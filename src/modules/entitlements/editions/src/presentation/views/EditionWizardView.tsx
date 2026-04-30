@@ -1,15 +1,17 @@
 "use client";
 /**
- * EditionWizardView — Multi-step Create wizard for Editions.
- * Uses extracted shared wizard components and the useEditionCreateViewModel.
+ * EditionWizardView — Premium multi-step Create wizard for Editions.
+ * Full localization, sectioned layout, themed stepper.
  */
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import {
-  ChevronRight, ChevronLeft, Check, Loader2,
+  ChevronRight, ChevronLeft, Check, Loader2, ArrowLeft,
   Tag, CreditCard, DollarSign, Eye,
 } from "lucide-react";
+import Link from "next/link";
 
 import { useEditionCreateViewModel } from "../viewmodels/useEditionCreateViewModel";
 import { WizardStepIndicator } from "../components/wizard/WizardStepIndicator";
@@ -18,44 +20,59 @@ import { WizardStepBilling } from "../components/wizard/WizardStepBilling";
 import { WizardStepPricing } from "../components/wizard/WizardStepPricing";
 import { WizardStepReview } from "../components/wizard/WizardStepReview";
 
-const STEPS = [
-  { id: "basics",  label: "Basics",  icon: Tag },
-  { id: "billing", label: "Billing", icon: CreditCard },
-  { id: "pricing", label: "Pricing", icon: DollarSign },
-  { id: "review",  label: "Review",  icon: Eye },
-] as const;
-
 export function EditionWizardView() {
+  useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();
   const vm = useEditionCreateViewModel();
 
+  const STEPS = [
+    { id: "basics",  label: t("entitlements.editions.wizard.stepBasics") || "Basics",   icon: Tag },
+    { id: "billing", label: t("entitlements.editions.wizard.stepBilling") || "Billing",  icon: CreditCard },
+    { id: "pricing", label: t("entitlements.editions.wizard.stepPricing") || "Pricing",  icon: DollarSign },
+    { id: "review",  label: t("entitlements.editions.wizard.stepReview") || "Review",   icon: Eye },
+  ] as const;
+
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      {/* Step indicator */}
+    <div className="max-w-3xl mx-auto space-y-8 pb-12">
+      {/* ── Header ── */}
+      <div className="flex items-center gap-3">
+        <Link href="/entitlements/editions">
+          <Button variant="ghost" size="icon" className="shrink-0">
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">
+            {t("entitlements.editions.wizard.createEdition") || "Create Edition"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {t("entitlements.editions.wizard.reviewSectionDesc") || "Configure a new subscription edition for your platform."}
+          </p>
+        </div>
+      </div>
+
+      {/* ── Step indicator ── */}
       <div className="overflow-x-auto pb-1">
         <WizardStepIndicator steps={STEPS} currentStep={vm.step} />
       </div>
 
-      {/* Step content */}
-      <div className="border border-border bg-card p-6 min-h-[400px]">
-        <h2 className="text-base font-semibold uppercase tracking-wider text-muted-foreground mb-6">
-          {STEPS[vm.step].label}
-        </h2>
-
+      {/* ── Step content ── */}
+      <div className="border border-border bg-card p-6 md:p-8 min-h-[400px]">
         {vm.step === 0 && <WizardStepBasics form={vm.form} onChange={vm.onChange} isEditMode={false} />}
         {vm.step === 1 && <WizardStepBilling form={vm.form} onChange={vm.onChange} />}
         {vm.step === 2 && <WizardStepPricing form={vm.form} prices={vm.prices} onPriceChange={vm.onPriceChange} />}
         {vm.step === 3 && <WizardStepReview form={vm.form} prices={vm.prices} />}
       </div>
 
-      {/* Error */}
+      {/* ── Error ── */}
       {vm.error && (
-        <div className="border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive flex items-center gap-2">
+          <span className="shrink-0">⚠</span>
           {vm.error}
         </div>
       )}
 
-      {/* Navigation */}
+      {/* ── Navigation ── */}
       <div className="flex items-center justify-between">
         <Button
           variant="outline"
@@ -63,7 +80,7 @@ export function EditionWizardView() {
           disabled={vm.isSubmitting}
           className="gap-2"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
           {vm.step === 0 ? (t("common.cancel") || "Cancel") : (t("common.back") || "Back")}
         </Button>
 
@@ -74,7 +91,7 @@ export function EditionWizardView() {
             className="gap-2"
           >
             {t("common.next") || "Next"}
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </Button>
         ) : (
           <Button

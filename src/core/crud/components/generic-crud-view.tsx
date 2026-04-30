@@ -476,9 +476,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   }, [onCreateClick, config, viewModel]);
 
   // Use config if provided, otherwise use direct props (backward compatibility)
-  const title = config ? t(config.titleKey) : propTitle!;
-  const subtitle = config ? config.customSubtitle || t(config.subtitleKey) : propSubtitle;
-  const allColumns = config ? config.columns : propColumns!;
+  const title = (config?.titleKey ? t(config.titleKey) : propTitle) || "";
+  const subtitle = config?.customSubtitle || (config?.subtitleKey ? t(config.subtitleKey) : propSubtitle) || "";
+  const allColumns = config?.columns || propColumns || [];
 
   // === Layer 1: Explicit restricted fields from /me response ===
   const restrictedFields = useRestrictedFields(config?.resource);
@@ -533,10 +533,10 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             : (item: any) => handleIndividualAction(action, item),
       }));
 
-  const createFields = config ? config.createFields : propCreateFields!;
+  const createFields = config?.createFields || propCreateFields!;
   // Support dynamic editFields: if it's a function, resolve it with the current editing item
   const resolveEditFields = useCallback((editingItem: any): FieldConfig[] => {
-    const raw = config ? config.editFields : propEditFields || propCreateFields;
+    const raw = config?.editFields || propEditFields || propCreateFields;
     if (typeof raw === 'function') {
       return raw(editingItem);
     }

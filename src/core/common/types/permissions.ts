@@ -328,6 +328,8 @@ export const SYSTEM_PERMISSIONS = {
   // Commissions
   COMMISSIONS_VIEW: "commissions.view",
   COMMISSIONS_EXPORT: "commissions.export",
+  COMMISSIONS_MANAGE: "commissions.manage",
+  COMMISSIONS_WAIVE: "commissions.waive",
 
   // Tenant Stripe Connect (self-service)
   TENANT_STRIPE_CONNECT_VIEW: "tenant_stripe_connect.view",

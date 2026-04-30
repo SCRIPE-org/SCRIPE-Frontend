@@ -6,6 +6,7 @@ export { EditionDetailView } from "./src/presentation/views/EditionDetailView";
 export { EditionComparisonView } from "./src/presentation/views/EditionComparisonView";
 export { EditionWizardView } from "./src/presentation/views/EditionWizardView";
 export { EditionEditWizardView } from "./src/presentation/views/EditionEditWizardView";
+export { EditionOverviewView } from "./src/presentation/views/EditionOverviewView";
 export { Edition } from "./src/domain/entities/Edition";
 export type { EditionData, EditionFeatureDto, EditionPriceData } from "./src/domain/entities/Edition";
 export type { CreateEditionRequest, UpdateEditionRequest } from "./src/domain/entities/EditionRequests";

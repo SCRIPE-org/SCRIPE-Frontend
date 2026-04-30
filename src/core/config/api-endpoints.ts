@@ -465,6 +465,14 @@ export const API_ENDPOINTS = {
         TRANSACTIONS: `${V1}/tenant-stripe-connect/transactions`,
         SYNC: `${V1}/tenant-stripe-connect/sync`,
       },
+      COMMISSION_LEDGER: {
+        LIST: `${V1}/commission-ledger`,
+      },
+      COMMISSION_INVOICES: {
+        LIST: `${V1}/commission-invoices`,
+        RETRY_CHARGE: (id: string) => `${V1}/commission-invoices/${id}/retry-charge`,
+        WAIVE: (id: string) => `${V1}/commission-invoices/${id}/waive`,
+      },
     },
     // ===== PLATFORM STRIPE DASHBOARD (System Admin) =====
     PLATFORM_STRIPE: {

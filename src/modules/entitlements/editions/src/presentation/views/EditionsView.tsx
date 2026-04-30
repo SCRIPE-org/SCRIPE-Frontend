@@ -102,7 +102,7 @@ export function EditionsView() {
                   getActions: (vmInstance: ReturnType<typeof useEditionsViewModel>, tFn: (key: string) => string, handleDeleteFn: ((item: Edition) => void) | undefined): CrudAction<Edition>[] => [
                         {
                               label: tFn("common.view") || "View",
-                              onClick: (item: Edition) => router.push(`/entitlements/editions/${item.id}`),
+                              onClick: (item: Edition) => router.push(`/entitlements/editions/${item.id}/overview`),
                               variant: "ghost" as const,
                               icon: <Eye className="h-4 w-4" />,
                         },
