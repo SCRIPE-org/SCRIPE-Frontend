@@ -337,9 +337,9 @@ export const SYSTEM_PERMISSIONS = {
   PLATFORM_STRIPE_VIEW: "platform_stripe.view",
 
   // Revenue Analytics
-  ANALYTICS_REVENUE_VIEW: "analytics.view",
-  ANALYTICS_HEALTH_VIEW: "analytics.view_health",
-  ANALYTICS_REPORTS_MANAGE: "analytics.manage_reports",
+  ANALYTICS_REVENUE_VIEW: "revenue_analytics.view",
+  ANALYTICS_HEALTH_VIEW: "revenue_analytics.view_health",
+  ANALYTICS_REPORTS_MANAGE: "revenue_analytics.manage_reports",
 
   // Tenant Payment Gateways (Tier 2 self-service)
   TENANT_PAYMENT_GATEWAYS_VIEW: "tenant_payment_gateways.view",
@@ -434,6 +434,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Stripe Connect
   "/entitlements/stripe-connect": [SYSTEM_PERMISSIONS.STRIPE_CONNECT_VIEW],
   "/entitlements/commissions": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
+  "/entitlements/commission-ledger": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
+  "/entitlements/commission-invoices": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
+  "/entitlements/payment-hub": [SYSTEM_PERMISSIONS.BILLING_MANAGE],
 
   // Platform Stripe Dashboard
   "/entitlements/platform-stripe": [SYSTEM_PERMISSIONS.PLATFORM_STRIPE_VIEW],
