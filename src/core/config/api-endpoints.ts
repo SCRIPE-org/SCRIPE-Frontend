@@ -588,6 +588,7 @@ export const API_ENDPOINTS = {
   COMPLIANCE: {
     // Dashboard
     DASHBOARD: `${V1}/compliance/dashboard`,
+    DASHBOARD_EXPORT: `${V1}/compliance/dashboard/export`,
 
     // Regulations
     REGULATIONS: `${V1}/compliance/regulations`,
