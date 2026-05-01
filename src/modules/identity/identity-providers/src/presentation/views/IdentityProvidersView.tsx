@@ -13,7 +13,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 export function IdentityProvidersView() {
   useModuleLocales(() => import("../../../locales"), "identity-providers");
 
-      const { vm, config } = useIdentityProvidersViewModel();
+  const { vm, config } = useIdentityProvidersViewModel();
 
-      return <GenericCrudView viewModel={vm} config={config} />;
+  return <GenericCrudView viewModel={vm} config={config} />;
 }

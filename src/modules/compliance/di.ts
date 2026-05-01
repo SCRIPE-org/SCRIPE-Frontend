@@ -13,45 +13,45 @@ import { getModuleApiService } from "@core/services/api-factory";
 
 // ── Service Implementations ──────────────────────────────────────────────────
 import { DashboardService } from "./dashboard/src/data/services/DashboardService";
-import { DsrService }       from "./dsr/src/data/services/DsrService";
-import { ConsentService }   from "./consent/src/data/services/ConsentService";
+import { DsrService } from "./dsr/src/data/services/DsrService";
+import { ConsentService } from "./consent/src/data/services/ConsentService";
 import { RetentionService } from "./retention/src/data/services/RetentionService";
 import { InventoryService } from "./inventory/src/data/services/InventoryService";
-import { ReportService }    from "./reports/src/data/services/ReportService";
+import { ReportService } from "./reports/src/data/services/ReportService";
 
 // ── Repository Implementations ───────────────────────────────────────────────
 import { DashboardRepository } from "./dashboard/src/data/repositories/DashboardRepository";
-import { DsrRepository }       from "./dsr/src/data/repositories/DsrRepository";
-import { ConsentRepository }   from "./consent/src/data/repositories/ConsentRepository";
+import { DsrRepository } from "./dsr/src/data/repositories/DsrRepository";
+import { ConsentRepository } from "./consent/src/data/repositories/ConsentRepository";
 import { RetentionRepository } from "./retention/src/data/repositories/RetentionRepository";
 import { InventoryRepository } from "./inventory/src/data/repositories/InventoryRepository";
-import { ReportRepository }    from "./reports/src/data/repositories/ReportRepository";
+import { ReportRepository } from "./reports/src/data/repositories/ReportRepository";
 
 // ── Repository Interfaces (exposed to consumers) ─────────────────────────────
 import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
-import type { IDsrRepository }       from "./dsr/src/domain/interfaces/IDsrRepository";
-import type { IConsentRepository }   from "./consent/src/domain/interfaces/IConsentRepository";
+import type { IDsrRepository } from "./dsr/src/domain/interfaces/IDsrRepository";
+import type { IConsentRepository } from "./consent/src/domain/interfaces/IConsentRepository";
 import type { IRetentionRepository } from "./retention/src/domain/interfaces/IRetentionRepository";
 import type { IInventoryRepository } from "./inventory/src/domain/interfaces/IInventoryRepository";
-import type { IReportRepository }    from "./reports/src/domain/interfaces/IReportRepository";
+import type { IReportRepository } from "./reports/src/domain/interfaces/IReportRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ───────────────────────
 import type { IDashboardService } from "./dashboard/src/domain/interfaces/IDashboardService";
-import type { IDsrService }       from "./dsr/src/domain/interfaces/IDsrService";
-import type { IConsentService }   from "./consent/src/domain/interfaces/IConsentService";
+import type { IDsrService } from "./dsr/src/domain/interfaces/IDsrService";
+import type { IConsentService } from "./consent/src/domain/interfaces/IConsentService";
 import type { IRetentionService } from "./retention/src/domain/interfaces/IRetentionService";
 import type { IInventoryService } from "./inventory/src/domain/interfaces/IInventoryService";
-import type { IReportService }    from "./reports/src/domain/interfaces/IReportService";
+import type { IReportService } from "./reports/src/domain/interfaces/IReportService";
 
 // ── Container Interface ───────────────────────────────────────────────────────
 
 export interface ComplianceContainer {
   dashboardRepository: IDashboardRepository;
-  dsrRepository:       IDsrRepository;
-  consentRepository:   IConsentRepository;
+  dsrRepository: IDsrRepository;
+  consentRepository: IConsentRepository;
   retentionRepository: IRetentionRepository;
   inventoryRepository: IInventoryRepository;
-  reportRepository:    IReportRepository;
+  reportRepository: IReportRepository;
 }
 
 let _container: ComplianceContainer | null = null;
@@ -65,20 +65,20 @@ export function getComplianceContainer(): ComplianceContainer {
 
     // ── Create Services (typed as interfaces) ──
     const dashboardService: IDashboardService = new DashboardService(apiService);
-    const dsrService:       IDsrService       = new DsrService(apiService);
-    const consentService:   IConsentService   = new ConsentService(apiService);
+    const dsrService: IDsrService = new DsrService(apiService);
+    const consentService: IConsentService = new ConsentService(apiService);
     const retentionService: IRetentionService = new RetentionService(apiService);
     const inventoryService: IInventoryService = new InventoryService(apiService);
-    const reportService:    IReportService    = new ReportService(apiService);
+    const reportService: IReportService = new ReportService(apiService);
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {
       dashboardRepository: new DashboardRepository(dashboardService),
-      dsrRepository:       new DsrRepository(dsrService),
-      consentRepository:   new ConsentRepository(consentService),
+      dsrRepository: new DsrRepository(dsrService),
+      consentRepository: new ConsentRepository(consentService),
       retentionRepository: new RetentionRepository(retentionService),
       inventoryRepository: new InventoryRepository(inventoryService),
-      reportRepository:    new ReportRepository(reportService),
+      reportRepository: new ReportRepository(reportService),
     };
   }
 
@@ -89,10 +89,22 @@ export function getComplianceContainer(): ComplianceContainer {
  * Compliance container accessor (for use in components and viewmodels)
  */
 export const complianceContainer = {
-  get dashboardRepository() { return getComplianceContainer().dashboardRepository; },
-  get dsrRepository()       { return getComplianceContainer().dsrRepository; },
-  get consentRepository()   { return getComplianceContainer().consentRepository; },
-  get retentionRepository() { return getComplianceContainer().retentionRepository; },
-  get inventoryRepository() { return getComplianceContainer().inventoryRepository; },
-  get reportRepository()    { return getComplianceContainer().reportRepository; },
+  get dashboardRepository() {
+    return getComplianceContainer().dashboardRepository;
+  },
+  get dsrRepository() {
+    return getComplianceContainer().dsrRepository;
+  },
+  get consentRepository() {
+    return getComplianceContainer().consentRepository;
+  },
+  get retentionRepository() {
+    return getComplianceContainer().retentionRepository;
+  },
+  get inventoryRepository() {
+    return getComplianceContainer().inventoryRepository;
+  },
+  get reportRepository() {
+    return getComplianceContainer().reportRepository;
+  },
 };

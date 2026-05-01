@@ -108,4 +108,7 @@ export const ar = {
       noEntries: "لا يوجد نشاط مسجل حتى الآن.",
     },
   },
+  common: {
+    copied: "[مفقود] Copied",
+  },
 };

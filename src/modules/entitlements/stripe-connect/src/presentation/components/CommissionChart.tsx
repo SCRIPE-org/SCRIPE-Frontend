@@ -44,7 +44,6 @@ const fmt = (n: number) =>
 
 // Recharts Formatter has a complex overload intersection.
 
-
 export function CommissionChart({
   trends,
   isLoading,
@@ -61,10 +60,10 @@ export function CommissionChart({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <CardTitle className="text-base">{t("entitlements.commissions.trendTitle")}</CardTitle>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {t("entitlements.commissions.trendDesc")}
             </p>
           </div>
@@ -76,7 +75,7 @@ export function CommissionChart({
                 id={`trend-period-${value}`}
                 variant={trendDays === value ? "default" : "outline"}
                 size="sm"
-                className="text-xs h-7 px-2"
+                className="h-7 px-2 text-xs"
                 onClick={() => onChangePeriod(value)}
               >
                 {label}
@@ -88,11 +87,11 @@ export function CommissionChart({
 
       <CardContent>
         {isLoading ? (
-          <div className="h-48 flex items-center justify-center text-muted-foreground text-sm">
+          <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
             {t("common.loading") || "Loading..."}
           </div>
         ) : chartData.length === 0 ? (
-          <div className="h-48 flex items-center justify-center text-muted-foreground text-sm">
+          <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
             {t("entitlements.commissions.noData")}
           </div>
         ) : (
@@ -114,8 +113,11 @@ export function CommissionChart({
                 width={70}
               />
               <Tooltip
-                formatter={(value: number | string | readonly (number | string)[] | undefined, name: string | number | undefined) => [
-                  name === "amount" ? fmt(Number(value) || 0) : (Number(value) || 0),
+                formatter={(
+                  value: number | string | readonly (number | string)[] | undefined,
+                  name: string | number | undefined
+                ) => [
+                  name === "amount" ? fmt(Number(value) || 0) : Number(value) || 0,
                   name === "amount"
                     ? t("entitlements.commissions.trendAmount")
                     : t("entitlements.commissions.trendCount"),

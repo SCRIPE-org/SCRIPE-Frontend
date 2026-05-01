@@ -10,7 +10,13 @@
 "use client";
 
 import { create } from "zustand";
-import type { CanvasComponent, CanvasComponentType, CanvasBackground, PositionMode, AuthPageId } from "../../domain/entities/CanvasComponent";
+import type {
+  CanvasComponent,
+  CanvasComponentType,
+  CanvasBackground,
+  PositionMode,
+  AuthPageId,
+} from "../../domain/entities/CanvasComponent";
 import {
   DEFAULT_CANVAS_COMPONENTS,
   DEFAULT_CANVAS_GRID_ROWS,
@@ -67,7 +73,12 @@ interface BuilderState {
 
   // ── Actions ──
   /** Initialize builder from draft data */
-  initialize: (components: CanvasComponent[], gridRows: number, background: CanvasBackground, pageComps?: Record<string, CanvasComponent[]>) => void;
+  initialize: (
+    components: CanvasComponent[],
+    gridRows: number,
+    background: CanvasBackground,
+    pageComps?: Record<string, CanvasComponent[]>
+  ) => void;
 
   /** Switch active auth page — saves current, loads target */
   setActivePage: (page: AuthPageId) => void;
@@ -105,7 +116,7 @@ interface BuilderState {
   selectComponent: (id: string | null) => void;
 
   /** Reorder z-index: 'forward' or 'back' */
-  reorderZ: (id: string, direction: 'forward' | 'back') => void;
+  reorderZ: (id: string, direction: "forward" | "back") => void;
 
   /** Reorder components by swapping two components identified by ID */
   reorderComponents: (fromId: string, toId: string) => void;
@@ -144,13 +155,17 @@ interface BuilderState {
   reset: () => void;
 
   /** Load a template — replaces ONLY the current active page's components (safe for per-page isolation) */
-  loadTemplate: (components: CanvasComponent[], gridRows: number, background: CanvasBackground) => void;
+  loadTemplate: (
+    components: CanvasComponent[],
+    gridRows: number,
+    background: CanvasBackground
+  ) => void;
 }
 
 // ── Helper: Create a snapshot of current canvas state ─────
 function takeSnapshot(state: BuilderState): CanvasSnapshot {
   return {
-    components: state.components.map(c => ({ ...c, props: { ...c.props } })),
+    components: state.components.map((c) => ({ ...c, props: { ...c.props } })),
     canvasGridRows: state.canvasGridRows,
     canvasBackground: { ...state.canvasBackground },
   };
@@ -179,7 +194,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   positionMode: DEFAULT_POSITION_MODE,
   zoom: 100,
 
-  activePage: 'login' as AuthPageId,
+  activePage: "login" as AuthPageId,
   pageComponents: {
     login: [],
     forgotPassword: [],
@@ -211,11 +226,11 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       canvasGridRows: gridRows || DEFAULT_CANVAS_GRID_ROWS,
       canvasBackground: background || DEFAULT_CANVAS_BACKGROUND,
       selectedComponentId: null,
-      activePage: 'login',
+      activePage: "login",
       pageComponents: {
         login: loginComps,
-        forgotPassword: pageComps?.forgotPassword || getDefaultComponentsForPage('forgotPassword'),
-        resetPassword: pageComps?.resetPassword || getDefaultComponentsForPage('resetPassword'),
+        forgotPassword: pageComps?.forgotPassword || getDefaultComponentsForPage("forgotPassword"),
+        resetPassword: pageComps?.resetPassword || getDefaultComponentsForPage("resetPassword"),
       },
       pageGridRows: {
         login: gridRows || DEFAULT_CANVAS_GRID_ROWS,
@@ -242,7 +257,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     // Save current page's state
     const updatedPageComponents = {
       ...state.pageComponents,
-      [state.activePage]: state.components.map(c => ({ ...c, props: { ...c.props } })),
+      [state.activePage]: state.components.map((c) => ({ ...c, props: { ...c.props } })),
     };
     const updatedPageGridRows = {
       ...state.pageGridRows,
@@ -254,9 +269,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     };
 
     // Load target page's state
-    const targetComponents = updatedPageComponents[page].length > 0
-      ? updatedPageComponents[page]
-      : getDefaultComponentsForPage(page);
+    const targetComponents =
+      updatedPageComponents[page].length > 0
+        ? updatedPageComponents[page]
+        : getDefaultComponentsForPage(page);
 
     set({
       activePage: page,
@@ -277,7 +293,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // ── Add Component ──
   addComponent: (type) => {
     const state = get();
-    const catalog = COMPONENT_CATALOG.find(c => c.type === type);
+    const catalog = COMPONENT_CATALOG.find((c) => c.type === type);
     if (!catalog) return null;
 
     // Singleton check
@@ -295,8 +311,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       type,
       gridColumn: catalog.defaultGridColumn,
       gridRow: `${nextRow} / ${nextRow + 1}`,
-      alignment: 'center',
-      verticalAlignment: 'center',
+      alignment: "center",
+      verticalAlignment: "center",
       x: centerX,
       y: nextY,
       width: catalog.defaultWidth,
@@ -323,17 +339,17 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // ── Remove Component ──
   removeComponent: (id) => {
     const state = get();
-    const comp = state.components.find(c => c.id === id);
+    const comp = state.components.find((c) => c.id === id);
     if (!comp) return false;
 
     // Cannot remove required components
-    const catalog = COMPONENT_CATALOG.find(c => c.type === comp.type);
+    const catalog = COMPONENT_CATALOG.find((c) => c.type === comp.type);
     if (catalog?.required) return false;
 
     const history = pushHistory(state);
     set({
       ...history,
-      components: state.components.filter(c => c.id !== id),
+      components: state.components.filter((c) => c.id !== id),
       selectedComponentId: state.selectedComponentId === id ? null : state.selectedComponentId,
     });
     return true;
@@ -345,8 +361,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const history = pushHistory(state);
     set({
       ...history,
-      components: state.components.map(c =>
-        c.id === id ? { ...c, ...updates, props: updates.props ? { ...c.props, ...updates.props } : c.props } : c
+      components: state.components.map((c) =>
+        c.id === id
+          ? { ...c, ...updates, props: updates.props ? { ...c.props, ...updates.props } : c.props }
+          : c
       ),
     });
   },
@@ -357,16 +375,14 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const history = pushHistory(state);
     set({
       ...history,
-      components: state.components.map(c =>
-        c.id === id ? { ...c, gridColumn, gridRow } : c
-      ),
+      components: state.components.map((c) => (c.id === id ? { ...c, gridColumn, gridRow } : c)),
     });
   },
 
   // ── Move Component (absolute mode) — LIVE, no history push ──
   moveComponentAbsolute: (id, x, y) => {
     const state = get();
-    const comp = state.components.find(c => c.id === id);
+    const comp = state.components.find((c) => c.id === id);
     if (!comp || comp.locked) return;
 
     const finalX = state.snapToGrid ? snapToGridValue(x) : x;
@@ -374,7 +390,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
     // Direct update — no history push during continuous drag
     set({
-      components: state.components.map(c =>
+      components: state.components.map((c) =>
         c.id === id ? { ...c, x: Math.max(0, finalX), y: Math.max(0, finalY) } : c
       ),
     });
@@ -383,21 +399,23 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // ── Resize Component — LIVE, no history push ──
   resizeComponent: (id, width, height) => {
     const state = get();
-    const comp = state.components.find(c => c.id === id);
+    const comp = state.components.find((c) => c.id === id);
     if (!comp || comp.locked) return;
 
-    const catalog = COMPONENT_CATALOG.find(c => c.type === comp.type);
+    const catalog = COMPONENT_CATALOG.find((c) => c.type === comp.type);
     const minW = catalog?.minWidth || 40;
     const minH = catalog?.minHeight || 20;
 
     // Direct update — no history push during continuous resize
     set({
-      components: state.components.map(c =>
-        c.id === id ? {
-          ...c,
-          width: Math.max(minW, state.snapToGrid ? snapToGridValue(width) : width),
-          height: Math.max(minH, state.snapToGrid ? snapToGridValue(height) : height),
-        } : c
+      components: state.components.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              width: Math.max(minW, state.snapToGrid ? snapToGridValue(width) : width),
+              height: Math.max(minH, state.snapToGrid ? snapToGridValue(height) : height),
+            }
+          : c
       ),
     });
   },
@@ -433,18 +451,14 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   lockComponent: (id) => {
     const state = get();
     set({
-      components: state.components.map(c =>
-        c.id === id ? { ...c, locked: true } : c
-      ),
+      components: state.components.map((c) => (c.id === id ? { ...c, locked: true } : c)),
     });
   },
 
   unlockComponent: (id) => {
     const state = get();
     set({
-      components: state.components.map(c =>
-        c.id === id ? { ...c, locked: false } : c
-      ),
+      components: state.components.map((c) => (c.id === id ? { ...c, locked: false } : c)),
     });
   },
 
@@ -456,14 +470,14 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // ── Reorder Z ──
   reorderZ: (id, direction) => {
     const state = get();
-    const comp = state.components.find(c => c.id === id);
+    const comp = state.components.find((c) => c.id === id);
     if (!comp) return;
 
     const history = pushHistory(state);
-    const delta = direction === 'forward' ? 1 : -1;
+    const delta = direction === "forward" ? 1 : -1;
     set({
       ...history,
-      components: state.components.map(c =>
+      components: state.components.map((c) =>
         c.id === id ? { ...c, zIndex: Math.max(0, c.zIndex + delta) } : c
       ),
     });
@@ -476,15 +490,15 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const state = get();
     if (fromId === toId) return;
 
-    const fromIndex = state.components.findIndex(c => c.id === fromId);
-    const toIndex = state.components.findIndex(c => c.id === toId);
+    const fromIndex = state.components.findIndex((c) => c.id === fromId);
+    const toIndex = state.components.findIndex((c) => c.id === toId);
     if (fromIndex === -1 || toIndex === -1) return;
 
     const history = pushHistory(state);
-    const newComponents = [...state.components.map(c => ({ ...c, props: { ...c.props } }))];
+    const newComponents = [...state.components.map((c) => ({ ...c, props: { ...c.props } }))];
 
     // If in grid mode, swap grid positions so components visually swap
-    if (state.positionMode === 'grid') {
+    if (state.positionMode === "grid") {
       const fromComp = newComponents[fromIndex];
       const toComp = newComponents[toIndex];
       const tempGridCol = fromComp.gridColumn;
@@ -510,11 +524,11 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // ── Duplicate Component ──
   duplicateComponent: (id) => {
     const state = get();
-    const comp = state.components.find(c => c.id === id);
+    const comp = state.components.find((c) => c.id === id);
     if (!comp) return;
 
     // Singleton check
-    const catalog = COMPONENT_CATALOG.find(c => c.type === comp.type);
+    const catalog = COMPONENT_CATALOG.find((c) => c.type === comp.type);
     if (catalog?.singleton && hasSingletonComponent(state.components, comp.type)) return;
 
     const nextRow = findNextAvailableRow(state.components);
@@ -546,9 +560,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const history = pushHistory(state);
     set({
       ...history,
-      components: state.components.map(c =>
-        c.id === id ? { ...c, visible: !c.visible } : c
-      ),
+      components: state.components.map((c) => (c.id === id ? { ...c, visible: !c.visible } : c)),
     });
   },
 
@@ -579,7 +591,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
   getOverlaps: () => {
     const state = get();
-    const visible = state.components.filter(c => c.visible);
+    const visible = state.components.filter((c) => c.visible);
     const pairs: [string, string][] = [];
     for (let i = 0; i < visible.length; i++) {
       for (let j = i + 1; j < visible.length; j++) {

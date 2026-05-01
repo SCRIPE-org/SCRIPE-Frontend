@@ -25,7 +25,6 @@ import { zh as commModules } from "../comm-pages/modules/zh";
 import { zh as commEntitlements } from "../comm-pages/entitlements/zh";
 import { zh as commCustomization } from "../comm-pages/customization/zh";
 
-
 import { zh as pageBillingEngine } from "../pages/billing-engine/zh";
 import { zh as pageInvoices } from "../pages/invoices/zh";
 import { zh as pageDunning } from "../pages/dunning/zh";
@@ -37,10 +36,32 @@ import { zh as pageRevenueAnalytics } from "../pages/revenue-analytics/zh";
 import { mergeAll } from "./utils";
 
 export const allDocsZh: Record<string, any> = mergeAll(
-  common, getStarted, architecture, features, modules,
-  security, frontend, infrastructure, tutorials, apiReference,
-  commWhyNexora, commPlatform, commEnterprise, commSecurity,
-  commTechnical, commDeveloper, commIntegration, commPricing,
-  commModules, commEntitlements, commCustomization,
-  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate, pageRevenueAnalytics,
+  common,
+  getStarted,
+  architecture,
+  features,
+  modules,
+  security,
+  frontend,
+  infrastructure,
+  tutorials,
+  apiReference,
+  commWhyNexora,
+  commPlatform,
+  commEnterprise,
+  commSecurity,
+  commTechnical,
+  commDeveloper,
+  commIntegration,
+  commPricing,
+  commModules,
+  commEntitlements,
+  commCustomization,
+  pageBillingEngine,
+  pageInvoices,
+  pageDunning,
+  pageTenantPlans,
+  pageUserSubscriptions,
+  pageTenantContextGate,
+  pageRevenueAnalytics
 );

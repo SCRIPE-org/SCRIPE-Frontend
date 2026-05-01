@@ -160,13 +160,7 @@ export function DocContent({ sections }: DocContentProps) {
             return <ComparisonBlock key={key} columns={section.columns} />;
 
           case "feature-grid":
-            return (
-              <FeatureGrid
-                key={key}
-                items={section.items}
-                columns={section.columns}
-              />
-            );
+            return <FeatureGrid key={key} items={section.items} columns={section.columns} />;
 
           default:
             return null;

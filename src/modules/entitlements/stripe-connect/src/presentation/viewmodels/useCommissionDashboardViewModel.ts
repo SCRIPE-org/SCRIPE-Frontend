@@ -41,8 +41,7 @@ export function useCommissionDashboardViewModel() {
     refetchOnWindowFocus: false,
   });
 
-  const isLoading =
-    dashboardQuery.isLoading || trendsQuery.isLoading || topTenantsQuery.isLoading;
+  const isLoading = dashboardQuery.isLoading || trendsQuery.isLoading || topTenantsQuery.isLoading;
 
   return {
     // KPI data

@@ -4,12 +4,12 @@
 
 // Domain entities
 export type {
-      IdentityProvider,
-      IdentityProviderListItem,
-      TestConnectionResult,
-      IdentityProviderListResponse,
-      CreateIdentityProviderRequest,
-      UpdateIdentityProviderRequest,
+  IdentityProvider,
+  IdentityProviderListItem,
+  TestConnectionResult,
+  IdentityProviderListResponse,
+  CreateIdentityProviderRequest,
+  UpdateIdentityProviderRequest,
 } from "./src/domain/entities/IdentityProvider";
 
 // Domain interfaces

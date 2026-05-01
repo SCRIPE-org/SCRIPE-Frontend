@@ -7,7 +7,11 @@ import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DsrModel } from "../models/DsrModels";
 import type { PagedResult } from "@modules/identity/core/domain/types";
-import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../../domain/entities/DsrRequests";
+import type {
+  DsrListParams,
+  SubmitDsrRequest,
+  ReviewDsrRequest,
+} from "../../domain/entities/DsrRequests";
 
 export class DsrService implements IDsrService {
   constructor(private readonly api: IApiService) {}

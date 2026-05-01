@@ -69,13 +69,16 @@ export function useLoginViewModel() {
   }, []);
 
   // Helper to handle external vs internal redirects
-  const handleRedirect = useCallback((path: string) => {
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-      window.location.href = path;
-    } else {
-      router.replace(path);
-    }
-  }, [router]);
+  const handleRedirect = useCallback(
+    (path: string) => {
+      if (path.startsWith("http://") || path.startsWith("https://")) {
+        window.location.href = path;
+      } else {
+        router.replace(path);
+      }
+    },
+    [router]
+  );
 
   // Check if user should be redirected (stable function - no deps that change)
   const checkAndRedirect = useCallback(() => {
@@ -118,9 +121,10 @@ export function useLoginViewModel() {
 
     try {
       // Extract tenant code from URL for tenant-aware logout redirect
-      const devTenantCode = typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("_tenant") ?? undefined
-        : undefined;
+      const devTenantCode =
+        typeof window !== "undefined"
+          ? (new URLSearchParams(window.location.search).get("_tenant") ?? undefined)
+          : undefined;
 
       await loginMutation.mutateAsync({
         identifier: formData.identifier,
@@ -178,11 +182,9 @@ export function useLoginViewModel() {
 
       // Same flow as successful login
       setAuth(user, user.permissions || [], []);
-      useAppStore.getState().setSubscriptionInfo(
-        result.subscriptionStatus,
-        result.gracePhase,
-        result.editionName
-      );
+      useAppStore
+        .getState()
+        .setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
       useAppStore.getState().setMustChangePassword(result.mustChangePassword ?? false);
 
       operationSuccess(t("auth.welcomeBack"));

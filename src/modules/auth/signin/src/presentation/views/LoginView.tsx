@@ -43,7 +43,13 @@ export function LoginView() {
   const hasCheckedAuth = useRef(false);
 
   // Pre-auth domain resolution for white-label branding
-  const { tenantId, branding, isResolved, isLoading: isTenantLoading, isApiError } = useTenantResolution();
+  const {
+    tenantId,
+    branding,
+    isResolved,
+    isLoading: isTenantLoading,
+    isApiError,
+  } = useTenantResolution();
 
   // ── One-time sync: apply resolved preferences only on initial load ──
   // After this initial sync, user's manual language/theme switches take precedence.
@@ -57,7 +63,9 @@ export function LoginView() {
         setLanguage(prefs.language);
       }
       hasAppliedInitialPrefs.current = true;
-    } catch { /* skip invalid JSON */ }
+    } catch {
+      /* skip invalid JSON */
+    }
   }, [branding?.dashboardThemeJson]);
 
   // ── Studio Preview Mode (§22) ──
@@ -67,7 +75,8 @@ export function LoginView() {
     slotConfigJson?: string;
   } | null>(null);
 
-  const isPreviewMode = typeof window !== "undefined" &&
+  const isPreviewMode =
+    typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("_preview") === "true";
 
   useEffect(() => {
@@ -129,9 +138,7 @@ export function LoginView() {
       if (a11y.pageTitle) {
         document.title = a11y.pageTitle;
       } else {
-        document.title = isResolved
-          ? `Login — ${companyName}`
-          : `Login — ${BRAND.name}`;
+        document.title = isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`;
       }
     }
   }, [isResolved, companyName, a11y.pageTitle]);
@@ -156,9 +163,18 @@ export function LoginView() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: "0ms" }} />
-            <div className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: "150ms" }} />
-            <div className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: "300ms" }} />
+            <div
+              className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40"
+              style={{ animationDelay: "0ms" }}
+            />
+            <div
+              className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40"
+              style={{ animationDelay: "150ms" }}
+            />
+            <div
+              className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40"
+              style={{ animationDelay: "300ms" }}
+            />
           </div>
         </div>
       </div>
@@ -173,10 +189,17 @@ export function LoginView() {
   // Non-existent tenant domain (skip in preview mode and when API itself failed)
   // When the API is unreachable (CORS, mixed-content, network error), fall through
   // to the normal platform login instead of showing "Tenant Not Found".
-  if (!isPreviewMode && !isTenantLoading && !isResolved && !isApiError && typeof window !== "undefined") {
+  if (
+    !isPreviewMode &&
+    !isTenantLoading &&
+    !isResolved &&
+    !isApiError &&
+    typeof window !== "undefined"
+  ) {
     const hostname = window.location.hostname;
     const devCode = new URLSearchParams(window.location.search).get("_tenant");
-    const isTenantExpectedCheck = devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));
+    const isTenantExpectedCheck =
+      devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));
     if (isTenantExpectedCheck) {
       return <TenantNotFoundView />;
     }
@@ -195,7 +218,10 @@ export function LoginView() {
     >
       {/* Safe Mode Banner */}
       {safeModeActive && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-600 dark:text-amber-400" role="alert">
+        <div
+          className="mb-6 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-600 dark:text-amber-400"
+          role="alert"
+        >
           <AlertTriangle className="h-4 w-4 shrink-0" />
           {t("auth.branding.safeModeActive")}
         </div>
@@ -255,17 +281,35 @@ export function LoginView() {
   const topActions = (
     <>
       {skipLink}
-      <div className="absolute left-8 right-8 top-8 flex items-center justify-between lg:justify-end gap-5 z-20" {...(a11y.ariaLandmarks ? { role: "navigation", "aria-label": t("auth.a11y.topActionsLabel") } : {})}>
-        <Button variant="ghost" size="sm" className="hidden lg:flex gap-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors" asChild>
+      <div
+        className="absolute left-8 right-8 top-8 z-20 flex items-center justify-between gap-5 lg:justify-end"
+        {...(a11y.ariaLandmarks
+          ? { role: "navigation", "aria-label": t("auth.a11y.topActionsLabel") }
+          : {})}
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hidden gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground lg:flex"
+          asChild
+        >
           <Link href="/docs">
             <BookOpen className="h-4 w-4" />
             {t("auth.branding.docs")}
           </Link>
         </Button>
-        <div className="hidden lg:block h-4 w-px bg-border" />
-        <div className="flex w-full lg:w-auto items-center justify-between lg:justify-start gap-1">
-          <Button variant="ghost" size="sm" className="flex lg:hidden gap-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors" asChild>
-            <Link href="/docs"><BookOpen className="h-4 w-4" />{t("auth.branding.docs")}</Link>
+        <div className="hidden h-4 w-px bg-border lg:block" />
+        <div className="flex w-full items-center justify-between gap-1 lg:w-auto lg:justify-start">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground lg:hidden"
+            asChild
+          >
+            <Link href="/docs">
+              <BookOpen className="h-4 w-4" />
+              {t("auth.branding.docs")}
+            </Link>
           </Button>
           <div className="flex gap-1">
             <LanguageSwitcher />
@@ -278,7 +322,7 @@ export function LoginView() {
 
   // ── Footer (shared) ──
   const footer = (
-    <div className="text-center lg:hidden mt-12">
+    <div className="mt-12 text-center lg:hidden">
       <p className="text-[11px] font-medium text-muted-foreground/50">
         © {new Date().getFullYear()} {companyName} — {t("auth.branding.copyright")}
       </p>
@@ -286,7 +330,9 @@ export function LoginView() {
   );
 
   // ── Slot: footer ──
-  const footerSlot = <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />;
+  const footerSlot = (
+    <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />
+  );
 
   // ── Builder Mode: render canvas-based layout from studio ──────────
   // When the published branding JSON contains canvasMode='builder', the entire
@@ -295,16 +341,20 @@ export function LoginView() {
   const rawBrandingJson = previewOverrides?.loginBrandingJson ?? branding?.loginBrandingJson;
   const parsedBranding = (() => {
     if (!rawBrandingJson) return null;
-    try { return JSON.parse(rawBrandingJson) as Record<string, unknown>; } catch { return null; }
+    try {
+      return JSON.parse(rawBrandingJson) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
   })();
 
-  if (parsedBranding?.canvasMode === 'builder' && Array.isArray(parsedBranding.components)) {
+  if (parsedBranding?.canvasMode === "builder" && Array.isArray(parsedBranding.components)) {
     return (
       <ProductionCanvasRenderer
         components={parsedBranding.components as any}
         gridRows={(parsedBranding.canvasGridRows as number) || 8}
         canvasBackground={parsedBranding.canvasBackground as any}
-        positionMode={(parsedBranding.canvasPositionMode as 'grid' | 'absolute') || 'grid'}
+        positionMode={(parsedBranding.canvasPositionMode as "grid" | "absolute") || "grid"}
         formContent={formContent}
         logoUrl={logoSrc}
         companyName={companyName}
@@ -323,7 +373,8 @@ export function LoginView() {
   // Common wrapper style — single layered background for gradient support
   const bgStyle = "selection:bg-primary/20";
   const wrapperStyle: React.CSSProperties = {
-    background: "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
+    background:
+      "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
     // fontFamily handled by .login-page CSS class (with RTL combined font stack)
     lineHeight: "var(--login-line-height, 1.5)",
     letterSpacing: "var(--login-letter-spacing, 0px)",
@@ -337,20 +388,26 @@ export function LoginView() {
 
   // Form side in split layouts: show bg-image + solid fallback
   const formSideBgStyle: React.CSSProperties = {
-    background: "var(--login-bg-image, none) var(--login-bg-image-position, center)/var(--login-bg-image-fit, cover) no-repeat, var(--login-bg, hsl(var(--background)))",
+    background:
+      "var(--login-bg-image, none) var(--login-bg-image-position, center)/var(--login-bg-image-fit, cover) no-repeat, var(--login-bg, hsl(var(--background)))",
   };
 
   switch (layout) {
     // ── SPLIT-LEFT: Branding right, form left ──────
     case "split-left":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideBgStyle}>
+        <div
+          className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
+          <div
+            className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
+            style={formSideBgStyle}
+          >
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && (
-              <DesktopHeading companyName={companyName} />
-            )}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -362,17 +419,34 @@ export function LoginView() {
     // ── CENTERED ──
     case "centered":
       return (
-        <div className={`flex min-h-screen w-full flex-col items-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full flex-col items-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {topActions}
-          <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
+          <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
             <div className="mb-10 flex flex-col items-center gap-4 text-center">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-background border border-border shadow-sm">
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">{companyName}</h1>
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+                {companyName}
+              </h1>
               <p className="text-sm text-muted-foreground">{t("auth.pleaseLogin")}</p>
             </div>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mb-8 w-full" />
+            <SlotRenderer
+              slotId="login.sidebar.content"
+              slotConfig={slotConfig}
+              className="mb-8 w-full"
+            />
             {formContent}
             {footerSlot}
             <p className="mt-12 text-[11px] font-medium text-muted-foreground/50">
@@ -390,14 +464,46 @@ export function LoginView() {
           dir={direction}
           style={wrapperStyle}
         >
-          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, #000000)", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: "var(--login-overlay-color, #000000)",
+              opacity: "var(--login-overlay-opacity, 0.5)",
+              backdropFilter: "blur(var(--login-overlay-blur, 0px))",
+            }}
+          />
           {topActions}
-          <div className="relative z-10 w-full border border-[var(--login-border,hsl(var(--border)))]/50 backdrop-blur-xl mx-4" style={{ maxWidth: "var(--login-form-width, 480px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)" }}>
+          <div
+            className="border-[var(--login-border,hsl(var(--border)))]/50 relative z-10 mx-4 w-full border backdrop-blur-xl"
+            style={{
+              maxWidth: "var(--login-form-width, 480px)",
+              borderRadius: "var(--login-radius-card, 16px)",
+              padding: "var(--login-card-padding, 32px)",
+              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+              backgroundColor:
+                "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)",
+            }}
+          >
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden bg-background border border-border shadow-sm" style={{ borderRadius: "var(--login-radius-card, 12px)" }}>
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div
+                className="flex h-16 w-16 items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+                style={{ borderRadius: "var(--login-radius-card, 12px)" }}
+              >
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
+              <h1
+                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+              >
+                {companyName}
+              </h1>
             </div>
             <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
             {formContent}
@@ -409,15 +515,36 @@ export function LoginView() {
     // ── MINIMAL ──
     case "minimal":
       return (
-        <div className={`flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {topActions}
           <div className="w-full px-6" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
             <div className="mb-10 flex flex-col items-center gap-3 text-center">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
-              <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+              <h1
+                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+              >
+                {companyName}
+              </h1>
+              <p
+                className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+              >
+                {t("auth.pleaseLogin")}
+              </p>
             </div>
             {formContent}
             {footerSlot}
@@ -436,18 +563,58 @@ export function LoginView() {
           dir={direction}
           style={wrapperStyle}
         >
-          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.7)", backdropFilter: "blur(var(--login-overlay-blur, 6px))" }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+              opacity: "var(--login-overlay-opacity, 0.7)",
+              backdropFilter: "blur(var(--login-overlay-blur, 6px))",
+            }}
+          />
           {topActions}
-          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))]/30 shadow-2xl backdrop-blur-2xl mx-4" style={{ maxWidth: "var(--login-form-width, 420px)", padding: "var(--login-card-padding, 32px)", borderRadius: "var(--login-radius-card, 24px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)" }}>
+          <div
+            className="border-[var(--login-accent,hsl(var(--border)))]/30 relative z-10 mx-4 w-full border shadow-2xl backdrop-blur-2xl"
+            style={{
+              maxWidth: "var(--login-form-width, 420px)",
+              padding: "var(--login-card-padding, 32px)",
+              borderRadius: "var(--login-radius-card, 24px)",
+              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+              backgroundColor:
+                "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)",
+            }}
+          >
             {/* Luminous border glow */}
-            <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-b from-[var(--login-primary,hsl(var(--primary)))]/20 via-transparent to-[var(--login-primary,hsl(var(--primary)))]/10" />
+            <div className="from-[var(--login-primary,hsl(var(--primary)))]/20 to-[var(--login-primary,hsl(var(--primary)))]/10 pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-b via-transparent" />
             <div className="relative z-10">
               <div className="mb-8 flex flex-col items-center gap-3 text-center">
-                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-[var(--login-accent,hsl(var(--border)))]/30 shadow-lg backdrop-blur-sm" style={{ backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 60%, transparent)" }}>
-                  <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                <div
+                  className="border-[var(--login-accent,hsl(var(--border)))]/30 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border shadow-lg backdrop-blur-sm"
+                  style={{
+                    backgroundColor:
+                      "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 60%, transparent)",
+                  }}
+                >
+                  <img
+                    src={logoSrc}
+                    alt={`${logoAlt} Logo`}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
                 </div>
-                <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
-                <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+                <h1
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+                >
+                  {companyName}
+                </h1>
+                <p
+                  className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                  style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                >
+                  {t("auth.pleaseLogin")}
+                </p>
               </div>
               {formContent}
               {footerSlot}
@@ -459,21 +626,35 @@ export function LoginView() {
     // ── MAGAZINE (Editorial-style with large hero text) ──
     case "magazine":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
-          <div className="relative hidden lg:flex lg:w-3/5 flex-col justify-end p-16 overflow-hidden"
-            style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+        <div
+          className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
+          <div
+            className="relative hidden flex-col justify-end overflow-hidden p-16 lg:flex lg:w-3/5"
+            style={{
+              backgroundImage: "var(--login-bg-image, none)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="relative z-10 max-w-2xl">
-              <h1 className="login-heading text-6xl font-bold tracking-tight text-white leading-[1.1]"
-              >
+              <h1 className="login-heading text-6xl font-bold leading-[1.1] tracking-tight text-white">
                 {branding?.loginHeadline || t("auth.branding.headline")}
               </h1>
-              <p className="mt-4 text-lg text-white/80">{branding?.loginSubtitle || t("auth.branding.subtitle")}</p>
+              <p className="mt-4 text-lg text-white/80">
+                {branding?.loginSubtitle || t("auth.branding.subtitle")}
+              </p>
             </div>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="relative z-10 mt-8" />
+            <SlotRenderer
+              slotId="login.sidebar.content"
+              slotConfig={slotConfig}
+              className="relative z-10 mt-8"
+            />
           </div>
-          <div className="relative flex w-full lg:w-2/5 flex-col items-center justify-center px-6 py-12">
+          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-2/5">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
@@ -487,21 +668,45 @@ export function LoginView() {
     // ── STACKED (Brand banner top, form below) ──
     case "stacked":
       return (
-        <div className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {topActions}
           {/* Brand Banner */}
-          <div className="relative w-full py-12 px-8 text-center overflow-hidden"
-            style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+          <div
+            className="relative w-full overflow-hidden px-8 py-12 text-center"
+            style={{
+              backgroundImage: "var(--login-bg-image, none)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
             <div className="absolute inset-0 bg-[var(--login-surface,hsl(var(--muted)/0.4))]" />
             <div className="relative z-10 flex flex-col items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
-              <h1 className="text-3xl font-semibold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</h1>
-              <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{t("auth.pleaseLogin")}</p>
+              <h1 className="text-3xl font-semibold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+                {companyName}
+              </h1>
+              <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                {t("auth.pleaseLogin")}
+              </p>
             </div>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="relative z-10 mt-6" />
+            <SlotRenderer
+              slotId="login.sidebar.content"
+              slotConfig={slotConfig}
+              className="relative z-10 mt-6"
+            />
           </div>
           {/* Form */}
           <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
@@ -514,13 +719,26 @@ export function LoginView() {
     // ── SIDEBAR-COMPACT (Narrow brand bar + form) ──
     case "sidebar-compact":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
           {/* Narrow brand strip */}
-          <div className="hidden lg:flex w-20 flex-col items-center justify-between py-8 bg-[var(--login-surface,hsl(var(--muted)/0.4))] border-e border-border">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-              <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+          <div className="hidden w-20 flex-col items-center justify-between border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] py-8 lg:flex">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+              <img
+                src={logoSrc}
+                alt={`${logoAlt} Logo`}
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
             </div>
-            <p className="text-[9px] text-muted-foreground/40 [writing-mode:vertical-lr] rotate-180">© {new Date().getFullYear()} {companyName}</p>
+            <p className="rotate-180 text-[9px] text-muted-foreground/40 [writing-mode:vertical-lr]">
+              © {new Date().getFullYear()} {companyName}
+            </p>
           </div>
           {/* Main form area */}
           <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12">
@@ -537,13 +755,17 @@ export function LoginView() {
     // ── ASYMMETRIC (60/40 split with accent divider) ──
     case "asymmetric":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
+        <div
+          className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
+          <div className="relative hidden overflow-hidden lg:flex lg:w-[60%]">
             <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
             {/* Accent divider */}
             <div className="absolute inset-y-0 end-0 w-1 bg-gradient-to-b from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
           </div>
-          <div className="relative flex w-full lg:w-[40%] flex-col items-center justify-center px-6 py-12">
+          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-[40%]">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
@@ -557,17 +779,47 @@ export function LoginView() {
     // ── FLOATING (Card floating with pattern bg) ──
     case "floating":
       return (
-        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {/* Pattern background */}
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
           {topActions}
-          <div className="relative z-10 w-full border border-border mx-4" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div
+            className="relative z-10 mx-4 w-full border border-border"
+            style={{
+              maxWidth: "var(--login-form-width, 440px)",
+              borderRadius: "var(--login-radius-card, 16px)",
+              padding: "var(--login-card-padding, 32px)",
+              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+              backgroundColor: "var(--login-surface, hsl(var(--background)))",
+            }}
+          >
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
-              <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+              <h1
+                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+              >
+                {companyName}
+              </h1>
+              <p
+                className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+              >
+                {t("auth.pleaseLogin")}
+              </p>
             </div>
             {formContent}
             {footerSlot}
@@ -583,20 +835,32 @@ export function LoginView() {
           dir={direction}
           style={wrapperStyle}
         >
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)", opacity: "var(--login-overlay-opacity, 0.7)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)",
+              opacity: "var(--login-overlay-opacity, 0.7)",
+              backdropFilter: "blur(var(--login-overlay-blur, 0px))",
+            }}
+          />
           {topActions}
           {/* Left: Big cinematic headline */}
-          <div className="relative z-10 hidden lg:flex lg:w-3/5 flex-col justify-center px-16 xl:px-24">
-            <h1 className="login-heading text-7xl font-black tracking-tighter leading-[0.95] text-[var(--login-text,hsl(var(--foreground)))]">
+          <div className="relative z-10 hidden flex-col justify-center px-16 lg:flex lg:w-3/5 xl:px-24">
+            <h1 className="login-heading text-7xl font-black leading-[0.95] tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]">
               {branding?.loginHeadline || companyName}
             </h1>
             <p className="mt-6 max-w-lg text-xl text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
               {branding?.loginSubtitle || t("auth.branding.subtitle")}
             </p>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
+            <SlotRenderer
+              slotId="login.sidebar.content"
+              slotConfig={slotConfig}
+              className="mt-10"
+            />
           </div>
           {/* Right: Form directly on surface (no card) */}
-          <div className="relative z-10 flex w-full lg:w-2/5 flex-col items-center justify-center px-8 py-12">
+          <div className="relative z-10 flex w-full flex-col items-center justify-center px-8 py-12 lg:w-2/5">
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
@@ -609,11 +873,21 @@ export function LoginView() {
     // ── SPLIT-DIAGONAL (Diagonal clip separating brand/form) ──
     case "split-diagonal":
       return (
-        <div className={`relative flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <div className="hidden lg:block absolute inset-0 w-[55%]" style={{ clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)", backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
+        <div
+          className={`relative flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
+          <div
+            className="absolute inset-0 hidden w-[55%] lg:block"
+            style={{
+              clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)",
+              backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))",
+            }}
+          >
             <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
           </div>
-          <div className="relative z-10 flex w-full lg:ms-auto lg:w-[50%] flex-col items-center justify-center px-6 py-12">
+          <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:ms-auto lg:w-[50%]">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
@@ -627,21 +901,42 @@ export function LoginView() {
     // ── CAROUSEL (Auto-rotating testimonials branding panel) ──
     case "carousel":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <div className="relative hidden lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-center overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] border-e border-border p-16">
+        <div
+          className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
+          <div className="relative hidden flex-col justify-center overflow-hidden border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-16 lg:flex lg:w-1/2 xl:w-[55%]">
             <div className="mb-8">
-              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
             </div>
             <h2 className="login-heading text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
               {branding?.loginHeadline || t("auth.branding.headline")}
             </h2>
-            <p className="mt-4 text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{branding?.loginSubtitle || t("auth.branding.subtitle")}</p>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
-            <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} className="mt-auto pt-10" />
+            <p className="mt-4 text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+              {branding?.loginSubtitle || t("auth.branding.subtitle")}
+            </p>
+            <SlotRenderer
+              slotId="login.sidebar.content"
+              slotConfig={slotConfig}
+              className="mt-10"
+            />
+            <SlotRenderer
+              slotId="login.sidebar.bottom"
+              slotConfig={slotConfig}
+              className="mt-auto pt-10"
+            />
           </div>
-          <div className="relative flex w-full lg:w-1/2 xl:w-[45%] flex-col items-center justify-center px-6 py-12">
+          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
@@ -655,23 +950,61 @@ export function LoginView() {
     // ── GLASS-MORPHISM (Extreme glass: thick blur, luminous border) ──
     case "glass-morphism":
       return (
-        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction}
-          style={wrapperStyle}>
-          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 2px))" }} />
+        <div
+          className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+              opacity: "var(--login-overlay-opacity, 0.5)",
+              backdropFilter: "blur(var(--login-overlay-blur, 2px))",
+            }}
+          />
           {/* Ambient glow orbs */}
-          <div className="pointer-events-none absolute top-1/4 start-1/4 h-64 w-64 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/20 blur-[100px]" />
-          <div className="pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/15 blur-[80px]" />
+          <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 pointer-events-none absolute start-1/4 top-1/4 h-64 w-64 rounded-full blur-[100px]" />
+          <div className="bg-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full blur-[80px]" />
           {topActions}
-          <div className="relative z-10 w-full mx-4" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
-            <div className="border border-[var(--login-accent,hsl(var(--border)))]/20 shadow-2xl backdrop-blur-3xl" style={{ borderRadius: "var(--login-radius-card, 24px)", padding: "var(--login-card-padding, 40px)", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)" }}>
-              <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br from-[var(--login-primary,hsl(var(--primary)))]/30 via-transparent to-[var(--login-primary,hsl(var(--primary)))]/15" />
+          <div
+            className="relative z-10 mx-4 w-full"
+            style={{ maxWidth: "var(--login-form-width, 440px)" }}
+          >
+            <div
+              className="border-[var(--login-accent,hsl(var(--border)))]/20 border shadow-2xl backdrop-blur-3xl"
+              style={{
+                borderRadius: "var(--login-radius-card, 24px)",
+                padding: "var(--login-card-padding, 40px)",
+                backgroundColor:
+                  "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)",
+              }}
+            >
+              <div className="from-[var(--login-primary,hsl(var(--primary)))]/30 to-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br via-transparent" />
               <div className="relative z-10">
                 <div className="mb-8 flex flex-col items-center gap-3 text-center">
-                  <div className="flex h-18 w-18 items-center justify-center overflow-hidden rounded-2xl border border-[var(--login-accent,hsl(var(--border)))]/20 shadow-xl backdrop-blur-md" style={{ backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 50%, transparent)" }}>
-                    <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                  <div
+                    className="h-18 w-18 border-[var(--login-accent,hsl(var(--border)))]/20 flex items-center justify-center overflow-hidden rounded-2xl border shadow-xl backdrop-blur-md"
+                    style={{
+                      backgroundColor:
+                        "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 50%, transparent)",
+                    }}
+                  >
+                    <img
+                      src={logoSrc}
+                      alt={`${logoAlt} Logo`}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
                   </div>
-                  <h1 className="text-2xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</h1>
-                  <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{t("auth.pleaseLogin")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+                    {companyName}
+                  </h1>
+                  <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                    {t("auth.pleaseLogin")}
+                  </p>
                 </div>
                 {formContent}
                 {footerSlot}
@@ -684,18 +1017,44 @@ export function LoginView() {
     // ── GRADIENT-WAVE (Animated wave between sections) ──
     case "gradient-wave":
       return (
-        <div className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {topActions}
           {/* Top branded section */}
-          <div className="relative flex flex-col items-center justify-center px-8 pt-20 pb-24 text-center" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
-            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-              <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+          <div
+            className="relative flex flex-col items-center justify-center px-8 pb-24 pt-20 text-center"
+            style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+          >
+            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+              <img
+                src={logoSrc}
+                alt={`${logoAlt} Logo`}
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
             </div>
-            <h1 className="login-heading mt-6 text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</h1>
-            <p className="mt-3 text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{branding?.loginSubtitle || t("auth.branding.subtitle")}</p>
+            <h1 className="login-heading mt-6 text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+              {companyName}
+            </h1>
+            <p className="mt-3 text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+              {branding?.loginSubtitle || t("auth.branding.subtitle")}
+            </p>
             {/* Wave SVG divider */}
-            <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 1440 100" preserveAspectRatio="none" style={{ height: "60px" }}>
-              <path d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z" fill="var(--login-bg, hsl(var(--background)))" />
+            <svg
+              className="absolute -bottom-1 left-0 w-full"
+              viewBox="0 0 1440 100"
+              preserveAspectRatio="none"
+              style={{ height: "60px" }}
+            >
+              <path
+                d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z"
+                fill="var(--login-bg, hsl(var(--background)))"
+              />
             </svg>
           </div>
           {/* Bottom form section */}
@@ -709,17 +1068,52 @@ export function LoginView() {
     // ── SPOTLIGHT (Dark bg with radial glow behind form) ──
     case "spotlight":
       return (
-        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {/* Radial spotlight glow */}
-          <div className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)` }} />
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)`,
+            }}
+          />
           {topActions}
-          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 420px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div
+            className="relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
+            style={{
+              maxWidth: "var(--login-form-width, 420px)",
+              borderRadius: "var(--login-radius-card, 16px)",
+              padding: "var(--login-card-padding, 32px)",
+              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+              backgroundColor: "var(--login-surface, hsl(var(--background)))",
+            }}
+          >
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
-                <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               </div>
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
-              <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+              <h1
+                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+              >
+                {companyName}
+              </h1>
+              <p
+                className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+              >
+                {t("auth.pleaseLogin")}
+              </p>
             </div>
             {formContent}
             {footerSlot}
@@ -730,21 +1124,53 @@ export function LoginView() {
     // ── DUAL-PANEL (Header + features left + form right) ──
     case "dual-panel":
       return (
-        <div className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
           {/* Top header bar */}
-          <div className="flex items-center justify-between border-b border-border px-8 py-4" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
+          <div
+            className="flex items-center justify-between border-b border-border px-8 py-4"
+            style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+          >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-background border border-border"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
-              <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</span>
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+              <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+                {companyName}
+              </span>
             </div>
-            <div className="flex gap-1"><LanguageSwitcher /><ThemeSwitcher /></div>
+            <div className="flex gap-1">
+              <LanguageSwitcher />
+              <ThemeSwitcher />
+            </div>
           </div>
           {/* Two-column body */}
           <div className="flex flex-1">
-            <div className="hidden lg:flex lg:w-1/2 flex-col justify-center border-e border-border px-12 xl:px-16" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.2))" }}>
-              <h2 className="text-3xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">{branding?.loginHeadline || t("auth.branding.headline")}</h2>
-              <p className="mt-3 text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{branding?.loginSubtitle || t("auth.branding.subtitle")}</p>
-              <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
+            <div
+              className="hidden flex-col justify-center border-e border-border px-12 lg:flex lg:w-1/2 xl:px-16"
+              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.2))" }}
+            >
+              <h2 className="text-3xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+                {branding?.loginHeadline || t("auth.branding.headline")}
+              </h2>
+              <p className="mt-3 text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                {branding?.loginSubtitle || t("auth.branding.subtitle")}
+              </p>
+              <SlotRenderer
+                slotId="login.sidebar.content"
+                slotConfig={slotConfig}
+                className="mt-10"
+              />
             </div>
             <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
               <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
@@ -758,21 +1184,56 @@ export function LoginView() {
     // ── CORNER-CARD (Small form bottom-right, large brand hero) ──
     case "corner-card":
       return (
-        <div className={`relative flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
-          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.6)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
+        <div
+          className={`relative flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+              opacity: "var(--login-overlay-opacity, 0.6)",
+              backdropFilter: "blur(var(--login-overlay-blur, 0px))",
+            }}
+          />
           {topActions}
           {/* Hero branding area */}
-          <div className="relative z-10 hidden lg:flex flex-1 flex-col justify-center px-16 xl:px-24">
-            <h1 className="login-heading text-6xl font-black tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]">{branding?.loginHeadline || companyName}</h1>
-            <p className="mt-4 max-w-lg text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{branding?.loginSubtitle || t("auth.branding.subtitle")}</p>
+          <div className="relative z-10 hidden flex-1 flex-col justify-center px-16 lg:flex xl:px-24">
+            <h1 className="login-heading text-6xl font-black tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]">
+              {branding?.loginHeadline || companyName}
+            </h1>
+            <p className="mt-4 max-w-lg text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+              {branding?.loginSubtitle || t("auth.branding.subtitle")}
+            </p>
             <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-8" />
           </div>
           {/* Corner card */}
-          <div className="relative z-10 flex w-full lg:w-auto items-end lg:items-end justify-center lg:justify-end p-6 lg:p-10">
-            <div className="w-full border border-[var(--login-accent,hsl(var(--border)))]" style={{ maxWidth: "var(--login-form-width, 400px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div className="relative z-10 flex w-full items-end justify-center p-6 lg:w-auto lg:items-end lg:justify-end lg:p-10">
+            <div
+              className="w-full border border-[var(--login-accent,hsl(var(--border)))]"
+              style={{
+                maxWidth: "var(--login-form-width, 400px)",
+                borderRadius: "var(--login-radius-card, 16px)",
+                padding: "var(--login-card-padding, 32px)",
+                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                backgroundColor: "var(--login-surface, hsl(var(--background)))",
+              }}
+            >
               <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-background border border-border"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
-                <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</span>
+                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+                  <img
+                    src={logoSrc}
+                    alt={`${logoAlt} Logo`}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                </div>
+                <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+                  {companyName}
+                </span>
               </div>
               {formContent}
               {footerSlot}
@@ -784,14 +1245,41 @@ export function LoginView() {
     // ── VERTICAL-SPLIT (Top branding, bottom form) ──
     case "vertical-split":
       return (
-        <div className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full flex-col ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {topActions}
-          <div className="relative flex flex-1 flex-col items-center justify-center px-8 py-16 text-center" style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}>
-            <div className="absolute inset-0" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.6))" }} />
+          <div
+            className="relative flex flex-1 flex-col items-center justify-center px-8 py-16 text-center"
+            style={{
+              backgroundImage: "var(--login-bg-image, none)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div
+              className="absolute inset-0"
+              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.6))" }}
+            />
             <div className="relative z-10 flex flex-col items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-background border border-border shadow-lg"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
-              <h1 className="login-heading text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">{branding?.loginHeadline || companyName}</h1>
-              <p className="text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{branding?.loginSubtitle || t("auth.branding.subtitle")}</p>
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-background shadow-lg">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+              <h1 className="login-heading text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+                {branding?.loginHeadline || companyName}
+              </h1>
+              <p className="text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                {branding?.loginSubtitle || t("auth.branding.subtitle")}
+              </p>
             </div>
             {/* Gradient divider */}
             <div className="absolute -bottom-px left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
@@ -806,18 +1294,41 @@ export function LoginView() {
     // ── FULLSCREEN-FORM (Zero distraction, full-screen form) ──
     case "fullscreen-form":
       return (
-        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {/* Subtle animated dot pattern */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,var(--login-accent,hsl(var(--border)))_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.07]" />
           {topActions}
-          <div className="relative z-10 w-full px-6" style={{ maxWidth: "var(--login-form-width, 400px)" }}>
+          <div
+            className="relative z-10 w-full px-6"
+            style={{ maxWidth: "var(--login-form-width, 400px)" }}
+          >
             <div className="mb-12 flex flex-col items-center gap-3 text-center">
-              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+              <h1
+                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+              >
+                {companyName}
+              </h1>
             </div>
             {formContent}
             {footerSlot}
-            <p className="mt-12 text-center text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50">© {new Date().getFullYear()} {companyName}</p>
+            <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50 mt-12 text-center text-[11px] font-medium">
+              © {new Date().getFullYear()} {companyName}
+            </p>
           </div>
         </div>
       );
@@ -825,17 +1336,55 @@ export function LoginView() {
     // ── MOSAIC (CSS grid mosaic bg, form card centered) ──
     case "mosaic":
       return (
-        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div
+          className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={wrapperStyle}
+        >
           {/* Mosaic grid pattern background */}
           <div className="pointer-events-none absolute inset-0 grid grid-cols-6 grid-rows-4 gap-1 p-2 opacity-[0.06]">
-            {Array.from({ length: 24 }).map((_, i) => (<div key={i} className="rounded-lg bg-[var(--login-primary,hsl(var(--primary)))]" style={{ opacity: 0.3 + (i % 5) * 0.15 }} />))}
+            {Array.from({ length: 24 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-lg bg-[var(--login-primary,hsl(var(--primary)))]"
+                style={{ opacity: 0.3 + (i % 5) * 0.15 }}
+              />
+            ))}
           </div>
           {topActions}
-          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div
+            className="relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
+            style={{
+              maxWidth: "var(--login-form-width, 440px)",
+              borderRadius: "var(--login-radius-card, 16px)",
+              padding: "var(--login-card-padding, 32px)",
+              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+              backgroundColor: "var(--login-surface, hsl(var(--background)))",
+            }}
+          >
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}>{companyName}</h1>
-              <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+                <img
+                  src={logoSrc}
+                  alt={`${logoAlt} Logo`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+              <h1
+                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
+              >
+                {companyName}
+              </h1>
+              <p
+                className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+              >
+                {t("auth.pleaseLogin")}
+              </p>
             </div>
             {formContent}
             {footerSlot}
@@ -847,14 +1396,19 @@ export function LoginView() {
     case "split-right":
     default:
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
+        <div
+          className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`}
+          dir={direction}
+          style={splitWrapperStyle}
+        >
           <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
-          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideBgStyle}>
+          <div
+            className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
+            style={formSideBgStyle}
+          >
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && (
-              <DesktopHeading companyName={companyName} />
-            )}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -865,13 +1419,36 @@ export function LoginView() {
 }
 
 // ── Reusable sub-components ────────────────────────
-function MobileLogo({ logoSrc, logoAlt, companyName }: { logoSrc: string; logoAlt: string; companyName: string }) {
+function MobileLogo({
+  logoSrc,
+  logoAlt,
+  companyName,
+}: {
+  logoSrc: string;
+  logoAlt: string;
+  companyName: string;
+}) {
   return (
-    <div className="mb-12 flex lg:hidden flex-col items-center gap-4">
-      <div className="flex h-24 w-24 items-center justify-center overflow-hidden bg-background border border-border shadow-sm" style={{ borderRadius: "var(--login-radius-card, 24px)" }}>
-        <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+    <div className="mb-12 flex flex-col items-center gap-4 lg:hidden">
+      <div
+        className="flex h-24 w-24 items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+        style={{ borderRadius: "var(--login-radius-card, 24px)" }}
+      >
+        <img
+          src={logoSrc}
+          alt={`${logoAlt} Logo`}
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
       </div>
-      <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 24px)" }}>{companyName}</h1>
+      <h1
+        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        style={{ fontSize: "var(--login-size-headline, 24px)" }}
+      >
+        {companyName}
+      </h1>
     </div>
   );
 }
@@ -879,9 +1456,22 @@ function MobileLogo({ logoSrc, logoAlt, companyName }: { logoSrc: string; logoAl
 function DesktopHeading({ companyName }: { companyName: string }) {
   const { t } = useI18n();
   return (
-    <div className="mb-10 text-center lg:text-start hidden lg:block w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
-      <h2 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 30px)" }}>{companyName}</h2>
-      <p className="mt-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.9375rem)" }}>{t("auth.pleaseLogin")}</p>
+    <div
+      className="mb-10 hidden w-full text-center lg:block lg:text-start"
+      style={{ maxWidth: "var(--login-form-width, 380px)" }}
+    >
+      <h2
+        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        style={{ fontSize: "var(--login-size-headline, 30px)" }}
+      >
+        {companyName}
+      </h2>
+      <p
+        className="mt-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+        style={{ fontSize: "var(--login-size-subtitle, 0.9375rem)" }}
+      >
+        {t("auth.pleaseLogin")}
+      </p>
     </div>
   );
 }

@@ -90,7 +90,8 @@ export function useTenantPlanEditViewModel(planId: string) {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans", planId] });
       success({
         title: t("entitlements.tenantPlans.updated") || "Plan Updated",
-        description: t("entitlements.tenantPlans.updatedDesc") || "The plan has been updated successfully.",
+        description:
+          t("entitlements.tenantPlans.updatedDesc") || "The plan has been updated successfully.",
       });
       router.push(`/entitlements/tenant-plans/${planId}`);
     },

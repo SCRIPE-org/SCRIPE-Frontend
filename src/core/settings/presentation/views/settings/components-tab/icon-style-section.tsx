@@ -10,10 +10,26 @@ export function IconStyleSection() {
   const settings = useSettings();
 
   const iconStyles: StyleOption[] = [
-    { value: "outline", name: t("settings.iconStyle.options.outline.name"), description: t("settings.iconStyle.options.outline.description") },
-    { value: "filled", name: t("settings.iconStyle.options.filled.name"), description: t("settings.iconStyle.options.filled.description") },
-    { value: "duotone", name: t("settings.iconStyle.options.duotone.name"), description: t("settings.iconStyle.options.duotone.description") },
-    { value: "minimal", name: t("settings.iconStyle.options.minimal.name"), description: t("settings.iconStyle.options.minimal.description") },
+    {
+      value: "outline",
+      name: t("settings.iconStyle.options.outline.name"),
+      description: t("settings.iconStyle.options.outline.description"),
+    },
+    {
+      value: "filled",
+      name: t("settings.iconStyle.options.filled.name"),
+      description: t("settings.iconStyle.options.filled.description"),
+    },
+    {
+      value: "duotone",
+      name: t("settings.iconStyle.options.duotone.name"),
+      description: t("settings.iconStyle.options.duotone.description"),
+    },
+    {
+      value: "minimal",
+      name: t("settings.iconStyle.options.minimal.name"),
+      description: t("settings.iconStyle.options.minimal.description"),
+    },
   ];
 
   return (

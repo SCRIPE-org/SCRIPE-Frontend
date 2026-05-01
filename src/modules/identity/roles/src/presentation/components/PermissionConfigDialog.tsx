@@ -14,7 +14,10 @@ import { GenericSelect } from "@core/crud/components/generic-select"; // Updated
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { PermissionScopes, type PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
+import {
+  PermissionScopes,
+  type PermissionAssignmentJson,
+} from "../../domain/types/PermissionTypes";
 
 export interface PermissionConfigDialogProps {
   open: boolean;

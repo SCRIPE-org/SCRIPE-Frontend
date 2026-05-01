@@ -26,11 +26,7 @@ export function FeatureValueCell({ feature }: FeatureValueCellProps) {
     const num = Number(value);
     if (num === -1) return <Infinity className="h-4 w-4 text-primary" />;
     if (num === 0) return <X className="h-4 w-4 text-muted-foreground/40" />;
-    return (
-      <span className="text-sm font-semibold tabular-nums">
-        {num.toLocaleString()}
-      </span>
-    );
+    return <span className="text-sm font-semibold tabular-nums">{num.toLocaleString()}</span>;
   }
 
   return <span className="text-sm">{value || "—"}</span>;

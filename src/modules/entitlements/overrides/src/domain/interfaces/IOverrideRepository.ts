@@ -6,14 +6,14 @@
 import type { FeatureOverride, ResolvedFeature } from "../entities/Override";
 
 export interface IOverrideRepository {
-      getOverrides(tenantId: string): Promise<FeatureOverride[]>;
-      getResolved(tenantId: string): Promise<ResolvedFeature[]>;
-      setOverride(
-            tenantId: string,
-            featureId: string,
-            data: { value: string; reason?: string }
-      ): Promise<string>;
-      removeOverride(tenantId: string, featureId: string): Promise<void>;
-      setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void>;
-      removeOverrideCost(overrideId: string): Promise<void>;
+  getOverrides(tenantId: string): Promise<FeatureOverride[]>;
+  getResolved(tenantId: string): Promise<ResolvedFeature[]>;
+  setOverride(
+    tenantId: string,
+    featureId: string,
+    data: { value: string; reason?: string }
+  ): Promise<string>;
+  removeOverride(tenantId: string, featureId: string): Promise<void>;
+  setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void>;
+  removeOverrideCost(overrideId: string): Promise<void>;
 }

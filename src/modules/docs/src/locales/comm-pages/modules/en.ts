@@ -5,28 +5,39 @@
 export const en = {
   commercial: {
     moduleCatalog: {
-      businessContent: "NEXORA isn't an empty shell; it's a functioning enterprise ecosystem from day one. Use our existing business modules—such as User Management, Audit Logging, and Notifications—as immediate starting points, or clone them to rapidly build proprietary features.",
+      businessContent:
+        "NEXORA isn't an empty shell; it's a functioning enterprise ecosystem from day one. Use our existing business modules—such as User Management, Audit Logging, and Notifications—as immediate starting points, or clone them to rapidly build proprietary features.",
       businessTitle: "Accelerated Business Logic",
       commTitle: "Communication & Webhooks",
-      coreContent: "The Foundation layer provides the absolute non-negotiables: the Identity Provider, multi-tenant resolution strategies, EF Core context abstractions, and the centralized MediatR dispatcher. It is the rock-solid bedrock upon which your entire application scales.",
+      coreContent:
+        "The Foundation layer provides the absolute non-negotiables: the Identity Provider, multi-tenant resolution strategies, EF Core context abstractions, and the centralized MediatR dispatcher. It is the rock-solid bedrock upon which your entire application scales.",
       coreTitle: "The Core Foundation",
       crmModule: "Headless CRM Module",
-      crmModuleDesc: "Manage organizational hierarchies, client relationships, and custom attributes with a fully API-driven CRM architecture.",
+      crmModuleDesc:
+        "Manage organizational hierarchies, client relationships, and custom attributes with a fully API-driven CRM architecture.",
       customModule: "Proprietary Integration Module",
-      customModuleDesc: "A pristine sandbox utilizing the exact same Clean Architecture boundaries to house your unique industry logic.",
+      customModuleDesc:
+        "A pristine sandbox utilizing the exact same Clean Architecture boundaries to house your unique industry logic.",
       dataTitle: "Data & Auditing",
-      description: "A comprehensive directory of the pre-built, production-ready enterprise bounded contexts included within the NEXORA platform.",
+      description:
+        "A comprehensive directory of the pre-built, production-ready enterprise bounded contexts included within the NEXORA platform.",
       financeModule: "Invoicing & Billing Engine",
-      financeModuleDesc: "Generate PDF invoices, manage tax localities, and integrate with Stripe or custom payment gateways.",
+      financeModuleDesc:
+        "Generate PDF invoices, manage tax localities, and integrate with Stripe or custom payment gateways.",
       hrModule: "Identity & Access Management",
-      hrModuleDesc: "Control granular role-based permissions, JWT lifetimes, and directory synchronizations.",
-      independenceContent: "Every module in the catalog is strictly isolated. The Notification module shares zero state with the User Management module. They communicate purely through asynchronous events, guaranteeing that a catastrophic failure in one domain never cascades to another.",
+      hrModuleDesc:
+        "Control granular role-based permissions, JWT lifetimes, and directory synchronizations.",
+      independenceContent:
+        "Every module in the catalog is strictly isolated. The Notification module shares zero state with the User Management module. They communicate purely through asynchronous events, guaranteeing that a catastrophic failure in one domain never cascades to another.",
       independenceTitle: "Cryptographic Module Isolation",
-      intro: "NEXORA ships with a massive library of enterprise-grade, pre-tested bounded contexts. From day one, you possess the operational maturity of a 5-year-old SaaS application.",
+      intro:
+        "NEXORA ships with a massive library of enterprise-grade, pre-tested bounded contexts. From day one, you possess the operational maturity of a 5-year-old SaaS application.",
       inventoryModule: "Asset Tracking Module",
-      inventoryModuleDesc: "Map complex hierarchical inventories and track state changes through strictly applied domain events.",
+      inventoryModuleDesc:
+        "Map complex hierarchical inventories and track state changes through strictly applied domain events.",
       projectModule: "Workflow & Project Module",
-      projectModuleDesc: "Manage complex state machines and multi-step organizational approval workflows.",
+      projectModuleDesc:
+        "Manage complex state machines and multi-step organizational approval workflows.",
       title: "Enterprise Module Catalog",
       tblCoreHeader1: "Module",
       tblCoreHeader2: "Description",
@@ -48,10 +59,12 @@ export const en = {
       tblCoreR5C3: "Self-referencing tree, per-tenant overrides, role-based visibility",
       tblCoreR6C1: "User Groups",
       tblCoreR6C2: "Batch role & restriction assignment",
-      tblCoreR6C3: "Group-based RBAC, field-level restrictions, member management, tenant-scoped groups",
+      tblCoreR6C3:
+        "Group-based RBAC, field-level restrictions, member management, tenant-scoped groups",
       tblCoreR7C1: "Entitlements",
       tblCoreR7C2: "Edition-based feature gating & plan management",
-      tblCoreR7C3: "Features, editions, subscriptions, overrides, quota enforcement, versioned rollouts, reseller scoping",
+      tblCoreR7C3:
+        "Features, editions, subscriptions, overrides, quota enforcement, versioned rollouts, reseller scoping",
       tblCommHeader1: "Module",
       tblCommHeader2: "Description",
       tblCommHeader3: "Key Capabilities",
@@ -75,10 +88,12 @@ export const en = {
       tblDataR1C3: "Image processing pipeline, virus scan ready, tenant-scoped storage, 4 backends",
       tblDataR2C1: "Download & Export",
       tblDataR2C2: "Data export and file delivery",
-      tblDataR2C3: "Resumable downloads (Range), ETag caching, session-based, path traversal prevention",
+      tblDataR2C3:
+        "Resumable downloads (Range), ETag caching, session-based, path traversal prevention",
       tblDataR3C1: "Recycle Bin",
       tblDataR3C2: "Soft-delete management",
-      tblDataR3C3: "Restore with dependencies, scheduled purge, cascade restore, per-entity policies",
+      tblDataR3C3:
+        "Restore with dependencies, scheduled purge, cascade restore, per-entity policies",
       tblDataR4C1: "User Management",
       tblDataR4C2: "Administrative user operations",
       tblDataR4C3: "27 endpoints, bulk ops, enterprise operations, protected admin rules",
@@ -87,9 +102,11 @@ export const en = {
       tblAnalyticsHeader3: "Key Capabilities",
       tblAnalyticsR1C1: "Revenue Analytics",
       tblAnalyticsR1C2: "BI-grade revenue intelligence dashboard",
-      tblAnalyticsR1C3: "MRR/ARR tracking, cohort analysis, LTV modeling, revenue forecasting, health scoring, PDF reports",
+      tblAnalyticsR1C3:
+        "MRR/ARR tracking, cohort analysis, LTV modeling, revenue forecasting, health scoring, PDF reports",
       analyticsTitle: "Revenue Intelligence",
-      analyticsContent: "The Revenue Analytics Engine transforms raw subscription data into actionable business intelligence. With 7 specialized dashboard tabs, automated nightly snapshots, and predictive forecasting, platform operators gain CFO-level visibility without external BI tools. Tenant health scoring proactively identifies churn risks before they materialize.",
+      analyticsContent:
+        "The Revenue Analytics Engine transforms raw subscription data into actionable business intelligence. With 7 specialized dashboard tabs, automated nightly snapshots, and predictive forecasting, platform operators gain CFO-level visibility without external BI tools. Tenant health scoring proactively identifies churn risks before they materialize.",
     },
   },
 };

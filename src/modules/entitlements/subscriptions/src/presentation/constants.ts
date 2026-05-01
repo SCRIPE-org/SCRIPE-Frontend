@@ -5,15 +5,16 @@
  */
 
 /** Status → Badge variant mapping */
-export const STATUS_VARIANTS: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  Active: "default",
-  Trialing: "secondary",
-  Canceled: "destructive",
-  Expired: "outline",
-  Suspended: "destructive",
-  PendingPayment: "secondary",
-  PastDue: "destructive",
-};
+export const STATUS_VARIANTS: Record<string, "default" | "secondary" | "outline" | "destructive"> =
+  {
+    Active: "default",
+    Trialing: "secondary",
+    Canceled: "destructive",
+    Expired: "outline",
+    Suspended: "destructive",
+    PendingPayment: "secondary",
+    PastDue: "destructive",
+  };
 
 /** Subscription type → Badge variant mapping */
 export const TYPE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
@@ -78,4 +79,3 @@ export const BILLING_CURRENCIES = [
 
 /** Shorthand codes for backward compatibility */
 export const BILLING_CURRENCY_CODES = BILLING_CURRENCIES.map((c) => c.code);
-

@@ -19,7 +19,10 @@ import {
 import { formatStripeCurrency, formatDate } from "./utils";
 import { PlatformPayout } from "../../domain/entities/PlatformStripeDashboard";
 
-const payoutStatusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ElementType }> = {
+const payoutStatusConfig: Record<
+  string,
+  { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ElementType }
+> = {
   paid: { variant: "default", icon: CheckCircle2 },
   pending: { variant: "secondary", icon: Clock },
   in_transit: { variant: "outline", icon: ArrowUpRight },
@@ -41,12 +44,14 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Landmark className="h-4 w-4 text-[#635bff]" />
-            <CardTitle className="text-base">{t("entitlements.platformStripe.recentPayouts")}</CardTitle>
+            <CardTitle className="text-base">
+              {t("entitlements.platformStripe.recentPayouts")}
+            </CardTitle>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="text-xs gap-1"
+            className="gap-1 text-xs"
             onClick={() => window.open(payoutsLink, "_blank")}
           >
             {t("entitlements.platformStripe.viewAll")} <ExternalLink className="h-3 w-3" />
@@ -55,7 +60,9 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
       </CardHeader>
       <CardContent>
         {payouts.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-6">{t("entitlements.platformStripe.noPayouts")}</p>
+          <p className="py-6 text-center text-sm text-muted-foreground">
+            {t("entitlements.platformStripe.noPayouts")}
+          </p>
         ) : (
           <div className="space-y-2">
             {payouts.map((po) => {
@@ -64,15 +71,15 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
               return (
                 <div
                   key={po.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between rounded-lg bg-muted/30 p-3 transition-colors hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-lg bg-violet-500/10">
+                    <div className="rounded-lg bg-violet-500/10 p-1.5">
                       <Landmark className="h-3.5 w-3.5 text-violet-500" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={poStatus.variant} className="text-[10px] px-1.5 py-0 gap-1">
+                        <Badge variant={poStatus.variant} className="gap-1 px-1.5 py-0 text-[10px]">
                           <PoIcon className="h-3 w-3" />
                           {po.status}
                         </Badge>
@@ -80,7 +87,7 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
                           <span className="text-[10px] text-muted-foreground">{po.method}</span>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {po.hasArrivalDate
                           ? `${t("entitlements.platformStripe.arrival")}: ${formatDate(po.arrivalDate)}`
                           : formatDate(po.created)}

@@ -1,14 +1,12 @@
 export const ar = {
   entitlements: {
     tenantPlans: {
-      // ── الصفحة ──
       title: "خطط المستأجر",
       description: "إنشاء وإدارة خطط التسعير للمستخدمين النهائيين.",
       planName: "اسم الخطة",
       namePlaceholder: "مثال: ذهبي، متميز، مؤسسي",
       descriptionPlaceholder: "وصف مختصر لهذه الخطة...",
       managePlan: "إدارة الخطط",
-      // ── التسعير والفوترة ──
       pricing: "السعر الابتدائي",
       billingCycles: "دورات الفوترة",
       billingCycle: "دورة الفوترة",
@@ -20,8 +18,6 @@ export const ar = {
       allowLifetime: "السماح بالشراء مدى الحياة",
       allowTrial: "السماح بالتجربة",
       allowTrialDesc: "إذا تم التفعيل، يمكن تقديم فترة تجريبية لهذه الخطة.",
-
-      // ── العرض ──
       displayNameEn: "اسم العرض (EN)",
       displayNameEnPlaceholder: "الاسم الظاهر للعملاء بالإنجليزية",
       displayNameAr: "اسم العرض (AR)",
@@ -31,8 +27,6 @@ export const ar = {
       isPublic: "مرئي للعامة",
       isPublicDesc: "إذا كان مفعلاً، يمكن للمستخدمين رؤية واختيار هذه الخطة.",
       tier: "مستوى الطبقة",
-
-      // ── الحدود والتجربة ──
       trialDays: "أيام التجربة",
       trialDaysDesc: "عدد أيام التجربة المجانية (0 = بدون تجربة).",
       maxUsers: "الحد الأقصى للمستخدمين",
@@ -42,20 +36,18 @@ export const ar = {
       subscribers: "المشتركون",
       gracePeriodDays: "أيام فترة السماح",
       gracePeriodDesc: "عدد الأيام بعد انتهاء الاشتراك قبل إيقاف الخدمة.",
-
-      // ── الإعدادات ──
       selfServiceEnabled: "الخدمة الذاتية مفعلة",
       contactSalesOnly: "الاتصال بالمبيعات فقط",
       color: "لون العلامة",
       badgeText: "نص الشارة",
       badgeTextPlaceholder: "مثال: الأكثر شعبية",
       isContactSalesOnly: "الاتصال بالمبيعات فقط",
-      isContactSalesOnlyDesc: "إذا تم التفعيل، لا يمكن للمستخدمين الاشتراك مباشرة. يجب عليهم الاتصال بالمبيعات.",
+      isContactSalesOnlyDesc:
+        "إذا تم التفعيل، لا يمكن للمستخدمين الاشتراك مباشرة. يجب عليهم الاتصال بالمبيعات.",
       isSelfServiceEnabled: "الخدمة الذاتية مفعلة",
       isSelfServiceEnabledDesc: "إذا تم التفعيل، يمكن للمستخدمين الاشتراك وإدارة هذه الخطة مباشرة.",
       quotasAndAccess: "الحصص والوصول",
       trialAndGrace: "التجربة وفترة السماح",
-      // ── دورة الحياة ──
       publish: "نشر",
       publishDesc: "جعل هذه الخطة متاحة للاشتراكات.",
       published: "تم نشر الخطة",
@@ -69,8 +61,6 @@ export const ar = {
       statusDraft: "مسودة",
       statusPublished: "منشور",
       statusArchived: "مؤرشف",
-
-      // ── المقارنة ──
       feature: "الميزة",
       features: "الميزات",
       comparison: {
@@ -92,35 +82,33 @@ export const ar = {
         categoryConfiguration: "الإعدادات",
         categoryGeneral: "عام",
       },
-
-      // ── علامات التبويب ──
       tabGeneral: "عام",
       tabSettings: "الإعدادات",
       tabFeatures: "الميزات",
       tabPricing: "التسعير",
       tabVersions: "الإصدارات",
       tabPromotions: "العروض الترويجية",
-
-      // ── علامة الميزات ──
       noFeatures: "لا توجد ميزات معينة لهذه الخطة بعد.",
       noFeaturesHint: "أضف ميزات من كتالوج الميزات لتحديد ما تتضمنه هذه الخطة.",
-
-      // ── علامة التسعير — النموذج الهجين ──
       noPricing: "لم يتم تكوين تسعير لهذه الخطة بعد.",
       noPricingHint: "أضف عملة لبدء تكوين التسعير لخطتك.",
       basePricing: "التسعير الأساسي (USD)",
       anchorCurrency: "مرجعية",
-      basePricingInfo: "الدولار الأمريكي هو العملة المرجعية. جميع العملات الأخرى تُحسب تلقائياً من أسعار الصرف ما لم يتم تحديدها يدوياً.",
+      basePricingInfo:
+        "الدولار الأمريكي هو العملة المرجعية. جميع العملات الأخرى تُحسب تلقائياً من أسعار الصرف ما لم يتم تحديدها يدوياً.",
       currencyOverrides: "تخصيص العملات",
-      noOverrides: "لا يوجد تخصيص للعملات. الأسعار بالعملات الأخرى تُحسب تلقائياً من أسعار صرف الدولار.",
+      noOverrides:
+        "لا يوجد تخصيص للعملات. الأسعار بالعملات الأخرى تُحسب تلقائياً من أسعار صرف الدولار.",
       loadingRates: "جارٍ تحميل أسعار الصرف...",
       addCurrency: "إضافة عملة",
-      addCurrencyOverrideDesc: "اختر عملة لإضافة تسعير صريح. سيتم ملء المبالغ مسبقاً من أسعار الصرف الحالية.",
+      addCurrencyOverrideDesc:
+        "اختر عملة لإضافة تسعير صريح. سيتم ملء المبالغ مسبقاً من أسعار الصرف الحالية.",
       allCurrenciesAdded: "تم إضافة جميع العملات المدعومة.",
       yearlyDiscount: "خصم سنوي:",
       applyDiscount: "تطبيق",
       livePreview: "معاينة مباشرة",
-      previewInfo: "توضح هذه المعاينة ما سيدفعه المستخدمون بكل عملة. الأسعار 'تلقائي' محوّلة من الدولار عبر أسعار الصرف المباشرة.",
+      previewInfo:
+        "توضح هذه المعاينة ما سيدفعه المستخدمون بكل عملة. الأسعار 'تلقائي' محوّلة من الدولار عبر أسعار الصرف المباشرة.",
       source: "المصدر",
       sourceExplicit: "صريح",
       sourceAuto: "تلقائي",
@@ -133,29 +121,26 @@ export const ar = {
       addCurrencyDesc: "اختر عملة لإضافة صفوف تسعير لجميع دورات الفوترة المفعلة.",
       amount: "المبلغ",
       originalAmount: "السعر الأصلي",
-      pricingInfo: "أضف تسعيراً لكل عملة سيدفع بها المستخدمون. كل عملة يمكن أن تحتوي على دورات فوترة شهرية وسنوية ومدى الحياة.",
+      pricingInfo:
+        "أضف تسعيراً لكل عملة سيدفع بها المستخدمون. كل عملة يمكن أن تحتوي على دورات فوترة شهرية وسنوية ومدى الحياة.",
       yearlySave: "وفّر",
       currency: "العملة",
       selectCurrency: "اختر العملة...",
-
-      // ── علامة الإصدارات ──
       noVersions: "لا توجد نسخ بعد.",
       noVersionsHint: "يتم إنشاء نسخ عند نشر الخطة.",
       versionHistory: "سجل الإصدارات",
-      versionHistoryDesc: "نسخ غير قابلة للتغيير تم إنشاؤها عند النشر. الاشتراكات النشطة مرتبطة بإصدارها.",
+      versionHistoryDesc:
+        "نسخ غير قابلة للتغيير تم إنشاؤها عند النشر. الاشتراكات النشطة مرتبطة بإصدارها.",
       versionNumber: "الإصدار",
       versionNotes: "ملاحظات التغيير",
       versionPublishedAt: "تاريخ النشر",
       versionPublishedBy: "نشر بواسطة",
       versionStatus: "الحالة",
-
-      // ── علامة العروض الترويجية ──
       promotionsTitle: "العروض الترويجية",
-      promotionsDesc: "أكواد الخصم والعروض المرتبطة بهذه الخطة. إدارة جميع العروض من الصفحة الرئيسية للعروض.",
+      promotionsDesc:
+        "أكواد الخصم والعروض المرتبطة بهذه الخطة. إدارة جميع العروض من الصفحة الرئيسية للعروض.",
       promotionsPlaceholder: "إدارة العروض الترويجية متاحة من الصفحة المخصصة.",
       viewAllPromotions: "عرض جميع العروض الترويجية",
-
-      // ── العمليات ──
       create: "إنشاء خطة",
       createDesc: "تحديد خطة تسعير جديدة للمستخدمين.",
       edit: "تعديل الخطة",
@@ -168,8 +153,6 @@ export const ar = {
       updatedDesc: "تم تحديث تفاصيل الخطة.",
       deleted: "تم حذف الخطة",
       deletedDesc: "تم إزالة الخطة.",
-
-      // ── الحالات ──
       noPlans: "لا توجد خطط",
       activeBadge: "نشط",
       inactiveBadge: "غير نشط",
@@ -180,8 +163,6 @@ export const ar = {
       cannotDeleteActive: "لا يمكن حذف خطة بها مشتركون نشطون.",
       noTenantContext: "خطط المستأجر متاحة فقط للمسؤولين المرتبطين بمستأجر.",
       noTenantContextHint: "يرجى انتحال صفة مسؤول مستأجر لإدارة الخطط.",
-
-      // ── التبويب العام ──
       generalInfo: "المعلومات العامة",
       billingConfig: "تكوين الفوترة",
       trialConfig: "تكوين التجربة",
@@ -190,13 +171,19 @@ export const ar = {
       basicDetails: "التفاصيل الأساسية",
       billingAndAccess: "الفوترة والوصول",
       supportedCycles: "الدورات المدعومة",
+      editSettings: "تعديل الإعدادات",
+      stepBasics: "الأساسيات",
+      stepBilling: "الفوترة",
+      editing: "جاري التعديل",
+      createPlan: "إنشاء خطة",
+      createPlanDesc: "حدد خطة تسعير جديدة لمستخدميك.",
+      reviewNote: "يتم تكوين قيم التسعير ومفاتيح التبديل التفصيلية للميزات في علامتي التبويب التسعير والميزات بعد إنشاء الخطة مبدئيًا.",
     },
-
-    // ── كتالوج الميزات ──
     featureDefinitions: {
       title: "كتالوج الميزات",
       tier2Badge: "المستوى ٢",
-      description: "حدد ميزات قابلة لإعادة الاستخدام يمكن تعيينها لخططك. قيم منطقية أو رقمية أو نصية.",
+      description:
+        "حدد ميزات قابلة لإعادة الاستخدام يمكن تعيينها لخططك. قيم منطقية أو رقمية أو نصية.",
       create: "إنشاء ميزة",
       view: "عرض الميزة",
       viewDesc: "عرض تفاصيل تعريف الميزة.",
@@ -236,7 +223,6 @@ export const ar = {
       pickFeature: "إضافة ميزة من الكتالوج",
       pickFeatureDesc: "اختر ميزة لإضافتها لهذه الخطة. يمكنك تعيين قيمتها بعد الإضافة.",
       noAvailableFeatures: "تم تعيين جميع الميزات لهذه الخطة.",
-      // ── صفحة النموذج ──
       createDesc: "حدد ميزة قابلة لإعادة الاستخدام لخطط المستأجر الخاصة بك.",
       editDesc: "تحديث تفاصيل تعريف الميزة.",
       sectionIdentity: "الهوية",
@@ -255,5 +241,54 @@ export const ar = {
       createFailed: "فشل في إنشاء تعريف الميزة.",
       updateFailed: "فشل في تحديث تعريف الميزة.",
     },
+    promotions: {
+      createSuccess: "تم إنشاء العرض بنجاح",
+      createFailed: "فشل في إنشاء العرض",
+      updateSuccess: "تم تحديث العرض بنجاح",
+      updateFailed: "فشل في تحديث العرض",
+      deleteSuccess: "تم حذف العرض بنجاح",
+      deleteFailed: "فشل في حذف العرض",
+      code: "الرمز",
+      discountType: "نوع الخصم",
+      percentage: "نسبة مئوية",
+      fixedAmount: "مبلغ ثابت",
+      freeTrial: "تجربة مجانية (أيام)",
+      value: "القيمة",
+      maxRedemptions: "الحد الأقصى للاستخدام",
+      startsAt: "يبدأ في",
+      expiresAt: "ينتهي في",
+      minimumAmount: "الحد الأدنى للمبلغ",
+      noMinimum: "بدون حد أدنى",
+      optionalDescription: "وصف اختياري",
+      autoApply: "تطبيق تلقائي",
+      stackable: "قابل للتجميع",
+      auto: "تلقائي",
+      off: "خصم",
+      used: "مستخدم",
+      expires: "ينتهي",
+      searchPlaceholder: "البحث في أكواد العروض…",
+      noPromotions: "لا توجد عروض ترويجية بعد",
+      createFirst: "أنشئ أول كود ترويجي لهذه الخطة.",
+      newPromotion: "عرض ترويجي جديد",
+      editPromotion: "تعديل العرض الترويجي",
+    },
+    pricing: {
+      perMonth: "[مفقود] Per Month",
+    },
+  },
+  common: {
+    new: "جديد",
+    updateFailed: "فشل التحديث",
+    updated: "تم التحديث",
+    deleted: "تم الحذف",
+    review: "مراجعة",
+    note: "ملاحظة",
+    optional: "اختياري",
+    cancel: "إلغاء",
+    noneSelected: "لم يتم التحديد",
+    noTrial: "بدون تجربة",
+  },
+  validation: {
+    required: "مطلوب",
   },
 };

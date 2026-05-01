@@ -29,12 +29,14 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-2">
+      <div className="mb-2 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
           <Building2 className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold">{t("tenant.stepOrganization") || "Organization"}</h2>
+          <h2 className="text-lg font-semibold">
+            {t("tenant.stepOrganization") || "Organization"}
+          </h2>
           <p className="text-sm text-muted-foreground">
             {t("tenant.stepOrganizationDesc") || "Basic information about the new tenant."}
           </p>
@@ -55,7 +57,9 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             autoFocus
           />
           {nameError && (
-            <p className="text-xs text-destructive">{t("validation.invalidName") || "Tenant name is required."}</p>
+            <p className="text-xs text-destructive">
+              {t("validation.invalidName") || "Tenant name is required."}
+            </p>
           )}
         </div>
 
@@ -72,7 +76,9 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             maxLength={50}
           />
           {codeError ? (
-            <p className="text-xs text-destructive">{t("validation.invalidCode") || "Tenant code is required."}</p>
+            <p className="text-xs text-destructive">
+              {t("validation.invalidCode") || "Tenant code is required."}
+            </p>
           ) : (
             <p className="text-xs text-muted-foreground">
               {t("tenant.codeHint") || "Unique identifier. Auto-generated from name."}
@@ -89,7 +95,9 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
           id="tenant-description"
           value={vm.form.description}
           onChange={(e) => vm.updateField("description", e.target.value)}
-          placeholder={t("tenant.descriptionPlaceholder") || "Brief description of the organization..."}
+          placeholder={
+            t("tenant.descriptionPlaceholder") || "Brief description of the organization..."
+          }
           className="min-h-[80px] resize-none"
           maxLength={500}
         />

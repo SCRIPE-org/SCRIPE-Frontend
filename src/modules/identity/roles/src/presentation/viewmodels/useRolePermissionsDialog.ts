@@ -94,7 +94,7 @@ export function useRolePermissionsDialog({
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevRoleId, setPrevRoleId] = useState(role?.id);
   const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
-  
+
   if (open !== prevOpen || role?.id !== prevRoleId) {
     setPrevOpen(open);
     setPrevRoleId(role?.id);
@@ -127,9 +127,14 @@ export function useRolePermissionsDialog({
   });
 
   // Initialize selection from role's permissions (only once per role)
-  const isReadyToInitRole = open && !!role?.id && tenantPermissions.length > 0 && !loadingRole && initializedRoleId !== role?.id;
+  const isReadyToInitRole =
+    open &&
+    !!role?.id &&
+    tenantPermissions.length > 0 &&
+    !loadingRole &&
+    initializedRoleId !== role?.id;
   const [prevIsReadyToInitRole, setPrevIsReadyToInitRole] = useState(isReadyToInitRole);
-  
+
   if (isReadyToInitRole && isReadyToInitRole !== prevIsReadyToInitRole) {
     setPrevIsReadyToInitRole(isReadyToInitRole);
     const validCodes = new Map<string, string>(); // code -> id
@@ -144,8 +149,17 @@ export function useRolePermissionsDialog({
           permissionId: rp.permissionId,
           scopeOverride: rp.scope,
           restrictedFields: (() => {
-            if (!rp.restrictedFields || rp.restrictedFields === "null" || rp.restrictedFields === "") return [];
-            try { return JSON.parse(rp.restrictedFields); } catch { return []; }
+            if (
+              !rp.restrictedFields ||
+              rp.restrictedFields === "null" ||
+              rp.restrictedFields === ""
+            )
+              return [];
+            try {
+              return JSON.parse(rp.restrictedFields);
+            } catch {
+              return [];
+            }
           })(),
         });
 

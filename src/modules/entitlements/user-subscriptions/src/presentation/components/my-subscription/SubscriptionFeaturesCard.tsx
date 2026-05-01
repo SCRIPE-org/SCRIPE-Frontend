@@ -14,14 +14,18 @@ interface SubscriptionFeaturesCardProps {
   language: string;
 }
 
-export function SubscriptionFeaturesCard({ subscription, t, language }: SubscriptionFeaturesCardProps) {
+export function SubscriptionFeaturesCard({
+  subscription,
+  t,
+  language,
+}: SubscriptionFeaturesCardProps) {
   const features = subscription.features;
 
   if (features.length === 0) {
     return null; // No features = don't render the card
   }
 
-  const renderFeatureValue = (feat: typeof features[0]) => {
+  const renderFeatureValue = (feat: (typeof features)[0]) => {
     switch (feat.valueType) {
       case "Boolean":
         return feat.value === "true" ? (
@@ -43,7 +47,7 @@ export function SubscriptionFeaturesCard({ subscription, t, language }: Subscrip
     }
   };
 
-  const getDisplayName = (feat: typeof features[0]) => {
+  const getDisplayName = (feat: (typeof features)[0]) => {
     if (language === "ar" && feat.displayNameAr) return feat.displayNameAr;
     return feat.displayNameEn || feat.featureKey;
   };
@@ -59,10 +63,7 @@ export function SubscriptionFeaturesCard({ subscription, t, language }: Subscrip
       <CardContent>
         <div className="divide-y">
           {features.map((feat) => (
-            <div
-              key={feat.featureKey}
-              className="flex items-center justify-between py-2.5"
-            >
+            <div key={feat.featureKey} className="flex items-center justify-between py-2.5">
               <span className="text-sm">{getDisplayName(feat)}</span>
               <div>{renderFeatureValue(feat)}</div>
             </div>

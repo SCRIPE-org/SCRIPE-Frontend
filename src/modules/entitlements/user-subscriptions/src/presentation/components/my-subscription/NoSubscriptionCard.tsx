@@ -12,7 +12,7 @@ interface NoSubscriptionCardProps {
 
 export function NoSubscriptionCard({ t }: NoSubscriptionCardProps) {
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
           {t("entitlements.mySubscription.title") || "My Subscription"}
@@ -20,11 +20,11 @@ export function NoSubscriptionCard({ t }: NoSubscriptionCardProps) {
       </div>
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-          <PackageOpen className="h-12 w-12 text-muted-foreground/50 mb-4" />
-          <h3 className="text-lg font-semibold mb-1">
+          <PackageOpen className="mb-4 h-12 w-12 text-muted-foreground/50" />
+          <h3 className="mb-1 text-lg font-semibold">
             {t("entitlements.mySubscription.noSubscription") || "No Active Subscription"}
           </h3>
-          <p className="text-sm text-muted-foreground max-w-md">
+          <p className="max-w-md text-sm text-muted-foreground">
             {t("entitlements.mySubscription.noSubscriptionDesc") ||
               "You don't have an active subscription yet. Contact your administrator or browse available plans."}
           </p>

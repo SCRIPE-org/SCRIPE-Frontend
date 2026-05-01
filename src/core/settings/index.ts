@@ -60,7 +60,12 @@ export { defaultSettings, SETTINGS_KEYS } from "./defaults";
 
 // Context
 export type { SettingsContextType } from "./context";
-export { SettingsContext, useSettings, createFallbackSettings, createCompatSetters } from "./context";
+export {
+  SettingsContext,
+  useSettings,
+  createFallbackSettings,
+  createCompatSetters,
+} from "./context";
 
 // Merge engine
 export type { OverrideControl, MergeInput, MergeResult } from "./merge-engine";
@@ -70,7 +75,12 @@ export { mergeSettings, DEFAULT_OVERRIDE_CONTROL } from "./merge-engine";
 export { applySettingsToDOM } from "./dom-applicator";
 
 // Persistence
-export { readTenantDefaults, readAdminOverrides, writeAdminOverrides, clearStaleAdminOverrides } from "./persistence";
+export {
+  readTenantDefaults,
+  readAdminOverrides,
+  writeAdminOverrides,
+  clearStaleAdminOverrides,
+} from "./persistence";
 
 // Provider
 export { SettingsProvider } from "./settings-provider";

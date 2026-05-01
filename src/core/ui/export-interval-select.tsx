@@ -75,7 +75,6 @@ export function ExportIntervalSelect({ value, onChange, className }: ExportInter
   useEffect(() => {
     const dates = calculatePresetDates("monthly");
     onChange(dates);
-
   }, []);
 
   const handlePresetClick = useCallback(

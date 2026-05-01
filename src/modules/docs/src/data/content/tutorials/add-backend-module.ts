@@ -2,76 +2,82 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "tutorials.addBackendModule.intro" },
+  { type: "paragraph", contentKey: "tutorials.addBackendModule.intro" },
 
-      // ─── Prerequisites ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.prerequisitesTitle", id: "prerequisites",
-      },
-      {
-            type: "list",
-            variant: "unordered",
-            items: [
-                  ".NET 8 SDK installed",
-                  "Oracle or SQL Server database configured",
-                  "Understanding of CQRS, MediatR, and Clean Architecture",
-            ],
-      },
+  // ─── Prerequisites ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.prerequisitesTitle",
+    id: "prerequisites",
+  },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      ".NET 8 SDK installed",
+      "Oracle or SQL Server database configured",
+      "Understanding of CQRS, MediatR, and Clean Architecture",
+    ],
+  },
 
-      // ─── Step-by-Step Guide ───────────────────────────────────
+  // ─── Step-by-Step Guide ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.stepsTitle",
+    id: "steps",
+  },
+  {
+    type: "step-guide",
+    steps: [
       {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.stepsTitle", id: "steps",
+        titleKey: "tutorials.addBackendModule.step1Title",
+        contentKey: "tutorials.addBackendModule.step1Desc",
       },
       {
-            type: "step-guide",
-            steps: [
-                  {
-                        titleKey: "tutorials.addBackendModule.step1Title",
-                        contentKey: "tutorials.addBackendModule.step1Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step2Title",
-                        contentKey: "tutorials.addBackendModule.step2Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step3Title",
-                        contentKey: "tutorials.addBackendModule.step3Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step4Title",
-                        contentKey: "tutorials.addBackendModule.step4Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step5Title",
-                        contentKey: "tutorials.addBackendModule.step5Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step6Title",
-                        contentKey: "tutorials.addBackendModule.step6Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step7Title",
-                        contentKey: "tutorials.addBackendModule.step7Desc",
-                  },
-                  {
-                        titleKey: "tutorials.addBackendModule.step8Title",
-                        contentKey: "tutorials.addBackendModule.step8Desc",
-                  },
-            ],
+        titleKey: "tutorials.addBackendModule.step2Title",
+        contentKey: "tutorials.addBackendModule.step2Desc",
       },
+      {
+        titleKey: "tutorials.addBackendModule.step3Title",
+        contentKey: "tutorials.addBackendModule.step3Desc",
+      },
+      {
+        titleKey: "tutorials.addBackendModule.step4Title",
+        contentKey: "tutorials.addBackendModule.step4Desc",
+      },
+      {
+        titleKey: "tutorials.addBackendModule.step5Title",
+        contentKey: "tutorials.addBackendModule.step5Desc",
+      },
+      {
+        titleKey: "tutorials.addBackendModule.step6Title",
+        contentKey: "tutorials.addBackendModule.step6Desc",
+      },
+      {
+        titleKey: "tutorials.addBackendModule.step7Title",
+        contentKey: "tutorials.addBackendModule.step7Desc",
+      },
+      {
+        titleKey: "tutorials.addBackendModule.step8Title",
+        contentKey: "tutorials.addBackendModule.step8Desc",
+      },
+    ],
+  },
 
-      // ─── Step 1: Project Structure ────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.structureTitle", id: "structure",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "Backend Module — Project Structure",
-            code: `src/Modules/Inventory/
+  // ─── Step 1: Project Structure ────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.structureTitle",
+    id: "structure",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Backend Module — Project Structure",
+    code: `src/Modules/Inventory/
 ├── Inventory.Application/
 │   ├── Commands/
 │   │   ├── CreateProduct/
@@ -116,18 +122,20 @@ const sections: DocSection[] = [
 └── Inventory.API/
     └── Controllers/
         └── ProductsController.cs`,
-      },
+  },
 
-      // ─── Step 2: Domain Entity ────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.entityTitle", id: "entity",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Domain/Entities/Product.cs",
-            code: `/// <summary>
+  // ─── Step 2: Domain Entity ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.entityTitle",
+    id: "entity",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Domain/Entities/Product.cs",
+    code: `/// <summary>
 /// Product entity — inherits from AuditableEntity for automatic
 /// CreatedAt/UpdatedAt/DeletedAt tracking and tenant awareness.
 /// </summary>
@@ -150,34 +158,36 @@ public class Product : AuditableEntity, ITenantAwareEntity
         AddDomainEvent(new ProductCreatedEvent(Id, Name, SKU));
     }
 }`,
-            highlightLines: [5, 6, 16, 17, 20, 21, 22],
-      },
+    highlightLines: [5, 6, 16, 17, 20, 21, 22],
+  },
 
-      // ─── Step 3: CQRS Command ─────────────────────────────────
+  // ─── Step 3: CQRS Command ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.commandTitle",
+    id: "command",
+  },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.commandTitle", id: "command",
-      },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "Command",
-                        language: "csharp",
-                        filename: "Commands/CreateProduct/CreateProductCommand.cs",
-                        code: `public record CreateProductCommand(
+        label: "Command",
+        language: "csharp",
+        filename: "Commands/CreateProduct/CreateProductCommand.cs",
+        code: `public record CreateProductCommand(
     string Name,
     string SKU,
     decimal Price,
     int Quantity,
     string Category
 ) : IRequest<Result<ProductDto>>;`,
-                  },
-                  {
-                        label: "Handler",
-                        language: "csharp",
-                        filename: "Commands/CreateProduct/CreateProductHandler.cs",
-                        code: `public class CreateProductHandler
+      },
+      {
+        label: "Handler",
+        language: "csharp",
+        filename: "Commands/CreateProduct/CreateProductHandler.cs",
+        code: `public class CreateProductHandler
     : IRequestHandler<CreateProductCommand, Result<ProductDto>>
 {
     private readonly IProductRepository _repo;
@@ -203,12 +213,12 @@ public class Product : AuditableEntity, ITenantAwareEntity
         return Result.Success(_mapper.Map<ProductDto>(product));
     }
 }`,
-                  },
-                  {
-                        label: "Validator",
-                        language: "csharp",
-                        filename: "Commands/CreateProduct/CreateProductValidator.cs",
-                        code: `public class CreateProductValidator
+      },
+      {
+        label: "Validator",
+        language: "csharp",
+        filename: "Commands/CreateProduct/CreateProductValidator.cs",
+        code: `public class CreateProductValidator
     : AbstractValidator<CreateProductCommand>
 {
     public CreateProductValidator(IProductRepository repo)
@@ -229,20 +239,22 @@ public class Product : AuditableEntity, ITenantAwareEntity
             .GreaterThanOrEqualTo(0);
     }
 }`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── Step 4: DI Registration ─────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.diTitle", id: "di-registration",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Infrastructure/DependencyInjection.cs",
-            code: `public static class DependencyInjection
+  // ─── Step 4: DI Registration ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.diTitle",
+    id: "di-registration",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Infrastructure/DependencyInjection.cs",
+    code: `public static class DependencyInjection
 {
     public static IServiceCollection AddInventoryModule(
         this IServiceCollection services, IConfiguration config)
@@ -264,18 +276,20 @@ public class Product : AuditableEntity, ITenantAwareEntity
         return services;
     }
 }`,
-      },
+  },
 
-      // ─── Step 5: Controller ───────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.controllerTitle", id: "controller",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "API/Controllers/ProductsController.cs",
-            code: `[ApiController]
+  // ─── Step 5: Controller ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.controllerTitle",
+    id: "controller",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "API/Controllers/ProductsController.cs",
+    code: `[ApiController]
 [Route("api/v1/[controller]")]
 [Authorize]
 [PermissionRequired("products.view")]
@@ -305,19 +319,21 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> DeleteProduct(Guid id)
         => HandleResult(await _mediator.Send(new DeleteProductCommand(id)));
 }`,
-            highlightLines: [4, 15, 21, 27],
-      },
+    highlightLines: [4, 15, 21, 27],
+  },
 
-      // ─── Step 6: Register in Program.cs ───────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "tutorials.addBackendModule.registerTitle", id: "register",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Program.cs — Add Module",
-            code: `// Add to the module switch in Program.cs:
+  // ─── Step 6: Register in Program.cs ───────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "tutorials.addBackendModule.registerTitle",
+    id: "register",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Program.cs — Add Module",
+    code: `// Add to the module switch in Program.cs:
 case "inventory":
     builder.Services.AddInventoryModule(configuration);
     break;
@@ -326,22 +342,26 @@ default:
     builder.Services.AddIdentityModule(configuration);
     builder.Services.AddInventoryModule(configuration); // NEW
     break;`,
-            highlightLines: [2, 3, 8],
-      },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "tutorials.addBackendModule.migrationNote",
-      },
+    highlightLines: [2, 3, 8],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "tutorials.addBackendModule.migrationNote",
+  },
 ];
 
 registerPage({
-      slug: "tutorials/add-backend-module",
-      titleKey: "tutorials.addBackendModule.title",
-      descriptionKey: "tutorials.addBackendModule.description",
-      category: "tutorials",
-      order: 2,
-      sections,
-      relatedSlugs: ["architecture/cqrs-pipeline", "architecture/dependency-injection", "tutorials/add-module"],
-      lastUpdated: "2026-02-20",
+  slug: "tutorials/add-backend-module",
+  titleKey: "tutorials.addBackendModule.title",
+  descriptionKey: "tutorials.addBackendModule.description",
+  category: "tutorials",
+  order: 2,
+  sections,
+  relatedSlugs: [
+    "architecture/cqrs-pipeline",
+    "architecture/dependency-injection",
+    "tutorials/add-module",
+  ],
+  lastUpdated: "2026-02-20",
 });

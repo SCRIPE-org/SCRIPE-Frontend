@@ -79,9 +79,7 @@ export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
                     className="h-7 w-7 shrink-0 cursor-pointer rounded border border-border"
                   />
                 )}
-                <Label className="w-24 shrink-0 text-xs text-muted-foreground">
-                  {token.label}
-                </Label>
+                <Label className="w-24 shrink-0 text-xs text-muted-foreground">{token.label}</Label>
                 <Input
                   value={tokens[token.key] || ""}
                   onChange={(e) => updateToken(token.key, e.target.value)}

@@ -20,25 +20,54 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
       striped: cn(b, "rounded-lg border bg-card"),
       bordered: cn(b, "rounded-lg border-2 border-border bg-card"),
       minimal: cn(b, "rounded-none border-0 bg-transparent"),
-      glass: cn(b, "rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl dark:bg-black/20 dark:border-white/10"),
-      neon: cn(b, "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_rgba(var(--primary),0.3)] dark:bg-black/95"),
-      gradient: cn(b, "rounded-2xl border-0 bg-gradient-to-br from-primary/20 via-background to-primary/10 shadow-2xl"),
-      neumorphism: cn(b, "rounded-3xl border-0 bg-background shadow-[20px_20px_40px_rgba(0,0,0,0.1),-20px_-20px_40px_rgba(255,255,255,0.1)] dark:shadow-[20px_20px_40px_rgba(0,0,0,0.3),-20px_-20px_40px_rgba(255,255,255,0.05)]"),
-      cyberpunk: cn(b, "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_rgba(var(--primary),0.4)] dark:bg-black/95"),
-      luxury: cn(b, "rounded-2xl border border-amber-200/30 bg-gradient-to-br from-amber-50/50 to-amber-100/30 shadow-2xl dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20"),
-      matrix: cn(b, "rounded-none border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.4)] dark:bg-black/95"),
-      diamond: cn(b, "rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/15 shadow-[0_0_40px_hsl(var(--primary)/0.3)] backdrop-blur-xl"),
+      glass: cn(
+        b,
+        "rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl dark:bg-black/20 dark:border-white/10"
+      ),
+      neon: cn(
+        b,
+        "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_rgba(var(--primary),0.3)] dark:bg-black/95"
+      ),
+      gradient: cn(
+        b,
+        "rounded-2xl border-0 bg-gradient-to-br from-primary/20 via-background to-primary/10 shadow-2xl"
+      ),
+      neumorphism: cn(
+        b,
+        "rounded-3xl border-0 bg-background shadow-[20px_20px_40px_rgba(0,0,0,0.1),-20px_-20px_40px_rgba(255,255,255,0.1)] dark:shadow-[20px_20px_40px_rgba(0,0,0,0.3),-20px_-20px_40px_rgba(255,255,255,0.05)]"
+      ),
+      cyberpunk: cn(
+        b,
+        "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_rgba(var(--primary),0.4)] dark:bg-black/95"
+      ),
+      luxury: cn(
+        b,
+        "rounded-2xl border border-amber-200/30 bg-gradient-to-br from-amber-50/50 to-amber-100/30 shadow-2xl dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20"
+      ),
+      matrix: cn(
+        b,
+        "rounded-none border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.4)] dark:bg-black/95"
+      ),
+      diamond: cn(
+        b,
+        "rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/15 shadow-[0_0_40px_hsl(var(--primary)/0.3)] backdrop-blur-xl"
+      ),
     };
     return map[style] ?? cn(b, "rounded-lg border bg-card shadow-sm");
   };
 
   const getHeaderClasses = () => {
     const map: Record<string, string> = {
-      striped: "bg-muted/50 border-b-2 border-border", bordered: "bg-muted/40 border-b-2 border-border",
-      minimal: "bg-transparent border-b border-border/50", glass: "bg-white/10 border-b border-white/20 backdrop-blur-sm",
-      neon: "bg-primary/10 border-b border-primary/30", gradient: "bg-gradient-to-r from-primary/10 to-primary/15 border-b border-primary/20",
-      neumorphism: "bg-background/80 border-b border-border/40", cyberpunk: "bg-primary/10 border-b border-primary/40",
-      luxury: "bg-amber-100/40 border-b border-amber-200/30 dark:bg-amber-900/20", matrix: "bg-primary/10 border-b border-primary/30",
+      striped: "bg-muted/50 border-b-2 border-border",
+      bordered: "bg-muted/40 border-b-2 border-border",
+      minimal: "bg-transparent border-b border-border/50",
+      glass: "bg-white/10 border-b border-white/20 backdrop-blur-sm",
+      neon: "bg-primary/10 border-b border-primary/30",
+      gradient: "bg-gradient-to-r from-primary/10 to-primary/15 border-b border-primary/20",
+      neumorphism: "bg-background/80 border-b border-border/40",
+      cyberpunk: "bg-primary/10 border-b border-primary/40",
+      luxury: "bg-amber-100/40 border-b border-amber-200/30 dark:bg-amber-900/20",
+      matrix: "bg-primary/10 border-b border-primary/30",
       diamond: "bg-primary/10 border-b border-primary/30",
     };
     return map[style] ?? "bg-muted/40 border-b border-border";
@@ -47,13 +76,16 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
   const getRowClasses = (index: number) => {
     const map: Record<string, string> = {
       striped: index % 2 === 0 ? "bg-muted/20 hover:bg-muted/30" : "bg-card hover:bg-muted/20",
-      bordered: "border-b bg-card hover:bg-muted/20", minimal: "border-b border-border/30 bg-transparent hover:bg-muted/10",
+      bordered: "border-b bg-card hover:bg-muted/20",
+      minimal: "border-b border-border/30 bg-transparent hover:bg-muted/10",
       glass: "bg-white/5 border-b border-white/10 backdrop-blur-sm hover:bg-white/10",
       neon: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
-      gradient: "bg-gradient-to-r from-primary/5 to-primary/10 border-b border-primary/10 hover:from-primary/10 hover:to-primary/15",
+      gradient:
+        "bg-gradient-to-r from-primary/5 to-primary/10 border-b border-primary/10 hover:from-primary/10 hover:to-primary/15",
       neumorphism: "bg-background/30 border-b border-border/20 hover:bg-background/50",
       cyberpunk: "bg-primary/5 border-b border-primary/30 hover:bg-primary/10",
-      luxury: "bg-amber-50/20 border-b border-amber-200/20 dark:bg-amber-900/10 hover:bg-amber-50/30",
+      luxury:
+        "bg-amber-50/20 border-b border-amber-200/20 dark:bg-amber-900/10 hover:bg-amber-50/30",
       matrix: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
       diamond: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
     };
@@ -65,22 +97,38 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
       <table className="w-full text-xs">
         <thead>
           <tr className={cn("font-medium text-muted-foreground", getHeaderClasses())}>
-            <th className="px-2 py-1.5 text-left font-semibold">{t("settings.sampleTable.name")}</th>
-            <th className="px-2 py-1.5 text-left font-semibold">{t("settings.sampleTable.role")}</th>
-            <th className="px-2 py-1.5 text-left font-semibold">{t("settings.sampleTable.status")}</th>
+            <th className="px-2 py-1.5 text-left font-semibold">
+              {t("settings.sampleTable.name")}
+            </th>
+            <th className="px-2 py-1.5 text-left font-semibold">
+              {t("settings.sampleTable.role")}
+            </th>
+            <th className="px-2 py-1.5 text-left font-semibold">
+              {t("settings.sampleTable.status")}
+            </th>
           </tr>
         </thead>
         <tbody>
           {sampleData.map((row, index) => (
             <tr key={row.id} className={getRowClasses(index)}>
               <td className="px-2 py-1.5 font-medium">{row.name}</td>
-              <td className="px-2 py-1.5 text-muted-foreground">{t(`settings.sampleTable.roles.${row.role}`)}</td>
+              <td className="px-2 py-1.5 text-muted-foreground">
+                {t(`settings.sampleTable.roles.${row.role}`)}
+              </td>
               <td className="px-2 py-1.5">
-                <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium",
-                  row.status === "active" && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-                  row.status === "pending" && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-                  row.status === "inactive" && "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                )}>{t(`settings.sampleTable.${row.status}`)}</span>
+                <span
+                  className={cn(
+                    "rounded px-1.5 py-0.5 text-[10px] font-medium",
+                    row.status === "active" &&
+                      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                    row.status === "pending" &&
+                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                    row.status === "inactive" &&
+                      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                  )}
+                >
+                  {t(`settings.sampleTable.${row.status}`)}
+                </span>
               </td>
             </tr>
           ))}
@@ -95,18 +143,66 @@ export function TableStyleSection() {
   const settings = useSettings();
 
   const tableStyles = [
-    { value: "default", name: t("settings.tableStyle.options.default.title"), description: t("settings.tableStyle.options.default.description") },
-    { value: "striped", name: t("settings.tableStyle.options.striped.title"), description: t("settings.tableStyle.options.striped.description") },
-    { value: "bordered", name: t("settings.tableStyle.options.bordered.title"), description: t("settings.tableStyle.options.bordered.description") },
-    { value: "minimal", name: t("settings.tableStyle.options.minimal.title"), description: t("settings.tableStyle.options.minimal.description") },
-    { value: "glass", name: t("settings.tableStyle.options.glass.title"), description: t("settings.tableStyle.options.glass.description") },
-    { value: "neon", name: t("settings.tableStyle.options.neon.title"), description: t("settings.tableStyle.options.neon.description") },
-    { value: "gradient", name: t("settings.tableStyle.options.gradient.title"), description: t("settings.tableStyle.options.gradient.description") },
-    { value: "neumorphism", name: t("settings.tableStyle.options.neumorphism.title"), description: t("settings.tableStyle.options.neumorphism.description") },
-    { value: "cyberpunk", name: t("settings.tableStyle.options.cyberpunk.title"), description: t("settings.tableStyle.options.cyberpunk.description") },
-    { value: "luxury", name: t("settings.tableStyle.options.luxury.title"), description: t("settings.tableStyle.options.luxury.description") },
-    { value: "matrix", name: t("settings.tableStyle.options.matrix.title"), description: t("settings.tableStyle.options.matrix.description") },
-    { value: "diamond", name: t("settings.tableStyle.options.diamond.title"), description: t("settings.tableStyle.options.diamond.description") },
+    {
+      value: "default",
+      name: t("settings.tableStyle.options.default.title"),
+      description: t("settings.tableStyle.options.default.description"),
+    },
+    {
+      value: "striped",
+      name: t("settings.tableStyle.options.striped.title"),
+      description: t("settings.tableStyle.options.striped.description"),
+    },
+    {
+      value: "bordered",
+      name: t("settings.tableStyle.options.bordered.title"),
+      description: t("settings.tableStyle.options.bordered.description"),
+    },
+    {
+      value: "minimal",
+      name: t("settings.tableStyle.options.minimal.title"),
+      description: t("settings.tableStyle.options.minimal.description"),
+    },
+    {
+      value: "glass",
+      name: t("settings.tableStyle.options.glass.title"),
+      description: t("settings.tableStyle.options.glass.description"),
+    },
+    {
+      value: "neon",
+      name: t("settings.tableStyle.options.neon.title"),
+      description: t("settings.tableStyle.options.neon.description"),
+    },
+    {
+      value: "gradient",
+      name: t("settings.tableStyle.options.gradient.title"),
+      description: t("settings.tableStyle.options.gradient.description"),
+    },
+    {
+      value: "neumorphism",
+      name: t("settings.tableStyle.options.neumorphism.title"),
+      description: t("settings.tableStyle.options.neumorphism.description"),
+    },
+    {
+      value: "cyberpunk",
+      name: t("settings.tableStyle.options.cyberpunk.title"),
+      description: t("settings.tableStyle.options.cyberpunk.description"),
+    },
+    {
+      value: "luxury",
+      name: t("settings.tableStyle.options.luxury.title"),
+      description: t("settings.tableStyle.options.luxury.description"),
+    },
+    {
+      value: "matrix",
+      name: t("settings.tableStyle.options.matrix.title"),
+      description: t("settings.tableStyle.options.matrix.description"),
+    },
+    {
+      value: "diamond",
+      name: t("settings.tableStyle.options.diamond.title"),
+      description: t("settings.tableStyle.options.diamond.description"),
+    },
   ];
 
   return (
@@ -116,7 +212,13 @@ export function TableStyleSection() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
             <div className="grid h-4 w-4 grid-cols-3 gap-0.5">
               {Array.from({ length: 9 }, (_, i) => (
-                <div key={i} className={cn("rounded-[1px]", i < 3 ? "bg-primary/60" : i < 6 ? "bg-primary/40" : "bg-primary/30")} />
+                <div
+                  key={i}
+                  className={cn(
+                    "rounded-[1px]",
+                    i < 3 ? "bg-primary/60" : i < 6 ? "bg-primary/40" : "bg-primary/30"
+                  )}
+                />
               ))}
             </div>
           </div>

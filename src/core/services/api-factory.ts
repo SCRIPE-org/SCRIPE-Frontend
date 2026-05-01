@@ -28,12 +28,12 @@ import type { IApiService } from "../interfaces/api.interface";
  * to be inlined at build time. Add new modules here as they are created.
  */
 const ENV_MAP: Record<string, string | undefined> = {
-      IDENTITY: process.env.NEXT_PUBLIC_IDENTITY_API_URL,
-      // ── Add new modules below this line ──
-      COMPLIANCE: process.env.NEXT_PUBLIC_COMPLIANCE_API_URL,
-      ENTITLEMENTS: process.env.NEXT_PUBLIC_ENTITLEMENTS_API_URL,
-      // PRODUCTS: process.env.NEXT_PUBLIC_PRODUCTS_API_URL,
-      // INVENTORY: process.env.NEXT_PUBLIC_INVENTORY_API_URL,
+  IDENTITY: process.env.NEXT_PUBLIC_IDENTITY_API_URL,
+  // ── Add new modules below this line ──
+  COMPLIANCE: process.env.NEXT_PUBLIC_COMPLIANCE_API_URL,
+  ENTITLEMENTS: process.env.NEXT_PUBLIC_ENTITLEMENTS_API_URL,
+  // PRODUCTS: process.env.NEXT_PUBLIC_PRODUCTS_API_URL,
+  // INVENTORY: process.env.NEXT_PUBLIC_INVENTORY_API_URL,
 };
 
 /** Cache: moduleKey → ApiService instance */
@@ -62,30 +62,30 @@ const BASE_KEY = "__base__";
  * getModuleApiService("PRODUCTS")  // → http://localhost:5010/api
  */
 export function getModuleApiService(moduleKey?: string): IApiService {
-      if (!moduleKey) {
-            if (!instanceCache.has(BASE_KEY)) {
-                  instanceCache.set(BASE_KEY, new ApiService(BASE_URL));
-            }
-            return instanceCache.get(BASE_KEY)!;
+  if (!moduleKey) {
+    if (!instanceCache.has(BASE_KEY)) {
+      instanceCache.set(BASE_KEY, new ApiService(BASE_URL));
+    }
+    return instanceCache.get(BASE_KEY)!;
+  }
+
+  if (!instanceCache.has(moduleKey)) {
+    // Look up from the static ENV_MAP (Next.js requires static literals)
+    const rawUrl = ENV_MAP[moduleKey];
+    const moduleUrl = rawUrl?.trim() || BASE_URL;
+
+    // If module URL equals base URL, reuse the base instance to save memory
+    if (moduleUrl === BASE_URL) {
+      if (!instanceCache.has(BASE_KEY)) {
+        instanceCache.set(BASE_KEY, new ApiService(BASE_URL));
       }
+      instanceCache.set(moduleKey, instanceCache.get(BASE_KEY)!);
+    } else {
+      instanceCache.set(moduleKey, new ApiService(moduleUrl));
+    }
+  }
 
-      if (!instanceCache.has(moduleKey)) {
-            // Look up from the static ENV_MAP (Next.js requires static literals)
-            const rawUrl = ENV_MAP[moduleKey];
-            const moduleUrl = rawUrl?.trim() || BASE_URL;
-
-            // If module URL equals base URL, reuse the base instance to save memory
-            if (moduleUrl === BASE_URL) {
-                  if (!instanceCache.has(BASE_KEY)) {
-                        instanceCache.set(BASE_KEY, new ApiService(BASE_URL));
-                  }
-                  instanceCache.set(moduleKey, instanceCache.get(BASE_KEY)!);
-            } else {
-                  instanceCache.set(moduleKey, new ApiService(moduleUrl));
-            }
-      }
-
-      return instanceCache.get(moduleKey)!;
+  return instanceCache.get(moduleKey)!;
 }
 
 /**
@@ -93,5 +93,5 @@ export function getModuleApiService(moduleKey?: string): IApiService {
  * Shorthand for getModuleApiService() with no arguments.
  */
 export function getBaseApiService(): IApiService {
-      return getModuleApiService();
+  return getModuleApiService();
 }

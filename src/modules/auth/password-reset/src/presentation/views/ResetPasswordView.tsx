@@ -50,7 +50,9 @@ export function ResetPasswordView() {
       if (!branding?.loginBrandingJson) return null;
       const parsed = JSON.parse(branding.loginBrandingJson);
       return parsed.pages?.["reset-password"] ?? null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   })();
 
   const layout = pageOverride?.layout || "centered";
@@ -60,7 +62,8 @@ export function ResetPasswordView() {
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
   const headline = pageOverride?.headline || t("auth.resetPassword") || "Reset Password";
-  const subtitle = pageOverride?.subtitle || t("auth.resetPasswordDesc") || "Enter your new password below.";
+  const subtitle =
+    pageOverride?.subtitle || t("auth.resetPasswordDesc") || "Enter your new password below.";
 
   // Dynamic document title
   useEffect(() => {
@@ -71,35 +74,46 @@ export function ResetPasswordView() {
 
   const isValid = password.length >= 8 && password === confirmPassword;
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!isValid) return;
 
-    setIsSubmitting(true);
-    setError(null);
+      setIsSubmitting(true);
+      setError(null);
 
-    try {
-      if (!token) {
-        setError(t("auth.resetNotAvailable") || "Self-service password reset is not yet available. Please contact your administrator.");
-        return;
+      try {
+        if (!token) {
+          setError(
+            t("auth.resetNotAvailable") ||
+              "Self-service password reset is not yet available. Please contact your administrator."
+          );
+          return;
+        }
+        setIsSuccess(true);
+      } catch (err: any) {
+        setError(
+          err?.message ||
+            t("auth.resetFailed") ||
+            "Failed to reset password. The link may have expired."
+        );
+      } finally {
+        setIsSubmitting(false);
       }
-      setIsSuccess(true);
-    } catch (err: any) {
-      setError(err?.message || t("auth.resetFailed") || "Failed to reset password. The link may have expired.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [email, token, password, isValid, t]);
+    },
+    [email, token, password, isValid, t]
+  );
 
   const wrapperStyle: React.CSSProperties = {
-    background: "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
+    background:
+      "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
     lineHeight: "var(--login-line-height, 1.5)",
     letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
   // Top actions bar
   const topActions = (
-    <div className="absolute left-8 right-8 top-8 flex items-center justify-end gap-1 z-20">
+    <div className="absolute left-8 right-8 top-8 z-20 flex items-center justify-end gap-1">
       <LanguageSwitcher />
       <ThemeSwitcher />
     </div>
@@ -109,22 +123,22 @@ export function ResetPasswordView() {
   if (!token) {
     return (
       <div
-        className="flex min-h-screen w-full flex-col items-center justify-center login-page selection:bg-primary/20"
+        className="login-page flex min-h-screen w-full flex-col items-center justify-center selection:bg-primary/20"
         dir={direction}
         style={wrapperStyle}
       >
         {topActions}
-        <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
+        <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
           <div className="w-full" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:text-[var(--login-text,hsl(var(--foreground)))] transition-colors mb-6"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] transition-colors hover:text-[var(--login-text,hsl(var(--foreground)))]"
             >
               <ArrowLeft className="h-4 w-4" />
               {t("auth.backToLogin") || "Back to login"}
             </Link>
             <div
-              className="border border-[var(--login-border,hsl(var(--border)))] space-y-6 text-center"
+              className="space-y-6 border border-[var(--login-border,hsl(var(--border)))] text-center"
               style={{
                 borderRadius: "var(--login-radius-card, 16px)",
                 padding: "var(--login-card-padding, 32px)",
@@ -136,11 +150,23 @@ export function ResetPasswordView() {
                 <AlertTriangle className="h-6 w-6 text-amber-500" />
               </div>
               <div className="space-y-2">
-                <h2 className="login-heading" style={{ color: "var(--login-text, hsl(var(--foreground)))", fontSize: "var(--login-size-headline, 1.25rem)" }}>
+                <h2
+                  className="login-heading"
+                  style={{
+                    color: "var(--login-text, hsl(var(--foreground)))",
+                    fontSize: "var(--login-size-headline, 1.25rem)",
+                  }}
+                >
                   {t("auth.invalidResetLink") || "Invalid Reset Link"}
                 </h2>
-                <p style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))", fontSize: "var(--login-size-subtitle, 0.875rem)" }}>
-                  {t("auth.invalidResetLinkDesc") || "This password reset link is invalid or has expired. Please request a new one."}
+                <p
+                  style={{
+                    color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
+                    fontSize: "var(--login-size-subtitle, 0.875rem)",
+                  }}
+                >
+                  {t("auth.invalidResetLinkDesc") ||
+                    "This password reset link is invalid or has expired. Please request a new one."}
                 </p>
               </div>
               <Link href="/forgot-password">
@@ -157,16 +183,16 @@ export function ResetPasswordView() {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col items-center justify-center login-page selection:bg-primary/20"
+      className="login-page flex min-h-screen w-full flex-col items-center justify-center selection:bg-primary/20"
       dir={direction}
       style={wrapperStyle}
     >
       {topActions}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
+      <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
         <div className="w-full" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:text-[var(--login-text,hsl(var(--foreground)))] transition-colors mb-6"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] transition-colors hover:text-[var(--login-text,hsl(var(--foreground)))]"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("auth.backToLogin") || "Back to login"}
@@ -174,7 +200,7 @@ export function ResetPasswordView() {
 
           {!isSuccess ? (
             <div
-              className="border border-[var(--login-border,hsl(var(--border)))] space-y-6"
+              className="space-y-6 border border-[var(--login-border,hsl(var(--border)))]"
               style={{
                 borderRadius: "var(--login-radius-card, 16px)",
                 padding: "var(--login-card-padding, 32px)",
@@ -182,21 +208,43 @@ export function ResetPasswordView() {
                 boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.1))",
               }}
             >
-              <div className="text-center space-y-2">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--login-primary, hsl(var(--primary))) 10%, transparent)" }}>
-                  <Lock className="h-6 w-6" style={{ color: "var(--login-primary, hsl(var(--primary)))" }} />
+              <div className="space-y-2 text-center">
+                <div
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
+                  style={{
+                    backgroundColor:
+                      "color-mix(in srgb, var(--login-primary, hsl(var(--primary))) 10%, transparent)",
+                  }}
+                >
+                  <Lock
+                    className="h-6 w-6"
+                    style={{ color: "var(--login-primary, hsl(var(--primary)))" }}
+                  />
                 </div>
-                <h1 className="login-heading tracking-tight" style={{ color: "var(--login-text, hsl(var(--foreground)))", fontSize: "var(--login-size-headline, 1.5rem)" }}>
+                <h1
+                  className="login-heading tracking-tight"
+                  style={{
+                    color: "var(--login-text, hsl(var(--foreground)))",
+                    fontSize: "var(--login-size-headline, 1.5rem)",
+                  }}
+                >
                   {headline}
                 </h1>
-                <p style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))", fontSize: "var(--login-size-subtitle, 0.875rem)" }}>
+                <p
+                  style={{
+                    color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
+                    fontSize: "var(--login-size-subtitle, 0.875rem)",
+                  }}
+                >
                   {subtitle}
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="login-label">{t("auth.newPassword") || "New Password"}</Label>
+                  <Label htmlFor="password" className="login-label">
+                    {t("auth.newPassword") || "New Password"}
+                  </Label>
                   <PasswordInput
                     id="password"
                     value={password}
@@ -207,13 +255,18 @@ export function ResetPasswordView() {
                     minLength={8}
                     className="login-input"
                   />
-                  <p className="text-xs" style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))" }}>
+                  <p
+                    className="text-xs"
+                    style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))" }}
+                  >
                     {t("auth.passwordMinLength") || "Must be at least 8 characters"}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="login-label">{t("auth.confirmPassword") || "Confirm Password"}</Label>
+                  <Label htmlFor="confirmPassword" className="login-label">
+                    {t("auth.confirmPassword") || "Confirm Password"}
+                  </Label>
                   <PasswordInput
                     id="confirmPassword"
                     value={confirmPassword}
@@ -248,7 +301,7 @@ export function ResetPasswordView() {
             </div>
           ) : (
             <div
-              className="border border-[var(--login-border,hsl(var(--border)))] space-y-6 text-center"
+              className="space-y-6 border border-[var(--login-border,hsl(var(--border)))] text-center"
               style={{
                 borderRadius: "var(--login-radius-card, 16px)",
                 padding: "var(--login-card-padding, 32px)",
@@ -260,11 +313,23 @@ export function ResetPasswordView() {
                 <CheckCircle className="h-6 w-6 text-emerald-500" />
               </div>
               <div className="space-y-2">
-                <h2 className="login-heading" style={{ color: "var(--login-text, hsl(var(--foreground)))", fontSize: "var(--login-size-headline, 1.25rem)" }}>
+                <h2
+                  className="login-heading"
+                  style={{
+                    color: "var(--login-text, hsl(var(--foreground)))",
+                    fontSize: "var(--login-size-headline, 1.25rem)",
+                  }}
+                >
                   {t("auth.passwordResetSuccess") || "Password Reset"}
                 </h2>
-                <p style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))", fontSize: "var(--login-size-subtitle, 0.875rem)" }}>
-                  {t("auth.passwordResetSuccessDesc") || "Your password has been reset successfully. You can now log in with your new password."}
+                <p
+                  style={{
+                    color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
+                    fontSize: "var(--login-size-subtitle, 0.875rem)",
+                  }}
+                >
+                  {t("auth.passwordResetSuccessDesc") ||
+                    "Your password has been reset successfully. You can now log in with your new password."}
                 </p>
               </div>
               <Button className="login-button w-full" onClick={() => router.push("/login")}>
@@ -273,7 +338,7 @@ export function ResetPasswordView() {
             </div>
           )}
         </div>
-        <p className="mt-12 text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50">
+        <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50 mt-12 text-[11px] font-medium">
           © {new Date().getFullYear()} {companyName}
         </p>
       </div>

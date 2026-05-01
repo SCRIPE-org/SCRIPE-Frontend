@@ -123,7 +123,7 @@ export class TenantModel {
     public readonly primaryDomain?: string,
     public readonly domainCount?: number,
     public readonly adminEmail?: string
-  ) { }
+  ) {}
 
   static fromJson(json: TenantJson): TenantModel {
     return new TenantModel(
@@ -192,7 +192,7 @@ export class TenantTreeNodeModel {
     public readonly suspensionType?: string,
     public readonly suspensionReason?: string,
     public readonly subscriptionStatus?: string
-  ) { }
+  ) {}
 
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
     return new TenantTreeNodeModel(
@@ -248,7 +248,7 @@ export class CreateTenantModel {
     public readonly promotionId?: string,
     public readonly promoCode?: string,
     public readonly skipPayment?: boolean
-  ) { }
+  ) {}
 
   toJson(): CreateTenantJson {
     return {
@@ -275,7 +275,7 @@ export class UpdateTenantModel {
     public readonly description?: string,
     public readonly isActive?: boolean,
     public readonly address?: string
-  ) { }
+  ) {}
 
   toJson(): UpdateTenantJson {
     return {

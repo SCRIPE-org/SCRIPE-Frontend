@@ -254,7 +254,7 @@ export function RichTextEditor({
 
   const getCharCount = (html: string) => {
     if (typeof document === "undefined") {
-      return html.replace(/<[^>]*>?/gm, '').length;
+      return html.replace(/<[^>]*>?/gm, "").length;
     }
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
@@ -307,7 +307,6 @@ export function RichTextEditor({
   const changeTextColor = (color: string) => {
     executeCommand("foreColor", color);
   };
-
 
   return (
     <div className={cn("rounded-md border bg-background", className)}>

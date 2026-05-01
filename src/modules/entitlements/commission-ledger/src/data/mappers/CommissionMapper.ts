@@ -1,5 +1,8 @@
 import { CommissionLedgerEntryModel, CommissionInvoiceModel } from "../models/CommissionModels";
-import { CommissionLedgerEntry, CommissionLedgerEntryData } from "../../domain/entities/CommissionLedgerEntry";
+import {
+  CommissionLedgerEntry,
+  CommissionLedgerEntryData,
+} from "../../domain/entities/CommissionLedgerEntry";
 import { CommissionInvoice, CommissionInvoiceData } from "../../domain/entities/CommissionInvoice";
 
 export class CommissionMapper {
@@ -32,4 +35,3 @@ export class CommissionMapper {
     return new CommissionInvoice(data);
   }
 }
-

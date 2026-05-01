@@ -24,13 +24,24 @@ export interface GatewayInfo {
   features: string[];
 }
 
-const GATEWAY_META: Record<string, Pick<GatewayInfo, "displayName" | "description" | "color" | "icon" | "features">> = {
+const GATEWAY_META: Record<
+  string,
+  Pick<GatewayInfo, "displayName" | "description" | "color" | "icon" | "features">
+> = {
   Stripe: {
     displayName: "Stripe",
     description: "stripeDesc",
     color: "#635bff",
     icon: "stripe",
-    features: ["recurring", "billingPortal", "multiCurrency", "webhooks", "refunds", "paymentLinks", "threeDSecure"],
+    features: [
+      "recurring",
+      "billingPortal",
+      "multiCurrency",
+      "webhooks",
+      "refunds",
+      "paymentLinks",
+      "threeDSecure",
+    ],
   },
   PayPal: {
     displayName: "PayPal",
@@ -61,12 +72,7 @@ export function usePaymentGatewaysViewModel() {
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["payment-gateways"],
     queryFn: async () => {
       return billingRepository.getGateways();
@@ -104,13 +110,13 @@ export function usePaymentGatewaysViewModel() {
   });
 
   const toggleStatusMutation = useMutation({
-    mutationFn: ({ gateway, enabled }: { gateway: string; enabled: boolean }) => 
+    mutationFn: ({ gateway, enabled }: { gateway: string; enabled: boolean }) =>
       billingRepository.toggleGatewayStatus(gateway, enabled),
     onSuccess: (res: { actionRequired?: string; message: string }) => {
       if (res.actionRequired === "config_change") {
-        showError({ 
-          title: t("billing.gateways.configRequired") || "Configuration Required", 
-          description: res.message 
+        showError({
+          title: t("billing.gateways.configRequired") || "Configuration Required",
+          description: res.message,
         });
       } else {
         success({ title: t("billing.gateways.toggleSuccess"), description: res.message });
@@ -133,7 +139,8 @@ export function usePaymentGatewaysViewModel() {
     refetch,
     testConnection: (gateway: string) => testConnectionMutation.mutate(gateway),
     isTestingConnection: testConnectionMutation.isPending,
-    toggleStatus: (gateway: string, enabled: boolean) => toggleStatusMutation.mutate({ gateway, enabled }),
+    toggleStatus: (gateway: string, enabled: boolean) =>
+      toggleStatusMutation.mutate({ gateway, enabled }),
     isTogglingStatus: toggleStatusMutation.isPending,
   };
 }

@@ -32,7 +32,7 @@ export function FeatureControl({ valueType, value, onChange }: FeatureControlPro
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-24 text-right h-8"
+        className="h-8 w-24 text-right"
         min={-1}
         placeholder="0"
       />
@@ -45,7 +45,7 @@ export function FeatureControl({ valueType, value, onChange }: FeatureControlPro
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-40 h-8"
+      className="h-8 w-40"
       placeholder="..."
     />
   );

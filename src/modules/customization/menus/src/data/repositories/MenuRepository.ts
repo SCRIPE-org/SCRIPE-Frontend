@@ -75,7 +75,9 @@ export class MenuRepository implements IMenuRepository {
     try {
       localStorage.removeItem("navigation_data");
       localStorage.removeItem("navigation_data_expiry");
-    } catch { /* SSR safety */ }
+    } catch {
+      /* SSR safety */
+    }
   }
 
   private findInTree(nodes: MenuTreeNode[], id: string): MenuTreeNode | undefined {

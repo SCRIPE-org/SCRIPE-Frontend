@@ -111,7 +111,8 @@ export const de = {
       stopImpersonateDesc: "Beendet die Impersonation.",
       transferDesc: "Überträgt die SuperAdmin-Rolle.",
       protectDesc: "Schaltet den Schutz vor Löschung um.",
-      impersonationWarning: "Ein mächtiges Feature, das vollständig im Audit-Log dokumentiert wird.",
+      impersonationWarning:
+        "Ein mächtiges Feature, das vollständig im Audit-Log dokumentiert wird.",
       queryParamsTitle: "Query-Parameter",
     },
     tenantApi: {
@@ -156,7 +157,8 @@ export const de = {
       getPermDesc: "Holt aktuelle Berechtigungen der Rolle.",
       syncScopesDesc: "Synchronisiert Berechtigungs-Scopes vom Eltern-Mandanten.",
       tenantScopedTitle: "Mandantenbezogene Rollen",
-      tenantScopedIntro: "Rollen können nur Berechtigungen nutzen, die im Tenant-Scope verfügbar sind.",
+      tenantScopedIntro:
+        "Rollen können nur Berechtigungen nutzen, die im Tenant-Scope verfügbar sind.",
       myTenantRolesDesc: "Listet verfügbare Rollen im eigenen Mandanten.",
       availablePermDesc: "Listet verfügbare Berechtigungen für Zuweisungen.",
       permissionsTitle: "Berechtigungen (Nur Lesen)",
@@ -166,42 +168,52 @@ export const de = {
       getPermByIdDesc: "Holt eine einzelne Berechtigung.",
       categoriesDesc: "Holt alle Berechtigungskategorien.",
       availableForTenantDesc: "Verfügbare Berechtigungen zur Vergabe an einen Mandanten.",
-      seededNote: "Berechtigungen entstehen automatisch durch [RequirePermission]-Attribute in der API.",
+      seededNote:
+        "Berechtigungen entstehen automatisch durch [RequirePermission]-Attribute in der API.",
     },
     userGroupsApi: {
       title: "User Groups API (Benutzergruppen)",
-      description: "Verwaltung großer Admin-Flotten via Benutzergruppen. Massenoperationen und additive Rollenzuweisungen.",
-      intro: "Steuert kollektive Berechtigungen. Änderungen an einer Gruppe wirken sich sofort auf alle Mitglieder aus.",
+      description:
+        "Verwaltung großer Admin-Flotten via Benutzergruppen. Massenoperationen und additive Rollenzuweisungen.",
+      intro:
+        "Steuert kollektive Berechtigungen. Änderungen an einer Gruppe wirken sich sofort auf alle Mitglieder aus.",
       crudTitle: "User Groups CRUD",
       listGroupsDesc: "Ruft eine paginierte Liste aller Gruppen ab.",
       myTenantGroupsDesc: "Schnellabfrage essentieller Gruppendaten (für Dropdowns).",
-      getGroupDesc: "Holt detaillierte Gruppeninformationen inkl. Mitglieder, Rollen und Einschränkungen.",
+      getGroupDesc:
+        "Holt detaillierte Gruppeninformationen inkl. Mitglieder, Rollen und Einschränkungen.",
       groupsByTenantDesc: "Filtert Gruppen direkt nach Mandanten-ID (Nur SuperAdmin).",
       createGroupDesc: "Erstellt eine neue Gruppe für einen bestimmten Mandanten.",
       createGroupMyTenantDesc: "Erstellt eine neue Gruppe für den aktiven Mandanten.",
-      updateGroupDesc: "Aktualisiert Metadaten und führt eine vollständige Synchronisation (Nuke & Pave) der Rollen durch.",
+      updateGroupDesc:
+        "Aktualisiert Metadaten und führt eine vollständige Synchronisation (Nuke & Pave) der Rollen durch.",
       deleteGroupDesc: "Führt ein Soft-Delete für eine Gruppe durch.",
       groupMembersTitle: "Gruppenmitglieder",
       groupMembersIntro: "Verwaltung der Administratoren in einer Gruppe.",
       addMembersDesc: "Fügt Admins zur Gruppe hinzu (Idempotent).",
       removeMemberDesc: "Entfernt einen Admin aus der Gruppe.",
       groupRolesRestrictionsTitle: "Gruppen-Rollen & Einschränkungen",
-      groupRolesRestrictionsIntro: "Steuert, welche Rollen und Feldeinschränkungen die Mitglieder vererbt bekommen.",
+      groupRolesRestrictionsIntro:
+        "Steuert, welche Rollen und Feldeinschränkungen die Mitglieder vererbt bekommen.",
       setGroupRolesDesc: "Ersetzt alle Rollen-IDs der Gruppe (Nuke & Pave).",
       setGroupRestrictionsDesc: "Ersetzt alle Feldeinschränkungen (Nuke & Pave).",
       bulkCascadeTitle: "Massen- & Cascade-Operationen",
-      bulkCascadeIntro: "Erlaubt das gleichzeitige Bearbeiten tausender Datensätze mit optionaler Auswirkung (Cascade) auf die Mitglieder.",
+      bulkCascadeIntro:
+        "Erlaubt das gleichzeitige Bearbeiten tausender Datensätze mit optionaler Auswirkung (Cascade) auf die Mitglieder.",
       bulkActivateDesc: "Massenaktivierung von Gruppen.",
       bulkDeactivateDesc: "Massendeaktivierung von Gruppen.",
       bulkDeleteDesc: "Massenlöschung von Gruppen.",
-      cascadeWarningNode: "Cascade-Operationen überspringen geschützte Admins (Tenant Owner) zur Sicherheit.",
+      cascadeWarningNode:
+        "Cascade-Operationen überspringen geschützte Admins (Tenant Owner) zur Sicherheit.",
     },
     webhookEmailApi: {
       title: "Webhook-, E-Mail- & Benachrichtigungs-API",
-      description: "Webhook-Abonnements, E-Mail-Versand, Message-Templates und SignalR-Benachrichtigungen.",
+      description:
+        "Webhook-Abonnements, E-Mail-Versand, Message-Templates und SignalR-Benachrichtigungen.",
       intro: "Schnittstellen für die Kommunikation nach außen und In-App-Benachrichtigungen.",
       webhooksTitle: "Webhooks",
-      webhooksIntro: "Webhooks senden HTTP POST-Anfragen mit signierten Payloads, wenn Systemereignisse eintreten.",
+      webhooksIntro:
+        "Webhooks senden HTTP POST-Anfragen mit signierten Payloads, wenn Systemereignisse eintreten.",
       listWebhooksDesc: "Listet alle Webhooks des aktuellen Mandanten auf.",
       createWebhookDesc: "Erstellt einen neuen Webhook.",
       updateWebhookDesc: "Aktualisiert Webhook-Daten.",
@@ -217,7 +229,8 @@ export const de = {
       emailStatsDesc: "Holt E-Mail-Statistiken.",
       searchRecipientsDesc: "Sucht nach E-Mail-Empfängern im System.",
       templatesTitle: "Nachrichtenvorlagen (Templates)",
-      templatesIntro: "Scriban-Engine für Variableninterpolation in E-Mails und Benachrichtigungen.",
+      templatesIntro:
+        "Scriban-Engine für Variableninterpolation in E-Mails und Benachrichtigungen.",
       listTemplatesDesc: "Listet Nachrichtenvorlagen auf.",
       getTemplateDesc: "Holt eine einzelne Vorlage.",
       createTemplateDesc: "Erstellt eine neue Vorlage.",

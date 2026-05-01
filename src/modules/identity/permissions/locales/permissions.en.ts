@@ -2,7 +2,8 @@ export const en = {
   permission: {
     title: "Permissions",
     description: "View system permissions. Permissions are pre-configured and read-only.",
-    infoTooltip: "Permissions are seeded by the system and cannot be modified. Contact a system administrator for permission changes.",
+    infoTooltip:
+      "Permissions are seeded by the system and cannot be modified. Contact a system administrator for permission changes.",
     searchPlaceholder: "Search permissions...",
     allCategories: "All Categories",
     noPermissionsFound: "No permissions found",

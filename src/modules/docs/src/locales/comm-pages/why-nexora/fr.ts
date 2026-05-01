@@ -5,26 +5,36 @@
 export const fr = {
   commercial: {
     whyNexoraOverview: {
-      description: "Un résumé exécutif définitif expliquant exactement pourquoi le choix du framework NEXORA dé-risque fondamentalement l'ensemble de votre parcours logiciel d'entreprise.",
+      description:
+        "Un résumé exécutif définitif expliquant exactement pourquoi le choix du framework NEXORA dé-risque fondamentalement l'ensemble de votre parcours logiciel d'entreprise.",
       glanceTitle: "L'Architecture en un Coup d'Œil",
       idealEnterprise: "Infrastructures d'Entreprise Établies",
-      idealEnterpriseDesc: "Migrez des mainframes existants chaotiques vers une architecture d'application moderne, strictement ordonnée et hautement évolutive.",
+      idealEnterpriseDesc:
+        "Migrez des mainframes existants chaotiques vers une architecture d'application moderne, strictement ordonnée et hautement évolutive.",
       idealForTitle: "Profils de Déploiement Stratégiques",
       idealGov: "Environnements Hautement Réglementés",
-      idealGovDesc: "Pistes d'audit strictes, ségrégation mathématique des données et infrastructure nativement capable de fonctionner sur site (on-premise).",
+      idealGovDesc:
+        "Pistes d'audit strictes, ségrégation mathématique des données et infrastructure nativement capable de fonctionner sur site (on-premise).",
       idealSaaS: "Fondateurs B2B Explosifs",
-      idealSaaSDesc: "Sautez deux ans de création d'autorisations d'utilisateurs et d'intégrations de facturation. Commencez à écrire vos fonctionnalités propriétaires dès le premier jour.",
+      idealSaaSDesc:
+        "Sautez deux ans de création d'autorisations d'utilisateurs et d'intégrations de facturation. Commencez à écrire vos fonctionnalités propriétaires dès le premier jour.",
       idealStartup: "Startups Lean à Haute Vélocité",
-      idealStartupDesc: "Atteignez le rendement d'ingénierie d'une équipe de 20 personnes avec seulement 3 développeurs full-stack.",
-      intro: "NEXORA donne aux organisations visionnaires les moyens de s'appuyer sur une base architecturale éprouvée et infiniment évolutive, garantissant des performances massives, une sécurité multi-tenant parfaite et une vitesse d'ingénierie inégalée.",
-      problemContent: "Les implémentations traditionnelles drainent un capital massif pour lutter contre l'indécision architecturale, les postures de sécurité fragiles et les modèles de mise à l'échelle déconnectés. NEXORA contourne totalement ces goulots d'étranglement.",
+      idealStartupDesc:
+        "Atteignez le rendement d'ingénierie d'une équipe de 20 personnes avec seulement 3 développeurs full-stack.",
+      intro:
+        "NEXORA donne aux organisations visionnaires les moyens de s'appuyer sur une base architecturale éprouvée et infiniment évolutive, garantissant des performances massives, une sécurité multi-tenant parfaite et une vitesse d'ingénierie inégalée.",
+      problemContent:
+        "Les implémentations traditionnelles drainent un capital massif pour lutter contre l'indécision architecturale, les postures de sécurité fragiles et les modèles de mise à l'échelle déconnectés. NEXORA contourne totalement ces goulots d'étranglement.",
       problemTitle: "La Friction des Implémentations Sur Mesure",
       savingsTitle: "Métriques d'Ingénierie Prouvables",
-      solutionContent: "Transcendez les goulots d'étranglement de développement traditionnels en tirant parti d'une fondation d'entreprise immaculée et prête pour la production. NEXORA équipe vos équipes d'ingénierie d'un backend en Clean Architecture pur, d'un frontend Next.js ultra-rapide et d'outils d'observabilité distribués prêts à l'emploi.",
+      solutionContent:
+        "Transcendez les goulots d'étranglement de développement traditionnels en tirant parti d'une fondation d'entreprise immaculée et prête pour la production. NEXORA équipe vos équipes d'ingénierie d'un backend en Clean Architecture pur, d'un frontend Next.js ultra-rapide et d'outils d'observabilité distribués prêts à l'emploi.",
       solutionTitle: "Le Fournisseur de Solutions Définitif",
-      startTip: "Action Architecturale : Ne devinez pas. Clonez le dépôt aujourd'hui, initialisez le système en 15 minutes et faites l'expérience de la clarté architecturale absolue.",
+      startTip:
+        "Action Architecturale : Ne devinez pas. Clonez le dépôt aujourd'hui, initialisez le système en 15 minutes et faites l'expérience de la clarté architecturale absolue.",
       title: "Pourquoi Choisir NEXORA ?",
-      visionContent: "Nous ne fournissons pas seulement du code ; nous sommes un partenaire actif de votre mise à l'échelle. Notre vision est d'éliminer absolument le concept de 'Dette Technique' en fournissant un framework intrinsèquement si structuré et logiquement parfait qu'il absorbe avec élégance des décennies de développement agressif de fonctionnalités.",
+      visionContent:
+        "Nous ne fournissons pas seulement du code ; nous sommes un partenaire actif de votre mise à l'échelle. Notre vision est d'éliminer absolument le concept de 'Dette Technique' en fournissant un framework intrinsèquement si structuré et logiquement parfait qu'il absorbe avec élégance des décennies de développement agressif de fonctionnalités.",
       visionTitle: "L'Horizon d'Évolutivité Infinie",
       tblCostHeader1: "Défi",
       tblCostHeader2: "Approche Traditionnelle",
@@ -94,34 +104,47 @@ export const fr = {
       tblSavingsR6C3: "Zéro correction ajoutée a posteriori",
     },
     competitiveAdvantages: {
-      architectureContent: "Nous refusons les compromis. NEXORA adhère strictement aux principes du Domain-Driven Design (DDD) et de la Clean Architecture. Contrairement aux modèles MVC plats qui s'effondrent sous l'échelle de l'entreprise, notre architecture garantit que la présentation et l'infrastructure ne fuient jamais dans votre logique métier principale.",
+      architectureContent:
+        "Nous refusons les compromis. NEXORA adhère strictement aux principes du Domain-Driven Design (DDD) et de la Clean Architecture. Contrairement aux modèles MVC plats qui s'effondrent sous l'échelle de l'entreprise, notre architecture garantit que la présentation et l'infrastructure ne fuient jamais dans votre logique métier principale.",
       architectureTitle: "Architecture Intransigeante",
       comparisonTitle: "Le Paradigme NEXORA",
-      databaseContent: "S'enfermer avec un seul fournisseur est un risque énorme. Avec NEXORA, vous pouvez migrer de manière transparente entre SQL Server, Oracle et PostgreSQL avec un simple indicateur de configuration. De plus, le commutateur Database.Mode vous permet de consolider tous les modules dans une seule base de données partagée (mode Single) ou d'isoler chaque module dans sa propre base de données (mode Multi) — sans réécrire une seule ligne de code d'accès aux données.",
+      databaseContent:
+        "S'enfermer avec un seul fournisseur est un risque énorme. Avec NEXORA, vous pouvez migrer de manière transparente entre SQL Server, Oracle et PostgreSQL avec un simple indicateur de configuration. De plus, le commutateur Database.Mode vous permet de consolider tous les modules dans une seule base de données partagée (mode Single) ou d'isoler chaque module dans sa propre base de données (mode Multi) — sans réécrire une seule ligne de code d'accès aux données.",
       databaseTitle: "Zéro Verrouillage de Base de Données (Vendor Lock-in)",
-      description: "Conçu pour les entreprises visionnaires afin de dominer leurs marchés grce à une conception intransigeante, une sécurité de niveau militaire et une évolutivité sans friction.",
-      evaluationTip: "Important : Réalisez une preuve de concept (PoC). L'essai de 30 jours de NEXORA permet à vos ingénieurs principaux de valider nos affirmations architecturales directement face à vos défis techniques les plus ardus.",
-      intro: "NEXORA est conçu pour anéantir totalement les limitations conventionnelles du développement de logiciels d'entreprise : les dépendances fournisseurs, l'entropie architecturale et les cycles de publication glaciaires. Voici comment les organisations visionnaires capitalisent leur ingénierie.",
+      description:
+        "Conçu pour les entreprises visionnaires afin de dominer leurs marchés grce à une conception intransigeante, une sécurité de niveau militaire et une évolutivité sans friction.",
+      evaluationTip:
+        "Important : Réalisez une preuve de concept (PoC). L'essai de 30 jours de NEXORA permet à vos ingénieurs principaux de valider nos affirmations architecturales directement face à vos défis techniques les plus ardus.",
+      intro:
+        "NEXORA est conçu pour anéantir totalement les limitations conventionnelles du développement de logiciels d'entreprise : les dépendances fournisseurs, l'entropie architecturale et les cycles de publication glaciaires. Voici comment les organisations visionnaires capitalisent leur ingénierie.",
       nexoraApproach: "L'Avantage NEXORA",
-      productivityContent: "Les startups comme les grandes entreprises utilisent NEXORA pour contourner 6 à 12 mois de développement de base. En fournissant une authentification prête pour la production, le multi-tenant et des journaux d'audit dès le premier jour, les équipes commencent immédiatement à fournir une valeur métier unique.",
+      productivityContent:
+        "Les startups comme les grandes entreprises utilisent NEXORA pour contourner 6 à 12 mois de développement de base. En fournissant une authentification prête pour la production, le multi-tenant et des journaux d'audit dès le premier jour, les équipes commencent immédiatement à fournir une valeur métier unique.",
       productivityTitle: "Productivité Sans Précédent",
-      securityContent: "Un modèle de sécurité de défense en profondeur à 8 couches prêt à l'emploi. Nous fournissons une isolation des locataires au niveau des lignes, une limitation de débit, une révocation JWT, un RBAC fin et des journaux d'audit immuables—des fonctionnalités qui nécessitent généralement des millions en R&D.",
+      securityContent:
+        "Un modèle de sécurité de défense en profondeur à 8 couches prêt à l'emploi. Nous fournissons une isolation des locataires au niveau des lignes, une limitation de débit, une révocation JWT, un RBAC fin et des journaux d'audit immuables—des fonctionnalités qui nécessitent généralement des millions en R&D.",
       securityTitle: "Sécurité de Niveau Militaire",
-      tenancyContent: "La plupart des systèmes SaaS de départ utilisent une isolation 'douce' où un seul bug expose les données d'un autre locataire. NEXORA propose une architecture multi-tenant stricte au niveau des lignes, basée sur des discriminateurs et profondément liée au pipeline de requêtes d'EF Core, rendant les fuites de données inter-locataires mathématiquement impossibles.",
+      tenancyContent:
+        "La plupart des systèmes SaaS de départ utilisent une isolation 'douce' où un seul bug expose les données d'un autre locataire. NEXORA propose une architecture multi-tenant stricte au niveau des lignes, basée sur des discriminateurs et profondément liée au pipeline de requêtes d'EF Core, rendant les fuites de données inter-locataires mathématiquement impossibles.",
       tenancyTitle: "Isolation Cryptographique des Locataires",
       tenantBranding: "Prêt pour la Marque Blanche (White-Label)",
-      tenantBrandingDesc: "Offrez une personnalisation profonde de la marque. Chaque locataire peut mapper des domaines personnalisés, des thèmes CSS et des surcharges de localisation de manière transparente.",
+      tenantBrandingDesc:
+        "Offrez une personnalisation profonde de la marque. Chaque locataire peut mapper des domaines personnalisés, des thèmes CSS et des surcharges de localisation de manière transparente.",
       tenantHierarchy: "Hiérarchie Infinie",
-      tenantHierarchyDesc: "Modélisez des relations B2B complexes avec des structures organisationnelles parent-enfant et des autorisations héritées.",
+      tenantHierarchyDesc:
+        "Modélisez des relations B2B complexes avec des structures organisationnelles parent-enfant et des autorisations héritées.",
       tenantIsolation: "Isolation Absolue",
-      tenantIsolationDesc: "Garantissez la conformité mondiale. Le JWT d'identité d'un utilisateur est cryptographiquement lié à son locataire, empêchant les mouvements latéraux.",
+      tenantIsolationDesc:
+        "Garantissez la conformité mondiale. Le JWT d'identité d'un utilisateur est cryptographiquement lié à son locataire, empêchant les mouvements latéraux.",
       title: "Avantages Compétitifs",
       traditionalApproach: "Le Dilemme Classique",
       compNexoraI1: "Architecture évolutive : Monolithe Modulaire → API Gateway → Microservices",
       compNexoraI2: "Base de code unique, trois modes de déploiement dynamiques",
       compNexoraI3: "Capacités des modules mathématiquement imposées à la compilation",
-      compNexoraI4: "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
-      compNexoraI5: "Infrastructure de base partagée immaculée se multipliant à travers tous les modules",
+      compNexoraI4:
+        "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
+      compNexoraI5:
+        "Infrastructure de base partagée immaculée se multipliant à travers tous les modules",
       compTradI1: "Forcé de choisir entre monolithe OU microservices dès le départ",
       compTradI2: "Réécriture complète requise pour modifier les topologies de déploiement",
       compTradI3: "Dépendances en plat de spaghettis entre des services hautement couplés",
@@ -154,17 +177,20 @@ export const fr = {
       tblProdHeader1: "Capacité",
       tblProdHeader2: "Impact Entreprise",
       tblProdR1C1: "Scaffolding CLI NEXORA",
-      tblProdR1C2: "Générez des tranches verticales complètes (Domaine → API → UI React) en moins d'une seconde",
+      tblProdR1C2:
+        "Générez des tranches verticales complètes (Domaine → API → UI React) en moins d'une seconde",
       tblProdR2C1: "Modèle SOLID View/ViewModel",
       tblProdR2C2: "Architecture UI mathématiquement cohérente sur des centaines de pages",
       tblProdR3C1: "GenericCrudView + DataTable",
-      tblProdR3C2: "Déployez des interfaces CRUD entièrement fonctionnelles, triables et paginées en ~60 lignes",
+      tblProdR3C2:
+        "Déployez des interfaces CRUD entièrement fonctionnelles, triables et paginées en ~60 lignes",
       tblProdR4C1: "Gestion standardisée des erreurs",
       tblProdR4C2: "Le modèle Result<T> élimine définitivement les blocs try/catch répétitifs",
       tblProdR5C1: "Schémas auto-générés",
       tblProdR5C2: "Évolution de l'état de la base de données avec zéro script SQL manuel",
       tblProdR6C1: "Synergie de rechargement à chaud (Hot reload)",
-      tblProdR6C2: "Observez instantanément les changements complexes full-stack pendant la compilation",
+      tblProdR6C2:
+        "Observez instantanément les changements complexes full-stack pendant la compilation",
       tblCompHeader1: "Capacité",
       tblCompHeader2: "NEXORA",
       tblCompHeader3: "Frameworks Classiques",
@@ -207,37 +233,52 @@ export const fr = {
       tblCompR9C4: "Mois 6",
     },
     targetIndustries: {
-      description: "Une plongée approfondie dans la façon dont des industries spécifiques à haute conformité exploitent NEXORA pour créer des applications sécurisées, évolutives et radicalement isolées.",
-      educationContent: "Gérez des répertoires universitaires massifs et isolez de manière stricte et hiérarchique les données PII des étudiants sur des campus distincts et des départements régionaux associés.",
+      description:
+        "Une plongée approfondie dans la façon dont des industries spécifiques à haute conformité exploitent NEXORA pour créer des applications sécurisées, évolutives et radicalement isolées.",
+      educationContent:
+        "Gérez des répertoires universitaires massifs et isolez de manière stricte et hiérarchique les données PII des étudiants sur des campus distincts et des départements régionaux associés.",
       educationTitle: "Enseignement Supérieur & EdTech",
-      financeContent: "Utilisez une ségrégation stricte des responsabilités de commande et de requête (CQRS) pour garantir que les registres financiers ne sont jamais verrouillés lors de la lecture des données, tandis que les pistes d'audit absolues satisfont à l'examen intense des organismes de réglementation.",
+      financeContent:
+        "Utilisez une ségrégation stricte des responsabilités de commande et de requête (CQRS) pour garantir que les registres financiers ne sont jamais verrouillés lors de la lecture des données, tandis que les pistes d'audit absolues satisfont à l'examen intense des organismes de réglementation.",
       financeTitle: "FinTech & Infrastructure Bancaire",
-      govContent: "Déployez rapidement sur des mainframes gouvernementaux renforcés, sur site (on-premise) et entièrement déconnectés du web public, en utilisant des limites de capacités strictes basées sur les rôles.",
+      govContent:
+        "Déployez rapidement sur des mainframes gouvernementaux renforcés, sur site (on-premise) et entièrement déconnectés du web public, en utilisant des limites de capacités strictes basées sur les rôles.",
       govTitle: "Gouvernement & Municipalités",
       healthMultiSite: "Isolation des Données Multi-Cliniques",
-      healthMultiSiteDesc: "Garantissez que les patients de la Clinique A ne peuvent physiquement pas être interrogés par les médecins de la Clinique B sans autorisation explicite traversant les limites multi-locataires.",
+      healthMultiSiteDesc:
+        "Garantissez que les patients de la Clinique A ne peuvent physiquement pas être interrogés par les médecins de la Clinique B sans autorisation explicite traversant les limites multi-locataires.",
       healthSecurity: "Infrastructure Conforme HIPAA",
-      healthSecurityDesc: "Prise en charge native du chiffrement de la base de données AES-256 au repos et TLS 1.3 strictement imposé en transit.",
-      healthcareContent: "Lorsque les violations de données signifient des responsabilités juridiques catastrophiques, les prestataires de soins de santé se tournent vers les filtres de requête globaux EF Core de NEXORA pour garantir mathématiquement que les données des patients ne soient jamais accidentellement mélangées à travers différentes installations médicales isolées.",
+      healthSecurityDesc:
+        "Prise en charge native du chiffrement de la base de données AES-256 au repos et TLS 1.3 strictement imposé en transit.",
+      healthcareContent:
+        "Lorsque les violations de données signifient des responsabilités juridiques catastrophiques, les prestataires de soins de santé se tournent vers les filtres de requête globaux EF Core de NEXORA pour garantir mathématiquement que les données des patients ne soient jamais accidentellement mélangées à travers différentes installations médicales isolées.",
       healthcareTitle: "Santé & Télémédecine",
-      intro: "NEXORA n'est pas seulement un framework d'application générique. Ses limites architecturales strictement appliquées, sa multi-location cryptographique et ses capacités d'audit médico-légales en font le choix définitif pour les environnements opérationnels hautement réglementés et à haut risque.",
+      intro:
+        "NEXORA n'est pas seulement un framework d'application générique. Ses limites architecturales strictement appliquées, sa multi-location cryptographique et ses capacités d'audit médico-légales en font le choix définitif pour les environnements opérationnels hautement réglementés et à haut risque.",
       matrixTitle: "Matrice d'Adéquation Industrielle",
       menaBuiltIn: "Localisation Native",
       menaCompetitor: "L'Alternative Cassée",
-      menaContent: "NEXORA fournit une prise en charge de l'arabe de droite à gauche (RTL) sans faille et magnifiquement formatée dès la sortie de la boîte, garantissant une adoption régionale immédiate sans piratages CSS (hacks) complexes.",
+      menaContent:
+        "NEXORA fournit une prise en charge de l'arabe de droite à gauche (RTL) sans faille et magnifiquement formatée dès la sortie de la boîte, garantissant une adoption régionale immédiate sans piratages CSS (hacks) complexes.",
       menaTitle: "Sièges Sociaux dans la Région MENA",
-      retailContent: "Gérez les pics de transactions explosifs du Black Friday avec élégance en utilisant les systèmes de messagerie résilients soutenus par RabbitMQ et des algorithmes de mise en cache distribués hautement concurrents.",
+      retailContent:
+        "Gérez les pics de transactions explosifs du Black Friday avec élégance en utilisant les systèmes de messagerie résilients soutenus par RabbitMQ et des algorithmes de mise en cache distribués hautement concurrents.",
       retailTitle: "E-Commerce d'Entreprise & Vente au Détail",
       saasAnalytics: "Télémétrie d'Application Forensique",
-      saasAnalyticsDesc: "Analysez instantanément quels locataires B2B génèrent le plus de trafic, permettant une optimisation précise du modèle de tarification.",
-      saasContent: "Le Software-as-a-Service est notre ADN principal. Lancez de nouveaux produits propriétaires en quelques semaines, et non en années, en exploitant nos modules massifs d'authentification, de facturation et de gestion organisationnelle pré-construits.",
+      saasAnalyticsDesc:
+        "Analysez instantanément quels locataires B2B génèrent le plus de trafic, permettant une optimisation précise du modèle de tarification.",
+      saasContent:
+        "Le Software-as-a-Service est notre ADN principal. Lancez de nouveaux produits propriétaires en quelques semaines, et non en années, en exploitant nos modules massifs d'authentification, de facturation et de gestion organisationnelle pré-construits.",
       saasMultiTenant: "Isolation Cryptographique Prouvable",
-      saasMultiTenantDesc: "Les clients B2B exigent la sécurité des données. Garantissez que leurs lignes sont complètement invisibles aux autres locataires via des filtres de requêtes globaux.",
+      saasMultiTenantDesc:
+        "Les clients B2B exigent la sécurité des données. Garantissez que leurs lignes sont complètement invisibles aux autres locataires via des filtres de requêtes globaux.",
       saasScaling: "Mise à l'Échelle Évolutive Sans Friction",
-      saasScalingDesc: "Commencez en tant que monolithe bon marché. Évoluez vers des microservices hautement distribués lorsque vous décrochez votre premier client Fortune 500 sans réécrire le code.",
+      saasScalingDesc:
+        "Commencez en tant que monolithe bon marché. Évoluez vers des microservices hautement distribués lorsque vous décrochez votre premier client Fortune 500 sans réécrire le code.",
       saasTitle: "SaaS B2B à Forte Croissance",
       saasWhiteLabel: "Fluidité de Marque Complète",
-      saasWhiteLabelDesc: "Permettez à vos clients d'entreprise massifs d'injecter dynamiquement leurs propres logos, leur typographie et leurs domaines de messagerie à l'échelle mondiale.",
+      saasWhiteLabelDesc:
+        "Permettez à vos clients d'entreprise massifs d'injecter dynamiquement leurs propres logos, leur typographie et leurs domaines de messagerie à l'échelle mondiale.",
       title: "Applications Industrielles Verticales",
       tblGovHeader1: "Exigence",
       tblGovHeader2: "Capacité NEXORA",
@@ -254,10 +295,13 @@ export const fr = {
       tblGovR6C1: "Isolation multi-départements",
       tblGovR6C2: "Multi-tenant hiérarchique par département",
       lstFinI1: "Piste d'audit complète pour la conformité réglementaire (SOX, PCI-DSS)",
-      lstFinI2: "Sécurité au niveau du champ pour protéger les données financières sensibles (salaire, SSN)",
+      lstFinI2:
+        "Sécurité au niveau du champ pour protéger les données financières sensibles (salaire, SSN)",
       lstFinI3: "La protection anti-rejeu empêche les soumissions de transactions en double",
-      lstFinI4: "Prise en charge de la base de données Oracle pour l'infrastructure bancaire existante",
-      lstFinI5: "Les paramètres d'ID chiffrés empêchent la falsification (tampering) des paramètres",
+      lstFinI4:
+        "Prise en charge de la base de données Oracle pour l'infrastructure bancaire existante",
+      lstFinI5:
+        "Les paramètres d'ID chiffrés empêchent la falsification (tampering) des paramètres",
       lstFinI6: "Gestion de session avec suivi des appareils et déconnexion forcée",
       compMenaI1Pos: "Système complet de mise en page RTL — et non une réflexion après coup",
       compMenaI2Pos: "Entités bilingues Arabe/Anglais (nameEn + nameAr)",
@@ -295,14 +339,19 @@ export const fr = {
       tblMatrixR7C3: "★★★★★",
     },
     roiAnalysis: {
-      caseStudyContent: "Un client d'entreprise récent a migré vers NEXORA après 18 mois de lutte contre une infrastructure personnalisée catastrophique. En 30 jours, ils ont complètement éliminé les frais généraux de leur service d'authentification, réduit de façon permanente l'OpEx d'infrastructure de 60 %, et réaffecté 4 ingénieurs seniors directement au développement agressif de fonctionnalités. Leur série B ultérieure a été obtenue en grande partie grce à l'évolutivité infinie et prouvable de leur nouvelle fondation architecturale.",
+      caseStudyContent:
+        "Un client d'entreprise récent a migré vers NEXORA après 18 mois de lutte contre une infrastructure personnalisée catastrophique. En 30 jours, ils ont complètement éliminé les frais généraux de leur service d'authentification, réduit de façon permanente l'OpEx d'infrastructure de 60 %, et réaffecté 4 ingénieurs seniors directement au développement agressif de fonctionnalités. Leur série B ultérieure a été obtenue en grande partie grce à l'évolutivité infinie et prouvable de leur nouvelle fondation architecturale.",
       caseStudyTitle: "Impact Financier Prouvé",
-      costIntro: "En achetant une licence perpétuelle, vous évitez le coût cumulatif et punitif des abonnements PaaS/SaaS qui évoluent agressivement avec votre succès.",
+      costIntro:
+        "En achetant une licence perpétuelle, vous évitez le coût cumulatif et punitif des abonnements PaaS/SaaS qui évoluent agressivement avec votre succès.",
       costTitle: "Dépenses d'Investissement Prévisibles (CapEx)",
-      description: "Une ventilation financière médico-légale comparant le Coût Total de Possession (TCO) de NEXORA par rapport à la création d'une architecture d'entreprise équivalente entièrement à partir de zéro.",
-      intro: "L'architecture d'entreprise est sans doute le risque le plus coûteux qu'un fondateur technique puisse prendre. NEXORA élimine complètement ce risque, garantissant un retour sur investissement massif et mathématiquement prouvable avant même d'écrire votre première ligne de logique métier.",
+      description:
+        "Une ventilation financière médico-légale comparant le Coût Total de Possession (TCO) de NEXORA par rapport à la création d'une architecture d'entreprise équivalente entièrement à partir de zéro.",
+      intro:
+        "L'architecture d'entreprise est sans doute le risque le plus coûteux qu'un fondateur technique puisse prendre. NEXORA élimine complètement ce risque, garantissant un retour sur investissement massif et mathématiquement prouvable avant même d'écrire votre première ligne de logique métier.",
       ongoingTitle: "Maintenance Drastiquement Réduite",
-      teamContent: "NEXORA permet à une équipe réduite de 3 ingénieurs de fournir le débit, la stabilité et l'échelle d'un département d'entreprise traditionnel de 15 personnes, maximisant ainsi l'efficacité des effectifs.",
+      teamContent:
+        "NEXORA permet à une équipe réduite de 3 ingénieurs de fournir le débit, la stabilité et l'échelle d'un département d'entreprise traditionnel de 15 personnes, maximisant ainsi l'efficacité des effectifs.",
       teamTitle: "Multiplicateur d'Effectifs d'Ingénierie",
       timeTitle: "Délai de Mise sur le Marché Accéléré",
       tip: "Astuce ROI : Réorientez des milliers d'heures d'ingénierie de l'infrastructure de base directement vers le développement de fonctionnalités exclusives et la différenciation sur le marché.",
@@ -413,20 +462,27 @@ export const fr = {
     },
     successMetrics: {
       cleanArch: "Architecture Propre Absolue",
-      cleanArchDesc: "Aucune fuite de logique de domaine. Les éléments d'interface utilisateur ne touchent jamais EF Core.",
-      description: "Une répartition quantifiable du rendement d'ingénierie, des améliorations de sécurité et des capacités de mise à l'échelle fournies immédiatement lors de l'adoption.",
+      cleanArchDesc:
+        "Aucune fuite de logique de domaine. Les éléments d'interface utilisateur ne touchent jamais EF Core.",
+      description:
+        "Une répartition quantifiable du rendement d'ingénierie, des améliorations de sécurité et des capacités de mise à l'échelle fournies immédiatement lors de l'adoption.",
       ecosystemTitle: "Avantages de l'Écosystème Intégré",
-      intro: "La véritable valeur de NEXORA n'est pas seulement le code ; c'est la vitesse. Nous fournissons les métriques d'ingénierie quantifiables nécessaires pour justifier l'adoption architecturale auprès des parties prenantes techniques.",
+      intro:
+        "La véritable valeur de NEXORA n'est pas seulement le code ; c'est la vitesse. Nous fournissons les métriques d'ingénierie quantifiables nécessaires pour justifier l'adoption architecturale auprès des parties prenantes techniques.",
       patterns: "Modèles CQRS Éprouvés au Combat",
-      patternsDesc: "La séparation des lectures et des écritures empêche les blocages (deadlocks) catastrophiques.",
-      performanceContent: "Avec la mise en cache distribuée, les projections de requêtes EF Core hautement optimisées et les WebSockets simultanés, l'API de base sert confortablement plus de 10 000 requêtes par seconde sur une infrastructure de milieu de gamme.",
+      patternsDesc:
+        "La séparation des lectures et des écritures empêche les blocages (deadlocks) catastrophiques.",
+      performanceContent:
+        "Avec la mise en cache distribuée, les projections de requêtes EF Core hautement optimisées et les WebSockets simultanés, l'API de base sert confortablement plus de 10 000 requêtes par seconde sur une infrastructure de milieu de gamme.",
       performanceTitle: "Débit Soutenu Massif",
       qualityTitle: "Qualité Système Prouvable",
       scaleTitle: "Échelle Horizontale Infinie",
       title: "Métriques de Succès de la Plateforme",
       typeSafety: "Sûreté de Typage de Bout en Bout",
-      typeSafetyDesc: "Des tables SQL aux propriétés (Props) React, l'intégrité des données est garantie à la compilation.",
-      velocityContent: "Avec des modules pré-construits, des pipelines CI/CD automatisés et une documentation Swagger immédiate, les organisations signalent régulièrement une augmentation de 400 % de la vitesse de livraison des fonctionnalités au cours de leurs premiers trimestres critiques.",
+      typeSafetyDesc:
+        "Des tables SQL aux propriétés (Props) React, l'intégrité des données est garantie à la compilation.",
+      velocityContent:
+        "Avec des modules pré-construits, des pipelines CI/CD automatisés et une documentation Swagger immédiate, les organisations signalent régulièrement une augmentation de 400 % de la vitesse de livraison des fonctionnalités au cours de leurs premiers trimestres critiques.",
       velocityTitle: "Vélocité d'Ingénierie Explosive",
       tblScaleHeader1: "Métrique",
       tblScaleHeader2: "Valeur",

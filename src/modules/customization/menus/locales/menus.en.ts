@@ -31,7 +31,8 @@ export const en = {
     addChildTitle: "Add Child Item",
     addChildDesc: "Add a child item under",
     deleteTitle: "Delete Menu Item",
-    deleteDesc: "Are you sure you want to delete \"{{name}}\"? This will also remove all child items.",
+    deleteDesc:
+      'Are you sure you want to delete "{{name}}"? This will also remove all child items.',
     addChild: "Add Child",
     createSuccess: "Menu Item Created",
     createSuccessDesc: "The menu item has been created successfully.",
@@ -70,7 +71,8 @@ export const en = {
     hiddenOverride: "This item is hidden",
     removeOverride: "Remove Override",
     removeOverrideTitle: "Remove Customization",
-    removeOverrideDesc: "Are you sure you want to remove this customization? The menu item will revert to its default settings.",
+    removeOverrideDesc:
+      "Are you sure you want to remove this customization? The menu item will revert to its default settings.",
     customizeItem: "Customize",
     customizeDesc: "Customize how this menu item appears:",
     overrideOrder: "Display Order",
@@ -103,5 +105,7 @@ export const en = {
     itemVisible: "Visible in menu",
     orderHint: "Lower numbers appear first. Leave blank for default order.",
     noActiveOverridesDesc: "No Active Overrides Desc",
+    noPermission: "No Permission",
+    noCustomizePermission: "No Customize Permission",
   },
 };

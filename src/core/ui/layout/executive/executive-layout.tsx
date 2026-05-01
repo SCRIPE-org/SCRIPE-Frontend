@@ -147,9 +147,7 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
             </Button>
             <LanguageSwitcher />
             <ThemeSwitcher />
-            {settings.showNotifications && (
-              <NotificationBell iconClassName="h-5 w-5" />
-            )}
+            {settings.showNotifications && <NotificationBell iconClassName="h-5 w-5" />}
             <div className="mx-1 h-6 w-px bg-border" />
             <UserProfileDropdown showName />
           </div>
@@ -236,7 +234,8 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
                       )}
                     >
                       {tab.children!.map((child) => {
-                        const childActive = child.href && isNavigationItemActive(child, pathname, navigation);
+                        const childActive =
+                          child.href && isNavigationItemActive(child, pathname, navigation);
                         const ChildIcon = child.icon;
                         return (
                           <button

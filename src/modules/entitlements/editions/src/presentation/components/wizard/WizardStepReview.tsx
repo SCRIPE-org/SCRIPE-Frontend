@@ -3,23 +3,42 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Check, X, ClipboardCheck } from "lucide-react";
-import type { CreateEditionRequest, UpdateEditionRequest } from "../../../domain/entities/EditionRequests";
+import type {
+  CreateEditionRequest,
+  UpdateEditionRequest,
+} from "../../../domain/entities/EditionRequests";
 
 interface WizardStepReviewProps {
   form: CreateEditionRequest | UpdateEditionRequest;
   prices?: Record<string, string>;
 }
 
-function ReviewRow({ label, value, mono }: { label: string; value: React.ReactNode; mono?: boolean }) {
+function ReviewRow({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: React.ReactNode;
+  mono?: boolean;
+}) {
   return (
-    <div className="flex items-start justify-between gap-4 px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors">
-      <span className="text-sm text-muted-foreground shrink-0">{label}</span>
-      <span className={`text-sm font-medium text-end ${mono ? "font-mono" : ""}`}>{value}</span>
+    <div className="flex items-start justify-between gap-4 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-muted/20">
+      <span className="shrink-0 text-sm text-muted-foreground">{label}</span>
+      <span className={`text-end text-sm font-medium ${mono ? "font-mono" : ""}`}>{value}</span>
     </div>
   );
 }
 
-function BoolBadge({ value, yesLabel, noLabel }: { value: boolean; yesLabel: string; noLabel: string }) {
+function BoolBadge({
+  value,
+  yesLabel,
+  noLabel,
+}: {
+  value: boolean;
+  yesLabel: string;
+  noLabel: string;
+}) {
   return (
     <Badge variant={value ? "default" : "secondary"} className="gap-1 text-xs">
       {value ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
@@ -31,7 +50,9 @@ function BoolBadge({ value, yesLabel, noLabel }: { value: boolean; yesLabel: str
 export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
   const { t } = useI18n();
 
-  const priceEntries = prices ? Object.entries(prices).filter(([, v]) => v && parseFloat(v) > 0) : [];
+  const priceEntries = prices
+    ? Object.entries(prices).filter(([, v]) => v && parseFloat(v) > 0)
+    : [];
 
   const yesLabel = t("entitlements.editions.wizard.yes") || "Yes";
   const noLabel = t("entitlements.editions.wizard.no") || "No";
@@ -54,23 +75,24 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-start gap-3 pb-4 border-b border-border">
-        <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center mt-0.5">
+      <div className="flex items-start gap-3 border-b border-border pb-4">
+        <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
           <ClipboardCheck className="h-4.5 w-4.5 text-primary" />
         </div>
         <div>
           <h3 className="text-sm font-semibold text-foreground">
             {t("entitlements.editions.wizard.reviewSection") || "Review & Confirm"}
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {t("entitlements.editions.wizard.reviewSectionDesc") || "Verify all settings before creating."}
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {t("entitlements.editions.wizard.reviewSectionDesc") ||
+              "Verify all settings before creating."}
           </p>
         </div>
       </div>
 
       {/* General */}
       <div className="border border-border">
-        <div className="bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+        <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {t("entitlements.editions.wizard.sectionGeneral") || "General"}
         </div>
         <ReviewRow
@@ -103,14 +125,14 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
 
       {/* Billing */}
       <div className="border border-border">
-        <div className="bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+        <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {t("entitlements.editions.wizard.sectionBilling") || "Billing"}
         </div>
         <ReviewRow
           label={t("entitlements.editions.wizard.billingCycles") || "Billing Cycles"}
           value={
             cyclesDisplay.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5 justify-end">
+              <div className="flex flex-wrap justify-end gap-1.5">
                 {cyclesDisplay.map((c) => (
                   <Badge key={c as string} variant="outline" className="text-xs">
                     {c}
@@ -118,7 +140,7 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
                 ))}
               </div>
             ) : (
-              <span className="text-muted-foreground italic">
+              <span className="italic text-muted-foreground">
                 {t("entitlements.editions.wizard.noneFree") || "None (Free Tier)"}
               </span>
             )
@@ -130,18 +152,30 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
         />
         <ReviewRow
           label={t("entitlements.editions.wizard.selfService") || "Self-Service"}
-          value={<BoolBadge value={form.isSelfServiceEnabled ?? true} yesLabel={yesLabel} noLabel={noLabel} />}
+          value={
+            <BoolBadge
+              value={form.isSelfServiceEnabled ?? true}
+              yesLabel={yesLabel}
+              noLabel={noLabel}
+            />
+          }
         />
         <ReviewRow
           label={t("entitlements.editions.wizard.contactSalesOnly") || "Contact Sales Only"}
-          value={<BoolBadge value={form.isContactSalesOnly ?? false} yesLabel={yesLabel} noLabel={noLabel} />}
+          value={
+            <BoolBadge
+              value={form.isContactSalesOnly ?? false}
+              yesLabel={yesLabel}
+              noLabel={noLabel}
+            />
+          }
         />
       </div>
 
       {/* Pricing */}
       {priceEntries.length > 0 && (
         <div className="border border-border">
-          <div className="bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+          <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             {t("entitlements.editions.wizard.pricing") || "Pricing Matrix"}
           </div>
           {priceEntries.map(([key, val]) => {
@@ -150,7 +184,11 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
               <ReviewRow
                 key={key}
                 label={`${currency} — ${cycle}`}
-                value={<span className="tabular-nums font-semibold text-emerald-600 dark:text-emerald-400">{val}</span>}
+                value={
+                  <span className="font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+                    {val}
+                  </span>
+                }
               />
             );
           })}

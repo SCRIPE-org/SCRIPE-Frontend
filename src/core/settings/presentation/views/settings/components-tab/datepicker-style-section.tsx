@@ -11,13 +11,50 @@ export function DatePickerStyleSection() {
   const settings = useSettings();
 
   const datePickerStyles: (StyleOption & { previewClass: string })[] = [
-    { value: "default", name: t("settings.datePickerStyle.options.default.name"), description: t("settings.datePickerStyle.options.default.description"), previewClass: "bg-background border border-border rounded-md" },
-    { value: "modern", name: t("settings.datePickerStyle.options.modern.name"), description: t("settings.datePickerStyle.options.modern.description"), previewClass: "bg-gradient-to-r from-background to-muted/20 border border-border/50 rounded-md shadow-sm" },
-    { value: "glass", name: t("settings.datePickerStyle.options.glass.name"), description: t("settings.datePickerStyle.options.glass.description"), previewClass: "bg-background/60 backdrop-blur-sm border border-white/20 rounded-md shadow-lg" },
-    { value: "outlined", name: t("settings.datePickerStyle.options.outlined.name"), description: t("settings.datePickerStyle.options.outlined.description"), previewClass: "bg-transparent border-2 border-border rounded-md" },
-    { value: "filled", name: t("settings.datePickerStyle.options.filled.name"), description: t("settings.datePickerStyle.options.filled.description"), previewClass: "bg-muted/50 border border-transparent rounded-md" },
-    { value: "minimal", name: t("settings.datePickerStyle.options.minimal.name"), description: t("settings.datePickerStyle.options.minimal.description"), previewClass: "bg-transparent border-b-2 border-border rounded-none" },
-    { value: "elegant", name: t("settings.datePickerStyle.options.elegant.name"), description: t("settings.datePickerStyle.options.elegant.description"), previewClass: "bg-gradient-to-br from-background via-background to-muted/10 border border-border/30 rounded-md shadow-sm" },
+    {
+      value: "default",
+      name: t("settings.datePickerStyle.options.default.name"),
+      description: t("settings.datePickerStyle.options.default.description"),
+      previewClass: "bg-background border border-border rounded-md",
+    },
+    {
+      value: "modern",
+      name: t("settings.datePickerStyle.options.modern.name"),
+      description: t("settings.datePickerStyle.options.modern.description"),
+      previewClass:
+        "bg-gradient-to-r from-background to-muted/20 border border-border/50 rounded-md shadow-sm",
+    },
+    {
+      value: "glass",
+      name: t("settings.datePickerStyle.options.glass.name"),
+      description: t("settings.datePickerStyle.options.glass.description"),
+      previewClass: "bg-background/60 backdrop-blur-sm border border-white/20 rounded-md shadow-lg",
+    },
+    {
+      value: "outlined",
+      name: t("settings.datePickerStyle.options.outlined.name"),
+      description: t("settings.datePickerStyle.options.outlined.description"),
+      previewClass: "bg-transparent border-2 border-border rounded-md",
+    },
+    {
+      value: "filled",
+      name: t("settings.datePickerStyle.options.filled.name"),
+      description: t("settings.datePickerStyle.options.filled.description"),
+      previewClass: "bg-muted/50 border border-transparent rounded-md",
+    },
+    {
+      value: "minimal",
+      name: t("settings.datePickerStyle.options.minimal.name"),
+      description: t("settings.datePickerStyle.options.minimal.description"),
+      previewClass: "bg-transparent border-b-2 border-border rounded-none",
+    },
+    {
+      value: "elegant",
+      name: t("settings.datePickerStyle.options.elegant.name"),
+      description: t("settings.datePickerStyle.options.elegant.description"),
+      previewClass:
+        "bg-gradient-to-br from-background via-background to-muted/10 border border-border/30 rounded-md shadow-sm",
+    },
   ];
 
   return (
@@ -30,7 +67,12 @@ export function DatePickerStyleSection() {
       gridClassName="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
       renderPreview={(option) => (
         <div className="space-y-2">
-          <div className={cn("flex h-10 w-full items-center justify-between px-3 text-xs text-muted-foreground", (option as any).previewClass)}>
+          <div
+            className={cn(
+              "flex h-10 w-full items-center justify-between px-3 text-xs text-muted-foreground",
+              (option as any).previewClass
+            )}
+          >
             <span>{t("settings.datePickerStyle.previewDate")}</span>
             <CalendarDays className="h-4 w-4" />
           </div>

@@ -11,13 +11,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@core/ui/dialog";
 import { Input } from "@core/ui/input";
-import {
-  CreditCard, ExternalLink, Copy, CheckCircle2, Clock,
-} from "lucide-react";
+import { CreditCard, ExternalLink, Copy, CheckCircle2, Clock } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
 
 /** Stripe checkout sessions expire after 24 hours by default */
@@ -35,7 +37,7 @@ function useCountdown(isActive: boolean) {
   useEffect(() => {
     if (!isActive) return;
     const start = Date.now();
-    
+
     const tick = setInterval(() => {
       const elapsed = Date.now() - start;
       const left = Math.max(0, SESSION_EXPIRY_MS - elapsed);
@@ -83,40 +85,46 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
 
         <div className="space-y-4 py-2">
           {/* Session expiry timer (L-12) */}
-          <div className={`flex items-center gap-2 rounded-lg px-3 py-2 border ${
-            countdown.isExpired
-              ? "bg-red-500/10 border-red-500/30"
-              : countdown.isUrgent
-                ? "bg-amber-500/10 border-amber-500/30"
-                : "bg-muted/50 border-border"
-          }`}>
-            <Clock className={`h-4 w-4 shrink-0 ${
+          <div
+            className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
               countdown.isExpired
-                ? "text-red-500"
+                ? "border-red-500/30 bg-red-500/10"
                 : countdown.isUrgent
-                  ? "text-amber-500"
-                  : "text-muted-foreground"
-            }`} />
-            <span className={`text-sm tabular-nums font-mono ${
-              countdown.isExpired
-                ? "text-red-600 dark:text-red-400"
-                : countdown.isUrgent
-                  ? "text-amber-600 dark:text-amber-400"
-                  : "text-muted-foreground"
-            }`}>
+                  ? "border-amber-500/30 bg-amber-500/10"
+                  : "border-border bg-muted/50"
+            }`}
+          >
+            <Clock
+              className={`h-4 w-4 shrink-0 ${
+                countdown.isExpired
+                  ? "text-red-500"
+                  : countdown.isUrgent
+                    ? "text-amber-500"
+                    : "text-muted-foreground"
+              }`}
+            />
+            <span
+              className={`font-mono text-sm tabular-nums ${
+                countdown.isExpired
+                  ? "text-red-600 dark:text-red-400"
+                  : countdown.isUrgent
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-muted-foreground"
+              }`}
+            >
               {countdown.isExpired
-                ? (t("billing.dialogs.sessionExpired") || "Session expired — generate a new link")
-                : `${t("billing.dialogs.expiresIn") || "Expires in"} ${formatPad(countdown.hours)}:${formatPad(countdown.minutes)}:${formatPad(countdown.seconds)}`
-              }
+                ? t("billing.dialogs.sessionExpired") || "Session expired — generate a new link"
+                : `${t("billing.dialogs.expiresIn") || "Expires in"} ${formatPad(countdown.hours)}:${formatPad(countdown.minutes)}:${formatPad(countdown.seconds)}`}
             </span>
           </div>
 
           {/* Email sent indicator */}
           {vm.checkoutEmailSent && (
-            <div className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/30 px-3 py-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+            <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
               <span className="text-sm text-green-700 dark:text-green-400">
-                {t("billing.dialogs.emailSent") || "Payment link has been emailed to the tenant admin."}
+                {t("billing.dialogs.emailSent") ||
+                  "Payment link has been emailed to the tenant admin."}
               </span>
             </div>
           )}
@@ -128,27 +136,28 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
                 {t("billing.dialogs.scanQrCode") || "Scan to open payment page"}
               </p>
               <div className="rounded-xl border bg-white p-3 shadow-sm">
-                <img
-                  src={vm.checkoutQrCode}
-                  alt="Payment QR Code"
-                  className="h-48 w-48"
-                />
+                <img src={vm.checkoutQrCode} alt="Payment QR Code" className="h-48 w-48" />
               </div>
             </div>
           )}
 
           {/* Payment URL */}
-          <div className="flex items-center gap-2 rounded-lg bg-muted/50 border p-3">
+          <div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
             <Input
               readOnly
               value={vm.checkoutUrl}
-              className="flex-1 text-xs bg-transparent border-0 h-auto p-0 focus-visible:ring-0"
+              className="h-auto flex-1 border-0 bg-transparent p-0 text-xs focus-visible:ring-0"
             />
           </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={handleCopyLink} className="gap-2" disabled={countdown.isExpired}>
+          <Button
+            variant="outline"
+            onClick={handleCopyLink}
+            className="gap-2"
+            disabled={countdown.isExpired}
+          >
             <Copy className="h-4 w-4" />
             {t("billing.actions.copyLink") || "Copy Link"}
           </Button>

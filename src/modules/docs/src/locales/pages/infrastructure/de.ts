@@ -15,7 +15,8 @@ export const de = {
       dashboardTitle: "Hangfire Dashboard",
       dashboardIntro: "Verfügbar unter /hangfire für SuperAdmins.",
       configTitle: "Konfiguration",
-      tenantWarning: "Hintergrundjobs laufen ohne Mandanten-Kontext. Er muss explizit gesetzt werden.",
+      tenantWarning:
+        "Hintergrundjobs laufen ohne Mandanten-Kontext. Er muss explizit gesetzt werden.",
     },
     fileStorage: {
       title: "Dateispeicher (File Storage)",
@@ -34,7 +35,8 @@ export const de = {
       architectureTitle: "Resilienz-Architektur",
       retryTitle: "Retry-Richtlinie",
       circuitBreakerTitle: "Circuit Breaker",
-      circuitBreakerIntro: "Stoppt nach 5 Fehlern für 30 Sekunden Anrufe zum ausgefallenen Service.",
+      circuitBreakerIntro:
+        "Stoppt nach 5 Fehlern für 30 Sekunden Anrufe zum ausgefallenen Service.",
       timeoutTitle: "Timeout-Richtlinie",
       usageTitle: "Nutzung im HttpClient",
       configTitle: "Konfiguration",
@@ -65,16 +67,20 @@ export const de = {
     databaseMigrations: {
       title: "Enterprise Datenbank-Migrationen",
       description: "Adaptive EF Core-Architektur für SQL Server, Oracle und PostgreSQL.",
-      intro: "Statt eines monolithischen DbContext verwendet NEXORA streng typisierte, abgeleitete DbContexts für eine saubere Trennung der ModelSnapshot-Dateien.",
+      intro:
+        "Statt eines monolithischen DbContext verwendet NEXORA streng typisierte, abgeleitete DbContexts für eine saubere Trennung der ModelSnapshot-Dateien.",
       architectureTitle: "Abgeleitete DbContext-Topologie",
-      architectureContent: "Basierend auf einem abstrakten DbContext werden anbieterspezifische abgeleitete Klassen generiert.",
+      architectureContent:
+        "Basierend auf einem abstrakten DbContext werden anbieterspezifische abgeleitete Klassen generiert.",
       diTitle: "Laufzeit-Provider-Injektion",
       diContent: "Dynamische Registrierung des korrekten Datenbankanbieters über appsettings.json.",
       cliTitle: "Generierung von Multi-Provider-Migrationen",
-      cliContent: "Die CLI generiert nahtlos parallele Migrationen für alle unterstützten Datenbanken.",
+      cliContent:
+        "Die CLI generiert nahtlos parallele Migrationen für alle unterstützten Datenbanken.",
       cliWarning: "Warnung: Bearbeiten Sie niemals die ModelSnapshot-Dateien manuell.",
       cliUpdateTitle: "Automatische Provider-Updates",
-      cliUpdateContent: "Erkennt automatisch den aktiven Provider aus den Settings beim Ausführen von Updates.",
+      cliUpdateContent:
+        "Erkennt automatisch den aktiven Provider aus den Settings beim Ausführen von Updates.",
       cliRemoveTitle: "Smart Force Removal (Rückgängig machen)",
       cliRemoveContent: "Sicheres Zurücksetzen von Migrationen für alle inaktiven Provider.",
       newProviderTitle: "Hinzufügen eines neuen Datenbankanbieters",
@@ -87,7 +93,8 @@ export const de = {
     nexoraCli: {
       title: "NEXORA CLI Tooling",
       description: "Produktivitäts-CLI mit 66 Scaffolding-Templates und automatischem Wiring.",
-      intro: "Eine node-basierte CLI für das fehlerfreie Scaffolding und Verdrahten (Wiring) von Modulen und Features.",
+      intro:
+        "Eine node-basierte CLI für das fehlerfreie Scaffolding und Verdrahten (Wiring) von Modulen und Features.",
       commandsTitle: "Kern-Befehle",
       commandsIntro: "Zwei fundamentale Befehle zum Generieren kompletter Architekturen.",
       newModuleTitle: "Modul-Scaffolding: new-module",
@@ -102,11 +109,13 @@ export const de = {
       dslIntro: "Verwendet die --properties (-p) Flag für schnelle Modell-Definition.",
       dslSyntaxInfo: "Syntax: PropertyName:Typ[:Modifier1][:Modifier2]",
       templatesTitle: "66 Immutable Templates",
-      templatesIntro: "Ersetzt das manuelle Schreiben durch Handlebars-Templates nach Clean Architecture.",
+      templatesIntro:
+        "Ersetzt das manuelle Schreiben durch Handlebars-Templates nach Clean Architecture.",
       securityTitle: "Automatisierte Security",
       securityIntro: "Die generierten Controller werden sofort mit RBAC-Attributen geschützt.",
       autoWiringTitle: "Auto-Wiring (Verdrahtung)",
-      autoWiringIntro: "Das wichtigste Feature: Die CLI trägt Klassen in DI, Routing und Docker vollautomatisch ein.",
+      autoWiringIntro:
+        "Das wichtigste Feature: Die CLI trägt Klassen in DI, Routing und Docker vollautomatisch ein.",
       wiringSln: "Aktualisierung der .sln Datei.",
       wiringProgram: "Registrierung in der Program.cs.",
       wiringSettings: "Datenbank-Verbindungen in der appsettings.json.",
@@ -128,94 +137,139 @@ export const de = {
     },
     nexoraStudio: {
       title: "NEXORA Studio",
-      description: "Visuelles Entwickler-Dashboard mit Echtzeit-Modulverwaltung, Code-Generatoren, Dev-Server-Steuerung und integriertem Terminal.",
-      intro: "NEXORA Studio ist ein visuelles Entwickler-Dashboard mit einer Echtzeit-Web-Oberfläche für Modulverwaltung, Code-Generatoren, Dev-Server-Steuerung, Datenbankoperationen, Docker-Verwaltung und mehr — alles in einem einzigen Browser-Tab.",
+      description:
+        "Visuelles Entwickler-Dashboard mit Echtzeit-Modulverwaltung, Code-Generatoren, Dev-Server-Steuerung und integriertem Terminal.",
+      intro:
+        "NEXORA Studio ist ein visuelles Entwickler-Dashboard mit einer Echtzeit-Web-Oberfläche für Modulverwaltung, Code-Generatoren, Dev-Server-Steuerung, Datenbankoperationen, Docker-Verwaltung und mehr — alles in einem einzigen Browser-Tab.",
       architectureTitle: "Studio-Architektur",
-      architectureIntro: "Das Studio besteht aus zwei Komponenten: die Engine (Express + Socket.io + SQLite, Port 4201) für API-Anfragen, Befehlsausführung und Echtzeit-Streaming. Die UI (Next.js, Port 4200) bietet 19 Seiten für alle Aspekte des Entwicklungsworkflows.",
+      architectureIntro:
+        "Das Studio besteht aus zwei Komponenten: die Engine (Express + Socket.io + SQLite, Port 4201) für API-Anfragen, Befehlsausführung und Echtzeit-Streaming. Die UI (Next.js, Port 4200) bietet 19 Seiten für alle Aspekte des Entwicklungsworkflows.",
       securityTitle: "Sicherheitsmodell",
-      securityIntro: "Defense-in-Depth-Sicherheit: Token-Authentifizierung (pro Start generiert), Befehls-Whitelist-Validierung, zentralisierte Eingabesanierung, Rate Limiting (200 Req/Min pro IP), CORS-Whitelist (nur localhost) und URL-Validierung.",
+      securityIntro:
+        "Defense-in-Depth-Sicherheit: Token-Authentifizierung (pro Start generiert), Befehls-Whitelist-Validierung, zentralisierte Eingabesanierung, Rate Limiting (200 Req/Min pro IP), CORS-Whitelist (nur localhost) und URL-Validierung.",
       featuresTitle: "Studio-Funktionen",
-      featureDashboard: "Dashboard — Gesundheitsscore, Aktivitäts-Feed, Modulstatistiken und Systemübersicht.",
-      featureModules: "Modul-Manager — Module erstellen, löschen, inspizieren und durchsuchen mit visueller UI und Echtzeit-Feedback.",
-      featureGenerators: "Code-Generatoren — Events, Spezifikationen, Validatoren, Enums, Hooks, Komponenten und Seiten über formularbasierte UI generieren.",
-      featureDevServers: "Dev-Server — Backend und Frontend mit Ein-Klick-Steuerung starten, stoppen und neustarten.",
-      featureDatabase: "Datenbank — Migrationen ausführen, Daten seeden, Migrationsstatus prüfen, Backups erstellen und Module zurücksetzen.",
-      featureDocker: "Docker — Docker Compose-Dienste verwalten, Logs anzeigen, Container-Gesundheit prüfen.",
-      featureTerminal: "Terminal — Integriertes Terminal mit Befehlshistorie, ANSI-Ausgabe-Rendering und WebSocket-Streaming.",
-      featureConfig: "Config-Editor — Umgebungsvariablen über .env, appsettings.json und nexora.config.json anzeigen und bearbeiten.",
-      featurePackages: "Paket-Manager — npm- und NuGet-Pakete für Frontend und Backend hinzufügen, entfernen und aktualisieren.",
-      featureSecurity: "Sicherheits-Tools — JWT/AES-Schlüssel generieren, Schwachstellen-Audits durchführen und Umgebungsvollständigkeit prüfen.",
+      featureDashboard:
+        "Dashboard — Gesundheitsscore, Aktivitäts-Feed, Modulstatistiken und Systemübersicht.",
+      featureModules:
+        "Modul-Manager — Module erstellen, löschen, inspizieren und durchsuchen mit visueller UI und Echtzeit-Feedback.",
+      featureGenerators:
+        "Code-Generatoren — Events, Spezifikationen, Validatoren, Enums, Hooks, Komponenten und Seiten über formularbasierte UI generieren.",
+      featureDevServers:
+        "Dev-Server — Backend und Frontend mit Ein-Klick-Steuerung starten, stoppen und neustarten.",
+      featureDatabase:
+        "Datenbank — Migrationen ausführen, Daten seeden, Migrationsstatus prüfen, Backups erstellen und Module zurücksetzen.",
+      featureDocker:
+        "Docker — Docker Compose-Dienste verwalten, Logs anzeigen, Container-Gesundheit prüfen.",
+      featureTerminal:
+        "Terminal — Integriertes Terminal mit Befehlshistorie, ANSI-Ausgabe-Rendering und WebSocket-Streaming.",
+      featureConfig:
+        "Config-Editor — Umgebungsvariablen über .env, appsettings.json und nexora.config.json anzeigen und bearbeiten.",
+      featurePackages:
+        "Paket-Manager — npm- und NuGet-Pakete für Frontend und Backend hinzufügen, entfernen und aktualisieren.",
+      featureSecurity:
+        "Sicherheits-Tools — JWT/AES-Schlüssel generieren, Schwachstellen-Audits durchführen und Umgebungsvollständigkeit prüfen.",
       cliCommandsTitle: "Studio-CLI-Befehle",
-      cliCommandsIntro: "Studio wird vollständig über die NEXORA CLI gestartet und verwaltet. Der Befehl nexora studio unterstützt Dev-Modus (--dev), Produktionsmodus, Build-only (studio build), benutzerdefinierte Ports (--port, --engine-port) und Headless-Modus (--no-browser).",
+      cliCommandsIntro:
+        "Studio wird vollständig über die NEXORA CLI gestartet und verwaltet. Der Befehl nexora studio unterstützt Dev-Modus (--dev), Produktionsmodus, Build-only (studio build), benutzerdefinierte Ports (--port, --engine-port) und Headless-Modus (--no-browser).",
     },
     healthChecks: {
       title: "Gesundheitsprüfungen & K8s-Probes",
-      description: "Enterprise-Health-Endpoints für Kubernetes Liveness-, Readiness- und Startup-Probes mit 5 individuellen Prüfungen.",
-      intro: "NEXORA bietet 5 Enterprise-Health-Endpoints, die für Kubernetes-Orchestrierung, Load-Balancer-Integration und Betriebsüberwachung konzipiert sind. Jeder Endpoint validiert spezifische Infrastrukturabhängigkeiten und liefert strukturierte JSON-Antworten.",
+      description:
+        "Enterprise-Health-Endpoints für Kubernetes Liveness-, Readiness- und Startup-Probes mit 5 individuellen Prüfungen.",
+      intro:
+        "NEXORA bietet 5 Enterprise-Health-Endpoints, die für Kubernetes-Orchestrierung, Load-Balancer-Integration und Betriebsüberwachung konzipiert sind. Jeder Endpoint validiert spezifische Infrastrukturabhängigkeiten und liefert strukturierte JSON-Antworten.",
       architectureTitle: "Health-Endpoint-Architektur",
       endpointsTitle: "Health-Endpoints",
       checksTitle: "Individuelle Gesundheitsprüfungen",
-      checksIntro: "Jede Prüfung validiert eine bestimmte Infrastrukturabhängigkeit. Prüfungen laufen parallel für minimale Latenz. Fehlgeschlagene Prüfungen liefern detaillierte Fehlerinformationen ohne sensible Verbindungszeichenfolgen preiszugeben. Der Fehlerstatus ist pro Prüfung konfigurierbar — Datenbank- und Startup-Fehler geben Unhealthy zurück, während Redis, SMTP und Storage Degraded zurückgeben.",
+      checksIntro:
+        "Jede Prüfung validiert eine bestimmte Infrastrukturabhängigkeit. Prüfungen laufen parallel für minimale Latenz. Fehlgeschlagene Prüfungen liefern detaillierte Fehlerinformationen ohne sensible Verbindungszeichenfolgen preiszugeben. Der Fehlerstatus ist pro Prüfung konfigurierbar — Datenbank- und Startup-Fehler geben Unhealthy zurück, während Redis, SMTP und Storage Degraded zurückgeben.",
       registrationTitle: "Registrierung der Gesundheitsprüfungen",
-      registrationIntro: "Gesundheitsprüfungen werden zentral in HealthCheckExtensions.cs mit expliziten Tags und Fehlerstatus registriert. Tags bestimmen, welcher Endpoint jede Prüfung einschließt.",
+      registrationIntro:
+        "Gesundheitsprüfungen werden zentral in HealthCheckExtensions.cs mit expliziten Tags und Fehlerstatus registriert. Tags bestimmen, welcher Endpoint jede Prüfung einschließt.",
       k8sTitle: "Kubernetes-Probe-Konfiguration",
-      k8sIntro: "NEXORAs Health-Endpoints korrespondieren direkt mit Kubernetes-Probe-Typen. Die Startup-Probe erlaubt bis zu 5 Minuten (30 Fehler × 10s Intervall) für die Datenbankmigration beim Erstdeployment.",
+      k8sIntro:
+        "NEXORAs Health-Endpoints korrespondieren direkt mit Kubernetes-Probe-Typen. Die Startup-Probe erlaubt bis zu 5 Minuten (30 Fehler × 10s Intervall) für die Datenbankmigration beim Erstdeployment.",
       dockerTitle: "Docker Compose Health Check",
-      dockerIntro: "Für Docker Compose Deployments konfigurieren Sie Health Checks in der Service-Definition. Verwenden Sie /health/live für grundlegende Liveness und /health/ready für Readiness. Setzen Sie start_period, um Zeit für Datenbankmigrationen zu gewähren.",
+      dockerIntro:
+        "Für Docker Compose Deployments konfigurieren Sie Health Checks in der Service-Definition. Verwenden Sie /health/live für grundlegende Liveness und /health/ready für Readiness. Setzen Sie start_period, um Zeit für Datenbankmigrationen zu gewähren.",
       responseTitle: "Antwortformat",
-      responseIntro: "NEXORA unterstützt zwei Antwortformate je nach Endpoint. Öffentliche Probe-Endpoints liefern minimales JSON. Authentifizierte Endpoints liefern detaillierte Antworten mit Dauern, Tags, Nutzdaten und Ausnahmedetails.",
+      responseIntro:
+        "NEXORA unterstützt zwei Antwortformate je nach Endpoint. Öffentliche Probe-Endpoints liefern minimales JSON. Authentifizierte Endpoints liefern detaillierte Antworten mit Dauern, Tags, Nutzdaten und Ausnahmedetails.",
       environmentsTitle: "Umgebungsspezifischer Leitfaden",
-      dockerTip: "Für IIS-Deployments: Konfigurieren Sie die Application Request Routing (ARR) Health Probe mit /health/ready als Health-Check-URL. Für Azure App Service: Konfigurieren Sie den Health Check-Pfad = /health/ready.",
+      dockerTip:
+        "Für IIS-Deployments: Konfigurieren Sie die Application Request Routing (ARR) Health Probe mit /health/ready als Health-Check-URL. Für Azure App Service: Konfigurieren Sie den Health Check-Pfad = /health/ready.",
     },
     observability: {
       title: "Observability & Monitoring",
-      description: "OpenTelemetry-Tracing, Prometheus-Metriken, Grafana-Loki-Logging und vorkonfigurierte Alarmregeln für das Produktionsmonitoring.",
-      intro: "NEXORA implementiert einen vollständigen Observability-Stack auf Basis offener Standards: OpenTelemetry für verteiltes Tracing, Prometheus für die Metrikerfassung, Grafana Loki für zentralisiertes Logging und Jaeger für die Trace-Visualisierung.",
+      description:
+        "OpenTelemetry-Tracing, Prometheus-Metriken, Grafana-Loki-Logging und vorkonfigurierte Alarmregeln für das Produktionsmonitoring.",
+      intro:
+        "NEXORA implementiert einen vollständigen Observability-Stack auf Basis offener Standards: OpenTelemetry für verteiltes Tracing, Prometheus für die Metrikerfassung, Grafana Loki für zentralisiertes Logging und Jaeger für die Trace-Visualisierung.",
       stackTitle: "Observability-Stack-Architektur",
       tracingTitle: "Verteiltes Tracing (OpenTelemetry)",
-      tracingIntro: "Das TracingBehavior erstellt einen OpenTelemetry-Span für jeden Command- und Query-Handler mit automatischer Modulerkennung, Anfragetypidentifikation und Dauermessung.",
+      tracingIntro:
+        "Das TracingBehavior erstellt einen OpenTelemetry-Span für jeden Command- und Query-Handler mit automatischer Modulerkennung, Anfragetypidentifikation und Dauermessung.",
       prometheusTitle: "Prometheus-Metriken",
-      prometheusIntro: "Der /metrics-Endpoint stellt OpenTelemetry-Metriken im Prometheus-Textformat bereit. Prometheus scrapt diesen Endpoint alle 15 Sekunden.",
+      prometheusIntro:
+        "Der /metrics-Endpoint stellt OpenTelemetry-Metriken im Prometheus-Textformat bereit. Prometheus scrapt diesen Endpoint alle 15 Sekunden.",
       loggingTitle: "Zentralisiertes Logging (Serilog + Loki)",
-      loggingIntro: "Serilog reichert jeden Logeintrag mit Maschinenname, Umgebung, Korrelations-ID, Mandanten-ID und Modul-Tag an. Bei konfiguriertem Loki werden Logs in Echtzeit gepusht.",
+      loggingIntro:
+        "Serilog reichert jeden Logeintrag mit Maschinenname, Umgebung, Korrelations-ID, Mandanten-ID und Modul-Tag an. Bei konfiguriertem Loki werden Logs in Echtzeit gepusht.",
       alertsTitle: "Alarmregeln",
-      alertsIntro: "Vorkonfigurierte Prometheus-Alarmregeln erkennen kritische und warnende Zustände. Kritische Alarme feuern bei hohen Fehlerraten, Datenbankausfällen und extremer Latenz.",
+      alertsIntro:
+        "Vorkonfigurierte Prometheus-Alarmregeln erkennen kritische und warnende Zustände. Kritische Alarme feuern bei hohen Fehlerraten, Datenbankausfällen und extremer Latenz.",
       monitoringStackTitle: "Docker-Monitoring-Stack",
-      monitoringStackIntro: "Eine vorgefertigte Docker-Compose-Datei startet den kompletten Monitoring-Stack mit automatisch bereitgestellten Datenquellen, Dashboards und Alarmregeln.",
+      monitoringStackIntro:
+        "Eine vorgefertigte Docker-Compose-Datei startet den kompletten Monitoring-Stack mit automatisch bereitgestellten Datenquellen, Dashboards und Alarmregeln.",
       configTitle: "Observability-Konfiguration",
-      productionWarning: "In der Produktion: TraceSampleRatio auf 0.1 setzen, Standard-Grafana-Passwort ändern, /metrics-Zugriff über Reverse-Proxy IP-Whitelist beschränken.",
+      productionWarning:
+        "In der Produktion: TraceSampleRatio auf 0.1 setzen, Standard-Grafana-Passwort ändern, /metrics-Zugriff über Reverse-Proxy IP-Whitelist beschränken.",
     },
     auditTrail: {
       title: "Enterprise Audit Trail",
-      description: "Vollständiges Audit-Logging mit automatischer Modulerkennung, Korrelationsverfolgung, Echtzeit-SignalR-Broadcasting und 45+ Ereignistypen.",
-      intro: "NEXORAs Enterprise Audit Trail erfasst jede bedeutende Aktion auf der Plattform — von Authentifizierungsereignissen über Entitätsmutationen bis hin zu Berechtigungsänderungen und Sicherheitsvorfällen.",
+      description:
+        "Vollständiges Audit-Logging mit automatischer Modulerkennung, Korrelationsverfolgung, Echtzeit-SignalR-Broadcasting und 45+ Ereignistypen.",
+      intro:
+        "NEXORAs Enterprise Audit Trail erfasst jede bedeutende Aktion auf der Plattform — von Authentifizierungsereignissen über Entitätsmutationen bis hin zu Berechtigungsänderungen und Sicherheitsvorfällen.",
       architectureTitle: "Audit-Trail-Architektur",
       entityTitle: "AuditLog-Entitätsschema",
-      entityIntro: "Die AuditLog-Entität erfasst umfassenden Kontext für jedes auditierbare Ereignis. Alte und neue Werte werden als JSON-Snapshots gespeichert.",
+      entityIntro:
+        "Die AuditLog-Entität erfasst umfassenden Kontext für jedes auditierbare Ereignis. Alte und neue Werte werden als JSON-Snapshots gespeichert.",
       moduleDetectionTitle: "Automatische Modulerkennung",
-      moduleDetectionIntro: "Der AuditService bestimmt automatisch, welches Modul jedes Audit-Ereignis erzeugt hat, durch Analyse des API-Endpoint-Pfads oder Entitätstypnamens.",
+      moduleDetectionIntro:
+        "Der AuditService bestimmt automatisch, welches Modul jedes Audit-Ereignis erzeugt hat, durch Analyse des API-Endpoint-Pfads oder Entitätstypnamens.",
       eventTypesTitle: "Audit-Ereignistypen (45+)",
       realtimeTitle: "Echtzeit-Broadcasting",
-      realtimeIntro: "Audit-Ereignisse (ausgenommen routinemäßige HTTP-Request-Logs) werden über SignalR an verbundene Clients gesendet. Ereignisse sind mandantenbezogen — Mandanten-Admins sehen nur ihre eigenen Ereignisse über mandantenspezifische Gruppen.",
+      realtimeIntro:
+        "Audit-Ereignisse (ausgenommen routinemäßige HTTP-Request-Logs) werden über SignalR an verbundene Clients gesendet. Ereignisse sind mandantenbezogen — Mandanten-Admins sehen nur ihre eigenen Ereignisse über mandantenspezifische Gruppen.",
       queryTitle: "Audit-Log-Abfrage-API",
-      queryIntro: "Der Audit-Log-Abfrage-Endpoint unterstützt umfassende Filterung mit 12 Parametern. Alle Filter sind optional und kombinierbar. Ergebnisse sind paginiert (Standard: 20 Einträge, Maximum: 100) und nach Zeitstempel absteigend sortiert.",
-      queryTip: "Profi-Tipp: Verwenden Sie CorrelationId, um den vollständigen Lebenszyklus einer einzelnen HTTP-Anfrage über alle Audit-Einträge hinweg zu verfolgen.",
+      queryIntro:
+        "Der Audit-Log-Abfrage-Endpoint unterstützt umfassende Filterung mit 12 Parametern. Alle Filter sind optional und kombinierbar. Ergebnisse sind paginiert (Standard: 20 Einträge, Maximum: 100) und nach Zeitstempel absteigend sortiert.",
+      queryTip:
+        "Profi-Tipp: Verwenden Sie CorrelationId, um den vollständigen Lebenszyklus einer einzelnen HTTP-Anfrage über alle Audit-Einträge hinweg zu verfolgen.",
     },
     loadTesting: {
       title: "Lasttests & Backup",
-      description: "k6-Performance-Testsuiten mit SLA-Schwellenwerten, CI/CD-Integration und Multi-Provider-Backup-Strategie.",
-      intro: "NEXORA enthält k6-Lasttestskripte zur Validierung von Performance-SLAs sowie eine umfassende Backup- und Disaster-Recovery-Strategie.",
+      description:
+        "k6-Performance-Testsuiten mit SLA-Schwellenwerten, CI/CD-Integration und Multi-Provider-Backup-Strategie.",
+      intro:
+        "NEXORA enthält k6-Lasttestskripte zur Validierung von Performance-SLAs sowie eine umfassende Backup- und Disaster-Recovery-Strategie.",
       overviewTitle: "k6-Testsuiten",
-      overviewIntro: "Zwei vorgefertigte k6-Testsuiten decken die kritischen Benutzerreisen ab: Authentifizierungsabläufe und CRUD-Operationen.",
+      overviewIntro:
+        "Zwei vorgefertigte k6-Testsuiten decken die kritischen Benutzerreisen ab: Authentifizierungsabläufe und CRUD-Operationen.",
       thresholdsTitle: "SLA-Schwellenwerte",
       authFlowTitle: "Auth-Flow-Testskript",
-      authFlowIntro: "Der auth-flow.js Test simuliert realistische Benutzerauthentifizierungsmuster: Login, Zugriff auf geschützte Endpoints mit JWT-Token und Health-Check-Verifizierung. Benutzerdefinierte Metriken (nexora_login_duration, nexora_login_fail_rate) verfolgen auth-spezifische SLAs.",
+      authFlowIntro:
+        "Der auth-flow.js Test simuliert realistische Benutzerauthentifizierungsmuster: Login, Zugriff auf geschützte Endpoints mit JWT-Token und Health-Check-Verifizierung. Benutzerdefinierte Metriken (nexora_login_duration, nexora_login_fail_rate) verfolgen auth-spezifische SLAs.",
       runningTitle: "Lasttests ausführen",
       cicdTitle: "CI/CD-Integration",
-      cicdIntro: "k6 integriert sich in GitHub Actions, GitLab CI und Azure Pipelines. Tests laufen gegen eine containerisierte Backend-Instanz mit Health-Readiness-Warten vor der Ausführung. Die Pipeline schlägt automatisch fehl, wenn ein SLA-Schwellenwert überschritten wird.",
+      cicdIntro:
+        "k6 integriert sich in GitHub Actions, GitLab CI und Azure Pipelines. Tests laufen gegen eine containerisierte Backend-Instanz mit Health-Readiness-Warten vor der Ausführung. Die Pipeline schlägt automatisch fehl, wenn ein SLA-Schwellenwert überschritten wird.",
       backupTitle: "Backup & Disaster Recovery",
-      backupIntro: "NEXORA unterstützt Multi-Provider-Backup-Strategien mit spezifischen Werkzeugen und Frequenzen für jede Datenbank-Engine.",
-      drWarning: "Kritisch: Testen Sie Ihre Disaster-Recovery-Prozeduren vierteljährlich. Ein Backup, das nie wiederhergestellt wurde, ist kein Backup — es ist eine Hoffnung.",
+      backupIntro:
+        "NEXORA unterstützt Multi-Provider-Backup-Strategien mit spezifischen Werkzeugen und Frequenzen für jede Datenbank-Engine.",
+      drWarning:
+        "Kritisch: Testen Sie Ihre Disaster-Recovery-Prozeduren vierteljährlich. Ein Backup, das nie wiederhergestellt wurde, ist kein Backup — es ist eine Hoffnung.",
     },
   },
 };

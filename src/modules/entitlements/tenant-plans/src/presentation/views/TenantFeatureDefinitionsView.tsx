@@ -32,13 +32,19 @@ export function TenantFeatureDefinitionsView() {
   }, [router]);
 
   // Navigate to the dedicated edit page
-  const handleEditClick = useCallback((item: TenantFeatureDefinition) => {
-    router.push(`/entitlements/tenant-feature-definitions/${item.id}/edit`);
-  }, [router]);
+  const handleEditClick = useCallback(
+    (item: TenantFeatureDefinition) => {
+      router.push(`/entitlements/tenant-feature-definitions/${item.id}/edit`);
+    },
+    [router]
+  );
 
-  const handleViewClick = useCallback((item: TenantFeatureDefinition) => {
-    router.push(`/entitlements/tenant-feature-definitions/${item.id}`);
-  }, [router]);
+  const handleViewClick = useCallback(
+    (item: TenantFeatureDefinition) => {
+      router.push(`/entitlements/tenant-feature-definitions/${item.id}`);
+    },
+    [router]
+  );
 
   const config: CrudConfig<TenantFeatureDefinition> = useMemo(
     () => ({
@@ -47,7 +53,7 @@ export function TenantFeatureDefinitionsView() {
       resource: "tenant_feature_definitions",
       columns,
       customHeaderContent: (
-        <Badge variant="outline" className="text-xs w-fit">
+        <Badge variant="outline" className="w-fit text-xs">
           {t("entitlements.featureDefinitions.tier2Badge") || "Tier 2"}
         </Badge>
       ),

@@ -2,44 +2,63 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "frontend.formValidation.intro" },
+  { type: "paragraph", contentKey: "frontend.formValidation.intro" },
 
-      // ─── Validation Architecture ──────────────────────────────
+  // ─── Validation Architecture ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Validation Architecture (Frontend + Backend)",
+    direction: "vertical",
+    nodes: [
+      { id: "frontend", label: "Frontend Validation", type: "primary" },
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.formValidation.architectureTitle", id: "architecture",
+        id: "zod",
+        label: "Zod Schemas",
+        type: "info",
+        description: "Type-safe schema definitions",
       },
       {
-            type: "flowchart",
-            title: "Validation Architecture (Frontend + Backend)",
-            direction: "vertical",
-            nodes: [
-                  { id: "frontend", label: "Frontend Validation", type: "primary" },
-                  { id: "zod", label: "Zod Schemas", type: "info", description: "Type-safe schema definitions" },
-                  { id: "rhf", label: "React Hook Form", type: "success", description: "Form state + zodResolver" },
-                  { id: "backend", label: "Backend Validation", type: "warning" },
-                  { id: "fluent", label: "FluentValidation", type: "danger", description: "Server-side validators" },
-                  { id: "pipeline", label: "ValidationBehavior (MediatR)", type: "danger" },
-            ],
-            connections: [
-                  { from: "frontend", to: "zod" },
-                  { from: "zod", to: "rhf", label: "zodResolver" },
-                  { from: "rhf", to: "backend", label: "API call" },
-                  { from: "backend", to: "fluent" },
-                  { from: "fluent", to: "pipeline" },
-            ],
+        id: "rhf",
+        label: "React Hook Form",
+        type: "success",
+        description: "Form state + zodResolver",
       },
+      { id: "backend", label: "Backend Validation", type: "warning" },
+      {
+        id: "fluent",
+        label: "FluentValidation",
+        type: "danger",
+        description: "Server-side validators",
+      },
+      { id: "pipeline", label: "ValidationBehavior (MediatR)", type: "danger" },
+    ],
+    connections: [
+      { from: "frontend", to: "zod" },
+      { from: "zod", to: "rhf", label: "zodResolver" },
+      { from: "rhf", to: "backend", label: "API call" },
+      { from: "backend", to: "fluent" },
+      { from: "fluent", to: "pipeline" },
+    ],
+  },
 
-      // ─── Zod Schemas ──────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.formValidation.zodTitle", id: "zod-schemas",
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Domain Entity Schema — Admin",
-            code: `import { z } from 'zod';
+  // ─── Zod Schemas ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.zodTitle",
+    id: "zod-schemas",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Domain Entity Schema — Admin",
+    code: `import { z } from 'zod';
 
 // Domain entity schema (in domain/entities/)
 export const AdminSchema = z.object({
@@ -79,18 +98,20 @@ export const CreateAdminSchema = z.object({
 });
 
 export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
-      },
+  },
 
-      // ─── React Hook Form Integration ──────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.formValidation.rhfTitle", id: "react-hook-form",
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Form ViewModel with zodResolver",
-            code: `import { useForm } from 'react-hook-form';
+  // ─── React Hook Form Integration ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.rhfTitle",
+    id: "react-hook-form",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Form ViewModel with zodResolver",
+    code: `import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export function useCreateAdminViewModel() {
@@ -132,23 +153,25 @@ export function useCreateAdminViewModel() {
     isSubmitting: createMutation.isPending,
   };
 }`,
-            highlightLines: [5, 6, 27, 28, 29, 30, 31, 32],
-      },
+    highlightLines: [5, 6, 27, 28, 29, 30, 31, 32],
+  },
 
-      // ─── Server Error Mapping ─────────────────────────────────
+  // ─── Server Error Mapping ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.serverErrorTitle",
+    id: "server-errors",
+  },
+  { type: "paragraph", contentKey: "frontend.formValidation.serverErrorIntro" },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.formValidation.serverErrorTitle", id: "server-errors",
-      },
-      { type: "paragraph", contentKey: "frontend.formValidation.serverErrorIntro" },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "Backend Validator",
-                        language: "csharp",
-                        filename: "CreateAdminValidator.cs — FluentValidation",
-                        code: `public class CreateAdminCommandValidator
+        label: "Backend Validator",
+        language: "csharp",
+        filename: "CreateAdminValidator.cs — FluentValidation",
+        code: `public class CreateAdminCommandValidator
     : AbstractValidator<CreateAdminCommand>
 {
     public CreateAdminCommandValidator(IAdminRepository repo)
@@ -170,12 +193,12 @@ export function useCreateAdminViewModel() {
             .NotEmpty().Length(2, 50);
     }
 }`,
-                  },
-                  {
-                        label: "Frontend Error Mapping",
-                        language: "typescript",
-                        filename: "Error Response → form.setError()",
-                        code: `// Backend returns:
+      },
+      {
+        label: "Frontend Error Mapping",
+        language: "typescript",
+        filename: "Error Response → form.setError()",
+        code: `// Backend returns:
 {
   "type": "ValidationError",
   "errors": [
@@ -193,41 +216,43 @@ error.errors.forEach(e => {
     message: e.errorMessage,
   });
 });`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── Validation Rules Reference ───────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.formValidation.rulesTitle", id: "rules-reference",
-      },
-      {
-            type: "table",
-            headers: ["Rule", "Zod (Frontend)", "FluentValidation (Backend)"],
-            rows: [
-                  ["Required", "z.string().min(1)", ".NotEmpty()"],
-                  ["Email", "z.string().email()", ".EmailAddress()"],
-                  ["Min length", "z.string().min(n)", ".MinimumLength(n)"],
-                  ["Max length", "z.string().max(n)", ".MaximumLength(n)"],
-                  ["Regex", "z.string().regex(r)", ".Matches(r)"],
-                  ["UUID", "z.string().uuid()", "Custom validator"],
-                  ["Number range", "z.number().min(n).max(m)", ".InclusiveBetween(n, m)"],
-                  ["Enum", "z.enum([...])", ".IsInEnum()"],
-                  ["Custom", "z.refine(fn)", ".Must(fn) / .MustAsync(fn)"],
-                  ["Cross-field", "z.refine() on parent", ".Must() with context"],
-                  ["Unique (async)", "Custom hook", ".MustAsync() with repo query"],
-            ],
-      },
+  // ─── Validation Rules Reference ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.rulesTitle",
+    id: "rules-reference",
+  },
+  {
+    type: "table",
+    headers: ["Rule", "Zod (Frontend)", "FluentValidation (Backend)"],
+    rows: [
+      ["Required", "z.string().min(1)", ".NotEmpty()"],
+      ["Email", "z.string().email()", ".EmailAddress()"],
+      ["Min length", "z.string().min(n)", ".MinimumLength(n)"],
+      ["Max length", "z.string().max(n)", ".MaximumLength(n)"],
+      ["Regex", "z.string().regex(r)", ".Matches(r)"],
+      ["UUID", "z.string().uuid()", "Custom validator"],
+      ["Number range", "z.number().min(n).max(m)", ".InclusiveBetween(n, m)"],
+      ["Enum", "z.enum([...])", ".IsInEnum()"],
+      ["Custom", "z.refine(fn)", ".Must(fn) / .MustAsync(fn)"],
+      ["Cross-field", "z.refine() on parent", ".Must() with context"],
+      ["Unique (async)", "Custom hook", ".MustAsync() with repo query"],
+    ],
+  },
 ];
 
 registerPage({
-      slug: "frontend/form-validation",
-      titleKey: "frontend.formValidation.title",
-      descriptionKey: "frontend.formValidation.description",
-      category: "frontend",
-      order: 5,
-      sections,
-      relatedSlugs: ["frontend/crud-system", "architecture/cqrs-pipeline", "frontend/state-management"],
-      lastUpdated: "2026-02-20",
+  slug: "frontend/form-validation",
+  titleKey: "frontend.formValidation.title",
+  descriptionKey: "frontend.formValidation.description",
+  category: "frontend",
+  order: 5,
+  sections,
+  relatedSlugs: ["frontend/crud-system", "architecture/cqrs-pipeline", "frontend/state-management"],
+  lastUpdated: "2026-02-20",
 });

@@ -1,7 +1,11 @@
 /**
  * Stripe Connect Repository — wraps service + mapper → returns domain entities.
  */
-import type { IConnectRepository, PagedResult, EligibleTenant } from "../../domain/interfaces/IConnectRepository";
+import type {
+  IConnectRepository,
+  PagedResult,
+  EligibleTenant,
+} from "../../domain/interfaces/IConnectRepository";
 import type { IConnectService } from "../../domain/interfaces/IConnectService";
 import { ConnectMapper } from "../mappers/ConnectMapper";
 import type {
@@ -36,7 +40,9 @@ export class ConnectRepository implements IConnectRepository {
     };
   }
 
-  async createAccount(tenantId: string): Promise<{ accountId: string; onboardingUrl: string; status: string }> {
+  async createAccount(
+    tenantId: string
+  ): Promise<{ accountId: string; onboardingUrl: string; status: string }> {
     const result = await this.service.createAccount(tenantId);
     return {
       accountId: result.accountId,

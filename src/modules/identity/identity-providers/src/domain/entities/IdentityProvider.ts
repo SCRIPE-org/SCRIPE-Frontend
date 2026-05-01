@@ -9,210 +9,292 @@
 // ─── Identity Provider Data ─────────────────────────────────────
 
 export interface IdentityProviderData {
-      id: string;
-      name: string;
-      slug: string;
-      protocol: string;
-      tenantId: string | null;
-      authority: string | null;
-      authorizationEndpoint: string | null;
-      tokenEndpoint: string | null;
-      userInformationEndpoint: string | null;
-      clientId: string | null;
-      hasClientSecret: boolean;
-      scopes: string | null;
-      redirectUri: string | null;
-      samlIdpEntityId: string | null;
-      samlSsoUrl: string | null;
-      samlCertificate: string | null;
-      claimMappingJson: string | null;
-      enabledForAdmins: boolean;
-      enabledForUsers: boolean;
-      iconUrl: string | null;
-      buttonColor: string | null;
-      buttonLabel: string | null;
-      displayOrder: number;
-      isActive: boolean;
-      createdAt: string;
-      modifiedAt: string | null;
+  id: string;
+  name: string;
+  slug: string;
+  protocol: string;
+  tenantId: string | null;
+  authority: string | null;
+  authorizationEndpoint: string | null;
+  tokenEndpoint: string | null;
+  userInformationEndpoint: string | null;
+  clientId: string | null;
+  hasClientSecret: boolean;
+  scopes: string | null;
+  redirectUri: string | null;
+  samlIdpEntityId: string | null;
+  samlSsoUrl: string | null;
+  samlCertificate: string | null;
+  claimMappingJson: string | null;
+  enabledForAdmins: boolean;
+  enabledForUsers: boolean;
+  iconUrl: string | null;
+  buttonColor: string | null;
+  buttonLabel: string | null;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt: string;
+  modifiedAt: string | null;
 }
 
 /**
  * Identity Provider Entity
  */
 export class IdentityProvider {
-      constructor(private readonly data: IdentityProviderData) { }
+  constructor(private readonly data: IdentityProviderData) {}
 
-      get id(): string { return this.data.id; }
-      get name(): string { return this.data.name; }
-      get slug(): string { return this.data.slug; }
-      get protocol(): string { return this.data.protocol; }
-      get tenantId(): string | null { return this.data.tenantId; }
-      get authority(): string | null { return this.data.authority; }
-      get authorizationEndpoint(): string | null { return this.data.authorizationEndpoint; }
-      get tokenEndpoint(): string | null { return this.data.tokenEndpoint; }
-      get userInformationEndpoint(): string | null { return this.data.userInformationEndpoint; }
-      get clientId(): string | null { return this.data.clientId; }
-      get hasClientSecret(): boolean { return this.data.hasClientSecret; }
-      get scopes(): string | null { return this.data.scopes; }
-      get redirectUri(): string | null { return this.data.redirectUri; }
-      get samlIdpEntityId(): string | null { return this.data.samlIdpEntityId; }
-      get samlSsoUrl(): string | null { return this.data.samlSsoUrl; }
-      get samlCertificate(): string | null { return this.data.samlCertificate; }
-      get claimMappingJson(): string | null { return this.data.claimMappingJson; }
-      get enabledForAdmins(): boolean { return this.data.enabledForAdmins; }
-      get enabledForUsers(): boolean { return this.data.enabledForUsers; }
-      get iconUrl(): string | null { return this.data.iconUrl; }
-      get buttonColor(): string | null { return this.data.buttonColor; }
-      get buttonLabel(): string | null { return this.data.buttonLabel; }
-      get displayOrder(): number { return this.data.displayOrder; }
-      get isActive(): boolean { return this.data.isActive; }
-      get createdAt(): string { return this.data.createdAt; }
-      get modifiedAt(): string | null { return this.data.modifiedAt; }
+  get id(): string {
+    return this.data.id;
+  }
+  get name(): string {
+    return this.data.name;
+  }
+  get slug(): string {
+    return this.data.slug;
+  }
+  get protocol(): string {
+    return this.data.protocol;
+  }
+  get tenantId(): string | null {
+    return this.data.tenantId;
+  }
+  get authority(): string | null {
+    return this.data.authority;
+  }
+  get authorizationEndpoint(): string | null {
+    return this.data.authorizationEndpoint;
+  }
+  get tokenEndpoint(): string | null {
+    return this.data.tokenEndpoint;
+  }
+  get userInformationEndpoint(): string | null {
+    return this.data.userInformationEndpoint;
+  }
+  get clientId(): string | null {
+    return this.data.clientId;
+  }
+  get hasClientSecret(): boolean {
+    return this.data.hasClientSecret;
+  }
+  get scopes(): string | null {
+    return this.data.scopes;
+  }
+  get redirectUri(): string | null {
+    return this.data.redirectUri;
+  }
+  get samlIdpEntityId(): string | null {
+    return this.data.samlIdpEntityId;
+  }
+  get samlSsoUrl(): string | null {
+    return this.data.samlSsoUrl;
+  }
+  get samlCertificate(): string | null {
+    return this.data.samlCertificate;
+  }
+  get claimMappingJson(): string | null {
+    return this.data.claimMappingJson;
+  }
+  get enabledForAdmins(): boolean {
+    return this.data.enabledForAdmins;
+  }
+  get enabledForUsers(): boolean {
+    return this.data.enabledForUsers;
+  }
+  get iconUrl(): string | null {
+    return this.data.iconUrl;
+  }
+  get buttonColor(): string | null {
+    return this.data.buttonColor;
+  }
+  get buttonLabel(): string | null {
+    return this.data.buttonLabel;
+  }
+  get displayOrder(): number {
+    return this.data.displayOrder;
+  }
+  get isActive(): boolean {
+    return this.data.isActive;
+  }
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
+  get modifiedAt(): string | null {
+    return this.data.modifiedAt;
+  }
 
-      // ===== Domain Logic =====
+  // ===== Domain Logic =====
 
-      /** Protocol display label */
-      get protocolLabel(): string {
-            switch (this.protocol) {
-                  case 'oidc': return 'OpenID Connect';
-                  case 'oauth2': return 'OAuth 2.0';
-                  case 'saml': return 'SAML';
-                  default: return this.protocol.toUpperCase();
-            }
-      }
+  /** Protocol display label */
+  get protocolLabel(): string {
+    switch (this.protocol) {
+      case "oidc":
+        return "OpenID Connect";
+      case "oauth2":
+        return "OAuth 2.0";
+      case "saml":
+        return "SAML";
+      default:
+        return this.protocol.toUpperCase();
+    }
+  }
 
-      /** Scope description */
-      get scopeLabel(): string {
-            const scopes: string[] = [];
-            if (this.enabledForAdmins) scopes.push('Admin');
-            if (this.enabledForUsers) scopes.push('User');
-            return scopes.length > 0 ? scopes.join(' & ') : 'None';
-      }
+  /** Scope description */
+  get scopeLabel(): string {
+    const scopes: string[] = [];
+    if (this.enabledForAdmins) scopes.push("Admin");
+    if (this.enabledForUsers) scopes.push("User");
+    return scopes.length > 0 ? scopes.join(" & ") : "None";
+  }
 
-      /** Whether this is a system-wide (built-in) provider */
-      get isSystemWide(): boolean {
-            return this.tenantId === null;
-      }
+  /** Whether this is a system-wide (built-in) provider */
+  get isSystemWide(): boolean {
+    return this.tenantId === null;
+  }
 }
 
 // ─── Identity Provider List Item ────────────────────────────────
 
 export interface IdentityProviderListItemData {
-      id: string;
-      name: string;
-      slug: string;
-      protocol: string;
-      enabledForAdmins: boolean;
-      enabledForUsers: boolean;
-      isActive: boolean;
-      displayOrder: number;
-      iconUrl: string | null;
-      buttonColor: string | null;
-      createdAt: string;
+  id: string;
+  name: string;
+  slug: string;
+  protocol: string;
+  enabledForAdmins: boolean;
+  enabledForUsers: boolean;
+  isActive: boolean;
+  displayOrder: number;
+  iconUrl: string | null;
+  buttonColor: string | null;
+  createdAt: string;
 }
 
 /**
  * Identity Provider List Item Entity
  */
 export class IdentityProviderListItem {
-      constructor(private readonly data: IdentityProviderListItemData) { }
+  constructor(private readonly data: IdentityProviderListItemData) {}
 
-      get id(): string { return this.data.id; }
-      get name(): string { return this.data.name; }
-      get slug(): string { return this.data.slug; }
-      get protocol(): string { return this.data.protocol; }
-      get enabledForAdmins(): boolean { return this.data.enabledForAdmins; }
-      get enabledForUsers(): boolean { return this.data.enabledForUsers; }
-      get isActive(): boolean { return this.data.isActive; }
-      get displayOrder(): number { return this.data.displayOrder; }
-      get iconUrl(): string | null { return this.data.iconUrl; }
-      get buttonColor(): string | null { return this.data.buttonColor; }
-      get createdAt(): string { return this.data.createdAt; }
+  get id(): string {
+    return this.data.id;
+  }
+  get name(): string {
+    return this.data.name;
+  }
+  get slug(): string {
+    return this.data.slug;
+  }
+  get protocol(): string {
+    return this.data.protocol;
+  }
+  get enabledForAdmins(): boolean {
+    return this.data.enabledForAdmins;
+  }
+  get enabledForUsers(): boolean {
+    return this.data.enabledForUsers;
+  }
+  get isActive(): boolean {
+    return this.data.isActive;
+  }
+  get displayOrder(): number {
+    return this.data.displayOrder;
+  }
+  get iconUrl(): string | null {
+    return this.data.iconUrl;
+  }
+  get buttonColor(): string | null {
+    return this.data.buttonColor;
+  }
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
 
-      // ===== Domain Logic =====
+  // ===== Domain Logic =====
 
-      get protocolLabel(): string {
-            switch (this.protocol) {
-                  case 'oidc': return 'OpenID Connect';
-                  case 'oauth2': return 'OAuth 2.0';
-                  case 'saml': return 'SAML';
-                  default: return this.protocol.toUpperCase();
-            }
-      }
+  get protocolLabel(): string {
+    switch (this.protocol) {
+      case "oidc":
+        return "OpenID Connect";
+      case "oauth2":
+        return "OAuth 2.0";
+      case "saml":
+        return "SAML";
+      default:
+        return this.protocol.toUpperCase();
+    }
+  }
 
-      get scopeLabel(): string {
-            const scopes: string[] = [];
-            if (this.enabledForAdmins) scopes.push('Admin');
-            if (this.enabledForUsers) scopes.push('User');
-            return scopes.length > 0 ? scopes.join(' & ') : 'None';
-      }
+  get scopeLabel(): string {
+    const scopes: string[] = [];
+    if (this.enabledForAdmins) scopes.push("Admin");
+    if (this.enabledForUsers) scopes.push("User");
+    return scopes.length > 0 ? scopes.join(" & ") : "None";
+  }
 }
 
 // ─── Test Connection Result ─────────────────────────────────────
 
 export class TestConnectionResult {
-      constructor(
-            public readonly isSuccess: boolean,
-            public readonly message: string,
-            public readonly discoveredIssuer: string | null,
-            public readonly discoveredEndpoints: string[] | null
-      ) { }
+  constructor(
+    public readonly isSuccess: boolean,
+    public readonly message: string,
+    public readonly discoveredIssuer: string | null,
+    public readonly discoveredEndpoints: string[] | null
+  ) {}
 }
 
 // ─── List Response ──────────────────────────────────────────────
 
 export interface IdentityProviderListResponse {
-      items: IdentityProviderListItem[];
-      totalCount: number;
+  items: IdentityProviderListItem[];
+  totalCount: number;
 }
 
 // ─── Request Types ──────────────────────────────────────────────
 
 export interface CreateIdentityProviderRequest {
-      name: string;
-      slug: string;
-      protocol: string;
-      authority?: string;
-      authorizationEndpoint?: string;
-      tokenEndpoint?: string;
-      userInformationEndpoint?: string;
-      clientId?: string;
-      clientSecret?: string;
-      scopes?: string;
-      redirectUri?: string;
-      samlIdpEntityId?: string;
-      samlSsoUrl?: string;
-      samlCertificate?: string;
-      claimMappingJson?: string;
-      enabledForAdmins: boolean;
-      enabledForUsers: boolean;
-      iconUrl?: string;
-      buttonColor?: string;
-      buttonLabel?: string;
-      displayOrder?: number;
+  name: string;
+  slug: string;
+  protocol: string;
+  authority?: string;
+  authorizationEndpoint?: string;
+  tokenEndpoint?: string;
+  userInformationEndpoint?: string;
+  clientId?: string;
+  clientSecret?: string;
+  scopes?: string;
+  redirectUri?: string;
+  samlIdpEntityId?: string;
+  samlSsoUrl?: string;
+  samlCertificate?: string;
+  claimMappingJson?: string;
+  enabledForAdmins: boolean;
+  enabledForUsers: boolean;
+  iconUrl?: string;
+  buttonColor?: string;
+  buttonLabel?: string;
+  displayOrder?: number;
 }
 
 export interface UpdateIdentityProviderRequest {
-      name?: string;
-      slug?: string;
-      protocol?: string;
-      authority?: string;
-      authorizationEndpoint?: string;
-      tokenEndpoint?: string;
-      userInformationEndpoint?: string;
-      clientId?: string;
-      clientSecret?: string;
-      scopes?: string;
-      redirectUri?: string;
-      samlIdpEntityId?: string;
-      samlSsoUrl?: string;
-      samlCertificate?: string;
-      claimMappingJson?: string;
-      enabledForAdmins?: boolean;
-      enabledForUsers?: boolean;
-      iconUrl?: string;
-      buttonColor?: string;
-      buttonLabel?: string;
-      displayOrder?: number;
+  name?: string;
+  slug?: string;
+  protocol?: string;
+  authority?: string;
+  authorizationEndpoint?: string;
+  tokenEndpoint?: string;
+  userInformationEndpoint?: string;
+  clientId?: string;
+  clientSecret?: string;
+  scopes?: string;
+  redirectUri?: string;
+  samlIdpEntityId?: string;
+  samlSsoUrl?: string;
+  samlCertificate?: string;
+  claimMappingJson?: string;
+  enabledForAdmins?: boolean;
+  enabledForUsers?: boolean;
+  iconUrl?: string;
+  buttonColor?: string;
+  buttonLabel?: string;
+  displayOrder?: number;
 }

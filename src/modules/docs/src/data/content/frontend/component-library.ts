@@ -2,38 +2,42 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "frontend.componentLibrary.intro" },
+  { type: "paragraph", contentKey: "frontend.componentLibrary.intro" },
 
-      // ─── shadcn/ui Foundation ─────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.componentLibrary.shadcnTitle", id: "shadcn-foundation",
-      },
-      { type: "paragraph", contentKey: "frontend.componentLibrary.shadcnIntro" },
-      {
-            type: "table",
-            headers: ["Category", "Components", "Location"],
-            rows: [
-                  ["Form Inputs", "Input, Textarea, Select, Checkbox, Switch, Radio, Slider", "@core/ui/"],
-                  ["Layout", "Card, Separator, Tabs, Accordion, Sheet, ScrollArea", "@core/ui/"],
-                  ["Feedback", "Alert, Toast, Badge, Progress, Skeleton", "@core/ui/"],
-                  ["Overlay", "Dialog, Popover, Tooltip, DropdownMenu, ContextMenu", "@core/ui/"],
-                  ["Navigation", "Breadcrumb, Pagination, Command, NavigationMenu", "@core/ui/"],
-                  ["Data Display", "Table, Avatar, Calendar", "@core/ui/"],
-                  ["Custom", "GenericSelect, ColorPicker, FilePicker, DateRangePicker", "@core/ui/ (extended)"],
-            ],
-      },
+  // ─── shadcn/ui Foundation ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.componentLibrary.shadcnTitle",
+    id: "shadcn-foundation",
+  },
+  { type: "paragraph", contentKey: "frontend.componentLibrary.shadcnIntro" },
+  {
+    type: "table",
+    headers: ["Category", "Components", "Location"],
+    rows: [
+      ["Form Inputs", "Input, Textarea, Select, Checkbox, Switch, Radio, Slider", "@core/ui/"],
+      ["Layout", "Card, Separator, Tabs, Accordion, Sheet, ScrollArea", "@core/ui/"],
+      ["Feedback", "Alert, Toast, Badge, Progress, Skeleton", "@core/ui/"],
+      ["Overlay", "Dialog, Popover, Tooltip, DropdownMenu, ContextMenu", "@core/ui/"],
+      ["Navigation", "Breadcrumb, Pagination, Command, NavigationMenu", "@core/ui/"],
+      ["Data Display", "Table, Avatar, Calendar", "@core/ui/"],
+      ["Custom", "GenericSelect, ColorPicker, FilePicker, DateRangePicker", "@core/ui/ (extended)"],
+    ],
+  },
 
-      // ─── Component Architecture ───────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.componentLibrary.architectureTitle", id: "architecture",
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Component Architecture Pattern — cn() utility",
-            code: `// @core/ui/lib/utils.ts
+  // ─── Component Architecture ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.componentLibrary.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Component Architecture Pattern — cn() utility",
+    code: `// @core/ui/lib/utils.ts
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -49,19 +53,21 @@ export function cn(...inputs: ClassValue[]) {
   disabled && "opacity-50 cursor-not-allowed",
   className  // Allow consumer overrides
 )} />`,
-      },
+  },
 
-      // ─── GenericSelect ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.componentLibrary.genericSelectTitle", id: "generic-select",
-      },
-      { type: "paragraph", contentKey: "frontend.componentLibrary.genericSelectIntro" },
-      {
-            type: "code",
-            language: "tsx",
-            filename: "GenericSelect — Usage Examples",
-            code: `// Simple flat select
+  // ─── GenericSelect ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.componentLibrary.genericSelectTitle",
+    id: "generic-select",
+  },
+  { type: "paragraph", contentKey: "frontend.componentLibrary.genericSelectIntro" },
+  {
+    type: "code",
+    language: "tsx",
+    filename: "GenericSelect — Usage Examples",
+    code: `// Simple flat select
 <GenericSelect
   options={roles}
   value={selectedRoleId}
@@ -97,18 +103,20 @@ export function cn(...inputs: ClassValue[]) {
   mode="multi"
   searchable
 />`,
-      },
+  },
 
-      // ─── Theme System ─────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.componentLibrary.themeTitle", id: "theme-system",
-      },
-      {
-            type: "code",
-            language: "css",
-            filename: "CSS Variables — Dark/Light Theme System",
-            code: `:root {
+  // ─── Theme System ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.componentLibrary.themeTitle",
+    id: "theme-system",
+  },
+  {
+    type: "code",
+    language: "css",
+    filename: "CSS Variables — Dark/Light Theme System",
+    code: `:root {
   /* Light theme tokens */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
@@ -134,55 +142,95 @@ export function cn(...inputs: ClassValue[]) {
   --muted: 240 3.7% 15.9%;
   --border: 240 3.7% 15.9%;
 }`,
-      },
+  },
 
-      // ─── Component Categories ─────────────────────────────────
+  // ─── Component Categories ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.componentLibrary.categoriesTitle",
+    id: "categories",
+  },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.componentLibrary.categoriesTitle", id: "categories",
+        icon: "📝",
+        titleKey: "frontend.componentLibrary.formsTitle",
+        descriptionKey: "frontend.componentLibrary.formsDesc",
       },
       {
-            type: "feature-grid",
-            columns: 3,
-            items: [
-                  { icon: "📝", titleKey: "frontend.componentLibrary.formsTitle", descriptionKey: "frontend.componentLibrary.formsDesc" },
-                  { icon: "📊", titleKey: "frontend.componentLibrary.chartsTitle", descriptionKey: "frontend.componentLibrary.chartsDesc" },
-                  { icon: "🎨", titleKey: "frontend.componentLibrary.layoutTitle", descriptionKey: "frontend.componentLibrary.layoutDesc" },
-                  { icon: "🔔", titleKey: "frontend.componentLibrary.feedbackTitle", descriptionKey: "frontend.componentLibrary.feedbackDesc" },
-                  { icon: "📱", titleKey: "frontend.componentLibrary.responsiveTitle", descriptionKey: "frontend.componentLibrary.responsiveDesc" },
-                  { icon: "♿", titleKey: "frontend.componentLibrary.a11yTitle", descriptionKey: "frontend.componentLibrary.a11yDesc" },
-            ],
+        icon: "📊",
+        titleKey: "frontend.componentLibrary.chartsTitle",
+        descriptionKey: "frontend.componentLibrary.chartsDesc",
       },
+      {
+        icon: "🎨",
+        titleKey: "frontend.componentLibrary.layoutTitle",
+        descriptionKey: "frontend.componentLibrary.layoutDesc",
+      },
+      {
+        icon: "🔔",
+        titleKey: "frontend.componentLibrary.feedbackTitle",
+        descriptionKey: "frontend.componentLibrary.feedbackDesc",
+      },
+      {
+        icon: "📱",
+        titleKey: "frontend.componentLibrary.responsiveTitle",
+        descriptionKey: "frontend.componentLibrary.responsiveDesc",
+      },
+      {
+        icon: "♿",
+        titleKey: "frontend.componentLibrary.a11yTitle",
+        descriptionKey: "frontend.componentLibrary.a11yDesc",
+      },
+    ],
+  },
 
-      // ─── Placement Rules ──────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.componentLibrary.placementTitle", id: "placement",
-      },
-      {
-            type: "table",
-            headers: ["Location", "Purpose", "Examples"],
-            rows: [
-                  ["@core/ui/", "Shared, generic, reusable across all modules", "Button, Input, Dialog, Toast"],
-                  ["@core/ui/ (extended)", "Generic but complex; module-agnostic", "GenericSelect, DataTable, FormDialog"],
-                  ["@modules/{name}/components/", "Domain-specific, only this module uses", "AdminCard, TenantBadge, RolePicker"],
-                  ["src/app/{route}/", "Route-specific tiny client fragments only", "DarkModeToggle (extracted for SSR)"],
-            ],
-      },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "frontend.componentLibrary.neverInApp",
-      },
+  // ─── Placement Rules ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.componentLibrary.placementTitle",
+    id: "placement",
+  },
+  {
+    type: "table",
+    headers: ["Location", "Purpose", "Examples"],
+    rows: [
+      ["@core/ui/", "Shared, generic, reusable across all modules", "Button, Input, Dialog, Toast"],
+      [
+        "@core/ui/ (extended)",
+        "Generic but complex; module-agnostic",
+        "GenericSelect, DataTable, FormDialog",
+      ],
+      [
+        "@modules/{name}/components/",
+        "Domain-specific, only this module uses",
+        "AdminCard, TenantBadge, RolePicker",
+      ],
+      [
+        "src/app/{route}/",
+        "Route-specific tiny client fragments only",
+        "DarkModeToggle (extracted for SSR)",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "frontend.componentLibrary.neverInApp",
+  },
 ];
 
 registerPage({
-      slug: "frontend/component-library",
-      titleKey: "frontend.componentLibrary.title",
-      descriptionKey: "frontend.componentLibrary.description",
-      category: "frontend",
-      order: 6,
-      sections,
-      relatedSlugs: ["frontend/crud-system", "frontend/localization", "architecture/frontend"],
-      lastUpdated: "2026-02-20",
+  slug: "frontend/component-library",
+  titleKey: "frontend.componentLibrary.title",
+  descriptionKey: "frontend.componentLibrary.description",
+  category: "frontend",
+  order: 6,
+  sections,
+  relatedSlugs: ["frontend/crud-system", "frontend/localization", "architecture/frontend"],
+  lastUpdated: "2026-02-20",
 });

@@ -28,25 +28,21 @@ export function PayoutsEmptyState() {
             "Connect your bank account via Stripe to start receiving payouts."}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+      <CardContent className="flex flex-col items-center justify-center space-y-4 py-12 text-center">
         <div className="rounded-full bg-primary/10 p-6">
           <CreditCard className="h-10 w-10 text-primary" />
         </div>
         <h3 className="text-xl font-semibold">
           {t("entitlements.stripeConnect.readyToConnect") || "Ready to receive payouts?"}
         </h3>
-        <p className="text-muted-foreground text-sm max-w-md">
+        <p className="max-w-md text-sm text-muted-foreground">
           {t("entitlements.stripeConnect.readyToConnectDesc") ||
             "Set up your payment account to securely receive automated payouts from your sales."}
         </p>
-        <Button
-          size="lg"
-          className="mt-2 gap-2"
-          onClick={() => router.push("/my-stripe-account")}
-        >
+        <Button size="lg" className="mt-2 gap-2" onClick={() => router.push("/my-stripe-account")}>
           <CreditCard className="h-4 w-4" />
           {t("entitlements.tenantConnect.getStartedBtn") || "Get Started"}
-          <ArrowRight className="h-4 w-4 ml-1" />
+          <ArrowRight className="ml-1 h-4 w-4" />
         </Button>
       </CardContent>
     </Card>

@@ -6,10 +6,19 @@
  *
  * @module customization/data
  */
-import { ThemeBundle, type BundleType, type ThemeBundleContents } from "../../domain/entities/ThemeBundle";
+import {
+  ThemeBundle,
+  type BundleType,
+  type ThemeBundleContents,
+} from "../../domain/entities/ThemeBundle";
 import type { ThemeBundleDto } from "../models/ThemeBundleTypes";
 
-const VALID_BUNDLE_TYPES: BundleType[] = ["login-only", "auth-suite", "dashboard-only", "full-bundle"];
+const VALID_BUNDLE_TYPES: BundleType[] = [
+  "login-only",
+  "auth-suite",
+  "dashboard-only",
+  "full-bundle",
+];
 
 export class ThemeBundleMapper {
   static toEntity(dto: ThemeBundleDto): ThemeBundle {

@@ -39,12 +39,11 @@ export const API_ENDPOINTS = {
 
   // ===== ACCOUNT SETUP (Public — no auth required) =====
   ACCOUNT_SETUP: {
-    VALIDATE_TOKEN: (token: string) => `${V1}/account-setup/validate?token=${encodeURIComponent(token)}`,
+    VALIDATE_TOKEN: (token: string) =>
+      `${V1}/account-setup/validate?token=${encodeURIComponent(token)}`,
     ACTIVATE: `${V1}/account-setup/activate`,
     RESEND_SETUP_EMAIL: `${V1}/account-setup/resend`,
   },
-
-
 
   // ===== ADMINS =====
   ADMINS: {
@@ -90,8 +89,6 @@ export const API_ENDPOINTS = {
     LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
     UNLINK_EXTERNAL_LOGIN: (id: string) => `${V1}/auth/admin/external-logins/${id}`,
   },
-
-
 
   ROLES: {
     LIST: `${V1}/Roles`,
@@ -158,8 +155,10 @@ export const API_ENDPOINTS = {
     // ── Domain Management ──
     DOMAINS: (id: string) => `${V1}/Tenants/${id}/domains`,
     DOMAIN_BY_ID: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}`,
-    DOMAIN_PRIMARY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/primary`,
-    DOMAIN_VERIFY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/verify`,
+    DOMAIN_PRIMARY: (id: string, domainId: string) =>
+      `${V1}/Tenants/${id}/domains/${domainId}/primary`,
+    DOMAIN_VERIFY: (id: string, domainId: string) =>
+      `${V1}/Tenants/${id}/domains/${domainId}/verify`,
   },
 
   // ===== THEME MARKETPLACE =====
@@ -232,8 +231,6 @@ export const API_ENDPOINTS = {
     RESTORE: (entityType: string, id: string) => `${V1}/recycle-bin/${entityType}/${id}/restore`,
     BULK_RESTORE: `${V1}/recycle-bin/bulk-restore`,
   },
-
-
 
   // ===== MESSAGING =====
   MESSAGE_TEMPLATES: {
@@ -309,26 +306,34 @@ export const API_ENDPOINTS = {
       CREATE: `${V1}/editions`,
       UPDATE: (id: string) => `${V1}/editions/${id}`,
       DELETE: (id: string) => `${V1}/editions/${id}`,
-      SET_FEATURE: (editionId: string, featureId: string) => `${V1}/editions/${editionId}/features/${featureId}`,
+      SET_FEATURE: (editionId: string, featureId: string) =>
+        `${V1}/editions/${editionId}/features/${featureId}`,
       VERSIONS: (editionId: string) => `${V1}/editions/${editionId}/versions`,
       CREATE_VERSION: (editionId: string) => `${V1}/editions/${editionId}/versions`,
-      PUBLISH_VERSION: (editionId: string, versionId: string) => `${V1}/editions/${editionId}/versions/${versionId}/publish`,
-      CANCEL_VERSION: (editionId: string, versionId: string) => `${V1}/editions/${editionId}/versions/${versionId}/cancel`,
+      PUBLISH_VERSION: (editionId: string, versionId: string) =>
+        `${V1}/editions/${editionId}/versions/${versionId}/publish`,
+      CANCEL_VERSION: (editionId: string, versionId: string) =>
+        `${V1}/editions/${editionId}/versions/${versionId}/cancel`,
       DIRECT_APPLY_FEATURES: (editionId: string) => `${V1}/editions/${editionId}/features/apply`,
       PRICES: (editionId: string) => `${V1}/editions/${editionId}/prices`,
       SET_PRICES: (editionId: string) => `${V1}/editions/${editionId}/prices`,
       // ── Promotions ──
       PROMOTIONS: (editionId: string) => `${V1}/editions/${editionId}/promotions`,
       CREATE_PROMOTION: (editionId: string) => `${V1}/editions/${editionId}/promotions`,
-      UPDATE_PROMOTION: (editionId: string, promoId: string) => `${V1}/editions/${editionId}/promotions/${promoId}`,
-      DELETE_PROMOTION: (editionId: string, promoId: string) => `${V1}/editions/${editionId}/promotions/${promoId}`,
-      VALIDATE_PROMO_CODE: (editionId: string) => `${V1}/editions/${editionId}/promotions/validate-code`,
+      UPDATE_PROMOTION: (editionId: string, promoId: string) =>
+        `${V1}/editions/${editionId}/promotions/${promoId}`,
+      DELETE_PROMOTION: (editionId: string, promoId: string) =>
+        `${V1}/editions/${editionId}/promotions/${promoId}`,
+      VALIDATE_PROMO_CODE: (editionId: string) =>
+        `${V1}/editions/${editionId}/promotions/validate-code`,
     },
     TENANT_FEATURES: {
       OVERRIDES: (tenantId: string) => `${V1}/tenants/${tenantId}/features/overrides`,
       RESOLVED: (tenantId: string) => `${V1}/tenants/${tenantId}/features/resolved`,
-      SET_OVERRIDE: (tenantId: string, featureId: string) => `${V1}/tenants/${tenantId}/features/${featureId}`,
-      REMOVE_OVERRIDE: (tenantId: string, featureId: string) => `${V1}/tenants/${tenantId}/features/${featureId}`,
+      SET_OVERRIDE: (tenantId: string, featureId: string) =>
+        `${V1}/tenants/${tenantId}/features/${featureId}`,
+      REMOVE_OVERRIDE: (tenantId: string, featureId: string) =>
+        `${V1}/tenants/${tenantId}/features/${featureId}`,
     },
     SUBSCRIPTIONS: {
       LIST_ALL: `${V1}/subscriptions`,
@@ -343,8 +348,10 @@ export const API_ENDPOINTS = {
       LIST_BY_TENANT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscriptions`,
       GET_BY_ID: (id: string) => `${V1}/subscriptions/${id}`,
       REVOKE: (id: string) => `${V1}/subscriptions/${id}`,
-      CHANGE_CURRENCY: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/change-currency`,
-      DOWNGRADE_IMPACT: (tenantId: string, targetEditionId: string) => `${V1}/tenants/${tenantId}/subscription/downgrade-impact?targetEditionId=${targetEditionId}`,
+      CHANGE_CURRENCY: (tenantId: string) =>
+        `${V1}/tenants/${tenantId}/subscription/change-currency`,
+      DOWNGRADE_IMPACT: (tenantId: string, targetEditionId: string) =>
+        `${V1}/tenants/${tenantId}/subscription/downgrade-impact?targetEditionId=${targetEditionId}`,
       EXPORT: (
         format: string,
         status?: string,
@@ -361,14 +368,16 @@ export const API_ENDPOINTS = {
         if (currency) params.set("currency", currency);
         if (dateFrom) params.set("dateFrom", dateFrom);
         if (dateTo) params.set("dateTo", dateTo);
-        if (expiringInDays && expiringInDays > 0) params.set("expiringInDays", expiringInDays.toString());
+        if (expiringInDays && expiringInDays > 0)
+          params.set("expiringInDays", expiringInDays.toString());
         if (edition && edition !== "all") params.set("edition", edition);
         return `${V1}/subscriptions/export?${params.toString()}`;
       },
       RECEIPT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/receipt`,
     },
     PRICING: {
-      PREVIEW: (editionId: string, currency: string, type: string) => `${V1}/editions/${editionId}/prices/preview?currency=${currency}&type=${type}`,
+      PREVIEW: (editionId: string, currency: string, type: string) =>
+        `${V1}/editions/${editionId}/prices/preview?currency=${currency}&type=${type}`,
       OVERRIDE_COST_SET: (overrideId: string) => `${V1}/overrides/${overrideId}/cost`,
       OVERRIDE_COST_REMOVE: (overrideId: string) => `${V1}/overrides/${overrideId}/cost`,
     },
@@ -446,9 +455,12 @@ export const API_ENDPOINTS = {
         ELIGIBLE_TENANTS: `${V1}/stripe-connect/accounts/eligible-tenants`,
         BY_ID: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}`,
         CREATE: `${V1}/stripe-connect/accounts`,
-        REFRESH_LINK: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/refresh-link`,
-        DASHBOARD_LINK: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/dashboard-link`,
-        COMMISSION_RATE: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/commission-rate`,
+        REFRESH_LINK: (tenantId: string) =>
+          `${V1}/stripe-connect/accounts/${tenantId}/refresh-link`,
+        DASHBOARD_LINK: (tenantId: string) =>
+          `${V1}/stripe-connect/accounts/${tenantId}/dashboard-link`,
+        COMMISSION_RATE: (tenantId: string) =>
+          `${V1}/stripe-connect/accounts/${tenantId}/commission-rate`,
       },
       COMMISSIONS: {
         LIST: `${V1}/commissions`,
@@ -609,9 +621,7 @@ export const API_ENDPOINTS = {
     REPORTS: `${V1}/compliance/reports`,
     GENERATE_REPORT: `${V1}/compliance/reports/generate`,
   },
-
 };
-
 
 /**
  * Helper to build URL with query parameters

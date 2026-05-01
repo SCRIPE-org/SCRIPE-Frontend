@@ -36,13 +36,21 @@ export function ProfileInfoForm({
   const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber);
 
   // Reset form when profile data changes (render-time state sync)
-  const [prevProfile, setPrevProfile] = useState({ firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber });
+  const [prevProfile, setPrevProfile] = useState({
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    phoneNumber: profile.phoneNumber,
+  });
   if (
     profile.firstName !== prevProfile.firstName ||
-    profile.lastName  !== prevProfile.lastName  ||
+    profile.lastName !== prevProfile.lastName ||
     profile.phoneNumber !== prevProfile.phoneNumber
   ) {
-    setPrevProfile({ firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber });
+    setPrevProfile({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phoneNumber: profile.phoneNumber,
+    });
     setFirstName(profile.firstName);
     setLastName(profile.lastName);
     setPhoneNumber(profile.phoneNumber);

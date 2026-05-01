@@ -21,9 +21,16 @@ interface BrandingPanelProps {
 }
 
 const SPLIT_LAYOUTS = [
-  "split-right", "split-left", "asymmetric", "sidebar-compact",
-  "magazine", "stacked", "dual-panel", "vertical-split",
-  "split-diagonal", "carousel",
+  "split-right",
+  "split-left",
+  "asymmetric",
+  "sidebar-compact",
+  "magazine",
+  "stacked",
+  "dual-panel",
+  "vertical-split",
+  "split-diagonal",
+  "carousel",
 ];
 
 export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
@@ -44,7 +51,7 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
 
       {/* Company Name (all layouts) */}
       <div className="space-y-1">
-        <Label className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           <Building2 className="h-3 w-3" />
           {t("studio.branding.companyName")}
         </Label>
@@ -61,7 +68,7 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
         <>
           {/* Headline (branding panel only) */}
           <div className="space-y-1">
-            <Label className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <Heading className="h-3 w-3" />
               {t("studio.branding.headline")}
             </Label>
@@ -71,12 +78,14 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
               placeholder={t("studio.branding.headlinePlaceholder")}
               className="h-8 text-xs"
             />
-            <p className="text-[10px] text-muted-foreground/60 tabular-nums text-end">{draft.headline.length}/100</p>
+            <p className="text-end text-[10px] tabular-nums text-muted-foreground/60">
+              {draft.headline.length}/100
+            </p>
           </div>
 
           {/* Subtitle (branding panel only) */}
           <div className="space-y-1">
-            <Label className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <FileText className="h-3 w-3" />
               {t("studio.branding.subtitle")}
             </Label>
@@ -85,15 +94,15 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
               onChange={(e) => updateDraft("subtitle", e.target.value)}
               placeholder={t("studio.branding.subtitlePlaceholder")}
               rows={2}
-              className="text-xs resize-none"
+              className="resize-none text-xs"
             />
           </div>
         </>
       ) : (
         /* Info note for non-split layouts */
-        <div className="flex items-start gap-2 rounded-lg bg-muted/30 border border-border/50 p-3">
-          <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
+        <div className="flex items-start gap-2 rounded-lg border border-border/50 bg-muted/30 p-3">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
+          <p className="text-[10px] leading-relaxed text-muted-foreground">
             {t("studio.branding.noPanelNote")}
           </p>
         </div>
@@ -101,7 +110,7 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
 
       {/* Copyright — ALL layouts */}
       <div className="space-y-1">
-        <Label className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           <Copyright className="h-3 w-3" />
           {t("studio.branding.copyright")}
         </Label>

@@ -72,7 +72,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
           <Skeleton className="h-7 w-48" />
         </div>
         <Skeleton className="h-56 w-full rounded-2xl" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Skeleton className="h-48 rounded-xl" />
           <Skeleton className="h-48 rounded-xl" />
           <Skeleton className="h-48 rounded-xl" />
@@ -88,18 +88,14 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-lg cursor-pointer"
+          className="h-9 w-9 cursor-pointer rounded-lg"
           onClick={() => router.back()}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">
-            {t("entSubscriptions.title")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("entSubscriptions.description")}
-          </p>
+          <h1 className="text-xl font-semibold tracking-tight">{t("entSubscriptions.title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("entSubscriptions.description")}</p>
         </div>
       </div>
 
@@ -108,7 +104,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
         <>
           <HeroCard sub={currentSub} vm={vm} t={t} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <PlanDetailsCard sub={currentSub} t={t} />
             <BillingCard sub={currentSub} t={t} />
             <StripeCard sub={currentSub} vm={vm} t={t} />

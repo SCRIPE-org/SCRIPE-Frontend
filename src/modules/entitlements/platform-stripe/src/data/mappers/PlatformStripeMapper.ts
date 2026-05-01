@@ -30,7 +30,9 @@ export class PlatformStripeMapper {
     return new PlatformStripeDashboard({
       account: PlatformStripeMapper.toAccountEntity(dto.account),
       balance: PlatformStripeMapper.toBalanceEntity(dto.balance),
-      recentTransactions: (dto.recentTransactions ?? []).map(PlatformStripeMapper.toTransactionEntity),
+      recentTransactions: (dto.recentTransactions ?? []).map(
+        PlatformStripeMapper.toTransactionEntity
+      ),
       recentPayouts: (dto.recentPayouts ?? []).map(PlatformStripeMapper.toPayoutEntity),
       connectSummary: PlatformStripeMapper.toConnectSummaryEntity(dto.connectSummary),
       links: PlatformStripeMapper.toLinksEntity(dto.links),

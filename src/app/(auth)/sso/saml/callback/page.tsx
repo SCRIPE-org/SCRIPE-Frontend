@@ -2,14 +2,14 @@ import SamlAcsCallbackView from "@/modules/auth/signin/src/presentation/views/Sa
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-      title: "SAML Redirecting | NEXORA",
-      description: "Processing your SAML Sign-in...",
+  title: "SAML Redirecting | NEXORA",
+  description: "Processing your SAML Sign-in...",
 };
 
 export default function SamlCallbackPage() {
-      return (
-            <main>
-                  <SamlAcsCallbackView />
-            </main>
-      );
+  return (
+    <main>
+      <SamlAcsCallbackView />
+    </main>
+  );
 }

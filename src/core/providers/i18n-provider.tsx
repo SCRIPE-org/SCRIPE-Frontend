@@ -107,9 +107,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         // Simple interpolation: replace {{param}} with actual values
         if (params) {
           return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
-            return params[paramKey] !== undefined
-              ? String(params[paramKey])
-              : match;
+            return params[paramKey] !== undefined ? String(params[paramKey]) : match;
           });
         }
         return value;
@@ -148,7 +146,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       document.body.classList.add("font-english");
       document.body.classList.remove("font-arabic");
     }
-
   }, []);
 
   // ─── STABLE CONTEXT VALUE ─────────────────────────────────
@@ -162,14 +159,18 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       markModuleLoaded,
       isModuleLoaded,
     }),
-    [language, direction, handleSetLanguage, t, registerBothLanguages, markModuleLoaded, isModuleLoaded]
+    [
+      language,
+      direction,
+      handleSetLanguage,
+      t,
+      registerBothLanguages,
+      markModuleLoaded,
+      isModuleLoaded,
+    ]
   );
 
-  return (
-    <I18nContext.Provider value={contextValue}>
-      {children}
-    </I18nContext.Provider>
-  );
+  return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>;
 }
 
 // ─── CONSUMER HOOK ──────────────────────────────────────────

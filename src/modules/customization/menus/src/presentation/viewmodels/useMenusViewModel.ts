@@ -252,7 +252,10 @@ export function useMenusViewModel() {
   }, []);
 
   /** Find a node by ID in the tree */
-  const findNode = useCallback(function findNodeRecursive(nodeId: string, nodes: MenuTreeNode[]): MenuTreeNode | null {
+  const findNode = useCallback(function findNodeRecursive(
+    nodeId: string,
+    nodes: MenuTreeNode[]
+  ): MenuTreeNode | null {
     for (const node of nodes) {
       if (node.id === nodeId) return node;
       const found = findNodeRecursive(nodeId, node.children);
@@ -262,24 +265,21 @@ export function useMenusViewModel() {
   }, []);
 
   /** Find siblings of a node and its parent ID */
-  const findSiblingsAndParent = useCallback(
-    function findSiblingsRecursive(
-      nodeId: string,
-      nodes: MenuTreeNode[],
-      parentId?: string
-    ): { siblings: MenuTreeNode[]; parentId?: string } | null {
-      const idx = nodes.findIndex((n) => n.id === nodeId);
-      if (idx >= 0) return { siblings: nodes, parentId };
-      for (const node of nodes) {
-        if (node.children.length > 0) {
-          const result = findSiblingsRecursive(nodeId, node.children, node.id);
-          if (result) return result;
-        }
+  const findSiblingsAndParent = useCallback(function findSiblingsRecursive(
+    nodeId: string,
+    nodes: MenuTreeNode[],
+    parentId?: string
+  ): { siblings: MenuTreeNode[]; parentId?: string } | null {
+    const idx = nodes.findIndex((n) => n.id === nodeId);
+    if (idx >= 0) return { siblings: nodes, parentId };
+    for (const node of nodes) {
+      if (node.children.length > 0) {
+        const result = findSiblingsRecursive(nodeId, node.children, node.id);
+        if (result) return result;
       }
-      return null;
-    },
-    []
-  );
+    }
+    return null;
+  }, []);
 
   /** Build reorder payload from a list of siblings */
   const buildReorderPayload = useCallback(
@@ -398,8 +398,8 @@ export function useMenusViewModel() {
           const oldResult = findSiblingsAndParent(draggedNode.id, safeMenuTree);
           const oldSiblings = oldResult
             ? [...oldResult.siblings]
-              .sort((a, b) => a.order - b.order)
-              .filter((n) => n.id !== draggedNode.id)
+                .sort((a, b) => a.order - b.order)
+                .filter((n) => n.id !== draggedNode.id)
             : [];
 
           // Add to new parent's children at end
@@ -448,8 +448,8 @@ export function useMenusViewModel() {
             // Cross-parent: remove from old, insert into new
             const oldSiblings = oldResult
               ? [...oldResult.siblings]
-                .sort((a, b) => a.order - b.order)
-                .filter((n) => n.id !== draggedNode.id)
+                  .sort((a, b) => a.order - b.order)
+                  .filter((n) => n.id !== draggedNode.id)
               : [];
 
             const newSiblings = [...targetResult.siblings]
@@ -504,8 +504,8 @@ export function useMenusViewModel() {
       const oldResult = findSiblingsAndParent(draggedNode.id, safeMenuTree);
       const oldSiblings = oldResult
         ? [...oldResult.siblings]
-          .sort((a, b) => a.order - b.order)
-          .filter((n) => n.id !== draggedNode.id)
+            .sort((a, b) => a.order - b.order)
+            .filter((n) => n.id !== draggedNode.id)
         : [];
 
       // Add to root at end

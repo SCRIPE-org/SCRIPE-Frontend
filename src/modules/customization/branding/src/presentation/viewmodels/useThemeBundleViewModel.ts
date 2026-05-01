@@ -118,8 +118,7 @@ export function useThemeBundleViewModel() {
 
   // ── Save Current as Bundle Mutation ──
   const saveBundleMutation = useMutation({
-    mutationFn: (data: SaveBundlePayload) =>
-      themeBundleRepository.saveCurrentAsBundle(data),
+    mutationFn: (data: SaveBundlePayload) => themeBundleRepository.saveCurrentAsBundle(data),
     onSuccess: () => {
       toast.success(t("studio.bundles.saveSuccess"));
       queryClient.invalidateQueries({ queryKey: BUNDLE_KEYS.all });

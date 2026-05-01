@@ -10,24 +10,12 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Palette, Sparkles } from "lucide-react";
 import { customizationContainer } from "@modules/customization/di";
 import { useToast } from "@core/ui/use-toast";
@@ -62,11 +50,7 @@ function slugify(str: string): string {
     .slice(0, 60);
 }
 
-export function SaveAsThemeModal({
-  isOpen,
-  onClose,
-  getDraftJson,
-}: SaveAsThemeModalProps) {
+export function SaveAsThemeModal({ isOpen, onClose, getDraftJson }: SaveAsThemeModalProps) {
   const { t } = useI18n();
   const { toast } = useToast();
 
@@ -135,8 +119,7 @@ export function SaveAsThemeModal({
       setAuthorName("");
       onClose();
     } catch (err: any) {
-      const msg =
-        err?.message || err?.response?.data?.error || "Failed to save theme";
+      const msg = err?.message || err?.response?.data?.error || "Failed to save theme";
       toast({ title: msg, variant: "destructive" });
     } finally {
       setIsSaving(false);
@@ -184,10 +167,7 @@ export function SaveAsThemeModal({
               id="theme-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={
-                t("studio.saveTheme.namePlaceholder") ||
-                "e.g. Corporate Blue"
-              }
+              placeholder={t("studio.saveTheme.namePlaceholder") || "e.g. Corporate Blue"}
               maxLength={100}
               autoFocus
             />
@@ -200,16 +180,13 @@ export function SaveAsThemeModal({
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label htmlFor="theme-desc">
-              {t("studio.saveTheme.description") || "Description"}
-            </Label>
+            <Label htmlFor="theme-desc">{t("studio.saveTheme.description") || "Description"}</Label>
             <Textarea
               id="theme-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={
-                t("studio.saveTheme.descPlaceholder") ||
-                "Short description of this theme..."
+                t("studio.saveTheme.descPlaceholder") || "Short description of this theme..."
               }
               rows={2}
               maxLength={500}
@@ -235,16 +212,12 @@ export function SaveAsThemeModal({
 
           {/* Author */}
           <div className="space-y-1.5">
-            <Label htmlFor="theme-author">
-              {t("studio.saveTheme.author") || "Author Name"}
-            </Label>
+            <Label htmlFor="theme-author">{t("studio.saveTheme.author") || "Author Name"}</Label>
             <Input
               id="theme-author"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
-              placeholder={
-                t("studio.saveTheme.authorPlaceholder") || "Your name"
-              }
+              placeholder={t("studio.saveTheme.authorPlaceholder") || "Your name"}
               maxLength={100}
             />
           </div>
@@ -252,19 +225,18 @@ export function SaveAsThemeModal({
           {/* Preview swatch */}
           <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-3">
             <div
-              className="h-10 w-10 rounded-lg shadow-sm border border-white/20 shrink-0"
+              className="h-10 w-10 shrink-0 rounded-lg border border-white/20 shadow-sm"
               style={{
                 background: `linear-gradient(135deg, ${accentColor}, color-mix(in srgb, ${accentColor} 50%, black))`,
               }}
             />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">
-                {name || (t("studio.saveTheme.preview") || "Theme Preview")}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-foreground">
+                {name || t("studio.saveTheme.preview") || "Theme Preview"}
               </p>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <p className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Sparkles className="h-3 w-3" />
-                {t("studio.saveTheme.previewDesc") ||
-                  "Saves current tokens, layout, and styling"}
+                {t("studio.saveTheme.previewDesc") || "Saves current tokens, layout, and styling"}
               </p>
             </div>
           </div>
@@ -277,8 +249,8 @@ export function SaveAsThemeModal({
           <Button onClick={handleSave} disabled={!isValid} loading={isSaving}>
             {!isSaving && <Palette className="mr-2 h-4 w-4" />}
             {isSaving
-              ? (t("common.saving") || "Saving...")
-              : (t("studio.saveTheme.save") || "Save Theme")}
+              ? t("common.saving") || "Saving..."
+              : t("studio.saveTheme.save") || "Save Theme"}
           </Button>
         </DialogFooter>
       </DialogContent>

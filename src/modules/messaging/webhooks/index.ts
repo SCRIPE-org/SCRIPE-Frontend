@@ -4,19 +4,19 @@
 
 // Domain entities
 export type {
-      WebhookSubscription,
-      WebhookSubscriptionListItem,
-      WebhookDeliveryLog,
-      WebhookDeliveryStats,
-      WebhookEventType,
-      WebhookTestResult,
-      WebhookListResponse,
+  WebhookSubscription,
+  WebhookSubscriptionListItem,
+  WebhookDeliveryLog,
+  WebhookDeliveryStats,
+  WebhookEventType,
+  WebhookTestResult,
+  WebhookListResponse,
 } from "./src/domain/entities/Webhook";
 
 // Domain request types
 export type {
-      CreateWebhookRequest,
-      UpdateWebhookRequest,
+  CreateWebhookRequest,
+  UpdateWebhookRequest,
 } from "./src/domain/entities/WebhookRequests";
 
 // Domain interfaces

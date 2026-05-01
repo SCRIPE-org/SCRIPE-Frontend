@@ -2,52 +2,98 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "infrastructure.loadTesting.intro" },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.intro" },
 
-      // ─── k6 Overview ───────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.loadTesting.overviewTitle", id: "overview",
-      },
-      { type: "paragraph", contentKey: "infrastructure.loadTesting.overviewIntro" },
-      {
-            type: "table",
-            headers: ["Test Suite", "File", "Stages", "What It Tests"],
-            rows: [
-                  ["Auth Flow", "tests/load/auth-flow.js", "2m ramp → 50 VUs × 5m → 1m ramp-down", "Login → JWT retrieval → protected endpoints → health check → concurrent sessions"],
-                  ["CRUD Operations", "tests/load/crud-operations.js", "2m ramp → 30 VUs × 5m → 1m ramp-down", "Create → Read (paginated) → Update → Delete with spike scenarios"],
-            ],
-      },
+  // ─── k6 Overview ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.overviewTitle",
+    id: "overview",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.overviewIntro" },
+  {
+    type: "table",
+    headers: ["Test Suite", "File", "Stages", "What It Tests"],
+    rows: [
+      [
+        "Auth Flow",
+        "tests/load/auth-flow.js",
+        "2m ramp → 50 VUs × 5m → 1m ramp-down",
+        "Login → JWT retrieval → protected endpoints → health check → concurrent sessions",
+      ],
+      [
+        "CRUD Operations",
+        "tests/load/crud-operations.js",
+        "2m ramp → 30 VUs × 5m → 1m ramp-down",
+        "Create → Read (paginated) → Update → Delete with spike scenarios",
+      ],
+    ],
+  },
 
-      // ─── SLA Thresholds ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.loadTesting.thresholdsTitle", id: "thresholds",
-      },
-      {
-            type: "table",
-            headers: ["Metric", "Threshold", "Description", "SLA Impact"],
-            rows: [
-                  ["http_req_duration (P95)", "< 2000ms", "95% of requests must complete within 2 seconds", "Pipeline FAILS if breached"],
-                  ["http_req_duration (P99)", "< 5000ms", "99% of requests must complete within 5 seconds", "Pipeline FAILS if breached"],
-                  ["http_req_failed", "< 1%", "Less than 1% of requests may return errors", "Pipeline FAILS if breached"],
-                  ["http_req_duration (avg)", "< 500ms", "Average response time under 500ms", "Pipeline FAILS if breached"],
-                  ["nexora_login_duration (P95)", "< 3000ms", "95% of login requests complete in 3 seconds", "Auth-specific SLA"],
-                  ["nexora_login_fail_rate", "< 5%", "Less than 5% of login attempts may fail", "Auth reliability SLA"],
-            ],
-      },
+  // ─── SLA Thresholds ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.thresholdsTitle",
+    id: "thresholds",
+  },
+  {
+    type: "table",
+    headers: ["Metric", "Threshold", "Description", "SLA Impact"],
+    rows: [
+      [
+        "http_req_duration (P95)",
+        "< 2000ms",
+        "95% of requests must complete within 2 seconds",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "http_req_duration (P99)",
+        "< 5000ms",
+        "99% of requests must complete within 5 seconds",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "http_req_failed",
+        "< 1%",
+        "Less than 1% of requests may return errors",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "http_req_duration (avg)",
+        "< 500ms",
+        "Average response time under 500ms",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "nexora_login_duration (P95)",
+        "< 3000ms",
+        "95% of login requests complete in 3 seconds",
+        "Auth-specific SLA",
+      ],
+      [
+        "nexora_login_fail_rate",
+        "< 5%",
+        "Less than 5% of login attempts may fail",
+        "Auth reliability SLA",
+      ],
+    ],
+  },
 
-      // ─── Auth Flow Script ──────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.loadTesting.authFlowTitle", id: "auth-flow",
-      },
-      { type: "paragraph", contentKey: "infrastructure.loadTesting.authFlowIntro" },
-      {
-            type: "code",
-            language: "javascript",
-            filename: "tests/load/auth-flow.js — Key Sections",
-            code: `import http from 'k6/http';
+  // ─── Auth Flow Script ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.authFlowTitle",
+    id: "auth-flow",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.authFlowIntro" },
+  {
+    type: "code",
+    language: "javascript",
+    filename: "tests/load/auth-flow.js — Key Sections",
+    code: `import http from 'k6/http';
 import { check, sleep, group } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
 
@@ -82,18 +128,20 @@ export default function () {
   group('3. Health Check', () => { /* GET /health/ready */ });
   sleep(Math.random() * 2 + 1); // Random 1-3s think time
 }`,
-      },
+  },
 
-      // ─── Running Tests ─────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.loadTesting.runningTitle", id: "running",
-      },
-      {
-            type: "code",
-            language: "bash",
-            filename: "Running k6 Load Tests",
-            code: `# ═══════════════════════════════════════════════════════════
+  // ─── Running Tests ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.runningTitle",
+    id: "running",
+  },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Running k6 Load Tests",
+    code: `# ═══════════════════════════════════════════════════════════
 # INSTALL k6
 # ═══════════════════════════════════════════════════════════
 # Windows:  winget install k6  (or choco install k6)
@@ -138,19 +186,21 @@ k6 run tests/load/auth-flow.js --out json=results.json
 k6 run tests/load/auth-flow.js \\
   --out experimental-prometheus-rw \\
   --env K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write`,
-      },
+  },
 
-      // ─── CI/CD Integration ─────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.loadTesting.cicdTitle", id: "cicd",
-      },
-      { type: "paragraph", contentKey: "infrastructure.loadTesting.cicdIntro" },
-      {
-            type: "code",
-            language: "yaml",
-            filename: "GitHub Actions — Load Test Job",
-            code: `name: Load Tests
+  // ─── CI/CD Integration ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.cicdTitle",
+    id: "cicd",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.cicdIntro" },
+  {
+    type: "code",
+    language: "yaml",
+    filename: "GitHub Actions — Load Test Job",
+    code: `name: Load Tests
 on:
   schedule:
     - cron: '0 3 * * 1'    # Every Monday at 3 AM
@@ -202,31 +252,69 @@ jobs:
         with:
           name: k6-results
           path: auth-results.json`,
-      },
+  },
 
-      // ─── Backup & DR ───────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.loadTesting.backupTitle", id: "backup-dr",
-      },
-      { type: "paragraph", contentKey: "infrastructure.loadTesting.backupIntro" },
-      {
-            type: "table",
-            headers: ["Component", "Strategy", "Frequency", "Retention", "Recovery Tool"],
-            rows: [
-                  ["SQL Server", "Full + Differential + Transaction Log", "Daily / Hourly / 15min", "30 days", "SSMS Restore or T-SQL RESTORE DATABASE"],
-                  ["Oracle", "RMAN Full + Incremental + Archive Log", "Weekly / Daily / Continuous", "30 days", "RMAN RECOVER + RESTORE"],
-                  ["PostgreSQL", "pg_dump + WAL archiving", "Daily + Continuous", "30 days", "pg_restore + Point-in-Time Recovery"],
-                  ["Redis", "RDB snapshots + AOF persistence", "Hourly + Real-time", "7 days", "redis-cli --rdb / AOF replay"],
-                  ["File Storage", "Cloud provider snapshots or rsync", "Daily", "90 days", "Cloud console restore or rsync reverse"],
-                  ["Audit Logs", "Separate backup (compliance requirement)", "Daily", "1 year minimum", "SQL restore to read-only replica"],
-            ],
-      },
-      {
-            type: "code",
-            language: "bash",
-            filename: "Backup & Recovery Commands",
-            code: `# ═══════════════════════════════════════════════════════════
+  // ─── Backup & DR ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.backupTitle",
+    id: "backup-dr",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.backupIntro" },
+  {
+    type: "table",
+    headers: ["Component", "Strategy", "Frequency", "Retention", "Recovery Tool"],
+    rows: [
+      [
+        "SQL Server",
+        "Full + Differential + Transaction Log",
+        "Daily / Hourly / 15min",
+        "30 days",
+        "SSMS Restore or T-SQL RESTORE DATABASE",
+      ],
+      [
+        "Oracle",
+        "RMAN Full + Incremental + Archive Log",
+        "Weekly / Daily / Continuous",
+        "30 days",
+        "RMAN RECOVER + RESTORE",
+      ],
+      [
+        "PostgreSQL",
+        "pg_dump + WAL archiving",
+        "Daily + Continuous",
+        "30 days",
+        "pg_restore + Point-in-Time Recovery",
+      ],
+      [
+        "Redis",
+        "RDB snapshots + AOF persistence",
+        "Hourly + Real-time",
+        "7 days",
+        "redis-cli --rdb / AOF replay",
+      ],
+      [
+        "File Storage",
+        "Cloud provider snapshots or rsync",
+        "Daily",
+        "90 days",
+        "Cloud console restore or rsync reverse",
+      ],
+      [
+        "Audit Logs",
+        "Separate backup (compliance requirement)",
+        "Daily",
+        "1 year minimum",
+        "SQL restore to read-only replica",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Backup & Recovery Commands",
+    code: `# ═══════════════════════════════════════════════════════════
 # SQL SERVER BACKUP (Windows / Docker)
 # ═══════════════════════════════════════════════════════════
 # Full backup
@@ -255,21 +343,25 @@ redis-cli BGSAVE
 
 # Copy RDB file
 cp /var/lib/redis/dump.rdb /backups/redis_$(date +%Y%m%d).rdb`,
-      },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "infrastructure.loadTesting.drWarning",
-      },
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "infrastructure.loadTesting.drWarning",
+  },
 ];
 
 registerPage({
-      slug: "infrastructure/load-testing",
-      titleKey: "infrastructure.loadTesting.title",
-      descriptionKey: "infrastructure.loadTesting.description",
-      category: "infrastructure",
-      order: 10,
-      sections,
-      relatedSlugs: ["infrastructure/observability", "infrastructure/resilience", "infrastructure/health-checks"],
-      lastUpdated: "2026-04-06",
+  slug: "infrastructure/load-testing",
+  titleKey: "infrastructure.loadTesting.title",
+  descriptionKey: "infrastructure.loadTesting.description",
+  category: "infrastructure",
+  order: 10,
+  sections,
+  relatedSlugs: [
+    "infrastructure/observability",
+    "infrastructure/resilience",
+    "infrastructure/health-checks",
+  ],
+  lastUpdated: "2026-04-06",
 });

@@ -28,12 +28,14 @@ export function RecommendationBadge({ label, size = "md" }: RecommendationBadgeP
 
   return (
     <span
-      className={`inline-flex items-center gap-1 font-semibold rounded-full border ${
+      className={`inline-flex items-center gap-1 rounded-full border font-semibold ${
         size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs"
       }`}
       style={{ backgroundColor: bg, borderColor: border, color: text }}
     >
-      <span aria-hidden className="text-[9px]">★</span>
+      <span aria-hidden className="text-[9px]">
+        ★
+      </span>
       {label}
     </span>
   );

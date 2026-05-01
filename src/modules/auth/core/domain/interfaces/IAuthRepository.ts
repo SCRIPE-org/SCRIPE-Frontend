@@ -13,7 +13,12 @@ export interface LoginResult {
 
 export interface IAuthRepository {
   login(credentials: LoginRequest): Promise<LoginResult>;
-  verify2FA(identifier: string, password: string, code: string, tenantId?: string): Promise<LoginResult>;
+  verify2FA(
+    identifier: string,
+    password: string,
+    code: string,
+    tenantId?: string
+  ): Promise<LoginResult>;
   logout(): Promise<void>;
   getMe(): Promise<User>;
   hasToken(): boolean;
@@ -25,7 +30,10 @@ export interface IAuthRepository {
   /** Stop impersonation — restores original admin session */
   stopImpersonation(): Promise<void>;
   /** Abstract the OIDC Consent form parameters generation out of the Presentation layer */
-  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> };
+  buildOidcConsentForm(
+    searchParams: URLSearchParams,
+    accessToken: string
+  ): { action: string; params: Record<string, string> };
   /** Link an external SSO account to the current admin profile */
   linkExternalLogin(data: {
     identityProviderId: string;

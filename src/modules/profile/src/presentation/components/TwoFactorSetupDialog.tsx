@@ -128,7 +128,14 @@ export function TwoFactorSetupDialog({
             <div className="flex flex-col items-center gap-4 py-4">
               {/* QR Code Image */}
               <div className="rounded-xl bg-white p-4">
-                <Image src={setupData.qrCodeDataUri} alt="2FA QR Code" width={192} height={192} className="h-48 w-48" unoptimized />
+                <Image
+                  src={setupData.qrCodeDataUri}
+                  alt="2FA QR Code"
+                  width={192}
+                  height={192}
+                  className="h-48 w-48"
+                  unoptimized
+                />
               </div>
 
               {/* Manual Entry Key */}

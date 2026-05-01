@@ -11,13 +11,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import {
-  DragEndEvent,
-  DragStartEvent,
-  useSensor,
-  useSensors,
-  PointerSensor,
-} from "@dnd-kit/core";
+import { DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
 import type { CanvasComponentType } from "../../domain/entities/CanvasComponent";
 
@@ -28,7 +22,7 @@ export function useBuilderDnd() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
-    }),
+    })
   );
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -54,8 +48,8 @@ export function useBuilderDnd() {
           const newComp = store.addComponent(activeData.type as CanvasComponentType);
 
           // In grid mode, if dropped ON a specific component, insert at that position
-          if (newComp && store.positionMode === 'grid' && overId.startsWith("comp_")) {
-            const targetComp = store.components.find(c => c.id === overId);
+          if (newComp && store.positionMode === "grid" && overId.startsWith("comp_")) {
+            const targetComp = store.components.find((c) => c.id === overId);
             if (targetComp) {
               // Assign the new component's grid position to match where it was dropped
               store.updateComponent(newComp.id, {
@@ -63,10 +57,10 @@ export function useBuilderDnd() {
                 gridColumn: targetComp.gridColumn,
               });
               // Push the target and subsequent components down by one row
-              const targetRowStart = parseInt(targetComp.gridRow.split('/')[0]?.trim(), 10) || 1;
-              store.components.forEach(c => {
+              const targetRowStart = parseInt(targetComp.gridRow.split("/")[0]?.trim(), 10) || 1;
+              store.components.forEach((c) => {
                 if (c.id === newComp.id) return;
-                const rowStart = parseInt(c.gridRow.split('/')[0]?.trim(), 10) || 1;
+                const rowStart = parseInt(c.gridRow.split("/")[0]?.trim(), 10) || 1;
                 if (rowStart >= targetRowStart) {
                   store.updateComponent(c.id, {
                     gridRow: `${rowStart + 1} / ${rowStart + 2}`,
@@ -77,10 +71,10 @@ export function useBuilderDnd() {
           }
 
           // In absolute mode, offset the new component position by the drop delta
-          if (newComp && store.positionMode === 'absolute' && delta) {
+          if (newComp && store.positionMode === "absolute" && delta) {
             const scale = store.zoom / 100;
-            const adjustedX = Math.max(0, Math.round(newComp.x + (delta.x / scale)));
-            const adjustedY = Math.max(0, Math.round(newComp.y + (delta.y / scale)));
+            const adjustedX = Math.max(0, Math.round(newComp.x + delta.x / scale));
+            const adjustedY = Math.max(0, Math.round(newComp.y + delta.y / scale));
             store.moveComponentAbsolute(newComp.id, adjustedX, adjustedY);
           }
         }
@@ -89,10 +83,10 @@ export function useBuilderDnd() {
 
       // 2. Dragged within canvas (reorder) — grid mode only
       if (activeData?.source === "canvas" && active.id !== over.id) {
-        if (store.positionMode === 'grid') {
+        if (store.positionMode === "grid") {
           // Swap grid positions between the two components
-          const srcComp = store.components.find(c => c.id === String(active.id));
-          const dstComp = store.components.find(c => c.id === String(over.id));
+          const srcComp = store.components.find((c) => c.id === String(active.id));
+          const dstComp = store.components.find((c) => c.id === String(over.id));
           if (srcComp && dstComp) {
             const srcRow = srcComp.gridRow;
             const srcCol = srcComp.gridColumn;
@@ -124,13 +118,11 @@ export function useBuilderDnd() {
         }
       }
     },
-    [store],
+    [store]
   );
 
   // Find the component being dragged for the overlay
-  const activeComponent = activeId
-    ? store.components.find((c) => c.id === activeId) || null
-    : null;
+  const activeComponent = activeId ? store.components.find((c) => c.id === activeId) || null : null;
 
   // Find palette item being dragged
   const activePaletteType = activeId?.startsWith("palette-")
@@ -139,7 +131,7 @@ export function useBuilderDnd() {
 
   // Compute overlapping component IDs (for free-form mode)
   const overlappingIds = useMemo(() => {
-    if (store.positionMode !== 'absolute') return new Set<string>();
+    if (store.positionMode !== "absolute") return new Set<string>();
     const pairs = store.getOverlaps();
     const ids = new Set<string>();
     for (const [a, b] of pairs) {

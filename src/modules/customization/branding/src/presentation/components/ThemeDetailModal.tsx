@@ -22,21 +22,34 @@
 import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@/core/common/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import {
-  Heart, Star, Eye, Paintbrush, X, Moon, Sun,
-  ShieldCheck, Blocks, Monitor, Tablet, Smartphone,
-  Sparkles, Lock, Code, Globe,
-  Users, Palette, Type, Ruler,
-  ShoppingCart, ExternalLink, Calendar,
+  Heart,
+  Star,
+  Eye,
+  Paintbrush,
+  X,
+  Moon,
+  Sun,
+  ShieldCheck,
+  Blocks,
+  Monitor,
+  Tablet,
+  Smartphone,
+  Sparkles,
+  Lock,
+  Code,
+  Globe,
+  Users,
+  Palette,
+  Type,
+  Ruler,
+  ShoppingCart,
+  ExternalLink,
+  Calendar,
 } from "lucide-react";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
@@ -89,7 +102,17 @@ export function ThemeDetailModal({
     const light: { name: string; value: string }[] = [];
     const dark: { name: string; value: string }[] = [];
 
-    const colorKeys = ["primary", "secondary", "background", "surface", "text", "muted", "border", "error", "success"];
+    const colorKeys = [
+      "primary",
+      "secondary",
+      "background",
+      "surface",
+      "text",
+      "muted",
+      "border",
+      "error",
+      "success",
+    ];
     for (const key of colorKeys) {
       const lightVal = parsedTokens[`color.${key}`];
       const darkVal = parsedTokens[`dark.color.${key}`];
@@ -118,40 +141,34 @@ export function ThemeDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+      <DialogContent className="flex max-h-[90vh] max-w-5xl flex-col overflow-hidden p-0">
         {/* ── Header ── */}
-        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50 shrink-0">
+        <DialogHeader className="shrink-0 border-b border-border/50 px-6 pb-4 pt-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               {/* Color swatch */}
               <div
-                className="h-14 w-14 rounded-xl shadow-lg border border-white/20 shrink-0"
+                className="h-14 w-14 shrink-0 rounded-xl border border-white/20 shadow-lg"
                 style={{
                   background: `linear-gradient(135deg, ${accentColor}, color-mix(in srgb, ${accentColor} 50%, black))`,
                 }}
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <DialogTitle className="text-xl font-bold">
-                    {theme.name}
-                  </DialogTitle>
-                  {theme.isFeatured && (
-                    <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                  )}
+                  <DialogTitle className="text-xl font-bold">{theme.name}</DialogTitle>
+                  {theme.isFeatured && <Star className="h-4 w-4 fill-amber-500 text-amber-500" />}
                   {theme.isNew && (
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px]">
-                      <Sparkles className="h-3 w-3 mr-0.5" />
+                    <Badge className="border-emerald-500/20 bg-emerald-500/10 text-[10px] text-emerald-600">
+                      <Sparkles className="mr-0.5 h-3 w-3" />
                       {t("studio.gallery.card.new")}
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+                <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
                   {theme.authorName && (
                     <span>{t("studio.gallery.card.byAuthor", { author: theme.authorName })}</span>
                   )}
-                  {theme.version && (
-                    <span>v{theme.version}</span>
-                  )}
+                  {theme.version && <span>v{theme.version}</span>}
                   {theme.category && (
                     <Badge variant="outline" className="text-[10px] capitalize">
                       {theme.category}
@@ -178,28 +195,28 @@ export function ThemeDetailModal({
 
         {/* ── Content ── */}
         <div className="flex-1 overflow-y-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
+          <div className="grid grid-cols-1 gap-0 lg:grid-cols-5">
             {/* Left: Preview */}
-            <div className="lg:col-span-3 border-r border-border/50 p-6">
+            <div className="border-r border-border/50 p-6 lg:col-span-3">
               {/* Device + Color mode controls */}
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                   <Eye className="h-4 w-4 text-primary" />
                   {t(`${D}.preview.title`)}
                 </h3>
                 <div className="flex items-center gap-2">
                   {/* Device toggle */}
-                  <div className="flex items-center p-0.5 rounded-md bg-muted/50 border border-border/50">
-                    {([
+                  <div className="flex items-center rounded-md border border-border/50 bg-muted/50 p-0.5">
+                    {[
                       { key: "desktop" as const, icon: Monitor },
                       { key: "tablet" as const, icon: Tablet },
                       { key: "mobile" as const, icon: Smartphone },
-                    ]).map(({ key, icon: Icon }) => (
+                    ].map(({ key, icon: Icon }) => (
                       <button
                         key={key}
                         onClick={() => setDeviceSize(key)}
                         className={cn(
-                          "h-7 w-7 flex items-center justify-center rounded transition-all",
+                          "flex h-7 w-7 items-center justify-center rounded transition-all",
                           deviceSize === key
                             ? "bg-background text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
@@ -211,11 +228,11 @@ export function ThemeDetailModal({
                     ))}
                   </div>
                   {/* Light/Dark toggle */}
-                  <div className="flex items-center p-0.5 rounded-md bg-muted/50 border border-border/50">
+                  <div className="flex items-center rounded-md border border-border/50 bg-muted/50 p-0.5">
                     <button
                       onClick={() => setColorMode("light")}
                       className={cn(
-                        "h-7 w-7 flex items-center justify-center rounded transition-all",
+                        "flex h-7 w-7 items-center justify-center rounded transition-all",
                         colorMode === "light"
                           ? "bg-background text-foreground shadow-sm"
                           : "text-muted-foreground hover:text-foreground"
@@ -227,7 +244,7 @@ export function ThemeDetailModal({
                     <button
                       onClick={() => setColorMode("dark")}
                       className={cn(
-                        "h-7 w-7 flex items-center justify-center rounded transition-all",
+                        "flex h-7 w-7 items-center justify-center rounded transition-all",
                         colorMode === "dark"
                           ? "bg-background text-foreground shadow-sm"
                           : "text-muted-foreground hover:text-foreground"
@@ -243,47 +260,50 @@ export function ThemeDetailModal({
               {/* Preview area */}
               <div className="flex justify-center">
                 <div
-                  className="relative rounded-xl border border-border/60 overflow-hidden shadow-lg transition-all duration-300"
+                  className="relative overflow-hidden rounded-xl border border-border/60 shadow-lg transition-all duration-300"
                   style={{
                     width: deviceWidths[deviceSize],
                     maxWidth: "100%",
-                    height: deviceSize === "mobile" ? "500px" : deviceSize === "tablet" ? "450px" : "380px",
-                    background: colorMode === "dark"
-                      ? `linear-gradient(135deg, color-mix(in srgb, ${accentColor} 20%, #0f172a), #0f172a)`
-                      : `linear-gradient(135deg, ${accentColor}20, #f8fafc)`,
+                    height:
+                      deviceSize === "mobile"
+                        ? "500px"
+                        : deviceSize === "tablet"
+                          ? "450px"
+                          : "380px",
+                    background:
+                      colorMode === "dark"
+                        ? `linear-gradient(135deg, color-mix(in srgb, ${accentColor} 20%, #0f172a), #0f172a)`
+                        : `linear-gradient(135deg, ${accentColor}20, #f8fafc)`,
                   }}
                 >
                   {/* Mock login form */}
                   <div className="absolute inset-0 flex items-center justify-center p-6">
                     <div
                       className={cn(
-                        "w-full rounded-2xl p-6 space-y-4 shadow-xl backdrop-blur-sm border transition-all",
+                        "w-full space-y-4 rounded-2xl border p-6 shadow-xl backdrop-blur-sm transition-all",
                         colorMode === "dark"
-                          ? "bg-slate-900/80 border-slate-700/40"
-                          : "bg-white/90 border-white/60"
+                          ? "border-slate-700/40 bg-slate-900/80"
+                          : "border-white/60 bg-white/90"
                       )}
                       style={{
                         maxWidth: deviceSize === "mobile" ? "280px" : "340px",
                       }}
                     >
                       {/* Logo placeholder */}
-                      <div className="flex justify-center mb-2">
-                        <div
-                          className="h-8 w-8 rounded-lg"
-                          style={{ background: accentColor }}
-                        />
+                      <div className="mb-2 flex justify-center">
+                        <div className="h-8 w-8 rounded-lg" style={{ background: accentColor }} />
                       </div>
                       {/* Title */}
-                      <div className="text-center space-y-1">
+                      <div className="space-y-1 text-center">
                         <div
                           className={cn(
-                            "h-4 w-32 rounded mx-auto",
+                            "mx-auto h-4 w-32 rounded",
                             colorMode === "dark" ? "bg-white/20" : "bg-gray-200"
                           )}
                         />
                         <div
                           className={cn(
-                            "h-2.5 w-48 rounded mx-auto",
+                            "mx-auto h-2.5 w-48 rounded",
                             colorMode === "dark" ? "bg-white/10" : "bg-gray-100"
                           )}
                         />
@@ -295,16 +315,13 @@ export function ThemeDetailModal({
                           className={cn(
                             "h-9 w-full rounded-lg border",
                             colorMode === "dark"
-                              ? "bg-slate-800/60 border-slate-600/40"
-                              : "bg-gray-50 border-gray-200"
+                              ? "border-slate-600/40 bg-slate-800/60"
+                              : "border-gray-200 bg-gray-50"
                           )}
                         />
                       ))}
                       {/* Button */}
-                      <div
-                        className="h-9 w-full rounded-lg"
-                        style={{ background: accentColor }}
-                      />
+                      <div className="h-9 w-full rounded-lg" style={{ background: accentColor }} />
                       {/* Footer link */}
                       <div className="flex justify-center">
                         <div
@@ -321,13 +338,9 @@ export function ThemeDetailModal({
 
               {/* Feature badges */}
               {features.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="mt-4 flex flex-wrap gap-2">
                   {features.map(({ key, icon: Icon }) => (
-                    <Badge
-                      key={key}
-                      variant="outline"
-                      className="text-xs gap-1 py-1"
-                    >
+                    <Badge key={key} variant="outline" className="gap-1 py-1 text-xs">
                       <Icon className="h-3.5 w-3.5" />
                       {t(`${D}.features.${key}`)}
                     </Badge>
@@ -337,9 +350,9 @@ export function ThemeDetailModal({
             </div>
 
             {/* Right: Info + Specs */}
-            <div className="lg:col-span-2 p-6">
+            <div className="p-6 lg:col-span-2">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="w-full mb-4">
+                <TabsList className="mb-4 w-full">
                   <TabsTrigger value="overview" className="flex-1 text-xs">
                     {t(`${D}.tabs.overview`)}
                   </TabsTrigger>
@@ -349,9 +362,9 @@ export function ThemeDetailModal({
                 </TabsList>
 
                 {/* Overview tab */}
-                <TabsContent value="overview" className="space-y-5 mt-0">
+                <TabsContent value="overview" className="mt-0 space-y-5">
                   {/* Description */}
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {theme.description || ""}
                   </p>
 
@@ -398,11 +411,7 @@ export function ThemeDetailModal({
                   {theme.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {theme.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="outline"
-                          className="text-[10px] capitalize"
-                        >
+                        <Badge key={tag} variant="outline" className="text-[10px] capitalize">
                           {tag}
                         </Badge>
                       ))}
@@ -411,19 +420,19 @@ export function ThemeDetailModal({
                 </TabsContent>
 
                 {/* Specs tab */}
-                <TabsContent value="specs" className="space-y-5 mt-0">
+                <TabsContent value="specs" className="mt-0 space-y-5">
                   {/* Color palette */}
                   {colorSwatches.light.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                      <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
                         <Palette className="h-3.5 w-3.5 text-primary" />
                         {t(`${D}.specs.colorPalette`)}
                       </h4>
                       {/* Light colors */}
-                      <p className="text-[10px] text-muted-foreground mb-1.5 uppercase tracking-wider">
+                      <p className="mb-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
                         {t(`${D}.specs.lightColors`)}
                       </p>
-                      <div className="flex flex-wrap gap-1.5 mb-3">
+                      <div className="mb-3 flex flex-wrap gap-1.5">
                         {colorSwatches.light.map(({ name, value }) => (
                           <div key={name} className="flex flex-col items-center gap-0.5">
                             <div
@@ -431,14 +440,16 @@ export function ThemeDetailModal({
                               style={{ backgroundColor: value }}
                               title={`${name}: ${value}`}
                             />
-                            <span className="text-[8px] text-muted-foreground capitalize">{name}</span>
+                            <span className="text-[8px] capitalize text-muted-foreground">
+                              {name}
+                            </span>
                           </div>
                         ))}
                       </div>
                       {/* Dark colors */}
                       {colorSwatches.dark.length > 0 && (
                         <>
-                          <p className="text-[10px] text-muted-foreground mb-1.5 uppercase tracking-wider">
+                          <p className="mb-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
                             {t(`${D}.specs.darkColors`)}
                           </p>
                           <div className="flex flex-wrap gap-1.5">
@@ -449,7 +460,9 @@ export function ThemeDetailModal({
                                   style={{ backgroundColor: value }}
                                   title={`${name}: ${value}`}
                                 />
-                                <span className="text-[8px] text-muted-foreground capitalize">{name}</span>
+                                <span className="text-[8px] capitalize text-muted-foreground">
+                                  {name}
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -461,7 +474,7 @@ export function ThemeDetailModal({
                   {/* Typography specs */}
                   {parsedTokens && (parsedTokens["font.body"] || parsedTokens["font.heading"]) && (
                     <div>
-                      <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                      <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
                         <Type className="h-3.5 w-3.5 text-primary" />
                         {t(`${D}.specs.typography`)}
                       </h4>
@@ -495,48 +508,47 @@ export function ThemeDetailModal({
                   )}
 
                   {/* Spacing specs */}
-                  {parsedTokens && (parsedTokens["spacing.borderRadius"] || parsedTokens["spacing.btnRadius"]) && (
-                    <div>
-                      <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                        <Ruler className="h-3.5 w-3.5 text-primary" />
-                        {t(`${D}.specs.spacing`)}
-                      </h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {parsedTokens["spacing.borderRadius"] && (
-                          <SpecItem
-                            label={t(`${D}.specs.borderRadius`)}
-                            value={parsedTokens["spacing.borderRadius"]}
-                          />
-                        )}
-                        {parsedTokens["spacing.btnRadius"] && (
-                          <SpecItem
-                            label={t(`${D}.specs.buttonRadius`)}
-                            value={parsedTokens["spacing.btnRadius"]}
-                          />
-                        )}
-                        {parsedTokens["spacing.formWidth"] && (
-                          <SpecItem
-                            label={t(`${D}.specs.formWidth`)}
-                            value={parsedTokens["spacing.formWidth"]}
-                          />
-                        )}
-                        {parsedTokens["spacing.inputHeight"] && (
-                          <SpecItem
-                            label={t(`${D}.specs.inputHeight`)}
-                            value={parsedTokens["spacing.inputHeight"]}
-                          />
-                        )}
+                  {parsedTokens &&
+                    (parsedTokens["spacing.borderRadius"] || parsedTokens["spacing.btnRadius"]) && (
+                      <div>
+                        <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                          <Ruler className="h-3.5 w-3.5 text-primary" />
+                          {t(`${D}.specs.spacing`)}
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {parsedTokens["spacing.borderRadius"] && (
+                            <SpecItem
+                              label={t(`${D}.specs.borderRadius`)}
+                              value={parsedTokens["spacing.borderRadius"]}
+                            />
+                          )}
+                          {parsedTokens["spacing.btnRadius"] && (
+                            <SpecItem
+                              label={t(`${D}.specs.buttonRadius`)}
+                              value={parsedTokens["spacing.btnRadius"]}
+                            />
+                          )}
+                          {parsedTokens["spacing.formWidth"] && (
+                            <SpecItem
+                              label={t(`${D}.specs.formWidth`)}
+                              value={parsedTokens["spacing.formWidth"]}
+                            />
+                          )}
+                          {parsedTokens["spacing.inputHeight"] && (
+                            <SpecItem
+                              label={t(`${D}.specs.inputHeight`)}
+                              value={parsedTokens["spacing.inputHeight"]}
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* No specs fallback */}
                   {!parsedTokens && (
-                    <div className="text-center py-8">
-                      <Palette className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-xs text-muted-foreground">
-                        {t(`${D}.tabs.specs`)}
-                      </p>
+                    <div className="py-8 text-center">
+                      <Palette className="mx-auto mb-2 h-8 w-8 text-muted-foreground/30" />
+                      <p className="text-xs text-muted-foreground">{t(`${D}.tabs.specs`)}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -546,7 +558,7 @@ export function ThemeDetailModal({
         </div>
 
         {/* ── Footer Actions ── */}
-        <div className="px-6 py-4 border-t border-border/50 bg-muted/20 flex items-center justify-between shrink-0">
+        <div className="flex shrink-0 items-center justify-between border-t border-border/50 bg-muted/20 px-6 py-4">
           <div className="flex items-center gap-2">
             {/* Favorite */}
             <Button
@@ -555,15 +567,8 @@ export function ThemeDetailModal({
               className="gap-1.5"
               onClick={() => onToggleFavorite?.(theme.slug)}
             >
-              <Heart
-                className={cn(
-                  "h-4 w-4",
-                  theme.isFavorited && "fill-red-500 text-red-500"
-                )}
-              />
-              {theme.isFavorited
-                ? t(`${D}.actions.unfavorite`)
-                : t(`${D}.actions.favorite`)}
+              <Heart className={cn("h-4 w-4", theme.isFavorited && "fill-red-500 text-red-500")} />
+              {theme.isFavorited ? t(`${D}.actions.unfavorite`) : t(`${D}.actions.favorite`)}
             </Button>
           </div>
 
@@ -581,11 +586,7 @@ export function ThemeDetailModal({
 
             {/* Apply */}
             {theme.isAvailable && !confirmApply && (
-              <Button
-                size="sm"
-                className="gap-1.5"
-                onClick={() => setConfirmApply(true)}
-              >
+              <Button size="sm" className="gap-1.5" onClick={() => setConfirmApply(true)}>
                 <Paintbrush className="h-4 w-4" />
                 {t(`${D}.actions.applyToDraft`)}
               </Button>
@@ -648,23 +649,13 @@ export function ThemeDetailModal({
 
 // ── Helpers ──
 
-function InfoItem({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function InfoItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-start gap-2 p-2 rounded-lg bg-muted/30">
-      <div className="text-muted-foreground mt-0.5">{icon}</div>
+    <div className="flex items-start gap-2 rounded-lg bg-muted/30 p-2">
+      <div className="mt-0.5 text-muted-foreground">{icon}</div>
       <div>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-          {label}
-        </p>
-        <p className="text-xs font-medium text-foreground capitalize">{value}</p>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+        <p className="text-xs font-medium capitalize text-foreground">{value}</p>
       </div>
     </div>
   );
@@ -672,9 +663,9 @@ function InfoItem({
 
 function SpecItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="p-2 rounded-lg bg-muted/30">
+    <div className="rounded-lg bg-muted/30 p-2">
       <p className="text-[10px] text-muted-foreground">{label}</p>
-      <p className="text-xs font-medium text-foreground font-mono">{value}</p>
+      <p className="font-mono text-xs font-medium text-foreground">{value}</p>
     </div>
   );
 }

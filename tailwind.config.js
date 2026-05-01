@@ -67,9 +67,9 @@ module.exports = {
         },
       },
       transitionDuration: {
-        "500": "500ms",
-        "700": "700ms",
-        "1000": "1000ms",
+        500: "500ms",
+        700: "700ms",
+        1000: "1000ms",
       },
       transitionTimingFunction: {
         "smooth-out": "cubic-bezier(0.32, 0.72, 0, 1)",

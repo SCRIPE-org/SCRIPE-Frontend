@@ -19,7 +19,7 @@ import type { IRecycleBinService } from "../../domain/interfaces/IRecycleBinServ
 import { DeletedItemMapper } from "../mappers/DeletedItemMapper";
 
 export class RecycleBinRepository implements IRecycleBinRepository {
-  constructor(private readonly service: IRecycleBinService) { }
+  constructor(private readonly service: IRecycleBinService) {}
 
   async getAll(): Promise<DeletedItemsGrouped> {
     const result = await this.service.getAll();
@@ -38,7 +38,9 @@ export class RecycleBinRepository implements IRecycleBinRepository {
     await this.service.restore(entityType, id, restoreAdmins);
   }
 
-  async bulkRestore(items: { entityType: string; id: string; restoreAdmins?: boolean }[]): Promise<number> {
+  async bulkRestore(
+    items: { entityType: string; id: string; restoreAdmins?: boolean }[]
+  ): Promise<number> {
     return this.service.bulkRestore(items);
   }
 }

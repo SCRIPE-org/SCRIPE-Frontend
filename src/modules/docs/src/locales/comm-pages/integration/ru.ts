@@ -17,15 +17,20 @@ export const ru = {
       tblCtrlR17C1: "TenantFeaturesController",
       tblCtrlR17C2: "4",
       tblCtrlR17C3: "Переопределения тэнантов, разрешенные функции",
-      authContent: "Абсолютно каждый контроллер по умолчанию заблокирован. NEXORA использует надежную валидацию токенов JWT, требуя точных гранулярных разрешений и подтвержденных claims тенанта до того, как будет возвращен хотя бы один байт JSON.",
+      authContent:
+        "Абсолютно каждый контроллер по умолчанию заблокирован. NEXORA использует надежную валидацию токенов JWT, требуя точных гранулярных разрешений и подтвержденных claims тенанта до того, как будет возвращен хотя бы один байт JSON.",
       authTitle: "Строгая криптографическая авторизация",
       controllersTitle: "Строгая топология контроллеров",
-      description: "Безупречная, полностью документированная поверхность RESTful API с динамической фильтрацией, пагинацией на основе курсора (cursor-based) и богатыми HATEOAS ответами.",
-      intro: "Бэкенд — это не просто обертка над базой данных (database wrapper); это тщательно продуманная HTTP-поверхность. NEXORA открывает безупречный RESTful API, который строго придерживается стандартных HTTP-методов (verbs), кодов состояния и конвенций гипермедиа.",
+      description:
+        "Безупречная, полностью документированная поверхность RESTful API с динамической фильтрацией, пагинацией на основе курсора (cursor-based) и богатыми HATEOAS ответами.",
+      intro:
+        "Бэкенд — это не просто обертка над базой данных (database wrapper); это тщательно продуманная HTTP-поверхность. NEXORA открывает безупречный RESTful API, который строго придерживается стандартных HTTP-методов (verbs), кодов состояния и конвенций гипермедиа.",
       paginationTitle: "Пагинация Cursor и Offset",
-      responseContent: "Больше никакого парсинга случайных строк с ошибками. Каждый ответ API — будь то успех или катастрофический сбой — обернут в нашу стандартизированную структуру Problem Details (паттерн `Result<T>`), гарантируя абсолютную предсказуемость для фронтенда и сторонних потребителей.",
+      responseContent:
+        "Больше никакого парсинга случайных строк с ошибками. Каждый ответ API — будь то успех или катастрофический сбой — обернут в нашу стандартизированную структуру Problem Details (паттерн `Result<T>`), гарантируя абсолютную предсказуемость для фронтенда и сторонних потребителей.",
       responseTitle: "Стандартизированные предсказуемые Payload'ы",
-      swaggerContent: "Мы генерируем подробную, глубоко аннотированную документацию Swagger (OpenAPI 3.0) напрямую из C#-кода во время выполнения (runtime). Разработчики могут интерактивно тестировать аутентифицированные payload'ы прямо из браузера в ту же секунду, когда система запускается.",
+      swaggerContent:
+        "Мы генерируем подробную, глубоко аннотированную документацию Swagger (OpenAPI 3.0) напрямую из C#-кода во время выполнения (runtime). Разработчики могут интерактивно тестировать аутентифицированные payload'ы прямо из браузера в ту же секунду, когда система запускается.",
       swaggerTitle: "Интерактивные порталы OpenAPI",
       title: "Поверхность RESTful API",
       tblCtrlHeader1: "Контроллер",
@@ -75,112 +80,155 @@ export const ru = {
       lstSwagI3: "Поддержка JWT-аутентификации прямо в Swagger UI",
       lstSwagI4: "Документация схем запросов/ответов с примерами",
       lstSwagI5: "Сгруппировано по контроллерам для удобной навигации",
-      lstSwagI6: "Доступно по адресу /swagger в режиме разработки (development mode)"
+      lstSwagI6: "Доступно по адресу /swagger в режиме разработки (development mode)",
     },
     apiDesign: {
       conventionsTitle: "Корпоративные стандарты",
-      description: "Ознакомьтесь с безупречными принципами проектирования RESTful API, строгим версионированием и предсказуемыми соглашениями, на которых работает NEXORA.",
+      description:
+        "Ознакомьтесь с безупречными принципами проектирования RESTful API, строгим версионированием и предсказуемыми соглашениями, на которых работает NEXORA.",
       errorTitle: "Стандартизированная обработка ошибок",
-      intro: "API NEXORA спроектировано для масштабирования и предсказуемости. От согласованных правил именования до стандартизированной пагинации и формата ошибок RFC 7807 — наша RESTful-архитектура без состояния (stateless) гарантирует бесшовную интеграцию для конечных потребителей.",
-      pipelineContent: "Пайплайн API использует высокооптимизированный жизненный цикл запросов MediatR. Каждый эндпоинт автоматически наследует валидацию, отслеживание производительности, кэширование и аудит-логирование еще до выполнения первой строки бизнес-логики.",
+      intro:
+        "API NEXORA спроектировано для масштабирования и предсказуемости. От согласованных правил именования до стандартизированной пагинации и формата ошибок RFC 7807 — наша RESTful-архитектура без состояния (stateless) гарантирует бесшовную интеграцию для конечных потребителей.",
+      pipelineContent:
+        "Пайплайн API использует высокооптимизированный жизненный цикл запросов MediatR. Каждый эндпоинт автоматически наследует валидацию, отслеживание производительности, кэширование и аудит-логирование еще до выполнения первой строки бизнес-логики.",
       pipelineTitle: "Надежный пайплайн запросов",
-      resultContent: "NEXORA устраняет «ад» блоков try-catch благодаря единому паттерну Result. Каждый ответ API строго типизирован и математически предсказуем, гарантируя, что потребители получают стандартные HTTP-коды состояния, оборачивающие идентичную JSON-структуру ответа независимо от используемого модуля.",
+      resultContent:
+        "NEXORA устраняет «ад» блоков try-catch благодаря единому паттерну Result. Каждый ответ API строго типизирован и математически предсказуем, гарантируя, что потребители получают стандартные HTTP-коды состояния, оборачивающие идентичную JSON-структуру ответа независимо от используемого модуля.",
       resultTitle: "Предсказуемый паттерн Result",
       statusCodesTitle: "Семантические коды состояния",
-      swaggerContent: "Изучите живую документацию Swagger/OpenAPI 3.0, чтобы мгновенно взаимодействовать с более чем 400 преднастроенными эндпоинтами. Мы генерируем строгие спецификации OpenAPI, что позволяет бесшовно создавать SDK для фронтенда и мобильных платформ.",
+      swaggerContent:
+        "Изучите живую документацию Swagger/OpenAPI 3.0, чтобы мгновенно взаимодействовать с более чем 400 преднастроенными эндпоинтами. Мы генерируем строгие спецификации OpenAPI, что позволяет бесшовно создавать SDK для фронтенда и мобильных платформ.",
       swaggerTitle: "Интерактивный Swagger UI",
-      title: "Дизайн и архитектура API"
+      title: "Дизайн и архитектура API",
     },
     webhookIntegration: {
-      description: "Массивно отказоустойчивый, асинхронный, event-driven диспетчер вебхуков, обеспечивающий безопасную мгновенную синхронизацию данных с огромными внешними API.",
+      description:
+        "Массивно отказоустойчивый, асинхронный, event-driven диспетчер вебхуков, обеспечивающий безопасную мгновенную синхронизацию данных с огромными внешними API.",
       eventsTitle: "Глобально транслируемые поддерживаемые события",
-      intro: "Современные enterprise системы обязаны общаться. Вместо того чтобы заставлять клиентов агрессивно пуллить (polling) ваш REST API, NEXORA включает нативный, массово эффективный диспетчер исходящих вебхуков. Пушьте критические события домена мгновенно в любую внешнюю систему по безопасному протоколу HTTPS.",
+      intro:
+        "Современные enterprise системы обязаны общаться. Вместо того чтобы заставлять клиентов агрессивно пуллить (polling) ваш REST API, NEXORA включает нативный, массово эффективный диспетчер исходящих вебхуков. Пушьте критические события домена мгновенно в любую внешнюю систему по безопасному протоколу HTTPS.",
       logsTitle: "Форензик-аудит диспетчеризации",
       managementTitle: "Динамическое управление подписками",
-      retryContent: "Если сервер подписчика уходит в офлайн, NEXORA не удаляет payload. Используя интеллектуальный паттерн persistent outbox (надежной исходящей очереди) с экспоненциальной задержкой (exponential backoff), система математически повторяет запрос (например, через 5 секунд, 1 минуту, 1 час, 1 день) до тех пор, пока получение не будет подтверждено HTTP-статусом 2xx.",
+      retryContent:
+        "Если сервер подписчика уходит в офлайн, NEXORA не удаляет payload. Используя интеллектуальный паттерн persistent outbox (надежной исходящей очереди) с экспоненциальной задержкой (exponential backoff), система математически повторяет запрос (например, через 5 секунд, 1 минуту, 1 час, 1 день) до тех пор, пока получение не будет подтверждено HTTP-статусом 2xx.",
       retryTitle: "Персистентный Exponential Backoff",
-      securityContent: "Каждый исходящий payload надежно подписан подписью HMAC-SHA256, сгенерированной на основе secret key тенанта. Сторонние интеграции могут окончательно проверить, что вебхук произошел с ваших серверов NEXORA и что payload не был перехвачен или глобально изменен.",
+      securityContent:
+        "Каждый исходящий payload надежно подписан подписью HMAC-SHA256, сгенерированной на основе secret key тенанта. Сторонние интеграции могут окончательно проверить, что вебхук произошел с ваших серверов NEXORA и что payload не был перехвачен или глобально изменен.",
       securityTitle: "Криптографические подписи HMAC",
-      title: "Высоконагруженная диспетчеризация Webhook'ов"
+      title: "Высоконагруженная диспетчеризация Webhook'ов",
     },
     emailIntegration: {
       bilingual: "Двуязычный роутинг шаблонов",
-      bilingualDesc: "Автоматически определяйте локаль тенанта и отправляйте глубоко персонализированные HTML-письма на арабском (RTL) или английском (LTR) из строго категоризированных шаблонов.",
+      bilingualDesc:
+        "Автоматически определяйте локаль тенанта и отправляйте глубоко персонализированные HTML-письма на арабском (RTL) или английском (LTR) из строго категоризированных шаблонов.",
       configTitle: "Динамические конфигурации SMTP",
-      description: "Асинхронная доставка транзакционных писем на основе очередей с богатыми настраиваемыми шаблонами Scriban.",
+      description:
+        "Асинхронная доставка транзакционных писем на основе очередей с богатыми настраиваемыми шаблонами Scriban.",
       featuresTitle: "Фичи Enterprise-доставки",
-      intro: "Транзакционные коммуникации никогда не должны блокировать API-запрос. NEXORA включает систему отправки на основе паттерна outbox и очередей, использующую фоновые воркеры (background workers), чтобы гарантировать сверхбыструю, надежную доставку email через стандартный SMTP или прямые REST API (SendGrid, Mailgun).",
+      intro:
+        "Транзакционные коммуникации никогда не должны блокировать API-запрос. NEXORA включает систему отправки на основе паттерна outbox и очередей, использующую фоновые воркеры (background workers), чтобы гарантировать сверхбыструю, надежную доставку email через стандартный SMTP или прямые REST API (SendGrid, Mailgun).",
       pipelineTitle: "Транзакционный пайплайн",
       providersTitle: "Агностичные провайдеры транспорта",
       queueBased: "Фоновые отправки",
-      queueBasedDesc: "API отвечают строго менее чем за 50 мс, в то время как тяжелые манипуляции со строками и внешние сетевые вызовы делегируются постоянным фоновым сервисам.",
+      queueBasedDesc:
+        "API отвечают строго менее чем за 50 мс, в то время как тяжелые манипуляции со строками и внешние сетевые вызовы делегируются постоянным фоновым сервисам.",
       retryLogic: "Экспоненциальная задержка (Exponential Backoff)",
-      retryLogicDesc: "Изящно обрабатывайте временные сетевые сбои или лимиты запросов от внешних провайдеров с помощью встроенных, настраиваемых и отказоустойчивых политик повторных попыток.",
-      templatesContent: "Пишите логику прямо внутри ваших email-макетов. Используя молниеносный язык шаблонов Scriban, вы можете выполнять условные блоки if/else, итерироваться по элементам и идеально форматировать даты, не допуская утечки бизнес-логики в слой приложения.",
+      retryLogicDesc:
+        "Изящно обрабатывайте временные сетевые сбои или лимиты запросов от внешних провайдеров с помощью встроенных, настраиваемых и отказоустойчивых политик повторных попыток.",
+      templatesContent:
+        "Пишите логику прямо внутри ваших email-макетов. Используя молниеносный язык шаблонов Scriban, вы можете выполнять условные блоки if/else, итерироваться по элементам и идеально форматировать даты, не допуская утечки бизнес-логики в слой приложения.",
       templatesTitle: "Интеллектуальные шаблоны Scriban",
       title: "Отказоустойчивая инфраструктура Email",
       tracking: "Аудит и трекинг доставки",
-      trackingDesc: "Записывайте ID отправки, точный timestamp и ответ провайдера для каждого отправленного письма, создавая неопровержимый audit trail."
+      trackingDesc:
+        "Записывайте ID отправки, точный timestamp и ответ провайдера для каждого отправленного письма, создавая неопровержимый audit trail.",
     },
     messageTemplates: {
-      bilingualContent: "Каждый шаблон нативно понимает контекст пользователя. Отправьте точно такой же транзакционный payload, и движок оценит предпочтительную локаль получателя, мгновенно сгенерировав красиво отформатированные коммуникации на арабском (RTL) или английском (LTR).",
+      bilingualContent:
+        "Каждый шаблон нативно понимает контекст пользователя. Отправьте точно такой же транзакционный payload, и движок оценит предпочтительную локаль получателя, мгновенно сгенерировав красиво отформатированные коммуникации на арабском (RTL) или английском (LTR).",
       bilingualTitle: "Интеллектуальный контекстный рендеринг",
       builtInTitle: "Предустановленные системные шаблоны",
-      description: "Тьюринг-полный движок динамических шаблонов на базе Scriban для локализованных писем, SMS, уведомлений и генерации PDF-документов.",
-      engineContent: "Зачем перекомпилировать код, чтобы изменить тему письма? NEXORA использует Scriban — молниеносно быстрый язык шаблонов, совместимый с Liquid. Он безопасно вычисляет логику if/else, манипуляции со строками и циклы данных непосредственно внутри контента, выполняясь менее чем за миллисекунду.",
+      description:
+        "Тьюринг-полный движок динамических шаблонов на базе Scriban для локализованных писем, SMS, уведомлений и генерации PDF-документов.",
+      engineContent:
+        "Зачем перекомпилировать код, чтобы изменить тему письма? NEXORA использует Scriban — молниеносно быстрый язык шаблонов, совместимый с Liquid. Он безопасно вычисляет логику if/else, манипуляции со строками и циклы данных непосредственно внутри контента, выполняясь менее чем за миллисекунду.",
       engineTitle: "Тьюринг-полный движок шаблонов (Turing-Complete)",
-      intro: "Коммуникации с клиентами должны быть динамичными, глубоко персонализированными и мгновенно развертываемыми. NEXORA отделяет разметку сообщений от базовой логики приложения, используя высокозащищенный шаблонизатор (sandboxed template engine).",
+      intro:
+        "Коммуникации с клиентами должны быть динамичными, глубоко персонализированными и мгновенно развертываемыми. NEXORA отделяет разметку сообщений от базовой логики приложения, используя высокозащищенный шаблонизатор (sandboxed template engine).",
       managementTitle: "Централизованный хаб шаблонов",
-      previewContent: "Разработчики и Product Owners могут мгновенно итерировать дизайн шаблонов через встроенный интерфейс live-превью. Инжектируйте моковые JSON payload'ы, чтобы протестировать сложные логические циклы и обработку ошибок, даже не деплоя код.",
+      previewContent:
+        "Разработчики и Product Owners могут мгновенно итерировать дизайн шаблонов через встроенный интерфейс live-превью. Инжектируйте моковые JSON payload'ы, чтобы протестировать сложные логические циклы и обработку ошибок, даже не деплоя код.",
       previewLive: "Инъекция payload'а в реальном времени",
-      previewLiveDesc: "Визуализируйте точный отрендеренный результат, скармливая в sandbox динамические объекты данных.",
+      previewLiveDesc:
+        "Визуализируйте точный отрендеренный результат, скармливая в sandbox динамические объекты данных.",
       previewTitle: "Живая Sandbox среда",
       previewVariables: "Безопасный Model Binding",
-      previewVariablesDesc: "Только явно разрешенные ViewModels могут быть доступны из шаблона, что гарантирует безопасность данных.",
-      title: "Динамическая шаблонизация сообщений"
+      previewVariablesDesc:
+        "Только явно разрешенные ViewModels могут быть доступны из шаблона, что гарантирует безопасность данных.",
+      title: "Динамическая шаблонизация сообщений",
     },
     ssoEnterprise: {
       title: "Корпоративный Единый Вход (Enterprise SSO)",
-      description: "Централизуйте доступ к учетным записям. Подключайте корпоративные каталоги напрямую к мультитенантной аутентификации NEXORA с нулевым (zero-friction) трением.",
-      intro: "Безопасность корпоративного масштаба требует централизованного доверия. SSO NEXORA позволяет вашим клиентам делегировать аутентификацию их существующим провайдерам идентичности (IdP), сохраняя при этом нашу строгую изоляцию тенантов и распределение ролей.",
+      description:
+        "Централизуйте доступ к учетным записям. Подключайте корпоративные каталоги напрямую к мультитенантной аутентификации NEXORA с нулевым (zero-friction) трением.",
+      intro:
+        "Безопасность корпоративного масштаба требует централизованного доверия. SSO NEXORA позволяет вашим клиентам делегировать аутентификацию их существующим провайдерам идентичности (IdP), сохраняя при этом нашу строгую изоляцию тенантов и распределение ролей.",
       oidcTitle: "Универсальная интеграция OIDC",
-      oidcContent: "Легко подключайтесь к Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace или любому другому провайдеру с поддержкой OpenID Connect (OIDC). Мы берем на себя криптографический обмен; ваши пользователи получают доступ в один клик.",
+      oidcContent:
+        "Легко подключайтесь к Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace или любому другому провайдеру с поддержкой OpenID Connect (OIDC). Мы берем на себя криптографический обмен; ваши пользователи получают доступ в один клик.",
       oauthAppsTitle: "Шлюз сторонних OAuth приложений",
-      oauthAppsContent: "Дайте программной экосистеме ваших клиентов возможность безопасной интеграции с NEXORA. Регистрируйте неограниченное количество OAuth приложений (Web, Desktop или SPA) и программно управляйте доступом (scopes) и жизненным циклом токенов.",
+      oauthAppsContent:
+        "Дайте программной экосистеме ваших клиентов возможность безопасной интеграции с NEXORA. Регистрируйте неограниченное количество OAuth приложений (Web, Desktop или SPA) и программно управляйте доступом (scopes) и жизненным циклом токенов.",
       tenantIsolationTitle: "Изолированные службы идентичности тенанта",
-      tenantIsolationContent: "NEXORA строго привязывает каждую конфигурацию SSO к ее тенанту. Тенант A может аутентифицироваться через Entra ID, в то время как Тенант B использует Okta — на одной платформе, с нулевым риском перекрестного доступа к данным.",
+      tenantIsolationContent:
+        "NEXORA строго привязывает каждую конфигурацию SSO к ее тенанту. Тенант A может аутентифицироваться через Entra ID, в то время как Тенант B использует Okta — на одной платформе, с нулевым риском перекрестного доступа к данным.",
       pkceSecurityTitle: "Proof Key for Code Exchange (PKCE)",
-      pkceSecurityContent: "Мы полностью отказываемся от устаревших и уязвимых потоков аутентификации. Абсолютно все OAuth транзакции NEXORA обязывают использовать протокол PKCE, обеспечивая полный иммунитет к атакам перехвата кода авторизации, даже для нативных мобильных клиентов или SPA фреймворков (JavaScript).",
+      pkceSecurityContent:
+        "Мы полностью отказываемся от устаревших и уязвимых потоков аутентификации. Абсолютно все OAuth транзакции NEXORA обязывают использовать протокол PKCE, обеспечивая полный иммунитет к атакам перехвата кода авторизации, даже для нативных мобильных клиентов или SPA фреймворков (JavaScript).",
       linkingTitle: "Автоматическая привязка идентичности",
-      linkingContent: "Забудьте о ручных приглашениях по email. Когда ваши сотрудники впервые входят через корпоративный SSO, NEXORA мгновенно сверяет их email и аккуратно привязывает их к профилям и локальным административным ролям (RBAC) без какого-либо трения.",
+      linkingContent:
+        "Забудьте о ручных приглашениях по email. Когда ваши сотрудники впервые входят через корпоративный SSO, NEXORA мгновенно сверяет их email и аккуратно привязывает их к профилям и локальным административным ролям (RBAC) без какого-либо трения.",
       valueTitle: "Strategic IAM Value",
       val1Title: "Zero-Trust Identity Protocol",
-      val1Desc: "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
+      val1Desc:
+        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
       val2Title: "Zero-Code Federation (IdP)",
-      val2Desc: "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
+      val2Desc:
+        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
       val3Title: "NEXORA as the Identity Server",
-      val3Desc: "Why pay for Auth0 or deploy Keycloak? Turn NEXORA into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume NEXORA's JWTs.",
+      val3Desc:
+        "Why pay for Auth0 or deploy Keycloak? Turn NEXORA into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume NEXORA's JWTs.",
       val4Title: "Absolute Tenant IAM Isolation",
-      val4Desc: "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
+      val4Desc:
+        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
       val5Title: "White-Labeled Login Experience",
-      val5Desc: "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
+      val5Desc:
+        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
       val6Title: "Future-Proof Standardization",
-      val6Desc: "NEXORA relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
+      val6Desc:
+        "NEXORA relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
       protocolsTitle: "Supported Authentication Protocols",
-      protocolsContent: "NEXORA mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
+      protocolsContent:
+        "NEXORA mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
       comparisonTitle: "How NEXORA Compares",
       multiIdpTitle: "Infinite Multi-IdP Per Tenant",
-      multiIdpContent: "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. NEXORA natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
+      multiIdpContent:
+        "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. NEXORA natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
       brandingTitle: "Architected for Corporate Branding",
-      brandingContent: "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
+      brandingContent:
+        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
       securityModelTitle: "PKCE Security Architecture",
-      securityModelContent: "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
+      securityModelContent:
+        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
       oauthTitle: "OAuth Application Registry (NEXORA as Server)",
-      oauthContent: "Invert the identity paradigm. By registering third-party software as OAuth Applications within NEXORA, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on NEXORA for unified identity resolution.",
+      oauthContent:
+        "Invert the identity paradigm. By registering third-party software as OAuth Applications within NEXORA, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on NEXORA for unified identity resolution.",
       oauth1Title: "Confidential Clients (Backend)",
-      oauth1Desc: "Server-side applications with secure backend storage for client secrets. Perfect for B2B API integrations enforcing the full Authorization Code flow with PKCE.",
+      oauth1Desc:
+        "Server-side applications with secure backend storage for client secrets. Perfect for B2B API integrations enforcing the full Authorization Code flow with PKCE.",
       oauth2Title: "Public Clients (SPA & Mobile)",
-      oauth2Desc: "React, Vue, iOS, and Android applications that cannot securely store static secrets. Strictly leverages the PKCE-only flow, ensuring access tokens are generated flawlessly without risking a compromised client secret."
-    }
-  }
+      oauth2Desc:
+        "React, Vue, iOS, and Android applications that cannot securely store static secrets. Strictly leverages the PKCE-only flow, ensuring access tokens are generated flawlessly without risking a compromised client secret.",
+    },
+  },
 };

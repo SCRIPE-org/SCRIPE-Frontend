@@ -43,7 +43,8 @@ function getCookieValue(name: string): string | null {
 }
 
 // P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
-let cachedLanguage: string = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
+let cachedLanguage: string =
+  typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
     if (e.key === "language" && e.newValue) cachedLanguage = e.newValue;
@@ -162,7 +163,6 @@ export class ApiService implements IApiService {
           (config.method ?? "").toLowerCase()
         );
         if (isMutating) {
-
           // Replay protection: unique timestamp + nonce per request
           config.headers["X-Request-Timestamp"] = Date.now().toString();
           config.headers["X-Request-Nonce"] = generateUUID();
@@ -260,23 +260,36 @@ export class ApiService implements IApiService {
           return Promise.reject(new DownloadInterceptedError());
         }
 
-        // Handle 403 TENANT_CONTEXT_FORBIDDEN - user lacks drill_down permission
+        // Handle 403 — two cases:
         if (error.response?.status === 403) {
           const data = error.response.data as { error?: string; message?: string };
+
+          // Case 1: Drill-down tenant context forbidden — clear context silently
           if (data.error === "TENANT_CONTEXT_FORBIDDEN") {
             appLogger.warn("Tenant context forbidden - clearing context");
-            // Clear the tenant context to exit drill-down mode (in-memory)
             this.setTenantContext(null);
-            // Also clear sessionStorage so drill-down doesn't persist on refresh
             if (typeof window !== "undefined") {
               sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
             }
-            // The error message will be shown to the user via the normal error flow
             return Promise.reject(
               new Error(data.message || "You do not have permission to switch tenant context")
             );
           }
+
+          // Case 2: Regular permission denied — navigate to /not-authorized
+          appLogger.warn("Permission denied (403) — redirecting to /not-authorized");
+          if (
+            typeof window !== "undefined" &&
+            !window.location.pathname.startsWith("/not-authorized") &&
+            !window.location.pathname.startsWith("/login")
+          ) {
+            window.location.href = "/not-authorized";
+          }
+          return Promise.reject(
+            new Error(data.message || "You do not have permission to perform this action")
+          );
         }
+
 
         // Log other errors
         const message = this.extractErrorMessage(error);

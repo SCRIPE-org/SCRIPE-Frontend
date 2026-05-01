@@ -2,37 +2,47 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Upload Architecture ────────────────────────────
-      { type: "heading", level: 2, titleKey: "features.fileUpload.architectureTitle", id: "architecture" },
-      { type: "paragraph", contentKey: "features.fileUpload.architectureIntro" },
-      {
-            type: "flowchart",
-            direction: "vertical",
-            title: "Upload Architecture",
-            nodes: [
-                  { id: "img", label: "ImageUploadController (Profile photos, logos)", type: "default" },
-                  { id: "file", label: "UploadsController (General files)", type: "default" },
-                  { id: "is", label: "ImageService (Resize, crop, format)", type: "primary" },
-                  { id: "fs", label: "FileService (Validation, storage)", type: "primary" },
-                  { id: "blob", label: "IBlobStorage (Local / Azure / S3 / MinIO)", type: "success" },
-                  { id: "static", label: "StaticFileMiddleware (Serves from storage)", type: "info" },
-            ],
-            connections: [
-                  { from: "img", to: "is" },
-                  { from: "file", to: "fs" },
-                  { from: "is", to: "fs" },
-                  { from: "fs", to: "blob" },
-                  { from: "blob", to: "static" },
-            ],
-      },
+  // ─── Upload Architecture ────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.fileUpload.architectureTitle",
+    id: "architecture",
+  },
+  { type: "paragraph", contentKey: "features.fileUpload.architectureIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "Upload Architecture",
+    nodes: [
+      { id: "img", label: "ImageUploadController (Profile photos, logos)", type: "default" },
+      { id: "file", label: "UploadsController (General files)", type: "default" },
+      { id: "is", label: "ImageService (Resize, crop, format)", type: "primary" },
+      { id: "fs", label: "FileService (Validation, storage)", type: "primary" },
+      { id: "blob", label: "IBlobStorage (Local / Azure / S3 / MinIO)", type: "success" },
+      { id: "static", label: "StaticFileMiddleware (Serves from storage)", type: "info" },
+    ],
+    connections: [
+      { from: "img", to: "is" },
+      { from: "file", to: "fs" },
+      { from: "is", to: "fs" },
+      { from: "fs", to: "blob" },
+      { from: "blob", to: "static" },
+    ],
+  },
 
-      // ─── Image Upload Pipeline ──────────────────────────
-      { type: "heading", level: 2, titleKey: "features.fileUpload.imagePipelineTitle", id: "image-pipeline" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "ImageService.cs",
-            code: `public class ImageService : IImageService
+  // ─── Image Upload Pipeline ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.fileUpload.imagePipelineTitle",
+    id: "image-pipeline",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ImageService.cs",
+    code: `public class ImageService : IImageService
 {
     public async Task<string> UploadAsync(IFormFile file, ImageUploadOptions options)
     {
@@ -62,29 +72,29 @@ const sections: DocSection[] = [
         return path;
     }
 }`,
-      },
+  },
 
-      // ─── File Validation Rules ──────────────────────────
-      { type: "heading", level: 2, titleKey: "features.fileUpload.validationTitle", id: "validation" },
-      {
-            type: "table",
-            headers: ["Rule", "Default", "Configurable"],
-            rows: [
-                  ["Image max size", "5 MB", "FileSettings.MaxImageSize"],
-                  ["Document max size", "25 MB", "FileSettings.MaxDocumentSize"],
-                  ["Allowed image types", "JPEG, PNG, WebP, GIF", "FileSettings.AllowedImageTypes"],
-                  ["Allowed document types", "PDF, DOCX, XLSX, CSV", "FileSettings.AllowedDocumentTypes"],
-                  ["Image max dimensions", "2048 × 2048", "ImageUploadOptions"],
-            ],
-      },
+  // ─── File Validation Rules ──────────────────────────
+  { type: "heading", level: 2, titleKey: "features.fileUpload.validationTitle", id: "validation" },
+  {
+    type: "table",
+    headers: ["Rule", "Default", "Configurable"],
+    rows: [
+      ["Image max size", "5 MB", "FileSettings.MaxImageSize"],
+      ["Document max size", "25 MB", "FileSettings.MaxDocumentSize"],
+      ["Allowed image types", "JPEG, PNG, WebP, GIF", "FileSettings.AllowedImageTypes"],
+      ["Allowed document types", "PDF, DOCX, XLSX, CSV", "FileSettings.AllowedDocumentTypes"],
+      ["Image max dimensions", "2048 × 2048", "ImageUploadOptions"],
+    ],
+  },
 
-      // ─── General File Upload ────────────────────────────
-      { type: "heading", level: 2, titleKey: "features.fileUpload.generalTitle", id: "general" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "FileService.cs",
-            code: `public class FileService : IFileService
+  // ─── General File Upload ────────────────────────────
+  { type: "heading", level: 2, titleKey: "features.fileUpload.generalTitle", id: "general" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "FileService.cs",
+    code: `public class FileService : IFileService
 {
     public async Task<string> UploadAsync(IFormFile file, string folder)
     {
@@ -103,15 +113,15 @@ const sections: DocSection[] = [
         return path;
     }
 }`,
-      },
+  },
 
-      // ─── Static File Serving ────────────────────────────
-      { type: "heading", level: 2, titleKey: "features.fileUpload.servingTitle", id: "serving" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Program.cs",
-            code: `// Static file middleware for uploaded files
+  // ─── Static File Serving ────────────────────────────
+  { type: "heading", level: 2, titleKey: "features.fileUpload.servingTitle", id: "serving" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Program.cs",
+    code: `// Static file middleware for uploaded files
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(settings.StoragePath),
@@ -119,30 +129,35 @@ app.UseStaticFiles(new StaticFileOptions
     ServeUnknownFileTypes = false,
     DefaultContentType = "application/octet-stream"
 });`,
-      },
-      { type: "paragraph", contentKey: "features.fileUpload.servingNote" },
+  },
+  { type: "paragraph", contentKey: "features.fileUpload.servingNote" },
 
-      // ─── Tenant-Scoped Storage ──────────────────────────
-      { type: "heading", level: 2, titleKey: "features.fileUpload.tenantScopedTitle", id: "tenant-scoped" },
-      {
-            type: "code",
-            language: "text",
-            filename: "Storage Directory Structure",
-            code: `uploads/
+  // ─── Tenant-Scoped Storage ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.fileUpload.tenantScopedTitle",
+    id: "tenant-scoped",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Storage Directory Structure",
+    code: `uploads/
 └── {tenant-id}/
     ├── admins/{admin-id}/profile.webp
     ├── logos/tenant-logo.png
     └── documents/{file-id}.pdf`,
-      },
+  },
 ];
 
 registerPage({
-      slug: "features/file-upload",
-      titleKey: "features.fileUpload.title",
-      descriptionKey: "features.fileUpload.description",
-      category: "features",
-      order: 11,
-      sections,
-      relatedSlugs: ["features/download-export"],
-      lastUpdated: "2026-02-20",
+  slug: "features/file-upload",
+  titleKey: "features.fileUpload.title",
+  descriptionKey: "features.fileUpload.description",
+  category: "features",
+  order: 11,
+  sections,
+  relatedSlugs: ["features/download-export"],
+  lastUpdated: "2026-02-20",
 });

@@ -112,15 +112,11 @@ export function useDashboardTheme() {
     <K extends keyof DashboardThemeConfig>(key: K, value: DashboardThemeConfig[K]) => {
       setDraft((prev) => ({ ...prev, [key]: value }));
     },
-    [],
+    []
   );
 
   const updateNested = useCallback(
-    (
-      section: keyof DashboardThemeConfig,
-      field: string,
-      value: unknown,
-    ) => {
+    (section: keyof DashboardThemeConfig, field: string, value: unknown) => {
       setDraft((prev) => ({
         ...prev,
         [section]: {
@@ -129,7 +125,7 @@ export function useDashboardTheme() {
         },
       }));
     },
-    [],
+    []
   );
 
   // ── Discard draft changes ──
@@ -151,10 +147,7 @@ export function useDashboardTheme() {
       });
 
       // Write to localStorage for immediate apply
-      localStorage.setItem(
-        STORAGE_KEYS.PREF_DASHBOARD_SETTINGS,
-        JSON.stringify(draft),
-      );
+      localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, JSON.stringify(draft));
 
       // Invalidate branding cache
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });

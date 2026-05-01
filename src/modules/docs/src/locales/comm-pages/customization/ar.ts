@@ -6,66 +6,99 @@ export const ar = {
   commercial: {
     loginCustomizer: {
       title: "مُخصِّص صفحة تسجيل الدخول",
-      description: "حوِّل تجربة تسجيل الدخول باستخدام استوديو بصري بدون كود — 22 تخطيطاً متميزاً، ومجموعة إتاحة WCAG AA، ومعاينة فورية، وسير عمل آمن على مستوى المؤسسات.",
-      intro: "الانطباعات الأولى تحدد الثقة. يُمكِّن استوديو مُخصِّص تسجيل الدخول من NEXORA مسؤولي المستأجرين من تصميم تجارب تسجيل دخول مذهلة ومتوافقة مع الهوية البصرية وقابلة للوصول بالكامل من خلال محرر بصري بديهي — لا حاجة لمطورين. مع 22 تخطيطاً جاهزاً للإنتاج، ومجموعة شاملة لإتاحة WCAG AA، ومعاينة فورية في بيئة معزولة، وسير عمل آمن للمسودة والنشر، يمكن لمؤسستك الحفاظ على اتساق مثالي للعلامة التجارية وتصميم شامل عبر كل مستأجر.",
+      description:
+        "حوِّل تجربة تسجيل الدخول باستخدام استوديو بصري بدون كود — 22 تخطيطاً متميزاً، ومجموعة إتاحة WCAG AA، ومعاينة فورية، وسير عمل آمن على مستوى المؤسسات.",
+      intro:
+        "الانطباعات الأولى تحدد الثقة. يُمكِّن استوديو مُخصِّص تسجيل الدخول من NEXORA مسؤولي المستأجرين من تصميم تجارب تسجيل دخول مذهلة ومتوافقة مع الهوية البصرية وقابلة للوصول بالكامل من خلال محرر بصري بديهي — لا حاجة لمطورين. مع 22 تخطيطاً جاهزاً للإنتاج، ومجموعة شاملة لإتاحة WCAG AA، ومعاينة فورية في بيئة معزولة، وسير عمل آمن للمسودة والنشر، يمكن لمؤسستك الحفاظ على اتساق مثالي للعلامة التجارية وتصميم شامل عبر كل مستأجر.",
       brandTitle: "تحكم كامل بهوية العلامة التجارية",
-      brandContent: "تملَّك الهوية البصرية لصفحة تسجيل الدخول بالكامل. قم بتحميل شعارات الشركة، وتكوين أنظمة الألوان مع معاينة حية، واختيار من خطوط Google المتميزة، وتطبيق خلفيات متطورة تشمل التدرجات والصور المرفوعة وتأثيرات التراكب. كل تغيير ينعكس فوراً في المعاينة المعزولة — بدون أي مخاطر على صفحة الإنتاج.",
+      brandContent:
+        "تملَّك الهوية البصرية لصفحة تسجيل الدخول بالكامل. قم بتحميل شعارات الشركة، وتكوين أنظمة الألوان مع معاينة حية، واختيار من خطوط Google المتميزة، وتطبيق خلفيات متطورة تشمل التدرجات والصور المرفوعة وتأثيرات التراكب. كل تغيير ينعكس فوراً في المعاينة المعزولة — بدون أي مخاطر على صفحة الإنتاج.",
       studioTitle: "استوديو التخصيص البصري",
-      studioContent: "يوفر استوديو المُخصِّص بيئة تصميم احترافية بواجهة مقسمة. تقدم اللوحة اليسرى 8 أقسام مبوبة — المظهر والألوان والخطوط والخلفية والتراكب ولوحة العلامة التجارية والإتاحة والمتقدم. تعرض اللوحة اليمنى معاينة حية لصفحة تسجيل الدخول في إطار معزول مع أزرار تبديل للأجهزة (سطح المكتب والجهاز اللوحي والجوال). التغييرات تُحدَّث فوراً عبر حقن متغيرات CSS — ما تراه هو بالضبط ما سيراه مستخدموك.",
+      studioContent:
+        "يوفر استوديو المُخصِّص بيئة تصميم احترافية بواجهة مقسمة. تقدم اللوحة اليسرى 8 أقسام مبوبة — المظهر والألوان والخطوط والخلفية والتراكب ولوحة العلامة التجارية والإتاحة والمتقدم. تعرض اللوحة اليمنى معاينة حية لصفحة تسجيل الدخول في إطار معزول مع أزرار تبديل للأجهزة (سطح المكتب والجهاز اللوحي والجوال). التغييرات تُحدَّث فوراً عبر حقن متغيرات CSS — ما تراه هو بالضبط ما سيراه مستخدموك.",
       layoutsTitle: "22 تخطيطاً متميزاً لتسجيل الدخول",
-      layoutsContent: "اختر من 22 تخطيطاً مصمماً بعناية لكل ذوق. تخطيطات T1 المقسمة (6) تتميز بلوحة علامة تجارية مخصصة بجانب نموذج تسجيل الدخول — مثالية للهوية المؤسسية. تخطيطات T2 كاملة الصفحة (8) توفر تجارب غامرة وعصرية مع خلفيات بعرض الشاشة وتأثيرات الزجاج الضبابي. تخطيطات T3 المتمركزة (4) تقدم تصاميم بطاقات أنيقة ومدمجة. تخطيطات T4 الخاصة (4) توفر معالجات سينمائية وفنية لتجارب العلامات التجارية المتميزة. كل تخطيط يدعم خلفية وتراكب وإتاحة وسمة مستقلة.",
+      layoutsContent:
+        "اختر من 22 تخطيطاً مصمماً بعناية لكل ذوق. تخطيطات T1 المقسمة (6) تتميز بلوحة علامة تجارية مخصصة بجانب نموذج تسجيل الدخول — مثالية للهوية المؤسسية. تخطيطات T2 كاملة الصفحة (8) توفر تجارب غامرة وعصرية مع خلفيات بعرض الشاشة وتأثيرات الزجاج الضبابي. تخطيطات T3 المتمركزة (4) تقدم تصاميم بطاقات أنيقة ومدمجة. تخطيطات T4 الخاصة (4) توفر معالجات سينمائية وفنية لتجارب العلامات التجارية المتميزة. كل تخطيط يدعم خلفية وتراكب وإتاحة وسمة مستقلة.",
       themeTitle: "سمة ذكية فاتحة/داكنة",
-      themeContent: "قدِّم تجارب مثالية في جميع ظروف الإضاءة مع بنية سمات ذكية. كوِّن أنظمة ألوان مستقلة وخلفيات النماذج وألوان النصوص وتأثيرات التراكب لكل وضع. يُصدِر النظام مجموعات منفصلة من متغيرات CSS لضمان عدم المساومة البصرية في أي سمة. يستمتع المستخدمون بانتقالات سلسة تحترم تفضيلات نظامهم.",
+      themeContent:
+        "قدِّم تجارب مثالية في جميع ظروف الإضاءة مع بنية سمات ذكية. كوِّن أنظمة ألوان مستقلة وخلفيات النماذج وألوان النصوص وتأثيرات التراكب لكل وضع. يُصدِر النظام مجموعات منفصلة من متغيرات CSS لضمان عدم المساومة البصرية في أي سمة. يستمتع المستخدمون بانتقالات سلسة تحترم تفضيلات نظامهم.",
       a11yTitle: "مجموعة إتاحة WCAG AA",
-      a11yContent: "الشمولية ليست اختيارية — إنها ميزة تنافسية. توفر مجموعة الإتاحة المدمجة في NEXORA أكثر من 32 إعداداً عبر 8 فئات (مؤشرات التركيز، التباين العالي، وضوح النص، الحركة والرسوم المتحركة، أهداف اللمس، الألوان والرؤية، قارئ الشاشة، مساعدة القراءة)، مما يضمن أن كل صفحة تسجيل دخول تلبي معايير WCAG AA من البداية. بدون أدوات خارجية، بدون تدقيقات إضافية، بدون تكلفة إضافية.",
+      a11yContent:
+        "الشمولية ليست اختيارية — إنها ميزة تنافسية. توفر مجموعة الإتاحة المدمجة في NEXORA أكثر من 32 إعداداً عبر 8 فئات (مؤشرات التركيز، التباين العالي، وضوح النص، الحركة والرسوم المتحركة، أهداف اللمس، الألوان والرؤية، قارئ الشاشة، مساعدة القراءة)، مما يضمن أن كل صفحة تسجيل دخول تلبي معايير WCAG AA من البداية. بدون أدوات خارجية، بدون تدقيقات إضافية، بدون تكلفة إضافية.",
       a11yProfilesTitle: "6 ملفات إتاحة بنقرة واحدة",
-      a11yProfilesContent: "انشر تجارب تسجيل دخول شاملة في ثوانٍ. اختر من 6 ملفات مُعدَّة مسبقاً — خط أساس WCAG AA، ضعف البصر، الإعاقة الحركية، الإعاقة الإدراكية، مُحسَّن لقارئ الشاشة، وإعادة التعيين للافتراضي. كل ملف يُطبِّق إعدادات محسنة دفعةً واحدة تستهدف احتياجات مستخدمين محددة، ويمكن تخصيصه بشكل إضافي بعد التطبيق.",
+      a11yProfilesContent:
+        "انشر تجارب تسجيل دخول شاملة في ثوانٍ. اختر من 6 ملفات مُعدَّة مسبقاً — خط أساس WCAG AA، ضعف البصر، الإعاقة الحركية، الإعاقة الإدراكية، مُحسَّن لقارئ الشاشة، وإعادة التعيين للافتراضي. كل ملف يُطبِّق إعدادات محسنة دفعةً واحدة تستهدف احتياجات مستخدمين محددة، ويمكن تخصيصه بشكل إضافي بعد التطبيق.",
       a11yAuditTitle: "محرك تدقيق WCAG الفوري",
-      a11yAuditContent: "تخلَّص من التخمين في الامتثال بالكامل. يُجري محرك التدقيق المدمج 4 فحوصات WCAG آلية في الوقت الفعلي: التحقق من نسبة التباين (4.5:1 للنصوص)، حجم أهداف اللمس (44 بكسل كحد أدنى)، وضوح التراكب، وإعدادات الحركة. كل فحص يُرجع مستوى خطورة (نجاح/تحذير/فشل) مع توصيات قابلة للتنفيذ — ويمكن لآلية الإصلاح التلقائي المدمجة حل الفحوصات الفاشلة تلقائياً بنقرة واحدة.",
+      a11yAuditContent:
+        "تخلَّص من التخمين في الامتثال بالكامل. يُجري محرك التدقيق المدمج 4 فحوصات WCAG آلية في الوقت الفعلي: التحقق من نسبة التباين (4.5:1 للنصوص)، حجم أهداف اللمس (44 بكسل كحد أدنى)، وضوح التراكب، وإعدادات الحركة. كل فحص يُرجع مستوى خطورة (نجاح/تحذير/فشل) مع توصيات قابلة للتنفيذ — ويمكن لآلية الإصلاح التلقائي المدمجة حل الفحوصات الفاشلة تلقائياً بنقرة واحدة.",
       a11yEnterpriseTitle: "تصميم شامل على مستوى المؤسسات",
-      a11yEnterpriseContent: "تلبية معايير الإتاحة لا تتعلق فقط بالامتثال — بل بتوسيع سوقك المستهدف بنسبة 15-20% وتقليل المخاطر القانونية. يتم حقن عناصر التحكم في الإتاحة عبر نفس أنبوب رموز CSS مثل العلامة التجارية، مما يضمن عدم وجود أي عبء على الأداء. جميع 23+ قاعدة CSS للإتاحة تتراكب بشكل صحيح فوق أنماط العلامة التجارية الأساسية، وتعمل عبر جميع التخطيطات الـ 22، وتُعاين في الوقت الفعلي.",
+      a11yEnterpriseContent:
+        "تلبية معايير الإتاحة لا تتعلق فقط بالامتثال — بل بتوسيع سوقك المستهدف بنسبة 15-20% وتقليل المخاطر القانونية. يتم حقن عناصر التحكم في الإتاحة عبر نفس أنبوب رموز CSS مثل العلامة التجارية، مما يضمن عدم وجود أي عبء على الأداء. جميع 23+ قاعدة CSS للإتاحة تتراكب بشكل صحيح فوق أنماط العلامة التجارية الأساسية، وتعمل عبر جميع التخطيطات الـ 22، وتُعاين في الوقت الفعلي.",
       safetyTitle: "سير عمل أمان على مستوى المؤسسات",
-      safetyContent: "تتطلب صفحات تسجيل الدخول المؤسسية موثوقية بلا توقف. ينفذ مُخصِّص NEXORA سير عمل مسودة ← معاينة ← نشر مدعوماً بالتحكم التفاؤلي في التزامن. كل إصدار منشور يُنشئ نسخة غير قابلة للتغيير للتراجع الفوري. يوفر الوضع الآمن بنقرة واحدة استعادة فورية للإعدادات الافتراضية. كل تغيير يُسجَّل في سجل التدقيق مع لقطات كاملة قبل/بعد.",
+      safetyContent:
+        "تتطلب صفحات تسجيل الدخول المؤسسية موثوقية بلا توقف. ينفذ مُخصِّص NEXORA سير عمل مسودة ← معاينة ← نشر مدعوماً بالتحكم التفاؤلي في التزامن. كل إصدار منشور يُنشئ نسخة غير قابلة للتغيير للتراجع الفوري. يوفر الوضع الآمن بنقرة واحدة استعادة فورية للإعدادات الافتراضية. كل تغيير يُسجَّل في سجل التدقيق مع لقطات كاملة قبل/بعد.",
       tenantTitle: "عزل العلامة التجارية متعدد المستأجرين",
-      tenantContent: "يعمل كل مستأجر في نطاق علامة تجارية معزول تماماً. لا يمكن لتسجيل دخول المستأجر A رؤية تكوين المستأجر B. الإعدادات مرتبطة تشفيرياً بـ JWT الخاص بالمستأجر، مما يمنع أي تسريب للبيانات عبر المستأجرين. يمكن للمسؤولين الأعلى إدارة ومعاينة علامة أي مستأجر عبر قدرة 'دخول عالم المستأجر' بدون التأثير على الإنتاج.",
+      tenantContent:
+        "يعمل كل مستأجر في نطاق علامة تجارية معزول تماماً. لا يمكن لتسجيل دخول المستأجر A رؤية تكوين المستأجر B. الإعدادات مرتبطة تشفيرياً بـ JWT الخاص بالمستأجر، مما يمنع أي تسريب للبيانات عبر المستأجرين. يمكن للمسؤولين الأعلى إدارة ومعاينة علامة أي مستأجر عبر قدرة 'دخول عالم المستأجر' بدون التأثير على الإنتاج.",
       zeroCodeTitle: "تخصيص حقيقي بدون كود",
-      zeroCodeContent: "تخلَّص من عنق الزجاجة التطويري تماماً. يمكن لمسؤولي المستأجرين تصميم ومعاينة ونشر تجارب تسجيل دخول مخصصة — بما في ذلك الامتثال الكامل لإتاحة WCAG AA — في دقائق وليس دورات تطوير. الاستوديو البصري يتعامل مع كل التعقيد خلف رموز التصميم وأنابيب متغيرات CSS. لا حاجة لمعرفة HTML أو CSS أو JavaScript. التغييرات تُتحقق منها وتُعزل ويمكن التراجع عنها بالتصميم.",
-      zeroCodeTip: "قوة خارقة لـ SaaS B2B: يمكن لعملائك تخصيص صفحات تسجيل الدخول بالكامل وجعلها قابلة للوصول بأنفسهم. يمكن لمسؤول المستأجر الدخول إلى لوحة الإدارة وفتح الاستوديو وتطبيق ملف WCAG AA وتخصيص التصميم والنشر — كل ذلك في أقل من 10 دقائق. بدون أي تدخل هندسي.",
+      zeroCodeContent:
+        "تخلَّص من عنق الزجاجة التطويري تماماً. يمكن لمسؤولي المستأجرين تصميم ومعاينة ونشر تجارب تسجيل دخول مخصصة — بما في ذلك الامتثال الكامل لإتاحة WCAG AA — في دقائق وليس دورات تطوير. الاستوديو البصري يتعامل مع كل التعقيد خلف رموز التصميم وأنابيب متغيرات CSS. لا حاجة لمعرفة HTML أو CSS أو JavaScript. التغييرات تُتحقق منها وتُعزل ويمكن التراجع عنها بالتصميم.",
+      zeroCodeTip:
+        "قوة خارقة لـ SaaS B2B: يمكن لعملائك تخصيص صفحات تسجيل الدخول بالكامل وجعلها قابلة للوصول بأنفسهم. يمكن لمسؤول المستأجر الدخول إلى لوحة الإدارة وفتح الاستوديو وتطبيق ملف WCAG AA وتخصيص التصميم والنشر — كل ذلك في أقل من 10 دقائق. بدون أي تدخل هندسي.",
       relatedTitle: "Complete Customization Ecosystem",
-      relatedIntro: "The Login Customizer is just the beginning. NEXORA's customization platform includes a premium Theme Marketplace and a full No-Code Page Builder — expanding your branding capabilities far beyond what any competitor offers.",
-      relatedMarketplace: "Theme Marketplace — 40 premium branding packages across 7 categories and 5 pricing tiers. Browse, preview, and deploy enterprise-grade visual identities in seconds.",
-      relatedBuilder: "No-Code Page Builder — Visual drag-and-drop canvas with 14 component types, 12-column grid system, multi-page branding, and bundle marketplace."
+      relatedIntro:
+        "The Login Customizer is just the beginning. NEXORA's customization platform includes a premium Theme Marketplace and a full No-Code Page Builder — expanding your branding capabilities far beyond what any competitor offers.",
+      relatedMarketplace:
+        "Theme Marketplace — 40 premium branding packages across 7 categories and 5 pricing tiers. Browse, preview, and deploy enterprise-grade visual identities in seconds.",
+      relatedBuilder:
+        "No-Code Page Builder — Visual drag-and-drop canvas with 14 component types, 12-column grid system, multi-page branding, and bundle marketplace.",
     },
     dashboardBuilder: {
       title: "منشئ لوحة التحكم — محرك تفضيلات المشرف",
-      description: "تفضيلات مشرف متزامنة مع الخادم بمستوى مؤسسي مع 61 إعدادًا قابلاً للتخصيص، مزامنة عبر الأجهزة، محرك دمج رباعي الطبقات، وبوابة ميزات قائمة على الإصدارات.",
-      intro: "لوحة التحكم هي حيث تتحقق الإنتاجية. بينما يقدم المنافسون زر تبديل لـ 'الوضع الداكن' ويسمونه تخصيصًا، توفر NEXORA 61 إعدادًا قابلاً للتكوين بشكل فردي — من قوالب التخطيط وسمات الألوان إلى أنماط المكونات وتأثيرات التمرير — جميعها محفوظة على الخادم مع مزامنة عبر الأجهزة، وتطبيق العلامة التجارية على مستوى المستأجر، وتحقيق الدخل القائم على الإصدارات. يحول منشئ لوحة التحكم تخصيص مساحة عمل المشرف من ميزة ثانوية إلى ميزة تنافسية استراتيجية.",
+      description:
+        "تفضيلات مشرف متزامنة مع الخادم بمستوى مؤسسي مع 61 إعدادًا قابلاً للتخصيص، مزامنة عبر الأجهزة، محرك دمج رباعي الطبقات، وبوابة ميزات قائمة على الإصدارات.",
+      intro:
+        "لوحة التحكم هي حيث تتحقق الإنتاجية. بينما يقدم المنافسون زر تبديل لـ 'الوضع الداكن' ويسمونه تخصيصًا، توفر NEXORA 61 إعدادًا قابلاً للتكوين بشكل فردي — من قوالب التخطيط وسمات الألوان إلى أنماط المكونات وتأثيرات التمرير — جميعها محفوظة على الخادم مع مزامنة عبر الأجهزة، وتطبيق العلامة التجارية على مستوى المستأجر، وتحقيق الدخل القائم على الإصدارات. يحول منشئ لوحة التحكم تخصيص مساحة عمل المشرف من ميزة ثانوية إلى ميزة تنافسية استراتيجية.",
       valueTitle: "القيمة التجارية",
-      valueIntro: "تزيد مساحات العمل المخصصة من تفاعل المستخدمين بنسبة 40% وتقلل وقت إعداد المشرفين الجدد بنسبة 60%. يحول منشئ لوحة التحكم في NEXORA هذه الرؤية إلى إيرادات من خلال حجب ميزات التخصيص المتقدمة خلف مستويات الإصدارات، مما يخلق فرص ترقية طبيعية.",
+      valueIntro:
+        "تزيد مساحات العمل المخصصة من تفاعل المستخدمين بنسبة 40% وتقلل وقت إعداد المشرفين الجدد بنسبة 60%. يحول منشئ لوحة التحكم في NEXORA هذه الرؤية إلى إيرادات من خلال حجب ميزات التخصيص المتقدمة خلف مستويات الإصدارات، مما يخلق فرص ترقية طبيعية.",
       howItWorksTitle: "كيف يعمل",
-      howItWorksIntro: "يستخدم منشئ لوحة التحكم محرك حل إعدادات رباعي الطبقات يدمج بذكاء الإعدادات الافتراضية للمنصة ومعايير العلامة التجارية للمستأجر وتفضيلات المشرف الفردية. يتم تخزين الإعدادات مؤقتًا محليًا للعرض الفوري ومزامنتها مع الخادم للاستمرارية عبر الأجهزة — كل ذلك بشفافية تامة بدون تدخل المستخدم.",
-      howItWorksTip: "دورة المزامنة بأكملها غير مرئية للمشرفين. غيّر سمة اللون على حاسوبك المحمول ← أغلق المتصفح ← افتح على هاتفك ← سمتك موجودة بالفعل. بدون تكوين، بدون إعداد، بدون احتكاك.",
+      howItWorksIntro:
+        "يستخدم منشئ لوحة التحكم محرك حل إعدادات رباعي الطبقات يدمج بذكاء الإعدادات الافتراضية للمنصة ومعايير العلامة التجارية للمستأجر وتفضيلات المشرف الفردية. يتم تخزين الإعدادات مؤقتًا محليًا للعرض الفوري ومزامنتها مع الخادم للاستمرارية عبر الأجهزة — كل ذلك بشفافية تامة بدون تدخل المستخدم.",
+      howItWorksTip:
+        "دورة المزامنة بأكملها غير مرئية للمشرفين. غيّر سمة اللون على حاسوبك المحمول ← أغلق المتصفح ← افتح على هاتفك ← سمتك موجودة بالفعل. بدون تكوين، بدون إعداد، بدون احتكاك.",
       categoriesTitle: "61 إعدادًا قابلاً للتخصيص",
-      categoriesIntro: "كل جانب من تجربة لوحة تحكم المشرف قابل للتخصيص، منظم في 9 فئات منطقية. لكل إعداد نوع محدد وقيمة افتراضية وبوابة إصدار اختيارية لتحقيق الدخل.",
+      categoriesIntro:
+        "كل جانب من تجربة لوحة تحكم المشرف قابل للتخصيص، منظم في 9 فئات منطقية. لكل إعداد نوع محدد وقيمة افتراضية وبوابة إصدار اختيارية لتحقيق الدخل.",
       enterpriseTitle: "بوابة الميزات القائمة على الإصدارات",
-      enterpriseIntro: "ميزات التخصيص المتقدمة محجوبة حسب مستوى الاشتراك، مما يخلق مسارات ترقية واضحة وفرص تحقيق الدخل. يرى المستأجرون في المستويات الأدنى الميزات المقفلة مع شارات الترقية، مما يدفع بشكل طبيعي تحويلات الاشتراكات.",
-      enterpriseNote: "يوفر المستوى المجاني قاعدة مقنعة مع أكثر من 30 إعدادًا بما في ذلك جميع قوالب التخطيط وسمات الألوان. تفتح المستويات المدفوعة الخلفيات المتدرجة وأنماط المكونات والألوان المخصصة وتخصيص الشعار وتأثيرات التمرير والتحكم في تجاوز المشرف — مما يخلق تمييزًا حقيقيًا في القيمة.",
+      enterpriseIntro:
+        "ميزات التخصيص المتقدمة محجوبة حسب مستوى الاشتراك، مما يخلق مسارات ترقية واضحة وفرص تحقيق الدخل. يرى المستأجرون في المستويات الأدنى الميزات المقفلة مع شارات الترقية، مما يدفع بشكل طبيعي تحويلات الاشتراكات.",
+      enterpriseNote:
+        "يوفر المستوى المجاني قاعدة مقنعة مع أكثر من 30 إعدادًا بما في ذلك جميع قوالب التخطيط وسمات الألوان. تفتح المستويات المدفوعة الخلفيات المتدرجة وأنماط المكونات والألوان المخصصة وتخصيص الشعار وتأثيرات التمرير والتحكم في تجاوز المشرف — مما يخلق تمييزًا حقيقيًا في القيمة.",
       syncTitle: "المزامنة عبر الأجهزة",
-      syncIntro: "تتبع تفضيلات المشرف المستخدم عبر الأجهزة بسلاسة. يتعامل نظام المزامنة مع 5 حالات حرجة واقعية يتجاهلها المنافسون — بما في ذلك إغلاق علامة التبويب وانقطاعات الشبكة والجلسات المتزامنة والمصادقة المنتهية.",
+      syncIntro:
+        "تتبع تفضيلات المشرف المستخدم عبر الأجهزة بسلاسة. يتعامل نظام المزامنة مع 5 حالات حرجة واقعية يتجاهلها المنافسون — بما في ذلك إغلاق علامة التبويب وانقطاعات الشبكة والجلسات المتزامنة والمصادقة المنتهية.",
       overrideTitle: "التحكم في تجاوز المشرف",
-      overrideIntro: "يحصل مسؤولو تكنولوجيا المعلومات على تحكم دقيق في الإعدادات التي يمكن لأعضاء فريقهم تخصيصها. هذا يتيح الامتثال للعلامة التجارية دون التضحية بالتخصيص — التوازن المثالي لنشر المؤسسات حيث تهم الهوية المؤسسية.",
+      overrideIntro:
+        "يحصل مسؤولو تكنولوجيا المعلومات على تحكم دقيق في الإعدادات التي يمكن لأعضاء فريقهم تخصيصها. هذا يتيح الامتثال للعلامة التجارية دون التضحية بالتخصيص — التوازن المثالي لنشر المؤسسات حيث تهم الهوية المؤسسية.",
       securityTitle: "أمان المؤسسات",
-      securityIntro: "ينفذ منشئ لوحة التحكم أمانًا دفاعيًا عميقًا في كل طبقة — من عزل تخزين المتصفح عند تسجيل الخروج إلى التحقق من الإعدادات من جانب الخادم وحل نزاعات التزامن.",
+      securityIntro:
+        "ينفذ منشئ لوحة التحكم أمانًا دفاعيًا عميقًا في كل طبقة — من عزل تخزين المتصفح عند تسجيل الخروج إلى التحقق من الإعدادات من جانب الخادم وحل نزاعات التزامن.",
       integrationTitle: "تكامل سلس مع المنصة",
-      integrationIntro: "منشئ لوحة التحكم متكامل بعمق مع نظام التخصيص الحالي في NEXORA، مما يضاعف قيمة كل ميزة أخرى في المنصة.",
-      integrationTip: "منشئ لوحة التحكم هو المكمل المثالي لمُخصص تسجيل الدخول — معًا، يوفران تحكمًا بصريًا شاملاً في تجربة المنصة بأكملها. يمكن أن تتضمن الحزمة الكاملة في سوق السمات كلاً من إعدادات العلامة التجارية لتسجيل الدخول ولوحة التحكم، مما يتيح نشر المنصة الكاملة بنقرة واحدة."
+      integrationIntro:
+        "منشئ لوحة التحكم متكامل بعمق مع نظام التخصيص الحالي في NEXORA، مما يضاعف قيمة كل ميزة أخرى في المنصة.",
+      integrationTip:
+        "منشئ لوحة التحكم هو المكمل المثالي لمُخصص تسجيل الدخول — معًا، يوفران تحكمًا بصريًا شاملاً في تجربة المنصة بأكملها. يمكن أن تتضمن الحزمة الكاملة في سوق السمات كلاً من إعدادات العلامة التجارية لتسجيل الدخول ولوحة التحكم، مما يتيح نشر المنصة الكاملة بنقرة واحدة.",
     },
     themeMarketplace: {
       title: "Premium Theme Marketplace",
-      description: "40 meticulously designed branding packages across 7 categories, 5 edition-aligned pricing tiers, per-page branding for all auth flows, engagement analytics, and one-click tenant deployment — transforming your login experience into a competitive advantage.",
-      intro: "Your login page is the first impression of your enterprise platform. While competitors offer a handful of generic color themes, NEXORA ships with a curated marketplace of 40 premium branding packages — each a complete visual identity with 50+ design tokens spanning colors, typography, spacing, dark mode, overlays, and independent branding for Login, Forgot Password, and Reset Password pages. Each theme is crafted by professional designers to serve specific market segments: corporate boardrooms, creative agencies, luxury brands, tech startups, and more. The marketplace is integrated directly into the admin panel with rich browsing, real-time preview, and one-click deployment — enabling tenant administrators to transform their platform's identity in under 60 seconds.",
+      description:
+        "40 meticulously designed branding packages across 7 categories, 5 edition-aligned pricing tiers, per-page branding for all auth flows, engagement analytics, and one-click tenant deployment — transforming your login experience into a competitive advantage.",
+      intro:
+        "Your login page is the first impression of your enterprise platform. While competitors offer a handful of generic color themes, NEXORA ships with a curated marketplace of 40 premium branding packages — each a complete visual identity with 50+ design tokens spanning colors, typography, spacing, dark mode, overlays, and independent branding for Login, Forgot Password, and Reset Password pages. Each theme is crafted by professional designers to serve specific market segments: corporate boardrooms, creative agencies, luxury brands, tech startups, and more. The marketplace is integrated directly into the admin panel with rich browsing, real-time preview, and one-click deployment — enabling tenant administrators to transform their platform's identity in under 60 seconds.",
       valueTitle: "The Business Value of Curated Branding",
-      valueContent: "Brand-aligned login pages increase user trust by 40% and reduce support tickets by 25% (Forrester Research). NEXORA's Theme Marketplace eliminates the $15,000–50,000 cost of custom branding projects by providing production-ready visual identities that can be deployed without designers, developers, or agencies. For SaaS operators, the 5-tier pricing model creates a natural upsell path — tenants on free plans see premium themes they can access by upgrading their subscription.",
+      valueContent:
+        "Brand-aligned login pages increase user trust by 40% and reduce support tickets by 25% (Forrester Research). NEXORA's Theme Marketplace eliminates the $15,000–50,000 cost of custom branding projects by providing production-ready visual identities that can be deployed without designers, developers, or agencies. For SaaS operators, the 5-tier pricing model creates a natural upsell path — tenants on free plans see premium themes they can access by upgrading their subscription.",
       tblValH1: "Challenge",
       tblValH2: "Traditional Approach",
       tblValH3: "With NEXORA Theme Marketplace",
@@ -88,25 +121,35 @@ export const ar = {
       tblValR6C2: "Additional development sprint ($5K–$15K)",
       tblValR6C3: "Every theme includes independent dark mode tokens.",
       catalogTitle: "40 Premium Branding Packages",
-      catalogContent: "Each theme is a comprehensive visual identity — not just a color swap. Every package includes 50+ coordinated design tokens: a full light-mode color palette (16 tokens), independent dark-mode palette (10 tokens), typography system (8 tokens including Google Font pairing), spacing and dimension settings (6 tokens), overlay and background effects (8 tokens), branding panel configuration (12 tokens), and per-page overrides for Login, Forgot Password, and Reset Password. No two themes share the same font pairing or color palette.",
+      catalogContent:
+        "Each theme is a comprehensive visual identity — not just a color swap. Every package includes 50+ coordinated design tokens: a full light-mode color palette (16 tokens), independent dark-mode palette (10 tokens), typography system (8 tokens including Google Font pairing), spacing and dimension settings (6 tokens), overlay and background effects (8 tokens), branding panel configuration (12 tokens), and per-page overrides for Login, Forgot Password, and Reset Password. No two themes share the same font pairing or color palette.",
       categoriesTitle: "7 Market-Targeted Categories",
-      categoriesContent: "Themes are organized into categories that map to specific market segments, enabling tenant administrators to find their ideal visual identity quickly.",
+      categoriesContent:
+        "Themes are organized into categories that map to specific market segments, enabling tenant administrators to find their ideal visual identity quickly.",
       fgCorporate: "Corporate (8 themes)",
-      fgCorporateDesc: "Professional identity for financial services, consulting, and enterprise. Clean serif/sans-serif pairings, navy/gray palettes, subtle gradients. Authority and trust.",
+      fgCorporateDesc:
+        "Professional identity for financial services, consulting, and enterprise. Clean serif/sans-serif pairings, navy/gray palettes, subtle gradients. Authority and trust.",
       fgCreative: "Creative (6 themes)",
-      fgCreativeDesc: "Bold identity for agencies, startups, and tech companies. Vibrant colors, playful Poppins/Quicksand typography, modern animated gradients. Energy and innovation.",
+      fgCreativeDesc:
+        "Bold identity for agencies, startups, and tech companies. Vibrant colors, playful Poppins/Quicksand typography, modern animated gradients. Energy and innovation.",
       fgDark: "Dark (6 themes)",
-      fgDarkDesc: "Sophisticated dark-mode-first identity for developer tools, media, and gaming. Deep slate/zinc backgrounds, cyan/amber accents, premium glass effects. Power and elegance.",
+      fgDarkDesc:
+        "Sophisticated dark-mode-first identity for developer tools, media, and gaming. Deep slate/zinc backgrounds, cyan/amber accents, premium glass effects. Power and elegance.",
       fgMinimal: "Minimal (5 themes)",
-      fgMinimalDesc: "Reductive identity for productivity tools and SaaS platforms. Monochromatic palettes, generous whitespace, system-optimized typography. Clarity and focus.",
+      fgMinimalDesc:
+        "Reductive identity for productivity tools and SaaS platforms. Monochromatic palettes, generous whitespace, system-optimized typography. Clarity and focus.",
       fgElegant: "Elegant (5 themes)",
-      fgElegantDesc: "Refined identity for beauty, fashion, and hospitality. Rose gold/champagne gradients, Playfair Display/Cormorant serifs, delicate overlays. Grace and sophistication.",
+      fgElegantDesc:
+        "Refined identity for beauty, fashion, and hospitality. Rose gold/champagne gradients, Playfair Display/Cormorant serifs, delicate overlays. Grace and sophistication.",
       fgLuxury: "Luxury (5 themes)",
-      fgLuxuryDesc: "Ultra-premium identity for high-end brands and private banking. Black/gold/platinum palettes, Italiana/Cinzel Decorative display fonts, art-directed layouts. Exclusivity and prestige.",
+      fgLuxuryDesc:
+        "Ultra-premium identity for high-end brands and private banking. Black/gold/platinum palettes, Italiana/Cinzel Decorative display fonts, art-directed layouts. Exclusivity and prestige.",
       fgNature: "Nature (5 themes)",
-      fgNatureDesc: "Earth-inspired identity for sustainability, wellness, and organic brands. Forest greens, terracotta, ocean blues, rounded shapes, warm serifs. Authenticity and calm.",
+      fgNatureDesc:
+        "Earth-inspired identity for sustainability, wellness, and organic brands. Forest greens, terracotta, ocean blues, rounded shapes, warm serifs. Authenticity and calm.",
       tierTitle: "5-Tier Edition-Aligned Pricing",
-      tierContent: "Theme access is automatically gated to the tenant's subscribed edition. Lower-tier tenants see premium themes with an 'Upgrade Required' badge — creating a frictionless upsell path that drives subscription upgrades. No manual enforcement needed.",
+      tierContent:
+        "Theme access is automatically gated to the tenant's subscribed edition. Lower-tier tenants see premium themes with an 'Upgrade Required' badge — creating a frictionless upsell path that drives subscription upgrades. No manual enforcement needed.",
       tblTierH1: "Tier",
       tblTierH2: "Themes",
       tblTierH3: "Available To",
@@ -132,19 +175,26 @@ export const ar = {
       tblTierR5C3: "Individual purchase",
       tblTierR5C4: "Art Deco, Brutalist, Vaporwave — ultra-exclusive",
       uxTitle: "Enterprise-Grade Marketplace Experience",
-      uxContent: "The Theme Marketplace is a full-page gallery experience integrated directly into the admin panel. Tenant administrators can browse themes with category filters, tier tabs, and search — preview any theme in real-time on their actual login page — and apply with a single click. The entire flow from browsing to deployment takes under 60 seconds.",
+      uxContent:
+        "The Theme Marketplace is a full-page gallery experience integrated directly into the admin panel. Tenant administrators can browse themes with category filters, tier tabs, and search — preview any theme in real-time on their actual login page — and apply with a single click. The entire flow from browsing to deployment takes under 60 seconds.",
       fgBrowse: "Rich Browsing",
-      fgBrowseDesc: "Animated hero section, category filter chips, tier tabs, search bar, grid/list view toggle, sort controls (popular/newest/name), and infinite scroll pagination. Every theme card shows a color palette strip, font preview, and engagement counters.",
+      fgBrowseDesc:
+        "Animated hero section, category filter chips, tier tabs, search bar, grid/list view toggle, sort controls (popular/newest/name), and infinite scroll pagination. Every theme card shows a color palette strip, font preview, and engagement counters.",
       fgPreview: "Real-Time Preview",
-      fgPreviewDesc: "Click any theme to see a fully rendered preview using your tenant's actual login page. CSS variables are injected via the design token pipeline — what you see is exactly what your users will experience. Desktop, tablet, and mobile breakpoints are all previewable.",
+      fgPreviewDesc:
+        "Click any theme to see a fully rendered preview using your tenant's actual login page. CSS variables are injected via the design token pipeline — what you see is exactly what your users will experience. Desktop, tablet, and mobile breakpoints are all previewable.",
       fgApply: "One-Click Deploy",
-      fgApplyDesc: "Applying a theme copies all 50+ design tokens into your draft settings. Review in the Customizer Studio, customize any token, and publish when ready. Copy-on-apply semantics mean your branding is permanently isolated from future marketplace updates.",
+      fgApplyDesc:
+        "Applying a theme copies all 50+ design tokens into your draft settings. Review in the Customizer Studio, customize any token, and publish when ready. Copy-on-apply semantics mean your branding is permanently isolated from future marketplace updates.",
       fgAnalytics: "Engagement Analytics",
-      fgAnalyticsDesc: "Every theme tracks LikesCount and AppliedCount — revealing which designs resonate most with your tenant base. Use these metrics to inform new theme development and edition/tier placement decisions.",
+      fgAnalyticsDesc:
+        "Every theme tracks LikesCount and AppliedCount — revealing which designs resonate most with your tenant base. Use these metrics to inform new theme development and edition/tier placement decisions.",
       perPageTitle: "Per-Page Branding — Complete Auth Experience",
-      perPageContent: "Unlike basic theme systems that apply one look across all pages, every NEXORA theme can define independent visual treatments for Login, Forgot Password, and Reset Password. This lets tenants present context-appropriate messaging: a strong brand statement on login, a reassuring message on forgot-password, and a clear action prompt on reset-password — all within a cohesive visual identity.",
+      perPageContent:
+        "Unlike basic theme systems that apply one look across all pages, every NEXORA theme can define independent visual treatments for Login, Forgot Password, and Reset Password. This lets tenants present context-appropriate messaging: a strong brand statement on login, a reassuring message on forgot-password, and a clear action prompt on reset-password — all within a cohesive visual identity.",
       safetyTitle: "Copy-on-Apply — Enterprise-Grade Safety",
-      safetyContent: "When a theme is applied, it's COPIED — not linked. Your tenant's branding is permanently isolated from future marketplace updates. If the marketplace theme is updated to v2.0, tenants who applied v1.0 retain their exact snapshot. This architectural decision trades storage efficiency for deployment safety — a critical requirement for enterprises whose branding is contractually defined.",
+      safetyContent:
+        "When a theme is applied, it's COPIED — not linked. Your tenant's branding is permanently isolated from future marketplace updates. If the marketplace theme is updated to v2.0, tenants who applied v1.0 retain their exact snapshot. This architectural decision trades storage efficiency for deployment safety — a critical requirement for enterprises whose branding is contractually defined.",
       roiTitle: "Provable ROI Metrics",
       tblRoiH1: "Metric",
       tblRoiH2: "Without Theme Marketplace",
@@ -196,80 +246,116 @@ export const ar = {
       tblCompR6C2: "No (live-linked)",
       tblCompR6C3: "N/A",
       tblCompR6C4: "Yes (immutable snapshot)",
-      tip: "The Theme Marketplace transforms branding from a cost center into a revenue driver. Premium themes visible to lower-tier tenants create natural upsell moments that increase subscription upgrade rates by 15-25%."
+      tip: "The Theme Marketplace transforms branding from a cost center into a revenue driver. Premium themes visible to lower-tier tenants create natural upsell moments that increase subscription upgrade rates by 15-25%.",
     },
     pageBuilder: {
       title: "No-Code Page Builder & Complete Customization Platform",
-      description: "A comprehensive visual design platform — drag-and-drop login page builder with 14 component types, 3 canvas modes, multi-page branding, dashboard theming, bundle marketplace, and enterprise safety workflows — enabling complete tenant-level platform customization without writing a single line of code.",
-      intro: "NEXORA doesn't just let you pick colors — it gives your tenants a complete visual design platform. The No-Code Page Builder combines a drag-and-drop login page builder, multi-page branding for all authentication flows, dashboard theming with 8 layouts and 12 color schemes, and a bundle marketplace for saving and sharing complete configurations. Tenant administrators gain the power of a professional design team through an intuitive visual interface, while your engineering team focuses on delivering business value instead of implementing custom branding requests.",
+      description:
+        "A comprehensive visual design platform — drag-and-drop login page builder with 14 component types, 3 canvas modes, multi-page branding, dashboard theming, bundle marketplace, and enterprise safety workflows — enabling complete tenant-level platform customization without writing a single line of code.",
+      intro:
+        "NEXORA doesn't just let you pick colors — it gives your tenants a complete visual design platform. The No-Code Page Builder combines a drag-and-drop login page builder, multi-page branding for all authentication flows, dashboard theming with 8 layouts and 12 color schemes, and a bundle marketplace for saving and sharing complete configurations. Tenant administrators gain the power of a professional design team through an intuitive visual interface, while your engineering team focuses on delivering business value instead of implementing custom branding requests.",
       builderValueTitle: "The Login Page Builder",
-      builderValueContent: "The Login Page Builder is a fully visual drag-and-drop canvas — like Figma or Wix, but purpose-built for enterprise login pages. Tenant administrators place pre-built components (logos, headings, forms, social login buttons, images) onto a responsive canvas, configure properties through a visual panel, and preview results in real-time. Three design modes (Freeform, Grid, Builder) accommodate every skill level — from pixel-perfect creative control to structured one-click assembly.",
+      builderValueContent:
+        "The Login Page Builder is a fully visual drag-and-drop canvas — like Figma or Wix, but purpose-built for enterprise login pages. Tenant administrators place pre-built components (logos, headings, forms, social login buttons, images) onto a responsive canvas, configure properties through a visual panel, and preview results in real-time. Three design modes (Freeform, Grid, Builder) accommodate every skill level — from pixel-perfect creative control to structured one-click assembly.",
       modesTitle: "3 Design Modes for Every User",
-      modesContent: "The builder adapts to every skill level with three distinct canvas modes. Each mode provides a different balance between creative freedom and structural consistency.",
+      modesContent:
+        "The builder adapts to every skill level with three distinct canvas modes. Each mode provides a different balance between creative freedom and structural consistency.",
       fgFreeform: "Freeform Mode",
-      fgFreeformDesc: "Absolute positioning with pixel-level control. Place any component anywhere on the canvas. Best for creative, non-standard layouts. Think: desktop publishing for login pages.",
+      fgFreeformDesc:
+        "Absolute positioning with pixel-level control. Place any component anywhere on the canvas. Best for creative, non-standard layouts. Think: desktop publishing for login pages.",
       fgGrid: "Grid Mode (Recommended)",
-      fgGridDesc: "Responsive 12-column CSS grid. Components snap to grid cells with configurable column spans. Layouts automatically adapt to desktop, tablet, and mobile breakpoints. Enterprise-grade consistency.",
+      fgGridDesc:
+        "Responsive 12-column CSS grid. Components snap to grid cells with configurable column spans. Layouts automatically adapt to desktop, tablet, and mobile breakpoints. Enterprise-grade consistency.",
       fgBuilder: "Builder Mode",
-      fgBuilderDesc: "Structured block-based assembly. Components organize into header/body/footer sections with automatic spacing. The fastest path from empty canvas to polished login page. Ideal for first-time users.",
+      fgBuilderDesc:
+        "Structured block-based assembly. Components organize into header/body/footer sections with automatic spacing. The fastest path from empty canvas to polished login page. Ideal for first-time users.",
       componentsTitle: "14 Pre-Built Component Types",
-      componentsContent: "The component palette provides everything needed to build professional login experiences. Each component is fully configurable through the visual Properties Panel — no CSS or HTML required.",
+      componentsContent:
+        "The component palette provides everything needed to build professional login experiences. Each component is fully configurable through the visual Properties Panel — no CSS or HTML required.",
       fgLogo: "Logo",
-      fgLogoDesc: "Tenant logo with configurable sizing, alignment, and link target. Supports SVG, PNG, and WebP. Automatically pulls the tenant's uploaded logo.",
+      fgLogoDesc:
+        "Tenant logo with configurable sizing, alignment, and link target. Supports SVG, PNG, and WebP. Automatically pulls the tenant's uploaded logo.",
       fgHeading: "Heading",
-      fgHeadingDesc: "Display text with configurable size, weight, color, and alignment. Supports dynamic tenant name variables. Uses the active theme's heading font.",
+      fgHeadingDesc:
+        "Display text with configurable size, weight, color, and alignment. Supports dynamic tenant name variables. Uses the active theme's heading font.",
       fgForm: "Login Form",
-      fgFormDesc: "The core authentication component — email/password inputs, submit button, remember-me checkbox, and forgot-password link. Non-functional in preview, fully operational when published.",
+      fgFormDesc:
+        "The core authentication component — email/password inputs, submit button, remember-me checkbox, and forgot-password link. Non-functional in preview, fully operational when published.",
       fgSocial: "Social Login",
-      fgSocialDesc: "Pre-built OAuth buttons for Google, Microsoft, Apple, and GitHub. Configurable layout (horizontal, vertical, icon-only) with automatic separator text.",
+      fgSocialDesc:
+        "Pre-built OAuth buttons for Google, Microsoft, Apple, and GitHub. Configurable layout (horizontal, vertical, icon-only) with automatic separator text.",
       fgImage: "Image",
-      fgImageDesc: "Display any image with configurable sizing, crop mode, border radius, and shadow. Use for hero graphics, illustrations, or decorative elements.",
+      fgImageDesc:
+        "Display any image with configurable sizing, crop mode, border radius, and shadow. Use for hero graphics, illustrations, or decorative elements.",
       fgButton: "Button",
-      fgButtonDesc: "Clickable action button with 4 variants (primary, secondary, outline, ghost), configurable text, icon, size, and link target.",
+      fgButtonDesc:
+        "Clickable action button with 4 variants (primary, secondary, outline, ghost), configurable text, icon, size, and link target.",
       fgCard: "Card Container",
-      fgCardDesc: "Container with background, border, and shadow. Can hold nested components for grouped layout regions.",
+      fgCardDesc:
+        "Container with background, border, and shadow. Can hold nested components for grouped layout regions.",
       fgFooter: "Footer",
-      fgFooterDesc: "Page footer with configurable links array, copyright text, and alignment. Pre-populated with Terms and Privacy links.",
+      fgFooterDesc:
+        "Page footer with configurable links array, copyright text, and alignment. Pre-populated with Terms and Privacy links.",
       fgOther: "6 More Components",
-      fgOtherDesc: "Text paragraphs, dividers, spacers, badges, icons, and Terms & Privacy links — covering every scenario from minimal to information-rich login pages.",
+      fgOtherDesc:
+        "Text paragraphs, dividers, spacers, badges, icons, and Terms & Privacy links — covering every scenario from minimal to information-rich login pages.",
       multiPageTitle: "Multi-Page Branding — Complete Auth Experience",
-      multiPageContent: "The customization platform extends beyond the login page. Multi-Page Branding provides independent visual configurations for Login, Forgot Password, and Reset Password — the three authentication pages that form a tenant's complete auth experience. Each page can have its own layout, headline, subtitle, overlay, and design tokens while sharing a consistent color and typography foundation. The Customizer Studio's page tab strip enables instant switching between pages with live preview for each.",
+      multiPageContent:
+        "The customization platform extends beyond the login page. Multi-Page Branding provides independent visual configurations for Login, Forgot Password, and Reset Password — the three authentication pages that form a tenant's complete auth experience. Each page can have its own layout, headline, subtitle, overlay, and design tokens while sharing a consistent color and typography foundation. The Customizer Studio's page tab strip enables instant switching between pages with live preview for each.",
       multiPageLogin: "Login Page",
-      multiPageLoginDesc: "The primary brand statement. Full visual control — layout selection, colors, typography, background, overlay, branding panel, dark mode. This is where first impressions are made.",
+      multiPageLoginDesc:
+        "The primary brand statement. Full visual control — layout selection, colors, typography, background, overlay, branding panel, dark mode. This is where first impressions are made.",
       multiPageForgot: "Forgot Password Page",
-      multiPageForgotDesc: "The trust-building page. Independent headline and subtitle for reassuring messaging ('We'll help you get back in'). Softer visual treatments that convey care and reliability.",
+      multiPageForgotDesc:
+        "The trust-building page. Independent headline and subtitle for reassuring messaging ('We'll help you get back in'). Softer visual treatments that convey care and reliability.",
       multiPageReset: "Reset Password Page",
-      multiPageResetDesc: "The action-oriented page. Clear, focused messaging ('Create your new password') with minimal distractions. Independent layout for optimal form visibility.",
+      multiPageResetDesc:
+        "The action-oriented page. Clear, focused messaging ('Create your new password') with minimal distractions. Independent layout for optimal form visibility.",
       multiPageAdvantage: "Competitive Advantage",
-      multiPageAdvantageDesc: "No competitor (Auth0, Okta, Keycloak) offers per-page branding for authentication flows. Most connect all auth pages to a single theme with no page-level customization. NEXORA's multi-page branding enables context-appropriate user experiences across the entire authentication journey.",
+      multiPageAdvantageDesc:
+        "No competitor (Auth0, Okta, Keycloak) offers per-page branding for authentication flows. Most connect all auth pages to a single theme with no page-level customization. NEXORA's multi-page branding enables context-appropriate user experiences across the entire authentication journey.",
       dashboardTitle: "Dashboard Theming — Platform-Wide Visual Control",
-      dashboardContent: "Branding doesn't stop at the login page. The Dashboard Theming panel extends visual customization to the admin dashboard itself. Tenants configure layout templates, color themes, theme modes, and sidebar preferences — all through the same zero-code studio interface with the same draft/publish safety workflow.",
+      dashboardContent:
+        "Branding doesn't stop at the login page. The Dashboard Theming panel extends visual customization to the admin dashboard itself. Tenants configure layout templates, color themes, theme modes, and sidebar preferences — all through the same zero-code studio interface with the same draft/publish safety workflow.",
       fgLayouts: "8 Layout Templates",
-      fgLayoutsDesc: "Default, Navigation, Classic, Compact, Elegant, Floating, Modern, and Minimal — each defining sidebar position, header style, content width, and navigation pattern.",
+      fgLayoutsDesc:
+        "Default, Navigation, Classic, Compact, Elegant, Floating, Modern, and Minimal — each defining sidebar position, header style, content width, and navigation pattern.",
       fgColors: "12 Color Themes",
-      fgColorsDesc: "Default, Zinc, Slate, Stone, Neutral, Red, Rose, Orange, Green, Blue, Violet, and Yellow — accent palettes applied to sidebar, headers, buttons, and active states.",
+      fgColorsDesc:
+        "Default, Zinc, Slate, Stone, Neutral, Red, Rose, Orange, Green, Blue, Violet, and Yellow — accent palettes applied to sidebar, headers, buttons, and active states.",
       fgMode: "Intelligent Theme Mode",
-      fgModeDesc: "Light, Dark, or System — respecting the user's OS preference. Each mode uses independently configured CSS variables for zero visual compromise.",
+      fgModeDesc:
+        "Light, Dark, or System — respecting the user's OS preference. Each mode uses independently configured CSS variables for zero visual compromise.",
       fgSidebar: "Sidebar Configuration",
-      fgSidebarDesc: "Default sidebar state (expanded/collapsed) and preferred language. Dashboard settings propagate to every admin's first-load experience.",
+      fgSidebarDesc:
+        "Default sidebar state (expanded/collapsed) and preferred language. Dashboard settings propagate to every admin's first-load experience.",
       bundleTitle: "Bundle Marketplace — One-Click Complete Setup",
-      bundleContent: "Save your entire visual configuration — login theme, builder layout, per-page overrides, dashboard settings, and accessibility profiles — as a named bundle. Browse bundles in the Theme Gallery's dedicated Bundle tab. Apply a complete design system with a single click. Bundle types include Login-only, Dashboard-only, and Complete (everything).",
+      bundleContent:
+        "Save your entire visual configuration — login theme, builder layout, per-page overrides, dashboard settings, and accessibility profiles — as a named bundle. Browse bundles in the Theme Gallery's dedicated Bundle tab. Apply a complete design system with a single click. Bundle types include Login-only, Dashboard-only, and Complete (everything).",
       fgSave: "Save as Bundle",
-      fgSaveDesc: "Capture your current studio state as a reusable, shareable bundle. Name it, add a description, set the bundle type, and save. Your configuration becomes available in the Bundle Gallery.",
+      fgSaveDesc:
+        "Capture your current studio state as a reusable, shareable bundle. Name it, add a description, set the bundle type, and save. Your configuration becomes available in the Bundle Gallery.",
       fgBrowse2: "Browse & Apply",
-      fgBrowse2Desc: "Browse bundles with type filters, search, and pagination. Preview bundle details including all included components. Apply with one click to instantly configure your complete platform visual identity.",
+      fgBrowse2Desc:
+        "Browse bundles with type filters, search, and pagination. Preview bundle details including all included components. Apply with one click to instantly configure your complete platform visual identity.",
       fgComplete: "Complete Bundles",
-      fgCompleteDesc: "The ultimate time-saver. A single Complete bundle sets up everything: login page branding, builder layout, per-page overrides for forgot/reset pages, dashboard theme, color scheme, and WCAG AA accessibility settings. From blank canvas to fully branded platform in one click.",
+      fgCompleteDesc:
+        "The ultimate time-saver. A single Complete bundle sets up everything: login page branding, builder layout, per-page overrides for forgot/reset pages, dashboard theme, color scheme, and WCAG AA accessibility settings. From blank canvas to fully branded platform in one click.",
       safetyTitle: "Enterprise-Grade Safety & Governance",
-      safetyContent: "Every customization operation is protected by NEXORA's enterprise safety framework. Draft/Publish separation ensures production is never affected until explicit deployment. Optimistic concurrency prevents concurrent edit conflicts. Safe Mode provides emergency bypass for corrupted configurations. Full audit trails track who changed what, when, with before/after snapshots. Permission-based access control ensures only authorized administrators can modify branding.",
+      safetyContent:
+        "Every customization operation is protected by NEXORA's enterprise safety framework. Draft/Publish separation ensures production is never affected until explicit deployment. Optimistic concurrency prevents concurrent edit conflicts. Safe Mode provides emergency bypass for corrupted configurations. Full audit trails track who changed what, when, with before/after snapshots. Permission-based access control ensures only authorized administrators can modify branding.",
       fgDraft: "Draft → Preview → Publish",
-      fgDraftDesc: "All changes operate in draft mode until explicitly published. Preview in a sandboxed iframe. Publish with one click. Rollback instantly if needed.",
+      fgDraftDesc:
+        "All changes operate in draft mode until explicitly published. Preview in a sandboxed iframe. Publish with one click. Rollback instantly if needed.",
       fgConcurrency: "Optimistic Concurrency",
-      fgConcurrencyDesc: "Concurrent edits are detected and rejected (409 Conflict). No risk of one admin's changes silently overwriting another's work.",
+      fgConcurrencyDesc:
+        "Concurrent edits are detected and rejected (409 Conflict). No risk of one admin's changes silently overwriting another's work.",
       fgSafeMode: "Emergency Safe Mode",
-      fgSafeModeDesc: "One-click bypass that restores platform defaults for the login page. Guaranteed working login even if branding configuration becomes corrupted.",
+      fgSafeModeDesc:
+        "One-click bypass that restores platform defaults for the login page. Guaranteed working login even if branding configuration becomes corrupted.",
       fgAudit: "Complete Audit Trail",
-      fgAuditDesc: "Every change is recorded: who, what, when, before/after. Supports compliance requirements (SOX, HIPAA, ISO 27001) for branding governance.",
+      fgAuditDesc:
+        "Every change is recorded: who, what, when, before/after. Supports compliance requirements (SOX, HIPAA, ISO 27001) for branding governance.",
       roiTitle: "Platform Customization ROI",
       tblRoiH1: "Scenario",
       tblRoiH2: "Without NEXORA",
@@ -329,7 +415,7 @@ export const ar = {
       tblCompR8C2: "No (live-edit)",
       tblCompR8C3: "No (direct deploy)",
       tblCompR8C4: "Yes (with concurrency + rollback + safe mode)",
-      tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions NEXORA as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform."
-    }
-  }
+      tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions NEXORA as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform.",
+    },
+  },
 };

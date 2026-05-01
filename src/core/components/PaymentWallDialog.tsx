@@ -40,23 +40,32 @@ export function PaymentWallDialog() {
   };
 
   return (
-    <Dialog open={true} onOpenChange={() => { /* unclosable */ }}>
+    <Dialog
+      open={true}
+      onOpenChange={() => {
+        /* unclosable */
+      }}
+    >
       <DialogContent
         className="sm:max-w-md [&>button]:hidden"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className="items-center text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30 mb-2">
+          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30">
             <ShieldAlert className="h-8 w-8 text-amber-600 dark:text-amber-400" />
           </div>
           <DialogTitle className="text-xl">
             {t("subscription.paymentWall.title") || "Payment Required"}
           </DialogTitle>
-          <DialogDescription className="text-center leading-relaxed mt-2">
-            {(t("subscription.paymentWall.description") ||
-              "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account.")
-              .replace("{edition}", editionName || t("subscription.paymentWall.yourPlan") || "your plan")}
+          <DialogDescription className="mt-2 text-center leading-relaxed">
+            {(
+              t("subscription.paymentWall.description") ||
+              "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account."
+            ).replace(
+              "{edition}",
+              editionName || t("subscription.paymentWall.yourPlan") || "your plan"
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -70,7 +79,7 @@ export function PaymentWallDialog() {
           </div>
         </div>
 
-        <DialogFooter className="sm:justify-center gap-2 mt-2">
+        <DialogFooter className="mt-2 gap-2 sm:justify-center">
           <Button variant="outline" onClick={handleLogout} className="gap-2">
             <LogOut className="h-4 w-4" />
             {t("nav.logout") || "Log Out"}

@@ -70,4 +70,3 @@ export interface BlockedIPSummary {
   latestAttempt: string;
   lastUsername: string | null;
 }
-

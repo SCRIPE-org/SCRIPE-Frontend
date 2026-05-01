@@ -8,9 +8,7 @@ import { useTheme } from "next-themes";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { customizationContainer } from "@modules/customization/di";
-import type {
-  AuditLogPagedResultJson as AuditLogPagedResult,
-} from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
+import type { AuditLogPagedResultJson as AuditLogPagedResult } from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
 import type { SystemSettingsJson as SystemSettingsResponse } from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
 
 // Query keys
@@ -130,12 +128,17 @@ export function useCustomizationViewModel() {
     mutationFn: (expectedVersion: number) =>
       customizationService.publishBranding({ expectedVersion }),
     onSuccess: () => {
-      toastSuccess({ title: t("tenantSettings.customization.publishSuccess") || "Published successfully" });
+      toastSuccess({
+        title: t("tenantSettings.customization.publishSuccess") || "Published successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
-      toastError({ title: t("tenantSettings.customization.publishFailed") || "Publish failed", description: error.message });
+      toastError({
+        title: t("tenantSettings.customization.publishFailed") || "Publish failed",
+        description: error.message,
+      });
     },
   });
 
@@ -143,26 +146,35 @@ export function useCustomizationViewModel() {
   const discardMutation = useMutation({
     mutationFn: () => customizationService.discardDraft(),
     onSuccess: () => {
-      toastSuccess({ title: t("tenantSettings.customization.discardSuccess") || "Draft discarded" });
+      toastSuccess({
+        title: t("tenantSettings.customization.discardSuccess") || "Draft discarded",
+      });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
-      toastError({ title: t("tenantSettings.customization.discardFailed") || "Discard failed", description: error.message });
+      toastError({
+        title: t("tenantSettings.customization.discardFailed") || "Discard failed",
+        description: error.message,
+      });
     },
   });
 
   // ─── Rollback Mutation ─────────────────────────────
   const rollbackMutation = useMutation({
-    mutationFn: (targetVersion: number) =>
-      customizationService.rollback(targetVersion),
+    mutationFn: (targetVersion: number) => customizationService.rollback(targetVersion),
     onSuccess: () => {
-      toastSuccess({ title: t("tenantSettings.customization.rollbackSuccess") || "Rollback successful" });
+      toastSuccess({
+        title: t("tenantSettings.customization.rollbackSuccess") || "Rollback successful",
+      });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
-      toastError({ title: t("tenantSettings.customization.rollbackFailed") || "Rollback failed", description: error.message });
+      toastError({
+        title: t("tenantSettings.customization.rollbackFailed") || "Rollback failed",
+        description: error.message,
+      });
     },
   });
 
@@ -197,7 +209,10 @@ export function useCustomizationViewModel() {
       successTimerRef.current = setTimeout(() => setIsSaveSuccess(false), 2500);
     },
     onError: (error: Error) => {
-      toastError({ title: t("tenantSettings.customization.prefsFailed") || "Failed to save preferences", description: error.message });
+      toastError({
+        title: t("tenantSettings.customization.prefsFailed") || "Failed to save preferences",
+        description: error.message,
+      });
     },
   });
 

@@ -8,18 +8,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
  * - No garbage collection during tests
  */
 function createTestQueryClient() {
-      return new QueryClient({
-            defaultOptions: {
-                  queries: {
-                        retry: false,
-                        staleTime: 0,
-                        gcTime: 0,
-                  },
-                  mutations: {
-                        retry: false,
-                  },
-            },
-      });
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+        gcTime: 0,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
 }
 
 /**
@@ -33,13 +33,9 @@ function createTestQueryClient() {
  * ```
  */
 export function renderWithProviders({ children }: { children: React.ReactNode }) {
-      const queryClient = createTestQueryClient();
+  const queryClient = createTestQueryClient();
 
-      return (
-            <QueryClientProvider client={queryClient}>
-                  {children}
-            </QueryClientProvider>
-      );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
 /**
@@ -47,13 +43,9 @@ export function renderWithProviders({ children }: { children: React.ReactNode })
  * for scenarios where you need to pre-populate the cache.
  */
 export function createWrapper(queryClient?: QueryClient) {
-      const client = queryClient ?? createTestQueryClient();
+  const client = queryClient ?? createTestQueryClient();
 
-      return function Wrapper({ children }: { children: React.ReactNode }) {
-            return (
-                  <QueryClientProvider client={client}>
-                        {children}
-                  </QueryClientProvider>
-            );
-      };
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  };
 }

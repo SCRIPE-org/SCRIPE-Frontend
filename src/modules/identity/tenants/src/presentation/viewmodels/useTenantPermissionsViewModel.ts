@@ -107,12 +107,16 @@ export function useTenantPermissionsDialog({
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevTenantId, setPrevTenantId] = useState(tenantId);
   const [prevInitializedTenantId, setPrevInitializedTenantId] = useState(initializedTenantId);
-  
-  if (open !== prevOpen || tenantId !== prevTenantId || initializedTenantId !== prevInitializedTenantId) {
+
+  if (
+    open !== prevOpen ||
+    tenantId !== prevTenantId ||
+    initializedTenantId !== prevInitializedTenantId
+  ) {
     setPrevOpen(open);
     setPrevTenantId(tenantId);
     setPrevInitializedTenantId(initializedTenantId);
-    
+
     if (open && tenantId && tenantId !== initializedTenantId) {
       setSearch("");
       setSelectedCodes(new Set());
@@ -205,9 +209,14 @@ export function useTenantPermissionsDialog({
   }, [parentPermissions, tenantPermissions]);
 
   // Initialize selection from tenant's permissions
-  const isReadyToInit = open && !!tenantId && allPermissions.length > 0 && !loadingTenant && initializedTenantId !== tenantId;
+  const isReadyToInit =
+    open &&
+    !!tenantId &&
+    allPermissions.length > 0 &&
+    !loadingTenant &&
+    initializedTenantId !== tenantId;
   const [prevIsReadyToInit, setPrevIsReadyToInit] = useState(isReadyToInit);
-  
+
   if (isReadyToInit && isReadyToInit !== prevIsReadyToInit) {
     setPrevIsReadyToInit(isReadyToInit);
     // Get valid codes from ALL known permissions (parent + current)

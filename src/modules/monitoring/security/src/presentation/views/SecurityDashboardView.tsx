@@ -17,10 +17,23 @@ import { Shield, FileDown } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load heavy sections (below-the-fold)
-const FailedLoginsHeatmap = dynamic(() => import("../components/FailedLoginsHeatmap").then(m => ({ default: m.FailedLoginsHeatmap })), { ssr: false });
-const BlockedIPsTable = dynamic(() => import("../components/BlockedIPsTable").then(m => ({ default: m.BlockedIPsTable })), { ssr: false });
-const SecurityTimeline = dynamic(() => import("../components/SecurityTimeline").then(m => ({ default: m.SecurityTimeline })), { ssr: false });
-const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
+const FailedLoginsHeatmap = dynamic(
+  () =>
+    import("../components/FailedLoginsHeatmap").then((m) => ({ default: m.FailedLoginsHeatmap })),
+  { ssr: false }
+);
+const BlockedIPsTable = dynamic(
+  () => import("../components/BlockedIPsTable").then((m) => ({ default: m.BlockedIPsTable })),
+  { ssr: false }
+);
+const SecurityTimeline = dynamic(
+  () => import("../components/SecurityTimeline").then((m) => ({ default: m.SecurityTimeline })),
+  { ssr: false }
+);
+const ReportExportDialog = dynamic(
+  () => import("@core/ui/report-export-dialog").then((m) => ({ default: m.ReportExportDialog })),
+  { ssr: false }
+);
 
 export function SecurityDashboardView() {
   useModuleLocales(() => import("../../../locales"), "security");

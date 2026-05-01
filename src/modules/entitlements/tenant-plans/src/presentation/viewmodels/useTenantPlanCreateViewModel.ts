@@ -68,7 +68,8 @@ export function useTenantPlanCreateViewModel() {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
       success({
         title: t("entitlements.tenantPlans.created") || "Plan Created",
-        description: t("entitlements.tenantPlans.createdDesc") || "The plan has been created successfully.",
+        description:
+          t("entitlements.tenantPlans.createdDesc") || "The plan has been created successfully.",
       });
       router.push(`/entitlements/tenant-plans/${newPlanId}`);
     },

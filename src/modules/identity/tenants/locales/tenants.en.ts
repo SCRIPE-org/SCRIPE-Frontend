@@ -69,7 +69,8 @@ export const en = {
     deleting: "Deleting...",
     hasDescendants: "This tenant has descendant tenant(s).",
     cascadeDelete: "Delete all descendants (admins, roles, and users will also be deleted)",
-    cascadeDeleteNotPermitted: "This tenant has descendant(s). You do not have permission to cascade delete.",
+    cascadeDeleteNotPermitted:
+      "This tenant has descendant(s). You do not have permission to cascade delete.",
     createDescription: "Add a new root tenant to the system.",
     createChildDescription: "Add a new child tenant under",
     editDescription: "Update tenant details for",
@@ -249,7 +250,8 @@ export const en = {
     lifetime: "Lifetime",
     trial: "Trial (14 days)",
     renewSubscription: "Renew Subscription",
-    renewDesc: "Extend the subscription period. The new period will be added from the current end date.",
+    renewDesc:
+      "Extend the subscription period. The new period will be added from the current end date.",
     currentEndDate: "Current End Date",
     extendBy: "Extend By",
     oneMonth: "1 Month",
@@ -260,11 +262,13 @@ export const en = {
     selectBillingCycle: "Billing Cycle",
     convertToPaid: "Convert to Paid",
     suspendSubscription: "Suspend Subscription",
-    suspendDesc: "This tenant will lose access to the system while suspended. You can resume it later.",
+    suspendDesc:
+      "This tenant will lose access to the system while suspended. You can resume it later.",
     suspendReason: "Reason for suspension",
     suspendReasonPlaceholder: "e.g. Payment fraud, Terms violation...",
     cancelSubscription: "Cancel Subscription",
-    cancelDesc: "This will permanently end the subscription. The tenant will lose all edition features and permissions.",
+    cancelDesc:
+      "This will permanently end the subscription. The tenant will lose all edition features and permissions.",
     cancelWarning: "This action cannot be undone. All features and permissions will be removed.",
     cancelReason: "Reason (optional)",
     cancelReasonPlaceholder: "Why are you canceling this subscription?",
@@ -284,7 +288,8 @@ export const en = {
     canceledBanner: "Subscription has been canceled.",
     expiredBanner: "Subscription has expired.",
     pendingPayment: "Pending Payment",
-    pendingPaymentBanner: "This tenant has a pending payment. Generate a payment link from the subscriptions page.",
+    pendingPaymentBanner:
+      "This tenant has a pending payment. Generate a payment link from the subscriptions page.",
     reassignPlan: "Reassign Plan",
     fallbackInfo: "On expiry",
     fallbackOnAction: "On cancel/suspend",
@@ -295,13 +300,17 @@ export const en = {
     downgradeKeepActive: "Tenant will keep active on the fallback plan with reduced features.",
     cancelDowngradeDesc: "Tenant will be moved to the fallback plan and remain active.",
     cancelPermanentDesc: "Subscription will be permanently canceled and all admins deactivated.",
-    cancelDowngradeKeepActive: "Tenant will keep active on the fallback plan with reduced features.",
+    cancelDowngradeKeepActive:
+      "Tenant will keep active on the fallback plan with reduced features.",
     downgrade: "Downgrade",
-    suspendAdminWarning: "All tenant administrators will be deactivated and unable to access the system until the subscription is resumed.",
-    cancelAdminWarning: "All tenant administrators will be permanently deactivated. This action cannot be undone.",
+    suspendAdminWarning:
+      "All tenant administrators will be deactivated and unable to access the system until the subscription is resumed.",
+    cancelAdminWarning:
+      "All tenant administrators will be permanently deactivated. This action cannot be undone.",
     resumeSubscription: "Resume Subscription",
     resumeDesc: "Resume the suspended subscription and restore tenant access.",
-    resumeAdminWarning: "All previously deactivated administrators will be re-activated and regain access to the system.",
+    resumeAdminWarning:
+      "All previously deactivated administrators will be re-activated and regain access to the system.",
     confirmResume: "Resume Subscription",
     downgradedBanner: "Downgraded from",
     restoreOriginalPlan: "Restore Original Plan",
@@ -309,7 +318,8 @@ export const en = {
     originalPlan: "Original Plan",
     downgradedOn: "Downgraded on",
     chooseBillingCycle: "You may choose a different billing cycle.",
-    restoreInfo: "A new billing period will start from today. Permissions will be restored to the original plan.",
+    restoreInfo:
+      "A new billing period will start from today. Permissions will be restored to the original plan.",
     confirmRestore: "Restore Plan",
     subscriptionRestored: "Subscription restored to the original plan",
     suspended: "Suspended",
@@ -321,8 +331,10 @@ export const en = {
     baseAmount: "Base Amount",
     exchangeRate: "Exchange Rate",
     changeCurrency: "Change Currency",
-    changeCurrencyDesc: "Change the billing currency for this subscription. Pricing will be recalculated using current exchange rates.",
-    changeCurrencyInfo: "The subscription amount will be recalculated using the current exchange rate. No other subscription details will change.",
+    changeCurrencyDesc:
+      "Change the billing currency for this subscription. Pricing will be recalculated using current exchange rates.",
+    changeCurrencyInfo:
+      "The subscription amount will be recalculated using the current exchange rate. No other subscription details will change.",
     currentCurrency: "Current Currency",
     newCurrency: "New Currency",
     selectCurrency: "Select currency",
@@ -399,15 +411,13 @@ export const en = {
       overridesDiscount: "Override Discount",
       overridesTotalCost: "Override Costs",
     },
-    // ── Account Setup Stepper ──
     adminEmail: "Admin Email",
     adminEmailPlaceholder: "admin@company.com",
     adminUsername: "Admin Username",
     adminUsernamePlaceholder: "Auto-generated if empty",
-    setupEmailSent: "An account setup email has been sent to the admin. They will set their own password.",
+    setupEmailSent:
+      "An account setup email has been sent to the admin. They will set their own password.",
     setupUrlLabel: "Account Setup Link (valid 24 hours):",
-    
-    // ── Stepper UI ──
     createTitle: "Create New Tenant",
     createSubtitle: "Set up a new organization with an administrator and subscription plan.",
     stepOrganization: "Organization",
@@ -418,21 +428,31 @@ export const en = {
     stepPlanDesc: "Choose an edition and configure billing. This step is optional.",
     codeHint: "Unique identifier. Auto-generated from name.",
     secureOnboarding: "Secure Onboarding",
-    secureOnboardingDesc: "The admin will receive a secure email with a one-time link to set their password. The account remains locked until they complete the setup.",
+    secureOnboardingDesc:
+      "The admin will receive a secure email with a one-time link to set their password. The account remains locked until they complete the setup.",
     autoGenerated: "Auto-generated from code",
     usernameHint: "Leave blank to auto-generate from tenant code.",
     edition: "Edition",
     searchEditions: "Search editions...",
     currency: "Currency",
     skipPayment: "Skip Payment",
-    skipPaymentDesc: "Activates the subscription without payment processing. Use for demos or manual billing.",
+    skipPaymentDesc:
+      "Activates the subscription without payment processing. Use for demos or manual billing.",
     summary: "Summary",
     payment: "Payment",
     skipped: "Skipped (Admin Override)",
     viewTenantDetails: "View Tenant Details",
     autoRedirect: "You will be automatically redirected in a few seconds...",
+    fullRefundApplied: "Full Refund Applied",
+    noPromotion: "No Promotion",
+    selectSubscriptionType: "Select Subscription Type",
+    noSubscriptionTypesAvailable: "No Subscription Types Available",
+    searchCurrencies: "Search Currencies",
+    days: "Days",
+    neverExpires: "Never Expires",
+    passwordExpiryHelp: "Password Expiry Help",
   },
-  validation:{
+  validation: {
     invalidEmail: "Invalid email",
     invalidUsername: "Invalid username",
     invalidPassword: "Invalid password",
@@ -459,5 +479,8 @@ export const en = {
     invalidAdminSuspendReason: "Invalid admin suspend reason",
     invalidAdminRefundAmount: "Invalid admin refund amount",
     invalidAdminRefundType: "Invalid admin refund type",
-  }
+  },
+  permission: {
+    autoGranted: "Auto Granted",
+  },
 };

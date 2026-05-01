@@ -92,15 +92,15 @@ export { de as customizationDe } from "./customization/de";
 
 // Lazy loader map for dynamic imports
 export const pageLoaders: Record<string, () => Promise<any>> = {
-  'why-nexora': () => import('./why-nexora/en'),
-  'platform': () => import('./platform/en'),
-  'enterprise': () => import('./enterprise/en'),
-  'security': () => import('./security/en'),
-  'technical': () => import('./technical/en'),
-  'developer': () => import('./developer/en'),
-  'integration': () => import('./integration/en'),
-  'pricing': () => import('./pricing/en'),
-  'modules': () => import('./modules/en'),
-  'entitlements': () => import('./entitlements/en'),
-  'customization': () => import('./customization/en'),
+  "why-nexora": () => import("./why-nexora/en"),
+  platform: () => import("./platform/en"),
+  enterprise: () => import("./enterprise/en"),
+  security: () => import("./security/en"),
+  technical: () => import("./technical/en"),
+  developer: () => import("./developer/en"),
+  integration: () => import("./integration/en"),
+  pricing: () => import("./pricing/en"),
+  modules: () => import("./modules/en"),
+  entitlements: () => import("./entitlements/en"),
+  customization: () => import("./customization/en"),
 };

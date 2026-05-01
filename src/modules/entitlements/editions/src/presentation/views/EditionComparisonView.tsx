@@ -13,9 +13,7 @@
 import { useRef, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import {
-  Table, TableBody, TableHead, TableHeader, TableRow, TableCell,
-} from "@core/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
 import { Card, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Eye, Sparkles, ChevronDown, ChevronUp, LayoutList, Loader2 } from "lucide-react";
@@ -53,25 +51,22 @@ function BillingCycleToggle({
 
   return (
     <div className="flex items-center justify-center">
-      <div className="inline-flex border border-border bg-muted/30 p-0.5 gap-0.5">
+      <div className="inline-flex gap-0.5 border border-border bg-muted/30 p-0.5">
         {cycles.map((cycle) => {
           const isActive = selected === cycle;
           return (
             <button
               key={cycle}
               onClick={() => onChange(cycle)}
-              className={`
-                relative flex items-center gap-2 px-5 py-2 text-sm font-semibold
-                transition-all duration-150
-                ${isActive
-                  ? "bg-background text-foreground shadow-sm border border-border"
-                  : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-                }
-              `}
+              className={`relative flex items-center gap-2 px-5 py-2 text-sm font-semibold transition-all duration-150 ${
+                isActive
+                  ? "border border-border bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+              } `}
             >
               {cycle}
               {cycle === "Yearly" && maxYearlySavings > 0 && (
-                <span className="text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-950/40 px-1.5 py-0.5 leading-none">
+                <span className="bg-green-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-green-600 dark:bg-green-950/40 dark:text-green-400">
                   SAVE {maxYearlySavings}%
                 </span>
               )}
@@ -96,7 +91,11 @@ function MatrixCell({
   const cls = `text-center py-3.5 px-3 ${isHighlighted ? "bg-primary/5" : ""}`;
 
   if (value === undefined || value === null || value === "") {
-    return <TableCell className={cls}><span className="text-muted-foreground/40">—</span></TableCell>;
+    return (
+      <TableCell className={cls}>
+        <span className="text-muted-foreground/40">—</span>
+      </TableCell>
+    );
   }
 
   if (valueType === "Boolean") {
@@ -113,9 +112,9 @@ function MatrixCell({
     const num = parseInt(value, 10);
     return (
       <TableCell className={cls}>
-        <span className="tabular-nums font-semibold text-sm">
+        <span className="text-sm font-semibold tabular-nums">
           {num === -1 ? (
-            <span className="text-primary font-bold">∞</span>
+            <span className="font-bold text-primary">∞</span>
           ) : num === 0 ? (
             <span className="text-muted-foreground/50">—</span>
           ) : (
@@ -139,12 +138,12 @@ function LoadingState() {
     <div className="space-y-8">
       {/* Cycle toggle skeleton */}
       <div className="flex justify-center">
-        <div className="h-10 w-72 bg-muted/30 animate-pulse border border-border" />
+        <div className="h-10 w-72 animate-pulse border border-border bg-muted/30" />
       </div>
       {/* Cards skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-96 border border-border/40 bg-muted/20 animate-pulse" />
+          <div key={i} className="h-96 animate-pulse border border-border/40 bg-muted/20" />
         ))}
       </div>
       <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
@@ -181,10 +180,12 @@ function FeatureCategoryBlock({
       />
       {rows.map((row: FeatureRow) => {
         const featureLabel =
-          language === "ar" && row.displayNameAr ? row.displayNameAr : row.displayNameEn || row.featureName;
+          language === "ar" && row.displayNameAr
+            ? row.displayNameAr
+            : row.displayNameEn || row.featureName;
         return (
-          <TableRow key={row.featureName} className="hover:bg-muted/30 transition-colors group">
-            <TableCell className="sticky left-0 bg-background group-hover:bg-muted/30 transition-colors font-medium text-sm py-3.5">
+          <TableRow key={row.featureName} className="group transition-colors hover:bg-muted/30">
+            <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium transition-colors group-hover:bg-muted/30">
               {featureLabel}
             </TableCell>
             {editions.map((ed: Edition) => (
@@ -229,7 +230,7 @@ export function EditionComparisonView() {
     return (
       <Card>
         <CardContent className="py-16 text-center">
-          <Sparkles className="mx-auto h-10 w-10 text-muted-foreground/30 mb-3" />
+          <Sparkles className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
           <p className="text-muted-foreground">
             {t("entitlements.editions.noEditions") || "No active editions to compare."}
           </p>
@@ -240,7 +241,8 @@ export function EditionComparisonView() {
 
   const colCount = editions.length;
   const colSpan = colCount + 1;
-  const recommendedEditionId = editions.find((e: Edition) => e.recommendationLabels.length > 0)?.id ?? "";
+  const recommendedEditionId =
+    editions.find((e: Edition) => e.recommendationLabels.length > 0)?.id ?? "";
 
   return (
     <div className="space-y-10">
@@ -258,7 +260,7 @@ export function EditionComparisonView() {
               {t("entitlements.editions.comparison.heroTitle") || "Compare Editions"}
             </h2>
           </div>
-          <div className="flex items-center gap-1.5 ml-10.5">
+          <div className="ml-10.5 flex items-center gap-1.5">
             <Eye className="h-3.5 w-3.5 text-muted-foreground/60" />
             <p className="text-sm text-muted-foreground">
               {t("entitlements.editions.comparison.heroSubtitle") ||
@@ -278,14 +280,14 @@ export function EditionComparisonView() {
 
         {/* ── Pricing Cards Grid ── */}
         <div
-          className={`grid gap-6 items-start ${
+          className={`grid items-start gap-6 ${
             colCount === 1
-              ? "grid-cols-1 max-w-sm"
+              ? "max-w-sm grid-cols-1"
               : colCount === 2
-              ? "grid-cols-1 md:grid-cols-2 max-w-2xl"
-              : colCount === 3
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+                ? "max-w-2xl grid-cols-1 md:grid-cols-2"
+                : colCount === 3
+                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
           }`}
         >
           {editions.map((ed: Edition, idx: number) => (
@@ -294,7 +296,9 @@ export function EditionComparisonView() {
               edition={ed}
               language={language}
               selectedCycle={selectedCycle}
-              priceInfo={cyclePrices[idx] ?? { price: undefined, isFree: true, isContactSales: false }}
+              priceInfo={
+                cyclePrices[idx] ?? { price: undefined, isFree: true, isContactSales: false }
+              }
               savingsPercent={savingsPercents[idx] ?? 0}
               highlights={progressiveHighlights[idx] ?? []}
               isRecommended={ed.id === recommendedEditionId}
@@ -311,12 +315,12 @@ export function EditionComparisonView() {
           {t("entitlements.editions.comparison.matrixTitle") || "Feature Comparison"}
         </h2>
 
-        <div className="border border-border overflow-hidden shadow-sm">
+        <div className="overflow-hidden border border-border shadow-sm">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-b bg-muted/40">
-                  <TableHead className="w-64 sticky left-0 bg-muted/40 z-10 font-semibold">
+                  <TableHead className="sticky left-0 z-10 w-64 bg-muted/40 font-semibold">
                     {t("entitlements.editions.feature") || "Feature"}
                   </TableHead>
                   {editions.map((ed: Edition) => (
@@ -337,10 +341,10 @@ export function EditionComparisonView() {
                   label={t("entitlements.editions.comparison.categoryBilling") || "Billing"}
                   colSpan={colSpan}
                 />
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.pricing.price") || "Price"}{" "}
-                    <span className="text-xs text-muted-foreground font-normal">
+                    <span className="text-xs font-normal text-muted-foreground">
                       ({selectedCycle})
                     </span>
                   </TableCell>
@@ -350,17 +354,24 @@ export function EditionComparisonView() {
                     return (
                       <TableCell
                         key={ed.id}
-                        className={`text-center py-3.5 font-bold ${isHL ? "bg-primary/5" : ""}`}
+                        className={`py-3.5 text-center font-bold ${isHL ? "bg-primary/5" : ""}`}
                       >
                         {info?.isContactSales ? (
                           <span className="text-sm text-muted-foreground">Custom</span>
                         ) : info?.isFree || info?.price === 0 ? (
-                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">Free</span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            Free
+                          </span>
                         ) : info?.price !== undefined ? (
                           <span>
                             ${info.price.toFixed(0)}
                             <span className="text-xs font-normal text-muted-foreground">
-                              /{selectedCycle === "Monthly" ? "mo" : selectedCycle === "Yearly" ? "yr" : "once"}
+                              /
+                              {selectedCycle === "Monthly"
+                                ? "mo"
+                                : selectedCycle === "Yearly"
+                                  ? "yr"
+                                  : "once"}
                             </span>
                           </span>
                         ) : (
@@ -372,14 +383,14 @@ export function EditionComparisonView() {
                 </TableRow>
 
                 {/* ── Trial Row ── */}
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.editions.allowTrial") || "Free Trial"}
                   </TableCell>
                   {editions.map((ed: Edition) => (
                     <TableCell
                       key={ed.id}
-                      className={`text-center py-3.5 ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}
+                      className={`py-3.5 text-center ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}
                     >
                       <div className="flex justify-center">
                         {ed.allowTrial && ed.trialDurationDays > 0 ? (
@@ -416,7 +427,7 @@ export function EditionComparisonView() {
 
           {/* ── Expand / Collapse ── */}
           {totalFeatureCount > 0 && (
-            <div className="border-t border-border/40 bg-muted/20 px-4 py-3 flex items-center justify-center">
+            <div className="flex items-center justify-center border-t border-border/40 bg-muted/20 px-4 py-3">
               <Button
                 variant="ghost"
                 size="sm"
@@ -432,9 +443,14 @@ export function EditionComparisonView() {
               >
                 <LayoutList className="h-4 w-4" />
                 {showAllFeatures
-                  ? (t("entitlements.editions.comparison.hideFeatures") || "Hide detailed features")
-                  : (t("entitlements.editions.comparison.showAllFeatures") || `Show all ${totalFeatureCount} features`)}
-                {showAllFeatures ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  ? t("entitlements.editions.comparison.hideFeatures") || "Hide detailed features"
+                  : t("entitlements.editions.comparison.showAllFeatures") ||
+                    `Show all ${totalFeatureCount} features`}
+                {showAllFeatures ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
               </Button>
             </div>
           )}

@@ -85,11 +85,11 @@ export function useAuditRealtime(): UseAuditRealtimeResult {
     if (!connection || connectionState !== "connected") return;
 
     connection.on(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
-    connection.invoke(HUB_METHODS.JOIN_GLOBAL_GROUP).catch(() => { });
+    connection.invoke(HUB_METHODS.JOIN_GLOBAL_GROUP).catch(() => {});
 
     return () => {
       connection.off(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
-      connection.invoke(HUB_METHODS.LEAVE_GLOBAL_GROUP).catch(() => { });
+      connection.invoke(HUB_METHODS.LEAVE_GLOBAL_GROUP).catch(() => {});
     };
   }, [connection, connectionState, handleAuditEvent]);
 

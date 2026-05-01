@@ -26,7 +26,7 @@ import { Permission } from "@modules/identity/permissions/src/domain/entities/Pe
 import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
 
 export class RoleRepository implements IRoleRepository {
-  constructor(private readonly service: IRoleService) { }
+  constructor(private readonly service: IRoleService) {}
 
   async getAll(params: RoleListParams): Promise<PagedResult<Role>> {
     const result = await this.service.getAll({

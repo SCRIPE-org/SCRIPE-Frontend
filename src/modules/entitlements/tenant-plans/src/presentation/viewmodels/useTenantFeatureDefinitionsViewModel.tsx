@@ -104,16 +104,14 @@ export function useTenantFeatureDefinitionsViewModel() {
       {
         key: "planUsageCount",
         label: t("entitlements.featureDefinitions.usageCount") || "Plans Using",
-        render: (value: number) => (
-          <Badge variant="secondary">{value ?? 0}</Badge>
-        ),
+        render: (value: number) => <Badge variant="secondary">{value ?? 0}</Badge>,
       },
       {
         key: "isActive",
         label: t("common.active") || "Active",
         render: (_v: unknown, item: TenantFeatureDefinition) => (
           <Badge variant={item.isActive ? "default" : "secondary"}>
-            {item.isActive ? (t("common.active") || "Active") : (t("common.inactive") || "Inactive")}
+            {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
           </Badge>
         ),
       },

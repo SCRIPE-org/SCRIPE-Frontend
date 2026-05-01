@@ -53,10 +53,10 @@ export function CreateTenantStepIndicator({
             <button
               onClick={() => isClickable && goToStep(step.id)}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300 cursor-pointer group",
-                isActive && "bg-primary/10 ring-1 ring-primary/30 shadow-sm",
+                "group flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300",
+                isActive && "bg-primary/10 shadow-sm ring-1 ring-primary/30",
                 !isActive && isCompleted && "hover:bg-muted/60",
-                !isActive && !isCompleted && "opacity-50 cursor-not-allowed"
+                !isActive && !isCompleted && "cursor-not-allowed opacity-50"
               )}
               disabled={!isClickable}
             >
@@ -74,7 +74,7 @@ export function CreateTenantStepIndicator({
                   <Icon className="h-4 w-4" />
                 )}
               </div>
-              <div className="hidden sm:block text-start">
+              <div className="hidden text-start sm:block">
                 <p
                   className={cn(
                     "text-xs font-medium uppercase tracking-wider",
@@ -95,7 +95,7 @@ export function CreateTenantStepIndicator({
             </button>
 
             {idx < STEPS.length - 1 && (
-              <div className="hidden sm:flex flex-1 items-center px-2">
+              <div className="hidden flex-1 items-center px-2 sm:flex">
                 <div
                   className={cn(
                     "h-px flex-1 transition-colors duration-500",

@@ -26,7 +26,11 @@ interface LockedSettingBadgeProps {
   showLabel?: boolean;
 }
 
-export function LockedSettingBadge({ settingKey, className, showLabel = false }: LockedSettingBadgeProps) {
+export function LockedSettingBadge({
+  settingKey,
+  className,
+  showLabel = false,
+}: LockedSettingBadgeProps) {
   const { overrideControl } = useSettings();
   const { t } = useI18n();
 
@@ -43,10 +47,7 @@ export function LockedSettingBadge({ settingKey, className, showLabel = false }:
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
           <span
-            className={cn(
-              "inline-flex items-center gap-1 text-muted-foreground/60",
-              className
-            )}
+            className={cn("inline-flex items-center gap-1 text-muted-foreground/60", className)}
           >
             <Lock className="h-3 w-3 shrink-0" />
             {showLabel && (

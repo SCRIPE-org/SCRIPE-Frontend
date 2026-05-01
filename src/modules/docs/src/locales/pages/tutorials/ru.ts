@@ -6,7 +6,8 @@ export const ru = {
   tutorials: {
     addModule: {
       title: "Добавление Frontend-модуля",
-      description: "Пошаговое руководство по созданию нового модуля с использованием паттерна SOLID View/ViewModel.",
+      description:
+        "Пошаговое руководство по созданию нового модуля с использованием паттерна SOLID View/ViewModel.",
       intro: "Избегайте спагетти-кода, следуя строгим правилам архитектуры NEXORA.",
       prerequisitesTitle: "Предварительные требования",
       stepsTitle: "Пошаговое руководство",
@@ -31,11 +32,13 @@ export const ru = {
       viewModelTitle: "ViewModel (Хук)",
       viewTitle: "Компонент View",
       routeTitle: "Маршрутизация",
-      checklist: "Чек-лист для Pull Request: соблюден ли SOLID, View < 60 строк, отсутствие кросс-модульных импортов.",
+      checklist:
+        "Чек-лист для Pull Request: соблюден ли SOLID, View < 60 строк, отсутствие кросс-модульных импортов.",
     },
     addBackendModule: {
       title: "Добавление Backend-модуля",
-      description: "Полное руководство по созданию микросервиса на C# с использованием чистой архитектуры и CQRS.",
+      description:
+        "Полное руководство по созданию микросервиса на C# с использованием чистой архитектуры и CQRS.",
       intro: "Как разработать безопасный REST API от базы данных до публичного эндпоинта.",
       prerequisitesTitle: "Предварительные требования",
       stepsTitle: "Пошаговое руководство",
@@ -61,7 +64,8 @@ export const ru = {
       diTitle: "Внедрение зависимостей",
       controllerTitle: "Вывод контроллера API",
       registerTitle: "Сборка и миграции",
-      migrationNote: "Всегда выполняйте 'dotnet ef database update' локально перед фиксацией (commit) кода.",
+      migrationNote:
+        "Всегда выполняйте 'dotnet ef database update' локально перед фиксацией (commit) кода.",
     },
   },
 };

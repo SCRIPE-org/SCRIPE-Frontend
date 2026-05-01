@@ -16,7 +16,13 @@ interface LogoProps {
   disableLink?: boolean;
 }
 
-export function Logo({ className, showText = true, size = "md", animation = "none", disableLink = false }: LogoProps) {
+export function Logo({
+  className,
+  showText = true,
+  size = "md",
+  animation = "none",
+  disableLink = false,
+}: LogoProps) {
   const settings = useSettings();
   const { logoUrl: tenantLogoUrl } = useTenantBranding();
 

@@ -56,10 +56,7 @@ export class ThemeMarketplaceRepository implements IThemeMarketplaceRepository {
     return dtos.map(ThemeMarketplaceMapper.toCardEntity);
   }
 
-  async getFavorites(params: {
-    page: number;
-    pageSize: number;
-  }): Promise<ThemeListResult> {
+  async getFavorites(params: { page: number; pageSize: number }): Promise<ThemeListResult> {
     const result = await this.service.getFavorites(params);
     return {
       items: result.items.map(ThemeMarketplaceMapper.toCardEntity),

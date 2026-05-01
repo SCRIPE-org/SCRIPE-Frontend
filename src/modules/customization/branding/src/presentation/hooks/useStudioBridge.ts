@@ -66,10 +66,7 @@ export function useStudioBridge() {
   const resetPreview = useCallback(() => {
     lastDraftRef.current = null;
     if (!iframeRef.current?.contentWindow) return;
-    iframeRef.current.contentWindow.postMessage(
-      { type: STUDIO_MSG.RESET },
-      window.location.origin
-    );
+    iframeRef.current.contentWindow.postMessage({ type: STUDIO_MSG.RESET }, window.location.origin);
   }, []);
 
   // Handle iframe load — re-send last draft

@@ -71,17 +71,13 @@ export function useAdminSettingsSync() {
       const api = getModuleApiService("IDENTITY");
 
       // Edge Case 5: Check for deferred flush from a previous session
-      const pendingFlush = localStorage.getItem(
-        STORAGE_KEYS.PENDING_SETTINGS_FLUSH
-      );
+      const pendingFlush = localStorage.getItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH);
       if (pendingFlush) {
         try {
           await api.put<void>(SAVE_ENDPOINT, {
             adminSettingsJson: pendingFlush,
           });
-          appLogger.info(
-            "Deferred settings flush successful — cleared PENDING_SETTINGS_FLUSH"
-          );
+          appLogger.info("Deferred settings flush successful — cleared PENDING_SETTINGS_FLUSH");
         } catch (flushErr) {
           appLogger.warn("Deferred flush failed, will retry next login", flushErr);
         } finally {
@@ -91,27 +87,18 @@ export function useAdminSettingsSync() {
       }
 
       // Fetch latest settings from server
-      const response = await api.get<{ adminSettingsJson: string | null }>(
-        SAVE_ENDPOINT
-      );
+      const response = await api.get<{ adminSettingsJson: string | null }>(SAVE_ENDPOINT);
 
       if (response?.adminSettingsJson) {
         const serverSettings = response.adminSettingsJson;
-        const cachedSettings = localStorage.getItem(
-          STORAGE_KEYS.DASHBOARD_SETTINGS
-        );
+        const cachedSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
 
         // Silent reconcile: only update if server differs from cache
         if (serverSettings !== cachedSettings) {
-          localStorage.setItem(
-            STORAGE_KEYS.DASHBOARD_SETTINGS,
-            serverSettings
-          );
+          localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, serverSettings);
           // Notify SettingsProvider to re-merge layers
           window.dispatchEvent(new Event("admin-settings-loaded"));
-          appLogger.info(
-            "Admin settings reconciled from server (silent update)"
-          );
+          appLogger.info("Admin settings reconciled from server (silent update)");
         }
       }
     } catch (err) {
@@ -155,7 +142,12 @@ export function useAdminSettingsSync() {
         appLogger.info("Admin settings synced to server");
       } catch (err: unknown) {
         // Edge Case 3: 409 Concurrency Conflict — field-level last-write-wins merge
-        if (err && typeof err === "object" && "status" in err && (err as { status: number }).status === 409) {
+        if (
+          err &&
+          typeof err === "object" &&
+          "status" in err &&
+          (err as { status: number }).status === 409
+        ) {
           try {
             const api = getModuleApiService("IDENTITY");
             const serverResponse = await api.get<{
@@ -172,10 +164,7 @@ export function useAdminSettingsSync() {
               for (const field of changedFieldsSinceLastSync.current) {
                 if (field in localData) {
                   merged[field] = localData[field];
-                  if (
-                    JSON.stringify(serverData[field]) !==
-                    JSON.stringify(localData[field])
-                  ) {
+                  if (JSON.stringify(serverData[field]) !== JSON.stringify(localData[field])) {
                     overriddenFields.push(field);
                   }
                 }
@@ -183,10 +172,7 @@ export function useAdminSettingsSync() {
 
               // Save the merged result immediately (no debounce)
               const mergedPayload = JSON.stringify(merged);
-              localStorage.setItem(
-                STORAGE_KEYS.DASHBOARD_SETTINGS,
-                mergedPayload
-              );
+              localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, mergedPayload);
               window.dispatchEvent(new Event("admin-settings-loaded"));
 
               await api.put<void>(SAVE_ENDPOINT, {
@@ -208,16 +194,10 @@ export function useAdminSettingsSync() {
                 );
               }
 
-              appLogger.info(
-                "409 resolved with field-level merge",
-                overriddenFields
-              );
+              appLogger.info("409 resolved with field-level merge", overriddenFields);
             }
           } catch (mergeErr) {
-            appLogger.error(
-              "Failed to resolve 409 conflict — local changes may be lost",
-              mergeErr
-            );
+            appLogger.error("Failed to resolve 409 conflict — local changes may be lost", mergeErr);
           }
         } else {
           appLogger.error("Failed to sync admin settings to server", err);
@@ -241,9 +221,7 @@ export function useAdminSettingsSync() {
       }
 
       // Read the latest settings from localStorage (written by SettingsProvider)
-      const currentSettings = localStorage.getItem(
-        STORAGE_KEYS.DASHBOARD_SETTINGS
-      );
+      const currentSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
       if (!currentSettings) return;
 
       latestPayload.current = currentSettings;
@@ -305,18 +283,12 @@ export function useAdminSettingsSync() {
           });
         } catch {
           // fetch with keepalive failed — fall through to deferred flush
-          localStorage.setItem(
-            STORAGE_KEYS.PENDING_SETTINGS_FLUSH,
-            latestPayload.current
-          );
+          localStorage.setItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH, latestPayload.current);
         }
       } else {
         // JWT is missing/expired — store payload for deferred flush on next login.
         // The loadAdminSettings() effect checks for this key before fetching.
-        localStorage.setItem(
-          STORAGE_KEYS.PENDING_SETTINGS_FLUSH,
-          latestPayload.current
-        );
+        localStorage.setItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH, latestPayload.current);
         appLogger.warn(
           "beforeunload: JWT expired — payload stored for deferred flush on next login"
         );

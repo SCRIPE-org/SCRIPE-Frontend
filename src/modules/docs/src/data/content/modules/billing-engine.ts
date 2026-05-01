@@ -6,13 +6,16 @@ const sections: DocSection[] = [
 
   // ─── IPaymentGateway Abstraction ──────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.abstractionTitle",
     id: "payment-gateway-abstraction",
   },
   { type: "paragraph", contentKey: "modules.billingEngine.abstractionIntro" },
   {
-    type: "code", language: "csharp", filename: "Core.Application/Abstractions/Payment/IPaymentGateway.cs",
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/Abstractions/Payment/IPaymentGateway.cs",
     code: `public interface IPaymentGateway
 {
     Task<CreateCheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request);
@@ -24,7 +27,8 @@ const sections: DocSection[] = [
 
   // ─── Three Subscription Modes ─────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.modesTitle",
     id: "subscription-modes",
   },
@@ -32,7 +36,8 @@ const sections: DocSection[] = [
 
   // Mode 1
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "modules.billingEngine.mode1Title",
     id: "mode-self-service",
   },
@@ -51,15 +56,20 @@ const sections: DocSection[] = [
       { id: "H", label: "TenantSubscription → Active ✅", type: "success" },
     ],
     connections: [
-      { from: "A", to: "B" }, { from: "B", to: "C" }, { from: "C", to: "D" },
-      { from: "D", to: "E" }, { from: "E", to: "F" }, { from: "F", to: "G" },
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
+      { from: "F", to: "G" },
       { from: "G", to: "H" },
     ],
   },
 
   // Mode 2
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "modules.billingEngine.mode2Title",
     id: "mode-contact-sales",
   },
@@ -76,20 +86,25 @@ const sections: DocSection[] = [
       { id: "F", label: "Same webhook flow as self-service", type: "success" },
     ],
     connections: [
-      { from: "A", to: "B" }, { from: "B", to: "C" }, { from: "C", to: "D" },
-      { from: "D", to: "E" }, { from: "E", to: "F" },
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
     ],
   },
 
   // Mode 3
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "modules.billingEngine.mode3Title",
     id: "mode-manual",
   },
   { type: "paragraph", contentKey: "modules.billingEngine.mode3Intro" },
   {
-    type: "code", language: "http",
+    type: "code",
+    language: "http",
     code: `POST /api/v1/subscriptions/assign
 Authorization: Bearer <admin-jwt>
 
@@ -104,7 +119,8 @@ Authorization: Bearer <admin-jwt>
 
   // ─── Stripe Webhook Handler ────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.webhookTitle",
     id: "stripe-webhook-handler",
   },
@@ -123,13 +139,15 @@ Authorization: Bearer <admin-jwt>
     ],
   },
   {
-    type: "info", variant: "tip",
+    type: "info",
+    variant: "tip",
     contentKey: "modules.billingEngine.idempotencyIntro",
   },
 
   // ─── Idempotency ──────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.idempotencyTitle",
     id: "idempotency",
   },
@@ -137,13 +155,16 @@ Authorization: Bearer <admin-jwt>
 
   // ─── Configuration ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.configTitle",
     id: "configuration",
   },
   { type: "paragraph", contentKey: "modules.billingEngine.configIntro" },
   {
-    type: "code", language: "json", filename: "appsettings.json",
+    type: "code",
+    language: "json",
+    filename: "appsettings.json",
     code: `{
   "Stripe": {
     "SecretKey": "sk_test_...",
@@ -157,7 +178,8 @@ Authorization: Bearer <admin-jwt>
 
   // ─── Stripe Customer Portal ────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.portalTitle",
     id: "customer-portal",
   },
@@ -165,7 +187,8 @@ Authorization: Bearer <admin-jwt>
 
   // ─── Edition Self-Service Fields ──────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.selfServiceTitle",
     id: "self-service-fields",
   },
@@ -174,14 +197,23 @@ Authorization: Bearer <admin-jwt>
     type: "table",
     headers: ["Field", "Type", "Effect"],
     rows: [
-      ["IsSelfServiceEnabled", "bool", "true = tenant can self-checkout. false = must contact sales."],
-      ["IsContactSalesOnly", "bool", "true = checkout button triggers payment link flow, not checkout session."],
+      [
+        "IsSelfServiceEnabled",
+        "bool",
+        "true = tenant can self-checkout. false = must contact sales.",
+      ],
+      [
+        "IsContactSalesOnly",
+        "bool",
+        "true = checkout button triggers payment link flow, not checkout session.",
+      ],
     ],
   },
 
   // ─── Zero-Decimal Currency ────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.currencyTitle",
     id: "zero-decimal-currency",
   },
@@ -189,7 +221,8 @@ Authorization: Bearer <admin-jwt>
 
   // ─── API Endpoints ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.billingEngine.endpointsTitle",
     id: "api-endpoints",
   },
@@ -197,12 +230,48 @@ Authorization: Bearer <admin-jwt>
   {
     type: "api-table",
     endpoints: [
-      { method: "POST", path: "/api/v1/billing/tenants/{id}/checkout-session", descriptionKey: "modules.billingEngine.ep.checkout", auth: "JWT", permission: "billing.manage" },
-      { method: "POST", path: "/api/v1/billing/tenants/{id}/payment-link", descriptionKey: "modules.billingEngine.ep.paymentLink", auth: "JWT", permission: "billing.manage" },
-      { method: "POST", path: "/api/v1/billing/tenants/{id}/portal-session", descriptionKey: "modules.billingEngine.ep.portal", auth: "JWT", permission: "billing.manage" },
-      { method: "POST", path: "/api/v1/billing/tenants/{id}/cancel-stripe", descriptionKey: "modules.billingEngine.ep.cancel", auth: "JWT", permission: "billing.manage" },
-      { method: "GET", path: "/api/v1/billing/dashboard", descriptionKey: "modules.billingEngine.ep.dashboard", auth: "JWT", permission: "billing.view" },
-      { method: "POST", path: "/api/stripe-webhooks", descriptionKey: "Stripe webhook receiver — no auth, HMAC-verified", auth: "HMAC", permission: "" },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/checkout-session",
+        descriptionKey: "modules.billingEngine.ep.checkout",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/payment-link",
+        descriptionKey: "modules.billingEngine.ep.paymentLink",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/portal-session",
+        descriptionKey: "modules.billingEngine.ep.portal",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/cancel-stripe",
+        descriptionKey: "modules.billingEngine.ep.cancel",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/billing/dashboard",
+        descriptionKey: "modules.billingEngine.ep.dashboard",
+        auth: "JWT",
+        permission: "billing.view",
+      },
+      {
+        method: "POST",
+        path: "/api/stripe-webhooks",
+        descriptionKey: "Stripe webhook receiver — no auth, HMAC-verified",
+        auth: "HMAC",
+        permission: "",
+      },
     ],
   },
 ];
@@ -214,6 +283,11 @@ registerPage({
   category: "modules",
   order: 6,
   sections,
-  relatedSlugs: ["modules/invoices", "modules/dunning", "modules/subscriptions", "features/webhook-system"],
+  relatedSlugs: [
+    "modules/invoices",
+    "modules/dunning",
+    "modules/subscriptions",
+    "features/webhook-system",
+  ],
   lastUpdated: "2026-04-18",
 });

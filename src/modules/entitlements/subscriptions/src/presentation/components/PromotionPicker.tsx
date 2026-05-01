@@ -40,16 +40,19 @@ export function PromotionPicker({
 }: PromotionPickerProps) {
   const { t } = useI18n();
 
-  const options = useMemo(() => [
-    {
-      value: NONE_VALUE,
-      label: t("entitlements.promotions.noPromotion") || "No promotion",
-    },
-    ...promotions.map((promo) => ({
-      value: promo.id,
-      label: `${promo.name} — ${promo.type === "Percentage" ? `${promo.discountValue}% off` : `$${promo.discountValue} off`}${promo.requiresCode ? " (Code)" : ""}`,
-    })),
-  ], [promotions, t]);
+  const options = useMemo(
+    () => [
+      {
+        value: NONE_VALUE,
+        label: t("entitlements.promotions.noPromotion") || "No promotion",
+      },
+      ...promotions.map((promo) => ({
+        value: promo.id,
+        label: `${promo.name} — ${promo.type === "Percentage" ? `${promo.discountValue}% off` : `$${promo.discountValue} off`}${promo.requiresCode ? " (Code)" : ""}`,
+      })),
+    ],
+    [promotions, t]
+  );
 
   return (
     <div className="space-y-3">
@@ -60,13 +63,14 @@ export function PromotionPicker({
         </Label>
 
         {isLoading ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+          <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
             {t("common.loading") || "Loading promotions..."}
           </div>
         ) : promotions.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-1">
-            {t("entitlements.promotions.noPromotionsAvailable") || "No promotions available for this plan"}
+          <p className="py-1 text-sm text-muted-foreground">
+            {t("entitlements.promotions.noPromotionsAvailable") ||
+              "No promotions available for this plan"}
           </p>
         ) : (
           <GenericSelect
@@ -96,16 +100,15 @@ export function PromotionPicker({
 
       {/* Discount preview */}
       {selectedPromotion && (
-        <div className="flex items-center gap-2 rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-2">
+        <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-950/30">
           <Tag className="h-4 w-4 text-green-600" />
           <span className="text-sm text-green-700 dark:text-green-400">
             {selectedPromotion.name} —{" "}
             {selectedPromotion.type === "Percentage"
               ? `${selectedPromotion.discountValue}% off`
-              : `$${selectedPromotion.discountValue} off`
-            }
+              : `$${selectedPromotion.discountValue} off`}
             {!selectedPromotion.requiresCode && (
-              <span className="text-xs opacity-75 ms-1">(auto-applied)</span>
+              <span className="ms-1 text-xs opacity-75">(auto-applied)</span>
             )}
           </span>
         </div>

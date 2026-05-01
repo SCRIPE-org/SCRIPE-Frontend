@@ -12,14 +12,14 @@ import type { SendNotificationPayload } from "../../domain/entities/Notification
 import { NotificationMapper } from "../mappers/NotificationMapper";
 
 export class NotificationSenderRepository implements INotificationSenderRepository {
-      constructor(private readonly service: INotificationSenderService) { }
+  constructor(private readonly service: INotificationSenderService) {}
 
-      async searchTargets(query: string): Promise<NotificationTarget[]> {
-            const jsonList = await this.service.searchTargets(query);
-            return jsonList.map((json) => NotificationMapper.toTargetEntity(json));
-      }
+  async searchTargets(query: string): Promise<NotificationTarget[]> {
+    const jsonList = await this.service.searchTargets(query);
+    return jsonList.map((json) => NotificationMapper.toTargetEntity(json));
+  }
 
-      async send(data: SendNotificationPayload): Promise<void> {
-            await this.service.send(data);
-      }
+  async send(data: SendNotificationPayload): Promise<void> {
+    await this.service.send(data);
+  }
 }

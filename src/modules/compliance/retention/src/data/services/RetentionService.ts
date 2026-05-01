@@ -20,6 +20,9 @@ export class RetentionService implements IRetentionService {
   }
 
   trigger(policyId: string): Promise<void> {
-    return this.api.post<void>(`${API_ENDPOINTS.COMPLIANCE.RETENTION_LIST}/${policyId}/trigger`, {});
+    return this.api.post<void>(
+      `${API_ENDPOINTS.COMPLIANCE.RETENTION_LIST}/${policyId}/trigger`,
+      {}
+    );
   }
 }

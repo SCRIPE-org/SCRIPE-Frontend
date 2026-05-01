@@ -9,8 +9,12 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";

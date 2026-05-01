@@ -170,7 +170,7 @@ export class AdminModel {
     public readonly isAccountActivated?: boolean,
     public readonly mustChangePassword?: boolean,
     public readonly isProtected?: boolean
-  ) { }
+  ) {}
 
   /**
    * Create AdminModel from API JSON
@@ -263,7 +263,7 @@ export class CreateAdminModel {
     public readonly userGroupIds?: string[],
     public readonly sendSetupEmail?: boolean,
     public readonly mustChangePassword?: boolean
-  ) { }
+  ) {}
 
   toJson(): CreateAdminJson {
     return {
@@ -297,7 +297,7 @@ export class UpdateAdminModel {
     public readonly email?: string,
     public readonly notes?: string,
     public readonly isActive?: boolean
-  ) { }
+  ) {}
 
   toJson(): UpdateAdminJson {
     return {

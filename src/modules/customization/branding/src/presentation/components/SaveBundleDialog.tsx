@@ -23,12 +23,23 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import {
-  LogIn, Shield, LayoutDashboard, Blocks, Grid3X3,
-  FileKey2, Save, Package,
+  LogIn,
+  Shield,
+  LayoutDashboard,
+  Blocks,
+  Grid3X3,
+  FileKey2,
+  Save,
+  Package,
 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { LAYER_INFO, BUNDLE_TYPE_CONFIG, type BundleLayer, type BundleType } from "../../domain/entities/ThemeBundle";
+import {
+  LAYER_INFO,
+  BUNDLE_TYPE_CONFIG,
+  type BundleLayer,
+  type BundleType,
+} from "../../domain/entities/ThemeBundle";
 import type { SaveBundlePayload } from "../../domain/interfaces/IThemeBundleService";
 
 interface SaveBundleDialogProps {
@@ -39,10 +50,21 @@ interface SaveBundleDialogProps {
 }
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  LogIn, Shield, LayoutDashboard, Blocks, Grid3X3, FileKey2,
+  LogIn,
+  Shield,
+  LayoutDashboard,
+  Blocks,
+  Grid3X3,
+  FileKey2,
 };
 
-const ALL_LAYERS: BundleLayer[] = ["login", "authPages", "dashboard", "loginBuilder", "dashboardBuilder"];
+const ALL_LAYERS: BundleLayer[] = [
+  "login",
+  "authPages",
+  "dashboard",
+  "loginBuilder",
+  "dashboardBuilder",
+];
 
 const B = "studio.bundles";
 
@@ -51,7 +73,12 @@ function detectBundleType(layers: Record<BundleLayer, boolean>): BundleType {
   const selected = ALL_LAYERS.filter((l) => layers[l]);
   if (selected.length === 5) return "full-bundle";
   if (selected.length === 1 && selected[0] === "login") return "login-only";
-  if (selected.includes("dashboard") && !selected.includes("login") && !selected.includes("authPages")) return "dashboard-only";
+  if (
+    selected.includes("dashboard") &&
+    !selected.includes("login") &&
+    !selected.includes("authPages")
+  )
+    return "dashboard-only";
   if (selected.includes("login") && selected.includes("authPages")) return "auth-suite";
   return "full-bundle";
 }
@@ -103,12 +130,10 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
             <Save className="h-5 w-5 text-primary" />
             {t(`${B}.saveDialog.title`)}
           </DialogTitle>
-          <DialogDescription>
-            {t(`${B}.saveDialog.subtitle`)}
-          </DialogDescription>
+          <DialogDescription>{t(`${B}.saveDialog.subtitle`)}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 mt-2">
+        <div className="mt-2 space-y-4">
           {/* Name */}
           <div className="space-y-1.5">
             <Label htmlFor="bundle-name" className="text-xs font-medium">
@@ -140,9 +165,7 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
 
           {/* Layer Selection */}
           <div className="space-y-2">
-            <Label className="text-xs font-medium">
-              {t(`${B}.saveDialog.selectLayers`)}
-            </Label>
+            <Label className="text-xs font-medium">{t(`${B}.saveDialog.selectLayers`)}</Label>
             <div className="space-y-2">
               {ALL_LAYERS.map((layer) => {
                 const info = LAYER_INFO[layer];
@@ -150,17 +173,16 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
                 return (
                   <label
                     key={layer}
-                    className="flex items-center gap-3 p-2.5 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 p-2.5 transition-colors hover:bg-muted/30"
                   >
-                    <Checkbox
-                      checked={layers[layer]}
-                      onCheckedChange={() => toggleLayer(layer)}
-                    />
+                    <Checkbox checked={layers[layer]} onCheckedChange={() => toggleLayer(layer)} />
                     <div
-                      className="h-7 w-7 rounded-md flex items-center justify-center flex-shrink-0"
+                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md"
                       style={{ backgroundColor: `${info.color}15` }}
                     >
-                      <span style={{ color: info.color }}><Icon className="h-3.5 w-3.5" /></span>
+                      <span style={{ color: info.color }}>
+                        <Icon className="h-3.5 w-3.5" />
+                      </span>
                     </div>
                     <span className="text-sm">{t(info.labelKey)}</span>
                   </label>
@@ -170,10 +192,16 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
           </div>
 
           {/* Auto-detected type */}
-          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/30 border border-border/50">
+          <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/30 p-2.5">
             <Package className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">{t(`${B}.saveDialog.detectedType`)}:</span>
-            <Badge variant="outline" className="text-xs" style={{ borderColor: typeConfig.color, color: typeConfig.color }}>
+            <span className="text-xs text-muted-foreground">
+              {t(`${B}.saveDialog.detectedType`)}:
+            </span>
+            <Badge
+              variant="outline"
+              className="text-xs"
+              style={{ borderColor: typeConfig.color, color: typeConfig.color }}
+            >
               {t(typeConfig.labelKey)}
             </Badge>
           </div>
@@ -199,7 +227,7 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
             {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} disabled={!canSave} loading={isSaving}>
-            {!isSaving && <Save className="h-4 w-4 mr-1.5" />}
+            {!isSaving && <Save className="mr-1.5 h-4 w-4" />}
             {t(`${B}.saveDialog.save`)}
           </Button>
         </DialogFooter>

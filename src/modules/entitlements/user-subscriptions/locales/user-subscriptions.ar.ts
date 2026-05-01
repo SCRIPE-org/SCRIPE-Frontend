@@ -53,8 +53,6 @@ export const ar = {
       noSubscriptions: "لا توجد اشتراكات",
       noTenantContext: "اشتراكات المستخدمين متاحة فقط للمسؤولين المرتبطين بمستأجر.",
       noTenantContextHint: "يرجى انتحال صفة مسؤول مستأجر لإدارة الاشتراكات.",
-
-      // Detail modal labels
       detailTitle: "تفاصيل الاشتراك",
       detailSubscriptionInfo: "معلومات الاشتراك",
       detailUserInfo: "معلومات المستخدم",
@@ -77,8 +75,6 @@ export const ar = {
       detailNever: "أبداً",
       detailLifetime: "مدى الحياة",
     },
-
-    // ── بوابة الخدمة الذاتية ──
     mySubscription: {
       title: "اشتراكي",
       description: "عرض خطة اشتراك مؤسستك الحالية وتفاصيلها.",
@@ -121,7 +117,8 @@ export const ar = {
       manageBilling: "إدارة الفوترة",
       cancel: "إلغاء الاشتراك",
       cancelTitle: "إلغاء الاشتراك؟",
-      cancelDesc: "هل أنت متأكد من إلغاء اشتراكك؟ ستفقد الوصول للميزات المميزة في نهاية فترة الفوترة.",
+      cancelDesc:
+        "هل أنت متأكد من إلغاء اشتراكك؟ ستفقد الوصول للميزات المميزة في نهاية فترة الفوترة.",
       confirmCancel: "نعم، ألغِ",
       cancelled: "تم إلغاء الاشتراك",
       cancelledDesc: "تم إلغاء اشتراكك.",
@@ -129,6 +126,19 @@ export const ar = {
       alreadyCancelled: "تم إلغاء هذا الاشتراك.",
       noSubscription: "لا يوجد اشتراك نشط",
       noSubscriptionDesc: "لا تملك مؤسستك خطة اشتراك نشطة. تواصل مع مسؤول المنصة.",
+      gatewayIntegration: "[مفقود] Gateway Integration",
+      gatewayDesc: "[مفقود] Gateway Desc",
+      gatewaySubId: "[مفقود] Gateway Sub Id",
+      gatewayCustomerId: "[مفقود] Gateway Customer Id",
     },
+  },
+  billing: {
+    gateways: {
+      stripe: "[مفقود] Stripe",
+      paypal: "[مفقود] Paypal",
+      paymob: "[مفقود] Paymob",
+    },
+    choosePaymentMethod: "[مفقود] Choose Payment Method",
+    choosePaymentMethodDesc: "[مفقود] Choose Payment Method Desc",
   },
 };

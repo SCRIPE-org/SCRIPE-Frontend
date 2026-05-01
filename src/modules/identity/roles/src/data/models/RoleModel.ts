@@ -10,7 +10,10 @@
 // ===== JSON Shapes (API contracts) =====
 
 import { PermissionScopes } from "../../domain/types/PermissionTypes";
-import type { PermissionAssignmentJson, PermissionScopeType } from "../../domain/types/PermissionTypes";
+import type {
+  PermissionAssignmentJson,
+  PermissionScopeType,
+} from "../../domain/types/PermissionTypes";
 export type { PermissionAssignmentJson, PermissionScopeType };
 export { PermissionScopes };
 
@@ -93,7 +96,7 @@ export class RoleModel {
     public readonly modifiedAt?: string,
     public readonly groupNamesEn?: string[],
     public readonly groupNamesAr?: string[]
-  ) { }
+  ) {}
 
   static fromJson(json: RoleJson): RoleModel {
     return new RoleModel(
@@ -142,7 +145,7 @@ export class RolePermissionModel {
     public readonly permissionId: string,
     public readonly permissionCode: string,
     public readonly scope?: string
-  ) { }
+  ) {}
 
   static fromJson(json: RolePermissionJson): RolePermissionModel {
     return new RolePermissionModel(json.permissionId, json.permissionCode, json.scope);
@@ -167,7 +170,7 @@ export class CreateRoleModel {
     public readonly descriptionAr?: string,
     public readonly tenantId?: string,
     public readonly permissionIds?: string[]
-  ) { }
+  ) {}
 
   toJson(): CreateRoleJson {
     return {
@@ -191,7 +194,7 @@ export class UpdateRoleModel {
     public readonly descriptionEn?: string,
     public readonly descriptionAr?: string,
     public readonly isActive?: boolean
-  ) { }
+  ) {}
 
   toJson(): UpdateRoleJson {
     return {
@@ -206,7 +209,7 @@ export class UpdateRoleModel {
 }
 
 export class AssignPermissionsModel {
-  constructor(public readonly permissions: PermissionAssignmentJson[]) { }
+  constructor(public readonly permissions: PermissionAssignmentJson[]) {}
 
   toJson(): AssignPermissionsJson {
     return {

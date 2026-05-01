@@ -26,9 +26,9 @@ export function useConsentViewModel() {
 
   return {
     consents: query.data ?? [],
-    grantedCount: (query.data ?? []).filter(c => c.isGranted).length,
-    withdrawnCount: (query.data ?? []).filter(c => !c.isGranted).length,
-    reConsentCount: (query.data ?? []).filter(c => c.requiresReConsent).length,
+    grantedCount: (query.data ?? []).filter((c) => c.isGranted).length,
+    withdrawnCount: (query.data ?? []).filter((c) => !c.isGranted).length,
+    reConsentCount: (query.data ?? []).filter((c) => c.requiresReConsent).length,
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,

@@ -55,10 +55,13 @@ export function DashboardLayoutPreview({ settings }: Props) {
         setIsReady(true);
         // Flush any pending settings
         if (pendingSettings.current && iframeRef.current?.contentWindow) {
-          iframeRef.current.contentWindow.postMessage({
-            type: "DASHBOARD_SETTINGS_UPDATE",
-            settings: pendingSettings.current,
-          }, window.location.origin);
+          iframeRef.current.contentWindow.postMessage(
+            {
+              type: "DASHBOARD_SETTINGS_UPDATE",
+              settings: pendingSettings.current,
+            },
+            window.location.origin
+          );
           pendingSettings.current = null;
         }
       }
@@ -72,10 +75,13 @@ export function DashboardLayoutPreview({ settings }: Props) {
     const mapped = mapToSettingsKeys(settings);
 
     if (isReady && iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage({
-        type: "DASHBOARD_SETTINGS_UPDATE",
-        settings: mapped,
-      }, window.location.origin);
+      iframeRef.current.contentWindow.postMessage(
+        {
+          type: "DASHBOARD_SETTINGS_UPDATE",
+          settings: mapped,
+        },
+        window.location.origin
+      );
     } else {
       pendingSettings.current = mapped;
     }
@@ -91,35 +97,35 @@ export function DashboardLayoutPreview({ settings }: Props) {
   const dim = DEVICE_DIMS[device];
 
   return (
-    <div className="relative w-full h-full min-h-0 flex flex-col">
+    <div className="relative flex h-full min-h-0 w-full flex-col">
       {/* Chrome bar */}
-      <div className="shrink-0 flex items-center justify-between px-4 py-1.5 bg-background/80 border-b border-border/30 backdrop-blur-sm">
+      <div className="flex shrink-0 items-center justify-between border-b border-border/30 bg-background/80 px-4 py-1.5 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <LayoutDashboard className="h-3.5 w-3.5 text-primary" />
           <span className="text-xs font-semibold text-foreground">
             {isRTL ? "معاينة لوحة التحكم" : "Dashboard Preview"}
           </span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-medium">
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] font-medium text-primary">
             {settings.layoutTemplate || "modern"}
           </span>
-          {!isReady && (
-            <span className="text-[10px] text-amber-500 animate-pulse">Loading...</span>
-          )}
+          {!isReady && <span className="animate-pulse text-[10px] text-amber-500">Loading...</span>}
         </div>
 
         <div className="flex items-center gap-1.5">
           {/* Device switcher */}
-          {([
+          {[
             { key: "desktop" as DeviceSize, icon: Monitor },
             { key: "tablet" as DeviceSize, icon: Tablet },
             { key: "mobile" as DeviceSize, icon: Smartphone },
-          ]).map(({ key, icon: Icon }) => (
+          ].map(({ key, icon: Icon }) => (
             <button
               key={key}
               onClick={() => setDevice(key)}
               className={cn(
-                "p-1 rounded transition-colors",
-                device === key ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground"
+                "rounded p-1 transition-colors",
+                device === key
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
               )}
               title={DEVICE_DIMS[key].label}
             >
@@ -127,23 +133,28 @@ export function DashboardLayoutPreview({ settings }: Props) {
             </button>
           ))}
 
-          <div className="w-px h-4 bg-border mx-1" />
+          <div className="mx-1 h-4 w-px bg-border" />
 
-          <button onClick={handleRefresh} className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors" title="Refresh">
+          <button
+            onClick={handleRefresh}
+            className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
+            title="Refresh"
+          >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
 
-          <span className="text-[10px] text-muted-foreground ms-2">
-            {settings.colorTheme} • {settings.sidebarPosition || "left"} • {settings.cardStyle || "default"}
+          <span className="ms-2 text-[10px] text-muted-foreground">
+            {settings.colorTheme} • {settings.sidebarPosition || "left"} •{" "}
+            {settings.cardStyle || "default"}
           </span>
         </div>
       </div>
 
       {/* Iframe container */}
-      <div className="flex-1 overflow-hidden flex items-start justify-center bg-gradient-to-br from-muted/20 via-background to-muted/10 p-2">
+      <div className="flex flex-1 items-start justify-center overflow-hidden bg-gradient-to-br from-muted/20 via-background to-muted/10 p-2">
         <div
           className={cn(
-            "h-full bg-background rounded-lg overflow-hidden shadow-2xl border border-border/30 transition-all duration-300",
+            "h-full overflow-hidden rounded-lg border border-border/30 bg-background shadow-2xl transition-all duration-300",
             device !== "desktop" && "mx-auto"
           )}
           style={{ width: dim.w, maxWidth: "100%" }}
@@ -151,7 +162,7 @@ export function DashboardLayoutPreview({ settings }: Props) {
           <iframe
             ref={iframeRef}
             src="/dashboard-preview"
-            className="w-full h-full border-none"
+            className="h-full w-full border-none"
             title="Dashboard Layout Preview"
           />
         </div>

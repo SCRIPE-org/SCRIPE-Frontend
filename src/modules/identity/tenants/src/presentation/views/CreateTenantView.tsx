@@ -45,14 +45,15 @@ export function CreateTenantView() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl py-6 px-4" dir={direction}>
+    <div className="mx-auto max-w-3xl px-4 py-6" dir={direction}>
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight">
           {t("tenant.createTitle") || "Create New Tenant"}
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("tenant.createSubtitle") || "Set up a new organization with an administrator and subscription plan."}
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("tenant.createSubtitle") ||
+            "Set up a new organization with an administrator and subscription plan."}
         </p>
       </div>
 
@@ -66,7 +67,7 @@ export function CreateTenantView() {
       />
 
       {/* Step Content */}
-      <div className="mt-8 rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+      <div className="mt-8 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
         <div className="p-6 md:p-8">
           {vm.currentStep === 1 && <CreateTenantStep1 vm={vm} t={t} />}
           {vm.currentStep === 2 && <CreateTenantStep2 vm={vm} t={t} />}
@@ -75,7 +76,12 @@ export function CreateTenantView() {
 
         {/* Footer navigation */}
         <div className="flex items-center justify-between border-t border-border/40 bg-muted/20 px-6 py-4 md:px-8">
-          <Button variant="ghost" onClick={vm.goBack} disabled={vm.currentStep === 1} className="gap-2">
+          <Button
+            variant="ghost"
+            onClick={vm.goBack}
+            disabled={vm.currentStep === 1}
+            className="gap-2"
+          >
             {isRtl ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             {t("common.back") || "Back"}
           </Button>
@@ -90,12 +96,12 @@ export function CreateTenantView() {
               onClick={vm.handleSubmit}
               disabled={!vm.canProceed}
               loading={vm.isSubmitting}
-              className="gap-2 min-w-[160px]"
+              className="min-w-[160px] gap-2"
             >
               {!vm.isSubmitting && <Check className="h-4 w-4" />}
               {vm.isSubmitting
-                ? (t("common.creating") || "Creating...")
-                : (t("tenant.createTenant") || "Create Tenant")}
+                ? t("common.creating") || "Creating..."
+                : t("tenant.createTenant") || "Create Tenant"}
             </Button>
           )}
         </div>

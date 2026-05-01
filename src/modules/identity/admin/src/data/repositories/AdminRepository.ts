@@ -24,7 +24,7 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
 export class AdminRepository implements IAdminRepository {
-  constructor(private readonly service: IAdminService) { }
+  constructor(private readonly service: IAdminService) {}
 
   async getAll(params: AdminListParams): Promise<PagedResult<Admin>> {
     const result = await this.service.getAll(params);
@@ -154,8 +154,6 @@ export class AdminRepository implements IAdminRepository {
   async bulkDeleteAll(filter: BulkAdminsFilterRequest): Promise<number> {
     return this.service.bulkDeleteAll(filter);
   }
-
-
 
   async transfer(id: string, request: TransferAdminRequest): Promise<void> {
     return this.service.transfer(id, {

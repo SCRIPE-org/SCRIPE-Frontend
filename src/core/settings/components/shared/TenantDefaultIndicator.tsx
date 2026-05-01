@@ -60,10 +60,7 @@ function getOverrideStatus(settingKey: string): {
   }
 }
 
-export function TenantDefaultIndicator({
-  settingKey,
-  className,
-}: TenantDefaultIndicatorProps) {
+export function TenantDefaultIndicator({ settingKey, className }: TenantDefaultIndicatorProps) {
   const settings = useSettings();
   const { t } = useI18n();
   const { isOverridden } = getOverrideStatus(settingKey);

@@ -27,11 +27,7 @@ interface SubTenantsTabProps {
   parentCode: string;
 }
 
-export function SubTenantsTab({
-  parentId,
-  parentName,
-  parentCode,
-}: SubTenantsTabProps) {
+export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTabProps) {
   const { t, direction } = useI18n();
   const vm = useSubTenantsViewModel({ parentId, parentName, parentCode });
 
@@ -50,12 +46,8 @@ export function SubTenantsTab({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">
-            {t("tenant.manageSubTenants")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("tenant.subTenantsDescription")}
-          </p>
+          <h3 className="text-lg font-semibold">{t("tenant.manageSubTenants")}</h3>
+          <p className="text-sm text-muted-foreground">{t("tenant.subTenantsDescription")}</p>
         </div>
         {vm.canCreate && (
           <Button
@@ -72,16 +64,12 @@ export function SubTenantsTab({
 
       {/* Children cards */}
       {vm.childNodes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border/50">
-          <div className="rounded-full bg-muted/50 p-3 mb-3">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/50 py-12 text-center">
+          <div className="mb-3 rounded-full bg-muted/50 p-3">
             <Inbox className="h-8 w-8 text-muted-foreground" />
           </div>
-          <p className="text-sm font-medium">
-            {t("tenant.noTenantsFound")}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {t("tenant.noTenantsDescription")}
-          </p>
+          <p className="text-sm font-medium">{t("tenant.noTenantsFound")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("tenant.noTenantsDescription")}</p>
         </div>
       ) : (
         <div className="space-y-0">
@@ -98,7 +86,6 @@ export function SubTenantsTab({
           ))}
         </div>
       )}
-
 
       <EditTenantDialog
         open={vm.editDialogOpen}

@@ -20,7 +20,14 @@ const QUERY_KEYS = {
   reportPreferences: () => ["analytics", "report-preferences"],
 };
 
-export type AnalyticsTab = "overview" | "revenue" | "retention" | "ltv" | "forecast" | "health" | "reports";
+export type AnalyticsTab =
+  | "overview"
+  | "revenue"
+  | "retention"
+  | "ltv"
+  | "forecast"
+  | "health"
+  | "reports";
 
 export function useAnalyticsViewModel() {
   const { analyticsRepository } = entitlementsContainer;
@@ -107,13 +114,15 @@ export function useAnalyticsViewModel() {
         includeForecast: true,
       }),
     onSuccess: (blob, format) => {
-      downloadBlob(blob, `analytics-export.${format === "xlsx" ? "xlsx" : format === "pdf" ? "pdf" : "csv"}`);
+      downloadBlob(
+        blob,
+        `analytics-export.${format === "xlsx" ? "xlsx" : format === "pdf" ? "pdf" : "csv"}`
+      );
     },
   });
 
   const generateReportMutation = useMutation({
-    mutationFn: () =>
-      analyticsRepository.generateReport({ currency: "USD" }),
+    mutationFn: () => analyticsRepository.generateReport({ currency: "USD" }),
     onSuccess: (blob) => {
       downloadBlob(blob, `analytics-report-${new Date().toISOString().slice(0, 10)}.pdf`);
     },
@@ -136,9 +145,12 @@ export function useAnalyticsViewModel() {
     setHealthPage(page);
   }, []);
 
-  const handleExport = useCallback(async (format: string) => {
-    await exportMutation.mutateAsync(format);
-  }, [exportMutation]);
+  const handleExport = useCallback(
+    async (format: string) => {
+      await exportMutation.mutateAsync(format);
+    },
+    [exportMutation]
+  );
 
   const handleGenerateReport = useCallback(async () => {
     await generateReportMutation.mutateAsync();

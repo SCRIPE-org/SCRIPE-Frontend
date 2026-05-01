@@ -49,11 +49,12 @@ export function useTenantSettingsViewModel() {
   const effectiveSettings = formData ?? settings ?? DEFAULT_TENANT_SETTINGS;
 
   // Mode is backend-driven: "my" | "system" | "tenant"
-  const mode: 'my' | 'system' | 'tenant' = (settings as any)?.mode === 'system'
-    ? 'system'
-    : (settings as any)?.mode === 'tenant'
-      ? 'tenant'
-      : 'my';
+  const mode: "my" | "system" | "tenant" =
+    (settings as any)?.mode === "system"
+      ? "system"
+      : (settings as any)?.mode === "tenant"
+        ? "tenant"
+        : "my";
 
   // Update field helper
   const updateField = <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => {
@@ -124,4 +125,3 @@ export function useTenantSettingsViewModel() {
     t,
   };
 }
-

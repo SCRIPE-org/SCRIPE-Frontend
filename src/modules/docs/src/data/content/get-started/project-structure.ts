@@ -2,21 +2,21 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      {
-            type: "paragraph",
-            contentKey: "getStarted.projectStructure.intro",
-      },
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "getStarted.projectStructure.rootTitle",
-            id: "root-structure",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "NEXORA/ (Root Monorepo)",
-            code: `NEXORA/
+  {
+    type: "paragraph",
+    contentKey: "getStarted.projectStructure.intro",
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.projectStructure.rootTitle",
+    id: "root-structure",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "NEXORA/ (Root Monorepo)",
+    code: `NEXORA/
 ├── NEXORA-Backend/          # .NET 10 Backend (Git Submodule)
 ├── NEXORA-Frontend/         # Next.js 16 Frontend (Git Submodule)
 ├── tools/nexora-cli/        # CLI scaffolding tool
@@ -24,18 +24,18 @@ const sections: DocSection[] = [
 ├── docs-commercial/         # Commercial documentation (25 files)
 ├── .gitmodules              # Submodule configuration
 └── README.md                # Root README`,
-      },
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "getStarted.projectStructure.backendTitle",
-            id: "backend-structure",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "NEXORA-Backend/ Structure",
-            code: `NEXORA-Backend/
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.projectStructure.backendTitle",
+    id: "backend-structure",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "NEXORA-Backend/ Structure",
+    code: `NEXORA-Backend/
 ├── src/
 │   ├── Host/
 │   │   └── API/
@@ -61,18 +61,18 @@ const sections: DocSection[] = [
 │   └── Architecture/                   # ArchTest conventions
 │
 └── docs/                               # Backend-specific docs`,
-      },
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "getStarted.projectStructure.frontendTitle",
-            id: "frontend-structure",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "NEXORA-Frontend/ Structure",
-            code: `NEXORA-Frontend/
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.projectStructure.frontendTitle",
+    id: "frontend-structure",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "NEXORA-Frontend/ Structure",
+    code: `NEXORA-Frontend/
 ├── src/
 │   ├── app/                            # Next.js App Router (connectors only)
 │   │   ├── (auth)/                     # Auth pages (login, register)
@@ -98,70 +98,80 @@ const sections: DocSection[] = [
 │       └── docs/                       # Documentation portal (this)
 │
 └── public/                             # Static assets`,
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.projectStructure.moduleAnatomyTitle",
+    id: "module-anatomy",
+  },
+  {
+    type: "paragraph",
+    contentKey: "getStarted.projectStructure.moduleAnatomyIntro",
+  },
+  {
+    type: "table",
+    headers: ["Directory", "Layer", "Contents", "Imports Allowed"],
+    rows: [
+      ["domain/entities/", "Domain", "Zod schemas, business rules", "External packages only"],
+      ["domain/interfaces/", "Domain", "Repository contracts", "Domain entities"],
+      ["data/models/", "Data", "API DTOs (raw API shapes)", "@core/network"],
+      ["data/mappers/", "Data", "DTO ↔ Entity mapping", "Domain + Data models"],
+      ["data/repositories/", "Data", "Interface implementations", "@core/network, mappers"],
+      [
+        "presentation/viewmodels/",
+        "Presentation",
+        "React hooks with logic",
+        "Domain interfaces, TanStack Query",
+      ],
+      ["presentation/views/", "Presentation", "Pure UI (<60 lines)", "ViewModels, components"],
+      [
+        "presentation/components/",
+        "Presentation",
+        "Reusable section UI",
+        "@core/ui, own module only",
+      ],
+      ["di.ts", "Root", "DI container for module", "Repositories, services"],
+      ["index.ts", "Root", "Public API exports", "Views, entities"],
+    ],
+  },
+  {
+    type: "comparison",
+    columns: [
+      {
+        titleKey: "getStarted.projectStructure.allowedImports",
+        variant: "positive",
+        items: [
+          "@core/* — Shared infrastructure",
+          "@modules/{self}/* — Own module files",
+          "External npm packages",
+        ],
       },
       {
-            type: "heading",
-            level: 2,
-            titleKey: "getStarted.projectStructure.moduleAnatomyTitle",
-            id: "module-anatomy",
+        titleKey: "getStarted.projectStructure.forbiddenImports",
+        variant: "negative",
+        items: [
+          "@modules/{other}/* — NEVER import from other modules",
+          "../../modules/{other}/ — Relative paths to other modules",
+          "Embedding other module entities directly",
+        ],
       },
-      {
-            type: "paragraph",
-            contentKey: "getStarted.projectStructure.moduleAnatomyIntro",
-      },
-      {
-            type: "table",
-            headers: ["Directory", "Layer", "Contents", "Imports Allowed"],
-            rows: [
-                  ["domain/entities/", "Domain", "Zod schemas, business rules", "External packages only"],
-                  ["domain/interfaces/", "Domain", "Repository contracts", "Domain entities"],
-                  ["data/models/", "Data", "API DTOs (raw API shapes)", "@core/network"],
-                  ["data/mappers/", "Data", "DTO ↔ Entity mapping", "Domain + Data models"],
-                  ["data/repositories/", "Data", "Interface implementations", "@core/network, mappers"],
-                  ["presentation/viewmodels/", "Presentation", "React hooks with logic", "Domain interfaces, TanStack Query"],
-                  ["presentation/views/", "Presentation", "Pure UI (<60 lines)", "ViewModels, components"],
-                  ["presentation/components/", "Presentation", "Reusable section UI", "@core/ui, own module only"],
-                  ["di.ts", "Root", "DI container for module", "Repositories, services"],
-                  ["index.ts", "Root", "Public API exports", "Views, entities"],
-            ],
-      },
-      {
-            type: "comparison",
-            columns: [
-                  {
-                        titleKey: "getStarted.projectStructure.allowedImports",
-                        variant: "positive",
-                        items: [
-                              "@core/* — Shared infrastructure",
-                              "@modules/{self}/* — Own module files",
-                              "External npm packages",
-                        ],
-                  },
-                  {
-                        titleKey: "getStarted.projectStructure.forbiddenImports",
-                        variant: "negative",
-                        items: [
-                              "@modules/{other}/* — NEVER import from other modules",
-                              "../../modules/{other}/ — Relative paths to other modules",
-                              "Embedding other module entities directly",
-                        ],
-                  },
-            ],
-      },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "getStarted.projectStructure.boundaryWarning",
-      },
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "getStarted.projectStructure.boundaryWarning",
+  },
 ];
 
 registerPage({
-      slug: "get-started/project-structure",
-      titleKey: "getStarted.projectStructure.title",
-      descriptionKey: "getStarted.projectStructure.description",
-      category: "get-started",
-      order: 4,
-      sections,
-      relatedSlugs: ["get-started/overview", "architecture/modules"],
-      lastUpdated: "2026-02-19",
+  slug: "get-started/project-structure",
+  titleKey: "getStarted.projectStructure.title",
+  descriptionKey: "getStarted.projectStructure.description",
+  category: "get-started",
+  order: 4,
+  sections,
+  relatedSlugs: ["get-started/overview", "architecture/modules"],
+  lastUpdated: "2026-02-19",
 });

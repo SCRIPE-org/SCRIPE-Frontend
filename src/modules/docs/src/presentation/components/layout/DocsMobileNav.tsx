@@ -12,7 +12,13 @@ interface DocsMobileNavProps {
   basePath?: string;
 }
 
-export function DocsMobileNav({ categories, activeSlug, isOpen, onClose, basePath = "/docs" }: DocsMobileNavProps) {
+export function DocsMobileNav({
+  categories,
+  activeSlug,
+  isOpen,
+  onClose,
+  basePath = "/docs",
+}: DocsMobileNavProps) {
   const { t } = useDocsI18n();
 
   if (!isOpen) return null;

@@ -15,10 +15,7 @@
 
 import { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type {
-  CrudConfig,
-  CrudAction,
-} from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 import { useThemeManagementViewModel } from "../viewmodels/useThemeManagementViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -49,7 +46,8 @@ const T = "studio.themeManagement";
 function TierBadge({
   isFree,
   pricingType,
-  minTierLevel, }: {
+  minTierLevel,
+}: {
   isFree: boolean;
   pricingType: string;
   minTierLevel: number;
@@ -59,9 +57,9 @@ function TierBadge({
     return (
       <Badge
         variant="outline"
-        className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] font-semibold"
+        className="border-emerald-500/20 bg-emerald-500/10 text-[10px] font-semibold text-emerald-600"
       >
-        <Sparkles className="h-3 w-3 mr-0.5" />
+        <Sparkles className="mr-0.5 h-3 w-3" />
         {t(`${T}.tier.free`)}
       </Badge>
     );
@@ -70,9 +68,9 @@ function TierBadge({
     return (
       <Badge
         variant="outline"
-        className="bg-violet-500/10 text-violet-600 border-violet-500/20 text-[10px] font-semibold"
+        className="border-violet-500/20 bg-violet-500/10 text-[10px] font-semibold text-violet-600"
       >
-        <Crown className="h-3 w-3 mr-0.5" />
+        <Crown className="mr-0.5 h-3 w-3" />
         {t(`${T}.tier.premium`)}
       </Badge>
     );
@@ -86,46 +84,43 @@ function TierBadge({
   return (
     <Badge
       variant="outline"
-      className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[10px] font-semibold"
+      className="border-blue-500/20 bg-blue-500/10 text-[10px] font-semibold text-blue-600"
     >
-      <Crown className="h-3 w-3 mr-0.5" />
+      <Crown className="mr-0.5 h-3 w-3" />
       {tierMap[minTierLevel] || t(`${T}.tier.tierN`, { n: minTierLevel })}
     </Badge>
   );
 }
 
 /** Feature badges */
-function FeatureBadges({
-  theme, }: {
-  theme: ThemeCard;
-}) {
+function FeatureBadges({ theme }: { theme: ThemeCard }) {
   const { t } = useI18n();
   return (
     <div className="flex flex-wrap gap-1">
       {theme.hasDarkMode && (
         <Badge
           variant="outline"
-          className="text-[9px] px-1.5 py-0 h-4 bg-slate-800/10 text-slate-600 border-slate-300/40"
+          className="h-4 border-slate-300/40 bg-slate-800/10 px-1.5 py-0 text-[9px] text-slate-600"
         >
-          <Moon className="h-2.5 w-2.5 mr-0.5" />
+          <Moon className="mr-0.5 h-2.5 w-2.5" />
           {t(`${T}.features.dark`)}
         </Badge>
       )}
       {theme.hasAccessibilityPreset && (
         <Badge
           variant="outline"
-          className="text-[9px] px-1.5 py-0 h-4 bg-blue-500/10 text-blue-600 border-blue-300/40"
+          className="h-4 border-blue-300/40 bg-blue-500/10 px-1.5 py-0 text-[9px] text-blue-600"
         >
-          <Accessibility className="h-2.5 w-2.5 mr-0.5" />
+          <Accessibility className="mr-0.5 h-2.5 w-2.5" />
           {t(`${T}.features.a11y`)}
         </Badge>
       )}
       {theme.hasContentBlocks && (
         <Badge
           variant="outline"
-          className="text-[9px] px-1.5 py-0 h-4 bg-purple-500/10 text-purple-600 border-purple-300/40"
+          className="h-4 border-purple-300/40 bg-purple-500/10 px-1.5 py-0 text-[9px] text-purple-600"
         >
-          <Blocks className="h-2.5 w-2.5 mr-0.5" />
+          <Blocks className="mr-0.5 h-2.5 w-2.5" />
           {t(`${T}.features.blocks`)}
         </Badge>
       )}
@@ -137,14 +132,8 @@ export function ThemeManagementView() {
   useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");
   const { t } = useI18n();
   const router = useRouter();
-  const {
-    vm,
-    getConfigBase,
-    handleDuplicate,
-    handleDeprecate,
-    handleToggleFavorite,
-    statistics,
-  } = useThemeManagementViewModel();
+  const { vm, getConfigBase, handleDuplicate, handleDeprecate, handleToggleFavorite, statistics } =
+    useThemeManagementViewModel();
   const configBase = getConfigBase();
 
   const config: CrudConfig<ThemeCard> = useMemo(
@@ -158,28 +147,26 @@ export function ThemeManagementView() {
           label: t(`${T}.columns.theme`),
           sortable: true,
           render: (_val: unknown, item: ThemeCard) => (
-            <div className="flex items-center gap-3 min-w-[200px]">
+            <div className="flex min-w-[200px] items-center gap-3">
               {/* Color accent swatch */}
               <div
-                className="h-9 w-9 rounded-lg border border-border/50 shrink-0 shadow-sm"
+                className="h-9 w-9 shrink-0 rounded-lg border border-border/50 shadow-sm"
                 style={{
                   background: item.accentColor
                     ? `linear-gradient(135deg, ${item.accentColor}, color-mix(in srgb, ${item.accentColor} 60%, black))`
                     : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.6))",
                 }}
               />
-              <div className="flex flex-col min-w-0">
+              <div className="flex min-w-0 flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-semibold truncate">
-                    {item.name}
-                  </span>
+                  <span className="truncate text-sm font-semibold">{item.name}</span>
                   {item.isFeatured && (
-                    <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 shrink-0" />
+                    <Star className="h-3.5 w-3.5 shrink-0 fill-amber-500 text-amber-500" />
                   )}
                   {item.isNew && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] px-1 py-0 h-3.5 bg-green-500/10 text-green-600 border-green-500/30"
+                      className="h-3.5 border-green-500/30 bg-green-500/10 px-1 py-0 text-[9px] text-green-600"
                     >
                       {t(`${T}.new`)}
                     </Badge>
@@ -187,13 +174,13 @@ export function ThemeManagementView() {
                   {item.isDeprecated && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] px-1 py-0 h-3.5 bg-red-500/10 text-red-600 border-red-500/30"
+                      className="h-3.5 border-red-500/30 bg-red-500/10 px-1 py-0 text-[9px] text-red-600"
                     >
                       {t(`${T}.deprecated`)}
                     </Badge>
                   )}
                 </div>
-                <span className="text-xs text-muted-foreground truncate max-w-[220px]">
+                <span className="max-w-[220px] truncate text-xs text-muted-foreground">
                   {item.description || t(`${T}.noDescription`)}
                 </span>
               </div>
@@ -206,7 +193,7 @@ export function ThemeManagementView() {
           sortable: true,
           render: (_val: unknown, item: ThemeCard) => (
             <Badge variant="outline" className="text-xs capitalize">
-              <Palette className="h-3 w-3 mr-1" />
+              <Palette className="mr-1 h-3 w-3" />
               {item.category || t(`${T}.uncategorized`)}
             </Badge>
           ),
@@ -225,9 +212,7 @@ export function ThemeManagementView() {
         {
           key: "features",
           label: t(`${T}.columns.features`),
-          render: (_val: unknown, item: ThemeCard) => (
-            <FeatureBadges theme={item} />
-          ),
+          render: (_val: unknown, item: ThemeCard) => <FeatureBadges theme={item} />,
         },
         {
           key: "usageCount",
@@ -253,29 +238,20 @@ export function ThemeManagementView() {
             <Badge
               variant={item.isSystem ? "default" : "outline"}
               className={`text-[10px] ${
-                item.isSystem
-                  ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                  : ""
+                item.isSystem ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
               }`}
             >
-              {item.isSystem
-                ? t(`${T}.type.system`)
-                : t(`${T}.type.custom`)}
+              {item.isSystem ? t(`${T}.type.system`) : t(`${T}.type.custom`)}
             </Badge>
           ),
         },
       ],
       getItemDisplayName: configBase.getItemDisplayName,
       deleteService: configBase.deleteService,
-      getActions: (
-        _vmInstance: any,
-        tFn: any,
-        handleDeleteFn: any
-      ): CrudAction<ThemeCard>[] => [
+      getActions: (_vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<ThemeCard>[] => [
         {
           label: t(`${T}.actions.preview`),
-          onClick: (item: ThemeCard) =>
-            router.push(`/customizer?preview=${item.slug}`),
+          onClick: (item: ThemeCard) => router.push(`/customizer?preview=${item.slug}`),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },
@@ -315,20 +291,13 @@ export function ThemeManagementView() {
         },
       ],
     }),
-    [
-      t,
-      configBase,
-      handleDuplicate,
-      handleDeprecate,
-      handleToggleFavorite,
-      router,
-    ]
+    [t, configBase, handleDuplicate, handleDeprecate, handleToggleFavorite, router]
   );
 
   return (
     <div className="space-y-6">
       {/* ── Statistics Cards ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard
           icon={<Palette className="h-5 w-5" />}
           label={t(`${T}.stats.total`)}
@@ -388,10 +357,8 @@ function StatCard({
 }) {
   const { t } = useI18n();
   return (
-    <div className="rounded-xl border border-border/50 bg-card p-4 flex items-center gap-3 shadow-sm transition-all hover:shadow-md">
-      <div
-        className={`h-10 w-10 rounded-lg ${bgColor} flex items-center justify-center ${color}`}
-      >
+    <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card p-4 shadow-sm transition-all hover:shadow-md">
+      <div className={`h-10 w-10 rounded-lg ${bgColor} flex items-center justify-center ${color}`}>
         {icon}
       </div>
       <div>

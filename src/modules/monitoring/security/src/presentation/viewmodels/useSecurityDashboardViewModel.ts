@@ -83,7 +83,11 @@ export function useFailedLoginsViewModel(days: number = 30, tenantId: string | n
 }
 
 // ─── Blocked IPs ViewModel ───────────────────────────────────────────
-export function useBlockedIPsViewModel(days: number = 30, limit: number = 20, tenantId: string | null = null) {
+export function useBlockedIPsViewModel(
+  days: number = 30,
+  limit: number = 20,
+  tenantId: string | null = null
+) {
   const repo = monitoringContainer.securityRepository;
 
   return useQuery({
@@ -126,7 +130,6 @@ export function useSecurityDashboardViewModel() {
     failedLogins.refetch();
     blockedIPs.refetch();
     timeline.refetch();
-
   }, [threats, failedLogins, blockedIPs, timeline]);
 
   return {

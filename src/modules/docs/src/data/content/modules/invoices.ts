@@ -6,7 +6,8 @@ const sections: DocSection[] = [
 
   // ─── Invoice Entity ───────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.invoiceEntityTitle",
     id: "invoice-entity",
   },
@@ -35,13 +36,15 @@ const sections: DocSection[] = [
     ],
   },
   {
-    type: "info", variant: "note",
+    type: "info",
+    variant: "note",
     contentKey: "modules.invoices.invoiceFieldsNote",
   },
 
   // ─── Invoice Line Items ────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.lineItemTitle",
     id: "line-items",
   },
@@ -60,7 +63,8 @@ const sections: DocSection[] = [
 
   // ─── PaymentTransaction ────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.transactionTitle",
     id: "payment-transaction",
   },
@@ -85,7 +89,8 @@ const sections: DocSection[] = [
 
   // ─── Invoice Status Lifecycle ──────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.statusTitle",
     id: "status-lifecycle",
   },
@@ -110,7 +115,8 @@ const sections: DocSection[] = [
 
   // ─── Invoice Numbering ────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.numberingTitle",
     id: "numbering",
   },
@@ -118,13 +124,15 @@ const sections: DocSection[] = [
 
   // ─── Revenue Dashboard ────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.dashboardTitle",
     id: "revenue-dashboard",
   },
   { type: "paragraph", contentKey: "modules.invoices.dashboardIntro" },
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "modules.invoices.metricsTitle",
     id: "dashboard-kpis",
   },
@@ -146,7 +154,8 @@ const sections: DocSection[] = [
 
   // ─── Multi-Currency ───────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.currencyTitle",
     id: "multi-currency",
   },
@@ -163,7 +172,8 @@ const sections: DocSection[] = [
 
   // ─── Export Formats ───────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.exportTitle",
     id: "export-formats",
   },
@@ -180,7 +190,8 @@ const sections: DocSection[] = [
 
   // ─── API Endpoints ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.invoices.endpointsTitle",
     id: "api-endpoints",
   },
@@ -188,11 +199,41 @@ const sections: DocSection[] = [
   {
     type: "api-table",
     endpoints: [
-      { method: "GET", path: "/api/v1/invoices", descriptionKey: "modules.invoices.ep.list", auth: "JWT", permission: "billing.view" },
-      { method: "GET", path: "/api/v1/invoices/{id}", descriptionKey: "modules.invoices.ep.get", auth: "JWT", permission: "billing.view" },
-      { method: "GET", path: "/api/v1/invoices/{id}/pdf", descriptionKey: "modules.invoices.ep.pdf", auth: "JWT", permission: "billing.view" },
-      { method: "GET", path: "/api/v1/billing/dashboard", descriptionKey: "modules.invoices.ep.dashboard", auth: "JWT", permission: "billing.view" },
-      { method: "GET", path: "/api/v1/subscriptions/export", descriptionKey: "modules.invoices.ep.export", auth: "JWT", permission: "billing.export" },
+      {
+        method: "GET",
+        path: "/api/v1/invoices",
+        descriptionKey: "modules.invoices.ep.list",
+        auth: "JWT",
+        permission: "billing.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/invoices/{id}",
+        descriptionKey: "modules.invoices.ep.get",
+        auth: "JWT",
+        permission: "billing.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/invoices/{id}/pdf",
+        descriptionKey: "modules.invoices.ep.pdf",
+        auth: "JWT",
+        permission: "billing.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/billing/dashboard",
+        descriptionKey: "modules.invoices.ep.dashboard",
+        auth: "JWT",
+        permission: "billing.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/subscriptions/export",
+        descriptionKey: "modules.invoices.ep.export",
+        auth: "JWT",
+        permission: "billing.export",
+      },
     ],
   },
 ];

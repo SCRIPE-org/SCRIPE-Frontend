@@ -6,7 +6,8 @@ const sections: DocSection[] = [
 
   // ─── 4-Stage Pipeline ─────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.stagesTitle",
     id: "dunning-stages",
   },
@@ -27,9 +28,15 @@ const sections: DocSection[] = [
       { id: "J", label: "Payment recovered? → Reactivate", type: "success" },
     ],
     connections: [
-      { from: "A", to: "B" }, { from: "B", to: "C" }, { from: "C", to: "D" },
-      { from: "D", to: "E" }, { from: "E", to: "F" }, { from: "F", to: "G" },
-      { from: "G", to: "H" }, { from: "H", to: "I" }, { from: "G", to: "J", label: "if payment recovered", style: "dashed" },
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
+      { from: "F", to: "G" },
+      { from: "G", to: "H" },
+      { from: "H", to: "I" },
+      { from: "G", to: "J", label: "if payment recovered", style: "dashed" },
     ],
   },
 
@@ -51,7 +58,8 @@ const sections: DocSection[] = [
 
   // ─── Background Jobs ──────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.jobsTitle",
     id: "background-jobs",
   },
@@ -60,12 +68,22 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Job", "Schedule", "Responsibility"],
     rows: [
-      ["SubscriptionReconciliationJob", "Daily 3:00 AM UTC", "Expiry detection, suspension, fallback edition assignment"],
-      ["DunningNotificationJob", "Daily 4:00 AM UTC", "Grace warning and final warning emails for PastDue subscriptions"],
+      [
+        "SubscriptionReconciliationJob",
+        "Daily 3:00 AM UTC",
+        "Expiry detection, suspension, fallback edition assignment",
+      ],
+      [
+        "DunningNotificationJob",
+        "Daily 4:00 AM UTC",
+        "Grace warning and final warning emails for PastDue subscriptions",
+      ],
     ],
   },
   {
-    type: "code", language: "json", filename: "appsettings.json",
+    type: "code",
+    language: "json",
+    filename: "appsettings.json",
     code: `{
   "BackgroundJobs": {
     "Jobs": {
@@ -84,7 +102,8 @@ const sections: DocSection[] = [
 
   // ─── Email Deduplication ──────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.deduplicationTitle",
     id: "email-deduplication",
   },
@@ -92,20 +111,23 @@ const sections: DocSection[] = [
 
   // ─── Cross-Module Integration ─────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.crossModuleTitle",
     id: "cross-module-integration",
   },
   { type: "paragraph", contentKey: "modules.dunning.crossModuleIntro" },
   {
-    type: "info", variant: "warning",
+    type: "info",
+    variant: "warning",
     contentKey: "modules.dunning.crossModuleIntro",
     titleKey: "modules.dunning.crossModuleTitle",
   },
 
   // ─── Auto-Fallback Edition ────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.fallbackTitle",
     id: "fallback-edition",
   },
@@ -113,13 +135,15 @@ const sections: DocSection[] = [
 
   // ─── Promo Codes & Proration ──────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.promotionsTitle",
     id: "promo-proration",
   },
   { type: "paragraph", contentKey: "modules.dunning.promotionsIntro" },
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "modules.dunning.promoExpiryTitle",
     id: "promo-expiry",
   },
@@ -127,7 +151,8 @@ const sections: DocSection[] = [
 
   // ─── Email Templates ──────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.dunning.emailsTitle",
     id: "email-templates",
   },
@@ -151,6 +176,11 @@ registerPage({
   category: "modules",
   order: 8,
   sections,
-  relatedSlugs: ["modules/billing-engine", "modules/invoices", "modules/subscriptions", "features/notification-system"],
+  relatedSlugs: [
+    "modules/billing-engine",
+    "modules/invoices",
+    "modules/subscriptions",
+    "features/notification-system",
+  ],
   lastUpdated: "2026-04-18",
 });

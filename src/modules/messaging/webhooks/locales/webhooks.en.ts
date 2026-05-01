@@ -38,8 +38,7 @@ export const en = {
     },
 
     // ─── URL Validation ──────────────────────────────────────
-    urlHttpsRequired:
-      "URL must use HTTPS (http://localhost allowed for dev)",
+    urlHttpsRequired: "URL must use HTTPS (http://localhost allowed for dev)",
 
     // ─── Status ──────────────────────────────────────────────
     status: {
@@ -52,8 +51,7 @@ export const en = {
 
     // ─── Actions ─────────────────────────────────────────────
     create: "Create Webhook",
-    createDesc:
-      "Subscribe to events and receive real-time HTTP notifications.",
+    createDesc: "Subscribe to events and receive real-time HTTP notifications.",
     edit: "Edit Webhook",
     editDesc: "Update the webhook subscription settings.",
     toggleStatus: "Toggle Status",
@@ -83,8 +81,7 @@ export const en = {
 
     // ─── Secret ──────────────────────────────────────────────
     secret: "Signing Secret",
-    secretDescription:
-      "Used to sign webhook payloads with HMAC-SHA256. Keep this secret safe.",
+    secretDescription: "Used to sign webhook payloads with HMAC-SHA256. Keep this secret safe.",
     rotateSecret: "Rotate Secret",
     rotateSecretTitle: "Rotate Signing Secret",
     rotateSecretDesc:
@@ -114,8 +111,7 @@ export const en = {
     maxRetries: "Max Retries",
     maxRetriesDesc: "Number of retry attempts on failure (0-10)",
     maxConsecutiveFailures: "Auto-disable Threshold",
-    maxFailuresDesc:
-      "Auto-disable after this many consecutive failures",
+    maxFailuresDesc: "Auto-disable after this many consecutive failures",
     consecutiveFailuresLabel: "failures",
     currentFailures: "Current Failures",
     lastStatus: "Last Status",
@@ -141,8 +137,7 @@ export const en = {
     latency: "Latency",
     timestamp: "Timestamp",
     noDeliveries: "No deliveries yet",
-    noDeliveriesDesc:
-      "Delivery attempts will appear here when events are triggered.",
+    noDeliveriesDesc: "Delivery attempts will appear here when events are triggered.",
     errorMessage: "Error",
     requestUrl: "Request URL",
     payload: "Payload",
@@ -161,10 +156,8 @@ export const en = {
       allClear: "All clear",
       retrying: "Retrying",
       idle: "Idle",
-      endpointAutoDisabled:
-        "endpoint was auto-disabled due to consecutive failures",
-      endpointsAutoDisabled:
-        "endpoints were auto-disabled due to consecutive failures",
+      endpointAutoDisabled: "endpoint was auto-disabled due to consecutive failures",
+      endpointsAutoDisabled: "endpoints were auto-disabled due to consecutive failures",
     },
 
     // ─── Analytics ───────────────────────────────────────────
@@ -179,8 +172,7 @@ export const en = {
       successfulDeliveries: "Successful",
       failedDeliveries: "Failed",
       noData: "No analytics data available yet",
-      noDataDesc:
-        "Analytics will populate once webhook deliveries start occurring.",
+      noDataDesc: "Analytics will populate once webhook deliveries start occurring.",
       last30days: "Daily delivery breakdown — last 30 days",
     },
 
@@ -191,14 +183,12 @@ export const en = {
       description:
         "Failed deliveries that have exhausted all retry attempts. You can replay them individually or in bulk.",
       empty: "No dead letters",
-      emptyDesc:
-        "All webhook deliveries are being processed successfully.",
+      emptyDesc: "All webhook deliveries are being processed successfully.",
       replay: "Replay",
       replayAll: "Replay All",
       replaying: "Replaying...",
       replayAllTitle: "Replay All Dead Letters",
-      replayAllDesc:
-        "This will retry all {{count}} failed deliveries. Are you sure?",
+      replayAllDesc: "This will retry all {{count}} failed deliveries. Are you sure?",
       confirmReplayAll: "Replay All",
       replaySuccess: "Delivery replayed successfully",
       replayAllSuccess: "All dead letters have been queued for replay",
@@ -213,8 +203,7 @@ export const en = {
       endpointSection: "Endpoint",
       endpointSectionDesc: "Where webhook events will be delivered",
       eventsSection: "Event Subscriptions",
-      eventsSectionDesc:
-        "Choose which events you want to be notified about",
+      eventsSectionDesc: "Choose which events you want to be notified about",
       optionsSection: "Options",
       optionsSectionDesc: "Additional delivery and retry settings",
       searchEvents: "Search events...",

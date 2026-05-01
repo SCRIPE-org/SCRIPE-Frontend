@@ -2,19 +2,21 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "architecture.domainEvents.intro" },
+  { type: "paragraph", contentKey: "architecture.domainEvents.intro" },
 
-      // ─── Domain Event Interface ───────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.domainEvents.interfaceTitle", id: "domain-event-interface",
-      },
-      { type: "paragraph", contentKey: "architecture.domainEvents.interfaceIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Domain/Events/IDomainEvent.cs",
-            code: `using MediatR;
+  // ─── Domain Event Interface ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.interfaceTitle",
+    id: "domain-event-interface",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.interfaceIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Domain/Events/IDomainEvent.cs",
+    code: `using MediatR;
 
 /// <summary>
 /// Marker interface for domain events.
@@ -33,48 +35,72 @@ public interface IDomainEvent : INotification
     /// </summary>
     DateTime OccurredAt => DateTime.UtcNow;
 }`,
-      },
+  },
 
-      // ─── Publishing & Handling ────────────────────────────────
+  // ─── Publishing & Handling ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.publishingTitle",
+    id: "publishing",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.publishingIntro" },
+  {
+    type: "flowchart",
+    title: "Domain Event Flow",
+    direction: "horizontal",
+    nodes: [
+      { id: "entity", label: "Entity.RaiseDomainEvent()", type: "primary" },
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.domainEvents.publishingTitle", id: "publishing",
+        id: "interceptor",
+        label: "OutboxInterceptor",
+        type: "warning",
+        description: "Captures events before SaveChanges",
       },
-      { type: "paragraph", contentKey: "architecture.domainEvents.publishingIntro" },
       {
-            type: "flowchart",
-            title: "Domain Event Flow",
-            direction: "horizontal",
-            nodes: [
-                  { id: "entity", label: "Entity.RaiseDomainEvent()", type: "primary" },
-                  { id: "interceptor", label: "OutboxInterceptor", type: "warning", description: "Captures events before SaveChanges" },
-                  { id: "outbox", label: "OutboxMessage Table", type: "info", description: "Persisted in same transaction" },
-                  { id: "processor", label: "OutboxProcessor", type: "success", description: "Background job, polls every 5s" },
-                  { id: "mediator", label: "MediatR Publish", type: "primary" },
-                  { id: "handler", label: "IDomainEventHandler<T>", type: "success", description: "One or more handlers" },
-            ],
-            connections: [
-                  { from: "entity", to: "interceptor", label: "SaveChanges" },
-                  { from: "interceptor", to: "outbox", label: "same DB transaction" },
-                  { from: "outbox", to: "processor", label: "polls unprocessed" },
-                  { from: "processor", to: "mediator", label: "deserialize & publish" },
-                  { from: "mediator", to: "handler", label: "fan-out" },
-            ],
+        id: "outbox",
+        label: "OutboxMessage Table",
+        type: "info",
+        description: "Persisted in same transaction",
       },
+      {
+        id: "processor",
+        label: "OutboxProcessor",
+        type: "success",
+        description: "Background job, polls every 5s",
+      },
+      { id: "mediator", label: "MediatR Publish", type: "primary" },
+      {
+        id: "handler",
+        label: "IDomainEventHandler<T>",
+        type: "success",
+        description: "One or more handlers",
+      },
+    ],
+    connections: [
+      { from: "entity", to: "interceptor", label: "SaveChanges" },
+      { from: "interceptor", to: "outbox", label: "same DB transaction" },
+      { from: "outbox", to: "processor", label: "polls unprocessed" },
+      { from: "processor", to: "mediator", label: "deserialize & publish" },
+      { from: "mediator", to: "handler", label: "fan-out" },
+    ],
+  },
 
-      // ─── IDomainEventPublisher ────────────────────────────────
+  // ─── IDomainEventPublisher ────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.domainEvents.publisherTitle",
+    id: "publisher",
+  },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 3,
-            titleKey: "architecture.domainEvents.publisherTitle", id: "publisher",
-      },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "Interface",
-                        language: "csharp",
-                        filename: "IDomainEventPublisher.cs",
-                        code: `/// <summary>
+        label: "Interface",
+        language: "csharp",
+        filename: "IDomainEventPublisher.cs",
+        code: `/// <summary>
 /// Abstraction for publishing domain events.
 /// Default implementation uses MediatR for in-process pub/sub.
 /// </summary>
@@ -83,12 +109,12 @@ public interface IDomainEventPublisher
     Task PublishAsync(IDomainEvent domainEvent, CancellationToken ct = default);
     Task PublishManyAsync(IEnumerable<IDomainEvent> events, CancellationToken ct = default);
 }`,
-                  },
-                  {
-                        label: "MediatR Implementation",
-                        language: "csharp",
-                        filename: "MediatRDomainEventPublisher.cs",
-                        code: `public class MediatRDomainEventPublisher : IDomainEventPublisher
+      },
+      {
+        label: "MediatR Implementation",
+        language: "csharp",
+        filename: "MediatRDomainEventPublisher.cs",
+        code: `public class MediatRDomainEventPublisher : IDomainEventPublisher
 {
     private readonly IMediator _mediator;
 
@@ -108,12 +134,12 @@ public interface IDomainEventPublisher
             await PublishAsync(evt, ct);
     }
 }`,
-                  },
-                  {
-                        label: "Handler Interface",
-                        language: "csharp",
-                        filename: "IDomainEventHandler.cs",
-                        code: `/// <summary>
+      },
+      {
+        label: "Handler Interface",
+        language: "csharp",
+        filename: "IDomainEventHandler.cs",
+        code: `/// <summary>
 /// Handler for domain events. Implement this to react to domain events.
 /// Multiple handlers can subscribe to the same event type.
 /// </summary>
@@ -123,32 +149,36 @@ public interface IDomainEventHandler<TEvent> :
 {
     Task Handle(TEvent domainEvent, CancellationToken ct);
 }`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── Outbox Pattern ───────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.domainEvents.outboxTitle", id: "outbox-pattern",
-      },
-      { type: "paragraph", contentKey: "architecture.domainEvents.outboxIntro" },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "architecture.domainEvents.outboxWarning",
-      },
+  // ─── Outbox Pattern ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.outboxTitle",
+    id: "outbox-pattern",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.outboxIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "architecture.domainEvents.outboxWarning",
+  },
 
-      // ─── OutboxMessage Entity ─────────────────────────────────
-      {
-            type: "heading", level: 3,
-            titleKey: "architecture.domainEvents.outboxMessageTitle", id: "outbox-message",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Infrastructure/Outbox/OutboxMessage.cs",
-            code: `/// <summary>
+  // ─── OutboxMessage Entity ─────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.domainEvents.outboxMessageTitle",
+    id: "outbox-message",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Infrastructure/Outbox/OutboxMessage.cs",
+    code: `/// <summary>
 /// Represents a domain event persisted in the outbox table.
 /// Ensures reliable event delivery even if the app crashes after SaveChanges.
 /// </summary>
@@ -162,19 +192,21 @@ public class OutboxMessage
     public string? Error { get; set; }                    // Error message if failed
     public int RetryCount { get; set; }                   // Number of processing attempts
 }`,
-      },
+  },
 
-      // ─── OutboxInterceptor ────────────────────────────────────
-      {
-            type: "heading", level: 3,
-            titleKey: "architecture.domainEvents.outboxInterceptorTitle", id: "outbox-interceptor",
-      },
-      { type: "paragraph", contentKey: "architecture.domainEvents.outboxInterceptorIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Infrastructure/Outbox/OutboxInterceptor.cs",
-            code: `/// <summary>
+  // ─── OutboxInterceptor ────────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.domainEvents.outboxInterceptorTitle",
+    id: "outbox-interceptor",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.outboxInterceptorIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Infrastructure/Outbox/OutboxInterceptor.cs",
+    code: `/// <summary>
 /// EF Core SaveChanges interceptor that captures domain events
 /// and persists them to the Outbox table in the SAME transaction.
 /// This guarantees atomicity: entity changes + events are committed together.
@@ -216,20 +248,22 @@ public class OutboxInterceptor : SaveChangesInterceptor
         return await base.SavingChangesAsync(eventData, result, ct);
     }
 }`,
-            highlightLines: [16, 17, 18, 19, 29, 30, 31, 32, 33, 34, 37],
-      },
+    highlightLines: [16, 17, 18, 19, 29, 30, 31, 32, 33, 34, 37],
+  },
 
-      // ─── OutboxProcessor ──────────────────────────────────────
-      {
-            type: "heading", level: 3,
-            titleKey: "architecture.domainEvents.outboxProcessorTitle", id: "outbox-processor",
-      },
-      { type: "paragraph", contentKey: "architecture.domainEvents.outboxProcessorIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Infrastructure/Outbox/OutboxProcessor.cs — Simplified",
-            code: `/// <summary>
+  // ─── OutboxProcessor ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.domainEvents.outboxProcessorTitle",
+    id: "outbox-processor",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.outboxProcessorIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Infrastructure/Outbox/OutboxProcessor.cs — Simplified",
+    code: `/// <summary>
 /// Background service that polls the Outbox table for unprocessed messages
 /// and publishes them via MediatR. Runs every 5 seconds.
 /// </summary>
@@ -277,20 +311,22 @@ public class OutboxProcessor : BackgroundService
         }
     }
 }`,
-            highlightLines: [16, 17, 18, 19, 20, 31, 34],
-      },
+    highlightLines: [16, 17, 18, 19, 20, 31, 34],
+  },
 
-      // ─── OutboxCleanupJob ─────────────────────────────────────
-      {
-            type: "heading", level: 3,
-            titleKey: "architecture.domainEvents.outboxCleanupTitle", id: "outbox-cleanup",
-      },
-      { type: "paragraph", contentKey: "architecture.domainEvents.outboxCleanupIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "OutboxCleanupJob.cs",
-            code: `/// <summary>
+  // ─── OutboxCleanupJob ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.domainEvents.outboxCleanupTitle",
+    id: "outbox-cleanup",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.outboxCleanupIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "OutboxCleanupJob.cs",
+    code: `/// <summary>
 /// Recurring job that deletes processed outbox messages older than 7 days.
 /// Runs daily at 2:00 AM UTC via Hangfire.
 /// </summary>
@@ -309,53 +345,81 @@ public class OutboxCleanupJob : RecurringJobBase
         _logger.LogInformation("Cleaned up {Count} outbox messages", deleted);
     }
 }`,
-      },
+  },
 
-      // ─── Outbox Architecture Summary ──────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.domainEvents.architectureSummaryTitle", id: "architecture-summary",
-      },
-      {
-            type: "table",
-            headers: ["Component", "File", "Responsibility"],
-            rows: [
-                  ["OutboxMessage", "Outbox/OutboxMessage.cs", "Entity representing a persisted domain event"],
-                  ["OutboxInterceptor", "Outbox/OutboxInterceptor.cs", "EF interceptor — captures events in same transaction"],
-                  ["OutboxDbContext", "Outbox/OutboxDbContext.cs", "Dedicated DbContext for the outbox table"],
-                  ["OutboxProcessor", "Outbox/OutboxProcessor.cs", "Background service — polls and publishes events"],
-                  ["OutboxCleanupJob", "Outbox/OutboxCleanupJob.cs", "Hangfire recurring job — cleans processed messages"],
-                  ["IDomainEventPublisher", "Events/IDomainEventPublisher.cs", "Abstraction for publishing domain events"],
-                  ["MediatRDomainEventPublisher", "Events/MediatRDomainEventPublisher.cs", "In-process pub/sub via MediatR"],
-                  ["DomainEventNotification", "Events/DomainEventNotification.cs", "Wrapper to bridge IDomainEvent → INotification"],
-            ],
-      },
+  // ─── Outbox Architecture Summary ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.architectureSummaryTitle",
+    id: "architecture-summary",
+  },
+  {
+    type: "table",
+    headers: ["Component", "File", "Responsibility"],
+    rows: [
+      ["OutboxMessage", "Outbox/OutboxMessage.cs", "Entity representing a persisted domain event"],
+      [
+        "OutboxInterceptor",
+        "Outbox/OutboxInterceptor.cs",
+        "EF interceptor — captures events in same transaction",
+      ],
+      ["OutboxDbContext", "Outbox/OutboxDbContext.cs", "Dedicated DbContext for the outbox table"],
+      [
+        "OutboxProcessor",
+        "Outbox/OutboxProcessor.cs",
+        "Background service — polls and publishes events",
+      ],
+      [
+        "OutboxCleanupJob",
+        "Outbox/OutboxCleanupJob.cs",
+        "Hangfire recurring job — cleans processed messages",
+      ],
+      [
+        "IDomainEventPublisher",
+        "Events/IDomainEventPublisher.cs",
+        "Abstraction for publishing domain events",
+      ],
+      [
+        "MediatRDomainEventPublisher",
+        "Events/MediatRDomainEventPublisher.cs",
+        "In-process pub/sub via MediatR",
+      ],
+      [
+        "DomainEventNotification",
+        "Events/DomainEventNotification.cs",
+        "Wrapper to bridge IDomainEvent → INotification",
+      ],
+    ],
+  },
 
-      // ─── Creating Custom Events ───────────────────────────────
+  // ─── Creating Custom Events ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.customEventsTitle",
+    id: "custom-events",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.customEventsIntro" },
+  {
+    type: "step-guide",
+    steps: [
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.domainEvents.customEventsTitle", id: "custom-events",
-      },
-      { type: "paragraph", contentKey: "architecture.domainEvents.customEventsIntro" },
-      {
-            type: "step-guide",
-            steps: [
-                  {
-                        titleKey: "architecture.domainEvents.step1Title",
-                        contentKey: "architecture.domainEvents.step1Content",
-                        code: `// 1. Define the event
+        titleKey: "architecture.domainEvents.step1Title",
+        contentKey: "architecture.domainEvents.step1Content",
+        code: `// 1. Define the event
 public record AdminCreatedEvent(
     Guid AdminId,
     string Email,
     string TenantId
 ) : IDomainEvent;`,
-                        codeLanguage: "csharp",
-                        codeFilename: "Identity.Domain/Events/AdminCreatedEvent.cs",
-                  },
-                  {
-                        titleKey: "architecture.domainEvents.step2Title",
-                        contentKey: "architecture.domainEvents.step2Content",
-                        code: `// 2. Raise the event from entity/command handler
+        codeLanguage: "csharp",
+        codeFilename: "Identity.Domain/Events/AdminCreatedEvent.cs",
+      },
+      {
+        titleKey: "architecture.domainEvents.step2Title",
+        contentKey: "architecture.domainEvents.step2Content",
+        code: `// 2. Raise the event from entity/command handler
 public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateAdminCommand command, CancellationToken ct)
@@ -373,13 +437,13 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
         return Result.Success(admin.Id);
     }
 }`,
-                        codeLanguage: "csharp",
-                        codeFilename: "CreateAdminCommandHandler.cs",
-                  },
-                  {
-                        titleKey: "architecture.domainEvents.step3Title",
-                        contentKey: "architecture.domainEvents.step3Content",
-                        code: `// 3. Handle the event (one or more handlers)
+        codeLanguage: "csharp",
+        codeFilename: "CreateAdminCommandHandler.cs",
+      },
+      {
+        titleKey: "architecture.domainEvents.step3Title",
+        contentKey: "architecture.domainEvents.step3Content",
+        code: `// 3. Handle the event (one or more handlers)
 public class SendWelcomeEmailOnAdminCreated
     : INotificationHandler<DomainEventNotification>
 {
@@ -395,55 +459,57 @@ public class SendWelcomeEmailOnAdminCreated
         });
     }
 }`,
-                        codeLanguage: "csharp",
-                        codeFilename: "SendWelcomeEmailOnAdminCreated.cs",
-                  },
-            ],
+        codeLanguage: "csharp",
+        codeFilename: "SendWelcomeEmailOnAdminCreated.cs",
       },
+    ],
+  },
 
-      // ─── Reliability Guarantees ───────────────────────────────
+  // ─── Reliability Guarantees ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.reliabilityTitle",
+    id: "reliability",
+  },
+  {
+    type: "comparison",
+    columns: [
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.domainEvents.reliabilityTitle", id: "reliability",
+        titleKey: "architecture.domainEvents.withOutboxTitle",
+        variant: "positive",
+        items: [
+          "Events persisted in same DB transaction as entity changes",
+          "Survives application crashes — events are in the database",
+          "At-least-once delivery guaranteed",
+          "Automatic retry with configurable retry count",
+          "Cleanup job removes old processed messages",
+          "Events processed in order (by OccurredOnUtc)",
+        ],
       },
       {
-            type: "comparison",
-            columns: [
-                  {
-                        titleKey: "architecture.domainEvents.withOutboxTitle",
-                        variant: "positive",
-                        items: [
-                              "Events persisted in same DB transaction as entity changes",
-                              "Survives application crashes — events are in the database",
-                              "At-least-once delivery guaranteed",
-                              "Automatic retry with configurable retry count",
-                              "Cleanup job removes old processed messages",
-                              "Events processed in order (by OccurredOnUtc)",
-                        ],
-                  },
-                  {
-                        titleKey: "architecture.domainEvents.withoutOutboxTitle",
-                        variant: "negative",
-                        items: [
-                              "Events published in-memory — lost if app crashes",
-                              "No guarantee of delivery after SaveChanges",
-                              "Race condition: DB saved but event publish fails",
-                              "No retry mechanism for failed handlers",
-                              "No auditing of which events were processed",
-                              "Order not guaranteed in async scenarios",
-                        ],
-                  },
-            ],
+        titleKey: "architecture.domainEvents.withoutOutboxTitle",
+        variant: "negative",
+        items: [
+          "Events published in-memory — lost if app crashes",
+          "No guarantee of delivery after SaveChanges",
+          "Race condition: DB saved but event publish fails",
+          "No retry mechanism for failed handlers",
+          "No auditing of which events were processed",
+          "Order not guaranteed in async scenarios",
+        ],
       },
+    ],
+  },
 ];
 
 registerPage({
-      slug: "architecture/domain-events",
-      titleKey: "architecture.domainEvents.title",
-      descriptionKey: "architecture.domainEvents.description",
-      category: "architecture",
-      order: 10,
-      sections,
-      relatedSlugs: ["architecture/domain-model", "architecture/cqrs-pipeline", "architecture/backend"],
-      lastUpdated: "2026-02-20",
+  slug: "architecture/domain-events",
+  titleKey: "architecture.domainEvents.title",
+  descriptionKey: "architecture.domainEvents.description",
+  category: "architecture",
+  order: 10,
+  sections,
+  relatedSlugs: ["architecture/domain-model", "architecture/cqrs-pipeline", "architecture/backend"],
+  lastUpdated: "2026-02-20",
 });

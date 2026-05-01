@@ -45,7 +45,8 @@ export const en = {
       totalPayoutsAmount: "Total Payout Amount",
       commissionRate: "Commission Rate",
       commissionRateOverride: "Override Rate",
-      commissionRateDesc: "Set a per-tenant commission override. Leave empty to use the edition or global rate.",
+      commissionRateDesc:
+        "Set a per-tenant commission override. Leave empty to use the edition or global rate.",
       commissionRateUpdated: "Commission Rate Updated",
       commissionRateUpdatedDesc: "The commission rate override has been saved.",
       commissionRateCleared: "Commission Rate Cleared",
@@ -58,8 +59,6 @@ export const en = {
         editionRate: "Edition Rate",
         globalDefault: "Global Default",
       },
-
-      // Status badges
       statusLabel: "Status",
       status: {
         Pending: "Pending",
@@ -72,8 +71,6 @@ export const en = {
         Restricted: "destructive",
       },
       enterTenantId: "Enter the Tenant ID to create a Stripe Connect account for:",
-
-      // Table columns
       columns: {
         tenant: "Tenant",
         status: "Status",
@@ -84,8 +81,6 @@ export const en = {
         totalAmount: "Total Amount",
         actions: "Actions",
       },
-
-      // ── Payouts Page (tenant-scoped) ──
       payoutsTitle: "Tenant Payouts",
       payoutsDesc: "Manage payouts and view commission history for this tenant.",
       stripeAccount: "Stripe Account",
@@ -111,18 +106,18 @@ export const en = {
       getStarted: "Get Started",
       getStartedDesc: "This tenant has not connected a Stripe account yet.",
       readyToConnect: "Ready to Connect",
-      readyToConnectDesc: "Create a Stripe Express account for this tenant to start processing payments.",
+      readyToConnectDesc:
+        "Create a Stripe Express account for this tenant to start processing payments.",
       continueOnboarding: "Continue Onboarding",
       actionRequired: "Action Required",
-      actionRequiredDesc: "This tenant's Stripe onboarding is incomplete. They need to finish setup to receive payouts.",
+      actionRequiredDesc:
+        "This tenant's Stripe onboarding is incomplete. They need to finish setup to receive payouts.",
+      alreadyOnboarded: "Already Onboarded",
     },
-
     commissions: {
       title: "Commission Dashboard",
       description: "Platform-wide commission revenue analytics and per-tenant breakdown.",
       noData: "No commission data available yet.",
-
-      // KPI cards
       totalCommission: "Total Commission",
       totalCommissionDesc: "Gross platform commission revenue collected",
       totalRefunded: "Refunded",
@@ -135,22 +130,16 @@ export const en = {
       activeTenantsDesc: "Tenants with active Stripe Connect accounts",
       globalRate: "Global Rate",
       globalRateDesc: "Platform-wide default commission rate",
-
-      // Trends chart
       trendTitle: "Commission Trend",
       trendDesc: "Daily commission revenue over the selected period",
       trendDays: "Days",
       trendAmount: "Amount",
       trendCount: "Transactions",
-
-      // Top tenants
       topTenantsTitle: "Top Revenue Tenants",
       topTenantsDesc: "Tenants generating the most commission for the platform",
       topTenantId: "Tenant",
       topTenantTotal: "Commission",
       topTenantCount: "Transactions",
-
-      // Filters
       filterDays: "Period",
       filter30: "Last 30 days",
       filter90: "Last 90 days",
@@ -159,19 +148,15 @@ export const en = {
       fromDate: "From",
       toDate: "To",
     },
-
     tenantConnect: {
-      // Page
       pageTitle: "Payment Account",
-      pageDesc: "Set up and manage your Stripe Connect Express account to receive automated payouts from your sales.",
+      pageDesc:
+        "Set up and manage your Stripe Connect Express account to receive automated payouts from your sales.",
       verified: "Verified",
-
-      // Hero (Not Onboarded)
       heroTitle: "Start Receiving Payments",
-      heroDesc: "Connect your bank account through Stripe to securely receive automated payouts from your sales. Setup takes just a few minutes.",
+      heroDesc:
+        "Connect your bank account through Stripe to securely receive automated payouts from your sales. Setup takes just a few minutes.",
       getStartedBtn: "Get Started",
-
-      // Steps
       step1Title: "Create Account",
       step1Desc: "We'll create a secure Stripe Express account for you.",
       step2Title: "Verify Identity",
@@ -180,17 +165,13 @@ export const en = {
       step3Desc: "Link your bank account to receive payouts.",
       step4Title: "Start Earning",
       step4Desc: "You're all set — payments flow automatically.",
-
-      // Security
-      securityNote: "Your information is securely processed by Stripe. NEXORA never sees or stores your bank account details.",
-
-      // In-Progress
+      securityNote:
+        "Your information is securely processed by Stripe. NEXORA never sees or stores your bank account details.",
       setupInProgress: "Account Setup In Progress",
       setupInProgressDesc: "Complete the remaining steps to start accepting payments.",
       setupProgress: "Setup Progress",
-      restrictedDesc: "Stripe requires additional information to verify your identity. Please complete the verification to continue.",
-
-      // Completed
+      restrictedDesc:
+        "Stripe requires additional information to verify your identity. Please complete the verification to continue.",
       accountReady: "Your Account is Ready",
       accountReadyDesc: "Payments and payouts are fully enabled.",
       totalPayouts: "Total Payouts",
@@ -207,18 +188,13 @@ export const en = {
       currency: "Currency",
       country: "Country",
       verifiedAt: "Verified At",
-
-      // Error state
       errorTitle: "Unable to Load Account",
-      errorDesc: "We couldn't load your payment account information. You may not have permission to access this page, or there was a network issue.",
-
-      // Sync
+      errorDesc:
+        "We couldn't load your payment account information. You may not have permission to access this page, or there was a network issue.",
       syncBtn: "Sync Data",
       syncSuccess: "Account Synced",
       syncSuccessDesc: "Your account data has been refreshed from Stripe.",
       syncFailed: "Sync failed. Please try again later.",
-
-      // Transactions
       txn: {
         title: "Recent Transactions",
         desc: "Payments received, platform fees, and refunds",

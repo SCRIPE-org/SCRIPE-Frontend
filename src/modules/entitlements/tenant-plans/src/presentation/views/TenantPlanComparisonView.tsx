@@ -12,14 +12,7 @@
 import { useRef, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCell,
-} from "@core/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
 import { Card, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@core/ui/toggle-group";
@@ -47,7 +40,11 @@ function MatrixCell({
   const cls = `text-center py-3.5 px-3 ${isHighlighted ? "bg-primary/5" : ""}`;
 
   if (value === undefined || value === null || value === "") {
-    return <TableCell className={cls}><span className="text-muted-foreground/40">—</span></TableCell>;
+    return (
+      <TableCell className={cls}>
+        <span className="text-muted-foreground/40">—</span>
+      </TableCell>
+    );
   }
 
   if (valueType === "Boolean") {
@@ -64,9 +61,9 @@ function MatrixCell({
     const num = parseInt(value, 10);
     return (
       <TableCell className={cls}>
-        <span className="tabular-nums font-semibold text-sm">
+        <span className="text-sm font-semibold tabular-nums">
           {num === -1 ? (
-            <span className="text-primary font-bold">∞</span>
+            <span className="font-bold text-primary">∞</span>
           ) : num === 0 ? (
             <span className="text-muted-foreground/50">—</span>
           ) : (
@@ -79,7 +76,7 @@ function MatrixCell({
 
   return (
     <TableCell className={cls}>
-      <span className="text-sm text-center">{value || "—"}</span>
+      <span className="text-center text-sm">{value || "—"}</span>
     </TableCell>
   );
 }
@@ -88,9 +85,12 @@ function MatrixCell({
 function LoadingState() {
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-96 rounded-xl border border-border/40 bg-muted/20 animate-pulse" />
+          <div
+            key={i}
+            className="h-96 animate-pulse rounded-xl border border-border/40 bg-muted/20"
+          />
         ))}
       </div>
       <div className="flex items-center justify-center gap-2 py-8 text-muted-foreground">
@@ -108,8 +108,17 @@ export function TenantPlanComparisonView() {
   const matrixRef = useRef<HTMLDivElement>(null);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
 
-  const { plans, categorizedFeatures, progressiveHighlights, totalFeatureCount, isLoading, isEmpty, selectedCycle, setSelectedCycle, availableCycles } =
-    useTenantPlanComparisonViewModel();
+  const {
+    plans,
+    categorizedFeatures,
+    progressiveHighlights,
+    totalFeatureCount,
+    isLoading,
+    isEmpty,
+    selectedCycle,
+    setSelectedCycle,
+    availableCycles,
+  } = useTenantPlanComparisonViewModel();
 
   if (isLoading) return <LoadingState />;
 
@@ -117,7 +126,7 @@ export function TenantPlanComparisonView() {
     return (
       <Card>
         <CardContent className="py-16 text-center">
-          <Sparkles className="mx-auto h-10 w-10 text-muted-foreground/30 mb-3" />
+          <Sparkles className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
           <p className="text-muted-foreground">
             {t("entitlements.tenantPlans.noPlans") || "No active plans to compare."}
           </p>
@@ -147,7 +156,7 @@ export function TenantPlanComparisonView() {
               {t("entitlements.tenantPlans.comparison.heroTitle") || "Compare Plans"}
             </h2>
           </div>
-          <div className="flex items-center gap-1.5 ml-10.5">
+          <div className="ml-10.5 flex items-center gap-1.5">
             <Eye className="h-3.5 w-3.5 text-muted-foreground/60" />
             <p className="text-sm text-muted-foreground">
               {t("entitlements.tenantPlans.comparison.heroSubtitle") ||
@@ -158,28 +167,40 @@ export function TenantPlanComparisonView() {
 
         {/* ── Cycle Toggle ── */}
         {availableCycles.length > 1 && (
-          <div className="flex justify-center mt-6 mb-8">
+          <div className="mb-8 mt-6 flex justify-center">
             <ToggleGroup
               type="single"
               value={selectedCycle}
               onValueChange={(val) => {
-                if (val === "Monthly" || val === "Yearly" || val === "Lifetime") setSelectedCycle(val);
+                if (val === "Monthly" || val === "Yearly" || val === "Lifetime")
+                  setSelectedCycle(val);
               }}
-              className="bg-muted/50 p-1 rounded-full border border-border/40"
+              className="rounded-full border border-border/40 bg-muted/50 p-1"
             >
               {availableCycles.includes("Monthly") && (
-                <ToggleGroupItem value="Monthly" className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                <ToggleGroupItem
+                  value="Monthly"
+                  className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm"
+                >
                   {t("entitlements.tenantPlans.allowMonthly") || "Monthly"}
                 </ToggleGroupItem>
               )}
               {availableCycles.includes("Yearly") && (
-                <ToggleGroupItem value="Yearly" className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                <ToggleGroupItem
+                  value="Yearly"
+                  className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm"
+                >
                   {t("entitlements.tenantPlans.allowYearly") || "Yearly"}
-                  <span className="ml-2 text-[10px] uppercase font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Save ~20%</span>
+                  <span className="ml-2 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-500">
+                    Save ~20%
+                  </span>
                 </ToggleGroupItem>
               )}
               {availableCycles.includes("Lifetime") && (
-                <ToggleGroupItem value="Lifetime" className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                <ToggleGroupItem
+                  value="Lifetime"
+                  className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm"
+                >
                   {t("entitlements.tenantPlans.allowLifetime") || "Lifetime"}
                 </ToggleGroupItem>
               )}
@@ -191,18 +212,21 @@ export function TenantPlanComparisonView() {
         <div
           className={`grid gap-5 ${
             colCount === 1
-              ? "grid-cols-1 max-w-sm"
+              ? "max-w-sm grid-cols-1"
               : colCount === 2
-              ? "grid-cols-1 md:grid-cols-2 max-w-2xl"
-              : colCount === 3
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+                ? "max-w-2xl grid-cols-1 md:grid-cols-2"
+                : colCount === 3
+                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
           }`}
         >
           {plans.map((plan: TenantPlan, idx: number) => {
-            const prevName = idx > 0
-              ? ((language === "ar" ? plans[idx - 1].displayNameAr : plans[idx - 1].displayNameEn) || plans[idx - 1].name)
-              : undefined;
+            const prevName =
+              idx > 0
+                ? (language === "ar"
+                    ? plans[idx - 1].displayNameAr
+                    : plans[idx - 1].displayNameEn) || plans[idx - 1].name
+                : undefined;
 
             return (
               <TenantPlanPricingCard
@@ -214,12 +238,15 @@ export function TenantPlanComparisonView() {
                 isRecommended={plan.id === recommendedPlanId}
                 selectedCycle={selectedCycle}
                 allHighlightsLabel={
-                  t("entitlements.tenantPlans.comparison.allPreviousPlus") || "All {prev} features, plus:"
+                  t("entitlements.tenantPlans.comparison.allPreviousPlus") ||
+                  "All {prev} features, plus:"
                 }
                 priceLabel={t("entitlements.pricing.perMonth") || "/month"}
                 freeLabel={t("common.free") || "Free"}
                 customLabel={t("entitlements.tenantPlans.comparison.customPricing") || "Custom"}
-                previewLabel={t("entitlements.tenantPlans.comparison.adminPreview") || "Admin Preview Only"}
+                previewLabel={
+                  t("entitlements.tenantPlans.comparison.adminPreview") || "Admin Preview Only"
+                }
               />
             );
           })}
@@ -236,18 +263,20 @@ export function TenantPlanComparisonView() {
           </h2>
         </div>
 
-        <div className="rounded-xl border border-border/60 overflow-hidden shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-b bg-muted/40">
-                  <TableHead className="w-64 sticky left-0 bg-muted/40 z-10 font-semibold">
+                  <TableHead className="sticky left-0 z-10 w-64 bg-muted/40 font-semibold">
                     {t("entitlements.tenantPlans.feature") || "Feature"}
                   </TableHead>
                   {plans.map((plan: TenantPlan) => (
                     <ComparisonColumnHeader
                       key={plan.id}
-                      displayName={(language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name}
+                      displayName={
+                        (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name
+                      }
                       tierLevel={plan.tierLevel}
                       badges={plan.badgeText ? [plan.badgeText] : []}
                       isRecommended={plan.id === recommendedPlanId}
@@ -263,29 +292,35 @@ export function TenantPlanComparisonView() {
                   colSpan={colSpan}
                 />
                 {/* Price */}
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.pricing.price") || "Price"}
                   </TableCell>
                   {plans.map((plan: TenantPlan) => {
                     const isHL = plan.id === recommendedPlanId;
-                    
+
                     let priceAmount: string;
                     let priceSuffix = "";
                     if (plan.isContactSalesOnly) {
-                      priceAmount = t("entitlements.tenantPlans.comparison.customPricing") || "Custom";
+                      priceAmount =
+                        t("entitlements.tenantPlans.comparison.customPricing") || "Custom";
                     } else if (!plan.hasPrices) {
                       priceAmount = t("common.free") || "Free";
                     } else {
-                      const cyclePrices = plan.prices.filter(p => p.billingCycle === selectedCycle);
+                      const cyclePrices = plan.prices.filter(
+                        (p) => p.billingCycle === selectedCycle
+                      );
                       if (cyclePrices.length > 0) {
-                        const cheapest = cyclePrices.reduce((min, p) => p.amount < min.amount ? p : min, cyclePrices[0]);
+                        const cheapest = cyclePrices.reduce(
+                          (min, p) => (p.amount < min.amount ? p : min),
+                          cyclePrices[0]
+                        );
                         priceAmount = new Intl.NumberFormat("en-US", {
                           style: "currency",
                           currency: cheapest.currency || "USD",
                           minimumFractionDigits: 0,
                         }).format(cheapest.amount);
-                        
+
                         if (selectedCycle === "Monthly") priceSuffix = "/mo";
                         else if (selectedCycle === "Yearly") priceSuffix = "/yr";
                         else if (selectedCycle === "Lifetime") priceSuffix = " one-time";
@@ -297,33 +332,39 @@ export function TenantPlanComparisonView() {
                     return (
                       <TableCell
                         key={plan.id}
-                        className={`text-center py-3.5 font-bold ${isHL ? "bg-primary/5" : ""}`}
+                        className={`py-3.5 text-center font-bold ${isHL ? "bg-primary/5" : ""}`}
                       >
                         {priceAmount === "—" ? (
                           <span className="text-muted-foreground/40">—</span>
                         ) : plan.isContactSalesOnly ? (
                           <span className="text-sm text-muted-foreground">{priceAmount}</span>
                         ) : !plan.hasPrices ? (
-                          <span className="text-emerald-400 font-bold">{priceAmount}</span>
+                          <span className="font-bold text-emerald-400">{priceAmount}</span>
                         ) : (
-                          <span>{priceAmount}<span className="text-xs font-normal text-muted-foreground">{priceSuffix}</span></span>
+                          <span>
+                            {priceAmount}
+                            <span className="text-xs font-normal text-muted-foreground">
+                              {priceSuffix}
+                            </span>
+                          </span>
                         )}
                       </TableCell>
                     );
                   })}
                 </TableRow>
                 {/* Trial */}
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.tenantPlans.allowTrial") || "Free Trial"}
                   </TableCell>
                   {plans.map((plan: TenantPlan) => (
-                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
+                    <TableCell
+                      key={plan.id}
+                      className={`py-3.5 text-center ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}
+                    >
                       <div className="flex justify-center">
                         {plan.hasTrial ? (
-                          <span className="text-sm font-medium">
-                            {plan.trialDays}d Free
-                          </span>
+                          <span className="text-sm font-medium">{plan.trialDays}d Free</span>
                         ) : (
                           <BooleanIndicator value={false} />
                         )}
@@ -332,33 +373,48 @@ export function TenantPlanComparisonView() {
                   ))}
                 </TableRow>
                 {/* Billing Cycles */}
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.tenantPlans.allowMonthly") || "Monthly Billing"}
                   </TableCell>
                   {plans.map((plan: TenantPlan) => (
-                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
-                      <div className="flex justify-center"><BooleanIndicator value={plan.allowMonthly} /></div>
+                    <TableCell
+                      key={plan.id}
+                      className={`py-3.5 text-center ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}
+                    >
+                      <div className="flex justify-center">
+                        <BooleanIndicator value={plan.allowMonthly} />
+                      </div>
                     </TableCell>
                   ))}
                 </TableRow>
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.tenantPlans.allowYearly") || "Annual Billing"}
                   </TableCell>
                   {plans.map((plan: TenantPlan) => (
-                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
-                      <div className="flex justify-center"><BooleanIndicator value={plan.allowYearly} /></div>
+                    <TableCell
+                      key={plan.id}
+                      className={`py-3.5 text-center ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}
+                    >
+                      <div className="flex justify-center">
+                        <BooleanIndicator value={plan.allowYearly} />
+                      </div>
                     </TableCell>
                   ))}
                 </TableRow>
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.tenantPlans.allowLifetime") || "Lifetime"}
                   </TableCell>
                   {plans.map((plan: TenantPlan) => (
-                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
-                      <div className="flex justify-center"><BooleanIndicator value={plan.allowLifetime} /></div>
+                    <TableCell
+                      key={plan.id}
+                      className={`py-3.5 text-center ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}
+                    >
+                      <div className="flex justify-center">
+                        <BooleanIndicator value={plan.allowLifetime} />
+                      </div>
                     </TableCell>
                   ))}
                 </TableRow>
@@ -368,8 +424,8 @@ export function TenantPlanComparisonView() {
                   label={t("entitlements.tenantPlans.comparison.categoryUsers") || "Users"}
                   colSpan={colSpan}
                 />
-                <TableRow className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                <TableRow className="transition-colors hover:bg-muted/30">
+                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
                     {t("entitlements.tenantPlans.maxUsers") || "Max Users"}
                   </TableCell>
                   {plans.map((plan: TenantPlan) => (
@@ -383,25 +439,26 @@ export function TenantPlanComparisonView() {
                 </TableRow>
 
                 {/* ── Dynamic Feature Categories (shown when expanded) ── */}
-                {showAllFeatures && [...categorizedFeatures.entries()].map(([category, rows]) => (
-                  <FeatureCategoryBlock
-                    key={category}
-                    category={category}
-                    rows={rows}
-                    plans={plans}
-                    recommendedPlanId={recommendedPlanId}
-                    colSpan={colSpan}
-                    language={language}
-                    t={t}
-                  />
-                ))}
+                {showAllFeatures &&
+                  [...categorizedFeatures.entries()].map(([category, rows]) => (
+                    <FeatureCategoryBlock
+                      key={category}
+                      category={category}
+                      rows={rows}
+                      plans={plans}
+                      recommendedPlanId={recommendedPlanId}
+                      colSpan={colSpan}
+                      language={language}
+                      t={t}
+                    />
+                  ))}
               </TableBody>
             </Table>
           </div>
 
           {/* ── Expand / Collapse Toggle ── */}
           {totalFeatureCount > 0 && (
-            <div className="border-t border-border/40 bg-muted/20 px-4 py-3 flex items-center justify-center">
+            <div className="flex items-center justify-center border-t border-border/40 bg-muted/20 px-4 py-3">
               <Button
                 variant="ghost"
                 size="sm"
@@ -417,8 +474,10 @@ export function TenantPlanComparisonView() {
               >
                 <LayoutList className="h-4 w-4" />
                 {showAllFeatures
-                  ? (t("entitlements.tenantPlans.comparison.hideFeatures") || "Hide detailed features")
-                  : (t("entitlements.tenantPlans.comparison.showAllFeatures") || `Show all ${totalFeatureCount} features`)}
+                  ? t("entitlements.tenantPlans.comparison.hideFeatures") ||
+                    "Hide detailed features"
+                  : t("entitlements.tenantPlans.comparison.showAllFeatures") ||
+                    `Show all ${totalFeatureCount} features`}
                 {showAllFeatures ? (
                   <ChevronUp className="h-4 w-4" />
                 ) : (
@@ -431,8 +490,6 @@ export function TenantPlanComparisonView() {
 
         <div ref={matrixRef} />
       </section>
-
-
     </div>
   );
 }
@@ -467,11 +524,8 @@ function FeatureCategoryBlock({
             ? row.displayNameAr
             : row.displayNameEn || row.featureKey;
         return (
-          <TableRow
-            key={row.featureKey}
-            className="hover:bg-muted/30 transition-colors group"
-          >
-            <TableCell className="sticky left-0 bg-background group-hover:bg-muted/30 transition-colors font-medium text-sm py-3.5">
+          <TableRow key={row.featureKey} className="group transition-colors hover:bg-muted/30">
+            <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium transition-colors group-hover:bg-muted/30">
               {featureLabel}
             </TableCell>
             {plans.map((plan: TenantPlan) => (

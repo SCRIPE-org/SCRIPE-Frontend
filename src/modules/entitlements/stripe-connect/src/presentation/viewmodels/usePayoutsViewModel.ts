@@ -44,15 +44,13 @@ export function usePayoutsViewModel() {
   const accountQuery = useQuery({
     queryKey: ACCOUNT_KEY,
     queryFn: () => connectRepository.getTenantStatus(),
-    retry: false,            // 404 means "not onboarded yet" — don't retry
+    retry: false, // 404 means "not onboarded yet" — don't retry
     staleTime: 30_000,
   });
 
   // account is null when 404 (not onboarded)
   const account = accountQuery.data ?? null;
-  const isNotOnboarded =
-    accountQuery.isError ||
-    (accountQuery.isSuccess && !account);
+  const isNotOnboarded = accountQuery.isError || (accountQuery.isSuccess && !account);
 
   // ── Commission history ─────────────────────────────────────────────────────
   // Only runs once the account is loaded and we have the tenantId
@@ -99,7 +97,10 @@ export function usePayoutsViewModel() {
       if (url) window.open(url, "_blank", "noopener,noreferrer");
     },
     onError: () => {
-      error({ title: t("common.error"), description: t("entitlements.stripeConnect.refreshFailed") });
+      error({
+        title: t("common.error"),
+        description: t("entitlements.stripeConnect.refreshFailed"),
+      });
     },
   });
 
@@ -110,21 +111,24 @@ export function usePayoutsViewModel() {
       if (url) window.open(url, "_blank", "noopener,noreferrer");
     },
     onError: () => {
-      error({ title: t("common.error"), description: t("entitlements.stripeConnect.dashboardLinkFailed") });
+      error({
+        title: t("common.error"),
+        description: t("entitlements.stripeConnect.dashboardLinkFailed"),
+      });
     },
   });
 
   // ── Computed summary ───────────────────────────────────────────────────────
   const commissions = commissionsQuery.data?.items ?? [];
-  const totalCount  = commissionsQuery.data?.totalCount ?? 0;
-  const totalPages  = Math.ceil(totalCount / pageSize);
+  const totalCount = commissionsQuery.data?.totalCount ?? 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   // Lifetime summary from account entity
-  const lifetimeGross   = account?.totalPayoutsAmount ?? 0;
-  const lifetimePaid    = account?.totalPayoutsCount ?? 0;
-  const effectiveRate   = account?.effectiveCommissionRate ?? 0;
-  const lifetimeFee     = lifetimeGross * effectiveRate;
-  const lifetimeNet     = lifetimeGross - lifetimeFee;
+  const lifetimeGross = account?.totalPayoutsAmount ?? 0;
+  const lifetimePaid = account?.totalPayoutsCount ?? 0;
+  const effectiveRate = account?.effectiveCommissionRate ?? 0;
+  const lifetimeFee = lifetimeGross * effectiveRate;
+  const lifetimeNet = lifetimeGross - lifetimeFee;
 
   return {
     // Account
@@ -144,8 +148,7 @@ export function usePayoutsViewModel() {
 
     // Filters
     filter,
-    setFilter: (f: Partial<PayoutsFilter>) =>
-      setFilter((prev) => ({ ...prev, ...f })),
+    setFilter: (f: Partial<PayoutsFilter>) => setFilter((prev) => ({ ...prev, ...f })),
     clearFilter: () => setFilter({}),
 
     // Lifetime summary
@@ -156,11 +159,11 @@ export function usePayoutsViewModel() {
     effectiveRate,
 
     // Actions
-    onboard:          () => onboardMutation.mutate(),
-    isOnboarding:     onboardMutation.isPending,
-    refreshLink:      () => refreshLinkMutation.mutate(),
-    isRefreshing:     refreshLinkMutation.isPending,
-    openDashboard:    () => dashboardMutation.mutate(),
+    onboard: () => onboardMutation.mutate(),
+    isOnboarding: onboardMutation.isPending,
+    refreshLink: () => refreshLinkMutation.mutate(),
+    isRefreshing: refreshLinkMutation.isPending,
+    openDashboard: () => dashboardMutation.mutate(),
     isOpeningDashboard: dashboardMutation.isPending,
   };
 }

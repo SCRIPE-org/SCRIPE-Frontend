@@ -20,7 +20,7 @@ export function GridOverlay({ gridRows, show }: GridOverlayProps) {
     <div
       className="pointer-events-none absolute inset-0 z-10"
       style={{
-        display: 'grid',
+        display: "grid",
         gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
         gridTemplateRows: `repeat(${gridRows}, minmax(60px, 1fr))`,
       }}
@@ -36,7 +36,7 @@ export function GridOverlay({ gridRows, show }: GridOverlayProps) {
           }}
         >
           {/* Column number label */}
-          <span className="block text-center text-[8px] text-primary/20 font-mono pt-0.5">
+          <span className="block pt-0.5 text-center font-mono text-[8px] text-primary/20">
             {i + 1}
           </span>
         </div>

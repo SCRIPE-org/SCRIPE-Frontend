@@ -72,7 +72,7 @@ export function TenantPaymentGatewaysView() {
 
   if (vm.isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex min-h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
@@ -87,7 +87,7 @@ export function TenantPaymentGatewaysView() {
             <h1 className="text-2xl font-bold tracking-tight">
               {t("entitlements.tenantGateways.title")}
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="mt-1 text-muted-foreground">
               {t("entitlements.tenantGateways.subtitle")}
             </p>
           </div>
@@ -114,31 +114,36 @@ export function TenantPaymentGatewaysView() {
           <>
             <Separator />
             <div>
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="mb-4 text-lg font-semibold">
                 {t("entitlements.tenantGateways.addNew")}
               </h2>
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {vm.availableToAdd.map((def) => (
                   <Card
                     key={def.type}
-                    className="group cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md border-dashed"
+                    className="group cursor-pointer border-dashed transition-all duration-200 hover:border-primary/50 hover:shadow-md"
                     onClick={() => vm.openConfigureForm(def.type)}
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">
-                          <GatewayIcon name={def.icon} className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted transition-colors group-hover:bg-primary/10">
+                          <GatewayIcon
+                            name={def.icon}
+                            className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary"
+                          />
                         </div>
                         <div>
                           <CardTitle className="text-base">{def.label}</CardTitle>
-                          <CardDescription className="text-xs">
-                            {def.description}
-                          </CardDescription>
+                          <CardDescription className="text-xs">{def.description}</CardDescription>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <Button variant="outline" size="sm" className="w-full gap-2 group-hover:border-primary/50 group-hover:text-primary transition-colors">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-2 transition-colors group-hover:border-primary/50 group-hover:text-primary"
+                      >
                         <Plus className="h-4 w-4" />
                         {t("entitlements.tenantGateways.configure")}
                       </Button>
@@ -154,11 +159,9 @@ export function TenantPaymentGatewaysView() {
         {vm.gateways.length === 0 && vm.availableToAdd.length === 0 && (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <CreditCard className="h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-medium">
-                {t("entitlements.tenantGateways.noGateways")}
-              </h3>
-              <p className="text-muted-foreground mt-1 max-w-sm">
+              <CreditCard className="mb-4 h-12 w-12 text-muted-foreground/50" />
+              <h3 className="text-lg font-medium">{t("entitlements.tenantGateways.noGateways")}</h3>
+              <p className="mt-1 max-w-sm text-muted-foreground">
                 {t("entitlements.tenantGateways.noGatewaysDesc")}
               </p>
             </CardContent>
@@ -177,21 +180,19 @@ export function TenantPaymentGatewaysView() {
         {/* ── Delete Confirmation ── */}
         <AlertDialog
           open={deleteTarget !== null}
-          onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+          onOpenChange={(open) => {
+            if (!open) setDeleteTarget(null);
+          }}
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>
-                {t("entitlements.tenantGateways.removeTitle")}
-              </AlertDialogTitle>
+              <AlertDialogTitle>{t("entitlements.tenantGateways.removeTitle")}</AlertDialogTitle>
               <AlertDialogDescription>
                 {t("entitlements.tenantGateways.removeDesc")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>
-                {t("common.cancel")}
-              </AlertDialogCancel>
+              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={async () => {
                   if (deleteTarget) {
@@ -202,9 +203,9 @@ export function TenantPaymentGatewaysView() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 {vm.isRemoving ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="mr-2 h-4 w-4" />
                 )}
                 {t("common.remove")}
               </AlertDialogAction>
@@ -236,7 +237,7 @@ function GatewayCard({
     <Card className="relative overflow-hidden">
       {/* Status stripe */}
       <div
-        className={`absolute top-0 left-0 right-0 h-1 ${
+        className={`absolute left-0 right-0 top-0 h-1 ${
           gateway.isVerified && gateway.isEnabled
             ? "bg-emerald-500"
             : !gateway.isEnabled
@@ -252,15 +253,18 @@ function GatewayCard({
               <GatewayIcon name={gateway.iconName} className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 {gateway.gatewayLabel}
                 {gateway.isTestMode && (
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 uppercase font-mono tracking-wider">
+                  <Badge
+                    variant="outline"
+                    className="px-1.5 py-0 font-mono text-[10px] uppercase tracking-wider"
+                  >
                     Test
                   </Badge>
                 )}
               </CardTitle>
-              <CardDescription className="text-xs mt-0.5">
+              <CardDescription className="mt-0.5 text-xs">
                 {gateway.gateway}
                 {gateway.merchantId && ` · ${gateway.merchantId}`}
               </CardDescription>
@@ -277,7 +281,7 @@ function GatewayCard({
             }
             className={`gap-1 ${
               gateway.isVerified && gateway.isEnabled
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                 : ""
             }`}
           >
@@ -301,7 +305,7 @@ function GatewayCard({
         )}
 
         {/* Actions */}
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
@@ -433,11 +437,13 @@ function ConfigureDialog({
 
         {/* Wizard Progress */}
         {!formState.isEditing && (
-          <div className="flex items-center justify-between mb-4 px-2">
+          <div className="mb-4 flex items-center justify-between px-2">
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex flex-col items-center gap-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step === s ? "bg-primary text-primary-foreground" : step > s ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
-                  {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${step === s ? "bg-primary text-primary-foreground" : step > s ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}
+                >
+                  {step > s ? <CheckCircle2 className="h-4 w-4" /> : s}
                 </div>
               </div>
             ))}
@@ -446,10 +452,12 @@ function ConfigureDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {step === 1 && !formState.isEditing && (
-            <div className="space-y-4 text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg">
+            <div className="space-y-4 rounded-lg bg-muted/30 p-4 text-sm text-muted-foreground">
               <p>{t("entitlements.tenantGateways.wizard.intro", { gateway: gatewayDef.label })}</p>
-              <ol className="list-decimal pl-5 space-y-2">
-                <li>{t("entitlements.tenantGateways.wizard.step1", { gateway: gatewayDef.label })}</li>
+              <ol className="list-decimal space-y-2 pl-5">
+                <li>
+                  {t("entitlements.tenantGateways.wizard.step1", { gateway: gatewayDef.label })}
+                </li>
                 <li>{t("entitlements.tenantGateways.wizard.step2")}</li>
                 <li>{t("entitlements.tenantGateways.wizard.step3")}</li>
                 <li>{t("entitlements.tenantGateways.wizard.step4")}</li>
@@ -491,9 +499,7 @@ function ConfigureDialog({
                       }
                       placeholder={field.placeholder}
                       value={fields[field.key] ?? ""}
-                      onChange={(e) =>
-                        setFields((f) => ({ ...f, [field.key]: e.target.value }))
-                      }
+                      onChange={(e) => setFields((f) => ({ ...f, [field.key]: e.target.value }))}
                       required={!("optional" in field && field.optional)}
                       className="pr-10"
                     />
@@ -534,13 +540,15 @@ function ConfigureDialog({
           )}
 
           {step === 3 && !formState.isEditing && (
-            <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center space-y-4 py-6 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <ShieldCheck className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">{t("entitlements.tenantGateways.wizard.readyTitle")}</h3>
-                <p className="text-sm text-muted-foreground mt-1 max-w-[280px]">
+                <h3 className="text-lg font-semibold">
+                  {t("entitlements.tenantGateways.wizard.readyTitle")}
+                </h3>
+                <p className="mt-1 max-w-[280px] text-sm text-muted-foreground">
                   {t("entitlements.tenantGateways.wizard.readyDesc", { gateway: gatewayDef.label })}
                 </p>
               </div>
@@ -549,17 +557,24 @@ function ConfigureDialog({
 
           {/* Error Display */}
           {error && (
-            <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive mt-4">
-              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+            <div className="mt-4 flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <p>{error.message}</p>
             </div>
           )}
 
           <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => { onClose(); resetForm(); }}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                onClose();
+                resetForm();
+              }}
+            >
               {t("common.cancel")}
             </Button>
-            
+
             {!formState.isEditing && step > 1 && (
               <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
                 {t("common.back")}
@@ -582,12 +597,12 @@ function ConfigureDialog({
         </form>
 
         {/* Docs link */}
-        <div className="border-t pt-3 mt-2">
+        <div className="mt-2 border-t pt-3">
           <a
             href={`https://docs.${formState.gatewayType.toLowerCase()}.com`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-primary"
           >
             <ExternalLink className="h-3 w-3" />
             {t("entitlements.tenantGateways.docsLink", { gateway: gatewayDef.label })}

@@ -47,16 +47,14 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
             <Paintbrush className="h-5 w-5 text-primary" />
             {c("studioTitle")}
           </CardTitle>
-          <CardDescription>
-            {c("layoutDescription")}
-          </CardDescription>
+          <CardDescription>{c("layoutDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button asChild className="gap-2">
             <Link href="/customizer">
               <Paintbrush className="h-4 w-4" />
               {c("studioTitle")}
-              <ExternalLink className="h-3.5 w-3.5 ml-1" />
+              <ExternalLink className="ml-1 h-3.5 w-3.5" />
             </Link>
           </Button>
         </CardContent>
@@ -71,16 +69,24 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               {c("draftPending") || "Unpublished Draft"}
             </CardTitle>
             <CardDescription>
-              {c("draftPendingDesc") || "You have unsaved changes in the Customizer Studio that haven't been published yet."}
-              {" · "}{c("currentVersion") || "Current version"}: <Badge variant="outline">v{settings.settingsVersion}</Badge>
+              {c("draftPendingDesc") ||
+                "You have unsaved changes in the Customizer Studio that haven't been published yet."}
+              {" · "}
+              {c("currentVersion") || "Current version"}:{" "}
+              <Badge variant="outline">v{settings.settingsVersion}</Badge>
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button asChild variant="outline" size="sm" className="gap-2 border-amber-500/30 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="gap-2 border-amber-500/30 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400"
+            >
               <Link href="/customizer">
                 <Paintbrush className="h-4 w-4" />
                 {c("reviewDraft") || "Review & Publish Draft"}
-                <ExternalLink className="h-3.5 w-3.5 ml-1" />
+                <ExternalLink className="ml-1 h-3.5 w-3.5" />
               </Link>
             </Button>
           </CardContent>
@@ -95,7 +101,8 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
             {c("versionHistory")}
           </CardTitle>
           <CardDescription>
-            {c("versionHistoryDesc")} · {c("currentVersion")}: <Badge variant="outline">v{settings.settingsVersion}</Badge>
+            {c("versionHistoryDesc")} · {c("currentVersion")}:{" "}
+            <Badge variant="outline">v{settings.settingsVersion}</Badge>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -120,7 +127,10 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                   </thead>
                   <tbody>
                     {vm.auditLog.items.map((entry) => (
-                      <tr key={`${entry.versionNumber}-${entry.changedAt}`} className="border-b hover:bg-muted/30">
+                      <tr
+                        key={`${entry.versionNumber}-${entry.changedAt}`}
+                        className="border-b hover:bg-muted/30"
+                      >
                         <td className="p-3">
                           <Badge variant="outline">v{entry.versionNumber}</Badge>
                         </td>
@@ -128,15 +138,21 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                           <Badge
                             variant={entry.changeType === "publish" ? "default" : "secondary"}
                             className={
-                              entry.changeType === "rollback" ? "bg-blue-500" :
-                              entry.changeType === "draft-discard" ? "bg-orange-500" :
-                              entry.changeType.includes("safe-mode") ? "bg-purple-500" : ""
+                              entry.changeType === "rollback"
+                                ? "bg-blue-500"
+                                : entry.changeType === "draft-discard"
+                                  ? "bg-orange-500"
+                                  : entry.changeType.includes("safe-mode")
+                                    ? "bg-purple-500"
+                                    : ""
                             }
                           >
                             {entry.changeType}
                           </Badge>
                         </td>
-                        <td className="p-3 text-muted-foreground">{entry.changedByAdminName || "—"}</td>
+                        <td className="p-3 text-muted-foreground">
+                          {entry.changedByAdminName || "—"}
+                        </td>
                         <td className="p-3 text-muted-foreground">
                           {new Date(entry.changedAt).toLocaleString()}
                         </td>
@@ -147,7 +163,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                             onClick={() => vm.rollback(entry.versionNumber)}
                             disabled={vm.isRollingBack}
                           >
-                            <RotateCcw className="h-3 w-3 mr-1" />
+                            <RotateCcw className="mr-1 h-3 w-3" />
                             {c("restore")}
                           </Button>
                         </td>
@@ -157,7 +173,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                 </table>
               </div>
               {/* Pagination */}
-              <div className="flex items-center justify-between mt-4">
+              <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
                   {c("page")} {vm.auditPage} · {vm.auditLog.totalCount} {c("totalEntries")}
                 </p>
@@ -182,7 +198,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               </div>
             </>
           ) : (
-            <p className="text-muted-foreground py-4 text-center">{c("noHistory")}</p>
+            <p className="py-4 text-center text-muted-foreground">{c("noHistory")}</p>
           )}
         </CardContent>
       </Card>
@@ -197,76 +213,85 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
           <CardDescription>{c("adminPrefsDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-            <>
-              {/* Theme Selector */}
-              <div className="grid gap-2">
-                <Label>{c("theme")}</Label>
-                <Select
-                  value={vm.prefsForm.theme}
-                  onValueChange={(val) => vm.updatePrefsField("theme", val)}
-                >
-                  <SelectTrigger className="w-full sm:w-[250px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="dark">{c("themeDark")}</SelectItem>
-                    <SelectItem value="light">{c("themeLight")}</SelectItem>
-                    <SelectItem value="system">{c("themeSystem")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Sidebar Collapsed Toggle */}
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>{c("sidebarCollapsed")}</Label>
-                </div>
-                <Switch
-                  checked={vm.prefsForm.sidebarCollapsed}
-                  onCheckedChange={(val) => vm.updatePrefsField("sidebarCollapsed", val)}
-                />
-              </div>
-
-              {/* Language Selector */}
-              <div className="grid gap-2">
-                <Label>{c("language")}</Label>
-                <Select
-                  value={vm.prefsForm.language}
-                  onValueChange={(val) => vm.updatePrefsField("language", val)}
-                >
-                  <SelectTrigger className="w-full sm:w-[250px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">{c("langEn")}</SelectItem>
-                    <SelectItem value="ar">{c("langAr")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Info about how prefs work */}
-              <div className="text-xs text-muted-foreground border-t pt-3">
-                <p>{c("prefsInfo")}</p>
-              </div>
-
-              {/* Save Button with Success Animation */}
-              <Button
-                onClick={vm.saveAdminPrefs}
-                disabled={(!vm.isPrefsChanged && !vm.isSaveSuccess)}
-                loading={vm.isSavingAdminPrefs}
-                size="sm"
-                className={vm.isSaveSuccess ? "bg-green-600 hover:bg-green-600 pointer-events-none transition-colors duration-300" : "transition-colors duration-300"}
+          <>
+            {/* Theme Selector */}
+            <div className="grid gap-2">
+              <Label>{c("theme")}</Label>
+              <Select
+                value={vm.prefsForm.theme}
+                onValueChange={(val) => vm.updatePrefsField("theme", val)}
               >
-                {!vm.isSavingAdminPrefs && (
-                  vm.isSaveSuccess ? (
-                    <><CheckCircle2 className="mr-2 h-4 w-4" />{c("prefsSaved")}</>
-                  ) : (
-                    <><Settings className="mr-2 h-4 w-4" />{c("savePreferences")}</>
-                  )
-                )}
-                {vm.isSavingAdminPrefs && c("savingPreferences")}
-              </Button>
-            </>
+                <SelectTrigger className="w-full sm:w-[250px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="dark">{c("themeDark")}</SelectItem>
+                  <SelectItem value="light">{c("themeLight")}</SelectItem>
+                  <SelectItem value="system">{c("themeSystem")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Sidebar Collapsed Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>{c("sidebarCollapsed")}</Label>
+              </div>
+              <Switch
+                checked={vm.prefsForm.sidebarCollapsed}
+                onCheckedChange={(val) => vm.updatePrefsField("sidebarCollapsed", val)}
+              />
+            </div>
+
+            {/* Language Selector */}
+            <div className="grid gap-2">
+              <Label>{c("language")}</Label>
+              <Select
+                value={vm.prefsForm.language}
+                onValueChange={(val) => vm.updatePrefsField("language", val)}
+              >
+                <SelectTrigger className="w-full sm:w-[250px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">{c("langEn")}</SelectItem>
+                  <SelectItem value="ar">{c("langAr")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Info about how prefs work */}
+            <div className="border-t pt-3 text-xs text-muted-foreground">
+              <p>{c("prefsInfo")}</p>
+            </div>
+
+            {/* Save Button with Success Animation */}
+            <Button
+              onClick={vm.saveAdminPrefs}
+              disabled={!vm.isPrefsChanged && !vm.isSaveSuccess}
+              loading={vm.isSavingAdminPrefs}
+              size="sm"
+              className={
+                vm.isSaveSuccess
+                  ? "pointer-events-none bg-green-600 transition-colors duration-300 hover:bg-green-600"
+                  : "transition-colors duration-300"
+              }
+            >
+              {!vm.isSavingAdminPrefs &&
+                (vm.isSaveSuccess ? (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {c("prefsSaved")}
+                  </>
+                ) : (
+                  <>
+                    <Settings className="mr-2 h-4 w-4" />
+                    {c("savePreferences")}
+                  </>
+                ))}
+              {vm.isSavingAdminPrefs && c("savingPreferences")}
+            </Button>
+          </>
         </CardContent>
       </Card>
 
@@ -284,7 +309,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
             {vm.isSystemSettingsLoading ? (
               <Skeleton className="h-[100px] w-full" />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <SystemSettingCard
                   label={c("defaultTheme")}
                   value={vm.systemSettings?.defaultThemeJson}
@@ -310,7 +335,15 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
 }
 
 /** Renders a system setting value or a friendly "not configured" message */
-function SystemSettingCard({ label, value, emptyText }: { label: string; value?: string | null; emptyText: string }) {
+function SystemSettingCard({
+  label,
+  value,
+  emptyText,
+}: {
+  label: string;
+  value?: string | null;
+  emptyText: string;
+}) {
   const displayValue = (() => {
     if (!value) return null;
     try {
@@ -322,13 +355,11 @@ function SystemSettingCard({ label, value, emptyText }: { label: string; value?:
 
   return (
     <div>
-      <p className="text-sm font-medium mb-1">{label}</p>
+      <p className="mb-1 text-sm font-medium">{label}</p>
       {displayValue ? (
-        <pre className="text-xs bg-muted p-2 rounded max-h-32 overflow-auto">
-          {displayValue}
-        </pre>
+        <pre className="max-h-32 overflow-auto rounded bg-muted p-2 text-xs">{displayValue}</pre>
       ) : (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground border border-dashed border-border rounded p-3">
+        <div className="flex items-center gap-2 rounded border border-dashed border-border p-3 text-xs text-muted-foreground">
           <Info className="h-3 w-3 shrink-0" />
           {emptyText}
         </div>

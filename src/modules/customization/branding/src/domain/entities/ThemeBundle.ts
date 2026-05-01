@@ -76,9 +76,21 @@ export const BUNDLE_TYPE_CONFIG: Record<BundleType, BundleTypeConfig> = {
 export const LAYER_INFO: Record<BundleLayer, { labelKey: string; icon: string; color: string }> = {
   login: { labelKey: "studio.bundles.layers.login", icon: "LogIn", color: "#6366f1" },
   authPages: { labelKey: "studio.bundles.layers.authPages", icon: "FileKey2", color: "#8b5cf6" },
-  dashboard: { labelKey: "studio.bundles.layers.dashboard", icon: "LayoutDashboard", color: "#06b6d4" },
-  loginBuilder: { labelKey: "studio.bundles.layers.loginBuilder", icon: "Blocks", color: "#10b981" },
-  dashboardBuilder: { labelKey: "studio.bundles.layers.dashboardBuilder", icon: "Grid3X3", color: "#f59e0b" },
+  dashboard: {
+    labelKey: "studio.bundles.layers.dashboard",
+    icon: "LayoutDashboard",
+    color: "#06b6d4",
+  },
+  loginBuilder: {
+    labelKey: "studio.bundles.layers.loginBuilder",
+    icon: "Blocks",
+    color: "#10b981",
+  },
+  dashboardBuilder: {
+    labelKey: "studio.bundles.layers.dashboardBuilder",
+    icon: "Grid3X3",
+    color: "#f59e0b",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -116,63 +128,121 @@ export class ThemeBundle {
   constructor(private readonly data: ThemeBundleData) {}
 
   // ── Identity ──
-  get id() { return this.data.id; }
-  get slug() { return this.data.slug; }
-  get name() { return this.data.name; }
-  get description() { return this.data.description; }
-  get bundleType() { return this.data.bundleType; }
-  get contents() { return this.data.contents; }
+  get id() {
+    return this.data.id;
+  }
+  get slug() {
+    return this.data.slug;
+  }
+  get name() {
+    return this.data.name;
+  }
+  get description() {
+    return this.data.description;
+  }
+  get bundleType() {
+    return this.data.bundleType;
+  }
+  get contents() {
+    return this.data.contents;
+  }
 
   // ── Display ──
-  get accentColor() { return this.data.accentColor; }
-  get thumbnailUrl() { return this.data.thumbnailUrl; }
-  get screenshots() { return this.data.screenshots; }
-  get tags() { return this.data.tags; }
+  get accentColor() {
+    return this.data.accentColor;
+  }
+  get thumbnailUrl() {
+    return this.data.thumbnailUrl;
+  }
+  get screenshots() {
+    return this.data.screenshots;
+  }
+  get tags() {
+    return this.data.tags;
+  }
 
   // ── Metadata ──
-  get authorName() { return this.data.authorName; }
-  get version() { return this.data.version; }
-  get publishedAt() { return this.data.publishedAt; }
+  get authorName() {
+    return this.data.authorName;
+  }
+  get version() {
+    return this.data.version;
+  }
+  get publishedAt() {
+    return this.data.publishedAt;
+  }
 
   // ── Pricing & Access ──
-  get isFree() { return this.data.isFree; }
-  get isSystem() { return this.data.isSystem; }
-  get isFeatured() { return this.data.isFeatured; }
-  get minTierLevel() { return this.data.minTierLevel; }
+  get isFree() {
+    return this.data.isFree;
+  }
+  get isSystem() {
+    return this.data.isSystem;
+  }
+  get isFeatured() {
+    return this.data.isFeatured;
+  }
+  get minTierLevel() {
+    return this.data.minTierLevel;
+  }
 
   // ── User State ──
-  get isFavorited() { return this.data.isFavorited; }
-  get isApplied() { return this.data.isApplied; }
-  get isAvailable() { return this.data.isAvailable; }
+  get isFavorited() {
+    return this.data.isFavorited;
+  }
+  get isApplied() {
+    return this.data.isApplied;
+  }
+  get isAvailable() {
+    return this.data.isAvailable;
+  }
 
   // ── Computed Properties ──
 
   /** Bundle type configuration from catalog */
-  get typeConfig(): BundleTypeConfig { return BUNDLE_TYPE_CONFIG[this.data.bundleType]; }
+  get typeConfig(): BundleTypeConfig {
+    return BUNDLE_TYPE_CONFIG[this.data.bundleType];
+  }
 
   /** Layers included in this bundle */
-  get includedLayers(): BundleLayer[] { return this.typeConfig.layers; }
+  get includedLayers(): BundleLayer[] {
+    return this.typeConfig.layers;
+  }
 
   /** Number of layers in this bundle */
-  get layerCount(): number { return this.includedLayers.length; }
+  get layerCount(): number {
+    return this.includedLayers.length;
+  }
 
   /** Does this bundle include login theme? */
-  get includesLogin(): boolean { return this.includedLayers.includes("login"); }
+  get includesLogin(): boolean {
+    return this.includedLayers.includes("login");
+  }
 
   /** Does this bundle include auth page overrides? */
-  get includesAuthPages(): boolean { return this.includedLayers.includes("authPages"); }
+  get includesAuthPages(): boolean {
+    return this.includedLayers.includes("authPages");
+  }
 
   /** Does this bundle include dashboard theme? */
-  get includesDashboard(): boolean { return this.includedLayers.includes("dashboard"); }
+  get includesDashboard(): boolean {
+    return this.includedLayers.includes("dashboard");
+  }
 
   /** Does this bundle include login builder canvas? */
-  get includesLoginBuilder(): boolean { return this.includedLayers.includes("loginBuilder"); }
+  get includesLoginBuilder(): boolean {
+    return this.includedLayers.includes("loginBuilder");
+  }
 
   /** Does this bundle include dashboard builder canvas? */
-  get includesDashboardBuilder(): boolean { return this.includedLayers.includes("dashboardBuilder"); }
+  get includesDashboardBuilder(): boolean {
+    return this.includedLayers.includes("dashboardBuilder");
+  }
 
   /** Is this a full bundle with everything? */
-  get isComplete(): boolean { return this.data.bundleType === "full-bundle"; }
+  get isComplete(): boolean {
+    return this.data.bundleType === "full-bundle";
+  }
 
   /** Immutable update */
   copyWith(updates: Partial<ThemeBundleData>): ThemeBundle {

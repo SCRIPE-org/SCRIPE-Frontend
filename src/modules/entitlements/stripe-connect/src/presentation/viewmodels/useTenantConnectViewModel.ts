@@ -143,7 +143,7 @@ export function useTenantConnectViewModel() {
     account,
     isLoading: statusQuery.isLoading,
     isError: statusQuery.isError,
-    
+
     // Actions
     onboard: () => onboardMutation.mutate(),
     isOnboarding: onboardMutation.isPending,

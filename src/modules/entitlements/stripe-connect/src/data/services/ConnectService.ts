@@ -181,14 +181,17 @@ export class ConnectService implements IConnectService {
     fromDate?: string;
     toDate?: string;
   }): Promise<TenantTransactionsResponseModel> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.TRANSACTIONS, {
-      page: params.page,
-      pageSize: params.pageSize,
-      status: params.status,
-      type: params.type,
-      fromDate: params.fromDate,
-      toDate: params.toDate,
-    });
+    const url = buildUrl(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.TRANSACTIONS,
+      {
+        page: params.page,
+        pageSize: params.pageSize,
+        status: params.status,
+        type: params.type,
+        fromDate: params.fromDate,
+        toDate: params.toDate,
+      }
+    );
     return this.api.get<TenantTransactionsResponseModel>(url);
   }
 

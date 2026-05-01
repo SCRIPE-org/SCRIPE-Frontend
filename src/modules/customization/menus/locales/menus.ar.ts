@@ -47,7 +47,7 @@ export const ar = {
     addChildTitle: "إضافة عنصر فرعي",
     addChildDesc: "إضافة عنصر فرعي تحت",
     deleteTitle: "حذف عنصر القائمة",
-    deleteDesc: "هل أنت متأكد من حذف \"{{name}}\"؟ سيتم أيضاً حذف جميع العناصر الفرعية.",
+    deleteDesc: 'هل أنت متأكد من حذف "{{name}}"؟ سيتم أيضاً حذف جميع العناصر الفرعية.',
     addChild: "إضافة فرعي",
     createSuccess: "تم إنشاء عنصر القائمة",
     createSuccessDesc: "تم إنشاء عنصر القائمة بنجاح.",
@@ -86,7 +86,8 @@ export const ar = {
     hiddenOverride: "هذا العنصر مخفي",
     removeOverride: "إزالة التخصيص",
     removeOverrideTitle: "إزالة التخصيص",
-    removeOverrideDesc: "هل أنت متأكد من إزالة هذا التخصيص؟ سيعود عنصر القائمة إلى إعداداته الافتراضية.",
+    removeOverrideDesc:
+      "هل أنت متأكد من إزالة هذا التخصيص؟ سيعود عنصر القائمة إلى إعداداته الافتراضية.",
     customizeItem: "تخصيص",
     customizeDesc: "تخصيص كيفية ظهور عنصر القائمة هذا:",
     overrideOrder: "ترتيب العرض",
@@ -103,5 +104,7 @@ export const ar = {
     backToManagement: "Back to Menu Management",
     allOverridesReset: "All customizations have been removed.",
     overrideRemoved: "Customization removed.",
+    noPermission: "[مفقود] No Permission",
+    noCustomizePermission: "[مفقود] No Customize Permission",
   },
 };

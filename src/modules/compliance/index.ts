@@ -7,11 +7,11 @@
 
 // ── Sub-module views ────────────────────────────────────────────────────────
 export { ComplianceDashboardView } from "./dashboard";
-export { DsrView }        from "./dsr";
-export { ConsentView }    from "./consent";
-export { RetentionView }  from "./retention";
-export { InventoryView }  from "./inventory";
-export { ReportsView }    from "./reports";
+export { DsrView } from "./dsr";
+export { ConsentView } from "./consent";
+export { RetentionView } from "./retention";
+export { InventoryView } from "./inventory";
+export { ReportsView } from "./reports";
 
 // ── DI Container ────────────────────────────────────────────────────────────
 export { complianceContainer, getComplianceContainer } from "./di";

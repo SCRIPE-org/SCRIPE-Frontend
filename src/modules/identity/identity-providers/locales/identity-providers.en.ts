@@ -52,14 +52,17 @@ export const en = {
     samlSection: "SAML Configuration",
     samlSectionDesc: "SAML 2.0 connection settings",
     samlComingSoon: "SAML support is coming soon",
-    samlComingSoonDesc: "Integration with SAML 2.0 Identity Providers (like Okta, ADFS) is currently under development and will be available in a future update.",
+    samlComingSoonDesc:
+      "Integration with SAML 2.0 Identity Providers (like Okta, ADFS) is currently under development and will be available in a future update.",
     appearanceSection: "Appearance",
     appearanceSectionDesc: "Customize how this provider appears on the login page",
     accessSection: "Access Control",
     accessSectionDesc: "Control who can use this provider to sign in",
     claimMappingsSection: "Claim Mappings",
-    claimMappingsSectionDesc: "Map external claims to NEXORA user attributes (JSON key †’ value pairs)",
-    claimMappingsHelp: "Maps external IdP claims to internal NEXORA attributes. Keys are NEXORA fields, values are the IdP claim URIs.",
+    claimMappingsSectionDesc:
+      "Map external claims to NEXORA user attributes (JSON key †’ value pairs)",
+    claimMappingsHelp:
+      "Maps external IdP claims to internal NEXORA attributes. Keys are NEXORA fields, values are the IdP claim URIs.",
     invalidJson: "Invalid JSON format",
     // Actions
     test: "Test",
@@ -77,10 +80,12 @@ export const en = {
     testSuccess: "Connection Successful",
     testFailed: "Connection Failed",
     // Danger zone
-    deleteWarning: "Deleting this provider will permanently remove it. Users who signed in via this provider will lose SSO access.",
+    deleteWarning:
+      "Deleting this provider will permanently remove it. Users who signed in via this provider will lose SSO access.",
     deleteButton: "Delete Provider",
     deleteConfirmTitle: "Delete Identity Provider",
-    deleteConfirmDesc: "This will permanently remove this identity provider. Users linked via this provider will lose SSO access. This action cannot be undone.",
+    deleteConfirmDesc:
+      "This will permanently remove this identity provider. Users linked via this provider will lose SSO access. This action cannot be undone.",
     endpointsSection: "Explicit Endpoints",
     endpointsSectionDesc: "Optional endpoints (overrides discovery)",
 
@@ -90,6 +95,7 @@ export const en = {
     samlIdpEntityId: "IdP Entity ID",
     samlSsoUrl: "Single Sign-On Service URL",
     samlCertificate: "IdP Public Certificate (Base64/PEM)",
-    samlCertificatePlaceholder: "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
+    samlCertificatePlaceholder:
+      "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
   },
 };

@@ -7,7 +7,8 @@ export const ar = {
     crudSystem: {
       title: "نظام CRUD",
       description: "نظام شامل يدير الواجهات وإنشاء/تعديل الجداول واسترجاع البيانات بفعالية.",
-      intro: "يوفر نظام CRUD حلاً شاملاً لبناء واجهات قائمة البيانات. يعتمد النظام على useCrudViewModel للتحكم التام في إدارة العمليات.",
+      intro:
+        "يوفر نظام CRUD حلاً شاملاً لبناء واجهات قائمة البيانات. يعتمد النظام على useCrudViewModel للتحكم التام في إدارة العمليات.",
       architectureTitle: "نظرة عامة على البنية",
       viewModelTitle: "خطاف useCrudViewModel",
       viewModelIntro: "يعمل كمنسق متكامل لحالات الجدول، الترحيل، المعالجات وغيرها.",
@@ -47,8 +48,10 @@ export const ar = {
     },
     localization: {
       title: "الترجمة (i18n)",
-      description: "LanguageProvider، ترجمات الوحدات، خطاف useModuleLocales، وظيفة t()، دعم RTL، وإضافة مفاتيح ترجمة جديدة.",
-      intro: "يستخدم NEXORA نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. كل وحدة تملك ترجماتها في مجلد locales/ خاص بها، يتم تحميلها كسولاً عبر خطاف useModuleLocales(). يدعم العربية (RTL) والإنجليزية (LTR) مع تبديل تلقائي للاتجاه والخطوط وحفظ التفضيلات في localStorage.",
+      description:
+        "LanguageProvider، ترجمات الوحدات، خطاف useModuleLocales، وظيفة t()، دعم RTL، وإضافة مفاتيح ترجمة جديدة.",
+      intro:
+        "يستخدم NEXORA نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. كل وحدة تملك ترجماتها في مجلد locales/ خاص بها، يتم تحميلها كسولاً عبر خطاف useModuleLocales(). يدعم العربية (RTL) والإنجليزية (LTR) مع تبديل تلقائي للاتجاه والخطوط وحفظ التفضيلات في localStorage.",
       architectureTitle: "البنية",
       dictionaryTitle: "هيكل القواميس",
       tFunctionTitle: "استخدام وظيفة t()",
@@ -56,13 +59,17 @@ export const ar = {
       rtlIntro: "تبديل تلقائي كامل للصفحات، الخطوط والاتجاهات.",
       addingKeysTitle: "إضافة مفاتيح ترجمة جديدة",
       step1Title: "1. إنشاء أو تحديث ترجمة الوحدة",
-      step1Desc: "أضف المفاتيح الجديدة في ملفات locales/{module}.en.ts و {module}.ar.ts الخاصة بالوحدة. أضف إلى core/locales/ فقط إذا كان المفتاح مشتركاً حقاً (تحقق، تنقل، واجهة مشتركة).",
+      step1Desc:
+        "أضف المفاتيح الجديدة في ملفات locales/{module}.en.ts و {module}.ar.ts الخاصة بالوحدة. أضف إلى core/locales/ فقط إذا كان المفتاح مشتركاً حقاً (تحقق، تنقل، واجهة مشتركة).",
       step2Title: "2. التسجيل عبر useModuleLocales",
-      step2Desc: "في مكون العرض، استدعِ useModuleLocales(() => import('../../../locales'), 'module-name') قبل useI18n() لتحميل ترجمات الوحدة كسولاً.",
+      step2Desc:
+        "في مكون العرض، استدعِ useModuleLocales(() => import('../../../locales'), 'module-name') قبل useI18n() لتحميل ترجمات الوحدة كسولاً.",
       step3Title: "3. استخدام t() مع مساحة اسم الوحدة",
-      step3Desc: "استدعِ t('moduleName.keyPath') باستخدام مساحة الاسم من ملف الترجمة. للمتغيرات، استخدم صيغة {{variable}} ومرر المتغيرات كمعامل ثانٍ.",
+      step3Desc:
+        "استدعِ t('moduleName.keyPath') باستخدام مساحة الاسم من ملف الترجمة. للمتغيرات، استخدم صيغة {{variable}} ومرر المتغيرات كمعامل ثانٍ.",
       noLocaleRoutes: "لا يتم استخدام طرق توجيه الملفات لترجمة اللغات للحفاظ على أداء الواجهة.",
-      moduleLocaleNote: "أداة nexora CLI تنشئ مجلد locales/ تلقائياً عند إنشاء وحدات جديدة عبر nexora new-module. كل ملف ترجمة يحتوي على ترجمات EN و AR، مجمعة في حزمة واحدة للتبديل الفوري بين اللغات.",
+      moduleLocaleNote:
+        "أداة nexora CLI تنشئ مجلد locales/ تلقائياً عند إنشاء وحدات جديدة عبر nexora new-module. كل ملف ترجمة يحتوي على ترجمات EN و AR، مجمعة في حزمة واحدة للتبديل الفوري بين اللغات.",
     },
     formValidation: {
       title: "التحقق من النماذج",

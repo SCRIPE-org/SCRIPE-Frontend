@@ -78,7 +78,8 @@ export function useUserFeatures(): UseUserFeatureResult {
     const feat = features[key];
     if (!feat) return false;
     if (feat.valueType === "Boolean") return feat.value === "true";
-    if (feat.valueType === "Numeric") return parseInt(feat.value) > 0 || parseInt(feat.value) === -1;
+    if (feat.valueType === "Numeric")
+      return parseInt(feat.value) > 0 || parseInt(feat.value) === -1;
     return feat.value !== "";
   };
 

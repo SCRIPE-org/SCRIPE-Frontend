@@ -22,8 +22,7 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
 export const themeKeys = {
   all: ["themes-management"] as const,
-  list: (filters: Record<string, unknown>) =>
-    [...themeKeys.all, "list", filters] as const,
+  list: (filters: Record<string, unknown>) => [...themeKeys.all, "list", filters] as const,
   detail: (slug: string) => [...themeKeys.all, "detail", slug] as const,
 };
 
@@ -34,43 +33,40 @@ export function useThemeManagementViewModel() {
   const { success, error: toastError } = useEnhancedToast();
 
   // ============ Core CRUD ViewModel ============
-  const vm = useCrudViewModel<ThemeCard, any, any>(
-    [...themeKeys.all],
-    {
-      getAll: async (params) => {
-        const res = await themeMarketplaceRepository.getThemes({
-          page: params.page,
+  const vm = useCrudViewModel<ThemeCard, any, any>([...themeKeys.all], {
+    getAll: async (params) => {
+      const res = await themeMarketplaceRepository.getThemes({
+        page: params.page,
+        pageSize: params.pageSize,
+        filters: {
+          search: params.search || "",
+          category: "",
+          sortBy: "name",
+        },
+      });
+      return {
+        items: res.items || [],
+        pagination: {
+          itemsCount: res.totalCount,
           pageSize: params.pageSize,
-          filters: {
-            search: params.search || "",
-            category: "",
-            sortBy: "name",
-          },
+          page: params.page,
+          pagesCount: Math.ceil(res.totalCount / params.pageSize),
+        },
+      };
+    },
+    delete: async (id: string) => {
+      const theme = vm.items.find((t) => t.id === id);
+      if (theme) {
+        await themeMarketplaceRepository.delete(theme.slug);
+        success({
+          title: t("studio.themeManagement.toast.deleted") || "Theme Deleted",
+          description:
+            t("studio.themeManagement.toast.deletedDesc") ||
+            "The theme has been removed from the marketplace.",
         });
-        return {
-          items: res.items || [],
-          pagination: {
-            itemsCount: res.totalCount,
-            pageSize: params.pageSize,
-            page: params.page,
-            pagesCount: Math.ceil(res.totalCount / params.pageSize),
-          },
-        };
-      },
-      delete: async (id: string) => {
-        const theme = vm.items.find((t) => t.id === id);
-        if (theme) {
-          await themeMarketplaceRepository.delete(theme.slug);
-          success({
-            title: t("studio.themeManagement.toast.deleted") || "Theme Deleted",
-            description:
-              t("studio.themeManagement.toast.deletedDesc") ||
-              "The theme has been removed from the marketplace.",
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   // ============ Duplicate Mutation ============
   const duplicateMutation = useMutation({
@@ -81,8 +77,9 @@ export function useThemeManagementViewModel() {
       success({
         title: t("studio.themeManagement.toast.duplicated") || "Theme Duplicated",
         description:
-          (t("studio.themeManagement.toast.duplicatedDesc", { name: variables.newName }) as string) ||
-          `Created "${variables.newName}" as a copy.`,
+          (t("studio.themeManagement.toast.duplicatedDesc", {
+            name: variables.newName,
+          }) as string) || `Created "${variables.newName}" as a copy.`,
       });
     },
     onError: (err: Error) => {

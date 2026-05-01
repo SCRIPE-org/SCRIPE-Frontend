@@ -6,16 +6,22 @@ export const zh = {
   commercial: {
     platformArchitecture: {
       title: "平台架构",
-      description: "探索专为大规模企业设计的 NEXORA 的整洁架构、MediatR 管道以及不可穿透的模块边界在结构上的完美性。",
-      intro: "体验超强水平扩展性与纯粹代码组织的完美融合。NEXORA 架构是一个精心设计的工程基础，能够经受数十年的企业演进。",
+      description:
+        "探索专为大规模企业设计的 NEXORA 的整洁架构、MediatR 管道以及不可穿透的模块边界在结构上的完美性。",
+      intro:
+        "体验超强水平扩展性与纯粹代码组织的完美融合。NEXORA 架构是一个精心设计的工程基础，能够经受数十年的企业演进。",
       modularTitle: "演进式模块化单体",
-      modularContent: "从极简的运维起步，动态演进至深度的微服务复杂性，而无需重写您的核心基石。NEXORA 绝对的模块隔离保证了当您从快速 MVP 扩展到全球分布式舰队时零摩擦。",
+      modularContent:
+        "从极简的运维起步，动态演进至深度的微服务复杂性，而无需重写您的核心基石。NEXORA 绝对的模块隔离保证了当您从快速 MVP 扩展到全球分布式舰队时零摩擦。",
       cleanTitle: "不妥协的整洁架构",
-      cleanContent: "您的专有业务逻辑坐镇于受保护的核心。通过在数学上将领域层与基础设施和 HTTP 传输层隔离，我们保证您的核心知识产权永远保持纯粹可读、技术无关且易于测试。",
+      cleanContent:
+        "您的专有业务逻辑坐镇于受保护的核心。通过在数学上将领域层与基础设施和 HTTP 传输层隔离，我们保证您的核心知识产权永远保持纯粹可读、技术无关且易于测试。",
       boundariesTitle: "不可渗透的模块边界",
-      boundariesContent: "跨模块的命名空间污染在物理上是不可能的。NEXORA 通过严格的工具和自动化的 CI 验证来强制执行明确的模块隔离，确保庞大的开发团队能够完全自主运作且不会出现代码合并冲突。",
+      boundariesContent:
+        "跨模块的命名空间污染在物理上是不可能的。NEXORA 通过严格的工具和自动化的 CI 验证来强制执行明确的模块隔离，确保庞大的开发团队能够完全自主运作且不会出现代码合并冲突。",
       cqrsTitle: "久经考验的 CQRS 事件管道",
-      cqrsContent: "彻底摧毁数据库死锁。通过 MediatR 管道明确分离命令（写）和查询（读）职责，NEXORA 允许您独立地扩展、缓存和优化激进的数据摄取流，而完全不会影响亚秒级的读取延迟。",
+      cqrsContent:
+        "彻底摧毁数据库死锁。通过 MediatR 管道明确分离命令（写）和查询（读）职责，NEXORA 允许您独立地扩展、缓存和优化激进的数据摄取流，而完全不会影响亚秒级的读取延迟。",
       deploymentTitle: "无摩擦的部署拓扑",
       monolith: "单体优势",
       gateway: "网关敏捷性",
@@ -72,10 +78,12 @@ export const zh = {
     cleanArchitecture: {
       title: "整洁架构 (Clean Architecture)",
       description: "深入探讨驱动 NEXORA 核心引擎的数学隔离依赖关系、DDD 原语和 SOLID 模式。",
-      intro: "将混乱的依赖关系转化为深刻的组织清晰度。NEXORA 的整洁架构实现在物理层面上防止了结构衰退，确保您的代码库在数十年持续迭代中保持纯净、可读且可无限扩展。",
+      intro:
+        "将混乱的依赖关系转化为深刻的组织清晰度。NEXORA 的整洁架构实现在物理层面上防止了结构衰退，确保您的代码库在数十年持续迭代中保持纯净、可读且可无限扩展。",
       layersTitle: "严格的架构分层",
       cqrsTitle: "高性能 CQRS 操作",
-      cqrsContent: "打破事务瓶颈。通过 MediatR 管道明确分离命令 (写) 和查询 (读) 职责，NEXORA 允许您独立扩展、缓存和优化大量数据摄入流，而不会影响亚秒级的读取延迟。",
+      cqrsContent:
+        "打破事务瓶颈。通过 MediatR 管道明确分离命令 (写) 和查询 (读) 职责，NEXORA 允许您独立扩展、缓存和优化大量数据摄入流，而不会影响亚秒级的读取延迟。",
       solidTitle: "数学上可证明的 SOLID 设计",
       singleResp: "单一职责 (Single Responsibility)",
       singleRespDesc: "每个类精确地编排一项操作，彻底消除了全能类 (god-classes) 和合并冲突。",
@@ -86,9 +94,11 @@ export const zh = {
       interfaceSeg: "接口隔离 (Interface Segregation)",
       interfaceSegDesc: "高度聚焦的契约确保组件仅依赖于它们运行绝对需要的精确方法。",
       dddTitle: "领域驱动设计 (DDD) 对等",
-      dddContent: "弥合技术实施和业务战略之间的鸿沟。我们强大的 DDD 原语——富实体 (Rich Entities)、值对象 (Value Objects) 和领域事件 (Domain Events)——确保您的代码库物理上镜像您企业的复杂运营现实，使系统能够立即被领域专家和工程师理解。",
+      dddContent:
+        "弥合技术实施和业务战略之间的鸿沟。我们强大的 DDD 原语——富实体 (Rich Entities)、值对象 (Value Objects) 和领域事件 (Domain Events)——确保您的代码库物理上镜像您企业的复杂运营现实，使系统能够立即被领域专家和工程师理解。",
       frontendTitle: "通过 SOLID 实现前端确定性",
-      frontendContent: "NEXORA 将后端纪律直接延伸到了 React 生态系统中。通过严格分离无状态、快速迭代的 UI 视图 (Views) 和逻辑繁重的 ViewModels，我们保证了绝对的 UI 可预测性，并永久消除了不稳定的渲染行为。",
+      frontendContent:
+        "NEXORA 将后端纪律直接延伸到了 React 生态系统中。通过严格分离无状态、快速迭代的 UI 视图 (Views) 和逻辑繁重的 ViewModels，我们保证了绝对的 UI 可预测性，并永久消除了不稳定的渲染行为。",
       benefitsTitle: "整洁设计的指数级投资回报率",
       tblLayersHeader1: "层级",
       tblLayersHeader2: "职责",
@@ -139,15 +149,20 @@ export const zh = {
     deploymentModes: {
       comparisonTitle: "部署矩阵",
       description: "从单一代码库提供三种部署拓扑：单体架构、分布式网关和独立的微服务架构。",
-      gatewayContent: "随着您的组织规模扩大，网关拓扑引入了 Ocelot 或 YARP，以将前端与后端服务解耦。这提供了集中的 SSL 终止、统一的速率限制和请求路由，而无需更改任何内部模块逻辑。",
+      gatewayContent:
+        "随着您的组织规模扩大，网关拓扑引入了 Ocelot 或 YARP，以将前端与后端服务解耦。这提供了集中的 SSL 终止、统一的速率限制和请求路由，而无需更改任何内部模块逻辑。",
       gatewayTitle: "分布式网关 (Distributed Gateway)",
-      intro: "NEXORA 的设计初衷是为了解决分布式系统中最棘手的问题：决定何时进行拆分。我们的架构原生支持来自完全相同代码库的三种部署模式，允许您从简单起步，并进行无限扩展，而无需承担大规模重构的成本。",
+      intro:
+        "NEXORA 的设计初衷是为了解决分布式系统中最棘手的问题：决定何时进行拆分。我们的架构原生支持来自完全相同代码库的三种部署模式，允许您从简单起步，并进行无限扩展，而无需承担大规模重构的成本。",
       keyPoint: "架构保证",
-      microContent: "当各个模块需要截然不同的缩放配置文件时（例如，消息传递模块处理数百万个 webhooks，而人力资源模块流量较低），NEXORA 允许您将限界上下文部署为完全自主的微服务。每个微服务都管理自己的部署管道和数据库。",
+      microContent:
+        "当各个模块需要截然不同的缩放配置文件时（例如，消息传递模块处理数百万个 webhooks，而人力资源模块流量较低），NEXORA 允许您将限界上下文部署为完全自主的微服务。每个微服务都管理自己的部署管道和数据库。",
       microTitle: "自主微服务",
-      migrationContent: "部署模式之间的转换非常流畅。从单体迁移到微服务不需要重写任何逻辑——只需重新配置 DI 容器，使用我们预建的抽象启动消息代理 (RabbitMQ/Kafka)，并将模块部署到独立的 Docker 容器中。",
+      migrationContent:
+        "部署模式之间的转换非常流畅。从单体迁移到微服务不需要重写任何逻辑——只需重新配置 DI 容器，使用我们预建的抽象启动消息代理 (RabbitMQ/Kafka)，并将模块部署到独立的 Docker 容器中。",
       migrationTitle: "无摩擦的演进式架构",
-      monolithContent: "快速启动并降低初始运营开销。整个 NEXORA 生态系统——包括所有模块、统一的 API 和 React 前端——被编译成一个高度优化的单一可部署单元。即使在单体应用内，严格的模块隔离也确保了代码库的纯净无暇。",
+      monolithContent:
+        "快速启动并降低初始运营开销。整个 NEXORA 生态系统——包括所有模块、统一的 API 和 React 前端——被编译成一个高度优化的单一可部署单元。即使在单体应用内，严格的模块隔离也确保了代码库的纯净无暇。",
       monolithTitle: "模块化单体",
       step1Content: "使用领域驱动设计定义严格的边界。",
       step1Title: "1. 限界上下文创建",
@@ -192,23 +207,31 @@ export const zh = {
       tblCompR7C4: "企业级规模",
     },
     databaseSupport: {
-      description: "在不重写任何一行查询的情况下，将 NEXORA 无缝部署到 SQL Server、PostgreSQL、Oracle 或 SQLite 上。",
+      description:
+        "在不重写任何一行查询的情况下，将 NEXORA 无缝部署到 SQL Server、PostgreSQL、Oracle 或 SQLite 上。",
       featuresTitle: "独立于提供商的功能",
-      intro: "NEXORA 使用 Entity Framework Core 完全抽象了数据库交互。选择符合您许可预算、高可用性要求或公司规定的关系型引擎。Database.Mode 设置（'Single' 或 'Multi'）控制所有模块是共享一个数据库还是每个模块拥有自己的数据库——无需任何代码更改即可配置。",
-      mig1Content: "忘记手动编写的 SQL 脚本吧。NEXORA 利用 EF Core Code-First 迁移功能，自动为所选提供商生成特定语法。",
+      intro:
+        "NEXORA 使用 Entity Framework Core 完全抽象了数据库交互。选择符合您许可预算、高可用性要求或公司规定的关系型引擎。Database.Mode 设置（'Single' 或 'Multi'）控制所有模块是共享一个数据库还是每个模块拥有自己的数据库——无需任何代码更改即可配置。",
+      mig1Content:
+        "忘记手动编写的 SQL 脚本吧。NEXORA 利用 EF Core Code-First 迁移功能，自动为所选提供商生成特定语法。",
       mig1Title: "自动化多模式生成",
-      mig2Content: "使用我们确定性隔离的迁移包，在开发、准生产和生产环境中自信地部署数据库架构更改。",
+      mig2Content:
+        "使用我们确定性隔离的迁移包，在开发、准生产和生产环境中自信地部署数据库架构更改。",
       mig2Title: "确定性部署",
       mig3Content: "在专用的历史记录表中跟踪已应用的迁移，确保分布式集群不会尝试并发修改架构。",
       mig3Title: "安全的并发升级",
-      mig4Content: "对于复杂的模式重构，NEXORA 提供了迁移前/后钩子 (Hooks)，从而实现零停机数据转换。",
+      mig4Content:
+        "对于复杂的模式重构，NEXORA 提供了迁移前/后钩子 (Hooks)，从而实现零停机数据转换。",
       mig4Title: "零停机转换",
-      migrationContent: "部署引擎评估当前的数据库状态，并在系统启动时自动应用待处理的操作。每次迁移都在事务中进行——要么整个模式完美升级，要么系统安全回滚。",
+      migrationContent:
+        "部署引擎评估当前的数据库状态，并在系统启动时自动应用待处理的操作。每次迁移都在事务中进行——要么整个模式完美升级，要么系统安全回滚。",
       migrationTitle: "事务性架构演进",
       perfTitle: "优化的查询编译",
-      providersIntro: "NEXORA 将数据库视为可互换的持久层。我们的仓储模式 (Repository pattern) 干净地隔离了特定于提供商的逻辑。",
+      providersIntro:
+        "NEXORA 将数据库视为可互换的持久层。我们的仓储模式 (Repository pattern) 干净地隔离了特定于提供商的逻辑。",
       providersTitle: "与部署环境无关的引擎",
-      switchContent: "通过 appsettings.json 中的一行配置即可切换数据库提供程序。使用 Database.Mode 设置在单数据库模式（所有模块共享一个数据库）和多数据库模式（每个模块拥有自己的数据库）之间切换。从开发环境中的单个 PostgreSQL 实例无缝过渡到生产环境中每个模块独立的 Oracle RAC 数据库。",
+      switchContent:
+        "通过 appsettings.json 中的一行配置即可切换数据库提供程序。使用 Database.Mode 设置在单数据库模式（所有模块共享一个数据库）和多数据库模式（每个模块拥有自己的数据库）之间切换。从开发环境中的单个 PostgreSQL 实例无缝过渡到生产环境中每个模块独立的 Oracle RAC 数据库。",
       switchTitle: "无摩擦的提供商切换",
       tip: "提示：对于微服务部署，请考虑根据其独特的性能特征，为不同的限界上下文使用不同的数据库提供商。",
       title: "数据库平台无关性",
@@ -218,9 +241,11 @@ export const zh = {
       compatibilityTitle: "严格的依赖锁定 (Dependency Locking)",
       description: "完全透明地细分驱动 NEXORA 核心引擎的确切框架、依赖库和开源包。",
       frontendTitle: "前端架构矩阵",
-      futureTip: "架构说明：NEXORA 刻意避开了处于“Alpha”阶段的激进前沿框架。所选择的每项技术背后都有庞大的企业级支持，从而确保未来 15 年的可用性。",
+      futureTip:
+        "架构说明：NEXORA 刻意避开了处于“Alpha”阶段的激进前沿框架。所选择的每项技术背后都有庞大的企业级支持，从而确保未来 15 年的可用性。",
       infraTitle: "DevOps 与部署基础架构",
-      intro: "我们不重新发明轮子。NEXORA 充当终极的架构粘合剂，无缝地将绝对同类最佳的、经过实战检验的现代框架（.NET 9、Next.js 15、React 19）整合为一个单一且凝聚的企业级愿景。",
+      intro:
+        "我们不重新发明轮子。NEXORA 充当终极的架构粘合剂，无缝地将绝对同类最佳的、经过实战检验的现代框架（.NET 9、Next.js 15、React 19）整合为一个单一且凝聚的企业级愿景。",
       title: "企业级技术栈",
       tblBackHeader1: "技术",
       tblBackHeader2: "版本",

@@ -7,7 +7,8 @@ export const ar = {
     overview: {
       title: "نظرة عامة على الأمان",
       description: "استراتيجية دفاعية من 5 طبقات، ميزات الأمان، إعدادات CORS، وتقييد معدل الطلبات.",
-      intro: "تنفذ NEXORA استراتيجية دفاعية عميقة بخمس طبقات: حماية الشبكة، المصادقة، التفويض، عزل البيانات، وسجلات التدقيق.",
+      intro:
+        "تنفذ NEXORA استراتيجية دفاعية عميقة بخمس طبقات: حماية الشبكة، المصادقة، التفويض، عزل البيانات، وسجلات التدقيق.",
       layersTitle: "طبقات الدفاع الأمني",
       featuresTitle: "ميزات الأمان",
       featureJwt: "مصادقة JWT",
@@ -17,7 +18,8 @@ export const ar = {
       featureRbac: "صلاحيات RBAC",
       featureRbacDesc: "محرك لتنفيذ قواعد الوصول يعتمد على الأدوار والمجموعات والخصائص.",
       featureRateLimit: "تقييد معدل الطلبات",
-      featureRateLimitDesc: "4 مستويات: حماية DDoS العالمية، لكل IP، لكل نقطة نهاية، والمصادقة المحددة.",
+      featureRateLimitDesc:
+        "4 مستويات: حماية DDoS العالمية، لكل IP، لكل نقطة نهاية، والمصادقة المحددة.",
       featureAudit: "سجلات التدقيق",
       featureAuditDesc: "يسجل كل إجراء (من، ماذا، متى، أين) مع البث اللحظي عبر SignalR.",
       featureCors: "تكوين CORS",
@@ -26,7 +28,7 @@ export const ar = {
       corsIntro: "تختلف السياسات بناءً على البيئة.",
       rateLimitTitle: "سياسات تقييد معدل الطلبات",
       passwordTitle: "سياسات كلمات المرور",
-      securityWarning: "راجع دائماً الإعدادات الأمنية قبل النشر للإنتاج."
+      securityWarning: "راجع دائماً الإعدادات الأمنية قبل النشر للإنتاج.",
     },
     authDeep: {
       title: "التعمق في المصادقة",
@@ -46,11 +48,12 @@ export const ar = {
       otpTitle: "نظام OTP (كلمات المرور لمرة واحدة)",
       otpIntro: "للتحقق من البريد والهواتف وتعيين كلمات مرور جديدة.",
       impersonationTitle: "انتحال شخصية المشرف",
-      impersonationIntro: "المشرف العام (SuperAdmin) يمكنه الانتحال للمساعدة الفنية مع ربط التدقيق الصارم.",
+      impersonationIntro:
+        "المشرف العام (SuperAdmin) يمكنه الانتحال للمساعدة الفنية مع ربط التدقيق الصارم.",
       impersonationWarning: "عملية خطيرة ومقيدة جداً.",
       sessionTitle: "إدارة الجلسة",
       sessionIntro: "NEXORA تستخدم جلسات عديمة الحالة (Stateless JWT).",
-      cookieAuthTip: "للأمان الأقصى، يتم تعيين الـ Cookies لتكون HttpOnly."
+      cookieAuthTip: "للأمان الأقصى، يتم تعيين الـ Cookies لتكون HttpOnly.",
     },
     dataProtection: {
       title: "حماية البيانات",
@@ -76,7 +79,7 @@ export const ar = {
       consentTitle: "إدارة الموافقة",
       retentionTitle: "سياسات الاحتفاظ بالبيانات",
       auditTrailTitle: "سجل التدقيق للامتثال",
-      bypassWarning: "استخدام تجاوز الفلاتر خطير ويجب تضمينه بفلاتر المستأجر لمنع التسرب."
+      bypassWarning: "استخدام تجاوز الفلاتر خطير ويجب تضمينه بفلاتر المستأجر لمنع التسرب.",
     },
     apiSecurity: {
       title: "أمان الـ API",
@@ -94,7 +97,7 @@ export const ar = {
       headersIntro: "إعدادات صارمة للرؤوس لمنع XSS والـ Clickjacking.",
       headersTip: "تصل دائمًا لتقييم +A بفضل تكوينات NEXORA.",
       replayTitle: "منع هجمات إعادة الإرسال (Replay Attacks)",
-      replayIntro: "محمي بالرموز قصيرة الأمد وصلاحية الاستخدام الواحد."
+      replayIntro: "محمي بالرموز قصيرة الأمد وصلاحية الاستخدام الواحد.",
     },
     middlewarePipeline: {
       title: "مسار البرمجيات الوسيطة (Middleware)",
@@ -122,7 +125,7 @@ export const ar = {
       registrationTitle: "ترتيب تسجيل Middleware",
       registrationIntro: "ترتيب ملف Program.cs حاسم لنجاح العملية.",
       summaryTitle: "ملخص الـ Middleware",
-      orderWarning: "تغيير الترتيب سيؤدي لأعطال. اختبر دائمًا بعد التعديل."
+      orderWarning: "تغيير الترتيب سيؤدي لأعطال. اختبر دائمًا بعد التعديل.",
     },
     auditCompliance: {
       title: "التدقيق والامتثال",
@@ -149,47 +152,65 @@ export const ar = {
       searchableTitle: "قابل للبحث",
       tenantScopedTitle: "نطاق المستأجرين",
       realtimeTitle: "في الوقت الفعلي",
-      retentionTitle: "سياسة الاحتفاظ"
+      retentionTitle: "سياسة الاحتفاظ",
     },
     sso: {
       title: "تسجيل الدخول الموحد (SSO)",
       description: "مصادقة OIDC، ربط هوية خارجي، وتطبيقات OAuth.",
-      intro: "يدعم نظام NEXORA المصادقة عبر موفرين خارجيين مبنيين على بروتوكول OIDC وتوفير بيانات اعتماد عبر تطبيقات OAuth. يتم تصميم النظام لتعدد المستأجرين مع تركيز عالٍ على أمان PKCE.",
+      intro:
+        "يدعم نظام NEXORA المصادقة عبر موفرين خارجيين مبنيين على بروتوكول OIDC وتوفير بيانات اعتماد عبر تطبيقات OAuth. يتم تصميم النظام لتعدد المستأجرين مع تركيز عالٍ على أمان PKCE.",
       architectureTitle: "بنية مصادقة OIDC/OAuth",
       endpointsTitle: "نقاط النهاية والتدفق (Endpoints & Flow)",
       flowIntro: "عملية مصادقة SSO تتكون من تدفق مكون من عدة خطوات لتحقيق أقصى قدر من الأمان:",
       authEndpointTitle: "1. نقطة مسار التفويض (Authorization Endpoint)",
-      authEndpointDesc: "تبدأ العملية عبر توجيه المستخدم إلى صفحة تسجيل دخول موفر الهوية الخارجي، وتتضمن التحقق من الـ PKCE وتوليد رمز (State).",
+      authEndpointDesc:
+        "تبدأ العملية عبر توجيه المستخدم إلى صفحة تسجيل دخول موفر الهوية الخارجي، وتتضمن التحقق من الـ PKCE وتوليد رمز (State).",
       callbackEndpointTitle: "2. نقطة مسار العودة (Callback Endpoint)",
-      callbackEndpointDesc: "يتم استقبال المستخدم بعد المصادقة بنجاح واستبدال كود التفويض (Authorization Code) بالرموز المؤمنة على الخادم، دون تدخل المتصفح.",
+      callbackEndpointDesc:
+        "يتم استقبال المستخدم بعد المصادقة بنجاح واستبدال كود التفويض (Authorization Code) بالرموز المؤمنة على الخادم، دون تدخل المتصفح.",
       linkingTitle: "ربط ومعالجة الهويات",
-      linkingIntro: "عندما يكمل المستخدم تسجيل الدخول، يتم مطابقة البريد الإلكتروني مع قاعدة بيانات المستخدمين الموجودة. إذا كان هذا أول دخول، يتم ربط حساب OIDC الخارجي مع الحساب الداخلي في NEXORA لمنع ازدواجية الحسابات.",
-      pkceWarning: "لا يتوفر دعم لتدفقات OAuth الضمنية (Implicit Flow) المنتهية الصلاحية؛ بدلاً من ذلك يُفرض تدفق PKCE في جميع الأشكال (التطبيقات العامة والسرية).",
+      linkingIntro:
+        "عندما يكمل المستخدم تسجيل الدخول، يتم مطابقة البريد الإلكتروني مع قاعدة بيانات المستخدمين الموجودة. إذا كان هذا أول دخول، يتم ربط حساب OIDC الخارجي مع الحساب الداخلي في NEXORA لمنع ازدواجية الحسابات.",
+      pkceWarning:
+        "لا يتوفر دعم لتدفقات OAuth الضمنية (Implicit Flow) المنتهية الصلاحية؛ بدلاً من ذلك يُفرض تدفق PKCE في جميع الأشكال (التطبيقات العامة والسرية).",
       howItWorksTitle: "How SSO Works",
-      howItWorksContent: "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+      howItWorksContent:
+        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
-      step1Content: "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
+      step1Content:
+        "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
       step2Title: "2. PKCE Challenge",
-      step2Content: "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
+      step2Content:
+        "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
       step3Title: "3. IdP Redirect",
-      step3Content: "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
+      step3Content:
+        "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
       step4Title: "4. User Authentication",
-      step4Content: "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
+      step4Content:
+        "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
       step5Title: "5. Callback & Token Exchange",
-      step5Content: "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
+      step5Content:
+        "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
       pkceTitle: "PKCE Security Model",
-      pkceContent: "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
+      pkceContent:
+        "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
       entityModelTitle: "Identity Provider Entity",
-      entityModelContent: "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
-      linkingContent: "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+      entityModelContent:
+        "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
+      linkingContent:
+        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
       oauthAppsTitle: "OAuth Applications",
-      oauthAppsContent: "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+      oauthAppsContent:
+        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
-      claimMappingContent: "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+      claimMappingContent:
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
-      tenantScopingContent: "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
-      tenantScopingNote: "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
-      apiTitle: "API Endpoints"
-    }
-  }
+      tenantScopingContent:
+        "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
+      tenantScopingNote:
+        "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
+      apiTitle: "API Endpoints",
+    },
+  },
 };

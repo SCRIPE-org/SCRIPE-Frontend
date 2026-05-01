@@ -179,11 +179,11 @@ export function useRoleDetailViewModel() {
 
     const filtered = searchQuery
       ? allPermissions.filter((p) => {
-        const name = p.getLocalizedName(language);
-        const code = p.code.toLowerCase();
-        const query = searchQuery.toLowerCase();
-        return name.toLowerCase().includes(query) || code.includes(query);
-      })
+          const name = p.getLocalizedName(language);
+          const code = p.code.toLowerCase();
+          const query = searchQuery.toLowerCase();
+          return name.toLowerCase().includes(query) || code.includes(query);
+        })
       : allPermissions;
 
     const grouped = filtered.reduce(

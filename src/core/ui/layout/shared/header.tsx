@@ -68,9 +68,7 @@ export function Header({ onMenuClick, isModern = false }: HeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="hover-lift" />
           <ThemeSwitcher buttonClassName="hover-lift" />
-          {settings.showNotifications && (
-            <NotificationBell iconClassName="h-5 w-5" />
-          )}
+          {settings.showNotifications && <NotificationBell iconClassName="h-5 w-5" />}
           <UserProfileDropdown showName={false} />
         </div>
       </div>

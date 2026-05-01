@@ -11,10 +11,7 @@ export function Footer() {
 
   return (
     <footer
-      className={cn(
-        "border-t border-border/50 bg-background/50 backdrop-blur-sm",
-        "px-6 py-3"
-      )}
+      className={cn("border-t border-border/50 bg-background/50 backdrop-blur-sm", "px-6 py-3")}
     >
       <div
         className={cn(

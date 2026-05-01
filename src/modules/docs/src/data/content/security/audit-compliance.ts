@@ -2,47 +2,71 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "security.auditCompliance.intro" },
+  { type: "paragraph", contentKey: "security.auditCompliance.intro" },
 
-      // ─── Audit Architecture ───────────────────────────────────
+  // ─── Audit Architecture ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.architectureTitle",
+    id: "audit-architecture",
+  },
+  { type: "paragraph", contentKey: "security.auditCompliance.architectureIntro" },
+  {
+    type: "flowchart",
+    title: "Audit Log Pipeline",
+    direction: "horizontal",
+    nodes: [
+      { id: "req", label: "HTTP Request", type: "primary" },
       {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.architectureTitle", id: "audit-architecture",
+        id: "logging",
+        label: "RequestLoggingMiddleware",
+        type: "info",
+        description: "Logs method, path, duration, user",
       },
-      { type: "paragraph", contentKey: "security.auditCompliance.architectureIntro" },
       {
-            type: "flowchart",
-            title: "Audit Log Pipeline",
-            direction: "horizontal",
-            nodes: [
-                  { id: "req", label: "HTTP Request", type: "primary" },
-                  { id: "logging", label: "RequestLoggingMiddleware", type: "info", description: "Logs method, path, duration, user" },
-                  { id: "interceptor", label: "AuditableEntityInterceptor", type: "warning", description: "Captures entity changes (before/after)" },
-                  { id: "behavior", label: "AuditBehavior (MediatR)", type: "success", description: "Business-level audit events" },
-                  { id: "service", label: "IAuditService", type: "primary" },
-                  { id: "db", label: "AuditLog Table", type: "info" },
-                  { id: "hub", label: "AuditHub (SignalR)", type: "success", description: "Real-time streaming to dashboard" },
-            ],
-            connections: [
-                  { from: "req", to: "logging" },
-                  { from: "logging", to: "service" },
-                  { from: "interceptor", to: "service" },
-                  { from: "behavior", to: "service" },
-                  { from: "service", to: "db", label: "persist" },
-                  { from: "service", to: "hub", label: "broadcast" },
-            ],
+        id: "interceptor",
+        label: "AuditableEntityInterceptor",
+        type: "warning",
+        description: "Captures entity changes (before/after)",
       },
+      {
+        id: "behavior",
+        label: "AuditBehavior (MediatR)",
+        type: "success",
+        description: "Business-level audit events",
+      },
+      { id: "service", label: "IAuditService", type: "primary" },
+      { id: "db", label: "AuditLog Table", type: "info" },
+      {
+        id: "hub",
+        label: "AuditHub (SignalR)",
+        type: "success",
+        description: "Real-time streaming to dashboard",
+      },
+    ],
+    connections: [
+      { from: "req", to: "logging" },
+      { from: "logging", to: "service" },
+      { from: "interceptor", to: "service" },
+      { from: "behavior", to: "service" },
+      { from: "service", to: "db", label: "persist" },
+      { from: "service", to: "hub", label: "broadcast" },
+    ],
+  },
 
-      // ─── AuditLog Entity ──────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.auditLogEntityTitle", id: "audit-log-entity",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "AuditLog Entity — Database Schema",
-            code: `/// <summary>
+  // ─── AuditLog Entity ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.auditLogEntityTitle",
+    id: "audit-log-entity",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "AuditLog Entity — Database Schema",
+    code: `/// <summary>
 /// Represents a single audit log entry in the database.
 /// Captures WHO did WHAT to WHICH entity, WHEN, and from WHERE.
 /// </summary>
@@ -66,33 +90,35 @@ public class AuditLog : Entity<Guid>
     public string? RequestPath { get; set; }   // API endpoint path
     public string? RequestMethod { get; set; } // HTTP method
 }`,
-      },
-      {
-            type: "table",
-            headers: ["Field", "Type", "Indexed", "Purpose"],
-            rows: [
-                  ["UserId", "string", "✅", "Quick lookup by user"],
-                  ["Action", "string", "✅", "Filter by CRUD type"],
-                  ["EntityName", "string", "✅", "Filter by entity type"],
-                  ["Timestamp", "DateTime", "✅", "Date range queries"],
-                  ["TenantId", "Guid?", "✅", "Tenant isolation"],
-                  ["CorrelationId", "string?", "✅", "Distributed tracing"],
-                  ["OldValues", "string? (JSON)", "—", "Change tracking"],
-                  ["NewValues", "string? (JSON)", "—", "Change tracking"],
-            ],
-      },
+  },
+  {
+    type: "table",
+    headers: ["Field", "Type", "Indexed", "Purpose"],
+    rows: [
+      ["UserId", "string", "✅", "Quick lookup by user"],
+      ["Action", "string", "✅", "Filter by CRUD type"],
+      ["EntityName", "string", "✅", "Filter by entity type"],
+      ["Timestamp", "DateTime", "✅", "Date range queries"],
+      ["TenantId", "Guid?", "✅", "Tenant isolation"],
+      ["CorrelationId", "string?", "✅", "Distributed tracing"],
+      ["OldValues", "string? (JSON)", "—", "Change tracking"],
+      ["NewValues", "string? (JSON)", "—", "Change tracking"],
+    ],
+  },
 
-      // ─── AuditableEntityInterceptor ───────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.interceptorTitle", id: "entity-interceptor",
-      },
-      { type: "paragraph", contentKey: "security.auditCompliance.interceptorIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "AuditableEntityInterceptor — Change Tracking",
-            code: `/// <summary>
+  // ─── AuditableEntityInterceptor ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.interceptorTitle",
+    id: "entity-interceptor",
+  },
+  { type: "paragraph", contentKey: "security.auditCompliance.interceptorIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "AuditableEntityInterceptor — Change Tracking",
+    code: `/// <summary>
 /// EF Core interceptor that captures entity changes before SaveChanges.
 /// For each Modified or Deleted entity, records old/new values.
 /// </summary>
@@ -148,23 +174,25 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, ct);
     }
 }`,
-            highlightLines: [13, 17, 18, 19, 20, 33, 34, 35, 36, 37, 38],
-      },
+    highlightLines: [13, 17, 18, 19, 20, 33, 34, 35, 36, 37, 38],
+  },
 
-      // ─── SignalR Streaming ────────────────────────────────────
+  // ─── SignalR Streaming ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.signalrTitle",
+    id: "signalr-streaming",
+  },
+  { type: "paragraph", contentKey: "security.auditCompliance.signalrIntro" },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.signalrTitle", id: "signalr-streaming",
-      },
-      { type: "paragraph", contentKey: "security.auditCompliance.signalrIntro" },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "AuditHub (Backend)",
-                        language: "csharp",
-                        filename: "AuditHub.cs — SignalR Hub",
-                        code: `/// <summary>
+        label: "AuditHub (Backend)",
+        language: "csharp",
+        filename: "AuditHub.cs — SignalR Hub",
+        code: `/// <summary>
 /// SignalR hub for real-time audit log streaming.
 /// Clients join tenant-specific groups for scoped updates.
 /// </summary>
@@ -193,12 +221,12 @@ public async Task LogAsync(AuditEntry entry)
         .Group(entry.TenantId.ToString())
         .SendAsync("AuditLogCreated", entry.ToDto());
 }`,
-                  },
-                  {
-                        label: "Frontend Listener",
-                        language: "typescript",
-                        filename: "useAuditStream.ts — Frontend Hook",
-                        code: `// Frontend hook for real-time audit log streaming
+      },
+      {
+        label: "Frontend Listener",
+        language: "typescript",
+        filename: "useAuditStream.ts — Frontend Hook",
+        code: `// Frontend hook for real-time audit log streaming
 export function useAuditStream() {
   const [logs, setLogs] = useState<AuditLogDto[]>([]);
   const connection = useSignalR(); // From SignalRProvider
@@ -213,30 +241,36 @@ export function useAuditStream() {
 
   return logs;
 }`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── Export System ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.exportTitle", id: "export",
-      },
-      { type: "paragraph", contentKey: "security.auditCompliance.exportIntro" },
-      {
-            type: "table",
-            headers: ["Export Format", "Service", "Features"],
-            rows: [
-                  ["CSV", "CsvExportService", "Lightweight, spreadsheet-compatible, UTF-8 BOM for Excel"],
-                  ["Excel (.xlsx)", "ExcelExportService", "Formatted headers, auto-width columns, color-coded rows"],
-                  ["PDF", "PdfExportService", "Branded header, summary stats, pagination, A4 landscape"],
-            ],
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "ExportService — Common Interface",
-            code: `public interface IExportService
+  // ─── Export System ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.exportTitle",
+    id: "export",
+  },
+  { type: "paragraph", contentKey: "security.auditCompliance.exportIntro" },
+  {
+    type: "table",
+    headers: ["Export Format", "Service", "Features"],
+    rows: [
+      ["CSV", "CsvExportService", "Lightweight, spreadsheet-compatible, UTF-8 BOM for Excel"],
+      [
+        "Excel (.xlsx)",
+        "ExcelExportService",
+        "Formatted headers, auto-width columns, color-coded rows",
+      ],
+      ["PDF", "PdfExportService", "Branded header, summary stats, pagination, A4 landscape"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ExportService — Common Interface",
+    code: `public interface IExportService
 {
     Task<byte[]> ExportAsync<T>(
         IEnumerable<T> data,
@@ -253,28 +287,50 @@ public class ExportOptions
     public string? WatermarkText { get; set; }     // PDF only
     public string? BrandingLogoPath { get; set; }   // PDF only
 }`,
-      },
+  },
 
-      // ─── Audit Query API ──────────────────────────────────────
+  // ─── Audit Query API ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.queryApiTitle",
+    id: "query-api",
+  },
+  { type: "paragraph", contentKey: "security.auditCompliance.queryApiIntro" },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.queryApiTitle", id: "query-api",
+        method: "GET",
+        path: "/api/v1/audit",
+        descriptionKey: "security.auditCompliance.querySearchDesc",
+        auth: "Admin + audit.view",
       },
-      { type: "paragraph", contentKey: "security.auditCompliance.queryApiIntro" },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/api/v1/audit", descriptionKey: "security.auditCompliance.querySearchDesc", auth: "Admin + audit.view" },
-                  { method: "GET", path: "/api/v1/audit/export?format=csv", descriptionKey: "security.auditCompliance.queryExportCsvDesc", auth: "Admin + audit.export" },
-                  { method: "GET", path: "/api/v1/audit/export?format=excel", descriptionKey: "security.auditCompliance.queryExportExcelDesc", auth: "Admin + audit.export" },
-                  { method: "GET", path: "/api/v1/audit/export?format=pdf", descriptionKey: "security.auditCompliance.queryExportPdfDesc", auth: "Admin + audit.export" },
-            ],
+        method: "GET",
+        path: "/api/v1/audit/export?format=csv",
+        descriptionKey: "security.auditCompliance.queryExportCsvDesc",
+        auth: "Admin + audit.export",
       },
       {
-            type: "code",
-            language: "json",
-            filename: "Search Audit Logs — Query Parameters",
-            code: `GET /api/v1/audit?
+        method: "GET",
+        path: "/api/v1/audit/export?format=excel",
+        descriptionKey: "security.auditCompliance.queryExportExcelDesc",
+        auth: "Admin + audit.export",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/audit/export?format=pdf",
+        descriptionKey: "security.auditCompliance.queryExportPdfDesc",
+        auth: "Admin + audit.export",
+      },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "Search Audit Logs — Query Parameters",
+    code: `GET /api/v1/audit?
   userId=a1b2c3d4...
   &action=Modified
   &entityName=Admin
@@ -285,34 +341,60 @@ public class ExportOptions
   &pageSize=25
   &sortBy=timestamp
   &sortDirection=desc`,
-      },
+  },
 
-      // ─── Compliance Features ──────────────────────────────────
+  // ─── Compliance Features ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.auditCompliance.complianceTitle",
+    id: "compliance",
+  },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
       {
-            type: "heading", level: 2,
-            titleKey: "security.auditCompliance.complianceTitle", id: "compliance",
+        icon: "📝",
+        titleKey: "security.auditCompliance.fullTraceTitle",
+        descriptionKey: "security.auditCompliance.fullTraceDesc",
       },
       {
-            type: "feature-grid",
-            columns: 3,
-            items: [
-                  { icon: "📝", titleKey: "security.auditCompliance.fullTraceTitle", descriptionKey: "security.auditCompliance.fullTraceDesc" },
-                  { icon: "🔒", titleKey: "security.auditCompliance.immutableTitle", descriptionKey: "security.auditCompliance.immutableDesc" },
-                  { icon: "🏢", titleKey: "security.auditCompliance.tenantScopedTitle", descriptionKey: "security.auditCompliance.tenantScopedDesc" },
-                  { icon: "📊", titleKey: "security.auditCompliance.retentionTitle", descriptionKey: "security.auditCompliance.retentionDesc" },
-                  { icon: "🔍", titleKey: "security.auditCompliance.searchableTitle", descriptionKey: "security.auditCompliance.searchableDesc" },
-                  { icon: "📡", titleKey: "security.auditCompliance.realtimeTitle", descriptionKey: "security.auditCompliance.realtimeDesc" },
-            ],
+        icon: "🔒",
+        titleKey: "security.auditCompliance.immutableTitle",
+        descriptionKey: "security.auditCompliance.immutableDesc",
       },
+      {
+        icon: "🏢",
+        titleKey: "security.auditCompliance.tenantScopedTitle",
+        descriptionKey: "security.auditCompliance.tenantScopedDesc",
+      },
+      {
+        icon: "📊",
+        titleKey: "security.auditCompliance.retentionTitle",
+        descriptionKey: "security.auditCompliance.retentionDesc",
+      },
+      {
+        icon: "🔍",
+        titleKey: "security.auditCompliance.searchableTitle",
+        descriptionKey: "security.auditCompliance.searchableDesc",
+      },
+      {
+        icon: "📡",
+        titleKey: "security.auditCompliance.realtimeTitle",
+        descriptionKey: "security.auditCompliance.realtimeDesc",
+      },
+    ],
+  },
 ];
 
 registerPage({
-      slug: "security/audit-compliance",
-      titleKey: "security.auditCompliance.title",
-      descriptionKey: "security.auditCompliance.description",
-      category: "security",
-      order: 6,
-      sections,
-      relatedSlugs: ["security/overview", "security/middleware-pipeline", "security/data-protection"],
-      lastUpdated: "2026-02-20",
+  slug: "security/audit-compliance",
+  titleKey: "security.auditCompliance.title",
+  descriptionKey: "security.auditCompliance.description",
+  category: "security",
+  order: 6,
+  sections,
+  relatedSlugs: ["security/overview", "security/middleware-pipeline", "security/data-protection"],
+  lastUpdated: "2026-02-20",
 });

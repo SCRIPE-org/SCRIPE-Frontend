@@ -45,8 +45,12 @@ export function getMessagingContainer(): MessagingContainer {
 
     _container = {
       emailRepository: new EmailRepository(new EmailService(apiService)),
-      notificationSenderRepository: new NotificationSenderRepository(new NotificationSenderService(apiService)),
-      messageTemplateRepository: new MessageTemplateRepository(new MessageTemplateService(apiService)),
+      notificationSenderRepository: new NotificationSenderRepository(
+        new NotificationSenderService(apiService)
+      ),
+      messageTemplateRepository: new MessageTemplateRepository(
+        new MessageTemplateService(apiService)
+      ),
       webhookRepository: new WebhookRepository(new WebhookService(apiService)),
     };
   }

@@ -41,9 +41,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
   const { t } = useI18n();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [editSection, setEditSection] = useState<
-    "security" | "audit" | "branding" | null
-  >(null);
+  const [editSection, setEditSection] = useState<"security" | "audit" | "branding" | null>(null);
   const [permissionsOpen, setPermissionsOpen] = useState(false);
 
   // Fetch Settings

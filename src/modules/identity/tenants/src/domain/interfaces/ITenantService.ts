@@ -11,7 +11,11 @@ import type {
   UpdateTenantSettingsRequest,
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import type { TenantModel, TenantTreeNodeModel } from "../types/TenantModelTypes";
-import type { CreateTenantJson, CreateTenantResultJson, UpdateTenantJson } from "../types/TenantModelTypes";
+import type {
+  CreateTenantJson,
+  CreateTenantResultJson,
+  UpdateTenantJson,
+} from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
 import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
 import type {
@@ -139,33 +143,73 @@ export interface ITenantService {
   /**
    * Get available editions (plans) for assignment
    */
-  getAvailableEditions(page?: number, pageSize?: number, search?: string): Promise<PagedEditionResult>;
+  getAvailableEditions(
+    page?: number,
+    pageSize?: number,
+    search?: string
+  ): Promise<PagedEditionResult>;
 
   /**
    * Get available promotions for a specific edition
    */
-  getEditionPromotions(editionId: string): Promise<Array<{
-    id: string; name: string; type: string; discountValue: number;
-    discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
-    promoCode?: string;
-    isActive: boolean; validFrom?: string; validUntil?: string;
-    maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
-  }>>;
+  getEditionPromotions(editionId: string): Promise<
+    Array<{
+      id: string;
+      name: string;
+      type: string;
+      discountValue: number;
+      discountCurrency?: string;
+      applicableCycle?: string;
+      requiresCode: boolean;
+      promoCode?: string;
+      isActive: boolean;
+      validFrom?: string;
+      validUntil?: string;
+      maxRedemptions?: number;
+      currentRedemptions: number;
+      firstTimeOnly: boolean;
+    }>
+  >;
 
   /**
    * Validate a promo code for a specific edition (backend validates the secret)
    */
-  validatePromoCode(editionId: string, promoCode: string): Promise<{ isValid: boolean; errorCode?: string; errorMessage?: string; promotionName?: string; discountType?: string; discountValue?: number }>;
+  validatePromoCode(
+    editionId: string,
+    promoCode: string
+  ): Promise<{
+    isValid: boolean;
+    errorCode?: string;
+    errorMessage?: string;
+    promotionName?: string;
+    discountType?: string;
+    discountValue?: number;
+  }>;
 
   /**
    * Assign a base/trial edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<{ id: string }>;
+  assignEdition(
+    tenantId: string,
+    editionId: string,
+    type?: string,
+    endDate?: string,
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant
    */
-  changeEdition(tenantId: string, editionId: string, type?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<void>;
+  changeEdition(
+    tenantId: string,
+    editionId: string,
+    type?: string,
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<void>;
 
   /** Renew (extend) the current subscription period */
   renewSubscription(tenantId: string, type: string): Promise<string>;
@@ -174,13 +218,25 @@ export interface ITenantService {
   convertTrial(tenantId: string, type: string): Promise<string>;
 
   /** Suspend a subscription (admin action for rules violation) */
-  suspendSubscription(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string>;
+  suspendSubscription(
+    tenantId: string,
+    reason: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string>;
 
   /** Resume a previously suspended subscription */
   resumeSubscription(tenantId: string, type?: string): Promise<string>;
 
   /** Cancel a subscription permanently */
-  cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string>;
+  cancelSubscription(
+    tenantId: string,
+    reason?: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string>;
 
   /** Re-sync tenant permissions from current edition (data backfill) */
   resyncPermissions(tenantId: string): Promise<void>;
@@ -194,7 +250,19 @@ export interface ITenantService {
    * Get resolved features (edition + overrides) for a tenant
    * Used by TenantStats to show quota limits without cross-module import
    */
-  getResolvedFeatures(tenantId: string): Promise<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>>;
+  getResolvedFeatures(
+    tenantId: string
+  ): Promise<
+    Array<{
+      featureId: string;
+      key: string;
+      nameEn: string;
+      nameAr: string;
+      effectiveValue: string;
+      valueType: string;
+      source: string;
+    }>
+  >;
 
   /** Change the billing currency of the active subscription */
   changeCurrency(tenantId: string, currency: string): Promise<string>;

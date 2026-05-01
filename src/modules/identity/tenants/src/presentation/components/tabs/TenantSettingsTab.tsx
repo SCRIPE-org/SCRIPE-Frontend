@@ -58,7 +58,7 @@ export function TenantSettingsTab({
 
   if (vm.error) {
     return (
-      <div className="rounded-xl bg-destructive/10 p-4 text-destructive border border-destructive/30">
+      <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-destructive">
         Error loading settings: {vm.error.message}
       </div>
     );
@@ -78,16 +78,16 @@ export function TenantSettingsTab({
       </div>
 
       {/* ── Security Card ── */}
-      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
         <div className="h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500" />
         <div className="p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
                 <Shield className="h-4 w-4 text-amber-500" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm">
+                <h4 className="text-sm font-semibold">
                   {t("tenant.settingsSecurity") || "Security Settings"}
                 </h4>
                 <p className="text-xs text-muted-foreground">
@@ -103,7 +103,7 @@ export function TenantSettingsTab({
           {/* Security grid */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Lock className="h-3 w-3" />
                 {t("tenant.passwordMinLength") || "Min Length"}
               </div>
@@ -111,7 +111,7 @@ export function TenantSettingsTab({
               <p className="text-xs text-muted-foreground">{t("tenant.characters") || "chars"}</p>
             </div>
             <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <KeyRound className="h-3 w-3" />
                 {t("tenant.lockoutThreshold") || "Lockout"}
               </div>
@@ -119,7 +119,7 @@ export function TenantSettingsTab({
               <p className="text-xs text-muted-foreground">{t("tenant.attempts") || "attempts"}</p>
             </div>
             <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Timer className="h-3 w-3" />
                 {t("tenant.lockoutDuration") || "Duration"}
               </div>
@@ -127,13 +127,11 @@ export function TenantSettingsTab({
               <p className="text-xs text-muted-foreground">{t("tenant.minutes") || "min"}</p>
             </div>
             <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Timer className="h-3 w-3" />
                 {t("tenant.passwordExpiryDays") || "Expiry"}
               </div>
-              <p className="text-lg font-bold">
-                {settings.passwordExpiryDays || "∞"}
-              </p>
+              <p className="text-lg font-bold">{settings.passwordExpiryDays || "∞"}</p>
               <p className="text-xs text-muted-foreground">
                 {settings.passwordExpiryDays
                   ? t("tenant.days") || "days"
@@ -143,7 +141,7 @@ export function TenantSettingsTab({
           </div>
 
           {/* Requirement badges */}
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="mt-3 flex flex-wrap gap-2">
             <RequirementBadge
               satisfied={settings.passwordRequireUppercase}
               label={t("tenant.requireUppercase") || "Uppercase"}
@@ -165,16 +163,16 @@ export function TenantSettingsTab({
       </div>
 
       {/* ── Branding Card ── */}
-      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
         <div className="h-1 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500" />
         <div className="p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10">
                 <Palette className="h-4 w-4 text-purple-500" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm">
+                <h4 className="text-sm font-semibold">
                   {t("tenant.settingsBranding") || "Branding"}
                 </h4>
                 <p className="text-xs text-muted-foreground">
@@ -197,17 +195,17 @@ export function TenantSettingsTab({
                     : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.logoUrl}`
                 }
                 alt={t("tenant.logoPreview")}
-                className="h-16 w-16 rounded-xl border border-border/50 object-contain p-1.5 bg-muted/20"
+                className="h-16 w-16 rounded-xl border border-border/50 bg-muted/20 object-contain p-1.5"
               />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted/30 border border-dashed border-border/50 text-xs text-muted-foreground">
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/30 text-xs text-muted-foreground">
                 {t("tenant.noLogo") || "No Logo"}
               </div>
             )}
             <div className="space-y-1.5">
               <p className="font-semibold">
                 {settings.companyName || (
-                  <span className="text-muted-foreground italic">
+                  <span className="italic text-muted-foreground">
                     {t("tenant.noCompanyName") || "No Company Name"}
                   </span>
                 )}
@@ -218,7 +216,7 @@ export function TenantSettingsTab({
                     className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
                     style={{ backgroundColor: settings.primaryColor || "#000000" }}
                   />
-                  <span className="text-xs text-muted-foreground font-mono">
+                  <span className="font-mono text-xs text-muted-foreground">
                     {settings.primaryColor || "#000000"}
                   </span>
                 </div>
@@ -228,7 +226,7 @@ export function TenantSettingsTab({
                       className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
                       style={{ backgroundColor: settings.secondaryColor }}
                     />
-                    <span className="text-xs text-muted-foreground font-mono">
+                    <span className="font-mono text-xs text-muted-foreground">
                       {settings.secondaryColor}
                     </span>
                   </div>
@@ -244,24 +242,34 @@ export function TenantSettingsTab({
                 <p className="text-xs text-muted-foreground">{t("tenant.favicon") || "Favicon"}</p>
                 <div className="mt-1">
                   <img
-                    src={settings.faviconUrl.startsWith("http") ? settings.faviconUrl : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.faviconUrl}`}
+                    src={
+                      settings.faviconUrl.startsWith("http")
+                        ? settings.faviconUrl
+                        : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.faviconUrl}`
+                    }
                     alt="Favicon"
                     className="h-8 w-8 object-contain"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
                   />
                 </div>
               </div>
             )}
             {settings.loginHeadline && (
               <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
-                <p className="text-xs text-muted-foreground">{t("tenant.loginHeadline") || "Login Headline"}</p>
-                <p className="text-sm font-medium truncate">{settings.loginHeadline}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("tenant.loginHeadline") || "Login Headline"}
+                </p>
+                <p className="truncate text-sm font-medium">{settings.loginHeadline}</p>
               </div>
             )}
             {settings.loginSubtitle && (
               <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
-                <p className="text-xs text-muted-foreground">{t("tenant.loginSubtitle") || "Login Subtitle"}</p>
-                <p className="text-sm font-medium truncate">{settings.loginSubtitle}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("tenant.loginSubtitle") || "Login Subtitle"}
+                </p>
+                <p className="truncate text-sm font-medium">{settings.loginSubtitle}</p>
               </div>
             )}
           </div>
@@ -269,16 +277,16 @@ export function TenantSettingsTab({
       </div>
 
       {/* ── Audit Card ── */}
-      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
         <div className="h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500" />
         <div className="p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
                 <ClipboardList className="h-4 w-4 text-emerald-500" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm">
+                <h4 className="text-sm font-semibold">
                   {t("tenant.settingsAudit") || "Audit & Logs"}
                 </h4>
               </div>
@@ -290,9 +298,7 @@ export function TenantSettingsTab({
 
           <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 p-3">
             <div>
-              <p className="font-medium text-sm">
-                {t("tenant.auditEnabled") || "Audit Logging"}
-              </p>
+              <p className="text-sm font-medium">{t("tenant.auditEnabled") || "Audit Logging"}</p>
               <p className="text-xs text-muted-foreground">
                 {t("tenant.retentionLabel", { days: settings.auditRetentionDays }) ||
                   `Retention: ${settings.auditRetentionDays} days`}
@@ -303,7 +309,7 @@ export function TenantSettingsTab({
               className={cn(
                 "gap-1",
                 settings.auditEnabled
-                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30"
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
                   : ""
               )}
             >
@@ -343,9 +349,7 @@ function RequirementBadge({ satisfied, label }: { satisfied: boolean; label: str
       variant="outline"
       className={cn(
         "gap-1 text-xs",
-        satisfied
-          ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-500"
-          : "opacity-50"
+        satisfied ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-500" : "opacity-50"
       )}
     >
       {satisfied ? (

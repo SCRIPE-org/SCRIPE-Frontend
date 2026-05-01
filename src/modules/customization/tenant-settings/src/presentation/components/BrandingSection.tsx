@@ -89,7 +89,9 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
                 placeholder="#6366f1"
               />
             </div>
-            <p className="text-xs text-muted-foreground">{t("tenantSettings.secondaryColorHelp")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("tenantSettings.secondaryColorHelp")}
+            </p>
           </div>
         </div>
 

@@ -147,6 +147,9 @@ export function applySettingsToDOM(settings: Settings): void {
     root.style.setProperty("--font-size-base", FONT_SIZE_MAP[settings.fontSize] || "18px");
     root.style.setProperty("--spacing-unit", SPACING_MAP[settings.spacingSize] || "1rem");
     root.style.setProperty("--border-radius", BORDER_RADIUS_MAP[settings.borderRadius] || "0.5rem");
-    root.style.setProperty("--shadow-intensity", SHADOW_MAP[settings.shadowIntensity] || "0 4px 6px -1px rgb(0 0 0 / 0.1)");
+    root.style.setProperty(
+      "--shadow-intensity",
+      SHADOW_MAP[settings.shadowIntensity] || "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+    );
   });
 }

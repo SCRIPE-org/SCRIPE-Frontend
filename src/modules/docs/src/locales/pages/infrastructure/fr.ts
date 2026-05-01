@@ -6,21 +6,27 @@ export const fr = {
   infrastructure: {
     backgroundJobs: {
       title: "Tches en Arrière-plan (Background Jobs)",
-      description: "Traitement asynchrone via Hangfire : nettoyage régulier, processeur d'Outbox, et tableau de bord.",
-      intro: "Évite les temps de réponse API lents en déléguant le travail lourd (e-mails, nettoyages) aux processus en arrière-plan.",
+      description:
+        "Traitement asynchrone via Hangfire : nettoyage régulier, processeur d'Outbox, et tableau de bord.",
+      intro:
+        "Évite les temps de réponse API lents en déléguant le travail lourd (e-mails, nettoyages) aux processus en arrière-plan.",
       architectureTitle: "Architecture Hangfire",
       recurringTitle: "Tches Récurrentes (Cron)",
       softDeleteTitle: "Tche de Nettoyage des Suppressions Logiques",
-      softDeleteIntro: "Les enregistrements logiques dépassant leur délai de rétention légal sont supprimés physiquement de manière ordonnée pour respecter les clés étrangères.",
+      softDeleteIntro:
+        "Les enregistrements logiques dépassant leur délai de rétention légal sont supprimés physiquement de manière ordonnée pour respecter les clés étrangères.",
       dashboardTitle: "Tableau de Bord Hangfire",
-      dashboardIntro: "Tableau de bord de monitoring intégré et protégé, réservé exclusivement aux rôles SuperAdmin.",
+      dashboardIntro:
+        "Tableau de bord de monitoring intégré et protégé, réservé exclusivement aux rôles SuperAdmin.",
       configTitle: "Configuration",
-      tenantWarning: "Avertissement : Les tches d'arrière-plan ne disposent d'aucun contexte HTTP. Le code doit forcer l'imitation d'un ID de locataire s'il souhaite accéder aux tables isolées.",
+      tenantWarning:
+        "Avertissement : Les tches d'arrière-plan ne disposent d'aucun contexte HTTP. Le code doit forcer l'imitation d'un ID de locataire s'il souhaite accéder aux tables isolées.",
     },
     fileStorage: {
       title: "Stockage de Fichiers (File Storage)",
       description: "Modèle de stratégie prenant en charge Local, Azure Blob, AWS S3 et MinIO.",
-      intro: "NEXORA change de fournisseur d'hébergement de fichiers dynamiquement en modifiant simplement les variables d'environnement.",
+      intro:
+        "NEXORA change de fournisseur d'hébergement de fichiers dynamiquement en modifiant simplement les variables d'environnement.",
       architectureTitle: "Architecture de Stockage",
       providersTitle: "Fournisseurs de Stockage",
       validationTitle: "Validation des Fichiers",
@@ -29,28 +35,36 @@ export const fr = {
     },
     resilience: {
       title: "Modèles de Résilience",
-      description: "Politiques Polly pour les nouvelles tentatives (retries), les disjoncteurs (circuit breakers) et les délais d'attente (timeouts).",
-      intro: "La stratégie pour s'assurer qu'une défaillance temporaire du réseau n'effondre pas l'entièreté de l'application.",
+      description:
+        "Politiques Polly pour les nouvelles tentatives (retries), les disjoncteurs (circuit breakers) et les délais d'attente (timeouts).",
+      intro:
+        "La stratégie pour s'assurer qu'une défaillance temporaire du réseau n'effondre pas l'entièreté de l'application.",
       architectureTitle: "Architecture de Résilience",
       retryTitle: "Politique de Nouvelle Tentative (Retry)",
       circuitBreakerTitle: "Disjoncteur (Circuit Breaker)",
-      circuitBreakerIntro: "Si l'API tierce échoue 5 fois de suite, le circuit s'ouvre : les appels suivants sont instantanément bloqués pendant 30 secondes pour laisser le temps au service de récupérer.",
+      circuitBreakerIntro:
+        "Si l'API tierce échoue 5 fois de suite, le circuit s'ouvre : les appels suivants sont instantanément bloqués pendant 30 secondes pour laisser le temps au service de récupérer.",
       timeoutTitle: "Politique de Délai d'Attente (Timeout)",
       usageTitle: "Utilisation dans le HttpClient",
       configTitle: "Configuration",
     },
     gatewayDeployment: {
       title: "Passerelle et Déploiement (Gateway & Deployment)",
-      description: "Passerelle inverse YARP, système de modules paramétrable et mise en production sous IIS ou Kestrel.",
-      intro: "Explication de la façon dont le Monolithe Modulaire est réparti sur les serveurs physiques et exposé au monde extérieur.",
+      description:
+        "Passerelle inverse YARP, système de modules paramétrable et mise en production sous IIS ou Kestrel.",
+      intro:
+        "Explication de la façon dont le Monolithe Modulaire est réparti sur les serveurs physiques et exposé au monde extérieur.",
       yarpTitle: "Passerelle YARP (API Gateway)",
-      yarpIntro: "Agit comme un pare-feu et un routeur qui transmet de manière intelligente la requête API au bon sous-module.",
+      yarpIntro:
+        "Agit comme un pare-feu et un routeur qui transmet de manière intelligente la requête API au bon sous-module.",
       moduleTitle: "Système de Modules",
-      moduleIntro: "La variable MODULE_NAME allège la charge de RAM en indiquant au binaire de ne charger en mémoire que le code de son microservice attribué.",
+      moduleIntro:
+        "La variable MODULE_NAME allège la charge de RAM en indiquant au binaire de ne charger en mémoire que le code de son microservice attribué.",
       modesTitle: "Modes de Déploiement",
       monolithTitle: "Mode Monolithe",
       microservicesTitle: "Mode Microservices",
-      portNote: "Sous le mode Microservices, chaque sous-réseau utilise une écoute de port dédiée pour l'acheminement des requêtes réseau.",
+      portNote:
+        "Sous le mode Microservices, chaque sous-réseau utilise une écoute de port dédiée pour l'acheminement des requêtes réseau.",
       iisTitle: "Déploiement sous IIS (Windows Server)",
       iisStep1Title: "1. Publier l'Application",
       iisStep1Desc: "Générez la distribution finale via la commande dotnet publish.",
@@ -59,26 +73,35 @@ export const fr = {
       iisStep3Title: "3. Définir les Variables d'Environnement",
       iisStep3Desc: "Renseigner la chaîne de connexion SQL au niveau du serveur.",
       iisStep4Title: "4. Configurer l'App Pool",
-      iisStep4Desc: "Sélectionnez impérativement 'No Managed Code' pour permettre le fonctionnement optimal de l'Out-of-Process de .NET Core.",
+      iisStep4Desc:
+        "Sélectionnez impérativement 'No Managed Code' pour permettre le fonctionnement optimal de l'Out-of-Process de .NET Core.",
       kestrelTitle: "Configuration sous Kestrel (Linux)",
     },
     databaseMigrations: {
       title: "Migrations de Bases de Données d'Entreprise",
       description: "Architecture EF Core auto-adaptative pour SQL Server, Oracle et PostgreSQL.",
-      intro: "Les différents moteurs SQL gérant les types de données de manière divergente, NEXORA s'assure d'une séparation absolue en compilant un ModelSnapshot unique pour chaque technologie SQL supportée.",
+      intro:
+        "Les différents moteurs SQL gérant les types de données de manière divergente, NEXORA s'assure d'une séparation absolue en compilant un ModelSnapshot unique pour chaque technologie SQL supportée.",
       architectureTitle: "Topologie des DbContext Dérivés",
-      architectureContent: "La classe centrale reste agnostique, tandis que des classes dérivées distinctes appliquent la syntaxe spécifique du fournisseur.",
+      architectureContent:
+        "La classe centrale reste agnostique, tandis que des classes dérivées distinctes appliquent la syntaxe spécifique du fournisseur.",
       diTitle: "Injection Dynamique du Fournisseur",
-      diContent: "Le moteur est sélectionné par simple variable de configuration. La collection de l'Injection de Dépendances (DI) s'occupe de lier le bon connecteur de base de données à la volée.",
+      diContent:
+        "Le moteur est sélectionné par simple variable de configuration. La collection de l'Injection de Dépendances (DI) s'occupe de lier le bon connecteur de base de données à la volée.",
       cliTitle: "Génération de Migrations Multi-Fournisseurs",
-      cliContent: "L'outil nexora-cli exécute des processus parallèles pour compiler 3 dossiers de migrations simultanés sans effort manuel.",
-      cliWarning: "Important : Ne manipulez jamais les fichiers ModelSnapshot manuellement. Cela créera une désynchronisation irrémédiable de l'infrastructure.",
+      cliContent:
+        "L'outil nexora-cli exécute des processus parallèles pour compiler 3 dossiers de migrations simultanés sans effort manuel.",
+      cliWarning:
+        "Important : Ne manipulez jamais les fichiers ModelSnapshot manuellement. Cela créera une désynchronisation irrémédiable de l'infrastructure.",
       cliUpdateTitle: "Mise à jour Automatique des Moteurs",
-      cliUpdateContent: "Le CLI de mise à jour lit dynamiquement l'environnement (SQL Server ou Oracle) et sélectionne la bonne migration à pousser au serveur.",
+      cliUpdateContent:
+        "Le CLI de mise à jour lit dynamiquement l'environnement (SQL Server ou Oracle) et sélectionne la bonne migration à pousser au serveur.",
       cliRemoveTitle: "Retrait Forcé Intelligent (Smart Force Removal)",
-      cliRemoveContent: "Répare proprement des fusions (merges) ou des déploiements défectueux sur les 3 moteurs de bases de données en une seule commande.",
+      cliRemoveContent:
+        "Répare proprement des fusions (merges) ou des déploiements défectueux sur les 3 moteurs de bases de données en une seule commande.",
       newProviderTitle: "Ajout d'un Nouveau Moteur de Base de Données",
-      newProviderContent: "Processus d'extension Clean Architecture pour brancher une technologie non native (ex: SQLite).",
+      newProviderContent:
+        "Processus d'extension Clean Architecture pour brancher une technologie non native (ex: SQLite).",
       newProviderStep1: "Héritez et scellez la classe DbContext (sealed class).",
       newProviderStep2: "Implémentez l'usine (Factory) de conception à froid.",
       newProviderStep3: "Déclarez le nouveau fournisseur dans le tableau InfrastructureDI.cs.",
@@ -86,27 +109,36 @@ export const fr = {
     },
     nexoraCli: {
       title: "L'Outil NEXORA CLI",
-      description: "Générateur productif via 66 modèles de scaffolding, commandes de multi-base de données et inter-cblage automatique.",
-      intro: "La CLI Node.js propriétaire de NEXORA résout le problème de répétition inhérent aux architectures propres. Elle conçoit des modules full-stack complets qui traversent de React à SQL.",
+      description:
+        "Générateur productif via 66 modèles de scaffolding, commandes de multi-base de données et inter-cblage automatique.",
+      intro:
+        "La CLI Node.js propriétaire de NEXORA résout le problème de répétition inhérent aux architectures propres. Elle conçoit des modules full-stack complets qui traversent de React à SQL.",
       commandsTitle: "Commandes de Scaffolding de Base",
       commandsIntro: "Les opérations pivots qui produisent le volume principal de la base de code.",
       newModuleTitle: "Génération de Modules : new-module",
-      newModuleIntro: "Crée des partitions logiques isolées DDD en Backend (Application, Domain, Infrastructure) et le squelette en Frontend simultanément.",
+      newModuleIntro:
+        "Crée des partitions logiques isolées DDD en Backend (Application, Domain, Infrastructure) et le squelette en Frontend simultanément.",
       newFeatureTitle: "Génération de Fonctionnalités : new-feature",
-      newFeatureIntro: "Crée 26 fichiers parfaitement reliés pour des opérations CRUD (APIs, Interfaces REST, Handlers MediatR, Zod) en utilisant un DSL.",
+      newFeatureIntro:
+        "Crée 26 fichiers parfaitement reliés pour des opérations CRUD (APIs, Interfaces REST, Handlers MediatR, Zod) en utilisant un DSL.",
       destructionTitle: "Outils de Destruction (Rollback)",
-      destructionIntro: "Permet de revenir en arrière instantanément si vous n'êtes pas satisfait d'un module généré en nettoyant proprement les références.",
+      destructionIntro:
+        "Permet de revenir en arrière instantanément si vous n'êtes pas satisfait d'un module généré en nettoyant proprement les références.",
       bgJobsTitle: "Générateurs de Services d'Arrière-plan",
       bgJobsIntro: "Intègre des classes et squelettes pour la file d'attente de tches Hangfire.",
       dslTitle: "Syntaxe DSL pour Définir les Propriétés",
-      dslIntro: "Via le paramètre -p, un simple format texte compile les classes C# en même temps que les validateurs React côté client.",
+      dslIntro:
+        "Via le paramètre -p, un simple format texte compile les classes C# en même temps que les validateurs React côté client.",
       dslSyntaxInfo: "Règles de Syntaxe : NomPropriété:Type[:Modificateur1][:Modificateur2]",
       templatesTitle: "66 Modèles Immuables (Templates)",
-      templatesIntro: "Alimenté par des modèles Handlebars pour garantir que chaque développeur produit un code 100% conforme aux conventions internes.",
+      templatesIntro:
+        "Alimenté par des modèles Handlebars pour garantir que chaque développeur produit un code 100% conforme aux conventions internes.",
       securityTitle: "Défense Automatisée en Profondeur",
-      securityIntro: "Les contrôleurs générés par CLI naissent sécurisés, incluant automatiquement les balises de permissions RBAC.",
+      securityIntro:
+        "Les contrôleurs générés par CLI naissent sécurisés, incluant automatiquement les balises de permissions RBAC.",
       autoWiringTitle: "Cblage Automatique (Auto-Wiring)",
-      autoWiringIntro: "La véritable valeur de l'outil : écrire le code est simple, l'insérer dans l'écosystème de 1000 fichiers sans erreur l'est moins. La CLI gère les enregistrements cruciaux :",
+      autoWiringIntro:
+        "La véritable valeur de l'outil : écrire le code est simple, l'insérer dans l'écosystème de 1000 fichiers sans erreur l'est moins. La CLI gère les enregistrements cruciaux :",
       wiringSln: "Injection directe de GUID dans les solutions .sln.",
       wiringProgram: "Inscriptions à l'intérieur de Program.cs.",
       wiringSettings: "Extension des chaînes de connexion dans appsettings.json.",
@@ -114,108 +146,160 @@ export const fr = {
       wiringPermissions: "Création des constantes React d'autorisations (permissions.ts).",
       wiringFrontendApp: "Ancrage des routes Server-Routing dans Next.js.",
       wiringFrontEnv: "Mise à jour des mandataires proxy d'environnement.",
-      revertSafely: "L'annulation d'une création récure parfaitement les cblages de manière indolore.",
+      revertSafely:
+        "L'annulation d'une création récure parfaitement les cblages de manière indolore.",
       dbSyncTitle: "Synchronisation de la Base de Données et de l'API",
-      dbSyncIntro: "Commandes haut-niveau liant les couches physiques des infrastructures C# et React.",
-      dbCliCmd: "Encapsule les exécutions complexes d'Entity Framework pour manipuler et migrer 3 dialectes SQL différents sans heurt.",
-      syncApiCmd: "Consomme à la volée le Swagger (OpenAPI) distant et écrit les contrats de types TypeScript Zod automatiquement.",
+      dbSyncIntro:
+        "Commandes haut-niveau liant les couches physiques des infrastructures C# et React.",
+      dbCliCmd:
+        "Encapsule les exécutions complexes d'Entity Framework pour manipuler et migrer 3 dialectes SQL différents sans heurt.",
+      syncApiCmd:
+        "Consomme à la volée le Swagger (OpenAPI) distant et écrit les contrats de types TypeScript Zod automatiquement.",
       configTitle: "Configuration Globale CLI",
-      configIntro: "S'appuie sur le fichier nexora.config.json à la racine du monorepo pour découvrir les chemins cibles.",
+      configIntro:
+        "S'appuie sur le fichier nexora.config.json à la racine du monorepo pour découvrir les chemins cibles.",
       namingTitle: "Mutations Intelligentes des Noms",
-      namingIntro: "Traite une variable et la pluralise, la transforme en PascalCase, kebab-case et en constante SNAKE_CASE infailliblement.",
+      namingIntro:
+        "Traite une variable et la pluralise, la transforme en PascalCase, kebab-case et en constante SNAKE_CASE infailliblement.",
       utilityTitle: "Outils Utilitaires d'Écosystème",
-      utilityIntro: "Démarre les environnements Node.js et les projets .NET en simultané depuis une invite de commande unique.",
+      utilityIntro:
+        "Démarre les environnements Node.js et les projets .NET en simultané depuis une invite de commande unique.",
     },
     nexoraStudio: {
       title: "NEXORA Studio",
-      description: "Tableau de bord visuel pour développeurs avec gestion de modules en temps réel, générateurs de code, contrôles de serveurs de développement et terminal intégré.",
-      intro: "NEXORA Studio est un tableau de bord visuel complet pour développeurs offrant une interface web en temps réel pour la gestion des modules, l'exécution de générateurs de code, le contrôle des serveurs de développement, les opérations de base de données, la gestion Docker et plus encore — le tout depuis un seul onglet de navigateur.",
+      description:
+        "Tableau de bord visuel pour développeurs avec gestion de modules en temps réel, générateurs de code, contrôles de serveurs de développement et terminal intégré.",
+      intro:
+        "NEXORA Studio est un tableau de bord visuel complet pour développeurs offrant une interface web en temps réel pour la gestion des modules, l'exécution de générateurs de code, le contrôle des serveurs de développement, les opérations de base de données, la gestion Docker et plus encore — le tout depuis un seul onglet de navigateur.",
       architectureTitle: "Architecture du Studio",
-      architectureIntro: "Le Studio se compose de deux composants : le Moteur (Express + Socket.io + SQLite sur le port 4201) gère les requêtes API, l'exécution des commandes et le streaming en temps réel. L'UI (Next.js sur le port 4200) offre 19 pages couvrant tous les aspects du workflow de développement.",
+      architectureIntro:
+        "Le Studio se compose de deux composants : le Moteur (Express + Socket.io + SQLite sur le port 4201) gère les requêtes API, l'exécution des commandes et le streaming en temps réel. L'UI (Next.js sur le port 4200) offre 19 pages couvrant tous les aspects du workflow de développement.",
       securityTitle: "Modèle de Sécurité",
-      securityIntro: "Sécurité de défense en profondeur : authentification par jeton (généré à chaque démarrage), validation de liste blanche de commandes, assainissement centralisé des entrées, limitation de débit (200 req/min par IP), liste blanche CORS (localhost uniquement) et validation d'URL.",
+      securityIntro:
+        "Sécurité de défense en profondeur : authentification par jeton (généré à chaque démarrage), validation de liste blanche de commandes, assainissement centralisé des entrées, limitation de débit (200 req/min par IP), liste blanche CORS (localhost uniquement) et validation d'URL.",
       featuresTitle: "Fonctionnalités du Studio",
-      featureDashboard: "Dashboard — Score de santé, flux d'activité, statistiques des modules et vue d'ensemble du système.",
-      featureModules: "Gestionnaire de Modules — Créer, supprimer, inspecter et parcourir les modules avec une UI visuelle et un retour en temps réel.",
-      featureGenerators: "Générateurs de Code — Générer des événements, spécifications, validateurs, enums, hooks, composants et pages via des formulaires.",
-      featureDevServers: "Serveurs de Développement — Démarrer, arrêter et redémarrer les serveurs backend et frontend en un clic.",
-      featureDatabase: "Base de Données — Exécuter des migrations, initialiser des données, vérifier le statut des migrations, sauvegarder et réinitialiser les modules.",
-      featureDocker: "Docker — Gérer les services Docker Compose, consulter les logs, vérifier la santé des conteneurs.",
-      featureTerminal: "Terminal — Terminal intégré avec historique des commandes, rendu de sortie ANSI et streaming via WebSocket.",
-      featureConfig: "Éditeur de Configuration — Afficher et modifier les variables d'environnement dans .env, appsettings.json et nexora.config.json.",
-      featurePackages: "Gestionnaire de Paquets — Ajouter, supprimer et mettre à jour les paquets npm et NuGet pour le frontend et le backend.",
-      featureSecurity: "Outils de Sécurité — Générer des secrets JWT/AES, exécuter des audits de vulnérabilités et valider la complétude de l'environnement.",
+      featureDashboard:
+        "Dashboard — Score de santé, flux d'activité, statistiques des modules et vue d'ensemble du système.",
+      featureModules:
+        "Gestionnaire de Modules — Créer, supprimer, inspecter et parcourir les modules avec une UI visuelle et un retour en temps réel.",
+      featureGenerators:
+        "Générateurs de Code — Générer des événements, spécifications, validateurs, enums, hooks, composants et pages via des formulaires.",
+      featureDevServers:
+        "Serveurs de Développement — Démarrer, arrêter et redémarrer les serveurs backend et frontend en un clic.",
+      featureDatabase:
+        "Base de Données — Exécuter des migrations, initialiser des données, vérifier le statut des migrations, sauvegarder et réinitialiser les modules.",
+      featureDocker:
+        "Docker — Gérer les services Docker Compose, consulter les logs, vérifier la santé des conteneurs.",
+      featureTerminal:
+        "Terminal — Terminal intégré avec historique des commandes, rendu de sortie ANSI et streaming via WebSocket.",
+      featureConfig:
+        "Éditeur de Configuration — Afficher et modifier les variables d'environnement dans .env, appsettings.json et nexora.config.json.",
+      featurePackages:
+        "Gestionnaire de Paquets — Ajouter, supprimer et mettre à jour les paquets npm et NuGet pour le frontend et le backend.",
+      featureSecurity:
+        "Outils de Sécurité — Générer des secrets JWT/AES, exécuter des audits de vulnérabilités et valider la complétude de l'environnement.",
       cliCommandsTitle: "Commandes CLI du Studio",
-      cliCommandsIntro: "Le Studio est entièrement lancé et géré via la CLI NEXORA. La commande nexora studio supporte le mode dev (--dev), le mode production, le mode build uniquement (studio build), les ports personnalisés (--port, --engine-port) et le mode headless (--no-browser).",
+      cliCommandsIntro:
+        "Le Studio est entièrement lancé et géré via la CLI NEXORA. La commande nexora studio supporte le mode dev (--dev), le mode production, le mode build uniquement (studio build), les ports personnalisés (--port, --engine-port) et le mode headless (--no-browser).",
     },
     healthChecks: {
       title: "Vérifications de Santé et Probes K8s",
-      description: "Points de terminaison de santé d'entreprise pour les probes liveness, readiness et startup de Kubernetes avec 5 vérifications individuelles.",
-      intro: "NEXORA fournit 5 points de terminaison de santé d'entreprise conçus pour l'orchestration Kubernetes, l'intégration des équilibreurs de charge et la surveillance opérationnelle. Chaque endpoint valide des dépendances d'infrastructure spécifiques et renvoie des réponses JSON structurées.",
+      description:
+        "Points de terminaison de santé d'entreprise pour les probes liveness, readiness et startup de Kubernetes avec 5 vérifications individuelles.",
+      intro:
+        "NEXORA fournit 5 points de terminaison de santé d'entreprise conçus pour l'orchestration Kubernetes, l'intégration des équilibreurs de charge et la surveillance opérationnelle. Chaque endpoint valide des dépendances d'infrastructure spécifiques et renvoie des réponses JSON structurées.",
       architectureTitle: "Architecture des Endpoints de Santé",
       endpointsTitle: "Endpoints de Santé",
       checksTitle: "Vérifications Individuelles",
-      checksIntro: "Chaque vérification valide une dépendance d'infrastructure spécifique. Les vérifications s'exécutent en parallèle pour une latence minimale. Les vérifications échouées renvoient des informations d'erreur détaillées sans divulguer les chaînes de connexion sensibles. L'état d'échec est configurable par vérification — les échecs de Base de données et Startup renvoient Unhealthy, tandis que Redis, SMTP et Storage renvoient Degraded.",
+      checksIntro:
+        "Chaque vérification valide une dépendance d'infrastructure spécifique. Les vérifications s'exécutent en parallèle pour une latence minimale. Les vérifications échouées renvoient des informations d'erreur détaillées sans divulguer les chaînes de connexion sensibles. L'état d'échec est configurable par vérification — les échecs de Base de données et Startup renvoient Unhealthy, tandis que Redis, SMTP et Storage renvoient Degraded.",
       registrationTitle: "Enregistrement des Vérifications de Santé",
-      registrationIntro: "Les vérifications de santé sont enregistrées centralement dans HealthCheckExtensions.cs avec des tags explicites et des statuts d'échec. Les tags déterminent quel endpoint inclut chaque vérification.",
+      registrationIntro:
+        "Les vérifications de santé sont enregistrées centralement dans HealthCheckExtensions.cs avec des tags explicites et des statuts d'échec. Les tags déterminent quel endpoint inclut chaque vérification.",
       k8sTitle: "Configuration des Probes Kubernetes",
-      k8sIntro: "Les endpoints de santé de NEXORA correspondent directement aux types de probes Kubernetes. Le probe de startup permet jusqu'à 5 minutes (30 échecs × 10s intervalle) pour la migration de base de données lors du premier déploiement.",
+      k8sIntro:
+        "Les endpoints de santé de NEXORA correspondent directement aux types de probes Kubernetes. Le probe de startup permet jusqu'à 5 minutes (30 échecs × 10s intervalle) pour la migration de base de données lors du premier déploiement.",
       dockerTitle: "Vérification de Santé Docker Compose",
-      dockerIntro: "Pour les déploiements Docker Compose, configurez les vérifications de santé dans la définition de service. Utilisez /health/live pour le liveness de base et /health/ready pour le readiness. Définissez start_period pour permettre le temps de migration de base de données.",
+      dockerIntro:
+        "Pour les déploiements Docker Compose, configurez les vérifications de santé dans la définition de service. Utilisez /health/live pour le liveness de base et /health/ready pour le readiness. Définissez start_period pour permettre le temps de migration de base de données.",
       responseTitle: "Format de Réponse",
-      responseIntro: "NEXORA supporte deux formats de réponse selon l'endpoint. Les endpoints de sonde publics renvoient un JSON minimal. Les endpoints authentifiés renvoient une réponse détaillée incluant les durées par vérification, tags, données de charge et détails d'exception.",
+      responseIntro:
+        "NEXORA supporte deux formats de réponse selon l'endpoint. Les endpoints de sonde publics renvoient un JSON minimal. Les endpoints authentifiés renvoient une réponse détaillée incluant les durées par vérification, tags, données de charge et détails d'exception.",
       environmentsTitle: "Guide Spécifique par Environnement",
-      dockerTip: "Pour les déploiements IIS : configurez la sonde de santé Application Request Routing (ARR) avec /health/ready comme URL de vérification. Pour Azure App Service : configurez le chemin de vérification de santé = /health/ready.",
+      dockerTip:
+        "Pour les déploiements IIS : configurez la sonde de santé Application Request Routing (ARR) avec /health/ready comme URL de vérification. Pour Azure App Service : configurez le chemin de vérification de santé = /health/ready.",
     },
     observability: {
       title: "Observabilité et Surveillance",
-      description: "Traçage distribué OpenTelemetry, métriques Prometheus, journalisation centralisée Grafana Loki et règles d'alerte préconfigurées.",
-      intro: "NEXORA implémente une pile d'observabilité complète construite sur des standards ouverts : OpenTelemetry pour le traçage distribué, Prometheus pour la collecte de métriques, Grafana Loki pour la journalisation centralisée et Jaeger pour la visualisation des traces.",
+      description:
+        "Traçage distribué OpenTelemetry, métriques Prometheus, journalisation centralisée Grafana Loki et règles d'alerte préconfigurées.",
+      intro:
+        "NEXORA implémente une pile d'observabilité complète construite sur des standards ouverts : OpenTelemetry pour le traçage distribué, Prometheus pour la collecte de métriques, Grafana Loki pour la journalisation centralisée et Jaeger pour la visualisation des traces.",
       stackTitle: "Architecture de la Pile d'Observabilité",
       tracingTitle: "Traçage Distribué (OpenTelemetry)",
-      tracingIntro: "Le TracingBehavior crée un span OpenTelemetry pour chaque handler de commande et de requête avec détection automatique du module, type de demande et mesures de durée.",
+      tracingIntro:
+        "Le TracingBehavior crée un span OpenTelemetry pour chaque handler de commande et de requête avec détection automatique du module, type de demande et mesures de durée.",
       prometheusTitle: "Métriques Prometheus",
-      prometheusIntro: "L'endpoint /metrics expose les métriques OpenTelemetry au format texte Prometheus. Prometheus scrape cet endpoint toutes les 15 secondes.",
+      prometheusIntro:
+        "L'endpoint /metrics expose les métriques OpenTelemetry au format texte Prometheus. Prometheus scrape cet endpoint toutes les 15 secondes.",
       loggingTitle: "Journalisation Centralisée (Serilog + Loki)",
-      loggingIntro: "Serilog enrichit chaque entrée de journal avec le nom de machine, l'environnement, l'ID de corrélation, l'ID de locataire et le tag de module. Lorsque Loki est configuré, les journaux sont poussés en temps réel.",
+      loggingIntro:
+        "Serilog enrichit chaque entrée de journal avec le nom de machine, l'environnement, l'ID de corrélation, l'ID de locataire et le tag de module. Lorsque Loki est configuré, les journaux sont poussés en temps réel.",
       alertsTitle: "Règles d'Alerte",
-      alertsIntro: "Des règles d'alerte Prometheus préconfigurées détectent les conditions critiques et d'avertissement. Les alertes critiques se déclenchent pour des taux d'erreur élevés, des pannes de base de données et une latence extrême.",
+      alertsIntro:
+        "Des règles d'alerte Prometheus préconfigurées détectent les conditions critiques et d'avertissement. Les alertes critiques se déclenchent pour des taux d'erreur élevés, des pannes de base de données et une latence extrême.",
       monitoringStackTitle: "Pile de Surveillance Docker",
-      monitoringStackIntro: "Un fichier Docker Compose préconstruit lance la pile de surveillance complète avec des sources de données, tableaux de bord et règles d'alerte provisionnés automatiquement.",
+      monitoringStackIntro:
+        "Un fichier Docker Compose préconstruit lance la pile de surveillance complète avec des sources de données, tableaux de bord et règles d'alerte provisionnés automatiquement.",
       configTitle: "Configuration de l'Observabilité",
-      productionWarning: "En production : définissez TraceSampleRatio à 0.1, changez le mot de passe Grafana par défaut, restreignez l'accès à /metrics via une liste blanche IP de proxy inverse.",
+      productionWarning:
+        "En production : définissez TraceSampleRatio à 0.1, changez le mot de passe Grafana par défaut, restreignez l'accès à /metrics via une liste blanche IP de proxy inverse.",
     },
     auditTrail: {
       title: "Piste d'Audit Entreprise",
-      description: "Journalisation d'audit complète avec détection automatique de module, suivi de corrélation, diffusion en temps réel SignalR et plus de 45 types d'événements.",
-      intro: "La piste d'audit entreprise de NEXORA capture chaque action significative sur la plateforme — des événements d'authentification aux mutations d'entités en passant par les changements de permissions et les incidents de sécurité.",
+      description:
+        "Journalisation d'audit complète avec détection automatique de module, suivi de corrélation, diffusion en temps réel SignalR et plus de 45 types d'événements.",
+      intro:
+        "La piste d'audit entreprise de NEXORA capture chaque action significative sur la plateforme — des événements d'authentification aux mutations d'entités en passant par les changements de permissions et les incidents de sécurité.",
       architectureTitle: "Architecture de la Piste d'Audit",
       entityTitle: "Schéma de l'Entité AuditLog",
-      entityIntro: "L'entité AuditLog capture un contexte complet pour chaque événement auditable. Les anciennes et nouvelles valeurs sont stockées en tant qu'instantanés JSON.",
+      entityIntro:
+        "L'entité AuditLog capture un contexte complet pour chaque événement auditable. Les anciennes et nouvelles valeurs sont stockées en tant qu'instantanés JSON.",
       moduleDetectionTitle: "Détection Automatique de Module",
-      moduleDetectionIntro: "L'AuditService détermine automatiquement quel module a généré chaque événement d'audit en analysant le chemin de l'endpoint API ou le nom du type d'entité.",
+      moduleDetectionIntro:
+        "L'AuditService détermine automatiquement quel module a généré chaque événement d'audit en analysant le chemin de l'endpoint API ou le nom du type d'entité.",
       eventTypesTitle: "Types d'Événements d'Audit (45+)",
       realtimeTitle: "Diffusion en Temps Réel",
-      realtimeIntro: "Les événements d'audit (hors logs de requêtes HTTP routinières) sont diffusés via SignalR aux clients connectés. Les événements sont délimités par locataire via des groupes spécifiques.",
+      realtimeIntro:
+        "Les événements d'audit (hors logs de requêtes HTTP routinières) sont diffusés via SignalR aux clients connectés. Les événements sont délimités par locataire via des groupes spécifiques.",
       queryTitle: "API de Requête des Logs d'Audit",
-      queryIntro: "L'endpoint de requête des logs d'audit supporte un filtrage exhaustif avec 12 paramètres. Tous les filtres sont optionnels et combinables. Les résultats sont paginés (défaut : 20 éléments, maximum : 100) et triés par horodatage décroissant.",
-      queryTip: "Conseil professionnel : Utilisez CorrelationId pour tracer le cycle de vie complet d'une requête HTTP à travers toutes les entrées d'audit.",
+      queryIntro:
+        "L'endpoint de requête des logs d'audit supporte un filtrage exhaustif avec 12 paramètres. Tous les filtres sont optionnels et combinables. Les résultats sont paginés (défaut : 20 éléments, maximum : 100) et triés par horodatage décroissant.",
+      queryTip:
+        "Conseil professionnel : Utilisez CorrelationId pour tracer le cycle de vie complet d'une requête HTTP à travers toutes les entrées d'audit.",
     },
     loadTesting: {
       title: "Tests de Charge et Sauvegarde",
-      description: "Suites de tests de performance k6 avec seuils SLA, intégration CI/CD et stratégie de sauvegarde multi-fournisseur.",
-      intro: "NEXORA inclut des scripts de test de charge k6 pour valider les SLAs de performance ainsi qu'une stratégie complète de sauvegarde et de reprise après sinistre.",
+      description:
+        "Suites de tests de performance k6 avec seuils SLA, intégration CI/CD et stratégie de sauvegarde multi-fournisseur.",
+      intro:
+        "NEXORA inclut des scripts de test de charge k6 pour valider les SLAs de performance ainsi qu'une stratégie complète de sauvegarde et de reprise après sinistre.",
       overviewTitle: "Suites de Tests k6",
-      overviewIntro: "Deux suites de tests k6 préconstruites couvrent les parcours utilisateur critiques : flux d'authentification et opérations CRUD.",
+      overviewIntro:
+        "Deux suites de tests k6 préconstruites couvrent les parcours utilisateur critiques : flux d'authentification et opérations CRUD.",
       thresholdsTitle: "Seuils SLA",
       authFlowTitle: "Script de Test du Flux d'Authentification",
-      authFlowIntro: "Le test auth-flow.js simule des patterns d'authentification réalistes : connexion, accès aux endpoints protégés avec jeton JWT et vérification du health check. Des métriques personnalisées (nexora_login_duration, nexora_login_fail_rate) suivent les SLAs d'authentification.",
+      authFlowIntro:
+        "Le test auth-flow.js simule des patterns d'authentification réalistes : connexion, accès aux endpoints protégés avec jeton JWT et vérification du health check. Des métriques personnalisées (nexora_login_duration, nexora_login_fail_rate) suivent les SLAs d'authentification.",
       runningTitle: "Exécuter les Tests de Charge",
       cicdTitle: "Intégration CI/CD",
-      cicdIntro: "k6 s'intègre avec GitHub Actions, GitLab CI et Azure Pipelines. Les tests s'exécutent contre une instance backend conteneurisée avec attente de readiness de santé. Le pipeline échoue automatiquement si un seuil SLA est dépassé.",
+      cicdIntro:
+        "k6 s'intègre avec GitHub Actions, GitLab CI et Azure Pipelines. Les tests s'exécutent contre une instance backend conteneurisée avec attente de readiness de santé. Le pipeline échoue automatiquement si un seuil SLA est dépassé.",
       backupTitle: "Sauvegarde et Reprise après Sinistre",
-      backupIntro: "NEXORA prend en charge des stratégies de sauvegarde multi-fournisseur avec des outils et fréquences spécifiques pour chaque moteur de base de données.",
-      drWarning: "Critique : Testez vos procédures de reprise après sinistre trimestriellement. Une sauvegarde jamais restaurée n'est pas une sauvegarde — c'est un espoir.",
+      backupIntro:
+        "NEXORA prend en charge des stratégies de sauvegarde multi-fournisseur avec des outils et fréquences spécifiques pour chaque moteur de base de données.",
+      drWarning:
+        "Critique : Testez vos procédures de reprise après sinistre trimestriellement. Une sauvegarde jamais restaurée n'est pas une sauvegarde — c'est un espoir.",
     },
   },
 };

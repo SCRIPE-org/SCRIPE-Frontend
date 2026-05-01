@@ -3,7 +3,8 @@ export const en = {
     features: {
       featureKey: "Feature Key",
       title: "Features",
-      description: "Manage the platform feature catalog — define capabilities that editions can configure.",
+      description:
+        "Manage the platform feature catalog — define capabilities that editions can configure.",
       name: "Feature Name",
       featureName: "Feature Key",
       displayName: "Display Name",
@@ -23,7 +24,8 @@ export const en = {
       edit: "Edit Feature",
       editDesc: "Update feature details.",
       deleteConfirmTitle: "Delete Feature",
-      deleteConfirmDesc: "This will remove this feature and all its edition values. This action cannot be undone.",
+      deleteConfirmDesc:
+        "This will remove this feature and all its edition values. This action cannot be undone.",
       created: "Feature Created",
       createdDesc: "Feature added to the catalog.",
       updated: "Feature Updated",

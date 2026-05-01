@@ -39,7 +39,10 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading = false, disabled, children, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, loading = false, disabled, children, ...props },
+    ref
+  ) => {
     const settings = useSettings();
     const Comp = asChild ? Slot : "button";
 
@@ -119,7 +122,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           buttonVariants({ variant, size }),
           getButtonClasses(),
           loading && "relative",
-          className,
+          className
         )}
         ref={ref}
         disabled={disabled || loading}
@@ -129,10 +132,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <LoadingSpinner
             size="inline"
             showText={false}
-            className={cn(
-              "shrink-0",
-              children ? "ltr:mr-2 rtl:ml-2" : "",
-            )}
+            className={cn("shrink-0", children ? "ltr:mr-2 rtl:ml-2" : "")}
           />
         )}
         {children}
@@ -143,4 +143,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
-

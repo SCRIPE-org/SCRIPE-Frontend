@@ -74,8 +74,10 @@ export const ar = {
     resyncedDesc: "تمت مزامنة الصلاحيات من الإصدار.",
     manage: "إدارة الاشتراكات",
     skipPayment: "تخطي الدفع",
-    skipPaymentDesc: "تفعيل الاشتراك بدون معالجة الدفع. يُستخدم للعروض التوضيحية أو الفوترة اليدوية.",
-    skipPaymentWarning: "لن يتم تجديد هذا الاشتراك تلقائياً. ولم يتم إنشاء عميل في Stripe. استخدم الفوترة اليدوية للمدفوعات المستقبلية.",
+    skipPaymentDesc:
+      "تفعيل الاشتراك بدون معالجة الدفع. يُستخدم للعروض التوضيحية أو الفوترة اليدوية.",
+    skipPaymentWarning:
+      "لن يتم تجديد هذا الاشتراك تلقائياً. ولم يتم إنشاء عميل في Stripe. استخدم الفوترة اليدوية للمدفوعات المستقبلية.",
     export: {
       title: "تصدير الاشتراكات",
       description: "إنشاء تقارير تحليلية شاملة للاشتراكات.",
@@ -111,6 +113,40 @@ export const ar = {
       expiringIn30Days: "تنتهي خلال 30 يوماً",
       expiringIn60Days: "تنتهي خلال 60 يوماً",
       expiringIn90Days: "تنتهي خلال 90 يوماً",
+    },
+    customRefundAmount: "مبلغ الاسترداد المخصص",
+    customAmountPlaceholder: "عنصر نائب للمبلغ المخصص",
+    customAmountHint: "تلميح المبلغ المخصص",
+    planDetails: "تفاصيل الخطة",
+    fallbackEdition: "الإصدار الاحتياطي",
+    paymentGateway: "بوابة الدفع",
+    freeEdition: "إصدار مجاني",
+    noPaymentGateway: "لا حاجة لبوابة دفع",
+    customer: "العميل",
+    subscription: "الاشتراك",
+    notCreated: "لم يتم إنشاؤه",
+    notLinked: "غير مرتبط",
+  },
+  entitlements: {
+    promotions: {
+      noPromotionsAvailable: "[مفقود] No Promotions Available",
+      selectPromotion: "[مفقود] Select Promotion",
+      enterCode: "[مفقود] Enter Code",
+    },
+  },
+  common: {
+    type: "[مفقود] Type",
+  },
+  dashboard: {
+    kpi: {
+      arpu: "[مفقود] Arpu",
+      arpuDesc: "[مفقود] Arpu Desc",
+      churnRate: "[مفقود] Churn Rate",
+      churnRateDesc: "[مفقود] Churn Rate Desc",
+      renewals: "[مفقود] Renewals",
+      renewalsDesc: "[مفقود] Renewals Desc",
+      promoDiscount: "[مفقود] Promo Discount",
+      promoDiscountDesc: "[مفقود] Promo Discount Desc",
     },
   },
 };

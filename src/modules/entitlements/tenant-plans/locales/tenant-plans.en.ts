@@ -1,14 +1,12 @@
 export const en = {
   entitlements: {
     tenantPlans: {
-      // ── Page ──
       title: "Tenant Plans",
       description: "Create and manage pricing plans for your end-users.",
       planName: "Plan Name",
       namePlaceholder: "e.g. Gold, Premium, Enterprise",
       descriptionPlaceholder: "Brief description of this plan...",
       managePlan: "Manage Plan",
-      // ── Pricing & Billing ──
       pricing: "Starting Price",
       billingCycles: "Billing Cycles",
       billingCycle: "Billing Cycle",
@@ -20,8 +18,6 @@ export const en = {
       allowLifetime: "Allow Lifetime Purchase",
       allowTrial: "Allow Trial",
       allowTrialDesc: "If enabled, a trial period can be offered for this plan.",
-
-      // ── Display ──
       displayNameEn: "Display Name (EN)",
       displayNameEnPlaceholder: "Customer-facing name in English",
       displayNameAr: "Display Name (AR)",
@@ -31,8 +27,6 @@ export const en = {
       isPublic: "Publicly Visible",
       isPublicDesc: "If enabled, users can see and select this plan.",
       tier: "Tier Level",
-
-      // ── Limits & Trial ──
       trialDays: "Trial Days",
       trialDaysDesc: "Number of free trial days (0 = no trial).",
       maxUsers: "Max Users",
@@ -42,20 +36,18 @@ export const en = {
       subscribers: "Subscribers",
       gracePeriodDays: "Grace Period Days",
       gracePeriodDesc: "Number of days after subscription expiration before suspension.",
-
-      // ── Settings ──
       selfServiceEnabled: "Self-Service Enabled",
       contactSalesOnly: "Contact Sales Only",
       color: "Brand Color",
       badgeText: "Badge Text",
       badgeTextPlaceholder: "e.g. Most Popular",
       isContactSalesOnly: "Contact Sales Only",
-      isContactSalesOnlyDesc: "If enabled, users cannot subscribe directly. They must contact sales.",
+      isContactSalesOnlyDesc:
+        "If enabled, users cannot subscribe directly. They must contact sales.",
       isSelfServiceEnabled: "Self-Service Enabled",
       isSelfServiceEnabledDesc: "If enabled, users can subscribe and manage this plan directly.",
       quotasAndAccess: "Quotas & Access",
       trialAndGrace: "Trial & Grace Period",
-      // ── Lifecycle ──
       publish: "Publish",
       publishDesc: "Make this plan live for subscriptions.",
       published: "Plan Published",
@@ -69,8 +61,6 @@ export const en = {
       statusDraft: "Draft",
       statusPublished: "Published",
       statusArchived: "Archived",
-
-      // ── Comparison ──
       feature: "Feature",
       features: "Features",
       comparison: {
@@ -92,35 +82,33 @@ export const en = {
         categoryConfiguration: "Configuration",
         categoryGeneral: "General",
       },
-
-      // ── Tabs ──
       tabGeneral: "General",
       tabSettings: "Settings",
       tabFeatures: "Features",
       tabPricing: "Pricing",
       tabVersions: "Versions",
       tabPromotions: "Promotions",
-
-      // ── Features Tab ──
       noFeatures: "No features assigned to this plan yet.",
       noFeaturesHint: "Add features from the Feature Catalog to define what this plan includes.",
-
-      // ── Pricing Tab — Hybrid Model ──
       noPricing: "No pricing configured for this plan yet.",
       noPricingHint: "Add a currency to start configuring pricing for your plan.",
       basePricing: "Base Pricing (USD)",
       anchorCurrency: "Anchor",
-      basePricingInfo: "USD is the anchor currency. All other currencies auto-calculate from exchange rates unless explicitly overridden.",
+      basePricingInfo:
+        "USD is the anchor currency. All other currencies auto-calculate from exchange rates unless explicitly overridden.",
       currencyOverrides: "Currency Overrides",
-      noOverrides: "No currency overrides set. Prices in other currencies are auto-calculated from USD exchange rates.",
+      noOverrides:
+        "No currency overrides set. Prices in other currencies are auto-calculated from USD exchange rates.",
       loadingRates: "Loading exchange rates...",
       addCurrency: "Add Currency",
-      addCurrencyOverrideDesc: "Select a currency to add explicit pricing. Amounts will be pre-filled from current exchange rates.",
+      addCurrencyOverrideDesc:
+        "Select a currency to add explicit pricing. Amounts will be pre-filled from current exchange rates.",
       allCurrenciesAdded: "All supported currencies have been added.",
       yearlyDiscount: "Yearly Discount:",
       applyDiscount: "Apply",
       livePreview: "Live Preview",
-      previewInfo: "This preview shows what your users would pay in each currency. 'Auto' prices are converted from USD via live exchange rates.",
+      previewInfo:
+        "This preview shows what your users would pay in each currency. 'Auto' prices are converted from USD via live exchange rates.",
       source: "Source",
       sourceExplicit: "Explicit",
       sourceAuto: "Auto",
@@ -133,43 +121,39 @@ export const en = {
       addCurrencyDesc: "Select a currency to add pricing rows for all enabled billing cycles.",
       amount: "Amount",
       originalAmount: "Original Price",
-      pricingInfo: "Add pricing for each currency your users will pay in. Each currency can have monthly, yearly, and lifetime billing cycles.",
+      pricingInfo:
+        "Add pricing for each currency your users will pay in. Each currency can have monthly, yearly, and lifetime billing cycles.",
       yearlySave: "Save",
       currency: "Currency",
       selectCurrency: "Select currency...",
-
-      // ── Versions Tab ──
       noVersions: "No version snapshots yet.",
       noVersionsHint: "Version snapshots are created when a plan is published.",
       versionHistory: "Version History",
-      versionHistoryDesc: "Immutable snapshots created on publish. Active subscriptions are pinned to their version.",
+      versionHistoryDesc:
+        "Immutable snapshots created on publish. Active subscriptions are pinned to their version.",
       versionNumber: "Version",
       versionNotes: "Change Notes",
       versionPublishedAt: "Published At",
       versionPublishedBy: "Published By",
       versionStatus: "Status",
-
-      // ── Promotions Tab ──
       promotionsTitle: "Promotions",
-      promotionsDesc: "Promo codes and discounts linked to this plan. Manage all promotions from the main Promotions page.",
+      promotionsDesc:
+        "Promo codes and discounts linked to this plan. Manage all promotions from the main Promotions page.",
       promotionsPlaceholder: "Promotions management is available from the dedicated page.",
       viewAllPromotions: "View All Promotions",
-
-      // ── CRUD ──
       create: "Create Plan",
       createDesc: "Define a new pricing plan for your users.",
       edit: "Edit Plan",
       editDesc: "Update plan details.",
       deleteConfirmTitle: "Delete Plan",
-      deleteConfirmDesc: "This will soft-delete the plan. You cannot delete plans with active subscribers.",
+      deleteConfirmDesc:
+        "This will soft-delete the plan. You cannot delete plans with active subscribers.",
       created: "Plan Created",
       createdDesc: "New plan created successfully.",
       updated: "Plan Updated",
       updatedDesc: "Plan details updated.",
       deleted: "Plan Deleted",
       deletedDesc: "Plan removed.",
-
-      // ── States ──
       noPlans: "No plans found",
       activeBadge: "Active",
       inactiveBadge: "Inactive",
@@ -180,8 +164,6 @@ export const en = {
       cannotDeleteActive: "Cannot delete a plan with active subscribers.",
       noTenantContext: "Tenant Plans are only available for tenant-scoped administrators.",
       noTenantContextHint: "Please impersonate a tenant admin to manage plans.",
-
-      // ── General Tab ──
       generalInfo: "General Information",
       billingConfig: "Billing Configuration",
       trialConfig: "Trial Configuration",
@@ -190,19 +172,26 @@ export const en = {
       basicDetails: "Basic Details",
       billingAndAccess: "Billing & Access",
       supportedCycles: "Supported Cycles",
+      editSettings: "Edit Settings",
+      stepBasics: "Basics",
+      stepBilling: "Billing",
+      editing: "Editing",
+      createPlan: "Create Plan",
+      createPlanDesc: "Define a new pricing plan for your users.",
+      reviewNote: "Pricing values and detailed feature toggles are configured on the Pricing and Features tabs after the plan is initially created.",
     },
-
-    // ── Feature Definitions CRUD ──
     featureDefinitions: {
       title: "Feature Catalog",
       tier2Badge: "Tier 2",
-      description: "Define reusable features that can be assigned to your plans. Boolean, numeric, or string capabilities.",
+      description:
+        "Define reusable features that can be assigned to your plans. Boolean, numeric, or string capabilities.",
       create: "Create Feature",
       view: "View Feature",
       viewDesc: "View feature definition details.",
       edit: "Edit Feature",
       deleteTitle: "Delete Feature",
-      deleteDesc: "This feature will be permanently removed. Features referenced by plans cannot be deleted.",
+      deleteDesc:
+        "This feature will be permanently removed. Features referenced by plans cannot be deleted.",
       searchPlaceholder: "Search features by key, name, or category...",
       key: "Feature Key",
       keyPlaceholder: "e.g. max_projects, api_access, custom_branding",
@@ -236,7 +225,6 @@ export const en = {
       pickFeature: "Add Feature from Catalog",
       pickFeatureDesc: "Select a feature to add to this plan. You can set its value after adding.",
       noAvailableFeatures: "All features have been assigned to this plan.",
-      // ── Form page ──
       createDesc: "Define a reusable feature for your tenant plans.",
       editDesc: "Update the feature definition details.",
       sectionIdentity: "Identity",
@@ -255,5 +243,54 @@ export const en = {
       createFailed: "Failed to create feature definition.",
       updateFailed: "Failed to update feature definition.",
     },
+    promotions: {
+      createSuccess: "Create Success",
+      createFailed: "Create Failed",
+      updateSuccess: "Update Success",
+      updateFailed: "Update Failed",
+      deleteSuccess: "Delete Success",
+      deleteFailed: "Delete Failed",
+      code: "Code",
+      discountType: "Discount Type",
+      percentage: "Percentage",
+      fixedAmount: "Fixed Amount",
+      freeTrial: "Free Trial (days)",
+      value: "Value",
+      maxRedemptions: "Max Redemptions",
+      startsAt: "Starts At",
+      expiresAt: "Expires At",
+      minimumAmount: "Minimum Amount",
+      noMinimum: "No minimum",
+      optionalDescription: "Optional description",
+      autoApply: "Auto-Apply",
+      stackable: "Stackable",
+      auto: "Auto",
+      off: "off",
+      used: "used",
+      expires: "Expires",
+      searchPlaceholder: "Search promo codes…",
+      noPromotions: "No promotions yet",
+      createFirst: "Create your first promo code for this plan.",
+      newPromotion: "New Promotion",
+      editPromotion: "Edit Promotion",
+    },
+    pricing: {
+      perMonth: "Per Month",
+    },
+  },
+  common: {
+    new: "New",
+    updateFailed: "Update Failed",
+    updated: "Updated",
+    deleted: "Deleted",
+    review: "Review",
+    note: "Note",
+    optional: "optional",
+    cancel: "Cancel",
+    noneSelected: "None selected",
+    noTrial: "No Trial",
+  },
+  validation: {
+    required: "Required",
   },
 };

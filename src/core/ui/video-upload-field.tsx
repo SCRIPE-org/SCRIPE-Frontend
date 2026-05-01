@@ -17,14 +17,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import {
-  Upload,
-  Link2,
-  Video,
-  Loader2,
-  Check,
-  X,
-} from "lucide-react";
+import { Upload, Link2, Video, Loader2, Check, X } from "lucide-react";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
 
@@ -100,7 +93,9 @@ export function VideoUploadField({
         );
         // Resolve relative path to full backend URL + cache-buster (same as ImageUploadField)
         const resolved = resolveFileUrl(response.url);
-        const cacheBusted = resolved.includes("?") ? `${resolved}&v=${Date.now()}` : `${resolved}?v=${Date.now()}`;
+        const cacheBusted = resolved.includes("?")
+          ? `${resolved}&v=${Date.now()}`
+          : `${resolved}?v=${Date.now()}`;
         onChange(cacheBusted);
         setActiveTab("url");
       } catch {
@@ -136,10 +131,13 @@ export function VideoUploadField({
     const trimmed = urlInput.trim();
     if (!trimmed) return;
     // Basic URL validation
-    if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://") && !trimmed.startsWith("/")) {
+    if (
+      !trimmed.startsWith("http://") &&
+      !trimmed.startsWith("https://") &&
+      !trimmed.startsWith("/")
+    ) {
       setError(
-        t("videoUpload.invalidUrl") ||
-          "Please enter a valid URL starting with http:// or https://"
+        t("videoUpload.invalidUrl") || "Please enter a valid URL starting with http:// or https://"
       );
       return;
     }
@@ -156,19 +154,15 @@ export function VideoUploadField({
 
   return (
     <div className="space-y-1.5">
-      {label && (
-        <Label className="text-[10px] text-muted-foreground">{label}</Label>
-      )}
-      {description && (
-        <p className="text-[9px] text-muted-foreground/70">{description}</p>
-      )}
+      {label && <Label className="text-[10px] text-muted-foreground">{label}</Label>}
+      {description && <p className="text-[9px] text-muted-foreground/70">{description}</p>}
 
       {/* Preview */}
       {value && displayUrl && (
-        <div className="relative rounded-md overflow-hidden border border-border bg-muted/20">
+        <div className="relative overflow-hidden rounded-md border border-border bg-muted/20">
           <video
             src={displayUrl}
-            className="w-full max-h-[120px] object-cover"
+            className="max-h-[120px] w-full object-cover"
             muted
             playsInline
             preload="metadata"
@@ -177,11 +171,11 @@ export function VideoUploadField({
             type="button"
             onClick={handleRemove}
             disabled={disabled}
-            className="absolute top-1 end-1 h-5 w-5 rounded-full bg-destructive/90 text-destructive-foreground flex items-center justify-center hover:bg-destructive transition-colors"
+            className="absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive/90 text-destructive-foreground transition-colors hover:bg-destructive"
           >
             <X className="h-3 w-3" />
           </button>
-          <div className="absolute bottom-1 start-1 bg-black/60 text-white text-[8px] px-1.5 py-0.5 rounded">
+          <div className="absolute bottom-1 start-1 rounded bg-black/60 px-1.5 py-0.5 text-[8px] text-white">
             {value.split("/").pop()?.substring(0, 30) || "video"}
           </div>
         </div>
@@ -190,11 +184,11 @@ export function VideoUploadField({
       {/* Upload / URL Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="h-7 w-full">
-          <TabsTrigger value="upload" className="h-5 text-[10px] gap-1 flex-1">
+          <TabsTrigger value="upload" className="h-5 flex-1 gap-1 text-[10px]">
             <Upload className="h-3 w-3" />
             {t("imageUpload.uploadTab") || "Upload"}
           </TabsTrigger>
-          <TabsTrigger value="url" className="h-5 text-[10px] gap-1 flex-1">
+          <TabsTrigger value="url" className="h-5 flex-1 gap-1 text-[10px]">
             <Link2 className="h-3 w-3" />
             {t("imageUpload.urlTab") || "URL"}
           </TabsTrigger>
@@ -211,11 +205,11 @@ export function VideoUploadField({
             onDragLeave={() => setIsDragOver(false)}
             onClick={() => !disabled && !isUploading && fileInputRef.current?.click()}
             className={cn(
-              "flex flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed p-4 cursor-pointer transition-colors",
+              "flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed p-4 transition-colors",
               isDragOver
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/40 hover:bg-accent/10",
-              disabled && "opacity-50 cursor-not-allowed"
+              disabled && "cursor-not-allowed opacity-50"
             )}
           >
             {isUploading ? (
@@ -228,7 +222,7 @@ export function VideoUploadField({
             ) : (
               <>
                 <Video className="h-5 w-5 text-muted-foreground" />
-                <span className="text-[10px] text-muted-foreground text-center">
+                <span className="text-center text-[10px] text-muted-foreground">
                   {t("videoUpload.dragDrop") || "Drop a video here or click to browse"}
                 </span>
                 <span className="text-[9px] text-muted-foreground/50">
@@ -253,7 +247,7 @@ export function VideoUploadField({
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               placeholder={t("videoUpload.urlPlaceholder") || "https://example.com/video.mp4"}
-              className="h-7 text-[10px] flex-1"
+              className="h-7 flex-1 text-[10px]"
               disabled={disabled}
               onKeyDown={(e) => e.key === "Enter" && handleUrlApply()}
             />
@@ -275,7 +269,7 @@ export function VideoUploadField({
 
       {/* Error */}
       {error && (
-        <p className="text-[10px] text-destructive flex items-center gap-1">
+        <p className="flex items-center gap-1 text-[10px] text-destructive">
           <X className="h-3 w-3" />
           {error}
         </p>

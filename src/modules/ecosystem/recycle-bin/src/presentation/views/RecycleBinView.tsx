@@ -35,7 +35,11 @@ export function RecycleBinView() {
     { key: "admins", label: t("recycleBin.tabs.admins"), count: vm.tabCounts.admins },
     { key: "users", label: t("recycleBin.tabs.users"), count: vm.tabCounts.users },
     { key: "roles", label: t("recycleBin.tabs.roles"), count: vm.tabCounts.roles },
-    { key: "userGroups", label: t("recycleBin.tabs.userGroups") || "User Groups", count: vm.tabCounts.userGroups },
+    {
+      key: "userGroups",
+      label: t("recycleBin.tabs.userGroups") || "User Groups",
+      count: vm.tabCounts.userGroups,
+    },
   ];
 
   // ============ Columns ============
@@ -122,19 +126,19 @@ export function RecycleBinView() {
       },
       bulkActions: vm.canRestore
         ? [
-          {
-            label: t("recycleBin.bulkRestore") || "Restore Selected",
-            onClick: async (selectedIds: string[]) => vm.handleBulkRestore(selectedIds),
-            variant: "default" as const,
-            icon: <RotateCcw className="h-4 w-4" />,
-            requiresConfirmation: true,
-            confirmTitle: t("recycleBin.confirmBulkRestore") || "Bulk Restore",
-            confirmDescription:
-              t("recycleBin.confirmBulkRestoreDesc") ||
-              "Are you sure you want to restore {count} items?",
-            minItems: 1,
-          } satisfies BulkAction,
-        ]
+            {
+              label: t("recycleBin.bulkRestore") || "Restore Selected",
+              onClick: async (selectedIds: string[]) => vm.handleBulkRestore(selectedIds),
+              variant: "default" as const,
+              icon: <RotateCcw className="h-4 w-4" />,
+              requiresConfirmation: true,
+              confirmTitle: t("recycleBin.confirmBulkRestore") || "Bulk Restore",
+              confirmDescription:
+                t("recycleBin.confirmBulkRestoreDesc") ||
+                "Are you sure you want to restore {count} items?",
+              minItems: 1,
+            } satisfies BulkAction,
+          ]
         : [],
       permissions: {
         canView: SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW,
@@ -168,22 +172,22 @@ export function RecycleBinView() {
       changePage: vm.changePage,
       changePageSize: vm.changePageSize,
       isCreateModalOpen: false,
-      setIsCreateModalOpen: () => { },
+      setIsCreateModalOpen: () => {},
       isEditModalOpen: false,
-      setIsEditModalOpen: () => { },
+      setIsEditModalOpen: () => {},
       editingItem: null,
-      openEditModal: () => { },
-      closeEditModal: () => { },
+      openEditModal: () => {},
+      closeEditModal: () => {},
       viewModalOpen: false,
-      setViewModalOpen: () => { },
+      setViewModalOpen: () => {},
       viewItem: null,
-      openViewModal: () => { },
-      closeViewModal: () => { },
+      openViewModal: () => {},
+      closeViewModal: () => {},
       selectedItems,
       setSelectedItems,
-      createItem: async () => { },
-      updateItem: async () => { },
-      deleteItem: async () => { },
+      createItem: async () => {},
+      updateItem: async () => {},
+      deleteItem: async () => {},
       refreshItems: vm.refreshItems,
       refresh: vm.refreshItems,
       isCreating: false,
@@ -248,10 +252,14 @@ export function RecycleBinView() {
 
       <CascadeRestoreDialog
         open={vm.restoreDialog.open}
-        onOpenChange={(v) => vm.setRestoreDialog(s => ({ ...s, open: v }))}
+        onOpenChange={(v) => vm.setRestoreDialog((s) => ({ ...s, open: v }))}
         onConfirm={vm.confirmRestore}
         isPending={vm.restoreDialog.isPending}
-        itemName={vm.restoreDialog.ids.length > 1 ? `${vm.restoreDialog.ids.length} groups` : "the selected group"}
+        itemName={
+          vm.restoreDialog.ids.length > 1
+            ? `${vm.restoreDialog.ids.length} groups`
+            : "the selected group"
+        }
       />
     </div>
   );

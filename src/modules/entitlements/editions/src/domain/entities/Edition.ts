@@ -19,7 +19,7 @@ export interface EditionFeatureDto {
 /** Pricing data for a specific currency + billing cycle combination. */
 export interface EditionPriceData {
   editionId: string;
-  currency: string;   // "USD" | "EUR" | "SAR" etc.
+  currency: string; // "USD" | "EUR" | "SAR" etc.
   billingCycle: string; // "Monthly" | "Yearly" | "Lifetime"
   amount: number;
 }
@@ -67,12 +67,24 @@ export interface EditionData extends BaseEntity {
 export class Edition {
   constructor(private readonly data: EditionData) {}
 
-  get id(): string { return this.data.id; }
-  get name(): string { return this.data.name; }
-  get displayNameEn(): string { return this.data.displayNameEn; }
-  get displayNameAr(): string { return this.data.displayNameAr; }
-  get description(): string | undefined { return this.data.description; }
-  get tagline(): string | undefined { return this.data.tagline; }
+  get id(): string {
+    return this.data.id;
+  }
+  get name(): string {
+    return this.data.name;
+  }
+  get displayNameEn(): string {
+    return this.data.displayNameEn;
+  }
+  get displayNameAr(): string {
+    return this.data.displayNameAr;
+  }
+  get description(): string | undefined {
+    return this.data.description;
+  }
+  get tagline(): string | undefined {
+    return this.data.tagline;
+  }
 
   /** Parsed recommendation labels from JSON string. Returns [] if empty/null. */
   get recommendationLabels(): string[] {
@@ -89,30 +101,74 @@ export class Edition {
     }
   }
 
-  get isSystem(): boolean { return this.data.isSystem; }
-  get isRetired(): boolean { return this.data.isRetired; }
-  get tierLevel(): number { return this.data.tierLevel; }
-  get createdAt(): string { return this.data.createdAt; }
-  get features(): EditionFeatureDto[] { return this.data.features ?? []; }
-  get featureCount(): number { return this.data.featureCount ?? this.features.length; }
-  get fallbackEditionId(): string | undefined { return this.data.fallbackEditionId; }
-  get fallbackEditionName(): string | undefined { return this.data.fallbackEditionName; }
-  get overflowPolicy(): string { return this.data.overflowPolicy ?? "Block"; }
-  get baseMonthlyPriceUsd(): number | undefined { return this.data.baseMonthlyPriceUsd; }
-  get prices(): EditionPriceData[] { return this.data.prices ?? []; }
+  get isSystem(): boolean {
+    return this.data.isSystem;
+  }
+  get isRetired(): boolean {
+    return this.data.isRetired;
+  }
+  get tierLevel(): number {
+    return this.data.tierLevel;
+  }
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
+  get features(): EditionFeatureDto[] {
+    return this.data.features ?? [];
+  }
+  get featureCount(): number {
+    return this.data.featureCount ?? this.features.length;
+  }
+  get fallbackEditionId(): string | undefined {
+    return this.data.fallbackEditionId;
+  }
+  get fallbackEditionName(): string | undefined {
+    return this.data.fallbackEditionName;
+  }
+  get overflowPolicy(): string {
+    return this.data.overflowPolicy ?? "Block";
+  }
+  get baseMonthlyPriceUsd(): number | undefined {
+    return this.data.baseMonthlyPriceUsd;
+  }
+  get prices(): EditionPriceData[] {
+    return this.data.prices ?? [];
+  }
   // ── Billing Controls ──
-  get allowMonthly(): boolean { return this.data.allowMonthly; }
-  get allowYearly(): boolean { return this.data.allowYearly; }
-  get allowLifetime(): boolean { return this.data.allowLifetime; }
-  get allowTrial(): boolean { return this.data.allowTrial; }
-  get trialDurationDays(): number { return this.data.trialDurationDays; }
-  get trialIsFree(): boolean { return this.data.trialIsFree; }
-  get trialDiscountPercent(): number { return this.data.trialDiscountPercent; }
-  get gracePeriodDays(): number { return this.data.gracePeriodDays; }
-  get maxActiveSubscriptions(): number { return this.data.maxActiveSubscriptions ?? -1; }
+  get allowMonthly(): boolean {
+    return this.data.allowMonthly;
+  }
+  get allowYearly(): boolean {
+    return this.data.allowYearly;
+  }
+  get allowLifetime(): boolean {
+    return this.data.allowLifetime;
+  }
+  get allowTrial(): boolean {
+    return this.data.allowTrial;
+  }
+  get trialDurationDays(): number {
+    return this.data.trialDurationDays;
+  }
+  get trialIsFree(): boolean {
+    return this.data.trialIsFree;
+  }
+  get trialDiscountPercent(): number {
+    return this.data.trialDiscountPercent;
+  }
+  get gracePeriodDays(): number {
+    return this.data.gracePeriodDays;
+  }
+  get maxActiveSubscriptions(): number {
+    return this.data.maxActiveSubscriptions ?? -1;
+  }
   // ── Self-Service Controls ──
-  get isSelfServiceEnabled(): boolean { return this.data.isSelfServiceEnabled ?? true; }
-  get isContactSalesOnly(): boolean { return this.data.isContactSalesOnly ?? false; }
+  get isSelfServiceEnabled(): boolean {
+    return this.data.isSelfServiceEnabled ?? true;
+  }
+  get isContactSalesOnly(): boolean {
+    return this.data.isContactSalesOnly ?? false;
+  }
 
   /**
    * Returns true if this edition has no pricing records at all (genuinely free).
@@ -126,7 +182,10 @@ export class Edition {
    * Get price for a given currency and billing cycle.
    * Returns undefined if no price record exists (= free for that combination).
    */
-  getPriceForCycle(billingCycle: "Monthly" | "Yearly" | "Lifetime", currency = "USD"): number | undefined {
+  getPriceForCycle(
+    billingCycle: "Monthly" | "Yearly" | "Lifetime",
+    currency = "USD"
+  ): number | undefined {
     const match = this.prices.find(
       (p) => p.billingCycle === billingCycle && p.currency === currency
     );

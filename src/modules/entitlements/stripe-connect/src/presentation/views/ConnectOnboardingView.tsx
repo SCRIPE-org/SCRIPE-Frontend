@@ -14,13 +14,7 @@ import { OnboardingStatusCard } from "../components/OnboardingStatusCard";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import { useState } from "react";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 
 export function ConnectOnboardingView() {
@@ -31,13 +25,13 @@ export function ConnectOnboardingView() {
 
   return (
     <div className="space-y-6">
-      <GenericCrudView 
-        viewModel={vm}
-        config={vm.getConfigBase()}
-      />
+      <GenericCrudView viewModel={vm} config={vm.getConfigBase()} />
 
       {/* View Detail Modal - Using custom state to prevent GenericCrudView modal clashes */}
-      <Dialog open={vm.customViewModalOpen} onOpenChange={(open) => !open && vm.closeCustomViewModal()}>
+      <Dialog
+        open={vm.customViewModalOpen}
+        onOpenChange={(open) => !open && vm.closeCustomViewModal()}
+      >
         <DialogContent className="sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle>{t("entitlements.stripeConnect.account")}</DialogTitle>
@@ -55,12 +49,10 @@ export function ConnectOnboardingView() {
                 isOpeningDashboard={vm.isOpeningDashboard}
               />
 
-              <div className="rounded-md border p-4 space-y-2 text-sm">
+              <div className="space-y-2 rounded-md border p-4 text-sm">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium">
-                    {t("entitlements.stripeConnect.effectiveRate")}
-                  </p>
-                  <span className="font-bold tabular-nums text-base">
+                  <p className="font-medium">{t("entitlements.stripeConnect.effectiveRate")}</p>
+                  <span className="text-base font-bold tabular-nums">
                     {((vm.customViewItem.effectiveCommissionRate ?? 0) * 100).toFixed(2)}%
                   </span>
                 </div>
@@ -70,19 +62,19 @@ export function ConnectOnboardingView() {
               </div>
 
               {vm.customViewItem.stripeAccountId && (
-                <div className="rounded-md border p-3 text-sm space-y-1">
+                <div className="space-y-1 rounded-md border p-3 text-sm">
                   <p className="text-xs text-muted-foreground">
                     {t("entitlements.stripeConnect.stripeAccountId")}
                   </p>
-                  <p className="font-mono text-xs break-all">
-                    {vm.customViewItem.stripeAccountId}
-                  </p>
+                  <p className="break-all font-mono text-xs">{vm.customViewItem.stripeAccountId}</p>
                 </div>
               )}
             </div>
           )}
           <DialogFooter>
-             <Button variant="outline" onClick={vm.closeCustomViewModal}>{t("common.close") || "Close"}</Button>
+            <Button variant="outline" onClick={vm.closeCustomViewModal}>
+              {t("common.close") || "Close"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

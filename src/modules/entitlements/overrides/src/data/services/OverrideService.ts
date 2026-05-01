@@ -9,47 +9,45 @@ import type { FeatureOverrideModel, ResolvedFeatureModel } from "../models/Overr
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 export class OverrideService implements IOverrideService {
-      constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
-      async getOverrides(tenantId: string): Promise<FeatureOverrideModel[]> {
-            return this.api.get<FeatureOverrideModel[]>(
-                  API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.OVERRIDES(tenantId)
-            );
-      }
+  async getOverrides(tenantId: string): Promise<FeatureOverrideModel[]> {
+    return this.api.get<FeatureOverrideModel[]>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.OVERRIDES(tenantId)
+    );
+  }
 
-      async getResolved(tenantId: string): Promise<ResolvedFeatureModel[]> {
-            return this.api.get<ResolvedFeatureModel[]>(
-                  API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
-            );
-      }
+  async getResolved(tenantId: string): Promise<ResolvedFeatureModel[]> {
+    return this.api.get<ResolvedFeatureModel[]>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
+    );
+  }
 
-      async setOverride(
-            tenantId: string,
-            featureId: string,
-            data: { value: string; reason?: string }
-      ): Promise<{ id: string }> {
-            return this.api.put<{ id: string }>(
-                  API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.SET_OVERRIDE(tenantId, featureId),
-                  data
-            );
-      }
+  async setOverride(
+    tenantId: string,
+    featureId: string,
+    data: { value: string; reason?: string }
+  ): Promise<{ id: string }> {
+    return this.api.put<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.SET_OVERRIDE(tenantId, featureId),
+      data
+    );
+  }
 
-      async removeOverride(tenantId: string, featureId: string): Promise<void> {
-            await this.api.delete(
-                  API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.REMOVE_OVERRIDE(tenantId, featureId)
-            );
-      }
+  async removeOverride(tenantId: string, featureId: string): Promise<void> {
+    await this.api.delete(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.REMOVE_OVERRIDE(tenantId, featureId)
+    );
+  }
 
-      async setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void> {
-            await this.api.put(
-                  API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_SET(overrideId),
-                  { amountUsd, reason }
-            );
-      }
+  async setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void> {
+    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_SET(overrideId), {
+      amountUsd,
+      reason,
+    });
+  }
 
-      async removeOverrideCost(overrideId: string): Promise<void> {
-            await this.api.delete(
-                  API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_REMOVE(overrideId)
-            );
-      }
+  async removeOverrideCost(overrideId: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_REMOVE(overrideId));
+  }
 }

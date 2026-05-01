@@ -39,15 +39,24 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
 
   // Build billing cycle options based on plan settings
   const cycleOptions: GenericSelectOption[] = [];
-  if (plan.allowMonthly) cycleOptions.push({ value: "Monthly", label: t("entitlements.tenantPlans.monthly") || "Monthly" });
-  if (plan.allowYearly) cycleOptions.push({ value: "Yearly", label: t("entitlements.tenantPlans.yearly") || "Yearly" });
-  if (plan.allowLifetime) cycleOptions.push({ value: "Lifetime", label: t("entitlements.tenantPlans.lifetime") || "Lifetime" });
+  if (plan.allowMonthly)
+    cycleOptions.push({
+      value: "Monthly",
+      label: t("entitlements.tenantPlans.monthly") || "Monthly",
+    });
+  if (plan.allowYearly)
+    cycleOptions.push({ value: "Yearly", label: t("entitlements.tenantPlans.yearly") || "Yearly" });
+  if (plan.allowLifetime)
+    cycleOptions.push({
+      value: "Lifetime",
+      label: t("entitlements.tenantPlans.lifetime") || "Lifetime",
+    });
 
   // Fallback if no cycles configured
   if (cycleOptions.length === 0) {
     cycleOptions.push(
       { value: "Monthly", label: t("entitlements.tenantPlans.monthly") || "Monthly" },
-      { value: "Yearly", label: t("entitlements.tenantPlans.yearly") || "Yearly" },
+      { value: "Yearly", label: t("entitlements.tenantPlans.yearly") || "Yearly" }
     );
   }
 
@@ -64,20 +73,22 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
   return (
     <Card className="border-dashed border-primary/30">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-sm">
           <DollarSign className="h-4 w-4 text-primary" />
           {t("entitlements.tenantPlans.addPrice") || "Add Price Entry"}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div className="space-y-1.5">
             <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
             <GenericSelect
               type="single"
               options={CURRENCY_OPTIONS}
               value={currency}
-              onValueChange={(v: string | string[]) => setCurrency(typeof v === "string" ? v : v[0])}
+              onValueChange={(v: string | string[]) =>
+                setCurrency(typeof v === "string" ? v : v[0])
+              }
               placeholder="Select currency..."
             />
           </div>
@@ -88,7 +99,9 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
               type="single"
               options={cycleOptions}
               value={billingCycle}
-              onValueChange={(v: string | string[]) => setBillingCycle(typeof v === "string" ? v : v[0])}
+              onValueChange={(v: string | string[]) =>
+                setBillingCycle(typeof v === "string" ? v : v[0])
+              }
               placeholder="Select cycle..."
             />
           </div>
@@ -107,11 +120,11 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
 
           <div className="flex items-end gap-2">
             <Button size="sm" onClick={handleAdd} disabled={amount <= 0}>
-              <Check className="h-4 w-4 me-1" />
+              <Check className="me-1 h-4 w-4" />
               {t("common.add") || "Add"}
             </Button>
             <Button size="sm" variant="ghost" onClick={onCancel}>
-              <X className="h-4 w-4 me-1" />
+              <X className="me-1 h-4 w-4" />
               {t("common.cancel") || "Cancel"}
             </Button>
           </div>

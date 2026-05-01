@@ -56,7 +56,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
       <>
         <Button
           size="sm"
-          className="gap-2 cursor-pointer"
+          className="cursor-pointer gap-2"
           onClick={() => vm.openGatewaySelection("generate")}
           disabled={vm.isSendingPaymentLink}
           loading={vm.isSendingPaymentLink}
@@ -67,7 +67,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
         <Button
           size="sm"
           variant="outline"
-          className="gap-2 cursor-pointer"
+          className="cursor-pointer gap-2"
           onClick={() => vm.openGatewaySelection("send")}
           disabled={vm.isSendingPaymentLink}
           loading={vm.isSendingPaymentLink}
@@ -83,10 +83,10 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              className="text-destructive cursor-pointer"
+              className="cursor-pointer text-destructive"
               onClick={() => vm.setShowCancelDialog(true)}
             >
-              <Ban className="h-4 w-4 me-2" />
+              <Ban className="me-2 h-4 w-4" />
               {t("entSubscriptions.revoke")}
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -101,7 +101,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
       <>
         <Button
           size="sm"
-          className="gap-2 cursor-pointer"
+          className="cursor-pointer gap-2"
           onClick={() => vm.resumeSubscription()}
           disabled={vm.isResuming}
         >
@@ -111,7 +111,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
         <Button
           size="sm"
           variant="outline"
-          className="gap-2 cursor-pointer"
+          className="cursor-pointer gap-2"
           onClick={() => vm.resyncPermissions()}
           disabled={vm.isResyncing}
         >
@@ -129,7 +129,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
         <Button
           size="sm"
           variant="outline"
-          className="gap-2 cursor-pointer"
+          className="cursor-pointer gap-2"
           onClick={() => vm.setShowChangeDialog(true)}
         >
           <ArrowRightLeft className="h-4 w-4" />
@@ -139,7 +139,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
         {isTrialing && (
           <Button
             size="sm"
-            className="gap-2 cursor-pointer"
+            className="cursor-pointer gap-2"
             onClick={() => vm.setShowConvertDialog(true)}
           >
             <Shield className="h-4 w-4" />
@@ -154,40 +154,52 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuItem className="cursor-pointer" onClick={() => vm.setShowSuspendDialog(true)}>
-              <PauseCircle className="h-4 w-4 me-2" />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => vm.setShowSuspendDialog(true)}
+            >
+              <PauseCircle className="me-2 h-4 w-4" />
               {t("entSubscriptions.suspend")}
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" onClick={() => vm.resyncPermissions()} disabled={vm.isResyncing}>
-              <RotateCcw className="h-4 w-4 me-2" />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => vm.resyncPermissions()}
+              disabled={vm.isResyncing}
+            >
+              <RotateCcw className="me-2 h-4 w-4" />
               {t("entSubscriptions.resync")}
             </DropdownMenuItem>
 
             {hasGatewayCustomer && !isFree && isStripe && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={() => vm.openBillingPortal()} disabled={vm.isOpeningPortal}>
-                  <ExternalLink className="h-4 w-4 me-2" />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => vm.openBillingPortal()}
+                  disabled={vm.isOpeningPortal}
+                >
+                  <ExternalLink className="me-2 h-4 w-4" />
                   {t("billing.actions.openPortal") || "Billing Portal"}
                 </DropdownMenuItem>
               </>
             )}
             {hasGatewaySub && (
               <DropdownMenuItem
-                className="text-destructive cursor-pointer"
+                className="cursor-pointer text-destructive"
                 onClick={() => vm.setShowCancelGatewayDialog(true)}
               >
-                <XSquare className="h-4 w-4 me-2" />
-                {t("billing.actions.cancelGateway") || `Cancel via ${sub.paymentGateway || 'Gateway'}`}
+                <XSquare className="me-2 h-4 w-4" />
+                {t("billing.actions.cancelGateway") ||
+                  `Cancel via ${sub.paymentGateway || "Gateway"}`}
               </DropdownMenuItem>
             )}
 
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive cursor-pointer"
+              className="cursor-pointer text-destructive"
               onClick={() => vm.setShowCancelDialog(true)}
             >
-              <Ban className="h-4 w-4 me-2" />
+              <Ban className="me-2 h-4 w-4" />
               {t("entSubscriptions.cancel")}
             </DropdownMenuItem>
           </DropdownMenuContent>

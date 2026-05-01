@@ -63,7 +63,7 @@ export function OnboardingStatusCard({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Icon className={`h-5 w-5 ${config.color}`} />
             {t("entitlements.stripeConnect.onboardingStatus")}
@@ -82,7 +82,7 @@ export function OnboardingStatusCard({
 
         {/* Disabled reason */}
         {account.onboardingStatus === "Restricted" && account.disabledReason && (
-          <div className="rounded-md bg-red-50 dark:bg-red-900/10 px-3 py-2 text-sm text-red-700 dark:text-red-400">
+          <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/10 dark:text-red-400">
             <strong>{t("entitlements.stripeConnect.disabledReason")}:</strong>{" "}
             {account.disabledReason}
           </div>
@@ -91,29 +91,25 @@ export function OnboardingStatusCard({
         {/* Key details */}
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <p className="text-xs text-muted-foreground mb-0.5">
+            <p className="mb-0.5 text-xs text-muted-foreground">
               {t("entitlements.stripeConnect.chargesEnabled")}
             </p>
-            <p className="font-medium">
-              {account.chargesEnabled ? "✅ Yes" : "❌ No"}
-            </p>
+            <p className="font-medium">{account.chargesEnabled ? "✅ Yes" : "❌ No"}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-0.5">
+            <p className="mb-0.5 text-xs text-muted-foreground">
               {t("entitlements.stripeConnect.payoutsEnabled")}
             </p>
-            <p className="font-medium">
-              {account.payoutsEnabled ? "✅ Yes" : "❌ No"}
-            </p>
+            <p className="font-medium">{account.payoutsEnabled ? "✅ Yes" : "❌ No"}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-0.5">
+            <p className="mb-0.5 text-xs text-muted-foreground">
               {t("entitlements.stripeConnect.currency")}
             </p>
             <p className="font-medium uppercase">{account.currency || "—"}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-0.5">
+            <p className="mb-0.5 text-xs text-muted-foreground">
               {t("entitlements.stripeConnect.country")}
             </p>
             <p className="font-medium uppercase">{account.country || "—"}</p>

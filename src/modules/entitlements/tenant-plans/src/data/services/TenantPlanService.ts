@@ -54,7 +54,9 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   async publish(id: string, changeNotes?: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.PUBLISH(id), { changeNotes: changeNotes ?? null });
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.PUBLISH(id), {
+      changeNotes: changeNotes ?? null,
+    });
   }
 
   async archive(id: string): Promise<void> {
@@ -62,7 +64,9 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   // ── Feature Definitions ──
-  async getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinitionListModel>> {
+  async getFeatureDefinitions(
+    params: PaginationParams & { category?: string }
+  ): Promise<PagedResult<TenantFeatureDefinitionListModel>> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
@@ -85,7 +89,10 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   async createFeatureDefinition(data: CreateFeatureDefinitionRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.CREATE, data);
+    return this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.CREATE,
+      data
+    );
   }
 
   async updateFeatureDefinition(id: string, data: UpdateFeatureDefinitionRequest): Promise<void> {
@@ -97,7 +104,9 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   // ── Promotions ──
-  async getPromotions(params: PaginationParams & { planId?: string }): Promise<PagedResult<TenantPlanPromotionListModel>> {
+  async getPromotions(
+    params: PaginationParams & { planId?: string }
+  ): Promise<PagedResult<TenantPlanPromotionListModel>> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
@@ -108,7 +117,10 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   async createPromotion(data: CreatePromotionRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.CREATE, data);
+    return this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.CREATE,
+      data
+    );
   }
 
   async updatePromotion(id: string, data: UpdatePromotionRequest): Promise<void> {
@@ -119,7 +131,10 @@ export class TenantPlanService implements ITenantPlanService {
     await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.DELETE(id));
   }
 
-  async validatePromoCode(code: string, planId?: string): Promise<{ isValid: boolean; message?: string }> {
+  async validatePromoCode(
+    code: string,
+    planId?: string
+  ): Promise<{ isValid: boolean; message?: string }> {
     return this.api.post<{ isValid: boolean; message?: string }>(
       API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.VALIDATE,
       { code, tenantPlanId: planId ?? null }

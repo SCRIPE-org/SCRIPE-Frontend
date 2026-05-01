@@ -14,7 +14,9 @@ import type { UsersEntity } from "../../domain/entities/UsersEntity";
 export class UsersRepository implements IUsersRepository {
   constructor(private readonly service: IUsersService) {}
 
-  async getAll(params?: Record<string, unknown>): Promise<{ items: UsersEntity[]; totalCount: number }> {
+  async getAll(
+    params?: Record<string, unknown>
+  ): Promise<{ items: UsersEntity[]; totalCount: number }> {
     const result = await this.service.getAll(params);
     return {
       items: (result.items || []).map(UsersMapper.toEntity),

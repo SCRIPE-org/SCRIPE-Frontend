@@ -2,37 +2,49 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.intro" },
+  { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.intro" },
 
-      // ─── YARP Gateway ─────────────────────────────────────────
+  // ─── YARP Gateway ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.yarpTitle",
+    id: "yarp-gateway",
+  },
+  { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.yarpIntro" },
+  {
+    type: "flowchart",
+    title: "Gateway Architecture",
+    direction: "horizontal",
+    nodes: [
+      { id: "client", label: "Frontend / Mobile", type: "primary" },
       {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.gatewayDeployment.yarpTitle", id: "yarp-gateway",
-      },
-      { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.yarpIntro" },
-      {
-            type: "flowchart",
-            title: "Gateway Architecture",
-            direction: "horizontal",
-            nodes: [
-                  { id: "client", label: "Frontend / Mobile", type: "primary" },
-                  { id: "gateway", label: "YARP Gateway", type: "info", description: "Reverse proxy + load balancing" },
-                  { id: "identity", label: "Identity Module", type: "success", description: "Auth, Users, Roles" },
-                  { id: "inventory", label: "Inventory Module", type: "warning", description: "(Future)" },
-                  { id: "hr", label: "HR Module", type: "danger", description: "(Future)" },
-            ],
-            connections: [
-                  { from: "client", to: "gateway" },
-                  { from: "gateway", to: "identity", label: "/api/v1/auth/*" },
-                  { from: "gateway", to: "inventory", label: "/api/v1/inventory/*" },
-                  { from: "gateway", to: "hr", label: "/api/v1/hr/*" },
-            ],
+        id: "gateway",
+        label: "YARP Gateway",
+        type: "info",
+        description: "Reverse proxy + load balancing",
       },
       {
-            type: "code",
-            language: "json",
-            filename: "appsettings.json — YARP Route Configuration",
-            code: `{
+        id: "identity",
+        label: "Identity Module",
+        type: "success",
+        description: "Auth, Users, Roles",
+      },
+      { id: "inventory", label: "Inventory Module", type: "warning", description: "(Future)" },
+      { id: "hr", label: "HR Module", type: "danger", description: "(Future)" },
+    ],
+    connections: [
+      { from: "client", to: "gateway" },
+      { from: "gateway", to: "identity", label: "/api/v1/auth/*" },
+      { from: "gateway", to: "inventory", label: "/api/v1/inventory/*" },
+      { from: "gateway", to: "hr", label: "/api/v1/hr/*" },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json — YARP Route Configuration",
+    code: `{
   "ReverseProxy": {
     "Routes": {
       "identity-route": {
@@ -70,19 +82,21 @@ const sections: DocSection[] = [
     }
   }
 }`,
-      },
+  },
 
-      // ─── Module System ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.gatewayDeployment.moduleTitle", id: "module-system",
-      },
-      { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.moduleIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Conditional Module Loading via Environment Variable",
-            code: `// Program.cs — Module registration
+  // ─── Module System ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.moduleTitle",
+    id: "module-system",
+  },
+  { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.moduleIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Conditional Module Loading via Environment Variable",
+    code: `// Program.cs — Module registration
 var moduleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "all";
 
 switch (moduleName.ToLower())
@@ -105,81 +119,87 @@ builder.Services.AddControllers()
     .ConfigureApplicationPartManager(manager =>
         manager.FeatureProviders.Add(
             new ModuleControllerFeatureProvider(moduleName)));`,
-            highlightLines: [2, 4, 21, 22, 23, 24],
-      },
+    highlightLines: [2, 4, 21, 22, 23, 24],
+  },
 
-      // ─── Deployment Modes ─────────────────────────────────────
+  // ─── Deployment Modes ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.modesTitle",
+    id: "deployment-modes",
+  },
+  {
+    type: "comparison",
+    columns: [
       {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.gatewayDeployment.modesTitle", id: "deployment-modes",
+        titleKey: "infrastructure.gatewayDeployment.monolithTitle",
+        variant: "positive",
+        items: [
+          "MODULE_NAME=all (all modules in one process)",
+          "Single database connection string",
+          "No YARP gateway needed",
+          "Simpler deployment (1 process)",
+          "Shared appsettings.json",
+          "Direct method calls between modules",
+        ],
       },
       {
-            type: "comparison",
-            columns: [
-                  {
-                        titleKey: "infrastructure.gatewayDeployment.monolithTitle",
-                        variant: "positive",
-                        items: [
-                              "MODULE_NAME=all (all modules in one process)",
-                              "Single database connection string",
-                              "No YARP gateway needed",
-                              "Simpler deployment (1 process)",
-                              "Shared appsettings.json",
-                              "Direct method calls between modules",
-                        ],
-                  },
-                  {
-                        titleKey: "infrastructure.gatewayDeployment.microserviceTitle",
-                        variant: "neutral",
-                        items: [
-                              "MODULE_NAME=identity (one module per process)",
-                              "Per-module database",
-                              "YARP gateway routes to each service",
-                              "Independent scaling per module",
-                              "Per-service configuration",
-                              "HTTP/gRPC between services",
-                        ],
-                  },
-            ],
+        titleKey: "infrastructure.gatewayDeployment.microserviceTitle",
+        variant: "neutral",
+        items: [
+          "MODULE_NAME=identity (one module per process)",
+          "Per-module database",
+          "YARP gateway routes to each service",
+          "Independent scaling per module",
+          "Per-service configuration",
+          "HTTP/gRPC between services",
+        ],
       },
+    ],
+  },
 
-      // ─── IIS Deployment ───────────────────────────────────────
+  // ─── IIS Deployment ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.iisTitle",
+    id: "iis-deployment",
+  },
+  {
+    type: "step-guide",
+    steps: [
       {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.gatewayDeployment.iisTitle", id: "iis-deployment",
+        titleKey: "infrastructure.gatewayDeployment.iisStep1",
+        contentKey: "infrastructure.gatewayDeployment.iisStep1Desc",
       },
       {
-            type: "step-guide",
-            steps: [
-                  {
-                        titleKey: "infrastructure.gatewayDeployment.iisStep1",
-                        contentKey: "infrastructure.gatewayDeployment.iisStep1Desc",
-                  },
-                  {
-                        titleKey: "infrastructure.gatewayDeployment.iisStep2",
-                        contentKey: "infrastructure.gatewayDeployment.iisStep2Desc",
-                  },
-                  {
-                        titleKey: "infrastructure.gatewayDeployment.iisStep3",
-                        contentKey: "infrastructure.gatewayDeployment.iisStep3Desc",
-                  },
-                  {
-                        titleKey: "infrastructure.gatewayDeployment.iisStep4",
-                        contentKey: "infrastructure.gatewayDeployment.iisStep4Desc",
-                  },
-            ],
+        titleKey: "infrastructure.gatewayDeployment.iisStep2",
+        contentKey: "infrastructure.gatewayDeployment.iisStep2Desc",
       },
+      {
+        titleKey: "infrastructure.gatewayDeployment.iisStep3",
+        contentKey: "infrastructure.gatewayDeployment.iisStep3Desc",
+      },
+      {
+        titleKey: "infrastructure.gatewayDeployment.iisStep4",
+        contentKey: "infrastructure.gatewayDeployment.iisStep4Desc",
+      },
+    ],
+  },
 
-      // ─── Kestrel ──────────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.gatewayDeployment.kestrelTitle", id: "kestrel",
-      },
-      {
-            type: "code",
-            language: "json",
-            filename: "Kestrel Production Configuration",
-            code: `{
+  // ─── Kestrel ──────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.kestrelTitle",
+    id: "kestrel",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "Kestrel Production Configuration",
+    code: `{
   "Kestrel": {
     "Endpoints": {
       "Https": {
@@ -200,21 +220,25 @@ builder.Services.AddControllers()
     }
   }
 }`,
-      },
-      {
-            type: "info",
-            variant: "note",
-            contentKey: "infrastructure.gatewayDeployment.portNote",
-      },
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "infrastructure.gatewayDeployment.portNote",
+  },
 ];
 
 registerPage({
-      slug: "infrastructure/gateway-deployment",
-      titleKey: "infrastructure.gatewayDeployment.title",
-      descriptionKey: "infrastructure.gatewayDeployment.description",
-      category: "infrastructure",
-      order: 5,
-      sections,
-      relatedSlugs: ["architecture/dependency-injection", "architecture/backend", "infrastructure/resilience"],
-      lastUpdated: "2026-02-20",
+  slug: "infrastructure/gateway-deployment",
+  titleKey: "infrastructure.gatewayDeployment.title",
+  descriptionKey: "infrastructure.gatewayDeployment.description",
+  category: "infrastructure",
+  order: 5,
+  sections,
+  relatedSlugs: [
+    "architecture/dependency-injection",
+    "architecture/backend",
+    "infrastructure/resilience",
+  ],
+  lastUpdated: "2026-02-20",
 });

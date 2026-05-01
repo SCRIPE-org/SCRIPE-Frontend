@@ -6,27 +6,39 @@ export const fr = {
   commercial: {
     licensingModel: {
       entitlementsTitle: "Différenciation des Plans Propulsée par les Droits",
-      entitlementsIntro: "Le module de Droits intégré de NEXORA gère la véritable différenciation des plans derrière chaque niveau de licence. Les éditions définissent les fonctionnalités incluses dans chaque plan, les abonnements lient les locataires aux plans, et les surcharges permettent des accords sur mesure — le tout appliqué automatiquement au niveau de l'API.",
+      entitlementsIntro:
+        "Le module de Droits intégré de NEXORA gère la véritable différenciation des plans derrière chaque niveau de licence. Les éditions définissent les fonctionnalités incluses dans chaque plan, les abonnements lient les locataires aux plans, et les surcharges permettent des accords sur mesure — le tout appliqué automatiquement au niveau de l'API.",
       entEditions: "Regroupement de Fonctionnalités Basé sur les Éditions",
-      entEditionsDesc: "Définissez des plans nommés (Basic, Pro, Enterprise) qui regroupent des valeurs de fonctionnalités booléennes, numériques et textuelles. L'édition souscrite par chaque locataire détermine automatiquement son accès aux fonctionnalités.",
+      entEditionsDesc:
+        "Définissez des plans nommés (Basic, Pro, Enterprise) qui regroupent des valeurs de fonctionnalités booléennes, numériques et textuelles. L'édition souscrite par chaque locataire détermine automatiquement son accès aux fonctionnalités.",
       entSubscriptions: "Cycle de Vie Complet de l'Abonnement",
-      entSubscriptionsDesc: "Attribuez, mettez à niveau, rétrogradez, suspendez et renouvelez les abonnements des locataires avec un suivi d'audit complet. Prend en charge les essais, les modules complémentaires et le comportement d'expiration automatique.",
+      entSubscriptionsDesc:
+        "Attribuez, mettez à niveau, rétrogradez, suspendez et renouvelez les abonnements des locataires avec un suivi d'audit complet. Prend en charge les essais, les modules complémentaires et le comportement d'expiration automatique.",
       entOverrides: "Surcharges par Locataire",
-      entOverridesDesc: "Personnalisez les valeurs des fonctionnalités pour des locataires individuels, indépendamment de leur plan. Parfait pour les accords d'entreprise, les promotions ou les tests bêta — avec des pistes d'audit complètes.",
+      entOverridesDesc:
+        "Personnalisez les valeurs des fonctionnalités pour des locataires individuels, indépendamment de leur plan. Parfait pour les accords d'entreprise, les promotions ou les tests bêta — avec des pistes d'audit complètes.",
       entVersioning: "Contrôle des Versions et Déploiements",
-      entVersioningDesc: "Créez des versions d'édition avec des instantanés de fonctionnalités et déployez-les via des stratégies de déploiement immédiat, canary ou planifié sans interrompre les locataires existants.",
-      entitlementsTip: "Le module des Droits s'intègre directement dans le pipeline MediatR — les commandes implémentant IRequireFeature sont automatiquement contrôlées par les valeurs de fonctionnalités résolues du locataire. Aucun middleware personnalisé n'est nécessaire.",
+      entVersioningDesc:
+        "Créez des versions d'édition avec des instantanés de fonctionnalités et déployez-les via des stratégies de déploiement immédiat, canary ou planifié sans interrompre les locataires existants.",
+      entitlementsTip:
+        "Le module des Droits s'intègre directement dans le pipeline MediatR — les commandes implémentant IRequireFeature sont automatiquement contrôlées par les valeurs de fonctionnalités résolues du locataire. Aucun middleware personnalisé n'est nécessaire.",
       comparisonTitle: "Comparaison des Niveaux de Licence",
-      description: "Des structures de licences transparentes, prévisibles et évolutives, conçues aussi bien pour les fondateurs techniques que pour les grandes entités corporatives.",
-      intro: "Contrairement aux modèles SaaS qui pénalisent votre croissance avec une facturation par poste (per-seat), NEXORA offre une prévisibilité fiscale absolue. Vous achetez des droits perpétuels sur la propriété intellectuelle de l'architecture de base, vous permettant de construire et d'évoluer à l'infini.",
-      renewalContent: "Chaque licence comprend 12 mois complets d'accès direct à notre référentiel GitHub privé. Vous recevez des améliorations architecturales continues, des corrections de bugs hebdomadaires et des mises à niveau de versions majeures (par exemple, la migration vers .NET 10) absolument gratuitement pendant cette période.",
+      description:
+        "Des structures de licences transparentes, prévisibles et évolutives, conçues aussi bien pour les fondateurs techniques que pour les grandes entités corporatives.",
+      intro:
+        "Contrairement aux modèles SaaS qui pénalisent votre croissance avec une facturation par poste (per-seat), NEXORA offre une prévisibilité fiscale absolue. Vous achetez des droits perpétuels sur la propriété intellectuelle de l'architecture de base, vous permettant de construire et d'évoluer à l'infini.",
+      renewalContent:
+        "Chaque licence comprend 12 mois complets d'accès direct à notre référentiel GitHub privé. Vous recevez des améliorations architecturales continues, des corrections de bugs hebdomadaires et des mises à niveau de versions majeures (par exemple, la migration vers .NET 10) absolument gratuitement pendant cette période.",
       renewalTitle: "Livraison Architecturale Continue",
       sourcCodeTitle: "Propriété Absolue du Code",
-      sourceCodeContent: "Vous ne louez pas NEXORA ; vous le possédez. Vous recevez l'intégralité du code source TypeScript et C# non obfusqué. Vous êtes légalement libre d'auditer, de modifier, de bifurquer (fork) et d'intégrer le framework directement dans vos offres SaaS commerciales propriétaires.",
+      sourceCodeContent:
+        "Vous ne louez pas NEXORA ; vous le possédez. Vous recevez l'intégralité du code source TypeScript et C# non obfusqué. Vous êtes légalement libre d'auditer, de modifier, de bifurquer (fork) et d'intégrer le framework directement dans vos offres SaaS commerciales propriétaires.",
       termsTitle: "Conditions Commerciales Claires",
       title: "Licences Commerciales & ROI",
-      trialTip: "Action Exécutive : Si vous n'êtes pas sûr du niveau qui correspond à votre feuille de route à 3 ans, contactez notre équipe d'ingénierie avant-vente pour une évaluation personnalisée des risques architecturaux.",
-      typesIntro: "Choisissez le niveau exact qui s'aligne sur votre piste de lancement actuelle et l'échelle d'entreprise projetée.",
+      trialTip:
+        "Action Exécutive : Si vous n'êtes pas sûr du niveau qui correspond à votre feuille de route à 3 ans, contactez notre équipe d'ingénierie avant-vente pour une évaluation personnalisée des risques architecturaux.",
+      typesIntro:
+        "Choisissez le niveau exact qui s'aligne sur votre piste de lancement actuelle et l'échelle d'entreprise projetée.",
       typesTitle: "Niveaux de Déploiement Stratégiques",
       tblTypesHeader1: "Licence",
       tblTypesHeader2: "Description",
@@ -121,38 +133,52 @@ export const fr = {
       tblRenewR4C3: "Contacter les ventes pour un devis",
       lstTermsI1: "Licence de secours perpétuelle pour la version à l'expiration du renouvellement",
       lstTermsI2: "Garantie satisfait ou remboursé de 30 jours au premier achat",
-      lstTermsI3: "Aucun verrouillage propriétaire (vendor lock-in) : vous possédez vos données et vos personnalisations",
+      lstTermsI3:
+        "Aucun verrouillage propriétaire (vendor lock-in) : vous possédez vos données et vos personnalisations",
       lstTermsI4: "Droits de transfert disponibles pour les acquisitions d'entreprises",
       lstTermsI5: "Remises disponibles pour l'éducation et les organismes à but non lucratif",
     },
     supportPlans: {
       communityAccess: "Accès Global Discord & GitHub",
-      communityAccessDesc: "Collaborez directement avec des centaines d'ingénieurs logiciels d'élite construisant sur NEXORA.",
-      description: "Accords de niveau de service dédiés (SLA), revues architecturales et support d'ingénierie prioritaire strictement adaptés aux clients d'entreprise.",
+      communityAccessDesc:
+        "Collaborez directement avec des centaines d'ingénieurs logiciels d'élite construisant sur NEXORA.",
+      description:
+        "Accords de niveau de service dédiés (SLA), revues architecturales et support d'ingénierie prioritaire strictement adaptés aux clients d'entreprise.",
       hotfixes: "Routage de Correctifs d'Urgence",
-      hotfixesDesc: "Contournez les cycles de publication standard pour obtenir des correctifs de sécurité et de stabilité immédiats.",
+      hotfixesDesc:
+        "Contournez les cycles de publication standard pour obtenir des correctifs de sécurité et de stabilité immédiats.",
       includedTitle: "Matrice d'Inclusion Standard",
-      intro: "Les logiciels d'entreprise nécessitent des garanties d'entreprise. Nous proposons des niveaux de support dédiés et hautement spécialisés garantissant que vos systèmes critiques sont soutenus directement par les architectes qui les ont construits.",
+      intro:
+        "Les logiciels d'entreprise nécessitent des garanties d'entreprise. Nous proposons des niveaux de support dédiés et hautement spécialisés garantissant que vos systèmes critiques sont soutenus directement par les architectes qui les ont construits.",
       knowledgeBase: "Vaste Base de Connaissances",
-      knowledgeBaseDesc: "Plans architecturaux profonds, chemins de migration connus et tutoriels spécifiques.",
+      knowledgeBaseDesc:
+        "Plans architecturaux profonds, chemins de migration connus et tutoriels spécifiques.",
       onboardingTitle: "Incubation & Intégration (Onboarding)",
       remoteDebug: "Débogage à Distance Pratique",
-      remoteDebugDesc: "Nous rejoignons votre écran pour démanteler de manière médico-légale les goulots d'étranglement d'intégration complexes en temps réel.",
-      slaIntro: "Nous soutenons notre code. Nos SLA sont juridiquement contraignants et garantissent définitivement notre vitesse de réponse aux blocages architecturaux critiques.",
+      remoteDebugDesc:
+        "Nous rejoignons votre écran pour démanteler de manière médico-légale les goulots d'étranglement d'intégration complexes en temps réel.",
+      slaIntro:
+        "Nous soutenons notre code. Nos SLA sont juridiquement contraignants et garantissent définitivement notre vitesse de réponse aux blocages architecturaux critiques.",
       slaTitle: "Accords de Niveau de Service Contraignants (SLA)",
-      step1Content: "Questions architecturales générales, traitées de manière asynchrone via des canaux communautaires standardisés.",
+      step1Content:
+        "Questions architecturales générales, traitées de manière asynchrone via des canaux communautaires standardisés.",
       step1Title: "1. Support Communautaire",
-      step2Content: "Vecteurs de réponse garantis en 24 heures directement de l'équipe d'ingénierie principale.",
+      step2Content:
+        "Vecteurs de réponse garantis en 24 heures directement de l'équipe d'ingénierie principale.",
       step2Title: "2. SLA Professionnel",
-      step3Content: "Routage d'urgence immédiat, canaux Slack dédiés et architectes principaux assignés.",
+      step3Content:
+        "Routage d'urgence immédiat, canaux Slack dédiés et architectes principaux assignés.",
       step3Title: "3. SLA Entreprise",
       step4Content: "Incubation sur site et développement de modules sur mesure très spécialisés.",
       step4Title: "4. Support Sur Mesure Haut de Gamme",
-      tiersIntro: "Sélectionnez le niveau spécifique de support technique qui s'aligne parfaitement sur le modèle de menace de votre déploiement et l'échelle de votre organisation.",
+      tiersIntro:
+        "Sélectionnez le niveau spécifique de support technique qui s'aligne parfaitement sur le modèle de menace de votre déploiement et l'échelle de votre organisation.",
       tiersTitle: "Niveaux de Support Technique",
       title: "SLA d'Entreprise & Support",
-      upgradeContent: "La transition vers de nouvelles versions majeures de .NET ou Next.js peut être risquée. Les niveaux Professional et Enterprise incluent des heures de révision technique dédiées pour garantir que les mises à niveau de vos versions majeures s'exécutent de manière impeccable et sans temps d'arrêt.",
-      upgradeTip: "Assurez-vous que votre organisation sélectionne un niveau correspondant à la criticité opérationnelle de votre déploiement.",
+      upgradeContent:
+        "La transition vers de nouvelles versions majeures de .NET ou Next.js peut être risquée. Les niveaux Professional et Enterprise incluent des heures de révision technique dédiées pour garantir que les mises à niveau de vos versions majeures s'exécutent de manière impeccable et sans temps d'arrêt.",
+      upgradeTip:
+        "Assurez-vous que votre organisation sélectionne un niveau correspondant à la criticité opérationnelle de votre déploiement.",
       upgradeTitle: "Assistance à la Migration vers les Versions Majeures",
       tblTiersHeader1: "Fonctionnalité",
       tblTiersHeader2: "Communauté",
@@ -247,20 +273,27 @@ export const fr = {
     },
     roadmap: {
       aiPowered: "Génération de Modules par Gen-AI",
-      aiPoweredDesc: "Générez des contextes délimités complets (full-stack) simplement en décrivant le domaine en langage naturel.",
+      aiPoweredDesc:
+        "Générez des contextes délimités complets (full-stack) simplement en décrivant le domaine en langage naturel.",
       cadenceTitle: "Rythme de Publication Prévisible",
       currentTitle: "L'Époque Actuelle",
-      description: "Un aperçu transparent de nos initiatives architecturales stratégiques, des modules de fonctionnalités à venir et des étapes clés d'ingénierie.",
-      feedbackTip: "Vous avez une exigence critique ? Les titulaires de licence Enterprise déterminent nos priorités de backlog. Contactez l'équipe d'architecture.",
+      description:
+        "Un aperçu transparent de nos initiatives architecturales stratégiques, des modules de fonctionnalités à venir et des étapes clés d'ingénierie.",
+      feedbackTip:
+        "Vous avez une exigence critique ? Les titulaires de licence Enterprise déterminent nos priorités de backlog. Contactez l'équipe d'architecture.",
       inProgressTitle: "Ingénierie Active",
-      intro: "NEXORA évolue continuellement. Notre feuille de route d'ingénierie est publique, prévisible et agressivement axée sur l'élimination du code passe-partout (boilerplate) pour les équipes de développement d'entreprise massives.",
+      intro:
+        "NEXORA évolue continuellement. Notre feuille de route d'ingénierie est publique, prévisible et agressivement axée sur l'élimination du code passe-partout (boilerplate) pour les équipes de développement d'entreprise massives.",
       multiRegion: "Multi-Région Actif-Actif",
-      multiRegionDesc: "Architectures prises en charge nativement pour des topologies de bases de données distribuées mondialement et sans nœud maître (masterless).",
+      multiRegionDesc:
+        "Architectures prises en charge nativement pour des topologies de bases de données distribuées mondialement et sans nœud maître (masterless).",
       nextTitle: "Le Prochain Horizon",
       pluginEco: "Architecture de Plugins Dynamique",
-      pluginEcoDesc: "Chargez des DLL C# précompilées et des composants React à l'exécution sans redémarrer le processus hôte.",
+      pluginEcoDesc:
+        "Chargez des DLL C# précompilées et des composants React à l'exécution sans redémarrer le processus hôte.",
       title: "Feuille de Route d'Ingénierie",
-      visionContent: "Nous ne courons pas après les tendances. Notre feuille de route se concentre exclusivement sur la maximisation du ROI de nos partenaires d'entreprise en automatisant la complexité architecturale et en élargissant le catalogue de domaines commerciaux pré-construits.",
+      visionContent:
+        "Nous ne courons pas après les tendances. Notre feuille de route se concentre exclusivement sur la maximisation du ROI de nos partenaires d'entreprise en automatisant la complexité architecturale et en élargissant le catalogue de domaines commerciaux pré-construits.",
       visionTitle: "La Vision Architecturale à Long Terme",
     },
     faq: {
@@ -271,9 +304,11 @@ export const fr = {
       q3: "En quoi NEXORA diffère-t-il des autres plateformes ERP ?",
       a3: "Contrairement aux systèmes ERP traditionnels qui vous enferment dans des flux de travail rigides, NEXORA vous donne un accès complet au code source tout en respectant les principes de la Clean Architecture. Vous bénéficiez d'une véritable isolation des modules (chaque module peut être extrait dans son propre microservice), d'une architecture multi-tenant intégrée avec isolation des données au niveau des lignes, de 4 fournisseurs de bases de données, d'une internationalisation (i18n) en 7 langues avec support complet RTL, et de fonctionnalités de sécurité d'entreprise telles que le modèle de sécurité à 8 couches — le tout conçu pour être étendu, et non seulement configuré.",
       qWhatIndustries: "Pour quels secteurs NEXORA est-il adapté ?",
-      aWhatIndustries: "NEXORA est intrinsèquement agnostique quant au secteur d'activité. Son architecture modulaire vous permet de construire des solutions pour la santé, la finance, la fabrication, la logistique, l'éducation, le gouvernement, le commerce de détail, l'immobilier, et plus encore. La plateforme de base fournit l'infrastructure commune (authentification, locataires, audit, permissions), tandis que les modules spécifiques à l'entreprise peuvent être ajoutés ou construits sur mesure en suivant les modèles établis.",
+      aWhatIndustries:
+        "NEXORA est intrinsèquement agnostique quant au secteur d'activité. Son architecture modulaire vous permet de construire des solutions pour la santé, la finance, la fabrication, la logistique, l'éducation, le gouvernement, le commerce de détail, l'immobilier, et plus encore. La plateforme de base fournit l'infrastructure commune (authentification, locataires, audit, permissions), tandis que les modules spécifiques à l'entreprise peuvent être ajoutés ou construits sur mesure en suivant les modèles établis.",
       qHowLongSetup: "Combien de temps faut-il pour démarrer ?",
-      aHowLongSetup: "Vous pouvez faire fonctionner NEXORA localement en moins de 15 minutes. Clonez le dépôt, configurez votre connexion à la base de données (SQL Server, Oracle, PostgreSQL ou SQLite), exécutez les migrations, et lancez le serveur de développement. L'outil nexora-cli accélère encore le développement en générant la structure (scaffolding) de nouveaux modules, entités et code répétitif en quelques secondes. La plupart des équipes sont productives dès le premier jour.",
+      aHowLongSetup:
+        "Vous pouvez faire fonctionner NEXORA localement en moins de 15 minutes. Clonez le dépôt, configurez votre connexion à la base de données (SQL Server, Oracle, PostgreSQL ou SQLite), exécutez les migrations, et lancez le serveur de développement. L'outil nexora-cli accélère encore le développement en générant la structure (scaffolding) de nouveaux modules, entités et code répétitif en quelques secondes. La plupart des équipes sont productives dès le premier jour.",
       q4: "Quelle pile technologique (stack) NEXORA utilise-t-il ?",
       a4: "Le backend est construit sur ASP.NET Core (.NET 9) avec Entity Framework Core, MediatR (CQRS) et FluentValidation. Le frontend utilise Next.js 15 avec TypeScript, TanStack Query, Zustand et un système de conception personnalisé construit sur Radix UI. Les fonctionnalités en temps réel sont propulsées par SignalR WebSockets, et la plateforme prend en charge la conteneurisation Docker pour le déploiement.",
       q5: "NEXORA peut-il évoluer d'un monolithe vers des microservices ?",
@@ -281,9 +316,12 @@ export const fr = {
       q6: "Quelles bases de données sont prises en charge ?",
       a6: "NEXORA prend en charge 3 fournisseurs de bases de données via Entity Framework Core : SQL Server, Oracle et PostgreSQL. Changer de fournisseur ne nécessite qu'une modification de configuration. De plus, le paramètre Database.Mode contrôle l'isolation de la base de données : le mode 'Single' place toutes les tables des modules dans une seule base de données partagée, tandis que le mode 'Multi' (par défaut) permet à chaque module d'avoir sa propre base de données avec des chaînes de connexion séparées et même des fournisseurs différents. Chaque fournisseur possède son propre ensemble de migrations, et la plateforme gère les particularités spécifiques aux fournisseurs de manière transparente.",
       qCanWeCustomize: "Pouvons-nous personnaliser et étendre les modules de NEXORA ?",
-      aCanWeCustomize: "Absolument. Vous recevez un accès complet au code source, et chaque module suit le modèle SOLID View/ViewModel avec une séparation claire des préoccupations. Vous pouvez modifier les modules existants, les étendre avec de nouvelles fonctionnalités, ou construire des modules entièrement nouveaux à l'aide de l'outil de génération de code nexora-cli. Le principe Ouvert/Fermé (Open/Closed) garantit que vous pouvez étendre le comportement par composition sans modifier le framework de base.",
-      qDatabaseSupport: "Comment NEXORA gère-t-il les migrations de base de données entre les fournisseurs ?",
-      aDatabaseSupport: "Chaque fournisseur de base de données possède son propre dossier de migration dédié, géré par EF Core. Lorsque vous ajoutez ou modifiez des entités, vous générez des migrations spécifiques au fournisseur qui tiennent compte des types de données et des contraintes de chaque base de données. La plateforme inclut des utilitaires de migration et la CLI peut générer des migrations pour tous les fournisseurs configurés simultanément, garantissant la cohérence dans tous les environnements.",
+      aCanWeCustomize:
+        "Absolument. Vous recevez un accès complet au code source, et chaque module suit le modèle SOLID View/ViewModel avec une séparation claire des préoccupations. Vous pouvez modifier les modules existants, les étendre avec de nouvelles fonctionnalités, ou construire des modules entièrement nouveaux à l'aide de l'outil de génération de code nexora-cli. Le principe Ouvert/Fermé (Open/Closed) garantit que vous pouvez étendre le comportement par composition sans modifier le framework de base.",
+      qDatabaseSupport:
+        "Comment NEXORA gère-t-il les migrations de base de données entre les fournisseurs ?",
+      aDatabaseSupport:
+        "Chaque fournisseur de base de données possède son propre dossier de migration dédié, géré par EF Core. Lorsque vous ajoutez ou modifiez des entités, vous générez des migrations spécifiques au fournisseur qui tiennent compte des types de données et des contraintes de chaque base de données. La plateforme inclut des utilitaires de migration et la CLI peut générer des migrations pour tous les fournisseurs configurés simultanément, garantissant la cohérence dans tous les environnements.",
       q7: "Quelles sont les options de licence disponibles ?",
       a7: "NEXORA propose des niveaux de licence flexibles conçus pour évoluer avec votre organisation. Les options incluent une licence Starter pour les petites équipes et les projets individuels, une licence Professional pour les entreprises en croissance avec des fonctionnalités avancées, et une licence Enterprise avec des déploiements illimités, un support prioritaire et des SLA personnalisés. Toutes les licences incluent un accès complet au code source et le droit d'utiliser NEXORA en production.",
       q8: "Y a-t-il un modèle de tarification par poste (per-seat) ou par utilisateur ?",
@@ -291,25 +329,35 @@ export const fr = {
       q9: "Pouvons-nous utiliser NEXORA pour plusieurs projets clients ?",
       a9: "Cela dépend de votre niveau de licence. La licence Starter couvre un seul projet, tandis que les licences Professional et Enterprise prennent en charge de multiples déploiements. Le niveau Enterprise fournit des déploiements de projets illimités, ce qui le rend idéal pour les éditeurs de logiciels (Software Houses) et les cabinets de conseil qui créent des solutions pour plusieurs clients. Chaque déploiement peut être personnalisé de manière indépendante.",
       qTrialPeriod: "Y a-t-il une période d'essai ou d'évaluation ?",
-      aTrialPeriod: "Oui. NEXORA offre une période d'évaluation de 30 jours avec un accès complet aux fonctionnalités de la plateforme, à la documentation et au support de la communauté. Pendant l'essai, vous pouvez construire une preuve de concept (PoC), explorer l'architecture, et évaluer si NEXORA correspond à vos exigences techniques. Aucune carte de crédit n'est requise pour commencer l'évaluation.",
+      aTrialPeriod:
+        "Oui. NEXORA offre une période d'évaluation de 30 jours avec un accès complet aux fonctionnalités de la plateforme, à la documentation et au support de la communauté. Pendant l'essai, vous pouvez construire une preuve de concept (PoC), explorer l'architecture, et évaluer si NEXORA correspond à vos exigences techniques. Aucune carte de crédit n'est requise pour commencer l'évaluation.",
       qUpgradePath: "Quel est le processus de mise à niveau entre les niveaux de licence ?",
-      aUpgradePath: "Vous pouvez mettre à niveau votre niveau de licence à tout moment en payant la différence entre votre niveau actuel et le nouveau. Les mises à niveau sont immédiates — vous recevrez l'accès aux fonctionnalités supplémentaires, aux canaux de support et aux droits de déploiement dès que la mise à niveau sera traitée. Il n'y a pas de pénalités ni de périodes d'engagement (lock-in). Les rétrogradations (downgrades) sont traitées au moment du renouvellement.",
+      aUpgradePath:
+        "Vous pouvez mettre à niveau votre niveau de licence à tout moment en payant la différence entre votre niveau actuel et le nouveau. Les mises à niveau sont immédiates — vous recevrez l'accès aux fonctionnalités supplémentaires, aux canaux de support et aux droits de déploiement dès que la mise à niveau sera traitée. Il n'y a pas de pénalités ni de périodes d'engagement (lock-in). Les rétrogradations (downgrades) sont traitées au moment du renouvellement.",
       qDataResidency: "Comment NEXORA gère-t-il les exigences de résidence des données ?",
-      aDataResidency: "NEXORA est auto-hébergé (self-hosted), ce qui signifie que vous avez un contrôle total sur l'endroit où résident vos données. Déployez sur votre propre infrastructure — sur site (on-premise), dans votre région cloud préférée (AWS, Azure, GCP), ou dans un centre de données privé. Le système multi-tenant prend en charge la configuration par locataire, de sorte que vous pouvez même héberger différents locataires dans différentes régions pour vous conformer au RGPD, à l'HIPAA ou aux réglementations locales sur la souveraineté des données.",
+      aDataResidency:
+        "NEXORA est auto-hébergé (self-hosted), ce qui signifie que vous avez un contrôle total sur l'endroit où résident vos données. Déployez sur votre propre infrastructure — sur site (on-premise), dans votre région cloud préférée (AWS, Azure, GCP), ou dans un centre de données privé. Le système multi-tenant prend en charge la configuration par locataire, de sorte que vous pouvez même héberger différents locataires dans différentes régions pour vous conformer au RGPD, à l'HIPAA ou aux réglementations locales sur la souveraineté des données.",
       qAuditLogs: "Quelles sont les capacités d'audit fournies par NEXORA ?",
-      aAuditLogs: "NEXORA capture les événements d'audit à partir de 4 sources : les journaux des requêtes HTTP (chaque appel API avec son timing et ses codes de réponse), le suivi des modifications des entités (qui a changé quoi, quand, avec des instantanés avant/après), les événements de sécurité (tentatives de connexion, changements de mot de passe, modifications de permissions), et les journaux des opérations métier. Toutes les données d'audit sont diffusables en temps réel via SignalR, exportables au format CSV/Excel, et prennent en charge des politiques de rétention configurables.",
+      aAuditLogs:
+        "NEXORA capture les événements d'audit à partir de 4 sources : les journaux des requêtes HTTP (chaque appel API avec son timing et ses codes de réponse), le suivi des modifications des entités (qui a changé quoi, quand, avec des instantanés avant/après), les événements de sécurité (tentatives de connexion, changements de mot de passe, modifications de permissions), et les journaux des opérations métier. Toutes les données d'audit sont diffusables en temps réel via SignalR, exportables au format CSV/Excel, et prennent en charge des politiques de rétention configurables.",
       qSSOIntegration: "NEXORA prend-il en charge le SSO et les fournisseurs d'identité externes ?",
-      aSSOIntegration: "NEXORA comprend un système d'authentification intégré basé sur JWT, avec prise en charge de l'authentification à deux facteurs (2FA), la gestion des sessions et des politiques de mots de passe configurables. L'architecture est conçue pour s'intégrer aux fournisseurs d'identité externes (OAuth2, OIDC, SAML) via le middleware d'authentification standard d'ASP.NET Core. Les clients Enterprise peuvent également s'intégrer à Active Directory, Azure AD ou Okta pour l'authentification unique (SSO).",
+      aSSOIntegration:
+        "NEXORA comprend un système d'authentification intégré basé sur JWT, avec prise en charge de l'authentification à deux facteurs (2FA), la gestion des sessions et des politiques de mots de passe configurables. L'architecture est conçue pour s'intégrer aux fournisseurs d'identité externes (OAuth2, OIDC, SAML) via le middleware d'authentification standard d'ASP.NET Core. Les clients Enterprise peuvent également s'intégrer à Active Directory, Azure AD ou Okta pour l'authentification unique (SSO).",
       qUpdateFrequency: "À quelle fréquence NEXORA est-il mis à jour ?",
-      aUpdateFrequency: "NEXORA suit un rythme de publication régulier avec des mises à jour mineures toutes les 2 à 4 semaines, et des versions majeures alignées sur les cycles de publication de .NET et Next.js. Chaque publication inclut des journaux des modifications détaillés (changelogs), des guides de migration et des notes de rétrocompatibilité. Les correctifs de sécurité sont publiés selon les besoins, généralement dans les 48 heures suivant la divulgation de la vulnérabilité. Les clients Enterprise reçoivent un accès anticipé aux versions candidates (release candidates).",
+      aUpdateFrequency:
+        "NEXORA suit un rythme de publication régulier avec des mises à jour mineures toutes les 2 à 4 semaines, et des versions majeures alignées sur les cycles de publication de .NET et Next.js. Chaque publication inclut des journaux des modifications détaillés (changelogs), des guides de migration et des notes de rétrocompatibilité. Les correctifs de sécurité sont publiés selon les besoins, généralement dans les 48 heures suivant la divulgation de la vulnérabilité. Les clients Enterprise reçoivent un accès anticipé aux versions candidates (release candidates).",
       qBreakingChanges: "Comment NEXORA gère-t-il les changements majeurs (breaking changes) ?",
-      aBreakingChanges: "Les changements majeurs sont minimisés par l'adhésion de NEXORA au principe Ouvert/Fermé (Open/Closed) — de nouvelles fonctionnalités sont ajoutées par extension, et non par modification. Lorsque des changements majeurs sont inévitables (comme les mises à niveau majeures du framework), ils sont clairement documentés avec des guides de migration étape par étape, des scripts de migration automatisés lorsque c'est possible, et une période de dépréciation (deprecation) d'au moins un cycle de version majeur. Les clients Enterprise reçoivent une assistance à la migration dédiée.",
+      aBreakingChanges:
+        "Les changements majeurs sont minimisés par l'adhésion de NEXORA au principe Ouvert/Fermé (Open/Closed) — de nouvelles fonctionnalités sont ajoutées par extension, et non par modification. Lorsque des changements majeurs sont inévitables (comme les mises à niveau majeures du framework), ils sont clairement documentés avec des guides de migration étape par étape, des scripts de migration automatisés lorsque c'est possible, et une période de dépréciation (deprecation) d'au moins un cycle de version majeur. Les clients Enterprise reçoivent une assistance à la migration dédiée.",
       qMigrationHelp: "Pouvons-nous obtenir de l'aide pour migrer depuis un système existant ?",
-      aMigrationHelp: "Oui. Les titulaires de licences Professional et Enterprise ont accès à des services de conseil en migration. L'équipe NEXORA peut aider à la planification de la migration des données, au mappage des schémas, aux scripts ETL et aux stratégies de basculement progressif (phased cutover). Pour les migrations complexes, un support d'ingénierie dédié est disponible pour accélérer la transition et minimiser les temps d'arrêt. Des ressources communautaires et des guides de migration sont également disponibles pour les migrations en libre-service.",
-      contactNote: "Vous avez une question qui n'est pas couverte ici ? Contactez notre équipe à support@nexora.dev ou rejoignez la communauté Discord pour une assistance en temps réel.",
+      aMigrationHelp:
+        "Oui. Les titulaires de licences Professional et Enterprise ont accès à des services de conseil en migration. L'équipe NEXORA peut aider à la planification de la migration des données, au mappage des schémas, aux scripts ETL et aux stratégies de basculement progressif (phased cutover). Pour les migrations complexes, un support d'ingénierie dédié est disponible pour accélérer la transition et minimiser les temps d'arrêt. Des ressources communautaires et des guides de migration sont également disponibles pour les migrations en libre-service.",
+      contactNote:
+        "Vous avez une question qui n'est pas couverte ici ? Contactez notre équipe à support@nexora.dev ou rejoignez la communauté Discord pour une assistance en temps réel.",
       description: "Foire aux questions (FAQ) sur NEXORA.",
       generalTitle: "Général",
-      intro: "Réponses aux questions les plus fréquemment posées sur l'architecture, les licences, le déploiement et les capacités de NEXORA.",
+      intro:
+        "Réponses aux questions les plus fréquemment posées sur l'architecture, les licences, le déploiement et les capacités de NEXORA.",
       licensingTitle: "Licences",
       securityTitle: "Sécurité",
       supportTitle: "Support",

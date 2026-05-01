@@ -23,14 +23,14 @@ export function ComparisonDataRow({
   renderCell,
 }: ComparisonDataRowProps) {
   return (
-    <TableRow className="border-b hover:bg-muted/10 transition-colors">
+    <TableRow className="border-b transition-colors hover:bg-muted/10">
       <TableCell className="text-muted-foreground">{label}</TableCell>
       {editions.map((ed, idx) => (
         <TableCell
           key={ed.id}
           className={cn(
-            "py-2.5 px-4 text-center",
-            idx === recommendedIdx && "bg-primary/5 border-x-2 border-primary/20"
+            "px-4 py-2.5 text-center",
+            idx === recommendedIdx && "border-x-2 border-primary/20 bg-primary/5"
           )}
         >
           <div className="flex justify-center">{renderCell(ed)}</div>

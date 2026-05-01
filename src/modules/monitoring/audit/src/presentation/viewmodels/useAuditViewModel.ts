@@ -20,10 +20,8 @@ export const auditKeys = {
     [...auditKeys.all(tenantId), "logs", params] as const,
   detail: (id: string, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "detail", id] as const,
-  analytics: (tenantId: string | null) =>
-    [...auditKeys.all(tenantId), "analytics"] as const,
-  topUsers: (tenantId: string | null) =>
-    [...auditKeys.all(tenantId), "top-users"] as const,
+  analytics: (tenantId: string | null) => [...auditKeys.all(tenantId), "analytics"] as const,
+  topUsers: (tenantId: string | null) => [...auditKeys.all(tenantId), "top-users"] as const,
 };
 
 // ─── Filter ViewModel ────────────────────────────────────────────────

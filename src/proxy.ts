@@ -28,46 +28,44 @@ const PROTECTED_PREFIXES = ["/admin", "/profile", "/settings", "/recycle-bin"];
 const AUTH_STATE_COOKIE = STORAGE_KEYS.nexora_auth_state;
 
 export function proxy(request: NextRequest) {
-      const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
-      // Allow public paths
-      if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-            return NextResponse.next();
-      }
+  // Allow public paths
+  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
 
-      // Check if route is protected (starts with known module prefixes or is at root level)
-      const isProtected =
-            PROTECTED_PREFIXES.some((p) => pathname.startsWith(p)) ||
-            pathname === "/"; // Home/dashboard is protected
+  // Check if route is protected (starts with known module prefixes or is at root level)
+  const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p)) || pathname === "/"; // Home/dashboard is protected
 
-      if (!isProtected) {
-            return NextResponse.next();
-      }
+  if (!isProtected) {
+    return NextResponse.next();
+  }
 
-      // Check for frontend auth state cookie as auth signal
-      const hasAuthState = request.cookies.has(AUTH_STATE_COOKIE);
+  // Check for frontend auth state cookie as auth signal
+  const hasAuthState = request.cookies.has(AUTH_STATE_COOKIE);
 
-      if (!hasAuthState) {
-            // Build login URL with redirect parameter
-            const loginUrl = new URL("/login", request.url);
-            loginUrl.searchParams.set("redirect", pathname);
-            return NextResponse.redirect(loginUrl);
-      }
+  if (!hasAuthState) {
+    // Build login URL with redirect parameter
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
 
-      return NextResponse.next();
+  return NextResponse.next();
 }
 
 // Matcher: skip static assets, API routes, and _next internals
 export const config = {
-      matcher: [
-            /*
-             * Match all request paths except:
-             * - _next/static (static files)
-             * - _next/image (image optimization files)
-             * - favicon.ico (browser auto-request)
-             * - api (API routes — handled by backend CORS/auth)
-             * - Files with extensions (images, fonts, etc.)
-             */
-            "/((?!_next/static|_next/image|favicon.ico|api|sw\\.js|offline\\.html|manifest\\.json|.*\\..*).*)",
-      ],
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (browser auto-request)
+     * - api (API routes — handled by backend CORS/auth)
+     * - Files with extensions (images, fonts, etc.)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|api|sw\\.js|offline\\.html|manifest\\.json|.*\\..*).*)",
+  ],
 };

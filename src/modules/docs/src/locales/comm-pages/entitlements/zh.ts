@@ -6,10 +6,13 @@ export const zh = {
   commercial: {
     entOverview: {
       title: "权益总览 (Entitlements Overview)",
-      description: "一个完整的企业级权益引擎，通过版本、订阅和基于租户的功能控制，将您的平台转化为具有差异化竞争力的 SaaS 产品。",
-      intro: "停止在代码库中硬编码计划检查。NEXORA 的权益模块提供了一个全栈式的、API 级别的功能门控 (feature gating) 引擎。它基于租户订阅的版本、活动中的自定义覆盖以及实时的配额计数器，自动强制执行每个租户能做和不能做的事情。",
+      description:
+        "一个完整的企业级权益引擎，通过版本、订阅和基于租户的功能控制，将您的平台转化为具有差异化竞争力的 SaaS 产品。",
+      intro:
+        "停止在代码库中硬编码计划检查。NEXORA 的权益模块提供了一个全栈式的、API 级别的功能门控 (feature gating) 引擎。它基于租户订阅的版本、活动中的自定义覆盖以及实时的配额计数器，自动强制执行每个租户能做和不能做的事情。",
       whyTitle: "为什么选择内置的权益系统？",
-      whyContent: "大多数 SaaS 平台只是将功能开关 (feature flags) 作为事后的补救措施。NEXORA 通过 IRequireFeature 接口将权益直接集成到 CQRS 管道中，这意味着您可以自动对每个命令进行门控保护，而无需编写任何一行自定义中间件代码。",
+      whyContent:
+        "大多数 SaaS 平台只是将功能开关 (feature flags) 作为事后的补救措施。NEXORA 通过 IRequireFeature 接口将权益直接集成到 CQRS 管道中，这意味着您可以自动对每个命令进行门控保护，而无需编写任何一行自定义中间件代码。",
       fgEditions: "版本 (计划)",
       fgEditionsDesc: "命名的功能包，如基础版、专业版、企业版，用于定义每个计划包含的内容。",
       fgSubscriptions: "订阅生命周期",
@@ -23,9 +26,11 @@ export const zh = {
       fgVersioning: "版本化与发布控制",
       fgVersioningDesc: "通过立即、灰度 (canary) 或计划发布策略部署版本变更。",
       howTitle: "工作原理",
-      howContent: "每个实现了 IRequireFeature 的 API 命令都会被 FeatureCheckBehavior 管道拦截。系统会解析该租户的有效功能值（覆盖 → 版本 → 默认值），然后决定是允许执行，还是返回清晰的“功能已禁用”响应。",
+      howContent:
+        "每个实现了 IRequireFeature 的 API 命令都会被 FeatureCheckBehavior 管道拦截。系统会解析该租户的有效功能值（覆盖 → 版本 → 默认值），然后决定是允许执行，还是返回清晰的“功能已禁用”响应。",
       resolutionTitle: "解析优先级",
-      resolutionContent: "当系统解析某个租户的功能值时，它会按照严格的优先级顺序检查数据源。最先提供值的数据源胜出。",
+      resolutionContent:
+        "当系统解析某个租户的功能值时，它会按照严格的优先级顺序检查数据源。最先提供值的数据源胜出。",
       tblResH1: "优先级",
       tblResH2: "数据源",
       tblResH3: "使用场景",
@@ -65,9 +70,11 @@ export const zh = {
     entEditions: {
       title: "版本与计划 (Editions & Plans)",
       description: "使用 NEXORA 强大的版本引擎来定义、管理和版本化您的 SaaS 产品计划。",
-      intro: "版本是您的 SaaS 定价策略的构建块。每个版本将特定的一组功能值（布尔开关、数字限制、字符串配置）捆绑到一个命名的计划中，该计划可以通过订阅分配给租户。",
+      intro:
+        "版本是您的 SaaS 定价策略的构建块。每个版本将特定的一组功能值（布尔开关、数字限制、字符串配置）捆绑到一个命名的计划中，该计划可以通过订阅分配给租户。",
       whatTitle: "什么是版本 (Editions)？",
-      whatContent: "版本是一个命名的计划（例如“基础版”、“专业版”、“企业版”），它定义了功能值的特定组合。当租户订阅某个版本时，他们会自动获得该版本定义的精准功能访问权限 —— 不多也不少。",
+      whatContent:
+        "版本是一个命名的计划（例如“基础版”、“专业版”、“企业版”），它定义了功能值的特定组合。当租户订阅某个版本时，他们会自动获得该版本定义的精准功能访问权限 —— 不多也不少。",
       scopeTitle: "系统版本 vs 零售版本 (Retail)",
       tblScopeH1: "作用域",
       tblScopeH2: "创建者",
@@ -79,13 +86,17 @@ export const zh = {
       tblScopeR2C2: "经销商租户",
       tblScopeR2C3: "为其子租户提供的定制计划（白标转售）",
       overflowTitle: "溢出策略 (Overflow Policies)",
-      overflowContent: "当租户超出其版本限制时，溢出策略决定了后续行为。这可以在不破坏用户体验的情况下，创造自然的向上销售 (upsell) 路径。",
+      overflowContent:
+        "当租户超出其版本限制时，溢出策略决定了后续行为。这可以在不破坏用户体验的情况下，创造自然的向上销售 (upsell) 路径。",
       overflowUpgrade: "建议升级 (Suggest Upgrade)",
-      overflowUpgradeDesc: "当达到限制时，系统会返回指向溢出版本的升级建议 —— 从而创建无缝的向上销售路径。",
+      overflowUpgradeDesc:
+        "当达到限制时，系统会返回指向溢出版本的升级建议 —— 从而创建无缝的向上销售路径。",
       overflowBlock: "硬性拦截 (Hard Block)",
-      overflowBlockDesc: "严格执行限制。命令将被拒绝，并带有明确的错误消息，指示当前计划的功能已达到容量上限。",
+      overflowBlockDesc:
+        "严格执行限制。命令将被拒绝，并带有明确的错误消息，指示当前计划的功能已达到容量上限。",
       versionTitle: "版本控制与发布",
-      versionContent: "版本控制允许您修改计划功能，而不会中断现有订阅者。创建具有更新功能值的新版本，然后选择您的发布策略。",
+      versionContent:
+        "版本控制允许您修改计划功能，而不会中断现有订阅者。创建具有更新功能值的新版本，然后选择您的发布策略。",
       tblRollH1: "策略",
       tblRollH2: "行为",
       tblRollH3: "最佳适用场景",
@@ -103,10 +114,13 @@ export const zh = {
     },
     entSubscriptions: {
       title: "订阅管理",
-      description: "租户订阅的完整生命周期管理，提供多币种定价、促销折扣、升级/降级影响分析、试用机制、过期处理以及全面的分析导出。",
-      intro: "订阅是租户和版本之间的桥梁。它们定义了租户当前所在的计划、开始和过期时间，以及订阅生命周期发生变化时系统应如何表现。凭借内置的多币种定价和促销折扣跟踪，NEXORA 提供了货币化所需的一切。",
+      description:
+        "租户订阅的完整生命周期管理，提供多币种定价、促销折扣、升级/降级影响分析、试用机制、过期处理以及全面的分析导出。",
+      intro:
+        "订阅是租户和版本之间的桥梁。它们定义了租户当前所在的计划、开始和过期时间，以及订阅生命周期发生变化时系统应如何表现。凭借内置的多币种定价和促销折扣跟踪，NEXORA 提供了货币化所需的一切。",
       lifecycleTitle: "订阅生命周期",
-      lifecycleContent: "每个订阅都遵循一个明确定义的状态机。系统会自动强制执行有效的状态转换，并在每个阶段发出领域事件，以用于审计和集成目的。",
+      lifecycleContent:
+        "每个订阅都遵循一个明确定义的状态机。系统会自动强制执行有效的状态转换，并在每个阶段发出领域事件，以用于审计和集成目的。",
       typesTitle: "订阅类型",
       tblTypeH1: "类型",
       tblTypeH2: "持续时间",
@@ -121,7 +135,8 @@ export const zh = {
       tblTypeR3C2: "主订阅的补充",
       tblTypeR3C3: "额外的功能包（例如：额外存储空间）",
       pricingTitle: "多币种定价引擎",
-      pricingContent: "每个订阅以租户的本地货币存储其定价，同时自动归一化为 USD 以进行统一收入分析。支持 9 种以上货币开箱即用 —— USD、EUR、GBP、SAR、AED、EGP、TRY、INR 等。",
+      pricingContent:
+        "每个订阅以租户的本地货币存储其定价，同时自动归一化为 USD 以进行统一收入分析。支持 9 种以上货币开箱即用 —— USD、EUR、GBP、SAR、AED、EGP、TRY、INR 等。",
       tblPriceH1: "字段",
       tblPriceH2: "用途",
       tblPriceH3: "示例",
@@ -144,20 +159,25 @@ export const zh = {
       tblPriceR6C2: "用于分析的归一化 USD 值",
       tblPriceR6C3: "119.76",
       promoTitle: "促销折扣",
-      promoContent: "通过每个订阅中内置的促销代码支持来推动获客和留存。已应用的促销通过代码名称和折扣百分比进行跟踪，以实现完整的审计和分析可见性。",
+      promoContent:
+        "通过每个订阅中内置的促销代码支持来推动获客和留存。已应用的促销通过代码名称和折扣百分比进行跟踪，以实现完整的审计和分析可见性。",
       fgPromoCode: "促销代码跟踪",
-      fgPromoCodeDesc: "每个订阅都记录其 AppliedPromoCode 和 PromotionDiscount 百分比。分析仪表板显示哪些促销活动产生最多的转化。",
+      fgPromoCodeDesc:
+        "每个订阅都记录其 AppliedPromoCode 和 PromotionDiscount 百分比。分析仪表板显示哪些促销活动产生最多的转化。",
       fgPromoAdjust: "自动调整",
-      fgPromoAdjustDesc: "当应用促销时，AdjustmentAmount 会自动从 BaseAmount × PromotionDiscount 计算，确保所有订阅的定价一致。",
+      fgPromoAdjustDesc:
+        "当应用促销时，AdjustmentAmount 会自动从 BaseAmount × PromotionDiscount 计算，确保所有订阅的定价一致。",
       opsTitle: "关键操作",
       opsAssign: "分配订阅",
       opsAssignDesc: "将租户链接到具有开始日期、持续时间、货币、可选促销代码和自动续订配置的版本。",
       opsUpgrade: "计划升级 (Upgrade)",
       opsUpgradeDesc: "将租户移动到更高级别的版本。新功能立即可用，且可以调整订阅周期。",
       opsDowngrade: "计划降级 (Downgrade)",
-      opsDowngradeDesc: "移动到较低级别的版本。系统提供完整的影响分析，在确认之前显示将丢失哪些功能。",
+      opsDowngradeDesc:
+        "移动到较低级别的版本。系统提供完整的影响分析，在确认之前显示将丢失哪些功能。",
       opsImpact: "影响分析",
-      opsImpactDesc: "在任何降级操作之前，API 会返回受影响功能及当前使用量的详细分析 —— 防止意外的数据丢失。",
+      opsImpactDesc:
+        "在任何降级操作之前，API 会返回受影响功能及当前使用量的详细分析 —— 防止意外的数据丢失。",
       expiryTitle: "过期行为",
       tblExpH1: "策略",
       tblExpH2: "行为",
@@ -172,33 +192,44 @@ export const zh = {
       tblExpR3C2: "自动降级到默认（免费）版本",
       tblExpR3C3: "带有付费升级的免费增值 (Freemium) 模式",
       exportTitle: "高级分析导出",
-      exportContent: "生成 CSV、Excel 和 PDF 格式的全面订阅分析报告。报告包括高级筛选（日期范围、即将过期、状态、版本）、多币种显示和颜色编码的过期指示器。",
+      exportContent:
+        "生成 CSV、Excel 和 PDF 格式的全面订阅分析报告。报告包括高级筛选（日期范围、即将过期、状态、版本）、多币种显示和颜色编码的过期指示器。",
       fgExportCsv: "CSV 导出",
-      fgExportCsvDesc: "轻量级逗号分隔格式，非常适合数据分析以及导入到 Power BI、Tableau 或 Google Sheets 等 BI 工具中。",
+      fgExportCsvDesc:
+        "轻量级逗号分隔格式，非常适合数据分析以及导入到 Power BI、Tableau 或 Google Sheets 等 BI 工具中。",
       fgExportExcel: "Excel 导出",
-      fgExportExcelDesc: "专业的 XLSX 工作簿，具有样式化标题、筛选元数据、过期日期的条件格式和自动调整列宽 —— 由 ClosedXML 驱动。",
+      fgExportExcelDesc:
+        "专业的 XLSX 工作簿，具有样式化标题、筛选元数据、过期日期的条件格式和自动调整列宽 —— 由 ClosedXML 驱动。",
       fgExportPdf: "PDF 导出",
-      fgExportPdfDesc: "可打印文档，带有品牌封面页、统计摘要和分页数据表，含有颜色编码的'剩余天数'列 —— 由 QuestPDF 驱动。",
+      fgExportPdfDesc:
+        "可打印文档，带有品牌封面页、统计摘要和分页数据表，含有颜色编码的'剩余天数'列 —— 由 QuestPDF 驱动。",
       enterpriseTitle: "企业订阅管理",
       renewalTitle: "不可变的收入审计跟踪",
-      renewalDesc: "续订会创建新的订阅行，而不是覆盖现有记录。每个计费周期都保留锁定的价格，以确保精确的 MRR 趋势和财务审计。",
+      renewalDesc:
+        "续订会创建新的订阅行，而不是覆盖现有记录。每个计费周期都保留锁定的价格，以确保精确的 MRR 趋势和财务审计。",
       promoExpiryTitle: "智能促销过期管理",
-      promoExpiryDesc: "限时促销通过 PromotionExpiresAt 自动跟踪。续订时，过期的促销将被移除——新价格无缝生效。",
+      promoExpiryDesc:
+        "限时促销通过 PromotionExpiresAt 自动跟踪。续订时，过期的促销将被移除——新价格无缝生效。",
       concurrencyTitle: "竞态条件防护",
-      concurrencyDesc: "每个订阅上的乐观并发戳可防止并行操作之间的冲突。企业级的数据完整性，无性能损失。",
+      concurrencyDesc:
+        "每个订阅上的乐观并发戳可防止并行操作之间的冲突。企业级的数据完整性，无性能损失。",
       validationTitle: "管道级别输入验证",
-      validationDesc: "所有 8 个订阅命令均受 FluentValidation 验证器保护，提供完全本地化的英语和阿拉伯语错误消息。",
+      validationDesc:
+        "所有 8 个订阅命令均受 FluentValidation 验证器保护，提供完全本地化的英语和阿拉伯语错误消息。",
       crossModuleTitle: "跨模块管理员集成",
-      crossModuleDesc: "订阅生命周期事件自动级联到身份管理。挂起时，所有租户管理员均被安全停用。恢复时，仅重新激活因挂起而停用的管理员。",
+      crossModuleDesc:
+        "订阅生命周期事件自动级联到身份管理。挂起时，所有租户管理员均被安全停用。恢复时，仅重新激活因挂起而停用的管理员。",
       apiTitle: "API 端点 (Endpoints)",
       tip: "降级影响分析 API 是一款强大的销售留存工具。在客户进行降级前，准确向他们展示他们将失去什么 —— 从而创造自然的客户留存契机。",
     },
     entFeatures: {
       title: "功能管理 (Feature Management)",
       description: "定义、分类和执行布尔、数字和字符串功能，具有自动配额跟踪和高性能缓存。",
-      intro: "功能是权益系统的原子构建块。每个可以按计划进行开关、限制或配置的能力都被定义为一个“功能”。系统支持三种值类型、自动数据植入 (seeding) 以及实时配额执行。",
+      intro:
+        "功能是权益系统的原子构建块。每个可以按计划进行开关、限制或配置的能力都被定义为一个“功能”。系统支持三种值类型、自动数据植入 (seeding) 以及实时配额执行。",
       typesTitle: "功能值类型",
-      typesContent: "每个功能都有一个特定的值类型，它决定了如何在版本和覆盖中对其进行评估、存储和执行。",
+      typesContent:
+        "每个功能都有一个特定的值类型，它决定了如何在版本和覆盖中对其进行评估、存储和执行。",
       tblTypeH1: "类型",
       tblTypeH2: "值",
       tblTypeH3: "示例",
@@ -217,13 +248,16 @@ export const zh = {
       tblTypeR3C4: "配置值，无强制执行机制",
       systemTitle: "系统功能 vs 自定义功能",
       fgSystem: "系统功能",
-      fgSystemDesc: "在应用启动时预先植入。不可变且始终存在。定义平台的核心能力（例如 MaxUsers, ApiAccess）。",
+      fgSystemDesc:
+        "在应用启动时预先植入。不可变且始终存在。定义平台的核心能力（例如 MaxUsers, ApiAccess）。",
       fgCustom: "自定义功能",
       fgCustomDesc: "由管理员在运行时通过 API 创建。非常适合随着产品迭代而发展的模块专属功能。",
       quotaTitle: "自动配额执行",
-      quotaContent: "数字功能可以关联 QuotaCounter 实体以跟踪实时使用情况。当命令为数字功能实现 IRequireFeature 时，FeatureCheckBehavior 管道会自动将当前计数与允许的限制进行对比。",
+      quotaContent:
+        "数字功能可以关联 QuotaCounter 实体以跟踪实时使用情况。当命令为数字功能实现 IRequireFeature 时，FeatureCheckBehavior 管道会自动将当前计数与允许的限制进行对比。",
       cacheTitle: "高性能功能缓存",
-      cacheContent: "解析后的功能值按租户被积极地缓存，以确保零延迟的授权检查。每当版本、订阅或覆盖发生变化时，缓存都会自动失效。",
+      cacheContent:
+        "解析后的功能值按租户被积极地缓存，以确保零延迟的授权检查。每当版本、订阅或覆盖发生变化时，缓存都会自动失效。",
       cachePerf: "亚毫秒级查询",
       cachePerfDesc: "解析的功能按租户缓存在内存中。管道检查只需几微秒即可完成，而不是几毫秒。",
       cacheInv: "自动失效机制",
@@ -233,23 +267,32 @@ export const zh = {
     },
     entOverrides: {
       title: "基于租户的覆盖 (Overrides)",
-      description: "无论租户订阅了何种计划，都可以为单个租户自定义功能值，提供完整的审计跟踪和可选的过期设置。",
-      intro: "覆盖功能是一个“逃生舱”，它让您的权益系统足够灵活，以适应真实商业世界。企业交易、促销优惠、Beta 测试以及合规例外，都需要能够在不改变底层计划的情况下，按租户自定义功能。",
+      description:
+        "无论租户订阅了何种计划，都可以为单个租户自定义功能值，提供完整的审计跟踪和可选的过期设置。",
+      intro:
+        "覆盖功能是一个“逃生舱”，它让您的权益系统足够灵活，以适应真实商业世界。企业交易、促销优惠、Beta 测试以及合规例外，都需要能够在不改变底层计划的情况下，按租户自定义功能。",
       priorityTitle: "解析优先级链",
-      priorityContent: "覆盖位于解析优先级链的顶端。当系统解析某个租户的功能值时，覆盖值始终胜出 —— 无论版本或默认值如何设置。",
+      priorityContent:
+        "覆盖位于解析优先级链的顶端。当系统解析某个租户的功能值时，覆盖值始终胜出 —— 无论版本或默认值如何设置。",
       useCasesTitle: "真实商业场景",
       ucEnterprise: "定制企业交易",
-      ucEnterpriseDesc: "一位世界 500 强客户的 Pro 计划需要 10,000 个用户，而通常上限是 500 个。设置一个覆盖即可 —— 无需更改代码，也无需定制版本。",
+      ucEnterpriseDesc:
+        "一位世界 500 强客户的 Pro 计划需要 10,000 个用户，而通常上限是 500 个。设置一个覆盖即可 —— 无需更改代码，也无需定制版本。",
       ucPromo: "促销升级",
-      ucPromoDesc: "作为促销活动，为租户提供 30 天的 Premium 功能。设置一个带有过期时间的覆盖，在促销期结束后会自动还原。",
+      ucPromoDesc:
+        "作为促销活动，为租户提供 30 天的 Premium 功能。设置一个带有过期时间的覆盖，在促销期结束后会自动还原。",
       ucBeta: "Beta 功能访问",
-      ucBetaDesc: "在向所有计划推出一项实验性功能之前，先为选定的租户启用它。在 Beta 测试期间，为特定租户覆盖该功能。",
+      ucBetaDesc:
+        "在向所有计划推出一项实验性功能之前，先为选定的租户启用它。在 Beta 测试期间，为特定租户覆盖该功能。",
       ucExpiring: "限时例外",
-      ucExpiringDesc: "监管合规要求可能需要临时开放功能权限。设置一个带有过期日期的覆盖 —— 系统会在过期后自动还原。",
+      ucExpiringDesc:
+        "监管合规要求可能需要临时开放功能权限。设置一个带有过期日期的覆盖 —— 系统会在过期后自动还原。",
       settingTitle: "设置覆盖",
-      settingContent: "通过一个简单的 API 调用即可设置覆盖。每个覆盖都包含功能、自定义值、可选的过期日期，以及用于审计的原因。",
+      settingContent:
+        "通过一个简单的 API 调用即可设置覆盖。每个覆盖都包含功能、自定义值、可选的过期日期，以及用于审计的原因。",
       auditTitle: "审计跟踪",
-      auditContent: "每一次的覆盖操作都会被全面审计。系统会跟踪谁设置了覆盖、设置的时间、之前的值以及提供的原因。",
+      auditContent:
+        "每一次的覆盖操作都会被全面审计。系统会跟踪谁设置了覆盖、设置的时间、之前的值以及提供的原因。",
       tblAuditH1: "事件",
       tblAuditH2: "追踪的数据",
       tblAuditH3: "目的",

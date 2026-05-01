@@ -180,7 +180,9 @@ export function NavigationMainSidebar({
     const displayName = t(item.name) || item.name;
     const isExpanded = mobileExpandedItems.includes(item.name);
     const active = isMatchWithFallback(item.href, pathname, navigation);
-    const hasActivChild = itemHasChildren ? hasActiveChildWithFallback(item, pathname, navigation) : false;
+    const hasActivChild = itemHasChildren
+      ? hasActiveChildWithFallback(item, pathname, navigation)
+      : false;
     const indent = level * 12;
 
     const indentStyle = isRTL

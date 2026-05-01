@@ -33,7 +33,7 @@ interface TabbedLayoutProps {
  *
  *  TAB BAR (44px)  horizontal scrollable
  *
- *  SUB-NAV                                 
+ *  SUB-NAV
  *  (240px)         MAIN CONTENT
  *  children
  *  of tab
@@ -90,9 +90,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Logo size="sm" className="text-primary-foreground" />
           </div>
-          <h1 className="hidden text-base font-semibold text-foreground sm:block">
-            {appName}
-          </h1>
+          <h1 className="hidden text-base font-semibold text-foreground sm:block">{appName}</h1>
         </div>
 
         <div className="flex-1" />
@@ -153,7 +151,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
           )}
         >
           <div className="p-3">
-            <NavRenderer variant="compact" items={activeTab!.children!} onNavigate={() => { }} />
+            <NavRenderer variant="compact" items={activeTab!.children!} onNavigate={() => {}} />
           </div>
           <div className="absolute inset-x-0 bottom-0 border-t border-border p-3">
             <LogoutButton />

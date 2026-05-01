@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * useNotificationViewModel — Notification bell ViewModel.
@@ -13,119 +13,134 @@
  * 4. This viewmodel reads those values from the provider context
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { notificationBellContainer } from '@core/notification/di';
-import { SecureTokenService } from '@core/common/secure-token-service';
-import { useNotificationHub } from '@core/providers/notification-provider';
-import type { NotificationItem } from '@core/notification/entities/NotificationItem';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { notificationBellContainer } from "@core/notification/di";
+import { SecureTokenService } from "@core/common/secure-token-service";
+import { useNotificationHub } from "@core/providers/notification-provider";
+import type { NotificationItem } from "@core/notification/entities/NotificationItem";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
 export interface NotificationViewModel {
-      notifications: NotificationItem[];
-      unreadCount: number;
-      isLoading: boolean;
-      isOpen: boolean;
-      toggleOpen: () => void;
-      close: () => void;
-      markAsRead: (id: string) => void;
-      markAllAsRead: () => void;
-      refresh: () => void;
+  notifications: NotificationItem[];
+  unreadCount: number;
+  isLoading: boolean;
+  isOpen: boolean;
+  toggleOpen: () => void;
+  close: () => void;
+  markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
+  refresh: () => void;
 }
 
 // ─── Hook ────────────────────────────────────────────────────────────
 
 export function useNotificationViewModel(): NotificationViewModel {
-      const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-      const [isLoading, setIsLoading] = useState(false);
-      const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-      // Pure WebSocket — all data comes from the provider
-      const hub = useNotificationHub();
-      const unreadCount = hub.unreadCount;
-      const latestNotification = hub.latestNotification;
+  // Pure WebSocket — all data comes from the provider
+  const hub = useNotificationHub();
+  const unreadCount = hub.unreadCount;
+  const latestNotification = hub.latestNotification;
 
-      const repo = notificationBellContainer.notificationBellRepository;
-      const mountedRef = useRef(true);
+  const repo = notificationBellContainer.notificationBellRepository;
+  const mountedRef = useRef(true);
 
-      useEffect(() => {
-            mountedRef.current = true;
-            return () => { mountedRef.current = false; };
-      }, []);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
-      // ─── Handle new notification from WebSocket ────────────────────
-      useEffect(() => {
-            if (!latestNotification) return;
-            const item: NotificationItem = {
-                  id: latestNotification.id,
-                  title: latestNotification.title,
-                  body: latestNotification.body,
-                  type: latestNotification.type,
-                  category: latestNotification.category,
-                  actionUrl: latestNotification.actionUrl,
-                  createdAt: latestNotification.createdAt,
-                  isRead: false,
-                  readAt: null,
-                  metadataJson: null,
-            };
-            setNotifications((prev) => [item, ...prev].slice(0, 20));
-      }, [latestNotification]);
+  // ─── Handle new notification from WebSocket ────────────────────
+  useEffect(() => {
+    if (!latestNotification) return;
+    const item: NotificationItem = {
+      id: latestNotification.id,
+      title: latestNotification.title,
+      body: latestNotification.body,
+      type: latestNotification.type,
+      category: latestNotification.category,
+      actionUrl: latestNotification.actionUrl,
+      createdAt: latestNotification.createdAt,
+      isRead: false,
+      readAt: null,
+      metadataJson: null,
+    };
+    setNotifications((prev) => [item, ...prev].slice(0, 20));
+  }, [latestNotification]);
 
-      // ─── Fetch notification list (only when dropdown opens) ────────
-      const fetchList = useCallback(async () => {
-            const token = SecureTokenService.getAccessToken();
-            if (!token) return;
-            setIsLoading(true);
-            try {
-                  const data = await repo.getNotifications({ pageSize: 10 });
-                  if (mountedRef.current) setNotifications(data.items);
-            } catch { /* silently fail */ } finally {
-                  if (mountedRef.current) setIsLoading(false);
-            }
-      }, [repo]);
+  // ─── Fetch notification list (only when dropdown opens) ────────
+  const fetchList = useCallback(async () => {
+    const token = SecureTokenService.getAccessToken();
+    if (!token) return;
+    setIsLoading(true);
+    try {
+      const data = await repo.getNotifications({ pageSize: 10 });
+      if (mountedRef.current) setNotifications(data.items);
+    } catch {
+      /* silently fail */
+    } finally {
+      if (mountedRef.current) setIsLoading(false);
+    }
+  }, [repo]);
 
-      // ─── Actions ──────────────────────────────────────────────────
-      const markAsRead = useCallback(async (id: string) => {
-            try {
-                  await repo.markAsRead(id);
-                  setNotifications((prev) =>
-                        prev.map((n) => (n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n))
-                  );
-                  hub.setUnreadCount((prev: number) => Math.max(0, prev - 1));
-            } catch { /* silently fail */ }
-      }, [repo, hub]);
+  // ─── Actions ──────────────────────────────────────────────────
+  const markAsRead = useCallback(
+    async (id: string) => {
+      try {
+        await repo.markAsRead(id);
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n
+          )
+        );
+        hub.setUnreadCount((prev: number) => Math.max(0, prev - 1));
+      } catch {
+        /* silently fail */
+      }
+    },
+    [repo, hub]
+  );
 
-      const markAllAsRead = useCallback(async () => {
-            try {
-                  await repo.markAllAsRead();
-                  setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
-                  hub.setUnreadCount(0);
-            } catch { /* silently fail */ }
-      }, [repo, hub]);
+  const markAllAsRead = useCallback(async () => {
+    try {
+      await repo.markAllAsRead();
+      setNotifications((prev) =>
+        prev.map((n) => ({ ...n, isRead: true, readAt: new Date().toISOString() }))
+      );
+      hub.setUnreadCount(0);
+    } catch {
+      /* silently fail */
+    }
+  }, [repo, hub]);
 
-      const toggleOpen = useCallback(() => {
-            setIsOpen((prev) => {
-                  const next = !prev;
-                  if (next) fetchList();
-                  return next;
-            });
-      }, [fetchList]);
+  const toggleOpen = useCallback(() => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      if (next) fetchList();
+      return next;
+    });
+  }, [fetchList]);
 
-      const close = useCallback(() => setIsOpen(false), []);
+  const close = useCallback(() => setIsOpen(false), []);
 
-      const refresh = useCallback(() => {
-            if (isOpen) fetchList();
-      }, [fetchList, isOpen]);
+  const refresh = useCallback(() => {
+    if (isOpen) fetchList();
+  }, [fetchList, isOpen]);
 
-      return {
-            notifications,
-            unreadCount,
-            isLoading,
-            isOpen,
-            toggleOpen,
-            close,
-            markAsRead,
-            markAllAsRead,
-            refresh,
-      };
+  return {
+    notifications,
+    unreadCount,
+    isLoading,
+    isOpen,
+    toggleOpen,
+    close,
+    markAsRead,
+    markAllAsRead,
+    refresh,
+  };
 }

@@ -24,8 +24,16 @@ import {
 } from "@core/ui/dialog";
 import { Badge } from "@core/ui/badge";
 import {
-  Undo2, Redo2, RotateCcw, Rows3, Grid3X3, LayoutTemplate,
-  ChevronDown, Save, AlertTriangle, Trash2,
+  Undo2,
+  Redo2,
+  RotateCcw,
+  Rows3,
+  Grid3X3,
+  LayoutTemplate,
+  ChevronDown,
+  Save,
+  AlertTriangle,
+  Trash2,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useBuilderStore } from "../../viewmodels/useBuilderStore";
@@ -44,16 +52,17 @@ import { TemplateStorageService } from "../../../data/services/TemplateStorageSe
 
 // ── Grid Overlap Detection ──────────────────────────────
 function parseGridRange(span: string): [number, number] {
-  const parts = span.split("/").map(s => parseInt(s.trim(), 10));
+  const parts = span.split("/").map((s) => parseInt(s.trim(), 10));
   return [parts[0] || 1, parts[1] || (parts[0] || 1) + 1];
 }
 
 function detectOverlaps(components: CanvasComponent[]): string[] {
-  const visible = components.filter(c => c.visible);
+  const visible = components.filter((c) => c.visible);
   const warnings: string[] = [];
   for (let i = 0; i < visible.length; i++) {
     for (let j = i + 1; j < visible.length; j++) {
-      const a = visible[i], b = visible[j];
+      const a = visible[i],
+        b = visible[j];
       const [ac1, ac2] = parseGridRange(a.gridColumn);
       const [ar1, ar2] = parseGridRange(a.gridRow);
       const [bc1, bc2] = parseGridRange(b.gridColumn);
@@ -79,7 +88,12 @@ interface BuilderPanelProps {
   activeAuthPage?: string;
 }
 
-export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAuthPage }: BuilderPanelProps) {
+export function BuilderPanel({
+  draft,
+  updateDraft,
+  sidebarOnly = false,
+  activeAuthPage,
+}: BuilderPanelProps) {
   const { t } = useI18n();
   const store = useBuilderStore();
   const [showTemplates, setShowTemplates] = useState(false);
@@ -96,10 +110,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
   }, []);
 
   // Overlap detection
-  const overlapWarnings = useMemo(
-    () => detectOverlaps(store.components),
-    [store.components]
-  );
+  const overlapWarnings = useMemo(() => detectOverlaps(store.components), [store.components]);
 
   // ── Note: Builder initialization, page switching, and draft syncing are ALL ──
   // ── handled by CustomizerStudioView's SYNC effects. BuilderPanel is DISPLAY-ONLY. ──
@@ -117,10 +128,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
         e.preventDefault();
         store.redo();
       }
-      if (
-        (e.key === "Delete" || e.key === "Backspace") &&
-        store.selectedComponentId
-      ) {
+      if ((e.key === "Delete" || e.key === "Backspace") && store.selectedComponentId) {
         if (
           (e.target as HTMLElement).tagName === "INPUT" ||
           (e.target as HTMLElement).tagName === "TEXTAREA"
@@ -143,19 +151,18 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
     (type: CanvasComponentType) => {
       store.addComponent(type);
     },
-    [store],
+    [store]
   );
 
   // Selected component
   const selectedComponent = store.selectedComponentId
-    ? store.components.find(c => c.id === store.selectedComponentId) || null
+    ? store.components.find((c) => c.id === store.selectedComponentId) || null
     : null;
-
 
   const sidebarContent = (
     <div className="space-y-4">
       {/* Toolbar: Undo/Redo + Canvas Settings */}
-      <div className="flex items-center gap-2 pb-3 border-b border-border">
+      <div className="flex items-center gap-2 border-b border-border pb-3">
         <Button
           variant="outline"
           size="sm"
@@ -183,7 +190,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
         <Button
           variant={store.snapToGrid ? "default" : "outline"}
           size="sm"
-          className="h-7 px-2 text-xs gap-1"
+          className="h-7 gap-1 px-2 text-xs"
           onClick={() => store.setSnapToGrid(!store.snapToGrid)}
           title={t("studio.builder.canvas.snap") || "Snap to Grid"}
         >
@@ -205,7 +212,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
       {/* Canvas Grid Rows */}
       <div className="flex items-center gap-2">
         <Rows3 className="h-3.5 w-3.5 text-muted-foreground" />
-        <Label className="text-[10px] text-muted-foreground flex-1">
+        <Label className="flex-1 text-[10px] text-muted-foreground">
           {t("studio.builder.canvas.rows") || "Grid Rows"}
         </Label>
         <Input
@@ -213,10 +220,8 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
           min={4}
           max={20}
           value={store.canvasGridRows}
-          onChange={e =>
-            store.setCanvasGridRows(parseInt(e.target.value, 10) || 8)
-          }
-          className="h-7 w-16 text-xs text-center"
+          onChange={(e) => store.setCanvasGridRows(parseInt(e.target.value, 10) || 8)}
+          className="h-7 w-16 text-center text-xs"
         />
       </div>
 
@@ -252,7 +257,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
           positionMode={store.positionMode}
           onUpdate={(id, updates) => store.updateComponent(id, updates)}
           onUpdateProps={(id, props) => {
-            const comp = store.components.find(c => c.id === id);
+            const comp = store.components.find((c) => c.id === id);
             if (comp) {
               store.updateComponent(id, {
                 props: { ...comp.props, ...props },
@@ -274,36 +279,29 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
         <Button
           variant="outline"
           size="sm"
-          className="w-full h-8 gap-1.5 text-xs"
-          onClick={() => setShowTemplates(p => !p)}
+          className="h-8 w-full gap-1.5 text-xs"
+          onClick={() => setShowTemplates((p) => !p)}
         >
           <LayoutTemplate className="h-3.5 w-3.5" />
           {t("studio.builder.fromTemplate") || "Start from Template"}
           <ChevronDown
-            className={cn(
-              "h-3 w-3 ml-auto transition-transform",
-              showTemplates && "rotate-180",
-            )}
+            className={cn("ml-auto h-3 w-3 transition-transform", showTemplates && "rotate-180")}
           />
         </Button>
         {showTemplates && (
-          <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto rounded-lg border border-border bg-muted/20 p-2">
+          <div className="grid max-h-48 grid-cols-2 gap-1.5 overflow-y-auto rounded-lg border border-border bg-muted/20 p-2">
             {getAllLayoutTemplates().map(({ layout, label }) => (
               <button
                 key={layout}
-                className="rounded-md border border-border bg-background px-2 py-1.5 text-[10px] font-medium text-foreground hover:bg-primary/5 hover:border-primary/30 transition-colors text-left truncate"
+                className="truncate rounded-md border border-border bg-background px-2 py-1.5 text-left text-[10px] font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5"
                 onClick={() => {
                   const tmpl = layoutToTemplate(layout);
-                  store.loadTemplate(
-                    tmpl.components,
-                    tmpl.gridRows,
-                    tmpl.background,
-                  );
+                  store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowTemplates(false);
                 }}
               >
                 {t(
-                  `studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`,
+                  `studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`
                 ) || label}
               </button>
             ))}
@@ -316,7 +314,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
         <Button
           variant="outline"
           size="sm"
-          className="flex-1 h-8 gap-1.5 text-xs"
+          className="h-8 flex-1 gap-1.5 text-xs"
           onClick={() => {
             setTemplateName("");
             setSaveDialogOpen(true);
@@ -331,14 +329,11 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
             variant="outline"
             size="sm"
             className="h-8 px-2 text-xs"
-            onClick={() => setShowSaved(p => !p)}
+            onClick={() => setShowSaved((p) => !p)}
           >
             {savedTemplates.length}
             <ChevronDown
-              className={cn(
-                "h-3 w-3 ml-0.5 transition-transform",
-                showSaved && "rotate-180",
-              )}
+              className={cn("ml-0.5 h-3 w-3 transition-transform", showSaved && "rotate-180")}
             />
           </Button>
         )}
@@ -346,28 +341,22 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
 
       {/* Saved Templates List */}
       {showSaved && savedTemplates.length > 0 && (
-        <div className="space-y-1 max-h-36 overflow-y-auto rounded-lg border border-border bg-muted/20 p-2">
-          {savedTemplates.map(tmpl => (
+        <div className="max-h-36 space-y-1 overflow-y-auto rounded-lg border border-border bg-muted/20 p-2">
+          {savedTemplates.map((tmpl) => (
             <div key={tmpl.id} className="flex items-center gap-2">
               <button
-                className="flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-[10px] font-medium text-foreground hover:bg-primary/5 hover:border-primary/30 transition-colors text-left truncate"
+                className="flex-1 truncate rounded-md border border-border bg-background px-2 py-1.5 text-left text-[10px] font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5"
                 onClick={() => {
-                  store.loadTemplate(
-                    tmpl.components,
-                    tmpl.gridRows,
-                    tmpl.background,
-                  );
+                  store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowSaved(false);
                 }}
               >
                 {tmpl.name}
               </button>
               <button
-                className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
                 onClick={() => {
-                  const updated = savedTemplates.filter(
-                    t => t.id !== tmpl.id,
-                  );
+                  const updated = savedTemplates.filter((t) => t.id !== tmpl.id);
                   setSavedTemplates(updated);
                   TemplateStorageService.save(updated);
                 }}
@@ -384,9 +373,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>
-              {t("studio.builder.saveTemplate") || "Save as Template"}
-            </DialogTitle>
+            <DialogTitle>{t("studio.builder.saveTemplate") || "Save as Template"}</DialogTitle>
             <DialogDescription>
               {t("studio.builder.saveTemplateDesc") ||
                 "Save the current canvas layout as a reusable template."}
@@ -399,21 +386,14 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
             <Input
               id="template-name"
               value={templateName}
-              onChange={e => setTemplateName(e.target.value)}
-              placeholder={
-                t("studio.builder.templateNamePlaceholder") ||
-                "My Custom Template"
-              }
+              onChange={(e) => setTemplateName(e.target.value)}
+              placeholder={t("studio.builder.templateNamePlaceholder") || "My Custom Template"}
               className="h-8 text-sm"
               autoFocus
             />
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSaveDialogOpen(false)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setSaveDialogOpen(false)}>
               {t("common.cancel") || "Cancel"}
             </Button>
             <Button
@@ -434,7 +414,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
                 setSaveDialogOpen(false);
               }}
             >
-              <Save className="h-3.5 w-3.5 mr-1" />
+              <Save className="mr-1 h-3.5 w-3.5" />
               {t("common.save") || "Save"}
             </Button>
           </DialogFooter>
@@ -443,24 +423,18 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
 
       {/* Responsive Validation Warnings */}
       {overlapWarnings.length > 0 && (
-        <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-2.5 space-y-1.5">
+        <div className="space-y-1.5 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-2.5">
           <div className="flex items-center gap-1.5 text-yellow-600 dark:text-yellow-400">
             <AlertTriangle className="h-3.5 w-3.5" />
             <span className="text-xs font-semibold">
               {t("studio.builder.validationWarnings") || "Layout Warnings"}
             </span>
-            <Badge
-              variant="outline"
-              className="ml-auto text-[10px] h-4 px-1 border-yellow-500/30"
-            >
+            <Badge variant="outline" className="ml-auto h-4 border-yellow-500/30 px-1 text-[10px]">
               {overlapWarnings.length}
             </Badge>
           </div>
           {overlapWarnings.map((w, i) => (
-            <p
-              key={i}
-              className="text-[10px] text-yellow-600/80 dark:text-yellow-400/80 pl-5"
-            >
+            <p key={i} className="pl-5 text-[10px] text-yellow-600/80 dark:text-yellow-400/80">
               {w}
             </p>
           ))}
@@ -479,4 +453,3 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
   // DndContext is now at CustomizerStudioView level (wraps both sidebar + canvas)
   return sidebarContent;
 }
-

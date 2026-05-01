@@ -92,7 +92,9 @@ export function getIdentityContainer(): IdentityContainer {
       permissionRepository: new PermissionRepository(permissionService),
       tenantRepository: new TenantRepository(tenantService),
       userGroupRepository: new UserGroupRepository(new UserGroupService(apiService)),
-      identityProviderRepository: new IdentityProviderRepository(new IdentityProviderService(apiService)),
+      identityProviderRepository: new IdentityProviderRepository(
+        new IdentityProviderService(apiService)
+      ),
       oauthAppRepository: new OAuthAppRepository(new OAuthAppService(apiService)),
       usersRepository: new UsersRepository(new UsersService(apiService)),
     };

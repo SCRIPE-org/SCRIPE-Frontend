@@ -5,93 +5,122 @@
 export const zh = {
   commercial: {
     performanceBenchmarks: {
-      apiIntro: "我们的架构将速度放在首位，同时不牺牲抽象性。API 的每一层都经过严格的基准测试，以确保内存分配最小化并提供最大的吞吐量。",
+      apiIntro:
+        "我们的架构将速度放在首位，同时不牺牲抽象性。API 的每一层都经过严格的基准测试，以确保内存分配最小化并提供最大的吞吐量。",
       apiTitle: "持续的 API 高速吞吐",
-      cachingContent: "除非逻辑上绝对需要，否则我们绝不查询数据库。NEXORA 实施了复杂的多级缓存策略。短命的 L1 内存缓存可以拦截相同的并发请求，而 L2 分布式 Redis 缓存则提供了大规模的跨节点读取吞吐量。",
+      cachingContent:
+        "除非逻辑上绝对需要，否则我们绝不查询数据库。NEXORA 实施了复杂的多级缓存策略。短命的 L1 内存缓存可以拦截相同的并发请求，而 L2 分布式 Redis 缓存则提供了大规模的跨节点读取吞吐量。",
       cachingTitle: "多层攻击性缓存",
       dbTitle: "Entity Framework 优化",
       description: "透明的真实世界性能指标、优化策略和横向扩展能力。",
       frontendTitle: "Next.js 渲染引擎",
-      intro: "NEXORA 不仅仅是可扩展的；它的速度更是爆炸性的。通过利用 .NET 9 的最新性能改进和激进的分布式缓存，该平台能以硬件级别的效率处理庞大的并发负载。",
+      intro:
+        "NEXORA 不仅仅是可扩展的；它的速度更是爆炸性的。通过利用 .NET 9 的最新性能改进和激进的分布式缓存，该平台能以硬件级别的效率处理庞大的并发负载。",
       scaleTitle: "无限水平扩展",
       tip: "性能提示：包含的多阶段 Dockerfiles 保证了绝对最小的容器镜像大小，使实例集群能够在毫秒内实现自动缩放。",
       title: "性能基准测试",
     },
     realTimeCapabilities: {
-      dashboardsContent: "停止强迫您的用户刷新页面。在底层数据库指标发生改变的同一毫秒，运营仪表板即可动态重新渲染，为调度、交易和监控应用程序提供巨大的竞争优势。",
+      dashboardsContent:
+        "停止强迫您的用户刷新页面。在底层数据库指标发生改变的同一毫秒，运营仪表板即可动态重新渲染，为调度、交易和监控应用程序提供巨大的竞争优势。",
       dashboardsTitle: "亚秒级实时仪表板",
-      description: "最先进的 WebSockets 集成，可实现亚秒级实时仪表板、系统范围的广播以及协作式的在线状态跟踪。",
-      intro: "现代企业级应用程序必须是“活的”。NEXORA 开箱即用，集成了高度优化的分布式 SignalR WebSocket 底板 (backplane)，向数以百万计的并发客户端提供双向实时通信。",
+      description:
+        "最先进的 WebSockets 集成，可实现亚秒级实时仪表板、系统范围的广播以及协作式的在线状态跟踪。",
+      intro:
+        "现代企业级应用程序必须是“活的”。NEXORA 开箱即用，集成了高度优化的分布式 SignalR WebSocket 底板 (backplane)，向数以百万计的并发客户端提供双向实时通信。",
       liveAudit: "实时法证流",
       liveAuditDesc: "在关键的安全和审计日志于全球范围内发生时，将它们直接流式传输到管理员仪表板。",
       liveCharts: "动态遥测渲染",
       liveChartsDesc: "在后端事件发布的瞬间，图表数据点即在屏幕上进行动画更新。",
-      notificationsContent: "该平台统一的通知中心可以立即将事务警报、审批请求和系统警告推送到 React UI 中，无需轮询服务器，大大降低了数据库负载和移动客户端的电池消耗。",
+      notificationsContent:
+        "该平台统一的通知中心可以立即将事务警报、审批请求和系统警告推送到 React UI 中，无需轮询服务器，大大降低了数据库负载和移动客户端的电池消耗。",
       notificationsTitle: "即时全局通知",
       presenceTrack: "在线状态和锁定跟踪",
       presenceTrackDesc: "在同事正在积极编辑特定实体时给出视觉提示，防止逻辑覆盖冲突。",
       scaleTitle: "由 Redis 支持的全球规模扩展",
       securityAlert: "即时威胁广播",
       securityAlertDesc: "广播关键的安全协议更改，强制客户端立即重新认证。",
-      signalrContent: "运行着多个 API 节点？没问题。我们预配置的 Redis 底板可透明地在整个 Kubernetes 集群中同步 WebSocket 消息，确保连接到节点 A 的用户能收到节点 B 生成的消息。",
+      signalrContent:
+        "运行着多个 API 节点？没问题。我们预配置的 Redis 底板可透明地在整个 Kubernetes 集群中同步 WebSocket 消息，确保连接到节点 A 的用户能收到节点 B 生成的消息。",
       signalrTitle: "分布式 WebSocket 底板",
       title: "实时响应能力",
     },
     resiliencePatterns: {
-      circuitContent: "如果第三方支付网关下线，在达到配置的失败阈值后，NEXORA 的断路器 (Circuit Breakers) 将立即“跳闸”。这从物理上防止了您的应用程序发送数千个注定失败的请求，让外部服务有时间恢复，同时您的应用程序快速失败 (fail-fast)。",
+      circuitContent:
+        "如果第三方支付网关下线，在达到配置的失败阈值后，NEXORA 的断路器 (Circuit Breakers) 将立即“跳闸”。这从物理上防止了您的应用程序发送数千个注定失败的请求，让外部服务有时间恢复，同时您的应用程序快速失败 (fail-fast)。",
       circuitTitle: "自动化断路器",
       configTitle: "动态策略配置",
-      degradationContent: "当外部依赖发生故障时，系统不会崩溃——它会优雅地降级。如果实时运费 API 无法访问，NEXORA 会自动提供上次已知的缓存费率，确保结账流程不被中断。",
+      degradationContent:
+        "当外部依赖发生故障时，系统不会崩溃——它会优雅地降级。如果实时运费 API 无法访问，NEXORA 会自动提供上次已知的缓存费率，确保结账流程不被中断。",
       degradationTitle: "优雅降级策略",
-      description: "利用智能重试管道、自动断路器和优雅的后备 (fallback) 策略，实现军用级别的容错能力。",
-      healthContent: "NEXORA 不会等待用户报告错误。系统不断针对数据库、缓存和第三方 API 执行主动健康检查。如果检测到性能下降，它会自动尝试修复或立即向 DevOps 发出警报。",
+      description:
+        "利用智能重试管道、自动断路器和优雅的后备 (fallback) 策略，实现军用级别的容错能力。",
+      healthContent:
+        "NEXORA 不会等待用户报告错误。系统不断针对数据库、缓存和第三方 API 执行主动健康检查。如果检测到性能下降，它会自动尝试修复或立即向 DevOps 发出警报。",
       healthTitle: "主动健康遥测",
-      intro: "在分布式企业环境中，网络故障不是一种可能性；它是一种数学上的必然性。NEXORA 经过专门设计，可在发生灾难性的外部服务中断时存活下来，而不影响核心的用户体验。",
+      intro:
+        "在分布式企业环境中，网络故障不是一种可能性；它是一种数学上的必然性。NEXORA 经过专门设计，可在发生灾难性的外部服务中断时存活下来，而不影响核心的用户体验。",
       retryTitle: "带抖动的指数退避 (Exponential Backoff)",
       tip: "架构提示：永远不要为网络调用编写标准的 try/catch 块。始终使用注入到整个平台中的集中式 Polly HTTP 拦截器。",
       title: "防御性弹性架构",
     },
     observabilityMonitoring: {
-      alertingContent: "如果没有人查看，可视化的仪表板便毫无意义。配置严格的基准阈值——例如，如果 500 错误激增，或者数据库 CPU 使用率超过 80%——系统将自动触发通过 Slack 或 PagerDuty 的事件响应协议。",
+      alertingContent:
+        "如果没有人查看，可视化的仪表板便毫无意义。配置严格的基准阈值——例如，如果 500 错误激增，或者数据库 CPU 使用率超过 80%——系统将自动触发通过 Slack 或 PagerDuty 的事件响应协议。",
       alertingTitle: "基于阈值的警报",
       cacheMetrics: "Redis 缓存效能",
       cacheMetricsDesc: "持续监控内存碎片、命中/未命中率以及逐出 (eviction) 指标以调整性能。",
       dbMetrics: "数据库连接池耗尽",
       dbMetricsDesc: "直接从 EF Core 跟踪活动连接、慢查询执行和命令编译时间。",
-      description: "法证级结构化日志记录、零停机健康探测、Prometheus 指标以及 OpenTelemetry 分布式追踪。",
-      healthContent: "开箱即用的 Kubernetes 原生存活 (liveness) 和就绪 (readiness) 探针。API 不断自我报告 SQL 数据库、Redis 缓存和外部依赖项的运行状态。如果某个节点发生故障，编排器会立即将其从负载均衡器的轮询中移除。",
+      description:
+        "法证级结构化日志记录、零停机健康探测、Prometheus 指标以及 OpenTelemetry 分布式追踪。",
+      healthContent:
+        "开箱即用的 Kubernetes 原生存活 (liveness) 和就绪 (readiness) 探针。API 不断自我报告 SQL 数据库、Redis 缓存和外部依赖项的运行状态。如果某个节点发生故障，编排器会立即将其从负载均衡器的轮询中移除。",
       healthTitle: "Kubernetes 原生探针",
-      intro: "无法衡量的东西就无法管理。NEXORA 集成了精锐的可观测性技术栈，为 SRE 和 DevSecOps 团队提供有关平台分布式行为的实时法证级洞察。",
-      loggingContent: "传统的文本日志在大规模系统下毫无用处。NEXORA 利用 Serilog 生成深度结构化的 JSON 事件日志，自动使用相关性 ID (Correlation IDs)、租户上下文和机器名称对其进行丰富，以便立即在 Datadog 或 ELK 中进行查询。",
+      intro:
+        "无法衡量的东西就无法管理。NEXORA 集成了精锐的可观测性技术栈，为 SRE 和 DevSecOps 团队提供有关平台分布式行为的实时法证级洞察。",
+      loggingContent:
+        "传统的文本日志在大规模系统下毫无用处。NEXORA 利用 Serilog 生成深度结构化的 JSON 事件日志，自动使用相关性 ID (Correlation IDs)、租户上下文和机器名称对其进行丰富，以便立即在 Datadog 或 ELK 中进行查询。",
       loggingTitle: "结构化的法证级日志",
-      metricsIntro: "通过集成标准 OpenTelemetry 协议，NEXORA 将数千个内部平台指标直接暴露给您现有的 Prometheus 和 Grafana 仪表板。",
+      metricsIntro:
+        "通过集成标准 OpenTelemetry 协议，NEXORA 将数千个内部平台指标直接暴露给您现有的 Prometheus 和 Grafana 仪表板。",
       metricsTitle: "OpenTelemetry 集成",
       requestMetrics: "API 请求吞吐量",
       requestMetricsDesc: "监控延迟百分位数（p95、p99）、有效载荷大小以及每个端点的精确执行时间。",
       tip: "高管提示：实施分布式追踪，以跨越所有部署的微服务无缝跟踪单个用户的请求轨迹。",
       title: "可观测性与遥测",
-      tracingContent: "在微服务部署中，一次单击可能会穿过五个孤立的服务。分布式追踪通过 HTTP 标头注入并传播关联 ID (Correlation IDs)，让您直观地绘制出复杂的请求旅程图，并立即识别出瓶颈服务。",
+      tracingContent:
+        "在微服务部署中，一次单击可能会穿过五个孤立的服务。分布式追踪通过 HTTP 标头注入并传播关联 ID (Correlation IDs)，让您直观地绘制出复杂的请求旅程图，并立即识别出瓶颈服务。",
       tracingTitle: "跨服务的分布式追踪",
       userMetrics: "认证速率",
       userMetricsDesc: "实时追踪登录成功率、暴力破解尝试以及特定租户的活动。",
     },
     testingStrategy: {
-      ci1Content: "绝对的执行环境隔离。在每次发起 Pull Request 时，CI 管道都会在一个密封的、无菌的 Linux 容器内确定性地恢复编译器工具链——从而从数学上根除了“在我的机器上能运行”的借口。",
+      ci1Content:
+        "绝对的执行环境隔离。在每次发起 Pull Request 时，CI 管道都会在一个密封的、无菌的 Linux 容器内确定性地恢复编译器工具链——从而从数学上根除了“在我的机器上能运行”的借口。",
       ci1Title: "1. 纯净环境初始化",
-      ci2Content: "使用智能模拟 (mocked) 的仓储来执行速度极快的 xUnit 套件。这保证了应用层纯粹的 CQRS 业务逻辑在毫秒内得到审查和认证，而无需建立任何物理数据库连接。",
+      ci2Content:
+        "使用智能模拟 (mocked) 的仓储来执行速度极快的 xUnit 套件。这保证了应用层纯粹的 CQRS 业务逻辑在毫秒内得到审查和认证，而无需建立任何物理数据库连接。",
       ci2Title: "2. 纯逻辑验证",
-      ci3Content: "使用 Testcontainers 注入临时的 Docker 数据库。这保证了 EF Core 的 LINQ 投影、全局查询过滤器和物理数据库迁移在自我销毁之前，都能在真实的 SQL 引擎上完美执行。",
+      ci3Content:
+        "使用 Testcontainers 注入临时的 Docker 数据库。这保证了 EF Core 的 LINQ 投影、全局查询过滤器和物理数据库迁移在自我销毁之前，都能在真实的 SQL 引擎上完美执行。",
       ci3Title: "3. 临时集成遥测",
-      ci4Content: "触发海量的 Playwright 浏览器集群。无头 (Headless) Chromium 工作进程无情地蹂躏编译好的 Next.js UI，积极地与每个 React 组件进行交互，以最终验证端到端的用户旅程。",
+      ci4Content:
+        "触发海量的 Playwright 浏览器集群。无头 (Headless) Chromium 工作进程无情地蹂躏编译好的 Next.js UI，积极地与每个 React 组件进行交互，以最终验证端到端的用户旅程。",
       ci4Title: "4. 自动化的跨浏览器测试",
-      ciContent: "没有绝对自动化的测试就是一种债务。附带的代码库原生附带了一个大规模并行的 GitHub Actions / GitLab CI 管道。它会在 `main` 分支上积极设卡，在物理上拒绝任何违反领域边界、数学断言失败或触发功能回退 (regression) 的代码。",
+      ciContent:
+        "没有绝对自动化的测试就是一种债务。附带的代码库原生附带了一个大规模并行的 GitHub Actions / GitLab CI 管道。它会在 `main` 分支上积极设卡，在物理上拒绝任何违反领域边界、数学断言失败或触发功能回退 (regression) 的代码。",
       ciTitle: "持续安全与完整性管道",
-      description: "深入分析 NEXORA 测试金字塔：极速的 CQRS 单元断言、临时的 Docker 数据库集成，以及无情的 Playwright UI 自动化测试。",
-      e2eContent: "用户验收测试 (UAT) 绝不能依赖人为错误。我们集成了 Playwright 来启动无头 Chromium 执行集群。这些集群模拟大规模、高度复杂的用户交互——执行完整的多租户入职流程、验证 React 组件状态，并确保 UI 在人工 QA 接触它之前，在激进的混乱条件下仍能保持完美的弹性。",
+      description:
+        "深入分析 NEXORA 测试金字塔：极速的 CQRS 单元断言、临时的 Docker 数据库集成，以及无情的 Playwright UI 自动化测试。",
+      e2eContent:
+        "用户验收测试 (UAT) 绝不能依赖人为错误。我们集成了 Playwright 来启动无头 Chromium 执行集群。这些集群模拟大规模、高度复杂的用户交互——执行完整的多租户入职流程、验证 React 组件状态，并确保 UI 在人工 QA 接触它之前，在激进的混乱条件下仍能保持完美的弹性。",
       e2eTitle: "无情的端到端浏览器自动化",
-      integrationContent: "广泛模拟数据库会导致危险的假阳性。NEXORA 部署了 Testcontainers，专门为每个测试套件动态配置、执行并销毁 PostgreSQL 和 Redis 的真实物理实例。这确保您的 EF Core 架构是在真正的基础设施上进行测试的，而不是在脆弱的内存模拟对象上。",
+      integrationContent:
+        "广泛模拟数据库会导致危险的假阳性。NEXORA 部署了 Testcontainers，专门为每个测试套件动态配置、执行并销毁 PostgreSQL 和 Redis 的真实物理实例。这确保您的 EF Core 架构是在真正的基础设施上进行测试的，而不是在脆弱的内存模拟对象上。",
       integrationTitle: "临时基础设施测试",
-      intro: "一个级联的企业级错误会导致数十万美元的系统停机损失。NEXORA 强制执行一种无情的、数学上严密的测试策略。从孤立的整洁架构逻辑测试到破坏性的无头浏览器自动化，每一个字节的代码在合并前都受到积极的审查和认证。",
+      intro:
+        "一个级联的企业级错误会导致数十万美元的系统停机损失。NEXORA 强制执行一种无情的、数学上严密的测试策略。从孤立的整洁架构逻辑测试到破坏性的无头浏览器自动化，每一个字节的代码在合并前都受到积极的审查和认证。",
       pyramidTitle: "分层代码认证金字塔",
       pyramidLvl: "认证层级",
       pyramidTech: "执行引擎",
@@ -111,7 +140,8 @@ export const zh = {
       summaryTitle: "基于数学的测试确定性",
       tip: "架构指令：不要追求虚荣的指标。对核心领域实体和 CQRS 处理程序强制执行绝对 100% 的覆盖率基准，并利用 Playwright UI 集群来覆盖表现层。",
       title: "自动化弹性与测试",
-      unitContent: "通过严格遵守整洁架构原则，NEXORA 的业务逻辑在物理层面上隔绝于 HTTP 上下文和 SQL 架构。您的工程团队可以在短短几毫秒内，针对核心处理程序和领域实体即时执行数千个 xUnit 测试套件，从而最大化开发人员的效率和部署信心。",
+      unitContent:
+        "通过严格遵守整洁架构原则，NEXORA 的业务逻辑在物理层面上隔绝于 HTTP 上下文和 SQL 架构。您的工程团队可以在短短几毫秒内，针对核心处理程序和领域实体即时执行数千个 xUnit 测试套件，从而最大化开发人员的效率和部署信心。",
       unitTitle: "极速隔离单元测试执行",
       lstIntI1: "用于现实 HTTP 管道测试的 WebApplicationFactory",
       lstIntI2: "用于一次性数据库实例的 TestContainers",
@@ -149,19 +179,22 @@ export const zh = {
     },
     storageBackends: {
       configTitle: "动态提供商配置",
-      description: "抽象的、超大规模的二进制存储阵列，无缝支持本地磁盘、AWS S3、Azure Blob 和 MinIO 存储后端。",
+      description:
+        "抽象的、超大规模的二进制存储阵列，无缝支持本地磁盘、AWS S3、Azure Blob 和 MinIO 存储后端。",
       featuresTitle: "存储子系统功能",
       handlingTitle: "安全文件传输",
       imageProcessing: "即时 (On-The-Fly) 图像优化",
       imageProcessingDesc: "自动压缩、调整大小并将上传的图片转换为现代的 WebP 格式。",
-      intro: "企业应用程序会生成数 TB 的二进制数据。NEXORA 完全抽象了物理存储位置。您可以在孵化期间使用本地磁盘，在生产环境中通过一行配置字符串即可迁移到全球性的 AWS S3 存储桶，而无需重写任何一个模块。",
+      intro:
+        "企业应用程序会生成数 TB 的二进制数据。NEXORA 完全抽象了物理存储位置。您可以在孵化期间使用本地磁盘，在生产环境中通过一行配置字符串即可迁移到全球性的 AWS S3 存储桶，而无需重写任何一个模块。",
       mig1Content: "使用本地文件系统以惊人的速度进行开发。",
       mig1Title: "1. 本地开发",
       mig2Content: "使用开源的 MinIO 容器无缝部署到准生产环境 (Staging)。",
       mig2Title: "2. 准生产基础设施",
       mig3Content: "在生产环境中使用 AWS S3 或 Azure Blob Storage 进行无限扩展。",
       mig3Title: "3. 无限的生产规模",
-      migrationContent: "`IStorageService` 接口将您的业务逻辑与云服务提供商绝对解耦。更换供应商完全是一项基础架构的配置操作，使您完全免受供应商锁定的影响。",
+      migrationContent:
+        "`IStorageService` 接口将您的业务逻辑与云服务提供商绝对解耦。更换供应商完全是一项基础架构的配置操作，使您完全免受供应商锁定的影响。",
       migrationTitle: "绝对的供应商独立性",
       pluggable: "提供商不可知论",
       pluggableDesc: "通过严格标准化的接口抽象，实现不同存储范式之间的无缝切换。",

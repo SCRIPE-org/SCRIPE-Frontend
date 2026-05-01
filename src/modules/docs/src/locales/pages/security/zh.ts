@@ -7,7 +7,8 @@ export const zh = {
     overview: {
       title: "安全概述",
       description: "五层纵深防御策略、安全特性、CORS 配置、限流与密码策略。",
-      intro: "NEXORA 采用纵深防御 (Defense-in-depth) 策略，分为：网络保护、身份验证、授权、数据隔离和审计日志。",
+      intro:
+        "NEXORA 采用纵深防御 (Defense-in-depth) 策略，分为：网络保护、身份验证、授权、数据隔离和审计日志。",
       layersTitle: "安全防御层",
       featuresTitle: "安全特性",
       featureJwt: "JWT 认证",
@@ -26,11 +27,12 @@ export const zh = {
       corsIntro: "针对开发和生产环境提供截然不同的 CORS 策略保障安全。",
       rateLimitTitle: "限流策略",
       passwordTitle: "密码策略",
-      securityWarning: "部署到生产环境前，务必审查并修改默认的安全机密配置 (Secrets) 及 CORS 源。"
+      securityWarning: "部署到生产环境前，务必审查并修改默认的安全机密配置 (Secrets) 及 CORS 源。",
     },
     authDeep: {
       title: "深入身份验证",
-      description: "JWT 生命周期、BCrypt 哈希、账户锁定、2FA、OAuth、OTP 系统及模拟登录 (Impersonation)。",
+      description:
+        "JWT 生命周期、BCrypt 哈希、账户锁定、2FA、OAuth、OTP 系统及模拟登录 (Impersonation)。",
       intro: "本页深入探讨 NEXORA 的验证机制细节，从令牌颁发到会话状态管理。",
       jwtLifecycleTitle: "JWT 令牌生命周期",
       jwtLifecycleIntro: "短期 Access Token，长期且使用后即轮换作废的 Refresh Token。",
@@ -46,51 +48,71 @@ export const zh = {
       otpTitle: "OTP 系统 (动态口令)",
       otpIntro: "用于邮箱、短信验证及密码重置流程。具备高强度随机生成和过期校验。",
       impersonationTitle: "身份模拟 (Impersonation)",
-      impersonationIntro: "超级管理员可切换至其他管理员的视角以排查问题，并保留了不可篡改的模拟者审计日志。",
+      impersonationIntro:
+        "超级管理员可切换至其他管理员的视角以排查问题，并保留了不可篡改的模拟者审计日志。",
       impersonationWarning: "一项极高权限的操作，具有限制条件且无法模拟同级或拥有保护标签的账户。",
       sessionTitle: "会话管理",
       sessionIntro: "采用无状态 JWT 机制，不在服务器内存中保留用户会话，提高了并发性能。",
-      cookieAuthTip: "为获得最佳安全性，请配置通过 HttpOnly 且 SameSite=Strict 的 Cookie 来传输 Refresh Token。"
+      cookieAuthTip:
+        "为获得最佳安全性，请配置通过 HttpOnly 且 SameSite=Strict 的 Cookie 来传输 Refresh Token。",
     },
     sso: {
       title: "单点登录 (SSO)",
       description: "OIDC 身份验证，外部身份绑定及 OAuth 应用集成。",
-      intro: "NEXORA 系统支持基于 OIDC 协议的外部提供商进行身份验证，并通过 OAuth 应用安全下发凭证。系统完美融合了租户隔离机制与严格的 PKCE 安全保护。",
+      intro:
+        "NEXORA 系统支持基于 OIDC 协议的外部提供商进行身份验证，并通过 OAuth 应用安全下发凭证。系统完美融合了租户隔离机制与严格的 PKCE 安全保护。",
       architectureTitle: "OIDC / OAuth 验证架构",
       endpointsTitle: "端点与流程 (Flows)",
       flowIntro: "SSO 登录环节包含一个提供最高安全保障的多步握手流程：",
       authEndpointTitle: "1. 授权端点 (Authorize)",
-      authEndpointDesc: "将用户重定向至外部 IdP 的登录页。在此步骤系统将注入 PKCE 验证码与防伪装态 (State) 参数。",
+      authEndpointDesc:
+        "将用户重定向至外部 IdP 的登录页。在此步骤系统将注入 PKCE 验证码与防伪装态 (State) 参数。",
       callbackEndpointTitle: "2. 回调端点 (Callback)",
-      callbackEndpointDesc: "在用户成功验证后接收其返回，并在服务端静默使用授权码对换 Token，全程无需浏览器干预。",
+      callbackEndpointDesc:
+        "在用户成功验证后接收其返回，并在服务端静默使用授权码对换 Token，全程无需浏览器干预。",
       linkingTitle: "身份绑定处理机制",
-      linkingIntro: "在成功登录后，系统会自动侦测数据库比对邮箱。如果是该用户的首次登录，其 OIDC 身份记录将瞬间融合并绑定到内部 NEXORA 账户，从而杜绝数据重复割裂。",
-      pkceWarning: "隐式 (Implicit) OAuth 流已被废弃剔除。PKCE 协议现在已强制应用在任何形式的授权机制中。",
+      linkingIntro:
+        "在成功登录后，系统会自动侦测数据库比对邮箱。如果是该用户的首次登录，其 OIDC 身份记录将瞬间融合并绑定到内部 NEXORA 账户，从而杜绝数据重复割裂。",
+      pkceWarning:
+        "隐式 (Implicit) OAuth 流已被废弃剔除。PKCE 协议现在已强制应用在任何形式的授权机制中。",
       howItWorksTitle: "How SSO Works",
-      howItWorksContent: "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+      howItWorksContent:
+        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
-      step1Content: "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
+      step1Content:
+        "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
       step2Title: "2. PKCE Challenge",
-      step2Content: "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
+      step2Content:
+        "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
       step3Title: "3. IdP Redirect",
-      step3Content: "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
+      step3Content:
+        "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
       step4Title: "4. User Authentication",
-      step4Content: "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
+      step4Content:
+        "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
       step5Title: "5. Callback & Token Exchange",
-      step5Content: "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
+      step5Content:
+        "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
       pkceTitle: "PKCE Security Model",
-      pkceContent: "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
+      pkceContent:
+        "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
       entityModelTitle: "Identity Provider Entity",
-      entityModelContent: "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
-      linkingContent: "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+      entityModelContent:
+        "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
+      linkingContent:
+        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
       oauthAppsTitle: "OAuth Applications",
-      oauthAppsContent: "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+      oauthAppsContent:
+        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
-      claimMappingContent: "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+      claimMappingContent:
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
-      tenantScopingContent: "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
-      tenantScopingNote: "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
-      apiTitle: "API Endpoints"
+      tenantScopingContent:
+        "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
+      tenantScopingNote:
+        "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
+      apiTitle: "API Endpoints",
     },
     dataProtection: {
       title: "数据保护",
@@ -100,13 +122,16 @@ export const zh = {
       tenantIsolationIntro: "通过 EF Core 全局查询过滤器，所有的数据库读取均自动挂载租户限定条件。",
       tenantScopingTitle: "查询过滤器作用域",
       tenantServicesTitle: "感知租户的服务 (Tenant-Aware Services)",
-      tenantServicesIntro: "服务层通过注入 IDataScopeService 直接获取租户上下文，而不是依赖请求头。",
+      tenantServicesIntro:
+        "服务层通过注入 IDataScopeService 直接获取租户上下文，而不是依赖请求头。",
       dataAtRestTitle: "静态数据加密 (Data at Rest)",
-      dataAtRestIntro: "采用数据库级的 TDE 加密，并结合 ASP.NET Core Data Protection API 加密特定机密字段。",
+      dataAtRestIntro:
+        "采用数据库级的 TDE 加密，并结合 ASP.NET Core Data Protection API 加密特定机密字段。",
       dataInTransitTitle: "传输中数据加密",
       dataInTransitIntro: "强制 TLS 1.2+ 加密并在生产环境启用了 HSTS 策略。",
       restrictedFieldsTitle: "受限字段 (字段级安全)",
-      restrictedFieldsIntro: "FieldProjectionMiddleware 在 JSON 序列化阶段，拦截并擦除越权访问的敏感属性。",
+      restrictedFieldsIntro:
+        "FieldProjectionMiddleware 在 JSON 序列化阶段，拦截并擦除越权访问的敏感属性。",
       idEncryptionTitle: "ID 加密",
       idEncryptionIntro: "可选将数据库的 Guid ID 进行 AES-256 加密后再返回给客户端，防止枚举攻击。",
       gdprTitle: "GDPR 合规性",
@@ -116,7 +141,8 @@ export const zh = {
       consentTitle: "同意管理",
       retentionTitle: "数据保留策略",
       auditTrailTitle: "合规审计追踪",
-      bypassWarning: "IgnoreQueryFilters() 会绕过隔离系统，请必须配合 .Where(e => e.TenantId) 一起使用防范越权。"
+      bypassWarning:
+        "IgnoreQueryFilters() 会绕过隔离系统，请必须配合 .Where(e => e.TenantId) 一起使用防范越权。",
     },
     apiSecurity: {
       title: "API 安全",
@@ -134,7 +160,7 @@ export const zh = {
       headersIntro: "注入 X-Content-Type-Options, X-Frame-Options 以及 CSP 等一系列标头。",
       headersTip: "使用 securityheaders.com 测试，默认配置应达到 A+ 评级。",
       replayTitle: "防重放攻击",
-      replayIntro: "短暂访问令牌、单次使用及滚动刷新的令牌设计使得重放攻击难以奏效。"
+      replayIntro: "短暂访问令牌、单次使用及滚动刷新的令牌设计使得重放攻击难以奏效。",
     },
     middlewarePipeline: {
       title: "中间件管道 (Middleware Pipeline)",
@@ -162,7 +188,7 @@ export const zh = {
       registrationTitle: "注册顺序",
       registrationIntro: "由 Program.cs 控制的核心排列顺序。",
       summaryTitle: "中间件清单摘要",
-      orderWarning: "轻易更改中间件顺序将导致不可预知的安全真空或级联崩溃。"
+      orderWarning: "轻易更改中间件顺序将导致不可预知的安全真空或级联崩溃。",
     },
     auditCompliance: {
       title: "审计与合规 (Audit & Compliance)",
@@ -171,7 +197,8 @@ export const zh = {
       architectureTitle: "审计架构",
       architectureIntro: "涉及 EF Core 拦截器机制、MediatR 行为拦截以及请求日志跟踪。",
       interceptorTitle: "实体变更拦截器",
-      interceptorIntro: "在 SaveChanges 之前，AuditableEntityInterceptor 计算新旧快照数据并转换为 JSON。",
+      interceptorIntro:
+        "在 SaveChanges 之前，AuditableEntityInterceptor 计算新旧快照数据并转换为 JSON。",
       auditLogEntityTitle: "审计日志实体结构",
       signalrTitle: "SignalR 实时大屏流",
       signalrIntro: "审计日志会在触发的毫秒内推送到管理员的前端控制台中。",
@@ -189,7 +216,7 @@ export const zh = {
       searchableTitle: "高速检索",
       tenantScopedTitle: "租户数据隔离",
       realtimeTitle: "实时推送",
-      retentionTitle: "自动保留策略清理"
-    }
-  }
+      retentionTitle: "自动保留策略清理",
+    },
+  },
 };

@@ -12,10 +12,11 @@ import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { Input } from "@core/ui/input";
-import {
-  Calendar, Clock, Download, FileText, Mail, Save, Settings2,
-} from "lucide-react";
-import type { ReportPreference, UpdateReportPreferenceRequest } from "../../domain/entities/AnalyticsEntities";
+import { Calendar, Clock, Download, FileText, Mail, Save, Settings2 } from "lucide-react";
+import type {
+  ReportPreference,
+  UpdateReportPreferenceRequest,
+} from "../../domain/entities/AnalyticsEntities";
 
 interface ReportsTabProps {
   preference: ReportPreference | null;
@@ -39,10 +40,18 @@ export function ReportsTab({
 
   const [cadence, setCadence] = useState(preference?.cadence ?? "None");
   const [email, setEmail] = useState(preference?.email ?? "");
-  const [includeTenantBreakdown, setIncludeTenantBreakdown] = useState(preference?.includeTenantBreakdown ?? true);
-  const [includeCohortAnalysis, setIncludeCohortAnalysis] = useState(preference?.includeCohortAnalysis ?? true);
-  const [includeHealthScores, setIncludeHealthScores] = useState(preference?.includeHealthScores ?? true);
-  const [includeForecasting, setIncludeForecasting] = useState(preference?.includeForecasting ?? true);
+  const [includeTenantBreakdown, setIncludeTenantBreakdown] = useState(
+    preference?.includeTenantBreakdown ?? true
+  );
+  const [includeCohortAnalysis, setIncludeCohortAnalysis] = useState(
+    preference?.includeCohortAnalysis ?? true
+  );
+  const [includeHealthScores, setIncludeHealthScores] = useState(
+    preference?.includeHealthScores ?? true
+  );
+  const [includeForecasting, setIncludeForecasting] = useState(
+    preference?.includeForecasting ?? true
+  );
   const [currency, setCurrency] = useState(preference?.currency ?? "USD");
 
   // Sync state when preference loads/changes
@@ -73,12 +82,16 @@ export function ReportsTab({
       });
       toast({
         title: t("entitlements.analytics.reports.saveSuccess") || "Preferences Saved",
-        description: t("entitlements.analytics.reports.saveSuccessDesc") || "Your report preferences have been updated.",
+        description:
+          t("entitlements.analytics.reports.saveSuccessDesc") ||
+          "Your report preferences have been updated.",
       });
     } catch {
       toast({
         title: t("entitlements.analytics.reports.saveError") || "Save Failed",
-        description: t("entitlements.analytics.reports.saveErrorDesc") || "Could not save preferences. Please try again.",
+        description:
+          t("entitlements.analytics.reports.saveErrorDesc") ||
+          "Could not save preferences. Please try again.",
         variant: "destructive",
       });
     }
@@ -89,12 +102,16 @@ export function ReportsTab({
       await onGenerateReport();
       toast({
         title: t("entitlements.analytics.reports.generateSuccess") || "Report Generated",
-        description: t("entitlements.analytics.reports.generateSuccessDesc") || "Your PDF report has been downloaded.",
+        description:
+          t("entitlements.analytics.reports.generateSuccessDesc") ||
+          "Your PDF report has been downloaded.",
       });
     } catch {
       toast({
         title: t("entitlements.analytics.reports.generateError") || "Report Failed",
-        description: t("entitlements.analytics.reports.generateErrorDesc") || "Could not generate the report. Please try again.",
+        description:
+          t("entitlements.analytics.reports.generateErrorDesc") ||
+          "Could not generate the report. Please try again.",
         variant: "destructive",
       });
     }
@@ -111,7 +128,7 @@ export function ReportsTab({
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Left: Scheduled Report Settings */}
-      <Card className="border border-border/30 shadow-sm overflow-hidden">
+      <Card className="overflow-hidden border border-border/30 shadow-sm">
         <div className="h-0.5 bg-gradient-to-r from-emerald-500 to-teal-600" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -136,10 +153,18 @@ export function ReportsTab({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="None">{t("entitlements.analytics.reports.cadenceNone")}</SelectItem>
-                <SelectItem value="Daily">{t("entitlements.analytics.reports.cadenceDaily")}</SelectItem>
-                <SelectItem value="Weekly">{t("entitlements.analytics.reports.cadenceWeekly")}</SelectItem>
-                <SelectItem value="Monthly">{t("entitlements.analytics.reports.cadenceMonthly")}</SelectItem>
+                <SelectItem value="None">
+                  {t("entitlements.analytics.reports.cadenceNone")}
+                </SelectItem>
+                <SelectItem value="Daily">
+                  {t("entitlements.analytics.reports.cadenceDaily")}
+                </SelectItem>
+                <SelectItem value="Weekly">
+                  {t("entitlements.analytics.reports.cadenceWeekly")}
+                </SelectItem>
+                <SelectItem value="Monthly">
+                  {t("entitlements.analytics.reports.cadenceMonthly")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -181,15 +206,37 @@ export function ReportsTab({
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("entitlements.analytics.reports.includedSections")}
             </Label>
-            <div className="space-y-3 bg-muted/20 rounded-lg p-3 border border-border/20">
+            <div className="space-y-3 rounded-lg border border-border/20 bg-muted/20 p-3">
               {[
-                { id: "tenant-breakdown", label: t("entitlements.analytics.reports.tenantBreakdown"), checked: includeTenantBreakdown, onChange: setIncludeTenantBreakdown },
-                { id: "cohort-analysis", label: t("entitlements.analytics.reports.cohortAnalysis"), checked: includeCohortAnalysis, onChange: setIncludeCohortAnalysis },
-                { id: "health-scores", label: t("entitlements.analytics.reports.healthScores"), checked: includeHealthScores, onChange: setIncludeHealthScores },
-                { id: "forecasting", label: t("entitlements.analytics.reports.forecasting"), checked: includeForecasting, onChange: setIncludeForecasting },
+                {
+                  id: "tenant-breakdown",
+                  label: t("entitlements.analytics.reports.tenantBreakdown"),
+                  checked: includeTenantBreakdown,
+                  onChange: setIncludeTenantBreakdown,
+                },
+                {
+                  id: "cohort-analysis",
+                  label: t("entitlements.analytics.reports.cohortAnalysis"),
+                  checked: includeCohortAnalysis,
+                  onChange: setIncludeCohortAnalysis,
+                },
+                {
+                  id: "health-scores",
+                  label: t("entitlements.analytics.reports.healthScores"),
+                  checked: includeHealthScores,
+                  onChange: setIncludeHealthScores,
+                },
+                {
+                  id: "forecasting",
+                  label: t("entitlements.analytics.reports.forecasting"),
+                  checked: includeForecasting,
+                  onChange: setIncludeForecasting,
+                },
               ].map(({ id, label, checked, onChange }) => (
                 <div key={id} className="flex items-center justify-between">
-                  <Label htmlFor={id} className="text-sm cursor-pointer">{label}</Label>
+                  <Label htmlFor={id} className="cursor-pointer text-sm">
+                    {label}
+                  </Label>
                   <Switch id={id} checked={checked} onCheckedChange={onChange} />
                 </div>
               ))}
@@ -200,7 +247,7 @@ export function ReportsTab({
           <Button
             onClick={handleSave}
             loading={isSaving}
-            className="w-full gap-2 mt-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/20"
+            className="mt-4 w-full gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-600 hover:to-teal-700"
           >
             <Save className="h-4 w-4" />
             {t("entitlements.analytics.reports.savePreferences")}
@@ -209,7 +256,7 @@ export function ReportsTab({
       </Card>
 
       {/* Right: On-Demand Report Generation */}
-      <Card className="border border-border/30 shadow-sm overflow-hidden">
+      <Card className="overflow-hidden border border-border/30 shadow-sm">
         <div className="h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -225,19 +272,19 @@ export function ReportsTab({
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center gap-5 py-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
-              <div className="relative rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-6 border border-blue-500/20">
+              <div className="absolute inset-0 animate-pulse rounded-full bg-blue-500/20 blur-xl" />
+              <div className="relative rounded-full border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-6">
                 <Download className="h-12 w-12 text-blue-500" />
               </div>
             </div>
-            <p className="text-center text-sm text-muted-foreground max-w-xs">
+            <p className="max-w-xs text-center text-sm text-muted-foreground">
               {t("entitlements.analytics.reports.generateInfo")}
             </p>
             <Button
               onClick={handleGenerateReport}
               loading={isGenerating}
               variant="outline"
-              className="gap-2 border-blue-500/30 hover:bg-blue-500/5 hover:border-blue-500/50"
+              className="gap-2 border-blue-500/30 hover:border-blue-500/50 hover:bg-blue-500/5"
               size="lg"
             >
               <Calendar className="h-4 w-4" />

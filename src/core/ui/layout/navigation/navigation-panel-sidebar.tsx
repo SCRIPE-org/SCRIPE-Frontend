@@ -249,8 +249,8 @@ export function NavigationPanelSidebar({
                 <selectedNavItem.icon className="h-4 w-4" />
               </div>
             )}
-            <div className={cn("flex-1 min-w-0", isRTL && "text-right")}>
-              <h3 className="text-sm font-semibold truncate">
+            <div className={cn("min-w-0 flex-1", isRTL && "text-right")}>
+              <h3 className="truncate text-sm font-semibold">
                 {t(selectedNavItem.name) || selectedNavItem.name}
               </h3>
               {selectedNavItem.children && (

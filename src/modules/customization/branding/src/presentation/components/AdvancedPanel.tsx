@@ -26,13 +26,11 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
       <div className="space-y-2">
         <div className="flex items-center gap-1.5">
           <Code className="h-3.5 w-3.5 text-muted-foreground" />
-          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("studio.advanced.customCss")}
           </label>
         </div>
-        <p className="text-[10px] text-muted-foreground">
-          {t("studio.advanced.customCssDesc")}
-        </p>
+        <p className="text-[10px] text-muted-foreground">{t("studio.advanced.customCssDesc")}</p>
         <Textarea
           value={draft.customCss}
           onChange={(e) => updateDraft("customCss", e.target.value)}
@@ -84,56 +82,71 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
   background: rgba(255,255,255,0.05) !important;
 }`}
           rows={10}
-          className="bg-muted/30 font-mono text-xs resize-y"
+          className="resize-y bg-muted/30 font-mono text-xs"
           spellCheck={false}
         />
 
         {/* CSS Variable Reference */}
         <details className="rounded-lg border border-border/60 bg-muted/20">
-          <summary className="cursor-pointer px-3 py-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
+          <summary className="cursor-pointer px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground">
             📋 {t("studio.advanced.cssVarRef") || "Available CSS Variables"}
           </summary>
-          <div className="px-3 pb-3 space-y-2">
-            <CssVarGroup title="🎨 Colors" vars={[
-              ["--login-primary", "Primary color"],
-              ["--login-secondary", "Secondary color"],
-              ["--login-bg", "Page background"],
-              ["--login-surface", "Card/surface background"],
-              ["--login-text", "Main text color"],
-              ["--login-text-muted", "Muted text color"],
-              ["--login-border", "Border color"],
-              ["--login-error", "Error color"],
-              ["--login-success", "Success color"],
-            ]} />
-            <CssVarGroup title="🖼️ Background" vars={[
-              ["--login-bg-image", "Background image"],
-              ["--login-bg-gradient", "Background gradient"],
-              ["--login-overlay-opacity", "Overlay opacity (0-1)"],
-              ["--login-overlay-color", "Overlay color"],
-              ["--login-overlay-blur", "Overlay blur (px)"],
-            ]} />
-            <CssVarGroup title="📐 Layout" vars={[
-              ["--login-panel-bg", "Branding panel bg (split layouts)"],
-              ["--login-panel-bg-image", "Panel bg image"],
-              ["--login-form-width", "Form max width (px)"],
-              ["--login-card-padding", "Card padding (px)"],
-              ["--login-element-gap", "Element spacing (px)"],
-              ["--login-input-height", "Input height (px)"],
-            ]} />
-            <CssVarGroup title="✏️ Typography" vars={[
-              ["--login-font-heading", "Heading font family"],
-              ["--login-font-body", "Body font family"],
-              ["--login-font-body-ar", "Arabic body font"],
-              ["--login-size-headline", "Headline size (px)"],
-              ["--login-size-subtitle", "Subtitle size (px)"],
-              ["--login-weight-heading", "Heading weight"],
-              ["--login-weight-body", "Body weight"],
-            ]} />
-            <CssVarGroup title="🔲 Shape" vars={[
-              ["--login-radius-card", "Card border radius"],
-              ["--login-radius-button", "Button border radius"],
-              ["--login-shadow-card", "Card box shadow"],
-            ]} />
+          <div className="space-y-2 px-3 pb-3">
+            <CssVarGroup
+              title="🎨 Colors"
+              vars={[
+                ["--login-primary", "Primary color"],
+                ["--login-secondary", "Secondary color"],
+                ["--login-bg", "Page background"],
+                ["--login-surface", "Card/surface background"],
+                ["--login-text", "Main text color"],
+                ["--login-text-muted", "Muted text color"],
+                ["--login-border", "Border color"],
+                ["--login-error", "Error color"],
+                ["--login-success", "Success color"],
+              ]}
+            />
+            <CssVarGroup
+              title="🖼️ Background"
+              vars={[
+                ["--login-bg-image", "Background image"],
+                ["--login-bg-gradient", "Background gradient"],
+                ["--login-overlay-opacity", "Overlay opacity (0-1)"],
+                ["--login-overlay-color", "Overlay color"],
+                ["--login-overlay-blur", "Overlay blur (px)"],
+              ]}
+            />
+            <CssVarGroup
+              title="📐 Layout"
+              vars={[
+                ["--login-panel-bg", "Branding panel bg (split layouts)"],
+                ["--login-panel-bg-image", "Panel bg image"],
+                ["--login-form-width", "Form max width (px)"],
+                ["--login-card-padding", "Card padding (px)"],
+                ["--login-element-gap", "Element spacing (px)"],
+                ["--login-input-height", "Input height (px)"],
+              ]}
+            />
+            <CssVarGroup
+              title="✏️ Typography"
+              vars={[
+                ["--login-font-heading", "Heading font family"],
+                ["--login-font-body", "Body font family"],
+                ["--login-font-body-ar", "Arabic body font"],
+                ["--login-size-headline", "Headline size (px)"],
+                ["--login-size-subtitle", "Subtitle size (px)"],
+                ["--login-weight-heading", "Heading weight"],
+                ["--login-weight-body", "Body weight"],
+              ]}
+            />
+            <CssVarGroup
+              title="🔲 Shape"
+              vars={[
+                ["--login-radius-card", "Card border radius"],
+                ["--login-radius-button", "Button border radius"],
+                ["--login-shadow-card", "Card box shadow"],
+              ]}
+            />
             <div className="space-y-1 pt-1">
               <p className="text-[10px] font-semibold text-foreground">🎯 CSS Class Hooks</p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[9px]">
@@ -155,14 +168,18 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
                   [".dark", "Dark theme"],
                 ].map(([cls, desc]) => (
                   <div key={cls} className="flex items-baseline gap-1">
-                    <code className="text-[8px] bg-muted px-0.5 rounded font-mono text-primary shrink-0">{cls}</code>
-                    <span className="text-muted-foreground truncate">{desc}</span>
+                    <code className="shrink-0 rounded bg-muted px-0.5 font-mono text-[8px] text-primary">
+                      {cls}
+                    </code>
+                    <span className="truncate text-muted-foreground">{desc}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <p className="text-[9px] text-muted-foreground/60 pt-1">
-              💡 Use <code className="text-[9px] bg-muted px-1 rounded">!important</code> to override inline styles. Target dark mode with <code className="text-[9px] bg-muted px-1 rounded">.dark .login-form</code> etc.
+            <p className="pt-1 text-[9px] text-muted-foreground/60">
+              💡 Use <code className="rounded bg-muted px-1 text-[9px]">!important</code> to
+              override inline styles. Target dark mode with{" "}
+              <code className="rounded bg-muted px-1 text-[9px]">.dark .login-form</code> etc.
             </p>
           </div>
         </details>
@@ -177,24 +194,37 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
             <p className="text-[10px] text-muted-foreground">{t("studio.advanced.safeModeDesc")}</p>
           </div>
         </div>
-        <Switch
-          checked={draft.safeMode}
-          onCheckedChange={(v) => updateDraft("safeMode", v)}
-        />
+        <Switch checked={draft.safeMode} onCheckedChange={(v) => updateDraft("safeMode", v)} />
       </div>
 
       {/* Accessibility Info */}
-      <div className="rounded-xl border border-border p-3 space-y-2">
+      <div className="space-y-2 rounded-xl border border-border p-3">
         <div className="flex items-center gap-2">
           <Accessibility className="h-4 w-4 text-blue-500" />
-          <p className="text-xs font-medium text-foreground">{t("studio.advanced.accessibility")}</p>
+          <p className="text-xs font-medium text-foreground">
+            {t("studio.advanced.accessibility")}
+          </p>
         </div>
-        <p className="text-[10px] text-muted-foreground">{t("studio.advanced.accessibilityDesc")}</p>
+        <p className="text-[10px] text-muted-foreground">
+          {t("studio.advanced.accessibilityDesc")}
+        </p>
         {/* Contrast Check */}
         <div className="space-y-1">
-          <ContrastCheck label={t("studio.advanced.textOnBg")} fg={draft.textColor} bg={draft.bgColor} />
-          <ContrastCheck label={t("studio.advanced.textOnSurface")} fg={draft.textColor} bg={draft.surfaceColor} />
-          <ContrastCheck label={t("studio.advanced.primaryOnSurface")} fg={draft.primaryColor} bg={draft.surfaceColor} />
+          <ContrastCheck
+            label={t("studio.advanced.textOnBg")}
+            fg={draft.textColor}
+            bg={draft.bgColor}
+          />
+          <ContrastCheck
+            label={t("studio.advanced.textOnSurface")}
+            fg={draft.textColor}
+            bg={draft.surfaceColor}
+          />
+          <ContrastCheck
+            label={t("studio.advanced.primaryOnSurface")}
+            fg={draft.primaryColor}
+            bg={draft.surfaceColor}
+          />
         </div>
       </div>
 
@@ -210,7 +240,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
       </div>
 
       {/* Export / Import */}
-      <div className="rounded-xl border border-border p-3 space-y-2">
+      <div className="space-y-2 rounded-xl border border-border p-3">
         <div className="flex items-center gap-2">
           <Code className="h-4 w-4 text-purple-500" />
           <p className="text-xs font-medium text-foreground">{t("studio.advanced.exportImport")}</p>
@@ -228,11 +258,11 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
               a.click();
               URL.revokeObjectURL(url);
             }}
-            className="flex-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-medium text-foreground hover:bg-muted/30 transition-colors"
+            className="flex-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted/30"
           >
             {t("studio.advanced.export")}
           </button>
-          <label className="flex-1 flex items-center justify-center rounded-md border border-border px-3 py-1.5 text-[11px] font-medium text-foreground hover:bg-muted/30 transition-colors cursor-pointer">
+          <label className="flex flex-1 cursor-pointer items-center justify-center rounded-md border border-border px-3 py-1.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted/30">
             {t("studio.advanced.import")}
             <input
               type="file"
@@ -252,7 +282,9 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
                         }
                       });
                     }
-                  } catch { /* ignore invalid JSON */ }
+                  } catch {
+                    /* ignore invalid JSON */
+                  }
                 };
                 reader.readAsText(file);
                 e.target.value = "";
@@ -269,11 +301,13 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
 function CssVarGroup({ title, vars }: { title: string; vars: [string, string][] }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold text-muted-foreground mb-1">{title}</p>
+      <p className="mb-1 text-[10px] font-semibold text-muted-foreground">{title}</p>
       <div className="space-y-0.5">
         {vars.map(([varName, desc]) => (
           <div key={varName} className="flex items-center justify-between">
-            <code className="text-[9px] font-mono text-primary/80 bg-muted px-1 rounded">{varName}</code>
+            <code className="rounded bg-muted px-1 font-mono text-[9px] text-primary/80">
+              {varName}
+            </code>
             <span className="text-[9px] text-muted-foreground/60">{desc}</span>
           </div>
         ))}
@@ -293,10 +327,18 @@ function ContrastCheck({ label, fg, bg }: { label: string; fg: string; bg: strin
       <span className="text-[10px] text-muted-foreground">{label}</span>
       <div className="flex items-center gap-1.5">
         <div className="flex gap-0.5">
-          <div className="h-3 w-3 rounded-sm border border-border" style={{ backgroundColor: fg }} />
-          <div className="h-3 w-3 rounded-sm border border-border" style={{ backgroundColor: bg }} />
+          <div
+            className="h-3 w-3 rounded-sm border border-border"
+            style={{ backgroundColor: fg }}
+          />
+          <div
+            className="h-3 w-3 rounded-sm border border-border"
+            style={{ backgroundColor: bg }}
+          />
         </div>
-        <span className={`text-[10px] font-mono font-bold ${passAAA ? "text-green-500" : passAA ? "text-amber-500" : "text-red-500"}`}>
+        <span
+          className={`font-mono text-[10px] font-bold ${passAAA ? "text-green-500" : passAA ? "text-amber-500" : "text-red-500"}`}
+        >
           {ratio.toFixed(1)}:1
         </span>
         <span className={`text-[9px] font-bold ${passAA ? "text-green-500" : "text-red-500"}`}>

@@ -1,4 +1,7 @@
-import type { TenantGatewayModel, ConfigureGatewayModel } from "../../data/models/TenantGatewayModels";
+import type {
+  TenantGatewayModel,
+  ConfigureGatewayModel,
+} from "../../data/models/TenantGatewayModels";
 
 export interface ITenantGatewayService {
   getMyGateways(): Promise<TenantGatewayModel[]>;

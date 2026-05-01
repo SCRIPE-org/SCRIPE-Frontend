@@ -31,7 +31,8 @@ export const zh = {
       viewModelTitle: "ViewModel 控制器",
       viewTitle: "视图展现层",
       routeTitle: "路由配置",
-      checklist: "在提交 PR 前务必检查：禁止私自跨模块 Import、保证语言包补充、检查视图代码量是否符合 SOLID 标准。",
+      checklist:
+        "在提交 PR 前务必检查：禁止私自跨模块 Import、保证语言包补充、检查视图代码量是否符合 SOLID 标准。",
     },
     addBackendModule: {
       title: "新增后端服务模块",

@@ -15,7 +15,7 @@ export function ComparisonSectionRow({ label, colSpan }: ComparisonSectionRowPro
     <TableRow>
       <TableCell
         colSpan={colSpan}
-        className="py-2 px-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground bg-muted/40"
+        className="bg-muted/40 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
       >
         {label}
       </TableCell>

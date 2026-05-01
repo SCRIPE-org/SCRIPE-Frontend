@@ -24,7 +24,13 @@ const PAGE_LABELS: Record<string, string> = {
   "reset-password": "reset password",
 };
 
-export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeLoad, activeAuthPage = "login" }: StudioPreviewProps) {
+export function StudioPreview({
+  iframeRef,
+  isPreviewReady,
+  deviceSize,
+  onIframeLoad,
+  activeAuthPage = "login",
+}: StudioPreviewProps) {
   const dimensions = DEVICE_DIMENSIONS[deviceSize];
 
   // NOTE: Auth page switching is handled entirely via postMessage (activeAuthPage
@@ -34,7 +40,7 @@ export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeL
   const iframeSrc = `/studio-preview?page=login`;
 
   return (
-    <div className="relative flex flex-1 items-center justify-center bg-muted/20 overflow-hidden p-6">
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-muted/20 p-6">
       {/* Loading overlay */}
       {!isPreviewReady && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/80 backdrop-blur-sm">
@@ -63,9 +69,11 @@ export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeL
               <div className="h-2.5 w-2.5 rounded-full bg-amber-400/60" />
               <div className="h-2.5 w-2.5 rounded-full bg-green-400/60" />
             </div>
-            <div className="flex-1 mx-8">
-              <div className="h-5 w-full max-w-sm mx-auto rounded-md bg-muted/60 flex items-center justify-center">
-                <span className="text-[9px] text-muted-foreground/60 font-mono">{PAGE_LABELS[activeAuthPage] || "login"} preview</span>
+            <div className="mx-8 flex-1">
+              <div className="mx-auto flex h-5 w-full max-w-sm items-center justify-center rounded-md bg-muted/60">
+                <span className="font-mono text-[9px] text-muted-foreground/60">
+                  {PAGE_LABELS[activeAuthPage] || "login"} preview
+                </span>
               </div>
             </div>
           </div>
@@ -86,7 +94,12 @@ export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeL
           title="Login Page Preview"
           onLoad={onIframeLoad}
           style={{
-            height: deviceSize === "desktop" ? "calc(100% - 32px)" : deviceSize === "mobile" ? "calc(100% - 24px)" : "100%",
+            height:
+              deviceSize === "desktop"
+                ? "calc(100% - 32px)"
+                : deviceSize === "mobile"
+                  ? "calc(100% - 24px)"
+                  : "100%",
           }}
         />
       </div>

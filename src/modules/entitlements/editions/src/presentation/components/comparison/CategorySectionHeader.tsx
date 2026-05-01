@@ -3,16 +3,7 @@
  * Shows an icon + uppercase category name to visually group related features.
  */
 import { TableRow, TableCell } from "@core/ui/table";
-import {
-  Cpu,
-  BarChart3,
-  Shield,
-  CreditCard,
-  Settings,
-  Layers,
-  Users,
-  Zap,
-} from "lucide-react";
+import { Cpu, BarChart3, Shield, CreditCard, Settings, Layers, Users, Zap } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Modules: <Layers className="h-3.5 w-3.5" />,
@@ -34,8 +25,8 @@ export function CategorySectionHeader({ label, colSpan }: CategorySectionHeaderP
   const icon = CATEGORY_ICONS[label] ?? <Settings className="h-3.5 w-3.5" />;
 
   return (
-    <TableRow className="bg-muted/50 border-y border-border/60">
-      <TableCell colSpan={colSpan} className="py-2.5 px-4">
+    <TableRow className="border-y border-border/60 bg-muted/50">
+      <TableCell colSpan={colSpan} className="px-4 py-2.5">
         <div className="flex items-center gap-2 text-muted-foreground">
           {icon}
           <span className="text-[11px] font-bold uppercase tracking-widest">{label}</span>

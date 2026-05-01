@@ -12,7 +12,8 @@ export const en = {
     discardSuccess: "Draft discarded. Reverted to live settings.",
     discardFailed: "Failed to discard draft",
     discardConfirmTitle: "Discard changes?",
-    discardConfirmDesc: "All unsaved changes will be lost and the design will revert to the last published version. This action cannot be undone.",
+    discardConfirmDesc:
+      "All unsaved changes will be lost and the design will revert to the last published version. This action cannot be undone.",
     discardConfirmAction: "Discard changes",
     versionConflict: "Version conflict - please reload and try again",
     saveDraft: "Save Draft",
@@ -20,7 +21,8 @@ export const en = {
     draftSaved: "Draft saved",
     draftSaveFailed: "Failed to save draft",
     noTenantTitle: "Tenant Required",
-    noTenantDesc: "Please select a tenant to customize their login page. The customizer works with tenant-specific branding settings.",
+    noTenantDesc:
+      "Please select a tenant to customize their login page. The customizer works with tenant-specific branding settings.",
     previewMode: "Theme Preview",
     exitPreview: "Exit Preview",
     reset: {
@@ -35,7 +37,8 @@ export const en = {
     resetSuccess: "Branding reset successfully",
     resetFailed: "Failed to reset branding",
     refresh: "Refresh from server",
-    systemDefaultsBanner: "Editing System Defaults - applied to all tenants without custom branding",
+    systemDefaultsBanner:
+      "Editing System Defaults - applied to all tenants without custom branding",
     customizingTenant: "Customizing:",
     marketplace: {
       title: "Theme Gallery",
@@ -118,7 +121,8 @@ export const en = {
       },
       confirm: {
         deprecateTitle: "Deprecate Theme",
-        deprecateDescription: "Are you sure you want to deprecate this theme? It will remain visible but cannot be newly applied.",
+        deprecateDescription:
+          "Are you sure you want to deprecate this theme? It will remain visible but cannot be newly applied.",
         deleteTitle: "Delete Theme",
         deleteDescription: "Are you sure you want to delete this theme? This cannot be undone.",
       },
@@ -133,7 +137,7 @@ export const en = {
         deleted: "Theme Deleted",
         deletedDesc: "The theme has been removed from the marketplace.",
         duplicated: "Theme Duplicated",
-        duplicatedDesc: "Created \"{{name}}\" as a copy.",
+        duplicatedDesc: 'Created "{{name}}" as a copy.',
         duplicateFailed: "Duplication Failed",
         deprecated: "Theme Deprecated",
         deprecatedDesc: "Theme has been marked as deprecated.",
@@ -144,7 +148,8 @@ export const en = {
     },
     gallery: {
       heroTitle: "Theme Gallery",
-      heroSubtitle: "Discover stunning login page themes. Preview any theme instantly, apply with one click.",
+      heroSubtitle:
+        "Discover stunning login page themes. Preview any theme instantly, apply with one click.",
       searchPlaceholder: "Search by name, category, or tag...",
       resultsCount: "{{count}} themes found",
       noResults: "No themes match your filters.",
@@ -792,11 +797,14 @@ export const en = {
       showToastIcons: "Show Toast Icons",
       toastDuration: "Duration",
       toastDurationMs: "{{ms}}ms",
-      overrideInfo: "Configure which settings individual admins can override. These controls are applied server-side and cannot be bypassed.",
+      overrideInfo:
+        "Configure which settings individual admins can override. These controls are applied server-side and cannot be bypassed.",
       allowOverride: "Allow Admin Override",
-      allowOverrideDesc: "When enabled, individual admins can customize their own dashboard appearance within the paths you define.",
+      allowOverrideDesc:
+        "When enabled, individual admins can customize their own dashboard appearance within the paths you define.",
       overridePaths: "Override Path Control",
-      overridePathsDesc: "Fine-grained control over which settings admins can override. Requires Enterprise edition.",
+      overridePathsDesc:
+        "Fine-grained control over which settings admins can override. Requires Enterprise edition.",
       locked: {
         badge: "Locked",
         allDisabled: "Managed by your organization",
@@ -971,7 +979,8 @@ export const en = {
       faviconDesc: "Upload or enter a URL for your favicon (ICO, PNG, SVG - max 512 KB)",
       copyright: "Copyright Text",
       copyrightPlaceholder: "© 2026 Your Company",
-      noPanelNote: "Headline and subtitle are only available for split layouts that have a separate branding panel. Switch to a split layout to customize these.",
+      noPanelNote:
+        "Headline and subtitle are only available for split layouts that have a separate branding panel. Switch to a split layout to customize these.",
     },
     colors: {
       themeMode: "Theme Mode",
@@ -1028,7 +1037,8 @@ export const en = {
       overlayOpacity: "Overlay Opacity",
       blur: "Blur Amount",
       themeTarget: "Theme-Specific Backgrounds",
-      themeTargetDesc: "You have split theme mode enabled. Configure separate backgrounds for light and dark themes below.",
+      themeTargetDesc:
+        "You have split theme mode enabled. Configure separate backgrounds for light and dark themes below.",
       lightBg: "Light Background",
       darkBg: "Dark Background",
       panelBg: "Panel Backgrounds",
@@ -1218,7 +1228,8 @@ export const en = {
     },
     advanced: {
       customCss: "Custom CSS",
-      customCssDesc: "Add custom CSS to fine-tune the login page design. Use CSS variables or any selector.",
+      customCssDesc:
+        "Add custom CSS to fine-tune the login page design. Use CSS variables or any selector.",
       cssVarRef: "Available CSS Variables",
       safeMode: "Safe Mode",
       safeModeDesc: "Falls back to default styles if custom CSS breaks the page",
@@ -1310,7 +1321,7 @@ export const en = {
         autoplay: "Autoplay",
         muted: "Muted",
         loop: "Loop",
-        showBackToLogin: "Show \"Back to Login\" link",
+        showBackToLogin: 'Show "Back to Login" link',
         showPasswordStrength: "Show password strength indicator",
         linkLabel: "Label",
         linkUrl: "URL",

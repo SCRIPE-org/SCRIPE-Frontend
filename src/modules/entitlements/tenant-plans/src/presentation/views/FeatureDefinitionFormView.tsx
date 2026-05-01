@@ -22,9 +22,20 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
 import {
-  ArrowLeft, Save, Loader2, Type, Hash, ToggleRight,
-  Tag, FolderOpen, SortAsc, FileText, CheckCircle2, AlertCircle,
-  Sparkles, KeyRound,
+  ArrowLeft,
+  Save,
+  Loader2,
+  Type,
+  Hash,
+  ToggleRight,
+  Tag,
+  FolderOpen,
+  SortAsc,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  KeyRound,
 } from "lucide-react";
 
 interface FeatureDefinitionFormViewProps {
@@ -34,7 +45,10 @@ interface FeatureDefinitionFormViewProps {
   isViewMode?: boolean;
 }
 
-export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefinitionFormViewProps) {
+export function FeatureDefinitionFormView({
+  featureId,
+  isViewMode,
+}: FeatureDefinitionFormViewProps) {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const {
     form,
@@ -85,7 +99,7 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
   const selectedTypeConfig = valueTypeOptions.find((o) => o.value === form.valueType);
 
   return (
-    <div className="space-y-6 pb-12 max-w-3xl mx-auto">
+    <div className="mx-auto max-w-3xl space-y-6 pb-12">
       {/* ─────── HEADER ─────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -98,21 +112,24 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight">
                 {isViewMode
-                  ? (t("entitlements.featureDefinitions.view") || "View Feature")
+                  ? t("entitlements.featureDefinitions.view") || "View Feature"
                   : isEditMode
-                    ? (t("entitlements.featureDefinitions.edit") || "Edit Feature")
-                    : (t("entitlements.featureDefinitions.create") || "Create Feature")}
+                    ? t("entitlements.featureDefinitions.edit") || "Edit Feature"
+                    : t("entitlements.featureDefinitions.create") || "Create Feature"}
               </h1>
               <Badge variant="outline" className="text-xs">
                 {t("entitlements.featureDefinitions.tier2Badge") || "Tier 2"}
               </Badge>
             </div>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <p className="mt-0.5 text-sm text-muted-foreground">
               {isViewMode
-                ? (t("entitlements.featureDefinitions.viewDesc") || "View feature definition details.")
+                ? t("entitlements.featureDefinitions.viewDesc") ||
+                  "View feature definition details."
                 : isEditMode
-                  ? (t("entitlements.featureDefinitions.editDesc") || "Update the feature definition details below.")
-                  : (t("entitlements.featureDefinitions.createDesc") || "Define a reusable feature for your tenant plans.")}
+                  ? t("entitlements.featureDefinitions.editDesc") ||
+                    "Update the feature definition details below."
+                  : t("entitlements.featureDefinitions.createDesc") ||
+                    "Define a reusable feature for your tenant plans."}
             </p>
           </div>
         </div>
@@ -120,13 +137,13 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
         <div className="flex items-center gap-2">
           <Link href="/entitlements/tenant-feature-definitions">
             <Button variant="outline">
-              {isViewMode ? (t("common.back") || "Back") : (t("common.cancel") || "Cancel")}
+              {isViewMode ? t("common.back") || "Back" : t("common.cancel") || "Cancel"}
             </Button>
           </Link>
           {!isViewMode && (
             <Button onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
-              {!isSaving && <Save className="h-4 w-4 me-2" />}
-              {isEditMode ? (t("common.save") || "Save") : (t("common.create") || "Create")}
+              {!isSaving && <Save className="me-2 h-4 w-4" />}
+              {isEditMode ? t("common.save") || "Save" : t("common.create") || "Create"}
             </Button>
           )}
         </div>
@@ -136,13 +153,14 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <KeyRound className="h-4 w-4 text-primary" />
             </div>
             {t("entitlements.featureDefinitions.sectionIdentity") || "Identity"}
           </CardTitle>
           <CardDescription>
-            {t("entitlements.featureDefinitions.sectionIdentityDesc") || "Unique key and customer-facing display names."}
+            {t("entitlements.featureDefinitions.sectionIdentityDesc") ||
+              "Unique key and customer-facing display names."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -156,22 +174,25 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
               id="fd-key"
               value={form.key}
               onChange={(e) => updateField("key", e.target.value)}
-              placeholder={t("entitlements.featureDefinitions.keyPlaceholder") || "e.g. max_projects"}
+              placeholder={
+                t("entitlements.featureDefinitions.keyPlaceholder") || "e.g. max_projects"
+              }
               disabled={isEditMode || isViewMode}
               className={errors.key ? "border-red-500" : ""}
             />
             <p className="text-xs text-muted-foreground">
-              {t("entitlements.featureDefinitions.keyHint") || "Unique identifier. Cannot be changed after creation."}
+              {t("entitlements.featureDefinitions.keyHint") ||
+                "Unique identifier. Cannot be changed after creation."}
             </p>
             {errors.key && (
-              <p className="text-xs text-red-500 flex items-center gap-1">
+              <p className="flex items-center gap-1 text-xs text-red-500">
                 <AlertCircle className="h-3 w-3" /> {errors.key}
               </p>
             )}
           </div>
 
           {/* Display Names — EN / AR side by side */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="fd-name-en">
                 {t("entitlements.featureDefinitions.displayNameEn") || "Display Name (EN)"}
@@ -180,19 +201,25 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
                 id="fd-name-en"
                 value={form.displayNameEn}
                 onChange={(e) => updateField("displayNameEn", e.target.value)}
-                placeholder={t("entitlements.featureDefinitions.displayNameEnPlaceholder") || "e.g. Maximum Projects"}
+                placeholder={
+                  t("entitlements.featureDefinitions.displayNameEnPlaceholder") ||
+                  "e.g. Maximum Projects"
+                }
                 disabled={isViewMode}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="fd-name-ar" className="text-right block">
+              <Label htmlFor="fd-name-ar" className="block text-right">
                 {t("entitlements.featureDefinitions.displayNameAr") || "Display Name (AR)"}
               </Label>
               <Input
                 id="fd-name-ar"
                 value={form.displayNameAr}
                 onChange={(e) => updateField("displayNameAr", e.target.value)}
-                placeholder={t("entitlements.featureDefinitions.displayNameArPlaceholder") || "الحد الأقصى للمشاريع"}
+                placeholder={
+                  t("entitlements.featureDefinitions.displayNameArPlaceholder") ||
+                  "الحد الأقصى للمشاريع"
+                }
                 disabled={isViewMode}
                 dir="rtl"
               />
@@ -205,13 +232,14 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-violet-500/10">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10">
               <Sparkles className="h-4 w-4 text-violet-500" />
             </div>
             {t("entitlements.featureDefinitions.sectionConfig") || "Value Configuration"}
           </CardTitle>
           <CardDescription>
-            {t("entitlements.featureDefinitions.sectionConfigDesc") || "Choose how this feature stores its value and set the default."}
+            {t("entitlements.featureDefinitions.sectionConfigDesc") ||
+              "Choose how this feature stores its value and set the default."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -221,7 +249,7 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
               {t("entitlements.featureDefinitions.valueType") || "Value Type"}
               <span className="text-red-500">*</span>
             </Label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {valueTypeOptions.map((option) => (
                 <button
                   key={option.value}
@@ -235,18 +263,20 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <div className={`flex items-center justify-center h-8 w-8 rounded-md ${
-                      form.valueType === option.value ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
-                    }`}>
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-md ${
+                        form.valueType === option.value
+                          ? "bg-primary/20 text-primary"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
                       {option.icon}
                     </div>
-                    <span className="font-medium text-sm">{option.label}</span>
+                    <span className="text-sm font-medium">{option.label}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {option.desc}
-                  </p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">{option.desc}</p>
                   {form.valueType === option.value && (
-                    <div className="absolute top-2 end-2">
+                    <div className="absolute end-2 top-2">
                       <CheckCircle2 className="h-4 w-4 text-primary" />
                     </div>
                   )}
@@ -254,7 +284,7 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
               ))}
             </div>
             {errors.valueType && (
-              <p className="text-xs text-red-500 flex items-center gap-1">
+              <p className="flex items-center gap-1 text-xs text-red-500">
                 <AlertCircle className="h-3 w-3" /> {errors.valueType}
               </p>
             )}
@@ -286,17 +316,18 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-500/10">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
               <FolderOpen className="h-4 w-4 text-amber-500" />
             </div>
             {t("entitlements.featureDefinitions.sectionOrganization") || "Organization"}
           </CardTitle>
           <CardDescription>
-            {t("entitlements.featureDefinitions.sectionOrganizationDesc") || "Group and describe this feature for better management."}
+            {t("entitlements.featureDefinitions.sectionOrganizationDesc") ||
+              "Group and describe this feature for better management."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* Category */}
             <div className="space-y-2">
               <Label htmlFor="fd-category" className="flex items-center gap-1.5">
@@ -307,7 +338,9 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
                 id="fd-category"
                 value={form.category}
                 onChange={(e) => updateField("category", e.target.value)}
-                placeholder={t("entitlements.featureDefinitions.categoryPlaceholder") || "e.g. Limits, Access"}
+                placeholder={
+                  t("entitlements.featureDefinitions.categoryPlaceholder") || "e.g. Limits, Access"
+                }
                 disabled={isViewMode}
               />
             </div>
@@ -339,7 +372,10 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
               id="fd-description"
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
-              placeholder={t("entitlements.featureDefinitions.descriptionPlaceholder") || "What this feature controls..."}
+              placeholder={
+                t("entitlements.featureDefinitions.descriptionPlaceholder") ||
+                "What this feature controls..."
+              }
               disabled={isViewMode}
               rows={3}
             />
@@ -351,13 +387,14 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
       <Card>
         <CardContent className="flex items-center justify-between py-5">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-emerald-500/10">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
               <CheckCircle2 className="h-4 w-4 text-emerald-500" />
             </div>
             <div>
               <p className="text-sm font-medium">{t("common.active") || "Active"}</p>
               <p className="text-xs text-muted-foreground">
-                {t("entitlements.featureDefinitions.activeHint") || "Inactive features won't appear in the plan feature picker."}
+                {t("entitlements.featureDefinitions.activeHint") ||
+                  "Inactive features won't appear in the plan feature picker."}
               </p>
             </div>
           </div>
@@ -374,13 +411,15 @@ export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefi
       <div className="flex items-center justify-end gap-3 pt-2">
         <Link href="/entitlements/tenant-feature-definitions">
           <Button variant="outline" size="lg">
-            {isViewMode ? (t("common.back") || "Back") : (t("common.cancel") || "Cancel")}
+            {isViewMode ? t("common.back") || "Back" : t("common.cancel") || "Cancel"}
           </Button>
         </Link>
         {!isViewMode && (
           <Button size="lg" onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
-            {!isSaving && <Save className="h-4 w-4 me-2" />}
-            {isEditMode ? (t("common.saveChanges") || "Save Changes") : (t("common.create") || "Create Feature")}
+            {!isSaving && <Save className="me-2 h-4 w-4" />}
+            {isEditMode
+              ? t("common.saveChanges") || "Save Changes"
+              : t("common.create") || "Create Feature"}
           </Button>
         )}
       </div>

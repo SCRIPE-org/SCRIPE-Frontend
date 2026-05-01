@@ -1368,15 +1368,33 @@ html {
   animation: nxFadeUp 0.4s ease-out both;
 }
 
-:root[data-animation="moderate"] .card:nth-child(1) { animation-delay: 0ms; }
-:root[data-animation="moderate"] .card:nth-child(2) { animation-delay: 60ms; }
-:root[data-animation="moderate"] .card:nth-child(3) { animation-delay: 120ms; }
-:root[data-animation="moderate"] .card:nth-child(4) { animation-delay: 180ms; }
-:root[data-animation="moderate"] .card:nth-child(5) { animation-delay: 240ms; }
-:root[data-animation="moderate"] .card:nth-child(6) { animation-delay: 300ms; }
-:root[data-animation="moderate"] .card:nth-child(7) { animation-delay: 360ms; }
-:root[data-animation="moderate"] .card:nth-child(8) { animation-delay: 400ms; }
-:root[data-animation="moderate"] .card:nth-child(n+9) { animation-delay: 420ms; }
+:root[data-animation="moderate"] .card:nth-child(1) {
+  animation-delay: 0ms;
+}
+:root[data-animation="moderate"] .card:nth-child(2) {
+  animation-delay: 60ms;
+}
+:root[data-animation="moderate"] .card:nth-child(3) {
+  animation-delay: 120ms;
+}
+:root[data-animation="moderate"] .card:nth-child(4) {
+  animation-delay: 180ms;
+}
+:root[data-animation="moderate"] .card:nth-child(5) {
+  animation-delay: 240ms;
+}
+:root[data-animation="moderate"] .card:nth-child(6) {
+  animation-delay: 300ms;
+}
+:root[data-animation="moderate"] .card:nth-child(7) {
+  animation-delay: 360ms;
+}
+:root[data-animation="moderate"] .card:nth-child(8) {
+  animation-delay: 400ms;
+}
+:root[data-animation="moderate"] .card:nth-child(n + 9) {
+  animation-delay: 420ms;
+}
 
 /* ========================================
    MODERATE — Table Row Stagger
@@ -1386,17 +1404,39 @@ html {
   animation: nxFadeUp 0.3s ease-out both;
 }
 
-:root[data-animation="moderate"] tbody tr:nth-child(1) { animation-delay: 0ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(2) { animation-delay: 30ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(3) { animation-delay: 60ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(4) { animation-delay: 90ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(5) { animation-delay: 120ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(6) { animation-delay: 150ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(7) { animation-delay: 180ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(8) { animation-delay: 210ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(9) { animation-delay: 240ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(10) { animation-delay: 270ms; }
-:root[data-animation="moderate"] tbody tr:nth-child(n+11) { animation-delay: 300ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(1) {
+  animation-delay: 0ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(2) {
+  animation-delay: 30ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(3) {
+  animation-delay: 60ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(4) {
+  animation-delay: 90ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(5) {
+  animation-delay: 120ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(6) {
+  animation-delay: 150ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(7) {
+  animation-delay: 180ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(8) {
+  animation-delay: 210ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(9) {
+  animation-delay: 240ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(10) {
+  animation-delay: 270ms;
+}
+:root[data-animation="moderate"] tbody tr:nth-child(n + 11) {
+  animation-delay: 300ms;
+}
 
 /* ========================================
    MODERATE — Grid Children Stagger
@@ -1408,19 +1448,33 @@ html {
 }
 
 :root[data-animation="moderate"] .grid > :nth-child(1),
-:root[data-animation="moderate"] .grid > div:nth-child(1) > .card { animation-delay: 0ms; }
+:root[data-animation="moderate"] .grid > div:nth-child(1) > .card {
+  animation-delay: 0ms;
+}
 :root[data-animation="moderate"] .grid > :nth-child(2),
-:root[data-animation="moderate"] .grid > div:nth-child(2) > .card { animation-delay: 70ms; }
+:root[data-animation="moderate"] .grid > div:nth-child(2) > .card {
+  animation-delay: 70ms;
+}
 :root[data-animation="moderate"] .grid > :nth-child(3),
-:root[data-animation="moderate"] .grid > div:nth-child(3) > .card { animation-delay: 140ms; }
+:root[data-animation="moderate"] .grid > div:nth-child(3) > .card {
+  animation-delay: 140ms;
+}
 :root[data-animation="moderate"] .grid > :nth-child(4),
-:root[data-animation="moderate"] .grid > div:nth-child(4) > .card { animation-delay: 210ms; }
+:root[data-animation="moderate"] .grid > div:nth-child(4) > .card {
+  animation-delay: 210ms;
+}
 :root[data-animation="moderate"] .grid > :nth-child(5),
-:root[data-animation="moderate"] .grid > div:nth-child(5) > .card { animation-delay: 260ms; }
+:root[data-animation="moderate"] .grid > div:nth-child(5) > .card {
+  animation-delay: 260ms;
+}
 :root[data-animation="moderate"] .grid > :nth-child(6),
-:root[data-animation="moderate"] .grid > div:nth-child(6) > .card { animation-delay: 300ms; }
-:root[data-animation="moderate"] .grid > :nth-child(n+7),
-:root[data-animation="moderate"] .grid > div:nth-child(n+7) > .card { animation-delay: 340ms; }
+:root[data-animation="moderate"] .grid > div:nth-child(6) > .card {
+  animation-delay: 300ms;
+}
+:root[data-animation="moderate"] .grid > :nth-child(n + 7),
+:root[data-animation="moderate"] .grid > div:nth-child(n + 7) > .card {
+  animation-delay: 340ms;
+}
 
 /* ========================================
    MODERATE — Dropdown Menu Entrance
@@ -1467,15 +1521,25 @@ html {
 }
 
 :root[data-animation="moderate"] form > div:nth-child(1),
-:root[data-animation="moderate"] form > fieldset:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] form > fieldset:nth-child(1) {
+  animation-delay: 0ms;
+}
 :root[data-animation="moderate"] form > div:nth-child(2),
-:root[data-animation="moderate"] form > fieldset:nth-child(2) { animation-delay: 50ms; }
+:root[data-animation="moderate"] form > fieldset:nth-child(2) {
+  animation-delay: 50ms;
+}
 :root[data-animation="moderate"] form > div:nth-child(3),
-:root[data-animation="moderate"] form > fieldset:nth-child(3) { animation-delay: 100ms; }
+:root[data-animation="moderate"] form > fieldset:nth-child(3) {
+  animation-delay: 100ms;
+}
 :root[data-animation="moderate"] form > div:nth-child(4),
-:root[data-animation="moderate"] form > fieldset:nth-child(4) { animation-delay: 150ms; }
-:root[data-animation="moderate"] form > div:nth-child(n+5),
-:root[data-animation="moderate"] form > fieldset:nth-child(n+5) { animation-delay: 180ms; }
+:root[data-animation="moderate"] form > fieldset:nth-child(4) {
+  animation-delay: 150ms;
+}
+:root[data-animation="moderate"] form > div:nth-child(n + 5),
+:root[data-animation="moderate"] form > fieldset:nth-child(n + 5) {
+  animation-delay: 180ms;
+}
 
 /* ========================================
    MODERATE — Badge / Tag Entrance
@@ -1515,19 +1579,29 @@ html {
 
 :root[data-animation="moderate"] .space-y-6 > :nth-child(1),
 :root[data-animation="moderate"] .space-y-4 > :nth-child(1),
-:root[data-animation="moderate"] .space-y-8 > :nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] .space-y-8 > :nth-child(1) {
+  animation-delay: 0ms;
+}
 :root[data-animation="moderate"] .space-y-6 > :nth-child(2),
 :root[data-animation="moderate"] .space-y-4 > :nth-child(2),
-:root[data-animation="moderate"] .space-y-8 > :nth-child(2) { animation-delay: 70ms; }
+:root[data-animation="moderate"] .space-y-8 > :nth-child(2) {
+  animation-delay: 70ms;
+}
 :root[data-animation="moderate"] .space-y-6 > :nth-child(3),
 :root[data-animation="moderate"] .space-y-4 > :nth-child(3),
-:root[data-animation="moderate"] .space-y-8 > :nth-child(3) { animation-delay: 140ms; }
+:root[data-animation="moderate"] .space-y-8 > :nth-child(3) {
+  animation-delay: 140ms;
+}
 :root[data-animation="moderate"] .space-y-6 > :nth-child(4),
 :root[data-animation="moderate"] .space-y-4 > :nth-child(4),
-:root[data-animation="moderate"] .space-y-8 > :nth-child(4) { animation-delay: 200ms; }
-:root[data-animation="moderate"] .space-y-6 > :nth-child(n+5),
-:root[data-animation="moderate"] .space-y-4 > :nth-child(n+5),
-:root[data-animation="moderate"] .space-y-8 > :nth-child(n+5) { animation-delay: 250ms; }
+:root[data-animation="moderate"] .space-y-8 > :nth-child(4) {
+  animation-delay: 200ms;
+}
+:root[data-animation="moderate"] .space-y-6 > :nth-child(n + 5),
+:root[data-animation="moderate"] .space-y-4 > :nth-child(n + 5),
+:root[data-animation="moderate"] .space-y-8 > :nth-child(n + 5) {
+  animation-delay: 250ms;
+}
 
 /* ========================================
    MODERATE — Flex Gap Containers
@@ -1555,11 +1629,21 @@ html {
   animation: nxFadeIn 0.25s ease-out both;
 }
 
-:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(1) { animation-delay: 0ms; }
-:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(2) { animation-delay: 40ms; }
-:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(3) { animation-delay: 80ms; }
-:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(4) { animation-delay: 120ms; }
-:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(n+5) { animation-delay: 150ms; }
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(1) {
+  animation-delay: 0ms;
+}
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(2) {
+  animation-delay: 40ms;
+}
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(3) {
+  animation-delay: 80ms;
+}
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(4) {
+  animation-delay: 120ms;
+}
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(n + 5) {
+  animation-delay: 150ms;
+}
 
 /* ========================================
    MODERATE — Avatar Pop-in
@@ -1596,17 +1680,29 @@ html {
 }
 
 :root[data-animation="moderate"] ul > li:nth-child(1),
-:root[data-animation="moderate"] ol > li:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] ol > li:nth-child(1) {
+  animation-delay: 0ms;
+}
 :root[data-animation="moderate"] ul > li:nth-child(2),
-:root[data-animation="moderate"] ol > li:nth-child(2) { animation-delay: 25ms; }
+:root[data-animation="moderate"] ol > li:nth-child(2) {
+  animation-delay: 25ms;
+}
 :root[data-animation="moderate"] ul > li:nth-child(3),
-:root[data-animation="moderate"] ol > li:nth-child(3) { animation-delay: 50ms; }
+:root[data-animation="moderate"] ol > li:nth-child(3) {
+  animation-delay: 50ms;
+}
 :root[data-animation="moderate"] ul > li:nth-child(4),
-:root[data-animation="moderate"] ol > li:nth-child(4) { animation-delay: 75ms; }
+:root[data-animation="moderate"] ol > li:nth-child(4) {
+  animation-delay: 75ms;
+}
 :root[data-animation="moderate"] ul > li:nth-child(5),
-:root[data-animation="moderate"] ol > li:nth-child(5) { animation-delay: 100ms; }
-:root[data-animation="moderate"] ul > li:nth-child(n+6),
-:root[data-animation="moderate"] ol > li:nth-child(n+6) { animation-delay: 120ms; }
+:root[data-animation="moderate"] ol > li:nth-child(5) {
+  animation-delay: 100ms;
+}
+:root[data-animation="moderate"] ul > li:nth-child(n + 6),
+:root[data-animation="moderate"] ol > li:nth-child(n + 6) {
+  animation-delay: 120ms;
+}
 
 /* ========================================
    MODERATE — Heading Hierarchy
@@ -1662,29 +1758,65 @@ html {
   animation: nxFadeUp 0.5s ease-out both;
 }
 
-:root[data-animation="high"] .card:nth-child(1) { animation-delay: 0ms; }
-:root[data-animation="high"] .card:nth-child(2) { animation-delay: 80ms; }
-:root[data-animation="high"] .card:nth-child(3) { animation-delay: 160ms; }
-:root[data-animation="high"] .card:nth-child(4) { animation-delay: 240ms; }
-:root[data-animation="high"] .card:nth-child(5) { animation-delay: 320ms; }
-:root[data-animation="high"] .card:nth-child(6) { animation-delay: 400ms; }
-:root[data-animation="high"] .card:nth-child(n+7) { animation-delay: 450ms; }
+:root[data-animation="high"] .card:nth-child(1) {
+  animation-delay: 0ms;
+}
+:root[data-animation="high"] .card:nth-child(2) {
+  animation-delay: 80ms;
+}
+:root[data-animation="high"] .card:nth-child(3) {
+  animation-delay: 160ms;
+}
+:root[data-animation="high"] .card:nth-child(4) {
+  animation-delay: 240ms;
+}
+:root[data-animation="high"] .card:nth-child(5) {
+  animation-delay: 320ms;
+}
+:root[data-animation="high"] .card:nth-child(6) {
+  animation-delay: 400ms;
+}
+:root[data-animation="high"] .card:nth-child(n + 7) {
+  animation-delay: 450ms;
+}
 
 :root[data-animation="high"] tbody tr {
   animation: nxFadeUp 0.4s ease-out both;
 }
 
-:root[data-animation="high"] tbody tr:nth-child(1) { animation-delay: 0ms; }
-:root[data-animation="high"] tbody tr:nth-child(2) { animation-delay: 50ms; }
-:root[data-animation="high"] tbody tr:nth-child(3) { animation-delay: 100ms; }
-:root[data-animation="high"] tbody tr:nth-child(4) { animation-delay: 150ms; }
-:root[data-animation="high"] tbody tr:nth-child(5) { animation-delay: 200ms; }
-:root[data-animation="high"] tbody tr:nth-child(6) { animation-delay: 250ms; }
-:root[data-animation="high"] tbody tr:nth-child(7) { animation-delay: 300ms; }
-:root[data-animation="high"] tbody tr:nth-child(8) { animation-delay: 350ms; }
-:root[data-animation="high"] tbody tr:nth-child(9) { animation-delay: 400ms; }
-:root[data-animation="high"] tbody tr:nth-child(10) { animation-delay: 450ms; }
-:root[data-animation="high"] tbody tr:nth-child(n+11) { animation-delay: 500ms; }
+:root[data-animation="high"] tbody tr:nth-child(1) {
+  animation-delay: 0ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(2) {
+  animation-delay: 50ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(3) {
+  animation-delay: 100ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(4) {
+  animation-delay: 150ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(5) {
+  animation-delay: 200ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(6) {
+  animation-delay: 250ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(7) {
+  animation-delay: 300ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(8) {
+  animation-delay: 350ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(9) {
+  animation-delay: 400ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(10) {
+  animation-delay: 450ms;
+}
+:root[data-animation="high"] tbody tr:nth-child(n + 11) {
+  animation-delay: 500ms;
+}
 
 :root[data-animation="high"] [role="menu"] {
   animation: nxExpandIn 0.35s ease-out both;
@@ -1708,12 +1840,24 @@ html {
   animation: nxScaleIn 0.45s ease-out both;
 }
 
-:root[data-animation="high"] .grid > :nth-child(1) { animation-delay: 0ms; }
-:root[data-animation="high"] .grid > :nth-child(2) { animation-delay: 100ms; }
-:root[data-animation="high"] .grid > :nth-child(3) { animation-delay: 200ms; }
-:root[data-animation="high"] .grid > :nth-child(4) { animation-delay: 300ms; }
-:root[data-animation="high"] .grid > :nth-child(5) { animation-delay: 380ms; }
-:root[data-animation="high"] .grid > :nth-child(n+6) { animation-delay: 440ms; }
+:root[data-animation="high"] .grid > :nth-child(1) {
+  animation-delay: 0ms;
+}
+:root[data-animation="high"] .grid > :nth-child(2) {
+  animation-delay: 100ms;
+}
+:root[data-animation="high"] .grid > :nth-child(3) {
+  animation-delay: 200ms;
+}
+:root[data-animation="high"] .grid > :nth-child(4) {
+  animation-delay: 300ms;
+}
+:root[data-animation="high"] .grid > :nth-child(5) {
+  animation-delay: 380ms;
+}
+:root[data-animation="high"] .grid > :nth-child(n + 6) {
+  animation-delay: 440ms;
+}
 
 :root[data-animation="high"] [role="alert"] {
   animation: nxSlideInFromRight 0.45s ease-out both;
@@ -1815,19 +1959,18 @@ html[data-bg-mode="custom"] body {
 }
 
 /* Make top-level layout wrapper divs transparent so body bg shows through */
-html[data-bg-mode="gradient"] body>div>div,
-html[data-bg-mode="custom"] body>div>div {
+html[data-bg-mode="gradient"] body > div > div,
+html[data-bg-mode="custom"] body > div > div {
   background-color: transparent !important;
 }
 
 /* Also handle deeper layout wrapper divs (some layouts nest an extra level) */
-html[data-bg-mode="gradient"] body>div>div>div.min-h-screen,
-html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
+html[data-bg-mode="gradient"] body > div > div > div.min-h-screen,
+html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
   background-color: transparent !important;
 }
 
 @layer utilities {
-
   /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */
   .modal-blurred-content {
     filter: blur(8px) brightness(0.7) !important;
@@ -1940,7 +2083,6 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -2024,9 +2166,11 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
    UTILITY CLASSES - BACKGROUND PATTERNS
    ======================================== */
 .bg-grid-pattern {
-  background-image: radial-gradient(circle,
-      hsl(var(--muted-foreground) / 0.1) 1px,
-      transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    hsl(var(--muted-foreground) / 0.1) 1px,
+    transparent 1px
+  );
   background-size: 20px 20px;
 }
 
@@ -2237,33 +2381,72 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    Used by login customizer block system
    ======================================== */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideLeft {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideRight {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes bounceIn {
-  0% { opacity: 0; transform: scale(0.85); }
-  50% { opacity: 1; transform: scale(1.05); }
-  70% { transform: scale(0.97); }
-  100% { opacity: 1; transform: scale(1); }
-}
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

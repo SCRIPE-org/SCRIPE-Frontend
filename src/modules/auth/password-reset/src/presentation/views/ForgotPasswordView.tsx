@@ -29,7 +29,11 @@ export function ForgotPasswordView() {
   const { branding } = useTenantResolution("forgot-password");
 
   // Parse branding + inject CSS tokens
-  const { layout: rawLayout, slotConfig, a11y } = useLoginBrandingTokens({
+  const {
+    layout: rawLayout,
+    slotConfig,
+    a11y,
+  } = useLoginBrandingTokens({
     loginBrandingJson: branding?.loginBrandingJson ?? null,
     slotConfigJson: branding?.slotConfigJson ?? null,
     isSafeMode: branding?.isSafeMode ?? false,
@@ -41,7 +45,9 @@ export function ForgotPasswordView() {
       if (!branding?.loginBrandingJson) return null;
       const parsed = JSON.parse(branding.loginBrandingJson);
       return parsed.pages?.["forgot-password"] ?? null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   })();
 
   const layout = pageOverride?.layout || "centered";
@@ -51,7 +57,10 @@ export function ForgotPasswordView() {
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
   const headline = pageOverride?.headline || t("auth.forgotPassword") || "Forgot Password";
-  const subtitle = pageOverride?.subtitle || t("auth.forgotPasswordDesc") || "Enter your email and we'll send you instructions to reset your password.";
+  const subtitle =
+    pageOverride?.subtitle ||
+    t("auth.forgotPasswordDesc") ||
+    "Enter your email and we'll send you instructions to reset your password.";
 
   // Dynamic document title
   useEffect(() => {
@@ -60,21 +69,25 @@ export function ForgotPasswordView() {
     }
   }, [headline, companyName]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setIsSubmitted(true);
-  }, [email]);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!email.trim()) return;
+      setIsSubmitted(true);
+    },
+    [email]
+  );
 
   const wrapperStyle: React.CSSProperties = {
-    background: "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
+    background:
+      "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
     lineHeight: "var(--login-line-height, 1.5)",
     letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
   // Top actions bar
   const topActions = (
-    <div className="absolute left-8 right-8 top-8 flex items-center justify-end gap-1 z-20">
+    <div className="absolute left-8 right-8 top-8 z-20 flex items-center justify-end gap-1">
       <LanguageSwitcher />
       <ThemeSwitcher />
     </div>
@@ -85,7 +98,7 @@ export function ForgotPasswordView() {
     <div className="w-full" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
       <Link
         href="/login"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:text-[var(--login-text,hsl(var(--foreground)))] transition-colors mb-6"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] transition-colors hover:text-[var(--login-text,hsl(var(--foreground)))]"
       >
         <ArrowLeft className="h-4 w-4" />
         {t("auth.backToLogin") || "Back to login"}
@@ -93,7 +106,7 @@ export function ForgotPasswordView() {
 
       {!isSubmitted ? (
         <div
-          className="border border-[var(--login-border,hsl(var(--border)))] space-y-6"
+          className="space-y-6 border border-[var(--login-border,hsl(var(--border)))]"
           style={{
             borderRadius: "var(--login-radius-card, 16px)",
             padding: "var(--login-card-padding, 32px)",
@@ -101,21 +114,43 @@ export function ForgotPasswordView() {
             boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.1))",
           }}
         >
-          <div className="text-center space-y-2">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--login-primary, hsl(var(--primary))) 10%, transparent)" }}>
-              <Mail className="h-6 w-6" style={{ color: "var(--login-primary, hsl(var(--primary)))" }} />
+          <div className="space-y-2 text-center">
+            <div
+              className="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
+              style={{
+                backgroundColor:
+                  "color-mix(in srgb, var(--login-primary, hsl(var(--primary))) 10%, transparent)",
+              }}
+            >
+              <Mail
+                className="h-6 w-6"
+                style={{ color: "var(--login-primary, hsl(var(--primary)))" }}
+              />
             </div>
-            <h1 className="login-heading tracking-tight" style={{ color: "var(--login-text, hsl(var(--foreground)))", fontSize: "var(--login-size-headline, 1.5rem)" }}>
+            <h1
+              className="login-heading tracking-tight"
+              style={{
+                color: "var(--login-text, hsl(var(--foreground)))",
+                fontSize: "var(--login-size-headline, 1.5rem)",
+              }}
+            >
               {headline}
             </h1>
-            <p style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))", fontSize: "var(--login-size-subtitle, 0.875rem)" }}>
+            <p
+              style={{
+                color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
+                fontSize: "var(--login-size-subtitle, 0.875rem)",
+              }}
+            >
               {subtitle}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="login-label">{t("auth.email") || "Email"}</Label>
+              <Label htmlFor="email" className="login-label">
+                {t("auth.email") || "Email"}
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -135,15 +170,19 @@ export function ForgotPasswordView() {
           </form>
 
           <div className="flex items-start gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3">
-            <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0 text-amber-500" />
-            <p className="text-xs" style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))" }}>
-              {t("auth.adminResetNotice") || "If self-service reset isn't available, contact your system administrator to reset your password."}
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            <p
+              className="text-xs"
+              style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))" }}
+            >
+              {t("auth.adminResetNotice") ||
+                "If self-service reset isn't available, contact your system administrator to reset your password."}
             </p>
           </div>
         </div>
       ) : (
         <div
-          className="border border-[var(--login-border,hsl(var(--border)))] space-y-6 text-center"
+          className="space-y-6 border border-[var(--login-border,hsl(var(--border)))] text-center"
           style={{
             borderRadius: "var(--login-radius-card, 16px)",
             padding: "var(--login-card-padding, 32px)",
@@ -155,15 +194,34 @@ export function ForgotPasswordView() {
             <CheckCircle className="h-6 w-6 text-emerald-500" />
           </div>
           <div className="space-y-2">
-            <h2 className="login-heading" style={{ color: "var(--login-text, hsl(var(--foreground)))", fontSize: "var(--login-size-headline, 1.25rem)" }}>
+            <h2
+              className="login-heading"
+              style={{
+                color: "var(--login-text, hsl(var(--foreground)))",
+                fontSize: "var(--login-size-headline, 1.25rem)",
+              }}
+            >
               {t("auth.checkYourEmail") || "Check your email"}
             </h2>
-            <p style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))", fontSize: "var(--login-size-subtitle, 0.875rem)" }}>
-              {t("auth.resetLinkSent") || "If an account exists with that email, we've sent password reset instructions."}
+            <p
+              style={{
+                color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
+                fontSize: "var(--login-size-subtitle, 0.875rem)",
+              }}
+            >
+              {t("auth.resetLinkSent") ||
+                "If an account exists with that email, we've sent password reset instructions."}
             </p>
           </div>
           <div className="space-y-3">
-            <Button variant="outline" className="w-full" onClick={() => { setIsSubmitted(false); setEmail(""); }}>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setIsSubmitted(false);
+                setEmail("");
+              }}
+            >
               {t("auth.tryAnotherEmail") || "Try another email"}
             </Button>
             <Link href="/login" className="block">
@@ -179,14 +237,14 @@ export function ForgotPasswordView() {
 
   return (
     <div
-      className="flex min-h-screen w-full flex-col items-center justify-center login-page selection:bg-primary/20"
+      className="login-page flex min-h-screen w-full flex-col items-center justify-center selection:bg-primary/20"
       dir={direction}
       style={wrapperStyle}
     >
       {topActions}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
+      <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
         {formContent}
-        <p className="mt-12 text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50">
+        <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50 mt-12 text-[11px] font-medium">
           © {new Date().getFullYear()} {companyName}
         </p>
       </div>

@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
@@ -194,7 +202,6 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       setIsLoading(false);
       setHasTriggeredRefresh(false); // Allow refresh on next login
     }
-
   }, [isAuthenticated]);
 
   // ========================================
@@ -251,7 +258,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         refreshNavigation(false, true);
       }
     }
-  }, [currentTenant, isAuthenticated, isDocsRoute, mustChangePassword, refreshNavigation, clearCache]);
+  }, [
+    currentTenant,
+    isAuthenticated,
+    isDocsRoute,
+    mustChangePassword,
+    refreshNavigation,
+    clearCache,
+  ]);
 
   // ========================================
   // PERIODIC REFRESH CHECK (every 5 minutes)
@@ -362,11 +376,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     [navigationData, isLoading, refreshNavigation, hasPageAccess, getRoutes, getPageActions]
   );
 
-  return (
-    <NavigationContext.Provider value={contextValue}>
-      {children}
-    </NavigationContext.Provider>
-  );
+  return <NavigationContext.Provider value={contextValue}>{children}</NavigationContext.Provider>;
 }
 
 export function useNavigation() {

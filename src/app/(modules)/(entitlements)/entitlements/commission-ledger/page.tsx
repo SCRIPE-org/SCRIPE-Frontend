@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const CommissionLedgerView = dynamic(
-  () =>
-    import("@modules/entitlements/commission-ledger").then((m) => ({
-      default: m.CommissionLedgerView,
-    }))
+const CommissionLedgerView = dynamic(() =>
+  import("@modules/entitlements/commission-ledger").then((m) => ({
+    default: m.CommissionLedgerView,
+  }))
 );
 
 export const metadata: Metadata = {

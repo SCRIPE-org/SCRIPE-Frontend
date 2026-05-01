@@ -437,9 +437,15 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/tenant-plans/compare": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-plans/[id]": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-feature-definitions": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
-  "/entitlements/tenant-feature-definitions/create": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_CREATE],
-  "/entitlements/tenant-feature-definitions/[id]": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
-  "/entitlements/tenant-feature-definitions/[id]/edit": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_UPDATE],
+  "/entitlements/tenant-feature-definitions/create": [
+    SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_CREATE,
+  ],
+  "/entitlements/tenant-feature-definitions/[id]": [
+    SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW,
+  ],
+  "/entitlements/tenant-feature-definitions/[id]/edit": [
+    SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_UPDATE,
+  ],
   "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
   "/my-subscription": [], // User self-service — any authenticated user
   "/my-stripe-account": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
@@ -481,4 +487,3 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/compliance/inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
   "/compliance/reports": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
 };
-

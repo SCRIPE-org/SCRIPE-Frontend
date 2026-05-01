@@ -7,7 +7,8 @@ export const zh = {
     overview: {
       title: "API 参考手册",
       description: "全面的 REST API 接口文档，包含调用格式、请求返回样例及限流防范说明。",
-      intro: "NEXORA 所有端点均以标准 JSON 承载。除公开路由外，所有访问强制要求具备有效的 JWT Bearer 令牌鉴权。我们通过统一封装的格式返回响应。",
+      intro:
+        "NEXORA 所有端点均以标准 JSON 承载。除公开路由外，所有访问强制要求具备有效的 JWT Bearer 令牌鉴权。我们通过统一封装的格式返回响应。",
       baseInfoTitle: "API 基础约定",
       authEndpointsTitle: "认证及权限换发端点",
       adminEndpointsTitle: "管理员运维操作端点",
@@ -16,7 +17,8 @@ export const zh = {
       tenantEndpointsTitle: "多租户管控端点",
       otherEndpointsTitle: "系统辅助接口集群",
       responseFormatTitle: "统一响应信封格式 (Envelope)",
-      swaggerTip: "在开发环境下，所有接口的直观定义和在线测试调试沙盒可以通过 /swagger 直接访问体验。",
+      swaggerTip:
+        "在开发环境下，所有接口的直观定义和在线测试调试沙盒可以通过 /swagger 直接访问体验。",
     },
     authApi: {
       title: "管理端认证 API",
@@ -26,11 +28,13 @@ export const zh = {
       loginTitle: "管理员登录",
       loginDesc: "使用邮箱与密码核验。校验无误即签发访问令牌和加密的刷新令牌。",
       refreshTitle: "刷新访问令牌",
-      refreshDesc: "交换合法的长效刷新令牌，获取新一套令牌。采用一次性置换 (Single-use rotation) 设计。",
+      refreshDesc:
+        "交换合法的长效刷新令牌，获取新一套令牌。采用一次性置换 (Single-use rotation) 设计。",
       logoutTitle: "安全注销",
       logoutDesc: "作废服务器数据库内当前账户对应的所有 Refresh Token。",
       tfaTitle: "2FA 双因素强制认证",
-      tfaIntro: "利用 TOTP (兼容 Google/Microsoft 验证器) 进行安全加固。在激活的情况下，系统将先签发临时的 2FA Session 而非最终访问权限。",
+      tfaIntro:
+        "利用 TOTP (兼容 Google/Microsoft 验证器) 进行安全加固。在激活的情况下，系统将先签发临时的 2FA Session 而非最终访问权限。",
       tfaEnableDesc: "分配新的 TOTP 根秘钥并生成绑定的二维码 URI 供扫描。",
       tfaConfirmDesc: "要求提交第一次动态验证码，作为二次确认。同时发还一组救急备用码。",
       tfaVerifyDesc: "持有 Session 配合最新 TOTP 动态码换取实际权限令牌。",
@@ -46,7 +50,8 @@ export const zh = {
       securityLogDesc: "提供自身操作历史（登录时间、IP及关键修改）以便自查。",
       sessionsDesc: "列出当前仍具有签发效力的各大在线会话与设备记录。",
       revokeSessionDesc: "定点抹杀指定设备的连接请求（如丢失手机或异地登录）。",
-      securityTip: "安全日志保留策略默认为 90 天。此类端点仅限操作自身数据；总审计日志在另一个模块内供审查。",
+      securityTip:
+        "安全日志保留策略默认为 90 天。此类端点仅限操作自身数据；总审计日志在另一个模块内供审查。",
     },
     userAuthApi: {
       title: "客户端认证 API",
@@ -58,14 +63,16 @@ export const zh = {
       loginTitle: "普通登录",
       loginDesc: "对下属应用人员提供的密码鉴定服务，分发带有其属性的身份 JWT。",
       externalTitle: "社交网络鉴权 (OAuth 协议)",
-      externalIntro: "无缝接受来自 Apple, Google, Microsoft 等生态体系签发的 Identity Token 以免除繁琐流程。",
+      externalIntro:
+        "无缝接受来自 Apple, Google, Microsoft 等生态体系签发的 Identity Token 以免除繁琐流程。",
       externalLoginDesc: "提取第三方 Token 内的鉴权并自动绑定、建档或直登系统。",
       verificationTitle: "电话与信箱 OTP 认证",
       verifyEmailDesc: "消耗发送至用户邮箱内的 6 位随机加密码完成激活。",
       verifyPhoneDesc: "消耗手机接收到的短讯码完成记录校验。",
       sendVerificationDesc: "触发重发流程（限流极度严苛，限制频繁骚扰发信）。",
       passwordResetTitle: "找回与重设密码",
-      forgotPasswordDesc: "无论账号存不存在都会响应“成功”，防止被不法分子探查注册信息；成功会派发重置口令。",
+      forgotPasswordDesc:
+        "无论账号存不存在都会响应“成功”，防止被不法分子探查注册信息；成功会派发重置口令。",
       resetPasswordDesc: "以 OTP 口令为引，重置成新密码以恢复权限。",
       tokenTitle: "令牌控制",
       refreshDesc: "用刷新令牌延长会话活性。",
@@ -81,11 +88,13 @@ export const zh = {
       updateProfileDesc: "常规档案信息的更新。",
       changePasswordDesc: "修改自己的当前密码。",
       summaryTitle: "接口分割要点",
-      diffNote: "NEXORA 前后管接口 (/user-auth vs /auth) 从数据库底层就是绝缘的，互相调用的 Token 会被立即阻截返回 401。",
+      diffNote:
+        "NEXORA 前后管接口 (/user-auth vs /auth) 从数据库底层就是绝缘的，互相调用的 Token 会被立即阻截返回 401。",
     },
     adminApi: {
       title: "操作员管理 API (Admin Management)",
-      description: "运维人员的维护与巡查通道：建立删除、批量行动和最高权限的临场借用 (Impersonation)。",
+      description:
+        "运维人员的维护与巡查通道：建立删除、批量行动和最高权限的临场借用 (Impersonation)。",
       intro: "该模块管控租户内部的操作员。所有操作需要具备 admins.* 的专门权限。",
       crudTitle: "核心增删改查端点",
       listDesc: "针对全租户或跨租户的管理员多维度列表探查与分页。",
@@ -105,19 +114,24 @@ export const zh = {
       bulkActivateDesc: "整体激活名单人员。",
       bulkDeactivateDesc: "整体隔离名单人员。",
       bulkDeleteDesc: "批量扫入垃圾桶。",
-      bulkDeleteAllDesc: "清场命令：使用已配置好的过滤项（Filter）清空目标，可用 excludeIds 设立白名单避开误伤。",
+      bulkDeleteAllDesc:
+        "清场命令：使用已配置好的过滤项（Filter）清空目标，可用 excludeIds 设立白名单避开误伤。",
       impersonationTitle: "跨维模拟登录 (Impersonation)",
-      impersonateDesc: "使用 SuperAdmin 的名义获取另一级管理者的等效权限去查看和定位他们界面的 BUG。",
+      impersonateDesc:
+        "使用 SuperAdmin 的名义获取另一级管理者的等效权限去查看和定位他们界面的 BUG。",
       stopImpersonateDesc: "强制结束这场高维干涉还原最初的令牌权限。",
-      transferDesc: "最高权力的割让：将所有者皇冠易主他人（此操作由执行方剥夺自己触发，高度受限）。",
+      transferDesc:
+        "最高权力的割让：将所有者皇冠易主他人（此操作由执行方剥夺自己触发，高度受限）。",
       protectDesc: "将普通账户套上保护光环，使得它不再会受到误删或清场命令的影响。",
-      impersonationWarning: "开启此模式时，一切操作会在底层的审计记录上签下两层名字，伪装者绝对无法嫁祸或掩盖痕迹，1 小时自动被系统踢出。",
+      impersonationWarning:
+        "开启此模式时，一切操作会在底层的审计记录上签下两层名字，伪装者绝对无法嫁祸或掩盖痕迹，1 小时自动被系统踢出。",
       queryParamsTitle: "查询参数格式化指引",
     },
     tenantApi: {
       title: "企业租户控制 API (Tenant Management)",
       description: "租户配置与限制、隔离沙盒创建、层级树状图查询、资源限制与 Logo 美化设定。",
-      intro: "此 API 主导平台的 SASS 化基础，让租户可以自行开设下级分公司、调节限额和读取统计报表。",
+      intro:
+        "此 API 主导平台的 SASS 化基础，让租户可以自行开设下级分公司、调节限额和读取统计报表。",
       crudTitle: "公司/租户的 CRUD",
       listDesc: "检索该层级有权限看到的分公司列表。",
       getByIdDesc: "获取一家公司的全局统筹数据及层级网络标识。",
@@ -143,7 +157,8 @@ export const zh = {
     rolePermissionApi: {
       title: "RBAC 角色权限分发 API",
       description: "配置岗位的访问权限墙、限制接口读写、重设 JSON 数据透视脱敏以及权限同步功能。",
-      intro: "权限(Permission)属于机器逻辑不能创造；角色(Role)属于公司的制度可以自由组合。这个 API 控制这套规则。",
+      intro:
+        "权限(Permission)属于机器逻辑不能创造；角色(Role)属于公司的制度可以自由组合。这个 API 控制这套规则。",
       rolesCrudTitle: "角色档案管理",
       listRolesDesc: "提取公司设置的岗位职能并附带各角色已挂靠的员工数量总计。",
       getRoleDesc: "展开角色详情，包括了可打开的侧边栏菜单配置以及对应的权限集合。",
@@ -152,7 +167,8 @@ export const zh = {
       deleteRoleDesc: "销毁废弃的岗位配置。若有人正担任此岗，系统将截断并拦截删除操作。",
       cloneRoleDesc: "将一份已有权限库以新名字原样复制一遍，作为设置同类职位的快捷方式。",
       assignTitle: "职能特权组合装配",
-      assignPermDesc: "清空并重写整个角色能力表（含字段过滤限制 JSON）。此操作会完全覆写原本的数据行。",
+      assignPermDesc:
+        "清空并重写整个角色能力表（含字段过滤限制 JSON）。此操作会完全覆写原本的数据行。",
       getPermDesc: "抽出所有配置好功能的详细记录用于界面展示勾选状态。",
       syncScopesDesc: "使得分公司从母公司拉取、更新同步并覆写权限继承逻辑。",
       tenantScopedTitle: "租户跨级与范围管理",
@@ -160,57 +176,71 @@ export const zh = {
       myTenantRolesDesc: "请求获取自己权限范围内的角色大库。",
       availablePermDesc: "请求获取本租户真实合法可以勾选的核心动作集。",
       permissionsTitle: "绝对能力字典 (仅读)",
-      permissionsIntro: "由于在后端 C# [RequirePermission] 直接编译固化，该体系天然防注入，仅能进行浏览并读取。",
+      permissionsIntro:
+        "由于在后端 C# [RequirePermission] 直接编译固化，该体系天然防注入，仅能进行浏览并读取。",
       listPermissionsDesc: "获取平台已部署具备的全域操作清单。",
       myPermissionsDesc: "查询当下访问令牌所有效的自身能做之事。",
       getPermByIdDesc: "获取权限的详情描述和标识。",
       categoriesDesc: "以类别为键值（如：users、system），用于构建整齐的权限配置清单界面。",
       availableForTenantDesc: "超级管理员分配公司时调用：浏览可分发的功能。",
-      seededNote: "如果需要抹去一个权限，只能从 C# 源码层移除并重发布，系统重启时会自动抹除对应的历史关联。",
+      seededNote:
+        "如果需要抹去一个权限，只能从 C# 源码层移除并重发布，系统重启时会自动抹除对应的历史关联。",
     },
     userGroupsApi: {
       title: "大规模用户群组策略 API (User Groups)",
-      description: "用于调配大型团队阵列的矩阵控制器。批量继承权限、批量设置并合并复杂多级的过滤权限（Nuke-and-Pave 技术实现）。",
-      intro: "在管理大规模用户时，逐个挂靠角色是低效的。建立组群之后，你只需增减用户或修改群组参数，成员将在下次会话中自动产生或失去叠加权限。",
+      description:
+        "用于调配大型团队阵列的矩阵控制器。批量继承权限、批量设置并合并复杂多级的过滤权限（Nuke-and-Pave 技术实现）。",
+      intro:
+        "在管理大规模用户时，逐个挂靠角色是低效的。建立组群之后，你只需增减用户或修改群组参数，成员将在下次会话中自动产生或失去叠加权限。",
       crudTitle: "核心群体维护端点",
       listGroupsDesc: "在超级与区域隔离的情况下获取本分公司群组表。",
       myTenantGroupsDesc: "超轻量级的简表（Id 和名字），优化供 Select/下拉组件使用以极速响应。",
-      getGroupDesc: "全相映射：提取组内所有已附带人员数组、下放角色列表，以及被限定的过滤规则字段。",
+      getGroupDesc:
+        "全相映射：提取组内所有已附带人员数组、下放角色列表，以及被限定的过滤规则字段。",
       groupsByTenantDesc: "允许高阶督导人员强制穿越查询某个子机构的群组配比情况。",
-      createGroupDesc: "为特定租户分配新组，期间会自动验证被附加的角色与该组所处的租户是否处于同一维度以防越权。",
+      createGroupDesc:
+        "为特定租户分配新组，期间会自动验证被附加的角色与该组所处的租户是否处于同一维度以防越权。",
       createGroupMyTenantDesc: "隐式路由，为你的公司本身快速新建群体。",
-      updateGroupDesc: "组的文字设定更替外带完整覆盖、核验并替换对应的角色数组清单（保证状态始终与输入一致）。",
+      updateGroupDesc:
+        "组的文字设定更替外带完整覆盖、核验并替换对应的角色数组清单（保证状态始终与输入一致）。",
       deleteGroupDesc: "软删除标记。系统会自动断开和里面人员的强制依附关系并遣散他们。",
       groupMembersTitle: "团队成员编制操作",
       groupMembersIntro: "人员关系调度器（Junction Entities 控制）。",
       addMembersDesc: "幂等式的挂靠方法。安全处理将大批量用户强行关联进入编队。",
       removeMemberDesc: "将操作者从编制里抹去。",
       groupRolesRestrictionsTitle: "集体效能与遮蔽范围配置",
-      groupRolesRestrictionsIntro: "管理这个组别在获得权利之余到底有多少字段因为安全原因需要被遮蔽。",
+      groupRolesRestrictionsIntro:
+        "管理这个组别在获得权利之余到底有多少字段因为安全原因需要被遮蔽。",
       setGroupRolesDesc: "毁灭重建模式更新该群组下放的所有角色 ID 矩阵。",
-      setGroupRestrictionsDesc: "将组的隐秘遮罩（如限定组内用户看不到别人的电话等 JSON 数据配置）毁灭重建重写入。",
+      setGroupRestrictionsDesc:
+        "将组的隐秘遮罩（如限定组内用户看不到别人的电话等 JSON 数据配置）毁灭重建重写入。",
       bulkCascadeTitle: "重型集群管控手段 (Bulk & Cascade)",
       bulkCascadeIntro: "大规模战争级武器。一键使成千上万的人失去系统进入能力或恢复工作。",
       bulkActivateDesc: "大规模翻转复原操作。",
       bulkDeactivateDesc: "一键使得数个组瘫痪。可一并让附属于这个组的所有人被强制限制。 ",
       bulkDeleteDesc: "抹除大批组织构架，带选项直接同时将依附的管理员全数解职送进回收站。",
-      cascadeWarningNode: "如果在指令级联中遭遇具有 Protected Flag 的租户拥有者管理员，系统将自动进行规避防删除以庇护整个系统的正常控制权流通。",
+      cascadeWarningNode:
+        "如果在指令级联中遭遇具有 Protected Flag 的租户拥有者管理员，系统将自动进行规避防删除以庇护整个系统的正常控制权流通。",
     },
     webhookEmailApi: {
       title: "通讯流、通知及网关订阅 API",
-      description: "将系统发生的变动导出到客户服务器的钩子，统一寄送模板化电子邮件并支持页面内部的小铃铛（Socket 通知）。",
+      description:
+        "将系统发生的变动导出到客户服务器的钩子，统一寄送模板化电子邮件并支持页面内部的小铃铛（Socket 通知）。",
       intro: "处理所有向外扩展（E-mail、外部接口）与向内触达（内部红点消息）的信息发布。",
       webhooksTitle: "Webhook 订阅钩子",
-      webhooksIntro: "平台将变成信息推送者。客户只需填入网址，遇到对应的事件即把 HMAC 签名的包裹发出去供三方响应。",
+      webhooksIntro:
+        "平台将变成信息推送者。客户只需填入网址，遇到对应的事件即把 HMAC 签名的包裹发出去供三方响应。",
       listWebhooksDesc: "当前挂载订阅目录。",
       createWebhookDesc: "分配地址、钩住系统事件列表并产生初始鉴权防伪种子（HMAC Secret）。",
       updateWebhookDesc: "切换钩子有效状态、事件数组修改或目标地址转换。",
       deleteWebhookDesc: "中止并消除外部系统对本地事件的嗅探权。",
       testWebhookDesc: "强制生成一个测试载荷发往指定服务端，验证防火墙是否阻挡了 HTTP 通讯。",
       emailTitle: "全局邮递队列系统",
-      emailIntro: "基于 Hangfire 列队运作的安全异步发送中心，处理所有的信件模板拼装、排队延时及补发。",
+      emailIntro:
+        "基于 Hangfire 列队运作的安全异步发送中心，处理所有的信件模板拼装、排队延时及补发。",
       listEmailsDesc: "查询系统所有的成功、排队或丢包废弃纪录列表。",
-      sendEmailDesc: "发送信件方法。指定信件模板和所需拼装的文字数据变量后，由发送端扔入工作序列中。",
+      sendEmailDesc:
+        "发送信件方法。指定信件模板和所需拼装的文字数据变量后，由发送端扔入工作序列中。",
       sendBulkDesc: "群发弹药库：一键输入数个收件人或由筛选条件进行系统通告，防止多次调取堵塞。",
       cancelEmailDesc: "急救拦截：当信件还在 Hangfire 任务列队处于等待（Pending）时将其撤下。",
       resendEmailDesc: "死信重唤：强行提取投递失败的记录进行重投。",
@@ -223,7 +253,8 @@ export const zh = {
       createTemplateDesc: "编入新的文字与 HTML 并定义其所需的变量占位符。",
       updateTemplateDesc: "调整邮件主题、模板正文。",
       deleteTemplateDesc: "剔除不需要的编排系统。",
-      previewTemplateDesc: "安全快照生成：塞入假数据立刻反馈为最终渲染结果以避免正式发出产生排版崩坏。",
+      previewTemplateDesc:
+        "安全快照生成：塞入假数据立刻反馈为最终渲染结果以避免正式发出产生排版崩坏。",
       renderTemplateDesc: "调用底层的执行器对模型和数据进行拼合生成纯净的传输内容格式。",
       notificationsTitle: "在线实时站内信系统",
       listNotificationsDesc: "查阅存在个人的信箱内已收到之通知（支持分页）。",
@@ -232,11 +263,13 @@ export const zh = {
       markAllReadDesc: "快捷式操作：大批量一次消灭该员工身上全部的红点警告状态。",
       deleteNotifDesc: "让一条通知从数据存储中永久灰飞烟灭。",
       searchTargetsDesc: "当你想对系统里某几个活人派发系统讯息时提供的辅助检索工具。",
-      signalrTip: "所有投递进入这套系统的警报都将同步经过 SignalR 全双工长链接信道立刻显现在前端用户的视觉盲区并震动提醒（无需刷页）。",
+      signalrTip:
+        "所有投递进入这套系统的警报都将同步经过 SignalR 全双工长链接信道立刻显现在前端用户的视觉盲区并震动提醒（无需刷页）。",
     },
     systemApi: {
       title: "系统维护、大屏数据及基础设施 API",
-      description: "主宰大盘数据透视、管理树状可折叠导航菜单、统管文件上传并对底层核心进行状态切脉。 ",
+      description:
+        "主宰大盘数据透视、管理树状可折叠导航菜单、统管文件上传并对底层核心进行状态切脉。 ",
       intro: "该节点覆盖了日常支撑功能的集成。这部分也是 NEXORA 作为企业级总线的基石。",
       dashboardTitle: "全维数据监视面板 (Dashboard)",
       dashboardIntro: "提取底层运转记录，在经过租户隔离与授权确认后分发至图形化大屏。",
@@ -252,27 +285,33 @@ export const zh = {
       exportSecurityDesc: "向网络安防或审计单位（Blue teams / Compliance）递交合规证明。",
       menuTitle: "全局可配置菜单树控制器",
       listMenusDesc: "拉取目前所有的挂载点并编排成深度的树状图结构。",
-      myMenuDesc: "自动结合 JWT 访问者的身份标签，对系统大目录进行修剪以发还仅可访问的前端左侧滑栏结构。",
+      myMenuDesc:
+        "自动结合 JWT 访问者的身份标签，对系统大目录进行修剪以发还仅可访问的前端左侧滑栏结构。",
       createMenuDesc: "热插拔菜单新增。不需要去 React 改代码重新打包即可拓展功能菜单。",
       updateMenuDesc: "修正图标和外链路径。",
       deleteMenuDesc: "消除整根树杈。系统将一并把下面的各个子页面链接隐藏消灭。",
       reorderMenuDesc: "处理前端用户使用拖曳工具整理列表后抛回的矩阵，瞬间回写记录使顺序固定。",
       roleVisibilityDesc: "定义了哪个岗位的角色可以显示出此选项（控制菜单墙的根本）。",
-      tenantOverrideDesc: "支持隔离自定义的覆盖机制，使得子公司 A 能把“产品”叫“车型”而其他公司依然还是显示为“产品”。",
+      tenantOverrideDesc:
+        "支持隔离自定义的覆盖机制，使得子公司 A 能把“产品”叫“车型”而其他公司依然还是显示为“产品”。",
       myOverridesDesc: "向页面请求属于本公司在配置上的特殊词条篡改列表。",
       recycleBinTitle: "亡者回收重塑站",
-      listDeletedDesc: "打破全局拦截器结界，直接读取打有软删除标记、留有存活时间的被丢弃的尸体记录。",
+      listDeletedDesc:
+        "打破全局拦截器结界，直接读取打有软删除标记、留有存活时间的被丢弃的尸体记录。",
       restoreDesc: "拔出死者标签！以毫秒级时间还原所有的关系结构并在面板起死回生。",
       purgeDesc: "核爆处理。直接触及硬件存储实行不可复原的实体删除，主要应对法律数据消抹要求。",
       filesTitle: "资产管理与云空间上载",
-      uploadDesc: "接收多路二进制流并丢向（Local, AWS S3, MinIO）云空间，随后返还受保护的物理路径。",
+      uploadDesc:
+        "接收多路二进制流并丢向（Local, AWS S3, MinIO）云空间，随后返还受保护的物理路径。",
       downloadDesc: "下载端点。利用分段响应实现快速下载或媒体文件的边下边播 (Streaming)。",
       deleteFileDesc: "指令向远端发送彻底粉碎存储于空间文件的指令。",
       settingsTitle: "中控全局平台配置系统",
       getSettingsDesc: "请求读取驱动所有内部发送组件和阈值的机密中心文件内容。",
       updateSettingsDesc: "支持随时在生产环境中无重启推送配置。",
-      resetSettingsDesc: "针对灾难的后手机制：清除一切内存或被人类搞乱的配置，退回默认出厂保护状态。",
-      readinessDesc: "专门留给 K8s (Kubernetes)、IIS 集群监控用的生命体征探测器，它会在 1 秒内敲击所有依赖核心 (Redis、主 SQL)并宣告服务器处于能承接流量的 200 活体状态。",
+      resetSettingsDesc:
+        "针对灾难的后手机制：清除一切内存或被人类搞乱的配置，退回默认出厂保护状态。",
+      readinessDesc:
+        "专门留给 K8s (Kubernetes)、IIS 集群监控用的生命体征探测器，它会在 1 秒内敲击所有依赖核心 (Redis、主 SQL)并宣告服务器处于能承接流量的 200 活体状态。",
     },
   },
 };

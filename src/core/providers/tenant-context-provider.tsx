@@ -88,7 +88,9 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
         const parsed = JSON.parse(saved);
         if (parsed?.id && parsed?.name) return parsed;
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return null;
   });
   const [breadcrumbs, setBreadcrumbs] = useState<TenantBreadcrumb[]>([]);
@@ -107,7 +109,6 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
     if (currentTenant?.id) {
       apiService.setTenantContext(currentTenant.id);
     }
-
   }, []);
 
   const enterTenantWorld = useCallback(

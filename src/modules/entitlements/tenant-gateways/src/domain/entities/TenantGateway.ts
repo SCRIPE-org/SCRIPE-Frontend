@@ -21,16 +21,36 @@ export interface TenantGatewayData {
 export class TenantGateway {
   constructor(private readonly data: TenantGatewayData) {}
 
-  get id() { return this.data.id; }
-  get gateway() { return this.data.gateway; }
-  get displayLabel() { return this.data.displayLabel; }
-  get merchantId() { return this.data.merchantId; }
-  get isEnabled() { return this.data.isEnabled; }
-  get isVerified() { return this.data.isVerified; }
-  get isTestMode() { return this.data.isTestMode; }
-  get lastVerifiedAt() { return this.data.lastVerifiedAt; }
-  get createdAt() { return this.data.createdAt; }
-  get modifiedAt() { return this.data.modifiedAt; }
+  get id() {
+    return this.data.id;
+  }
+  get gateway() {
+    return this.data.gateway;
+  }
+  get displayLabel() {
+    return this.data.displayLabel;
+  }
+  get merchantId() {
+    return this.data.merchantId;
+  }
+  get isEnabled() {
+    return this.data.isEnabled;
+  }
+  get isVerified() {
+    return this.data.isVerified;
+  }
+  get isTestMode() {
+    return this.data.isTestMode;
+  }
+  get lastVerifiedAt() {
+    return this.data.lastVerifiedAt;
+  }
+  get createdAt() {
+    return this.data.createdAt;
+  }
+  get modifiedAt() {
+    return this.data.modifiedAt;
+  }
 
   /** Human-readable gateway label with fallback */
   get gatewayLabel(): string {
@@ -54,10 +74,14 @@ export class TenantGateway {
   /** Gateway icon name (Lucide icon) */
   get iconName(): string {
     switch (this.data.gateway) {
-      case "Stripe": return "CreditCard";
-      case "PayPal": return "Wallet";
-      case "Paymob": return "Banknote";
-      default: return "CreditCard";
+      case "Stripe":
+        return "CreditCard";
+      case "PayPal":
+        return "Wallet";
+      case "Paymob":
+        return "Banknote";
+      default:
+        return "CreditCard";
     }
   }
 

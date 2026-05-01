@@ -15,10 +15,7 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import {
-  isNavigationItemActive,
-  getFlatNavigationItems,
-} from "@core/config/navigation";
+import { isNavigationItemActive, getFlatNavigationItems } from "@core/config/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
@@ -256,9 +253,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
-            {settings.showNotifications && (
-              <NotificationBell iconClassName="h-5 w-5" />
-            )}
+            {settings.showNotifications && <NotificationBell iconClassName="h-5 w-5" />}
             <UserProfileDropdown showName={false} />
           </div>
         </div>

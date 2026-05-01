@@ -7,7 +7,8 @@ export const de = {
     crudSystem: {
       title: "CRUD-System",
       description: "useCrudViewModel Hook, GenericCrudView, DataTable und Formularsystem.",
-      intro: "Das CRUD-System bietet eine vollständige, wiederverwendbare Lösung für List-/Detail-/Formularseiten.",
+      intro:
+        "Das CRUD-System bietet eine vollständige, wiederverwendbare Lösung für List-/Detail-/Formularseiten.",
       architectureTitle: "Architekturübersicht",
       viewModelTitle: "useCrudViewModel Hook",
       viewModelIntro: "Kapselt alle CRUD-bezogenen Zustände (Paginierung, Suche, Sortierung).",
@@ -29,7 +30,7 @@ export const de = {
       rtlDesc: "Automatische Ausrichtungsanpassung (z.B. für Arabisch).",
       formTitle: "Formularsystem",
       formIntro: "Integriert Zod-Schemas mit GenericForm für Erstellen/Bearbeiten.",
-      extensionTip: "Das System ist auf Erweiterung, nicht auf Modifikation ausgelegt."
+      extensionTip: "Das System ist auf Erweiterung, nicht auf Modifikation ausgelegt.",
     },
     stateManagement: {
       title: "State Management",
@@ -43,7 +44,7 @@ export const de = {
       zustandIntro: "Speichert Themen, Sidebar-Status und Auth-Zustand.",
       languageTitle: "Lokalisierungs-State",
       languageIntro: "Wird über LanguageProvider und localStorage verwaltet.",
-      antiPatternsTitle: "Anti-Patterns"
+      antiPatternsTitle: "Anti-Patterns",
     },
     localization: {
       title: "Lokalisierung (i18n)",
@@ -62,7 +63,8 @@ export const de = {
       step3Title: "3. Interpolation",
       step3Desc: "Variablen mit {{variable}} übergeben.",
       noLocaleRoutes: "Wir nutzen KEINE dateibasierte Lokalisierung wie [locale]/page.tsx.",
-      moduleLocaleNote: "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching."
+      moduleLocaleNote:
+        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "Formularvalidierung",
@@ -73,7 +75,7 @@ export const de = {
       rhfTitle: "React Hook Form Integration",
       rulesTitle: "Validierungsregeln Referenz",
       serverErrorTitle: "Serverseitige Fehlerbehandlung",
-      serverErrorIntro: "Server-Fehler werden über setError() den Feldern in der UI zugeordnet."
+      serverErrorIntro: "Server-Fehler werden über setError() den Feldern in der UI zugeordnet.",
     },
     componentLibrary: {
       title: "Komponentenbibliothek",
@@ -93,7 +95,7 @@ export const de = {
       a11yTitle: "Barrierefreiheit (Accessibility)",
       placementTitle: "Regeln zur Platzierung",
       architectureTitle: "Komponenten-Architektur",
-      neverInApp: "NIEMALS UI-Komponenten direkt in src/app/ ablegen."
+      neverInApp: "NIEMALS UI-Komponenten direkt in src/app/ ablegen.",
     },
     realtime: {
       title: "Echtzeit (SignalR)",
@@ -104,7 +106,7 @@ export const de = {
       hooksTitle: "React Hooks",
       providerTitle: "SignalR Provider",
       connectionStatesTitle: "Verbindungsstatus",
-      tenantGroupNote: "SignalR Verbindungen sind strikt nach Mandanten isoliert."
-    }
-  }
+      tenantGroupNote: "SignalR Verbindungen sind strikt nach Mandanten isoliert.",
+    },
+  },
 };

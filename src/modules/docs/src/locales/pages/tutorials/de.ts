@@ -6,7 +6,8 @@ export const de = {
   tutorials: {
     addModule: {
       title: "Frontend-Modul hinzufügen",
-      description: "Schritt-für-Schritt-Anleitung zur Erstellung eines Moduls nach dem SOLID-Muster.",
+      description:
+        "Schritt-für-Schritt-Anleitung zur Erstellung eines Moduls nach dem SOLID-Muster.",
       intro: "Erstellen Sie ein Modul mit ViewModels, Zod-Schemas und DI.",
       prerequisitesTitle: "Voraussetzungen",
       stepsTitle: "Schritt-für-Schritt",
@@ -31,7 +32,8 @@ export const de = {
       viewModelTitle: "ViewModel",
       viewTitle: "View Komponente",
       routeTitle: "Routen & Navigation",
-      checklist: "Checkliste für den PR: SOLID beachtet, keine Cross-Importe, Übersetzungen hinzugefügt.",
+      checklist:
+        "Checkliste für den PR: SOLID beachtet, keine Cross-Importe, Übersetzungen hinzugefügt.",
     },
     addBackendModule: {
       title: "Backend-Modul hinzufügen",

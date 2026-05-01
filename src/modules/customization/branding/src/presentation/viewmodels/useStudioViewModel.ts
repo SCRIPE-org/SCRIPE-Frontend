@@ -24,7 +24,11 @@ import type {
   LoginSlotId,
   ContentBlock,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
-import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND } from "../../domain/entities/CanvasComponent";
+import {
+  DEFAULT_CANVAS_COMPONENTS,
+  DEFAULT_CANVAS_GRID_ROWS,
+  DEFAULT_CANVAS_BACKGROUND,
+} from "../../domain/entities/CanvasComponent";
 import {
   type StudioDraftProps as StudioDraft,
   DEFAULT_DRAFT,
@@ -34,7 +38,6 @@ import {
   type AuthPageOverride,
   DEFAULT_PAGE_OVERRIDES,
 } from "../../domain/entities/StudioDraft";
-
 
 // NOTE: Domain types are imported directly from ../../domain/entities/StudioDraft by all components.
 
@@ -77,11 +80,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const branding = brandingQuery.data;
 
   // Mode is backend-driven: "my" | "system" | "tenant"
-  const mode: 'my' | 'system' | 'tenant' = targetTenantId
-    ? 'tenant'
-    : (branding as any)?.mode === 'system'
-      ? 'system'
-      : 'my';
+  const mode: "my" | "system" | "tenant" = targetTenantId
+    ? "tenant"
+    : (branding as any)?.mode === "system"
+      ? "system"
+      : "my";
 
   // ── State ──
   const [draft, setDraft] = useState<StudioDraft>(DEFAULT_DRAFT);
@@ -94,177 +97,236 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── Build draft from branding data (reused by init + discard) ──
-  const buildDraftFromBranding = useCallback((brandingData: TenantBrandingData, useDraft = true): StudioDraft => {
-    const live = brandingData.loginBrandingJson ? JSON.parse(brandingData.loginBrandingJson) : {};
-    const draftJson = useDraft && (brandingData as any).draftBrandingJson
-      ? JSON.parse((brandingData as any).draftBrandingJson) : null;
+  const buildDraftFromBranding = useCallback(
+    (brandingData: TenantBrandingData, useDraft = true): StudioDraft => {
+      const live = brandingData.loginBrandingJson ? JSON.parse(brandingData.loginBrandingJson) : {};
+      const draftJson =
+        useDraft && (brandingData as any).draftBrandingJson
+          ? JSON.parse((brandingData as any).draftBrandingJson)
+          : null;
 
-    const source = draftJson || live;
-    const tokens = source.tokens || {};
-    const slotRaw = brandingData.slotConfigJson || (brandingData as any).slotConfigJson;
+      const source = draftJson || live;
+      const tokens = source.tokens || {};
+      const slotRaw = brandingData.slotConfigJson || (brandingData as any).slotConfigJson;
 
-    // Dashboard settings come from the separate dashboardThemeJson field, NOT from loginBrandingJson
-    // Gap #5: Prefer draft dashboard theme (if exists and useDraft) over published version
-    const draftDashboardRaw = useDraft && (brandingData as any).draftDashboardThemeJson;
-    const liveDashboardRaw = (brandingData as any).dashboardThemeJson;
-    const dashboardThemeRaw = draftDashboardRaw || liveDashboardRaw;
-    const dashboardTheme = dashboardThemeRaw ? JSON.parse(dashboardThemeRaw) : null;
+      // Dashboard settings come from the separate dashboardThemeJson field, NOT from loginBrandingJson
+      // Gap #5: Prefer draft dashboard theme (if exists and useDraft) over published version
+      const draftDashboardRaw = useDraft && (brandingData as any).draftDashboardThemeJson;
+      const liveDashboardRaw = (brandingData as any).dashboardThemeJson;
+      const dashboardThemeRaw = draftDashboardRaw || liveDashboardRaw;
+      const dashboardTheme = dashboardThemeRaw ? JSON.parse(dashboardThemeRaw) : null;
 
-    return {
-      layout: source.layout || "split-right",
-      headline: source.headline || "",
-      subtitle: source.subtitle || "",
-      companyName: source.companyName || brandingData.companyName || "",
-      logoUrl: source.logoUrl || brandingData.logoUrl || "",
-      faviconUrl: source.faviconUrl || (brandingData as any).faviconUrl || "",
-      copyrightText: source.copyrightText || "",
-      // Colors
-      primaryColor: tokens["color.primary"] || brandingData.primaryColor || DEFAULT_DRAFT.primaryColor,
-      secondaryColor: tokens["color.secondary"] || brandingData.secondaryColor || DEFAULT_DRAFT.secondaryColor,
-      bgColor: tokens["color.background"] || DEFAULT_DRAFT.bgColor,
-      surfaceColor: tokens["color.surface"] || DEFAULT_DRAFT.surfaceColor,
-      textColor: tokens["color.text"] || DEFAULT_DRAFT.textColor,
-      mutedColor: tokens["color.textMuted"] || DEFAULT_DRAFT.mutedColor,
-      borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
-      errorColor: tokens["color.error"] || DEFAULT_DRAFT.errorColor,
-      successColor: tokens["color.success"] || DEFAULT_DRAFT.successColor,
-      themeMode: source.themeMode || "unified",
-      darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
-      darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
-      darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
-      darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
-      darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
-      darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
-      darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
-      darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
-      darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
-      // Typography
-      fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
-      fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
-      headingFont: tokens["font.heading"] || "",
-      headingSize: parseInt(tokens["font.size.headline"] || "") || DEFAULT_DRAFT.headingSize,
-      bodySize: parseInt(tokens["font.size.subtitle"] || "") || DEFAULT_DRAFT.bodySize,
-      headingWeight: parseInt(tokens["font.weight.heading"] || "") || DEFAULT_DRAFT.headingWeight,
-      bodyWeight: parseInt(tokens["font.weight.body"] || "") || DEFAULT_DRAFT.bodyWeight,
-      lineHeight: parseFloat(tokens["font.lineHeight"] || "") || DEFAULT_DRAFT.lineHeight,
-      letterSpacing: parseFloat(tokens["font.letterSpacing"] || "") || DEFAULT_DRAFT.letterSpacing,
-      // Background
-      bgType: source.bgType || "solid",
-      bgGradientDirection: source.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
-      bgGradientFrom: source.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
-      bgGradientTo: source.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
-      bgImageUrl: tokens["bg.image"] || "",
-      bgImageFit: source.bgImageFit || DEFAULT_DRAFT.bgImageFit,
-      bgImagePosition: source.bgImagePosition || DEFAULT_DRAFT.bgImagePosition,
-      bgOverlayEnabled: source.bgOverlayEnabled ?? false,
-      bgOverlayColor: source.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
-      bgOverlayOpacity: parseFloat(tokens["overlay.opacity"] || "") || DEFAULT_DRAFT.bgOverlayOpacity,
-      bgBlur: parseInt(source.bgBlur || "") || DEFAULT_DRAFT.bgBlur,
-      // Dark background
-      darkBgType: source.darkBgType || DEFAULT_DRAFT.darkBgType,
-      darkBgGradientDirection: source.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
-      darkBgGradientFrom: source.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
-      darkBgGradientTo: source.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
-      darkBgImageUrl: tokens["dark.bg.image"] || source.darkBgImageUrl || "",
-      darkBgImageFit: source.darkBgImageFit || DEFAULT_DRAFT.darkBgImageFit,
-      darkBgImagePosition: source.darkBgImagePosition || DEFAULT_DRAFT.darkBgImagePosition,
-      darkBgOverlayEnabled: source.darkBgOverlayEnabled ?? false,
-      darkBgOverlayColor: source.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
-      darkBgOverlayOpacity: parseFloat(tokens["dark.overlay.opacity"] || "") || DEFAULT_DRAFT.darkBgOverlayOpacity,
-      darkBgBlur: parseInt(source.darkBgBlur || "") || DEFAULT_DRAFT.darkBgBlur,
-      // Split panel bg — LIGHT
-      splitBgMode: source.splitBgMode || DEFAULT_DRAFT.splitBgMode,
-      panelBgType: source.panelBgType || DEFAULT_DRAFT.panelBgType,
-      panelBgColor: tokens["panel.color.background"] || source.panelBgColor || DEFAULT_DRAFT.panelBgColor,
-      panelBgGradientDirection: source.panelBgGradientDirection || DEFAULT_DRAFT.panelBgGradientDirection,
-      panelBgGradientFrom: source.panelBgGradientFrom || DEFAULT_DRAFT.panelBgGradientFrom,
-      panelBgGradientTo: source.panelBgGradientTo || DEFAULT_DRAFT.panelBgGradientTo,
-      panelBgImageUrl: tokens["panel.bg.image"] || source.panelBgImageUrl || "",
-      panelBgImageFit: source.panelBgImageFit || DEFAULT_DRAFT.panelBgImageFit,
-      panelBgImagePosition: source.panelBgImagePosition || DEFAULT_DRAFT.panelBgImagePosition,
-      panelBgOverlayEnabled: source.panelBgOverlayEnabled ?? false,
-      panelBgOverlayColor: source.panelBgOverlayColor || DEFAULT_DRAFT.panelBgOverlayColor,
-      panelBgOverlayOpacity: parseFloat(source.panelBgOverlayOpacity || "") || DEFAULT_DRAFT.panelBgOverlayOpacity,
-      panelBgBlur: parseInt(source.panelBgBlur || "") || DEFAULT_DRAFT.panelBgBlur,
-      // Split panel bg — DARK
-      darkPanelBgType: source.darkPanelBgType || DEFAULT_DRAFT.darkPanelBgType,
-      darkPanelBgColor: tokens["dark.panel.color.background"] || source.darkPanelBgColor || DEFAULT_DRAFT.darkPanelBgColor,
-      darkPanelBgGradientDirection: source.darkPanelBgGradientDirection || DEFAULT_DRAFT.darkPanelBgGradientDirection,
-      darkPanelBgGradientFrom: source.darkPanelBgGradientFrom || DEFAULT_DRAFT.darkPanelBgGradientFrom,
-      darkPanelBgGradientTo: source.darkPanelBgGradientTo || DEFAULT_DRAFT.darkPanelBgGradientTo,
-      darkPanelBgImageUrl: tokens["dark.panel.bg.image"] || source.darkPanelBgImageUrl || "",
-      darkPanelBgImageFit: source.darkPanelBgImageFit || DEFAULT_DRAFT.darkPanelBgImageFit,
-      darkPanelBgImagePosition: source.darkPanelBgImagePosition || DEFAULT_DRAFT.darkPanelBgImagePosition,
-      darkPanelBgOverlayEnabled: source.darkPanelBgOverlayEnabled ?? false,
-      darkPanelBgOverlayColor: source.darkPanelBgOverlayColor || DEFAULT_DRAFT.darkPanelBgOverlayColor,
-      darkPanelBgOverlayOpacity: parseFloat(source.darkPanelBgOverlayOpacity || "") || DEFAULT_DRAFT.darkPanelBgOverlayOpacity,
-      darkPanelBgBlur: parseInt(source.darkPanelBgBlur || "") || DEFAULT_DRAFT.darkPanelBgBlur,
-      // Spacing
-      borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
-      formWidth: parseInt(source.formWidth || "") || DEFAULT_DRAFT.formWidth,
-      cardPadding: parseInt(source.cardPadding || "") || DEFAULT_DRAFT.cardPadding,
-      elementGap: parseInt(source.elementGap || "") || DEFAULT_DRAFT.elementGap,
-      inputHeight: parseInt(source.inputHeight || "") || DEFAULT_DRAFT.inputHeight,
-      btnRadius: parseInt(tokens["radius.button"] || "") || DEFAULT_DRAFT.btnRadius,
-      btnSize: source.btnSize || DEFAULT_DRAFT.btnSize,
-      // Slots
-      slotConfig: slotRaw ? JSON.parse(slotRaw) : { _schemaVersion: 1, slots: {} },
-      // Advanced
-      customCss: source.customCss || "",
-      safeMode: (brandingData as any).isSafeMode ?? false,
-      // Multi-Page Branding
-      pageOverrides: source.pages || {},
-      // Page Builder (M10)
-      canvasMode: source.canvasMode || DEFAULT_DRAFT.canvasMode,
-      canvasComponents: source.components || DEFAULT_CANVAS_COMPONENTS,
-      canvasGridRows: source.canvasGridRows || DEFAULT_CANVAS_GRID_ROWS,
-      canvasBackground: source.canvasBackground || DEFAULT_CANVAS_BACKGROUND,
-      canvasPositionMode: source.canvasPositionMode || DEFAULT_DRAFT.canvasPositionMode,
-      // Accessibility
-      // Focus & Keyboard
-      a11yFocusRingEnabled: source.a11yFocusRingEnabled ?? tokens["a11y.focusRing.enabled"] !== "false",
-      a11yFocusRingColor: source.a11yFocusRingColor || tokens["a11y.focusRing.color"] || DEFAULT_DRAFT.a11yFocusRingColor,
-      a11yFocusRingWidth: parseInt(tokens["a11y.focusRing.width"] || "") || source.a11yFocusRingWidth || DEFAULT_DRAFT.a11yFocusRingWidth,
-      a11yFocusRingStyle: source.a11yFocusRingStyle || DEFAULT_DRAFT.a11yFocusRingStyle,
-      a11ySkipLinkEnabled: source.a11ySkipLinkEnabled ?? tokens["a11y.skipLink.enabled"] !== "false",
-      a11yHighlightFocus: source.a11yHighlightFocus ?? tokens["a11y.highlightFocus"] === "true",
-      // Screen Reader
-      a11yAriaLandmarks: source.a11yAriaLandmarks ?? tokens["a11y.ariaLandmarks"] !== "false",
-      a11yFormLabelsVisible: source.a11yFormLabelsVisible ?? tokens["a11y.formLabels.visible"] !== "false",
-      a11yErrorAnnounce: source.a11yErrorAnnounce ?? tokens["a11y.errorAnnounce"] !== "false",
-      a11yPageTitle: source.a11yPageTitle || tokens["a11y.pageTitle"] || "",
-      // Contrast & Colors
-      a11yHighContrastMode: source.a11yHighContrastMode ?? tokens["a11y.highContrast"] === "true",
-      a11yContrastPreset: source.a11yContrastPreset || (tokens["a11y.contrastPreset"] as any) || DEFAULT_DRAFT.a11yContrastPreset,
-      a11ySaturation: parseInt(tokens["a11y.saturation"] || "") || (source.a11ySaturation ?? DEFAULT_DRAFT.a11ySaturation),
-      a11yHighlightLinks: source.a11yHighlightLinks ?? tokens["a11y.highlightLinks"] === "true",
-      // Typography & Readability
-      a11yMinFontSize: parseInt(tokens["a11y.minFontSize"] || "") || source.a11yMinFontSize || DEFAULT_DRAFT.a11yMinFontSize,
-      a11yContentScaling: parseInt(tokens["a11y.contentScaling"] || "") || (source.a11yContentScaling ?? DEFAULT_DRAFT.a11yContentScaling),
-      a11yLineHeight: parseFloat(tokens["a11y.lineHeight"] || "") || (source.a11yLineHeight ?? DEFAULT_DRAFT.a11yLineHeight),
-      a11yLetterSpacing: parseFloat(tokens["a11y.letterSpacing"] || "") || (source.a11yLetterSpacing ?? DEFAULT_DRAFT.a11yLetterSpacing),
-      a11yWordSpacing: parseFloat(tokens["a11y.wordSpacing"] || "") || (source.a11yWordSpacing ?? DEFAULT_DRAFT.a11yWordSpacing),
-      a11yDyslexicFont: source.a11yDyslexicFont ?? tokens["a11y.dyslexicFont"] === "true",
-      a11yTextAlign: source.a11yTextAlign || (tokens["a11y.textAlign"] as any) || DEFAULT_DRAFT.a11yTextAlign,
-      // Cursor & Reading Aids
-      a11yCursorSize: source.a11yCursorSize || (tokens["a11y.cursorSize"] as any) || DEFAULT_DRAFT.a11yCursorSize,
-      a11yReadingGuide: source.a11yReadingGuide ?? tokens["a11y.readingGuide"] === "true",
-      a11yReadingMask: source.a11yReadingMask ?? tokens["a11y.readingMask"] === "true",
-      // Motion & Animation
-      a11yReducedMotion: source.a11yReducedMotion || DEFAULT_DRAFT.a11yReducedMotion,
-      a11yAnimationDuration: parseInt(tokens["a11y.animationDuration"] || "") || source.a11yAnimationDuration || DEFAULT_DRAFT.a11yAnimationDuration,
-      a11yAutoplayDisabled: source.a11yAutoplayDisabled ?? tokens["a11y.autoplayDisabled"] === "true",
-      a11yPauseAnimations: source.a11yPauseAnimations ?? tokens["a11y.pauseAnimations"] === "true",
-      // Content & Media
-      a11yHideImages: source.a11yHideImages ?? tokens["a11y.hideImages"] === "true",
-      a11yTooltips: source.a11yTooltips ?? tokens["a11y.tooltips"] === "true",
-      // Touch & Target Size
-      a11yLargeTargets: source.a11yLargeTargets ?? tokens["a11y.largeTargets"] === "true",
-      a11yForcedColorsSupport: source.a11yForcedColorsSupport ?? tokens["a11y.forcedColors"] !== "false",
-      // Dashboard — loaded from separate dashboardThemeJson field (not inside login branding)
-      dashboardSettings: dashboardTheme || source.dashboardSettings || DEFAULT_DRAFT.dashboardSettings,
-    };
-  }, []);
+      return {
+        layout: source.layout || "split-right",
+        headline: source.headline || "",
+        subtitle: source.subtitle || "",
+        companyName: source.companyName || brandingData.companyName || "",
+        logoUrl: source.logoUrl || brandingData.logoUrl || "",
+        faviconUrl: source.faviconUrl || (brandingData as any).faviconUrl || "",
+        copyrightText: source.copyrightText || "",
+        // Colors
+        primaryColor:
+          tokens["color.primary"] || brandingData.primaryColor || DEFAULT_DRAFT.primaryColor,
+        secondaryColor:
+          tokens["color.secondary"] || brandingData.secondaryColor || DEFAULT_DRAFT.secondaryColor,
+        bgColor: tokens["color.background"] || DEFAULT_DRAFT.bgColor,
+        surfaceColor: tokens["color.surface"] || DEFAULT_DRAFT.surfaceColor,
+        textColor: tokens["color.text"] || DEFAULT_DRAFT.textColor,
+        mutedColor: tokens["color.textMuted"] || DEFAULT_DRAFT.mutedColor,
+        borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
+        errorColor: tokens["color.error"] || DEFAULT_DRAFT.errorColor,
+        successColor: tokens["color.success"] || DEFAULT_DRAFT.successColor,
+        themeMode: source.themeMode || "unified",
+        darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
+        darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
+        darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
+        darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
+        darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
+        darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
+        darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
+        darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
+        darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
+        // Typography
+        fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
+        fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
+        headingFont: tokens["font.heading"] || "",
+        headingSize: parseInt(tokens["font.size.headline"] || "") || DEFAULT_DRAFT.headingSize,
+        bodySize: parseInt(tokens["font.size.subtitle"] || "") || DEFAULT_DRAFT.bodySize,
+        headingWeight: parseInt(tokens["font.weight.heading"] || "") || DEFAULT_DRAFT.headingWeight,
+        bodyWeight: parseInt(tokens["font.weight.body"] || "") || DEFAULT_DRAFT.bodyWeight,
+        lineHeight: parseFloat(tokens["font.lineHeight"] || "") || DEFAULT_DRAFT.lineHeight,
+        letterSpacing:
+          parseFloat(tokens["font.letterSpacing"] || "") || DEFAULT_DRAFT.letterSpacing,
+        // Background
+        bgType: source.bgType || "solid",
+        bgGradientDirection: source.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
+        bgGradientFrom: source.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
+        bgGradientTo: source.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
+        bgImageUrl: tokens["bg.image"] || "",
+        bgImageFit: source.bgImageFit || DEFAULT_DRAFT.bgImageFit,
+        bgImagePosition: source.bgImagePosition || DEFAULT_DRAFT.bgImagePosition,
+        bgOverlayEnabled: source.bgOverlayEnabled ?? false,
+        bgOverlayColor: source.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
+        bgOverlayOpacity:
+          parseFloat(tokens["overlay.opacity"] || "") || DEFAULT_DRAFT.bgOverlayOpacity,
+        bgBlur: parseInt(source.bgBlur || "") || DEFAULT_DRAFT.bgBlur,
+        // Dark background
+        darkBgType: source.darkBgType || DEFAULT_DRAFT.darkBgType,
+        darkBgGradientDirection:
+          source.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
+        darkBgGradientFrom: source.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
+        darkBgGradientTo: source.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
+        darkBgImageUrl: tokens["dark.bg.image"] || source.darkBgImageUrl || "",
+        darkBgImageFit: source.darkBgImageFit || DEFAULT_DRAFT.darkBgImageFit,
+        darkBgImagePosition: source.darkBgImagePosition || DEFAULT_DRAFT.darkBgImagePosition,
+        darkBgOverlayEnabled: source.darkBgOverlayEnabled ?? false,
+        darkBgOverlayColor: source.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
+        darkBgOverlayOpacity:
+          parseFloat(tokens["dark.overlay.opacity"] || "") || DEFAULT_DRAFT.darkBgOverlayOpacity,
+        darkBgBlur: parseInt(source.darkBgBlur || "") || DEFAULT_DRAFT.darkBgBlur,
+        // Split panel bg — LIGHT
+        splitBgMode: source.splitBgMode || DEFAULT_DRAFT.splitBgMode,
+        panelBgType: source.panelBgType || DEFAULT_DRAFT.panelBgType,
+        panelBgColor:
+          tokens["panel.color.background"] || source.panelBgColor || DEFAULT_DRAFT.panelBgColor,
+        panelBgGradientDirection:
+          source.panelBgGradientDirection || DEFAULT_DRAFT.panelBgGradientDirection,
+        panelBgGradientFrom: source.panelBgGradientFrom || DEFAULT_DRAFT.panelBgGradientFrom,
+        panelBgGradientTo: source.panelBgGradientTo || DEFAULT_DRAFT.panelBgGradientTo,
+        panelBgImageUrl: tokens["panel.bg.image"] || source.panelBgImageUrl || "",
+        panelBgImageFit: source.panelBgImageFit || DEFAULT_DRAFT.panelBgImageFit,
+        panelBgImagePosition: source.panelBgImagePosition || DEFAULT_DRAFT.panelBgImagePosition,
+        panelBgOverlayEnabled: source.panelBgOverlayEnabled ?? false,
+        panelBgOverlayColor: source.panelBgOverlayColor || DEFAULT_DRAFT.panelBgOverlayColor,
+        panelBgOverlayOpacity:
+          parseFloat(source.panelBgOverlayOpacity || "") || DEFAULT_DRAFT.panelBgOverlayOpacity,
+        panelBgBlur: parseInt(source.panelBgBlur || "") || DEFAULT_DRAFT.panelBgBlur,
+        // Split panel bg — DARK
+        darkPanelBgType: source.darkPanelBgType || DEFAULT_DRAFT.darkPanelBgType,
+        darkPanelBgColor:
+          tokens["dark.panel.color.background"] ||
+          source.darkPanelBgColor ||
+          DEFAULT_DRAFT.darkPanelBgColor,
+        darkPanelBgGradientDirection:
+          source.darkPanelBgGradientDirection || DEFAULT_DRAFT.darkPanelBgGradientDirection,
+        darkPanelBgGradientFrom:
+          source.darkPanelBgGradientFrom || DEFAULT_DRAFT.darkPanelBgGradientFrom,
+        darkPanelBgGradientTo: source.darkPanelBgGradientTo || DEFAULT_DRAFT.darkPanelBgGradientTo,
+        darkPanelBgImageUrl: tokens["dark.panel.bg.image"] || source.darkPanelBgImageUrl || "",
+        darkPanelBgImageFit: source.darkPanelBgImageFit || DEFAULT_DRAFT.darkPanelBgImageFit,
+        darkPanelBgImagePosition:
+          source.darkPanelBgImagePosition || DEFAULT_DRAFT.darkPanelBgImagePosition,
+        darkPanelBgOverlayEnabled: source.darkPanelBgOverlayEnabled ?? false,
+        darkPanelBgOverlayColor:
+          source.darkPanelBgOverlayColor || DEFAULT_DRAFT.darkPanelBgOverlayColor,
+        darkPanelBgOverlayOpacity:
+          parseFloat(source.darkPanelBgOverlayOpacity || "") ||
+          DEFAULT_DRAFT.darkPanelBgOverlayOpacity,
+        darkPanelBgBlur: parseInt(source.darkPanelBgBlur || "") || DEFAULT_DRAFT.darkPanelBgBlur,
+        // Spacing
+        borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
+        formWidth: parseInt(source.formWidth || "") || DEFAULT_DRAFT.formWidth,
+        cardPadding: parseInt(source.cardPadding || "") || DEFAULT_DRAFT.cardPadding,
+        elementGap: parseInt(source.elementGap || "") || DEFAULT_DRAFT.elementGap,
+        inputHeight: parseInt(source.inputHeight || "") || DEFAULT_DRAFT.inputHeight,
+        btnRadius: parseInt(tokens["radius.button"] || "") || DEFAULT_DRAFT.btnRadius,
+        btnSize: source.btnSize || DEFAULT_DRAFT.btnSize,
+        // Slots
+        slotConfig: slotRaw ? JSON.parse(slotRaw) : { _schemaVersion: 1, slots: {} },
+        // Advanced
+        customCss: source.customCss || "",
+        safeMode: (brandingData as any).isSafeMode ?? false,
+        // Multi-Page Branding
+        pageOverrides: source.pages || {},
+        // Page Builder (M10)
+        canvasMode: source.canvasMode || DEFAULT_DRAFT.canvasMode,
+        canvasComponents: source.components || DEFAULT_CANVAS_COMPONENTS,
+        canvasGridRows: source.canvasGridRows || DEFAULT_CANVAS_GRID_ROWS,
+        canvasBackground: source.canvasBackground || DEFAULT_CANVAS_BACKGROUND,
+        canvasPositionMode: source.canvasPositionMode || DEFAULT_DRAFT.canvasPositionMode,
+        // Accessibility
+        // Focus & Keyboard
+        a11yFocusRingEnabled:
+          source.a11yFocusRingEnabled ?? tokens["a11y.focusRing.enabled"] !== "false",
+        a11yFocusRingColor:
+          source.a11yFocusRingColor ||
+          tokens["a11y.focusRing.color"] ||
+          DEFAULT_DRAFT.a11yFocusRingColor,
+        a11yFocusRingWidth:
+          parseInt(tokens["a11y.focusRing.width"] || "") ||
+          source.a11yFocusRingWidth ||
+          DEFAULT_DRAFT.a11yFocusRingWidth,
+        a11yFocusRingStyle: source.a11yFocusRingStyle || DEFAULT_DRAFT.a11yFocusRingStyle,
+        a11ySkipLinkEnabled:
+          source.a11ySkipLinkEnabled ?? tokens["a11y.skipLink.enabled"] !== "false",
+        a11yHighlightFocus: source.a11yHighlightFocus ?? tokens["a11y.highlightFocus"] === "true",
+        // Screen Reader
+        a11yAriaLandmarks: source.a11yAriaLandmarks ?? tokens["a11y.ariaLandmarks"] !== "false",
+        a11yFormLabelsVisible:
+          source.a11yFormLabelsVisible ?? tokens["a11y.formLabels.visible"] !== "false",
+        a11yErrorAnnounce: source.a11yErrorAnnounce ?? tokens["a11y.errorAnnounce"] !== "false",
+        a11yPageTitle: source.a11yPageTitle || tokens["a11y.pageTitle"] || "",
+        // Contrast & Colors
+        a11yHighContrastMode: source.a11yHighContrastMode ?? tokens["a11y.highContrast"] === "true",
+        a11yContrastPreset:
+          source.a11yContrastPreset ||
+          (tokens["a11y.contrastPreset"] as any) ||
+          DEFAULT_DRAFT.a11yContrastPreset,
+        a11ySaturation:
+          parseInt(tokens["a11y.saturation"] || "") ||
+          (source.a11ySaturation ?? DEFAULT_DRAFT.a11ySaturation),
+        a11yHighlightLinks: source.a11yHighlightLinks ?? tokens["a11y.highlightLinks"] === "true",
+        // Typography & Readability
+        a11yMinFontSize:
+          parseInt(tokens["a11y.minFontSize"] || "") ||
+          source.a11yMinFontSize ||
+          DEFAULT_DRAFT.a11yMinFontSize,
+        a11yContentScaling:
+          parseInt(tokens["a11y.contentScaling"] || "") ||
+          (source.a11yContentScaling ?? DEFAULT_DRAFT.a11yContentScaling),
+        a11yLineHeight:
+          parseFloat(tokens["a11y.lineHeight"] || "") ||
+          (source.a11yLineHeight ?? DEFAULT_DRAFT.a11yLineHeight),
+        a11yLetterSpacing:
+          parseFloat(tokens["a11y.letterSpacing"] || "") ||
+          (source.a11yLetterSpacing ?? DEFAULT_DRAFT.a11yLetterSpacing),
+        a11yWordSpacing:
+          parseFloat(tokens["a11y.wordSpacing"] || "") ||
+          (source.a11yWordSpacing ?? DEFAULT_DRAFT.a11yWordSpacing),
+        a11yDyslexicFont: source.a11yDyslexicFont ?? tokens["a11y.dyslexicFont"] === "true",
+        a11yTextAlign:
+          source.a11yTextAlign || (tokens["a11y.textAlign"] as any) || DEFAULT_DRAFT.a11yTextAlign,
+        // Cursor & Reading Aids
+        a11yCursorSize:
+          source.a11yCursorSize ||
+          (tokens["a11y.cursorSize"] as any) ||
+          DEFAULT_DRAFT.a11yCursorSize,
+        a11yReadingGuide: source.a11yReadingGuide ?? tokens["a11y.readingGuide"] === "true",
+        a11yReadingMask: source.a11yReadingMask ?? tokens["a11y.readingMask"] === "true",
+        // Motion & Animation
+        a11yReducedMotion: source.a11yReducedMotion || DEFAULT_DRAFT.a11yReducedMotion,
+        a11yAnimationDuration:
+          parseInt(tokens["a11y.animationDuration"] || "") ||
+          source.a11yAnimationDuration ||
+          DEFAULT_DRAFT.a11yAnimationDuration,
+        a11yAutoplayDisabled:
+          source.a11yAutoplayDisabled ?? tokens["a11y.autoplayDisabled"] === "true",
+        a11yPauseAnimations:
+          source.a11yPauseAnimations ?? tokens["a11y.pauseAnimations"] === "true",
+        // Content & Media
+        a11yHideImages: source.a11yHideImages ?? tokens["a11y.hideImages"] === "true",
+        a11yTooltips: source.a11yTooltips ?? tokens["a11y.tooltips"] === "true",
+        // Touch & Target Size
+        a11yLargeTargets: source.a11yLargeTargets ?? tokens["a11y.largeTargets"] === "true",
+        a11yForcedColorsSupport:
+          source.a11yForcedColorsSupport ?? tokens["a11y.forcedColors"] !== "false",
+        // Dashboard — loaded from separate dashboardThemeJson field (not inside login branding)
+        dashboardSettings:
+          dashboardTheme || source.dashboardSettings || DEFAULT_DRAFT.dashboardSettings,
+      };
+    },
+    []
+  );
 
   // ─── Initialize draft from live settings (render-time state-based) ───
   const [prevBranding, setPrevBranding] = useState(branding);
@@ -276,61 +338,86 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         setDraft(newDraft);
         // NOTE: Do NOT setIsDirty here. The draft is already persisted server-side.
         // Auto-save should only fire when the USER actually makes changes.
-      } catch { /* invalid JSON — use defaults */ }
+      } catch {
+        /* invalid JSON — use defaults */
+      }
     }
   }
 
   // ── Update any draft field ──
-  const updateDraft = useCallback(<K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => {
-    setDraft(prev => ({ ...prev, [field]: value }));
-    setIsDirty(true);
-  }, []);
+  const updateDraft = useCallback(
+    <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => {
+      setDraft((prev) => ({ ...prev, [field]: value }));
+      setIsDirty(true);
+    },
+    []
+  );
 
   // ── Batch update (for color presets) ──
   const batchUpdateDraft = useCallback((updates: Partial<StudioDraft>) => {
-    setDraft(prev => ({ ...prev, ...updates }));
+    setDraft((prev) => ({ ...prev, ...updates }));
     setIsDirty(true);
   }, []);
 
   // ── Per-page override helpers ──
-  const getPageOverride = useCallback((pageId: AuthPageId): AuthPageOverride => {
-    const override = draft.pageOverrides[pageId];
-    if (override) return { ...DEFAULT_PAGE_OVERRIDES[pageId], ...override };
-    // For login, derive from global draft fields (backward compat)
-    if (pageId === "login") {
-      return { layout: draft.layout, headline: draft.headline, subtitle: draft.subtitle, inheritBackground: false };
-    }
-    return DEFAULT_PAGE_OVERRIDES[pageId];
-  }, [draft]);
-
-  const setPageOverride = useCallback((pageId: AuthPageId, field: keyof AuthPageOverride, value: AuthPageOverride[keyof AuthPageOverride]) => {
-    setDraft(prev => {
-      const currentOverride = prev.pageOverrides[pageId] || (
-        pageId === "login"
-          ? { layout: prev.layout, headline: prev.headline, subtitle: prev.subtitle, inheritBackground: false }
-          : DEFAULT_PAGE_OVERRIDES[pageId]
-      );
-      const newOverride = { ...currentOverride, [field]: value };
-      const newOverrides = { ...prev.pageOverrides, [pageId]: newOverride };
-
-      // For login page, also sync global layout/headline/subtitle for backward compatibility
+  const getPageOverride = useCallback(
+    (pageId: AuthPageId): AuthPageOverride => {
+      const override = draft.pageOverrides[pageId];
+      if (override) return { ...DEFAULT_PAGE_OVERRIDES[pageId], ...override };
+      // For login, derive from global draft fields (backward compat)
       if (pageId === "login") {
         return {
-          ...prev,
-          layout: newOverride.layout as StudioDraft["layout"],
-          headline: newOverride.headline,
-          subtitle: newOverride.subtitle,
-          pageOverrides: newOverrides,
+          layout: draft.layout,
+          headline: draft.headline,
+          subtitle: draft.subtitle,
+          inheritBackground: false,
         };
       }
-      return { ...prev, pageOverrides: newOverrides };
-    });
-    setIsDirty(true);
-  }, []);
+      return DEFAULT_PAGE_OVERRIDES[pageId];
+    },
+    [draft]
+  );
+
+  const setPageOverride = useCallback(
+    (
+      pageId: AuthPageId,
+      field: keyof AuthPageOverride,
+      value: AuthPageOverride[keyof AuthPageOverride]
+    ) => {
+      setDraft((prev) => {
+        const currentOverride =
+          prev.pageOverrides[pageId] ||
+          (pageId === "login"
+            ? {
+                layout: prev.layout,
+                headline: prev.headline,
+                subtitle: prev.subtitle,
+                inheritBackground: false,
+              }
+            : DEFAULT_PAGE_OVERRIDES[pageId]);
+        const newOverride = { ...currentOverride, [field]: value };
+        const newOverrides = { ...prev.pageOverrides, [pageId]: newOverride };
+
+        // For login page, also sync global layout/headline/subtitle for backward compatibility
+        if (pageId === "login") {
+          return {
+            ...prev,
+            layout: newOverride.layout as StudioDraft["layout"],
+            headline: newOverride.headline,
+            subtitle: newOverride.subtitle,
+            pageOverrides: newOverrides,
+          };
+        }
+        return { ...prev, pageOverrides: newOverrides };
+      });
+      setIsDirty(true);
+    },
+    []
+  );
 
   // ── Slot management ──
   const addBlock = useCallback((slotId: LoginSlotId, block: ContentBlock) => {
-    setDraft(prev => {
+    setDraft((prev) => {
       const newSlots = { ...prev.slotConfig.slots };
       const existing = newSlots[slotId] || [];
       newSlots[slotId] = [...existing, block];
@@ -340,7 +427,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   }, []);
 
   const removeBlock = useCallback((slotId: LoginSlotId, index: number) => {
-    setDraft(prev => {
+    setDraft((prev) => {
       const newSlots = { ...prev.slotConfig.slots };
       const existing = [...(newSlots[slotId] || [])];
       existing.splice(index, 1);
@@ -350,21 +437,24 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     setIsDirty(true);
   }, []);
 
-  const moveBlock = useCallback((slotId: LoginSlotId, fromIndex: number, direction: "up" | "down") => {
-    setDraft(prev => {
-      const newSlots = { ...prev.slotConfig.slots };
-      const existing = [...(newSlots[slotId] || [])];
-      const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
-      if (toIndex < 0 || toIndex >= existing.length) return prev;
-      [existing[fromIndex], existing[toIndex]] = [existing[toIndex], existing[fromIndex]];
-      newSlots[slotId] = existing;
-      return { ...prev, slotConfig: { ...prev.slotConfig, slots: newSlots } };
-    });
-    setIsDirty(true);
-  }, []);
+  const moveBlock = useCallback(
+    (slotId: LoginSlotId, fromIndex: number, direction: "up" | "down") => {
+      setDraft((prev) => {
+        const newSlots = { ...prev.slotConfig.slots };
+        const existing = [...(newSlots[slotId] || [])];
+        const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
+        if (toIndex < 0 || toIndex >= existing.length) return prev;
+        [existing[fromIndex], existing[toIndex]] = [existing[toIndex], existing[fromIndex]];
+        newSlots[slotId] = existing;
+        return { ...prev, slotConfig: { ...prev.slotConfig, slots: newSlots } };
+      });
+      setIsDirty(true);
+    },
+    []
+  );
 
   const updateBlock = useCallback((slotId: LoginSlotId, index: number, block: ContentBlock) => {
-    setDraft(prev => {
+    setDraft((prev) => {
       const newSlots = { ...prev.slotConfig.slots };
       const existing = [...(newSlots[slotId] || [])];
       existing[index] = block;
@@ -446,38 +536,76 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         "dark.color.success": draft.darkSuccessColor,
         // Dark background tokens — fully independent (no inherit from light)
         "dark.bg.image": draft.darkBgImageUrl,
-        "dark.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkBgImageFit] || "cover",
+        "dark.bg.image.fit":
+          (
+            {
+              cover: "cover",
+              contain: "contain",
+              fill: "100% 100%",
+              none: "auto",
+              "scale-down": "contain",
+            } as Record<string, string>
+          )[draft.darkBgImageFit] || "cover",
         "dark.bg.image.position": draft.darkBgImagePosition,
-        "dark.bg.gradient": draft.darkBgType === "gradient"
-          ? `linear-gradient(${draft.darkBgGradientDirection}, ${draft.darkBgGradientFrom}, ${draft.darkBgGradientTo})`
-          : "",
+        "dark.bg.gradient":
+          draft.darkBgType === "gradient"
+            ? `linear-gradient(${draft.darkBgGradientDirection}, ${draft.darkBgGradientFrom}, ${draft.darkBgGradientTo})`
+            : "",
         "dark.overlay.opacity": draft.darkBgOverlayEnabled ? `${draft.darkBgOverlayOpacity}` : "0",
         "dark.overlay.color": draft.darkBgOverlayColor || "rgba(0,0,0,0.5)",
         "dark.overlay.blur": draft.darkBgOverlayEnabled ? `${draft.darkBgBlur}px` : "0px",
         // Panel tokens — LIGHT (for split layouts with independent panel bg)
-        ...(draft.splitBgMode === "independent" ? {
-          "panel.color.background": draft.panelBgColor,
-          "panel.bg.image": draft.panelBgImageUrl,
-          "panel.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.panelBgImageFit] || "cover",
-          "panel.bg.image.position": draft.panelBgImagePosition,
-          "panel.bg.gradient": draft.panelBgType === "gradient"
-            ? `linear-gradient(${draft.panelBgGradientDirection}, ${draft.panelBgGradientFrom}, ${draft.panelBgGradientTo})`
-            : "",
-          "panel.overlay.opacity": draft.panelBgOverlayEnabled ? `${draft.panelBgOverlayOpacity}` : "0",
-          "panel.overlay.color": draft.panelBgOverlayColor || "rgba(0,0,0,0.5)",
-          "panel.overlay.blur": draft.panelBgOverlayEnabled ? `${draft.panelBgBlur}px` : "0px",
-          // Panel tokens — DARK (fully independent, no inherit from light panel)
-          "dark.panel.color.background": draft.darkPanelBgColor,
-          "dark.panel.bg.image": draft.darkPanelBgImageUrl,
-          "dark.panel.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkPanelBgImageFit] || "cover",
-          "dark.panel.bg.image.position": draft.darkPanelBgImagePosition,
-          "dark.panel.bg.gradient": draft.darkPanelBgType === "gradient"
-            ? `linear-gradient(${draft.darkPanelBgGradientDirection}, ${draft.darkPanelBgGradientFrom}, ${draft.darkPanelBgGradientTo})`
-            : "",
-          "dark.panel.overlay.opacity": draft.darkPanelBgOverlayEnabled ? `${draft.darkPanelBgOverlayOpacity}` : "0",
-          "dark.panel.overlay.color": draft.darkPanelBgOverlayColor || "rgba(0,0,0,0.5)",
-          "dark.panel.overlay.blur": draft.darkPanelBgOverlayEnabled ? `${draft.darkPanelBgBlur}px` : "0px",
-        } : {}),
+        ...(draft.splitBgMode === "independent"
+          ? {
+              "panel.color.background": draft.panelBgColor,
+              "panel.bg.image": draft.panelBgImageUrl,
+              "panel.bg.image.fit":
+                (
+                  {
+                    cover: "cover",
+                    contain: "contain",
+                    fill: "100% 100%",
+                    none: "auto",
+                    "scale-down": "contain",
+                  } as Record<string, string>
+                )[draft.panelBgImageFit] || "cover",
+              "panel.bg.image.position": draft.panelBgImagePosition,
+              "panel.bg.gradient":
+                draft.panelBgType === "gradient"
+                  ? `linear-gradient(${draft.panelBgGradientDirection}, ${draft.panelBgGradientFrom}, ${draft.panelBgGradientTo})`
+                  : "",
+              "panel.overlay.opacity": draft.panelBgOverlayEnabled
+                ? `${draft.panelBgOverlayOpacity}`
+                : "0",
+              "panel.overlay.color": draft.panelBgOverlayColor || "rgba(0,0,0,0.5)",
+              "panel.overlay.blur": draft.panelBgOverlayEnabled ? `${draft.panelBgBlur}px` : "0px",
+              // Panel tokens — DARK (fully independent, no inherit from light panel)
+              "dark.panel.color.background": draft.darkPanelBgColor,
+              "dark.panel.bg.image": draft.darkPanelBgImageUrl,
+              "dark.panel.bg.image.fit":
+                (
+                  {
+                    cover: "cover",
+                    contain: "contain",
+                    fill: "100% 100%",
+                    none: "auto",
+                    "scale-down": "contain",
+                  } as Record<string, string>
+                )[draft.darkPanelBgImageFit] || "cover",
+              "dark.panel.bg.image.position": draft.darkPanelBgImagePosition,
+              "dark.panel.bg.gradient":
+                draft.darkPanelBgType === "gradient"
+                  ? `linear-gradient(${draft.darkPanelBgGradientDirection}, ${draft.darkPanelBgGradientFrom}, ${draft.darkPanelBgGradientTo})`
+                  : "",
+              "dark.panel.overlay.opacity": draft.darkPanelBgOverlayEnabled
+                ? `${draft.darkPanelBgOverlayOpacity}`
+                : "0",
+              "dark.panel.overlay.color": draft.darkPanelBgOverlayColor || "rgba(0,0,0,0.5)",
+              "dark.panel.overlay.blur": draft.darkPanelBgOverlayEnabled
+                ? `${draft.darkPanelBgBlur}px`
+                : "0px",
+            }
+          : {}),
         "font.body": draft.fontFamily,
         "font.bodyAr": draft.fontFamilyAr,
         "font.heading": draft.headingFont || draft.fontFamily,
@@ -499,11 +627,21 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         "spacing.inputHeight": `${draft.inputHeight}px`,
         "split.bg.mode": draft.splitBgMode,
         "bg.image": draft.bgImageUrl,
-        "bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.bgImageFit] || "cover",
+        "bg.image.fit":
+          (
+            {
+              cover: "cover",
+              contain: "contain",
+              fill: "100% 100%",
+              none: "auto",
+              "scale-down": "contain",
+            } as Record<string, string>
+          )[draft.bgImageFit] || "cover",
         "bg.image.position": draft.bgImagePosition,
-        "bg.gradient": draft.bgType === "gradient"
-          ? `linear-gradient(${draft.bgGradientDirection}, ${draft.bgGradientFrom}, ${draft.bgGradientTo})`
-          : "",
+        "bg.gradient":
+          draft.bgType === "gradient"
+            ? `linear-gradient(${draft.bgGradientDirection}, ${draft.bgGradientFrom}, ${draft.bgGradientTo})`
+            : "",
         // ── Accessibility tokens ──
         // Focus & Keyboard
         "a11y.focusRing.enabled": `${draft.a11yFocusRingEnabled}`,
@@ -565,10 +703,16 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         const draftDashboardThemeJson = JSON.stringify(draft.dashboardSettings);
         if (targetTenantId) {
           // Drilldown: save draft to specific tenant via repository
-          await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, draftDashboardThemeJson });
+          await repository.updateTenantSettingsById(targetTenantId, {
+            draftBrandingJson: draftJson,
+            draftDashboardThemeJson,
+          });
         } else {
           // My tenant via repository
-          await repository.updateMySettings({ draftBrandingJson: draftJson, draftDashboardThemeJson });
+          await repository.updateMySettings({
+            draftBrandingJson: draftJson,
+            draftDashboardThemeJson,
+          });
         }
         setLastSavedAt(new Date());
       } catch {
@@ -597,7 +741,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         });
       } else {
         // My tenant via repository — save draft dashboard, then publish (backend promotes draft→live)
-        await repository.updateMySettings({ draftBrandingJson: draftJson, draftDashboardThemeJson });
+        await repository.updateMySettings({
+          draftBrandingJson: draftJson,
+          draftDashboardThemeJson,
+        });
         const currentVersion = (branding as any)?.settingsVersion ?? 0;
         await repository.publishBranding(currentVersion);
       }
@@ -613,7 +760,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     onError: (error: Error) => {
       const isConflict = error.message?.includes("409") || error.message?.includes("conflict");
       toastError({
-        title: isConflict ? t("studio.versionConflict") : (t("studio.publishFailed") || "Publish failed"),
+        title: isConflict
+          ? t("studio.versionConflict")
+          : t("studio.publishFailed") || "Publish failed",
         description: error.message,
       });
     },
@@ -625,9 +774,15 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       const draftJson = buildDraftJson();
       const draftDashboardThemeJson = JSON.stringify(draft.dashboardSettings);
       if (targetTenantId) {
-        await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, draftDashboardThemeJson });
+        await repository.updateTenantSettingsById(targetTenantId, {
+          draftBrandingJson: draftJson,
+          draftDashboardThemeJson,
+        });
       } else {
-        await repository.updateMySettings({ draftBrandingJson: draftJson, draftDashboardThemeJson });
+        await repository.updateMySettings({
+          draftBrandingJson: draftJson,
+          draftDashboardThemeJson,
+        });
       }
     },
     onSuccess: () => {
@@ -635,7 +790,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       setLastSavedAt(new Date());
     },
     onError: (error: Error) => {
-      toastError({ title: t("studio.draftSaveFailed") || "Failed to save draft", description: error.message });
+      toastError({
+        title: t("studio.draftSaveFailed") || "Failed to save draft",
+        description: error.message,
+      });
     },
   });
 
@@ -651,7 +809,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         try {
           const restored = buildDraftFromBranding(branding, false); // false = use live only, skip draft
           setDraft(restored);
-        } catch { setDraft(DEFAULT_DRAFT); }
+        } catch {
+          setDraft(DEFAULT_DRAFT);
+        }
       } else {
         setDraft(DEFAULT_DRAFT);
       }
@@ -661,7 +821,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     },
     onError: (error: Error) => {
       setShowDiscardConfirm(false);
-      toastError({ title: t("studio.discardFailed") || "Discard failed", description: error.message });
+      toastError({
+        title: t("studio.discardFailed") || "Discard failed",
+        description: error.message,
+      });
     },
   });
 
@@ -674,136 +837,150 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const savedDraftRef = useRef<StudioDraft | null>(null);
   const [isPreviewingTheme, setIsPreviewingTheme] = useState(false);
 
-  const previewTheme = useCallback((themeDataJson: string) => {
-    // Save current draft so we can restore it
-    if (!savedDraftRef.current) {
-      savedDraftRef.current = draft;
-    }
-    try {
-      const parsed = JSON.parse(themeDataJson);
+  const previewTheme = useCallback(
+    (themeDataJson: string) => {
+      // Save current draft so we can restore it
+      if (!savedDraftRef.current) {
+        savedDraftRef.current = draft;
+      }
+      try {
+        const parsed = JSON.parse(themeDataJson);
 
-      // Support BOTH formats:
-      //   1. Seeder format:  { colors: { primary, background, ... }, typography: { fontFamily }, spacing: { borderRadius } }
-      //   2. Tokens format:  { tokens: { "color.primary", "font.body", "radius.card" } }
-      const tokens = parsed.tokens || {};
-      const colors = parsed.colors || {};
-      const typography = parsed.typography || {};
-      const spacing = parsed.spacing || {};
+        // Support BOTH formats:
+        //   1. Seeder format:  { colors: { primary, background, ... }, typography: { fontFamily }, spacing: { borderRadius } }
+        //   2. Tokens format:  { tokens: { "color.primary", "font.body", "radius.card" } }
+        const tokens = parsed.tokens || {};
+        const colors = parsed.colors || {};
+        const typography = parsed.typography || {};
+        const spacing = parsed.spacing || {};
 
-      // Helper to parse int from token string like "12px" -> 12
-      const tInt = (key: string, fb?: number) => parseInt(tokens[key] || "") || fb || 0;
-      const tFloat = (key: string, fb?: number) => parseFloat(tokens[key] || "") || fb || 0;
+        // Helper to parse int from token string like "12px" -> 12
+        const tInt = (key: string, fb?: number) => parseInt(tokens[key] || "") || fb || 0;
+        const tFloat = (key: string, fb?: number) => parseFloat(tokens[key] || "") || fb || 0;
 
-      const tempDraft: StudioDraft = {
-        ...DEFAULT_DRAFT,
-        layout: parsed.layout || DEFAULT_DRAFT.layout,
-        headline: parsed.headline || "",
-        subtitle: parsed.subtitle || "",
-        companyName: parsed.companyName || draft.companyName,
-        logoUrl: parsed.logoUrl || draft.logoUrl,
-        faviconUrl: parsed.faviconUrl || draft.faviconUrl,
-        copyrightText: parsed.copyrightText || draft.copyrightText,
+        const tempDraft: StudioDraft = {
+          ...DEFAULT_DRAFT,
+          layout: parsed.layout || DEFAULT_DRAFT.layout,
+          headline: parsed.headline || "",
+          subtitle: parsed.subtitle || "",
+          companyName: parsed.companyName || draft.companyName,
+          logoUrl: parsed.logoUrl || draft.logoUrl,
+          faviconUrl: parsed.faviconUrl || draft.faviconUrl,
+          copyrightText: parsed.copyrightText || draft.copyrightText,
 
-        // ── Theme Mode ──
-        themeMode: parsed.themeMode || DEFAULT_DRAFT.themeMode,
+          // ── Theme Mode ──
+          themeMode: parsed.themeMode || DEFAULT_DRAFT.themeMode,
 
-        // ── Light Palette — tokens first, then seeder colors, then defaults ──
-        primaryColor: tokens["color.primary"] || colors.primary || DEFAULT_DRAFT.primaryColor,
-        secondaryColor: tokens["color.secondary"] || colors.secondary || DEFAULT_DRAFT.secondaryColor,
-        bgColor: tokens["color.background"] || colors.background || DEFAULT_DRAFT.bgColor,
-        surfaceColor: tokens["color.surface"] || colors.surface || DEFAULT_DRAFT.surfaceColor,
-        textColor: tokens["color.text"] || colors.text || DEFAULT_DRAFT.textColor,
-        mutedColor: tokens["color.textMuted"] || colors.muted || DEFAULT_DRAFT.mutedColor,
-        borderColor: tokens["color.border"] || colors.border || DEFAULT_DRAFT.borderColor,
-        errorColor: tokens["color.error"] || colors.error || DEFAULT_DRAFT.errorColor,
-        successColor: tokens["color.success"] || colors.success || DEFAULT_DRAFT.successColor,
+          // ── Light Palette — tokens first, then seeder colors, then defaults ──
+          primaryColor: tokens["color.primary"] || colors.primary || DEFAULT_DRAFT.primaryColor,
+          secondaryColor:
+            tokens["color.secondary"] || colors.secondary || DEFAULT_DRAFT.secondaryColor,
+          bgColor: tokens["color.background"] || colors.background || DEFAULT_DRAFT.bgColor,
+          surfaceColor: tokens["color.surface"] || colors.surface || DEFAULT_DRAFT.surfaceColor,
+          textColor: tokens["color.text"] || colors.text || DEFAULT_DRAFT.textColor,
+          mutedColor: tokens["color.textMuted"] || colors.muted || DEFAULT_DRAFT.mutedColor,
+          borderColor: tokens["color.border"] || colors.border || DEFAULT_DRAFT.borderColor,
+          errorColor: tokens["color.error"] || colors.error || DEFAULT_DRAFT.errorColor,
+          successColor: tokens["color.success"] || colors.success || DEFAULT_DRAFT.successColor,
 
-        // ── Dark Palette ──
-        darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
-        darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
-        darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
-        darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
-        darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
-        darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
-        darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
-        darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
-        darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
+          // ── Dark Palette ──
+          darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
+          darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
+          darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
+          darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
+          darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
+          darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
+          darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
+          darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
+          darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
 
-        // ── Typography — tokens first, then seeder typography object ──
-        fontFamily: tokens["font.body"] || typography.fontFamily || DEFAULT_DRAFT.fontFamily,
-        fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
-        headingFont: tokens["font.heading"] || typography.headingFont || "",
-        headingSize: tInt("font.size.headline", typography.headingSize || DEFAULT_DRAFT.headingSize),
-        bodySize: tInt("font.size.subtitle", typography.bodySize || DEFAULT_DRAFT.bodySize),
-        headingWeight: tInt("font.weight.heading", DEFAULT_DRAFT.headingWeight),
-        bodyWeight: tInt("font.weight.body", DEFAULT_DRAFT.bodyWeight),
-        lineHeight: tFloat("font.lineHeight", DEFAULT_DRAFT.lineHeight),
-        letterSpacing: tFloat("font.letterSpacing", DEFAULT_DRAFT.letterSpacing),
+          // ── Typography — tokens first, then seeder typography object ──
+          fontFamily: tokens["font.body"] || typography.fontFamily || DEFAULT_DRAFT.fontFamily,
+          fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
+          headingFont: tokens["font.heading"] || typography.headingFont || "",
+          headingSize: tInt(
+            "font.size.headline",
+            typography.headingSize || DEFAULT_DRAFT.headingSize
+          ),
+          bodySize: tInt("font.size.subtitle", typography.bodySize || DEFAULT_DRAFT.bodySize),
+          headingWeight: tInt("font.weight.heading", DEFAULT_DRAFT.headingWeight),
+          bodyWeight: tInt("font.weight.body", DEFAULT_DRAFT.bodyWeight),
+          lineHeight: tFloat("font.lineHeight", DEFAULT_DRAFT.lineHeight),
+          letterSpacing: tFloat("font.letterSpacing", DEFAULT_DRAFT.letterSpacing),
 
-        // ── Spacing — tokens first, then seeder spacing object ──
-        borderRadius: tInt("radius.card", spacing.borderRadius || DEFAULT_DRAFT.borderRadius),
-        btnRadius: tInt("radius.button", spacing.btnRadius || DEFAULT_DRAFT.btnRadius),
-        formWidth: tInt("spacing.formWidth", spacing.formWidth || DEFAULT_DRAFT.formWidth),
-        cardPadding: tInt("spacing.cardPadding", spacing.cardPadding || DEFAULT_DRAFT.cardPadding),
-        elementGap: tInt("spacing.elementGap", DEFAULT_DRAFT.elementGap),
-        inputHeight: tInt("spacing.inputHeight", DEFAULT_DRAFT.inputHeight),
-        btnSize: parsed.btnSize || DEFAULT_DRAFT.btnSize,
+          // ── Spacing — tokens first, then seeder spacing object ──
+          borderRadius: tInt("radius.card", spacing.borderRadius || DEFAULT_DRAFT.borderRadius),
+          btnRadius: tInt("radius.button", spacing.btnRadius || DEFAULT_DRAFT.btnRadius),
+          formWidth: tInt("spacing.formWidth", spacing.formWidth || DEFAULT_DRAFT.formWidth),
+          cardPadding: tInt(
+            "spacing.cardPadding",
+            spacing.cardPadding || DEFAULT_DRAFT.cardPadding
+          ),
+          elementGap: tInt("spacing.elementGap", DEFAULT_DRAFT.elementGap),
+          inputHeight: tInt("spacing.inputHeight", DEFAULT_DRAFT.inputHeight),
+          btnSize: parsed.btnSize || DEFAULT_DRAFT.btnSize,
 
-        // ── Background ──
-        bgType: parsed.bgType || DEFAULT_DRAFT.bgType,
-        bgGradientDirection: parsed.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
-        bgGradientFrom: parsed.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
-        bgGradientTo: parsed.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
-        bgImageUrl: tokens["bg.image"] || "",
-        bgOverlayEnabled: parsed.bgOverlayEnabled ?? DEFAULT_DRAFT.bgOverlayEnabled,
-        bgOverlayColor: parsed.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
-        bgOverlayOpacity: tFloat("overlay.opacity", DEFAULT_DRAFT.bgOverlayOpacity),
-        bgBlur: typeof parsed.bgBlur === "number" ? parsed.bgBlur : DEFAULT_DRAFT.bgBlur,
+          // ── Background ──
+          bgType: parsed.bgType || DEFAULT_DRAFT.bgType,
+          bgGradientDirection: parsed.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
+          bgGradientFrom: parsed.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
+          bgGradientTo: parsed.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
+          bgImageUrl: tokens["bg.image"] || "",
+          bgOverlayEnabled: parsed.bgOverlayEnabled ?? DEFAULT_DRAFT.bgOverlayEnabled,
+          bgOverlayColor: parsed.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
+          bgOverlayOpacity: tFloat("overlay.opacity", DEFAULT_DRAFT.bgOverlayOpacity),
+          bgBlur: typeof parsed.bgBlur === "number" ? parsed.bgBlur : DEFAULT_DRAFT.bgBlur,
 
-        // ── Dark Background ──
-        darkBgType: parsed.darkBgType || DEFAULT_DRAFT.darkBgType,
-        darkBgGradientDirection: parsed.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
-        darkBgGradientFrom: parsed.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
-        darkBgGradientTo: parsed.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
-        darkBgImageUrl: tokens["dark.bg.image"] || "",
-        darkBgOverlayEnabled: parsed.darkBgOverlayEnabled ?? DEFAULT_DRAFT.darkBgOverlayEnabled,
-        darkBgOverlayColor: parsed.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
-        darkBgOverlayOpacity: tFloat("dark.overlay.opacity", DEFAULT_DRAFT.darkBgOverlayOpacity),
-        darkBgBlur: typeof parsed.darkBgBlur === "number" ? parsed.darkBgBlur : DEFAULT_DRAFT.darkBgBlur,
+          // ── Dark Background ──
+          darkBgType: parsed.darkBgType || DEFAULT_DRAFT.darkBgType,
+          darkBgGradientDirection:
+            parsed.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
+          darkBgGradientFrom: parsed.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
+          darkBgGradientTo: parsed.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
+          darkBgImageUrl: tokens["dark.bg.image"] || "",
+          darkBgOverlayEnabled: parsed.darkBgOverlayEnabled ?? DEFAULT_DRAFT.darkBgOverlayEnabled,
+          darkBgOverlayColor: parsed.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
+          darkBgOverlayOpacity: tFloat("dark.overlay.opacity", DEFAULT_DRAFT.darkBgOverlayOpacity),
+          darkBgBlur:
+            typeof parsed.darkBgBlur === "number" ? parsed.darkBgBlur : DEFAULT_DRAFT.darkBgBlur,
 
-        // ── Custom CSS ──
-        customCss: parsed.customCss || "",
+          // ── Custom CSS ──
+          customCss: parsed.customCss || "",
 
-        // ── Keep current slots, safe mode & builder state ──
-        slotConfig: draft.slotConfig,
-        safeMode: draft.safeMode,
-        canvasMode: draft.canvasMode,
-        canvasComponents: draft.canvasComponents,
-        canvasGridRows: draft.canvasGridRows,
-        canvasBackground: draft.canvasBackground,
-        dashboardSettings: draft.dashboardSettings,
+          // ── Keep current slots, safe mode & builder state ──
+          slotConfig: draft.slotConfig,
+          safeMode: draft.safeMode,
+          canvasMode: draft.canvasMode,
+          canvasComponents: draft.canvasComponents,
+          canvasGridRows: draft.canvasGridRows,
+          canvasBackground: draft.canvasBackground,
+          dashboardSettings: draft.dashboardSettings,
 
-        // ── Import per-page overrides from theme (if present) ──
-        pageOverrides: (() => {
-          const themePages = parsed.pages as Record<string, any> | undefined;
-          if (!themePages) return draft.pageOverrides;
-          const merged = { ...draft.pageOverrides };
-          for (const [pageId, pageData] of Object.entries(themePages)) {
-            const typedPageId = pageId as keyof typeof merged;
-            merged[typedPageId] = {
-              ...(merged[typedPageId] || { inheritBackground: true }),
-              layout: pageData.layout || merged[typedPageId]?.layout || 'centered',
-              headline: pageData.headline || merged[typedPageId]?.headline || '',
-              subtitle: pageData.subtitle || merged[typedPageId]?.subtitle || '',
-            };
-          }
-          return merged;
-        })(),
-      };
-      setDraft(tempDraft);
-      setIsPreviewingTheme(true);
-    } catch { /* invalid JSON */ }
-  }, [draft]);
+          // ── Import per-page overrides from theme (if present) ──
+          pageOverrides: (() => {
+            const themePages = parsed.pages as Record<string, any> | undefined;
+            if (!themePages) return draft.pageOverrides;
+            const merged = { ...draft.pageOverrides };
+            for (const [pageId, pageData] of Object.entries(themePages)) {
+              const typedPageId = pageId as keyof typeof merged;
+              merged[typedPageId] = {
+                ...(merged[typedPageId] || { inheritBackground: true }),
+                layout: pageData.layout || merged[typedPageId]?.layout || "centered",
+                headline: pageData.headline || merged[typedPageId]?.headline || "",
+                subtitle: pageData.subtitle || merged[typedPageId]?.subtitle || "",
+              };
+            }
+            return merged;
+          })(),
+        };
+        setDraft(tempDraft);
+        setIsPreviewingTheme(true);
+      } catch {
+        /* invalid JSON */
+      }
+    },
+    [draft]
+  );
 
   const exitThemePreview = useCallback(() => {
     if (savedDraftRef.current) {
@@ -879,7 +1056,8 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     exitThemePreview,
     isPreviewingTheme,
     // Reset Branding
-    resetBranding: (type: "Published" | "GlobalDefault" | "FactoryDefault") => resetMutation.mutate(type),
+    resetBranding: (type: "Published" | "GlobalDefault" | "FactoryDefault") =>
+      resetMutation.mutate(type),
     isResetting: resetMutation.isPending,
     // Refresh
     refreshDraft,

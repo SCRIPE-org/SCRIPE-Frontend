@@ -1,6 +1,5 @@
 export const en = {
   entitlements: {
-
     overrides: {
       title: "Feature Overrides",
       description: "Per-tenant feature value overrides for custom deals.",
@@ -96,7 +95,8 @@ export const en = {
       durationDays: "Duration (Days)",
       firstTimeOnly: "First-Time Only",
       autoApplied: "Auto-Applied",
-      autoAppliedDesc: "This promotion is automatically applied when a new subscription is created.",
+      autoAppliedDesc:
+        "This promotion is automatically applied when a new subscription is created.",
       validFrom: "Valid From",
       validUntil: "Valid Until",
       maxRedemptions: "Max Redemptions",
@@ -113,8 +113,16 @@ export const en = {
       custom: "Custom...",
       customDays: "Enter days...",
       noPromotion: "No Promotion",
+      noPromotionsAvailable: "No Promotions Available",
+      selectPromotion: "Select Promotion",
+      enterCode: "Enter Code",
+      createSuccess: "Create Success",
+      createFailed: "Create Failed",
+      updateSuccess: "Update Success",
+      updateFailed: "Update Failed",
+      deleteSuccess: "Delete Success",
+      deleteFailed: "Delete Failed",
     },
-    // ── Subscription Status Labels (E-06) ──
     subscription: {
       status: {
         Active: "Active",
@@ -127,13 +135,15 @@ export const en = {
       },
       paymentWall: {
         title: "Payment Required",
-        description: "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account.",
+        description:
+          "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account.",
         yourPlan: "your plan",
         contactAdmin: "Contact your system administrator to generate a payment link.",
       },
     },
     gracePeriod: {
-      daysRemaining: "Your grace period ends in {days} day(s). Please resolve your payment to avoid service interruption.",
+      daysRemaining:
+        "Your grace period ends in {days} day(s). Please resolve your payment to avoid service interruption.",
       active: "Your subscription is in a grace period. Please resolve payment.",
       resolve: "Resolve",
     },
@@ -185,8 +195,10 @@ export const en = {
         Edition: "Edition Level",
         Tenant: "Tenant Level",
       },
-      commissionRateDesc: "Set a custom commission rate for this tenant. This overrides the edition and platform defaults.",
-      commissionRateCleared: "Rate override removed. The tenant will now use the edition or platform default.",
+      commissionRateDesc:
+        "Set a custom commission rate for this tenant. This overrides the edition and platform defaults.",
+      commissionRateCleared:
+        "Rate override removed. The tenant will now use the edition or platform default.",
       created: "Account Created",
       createdDesc: "Stripe Connect account created successfully.",
       createFailed: "Failed to create Connect account.",
@@ -208,6 +220,7 @@ export const en = {
       accountStatus: "Account Status",
       actionRequired: "Action Required",
       actionRequiredDesc: "Stripe requires additional information to verify your account.",
+      alreadyOnboarded: "Already Onboarded",
     },
     commissionLedger: {
       title: "Commission Ledger",
@@ -278,11 +291,13 @@ export const en = {
       toggleSuccess: "Status Updated",
       toggleFailed: "Status Update Failed",
       configRequired: "Configuration Required",
-      removeDesc: "This will permanently delete the gateway credentials. Any active integrations using this gateway will stop working.",
+      removeDesc:
+        "This will permanently delete the gateway credentials. Any active integrations using this gateway will stop working.",
       removeTooltip: "Remove this gateway",
       configureTitle: "Configure {gateway}",
       editTitle: "Update {gateway}",
-      configureDesc: "Enter your API credentials. All secrets are encrypted at rest and never exposed.",
+      configureDesc:
+        "Enter your API credentials. All secrets are encrypted at rest and never exposed.",
       displayLabel: "Display Label",
       testMode: "Test Mode",
       testModeDesc: "Use sandbox/test credentials. No real charges will be processed.",
@@ -293,14 +308,102 @@ export const en = {
         step1Desc: "Step 1: Getting your API Keys",
         step2Desc: "Step 2: Enter your credentials",
         step3Desc: "Step 3: Verification & Save",
-        intro: "To connect your {gateway} account, you need to obtain your API keys from their developer dashboard.",
+        intro:
+          "To connect your {gateway} account, you need to obtain your API keys from their developer dashboard.",
         step1: "Log in to your {gateway} account.",
         step2: "Navigate to the Developer / API sections.",
         step3: "Create a new API Key / Application.",
         step4: "Copy the Client ID (API Key) and Secret.",
         readyTitle: "Ready to Connect",
-        readyDesc: "Click save below to verify your credentials with {gateway} and establish the connection.",
+        readyDesc:
+          "Click save below to verify your credentials with {gateway} and establish the connection.",
       },
     },
+    analytics: {
+      export: {
+        success: "Success",
+        successDesc: "Success Desc",
+        error: "Error",
+        errorDesc: "Error Desc",
+      },
+      reports: {
+        saveSuccess: "Save Success",
+        saveSuccessDesc: "Save Success Desc",
+        saveError: "Save Error",
+        saveErrorDesc: "Save Error Desc",
+        generateSuccess: "Generate Success",
+        generateSuccessDesc: "Generate Success Desc",
+        generateError: "Generate Error",
+        generateErrorDesc: "Generate Error Desc",
+      },
+    },
+    pricing: {
+      perMonth: "Per Month",
+    },
+    tenantPlans: {
+      editSettings: "Edit Settings",
+      stepBasics: "Step Basics",
+      stepBilling: "Step Billing",
+      editing: "Editing",
+      createPlan: "Create Plan",
+      createPlanDesc: "Create Plan Desc",
+    },
+    mySubscription: {
+      gatewayIntegration: "Gateway Integration",
+      gatewayDesc: "Gateway Desc",
+      gatewaySubId: "Gateway Sub Id",
+      gatewayCustomerId: "Gateway Customer Id",
+    },
+  },
+  common: {
+    failed: "Failed",
+    noResultsForSearch: "No Results For Search",
+    type: "Type",
+    new: "New",
+    updateFailed: "Update Failed",
+    updated: "Updated",
+    deleted: "Deleted",
+    review: "Review",
+  },
+  billing: {
+    gateways: {
+      configRequired: "Config Required",
+      stripe: "Stripe",
+      paypal: "Paypal",
+      paymob: "Paymob",
+    },
+    choosePaymentMethod: "Choose Payment Method",
+    choosePaymentMethodDesc: "Choose Payment Method Desc",
+  },
+  paymentHub: {
+    gatewayConfig: "Gateway Config",
+    stripeConnect: "Stripe Connect",
+    myCredentials: "My Credentials",
+    billing: "Billing",
+    title: "Title",
+  },
+  commission: {
+    title: "Title",
+    invoices: "Invoices",
+  },
+  entSubscriptions: {
+    customRefundAmount: "Custom Refund Amount",
+    customAmountPlaceholder: "Custom Amount Placeholder",
+    customAmountHint: "Custom Amount Hint",
+  },
+  dashboard: {
+    kpi: {
+      arpu: "Arpu",
+      arpuDesc: "Arpu Desc",
+      churnRate: "Churn Rate",
+      churnRateDesc: "Churn Rate Desc",
+      renewals: "Renewals",
+      renewalsDesc: "Renewals Desc",
+      promoDiscount: "Promo Discount",
+      promoDiscountDesc: "Promo Discount Desc",
+    },
+  },
+  validation: {
+    required: "Required",
   },
 };

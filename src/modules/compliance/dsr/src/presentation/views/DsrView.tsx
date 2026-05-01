@@ -2,80 +2,82 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Users, ChevronLeft, RefreshCw, AlertTriangle, CheckCircle2,
-} from "lucide-react";
+import { Users, RefreshCw, AlertTriangle, CheckCircle2, ChevronLeft } from "lucide-react";
 import { useDsrViewModel } from "../viewmodels/useDsrViewModel";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Skeleton } from "@core/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 
-// ── SLA Bar ───────────────────────────────────────────────────────────────────
+// ── SLA Progress Bar ──────────────────────────────────────────────────────────
+
+const SLA_COLORS: Record<string, string> = {
+  green: "bg-emerald-500",
+  yellow: "bg-yellow-500",
+  orange: "bg-orange-500",
+  red: "bg-red-500",
+};
 
 function SlaBar({ percent, color }: { percent: number; color: string }) {
-  const colorClass = {
-    green: "bg-emerald-500",
-    yellow: "bg-amber-500",
-    orange: "bg-orange-500",
-    red: "bg-red-500",
-  }[color] ?? "bg-slate-500";
-
   return (
-    <div className="flex items-center gap-2 w-full">
-      <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${colorClass}`} style={{ width: `${percent}%` }} />
+    <div className="flex min-w-[80px] items-center gap-2">
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+        <div
+          className={`h-full rounded-full ${SLA_COLORS[color] ?? "bg-muted-foreground"}`}
+          style={{ width: `${Math.min(percent, 100)}%` }}
+        />
       </div>
-      <span className={`text-xs font-medium ${colorClass.replace("bg-", "text-")}`}>{percent}%</span>
+      <span className="w-8 text-right text-xs text-muted-foreground">{percent}%</span>
     </div>
   );
 }
 
-// ── DSR Row ───────────────────────────────────────────────────────────────────
+// ── Status → Badge variant ────────────────────────────────────────────────────
 
-const statusColors: Record<string, string> = {
-  Pending: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  InReview: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  Approved: "bg-violet-500/20 text-violet-300 border-violet-500/30",
-  Processing: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
-  Completed: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  Rejected: "bg-red-500/20 text-red-300 border-red-500/30",
-  Cancelled: "bg-slate-500/20 text-slate-400 border-slate-500/30",
-  PartiallyCompleted: "bg-teal-500/20 text-teal-300 border-teal-500/30",
+const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
+  Completed: "default",
+  Approved: "default",
+  InReview: "secondary",
+  Processing: "secondary",
+  Pending: "outline",
+  PartiallyCompleted: "outline",
+  Rejected: "destructive",
+  Cancelled: "destructive",
 };
 
-function DsrRow({ dsr }: { dsr: DataSubjectRequest }) {
-  const { t } = useI18n();
-  const color = dsr.slaColor;
+// ── Filter Toggle ─────────────────────────────────────────────────────────────
 
+function FilterToggle({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
-    <div className="grid grid-cols-[2fr_1fr_1fr_auto_auto] items-center gap-4 px-6 py-4 hover:bg-white/[0.03] transition-colors border-b border-white/[0.04] last:border-0">
-      <div className="min-w-0">
-        <p className="text-sm text-white truncate">{dsr.subjectEmail}</p>
-        <p className="text-xs text-slate-500 mt-0.5">{dsr.regulationCode} · {dsr.requestType}</p>
-      </div>
-      <div>
-        <Badge className={`text-xs border ${statusColors[dsr.status] ?? "bg-slate-500/20 text-slate-400 border-slate-500/30"}`}>
-          {dsr.status}
-        </Badge>
-      </div>
-      <SlaBar percent={dsr.slaPercent} color={color} />
-      <div className="text-xs text-slate-400 whitespace-nowrap">
-        {dsr.daysRemaining > 0
-          ? `${dsr.daysRemaining}d ${t("compliance.remaining")}`
-          : dsr.isCompleted ? t("compliance.completed") : t("compliance.overdue")}
-      </div>
-      <div>
-        {dsr.isOverdue && <AlertTriangle className="w-4 h-4 text-red-400" />}
-        {dsr.isCompleted && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-      </div>
-    </div>
+    <button
+      onClick={onClick}
+      className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
+        active
+          ? "border-primary bg-primary/10 font-medium text-primary"
+          : "border-border bg-background text-muted-foreground hover:border-border/80 hover:text-foreground"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
 export function DsrView() {
+  useModuleLocales(() => import("../../../locales"), "compliance-dsr");
   const { t } = useI18n();
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState("");
@@ -88,104 +90,144 @@ export function DsrView() {
     requestType: typeFilter || undefined,
   });
 
-  const statuses = ["", "Pending", "InReview", "Approved", "Processing", "Completed", "Rejected", "Cancelled"];
+  const statuses = [
+    "",
+    "Pending",
+    "InReview",
+    "Approved",
+    "Processing",
+    "Completed",
+    "Rejected",
+    "Cancelled",
+  ];
   const types = ["", "Export", "Erasure", "Rectification", "Restriction"];
-
-  const overdue = dsrs.filter(d => d.isOverdue).length;
-  const completed = dsrs.filter(d => d.isCompleted).length;
+  const overdue = dsrs.filter((d) => d.isOverdue).length;
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] text-white">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-white/[0.08] px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push("/compliance")}
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/[0.06] transition-colors"
-              aria-label={t("common.back") ?? "Back"}
-            >
-              <ChevronLeft className="w-4 h-4 text-slate-400" />
-            </button>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/30 to-indigo-600/30 border border-blue-500/30 flex items-center justify-center">
-              <Users className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">{t("compliance.dsrTitle")}</h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {totalCount} {t("compliance.total") ?? "total"} · {overdue} {t("compliance.overdue")} · {completed} {t("compliance.completed")}
-              </p>
-            </div>
-          </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Button
-            id="compliance-dsr-refresh"
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="border-white/[0.08] text-slate-400 hover:text-white"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => router.push("/compliance")}
           >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
+          <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-2.5">
+            <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">{t("compliance.dsrTitle")}</h2>
+            <p className="text-sm text-muted-foreground">
+              {totalCount} {t("compliance.total")} · {overdue} {t("compliance.overdue")}
+            </p>
+          </div>
         </div>
+        <Button id="compliance-dsr-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+          <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+          {t("common.refresh")}
+        </Button>
       </div>
 
-      <div className="px-8 py-6 max-w-[1600px] mx-auto space-y-5">
-
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3">
-          <div className="flex flex-wrap gap-1.5">
-            {statuses.map(s => (
-              <button
-                key={s || "all"}
+      {/* Filters */}
+      <Card>
+        <CardContent className="space-y-3 pt-4">
+          <div className="flex flex-wrap gap-2">
+            {statuses.map((s) => (
+              <FilterToggle
+                key={s || "all-status"}
+                label={s || t("common.all") || "All"}
+                active={statusFilter === s}
                 onClick={() => setStatusFilter(s)}
-                className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${statusFilter === s ? "border-blue-500/50 bg-blue-500/20 text-blue-300" : "border-white/[0.08] bg-white/[0.03] text-slate-400 hover:text-white"}`}
-              >
-                {s || t("common.all") || "All"}
-              </button>
+              />
             ))}
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {types.map(type => (
-              <button
+          <div className="flex flex-wrap gap-2">
+            {types.map((type) => (
+              <FilterToggle
                 key={type || "all-types"}
+                label={type || t("compliance.allTypes") || "All Types"}
+                active={typeFilter === type}
                 onClick={() => setTypeFilter(type)}
-                className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${typeFilter === type ? "border-violet-500/50 bg-violet-500/20 text-violet-300" : "border-white/[0.08] bg-white/[0.03] text-slate-400 hover:text-white"}`}
-              >
-                {type || t("compliance.allTypes") || "All Types"}
-              </button>
+              />
             ))}
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Table */}
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
-          <div className="grid grid-cols-[2fr_1fr_1fr_auto_auto] gap-4 px-6 py-3 border-b border-white/[0.08] bg-white/[0.02]">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">{t("compliance.subject")}</span>
-            <span className="text-xs text-slate-500 uppercase tracking-wider">{t("compliance.status")}</span>
-            <span className="text-xs text-slate-500 uppercase tracking-wider">{t("compliance.sla")}</span>
-            <span className="text-xs text-slate-500 uppercase tracking-wider">{t("compliance.deadline")}</span>
-            <span className="text-xs text-slate-500 uppercase tracking-wider"></span>
-          </div>
-
+      {/* Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t("compliance.dsrTitle")}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
-                <p className="text-sm text-slate-500">{t("common.loading")}</p>
-              </div>
+            <div className="space-y-3 p-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 rounded-lg" />
+              ))}
             </div>
           ) : dsrs.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-slate-500">
-              <div className="text-center">
-                <Users className="w-12 h-12 mx-auto mb-3 text-slate-700" />
-                <p className="text-sm font-medium text-slate-400">{t("compliance.noDsrs")}</p>
-              </div>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <Users className="mb-4 h-12 w-12 text-muted-foreground" />
+              <p className="text-muted-foreground">{t("compliance.noDsrs")}</p>
             </div>
           ) : (
-            dsrs.map(dsr => <DsrRow key={dsr.id} dsr={dsr} />)
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("compliance.subject")}</TableHead>
+                  <TableHead>{t("compliance.requestType")}</TableHead>
+                  <TableHead>{t("compliance.status")}</TableHead>
+                  <TableHead>{t("compliance.sla")}</TableHead>
+                  <TableHead>{t("compliance.deadline")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {dsrs.map((dsr: DataSubjectRequest) => (
+                  <TableRow key={dsr.id}>
+                    <TableCell>
+                      <div>
+                        <p className="text-sm font-medium">{dsr.subjectEmail}</p>
+                        <p className="text-xs text-muted-foreground">{dsr.regulationCode}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{dsr.requestType}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={STATUS_VARIANT[dsr.status] ?? "outline"}>{dsr.status}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <SlaBar percent={dsr.slaPercent} color={dsr.slaColor} />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5">
+                        {dsr.isOverdue && (
+                          <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+                        )}
+                        {dsr.isCompleted && (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {dsr.daysRemaining > 0
+                            ? `${dsr.daysRemaining}d ${t("compliance.remaining")}`
+                            : dsr.isCompleted
+                              ? t("compliance.completed")
+                              : t("compliance.overdue")}
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

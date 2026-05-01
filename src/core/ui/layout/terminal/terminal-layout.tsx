@@ -76,7 +76,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
         <div className="flex flex-1 items-center justify-center gap-2">
           <TerminalIcon className="h-3 w-3 text-[#8b949e]" />
           <span className="text-xs text-[#8b949e]">
-            {appName}  {t("layout.terminal") || "terminal"}
+            {appName} {t("layout.terminal") || "terminal"}
           </span>
         </div>
         <div className="flex items-center gap-1">

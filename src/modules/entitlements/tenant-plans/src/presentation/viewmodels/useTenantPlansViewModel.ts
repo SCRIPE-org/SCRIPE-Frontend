@@ -7,7 +7,10 @@
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
-import type { CreateTenantPlanRequest, UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
+import type {
+  CreateTenantPlanRequest,
+  UpdateTenantPlanRequest,
+} from "../../domain/entities/TenantPlanRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

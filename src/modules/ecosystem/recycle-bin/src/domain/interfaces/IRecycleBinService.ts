@@ -38,5 +38,7 @@ export interface IRecycleBinService {
   /**
    * Bulk restore multiple deleted items
    */
-  bulkRestore(items: { entityType: string; id: string; restoreAdmins?: boolean }[]): Promise<number>;
+  bulkRestore(
+    items: { entityType: string; id: string; restoreAdmins?: boolean }[]
+  ): Promise<number>;
 }

@@ -1,181 +1,1 @@
-"use client";
-
-import type React from "react";
-import { useState } from "react";
-import { Menu, X, PanelRightClose, PanelRightOpen } from "lucide-react";
-import { Button } from "@core/ui/button";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useSettings } from "@core/providers/settings-provider";
-import { cn } from "@core/common/utils";
-import { Logo } from "@core/ui/logo";
-import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
-import { LanguageSwitcher, ThemeSwitcher } from "../common";
-import { NavRenderer } from "../shared/nav-renderer";
-import { UserCard } from "../shared/user-card";
-import { LogoutButton } from "../shared/logout-button";
-import { Footer } from "../shared/footer";
-import { NotificationBell } from "@core/ui/notification";
-import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
-
-interface DualLayoutProps {
-  children: React.ReactNode;
-  sidebarOpen: boolean;
-  onSidebarOpenChange: (open: boolean) => void;
-}
-
-/**
- * Dual Layout  Inspired by Slack / Outlook / Teams.
- *
- * Structure:
- * 
- *  HEADER (56px)  logo, search, profile        
- * 
- *  LEFT NAV               DETAIL PANEL        
- *  (240px)   MAIN CONTENT (320px, toggleable) 
- *                                             
- *                                             
- * 
- *  FOOTER (if enabled)                          
- * 
- */
-export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualLayoutProps) {
-  const { t, direction } = useI18n();
-  const appName = useBrandedAppName();
-  const { showFooter, showDetailPanel } = useSettings();
-  const [detailOpen, setDetailOpen] = useState(showDetailPanel);
-
-  return (
-    <div className={cn("min-h-screen bg-background", direction === "rtl" ? "rtl" : "ltr")}>
-      {/*  HEADER  */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-card px-4 backdrop-blur-sm lg:px-6">
-        <div className="flex shrink-0 items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => onSidebarOpenChange(!sidebarOpen)}
-          >
-            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Logo size="sm" className="text-primary-foreground" />
-          </div>
-          <h1 className="hidden text-base font-semibold text-foreground sm:block">
-            {appName}
-          </h1>
-        </div>
-
-        <div className="flex-1" />
-
-        <div className="flex items-center gap-2">
-          {/* Detail panel toggle (desktop) */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden lg:flex"
-            onClick={() => setDetailOpen(!detailOpen)}
-            title={detailOpen ? "Close detail panel" : "Open detail panel"}
-          >
-            {detailOpen ? (
-              <PanelRightClose className="h-5 w-5" />
-            ) : (
-              <PanelRightOpen className="h-5 w-5" />
-            )}
-          </Button>
-          <ThemeSwitcher
-            buttonClassName="hover:bg-accent"
-            contentClassName="bg-popover border-border"
-          />
-          <LanguageSwitcher
-            buttonClassName="hover:bg-accent"
-            contentClassName="bg-popover border-border"
-          />
-          <NotificationBell iconClassName="h-5 w-5" />
-          <UserProfileDropdown variant="navigation" showName={false} />
-        </div>
-      </header>
-
-      {/*  LEFT SIDEBAR (desktop)  */}
-      <aside
-        className={cn(
-          "fixed bottom-0 top-14 z-20 hidden w-72 flex-col overflow-y-auto border-e border-sidebar-border bg-sidebar lg:flex",
-          direction === "rtl" ? "right-0" : "left-0"
-        )}
-      >
-        <div className="border-b border-sidebar-border p-4">
-          <UserCard size="sm" />
-        </div>
-        <div className="flex-1 overflow-y-auto p-3">
-          <NavRenderer variant="default" onNavigate={() => { }} />
-        </div>
-        <div className="border-t border-sidebar-border p-3">
-          <LogoutButton />
-        </div>
-      </aside>
-
-      {/*  MOBILE SIDEBAR OVERLAY  */}
-      {sidebarOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-            onClick={() => onSidebarOpenChange(false)}
-          />
-          <aside
-            className={cn(
-              "fixed bottom-0 top-0 z-50 flex w-72 flex-col overflow-y-auto bg-card shadow-2xl lg:hidden",
-              direction === "rtl" ? "right-0" : "left-0"
-            )}
-          >
-            <div className="flex items-center justify-between border-b border-border p-4">
-              <h2 className="font-semibold">{appName}</h2>
-              <Button variant="ghost" size="icon" onClick={() => onSidebarOpenChange(false)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-3">
-              <NavRenderer variant="compact" onNavigate={() => onSidebarOpenChange(false)} />
-            </div>
-            <div className="border-t border-border p-3">
-              <LogoutButton />
-            </div>
-          </aside>
-        </>
-      )}
-
-      {/*  DETAIL PANEL (desktop)  */}
-      <aside
-        className={cn(
-          "fixed bottom-0 top-14 z-20 hidden w-80 overflow-y-auto border-s border-border bg-card transition-transform duration-300 lg:block",
-          direction === "rtl" ? "left-0" : "right-0",
-          detailOpen
-            ? "translate-x-0"
-            : direction === "rtl"
-              ? "-translate-x-full"
-              : "translate-x-full"
-        )}
-      >
-        <div className="border-b border-border p-4">
-          <h3 className="text-sm font-semibold text-foreground">
-            {t("layout.detail_panel") || "Details"}
-          </h3>
-        </div>
-        <div className="p-4 text-sm text-muted-foreground">
-          {t("layout.detail_placeholder") || "Select an item to see details here."}
-        </div>
-      </aside>
-
-      {/*  MAIN CONTENT  */}
-      <main
-        className={cn(
-          "pt-14 transition-all duration-300",
-          direction === "rtl" ? "lg:pr-72" : "lg:pl-72",
-          detailOpen && (direction === "rtl" ? "lg:pl-80" : "lg:pr-80")
-        )}
-      >
-        <div className="animate-fade-in p-6">{children}</div>
-      </main>
-
-      {showFooter && <Footer />}
-    </div>
-  );
-}
+"use client";import type React from "react";import { useState } from "react";import { Menu, X, PanelRightClose, PanelRightOpen } from "lucide-react";import { Button } from "@core/ui/button";import { useI18n } from "@core/providers/i18n-provider";import { useSettings } from "@core/providers/settings-provider";import { cn } from "@core/common/utils";import { Logo } from "@core/ui/logo";import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";import { LanguageSwitcher, ThemeSwitcher } from "../common";import { NavRenderer } from "../shared/nav-renderer";import { UserCard } from "../shared/user-card";import { LogoutButton } from "../shared/logout-button";import { Footer } from "../shared/footer";import { NotificationBell } from "@core/ui/notification";import { useBrandedAppName } from "@core/hooks/use-branded-app-name";interface DualLayoutProps {  children: React.ReactNode;  sidebarOpen: boolean;  onSidebarOpenChange: (open: boolean) => void;}/** * Dual Layout  Inspired by Slack / Outlook / Teams. * * Structure: *  *  HEADER (56px)  logo, search, profile         *  *  LEFT NAV               DETAIL PANEL         *  (240px)   MAIN CONTENT (320px, toggleable)  *                                              *                                              *  *  FOOTER (if enabled)                           *  */export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualLayoutProps) {  const { t, direction } = useI18n();  const appName = useBrandedAppName();  const { showFooter, showDetailPanel } = useSettings();  const [detailOpen, setDetailOpen] = useState(showDetailPanel);  return (    <div className={cn("min-h-screen bg-background", direction === "rtl" ? "rtl" : "ltr")}>      {/*  HEADER  */}      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-card px-4 backdrop-blur-sm lg:px-6">        <div className="flex shrink-0 items-center gap-3">          <Button            variant="ghost"            size="icon"            className="lg:hidden"            onClick={() => onSidebarOpenChange(!sidebarOpen)}          >            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}          </Button>          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">            <Logo size="sm" className="text-primary-foreground" />          </div>          <h1 className="hidden text-base font-semibold text-foreground sm:block">{appName}</h1>        </div>        <div className="flex-1" />        <div className="flex items-center gap-2">          {/* Detail panel toggle (desktop) */}          <Button            variant="ghost"            size="icon"            className="hidden lg:flex"            onClick={() => setDetailOpen(!detailOpen)}            title={detailOpen ? "Close detail panel" : "Open detail panel"}          >            {detailOpen ? (              <PanelRightClose className="h-5 w-5" />            ) : (              <PanelRightOpen className="h-5 w-5" />            )}          </Button>          <ThemeSwitcher            buttonClassName="hover:bg-accent"            contentClassName="bg-popover border-border"          />          <LanguageSwitcher            buttonClassName="hover:bg-accent"            contentClassName="bg-popover border-border"          />          <NotificationBell iconClassName="h-5 w-5" />          <UserProfileDropdown variant="navigation" showName={false} />        </div>      </header>      {/*  LEFT SIDEBAR (desktop)  */}      <aside        className={cn(          "fixed bottom-0 top-14 z-20 hidden w-72 flex-col overflow-y-auto border-e border-sidebar-border bg-sidebar lg:flex",          direction === "rtl" ? "right-0" : "left-0"        )}      >        <div className="border-b border-sidebar-border p-4">          <UserCard size="sm" />        </div>        <div className="flex-1 overflow-y-auto p-3">          <NavRenderer variant="default" onNavigate={() => {}} />        </div>        <div className="border-t border-sidebar-border p-3">          <LogoutButton />        </div>      </aside>      {/*  MOBILE SIDEBAR OVERLAY  */}      {sidebarOpen && (        <>          <div            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"            onClick={() => onSidebarOpenChange(false)}          />          <aside            className={cn(              "fixed bottom-0 top-0 z-50 flex w-72 flex-col overflow-y-auto bg-card shadow-2xl lg:hidden",              direction === "rtl" ? "right-0" : "left-0"            )}          >            <div className="flex items-center justify-between border-b border-border p-4">              <h2 className="font-semibold">{appName}</h2>              <Button variant="ghost" size="icon" onClick={() => onSidebarOpenChange(false)}>                <X className="h-4 w-4" />              </Button>            </div>            <div className="flex-1 overflow-y-auto p-3">              <NavRenderer variant="compact" onNavigate={() => onSidebarOpenChange(false)} />            </div>            <div className="border-t border-border p-3">              <LogoutButton />            </div>          </aside>        </>      )}      {/*  DETAIL PANEL (desktop)  */}      <aside        className={cn(          "fixed bottom-0 top-14 z-20 hidden w-80 overflow-y-auto border-s border-border bg-card transition-transform duration-300 lg:block",          direction === "rtl" ? "left-0" : "right-0",          detailOpen            ? "translate-x-0"            : direction === "rtl"              ? "-translate-x-full"              : "translate-x-full"        )}      >        <div className="border-b border-border p-4">          <h3 className="text-sm font-semibold text-foreground">            {t("layout.detail_panel") || "Details"}          </h3>        </div>        <div className="p-4 text-sm text-muted-foreground">          {t("layout.detail_placeholder") || "Select an item to see details here."}        </div>      </aside>      {/*  MAIN CONTENT  */}      <main        className={cn(          "pt-14 transition-all duration-300",          direction === "rtl" ? "lg:pr-72" : "lg:pl-72",          detailOpen && (direction === "rtl" ? "lg:pl-80" : "lg:pr-80")        )}      >        <div className="animate-fade-in p-6">{children}</div>      </main>      {showFooter && <Footer />}    </div>  );}

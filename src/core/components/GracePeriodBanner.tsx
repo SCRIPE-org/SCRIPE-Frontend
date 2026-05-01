@@ -25,14 +25,17 @@ export function GracePeriodBanner() {
   // Only show for PastDue with a grace phase
   if (subscriptionStatus !== "PastDue" || !gracePhase) return null;
 
-  const phaseConfig: Record<string, {
-    icon: React.ReactNode;
-    bgClass: string;
-    textClass: string;
-    borderClass: string;
-    titleKey: string;
-    descKey: string;
-  }> = {
+  const phaseConfig: Record<
+    string,
+    {
+      icon: React.ReactNode;
+      bgClass: string;
+      textClass: string;
+      borderClass: string;
+      titleKey: string;
+      descKey: string;
+    }
+  > = {
     Warning: {
       icon: <Clock className="h-4 w-4 shrink-0" />,
       bgClass: "bg-amber-50 dark:bg-amber-950/30",
@@ -65,18 +68,18 @@ export function GracePeriodBanner() {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-4 py-2.5 border-b text-sm",
+        "flex items-center gap-3 border-b px-4 py-2.5 text-sm",
         config.bgClass,
         config.textClass,
         config.borderClass
       )}
     >
       {config.icon}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 min-w-0">
-        <span className="font-semibold whitespace-nowrap">
+      <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2">
+        <span className="whitespace-nowrap font-semibold">
           {t(config.titleKey) || config.titleKey}
         </span>
-        <span className="text-xs sm:text-sm opacity-80 truncate">
+        <span className="truncate text-xs opacity-80 sm:text-sm">
           {(t(config.descKey) || config.descKey).replace("{edition}", editionName || "")}
         </span>
       </div>

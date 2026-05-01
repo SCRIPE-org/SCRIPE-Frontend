@@ -12,10 +12,7 @@ import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "@core/ui/layout/c
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import {
-  isNavigationItemActive,
-  getFlatNavigationItems,
-} from "@core/config/navigation";
+import { isNavigationItemActive, getFlatNavigationItems } from "@core/config/navigation";
 import { Home, ChevronRight, Search, Grid3X3, X } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
@@ -88,22 +85,22 @@ export function VaultLayout({ children }: VaultLayoutProps) {
         icon: group.icon,
         items: group.children
           ? group.children
-            .filter((child) => child.href)
-            .map((child) => ({
-              name: t(child.name) || child.name,
-              href: child.href!,
-              icon: child.icon,
-              active: isNavigationItemActive(child, pathname, navigation),
-            }))
+              .filter((child) => child.href)
+              .map((child) => ({
+                name: t(child.name) || child.name,
+                href: child.href!,
+                icon: child.icon,
+                active: isNavigationItemActive(child, pathname, navigation),
+              }))
           : group.href
             ? [
-              {
-                name: t(group.name) || group.name,
-                href: group.href,
-                icon: group.icon,
-                active: isNavigationItemActive(group, pathname, navigation),
-              },
-            ]
+                {
+                  name: t(group.name) || group.name,
+                  href: group.href,
+                  icon: group.icon,
+                  active: isNavigationItemActive(group, pathname, navigation),
+                },
+              ]
             : [],
       }))
       .filter((cat) => cat.items.length > 0);
@@ -132,7 +129,9 @@ export function VaultLayout({ children }: VaultLayoutProps) {
         break;
       }
       if (group.children) {
-        const active = group.children.find((c) => c.href && isNavigationItemActive(c, pathname, navigation));
+        const active = group.children.find(
+          (c) => c.href && isNavigationItemActive(c, pathname, navigation)
+        );
         if (active) {
           segs.push({ label: t(group.name) || group.name });
           segs.push({ label: t(active.name) || active.name });
@@ -182,9 +181,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
             </Button>
             <LanguageSwitcher />
             <ThemeSwitcher />
-            {settings.showNotifications && (
-              <NotificationBell iconClassName="h-5 w-5" />
-            )}
+            {settings.showNotifications && <NotificationBell iconClassName="h-5 w-5" />}
             <UserProfileDropdown showName={false} />
           </div>
         </div>

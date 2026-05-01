@@ -378,8 +378,6 @@ export function CheckboxRadioTab() {
     {} as Record<string, typeof radioStyles>
   );
 
-
-
   return (
     <div className="space-y-6">
       {/* Checkbox Styles */}

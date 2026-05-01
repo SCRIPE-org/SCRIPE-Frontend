@@ -56,7 +56,7 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {/* Billing Cycle */}
           <div className="flex items-center gap-2">
             <CreditCard className="h-4 w-4 text-muted-foreground" />
@@ -64,9 +64,7 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
               <p className="text-xs text-muted-foreground">
                 {t("entitlements.mySubscription.billingCycle") || "Billing Cycle"}
               </p>
-              <p className="text-sm font-medium">
-                {subscription.billingCycle || "—"}
-              </p>
+              <p className="text-sm font-medium">{subscription.billingCycle || "—"}</p>
             </div>
           </div>
 
@@ -78,7 +76,9 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
                 {t("entitlements.mySubscription.price") || "Price"}
               </p>
               <p className="text-sm font-medium tabular-nums">
-                {subscription.price > 0 ? subscription.formattedPrice : (t("entitlements.mySubscription.free") || "Free")}
+                {subscription.price > 0
+                  ? subscription.formattedPrice
+                  : t("entitlements.mySubscription.free") || "Free"}
               </p>
             </div>
           </div>
@@ -89,32 +89,32 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
             <div>
               <p className="text-xs text-muted-foreground">
                 {subscription.isAutoRenew
-                  ? (t("entitlements.mySubscription.renewsOn") || "Renews On")
-                  : (t("entitlements.mySubscription.expiresOn") || "Expires On")}
+                  ? t("entitlements.mySubscription.renewsOn") || "Renews On"
+                  : t("entitlements.mySubscription.expiresOn") || "Expires On"}
               </p>
-              <p className="text-sm font-medium">
-                {formatDate(subscription.expiresAt)}
-              </p>
+              <p className="text-sm font-medium">{formatDate(subscription.expiresAt)}</p>
             </div>
           </div>
         </div>
 
         {/* Days remaining warning */}
         {subscription.isExpiringSoon && subscription.daysRemaining != null && (
-          <div className="mt-4 flex items-center gap-2 rounded-md bg-amber-50 dark:bg-amber-900/10 px-3 py-2 text-amber-700 dark:text-amber-400">
+          <div className="mt-4 flex items-center gap-2 rounded-md bg-amber-50 px-3 py-2 text-amber-700 dark:bg-amber-900/10 dark:text-amber-400">
             <Timer className="h-4 w-4" />
             <span className="text-sm">
-              {t("entitlements.mySubscription.expiringSoon") || `Expires in ${subscription.daysRemaining} day(s)`}
+              {t("entitlements.mySubscription.expiringSoon") ||
+                `Expires in ${subscription.daysRemaining} day(s)`}
             </span>
           </div>
         )}
 
         {/* Trial info */}
         {subscription.hasTrial && subscription.trialEndsAt && (
-          <div className="mt-4 flex items-center gap-2 rounded-md bg-blue-50 dark:bg-blue-900/10 px-3 py-2 text-blue-700 dark:text-blue-400">
+          <div className="mt-4 flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2 text-blue-700 dark:bg-blue-900/10 dark:text-blue-400">
             <Timer className="h-4 w-4" />
             <span className="text-sm">
-              {t("entitlements.mySubscription.trialEnds") || "Trial ends"}: {formatDate(subscription.trialEndsAt)}
+              {t("entitlements.mySubscription.trialEnds") || "Trial ends"}:{" "}
+              {formatDate(subscription.trialEndsAt)}
             </span>
           </div>
         )}

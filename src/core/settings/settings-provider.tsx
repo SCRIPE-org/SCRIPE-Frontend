@@ -25,7 +25,12 @@ import type { Settings } from "./types";
 import { defaultSettings } from "./defaults";
 import type { OverrideControl } from "./merge-engine";
 import { mergeSettings, DEFAULT_OVERRIDE_CONTROL } from "./merge-engine";
-import { readTenantDefaults, readAdminOverrides, writeAdminOverrides, clearStaleAdminOverrides } from "./persistence";
+import {
+  readTenantDefaults,
+  readAdminOverrides,
+  writeAdminOverrides,
+  clearStaleAdminOverrides,
+} from "./persistence";
 import { applySettingsToDOM } from "./dom-applicator";
 import type { SettingsContextType } from "./context";
 import { SettingsContext, createCompatSetters } from "./context";
@@ -79,7 +84,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsHydrated(true);
       // Clear merging flag on next microtask (after React batches the state update)
-      queueMicrotask(() => { isMergingRef.current = false; });
+      queueMicrotask(() => {
+        isMergingRef.current = false;
+      });
     }
   }, []);
 
@@ -107,7 +114,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     if (!isAuthenticated && isHydrated) {
       isMergingRef.current = true;
       setSettings(defaultSettings);
-      queueMicrotask(() => { isMergingRef.current = false; });
+      queueMicrotask(() => {
+        isMergingRef.current = false;
+      });
     }
   }, [isAuthenticated, isHydrated]);
 
@@ -117,9 +126,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     if (isHydrated && isAuthenticated && settings.autoSave && !isMergingRef.current) {
       writeAdminOverrides(settings);
       // M11: Include which specific field changed — used by useAdminSettingsSync for 409 merge
-      window.dispatchEvent(new CustomEvent("settings-changed", {
-        detail: { changedField: lastChangedFieldRef.current },
-      }));
+      window.dispatchEvent(
+        new CustomEvent("settings-changed", {
+          detail: { changedField: lastChangedFieldRef.current },
+        })
+      );
       lastChangedFieldRef.current = null;
     }
   }, [settings, isHydrated, isAuthenticated, settings.autoSave]);
@@ -135,7 +146,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
     lastChangedFieldRef.current = key;
     setSettings((prev) => ({ ...prev, [key]: value }));
-   
   }, []);
 
   // ── Utilities (Gap #9: respect locks) ───────────────────
@@ -162,35 +172,41 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return JSON.stringify(settings, null, 2);
   }, [settings]);
 
-  const importSettings = useCallback((settingsString: string): boolean => {
-    try {
-      const parsed = JSON.parse(settingsString);
-      const { allowAdminOverride, allowedPaths } = overrideControl;
-      if (!allowAdminOverride) return false;
-      let filtered = parsed;
-      if (allowedPaths && allowedPaths.length > 0) {
-        filtered = Object.fromEntries(
-          Object.entries(parsed).filter(([k]) => allowedPaths.includes(k)),
-        );
+  const importSettings = useCallback(
+    (settingsString: string): boolean => {
+      try {
+        const parsed = JSON.parse(settingsString);
+        const { allowAdminOverride, allowedPaths } = overrideControl;
+        if (!allowAdminOverride) return false;
+        let filtered = parsed;
+        if (allowedPaths && allowedPaths.length > 0) {
+          filtered = Object.fromEntries(
+            Object.entries(parsed).filter(([k]) => allowedPaths.includes(k))
+          );
+        }
+        setSettings((prev) => ({ ...prev, ...defaultSettings, ...filtered }));
+        return true;
+      } catch {
+        return false;
       }
-      setSettings((prev) => ({ ...prev, ...defaultSettings, ...filtered }));
-      return true;
-    } catch {
-      return false;
-    }
-  }, [overrideControl]);
+    },
+    [overrideControl]
+  );
 
   // ── Context value (memoized) ────────────────────────────
 
-  const contextValue = useMemo<SettingsContextType>(() => ({
-    ...settings,
-    updateSetting,
-    ...createCompatSetters(updateSetting),
-    resetSettings,
-    exportSettings,
-    importSettings,
-    overrideControl,
-  }), [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting]);
+  const contextValue = useMemo<SettingsContextType>(
+    () => ({
+      ...settings,
+      updateSetting,
+      ...createCompatSetters(updateSetting),
+      resetSettings,
+      exportSettings,
+      importSettings,
+      overrideControl,
+    }),
+    [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting]
+  );
 
   // Don't render until hydrated to prevent hydration mismatches
   if (!isHydrated) {

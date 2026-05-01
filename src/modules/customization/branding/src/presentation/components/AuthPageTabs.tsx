@@ -32,8 +32,8 @@ interface AuthPageTabsProps {
 export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) {
   const { t } = useI18n();
   return (
-    <div className="flex items-center gap-1 border-b border-border bg-muted/30 px-4 py-1.5 overflow-x-auto scrollbar-none">
-      <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60 me-2">
+    <div className="scrollbar-none flex items-center gap-1 overflow-x-auto border-b border-border bg-muted/30 px-4 py-1.5">
+      <span className="me-2 shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
         {t("studio.pages.label") || "Page"}
       </span>
       {AUTH_PAGES.map((page) => {
@@ -44,7 +44,7 @@ export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) 
             key={page.id}
             onClick={() => onPageChange(page.id)}
             className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap",
+              "flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-all",
               isActive
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"

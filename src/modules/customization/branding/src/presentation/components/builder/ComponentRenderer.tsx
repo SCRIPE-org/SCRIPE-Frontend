@@ -33,41 +33,41 @@ interface ComponentRendererProps {
 
 export function ComponentRenderer({ type, props }: ComponentRendererProps) {
   switch (type) {
-    case 'logo':
+    case "logo":
       return <BuilderLogo {...props} />;
-    case 'loginForm':
+    case "loginForm":
       return <BuilderLoginForm {...props} />;
-    case 'forgotForm':
+    case "forgotForm":
       return <BuilderForgotForm {...props} />;
-    case 'resetForm':
+    case "resetForm":
       return <BuilderResetForm {...props} />;
-    case 'heading':
+    case "heading":
       return <BuilderHeading {...props} />;
-    case 'subtitle':
+    case "subtitle":
       return <BuilderSubtitle {...props} />;
-    case 'socialLogin':
+    case "socialLogin":
       return <BuilderSocialLogin {...props} />;
-    case 'featureList':
+    case "featureList":
       return <BuilderFeatureList {...props} />;
-    case 'testimonial':
+    case "testimonial":
       return <BuilderTestimonial {...props} />;
-    case 'image':
+    case "image":
       return <BuilderImage {...props} />;
-    case 'ctaButton':
+    case "ctaButton":
       return <BuilderCtaButton {...props} />;
-    case 'divider':
+    case "divider":
       return <BuilderDivider {...props} />;
-    case 'footer':
+    case "footer":
       return <BuilderFooter {...props} />;
-    case 'copyright':
+    case "copyright":
       return <BuilderCopyright {...props} />;
-    case 'customHtml':
+    case "customHtml":
       return <BuilderCustomHtml {...props} />;
-    case 'videoBg':
+    case "videoBg":
       return <BuilderVideoBg {...props} />;
     default:
       return (
-        <div className="p-2 border border-dashed border-destructive/40 rounded text-xs text-destructive">
+        <div className="rounded border border-dashed border-destructive/40 p-2 text-xs text-destructive">
           Unknown: {type}
         </div>
       );

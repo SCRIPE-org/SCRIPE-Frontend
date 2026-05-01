@@ -11,8 +11,8 @@ import { type DashboardBuilderCanvas, DEFAULT_BUILDER_CANVAS } from "./Dashboard
 // ── Greeting ──
 export interface DashboardGreeting {
   enabled: boolean;
-  text?: string;      // e.g. "Welcome back, {name}"
-  subtitle?: string;  // e.g. "Here's what's happening today"
+  text?: string; // e.g. "Welcome back, {name}"
+  subtitle?: string; // e.g. "Here's what's happening today"
 }
 
 // ── KPI Card Styles ──
@@ -81,38 +81,83 @@ export interface DashboardPalette {
   id: string;
   nameKey: string; // i18n key
   colors: string[];
-  accent: string;  // Primary accent for KPI icons
+  accent: string; // Primary accent for KPI icons
 }
 
 export const DASHBOARD_PALETTES: DashboardPalette[] = [
   {
     id: "default",
     nameKey: "dashboard.studio.palette.default",
-    colors: ["#6366f1", "#8b5cf6", "#a78bfa", "#c4b5fd", "#ddd6fe", "#ede9fe", "#818cf8", "#4f46e5"],
+    colors: [
+      "#6366f1",
+      "#8b5cf6",
+      "#a78bfa",
+      "#c4b5fd",
+      "#ddd6fe",
+      "#ede9fe",
+      "#818cf8",
+      "#4f46e5",
+    ],
     accent: "#6366f1",
   },
   {
     id: "ocean",
     nameKey: "dashboard.studio.palette.ocean",
-    colors: ["#0ea5e9", "#06b6d4", "#14b8a6", "#0891b2", "#22d3ee", "#67e8f9", "#38bdf8", "#0284c7"],
+    colors: [
+      "#0ea5e9",
+      "#06b6d4",
+      "#14b8a6",
+      "#0891b2",
+      "#22d3ee",
+      "#67e8f9",
+      "#38bdf8",
+      "#0284c7",
+    ],
     accent: "#0ea5e9",
   },
   {
     id: "sunset",
     nameKey: "dashboard.studio.palette.sunset",
-    colors: ["#f97316", "#fb923c", "#f59e0b", "#ef4444", "#fbbf24", "#facc15", "#ea580c", "#dc2626"],
+    colors: [
+      "#f97316",
+      "#fb923c",
+      "#f59e0b",
+      "#ef4444",
+      "#fbbf24",
+      "#facc15",
+      "#ea580c",
+      "#dc2626",
+    ],
     accent: "#f97316",
   },
   {
     id: "forest",
     nameKey: "dashboard.studio.palette.forest",
-    colors: ["#22c55e", "#10b981", "#34d399", "#16a34a", "#4ade80", "#6ee7b7", "#059669", "#15803d"],
+    colors: [
+      "#22c55e",
+      "#10b981",
+      "#34d399",
+      "#16a34a",
+      "#4ade80",
+      "#6ee7b7",
+      "#059669",
+      "#15803d",
+    ],
     accent: "#22c55e",
   },
   {
     id: "monochrome",
     nameKey: "dashboard.studio.palette.monochrome",
-    colors: ["#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0", "#1e293b", "#0f172a"],
+    colors: [
+      "#334155",
+      "#475569",
+      "#64748b",
+      "#94a3b8",
+      "#cbd5e1",
+      "#e2e8f0",
+      "#1e293b",
+      "#0f172a",
+    ],
     accent: "#475569",
   },
 ];
@@ -156,9 +201,7 @@ export const DEFAULT_DASHBOARD_THEME: DashboardThemeConfig = {
 // Parser (JSON → typed config)
 // ═══════════════════════════════════════════════
 
-export function parseDashboardThemeJson(
-  json: string | null | undefined,
-): DashboardThemeConfig {
+export function parseDashboardThemeJson(json: string | null | undefined): DashboardThemeConfig {
   if (!json) return { ...DEFAULT_DASHBOARD_THEME };
   try {
     const raw = JSON.parse(json);
@@ -183,10 +226,14 @@ export function parseDashboardThemeJson(
         showGrid: raw.charts?.showGrid ?? DEFAULT_DASHBOARD_THEME.charts.showGrid,
       },
       sections: {
-        loginActivity: raw.sections?.loginActivity ?? DEFAULT_DASHBOARD_THEME.sections.loginActivity,
-        eventDistribution: raw.sections?.eventDistribution ?? DEFAULT_DASHBOARD_THEME.sections.eventDistribution,
-        recentChanges: raw.sections?.recentChanges ?? DEFAULT_DASHBOARD_THEME.sections.recentChanges,
-        securityEvents: raw.sections?.securityEvents ?? DEFAULT_DASHBOARD_THEME.sections.securityEvents,
+        loginActivity:
+          raw.sections?.loginActivity ?? DEFAULT_DASHBOARD_THEME.sections.loginActivity,
+        eventDistribution:
+          raw.sections?.eventDistribution ?? DEFAULT_DASHBOARD_THEME.sections.eventDistribution,
+        recentChanges:
+          raw.sections?.recentChanges ?? DEFAULT_DASHBOARD_THEME.sections.recentChanges,
+        securityEvents:
+          raw.sections?.securityEvents ?? DEFAULT_DASHBOARD_THEME.sections.securityEvents,
         blockedIPs: raw.sections?.blockedIPs ?? DEFAULT_DASHBOARD_THEME.sections.blockedIPs,
       },
       layout: {

@@ -386,17 +386,14 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       };
 
       if (action.requiresConfirmation || action.confirmTitle || action.confirmDescription) {
-        await deleteSystem.confirmDelete(
-          execute,
-          {
-            itemName: `${selectedIds.length} items`,
-            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
-            confirmTitle: action.confirmTitle || action.label,
-            confirmDescription:
-              action.confirmDescription ||
-              `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length} items?`,
-          }
-        );
+        await deleteSystem.confirmDelete(execute, {
+          itemName: `${selectedIds.length} items`,
+          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
+          confirmTitle: action.confirmTitle || action.label,
+          confirmDescription:
+            action.confirmDescription ||
+            `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length} items?`,
+        });
       } else {
         await execute();
       }
@@ -413,16 +410,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       };
 
       if (action.confirmTitle || action.confirmDescription) {
-        await deleteSystem.confirmDelete(
-          execute,
-          {
-            itemName: "all items",
-            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
-            confirmTitle: action.confirmTitle || action.label,
-            confirmDescription:
-              action.confirmDescription || `Are you sure you want to ${action.label.toLowerCase()}?`,
-          }
-        );
+        await deleteSystem.confirmDelete(execute, {
+          itemName: "all items",
+          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
+          confirmTitle: action.confirmTitle || action.label,
+          confirmDescription:
+            action.confirmDescription || `Are you sure you want to ${action.label.toLowerCase()}?`,
+        });
       } else {
         await execute();
       }
@@ -477,7 +471,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   // Use config if provided, otherwise use direct props (backward compatibility)
   const title = (config?.titleKey ? t(config.titleKey) : propTitle) || "";
-  const subtitle = config?.customSubtitle || (config?.subtitleKey ? t(config.subtitleKey) : propSubtitle) || "";
+  const subtitle =
+    config?.customSubtitle || (config?.subtitleKey ? t(config.subtitleKey) : propSubtitle) || "";
   const allColumns = config?.columns || propColumns || [];
 
   // === Layer 1: Explicit restricted fields from /me response ===
@@ -501,12 +496,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   }, [allColumns, viewModel?.items]);
 
   // Merge both layers to determine visible columns
-  const columns = useMemo(() =>
-    allColumns.filter(col => {
-      if (restrictedFields.includes(col.key)) return false;
-      if (nullColumns.has(col.key)) return false;
-      return true;
-    }),
+  const columns = useMemo(
+    () =>
+      allColumns.filter((col) => {
+        if (restrictedFields.includes(col.key)) return false;
+        if (nullColumns.has(col.key)) return false;
+        return true;
+      }),
     [allColumns, restrictedFields, nullColumns]
   );
 
@@ -519,29 +515,32 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const actions = config?.hideActionsColumn
     ? undefined
     : rawActions
-      ?.filter((action) => {
-        if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
-          return false;
-        }
-        return true;
-      })
-      .map((action) => ({
-        ...action,
-        onClick:
-          action.onClick === handleDelete
-            ? handleDelete
-            : (item: any) => handleIndividualAction(action, item),
-      }));
+        ?.filter((action) => {
+          if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+            return false;
+          }
+          return true;
+        })
+        .map((action) => ({
+          ...action,
+          onClick:
+            action.onClick === handleDelete
+              ? handleDelete
+              : (item: any) => handleIndividualAction(action, item),
+        }));
 
   const createFields = config?.createFields || propCreateFields!;
   // Support dynamic editFields: if it's a function, resolve it with the current editing item
-  const resolveEditFields = useCallback((editingItem: any): FieldConfig[] => {
-    const raw = config?.editFields || propEditFields || propCreateFields;
-    if (typeof raw === 'function') {
-      return raw(editingItem);
-    }
-    return (raw || createFields || []) as FieldConfig[];
-  }, [config, propEditFields, propCreateFields, createFields]);
+  const resolveEditFields = useCallback(
+    (editingItem: any): FieldConfig[] => {
+      const raw = config?.editFields || propEditFields || propCreateFields;
+      if (typeof raw === "function") {
+        return raw(editingItem);
+      }
+      return (raw || createFields || []) as FieldConfig[];
+    },
+    [config, propEditFields, propCreateFields, createFields]
+  );
   const editFields = resolveEditFields(viewModel.editingItem);
 
   // Auto-generate pagination and search for config-based usage
@@ -549,20 +548,20 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     propPagination ||
     (config
       ? {
-        ...viewModel.pagination,
-        onPageChange: viewModel.changePage,
-        onPageSizeChange: viewModel.changePageSize,
-      }
+          ...viewModel.pagination,
+          onPageChange: viewModel.changePage,
+          onPageSizeChange: viewModel.changePageSize,
+        }
       : undefined);
 
   const search =
     propSearch ||
     (config
       ? {
-        value: viewModel.searchValue,
-        onChange: viewModel.handleSearchChange,
-        inputRef: viewModel.searchInputRef,
-      }
+          value: viewModel.searchValue,
+          onChange: viewModel.handleSearchChange,
+          inputRef: viewModel.searchInputRef,
+        }
       : undefined);
 
   // ========================================
@@ -699,7 +698,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           {config?.customActions
-            ?.filter((action) => !action.requiredPermission || hasPermission(action.requiredPermission))
+            ?.filter(
+              (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
+            )
             .map((action, index) => (
               <Button
                 key={index}
@@ -717,7 +718,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           {config?.enableBulkActions === true && viewModel.selectedItems.length > 0 && (
             <div className="mt-2 flex flex-col gap-2 sm:mt-0 sm:flex-row">
               {config?.bulkActions
-                ?.filter((action) => !action.requiredPermission || hasPermission(action.requiredPermission))
+                ?.filter(
+                  (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
+                )
                 .map((action, index) => {
                   const meetsMin =
                     !action.minItems || viewModel.selectedItems.length >= action.minItems;
@@ -788,9 +791,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         pagination={
           pagination
             ? {
-              ...pagination,
-              currentPage: pagination.page, // Map page to currentPage for GenericTable
-            }
+                ...pagination,
+                currentPage: pagination.page, // Map page to currentPage for GenericTable
+              }
             : undefined
         }
         onSearch={search?.onChange}
@@ -835,8 +838,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         }}
         title={`${t("common.edit")} ${title}`}
         description={`Edit the ${title.toLowerCase()} details below.`}
-        formKey={`edit-form-${viewModel.editingItem?.id || "new"
-          }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
+        formKey={`edit-form-${
+          viewModel.editingItem?.id || "new"
+        }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
       >
         <GenericForm
           fields={editFields || createFields || []}
@@ -875,7 +879,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 ? config.editInitialValues(viewModel.viewItem)
                 : viewModel.viewItem || {}
             }
-            onSubmit={async () => { }} // No-op for read-only
+            onSubmit={async () => {}} // No-op for read-only
             onCancel={viewModel.closeViewModal}
             readOnly={true}
           />
@@ -891,7 +895,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         confirmText={
           deleteSystem.deleteOptions.confirmButtonText ||
           (deleteSystem.deleteOptions.variant === "destructive" ||
-            !deleteSystem.deleteOptions.variant
+          !deleteSystem.deleteOptions.variant
             ? t("common.delete")
             : t("common.confirm"))
         }

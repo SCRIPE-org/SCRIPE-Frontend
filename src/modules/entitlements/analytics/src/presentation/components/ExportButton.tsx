@@ -39,8 +39,8 @@ export function ExportButton({ onExport, disabled }: ExportButtonProps) {
       toast({
         title: t("entitlements.analytics.export.success") || "Export Complete",
         description:
-          (t("entitlements.analytics.export.successDesc") ||
-            `Your ${FORMAT_LABELS[format] ?? format} file has been downloaded.`),
+          t("entitlements.analytics.export.successDesc") ||
+          `Your ${FORMAT_LABELS[format] ?? format} file has been downloaded.`,
       });
     } catch {
       toast({

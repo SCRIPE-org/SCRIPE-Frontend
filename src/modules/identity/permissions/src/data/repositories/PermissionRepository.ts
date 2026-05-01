@@ -24,7 +24,7 @@ import type { IPermissionService } from "../../domain/interfaces/IPermissionServ
 import { PermissionMapper } from "../mappers/PermissionMapper";
 
 export class PermissionRepository implements IPermissionRepository {
-  constructor(private readonly service: IPermissionService) { }
+  constructor(private readonly service: IPermissionService) {}
 
   async getAll(params?: PermissionListParams): Promise<Permission[]> {
     const models = await this.service.getAll(params);

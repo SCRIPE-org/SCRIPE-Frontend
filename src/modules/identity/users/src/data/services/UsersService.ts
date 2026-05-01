@@ -13,7 +13,9 @@ import type { UsersListModel, UsersDetailModel, UpdateUserModel } from "../model
 export class UsersService implements IUsersService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params?: Record<string, unknown>): Promise<{ items: UsersListModel[]; totalCount: number }> {
+  async getAll(
+    params?: Record<string, unknown>
+  ): Promise<{ items: UsersListModel[]; totalCount: number }> {
     const url = buildUrl(API_ENDPOINTS.USERS.LIST, params as Record<string, string>);
     return this.api.get<{ items: UsersListModel[]; totalCount: number }>(url);
   }

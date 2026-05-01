@@ -73,14 +73,15 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="mb-2 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
           <CreditCard className="h-5 w-5 text-amber-500" />
         </div>
         <div>
           <h2 className="text-lg font-semibold">{t("tenant.stepPlan") || "Plan & Billing"}</h2>
           <p className="text-sm text-muted-foreground">
-            {t("tenant.stepPlanDesc") || "Choose an edition and configure billing. This step is optional."}
+            {t("tenant.stepPlanDesc") ||
+              "Choose an edition and configure billing. This step is optional."}
           </p>
         </div>
       </div>
@@ -103,19 +104,24 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Subscription Type & Currency — only shown after edition is selected */}
       {vm.form.editionId && (
-        <div className="grid gap-5 sm:grid-cols-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <div className="grid gap-5 duration-300 animate-in fade-in-0 slide-in-from-bottom-2 sm:grid-cols-2">
           {/* Subscription Type */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">{t("tenant.subscriptionType") || "Subscription Type"}</Label>
+            <Label className="text-sm font-medium">
+              {t("tenant.subscriptionType") || "Subscription Type"}
+            </Label>
             <GenericSelect
               options={subscriptionTypeOptions}
               value={vm.form.subscriptionType}
-              onValueChange={(v: string | string[]) => vm.updateField("subscriptionType", v as string)}
+              onValueChange={(v: string | string[]) =>
+                vm.updateField("subscriptionType", v as string)
+              }
               placeholder={t("tenant.selectSubscriptionType") || "Select type..."}
             />
             {subscriptionTypeOptions.length === 0 && (
               <p className="text-xs text-destructive">
-                {t("tenant.noSubscriptionTypesAvailable") || "No subscription types are enabled for this edition."}
+                {t("tenant.noSubscriptionTypesAvailable") ||
+                  "No subscription types are enabled for this edition."}
               </p>
             )}
           </div>
@@ -137,7 +143,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Promo Code */}
       {vm.form.editionId && (
-        <div className="space-y-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <div className="space-y-2 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
           <Label className="text-sm font-medium">{t("tenant.promoCode") || "Promo Code"}</Label>
           <Input
             value={vm.form.promoCode}
@@ -146,15 +152,15 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
             className="h-11 font-mono uppercase"
           />
           {vm.availablePromotions.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
+            <div className="mt-2 flex flex-wrap gap-1.5">
               {vm.availablePromotions.map((promo) => {
                 const isSelected = vm.form.promotionId === promo.id;
-                
+
                 return (
                   <Badge
                     key={promo.id}
                     variant={isSelected ? "default" : "secondary"}
-                    className="text-xs cursor-pointer hover:bg-primary/20 transition-colors"
+                    className="cursor-pointer text-xs transition-colors hover:bg-primary/20"
                     onClick={() => {
                       if (isSelected) {
                         // Deselect — clear both fields atomically
@@ -173,7 +179,11 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                       }
                     }}
                   >
-                    {promo.name} ({promo.type === "Percentage" ? `${promo.discountValue}%` : `$${promo.discountValue}`})
+                    {promo.name} (
+                    {promo.type === "Percentage"
+                      ? `${promo.discountValue}%`
+                      : `$${promo.discountValue}`}
+                    )
                   </Badge>
                 );
               })}
@@ -184,16 +194,15 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Skip Payment Toggle */}
       {vm.form.editionId && !isFreeEdition && (
-        <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <div className="duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
           <div className="flex items-center justify-between rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
               <div>
-                <p className="text-sm font-medium">
-                  {t("tenant.skipPayment") || "Skip Payment"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {t("tenant.skipPaymentDesc") || "Activates the subscription without payment processing. Use for demos or manual billing."}
+                <p className="text-sm font-medium">{t("tenant.skipPayment") || "Skip Payment"}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {t("tenant.skipPaymentDesc") ||
+                    "Activates the subscription without payment processing. Use for demos or manual billing."}
                 </p>
               </div>
             </div>
@@ -225,26 +234,35 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
   }, [vm.form.subscriptionType, t]);
 
   const currencyInfo = SUPPORTED_CURRENCIES.find((c) => c.code === vm.form.currency);
-  const currencyLabel = currencyInfo ? `${currencyInfo.code} (${currencyInfo.symbol})` : vm.form.currency;
+  const currencyLabel = currencyInfo
+    ? `${currencyInfo.code} (${currencyInfo.symbol})`
+    : vm.form.currency;
 
   return (
-    <div className="rounded-xl bg-muted/30 border border-border/50 p-4 space-y-2 animate-in fade-in-0 duration-300">
-      <h4 className="text-sm font-semibold mb-3">{t("tenant.summary") || "Summary"}</h4>
-      <SummaryRow label={t("tenant.edition") || "Edition"} value={vm.selectedEdition?.name || "-"} />
+    <div className="space-y-2 rounded-xl border border-border/50 bg-muted/30 p-4 duration-300 animate-in fade-in-0">
+      <h4 className="mb-3 text-sm font-semibold">{t("tenant.summary") || "Summary"}</h4>
+      <SummaryRow
+        label={t("tenant.edition") || "Edition"}
+        value={vm.selectedEdition?.name || "-"}
+      />
       <SummaryRow label={t("tenant.subscriptionType") || "Billing"} value={subscriptionLabel} />
       <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />
       {vm.form.promotionId && (
-        <SummaryRow 
-          label={t("tenant.promotion") || "Promotion"} 
-          value={vm.availablePromotions.find(p => p.id === vm.form.promotionId)?.name || vm.form.promoCode || "Applied"} 
-          highlight 
+        <SummaryRow
+          label={t("tenant.promotion") || "Promotion"}
+          value={
+            vm.availablePromotions.find((p) => p.id === vm.form.promotionId)?.name ||
+            vm.form.promoCode ||
+            "Applied"
+          }
+          highlight
         />
       )}
       {!vm.form.promotionId && vm.form.promoCode && (
-        <SummaryRow 
-          label={t("tenant.promotion") || "Promotion"} 
-          value={vm.form.promoCode} 
-          highlight 
+        <SummaryRow
+          label={t("tenant.promotion") || "Promotion"}
+          value={vm.form.promoCode}
+          highlight
         />
       )}
       {vm.form.skipPayment && (
@@ -258,7 +276,15 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
   );
 }
 
-function SummaryRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function SummaryRow({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
   return (
     <div className="flex items-center justify-between text-sm">
       <span className="text-muted-foreground">{label}</span>

@@ -10,16 +10,45 @@
 import React from "react";
 import { cn } from "@core/common/utils";
 import {
-  Users, Activity, Shield, Building2, TrendingUp, TrendingDown, Minus,
-  BarChart3, Table2, Zap, Bell, CalendarDays, Megaphone, Code,
-  ArrowUpRight, ArrowDownRight, MoreHorizontal, CheckCircle2, Clock,
-  AlertTriangle, Info, ExternalLink,
+  Users,
+  Activity,
+  Shield,
+  Building2,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  BarChart3,
+  Table2,
+  Zap,
+  Bell,
+  CalendarDays,
+  Megaphone,
+  Code,
+  ArrowUpRight,
+  ArrowDownRight,
+  MoreHorizontal,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  Info,
+  ExternalLink,
 } from "lucide-react";
 
 // ── Icon Map ──────────────────────────────────────────────
 const ICON_MAP: Record<string, React.ElementType> = {
-  Users, Activity, Shield, Building2, TrendingUp, TrendingDown,
-  BarChart3, Table2, Zap, Bell, CalendarDays, Megaphone, Code,
+  Users,
+  Activity,
+  Shield,
+  Building2,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  Table2,
+  Zap,
+  Bell,
+  CalendarDays,
+  Megaphone,
+  Code,
 };
 
 function resolveIcon(name: string): React.ElementType {
@@ -52,12 +81,14 @@ export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
             {dir === "up" && <ArrowUpRight className="h-3 w-3 text-emerald-500" />}
             {dir === "down" && <ArrowDownRight className="h-3 w-3 text-red-500" />}
             {dir === "neutral" && <Minus className="h-3 w-3 text-muted-foreground" />}
-            <span className={cn(
-              "text-xs font-medium",
-              dir === "up" && "text-emerald-500",
-              dir === "down" && "text-red-500",
-              dir === "neutral" && "text-muted-foreground",
-            )}>
+            <span
+              className={cn(
+                "text-xs font-medium",
+                dir === "up" && "text-emerald-500",
+                dir === "down" && "text-red-500",
+                dir === "neutral" && "text-muted-foreground"
+              )}
+            >
               {trend}
             </span>
           </div>
@@ -140,12 +171,14 @@ export function WidgetDataTable({ props }: { props: Record<string, unknown> }) {
               <tr key={i} className="border-b border-border/20 last:border-0">
                 <td className="py-1.5 font-medium">{row.name}</td>
                 <td className="py-1.5">
-                  <span className={cn(
-                    "rounded-full px-2 py-0.5 text-[10px] font-medium",
-                    row.status === "Active" && "bg-emerald-500/10 text-emerald-500",
-                    row.status === "Pending" && "bg-amber-500/10 text-amber-500",
-                    row.status === "Inactive" && "bg-red-500/10 text-red-500",
-                  )}>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-medium",
+                      row.status === "Active" && "bg-emerald-500/10 text-emerald-500",
+                      row.status === "Pending" && "bg-amber-500/10 text-amber-500",
+                      row.status === "Inactive" && "bg-red-500/10 text-red-500"
+                    )}
+                  >
                     {row.status}
                   </span>
                 </td>
@@ -193,7 +226,12 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
   const showTimestamps = (props.showTimestamps as boolean) ?? true;
 
   const items = [
-    { icon: CheckCircle2, color: "text-emerald-500", text: "User login successful", time: "2m ago" },
+    {
+      icon: CheckCircle2,
+      color: "text-emerald-500",
+      text: "User login successful",
+      time: "2m ago",
+    },
     { icon: AlertTriangle, color: "text-amber-500", text: "Failed login attempt", time: "5m ago" },
     { icon: Users, color: "text-primary", text: "New admin created", time: "12m ago" },
     { icon: Shield, color: "text-blue-500", text: "Permissions updated", time: "30m ago" },
@@ -210,11 +248,9 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
             <div className="mt-0.5 rounded-full bg-muted p-1">
               <item.icon className={cn("h-3 w-3", item.color)} />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium">{item.text}</p>
-              {showTimestamps && (
-                <p className="text-[10px] text-muted-foreground">{item.time}</p>
-              )}
+              {showTimestamps && <p className="text-[10px] text-muted-foreground">{item.time}</p>}
             </div>
           </div>
         ))}
@@ -242,16 +278,18 @@ export function WidgetCalendar({ props }: { props: Record<string, unknown> }) {
     <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
       <h3 className="mb-3 text-sm font-semibold">Calendar</h3>
       <div className="mb-2 grid grid-cols-7 gap-0.5 text-center">
-        {days.map(d => (
-          <span key={d} className="text-[10px] font-medium text-muted-foreground">{d}</span>
+        {days.map((d) => (
+          <span key={d} className="text-[10px] font-medium text-muted-foreground">
+            {d}
+          </span>
         ))}
-        {dates.map(d => (
+        {dates.map((d) => (
           <span
             key={d}
             className={cn(
               "rounded-md py-0.5 text-[10px]",
-              d === today && "bg-primary text-primary-foreground font-bold",
-              d !== today && "text-foreground/70 hover:bg-muted",
+              d === today && "bg-primary font-bold text-primary-foreground",
+              d !== today && "text-foreground/70 hover:bg-muted"
             )}
           >
             {d}
@@ -290,17 +328,25 @@ export function WidgetNotifications({ props }: { props: Record<string, unknown> 
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold">Notifications</h3>
         <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
-          {items.filter(i => i.unread).length}
+          {items.filter((i) => i.unread).length}
         </span>
       </div>
       <div className="flex-1 space-y-2 overflow-hidden">
         {items.map((item, i) => (
-          <div key={i} className={cn(
-            "flex items-start gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors",
-            item.unread ? "bg-primary/5" : "hover:bg-muted/30"
-          )}>
-            <Bell className={cn("mt-0.5 h-3 w-3 flex-shrink-0", item.unread ? "text-primary" : "text-muted-foreground")} />
-            <div className="flex-1 min-w-0">
+          <div
+            key={i}
+            className={cn(
+              "flex items-start gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors",
+              item.unread ? "bg-primary/5" : "hover:bg-muted/30"
+            )}
+          >
+            <Bell
+              className={cn(
+                "mt-0.5 h-3 w-3 flex-shrink-0",
+                item.unread ? "text-primary" : "text-muted-foreground"
+              )}
+            />
+            <div className="min-w-0 flex-1">
               <p className={cn("truncate", item.unread && "font-medium")}>{item.title}</p>
               <p className="text-[10px] text-muted-foreground">{item.time}</p>
             </div>
@@ -316,13 +362,14 @@ export function WidgetNotifications({ props }: { props: Record<string, unknown> 
 // ═══════════════════════════════════════════════════════════
 export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }) {
   const title = (props.title as string) || "Announcement";
-  const message = (props.message as string) || "Welcome to the platform! Check out our latest features.";
+  const message =
+    (props.message as string) || "Welcome to the platform! Check out our latest features.";
   const variant = (props.variant as string) || "info";
 
   const variants: Record<string, { bg: string; border: string; icon: React.ElementType }> = {
-    info:    { bg: "bg-blue-500/5",   border: "border-blue-500/20",   icon: Info },
+    info: { bg: "bg-blue-500/5", border: "border-blue-500/20", icon: Info },
     success: { bg: "bg-emerald-500/5", border: "border-emerald-500/20", icon: CheckCircle2 },
-    warning: { bg: "bg-amber-500/5",   border: "border-amber-500/20",   icon: AlertTriangle },
+    warning: { bg: "bg-amber-500/5", border: "border-amber-500/20", icon: AlertTriangle },
   };
   const v = variants[variant] || variants.info;
 
@@ -346,11 +393,16 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
   const height = (props.height as number) || 300;
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <div className="flex items-center justify-between border-b border-border px-4 py-2">
         <h3 className="text-sm font-semibold">{title}</h3>
         {url && (
-          <a href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground"
+          >
             <ExternalLink className="h-3 w-3" />
           </a>
         )}
@@ -364,7 +416,10 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
           sandbox="allow-scripts allow-same-origin"
         />
       ) : (
-        <div className="flex flex-1 items-center justify-center p-4 text-xs text-muted-foreground" style={{ minHeight: height }}>
+        <div
+          className="flex flex-1 items-center justify-center p-4 text-xs text-muted-foreground"
+          style={{ minHeight: height }}
+        >
           <div className="text-center">
             <Code className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
             <p>Configure a URL to embed custom content</p>
@@ -380,15 +435,27 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
 // ═══════════════════════════════════════════════════════════
 export function WidgetRenderer({ type, props }: { type: string; props: Record<string, unknown> }) {
   switch (type) {
-    case 'statsCard':     return <WidgetStatsCard props={props} />;
-    case 'chart':         return <WidgetChart props={props} />;
-    case 'dataTable':     return <WidgetDataTable props={props} />;
-    case 'quickActions':  return <WidgetQuickActions props={props} />;
-    case 'activityFeed':  return <WidgetActivityFeed props={props} />;
-    case 'calendar':      return <WidgetCalendar props={props} />;
-    case 'notifications': return <WidgetNotifications props={props} />;
-    case 'announcement':  return <WidgetAnnouncement props={props} />;
-    case 'customWidget':  return <WidgetCustom props={props} />;
-    default:              return <div className="rounded border p-4 text-xs text-muted-foreground">Unknown: {type}</div>;
+    case "statsCard":
+      return <WidgetStatsCard props={props} />;
+    case "chart":
+      return <WidgetChart props={props} />;
+    case "dataTable":
+      return <WidgetDataTable props={props} />;
+    case "quickActions":
+      return <WidgetQuickActions props={props} />;
+    case "activityFeed":
+      return <WidgetActivityFeed props={props} />;
+    case "calendar":
+      return <WidgetCalendar props={props} />;
+    case "notifications":
+      return <WidgetNotifications props={props} />;
+    case "announcement":
+      return <WidgetAnnouncement props={props} />;
+    case "customWidget":
+      return <WidgetCustom props={props} />;
+    default:
+      return (
+        <div className="rounded border p-4 text-xs text-muted-foreground">Unknown: {type}</div>
+      );
   }
 }

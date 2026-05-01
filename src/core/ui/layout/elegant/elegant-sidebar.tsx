@@ -45,7 +45,7 @@ export function ElegantSidebar({ open, onOpenChange }: ElegantSidebarProps) {
         // RTL
         direction === "rtl" ? "right-3" : "left-3",
         // Slide animation
-        "ease-smooth-out transition-all duration-300",
+        "transition-all duration-300 ease-smooth-out",
         open
           ? "translate-x-0 opacity-100"
           : direction === "rtl"

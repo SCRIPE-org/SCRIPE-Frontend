@@ -1,4 +1,8 @@
-import type { CommissionLedgerEntryModel, CommissionInvoiceModel, PagedResultModel } from "../../data/models/CommissionModels";
+import type {
+  CommissionLedgerEntryModel,
+  CommissionInvoiceModel,
+  PagedResultModel,
+} from "../../data/models/CommissionModels";
 import type { CommissionListParams } from "./ICommissionLedgerRepository";
 
 export interface ICommissionLedgerService {

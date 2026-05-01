@@ -16,41 +16,41 @@ import { cn } from "@core/common/utils";
 
 // ─── Device presets ─────────────────────────────────────────
 const DEVICES = [
-      { id: "desktop" as const, icon: Monitor, width: "100%", label: "Desktop" },
-      { id: "tablet" as const, icon: Tablet, width: "768px", label: "Tablet" },
-      { id: "mobile" as const, icon: Smartphone, width: "375px", label: "Mobile" },
+  { id: "desktop" as const, icon: Monitor, width: "100%", label: "Desktop" },
+  { id: "tablet" as const, icon: Tablet, width: "768px", label: "Tablet" },
+  { id: "mobile" as const, icon: Smartphone, width: "375px", label: "Mobile" },
 ] as const;
 
 type DeviceId = (typeof DEVICES)[number]["id"];
 
 // ─── Props ──────────────────────────────────────────────────
 export interface TemplateLivePreviewProps {
-      /** The raw HTML body of the template */
-      body: string;
-      /** Optional subject line to display above the preview */
-      subject?: string;
+  /** The raw HTML body of the template */
+  body: string;
+  /** Optional subject line to display above the preview */
+  subject?: string;
 }
 
 // ─── Component ──────────────────────────────────────────────
 export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps) {
-      const [device, setDevice] = useState<DeviceId>("desktop");
-      const [debouncedBody, setDebouncedBody] = useState(body);
-      const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [device, setDevice] = useState<DeviceId>("desktop");
+  const [debouncedBody, setDebouncedBody] = useState(body);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-      // ── Debounce body updates (300ms) ──
-      useEffect(() => {
-            const timer = setTimeout(() => setDebouncedBody(body), 300);
-            return () => clearTimeout(timer);
-      }, [body]);
+  // ── Debounce body updates (300ms) ──
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedBody(body), 300);
+    return () => clearTimeout(timer);
+  }, [body]);
 
-      // ── Build full HTML document ──
-      const srcDoc = useMemo(() => {
-            const sanitized = debouncedBody
-                  .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-                  .replace(/on\w+="[^"]*"/gi, "")
-                  .replace(/on\w+='[^']*'/gi, "");
+  // ── Build full HTML document ──
+  const srcDoc = useMemo(() => {
+    const sanitized = debouncedBody
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/on\w+="[^"]*"/gi, "")
+      .replace(/on\w+='[^']*'/gi, "");
 
-            return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8"/>
@@ -73,80 +73,79 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
 </head>
 <body>${sanitized}</body>
 </html>`;
-      }, [debouncedBody]);
+  }, [debouncedBody]);
 
-      // ── Auto-resize iframe ──
-      const handleIframeLoad = () => {
-            const iframe = iframeRef.current;
-            if (!iframe) return;
-            try {
-                  const doc = iframe.contentDocument;
-                  if (doc?.body) {
-                        iframe.style.height = `${Math.min(doc.body.scrollHeight + 24, 500)}px`;
-                  }
-            } catch {
-                  // sandbox restriction
-            }
-      };
+  // ── Auto-resize iframe ──
+  const handleIframeLoad = () => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    try {
+      const doc = iframe.contentDocument;
+      if (doc?.body) {
+        iframe.style.height = `${Math.min(doc.body.scrollHeight + 24, 500)}px`;
+      }
+    } catch {
+      // sandbox restriction
+    }
+  };
 
-      const selectedDevice = DEVICES.find((d) => d.id === device)!;
+  const selectedDevice = DEVICES.find((d) => d.id === device)!;
 
-      return (
-            <div className="space-y-3">
-                  {/* Device toggles */}
-                  <div className="flex items-center justify-center gap-1 p-1 bg-muted/50 rounded-lg">
-                        {DEVICES.map((d) => (
-                              <Button
-                                    key={d.id}
-                                    type="button"
-                                    variant={device === d.id ? "default" : "ghost"}
-                                    size="sm"
-                                    className={cn(
-                                          "h-7 px-2.5 gap-1.5 text-xs",
-                                          device === d.id && "shadow-sm"
-                                    )}
-                                    onClick={() => setDevice(d.id)}
-                                    title={d.label}
-                              >
-                                    <d.icon className="h-3.5 w-3.5" />
-                                    <span className="hidden sm:inline">{d.label}</span>
-                              </Button>
-                        ))}
-                  </div>
+  return (
+    <div className="space-y-3">
+      {/* Device toggles */}
+      <div className="flex items-center justify-center gap-1 rounded-lg bg-muted/50 p-1">
+        {DEVICES.map((d) => (
+          <Button
+            key={d.id}
+            type="button"
+            variant={device === d.id ? "default" : "ghost"}
+            size="sm"
+            className={cn("h-7 gap-1.5 px-2.5 text-xs", device === d.id && "shadow-sm")}
+            onClick={() => setDevice(d.id)}
+            title={d.label}
+          >
+            <d.icon className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{d.label}</span>
+          </Button>
+        ))}
+      </div>
 
-                  {/* Subject preview */}
-                  {subject && (
-                        <div className="px-3 py-2 bg-muted/30 rounded-md border border-border/50">
-                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">Subject</p>
-                              <p className="text-sm font-medium truncate">{subject}</p>
-                        </div>
-                  )}
+      {/* Subject preview */}
+      {subject && (
+        <div className="rounded-md border border-border/50 bg-muted/30 px-3 py-2">
+          <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+            Subject
+          </p>
+          <p className="truncate text-sm font-medium">{subject}</p>
+        </div>
+      )}
 
-                  {/* Preview container */}
-                  <div className="flex justify-center">
-                        <div
-                              className="border rounded-lg bg-white dark:bg-zinc-900 overflow-hidden transition-all duration-300"
-                              style={{ width: selectedDevice.width, maxWidth: "100%" }}
-                        >
-                              {debouncedBody ? (
-                                    <iframe
-                                          ref={iframeRef}
-                                          srcDoc={srcDoc}
-                                          sandbox="allow-same-origin"
-                                          className="w-full border-0"
-                                          style={{ minHeight: "120px", height: "300px", maxHeight: "500px" }}
-                                          title="Template Preview"
-                                          onLoad={handleIframeLoad}
-                                    />
-                              ) : (
-                                    <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-                                          Start typing to see preview...
-                                    </div>
-                              )}
-                        </div>
-                  </div>
+      {/* Preview container */}
+      <div className="flex justify-center">
+        <div
+          className="overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:bg-zinc-900"
+          style={{ width: selectedDevice.width, maxWidth: "100%" }}
+        >
+          {debouncedBody ? (
+            <iframe
+              ref={iframeRef}
+              srcDoc={srcDoc}
+              sandbox="allow-same-origin"
+              className="w-full border-0"
+              style={{ minHeight: "120px", height: "300px", maxHeight: "500px" }}
+              title="Template Preview"
+              onLoad={handleIframeLoad}
+            />
+          ) : (
+            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+              Start typing to see preview...
             </div>
-      );
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default TemplateLivePreview;

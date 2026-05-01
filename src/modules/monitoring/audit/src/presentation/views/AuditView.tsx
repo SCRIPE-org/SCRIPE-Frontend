@@ -20,9 +20,18 @@ import { FileText, Radio, Download } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load table and dialog components
-const AuditLogTable = dynamic(() => import("../components/AuditLogTable").then(m => ({ default: m.AuditLogTable })), { ssr: false });
-const AuditDetailDialog = dynamic(() => import("../components/AuditDetailDialog").then(m => ({ default: m.AuditDetailDialog })), { ssr: false });
-const AuditExportDialog = dynamic(() => import("../components/AuditExportDialog").then(m => ({ default: m.AuditExportDialog })), { ssr: false });
+const AuditLogTable = dynamic(
+  () => import("../components/AuditLogTable").then((m) => ({ default: m.AuditLogTable })),
+  { ssr: false }
+);
+const AuditDetailDialog = dynamic(
+  () => import("../components/AuditDetailDialog").then((m) => ({ default: m.AuditDetailDialog })),
+  { ssr: false }
+);
+const AuditExportDialog = dynamic(
+  () => import("../components/AuditExportDialog").then((m) => ({ default: m.AuditExportDialog })),
+  { ssr: false }
+);
 
 const connectionColors = {
   connected: "bg-emerald-500",

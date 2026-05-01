@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const UsersView = dynamic(
-  () =>
-    import("@modules/identity/users/src/presentation/views/UsersView").then((m) => ({
-      default: m.UsersView,
-    }))
+const UsersView = dynamic(() =>
+  import("@modules/identity/users/src/presentation/views/UsersView").then((m) => ({
+    default: m.UsersView,
+  }))
 );
 
 export const metadata: Metadata = {

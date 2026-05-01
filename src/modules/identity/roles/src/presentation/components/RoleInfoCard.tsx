@@ -47,8 +47,10 @@ export function RoleInfoCard({ role, isLoading, selectedCount, totalCount }: Rol
             </div>
             {role?.hasGroups && (
               <div className="border-t pt-2">
-                <label className="text-sm text-muted-foreground">{t("roles.groups") || "Groups"}</label>
-                <div className="flex flex-wrap gap-1 mt-1">
+                <label className="text-sm text-muted-foreground">
+                  {t("roles.groups") || "Groups"}
+                </label>
+                <div className="mt-1 flex flex-wrap gap-1">
                   {role.getLocalizedGroups(language).map((groupName, i) => (
                     <Badge key={i} variant="secondary" className="text-xs">
                       {groupName}

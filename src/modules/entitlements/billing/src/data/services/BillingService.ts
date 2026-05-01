@@ -3,7 +3,10 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { IBillingService, GatewayListResponseModel } from "../../domain/interfaces/IBillingService";
+import type {
+  IBillingService,
+  GatewayListResponseModel,
+} from "../../domain/interfaces/IBillingService";
 import type {
   InvoiceResponseModel,
   InvoiceListResponseModel,
@@ -88,14 +91,10 @@ export class BillingService implements IBillingService {
     );
   }
 
-  async cancelGatewaySubscription(
-    tenantId: string,
-    immediately: boolean
-  ): Promise<void> {
-    await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.CANCEL_GATEWAY(tenantId),
-      { immediately }
-    );
+  async cancelGatewaySubscription(tenantId: string, immediately: boolean): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.CANCEL_GATEWAY(tenantId), {
+      immediately,
+    });
   }
 
   // ── Dashboard & Revenue ──
@@ -120,39 +119,29 @@ export class BillingService implements IBillingService {
   // ── PDF Download ──
 
   async downloadInvoicePdf(invoiceId: string): Promise<Blob> {
-    return this.api.getBlob(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.PDF(invoiceId)
-    );
+    return this.api.getBlob(API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.PDF(invoiceId));
   }
 
   // ── Email ──
 
   async sendInvoiceEmail(invoiceId: string): Promise<void> {
-    await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.SEND_EMAIL(invoiceId),
-      {}
-    );
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.SEND_EMAIL(invoiceId), {});
   }
 
   // ── Payment Gateway Management ──
 
   async getGateways(): Promise<GatewayListResponseModel> {
-    return this.api.get<GatewayListResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.BASE
-    );
+    return this.api.get<GatewayListResponseModel>(API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.BASE);
   }
 
   async testGatewayConnection(gateway: string): Promise<{ success: boolean; message: string }> {
-    return this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TEST_CONNECTION(gateway),
-      {}
-    );
+    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TEST_CONNECTION(gateway), {});
   }
 
-  async toggleGatewayStatus(gateway: string, enabled: boolean): Promise<{ success: boolean; message: string; enabled: boolean }> {
-    return this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TOGGLE(gateway),
-      { enabled }
-    );
+  async toggleGatewayStatus(
+    gateway: string,
+    enabled: boolean
+  ): Promise<{ success: boolean; message: string; enabled: boolean }> {
+    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TOGGLE(gateway), { enabled });
   }
 }

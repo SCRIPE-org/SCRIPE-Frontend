@@ -27,107 +27,107 @@ import { appLogger } from "./logger";
 import { BRAND } from "@core/config/branding";
 
 type AuthBroadcastEvent =
-      | { type: "LOGOUT" }
-      | { type: "TOKEN_REFRESHED"; accessToken: string; expiresAt?: number }
-      | { type: "IMPERSONATION_START" }
-      | { type: "IMPERSONATION_STOP" };
+  | { type: "LOGOUT" }
+  | { type: "TOKEN_REFRESHED"; accessToken: string; expiresAt?: number }
+  | { type: "IMPERSONATION_START" }
+  | { type: "IMPERSONATION_STOP" };
 
 class AuthBroadcastService {
-      private channel: BroadcastChannel | null = null;
+  private channel: BroadcastChannel | null = null;
 
-      // Callbacks
-      private onLogoutCallback: (() => void) | null = null;
-      private onTokenRefreshedCallback: ((token: string) => void) | null = null;
-      private onImpersonationCallback: ((type: "start" | "stop") => void) | null = null;
+  // Callbacks
+  private onLogoutCallback: (() => void) | null = null;
+  private onTokenRefreshedCallback: ((token: string) => void) | null = null;
+  private onImpersonationCallback: ((type: "start" | "stop") => void) | null = null;
 
-      constructor() {
-            if (typeof window !== "undefined" && typeof BroadcastChannel !== "undefined") {
-                  try {
-                        this.channel = new BroadcastChannel(BRAND.authChannel);
-                        this.channel.onmessage = (event: MessageEvent<AuthBroadcastEvent>) => {
-                              this.handleMessage(event.data);
-                        };
-                        appLogger.debug("[AuthBroadcast] Channel initialized");
-                  } catch {
-                        appLogger.warn("[AuthBroadcast] BroadcastChannel not available");
-                  }
-            }
+  constructor() {
+    if (typeof window !== "undefined" && typeof BroadcastChannel !== "undefined") {
+      try {
+        this.channel = new BroadcastChannel(BRAND.authChannel);
+        this.channel.onmessage = (event: MessageEvent<AuthBroadcastEvent>) => {
+          this.handleMessage(event.data);
+        };
+        appLogger.debug("[AuthBroadcast] Channel initialized");
+      } catch {
+        appLogger.warn("[AuthBroadcast] BroadcastChannel not available");
       }
+    }
+  }
 
-      private handleMessage(event: AuthBroadcastEvent): void {
-            switch (event.type) {
-                  case "LOGOUT":
-                        appLogger.debug("[AuthBroadcast] Received LOGOUT from another tab");
-                        secureTokenService.clearTokens();
-                        this.onLogoutCallback?.();
-                        break;
+  private handleMessage(event: AuthBroadcastEvent): void {
+    switch (event.type) {
+      case "LOGOUT":
+        appLogger.debug("[AuthBroadcast] Received LOGOUT from another tab");
+        secureTokenService.clearTokens();
+        this.onLogoutCallback?.();
+        break;
 
-                  case "TOKEN_REFRESHED":
-                        appLogger.debug("[AuthBroadcast] Received TOKEN_REFRESHED from another tab");
-                        secureTokenService.setAccessToken(event.accessToken);
-                        if (event.expiresAt) {
-                              secureTokenService.setTokenExpiry(event.expiresAt);
-                        }
-                        this.onTokenRefreshedCallback?.(event.accessToken);
-                        break;
+      case "TOKEN_REFRESHED":
+        appLogger.debug("[AuthBroadcast] Received TOKEN_REFRESHED from another tab");
+        secureTokenService.setAccessToken(event.accessToken);
+        if (event.expiresAt) {
+          secureTokenService.setTokenExpiry(event.expiresAt);
+        }
+        this.onTokenRefreshedCallback?.(event.accessToken);
+        break;
 
-                  case "IMPERSONATION_START":
-                        appLogger.debug("[AuthBroadcast] Received IMPERSONATION_START from another tab");
-                        this.onImpersonationCallback?.("start");
-                        break;
+      case "IMPERSONATION_START":
+        appLogger.debug("[AuthBroadcast] Received IMPERSONATION_START from another tab");
+        this.onImpersonationCallback?.("start");
+        break;
 
-                  case "IMPERSONATION_STOP":
-                        appLogger.debug("[AuthBroadcast] Received IMPERSONATION_STOP from another tab");
-                        this.onImpersonationCallback?.("stop");
-                        break;
-            }
-      }
+      case "IMPERSONATION_STOP":
+        appLogger.debug("[AuthBroadcast] Received IMPERSONATION_STOP from another tab");
+        this.onImpersonationCallback?.("stop");
+        break;
+    }
+  }
 
-      // ─── Register Callbacks ───────────────────────────────────────
+  // ─── Register Callbacks ───────────────────────────────────────
 
-      onLogout(callback: () => void): void {
-            this.onLogoutCallback = callback;
-      }
+  onLogout(callback: () => void): void {
+    this.onLogoutCallback = callback;
+  }
 
-      onTokenRefreshed(callback: (token: string) => void): void {
-            this.onTokenRefreshedCallback = callback;
-      }
+  onTokenRefreshed(callback: (token: string) => void): void {
+    this.onTokenRefreshedCallback = callback;
+  }
 
-      onImpersonation(callback: (type: "start" | "stop") => void): void {
-            this.onImpersonationCallback = callback;
-      }
+  onImpersonation(callback: (type: "start" | "stop") => void): void {
+    this.onImpersonationCallback = callback;
+  }
 
-      // ─── Broadcast Events ────────────────────────────────────────
+  // ─── Broadcast Events ────────────────────────────────────────
 
-      broadcastLogout(): void {
-            this.post({ type: "LOGOUT" });
-      }
+  broadcastLogout(): void {
+    this.post({ type: "LOGOUT" });
+  }
 
-      broadcastTokenRefreshed(accessToken: string, expiresAt?: number): void {
-            this.post({ type: "TOKEN_REFRESHED", accessToken, expiresAt });
-      }
+  broadcastTokenRefreshed(accessToken: string, expiresAt?: number): void {
+    this.post({ type: "TOKEN_REFRESHED", accessToken, expiresAt });
+  }
 
-      broadcastImpersonationStart(): void {
-            this.post({ type: "IMPERSONATION_START" });
-      }
+  broadcastImpersonationStart(): void {
+    this.post({ type: "IMPERSONATION_START" });
+  }
 
-      broadcastImpersonationStop(): void {
-            this.post({ type: "IMPERSONATION_STOP" });
-      }
+  broadcastImpersonationStop(): void {
+    this.post({ type: "IMPERSONATION_STOP" });
+  }
 
-      private post(event: AuthBroadcastEvent): void {
-            try {
-                  this.channel?.postMessage(event);
-            } catch {
-                  // Ignore — channel may be closed
-            }
-      }
+  private post(event: AuthBroadcastEvent): void {
+    try {
+      this.channel?.postMessage(event);
+    } catch {
+      // Ignore — channel may be closed
+    }
+  }
 
-      /** Close the channel (e.g. on component unmount) */
-      close(): void {
-            this.channel?.close();
-            this.channel = null;
-      }
+  /** Close the channel (e.g. on component unmount) */
+  close(): void {
+    this.channel?.close();
+    this.channel = null;
+  }
 }
 
 /** Singleton instance — safe to import anywhere */

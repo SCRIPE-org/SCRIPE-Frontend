@@ -9,8 +9,12 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
 import type { SubscriptionEditionDialogProps } from "../types";
@@ -25,7 +29,7 @@ export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps
     (s: SubscriptionListItem) => s.status === "Active" || s.status === "Trialing"
   )?.editionId;
   const selectedEd = activeSubEditionId
-    ? (editionsVm.items ?? []).find((ed) => ed.id === activeSubEditionId) ?? null
+    ? ((editionsVm.items ?? []).find((ed) => ed.id === activeSubEditionId) ?? null)
     : null;
 
   return (

@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const PaymentHubView = dynamic(
-  () =>
-    import("@modules/entitlements/payment-hub").then((m) => ({
-      default: m.PaymentHubView,
-    }))
+const PaymentHubView = dynamic(() =>
+  import("@modules/entitlements/payment-hub").then((m) => ({
+    default: m.PaymentHubView,
+  }))
 );
 
 export const metadata: Metadata = {

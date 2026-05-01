@@ -4,8 +4,16 @@
  * Elevated Tier 2 Architecture: maps pricing matrix, feature catalog,
  * version snapshots, and lifecycle status.
  */
-import { TenantPlan, TenantFeatureDefinition, TenantPlanPromotion } from "../../domain/entities/TenantPlan";
-import type { TenantPlanData, TenantFeatureDefinitionData, TenantPlanPromotionData } from "../../domain/entities/TenantPlan";
+import {
+  TenantPlan,
+  TenantFeatureDefinition,
+  TenantPlanPromotion,
+} from "../../domain/entities/TenantPlan";
+import type {
+  TenantPlanData,
+  TenantFeatureDefinitionData,
+  TenantPlanPromotionData,
+} from "../../domain/entities/TenantPlan";
 import type {
   TenantPlanModel,
   TenantPlanListModel,
@@ -46,23 +54,31 @@ export class TenantPlanMapper {
       sortOrder: model.sortOrder ?? 0,
       currentVersion: model.currentVersion ?? 0,
       activeSubscriberCount: model.activeSubscriberCount ?? 0,
-      features: (model.features ?? []).map((f: {
-        featureDefinitionId?: string; id?: string;
-        featureKey?: string; key?: string;
-        featureDisplayNameEn?: string; displayNameEn?: string;
-        featureDisplayNameAr?: string; displayNameAr?: string;
-        featureValueType?: string; valueType?: string;
-        value?: string;
-        overrideLabel?: string; category?: string;
-      }) => ({
-        featureDefinitionId: f.featureDefinitionId ?? f.id ?? "",
-        featureKey: f.featureKey ?? f.key ?? "",
-        featureDisplayNameEn: f.featureDisplayNameEn ?? f.displayNameEn,
-        featureDisplayNameAr: f.featureDisplayNameAr ?? f.displayNameAr,
-        featureValueType: f.featureValueType ?? f.valueType ?? "Boolean",
-        value: f.value ?? "",
-        overrideLabel: f.overrideLabel ?? f.category,
-      })),
+      features: (model.features ?? []).map(
+        (f: {
+          featureDefinitionId?: string;
+          id?: string;
+          featureKey?: string;
+          key?: string;
+          featureDisplayNameEn?: string;
+          displayNameEn?: string;
+          featureDisplayNameAr?: string;
+          displayNameAr?: string;
+          featureValueType?: string;
+          valueType?: string;
+          value?: string;
+          overrideLabel?: string;
+          category?: string;
+        }) => ({
+          featureDefinitionId: f.featureDefinitionId ?? f.id ?? "",
+          featureKey: f.featureKey ?? f.key ?? "",
+          featureDisplayNameEn: f.featureDisplayNameEn ?? f.displayNameEn,
+          featureDisplayNameAr: f.featureDisplayNameAr ?? f.displayNameAr,
+          featureValueType: f.featureValueType ?? f.valueType ?? "Boolean",
+          value: f.value ?? "",
+          overrideLabel: f.overrideLabel ?? f.category,
+        })
+      ),
       prices: model.prices ?? [],
       versions: model.versions ?? [],
       createdAt: model.createdAt,
@@ -103,7 +119,9 @@ export class TenantPlanMapper {
   }
 
   // ── Feature Definition Mappers ──
-  static toFeatureDefinitionEntity(model: TenantFeatureDefinitionModel | TenantFeatureDefinitionListModel): TenantFeatureDefinition {
+  static toFeatureDefinitionEntity(
+    model: TenantFeatureDefinitionModel | TenantFeatureDefinitionListModel
+  ): TenantFeatureDefinition {
     const data: TenantFeatureDefinitionData = {
       id: model.id,
       tenantId: "tenantId" in model ? model.tenantId : undefined,
@@ -124,7 +142,9 @@ export class TenantPlanMapper {
   }
 
   // ── Promotion Mappers ──
-  static toPromotionEntity(model: TenantPlanPromotionModel | TenantPlanPromotionListModel): TenantPlanPromotion {
+  static toPromotionEntity(
+    model: TenantPlanPromotionModel | TenantPlanPromotionListModel
+  ): TenantPlanPromotion {
     const data: TenantPlanPromotionData = {
       id: model.id,
       tenantPlanId: "tenantPlanId" in model ? model.tenantPlanId : undefined,

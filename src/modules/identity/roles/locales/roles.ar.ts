@@ -60,4 +60,12 @@ export const ar = {
     fetchError: "فشل في جلب صلاحيات الدور",
     otherCategory: "أخرى",
   },
+  role: {
+    deleteConfirm: "[مفقود] Delete Confirm",
+    hasAdmins: "[مفقود] Has Admins",
+    selectFallback: "[مفقود] Select Fallback",
+    selectFallbackPlaceholder: "[مفقود] Select Fallback Placeholder",
+    permissionsSaved: "[مفقود] Permissions Saved",
+    permissionsSaveError: "[مفقود] Permissions Save Error",
+  },
 };

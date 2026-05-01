@@ -7,7 +7,8 @@ export const ar = {
     url: "رابط نقطة النهاية",
     urlPlaceholder: "https://your-server.com/webhook",
     scopePlatformOnly: "أحداث المنصة فقط",
-    scopePlatformOnlyDesc: "التشغيل فقط على الأحداث على مستوى النظام، مع تجاهل الإجراءات الخاصة بالمستأجرين",
+    scopePlatformOnlyDesc:
+      "التشغيل فقط على الأحداث على مستوى النظام، مع تجاهل الإجراءات الخاصة بالمستأجرين",
     scopeAllTenants: "جميع المستأجرين (عالمي)",
     scopeAllTenantsDesc: "جميع الأحداث عبر المنصة بأكملها",
     scopeTenantOnly: "هذا المستأجر فقط",
@@ -38,8 +39,7 @@ export const ar = {
     },
 
     // ─── التحقق من الرابط ────────────────────────────────────
-    urlHttpsRequired:
-      "يجب أن يستخدم الرابط HTTPS (http://localhost مسموح به للتطوير)",
+    urlHttpsRequired: "يجب أن يستخدم الرابط HTTPS (http://localhost مسموح به للتطوير)",
 
     // ─── الحالة ──────────────────────────────────────────────
     status: {
@@ -82,8 +82,7 @@ export const ar = {
 
     // ─── السر ────────────────────────────────────────────────
     secret: "مفتاح التوقيع",
-    secretDescription:
-      "يُستخدم لتوقيع حمولات الويب هوك بـ HMAC-SHA256. حافظ على سرية هذا المفتاح.",
+    secretDescription: "يُستخدم لتوقيع حمولات الويب هوك بـ HMAC-SHA256. حافظ على سرية هذا المفتاح.",
     rotateSecret: "تدوير المفتاح",
     rotateSecretTitle: "تدوير مفتاح التوقيع",
     rotateSecretDesc:
@@ -158,10 +157,8 @@ export const ar = {
       allClear: "كل شيء جيد",
       retrying: "جارٍ الإعادة",
       idle: "خامل",
-      endpointAutoDisabled:
-        "تم تعطيل نقطة نهاية تلقائياً بسبب فشل متتالي",
-      endpointsAutoDisabled:
-        "تم تعطيل نقاط نهاية تلقائياً بسبب فشل متتالي",
+      endpointAutoDisabled: "تم تعطيل نقطة نهاية تلقائياً بسبب فشل متتالي",
+      endpointsAutoDisabled: "تم تعطيل نقاط نهاية تلقائياً بسبب فشل متتالي",
     },
 
     // ─── التحليلات ───────────────────────────────────────────

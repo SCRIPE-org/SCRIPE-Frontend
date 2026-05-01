@@ -6,7 +6,7 @@ import { TechnicalDocsView } from "./TechnicalDocsView";
 import "../../data/content/registry";
 
 interface TechnicalPageConnectorProps {
-      slug: string;
+  slug: string;
 }
 
 /**
@@ -14,5 +14,5 @@ interface TechnicalPageConnectorProps {
  * the server page.tsx to the TechnicalDocsView client component.
  */
 export function TechnicalPageConnector({ slug }: TechnicalPageConnectorProps) {
-      return <TechnicalDocsView slug={slug} />;
+  return <TechnicalDocsView slug={slug} />;
 }

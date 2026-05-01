@@ -27,7 +27,12 @@ const VALUE_TYPE_OPTIONS: GenericSelectOption[] = [
   { value: "String", label: "String" },
 ];
 
-export function FeatureDefinitionFormFields({ form, mode, t, language }: FeatureDefinitionFormFieldsProps) {
+export function FeatureDefinitionFormFields({
+  form,
+  mode,
+  t,
+  language,
+}: FeatureDefinitionFormFieldsProps) {
   return (
     <div className="space-y-4">
       {/* ── Key ── */}
@@ -37,7 +42,9 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
           id="fd-key"
           value={String(form.getValue("key") ?? "")}
           onChange={(e) => form.setValue("key", e.target.value)}
-          placeholder={t("entitlements.featureDefinitions.keyPlaceholder") || "e.g. max_projects, api_access"}
+          placeholder={
+            t("entitlements.featureDefinitions.keyPlaceholder") || "e.g. max_projects, api_access"
+          }
           disabled={mode === "edit"}
         />
         <p className="text-xs text-muted-foreground">
@@ -47,7 +54,7 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
       </div>
 
       {/* ── Display Names ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="fd-name-en">
             {t("entitlements.featureDefinitions.displayNameEn") || "Display Name (EN)"}
@@ -56,7 +63,10 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
             id="fd-name-en"
             value={String(form.getValue("displayNameEn") ?? "")}
             onChange={(e) => form.setValue("displayNameEn", e.target.value)}
-            placeholder={t("entitlements.featureDefinitions.displayNameEnPlaceholder") || "e.g. Maximum Projects"}
+            placeholder={
+              t("entitlements.featureDefinitions.displayNameEnPlaceholder") ||
+              "e.g. Maximum Projects"
+            }
           />
         </div>
         <div className="space-y-1.5">
@@ -68,7 +78,10 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
             dir="rtl"
             value={String(form.getValue("displayNameAr") ?? "")}
             onChange={(e) => form.setValue("displayNameAr", e.target.value)}
-            placeholder={t("entitlements.featureDefinitions.displayNameArPlaceholder") || "الحد الأقصى للمشاريع"}
+            placeholder={
+              t("entitlements.featureDefinitions.displayNameArPlaceholder") ||
+              "الحد الأقصى للمشاريع"
+            }
           />
         </div>
       </div>
@@ -80,7 +93,9 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
           type="single"
           options={VALUE_TYPE_OPTIONS}
           value={String(form.getValue("valueType") ?? "Boolean")}
-          onValueChange={(v: string | string[]) => form.setValue("valueType", typeof v === "string" ? v : v[0])}
+          onValueChange={(v: string | string[]) =>
+            form.setValue("valueType", typeof v === "string" ? v : v[0])
+          }
           placeholder={t("entitlements.featureDefinitions.selectType") || "Select type..."}
           disabled={mode === "edit"}
         />
@@ -118,7 +133,10 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
           id="fd-category"
           value={String(form.getValue("category") ?? "")}
           onChange={(e) => form.setValue("category", e.target.value)}
-          placeholder={t("entitlements.featureDefinitions.categoryPlaceholder") || "e.g. Limits, Access, Branding"}
+          placeholder={
+            t("entitlements.featureDefinitions.categoryPlaceholder") ||
+            "e.g. Limits, Access, Branding"
+          }
         />
       </div>
 
@@ -131,7 +149,10 @@ export function FeatureDefinitionFormFields({ form, mode, t, language }: Feature
           id="fd-desc"
           value={String(form.getValue("description") ?? "")}
           onChange={(e) => form.setValue("description", e.target.value)}
-          placeholder={t("entitlements.featureDefinitions.descriptionPlaceholder") || "What this feature controls..."}
+          placeholder={
+            t("entitlements.featureDefinitions.descriptionPlaceholder") ||
+            "What this feature controls..."
+          }
           rows={2}
         />
       </div>

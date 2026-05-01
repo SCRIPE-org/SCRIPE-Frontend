@@ -43,7 +43,7 @@ const PUBLIC_PAGES = [
   "/studio-preview",
   "/dashboard-preview",
   "/setup-account",
-  "/change-password"
+  "/change-password",
 ];
 
 // Route prefixes that are always public (no auth checks at all)
@@ -105,7 +105,11 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      const isAuthPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password" || pathname.startsWith("/sso");
+      const isAuthPage =
+        pathname === "/login" ||
+        pathname === "/forgot-password" ||
+        pathname === "/reset-password" ||
+        pathname.startsWith("/sso");
       const hasToken = secureTokenService.hasToken();
 
       // ─── Redirect authenticated users AWAY from auth pages ───
@@ -127,7 +131,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         // This allows we to hit Case 2 below, which will attempt a silent refresh.
         // If refresh succeeds, user is redirected to /. If it fails, they stay on the login page.
         const needsSilentRefreshOnAuthPage = isAuthPage && !hasToken && isAuthenticated;
-        
+
         if (!needsSilentRefreshOnAuthPage) {
           setIsChecking(false);
           return;
@@ -221,7 +225,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         isRefreshing.current = false;
         // Refresh failed → session is truly expired
         appLogger.debug("[RouteGuard] Session expired, redirecting to login");
-        
+
         if (!isAuthPage && !hasRedirected.current) {
           hasRedirected.current = true;
           forceLogout();

@@ -39,7 +39,11 @@ export function useTenantPlanComparisonViewModel() {
   const [selectedCycle, setSelectedCycle] = useState<"Monthly" | "Yearly" | "Lifetime">("Monthly");
 
   // Step 1: Fetch the list to get plan IDs
-  const { data: listData, isLoading: isListLoading, error } = useQuery({
+  const {
+    data: listData,
+    isLoading: isListLoading,
+    error,
+  } = useQuery({
     queryKey: ["entitlements", "tenant-plans", "comparison-list"],
     queryFn: () => tenantPlanRepository.getAll({ page: 1, pageSize: 50 }),
     staleTime: 5 * 60 * 1000,
@@ -119,7 +123,16 @@ export function useTenantPlanComparisonViewModel() {
     grouped.forEach((rows) => rows.sort((a, b) => a.displayNameEn.localeCompare(b.displayNameEn)));
 
     // Sort categories
-    const CATEGORY_ORDER = ["Billing", "Modules", "Quotas", "Security", "Users", "Performance", "Configuration", "General"];
+    const CATEGORY_ORDER = [
+      "Billing",
+      "Modules",
+      "Quotas",
+      "Security",
+      "Users",
+      "Performance",
+      "Configuration",
+      "General",
+    ];
     return new Map(
       [...grouped.entries()].sort(([a], [b]) => {
         const ai = CATEGORY_ORDER.indexOf(a);
@@ -143,10 +156,15 @@ export function useTenantPlanComparisonViewModel() {
     // Plan 0: Base plan highlights
     const baseHighlights: PricingHighlight[] = [];
     if (plans[0].maxUsers > 0) baseHighlights.push({ label: `Up to ${plans[0].maxUsers} Users` });
-    else if (plans[0].maxUsers === -1) baseHighlights.push({ label: "Unlimited Users", isUnlimited: true });
+    else if (plans[0].maxUsers === -1)
+      baseHighlights.push({ label: "Unlimited Users", isUnlimited: true });
 
-    const baseFeatures = plans[0].features.filter(f => f.featureValueType === "Boolean" && f.value === "true").slice(0, 3);
-    baseFeatures.forEach(f => baseHighlights.push({ label: f.featureDisplayNameEn || f.featureKey }));
+    const baseFeatures = plans[0].features
+      .filter((f) => f.featureValueType === "Boolean" && f.value === "true")
+      .slice(0, 3);
+    baseFeatures.forEach((f) =>
+      baseHighlights.push({ label: f.featureDisplayNameEn || f.featureKey })
+    );
     highlights.push(baseHighlights);
 
     // Subsequent plans: calculate deltas
@@ -163,9 +181,9 @@ export function useTenantPlanComparisonViewModel() {
       }
 
       // Check features upgrade
-      currPlan.features.forEach(currFeat => {
-        const prevFeat = prevPlan.features.find(f => f.featureKey === currFeat.featureKey);
-        
+      currPlan.features.forEach((currFeat) => {
+        const prevFeat = prevPlan.features.find((f) => f.featureKey === currFeat.featureKey);
+
         if (currFeat.featureValueType === "Boolean" && currFeat.value === "true") {
           if (!prevFeat || prevFeat.value !== "true") {
             currentHighlights.push({ label: currFeat.featureDisplayNameEn || currFeat.featureKey });
@@ -174,9 +192,14 @@ export function useTenantPlanComparisonViewModel() {
           const currNum = parseInt(currFeat.value, 10);
           const prevNum = prevFeat ? parseInt(prevFeat.value, 10) : 0;
           if (currNum === -1 && prevNum !== -1) {
-            currentHighlights.push({ label: `Unlimited ${currFeat.featureDisplayNameEn || currFeat.featureKey}`, isUnlimited: true });
+            currentHighlights.push({
+              label: `Unlimited ${currFeat.featureDisplayNameEn || currFeat.featureKey}`,
+              isUnlimited: true,
+            });
           } else if (currNum > prevNum) {
-            currentHighlights.push({ label: `${currFeat.featureDisplayNameEn || currFeat.featureKey} (${currNum})` });
+            currentHighlights.push({
+              label: `${currFeat.featureDisplayNameEn || currFeat.featureKey} (${currNum})`,
+            });
           }
         }
       });
@@ -204,7 +227,7 @@ export function useTenantPlanComparisonViewModel() {
       if (plan.allowYearly) cycles.add("Yearly");
       if (plan.allowLifetime) cycles.add("Lifetime");
     });
-    
+
     // Ensure "Monthly" is default if available and nothing is explicitly selected
     const sortedCycles = Array.from(cycles);
     if (!cycles.has(selectedCycle) && sortedCycles.length > 0) {
@@ -214,7 +237,7 @@ export function useTenantPlanComparisonViewModel() {
         setSelectedCycle(sortedCycles[0]);
       }
     }
-    
+
     return sortedCycles;
   }, [plans, selectedCycle]);
 

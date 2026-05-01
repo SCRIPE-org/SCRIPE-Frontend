@@ -28,17 +28,19 @@ export function CommissionLedgerView() {
                 onClick={() => vm.actions.retry(invoice.id)}
                 disabled={vm.actions.isRetrying}
               >
-                <RefreshCw className="h-4 w-4 mr-1" />
+                <RefreshCw className="mr-1 h-4 w-4" />
                 {t("entitlements.commissionLedger.retryCharge")}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => vm.actions.waive(invoice.id, t("entitlements.commissionLedger.adminWaiver"))}
+                onClick={() =>
+                  vm.actions.waive(invoice.id, t("entitlements.commissionLedger.adminWaiver"))
+                }
                 disabled={vm.actions.isWaiving}
                 className="text-destructive"
               >
-                <XCircle className="h-4 w-4 mr-1" />
+                <XCircle className="mr-1 h-4 w-4" />
                 {t("entitlements.commissionLedger.waive")}
               </Button>
             </div>
@@ -62,7 +64,9 @@ export function CommissionLedgerView() {
 
       <Tabs defaultValue="ledgers" className="w-full">
         <TabsList>
-          <TabsTrigger value="ledgers">{t("entitlements.commissionLedger.ledgerEntries")}</TabsTrigger>
+          <TabsTrigger value="ledgers">
+            {t("entitlements.commissionLedger.ledgerEntries")}
+          </TabsTrigger>
           <TabsTrigger value="invoices">{t("entitlements.commissionLedger.invoices")}</TabsTrigger>
         </TabsList>
         <TabsContent value="ledgers" className="mt-4">

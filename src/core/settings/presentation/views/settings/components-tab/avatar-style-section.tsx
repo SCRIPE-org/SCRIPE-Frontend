@@ -27,7 +27,12 @@ export function AvatarStyleSection() {
       gridClassName="grid-cols-2 md:grid-cols-4"
       renderPreview={(option) => (
         <div className="flex justify-center">
-          <div className={cn("flex h-10 w-10 items-center justify-center bg-primary text-sm font-medium text-primary-foreground", option.class)}>
+          <div
+            className={cn(
+              "flex h-10 w-10 items-center justify-center bg-primary text-sm font-medium text-primary-foreground",
+              option.class
+            )}
+          >
             <User className="h-5 w-5" />
           </div>
         </div>

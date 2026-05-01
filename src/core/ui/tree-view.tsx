@@ -856,9 +856,7 @@ function TreeList<T>({
               </div>
 
               {/* Actions */}
-              {actions && (
-                <NodeActions node={node} actions={actions} direction={direction} />
-              )}
+              {actions && <NodeActions node={node} actions={actions} direction={direction} />}
             </div>
 
             {/* Children */}

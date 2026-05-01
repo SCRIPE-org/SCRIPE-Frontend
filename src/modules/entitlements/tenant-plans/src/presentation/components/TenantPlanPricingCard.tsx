@@ -49,27 +49,29 @@ export function TenantPlanPricingCard({
   customLabel,
   previewLabel,
 }: TenantPlanPricingCardProps) {
-  const displayName =
-    (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name;
+  const displayName = (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name;
   const badges = plan.badgeText ? [plan.badgeText] : [];
 
   let priceAmount: string;
   let priceSuffix = "";
-  
+
   if (plan.isContactSalesOnly) {
     priceAmount = customLabel;
   } else if (!plan.hasPrices) {
     priceAmount = freeLabel;
   } else {
-    const cyclePrices = plan.prices.filter(p => p.billingCycle === selectedCycle);
+    const cyclePrices = plan.prices.filter((p) => p.billingCycle === selectedCycle);
     if (cyclePrices.length > 0) {
-      const cheapest = cyclePrices.reduce((min, p) => p.amount < min.amount ? p : min, cyclePrices[0]);
+      const cheapest = cyclePrices.reduce(
+        (min, p) => (p.amount < min.amount ? p : min),
+        cyclePrices[0]
+      );
       priceAmount = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: cheapest.currency || "USD",
         minimumFractionDigits: 0,
       }).format(cheapest.amount);
-      
+
       if (selectedCycle === "Monthly") priceSuffix = "/mo";
       else if (selectedCycle === "Yearly") priceSuffix = "/yr";
       else if (selectedCycle === "Lifetime") priceSuffix = " one-time";
@@ -81,13 +83,11 @@ export function TenantPlanPricingCard({
 
   return (
     <div
-      className={`relative flex flex-col rounded-xl border transition-all duration-300 overflow-hidden
-        ${
-          isRecommended
-            ? "border-primary/50 shadow-[0_0_0_1px_rgba(var(--primary),0.3),0_8px_40px_rgba(var(--primary),0.15)] bg-card"
-            : "border-border/60 bg-card/80 hover:border-border hover:shadow-lg"
-        }
-      `}
+      className={`relative flex flex-col overflow-hidden rounded-xl border transition-all duration-300 ${
+        isRecommended
+          ? "border-primary/50 bg-card shadow-[0_0_0_1px_rgba(var(--primary),0.3),0_8px_40px_rgba(var(--primary),0.15)]"
+          : "border-border/60 bg-card/80 hover:border-border hover:shadow-lg"
+      } `}
     >
       {/* Top accent line for recommended */}
       {isRecommended && (
@@ -108,7 +108,7 @@ export function TenantPlanPricingCard({
         <div>
           <h3 className="text-base font-bold text-foreground">{displayName}</h3>
           {plan.tagline && (
-            <p className="mt-1 text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {plan.tagline}
             </p>
           )}
@@ -118,46 +118,37 @@ export function TenantPlanPricingCard({
         <div className="flex items-end gap-1">
           <span
             className={`font-bold tracking-tight ${
-              priceAmount === freeLabel || priceAmount === customLabel
-                ? "text-2xl"
-                : "text-3xl"
+              priceAmount === freeLabel || priceAmount === customLabel ? "text-2xl" : "text-3xl"
             }`}
           >
             {priceAmount}
           </span>
-          {priceSuffix && (
-            <span className="text-sm text-muted-foreground mb-1">
-              {priceSuffix}
-            </span>
-          )}
+          {priceSuffix && <span className="mb-1 text-sm text-muted-foreground">{priceSuffix}</span>}
         </div>
 
         {/* Trial info */}
         {plan.hasTrial && (
-          <p className="text-xs text-muted-foreground">
-            {plan.trialDays}-day free trial
-          </p>
+          <p className="text-xs text-muted-foreground">{plan.trialDays}-day free trial</p>
         )}
 
         {/* Separator */}
         <div className="h-px bg-border/50" />
 
         {/* Progressive highlights */}
-        <div className="flex flex-col gap-2 min-h-[120px]">
+        <div className="flex min-h-[120px] flex-col gap-2">
           {previousPlanName && (
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {allHighlightsLabel.replace("{prev}", previousPlanName)}
             </p>
           )}
           {highlights.map((hl, idx) => (
             <div key={idx} className="flex items-start gap-2">
               <div
-                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full
-                  ${
-                    hl.isUnlimited
-                      ? "bg-primary/15 text-primary"
-                      : "bg-emerald-500/15 text-emerald-500"
-                  }`}
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
+                  hl.isUnlimited
+                    ? "bg-primary/15 text-primary"
+                    : "bg-emerald-500/15 text-emerald-500"
+                }`}
               >
                 {hl.isUnlimited ? (
                   <InfinityIcon className="h-2.5 w-2.5" />
@@ -165,22 +156,18 @@ export function TenantPlanPricingCard({
                   <Check className="h-2.5 w-2.5" strokeWidth={3} />
                 )}
               </div>
-              <span className="text-sm text-foreground/80 leading-tight">
-                {hl.label}
-              </span>
+              <span className="text-sm leading-tight text-foreground/80">{hl.label}</span>
             </div>
           ))}
           {highlights.length === 0 && !previousPlanName && (
-            <p className="text-xs text-muted-foreground/60 italic">
-              Core plan
-            </p>
+            <p className="text-xs italic text-muted-foreground/60">Core plan</p>
           )}
         </div>
       </div>
 
       {/* Admin Preview Label */}
       <div className="mt-auto border-t border-border/40 bg-muted/30 px-6 py-3">
-        <p className="text-center text-xs text-muted-foreground/70 font-medium uppercase tracking-wider">
+        <p className="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
           {previewLabel}
         </p>
       </div>

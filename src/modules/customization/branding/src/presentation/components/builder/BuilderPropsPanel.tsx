@@ -20,7 +20,12 @@ import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock } from "luc
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { VideoUploadField } from "@core/ui/video-upload-field";
 import { CodeEditorField } from "@core/ui/code-editor-field";
-import type { CanvasComponent, CanvasComponentType, GridAlignment, PositionMode } from "../../../domain/entities/CanvasComponent";
+import type {
+  CanvasComponent,
+  CanvasComponentType,
+  GridAlignment,
+  PositionMode,
+} from "../../../domain/entities/CanvasComponent";
 import { COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -32,16 +37,16 @@ interface BuilderPropsPanelProps {
   onRemove: (id: string) => boolean;
   onDuplicate: (id: string) => void;
   onToggleVisibility: (id: string) => void;
-  onReorderZ: (id: string, direction: 'forward' | 'back') => void;
+  onReorderZ: (id: string, direction: "forward" | "back") => void;
   onLock: (id: string) => void;
   onUnlock: (id: string) => void;
   onResize: (id: string, width: number, height: number) => void;
 }
 
 const ALIGNMENT_OPTIONS: { value: GridAlignment; label: string }[] = [
-  { value: 'start', label: 'Start' },
-  { value: 'center', label: 'Center' },
-  { value: 'end', label: 'End' },
+  { value: "start", label: "Start" },
+  { value: "center", label: "Center" },
+  { value: "end", label: "End" },
 ];
 
 /** Parse "N / M" grid string into [start, end] */
@@ -51,41 +56,56 @@ function parseGridSpan(span: string): [number, number] {
   return [1, 2];
 }
 
-export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateProps, onRemove, onDuplicate, onToggleVisibility, onReorderZ, onLock, onUnlock, onResize,
+export function BuilderPropsPanel({
+  component,
+  positionMode,
+  onUpdate,
+  onUpdateProps,
+  onRemove,
+  onDuplicate,
+  onToggleVisibility,
+  onReorderZ,
+  onLock,
+  onUnlock,
+  onResize,
 }: BuilderPropsPanelProps) {
   const { t } = useI18n();
-  const catalog = COMPONENT_CATALOG.find(c => c.type === component.type);
+  const catalog = COMPONENT_CATALOG.find((c) => c.type === component.type);
   const [colStart, colEnd] = parseGridSpan(component.gridColumn);
   const [rowStart, rowEnd] = parseGridSpan(component.gridRow);
-  const isAbsolute = positionMode === 'absolute';
+  const isAbsolute = positionMode === "absolute";
 
   return (
-    <div className="space-y-4 border-t border-border pt-4 mt-4">
+    <div className="mt-4 space-y-4 border-t border-border pt-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold text-foreground">
-          {t(catalog?.labelKey || '') || component.type}
+          {t(catalog?.labelKey || "") || component.type}
         </p>
         <div className="flex items-center gap-1">
           <button
             onClick={() => onToggleVisibility(component.id)}
-            className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
-            title={component.visible ? 'Hide' : 'Show'}
+            className="flex h-7 w-7 items-center justify-center rounded-md transition-colors hover:bg-muted"
+            title={component.visible ? "Hide" : "Show"}
           >
-            {component.visible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+            {component.visible ? (
+              <Eye className="h-3.5 w-3.5" />
+            ) : (
+              <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
+            )}
           </button>
           <button
             onClick={() => onDuplicate(component.id)}
-            className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
-            title={t('studio.builder.duplicate') || 'Duplicate'}
+            className="flex h-7 w-7 items-center justify-center rounded-md transition-colors hover:bg-muted"
+            title={t("studio.builder.duplicate") || "Duplicate"}
           >
             <Copy className="h-3.5 w-3.5" />
           </button>
           {!catalog?.required && (
             <button
               onClick={() => onRemove(component.id)}
-              className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-destructive/10 text-destructive transition-colors"
-              title={t('studio.builder.remove') || 'Remove'}
+              className="flex h-7 w-7 items-center justify-center rounded-md text-destructive transition-colors hover:bg-destructive/10"
+              title={t("studio.builder.remove") || "Remove"}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
@@ -99,18 +119,18 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
           /* ── Free-form position controls ── */
           <>
             <div className="flex items-center justify-between">
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                {t('studio.builder.props.position') || 'Position'}
+              <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                {t("studio.builder.props.position") || "Position"}
               </p>
               <button
-                onClick={() => component.locked ? onUnlock(component.id) : onLock(component.id)}
+                onClick={() => (component.locked ? onUnlock(component.id) : onLock(component.id))}
                 className={cn(
-                  "h-6 w-6 flex items-center justify-center rounded-md transition-colors",
+                  "flex h-6 w-6 items-center justify-center rounded-md transition-colors",
                   component.locked
                     ? "bg-destructive/10 text-destructive"
-                    : "hover:bg-muted text-muted-foreground"
+                    : "text-muted-foreground hover:bg-muted"
                 )}
-                title={component.locked ? 'Unlock' : 'Lock'}
+                title={component.locked ? "Unlock" : "Lock"}
               >
                 {component.locked ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
               </button>
@@ -124,7 +144,7 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
                   min={0}
                   value={component.x}
                   onChange={(e) => onUpdate(component.id, { x: parseInt(e.target.value, 10) || 0 })}
-                  className="h-8 text-xs font-mono"
+                  className="h-8 font-mono text-xs"
                   disabled={component.locked}
                 />
               </div>
@@ -135,7 +155,7 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
                   min={0}
                   value={component.y}
                   onChange={(e) => onUpdate(component.id, { y: parseInt(e.target.value, 10) || 0 })}
-                  className="h-8 text-xs font-mono"
+                  className="h-8 font-mono text-xs"
                   disabled={component.locked}
                 />
               </div>
@@ -144,9 +164,15 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
                 <Input
                   type="number"
                   min={catalog?.minWidth || 40}
-                  value={component.width || ''}
-                  onChange={(e) => onResize(component.id, parseInt(e.target.value, 10) || 200, component.height || 0)}
-                  className="h-8 text-xs font-mono"
+                  value={component.width || ""}
+                  onChange={(e) =>
+                    onResize(
+                      component.id,
+                      parseInt(e.target.value, 10) || 200,
+                      component.height || 0
+                    )
+                  }
+                  className="h-8 font-mono text-xs"
                   disabled={component.locked}
                   placeholder="auto"
                 />
@@ -156,9 +182,15 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
                 <Input
                   type="number"
                   min={catalog?.minHeight || 20}
-                  value={component.height || ''}
-                  onChange={(e) => onResize(component.id, component.width || 200, parseInt(e.target.value, 10) || 0)}
-                  className="h-8 text-xs font-mono"
+                  value={component.height || ""}
+                  onChange={(e) =>
+                    onResize(
+                      component.id,
+                      component.width || 200,
+                      parseInt(e.target.value, 10) || 0
+                    )
+                  }
+                  className="h-8 font-mono text-xs"
                   disabled={component.locked}
                   placeholder="auto"
                 />
@@ -168,104 +200,120 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
         ) : (
           /* ── Grid placement controls ── */
           <>
-            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-              {t('studio.builder.props.gridPlacement') || 'Grid Placement'}
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              {t("studio.builder.props.gridPlacement") || "Grid Placement"}
             </p>
 
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label className="text-[10px] text-muted-foreground">Col Start</Label>
-            <Input
-              type="number"
-              min={1}
-              max={12}
-              value={colStart}
-              onChange={(e) => onUpdate(component.id, { gridColumn: `${e.target.value} / ${colEnd}` })}
-              className="h-8 text-xs"
-            />
-          </div>
-          <div>
-            <Label className="text-[10px] text-muted-foreground">Col End</Label>
-            <Input
-              type="number"
-              min={2}
-              max={13}
-              value={colEnd}
-              onChange={(e) => onUpdate(component.id, { gridColumn: `${colStart} / ${e.target.value}` })}
-              className="h-8 text-xs"
-            />
-          </div>
-          <div>
-            <Label className="text-[10px] text-muted-foreground">Row Start</Label>
-            <Input
-              type="number"
-              min={1}
-              max={20}
-              value={rowStart}
-              onChange={(e) => onUpdate(component.id, { gridRow: `${e.target.value} / ${rowEnd}` })}
-              className="h-8 text-xs"
-            />
-          </div>
-          <div>
-            <Label className="text-[10px] text-muted-foreground">Row End</Label>
-            <Input
-              type="number"
-              min={2}
-              max={21}
-              value={rowEnd}
-              onChange={(e) => onUpdate(component.id, { gridRow: `${rowStart} / ${e.target.value}` })}
-              className="h-8 text-xs"
-            />
-          </div>
-        </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-[10px] text-muted-foreground">Col Start</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={colStart}
+                  onChange={(e) =>
+                    onUpdate(component.id, { gridColumn: `${e.target.value} / ${colEnd}` })
+                  }
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">Col End</Label>
+                <Input
+                  type="number"
+                  min={2}
+                  max={13}
+                  value={colEnd}
+                  onChange={(e) =>
+                    onUpdate(component.id, { gridColumn: `${colStart} / ${e.target.value}` })
+                  }
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">Row Start</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={rowStart}
+                  onChange={(e) =>
+                    onUpdate(component.id, { gridRow: `${e.target.value} / ${rowEnd}` })
+                  }
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">Row End</Label>
+                <Input
+                  type="number"
+                  min={2}
+                  max={21}
+                  value={rowEnd}
+                  onChange={(e) =>
+                    onUpdate(component.id, { gridRow: `${rowStart} / ${e.target.value}` })
+                  }
+                  className="h-8 text-xs"
+                />
+              </div>
+            </div>
 
-        {/* Alignment */}
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label className="text-[10px] text-muted-foreground">H-Align</Label>
-            <select
-              value={component.alignment}
-              onChange={(e) => onUpdate(component.id, { alignment: e.target.value as GridAlignment })}
-              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
-            >
-              {ALIGNMENT_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <Label className="text-[10px] text-muted-foreground">V-Align</Label>
-            <select
-              value={component.verticalAlignment}
-              onChange={(e) => onUpdate(component.id, { verticalAlignment: e.target.value as GridAlignment })}
-              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
-            >
-              {ALIGNMENT_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+            {/* Alignment */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-[10px] text-muted-foreground">H-Align</Label>
+                <select
+                  value={component.alignment}
+                  onChange={(e) =>
+                    onUpdate(component.id, { alignment: e.target.value as GridAlignment })
+                  }
+                  className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
+                >
+                  {ALIGNMENT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">V-Align</Label>
+                <select
+                  value={component.verticalAlignment}
+                  onChange={(e) =>
+                    onUpdate(component.id, { verticalAlignment: e.target.value as GridAlignment })
+                  }
+                  className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
+                >
+                  {ALIGNMENT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </>
         )}
 
         {/* Z-Order */}
         <div className="flex items-center gap-2">
-          <Label className="text-[10px] text-muted-foreground flex-1">Layer</Label>
+          <Label className="flex-1 text-[10px] text-muted-foreground">Layer</Label>
           <Button
             variant="outline"
             size="sm"
             className="h-7 w-7 p-0"
-            onClick={() => onReorderZ(component.id, 'forward')}
+            onClick={() => onReorderZ(component.id, "forward")}
           >
             <ArrowUp className="h-3 w-3" />
           </Button>
-          <span className="text-xs font-mono w-6 text-center">{component.zIndex}</span>
+          <span className="w-6 text-center font-mono text-xs">{component.zIndex}</span>
           <Button
             variant="outline"
             size="sm"
             className="h-7 w-7 p-0"
-            onClick={() => onReorderZ(component.id, 'back')}
+            onClick={() => onReorderZ(component.id, "back")}
           >
             <ArrowDown className="h-3 w-3" />
           </Button>
@@ -274,10 +322,11 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
 
       {/* Component-Specific Props */}
       <div className="space-y-3 border-t border-border pt-3">
-        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-          {t('studio.builder.props.componentSettings') || 'Settings'}
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          {t("studio.builder.props.componentSettings") || "Settings"}
         </p>
-        <ComponentSpecificProps type={component.type}
+        <ComponentSpecificProps
+          type={component.type}
           props={component.props}
           onUpdateProps={(newProps) => onUpdateProps(component.id, newProps)}
         />
@@ -287,7 +336,8 @@ export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateP
 }
 
 /** Render props editor based on component type */
-function ComponentSpecificProps({ type,
+function ComponentSpecificProps({
+  type,
   props,
   onUpdateProps,
 }: {
@@ -297,14 +347,17 @@ function ComponentSpecificProps({ type,
 }) {
   const { t } = useI18n();
   switch (type) {
-    case 'logo':
+    case "logo":
       return (
         <div className="space-y-2">
           <ImageUploadField
-            value={(props.src as string) || ''}
+            value={(props.src as string) || ""}
             onChange={(url) => onUpdateProps({ src: url })}
-            label={t('studio.builder.props.logoImage') || 'Logo Image'}
-            description={t('studio.builder.props.logoImageDesc') || 'Upload or paste a URL. Leave empty to use the default app logo.'}
+            label={t("studio.builder.props.logoImage") || "Logo Image"}
+            description={
+              t("studio.builder.props.logoImageDesc") ||
+              "Upload or paste a URL. Leave empty to use the default app logo."
+            }
             maxSizeBytes={2 * 1024 * 1024}
           />
           <div className="grid grid-cols-2 gap-2">
@@ -320,11 +373,13 @@ function ComponentSpecificProps({ type,
               />
             </div>
             <div>
-              <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.shape') || 'Shape'}</Label>
+              <Label className="text-[10px] text-muted-foreground">
+                {t("studio.builder.props.shape") || "Shape"}
+              </Label>
               <select
-                value={(props.shape as string) || 'auto'}
+                value={(props.shape as string) || "auto"}
                 onChange={(e) => onUpdateProps({ shape: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="auto">Auto</option>
                 <option value="circle">Circle</option>
@@ -336,7 +391,7 @@ function ComponentSpecificProps({ type,
           <div>
             <Label className="text-[10px] text-muted-foreground">Link URL</Label>
             <Input
-              value={(props.linkUrl as string) || ''}
+              value={(props.linkUrl as string) || ""}
               onChange={(e) => onUpdateProps({ linkUrl: e.target.value })}
               placeholder="https://..."
               className="h-8 text-xs"
@@ -348,24 +403,26 @@ function ComponentSpecificProps({ type,
               type="range"
               min={0}
               max={100}
-              value={((props.opacity as number) ?? 100)}
+              value={(props.opacity as number) ?? 100}
               onChange={(e) => onUpdateProps({ opacity: parseInt(e.target.value, 10) })}
-              className="w-full h-2 accent-primary"
+              className="h-2 w-full accent-primary"
             />
-            <span className="text-[9px] text-muted-foreground">{(props.opacity as number) ?? 100}%</span>
+            <span className="text-[9px] text-muted-foreground">
+              {(props.opacity as number) ?? 100}%
+            </span>
           </div>
         </div>
       );
 
-    case 'loginForm':
+    case "loginForm":
       return (
         <div className="space-y-2">
-          <Label className="text-[10px] text-muted-foreground font-semibold">Visibility</Label>
+          <Label className="text-[10px] font-semibold text-muted-foreground">Visibility</Label>
           {[
-            { key: 'showSocial', label: 'Show Social Login' },
-            { key: 'showRemember', label: 'Show Remember Me' },
-            { key: 'showForgot', label: 'Show Forgot Password' },
-            { key: 'showRegister', label: 'Show Register Link' },
+            { key: "showSocial", label: "Show Social Login" },
+            { key: "showRemember", label: "Show Remember Me" },
+            { key: "showForgot", label: "Show Forgot Password" },
+            { key: "showRegister", label: "Show Register Link" },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
@@ -375,16 +432,16 @@ function ComponentSpecificProps({ type,
               />
             </div>
           ))}
-          <div className="pt-2 border-t border-border/50">
-            <Label className="text-[10px] text-muted-foreground font-semibold">Form Style</Label>
+          <div className="border-t border-border/50 pt-2">
+            <Label className="text-[10px] font-semibold text-muted-foreground">Form Style</Label>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-[10px] text-muted-foreground">Style</Label>
               <select
-                value={(props.formStyle as string) || 'card'}
+                value={(props.formStyle as string) || "card"}
                 onChange={(e) => onUpdateProps({ formStyle: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="card">Card</option>
                 <option value="flat">Flat</option>
@@ -409,15 +466,15 @@ function ComponentSpecificProps({ type,
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={(props.cardBg as string) || '#ffffff'}
+                value={(props.cardBg as string) || "#ffffff"}
                 onChange={(e) => onUpdateProps({ cardBg: e.target.value })}
-                className="h-8 w-10 rounded border border-border cursor-pointer"
+                className="h-8 w-10 cursor-pointer rounded border border-border"
               />
               <Input
-                value={(props.cardBg as string) || ''}
+                value={(props.cardBg as string) || ""}
                 onChange={(e) => onUpdateProps({ cardBg: e.target.value })}
                 placeholder="auto"
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 text-xs"
               />
             </div>
           </div>
@@ -435,12 +492,12 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'forgotForm':
+    case "forgotForm":
       return (
         <div className="space-y-2">
           {[
-            { key: 'showBackToLogin', label: 'Show Back to Login' },
-            { key: 'showIcon', label: 'Show Key Icon' },
+            { key: "showBackToLogin", label: "Show Back to Login" },
+            { key: "showIcon", label: "Show Key Icon" },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
@@ -453,7 +510,7 @@ function ComponentSpecificProps({ type,
           <div>
             <Label className="text-[10px] text-muted-foreground">Description Text</Label>
             <Input
-              value={(props.description as string) || ''}
+              value={(props.description as string) || ""}
               onChange={(e) => onUpdateProps({ description: e.target.value })}
               placeholder="Enter your email to receive a reset link"
               className="h-8 text-xs"
@@ -462,7 +519,7 @@ function ComponentSpecificProps({ type,
           <div>
             <Label className="text-[10px] text-muted-foreground">Button Label</Label>
             <Input
-              value={(props.buttonLabel as string) || ''}
+              value={(props.buttonLabel as string) || ""}
               onChange={(e) => onUpdateProps({ buttonLabel: e.target.value })}
               placeholder="Send Reset Link"
               className="h-8 text-xs"
@@ -472,9 +529,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Style</Label>
               <select
-                value={(props.formStyle as string) || 'card'}
+                value={(props.formStyle as string) || "card"}
                 onChange={(e) => onUpdateProps({ formStyle: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="card">Card</option>
                 <option value="flat">Flat</option>
@@ -496,12 +553,12 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'resetForm':
+    case "resetForm":
       return (
         <div className="space-y-2">
           {[
-            { key: 'showPasswordStrength', label: 'Show Password Strength' },
-            { key: 'showConfirmPassword', label: 'Show Confirm Password' },
+            { key: "showPasswordStrength", label: "Show Password Strength" },
+            { key: "showConfirmPassword", label: "Show Confirm Password" },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
@@ -514,7 +571,7 @@ function ComponentSpecificProps({ type,
           <div>
             <Label className="text-[10px] text-muted-foreground">Button Label</Label>
             <Input
-              value={(props.buttonLabel as string) || ''}
+              value={(props.buttonLabel as string) || ""}
               onChange={(e) => onUpdateProps({ buttonLabel: e.target.value })}
               placeholder="Reset Password"
               className="h-8 text-xs"
@@ -524,9 +581,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Style</Label>
               <select
-                value={(props.formStyle as string) || 'card'}
+                value={(props.formStyle as string) || "card"}
                 onChange={(e) => onUpdateProps({ formStyle: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="card">Card</option>
                 <option value="flat">Flat</option>
@@ -548,16 +605,16 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'heading':
-    case 'subtitle':
+    case "heading":
+    case "subtitle":
       return (
         <div className="space-y-2">
           <div>
             <Label className="text-[10px] text-muted-foreground">Text</Label>
             <Input
-              value={(props.text as string) || ''}
+              value={(props.text as string) || ""}
               onChange={(e) => onUpdateProps({ text: e.target.value })}
-              placeholder={type === 'heading' ? 'Welcome Back' : 'Sign in to continue'}
+              placeholder={type === "heading" ? "Welcome Back" : "Sign in to continue"}
               className="h-8 text-xs"
             />
           </div>
@@ -568,7 +625,7 @@ function ComponentSpecificProps({ type,
                 type="number"
                 min={10}
                 max={72}
-                value={(props.fontSize as number) || (type === 'heading' ? 32 : 16)}
+                value={(props.fontSize as number) || (type === "heading" ? 32 : 16)}
                 onChange={(e) => onUpdateProps({ fontSize: parseInt(e.target.value, 10) })}
                 className="h-8 text-xs"
               />
@@ -576,45 +633,54 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Font Weight</Label>
               <select
-                value={(props.fontWeight as number) || (type === 'heading' ? 700 : 400)}
+                value={(props.fontWeight as number) || (type === "heading" ? 700 : 400)}
                 onChange={(e) => onUpdateProps({ fontWeight: parseInt(e.target.value, 10) })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
-                {[300, 400, 500, 600, 700, 800, 900].map(w => (
-                  <option key={w} value={w}>{w}{w === 400 ? ' (Regular)' : w === 700 ? ' (Bold)' : ''}</option>
+                {[300, 400, 500, 600, 700, 800, 900].map((w) => (
+                  <option key={w} value={w}>
+                    {w}
+                    {w === 400 ? " (Regular)" : w === 700 ? " (Bold)" : ""}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
           <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.color') || 'Color'}</Label>
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.color") || "Color"}
+            </Label>
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={(props.color as string) !== 'inherit' ? (props.color as string) || '#000000' : '#000000'}
+                value={
+                  (props.color as string) !== "inherit"
+                    ? (props.color as string) || "#000000"
+                    : "#000000"
+                }
                 onChange={(e) => onUpdateProps({ color: e.target.value })}
-                className="h-8 w-10 rounded border border-border cursor-pointer"
+                className="h-8 w-10 cursor-pointer rounded border border-border"
               />
               <Input
-                value={(props.color as string) || 'inherit'}
+                value={(props.color as string) || "inherit"}
                 onChange={(e) => onUpdateProps({ color: e.target.value })}
                 placeholder="inherit"
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 text-xs"
               />
             </div>
           </div>
           <div>
             <Label className="text-[10px] text-muted-foreground">Text Align</Label>
-            <div className="flex gap-1 mt-0.5">
+            <div className="mt-0.5 flex gap-1">
               {/* UI-EXCEPTION: compact studio layout */}
-              {(['left', 'center', 'right'] as const).map(align => (
+              {(["left", "center", "right"] as const).map((align) => (
                 <button
                   key={align}
                   onClick={() => onUpdateProps({ textAlign: align })}
                   className={cn(
-                    "flex-1 h-7 rounded-md text-[10px] font-medium transition-colors border",
-                    (props.textAlign || 'center') === align
-                      ? "bg-primary/10 border-primary/30 text-primary"
+                    "h-7 flex-1 rounded-md border text-[10px] font-medium transition-colors",
+                    (props.textAlign || "center") === align
+                      ? "border-primary/30 bg-primary/10 text-primary"
                       : "border-border bg-background text-muted-foreground hover:bg-muted"
                   )}
                 >
@@ -627,9 +693,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Text Transform</Label>
               <select
-                value={(props.textTransform as string) || 'none'}
+                value={(props.textTransform as string) || "none"}
                 onChange={(e) => onUpdateProps({ textTransform: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="none">None</option>
                 <option value="uppercase">UPPERCASE</option>
@@ -668,22 +734,24 @@ function ComponentSpecificProps({ type,
               type="range"
               min={0}
               max={100}
-              value={((props.opacity as number) ?? 100)}
+              value={(props.opacity as number) ?? 100}
               onChange={(e) => onUpdateProps({ opacity: parseInt(e.target.value, 10) })}
-              className="w-full h-2 accent-primary"
+              className="h-2 w-full accent-primary"
             />
-            <span className="text-[9px] text-muted-foreground">{(props.opacity as number) ?? 100}%</span>
+            <span className="text-[9px] text-muted-foreground">
+              {(props.opacity as number) ?? 100}%
+            </span>
           </div>
         </div>
       );
 
-    case 'ctaButton':
+    case "ctaButton":
       return (
         <div className="space-y-2">
           <div>
             <Label className="text-[10px] text-muted-foreground">Label</Label>
             <Input
-              value={(props.label as string) || ''}
+              value={(props.label as string) || ""}
               onChange={(e) => onUpdateProps({ label: e.target.value })}
               placeholder="Get Started"
               className="h-8 text-xs"
@@ -692,7 +760,7 @@ function ComponentSpecificProps({ type,
           <div>
             <Label className="text-[10px] text-muted-foreground">URL</Label>
             <Input
-              value={(props.url as string) || ''}
+              value={(props.url as string) || ""}
               onChange={(e) => onUpdateProps({ url: e.target.value })}
               placeholder="https://..."
               className="h-8 text-xs"
@@ -702,9 +770,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Variant</Label>
               <select
-                value={(props.variant as string) || 'default'}
+                value={(props.variant as string) || "default"}
                 onChange={(e) => onUpdateProps({ variant: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="default">Filled</option>
                 <option value="outline">Outline</option>
@@ -714,11 +782,13 @@ function ComponentSpecificProps({ type,
               </select>
             </div>
             <div>
-              <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.size') || 'Size'}</Label>
+              <Label className="text-[10px] text-muted-foreground">
+                {t("studio.builder.props.size") || "Size"}
+              </Label>
               <select
-                value={(props.size as string) || 'md'}
+                value={(props.size as string) || "md"}
                 onChange={(e) => onUpdateProps({ size: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="sm">Small</option>
                 <option value="md">Medium</option>
@@ -749,9 +819,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Icon Position</Label>
               <select
-                value={(props.iconPosition as string) || 'none'}
+                value={(props.iconPosition as string) || "none"}
                 onChange={(e) => onUpdateProps({ iconPosition: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="none">No Icon</option>
                 <option value="left">Left</option>
@@ -764,15 +834,15 @@ function ComponentSpecificProps({ type,
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={(props.bgColor as string) || '#6366f1'}
+                value={(props.bgColor as string) || "#6366f1"}
                 onChange={(e) => onUpdateProps({ bgColor: e.target.value })}
-                className="h-8 w-10 rounded border border-border cursor-pointer"
+                className="h-8 w-10 cursor-pointer rounded border border-border"
               />
               <Input
-                value={(props.bgColor as string) || ''}
+                value={(props.bgColor as string) || ""}
                 onChange={(e) => onUpdateProps({ bgColor: e.target.value })}
                 placeholder="auto"
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 text-xs"
               />
             </div>
           </div>
@@ -781,34 +851,36 @@ function ComponentSpecificProps({ type,
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={(props.textColor as string) || '#ffffff'}
+                value={(props.textColor as string) || "#ffffff"}
                 onChange={(e) => onUpdateProps({ textColor: e.target.value })}
-                className="h-8 w-10 rounded border border-border cursor-pointer"
+                className="h-8 w-10 cursor-pointer rounded border border-border"
               />
               <Input
-                value={(props.textColor as string) || ''}
+                value={(props.textColor as string) || ""}
                 onChange={(e) => onUpdateProps({ textColor: e.target.value })}
                 placeholder="auto"
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 text-xs"
               />
             </div>
           </div>
         </div>
       );
 
-    case 'image':
+    case "image":
       return (
         <div className="space-y-2">
           <ImageUploadField
-            value={(props.src as string) || ''}
+            value={(props.src as string) || ""}
             onChange={(url) => onUpdateProps({ src: url })}
-            label={t('studio.builder.props.imageSource') || 'Image'}
-            description={t('studio.builder.props.imageSourceDesc') || 'Upload an image or paste a direct URL.'}
+            label={t("studio.builder.props.imageSource") || "Image"}
+            description={
+              t("studio.builder.props.imageSourceDesc") || "Upload an image or paste a direct URL."
+            }
           />
           <div>
             <Label className="text-[10px] text-muted-foreground">Alt Text</Label>
             <Input
-              value={(props.alt as string) || ''}
+              value={(props.alt as string) || ""}
               onChange={(e) => onUpdateProps({ alt: e.target.value })}
               className="h-8 text-xs"
             />
@@ -817,9 +889,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Object Fit</Label>
               <select
-                value={(props.objectFit as string) || 'cover'}
+                value={(props.objectFit as string) || "cover"}
                 onChange={(e) => onUpdateProps({ objectFit: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="cover">Cover</option>
                 <option value="contain">Contain</option>
@@ -831,9 +903,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Object Position</Label>
               <select
-                value={(props.objectPosition as string) || 'center'}
+                value={(props.objectPosition as string) || "center"}
                 onChange={(e) => onUpdateProps({ objectPosition: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="center">Center</option>
                 <option value="top">Top</option>
@@ -858,9 +930,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Shadow</Label>
               <select
-                value={(props.shadow as string) || 'none'}
+                value={(props.shadow as string) || "none"}
                 onChange={(e) => onUpdateProps({ shadow: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="none">None</option>
                 <option value="sm">Small</option>
@@ -877,32 +949,34 @@ function ComponentSpecificProps({ type,
               type="range"
               min={0}
               max={100}
-              value={((props.opacity as number) ?? 100)}
+              value={(props.opacity as number) ?? 100}
               onChange={(e) => onUpdateProps({ opacity: parseInt(e.target.value, 10) })}
-              className="w-full h-2 accent-primary"
+              className="h-2 w-full accent-primary"
             />
-            <span className="text-[9px] text-muted-foreground">{(props.opacity as number) ?? 100}%</span>
+            <span className="text-[9px] text-muted-foreground">
+              {(props.opacity as number) ?? 100}%
+            </span>
           </div>
         </div>
       );
 
-    case 'testimonial':
+    case "testimonial":
       return (
         <div className="space-y-2">
           <div>
             <Label className="text-[10px] text-muted-foreground">Quote</Label>
             <Textarea
-              value={(props.quote as string) || ''}
+              value={(props.quote as string) || ""}
               onChange={(e) => onUpdateProps({ quote: e.target.value })}
               placeholder="This product changed our lives..."
-              className="h-20 text-xs resize-none"
+              className="h-20 resize-none text-xs"
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-[10px] text-muted-foreground">Author</Label>
               <Input
-                value={(props.author as string) || ''}
+                value={(props.author as string) || ""}
                 onChange={(e) => onUpdateProps({ author: e.target.value })}
                 placeholder="John Doe"
                 className="h-8 text-xs"
@@ -911,7 +985,7 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Role</Label>
               <Input
-                value={(props.role as string) || ''}
+                value={(props.role as string) || ""}
                 onChange={(e) => onUpdateProps({ role: e.target.value })}
                 placeholder="CEO at Company"
                 className="h-8 text-xs"
@@ -919,15 +993,15 @@ function ComponentSpecificProps({ type,
             </div>
           </div>
           <ImageUploadField
-            value={(props.avatar as string) || ''}
+            value={(props.avatar as string) || ""}
             onChange={(url) => onUpdateProps({ avatar: url })}
             label="Avatar"
             description="Author photo"
           />
           <div>
             <Label className="text-[10px] text-muted-foreground">Rating</Label>
-            <div className="flex gap-1 mt-0.5">
-              {[1, 2, 3, 4, 5].map(star => (
+            <div className="mt-0.5 flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
                 // UI-EXCEPTION: compact studio layout
                 <button
                   key={star}
@@ -944,7 +1018,7 @@ function ComponentSpecificProps({ type,
               ))}
               <button
                 onClick={() => onUpdateProps({ rating: 0 })}
-                className="text-[10px] text-muted-foreground ml-1 hover:text-foreground"
+                className="ml-1 text-[10px] text-muted-foreground hover:text-foreground"
               >
                 Clear
               </button>
@@ -954,9 +1028,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Style</Label>
               <select
-                value={(props.variant as string) || 'card'}
+                value={(props.variant as string) || "card"}
                 onChange={(e) => onUpdateProps({ variant: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="card">Card</option>
                 <option value="minimal">Minimal</option>
@@ -966,9 +1040,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Quote Style</Label>
               <select
-                value={(props.quoteStyle as string) || 'italic'}
+                value={(props.quoteStyle as string) || "italic"}
                 onChange={(e) => onUpdateProps({ quoteStyle: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="italic">Italic</option>
                 <option value="normal">Normal</option>
@@ -978,16 +1052,16 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'divider':
+    case "divider":
       return (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-[10px] text-muted-foreground">Type</Label>
               <select
-                value={(props.style as string) || 'line'}
+                value={(props.style as string) || "line"}
                 onChange={(e) => onUpdateProps({ style: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="line">Line</option>
                 <option value="space">Space</option>
@@ -998,9 +1072,9 @@ function ComponentSpecificProps({ type,
             <div>
               <Label className="text-[10px] text-muted-foreground">Line Style</Label>
               <select
-                value={(props.lineStyle as string) || 'solid'}
+                value={(props.lineStyle as string) || "solid"}
                 onChange={(e) => onUpdateProps({ lineStyle: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="solid">Solid</option>
                 <option value="dashed">Dashed</option>
@@ -1010,19 +1084,21 @@ function ComponentSpecificProps({ type,
             </div>
           </div>
           <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.color') || 'Color'}</Label>
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.color") || "Color"}
+            </Label>
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={(props.color as string) || '#cccccc'}
+                value={(props.color as string) || "#cccccc"}
                 onChange={(e) => onUpdateProps({ color: e.target.value })}
-                className="h-8 w-10 rounded border border-border cursor-pointer"
+                className="h-8 w-10 cursor-pointer rounded border border-border"
               />
               <Input
-                value={(props.color as string) || 'inherit'}
+                value={(props.color as string) || "inherit"}
                 onChange={(e) => onUpdateProps({ color: e.target.value })}
                 placeholder="inherit"
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 text-xs"
               />
             </div>
           </div>
@@ -1064,13 +1140,13 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'copyright':
+    case "copyright":
       return (
         <div className="space-y-2">
           <div>
             <Label className="text-[10px] text-muted-foreground">Text</Label>
             <Input
-              value={(props.text as string) || ''}
+              value={(props.text as string) || ""}
               onChange={(e) => onUpdateProps({ text: e.target.value })}
               placeholder="© 2026 Company Name"
               className="h-8 text-xs"
@@ -1078,11 +1154,13 @@ function ComponentSpecificProps({ type,
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.year') || 'Year'}</Label>
+              <Label className="text-[10px] text-muted-foreground">
+                {t("studio.builder.props.year") || "Year"}
+              </Label>
               <select
-                value={(props.year as string) || 'auto'}
+                value={(props.year as string) || "auto"}
                 onChange={(e) => onUpdateProps({ year: e.target.value })}
-                className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
               >
                 <option value="auto">Auto (current year)</option>
                 <option value="2024">2024</option>
@@ -1112,33 +1190,39 @@ function ComponentSpecificProps({ type,
             />
           </div>
           <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.color') || 'Color'}</Label>
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.color") || "Color"}
+            </Label>
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={(props.color as string) !== 'inherit' ? (props.color as string) || '#888888' : '#888888'}
+                value={
+                  (props.color as string) !== "inherit"
+                    ? (props.color as string) || "#888888"
+                    : "#888888"
+                }
                 onChange={(e) => onUpdateProps({ color: e.target.value })}
-                className="h-8 w-10 rounded border border-border cursor-pointer"
+                className="h-8 w-10 cursor-pointer rounded border border-border"
               />
               <Input
-                value={(props.color as string) || 'inherit'}
+                value={(props.color as string) || "inherit"}
                 onChange={(e) => onUpdateProps({ color: e.target.value })}
                 placeholder="inherit"
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 text-xs"
               />
             </div>
           </div>
           <div>
             <Label className="text-[10px] text-muted-foreground">Text Align</Label>
-            <div className="flex gap-1 mt-0.5">
-              {(['left', 'center', 'right'] as const).map(align => (
+            <div className="mt-0.5 flex gap-1">
+              {(["left", "center", "right"] as const).map((align) => (
                 <button
                   key={align}
                   onClick={() => onUpdateProps({ textAlign: align })}
                   className={cn(
-                    "flex-1 h-7 rounded-md text-[10px] font-medium transition-colors border",
-                    (props.textAlign || 'center') === align
-                      ? "bg-primary/10 border-primary/30 text-primary"
+                    "h-7 flex-1 rounded-md border text-[10px] font-medium transition-colors",
+                    (props.textAlign || "center") === align
+                      ? "border-primary/30 bg-primary/10 text-primary"
                       : "border-border bg-background text-muted-foreground hover:bg-muted"
                   )}
                 >
@@ -1150,14 +1234,18 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'socialLogin':
+    case "socialLogin":
       return (
         <div className="space-y-2">
           <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.providers') || 'Providers'}</Label>
-            <div className="space-y-1.5 mt-1">
-              {['google', 'microsoft', 'github', 'apple'].map(provider => {
-                const providers = (Array.isArray(props.providers) ? props.providers : []) as string[];
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.providers") || "Providers"}
+            </Label>
+            <div className="mt-1 space-y-1.5">
+              {["google", "microsoft", "github", "apple"].map((provider) => {
+                const providers = (
+                  Array.isArray(props.providers) ? props.providers : []
+                ) as string[];
                 return (
                   <div key={provider} className="flex items-center gap-2">
                     <Checkbox
@@ -1166,11 +1254,16 @@ function ComponentSpecificProps({ type,
                       onCheckedChange={(checked) => {
                         const updated = checked
                           ? [...providers, provider]
-                          : providers.filter(p => p !== provider);
+                          : providers.filter((p) => p !== provider);
                         onUpdateProps({ providers: updated });
                       }}
                     />
-                    <label htmlFor={`provider-${provider}`} className="text-xs text-foreground capitalize cursor-pointer">{provider}</label>
+                    <label
+                      htmlFor={`provider-${provider}`}
+                      className="cursor-pointer text-xs capitalize text-foreground"
+                    >
+                      {provider}
+                    </label>
                   </div>
                 );
               })}
@@ -1179,9 +1272,9 @@ function ComponentSpecificProps({ type,
           <div>
             <Label className="text-[10px] text-muted-foreground">Layout</Label>
             <select
-              value={(props.layout as string) || 'row'}
+              value={(props.layout as string) || "row"}
               onChange={(e) => onUpdateProps({ layout: e.target.value })}
-              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+              className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
             >
               <option value="row">Row</option>
               <option value="column">Column</option>
@@ -1191,23 +1284,30 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'featureList': {
-      const featureItems = (Array.isArray(props.items) ? props.items : []) as Array<{ title: string; desc?: string }>;
+    case "featureList": {
+      const featureItems = (Array.isArray(props.items) ? props.items : []) as Array<{
+        title: string;
+        desc?: string;
+      }>;
       return (
         <div className="space-y-2">
           <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.variant') || 'Variant'}</Label>
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.variant") || "Variant"}
+            </Label>
             <select
-              value={(props.variant as string) || 'list'}
+              value={(props.variant as string) || "list"}
               onChange={(e) => onUpdateProps({ variant: e.target.value })}
-              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+              className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
             >
-              <option value="list">{t('studio.builder.props.variantList') || 'List'}</option>
-              <option value="grid">{t('studio.builder.props.variantGrid') || 'Grid'}</option>
+              <option value="list">{t("studio.builder.props.variantList") || "List"}</option>
+              <option value="grid">{t("studio.builder.props.variantGrid") || "Grid"}</option>
             </select>
           </div>
           <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.maxItems') || 'Max Items'}</Label>
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.maxItems") || "Max Items"}
+            </Label>
             <Input
               type="number"
               min={1}
@@ -1219,38 +1319,46 @@ function ComponentSpecificProps({ type,
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.items') || 'Items'}</Label>
+              <Label className="text-[10px] text-muted-foreground">
+                {t("studio.builder.props.items") || "Items"}
+              </Label>
               <button
                 onClick={() => {
-                  const newItems = [...featureItems, { title: `Feature ${featureItems.length + 1}`, desc: '' }];
+                  const newItems = [
+                    ...featureItems,
+                    { title: `Feature ${featureItems.length + 1}`, desc: "" },
+                  ];
                   onUpdateProps({ items: newItems });
                 }}
-                className="text-[10px] text-primary hover:text-primary/80 transition-colors"
+                className="text-[10px] text-primary transition-colors hover:text-primary/80"
               >
-                + {t('studio.builder.props.addItem') || 'Add'}
+                + {t("studio.builder.props.addItem") || "Add"}
               </button>
             </div>
             {featureItems.map((item, idx) => (
-              <div key={idx} className="flex items-start gap-1 rounded border border-border/50 p-1.5 bg-muted/20">
+              <div
+                key={idx}
+                className="flex items-start gap-1 rounded border border-border/50 bg-muted/20 p-1.5"
+              >
                 <div className="flex-1 space-y-1">
                   <Input
-                    value={item.title || ''}
+                    value={item.title || ""}
                     onChange={(e) => {
                       const updated = [...featureItems];
                       updated[idx] = { ...updated[idx], title: e.target.value };
                       onUpdateProps({ items: updated });
                     }}
-                    placeholder={t('studio.builder.props.featureTitle') || 'Title'}
+                    placeholder={t("studio.builder.props.featureTitle") || "Title"}
                     className="h-6 text-[10px]"
                   />
                   <Input
-                    value={item.desc || ''}
+                    value={item.desc || ""}
                     onChange={(e) => {
                       const updated = [...featureItems];
                       updated[idx] = { ...updated[idx], desc: e.target.value };
                       onUpdateProps({ items: updated });
                     }}
-                    placeholder={t('studio.builder.props.featureDesc') || 'Description'}
+                    placeholder={t("studio.builder.props.featureDesc") || "Description"}
                     className="h-6 text-[10px]"
                   />
                 </div>
@@ -1259,57 +1367,71 @@ function ComponentSpecificProps({ type,
                     const updated = featureItems.filter((_, i) => i !== idx);
                     onUpdateProps({ items: updated });
                   }}
-                  className="p-0.5 text-muted-foreground hover:text-destructive transition-colors shrink-0 mt-0.5"
+                  className="mt-0.5 shrink-0 p-0.5 text-muted-foreground transition-colors hover:text-destructive"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
               </div>
             ))}
             {featureItems.length === 0 && (
-              <p className="text-[10px] text-muted-foreground italic">{t('studio.builder.props.noItems') || 'Default items shown. Add custom items above.'}</p>
+              <p className="text-[10px] italic text-muted-foreground">
+                {t("studio.builder.props.noItems") ||
+                  "Default items shown. Add custom items above."}
+              </p>
             )}
           </div>
         </div>
       );
     }
 
-    case 'footer': {
-      const footerLinks = (Array.isArray(props.links) ? props.links : []) as Array<{ label: string; url: string }>;
+    case "footer": {
+      const footerLinks = (Array.isArray(props.links) ? props.links : []) as Array<{
+        label: string;
+        url: string;
+      }>;
       return (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.links') || 'Links'}</Label>
+            <Label className="text-[10px] text-muted-foreground">
+              {t("studio.builder.props.links") || "Links"}
+            </Label>
             <button
               onClick={() => {
-                const newLinks = [...footerLinks, { label: `Link ${footerLinks.length + 1}`, url: '#' }];
+                const newLinks = [
+                  ...footerLinks,
+                  { label: `Link ${footerLinks.length + 1}`, url: "#" },
+                ];
                 onUpdateProps({ links: newLinks });
               }}
-              className="text-[10px] text-primary hover:text-primary/80 transition-colors"
+              className="text-[10px] text-primary transition-colors hover:text-primary/80"
             >
-              + {t('studio.builder.props.addLink') || 'Add'}
+              + {t("studio.builder.props.addLink") || "Add"}
             </button>
           </div>
           {footerLinks.map((link, idx) => (
-            <div key={idx} className="flex items-center gap-1 rounded border border-border/50 p-1.5 bg-muted/20">
+            <div
+              key={idx}
+              className="flex items-center gap-1 rounded border border-border/50 bg-muted/20 p-1.5"
+            >
               <div className="flex-1 space-y-1">
                 <Input
-                  value={link.label || ''}
+                  value={link.label || ""}
                   onChange={(e) => {
                     const updated = [...footerLinks];
                     updated[idx] = { ...updated[idx], label: e.target.value };
                     onUpdateProps({ links: updated });
                   }}
-                  placeholder={t('studio.builder.props.linkLabel') || 'Label'}
+                  placeholder={t("studio.builder.props.linkLabel") || "Label"}
                   className="h-6 text-[10px]"
                 />
                 <Input
-                  value={link.url || ''}
+                  value={link.url || ""}
                   onChange={(e) => {
                     const updated = [...footerLinks];
                     updated[idx] = { ...updated[idx], url: e.target.value };
                     onUpdateProps({ links: updated });
                   }}
-                  placeholder={t('studio.builder.props.linkUrl') || 'URL'}
+                  placeholder={t("studio.builder.props.linkUrl") || "URL"}
                   className="h-6 text-[10px]"
                 />
               </div>
@@ -1318,25 +1440,29 @@ function ComponentSpecificProps({ type,
                   const updated = footerLinks.filter((_, i) => i !== idx);
                   onUpdateProps({ links: updated });
                 }}
-                className="p-0.5 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                className="shrink-0 p-0.5 text-muted-foreground transition-colors hover:text-destructive"
               >
                 <Trash2 className="h-3 w-3" />
               </button>
             </div>
           ))}
           {footerLinks.length === 0 && (
-            <p className="text-[10px] text-muted-foreground italic">{t('studio.builder.props.noLinks') || 'Default links shown. Add custom links above.'}</p>
+            <p className="text-[10px] italic text-muted-foreground">
+              {t("studio.builder.props.noLinks") || "Default links shown. Add custom links above."}
+            </p>
           )}
         </div>
       );
     }
 
-    case 'customHtml':
+    case "customHtml":
       return (
         <div className="space-y-2">
           <CodeEditorField
-            label={t('studio.builder.props.htmlContent') || 'Custom HTML + CSS'}
-            description={t('studio.builder.props.htmlWarning') || '⚠ Content is sanitized before rendering.'}
+            label={t("studio.builder.props.htmlContent") || "Custom HTML + CSS"}
+            description={
+              t("studio.builder.props.htmlWarning") || "⚠ Content is sanitized before rendering."
+            }
             height={120}
             showPreview
             renderPreview={() => (
@@ -1344,22 +1470,26 @@ function ComponentSpecificProps({ type,
                 {(props.css as string) && (
                   <style dangerouslySetInnerHTML={{ __html: props.css as string }} />
                 )}
-                <div dangerouslySetInnerHTML={{ __html: (props.content as string) || '<p style="color:#888">No content yet</p>' }} />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: (props.content as string) || '<p style="color:#888">No content yet</p>',
+                  }}
+                />
               </div>
             )}
             tabs={[
               {
-                id: 'html',
-                label: 'HTML',
-                language: 'html',
-                value: (props.content as string) || '',
+                id: "html",
+                label: "HTML",
+                language: "html",
+                value: (props.content as string) || "",
                 onChange: (val) => onUpdateProps({ content: val }),
               },
               {
-                id: 'css',
-                label: 'CSS',
-                language: 'css',
-                value: (props.css as string) || '',
+                id: "css",
+                label: "CSS",
+                language: "css",
+                value: (props.css as string) || "",
                 onChange: (val) => onUpdateProps({ css: val }),
               },
             ]}
@@ -1367,25 +1497,29 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'videoBg':
+    case "videoBg":
       return (
         <div className="space-y-2">
           <VideoUploadField
-            value={(props.src as string) || ''}
+            value={(props.src as string) || ""}
             onChange={(url) => onUpdateProps({ src: url })}
-            label={t('studio.builder.props.videoUrl') || 'Video URL'}
-            description={t('studio.builder.props.videoUrlHint') || 'Direct .mp4, .webm, or .ogg URL'}
+            label={t("studio.builder.props.videoUrl") || "Video URL"}
+            description={
+              t("studio.builder.props.videoUrlHint") || "Direct .mp4, .webm, or .ogg URL"
+            }
           />
           <ImageUploadField
-            value={(props.poster as string) || ''}
+            value={(props.poster as string) || ""}
             onChange={(url) => onUpdateProps({ poster: url })}
-            label={t('studio.builder.props.posterImage') || 'Poster Image'}
-            description={t('studio.builder.props.posterImageDesc') || 'Shown while video loads or on mobile.'}
+            label={t("studio.builder.props.posterImage") || "Poster Image"}
+            description={
+              t("studio.builder.props.posterImageDesc") || "Shown while video loads or on mobile."
+            }
           />
           {[
-            { key: 'autoplay', label: t('studio.builder.props.autoplay') || 'Autoplay' },
-            { key: 'muted', label: t('studio.builder.props.muted') || 'Muted' },
-            { key: 'loop', label: t('studio.builder.props.loop') || 'Loop' },
+            { key: "autoplay", label: t("studio.builder.props.autoplay") || "Autoplay" },
+            { key: "muted", label: t("studio.builder.props.muted") || "Muted" },
+            { key: "loop", label: t("studio.builder.props.loop") || "Loop" },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
@@ -1403,8 +1537,8 @@ function ComponentSpecificProps({ type,
 
     default:
       return (
-        <p className="text-[10px] text-muted-foreground italic">
-          {t('studio.builder.props.noSettings') || 'No configurable settings'}
+        <p className="text-[10px] italic text-muted-foreground">
+          {t("studio.builder.props.noSettings") || "No configurable settings"}
         </p>
       );
   }

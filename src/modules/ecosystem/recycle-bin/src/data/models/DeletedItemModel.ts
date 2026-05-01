@@ -49,7 +49,7 @@ export class DeletedItemModel {
     public readonly tenantName?: string,
     public readonly deletedAt?: string,
     public readonly deletedByName?: string
-  ) { }
+  ) {}
 
   /**
    * Create DeletedItemModel from API JSON

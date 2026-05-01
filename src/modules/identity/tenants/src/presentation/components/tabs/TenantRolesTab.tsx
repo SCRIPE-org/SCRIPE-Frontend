@@ -71,7 +71,9 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
-      toastSuccess({ title: t("tenant.permissionsResynced") || "Permissions resynced from edition" });
+      toastSuccess({
+        title: t("tenant.permissionsResynced") || "Permissions resynced from edition",
+      });
     },
     onError: (err: Error) => {
       toastError({ title: t("common.error"), description: err.message });
@@ -89,33 +91,37 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           ? (value: string) => <code className="rounded bg-muted px-2 py-0.5 text-xs">{value}</code>
           : col.key === "name"
             ? (_: unknown, role: Role) => (
-              <span className="font-medium">{role.getLocalizedName(language)}</span>
-            )
+                <span className="font-medium">{role.getLocalizedName(language)}</span>
+              )
             : col.key === "description"
               ? (_: unknown, role: Role) => (
-                <span className="block max-w-[200px] truncate text-sm text-muted-foreground">
-                  {role.getLocalizedDescription(language)}
-                </span>
-              )
+                  <span className="block max-w-[200px] truncate text-sm text-muted-foreground">
+                    {role.getLocalizedDescription(language)}
+                  </span>
+                )
               : col.key === "priority"
                 ? (value: number) => <Badge variant="outline">{value}</Badge>
                 : col.key === "groups"
                   ? (_: unknown, role: Role) => {
-                    const groups = role.getLocalizedGroups(language);
-                    return (
-                      <div className="flex flex-wrap gap-1">
-                        {groups.length > 0 ? (
-                          groups.map((groupName, index) => (
-                            <Badge key={`${index}-${groupName}`} variant="secondary" className="text-xs">
-                              {groupName}
-                            </Badge>
-                          ))
-                        ) : (
-                          <span className="text-muted-foreground">-</span>
-                        )}
-                      </div>
-                    );
-                  }
+                      const groups = role.getLocalizedGroups(language);
+                      return (
+                        <div className="flex flex-wrap gap-1">
+                          {groups.length > 0 ? (
+                            groups.map((groupName, index) => (
+                              <Badge
+                                key={`${index}-${groupName}`}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                {groupName}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </div>
+                      );
+                    }
                   : col.key === "createdAt"
                     ? (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-")
                     : undefined,
@@ -193,7 +199,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           onClick={() => resyncMutation.mutate()}
           loading={resyncMutation.isPending}
         >
-          {!resyncMutation.isPending && <RefreshCw className="h-4 w-4 me-2" />}
+          {!resyncMutation.isPending && <RefreshCw className="me-2 h-4 w-4" />}
           {t("tenant.resyncPermissions") || "Resync Permissions"}
         </Button>
       </div>

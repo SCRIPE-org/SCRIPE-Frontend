@@ -111,9 +111,10 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
     setIsLoading(true);
 
     try {
-      const result = activeTab === "favorites"
-        ? await themeMarketplaceRepository.getFavorites({ page, pageSize })
-        : await themeMarketplaceRepository.getThemes({ page, pageSize, filters });
+      const result =
+        activeTab === "favorites"
+          ? await themeMarketplaceRepository.getFavorites({ page, pageSize })
+          : await themeMarketplaceRepository.getThemes({ page, pageSize, filters });
 
       setThemes(result.items);
       setTotalCount(result.totalCount);
@@ -139,90 +140,104 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
   }, [themeMarketplaceRepository]);
 
   // ── Open detail ──
-  const openDetail = useCallback(async (slug: string) => {
-    setIsDetailLoading(true);
-    try {
-      const detail = await themeMarketplaceRepository.getBySlug(slug);
-      setSelectedTheme(detail);
-    } catch {
-      toast({ title: "Failed to load theme details", variant: "destructive" });
-    } finally {
-      setIsDetailLoading(false);
-    }
-  }, [themeMarketplaceRepository, toast]);
+  const openDetail = useCallback(
+    async (slug: string) => {
+      setIsDetailLoading(true);
+      try {
+        const detail = await themeMarketplaceRepository.getBySlug(slug);
+        setSelectedTheme(detail);
+      } catch {
+        toast({ title: "Failed to load theme details", variant: "destructive" });
+      } finally {
+        setIsDetailLoading(false);
+      }
+    },
+    [themeMarketplaceRepository, toast]
+  );
 
   const closeDetail = useCallback(() => {
     setSelectedTheme(null);
   }, []);
 
   // ── Apply theme ──
-  const applyTheme = useCallback(async (slug: string, merge: boolean = false): Promise<boolean> => {
-    setIsApplying(true);
-    try {
-      await themeMarketplaceRepository.apply(slug, merge);
-      toast({
-        title: "Theme applied to draft",
-        description: "Open the customizer to preview and publish.",
-      });
-
-      // Refresh themes to update isApplied state
-      await loadThemes();
-      return true;
-    } catch (err: any) {
-      const message = err?.message || err?.response?.data?.error || "Failed to apply theme";
-      // Detect system admin without tenant context
-      if (message.includes("System admins") || message.includes("target tenant") || message.includes("drilldown")) {
+  const applyTheme = useCallback(
+    async (slug: string, merge: boolean = false): Promise<boolean> => {
+      setIsApplying(true);
+      try {
+        await themeMarketplaceRepository.apply(slug, merge);
         toast({
-          title: "No tenant selected",
-          description: "System admins must enter a tenant (via Tenant World) before applying themes. Go to Tenants → Enter Tenant → then open the Customizer.",
-          variant: "destructive",
+          title: "Theme applied to draft",
+          description: "Open the customizer to preview and publish.",
         });
-      } else {
-        toast({ title: message, variant: "destructive" });
+
+        // Refresh themes to update isApplied state
+        await loadThemes();
+        return true;
+      } catch (err: any) {
+        const message = err?.message || err?.response?.data?.error || "Failed to apply theme";
+        // Detect system admin without tenant context
+        if (
+          message.includes("System admins") ||
+          message.includes("target tenant") ||
+          message.includes("drilldown")
+        ) {
+          toast({
+            title: "No tenant selected",
+            description:
+              "System admins must enter a tenant (via Tenant World) before applying themes. Go to Tenants → Enter Tenant → then open the Customizer.",
+            variant: "destructive",
+          });
+        } else {
+          toast({ title: message, variant: "destructive" });
+        }
+        return false;
+      } finally {
+        setIsApplying(false);
       }
-      return false;
-    } finally {
-      setIsApplying(false);
-    }
-  }, [themeMarketplaceRepository, toast, loadThemes]);
+    },
+    [themeMarketplaceRepository, toast, loadThemes]
+  );
 
   // ── Toggle favorite ──
-  const toggleFavorite = useCallback(async (slug: string) => {
-    setIsTogglingFavorite(slug);
-    try {
-      await themeMarketplaceRepository.toggleFavorite(slug);
+  const toggleFavorite = useCallback(
+    async (slug: string) => {
+      setIsTogglingFavorite(slug);
+      try {
+        await themeMarketplaceRepository.toggleFavorite(slug);
 
-      // Optimistic update: toggle isFavorited and likeCount in local state
-      setThemes((prev) =>
-        prev.map((t) =>
-          t.slug === slug
-            ? t.copyWith({
-              isFavorited: !t.isFavorited,
-              likeCount: t.isFavorited ? t.likeCount - 1 : t.likeCount + 1,
-            })
-            : t
-        )
-      );
-      setFeaturedThemes((prev) =>
-        prev.map((t) =>
-          t.slug === slug
-            ? t.copyWith({
-              isFavorited: !t.isFavorited,
-              likeCount: t.isFavorited ? t.likeCount - 1 : t.likeCount + 1,
-            })
-            : t
-        )
-      );
-      if (selectedTheme?.slug === slug) {
-        // Detail is a ThemeDetail (extends ThemeCard), reload from server for clean state
-        await openDetail(slug);
+        // Optimistic update: toggle isFavorited and likeCount in local state
+        setThemes((prev) =>
+          prev.map((t) =>
+            t.slug === slug
+              ? t.copyWith({
+                  isFavorited: !t.isFavorited,
+                  likeCount: t.isFavorited ? t.likeCount - 1 : t.likeCount + 1,
+                })
+              : t
+          )
+        );
+        setFeaturedThemes((prev) =>
+          prev.map((t) =>
+            t.slug === slug
+              ? t.copyWith({
+                  isFavorited: !t.isFavorited,
+                  likeCount: t.isFavorited ? t.likeCount - 1 : t.likeCount + 1,
+                })
+              : t
+          )
+        );
+        if (selectedTheme?.slug === slug) {
+          // Detail is a ThemeDetail (extends ThemeCard), reload from server for clean state
+          await openDetail(slug);
+        }
+      } catch {
+        toast({ title: "Failed to update favorite", variant: "destructive" });
+      } finally {
+        setIsTogglingFavorite(null);
       }
-    } catch {
-      toast({ title: "Failed to update favorite", variant: "destructive" });
-    } finally {
-      setIsTogglingFavorite(null);
-    }
-  }, [themeMarketplaceRepository, selectedTheme, toast, openDetail]);
+    },
+    [themeMarketplaceRepository, selectedTheme, toast, openDetail]
+  );
 
   // ── Auto-load on filter/page/tab change ──
   useEffect(() => {

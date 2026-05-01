@@ -23,10 +23,31 @@ export interface IAnalyticsRepository {
   getCohortAnalysis(months?: number): Promise<CohortAnalysisResponse>;
   getLtvByEdition(): Promise<LtvResponse>;
   getForecast(months?: number): Promise<RevenueForecastResponse>;
-  getHealthScores(page?: number, pageSize?: number, sortBy?: string, sortDesc?: boolean, minScore?: number, maxScore?: number): Promise<TenantHealthScoresResponse>;
+  getHealthScores(
+    page?: number,
+    pageSize?: number,
+    sortBy?: string,
+    sortDesc?: boolean,
+    minScore?: number,
+    maxScore?: number
+  ): Promise<TenantHealthScoresResponse>;
   getHealthById(tenantId: string): Promise<TenantHealthScore>;
   getReportPreferences(): Promise<ReportPreference>;
   updateReportPreferences(data: UpdateReportPreferenceRequest): Promise<void>;
-  exportAnalytics(data: { format: string; from?: string; to?: string; tenantId?: string; includeMrrMovement: boolean; includeCohort: boolean; includeHealth: boolean; includeForecast: boolean }): Promise<Blob>;
-  generateReport(data: { from?: string; to?: string; tenantId?: string; currency: string }): Promise<Blob>;
+  exportAnalytics(data: {
+    format: string;
+    from?: string;
+    to?: string;
+    tenantId?: string;
+    includeMrrMovement: boolean;
+    includeCohort: boolean;
+    includeHealth: boolean;
+    includeForecast: boolean;
+  }): Promise<Blob>;
+  generateReport(data: {
+    from?: string;
+    to?: string;
+    tenantId?: string;
+    currency: string;
+  }): Promise<Blob>;
 }

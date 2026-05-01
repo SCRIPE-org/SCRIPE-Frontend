@@ -58,7 +58,7 @@ export interface AdminData extends BaseEntity {
  * Admin entity class
  */
 export class Admin {
-  constructor(public readonly data: AdminData) { }
+  constructor(public readonly data: AdminData) {}
 
   get id(): string {
     return this.data.id;

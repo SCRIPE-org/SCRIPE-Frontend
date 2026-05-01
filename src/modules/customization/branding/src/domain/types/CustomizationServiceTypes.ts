@@ -3,5 +3,11 @@
  *
  * @module customization/domain
  */
-export type { BrandingResponseJson, AuditLogPagedResultJson } from "../../data/models/BrandingModel";
-export type { SystemSettingsJson, UpdateSystemSettingsJson } from "../../data/models/SystemSettingsModel";
+export type {
+  BrandingResponseJson,
+  AuditLogPagedResultJson,
+} from "../../data/models/BrandingModel";
+export type {
+  SystemSettingsJson,
+  UpdateSystemSettingsJson,
+} from "../../data/models/SystemSettingsModel";

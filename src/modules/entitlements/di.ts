@@ -69,18 +69,18 @@ import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfa
 import type { ICommissionLedgerService } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerService";
 
 export interface EntitlementsContainer {
-      featureRepository: IFeatureRepository;
-      editionRepository: IEditionRepository;
-      overrideRepository: IOverrideRepository;
-      subscriptionRepository: ISubscriptionRepository;
-      billingRepository: IBillingRepository;
-      tenantPlanRepository: ITenantPlanRepository;
-      userSubscriptionRepository: IUserSubscriptionRepository;
-      connectRepository: IConnectRepository;
-      platformStripeRepository: IPlatformStripeRepository;
-      analyticsRepository: IAnalyticsRepository;
-      tenantGatewayRepository: ITenantGatewayRepository;
-      commissionLedgerRepository: ICommissionLedgerRepository;
+  featureRepository: IFeatureRepository;
+  editionRepository: IEditionRepository;
+  overrideRepository: IOverrideRepository;
+  subscriptionRepository: ISubscriptionRepository;
+  billingRepository: IBillingRepository;
+  tenantPlanRepository: ITenantPlanRepository;
+  userSubscriptionRepository: IUserSubscriptionRepository;
+  connectRepository: IConnectRepository;
+  platformStripeRepository: IPlatformStripeRepository;
+  analyticsRepository: IAnalyticsRepository;
+  tenantGatewayRepository: ITenantGatewayRepository;
+  commissionLedgerRepository: ICommissionLedgerRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -89,81 +89,85 @@ let _container: EntitlementsContainer | null = null;
  * Get the entitlements container (lazy initialization)
  */
 export function getEntitlementsContainer(): EntitlementsContainer {
-      if (!_container) {
-            const apiService = getModuleApiService("ENTITLEMENTS");
+  if (!_container) {
+    const apiService = getModuleApiService("ENTITLEMENTS");
 
-            // ── Create Services (typed as interfaces) ──
-            const featureService: IFeatureService = new FeatureService(apiService);
-            const editionService: IEditionService = new EditionService(apiService);
-            const overrideService: IOverrideService = new OverrideService(apiService);
-            const subscriptionService: ISubscriptionService = new SubscriptionService(apiService);
-            const billingService: IBillingService = new BillingService(apiService);
-            const tenantPlanService: ITenantPlanService = new TenantPlanService(apiService);
-            const userSubscriptionService: IUserSubscriptionService = new UserSubscriptionService(apiService);
-            const connectService: IConnectService = new ConnectService(apiService);
-            const platformStripeService: IPlatformStripeService = new PlatformStripeService(apiService);
-            const analyticsService: IAnalyticsService = new AnalyticsService(apiService);
-            const tenantGatewayService: ITenantGatewayService = new TenantGatewayService(apiService);
-            const commissionLedgerService: ICommissionLedgerService = new CommissionLedgerService(apiService);
+    // ── Create Services (typed as interfaces) ──
+    const featureService: IFeatureService = new FeatureService(apiService);
+    const editionService: IEditionService = new EditionService(apiService);
+    const overrideService: IOverrideService = new OverrideService(apiService);
+    const subscriptionService: ISubscriptionService = new SubscriptionService(apiService);
+    const billingService: IBillingService = new BillingService(apiService);
+    const tenantPlanService: ITenantPlanService = new TenantPlanService(apiService);
+    const userSubscriptionService: IUserSubscriptionService = new UserSubscriptionService(
+      apiService
+    );
+    const connectService: IConnectService = new ConnectService(apiService);
+    const platformStripeService: IPlatformStripeService = new PlatformStripeService(apiService);
+    const analyticsService: IAnalyticsService = new AnalyticsService(apiService);
+    const tenantGatewayService: ITenantGatewayService = new TenantGatewayService(apiService);
+    const commissionLedgerService: ICommissionLedgerService = new CommissionLedgerService(
+      apiService
+    );
 
-            // ── Create Repositories (IService → IRepository mapping) ──
-            _container = {
-                  featureRepository: new FeatureRepository(featureService),
-                  editionRepository: new EditionRepository(editionService),
-                  overrideRepository: new OverrideRepository(overrideService),
-                  subscriptionRepository: new SubscriptionRepository(subscriptionService),
-                  billingRepository: new BillingRepository(billingService),
-                  tenantPlanRepository: new TenantPlanRepository(tenantPlanService),
-                  userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
-                  connectRepository: new ConnectRepository(connectService),
-                  platformStripeRepository: new PlatformStripeRepository(platformStripeService),
-                  analyticsRepository: new AnalyticsRepository(analyticsService),
-                  tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
-                  commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
-            };
-      }
+    // ── Create Repositories (IService → IRepository mapping) ──
+    _container = {
+      featureRepository: new FeatureRepository(featureService),
+      editionRepository: new EditionRepository(editionService),
+      overrideRepository: new OverrideRepository(overrideService),
+      subscriptionRepository: new SubscriptionRepository(subscriptionService),
+      billingRepository: new BillingRepository(billingService),
+      tenantPlanRepository: new TenantPlanRepository(tenantPlanService),
+      userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
+      connectRepository: new ConnectRepository(connectService),
+      platformStripeRepository: new PlatformStripeRepository(platformStripeService),
+      analyticsRepository: new AnalyticsRepository(analyticsService),
+      tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
+      commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
+    };
+  }
 
-      return _container;
+  return _container;
 }
 
 /**
  * Entitlements container accessor (for use in components)
  */
 export const entitlementsContainer = {
-      get featureRepository() {
-            return getEntitlementsContainer().featureRepository;
-      },
-      get editionRepository() {
-            return getEntitlementsContainer().editionRepository;
-      },
-      get overrideRepository() {
-            return getEntitlementsContainer().overrideRepository;
-      },
-      get subscriptionRepository() {
-            return getEntitlementsContainer().subscriptionRepository;
-      },
-      get billingRepository() {
-            return getEntitlementsContainer().billingRepository;
-      },
-      get tenantPlanRepository() {
-            return getEntitlementsContainer().tenantPlanRepository;
-      },
-      get userSubscriptionRepository() {
-            return getEntitlementsContainer().userSubscriptionRepository;
-      },
-      get connectRepository() {
-            return getEntitlementsContainer().connectRepository;
-      },
-      get platformStripeRepository() {
-            return getEntitlementsContainer().platformStripeRepository;
-      },
-      get analyticsRepository() {
-            return getEntitlementsContainer().analyticsRepository;
-      },
-      get tenantGatewayRepository() {
-            return getEntitlementsContainer().tenantGatewayRepository;
-      },
-      get commissionLedgerRepository() {
-            return getEntitlementsContainer().commissionLedgerRepository;
-      },
+  get featureRepository() {
+    return getEntitlementsContainer().featureRepository;
+  },
+  get editionRepository() {
+    return getEntitlementsContainer().editionRepository;
+  },
+  get overrideRepository() {
+    return getEntitlementsContainer().overrideRepository;
+  },
+  get subscriptionRepository() {
+    return getEntitlementsContainer().subscriptionRepository;
+  },
+  get billingRepository() {
+    return getEntitlementsContainer().billingRepository;
+  },
+  get tenantPlanRepository() {
+    return getEntitlementsContainer().tenantPlanRepository;
+  },
+  get userSubscriptionRepository() {
+    return getEntitlementsContainer().userSubscriptionRepository;
+  },
+  get connectRepository() {
+    return getEntitlementsContainer().connectRepository;
+  },
+  get platformStripeRepository() {
+    return getEntitlementsContainer().platformStripeRepository;
+  },
+  get analyticsRepository() {
+    return getEntitlementsContainer().analyticsRepository;
+  },
+  get tenantGatewayRepository() {
+    return getEntitlementsContainer().tenantGatewayRepository;
+  },
+  get commissionLedgerRepository() {
+    return getEntitlementsContainer().commissionLedgerRepository;
+  },
 };

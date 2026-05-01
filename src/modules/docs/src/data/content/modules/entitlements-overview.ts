@@ -2,102 +2,134 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.intro",
-      },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.intro",
+  },
 
-      // ─── What is Entitlements ──────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.whatIsTitle",
-            id: "what-is-entitlements",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.whatIsIntro",
-      },
-      {
-            type: "table",
-            headers: ["Concept", "Analogy", "Example"],
-            rows: [
-                  ["Feature", "A switch or dial on your platform", "Chat.Enabled, MaxAdmins, Theme"],
-                  ["Edition", "A product SKU / pricing plan", "Basic ($29/mo), Pro ($99/mo), Enterprise (custom)"],
-                  ["Subscription", "A customer's contract", "Acme Corp → Pro plan, monthly, active since Jan 2026"],
-                  ["Override", "A one-off exception", "Give Acme Corp 500 admins instead of the Pro default of 50"],
-            ],
-      },
+  // ─── What is Entitlements ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.whatIsTitle",
+    id: "what-is-entitlements",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.whatIsIntro",
+  },
+  {
+    type: "table",
+    headers: ["Concept", "Analogy", "Example"],
+    rows: [
+      ["Feature", "A switch or dial on your platform", "Chat.Enabled, MaxAdmins, Theme"],
+      [
+        "Edition",
+        "A product SKU / pricing plan",
+        "Basic ($29/mo), Pro ($99/mo), Enterprise (custom)",
+      ],
+      [
+        "Subscription",
+        "A customer's contract",
+        "Acme Corp → Pro plan, monthly, active since Jan 2026",
+      ],
+      [
+        "Override",
+        "A one-off exception",
+        "Give Acme Corp 500 admins instead of the Pro default of 50",
+      ],
+    ],
+  },
 
-      // ─── Architecture ─────────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.architectureTitle",
-            id: "architecture",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.architectureIntro",
-      },
-      {
-            type: "flowchart",
-            direction: "vertical",
-            nodes: [
-                  { id: "feat", label: "Features", description: "Boolean / Numeric / String capabilities" },
-                  { id: "ed", label: "Editions", description: "Named plans (Basic, Pro, Enterprise)" },
-                  { id: "sub", label: "Subscriptions", description: "Tenant ↔ Edition binding" },
-                  { id: "ovr", label: "Overrides", description: "Per-tenant custom values" },
-                  { id: "cache", label: "FeatureCache", description: "In-memory resolved values" },
-                  { id: "pipe", label: "FeatureCheckBehavior", description: "MediatR pipeline gate" },
-            ],
-            connections: [
-                  { from: "feat", to: "ed", label: "bundled into" },
-                  { from: "ed", to: "sub", label: "linked via" },
-                  { from: "sub", to: "cache", label: "resolved into" },
-                  { from: "ovr", to: "cache", label: "overrides" },
-                  { from: "cache", to: "pipe", label: "checked by" },
-            ],
-      },
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.architectureIntro",
+  },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "feat", label: "Features", description: "Boolean / Numeric / String capabilities" },
+      { id: "ed", label: "Editions", description: "Named plans (Basic, Pro, Enterprise)" },
+      { id: "sub", label: "Subscriptions", description: "Tenant ↔ Edition binding" },
+      { id: "ovr", label: "Overrides", description: "Per-tenant custom values" },
+      { id: "cache", label: "FeatureCache", description: "In-memory resolved values" },
+      { id: "pipe", label: "FeatureCheckBehavior", description: "MediatR pipeline gate" },
+    ],
+    connections: [
+      { from: "feat", to: "ed", label: "bundled into" },
+      { from: "ed", to: "sub", label: "linked via" },
+      { from: "sub", to: "cache", label: "resolved into" },
+      { from: "ovr", to: "cache", label: "overrides" },
+      { from: "cache", to: "pipe", label: "checked by" },
+    ],
+  },
 
-      // ─── Four Domains ─────────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.domainsTitle",
-            id: "four-domains",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.domainsIntro",
-      },
-      {
-            type: "table",
-            headers: ["Domain", "Entity", "Responsibility", "Key Operations"],
-            rows: [
-                  ["Features", "Feature", "Define controllable capabilities (boolean toggle, numeric quota, string config)", "CRUD, Seed system features, ValueType validation"],
-                  ["Editions", "Edition, EditionVersion, EditionFeature", "Named plans that bundle feature values with versioning", "CRUD, Version management, Rollout strategies, Direct-apply"],
-                  ["Subscriptions", "TenantSubscription", "Bind tenants to editions with full lifecycle", "Assign, Upgrade, Downgrade, Suspend, Resume, Cancel, Renew"],
-                  ["Overrides", "TenantFeatureOverride", "Per-tenant custom values bypassing edition defaults", "Set, Remove, List, Resolve all features"],
-            ],
-      },
+  // ─── Four Domains ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.domainsTitle",
+    id: "four-domains",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.domainsIntro",
+  },
+  {
+    type: "table",
+    headers: ["Domain", "Entity", "Responsibility", "Key Operations"],
+    rows: [
+      [
+        "Features",
+        "Feature",
+        "Define controllable capabilities (boolean toggle, numeric quota, string config)",
+        "CRUD, Seed system features, ValueType validation",
+      ],
+      [
+        "Editions",
+        "Edition, EditionVersion, EditionFeature",
+        "Named plans that bundle feature values with versioning",
+        "CRUD, Version management, Rollout strategies, Direct-apply",
+      ],
+      [
+        "Subscriptions",
+        "TenantSubscription",
+        "Bind tenants to editions with full lifecycle",
+        "Assign, Upgrade, Downgrade, Suspend, Resume, Cancel, Renew",
+      ],
+      [
+        "Overrides",
+        "TenantFeatureOverride",
+        "Per-tenant custom values bypassing edition defaults",
+        "Set, Remove, List, Resolve all features",
+      ],
+    ],
+  },
 
-      // ─── Resolution Chain ─────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.resolutionTitle",
-            id: "resolution-chain",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.resolutionIntro",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "Feature Value Resolution Chain",
-            code: `Priority (highest → lowest):
+  // ─── Resolution Chain ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.resolutionTitle",
+    id: "resolution-chain",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.resolutionIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Feature Value Resolution Chain",
+    code: `Priority (highest → lowest):
 
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  1. TenantFeatureOverride  →  Custom value set for THIS specific tenant │
@@ -112,29 +144,29 @@ const sections: DocSection[] = [
 
 Resolution Order:
   Check Override → exists? use it : Check Edition → exists? use it : use Default`,
-      },
-      {
-            type: "info",
-            variant: "tip",
-            contentKey: "modules.entitlementsOverview.resolutionTip",
-      },
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.entitlementsOverview.resolutionTip",
+  },
 
-      // ─── Pipeline Integration ─────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.pipelineTitle",
-            id: "pipeline-integration",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.pipelineIntro",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "IRequireFeature Interface",
-            code: `// Mark a command to require a feature
+  // ─── Pipeline Integration ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.pipelineTitle",
+    id: "pipeline-integration",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.pipelineIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "IRequireFeature Interface",
+    code: `// Mark a command to require a feature
 public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
 {
     public string RequiredFeatureName => "Chat.Enabled";
@@ -143,12 +175,12 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
     public string Name { get; set; }
     public string Description { get; set; }
 }`,
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "FeatureCheckBehavior Pipeline",
-            code: `public class FeatureCheckBehavior<TRequest, TResponse> 
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "FeatureCheckBehavior Pipeline",
+    code: `public class FeatureCheckBehavior<TRequest, TResponse> 
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequireFeature
 {
@@ -183,51 +215,67 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
         return await next(); // Feature check passed
     }
 }`,
-      },
-      {
-            type: "info",
-            variant: "tip",
-            contentKey: "modules.entitlementsOverview.pipelineTip",
-      },
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.entitlementsOverview.pipelineTip",
+  },
 
-      // ─── CQRS Command/Query Map ───────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.cqrsMapTitle",
-            id: "cqrs-map",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.cqrsMapIntro",
-      },
-      {
-            type: "table",
-            headers: ["Domain", "Commands", "Queries"],
-            rows: [
-                  ["Features", "CreateFeature, UpdateFeature, DeleteFeature", "GetFeatures (paginated), GetFeatureById"],
-                  ["Editions", "CreateEdition, UpdateEdition, DeleteEdition, SetEditionFeatures, DirectApplyFeatures, CreateEditionVersion, PublishEditionVersion, RollbackEditionVersion", "GetEditions, GetEditionById, GetEditionFeatures, GetEditionVersions"],
-                  ["Subscriptions", "AssignSubscription, UpgradeSubscription, DowngradeSubscription, SuspendSubscription, ResumeSubscription, CancelSubscription, RenewSubscription", "GetSubscriptions, GetSubscriptionById, GetDowngradeImpact, GetTenantActiveSubscription"],
-                  ["Overrides", "SetFeatureOverride, RemoveFeatureOverride", "GetTenantOverrides, GetResolvedFeatures"],
-            ],
-      },
+  // ─── CQRS Command/Query Map ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.cqrsMapTitle",
+    id: "cqrs-map",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.cqrsMapIntro",
+  },
+  {
+    type: "table",
+    headers: ["Domain", "Commands", "Queries"],
+    rows: [
+      [
+        "Features",
+        "CreateFeature, UpdateFeature, DeleteFeature",
+        "GetFeatures (paginated), GetFeatureById",
+      ],
+      [
+        "Editions",
+        "CreateEdition, UpdateEdition, DeleteEdition, SetEditionFeatures, DirectApplyFeatures, CreateEditionVersion, PublishEditionVersion, RollbackEditionVersion",
+        "GetEditions, GetEditionById, GetEditionFeatures, GetEditionVersions",
+      ],
+      [
+        "Subscriptions",
+        "AssignSubscription, UpgradeSubscription, DowngradeSubscription, SuspendSubscription, ResumeSubscription, CancelSubscription, RenewSubscription",
+        "GetSubscriptions, GetSubscriptionById, GetDowngradeImpact, GetTenantActiveSubscription",
+      ],
+      [
+        "Overrides",
+        "SetFeatureOverride, RemoveFeatureOverride",
+        "GetTenantOverrides, GetResolvedFeatures",
+      ],
+    ],
+  },
 
-      // ─── DI Registration ──────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.diTitle",
-            id: "di-registration",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.diIntro",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "DependencyInjection.cs",
-            code: `public static class DependencyInjection
+  // ─── DI Registration ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.diTitle",
+    id: "di-registration",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.diIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "DependencyInjection.cs",
+    code: `public static class DependencyInjection
 {
     public static IServiceCollection AddEntitlementsModule(
         this IServiceCollection services, IConfiguration config)
@@ -255,24 +303,24 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
         return services;
     }
 }`,
-      },
+  },
 
-      // ─── Backend Structure ────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.backendTitle",
-            id: "backend-structure",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.backendIntro",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "Backend Module Structure",
-            code: `Entitlements/
+  // ─── Backend Structure ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.backendTitle",
+    id: "backend-structure",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.backendIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Backend Module Structure",
+    code: `Entitlements/
 ├── Entitlements.Domain/
 │   ├── Entities/
 │   │   ├── Feature.cs                  # Controllable capability
@@ -328,24 +376,24 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
     │   ├── FeatureCache.cs
     │   └── NoOpFeatureCache.cs
     └── DependencyInjection.cs`,
-      },
+  },
 
-      // ─── Frontend Structure ───────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.frontendTitle",
-            id: "frontend-structure",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.frontendIntro",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "Frontend Module Structure",
-            code: `src/modules/entitlements/
+  // ─── Frontend Structure ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.frontendTitle",
+    id: "frontend-structure",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.frontendIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Frontend Module Structure",
+    code: `src/modules/entitlements/
 ├── editions/                    # Edition management
 │   └── src/
 │       ├── domain/
@@ -365,72 +413,100 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
 │   └── src/ { domain, data, presentation }
 └── overrides/                   # Per-tenant overrides
     └── src/ { domain, data, presentation }`,
-      },
+  },
 
-      // ─── API Controllers ──────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.controllersTitle",
-            id: "api-controllers",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.controllersIntro",
-      },
-      {
-            type: "table",
-            headers: ["Controller", "Route Prefix", "Endpoints", "Permission Prefix", "Key Operations"],
-            rows: [
-                  ["EditionsController", "/api/v1/editions", "11", "editions.*", "CRUD, SetFeatures, DirectApply, Versions, Publish, Rollback"],
-                  ["FeaturesController", "/api/v1/features", "5", "features.*", "CRUD (system features are read-only)"],
-                  ["SubscriptionsController", "/api/v1/subscriptions", "12", "subscriptions.*", "Assign, Upgrade, Downgrade, Suspend, Resume, Cancel, Renew, DowngradeImpact"],
-                  ["TenantFeaturesController", "/api/v1/tenants/{id}/features", "4", "features.*", "SetOverride, RemoveOverride, GetOverrides, GetResolved"],
-            ],
-      },
+  // ─── API Controllers ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.controllersTitle",
+    id: "api-controllers",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.controllersIntro",
+  },
+  {
+    type: "table",
+    headers: ["Controller", "Route Prefix", "Endpoints", "Permission Prefix", "Key Operations"],
+    rows: [
+      [
+        "EditionsController",
+        "/api/v1/editions",
+        "11",
+        "editions.*",
+        "CRUD, SetFeatures, DirectApply, Versions, Publish, Rollback",
+      ],
+      [
+        "FeaturesController",
+        "/api/v1/features",
+        "5",
+        "features.*",
+        "CRUD (system features are read-only)",
+      ],
+      [
+        "SubscriptionsController",
+        "/api/v1/subscriptions",
+        "12",
+        "subscriptions.*",
+        "Assign, Upgrade, Downgrade, Suspend, Resume, Cancel, Renew, DowngradeImpact",
+      ],
+      [
+        "TenantFeaturesController",
+        "/api/v1/tenants/{id}/features",
+        "4",
+        "features.*",
+        "SetOverride, RemoveOverride, GetOverrides, GetResolved",
+      ],
+    ],
+  },
 
-      // ─── Feature Comparison Table ─────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.comparisonTitle",
-            id: "comparison",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.comparisonIntro",
-      },
-      {
-            type: "table",
-            headers: ["Capability", "Without Entitlements", "With Entitlements"],
-            rows: [
-                  ["Feature Gating", "Manual if/else checks scattered in code", "Automatic pipeline-level gating via IRequireFeature"],
-                  ["Plan Management", "Hard-coded tier logic", "Dynamic editions with feature bundles"],
-                  ["Quota Enforcement", "No enforcement", "Automatic quota tracking with QuotaCounter"],
-                  ["Plan Changes", "Manual DB updates", "Safe upgrade/downgrade with impact analysis"],
-                  ["Custom Deals", "Code changes required", "Override via API without touching code"],
-                  ["Version Control", "No versioning", "Edition versions with rollout strategies"],
-                  ["Audit Trail", "No tracking", "Every change audited automatically"],
-                  ["Reseller Support", "Not possible", "Tenant-scoped retail editions"],
-            ],
-      },
+  // ─── Feature Comparison Table ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.comparisonTitle",
+    id: "comparison",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.comparisonIntro",
+  },
+  {
+    type: "table",
+    headers: ["Capability", "Without Entitlements", "With Entitlements"],
+    rows: [
+      [
+        "Feature Gating",
+        "Manual if/else checks scattered in code",
+        "Automatic pipeline-level gating via IRequireFeature",
+      ],
+      ["Plan Management", "Hard-coded tier logic", "Dynamic editions with feature bundles"],
+      ["Quota Enforcement", "No enforcement", "Automatic quota tracking with QuotaCounter"],
+      ["Plan Changes", "Manual DB updates", "Safe upgrade/downgrade with impact analysis"],
+      ["Custom Deals", "Code changes required", "Override via API without touching code"],
+      ["Version Control", "No versioning", "Edition versions with rollout strategies"],
+      ["Audit Trail", "No tracking", "Every change audited automatically"],
+      ["Reseller Support", "Not possible", "Tenant-scoped retail editions"],
+    ],
+  },
 
-      // ─── NoOp Fallback ────────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.noOpTitle",
-            id: "noop-fallback",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.noOpIntro",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "NoOpFeatureCache.cs",
-            code: `/// <summary>
+  // ─── NoOp Fallback ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.noOpTitle",
+    id: "noop-fallback",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.noOpIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "NoOpFeatureCache.cs",
+    code: `/// <summary>
 /// Registered when the Entitlements module is not loaded.
 /// All features are treated as enabled with unlimited quotas.
 /// </summary>
@@ -451,29 +527,29 @@ public class NoOpFeatureCache : IFeatureCache
     public Task<int> GetCurrentUsage(Guid tenantId, string featureName)
         => Task.FromResult(0); // No usage tracked
 }`,
-      },
-      {
-            type: "info",
-            variant: "note",
-            contentKey: "modules.entitlementsOverview.noOpNote",
-      },
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "modules.entitlementsOverview.noOpNote",
+  },
 
-      // ─── Getting Started ──────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "modules.entitlementsOverview.gettingStartedTitle",
-            id: "getting-started",
-      },
-      {
-            type: "paragraph",
-            contentKey: "modules.entitlementsOverview.gettingStartedIntro",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "Quick Start Steps",
-            code: `Step 1: Define Features
+  // ─── Getting Started ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.gettingStartedTitle",
+    id: "getting-started",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.gettingStartedIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Quick Start Steps",
+    code: `Step 1: Define Features
   → POST /api/v1/features
   → Create features like "Chat.Enabled" (Boolean), "MaxAdmins" (Numeric)
 
@@ -493,16 +569,22 @@ Step 4: Gate Commands (Optional)
 Step 5: Apply Overrides (Optional)
   → POST /api/v1/tenants/{id}/features/overrides
   → Give specific tenants custom values`,
-      },
+  },
 ];
 
 registerPage({
-      slug: "modules/entitlements-overview",
-      titleKey: "modules.entitlementsOverview.title",
-      descriptionKey: "modules.entitlementsOverview.description",
-      category: "modules",
-      order: 1,
-      sections,
-      relatedSlugs: ["modules/editions", "modules/subscriptions", "modules/features", "modules/overrides", "architecture/cqrs-pipeline"],
-      lastUpdated: "2026-03-02",
+  slug: "modules/entitlements-overview",
+  titleKey: "modules.entitlementsOverview.title",
+  descriptionKey: "modules.entitlementsOverview.description",
+  category: "modules",
+  order: 1,
+  sections,
+  relatedSlugs: [
+    "modules/editions",
+    "modules/subscriptions",
+    "modules/features",
+    "modules/overrides",
+    "architecture/cqrs-pipeline",
+  ],
+  lastUpdated: "2026-03-02",
 });

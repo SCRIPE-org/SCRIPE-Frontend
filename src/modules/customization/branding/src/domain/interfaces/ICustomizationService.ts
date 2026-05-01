@@ -6,8 +6,14 @@
  *
  * @module customization/domain
  */
-import type { BrandingResponseJson, AuditLogPagedResultJson } from "../types/CustomizationServiceTypes";
-import type { SystemSettingsJson, UpdateSystemSettingsJson } from "../types/CustomizationServiceTypes";
+import type {
+  BrandingResponseJson,
+  AuditLogPagedResultJson,
+} from "../types/CustomizationServiceTypes";
+import type {
+  SystemSettingsJson,
+  UpdateSystemSettingsJson,
+} from "../types/CustomizationServiceTypes";
 
 export interface ICustomizationService {
   // ── Tenant Branding (My Tenant) ──

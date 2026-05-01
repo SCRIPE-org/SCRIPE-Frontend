@@ -4,25 +4,25 @@
  */
 
 export interface FeatureOverrideModel {
-      id: string;
-      tenantId: string;
-      featureId: string;
-      featureName: string;
-      value: string;
-      valueType: string;
-      reason?: string;
-      createdAt: string;
-      modifiedAt?: string;
-      costAmountUsd?: number;
-      costReason?: string;
+  id: string;
+  tenantId: string;
+  featureId: string;
+  featureName: string;
+  value: string;
+  valueType: string;
+  reason?: string;
+  createdAt: string;
+  modifiedAt?: string;
+  costAmountUsd?: number;
+  costReason?: string;
 }
 
 export interface ResolvedFeatureModel {
-      featureId: string;
-      key: string;
-      nameEn: string;
-      nameAr: string;
-      valueType: string;
-      effectiveValue: string;
-      source: "Default" | "Edition" | "Override";
+  featureId: string;
+  key: string;
+  nameEn: string;
+  nameAr: string;
+  valueType: string;
+  effectiveValue: string;
+  source: "Default" | "Edition" | "Override";
 }

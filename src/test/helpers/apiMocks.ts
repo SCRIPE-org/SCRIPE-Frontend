@@ -20,35 +20,35 @@ import { createMockTokenResponse, createMockAdmin } from "./mockFactories";
 // ──────────────────────────────────────────────
 
 export const handlers = [
-      // Auth - Login
-      http.post("*/api/v1/auth/admin/login", () => {
-            return HttpResponse.json(createMockTokenResponse());
-      }),
+  // Auth - Login
+  http.post("*/api/v1/auth/admin/login", () => {
+    return HttpResponse.json(createMockTokenResponse());
+  }),
 
-      // Auth - Refresh Token
-      http.post("*/api/v1/auth/admin/refresh-token", () => {
-            return HttpResponse.json(createMockTokenResponse());
-      }),
+  // Auth - Refresh Token
+  http.post("*/api/v1/auth/admin/refresh-token", () => {
+    return HttpResponse.json(createMockTokenResponse());
+  }),
 
-      // Auth - Logout
-      http.post("*/api/v1/auth/admin/logout", () => {
-            return new HttpResponse(null, { status: 200 });
-      }),
+  // Auth - Logout
+  http.post("*/api/v1/auth/admin/logout", () => {
+    return new HttpResponse(null, { status: 200 });
+  }),
 
-      // Auth - Me
-      http.get("*/api/v1/auth/admin/me", () => {
-            return HttpResponse.json(createMockAdmin());
-      }),
+  // Auth - Me
+  http.get("*/api/v1/auth/admin/me", () => {
+    return HttpResponse.json(createMockAdmin());
+  }),
 
-      // Admins - List
-      http.get("*/api/v1/admins", () => {
-            return HttpResponse.json({
-                  items: [createMockAdmin(), createMockAdmin({ id: "2", username: "admin2" })],
-                  totalCount: 2,
-                  page: 1,
-                  pageSize: 10,
-            });
-      }),
+  // Admins - List
+  http.get("*/api/v1/admins", () => {
+    return HttpResponse.json({
+      items: [createMockAdmin(), createMockAdmin({ id: "2", username: "admin2" })],
+      totalCount: 2,
+      page: 1,
+      pageSize: 10,
+    });
+  }),
 ];
 
 // ──────────────────────────────────────────────
@@ -62,26 +62,23 @@ export const server = setupServer(...handlers);
 // ──────────────────────────────────────────────
 
 export const overrides = {
-      /** Make login return an error */
-      loginError: (status = 401, message = "Invalid credentials") =>
-            http.post("*/api/v1/auth/admin/login", () => {
-                  return HttpResponse.json(
-                        { error: { code: "INVALID_CREDENTIALS", message } },
-                        { status }
-                  );
-            }),
+  /** Make login return an error */
+  loginError: (status = 401, message = "Invalid credentials") =>
+    http.post("*/api/v1/auth/admin/login", () => {
+      return HttpResponse.json({ error: { code: "INVALID_CREDENTIALS", message } }, { status });
+    }),
 
-      /** Make login require 2FA */
-      login2FA: () =>
-            http.post("*/api/v1/auth/admin/login", () => {
-                  return HttpResponse.json(
-                        createMockTokenResponse({ requires2FA: true, accessToken: "", refreshToken: "" })
-                  );
-            }),
+  /** Make login require 2FA */
+  login2FA: () =>
+    http.post("*/api/v1/auth/admin/login", () => {
+      return HttpResponse.json(
+        createMockTokenResponse({ requires2FA: true, accessToken: "", refreshToken: "" })
+      );
+    }),
 
-      /** Make any endpoint return a network error */
-      networkError: (path: string) =>
-            http.all(path, () => {
-                  return HttpResponse.error();
-            }),
+  /** Make any endpoint return a network error */
+  networkError: (path: string) =>
+    http.all(path, () => {
+      return HttpResponse.error();
+    }),
 };

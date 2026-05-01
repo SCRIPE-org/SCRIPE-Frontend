@@ -26,9 +26,7 @@ export function StripeTestModeBanner() {
   return (
     <Alert className="relative border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400">
       <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>
-        {t("billing.testMode.label") || "Stripe Test Mode"}
-      </AlertTitle>
+      <AlertTitle>{t("billing.testMode.label") || "Stripe Test Mode"}</AlertTitle>
       <AlertDescription>
         {t("billing.testMode.description") ||
           "Payments are simulated. No real charges will be made. Switch to live keys for production."}
@@ -37,7 +35,7 @@ export function StripeTestModeBanner() {
         variant="ghost"
         size="icon"
         onClick={() => setDismissed(true)}
-        className="absolute top-2 end-2 h-7 w-7 opacity-60 hover:opacity-100 hover:bg-amber-500/20"
+        className="absolute end-2 top-2 h-7 w-7 opacity-60 hover:bg-amber-500/20 hover:opacity-100"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />

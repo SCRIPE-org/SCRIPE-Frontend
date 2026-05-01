@@ -7,26 +7,47 @@
  */
 "use client";
 
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/core/common/utils";
 import {
-  Image, LogIn, Type, AlignLeft, Share2, ListChecks, Quote,
-  ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
-  Code, Video, GripVertical, Eye, EyeOff,
+  Image,
+  LogIn,
+  Type,
+  AlignLeft,
+  Share2,
+  ListChecks,
+  Quote,
+  ImageIcon,
+  MousePointerClick,
+  Minus,
+  PanelBottom,
+  Copyright,
+  Code,
+  Video,
+  GripVertical,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CanvasComponent } from "../../../domain/entities/CanvasComponent";
 import { COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  Image, LogIn, Type, AlignLeft, Share2, ListChecks, Quote,
-  ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
-  Code, Video,
+  Image,
+  LogIn,
+  Type,
+  AlignLeft,
+  Share2,
+  ListChecks,
+  Quote,
+  ImageIcon,
+  MousePointerClick,
+  Minus,
+  PanelBottom,
+  Copyright,
+  Code,
+  Video,
 };
 
 interface ComponentOrderListProps {
@@ -50,17 +71,10 @@ function SortableLayerItem({
   onToggleVisibility: () => void;
 }) {
   const { t } = useI18n();
-  const catalog = COMPONENT_CATALOG.find(c => c.type === component.type);
+  const catalog = COMPONENT_CATALOG.find((c) => c.type === component.type);
   const Icon = ICON_MAP[catalog?.icon || "Image"] || Image;
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `layer-${component.id}`,
     data: { source: "layer-list", componentId: component.id, index },
   });
@@ -77,38 +91,40 @@ function SortableLayerItem({
       style={style}
       onClick={onSelect}
       className={cn(
-        "flex items-center gap-2 rounded-md px-2 py-1.5 cursor-pointer transition-all group",
-        isDragging && "opacity-50 shadow-lg bg-primary/10 ring-1 ring-primary/30",
+        "group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-all",
+        isDragging && "bg-primary/10 opacity-50 shadow-lg ring-1 ring-primary/30",
         isSelected
-          ? "bg-primary/10 border border-primary/30"
-          : "hover:bg-muted/60 border border-transparent",
-        !component.visible && "opacity-50",
+          ? "border border-primary/30 bg-primary/10"
+          : "border border-transparent hover:bg-muted/60",
+        !component.visible && "opacity-50"
       )}
     >
       {/* Drag handle */}
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing p-0.5 text-muted-foreground/40 hover:text-muted-foreground"
+        className="cursor-grab p-0.5 text-muted-foreground/40 hover:text-muted-foreground active:cursor-grabbing"
       >
         <GripVertical className="h-3 w-3" />
       </div>
 
       {/* Index number */}
-      <span className="text-[9px] font-mono text-muted-foreground/50 w-3 text-center shrink-0">
+      <span className="w-3 shrink-0 text-center font-mono text-[9px] text-muted-foreground/50">
         {index + 1}
       </span>
 
       {/* Icon */}
-      <div className={cn(
-        "flex h-5 w-5 shrink-0 items-center justify-center rounded",
-        isSelected ? "bg-primary/20 text-primary" : "bg-muted/60 text-muted-foreground",
-      )}>
+      <div
+        className={cn(
+          "flex h-5 w-5 shrink-0 items-center justify-center rounded",
+          isSelected ? "bg-primary/20 text-primary" : "bg-muted/60 text-muted-foreground"
+        )}
+      >
         <Icon className="h-3 w-3" />
       </div>
 
       {/* Label */}
-      <span className="text-[10px] font-medium text-foreground truncate flex-1">
+      <span className="flex-1 truncate text-[10px] font-medium text-foreground">
         {t(catalog?.labelKey || "") || component.type}
       </span>
 
@@ -119,10 +135,10 @@ function SortableLayerItem({
           onToggleVisibility();
         }}
         className={cn(
-          "p-0.5 rounded transition-colors opacity-0 group-hover:opacity-100",
+          "rounded p-0.5 opacity-0 transition-colors group-hover:opacity-100",
           component.visible
             ? "text-muted-foreground/40 hover:text-foreground"
-            : "text-muted-foreground/60 hover:text-foreground opacity-100",
+            : "text-muted-foreground/60 opacity-100 hover:text-foreground"
         )}
         title={component.visible ? "Hide" : "Show"}
       >
@@ -145,20 +161,20 @@ export function ComponentOrderList({
 
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+      <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {t("studio.builder.layers") || "Layers"}
       </p>
-      <p className="text-[10px] text-muted-foreground/70 mb-1">
+      <p className="mb-1 text-[10px] text-muted-foreground/70">
         {t("studio.builder.layersHint") || "Drag to reorder layer stack"}
       </p>
 
       <SortableContext
-        items={sortedComponents.map(c => `layer-${c.id}`)}
+        items={sortedComponents.map((c) => `layer-${c.id}`)}
         strategy={verticalListSortingStrategy}
       >
         <div className="space-y-0.5 rounded-lg border border-border/60 bg-muted/10 p-1.5">
           {sortedComponents.length === 0 ? (
-            <p className="text-[10px] text-muted-foreground/50 text-center py-3 italic">
+            <p className="py-3 text-center text-[10px] italic text-muted-foreground/50">
               {t("studio.builder.noLayers") || "No components yet"}
             </p>
           ) : (

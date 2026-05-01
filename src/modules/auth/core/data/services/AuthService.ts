@@ -11,11 +11,7 @@
  * @module auth/data
  */
 
-import {
-  LoginRequestModel,
-  LoginResponseModel,
-  type LoginResponseJson,
-} from "../models/AuthModel";
+import { LoginRequestModel, LoginResponseModel, type LoginResponseJson } from "../models/AuthModel";
 import {
   Verify2FARequestModel,
   Verify2FAResponseModel,
@@ -27,7 +23,7 @@ import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 
 export class AuthService implements IAuthService {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
   async login(request: LoginRequestModel): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
@@ -58,10 +54,7 @@ export class AuthService implements IAuthService {
    * Backend CookieAuthMiddleware injects the refresh token into the request body.
    */
   async refreshToken(): Promise<LoginResponseModel> {
-    const json = await this.api.postPublic<LoginResponseJson>(
-      API_ENDPOINTS.AUTH.REFRESH,
-      {}
-    );
+    const json = await this.api.postPublic<LoginResponseJson>(API_ENDPOINTS.AUTH.REFRESH, {});
     return LoginResponseModel.fromJson(json);
   }
 
@@ -86,10 +79,7 @@ export class AuthService implements IAuthService {
    * Returns original admin's access token.
    */
   async stopImpersonation(): Promise<LoginResponseModel> {
-    const json = await this.api.post<LoginResponseJson>(
-      API_ENDPOINTS.AUTH.STOP_IMPERSONATION,
-      {}
-    );
+    const json = await this.api.post<LoginResponseJson>(API_ENDPOINTS.AUTH.STOP_IMPERSONATION, {});
     return LoginResponseModel.fromJson(json);
   }
 
@@ -97,7 +87,10 @@ export class AuthService implements IAuthService {
    * Constructs the HTML Form action URL and whitelist of hidden input parameters
    * required to securely POST the OIDC consent back to the backend.
    */
-  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> } {
+  buildOidcConsentForm(
+    searchParams: URLSearchParams,
+    accessToken: string
+  ): { action: string; params: Record<string, string> } {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     const baseHost = backendUrl.replace(/\/api$/, "");
     const action = `${baseHost}${API_ENDPOINTS.AUTH.OIDC.AUTHORIZE}`;

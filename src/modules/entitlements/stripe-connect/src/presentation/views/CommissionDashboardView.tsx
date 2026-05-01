@@ -20,14 +20,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useCommissionDashboardViewModel } from "../viewmodels/useCommissionDashboardViewModel";
 import { CommissionKpiCards } from "../components/CommissionKpiCards";
 import { CommissionChart } from "../components/CommissionChart";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@core/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { BarChart3 } from "lucide-react";
 
@@ -44,27 +37,23 @@ export function CommissionDashboardView() {
     }).format(n);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
           <BarChart3 className="h-6 w-6 text-primary" />
           {t("entitlements.commissions.title")}
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">
+        <p className="mt-1 text-sm text-muted-foreground">
           {t("entitlements.commissions.description")}
         </p>
       </div>
 
       {/* KPI Cards */}
-      <CommissionKpiCards
-        dashboard={vm.dashboard}
-        isLoading={vm.isDashboardLoading}
-        t={t}
-      />
+      <CommissionKpiCards dashboard={vm.dashboard} isLoading={vm.isDashboardLoading} t={t} />
 
       {/* Trend Chart + Top Tenants — side by side on large screens */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         {/* Chart takes 2/3 */}
         <div className="xl:col-span-2">
           <CommissionChart
@@ -89,11 +78,11 @@ export function CommissionDashboardView() {
             </CardHeader>
             <CardContent className="p-0">
               {vm.isTopTenantsLoading ? (
-                <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+                <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
                   {t("common.loading") || "Loading..."}
                 </div>
               ) : vm.topTenants.length === 0 ? (
-                <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+                <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
                   {t("entitlements.commissions.noData")}
                 </div>
               ) : (
@@ -103,10 +92,10 @@ export function CommissionDashboardView() {
                       <TableHead className="text-xs">
                         {t("entitlements.commissions.topTenantId")}
                       </TableHead>
-                      <TableHead className="text-xs text-right">
+                      <TableHead className="text-right text-xs">
                         {t("entitlements.commissions.topTenantTotal")}
                       </TableHead>
-                      <TableHead className="text-xs text-right">
+                      <TableHead className="text-right text-xs">
                         {t("entitlements.commissions.topTenantCount")}
                       </TableHead>
                     </TableRow>
@@ -114,16 +103,16 @@ export function CommissionDashboardView() {
                   <TableBody>
                     {vm.topTenants.map((tenant, idx) => (
                       <TableRow key={tenant.tenantId}>
-                        <TableCell className="text-xs font-mono truncate max-w-[100px]">
-                          <span className="text-muted-foreground mr-1.5 tabular-nums">
+                        <TableCell className="max-w-[100px] truncate font-mono text-xs">
+                          <span className="mr-1.5 tabular-nums text-muted-foreground">
                             {idx + 1}.
                           </span>
                           {tenant.tenantId}
                         </TableCell>
-                        <TableCell className="text-xs text-right tabular-nums font-medium">
+                        <TableCell className="text-right text-xs font-medium tabular-nums">
                           {fmt(tenant.totalCommission)}
                         </TableCell>
-                        <TableCell className="text-xs text-right tabular-nums text-muted-foreground">
+                        <TableCell className="text-right text-xs tabular-nums text-muted-foreground">
                           {new Intl.NumberFormat("en-US").format(tenant.transactionCount)}
                         </TableCell>
                       </TableRow>

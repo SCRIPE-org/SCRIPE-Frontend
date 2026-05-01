@@ -38,14 +38,32 @@ import {
 import { Button } from "@core/ui/button";
 
 // ── Status badge variants ──
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ElementType; color: string }> = {
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+    icon: React.ElementType;
+    color: string;
+  }
+> = {
   Active: { label: "Active", variant: "default", icon: CheckCircle2, color: "text-emerald-500" },
   Trialing: { label: "Trial", variant: "secondary", icon: Clock, color: "text-amber-500" },
-  PendingPayment: { label: "Pending Payment", variant: "outline", icon: AlertCircle, color: "text-yellow-500" },
+  PendingPayment: {
+    label: "Pending Payment",
+    variant: "outline",
+    icon: AlertCircle,
+    color: "text-yellow-500",
+  },
   Suspended: { label: "Suspended", variant: "destructive", icon: XCircle, color: "text-red-500" },
   Canceled: { label: "Canceled", variant: "destructive", icon: XCircle, color: "text-red-400" },
   Expired: { label: "Expired", variant: "outline", icon: Clock, color: "text-gray-400" },
-  PastDue: { label: "Past Due", variant: "destructive", icon: AlertCircle, color: "text-orange-500" },
+  PastDue: {
+    label: "Past Due",
+    variant: "destructive",
+    icon: AlertCircle,
+    color: "text-orange-500",
+  },
 };
 
 // ── Type badge config ──
@@ -98,10 +116,10 @@ export function MySubscriptionView() {
 
   if (!vm.hasSubscription || !vm.subscription) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-6 max-w-md mx-auto text-center">
+      <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-6 py-20 text-center">
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-pink-500/20 rounded-full blur-2xl animate-pulse" />
-          <div className="relative bg-gradient-to-br from-muted/50 to-muted rounded-full p-6 border border-border/50">
+          <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-violet-500/20 to-pink-500/20 blur-2xl" />
+          <div className="relative rounded-full border border-border/50 bg-gradient-to-br from-muted/50 to-muted p-6">
             <Crown className="h-12 w-12 text-muted-foreground" />
           </div>
         </div>
@@ -109,7 +127,7 @@ export function MySubscriptionView() {
           <h2 className="text-xl font-semibold tracking-tight">
             {t("entitlements.mySubscription.noSubscription") || "No Active Subscription"}
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="mt-2 text-sm text-muted-foreground">
             {t("entitlements.mySubscription.noSubscriptionDesc") ||
               "Your organization doesn't have an active subscription plan. Contact your platform administrator."}
           </p>
@@ -125,24 +143,19 @@ export function MySubscriptionView() {
   const TypeIcon = type.icon;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl space-y-6">
       {/* ── Page Header ── */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
             {t("entitlements.mySubscription.title") || "My Subscription"}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("entitlements.mySubscription.description") ||
               "View your organization's current subscription plan and details."}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => vm.refetch()}
-          className="gap-2"
-        >
+        <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-2">
           <RefreshCw className="h-4 w-4" />
           {t("common.refresh") || "Refresh"}
         </Button>
@@ -154,25 +167,23 @@ export function MySubscriptionView() {
       <Card className="relative overflow-hidden border-0 shadow-xl">
         {/* Background gradient accent */}
         <div className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-[0.04]`} />
-        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${type.gradient}`} />
+        <div className={`absolute left-0 right-0 top-0 h-1 bg-gradient-to-r ${type.gradient}`} />
 
         <CardContent className="relative p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             {/* Left: Edition info */}
             <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-xl bg-gradient-to-br ${type.gradient} shadow-lg`}>
+              <div className={`rounded-xl bg-gradient-to-br p-3 ${type.gradient} shadow-lg`}>
                 <TypeIcon className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight">
-                  {sub.editionName}
-                </h2>
-                <div className="flex items-center gap-2 mt-1">
+                <h2 className="text-2xl font-bold tracking-tight">{sub.editionName}</h2>
+                <div className="mt-1 flex items-center gap-2">
                   <Badge variant="outline" className="text-xs font-medium">
                     {type.label}
                   </Badge>
                   {sub.isDowngraded && (
-                    <Badge variant="destructive" className="text-xs gap-1">
+                    <Badge variant="destructive" className="gap-1 text-xs">
                       <ArrowDownRight className="h-3 w-3" />
                       {t("entitlements.mySubscription.downgraded") || "Downgraded"}
                     </Badge>
@@ -184,7 +195,7 @@ export function MySubscriptionView() {
             {/* Right: Status badge */}
             <div className="flex items-center gap-2">
               <StatusIcon className={`h-5 w-5 ${status.color}`} />
-              <Badge variant={status.variant} className="text-sm px-3 py-1">
+              <Badge variant={status.variant} className="px-3 py-1 text-sm">
                 {status.label}
               </Badge>
             </div>
@@ -192,16 +203,15 @@ export function MySubscriptionView() {
 
           {/* Downgrade notice */}
           {sub.isDowngraded && sub.downgradedFromEditionName && (
-            <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm">
+            <div className="mt-4 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm">
               <span className="text-muted-foreground">
                 {t("entitlements.mySubscription.downgradedFrom") || "Downgraded from"}{" "}
               </span>
-              <span className="font-semibold text-foreground">
-                {sub.downgradedFromEditionName}
-              </span>
+              <span className="font-semibold text-foreground">{sub.downgradedFromEditionName}</span>
               {sub.downgradedAt && (
                 <span className="text-muted-foreground">
-                  {" — "}{formatDate(sub.downgradedAt, language)}
+                  {" — "}
+                  {formatDate(sub.downgradedAt, language)}
                 </span>
               )}
             </div>
@@ -212,9 +222,9 @@ export function MySubscriptionView() {
       {/* ══════════════════════════════════════════
           DETAILS GRID (2-column on desktop)
          ══════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* ── Billing Card ── */}
-        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+        <Card className="shadow-md transition-shadow duration-300 hover:shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <CreditCard className="h-4 w-4 text-primary" />
@@ -228,7 +238,7 @@ export function MySubscriptionView() {
               <span className="text-sm text-muted-foreground">
                 {t("entitlements.mySubscription.totalAmount") || "Total Amount"}
               </span>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-xl font-bold text-transparent">
                 {formatCurrency(sub.totalAmount, sub.currency)}
               </span>
             </div>
@@ -262,14 +272,15 @@ export function MySubscriptionView() {
             {sub.appliedPromoCode && (
               <>
                 <Separator />
-                <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                <div className="rounded-lg border border-primary/10 bg-primary/5 p-3">
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <Tag className="h-4 w-4 text-primary" />
                     <span>{sub.appliedPromoCode}</span>
                   </div>
                   {(sub.promotionDiscount ?? 0) > 0 && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t("entitlements.mySubscription.discountApplied") || "Discount applied"}: {formatCurrency(sub.promotionDiscount, sub.currency)}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t("entitlements.mySubscription.discountApplied") || "Discount applied"}:{" "}
+                      {formatCurrency(sub.promotionDiscount, sub.currency)}
                     </p>
                   )}
                 </div>
@@ -279,7 +290,7 @@ export function MySubscriptionView() {
         </Card>
 
         {/* ── Timeline Card ── */}
-        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+        <Card className="shadow-md transition-shadow duration-300 hover:shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-primary" />
@@ -345,7 +356,7 @@ export function MySubscriptionView() {
           PAYMENT GATEWAY SECTION (if connected)
          ══════════════════════════════════════════ */}
       {(sub.gatewaySubscriptionId || sub.gatewayCustomerId) && (
-        <Card className="shadow-md border-0 bg-gradient-to-br from-[#635bff]/5 to-[#635bff]/10">
+        <Card className="border-0 bg-gradient-to-br from-[#635bff]/5 to-[#635bff]/10 shadow-md">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-[#635bff]" />
@@ -355,7 +366,7 @@ export function MySubscriptionView() {
             </div>
             <CardDescription>
               {t("entitlements.mySubscription.gatewayDesc") ||
-                `Your subscription is managed through ${sub.paymentGateway || 'your payment provider'}.`}
+                `Your subscription is managed through ${sub.paymentGateway || "your payment provider"}.`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -377,7 +388,7 @@ export function MySubscriptionView() {
 
       {/* ── Refund Details (if any) ── */}
       {sub.refundType && sub.refundType !== "None" && (
-        <Card className="shadow-md border-destructive/20">
+        <Card className="border-destructive/20 shadow-md">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4 text-destructive" />

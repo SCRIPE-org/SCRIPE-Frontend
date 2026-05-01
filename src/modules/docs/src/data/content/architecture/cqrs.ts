@@ -2,72 +2,78 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "architecture.cqrs.intro" },
+  { type: "paragraph", contentKey: "architecture.cqrs.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.whatIsCqrsTitle",
+    id: "what-is-cqrs",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrs.whatIsCqrsIntro" },
+  {
+    type: "comparison",
+    columns: [
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrs.whatIsCqrsTitle", id: "what-is-cqrs",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrs.whatIsCqrsIntro" },
-      {
-            type: "comparison",
-            columns: [
-                  {
-                        titleKey: "architecture.cqrs.commandSide",
-                        variant: "neutral",
-                        items: [
-                              "Commands CHANGE state (Create, Update, Delete)",
-                              "Always return Result<T> or Result<Unit>",
-                              "Go through validation + audit behaviors",
-                              "Invalidate related caches on success",
-                              "Named: CreateXxxCommand, UpdateXxxCommand",
-                        ],
-                  },
-                  {
-                        titleKey: "architecture.cqrs.querySide",
-                        variant: "neutral",
-                        items: [
-                              "Queries READ state (Get, List, Search)",
-                              "Return domain entities or DTOs",
-                              "Skip audit behavior (read-only)",
-                              "Can leverage caching",
-                              "Named: GetXxxQuery, ListXxxQuery",
-                        ],
-                  },
-            ],
+        titleKey: "architecture.cqrs.commandSide",
+        variant: "neutral",
+        items: [
+          "Commands CHANGE state (Create, Update, Delete)",
+          "Always return Result<T> or Result<Unit>",
+          "Go through validation + audit behaviors",
+          "Invalidate related caches on success",
+          "Named: CreateXxxCommand, UpdateXxxCommand",
+        ],
       },
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrs.pipelineTitle", id: "pipeline",
+        titleKey: "architecture.cqrs.querySide",
+        variant: "neutral",
+        items: [
+          "Queries READ state (Get, List, Search)",
+          "Return domain entities or DTOs",
+          "Skip audit behavior (read-only)",
+          "Can leverage caching",
+          "Named: GetXxxQuery, ListXxxQuery",
+        ],
       },
-      {
-            type: "flowchart",
-            title: "MediatR Pipeline (3 Behaviors)",
-            direction: "vertical",
-            nodes: [
-                  { id: "send", label: "mediator.Send(command)", type: "primary" },
-                  { id: "validation", label: "1. ValidationBehavior — FluentValidation", type: "warning" },
-                  { id: "audit", label: "2. AuditBehavior — Log to AuditLog table", type: "info" },
-                  { id: "perf", label: "3. PerformanceBehavior — Log slow queries", type: "danger" },
-                  { id: "handler", label: "CommandHandler.Handle()", type: "success" },
-                  { id: "result", label: "Result<T>", type: "primary" },
-            ],
-            connections: [
-                  { from: "send", to: "validation" },
-                  { from: "validation", to: "audit", label: "Valid ✓" },
-                  { from: "audit", to: "perf" },
-                  { from: "perf", to: "handler" },
-                  { from: "handler", to: "result" },
-            ],
-      },
-      {
-            type: "heading", level: 3,
-            titleKey: "architecture.cqrs.validationBehaviorTitle", id: "validation-behavior",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "ValidationBehavior.cs",
-            code: `public class ValidationBehavior<TRequest, TResponse>
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.pipelineTitle",
+    id: "pipeline",
+  },
+  {
+    type: "flowchart",
+    title: "MediatR Pipeline (3 Behaviors)",
+    direction: "vertical",
+    nodes: [
+      { id: "send", label: "mediator.Send(command)", type: "primary" },
+      { id: "validation", label: "1. ValidationBehavior — FluentValidation", type: "warning" },
+      { id: "audit", label: "2. AuditBehavior — Log to AuditLog table", type: "info" },
+      { id: "perf", label: "3. PerformanceBehavior — Log slow queries", type: "danger" },
+      { id: "handler", label: "CommandHandler.Handle()", type: "success" },
+      { id: "result", label: "Result<T>", type: "primary" },
+    ],
+    connections: [
+      { from: "send", to: "validation" },
+      { from: "validation", to: "audit", label: "Valid ✓" },
+      { from: "audit", to: "perf" },
+      { from: "perf", to: "handler" },
+      { from: "handler", to: "result" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.cqrs.validationBehaviorTitle",
+    id: "validation-behavior",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ValidationBehavior.cs",
+    code: `public class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
@@ -93,29 +99,31 @@ const sections: DocSection[] = [
         return await next();
     }
 }`,
-            highlightLines: [11, 22, 23],
-      },
+    highlightLines: [11, 22, 23],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.commandExampleTitle",
+    id: "command-example",
+  },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrs.commandExampleTitle", id: "command-example",
-      },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "Command",
-                        language: "csharp",
-                        code: `public record CreateAdminCommand(
+        label: "Command",
+        language: "csharp",
+        code: `public record CreateAdminCommand(
     string Name,
     string Email,
     string Password,
     Guid? TenantId
 ) : IRequest<Result<AdminResponse>>;`,
-                  },
-                  {
-                        label: "Validator",
-                        language: "csharp",
-                        code: `public class CreateAdminCommandValidator
+      },
+      {
+        label: "Validator",
+        language: "csharp",
+        code: `public class CreateAdminCommandValidator
     : AbstractValidator<CreateAdminCommand>
 {
     public CreateAdminCommandValidator()
@@ -136,11 +144,11 @@ const sections: DocSection[] = [
             .Matches("[^a-zA-Z0-9]").WithMessage("Must contain special char");
     }
 }`,
-                  },
-                  {
-                        label: "Handler",
-                        language: "csharp",
-                        code: `public class CreateAdminCommandHandler
+      },
+      {
+        label: "Handler",
+        language: "csharp",
+        code: `public class CreateAdminCommandHandler
     : IRequestHandler<CreateAdminCommand, Result<AdminResponse>>
 {
     private readonly IAdminRepository _repo;
@@ -170,18 +178,20 @@ const sections: DocSection[] = [
             _mapper.Map<AdminResponse>(admin));
     }
 }`,
-                  },
-            ],
       },
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrs.queryExampleTitle", id: "query-example",
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "GetAdminByIdQuery + Handler",
-            code: `// Query
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.queryExampleTitle",
+    id: "query-example",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "GetAdminByIdQuery + Handler",
+    code: `// Query
 public record GetAdminByIdQuery(Guid Id) : IRequest<Result<AdminDetailResponse>>;
 
 // Handler
@@ -209,22 +219,22 @@ public class GetAdminByIdQueryHandler
         return Result<AdminDetailResponse>.Success(response);
     }
 }`,
-            highlightLines: [15, 16, 17, 24],
-      },
-      {
-            type: "info",
-            variant: "tip",
-            contentKey: "architecture.cqrs.cachingTip",
-      },
+    highlightLines: [15, 16, 17, 24],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "architecture.cqrs.cachingTip",
+  },
 ];
 
 registerPage({
-      slug: "architecture/cqrs",
-      titleKey: "architecture.cqrs.title",
-      descriptionKey: "architecture.cqrs.description",
-      category: "architecture",
-      order: 4,
-      sections,
-      relatedSlugs: ["architecture/backend", "architecture/data-flow"],
-      lastUpdated: "2026-02-19",
+  slug: "architecture/cqrs",
+  titleKey: "architecture.cqrs.title",
+  descriptionKey: "architecture.cqrs.description",
+  category: "architecture",
+  order: 4,
+  sections,
+  relatedSlugs: ["architecture/backend", "architecture/data-flow"],
+  lastUpdated: "2026-02-19",
 });

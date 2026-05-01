@@ -111,4 +111,7 @@ export const en = {
       noEntries: "No activity recorded yet.",
     },
   },
+  common: {
+    copied: "Copied",
+  },
 };

@@ -2,7 +2,8 @@ export const ar = {
   entitlements: {
     analytics: {
       title: "تحليلات الإيرادات",
-      description: "راقب الإيرادات الشهرية المتكررة، والاحتفاظ، والقيمة الدائمة، والتنبؤات، وصحة المستأجرين في الوقت الفعلي.",
+      description:
+        "راقب الإيرادات الشهرية المتكررة، والاحتفاظ، والقيمة الدائمة، والتنبؤات، وصحة المستأجرين في الوقت الفعلي.",
       tabs: {
         overview: "نظرة عامة",
         revenue: "الإيرادات",
@@ -99,6 +100,10 @@ export const ar = {
         csv: "تحميل CSV",
         excel: "تحميل Excel",
         pdf: "تحميل PDF",
+        success: "[مفقود] Success",
+        successDesc: "[مفقود] Success Desc",
+        error: "[مفقود] Error",
+        errorDesc: "[مفقود] Error Desc",
       },
       reports: {
         scheduleTitle: "التقارير المجدولة",
@@ -119,12 +124,22 @@ export const ar = {
         forecasting: "التنبؤ",
         savePreferences: "حفظ التفضيلات",
         generateButton: "إنشاء تقرير كامل",
-        generateInfo: "إنشاء تقرير تحليلي شامل يغطي جميع المقاييس وحركة الإيرادات واحتفاظ الأفواج ودرجات الصحة.",
+        generateInfo:
+          "إنشاء تقرير تحليلي شامل يغطي جميع المقاييس وحركة الإيرادات واحتفاظ الأفواج ودرجات الصحة.",
         lastSent: "آخر تقرير أُرسل",
+        saveSuccess: "[مفقود] Save Success",
+        saveSuccessDesc: "[مفقود] Save Success Desc",
+        saveError: "[مفقود] Save Error",
+        saveErrorDesc: "[مفقود] Save Error Desc",
+        generateSuccess: "[مفقود] Generate Success",
+        generateSuccessDesc: "[مفقود] Generate Success Desc",
+        generateError: "[مفقود] Generate Error",
+        generateErrorDesc: "[مفقود] Generate Error Desc",
       },
       empty: {
         title: "لا توجد بيانات تحليلية بعد",
-        description: "يتم إنشاء البيانات التحليلية تلقائياً. بمجرد أن يكون لدى المستأجرين اشتراكات نشطة، ستظهر المقاييس هنا.",
+        description:
+          "يتم إنشاء البيانات التحليلية تلقائياً. بمجرد أن يكون لدى المستأجرين اشتراكات نشطة، ستظهر المقاييس هنا.",
         hint: "نصيحة: تأكد من تشغيل وظيفة التحليلات الخلفية مرة واحدة على الأقل.",
       },
     },

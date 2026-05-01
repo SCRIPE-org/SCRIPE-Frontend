@@ -9,13 +9,11 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { validateForm, ValidationRule, isFormValid, getFormErrors } from "@core/common/validation";
 
 export interface UseValidationOptions {
-
   initialValues?: Record<string, any>;
   validationRules?: Record<string, ValidationRule[]>;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
 }
-
 
 export interface UseValidationReturn<T extends Record<string, any>> {
   values: T;
@@ -93,7 +91,7 @@ export function useValidation<T extends Record<string, any>>(
   }, [values, validationRules]);
 
   // Set a single field value
-   
+
   const setValue = useCallback(
     (field: keyof T, value: any) => {
       setValuesState((prev) => ({ ...prev, [field]: value }));

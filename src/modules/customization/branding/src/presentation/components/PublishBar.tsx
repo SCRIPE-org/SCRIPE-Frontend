@@ -11,9 +11,22 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft, Monitor, Tablet, Smartphone, Upload, RotateCcw,
-  Loader2, Circle, Save, Check, ChevronDown, RefreshCw,
-  Globe, Factory, Eye, Palette,
+  ArrowLeft,
+  Monitor,
+  Tablet,
+  Smartphone,
+  Upload,
+  RotateCcw,
+  Loader2,
+  Circle,
+  Save,
+  Check,
+  ChevronDown,
+  RefreshCw,
+  Globe,
+  Factory,
+  Eye,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import type { DeviceSize } from "../../domain/entities/StudioDraft";
@@ -44,9 +57,23 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
   { id: "mobile", icon: Smartphone, labelKey: "studio.device.mobile" },
 ];
 
-export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
-  isResetting, isPreviewingTheme, lastSavedAt, deviceSize, setDeviceSize,
-  onPublish, onDiscard, onSaveDraft, onReset, onExitPreview, onRefresh, onSaveAsTheme,
+export function PublishBar({
+  isDirty,
+  isPublishing,
+  isDiscarding,
+  isSavingDraft,
+  isResetting,
+  isPreviewingTheme,
+  lastSavedAt,
+  deviceSize,
+  setDeviceSize,
+  onPublish,
+  onDiscard,
+  onSaveDraft,
+  onReset,
+  onExitPreview,
+  onRefresh,
+  onSaveAsTheme,
 }: PublishBarProps) {
   const { t } = useI18n();
   const [showResetMenu, setShowResetMenu] = useState(false);
@@ -74,7 +101,7 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
       <div className="flex items-center gap-3">
         <Link
           href="/"
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           title={t("studio.backToApp")}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -91,7 +118,7 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
             </span>
             <button
               onClick={onExitPreview}
-              className="ml-1 text-[10px] text-violet-600 hover:text-violet-800 underline"
+              className="ml-1 text-[10px] text-violet-600 underline hover:text-violet-800"
             >
               {t("studio.exitPreview") || "Exit"}
             </button>
@@ -146,7 +173,7 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
         {onRefresh && (
           <button
             onClick={onRefresh}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             title={t("studio.refresh") || "Refresh from server"}
           >
             <RefreshCw className="h-3.5 w-3.5" />
@@ -157,11 +184,13 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
         {onSaveAsTheme && (
           <button
             onClick={onSaveAsTheme}
-            className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             title={t("studio.saveTheme.title") || "Save as Theme"}
           >
             <Palette className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">{t("studio.saveTheme.title") || "Save as Theme"}</span>
+            <span className="hidden sm:inline">
+              {t("studio.saveTheme.title") || "Save as Theme"}
+            </span>
           </button>
         )}
 
@@ -171,44 +200,69 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
             <button
               onClick={() => setShowResetMenu(!showResetMenu)}
               disabled={isResetting}
-              className="flex h-8 items-center gap-1 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
+              className="flex h-8 items-center gap-1 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
               title={t("studio.reset.title") || "Reset"}
             >
-              {isResetting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+              {isResetting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RotateCcw className="h-3.5 w-3.5" />
+              )}
               <ChevronDown className="h-3 w-3" />
             </button>
 
             {showResetMenu && (
-              <div className="absolute right-0 top-full mt-1 z-50 w-56 rounded-lg border border-border bg-background shadow-lg py-1">
+              <div className="absolute right-0 top-full z-50 mt-1 w-56 rounded-lg border border-border bg-background py-1 shadow-lg">
                 <button
-                  onClick={() => { onReset("Published"); setShowResetMenu(false); }}
-                  className="flex w-full items-center gap-2.5 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
+                  onClick={() => {
+                    onReset("Published");
+                    setShowResetMenu(false);
+                  }}
+                  className="flex w-full items-center gap-2.5 px-3 py-2 text-xs text-foreground transition-colors hover:bg-muted"
                 >
                   <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
                   <div className="flex flex-col items-start">
-                    <span className="font-medium">{t("studio.reset.published") || "Revert to Published"}</span>
-                    <span className="text-[10px] text-muted-foreground">{t("studio.reset.publishedDesc") || "Reset draft to current live design"}</span>
+                    <span className="font-medium">
+                      {t("studio.reset.published") || "Revert to Published"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {t("studio.reset.publishedDesc") || "Reset draft to current live design"}
+                    </span>
                   </div>
                 </button>
                 <button
-                  onClick={() => { onReset("GlobalDefault"); setShowResetMenu(false); }}
-                  className="flex w-full items-center gap-2.5 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
+                  onClick={() => {
+                    onReset("GlobalDefault");
+                    setShowResetMenu(false);
+                  }}
+                  className="flex w-full items-center gap-2.5 px-3 py-2 text-xs text-foreground transition-colors hover:bg-muted"
                 >
                   <Globe className="h-3.5 w-3.5 text-muted-foreground" />
                   <div className="flex flex-col items-start">
-                    <span className="font-medium">{t("studio.reset.globalDefault") || "System Defaults"}</span>
-                    <span className="text-[10px] text-muted-foreground">{t("studio.reset.globalDefaultDesc") || "Use platform-wide default branding"}</span>
+                    <span className="font-medium">
+                      {t("studio.reset.globalDefault") || "System Defaults"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {t("studio.reset.globalDefaultDesc") || "Use platform-wide default branding"}
+                    </span>
                   </div>
                 </button>
                 <div className="my-1 border-t border-border" />
                 <button
-                  onClick={() => { onReset("FactoryDefault"); setShowResetMenu(false); }}
-                  className="flex w-full items-center gap-2.5 px-3 py-2 text-xs text-destructive hover:bg-destructive/5 transition-colors"
+                  onClick={() => {
+                    onReset("FactoryDefault");
+                    setShowResetMenu(false);
+                  }}
+                  className="flex w-full items-center gap-2.5 px-3 py-2 text-xs text-destructive transition-colors hover:bg-destructive/5"
                 >
                   <Factory className="h-3.5 w-3.5" />
                   <div className="flex flex-col items-start">
-                    <span className="font-medium">{t("studio.reset.factoryDefault") || "Factory Reset"}</span>
-                    <span className="text-[10px] text-muted-foreground">{t("studio.reset.factoryDefaultDesc") || "Reset to NEXORA default theme"}</span>
+                    <span className="font-medium">
+                      {t("studio.reset.factoryDefault") || "Factory Reset"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {t("studio.reset.factoryDefaultDesc") || "Reset to NEXORA default theme"}
+                    </span>
                   </div>
                 </button>
               </div>
@@ -221,17 +275,25 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
             <button
               onClick={onSaveDraft}
               disabled={isSavingDraft}
-              className="flex h-8 items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3 text-xs font-medium text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-50"
             >
-              {isSavingDraft ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+              {isSavingDraft ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Save className="h-3.5 w-3.5" />
+              )}
               {t("studio.saveDraft") || "Save Draft"}
             </button>
             <button
               onClick={onDiscard}
               disabled={isDiscarding}
-              className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
             >
-              {isDiscarding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+              {isDiscarding ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RotateCcw className="h-3.5 w-3.5" />
+              )}
               {t("studio.discard")}
             </button>
           </>
@@ -239,9 +301,13 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
         <button
           onClick={onPublish}
           disabled={!isDirty || isPublishing}
-          className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isPublishing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+          {isPublishing ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Upload className="h-3.5 w-3.5" />
+          )}
           {t("studio.publish")}
         </button>
       </div>

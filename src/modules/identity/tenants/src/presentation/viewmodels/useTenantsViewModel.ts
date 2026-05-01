@@ -21,10 +21,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
-import {
-  type EditFormState,
-  initialEditForm,
-} from "../components/TenantDialogs";
+import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 // ─────────────────────────────────────────
 // Tree filtering helper
@@ -36,8 +33,7 @@ function filterTree(nodes: TenantTreeNode[], query: string): TenantTreeNode[] {
 
   return nodes.reduce<TenantTreeNode[]>((acc, node) => {
     const matchesSelf =
-      node.name.toLowerCase().includes(lowerQuery) ||
-      node.code.toLowerCase().includes(lowerQuery);
+      node.name.toLowerCase().includes(lowerQuery) || node.code.toLowerCase().includes(lowerQuery);
 
     const filteredChildren = filterTree(node.children || [], query);
 
@@ -89,10 +85,7 @@ export function useTenantsViewModel() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // ── Data queries ──
-  const {
-    data: treeData,
-    isLoading,
-  } = useQuery({
+  const { data: treeData, isLoading } = useQuery({
     queryKey: ["tenants", "tree"],
     queryFn: () =>
       isSystemAdmin
@@ -102,8 +95,6 @@ export function useTenantsViewModel() {
 
   const tree = useMemo(() => treeData ?? [], [treeData]);
   const filteredTree = useMemo(() => filterTree(tree, search), [tree, search]);
-
-
 
   // ── Handlers ──
 

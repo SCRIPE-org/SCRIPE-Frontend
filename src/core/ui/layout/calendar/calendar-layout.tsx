@@ -96,9 +96,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
             {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
           <Logo size="sm" />
-          <span className="hidden text-sm font-bold text-foreground md:block">
-            {appName}
-          </span>
+          <span className="hidden text-sm font-bold text-foreground md:block">{appName}</span>
         </div>
 
         {/* Date display */}

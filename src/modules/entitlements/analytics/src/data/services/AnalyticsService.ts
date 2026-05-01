@@ -57,9 +57,7 @@ export class AnalyticsService implements IAnalyticsService {
   }
 
   async getLtvByEdition(): Promise<LtvResponseModel> {
-    return this.api.get<LtvResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.LTV
-    );
+    return this.api.get<LtvResponseModel>(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.LTV);
   }
 
   async getForecast(months?: number): Promise<RevenueForecastResponseModel> {
@@ -76,11 +74,16 @@ export class AnalyticsService implements IAnalyticsService {
     sortBy?: string,
     sortDesc?: boolean,
     minScore?: number,
-    maxScore?: number,
+    maxScore?: number
   ): Promise<TenantHealthScoresResponseModel> {
     return this.api.get<TenantHealthScoresResponseModel>(
       buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.HEALTH_SCORES, {
-        page, pageSize, sortBy, sortDesc, minHealthScore: minScore, maxHealthScore: maxScore,
+        page,
+        pageSize,
+        sortBy,
+        sortDesc,
+        minHealthScore: minScore,
+        maxHealthScore: maxScore,
       })
     );
   }
@@ -98,10 +101,7 @@ export class AnalyticsService implements IAnalyticsService {
   }
 
   async updateReportPreferences(data: UpdateReportPreferenceRequestModel): Promise<void> {
-    await this.api.put(
-      API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.REPORT_PREFERENCES,
-      data
-    );
+    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.REPORT_PREFERENCES, data);
   }
 
   async exportAnalytics(data: {
@@ -114,10 +114,7 @@ export class AnalyticsService implements IAnalyticsService {
     includeHealth: boolean;
     includeForecast: boolean;
   }): Promise<Blob> {
-    return this.api.postBlob(
-      API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.EXPORT,
-      data
-    );
+    return this.api.postBlob(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.EXPORT, data);
   }
 
   async generateReport(data: {
@@ -126,9 +123,6 @@ export class AnalyticsService implements IAnalyticsService {
     tenantId?: string;
     currency: string;
   }): Promise<Blob> {
-    return this.api.postBlob(
-      API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.GENERATE_REPORT,
-      data
-    );
+    return this.api.postBlob(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.GENERATE_REPORT, data);
   }
 }

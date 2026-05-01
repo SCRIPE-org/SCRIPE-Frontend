@@ -72,20 +72,30 @@ export function CustomizerStudioView() {
     const pageComps: Record<string, CanvasComponent[]> = {};
     for (const [pageId, override] of Object.entries(vm.draft.pageOverrides || {})) {
       if (override?.canvasComponents && override.canvasComponents.length > 0) {
-        pageComps[pageId === 'forgot-password' ? 'forgotPassword' : pageId === 'reset-password' ? 'resetPassword' : pageId] =
-          override.canvasComponents.map((c: any) => ({ ...c, props: { ...c.props } }));
+        pageComps[
+          pageId === "forgot-password"
+            ? "forgotPassword"
+            : pageId === "reset-password"
+              ? "resetPassword"
+              : pageId
+        ] = override.canvasComponents.map((c: any) => ({ ...c, props: { ...c.props } }));
       }
     }
 
     // Deep copy to ensure new references
-    const componentsCopy = vm.draft.canvasComponents.map((c: any) => ({ ...c, props: { ...c.props } }));
+    const componentsCopy = vm.draft.canvasComponents.map((c: any) => ({
+      ...c,
+      props: { ...c.props },
+    }));
     builderStore.initialize(
       componentsCopy,
       vm.draft.canvasGridRows,
-      vm.draft.canvasBackground ? { ...vm.draft.canvasBackground } : { type: 'inherit' as const, value: '' },
-      pageComps.forgotPassword || pageComps.resetPassword ? pageComps as any : undefined,
+      vm.draft.canvasBackground
+        ? { ...vm.draft.canvasBackground }
+        : { type: "inherit" as const, value: "" },
+      pageComps.forgotPassword || pageComps.resetPassword ? (pageComps as any) : undefined
     );
-    builderStore.setPositionMode(vm.draft.canvasPositionMode || 'absolute');
+    builderStore.setPositionMode(vm.draft.canvasPositionMode || "absolute");
     hasInitializedBuilder.current = true;
   }, [vm.draft]);
 
@@ -99,10 +109,13 @@ export function CustomizerStudioView() {
     lastSyncedPage.current = vm.activeAuthPage;
 
     // Map the studio's page ID to the builder store's page ID format
-    const storePageId = vm.activeAuthPage === 'forgot-password' ? 'forgotPassword'
-      : vm.activeAuthPage === 'reset-password' ? 'resetPassword'
-      : 'login';
-    
+    const storePageId =
+      vm.activeAuthPage === "forgot-password"
+        ? "forgotPassword"
+        : vm.activeAuthPage === "reset-password"
+          ? "resetPassword"
+          : "login";
+
     // The store's setActivePage saves current components and loads target page
     builderStore.setActivePage(storePageId as any);
   }, [vm.activeAuthPage]);
@@ -118,23 +131,26 @@ export function CustomizerStudioView() {
 
   // Helper: flush current builder state to the correct draft location
   const flushBuilderToDraft = useCallback(() => {
-    if (vm.activeAuthPage === 'login') {
+    if (vm.activeAuthPage === "login") {
       vm.batchUpdateDraft({
-        canvasComponents: builderStore.components.map(c => ({ ...c, props: { ...c.props } })),
+        canvasComponents: builderStore.components.map((c) => ({ ...c, props: { ...c.props } })),
         canvasGridRows: builderStore.canvasGridRows,
         canvasBackground: { ...builderStore.canvasBackground },
         canvasPositionMode: builderStore.positionMode,
       });
     } else {
       const existing = vm.draft.pageOverrides[vm.activeAuthPage] || {
-        layout: 'centered', headline: '', subtitle: '', inheritBackground: true,
+        layout: "centered",
+        headline: "",
+        subtitle: "",
+        inheritBackground: true,
       };
       vm.batchUpdateDraft({
         pageOverrides: {
           ...vm.draft.pageOverrides,
           [vm.activeAuthPage]: {
             ...existing,
-            canvasComponents: builderStore.components.map(c => ({ ...c, props: { ...c.props } })),
+            canvasComponents: builderStore.components.map((c) => ({ ...c, props: { ...c.props } })),
             canvasGridRows: builderStore.canvasGridRows,
             canvasBackground: { ...builderStore.canvasBackground },
             canvasPositionMode: builderStore.positionMode,
@@ -142,7 +158,15 @@ export function CustomizerStudioView() {
         },
       });
     }
-  }, [vm.activeAuthPage, vm.draft.pageOverrides, builderStore.components, builderStore.canvasGridRows, builderStore.canvasBackground, builderStore.positionMode, vm.batchUpdateDraft]);
+  }, [
+    vm.activeAuthPage,
+    vm.draft.pageOverrides,
+    builderStore.components,
+    builderStore.canvasGridRows,
+    builderStore.canvasBackground,
+    builderStore.positionMode,
+    vm.batchUpdateDraft,
+  ]);
 
   useEffect(() => {
     // Detect builder → non-builder transition: flush state so preview gets latest
@@ -167,7 +191,15 @@ export function CustomizerStudioView() {
     }
 
     flushBuilderToDraft();
-  }, [isBuilderMode, builderStore.components, builderStore.canvasGridRows, builderStore.canvasBackground, builderStore.positionMode, vm.activeAuthPage, flushBuilderToDraft]);
+  }, [
+    isBuilderMode,
+    builderStore.components,
+    builderStore.canvasGridRows,
+    builderStore.canvasBackground,
+    builderStore.positionMode,
+    vm.activeAuthPage,
+    flushBuilderToDraft,
+  ]);
 
   // ── Send draft to iframe whenever draft changes ──
   // This MUST fire even in builder mode so the preview receives canvas data.
@@ -259,26 +291,28 @@ export function CustomizerStudioView() {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       {/* System Defaults Banner */}
       {vm.mode === "system" && (
-        <div className="flex items-center gap-2 bg-violet-600 px-4 py-2 text-white text-sm font-medium">
+        <div className="flex items-center gap-2 bg-violet-600 px-4 py-2 text-sm font-medium text-white">
           <Building2 className="h-4 w-4" />
-          <span>{t("studio.systemDefaultsBanner") || "Editing System Defaults -- applied to all tenants without custom branding"}</span>
+          <span>
+            {t("studio.systemDefaultsBanner") ||
+              "Editing System Defaults -- applied to all tenants without custom branding"}
+          </span>
         </div>
       )}
 
       {/* Tenant Drilldown Banner */}
       {vm.mode === "tenant" && vm.targetTenantName && (
-        <div className="flex items-center gap-2 bg-cyan-600 px-4 py-2 text-white text-sm font-medium">
+        <div className="flex items-center gap-2 bg-cyan-600 px-4 py-2 text-sm font-medium text-white">
           <Building2 className="h-4 w-4" />
-          <span>{t("studio.customizingTenant") || "Customizing:"} {vm.targetTenantName}</span>
+          <span>
+            {t("studio.customizingTenant") || "Customizing:"} {vm.targetTenantName}
+          </span>
         </div>
       )}
 
       {/* Auth Page Tabs -- switch between Login / Forgot Password / Reset Password */}
       {!isDashboardMode && (
-        <AuthPageTabs
-          activePageId={vm.activeAuthPage}
-          onPageChange={vm.setActiveAuthPage}
-        />
+        <AuthPageTabs activePageId={vm.activeAuthPage} onPageChange={vm.setActiveAuthPage} />
       )}
 
       {/* Top Bar */}
@@ -303,17 +337,18 @@ export function CustomizerStudioView() {
 
       {/* Builder Mode Indicator */}
       {isBuilderMode && (
-        <div className="flex items-center gap-2 bg-gradient-to-r from-indigo-500/10 via-primary/5 to-indigo-500/10 border-b border-primary/20 px-4 py-1.5">
+        <div className="flex items-center gap-2 border-b border-primary/20 bg-gradient-to-r from-indigo-500/10 via-primary/5 to-indigo-500/10 px-4 py-1.5">
           <LayoutGrid className="h-3.5 w-3.5 text-primary" />
           <span className="text-xs font-medium text-primary">
             {t("studio.builder.modeActive") || "Builder Mode"} —{" "}
-            <span className="text-muted-foreground font-normal">
+            <span className="font-normal text-muted-foreground">
               {t("studio.builder.modeHint") || "Drag components to arrange your login page layout"}
             </span>
           </span>
           <div className="flex-1" />
-          <span className="text-[10px] text-muted-foreground/60 font-mono">
-            {builderStore.positionMode === 'absolute' ? '⟐ Free-form' : '⊞ Grid'} | {builderStore.components.length} components | {builderStore.zoom}%
+          <span className="font-mono text-[10px] text-muted-foreground/60">
+            {builderStore.positionMode === "absolute" ? "⟐ Free-form" : "⊞ Grid"} |{" "}
+            {builderStore.components.length} components | {builderStore.zoom}%
           </span>
         </div>
       )}
@@ -333,7 +368,7 @@ export function CustomizerStudioView() {
             {builderDnd.activeComponent ? (
               <DragOverlayItem component={builderDnd.activeComponent} />
             ) : builderDnd.activePaletteType ? (
-              <div className="flex items-center gap-2 rounded-lg border-2 border-primary/60 bg-primary/10 px-3 py-2 shadow-xl backdrop-blur-sm min-w-[180px]">
+              <div className="flex min-w-[180px] items-center gap-2 rounded-lg border-2 border-primary/60 bg-primary/10 px-3 py-2 shadow-xl backdrop-blur-sm">
                 <span className="text-xs font-semibold text-primary">
                   + {builderDnd.activePaletteType}
                 </span>

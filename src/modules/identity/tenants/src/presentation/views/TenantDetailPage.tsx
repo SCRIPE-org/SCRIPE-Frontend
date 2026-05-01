@@ -76,7 +76,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       <div className="space-y-5" dir={direction}>
         <Skeleton className="h-8 w-48 rounded-lg" />
         {/* Hero header skeleton */}
-        <div className="rounded-2xl border border-border/50 p-6 space-y-4">
+        <div className="space-y-4 rounded-2xl border border-border/50 p-6">
           <div className="flex items-start gap-4">
             <Skeleton className="h-16 w-16 rounded-xl" />
             <div className="flex-1 space-y-3">
@@ -110,10 +110,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   // ── Error State ──
   if (error || !tenant) {
     return (
-      <div
-        className="flex min-h-[60vh] flex-col items-center justify-center gap-4"
-        dir={direction}
-      >
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4" dir={direction}>
         <div className="rounded-2xl bg-destructive/10 p-6">
           <AlertTriangle className="h-12 w-12 text-destructive" />
         </div>

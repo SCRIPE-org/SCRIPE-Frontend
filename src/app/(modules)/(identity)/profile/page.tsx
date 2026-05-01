@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const ProfileGeneralView = dynamic(
-  () =>
-    import("@modules/profile/src/presentation/views/ProfileGeneralView").then((m) => ({
-      default: m.ProfileGeneralView,
-    }))
+const ProfileGeneralView = dynamic(() =>
+  import("@modules/profile/src/presentation/views/ProfileGeneralView").then((m) => ({
+    default: m.ProfileGeneralView,
+  }))
 );
 
 export const metadata: Metadata = {

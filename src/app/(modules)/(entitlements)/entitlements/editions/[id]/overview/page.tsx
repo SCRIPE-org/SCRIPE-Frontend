@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const EditionOverviewView = dynamic(
-  () => import("@modules/entitlements/editions").then((m) => ({ default: m.EditionOverviewView }))
+const EditionOverviewView = dynamic(() =>
+  import("@modules/entitlements/editions").then((m) => ({ default: m.EditionOverviewView }))
 );
 
 export const metadata: Metadata = {

@@ -7,64 +7,90 @@ export const zh = {
     entitlementsOverview: {
       title: "权益总览 (Entitlements Overview)",
       description: "基于版本的功能门控，包含功能、版本、订阅以及基于租户的自定义覆盖。",
-      intro: "权益模块是 NEXORA 的计划与功能管理引擎。它定义了每个租户 (tenant) 能获得哪些能力，计划（版本）如何打包这些能力，以及订阅如何将租户与计划关联起来。",
+      intro:
+        "权益模块是 NEXORA 的计划与功能管理引擎。它定义了每个租户 (tenant) 能获得哪些能力，计划（版本）如何打包这些能力，以及订阅如何将租户与计划关联起来。",
       whatIsTitle: "什么是权益 (Entitlements)？",
-      whatIsIntro: "权益模块负责根据租户订阅的版本（计划）控制其可访问的功能。它提供了一个三级解析链：功能默认值 → 版本值 → 租户自定义覆盖，从而确保为平台运营商和经销商租户提供最大的灵活性。",
+      whatIsIntro:
+        "权益模块负责根据租户订阅的版本（计划）控制其可访问的功能。它提供了一个三级解析链：功能默认值 → 版本值 → 租户自定义覆盖，从而确保为平台运营商和经销商租户提供最大的灵活性。",
       architectureTitle: "架构",
-      architectureIntro: "权益系统由四个相互关联的领域 (Domains) 组成，它们协同工作以提供完整的功能门控 (feature-gating) 解决方案。",
+      architectureIntro:
+        "权益系统由四个相互关联的领域 (Domains) 组成，它们协同工作以提供完整的功能门控 (feature-gating) 解决方案。",
       domainsTitle: "四大领域",
       domainsIntro: "每个领域负责处理权益生命周期中的特定方面：",
       resolutionTitle: "功能值解析链",
-      resolutionIntro: "当系统需要确定某个租户的功能值时，它会遵循严格的优先级链。提供值的最高优先级来源将胜出。",
+      resolutionIntro:
+        "当系统需要确定某个租户的功能值时，它会遵循严格的优先级链。提供值的最高优先级来源将胜出。",
       pipelineTitle: "管道集成 (Pipeline Integration)",
-      pipelineIntro: "NEXORA 通过 FeatureCheckBehavior 将权益直接集成到 MediatR CQRS 管道中。实现 IRequireFeature 的命令和查询会自动受到门控保护 —— 如果解析出的租户功能值为禁用状态，请求将在到达处理程序之前被拒绝。",
-      pipelineTip: "要将命令隐藏在功能门控之后，只需实现 IRequireFeature 并将 RequiredFeatureName 设置为该功能的稳定系统键（例如 'Chat.Enabled'）。无需编写额外代码。",
+      pipelineIntro:
+        "NEXORA 通过 FeatureCheckBehavior 将权益直接集成到 MediatR CQRS 管道中。实现 IRequireFeature 的命令和查询会自动受到门控保护 —— 如果解析出的租户功能值为禁用状态，请求将在到达处理程序之前被拒绝。",
+      pipelineTip:
+        "要将命令隐藏在功能门控之后，只需实现 IRequireFeature 并将 RequiredFeatureName 设置为该功能的稳定系统键（例如 'Chat.Enabled'）。无需编写额外代码。",
       backendTitle: "后端结构",
-      backendIntro: "权益后端遵循 NEXORA 标准的整洁架构 (Clean Architecture) 模块布局，包含领域层 (Domain)、应用层 (Application) 和基础设施层 (Infrastructure)。",
+      backendIntro:
+        "权益后端遵循 NEXORA 标准的整洁架构 (Clean Architecture) 模块布局，包含领域层 (Domain)、应用层 (Application) 和基础设施层 (Infrastructure)。",
       frontendTitle: "前端结构",
-      frontendIntro: "前端与后端相呼应，包含四个子模块（版本、功能、订阅、覆盖），每个模块都遵循 SOLID 视图/视图模型 (View/ViewModel) 模式。",
+      frontendIntro:
+        "前端与后端相呼应，包含四个子模块（版本、功能、订阅、覆盖），每个模块都遵循 SOLID 视图/视图模型 (View/ViewModel) 模式。",
       controllersTitle: "API 控制器",
-      controllersIntro: "权益模块跨 4 个控制器暴露了 31 个 API 端点 (endpoints)，所有端点均经过 JWT 身份验证，并受基于权限的授权保护。",
+      controllersIntro:
+        "权益模块跨 4 个控制器暴露了 31 个 API 端点 (endpoints)，所有端点均经过 JWT 身份验证，并受基于权限的授权保护。",
       noOpTitle: "NoOp 后备机制 (Fallback)",
-      noOpIntro: "当未加载权益模块时（例如在不包含权益的微服务中），NEXORA 会注册一个 NoOpFeatureCache。这允许 IRequireFeature 命令无错误地通过 —— 所有功能默认被视为已启用。",
-      noOpNote: "NoOp 后备机制确保模块可以使用 IRequireFeature 而无需硬依赖权益模块。在生产环境的单体模式下，真实的 FeatureCache 始终可用。",
+      noOpIntro:
+        "当未加载权益模块时（例如在不包含权益的微服务中），NEXORA 会注册一个 NoOpFeatureCache。这允许 IRequireFeature 命令无错误地通过 —— 所有功能默认被视为已启用。",
+      noOpNote:
+        "NoOp 后备机制确保模块可以使用 IRequireFeature 而无需硬依赖权益模块。在生产环境的单体模式下，真实的 FeatureCache 始终可用。",
       contextAwareTitle: "上下文感知范围筛选",
-      contextAwareIntro: "所有权益页面（功能、版本、权限）都是上下文感知的。前端会检测用户是否为系统管理员（tenantId 为 null）、租户管理员或处于下钻模式，并相应地调用不同的后端接口。系统管理员可以看到完整的目录并进行 CRUD 操作；租户管理员仅能以只读模式查看其有效数据。",
-      resolutionTip: "解析链采用延迟评估 (lazy evaluation) —— 值在首次解析后会被缓存，并在订阅、版本或覆盖发生变化时失效。",
+      contextAwareIntro:
+        "所有权益页面（功能、版本、权限）都是上下文感知的。前端会检测用户是否为系统管理员（tenantId 为 null）、租户管理员或处于下钻模式，并相应地调用不同的后端接口。系统管理员可以看到完整的目录并进行 CRUD 操作；租户管理员仅能以只读模式查看其有效数据。",
+      resolutionTip:
+        "解析链采用延迟评估 (lazy evaluation) —— 值在首次解析后会被缓存，并在订阅、版本或覆盖发生变化时失效。",
       cqrsMapTitle: "CQRS 命令与查询映射",
-      cqrsMapIntro: "权益模块注册了跨越四个领域的 31 个 MediatR 处理程序。每个命令都有一个对应的 FluentValidation 验证器用于输入验证。",
+      cqrsMapIntro:
+        "权益模块注册了跨越四个领域的 31 个 MediatR 处理程序。每个命令都有一个对应的 FluentValidation 验证器用于输入验证。",
       diTitle: "依赖注入 (DI) 注册",
-      diIntro: "所有权益服务均通过 DependencyInjection.cs 中的 AddEntitlementsModule 扩展方法进行注册。该模块遵循 NEXORA 的标准注册模式。",
+      diIntro:
+        "所有权益服务均通过 DependencyInjection.cs 中的 AddEntitlementsModule 扩展方法进行注册。该模块遵循 NEXORA 的标准注册模式。",
       comparisonTitle: "启用与禁用权益的对比",
       comparisonIntro: "下表展示了启用权益模块与在没有该模块的情况下运行时的功能差异：",
       gettingStartedTitle: "快速入门",
-      gettingStartedIntro: "按照以下 5 个步骤为您的平台设置权益系统。每个步骤都建立在前一个步骤的基础之上：",
+      gettingStartedIntro:
+        "按照以下 5 个步骤为您的平台设置权益系统。每个步骤都建立在前一个步骤的基础之上：",
     },
     editions: {
       title: "版本 (Editions)",
       description: "具有功能包、溢出策略、版本控制和发布策略的命名订阅计划。",
-      intro: "版本是命名的计划（如基础版、专业版、企业版），用于将功能值捆绑在一起。每个租户都会订阅一个版本，以决定其功能访问权限。版本支持通过受控的发布策略进行版本控制，以便安全地部署更改。",
+      intro:
+        "版本是命名的计划（如基础版、专业版、企业版），用于将功能值捆绑在一起。每个租户都会订阅一个版本，以决定其功能访问权限。版本支持通过受控的发布策略进行版本控制，以便安全地部署更改。",
       entityTitle: "版本实体",
-      entityIntro: "版本是一个包含功能值的命名计划。系统版本由平台管理员创建；零售版由经销商租户为其子租户创建。",
+      entityIntro:
+        "版本是一个包含功能值的命名计划。系统版本由平台管理员创建；零售版由经销商租户为其子租户创建。",
       overflowTitle: "溢出策略 (Overflow Policy)",
-      overflowIntro: "当租户降级到具有较低限制的版本时，其现有资源可能会超出新限制。溢出策略决定了此时会发生什么：",
+      overflowIntro:
+        "当租户降级到具有较低限制的版本时，其现有资源可能会超出新限制。溢出策略决定了此时会发生什么：",
       featuresTitle: "版本功能",
-      featuresIntro: "每个版本包含一组 EditionFeature 记录，用于将功能映射到该计划内的值。未在版本中显式设置的功能将回退到 Feature.DefaultValue。",
+      featuresIntro:
+        "每个版本包含一组 EditionFeature 记录，用于将功能映射到该计划内的值。未在版本中显式设置的功能将回退到 Feature.DefaultValue。",
       versionsTitle: "版本控制 (Edition Versions)",
-      versionsIntro: "版本控制为功能更改提供了发布系统。管理员无需直接修改功能，而是可以创建一个新版本（快照），选择发布策略并进行发布。",
+      versionsIntro:
+        "版本控制为功能更改提供了发布系统。管理员无需直接修改功能，而是可以创建一个新版本（快照），选择发布策略并进行发布。",
       rolloutTitle: "发布策略 (Rollout Strategies)",
       rolloutIntro: "发布版本时，管理员可以选择如何将更改部署给已订阅的租户：",
       workflowTitle: "立即应用 vs 另存为版本",
       workflowIntro: "NEXORA 提供了两种更新版本功能的方法，各自适用于不同的场景：",
-      workflowTip: "使用“立即应用”进行紧急修复和较小更改。使用“另存为版本”进行需要阶段性发布和审计跟踪的重大计划更新。",
+      workflowTip:
+        "使用“立即应用”进行紧急修复和较小更改。使用“另存为版本”进行需要阶段性发布和审计跟踪的重大计划更新。",
       endpointsTitle: "API 端点 (Endpoints)",
       endpointsIntro: "版本控制器暴露了 11 个端点，用于管理版本、其功能及版本生命周期：",
       drillDownTitle: "下钻行为",
-      drillDownIntro: "当系统管理员下钻到租户时，版本列表会自动限制为该租户可见的版本。后端使用 X-Tenant-Context 头进行筛选：系统版本 + 所选租户创建的零售版本。前端在下钻模式下隐藏 CRUD 操作。",
+      drillDownIntro:
+        "当系统管理员下钻到租户时，版本列表会自动限制为该租户可见的版本。后端使用 X-Tenant-Context 头进行筛选：系统版本 + 所选租户创建的零售版本。前端在下钻模式下隐藏 CRUD 操作。",
       scopingTitle: "系统版本 vs 零售版本",
-      scopingIntro: "NEXORA 支持两种类型的版本：平台管理员创建对所有租户可见的系统版本，以及经销商租户仅为其子租户创建的零售版本。",
-      scopingNote: "租户管理员只能看到系统版本及其自己的零售版本。这确保了经销商租户之间的版本隔离。",
-      featuresTip: "未在版本中显式设置的功能将回退到 Feature.DefaultValue。您只需配置与全局默认值不同的功能。",
+      scopingIntro:
+        "NEXORA 支持两种类型的版本：平台管理员创建对所有租户可见的系统版本，以及经销商租户仅为其子租户创建的零售版本。",
+      scopingNote:
+        "租户管理员只能看到系统版本及其自己的零售版本。这确保了经销商租户之间的版本隔离。",
+      featuresTip:
+        "未在版本中显式设置的功能将回退到 Feature.DefaultValue。您只需配置与全局默认值不同的功能。",
       endpointsList: "列出所有版本（支持分页和过滤）",
       endpointsGet: "通过 ID 获取版本详情",
       endpointsCreate: "创建一个新版本",
@@ -79,27 +105,36 @@ export const zh = {
     },
     subscriptions: {
       title: "订阅 (Subscriptions)",
-      description: "具有完整生命周期管理、多币种定价、促销活动、试用、降级、过期行为和高级分析导出的租户-版本绑定。",
-      intro: "订阅将租户与版本（计划）连接起来。每个租户都有一个决定其版本的基础订阅，也可以选择附加订阅以获得额外功能。订阅系统负责处理从分配到续订、降级、挂起和取消的完整生命周期——内置多币种定价和促销折扣追踪支持。",
+      description:
+        "具有完整生命周期管理、多币种定价、促销活动、试用、降级、过期行为和高级分析导出的租户-版本绑定。",
+      intro:
+        "订阅将租户与版本（计划）连接起来。每个租户都有一个决定其版本的基础订阅，也可以选择附加订阅以获得额外功能。订阅系统负责处理从分配到续订、降级、挂起和取消的完整生命周期——内置多币种定价和促销折扣追踪支持。",
       entityTitle: "订阅实体",
-      entityIntro: "TenantSubscription（租户订阅）通过生命周期跟踪将租户绑定到版本。它支持多种订阅类型和状态，以实现全面的生命周期管理。",
+      entityIntro:
+        "TenantSubscription（租户订阅）通过生命周期跟踪将租户绑定到版本。它支持多种订阅类型和状态，以实现全面的生命周期管理。",
       typesTitle: "订阅类型",
       typesIntro: "每个订阅都有一个类型，它决定了计费周期和行为：",
       lifecycleTitle: "状态生命周期",
       lifecycleIntro: "订阅在其生命周期中会经历一系列状态：",
       downgradeTitle: "降级跟踪",
-      downgradeIntro: "当租户被降级时（无论是手动降级还是因过期降级），系统会跟踪原始订阅详细信息，以用于审计和潜在的恢复。DowngradedFromEditionId、DowngradedFromType、DowngradedFromEndDate 和 DowngradedAt 字段保留了完整的降级历史记录。",
-      downgradeWarning: "降级时，目标版本的溢出策略 (OverflowPolicy) 决定了对超出新限制的资源的处理方式。在进行更改之前，请始终使用'降级影响'端点预览效果。",
+      downgradeIntro:
+        "当租户被降级时（无论是手动降级还是因过期降级），系统会跟踪原始订阅详细信息，以用于审计和潜在的恢复。DowngradedFromEditionId、DowngradedFromType、DowngradedFromEndDate 和 DowngradedAt 字段保留了完整的降级历史记录。",
+      downgradeWarning:
+        "降级时，目标版本的溢出策略 (OverflowPolicy) 决定了对超出新限制的资源的处理方式。在进行更改之前，请始终使用'降级影响'端点预览效果。",
       expiryTitle: "过期行为",
       expiryIntro: "当订阅过期时，ExpiryBehavior 设置决定了接下来会发生什么：",
       pricingTitle: "多币种定价",
-      pricingIntro: "每个订阅都携带完整的定价元数据：货币（ISO 代码）、基础金额、调整金额、总金额、兑美元汇率和美元总金额。这使得在 9+ 种支持的货币（USD、EUR、GBP、SAR、AED、EGP、TRY、INR 等）中进行精确的收入跟踪成为可能。",
+      pricingIntro:
+        "每个订阅都携带完整的定价元数据：货币（ISO 代码）、基础金额、调整金额、总金额、兑美元汇率和美元总金额。这使得在 9+ 种支持的货币（USD、EUR、GBP、SAR、AED、EGP、TRY、INR 等）中进行精确的收入跟踪成为可能。",
       exchangeRateTitle: "USD 标准化",
-      exchangeRateIntro: "所有金额通过 ExchangeRateToUsd 标准化为 USD，以实现一致的 MRR/ARR 报告。TotalAmountUsd 字段在订阅时计算并存储以确保历史准确性——汇率波动不会追溯性地更改过去的记录。",
+      exchangeRateIntro:
+        "所有金额通过 ExchangeRateToUsd 标准化为 USD，以实现一致的 MRR/ARR 报告。TotalAmountUsd 字段在订阅时计算并存储以确保历史准确性——汇率波动不会追溯性地更改过去的记录。",
       promotionsTitle: "促销折扣",
-      promotionsIntro: "订阅通过 AppliedPromoCode 字段支持促销代码。当应用有效的促销活动时，PromotionDiscount 百分比会被记录，AdjustmentAmount 反映应用于 BaseAmount 的折扣。促销活动按订阅进行跟踪，用于审计和分析。",
+      promotionsIntro:
+        "订阅通过 AppliedPromoCode 字段支持促销代码。当应用有效的促销活动时，PromotionDiscount 百分比会被记录，AdjustmentAmount 反映应用于 BaseAmount 的折扣。促销活动按订阅进行跟踪，用于审计和分析。",
       exportTitle: "高级导出与报告",
-      exportIntro: "订阅导出系统以 CSV、Excel (XLSX) 和 PDF 格式生成全面的报告。每份报告都包含带有筛选元数据的封面页、颜色编码的数据表和统计摘要。",
+      exportIntro:
+        "订阅导出系统以 CSV、Excel (XLSX) 和 PDF 格式生成全面的报告。每份报告都包含带有筛选元数据的封面页、颜色编码的数据表和统计摘要。",
       exportFiltersTitle: "导出筛选器",
       exportFiltersIntro: "报告支持高级筛选以实现有针对性的分析：",
       exportFilterDate: "日期范围 — 按订阅创建日期筛选（过去 7/30/90 天、去年或自定义范围）",
@@ -108,36 +143,50 @@ export const zh = {
       exportFilterEdition: "版本 — 按特定计划/版本筛选",
       exportFilterCurrency: "货币 — 以选定货币显示金额",
       exportDaysLeftTitle: "距到期天数",
-      exportDaysLeftIntro: "报告包含一个计算的'剩余天数'列，具有条件颜色编码：红色（≤7 天）、黄色（≤30 天）、绿色（>30 天）。这使得能够一目了然地识别需要续订关注的订阅。",
+      exportDaysLeftIntro:
+        "报告包含一个计算的'剩余天数'列，具有条件颜色编码：红色（≤7 天）、黄色（≤30 天）、绿色（>30 天）。这使得能够一目了然地识别需要续订关注的订阅。",
       exportFormatsTitle: "导出格式详情",
       exportFormatCsv: "CSV — 轻量级，可导入任何电子表格或 BI 工具",
-      exportFormatExcel: "XLSX — 专业的 Excel 工作簿，具有样式化标题、筛选元数据表、条件格式和自动调整列宽 (ClosedXML)",
+      exportFormatExcel:
+        "XLSX — 专业的 Excel 工作簿，具有样式化标题、筛选元数据表、条件格式和自动调整列宽 (ClosedXML)",
       exportFormatPdf: "PDF — 可打印的文档，具有品牌化封面页、统计摘要和分页数据表 (QuestPDF)",
       renewalTitle: "续订 — 新行模式 (B2)",
-      renewalIntro: "续订会创建新的 TenantSubscription 行，而不是覆盖现有记录（Stripe 模式）。旧订阅标记为已过期（IsActive=false），同时创建新行，包含新的 Id、StartDate=UtcNow、重新计算的定价和转移的促销详情。这为每个计费周期保留了完整的收入审计跟踪。",
+      renewalIntro:
+        "续订会创建新的 TenantSubscription 行，而不是覆盖现有记录（Stripe 模式）。旧订阅标记为已过期（IsActive=false），同时创建新行，包含新的 Id、StartDate=UtcNow、重新计算的定价和转移的促销详情。这为每个计费周期保留了完整的收入审计跟踪。",
       renewalAuditTitle: "收入审计跟踪",
-      renewalAuditIntro: "每个计费周期在数据库中生成自己的不可变行，包含续订时锁定的定价。这实现了精确的财务报告：MRR 趋势、按周期的流失分析和每个周期的退款跟踪。",
+      renewalAuditIntro:
+        "每个计费周期在数据库中生成自己的不可变行，包含续订时锁定的定价。这实现了精确的财务报告：MRR 趋势、按周期的流失分析和每个周期的退款跟踪。",
       promoExpiryTitle: "促销到期跟踪 (A1)",
-      promoExpiryIntro: "当应用 DurationDays > 0 的促销时，系统计算 PromotionExpiresAt 时间戳。每次续订时，处理程序检查 UtcNow > PromotionExpiresAt — 如果促销已过期，折扣将被移除且不会转移到新的订阅行。",
+      promoExpiryIntro:
+        "当应用 DurationDays > 0 的促销时，系统计算 PromotionExpiresAt 时间戳。每次续订时，处理程序检查 UtcNow > PromotionExpiresAt — 如果促销已过期，折扣将被移除且不会转移到新的订阅行。",
       concurrencyTitle: "乐观并发 (E1)",
-      concurrencyIntro: "每个 TenantSubscription 都有标记为 [ConcurrencyCheck] 的 ConcurrencyStamp (Guid)。该戳在每次写操作时刷新。这防止了竞态条件 — 例如并发取消 + 对账任务 — 通过在冲突时抛出 DbUpdateConcurrencyException。",
+      concurrencyIntro:
+        "每个 TenantSubscription 都有标记为 [ConcurrencyCheck] 的 ConcurrencyStamp (Guid)。该戳在每次写操作时刷新。这防止了竞态条件 — 例如并发取消 + 对账任务 — 通过在冲突时抛出 DbUpdateConcurrencyException。",
       validationTitle: "输入验证 (G1)",
-      validationIntro: "所有 8 个订阅命令都有专用的 FluentValidation 验证器。验证器使用 ILocalizer 提供本地化错误消息（EN + AR）。业务规则包括：不能以试用方式续订、正数退款金额、字符串长度限制。",
+      validationIntro:
+        "所有 8 个订阅命令都有专用的 FluentValidation 验证器。验证器使用 ILocalizer 提供本地化错误消息（EN + AR）。业务规则包括：不能以试用方式续订、正数退款金额、字符串长度限制。",
       crossModuleTitle: "跨模块集成 (H1)",
-      crossModuleIntro: "订阅生命周期事件发布由身份模块消费的领域事件。当订阅被暂停时，所有租户管理员以 DeactivationReason='SubscriptionSuspended' 被停用。恢复时，只有因暂停而停用的管理员被重新激活。",
-      crossModuleReasons: "三个停用原因：'Manual'（永不自动重新激活）、'SubscriptionSuspended'（恢复时重新激活）、'SubscriptionExpired'（到期时停用）。",
+      crossModuleIntro:
+        "订阅生命周期事件发布由身份模块消费的领域事件。当订阅被暂停时，所有租户管理员以 DeactivationReason='SubscriptionSuspended' 被停用。恢复时，只有因暂停而停用的管理员被重新激活。",
+      crossModuleReasons:
+        "三个停用原因：'Manual'（永不自动重新激活）、'SubscriptionSuspended'（恢复时重新激活）、'SubscriptionExpired'（到期时停用）。",
       impactTitle: "降级影响分析",
-      impactIntro: "在更改租户的版本之前，请使用'降级影响'端点预览哪些资源会发生溢出。响应会列出将超出新版本限制的所有功能，以及当前使用量与新限制的对比。",
+      impactIntro:
+        "在更改租户的版本之前，请使用'降级影响'端点预览哪些资源会发生溢出。响应会列出将超出新版本限制的所有功能，以及当前使用量与新限制的对比。",
       endpointsTitle: "API 端点 (Endpoints)",
       endpointsIntro: "订阅控制器提供了涵盖完整订阅生命周期的 13 个端点：",
       operationsTitle: "订阅操作",
-      operationsIntro: "订阅模块支持一套全面的生命周期操作。每个操作都会使订阅转换到新状态，并带有完整的审计跟踪。",
+      operationsIntro:
+        "订阅模块支持一套全面的生命周期操作。每个操作都会使订阅转换到新状态，并带有完整的审计跟踪。",
       assignTitle: "分配订阅",
-      assignIntro: "创建新的订阅以将租户链接到版本。如果租户已有活动订阅，先前的订阅将被自动取消。支持可选的货币、促销代码和过期行为参数。",
+      assignIntro:
+        "创建新的订阅以将租户链接到版本。如果租户已有活动订阅，先前的订阅将被自动取消。支持可选的货币、促销代码和过期行为参数。",
       upgradeTitle: "升级与降级 (Upgrade & Downgrade)",
-      upgradeIntro: "租户可以在不同版本之间移动。升级会立即应用，新版本的功能立即生效。降级会首先检查 OverflowPolicy，以处理超出新限制的资源。",
+      upgradeIntro:
+        "租户可以在不同版本之间移动。升级会立即应用，新版本的功能立即生效。降级会首先检查 OverflowPolicy，以处理超出新限制的资源。",
       trialTitle: "试用转换 (Trial Conversion)",
-      trialIntro: "试用订阅具有 TrialEndDate（试用结束日期）。当试用版升级为付费计划时，IsTrialConverted 将设置为 true，并且订阅将转换为新类型。如果试用在未转换的情况下过期，ExpiryBehavior 将决定接下来的操作。",
+      trialIntro:
+        "试用订阅具有 TrialEndDate（试用结束日期）。当试用版升级为付费计划时，IsTrialConverted 将设置为 true，并且订阅将转换为新类型。如果试用在未转换的情况下过期，ExpiryBehavior 将决定接下来的操作。",
       ep: {
         list: "列出所有订阅（支持分页，可按状态/类型/租户过滤）",
         get: "通过 ID 获取订阅详情",
@@ -156,30 +205,43 @@ export const zh = {
     features: {
       title: "功能 (Features)",
       description: "具有布尔、数字和字符串值类型的可控平台能力。",
-      intro: "功能是权益系统的原子构建块。每个功能代表一种可控的能力——布尔开关、数字配额或字符串配置。功能拥有一个永不改变的稳定系统键 (Name)，确保在代码中引用的安全性。",
+      intro:
+        "功能是权益系统的原子构建块。每个功能代表一种可控的能力——布尔开关、数字配额或字符串配置。功能拥有一个永不改变的稳定系统键 (Name)，确保在代码中引用的安全性。",
       entityTitle: "功能实体",
-      entityIntro: "功能 (Feature) 定义了一种可控的平台能力。Name 字段是用于代码的稳定系统键；DisplayNameEn/DisplayNameAr 是面向用户的标签。",
+      entityIntro:
+        "功能 (Feature) 定义了一种可控的平台能力。Name 字段是用于代码的稳定系统键；DisplayNameEn/DisplayNameAr 是面向用户的标签。",
       valueTypesTitle: "值类型",
-      valueTypesIntro: "功能值以字符串形式存储，但会根据其 ValueType 进行解析。系统在创建和更新时会针对预期类型验证值。",
-      valueTypesTip: "对于数字 (Numeric) 功能，使用 -1 表示“无限制”。FeatureCheckBehavior 将 -1 视为特殊值，绝不会拦截具有无限配额的请求。",
+      valueTypesIntro:
+        "功能值以字符串形式存储，但会根据其 ValueType 进行解析。系统在创建和更新时会针对预期类型验证值。",
+      valueTypesTip:
+        "对于数字 (Numeric) 功能，使用 -1 表示“无限制”。FeatureCheckBehavior 将 -1 视为特殊值，绝不会拦截具有无限配额的请求。",
       systemVsCustomTitle: "系统功能 vs 自定义功能",
-      systemVsCustomIntro: "NEXORA 区分了系统功能（启动时自动植入，只读）和自定义功能（由管理员通过 API 创建）：",
+      systemVsCustomIntro:
+        "NEXORA 区分了系统功能（启动时自动植入，只读）和自定义功能（由管理员通过 API 创建）：",
       cacheTitle: "功能缓存 (Feature Cache)",
-      cacheIntro: "解析后的功能值缓存在 IFeatureCache 中，以避免每次请求都查询数据库。每当版本功能发生更改、订阅被修改或覆盖被设置/移除时，缓存就会失效。在没有权益模块的微服务部署中，NoOpFeatureCache 会将所有功能视为已启用。",
+      cacheIntro:
+        "解析后的功能值缓存在 IFeatureCache 中，以避免每次请求都查询数据库。每当版本功能发生更改、订阅被修改或覆盖被设置/移除时，缓存就会失效。在没有权益模块的微服务部署中，NoOpFeatureCache 会将所有功能视为已启用。",
       requireFeatureTitle: "IRequireFeature 接口",
-      requireFeatureIntro: "要将 CQRS 命令或查询隐藏在功能后面，请实现 IRequireFeature 标记接口。FeatureCheckBehavior 管道行为会自动解析租户的当前值，如果功能被禁用，则拒绝该请求。",
-      requireFeatureNote: "IRequireFeature 同时适用于布尔功能（检查启用/禁用状态）和数字功能（检查剩余配额）。该行为会自动根据 Feature.ValueType 确定检查类型。",
+      requireFeatureIntro:
+        "要将 CQRS 命令或查询隐藏在功能后面，请实现 IRequireFeature 标记接口。FeatureCheckBehavior 管道行为会自动解析租户的当前值，如果功能被禁用，则拒绝该请求。",
+      requireFeatureNote:
+        "IRequireFeature 同时适用于布尔功能（检查启用/禁用状态）和数字功能（检查剩余配额）。该行为会自动根据 Feature.ValueType 确定检查类型。",
       contextAwareTitle: "上下文感知功能显示",
-      contextAwareIntro: "功能列表是上下文感知的。系统管理员可以看到完整的功能目录并进行 CRUD 操作。租户管理员和下钻会话仅能以只读模式查看租户的有效功能（从版本 + 覆盖中解析）。所有范围筛选均在后端通过 GET /features（目录）vs GET /features/effective（租户范围）完成。",
+      contextAwareIntro:
+        "功能列表是上下文感知的。系统管理员可以看到完整的功能目录并进行 CRUD 操作。租户管理员和下钻会话仅能以只读模式查看租户的有效功能（从版本 + 覆盖中解析）。所有范围筛选均在后端通过 GET /features（目录）vs GET /features/effective（租户范围）完成。",
       endpointsTitle: "API 端点 (Endpoints)",
       endpointsIntro: "功能控制器暴露了 5 个 CRUD 端点。系统功能无法被删除：",
       seedingTitle: "功能数据植入 (Seeding)",
-      seedingIntro: "系统功能在应用程序启动时由 EntitlementsStartupSeeder 自动植入。植入程序会检查每个系统功能是否已存在（通过名称），仅创建缺失的功能 —— 绝不会覆盖已存在的功能。",
+      seedingIntro:
+        "系统功能在应用程序启动时由 EntitlementsStartupSeeder 自动植入。植入程序会检查每个系统功能是否已存在（通过名称），仅创建缺失的功能 —— 绝不会覆盖已存在的功能。",
       quotaTitle: "配额跟踪 (QuotaCounter)",
-      quotaIntro: "数字功能通过 QuotaCounter 实体支持自动配额执行。针对每个面向数字功能的 IRequireFeature 命令，FeatureCheckBehavior 会将当前使用量与解析后的限制进行对比检查。",
-      cacheNote: "缓存会在以下情况自动失效：(1) 修改了版本功能；(2) 分配/更改了订阅；(3) 设置/移除了自定义覆盖。不需要手动清除缓存。",
+      quotaIntro:
+        "数字功能通过 QuotaCounter 实体支持自动配额执行。针对每个面向数字功能的 IRequireFeature 命令，FeatureCheckBehavior 会将当前使用量与解析后的限制进行对比检查。",
+      cacheNote:
+        "缓存会在以下情况自动失效：(1) 修改了版本功能；(2) 分配/更改了订阅；(3) 设置/移除了自定义覆盖。不需要手动清除缓存。",
       patternTitle: "IRequireFeature 模式",
-      patternIntro: "要将任何 CQRS 命令置于功能检查之后，只需实现 IRequireFeature 标记接口。FeatureCheckBehavior 会自动拦截请求，解析租户的功能值，如果禁用或超出配额则拒绝请求。",
+      patternIntro:
+        "要将任何 CQRS 命令置于功能检查之后，只需实现 IRequireFeature 标记接口。FeatureCheckBehavior 会自动拦截请求，解析租户的功能值，如果禁用或超出配额则拒绝请求。",
       ep: {
         list: "列出所有功能（支持分页，可按类别/类型过滤）",
         get: "通过 ID 获取功能详情",
@@ -191,41 +253,53 @@ export const zh = {
     overrides: {
       title: "功能覆盖 (Feature Overrides)",
       description: "基于每个租户的功能值定制，绕过版本的默认值。",
-      intro: "功能覆盖允许平台管理员为单个租户定制功能值，无论其订阅了哪个版本。覆盖在解析链中具有最高优先级，非常适合定制销售交易、特别促销或一次性例外情况。",
+      intro:
+        "功能覆盖允许平台管理员为单个租户定制功能值，无论其订阅了哪个版本。覆盖在解析链中具有最高优先级，非常适合定制销售交易、特别促销或一次性例外情况。",
       entityTitle: "覆盖实体",
-      entityIntro: "TenantFeatureOverride 为特定租户的特定功能设置自定义值。它包含一个可选的 Reason（原因）字段以供审计使用。",
+      entityIntro:
+        "TenantFeatureOverride 为特定租户的特定功能设置自定义值。它包含一个可选的 Reason（原因）字段以供审计使用。",
       priorityTitle: "解析优先级",
-      priorityIntro: "覆盖位于解析链的顶端。当系统解析某个租户的功能值时，会首先检查是否存在覆盖记录：",
+      priorityIntro:
+        "覆盖位于解析链的顶端。当系统解析某个租户的功能值时，会首先检查是否存在覆盖记录：",
       whenTitle: "何时使用覆盖 (Overrides)",
       whenIntro: "覆盖专为特殊情况设计，即租户需要与当前版本提供的值不同的情况：",
       useCase1: "定制企业交易 — '给 Acme Corp 提供 500 个管理员名额，而不是标准的 50 个'",
       useCase2: "促销优惠 — '为该租户启用高级聊天功能 30 天'",
       useCase3: "Beta 测试 — '为早期采用者启用新的发票模块'",
       useCase4: "临时提额 — '在数据迁移期间提高他们的文件上传限制'",
-      overuseWarning: "应谨慎使用覆盖功能。如果许多租户需要相同的覆盖，请考虑创建一个新版本。过多的覆盖会使系统变得难以管理和审计。",
+      overuseWarning:
+        "应谨慎使用覆盖功能。如果许多租户需要相同的覆盖，请考虑创建一个新版本。过多的覆盖会使系统变得难以管理和审计。",
       resolvedTitle: "已解析功能端点 (Resolved Features)",
-      resolvedIntro: "GET /api/v1/tenants/{tenantId}/features/resolved 端点返回给定租户每个功能的最终生效值。它会显示每个条目的解析来源（覆盖/版本/默认值），使调试和审计变得非常简单。",
+      resolvedIntro:
+        "GET /api/v1/tenants/{tenantId}/features/resolved 端点返回给定租户每个功能的最终生效值。它会显示每个条目的解析来源（覆盖/版本/默认值），使调试和审计变得非常简单。",
       endpointsTitle: "API 端点 (Endpoints)",
-      endpointsIntro: "TenantFeatures 控制器暴露了 4 个端点，用于管理按租户自定义覆盖和解析后的值：",
+      endpointsIntro:
+        "TenantFeatures 控制器暴露了 4 个端点，用于管理按租户自定义覆盖和解析后的值：",
       scenariosTitle: "使用场景",
       scenariosIntro: "以下实际场景展示了覆盖功能何时能提供最大价值：",
       settingTitle: "设置覆盖",
-      settingIntro: "要设置覆盖，请向租户功能端点发送 POST 请求，并附带功能 ID、自定义值以及可选的审计原因。",
-      settingTip: "在设置覆盖时，请始终提供原因 —— 这会使审计跟踪更有意义，并帮助未来的管理员理解应用该覆盖的原因。",
+      settingIntro:
+        "要设置覆盖，请向租户功能端点发送 POST 请求，并附带功能 ID、自定义值以及可选的审计原因。",
+      settingTip:
+        "在设置覆盖时，请始终提供原因 —— 这会使审计跟踪更有意义，并帮助未来的管理员理解应用该覆盖的原因。",
       expiryTitle: "过期的覆盖",
-      expiryIntro: "覆盖可以有一个可选的 ExpiresAt（过期时间）日期。当过期日期过去后，覆盖会自动停用，该功能将回退到版本值（或全局默认值）。",
-      expiryNote: "过期的覆盖将被软停用（IsActive = false），而不是被删除。这保留了审计跟踪，并在需要时允许重新激活。",
+      expiryIntro:
+        "覆盖可以有一个可选的 ExpiresAt（过期时间）日期。当过期日期过去后，覆盖会自动停用，该功能将回退到版本值（或全局默认值）。",
+      expiryNote:
+        "过期的覆盖将被软停用（IsActive = false），而不是被删除。这保留了审计跟踪，并在需要时允许重新激活。",
       auditTitle: "审计跟踪",
-      auditIntro: "每一个覆盖操作都会被记录，并附带完整的审计信息。每个覆盖上的 Reason（原因）字段提供了应用自定义值的上下文背景。",
+      auditIntro:
+        "每一个覆盖操作都会被记录，并附带完整的审计信息。每个覆盖上的 Reason（原因）字段提供了应用自定义值的上下文背景。",
       bestPracticesTitle: "最佳实践",
       bestPracticesIntro: "遵循以下准则，以保持您的覆盖系统易于维护且可审计。",
-      bestPracticesWarning: "应谨慎使用覆盖。如果许多租户需要相同的覆盖，请考虑直接创建一个新版本。过度使用覆盖会使系统管理变得困难，并产生维护债务。",
+      bestPracticesWarning:
+        "应谨慎使用覆盖。如果许多租户需要相同的覆盖，请考虑直接创建一个新版本。过度使用覆盖会使系统管理变得困难，并产生维护债务。",
       ep: {
         list: "列出特定租户的所有覆盖",
         set: "为租户设置或更新功能覆盖",
         remove: "移除（停用）功能覆盖",
         resolved: "获取租户所有已解析的功能值（显示来源：覆盖/版本/默认值）",
-      }
-    }
-  }
+      },
+    },
+  },
 };

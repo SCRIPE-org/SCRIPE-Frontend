@@ -4,7 +4,17 @@
  */
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
-import { TrendingUp, TrendingDown, Minus, DollarSign, Users, RefreshCw, Percent, Activity, BarChart3 } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  DollarSign,
+  Users,
+  RefreshCw,
+  Percent,
+  Activity,
+  BarChart3,
+} from "lucide-react";
 import type { AnalyticsOverview } from "../../domain/entities/AnalyticsEntities";
 
 interface OverviewTabProps {
@@ -14,11 +24,17 @@ interface OverviewTabProps {
 function formatCurrency(value: number, currency = "USD"): string {
   if (Math.abs(value) >= 1_000_000) {
     return new Intl.NumberFormat("en-US", {
-      style: "currency", currency, notation: "compact", maximumFractionDigits: 1,
+      style: "currency",
+      currency,
+      notation: "compact",
+      maximumFractionDigits: 1,
     }).format(value);
   }
   return new Intl.NumberFormat("en-US", {
-    style: "currency", currency, minimumFractionDigits: 0, maximumFractionDigits: 0,
+    style: "currency",
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value);
 }
 
@@ -37,30 +53,55 @@ interface KpiCardProps {
   large?: boolean;
 }
 
-function KpiCard({ title, value, change, icon: Icon, gradient, iconBg, subtitle, large }: KpiCardProps) {
-  const TrendIcon = change !== undefined
-    ? change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus
-    : null;
-  const trendColor = change !== undefined
-    ? change > 0 ? "text-emerald-500" : change < 0 ? "text-red-500" : "text-muted-foreground"
-    : "";
+function KpiCard({
+  title,
+  value,
+  change,
+  icon: Icon,
+  gradient,
+  iconBg,
+  subtitle,
+  large,
+}: KpiCardProps) {
+  const TrendIcon =
+    change !== undefined ? (change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus) : null;
+  const trendColor =
+    change !== undefined
+      ? change > 0
+        ? "text-emerald-500"
+        : change < 0
+          ? "text-red-500"
+          : "text-muted-foreground"
+      : "";
 
   return (
-    <Card className={`relative overflow-hidden group hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-border/30 bg-card/80 backdrop-blur-sm ${large ? "sm:col-span-2" : ""}`}>
+    <Card
+      className={`group relative overflow-hidden border border-border/30 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${large ? "sm:col-span-2" : ""}`}
+    >
       {/* Gradient accent top border */}
-      <div className={`absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r ${gradient}`} />
+      <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${gradient}`} />
       {/* Hover glow */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-[0.03]`}
+      />
       <CardContent className={`relative ${large ? "p-6" : "p-5"}`}>
         <div className="flex items-start justify-between">
-          <div className="space-y-2 flex-1">
-            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{title}</p>
+          <div className="flex-1 space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {title}
+            </p>
             <p className={`${large ? "text-3xl" : "text-2xl"} font-bold tracking-tight`}>{value}</p>
             <div className="flex items-center gap-2">
               {change !== undefined && TrendIcon && (
-                <div className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
-                  change > 0 ? "bg-emerald-500/10 text-emerald-600" : change < 0 ? "bg-red-500/10 text-red-600" : "bg-muted text-muted-foreground"
-                }`}>
+                <div
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                    change > 0
+                      ? "bg-emerald-500/10 text-emerald-600"
+                      : change < 0
+                        ? "bg-red-500/10 text-red-600"
+                        : "bg-muted text-muted-foreground"
+                  }`}
+                >
                   <TrendIcon className="h-3 w-3" />
                   {formatPercent(change)}
                 </div>
@@ -68,7 +109,9 @@ function KpiCard({ title, value, change, icon: Icon, gradient, iconBg, subtitle,
               {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
             </div>
           </div>
-          <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${iconBg} text-white shadow-lg shrink-0`}>
+          <div
+            className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${iconBg} shrink-0 text-white shadow-lg`}
+          >
             <Icon className="h-5 w-5" />
           </div>
         </div>
@@ -101,7 +144,10 @@ export function OverviewTab({ overview }: OverviewTabProps) {
     {
       title: t("entitlements.analytics.kpi.activeSubscriptions"),
       value: overview.activeSubscriptions.toLocaleString(),
-      subtitle: overview.newSubscriptions > 0 ? t("entitlements.analytics.kpi.newCount", { count: String(overview.newSubscriptions) }) : undefined,
+      subtitle:
+        overview.newSubscriptions > 0
+          ? t("entitlements.analytics.kpi.newCount", { count: String(overview.newSubscriptions) })
+          : undefined,
       icon: Users,
       gradient: "from-violet-500 to-purple-600",
       iconBg: "from-violet-500 to-purple-600",
@@ -117,8 +163,14 @@ export function OverviewTab({ overview }: OverviewTabProps) {
       title: t("entitlements.analytics.kpi.nrr"),
       value: `${overview.netRevenueRetention.toFixed(1)}%`,
       icon: RefreshCw,
-      gradient: overview.netRevenueRetention >= 100 ? "from-emerald-500 to-green-600" : "from-red-500 to-rose-600",
-      iconBg: overview.netRevenueRetention >= 100 ? "from-emerald-500 to-green-600" : "from-red-500 to-rose-600",
+      gradient:
+        overview.netRevenueRetention >= 100
+          ? "from-emerald-500 to-green-600"
+          : "from-red-500 to-rose-600",
+      iconBg:
+        overview.netRevenueRetention >= 100
+          ? "from-emerald-500 to-green-600"
+          : "from-red-500 to-rose-600",
     },
     {
       title: t("entitlements.analytics.kpi.trialConversion"),
@@ -144,7 +196,7 @@ export function OverviewTab({ overview }: OverviewTabProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {kpis.map((kpi) => (
         <KpiCard key={kpi.title} {...kpi} />
       ))}

@@ -26,21 +26,54 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Radio, FileDown, Settings2, Shield, BarChart3, ScrollText, LayoutDashboard } from "lucide-react";
+import {
+  Radio,
+  FileDown,
+  Settings2,
+  Shield,
+  BarChart3,
+  ScrollText,
+  LayoutDashboard,
+} from "lucide-react";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { useAppStore } from "@core/store/useAppStore";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load heavy chart/section components (not above-the-fold)
-const LoginActivityChart = dynamic(() => import("../components/LoginActivityChart").then(m => ({ default: m.LoginActivityChart })), { ssr: false });
-const EventDistributionChart = dynamic(() => import("../components/EventDistributionChart").then(m => ({ default: m.EventDistributionChart })), { ssr: false });
-const RecentChangesSection = dynamic(() => import("../components/RecentChangesSection").then(m => ({ default: m.RecentChangesSection })), { ssr: false });
-const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
+const LoginActivityChart = dynamic(
+  () => import("../components/LoginActivityChart").then((m) => ({ default: m.LoginActivityChart })),
+  { ssr: false }
+);
+const EventDistributionChart = dynamic(
+  () =>
+    import("../components/EventDistributionChart").then((m) => ({
+      default: m.EventDistributionChart,
+    })),
+  { ssr: false }
+);
+const RecentChangesSection = dynamic(
+  () =>
+    import("../components/RecentChangesSection").then((m) => ({ default: m.RecentChangesSection })),
+  { ssr: false }
+);
+const ReportExportDialog = dynamic(
+  () => import("@core/ui/report-export-dialog").then((m) => ({ default: m.ReportExportDialog })),
+  { ssr: false }
+);
 
 // Lazy-load embedded sub-views
-const AuditView = dynamic(() => import("@modules/monitoring/audit").then(m => ({ default: m.AuditView })), { ssr: false });
-const SecurityDashboardView = dynamic(() => import("@modules/monitoring/security").then(m => ({ default: m.SecurityDashboardView })), { ssr: false });
-const TenantAnalyticsView = dynamic(() => import("@modules/monitoring/analytics").then(m => ({ default: m.TenantAnalyticsView })), { ssr: false });
+const AuditView = dynamic(
+  () => import("@modules/monitoring/audit").then((m) => ({ default: m.AuditView })),
+  { ssr: false }
+);
+const SecurityDashboardView = dynamic(
+  () => import("@modules/monitoring/security").then((m) => ({ default: m.SecurityDashboardView })),
+  { ssr: false }
+);
+const TenantAnalyticsView = dynamic(
+  () => import("@modules/monitoring/analytics").then((m) => ({ default: m.TenantAnalyticsView })),
+  { ssr: false }
+);
 
 const connectionColors = {
   connected: "bg-emerald-500",
@@ -72,7 +105,10 @@ export function DashboardView() {
     const text = config.greeting.text
       ? config.greeting.text.replace("{name}", name)
       : `${t("dashboard.greeting") || "Welcome back"}, ${name}`;
-    const subtitle = config.greeting.subtitle || t("dashboard.greetingSubtitle") || "Here's what's happening today";
+    const subtitle =
+      config.greeting.subtitle ||
+      t("dashboard.greetingSubtitle") ||
+      "Here's what's happening today";
     return { text, subtitle };
   })();
 
@@ -124,7 +160,7 @@ export function DashboardView() {
 
       {/* ── Tab Navigation ── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+        <TabsList className="grid w-full grid-cols-4 lg:inline-grid lg:w-auto">
           <TabsTrigger value="overview" className="gap-1.5">
             <LayoutDashboard className="h-4 w-4" />
             {t("dashboard.tabs.overview") || "Overview"}
@@ -148,7 +184,7 @@ export function DashboardView() {
         </TabsList>
 
         {/* ── Overview Tab ── */}
-        <TabsContent value="overview" className="space-y-6 mt-6">
+        <TabsContent value="overview" className="mt-6 space-y-6">
           {/* KPI Cards Row — themed */}
           <KPICardsSection
             data={vm.summary.data}

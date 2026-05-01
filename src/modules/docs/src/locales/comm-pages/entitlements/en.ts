@@ -6,26 +6,37 @@ export const en = {
   commercial: {
     entOverview: {
       title: "Entitlements Overview",
-      description: "A complete, enterprise-grade entitlements engine that transforms your platform into a differentiated SaaS product with editions, subscriptions, and per-tenant feature control.",
-      intro: "Stop hardcoding plan checks into your codebase. NEXORA's Entitlements module provides a full-stack, API-level feature gating engine that automatically enforces what each tenant can and cannot do — based on their subscribed edition, active overrides, and real-time quota counters.",
+      description:
+        "A complete, enterprise-grade entitlements engine that transforms your platform into a differentiated SaaS product with editions, subscriptions, and per-tenant feature control.",
+      intro:
+        "Stop hardcoding plan checks into your codebase. NEXORA's Entitlements module provides a full-stack, API-level feature gating engine that automatically enforces what each tenant can and cannot do — based on their subscribed edition, active overrides, and real-time quota counters.",
       whyTitle: "Why Built-In Entitlements?",
-      whyContent: "Most SaaS platforms bolt on feature flags as an afterthought. NEXORA integrates entitlements directly into the CQRS pipeline via the IRequireFeature interface, meaning every command can be automatically gated without a single line of custom middleware.",
+      whyContent:
+        "Most SaaS platforms bolt on feature flags as an afterthought. NEXORA integrates entitlements directly into the CQRS pipeline via the IRequireFeature interface, meaning every command can be automatically gated without a single line of custom middleware.",
       fgEditions: "Editions (Plans)",
-      fgEditionsDesc: "Named feature bundles like Basic, Pro, Enterprise that define what each plan includes.",
+      fgEditionsDesc:
+        "Named feature bundles like Basic, Pro, Enterprise that define what each plan includes.",
       fgSubscriptions: "Subscription Lifecycle",
-      fgSubscriptionsDesc: "Assign, upgrade, downgrade, suspend, and renew tenant subscriptions with full audit trails.",
+      fgSubscriptionsDesc:
+        "Assign, upgrade, downgrade, suspend, and renew tenant subscriptions with full audit trails.",
       fgFeatures: "Feature Catalog",
-      fgFeaturesDesc: "Boolean, Numeric, and String feature types with system-seeded defaults and custom extensibility.",
+      fgFeaturesDesc:
+        "Boolean, Numeric, and String feature types with system-seeded defaults and custom extensibility.",
       fgOverrides: "Per-Tenant Overrides",
-      fgOverridesDesc: "Customize any feature value for individual tenants — perfect for enterprise deals or beta access.",
+      fgOverridesDesc:
+        "Customize any feature value for individual tenants — perfect for enterprise deals or beta access.",
       fgQuotas: "Quota Enforcement",
-      fgQuotasDesc: "Numeric features with QuotaCounter entities are automatically enforced at the pipeline level.",
+      fgQuotasDesc:
+        "Numeric features with QuotaCounter entities are automatically enforced at the pipeline level.",
       fgVersioning: "Version & Rollout",
-      fgVersioningDesc: "Deploy edition changes via immediate, canary, or scheduled rollout strategies.",
+      fgVersioningDesc:
+        "Deploy edition changes via immediate, canary, or scheduled rollout strategies.",
       howTitle: "How It Works",
-      howContent: "Every API command that implements IRequireFeature is intercepted by the FeatureCheckBehavior pipeline. The system resolves the tenant's effective feature values (overrides → edition → defaults) and either allows execution or returns a clear 'feature disabled' response.",
+      howContent:
+        "Every API command that implements IRequireFeature is intercepted by the FeatureCheckBehavior pipeline. The system resolves the tenant's effective feature values (overrides → edition → defaults) and either allows execution or returns a clear 'feature disabled' response.",
       resolutionTitle: "Resolution Priority",
-      resolutionContent: "When the system resolves a feature value for a tenant, it checks sources in strict priority order. The first source that provides a value wins.",
+      resolutionContent:
+        "When the system resolves a feature value for a tenant, it checks sources in strict priority order. The first source that provides a value wins.",
       tblResH1: "Priority",
       tblResH2: "Source",
       tblResH3: "Use Case",
@@ -64,10 +75,13 @@ export const en = {
     },
     entEditions: {
       title: "Editions & Plans",
-      description: "Define, manage, and version your SaaS product plans using NEXORA's powerful Editions engine.",
-      intro: "Editions are the building blocks of your SaaS pricing strategy. Each edition bundles a specific set of feature values (Boolean toggles, numeric limits, string configurations) into a named plan that can be assigned to tenants via subscriptions.",
+      description:
+        "Define, manage, and version your SaaS product plans using NEXORA's powerful Editions engine.",
+      intro:
+        "Editions are the building blocks of your SaaS pricing strategy. Each edition bundles a specific set of feature values (Boolean toggles, numeric limits, string configurations) into a named plan that can be assigned to tenants via subscriptions.",
       whatTitle: "What Are Editions?",
-      whatContent: "An Edition is a named plan (e.g., 'Basic', 'Pro', 'Enterprise') that defines a specific combination of feature values. When a tenant subscribes to an edition, they automatically gain access to exactly the features that edition defines — not more, not less.",
+      whatContent:
+        "An Edition is a named plan (e.g., 'Basic', 'Pro', 'Enterprise') that defines a specific combination of feature values. When a tenant subscribes to an edition, they automatically gain access to exactly the features that edition defines — not more, not less.",
       scopeTitle: "System vs Retail Editions",
       tblScopeH1: "Scope",
       tblScopeH2: "Created By",
@@ -79,13 +93,17 @@ export const en = {
       tblScopeR2C2: "Reseller tenants",
       tblScopeR2C3: "Custom plans for child tenants (white-label reselling)",
       overflowTitle: "Overflow Policies",
-      overflowContent: "When a tenant exceeds their edition's limits, the overflow policy determines the behavior. This creates natural upsell paths without breaking the user experience.",
+      overflowContent:
+        "When a tenant exceeds their edition's limits, the overflow policy determines the behavior. This creates natural upsell paths without breaking the user experience.",
       overflowUpgrade: "Suggest Upgrade",
-      overflowUpgradeDesc: "When limits are reached, the system returns an upgrade suggestion pointing to the overflow edition — creating a seamless upsell path.",
+      overflowUpgradeDesc:
+        "When limits are reached, the system returns an upgrade suggestion pointing to the overflow edition — creating a seamless upsell path.",
       overflowBlock: "Hard Block",
-      overflowBlockDesc: "Strictly enforce the limit. Commands are rejected with a clear error message indicating the feature is at capacity for the current plan.",
+      overflowBlockDesc:
+        "Strictly enforce the limit. Commands are rejected with a clear error message indicating the feature is at capacity for the current plan.",
       versionTitle: "Versioning & Rollouts",
-      versionContent: "Edition versions allow you to modify plan features without disrupting existing subscribers. Create a new version with updated feature values, then choose your rollout strategy.",
+      versionContent:
+        "Edition versions allow you to modify plan features without disrupting existing subscribers. Create a new version with updated feature values, then choose your rollout strategy.",
       tblRollH1: "Strategy",
       tblRollH2: "Behavior",
       tblRollH3: "Best For",
@@ -103,10 +121,13 @@ export const en = {
     },
     entSubscriptions: {
       title: "Subscription Management",
-      description: "Full lifecycle management for tenant subscriptions with multi-currency pricing, promotional discounts, upgrade/downgrade impact analysis, trials, expiry handling, and comprehensive analytics export.",
-      intro: "Subscriptions are the bridge between tenants and editions. They define which plan a tenant is on, when it starts and expires, and how the system behaves when the subscription lifecycle changes. With built-in multi-currency pricing and promotional discount tracking, NEXORA provides everything you need for monetization.",
+      description:
+        "Full lifecycle management for tenant subscriptions with multi-currency pricing, promotional discounts, upgrade/downgrade impact analysis, trials, expiry handling, and comprehensive analytics export.",
+      intro:
+        "Subscriptions are the bridge between tenants and editions. They define which plan a tenant is on, when it starts and expires, and how the system behaves when the subscription lifecycle changes. With built-in multi-currency pricing and promotional discount tracking, NEXORA provides everything you need for monetization.",
       lifecycleTitle: "Subscription Lifecycle",
-      lifecycleContent: "Every subscription follows a well-defined state machine. The system automatically enforces valid transitions and emits domain events at each stage for audit and integration purposes.",
+      lifecycleContent:
+        "Every subscription follows a well-defined state machine. The system automatically enforces valid transitions and emits domain events at each stage for audit and integration purposes.",
       typesTitle: "Subscription Types",
       tblTypeH1: "Type",
       tblTypeH2: "Duration",
@@ -121,7 +142,8 @@ export const en = {
       tblTypeR3C2: "Supplementary to main subscription",
       tblTypeR3C3: "Additional feature packs (e.g., extra storage)",
       pricingTitle: "Multi-Currency Pricing Engine",
-      pricingContent: "Every subscription stores its pricing in the tenant's native currency while automatically normalizing to USD for unified revenue analytics. Support for 9+ currencies out of the box — USD, EUR, GBP, SAR, AED, EGP, TRY, INR, and more.",
+      pricingContent:
+        "Every subscription stores its pricing in the tenant's native currency while automatically normalizing to USD for unified revenue analytics. Support for 9+ currencies out of the box — USD, EUR, GBP, SAR, AED, EGP, TRY, INR, and more.",
       tblPriceH1: "Field",
       tblPriceH2: "Purpose",
       tblPriceH3: "Example",
@@ -144,20 +166,27 @@ export const en = {
       tblPriceR6C2: "Normalized USD value for analytics",
       tblPriceR6C3: "119.76",
       promoTitle: "Promotional Discounts",
-      promoContent: "Drive acquisition and retention with promo code support built into every subscription. Applied promotions are tracked with the code name and discount percentage for full audit and analytics visibility.",
+      promoContent:
+        "Drive acquisition and retention with promo code support built into every subscription. Applied promotions are tracked with the code name and discount percentage for full audit and analytics visibility.",
       fgPromoCode: "Promo Code Tracking",
-      fgPromoCodeDesc: "Each subscription records its AppliedPromoCode and PromotionDiscount percentage. Analytics dashboards show which promotions drive the most conversions.",
+      fgPromoCodeDesc:
+        "Each subscription records its AppliedPromoCode and PromotionDiscount percentage. Analytics dashboards show which promotions drive the most conversions.",
       fgPromoAdjust: "Automatic Adjustment",
-      fgPromoAdjustDesc: "When a promo is applied, AdjustmentAmount is computed automatically from BaseAmount × PromotionDiscount, ensuring consistent pricing across all subscriptions.",
+      fgPromoAdjustDesc:
+        "When a promo is applied, AdjustmentAmount is computed automatically from BaseAmount × PromotionDiscount, ensuring consistent pricing across all subscriptions.",
       opsTitle: "Key Operations",
       opsAssign: "Assign Subscription",
-      opsAssignDesc: "Link a tenant to an edition with start date, duration, currency, optional promo code, and auto-renewal configuration.",
+      opsAssignDesc:
+        "Link a tenant to an edition with start date, duration, currency, optional promo code, and auto-renewal configuration.",
       opsUpgrade: "Upgrade Plan",
-      opsUpgradeDesc: "Move a tenant to a higher edition. New features are available immediately and the subscription period can be adjusted.",
+      opsUpgradeDesc:
+        "Move a tenant to a higher edition. New features are available immediately and the subscription period can be adjusted.",
       opsDowngrade: "Downgrade Plan",
-      opsDowngradeDesc: "Move to a lower edition. The system provides a full impact analysis showing which features will be lost before confirming.",
+      opsDowngradeDesc:
+        "Move to a lower edition. The system provides a full impact analysis showing which features will be lost before confirming.",
       opsImpact: "Impact Analysis",
-      opsImpactDesc: "Before any downgrade, the API returns a detailed analysis of affected features and current usage — preventing surprise data loss.",
+      opsImpactDesc:
+        "Before any downgrade, the API returns a detailed analysis of affected features and current usage — preventing surprise data loss.",
       expiryTitle: "Expiry Behavior",
       tblExpH1: "Policy",
       tblExpH2: "Behavior",
@@ -172,33 +201,45 @@ export const en = {
       tblExpR3C2: "Automatically downgrade to the default (free) edition",
       tblExpR3C3: "Freemium models with paid upgrades",
       exportTitle: "Advanced Analytics Export",
-      exportContent: "Generate comprehensive subscription analytics reports in CSV, Excel, and PDF formats. Reports include advanced filtering (date range, expiring-soon, status, edition), multi-currency display, and color-coded expiry indicators.",
+      exportContent:
+        "Generate comprehensive subscription analytics reports in CSV, Excel, and PDF formats. Reports include advanced filtering (date range, expiring-soon, status, edition), multi-currency display, and color-coded expiry indicators.",
       fgExportCsv: "CSV Export",
-      fgExportCsvDesc: "Lightweight comma-separated format, ideal for data analysis and import into BI tools like Power BI, Tableau, or Google Sheets.",
+      fgExportCsvDesc:
+        "Lightweight comma-separated format, ideal for data analysis and import into BI tools like Power BI, Tableau, or Google Sheets.",
       fgExportExcel: "Excel Export",
-      fgExportExcelDesc: "Professional XLSX workbook with styled headers, filter metadata, conditional formatting for expiry dates, and auto-sized columns — powered by ClosedXML.",
+      fgExportExcelDesc:
+        "Professional XLSX workbook with styled headers, filter metadata, conditional formatting for expiry dates, and auto-sized columns — powered by ClosedXML.",
       fgExportPdf: "PDF Export",
-      fgExportPdfDesc: "Print-ready document with branded cover page, statistical summary, and paginated data tables with color-coded 'Days Left' column — powered by QuestPDF.",
+      fgExportPdfDesc:
+        "Print-ready document with branded cover page, statistical summary, and paginated data tables with color-coded 'Days Left' column — powered by QuestPDF.",
       enterpriseTitle: "Enterprise Subscription Management",
       renewalTitle: "Immutable Renewal Audit Trail",
-      renewalDesc: "Renewals create NEW subscription rows instead of overwriting existing records. Each billing cycle preserves locked-in pricing for precise MRR trends, churn analysis, and financial audit compliance.",
+      renewalDesc:
+        "Renewals create NEW subscription rows instead of overwriting existing records. Each billing cycle preserves locked-in pricing for precise MRR trends, churn analysis, and financial audit compliance.",
       promoExpiryTitle: "Intelligent Promotion Expiry",
-      promoExpiryDesc: "Time-bound promotions are automatically tracked via PromotionExpiresAt. Expired promotions are stripped on renewal — new pricing takes effect seamlessly without admin intervention.",
+      promoExpiryDesc:
+        "Time-bound promotions are automatically tracked via PromotionExpiresAt. Expired promotions are stripped on renewal — new pricing takes effect seamlessly without admin intervention.",
       concurrencyTitle: "Race-Condition Protection",
-      concurrencyDesc: "Optimistic concurrency stamps on every subscription prevent mid-air collisions between parallel operations. Enterprise-grade data integrity without performance penalties.",
+      concurrencyDesc:
+        "Optimistic concurrency stamps on every subscription prevent mid-air collisions between parallel operations. Enterprise-grade data integrity without performance penalties.",
       validationTitle: "Pipeline-Level Validation",
-      validationDesc: "All 8 subscription commands are guarded by FluentValidation validators with fully localized error messages in English and Arabic. Invalid requests are rejected before business logic executes.",
+      validationDesc:
+        "All 8 subscription commands are guarded by FluentValidation validators with fully localized error messages in English and Arabic. Invalid requests are rejected before business logic executes.",
       crossModuleTitle: "Cross-Module Admin Integration",
-      crossModuleDesc: "Subscription lifecycle events automatically cascade to Identity management. When suspended, all tenant admins are deactivated. On resume, only subscription-suspended admins are reactivated.",
+      crossModuleDesc:
+        "Subscription lifecycle events automatically cascade to Identity management. When suspended, all tenant admins are deactivated. On resume, only subscription-suspended admins are reactivated.",
       apiTitle: "API Endpoints",
       tip: "The downgrade impact analysis API is a powerful sales retention tool. Show customers exactly what they'll lose before they downgrade — creating natural retention moments.",
     },
     entFeatures: {
       title: "Feature Management",
-      description: "Define, categorize, and enforce Boolean, Numeric, and String features with automatic quota tracking and high-performance caching.",
-      intro: "Features are the atomic building blocks of your entitlements system. Every capability that can be toggled, limited, or configured per plan is defined as a Feature. The system supports three value types, automatic seeding, and real-time quota enforcement.",
+      description:
+        "Define, categorize, and enforce Boolean, Numeric, and String features with automatic quota tracking and high-performance caching.",
+      intro:
+        "Features are the atomic building blocks of your entitlements system. Every capability that can be toggled, limited, or configured per plan is defined as a Feature. The system supports three value types, automatic seeding, and real-time quota enforcement.",
       typesTitle: "Feature Value Types",
-      typesContent: "Each feature has a specific value type that determines how it is evaluated, stored, and enforced across editions and overrides.",
+      typesContent:
+        "Each feature has a specific value type that determines how it is evaluated, stored, and enforced across editions and overrides.",
       tblTypeH1: "Type",
       tblTypeH2: "Values",
       tblTypeH3: "Example",
@@ -217,39 +258,54 @@ export const en = {
       tblTypeR3C4: "Configuration value, no enforcement",
       systemTitle: "System vs Custom Features",
       fgSystem: "System Features",
-      fgSystemDesc: "Pre-seeded at application startup. Immutable and always present. Define the core capabilities of your platform (e.g., MaxUsers, ApiAccess).",
+      fgSystemDesc:
+        "Pre-seeded at application startup. Immutable and always present. Define the core capabilities of your platform (e.g., MaxUsers, ApiAccess).",
       fgCustom: "Custom Features",
-      fgCustomDesc: "Created by administrators at runtime via the API. Perfect for module-specific features that evolve as your product grows.",
+      fgCustomDesc:
+        "Created by administrators at runtime via the API. Perfect for module-specific features that evolve as your product grows.",
       quotaTitle: "Automatic Quota Enforcement",
-      quotaContent: "Numeric features can have associated QuotaCounter entities that track real-time usage. When a command implements IRequireFeature for a numeric feature, the FeatureCheckBehavior pipeline automatically compares the current count against the allowed limit.",
+      quotaContent:
+        "Numeric features can have associated QuotaCounter entities that track real-time usage. When a command implements IRequireFeature for a numeric feature, the FeatureCheckBehavior pipeline automatically compares the current count against the allowed limit.",
       cacheTitle: "High-Performance Feature Caching",
-      cacheContent: "Resolved feature values are aggressively cached per-tenant to ensure zero-latency authorization checks. The cache is automatically invalidated whenever editions, subscriptions, or overrides change.",
+      cacheContent:
+        "Resolved feature values are aggressively cached per-tenant to ensure zero-latency authorization checks. The cache is automatically invalidated whenever editions, subscriptions, or overrides change.",
       cachePerf: "Sub-Millisecond Lookups",
-      cachePerfDesc: "Resolved features are cached in-memory per tenant. Pipeline checks complete in microseconds, not milliseconds.",
+      cachePerfDesc:
+        "Resolved features are cached in-memory per tenant. Pipeline checks complete in microseconds, not milliseconds.",
       cacheInv: "Automatic Invalidation",
-      cacheInvDesc: "Any change to editions, subscriptions, or overrides immediately invalidates the affected tenant's feature cache.",
+      cacheInvDesc:
+        "Any change to editions, subscriptions, or overrides immediately invalidates the affected tenant's feature cache.",
       apiTitle: "API Endpoints",
       tip: "System features are seeded automatically from your code on every application startup. This means your feature catalog stays perfectly synchronized with your actual codebase — no manual database management required.",
     },
     entOverrides: {
       title: "Per-Tenant Overrides",
-      description: "Customize feature values for individual tenants regardless of their subscribed plan, with full audit trails and optional expiration.",
-      intro: "Overrides are the escape hatch that makes your entitlements system flexible enough for the real world. Enterprise deals, promotional offers, beta testing, and regulatory exceptions all require the ability to customize features per-tenant without changing the underlying plan.",
+      description:
+        "Customize feature values for individual tenants regardless of their subscribed plan, with full audit trails and optional expiration.",
+      intro:
+        "Overrides are the escape hatch that makes your entitlements system flexible enough for the real world. Enterprise deals, promotional offers, beta testing, and regulatory exceptions all require the ability to customize features per-tenant without changing the underlying plan.",
       priorityTitle: "Resolution Priority Chain",
-      priorityContent: "Overrides sit at the top of the resolution priority chain. When the system resolves a feature value for a tenant, an override always wins — regardless of what the edition or default value says.",
+      priorityContent:
+        "Overrides sit at the top of the resolution priority chain. When the system resolves a feature value for a tenant, an override always wins — regardless of what the edition or default value says.",
       useCasesTitle: "Real-World Use Cases",
       ucEnterprise: "Enterprise Custom Deals",
-      ucEnterpriseDesc: "A Fortune 500 client needs 10,000 users on a Pro plan that normally caps at 500. Set an override — no code changes, no custom builds.",
+      ucEnterpriseDesc:
+        "A Fortune 500 client needs 10,000 users on a Pro plan that normally caps at 500. Set an override — no code changes, no custom builds.",
       ucPromo: "Promotional Upgrades",
-      ucPromoDesc: "Give a tenant Premium features for 30 days as a promotional offer. Set an expiring override that automatically reverts after the promotion period.",
+      ucPromoDesc:
+        "Give a tenant Premium features for 30 days as a promotional offer. Set an expiring override that automatically reverts after the promotion period.",
       ucBeta: "Beta Feature Access",
-      ucBetaDesc: "Enable an experimental feature for select tenants before rolling it out to all plans. Override the feature for specific tenants during the beta.",
+      ucBetaDesc:
+        "Enable an experimental feature for select tenants before rolling it out to all plans. Override the feature for specific tenants during the beta.",
       ucExpiring: "Time-Limited Exceptions",
-      ucExpiringDesc: "Regulatory requirements may demand temporary feature access. Set an override with an expiration date — the system automatically reverts when it expires.",
+      ucExpiringDesc:
+        "Regulatory requirements may demand temporary feature access. Set an override with an expiration date — the system automatically reverts when it expires.",
       settingTitle: "Setting an Override",
-      settingContent: "Overrides are set via a simple API call. Each override includes the feature, the custom value, an optional expiration date, and a reason for audit purposes.",
+      settingContent:
+        "Overrides are set via a simple API call. Each override includes the feature, the custom value, an optional expiration date, and a reason for audit purposes.",
       auditTitle: "Audit Trail",
-      auditContent: "Every override action is fully audited. The system tracks who set the override, when it was set, the previous value, and the reason provided.",
+      auditContent:
+        "Every override action is fully audited. The system tracks who set the override, when it was set, the previous value, and the reason provided.",
       tblAuditH1: "Event",
       tblAuditH2: "Tracked Data",
       tblAuditH3: "Purpose",

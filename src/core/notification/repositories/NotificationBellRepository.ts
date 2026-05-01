@@ -9,25 +9,29 @@ import type { INotificationBellService } from "../services/NotificationBellServi
 import type { NotificationListResponse, UnreadCountResponse } from "../entities/NotificationItem";
 
 export class NotificationBellRepository implements INotificationBellRepository {
-      constructor(private readonly service: INotificationBellService) { }
+  constructor(private readonly service: INotificationBellService) {}
 
-      async getNotifications(params?: { page?: number; pageSize?: number; isRead?: boolean }): Promise<NotificationListResponse> {
-            return this.service.getNotifications(params);
-      }
+  async getNotifications(params?: {
+    page?: number;
+    pageSize?: number;
+    isRead?: boolean;
+  }): Promise<NotificationListResponse> {
+    return this.service.getNotifications(params);
+  }
 
-      async getUnreadCount(): Promise<UnreadCountResponse> {
-            return this.service.getUnreadCount();
-      }
+  async getUnreadCount(): Promise<UnreadCountResponse> {
+    return this.service.getUnreadCount();
+  }
 
-      async markAsRead(id: string): Promise<void> {
-            await this.service.markAsRead(id);
-      }
+  async markAsRead(id: string): Promise<void> {
+    await this.service.markAsRead(id);
+  }
 
-      async markAllAsRead(): Promise<void> {
-            await this.service.markAllAsRead();
-      }
+  async markAllAsRead(): Promise<void> {
+    await this.service.markAllAsRead();
+  }
 
-      async deleteNotification(id: string): Promise<void> {
-            await this.service.deleteNotification(id);
-      }
+  async deleteNotification(id: string): Promise<void> {
+    await this.service.deleteNotification(id);
+  }
 }

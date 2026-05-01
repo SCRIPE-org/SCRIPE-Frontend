@@ -25,7 +25,6 @@ import { es as commModules } from "../comm-pages/modules/es";
 import { es as commEntitlements } from "../comm-pages/entitlements/es";
 import { es as commCustomization } from "../comm-pages/customization/es";
 
-
 import { es as pageBillingEngine } from "../pages/billing-engine/es";
 import { es as pageInvoices } from "../pages/invoices/es";
 import { es as pageDunning } from "../pages/dunning/es";
@@ -37,10 +36,32 @@ import { es as pageRevenueAnalytics } from "../pages/revenue-analytics/es";
 import { mergeAll } from "./utils";
 
 export const allDocsEs: Record<string, any> = mergeAll(
-  common, getStarted, architecture, features, modules,
-  security, frontend, infrastructure, tutorials, apiReference,
-  commWhyNexora, commPlatform, commEnterprise, commSecurity,
-  commTechnical, commDeveloper, commIntegration, commPricing,
-  commModules, commEntitlements, commCustomization,
-  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate, pageRevenueAnalytics,
+  common,
+  getStarted,
+  architecture,
+  features,
+  modules,
+  security,
+  frontend,
+  infrastructure,
+  tutorials,
+  apiReference,
+  commWhyNexora,
+  commPlatform,
+  commEnterprise,
+  commSecurity,
+  commTechnical,
+  commDeveloper,
+  commIntegration,
+  commPricing,
+  commModules,
+  commEntitlements,
+  commCustomization,
+  pageBillingEngine,
+  pageInvoices,
+  pageDunning,
+  pageTenantPlans,
+  pageUserSubscriptions,
+  pageTenantContextGate,
+  pageRevenueAnalytics
 );

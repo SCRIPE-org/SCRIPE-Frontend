@@ -16,16 +16,29 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 import { useState } from "react";
 import {
-  CheckCircle2, AlertTriangle, XCircle, Info, Eye, Target, Layers, Zap,
-  Focus, MonitorSpeaker, ScanEye, Paintbrush, Type, MousePointer2,
-  ImageOff, Hand,
-  ChevronDown, ChevronRight, Wand2,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Info,
+  Eye,
+  Target,
+  Layers,
+  Zap,
+  Focus,
+  MonitorSpeaker,
+  ScanEye,
+  Paintbrush,
+  Type,
+  MousePointer2,
+  ImageOff,
+  Hand,
+  ChevronDown,
+  ChevronRight,
+  Wand2,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { Switch } from "@core/ui/switch";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { ColorInput } from "./ColorInput";
 import { SliderInput } from "./SliderInput";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
@@ -144,12 +157,7 @@ function ColorSwatch({ color }: { color: string }) {
 
 // ── Audit Check Item ──────────────────────────────────
 
-function CheckItem({
-  check, onFix,
-}: {
-  check: AccessibilityCheck;
-  onFix?: () => void;
-}) {
+function CheckItem({ check, onFix }: { check: AccessibilityCheck; onFix?: () => void }) {
   const { t } = useI18n();
   const severity = SEVERITY_CONFIG[check.severity];
   const Icon = severity.icon;
@@ -162,16 +170,12 @@ function CheckItem({
       )}
     >
       <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", severity.className)} />
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-foreground">
-            {t(check.labelKey)}
-          </span>
+          <span className="text-xs font-medium text-foreground">{t(check.labelKey)}</span>
         </div>
         {check.details && (
-          <p className="mt-0.5 text-[10px] text-muted-foreground font-mono">
-            {check.details}
-          </p>
+          <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">{check.details}</p>
         )}
         {check.colorA && check.colorB && (
           <div className="mt-1.5 flex items-center gap-1.5">
@@ -200,7 +204,8 @@ function CheckItem({
 
 function CategorySection({
   category,
-  checks, onFixCheck,
+  checks,
+  onFixCheck,
 }: {
   category: CheckCategory;
   checks: AccessibilityCheck[];
@@ -224,7 +229,8 @@ function CategorySection({
         {checks.map((check) => (
           <CheckItem
             key={check.id}
-            check={check} onFix={check.autoFix ? () => onFixCheck(check.autoFix!) : undefined}
+            check={check}
+            onFix={check.autoFix ? () => onFixCheck(check.autoFix!) : undefined}
           />
         ))}
       </div>
@@ -260,21 +266,19 @@ function SummaryBadge({
 
 // ── Main Panel ────────────────────────────────────────
 
-export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: AccessibilityPanelProps) {
+export function AccessibilityPanel({
+  draft,
+  updateDraft,
+  batchUpdateDraft,
+}: AccessibilityPanelProps) {
   const { t } = useI18n();
   const { summary, byCategory } = useAccessibilityChecker(draft);
 
   const scorePercent =
-    summary.total > 0
-      ? Math.round(((summary.pass + summary.info) / summary.total) * 100)
-      : 100;
+    summary.total > 0 ? Math.round(((summary.pass + summary.info) / summary.total) * 100) : 100;
 
   const scoreColor =
-    summary.fail > 0
-      ? "text-red-500"
-      : summary.warn > 0
-        ? "text-amber-500"
-        : "text-emerald-500";
+    summary.fail > 0 ? "text-red-500" : summary.warn > 0 ? "text-amber-500" : "text-emerald-500";
 
   const handleAutoFix = (fix: Partial<StudioDraft>) => {
     batchUpdateDraft(fix);
@@ -286,24 +290,51 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
       <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-muted/30 p-4">
         <div className="relative flex h-20 w-20 items-center justify-center">
           <svg className="h-20 w-20 -rotate-90" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" strokeWidth="6" className="text-border" />
             <circle
-              cx="40" cy="40" r="34" fill="none" stroke="currentColor" strokeWidth="6"
+              cx="40"
+              cy="40"
+              r="34"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
+              className="text-border"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              r="34"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
               strokeDasharray={`${2 * Math.PI * 34}`}
               strokeDashoffset={`${2 * Math.PI * 34 * (1 - scorePercent / 100)}`}
               strokeLinecap="round"
               className={scoreColor}
             />
           </svg>
-          <span className={cn("absolute text-lg font-bold", scoreColor)}>
-            {scorePercent}%
-          </span>
+          <span className={cn("absolute text-lg font-bold", scoreColor)}>{scorePercent}%</span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
-          <SummaryBadge count={summary.pass} severity="pass" label={t("studio.a11y.severity.pass")} />
-          <SummaryBadge count={summary.warn} severity="warn" label={t("studio.a11y.severity.warn")} />
-          <SummaryBadge count={summary.fail} severity="fail" label={t("studio.a11y.severity.fail")} />
-          <SummaryBadge count={summary.info} severity="info" label={t("studio.a11y.severity.info")} />
+          <SummaryBadge
+            count={summary.pass}
+            severity="pass"
+            label={t("studio.a11y.severity.pass")}
+          />
+          <SummaryBadge
+            count={summary.warn}
+            severity="warn"
+            label={t("studio.a11y.severity.warn")}
+          />
+          <SummaryBadge
+            count={summary.fail}
+            severity="fail"
+            label={t("studio.a11y.severity.fail")}
+          />
+          <SummaryBadge
+            count={summary.info}
+            severity="info"
+            label={t("studio.a11y.severity.info")}
+          />
         </div>
         <p className="text-center text-[10px] text-muted-foreground">
           {t("studio.a11y.summary.description")}
@@ -317,21 +348,85 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         </p>
         <div className="grid grid-cols-2 gap-1.5">
           {[
-            { key: "motor", emoji: "♿", labelKey: "studio.a11y.profiles.motor", updates: { a11yLargeTargets: true, a11yCursorSize: "large" as const, a11yFocusRingEnabled: true, a11yFocusRingWidth: 4, a11ySkipLinkEnabled: true } },
-            { key: "vision", emoji: "👁", labelKey: "studio.a11y.profiles.vision", updates: { a11yHighContrastMode: true, a11yMinFontSize: 20, a11yContentScaling: 150, a11yHighlightLinks: true } },
-            { key: "cognitive", emoji: "🧠", labelKey: "studio.a11y.profiles.cognitive", updates: { a11yReadingGuide: true, a11yPauseAnimations: true, a11yMinFontSize: 18, a11yLineHeight: 2, a11yReducedMotion: "always" as const } },
-            { key: "dyslexia", emoji: "📖", labelKey: "studio.a11y.profiles.dyslexia", updates: { a11yDyslexicFont: true, a11yLineHeight: 2, a11yLetterSpacing: 2, a11yWordSpacing: 4, a11yReadingGuide: true } },
-            { key: "seizure", emoji: "⚡", labelKey: "studio.a11y.profiles.seizure", updates: { a11yPauseAnimations: true, a11ySaturation: 0, a11yAutoplayDisabled: true, a11yReducedMotion: "always" as const } },
-            { key: "screenReader", emoji: "🔊", labelKey: "studio.a11y.profiles.screenReader", updates: { a11yAriaLandmarks: true, a11yFormLabelsVisible: true, a11yErrorAnnounce: true, a11ySkipLinkEnabled: true, a11yPageTitle: draft.companyName || "Login" } },
+            {
+              key: "motor",
+              emoji: "♿",
+              labelKey: "studio.a11y.profiles.motor",
+              updates: {
+                a11yLargeTargets: true,
+                a11yCursorSize: "large" as const,
+                a11yFocusRingEnabled: true,
+                a11yFocusRingWidth: 4,
+                a11ySkipLinkEnabled: true,
+              },
+            },
+            {
+              key: "vision",
+              emoji: "👁",
+              labelKey: "studio.a11y.profiles.vision",
+              updates: {
+                a11yHighContrastMode: true,
+                a11yMinFontSize: 20,
+                a11yContentScaling: 150,
+                a11yHighlightLinks: true,
+              },
+            },
+            {
+              key: "cognitive",
+              emoji: "🧠",
+              labelKey: "studio.a11y.profiles.cognitive",
+              updates: {
+                a11yReadingGuide: true,
+                a11yPauseAnimations: true,
+                a11yMinFontSize: 18,
+                a11yLineHeight: 2,
+                a11yReducedMotion: "always" as const,
+              },
+            },
+            {
+              key: "dyslexia",
+              emoji: "📖",
+              labelKey: "studio.a11y.profiles.dyslexia",
+              updates: {
+                a11yDyslexicFont: true,
+                a11yLineHeight: 2,
+                a11yLetterSpacing: 2,
+                a11yWordSpacing: 4,
+                a11yReadingGuide: true,
+              },
+            },
+            {
+              key: "seizure",
+              emoji: "⚡",
+              labelKey: "studio.a11y.profiles.seizure",
+              updates: {
+                a11yPauseAnimations: true,
+                a11ySaturation: 0,
+                a11yAutoplayDisabled: true,
+                a11yReducedMotion: "always" as const,
+              },
+            },
+            {
+              key: "screenReader",
+              emoji: "🔊",
+              labelKey: "studio.a11y.profiles.screenReader",
+              updates: {
+                a11yAriaLandmarks: true,
+                a11yFormLabelsVisible: true,
+                a11yErrorAnnounce: true,
+                a11ySkipLinkEnabled: true,
+                a11yPageTitle: draft.companyName || "Login",
+              },
+            },
           ].map((profile) => (
             <button
               key={profile.key}
               type="button"
-              className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-2 text-left transition-all hover:bg-muted hover:border-primary/40 active:scale-[0.97]"
+              className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-2 text-left transition-all hover:border-primary/40 hover:bg-muted active:scale-[0.97]"
               onClick={() => batchUpdateDraft(profile.updates)}
             >
               <span className="text-sm">{profile.emoji}</span>
-              <span className="text-[10px] font-medium text-foreground leading-tight">
+              <span className="text-[10px] font-medium leading-tight text-foreground">
                 {t(profile.labelKey)}
               </span>
             </button>
@@ -340,22 +435,46 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
           <button
             key="reset"
             type="button"
-            className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/5 px-2.5 py-2 text-left transition-all hover:bg-red-500/10 hover:border-red-500/50 active:scale-[0.97] col-span-2"
-            onClick={() => batchUpdateDraft({
-              a11yFocusRingEnabled: true, a11yFocusRingColor: "", a11yFocusRingWidth: 3, a11yFocusRingStyle: "solid",
-              a11ySkipLinkEnabled: true, a11yHighlightFocus: false,
-              a11yAriaLandmarks: true, a11yFormLabelsVisible: true, a11yErrorAnnounce: true, a11yPageTitle: "",
-              a11yHighContrastMode: false, a11yContrastPreset: "normal" as const, a11ySaturation: 100, a11yHighlightLinks: false,
-              a11yMinFontSize: 14, a11yContentScaling: 100, a11yLineHeight: 0, a11yLetterSpacing: 0, a11yWordSpacing: 0,
-              a11yDyslexicFont: false, a11yTextAlign: "inherit" as const,
-              a11yCursorSize: "default" as const, a11yReadingGuide: false, a11yReadingMask: false,
-              a11yReducedMotion: "auto" as const, a11yAnimationDuration: 300, a11yAutoplayDisabled: false, a11yPauseAnimations: false,
-              a11yHideImages: false, a11yTooltips: false,
-              a11yLargeTargets: false, a11yForcedColorsSupport: true,
-            })}
+            className="col-span-2 flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/5 px-2.5 py-2 text-left transition-all hover:border-red-500/50 hover:bg-red-500/10 active:scale-[0.97]"
+            onClick={() =>
+              batchUpdateDraft({
+                a11yFocusRingEnabled: true,
+                a11yFocusRingColor: "",
+                a11yFocusRingWidth: 3,
+                a11yFocusRingStyle: "solid",
+                a11ySkipLinkEnabled: true,
+                a11yHighlightFocus: false,
+                a11yAriaLandmarks: true,
+                a11yFormLabelsVisible: true,
+                a11yErrorAnnounce: true,
+                a11yPageTitle: "",
+                a11yHighContrastMode: false,
+                a11yContrastPreset: "normal" as const,
+                a11ySaturation: 100,
+                a11yHighlightLinks: false,
+                a11yMinFontSize: 14,
+                a11yContentScaling: 100,
+                a11yLineHeight: 0,
+                a11yLetterSpacing: 0,
+                a11yWordSpacing: 0,
+                a11yDyslexicFont: false,
+                a11yTextAlign: "inherit" as const,
+                a11yCursorSize: "default" as const,
+                a11yReadingGuide: false,
+                a11yReadingMask: false,
+                a11yReducedMotion: "auto" as const,
+                a11yAnimationDuration: 300,
+                a11yAutoplayDisabled: false,
+                a11yPauseAnimations: false,
+                a11yHideImages: false,
+                a11yTooltips: false,
+                a11yLargeTargets: false,
+                a11yForcedColorsSupport: true,
+              })
+            }
           >
             <span className="text-sm">↩</span>
-            <span className="text-[10px] font-medium text-red-500 leading-tight">
+            <span className="text-[10px] font-medium leading-tight text-red-500">
               {t("studio.a11y.profiles.resetAll")}
             </span>
           </button>
@@ -371,7 +490,10 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         subtitle={t("studio.a11y.settings.focusKeyboardDesc")}
         color="text-cyan-500"
       >
-        <SettingRow label={t("studio.a11y.settings.focusRing")} description={t("studio.a11y.settings.focusRingDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.focusRing")}
+          description={t("studio.a11y.settings.focusRingDesc")}
+        >
           <Switch
             checked={draft.a11yFocusRingEnabled}
             onCheckedChange={(v) => updateDraft("a11yFocusRingEnabled", v)}
@@ -387,33 +509,47 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
             <SliderInput
               label={t("studio.a11y.settings.focusRingWidth")}
               value={draft.a11yFocusRingWidth}
-              min={1} max={5} step={1}
+              min={1}
+              max={5}
+              step={1}
               onChange={(v) => updateDraft("a11yFocusRingWidth", v)}
             />
             <SettingRow label={t("studio.a11y.settings.focusRingStyle")}>
               <Select
                 value={draft.a11yFocusRingStyle}
-                onValueChange={(v) => updateDraft("a11yFocusRingStyle", v as "solid" | "dashed" | "double")}
+                onValueChange={(v) =>
+                  updateDraft("a11yFocusRingStyle", v as "solid" | "dashed" | "double")
+                }
               >
                 <SelectTrigger className="h-7 w-24 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="solid">{t("studio.a11y.settings.focusRingSolid")}</SelectItem>
-                  <SelectItem value="dashed">{t("studio.a11y.settings.focusRingDashed")}</SelectItem>
-                  <SelectItem value="double">{t("studio.a11y.settings.focusRingDouble")}</SelectItem>
+                  <SelectItem value="dashed">
+                    {t("studio.a11y.settings.focusRingDashed")}
+                  </SelectItem>
+                  <SelectItem value="double">
+                    {t("studio.a11y.settings.focusRingDouble")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </SettingRow>
           </>
         )}
-        <SettingRow label={t("studio.a11y.settings.skipLink")} description={t("studio.a11y.settings.skipLinkDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.skipLink")}
+          description={t("studio.a11y.settings.skipLinkDesc")}
+        >
           <Switch
             checked={draft.a11ySkipLinkEnabled}
             onCheckedChange={(v) => updateDraft("a11ySkipLinkEnabled", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.highlightFocus")} description={t("studio.a11y.settings.highlightFocusDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.highlightFocus")}
+          description={t("studio.a11y.settings.highlightFocusDesc")}
+        >
           <Switch
             checked={draft.a11yHighlightFocus}
             onCheckedChange={(v) => updateDraft("a11yHighlightFocus", v)}
@@ -428,26 +564,35 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         subtitle={t("studio.a11y.settings.screenReaderDesc")}
         color="text-violet-500"
       >
-        <SettingRow label={t("studio.a11y.settings.ariaLandmarks")} description={t("studio.a11y.settings.ariaLandmarksDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.ariaLandmarks")}
+          description={t("studio.a11y.settings.ariaLandmarksDesc")}
+        >
           <Switch
             checked={draft.a11yAriaLandmarks}
             onCheckedChange={(v) => updateDraft("a11yAriaLandmarks", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.formLabels")} description={t("studio.a11y.settings.formLabelsDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.formLabels")}
+          description={t("studio.a11y.settings.formLabelsDesc")}
+        >
           <Switch
             checked={draft.a11yFormLabelsVisible}
             onCheckedChange={(v) => updateDraft("a11yFormLabelsVisible", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.errorAnnounce")} description={t("studio.a11y.settings.errorAnnounceDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.errorAnnounce")}
+          description={t("studio.a11y.settings.errorAnnounceDesc")}
+        >
           <Switch
             checked={draft.a11yErrorAnnounce}
             onCheckedChange={(v) => updateDraft("a11yErrorAnnounce", v)}
           />
         </SettingRow>
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("studio.a11y.settings.pageTitle")}
           </label>
           <input
@@ -457,7 +602,9 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
             className="h-8 w-full rounded-md border border-border bg-background px-2.5 text-xs text-foreground outline-none transition-colors focus:border-primary"
             placeholder={t("studio.a11y.settings.pageTitlePlaceholder")}
           />
-          <p className="text-[10px] text-muted-foreground">{t("studio.a11y.settings.pageTitleDesc")}</p>
+          <p className="text-[10px] text-muted-foreground">
+            {t("studio.a11y.settings.pageTitleDesc")}
+          </p>
         </div>
       </Section>
 
@@ -468,13 +615,19 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         subtitle={t("studio.a11y.settings.contrastColorsDesc")}
         color="text-amber-500"
       >
-        <SettingRow label={t("studio.a11y.settings.highContrast")} description={t("studio.a11y.settings.highContrastDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.highContrast")}
+          description={t("studio.a11y.settings.highContrastDesc")}
+        >
           <Switch
             checked={draft.a11yHighContrastMode}
             onCheckedChange={(v) => updateDraft("a11yHighContrastMode", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.contrastPreset")} description={t("studio.a11y.settings.contrastPresetDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.contrastPreset")}
+          description={t("studio.a11y.settings.contrastPresetDesc")}
+        >
           <Select
             value={draft.a11yContrastPreset}
             onValueChange={(v) => updateDraft("a11yContrastPreset", v as any)}
@@ -487,18 +640,25 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
               <SelectItem value="dark">{t("studio.a11y.settings.presetDark")}</SelectItem>
               <SelectItem value="light">{t("studio.a11y.settings.presetLight")}</SelectItem>
               <SelectItem value="inverted">{t("studio.a11y.settings.presetInverted")}</SelectItem>
-              <SelectItem value="monochrome">{t("studio.a11y.settings.presetMonochrome")}</SelectItem>
+              <SelectItem value="monochrome">
+                {t("studio.a11y.settings.presetMonochrome")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </SettingRow>
         <SliderInput
           label={t("studio.a11y.settings.saturation")}
           value={draft.a11ySaturation}
-          min={0} max={200} step={10}
+          min={0}
+          max={200}
+          step={10}
           unit="%"
           onChange={(v) => updateDraft("a11ySaturation", v)}
         />
-        <SettingRow label={t("studio.a11y.settings.highlightLinks")} description={t("studio.a11y.settings.highlightLinksDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.highlightLinks")}
+          description={t("studio.a11y.settings.highlightLinksDesc")}
+        >
           <Switch
             checked={draft.a11yHighlightLinks}
             onCheckedChange={(v) => updateDraft("a11yHighlightLinks", v)}
@@ -516,45 +676,61 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         <SliderInput
           label={t("studio.a11y.settings.minFontSize")}
           value={draft.a11yMinFontSize}
-          min={12} max={24} step={1}
+          min={12}
+          max={24}
+          step={1}
           unit="px"
           onChange={(v) => updateDraft("a11yMinFontSize", v)}
         />
         <SliderInput
           label={t("studio.a11y.settings.contentScaling")}
           value={draft.a11yContentScaling}
-          min={100} max={200} step={10}
+          min={100}
+          max={200}
+          step={10}
           unit="%"
           onChange={(v) => updateDraft("a11yContentScaling", v)}
         />
         <SliderInput
           label={t("studio.a11y.settings.lineHeight")}
           value={draft.a11yLineHeight}
-          min={0} max={3} step={0.25}
+          min={0}
+          max={3}
+          step={0.25}
           unit="×"
           onChange={(v) => updateDraft("a11yLineHeight", v)}
         />
         <SliderInput
           label={t("studio.a11y.settings.letterSpacing")}
           value={draft.a11yLetterSpacing}
-          min={0} max={5} step={0.5}
+          min={0}
+          max={5}
+          step={0.5}
           unit="px"
           onChange={(v) => updateDraft("a11yLetterSpacing", v)}
         />
         <SliderInput
           label={t("studio.a11y.settings.wordSpacing")}
           value={draft.a11yWordSpacing}
-          min={0} max={10} step={1}
+          min={0}
+          max={10}
+          step={1}
           unit="px"
           onChange={(v) => updateDraft("a11yWordSpacing", v)}
         />
-        <SettingRow label={t("studio.a11y.settings.dyslexicFont")} description={t("studio.a11y.settings.dyslexicFontDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.dyslexicFont")}
+          description={t("studio.a11y.settings.dyslexicFontDesc")}
+        >
           <Switch
             checked={draft.a11yDyslexicFont}
             onCheckedChange={(v) => updateDraft("a11yDyslexicFont", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.textAlign")} description={t("studio.a11y.settings.textAlignDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.textAlign")}
+          description={t("studio.a11y.settings.textAlignDesc")}
+        >
           <Select
             value={draft.a11yTextAlign}
             onValueChange={(v) => updateDraft("a11yTextAlign", v as any)}
@@ -580,7 +756,10 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         color="text-teal-500"
         defaultOpen={false}
       >
-        <SettingRow label={t("studio.a11y.settings.cursorSize")} description={t("studio.a11y.settings.cursorSizeDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.cursorSize")}
+          description={t("studio.a11y.settings.cursorSizeDesc")}
+        >
           <Select
             value={draft.a11yCursorSize}
             onValueChange={(v) => updateDraft("a11yCursorSize", v as any)}
@@ -595,13 +774,19 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
             </SelectContent>
           </Select>
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.readingGuide")} description={t("studio.a11y.settings.readingGuideDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.readingGuide")}
+          description={t("studio.a11y.settings.readingGuideDesc")}
+        >
           <Switch
             checked={draft.a11yReadingGuide}
             onCheckedChange={(v) => updateDraft("a11yReadingGuide", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.readingMask")} description={t("studio.a11y.settings.readingMaskDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.readingMask")}
+          description={t("studio.a11y.settings.readingMaskDesc")}
+        >
           <Switch
             checked={draft.a11yReadingMask}
             onCheckedChange={(v) => updateDraft("a11yReadingMask", v)}
@@ -620,7 +805,9 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         <SettingRow label={t("studio.a11y.settings.reducedMotion")}>
           <Select
             value={draft.a11yReducedMotion}
-            onValueChange={(v) => updateDraft("a11yReducedMotion", v as "auto" | "always" | "never")}
+            onValueChange={(v) =>
+              updateDraft("a11yReducedMotion", v as "auto" | "always" | "never")
+            }
           >
             <SelectTrigger className="h-7 w-28 text-xs">
               <SelectValue />
@@ -635,17 +822,25 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         <SliderInput
           label={t("studio.a11y.settings.animationDuration")}
           value={draft.a11yAnimationDuration}
-          min={0} max={1000} step={50}
+          min={0}
+          max={1000}
+          step={50}
           unit="ms"
           onChange={(v) => updateDraft("a11yAnimationDuration", v)}
         />
-        <SettingRow label={t("studio.a11y.settings.autoplay")} description={t("studio.a11y.settings.autoplayDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.autoplay")}
+          description={t("studio.a11y.settings.autoplayDesc")}
+        >
           <Switch
             checked={draft.a11yAutoplayDisabled}
             onCheckedChange={(v) => updateDraft("a11yAutoplayDisabled", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.pauseAnimations")} description={t("studio.a11y.settings.pauseAnimationsDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.pauseAnimations")}
+          description={t("studio.a11y.settings.pauseAnimationsDesc")}
+        >
           <Switch
             checked={draft.a11yPauseAnimations}
             onCheckedChange={(v) => updateDraft("a11yPauseAnimations", v)}
@@ -661,13 +856,19 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         color="text-orange-500"
         defaultOpen={false}
       >
-        <SettingRow label={t("studio.a11y.settings.hideImages")} description={t("studio.a11y.settings.hideImagesDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.hideImages")}
+          description={t("studio.a11y.settings.hideImagesDesc")}
+        >
           <Switch
             checked={draft.a11yHideImages}
             onCheckedChange={(v) => updateDraft("a11yHideImages", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.tooltips")} description={t("studio.a11y.settings.tooltipsDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.tooltips")}
+          description={t("studio.a11y.settings.tooltipsDesc")}
+        >
           <Switch
             checked={draft.a11yTooltips}
             onCheckedChange={(v) => updateDraft("a11yTooltips", v)}
@@ -683,13 +884,19 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         color="text-rose-500"
         defaultOpen={false}
       >
-        <SettingRow label={t("studio.a11y.settings.largeTargets")} description={t("studio.a11y.settings.largeTargetsDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.largeTargets")}
+          description={t("studio.a11y.settings.largeTargetsDesc")}
+        >
           <Switch
             checked={draft.a11yLargeTargets}
             onCheckedChange={(v) => updateDraft("a11yLargeTargets", v)}
           />
         </SettingRow>
-        <SettingRow label={t("studio.a11y.settings.forcedColors")} description={t("studio.a11y.settings.forcedColorsDesc")}>
+        <SettingRow
+          label={t("studio.a11y.settings.forcedColors")}
+          description={t("studio.a11y.settings.forcedColorsDesc")}
+        >
           <Switch
             checked={draft.a11yForcedColorsSupport}
             onCheckedChange={(v) => updateDraft("a11yForcedColorsSupport", v)}
@@ -704,15 +911,14 @@ export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: Acc
         subtitle={t("studio.a11y.audit.subtitle")}
         color="text-emerald-500"
       >
-        {(["contrast", "target", "overlay", "motion"] as CheckCategory[]).map(
-          (category) => (
-            <CategorySection
-              key={category}
-              category={category}
-              checks={byCategory[category]} onFixCheck={handleAutoFix}
-            />
-          )
-        )}
+        {(["contrast", "target", "overlay", "motion"] as CheckCategory[]).map((category) => (
+          <CategorySection
+            key={category}
+            category={category}
+            checks={byCategory[category]}
+            onFixCheck={handleAutoFix}
+          />
+        ))}
       </Section>
     </div>
   );

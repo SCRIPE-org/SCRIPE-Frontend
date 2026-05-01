@@ -17,9 +17,20 @@ import { BarChart3, FileDown } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load chart components (below-the-fold)
-const AdminDistributionPie = dynamic(() => import("../components/AdminDistributionPie").then(m => ({ default: m.AdminDistributionPie })), { ssr: false });
-const LoginComparisonChart = dynamic(() => import("../components/LoginComparisonChart").then(m => ({ default: m.LoginComparisonChart })), { ssr: false });
-const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
+const AdminDistributionPie = dynamic(
+  () =>
+    import("../components/AdminDistributionPie").then((m) => ({ default: m.AdminDistributionPie })),
+  { ssr: false }
+);
+const LoginComparisonChart = dynamic(
+  () =>
+    import("../components/LoginComparisonChart").then((m) => ({ default: m.LoginComparisonChart })),
+  { ssr: false }
+);
+const ReportExportDialog = dynamic(
+  () => import("@core/ui/report-export-dialog").then((m) => ({ default: m.ReportExportDialog })),
+  { ssr: false }
+);
 
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");

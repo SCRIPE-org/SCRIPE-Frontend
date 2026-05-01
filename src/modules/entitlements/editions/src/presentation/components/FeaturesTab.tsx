@@ -15,16 +15,8 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
-import {
-  ChevronDown, ChevronRight, Zap, ChevronsUpDown, Shield,
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { ChevronDown, ChevronRight, Zap, ChevronsUpDown, Shield } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
 import type { Edition } from "../../domain/entities/Edition";
@@ -92,14 +84,17 @@ export function FeaturesTab({
                 {t("entitlements.editions.overflowPolicy")}
               </CardTitle>
               {overflowPolicyChanged && (
-                <Badge variant="outline" className="text-[10px] h-4 text-amber-600 border-amber-500/30 bg-amber-500/5">
+                <Badge
+                  variant="outline"
+                  className="h-4 border-amber-500/30 bg-amber-500/5 text-[10px] text-amber-600"
+                >
                   {t("common.modified") || "Modified"}
                 </Badge>
               )}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pt-0 pb-4">
+        <CardContent className="pb-4 pt-0">
           <Select value={overflowPolicy} onValueChange={setOverflowPolicy}>
             <SelectTrigger className="w-full max-w-xs">
               <SelectValue />
@@ -112,7 +107,7 @@ export function FeaturesTab({
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="mt-2 text-xs text-muted-foreground">
             {t(`entitlements.editions.overflowPolicyHints.${overflowPolicy}`)}
           </p>
         </CardContent>
@@ -126,7 +121,7 @@ export function FeaturesTab({
           <Badge variant="secondary" className="text-xs">
             {(() => {
               const allFeats = features || [];
-              const enabledTotal = allFeats.filter(f => {
+              const enabledTotal = allFeats.filter((f) => {
                 const val = getEffectiveValue(f);
                 return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
               }).length;
@@ -134,14 +129,18 @@ export function FeaturesTab({
             })()}
           </Badge>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => {
-          const allCollapsed = Object.values(collapsedModules).every(v => v);
-          allCollapsed ? expandAll() : collapseAll();
-        }}>
-          <ChevronsUpDown className="h-4 w-4 me-1" />
-          {Object.values(collapsedModules).every(v => v)
-            ? (t("common.expandAll") || "Expand All")
-            : (t("common.collapseAll") || "Collapse All")}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            const allCollapsed = Object.values(collapsedModules).every((v) => v);
+            allCollapsed ? expandAll() : collapseAll();
+          }}
+        >
+          <ChevronsUpDown className="me-1 h-4 w-4" />
+          {Object.values(collapsedModules).every((v) => v)
+            ? t("common.expandAll") || "Expand All"
+            : t("common.collapseAll") || "Collapse All"}
         </Button>
       </div>
 
@@ -149,7 +148,7 @@ export function FeaturesTab({
       {Object.entries(featuresByModule).map(([moduleName, categories]) => {
         const isCollapsed = collapsedModules[moduleName] ?? true;
         const allFeatures = Object.values(categories).flat();
-        const enabledCount = allFeatures.filter(f => {
+        const enabledCount = allFeatures.filter((f) => {
           const val = getEffectiveValue(f);
           return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
         }).length;
@@ -157,7 +156,7 @@ export function FeaturesTab({
         return (
           <Card key={moduleName} className="overflow-hidden">
             <CardHeader
-              className="cursor-pointer select-none hover:bg-accent/50 transition-colors py-3"
+              className="cursor-pointer select-none py-3 transition-colors hover:bg-accent/50"
               onClick={() => toggleModule(moduleName)}
             >
               <div className="flex items-center justify-between">
@@ -169,7 +168,9 @@ export function FeaturesTab({
                   )}
                   <CardTitle className="text-base">{moduleName}</CardTitle>
                 </div>
-                <Badge variant="outline">{enabledCount}/{allFeatures.length}</Badge>
+                <Badge variant="outline">
+                  {enabledCount}/{allFeatures.length}
+                </Badge>
               </div>
             </CardHeader>
 
@@ -178,35 +179,45 @@ export function FeaturesTab({
                 {Object.entries(categories).map(([categoryName, categoryFeatures]) => (
                   <div key={categoryName}>
                     {Object.keys(categories).length > 1 && (
-                      <div className="flex items-center gap-2 py-2 mt-2 border-b border-dashed">
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      <div className="mt-2 flex items-center gap-2 border-b border-dashed py-2">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                           {categoryName}
                         </span>
-                        <Badge variant="secondary" className="text-[10px] h-4">
+                        <Badge variant="secondary" className="h-4 text-[10px]">
                           {categoryFeatures.length}
                         </Badge>
                       </div>
                     )}
                     <div className="divide-y">
-                      {categoryFeatures.map(feature => {
+                      {categoryFeatures.map((feature) => {
                         const value = getEffectiveValue(feature);
-                        const serverFeature = edition.features.find(ef => ef.featureName === feature.name);
+                        const serverFeature = edition.features.find(
+                          (ef) => ef.featureName === feature.name
+                        );
                         const isModified = serverFeature
                           ? serverFeature.value !== value
                           : value !== getFeatureDisabledDefault(feature.valueType);
 
                         return (
-                          <div key={feature.id} className="flex items-center justify-between py-3 gap-4">
-                            <div className="space-y-0.5 flex-1 min-w-0">
+                          <div
+                            key={feature.id}
+                            className="flex items-center justify-between gap-4 py-3"
+                          >
+                            <div className="min-w-0 flex-1 space-y-0.5">
                               <div className="flex items-center gap-2">
-                                <span className="font-medium text-sm">
+                                <span className="text-sm font-medium">
                                   {feature.getDisplayName(language)}
                                 </span>
                                 {isModified && (
-                                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" title={t("common.modified") || "Modified"} />
+                                  <span
+                                    className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"
+                                    title={t("common.modified") || "Modified"}
+                                  />
                                 )}
                               </div>
-                              <p className="text-xs text-muted-foreground font-mono">{feature.name}</p>
+                              <p className="font-mono text-xs text-muted-foreground">
+                                {feature.name}
+                              </p>
                             </div>
 
                             <div className="flex-shrink-0">
@@ -235,9 +246,12 @@ export function FeaturesTab({
 // ── Helpers ──
 export function getFeatureDisabledDefault(valueType: string): string {
   switch (valueType?.toLowerCase()) {
-    case "boolean": return "false";
-    case "numeric": return "0";
-    default: return "";
+    case "boolean":
+      return "false";
+    case "numeric":
+      return "0";
+    default:
+      return "";
   }
 }
 
@@ -245,8 +259,14 @@ function getEnumFeatureOptions(t: TFn): Record<string, { value: string; label: s
   return {
     "Identity.AdminPoolMode": [
       { value: "shared", label: t("entitlements.features.sharedPool") || "Shared Pool" },
-      { value: "separate", label: t("entitlements.features.separatePool") || "Separate (Parent Independent)" },
-      { value: "per_child", label: t("entitlements.features.perChildPool") || "Per Child (No Pool)" },
+      {
+        value: "separate",
+        label: t("entitlements.features.separatePool") || "Separate (Parent Independent)",
+      },
+      {
+        value: "per_child",
+        label: t("entitlements.features.perChildPool") || "Per Child (No Pool)",
+      },
     ],
   };
 }
@@ -268,12 +288,14 @@ function FeatureControl({
   if (enumOptions) {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-44 h-8">
+        <SelectTrigger className="h-8 w-44">
           <SelectValue placeholder="Select..." />
         </SelectTrigger>
         <SelectContent>
           {enumOptions.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -295,7 +317,7 @@ function FeatureControl({
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-24 text-right h-8"
+        className="h-8 w-24 text-right"
         min={0}
       />
     );
@@ -306,7 +328,7 @@ function FeatureControl({
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-40 h-8"
+      className="h-8 w-40"
     />
   );
 }

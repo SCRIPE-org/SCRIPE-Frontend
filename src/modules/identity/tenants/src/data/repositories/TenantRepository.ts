@@ -24,10 +24,14 @@ import { TenantMapper } from "../mappers/TenantMapper";
 import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
 import { appLogger } from "@core/common/logger";
-import type { SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../models/TenantSubscription";
+import type {
+  SubscriptionModel,
+  PagedEditionResult,
+  DowngradeImpactReport,
+} from "../models/TenantSubscription";
 
 export class TenantRepository implements ITenantRepository {
-  constructor(private readonly service: ITenantService) { }
+  constructor(private readonly service: ITenantService) {}
 
   async getAll(params: TenantListParams): Promise<PagedResult<Tenant>> {
     const result = await this.service.getAll(params);
@@ -159,7 +163,11 @@ export class TenantRepository implements ITenantRepository {
     this.service.setTenantContext(tenantId);
   }
 
-  async getAvailableEditions(page?: number, pageSize?: number, search?: string): Promise<PagedEditionResult> {
+  async getAvailableEditions(
+    page?: number,
+    pageSize?: number,
+    search?: string
+  ): Promise<PagedEditionResult> {
     return this.service.getAvailableEditions(page, pageSize, search);
   }
 
@@ -171,11 +179,34 @@ export class TenantRepository implements ITenantRepository {
     return this.service.validatePromoCode(editionId, promoCode);
   }
 
-  async assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<{ id: string }> {
-    return this.service.assignEdition(tenantId, editionId, type, endDate, currency, promoCode, promotionId);
+  async assignEdition(
+    tenantId: string,
+    editionId: string,
+    type?: string,
+    endDate?: string,
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<{ id: string }> {
+    return this.service.assignEdition(
+      tenantId,
+      editionId,
+      type,
+      endDate,
+      currency,
+      promoCode,
+      promotionId
+    );
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string, promoCode?: string, promotionId?: string): Promise<void> {
+  async changeEdition(
+    tenantId: string,
+    editionId: string,
+    type: string = "Lifetime",
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<void> {
     return this.service.changeEdition(tenantId, editionId, type, currency, promoCode, promotionId);
   }
 
@@ -187,16 +218,40 @@ export class TenantRepository implements ITenantRepository {
     return this.service.convertTrial(tenantId, type);
   }
 
-  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string> {
-    return this.service.suspendSubscription(tenantId, reason, useFallback, refundType, customRefundAmount);
+  async suspendSubscription(
+    tenantId: string,
+    reason: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string> {
+    return this.service.suspendSubscription(
+      tenantId,
+      reason,
+      useFallback,
+      refundType,
+      customRefundAmount
+    );
   }
 
   async resumeSubscription(tenantId: string, type?: string): Promise<string> {
     return this.service.resumeSubscription(tenantId, type);
   }
 
-  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string> {
-    return this.service.cancelSubscription(tenantId, reason, useFallback, refundType, customRefundAmount);
+  async cancelSubscription(
+    tenantId: string,
+    reason?: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string> {
+    return this.service.cancelSubscription(
+      tenantId,
+      reason,
+      useFallback,
+      refundType,
+      customRefundAmount
+    );
   }
 
   async resyncPermissions(tenantId: string): Promise<void> {
@@ -207,7 +262,19 @@ export class TenantRepository implements ITenantRepository {
     return this.service.getTenantSubscriptions(tenantId);
   }
 
-  async getResolvedFeatures(tenantId: string): Promise<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>> {
+  async getResolvedFeatures(
+    tenantId: string
+  ): Promise<
+    Array<{
+      featureId: string;
+      key: string;
+      nameEn: string;
+      nameAr: string;
+      effectiveValue: string;
+      valueType: string;
+      source: string;
+    }>
+  > {
     return this.service.getResolvedFeatures(tenantId);
   }
 
@@ -215,7 +282,10 @@ export class TenantRepository implements ITenantRepository {
     return this.service.changeCurrency(tenantId, currency);
   }
 
-  async getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport> {
+  async getDowngradeImpact(
+    tenantId: string,
+    targetEditionId: string
+  ): Promise<DowngradeImpactReport> {
     return this.service.getDowngradeImpact(tenantId, targetEditionId);
   }
 

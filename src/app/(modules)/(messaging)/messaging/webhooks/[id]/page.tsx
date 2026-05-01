@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const WebhookDetailView = dynamic(
-  () => import("@modules/messaging/webhooks").then((m) => ({ default: m.WebhookDetailView }))
+const WebhookDetailView = dynamic(() =>
+  import("@modules/messaging/webhooks").then((m) => ({ default: m.WebhookDetailView }))
 );
 
 export const metadata: Metadata = {

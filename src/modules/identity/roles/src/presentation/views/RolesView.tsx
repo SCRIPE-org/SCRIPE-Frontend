@@ -228,7 +228,9 @@ export function RolesView() {
       {
         label: t("common.delete") || "Delete",
         icon: <Trash className="h-4 w-4" />,
-        onClick: async (ids: string[]) => { await handleBulkDelete(ids); },
+        onClick: async (ids: string[]) => {
+          await handleBulkDelete(ids);
+        },
         variant: "destructive" as const,
         requiresConfirmation: true,
       },

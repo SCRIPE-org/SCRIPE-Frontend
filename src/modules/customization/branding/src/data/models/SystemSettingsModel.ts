@@ -73,7 +73,7 @@ export class SystemSettingsModel {
     public readonly defaultTermsOfServiceUrl: string | null,
     public readonly defaultPrivacyPolicyUrl: string | null,
     public readonly dashboardThemeJson: string | null,
-    public readonly settingsVersion: number,
+    public readonly settingsVersion: number
   ) {}
 
   static fromJson(json: SystemSettingsJson): SystemSettingsModel {
@@ -94,7 +94,7 @@ export class SystemSettingsModel {
       json.defaultTermsOfServiceUrl,
       json.defaultPrivacyPolicyUrl,
       json.dashboardThemeJson,
-      json.settingsVersion ?? 0,
+      json.settingsVersion ?? 0
     );
   }
 

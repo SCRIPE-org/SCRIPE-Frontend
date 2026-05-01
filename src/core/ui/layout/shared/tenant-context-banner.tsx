@@ -64,12 +64,7 @@ export function TenantContextBanner() {
         <span className="text-sm font-medium">
           {t("admin.impersonating") || "Impersonating User"}
         </span>
-        <Button
-          variant="destructive"
-          size="sm"
-          className="h-7 text-xs"
-          onClick={stopImpersonation}
-        >
+        <Button variant="destructive" size="sm" className="h-7 text-xs" onClick={stopImpersonation}>
           <X className={cn("h-3 w-3", direction === "rtl" ? "ml-1" : "mr-1")} />
           {t("common.stop") || "Stop"}
         </Button>

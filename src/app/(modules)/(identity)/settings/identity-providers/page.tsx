@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const IdentityProvidersView = dynamic(
-  () =>
-    import("@modules/identity/identity-providers").then((m) => ({
-      default: m.IdentityProvidersView,
-    }))
+const IdentityProvidersView = dynamic(() =>
+  import("@modules/identity/identity-providers").then((m) => ({
+    default: m.IdentityProvidersView,
+  }))
 );
 
 export const metadata: Metadata = {

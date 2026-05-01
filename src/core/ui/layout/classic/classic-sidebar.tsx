@@ -81,9 +81,7 @@ export function ClassicSidebar({ open, onOpenChange, collapsible }: ClassicSideb
               <Logo size="sm" className="text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">
-                {appName}
-              </h1>
+              <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">{appName}</h1>
               <p className="text-[10px] leading-tight text-sidebar-foreground/50">
                 {t("app.version")}
               </p>

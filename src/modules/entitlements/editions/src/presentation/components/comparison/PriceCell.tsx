@@ -25,16 +25,12 @@ export function PriceCell({ price, freeLabel, isRecommended }: PriceCellProps) {
   return (
     <TableCell
       className={cn(
-        "py-2.5 px-4 text-center",
-        isRecommended && "bg-primary/5 border-x-2 border-primary/20"
+        "px-4 py-2.5 text-center",
+        isRecommended && "border-x-2 border-primary/20 bg-primary/5"
       )}
     >
-      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-        {formatted}
-      </span>
-      {price ? (
-        <span className="text-xs text-muted-foreground block">/mo</span>
-      ) : null}
+      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatted}</span>
+      {price ? <span className="block text-xs text-muted-foreground">/mo</span> : null}
     </TableCell>
   );
 }

@@ -28,14 +28,19 @@ export function ComingSoonView({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-${accentColor}/10`}>
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-lg bg-${accentColor}/10`}
+          >
             <Icon className={`h-5 w-5 text-${accentColor}`} />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">{t(titleKey)}</h1>
           </div>
         </div>
-        <Badge variant="outline" className="gap-1.5 border-amber-500/30 bg-amber-500/5 text-amber-600 dark:text-amber-400">
+        <Badge
+          variant="outline"
+          className="gap-1.5 border-amber-500/30 bg-amber-500/5 text-amber-600 dark:text-amber-400"
+        >
           <Clock className="h-3 w-3" />
           {t("common.comingSoon") || "Coming Soon"}
         </Badge>
@@ -53,19 +58,17 @@ export function ComingSoonView({
             </div>
           </div>
 
-          <h2 className="text-xl font-semibold mb-2">{t(titleKey)}</h2>
-          <p className="text-muted-foreground max-w-md mb-8">
-            {t(descriptionKey)}
-          </p>
+          <h2 className="mb-2 text-xl font-semibold">{t(titleKey)}</h2>
+          <p className="mb-8 max-w-md text-muted-foreground">{t(descriptionKey)}</p>
 
           {/* Feature Preview */}
-          <div className="grid gap-3 text-start max-w-lg w-full">
+          <div className="grid w-full max-w-lg gap-3 text-start">
             {Object.entries(featuresKeys).map(([key, localeKey]) => (
               <div
                 key={key}
                 className="flex items-start gap-3 rounded-lg border border-border/50 bg-muted/30 px-4 py-3"
               >
-                <Check className="h-4 w-4 mt-0.5 text-emerald-500 shrink-0" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                 <span className="text-sm text-foreground/80">{t(localeKey)}</span>
               </div>
             ))}

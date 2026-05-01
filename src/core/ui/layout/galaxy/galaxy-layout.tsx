@@ -157,9 +157,7 @@ export function GalaxyLayout({ children }: GalaxyLayoutProps) {
               </Button>
               <LanguageSwitcher />
               <ThemeSwitcher />
-              {settings.showNotifications && (
-                <NotificationBell iconClassName="h-5 w-5" />
-              )}
+              {settings.showNotifications && <NotificationBell iconClassName="h-5 w-5" />}
               <UserProfileDropdown showName={false} />
             </div>
           </header>

@@ -17,14 +17,30 @@ export interface ConsentStatusData {
 export class ConsentStatus {
   constructor(private readonly data: ConsentStatusData) {}
 
-  get purposeId() { return this.data.purposeId; }
-  get purposeKey() { return this.data.purposeKey ?? ""; }
-  get purposeName() { return this.data.purposeName ?? this.data.purposeKey ?? ""; }
-  get currentAction() { return this.data.currentAction; }
-  get isGranted() { return this.data.currentAction === "Granted"; }
-  get requiresReConsent() { return this.data.requiresReConsent ?? false; }
-  get lastUpdatedAt() { return new Date(this.data.lastUpdatedAt); }
-  get consentVersion() { return this.data.consentVersion ?? "1.0"; }
+  get purposeId() {
+    return this.data.purposeId;
+  }
+  get purposeKey() {
+    return this.data.purposeKey ?? "";
+  }
+  get purposeName() {
+    return this.data.purposeName ?? this.data.purposeKey ?? "";
+  }
+  get currentAction() {
+    return this.data.currentAction;
+  }
+  get isGranted() {
+    return this.data.currentAction === "Granted";
+  }
+  get requiresReConsent() {
+    return this.data.requiresReConsent ?? false;
+  }
+  get lastUpdatedAt() {
+    return new Date(this.data.lastUpdatedAt);
+  }
+  get consentVersion() {
+    return this.data.consentVersion ?? "1.0";
+  }
 
   copyWith(updates: Partial<ConsentStatusData>): ConsentStatus {
     return new ConsentStatus({ ...this.data, ...updates });

@@ -40,7 +40,7 @@ export class Verify2FARequestModel {
     public readonly password: string,
     public readonly code: string,
     public readonly tenantId?: string
-  ) { }
+  ) {}
 
   toJson(): Verify2FARequestJson {
     return {
@@ -63,7 +63,7 @@ export class Verify2FAResponseModel {
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
     public readonly userProfile: any = null
-  ) { }
+  ) {}
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
     return new Verify2FAResponseModel(

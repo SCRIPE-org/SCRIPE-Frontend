@@ -54,8 +54,6 @@ export default function GlobalError({
     appLogger.error("Global error:", { error, appError });
   }, [error]);
 
-
-
   const handleRetry = () => {
     window.location.reload();
   };

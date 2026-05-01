@@ -34,11 +34,7 @@ export {
   hasSingletonComponent,
   getCatalogEntry,
 } from "./CanvasComponent";
-export {
-  type LayoutTemplate,
-  layoutToTemplate,
-  getAllLayoutTemplates,
-} from "./LayoutTemplates";
+export { type LayoutTemplate, layoutToTemplate, getAllLayoutTemplates } from "./LayoutTemplates";
 export { type SavedTemplate } from "./SavedTemplate";
 export { ThemeCard, type ThemeCardData } from "./ThemeCard";
 export { ThemeDetail, type ThemeDetailData } from "./ThemeDetail";

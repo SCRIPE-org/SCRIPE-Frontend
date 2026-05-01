@@ -13,7 +13,7 @@ export function useRetentionViewModel() {
   });
 
   const policies = query.data ?? [];
-  const activeCount = policies.filter(p => p.isActive).length;
+  const activeCount = policies.filter((p) => p.isActive).length;
 
   return {
     policies,

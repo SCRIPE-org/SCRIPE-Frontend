@@ -15,8 +15,7 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 // ─── Query keys ──────────────────────────────────────────────────────
 export const analyticsKeys = {
   all: (tenantId: string | null) => ["analytics", tenantId ?? "system"] as const,
-  summary: (tenantId: string | null) =>
-    [...analyticsKeys.all(tenantId), "summary"] as const,
+  summary: (tenantId: string | null) => [...analyticsKeys.all(tenantId), "summary"] as const,
   distribution: (days: number, tenantId: string | null) =>
     [...analyticsKeys.all(tenantId), "distribution", days] as const,
   comparison: (days: number, tenantId: string | null) =>
@@ -96,7 +95,6 @@ export function useTenantAnalyticsViewModel() {
     metrics.refetch();
     distribution.refetch();
     comparison.refetch();
-
   }, [metrics, distribution, comparison]);
 
   return {

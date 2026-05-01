@@ -11,11 +11,11 @@ export { HeadingDropdown } from "./HeadingDropdown";
 
 // ─── Feature components ─────────────────────────────────────
 export {
-      VariablePicker,
-      DEFAULT_VARIABLES,
-      type VariableDefinition,
-      type VariableCategory,
-      type VariablePickerProps,
+  VariablePicker,
+  DEFAULT_VARIABLES,
+  type VariableDefinition,
+  type VariableCategory,
+  type VariablePickerProps,
 } from "./VariablePicker";
 export { ColorPickerField, type ColorPickerFieldProps } from "./ColorPickerField";
 export { ButtonDesigner, type ButtonDesignerProps } from "./ButtonDesigner";

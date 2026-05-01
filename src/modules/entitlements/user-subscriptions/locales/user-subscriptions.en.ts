@@ -53,8 +53,6 @@ export const en = {
       noSubscriptions: "No subscriptions found",
       noTenantContext: "User Subscriptions are only available for tenant-scoped administrators.",
       noTenantContextHint: "Please impersonate a tenant admin to manage subscriptions.",
-
-      // Detail modal labels
       detailTitle: "Subscription Details",
       detailSubscriptionInfo: "Subscription Information",
       detailUserInfo: "User Information",
@@ -77,8 +75,6 @@ export const en = {
       detailNever: "Never",
       detailLifetime: "Lifetime",
     },
-
-    // ── User Self-Service Portal ──
     mySubscription: {
       title: "My Subscription",
       description: "View your organization's current subscription plan and details.",
@@ -121,14 +117,29 @@ export const en = {
       manageBilling: "Manage Billing",
       cancel: "Cancel Subscription",
       cancelTitle: "Cancel Subscription?",
-      cancelDesc: "Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period.",
+      cancelDesc:
+        "Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period.",
       confirmCancel: "Yes, Cancel",
       cancelled: "Subscription Cancelled",
       cancelledDesc: "Your subscription has been cancelled.",
       cancelFailed: "Failed to cancel subscription.",
       alreadyCancelled: "This subscription has been cancelled.",
       noSubscription: "No Active Subscription",
-      noSubscriptionDesc: "Your organization doesn't have an active subscription plan. Contact your platform administrator.",
+      noSubscriptionDesc:
+        "Your organization doesn't have an active subscription plan. Contact your platform administrator.",
+      gatewayIntegration: "Gateway Integration",
+      gatewayDesc: "Gateway Desc",
+      gatewaySubId: "Gateway Sub Id",
+      gatewayCustomerId: "Gateway Customer Id",
     },
+  },
+  billing: {
+    gateways: {
+      stripe: "Stripe",
+      paypal: "Paypal",
+      paymob: "Paymob",
+    },
+    choosePaymentMethod: "Choose Payment Method",
+    choosePaymentMethodDesc: "Choose Payment Method Desc",
   },
 };

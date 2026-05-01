@@ -32,23 +32,47 @@ import { en as userGroupsEn, ar as userGroupsAr } from "@modules/identity/user-g
 import { en as usersEn, ar as usersAr } from "@modules/identity/users/locales";
 
 // ─── Customization ─────────────────────────────────────
-import { en as custSettingsEn, ar as custSettingsAr } from "@modules/customization/settings/locales";
+import {
+  en as custSettingsEn,
+  ar as custSettingsAr,
+} from "@modules/customization/settings/locales";
 import { en as custStudioEn, ar as custStudioAr } from "@modules/customization/studio/locales";
 import { en as menusEn, ar as menusAr } from "@modules/customization/menus/locales";
-import { en as tenantSettingsEn, ar as tenantSettingsAr } from "@modules/customization/tenant-settings/locales";
+import {
+  en as tenantSettingsEn,
+  ar as tenantSettingsAr,
+} from "@modules/customization/tenant-settings/locales";
 
 // ─── Entitlements ──────────────────────────────────────
 import { en as entitlementsEn, ar as entitlementsAr } from "@modules/entitlements/locales";
 import { en as editionsEn, ar as editionsAr } from "@modules/entitlements/editions/locales";
 import { en as featuresEn, ar as featuresAr } from "@modules/entitlements/features/locales";
 import { en as overridesEn, ar as overridesAr } from "@modules/entitlements/overrides/locales";
-import { en as subscriptionsEn, ar as subscriptionsAr } from "@modules/entitlements/subscriptions/locales";
+import {
+  en as subscriptionsEn,
+  ar as subscriptionsAr,
+} from "@modules/entitlements/subscriptions/locales";
 import { en as billingEn, ar as billingAr } from "@modules/entitlements/billing/locales";
-import { en as tenantPlansEn, ar as tenantPlansAr } from "@modules/entitlements/tenant-plans/locales";
-import { en as userSubscriptionsEn, ar as userSubscriptionsAr } from "@modules/entitlements/user-subscriptions/locales";
-import { en as stripeConnectEn, ar as stripeConnectAr } from "@modules/entitlements/stripe-connect/locales";
-import { en as platformStripeEn, ar as platformStripeAr } from "@modules/entitlements/platform-stripe/locales";
-import { en as revenueAnalyticsEn, ar as revenueAnalyticsAr } from "@modules/entitlements/analytics/locales";
+import {
+  en as tenantPlansEn,
+  ar as tenantPlansAr,
+} from "@modules/entitlements/tenant-plans/locales";
+import {
+  en as userSubscriptionsEn,
+  ar as userSubscriptionsAr,
+} from "@modules/entitlements/user-subscriptions/locales";
+import {
+  en as stripeConnectEn,
+  ar as stripeConnectAr,
+} from "@modules/entitlements/stripe-connect/locales";
+import {
+  en as platformStripeEn,
+  ar as platformStripeAr,
+} from "@modules/entitlements/platform-stripe/locales";
+import {
+  en as revenueAnalyticsEn,
+  ar as revenueAnalyticsAr,
+} from "@modules/entitlements/analytics/locales";
 
 // ─── Messaging ─────────────────────────────────────────
 import { en as messagingEn, ar as messagingAr } from "@modules/messaging/locales";
@@ -65,52 +89,119 @@ import { deepMerge } from "@core/utils/deep-merge";
 
 // ─── Compliance ─────────────────────────────────────────────────
 // 6 sub-modules, each owning their own slice of the "compliance" key
-import { en as compDashboardEn, ar as compDashboardAr }         from "@modules/compliance/dashboard/locales";
-import { en as compDsrEn, ar as compDsrAr }                     from "@modules/compliance/dsr/locales";
-import { en as compConsentEn, ar as compConsentAr }             from "@modules/compliance/consent/locales";
-import { en as compRetentionEn, ar as compRetentionAr }         from "@modules/compliance/retention/locales";
-import { en as compInventoryEn, ar as compInventoryAr }         from "@modules/compliance/inventory/locales";
-import { en as compReportsEn, ar as compReportsAr }             from "@modules/compliance/reports/locales";
+import {
+  en as compDashboardEn,
+  ar as compDashboardAr,
+} from "@modules/compliance/dashboard/locales";
+import { en as compDsrEn, ar as compDsrAr } from "@modules/compliance/dsr/locales";
+import { en as compConsentEn, ar as compConsentAr } from "@modules/compliance/consent/locales";
+import {
+  en as compRetentionEn,
+  ar as compRetentionAr,
+} from "@modules/compliance/retention/locales";
+import {
+  en as compInventoryEn,
+  ar as compInventoryAr,
+} from "@modules/compliance/inventory/locales";
+import { en as compReportsEn, ar as compReportsAr } from "@modules/compliance/reports/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, any> = deepMerge(
   {},
   signinEn,
   // Monitoring
-  analyticsEn, auditEn, dashboardEn, securityEn,
+  analyticsEn,
+  auditEn,
+  dashboardEn,
+  securityEn,
   // Identity
-  adminEn, idpEn, oauthEn, permissionsEn, rolesEn, tenantsEn, userGroupsEn, usersEn,
+  adminEn,
+  idpEn,
+  oauthEn,
+  permissionsEn,
+  rolesEn,
+  tenantsEn,
+  userGroupsEn,
+  usersEn,
   // Customization
-  custSettingsEn, custStudioEn, menusEn, tenantSettingsEn,
+  custSettingsEn,
+  custStudioEn,
+  menusEn,
+  tenantSettingsEn,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
-  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn, tenantPlansEn, userSubscriptionsEn, stripeConnectEn, platformStripeEn, revenueAnalyticsEn,
+  entitlementsEn,
+  editionsEn,
+  featuresEn,
+  overridesEn,
+  subscriptionsEn,
+  billingEn,
+  tenantPlansEn,
+  userSubscriptionsEn,
+  stripeConnectEn,
+  platformStripeEn,
+  revenueAnalyticsEn,
   // Messaging
-  messagingEn, webhooksEn,
+  messagingEn,
+  webhooksEn,
   // Ecosystem
   recycleBinEn,
   // Profile
   profileEn,
   // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
-  compDashboardEn, compDsrEn, compConsentEn, compRetentionEn, compInventoryEn, compReportsEn,
+  compDashboardEn,
+  compDsrEn,
+  compConsentEn,
+  compRetentionEn,
+  compInventoryEn,
+  compReportsEn
 );
 
 export const allModulesAr: Record<string, any> = deepMerge(
   {},
   signinAr,
   // Monitoring
-  analyticsAr, auditAr, dashboardAr, securityAr,
+  analyticsAr,
+  auditAr,
+  dashboardAr,
+  securityAr,
   // Identity
-  adminAr, idpAr, oauthAr, permissionsAr, rolesAr, tenantsAr, userGroupsAr, usersAr,
+  adminAr,
+  idpAr,
+  oauthAr,
+  permissionsAr,
+  rolesAr,
+  tenantsAr,
+  userGroupsAr,
+  usersAr,
   // Customization
-  custSettingsAr, custStudioAr, menusAr, tenantSettingsAr,
+  custSettingsAr,
+  custStudioAr,
+  menusAr,
+  tenantSettingsAr,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
-  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr, tenantPlansAr, userSubscriptionsAr, stripeConnectAr, platformStripeAr, revenueAnalyticsAr,
+  entitlementsAr,
+  editionsAr,
+  featuresAr,
+  overridesAr,
+  subscriptionsAr,
+  billingAr,
+  tenantPlansAr,
+  userSubscriptionsAr,
+  stripeConnectAr,
+  platformStripeAr,
+  revenueAnalyticsAr,
   // Messaging
-  messagingAr, webhooksAr,
+  messagingAr,
+  webhooksAr,
   // Ecosystem
   recycleBinAr,
   // Profile
   profileAr,
   // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
-  compDashboardAr, compDsrAr, compConsentAr, compRetentionAr, compInventoryAr, compReportsAr,
+  compDashboardAr,
+  compDsrAr,
+  compConsentAr,
+  compRetentionAr,
+  compInventoryAr,
+  compReportsAr
 );

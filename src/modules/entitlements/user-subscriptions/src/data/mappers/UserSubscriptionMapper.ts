@@ -3,7 +3,10 @@
  */
 import { UserSubscription } from "../../domain/entities/UserSubscription";
 import type { UserSubscriptionData } from "../../domain/entities/UserSubscription";
-import type { UserSubscriptionModel, UserSubscriptionListModel } from "../models/UserSubscriptionModels";
+import type {
+  UserSubscriptionModel,
+  UserSubscriptionListModel,
+} from "../models/UserSubscriptionModels";
 
 export class UserSubscriptionMapper {
   static toEntity(model: UserSubscriptionModel): UserSubscription {
@@ -50,7 +53,7 @@ export class UserSubscriptionMapper {
       userId: model.userId ?? "",
       userName: model.userName,
       userEmail: model.userEmail,
-      tenantId: "",  // Not available in list DTO — omitted intentionally
+      tenantId: "", // Not available in list DTO — omitted intentionally
       tenantPlanId: model.tenantPlanId ?? "",
       planName: model.planName ?? "",
       // currency, price, billingCycle intentionally omitted — not in list DTO
@@ -58,7 +61,7 @@ export class UserSubscriptionMapper {
       startedAt: model.startedAt,
       expiresAt: model.expiresAt,
       trialEndsAt: model.trialEndsAt,
-      isAutoRenew: false,  // Not in list DTO — detail-only field
+      isAutoRenew: false, // Not in list DTO — detail-only field
       isActive: status === "Active" || status === "Trial" || status === "Free",
       isExpiringSoon: model.isExpiringSoon ?? false,
       daysRemaining: model.daysRemaining,

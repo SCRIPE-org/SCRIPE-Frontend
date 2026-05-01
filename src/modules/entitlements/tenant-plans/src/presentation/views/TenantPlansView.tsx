@@ -18,7 +18,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@core/ui/dialog";
 import { Pencil, Trash2, Eye, Rocket, Archive, Settings2, Columns } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -29,7 +36,10 @@ export function TenantPlansView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t } = useI18n();
   const vm = useTenantPlansViewModel();
-  const [confirmAction, setConfirmAction] = useState<{ type: "publish" | "archive"; plan: TenantPlan } | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "publish" | "archive";
+    plan: TenantPlan;
+  } | null>(null);
 
   const handleConfirmAction = () => {
     if (!confirmAction) return;
@@ -92,7 +102,7 @@ export function TenantPlansView() {
           key: "pricing",
           label: t("entitlements.tenantPlans.pricing") || "Starting Price",
           render: (_val: unknown, plan: TenantPlan) => (
-            <span className="tabular-nums text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="text-sm font-medium tabular-nums text-emerald-600 dark:text-emerald-400">
               {plan.formattedStartingPrice}
             </span>
           ),
@@ -101,14 +111,14 @@ export function TenantPlansView() {
           key: "cycles",
           label: t("entitlements.tenantPlans.billingCycles") || "Billing Cycles",
           render: (_val: unknown, plan: TenantPlan) => (
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex flex-wrap gap-1">
               {plan.supportedCycles.map((cycle) => (
                 <Badge key={cycle} variant="outline" className="text-xs">
                   {cycle}
                 </Badge>
               ))}
               {plan.supportedCycles.length === 0 && (
-                <span className="text-muted-foreground text-xs">—</span>
+                <span className="text-xs text-muted-foreground">—</span>
               )}
             </div>
           ),
@@ -133,7 +143,7 @@ export function TenantPlansView() {
           key: "tierLevel",
           label: t("entitlements.tenantPlans.tier") || "Tier",
           render: (_val: unknown, plan: TenantPlan) => (
-            <span className="tabular-nums text-sm">{plan.tierLevel}</span>
+            <span className="text-sm tabular-nums">{plan.tierLevel}</span>
           ),
         },
         {
@@ -149,13 +159,16 @@ export function TenantPlansView() {
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created",
-          render: (value: string) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "-",
+          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
         },
       ],
       getItemDisplayName: (plan: TenantPlan) => plan.name,
       deleteService: (id: string) => vm.deleteItem(id),
-      getActions: (vmInstance: ReturnType<typeof useTenantPlansViewModel>, tFn: (key: string) => string, handleDeleteFn: ((item: TenantPlan) => void) | undefined): CrudAction<TenantPlan>[] => [
+      getActions: (
+        vmInstance: ReturnType<typeof useTenantPlansViewModel>,
+        tFn: (key: string) => string,
+        handleDeleteFn: ((item: TenantPlan) => void) | undefined
+      ): CrudAction<TenantPlan>[] => [
         {
           label: tFn("common.view") || "View",
           onClick: (item: TenantPlan) => {
@@ -219,26 +232,40 @@ export function TenantPlansView() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {confirmAction?.type === "publish" ? (
-                <><Rocket className="h-4 w-4 text-green-600" /> {t("entitlements.tenantPlans.publish") || "Publish"}</>
+                <>
+                  <Rocket className="h-4 w-4 text-green-600" />{" "}
+                  {t("entitlements.tenantPlans.publish") || "Publish"}
+                </>
               ) : (
-                <><Archive className="h-4 w-4 text-amber-600" /> {t("entitlements.tenantPlans.archive") || "Archive"}</>
+                <>
+                  <Archive className="h-4 w-4 text-amber-600" />{" "}
+                  {t("entitlements.tenantPlans.archive") || "Archive"}
+                </>
               )}
             </DialogTitle>
             <DialogDescription>
               {confirmAction?.type === "publish"
-                ? t("entitlements.tenantPlans.publishDesc") || "Make this plan live for subscriptions."
-                : t("entitlements.tenantPlans.archiveDesc") || "Archive this plan. Existing subscriptions are maintained."}
-              <span className="block mt-1 font-medium text-foreground">
+                ? t("entitlements.tenantPlans.publishDesc") ||
+                  "Make this plan live for subscriptions."
+                : t("entitlements.tenantPlans.archiveDesc") ||
+                  "Archive this plan. Existing subscriptions are maintained."}
+              <span className="mt-1 block font-medium text-foreground">
                 {confirmAction?.plan.name}
               </span>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setConfirmAction(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setConfirmAction(null)}>
+              Cancel
+            </Button>
             <Button
               onClick={handleConfirmAction}
               loading={vm.isPublishing || vm.isArchiving}
-              className={confirmAction?.type === "publish" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-amber-600 hover:bg-amber-700 text-white"}
+              className={
+                confirmAction?.type === "publish"
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "bg-amber-600 text-white hover:bg-amber-700"
+              }
             >
               {confirmAction?.type === "publish"
                 ? t("entitlements.tenantPlans.publish") || "Publish"

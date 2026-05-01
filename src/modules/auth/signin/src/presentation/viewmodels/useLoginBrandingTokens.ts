@@ -118,7 +118,7 @@ function parseA11yConfig(tokens: Record<string, string | undefined>): Accessibil
     animationDuration: parseInt(tokens["a11y.animationDuration"] || "200"),
     autoplayDisabled: tokens["a11y.autoplayDisabled"] === "true",
     pauseAnimations: tokens["a11y.pauseAnimations"] === "true",
-    // Content & Media 
+    // Content & Media
     hideImages: tokens["a11y.hideImages"] === "true",
     tooltips: tokens["a11y.tooltips"] === "true",
     // Touch & Target Size
@@ -132,15 +132,14 @@ export function useLoginBrandingTokens({
   slotConfigJson,
   isSafeMode,
 }: LoginBrandingTokensInput): LoginBrandingTokensResult {
-
   // Parse configs (memoized to avoid re-parsing on every render)
   const config = useMemo(
-    () => isSafeMode ? parseLoginBrandingJson(null) : parseLoginBrandingJson(loginBrandingJson),
+    () => (isSafeMode ? parseLoginBrandingJson(null) : parseLoginBrandingJson(loginBrandingJson)),
     [loginBrandingJson, isSafeMode]
   );
 
   const slotConfig = useMemo(
-    () => isSafeMode ? parseSlotConfig(null) : parseSlotConfig(slotConfigJson),
+    () => (isSafeMode ? parseSlotConfig(null) : parseSlotConfig(slotConfigJson)),
     [slotConfigJson, isSafeMode]
   );
 
@@ -170,7 +169,9 @@ export function useLoginBrandingTokens({
     }
 
     // Background image — ALWAYS emit (use 'none' when cleared so preview updates immediately)
-    rootRules.push(`  --login-bg-image: ${tokens["bg.image"] ? `url(${tokens["bg.image"]})` : "none"};`);
+    rootRules.push(
+      `  --login-bg-image: ${tokens["bg.image"] ? `url(${tokens["bg.image"]})` : "none"};`
+    );
     if (tokens["bg.image.fit"]) {
       rootRules.push(`  --login-bg-image-fit: ${tokens["bg.image.fit"]};`);
     }
@@ -185,7 +186,9 @@ export function useLoginBrandingTokens({
     }
 
     // Panel bg image — ALWAYS emit
-    rootRules.push(`  --login-panel-bg-image: ${tokens["panel.bg.image"] ? `url(${tokens["panel.bg.image"]})` : "none"};`);
+    rootRules.push(
+      `  --login-panel-bg-image: ${tokens["panel.bg.image"] ? `url(${tokens["panel.bg.image"]})` : "none"};`
+    );
     if (tokens["panel.bg.image.fit"]) {
       rootRules.push(`  --login-panel-bg-image-fit: ${tokens["panel.bg.image.fit"]};`);
     }
@@ -261,7 +264,9 @@ export function useLoginBrandingTokens({
     }
 
     // Dark bg image — ALWAYS emit
-    darkRules.push(`  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`);
+    darkRules.push(
+      `  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`
+    );
 
     // Dark panel overrides
     const darkPanelColorMap: Record<string, string> = {
@@ -274,7 +279,10 @@ export function useLoginBrandingTokens({
     }
 
     // Dark panel overlay CSS vars — use != null check (not truthiness, "0" is valid)
-    if (tokens["dark.panel.overlay.opacity"] != null && tokens["dark.panel.overlay.opacity"] !== "") {
+    if (
+      tokens["dark.panel.overlay.opacity"] != null &&
+      tokens["dark.panel.overlay.opacity"] !== ""
+    ) {
       darkRules.push(`  --login-panel-overlay-opacity: ${tokens["dark.panel.overlay.opacity"]};`);
     }
     if (tokens["dark.panel.overlay.color"] != null && tokens["dark.panel.overlay.color"] !== "") {
@@ -286,7 +294,9 @@ export function useLoginBrandingTokens({
     if (tokens["dark.panel.bg.gradient"]) {
       darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);
     }
-    darkRules.push(`  --login-panel-bg-image: ${tokens["dark.panel.bg.image"] ? `url(${tokens["dark.panel.bg.image"]})` : "none"};`);
+    darkRules.push(
+      `  --login-panel-bg-image: ${tokens["dark.panel.bg.image"] ? `url(${tokens["dark.panel.bg.image"]})` : "none"};`
+    );
 
     // ─── Build final CSS ───
     const cssBlocks: string[] = [];
@@ -306,7 +316,8 @@ export function useLoginBrandingTokens({
       const r = parseInt(hex.slice(1, 3), 16) / 255;
       const g = parseInt(hex.slice(3, 5), 16) / 255;
       const b = parseInt(hex.slice(5, 7), 16) / 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
       const l = (max + min) / 2;
       if (max === min) return `0 0% ${Math.round(l * 100)}%`;
       const d = max - min;
@@ -461,7 +472,8 @@ export function useLoginBrandingTokens({
 
     // ── 1. Focus Ring ──
     const focusEnabled = tokens["a11y.focusRing.enabled"] !== "false";
-    const focusColor = tokens["a11y.focusRing.color"] || tokens["color.primary"] || "hsl(var(--primary))";
+    const focusColor =
+      tokens["a11y.focusRing.color"] || tokens["color.primary"] || "hsl(var(--primary))";
     const focusWidth = tokens["a11y.focusRing.width"] || "3px";
     const focusStyle = tokens["a11y.focusRing.style"] || "solid";
     if (focusEnabled) {
@@ -948,7 +960,9 @@ export function useLoginBrandingTokens({
     try {
       const raw = loginBrandingJson ? JSON.parse(loginBrandingJson) : {};
       customCss = raw.customCss || "";
-    } catch { /* ignore parse errors */ }
+    } catch {
+      /* ignore parse errors */
+    }
 
     if (!customCss) return;
 
@@ -968,7 +982,7 @@ export function useLoginBrandingTokens({
 
   // ─── Parse accessibility config for DOM rendering ───
   const a11y = useMemo(
-    () => isSafeMode ? parseA11yConfig({}) : parseA11yConfig(config.tokens),
+    () => (isSafeMode ? parseA11yConfig({}) : parseA11yConfig(config.tokens)),
     [config.tokens, isSafeMode]
   );
 

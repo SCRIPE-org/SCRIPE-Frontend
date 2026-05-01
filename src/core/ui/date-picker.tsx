@@ -39,7 +39,6 @@ const MIN_CALENDAR_WIDTH = 320;
 const ESTIMATED_CALENDAR_HEIGHT = 520; // header + calendar grid + time picker + action buttons
 const EDGE_PADDING = 8;
 
-
 function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
   const { triggerRect, calendarRect, calendarContent } = params;
   const viewportWidth = window.innerWidth;
@@ -585,7 +584,7 @@ export function DatePicker({
           labelPosition,
           "top-1/2 -translate-y-1/2 text-muted-foreground/70 text-sm font-medium bg-gradient-to-r from-background to-background px-2 rounded",
           (isFocused || showCalendar) &&
-          "top-0 text-xs text-primary font-semibold scale-90 -translate-y-1/2"
+            "top-0 text-xs text-primary font-semibold scale-90 -translate-y-1/2"
         );
       case "minimal":
         return cn(
@@ -611,8 +610,9 @@ export function DatePicker({
 
   const ariaLabel = useMemo(() => {
     if (value) {
-      return `${placeholder || t("common.selectDate") || "Select date"
-        }: ${formatDisplayValue(value)}`;
+      return `${
+        placeholder || t("common.selectDate") || "Select date"
+      }: ${formatDisplayValue(value)}`;
     }
     return placeholder || t("common.selectDate") || "Select date";
   }, [value, placeholder, formatDisplayValue, t]);
@@ -693,16 +693,19 @@ export function DatePicker({
             aria-modal="true"
             aria-label={t("common.calendarDialog") || "Calendar"}
             className={cn(
-              "pointer-events-auto fixed z-[2147483647] bg-background rounded-lg border shadow-lg",
-              calendarPosition.placement === "top-start" ? "rounded-b-none border-b-0" : "rounded-t-none border-t-0"
+              "pointer-events-auto fixed z-[2147483647] rounded-lg border bg-background shadow-lg",
+              calendarPosition.placement === "top-start"
+                ? "rounded-b-none border-b-0"
+                : "rounded-t-none border-t-0"
             )}
             style={{
               top: `${calendarPosition.top}px`,
               left: `${calendarPosition.left}px`,
               width: `${calendarPosition.width}px`,
               pointerEvents: "auto",
-              transform: `translateZ(0) translateY(${animateOpen ? 0 : calendarPosition.placement === "top-start" ? 6 : -6
-                }px)`,
+              transform: `translateZ(0) translateY(${
+                animateOpen ? 0 : calendarPosition.placement === "top-start" ? 6 : -6
+              }px)`,
               willChange: "transform, opacity",
               opacity: animateOpen ? 1 : 0,
               transition:

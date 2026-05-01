@@ -63,7 +63,9 @@ export function getCustomizationContainer(): CustomizationContainer {
       customizationRepository: new CustomizationRepository(customizationService),
       tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
       menuRepository: new MenuRepository(new MenuService(apiService)),
-      themeMarketplaceRepository: new ThemeMarketplaceRepository(new ThemeMarketplaceService(apiService)),
+      themeMarketplaceRepository: new ThemeMarketplaceRepository(
+        new ThemeMarketplaceService(apiService)
+      ),
       themeBundleRepository: new ThemeBundleRepository(new ThemeBundleService(apiService)),
     };
   }

@@ -22,7 +22,12 @@ import { cn } from "@/core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Grid3X3, Move, ZoomIn, ZoomOut, Magnet, AlertTriangle } from "lucide-react";
 import type { CanvasComponent, PositionMode } from "../../../domain/entities/CanvasComponent";
-import { CANVAS_GRID_COLUMNS, CANVAS_WIDTH, CANVAS_HEIGHT, SNAP_GRID_SIZE } from "../../../domain/entities/CanvasComponent";
+import {
+  CANVAS_GRID_COLUMNS,
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  SNAP_GRID_SIZE,
+} from "../../../domain/entities/CanvasComponent";
 import { GridOverlay } from "./GridOverlay";
 import { DraggableCanvasItem } from "./DraggableCanvasItem";
 
@@ -93,40 +98,40 @@ export function BuilderCanvas({
     if (idx > 0) onSetZoom(ZOOM_STEPS[idx - 1]);
   };
 
-  const isAbsolute = positionMode === 'absolute';
+  const isAbsolute = positionMode === "absolute";
 
   return (
-    <div className={cn("flex flex-col gap-2", fullWidth ? "w-full h-full" : "w-full")}>
+    <div className={cn("flex flex-col gap-2", fullWidth ? "h-full w-full" : "w-full")}>
       {/* ── Toolbar ── */}
       <div className="flex items-center justify-between gap-2 px-1">
         {/* Position mode toggle */}
-        <div className="flex items-center gap-1 bg-muted/40 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 rounded-lg bg-muted/40 p-0.5">
           {/* UI-EXCEPTION: compact studio layout */}
           <button
-            onClick={() => onSetPositionMode('absolute')}
+            onClick={() => onSetPositionMode("absolute")}
             className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
+              "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-all",
               isAbsolute
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             )}
-            title={t('studio.builder.freeForm') || 'Free-form'}
+            title={t("studio.builder.freeForm") || "Free-form"}
           >
             <Move className="h-3 w-3" />
-            <span>{t('studio.builder.freeForm') || 'Free-form'}</span>
+            <span>{t("studio.builder.freeForm") || "Free-form"}</span>
           </button>
           <button
-            onClick={() => onSetPositionMode('grid')}
+            onClick={() => onSetPositionMode("grid")}
             className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
+              "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-all",
               !isAbsolute
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             )}
-            title={t('studio.builder.grid') || 'Grid'}
+            title={t("studio.builder.grid") || "Grid"}
           >
             <Grid3X3 className="h-3 w-3" />
-            <span>{t('studio.builder.grid') || 'Grid'}</span>
+            <span>{t("studio.builder.grid") || "Grid"}</span>
           </button>
         </div>
 
@@ -136,33 +141,33 @@ export function BuilderCanvas({
           <button
             onClick={() => onSetSnapToGrid(!snapToGrid)}
             className={cn(
-              "flex items-center gap-1 px-2 py-1 rounded-md text-[11px] transition-colors",
+              "flex items-center gap-1 rounded-md px-2 py-1 text-[11px] transition-colors",
               snapToGrid
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:text-foreground"
             )}
-            title={t('studio.builder.snapToGrid') || 'Snap to grid'}
+            title={t("studio.builder.snapToGrid") || "Snap to grid"}
           >
             <Magnet className="h-3 w-3" />
             <span className="hidden sm:inline">{SNAP_GRID_SIZE}px</span>
           </button>
 
           {/* Zoom controls */}
-          <div className="flex items-center gap-0.5 bg-muted/30 rounded-md">
+          <div className="flex items-center gap-0.5 rounded-md bg-muted/30">
             <button
               onClick={prevZoom}
               disabled={zoom <= ZOOM_STEPS[0]}
-              className="h-6 w-6 flex items-center justify-center rounded-l-md hover:bg-muted disabled:opacity-30 transition-colors"
+              className="flex h-6 w-6 items-center justify-center rounded-l-md transition-colors hover:bg-muted disabled:opacity-30"
             >
               <ZoomOut className="h-3 w-3" />
             </button>
-            <span className="text-[10px] font-mono w-8 text-center text-muted-foreground">
+            <span className="w-8 text-center font-mono text-[10px] text-muted-foreground">
               {zoom}%
             </span>
             <button
               onClick={nextZoom}
               disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
-              className="h-6 w-6 flex items-center justify-center rounded-r-md hover:bg-muted disabled:opacity-30 transition-colors"
+              className="flex h-6 w-6 items-center justify-center rounded-r-md transition-colors hover:bg-muted disabled:opacity-30"
             >
               <ZoomIn className="h-3 w-3" />
             </button>
@@ -172,9 +177,11 @@ export function BuilderCanvas({
 
       {/* Overlap warning */}
       {overlappingIds.size > 0 && (
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-destructive/10 text-destructive text-[11px]">
+        <div className="flex items-center gap-1.5 rounded-md bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
           <AlertTriangle className="h-3 w-3 flex-shrink-0" />
-          <span>{overlappingIds.size / 2} overlapping component{overlappingIds.size > 2 ? 's' : ''}</span>
+          <span>
+            {overlappingIds.size / 2} overlapping component{overlappingIds.size > 2 ? "s" : ""}
+          </span>
         </div>
       )}
 
@@ -183,7 +190,7 @@ export function BuilderCanvas({
         <div
           style={{
             transform: `scale(${scale})`,
-            transformOrigin: 'top left',
+            transformOrigin: "top left",
             width: isAbsolute ? `${CANVAS_WIDTH}px` : undefined,
             minHeight: isAbsolute ? `${CANVAS_HEIGHT}px` : undefined,
           }}
@@ -191,10 +198,10 @@ export function BuilderCanvas({
           <div
             ref={setNodeRef}
             className={cn(
-              "relative rounded-xl border-2 border-dashed transition-all overflow-hidden",
+              "relative overflow-hidden rounded-xl border-2 border-dashed transition-all",
               isOver
                 ? "border-primary/50 bg-primary/[0.02] shadow-[inset_0_0_40px_rgba(var(--primary-rgb,59,130,246),0.05)]"
-                : "border-border/40 bg-muted/10",
+                : "border-border/40 bg-muted/10"
             )}
             onClick={(e) => {
               if (e.target === e.currentTarget || (e.target as HTMLElement).dataset.canvasArea) {
@@ -212,7 +219,7 @@ export function BuilderCanvas({
             {/* Snap grid for free-form mode */}
             {snapToGrid && isAbsolute && (
               <div
-                className="absolute inset-0 pointer-events-none z-0 opacity-[0.04]"
+                className="pointer-events-none absolute inset-0 z-0 opacity-[0.04]"
                 style={{
                   backgroundImage: `
                     linear-gradient(to right, currentColor 1px, transparent 1px),
@@ -226,7 +233,7 @@ export function BuilderCanvas({
             {/* Column number labels (top) — grid mode only */}
             {snapToGrid && !isAbsolute && (
               <div
-                className="absolute top-0 left-0 right-0 z-10 pointer-events-none"
+                className="pointer-events-none absolute left-0 right-0 top-0 z-10"
                 style={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
@@ -236,7 +243,7 @@ export function BuilderCanvas({
                 {Array.from({ length: CANVAS_GRID_COLUMNS }, (_, i) => (
                   <div
                     key={`col-label-${i}`}
-                    className="flex items-center justify-center h-5 text-[8px] font-mono text-muted-foreground/30"
+                    className="flex h-5 items-center justify-center font-mono text-[8px] text-muted-foreground/30"
                   >
                     {i + 1}
                   </div>
@@ -270,7 +277,7 @@ export function BuilderCanvas({
               (() => {
                 // Sort by grid position (row start, then column start) so
                 // the SortableContext items array matches the visual layout.
-                const parseStart = (s: string) => parseInt(s.split('/')[0]?.trim(), 10) || 1;
+                const parseStart = (s: string) => parseInt(s.split("/")[0]?.trim(), 10) || 1;
                 const gridSorted = [...components].sort((a, b) => {
                   const rowDiff = parseStart(a.gridRow) - parseStart(b.gridRow);
                   if (rowDiff !== 0) return rowDiff;
@@ -278,11 +285,11 @@ export function BuilderCanvas({
                 });
                 return (
                   <SortableContext
-                    items={gridSorted.map(c => c.id)}
+                    items={gridSorted.map((c) => c.id)}
                     strategy={rectSortingStrategy}
                   >
                     <div
-                      className="relative z-20 w-full h-full p-2"
+                      className="relative z-20 h-full w-full p-2"
                       style={{
                         display: "grid",
                         gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
@@ -311,10 +318,16 @@ export function BuilderCanvas({
 
             {/* Empty state */}
             {components.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center z-30">
+              <div className="absolute inset-0 z-30 flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
-                  <div className="mb-3 mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-muted/40">
-                    <svg className="h-6 w-6 text-muted-foreground/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/40">
+                    <svg
+                      className="h-6 w-6 text-muted-foreground/50"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
                       <rect x="3" y="3" width="18" height="18" rx="2" />
                       <line x1="3" y1="9" x2="21" y2="9" />
                       <line x1="9" y1="3" x2="9" y2="21" />
@@ -323,7 +336,7 @@ export function BuilderCanvas({
                   <p className="text-sm font-medium">
                     {t("studio.builder.canvas.empty") || "Drop components here"}
                   </p>
-                  <p className="text-xs mt-1 text-muted-foreground/60">
+                  <p className="mt-1 text-xs text-muted-foreground/60">
                     {t("studio.builder.canvas.emptyHint") || "Drag from the palette or click +"}
                   </p>
                 </div>
@@ -332,10 +345,10 @@ export function BuilderCanvas({
 
             {/* Drop indicator overlay */}
             {isOver && (
-              <div className="absolute inset-0 z-40 pointer-events-none rounded-xl">
-                <div className="absolute inset-0 border-2 border-primary/40 rounded-xl bg-primary/[0.03]" />
+              <div className="pointer-events-none absolute inset-0 z-40 rounded-xl">
+                <div className="absolute inset-0 rounded-xl border-2 border-primary/40 bg-primary/[0.03]" />
                 {/* Animated pulse */}
-                <div className="absolute inset-0 border-2 border-primary/20 rounded-xl animate-pulse" />
+                <div className="absolute inset-0 animate-pulse rounded-xl border-2 border-primary/20" />
               </div>
             )}
           </div>

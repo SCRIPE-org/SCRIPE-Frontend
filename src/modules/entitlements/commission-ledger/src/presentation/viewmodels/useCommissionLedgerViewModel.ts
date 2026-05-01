@@ -31,24 +31,39 @@ export function useCommissionLedgerViewModel() {
   });
 
   const waiveMutation = useMutation({
-    mutationFn: ({ id, notes }: { id: string; notes: string }) => commissionLedgerRepository.waiveInvoice(id, notes),
+    mutationFn: ({ id, notes }: { id: string; notes: string }) =>
+      commissionLedgerRepository.waiveInvoice(id, notes),
     onSuccess: () => {
-      toast({ title: t("common.success") || "Success", description: t("entitlements.commissionLedger.waived") || "Invoice waived successfully" });
+      toast({
+        title: t("common.success") || "Success",
+        description: t("entitlements.commissionLedger.waived") || "Invoice waived successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
     onError: (error: Error) => {
-      toast({ title: t("common.error") || "Error", description: error.message, variant: "destructive" });
+      toast({
+        title: t("common.error") || "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
   const retryMutation = useMutation({
     mutationFn: (id: string) => commissionLedgerRepository.retryCharge(id),
     onSuccess: () => {
-      toast({ title: t("common.success") || "Success", description: t("entitlements.commissionLedger.retryScheduled") || "Charge retry scheduled" });
+      toast({
+        title: t("common.success") || "Success",
+        description: t("entitlements.commissionLedger.retryScheduled") || "Charge retry scheduled",
+      });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
     onError: (error: Error) => {
-      toast({ title: t("common.error") || "Error", description: error.message, variant: "destructive" });
+      toast({
+        title: t("common.error") || "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -67,7 +82,7 @@ export function useCommissionLedgerViewModel() {
       label: t("entitlements.commissionLedger.collectionMethod") || "Type",
       render: (_value, item) =>
         item.isInstant
-          ? "⚡ Instant"      // Stripe Connect — already collected
+          ? "⚡ Instant" // Stripe Connect — already collected
           : "📋 Post-Billing", // PayPal/Paymob — will be invoiced
     },
     {
@@ -97,7 +112,6 @@ export function useCommissionLedgerViewModel() {
     },
   ];
 
-
   const invoiceColumns: CrudColumn<CommissionInvoice>[] = [
     {
       key: "invoiceNumber",
@@ -106,7 +120,8 @@ export function useCommissionLedgerViewModel() {
     {
       key: "periodStart",
       label: t("entitlements.commissionLedger.period") || "Period",
-      render: (value, item) => `${new Date(value).toLocaleDateString()} - ${new Date(item.periodEnd).toLocaleDateString()}`,
+      render: (value, item) =>
+        `${new Date(value).toLocaleDateString()} - ${new Date(item.periodEnd).toLocaleDateString()}`,
     },
     {
       key: "totalCommission",

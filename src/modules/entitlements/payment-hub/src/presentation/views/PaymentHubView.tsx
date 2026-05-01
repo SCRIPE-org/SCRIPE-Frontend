@@ -84,21 +84,21 @@ export function PaymentHubView() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, index) => (
-          <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => router.push(card.href)}>
+          <Card
+            key={index}
+            className="cursor-pointer transition-shadow hover:shadow-md"
+            onClick={() => router.push(card.href)}
+          >
             <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                {card.icon}
-              </div>
+              <div className="rounded-lg bg-primary/10 p-2">{card.icon}</div>
               <div className="flex-1">
                 <CardTitle className="text-lg">{card.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <CardDescription className="text-sm">
-                {card.description}
-              </CardDescription>
+              <CardDescription className="text-sm">{card.description}</CardDescription>
             </CardContent>
           </Card>
         ))}

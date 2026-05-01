@@ -22,4 +22,3 @@ export function DocsLayout({ children, scope = "technical" }: DocsLayoutProps) {
     </ThemeProvider>
   );
 }
-

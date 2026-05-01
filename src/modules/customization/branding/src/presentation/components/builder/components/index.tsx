@@ -19,16 +19,28 @@ import { Eye, EyeOff, Lock, User, Quote as QuoteIcon, Check } from "lucide-react
 import { useState } from "react";
 
 // ── Logo ────────────────────────────────────────────────
-export function BuilderLogo({ maxWidth = 200, src, shape = 'auto' }: { maxWidth?: number; src?: string; shape?: string; [k: string]: unknown }) {
-  const borderRadius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : shape === 'rounded' ? '8px' : undefined;
+export function BuilderLogo({
+  maxWidth = 200,
+  src,
+  shape = "auto",
+}: {
+  maxWidth?: number;
+  src?: string;
+  shape?: string;
+  [k: string]: unknown;
+}) {
+  const borderRadius =
+    shape === "circle" ? "50%" : shape === "square" ? "0" : shape === "rounded" ? "8px" : undefined;
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex w-full items-center justify-center">
       <img
-        src={resolveFileUrl(src) || '/app-logo.png'}
+        src={resolveFileUrl(src) || "/app-logo.png"}
         alt="Logo"
         className="object-contain"
-        style={{ maxWidth: `${maxWidth}px`, maxHeight: '80px', borderRadius }}
-        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+        style={{ maxWidth: `${maxWidth}px`, maxHeight: "80px", borderRadius }}
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = "none";
+        }}
       />
     </div>
   );
@@ -50,23 +62,27 @@ export function BuilderLoginForm({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="w-full" style={{ maxWidth: 'var(--login-form-width, 380px)' }}>
-      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col" style={{ gap: 'var(--login-element-gap, 16px)' }}>
+    <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="flex flex-col"
+        style={{ gap: "var(--login-element-gap, 16px)" }}
+      >
         {/* Username */}
         <div className="space-y-2">
           <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
             Username
           </Label>
           <div className="relative">
-            <User className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <User className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
             <Input
               placeholder="Enter your username"
               className="ps-9"
               readOnly
               style={{
-                height: 'var(--login-input-height, 44px)',
-                borderRadius: 'var(--login-radius-button, 8px)',
-                borderColor: 'var(--login-border, hsl(var(--border)))',
+                height: "var(--login-input-height, 44px)",
+                borderRadius: "var(--login-radius-button, 8px)",
+                borderColor: "var(--login-border, hsl(var(--border)))",
               }}
             />
           </div>
@@ -78,16 +94,16 @@ export function BuilderLoginForm({
             Password
           </Label>
           <div className="relative">
-            <Lock className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <Lock className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="********"
-              className="ps-9 pe-9"
+              className="pe-9 ps-9"
               readOnly
               style={{
-                height: 'var(--login-input-height, 44px)',
-                borderRadius: 'var(--login-radius-button, 8px)',
-                borderColor: 'var(--login-border, hsl(var(--border)))',
+                height: "var(--login-input-height, 44px)",
+                borderRadius: "var(--login-radius-button, 8px)",
+                borderColor: "var(--login-border, hsl(var(--border)))",
               }}
             />
             <button
@@ -104,13 +120,13 @@ export function BuilderLoginForm({
         {(showRemember || showForgot) && (
           <div className="flex items-center justify-between text-xs">
             {showRemember && (
-              <label className="flex items-center gap-2 cursor-pointer text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+              <label className="flex cursor-pointer items-center gap-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
                 <input type="checkbox" className="h-3.5 w-3.5 rounded" readOnly />
                 Remember me
               </label>
             )}
             {showForgot && (
-              <span className="text-[var(--login-primary,hsl(var(--primary)))] cursor-pointer hover:underline">
+              <span className="cursor-pointer text-[var(--login-primary,hsl(var(--primary)))] hover:underline">
                 Forgot password?
               </span>
             )}
@@ -122,9 +138,9 @@ export function BuilderLoginForm({
           type="submit"
           className="w-full text-sm font-semibold"
           style={{
-            height: 'var(--login-input-height, 44px)',
-            backgroundColor: 'var(--login-primary, hsl(var(--primary)))',
-            borderRadius: 'var(--login-radius-button, 8px)',
+            height: "var(--login-input-height, 44px)",
+            backgroundColor: "var(--login-primary, hsl(var(--primary)))",
+            borderRadius: "var(--login-radius-button, 8px)",
           }}
         >
           Sign In
@@ -133,8 +149,10 @@ export function BuilderLoginForm({
         {/* Register link */}
         {showRegister && (
           <p className="text-center text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            Don&apos;t have an account?{' '}
-            <span className="text-[var(--login-primary,hsl(var(--primary)))] cursor-pointer hover:underline">Register</span>
+            Don&apos;t have an account?{" "}
+            <span className="cursor-pointer text-[var(--login-primary,hsl(var(--primary)))] hover:underline">
+              Register
+            </span>
           </p>
         )}
       </form>
@@ -153,10 +171,20 @@ export function BuilderLoginForm({
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" type="button" className="h-10 text-xs" style={{ borderRadius: 'var(--login-radius-button, 8px)' }}>
+            <Button
+              variant="outline"
+              type="button"
+              className="h-10 text-xs"
+              style={{ borderRadius: "var(--login-radius-button, 8px)" }}
+            >
               Google
             </Button>
-            <Button variant="outline" type="button" className="h-10 text-xs" style={{ borderRadius: 'var(--login-radius-button, 8px)' }}>
+            <Button
+              variant="outline"
+              type="button"
+              className="h-10 text-xs"
+              style={{ borderRadius: "var(--login-radius-button, 8px)" }}
+            >
               Microsoft
             </Button>
           </div>
@@ -168,65 +196,83 @@ export function BuilderLoginForm({
 
 // ── Heading ─────────────────────────────────────────────
 export function BuilderHeading({
-  text = 'Welcome Back',
+  text = "Welcome Back",
   fontSize = 32,
   fontWeight = 700,
-  color = 'inherit',
-}: { text?: string; fontSize?: number; fontWeight?: number; color?: string; [k: string]: unknown }) {
+  color = "inherit",
+}: {
+  text?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  color?: string;
+  [k: string]: unknown;
+}) {
   return (
     <h1
       className="tracking-tight"
       style={{
         fontSize: `${fontSize}px`,
         fontWeight,
-        color: color === 'inherit' ? 'var(--login-text, hsl(var(--foreground)))' : color,
-        fontFamily: 'var(--login-font-heading, inherit)',
+        color: color === "inherit" ? "var(--login-text, hsl(var(--foreground)))" : color,
+        fontFamily: "var(--login-font-heading, inherit)",
       }}
     >
-      {text || 'Welcome Back'}
+      {text || "Welcome Back"}
     </h1>
   );
 }
 
 // ── Subtitle ────────────────────────────────────────────
 export function BuilderSubtitle({
-  text = 'Sign in to continue',
+  text = "Sign in to continue",
   fontSize = 16,
-  color = 'inherit',
-}: { text?: string; fontSize?: number; color?: string; [k: string]: unknown }) {
+  color = "inherit",
+}: {
+  text?: string;
+  fontSize?: number;
+  color?: string;
+  [k: string]: unknown;
+}) {
   return (
     <p
       style={{
         fontSize: `${fontSize}px`,
-        color: color === 'inherit' ? 'var(--login-text-muted, hsl(var(--muted-foreground)))' : color,
+        color:
+          color === "inherit" ? "var(--login-text-muted, hsl(var(--muted-foreground)))" : color,
       }}
     >
-      {text || 'Sign in to continue'}
+      {text || "Sign in to continue"}
     </p>
   );
 }
 
 // ── Social Login ────────────────────────────────────────
 export function BuilderSocialLogin({
-  providers = ['google', 'microsoft'],
-  layout = 'row',
-}: { providers?: string[]; layout?: string; [k: string]: unknown }) {
+  providers = ["google", "microsoft"],
+  layout = "row",
+}: {
+  providers?: string[];
+  layout?: string;
+  [k: string]: unknown;
+}) {
   const providerLabels: Record<string, string> = {
-    google: 'Google',
-    microsoft: 'Microsoft',
-    github: 'GitHub',
-    apple: 'Apple',
+    google: "Google",
+    microsoft: "Microsoft",
+    github: "GitHub",
+    apple: "Apple",
   };
 
   return (
-    <div className={`flex gap-2 w-full ${layout === 'column' ? 'flex-col' : layout === 'grid' ? 'flex-wrap' : 'flex-row'}`}>
-      {(Array.isArray(providers) ? providers : ['google', 'microsoft']).map((p) => (
+    <div
+      className={`flex w-full gap-2 ${layout === "column" ? "flex-col" : layout === "grid" ? "flex-wrap" : "flex-row"}`}
+    >
+      {(Array.isArray(providers) ? providers : ["google", "microsoft"]).map((p) => (
         <Button
           key={p}
           variant="outline"
           type="button"
-          className="flex-1 h-10 text-xs"
-          style={{ borderRadius: 'var(--login-radius-button, 8px)' }}
+          className="h-10 flex-1 text-xs"
+          style={{ borderRadius: "var(--login-radius-button, 8px)" }}
         >
           {providerLabels[p] || p}
         </Button>
@@ -239,25 +285,37 @@ export function BuilderSocialLogin({
 export function BuilderFeatureList({
   items = [],
   maxItems = 6,
-  variant = 'list',
-}: { items?: Array<{ icon?: string; title: string; desc?: string }>; maxItems?: number; variant?: string; [k: string]: unknown }) {
-  const displayItems = (Array.isArray(items) && items.length > 0) ? items.slice(0, maxItems) : [
-    { title: 'Secure & Reliable', desc: 'Enterprise-grade security' },
-    { title: 'Easy to Use', desc: 'Intuitive interface' },
-    { title: 'Fast Performance', desc: 'Lightning-fast responses' },
-  ];
+  variant = "list",
+}: {
+  items?: Array<{ icon?: string; title: string; desc?: string }>;
+  maxItems?: number;
+  variant?: string;
+  [k: string]: unknown;
+}) {
+  const displayItems =
+    Array.isArray(items) && items.length > 0
+      ? items.slice(0, maxItems)
+      : [
+          { title: "Secure & Reliable", desc: "Enterprise-grade security" },
+          { title: "Easy to Use", desc: "Intuitive interface" },
+          { title: "Fast Performance", desc: "Lightning-fast responses" },
+        ];
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="w-full space-y-3">
       {displayItems.map((item, i) => (
         <div key={i} className="flex items-start gap-3">
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/10 mt-0.5">
+          <div className="bg-[var(--login-primary,hsl(var(--primary)))]/10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
             <Check className="h-3.5 w-3.5 text-[var(--login-primary,hsl(var(--primary)))]" />
           </div>
           <div>
-            <p className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">{item.title}</p>
+            <p className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+              {item.title}
+            </p>
             {item.desc && (
-              <p className="text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{item.desc}</p>
+              <p className="text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                {item.desc}
+              </p>
             )}
           </div>
         </div>
@@ -268,25 +326,35 @@ export function BuilderFeatureList({
 
 // ── Testimonial ─────────────────────────────────────────
 export function BuilderTestimonial({
-  quote = 'This product has transformed how we work. Absolutely amazing experience.',
-  author = 'Jane Smith',
-  role = 'CEO, TechCorp',
-}: { quote?: string; author?: string; role?: string; avatar?: string; [k: string]: unknown }) {
+  quote = "This product has transformed how we work. Absolutely amazing experience.",
+  author = "Jane Smith",
+  role = "CEO, TechCorp",
+}: {
+  quote?: string;
+  author?: string;
+  role?: string;
+  avatar?: string;
+  [k: string]: unknown;
+}) {
   return (
-    <div className="w-full rounded-lg border border-[var(--login-border,hsl(var(--border)))]/50 p-4 bg-[var(--login-surface,hsl(var(--background)))]/50">
-      <QuoteIcon className="h-5 w-5 text-[var(--login-primary,hsl(var(--primary)))]/40 mb-2" />
-      <p className="text-sm italic text-[var(--login-text,hsl(var(--foreground)))] leading-relaxed">
-        &ldquo;{quote || 'This product has transformed how we work.'}&rdquo;
+    <div className="border-[var(--login-border,hsl(var(--border)))]/50 bg-[var(--login-surface,hsl(var(--background)))]/50 w-full rounded-lg border p-4">
+      <QuoteIcon className="text-[var(--login-primary,hsl(var(--primary)))]/40 mb-2 h-5 w-5" />
+      <p className="text-sm italic leading-relaxed text-[var(--login-text,hsl(var(--foreground)))]">
+        &ldquo;{quote || "This product has transformed how we work."}&rdquo;
       </p>
       <div className="mt-3 flex items-center gap-2">
-        <div className="h-8 w-8 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/20 flex items-center justify-center">
+        <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 flex h-8 w-8 items-center justify-center rounded-full">
           <span className="text-xs font-bold text-[var(--login-primary,hsl(var(--primary)))]">
-            {(author || 'JS')[0]}
+            {(author || "JS")[0]}
           </span>
         </div>
         <div>
-          <p className="text-xs font-medium text-[var(--login-text,hsl(var(--foreground)))]">{author || 'Jane Smith'}</p>
-          <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{role || 'CEO'}</p>
+          <p className="text-xs font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            {author || "Jane Smith"}
+          </p>
+          <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+            {role || "CEO"}
+          </p>
         </div>
       </div>
     </div>
@@ -295,17 +363,27 @@ export function BuilderTestimonial({
 
 // ── Image ───────────────────────────────────────────────
 export function BuilderImage({
-  src = '',
-  alt = '',
-  objectFit = 'cover',
-  maxWidth = '100%',
+  src = "",
+  alt = "",
+  objectFit = "cover",
+  maxWidth = "100%",
   borderRadius = 8,
-}: { src?: string; alt?: string; objectFit?: string; maxWidth?: string | number; borderRadius?: number; [k: string]: unknown }) {
+}: {
+  src?: string;
+  alt?: string;
+  objectFit?: string;
+  maxWidth?: string | number;
+  borderRadius?: number;
+  [k: string]: unknown;
+}) {
   if (!src) {
     return (
       <div
-        className="w-full h-32 bg-muted/40 border border-dashed border-border rounded-lg flex items-center justify-center"
-        style={{ borderRadius: `${borderRadius}px`, maxWidth: typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth }}
+        className="flex h-32 w-full items-center justify-center rounded-lg border border-dashed border-border bg-muted/40"
+        style={{
+          borderRadius: `${borderRadius}px`,
+          maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
+        }}
       >
         <span className="text-xs text-muted-foreground">Image Placeholder</span>
       </div>
@@ -315,10 +393,10 @@ export function BuilderImage({
     <img
       src={resolveFileUrl(src)}
       alt={alt}
-      className="w-full h-auto"
+      className="h-auto w-full"
       style={{
-        objectFit: objectFit as React.CSSProperties['objectFit'],
-        maxWidth: typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth,
+        objectFit: objectFit as React.CSSProperties["objectFit"],
+        maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
         borderRadius: `${borderRadius}px`,
       }}
     />
@@ -327,40 +405,56 @@ export function BuilderImage({
 
 // ── CTA Button ──────────────────────────────────────────
 export function BuilderCtaButton({
-  label = 'Get Started',
-  url = '',
-  variant = 'default',
-  size = 'md',
-}: { label?: string; url?: string; variant?: string; size?: string; [k: string]: unknown }) {
-  const h = size === 'sm' ? '36px' : size === 'lg' ? '48px' : '40px';
+  label = "Get Started",
+  url = "",
+  variant = "default",
+  size = "md",
+}: {
+  label?: string;
+  url?: string;
+  variant?: string;
+  size?: string;
+  [k: string]: unknown;
+}) {
+  const h = size === "sm" ? "36px" : size === "lg" ? "48px" : "40px";
   return (
     <Button
-      variant={variant as 'default' | 'outline' | 'ghost'}
+      variant={variant as "default" | "outline" | "ghost"}
       className="text-sm font-semibold"
       style={{
         height: h,
-        borderRadius: 'var(--login-radius-button, 8px)',
-        ...(variant === 'default' ? { backgroundColor: 'var(--login-primary, hsl(var(--primary)))' } : {}),
+        borderRadius: "var(--login-radius-button, 8px)",
+        ...(variant === "default"
+          ? { backgroundColor: "var(--login-primary, hsl(var(--primary)))" }
+          : {}),
       }}
       onClick={(e) => e.preventDefault()}
     >
-      {label || 'Get Started'}
+      {label || "Get Started"}
     </Button>
   );
 }
 
 // ── Divider ─────────────────────────────────────────────
 export function BuilderDivider({
-  style = 'line',
-  color = 'inherit',
-}: { style?: string; color?: string; [k: string]: unknown }) {
-  const borderColor = color === 'inherit' ? 'var(--login-border, hsl(var(--border)))' : color;
-  if (style === 'space') return <div className="w-full h-8" />;
-  if (style === 'dots') {
+  style = "line",
+  color = "inherit",
+}: {
+  style?: string;
+  color?: string;
+  [k: string]: unknown;
+}) {
+  const borderColor = color === "inherit" ? "var(--login-border, hsl(var(--border)))" : color;
+  if (style === "space") return <div className="h-8 w-full" />;
+  if (style === "dots") {
     return (
-      <div className="w-full flex items-center justify-center gap-1 py-2">
-        {[0, 1, 2].map(i => (
-          <div key={i} className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: borderColor }} />
+      <div className="flex w-full items-center justify-center gap-1 py-2">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="h-1.5 w-1.5 rounded-full"
+            style={{ backgroundColor: borderColor }}
+          />
         ))}
       </div>
     );
@@ -371,19 +465,25 @@ export function BuilderDivider({
 // ── Footer ──────────────────────────────────────────────
 export function BuilderFooter({
   links = [],
-}: { links?: Array<{ label: string; url: string }>; [k: string]: unknown }) {
-  const displayLinks = (Array.isArray(links) && links.length > 0) ? links : [
-    { label: 'Privacy', url: '#' },
-    { label: 'Terms', url: '#' },
-    { label: 'Support', url: '#' },
-  ];
+}: {
+  links?: Array<{ label: string; url: string }>;
+  [k: string]: unknown;
+}) {
+  const displayLinks =
+    Array.isArray(links) && links.length > 0
+      ? links
+      : [
+          { label: "Privacy", url: "#" },
+          { label: "Terms", url: "#" },
+          { label: "Support", url: "#" },
+        ];
 
   return (
-    <div className="w-full flex items-center justify-center gap-4">
+    <div className="flex w-full items-center justify-center gap-4">
       {displayLinks.map((link, i) => (
         <span
           key={i}
-          className="text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:text-[var(--login-primary,hsl(var(--primary)))] cursor-pointer transition-colors"
+          className="cursor-pointer text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))] transition-colors hover:text-[var(--login-primary,hsl(var(--primary)))]"
         >
           {link.label}
         </span>
@@ -394,18 +494,23 @@ export function BuilderFooter({
 
 // ── Copyright ───────────────────────────────────────────
 export function BuilderCopyright({
-  text = '',
-  year = 'auto',
+  text = "",
+  year = "auto",
   poweredBy = false,
-}: { text?: string; year?: string; poweredBy?: boolean; [k: string]: unknown }) {
-  const displayYear = year === 'auto' ? new Date().getFullYear() : year;
+}: {
+  text?: string;
+  year?: string;
+  poweredBy?: boolean;
+  [k: string]: unknown;
+}) {
+  const displayYear = year === "auto" ? new Date().getFullYear() : year;
   return (
     <div className="w-full text-center">
       <p className="text-[11px] text-[var(--login-text-muted,hsl(var(--muted-foreground))/50)]">
         {text || `© ${displayYear} Company Name`}
       </p>
       {poweredBy && (
-        <p className="text-[9px] text-[var(--login-text-muted,hsl(var(--muted-foreground))/30)] mt-1">
+        <p className="mt-1 text-[9px] text-[var(--login-text-muted,hsl(var(--muted-foreground))/30)]">
           Powered by NEXORA
         </p>
       )}
@@ -439,19 +544,28 @@ const CUSTOM_HTML_RESET = `
 .nexora-custom-html hr { border: none; border-top: 1px solid #d1d5db; margin: 1.5em 0; }
 `;
 
-export function BuilderCustomHtml({ content = '', css = '' }: { content?: string; css?: string; [k: string]: unknown }) {
+export function BuilderCustomHtml({
+  content = "",
+  css = "",
+}: {
+  content?: string;
+  css?: string;
+  [k: string]: unknown;
+}) {
   if (!content && !css) {
     return (
-      <div className="w-full p-4 border border-dashed border-amber-500/30 rounded-lg bg-amber-500/5">
+      <div className="w-full rounded-lg border border-dashed border-amber-500/30 bg-amber-500/5 p-4">
         <p className="text-xs text-amber-600">Custom HTML Block</p>
-        <p className="text-[10px] text-muted-foreground mt-1">Edit HTML &amp; CSS in the properties panel using the code editor.</p>
+        <p className="mt-1 text-[10px] text-muted-foreground">
+          Edit HTML &amp; CSS in the properties panel using the code editor.
+        </p>
       </div>
     );
   }
   // NOTE: In production, sanitize via DOMPurify
   return (
     <div className="nexora-custom-html w-full">
-      <style dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + (css || '') }} />
+      <style dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + (css || "") }} />
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );
@@ -459,14 +573,20 @@ export function BuilderCustomHtml({ content = '', css = '' }: { content?: string
 
 // ── Video Background ────────────────────────────────────
 export function BuilderVideoBg({
-  src = '',
-  poster = '',
+  src = "",
+  poster = "",
   autoplay = true,
   muted = true,
-}: { src?: string; poster?: string; autoplay?: boolean; muted?: boolean; [k: string]: unknown }) {
+}: {
+  src?: string;
+  poster?: string;
+  autoplay?: boolean;
+  muted?: boolean;
+  [k: string]: unknown;
+}) {
   if (!src) {
     return (
-      <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-violet-500/10 to-blue-500/10 rounded-lg flex items-center justify-center border border-dashed border-violet-500/30">
+      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-blue-500/10">
         <p className="text-xs text-violet-500">Video Background — Set a URL to preview</p>
       </div>
     );
@@ -479,7 +599,7 @@ export function BuilderVideoBg({
       muted={muted}
       loop
       playsInline
-      className="w-full h-full object-cover rounded-lg"
+      className="h-full w-full rounded-lg object-cover"
     />
   );
 }
@@ -487,37 +607,48 @@ export function BuilderVideoBg({
 // ── Forgot Password Form ────────────────────────────────
 export function BuilderForgotForm({
   showBackToLogin = true,
-}: { showBackToLogin?: boolean; [k: string]: unknown }) {
+}: {
+  showBackToLogin?: boolean;
+  [k: string]: unknown;
+}) {
   return (
-    <div className="w-full" style={{ maxWidth: 'var(--login-form-width, 380px)' }}>
-      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col" style={{ gap: 'var(--login-element-gap, 16px)' }}>
-        <div className="text-center mb-2">
-          <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">Forgot Password</h3>
-          <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] mt-1">
+    <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="flex flex-col"
+        style={{ gap: "var(--login-element-gap, 16px)" }}
+      >
+        <div className="mb-2 text-center">
+          <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+            Forgot Password
+          </h3>
+          <p className="mt-1 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
             Enter your email to receive a reset link
           </p>
         </div>
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">Email Address</Label>
+          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            Email Address
+          </Label>
           <Input
             type="email"
             placeholder="you@example.com"
             className="h-10 ps-3 text-sm"
             style={{
-              borderRadius: 'var(--login-field-radius, 6px)',
-              background: 'var(--login-input-bg, hsl(var(--background)))',
-              borderColor: 'var(--login-input-border, hsl(var(--border)))',
-              color: 'var(--login-text, hsl(var(--foreground)))',
+              borderRadius: "var(--login-field-radius, 6px)",
+              background: "var(--login-input-bg, hsl(var(--background)))",
+              borderColor: "var(--login-input-border, hsl(var(--border)))",
+              color: "var(--login-text, hsl(var(--foreground)))",
             }}
           />
         </div>
         <Button
           type="submit"
-          className="w-full h-10 font-medium"
+          className="h-10 w-full font-medium"
           style={{
-            borderRadius: 'var(--login-button-radius, var(--login-field-radius, 6px))',
-            background: 'var(--login-button-bg, hsl(var(--primary)))',
-            color: 'var(--login-button-text, hsl(var(--primary-foreground)))',
+            borderRadius: "var(--login-button-radius, var(--login-field-radius, 6px))",
+            background: "var(--login-button-bg, hsl(var(--primary)))",
+            color: "var(--login-button-text, hsl(var(--primary-foreground)))",
           }}
         >
           Send Reset Link
@@ -535,61 +666,76 @@ export function BuilderForgotForm({
 // ── Reset Password Form ─────────────────────────────────
 export function BuilderResetForm({
   showPasswordStrength = true,
-}: { showPasswordStrength?: boolean; [k: string]: unknown }) {
+}: {
+  showPasswordStrength?: boolean;
+  [k: string]: unknown;
+}) {
   return (
-    <div className="w-full" style={{ maxWidth: 'var(--login-form-width, 380px)' }}>
-      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col" style={{ gap: 'var(--login-element-gap, 16px)' }}>
-        <div className="text-center mb-2">
-          <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">Reset Password</h3>
-          <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] mt-1">
+    <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="flex flex-col"
+        style={{ gap: "var(--login-element-gap, 16px)" }}
+      >
+        <div className="mb-2 text-center">
+          <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+            Reset Password
+          </h3>
+          <p className="mt-1 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
             Create a new secure password
           </p>
         </div>
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">New Password</Label>
+          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            New Password
+          </Label>
           <Input
             type="password"
             placeholder="••••••••"
             className="h-10 ps-3 text-sm"
             style={{
-              borderRadius: 'var(--login-field-radius, 6px)',
-              background: 'var(--login-input-bg, hsl(var(--background)))',
-              borderColor: 'var(--login-input-border, hsl(var(--border)))',
-              color: 'var(--login-text, hsl(var(--foreground)))',
+              borderRadius: "var(--login-field-radius, 6px)",
+              background: "var(--login-input-bg, hsl(var(--background)))",
+              borderColor: "var(--login-input-border, hsl(var(--border)))",
+              color: "var(--login-text, hsl(var(--foreground)))",
             }}
           />
         </div>
         {showPasswordStrength && (
           <div className="space-y-1">
             <div className="flex gap-1">
-              {[1, 2, 3, 4].map(i => (
+              {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="h-1 flex-1 rounded-full bg-muted" />
               ))}
             </div>
-            <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">Password strength indicator</p>
+            <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+              Password strength indicator
+            </p>
           </div>
         )}
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">Confirm Password</Label>
+          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            Confirm Password
+          </Label>
           <Input
             type="password"
             placeholder="••••••••"
             className="h-10 ps-3 text-sm"
             style={{
-              borderRadius: 'var(--login-field-radius, 6px)',
-              background: 'var(--login-input-bg, hsl(var(--background)))',
-              borderColor: 'var(--login-input-border, hsl(var(--border)))',
-              color: 'var(--login-text, hsl(var(--foreground)))',
+              borderRadius: "var(--login-field-radius, 6px)",
+              background: "var(--login-input-bg, hsl(var(--background)))",
+              borderColor: "var(--login-input-border, hsl(var(--border)))",
+              color: "var(--login-text, hsl(var(--foreground)))",
             }}
           />
         </div>
         <Button
           type="submit"
-          className="w-full h-10 font-medium"
+          className="h-10 w-full font-medium"
           style={{
-            borderRadius: 'var(--login-button-radius, var(--login-field-radius, 6px))',
-            background: 'var(--login-button-bg, hsl(var(--primary)))',
-            color: 'var(--login-button-text, hsl(var(--primary-foreground)))',
+            borderRadius: "var(--login-button-radius, var(--login-field-radius, 6px))",
+            background: "var(--login-button-bg, hsl(var(--primary)))",
+            color: "var(--login-button-text, hsl(var(--primary-foreground)))",
           }}
         >
           Reset Password

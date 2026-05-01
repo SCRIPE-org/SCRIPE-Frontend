@@ -35,4 +35,3 @@ export { ThemeGalleryView } from "./src/presentation/views/ThemeGalleryView";
 export { ThemeMarketplacePanel } from "./src/presentation/components/ThemeMarketplacePanel";
 export { ThemeDetailModal } from "./src/presentation/components/ThemeDetailModal";
 export { useThemeMarketplace } from "./src/presentation/hooks/useThemeMarketplace";
-

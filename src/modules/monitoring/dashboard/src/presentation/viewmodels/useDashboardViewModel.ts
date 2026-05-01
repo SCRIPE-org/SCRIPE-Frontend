@@ -18,8 +18,7 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 // Every key includes tenantId so caching is tenant-aware
 export const dashboardKeys = {
   all: (tenantId: string | null) => ["dashboard", tenantId ?? "system"] as const,
-  summary: (tenantId: string | null) =>
-    [...dashboardKeys.all(tenantId), "summary"] as const,
+  summary: (tenantId: string | null) => [...dashboardKeys.all(tenantId), "summary"] as const,
   loginActivity: (days: number, tenantId: string | null) =>
     [...dashboardKeys.all(tenantId), "login-activity", days] as const,
   recentChanges: (limit: number, tenantId: string | null) =>
@@ -109,12 +108,7 @@ export function useDashboardViewModel() {
       loginActivity.isError ||
       recentChanges.isError ||
       eventDistribution.isError,
-    [
-      summary.isError,
-      loginActivity.isError,
-      recentChanges.isError,
-      eventDistribution.isError,
-    ]
+    [summary.isError, loginActivity.isError, recentChanges.isError, eventDistribution.isError]
   );
 
   const refetchAll = useCallback(() => {
@@ -122,13 +116,7 @@ export function useDashboardViewModel() {
     loginActivity.refetch();
     recentChanges.refetch();
     eventDistribution.refetch();
-
-  }, [
-    summary,
-    loginActivity,
-    recentChanges,
-    eventDistribution,
-  ]);
+  }, [summary, loginActivity, recentChanges, eventDistribution]);
 
   return {
     summary,

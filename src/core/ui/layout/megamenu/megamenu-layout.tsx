@@ -87,9 +87,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
         <div className="flex h-14 items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-4">
             <Logo size="sm" />
-            <span className="hidden text-sm font-bold text-foreground md:block">
-              {appName}
-            </span>
+            <span className="hidden text-sm font-bold text-foreground md:block">{appName}</span>
           </div>
 
           {/* Desktop nav items */}

@@ -2,33 +2,65 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "apiReference.systemApi.intro" },
+  { type: "paragraph", contentKey: "apiReference.systemApi.intro" },
 
-      // ─── Dashboard ────────────────────────────────────────────
+  // ─── Dashboard ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.dashboardTitle",
+    id: "dashboard",
+  },
+  { type: "paragraph", contentKey: "apiReference.systemApi.dashboardIntro" },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.dashboardTitle", id: "dashboard",
+        method: "GET",
+        path: "/api/v1/dashboard/summary",
+        descriptionKey: "apiReference.systemApi.summaryDesc",
+        auth: "dashboard.view",
       },
-      { type: "paragraph", contentKey: "apiReference.systemApi.dashboardIntro" },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/api/v1/dashboard/summary", descriptionKey: "apiReference.systemApi.summaryDesc", auth: "dashboard.view" },
-                  { method: "GET", path: "/api/v1/dashboard/login-activity", descriptionKey: "apiReference.systemApi.loginActivityDesc", auth: "dashboard.view" },
-                  { method: "GET", path: "/api/v1/dashboard/recent-changes", descriptionKey: "apiReference.systemApi.recentChangesDesc", auth: "dashboard.view" },
-                  { method: "GET", path: "/api/v1/dashboard/event-distribution", descriptionKey: "apiReference.systemApi.eventDistDesc", auth: "dashboard.view" },
-                  { method: "GET", path: "/api/v1/dashboard/security-events", descriptionKey: "apiReference.systemApi.securityEventsDesc", auth: "dashboard.view" },
-                  { method: "GET", path: "/api/v1/dashboard/top-blocked-ips", descriptionKey: "apiReference.systemApi.blockedIpsDesc", auth: "dashboard.view" },
-            ],
+        method: "GET",
+        path: "/api/v1/dashboard/login-activity",
+        descriptionKey: "apiReference.systemApi.loginActivityDesc",
+        auth: "dashboard.view",
       },
       {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "KPI Summary",
-                        language: "json",
-                        filename: "GET /dashboard/summary — Response",
-                        code: `{
+        method: "GET",
+        path: "/api/v1/dashboard/recent-changes",
+        descriptionKey: "apiReference.systemApi.recentChangesDesc",
+        auth: "dashboard.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/dashboard/event-distribution",
+        descriptionKey: "apiReference.systemApi.eventDistDesc",
+        auth: "dashboard.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/dashboard/security-events",
+        descriptionKey: "apiReference.systemApi.securityEventsDesc",
+        auth: "dashboard.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/dashboard/top-blocked-ips",
+        descriptionKey: "apiReference.systemApi.blockedIpsDesc",
+        auth: "dashboard.view",
+      },
+    ],
+  },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "KPI Summary",
+        language: "json",
+        filename: "GET /dashboard/summary — Response",
+        code: `{
   "totalAdmins": 25,
   "activeAdmins": 22,
   "totalUsers": 1500,
@@ -41,12 +73,12 @@ const sections: DocSection[] = [
   "storageUsedMB": 2400,
   "pendingNotifications": 12
 }`,
-                  },
-                  {
-                        label: "Login Activity",
-                        language: "json",
-                        filename: "GET /dashboard/login-activity?period=7d",
-                        code: `{
+      },
+      {
+        label: "Login Activity",
+        language: "json",
+        filename: "GET /dashboard/login-activity?period=7d",
+        code: `{
   "period": "7d",
   "data": [
     { "date": "2026-02-14", "successful": 42, "failed": 2 },
@@ -58,12 +90,12 @@ const sections: DocSection[] = [
     { "date": "2026-02-20", "successful": 33, "failed": 0 }
   ]
 }`,
-                  },
-                  {
-                        label: "Security Events",
-                        language: "json",
-                        filename: "GET /dashboard/security-events",
-                        code: `{
+      },
+      {
+        label: "Security Events",
+        language: "json",
+        filename: "GET /dashboard/security-events",
+        code: `{
   "threats": 12,
   "failedLogins": 15,
   "blockedIPs": 3,
@@ -83,57 +115,121 @@ const sections: DocSection[] = [
     }
   ]
 }`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── Dashboard Export ─────────────────────────────────────
+  // ─── Dashboard Export ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.dashboardExportTitle",
+    id: "dashboard-export",
+  },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.dashboardExportTitle", id: "dashboard-export",
+        method: "GET",
+        path: "/api/v1/dashboard/export/overview",
+        descriptionKey: "apiReference.systemApi.exportOverviewDesc",
+        auth: "dashboard.export",
       },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/api/v1/dashboard/export/overview", descriptionKey: "apiReference.systemApi.exportOverviewDesc", auth: "dashboard.export" },
-                  { method: "GET", path: "/api/v1/dashboard/export/analytics", descriptionKey: "apiReference.systemApi.exportAnalyticsDesc", auth: "dashboard.export" },
-                  { method: "GET", path: "/api/v1/dashboard/export/security", descriptionKey: "apiReference.systemApi.exportSecurityDesc", auth: "dashboard.export" },
-            ],
+        method: "GET",
+        path: "/api/v1/dashboard/export/analytics",
+        descriptionKey: "apiReference.systemApi.exportAnalyticsDesc",
+        auth: "dashboard.export",
       },
       {
-            type: "table",
-            headers: ["Parameter", "Values", "Description"],
-            rows: [
-                  ["format", "csv, excel, pdf", "Export file format"],
-                  ["period", "7d, 30d, 90d, 1y", "Date range for data"],
-                  ["includeCharts", "true/false", "Include chart images (PDF only)"],
-            ],
+        method: "GET",
+        path: "/api/v1/dashboard/export/security",
+        descriptionKey: "apiReference.systemApi.exportSecurityDesc",
+        auth: "dashboard.export",
       },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Parameter", "Values", "Description"],
+    rows: [
+      ["format", "csv, excel, pdf", "Export file format"],
+      ["period", "7d, 30d, 90d, 1y", "Date range for data"],
+      ["includeCharts", "true/false", "Include chart images (PDF only)"],
+    ],
+  },
 
-      // ─── Menu Management ──────────────────────────────────────
+  // ─── Menu Management ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.menuTitle",
+    id: "menus",
+  },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.menuTitle", id: "menus",
+        method: "GET",
+        path: "/api/v1/menus",
+        descriptionKey: "apiReference.systemApi.listMenusDesc",
+        auth: "menus.view",
       },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/api/v1/menus", descriptionKey: "apiReference.systemApi.listMenusDesc", auth: "menus.view" },
-                  { method: "GET", path: "/api/v1/menus/my-menu", descriptionKey: "apiReference.systemApi.myMenuDesc", auth: "Bearer Token" },
-                  { method: "POST", path: "/api/v1/menus", descriptionKey: "apiReference.systemApi.createMenuDesc", auth: "menus.create" },
-                  { method: "PUT", path: "/api/v1/menus/{id}", descriptionKey: "apiReference.systemApi.updateMenuDesc", auth: "menus.update" },
-                  { method: "DELETE", path: "/api/v1/menus/{id}", descriptionKey: "apiReference.systemApi.deleteMenuDesc", auth: "menus.delete" },
-                  { method: "PUT", path: "/api/v1/menus/reorder", descriptionKey: "apiReference.systemApi.reorderMenuDesc", auth: "menus.update" },
-                  { method: "PUT", path: "/api/v1/menus/{id}/role-visibility", descriptionKey: "apiReference.systemApi.roleVisibilityDesc", auth: "menus.update" },
-                  { method: "PUT", path: "/api/v1/menus/{id}/tenant-override", descriptionKey: "apiReference.systemApi.tenantOverrideDesc", auth: "menus.update" },
-                  { method: "GET", path: "/api/v1/menus/my-overrides", descriptionKey: "apiReference.systemApi.myOverridesDesc", auth: "Bearer Token" },
-            ],
+        method: "GET",
+        path: "/api/v1/menus/my-menu",
+        descriptionKey: "apiReference.systemApi.myMenuDesc",
+        auth: "Bearer Token",
       },
       {
-            type: "code",
-            language: "json",
-            filename: "GET /menus/my-menu — Personalized Menu Tree",
-            code: `[
+        method: "POST",
+        path: "/api/v1/menus",
+        descriptionKey: "apiReference.systemApi.createMenuDesc",
+        auth: "menus.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/menus/{id}",
+        descriptionKey: "apiReference.systemApi.updateMenuDesc",
+        auth: "menus.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/menus/{id}",
+        descriptionKey: "apiReference.systemApi.deleteMenuDesc",
+        auth: "menus.delete",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/menus/reorder",
+        descriptionKey: "apiReference.systemApi.reorderMenuDesc",
+        auth: "menus.update",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/menus/{id}/role-visibility",
+        descriptionKey: "apiReference.systemApi.roleVisibilityDesc",
+        auth: "menus.update",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/menus/{id}/tenant-override",
+        descriptionKey: "apiReference.systemApi.tenantOverrideDesc",
+        auth: "menus.update",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/menus/my-overrides",
+        descriptionKey: "apiReference.systemApi.myOverridesDesc",
+        auth: "Bearer Token",
+      },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "GET /menus/my-menu — Personalized Menu Tree",
+    code: `[
   {
     "id": "menu-1",
     "title": "Dashboard",
@@ -154,26 +250,43 @@ const sections: DocSection[] = [
     ]
   }
 ]`,
-      },
+  },
 
-      // ─── Recycle Bin ──────────────────────────────────────────
+  // ─── Recycle Bin ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.recycleBinTitle",
+    id: "recycle-bin",
+  },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.recycleBinTitle", id: "recycle-bin",
+        method: "GET",
+        path: "/api/v1/recycle-bin",
+        descriptionKey: "apiReference.systemApi.listDeletedDesc",
+        auth: "recyclebin.view",
       },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/api/v1/recycle-bin", descriptionKey: "apiReference.systemApi.listDeletedDesc", auth: "recyclebin.view" },
-                  { method: "POST", path: "/api/v1/recycle-bin/{id}/restore", descriptionKey: "apiReference.systemApi.restoreDesc", auth: "recyclebin.restore" },
-                  { method: "DELETE", path: "/api/v1/recycle-bin/{id}", descriptionKey: "apiReference.systemApi.purgeDesc", auth: "recyclebin.purge" },
-            ],
+        method: "POST",
+        path: "/api/v1/recycle-bin/{id}/restore",
+        descriptionKey: "apiReference.systemApi.restoreDesc",
+        auth: "recyclebin.restore",
       },
       {
-            type: "code",
-            language: "json",
-            filename: "GET /recycle-bin — Deleted Items",
-            code: `{
+        method: "DELETE",
+        path: "/api/v1/recycle-bin/{id}",
+        descriptionKey: "apiReference.systemApi.purgeDesc",
+        auth: "recyclebin.purge",
+      },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "GET /recycle-bin — Deleted Items",
+    code: `{
   "items": [
     {
       "id": "entity-uuid",
@@ -186,66 +299,112 @@ const sections: DocSection[] = [
   ],
   "totalCount": 5
 }`,
-      },
+  },
 
-      // ─── File Management ──────────────────────────────────────
+  // ─── File Management ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.filesTitle",
+    id: "files",
+  },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.filesTitle", id: "files",
+        method: "POST",
+        path: "/api/v1/files/upload",
+        descriptionKey: "apiReference.systemApi.uploadDesc",
+        auth: "Bearer Token",
       },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "POST", path: "/api/v1/files/upload", descriptionKey: "apiReference.systemApi.uploadDesc", auth: "Bearer Token" },
-                  { method: "GET", path: "/api/v1/files/{id}", descriptionKey: "apiReference.systemApi.downloadDesc", auth: "Bearer Token" },
-                  { method: "DELETE", path: "/api/v1/files/{id}", descriptionKey: "apiReference.systemApi.deleteFileDesc", auth: "files.delete" },
-            ],
+        method: "GET",
+        path: "/api/v1/files/{id}",
+        descriptionKey: "apiReference.systemApi.downloadDesc",
+        auth: "Bearer Token",
       },
       {
-            type: "table",
-            headers: ["Constraint", "Value"],
-            rows: [
-                  ["Max file size", "10 MB (configurable)"],
-                  ["Max image dimensions", "4096 x 4096 px"],
-                  ["Allowed image types", "jpg, jpeg, png, gif, webp, svg"],
-                  ["Allowed document types", "pdf, doc, docx, xls, xlsx, csv"],
-                  ["Avatar max size", "2 MB"],
-                  ["Tenant logo max size", "5 MB"],
-                  ["Storage providers", "Local, Azure Blob, AWS S3, MinIO"],
-            ],
+        method: "DELETE",
+        path: "/api/v1/files/{id}",
+        descriptionKey: "apiReference.systemApi.deleteFileDesc",
+        auth: "files.delete",
       },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Constraint", "Value"],
+    rows: [
+      ["Max file size", "10 MB (configurable)"],
+      ["Max image dimensions", "4096 x 4096 px"],
+      ["Allowed image types", "jpg, jpeg, png, gif, webp, svg"],
+      ["Allowed document types", "pdf, doc, docx, xls, xlsx, csv"],
+      ["Avatar max size", "2 MB"],
+      ["Tenant logo max size", "5 MB"],
+      ["Storage providers", "Local, Azure Blob, AWS S3, MinIO"],
+    ],
+  },
 
-      // ─── Settings ─────────────────────────────────────────────
+  // ─── Settings ─────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.settingsTitle",
+    id: "settings",
+  },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.settingsTitle", id: "settings",
+        method: "GET",
+        path: "/api/v1/settings",
+        descriptionKey: "apiReference.systemApi.getSettingsDesc",
+        auth: "settings.view",
       },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/api/v1/settings", descriptionKey: "apiReference.systemApi.getSettingsDesc", auth: "settings.view" },
-                  { method: "PUT", path: "/api/v1/settings", descriptionKey: "apiReference.systemApi.updateSettingsDesc", auth: "settings.update" },
-                  { method: "POST", path: "/api/v1/settings/reset", descriptionKey: "apiReference.systemApi.resetSettingsDesc", auth: "settings.update" },
-            ],
+        method: "PUT",
+        path: "/api/v1/settings",
+        descriptionKey: "apiReference.systemApi.updateSettingsDesc",
+        auth: "settings.update",
       },
+      {
+        method: "POST",
+        path: "/api/v1/settings/reset",
+        descriptionKey: "apiReference.systemApi.resetSettingsDesc",
+        auth: "settings.update",
+      },
+    ],
+  },
 
-      // ─── Health Checks ────────────────────────────────────────
+  // ─── Health Checks ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.systemApi.healthTitle",
+    id: "health",
+  },
+  {
+    type: "api-table",
+    endpoints: [
       {
-            type: "heading", level: 2,
-            titleKey: "apiReference.systemApi.healthTitle", id: "health",
+        method: "GET",
+        path: "/health",
+        descriptionKey: "apiReference.systemApi.healthCheckDesc",
+        auth: "None",
       },
       {
-            type: "api-table",
-            endpoints: [
-                  { method: "GET", path: "/health", descriptionKey: "apiReference.systemApi.healthCheckDesc", auth: "None" },
-                  { method: "GET", path: "/health/ready", descriptionKey: "apiReference.systemApi.readinessDesc", auth: "None" },
-            ],
+        method: "GET",
+        path: "/health/ready",
+        descriptionKey: "apiReference.systemApi.readinessDesc",
+        auth: "None",
       },
-      {
-            type: "code",
-            language: "json",
-            filename: "GET /health — Response",
-            code: `{
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "GET /health — Response",
+    code: `{
   "status": "Healthy",
   "totalDuration": "00:00:00.1234567",
   "entries": {
@@ -255,16 +414,20 @@ const sections: DocSection[] = [
     "hangfire": { "status": "Healthy", "duration": "00:00:00.0089" }
   }
 }`,
-      },
+  },
 ];
 
 registerPage({
-      slug: "api-reference/system-api",
-      titleKey: "apiReference.systemApi.title",
-      descriptionKey: "apiReference.systemApi.description",
-      category: "api-reference",
-      order: 8,
-      sections,
-      relatedSlugs: ["api-reference/admin-api", "security/audit-compliance", "api-reference/webhook-email-api"],
-      lastUpdated: "2026-02-20",
+  slug: "api-reference/system-api",
+  titleKey: "apiReference.systemApi.title",
+  descriptionKey: "apiReference.systemApi.description",
+  category: "api-reference",
+  order: 8,
+  sections,
+  relatedSlugs: [
+    "api-reference/admin-api",
+    "security/audit-compliance",
+    "api-reference/webhook-email-api",
+  ],
+  lastUpdated: "2026-02-20",
 });

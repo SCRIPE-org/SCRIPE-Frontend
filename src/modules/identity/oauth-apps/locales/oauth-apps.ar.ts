@@ -93,7 +93,8 @@ export const ar = {
     regenerateConfirmTitle: "تجديد سر العميل",
     regenerateConfirmDesc: "سيتم إبطال السر الحالي. جميع التطبيقات التي تستخدمه ستتوقف عن العمل.",
     // منطقة الخطر
-    deleteWarning: "حذف هذا التطبيق سيُلغي جميع الرموز ويكسر التكاملات الحالية. لا يمكن التراجع عن ذلك.",
+    deleteWarning:
+      "حذف هذا التطبيق سيُلغي جميع الرموز ويكسر التكاملات الحالية. لا يمكن التراجع عن ذلك.",
     deleteButton: "حذف التطبيق",
     deleteConfirmTitle: "حذف تطبيق OAuth",
     deleteConfirmDesc: "سيتم حذف هذا التطبيق نهائياً. سيتم إبطال جميع جلسات المصادقة.",
@@ -117,7 +118,8 @@ export const ar = {
     allowAccess: "السماح بالوصول",
     cancelAndReturn: "إلغاء والعودة",
     invalidRequestTitle: "طلب تفويض غير صالح",
-    invalidRequestDesc: "يفتقر طلب التطبيق إلى المعلمات الأساسية المطلوبة (client_id أو redirect_uri).",
+    invalidRequestDesc:
+      "يفتقر طلب التطبيق إلى المعلمات الأساسية المطلوبة (client_id أو redirect_uri).",
     backToDashboard: "العودة إلى لوحة القيادة",
     sessionExpired: "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
   },

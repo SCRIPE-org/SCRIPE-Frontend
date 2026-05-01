@@ -80,7 +80,7 @@ export class BrandingModel {
     public readonly termsOfServiceUrl: string | null,
     public readonly privacyPolicyUrl: string | null,
     public readonly settingsVersion: number,
-    public readonly isSafeMode: boolean,
+    public readonly isSafeMode: boolean
   ) {}
 
   static fromJson(json: BrandingResponseJson): BrandingModel {
@@ -104,7 +104,7 @@ export class BrandingModel {
       json.termsOfServiceUrl,
       json.privacyPolicyUrl,
       json.settingsVersion ?? 0,
-      json.isSafeMode ?? false,
+      json.isSafeMode ?? false
     );
   }
 
@@ -142,7 +142,7 @@ export class AuditLogEntryModel {
     public readonly versionNumber: number,
     public readonly changeType: string,
     public readonly changedByAdminName: string | null,
-    public readonly changedAt: string,
+    public readonly changedAt: string
   ) {}
 
   static fromJson(json: AuditLogEntryJson): AuditLogEntryModel {
@@ -150,7 +150,7 @@ export class AuditLogEntryModel {
       json.versionNumber,
       json.changeType,
       json.changedByAdminName,
-      json.changedAt,
+      json.changedAt
     );
   }
 

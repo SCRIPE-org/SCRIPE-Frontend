@@ -56,12 +56,17 @@ export function mergeSettings(input: MergeInput): MergeResult {
   // Layer 3: Tenant defaults
   if (input.tenantRaw) {
     const {
-      theme, language, sidebarCollapsed, _schemaVersion,
-      _allowAdminOverride, _allowedAdminPaths, _settingsVersion,
+      theme,
+      language,
+      sidebarCollapsed,
+      _schemaVersion,
+      _allowAdminOverride,
+      _allowedAdminPaths,
+      _settingsVersion,
       ...dashboardSettings
     } = input.tenantRaw;
     tenantDefaults = dashboardSettings as Partial<Settings>;
-    tenantVersion = ((_settingsVersion as number) ?? 0);
+    tenantVersion = (_settingsVersion as number) ?? 0;
     if (_allowAdminOverride !== undefined) allowAdminOverride = _allowAdminOverride as boolean;
     if (_allowedAdminPaths) allowedPaths = _allowedAdminPaths as string[];
   }

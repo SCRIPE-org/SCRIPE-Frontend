@@ -1,6 +1,5 @@
 export const ar = {
   entitlements: {
-
     overrides: {
       title: "تجاوزات الميزات",
       totalCost: "القيمة الاجمالية للميزات الزائدة",
@@ -113,8 +112,16 @@ export const ar = {
       twoYears: "سنتان",
       custom: "مخصص...",
       customDays: "أدخل عدد الأيام...",
+      noPromotionsAvailable: "[مفقود] No Promotions Available",
+      selectPromotion: "[مفقود] Select Promotion",
+      enterCode: "[مفقود] Enter Code",
+      createSuccess: "[مفقود] Create Success",
+      createFailed: "[مفقود] Create Failed",
+      updateSuccess: "[مفقود] Update Success",
+      updateFailed: "[مفقود] Update Failed",
+      deleteSuccess: "[مفقود] Delete Success",
+      deleteFailed: "[مفقود] Delete Failed",
     },
-    // ── تسميات حالة الاشتراك (E-06) ──
     subscription: {
       status: {
         Active: "نشط",
@@ -127,13 +134,15 @@ export const ar = {
       },
       paymentWall: {
         title: "مطلوب الدفع",
-        description: "اشتراكك في {edition} بانتظار الدفع. يرجى التواصل مع مسؤول النظام لإتمام عملية الدفع وتفعيل حسابك.",
+        description:
+          "اشتراكك في {edition} بانتظار الدفع. يرجى التواصل مع مسؤول النظام لإتمام عملية الدفع وتفعيل حسابك.",
         yourPlan: "خطتك",
         contactAdmin: "تواصل مع مسؤول النظام لإنشاء رابط الدفع.",
       },
     },
     gracePeriod: {
-      daysRemaining: "تنتهي فترة السماح خلال {days} يوم/أيام. يرجى تسوية الدفع لتجنب انقطاع الخدمة.",
+      daysRemaining:
+        "تنتهي فترة السماح خلال {days} يوم/أيام. يرجى تسوية الدفع لتجنب انقطاع الخدمة.",
       active: "اشتراكك في فترة سماح. يرجى تسوية الدفع.",
       resolve: "حل المشكلة",
     },
@@ -185,7 +194,8 @@ export const ar = {
         Edition: "مستوى النسخة",
         Tenant: "مستوى المستأجر",
       },
-      commissionRateDesc: "تعيين نسبة عمولة مخصصة لهذا المستأجر. سيؤدي هذا إلى تجاوز الإعدادات الافتراضية للنسخة أو المنصة.",
+      commissionRateDesc:
+        "تعيين نسبة عمولة مخصصة لهذا المستأجر. سيؤدي هذا إلى تجاوز الإعدادات الافتراضية للنسخة أو المنصة.",
       commissionRateCleared: "تمت إزالة تجاوز النسبة. سيستخدم المستأجر الآن الإعدادات الافتراضية.",
       created: "تم إنشاء الحساب",
       createdDesc: "تم إنشاء حساب سترايب كونكت بنجاح.",
@@ -208,6 +218,7 @@ export const ar = {
       accountStatus: "حالة الحساب",
       actionRequired: "إجراء مطلوب",
       actionRequiredDesc: "تتطلب سترايب معلومات إضافية للتحقق من حسابك.",
+      alreadyOnboarded: "[مفقود] Already Onboarded",
     },
     commissionLedger: {
       title: "دفتر العمولات",
@@ -278,11 +289,13 @@ export const ar = {
       toggleSuccess: "تم تحديث الحالة",
       toggleFailed: "فشل تحديث الحالة",
       configRequired: "تكوين مطلوب",
-      removeDesc: "سيؤدي هذا إلى حذف بيانات اعتماد البوابة نهائياً. ستتوقف أي تكاملات نشطة تستخدم هذه البوابة عن العمل.",
+      removeDesc:
+        "سيؤدي هذا إلى حذف بيانات اعتماد البوابة نهائياً. ستتوقف أي تكاملات نشطة تستخدم هذه البوابة عن العمل.",
       removeTooltip: "إزالة هذه البوابة",
       configureTitle: "تكوين {gateway}",
       editTitle: "تحديث {gateway}",
-      configureDesc: "أدخل بيانات اعتماد API الخاصة بك. يتم تشفير جميع الأسرار ولا يتم كشفها أبداً.",
+      configureDesc:
+        "أدخل بيانات اعتماد API الخاصة بك. يتم تشفير جميع الأسرار ولا يتم كشفها أبداً.",
       displayLabel: "التسمية المعروضة",
       testMode: "وضع الاختبار",
       testModeDesc: "استخدم بيانات الاختبار. لن تتم معالجة أي رسوم حقيقية.",
@@ -302,7 +315,91 @@ export const ar = {
         readyDesc: "انقر حفظ أدناه للتحقق من بيانات اعتمادك مع {gateway} وإنشاء الاتصال.",
       },
     },
-    
-    
+    analytics: {
+      export: {
+        success: "[مفقود] Success",
+        successDesc: "[مفقود] Success Desc",
+        error: "[مفقود] Error",
+        errorDesc: "[مفقود] Error Desc",
+      },
+      reports: {
+        saveSuccess: "[مفقود] Save Success",
+        saveSuccessDesc: "[مفقود] Save Success Desc",
+        saveError: "[مفقود] Save Error",
+        saveErrorDesc: "[مفقود] Save Error Desc",
+        generateSuccess: "[مفقود] Generate Success",
+        generateSuccessDesc: "[مفقود] Generate Success Desc",
+        generateError: "[مفقود] Generate Error",
+        generateErrorDesc: "[مفقود] Generate Error Desc",
+      },
+    },
+    pricing: {
+      perMonth: "[مفقود] Per Month",
+    },
+    tenantPlans: {
+      editSettings: "[مفقود] Edit Settings",
+      stepBasics: "[مفقود] Step Basics",
+      stepBilling: "[مفقود] Step Billing",
+      editing: "[مفقود] Editing",
+      createPlan: "[مفقود] Create Plan",
+      createPlanDesc: "[مفقود] Create Plan Desc",
+    },
+    mySubscription: {
+      gatewayIntegration: "[مفقود] Gateway Integration",
+      gatewayDesc: "[مفقود] Gateway Desc",
+      gatewaySubId: "[مفقود] Gateway Sub Id",
+      gatewayCustomerId: "[مفقود] Gateway Customer Id",
+    },
+  },
+  common: {
+    failed: "[مفقود] Failed",
+    noResultsForSearch: "[مفقود] No Results For Search",
+    type: "[مفقود] Type",
+    new: "[مفقود] New",
+    updateFailed: "[مفقود] Update Failed",
+    updated: "[مفقود] Updated",
+    deleted: "[مفقود] Deleted",
+    review: "[مفقود] Review",
+  },
+  billing: {
+    gateways: {
+      configRequired: "[مفقود] Config Required",
+      stripe: "[مفقود] Stripe",
+      paypal: "[مفقود] Paypal",
+      paymob: "[مفقود] Paymob",
+    },
+    choosePaymentMethod: "[مفقود] Choose Payment Method",
+    choosePaymentMethodDesc: "[مفقود] Choose Payment Method Desc",
+  },
+  paymentHub: {
+    gatewayConfig: "[مفقود] Gateway Config",
+    stripeConnect: "[مفقود] Stripe Connect",
+    myCredentials: "[مفقود] My Credentials",
+    billing: "[مفقود] Billing",
+    title: "[مفقود] Title",
+  },
+  commission: {
+    title: "[مفقود] Title",
+    invoices: "[مفقود] Invoices",
+  },
+  entSubscriptions: {
+    customRefundAmount: "[مفقود] Custom Refund Amount",
+    customAmountPlaceholder: "[مفقود] Custom Amount Placeholder",
+    customAmountHint: "[مفقود] Custom Amount Hint",
+  },
+  dashboard: {
+    kpi: {
+      arpu: "[مفقود] Arpu",
+      arpuDesc: "[مفقود] Arpu Desc",
+      churnRate: "[مفقود] Churn Rate",
+      churnRateDesc: "[مفقود] Churn Rate Desc",
+      renewals: "[مفقود] Renewals",
+      renewalsDesc: "[مفقود] Renewals Desc",
+      promoDiscount: "[مفقود] Promo Discount",
+      promoDiscountDesc: "[مفقود] Promo Discount Desc",
+    },
+  },
+  validation: {
+    required: "[مفقود] Required",
   },
 };

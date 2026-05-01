@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const CommissionDashboardView = dynamic(
-  () =>
-    import("@modules/entitlements/stripe-connect").then((m) => ({
-      default: m.CommissionDashboardView,
-    }))
+const CommissionDashboardView = dynamic(() =>
+  import("@modules/entitlements/stripe-connect").then((m) => ({
+    default: m.CommissionDashboardView,
+  }))
 );
 
 export const metadata: Metadata = {

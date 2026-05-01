@@ -17,7 +17,7 @@ import { BrandingModel, AuditLogEntryModel } from "../models/BrandingModel";
 import { SystemSettingsModel } from "../models/SystemSettingsModel";
 
 export class CustomizationRepository implements ICustomizationRepository {
-  constructor(private readonly service: ICustomizationService) { }
+  constructor(private readonly service: ICustomizationService) {}
 
   // ── Tenant Branding (My Tenant) ──
 

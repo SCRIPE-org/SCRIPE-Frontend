@@ -6,26 +6,37 @@ export const de = {
   commercial: {
     entOverview: {
       title: "Berechtigungsübersicht",
-      description: "Eine vollständige, unternehmenstaugliche Berechtigungs-Engine, die Ihre Plattform in ein differenziertes SaaS-Produkt mit Editionen, Abonnements und mandantenspezifischer Funktionssteuerung verwandelt.",
-      intro: "Hören Sie auf, Planprüfungen in Ihrer Codebasis fest zu verdrahten. Das Berechtigungsmodul von NEXORA bietet eine Full-Stack-Feature-Gating-Engine auf API-Ebene, die automatisch durchsetzt, was jeder Mandant tun darf und was nicht — basierend auf seiner abonnierten Edition, aktiven Überschreibungen und Echtzeit-Kontingentzählern.",
+      description:
+        "Eine vollständige, unternehmenstaugliche Berechtigungs-Engine, die Ihre Plattform in ein differenziertes SaaS-Produkt mit Editionen, Abonnements und mandantenspezifischer Funktionssteuerung verwandelt.",
+      intro:
+        "Hören Sie auf, Planprüfungen in Ihrer Codebasis fest zu verdrahten. Das Berechtigungsmodul von NEXORA bietet eine Full-Stack-Feature-Gating-Engine auf API-Ebene, die automatisch durchsetzt, was jeder Mandant tun darf und was nicht — basierend auf seiner abonnierten Edition, aktiven Überschreibungen und Echtzeit-Kontingentzählern.",
       whyTitle: "Warum integrierte Berechtigungen?",
-      whyContent: "Die meisten SaaS-Plattformen flanschen Feature-Flags als nachträglichen Gedanken an. NEXORA integriert Berechtigungen über die IRequireFeature-Schnittstelle direkt in die CQRS-Pipeline, was bedeutet, dass jeder Befehl automatisch überwacht werden kann, ohne eine einzige Zeile benutzerdefinierter Middleware.",
+      whyContent:
+        "Die meisten SaaS-Plattformen flanschen Feature-Flags als nachträglichen Gedanken an. NEXORA integriert Berechtigungen über die IRequireFeature-Schnittstelle direkt in die CQRS-Pipeline, was bedeutet, dass jeder Befehl automatisch überwacht werden kann, ohne eine einzige Zeile benutzerdefinierter Middleware.",
       fgEditions: "Editionen (Pläne)",
-      fgEditionsDesc: "Benannte Funktionsbündel wie Basic, Pro, Enterprise, die definieren, was jeder Plan beinhaltet.",
+      fgEditionsDesc:
+        "Benannte Funktionsbündel wie Basic, Pro, Enterprise, die definieren, was jeder Plan beinhaltet.",
       fgSubscriptions: "Abonnement-Lebenszyklus",
-      fgSubscriptionsDesc: "Weisen Sie Mandantenabonnements zu, stufen Sie sie hoch, stufen Sie sie herab, sperren und verlängern Sie sie mit vollständigen Audit-Trails.",
+      fgSubscriptionsDesc:
+        "Weisen Sie Mandantenabonnements zu, stufen Sie sie hoch, stufen Sie sie herab, sperren und verlängern Sie sie mit vollständigen Audit-Trails.",
       fgFeatures: "Funktionskatalog",
-      fgFeaturesDesc: "Boolesche, numerische und String-Funktionstypen mit systemseitig geseedeten Standards und benutzerdefinierter Erweiterbarkeit.",
+      fgFeaturesDesc:
+        "Boolesche, numerische und String-Funktionstypen mit systemseitig geseedeten Standards und benutzerdefinierter Erweiterbarkeit.",
       fgOverrides: "Mandantenspezifische Überschreibungen",
-      fgOverridesDesc: "Passen Sie jeden Funktionswert für einzelne Mandanten an — perfekt für Enterprise-Deals oder Beta-Zugang.",
+      fgOverridesDesc:
+        "Passen Sie jeden Funktionswert für einzelne Mandanten an — perfekt für Enterprise-Deals oder Beta-Zugang.",
       fgQuotas: "Kontingentdurchsetzung",
-      fgQuotasDesc: "Numerische Funktionen mit QuotaCounter-Entitäten werden automatisch auf Pipeline-Ebene durchgesetzt.",
+      fgQuotasDesc:
+        "Numerische Funktionen mit QuotaCounter-Entitäten werden automatisch auf Pipeline-Ebene durchgesetzt.",
       fgVersioning: "Versionierung & Rollout",
-      fgVersioningDesc: "Stellen Sie Editionsänderungen über sofortige, Canary- oder geplante Rollout-Strategien bereit.",
+      fgVersioningDesc:
+        "Stellen Sie Editionsänderungen über sofortige, Canary- oder geplante Rollout-Strategien bereit.",
       howTitle: "Wie es funktioniert",
-      howContent: "Jeder API-Befehl, der IRequireFeature implementiert, wird von der FeatureCheckBehavior-Pipeline abgefangen. Das System ermittelt die effektiven Funktionswerte des Mandanten (Überschreibungen → Edition → Standards) und erlaubt entweder die Ausführung oder gibt eine klare 'Funktion deaktiviert'-Antwort zurück.",
+      howContent:
+        "Jeder API-Befehl, der IRequireFeature implementiert, wird von der FeatureCheckBehavior-Pipeline abgefangen. Das System ermittelt die effektiven Funktionswerte des Mandanten (Überschreibungen → Edition → Standards) und erlaubt entweder die Ausführung oder gibt eine klare 'Funktion deaktiviert'-Antwort zurück.",
       resolutionTitle: "Auflösungspriorität",
-      resolutionContent: "Wenn das System einen Funktionswert für einen Mandanten auflöst, prüft es die Quellen in strikter Prioritätsreihenfolge. Die erste Quelle, die einen Wert liefert, gewinnt.",
+      resolutionContent:
+        "Wenn das System einen Funktionswert für einen Mandanten auflöst, prüft es die Quellen in strikter Prioritätsreihenfolge. Die erste Quelle, die einen Wert liefert, gewinnt.",
       tblResH1: "Priorität",
       tblResH2: "Quelle",
       tblResH3: "Anwendungsfall",
@@ -64,28 +75,36 @@ export const de = {
     },
     entEditions: {
       title: "Editionen & Pläne",
-      description: "Definieren, verwalten und versionieren Sie Ihre SaaS-Produktpläne mit der leistungsstarken Editions-Engine von NEXORA.",
-      intro: "Editionen sind die Bausteine Ihrer SaaS-Preisstrategie. Jede Edition bündelt eine spezifische Gruppe von Funktionswerten (boolesche Schalter, numerische Limits, String-Konfigurationen) in einen benannten Plan, der Mandanten über Abonnements zugewiesen werden kann.",
+      description:
+        "Definieren, verwalten und versionieren Sie Ihre SaaS-Produktpläne mit der leistungsstarken Editions-Engine von NEXORA.",
+      intro:
+        "Editionen sind die Bausteine Ihrer SaaS-Preisstrategie. Jede Edition bündelt eine spezifische Gruppe von Funktionswerten (boolesche Schalter, numerische Limits, String-Konfigurationen) in einen benannten Plan, der Mandanten über Abonnements zugewiesen werden kann.",
       whatTitle: "Was sind Editionen?",
-      whatContent: "Eine Edition ist ein benannter Plan (z. B. 'Basic', 'Pro', 'Enterprise'), der eine bestimmte Kombination von Funktionswerten definiert. Wenn ein Mandant eine Edition abonniert, erhält er automatisch Zugriff auf genau die Funktionen, die diese Edition definiert — nicht mehr und nicht weniger.",
+      whatContent:
+        "Eine Edition ist ein benannter Plan (z. B. 'Basic', 'Pro', 'Enterprise'), der eine bestimmte Kombination von Funktionswerten definiert. Wenn ein Mandant eine Edition abonniert, erhält er automatisch Zugriff auf genau die Funktionen, die diese Edition definiert — nicht mehr und nicht weniger.",
       scopeTitle: "System- vs. Retail-Editionen",
       tblScopeH1: "Bereich",
       tblScopeH2: "Erstellt von",
       tblScopeH3: "Anwendungsfall",
       tblScopeR1C1: "System",
       tblScopeR1C2: "Plattformbesitzer (Root-Mandant)",
-      tblScopeR1C3: "Globale Pläne, die allen Mandanten zur Verfügung stehen (Basic, Pro, Enterprise)",
+      tblScopeR1C3:
+        "Globale Pläne, die allen Mandanten zur Verfügung stehen (Basic, Pro, Enterprise)",
       tblScopeR2C1: "Retail",
       tblScopeR2C2: "Reseller-Mandanten",
       tblScopeR2C3: "Benutzerdefinierte Pläne für Unter-Mandanten (White-Label-Reselling)",
       overflowTitle: "Überlaufrichtlinien (Overflow Policies)",
-      overflowContent: "Wenn ein Mandant die Limits seiner Edition überschreitet, bestimmt die Überlaufrichtlinie das Verhalten. Dies schafft natürliche Upsell-Pfade, ohne die Benutzererfahrung zu beeinträchtigen.",
+      overflowContent:
+        "Wenn ein Mandant die Limits seiner Edition überschreitet, bestimmt die Überlaufrichtlinie das Verhalten. Dies schafft natürliche Upsell-Pfade, ohne die Benutzererfahrung zu beeinträchtigen.",
       overflowUpgrade: "Upgrade vorschlagen",
-      overflowUpgradeDesc: "Wenn Limits erreicht sind, gibt das System einen Upgrade-Vorschlag zurück, der auf die Überlauf-Edition verweist — und schafft so einen nahtlosen Upsell-Pfad.",
+      overflowUpgradeDesc:
+        "Wenn Limits erreicht sind, gibt das System einen Upgrade-Vorschlag zurück, der auf die Überlauf-Edition verweist — und schafft so einen nahtlosen Upsell-Pfad.",
       overflowBlock: "Harte Blockade (Hard Block)",
-      overflowBlockDesc: "Limit strikt durchsetzen. Befehle werden mit einer klaren Fehlermeldung abgelehnt, die anzeigt, dass die Funktion für den aktuellen Plan ausgelastet ist.",
+      overflowBlockDesc:
+        "Limit strikt durchsetzen. Befehle werden mit einer klaren Fehlermeldung abgelehnt, die anzeigt, dass die Funktion für den aktuellen Plan ausgelastet ist.",
       versionTitle: "Versionierung & Rollouts",
-      versionContent: "Editionsversionen ermöglichen es Ihnen, Planfunktionen zu ändern, ohne bestehende Abonnenten zu stören. Erstellen Sie eine neue Version mit aktualisierten Funktionswerten und wählen Sie dann Ihre Rollout-Strategie.",
+      versionContent:
+        "Editionsversionen ermöglichen es Ihnen, Planfunktionen zu ändern, ohne bestehende Abonnenten zu stören. Erstellen Sie eine neue Version mit aktualisierten Funktionswerten und wählen Sie dann Ihre Rollout-Strategie.",
       tblRollH1: "Strategie",
       tblRollH2: "Verhalten",
       tblRollH3: "Am besten für",
@@ -103,10 +122,13 @@ export const de = {
     },
     entSubscriptions: {
       title: "Abonnementverwaltung",
-      description: "Vollständige Lebenszyklusverwaltung für Mandantenabonnements mit Mehrwährungspreisen, Aktionsrabatten, Analyse der Upgrade-/Downgrade-Auswirkungen, Testversionen, Ablaufbehandlung und umfassendem Analytik-Export.",
-      intro: "Abonnements sind die Brücke zwischen Mandanten und Editionen. Sie definieren, in welchem Plan sich ein Mandant befindet, wann er beginnt und abläuft, und wie sich das System verhält, wenn sich der Abonnement-Lebenszyklus ändert. Mit integrierter Mehrwährungspreisgestaltung und Aktionsrabatt-Tracking bietet NEXORA alles, was Sie für die Monetarisierung benötigen.",
+      description:
+        "Vollständige Lebenszyklusverwaltung für Mandantenabonnements mit Mehrwährungspreisen, Aktionsrabatten, Analyse der Upgrade-/Downgrade-Auswirkungen, Testversionen, Ablaufbehandlung und umfassendem Analytik-Export.",
+      intro:
+        "Abonnements sind die Brücke zwischen Mandanten und Editionen. Sie definieren, in welchem Plan sich ein Mandant befindet, wann er beginnt und abläuft, und wie sich das System verhält, wenn sich der Abonnement-Lebenszyklus ändert. Mit integrierter Mehrwährungspreisgestaltung und Aktionsrabatt-Tracking bietet NEXORA alles, was Sie für die Monetarisierung benötigen.",
       lifecycleTitle: "Abonnement-Lebenszyklus",
-      lifecycleContent: "Jedes Abonnement folgt einem klar definierten Zustandsautomaten. Das System erzwingt automatisch gültige Übergänge und gibt in jeder Phase Domänenereignisse für Audit- und Integrationszwecke aus.",
+      lifecycleContent:
+        "Jedes Abonnement folgt einem klar definierten Zustandsautomaten. Das System erzwingt automatisch gültige Übergänge und gibt in jeder Phase Domänenereignisse für Audit- und Integrationszwecke aus.",
       typesTitle: "Abonnementtypen",
       tblTypeH1: "Typ",
       tblTypeH2: "Dauer",
@@ -121,7 +143,8 @@ export const de = {
       tblTypeR3C2: "Ergänzung zum Hauptabonnement",
       tblTypeR3C3: "Zusätzliche Funktionspakete (z. B. zusätzlicher Speicher)",
       pricingTitle: "Mehrwährungs-Preis-Engine",
-      pricingContent: "Jedes Abonnement speichert seine Preise in der lokalen Währung des Mandanten und normalisiert automatisch auf USD für einheitliche Umsatzanalysen. Unterstützung für 9+ Währungen sofort einsatzbereit — USD, EUR, GBP, SAR, AED, EGP, TRY, INR und mehr.",
+      pricingContent:
+        "Jedes Abonnement speichert seine Preise in der lokalen Währung des Mandanten und normalisiert automatisch auf USD für einheitliche Umsatzanalysen. Unterstützung für 9+ Währungen sofort einsatzbereit — USD, EUR, GBP, SAR, AED, EGP, TRY, INR und mehr.",
       tblPriceH1: "Feld",
       tblPriceH2: "Zweck",
       tblPriceH3: "Beispiel",
@@ -144,20 +167,27 @@ export const de = {
       tblPriceR6C2: "Normalisierter USD-Wert für Analytik",
       tblPriceR6C3: "119.76",
       promoTitle: "Aktionsrabatte",
-      promoContent: "Fördern Sie Akquise und Kundenbindung mit integrierter Aktionscode-Unterstützung in jedem Abonnement. Angewandte Aktionen werden mit Codename und Rabattprozentsatz für volle Audit- und Analytik-Transparenz verfolgt.",
+      promoContent:
+        "Fördern Sie Akquise und Kundenbindung mit integrierter Aktionscode-Unterstützung in jedem Abonnement. Angewandte Aktionen werden mit Codename und Rabattprozentsatz für volle Audit- und Analytik-Transparenz verfolgt.",
       fgPromoCode: "Aktionscode-Tracking",
-      fgPromoCodeDesc: "Jedes Abonnement zeichnet seinen AppliedPromoCode und den PromotionDiscount-Prozentsatz auf. Analytik-Dashboards zeigen, welche Aktionen die meisten Konversionen generieren.",
+      fgPromoCodeDesc:
+        "Jedes Abonnement zeichnet seinen AppliedPromoCode und den PromotionDiscount-Prozentsatz auf. Analytik-Dashboards zeigen, welche Aktionen die meisten Konversionen generieren.",
       fgPromoAdjust: "Automatische Anpassung",
-      fgPromoAdjustDesc: "Wenn eine Aktion angewendet wird, wird AdjustmentAmount automatisch aus BaseAmount × PromotionDiscount berechnet, um konsistente Preisgestaltung über alle Abonnements zu gewährleisten.",
+      fgPromoAdjustDesc:
+        "Wenn eine Aktion angewendet wird, wird AdjustmentAmount automatisch aus BaseAmount × PromotionDiscount berechnet, um konsistente Preisgestaltung über alle Abonnements zu gewährleisten.",
       opsTitle: "Schlüsseloperationen",
       opsAssign: "Abonnement zuweisen",
-      opsAssignDesc: "Verknüpfen Sie einen Mandanten mit einer Edition mit Startdatum, Dauer, Währung, optionalem Aktionscode und automatischer Verlängerungskonfiguration.",
+      opsAssignDesc:
+        "Verknüpfen Sie einen Mandanten mit einer Edition mit Startdatum, Dauer, Währung, optionalem Aktionscode und automatischer Verlängerungskonfiguration.",
       opsUpgrade: "Plan-Upgrade",
-      opsUpgradeDesc: "Mandanten in eine höhere Edition verschieben. Neue Funktionen sind sofort verfügbar und die Abonnementlaufzeit kann angepasst werden.",
+      opsUpgradeDesc:
+        "Mandanten in eine höhere Edition verschieben. Neue Funktionen sind sofort verfügbar und die Abonnementlaufzeit kann angepasst werden.",
       opsDowngrade: "Plan-Downgrade",
-      opsDowngradeDesc: "In eine niedrigere Edition wechseln. Das System bietet eine vollständige Auswirkungsanalyse, die zeigt, welche Funktionen vor der Bestätigung verloren gehen.",
+      opsDowngradeDesc:
+        "In eine niedrigere Edition wechseln. Das System bietet eine vollständige Auswirkungsanalyse, die zeigt, welche Funktionen vor der Bestätigung verloren gehen.",
       opsImpact: "Auswirkungsanalyse",
-      opsImpactDesc: "Vor jedem Downgrade liefert die API eine detaillierte Analyse der betroffenen Funktionen und der aktuellen Nutzung — um überraschenden Datenverlust zu vermeiden.",
+      opsImpactDesc:
+        "Vor jedem Downgrade liefert die API eine detaillierte Analyse der betroffenen Funktionen und der aktuellen Nutzung — um überraschenden Datenverlust zu vermeiden.",
       expiryTitle: "Ablaufverhalten",
       tblExpH1: "Richtlinie",
       tblExpH2: "Verhalten",
@@ -172,33 +202,45 @@ export const de = {
       tblExpR3C2: "Automatisch auf die Standard-Edition (kostenlos) herabstufen",
       tblExpR3C3: "Freemium-Modelle mit kostenpflichtigen Upgrades",
       exportTitle: "Erweiterter Analytik-Export",
-      exportContent: "Erstellen Sie umfassende Abonnement-Analytikberichte in den Formaten CSV, Excel und PDF. Berichte enthalten erweiterte Filterung (Datumsbereich, bald ablaufend, Status, Edition), Mehrwährungsanzeige und farbcodierte Ablaufindikatoren.",
+      exportContent:
+        "Erstellen Sie umfassende Abonnement-Analytikberichte in den Formaten CSV, Excel und PDF. Berichte enthalten erweiterte Filterung (Datumsbereich, bald ablaufend, Status, Edition), Mehrwährungsanzeige und farbcodierte Ablaufindikatoren.",
       fgExportCsv: "CSV-Export",
-      fgExportCsvDesc: "Leichtes kommagetrennntes Format, ideal für Datenanalyse und Import in BI-Tools wie Power BI, Tableau oder Google Sheets.",
+      fgExportCsvDesc:
+        "Leichtes kommagetrennntes Format, ideal für Datenanalyse und Import in BI-Tools wie Power BI, Tableau oder Google Sheets.",
       fgExportExcel: "Excel-Export",
-      fgExportExcelDesc: "Professionelle XLSX-Arbeitsmappe mit gestylten Kopfzeilen, Filter-Metadaten, bedingter Formatierung für Ablaufdaten und automatisch angepassten Spalten — betrieben von ClosedXML.",
+      fgExportExcelDesc:
+        "Professionelle XLSX-Arbeitsmappe mit gestylten Kopfzeilen, Filter-Metadaten, bedingter Formatierung für Ablaufdaten und automatisch angepassten Spalten — betrieben von ClosedXML.",
       fgExportPdf: "PDF-Export",
-      fgExportPdfDesc: "Druckfertiges Dokument mit gebrandetem Deckblatt, statistischer Zusammenfassung und paginierten Datentabellen mit farbcodierter 'Verbleibende Tage'-Spalte — betrieben von QuestPDF.",
+      fgExportPdfDesc:
+        "Druckfertiges Dokument mit gebrandetem Deckblatt, statistischer Zusammenfassung und paginierten Datentabellen mit farbcodierter 'Verbleibende Tage'-Spalte — betrieben von QuestPDF.",
       enterpriseTitle: "Enterprise-Abonnementverwaltung",
       renewalTitle: "Unveränderlicher Umsatz-Prüfpfad",
-      renewalDesc: "Verlängerungen erstellen NEUE Abonnementzeilen statt bestehende Datensätze zu überschreiben. Jeder Abrechnungszyklus bewahrt festgeschriebene Preise für präzise MRR-Trends und Finanzprüfungen.",
+      renewalDesc:
+        "Verlängerungen erstellen NEUE Abonnementzeilen statt bestehende Datensätze zu überschreiben. Jeder Abrechnungszyklus bewahrt festgeschriebene Preise für präzise MRR-Trends und Finanzprüfungen.",
       promoExpiryTitle: "Intelligente Aktionsablauf-Verwaltung",
-      promoExpiryDesc: "Zeitgebundene Aktionen werden automatisch über PromotionExpiresAt verfolgt. Bei Verlängerung werden abgelaufene Aktionen entfernt — neue Preise gelten nahtlos.",
+      promoExpiryDesc:
+        "Zeitgebundene Aktionen werden automatisch über PromotionExpiresAt verfolgt. Bei Verlängerung werden abgelaufene Aktionen entfernt — neue Preise gelten nahtlos.",
       concurrencyTitle: "Schutz vor Race Conditions",
-      concurrencyDesc: "Optimistische Nebenläufigkeitsstempel auf jedem Abonnement verhindern Kollisionen zwischen parallelen Operationen. Unternehmenstaugliche Datenintegrität ohne Leistungseinbußen.",
+      concurrencyDesc:
+        "Optimistische Nebenläufigkeitsstempel auf jedem Abonnement verhindern Kollisionen zwischen parallelen Operationen. Unternehmenstaugliche Datenintegrität ohne Leistungseinbußen.",
       validationTitle: "Eingabevalidierung auf Pipeline-Ebene",
-      validationDesc: "Alle 8 Abonnement-Befehle sind durch FluentValidation-Validatoren mit vollständig lokalisierten Fehlermeldungen in Englisch und Arabisch geschützt.",
+      validationDesc:
+        "Alle 8 Abonnement-Befehle sind durch FluentValidation-Validatoren mit vollständig lokalisierten Fehlermeldungen in Englisch und Arabisch geschützt.",
       crossModuleTitle: "Modulübergreifende Admin-Integration",
-      crossModuleDesc: "Abonnement-Lebenszyklus-Ereignisse kaskadieren automatisch zur Identitätsverwaltung. Bei Aussetzung werden alle Mandanten-Admins sicher deaktiviert. Bei Wiederaufnahme werden nur aussetzungsbedingt deaktivierte Admins reaktiviert.",
+      crossModuleDesc:
+        "Abonnement-Lebenszyklus-Ereignisse kaskadieren automatisch zur Identitätsverwaltung. Bei Aussetzung werden alle Mandanten-Admins sicher deaktiviert. Bei Wiederaufnahme werden nur aussetzungsbedingt deaktivierte Admins reaktiviert.",
       apiTitle: "API-Endpunkte",
       tip: "Die API zur Analyse der Downgrade-Auswirkungen ist ein leistungsstarkes Tool zur Kundenbindung. Zeigen Sie Kunden genau, was sie verlieren, bevor sie ein Downgrade durchführen — so entstehen natürliche Bindungsmomente.",
     },
     entFeatures: {
       title: "Funktionsverwaltung (Feature Management)",
-      description: "Definieren, kategorisieren und erzwingen Sie boolesche, numerische und String-Funktionen mit automatischer Kontingentverfolgung und hochleistungsfähigem Caching.",
-      intro: "Funktionen sind die atomaren Bausteine Ihres Berechtigungssystems. Jede Fähigkeit, die pro Plan umgeschaltet, begrenzt oder konfiguriert werden kann, wird als Funktion definiert. Das System unterstützt drei Wertetypen, automatisches Seeding und Kontingentdurchsetzung in Echtzeit.",
+      description:
+        "Definieren, kategorisieren und erzwingen Sie boolesche, numerische und String-Funktionen mit automatischer Kontingentverfolgung und hochleistungsfähigem Caching.",
+      intro:
+        "Funktionen sind die atomaren Bausteine Ihres Berechtigungssystems. Jede Fähigkeit, die pro Plan umgeschaltet, begrenzt oder konfiguriert werden kann, wird als Funktion definiert. Das System unterstützt drei Wertetypen, automatisches Seeding und Kontingentdurchsetzung in Echtzeit.",
       typesTitle: "Funktionswertetypen",
-      typesContent: "Jede Funktion hat einen bestimmten Wertetyp, der bestimmt, wie sie über Editionen und Überschreibungen hinweg evaluiert, gespeichert und durchgesetzt wird.",
+      typesContent:
+        "Jede Funktion hat einen bestimmten Wertetyp, der bestimmt, wie sie über Editionen und Überschreibungen hinweg evaluiert, gespeichert und durchgesetzt wird.",
       tblTypeH1: "Typ",
       tblTypeH2: "Werte",
       tblTypeH3: "Beispiel",
@@ -217,39 +259,54 @@ export const de = {
       tblTypeR3C4: "Konfigurationswert, keine Durchsetzung",
       systemTitle: "System- vs. Benutzerdefinierte Funktionen",
       fgSystem: "Systemfunktionen",
-      fgSystemDesc: "Beim Anwendungsstart vorab geseedet. Unveränderlich und immer vorhanden. Definieren Sie die Kernfunktionen Ihrer Plattform (z. B. MaxUsers, ApiAccess).",
+      fgSystemDesc:
+        "Beim Anwendungsstart vorab geseedet. Unveränderlich und immer vorhanden. Definieren Sie die Kernfunktionen Ihrer Plattform (z. B. MaxUsers, ApiAccess).",
       fgCustom: "Benutzerdefinierte Funktionen",
-      fgCustomDesc: "Werden von Administratoren zur Laufzeit über die API erstellt. Perfekt für modulspezifische Funktionen, die sich mit dem Wachstum Ihres Produkts entwickeln.",
+      fgCustomDesc:
+        "Werden von Administratoren zur Laufzeit über die API erstellt. Perfekt für modulspezifische Funktionen, die sich mit dem Wachstum Ihres Produkts entwickeln.",
       quotaTitle: "Automatische Kontingentdurchsetzung",
-      quotaContent: "Numerische Funktionen können zugehörige QuotaCounter-Entitäten haben, die die Nutzung in Echtzeit verfolgen. Wenn ein Befehl IRequireFeature für eine numerische Funktion implementiert, vergleicht die FeatureCheckBehavior-Pipeline automatisch die aktuelle Anzahl mit dem zulässigen Limit.",
+      quotaContent:
+        "Numerische Funktionen können zugehörige QuotaCounter-Entitäten haben, die die Nutzung in Echtzeit verfolgen. Wenn ein Befehl IRequireFeature für eine numerische Funktion implementiert, vergleicht die FeatureCheckBehavior-Pipeline automatisch die aktuelle Anzahl mit dem zulässigen Limit.",
       cacheTitle: "Hochleistungs-Feature-Caching",
-      cacheContent: "Aufgelöste Funktionswerte werden pro Mandant aggressiv zwischengespeichert, um Autorisierungsprüfungen ohne Latenz zu gewährleisten. Der Cache wird automatisch invalidiert, wenn sich Editionen, Abonnements oder Überschreibungen ändern.",
+      cacheContent:
+        "Aufgelöste Funktionswerte werden pro Mandant aggressiv zwischengespeichert, um Autorisierungsprüfungen ohne Latenz zu gewährleisten. Der Cache wird automatisch invalidiert, wenn sich Editionen, Abonnements oder Überschreibungen ändern.",
       cachePerf: "Sub-Millisekunden-Lookups",
-      cachePerfDesc: "Aufgelöste Funktionen werden pro Mandant im Speicher (In-Memory) zwischengespeichert. Pipeline-Prüfungen dauern Mikrosekunden, nicht Millisekunden.",
+      cachePerfDesc:
+        "Aufgelöste Funktionen werden pro Mandant im Speicher (In-Memory) zwischengespeichert. Pipeline-Prüfungen dauern Mikrosekunden, nicht Millisekunden.",
       cacheInv: "Automatische Invalidierung",
-      cacheInvDesc: "Jede Änderung an Editionen, Abonnements oder Überschreibungen macht den Feature-Cache des betroffenen Mandanten sofort ungültig.",
+      cacheInvDesc:
+        "Jede Änderung an Editionen, Abonnements oder Überschreibungen macht den Feature-Cache des betroffenen Mandanten sofort ungültig.",
       apiTitle: "API-Endpunkte",
       tip: "Systemfunktionen werden bei jedem Anwendungsstart automatisch aus Ihrem Code geseedet. Das bedeutet, dass Ihr Funktionskatalog perfekt mit Ihrer tatsächlichen Codebasis synchronisiert bleibt — keine manuelle Datenbankverwaltung erforderlich.",
     },
     entOverrides: {
       title: "Mandantenspezifische Überschreibungen",
-      description: "Passen Sie Funktionswerte für einzelne Mandanten unabhängig von ihrem abonnierten Plan an, mit vollständigen Audit-Trails und optionalem Ablaufdatum.",
-      intro: "Überschreibungen sind das Notventil, das Ihr Berechtigungssystem flexibel genug für die reale Welt macht. Enterprise-Deals, Werbeangebote, Beta-Tests und regulatorische Ausnahmen erfordern alle die Möglichkeit, Funktionen mandantenspezifisch anzupassen, ohne den zugrunde liegenden Plan zu ändern.",
+      description:
+        "Passen Sie Funktionswerte für einzelne Mandanten unabhängig von ihrem abonnierten Plan an, mit vollständigen Audit-Trails und optionalem Ablaufdatum.",
+      intro:
+        "Überschreibungen sind das Notventil, das Ihr Berechtigungssystem flexibel genug für die reale Welt macht. Enterprise-Deals, Werbeangebote, Beta-Tests und regulatorische Ausnahmen erfordern alle die Möglichkeit, Funktionen mandantenspezifisch anzupassen, ohne den zugrunde liegenden Plan zu ändern.",
       priorityTitle: "Auflösungsprioritätskette",
-      priorityContent: "Überschreibungen stehen an der Spitze der Auflösungsprioritätskette. Wenn das System einen Funktionswert für einen Mandanten auflöst, gewinnt immer eine Überschreibung — unabhängig davon, was die Edition oder der Standardwert besagt.",
+      priorityContent:
+        "Überschreibungen stehen an der Spitze der Auflösungsprioritätskette. Wenn das System einen Funktionswert für einen Mandanten auflöst, gewinnt immer eine Überschreibung — unabhängig davon, was die Edition oder der Standardwert besagt.",
       useCasesTitle: "Praxisnahe Anwendungsfälle",
       ucEnterprise: "Maßgeschneiderte Enterprise-Deals",
-      ucEnterpriseDesc: "Ein Fortune-500-Kunde benötigt 10.000 Benutzer in einem Pro-Plan, der normalerweise bei 500 begrenzt ist. Legen Sie eine Überschreibung fest — keine Codeänderungen, keine Custom-Builds.",
+      ucEnterpriseDesc:
+        "Ein Fortune-500-Kunde benötigt 10.000 Benutzer in einem Pro-Plan, der normalerweise bei 500 begrenzt ist. Legen Sie eine Überschreibung fest — keine Codeänderungen, keine Custom-Builds.",
       ucPromo: "Promotion-Upgrades",
-      ucPromoDesc: "Geben Sie einem Mandanten für 30 Tage Premium-Funktionen als Werbeangebot. Legen Sie eine ablaufende Überschreibung fest, die nach dem Aktionszeitraum automatisch zurückgesetzt wird.",
+      ucPromoDesc:
+        "Geben Sie einem Mandanten für 30 Tage Premium-Funktionen als Werbeangebot. Legen Sie eine ablaufende Überschreibung fest, die nach dem Aktionszeitraum automatisch zurückgesetzt wird.",
       ucBeta: "Beta-Funktionszugang",
-      ucBetaDesc: "Aktivieren Sie eine experimentelle Funktion für ausgewählte Mandanten, bevor Sie sie für alle Pläne ausrollen. Überschreiben Sie die Funktion für bestimmte Mandanten während der Beta-Phase.",
+      ucBetaDesc:
+        "Aktivieren Sie eine experimentelle Funktion für ausgewählte Mandanten, bevor Sie sie für alle Pläne ausrollen. Überschreiben Sie die Funktion für bestimmte Mandanten während der Beta-Phase.",
       ucExpiring: "Zeitlich begrenzte Ausnahmen",
-      ucExpiringDesc: "Gesetzliche Anforderungen können einen vorübergehenden Funktionszugang erfordern. Legen Sie eine Überschreibung mit Ablaufdatum fest — das System setzt sie nach Ablauf automatisch zurück.",
+      ucExpiringDesc:
+        "Gesetzliche Anforderungen können einen vorübergehenden Funktionszugang erfordern. Legen Sie eine Überschreibung mit Ablaufdatum fest — das System setzt sie nach Ablauf automatisch zurück.",
       settingTitle: "Eine Überschreibung festlegen",
-      settingContent: "Überschreibungen werden über einen einfachen API-Aufruf festgelegt. Jede Überschreibung umfasst die Funktion, den benutzerdefinierten Wert, ein optionales Ablaufdatum und einen Grund für Prüfzwecke.",
+      settingContent:
+        "Überschreibungen werden über einen einfachen API-Aufruf festgelegt. Jede Überschreibung umfasst die Funktion, den benutzerdefinierten Wert, ein optionales Ablaufdatum und einen Grund für Prüfzwecke.",
       auditTitle: "Audit-Trail",
-      auditContent: "Jede Überschreibungsaktion wird vollständig geprüft. Das System verfolgt, wer die Überschreibung festgelegt hat, wann sie festgelegt wurde, den vorherigen Wert und den angegebenen Grund.",
+      auditContent:
+        "Jede Überschreibungsaktion wird vollständig geprüft. Das System verfolgt, wer die Überschreibung festgelegt hat, wann sie festgelegt wurde, den vorherigen Wert und den angegebenen Grund.",
       tblAuditH1: "Ereignis",
       tblAuditH2: "Verfolgte Daten",
       tblAuditH3: "Zweck",

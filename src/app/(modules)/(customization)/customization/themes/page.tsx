@@ -2,17 +2,15 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const ThemeManagementView = dynamic(
-  () =>
-    import("@modules/customization/branding").then((m) => ({
-      default: m.ThemeManagementView,
-    }))
+const ThemeManagementView = dynamic(() =>
+  import("@modules/customization/branding").then((m) => ({
+    default: m.ThemeManagementView,
+  }))
 );
 
 export const metadata: Metadata = {
   title: "Theme Management | NEXORA",
-  description:
-    "Manage, create, and organize login page themes for the marketplace",
+  description: "Manage, create, and organize login page themes for the marketplace",
 };
 
 export default function ThemeManagementPage() {

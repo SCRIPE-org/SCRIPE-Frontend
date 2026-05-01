@@ -20,10 +20,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
-import {
-  type EditFormState,
-  initialEditForm,
-} from "../components/TenantDialogs";
+import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 interface UseSubTenantsViewModelParams {
   parentId: string;
@@ -57,8 +54,6 @@ export function useSubTenantsViewModel({
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-
-
   // ── Data queries ──
   const { data: children, isLoading } = useQuery({
     queryKey: ["tenants", "children", parentId],
@@ -67,8 +62,6 @@ export function useSubTenantsViewModel({
   });
 
   const childNodes = useMemo(() => children ?? [], [children]);
-
-
 
   // ── Handlers ──
 

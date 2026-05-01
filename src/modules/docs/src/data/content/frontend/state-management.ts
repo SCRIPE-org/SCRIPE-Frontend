@@ -2,50 +2,79 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "frontend.stateManagement.intro" },
+  { type: "paragraph", contentKey: "frontend.stateManagement.intro" },
 
-      // ─── State Categories ─────────────────────────────────────
+  // ─── State Categories ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.stateManagement.categoriesTitle",
+    id: "categories",
+  },
+  {
+    type: "flowchart",
+    title: "State Management Architecture",
+    direction: "vertical",
+    nodes: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.stateManagement.categoriesTitle", id: "categories",
+        id: "server",
+        label: "Server State (TanStack Query v5)",
+        type: "primary",
+        description: "API data: admins, users, tenants, roles, etc.",
       },
       {
-            type: "flowchart",
-            title: "State Management Architecture",
-            direction: "vertical",
-            nodes: [
-                  { id: "server", label: "Server State (TanStack Query v5)", type: "primary", description: "API data: admins, users, tenants, roles, etc." },
-                  { id: "global", label: "Global UI State (Zustand)", type: "warning", description: "Auth, sidebar, theme, toasts" },
-                  { id: "local", label: "Local Component State (useState)", type: "success", description: "Form inputs, modals, toggles" },
-                  { id: "lang", label: "Language State (LanguageProvider)", type: "info", description: "Arabic/English, RTL/LTR, translations" },
-            ],
-            connections: [],
+        id: "global",
+        label: "Global UI State (Zustand)",
+        type: "warning",
+        description: "Auth, sidebar, theme, toasts",
       },
       {
-            type: "table",
-            headers: ["State Type", "Tool", "Location", "Persistence"],
-            rows: [
-                  ["Server Data", "TanStack Query v5", "ViewModels", "In-memory cache (configurable staleTime)"],
-                  ["Auth/Session", "Zustand + persist", "@core/store", "localStorage"],
-                  ["Theme/Sidebar", "Zustand", "@core/store", "Optional"],
-                  ["Toasts", "Zustand", "@core/store", "None"],
-                  ["Language", "LanguageProvider", "@core/providers", "localStorage"],
-                  ["Form Inputs", "useState / React Hook Form", "Components", "None"],
-                  ["Modal/Toggle", "useState", "Components", "None"],
-            ],
+        id: "local",
+        label: "Local Component State (useState)",
+        type: "success",
+        description: "Form inputs, modals, toggles",
       },
+      {
+        id: "lang",
+        label: "Language State (LanguageProvider)",
+        type: "info",
+        description: "Arabic/English, RTL/LTR, translations",
+      },
+    ],
+    connections: [],
+  },
+  {
+    type: "table",
+    headers: ["State Type", "Tool", "Location", "Persistence"],
+    rows: [
+      [
+        "Server Data",
+        "TanStack Query v5",
+        "ViewModels",
+        "In-memory cache (configurable staleTime)",
+      ],
+      ["Auth/Session", "Zustand + persist", "@core/store", "localStorage"],
+      ["Theme/Sidebar", "Zustand", "@core/store", "Optional"],
+      ["Toasts", "Zustand", "@core/store", "None"],
+      ["Language", "LanguageProvider", "@core/providers", "localStorage"],
+      ["Form Inputs", "useState / React Hook Form", "Components", "None"],
+      ["Modal/Toggle", "useState", "Components", "None"],
+    ],
+  },
 
-      // ─── TanStack Query ───────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.stateManagement.tanstackTitle", id: "tanstack-query",
-      },
-      { type: "paragraph", contentKey: "frontend.stateManagement.tanstackIntro" },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Query Key Factory Pattern",
-            code: `// Consistent query key structure for cache management
+  // ─── TanStack Query ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.stateManagement.tanstackTitle",
+    id: "tanstack-query",
+  },
+  { type: "paragraph", contentKey: "frontend.stateManagement.tanstackIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Query Key Factory Pattern",
+    code: `// Consistent query key structure for cache management
 export const adminKeys = {
   all:     ["admins"] as const,
   lists:   ()           => [...adminKeys.all, "list"] as const,
@@ -64,18 +93,20 @@ const { data, isLoading } = useQuery({
 // Invalidation after mutation
 const queryClient = useQueryClient();
 queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
-      },
+  },
 
-      // ─── Mutations ────────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.stateManagement.mutationsTitle", id: "mutations",
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Mutation Pattern with Cache Invalidation",
-            code: `export function useCreateAdmin() {
+  // ─── Mutations ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.stateManagement.mutationsTitle",
+    id: "mutations",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Mutation Pattern with Cache Invalidation",
+    code: `export function useCreateAdmin() {
   const queryClient = useQueryClient();
   const repo = container.adminRepository;
   const { t } = Language();
@@ -96,31 +127,33 @@ queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
     },
   });
 }`,
-      },
+  },
 
-      // ─── Zustand Stores ───────────────────────────────────────
+  // ─── Zustand Stores ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.stateManagement.zustandTitle",
+    id: "zustand",
+  },
+  { type: "paragraph", contentKey: "frontend.stateManagement.zustandIntro" },
+  {
+    type: "table",
+    headers: ["Store", "Purpose", "Persisted?"],
+    rows: [
+      ["useAuthStore", "User session, tokens, permissions, impersonation", "Yes (localStorage)"],
+      ["useUIStore", "Sidebar open/collapsed, theme, mobile state", "Optional"],
+      ["useToastStore", "Toast notification queue (auto-dismiss)", "No"],
+    ],
+  },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.stateManagement.zustandTitle", id: "zustand",
-      },
-      { type: "paragraph", contentKey: "frontend.stateManagement.zustandIntro" },
-      {
-            type: "table",
-            headers: ["Store", "Purpose", "Persisted?"],
-            rows: [
-                  ["useAuthStore", "User session, tokens, permissions, impersonation", "Yes (localStorage)"],
-                  ["useUIStore", "Sidebar open/collapsed, theme, mobile state", "Optional"],
-                  ["useToastStore", "Toast notification queue (auto-dismiss)", "No"],
-            ],
-      },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "Auth Store",
-                        language: "typescript",
-                        filename: "useAuthStore.ts — Key Interface",
-                        code: `interface AuthState {
+        label: "Auth Store",
+        language: "typescript",
+        filename: "useAuthStore.ts — Key Interface",
+        code: `interface AuthState {
   user: User | null;
   token: string | null;
   refreshToken: string | null;
@@ -136,12 +169,12 @@ queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
   startImpersonation: (targetUser: User, token: string) => void;
   stopImpersonation: () => void;
 }`,
-                  },
-                  {
-                        label: "UI Store",
-                        language: "typescript",
-                        filename: "useUIStore.ts — Sidebar & Theme",
-                        code: `interface UIState {
+      },
+      {
+        label: "UI Store",
+        language: "typescript",
+        filename: "useUIStore.ts — Sidebar & Theme",
+        code: `interface UIState {
   sidebarOpen: boolean;
   sidebarCollapsed: boolean;
   theme: 'light' | 'dark' | 'system';
@@ -152,21 +185,23 @@ queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   setIsMobile: (isMobile: boolean) => void;
 }`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── LanguageProvider ─────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.stateManagement.languageTitle", id: "language",
-      },
-      { type: "paragraph", contentKey: "frontend.stateManagement.languageIntro" },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Language() Hook — API",
-            code: `const {
+  // ─── LanguageProvider ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.stateManagement.languageTitle",
+    id: "language",
+  },
+  { type: "paragraph", contentKey: "frontend.stateManagement.languageIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Language() Hook — API",
+    code: `const {
   language,      // 'en' | 'ar'
   direction,     // 'ltr' | 'rtl'
   setLanguage,   // (lang: 'en' | 'ar') => void
@@ -179,47 +214,49 @@ t('errors.minLength', { min: '8' });        // "Must be at least 8 characters"
 
 // RTL-aware styling:
 <div className={direction === 'rtl' ? 'text-right' : 'text-left'}>`,
-      },
+  },
 
-      // ─── Anti-Patterns ────────────────────────────────────────
+  // ─── Anti-Patterns ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.stateManagement.antiPatternsTitle",
+    id: "anti-patterns",
+  },
+  {
+    type: "comparison",
+    columns: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.stateManagement.antiPatternsTitle", id: "anti-patterns",
+        titleKey: "frontend.stateManagement.antiPatternsDont",
+        variant: "negative",
+        items: [
+          "Store API data in Zustand (useEffect + fetch → Zustand setState)",
+          "Prop-drill sidebar/theme state through 5+ components",
+          "Use [locale] file-based routing for i18n",
+          "Create new Zustand stores per module",
+        ],
       },
       {
-            type: "comparison",
-            columns: [
-                  {
-                        titleKey: "frontend.stateManagement.antiPatternsDont",
-                        variant: "negative",
-                        items: [
-                              "Store API data in Zustand (useEffect + fetch → Zustand setState)",
-                              "Prop-drill sidebar/theme state through 5+ components",
-                              "Use [locale] file-based routing for i18n",
-                              "Create new Zustand stores per module",
-                        ],
-                  },
-                  {
-                        titleKey: "frontend.stateManagement.antiPatternsDo",
-                        variant: "positive",
-                        items: [
-                              "Use TanStack Query for all server-state (useQuery + useQueryClient)",
-                              "Access Zustand directly where needed (useUIStore())",
-                              "Use LanguageProvider + t() function with localStorage persistence",
-                              "Use hooks + TanStack Query per module; Zustand only for global UI",
-                        ],
-                  },
-            ],
+        titleKey: "frontend.stateManagement.antiPatternsDo",
+        variant: "positive",
+        items: [
+          "Use TanStack Query for all server-state (useQuery + useQueryClient)",
+          "Access Zustand directly where needed (useUIStore())",
+          "Use LanguageProvider + t() function with localStorage persistence",
+          "Use hooks + TanStack Query per module; Zustand only for global UI",
+        ],
       },
+    ],
+  },
 ];
 
 registerPage({
-      slug: "frontend/state-management",
-      titleKey: "frontend.stateManagement.title",
-      descriptionKey: "frontend.stateManagement.description",
-      category: "frontend",
-      order: 3,
-      sections,
-      relatedSlugs: ["frontend/crud-system", "architecture/frontend", "frontend/localization"],
-      lastUpdated: "2026-02-20",
+  slug: "frontend/state-management",
+  titleKey: "frontend.stateManagement.title",
+  descriptionKey: "frontend.stateManagement.description",
+  category: "frontend",
+  order: 3,
+  sections,
+  relatedSlugs: ["frontend/crud-system", "architecture/frontend", "frontend/localization"],
+  lastUpdated: "2026-02-20",
 });

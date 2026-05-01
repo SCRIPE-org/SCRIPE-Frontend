@@ -5,26 +5,33 @@
 export const zh = {
   commercial: {
     whyNexoraOverview: {
-      description: "一份决定性的、高管级别的摘要，准确地说明了选择 NEXORA 框架为何从根本上消除了您整个企业软件开发之旅的风险。",
+      description:
+        "一份决定性的、高管级别的摘要，准确地说明了选择 NEXORA 框架为何从根本上消除了您整个企业软件开发之旅的风险。",
       glanceTitle: "架构概览",
       idealEnterprise: "成熟的企业基础架构",
       idealEnterpriseDesc: "将混乱的遗留大型机迁移到严格有序、高度可扩展的现代应用程序架构。",
       idealForTitle: "战略部署档案",
       idealGov: "高度受监管的环境",
-      idealGovDesc: "严格的审计跟踪、数学上的数据隔离以及原生的本地 (On-premise) 部署能力基础设施。",
+      idealGovDesc:
+        "严格的审计跟踪、数学上的数据隔离以及原生的本地 (On-premise) 部署能力基础设施。",
       idealSaaS: "爆炸性增长的 B2B 创始人",
       idealSaaSDesc: "跳过构建用户权限和计费集成所需的两年时间。从第一天就开始编写您的专有功能。",
       idealStartup: "精益、高速发展的初创公司",
       idealStartupDesc: "仅凭 3 名全栈开发人员即可实现 20 人团队的工程吞吐量。",
-      intro: "NEXORA 赋予有远见的组织一个经过实战考验、可无限扩展的架构基础，从而保证了巨大的性能、完美的多租户安全性以及无与伦比的工程开发速度。",
-      problemContent: "传统的软件实现会耗费大量资金在架构上的犹豫不决、脆弱的安全态势和脱节的扩展模型上进行斗争。NEXORA 完全绕过了这些瓶颈。",
+      intro:
+        "NEXORA 赋予有远见的组织一个经过实战考验、可无限扩展的架构基础，从而保证了巨大的性能、完美的多租户安全性以及无与伦比的工程开发速度。",
+      problemContent:
+        "传统的软件实现会耗费大量资金在架构上的犹豫不决、脆弱的安全态势和脱节的扩展模型上进行斗争。NEXORA 完全绕过了这些瓶颈。",
       problemTitle: "定制实施带来的摩擦",
       savingsTitle: "可证明的工程指标",
-      solutionContent: "通过利用纯净、生产就绪的企业基础，超越传统的开发瓶颈。NEXORA 为您的工程团队开箱即用地配备了纯正的整洁架构后端、极其快速的 Next.js 前端以及分布式可观测性工具。",
+      solutionContent:
+        "通过利用纯净、生产就绪的企业基础，超越传统的开发瓶颈。NEXORA 为您的工程团队开箱即用地配备了纯正的整洁架构后端、极其快速的 Next.js 前端以及分布式可观测性工具。",
       solutionTitle: "权威的解决方案提供商",
-      startTip: "架构行动：不要只是猜测。立即克隆代码库，在 15 分钟内初始化系统，体验绝对的架构清晰度。",
+      startTip:
+        "架构行动：不要只是猜测。立即克隆代码库，在 15 分钟内初始化系统，体验绝对的架构清晰度。",
       title: "为何选择 NEXORA？",
-      visionContent: "我们不仅提供代码；我们积极参与您的规模扩展。我们的愿景是通过提供一个具有内在结构且逻辑完美的框架来优雅地吸收数十年的激进功能开发，从而彻底消除“技术债务”的概念。",
+      visionContent:
+        "我们不仅提供代码；我们积极参与您的规模扩展。我们的愿景是通过提供一个具有内在结构且逻辑完美的框架来优雅地吸收数十年的激进功能开发，从而彻底消除“技术债务”的概念。",
       visionTitle: "无限扩展的地平线",
       tblCostHeader1: "面临的挑战",
       tblCostHeader2: "传统方法",
@@ -94,27 +101,37 @@ export const zh = {
       tblSavingsR6C3: "零修补、零额外工作",
     },
     competitiveAdvantages: {
-      architectureContent: "我们拒绝妥协。NEXORA 严格遵循领域驱动设计 (DDD) 和整洁架构 (Clean Architecture) 原则。与在企业规模下容易崩溃的扁平 MVC 模板不同，我们的架构保证了表现层和基础设施层永远不会泄漏到您的核心业务逻辑中。",
+      architectureContent:
+        "我们拒绝妥协。NEXORA 严格遵循领域驱动设计 (DDD) 和整洁架构 (Clean Architecture) 原则。与在企业规模下容易崩溃的扁平 MVC 模板不同，我们的架构保证了表现层和基础设施层永远不会泄漏到您的核心业务逻辑中。",
       architectureTitle: "毫不妥协的架构",
       comparisonTitle: "NEXORA 范式",
-      databaseContent: "锁定在单一供应商是一个巨大的隐患。使用 NEXORA，您只需一个配置标志即可在 SQL Server、Oracle 和 PostgreSQL 之间无缝迁移。此外，Database.Mode 切换开关允许您将所有模块合并到一个共享数据库中（Single 模式）或将每个模块隔离到其自己的数据库中（Multi 模式）——而无需重写任何一行数据访问代码。",
+      databaseContent:
+        "锁定在单一供应商是一个巨大的隐患。使用 NEXORA，您只需一个配置标志即可在 SQL Server、Oracle 和 PostgreSQL 之间无缝迁移。此外，Database.Mode 切换开关允许您将所有模块合并到一个共享数据库中（Single 模式）或将每个模块隔离到其自己的数据库中（Multi 模式）——而无需重写任何一行数据访问代码。",
       databaseTitle: "零数据库锁定",
-      description: "专为有远见的企业设计，通过毫不妥协的设计、军用级的安全性和无摩擦的扩展性来主导其市场。",
-      evaluationTip: "重要提示：进行概念验证 (PoC)。NEXORA 的 30 天试用版允许您的首席工程师直接针对您最困难的技术挑战验证我们的架构声明。",
-      intro: "NEXORA 旨在彻底摧毁企业软件开发的传统限制：供应商依赖、架构熵和缓慢的发布周期。以下是有远见的组织如何倍增其工程资本的方式。",
+      description:
+        "专为有远见的企业设计，通过毫不妥协的设计、军用级的安全性和无摩擦的扩展性来主导其市场。",
+      evaluationTip:
+        "重要提示：进行概念验证 (PoC)。NEXORA 的 30 天试用版允许您的首席工程师直接针对您最困难的技术挑战验证我们的架构声明。",
+      intro:
+        "NEXORA 旨在彻底摧毁企业软件开发的传统限制：供应商依赖、架构熵和缓慢的发布周期。以下是有远见的组织如何倍增其工程资本的方式。",
       nexoraApproach: "NEXORA 优势",
-      productivityContent: "初创公司和大型企业都使用 NEXORA 来绕过 6-12 个月的基础开发工作。通过在第一天就提供生产就绪的身份验证、多租户和审计日志，团队能够立即开始交付独特的商业价值。",
+      productivityContent:
+        "初创公司和大型企业都使用 NEXORA 来绕过 6-12 个月的基础开发工作。通过在第一天就提供生产就绪的身份验证、多租户和审计日志，团队能够立即开始交付独特的商业价值。",
       productivityTitle: "史无前例的生产力",
-      securityContent: "开箱即用的 8 层纵深防御安全模型。我们提供行级租户隔离、速率限制、JWT 撤销、细粒度 RBAC 和不可变的审计日志——这些通常需要数百万研发资金的功能。",
+      securityContent:
+        "开箱即用的 8 层纵深防御安全模型。我们提供行级租户隔离、速率限制、JWT 撤销、细粒度 RBAC 和不可变的审计日志——这些通常需要数百万研发资金的功能。",
       securityTitle: "军用级安全",
-      tenancyContent: "大多数 SaaS 启动模板使用“软”隔离，其中一个错误就会暴露另一个租户的数据。NEXORA 具有与 EF Core 查询管道深度绑定的基于鉴别器 (discriminator) 的严格行级租户隔离，使得跨租户数据泄漏在数学上成为不可能。",
+      tenancyContent:
+        "大多数 SaaS 启动模板使用“软”隔离，其中一个错误就会暴露另一个租户的数据。NEXORA 具有与 EF Core 查询管道深度绑定的基于鉴别器 (discriminator) 的严格行级租户隔离，使得跨租户数据泄漏在数学上成为不可能。",
       tenancyTitle: "加密级的租户隔离",
       tenantBranding: "白标 (White-Label) 就绪",
-      tenantBrandingDesc: "提供深度的品牌定制。每个租户都可以透明地映射自定义域名、CSS 主题和本地化重写。",
+      tenantBrandingDesc:
+        "提供深度的品牌定制。每个租户都可以透明地映射自定义域名、CSS 主题和本地化重写。",
       tenantHierarchy: "无限层级",
       tenantHierarchyDesc: "使用父子组织结构和继承的权限对复杂的 B2B 关系进行建模。",
       tenantIsolation: "绝对隔离",
-      tenantIsolationDesc: "保证全球合规性。用户的身份 JWT 以密码学方式绑定到其租户，防止横向越权移动。",
+      tenantIsolationDesc:
+        "保证全球合规性。用户的身份 JWT 以密码学方式绑定到其租户，防止横向越权移动。",
       title: "竞争优势",
       traditionalApproach: "传统困境",
       compNexoraI1: "模块化单体 → API 网关 → 微服务演进式架构",
@@ -207,37 +224,51 @@ export const zh = {
       tblCompR9C4: "第 6 个月",
     },
     targetIndustries: {
-      description: "深入了解特定高合规性要求的行业如何利用 NEXORA 构建安全、可扩展且彻底隔离的应用程序。",
-      educationContent: "管理庞大的大学目录，并严格地在不同校区和相关区域部门之间分层隔离学生的个人身份信息 (PII) 数据。",
+      description:
+        "深入了解特定高合规性要求的行业如何利用 NEXORA 构建安全、可扩展且彻底隔离的应用程序。",
+      educationContent:
+        "管理庞大的大学目录，并严格地在不同校区和相关区域部门之间分层隔离学生的个人身份信息 (PII) 数据。",
       educationTitle: "高等教育与教育科技 (EdTech)",
-      financeContent: "利用严格的命令查询职责分离 (CQRS) 来保证财务账本在读取数据时永远不会被锁定，而绝对的审计跟踪机制能满足监管机构的严格审查。",
+      financeContent:
+        "利用严格的命令查询职责分离 (CQRS) 来保证财务账本在读取数据时永远不会被锁定，而绝对的审计跟踪机制能满足监管机构的严格审查。",
       financeTitle: "金融科技与银行基础设施",
-      govContent: "将应用快速部署到强化的本地 (On-premise) 政府大型机上，使其与公共网络完全断开，并使用严格的基于角色的能力边界。",
+      govContent:
+        "将应用快速部署到强化的本地 (On-premise) 政府大型机上，使其与公共网络完全断开，并使用严格的基于角色的能力边界。",
       govTitle: "政府与市政机构",
       healthMultiSite: "跨诊所数据隔离",
-      healthMultiSiteDesc: "确保诊所 B 的医生如果没有跨多租户边界的明确授权，从物理层面就无法查询到诊所 A 的患者信息。",
+      healthMultiSiteDesc:
+        "确保诊所 B 的医生如果没有跨多租户边界的明确授权，从物理层面就无法查询到诊所 A 的患者信息。",
       healthSecurity: "符合 HIPAA 规范的基础设施",
-      healthSecurityDesc: "原生支持静态数据的 AES-256 数据库加密，并强制实行传输中的 TLS 1.3 协议。",
-      healthcareContent: "当数据泄露意味着灾难性的法律责任时，医疗保健提供商求助于 NEXORA 的 EF Core 全局查询过滤器，以在数学层面保证患者数据永远不会在不同的隔离医疗机构之间被意外混合。",
+      healthSecurityDesc:
+        "原生支持静态数据的 AES-256 数据库加密，并强制实行传输中的 TLS 1.3 协议。",
+      healthcareContent:
+        "当数据泄露意味着灾难性的法律责任时，医疗保健提供商求助于 NEXORA 的 EF Core 全局查询过滤器，以在数学层面保证患者数据永远不会在不同的隔离医疗机构之间被意外混合。",
       healthcareTitle: "医疗保健与远程医疗",
-      intro: "NEXORA 不仅仅是一个通用的应用程序框架。其严格执行的架构边界、加密多租户技术以及法证级审计功能，使其成为受到严格监管、高风险运营环境的绝对首选。",
+      intro:
+        "NEXORA 不仅仅是一个通用的应用程序框架。其严格执行的架构边界、加密多租户技术以及法证级审计功能，使其成为受到严格监管、高风险运营环境的绝对首选。",
       matrixTitle: "行业适用性矩阵",
       menaBuiltIn: "原生本地化支持",
       menaCompetitor: "残缺的替代方案",
-      menaContent: "NEXORA 开箱即用地提供完美无瑕、格式美观的从右向左 (RTL) 阿拉伯语支持，确保无需复杂的 CSS hacking 即可立即获得区域用户的采用。",
+      menaContent:
+        "NEXORA 开箱即用地提供完美无瑕、格式美观的从右向左 (RTL) 阿拉伯语支持，确保无需复杂的 CSS hacking 即可立即获得区域用户的采用。",
       menaTitle: "中东和北非地区 (MENA) 总部",
-      retailContent: "使用由 RabbitMQ 提供支持的弹性电子邮件系统和高并发的分布式缓存算法，优雅地应对“黑色星期五”爆炸性的交易高峰。",
+      retailContent:
+        "使用由 RabbitMQ 提供支持的弹性电子邮件系统和高并发的分布式缓存算法，优雅地应对“黑色星期五”爆炸性的交易高峰。",
       retailTitle: "企业级电子商务与零售",
       saasAnalytics: "法证级应用遥测",
       saasAnalyticsDesc: "即时分析哪些 B2B 租户带来了最多的流量，从而实现精准的定价模型优化。",
-      saasContent: "软件即服务 (SaaS) 是我们的核心 DNA。借助我们庞大的预建身份验证、计费和组织管理模块，在几周（而非几年）内发布新的专有产品。",
+      saasContent:
+        "软件即服务 (SaaS) 是我们的核心 DNA。借助我们庞大的预建身份验证、计费和组织管理模块，在几周（而非几年）内发布新的专有产品。",
       saasMultiTenant: "可证明的加密隔离",
-      saasMultiTenantDesc: "B2B 客户需要数据安全。通过全局查询过滤器，确保他们的数据行对其他租户完全不可见。",
+      saasMultiTenantDesc:
+        "B2B 客户需要数据安全。通过全局查询过滤器，确保他们的数据行对其他租户完全不可见。",
       saasScaling: "无摩擦的演进式扩展",
-      saasScalingDesc: "从低成本的单体架构起步。当您拿下第一家财富 500 强客户时，无需重写代码即可演变为高度分布式的微服务。",
+      saasScalingDesc:
+        "从低成本的单体架构起步。当您拿下第一家财富 500 强客户时，无需重写代码即可演变为高度分布式的微服务。",
       saasTitle: "高增长的 B2B SaaS",
       saasWhiteLabel: "完全的品牌流动性",
-      saasWhiteLabelDesc: "允许您的庞大企业客户在全球范围内动态注入他们自己的徽标、排版系统和电子邮件域名。",
+      saasWhiteLabelDesc:
+        "允许您的庞大企业客户在全球范围内动态注入他们自己的徽标、排版系统和电子邮件域名。",
       title: "垂直行业应用场景",
       tblGovHeader1: "需求",
       tblGovHeader2: "NEXORA 的能力",
@@ -295,14 +326,19 @@ export const zh = {
       tblMatrixR7C3: "★★★★★",
     },
     roiAnalysis: {
-      caseStudyContent: "最近，一家企业客户在经历了长达 18 个月与灾难性的定制基础设施的斗争后，迁移到了 NEXORA。在短短 30 天内，他们完全消除了认证服务的开销，将基础设施运营支出 (OpEx) 永久削减了 60%，并让 4 名高级工程师重新专注于激进的业务功能开发。得益于新架构基础那可证明的无限可扩展性，他们成功获得了随后的 B 轮融资。",
+      caseStudyContent:
+        "最近，一家企业客户在经历了长达 18 个月与灾难性的定制基础设施的斗争后，迁移到了 NEXORA。在短短 30 天内，他们完全消除了认证服务的开销，将基础设施运营支出 (OpEx) 永久削减了 60%，并让 4 名高级工程师重新专注于激进的业务功能开发。得益于新架构基础那可证明的无限可扩展性，他们成功获得了随后的 B 轮融资。",
       caseStudyTitle: "经验证的财务影响",
-      costIntro: "通过购买永久许可证，您能够避免 PaaS/SaaS 订阅模式随着您的业务成功而带来的不断复利累积的惩罚性成本。",
+      costIntro:
+        "通过购买永久许可证，您能够避免 PaaS/SaaS 订阅模式随着您的业务成功而带来的不断复利累积的惩罚性成本。",
       costTitle: "可预测的资本支出 (CapEx)",
-      description: "深入的财务细分，比较采用 NEXORA 的总拥有成本 (TCO) 与从零开始构建同等企业架构的成本。",
-      intro: "企业架构可能是技术创始人承担的最昂贵风险。NEXORA 完全消除了这一风险，在您编写第一行代码之前，就保证了巨大的、数学上可证明的投资回报率 (ROI)。",
+      description:
+        "深入的财务细分，比较采用 NEXORA 的总拥有成本 (TCO) 与从零开始构建同等企业架构的成本。",
+      intro:
+        "企业架构可能是技术创始人承担的最昂贵风险。NEXORA 完全消除了这一风险，在您编写第一行代码之前，就保证了巨大的、数学上可证明的投资回报率 (ROI)。",
       ongoingTitle: "大幅降低的维护成本",
-      teamContent: "NEXORA 让一个只有 3 名工程师的精干团队，能够交付传统 15 人企业部门的吞吐量、稳定性和规模，从而最大化了员工效率。",
+      teamContent:
+        "NEXORA 让一个只有 3 名工程师的精干团队，能够交付传统 15 人企业部门的吞吐量、稳定性和规模，从而最大化了员工效率。",
       teamTitle: "工程师人效倍增器",
       timeTitle: "加速上市时间 (Time-To-Market)",
       tip: "ROI 提示：将数千小时从基础基础设施建设转移到独有功能开发和市场差异化上。",
@@ -416,17 +452,20 @@ export const zh = {
       cleanArchDesc: "零领域逻辑泄漏。UI 元素永远不会接触到 EF Core。",
       description: "对采用后即可立即获得的工程吞吐量、安全增强和横向扩展能力的量化细分。",
       ecosystemTitle: "集成生态系统优势",
-      intro: "NEXORA 的真正价值不仅在于代码，而在于研发速度 (Velocity)。我们提供了在向技术利益相关者证明采纳该架构是否合理所需的量化工程指标。",
+      intro:
+        "NEXORA 的真正价值不仅在于代码，而在于研发速度 (Velocity)。我们提供了在向技术利益相关者证明采纳该架构是否合理所需的量化工程指标。",
       patterns: "久经考验的 CQRS 模式",
       patternsDesc: "读写操作的隔离防止了灾难性的数据库死锁。",
-      performanceContent: "借助分布式缓存、高度优化的 EF Core 查询投影和并发 WebSockets，其核心 API 可以在中端基础设施上轻松处理每秒超过 10,000+ 个并发请求。",
+      performanceContent:
+        "借助分布式缓存、高度优化的 EF Core 查询投影和并发 WebSockets，其核心 API 可以在中端基础设施上轻松处理每秒超过 10,000+ 个并发请求。",
       performanceTitle: "极高的持续吞吐量",
       qualityTitle: "可证明的系统质量",
       scaleTitle: "无限的水平扩展能力",
       title: "平台成功指标",
       typeSafety: "端到端的类型安全",
       typeSafetyDesc: "从 SQL 表结构到 React 的 Props，数据的完整性在编译时得到了彻底保证。",
-      velocityContent: "凭借预建的业务模块、自动化的 CI/CD 管道和即刻生成的 Swagger 文档，企业经常反馈在其关键的第一个季度，功能的交付速度提高了 400%。",
+      velocityContent:
+        "凭借预建的业务模块、自动化的 CI/CD 管道和即刻生成的 Swagger 文档，企业经常反馈在其关键的第一个季度，功能的交付速度提高了 400%。",
       velocityTitle: "爆炸性的工程开发速度",
       tblScaleHeader1: "指标",
       tblScaleHeader2: "数值",

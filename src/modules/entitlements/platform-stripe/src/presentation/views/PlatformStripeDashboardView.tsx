@@ -35,8 +35,8 @@ export function PlatformStripeDashboardView() {
   // ── Error State ──
   if (error || !dashboard) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4 max-w-md mx-auto text-center">
-        <div className="p-4 rounded-full bg-destructive/10">
+      <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-4 py-20 text-center">
+        <div className="rounded-full bg-destructive/10 p-4">
           <AlertCircle className="h-8 w-8 text-destructive" />
         </div>
         <h2 className="text-lg font-semibold">{t("entitlements.platformStripe.errorTitle")}</h2>
@@ -52,15 +52,15 @@ export function PlatformStripeDashboardView() {
 
   // ── Dashboard ──
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <Wallet className="h-6 w-6 text-[#635bff]" />
             {t("entitlements.platformStripe.title")}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("entitlements.platformStripe.description")}
           </p>
         </div>
@@ -70,7 +70,7 @@ export function PlatformStripeDashboardView() {
           </Button>
           <Button
             size="sm"
-            className="gap-2 bg-[#635bff] hover:bg-[#5851ea] text-white"
+            className="gap-2 bg-[#635bff] text-white hover:bg-[#5851ea]"
             onClick={() => window.open(dashboard.links.dashboard, "_blank")}
           >
             <ExternalLink className="h-4 w-4" /> {t("entitlements.platformStripe.openStripe")}
@@ -88,15 +88,12 @@ export function PlatformStripeDashboardView() {
       <ConnectSummaryCard connectSummary={dashboard.connectSummary} />
 
       {/* Transactions + Payouts (side by side) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <TransactionsCard
           transactions={dashboard.recentTransactions}
           paymentsLink={dashboard.links.payments}
         />
-        <PayoutsCard
-          payouts={dashboard.recentPayouts}
-          payoutsLink={dashboard.links.payouts}
-        />
+        <PayoutsCard payouts={dashboard.recentPayouts} payoutsLink={dashboard.links.payouts} />
       </div>
 
       {/* Quick Links */}

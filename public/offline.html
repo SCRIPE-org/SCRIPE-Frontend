@@ -1,228 +1,251 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#09090b" />
-  <title>NEXORA — Offline</title>
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #09090b;
-      --surface: #18181b;
-      --border: #27272a;
-      --text: #fafafa;
-      --text-muted: #a1a1aa;
-      --primary: #6366f1;
-      --primary-hover: #818cf8;
-    }
-
-    body {
-      font-family: 'Inter', 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .container {
-      text-align: center;
-      padding: 2rem;
-      max-width: 460px;
-      width: 100%;
-    }
-
-    /* WiFi-off icon */
-    .icon-container {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 2rem;
-    }
-
-    .wifi-icon {
-      width: 100px;
-      height: 100px;
-      opacity: 0.9;
-    }
-
-    .pulse-ring {
-      position: absolute;
-      inset: -10px;
-      border: 2px solid var(--primary);
-      border-radius: 50%;
-      opacity: 0;
-      animation: pulse 2s ease-out infinite;
-    }
-
-    .pulse-ring:nth-child(2) {
-      animation-delay: 0.6s;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.8); opacity: 0.6; }
-      100% { transform: scale(1.4); opacity: 0; }
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-
-    /* Bilingual text */
-    .ar-text {
-      direction: rtl;
-      font-family: 'Cairo', sans-serif;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-      opacity: 0.7;
-    }
-
-    .retry-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 2rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .retry-btn:hover {
-      background: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    .retry-btn:active {
-      transform: translateY(0);
-    }
-
-    .retry-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .timer {
-      display: block;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      margin-top: 1rem;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ef4444;
-      display: inline-block;
-      margin-right: 0.4rem;
-      animation: blink 1.5s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .pulse-ring,
-      .status-dot {
-        animation: none;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#09090b" />
+    <title>NEXORA — Offline</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="icon-container">
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring"></div>
-      <svg class="wifi-icon" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M1 1l22 22" />
-        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
-        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
-        <path d="M10.71 5.05A16 16 0 0 1 22.56 9" />
-        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
-        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-        <line x1="12" y1="20" x2="12.01" y2="20" />
-      </svg>
+
+      :root {
+        --bg: #09090b;
+        --surface: #18181b;
+        --border: #27272a;
+        --text: #fafafa;
+        --text-muted: #a1a1aa;
+        --primary: #6366f1;
+        --primary-hover: #818cf8;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          "Cairo",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 460px;
+        width: 100%;
+      }
+
+      /* WiFi-off icon */
+      .icon-container {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 2rem;
+      }
+
+      .wifi-icon {
+        width: 100px;
+        height: 100px;
+        opacity: 0.9;
+      }
+
+      .pulse-ring {
+        position: absolute;
+        inset: -10px;
+        border: 2px solid var(--primary);
+        border-radius: 50%;
+        opacity: 0;
+        animation: pulse 2s ease-out infinite;
+      }
+
+      .pulse-ring:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.6;
+        }
+        100% {
+          transform: scale(1.4);
+          opacity: 0;
+        }
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+      }
+
+      /* Bilingual text */
+      .ar-text {
+        direction: rtl;
+        font-family: "Cairo", sans-serif;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        opacity: 0.7;
+      }
+
+      .retry-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 2rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.15s;
+      }
+
+      .retry-btn:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .retry-btn:active {
+        transform: translateY(0);
+      }
+
+      .retry-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .timer {
+        display: block;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin-top: 1rem;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
+        display: inline-block;
+        margin-right: 0.4rem;
+        animation: blink 1.5s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .pulse-ring,
+        .status-dot {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon-container">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+        <svg
+          class="wifi-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#6366f1"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M1 1l22 22" />
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+          <path d="M10.71 5.05A16 16 0 0 1 22.56 9" />
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+          <line x1="12" y1="20" x2="12.01" y2="20" />
+        </svg>
+      </div>
+
+      <h1>You're Offline</h1>
+      <p class="subtitle">
+        <span class="status-dot"></span>No internet connection detected.<br />
+        Check your connection and try again.
+      </p>
+      <p class="ar-text">أنت غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.</p>
+
+      <button class="retry-btn" id="retryBtn" onclick="retryConnection()">↻ Try Again</button>
+      <span class="timer" id="timer"></span>
     </div>
 
-    <h1>You're Offline</h1>
-    <p class="subtitle">
-      <span class="status-dot"></span>No internet connection detected.<br />
-      Check your connection and try again.
-    </p>
-    <p class="ar-text">أنت غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.</p>
+    <script>
+      let countdown = 30;
+      let interval;
 
-    <button class="retry-btn" id="retryBtn" onclick="retryConnection()">
-      ↻ Try Again
-    </button>
-    <span class="timer" id="timer"></span>
-  </div>
+      function startAutoRetry() {
+        countdown = 30;
+        clearInterval(interval);
+        interval = setInterval(() => {
+          countdown--;
+          document.getElementById("timer").textContent = `Auto-retry in ${countdown}s`;
+          if (countdown <= 0) {
+            retryConnection();
+          }
+        }, 1000);
+      }
 
-  <script>
-    let countdown = 30;
-    let interval;
+      function retryConnection() {
+        const btn = document.getElementById("retryBtn");
+        btn.disabled = true;
+        btn.textContent = "⟳ Checking...";
+        clearInterval(interval);
 
-    function startAutoRetry() {
-      countdown = 30;
-      clearInterval(interval);
-      interval = setInterval(() => {
-        countdown--;
-        document.getElementById('timer').textContent =
-          `Auto-retry in ${countdown}s`;
-        if (countdown <= 0) {
-          retryConnection();
-        }
-      }, 1000);
-    }
+        fetch("/", { method: "HEAD", cache: "no-store" })
+          .then(() => {
+            window.location.reload();
+          })
+          .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = "↻ Try Again";
+            startAutoRetry();
+          });
+      }
 
-    function retryConnection() {
-      const btn = document.getElementById('retryBtn');
-      btn.disabled = true;
-      btn.textContent = '⟳ Checking...';
-      clearInterval(interval);
-
-      fetch('/', { method: 'HEAD', cache: 'no-store' })
-        .then(() => {
-          window.location.reload();
-        })
-        .catch(() => {
-          btn.disabled = false;
-          btn.innerHTML = '↻ Try Again';
-          startAutoRetry();
-        });
-    }
-
-    startAutoRetry();
-  </script>
-</body>
+      startAutoRetry();
+    </script>
+  </body>
 </html>

@@ -158,8 +158,6 @@ export interface IAdminService {
    */
   bulkDeleteAll(filter: BulkAdminsFilterJson): Promise<number>;
 
-
-
   /**
    * Transfer admin to another tenant
    */

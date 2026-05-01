@@ -6,9 +6,22 @@
  *
  * @module customization/domain
  */
-import type { LoginLayout, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
-import type { CanvasComponent, CanvasMode, CanvasBackground, PositionMode } from "./CanvasComponent";
-import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND, DEFAULT_POSITION_MODE } from "./CanvasComponent";
+import type {
+  LoginLayout,
+  SlotConfig,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type {
+  CanvasComponent,
+  CanvasMode,
+  CanvasBackground,
+  PositionMode,
+} from "./CanvasComponent";
+import {
+  DEFAULT_CANVAS_COMPONENTS,
+  DEFAULT_CANVAS_GRID_ROWS,
+  DEFAULT_CANVAS_BACKGROUND,
+  DEFAULT_POSITION_MODE,
+} from "./CanvasComponent";
 
 // Dashboard settings type — full 61 settings matching SettingsProvider schema
 export interface DashboardThemeSettings {
@@ -179,14 +192,13 @@ export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
   toastDuration: 5000,
 };
 
-
 // ── Auth Page Identifiers ─────────────────────────────
 export type AuthPageId = "login" | "forgot-password" | "reset-password";
 
 export const AUTH_PAGES: { id: AuthPageId; labelKey: string; icon: string }[] = [
-  { id: "login",           labelKey: "studio.page.login",         icon: "LogIn" },
+  { id: "login", labelKey: "studio.page.login", icon: "LogIn" },
   { id: "forgot-password", labelKey: "studio.page.forgotPassword", icon: "KeyRound" },
-  { id: "reset-password",  labelKey: "studio.page.resetPassword",  icon: "RotateCcw" },
+  { id: "reset-password", labelKey: "studio.page.resetPassword", icon: "RotateCcw" },
 ];
 
 // ── Per-Page Override — each page can customize layout + content + background ──
@@ -222,9 +234,9 @@ export type AuthPageOverrides = Partial<Record<AuthPageId, AuthPageOverride>>;
 
 // Default per-page values (login inherits from global draft; other pages inherit bg from login)
 export const DEFAULT_PAGE_OVERRIDES: Record<AuthPageId, AuthPageOverride> = {
-  "login":           { layout: "split-right", headline: "", subtitle: "", inheritBackground: false },
-  "forgot-password": { layout: "centered",    headline: "", subtitle: "", inheritBackground: true },
-  "reset-password":  { layout: "centered",    headline: "", subtitle: "", inheritBackground: true },
+  login: { layout: "split-right", headline: "", subtitle: "", inheritBackground: false },
+  "forgot-password": { layout: "centered", headline: "", subtitle: "", inheritBackground: true },
+  "reset-password": { layout: "centered", headline: "", subtitle: "", inheritBackground: true },
 };
 
 // ── Draft Shape ───────────────────────────────────────
@@ -523,9 +535,9 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
   // Typography & Readability
   a11yMinFontSize: 14,
   a11yContentScaling: 100,
-  a11yLineHeight: 0,       // 0 = inherit (no override)
-  a11yLetterSpacing: 0,    // 0 = inherit
-  a11yWordSpacing: 0,      // 0 = inherit
+  a11yLineHeight: 0, // 0 = inherit (no override)
+  a11yLetterSpacing: 0, // 0 = inherit
+  a11yWordSpacing: 0, // 0 = inherit
   a11yDyslexicFont: false,
   a11yTextAlign: "inherit",
   // Cursor & Reading Aids
@@ -546,7 +558,7 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
   // Multi-Page Branding
   pageOverrides: {},
   // Page Builder (M10)
-  canvasMode: 'layout',
+  canvasMode: "layout",
   canvasComponents: DEFAULT_CANVAS_COMPONENTS,
   canvasGridRows: DEFAULT_CANVAS_GRID_ROWS,
   canvasBackground: DEFAULT_CANVAS_BACKGROUND,
@@ -565,7 +577,18 @@ export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: numb
 };
 
 // ── Panel Identifiers ─────────────────────────────────
-export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced" | "accessibility" | "themes" | "builder" | "dashboard";
+export type StudioPanel =
+  | "layout"
+  | "branding"
+  | "appearance"
+  | "typography"
+  | "spacing"
+  | "blocks"
+  | "advanced"
+  | "accessibility"
+  | "themes"
+  | "builder"
+  | "dashboard";
 
 // ── All 22 Layouts ─────────────────────────────────────
 export const ALL_LAYOUTS: {
@@ -574,44 +597,177 @@ export const ALL_LAYOUTS: {
   descKey: string;
   thumbnail: string;
 }[] = [
-  { id: "split-right",     labelKey: "studio.layout.splitRight",     descKey: "studio.layout.splitRightDesc",     thumbnail: "◧" },
-  { id: "split-left",      labelKey: "studio.layout.splitLeft",      descKey: "studio.layout.splitLeftDesc",      thumbnail: "◨" },
-  { id: "centered",        labelKey: "studio.layout.centered",       descKey: "studio.layout.centeredDesc",       thumbnail: "◉" },
-  { id: "branded-full",    labelKey: "studio.layout.brandedFull",    descKey: "studio.layout.brandedFullDesc",    thumbnail: "▣" },
-  { id: "minimal",         labelKey: "studio.layout.minimal",        descKey: "studio.layout.minimalDesc",        thumbnail: "▭" },
-  { id: "overlay",         labelKey: "studio.layout.overlay",        descKey: "studio.layout.overlayDesc",        thumbnail: "◫" },
-  { id: "magazine",        labelKey: "studio.layout.magazine",       descKey: "studio.layout.magazineDesc",       thumbnail: "▤" },
-  { id: "stacked",         labelKey: "studio.layout.stacked",        descKey: "studio.layout.stackedDesc",        thumbnail: "▥" },
-  { id: "sidebar-compact", labelKey: "studio.layout.sidebarCompact", descKey: "studio.layout.sidebarCompactDesc", thumbnail: "▮" },
-  { id: "asymmetric",      labelKey: "studio.layout.asymmetric",     descKey: "studio.layout.asymmetricDesc",     thumbnail: "◰" },
-  { id: "floating",        labelKey: "studio.layout.floating",       descKey: "studio.layout.floatingDesc",       thumbnail: "◻" },
-  { id: "immersive",       labelKey: "studio.layout.immersive",      descKey: "studio.layout.immersiveDesc",      thumbnail: "◼" },
-  { id: "split-diagonal",  labelKey: "studio.layout.splitDiagonal",  descKey: "studio.layout.splitDiagonalDesc",  thumbnail: "◸" },
-  { id: "carousel",        labelKey: "studio.layout.carousel",       descKey: "studio.layout.carouselDesc",       thumbnail: "⟳" },
-  { id: "glass-morphism",  labelKey: "studio.layout.glassMorphism",  descKey: "studio.layout.glassMorphismDesc",  thumbnail: "◇" },
-  { id: "gradient-wave",   labelKey: "studio.layout.gradientWave",   descKey: "studio.layout.gradientWaveDesc",   thumbnail: "∿" },
-  { id: "spotlight",       labelKey: "studio.layout.spotlight",      descKey: "studio.layout.spotlightDesc",      thumbnail: "◎" },
-  { id: "dual-panel",      labelKey: "studio.layout.dualPanel",      descKey: "studio.layout.dualPanelDesc",      thumbnail: "▦" },
-  { id: "corner-card",     labelKey: "studio.layout.cornerCard",     descKey: "studio.layout.cornerCardDesc",     thumbnail: "◳" },
-  { id: "vertical-split",  labelKey: "studio.layout.verticalSplit",  descKey: "studio.layout.verticalSplitDesc",  thumbnail: "⬒" },
-  { id: "fullscreen-form", labelKey: "studio.layout.fullscreenForm", descKey: "studio.layout.fullscreenFormDesc", thumbnail: "▢" },
-  { id: "mosaic",          labelKey: "studio.layout.mosaic",         descKey: "studio.layout.mosaicDesc",         thumbnail: "▩" },
+  {
+    id: "split-right",
+    labelKey: "studio.layout.splitRight",
+    descKey: "studio.layout.splitRightDesc",
+    thumbnail: "◧",
+  },
+  {
+    id: "split-left",
+    labelKey: "studio.layout.splitLeft",
+    descKey: "studio.layout.splitLeftDesc",
+    thumbnail: "◨",
+  },
+  {
+    id: "centered",
+    labelKey: "studio.layout.centered",
+    descKey: "studio.layout.centeredDesc",
+    thumbnail: "◉",
+  },
+  {
+    id: "branded-full",
+    labelKey: "studio.layout.brandedFull",
+    descKey: "studio.layout.brandedFullDesc",
+    thumbnail: "▣",
+  },
+  {
+    id: "minimal",
+    labelKey: "studio.layout.minimal",
+    descKey: "studio.layout.minimalDesc",
+    thumbnail: "▭",
+  },
+  {
+    id: "overlay",
+    labelKey: "studio.layout.overlay",
+    descKey: "studio.layout.overlayDesc",
+    thumbnail: "◫",
+  },
+  {
+    id: "magazine",
+    labelKey: "studio.layout.magazine",
+    descKey: "studio.layout.magazineDesc",
+    thumbnail: "▤",
+  },
+  {
+    id: "stacked",
+    labelKey: "studio.layout.stacked",
+    descKey: "studio.layout.stackedDesc",
+    thumbnail: "▥",
+  },
+  {
+    id: "sidebar-compact",
+    labelKey: "studio.layout.sidebarCompact",
+    descKey: "studio.layout.sidebarCompactDesc",
+    thumbnail: "▮",
+  },
+  {
+    id: "asymmetric",
+    labelKey: "studio.layout.asymmetric",
+    descKey: "studio.layout.asymmetricDesc",
+    thumbnail: "◰",
+  },
+  {
+    id: "floating",
+    labelKey: "studio.layout.floating",
+    descKey: "studio.layout.floatingDesc",
+    thumbnail: "◻",
+  },
+  {
+    id: "immersive",
+    labelKey: "studio.layout.immersive",
+    descKey: "studio.layout.immersiveDesc",
+    thumbnail: "◼",
+  },
+  {
+    id: "split-diagonal",
+    labelKey: "studio.layout.splitDiagonal",
+    descKey: "studio.layout.splitDiagonalDesc",
+    thumbnail: "◸",
+  },
+  {
+    id: "carousel",
+    labelKey: "studio.layout.carousel",
+    descKey: "studio.layout.carouselDesc",
+    thumbnail: "⟳",
+  },
+  {
+    id: "glass-morphism",
+    labelKey: "studio.layout.glassMorphism",
+    descKey: "studio.layout.glassMorphismDesc",
+    thumbnail: "◇",
+  },
+  {
+    id: "gradient-wave",
+    labelKey: "studio.layout.gradientWave",
+    descKey: "studio.layout.gradientWaveDesc",
+    thumbnail: "∿",
+  },
+  {
+    id: "spotlight",
+    labelKey: "studio.layout.spotlight",
+    descKey: "studio.layout.spotlightDesc",
+    thumbnail: "◎",
+  },
+  {
+    id: "dual-panel",
+    labelKey: "studio.layout.dualPanel",
+    descKey: "studio.layout.dualPanelDesc",
+    thumbnail: "▦",
+  },
+  {
+    id: "corner-card",
+    labelKey: "studio.layout.cornerCard",
+    descKey: "studio.layout.cornerCardDesc",
+    thumbnail: "◳",
+  },
+  {
+    id: "vertical-split",
+    labelKey: "studio.layout.verticalSplit",
+    descKey: "studio.layout.verticalSplitDesc",
+    thumbnail: "⬒",
+  },
+  {
+    id: "fullscreen-form",
+    labelKey: "studio.layout.fullscreenForm",
+    descKey: "studio.layout.fullscreenFormDesc",
+    thumbnail: "▢",
+  },
+  {
+    id: "mosaic",
+    labelKey: "studio.layout.mosaic",
+    descKey: "studio.layout.mosaicDesc",
+    thumbnail: "▩",
+  },
 ];
 
 // ── Font Options (English) ─────────────────────────────
 export const FONT_OPTIONS_EN = [
-  "Inter", "Roboto", "Poppins", "Outfit", "Plus Jakarta Sans",
-  "DM Sans", "Source Sans 3", "Nunito", "Lato", "Montserrat",
-  "Open Sans", "Raleway", "Work Sans", "Manrope", "Geist",
-  "Figtree", "Lexend", "Sora", "Bricolage Grotesque",
+  "Inter",
+  "Roboto",
+  "Poppins",
+  "Outfit",
+  "Plus Jakarta Sans",
+  "DM Sans",
+  "Source Sans 3",
+  "Nunito",
+  "Lato",
+  "Montserrat",
+  "Open Sans",
+  "Raleway",
+  "Work Sans",
+  "Manrope",
+  "Geist",
+  "Figtree",
+  "Lexend",
+  "Sora",
+  "Bricolage Grotesque",
   "system-ui",
 ];
 
 // ── Font Options (Arabic) ──────────────────────────────
 export const FONT_OPTIONS_AR = [
-  "Cairo", "Tajawal", "IBM Plex Sans Arabic", "Noto Kufi Arabic",
-  "Amiri", "El Messiri", "Almarai", "Changa",
-  "Noto Sans Arabic", "Readex Pro", "Rubik",
+  "Cairo",
+  "Tajawal",
+  "IBM Plex Sans Arabic",
+  "Noto Kufi Arabic",
+  "Amiri",
+  "El Messiri",
+  "Almarai",
+  "Changa",
+  "Noto Sans Arabic",
+  "Readex Pro",
+  "Rubik",
   "system-ui",
 ];
 
@@ -620,55 +776,115 @@ export const COLOR_PRESETS: { labelKey: string; colors: Partial<StudioDraftProps
   {
     labelKey: "studio.preset.proDark",
     colors: {
-      primaryColor: "#3b82f6", secondaryColor: "#64748b", bgColor: "#ffffff", surfaceColor: "#f8fafc",
-      textColor: "#0f172a", mutedColor: "#64748b", borderColor: "#e2e8f0",
-      darkPrimaryColor: "#3b82f6", darkSecondaryColor: "#94a3b8", darkBgColor: "#0f172a", darkSurfaceColor: "#1e293b",
-      darkTextColor: "#f8fafc", darkMutedColor: "#94a3b8", darkBorderColor: "#334155",
+      primaryColor: "#3b82f6",
+      secondaryColor: "#64748b",
+      bgColor: "#ffffff",
+      surfaceColor: "#f8fafc",
+      textColor: "#0f172a",
+      mutedColor: "#64748b",
+      borderColor: "#e2e8f0",
+      darkPrimaryColor: "#3b82f6",
+      darkSecondaryColor: "#94a3b8",
+      darkBgColor: "#0f172a",
+      darkSurfaceColor: "#1e293b",
+      darkTextColor: "#f8fafc",
+      darkMutedColor: "#94a3b8",
+      darkBorderColor: "#334155",
     },
   },
   {
     labelKey: "studio.preset.oceanBlue",
     colors: {
-      primaryColor: "#0ea5e9", secondaryColor: "#38bdf8", bgColor: "#f0f9ff", surfaceColor: "#e0f2fe",
-      textColor: "#0c4a6e", mutedColor: "#64748b", borderColor: "#bae6fd",
-      darkPrimaryColor: "#0ea5e9", darkSecondaryColor: "#38bdf8", darkBgColor: "#0c1222", darkSurfaceColor: "#172038",
-      darkTextColor: "#e2e8f0", darkMutedColor: "#64748b", darkBorderColor: "#1e3a5a",
+      primaryColor: "#0ea5e9",
+      secondaryColor: "#38bdf8",
+      bgColor: "#f0f9ff",
+      surfaceColor: "#e0f2fe",
+      textColor: "#0c4a6e",
+      mutedColor: "#64748b",
+      borderColor: "#bae6fd",
+      darkPrimaryColor: "#0ea5e9",
+      darkSecondaryColor: "#38bdf8",
+      darkBgColor: "#0c1222",
+      darkSurfaceColor: "#172038",
+      darkTextColor: "#e2e8f0",
+      darkMutedColor: "#64748b",
+      darkBorderColor: "#1e3a5a",
     },
   },
   {
     labelKey: "studio.preset.forestGreen",
     colors: {
-      primaryColor: "#10b981", secondaryColor: "#34d399", bgColor: "#f0fdf4", surfaceColor: "#dcfce7",
-      textColor: "#14532d", mutedColor: "#6b7280", borderColor: "#bbf7d0",
-      darkPrimaryColor: "#10b981", darkSecondaryColor: "#6ee7b7", darkBgColor: "#0a1f15", darkSurfaceColor: "#132f21",
-      darkTextColor: "#ecfdf5", darkMutedColor: "#6ee7b7", darkBorderColor: "#1a4732",
+      primaryColor: "#10b981",
+      secondaryColor: "#34d399",
+      bgColor: "#f0fdf4",
+      surfaceColor: "#dcfce7",
+      textColor: "#14532d",
+      mutedColor: "#6b7280",
+      borderColor: "#bbf7d0",
+      darkPrimaryColor: "#10b981",
+      darkSecondaryColor: "#6ee7b7",
+      darkBgColor: "#0a1f15",
+      darkSurfaceColor: "#132f21",
+      darkTextColor: "#ecfdf5",
+      darkMutedColor: "#6ee7b7",
+      darkBorderColor: "#1a4732",
     },
   },
   {
     labelKey: "studio.preset.sunsetWarm",
     colors: {
-      primaryColor: "#f59e0b", secondaryColor: "#fbbf24", bgColor: "#fffbeb", surfaceColor: "#fef3c7",
-      textColor: "#78350f", mutedColor: "#92400e", borderColor: "#fde68a",
-      darkPrimaryColor: "#f59e0b", darkSecondaryColor: "#fbbf24", darkBgColor: "#1c1008", darkSurfaceColor: "#2a1b0f",
-      darkTextColor: "#fef3c7", darkMutedColor: "#d97706", darkBorderColor: "#451a03",
+      primaryColor: "#f59e0b",
+      secondaryColor: "#fbbf24",
+      bgColor: "#fffbeb",
+      surfaceColor: "#fef3c7",
+      textColor: "#78350f",
+      mutedColor: "#92400e",
+      borderColor: "#fde68a",
+      darkPrimaryColor: "#f59e0b",
+      darkSecondaryColor: "#fbbf24",
+      darkBgColor: "#1c1008",
+      darkSurfaceColor: "#2a1b0f",
+      darkTextColor: "#fef3c7",
+      darkMutedColor: "#d97706",
+      darkBorderColor: "#451a03",
     },
   },
   {
     labelKey: "studio.preset.monochrome",
     colors: {
-      primaryColor: "#71717a", secondaryColor: "#a1a1aa", bgColor: "#fafafa", surfaceColor: "#f4f4f5",
-      textColor: "#18181b", mutedColor: "#71717a", borderColor: "#e4e4e7",
-      darkPrimaryColor: "#a1a1aa", darkSecondaryColor: "#71717a", darkBgColor: "#09090b", darkSurfaceColor: "#18181b",
-      darkTextColor: "#fafafa", darkMutedColor: "#71717a", darkBorderColor: "#27272a",
+      primaryColor: "#71717a",
+      secondaryColor: "#a1a1aa",
+      bgColor: "#fafafa",
+      surfaceColor: "#f4f4f5",
+      textColor: "#18181b",
+      mutedColor: "#71717a",
+      borderColor: "#e4e4e7",
+      darkPrimaryColor: "#a1a1aa",
+      darkSecondaryColor: "#71717a",
+      darkBgColor: "#09090b",
+      darkSurfaceColor: "#18181b",
+      darkTextColor: "#fafafa",
+      darkMutedColor: "#71717a",
+      darkBorderColor: "#27272a",
     },
   },
   {
     labelKey: "studio.preset.purpleNight",
     colors: {
-      primaryColor: "#8b5cf6", secondaryColor: "#a78bfa", bgColor: "#faf5ff", surfaceColor: "#f3e8ff",
-      textColor: "#3b0764", mutedColor: "#7c3aed", borderColor: "#e9d5ff",
-      darkPrimaryColor: "#8b5cf6", darkSecondaryColor: "#a78bfa", darkBgColor: "#0f0720", darkSurfaceColor: "#1a0e38",
-      darkTextColor: "#f5f3ff", darkMutedColor: "#a78bfa", darkBorderColor: "#2e1f5e",
+      primaryColor: "#8b5cf6",
+      secondaryColor: "#a78bfa",
+      bgColor: "#faf5ff",
+      surfaceColor: "#f3e8ff",
+      textColor: "#3b0764",
+      mutedColor: "#7c3aed",
+      borderColor: "#e9d5ff",
+      darkPrimaryColor: "#8b5cf6",
+      darkSecondaryColor: "#a78bfa",
+      darkBgColor: "#0f0720",
+      darkSurfaceColor: "#1a0e38",
+      darkTextColor: "#f5f3ff",
+      darkMutedColor: "#a78bfa",
+      darkBorderColor: "#2e1f5e",
     },
   },
 ];

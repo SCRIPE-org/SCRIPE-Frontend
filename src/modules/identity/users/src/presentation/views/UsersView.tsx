@@ -15,11 +15,7 @@ import { useUsersViewModel } from "../viewmodels/useUsersViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
-import {
-  Unlock,
-  UserCheck,
-  UserX,
-} from "lucide-react";
+import { Unlock, UserCheck, UserX } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function UsersView() {
@@ -40,36 +36,40 @@ export function UsersView() {
   const configBase = getConfigBase();
 
   // ============ Bulk Actions ============
-  const bulkActions: BulkAction[] = useMemo(() => [
-    {
-      label: t("users.bulk.activate") || "Activate Selected",
-      icon: <UserCheck className="h-4 w-4" />,
-      onClick: async (selectedIds: string[]) => {
-        await handleBulkActivate(selectedIds);
+  const bulkActions: BulkAction[] = useMemo(
+    () => [
+      {
+        label: t("users.bulk.activate") || "Activate Selected",
+        icon: <UserCheck className="h-4 w-4" />,
+        onClick: async (selectedIds: string[]) => {
+          await handleBulkActivate(selectedIds);
+        },
+        requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
       },
-      requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
-    },
-    {
-      label: t("users.bulk.deactivate") || "Deactivate Selected",
-      icon: <UserX className="h-4 w-4" />,
-      onClick: async (selectedIds: string[]) => {
-        await handleBulkDeactivate(selectedIds);
+      {
+        label: t("users.bulk.deactivate") || "Deactivate Selected",
+        icon: <UserX className="h-4 w-4" />,
+        onClick: async (selectedIds: string[]) => {
+          await handleBulkDeactivate(selectedIds);
+        },
+        requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
       },
-      requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
-    },
-    {
-      label: t("users.bulk.delete") || "Delete Selected",
-      icon: <UserX className="h-4 w-4" />,
-      variant: "destructive" as const,
-      onClick: async (selectedIds: string[]) => {
-        await handleBulkDelete(selectedIds);
+      {
+        label: t("users.bulk.delete") || "Delete Selected",
+        icon: <UserX className="h-4 w-4" />,
+        variant: "destructive" as const,
+        onClick: async (selectedIds: string[]) => {
+          await handleBulkDelete(selectedIds);
+        },
+        requiresConfirmation: true,
+        confirmTitle: t("users.deleteTitle") || "Delete Users",
+        confirmDescription:
+          t("users.deleteConfirm") || "Are you sure you want to delete the selected users?",
+        requiredPermission: SYSTEM_PERMISSIONS.USERS_DELETE,
       },
-      requiresConfirmation: true,
-      confirmTitle: t("users.deleteTitle") || "Delete Users",
-      confirmDescription: t("users.deleteConfirm") || "Are you sure you want to delete the selected users?",
-      requiredPermission: SYSTEM_PERMISSIONS.USERS_DELETE,
-    },
-  ], [t, handleBulkActivate, handleBulkDeactivate, handleBulkDelete]);
+    ],
+    [t, handleBulkActivate, handleBulkDeactivate, handleBulkDelete]
+  );
 
   // ============ Config ============
   const config: CrudConfig<UsersEntity> = useMemo(
@@ -89,16 +89,14 @@ export function UsersView() {
         {
           key: "name",
           label: t("users.columns.name") || "Name",
-          render: (_val: unknown, user: UsersEntity) => (
-            <span>{user.displayName}</span>
-          ),
+          render: (_val: unknown, user: UsersEntity) => <span>{user.displayName}</span>,
         },
         {
           key: "email",
           label: t("users.columns.email") || "Email",
           render: (_val: unknown, user: UsersEntity) =>
             user.email ? (
-              <a href={`mailto:${user.email}`} className="text-primary hover:underline text-sm">
+              <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline">
                 {user.email}
               </a>
             ) : (
@@ -121,9 +119,7 @@ export function UsersView() {
           label: t("users.columns.createdAt") || "Joined",
           render: (_val: unknown, user: UsersEntity) => (
             <span className="text-sm text-muted-foreground">
-              {user.createdAt
-                ? new Date(user.createdAt).toLocaleDateString()
-                : "—"}
+              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
             </span>
           ),
         },

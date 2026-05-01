@@ -44,7 +44,7 @@ export function FeatureCatalogPicker({
         f.key.toLowerCase().includes(q) ||
         f.displayNameEn.toLowerCase().includes(q) ||
         f.displayNameAr.toLowerCase().includes(q) ||
-        (f.category ?? "").toLowerCase().includes(q),
+        (f.category ?? "").toLowerCase().includes(q)
     );
   }, [availableFeatures, search]);
 
@@ -61,7 +61,7 @@ export function FeatureCatalogPicker({
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[70vh] flex flex-col">
+      <DialogContent className="flex max-h-[70vh] max-w-lg flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
@@ -75,25 +75,27 @@ export function FeatureCatalogPicker({
 
         {/* ── Search ── */}
         <div className="relative">
-          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("entitlements.featureDefinitions.searchPlaceholder") || "Search features..."}
+            placeholder={
+              t("entitlements.featureDefinitions.searchPlaceholder") || "Search features..."
+            }
             className="ps-9"
           />
         </div>
 
         {/* ── Feature List ── */}
-        <div className="overflow-y-auto flex-1 -mx-6 px-6">
+        <div className="-mx-6 flex-1 overflow-y-auto px-6">
           {Object.keys(grouped).length === 0 ? (
-            <div className="text-center py-8 text-sm text-muted-foreground">
+            <div className="py-8 text-center text-sm text-muted-foreground">
               {t("common.noResults") || "No features found."}
             </div>
           ) : (
             Object.entries(grouped).map(([category, features]) => (
               <div key={category} className="mb-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {category}
                 </p>
                 <div className="space-y-1">
@@ -101,20 +103,20 @@ export function FeatureCatalogPicker({
                     <button
                       key={feature.id}
                       onClick={() => onSelect(feature)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent/60 transition-colors text-start"
+                      className="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-start transition-colors hover:bg-accent/60"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">
+                          <span className="text-sm font-medium">
                             {language === "ar" ? feature.displayNameAr : feature.displayNameEn}
                           </span>
                           <Badge variant="outline" className="text-[10px]">
                             {feature.valueType}
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground font-mono">{feature.key}</p>
+                        <p className="font-mono text-xs text-muted-foreground">{feature.key}</p>
                       </div>
-                      <Plus className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
                     </button>
                   ))}
                 </div>

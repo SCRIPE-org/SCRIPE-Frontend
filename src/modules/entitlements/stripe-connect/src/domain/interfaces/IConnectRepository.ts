@@ -27,7 +27,9 @@ export interface IConnectRepository {
     search?: string;
     status?: string;
   }): Promise<PagedResult<ConnectAccountListItem>>;
-  createAccount(tenantId: string): Promise<{ accountId: string; onboardingUrl: string; status: string }>;
+  createAccount(
+    tenantId: string
+  ): Promise<{ accountId: string; onboardingUrl: string; status: string }>;
   refreshOnboardingLink(tenantId: string): Promise<string>;
   getDashboardLink(tenantId: string): Promise<string>;
   updateCommissionRate(tenantId: string, rate: number | null): Promise<void>;

@@ -10,18 +10,18 @@
 
 // ── Widget Types ──────────────────────────────────────────
 export type DashboardWidgetType =
-  | 'statsCard'
-  | 'chart'
-  | 'dataTable'
-  | 'quickActions'
-  | 'activityFeed'
-  | 'calendar'
-  | 'notifications'
-  | 'announcement'
-  | 'customWidget';
+  | "statsCard"
+  | "chart"
+  | "dataTable"
+  | "quickActions"
+  | "activityFeed"
+  | "calendar"
+  | "notifications"
+  | "announcement"
+  | "customWidget";
 
 // ── Grid Alignment ────────────────────────────────────────
-export type WidgetAlignment = 'start' | 'center' | 'end' | 'stretch';
+export type WidgetAlignment = "start" | "center" | "end" | "stretch";
 
 // ── Dashboard Widget ──────────────────────────────────────
 export interface DashboardWidget {
@@ -68,202 +68,220 @@ export interface WidgetCatalogEntry {
 // ── Widget Catalog ────────────────────────────────────────
 export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
   {
-    type: 'statsCard',
-    labelKey: 'dashboard.builder.widget.statsCard',
-    icon: 'TrendingUp',
-    descriptionKey: 'dashboard.builder.widget.statsCardDesc',
+    type: "statsCard",
+    labelKey: "dashboard.builder.widget.statsCard",
+    icon: "TrendingUp",
+    descriptionKey: "dashboard.builder.widget.statsCardDesc",
     defaultProps: {
-      title: 'Total Users',
-      value: '2,450',
-      trend: '+12.5%',
-      trendDirection: 'up',
-      icon: 'Users',
+      title: "Total Users",
+      value: "2,450",
+      trend: "+12.5%",
+      trendDirection: "up",
+      icon: "Users",
     },
-    defaultGridColumn: '1 / 4',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 4",
+    defaultGridRow: "auto",
     singleton: false,
     requiredEdition: null,
   },
   {
-    type: 'chart',
-    labelKey: 'dashboard.builder.widget.chart',
-    icon: 'BarChart3',
-    descriptionKey: 'dashboard.builder.widget.chartDesc',
+    type: "chart",
+    labelKey: "dashboard.builder.widget.chart",
+    icon: "BarChart3",
+    descriptionKey: "dashboard.builder.widget.chartDesc",
     defaultProps: {
-      chartType: 'line',
-      title: 'Activity',
+      chartType: "line",
+      title: "Activity",
       showLegend: true,
       showGrid: true,
     },
-    defaultGridColumn: '1 / 9',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 9",
+    defaultGridRow: "auto",
     singleton: false,
     requiredEdition: null,
   },
   {
-    type: 'dataTable',
-    labelKey: 'dashboard.builder.widget.dataTable',
-    icon: 'Table2',
-    descriptionKey: 'dashboard.builder.widget.dataTableDesc',
+    type: "dataTable",
+    labelKey: "dashboard.builder.widget.dataTable",
+    icon: "Table2",
+    descriptionKey: "dashboard.builder.widget.dataTableDesc",
     defaultProps: {
-      title: 'Recent Records',
+      title: "Recent Records",
       maxRows: 5,
       showSearch: false,
     },
-    defaultGridColumn: '1 / 7',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 7",
+    defaultGridRow: "auto",
     singleton: false,
     requiredEdition: null,
   },
   {
-    type: 'quickActions',
-    labelKey: 'dashboard.builder.widget.quickActions',
-    icon: 'Zap',
-    descriptionKey: 'dashboard.builder.widget.quickActionsDesc',
+    type: "quickActions",
+    labelKey: "dashboard.builder.widget.quickActions",
+    icon: "Zap",
+    descriptionKey: "dashboard.builder.widget.quickActionsDesc",
     defaultProps: {
       columns: 2,
-      actions: ['Add User', 'View Reports', 'Settings', 'Export'],
+      actions: ["Add User", "View Reports", "Settings", "Export"],
     },
-    defaultGridColumn: '1 / 5',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 5",
+    defaultGridRow: "auto",
     singleton: true,
     requiredEdition: null,
   },
   {
-    type: 'activityFeed',
-    labelKey: 'dashboard.builder.widget.activityFeed',
-    icon: 'Activity',
-    descriptionKey: 'dashboard.builder.widget.activityFeedDesc',
+    type: "activityFeed",
+    labelKey: "dashboard.builder.widget.activityFeed",
+    icon: "Activity",
+    descriptionKey: "dashboard.builder.widget.activityFeedDesc",
     defaultProps: {
       maxItems: 8,
       showTimestamps: true,
-      title: 'Recent Activity',
+      title: "Recent Activity",
     },
-    defaultGridColumn: '1 / 7',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 7",
+    defaultGridRow: "auto",
     singleton: true,
     requiredEdition: null,
   },
   {
-    type: 'calendar',
-    labelKey: 'dashboard.builder.widget.calendar',
-    icon: 'CalendarDays',
-    descriptionKey: 'dashboard.builder.widget.calendarDesc',
+    type: "calendar",
+    labelKey: "dashboard.builder.widget.calendar",
+    icon: "CalendarDays",
+    descriptionKey: "dashboard.builder.widget.calendarDesc",
     defaultProps: {
       showUpcoming: true,
       maxEvents: 5,
     },
-    defaultGridColumn: '1 / 5',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 5",
+    defaultGridRow: "auto",
     singleton: true,
     requiredEdition: null,
   },
   {
-    type: 'notifications',
-    labelKey: 'dashboard.builder.widget.notifications',
-    icon: 'Bell',
-    descriptionKey: 'dashboard.builder.widget.notificationsDesc',
+    type: "notifications",
+    labelKey: "dashboard.builder.widget.notifications",
+    icon: "Bell",
+    descriptionKey: "dashboard.builder.widget.notificationsDesc",
     defaultProps: {
       maxItems: 5,
       showUnreadOnly: false,
     },
-    defaultGridColumn: '1 / 5',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 5",
+    defaultGridRow: "auto",
     singleton: true,
     requiredEdition: null,
   },
   {
-    type: 'announcement',
-    labelKey: 'dashboard.builder.widget.announcement',
-    icon: 'Megaphone',
-    descriptionKey: 'dashboard.builder.widget.announcementDesc',
+    type: "announcement",
+    labelKey: "dashboard.builder.widget.announcement",
+    icon: "Megaphone",
+    descriptionKey: "dashboard.builder.widget.announcementDesc",
     defaultProps: {
-      title: 'Announcement',
-      message: '',
-      variant: 'info',
+      title: "Announcement",
+      message: "",
+      variant: "info",
       dismissible: true,
     },
-    defaultGridColumn: '1 / 13',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 13",
+    defaultGridRow: "auto",
     singleton: false,
     requiredEdition: null,
   },
   {
-    type: 'customWidget',
-    labelKey: 'dashboard.builder.widget.customWidget',
-    icon: 'Code',
-    descriptionKey: 'dashboard.builder.widget.customWidgetDesc',
+    type: "customWidget",
+    labelKey: "dashboard.builder.widget.customWidget",
+    icon: "Code",
+    descriptionKey: "dashboard.builder.widget.customWidgetDesc",
     defaultProps: {
-      url: '',
-      title: 'Custom Widget',
+      url: "",
+      title: "Custom Widget",
       height: 300,
     },
-    defaultGridColumn: '1 / 7',
-    defaultGridRow: 'auto',
+    defaultGridColumn: "1 / 7",
+    defaultGridRow: "auto",
     singleton: false,
-    requiredEdition: 'enterprise',
+    requiredEdition: "enterprise",
   },
 ];
 
 // ── Default Builder Canvas ────────────────────────────────
 export const DEFAULT_DASHBOARD_WIDGETS: DashboardWidget[] = [
   {
-    id: 'default-stats-1',
-    type: 'statsCard',
-    gridColumn: '1 / 4',
-    gridRow: '1 / 2',
-    alignment: 'stretch',
-    props: { title: 'Total Users', value: '2,450', trend: '+12.5%', trendDirection: 'up', icon: 'Users' },
+    id: "default-stats-1",
+    type: "statsCard",
+    gridColumn: "1 / 4",
+    gridRow: "1 / 2",
+    alignment: "stretch",
+    props: {
+      title: "Total Users",
+      value: "2,450",
+      trend: "+12.5%",
+      trendDirection: "up",
+      icon: "Users",
+    },
     zIndex: 1,
     visible: true,
   },
   {
-    id: 'default-stats-2',
-    type: 'statsCard',
-    gridColumn: '4 / 7',
-    gridRow: '1 / 2',
-    alignment: 'stretch',
-    props: { title: 'Active Sessions', value: '342', trend: '+5.2%', trendDirection: 'up', icon: 'Activity' },
+    id: "default-stats-2",
+    type: "statsCard",
+    gridColumn: "4 / 7",
+    gridRow: "1 / 2",
+    alignment: "stretch",
+    props: {
+      title: "Active Sessions",
+      value: "342",
+      trend: "+5.2%",
+      trendDirection: "up",
+      icon: "Activity",
+    },
     zIndex: 1,
     visible: true,
   },
   {
-    id: 'default-stats-3',
-    type: 'statsCard',
-    gridColumn: '7 / 10',
-    gridRow: '1 / 2',
-    alignment: 'stretch',
-    props: { title: 'Total Roles', value: '18', trend: '0%', trendDirection: 'neutral', icon: 'Shield' },
+    id: "default-stats-3",
+    type: "statsCard",
+    gridColumn: "7 / 10",
+    gridRow: "1 / 2",
+    alignment: "stretch",
+    props: {
+      title: "Total Roles",
+      value: "18",
+      trend: "0%",
+      trendDirection: "neutral",
+      icon: "Shield",
+    },
     zIndex: 1,
     visible: true,
   },
   {
-    id: 'default-stats-4',
-    type: 'statsCard',
-    gridColumn: '10 / 13',
-    gridRow: '1 / 2',
-    alignment: 'stretch',
-    props: { title: 'Tenants', value: '7', trend: '+2', trendDirection: 'up', icon: 'Building2' },
+    id: "default-stats-4",
+    type: "statsCard",
+    gridColumn: "10 / 13",
+    gridRow: "1 / 2",
+    alignment: "stretch",
+    props: { title: "Tenants", value: "7", trend: "+2", trendDirection: "up", icon: "Building2" },
     zIndex: 1,
     visible: true,
   },
   {
-    id: 'default-chart',
-    type: 'chart',
-    gridColumn: '1 / 9',
-    gridRow: '2 / 4',
-    alignment: 'stretch',
-    props: { chartType: 'line', title: 'Login Activity', showLegend: true, showGrid: true },
+    id: "default-chart",
+    type: "chart",
+    gridColumn: "1 / 9",
+    gridRow: "2 / 4",
+    alignment: "stretch",
+    props: { chartType: "line", title: "Login Activity", showLegend: true, showGrid: true },
     zIndex: 1,
     visible: true,
   },
   {
-    id: 'default-activity',
-    type: 'activityFeed',
-    gridColumn: '9 / 13',
-    gridRow: '2 / 4',
-    alignment: 'stretch',
-    props: { maxItems: 8, showTimestamps: true, title: 'Recent Activity' },
+    id: "default-activity",
+    type: "activityFeed",
+    gridColumn: "9 / 13",
+    gridRow: "2 / 4",
+    alignment: "stretch",
+    props: { maxItems: 8, showTimestamps: true, title: "Recent Activity" },
     zIndex: 1,
     visible: true,
   },
@@ -296,9 +314,9 @@ export function findNextAvailableRow(widgets: DashboardWidget[]): number {
 }
 
 export function hasSingletonWidget(widgets: DashboardWidget[], type: DashboardWidgetType): boolean {
-  return widgets.some(w => w.type === type);
+  return widgets.some((w) => w.type === type);
 }
 
 export function getWidgetCatalogEntry(type: DashboardWidgetType): WidgetCatalogEntry | undefined {
-  return WIDGET_CATALOG.find(c => c.type === type);
+  return WIDGET_CATALOG.find((c) => c.type === type);
 }

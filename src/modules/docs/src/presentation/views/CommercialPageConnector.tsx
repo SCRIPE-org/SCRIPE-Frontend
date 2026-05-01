@@ -6,7 +6,7 @@ import { CommercialDocsView } from "./CommercialDocsView";
 import "../../data/content/registry";
 
 interface CommercialPageConnectorProps {
-      slug: string;
+  slug: string;
 }
 
 /**
@@ -14,5 +14,5 @@ interface CommercialPageConnectorProps {
  * the server page.tsx to the CommercialDocsView client component.
  */
 export function CommercialPageConnector({ slug }: CommercialPageConnectorProps) {
-      return <CommercialDocsView slug={slug} />;
+  return <CommercialDocsView slug={slug} />;
 }

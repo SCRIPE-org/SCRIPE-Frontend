@@ -24,20 +24,22 @@ interface PriceRowProps {
 
 export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowProps) {
   return (
-    <div className="flex items-center justify-between py-3 gap-4">
-      <div className="flex items-center gap-3 flex-1">
-        <Badge variant="outline" className="shrink-0">{price.billingCycle}</Badge>
+    <div className="flex items-center justify-between gap-4 py-3">
+      <div className="flex flex-1 items-center gap-3">
+        <Badge variant="outline" className="shrink-0">
+          {price.billingCycle}
+        </Badge>
 
         {/* Amount */}
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground whitespace-nowrap">
+          <Label className="whitespace-nowrap text-xs text-muted-foreground">
             {t("entitlements.tenantPlans.amount") || "Amount"}:
           </Label>
           <Input
             type="number"
             value={price.amount}
             onChange={(e) => onUpdate({ amount: parseFloat(e.target.value) || 0 })}
-            className="w-28 h-8 text-right tabular-nums"
+            className="h-8 w-28 text-right tabular-nums"
             min={0}
             step={0.01}
           />
@@ -45,7 +47,7 @@ export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowPro
 
         {/* Original Amount (strikethrough price) */}
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground whitespace-nowrap">
+          <Label className="whitespace-nowrap text-xs text-muted-foreground">
             {t("entitlements.tenantPlans.originalAmount") || "Original"}:
           </Label>
           <Input
@@ -56,7 +58,7 @@ export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowPro
                 originalAmount: e.target.value ? parseFloat(e.target.value) : undefined,
               })
             }
-            className="w-28 h-8 text-right tabular-nums"
+            className="h-8 w-28 text-right tabular-nums"
             min={0}
             step={0.01}
             placeholder="—"
@@ -65,7 +67,7 @@ export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowPro
 
         {/* Promotional flag */}
         <div className="flex items-center gap-1.5">
-          <Label className="text-xs text-muted-foreground whitespace-nowrap">
+          <Label className="whitespace-nowrap text-xs text-muted-foreground">
             {t("entitlements.tenantPlans.promo") || "Promo"}
           </Label>
           <Switch
@@ -76,8 +78,8 @@ export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowPro
       </div>
 
       {/* Preview + Delete */}
-      <div className="flex items-center gap-2 shrink-0">
-        <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="text-lg font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
           {formatAmount(price.amount, currency)}
         </span>
         <Button

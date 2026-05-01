@@ -61,7 +61,7 @@ export function InvoiceListView() {
         },
       ],
       customHeaderContent: (
-        <div className="flex justify-end -mt-2 mb-2">
+        <div className="-mt-2 mb-2 flex justify-end">
           <CurrencyDisplayToggle />
         </div>
       ),
@@ -69,17 +69,13 @@ export function InvoiceListView() {
         {
           key: "invoiceNumber",
           label: t("billing.columns.invoiceNumber"),
-          render: (value: string) => (
-            <span className="font-mono text-sm">{value}</span>
-          ),
+          render: (value: string) => <span className="font-mono text-sm">{value}</span>,
           sortable: true,
         },
         {
           key: "tenantName",
           label: t("billing.columns.tenantName") || "Tenant",
-          render: (value: string) => (
-            <span className="font-medium">{value || "—"}</span>
-          ),
+          render: (value: string) => <span className="font-medium">{value || "—"}</span>,
         },
         {
           key: "total",
@@ -107,27 +103,22 @@ export function InvoiceListView() {
         {
           key: "billingCycle",
           label: t("billing.columns.billingCycle"),
-          render: (value: string) => (
-            <span className="capitalize">{value}</span>
-          ),
+          render: (value: string) => <span className="capitalize">{value}</span>,
         },
         {
           key: "dueDate",
           label: t("billing.columns.dueDate"),
-          render: (value: string) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "—",
+          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "—"),
         },
         {
           key: "paidAt",
           label: t("billing.columns.paidAt"),
-          render: (value: string) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "—",
+          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "—"),
         },
         {
           key: "createdAt",
           label: t("common.createdAt"),
-          render: (value: string) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "—",
+          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "—"),
         },
       ],
 
@@ -141,12 +132,7 @@ export function InvoiceListView() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 relative"
-                loading={anyLoading}
-              >
+              <Button variant="ghost" size="icon" className="relative h-8 w-8" loading={anyLoading}>
                 {!anyLoading && <MoreHorizontal className="h-4 w-4" />}
               </Button>
             </DropdownMenuTrigger>
@@ -162,8 +148,8 @@ export function InvoiceListView() {
                   <Download className="h-4 w-4" />
                 )}
                 {pdfLoading
-                  ? (t("billing.actions.downloading") || "Downloading...")
-                  : (t("billing.actions.downloadPdf") || "Download PDF")}
+                  ? t("billing.actions.downloading") || "Downloading..."
+                  : t("billing.actions.downloadPdf") || "Download PDF"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -177,8 +163,8 @@ export function InvoiceListView() {
                   <Mail className="h-4 w-4" />
                 )}
                 {emailLoading
-                  ? (t("billing.actions.sending") || "Sending...")
-                  : (t("billing.actions.sendEmail") || "Send to Tenant Email")}
+                  ? t("billing.actions.sending") || "Sending..."
+                  : t("billing.actions.sendEmail") || "Send to Tenant Email"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -8,7 +8,6 @@ export const en = {
     securityDescription: "Password policies and authentication settings",
     branding: "Branding",
     brandingDescription: "Customize your organization's appearance",
-    // Quota fields
     maxAdmins: "Max Admins",
     maxAdminsHelp: "Maximum number of administrators. -1 for unlimited.",
     maxRoles: "Max Roles",
@@ -16,7 +15,6 @@ export const en = {
     maxSubTenants: "Max Sub-Tenants",
     maxSubTenantsHelp: "Maximum number of child organizations. -1 for unlimited.",
     unlimited: "Unlimited",
-    // Password fields
     passwordMinLength: "Minimum Length",
     passwordMinLengthHelp: "Minimum password length required.",
     passwordRequireUppercase: "Require Uppercase",
@@ -27,19 +25,16 @@ export const en = {
     passwordRequireSpecialHelp: "Password must contain special characters (!@#$%).",
     passwordExpiryDays: "Password Expiry (Days)",
     passwordExpiryDaysHelp: "Days before password expires. 0 for no expiry.",
-    // Login security
     loginLockoutThreshold: "Lockout Threshold",
     loginLockoutThresholdHelp: "Failed attempts before account lockout.",
     loginLockoutMinutes: "Lockout Duration (Minutes)",
     loginLockoutMinutesHelp: "Minutes before locked account is released.",
     require2FA: "Require 2FA",
     require2FAHelp: "All users must enable two-factor authentication.",
-    // Audit
     auditEnabled: "Enable Audit Logging",
     auditEnabledHelp: "Track all user actions in audit log.",
     auditRetentionDays: "Audit Retention (Days)",
     auditRetentionDaysHelp: "Days to keep audit logs before deletion.",
-    // Branding
     logoUrl: "Logo URL",
     logoUrlHelp: "URL to your organization's logo.",
     primaryColor: "Primary Color",
@@ -59,7 +54,6 @@ export const en = {
     orEnterUrl: "Or enter URL",
     companyName: "Company Name",
     companyNameHelp: "Display name for your organization.",
-    // Actions
     saveSettings: "Save Settings",
     saving: "Saving...",
     saveSuccess: "Settings saved successfully",
@@ -67,13 +61,13 @@ export const en = {
     loadError: "Failed to load settings",
     systemAdminMessage:
       "System administrators do not have tenant settings. Please use the tenant management page to configure specific tenant settings.",
-    // Customization System
     customization: {
       draftPublishTitle: "Draft & Publish",
       draftPublishDesc: "Manage your branding draft lifecycle",
       currentVersion: "Current version",
       draftPending: "Unpublished Draft",
-      draftPendingDesc: "You have unsaved changes in the Customizer Studio that haven't been published yet.",
+      draftPendingDesc:
+        "You have unsaved changes in the Customizer Studio that haven't been published yet.",
       reviewDraft: "Review & Publish Draft",
       discardDraft: "Discard Draft",
       publishing: "Publishing...",
@@ -85,7 +79,6 @@ export const en = {
       safeMode: "Safe Mode",
       safeModeOn: "ON",
       safeModeOff: "OFF",
-      // Version History
       versionHistory: "Settings Version History",
       versionHistoryDesc: "Audit trail of all settings changes. Click a version to rollback.",
       version: "Version",
@@ -100,7 +93,6 @@ export const en = {
       noHistory: "No version history yet. Publish your first change to see it here.",
       page: "Page",
       totalEntries: "total entries",
-      // Admin Preferences
       adminPrefs: "My Admin Preferences",
       adminPrefsDesc: "Personal dashboard settings. Only visible to you.",
       theme: "Dashboard Theme",
@@ -115,23 +107,24 @@ export const en = {
       savingPreferences: "Saving...",
       prefsSaved: "Preferences saved",
       prefsFailed: "Save failed",
-      // System Settings
       systemSettings: "Platform System Settings",
-      systemSettingsDesc: "Platform-wide defaults (system admin only). This controls default themes and layout catalogs.",
+      systemSettingsDesc:
+        "Platform-wide defaults (system admin only). This controls default themes and layout catalogs.",
       defaultTheme: "Default Theme",
       layoutCatalog: "Layout Catalog",
       slotRegistry: "Slot Registry",
       notConfigured: "Not configured yet. Will use platform defaults.",
       noDraftTitle: "No Draft Pending",
-      noDraftDesc: "Basic branding changes (logo, colors, headline) save instantly. This draft system is for advanced login customization (layouts, design tokens, content blocks) - created from the Customizer Studio.",
-      prefsInfo: "These preferences are set as tenant defaults. Users can override them individually (e.g. toggle theme in the header). Clearing browser storage restores these defaults.",
-      // Customizer Studio
+      noDraftDesc:
+        "Basic branding changes (logo, colors, headline) save instantly. This draft system is for advanced login customization (layouts, design tokens, content blocks) - created from the Customizer Studio.",
+      prefsInfo:
+        "These preferences are set as tenant defaults. Users can override them individually (e.g. toggle theme in the header). Clearing browser storage restores these defaults.",
       studioTitle: "Login Customizer Studio",
       unsavedDraft: "Unsaved draft",
       published: "Published",
       publish: "Publish",
-      versionConflict: "Version conflict - another admin published changes. Please refresh and try again.",
-      // Studio panels
+      versionConflict:
+        "Version conflict - another admin published changes. Please refresh and try again.",
       loginLayout: "Login Page Layout",
       layoutDescription: "Choose how your login page is structured. Changes preview instantly.",
       branding: "Branding",
@@ -149,7 +142,11 @@ export const en = {
       blockTypes: "Available Blocks",
       slots: "Login Slots",
       allLayouts: "Available in all layouts",
-      blockEditorNote: "Drag blocks into slots above. Full block editing with rich content will be available in the studio v1.1 update.",
+      blockEditorNote:
+        "Drag blocks into slots above. Full block editing with rich content will be available in the studio v1.1 update.",
     },
+    systemBanner: "System Banner",
+    systemTitle: "System Title",
+    systemDescription: "System Description",
   },
 };

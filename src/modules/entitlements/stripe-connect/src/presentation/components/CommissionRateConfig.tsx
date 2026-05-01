@@ -34,9 +34,7 @@ export function CommissionRateConfig({
   t,
 }: CommissionRateConfigProps) {
   const [rateInput, setRateInput] = useState(
-    account?.commissionRate != null
-      ? (account.commissionRate * 100).toFixed(2)
-      : ""
+    account?.commissionRate != null ? (account.commissionRate * 100).toFixed(2) : ""
   );
   const [validationError, setValidationError] = useState("");
 
@@ -76,7 +74,7 @@ export function CommissionRateConfig({
 
         <div className="space-y-4 py-2">
           {/* Effective rate display */}
-          <div className="rounded-md border bg-muted/30 p-3 space-y-2">
+          <div className="space-y-2 rounded-md border bg-muted/30 p-3">
             <div className="flex items-center gap-2 text-sm font-medium">
               <Info className="h-4 w-4 text-muted-foreground" />
               {t("entitlements.stripeConnect.effectiveRate")}: {effectiveRatePercent}%
@@ -85,7 +83,7 @@ export function CommissionRateConfig({
               {t("entitlements.stripeConnect.effectiveRateDesc")}
             </p>
             {/* Resolution chain badges */}
-            <div className="flex flex-wrap gap-1 mt-1">
+            <div className="mt-1 flex flex-wrap gap-1">
               {(["tenantOverride", "editionRate", "globalDefault"] as const).map((level) => (
                 <Badge key={level} variant="outline" className="text-xs font-normal">
                   {t(`entitlements.stripeConnect.rateLevel.${level}`)}
@@ -114,12 +112,7 @@ export function CommissionRateConfig({
                 }}
               />
               {rateInput !== "" && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setRateInput("")}
-                >
+                <Button type="button" variant="ghost" size="icon" onClick={() => setRateInput("")}>
                   <X className="h-4 w-4" />
                 </Button>
               )}
@@ -127,9 +120,7 @@ export function CommissionRateConfig({
             <p className="text-xs text-muted-foreground">
               {t("entitlements.stripeConnect.commissionRateDesc")}
             </p>
-            {validationError && (
-              <p className="text-xs text-destructive">{validationError}</p>
-            )}
+            {validationError && <p className="text-xs text-destructive">{validationError}</p>}
           </div>
         </div>
 
@@ -149,7 +140,7 @@ export function CommissionRateConfig({
             {t("common.cancel") || "Cancel"}
           </Button>
           <Button type="button" onClick={handleSave} loading={isSaving}>
-            {isSaving ? (t("common.saving") || "Saving...") : (t("common.save") || "Save")}
+            {isSaving ? t("common.saving") || "Saving..." : t("common.save") || "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -50,13 +50,11 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2.5">
-      <div className="flex items-center gap-2.5 text-muted-foreground min-w-[140px]">
+      <div className="flex min-w-[140px] items-center gap-2.5 text-muted-foreground">
         {Icon && <Icon className="h-4 w-4 shrink-0" />}
         <span className="text-sm font-medium">{label}</span>
       </div>
-      <div className={`text-sm font-medium text-right ${valueColor ?? ""}`}>
-        {value}
-      </div>
+      <div className={`text-right text-sm font-medium ${valueColor ?? ""}`}>{value}</div>
     </div>
   );
 }
@@ -72,8 +70,8 @@ function SectionCard({
 }) {
   return (
     <Card className="border border-border/50 bg-muted/30">
-      <CardHeader className="pb-3 pt-4 px-5">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+      <CardHeader className="px-5 pb-3 pt-4">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <Icon className="h-4 w-4 text-primary" />
           {title}
         </CardTitle>
@@ -124,10 +122,10 @@ export function SubscriptionDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader className="pb-2">
           <DialogTitle className="flex items-center gap-3 text-xl">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
               <Shield className="h-5 w-5 text-primary" />
             </div>
             {t("entitlements.userSubscriptions.detailTitle")}
@@ -135,14 +133,14 @@ export function SubscriptionDetailModal({
         </DialogHeader>
 
         {/* ── Status Banner ── */}
-        <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 px-4 py-3 mb-2">
+        <div className="mb-2 flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 px-4 py-3">
           <div className="flex items-center gap-3">
-            <Badge variant={sub.statusColor} className="text-sm px-3 py-1">
+            <Badge variant={sub.statusColor} className="px-3 py-1 text-sm">
               {statusMap[sub.status] || sub.status}
             </Badge>
             {sub.isSelfService && (
               <Badge variant="outline" className="text-xs">
-                <Globe className="h-3 w-3 mr-1" />
+                <Globe className="mr-1 h-3 w-3" />
                 {t("entitlements.userSubscriptions.detailSelfService")}
               </Badge>
             )}
@@ -165,43 +163,29 @@ export function SubscriptionDetailModal({
 
         <div className="space-y-4">
           {/* ── User Info ── */}
-          <SectionCard
-            title={t("entitlements.userSubscriptions.detailUserInfo")}
-            icon={User}
-          >
+          <SectionCard title={t("entitlements.userSubscriptions.detailUserInfo")} icon={User}>
             <InfoRow
               icon={User}
               label={t("entitlements.userSubscriptions.user")}
-              value={
-                sub.userName || t("entitlements.userSubscriptions.detailUnknownUser")
-              }
+              value={sub.userName || t("entitlements.userSubscriptions.detailUnknownUser")}
             />
             {sub.userEmail && (
               <InfoRow
                 icon={Mail}
                 label="Email"
                 value={
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {sub.userEmail}
-                  </span>
+                  <span className="font-mono text-xs text-muted-foreground">{sub.userEmail}</span>
                 }
               />
             )}
           </SectionCard>
 
           {/* ── Plan & Pricing ── */}
-          <SectionCard
-            title={t("entitlements.userSubscriptions.detailPlanInfo")}
-            icon={Zap}
-          >
+          <SectionCard title={t("entitlements.userSubscriptions.detailPlanInfo")} icon={Zap}>
             <InfoRow
               icon={Tag}
               label={t("entitlements.userSubscriptions.plan")}
-              value={
-                <span className="font-semibold text-foreground">
-                  {sub.planName}
-                </span>
-              }
+              value={<span className="font-semibold text-foreground">{sub.planName}</span>}
             />
             {sub.billingCycle && (
               <InfoRow
@@ -215,10 +199,10 @@ export function SubscriptionDetailModal({
                 icon={CreditCard}
                 label={t("entitlements.mySubscription.price")}
                 value={
-                  <span className="text-foreground font-semibold">
+                  <span className="font-semibold text-foreground">
                     {sub.formattedPrice}
                     {sub.billingCycle && (
-                      <span className="text-muted-foreground font-normal text-xs">
+                      <span className="text-xs font-normal text-muted-foreground">
                         {" "}
                         / {sub.billingCycle.toLowerCase()}
                       </span>
@@ -237,10 +221,7 @@ export function SubscriptionDetailModal({
           </SectionCard>
 
           {/* ── Important Dates ── */}
-          <SectionCard
-            title={t("entitlements.userSubscriptions.detailDates")}
-            icon={Calendar}
-          >
+          <SectionCard title={t("entitlements.userSubscriptions.detailDates")} icon={Calendar}>
             <InfoRow
               icon={CheckCircle2}
               label={t("entitlements.userSubscriptions.startedAt")}
@@ -315,7 +296,10 @@ export function SubscriptionDetailModal({
                   icon={Globe}
                   label={t("entitlements.userSubscriptions.detailExternalRef")}
                   value={
-                    <span className="font-mono text-xs truncate max-w-[200px] inline-block" title={sub.externalRef}>
+                    <span
+                      className="inline-block max-w-[200px] truncate font-mono text-xs"
+                      title={sub.externalRef}
+                    >
                       {sub.externalRef}
                     </span>
                   }
@@ -326,7 +310,7 @@ export function SubscriptionDetailModal({
                   icon={Tag}
                   label={t("entitlements.userSubscriptions.detailOriginalPrice")}
                   value={
-                    <span className="line-through text-muted-foreground">
+                    <span className="text-muted-foreground line-through">
                       {sub.formattedOriginalPrice}
                     </span>
                   }
@@ -337,10 +321,7 @@ export function SubscriptionDetailModal({
 
           {/* ── Promotion (conditional) ── */}
           {sub.hasPromotion && (
-            <SectionCard
-              title={t("entitlements.userSubscriptions.detailPromotion")}
-              icon={Percent}
-            >
+            <SectionCard title={t("entitlements.userSubscriptions.detailPromotion")} icon={Percent}>
               <InfoRow
                 icon={Tag}
                 label={t("entitlements.userSubscriptions.promotionCode")}
@@ -355,7 +336,7 @@ export function SubscriptionDetailModal({
                   icon={Percent}
                   label={t("entitlements.userSubscriptions.detailDiscountAmount")}
                   value={
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                       -{sub.formattedDiscount}
                     </span>
                   }
@@ -371,7 +352,7 @@ export function SubscriptionDetailModal({
               icon={FileText}
             >
               <div className="py-2.5">
-                <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                   {sub.notes}
                 </p>
               </div>

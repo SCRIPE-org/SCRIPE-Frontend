@@ -6,7 +6,11 @@ import type { IDsrRepository } from "../../domain/interfaces/IDsrRepository";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 import type { PagedResult } from "@modules/identity/core/domain/types";
-import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../../domain/entities/DsrRequests";
+import type {
+  DsrListParams,
+  SubmitDsrRequest,
+  ReviewDsrRequest,
+} from "../../domain/entities/DsrRequests";
 import { DsrMapper } from "../mappers/DsrMapper";
 
 export class DsrRepository implements IDsrRepository {

@@ -36,12 +36,14 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 text-[#635bff]" />
-            <CardTitle className="text-base">{t("entitlements.platformStripe.recentTransactions")}</CardTitle>
+            <CardTitle className="text-base">
+              {t("entitlements.platformStripe.recentTransactions")}
+            </CardTitle>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="text-xs gap-1"
+            className="gap-1 text-xs"
             onClick={() => window.open(paymentsLink, "_blank")}
           >
             {t("entitlements.platformStripe.viewAll")} <ExternalLink className="h-3 w-3" />
@@ -50,18 +52,22 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
       </CardHeader>
       <CardContent>
         {transactions.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-6">{t("entitlements.platformStripe.noTransactions")}</p>
+          <p className="py-6 text-center text-sm text-muted-foreground">
+            {t("entitlements.platformStripe.noTransactions")}
+          </p>
         ) : (
-          <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+          <div className="max-h-[400px] space-y-2 overflow-y-auto pr-1">
             {transactions.map((tx) => {
               const txType = txTypeLabels[tx.type] ?? { label: tx.type, color: "text-foreground" };
               return (
                 <div
                   key={tx.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between rounded-lg bg-muted/30 p-3 transition-colors hover:bg-muted/50"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className={`p-1.5 rounded-lg ${tx.isPositive ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div
+                      className={`rounded-lg p-1.5 ${tx.isPositive ? "bg-emerald-500/10" : "bg-red-500/10"}`}
+                    >
                       {tx.isPositive ? (
                         <ArrowDownRight className="h-3.5 w-3.5 text-emerald-500" />
                       ) : (
@@ -70,20 +76,28 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs font-medium ${txType.color}`}>{txType.label}</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">{tx.status}</Badge>
+                        <span className={`text-xs font-medium ${txType.color}`}>
+                          {txType.label}
+                        </span>
+                        <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                          {tx.status}
+                        </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                      <p className="max-w-[200px] truncate text-xs text-muted-foreground">
                         {tx.displayLabel}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className={`text-sm font-semibold ${tx.isPositive ? "text-emerald-600" : "text-red-500"}`}>
-                      {tx.isPositive ? "+" : ""}{formatStripeCurrency(tx.amount, tx.currency)}
+                  <div className="shrink-0 text-right">
+                    <p
+                      className={`text-sm font-semibold ${tx.isPositive ? "text-emerald-600" : "text-red-500"}`}
+                    >
+                      {tx.isPositive ? "+" : ""}
+                      {formatStripeCurrency(tx.amount, tx.currency)}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      {t("entitlements.platformStripe.fee")}: {formatStripeCurrency(tx.fee, tx.currency)}
+                      {t("entitlements.platformStripe.fee")}:{" "}
+                      {formatStripeCurrency(tx.fee, tx.currency)}
                     </p>
                   </div>
                 </div>

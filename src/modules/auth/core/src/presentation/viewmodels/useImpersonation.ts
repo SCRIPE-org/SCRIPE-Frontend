@@ -57,7 +57,10 @@ export function useImpersonation() {
         await repo.impersonate(adminId);
 
         setIsImpersonating(true);
-        success({ title: "Impersonation started", description: "You are now viewing as another admin." });
+        success({
+          title: "Impersonation started",
+          description: "You are now viewing as another admin.",
+        });
         appLogger.auth(`Impersonation started for admin: ${adminId}`);
 
         // Navigate to home with full reload — fresh data with new identity
@@ -86,7 +89,10 @@ export function useImpersonation() {
       await repo.stopImpersonation();
 
       setIsImpersonating(false);
-      success({ title: "Impersonation ended", description: "Your original session has been restored." });
+      success({
+        title: "Impersonation ended",
+        description: "Your original session has been restored.",
+      });
       appLogger.auth("Impersonation stopped, original admin restored");
 
       // Navigate to home with full reload — fresh data with original identity

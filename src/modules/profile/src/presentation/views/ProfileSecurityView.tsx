@@ -17,9 +17,22 @@ import { ExternalLoginsSection } from "../components/ExternalLoginsSection";
 import { Loader2 } from "lucide-react";
 
 // Lazy-load dialogs (only shown on click)
-const BackupCodesDialog = dynamic(() => import("../components/BackupCodesDialog").then(m => ({ default: m.BackupCodesDialog })), { ssr: false });
-const TwoFactorSetupDialog = dynamic(() => import("../components/TwoFactorSetupDialog").then(m => ({ default: m.TwoFactorSetupDialog })), { ssr: false });
-const TwoFactorDisableDialog = dynamic(() => import("../components/TwoFactorDisableDialog").then(m => ({ default: m.TwoFactorDisableDialog })), { ssr: false });
+const BackupCodesDialog = dynamic(
+  () => import("../components/BackupCodesDialog").then((m) => ({ default: m.BackupCodesDialog })),
+  { ssr: false }
+);
+const TwoFactorSetupDialog = dynamic(
+  () =>
+    import("../components/TwoFactorSetupDialog").then((m) => ({ default: m.TwoFactorSetupDialog })),
+  { ssr: false }
+);
+const TwoFactorDisableDialog = dynamic(
+  () =>
+    import("../components/TwoFactorDisableDialog").then((m) => ({
+      default: m.TwoFactorDisableDialog,
+    })),
+  { ssr: false }
+);
 
 export function ProfileSecurityView() {
   const { t } = useI18n();
@@ -95,9 +108,7 @@ export function ProfileSecurityView() {
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           {t("sso.externalLogins")}
         </h3>
-        <p className="text-xs text-muted-foreground mb-4">
-          {t("sso.externalLoginsDescription")}
-        </p>
+        <p className="mb-4 text-xs text-muted-foreground">{t("sso.externalLoginsDescription")}</p>
         <ExternalLoginsSection />
       </section>
 

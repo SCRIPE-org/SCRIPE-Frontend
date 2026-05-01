@@ -52,14 +52,16 @@ export const ar = {
     samlSection: "إعدادات SAML",
     samlSectionDesc: "إعدادات اتصال SAML 2.0",
     samlComingSoon: "دعم SAML قريباً",
-    samlComingSoonDesc: "الربط مع موفري هوية SAML 2.0 (مثل Okta و ADFS) قيد التطوير حالياً وسيتوفر في تحديث قادم.",
+    samlComingSoonDesc:
+      "الربط مع موفري هوية SAML 2.0 (مثل Okta و ADFS) قيد التطوير حالياً وسيتوفر في تحديث قادم.",
     appearanceSection: "المظهر",
     appearanceSectionDesc: "تخصيص مظهر هذا الموفر في صفحة تسجيل الدخول",
     accessSection: "التحكم بالوصول",
     accessSectionDesc: "التحكم بمن يستطيع استخدام هذا الموفر لتسجيل الدخول",
     claimMappingsSection: "ربط المطالبات",
     claimMappingsSectionDesc: "ربط المطالبات الخارجية بسمات مستخدمي NEXORA (أزواج مفتاح/قيمة JSON)",
-    claimMappingsHelp: "تربط مطالبات موفر الهوية الخارجي بسمات NEXORA الداخلية. المفاتيح هي حقول NEXORA، والقيم هي معرّفات مطالبات الموفر.",
+    claimMappingsHelp:
+      "تربط مطالبات موفر الهوية الخارجي بسمات NEXORA الداخلية. المفاتيح هي حقول NEXORA، والقيم هي معرّفات مطالبات الموفر.",
     invalidJson: "صيغة JSON غير صالحة",
     // الإجراءات
     test: "اختبار",
@@ -77,10 +79,12 @@ export const ar = {
     testSuccess: "الاتصال ناجح",
     testFailed: "فشل الاتصال",
     // منطقة الخطر
-    deleteWarning: "حذف هذا الموفر سيزيله نهائياً. المستخدمون الذين سجلوا الدخول عبره سيفقدون الوصول عبر SSO.",
+    deleteWarning:
+      "حذف هذا الموفر سيزيله نهائياً. المستخدمون الذين سجلوا الدخول عبره سيفقدون الوصول عبر SSO.",
     deleteButton: "حذف الموفر",
     deleteConfirmTitle: "حذف موفر الهوية",
-    deleteConfirmDesc: "سيتم حذف موفر الهوية نهائياً. سيفقد المستخدمون المرتبطون به إمكانية تسجيل الدخول الموحد. لا يمكن التراجع عن هذا الإجراء.",
+    deleteConfirmDesc:
+      "سيتم حذف موفر الهوية نهائياً. سيفقد المستخدمون المرتبطون به إمكانية تسجيل الدخول الموحد. لا يمكن التراجع عن هذا الإجراء.",
     endpointsSection: "نقاط النهاية الصريحة",
     endpointsSectionDesc: "اختياري (تتجاوز الاكتشاف التلقائي)",
     authorizationEndpoint: "نقطة نهاية المصادقة (اختياري)",
@@ -89,6 +93,7 @@ export const ar = {
     samlIdpEntityId: "معرف كيان موفر الهوية (IdP Entity ID)",
     samlSsoUrl: "رابط خدمة تسجيل الدخول الموحد (SSO)",
     samlCertificate: "الشهادة العامة لموفر الهوية (Base64/PEM)",
-    samlCertificatePlaceholder: "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
+    samlCertificatePlaceholder:
+      "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
   },
 };

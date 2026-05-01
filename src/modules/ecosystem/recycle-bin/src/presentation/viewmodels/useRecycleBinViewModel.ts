@@ -49,7 +49,12 @@ export function useRecycleBinViewModel() {
   const [searchValue, setSearchValue] = useState("");
 
   // Restore dialog state
-  const [restoreDialog, setRestoreDialog] = useState<{ open: boolean; entityType: string; ids: string[]; isPending: boolean }>({
+  const [restoreDialog, setRestoreDialog] = useState<{
+    open: boolean;
+    entityType: string;
+    ids: string[];
+    isPending: boolean;
+  }>({
     open: false,
     entityType: "",
     ids: [],
@@ -64,8 +69,15 @@ export function useRecycleBinViewModel() {
 
   // ============ Restore Mutation ============
   const restoreMutation = useMutation({
-    mutationFn: ({ entityType, id, restoreAdmins }: { entityType: string; id: string; restoreAdmins?: boolean }) =>
-      recycleBinRepository.restore(entityType, id, restoreAdmins),
+    mutationFn: ({
+      entityType,
+      id,
+      restoreAdmins,
+    }: {
+      entityType: string;
+      id: string;
+      restoreAdmins?: boolean;
+    }) => recycleBinRepository.restore(entityType, id, restoreAdmins),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] });
       success({
@@ -151,14 +163,11 @@ export function useRecycleBinViewModel() {
     [activeTab]
   );
 
-  const changePageSize = useCallback(
-    (size: number) => {
-      setPageSize(size);
-      // Reset all tabs to page 1 when page size changes
-      setTabPages({ tenants: 1, admins: 1, users: 1, roles: 1, userGroups: 1 });
-    },
-    []
-  );
+  const changePageSize = useCallback((size: number) => {
+    setPageSize(size);
+    // Reset all tabs to page 1 when page size changes
+    setTabPages({ tenants: 1, admins: 1, users: 1, roles: 1, userGroups: 1 });
+  }, []);
 
   const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab);
@@ -179,51 +188,71 @@ export function useRecycleBinViewModel() {
 
   // ============ Handlers ============
 
-  const triggerRestore = useCallback((entityType: string, id: string) => {
-    if (entityType.toLowerCase() === "usergroup" || entityType.toLowerCase() === "usergroups") {
-      setRestoreDialog({ open: true, entityType, ids: [id], isPending: false });
-    } else {
-      restoreMutation.mutate({ entityType, id });
-    }
-  }, [restoreMutation]);
-
-  const triggerBulkRestore = useCallback((ids: string[]) => {
-    if (ids.length === 0) return;
-
-    // Determine entity type from the first item (all selected items should be of the same type via the active tab)
-    const firstItem = allTabItems.find((ci) => ci.id === ids[0]);
-    if (!firstItem) return;
-
-    if (firstItem.entityType.toLowerCase() === "usergroup" || firstItem.entityType.toLowerCase() === "usergroups") {
-      setRestoreDialog({ open: true, entityType: firstItem.entityType, ids, isPending: false });
-    } else {
-      const items = ids
-        .map((id) => {
-          const item = allTabItems.find((ci) => ci.id === id);
-          return item ? { entityType: item.entityType.toLowerCase(), id: item.id } : null;
-        })
-        .filter((i): i is { entityType: string; id: string } => i !== null);
-      if (items.length > 0) {
-        bulkRestoreMutation.mutate(items);
-      }
-    }
-  }, [allTabItems, bulkRestoreMutation]);
-
-  const confirmRestore = useCallback(async (restoreAdmins: boolean) => {
-    setRestoreDialog(s => ({ ...s, isPending: true }));
-    try {
-      if (restoreDialog.ids.length === 1) {
-        await restoreMutation.mutateAsync({ entityType: restoreDialog.entityType, id: restoreDialog.ids[0], restoreAdmins });
+  const triggerRestore = useCallback(
+    (entityType: string, id: string) => {
+      if (entityType.toLowerCase() === "usergroup" || entityType.toLowerCase() === "usergroups") {
+        setRestoreDialog({ open: true, entityType, ids: [id], isPending: false });
       } else {
-        const items = restoreDialog.ids.map(id => ({ entityType: restoreDialog.entityType, id, restoreAdmins }));
-        await bulkRestoreMutation.mutateAsync(items);
+        restoreMutation.mutate({ entityType, id });
       }
-      setRestoreDialog({ open: false, entityType: "", ids: [], isPending: false });
-    } catch (err: any) {
-      toastError({ title: t("common.error"), description: err.message });
-      setRestoreDialog(s => ({ ...s, isPending: false }));
-    }
-  }, [restoreDialog, restoreMutation, bulkRestoreMutation, toastError, t]);
+    },
+    [restoreMutation]
+  );
+
+  const triggerBulkRestore = useCallback(
+    (ids: string[]) => {
+      if (ids.length === 0) return;
+
+      // Determine entity type from the first item (all selected items should be of the same type via the active tab)
+      const firstItem = allTabItems.find((ci) => ci.id === ids[0]);
+      if (!firstItem) return;
+
+      if (
+        firstItem.entityType.toLowerCase() === "usergroup" ||
+        firstItem.entityType.toLowerCase() === "usergroups"
+      ) {
+        setRestoreDialog({ open: true, entityType: firstItem.entityType, ids, isPending: false });
+      } else {
+        const items = ids
+          .map((id) => {
+            const item = allTabItems.find((ci) => ci.id === id);
+            return item ? { entityType: item.entityType.toLowerCase(), id: item.id } : null;
+          })
+          .filter((i): i is { entityType: string; id: string } => i !== null);
+        if (items.length > 0) {
+          bulkRestoreMutation.mutate(items);
+        }
+      }
+    },
+    [allTabItems, bulkRestoreMutation]
+  );
+
+  const confirmRestore = useCallback(
+    async (restoreAdmins: boolean) => {
+      setRestoreDialog((s) => ({ ...s, isPending: true }));
+      try {
+        if (restoreDialog.ids.length === 1) {
+          await restoreMutation.mutateAsync({
+            entityType: restoreDialog.entityType,
+            id: restoreDialog.ids[0],
+            restoreAdmins,
+          });
+        } else {
+          const items = restoreDialog.ids.map((id) => ({
+            entityType: restoreDialog.entityType,
+            id,
+            restoreAdmins,
+          }));
+          await bulkRestoreMutation.mutateAsync(items);
+        }
+        setRestoreDialog({ open: false, entityType: "", ids: [], isPending: false });
+      } catch (err: any) {
+        toastError({ title: t("common.error"), description: err.message });
+        setRestoreDialog((s) => ({ ...s, isPending: false }));
+      }
+    },
+    [restoreDialog, restoreMutation, bulkRestoreMutation, toastError, t]
+  );
 
   const handleRestore = useCallback(
     (entityType: string, id: string) => triggerRestore(entityType, id),

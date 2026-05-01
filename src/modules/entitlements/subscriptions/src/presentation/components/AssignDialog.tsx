@@ -11,8 +11,12 @@ import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import { DatePicker } from "@core/ui/date-picker";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Label } from "@core/ui/label";
@@ -76,17 +80,23 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           {/* Expiry Behavior */}
           {vm.subscriptionType !== "Lifetime" && (
             <div className="space-y-2">
-            <Label>{t("entSubscriptions.expiryBehavior") || "On Expiry"}</Label>
-            <GenericSelect
-              type="single"
-              options={[
-                { value: "Fallback", label: `↓ ${t("entSubscriptions.fallback") || "Fallback to lower edition"}` },
-                { value: "Suspend", label: `⏸ ${t("entSubscriptions.suspendOnExpiry") || "Suspend tenant"}` },
-              ]}
-              value={vm.expiryBehavior}
-              onValueChange={(v: string) => vm.setExpiryBehavior(v)}
-            />
-          </div>
+              <Label>{t("entSubscriptions.expiryBehavior") || "On Expiry"}</Label>
+              <GenericSelect
+                type="single"
+                options={[
+                  {
+                    value: "Fallback",
+                    label: `↓ ${t("entSubscriptions.fallback") || "Fallback to lower edition"}`,
+                  },
+                  {
+                    value: "Suspend",
+                    label: `⏸ ${t("entSubscriptions.suspendOnExpiry") || "Suspend tenant"}`,
+                  },
+                ]}
+                value={vm.expiryBehavior}
+                onValueChange={(v: string) => vm.setExpiryBehavior(v)}
+              />
+            </div>
           )}
 
           {/* Promotion Picker */}
@@ -111,18 +121,20 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
                 checked={vm.skipPayment}
                 onCheckedChange={(checked) => vm.setSkipPayment(!!checked)}
               />
-              <Label htmlFor="assign-skip-payment" className="text-sm font-medium cursor-pointer">
+              <Label htmlFor="assign-skip-payment" className="cursor-pointer text-sm font-medium">
                 {t("entSubscriptions.skipPayment") || "Skip Payment"}
               </Label>
             </div>
-            <p className="text-xs text-muted-foreground ms-6">
-              {t("entSubscriptions.skipPaymentDesc") || "Activates the subscription without payment processing. Use for demos or manual billing."}
+            <p className="ms-6 text-xs text-muted-foreground">
+              {t("entSubscriptions.skipPaymentDesc") ||
+                "Activates the subscription without payment processing. Use for demos or manual billing."}
             </p>
             {vm.skipPayment && (
-              <div className="flex items-start gap-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-2 ms-6">
-                <Shield className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+              <div className="ms-6 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2 dark:border-amber-800 dark:bg-amber-950/30">
+                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                 <span className="text-xs text-amber-700 dark:text-amber-400">
-                  {t("entSubscriptions.skipPaymentWarning") || "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing."}
+                  {t("entSubscriptions.skipPaymentWarning") ||
+                    "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing."}
                 </span>
               </div>
             )}
@@ -136,7 +148,11 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           <Button variant="outline" onClick={() => vm.setShowAssignDialog(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={vm.submitAssign} disabled={!vm.selectedEditionId} loading={vm.isAssigning}>
+          <Button
+            onClick={vm.submitAssign}
+            disabled={!vm.selectedEditionId}
+            loading={vm.isAssigning}
+          >
             {t("entSubscriptions.assign")}
           </Button>
         </DialogFooter>

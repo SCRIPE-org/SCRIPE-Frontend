@@ -269,15 +269,13 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
   // Resend Setup Email mutation
   const resendSetupEmailMutation = useMutation({
-    mutationFn: ({ adminId }: { adminId: string }) =>
-      adminRepository.resendSetupEmail(adminId),
+    mutationFn: ({ adminId }: { adminId: string }) => adminRepository.resendSetupEmail(adminId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admins"] });
       success({
         title: t("admin.setupEmailResent") || "Setup Email Resent",
         description:
-          t("admin.setupEmailResentDesc") ||
-          "Account setup email has been resent successfully.",
+          t("admin.setupEmailResentDesc") || "Account setup email has been resent successfully.",
       });
     },
     onError: (err: Error) => {
@@ -355,15 +353,16 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         const roleSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
         const isExplicitTenant = !!propTenantId;
 
-        const result = (useMyTenant && !isExplicitTenant)
-          ? await roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
-          : await roleRepository.getAll({
-            search: query,
-            page: 1,
-            pageSize: 20,
-            tenantId: roleSearchTenantId,
-            strict: true, // Force strict filtering
-          });
+        const result =
+          useMyTenant && !isExplicitTenant
+            ? await roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
+            : await roleRepository.getAll({
+                search: query,
+                page: 1,
+                pageSize: 20,
+                tenantId: roleSearchTenantId,
+                strict: true, // Force strict filtering
+              });
 
         return (result.items || []).map((role) => ({
           value: role.id,
@@ -384,14 +383,19 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         const groupSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
         const isExplicitTenant = !!propTenantId;
 
-        const result = (useMyTenant && !isExplicitTenant)
-          ? await systemContainer.userGroupRepository.getMyTenantGroups({ search: query, page: 1, pageSize: 20 })
-          : await systemContainer.userGroupRepository.getAll({
-            search: query,
-            page: 1,
-            pageSize: 20,
-            tenantId: groupSearchTenantId,
-          });
+        const result =
+          useMyTenant && !isExplicitTenant
+            ? await systemContainer.userGroupRepository.getMyTenantGroups({
+                search: query,
+                page: 1,
+                pageSize: 20,
+              })
+            : await systemContainer.userGroupRepository.getAll({
+                search: query,
+                page: 1,
+                pageSize: 20,
+                tenantId: groupSearchTenantId,
+              });
 
         return (result.items || []).map((g) => ({
           value: g.id,
@@ -443,7 +447,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           name: "sendSetupEmail",
           label: t("admin.sendSetupEmail") || "Send setup email to the admin",
           type: "switch" as const,
-          description: t("admin.sendSetupEmailDescription") || "When enabled, an email invitation will be sent to set up the account. When disabled, you can set the password manually.",
+          description:
+            t("admin.sendSetupEmailDescription") ||
+            "When enabled, an email invitation will be sent to set up the account. When disabled, you can set the password manually.",
         },
         {
           name: "password",
@@ -457,7 +463,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           name: "mustChangePassword",
           label: t("admin.mustChangePassword") || "Require password change on first login",
           type: "switch" as const,
-          description: t("admin.mustChangePasswordDescription") || "The admin will be forced to change their password after their first login.",
+          description:
+            t("admin.mustChangePasswordDescription") ||
+            "The admin will be forced to change their password after their first login.",
           isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
         },
         {
@@ -586,8 +594,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
     handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
 
-    handleResendSetupEmail: (adminId: string) =>
-      resendSetupEmailMutation.mutate({ adminId }),
+    handleResendSetupEmail: (adminId: string) => resendSetupEmailMutation.mutate({ adminId }),
 
     isTogglingActive: toggleActiveMutation.isPending,
     isAssigningRole: assignRoleMutation.isPending,

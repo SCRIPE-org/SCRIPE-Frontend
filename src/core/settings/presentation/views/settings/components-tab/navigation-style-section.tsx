@@ -37,10 +37,26 @@ export function NavigationStyleSection() {
   };
 
   const navigationStyles: StyleOption[] = [
-    { value: "default", name: t("settings.navigationStyle.options.default.name"), description: t("settings.navigationStyle.options.default.description") },
-    { value: "pills", name: t("settings.navigationStyle.options.pills.name"), description: t("settings.navigationStyle.options.pills.description") },
-    { value: "underline", name: t("settings.navigationStyle.options.underline.name"), description: t("settings.navigationStyle.options.underline.description") },
-    { value: "sidebar", name: t("settings.navigationStyle.options.sidebar.name"), description: t("settings.navigationStyle.options.sidebar.description") },
+    {
+      value: "default",
+      name: t("settings.navigationStyle.options.default.name"),
+      description: t("settings.navigationStyle.options.default.description"),
+    },
+    {
+      value: "pills",
+      name: t("settings.navigationStyle.options.pills.name"),
+      description: t("settings.navigationStyle.options.pills.description"),
+    },
+    {
+      value: "underline",
+      name: t("settings.navigationStyle.options.underline.name"),
+      description: t("settings.navigationStyle.options.underline.description"),
+    },
+    {
+      value: "sidebar",
+      name: t("settings.navigationStyle.options.sidebar.name"),
+      description: t("settings.navigationStyle.options.sidebar.description"),
+    },
   ];
 
   return (

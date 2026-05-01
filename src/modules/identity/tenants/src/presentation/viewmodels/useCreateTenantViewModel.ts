@@ -160,7 +160,10 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
           next.code = generateCode(value as string);
         }
         // Auto-generate username from code
-        if (field === "code" && (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)) {
+        if (
+          field === "code" &&
+          (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)
+        ) {
           next.adminUsername = `${(value as string).toLowerCase()}_admin`;
         }
         // When edition changes, reset subscriptionType to the first enabled type
@@ -223,7 +226,11 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   );
 
   // ── Step validation ──
-  const [stepTouched, setStepTouched] = useState<Record<StepId, boolean>>({ 1: false, 2: false, 3: false });
+  const [stepTouched, setStepTouched] = useState<Record<StepId, boolean>>({
+    1: false,
+    2: false,
+    3: false,
+  });
 
   const stepErrors = useMemo(() => {
     const errors: Record<StepId, string[]> = { 1: [], 2: [], 3: [] };
@@ -239,10 +246,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     return errors;
   }, [form]);
 
-  const isStepValid = useCallback(
-    (step: StepId) => stepErrors[step].length === 0,
-    [stepErrors]
-  );
+  const isStepValid = useCallback((step: StepId) => stepErrors[step].length === 0, [stepErrors]);
 
   const canProceed = useMemo(() => isStepValid(currentStep), [isStepValid, currentStep]);
 
@@ -390,4 +394,3 @@ function generateCode(name: string): string {
 
 /** Exported type alias for components to reference the ViewModel shape */
 export type CreateTenantVM = ReturnType<typeof useCreateTenantViewModel>;
-

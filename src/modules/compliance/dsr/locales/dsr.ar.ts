@@ -54,7 +54,8 @@ export const ar = {
 
     // Erasure gate
     erasureGate: "بوابة تأكيد الحذف",
-    erasureGateWarning: "هذا الإجراء لا يمكن التراجع عنه. ستُجهَّل جميع البيانات الشخصية بشكل دائم.",
+    erasureGateWarning:
+      "هذا الإجراء لا يمكن التراجع عنه. ستُجهَّل جميع البيانات الشخصية بشكل دائم.",
     erasureGraceNotice: "تنطبق فترة سماح قبل التنفيذ.",
     confirmErasureTitle: "تأكيد الحذف النهائي",
 

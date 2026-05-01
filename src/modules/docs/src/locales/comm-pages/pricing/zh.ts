@@ -6,26 +6,36 @@ export const zh = {
   commercial: {
     licensingModel: {
       entitlementsTitle: "基于权益的计划差异化",
-      entitlementsIntro: "NEXORA 内置的权益模块为每个许可证层级背后的实际计划差异化提供动力。版本定义了每个计划包含的功能，订阅将租户与计划联系起来，而覆盖则支持自定义交易 —— 所有这些都在 API 级别自动强制执行。",
+      entitlementsIntro:
+        "NEXORA 内置的权益模块为每个许可证层级背后的实际计划差异化提供动力。版本定义了每个计划包含的功能，订阅将租户与计划联系起来，而覆盖则支持自定义交易 —— 所有这些都在 API 级别自动强制执行。",
       entEditions: "基于版本的功能捆绑",
-      entEditionsDesc: "定义命名的计划（基础版、专业版、企业版），用于捆绑布尔、数字和字符串功能值。每个租户订阅的版本将自动决定其功能访问权限。",
+      entEditionsDesc:
+        "定义命名的计划（基础版、专业版、企业版），用于捆绑布尔、数字和字符串功能值。每个租户订阅的版本将自动决定其功能访问权限。",
       entSubscriptions: "完整的订阅生命周期",
-      entSubscriptionsDesc: "分配、升级、降级、挂起和续订租户订阅，并具有完整的审计跟踪。支持试用、附加组件和自动过期行为。",
+      entSubscriptionsDesc:
+        "分配、升级、降级、挂起和续订租户订阅，并具有完整的审计跟踪。支持试用、附加组件和自动过期行为。",
       entOverrides: "基于租户的覆盖",
-      entOverridesDesc: "无论租户的计划如何，都可以为单个租户自定义功能值。非常适合企业交易、促销或 Beta 测试 —— 并具有完整的审计跟踪。",
+      entOverridesDesc:
+        "无论租户的计划如何，都可以为单个租户自定义功能值。非常适合企业交易、促销或 Beta 测试 —— 并具有完整的审计跟踪。",
       entVersioning: "版本与发布控制",
-      entVersioningDesc: "创建带有功能快照的发布版本，并通过立即、灰度 (canary) 或计划发布策略进行部署，而不会中断现有租户的服务。",
-      entitlementsTip: "权益模块直接集成到 MediatR 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
+      entVersioningDesc:
+        "创建带有功能快照的发布版本，并通过立即、灰度 (canary) 或计划发布策略进行部署，而不会中断现有租户的服务。",
+      entitlementsTip:
+        "权益模块直接集成到 MediatR 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
       comparisonTitle: "许可证层级对比",
       description: "为技术创始人以及庞大的企业实体量身设计的透明、可预测和可扩展的许可结构。",
-      intro: "与 SaaS 模型使用按席位 (per-seat) 计费来惩罚您的业务增长不同，NEXORA 提供了绝对的财务可预测性。您购买的是核心架构知识产权的永久权利，使您可以不受限制地构建和扩展。",
-      renewalContent: "每个许可证都包含整整 12 个月的私有 GitHub 存储库直接访问权限。在此期间，您可以完全免费获得持续的架构改进、每周漏洞修复以及大规模版本升级（例如迁移到 .NET 10）。",
+      intro:
+        "与 SaaS 模型使用按席位 (per-seat) 计费来惩罚您的业务增长不同，NEXORA 提供了绝对的财务可预测性。您购买的是核心架构知识产权的永久权利，使您可以不受限制地构建和扩展。",
+      renewalContent:
+        "每个许可证都包含整整 12 个月的私有 GitHub 存储库直接访问权限。在此期间，您可以完全免费获得持续的架构改进、每周漏洞修复以及大规模版本升级（例如迁移到 .NET 10）。",
       renewalTitle: "持续架构交付",
       sourcCodeTitle: "绝对的代码所有权",
-      sourceCodeContent: "您不是在租赁 NEXORA；您拥有它。您将收到完整且未被混淆的 TypeScript 和 C# 源代码。在法律上，您可以自由地审计、修改、分支 (fork) 并将该框架直接嵌入到您专有的商业 SaaS 产品中。",
+      sourceCodeContent:
+        "您不是在租赁 NEXORA；您拥有它。您将收到完整且未被混淆的 TypeScript 和 C# 源代码。在法律上，您可以自由地审计、修改、分支 (fork) 并将该框架直接嵌入到您专有的商业 SaaS 产品中。",
       termsTitle: "清晰的商业条款",
       title: "商业许可与投资回报",
-      trialTip: "高管行动：如果您不确定哪个层级符合您 3 年的路线图规划，请联系我们的销售工程团队以获取定制的架构风险评估。",
+      trialTip:
+        "高管行动：如果您不确定哪个层级符合您 3 年的路线图规划，请联系我们的销售工程团队以获取定制的架构风险评估。",
       typesIntro: "选择与您当前的运营周期和预计的企业规模完全匹配的层级。",
       typesTitle: "战略部署层级",
       tblTypesHeader1: "许可证",
@@ -132,13 +142,15 @@ export const zh = {
       hotfixes: "紧急补丁通道",
       hotfixesDesc: "绕过标准的发布周期，以获得即时的安全和稳定性补丁 (Hotfixes)。",
       includedTitle: "标准包含矩阵",
-      intro: "企业级软件需要企业级的保障。我们提供专门的、高度专业化的支持层级，确保您的关键系统由构建它们的架构师直接提供后盾。",
+      intro:
+        "企业级软件需要企业级的保障。我们提供专门的、高度专业化的支持层级，确保您的关键系统由构建它们的架构师直接提供后盾。",
       knowledgeBase: "庞大的知识库",
       knowledgeBaseDesc: "深度的架构蓝图、已知的迁移路径以及具体的教程。",
       onboardingTitle: "孵化与入职 (Onboarding)",
       remoteDebug: "动手远程调试",
       remoteDebugDesc: "我们直接加入您的屏幕，在实时中以法证级别的方式拆解复杂的集成瓶颈。",
-      slaIntro: "我们为自己的代码提供坚实的后盾。我们的 SLA 具有法律约束力，明确保证了我们对关键架构阻塞问题 (Blockers) 的响应速度。",
+      slaIntro:
+        "我们为自己的代码提供坚实的后盾。我们的 SLA 具有法律约束力，明确保证了我们对关键架构阻塞问题 (Blockers) 的响应速度。",
       slaTitle: "具有约束力的服务等级协议 (SLA)",
       step1Content: "一般的架构问题，通过标准化的社区渠道以异步方式处理。",
       step1Title: "1. 社区支持",
@@ -151,7 +163,8 @@ export const zh = {
       tiersIntro: "选择与您的部署威胁模型和组织规模完美匹配的特定技术支持层级。",
       tiersTitle: "技术支持层级",
       title: "企业 SLA 与支持服务",
-      upgradeContent: "向 .NET 或 Next.js 的新主版本过渡可能存在风险。Professional 和 Enterprise 层级包括专属的技术审查时间，以确保您的主版本升级得到完美执行，且不会造成停机 (Downtime)。",
+      upgradeContent:
+        "向 .NET 或 Next.js 的新主版本过渡可能存在风险。Professional 和 Enterprise 层级包括专属的技术审查时间，以确保您的主版本升级得到完美执行，且不会造成停机 (Downtime)。",
       upgradeTip: "请确保您的组织选择了与其部署的操作关键性 (Operational criticality) 匹配的层级。",
       upgradeTitle: "主版本迁移协助",
       tblTiersHeader1: "特性",
@@ -253,14 +266,16 @@ export const zh = {
       description: "透明地概述我们的战略架构计划、即将推出的功能模块以及工程里程碑。",
       feedbackTip: "有关键需求吗？企业许可证持有者决定我们的待办事项优先级。请联系架构团队。",
       inProgressTitle: "活跃开发中",
-      intro: "NEXORA 正在持续演进中。我们的工程路线图是公开的、可预测的，并致力于为庞大的企业开发团队消灭样板代码 (boilerplate)。",
+      intro:
+        "NEXORA 正在持续演进中。我们的工程路线图是公开的、可预测的，并致力于为庞大的企业开发团队消灭样板代码 (boilerplate)。",
       multiRegion: "双活多区域部署 (Active-Active Multi-Region)",
       multiRegionDesc: "原生支持全球分布的无主 (masterless) 数据库拓扑架构。",
       nextTitle: "下一阶段展望",
       pluginEco: "动态插件架构",
       pluginEcoDesc: "无需重启宿主进程，即可在运行时加载预编译的 C# DLL 和 React 组件。",
       title: "工程开发路线图",
-      visionContent: "我们从不追逐转瞬即逝的趋势。我们的路线图完全专注于通过自动化解决架构复杂性和扩展预置的业务领域目录，为企业合作伙伴带来复利级的投资回报 (ROI)。",
+      visionContent:
+        "我们从不追逐转瞬即逝的趋势。我们的路线图完全专注于通过自动化解决架构复杂性和扩展预置的业务领域目录，为企业合作伙伴带来复利级的投资回报 (ROI)。",
       visionTitle: "长期架构愿景",
     },
     faq: {
@@ -271,9 +286,11 @@ export const zh = {
       q3: "NEXORA 与其他 ERP 平台有何不同？",
       a3: "与将您锁定在僵化工作流中的传统 ERP 系统不同，NEXORA 采用整洁架构原理，为您提供完整的源代码访问权限。您将获得真正的模块隔离（每个模块都可以提取到自己的微服务中）、内置的行级数据隔离多租户功能、4 种数据库提供商支持、带有全面 RTL 支持的 7 语言国际化 (i18n)，以及 8 层安全模型等企业级安全特性——所有这些被设计成用来“扩展”，而不仅仅是“配置”。",
       qWhatIndustries: "NEXORA 适用于哪些行业？",
-      aWhatIndustries: "NEXORA 在设计上是与行业无关的。其模块化架构允许您为医疗保健、金融、制造、物流、教育、政府、零售、房地产等领域构建解决方案。核心平台提供通用基础架构（身份验证、租户、审计、权限），而特定业务模块可以按照既定模式进行添加或定制开发。",
+      aWhatIndustries:
+        "NEXORA 在设计上是与行业无关的。其模块化架构允许您为医疗保健、金融、制造、物流、教育、政府、零售、房地产等领域构建解决方案。核心平台提供通用基础架构（身份验证、租户、审计、权限），而特定业务模块可以按照既定模式进行添加或定制开发。",
       qHowLongSetup: "上手需要多长时间？",
-      aHowLongSetup: "您可以在不到 15 分钟内在本地运行 NEXORA。克隆代码库，配置您的数据库连接（SQL Server、Oracle、PostgreSQL 或 SQLite），运行迁移，然后启动开发服务器。nexora-cli 工具通过在几秒钟内生成新模块、实体和样板代码来进一步加速开发。大多数团队在第一天就能投入生产开发。",
+      aHowLongSetup:
+        "您可以在不到 15 分钟内在本地运行 NEXORA。克隆代码库，配置您的数据库连接（SQL Server、Oracle、PostgreSQL 或 SQLite），运行迁移，然后启动开发服务器。nexora-cli 工具通过在几秒钟内生成新模块、实体和样板代码来进一步加速开发。大多数团队在第一天就能投入生产开发。",
       q4: "NEXORA 使用什么技术栈？",
       a4: "后端构建在 ASP.NET Core (.NET 9) 之上，搭配 Entity Framework Core、MediatR (用于 CQRS) 和 FluentValidation。前端使用 Next.js 15，结合 TypeScript、TanStack Query、Zustand 以及基于 Radix UI 构建的定制设计系统。实时功能由 SignalR WebSockets 提供支持，平台支持使用 Docker 容器化进行部署。",
       q5: "NEXORA 能从单体架构扩展到微服务吗？",
@@ -281,9 +298,11 @@ export const zh = {
       q6: "支持哪些数据库？",
       a6: "NEXORA 通过 Entity Framework Core 支持 3 种数据库提供程序：SQL Server、Oracle 和 PostgreSQL。切换提供程序只需更改配置。此外，Database.Mode 设置控制数据库隔离：'Single' 模式将所有模块表放在一个共享数据库中，而 'Multi' 模式（默认）允许每个模块拥有自己的数据库，并具有单独的连接字符串甚至不同的提供程序。每个提供程序都有自己的迁移集，平台透明地处理提供程序特定的差异。",
       qCanWeCustomize: "我们可以定制和扩展 NEXORA 的模块吗？",
-      aCanWeCustomize: "绝对可以。您将获得完整的源代码访问权限，并且每个模块都遵循 SOLID View/ViewModel 模式，具有清晰的关注点分离。您可以修改现有模块，利用新功能扩展它们，或者使用 nexora-cli 脚手架工具构建全新的模块。开闭原则 (Open/Closed) 确保您可以通过组合扩展行为，而无需修改核心框架。",
+      aCanWeCustomize:
+        "绝对可以。您将获得完整的源代码访问权限，并且每个模块都遵循 SOLID View/ViewModel 模式，具有清晰的关注点分离。您可以修改现有模块，利用新功能扩展它们，或者使用 nexora-cli 脚手架工具构建全新的模块。开闭原则 (Open/Closed) 确保您可以通过组合扩展行为，而无需修改核心框架。",
       qDatabaseSupport: "NEXORA 如何跨不同的数据库提供商处理数据库迁移？",
-      aDatabaseSupport: "每个数据库提供商都有由 EF Core 管理的专用迁移文件夹。在添加或修改实体时，您将生成特定于提供商的迁移，以适应每个数据库的数据类型和约束。平台包含迁移实用程序，CLI 可以同时为所有配置的提供商生成迁移，以确保在所有环境中的一致性。",
+      aDatabaseSupport:
+        "每个数据库提供商都有由 EF Core 管理的专用迁移文件夹。在添加或修改实体时，您将生成特定于提供商的迁移，以适应每个数据库的数据类型和约束。平台包含迁移实用程序，CLI 可以同时为所有配置的提供商生成迁移，以确保在所有环境中的一致性。",
       q7: "有哪些可用的许可选项？",
       a7: "NEXORA 提供灵活的许可层级，旨在与您的组织共同扩展。选项包括适用于小型团队和个人项目的 Starter 许可证，适用于具有高级功能的成长型公司的 Professional 许可证，以及具有无限部署、优先支持和定制 SLA 的 Enterprise 许可证。所有许可证均包括完整的源代码访问权限以及在生产环境中使用 NEXORA 的权利。",
       q8: "是否按席位 (per-seat) 或按用户收费？",
@@ -291,22 +310,31 @@ export const zh = {
       q9: "我们能将 NEXORA 用于多个客户的项目吗？",
       a9: "这取决于您的许可证层级。Starter 许可证涵盖单个项目，而 Professional 和 Enterprise 许可证支持多个部署。Enterprise 层提供无限项目部署，因此它是为多个客户构建解决方案的软件公司和咨询公司的理想选择。每个部署的实例都可以独立定制。",
       qTrialPeriod: "有试用或评估期吗？",
-      aTrialPeriod: "有的。NEXORA 提供 30 天的评估期，在此期间可以完全访问平台的所有功能、文档以及社区支持。在试用期间，您可以构建概念验证 (PoC)，探索架构，并评估 NEXORA 是否适合您的技术需求。开始评估无需绑定信用卡。",
+      aTrialPeriod:
+        "有的。NEXORA 提供 30 天的评估期，在此期间可以完全访问平台的所有功能、文档以及社区支持。在试用期间，您可以构建概念验证 (PoC)，探索架构，并评估 NEXORA 是否适合您的技术需求。开始评估无需绑定信用卡。",
       qUpgradePath: "在不同的许可证层级之间有什么升级途径？",
-      aUpgradePath: "您可以随时通过支付当前层级和新层级之间的差价来升级您的许可证。升级会立即生效——处理完升级后，您将立刻获得访问其他功能、支持渠道和部署权限的资格。没有惩罚或锁定期。降级操作将在续订时处理。",
+      aUpgradePath:
+        "您可以随时通过支付当前层级和新层级之间的差价来升级您的许可证。升级会立即生效——处理完升级后，您将立刻获得访问其他功能、支持渠道和部署权限的资格。没有惩罚或锁定期。降级操作将在续订时处理。",
       qDataResidency: "NEXORA 如何处理数据驻留 (Data Residency) 要求？",
-      aDataResidency: "NEXORA 是自托管 (Self-hosted) 的，这意味着您可以完全控制数据的存储位置。您可以将其部署在自己的基础设施上——即本地部署 (On-premises)，或部署在您首选的云区域 (AWS、Azure、GCP) 中，又或是部署在私有数据中心。多租户系统支持按租户进行配置，因此您甚至可以将不同的租户托管在不同的地区，以符合 GDPR、HIPAA 或本地数据主权法规。",
+      aDataResidency:
+        "NEXORA 是自托管 (Self-hosted) 的，这意味着您可以完全控制数据的存储位置。您可以将其部署在自己的基础设施上——即本地部署 (On-premises)，或部署在您首选的云区域 (AWS、Azure、GCP) 中，又或是部署在私有数据中心。多租户系统支持按租户进行配置，因此您甚至可以将不同的租户托管在不同的地区，以符合 GDPR、HIPAA 或本地数据主权法规。",
       qAuditLogs: "NEXORA 提供哪些审计功能？",
-      aAuditLogs: "NEXORA 会从 4 个来源捕获审计事件：HTTP 请求日志（记录每个 API 调用的时间安排和响应代码）、实体更改跟踪（记录谁在何时更改了什么，并包含更改前后的快照）、安全事件（记录登录尝试、密码更改、权限修改）以及业务操作日志。所有审计数据均可通过 SignalR 实时流式传输、导出到 CSV/Excel，并支持配置保留策略。",
+      aAuditLogs:
+        "NEXORA 会从 4 个来源捕获审计事件：HTTP 请求日志（记录每个 API 调用的时间安排和响应代码）、实体更改跟踪（记录谁在何时更改了什么，并包含更改前后的快照）、安全事件（记录登录尝试、密码更改、权限修改）以及业务操作日志。所有审计数据均可通过 SignalR 实时流式传输、导出到 CSV/Excel，并支持配置保留策略。",
       qSSOIntegration: "NEXORA 是否支持 SSO 和外部身份提供商？",
-      aSSOIntegration: "NEXORA 包含一个内置的基于 JWT 的身份验证系统，支持双重身份验证 (2FA)、会话管理和可配置的密码策略。该架构设计可通过标准 ASP.NET Core 身份验证中间件集成外部身份提供商 (OAuth2、OIDC、SAML)。企业客户还可以将系统与 Active Directory、Azure AD 或 Okta 集成以实现单点登录 (SSO)。",
+      aSSOIntegration:
+        "NEXORA 包含一个内置的基于 JWT 的身份验证系统，支持双重身份验证 (2FA)、会话管理和可配置的密码策略。该架构设计可通过标准 ASP.NET Core 身份验证中间件集成外部身份提供商 (OAuth2、OIDC、SAML)。企业客户还可以将系统与 Active Directory、Azure AD 或 Okta 集成以实现单点登录 (SSO)。",
       qUpdateFrequency: "NEXORA 多久更新一次？",
-      aUpdateFrequency: "NEXORA 遵循定期的发布节奏：每 2-4 周发布一次次要更新，主要版本的发布则与 .NET 和 Next.js 的版本周期保持一致。每个版本都包含详细的更新日志、迁移指南和向后兼容性说明。安全补丁会根据需要发布，通常在漏洞披露后的 48 小时内完成。企业级客户能提前访问候选版本 (Release candidates)。",
+      aUpdateFrequency:
+        "NEXORA 遵循定期的发布节奏：每 2-4 周发布一次次要更新，主要版本的发布则与 .NET 和 Next.js 的版本周期保持一致。每个版本都包含详细的更新日志、迁移指南和向后兼容性说明。安全补丁会根据需要发布，通常在漏洞披露后的 48 小时内完成。企业级客户能提前访问候选版本 (Release candidates)。",
       qBreakingChanges: "NEXORA 如何处理破坏性变更 (Breaking changes)？",
-      aBreakingChanges: "得益于 NEXORA 坚持开闭原则 (Open/Closed) ——新功能通过扩展而非修改来添加，从而将破坏性变更降至最低。当破坏性变更是不可避免的（例如重大框架升级），我们会提供清晰的说明、逐步迁移指南、并在可能的情况下提供自动化迁移脚本，并设有至少一个主要版本周期的弃用期 (Deprecation period)。企业客户可获得专门的迁移协助。",
+      aBreakingChanges:
+        "得益于 NEXORA 坚持开闭原则 (Open/Closed) ——新功能通过扩展而非修改来添加，从而将破坏性变更降至最低。当破坏性变更是不可避免的（例如重大框架升级），我们会提供清晰的说明、逐步迁移指南、并在可能的情况下提供自动化迁移脚本，并设有至少一个主要版本周期的弃用期 (Deprecation period)。企业客户可获得专门的迁移协助。",
       qMigrationHelp: "我们可以获得从现有系统迁移的帮助吗？",
-      aMigrationHelp: "可以。Professional 和 Enterprise 许可证持有者可以访问迁移咨询服务。NEXORA 团队可以协助进行数据迁移规划、架构映射、ETL 脚本编写和分阶段割接策略。对于复杂的迁移，可提供专门的工程支持，以加速过渡并最大程度地减少停机时间。我们也提供社区资源和迁移指南以供自助迁移参考。",
-      contactNote: "有未在此处涵盖的问题吗？请通过 support@nexora.dev 联系我们的团队，或加入社区 Discord 获取实时帮助。",
+      aMigrationHelp:
+        "可以。Professional 和 Enterprise 许可证持有者可以访问迁移咨询服务。NEXORA 团队可以协助进行数据迁移规划、架构映射、ETL 脚本编写和分阶段割接策略。对于复杂的迁移，可提供专门的工程支持，以加速过渡并最大程度地减少停机时间。我们也提供社区资源和迁移指南以供自助迁移参考。",
+      contactNote:
+        "有未在此处涵盖的问题吗？请通过 support@nexora.dev 联系我们的团队，或加入社区 Discord 获取实时帮助。",
       description: "关于 NEXORA 的常见问题解答。",
       generalTitle: "常规问题",
       intro: "关于 NEXORA 架构、许可、部署和功能最常见问题的解答。",

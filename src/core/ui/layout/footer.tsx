@@ -8,7 +8,8 @@ export function Footer() {
   const { companyName } = useTenantBranding();
   return (
     <footer className="border-t border-border py-4 text-center text-sm text-muted-foreground">
-      © {new Date().getFullYear()} {companyName}. {t("footer.allRightsReserved") || "All rights reserved."}
+      © {new Date().getFullYear()} {companyName}.{" "}
+      {t("footer.allRightsReserved") || "All rights reserved."}
     </footer>
   );
 }

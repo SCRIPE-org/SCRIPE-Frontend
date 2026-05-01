@@ -47,7 +47,9 @@ function makeLoginTheme(config: {
 
   // Resolve gradient values for bg tokens
   const bgIsGradient = config.bgType === "gradient";
-  const bgGradientMatch = bgIsGradient ? config.bgValue.match(/linear-gradient\(([^,]+),\s*([^,]+(?:,\s*[^)]+)?)\)/) : null;
+  const bgGradientMatch = bgIsGradient
+    ? config.bgValue.match(/linear-gradient\(([^,]+),\s*([^,]+(?:,\s*[^)]+)?)\)/)
+    : null;
 
   return JSON.stringify({
     layout: config.layout,
@@ -56,10 +58,10 @@ function makeLoginTheme(config: {
     bgType: config.bgType === "gradient" ? "gradient" : "solid",
     bgGradientDirection: bgGradientMatch ? bgGradientMatch[1].trim() : "135deg",
     bgGradientFrom: bgIsGradient
-      ? (config.bgValue.match(/#[0-9a-fA-F]{6}/g)?.[0] || config.bgColor)
+      ? config.bgValue.match(/#[0-9a-fA-F]{6}/g)?.[0] || config.bgColor
       : config.bgColor,
     bgGradientTo: bgIsGradient
-      ? (config.bgValue.match(/#[0-9a-fA-F]{6}/g)?.[1] || config.bgColor)
+      ? config.bgValue.match(/#[0-9a-fA-F]{6}/g)?.[1] || config.bgColor
       : config.bgColor,
     tokens: {
       "color.primary": config.primaryColor,
@@ -101,7 +103,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-corporate-elite",
     slug: "corporate-elite",
     name: "Corporate Elite",
-    description: "Professional enterprise login with clean split-right layout. Perfect for Fortune 500 companies and large organizations that need a polished, trustworthy first impression.",
+    description:
+      "Professional enterprise login with clean split-right layout. Perfect for Fortune 500 companies and large organizations that need a polished, trustworthy first impression.",
     bundleType: "full-bundle",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -151,7 +154,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-healthcare-trust",
     slug: "healthcare-trust",
     name: "Healthcare Trust",
-    description: "Calm, accessible design with a centered layout. Uses green tones to convey trust and safety. WCAG AA compliant with high-contrast text and large touch targets.",
+    description:
+      "Calm, accessible design with a centered layout. Uses green tones to convey trust and safety. WCAG AA compliant with high-contrast text and large touch targets.",
     bundleType: "auth-suite",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -201,7 +205,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-saas-velocity",
     slug: "saas-velocity",
     name: "SaaS Velocity",
-    description: "Modern glassmorphism login with vibrant purple gradients. Designed for fast-growing SaaS products that want to convey innovation and speed.",
+    description:
+      "Modern glassmorphism login with vibrant purple gradients. Designed for fast-growing SaaS products that want to convey innovation and speed.",
     bundleType: "full-bundle",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -252,7 +257,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-creative-studio",
     slug: "creative-studio",
     name: "Creative Studio",
-    description: "Bold, expressive design for creative agencies and design studios. Uses a magazine-style layout with striking pink accents and dynamic typography.",
+    description:
+      "Bold, expressive design for creative agencies and design studios. Uses a magazine-style layout with striking pink accents and dynamic typography.",
     bundleType: "auth-suite",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -302,7 +308,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-dark-command",
     slug: "dark-command",
     name: "Dark Command",
-    description: "Developer-focused dark theme with monospace typography and spotlight layout. Clean, minimal, and distraction-free. Perfect for dev tools and APIs.",
+    description:
+      "Developer-focused dark theme with monospace typography and spotlight layout. Clean, minimal, and distraction-free. Perfect for dev tools and APIs.",
     bundleType: "login-only",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -352,7 +359,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-minimal-zen",
     slug: "minimal-zen",
     name: "Minimal Zen",
-    description: "Ultra-clean minimal design with generous whitespace and subtle gray tones. Less is more -- focuses attention entirely on the sign-in experience.",
+    description:
+      "Ultra-clean minimal design with generous whitespace and subtle gray tones. Less is more -- focuses attention entirely on the sign-in experience.",
     bundleType: "login-only",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -402,7 +410,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-government-secure",
     slug: "government-secure",
     name: "Government Secure",
-    description: "Institutional design with deep navy branding and structured split-left layout. Conveys authority, trust, and compliance. Inherently accessible.",
+    description:
+      "Institutional design with deep navy branding and structured split-left layout. Conveys authority, trust, and compliance. Inherently accessible.",
     bundleType: "full-bundle",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -452,7 +461,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-education-campus",
     slug: "education-campus",
     name: "Education Campus",
-    description: "Warm, inviting design for universities and educational platforms. Stacked layout with amber accents that feel approachable and energetic.",
+    description:
+      "Warm, inviting design for universities and educational platforms. Stacked layout with amber accents that feel approachable and energetic.",
     bundleType: "auth-suite",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -502,7 +512,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-fintech-vault",
     slug: "fintech-vault",
     name: "FinTech Vault",
-    description: "Sophisticated finance-grade design with teal accents and diagonal split layout. Conveys security and precision for banking and financial services.",
+    description:
+      "Sophisticated finance-grade design with teal accents and diagonal split layout. Conveys security and precision for banking and financial services.",
     bundleType: "full-bundle",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -552,7 +563,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-luxury-brand",
     slug: "luxury-brand",
     name: "Luxury Brand",
-    description: "Premium, elegant design with gold accents and serif typography. Uses an overlay layout with dramatic imagery. For luxury brands, fashion, and high-end services.",
+    description:
+      "Premium, elegant design with gold accents and serif typography. Uses an overlay layout with dramatic imagery. For luxury brands, fashion, and high-end services.",
     bundleType: "auth-suite",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -603,7 +615,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-startup-launch",
     slug: "startup-launch",
     name: "Startup Launch",
-    description: "Energetic, modern design with floating card layout and vibrant purple gradients. Built for startups that want to make a memorable first impression.",
+    description:
+      "Energetic, modern design with floating card layout and vibrant purple gradients. Built for startups that want to make a memorable first impression.",
     bundleType: "full-bundle",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -653,7 +666,8 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
     id: "demo-night-owl",
     slug: "night-owl",
     name: "Night Owl",
-    description: "Deep dark theme with indigo accents and immersive full-bleed layout. Designed for apps where dark mode is the default. Easy on the eyes, stylish by nature.",
+    description:
+      "Deep dark theme with indigo accents and immersive full-bleed layout. Designed for apps where dark mode is the default. Easy on the eyes, stylish by nature.",
     bundleType: "login-only",
     contents: {
       loginThemeJson: makeLoginTheme({
@@ -702,16 +716,16 @@ export const DEMO_BUNDLES: ThemeBundleData[] = [
 
 /** Get a demo bundle by slug */
 export function getDemoBundleBySlug(slug: string): ThemeBundleData | undefined {
-  return DEMO_BUNDLES.find(b => b.slug === slug);
+  return DEMO_BUNDLES.find((b) => b.slug === slug);
 }
 
 /** Get all featured demo bundles */
 export function getFeaturedDemoBundles(): ThemeBundleData[] {
-  return DEMO_BUNDLES.filter(b => b.isFeatured);
+  return DEMO_BUNDLES.filter((b) => b.isFeatured);
 }
 
 /** Filter demo bundles by industry/category tag */
 export function filterDemoBundlesByCategory(category: string): ThemeBundleData[] {
   if (!category) return DEMO_BUNDLES;
-  return DEMO_BUNDLES.filter(b => b.tags.some(t => t.includes(category)));
+  return DEMO_BUNDLES.filter((b) => b.tags.some((t) => t.includes(category)));
 }

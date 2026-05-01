@@ -8,8 +8,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import {
-  ChevronRight, ChevronLeft, Check, Loader2, ArrowLeft,
-  Tag, CreditCard, Eye,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  Loader2,
+  ArrowLeft,
+  Tag,
+  CreditCard,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -29,14 +35,18 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
   const vm = useEditionEditViewModel(editionId);
 
   const STEPS = [
-    { id: "basics",  label: t("entitlements.editions.wizard.stepBasics") || "Basics",  icon: Tag },
-    { id: "billing", label: t("entitlements.editions.wizard.stepBilling") || "Billing", icon: CreditCard },
-    { id: "review",  label: t("entitlements.editions.wizard.stepReview") || "Review",  icon: Eye },
+    { id: "basics", label: t("entitlements.editions.wizard.stepBasics") || "Basics", icon: Tag },
+    {
+      id: "billing",
+      label: t("entitlements.editions.wizard.stepBilling") || "Billing",
+      icon: CreditCard,
+    },
+    { id: "review", label: t("entitlements.editions.wizard.stepReview") || "Review", icon: Eye },
   ] as const;
 
   if (vm.isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+      <div className="flex min-h-[400px] flex-col items-center justify-center gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <p className="text-sm text-muted-foreground">{t("common.loading") || "Loading…"}</p>
       </div>
@@ -46,7 +56,7 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
   const displayName = vm.edition?.getDisplayName("en") ?? "Edition";
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 pb-12">
+    <div className="mx-auto max-w-3xl space-y-8 pb-12">
       {/* ── Header ── */}
       <div className="flex items-center gap-3">
         <Link href={`/entitlements/editions/${editionId}`}>
@@ -68,15 +78,17 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
       </div>
 
       {/* ── Step content ── */}
-      <div className="border border-border bg-card p-6 md:p-8 min-h-[380px]">
-        {vm.step === 0 && <WizardStepBasics form={vm.form} onChange={vm.onChange} isEditMode={true} />}
+      <div className="min-h-[380px] border border-border bg-card p-6 md:p-8">
+        {vm.step === 0 && (
+          <WizardStepBasics form={vm.form} onChange={vm.onChange} isEditMode={true} />
+        )}
         {vm.step === 1 && <WizardStepBilling form={vm.form} onChange={vm.onChange} />}
         {vm.step === 2 && <WizardStepReview form={vm.form} />}
       </div>
 
       {/* ── Error ── */}
       {vm.error && (
-        <div className="border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive flex items-center gap-2">
+        <div className="flex items-center gap-2 border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           <span className="shrink-0">⚠</span>
           {vm.error}
         </div>
@@ -91,7 +103,7 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
           className="gap-2"
         >
           <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
-          {vm.step === 0 ? (t("common.cancel") || "Cancel") : (t("common.back") || "Back")}
+          {vm.step === 0 ? t("common.cancel") || "Cancel" : t("common.back") || "Back"}
         </Button>
 
         {vm.step < STEPS.length - 1 ? (
@@ -102,9 +114,13 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
         ) : (
           <Button onClick={vm.handleSubmit} disabled={vm.isSubmitting} className="gap-2">
             {vm.isSubmitting ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving") || "Saving…"}</>
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving") || "Saving…"}
+              </>
             ) : (
-              <><Check className="h-4 w-4" /> {t("common.saveChanges") || "Save Changes"}</>
+              <>
+                <Check className="h-4 w-4" /> {t("common.saveChanges") || "Save Changes"}
+              </>
             )}
           </Button>
         )}

@@ -82,9 +82,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
       >
         <div className="flex items-center gap-3">
           <Logo size="sm" />
-          <h1 className="hidden text-sm font-semibold text-foreground sm:block">
-            {appName}
-          </h1>
+          <h1 className="hidden text-sm font-semibold text-foreground sm:block">{appName}</h1>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />

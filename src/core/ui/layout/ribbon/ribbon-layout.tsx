@@ -106,9 +106,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
               {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
             <Logo size="sm" />
-            <span className="hidden text-sm font-semibold text-foreground sm:block">
-              {appName}
-            </span>
+            <span className="hidden text-sm font-semibold text-foreground sm:block">{appName}</span>
           </div>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />

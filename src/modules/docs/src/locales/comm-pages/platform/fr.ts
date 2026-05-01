@@ -6,16 +6,22 @@ export const fr = {
   commercial: {
     platformArchitecture: {
       title: "Architecture de la Plateforme",
-      description: "Explorez la perfection structurelle de la Clean Architecture de NEXORA, des pipelines MediatR et des frontières de modules impénétrables conçues pour une échelle d'entreprise massive.",
-      intro: "Expérimentez la convergence entre une scalabilité horizontale massive et une organisation de code immaculée. L'architecture de NEXORA est une fondation méticuleusement conçue pour résister à des décennies d'évolution d'entreprise.",
+      description:
+        "Explorez la perfection structurelle de la Clean Architecture de NEXORA, des pipelines MediatR et des frontières de modules impénétrables conçues pour une échelle d'entreprise massive.",
+      intro:
+        "Expérimentez la convergence entre une scalabilité horizontale massive et une organisation de code immaculée. L'architecture de NEXORA est une fondation méticuleusement conçue pour résister à des décennies d'évolution d'entreprise.",
       modularTitle: "Le Monolithe Modulaire Évolutif",
-      modularContent: "Commencez par une simplicité opérationnelle radicale et évoluez dynamiquement vers une profonde complexité de microservices sans jamais réécrire votre base fondamentale. L'isolation absolue des modules de NEXORA garantit une friction nulle lorsque vous passez d'un MVP rapide à une armada universellement distribuée.",
+      modularContent:
+        "Commencez par une simplicité opérationnelle radicale et évoluez dynamiquement vers une profonde complexité de microservices sans jamais réécrire votre base fondamentale. L'isolation absolue des modules de NEXORA garantit une friction nulle lorsque vous passez d'un MVP rapide à une armada universellement distribuée.",
       cleanTitle: "Architecture Propre (Clean Architecture) Intransigeante",
-      cleanContent: "Votre logique métier propriétaire réside dans le noyau protégé. En isolant mathématiquement le domaine de l'infrastructure et des couches de transport HTTP, nous garantissons que votre propriété intellectuelle de base reste parfaitement lisible, technologiquement agnostique et testable sans effort.",
+      cleanContent:
+        "Votre logique métier propriétaire réside dans le noyau protégé. En isolant mathématiquement le domaine de l'infrastructure et des couches de transport HTTP, nous garantissons que votre propriété intellectuelle de base reste parfaitement lisible, technologiquement agnostique et testable sans effort.",
       boundariesTitle: "Frontières Imperméables des Modules",
-      boundariesContent: "La pollution de l'espace de noms entre les modules est physiquement impossible. NEXORA impose une ségrégation définitive des modules via des outils stricts et une validation CI automatisée, garantissant que des équipes de développement massives opèrent avec une autonomie totale et sans conflits de fusion (merge collisions).",
+      boundariesContent:
+        "La pollution de l'espace de noms entre les modules est physiquement impossible. NEXORA impose une ségrégation définitive des modules via des outils stricts et une validation CI automatisée, garantissant que des équipes de développement massives opèrent avec une autonomie totale et sans conflits de fusion (merge collisions).",
       cqrsTitle: "Pipelines d'Événements CQRS Éprouvés",
-      cqrsContent: "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes MediatR agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
+      cqrsContent:
+        "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes MediatR agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
       deploymentTitle: "Topologies de Déploiement Sans Friction",
       monolith: "Domination Monolithique",
       gateway: "Agilité de la Passerelle (Gateway)",
@@ -71,24 +77,33 @@ export const fr = {
     },
     cleanArchitecture: {
       title: "Architecture Propre (Clean Architecture)",
-      description: "Une exploration approfondie des dépendances mathématiquement isolées, des primitives DDD et des modèles SOLID qui pilotent le moteur central de NEXORA.",
-      intro: "Transformez des dépendances chaotiques en une clarté organisationnelle profonde. L'implémentation de la Clean Architecture de NEXORA empêche physiquement la dégradation structurelle, garantissant que votre base de code reste immaculée, lisible et infiniment évolutive sur des décennies d'itérations continues.",
+      description:
+        "Une exploration approfondie des dépendances mathématiquement isolées, des primitives DDD et des modèles SOLID qui pilotent le moteur central de NEXORA.",
+      intro:
+        "Transformez des dépendances chaotiques en une clarté organisationnelle profonde. L'implémentation de la Clean Architecture de NEXORA empêche physiquement la dégradation structurelle, garantissant que votre base de code reste immaculée, lisible et infiniment évolutive sur des décennies d'itérations continues.",
       layersTitle: "Stratification Architecturale Stricte",
       cqrsTitle: "Opérations CQRS Hautes Performances",
-      cqrsContent: "Démolissez les goulots d'étranglement transactionnels. En séparant les responsabilités de Commande (Écriture) et de Requête (Lecture) via le pipeline MediatR, NEXORA vous permet de mettre à l'échelle, de mettre en cache et d'optimiser indépendamment les flux d'ingestion de données agressifs sans impacter la latence de lecture sous la seconde.",
+      cqrsContent:
+        "Démolissez les goulots d'étranglement transactionnels. En séparant les responsabilités de Commande (Écriture) et de Requête (Lecture) via le pipeline MediatR, NEXORA vous permet de mettre à l'échelle, de mettre en cache et d'optimiser indépendamment les flux d'ingestion de données agressifs sans impacter la latence de lecture sous la seconde.",
       solidTitle: "Conception SOLID Mathématiquement Prouvable",
       singleResp: "Responsabilité Unique",
-      singleRespDesc: "Chaque classe orchestre exactement une opération, éliminant définitivement les classes 'Dieu' et les conflits de fusion (merge conflicts).",
+      singleRespDesc:
+        "Chaque classe orchestre exactement une opération, éliminant définitivement les classes 'Dieu' et les conflits de fusion (merge conflicts).",
       openClosed: "Principe Ouvert/Fermé",
-      openClosedDesc: "Injectez continuellement de nouvelles fonctionnalités d'entreprise via des interfaces sans jamais muter le moteur central éprouvé.",
+      openClosedDesc:
+        "Injectez continuellement de nouvelles fonctionnalités d'entreprise via des interfaces sans jamais muter le moteur central éprouvé.",
       depInversion: "Inversion des Dépendances",
-      depInversionDesc: "La politique de haut niveau dicte les détails de bas niveau. L'infrastructure sert le domaine, jamais l'inverse.",
+      depInversionDesc:
+        "La politique de haut niveau dicte les détails de bas niveau. L'infrastructure sert le domaine, jamais l'inverse.",
       interfaceSeg: "Ségrégation des Interfaces",
-      interfaceSegDesc: "Des contrats ultra-ciblés garantissent que les composants ne dépendent que des méthodes précises dont ils ont absolument besoin pour fonctionner.",
+      interfaceSegDesc:
+        "Des contrats ultra-ciblés garantissent que les composants ne dépendent que des méthodes précises dont ils ont absolument besoin pour fonctionner.",
       dddTitle: "Parité Domain-Driven Design (DDD)",
-      dddContent: "Comblez le fossé entre l'implémentation technique et la stratégie commerciale. Nos primitives DDD robustes—Entités Riches, Objets de Valeur (Value Objects) et Événements de Domaine—garantissent que votre base de code reflète physiquement la réalité opérationnelle complexe de votre entreprise, rendant le système instantanément compréhensible pour les experts métier comme pour les ingénieurs.",
+      dddContent:
+        "Comblez le fossé entre l'implémentation technique et la stratégie commerciale. Nos primitives DDD robustes—Entités Riches, Objets de Valeur (Value Objects) et Événements de Domaine—garantissent que votre base de code reflète physiquement la réalité opérationnelle complexe de votre entreprise, rendant le système instantanément compréhensible pour les experts métier comme pour les ingénieurs.",
       frontendTitle: "Déterminisme Frontend via SOLID",
-      frontendContent: "NEXORA étend la discipline du backend directement dans l'écosystème React. En séparant strictement les Vues (Views) sans état et à itération rapide des ViewModels lourds en logique, nous garantissons une prévisibilité absolue de l'interface utilisateur et éliminons définitivement les comportements de rendu erratiques.",
+      frontendContent:
+        "NEXORA étend la discipline du backend directement dans l'écosystème React. En séparant strictement les Vues (Views) sans état et à itération rapide des ViewModels lourds en logique, nous garantissons une prévisibilité absolue de l'interface utilisateur et éliminons définitivement les comportements de rendu erratiques.",
       benefitsTitle: "Le ROI Exponentiel d'une Conception Propre",
       tblLayersHeader1: "Couche",
       tblLayersHeader2: "Responsabilité",
@@ -138,22 +153,30 @@ export const fr = {
     },
     deploymentModes: {
       comparisonTitle: "Matrice de Déploiement",
-      description: "Trois topologies de déploiement à partir d'une seule base de code : Monolithe, Passerelle Distribuée (Gateway) et Microservices Indépendants.",
-      gatewayContent: "À mesure que votre organisation se développe, la topologie Gateway introduit Ocelot ou YARP pour découpler le frontend des services backend. Cela fournit une terminaison SSL centralisée, une limitation de débit unifiée et un routage des requêtes sans modifier aucune logique interne des modules.",
+      description:
+        "Trois topologies de déploiement à partir d'une seule base de code : Monolithe, Passerelle Distribuée (Gateway) et Microservices Indépendants.",
+      gatewayContent:
+        "À mesure que votre organisation se développe, la topologie Gateway introduit Ocelot ou YARP pour découpler le frontend des services backend. Cela fournit une terminaison SSL centralisée, une limitation de débit unifiée et un routage des requêtes sans modifier aucune logique interne des modules.",
       gatewayTitle: "Passerelle Distribuée (API Gateway)",
-      intro: "NEXORA a été conçu pour résoudre le problème le plus difficile dans les systèmes distribués : décider quand se séparer. Notre architecture prend en charge trois modes de déploiement prêts à l'emploi à partir de la même base de code, vous permettant de commencer simple et de mettre à l'échelle de manière infinie sans le coût d'une refactorisation massive.",
+      intro:
+        "NEXORA a été conçu pour résoudre le problème le plus difficile dans les systèmes distribués : décider quand se séparer. Notre architecture prend en charge trois modes de déploiement prêts à l'emploi à partir de la même base de code, vous permettant de commencer simple et de mettre à l'échelle de manière infinie sans le coût d'une refactorisation massive.",
       keyPoint: "Garantie Architecturale",
-      microContent: "Lorsque les modules individuels nécessitent des profils de mise à l'échelle distincts (par exemple, le module de messagerie gère des millions de webhooks tandis que le module RH a un faible trafic), NEXORA vous permet de déployer des contextes délimités (Bounded Contexts) en tant que microservices entièrement autonomes. Chaque microservice gère son propre pipeline de déploiement et sa propre base de données.",
+      microContent:
+        "Lorsque les modules individuels nécessitent des profils de mise à l'échelle distincts (par exemple, le module de messagerie gère des millions de webhooks tandis que le module RH a un faible trafic), NEXORA vous permet de déployer des contextes délimités (Bounded Contexts) en tant que microservices entièrement autonomes. Chaque microservice gère son propre pipeline de déploiement et sa propre base de données.",
       microTitle: "Microservices Autonomes",
-      migrationContent: "La transition entre les modes de déploiement est fluide. Passer d'un monolithe à des microservices ne nécessite aucune réécriture logique — reconfigurez simplement les conteneurs DI, lancez un courtier de messages (RabbitMQ/Kafka) en utilisant nos abstractions pré-construites, et déployez les modules dans des conteneurs Docker indépendants.",
+      migrationContent:
+        "La transition entre les modes de déploiement est fluide. Passer d'un monolithe à des microservices ne nécessite aucune réécriture logique — reconfigurez simplement les conteneurs DI, lancez un courtier de messages (RabbitMQ/Kafka) en utilisant nos abstractions pré-construites, et déployez les modules dans des conteneurs Docker indépendants.",
       migrationTitle: "Architecture Évolutive Sans Friction",
-      monolithContent: "Démarrez rapidement et réduisez les frais généraux opérationnels initiaux. L'ensemble de l'écosystème NEXORA — y compris tous les modules, l'API unifiée et le frontend React — est compilé en une unité de déploiement unique hautement optimisée. Une isolation stricte des modules garantit que la base de code reste immaculée même au sein d'un monolithe.",
+      monolithContent:
+        "Démarrez rapidement et réduisez les frais généraux opérationnels initiaux. L'ensemble de l'écosystème NEXORA — y compris tous les modules, l'API unifiée et le frontend React — est compilé en une unité de déploiement unique hautement optimisée. Une isolation stricte des modules garantit que la base de code reste immaculée même au sein d'un monolithe.",
       monolithTitle: "Le Monolithe Modulaire",
       step1Content: "Définissez des limites strictes à l'aide du Domain-Driven Design.",
       step1Title: "1. Création du Contexte Délimité",
-      step2Content: "Établissez une séparation logique en utilisant des API et des interfaces internes.",
+      step2Content:
+        "Établissez une séparation logique en utilisant des API et des interfaces internes.",
       step2Title: "2. Isolation Logique",
-      step3Content: "Passez d'une communication par appels de fonctions en mémoire à des bus d'événements asynchrones.",
+      step3Content:
+        "Passez d'une communication par appels de fonctions en mémoire à des bus d'événements asynchrones.",
       step3Title: "3. Découplage Asynchrone",
       step4Content: "Déployez des conteneurs physiques via Kubernetes ou des orchestrateurs ECS.",
       step4Title: "4. Déploiement Physique",
@@ -192,23 +215,32 @@ export const fr = {
       tblCompR7C4: "Échelle de l'entreprise",
     },
     databaseSupport: {
-      description: "Déployez NEXORA de manière transparente sur SQL Server, PostgreSQL, Oracle ou SQLite sans réécrire une seule requête.",
+      description:
+        "Déployez NEXORA de manière transparente sur SQL Server, PostgreSQL, Oracle ou SQLite sans réécrire une seule requête.",
       featuresTitle: "Capacités Indépendantes du Fournisseur",
-      intro: "NEXORA utilise Entity Framework Core pour abstraire complètement les interactions avec la base de données. Choisissez le moteur relationnel qui correspond à votre budget de licences, vos exigences de haute disponibilité ou vos mandats d'entreprise. Le paramètre Database.Mode ('Single' ou 'Multi') contrôle si tous les modules partagent une seule base de données ou si chacun dispose de la sienne — configurable sans aucune modification de code.",
-      mig1Content: "Oubliez les scripts SQL manuels. NEXORA utilise les migrations Code-First d'EF Core, générant automatiquement une syntaxe spécifique pour le fournisseur choisi.",
+      intro:
+        "NEXORA utilise Entity Framework Core pour abstraire complètement les interactions avec la base de données. Choisissez le moteur relationnel qui correspond à votre budget de licences, vos exigences de haute disponibilité ou vos mandats d'entreprise. Le paramètre Database.Mode ('Single' ou 'Multi') contrôle si tous les modules partagent une seule base de données ou si chacun dispose de la sienne — configurable sans aucune modification de code.",
+      mig1Content:
+        "Oubliez les scripts SQL manuels. NEXORA utilise les migrations Code-First d'EF Core, générant automatiquement une syntaxe spécifique pour le fournisseur choisi.",
       mig1Title: "Génération Automatisée Multi-Schémas",
-      mig2Content: "Déployez les modifications de schéma en toute confiance dans les environnements de développement, de préproduction (staging) et de production à l'aide de nos packages de migration isolés de manière déterministe.",
+      mig2Content:
+        "Déployez les modifications de schéma en toute confiance dans les environnements de développement, de préproduction (staging) et de production à l'aide de nos packages de migration isolés de manière déterministe.",
       mig2Title: "Déploiements Déterministes",
-      mig3Content: "Suivez les migrations appliquées dans une table d'historique dédiée, garantissant que les clusters distribués ne tentent pas de modifier le schéma simultanément.",
+      mig3Content:
+        "Suivez les migrations appliquées dans une table d'historique dédiée, garantissant que les clusters distribués ne tentent pas de modifier le schéma simultanément.",
       mig3Title: "Mises à Niveau Concurrentes Sécurisées",
-      mig4Content: "Pour les refactorisations de schéma complexes, NEXORA fournit des crochets (hooks) de pré/post migration permettant des transformations de données sans temps d'arrêt (zero-downtime).",
+      mig4Content:
+        "Pour les refactorisations de schéma complexes, NEXORA fournit des crochets (hooks) de pré/post migration permettant des transformations de données sans temps d'arrêt (zero-downtime).",
       mig4Title: "Transformations Sans Temps d'Arrêt",
-      migrationContent: "Le moteur de déploiement évalue l'état actuel de la base de données et applique les opérations en attente automatiquement au démarrage. Chaque migration est transactionnelle : soit l'ensemble du schéma est mis à niveau parfaitement, soit le système est restauré en toute sécurité.",
+      migrationContent:
+        "Le moteur de déploiement évalue l'état actuel de la base de données et applique les opérations en attente automatiquement au démarrage. Chaque migration est transactionnelle : soit l'ensemble du schéma est mis à niveau parfaitement, soit le système est restauré en toute sécurité.",
       migrationTitle: "Évolutions de Schémas Transactionnelles",
       perfTitle: "Compilation de Requêtes Optimisée",
-      providersIntro: "NEXORA traite la base de données comme une couche de persistance interchangeable. Notre modèle de référentiel (Repository) isole proprement la logique spécifique au fournisseur.",
+      providersIntro:
+        "NEXORA traite la base de données comme une couche de persistance interchangeable. Notre modèle de référentiel (Repository) isole proprement la logique spécifique au fournisseur.",
       providersTitle: "Moteurs de Déploiement Agnostiques",
-      switchContent: "Changez de fournisseur de base de données via une seule ligne dans appsettings.json. Basculez entre le mode base de données unique (tous les modules partagent une BD) et le mode multi-bases de données (chaque module a sa propre BD) avec le paramètre Database.Mode. Passez d'une seule instance PostgreSQL en développement à des bases de données Oracle RAC isolées par module en production — de manière transparente.",
+      switchContent:
+        "Changez de fournisseur de base de données via une seule ligne dans appsettings.json. Basculez entre le mode base de données unique (tous les modules partagent une BD) et le mode multi-bases de données (chaque module a sa propre BD) avec le paramètre Database.Mode. Passez d'une seule instance PostgreSQL en développement à des bases de données Oracle RAC isolées par module en production — de manière transparente.",
       switchTitle: "Changement de Fournisseur Sans Friction",
       tip: "Conseil : Pour les déploiements de microservices, envisagez d'utiliser différents fournisseurs de bases de données pour différents contextes délimités (Bounded Contexts) en fonction de leurs profils de performances uniques.",
       title: "Agnosticisme de Base de Données",
@@ -216,11 +248,14 @@ export const fr = {
     technologyStack: {
       backendTitle: "La Matrice Architecturale du Backend",
       compatibilityTitle: "Verrouillage Strict des Dépendances",
-      description: "Une ventilation totalement transparente des frameworks exacts, des bibliothèques et des packages open-source qui font fonctionner le moteur principal de NEXORA.",
+      description:
+        "Une ventilation totalement transparente des frameworks exacts, des bibliothèques et des packages open-source qui font fonctionner le moteur principal de NEXORA.",
       frontendTitle: "La Matrice Architecturale du Frontend",
-      futureTip: "Note d'Architecture : NEXORA évite délibérément les frameworks en version 'alpha' à la pointe de la technologie. Chaque technologie choisie bénéficie d'un soutien massif d'entreprise, garantissant un support pour les 15 prochaines années.",
+      futureTip:
+        "Note d'Architecture : NEXORA évite délibérément les frameworks en version 'alpha' à la pointe de la technologie. Chaque technologie choisie bénéficie d'un soutien massif d'entreprise, garantissant un support pour les 15 prochaines années.",
       infraTitle: "Infrastructure DevOps & Déploiement",
-      intro: "Nous ne réinventons pas la roue. NEXORA agit comme le ciment architectural ultime, intégrant de manière transparente les meilleurs frameworks modernes éprouvés sur le terrain (.NET 9, Next.js 15, React 19) dans une vision d'entreprise singulière et cohérente.",
+      intro:
+        "Nous ne réinventons pas la roue. NEXORA agit comme le ciment architectural ultime, intégrant de manière transparente les meilleurs frameworks modernes éprouvés sur le terrain (.NET 9, Next.js 15, React 19) dans une vision d'entreprise singulière et cohérente.",
       title: "La Pile Technologique (Stack) d'Entreprise",
       tblBackHeader1: "Technologie",
       tblBackHeader2: "Version",

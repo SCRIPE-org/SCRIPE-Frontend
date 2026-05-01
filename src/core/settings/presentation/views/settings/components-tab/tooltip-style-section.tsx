@@ -12,14 +12,46 @@ export function TooltipStyleSection() {
   const settings = useSettings();
 
   const tooltipStyles: StyleOption[] = [
-    { value: "default", name: t("settings.tooltipStyle.options.default.name"), description: t("settings.tooltipStyle.options.default.description") },
-    { value: "rounded", name: t("settings.tooltipStyle.options.rounded.name"), description: t("settings.tooltipStyle.options.rounded.description") },
-    { value: "sharp", name: t("settings.tooltipStyle.options.sharp.name"), description: t("settings.tooltipStyle.options.sharp.description") },
-    { value: "bubble", name: t("settings.tooltipStyle.options.bubble.name"), description: t("settings.tooltipStyle.options.bubble.description") },
-    { value: "glass", name: t("settings.tooltipStyle.options.glass.name"), description: t("settings.tooltipStyle.options.glass.description") },
-    { value: "neon", name: t("settings.tooltipStyle.options.neon.name"), description: t("settings.tooltipStyle.options.neon.description") },
-    { value: "minimal", name: t("settings.tooltipStyle.options.minimal.name"), description: t("settings.tooltipStyle.options.minimal.description") },
-    { value: "elegant", name: t("settings.tooltipStyle.options.elegant.name"), description: t("settings.tooltipStyle.options.elegant.description") },
+    {
+      value: "default",
+      name: t("settings.tooltipStyle.options.default.name"),
+      description: t("settings.tooltipStyle.options.default.description"),
+    },
+    {
+      value: "rounded",
+      name: t("settings.tooltipStyle.options.rounded.name"),
+      description: t("settings.tooltipStyle.options.rounded.description"),
+    },
+    {
+      value: "sharp",
+      name: t("settings.tooltipStyle.options.sharp.name"),
+      description: t("settings.tooltipStyle.options.sharp.description"),
+    },
+    {
+      value: "bubble",
+      name: t("settings.tooltipStyle.options.bubble.name"),
+      description: t("settings.tooltipStyle.options.bubble.description"),
+    },
+    {
+      value: "glass",
+      name: t("settings.tooltipStyle.options.glass.name"),
+      description: t("settings.tooltipStyle.options.glass.description"),
+    },
+    {
+      value: "neon",
+      name: t("settings.tooltipStyle.options.neon.name"),
+      description: t("settings.tooltipStyle.options.neon.description"),
+    },
+    {
+      value: "minimal",
+      name: t("settings.tooltipStyle.options.minimal.name"),
+      description: t("settings.tooltipStyle.options.minimal.description"),
+    },
+    {
+      value: "elegant",
+      name: t("settings.tooltipStyle.options.elegant.name"),
+      description: t("settings.tooltipStyle.options.elegant.description"),
+    },
   ];
 
   return (

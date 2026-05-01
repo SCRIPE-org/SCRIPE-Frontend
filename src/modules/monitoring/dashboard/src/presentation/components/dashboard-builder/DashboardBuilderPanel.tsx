@@ -9,7 +9,17 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useSensor, useSensors, PointerSensor, useDraggable, useDroppable } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  useDraggable,
+  useDroppable,
+} from "@dnd-kit/core";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -20,10 +30,27 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { Separator } from "@core/ui/separator";
 import { Badge } from "@core/ui/badge";
 import {
-  Undo2, Redo2, RotateCcw, Plus, Trash2,
-  Eye, EyeOff, Copy, ArrowUp, ArrowDown,
-  TrendingUp, BarChart3, Table2, Zap, Activity, CalendarDays,
-  Bell, Megaphone, Code, Minus as MinusIcon, PlusIcon,
+  Undo2,
+  Redo2,
+  RotateCcw,
+  Plus,
+  Trash2,
+  Eye,
+  EyeOff,
+  Copy,
+  ArrowUp,
+  ArrowDown,
+  TrendingUp,
+  BarChart3,
+  Table2,
+  Zap,
+  Activity,
+  CalendarDays,
+  Bell,
+  Megaphone,
+  Code,
+  Minus as MinusIcon,
+  PlusIcon,
 } from "lucide-react";
 import { useDashboardBuilderStore } from "../../viewmodels/useDashboardBuilderStore";
 import {
@@ -35,8 +62,15 @@ import { WidgetRenderer } from "./widgets";
 
 // ── Icon resolver ─────────────────────────────────────────
 const LUCIDE_MAP: Record<string, React.ElementType> = {
-  TrendingUp, BarChart3, Table2, Zap, Activity,
-  CalendarDays, Bell, Megaphone, Code,
+  TrendingUp,
+  BarChart3,
+  Table2,
+  Zap,
+  Activity,
+  CalendarDays,
+  Bell,
+  Megaphone,
+  Code,
 };
 
 function resolveIcon(name: string): React.ElementType {
@@ -46,7 +80,13 @@ function resolveIcon(name: string): React.ElementType {
 // ═══════════════════════════════════════════════════════════
 // Draggable Palette Item
 // ═══════════════════════════════════════════════════════════
-function PaletteItem({ type, labelKey, icon, descriptionKey, requiredEdition }: {
+function PaletteItem({
+  type,
+  labelKey,
+  icon,
+  descriptionKey,
+  requiredEdition,
+}: {
   type: DashboardWidgetType;
   labelKey: string;
   icon: string;
@@ -56,8 +96,11 @@ function PaletteItem({ type, labelKey, icon, descriptionKey, requiredEdition }: 
   const { t } = useI18n();
   const resolvedIconComponent = resolveIcon(icon);
   const store = useDashboardBuilderStore();
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: `palette-${type}`, data: { type, source: 'palette' } });
-  const isEnterprise = requiredEdition === 'enterprise';
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `palette-${type}`,
+    data: { type, source: "palette" },
+  });
+  const isEnterprise = requiredEdition === "enterprise";
 
   return (
     <div
@@ -74,16 +117,21 @@ function PaletteItem({ type, labelKey, icon, descriptionKey, requiredEdition }: 
       <div className="rounded-md bg-primary/10 p-1.5">
         {React.createElement(resolvedIconComponent, { className: "h-3.5 w-3.5 text-primary" })}
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-medium">{t(labelKey) || type}</p>
         <p className="truncate text-[10px] text-muted-foreground">{t(descriptionKey) || ""}</p>
       </div>
       {isEnterprise ? (
-        <Badge variant="outline" className="text-[9px] px-1.5 py-0 shrink-0">ENT</Badge>
+        <Badge variant="outline" className="shrink-0 px-1.5 py-0 text-[9px]">
+          ENT
+        </Badge>
       ) : (
         <button
-          className="rounded p-1 hover:bg-primary/10 shrink-0"
-          onClick={(e) => { e.stopPropagation(); store.addWidget(type); }}
+          className="shrink-0 rounded p-1 hover:bg-primary/10"
+          onClick={(e) => {
+            e.stopPropagation();
+            store.addWidget(type);
+          }}
           title="Quick add"
         >
           <Plus className="h-3 w-3 text-primary" />
@@ -99,7 +147,7 @@ function PaletteItem({ type, labelKey, icon, descriptionKey, requiredEdition }: 
 function BuilderCanvas({ onSelectWidget }: { onSelectWidget: (id: string | null) => void }) {
   const { t } = useI18n();
   const store = useDashboardBuilderStore();
-  const { setNodeRef, isOver } = useDroppable({ id: 'dashboard-canvas' });
+  const { setNodeRef, isOver } = useDroppable({ id: "dashboard-canvas" });
 
   return (
     <div
@@ -118,26 +166,33 @@ function BuilderCanvas({ onSelectWidget }: { onSelectWidget: (id: string | null)
         <div
           className="grid gap-3 p-3"
           style={{
-            gridTemplateColumns: 'repeat(12, 1fr)',
+            gridTemplateColumns: "repeat(12, 1fr)",
             gridTemplateRows: `repeat(${store.gridRows}, minmax(100px, auto))`,
           }}
         >
-          {store.widgets.filter(w => w.visible).sort((a, b) => a.zIndex - b.zIndex).map(w => (
-            <div
-              key={w.id}
-              className={cn(
-                "relative cursor-pointer rounded-lg ring-2 ring-transparent transition-all",
-                store.selectedWidgetId === w.id && "ring-primary ring-offset-2 ring-offset-background"
-              )}
-              style={{
-                gridColumn: w.gridColumn,
-                gridRow: w.gridRow,
-              }}
-              onClick={(e) => { e.stopPropagation(); onSelectWidget(w.id); }}
-            >
-              <WidgetRenderer type={w.type} props={w.props} />
-            </div>
-          ))}
+          {store.widgets
+            .filter((w) => w.visible)
+            .sort((a, b) => a.zIndex - b.zIndex)
+            .map((w) => (
+              <div
+                key={w.id}
+                className={cn(
+                  "relative cursor-pointer rounded-lg ring-2 ring-transparent transition-all",
+                  store.selectedWidgetId === w.id &&
+                    "ring-primary ring-offset-2 ring-offset-background"
+                )}
+                style={{
+                  gridColumn: w.gridColumn,
+                  gridRow: w.gridRow,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectWidget(w.id);
+                }}
+              >
+                <WidgetRenderer type={w.type} props={w.props} />
+              </div>
+            ))}
         </div>
       )}
     </div>
@@ -150,7 +205,7 @@ function BuilderCanvas({ onSelectWidget }: { onSelectWidget: (id: string | null)
 function WidgetPropsPanel() {
   const { t } = useI18n();
   const store = useDashboardBuilderStore();
-  const widget = store.widgets.find(w => w.id === store.selectedWidgetId);
+  const widget = store.widgets.find((w) => w.id === store.selectedWidgetId);
 
   if (!widget) {
     return (
@@ -160,7 +215,7 @@ function WidgetPropsPanel() {
     );
   }
 
-  const catalog = WIDGET_CATALOG.find(c => c.type === widget.type);
+  const catalog = WIDGET_CATALOG.find((c) => c.type === widget.type);
 
   return (
     <div className="space-y-3 p-3">
@@ -182,7 +237,7 @@ function WidgetPropsPanel() {
             <Copy className="h-3 w-3" />
           </button>
           <button
-            className="rounded p-1 hover:bg-destructive/10 text-destructive"
+            className="rounded p-1 text-destructive hover:bg-destructive/10"
             onClick={() => store.removeWidget(widget.id)}
             title={t("dashboard.builder.remove") || "Remove"}
           >
@@ -195,7 +250,7 @@ function WidgetPropsPanel() {
 
       {/* Grid Placement */}
       <div className="space-y-2">
-        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+        <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
           {t("dashboard.builder.props.gridPlacement") || "Grid Placement"}
         </Label>
         <div className="grid grid-cols-2 gap-2">
@@ -224,11 +279,17 @@ function WidgetPropsPanel() {
           {t("dashboard.builder.props.zIndex") || "Layer"}
         </Label>
         <div className="flex items-center gap-1">
-          <button className="rounded p-1 hover:bg-muted" onClick={() => store.reorderZ(widget.id, 'back')}>
+          <button
+            className="rounded p-1 hover:bg-muted"
+            onClick={() => store.reorderZ(widget.id, "back")}
+          >
             <ArrowDown className="h-3 w-3" />
           </button>
           <span className="min-w-[20px] text-center text-xs">{widget.zIndex}</span>
-          <button className="rounded p-1 hover:bg-muted" onClick={() => store.reorderZ(widget.id, 'forward')}>
+          <button
+            className="rounded p-1 hover:bg-muted"
+            onClick={() => store.reorderZ(widget.id, "forward")}
+          >
             <ArrowUp className="h-3 w-3" />
           </button>
         </div>
@@ -238,53 +299,140 @@ function WidgetPropsPanel() {
 
       {/* Widget-specific props */}
       <div className="space-y-2">
-        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+        <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
           {t("dashboard.builder.props.settings") || "Widget Settings"}
         </Label>
-        {widget.type === 'statsCard' && (
+        {widget.type === "statsCard" && (
           <div className="space-y-2">
-            <Input className="h-7 text-xs" placeholder="Title" value={(widget.props.title as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })} />
-            <Input className="h-7 text-xs" placeholder="Value" value={(widget.props.value as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, value: e.target.value } })} />
-            <Input className="h-7 text-xs" placeholder="Trend" value={(widget.props.trend as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, trend: e.target.value } })} />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Title"
+              value={(widget.props.title as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })
+              }
+            />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Value"
+              value={(widget.props.value as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, value: e.target.value } })
+              }
+            />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Trend"
+              value={(widget.props.trend as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, trend: e.target.value } })
+              }
+            />
           </div>
         )}
-        {widget.type === 'chart' && (
+        {widget.type === "chart" && (
           <div className="space-y-2">
-            <Input className="h-7 text-xs" placeholder="Title" value={(widget.props.title as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })} />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Title"
+              value={(widget.props.title as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })
+              }
+            />
             <div className="flex items-center justify-between">
               <Label className="text-xs">Show Legend</Label>
-              <Switch checked={(widget.props.showLegend as boolean) ?? true} onCheckedChange={(v) => store.updateWidget(widget.id, { props: { ...widget.props, showLegend: v } })} />
+              <Switch
+                checked={(widget.props.showLegend as boolean) ?? true}
+                onCheckedChange={(v) =>
+                  store.updateWidget(widget.id, { props: { ...widget.props, showLegend: v } })
+                }
+              />
             </div>
             <div className="flex items-center justify-between">
               <Label className="text-xs">Show Grid</Label>
-              <Switch checked={(widget.props.showGrid as boolean) ?? true} onCheckedChange={(v) => store.updateWidget(widget.id, { props: { ...widget.props, showGrid: v } })} />
+              <Switch
+                checked={(widget.props.showGrid as boolean) ?? true}
+                onCheckedChange={(v) =>
+                  store.updateWidget(widget.id, { props: { ...widget.props, showGrid: v } })
+                }
+              />
             </div>
           </div>
         )}
-        {widget.type === 'announcement' && (
+        {widget.type === "announcement" && (
           <div className="space-y-2">
-            <Input className="h-7 text-xs" placeholder="Title" value={(widget.props.title as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })} />
-            <Input className="h-7 text-xs" placeholder="Message" value={(widget.props.message as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, message: e.target.value } })} />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Title"
+              value={(widget.props.title as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })
+              }
+            />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Message"
+              value={(widget.props.message as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, {
+                  props: { ...widget.props, message: e.target.value },
+                })
+              }
+            />
           </div>
         )}
-        {widget.type === 'customWidget' && (
+        {widget.type === "customWidget" && (
           <div className="space-y-2">
-            <Input className="h-7 text-xs" placeholder="Title" value={(widget.props.title as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })} />
-            <Input className="h-7 text-xs" placeholder="URL" value={(widget.props.url as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, url: e.target.value } })} />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Title"
+              value={(widget.props.title as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })
+              }
+            />
+            <Input
+              className="h-7 text-xs"
+              placeholder="URL"
+              value={(widget.props.url as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, url: e.target.value } })
+              }
+            />
           </div>
         )}
-        {widget.type === 'activityFeed' && (
+        {widget.type === "activityFeed" && (
           <div className="space-y-2">
-            <Input className="h-7 text-xs" placeholder="Title" value={(widget.props.title as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })} />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Title"
+              value={(widget.props.title as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })
+              }
+            />
             <div className="flex items-center justify-between">
               <Label className="text-xs">Show Timestamps</Label>
-              <Switch checked={(widget.props.showTimestamps as boolean) ?? true} onCheckedChange={(v) => store.updateWidget(widget.id, { props: { ...widget.props, showTimestamps: v } })} />
+              <Switch
+                checked={(widget.props.showTimestamps as boolean) ?? true}
+                onCheckedChange={(v) =>
+                  store.updateWidget(widget.id, { props: { ...widget.props, showTimestamps: v } })
+                }
+              />
             </div>
           </div>
         )}
-        {widget.type === 'dataTable' && (
+        {widget.type === "dataTable" && (
           <div className="space-y-2">
-            <Input className="h-7 text-xs" placeholder="Title" value={(widget.props.title as string) || ""} onChange={(e) => store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })} />
+            <Input
+              className="h-7 text-xs"
+              placeholder="Title"
+              value={(widget.props.title as string) || ""}
+              onChange={(e) =>
+                store.updateWidget(widget.id, { props: { ...widget.props, title: e.target.value } })
+              }
+            />
           </div>
         )}
       </div>
@@ -300,7 +448,10 @@ interface DashboardBuilderPanelProps {
   onCanvasChange?: (canvas: DashboardBuilderCanvas) => void;
 }
 
-export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: DashboardBuilderPanelProps) {
+export function DashboardBuilderPanel({
+  initialCanvas,
+  onCanvasChange,
+}: DashboardBuilderPanelProps) {
   const { t } = useI18n();
   const store = useDashboardBuilderStore();
   const [dragActiveType, setDragActiveType] = useState<DashboardWidgetType | null>(null);
@@ -310,30 +461,27 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
     if (initialCanvas) {
       store.initialize(initialCanvas);
     }
-
   }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
         e.preventDefault();
         store.undo();
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && e.shiftKey) {
         e.preventDefault();
         store.redo();
       }
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
   // Notify parent on changes
   useEffect(() => {
     onCanvasChange?.(store.toCanvas());
-
   }, [store.widgets, store.gridRows, store.enabled]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -343,16 +491,18 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
     if (type) setDragActiveType(type);
   }, []);
 
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    setDragActiveType(null);
-    if (!event.over) return;
-    const type = event.active.data.current?.type as DashboardWidgetType;
-    const source = event.active.data.current?.source as string;
-    if (source === 'palette' && type) {
-      store.addWidget(type);
-    }
-
-  }, [store]);
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      setDragActiveType(null);
+      if (!event.over) return;
+      const type = event.active.data.current?.type as DashboardWidgetType;
+      const source = event.active.data.current?.source as string;
+      if (source === "palette" && type) {
+        store.addWidget(type);
+      }
+    },
+    [store]
+  );
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -361,38 +511,50 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
           <div className="flex items-center gap-1">
             <Button
-              variant="ghost" size="icon" className="h-7 w-7"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               disabled={!store.canUndo}
               onClick={() => store.undo()}
-              title={`${t('dashboard.builder.undo') || 'Undo'} (Ctrl+Z)`}
+              title={`${t("dashboard.builder.undo") || "Undo"} (Ctrl+Z)`}
             >
               <Undo2 className="h-3.5 w-3.5" />
             </Button>
             <Button
-              variant="ghost" size="icon" className="h-7 w-7"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               disabled={!store.canRedo}
               onClick={() => store.redo()}
-              title={`${t('dashboard.builder.redo') || 'Redo'} (Ctrl+Shift+Z)`}
+              title={`${t("dashboard.builder.redo") || "Redo"} (Ctrl+Shift+Z)`}
             >
               <Redo2 className="h-3.5 w-3.5" />
             </Button>
             <Separator orientation="vertical" className="mx-1 h-5" />
             <Button
-              variant="ghost" size="icon" className="h-7 w-7"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               onClick={() => store.reset()}
-              title={t('dashboard.builder.reset') || 'Reset'}
+              title={t("dashboard.builder.reset") || "Reset"}
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Label className="text-xs">{t('dashboard.builder.gridRows') || 'Rows'}</Label>
+            <Label className="text-xs">{t("dashboard.builder.gridRows") || "Rows"}</Label>
             <div className="flex items-center gap-1">
-              <button className="rounded p-0.5 hover:bg-muted" onClick={() => store.setGridRows(store.gridRows - 1)}>
+              <button
+                className="rounded p-0.5 hover:bg-muted"
+                onClick={() => store.setGridRows(store.gridRows - 1)}
+              >
                 <MinusIcon className="h-3 w-3" />
               </button>
               <span className="min-w-[20px] text-center text-xs font-medium">{store.gridRows}</span>
-              <button className="rounded p-0.5 hover:bg-muted" onClick={() => store.setGridRows(store.gridRows + 1)}>
+              <button
+                className="rounded p-0.5 hover:bg-muted"
+                onClick={() => store.setGridRows(store.gridRows + 1)}
+              >
                 <PlusIcon className="h-3 w-3" />
               </button>
             </div>
@@ -407,7 +569,7 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
                 <h4 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                   {t("dashboard.builder.palette.title") || "Widgets"}
                 </h4>
-                {WIDGET_CATALOG.map(entry => (
+                {WIDGET_CATALOG.map((entry) => (
                   <PaletteItem key={entry.type} {...entry} />
                 ))}
               </div>

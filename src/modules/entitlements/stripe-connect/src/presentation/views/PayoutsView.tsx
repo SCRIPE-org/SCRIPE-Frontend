@@ -9,7 +9,7 @@
 
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePayoutsViewModel } from "../viewmodels/usePayoutsViewModel";
-import { PayoutsHeader }        from "../components/payouts/PayoutsHeader";
+import { PayoutsHeader } from "../components/payouts/PayoutsHeader";
 import { PayoutsLoadingSkeleton } from "../components/payouts/PayoutsLoadingSkeleton";
 import { CommissionHistoryCard } from "../components/payouts/CommissionHistoryCard";
 import { AccountStatusCard } from "../components/payouts/AccountStatusCard";
@@ -23,12 +23,10 @@ export function PayoutsView() {
   if (vm.isAccountLoading) return <PayoutsLoadingSkeleton />;
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="mx-auto max-w-5xl space-y-6 p-6">
       <PayoutsHeader account={vm.account} />
 
-      {vm.isNotOnboarded && (
-        <PayoutsEmptyState />
-      )}
+      {vm.isNotOnboarded && <PayoutsEmptyState />}
 
       {vm.account && (
         <>

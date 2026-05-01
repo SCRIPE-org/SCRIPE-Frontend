@@ -22,14 +22,34 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { createPortal } from "react-dom";
 
 // CodeMirror imports
-import { EditorView, keymap, placeholder as cmPlaceholder, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, dropCursor } from "@codemirror/view";
+import {
+  EditorView,
+  keymap,
+  placeholder as cmPlaceholder,
+  lineNumbers,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  drawSelection,
+  dropCursor,
+} from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { bracketMatching, indentOnInput, foldGutter, syntaxHighlighting, defaultHighlightStyle } from "@codemirror/language";
-import { closeBrackets, closeBracketsKeymap, autocompletion, completionKeymap } from "@codemirror/autocomplete";
+import {
+  bracketMatching,
+  indentOnInput,
+  foldGutter,
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from "@codemirror/language";
+import {
+  closeBrackets,
+  closeBracketsKeymap,
+  autocompletion,
+  completionKeymap,
+} from "@codemirror/autocomplete";
 import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
 
 // ── Shared CodeMirror Hook ──────────────────────────────
@@ -136,7 +156,6 @@ function useCodeMirrorEditor({
       viewRef.current = null;
     };
     // Only recreate on language change, not on value changes
-
   }, [language, minHeight]);
 
   // Update value from outside
@@ -255,21 +274,24 @@ function CodeEditorModal({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  const handleInsertSnippet = useCallback((code: string) => {
-    if (activeTab) {
-      const newValue = activeTab.value ? activeTab.value + "\n\n" + code : code;
-      activeTab.onChange(newValue);
-      setCopiedSnippet(code);
-      setTimeout(() => setCopiedSnippet(null), 1500);
-    }
-  }, [activeTab]);
+  const handleInsertSnippet = useCallback(
+    (code: string) => {
+      if (activeTab) {
+        const newValue = activeTab.value ? activeTab.value + "\n\n" + code : code;
+        activeTab.onChange(newValue);
+        setCopiedSnippet(code);
+        setTimeout(() => setCopiedSnippet(null), 1500);
+      }
+    },
+    [activeTab]
+  );
 
   const snippets = activeTab?.language === "css" ? CSS_SNIPPETS : HTML_SNIPPETS;
 
   const editorRef = useCodeMirrorEditor({
     language: activeTab?.language || "html",
     value: activeTab?.value || "",
-    onChange: activeTab?.onChange || (() => { }),
+    onChange: activeTab?.onChange || (() => {}),
     minHeight: "100%",
   });
 
@@ -279,18 +301,18 @@ function CodeEditorModal({
       onClick={onClose}
     >
       <div
-        className="w-[92vw] max-w-[1100px] h-[85vh] max-h-[750px] bg-[#1e1e1e] rounded-xl shadow-2xl border border-[#3c3c3c] flex flex-col overflow-hidden"
+        className="flex h-[85vh] max-h-[750px] w-[92vw] max-w-[1100px] flex-col overflow-hidden rounded-xl border border-[#3c3c3c] bg-[#1e1e1e] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-2.5 bg-[#252526] border-b border-[#3c3c3c]">
+        <div className="flex items-center justify-between border-b border-[#3c3c3c] bg-[#252526] px-4 py-2.5">
           <div className="flex items-center gap-3">
             <FileCode2 className="h-4 w-4 text-[#007acc]" />
             <span className="text-sm font-medium text-[#cccccc]">
               {t("studio.builder.codeEditor") || "Code Editor"}
             </span>
             {/* Tabs */}
-            <div className="flex items-center gap-0.5 ml-4">
+            <div className="ml-4 flex items-center gap-0.5">
               {tabs.map((tab) => (
                 // UI-EXCEPTION: compact studio layout
                 <button
@@ -300,10 +322,10 @@ function CodeEditorModal({
                     setShowPreviewPane(false);
                   }}
                   className={cn(
-                    "px-3 py-1 text-xs font-medium rounded-md transition-all",
+                    "rounded-md px-3 py-1 text-xs font-medium transition-all",
                     activeTabId === tab.id
                       ? "bg-[#1e1e1e] text-[#cccccc] shadow-sm"
-                      : "text-[#969696] hover:text-[#cccccc] hover:bg-[#2d2d2d]"
+                      : "text-[#969696] hover:bg-[#2d2d2d] hover:text-[#cccccc]"
                   )}
                 >
                   {tab.label}
@@ -316,10 +338,10 @@ function CodeEditorModal({
             <button
               onClick={() => setShowSnippets(!showSnippets)}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                 showSnippets
                   ? "bg-amber-500/20 text-amber-400"
-                  : "text-[#969696] hover:text-[#cccccc] hover:bg-[#2d2d2d]"
+                  : "text-[#969696] hover:bg-[#2d2d2d] hover:text-[#cccccc]"
               )}
             >
               <Zap className="h-3.5 w-3.5" />
@@ -329,22 +351,26 @@ function CodeEditorModal({
               <button
                 onClick={() => setShowPreviewPane(!showPreviewPane)}
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
+                  "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                   showPreviewPane
                     ? "bg-[#007acc]/20 text-[#3794ff]"
-                    : "text-[#969696] hover:text-[#cccccc] hover:bg-[#2d2d2d]"
+                    : "text-[#969696] hover:bg-[#2d2d2d] hover:text-[#cccccc]"
                 )}
               >
                 {showPreviewPane ? (
-                  <><Code className="h-3.5 w-3.5" /> {t("studio.builder.codeOnly") || "Code"}</>
+                  <>
+                    <Code className="h-3.5 w-3.5" /> {t("studio.builder.codeOnly") || "Code"}
+                  </>
                 ) : (
-                  <><Eye className="h-3.5 w-3.5" /> {t("studio.builder.preview") || "Preview"}</>
+                  <>
+                    <Eye className="h-3.5 w-3.5" /> {t("studio.builder.preview") || "Preview"}
+                  </>
                 )}
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-md text-[#969696] hover:text-[#cccccc] hover:bg-[#3c3c3c] transition-colors"
+              className="rounded-md p-1.5 text-[#969696] transition-colors hover:bg-[#3c3c3c] hover:text-[#cccccc]"
               title="Close (Esc)"
             >
               <X className="h-4 w-4" />
@@ -353,31 +379,32 @@ function CodeEditorModal({
         </div>
 
         {/* Body */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex flex-1 overflow-hidden">
           {/* Snippets Panel */}
           {showSnippets && (
-            <div className="w-64 border-r border-[#3c3c3c] bg-[#252526] overflow-y-auto flex-shrink-0">
-              <div className="p-3 border-b border-[#3c3c3c]">
-                <h3 className="text-xs font-semibold text-[#cccccc] uppercase tracking-wide">
-                  {activeTab?.language === "css" ? "CSS" : "HTML"} {t("studio.builder.templates") || "Templates"}
+            <div className="w-64 flex-shrink-0 overflow-y-auto border-r border-[#3c3c3c] bg-[#252526]">
+              <div className="border-b border-[#3c3c3c] p-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-[#cccccc]">
+                  {activeTab?.language === "css" ? "CSS" : "HTML"}{" "}
+                  {t("studio.builder.templates") || "Templates"}
                 </h3>
               </div>
-              <div className="p-2 space-y-1.5">
+              <div className="space-y-1.5 p-2">
                 {snippets.map((s) => (
                   <button
                     key={s.name}
                     onClick={() => handleInsertSnippet(s.code)}
-                    className="w-full text-left px-3 py-2.5 rounded-md hover:bg-[#2d2d2d] transition-colors group"
+                    className="group w-full rounded-md px-3 py-2.5 text-left transition-colors hover:bg-[#2d2d2d]"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-[#cccccc]">{s.name}</span>
                       {copiedSnippet === s.code ? (
                         <Check className="h-3 w-3 text-emerald-400" />
                       ) : (
-                        <Copy className="h-3 w-3 text-[#666] group-hover:text-[#999] transition-colors" />
+                        <Copy className="h-3 w-3 text-[#666] transition-colors group-hover:text-[#999]" />
                       )}
                     </div>
-                    <pre className="text-[9px] text-[#666] mt-1.5 line-clamp-3 font-mono whitespace-pre-wrap">
+                    <pre className="mt-1.5 line-clamp-3 whitespace-pre-wrap font-mono text-[9px] text-[#666]">
                       {s.code.slice(0, 100)}...
                     </pre>
                   </button>
@@ -387,34 +414,32 @@ function CodeEditorModal({
           )}
 
           {/* Editor */}
-          <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="min-w-0 flex-1 overflow-hidden">
             {showPreviewPane && renderPreview ? (
-              <div className="h-full flex">
+              <div className="flex h-full">
                 <div
                   ref={editorRef}
-                  className="w-1/2 h-full overflow-auto border-r border-[#3c3c3c]"
+                  className="h-full w-1/2 overflow-auto border-r border-[#3c3c3c]"
                 />
-                <div className="w-1/2 h-full overflow-auto p-6 bg-background/95 text-foreground">
+                <div className="h-full w-1/2 overflow-auto bg-background/95 p-6 text-foreground">
                   {renderPreview()}
                 </div>
               </div>
             ) : (
-              <div
-                ref={editorRef}
-                className="h-full overflow-auto"
-              />
+              <div ref={editorRef} className="h-full overflow-auto" />
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-2 bg-[#007acc] text-white text-[11px]">
+        <div className="flex items-center justify-between bg-[#007acc] px-4 py-2 text-[11px] text-white">
           <span>
-            {activeTab?.language.toUpperCase()} •{" "}
-            {activeTab?.value?.split("\n").length || 0} {t("studio.builder.lines") || "lines"}
+            {activeTab?.language.toUpperCase()} • {activeTab?.value?.split("\n").length || 0}{" "}
+            {t("studio.builder.lines") || "lines"}
           </span>
           <span className="opacity-70">
-            {t("studio.builder.escToClose") || "Press Esc to close"} • {t("studio.builder.autoSave") || "Changes save automatically"}
+            {t("studio.builder.escToClose") || "Press Esc to close"} •{" "}
+            {t("studio.builder.autoSave") || "Changes save automatically"}
           </span>
         </div>
       </div>
@@ -443,7 +468,7 @@ export function CodeEditorField({
   const editorRef = useCodeMirrorEditor({
     language: activeTabData?.language || "html",
     value: activeTabData?.value || "",
-    onChange: activeTabData?.onChange || (() => { }),
+    onChange: activeTabData?.onChange || (() => {}),
     placeholderText:
       activeTabData?.language === "html"
         ? '<div class="my-block">\n  <h2>Hello</h2>\n  <p>World</p>\n</div>'
@@ -454,25 +479,19 @@ export function CodeEditorField({
   return (
     <div className={cn("space-y-1.5", className)}>
       {/* Label */}
-      {label && (
-        <span className="text-[10px] font-medium text-muted-foreground">
-          {label}
-        </span>
-      )}
-      {description && (
-        <p className="text-[9px] text-amber-500/80">{description}</p>
-      )}
+      {label && <span className="text-[10px] font-medium text-muted-foreground">{label}</span>}
+      {description && <p className="text-[9px] text-amber-500/80">{description}</p>}
 
       {/* Tab Selector (inline) */}
       {tabs.length > 1 && (
-        <div className="flex items-center gap-1 p-0.5 rounded-md bg-muted/30 border border-border/50">
+        <div className="flex items-center gap-1 rounded-md border border-border/50 bg-muted/30 p-0.5">
           {tabs.map((tab) => (
             // UI-EXCEPTION: compact studio layout
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex-1 px-2 py-1 rounded text-[10px] font-medium transition-all",
+                "flex-1 rounded px-2 py-1 text-[10px] font-medium transition-all",
                 activeTab === tab.id
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -487,14 +506,14 @@ export function CodeEditorField({
       {/* Inline CodeMirror Editor */}
       <div
         ref={editorRef}
-        className="w-full rounded-md border border-border bg-[#1e1e1e] overflow-hidden"
+        className="w-full overflow-hidden rounded-md border border-border bg-[#1e1e1e]"
         style={{ maxHeight: height * 1.5 }}
       />
 
       {/* Open Full Editor Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-dashed border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all text-xs font-medium group"
+        className="group flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-primary/30 bg-primary/5 px-3 py-2 text-xs font-medium text-primary transition-all hover:border-primary/50 hover:bg-primary/10"
       >
         <Maximize2 className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         {t("studio.builder.openEditor") || "Open Full Editor"}

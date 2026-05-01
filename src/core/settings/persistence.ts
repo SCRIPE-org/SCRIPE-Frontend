@@ -47,7 +47,9 @@ export function writeAdminOverrides(settings: Settings): void {
     try {
       const prefRaw = localStorage.getItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS);
       if (prefRaw) basedOnVersion = JSON.parse(prefRaw)?._settingsVersion ?? 0;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
     const toSave = { ...settings, _basedOnVersion: basedOnVersion };
     localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(toSave));
@@ -63,5 +65,7 @@ export function clearStaleAdminOverrides(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
     appLogger.info("[SettingsPersistence] Cleared stale admin overrides");
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }

@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const ThemeGalleryView = dynamic(
-  () =>
-    import("@modules/customization/branding").then((m) => ({
-      default: m.ThemeGalleryView,
-    }))
+const ThemeGalleryView = dynamic(() =>
+  import("@modules/customization/branding").then((m) => ({
+    default: m.ThemeGalleryView,
+  }))
 );
 
 export const metadata: Metadata = {

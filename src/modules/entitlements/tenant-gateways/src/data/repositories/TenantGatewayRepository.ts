@@ -1,5 +1,8 @@
 import type { ITenantGatewayService } from "../../domain/interfaces/ITenantGatewayService";
-import type { ITenantGatewayRepository, ConfigureGatewayRequest } from "../../domain/interfaces/ITenantGatewayRepository";
+import type {
+  ITenantGatewayRepository,
+  ConfigureGatewayRequest,
+} from "../../domain/interfaces/ITenantGatewayRepository";
 import type { TenantGateway } from "../../domain/entities/TenantGateway";
 import { TenantGatewayMapper } from "../mappers/TenantGatewayMapper";
 

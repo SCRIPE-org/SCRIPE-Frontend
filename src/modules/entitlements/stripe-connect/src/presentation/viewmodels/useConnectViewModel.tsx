@@ -14,7 +14,6 @@ import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-
 import type { ConnectAccountListItem } from "../../domain/entities/ConnectAccount";
 import { ExternalLink, RefreshCw, Pencil, Eye } from "lucide-react";
 
-
 const QUERY_KEY = ["entitlements", "stripe-connect", "accounts"];
 
 export function useConnectViewModel() {
@@ -59,7 +58,7 @@ export function useConnectViewModel() {
     setCustomViewItem(item);
     setCustomViewModalOpen(true);
   };
-  
+
   const closeCustomViewModal = () => {
     setCustomViewModalOpen(false);
     setTimeout(() => setCustomViewItem(null), 200);
@@ -105,7 +104,9 @@ export function useConnectViewModel() {
       if (axiosErr?.response?.status === 409) {
         success({
           title: t("entitlements.stripeConnect.onboardingComplete") || "Onboarding Complete",
-          description: t("entitlements.stripeConnect.alreadyOnboarded") || "Account is already fully onboarded.",
+          description:
+            t("entitlements.stripeConnect.alreadyOnboarded") ||
+            "Account is already fully onboarded.",
         });
         vm.refresh();
         closeCustomViewModal();
@@ -175,38 +176,57 @@ export function useConnectViewModel() {
           label: t("entitlements.stripeConnect.statusLabel") || "Status",
           render: (val: string) => {
             const map: Record<string, { label: string; className: string }> = {
-              Complete:   { label: val, className: "bg-green-500/20 text-green-400 border border-green-500/30" },
-              Pending:    { label: val, className: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" },
-              Restricted: { label: val, className: "bg-red-500/20 text-red-400 border border-red-500/30" },
+              Complete: {
+                label: val,
+                className: "bg-green-500/20 text-green-400 border border-green-500/30",
+              },
+              Pending: {
+                label: val,
+                className: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30",
+              },
+              Restricted: {
+                label: val,
+                className: "bg-red-500/20 text-red-400 border border-red-500/30",
+              },
             };
-            const style = map[val] ?? { label: val, className: "bg-muted text-muted-foreground border border-border" };
+            const style = map[val] ?? {
+              label: val,
+              className: "bg-muted text-muted-foreground border border-border",
+            };
             return (
-              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${style.className}`}>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${style.className}`}
+              >
                 {val === "Complete" && "✓"}
                 {val === "Pending" && "⏳"}
                 {val === "Restricted" && "⚠️"}
                 {style.label}
               </span>
             );
-          }
+          },
         },
         {
           key: "flags",
           label: t("entitlements.stripeConnect.capabilities") || "Capabilities",
-          render: (_val: unknown, row: ConnectAccountListItem) => `${row.chargesEnabled ? '💳' : '❌'} / ${row.payoutsEnabled ? '🏦' : '❌'}`
+          render: (_val: unknown, row: ConnectAccountListItem) =>
+            `${row.chargesEnabled ? "💳" : "❌"} / ${row.payoutsEnabled ? "🏦" : "❌"}`,
         },
         {
           key: "rate",
           label: t("entitlements.stripeConnect.effectiveRate") || "Rate",
-          render: (_val: unknown, row: ConnectAccountListItem) => `${(row.effectiveCommissionRate * 100).toFixed(1)}%`
+          render: (_val: unknown, row: ConnectAccountListItem) =>
+            `${(row.effectiveCommissionRate * 100).toFixed(1)}%`,
         },
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created At",
-          render: (val: string) => new Date(val).toLocaleDateString()
-        }
+          render: (val: string) => new Date(val).toLocaleDateString(),
+        },
       ],
-      getActions: (_vmInstance: unknown, tFn: (key: string) => string): CrudAction<ConnectAccountListItem>[] => [
+      getActions: (
+        _vmInstance: unknown,
+        tFn: (key: string) => string
+      ): CrudAction<ConnectAccountListItem>[] => [
         {
           label: tFn("common.view") || "View",
           onClick: (item: ConnectAccountListItem) => openCustomViewModal(item),
@@ -246,7 +266,7 @@ export function useConnectViewModel() {
           },
           variant: "ghost" as const,
           icon: <Pencil className="h-4 w-4" />,
-        }
+        },
       ],
       onCreateClick: () => setCustomCreateModalOpen(true),
     };
@@ -256,7 +276,7 @@ export function useConnectViewModel() {
   return {
     ...vm,
     getConfigBase,
-    
+
     // Custom logic overrides
     createAccount: (tenantId: string) => createMutation.mutate(tenantId),
     isCreating: createMutation.isPending,
@@ -264,7 +284,7 @@ export function useConnectViewModel() {
     isRefreshingLink: refreshLinkMutation.isPending,
     openDashboard: (tenantId: string) => dashboardLinkMutation.mutate(tenantId),
     isOpeningDashboard: dashboardLinkMutation.isPending,
-    
+
     // Custom Modals
     customCreateModalOpen,
     setCustomCreateModalOpen,
@@ -272,7 +292,7 @@ export function useConnectViewModel() {
     setCustomViewModalOpen,
     customViewItem,
     closeCustomViewModal,
-    
+
     // Dialogs specific state
     isRateDialogOpen,
     rateTarget,
@@ -280,7 +300,8 @@ export function useConnectViewModel() {
       setIsRateDialogOpen(false);
       setRateTarget(null);
     },
-    updateRate: (tenantId: string, rate: number | null) => updateRateMutation.mutate({ tenantId, rate }),
+    updateRate: (tenantId: string, rate: number | null) =>
+      updateRateMutation.mutate({ tenantId, rate }),
     isUpdatingRate: updateRateMutation.isPending,
 
     handleTenantSearch: async (query: string) => {

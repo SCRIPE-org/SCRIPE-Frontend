@@ -12,11 +12,19 @@ import { CheckCircle2, XCircle } from "lucide-react";
 export type TFn = (key: string) => string;
 
 // ── Stat Card ──
-export function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+export function StatCard({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="mb-1 flex items-center gap-2 text-muted-foreground">
           {icon}
           <span className="text-xs font-medium">{label}</span>
         </div>
@@ -30,14 +38,22 @@ export function StatCard({ icon, label, value }: { icon: React.ReactNode; label:
 export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
-      <span className="text-muted-foreground whitespace-nowrap">{label}</span>
-      <span className="font-medium text-end truncate">{value}</span>
+      <span className="whitespace-nowrap text-muted-foreground">{label}</span>
+      <span className="truncate text-end font-medium">{value}</span>
     </div>
   );
 }
 
 // ── Flag Row (label: ✓ / ✗) ──
-export function FlagRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: boolean }) {
+export function FlagRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: boolean;
+}) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
       <div className="flex items-center gap-2 text-muted-foreground">

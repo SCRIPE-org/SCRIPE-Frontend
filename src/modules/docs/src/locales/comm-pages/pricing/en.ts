@@ -6,16 +6,22 @@ export const en = {
   commercial: {
     licensingModel: {
       comparisonTitle: "License Tier Comparison",
-      description: "Transparent, predictable, and scalable licensing structures designed for technical founders and massive corporate entities alike.",
-      intro: "Unlike SaaS models that penalize your growth with per-seat billing, NEXORA provides absolute fiscal predictability. You are purchasing perpetual rights to the core architectural intellectual property, allowing you to build and scale infinitely.",
-      renewalContent: "Every license includes a full 12 months of direct access to our private GitHub repository. You receive continuous architectural refinements, weekly bug fixes, and massive version upgrades (e.g., migrating to .NET 10) absolutely free during this period.",
+      description:
+        "Transparent, predictable, and scalable licensing structures designed for technical founders and massive corporate entities alike.",
+      intro:
+        "Unlike SaaS models that penalize your growth with per-seat billing, NEXORA provides absolute fiscal predictability. You are purchasing perpetual rights to the core architectural intellectual property, allowing you to build and scale infinitely.",
+      renewalContent:
+        "Every license includes a full 12 months of direct access to our private GitHub repository. You receive continuous architectural refinements, weekly bug fixes, and massive version upgrades (e.g., migrating to .NET 10) absolutely free during this period.",
       renewalTitle: "Continuous Architectural Delivery",
       sourcCodeTitle: "Absolute Code Ownership",
-      sourceCodeContent: "You don't lease NEXORA; you own it. You receive the complete, un-obfuscated TypeScript and C# source code. You are legally free to audit, modify, fork, and embed the framework directly into your proprietary, commercial SaaS offerings.",
+      sourceCodeContent:
+        "You don't lease NEXORA; you own it. You receive the complete, un-obfuscated TypeScript and C# source code. You are legally free to audit, modify, fork, and embed the framework directly into your proprietary, commercial SaaS offerings.",
       termsTitle: "Clear Commercial Terms",
       title: "Commercial Licensing & ROI",
-      trialTip: "Executive Action: If you aren't sure which tier fits your 3-year roadmap, contact our sales engineering team for a customized architectural risk assessment.",
-      typesIntro: "Choose the exact tier that aligns with your current runway and projected enterprise scale.",
+      trialTip:
+        "Executive Action: If you aren't sure which tier fits your 3-year roadmap, contact our sales engineering team for a customized architectural risk assessment.",
+      typesIntro:
+        "Choose the exact tier that aligns with your current runway and projected enterprise scale.",
       typesTitle: "Strategic Deployment Tiers",
       tblTypesHeader1: "License",
       tblTypesHeader2: "Description",
@@ -114,45 +120,62 @@ export const en = {
       lstTermsI4: "Transfer rights available for company acquisitions",
       lstTermsI5: "Educational and non-profit discounts available",
       entitlementsTitle: "Entitlements-Powered Plan Differentiation",
-      entitlementsIntro: "NEXORA's built-in Entitlements module powers the actual plan differentiation behind every license tier. Editions define what features each plan includes, subscriptions link tenants to plans, and overrides enable custom deals — all enforced automatically at the API level.",
+      entitlementsIntro:
+        "NEXORA's built-in Entitlements module powers the actual plan differentiation behind every license tier. Editions define what features each plan includes, subscriptions link tenants to plans, and overrides enable custom deals — all enforced automatically at the API level.",
       entEditions: "Edition-Based Feature Bundling",
-      entEditionsDesc: "Define named plans (Basic, Pro, Enterprise) that bundle Boolean, Numeric, and String feature values. Each tenant's subscribed edition automatically determines their feature access.",
+      entEditionsDesc:
+        "Define named plans (Basic, Pro, Enterprise) that bundle Boolean, Numeric, and String feature values. Each tenant's subscribed edition automatically determines their feature access.",
       entSubscriptions: "Full Subscription Lifecycle",
-      entSubscriptionsDesc: "Assign, upgrade, downgrade, suspend, and renew tenant subscriptions with complete audit tracking. Supports trials, add-ons, and automatic expiry behavior.",
+      entSubscriptionsDesc:
+        "Assign, upgrade, downgrade, suspend, and renew tenant subscriptions with complete audit tracking. Supports trials, add-ons, and automatic expiry behavior.",
       entOverrides: "Per-Tenant Overrides",
-      entOverridesDesc: "Customize feature values for individual tenants regardless of their plan. Perfect for enterprise deals, promotions, or beta testing — with full audit trails.",
+      entOverridesDesc:
+        "Customize feature values for individual tenants regardless of their plan. Perfect for enterprise deals, promotions, or beta testing — with full audit trails.",
       entVersioning: "Version & Rollout Control",
-      entVersioningDesc: "Create edition versions with feature snapshots and deploy via immediate, canary, or scheduled rollout strategies without interrupting existing tenants.",
-      entitlementsTip: "The Entitlements module integrates directly into the MediatR pipeline — commands implementing IRequireFeature are automatically gated by the tenant's resolved feature values. No custom middleware needed.",
+      entVersioningDesc:
+        "Create edition versions with feature snapshots and deploy via immediate, canary, or scheduled rollout strategies without interrupting existing tenants.",
+      entitlementsTip:
+        "The Entitlements module integrates directly into the MediatR pipeline — commands implementing IRequireFeature are automatically gated by the tenant's resolved feature values. No custom middleware needed.",
     },
     supportPlans: {
       communityAccess: "Global Discord & GitHub Access",
-      communityAccessDesc: "Collaborate directly with hundreds of elite software engineers building on NEXORA.",
-      description: "Dedicated Service Level Agreements, architectural reviews, and prioritized engineering support strictly tailored for enterprise clients.",
+      communityAccessDesc:
+        "Collaborate directly with hundreds of elite software engineers building on NEXORA.",
+      description:
+        "Dedicated Service Level Agreements, architectural reviews, and prioritized engineering support strictly tailored for enterprise clients.",
       hotfixes: "Emergency Patch Routing",
       hotfixesDesc: "Bypass standard release cycles for immediate security and stability patches.",
       includedTitle: "Standard Inclusion Matrix",
-      intro: "Enterprise software requires enterprise guarantees. We offer dedicated, highly specialized support tiers ensuring your critical systems are backed directly by the architects who built them.",
+      intro:
+        "Enterprise software requires enterprise guarantees. We offer dedicated, highly specialized support tiers ensuring your critical systems are backed directly by the architects who built them.",
       knowledgeBase: "Extensive Knowledge Base",
-      knowledgeBaseDesc: "Deep architectural blueprints, known migration paths, and specific tutorials.",
+      knowledgeBaseDesc:
+        "Deep architectural blueprints, known migration paths, and specific tutorials.",
       onboardingTitle: "Incubation & Onboarding",
       remoteDebug: "Hands-On Remote Debugging",
-      remoteDebugDesc: "We join your screen to forensically dismantle complex integration bottlenecks in real-time.",
-      slaIntro: "We stand behind the code. Our SLAs are contractually binding and definitively guarantee our response velocity to critical architectural blockers.",
+      remoteDebugDesc:
+        "We join your screen to forensically dismantle complex integration bottlenecks in real-time.",
+      slaIntro:
+        "We stand behind the code. Our SLAs are contractually binding and definitively guarantee our response velocity to critical architectural blockers.",
       slaTitle: "Binding Service Level Agreements",
-      step1Content: "General architectural questions, handled asynchronously via standardized community channels.",
+      step1Content:
+        "General architectural questions, handled asynchronously via standardized community channels.",
       step1Title: "1. Community Support",
       step2Content: "Guaranteed 24-hour response vectors directly from the core engineering team.",
       step2Title: "2. Professional SLA",
-      step3Content: "Immediate emergency routing, dedicated Slack channels, and assigned primary architects.",
+      step3Content:
+        "Immediate emergency routing, dedicated Slack channels, and assigned primary architects.",
       step3Title: "3. Enterprise SLA",
       step4Content: "On-site incubation and heavily specialized bespoke module development.",
       step4Title: "4. Custom White-Glove Support",
-      tiersIntro: "Select the specific level of technical support that perfectly aligns with your deployment threat model and organizational scale.",
+      tiersIntro:
+        "Select the specific level of technical support that perfectly aligns with your deployment threat model and organizational scale.",
       tiersTitle: "Technical Support Tiers",
       title: "Enterprise SLAs & Support",
-      upgradeContent: "The transition to new major versions of .NET or Next.js can be risky. Professional and Enterprise tiers include dedicated technical review hours to ensure your major version upgrades are executed flawlessly and without downtime.",
-      upgradeTip: "Ensure your organization selects a tier matching the operational criticality of your deployment.",
+      upgradeContent:
+        "The transition to new major versions of .NET or Next.js can be risky. Professional and Enterprise tiers include dedicated technical review hours to ensure your major version upgrades are executed flawlessly and without downtime.",
+      upgradeTip:
+        "Ensure your organization selects a tier matching the operational criticality of your deployment.",
       upgradeTitle: "Major Version Migration Assistance",
       tblTiersHeader1: "Feature",
       tblTiersHeader2: "Community",
@@ -247,20 +270,27 @@ export const en = {
     },
     roadmap: {
       aiPowered: "Gen-AI Module Generation",
-      aiPoweredDesc: "Generate entire full-stack bounded contexts merely by describing the domain in natural language.",
+      aiPoweredDesc:
+        "Generate entire full-stack bounded contexts merely by describing the domain in natural language.",
       cadenceTitle: "Predictable Release Cadence",
       currentTitle: "The Current Epoch",
-      description: "A transparent overview of our strategic architectural initiatives, upcoming feature modules, and engineering milestones.",
-      feedbackTip: "Got a critical requirement? Enterprise License holders determine our backlog priorities. Reach out to the architecture team.",
+      description:
+        "A transparent overview of our strategic architectural initiatives, upcoming feature modules, and engineering milestones.",
+      feedbackTip:
+        "Got a critical requirement? Enterprise License holders determine our backlog priorities. Reach out to the architecture team.",
       inProgressTitle: "Active Engineering",
-      intro: "NEXORA is continuously evolving. Our engineering roadmap is public, predictable, and aggressively focused on eliminating boilerplate for massive enterprise development teams.",
+      intro:
+        "NEXORA is continuously evolving. Our engineering roadmap is public, predictable, and aggressively focused on eliminating boilerplate for massive enterprise development teams.",
       multiRegion: "Active-Active Multi-Region",
-      multiRegionDesc: "Natively supported architectures for globally distributed, masterless database topologies.",
+      multiRegionDesc:
+        "Natively supported architectures for globally distributed, masterless database topologies.",
       nextTitle: "The Next Horizon",
       pluginEco: "Dynamic Plugin Architecture",
-      pluginEcoDesc: "Load pre-compiled C# DLLs and React components at runtime without restarting the host process.",
+      pluginEcoDesc:
+        "Load pre-compiled C# DLLs and React components at runtime without restarting the host process.",
       title: "Engineering Roadmap",
-      visionContent: "We don't chase trends. Our roadmap focuses exclusively on compounding the ROI of our enterprise partners by automating architectural complexity and expanding the catalog of pre-built business domains.",
+      visionContent:
+        "We don't chase trends. Our roadmap focuses exclusively on compounding the ROI of our enterprise partners by automating architectural complexity and expanding the catalog of pre-built business domains.",
       visionTitle: "The Long-Term Architectural Vision",
     },
     faq: {
@@ -271,9 +301,11 @@ export const en = {
       q3: "How is NEXORA different from other ERP platforms?",
       a3: "Unlike traditional ERP systems that lock you into rigid workflows, NEXORA gives you full source code access with Clean Architecture principles. You get true module isolation (each module can be extracted to its own microservice), built-in multi-tenancy with row-level data isolation, 4 database providers, 7-language i18n with full RTL support, and enterprise security features like the 8-layer security model — all designed to be extended, not just configured.",
       qWhatIndustries: "What industries is NEXORA suitable for?",
-      aWhatIndustries: "NEXORA is industry-agnostic by design. Its modular architecture allows you to build solutions for healthcare, finance, manufacturing, logistics, education, government, retail, real estate, and more. The core platform provides the common infrastructure (authentication, tenancy, audit, permissions), while business-specific modules can be added or custom-built following the established patterns.",
+      aWhatIndustries:
+        "NEXORA is industry-agnostic by design. Its modular architecture allows you to build solutions for healthcare, finance, manufacturing, logistics, education, government, retail, real estate, and more. The core platform provides the common infrastructure (authentication, tenancy, audit, permissions), while business-specific modules can be added or custom-built following the established patterns.",
       qHowLongSetup: "How long does it take to get started?",
-      aHowLongSetup: "You can have NEXORA running locally in under 15 minutes. Clone the repository, configure your database connection (SQL Server, Oracle, PostgreSQL, or SQLite), run the migrations, and start the development server. The nexora-cli tool further accelerates development by scaffolding new modules, entities, and boilerplate code in seconds. Most teams are productive within the first day.",
+      aHowLongSetup:
+        "You can have NEXORA running locally in under 15 minutes. Clone the repository, configure your database connection (SQL Server, Oracle, PostgreSQL, or SQLite), run the migrations, and start the development server. The nexora-cli tool further accelerates development by scaffolding new modules, entities, and boilerplate code in seconds. Most teams are productive within the first day.",
       q4: "What technology stack does NEXORA use?",
       a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, MediatR (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
       q5: "Can NEXORA scale from monolith to microservices?",
@@ -281,9 +313,11 @@ export const en = {
       q6: "What databases are supported?",
       a6: "NEXORA supports 3 database providers through Entity Framework Core: SQL Server, Oracle, and PostgreSQL. Switching providers requires only a configuration change. Additionally, the Database.Mode setting controls database isolation: 'Single' mode puts all module tables in one shared database, while 'Multi' mode (default) allows each module to have its own database with separate connection strings and even different providers. Each provider has its own migration set, and the platform handles provider-specific quirks transparently.",
       qCanWeCustomize: "Can we customize and extend NEXORA's modules?",
-      aCanWeCustomize: "Absolutely. You receive full source code access, and every module follows the SOLID View/ViewModel pattern with clear separation of concerns. You can modify existing modules, extend them with new features, or build entirely new modules using the nexora-cli scaffolding tool. The Open/Closed principle ensures you can extend behavior through composition without modifying the core framework.",
+      aCanWeCustomize:
+        "Absolutely. You receive full source code access, and every module follows the SOLID View/ViewModel pattern with clear separation of concerns. You can modify existing modules, extend them with new features, or build entirely new modules using the nexora-cli scaffolding tool. The Open/Closed principle ensures you can extend behavior through composition without modifying the core framework.",
       qDatabaseSupport: "How does NEXORA handle database migrations across providers?",
-      aDatabaseSupport: "Each database provider has its own dedicated migration folder managed by EF Core. When you add or modify entities, you generate provider-specific migrations that account for each database's data types and constraints. The platform includes migration utilities and the CLI can scaffold migrations for all configured providers simultaneously, ensuring consistency across environments.",
+      aDatabaseSupport:
+        "Each database provider has its own dedicated migration folder managed by EF Core. When you add or modify entities, you generate provider-specific migrations that account for each database's data types and constraints. The platform includes migration utilities and the CLI can scaffold migrations for all configured providers simultaneously, ensuring consistency across environments.",
       q7: "What licensing options are available?",
       a7: "NEXORA offers flexible licensing tiers designed to scale with your organization. Options include a Starter license for small teams and individual projects, a Professional license for growing companies with advanced features, and an Enterprise license with unlimited deployments, priority support, and custom SLAs. All licenses include full source code access and the right to use NEXORA in production.",
       q8: "Is there a per-seat or per-user pricing model?",
@@ -291,25 +325,35 @@ export const en = {
       q9: "Can we use NEXORA for multiple client projects?",
       a9: "This depends on your license tier. The Starter license covers a single project, while Professional and Enterprise licenses support multiple deployments. The Enterprise tier provides unlimited project deployments, making it ideal for software houses and consulting firms that build solutions for multiple clients. Each deployment can be customized independently.",
       qTrialPeriod: "Is there a trial or evaluation period?",
-      aTrialPeriod: "Yes. NEXORA offers a 30-day evaluation period with full access to the platform's features, documentation, and community support. During the trial, you can build a proof-of-concept, explore the architecture, and assess whether NEXORA fits your technical requirements. No credit card is required to start the evaluation.",
+      aTrialPeriod:
+        "Yes. NEXORA offers a 30-day evaluation period with full access to the platform's features, documentation, and community support. During the trial, you can build a proof-of-concept, explore the architecture, and assess whether NEXORA fits your technical requirements. No credit card is required to start the evaluation.",
       qUpgradePath: "What is the upgrade path between license tiers?",
-      aUpgradePath: "You can upgrade your license tier at any time by paying the difference between your current tier and the new one. Upgrades are immediate — you'll receive access to additional features, support channels, and deployment rights as soon as the upgrade is processed. There are no penalties or lock-in periods. Downgrades are handled at renewal time.",
+      aUpgradePath:
+        "You can upgrade your license tier at any time by paying the difference between your current tier and the new one. Upgrades are immediate — you'll receive access to additional features, support channels, and deployment rights as soon as the upgrade is processed. There are no penalties or lock-in periods. Downgrades are handled at renewal time.",
       qDataResidency: "How does NEXORA handle data residency requirements?",
-      aDataResidency: "NEXORA is self-hosted, meaning you have complete control over where your data resides. Deploy on your own infrastructure — on-premises, in your preferred cloud region (AWS, Azure, GCP), or in a private data center. The multi-tenancy system supports per-tenant configuration, so you can even host different tenants in different regions to comply with GDPR, HIPAA, or local data sovereignty regulations.",
+      aDataResidency:
+        "NEXORA is self-hosted, meaning you have complete control over where your data resides. Deploy on your own infrastructure — on-premises, in your preferred cloud region (AWS, Azure, GCP), or in a private data center. The multi-tenancy system supports per-tenant configuration, so you can even host different tenants in different regions to comply with GDPR, HIPAA, or local data sovereignty regulations.",
       qAuditLogs: "What audit capabilities does NEXORA provide?",
-      aAuditLogs: "NEXORA captures audit events from 4 sources: HTTP request logs (every API call with timing and response codes), entity change tracking (who changed what, when, with before/after snapshots), security events (login attempts, password changes, permission modifications), and business operation logs. All audit data is streamable in real-time via SignalR, exportable to CSV/Excel, and supports configurable retention policies.",
+      aAuditLogs:
+        "NEXORA captures audit events from 4 sources: HTTP request logs (every API call with timing and response codes), entity change tracking (who changed what, when, with before/after snapshots), security events (login attempts, password changes, permission modifications), and business operation logs. All audit data is streamable in real-time via SignalR, exportable to CSV/Excel, and supports configurable retention policies.",
       qSSOIntegration: "Does NEXORA support SSO and external identity providers?",
-      aSSOIntegration: "NEXORA includes a built-in JWT-based authentication system with support for two-factor authentication (2FA), session management, and configurable password policies. The architecture is designed to integrate with external identity providers (OAuth2, OIDC, SAML) through standard ASP.NET Core authentication middleware. Enterprise customers can also integrate with Active Directory, Azure AD, or Okta for single sign-on.",
+      aSSOIntegration:
+        "NEXORA includes a built-in JWT-based authentication system with support for two-factor authentication (2FA), session management, and configurable password policies. The architecture is designed to integrate with external identity providers (OAuth2, OIDC, SAML) through standard ASP.NET Core authentication middleware. Enterprise customers can also integrate with Active Directory, Azure AD, or Okta for single sign-on.",
       qUpdateFrequency: "How frequently is NEXORA updated?",
-      aUpdateFrequency: "NEXORA follows a regular release cadence with minor updates every 2–4 weeks and major version releases aligned with .NET and Next.js version cycles. Each release includes detailed changelogs, migration guides, and backward-compatibility notes. Security patches are released as needed, typically within 48 hours of vulnerability disclosure. Enterprise customers receive early access to release candidates.",
+      aUpdateFrequency:
+        "NEXORA follows a regular release cadence with minor updates every 2–4 weeks and major version releases aligned with .NET and Next.js version cycles. Each release includes detailed changelogs, migration guides, and backward-compatibility notes. Security patches are released as needed, typically within 48 hours of vulnerability disclosure. Enterprise customers receive early access to release candidates.",
       qBreakingChanges: "How does NEXORA handle breaking changes?",
-      aBreakingChanges: "Breaking changes are minimized through NEXORA's adherence to the Open/Closed principle — new features are added via extension, not modification. When breaking changes are unavoidable (such as major framework upgrades), they are clearly documented with step-by-step migration guides, automated migration scripts where possible, and a deprecation period of at least one major version cycle. Enterprise customers receive dedicated migration assistance.",
+      aBreakingChanges:
+        "Breaking changes are minimized through NEXORA's adherence to the Open/Closed principle — new features are added via extension, not modification. When breaking changes are unavoidable (such as major framework upgrades), they are clearly documented with step-by-step migration guides, automated migration scripts where possible, and a deprecation period of at least one major version cycle. Enterprise customers receive dedicated migration assistance.",
       qMigrationHelp: "Can we get help migrating from an existing system?",
-      aMigrationHelp: "Yes. Professional and Enterprise license holders have access to migration consulting services. The NEXORA team can assist with data migration planning, schema mapping, ETL scripts, and phased cutover strategies. For complex migrations, dedicated engineering support is available to accelerate the transition and minimize downtime. Community resources and migration guides are also available for self-service migrations.",
-      contactNote: "Have a question not covered here? Reach out to our team at support@nexora.dev or join the community Discord for real-time assistance.",
+      aMigrationHelp:
+        "Yes. Professional and Enterprise license holders have access to migration consulting services. The NEXORA team can assist with data migration planning, schema mapping, ETL scripts, and phased cutover strategies. For complex migrations, dedicated engineering support is available to accelerate the transition and minimize downtime. Community resources and migration guides are also available for self-service migrations.",
+      contactNote:
+        "Have a question not covered here? Reach out to our team at support@nexora.dev or join the community Discord for real-time assistance.",
       description: "Frequently asked questions about NEXORA.",
       generalTitle: "General",
-      intro: "Answers to the most commonly asked questions about NEXORA's architecture, licensing, deployment, and capabilities.",
+      intro:
+        "Answers to the most commonly asked questions about NEXORA's architecture, licensing, deployment, and capabilities.",
       licensingTitle: "Licensing",
       securityTitle: "Security",
       supportTitle: "Support",

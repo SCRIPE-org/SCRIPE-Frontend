@@ -146,7 +146,10 @@ export function HUDLayout({ children }: HUDLayoutProps) {
                 {i === breadcrumbs.length - 1 ? (
                   <span className="truncate font-medium text-foreground">{crumb.label}</span>
                 ) : (
-                  <Link href={crumb.href} className="truncate transition-colors hover:text-foreground">
+                  <Link
+                    href={crumb.href}
+                    className="truncate transition-colors hover:text-foreground"
+                  >
                     {crumb.label}
                   </Link>
                 )}

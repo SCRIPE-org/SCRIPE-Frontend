@@ -82,9 +82,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 function relativeLuminance(r: number, g: number, b: number): number {
   const [rs, gs, bs] = [r, g, b].map((c) => {
     const sRGB = c / 255;
-    return sRGB <= 0.04045
-      ? sRGB / 12.92
-      : Math.pow((sRGB + 0.055) / 1.055, 2.4);
+    return sRGB <= 0.04045 ? sRGB / 12.92 : Math.pow((sRGB + 0.055) / 1.055, 2.4);
   });
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }
@@ -216,32 +214,88 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
     // ── 1. Contrast Checks (Light Mode) ───────────────
 
     checks.push(
-      contrastCheck("textOnBg", "studio.a11y.check.textOnBg", draft.textColor, draft.bgColor, 4.5, "textColor")
+      contrastCheck(
+        "textOnBg",
+        "studio.a11y.check.textOnBg",
+        draft.textColor,
+        draft.bgColor,
+        4.5,
+        "textColor"
+      )
     );
     checks.push(
-      contrastCheck("textOnSurface", "studio.a11y.check.textOnSurface", draft.textColor, draft.surfaceColor, 4.5, "textColor")
+      contrastCheck(
+        "textOnSurface",
+        "studio.a11y.check.textOnSurface",
+        draft.textColor,
+        draft.surfaceColor,
+        4.5,
+        "textColor"
+      )
     );
     checks.push(
-      contrastCheck("primaryOnBg", "studio.a11y.check.primaryOnBg", draft.primaryColor, draft.bgColor, 3.0, "primaryColor")
+      contrastCheck(
+        "primaryOnBg",
+        "studio.a11y.check.primaryOnBg",
+        draft.primaryColor,
+        draft.bgColor,
+        3.0,
+        "primaryColor"
+      )
     );
     checks.push(
-      contrastCheck("primaryOnSurface", "studio.a11y.check.primaryOnSurface", draft.primaryColor, draft.surfaceColor, 3.0, "primaryColor")
+      contrastCheck(
+        "primaryOnSurface",
+        "studio.a11y.check.primaryOnSurface",
+        draft.primaryColor,
+        draft.surfaceColor,
+        3.0,
+        "primaryColor"
+      )
     );
     checks.push(
-      contrastCheck("errorOnSurface", "studio.a11y.check.errorOnSurface", draft.errorColor, draft.surfaceColor, 4.5, "errorColor")
+      contrastCheck(
+        "errorOnSurface",
+        "studio.a11y.check.errorOnSurface",
+        draft.errorColor,
+        draft.surfaceColor,
+        4.5,
+        "errorColor"
+      )
     );
 
     // ── 2. Contrast Checks (Dark Mode) ────────────────
 
     if (draft.themeMode === "split") {
       checks.push(
-        contrastCheck("darkTextOnBg", "studio.a11y.check.darkTextOnBg", draft.darkTextColor, draft.darkBgColor, 4.5, "darkTextColor")
+        contrastCheck(
+          "darkTextOnBg",
+          "studio.a11y.check.darkTextOnBg",
+          draft.darkTextColor,
+          draft.darkBgColor,
+          4.5,
+          "darkTextColor"
+        )
       );
       checks.push(
-        contrastCheck("darkTextOnSurface", "studio.a11y.check.darkTextOnSurface", draft.darkTextColor, draft.darkSurfaceColor, 4.5, "darkTextColor")
+        contrastCheck(
+          "darkTextOnSurface",
+          "studio.a11y.check.darkTextOnSurface",
+          draft.darkTextColor,
+          draft.darkSurfaceColor,
+          4.5,
+          "darkTextColor"
+        )
       );
       checks.push(
-        contrastCheck("darkPrimaryOnSurface", "studio.a11y.check.darkPrimaryOnSurface", draft.darkPrimaryColor, draft.darkSurfaceColor, 3.0, "darkPrimaryColor")
+        contrastCheck(
+          "darkPrimaryOnSurface",
+          "studio.a11y.check.darkPrimaryOnSurface",
+          draft.darkPrimaryColor,
+          draft.darkSurfaceColor,
+          3.0,
+          "darkPrimaryColor"
+        )
       );
     }
 
@@ -253,9 +307,7 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
       category: "target",
       severity: inputPasses ? "pass" : "fail",
       labelKey: "studio.a11y.check.buttonSize",
-      descriptionKey: inputPasses
-        ? "studio.a11y.desc.targetPass"
-        : "studio.a11y.desc.targetFail",
+      descriptionKey: inputPasses ? "studio.a11y.desc.targetPass" : "studio.a11y.desc.targetFail",
       details: `${draft.inputHeight}px (min 44px)`,
       autoFix: inputPasses ? undefined : { inputHeight: 44 },
     });
@@ -263,16 +315,13 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
     // ── 4. Overlay Readability ────────────────────────
 
     if (draft.bgType === "image" && draft.bgImageUrl) {
-      const overlayOk =
-        draft.bgOverlayEnabled && draft.bgOverlayOpacity >= 0.4;
+      const overlayOk = draft.bgOverlayEnabled && draft.bgOverlayOpacity >= 0.4;
       checks.push({
         id: "overlayReadability",
         category: "overlay",
         severity: overlayOk ? "pass" : "warn",
         labelKey: "studio.a11y.check.overlayReadability",
-        descriptionKey: overlayOk
-          ? "studio.a11y.desc.overlayPass"
-          : "studio.a11y.desc.overlayWarn",
+        descriptionKey: overlayOk ? "studio.a11y.desc.overlayPass" : "studio.a11y.desc.overlayWarn",
         details: draft.bgOverlayEnabled
           ? `Opacity: ${draft.bgOverlayOpacity.toFixed(1)} (min 0.4)`
           : "No overlay enabled",
@@ -280,13 +329,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
       });
     }
 
-    if (
-      draft.themeMode === "split" &&
-      draft.darkBgType === "image" &&
-      draft.darkBgImageUrl
-    ) {
-      const darkOverlayOk =
-        draft.darkBgOverlayEnabled && draft.darkBgOverlayOpacity >= 0.4;
+    if (draft.themeMode === "split" && draft.darkBgType === "image" && draft.darkBgImageUrl) {
+      const darkOverlayOk = draft.darkBgOverlayEnabled && draft.darkBgOverlayOpacity >= 0.4;
       checks.push({
         id: "darkOverlayReadability",
         category: "overlay",
@@ -298,7 +342,9 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         details: draft.darkBgOverlayEnabled
           ? `Opacity: ${draft.darkBgOverlayOpacity.toFixed(1)} (min 0.4)`
           : "No overlay enabled",
-        autoFix: darkOverlayOk ? undefined : { darkBgOverlayEnabled: true, darkBgOverlayOpacity: 0.5 },
+        autoFix: darkOverlayOk
+          ? undefined
+          : { darkBgOverlayEnabled: true, darkBgOverlayOpacity: 0.5 },
       });
     }
 

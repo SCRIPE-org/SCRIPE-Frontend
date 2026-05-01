@@ -67,23 +67,15 @@ export function CollapsibleSection({
         disabled={isLocked}
         dir="auto"
       >
-        <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-        <span className="flex-1 text-[11px] font-semibold text-foreground truncate">
-          {title}
-        </span>
+        <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <span className="flex-1 truncate text-[11px] font-semibold text-foreground">{title}</span>
         {count != null && (
-          <span className="text-[9px] text-muted-foreground/60 tabular-nums shrink-0">
-            {count}
-          </span>
+          <span className="shrink-0 text-[9px] tabular-nums text-muted-foreground/60">{count}</span>
         )}
-        {isLocked && <Lock className="h-3 w-3 text-amber-500 shrink-0" />}
-        <Arrow className="h-3 w-3 text-muted-foreground shrink-0" />
+        {isLocked && <Lock className="h-3 w-3 shrink-0 text-amber-500" />}
+        <Arrow className="h-3 w-3 shrink-0 text-muted-foreground" />
       </button>
-      {isOpen && (
-        <div className="space-y-3 pb-3 px-0.5">
-          {children}
-        </div>
-      )}
+      {isOpen && <div className="space-y-3 px-0.5 pb-3">{children}</div>}
     </div>
   );
 }

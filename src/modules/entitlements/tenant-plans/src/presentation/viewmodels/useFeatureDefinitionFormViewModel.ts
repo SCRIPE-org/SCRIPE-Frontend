@@ -76,9 +76,12 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
     }
   }
 
-  const updateField = useCallback(<K extends keyof typeof form>(key: K, value: typeof form[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const updateField = useCallback(
+    <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
 
   // ── Validation ──
   const errors = useMemo(() => {
@@ -99,14 +102,17 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
       success({
         title: t("entitlements.featureDefinitions.created") || "Feature Created",
-        description: t("entitlements.featureDefinitions.createdDesc") || "Feature definition created successfully.",
+        description:
+          t("entitlements.featureDefinitions.createdDesc") ||
+          "Feature definition created successfully.",
       });
       router.push("/entitlements/tenant-feature-definitions");
     },
     onError: () => {
       showError({
         title: t("common.error") || "Error",
-        description: t("entitlements.featureDefinitions.createFailed") || "Failed to create feature.",
+        description:
+          t("entitlements.featureDefinitions.createFailed") || "Failed to create feature.",
       });
     },
   });
@@ -120,14 +126,16 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
       success({
         title: t("entitlements.featureDefinitions.updated") || "Feature Updated",
-        description: t("entitlements.featureDefinitions.updatedDesc") || "Feature definition updated.",
+        description:
+          t("entitlements.featureDefinitions.updatedDesc") || "Feature definition updated.",
       });
       router.push("/entitlements/tenant-feature-definitions");
     },
     onError: () => {
       showError({
         title: t("common.error") || "Error",
-        description: t("entitlements.featureDefinitions.updateFailed") || "Failed to update feature.",
+        description:
+          t("entitlements.featureDefinitions.updateFailed") || "Failed to update feature.",
       });
     },
   });

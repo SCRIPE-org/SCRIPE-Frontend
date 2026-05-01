@@ -14,13 +14,18 @@ export interface UserSearchResult {
 }
 
 export interface IUserSubscriptionRepository {
-  getAll(params: PaginationParams & { planId?: string; status?: string }): Promise<PagedResult<UserSubscription>>;
+  getAll(
+    params: PaginationParams & { planId?: string; status?: string }
+  ): Promise<PagedResult<UserSubscription>>;
   getById(id: string): Promise<UserSubscription>;
   getMySubscription(): Promise<UserSubscription | null>;
   create(request: CreateUserSubscriptionRequest): Promise<string>;
   cancel(id: string): Promise<void>;
   renew(id: string): Promise<void>;
-  changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<string>;
+  changePlan(
+    id: string,
+    data: { newTenantPlanId: string; billingCycle: string; reason?: string }
+  ): Promise<string>;
   /** Search users by name or email for the Create form user combobox (GAP-3). */
   searchUsers(query: string): Promise<UserSearchResult[]>;
 }

@@ -5,85 +5,119 @@
  * Repository orchestrates Service + Mapper and returns domain entities.
  */
 import type { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRepository";
-import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
+import type {
+  Subscription,
+  SubscriptionListItem,
+  GlobalSubscriptionItem,
+} from "../../domain/entities/Subscription";
 import type { ExportParams, ExportFileResult } from "../../domain/entities/SubscriptionExport";
 import type { ISubscriptionService } from "../../domain/interfaces/ISubscriptionService";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
-      constructor(private readonly service: ISubscriptionService) { }
+  constructor(private readonly service: ISubscriptionService) {}
 
-      // ── Queries ──
+  // ── Queries ──
 
-      async getAll(): Promise<GlobalSubscriptionItem[]> {
-            const models = await this.service.getAll();
-            return models.map(SubscriptionMapper.toGlobalItem);
-      }
+  async getAll(): Promise<GlobalSubscriptionItem[]> {
+    const models = await this.service.getAll();
+    return models.map(SubscriptionMapper.toGlobalItem);
+  }
 
-      async getByTenant(tenantId: string): Promise<SubscriptionListItem[]> {
-            const models = await this.service.getByTenant(tenantId);
-            return models.map(SubscriptionMapper.toListItem);
-      }
+  async getByTenant(tenantId: string): Promise<SubscriptionListItem[]> {
+    const models = await this.service.getByTenant(tenantId);
+    return models.map(SubscriptionMapper.toListItem);
+  }
 
-      async getById(id: string): Promise<Subscription> {
-            const model = await this.service.getById(id);
-            return SubscriptionMapper.toEntity(model);
-      }
+  async getById(id: string): Promise<Subscription> {
+    const model = await this.service.getById(id);
+    return SubscriptionMapper.toEntity(model);
+  }
 
-      async getMyTenantSubscription(): Promise<Subscription | null> {
-            const model = await this.service.getMyTenantSubscription();
-            return model ? SubscriptionMapper.toEntity(model) : null;
-      }
+  async getMyTenantSubscription(): Promise<Subscription | null> {
+    const model = await this.service.getMyTenantSubscription();
+    return model ? SubscriptionMapper.toEntity(model) : null;
+  }
 
-      // ── Export ──
+  // ── Export ──
 
-      async exportSubscriptions(params: ExportParams): Promise<ExportFileResult> {
-            return this.service.exportSubscriptions(params);
-      }
+  async exportSubscriptions(params: ExportParams): Promise<ExportFileResult> {
+    return this.service.exportSubscriptions(params);
+  }
 
-      async downloadReceipt(tenantId: string): Promise<ExportFileResult> {
-            return this.service.downloadReceipt(tenantId);
-      }
+  async downloadReceipt(tenantId: string): Promise<ExportFileResult> {
+    return this.service.downloadReceipt(tenantId);
+  }
 
-      // ── Lifecycle ──
+  // ── Lifecycle ──
 
-      async assign(
-            tenantId: string,
-            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string; skipPayment?: boolean }
-      ): Promise<string> {
-            const result = await this.service.assign(tenantId, data);
-            return result.id;
-      }
+  async assign(
+    tenantId: string,
+    data: {
+      editionId: string;
+      type: string;
+      endDate?: string;
+      expiryBehavior?: string;
+      promoCode?: string;
+      currency?: string;
+      promotionId?: string;
+      skipPayment?: boolean;
+    }
+  ): Promise<string> {
+    const result = await this.service.assign(tenantId, data);
+    return result.id;
+  }
 
-      async change(tenantId: string, data: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }): Promise<void> {
-            await this.service.change(tenantId, data);
-      }
+  async change(
+    tenantId: string,
+    data: {
+      editionId: string;
+      type: string;
+      promoCode?: string;
+      currency?: string;
+      promotionId?: string;
+    }
+  ): Promise<void> {
+    await this.service.change(tenantId, data);
+  }
 
-      async renew(tenantId: string, type: string): Promise<void> {
-            await this.service.renew(tenantId, type);
-      }
+  async renew(tenantId: string, type: string): Promise<void> {
+    await this.service.renew(tenantId, type);
+  }
 
-      async convertTrial(tenantId: string, type: string): Promise<void> {
-            await this.service.convertTrial(tenantId, type);
-      }
+  async convertTrial(tenantId: string, type: string): Promise<void> {
+    await this.service.convertTrial(tenantId, type);
+  }
 
-      async suspend(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<void> {
-            await this.service.suspend(tenantId, reason, useFallback, refundType, customRefundAmount);
-      }
+  async suspend(
+    tenantId: string,
+    reason: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<void> {
+    await this.service.suspend(tenantId, reason, useFallback, refundType, customRefundAmount);
+  }
 
-      async resume(tenantId: string, type?: string): Promise<void> {
-            await this.service.resume(tenantId, type);
-      }
+  async resume(tenantId: string, type?: string): Promise<void> {
+    await this.service.resume(tenantId, type);
+  }
 
-      async cancel(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<void> {
-            await this.service.cancel(tenantId, reason, useFallback, refundType, customRefundAmount);
-      }
+  async cancel(
+    tenantId: string,
+    reason?: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<void> {
+    await this.service.cancel(tenantId, reason, useFallback, refundType, customRefundAmount);
+  }
 
-      async resync(tenantId: string): Promise<void> {
-            await this.service.resync(tenantId);
-      }
+  async resync(tenantId: string): Promise<void> {
+    await this.service.resync(tenantId);
+  }
 
-      async revoke(id: string): Promise<void> {
-            await this.service.revoke(id);
-      }
+  async revoke(id: string): Promise<void> {
+    await this.service.revoke(id);
+  }
 }

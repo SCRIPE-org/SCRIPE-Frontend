@@ -28,27 +28,63 @@ export interface AnalyticsOverviewData {
 export class AnalyticsOverview {
   constructor(private readonly data: AnalyticsOverviewData) {}
 
-  get totalMrr() { return this.data.totalMrr; }
-  get mrrChange() { return this.data.mrrChange; }
-  get mrrChangePercent() { return this.data.mrrChangePercent; }
-  get totalArr() { return this.data.totalArr; }
-  get totalRevenue() { return this.data.totalRevenue; }
-  get activeSubscriptions() { return this.data.activeSubscriptions; }
-  get newSubscriptions() { return this.data.newSubscriptions; }
-  get churnedSubscriptions() { return this.data.churnedSubscriptions; }
-  get trialSubscriptions() { return this.data.trialSubscriptions; }
-  get trialConversionRate() { return this.data.trialConversionRate; }
-  get arpu() { return this.data.arpu; }
-  get netRevenueRetention() { return this.data.netRevenueRetention; }
-  get grossRevenueRetention() { return this.data.grossRevenueRetention; }
-  get currency() { return this.data.currency; }
-  get periodStart() { return this.data.periodStart; }
-  get periodEnd() { return this.data.periodEnd; }
+  get totalMrr() {
+    return this.data.totalMrr;
+  }
+  get mrrChange() {
+    return this.data.mrrChange;
+  }
+  get mrrChangePercent() {
+    return this.data.mrrChangePercent;
+  }
+  get totalArr() {
+    return this.data.totalArr;
+  }
+  get totalRevenue() {
+    return this.data.totalRevenue;
+  }
+  get activeSubscriptions() {
+    return this.data.activeSubscriptions;
+  }
+  get newSubscriptions() {
+    return this.data.newSubscriptions;
+  }
+  get churnedSubscriptions() {
+    return this.data.churnedSubscriptions;
+  }
+  get trialSubscriptions() {
+    return this.data.trialSubscriptions;
+  }
+  get trialConversionRate() {
+    return this.data.trialConversionRate;
+  }
+  get arpu() {
+    return this.data.arpu;
+  }
+  get netRevenueRetention() {
+    return this.data.netRevenueRetention;
+  }
+  get grossRevenueRetention() {
+    return this.data.grossRevenueRetention;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+  get periodStart() {
+    return this.data.periodStart;
+  }
+  get periodEnd() {
+    return this.data.periodEnd;
+  }
 
   /** Whether MRR is growing */
-  get isMrrGrowing() { return this.data.mrrChange > 0; }
+  get isMrrGrowing() {
+    return this.data.mrrChange > 0;
+  }
   /** Whether MRR is declining */
-  get isMrrDeclining() { return this.data.mrrChange < 0; }
+  get isMrrDeclining() {
+    return this.data.mrrChange < 0;
+  }
   /** Quick revenue health indicator */
   get revenueHealthLevel(): "healthy" | "moderate" | "critical" {
     if (this.data.netRevenueRetention >= 100) return "healthy";
@@ -77,22 +113,46 @@ export interface MrrMovementData {
 export class MrrMovement {
   constructor(private readonly data: MrrMovementData) {}
 
-  get month() { return this.data.month; }
-  get mrrStart() { return this.data.mrrStart; }
-  get mrrNew() { return this.data.mrrNew; }
-  get mrrExpansion() { return this.data.mrrExpansion; }
-  get mrrContraction() { return this.data.mrrContraction; }
-  get mrrChurn() { return this.data.mrrChurn; }
-  get mrrReactivation() { return this.data.mrrReactivation; }
-  get mrrEnd() { return this.data.mrrEnd; }
-  get netChange() { return this.data.netChange; }
+  get month() {
+    return this.data.month;
+  }
+  get mrrStart() {
+    return this.data.mrrStart;
+  }
+  get mrrNew() {
+    return this.data.mrrNew;
+  }
+  get mrrExpansion() {
+    return this.data.mrrExpansion;
+  }
+  get mrrContraction() {
+    return this.data.mrrContraction;
+  }
+  get mrrChurn() {
+    return this.data.mrrChurn;
+  }
+  get mrrReactivation() {
+    return this.data.mrrReactivation;
+  }
+  get mrrEnd() {
+    return this.data.mrrEnd;
+  }
+  get netChange() {
+    return this.data.netChange;
+  }
 
   /** All positive contributions (new + expansion + reactivation) */
-  get totalPositive() { return this.data.mrrNew + this.data.mrrExpansion + this.data.mrrReactivation; }
+  get totalPositive() {
+    return this.data.mrrNew + this.data.mrrExpansion + this.data.mrrReactivation;
+  }
   /** All negative movements (contraction + churn) */
-  get totalNegative() { return this.data.mrrContraction + this.data.mrrChurn; }
+  get totalNegative() {
+    return this.data.mrrContraction + this.data.mrrChurn;
+  }
   /** Whether this month saw net growth */
-  get isGrowth() { return this.data.netChange > 0; }
+  get isGrowth() {
+    return this.data.netChange > 0;
+  }
 
   copyWith(updates: Partial<MrrMovementData>): MrrMovement {
     return new MrrMovement({ ...this.data, ...updates });
@@ -117,13 +177,23 @@ export interface CohortBucketData {
 export class CohortBucket {
   constructor(private readonly data: CohortBucketData) {}
 
-  get monthOffset() { return this.data.monthOffset; }
-  get retainedCount() { return this.data.retainedCount; }
-  get retentionRate() { return this.data.retentionRate; }
-  get revenue() { return this.data.revenue; }
+  get monthOffset() {
+    return this.data.monthOffset;
+  }
+  get retainedCount() {
+    return this.data.retainedCount;
+  }
+  get retentionRate() {
+    return this.data.retentionRate;
+  }
+  get revenue() {
+    return this.data.revenue;
+  }
 
   /** Color intensity (0-1) for heatmap rendering */
-  get heatmapIntensity() { return this.data.retentionRate / 100; }
+  get heatmapIntensity() {
+    return this.data.retentionRate / 100;
+  }
 
   copyWith(updates: Partial<CohortBucketData>): CohortBucket {
     return new CohortBucket({ ...this.data, ...updates });
@@ -139,9 +209,15 @@ export interface CohortRowData {
 export class CohortRow {
   constructor(private readonly data: CohortRowData) {}
 
-  get cohortMonth() { return this.data.cohortMonth; }
-  get initialCount() { return this.data.initialCount; }
-  get buckets() { return this.data.buckets; }
+  get cohortMonth() {
+    return this.data.cohortMonth;
+  }
+  get initialCount() {
+    return this.data.initialCount;
+  }
+  get buckets() {
+    return this.data.buckets;
+  }
 
   /** Latest retention rate (last bucket) */
   get latestRetention() {
@@ -176,17 +252,35 @@ export interface EditionLtvData {
 export class EditionLtv {
   constructor(private readonly data: EditionLtvData) {}
 
-  get editionId() { return this.data.editionId; }
-  get editionName() { return this.data.editionName; }
-  get averageLtv() { return this.data.averageLtv; }
-  get medianLtv() { return this.data.medianLtv; }
-  get avgLifespanMonths() { return this.data.avgLifespanMonths; }
-  get avgMonthlyRevenue() { return this.data.avgMonthlyRevenue; }
-  get subscriberCount() { return this.data.subscriberCount; }
-  get currency() { return this.data.currency; }
+  get editionId() {
+    return this.data.editionId;
+  }
+  get editionName() {
+    return this.data.editionName;
+  }
+  get averageLtv() {
+    return this.data.averageLtv;
+  }
+  get medianLtv() {
+    return this.data.medianLtv;
+  }
+  get avgLifespanMonths() {
+    return this.data.avgLifespanMonths;
+  }
+  get avgMonthlyRevenue() {
+    return this.data.avgMonthlyRevenue;
+  }
+  get subscriberCount() {
+    return this.data.subscriberCount;
+  }
+  get currency() {
+    return this.data.currency;
+  }
 
   /** LTV in years for display */
-  get avgLifespanYears() { return Math.round((this.data.avgLifespanMonths / 12) * 10) / 10; }
+  get avgLifespanYears() {
+    return Math.round((this.data.avgLifespanMonths / 12) * 10) / 10;
+  }
 
   copyWith(updates: Partial<EditionLtvData>): EditionLtv {
     return new EditionLtv({ ...this.data, ...updates });
@@ -211,14 +305,26 @@ export interface ForecastPointData {
 export class ForecastPoint {
   constructor(private readonly data: ForecastPointData) {}
 
-  get month() { return this.data.month; }
-  get projectedMrr() { return this.data.projectedMrr; }
-  get lowerBound() { return this.data.lowerBound; }
-  get upperBound() { return this.data.upperBound; }
-  get confidence() { return this.data.confidence; }
+  get month() {
+    return this.data.month;
+  }
+  get projectedMrr() {
+    return this.data.projectedMrr;
+  }
+  get lowerBound() {
+    return this.data.lowerBound;
+  }
+  get upperBound() {
+    return this.data.upperBound;
+  }
+  get confidence() {
+    return this.data.confidence;
+  }
 
   /** Range between upper and lower bounds */
-  get confidenceRange() { return this.data.upperBound - this.data.lowerBound; }
+  get confidenceRange() {
+    return this.data.upperBound - this.data.lowerBound;
+  }
 
   copyWith(updates: Partial<ForecastPointData>): ForecastPoint {
     return new ForecastPoint({ ...this.data, ...updates });
@@ -252,23 +358,51 @@ export interface TenantHealthScoreData {
 export class TenantHealthScore {
   constructor(private readonly data: TenantHealthScoreData) {}
 
-  get tenantId() { return this.data.tenantId; }
-  get tenantName() { return this.data.tenantName; }
-  get healthScore() { return this.data.healthScore; }
-  get previousHealthScore() { return this.data.previousHealthScore; }
-  get scoreChange() { return this.data.scoreChange; }
-  get riskLevel() { return this.data.riskLevel; }
-  get mrrEnd() { return this.data.mrrEnd; }
-  get activeSubscriptions() { return this.data.activeSubscriptions; }
-  get activeUserCount() { return this.data.activeUserCount; }
-  get totalUserCount() { return this.data.totalUserCount; }
-  get adminLoginCount() { return this.data.adminLoginCount; }
-  get lastSnapshotMonth() { return this.data.lastSnapshotMonth; }
+  get tenantId() {
+    return this.data.tenantId;
+  }
+  get tenantName() {
+    return this.data.tenantName;
+  }
+  get healthScore() {
+    return this.data.healthScore;
+  }
+  get previousHealthScore() {
+    return this.data.previousHealthScore;
+  }
+  get scoreChange() {
+    return this.data.scoreChange;
+  }
+  get riskLevel() {
+    return this.data.riskLevel;
+  }
+  get mrrEnd() {
+    return this.data.mrrEnd;
+  }
+  get activeSubscriptions() {
+    return this.data.activeSubscriptions;
+  }
+  get activeUserCount() {
+    return this.data.activeUserCount;
+  }
+  get totalUserCount() {
+    return this.data.totalUserCount;
+  }
+  get adminLoginCount() {
+    return this.data.adminLoginCount;
+  }
+  get lastSnapshotMonth() {
+    return this.data.lastSnapshotMonth;
+  }
 
   /** Whether the score is improving */
-  get isImproving() { return this.data.scoreChange > 0; }
+  get isImproving() {
+    return this.data.scoreChange > 0;
+  }
   /** Whether the tenant is at risk (score < 40) */
-  get isAtRisk() { return this.data.riskLevel === "AtRisk"; }
+  get isAtRisk() {
+    return this.data.riskLevel === "AtRisk";
+  }
   /** Active user engagement ratio */
   get engagementRate() {
     return this.data.totalUserCount > 0
@@ -318,29 +452,67 @@ export interface ReportPreferenceData {
 export class ReportPreference {
   constructor(private readonly data: ReportPreferenceData) {}
 
-  get id() { return this.data.id; }
-  get adminId() { return this.data.adminId; }
-  get cadence() { return this.data.cadence; }
-  get email() { return this.data.email; }
-  get includeOverview() { return this.data.includeOverview; }
-  get includeMrr() { return this.data.includeMrr; }
-  get includeCohort() { return this.data.includeCohort; }
-  get includeLtv() { return this.data.includeLtv; }
-  get includeForecast() { return this.data.includeForecast; }
-  get includeHealth() { return this.data.includeHealth; }
-  get includeTenantBreakdown() { return this.data.includeTenantBreakdown; }
-  get includeCohortAnalysis() { return this.data.includeCohortAnalysis; }
-  get includeHealthScores() { return this.data.includeHealthScores; }
-  get includeForecasting() { return this.data.includeForecasting; }
-  get emailEnabled() { return this.data.emailEnabled; }
-  get currency() { return this.data.currency; }
-  get lastSentAt() { return this.data.lastSentAt; }
+  get id() {
+    return this.data.id;
+  }
+  get adminId() {
+    return this.data.adminId;
+  }
+  get cadence() {
+    return this.data.cadence;
+  }
+  get email() {
+    return this.data.email;
+  }
+  get includeOverview() {
+    return this.data.includeOverview;
+  }
+  get includeMrr() {
+    return this.data.includeMrr;
+  }
+  get includeCohort() {
+    return this.data.includeCohort;
+  }
+  get includeLtv() {
+    return this.data.includeLtv;
+  }
+  get includeForecast() {
+    return this.data.includeForecast;
+  }
+  get includeHealth() {
+    return this.data.includeHealth;
+  }
+  get includeTenantBreakdown() {
+    return this.data.includeTenantBreakdown;
+  }
+  get includeCohortAnalysis() {
+    return this.data.includeCohortAnalysis;
+  }
+  get includeHealthScores() {
+    return this.data.includeHealthScores;
+  }
+  get includeForecasting() {
+    return this.data.includeForecasting;
+  }
+  get emailEnabled() {
+    return this.data.emailEnabled;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+  get lastSentAt() {
+    return this.data.lastSentAt;
+  }
 
   /** Number of sections enabled */
   get enabledSectionCount() {
     return [
-      this.data.includeOverview, this.data.includeMrr, this.data.includeCohort,
-      this.data.includeLtv, this.data.includeForecast, this.data.includeHealth,
+      this.data.includeOverview,
+      this.data.includeMrr,
+      this.data.includeCohort,
+      this.data.includeLtv,
+      this.data.includeForecast,
+      this.data.includeHealth,
     ].filter(Boolean).length;
   }
 

@@ -18,20 +18,20 @@ interface EmptyStateProps {
 
 export function EmptyState({ vm, t }: EmptyStateProps) {
   return (
-    <Card className="border-dashed border-2 border-border/60">
+    <Card className="border-2 border-dashed border-border/60">
       <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
           <Package className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="text-lg font-semibold mb-1">
+        <h3 className="mb-1 text-lg font-semibold">
           {t("entSubscriptions.noSubscriptions") || "No Active Subscription"}
         </h3>
-        <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+        <p className="mb-6 max-w-sm text-sm text-muted-foreground">
           {t("entSubscriptions.assignDesc") || "Assign a subscription plan to get started."}
         </p>
         <Button
           size="lg"
-          className="gap-2 cursor-pointer"
+          className="cursor-pointer gap-2"
           onClick={() => vm.setShowAssignDialog(true)}
         >
           <Zap className="h-5 w-5" />

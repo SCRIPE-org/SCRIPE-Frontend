@@ -16,4 +16,3 @@ export type {
 } from "./src/domain/entities/Invoice";
 export type { IBillingRepository } from "./src/domain/interfaces/IBillingRepository";
 export type { IBillingService } from "./src/domain/interfaces/IBillingService";
-

@@ -6,8 +6,10 @@ export const de = {
   security: {
     overview: {
       title: "Sicherheitsübersicht",
-      description: "5-Schichten-Verteidigungsstrategie, CORS-Konfiguration, Rate Limiting und Passwortrichtlinien.",
-      intro: "NEXORA implementiert eine Defense-in-Depth-Strategie mit mehreren Sicherheitsprüfungen.",
+      description:
+        "5-Schichten-Verteidigungsstrategie, CORS-Konfiguration, Rate Limiting und Passwortrichtlinien.",
+      intro:
+        "NEXORA implementiert eine Defense-in-Depth-Strategie mit mehreren Sicherheitsprüfungen.",
       layersTitle: "Verteidigungsschichten",
       featuresTitle: "Sicherheitsfunktionen",
       featureJwt: "JWT-Authentifizierung",
@@ -17,7 +19,8 @@ export const de = {
       featureRbac: "RBAC-Berechtigungen",
       featureRbacDesc: "Umfassende PBAC-Durchsetzung für Rollen, Gruppen und Felder.",
       featureRateLimit: "Rate Limiting",
-      featureRateLimitDesc: "4-stufiger Schutz: DDoS, pro IP, pro Endpunkt und für Authentifizierung.",
+      featureRateLimitDesc:
+        "4-stufiger Schutz: DDoS, pro IP, pro Endpunkt und für Authentifizierung.",
       featureAudit: "Audit Logging",
       featureAuditDesc: "Wer, Was, Wann, Wo mit Echtzeit-Broadcasting.",
       featureCors: "CORS Konfiguration",
@@ -26,7 +29,8 @@ export const de = {
       corsIntro: "Unterscheidet sich zwischen Entwicklungs- und Produktionsumgebungen.",
       rateLimitTitle: "Rate Limiting Richtlinien",
       passwordTitle: "Passwortrichtlinien",
-      securityWarning: "Überprüfen Sie immer die Sicherheitseinstellungen vor dem Production-Deployment."
+      securityWarning:
+        "Überprüfen Sie immer die Sicherheitseinstellungen vor dem Production-Deployment.",
     },
     authDeep: {
       title: "Authentifizierung im Detail",
@@ -50,51 +54,71 @@ export const de = {
       impersonationWarning: "Alle Aktionen werden der Identität des Impersonators zugeordnet.",
       sessionTitle: "Sitzungsmanagement (Session Management)",
       sessionIntro: "Zustandsloses JWT-Modell, Refresh-Tokens in der DB.",
-      cookieAuthTip: "Senden Sie Refresh-Tokens als HttpOnly, Secure, SameSite=Strict Cookies."
+      cookieAuthTip: "Senden Sie Refresh-Tokens als HttpOnly, Secure, SameSite=Strict Cookies.",
     },
     sso: {
       title: "Single Sign-On (SSO)",
       description: "OIDC-Authentifizierung, externe Identitätsverknüpfung und OAuth-Apps.",
-      intro: "Das NEXORA-System unterstützt die Authentifizierung über externe Anbieter basierend auf dem OIDC-Protokoll und die Bereitstellung von Anmeldeinformationen über OAuth-Anwendungen. Das System ist auf Mandantenfähigkeit ausgelegt, mit starkem Fokus auf PKCE-Sicherheit.",
+      intro:
+        "Das NEXORA-System unterstützt die Authentifizierung über externe Anbieter basierend auf dem OIDC-Protokoll und die Bereitstellung von Anmeldeinformationen über OAuth-Anwendungen. Das System ist auf Mandantenfähigkeit ausgelegt, mit starkem Fokus auf PKCE-Sicherheit.",
       architectureTitle: "OIDC/OAuth Auth-Architektur",
       endpointsTitle: "Endpunkte & Flow",
-      flowIntro: "Der SSO-Authentifizierungsprozess besteht aus einem mehrstufigen Flow, um maximale Sicherheit zu gewährleisten:",
+      flowIntro:
+        "Der SSO-Authentifizierungsprozess besteht aus einem mehrstufigen Flow, um maximale Sicherheit zu gewährleisten:",
       authEndpointTitle: "1. Autorisierungs-Endpunkt",
-      authEndpointDesc: "Leitet den Benutzer zur Anmeldeseite des externen Identitätsanbieters weiter. Enthält PKCE-Verifizierung und Status-Token-Generierung.",
+      authEndpointDesc:
+        "Leitet den Benutzer zur Anmeldeseite des externen Identitätsanbieters weiter. Enthält PKCE-Verifizierung und Status-Token-Generierung.",
       callbackEndpointTitle: "2. Callback-Endpunkt",
-      callbackEndpointDesc: "Empfängt den Benutzer nach erfolgreicher Authentifizierung und tauscht den Autorisierungscode gegen Sicherheitstokens auf der Serverseite aus – ohne Eingriff des Browsers.",
+      callbackEndpointDesc:
+        "Empfängt den Benutzer nach erfolgreicher Authentifizierung und tauscht den Autorisierungscode gegen Sicherheitstokens auf der Serverseite aus – ohne Eingriff des Browsers.",
       linkingTitle: "Verknüpfung und Identitätsverarbeitung",
-      linkingIntro: "Wenn ein Benutzer den Login abschließt, wird die E-Mail-Adresse mit der vorhandenen Benutzer-Datenbank abgeglichen. Wenn es sich um den ersten Login handelt, wird das externe OIDC-Konto mit dem internen NEXORA-Konto verknüpft, um Duplikate zu vermeiden.",
-      pkceWarning: "Die Unterstützung für veraltete implizite OAuth-Flows (Implicit Flow) entfällt. Stattdessen ist PKCE in allen Varianten zwingend erforderlich.",
+      linkingIntro:
+        "Wenn ein Benutzer den Login abschließt, wird die E-Mail-Adresse mit der vorhandenen Benutzer-Datenbank abgeglichen. Wenn es sich um den ersten Login handelt, wird das externe OIDC-Konto mit dem internen NEXORA-Konto verknüpft, um Duplikate zu vermeiden.",
+      pkceWarning:
+        "Die Unterstützung für veraltete implizite OAuth-Flows (Implicit Flow) entfällt. Stattdessen ist PKCE in allen Varianten zwingend erforderlich.",
       howItWorksTitle: "How SSO Works",
-      howItWorksContent: "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+      howItWorksContent:
+        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
-      step1Content: "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
+      step1Content:
+        "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
       step2Title: "2. PKCE Challenge",
-      step2Content: "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
+      step2Content:
+        "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
       step3Title: "3. IdP Redirect",
-      step3Content: "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
+      step3Content:
+        "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
       step4Title: "4. User Authentication",
-      step4Content: "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
+      step4Content:
+        "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
       step5Title: "5. Callback & Token Exchange",
-      step5Content: "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
+      step5Content:
+        "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
       pkceTitle: "PKCE Security Model",
-      pkceContent: "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
+      pkceContent:
+        "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
       entityModelTitle: "Identity Provider Entity",
-      entityModelContent: "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
-      linkingContent: "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+      entityModelContent:
+        "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
+      linkingContent:
+        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
       oauthAppsTitle: "OAuth Applications",
-      oauthAppsContent: "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+      oauthAppsContent:
+        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
-      claimMappingContent: "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+      claimMappingContent:
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
-      tenantScopingContent: "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
-      tenantScopingNote: "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
-      apiTitle: "API Endpoints"
+      tenantScopingContent:
+        "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
+      tenantScopingNote:
+        "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
+      apiTitle: "API Endpoints",
     },
     dataProtection: {
       title: "Datenschutz (Data Protection)",
-      description: "Mandantenisolierung, Verschlüsselung, Field-Level-Security und DSGVO-Compliance.",
+      description:
+        "Mandantenisolierung, Verschlüsselung, Field-Level-Security und DSGVO-Compliance.",
       intro: "NEXORA schützt Daten auf jeder Ebene, vom Netzwerk bis zur Zeile in der Datenbank.",
       tenantIsolationTitle: "Datenisolierung für Mandanten",
       tenantIsolationIntro: "Alle Abfragen werden über globale Query Filter beschränkt.",
@@ -106,7 +130,8 @@ export const de = {
       dataInTransitTitle: "Verschlüsselung bei der Übertragung (Data in Transit)",
       dataInTransitIntro: "Ausschließlich TLS 1.2+ mit HSTS-Headern.",
       restrictedFieldsTitle: "Eingeschränkte Felder (Field-Level Security)",
-      restrictedFieldsIntro: "FieldProjectionMiddleware entfernt sensible Felder aus der JSON-Antwort.",
+      restrictedFieldsIntro:
+        "FieldProjectionMiddleware entfernt sensible Felder aus der JSON-Antwort.",
       idEncryptionTitle: "ID-Verschlüsselung",
       idEncryptionIntro: "Maskiert interne Guid-IDs vor externen Benutzern mittels AES-256.",
       gdprTitle: "DSGVO Compliance (GDPR)",
@@ -116,7 +141,8 @@ export const de = {
       consentTitle: "Zustimmungsverwaltung (Consent Management)",
       retentionTitle: "Datenaufbewahrungsrichtlinien",
       auditTrailTitle: "Audit-Trail für Compliance",
-      bypassWarning: "Vorsicht bei der Verwendung von IgnoreQueryFilters() in Bezug auf Datenlecks."
+      bypassWarning:
+        "Vorsicht bei der Verwendung von IgnoreQueryFilters() in Bezug auf Datenlecks.",
     },
     apiSecurity: {
       title: "API-Sicherheit",
@@ -127,14 +153,15 @@ export const de = {
       corsTitle: "CORS Konfiguration",
       corsIntro: "Eingeschränkt in der Produktion, offen für localhost-Entwicklung.",
       inputValidationTitle: "Input-Validierung",
-      inputValidationIntro: "Strukturierte Validierungsfehler über FluentValidation in der Pipeline.",
+      inputValidationIntro:
+        "Strukturierte Validierungsfehler über FluentValidation in der Pipeline.",
       csrfTitle: "CSRF-Schutz",
       csrfIntro: "Bear-Tokens und SameSite-Cookies schützen vor Cross-Site Request Forgery.",
       headersTitle: "Security Headers",
       headersIntro: "A+ Score Standard: nosniff, DENY, CSP.",
       headersTip: "Testen Sie Ihre Header immer über securityheaders.com.",
       replayTitle: "Schutz vor Replay-Angriffen",
-      replayIntro: "Einmal-Tokens und Zeitstempel verhindern Replays."
+      replayIntro: "Einmal-Tokens und Zeitstempel verhindern Replays.",
     },
     middlewarePipeline: {
       title: "Middleware-Pipeline",
@@ -143,7 +170,8 @@ export const de = {
       overviewTitle: "Pipeline-Übersicht",
       overviewIntro: "Der Flow verläuft von oben nach unten. Die Reihenfolge ist heilig.",
       globalExceptionTitle: "1. Global Exception Handler",
-      globalExceptionIntro: "Fängt ungehandelte Ausnahmen ab und gibt standardisiertes JSON zurück.",
+      globalExceptionIntro:
+        "Fängt ungehandelte Ausnahmen ab und gibt standardisiertes JSON zurück.",
       correlationIdTitle: "2. Correlation ID",
       correlationIdIntro: "Für Distributed Tracing und Logs.",
       requestLoggingTitle: "3. Request Logging",
@@ -156,13 +184,14 @@ export const de = {
       cacheHeadersTitle: "6. Cache Headers",
       cacheHeadersIntro: "Setzt No-Cache für APIs und Max-Age für statische Dateien.",
       fieldProjectionTitle: "7. Field Projection",
-      fieldProjectionIntro: "Löscht aus der Antwort jene Felder, für die der User keine Berechtigung hat.",
+      fieldProjectionIntro:
+        "Löscht aus der Antwort jene Felder, für die der User keine Berechtigung hat.",
       observabilityTitle: "Observability Middleware",
       observabilityIntro: "OpenTelemetry und Prometheus /metrics-Endpunkt.",
       registrationTitle: "Registrierungsreihenfolge",
       registrationIntro: "Wird in Program.cs definiert.",
       summaryTitle: "Middleware Zusammenfassung",
-      orderWarning: "Ändern Sie diese Reihenfolge niemals leichtfertig."
+      orderWarning: "Ändern Sie diese Reihenfolge niemals leichtfertig.",
     },
     auditCompliance: {
       title: "Audit & Compliance",
@@ -189,7 +218,7 @@ export const de = {
       searchableTitle: "Durchsuchbar",
       tenantScopedTitle: "Mandantenbezogen (Tenant Scoped)",
       realtimeTitle: "In Echtzeit",
-      retentionTitle: "Aufbewahrungsrichtlinie"
-    }
-  }
+      retentionTitle: "Aufbewahrungsrichtlinie",
+    },
+  },
 };

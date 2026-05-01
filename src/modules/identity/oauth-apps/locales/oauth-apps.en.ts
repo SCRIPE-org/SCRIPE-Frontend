@@ -1,6 +1,7 @@
 export const en = {
   oauthApps: {
-    samlSpCertificateHelp: "The SP certificate is used to sign SAML requests to NEXORA. It is required for SAML authentication.",
+    samlSpCertificateHelp:
+      "The SP certificate is used to sign SAML requests to NEXORA. It is required for SAML authentication.",
     samlSpCertificate: "SP Certificate",
     title: "OAuth Applications",
     description: "Manage third-party applications that authenticate via NEXORA (OIDC Server)",
@@ -89,12 +90,15 @@ export const en = {
     secretWarning: "Copy this secret now. It will NOT be shown again.",
     // Confirmations
     regenerateConfirmTitle: "Regenerate Client Secret",
-    regenerateConfirmDesc: "The current secret will be invalidated. All applications using the old secret will stop working.",
+    regenerateConfirmDesc:
+      "The current secret will be invalidated. All applications using the old secret will stop working.",
     // Danger zone
-    deleteWarning: "Deleting this application will revoke all tokens and break existing integrations. This cannot be undone.",
+    deleteWarning:
+      "Deleting this application will revoke all tokens and break existing integrations. This cannot be undone.",
     deleteButton: "Delete Application",
     deleteConfirmTitle: "Delete OAuth Application",
-    deleteConfirmDesc: "This will permanently remove this application. All authenticated sessions will be invalidated.",
+    deleteConfirmDesc:
+      "This will permanently remove this application. All authenticated sessions will be invalidated.",
 
     samlSection: "SAML Configuration",
     samlSectionDesc: "Optional: Configure SAML 2.0 properties if this is a SAML Service Provider.",
@@ -118,7 +122,8 @@ export const en = {
     allowAccess: "Allow Access",
     cancelAndReturn: "Cancel & Return",
     invalidRequestTitle: "Invalid Authorization Request",
-    invalidRequestDesc: "The application request is missing required core parameters (client_id or redirect_uri).",
+    invalidRequestDesc:
+      "The application request is missing required core parameters (client_id or redirect_uri).",
     backToDashboard: "Back to Dashboard",
     sessionExpired: "Your session has expired. Please log in again.",
   },

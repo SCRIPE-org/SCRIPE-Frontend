@@ -9,8 +9,12 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Label } from "@core/ui/label";
@@ -80,7 +84,11 @@ export function ChangeDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           <Button variant="outline" onClick={() => vm.setShowChangeDialog(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={vm.submitChange} disabled={!vm.selectedEditionId} loading={vm.isChanging}>
+          <Button
+            onClick={vm.submitChange}
+            disabled={!vm.selectedEditionId}
+            loading={vm.isChanging}
+          >
             {t("entSubscriptions.change")}
           </Button>
         </DialogFooter>

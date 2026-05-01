@@ -117,8 +117,8 @@ export interface TenantFinancialSummaryModel {
 
 export interface TenantTransactionItemModel {
   id: string;
-  type: string;       // "Payment" | "Refund" | "PartialRefund"
-  status: string;     // "Pending" | "Collected" | "Refunded" | "PartiallyRefunded"
+  type: string; // "Payment" | "Refund" | "PartialRefund"
+  status: string; // "Pending" | "Collected" | "Refunded" | "PartiallyRefunded"
   grossAmount: number;
   platformFee: number;
   netAmount: number;

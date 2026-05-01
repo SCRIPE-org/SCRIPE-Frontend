@@ -74,8 +74,10 @@ export const en = {
     resyncedDesc: "Permissions have been synchronized from the edition.",
     manage: "Manage Subscriptions",
     skipPayment: "Skip Payment",
-    skipPaymentDesc: "Activates the subscription without payment processing. Use for demos or manual billing.",
-    skipPaymentWarning: "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing.",
+    skipPaymentDesc:
+      "Activates the subscription without payment processing. Use for demos or manual billing.",
+    skipPaymentWarning:
+      "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing.",
     export: {
       title: "Export Subscriptions",
       description: "Generate comprehensive subscription analytics reports.",
@@ -111,6 +113,40 @@ export const en = {
       expiringIn30Days: "Expiring in 30 days",
       expiringIn60Days: "Expiring in 60 days",
       expiringIn90Days: "Expiring in 90 days",
+    },
+    customRefundAmount: "Custom Refund Amount",
+    customAmountPlaceholder: "Custom Amount Placeholder",
+    customAmountHint: "Custom Amount Hint",
+    planDetails: "Plan Details",
+    fallbackEdition: "Fallback Edition",
+    paymentGateway: "Payment Gateway",
+    freeEdition: "Free Edition",
+    noPaymentGateway: "No payment gateway required",
+    customer: "Customer",
+    subscription: "Subscription",
+    notCreated: "Not created",
+    notLinked: "Not linked",
+  },
+  entitlements: {
+    promotions: {
+      noPromotionsAvailable: "No Promotions Available",
+      selectPromotion: "Select Promotion",
+      enterCode: "Enter Code",
+    },
+  },
+  common: {
+    type: "Type",
+  },
+  dashboard: {
+    kpi: {
+      arpu: "Arpu",
+      arpuDesc: "Arpu Desc",
+      churnRate: "Churn Rate",
+      churnRateDesc: "Churn Rate Desc",
+      renewals: "Renewals",
+      renewalsDesc: "Renewals Desc",
+      promoDiscount: "Promo Discount",
+      promoDiscountDesc: "Promo Discount Desc",
     },
   },
 };

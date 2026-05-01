@@ -143,7 +143,11 @@ const variantStyles: Record<
 // Auto-expand helpers
 // ---------------------------------------------------------------------------
 
-function shouldExpandParent(item: NavigationItem, pathname: string, allItems: NavigationItem[]): boolean {
+function shouldExpandParent(
+  item: NavigationItem,
+  pathname: string,
+  allItems: NavigationItem[]
+): boolean {
   if (!item.children) return false;
   return item.children.some((child) => {
     // Exact match first
@@ -208,7 +212,10 @@ export function NavRenderer({
       setExpandedItems((prevExpandedItems) => {
         const merged = new Set([...prevExpandedItems, ...autoExpanded]);
         const mergedArr = Array.from(merged);
-        if (mergedArr.length !== prevExpandedItems.length || !mergedArr.every((v, i) => prevExpandedItems[i] === v)) {
+        if (
+          mergedArr.length !== prevExpandedItems.length ||
+          !mergedArr.every((v, i) => prevExpandedItems[i] === v)
+        ) {
           return mergedArr;
         }
         return prevExpandedItems;

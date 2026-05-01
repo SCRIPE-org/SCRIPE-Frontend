@@ -145,9 +145,6 @@ export interface IAdminRepository {
    */
   bulkDeleteAll(filter: BulkAdminsFilterRequest): Promise<number>;
 
-
-
-
   /**
    * Transfer admin to another tenant
    */

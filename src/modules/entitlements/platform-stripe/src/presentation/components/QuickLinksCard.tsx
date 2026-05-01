@@ -35,15 +35,47 @@ export function QuickLinksCard({ links }: QuickLinksCardProps) {
         <CardDescription>{t("entitlements.platformStripe.quickLinksDescription")}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <QuickLink icon={CreditCard} label={t("entitlements.platformStripe.linkPayments")} href={links.payments} />
-          <QuickLink icon={Landmark} label={t("entitlements.platformStripe.linkPayouts")} href={links.payouts} />
-          <QuickLink icon={Users} label={t("entitlements.platformStripe.linkConnect")} href={links.connect} />
-          <QuickLink icon={Globe} label={t("entitlements.platformStripe.linkCustomers")} href={links.customers} />
-          <QuickLink icon={Code} label={t("entitlements.platformStripe.linkDevelopers")} href={links.developers} />
-          <QuickLink icon={Webhook} label={t("entitlements.platformStripe.linkWebhooks")} href={links.webhooks} />
-          <QuickLink icon={Activity} label={t("entitlements.platformStripe.linkEvents")} href={links.events} />
-          <QuickLink icon={Building2} label={t("entitlements.platformStripe.linkDashboard")} href={links.dashboard} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <QuickLink
+            icon={CreditCard}
+            label={t("entitlements.platformStripe.linkPayments")}
+            href={links.payments}
+          />
+          <QuickLink
+            icon={Landmark}
+            label={t("entitlements.platformStripe.linkPayouts")}
+            href={links.payouts}
+          />
+          <QuickLink
+            icon={Users}
+            label={t("entitlements.platformStripe.linkConnect")}
+            href={links.connect}
+          />
+          <QuickLink
+            icon={Globe}
+            label={t("entitlements.platformStripe.linkCustomers")}
+            href={links.customers}
+          />
+          <QuickLink
+            icon={Code}
+            label={t("entitlements.platformStripe.linkDevelopers")}
+            href={links.developers}
+          />
+          <QuickLink
+            icon={Webhook}
+            label={t("entitlements.platformStripe.linkWebhooks")}
+            href={links.webhooks}
+          />
+          <QuickLink
+            icon={Activity}
+            label={t("entitlements.platformStripe.linkEvents")}
+            href={links.events}
+          />
+          <QuickLink
+            icon={Building2}
+            label={t("entitlements.platformStripe.linkDashboard")}
+            href={links.dashboard}
+          />
         </div>
       </CardContent>
     </Card>
@@ -52,15 +84,23 @@ export function QuickLinksCard({ links }: QuickLinksCardProps) {
 
 // ── Private Subcomponent ──
 
-function QuickLink({ icon: Icon, label, href }: { icon: React.ElementType; label: string; href: string }) {
+function QuickLink({
+  icon: Icon,
+  label,
+  href,
+}: {
+  icon: React.ElementType;
+  label: string;
+  href: string;
+}) {
   return (
     <button
       onClick={() => window.open(href, "_blank")}
-      className="flex items-center gap-2 p-3 rounded-lg border border-border/50 hover:border-[#635bff]/30 hover:bg-[#635bff]/5 transition-all duration-200 text-sm font-medium group"
+      className="group flex items-center gap-2 rounded-lg border border-border/50 p-3 text-sm font-medium transition-all duration-200 hover:border-[#635bff]/30 hover:bg-[#635bff]/5"
     >
-      <Icon className="h-4 w-4 text-muted-foreground group-hover:text-[#635bff] transition-colors" />
+      <Icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-[#635bff]" />
       <span>{label}</span>
-      <ExternalLink className="h-3 w-3 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+      <ExternalLink className="ml-auto h-3 w-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
     </button>
   );
 }

@@ -18,8 +18,13 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import {
-  Zap, ChevronDown, ChevronRight, ChevronsUpDown, Plus,
-  Save, CheckCircle2,
+  Zap,
+  ChevronDown,
+  ChevronRight,
+  ChevronsUpDown,
+  Plus,
+  Save,
+  CheckCircle2,
 } from "lucide-react";
 import type { TenantPlan, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
 import { FeatureCatalogPicker } from "./features-tab/FeatureCatalogPicker";
@@ -63,13 +68,17 @@ export function FeaturesTab({
   // ── Available (unassigned) features from catalog ──
   const availableFeatures = useMemo(
     () => featureCatalog.filter((f) => f.isActive && !assignedIds.has(f.id)),
-    [featureCatalog, assignedIds],
+    [featureCatalog, assignedIds]
   );
 
   // ── Assigned features enriched with catalog metadata ──
   const assignedFeatures = useMemo(() => {
     const catalogMap = new Map(featureCatalog.map((f) => [f.id, f]));
-    const result: Array<{ definition: TenantFeatureDefinition; value: string; overrideLabel?: string }> = [];
+    const result: Array<{
+      definition: TenantFeatureDefinition;
+      value: string;
+      overrideLabel?: string;
+    }> = [];
     for (const [defId, data] of localFeatures) {
       const def = catalogMap.get(defId);
       if (def) {
@@ -92,10 +101,13 @@ export function FeaturesTab({
   }, [assignedFeatures]);
 
   // ── Handlers ──
-  const handleAddFeature = useCallback((def: TenantFeatureDefinition) => {
-    addFeature(def);
-    setShowPicker(false);
-  }, [addFeature]);
+  const handleAddFeature = useCallback(
+    (def: TenantFeatureDefinition) => {
+      addFeature(def);
+      setShowPicker(false);
+    },
+    [addFeature]
+  );
 
   const toggleCategory = useCallback((cat: string) => {
     setCollapsedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
@@ -118,14 +130,14 @@ export function FeaturesTab({
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <Zap className="h-10 w-10 text-muted-foreground/40 mb-3" />
+          <Zap className="mb-3 h-10 w-10 text-muted-foreground/40" />
           <p className="text-sm text-muted-foreground">
             {t("entitlements.featureDefinitions.emptyCatalog") ||
               "No features defined yet. Create features in the Feature Catalog first."}
           </p>
           <Button variant="outline" size="sm" className="mt-3" asChild>
             <Link href="/entitlements/tenant-feature-definitions">
-              <Plus className="h-4 w-4 me-1" />
+              <Plus className="me-1 h-4 w-4" />
               {t("entitlements.featureDefinitions.goToCatalog") || "Go to Feature Catalog"}
             </Link>
           </Button>
@@ -147,7 +159,10 @@ export function FeaturesTab({
             {assignedFeatures.length}/{featureCatalog.filter((f) => f.isActive).length}
           </Badge>
           {hasChanges && (
-            <Badge variant="outline" className="text-xs text-amber-600 border-amber-500/30 bg-amber-500/5">
+            <Badge
+              variant="outline"
+              className="border-amber-500/30 bg-amber-500/5 text-xs text-amber-600"
+            >
               {t("common.unsavedChanges") || "Unsaved Changes"}
             </Badge>
           )}
@@ -156,10 +171,10 @@ export function FeaturesTab({
         <div className="flex items-center gap-2">
           {categories.length > 1 && (
             <Button variant="ghost" size="sm" onClick={toggleAll}>
-              <ChevronsUpDown className="h-4 w-4 me-1" />
+              <ChevronsUpDown className="me-1 h-4 w-4" />
               {allCollapsed
-                ? (t("common.expandAll") || "Expand All")
-                : (t("common.collapseAll") || "Collapse All")}
+                ? t("common.expandAll") || "Expand All"
+                : t("common.collapseAll") || "Collapse All"}
             </Button>
           )}
           <Button variant="ghost" size="sm" asChild>
@@ -167,12 +182,17 @@ export function FeaturesTab({
               {t("entitlements.featureDefinitions.manageCatalog") || "Manage Catalog"}
             </Link>
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setShowPicker(true)} disabled={availableFeatures.length === 0}>
-            <Plus className="h-4 w-4 me-1" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPicker(true)}
+            disabled={availableFeatures.length === 0}
+          >
+            <Plus className="me-1 h-4 w-4" />
             {t("entitlements.featureDefinitions.addFeature") || "Add Feature"}
           </Button>
           <Button size="sm" onClick={onSave} disabled={!hasChanges} loading={isSaving}>
-            {!isSaving && <Save className="h-4 w-4 me-1" />}
+            {!isSaving && <Save className="me-1 h-4 w-4" />}
             {t("common.save") || "Save"}
           </Button>
         </div>
@@ -193,11 +213,11 @@ export function FeaturesTab({
       {assignedFeatures.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <CheckCircle2 className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <CheckCircle2 className="mb-3 h-10 w-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">
               {t("entitlements.tenantPlans.noFeatures") || "No features assigned to this plan yet."}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {t("entitlements.tenantPlans.noFeaturesHint") ||
                 "Click 'Add Feature' to assign features from your catalog."}
             </p>
@@ -210,7 +230,7 @@ export function FeaturesTab({
           return (
             <Card key={category} className="overflow-hidden">
               <CardHeader
-                className="cursor-pointer select-none hover:bg-accent/50 transition-colors py-3"
+                className="cursor-pointer select-none py-3 transition-colors hover:bg-accent/50"
                 onClick={() => toggleCategory(category)}
               >
                 <div className="flex items-center justify-between">
@@ -232,7 +252,7 @@ export function FeaturesTab({
                     {items.map((item) => {
                       // Track if this value was modified vs. the server state
                       const originalFeature = (plan.features || []).find(
-                        (f) => f.featureDefinitionId === item.definition.id,
+                        (f) => f.featureDefinitionId === item.definition.id
                       );
                       const isModified = originalFeature
                         ? originalFeature.value !== item.value

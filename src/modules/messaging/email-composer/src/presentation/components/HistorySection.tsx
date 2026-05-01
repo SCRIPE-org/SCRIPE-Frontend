@@ -6,36 +6,23 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@core/ui/table";
 import {
-      Select,
-      SelectContent,
-      SelectItem,
-      SelectTrigger,
-      SelectValue,
-} from "@core/ui/select";
-import {
-      Table,
-      TableHeader,
-      TableBody,
-      TableHead,
-      TableRow,
-      TableCell,
-} from "@core/ui/table";
-import {
-      Mail,
-      Loader2,
-      ChevronLeft,
-      ChevronRight,
-      Trash2,
-      RefreshCcw,
-      ChevronDown,
-      ChevronUp,
-      FileText,
-      Paperclip,
-      AlertTriangle,
-      CheckCircle2,
-      Clock,
-      Search,
+  Mail,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  RefreshCcw,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Paperclip,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Search,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@core/common/utils";
@@ -43,378 +30,399 @@ import type { SentEmail } from "../../domain/entities/Email";
 
 // ─── Props ──────────────────────────────────────────────────
 export interface HistorySectionProps {
-      history: SentEmail[];
-      historyTotal: number;
-      historyPage: number;
-      setHistoryPage: (page: number) => void;
-      historyTotalPages: number;
-      isHistoryLoading: boolean;
-      cancelEmail: (id: string) => void;
-      isCancelling: boolean;
-      /** Resend: pre-fill compose with same subject/body/recipient */
-      onResend?: (email: SentEmail) => void;
-      /** Use as Template: navigate to template creation with body/subject */
-      onUseAsTemplate?: (email: SentEmail) => void;
-      /** History search text */
-      historySearch?: string;
-      setHistorySearch?: (v: string) => void;
-      /** History status filter */
-      historyStatus?: string;
-      setHistoryStatus?: (v: string) => void;
+  history: SentEmail[];
+  historyTotal: number;
+  historyPage: number;
+  setHistoryPage: (page: number) => void;
+  historyTotalPages: number;
+  isHistoryLoading: boolean;
+  cancelEmail: (id: string) => void;
+  isCancelling: boolean;
+  /** Resend: pre-fill compose with same subject/body/recipient */
+  onResend?: (email: SentEmail) => void;
+  /** Use as Template: navigate to template creation with body/subject */
+  onUseAsTemplate?: (email: SentEmail) => void;
+  /** History search text */
+  historySearch?: string;
+  setHistorySearch?: (v: string) => void;
+  /** History status filter */
+  historyStatus?: string;
+  setHistoryStatus?: (v: string) => void;
 }
 
 // ─── Status Config ──────────────────────────────────────────
-const STATUS_CONFIG: Record<string, { label: string; variant: "success" | "destructive" | "secondary" | "outline"; icon: typeof CheckCircle2; color: string }> = {
-      Sent: {
-            label: "Sent",
-            variant: "success" as const,
-            icon: CheckCircle2,
-            color: "text-emerald-500",
-      },
-      Failed: {
-            label: "Failed",
-            variant: "destructive" as const,
-            icon: AlertTriangle,
-            color: "text-red-500",
-      },
-      Pending: {
-            label: "Pending",
-            variant: "secondary" as const,
-            icon: Clock,
-            color: "text-amber-500",
-      },
-      Cancelled: {
-            label: "Cancelled",
-            variant: "outline" as const,
-            icon: Clock,
-            color: "text-gray-400",
-      },
+const STATUS_CONFIG: Record<
+  string,
+  {
+    label: string;
+    variant: "success" | "destructive" | "secondary" | "outline";
+    icon: typeof CheckCircle2;
+    color: string;
+  }
+> = {
+  Sent: {
+    label: "Sent",
+    variant: "success" as const,
+    icon: CheckCircle2,
+    color: "text-emerald-500",
+  },
+  Failed: {
+    label: "Failed",
+    variant: "destructive" as const,
+    icon: AlertTriangle,
+    color: "text-red-500",
+  },
+  Pending: {
+    label: "Pending",
+    variant: "secondary" as const,
+    icon: Clock,
+    color: "text-amber-500",
+  },
+  Cancelled: {
+    label: "Cancelled",
+    variant: "outline" as const,
+    icon: Clock,
+    color: "text-gray-400",
+  },
 };
 
 // ─── Expanded Row ───────────────────────────────────────────
 function ExpandedEmailRow({
-      email,
-      onResend,
-      onUseAsTemplate,
+  email,
+  onResend,
+  onUseAsTemplate,
 }: {
-      email: SentEmail;
-      onResend?: (email: SentEmail) => void;
-      onUseAsTemplate?: (email: SentEmail) => void;
+  email: SentEmail;
+  onResend?: (email: SentEmail) => void;
+  onUseAsTemplate?: (email: SentEmail) => void;
 }) {
-      return (
-            <TableRow>
-                  <TableCell colSpan={5} className="p-0">
-                        <div className="bg-muted/30 border-t border-b px-6 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
-                              {/* Error message */}
-                              {email.status === "Failed" && email.errorMessage && (
-                                    <div className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded-md text-sm">
-                                          <AlertTriangle className="h-4 w-4 shrink-0" />
-                                          <span>{email.errorMessage}</span>
-                                    </div>
-                              )}
+  const { t } = useI18n();
+  return (
+    <TableRow>
+      <TableCell colSpan={5} className="p-0">
+        <div className="space-y-4 border-b border-t bg-muted/30 px-6 py-4 duration-200 animate-in slide-in-from-top-2">
+          {/* Error message */}
+          {email.status === "Failed" && email.errorMessage && (
+            <div className="flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              <span>{email.errorMessage}</span>
+            </div>
+          )}
 
-                              {/* Subject */}
-                              <div>
-                                    <p className="text-xs font-medium text-muted-foreground mb-1">Subject</p>
-                                    <p className="text-sm font-medium">{email.subject}</p>
-                              </div>
+          {/* Subject */}
+          <div>
+            <p className="mb-1 text-xs font-medium text-muted-foreground">{t("messaging.email.subject") || "Subject"}</p>
+            <p className="text-sm font-medium">{email.subject}</p>
+          </div>
 
-                              {/* Body Preview */}
-                              <div>
-                                    <p className="text-xs font-medium text-muted-foreground mb-1">Body Preview</p>
-                                    <div className="border rounded-lg bg-white dark:bg-background overflow-hidden max-h-[200px]">
-                                          {email.body.includes("<") ? (
-                                                <iframe
-                                                      srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:#000;padding:12px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${email.body.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "").replace(/on\w+="[^"]*"/gi, "").replace(/on\w+='[^']*'/gi, "")}</body></html>`}
-                                                      sandbox="allow-same-origin"
-                                                      className="w-full border-0"
-                                                      style={{ height: "180px" }}
-                                                      title="Email Body Preview"
-                                                />
-                                          ) : (
-                                                <pre className="whitespace-pre-wrap text-sm font-sans p-4">{email.body}</pre>
-                                          )}
-                                    </div>
-                              </div>
+          {/* Body Preview */}
+          <div>
+            <p className="mb-1 text-xs font-medium text-muted-foreground">{t("messaging.email.bodyPreview") || "Body Preview"}</p>
+            <div className="max-h-[200px] overflow-hidden rounded-lg border bg-white dark:bg-background">
+              {email.body.includes("<") ? (
+                <iframe
+                  srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:#000;padding:12px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${email.body
+                    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+                    .replace(/on\w+="[^"]*"/gi, "")
+                    .replace(/on\w+='[^']*'/gi, "")}</body></html>`}
+                  sandbox="allow-same-origin"
+                  className="w-full border-0"
+                  style={{ height: "180px" }}
+                  title="Email Body Preview"
+                />
+              ) : (
+                <pre className="whitespace-pre-wrap p-4 font-sans text-sm">{email.body}</pre>
+              )}
+            </div>
+          </div>
 
-                              {/* Attachments */}
-                              {email.attachments && (() => {
-                                    const urls = email.attachments.split(",").map(u => u.trim()).filter(Boolean);
-                                    if (urls.length === 0) return null;
-                                    return (
-                                          <div>
-                                                <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
-                                                      <Paperclip className="h-3.5 w-3.5" />
-                                                      Attachments ({urls.length})
-                                                </p>
-                                                <div className="flex flex-wrap gap-2">
-                                                      {urls.map((url, i) => {
-                                                            const fileName = decodeURIComponent(url.split("/").pop() || `attachment-${i + 1}`);
-                                                            return (
-                                                                  <a
-                                                                        key={i}
-                                                                        href={url}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-muted/50 hover:bg-muted border rounded-md text-xs font-medium text-foreground transition-colors"
-                                                                        title={fileName}
-                                                                  >
-                                                                        <FileText className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                                                                        <span className="truncate max-w-[200px]">{fileName}</span>
-                                                                  </a>
-                                                            );
-                                                      })}
-                                                </div>
-                                          </div>
-                                    );
-                              })()}
+          {/* Attachments */}
+          {email.attachments &&
+            (() => {
+              const urls = email.attachments
+                .split(",")
+                .map((u) => u.trim())
+                .filter(Boolean);
+              if (urls.length === 0) return null;
+              return (
+                <div>
+                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <Paperclip className="h-3.5 w-3.5" />
+                    {t("messaging.email.attachments") || "Attachments"} ({urls.length})
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {urls.map((url, i) => {
+                      const fileName = decodeURIComponent(
+                        url.split("/").pop() || `attachment-${i + 1}`
+                      );
+                      return (
+                        <a
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-md border bg-muted/50 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+                          title={fileName}
+                        >
+                          <FileText className="h-3.5 w-3.5 shrink-0 text-blue-500" />
+                          <span className="max-w-[200px] truncate">{fileName}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
-                              {/* Actions */}
-                              <div className="flex items-center gap-2">
-                                    {onResend && (
-                                          <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="gap-1.5 h-7 text-xs"
-                                                onClick={() => onResend(email)}
-                                          >
-                                                <RefreshCcw className="h-3 w-3" />
-                                                {email.status === "Failed" ? "Retry" : "Resend"}
-                                          </Button>
-                                    )}
-                                    {onUseAsTemplate && (
-                                          <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="gap-1.5 h-7 text-xs"
-                                                onClick={() => onUseAsTemplate(email)}
-                                          >
-                                                <FileText className="h-3 w-3" />
-                                                Use as Template
-                                          </Button>
-                                    )}
-                              </div>
-                        </div>
-                  </TableCell>
-            </TableRow>
-      );
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            {onResend && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 gap-1.5 text-xs"
+                onClick={() => onResend(email)}
+              >
+                <RefreshCcw className="h-3 w-3" />
+                {email.status === "Failed" ? t("messaging.email.retry") || "Retry" : t("messaging.email.resend") || "Resend"}
+              </Button>
+            )}
+            {onUseAsTemplate && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 gap-1.5 text-xs"
+                onClick={() => onUseAsTemplate(email)}
+              >
+                <FileText className="h-3 w-3" />
+                {t("messaging.email.useAsTemplate") || "Use as Template"}
+              </Button>
+            )}
+          </div>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
 }
 
 // ─── Main Component ─────────────────────────────────────────
 export function HistorySection(vm: HistorySectionProps) {
-      const { t } = useI18n();
-      const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { t } = useI18n();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-      const toggleExpand = (id: string) => {
-            setExpandedId((prev) => (prev === id ? null : id));
-      };
+  const toggleExpand = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
 
-      return (
-            <Card>
-                  <CardHeader>
-                        <div className="flex items-center justify-between">
-                              <div>
-                                    <CardTitle>{t("messaging.email.historyTitle")}</CardTitle>
-                                    <CardDescription>{t("messaging.email.historyDescription")}</CardDescription>
-                              </div>
-                              {vm.historyTotal > 0 && (
-                                    <Badge variant="secondary" className="text-xs">
-                                          {vm.historyTotal} {t("common.items") || "total"}
-                                    </Badge>
-                              )}
-                        </div>
-                  </CardHeader>
-                  <CardContent>
-                        {/* Search & Status Filter Bar */}
-                        {(vm.setHistorySearch || vm.setHistoryStatus) && (
-                              <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                                    {vm.setHistorySearch && (
-                                          <div className="relative flex-1">
-                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
-                                                <Input
-                                                      type="text"
-                                                      placeholder={t("common.search") || "Search by recipient or subject..."}
-                                                      value={vm.historySearch || ""}
-                                                      onChange={(e) => vm.setHistorySearch!(e.target.value)}
-                                                      className="pl-9"
-                                                />
-                                          </div>
-                                    )}
-                                    {vm.setHistoryStatus && (
-                                          <div className="min-w-[160px]">
-                                                <Select
-                                                      value={vm.historyStatus || "all"}
-                                                      onValueChange={(value) => vm.setHistoryStatus!(value === "all" ? "" : value)}
-                                                >
-                                                      <SelectTrigger>
-                                                            <SelectValue placeholder={t("common.all") || "All Status"} />
-                                                      </SelectTrigger>
-                                                      <SelectContent>
-                                                            <SelectItem value="all">{t("common.all") || "All Status"}</SelectItem>
-                                                            <SelectItem value="Sent">Sent</SelectItem>
-                                                            <SelectItem value="Failed">Failed</SelectItem>
-                                                            <SelectItem value="Pending">Pending</SelectItem>
-                                                            <SelectItem value="Cancelled">Cancelled</SelectItem>
-                                                      </SelectContent>
-                                                </Select>
-                                          </div>
-                                    )}
-                              </div>
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>{t("messaging.email.historyTitle")}</CardTitle>
+            <CardDescription>{t("messaging.email.historyDescription")}</CardDescription>
+          </div>
+          {vm.historyTotal > 0 && (
+            <Badge variant="secondary" className="text-xs">
+              {vm.historyTotal} {t("common.items") || "total"}
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {/* Search & Status Filter Bar */}
+        {(vm.setHistorySearch || vm.setHistoryStatus) && (
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+            {vm.setHistorySearch && (
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder={t("common.search") || "Search by recipient or subject..."}
+                  value={vm.historySearch || ""}
+                  onChange={(e) => vm.setHistorySearch!(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            )}
+            {vm.setHistoryStatus && (
+              <div className="min-w-[160px]">
+                <Select
+                  value={vm.historyStatus || "all"}
+                  onValueChange={(value) => vm.setHistoryStatus!(value === "all" ? "" : value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("common.all") || "All Status"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("common.all") || "All Status"}</SelectItem>
+                    <SelectItem value="Sent">Sent</SelectItem>
+                    <SelectItem value="Failed">Failed</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        )}
+        {vm.isHistoryLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : vm.history.length === 0 ? (
+          <div className="py-12 text-center text-muted-foreground">
+            <Mail className="mx-auto mb-3 h-12 w-12 opacity-30" />
+            <p className="font-medium">{t("common.noData") || "No sent emails yet"}</p>
+            <p className="mt-1 text-sm">{t("messaging.email.emptyHint") || "Emails you send will appear here"}</p>
+          </div>
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-8" />
+                  <TableHead>{t("messaging.email.to") || "To"}</TableHead>
+                  <TableHead>{t("messaging.email.subject") || "Subject"}</TableHead>
+                  <TableHead>{t("common.status") || "Status"}</TableHead>
+                  <TableHead>{t("messaging.email.sentAt") || "Sent At"}</TableHead>
+                  <TableHead className="w-20">{t("common.actions") || "Actions"}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {vm.history.map((email, idx) => {
+                  const isExpanded = expandedId === email.id;
+                  const statusConf = STATUS_CONFIG[email.status] || STATUS_CONFIG.Pending;
+                  const StatusIcon = statusConf.icon;
+
+                  return (
+                    <React.Fragment key={email.id || idx}>
+                      <TableRow
+                        className={cn(
+                          "cursor-pointer transition-colors",
+                          isExpanded && "bg-muted/20"
                         )}
-                        {vm.isHistoryLoading ? (
-                              <div className="flex items-center justify-center py-12">
-                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                              </div>
-                        ) : vm.history.length === 0 ? (
-                              <div className="text-center py-12 text-muted-foreground">
-                                    <Mail className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                                    <p className="font-medium">{t("common.noData") || "No sent emails yet"}</p>
-                                    <p className="text-sm mt-1">Emails you send will appear here</p>
-                              </div>
-                        ) : (
-                              <>
-                                    <Table>
-                                          <TableHeader>
-                                                <TableRow>
-                                                      <TableHead className="w-8" />
-                                                      <TableHead>{t("messaging.email.to") || "To"}</TableHead>
-                                                      <TableHead>{t("messaging.email.subject") || "Subject"}</TableHead>
-                                                      <TableHead>{t("common.status") || "Status"}</TableHead>
-                                                      <TableHead>{t("messaging.email.sentAt") || "Sent At"}</TableHead>
-                                                      <TableHead className="w-20">{t("common.actions") || "Actions"}</TableHead>
-                                                </TableRow>
-                                          </TableHeader>
-                                          <TableBody>
-                                                {vm.history.map((email, idx) => {
-                                                      const isExpanded = expandedId === email.id;
-                                                      const statusConf = STATUS_CONFIG[email.status] || STATUS_CONFIG.Pending;
-                                                      const StatusIcon = statusConf.icon;
+                        onClick={() => toggleExpand(email.id)}
+                      >
+                        {/* Expand toggle */}
+                        <TableCell className="pr-0">
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </TableCell>
 
-                                                      return (
-                                                            <React.Fragment key={email.id || idx}>
-                                                                  <TableRow
-                                                                        className={cn(
-                                                                              "cursor-pointer transition-colors",
-                                                                              isExpanded && "bg-muted/20"
-                                                                        )}
-                                                                        onClick={() => toggleExpand(email.id)}
-                                                                  >
-                                                                        {/* Expand toggle */}
-                                                                        <TableCell className="pr-0">
-                                                                              {isExpanded ? (
-                                                                                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                                                                              ) : (
-                                                                                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                                                                              )}
-                                                                        </TableCell>
+                        {/* To */}
+                        <TableCell>
+                          <span
+                            className="inline-block max-w-[200px] truncate font-medium"
+                            title={email.to}
+                          >
+                            {email.to}
+                          </span>
+                        </TableCell>
 
-                                                                        {/* To */}
-                                                                        <TableCell>
-                                                                              <span className="truncate max-w-[200px] inline-block font-medium" title={email.to}>
-                                                                                    {email.to}
-                                                                              </span>
-                                                                        </TableCell>
+                        {/* Subject */}
+                        <TableCell>
+                          <span className="inline-block max-w-[250px] truncate">
+                            {email.subject}
+                          </span>
+                        </TableCell>
 
-                                                                        {/* Subject */}
-                                                                        <TableCell>
-                                                                              <span className="truncate max-w-[250px] inline-block">
-                                                                                    {email.subject}
-                                                                              </span>
-                                                                        </TableCell>
+                        {/* Status */}
+                        <TableCell>
+                          <Badge variant={statusConf.variant} className="gap-1">
+                            <StatusIcon className="h-3 w-3" />
+                            {t(
+                              `messaging.email.status${email.status.charAt(0).toUpperCase() + email.status.slice(1)}`
+                            ) || statusConf.label}
+                          </Badge>
+                        </TableCell>
 
-                                                                        {/* Status */}
-                                                                        <TableCell>
-                                                                              <Badge
-                                                                                    variant={statusConf.variant}
-                                                                                    className="gap-1"
-                                                                              >
-                                                                                    <StatusIcon className="h-3 w-3" />
-                                                                                    {t(`messaging.email.status${email.status.charAt(0).toUpperCase() + email.status.slice(1)}`) || statusConf.label}
-                                                                              </Badge>
-                                                                        </TableCell>
+                        {/* Sent At */}
+                        <TableCell className="text-sm text-muted-foreground">
+                          {email.sentAt ? format(new Date(email.sentAt), "MMM d, yyyy HH:mm") : "-"}
+                        </TableCell>
 
-                                                                        {/* Sent At */}
-                                                                        <TableCell className="text-sm text-muted-foreground">
-                                                                              {email.sentAt
-                                                                                    ? format(new Date(email.sentAt), "MMM d, yyyy HH:mm")
-                                                                                    : "-"}
-                                                                        </TableCell>
+                        {/* Quick Actions */}
+                        <TableCell>
+                          <div
+                            className="flex items-center gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {email.status === "Failed" && vm.onResend && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-blue-500 hover:bg-blue-500/10 hover:text-blue-600"
+                                onClick={() => vm.onResend!(email)}
+                                title="Retry"
+                              >
+                                <RefreshCcw className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            {email.status === "Pending" && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => vm.cancelEmail(email.id)}
+                                disabled={vm.isCancelling}
+                                title={t("messaging.email.cancelEmail") || "Cancel email"}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
 
-                                                                        {/* Quick Actions */}
-                                                                        <TableCell>
-                                                                              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                                                                                    {email.status === "Failed" && vm.onResend && (
-                                                                                          <Button
-                                                                                                variant="ghost"
-                                                                                                size="icon"
-                                                                                                className="h-7 w-7 text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
-                                                                                                onClick={() => vm.onResend!(email)}
-                                                                                                title="Retry"
-                                                                                          >
-                                                                                                <RefreshCcw className="h-3.5 w-3.5" />
-                                                                                          </Button>
-                                                                                    )}
-                                                                                    {email.status === "Pending" && (
-                                                                                          <Button
-                                                                                                variant="ghost"
-                                                                                                size="icon"
-                                                                                                className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                                                                                onClick={() => vm.cancelEmail(email.id)}
-                                                                                                disabled={vm.isCancelling}
-                                                                                                title={t("messaging.email.cancelEmail") || "Cancel email"}
-                                                                                          >
-                                                                                                <Trash2 className="h-3.5 w-3.5" />
-                                                                                          </Button>
-                                                                                    )}
-                                                                              </div>
-                                                                        </TableCell>
-                                                                  </TableRow>
+                      {/* Expanded Detail */}
+                      {isExpanded && (
+                        <ExpandedEmailRow
+                          email={email}
+                          onResend={vm.onResend}
+                          onUseAsTemplate={vm.onUseAsTemplate}
+                        />
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+            </Table>
 
-                                                                  {/* Expanded Detail */}
-                                                                  {isExpanded && (
-                                                                        <ExpandedEmailRow
-                                                                              email={email}
-                                                                              onResend={vm.onResend}
-                                                                              onUseAsTemplate={vm.onUseAsTemplate}
-                                                                        />
-                                                                  )}
-                                                            </React.Fragment>
-                                                      );
-                                                })}
-                                          </TableBody>
-                                    </Table>
-
-                                    {/* Pagination */}
-                                    {vm.historyTotalPages > 1 && (
-                                          <div className="flex items-center justify-between pt-4">
-                                                <p className="text-sm text-muted-foreground">
-                                                      {t("common.page") || "Page"} {vm.historyPage} / {vm.historyTotalPages}
-                                                      {" · "}
-                                                      {vm.historyTotal} {t("common.items") || "items"}
-                                                </p>
-                                                <div className="flex gap-1">
-                                                      <Button
-                                                            variant="outline"
-                                                            size="icon"
-                                                            disabled={vm.historyPage <= 1}
-                                                            onClick={() => vm.setHistoryPage(vm.historyPage - 1)}
-                                                      >
-                                                            <ChevronLeft className="h-4 w-4" />
-                                                      </Button>
-                                                      <Button
-                                                            variant="outline"
-                                                            size="icon"
-                                                            disabled={vm.historyPage >= vm.historyTotalPages}
-                                                            onClick={() => vm.setHistoryPage(vm.historyPage + 1)}
-                                                      >
-                                                            <ChevronRight className="h-4 w-4" />
-                                                      </Button>
-                                                </div>
-                                          </div>
-                                    )}
-                              </>
-                        )}
-                  </CardContent>
-            </Card>
-      );
+            {/* Pagination */}
+            {vm.historyTotalPages > 1 && (
+              <div className="flex items-center justify-between pt-4">
+                <p className="text-sm text-muted-foreground">
+                  {t("common.page") || "Page"} {vm.historyPage} / {vm.historyTotalPages}
+                  {" · "}
+                  {vm.historyTotal} {t("common.items") || "items"}
+                </p>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    disabled={vm.historyPage <= 1}
+                    onClick={() => vm.setHistoryPage(vm.historyPage - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    disabled={vm.historyPage >= vm.historyTotalPages}
+                    onClick={() => vm.setHistoryPage(vm.historyPage + 1)}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

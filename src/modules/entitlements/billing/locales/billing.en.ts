@@ -71,7 +71,8 @@ export const en = {
     },
     dialogs: {
       checkoutTitle: "Payment Link Generated",
-      checkoutDescription: "Share this payment link with the tenant to complete their subscription.",
+      checkoutDescription:
+        "Share this payment link with the tenant to complete their subscription.",
       emailSent: "Payment link has been emailed to the tenant admin.",
       scanQrCode: "Scan to open payment page",
       sessionExpired: "Session expired — generate a new link",
@@ -133,7 +134,6 @@ export const en = {
       description:
         "Payments are simulated. No real charges will be made. Switch to live keys for production.",
     },
-    // ── Payment Gateway Management ──
     gateways: {
       title: "Payment Gateways",
       description: "View and manage the platform's payment gateway configuration.",
@@ -159,7 +159,8 @@ export const en = {
       stripeDesc: "Global payment processing with full recurring billing and customer portal.",
       paypalDesc: "Worldwide payment gateway with buyer protection and multi-currency support.",
       paymobDesc: "MENA-focused payment gateway with mobile wallet and local payment methods.",
-      configNote: "Gateway configuration is managed in server settings (appsettings.json). Contact your system administrator to enable or change gateways.",
+      configNote:
+        "Gateway configuration is managed in server settings (appsettings.json). Contact your system administrator to enable or change gateways.",
       selectForCheckout: "Select Gateway",
       autoDefault: "Auto (use default)",
       testConnection: "Test Connection",
@@ -168,5 +169,8 @@ export const en = {
       toggleSuccess: "Status Updated",
       toggleFailed: "Update Failed",
     },
+  },
+  common: {
+    failed: "Failed",
   },
 };

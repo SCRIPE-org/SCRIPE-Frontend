@@ -6,12 +6,9 @@
  *
  * @module notification-sender/domain
  */
-import type {
-      NotificationTargetJson,
-      SendNotificationJson,
-} from "../types/NotificationTypes";
+import type { NotificationTargetJson, SendNotificationJson } from "../types/NotificationTypes";
 
 export interface INotificationSenderService {
-      searchTargets(query: string): Promise<NotificationTargetJson[]>;
-      send(data: SendNotificationJson): Promise<void>;
+  searchTargets(query: string): Promise<NotificationTargetJson[]>;
+  send(data: SendNotificationJson): Promise<void>;
 }

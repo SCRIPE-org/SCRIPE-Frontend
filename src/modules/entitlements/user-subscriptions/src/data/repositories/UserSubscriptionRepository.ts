@@ -6,7 +6,10 @@
  *
  * TenantId is resolved server-side from JWT context.
  */
-import type { IUserSubscriptionRepository, UserSearchResult } from "../../domain/interfaces/IUserSubscriptionRepository";
+import type {
+  IUserSubscriptionRepository,
+  UserSearchResult,
+} from "../../domain/interfaces/IUserSubscriptionRepository";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import { UserSubscriptionMapper } from "../mappers/UserSubscriptionMapper";
@@ -54,7 +57,10 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     await this.service.renew(id);
   }
 
-  async changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<string> {
+  async changePlan(
+    id: string,
+    data: { newTenantPlanId: string; billingCycle: string; reason?: string }
+  ): Promise<string> {
     const response = await this.service.changePlan(id, data);
     return response.id;
   }

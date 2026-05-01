@@ -27,7 +27,7 @@ import { ProfileMapper } from "../mappers/ProfileMapper";
 import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
 
 export class ProfileRepository implements IProfileRepository {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
   // ── Profile ──────────────────────────────────────────
 

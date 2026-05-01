@@ -11,10 +11,7 @@ import { ProfileNav } from "@modules/profile/src/presentation/components/Profile
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
-  useModuleLocales(
-    () => import("@/modules/profile/locales"),
-    "profile"
-  );
+  useModuleLocales(() => import("@/modules/profile/locales"), "profile");
   const { profile, isLoading } = useProfilePageViewModel();
 
   return (

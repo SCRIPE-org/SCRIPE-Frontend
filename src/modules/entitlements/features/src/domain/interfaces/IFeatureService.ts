@@ -10,11 +10,11 @@ import type { FeatureModel, TenantEffectiveFeatureModel } from "../../data/model
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 
 export interface IFeatureService {
-      getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;
-      getById(id: string): Promise<FeatureModel>;
-      create(data: CreateFeatureRequest): Promise<{ id: string }>;
-      update(id: string, data: UpdateFeatureRequest): Promise<void>;
-      delete(id: string): Promise<void>;
-      getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeatureModel[]>;
-      getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]>;
+  getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;
+  getById(id: string): Promise<FeatureModel>;
+  create(data: CreateFeatureRequest): Promise<{ id: string }>;
+  update(id: string, data: UpdateFeatureRequest): Promise<void>;
+  delete(id: string): Promise<void>;
+  getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeatureModel[]>;
+  getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]>;
 }

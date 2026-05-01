@@ -43,24 +43,58 @@ export class SystemDefaults {
 
   // ===== Getters =====
 
-  get defaultThemeJson(): string | null { return this.props.defaultThemeJson; }
-  get layoutCatalogJson(): string | null { return this.props.layoutCatalogJson; }
-  get slotRegistryJson(): string | null { return this.props.slotRegistryJson; }
+  get defaultThemeJson(): string | null {
+    return this.props.defaultThemeJson;
+  }
+  get layoutCatalogJson(): string | null {
+    return this.props.layoutCatalogJson;
+  }
+  get slotRegistryJson(): string | null {
+    return this.props.slotRegistryJson;
+  }
 
-  get loginBrandingJson(): string | null { return this.props.loginBrandingJson; }
-  get slotConfigJson(): string | null { return this.props.slotConfigJson; }
-  get draftBrandingJson(): string | null { return this.props.draftBrandingJson; }
-  get defaultCompanyName(): string | null { return this.props.defaultCompanyName; }
-  get defaultLogoUrl(): string | null { return this.props.defaultLogoUrl; }
-  get defaultFaviconUrl(): string | null { return this.props.defaultFaviconUrl; }
-  get defaultLoginHeadline(): string | null { return this.props.defaultLoginHeadline; }
-  get defaultLoginSubtitle(): string | null { return this.props.defaultLoginSubtitle; }
-  get defaultPrimaryColor(): string | null { return this.props.defaultPrimaryColor; }
-  get defaultSecondaryColor(): string | null { return this.props.defaultSecondaryColor; }
-  get defaultTermsOfServiceUrl(): string | null { return this.props.defaultTermsOfServiceUrl; }
-  get defaultPrivacyPolicyUrl(): string | null { return this.props.defaultPrivacyPolicyUrl; }
-  get dashboardThemeJson(): string | null { return this.props.dashboardThemeJson; }
-  get settingsVersion(): number { return this.props.settingsVersion; }
+  get loginBrandingJson(): string | null {
+    return this.props.loginBrandingJson;
+  }
+  get slotConfigJson(): string | null {
+    return this.props.slotConfigJson;
+  }
+  get draftBrandingJson(): string | null {
+    return this.props.draftBrandingJson;
+  }
+  get defaultCompanyName(): string | null {
+    return this.props.defaultCompanyName;
+  }
+  get defaultLogoUrl(): string | null {
+    return this.props.defaultLogoUrl;
+  }
+  get defaultFaviconUrl(): string | null {
+    return this.props.defaultFaviconUrl;
+  }
+  get defaultLoginHeadline(): string | null {
+    return this.props.defaultLoginHeadline;
+  }
+  get defaultLoginSubtitle(): string | null {
+    return this.props.defaultLoginSubtitle;
+  }
+  get defaultPrimaryColor(): string | null {
+    return this.props.defaultPrimaryColor;
+  }
+  get defaultSecondaryColor(): string | null {
+    return this.props.defaultSecondaryColor;
+  }
+  get defaultTermsOfServiceUrl(): string | null {
+    return this.props.defaultTermsOfServiceUrl;
+  }
+  get defaultPrivacyPolicyUrl(): string | null {
+    return this.props.defaultPrivacyPolicyUrl;
+  }
+  get dashboardThemeJson(): string | null {
+    return this.props.dashboardThemeJson;
+  }
+  get settingsVersion(): number {
+    return this.props.settingsVersion;
+  }
 
   // ===== Business Logic =====
 

@@ -11,8 +11,13 @@ export function CalendarStyleSection() {
   const settings = useSettings();
 
   const weekDays = [
-    t("daysShort.sun"), t("daysShort.mon"), t("daysShort.tue"),
-    t("daysShort.wed"), t("daysShort.thu"), t("daysShort.fri"), t("daysShort.sat"),
+    t("daysShort.sun"),
+    t("daysShort.mon"),
+    t("daysShort.tue"),
+    t("daysShort.wed"),
+    t("daysShort.thu"),
+    t("daysShort.fri"),
+    t("daysShort.sat"),
   ];
 
   const sampleMonthLabel = t("settings.calendar.sampleLabel", {
@@ -21,12 +26,36 @@ export function CalendarStyleSection() {
   });
 
   const calendarStyles: StyleOption[] = [
-    { value: "default", name: t("settings.calendarStyle.options.default.name"), description: t("settings.calendarStyle.options.default.description") },
-    { value: "modern", name: t("settings.calendarStyle.options.modern.name"), description: t("settings.calendarStyle.options.modern.description") },
-    { value: "glass", name: t("settings.calendarStyle.options.glass.name"), description: t("settings.calendarStyle.options.glass.description") },
-    { value: "elegant", name: t("settings.calendarStyle.options.elegant.name"), description: t("settings.calendarStyle.options.elegant.description") },
-    { value: "minimal", name: t("settings.calendarStyle.options.minimal.name"), description: t("settings.calendarStyle.options.minimal.description") },
-    { value: "dark", name: t("settings.calendarStyle.options.dark.name"), description: t("settings.calendarStyle.options.dark.description") },
+    {
+      value: "default",
+      name: t("settings.calendarStyle.options.default.name"),
+      description: t("settings.calendarStyle.options.default.description"),
+    },
+    {
+      value: "modern",
+      name: t("settings.calendarStyle.options.modern.name"),
+      description: t("settings.calendarStyle.options.modern.description"),
+    },
+    {
+      value: "glass",
+      name: t("settings.calendarStyle.options.glass.name"),
+      description: t("settings.calendarStyle.options.glass.description"),
+    },
+    {
+      value: "elegant",
+      name: t("settings.calendarStyle.options.elegant.name"),
+      description: t("settings.calendarStyle.options.elegant.description"),
+    },
+    {
+      value: "minimal",
+      name: t("settings.calendarStyle.options.minimal.name"),
+      description: t("settings.calendarStyle.options.minimal.description"),
+    },
+    {
+      value: "dark",
+      name: t("settings.calendarStyle.options.dark.name"),
+      description: t("settings.calendarStyle.options.dark.description"),
+    },
   ];
 
   return (
@@ -46,13 +75,23 @@ export function CalendarStyleSection() {
           </div>
           <div className="grid grid-cols-7 gap-0.5 text-xs">
             {weekDays.map((day, i) => (
-              <div key={i} className="flex h-4 w-4 items-center justify-center text-muted-foreground">{day}</div>
+              <div
+                key={i}
+                className="flex h-4 w-4 items-center justify-center text-muted-foreground"
+              >
+                {day}
+              </div>
             ))}
             {Array.from({ length: 7 }, (_, i) => (
-              <div key={i} className={cn(
-                "flex h-4 w-4 items-center justify-center rounded-sm text-xs",
-                i === 3 ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-              )}>{i + 1}</div>
+              <div
+                key={i}
+                className={cn(
+                  "flex h-4 w-4 items-center justify-center rounded-sm text-xs",
+                  i === 3 ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                )}
+              >
+                {i + 1}
+              </div>
             ))}
           </div>
         </div>

@@ -121,7 +121,9 @@ export function RailLayout({ children }: RailLayoutProps) {
               const hasChildren = item.children && item.children.length > 0;
               const isActive = item.href
                 ? isNavigationItemActive(item, pathname, navigation)
-                : item.children?.some((c) => c.href && isNavigationItemActive(c, pathname, navigation));
+                : item.children?.some(
+                    (c) => c.href && isNavigationItemActive(c, pathname, navigation)
+                  );
               const isPopoverOpen = activePopover === item.name;
 
               return (
@@ -180,7 +182,9 @@ export function RailLayout({ children }: RailLayoutProps) {
             </div>
             {activePopoverItem.children.map((child) => {
               const ChildIcon = child.icon;
-              const isChildActive = child.href ? isNavigationItemActive(child, pathname, navigation) : false;
+              const isChildActive = child.href
+                ? isNavigationItemActive(child, pathname, navigation)
+                : false;
               return (
                 <button
                   key={child.name}
@@ -233,9 +237,7 @@ export function RailLayout({ children }: RailLayoutProps) {
             </Button>
             <LanguageSwitcher />
             <ThemeSwitcher />
-            {settings.showNotifications && (
-              <NotificationBell iconClassName="h-5 w-5" />
-            )}
+            {settings.showNotifications && <NotificationBell iconClassName="h-5 w-5" />}
             <UserProfileDropdown showName={false} />
           </div>
         </header>

@@ -19,64 +19,64 @@ import type { Feature } from "../../domain/entities/Feature";
 import type { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
 
 export function useFeaturesViewModel() {
-      const { featureRepository } = entitlementsContainer;
+  const { featureRepository } = entitlementsContainer;
 
-      // ── Detect context ──
-      // System admin = tenantId is null (from JWT); tenant admin = tenantId is set
-      const userTenantId = useAppStore((s) => s.user?.tenantId);
+  // ── Detect context ──
+  // System admin = tenantId is null (from JWT); tenant admin = tenantId is set
+  const userTenantId = useAppStore((s) => s.user?.tenantId);
 
-      // Reactive drill-down context (updates when entering/exiting tenant world)
-      const { isInTenantWorld } = useTenantContext();
+  // Reactive drill-down context (updates when entering/exiting tenant world)
+  const { isInTenantWorld } = useTenantContext();
 
-      // System catalog mode: system admin (tenantId == null) with NO drill-down context
-      // - userTenantId: null for system admins, set for tenant admins / impersonation
-      // - isInTenantWorld: set when super admin drills into a tenant
-      const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
+  // System catalog mode: system admin (tenantId == null) with NO drill-down context
+  // - userTenantId: null for system admins, set for tenant admins / impersonation
+  // - isInTenantWorld: set when super admin drills into a tenant
+  const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
 
-      // ── CATALOG MODE: Global feature catalog (existing CRUD) ──
-      // Only enabled for system admins — tenant admins never fire this API call
-      const catalogVm = useCrudViewModel<Feature, never, never>(
-            ["entitlements", "features"],
-            {
-                  getAll: async (params) => {
-                        const res = await featureRepository.getAll({
-                              page: params.page,
-                              pageSize: params.pageSize,
-                              search: params.search,
-                        });
-                        return {
-                              items: res.items || [],
-                              pagination: {
-                                    itemsCount: res.totalCount,
-                                    pageSize: params.pageSize,
-                                    page: params.page,
-                                    pagesCount: res.totalPages,
-                              },
-                        };
-                  },
-                  // Features are system-seeded — no create, update, or delete
-            },
-            { enabled: isSystemCatalogMode }
-      );
+  // ── CATALOG MODE: Global feature catalog (existing CRUD) ──
+  // Only enabled for system admins — tenant admins never fire this API call
+  const catalogVm = useCrudViewModel<Feature, never, never>(
+    ["entitlements", "features"],
+    {
+      getAll: async (params) => {
+        const res = await featureRepository.getAll({
+          page: params.page,
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      // Features are system-seeded — no create, update, or delete
+    },
+    { enabled: isSystemCatalogMode }
+  );
 
-      // ── EFFECTIVE MODE: Tenant's resolved features ──
-      // Key includes isInTenantWorld so it refetches when entering/exiting drill-down
-      const effectiveQuery = useQuery<TenantEffectiveFeature[]>({
-            queryKey: ["entitlements", "effective-features", userTenantId ?? "self", isInTenantWorld],
-            queryFn: () => featureRepository.getEffective(),
-            enabled: !isSystemCatalogMode,
-      });
+  // ── EFFECTIVE MODE: Tenant's resolved features ──
+  // Key includes isInTenantWorld so it refetches when entering/exiting drill-down
+  const effectiveQuery = useQuery<TenantEffectiveFeature[]>({
+    queryKey: ["entitlements", "effective-features", userTenantId ?? "self", isInTenantWorld],
+    queryFn: () => featureRepository.getEffective(),
+    enabled: !isSystemCatalogMode,
+  });
 
-      return {
-            // Mode flag
-            isSystemCatalogMode,
+  return {
+    // Mode flag
+    isSystemCatalogMode,
 
-            // Catalog mode data (for GenericCrudView)
-            catalogVm: isSystemCatalogMode ? catalogVm : undefined,
+    // Catalog mode data (for GenericCrudView)
+    catalogVm: isSystemCatalogMode ? catalogVm : undefined,
 
-            // Effective mode data
-            effectiveFeatures: effectiveQuery.data ?? [],
-            isLoadingEffective: effectiveQuery.isLoading,
-            effectiveError: effectiveQuery.error,
-      };
+    // Effective mode data
+    effectiveFeatures: effectiveQuery.data ?? [],
+    isLoadingEffective: effectiveQuery.isLoading,
+    effectiveError: effectiveQuery.error,
+  };
 }

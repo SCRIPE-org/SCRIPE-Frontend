@@ -219,7 +219,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         className={cn(
           "gap-1 text-xs",
           status === "suspended" &&
-          "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+            "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400"
         )}
       >
         {StatusIcon && <StatusIcon className="h-3 w-3" />}
@@ -241,16 +241,19 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         >
           <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
           <div className="flex-1 text-sm">
-            <p className="font-medium text-amber-500">
-              {t("tenant.suspendedBanner")}
-            </p>
+            <p className="font-medium text-amber-500">{t("tenant.suspendedBanner")}</p>
             {(tenant as any).suspensionReason && (
               <p className="mt-0.5 text-muted-foreground">{(tenant as any).suspensionReason}</p>
             )}
           </div>
           {onEnter && (
-            <Button size="sm" variant="outline" className="shrink-0 border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10" disabled>
-              <Play className="h-4 w-4 me-1.5" />
+            <Button
+              size="sm"
+              variant="outline"
+              className="shrink-0 border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10"
+              disabled
+            >
+              <Play className="me-1.5 h-4 w-4" />
               {t("tenant.resume")}
             </Button>
           )}
@@ -260,7 +263,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       {status === "canceled" && (
         <div
           dir={direction}
-          className="flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/5 p-4 mb-4"
+          className="mb-4 flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/5 p-4"
         >
           <Ban className="h-5 w-5 shrink-0 text-red-500" />
           <div className="flex-1 text-sm">
@@ -275,7 +278,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       {status === "expired" && (
         <div
           dir={direction}
-          className="flex items-center gap-3 rounded-xl border border-orange-500/30 bg-orange-500/5 p-4 mb-4"
+          className="mb-4 flex items-center gap-3 rounded-xl border border-orange-500/30 bg-orange-500/5 p-4"
         >
           <XCircle className="h-5 w-5 shrink-0 text-orange-500" />
           <div className="flex-1 text-sm">
@@ -299,7 +302,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         {/* Top gradient accent line */}
         <div
           className={cn(
-            "absolute top-0 inset-x-0 h-1 bg-gradient-to-r",
+            "absolute inset-x-0 top-0 h-1 bg-gradient-to-r",
             statusBorderGradient[status]
           )}
         />
@@ -326,7 +329,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 className={cn(
                   "flex items-center justify-center",
                   "h-16 w-16 shrink-0 rounded-xl",
-                  "bg-gradient-to-br border",
+                  "border bg-gradient-to-br",
                   "shadow-lg shadow-primary/10",
                   statusIconBg[status]
                 )}
@@ -337,9 +340,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
               {/* Text */}
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex flex-wrap items-center gap-3">
-                  <h1 className="break-words text-2xl font-bold tracking-tight">
-                    {tenant.name}
-                  </h1>
+                  <h1 className="break-words text-2xl font-bold tracking-tight">{tenant.name}</h1>
                   {statusBadge}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
@@ -369,7 +370,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                   )}
                 </div>
                 {tenant.description && (
-                  <p className="mt-2 max-w-lg text-sm text-muted-foreground leading-relaxed">
+                  <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
                     {tenant.description}
                   </p>
                 )}
@@ -385,7 +386,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                   onClick={onEnter}
                   disabled={status === "suspended"}
                 >
-                  <LogIn className="h-4 w-4 me-1.5" />
+                  <LogIn className="me-1.5 h-4 w-4" />
                   {t("tenant.enterTenantWorld")}
                 </Button>
               )}
@@ -402,7 +403,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                     setEditOpen(true);
                   }}
                 >
-                  <Pencil className="h-4 w-4 me-1.5" />
+                  <Pencil className="me-1.5 h-4 w-4" />
                   {t("common.edit")}
                 </Button>
               )}
@@ -413,17 +414,13 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                   onClick={() => setStatusConfirmOpen(true)}
                   loading={isUpdating}
                 >
-                  {!isUpdating && <Power className="h-4 w-4 me-1.5" />}
+                  {!isUpdating && <Power className="me-1.5 h-4 w-4" />}
                   {tenant.isActive ? t("common.deactivate") : t("common.activate")}
                 </Button>
               )}
               {canDelete && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => setDeleteOpen(true)}
-                >
-                  <Trash2 className="h-4 w-4 me-1.5" />
+                <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
+                  <Trash2 className="me-1.5 h-4 w-4" />
                   {t("common.delete")}
                 </Button>
               )}
@@ -432,8 +429,8 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
 
           {/* Inline subscription progress bar */}
           {status === "active" && tenant.editionName && (
-            <div className="mt-5 pt-5 border-t border-border/30">
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
+            <div className="mt-5 border-t border-border/30 pt-5">
+              <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium">
                   {tenant.editionName}
                   {daysLeft !== null
@@ -446,7 +443,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                   </span>
                 )}
               </div>
-              <div className="h-2 w-full rounded-full bg-muted/50 overflow-hidden">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted/50">
                 <div
                   className={cn("h-full rounded-full transition-all duration-700", progressColor)}
                   style={{ width: `${progress}%` }}
@@ -457,13 +454,13 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
 
           {/* Depleted bar for expired */}
           {status === "expired" && (
-            <div className="mt-5 pt-5 border-t border-border/30">
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
+            <div className="mt-5 border-t border-border/30 pt-5">
+              <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium text-destructive">
                   {t("tenant.expired")} • {tenant.editionName}
                 </span>
               </div>
-              <div className="h-2 w-full rounded-full bg-muted/50 overflow-hidden">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted/50">
                 <div className="h-full w-0 rounded-full bg-destructive" />
               </div>
             </div>
@@ -544,9 +541,9 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
             <DialogDescription>
               {tenant.isActive
                 ? t("tenant.deactivateConfirmation", { name: tenant.name }) ||
-                `Are you sure you want to deactivate ${tenant.name}?`
+                  `Are you sure you want to deactivate ${tenant.name}?`
                 : t("tenant.activateConfirmation", { name: tenant.name }) ||
-                `Are you sure you want to activate ${tenant.name}?`}
+                  `Are you sure you want to activate ${tenant.name}?`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className={cn(isRtl && "flex-row-reverse sm:flex-row-reverse")}>

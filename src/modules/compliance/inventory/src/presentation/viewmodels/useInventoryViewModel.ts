@@ -23,7 +23,8 @@ export function useInventoryViewModel() {
     isError: query.isError,
     refetch: query.refetch,
     search: params.search ?? "",
-    setSearch: (search: string) => setParams(p => ({ ...p, search: search || undefined, page: 1 })),
-    setPage: (page: number) => setParams(p => ({ ...p, page })),
+    setSearch: (search: string) =>
+      setParams((p) => ({ ...p, search: search || undefined, page: 1 })),
+    setPage: (page: number) => setParams((p) => ({ ...p, page })),
   };
 }

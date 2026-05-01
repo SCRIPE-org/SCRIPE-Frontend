@@ -84,7 +84,9 @@ export function useTenantPlanDetailViewModel(planId: string) {
   // ═══════════════════════════════════════════════════════════════════
 
   // ── Features State ──
-  const [localFeatures, setLocalFeatures] = useState<Map<string, { value: string; overrideLabel?: string }>>(new Map());
+  const [localFeatures, setLocalFeatures] = useState<
+    Map<string, { value: string; overrideLabel?: string }>
+  >(new Map());
   const featuresInitRef = useRef(false);
 
   // ── Pricing State (Hybrid Model — mirrors Edition) ──
@@ -129,7 +131,8 @@ export function useTenantPlanDetailViewModel(planId: string) {
   const usdMonthly = localUsdMonthly ?? serverPricingData.usd.monthlyAmount;
   const usdYearly = localUsdYearly ?? serverPricingData.usd.yearlyAmount;
   const usdLifetime = localUsdLifetime ?? serverPricingData.usd.lifetimeAmount;
-  const suggestedYearly = Math.round(usdMonthly * 12 * (1 - yearlyDiscountPercent / 100) * 100) / 100;
+  const suggestedYearly =
+    Math.round(usdMonthly * 12 * (1 - yearlyDiscountPercent / 100) * 100) / 100;
 
   // ── Effective overrides (merged: server + local edits + added - removed) ──
   const overrides = useMemo((): PriceRow[] => {
@@ -162,7 +165,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
   const usedCurrencyCodes = useMemo(() => new Set(overrides.map((o) => o.currency)), [overrides]);
   const availableCurrencies = useMemo(
     () => SUPPORTED_CURRENCIES.filter((c) => c.code !== "USD" && !usedCurrencyCodes.has(c.code)),
-    [usedCurrencyCodes],
+    [usedCurrencyCodes]
   );
 
   // ─── Initialize features from server data (once per plan load) ───
@@ -247,7 +250,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
         return next;
       });
     },
-    [exchangeRates, usdMonthly, usdYearly, usdLifetime],
+    [exchangeRates, usdMonthly, usdYearly, usdLifetime]
   );
 
   const removeOverride = useCallback((currencyCode: string) => {
@@ -267,7 +270,12 @@ export function useTenantPlanDetailViewModel(planId: string) {
 
   const updateOverride = useCallback(
     (currency: string, field: "monthly" | "yearly" | "lifetime", amount: number) => {
-      const fieldKey = field === "monthly" ? "monthlyAmount" : field === "yearly" ? "yearlyAmount" : "lifetimeAmount";
+      const fieldKey =
+        field === "monthly"
+          ? "monthlyAmount"
+          : field === "yearly"
+            ? "yearlyAmount"
+            : "lifetimeAmount";
 
       if (addedOverrides.has(currency)) {
         setAddedOverrides((prev) => {
@@ -280,14 +288,18 @@ export function useTenantPlanDetailViewModel(planId: string) {
         setLocalOverrides((prev) => {
           const next = new Map(prev || new Map());
           const existing = next.get(currency) ||
-            serverPricingData.others.find((o) => o.currency === currency) ||
-            { currency, monthlyAmount: 0, yearlyAmount: 0, lifetimeAmount: 0 };
+            serverPricingData.others.find((o) => o.currency === currency) || {
+              currency,
+              monthlyAmount: 0,
+              yearlyAmount: 0,
+              lifetimeAmount: 0,
+            };
           next.set(currency, { ...existing, [fieldKey]: amount });
           return next;
         });
       }
     },
-    [addedOverrides, serverPricingData.others],
+    [addedOverrides, serverPricingData.others]
   );
 
   const applyDiscountToYearly = useCallback(() => {
@@ -343,7 +355,8 @@ export function useTenantPlanDetailViewModel(planId: string) {
         monthly = usdMonthly;
         yearly = usdYearly;
       } else {
-        const row = overrides.find((o) => o.currency === currency) ||
+        const row =
+          overrides.find((o) => o.currency === currency) ||
           preview.find((p) => p.currency === currency);
         if (!row) return 0;
         monthly = row.monthlyAmount;
@@ -354,19 +367,30 @@ export function useTenantPlanDetailViewModel(planId: string) {
       const monthlyEquiv = monthly * 12;
       return Math.round(((monthlyEquiv - yearly) / monthlyEquiv) * 100);
     },
-    [usdMonthly, usdYearly, overrides, preview],
+    [usdMonthly, usdYearly, overrides, preview]
   );
 
   // ── Dirty tracking (pricing) ──
   const pricesHasChanges = useMemo(() => {
-    if (localUsdMonthly !== null && localUsdMonthly !== serverPricingData.usd.monthlyAmount) return true;
-    if (localUsdYearly !== null && localUsdYearly !== serverPricingData.usd.yearlyAmount) return true;
-    if (localUsdLifetime !== null && localUsdLifetime !== serverPricingData.usd.lifetimeAmount) return true;
+    if (localUsdMonthly !== null && localUsdMonthly !== serverPricingData.usd.monthlyAmount)
+      return true;
+    if (localUsdYearly !== null && localUsdYearly !== serverPricingData.usd.yearlyAmount)
+      return true;
+    if (localUsdLifetime !== null && localUsdLifetime !== serverPricingData.usd.lifetimeAmount)
+      return true;
     if (removedOverrides.size > 0) return true;
     if (addedOverrides.size > 0) return true;
     if (localOverrides && localOverrides.size > 0) return true;
     return false;
-  }, [localUsdMonthly, localUsdYearly, localUsdLifetime, removedOverrides, addedOverrides, localOverrides, serverPricingData]);
+  }, [
+    localUsdMonthly,
+    localUsdYearly,
+    localUsdLifetime,
+    removedOverrides,
+    addedOverrides,
+    localOverrides,
+    serverPricingData,
+  ]);
 
   // ── Discard pricing changes ──
   const discardPricing = useCallback(() => {
@@ -380,7 +404,10 @@ export function useTenantPlanDetailViewModel(planId: string) {
 
   // ── Build the common update payload from plan + overrides ──
   const buildUpdatePayload = useCallback(
-    (overridesPayload?: { features?: UpsertTenantPlanFeatureRequest[]; prices?: UpsertTenantPlanPriceRequest[] }): UpdateTenantPlanRequest => {
+    (overridesPayload?: {
+      features?: UpsertTenantPlanFeatureRequest[];
+      prices?: UpsertTenantPlanPriceRequest[];
+    }): UpdateTenantPlanRequest => {
       if (!plan) throw new Error("No plan loaded");
       return {
         name: plan.name,
@@ -400,7 +427,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
         ...overridesPayload,
       };
     },
-    [plan],
+    [plan]
   );
 
   // ── Build flat price array from Hybrid Model ──
@@ -408,15 +435,33 @@ export function useTenantPlanDetailViewModel(planId: string) {
     const flatPrices: UpsertTenantPlanPriceRequest[] = [];
 
     // USD base prices
-    if (usdMonthly > 0) flatPrices.push({ currency: "USD", billingCycle: "Monthly", amount: usdMonthly });
-    if (usdYearly > 0) flatPrices.push({ currency: "USD", billingCycle: "Yearly", amount: usdYearly });
-    if (usdLifetime > 0) flatPrices.push({ currency: "USD", billingCycle: "Lifetime", amount: usdLifetime });
+    if (usdMonthly > 0)
+      flatPrices.push({ currency: "USD", billingCycle: "Monthly", amount: usdMonthly });
+    if (usdYearly > 0)
+      flatPrices.push({ currency: "USD", billingCycle: "Yearly", amount: usdYearly });
+    if (usdLifetime > 0)
+      flatPrices.push({ currency: "USD", billingCycle: "Lifetime", amount: usdLifetime });
 
     // Override prices
     for (const row of overrides) {
-      if (row.monthlyAmount > 0) flatPrices.push({ currency: row.currency, billingCycle: "Monthly", amount: row.monthlyAmount });
-      if (row.yearlyAmount > 0) flatPrices.push({ currency: row.currency, billingCycle: "Yearly", amount: row.yearlyAmount });
-      if (row.lifetimeAmount > 0) flatPrices.push({ currency: row.currency, billingCycle: "Lifetime", amount: row.lifetimeAmount });
+      if (row.monthlyAmount > 0)
+        flatPrices.push({
+          currency: row.currency,
+          billingCycle: "Monthly",
+          amount: row.monthlyAmount,
+        });
+      if (row.yearlyAmount > 0)
+        flatPrices.push({
+          currency: row.currency,
+          billingCycle: "Yearly",
+          amount: row.yearlyAmount,
+        });
+      if (row.lifetimeAmount > 0)
+        flatPrices.push({
+          currency: row.currency,
+          billingCycle: "Lifetime",
+          amount: row.lifetimeAmount,
+        });
     }
 
     return flatPrices;
@@ -424,8 +469,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
 
   // ── Update Plan ──
   const updateMutation = useMutation({
-    mutationFn: (data: UpdateTenantPlanRequest) =>
-      tenantPlanRepository.update(planId, data),
+    mutationFn: (data: UpdateTenantPlanRequest) => tenantPlanRepository.update(planId, data),
     onSuccess: () => {
       featuresInitRef.current = false;
       discardPricing();
@@ -502,7 +546,6 @@ export function useTenantPlanDetailViewModel(planId: string) {
       });
     },
   });
-
 
   return {
     plan,

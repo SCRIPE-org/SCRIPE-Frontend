@@ -163,8 +163,14 @@ export function useEditionComparisonViewModel() {
     grouped.forEach((rows) => rows.sort((a, b) => a.sortOrder - b.sortOrder));
 
     const CATEGORY_ORDER = [
-      "Billing", "Modules", "Quotas", "Security",
-      "Users", "Performance", "Configuration", "General",
+      "Billing",
+      "Modules",
+      "Quotas",
+      "Security",
+      "Users",
+      "Performance",
+      "Configuration",
+      "General",
     ];
     return new Map(
       [...grouped.entries()].sort(([a], [b]) => {

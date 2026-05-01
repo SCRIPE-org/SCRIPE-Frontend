@@ -2,27 +2,29 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const IdentityProviderDetailView = dynamic(
-      () => import("@modules/identity/identity-providers").then((m) => ({ default: m.IdentityProviderDetailView }))
+const IdentityProviderDetailView = dynamic(() =>
+  import("@modules/identity/identity-providers").then((m) => ({
+    default: m.IdentityProviderDetailView,
+  }))
 );
 
 export const metadata: Metadata = {
-      title: "Identity Provider Details | NEXORA",
-      description: "View and configure identity provider settings",
+  title: "Identity Provider Details | NEXORA",
+  description: "View and configure identity provider settings",
 };
 
 interface Props {
-      params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>;
 }
 
 export default async function IdentityProviderDetailPage({ params }: Props) {
-      const { id } = await params;
+  const { id } = await params;
 
-      return (
-            <main>
-                  <ModuleErrorBoundary moduleName="Identity Provider Detail">
-                        <IdentityProviderDetailView providerId={id} />
-                  </ModuleErrorBoundary>
-            </main>
-      );
+  return (
+    <main>
+      <ModuleErrorBoundary moduleName="Identity Provider Detail">
+        <IdentityProviderDetailView providerId={id} />
+      </ModuleErrorBoundary>
+    </main>
+  );
 }

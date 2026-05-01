@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const FeatureDefinitionFormView = dynamic(
-  () =>
-    import("@modules/entitlements/tenant-plans").then((m) => ({
-      default: m.FeatureDefinitionFormView,
-    }))
+const FeatureDefinitionFormView = dynamic(() =>
+  import("@modules/entitlements/tenant-plans").then((m) => ({
+    default: m.FeatureDefinitionFormView,
+  }))
 );
 
 export const metadata: Metadata = {

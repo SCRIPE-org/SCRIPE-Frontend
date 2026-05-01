@@ -50,7 +50,9 @@ function hasAnyExactMatch(items: NavigationItem[], pathname: string): boolean {
  */
 function isPrefixMatch(href: string | undefined, pathname: string): boolean {
   if (!href || href === "/") return false;
-  return pathname.startsWith(href) && (pathname.length === href.length || pathname[href.length] === "/");
+  return (
+    pathname.startsWith(href) && (pathname.length === href.length || pathname[href.length] === "/")
+  );
 }
 
 /**

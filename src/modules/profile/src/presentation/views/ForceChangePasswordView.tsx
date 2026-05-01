@@ -67,64 +67,86 @@ export function ForceChangePasswordView() {
     { met: hasSpecial, label: t("profile.security.strength.special") },
   ];
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!isValid) return;
 
-    setIsSubmitting(true);
-    setSubmitError(null);
+      setIsSubmitting(true);
+      setSubmitError(null);
 
-    try {
-      // Step 1: Change the password on the backend.
-      // This clears MustChangePassword=false in the DB, but the current JWT still has mcp=true.
-      await profileRepository.changePassword({
-        currentPassword,
-        newPassword,
-      });
-
-      // Step 2: Refresh the token to get a NEW JWT without the mcp=true claim.
-      // This is critical — using the old token would still be blocked by the MCP middleware.
-      const refreshResult = await authRepository.refreshToken();
-      if (refreshResult.kind === "ok") {
-        const refreshData = refreshResult.value;
-        // Update subscription info from fresh token
-        setSubscriptionInfo(
-          refreshData.subscriptionStatus ?? null,
-          refreshData.gracePhase ?? null,
-          refreshData.editionName ?? null
-        );
-
-        // Step 3: Fetch current user state with the new token
-        try {
-          const user = await authRepository.getMe();
-          if (user) {
-            setAuth(user, user.permissions || [], []);
-          }
-        } catch { /* non-critical — store still updated */ }
-      }
-
-      // Step 4: NOW clear MCP in the store — after the new token is in memory.
-      // NavigationProvider will now fire /Menus/my with the clean token (no mcp claim).
-      setMustChangePassword(false);
-
-      operationSuccess(t("profile.security.passwordChanged"));
-
-      // Step 5: Fetch navigation & invalidate all stale queries with the clean token.
       try {
-        await refreshNavigation(false, true);
-      } catch { /* non-critical */ }
-      queryClient.invalidateQueries();
+        // Step 1: Change the password on the backend.
+        // This clears MustChangePassword=false in the DB, but the current JWT still has mcp=true.
+        await profileRepository.changePassword({
+          currentPassword,
+          newPassword,
+        });
 
-      // Step 6: Redirect to home
-      router.replace("/");
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Password change failed";
-      setSubmitError(msg);
-      operationError(msg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [isValid, currentPassword, newPassword, profileRepository, authRepository, setMustChangePassword, setAuth, setSubscriptionInfo, operationSuccess, operationError, router, t, refreshNavigation, queryClient]);
+        // Step 2: Refresh the token to get a NEW JWT without the mcp=true claim.
+        // This is critical — using the old token would still be blocked by the MCP middleware.
+        const refreshResult = await authRepository.refreshToken();
+        if (refreshResult.kind === "ok") {
+          const refreshData = refreshResult.value;
+          // Update subscription info from fresh token
+          setSubscriptionInfo(
+            refreshData.subscriptionStatus ?? null,
+            refreshData.gracePhase ?? null,
+            refreshData.editionName ?? null
+          );
+
+          // Step 3: Fetch current user state with the new token
+          try {
+            const user = await authRepository.getMe();
+            if (user) {
+              setAuth(user, user.permissions || [], []);
+            }
+          } catch {
+            /* non-critical — store still updated */
+          }
+        }
+
+        // Step 4: NOW clear MCP in the store — after the new token is in memory.
+        // NavigationProvider will now fire /Menus/my with the clean token (no mcp claim).
+        setMustChangePassword(false);
+
+        operationSuccess(t("profile.security.passwordChanged"));
+
+        // Step 5: Fetch navigation & invalidate all stale queries with the clean token.
+        try {
+          await refreshNavigation(false, true);
+        } catch {
+          /* non-critical */
+        }
+        queryClient.invalidateQueries();
+
+        // Step 6: Redirect to home
+        router.replace("/");
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Password change failed";
+        setSubmitError(msg);
+        operationError(msg);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [
+      isValid,
+      currentPassword,
+      newPassword,
+      profileRepository,
+      authRepository,
+      setMustChangePassword,
+      setAuth,
+      setSubscriptionInfo,
+      operationSuccess,
+      operationError,
+      router,
+      t,
+      refreshNavigation,
+      queryClient,
+    ]
+  );
 
   const handleLogout = useCallback(() => {
     logout();
@@ -132,10 +154,13 @@ export function ForceChangePasswordView() {
   }, [logout, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4" dir={direction}>
+    <div
+      className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4"
+      dir={direction}
+    >
       <div className="w-full max-w-md space-y-6">
         {/* Header Card */}
-        <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 shadow-xl">
+        <div className="rounded-2xl border border-border/60 bg-card/80 p-8 shadow-xl backdrop-blur-sm">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 ring-2 ring-amber-500/20">
               <ShieldAlert className="h-8 w-8 text-amber-500" />
@@ -143,15 +168,18 @@ export function ForceChangePasswordView() {
             <h1 className="text-2xl font-bold tracking-tight">
               {t("profile.security.changePassword")}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-              {t("admin.forceChangePassword.description") || "Your administrator requires you to change your password before continuing."}
+            <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+              {t("admin.forceChangePassword.description") ||
+                "Your administrator requires you to change your password before continuing."}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Current Password */}
             <div className="space-y-2">
-              <Label htmlFor="force-current-password">{t("profile.security.currentPassword")}</Label>
+              <Label htmlFor="force-current-password">
+                {t("profile.security.currentPassword")}
+              </Label>
               <div className="relative">
                 <Input
                   id="force-current-password"
@@ -209,7 +237,9 @@ export function ForceChangePasswordView() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label htmlFor="force-confirm-password">{t("profile.security.confirmPassword")}</Label>
+              <Label htmlFor="force-confirm-password">
+                {t("profile.security.confirmPassword")}
+              </Label>
               <Input
                 id="force-confirm-password"
                 type="password"

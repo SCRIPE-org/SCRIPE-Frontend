@@ -221,13 +221,22 @@ export function CreateTenantDialog({
           const selectedEd = cachedEditions.find((ed) => ed.id === selectedEditionId);
           const opts: { value: string; label: string }[] = [];
           if (selectedEd?.allowLifetime !== false)
-            opts.push({ value: "Lifetime", label: t("tenant.subscriptionTypes.lifetime") || "Lifetime" });
+            opts.push({
+              value: "Lifetime",
+              label: t("tenant.subscriptionTypes.lifetime") || "Lifetime",
+            });
           if (selectedEd?.allowMonthly !== false)
-            opts.push({ value: "Monthly", label: t("tenant.subscriptionTypes.monthly") || "Monthly" });
+            opts.push({
+              value: "Monthly",
+              label: t("tenant.subscriptionTypes.monthly") || "Monthly",
+            });
           if (selectedEd?.allowYearly !== false)
             opts.push({ value: "Yearly", label: t("tenant.subscriptionTypes.yearly") || "Yearly" });
           if (selectedEd?.allowTrial !== false)
-            opts.push({ value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" });
+            opts.push({
+              value: "Trial",
+              label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)",
+            });
           return opts;
         })(),
         onChange: (value: string, formData: Record<string, any>) => {
@@ -256,7 +265,8 @@ export function CreateTenantDialog({
         label: t("tenant.billingCurrency") || "Billing Currency",
         type: "select",
         required: true,
-        isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
+        isVisible: (formData: Record<string, any>) =>
+          !!formData.editionId && !!formData.subscriptionType,
         options: SUPPORTED_CURRENCIES.map((c) => ({
           value: c.code,
           label: `${c.flag} ${c.code} — ${c.name}`,
@@ -268,9 +278,13 @@ export function CreateTenantDialog({
         label: t("tenant.entitlementLabels.promotionsTitle") || "Promotion",
         type: "select",
         loading: isLoadingPromotions,
-        isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
+        isVisible: (formData: Record<string, any>) =>
+          !!formData.editionId && !!formData.subscriptionType,
         options: [
-          { value: "__none__", label: t("tenant.entitlementLabels.promotionsNoPromotion") || "No promotion" },
+          {
+            value: "__none__",
+            label: t("tenant.entitlementLabels.promotionsNoPromotion") || "No promotion",
+          },
           ...availablePromotions.map((p) => ({
             value: p.id,
             label: `${p.name} — ${p.type === "Percentage" ? `${p.discountValue}% off` : `$${p.discountValue} off`}${p.requiresCode ? " (Code)" : ""}`,
@@ -310,11 +324,22 @@ export function CreateTenantDialog({
         }),
       },
     ],
-    [t, onSearchEditions, selectedEditionId, cachedEditions, availablePromotions, requiresPromoCode, isLoadingPromotions, onEditionChange, onSubscriptionTypeChange, setForm]
+    [
+      t,
+      onSearchEditions,
+      selectedEditionId,
+      cachedEditions,
+      availablePromotions,
+      requiresPromoCode,
+      isLoadingPromotions,
+      onEditionChange,
+      onSubscriptionTypeChange,
+      setForm,
+    ]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
-    const promoId = data.promotionId === "__none__" ? "" : (data.promotionId || "");
+    const promoId = data.promotionId === "__none__" ? "" : data.promotionId || "";
     const resolvedData: CreateFormState = {
       name: data.name,
       code: data.code,

@@ -7,7 +7,11 @@
  * TenantId is resolved server-side from JWT context.
  */
 import type { ITenantPlanRepository } from "../../domain/interfaces/ITenantPlanRepository";
-import type { TenantPlan, TenantFeatureDefinition, TenantPlanPromotion } from "../../domain/entities/TenantPlan";
+import type {
+  TenantPlan,
+  TenantFeatureDefinition,
+  TenantPlanPromotion,
+} from "../../domain/entities/TenantPlan";
 import type {
   CreateTenantPlanRequest,
   UpdateTenantPlanRequest,
@@ -64,7 +68,9 @@ export class TenantPlanRepository implements ITenantPlanRepository {
   }
 
   // ── Feature Definitions ──
-  async getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinition>> {
+  async getFeatureDefinitions(
+    params: PaginationParams & { category?: string }
+  ): Promise<PagedResult<TenantFeatureDefinition>> {
     const result = await this.service.getFeatureDefinitions(params);
     return {
       items: result.items.map((m) => TenantPlanMapper.toFeatureDefinitionEntity(m)),
@@ -92,7 +98,10 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     return response.id;
   }
 
-  async updateFeatureDefinition(id: string, request: UpdateFeatureDefinitionRequest): Promise<void> {
+  async updateFeatureDefinition(
+    id: string,
+    request: UpdateFeatureDefinitionRequest
+  ): Promise<void> {
     await this.service.updateFeatureDefinition(id, request);
   }
 
@@ -101,7 +110,9 @@ export class TenantPlanRepository implements ITenantPlanRepository {
   }
 
   // ── Promotions ──
-  async getPromotions(params: PaginationParams & { planId?: string }): Promise<PagedResult<TenantPlanPromotion>> {
+  async getPromotions(
+    params: PaginationParams & { planId?: string }
+  ): Promise<PagedResult<TenantPlanPromotion>> {
     const result = await this.service.getPromotions(params);
     return {
       items: result.items.map((m) => TenantPlanMapper.toPromotionEntity(m)),
@@ -127,7 +138,10 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     await this.service.deletePromotion(id);
   }
 
-  async validatePromoCode(code: string, planId?: string): Promise<{ isValid: boolean; message?: string }> {
+  async validatePromoCode(
+    code: string,
+    planId?: string
+  ): Promise<{ isValid: boolean; message?: string }> {
     return this.service.validatePromoCode(code, planId);
   }
 }

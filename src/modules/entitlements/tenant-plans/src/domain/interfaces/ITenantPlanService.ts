@@ -34,7 +34,9 @@ export interface ITenantPlanService {
   archive(id: string): Promise<void>;
 
   // Feature Definitions
-  getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinitionListModel>>;
+  getFeatureDefinitions(
+    params: PaginationParams & { category?: string }
+  ): Promise<PagedResult<TenantFeatureDefinitionListModel>>;
   getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinitionModel>;
   getActiveFeatureDefinitions(): Promise<TenantFeatureDefinitionListModel[]>;
   createFeatureDefinition(data: CreateFeatureDefinitionRequest): Promise<{ id: string }>;
@@ -42,7 +44,9 @@ export interface ITenantPlanService {
   deleteFeatureDefinition(id: string): Promise<void>;
 
   // Promotions
-  getPromotions(params: PaginationParams & { planId?: string }): Promise<PagedResult<TenantPlanPromotionListModel>>;
+  getPromotions(
+    params: PaginationParams & { planId?: string }
+  ): Promise<PagedResult<TenantPlanPromotionListModel>>;
   createPromotion(data: CreatePromotionRequest): Promise<{ id: string }>;
   updatePromotion(id: string, data: UpdatePromotionRequest): Promise<void>;
   deletePromotion(id: string): Promise<void>;

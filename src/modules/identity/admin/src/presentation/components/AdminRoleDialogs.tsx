@@ -327,7 +327,12 @@ export function ResetPasswordDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSubmit} loading={isLoading} disabled={!isValid} variant="destructive">
+          <Button
+            onClick={handleSubmit}
+            loading={isLoading}
+            disabled={!isValid}
+            variant="destructive"
+          >
             {t("admin.resetPassword") || "Reset Password"}
           </Button>
         </div>

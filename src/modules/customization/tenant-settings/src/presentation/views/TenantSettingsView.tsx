@@ -65,9 +65,12 @@ export function TenantSettingsView() {
     <div className="space-y-6">
       {/* System Defaults Banner */}
       {vm.mode === "system" && (
-        <div className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2.5 text-white text-sm font-medium">
+        <div className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white">
           <Building2 className="h-4 w-4 shrink-0" />
-          <span>{vm.t("tenantSettings.systemBanner") || "Editing System Defaults — these apply to all tenants without custom settings"}</span>
+          <span>
+            {vm.t("tenantSettings.systemBanner") ||
+              "Editing System Defaults — these apply to all tenants without custom settings"}
+          </span>
         </div>
       )}
 
@@ -89,14 +92,16 @@ export function TenantSettingsView() {
 
 // Small helper components to keep main view clean
 
-function PageHeader({ mode }: { mode: 'my' | 'system' | 'tenant' }) {
+function PageHeader({ mode }: { mode: "my" | "system" | "tenant" }) {
   const { t } = useI18n();
-  const title = mode === "system"
-    ? (t("tenantSettings.systemTitle") || "System Settings")
-    : (t("tenantSettings.title") || "Tenant Settings");
-  const description = mode === "system"
-    ? (t("tenantSettings.systemDescription") || "Platform-wide defaults inherited by all tenants")
-    : (t("tenantSettings.description") || "Manage your tenant settings");
+  const title =
+    mode === "system"
+      ? t("tenantSettings.systemTitle") || "System Settings"
+      : t("tenantSettings.title") || "Tenant Settings";
+  const description =
+    mode === "system"
+      ? t("tenantSettings.systemDescription") || "Platform-wide defaults inherited by all tenants"
+      : t("tenantSettings.description") || "Manage your tenant settings";
 
   return (
     <div>
@@ -121,4 +126,3 @@ function SaveActions({ vm }: { vm: ReturnType<typeof useTenantSettingsViewModel>
     </div>
   );
 }
-

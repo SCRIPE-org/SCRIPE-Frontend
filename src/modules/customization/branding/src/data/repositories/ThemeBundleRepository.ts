@@ -6,8 +6,14 @@
  * @module customization/data
  */
 import type { ThemeBundle } from "../../domain/entities/ThemeBundle";
-import type { BundlePagedResult, IThemeBundleRepository } from "../../domain/interfaces/IThemeBundleRepository";
-import type { BundleListParams, SaveBundlePayload } from "../../domain/interfaces/IThemeBundleService";
+import type {
+  BundlePagedResult,
+  IThemeBundleRepository,
+} from "../../domain/interfaces/IThemeBundleRepository";
+import type {
+  BundleListParams,
+  SaveBundlePayload,
+} from "../../domain/interfaces/IThemeBundleService";
 import type { IThemeBundleService } from "../../domain/interfaces/IThemeBundleService";
 import { ThemeBundleMapper } from "../mappers/ThemeBundleMapper";
 

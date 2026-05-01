@@ -2,13 +2,12 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const TenantPlanComparisonView = dynamic(
-  () =>
-    import(
-      "@modules/entitlements/tenant-plans/src/presentation/views/TenantPlanComparisonView"
-    ).then((m) => ({
+const TenantPlanComparisonView = dynamic(() =>
+  import("@modules/entitlements/tenant-plans/src/presentation/views/TenantPlanComparisonView").then(
+    (m) => ({
       default: m.TenantPlanComparisonView,
-    }))
+    })
+  )
 );
 
 export const metadata: Metadata = {

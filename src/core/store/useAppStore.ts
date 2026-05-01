@@ -29,7 +29,11 @@ interface AppState {
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
-  setSubscriptionInfo: (status: string | null, gracePhase: string | null, editionName: string | null) => void;
+  setSubscriptionInfo: (
+    status: string | null,
+    gracePhase: string | null,
+    editionName: string | null
+  ) => void;
 
   // Must Change Password (force password change on first login)
   mustChangePassword: boolean;
@@ -149,7 +153,9 @@ export const useAppStore = create<AppState>()(
                 state?.setSidebarOpen(prefCollapsed !== "true");
               }
             }
-          } catch { /* ignore parse errors */ }
+          } catch {
+            /* ignore parse errors */
+          }
         }
       },
     }

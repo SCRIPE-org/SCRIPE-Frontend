@@ -38,7 +38,16 @@ export interface UserProfileJson {
   createdAt: string;
   modifiedAt?: string | null;
   notes?: string | null;
-  roles: { roleId: string; roleNameEn: string; roleNameAr: string; roleCode: string; tenantId?: string | null; tenantName?: string | null; inheritToChildren?: boolean; expiresAt?: string | null }[];
+  roles: {
+    roleId: string;
+    roleNameEn: string;
+    roleNameAr: string;
+    roleCode: string;
+    tenantId?: string | null;
+    tenantName?: string | null;
+    inheritToChildren?: boolean;
+    expiresAt?: string | null;
+  }[];
   permissions: string[];
   tenantId?: string | null;
   tenantName?: string | null;
@@ -76,7 +85,7 @@ export class LoginRequestModel {
     public readonly password: string,
     public readonly tenantId?: string,
     public readonly deviceInfo?: string
-  ) { }
+  ) {}
 
   static fromJson(json: LoginRequestJson): LoginRequestModel {
     return new LoginRequestModel(json.identifier, json.password, json.tenantId, json.deviceInfo);
@@ -105,7 +114,7 @@ export class LoginResponseModel {
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
     public readonly userProfile: UserProfileJson | null = null
-  ) { }
+  ) {}
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
     return new LoginResponseModel(

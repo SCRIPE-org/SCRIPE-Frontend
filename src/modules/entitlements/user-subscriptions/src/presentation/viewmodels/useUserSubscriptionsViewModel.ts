@@ -23,35 +23,32 @@ export function useUserSubscriptionsViewModel() {
   const queryClient = useQueryClient();
   const queryKey = ["entitlements", "user-subscriptions"];
 
-  const vm = useCrudViewModel<UserSubscription, CreateUserSubscriptionRequest, never>(
-    queryKey,
-    {
-      getAll: async (params) => {
-        const res = await userSubscriptionRepository.getAll({
-          page: params.page,
+  const vm = useCrudViewModel<UserSubscription, CreateUserSubscriptionRequest, never>(queryKey, {
+    getAll: async (params) => {
+      const res = await userSubscriptionRepository.getAll({
+        page: params.page,
+        pageSize: params.pageSize,
+        search: params.search,
+      });
+      return {
+        items: res.items || [],
+        pagination: {
+          itemsCount: res.totalCount,
           pageSize: params.pageSize,
-          search: params.search,
-        });
-        return {
-          items: res.items || [],
-          pagination: {
-            itemsCount: res.totalCount,
-            pageSize: params.pageSize,
-            page: params.page,
-            pagesCount: res.totalPages,
-          },
-        };
-      },
-      create: async (data) => {
-        const id = await userSubscriptionRepository.create(data);
-        success({
-          title: t("entitlements.userSubscriptions.assigned"),
-          description: t("entitlements.userSubscriptions.assignedDesc"),
-        });
-        return { id } as unknown as UserSubscription;
-      },
-    }
-  );
+          page: params.page,
+          pagesCount: res.totalPages,
+        },
+      };
+    },
+    create: async (data) => {
+      const id = await userSubscriptionRepository.create(data);
+      success({
+        title: t("entitlements.userSubscriptions.assigned"),
+        description: t("entitlements.userSubscriptions.assignedDesc"),
+      });
+      return { id } as unknown as UserSubscription;
+    },
+  });
 
   // ── Available Plans (static list for the Create form plan selector) ──────────
   // Plans are a relatively small set (rarely > 20 per tenant) — fetch all upfront.
@@ -76,7 +73,7 @@ export function useUserSubscriptionsViewModel() {
     try {
       const res = await userSubscriptionRepository.searchUsers(query);
       return (res ?? []).map((u) => ({
-        value: u.id,               // encrypted user ID — sent as-is to backend
+        value: u.id, // encrypted user ID — sent as-is to backend
         label: `${u.name} (${u.email})`,
       }));
     } catch {

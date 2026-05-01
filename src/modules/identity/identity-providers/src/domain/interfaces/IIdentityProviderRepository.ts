@@ -1,25 +1,25 @@
 import type {
-      IdentityProvider,
-      IdentityProviderListItem,
-      TestConnectionResult,
-      CreateIdentityProviderRequest,
-      UpdateIdentityProviderRequest,
+  IdentityProvider,
+  IdentityProviderListItem,
+  TestConnectionResult,
+  CreateIdentityProviderRequest,
+  UpdateIdentityProviderRequest,
 } from "../entities/IdentityProvider";
 
 export interface IIdentityProviderRepository {
-      getAll(params: {
-            page: number;
-            pageSize: number;
-            search?: string;
-      }): Promise<{ items: IdentityProviderListItem[]; totalCount: number }>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<{ items: IdentityProviderListItem[]; totalCount: number }>;
 
-      getById(id: string): Promise<IdentityProvider>;
+  getById(id: string): Promise<IdentityProvider>;
 
-      create(data: CreateIdentityProviderRequest): Promise<{ id: string }>;
+  create(data: CreateIdentityProviderRequest): Promise<{ id: string }>;
 
-      update(id: string, data: UpdateIdentityProviderRequest): Promise<void>;
+  update(id: string, data: UpdateIdentityProviderRequest): Promise<void>;
 
-      remove(id: string): Promise<void>;
+  remove(id: string): Promise<void>;
 
-      testConnection(id: string): Promise<TestConnectionResult>;
+  testConnection(id: string): Promise<TestConnectionResult>;
 }

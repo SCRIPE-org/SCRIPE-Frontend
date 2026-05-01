@@ -16,8 +16,17 @@ import { ErrorBoundary } from "@core/ui/error-boundary";
 import { TooltipProvider } from "@core/ui/tooltip";
 
 // Lazy-load SignalR providers (~100KB @microsoft/signalr) — not needed for initial render
-const SignalRProvider = dynamic(() => import("@core/providers/signalr-provider").then(m => ({ default: m.SignalRProvider })), { ssr: false });
-const NotificationSignalRProvider = dynamic(() => import("@core/providers/notification-provider").then(m => ({ default: m.NotificationSignalRProvider })), { ssr: false });
+const SignalRProvider = dynamic(
+  () => import("@core/providers/signalr-provider").then((m) => ({ default: m.SignalRProvider })),
+  { ssr: false }
+);
+const NotificationSignalRProvider = dynamic(
+  () =>
+    import("@core/providers/notification-provider").then((m) => ({
+      default: m.NotificationSignalRProvider,
+    })),
+  { ssr: false }
+);
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -60,33 +69,30 @@ const queryClient = new QueryClient({
 export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        disableTransitionOnChange={false}
-      >
+      <ThemeProvider attribute="class" disableTransitionOnChange={false}>
         <TooltipProvider>
-        <ServiceProvider>
-          <SettingsProvider>
-            <I18nProvider>
-              <ErrorBoundary>
-                <PermissionProvider>
-                  <TenantContextProvider>
-                    <SignalRProvider>
-                      <NotificationSignalRProvider>
-                        <NavigationProvider>
-                          <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
-                            <RouteGuard>{children}</RouteGuard>
-                          </AuthRefreshProvider>
-                        </NavigationProvider>
-                      </NotificationSignalRProvider>
-                    </SignalRProvider>
-                  </TenantContextProvider>
-                </PermissionProvider>
-              </ErrorBoundary>
-              <EnhancedToaster />
-            </I18nProvider>
-          </SettingsProvider>
-        </ServiceProvider>
+          <ServiceProvider>
+            <SettingsProvider>
+              <I18nProvider>
+                <ErrorBoundary>
+                  <PermissionProvider>
+                    <TenantContextProvider>
+                      <SignalRProvider>
+                        <NotificationSignalRProvider>
+                          <NavigationProvider>
+                            <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
+                              <RouteGuard>{children}</RouteGuard>
+                            </AuthRefreshProvider>
+                          </NavigationProvider>
+                        </NotificationSignalRProvider>
+                      </SignalRProvider>
+                    </TenantContextProvider>
+                  </PermissionProvider>
+                </ErrorBoundary>
+                <EnhancedToaster />
+              </I18nProvider>
+            </SettingsProvider>
+          </ServiceProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

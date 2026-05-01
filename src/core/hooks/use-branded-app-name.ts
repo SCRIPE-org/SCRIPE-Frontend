@@ -11,6 +11,6 @@
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 
 export function useBrandedAppName(): string {
-      const { appName } = useTenantBranding();
-      return appName;
+  const { appName } = useTenantBranding();
+  return appName;
 }

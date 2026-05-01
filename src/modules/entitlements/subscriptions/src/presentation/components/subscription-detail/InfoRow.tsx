@@ -19,7 +19,7 @@ export function InfoRow({ icon, label, value, muted = false }: InfoRowProps) {
         {icon}
         <span>{label}</span>
       </div>
-      <div className={cn("text-sm font-medium text-end", muted && "text-muted-foreground")}>
+      <div className={cn("text-end text-sm font-medium", muted && "text-muted-foreground")}>
         {value || "—"}
       </div>
     </div>

@@ -47,17 +47,18 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   // Fetch available roles for the VALID scope
   const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
     queryKey: ["roles-for-manage", scopeTenantId],
-    queryFn: () => scopeTenantId
-      ? roleRepository.getAll({
-        page: 1,
-        pageSize: 100,
-        tenantId: scopeTenantId,
-        strict: true,
-      })
-      : roleRepository.getMyTenantRoles({
-        page: 1,
-        pageSize: 100,
-      }),
+    queryFn: () =>
+      scopeTenantId
+        ? roleRepository.getAll({
+            page: 1,
+            pageSize: 100,
+            tenantId: scopeTenantId,
+            strict: true,
+          })
+        : roleRepository.getMyTenantRoles({
+            page: 1,
+            pageSize: 100,
+          }),
     enabled: open && !!admin,
   });
 
@@ -92,13 +93,18 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   const [prevCurrentRoles, setPrevCurrentRoles] = useState(currentRoles);
   const [prevRolesData, setPrevRolesData] = useState(rolesData);
   const [prevScopeTenantId, setPrevScopeTenantId] = useState(scopeTenantId);
-  
-  if (open !== prevOpen || currentRoles !== prevCurrentRoles || rolesData !== prevRolesData || scopeTenantId !== prevScopeTenantId) {
+
+  if (
+    open !== prevOpen ||
+    currentRoles !== prevCurrentRoles ||
+    rolesData !== prevRolesData ||
+    scopeTenantId !== prevScopeTenantId
+  ) {
     setPrevOpen(open);
     setPrevCurrentRoles(currentRoles);
     setPrevRolesData(rolesData);
     setPrevScopeTenantId(scopeTenantId);
-    
+
     if (open && currentRoles && rolesData?.items) {
       const scopedCurrentRoles = currentRoles.filter((r) => (r.tenantId || "") === scopeTenantId);
       const matchedIds: string[] = [];

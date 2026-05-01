@@ -6,10 +6,7 @@
  *
  * @module tenant-settings/domain
  */
-import type {
-  TenantSettingsModel,
-  UpdateTenantSettingsRequest,
-} from "../types/SettingsTypes";
+import type { TenantSettingsModel, UpdateTenantSettingsRequest } from "../types/SettingsTypes";
 
 export interface ITenantSettingsService {
   /**

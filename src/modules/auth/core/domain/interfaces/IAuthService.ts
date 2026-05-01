@@ -17,7 +17,10 @@ export interface IAuthService {
   getMe<T>(): Promise<T>;
   impersonate(adminId: string): Promise<LoginResponseModel>;
   stopImpersonation(): Promise<LoginResponseModel>;
-  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> };
+  buildOidcConsentForm(
+    searchParams: URLSearchParams,
+    accessToken: string
+  ): { action: string; params: Record<string, string> };
   /** Link an external SSO account to the current admin profile */
   linkExternalLogin(data: {
     identityProviderId: string;

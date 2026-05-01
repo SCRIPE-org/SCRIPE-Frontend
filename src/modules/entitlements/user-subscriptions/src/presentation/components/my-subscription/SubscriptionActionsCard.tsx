@@ -54,7 +54,7 @@ export function SubscriptionActionsCard({
         <CardContent className="flex flex-wrap gap-3">
           {/* Stripe Customer Portal placeholder */}
           <Button variant="outline" disabled>
-            <CreditCard className="h-4 w-4 me-2" />
+            <CreditCard className="me-2 h-4 w-4" />
             {t("entitlements.mySubscription.manageBilling") || "Manage Billing"}
             <span className="ms-1.5 text-xs text-muted-foreground">(Coming Soon)</span>
           </Button>
@@ -65,7 +65,7 @@ export function SubscriptionActionsCard({
               onClick={() => setShowCancelDialog(true)}
               loading={isCancelling}
             >
-              {!isCancelling && <XCircle className="h-4 w-4 me-2" />}
+              {!isCancelling && <XCircle className="me-2 h-4 w-4" />}
               {t("entitlements.mySubscription.cancel") || "Cancel Subscription"}
             </Button>
           )}
@@ -73,7 +73,8 @@ export function SubscriptionActionsCard({
           {subscription.isCancelled && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
-              {t("entitlements.mySubscription.alreadyCancelled") || "This subscription has been cancelled."}
+              {t("entitlements.mySubscription.alreadyCancelled") ||
+                "This subscription has been cancelled."}
             </div>
           )}
         </CardContent>

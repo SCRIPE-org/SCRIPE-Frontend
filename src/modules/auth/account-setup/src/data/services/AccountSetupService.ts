@@ -45,10 +45,9 @@ export const AccountSetupService = {
    * Validate a setup token (public, no auth)
    */
   async validateToken(token: string): Promise<ValidateTokenResponse> {
-    const { data } = await api.get<ValidateTokenResponse>(
-      `/v1/account-setup/validate`,
-      { params: { token } }
-    );
+    const { data } = await api.get<ValidateTokenResponse>(`/v1/account-setup/validate`, {
+      params: { token },
+    });
     return data;
   },
 
@@ -56,10 +55,7 @@ export const AccountSetupService = {
    * Activate account — set password and consume the token (public, no auth)
    */
   async activateAccount(request: ActivateAccountRequest): Promise<ActivateAccountResponse> {
-    const { data } = await api.post<ActivateAccountResponse>(
-      `/v1/account-setup/activate`,
-      request
-    );
+    const { data } = await api.post<ActivateAccountResponse>(`/v1/account-setup/activate`, request);
     return data;
   },
 };

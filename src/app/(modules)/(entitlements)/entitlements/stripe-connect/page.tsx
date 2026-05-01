@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const ConnectOnboardingView = dynamic(
-  () =>
-    import("@modules/entitlements/stripe-connect").then((m) => ({
-      default: m.ConnectOnboardingView,
-    }))
+const ConnectOnboardingView = dynamic(() =>
+  import("@modules/entitlements/stripe-connect").then((m) => ({
+    default: m.ConnectOnboardingView,
+  }))
 );
 
 export const metadata: Metadata = {

@@ -4,32 +4,32 @@
  */
 
 export interface FeatureModel {
-      id: string;
-      name: string;
-      displayNameEn?: string;
-      displayNameAr?: string;
-      category?: string;
-      sortOrder: number;
-      isVisibleInUI: boolean;
-      valueType: string;
-      defaultValue: string;
-      module: string;
-      description?: string;
-      isSystem: boolean;
-      createdAt: string;
-      modifiedAt?: string;
+  id: string;
+  name: string;
+  displayNameEn?: string;
+  displayNameAr?: string;
+  category?: string;
+  sortOrder: number;
+  isVisibleInUI: boolean;
+  valueType: string;
+  defaultValue: string;
+  module: string;
+  description?: string;
+  isSystem: boolean;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 export interface TenantEffectiveFeatureModel {
-      featureId: string;
-      name: string;
-      displayNameEn?: string;
-      displayNameAr?: string;
-      valueType: string;
-      editionValue: string;
-      overrideValue?: string | null;
-      effectiveValue: string;
-      category?: string;
-      module?: string;
-      hasOverride: boolean;
+  featureId: string;
+  name: string;
+  displayNameEn?: string;
+  displayNameAr?: string;
+  valueType: string;
+  editionValue: string;
+  overrideValue?: string | null;
+  effectiveValue: string;
+  category?: string;
+  module?: string;
+  hasOverride: boolean;
 }

@@ -45,10 +45,7 @@ interface AdminsViewProps {
 }
 
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
-  useModuleLocales(
-    () => import("../../../locales"),
-    "admin"
-  );
+  useModuleLocales(() => import("../../../locales"), "admin");
   const { t, language } = useI18n();
   const { isSuperAdmin } = usePermissions();
   const currentUser = useAppStore((state) => state.user);
@@ -175,7 +172,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           label: t("admin.email") || "Email",
           render: (_val: unknown, admin: Admin) =>
             admin.email ? (
-              <a href={`mailto:${admin.email}`} className="text-primary hover:underline text-sm">
+              <a href={`mailto:${admin.email}`} className="text-sm text-primary hover:underline">
                 {admin.email}
               </a>
             ) : (
@@ -261,7 +258,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Pencil className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
+            show: (item: Admin) =>
+              !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("admin.impersonate") || "Impersonate",
@@ -269,7 +267,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <UserCheck className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_IMPERSONATE,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
+            show: (item: Admin) =>
+              !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("admin.transfer") || "Transfer",
@@ -315,7 +314,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Shield className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
+            show: (item: Admin) =>
+              !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("admin.resetPassword") || "Reset Password",
@@ -324,7 +324,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             className: "text-orange-600 hover:text-orange-700",
             icon: <Settings className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
+            show: (item: Admin) =>
+              !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("userGroups.assignToGroup") || "Assign to Group",
@@ -368,13 +369,17 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           label: t("common.activate") || "Activate",
           icon: <ShieldCheck className="h-4 w-4" />,
-          onClick: async (ids: string[]) => { await handleBulkActivate(ids); },
+          onClick: async (ids: string[]) => {
+            await handleBulkActivate(ids);
+          },
           variant: "outline" as const,
         },
         {
           label: t("common.deactivate") || "Deactivate",
           icon: <ShieldAlert className="h-4 w-4" />,
-          onClick: async (ids: string[]) => { await handleBulkDeactivate(ids); },
+          onClick: async (ids: string[]) => {
+            await handleBulkDeactivate(ids);
+          },
           variant: "outline" as const,
         },
         {
@@ -390,7 +395,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           label: t("common.delete") || "Delete",
           icon: <Trash2 className="h-4 w-4" />,
-          onClick: async (ids: string[]) => { await handleBulkDelete(ids); },
+          onClick: async (ids: string[]) => {
+            await handleBulkDelete(ids);
+          },
           variant: "destructive" as const,
           requiresConfirmation: true,
         },

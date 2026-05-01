@@ -2,45 +2,79 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "frontend.crudSystem.intro" },
+  { type: "paragraph", contentKey: "frontend.crudSystem.intro" },
 
-      // ─── Architecture Overview ────────────────────────────────
+  // ─── Architecture Overview ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "CRUD System Architecture",
+    direction: "vertical",
+    nodes: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.crudSystem.architectureTitle", id: "architecture",
+        id: "view",
+        label: "GenericCrudView",
+        type: "primary",
+        description: "Orchestrates table, dialogs, pagination",
       },
       {
-            type: "flowchart",
-            title: "CRUD System Architecture",
-            direction: "vertical",
-            nodes: [
-                  { id: "view", label: "GenericCrudView", type: "primary", description: "Orchestrates table, dialogs, pagination" },
-                  { id: "datatable", label: "DataTable", type: "info", description: "Flexible table with sorting, search, selection" },
-                  { id: "formDialog", label: "FormDialog", type: "success", description: "Create/Edit form in a dialog" },
-                  { id: "confirm", label: "ConfirmDialog", type: "danger", description: "Delete/bulk action confirmation" },
-                  { id: "viewModel", label: "useCrudViewModel", type: "warning", description: "Hook: all CRUD state & mutations" },
-                  { id: "repo", label: "ICrudRepository", type: "default", description: "Data access abstraction" },
-            ],
-            connections: [
-                  { from: "view", to: "datatable" },
-                  { from: "view", to: "formDialog" },
-                  { from: "view", to: "confirm" },
-                  { from: "view", to: "viewModel", label: "uses" },
-                  { from: "viewModel", to: "repo", label: "calls" },
-            ],
+        id: "datatable",
+        label: "DataTable",
+        type: "info",
+        description: "Flexible table with sorting, search, selection",
       },
+      {
+        id: "formDialog",
+        label: "FormDialog",
+        type: "success",
+        description: "Create/Edit form in a dialog",
+      },
+      {
+        id: "confirm",
+        label: "ConfirmDialog",
+        type: "danger",
+        description: "Delete/bulk action confirmation",
+      },
+      {
+        id: "viewModel",
+        label: "useCrudViewModel",
+        type: "warning",
+        description: "Hook: all CRUD state & mutations",
+      },
+      {
+        id: "repo",
+        label: "ICrudRepository",
+        type: "default",
+        description: "Data access abstraction",
+      },
+    ],
+    connections: [
+      { from: "view", to: "datatable" },
+      { from: "view", to: "formDialog" },
+      { from: "view", to: "confirm" },
+      { from: "view", to: "viewModel", label: "uses" },
+      { from: "viewModel", to: "repo", label: "calls" },
+    ],
+  },
 
-      // ─── useCrudViewModel ─────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.crudSystem.viewModelTitle", id: "use-crud-viewmodel",
-      },
-      { type: "paragraph", contentKey: "frontend.crudSystem.viewModelIntro" },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "useCrudViewModel — Configuration",
-            code: `interface CrudViewModelConfig<T, TCreate, TUpdate> {
+  // ─── useCrudViewModel ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.viewModelTitle",
+    id: "use-crud-viewmodel",
+  },
+  { type: "paragraph", contentKey: "frontend.crudSystem.viewModelIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useCrudViewModel — Configuration",
+    code: `interface CrudViewModelConfig<T, TCreate, TUpdate> {
   // Data fetching
   queryKey: string;
   fetchFn: (params: PaginationParams) => Promise<PaginatedResult<T>>;
@@ -73,12 +107,12 @@ const sections: DocSection[] = [
   onDeleteSuccess?: () => void;
   onError?: (error: Error) => void;
 }`,
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "useCrudViewModel — Returned Interface",
-            code: `interface CrudViewModelReturn<T> {
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useCrudViewModel — Returned Interface",
+    code: `interface CrudViewModelReturn<T> {
   // Data
   items: T[];
   totalCount: number;
@@ -129,19 +163,21 @@ const sections: DocSection[] = [
   bulkDelete: () => void;
   bulkAction: (action: string) => void;
 }`,
-      },
+  },
 
-      // ─── GenericCrudView ──────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.crudSystem.genericCrudViewTitle", id: "generic-crud-view",
-      },
-      { type: "paragraph", contentKey: "frontend.crudSystem.genericCrudViewIntro" },
-      {
-            type: "code",
-            language: "tsx",
-            filename: "GenericCrudView — Usage Example",
-            code: `<GenericCrudView
+  // ─── GenericCrudView ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.genericCrudViewTitle",
+    id: "generic-crud-view",
+  },
+  { type: "paragraph", contentKey: "frontend.crudSystem.genericCrudViewIntro" },
+  {
+    type: "code",
+    language: "tsx",
+    filename: "GenericCrudView — Usage Example",
+    code: `<GenericCrudView
   crud={vm.table}
   columns={vm.columns}
   title={t("admins.title")}
@@ -159,18 +195,20 @@ const sections: DocSection[] = [
   headerSlot={<FilterSection {...vm.filters} />}
   beforeTableSlot={<StatisticsSection {...vm.statistics} />}
 />`,
-      },
+  },
 
-      // ─── Column System ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.crudSystem.columnsTitle", id: "column-system",
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "Column Helper API — All Builder Methods",
-            code: `const column = createColumnHelper<Admin>();
+  // ─── Column System ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.columnsTitle",
+    id: "column-system",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Column Helper API — All Builder Methods",
+    code: `const column = createColumnHelper<Admin>();
 
 // Built-in column types:
 column.index("No");                        // Auto-incrementing row number
@@ -207,37 +245,65 @@ column.custom("actions", t("actions"), (row) => (  // Fully custom
     onDelete={() => vm.table.openDeleteDialog(row)}
   />
 ));`,
-      },
+  },
 
-      // ─── DataTable ────────────────────────────────────────────
+  // ─── DataTable ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.dataTableTitle",
+    id: "data-table",
+  },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.crudSystem.dataTableTitle", id: "data-table",
+        icon: "🔍",
+        titleKey: "frontend.crudSystem.searchTitle",
+        descriptionKey: "frontend.crudSystem.searchDesc",
       },
       {
-            type: "feature-grid",
-            columns: 3,
-            items: [
-                  { icon: "🔍", titleKey: "frontend.crudSystem.searchTitle", descriptionKey: "frontend.crudSystem.searchDesc" },
-                  { icon: "🔄", titleKey: "frontend.crudSystem.sortingTitle", descriptionKey: "frontend.crudSystem.sortingDesc" },
-                  { icon: "📄", titleKey: "frontend.crudSystem.paginationTitle", descriptionKey: "frontend.crudSystem.paginationDesc" },
-                  { icon: "☑️", titleKey: "frontend.crudSystem.selectionTitle", descriptionKey: "frontend.crudSystem.selectionDesc" },
-                  { icon: "📱", titleKey: "frontend.crudSystem.responsiveTitle", descriptionKey: "frontend.crudSystem.responsiveDesc" },
-                  { icon: "🌐", titleKey: "frontend.crudSystem.rtlTitle", descriptionKey: "frontend.crudSystem.rtlDesc" },
-            ],
+        icon: "🔄",
+        titleKey: "frontend.crudSystem.sortingTitle",
+        descriptionKey: "frontend.crudSystem.sortingDesc",
       },
+      {
+        icon: "📄",
+        titleKey: "frontend.crudSystem.paginationTitle",
+        descriptionKey: "frontend.crudSystem.paginationDesc",
+      },
+      {
+        icon: "☑️",
+        titleKey: "frontend.crudSystem.selectionTitle",
+        descriptionKey: "frontend.crudSystem.selectionDesc",
+      },
+      {
+        icon: "📱",
+        titleKey: "frontend.crudSystem.responsiveTitle",
+        descriptionKey: "frontend.crudSystem.responsiveDesc",
+      },
+      {
+        icon: "🌐",
+        titleKey: "frontend.crudSystem.rtlTitle",
+        descriptionKey: "frontend.crudSystem.rtlDesc",
+      },
+    ],
+  },
 
-      // ─── Form System ─────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.crudSystem.formTitle", id: "form-system",
-      },
-      { type: "paragraph", contentKey: "frontend.crudSystem.formIntro" },
-      {
-            type: "code",
-            language: "tsx",
-            filename: "GenericForm + FormDialog — Usage",
-            code: `// GenericForm provides schema-driven form rendering
+  // ─── Form System ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.formTitle",
+    id: "form-system",
+  },
+  { type: "paragraph", contentKey: "frontend.crudSystem.formIntro" },
+  {
+    type: "code",
+    language: "tsx",
+    filename: "GenericForm + FormDialog — Usage",
+    code: `// GenericForm provides schema-driven form rendering
 <GenericForm
   schema={adminSchema}
   defaultValues={editingAdmin}
@@ -271,21 +337,21 @@ column.custom("actions", t("actions"), (row) => (  // Fully custom
   variant="danger"
   isLoading={crud.remove.isPending}
 />`,
-      },
-      {
-            type: "info",
-            variant: "tip",
-            contentKey: "frontend.crudSystem.extensionTip",
-      },
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "frontend.crudSystem.extensionTip",
+  },
 ];
 
 registerPage({
-      slug: "frontend/crud-system",
-      titleKey: "frontend.crudSystem.title",
-      descriptionKey: "frontend.crudSystem.description",
-      category: "frontend",
-      order: 2,
-      sections,
-      relatedSlugs: ["frontend/state-management", "architecture/frontend", "frontend/localization"],
-      lastUpdated: "2026-02-20",
+  slug: "frontend/crud-system",
+  titleKey: "frontend.crudSystem.title",
+  descriptionKey: "frontend.crudSystem.description",
+  category: "frontend",
+  order: 2,
+  sections,
+  relatedSlugs: ["frontend/state-management", "architecture/frontend", "frontend/localization"],
+  lastUpdated: "2026-02-20",
 });

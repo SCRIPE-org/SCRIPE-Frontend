@@ -18,15 +18,7 @@ import { Separator } from "@core/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import type { MenuTreeNode, MenuItemOverrideInfo } from "../../domain/entities/MenuItem";
 import type { OverrideFormData, FlatMenuItem } from "../viewmodels/useMenuCustomizeViewModel";
-import {
-  Save,
-  RotateCcw,
-  FileText,
-  FolderOpen,
-  EyeOff,
-  Eye,
-  ArrowRight,
-} from "lucide-react";
+import { Save, RotateCcw, FileText, FolderOpen, EyeOff, Eye, ArrowRight } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */

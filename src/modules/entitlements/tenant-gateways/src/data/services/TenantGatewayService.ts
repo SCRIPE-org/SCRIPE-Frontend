@@ -10,9 +10,7 @@ export class TenantGatewayService implements ITenantGatewayService {
   constructor(private readonly api: IApiService) {}
 
   async getMyGateways(): Promise<TenantGatewayModel[]> {
-    return this.api.get<TenantGatewayModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_GATEWAYS.LIST
-    );
+    return this.api.get<TenantGatewayModel[]>(API_ENDPOINTS.ENTITLEMENTS.TENANT_GATEWAYS.LIST);
   }
 
   async configureGateway(data: ConfigureGatewayModel): Promise<{ id: string }> {
@@ -30,8 +28,6 @@ export class TenantGatewayService implements ITenantGatewayService {
   }
 
   async removeGateway(gatewayType: string): Promise<void> {
-    await this.api.delete(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_GATEWAYS.REMOVE(gatewayType)
-    );
+    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.TENANT_GATEWAYS.REMOVE(gatewayType));
   }
 }

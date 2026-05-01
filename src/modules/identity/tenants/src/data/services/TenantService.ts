@@ -40,7 +40,7 @@ import type {
 } from "../models/TenantSubscription";
 
 export class TenantService implements ITenantService {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
   async getAll(params: ServiceTenantListParams): Promise<TenantListResult> {
     const url = buildUrl(API_ENDPOINTS.TENANTS.LIST, {
@@ -192,7 +192,11 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async getAvailableEditions(page: number = 1, pageSize: number = 100, search?: string): Promise<PagedEditionResult> {
+  async getAvailableEditions(
+    page: number = 1,
+    pageSize: number = 100,
+    search?: string
+  ): Promise<PagedEditionResult> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.LIST, {
       page,
       pageSize,
@@ -201,18 +205,41 @@ export class TenantService implements ITenantService {
     return this.api.get<PagedEditionResult>(url);
   }
 
-  async getEditionPromotions(editionId: string): Promise<Array<{
-    id: string; name: string; type: string; discountValue: number;
-    discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
-    promoCode?: string;
-    isActive: boolean; validFrom?: string; validUntil?: string;
-    maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
-  }>> {
+  async getEditionPromotions(editionId: string): Promise<
+    Array<{
+      id: string;
+      name: string;
+      type: string;
+      discountValue: number;
+      discountCurrency?: string;
+      applicableCycle?: string;
+      requiresCode: boolean;
+      promoCode?: string;
+      isActive: boolean;
+      validFrom?: string;
+      validUntil?: string;
+      maxRedemptions?: number;
+      currentRedemptions: number;
+      firstTimeOnly: boolean;
+    }>
+  > {
     return this.api.get(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.PROMOTIONS(editionId));
   }
 
-  async validatePromoCode(editionId: string, promoCode: string): Promise<{ isValid: boolean; errorCode?: string; errorMessage?: string; promotionName?: string; discountType?: string; discountValue?: number }> {
-    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VALIDATE_PROMO_CODE(editionId), { promoCode });
+  async validatePromoCode(
+    editionId: string,
+    promoCode: string
+  ): Promise<{
+    isValid: boolean;
+    errorCode?: string;
+    errorMessage?: string;
+    promotionName?: string;
+    discountType?: string;
+    discountValue?: number;
+  }> {
+    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VALIDATE_PROMO_CODE(editionId), {
+      promoCode,
+    });
   }
 
   async assignEdition(
@@ -230,11 +257,21 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string, currency?: string, promoCode?: string, promotionId?: string): Promise<void> {
-    await this.api.put(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
-      { editionId, type, currency, promoCode, promotionId }
-    );
+  async changeEdition(
+    tenantId: string,
+    editionId: string,
+    type: string,
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<void> {
+    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId), {
+      editionId,
+      type,
+      currency,
+      promoCode,
+      promotionId,
+    });
   }
 
   async renewSubscription(tenantId: string, type: string): Promise<string> {
@@ -253,10 +290,21 @@ export class TenantService implements ITenantService {
     return res?.message || "";
   }
 
-  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string> {
+  async suspendSubscription(
+    tenantId: string,
+    reason: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string> {
     const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
-      { reason, useFallback: useFallback ?? false, refundType: refundType ?? "None", customRefundAmount }
+      {
+        reason,
+        useFallback: useFallback ?? false,
+        refundType: refundType ?? "None",
+        customRefundAmount,
+      }
     );
     return res?.message || "";
   }
@@ -269,19 +317,27 @@ export class TenantService implements ITenantService {
     return res?.message || "";
   }
 
-  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string> {
+  async cancelSubscription(
+    tenantId: string,
+    reason?: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string> {
     const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
-      { reason, useFallback: useFallback ?? false, refundType: refundType ?? "None", customRefundAmount }
+      {
+        reason,
+        useFallback: useFallback ?? false,
+        refundType: refundType ?? "None",
+        customRefundAmount,
+      }
     );
     return res?.message || "";
   }
 
   async resyncPermissions(tenantId: string): Promise<void> {
-    await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId),
-      {}
-    );
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId), {});
   }
 
   async getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]> {
@@ -290,10 +346,30 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async getResolvedFeatures(tenantId: string): Promise<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>> {
-    return this.api.get<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
-    );
+  async getResolvedFeatures(
+    tenantId: string
+  ): Promise<
+    Array<{
+      featureId: string;
+      key: string;
+      nameEn: string;
+      nameAr: string;
+      effectiveValue: string;
+      valueType: string;
+      source: string;
+    }>
+  > {
+    return this.api.get<
+      Array<{
+        featureId: string;
+        key: string;
+        nameEn: string;
+        nameAr: string;
+        effectiveValue: string;
+        valueType: string;
+        source: string;
+      }>
+    >(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId));
   }
 
   async changeCurrency(tenantId: string, currency: string): Promise<string> {
@@ -304,7 +380,10 @@ export class TenantService implements ITenantService {
     return res?.message || "";
   }
 
-  async getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport> {
+  async getDowngradeImpact(
+    tenantId: string,
+    targetEditionId: string
+  ): Promise<DowngradeImpactReport> {
     return this.api.get<DowngradeImpactReport>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
     );
@@ -318,7 +397,9 @@ export class TenantService implements ITenantService {
 
   // ── Domain Management ─────────────────────────────────────
 
-  async getDomains(tenantId: string): Promise<import("../../domain/interfaces/ITenantService").TenantDomainsResponse> {
+  async getDomains(
+    tenantId: string
+  ): Promise<import("../../domain/interfaces/ITenantService").TenantDomainsResponse> {
     return this.api.get(API_ENDPOINTS.TENANTS.DOMAINS(tenantId));
   }
 
@@ -338,4 +419,3 @@ export class TenantService implements ITenantService {
     await this.api.delete(API_ENDPOINTS.TENANTS.DOMAIN_BY_ID(tenantId, domainId));
   }
 }
-

@@ -31,7 +31,8 @@ export const ar = {
       viewModelTitle: "الـ ViewModel",
       viewTitle: "مكون العرض (View)",
       routeTitle: "المسار والتنقل",
-      checklist: "قبل الإرسال، تحقق: الوحدة تتبع نمط SOLID، المشهد أقل من 60 سطرًا، لا توجد واردات عبر الوحدات، تمت إضافة الترجمات للقواميس، وتمت إضافة مدخل القائمة.",
+      checklist:
+        "قبل الإرسال، تحقق: الوحدة تتبع نمط SOLID، المشهد أقل من 60 سطرًا، لا توجد واردات عبر الوحدات، تمت إضافة الترجمات للقواميس، وتمت إضافة مدخل القائمة.",
     },
     addBackendModule: {
       title: "إضافة وحدة للواجهة الخلفية",
@@ -61,7 +62,8 @@ export const ar = {
       diTitle: "حقن التبعيات",
       controllerTitle: "وحدة تحكم الـ API",
       registerTitle: "تسجيل الوحدة",
-      migrationNote: "لا تنس تشغيل 'dotnet ef migrations add' لإنشاء الترحيل، و 'dotnet ef database update' قبل الاعتماد.",
+      migrationNote:
+        "لا تنس تشغيل 'dotnet ef migrations add' لإنشاء الترحيل، و 'dotnet ef database update' قبل الاعتماد.",
     },
   },
 };

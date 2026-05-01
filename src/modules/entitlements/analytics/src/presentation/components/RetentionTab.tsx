@@ -35,24 +35,27 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">{t("entitlements.analytics.retention.title")}</h2>
 
-      <Card className="border border-border/30 shadow-sm overflow-hidden">
-        <CardHeader className="pb-2 bg-muted/20">
+      <Card className="overflow-hidden border border-border/30 shadow-sm">
+        <CardHeader className="bg-muted/20 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             {t("entitlements.analytics.retention.heatmap")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 overflow-x-auto">
+        <CardContent className="overflow-x-auto p-0">
           <div className="min-w-[600px]">
             {/* Header row */}
             <div className="flex border-b bg-muted/30">
-              <div className="w-24 shrink-0 px-3 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              <div className="w-24 shrink-0 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 {t("entitlements.analytics.retention.cohort")}
               </div>
-              <div className="w-16 shrink-0 px-2 py-2.5 text-xs font-bold text-muted-foreground text-center">
+              <div className="w-16 shrink-0 px-2 py-2.5 text-center text-xs font-bold text-muted-foreground">
                 #
               </div>
               {Array.from({ length: maxColumns }, (_, i) => (
-                <div key={i} className="w-14 shrink-0 px-1 py-2.5 text-xs font-bold text-muted-foreground text-center">
+                <div
+                  key={i}
+                  className="w-14 shrink-0 px-1 py-2.5 text-center text-xs font-bold text-muted-foreground"
+                >
                   M{i}
                 </div>
               ))}
@@ -62,13 +65,13 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
             {cohortData.cohorts.map((row, rowIdx) => (
               <div
                 key={row.cohortMonth}
-                className="flex border-b last:border-0 hover:bg-muted/10 transition-colors"
+                className="flex border-b transition-colors last:border-0 hover:bg-muted/10"
                 style={{ animationDelay: `${rowIdx * 30}ms` }}
               >
-                <div className="w-24 shrink-0 px-3 py-2.5 text-xs font-medium font-mono text-foreground/80">
+                <div className="w-24 shrink-0 px-3 py-2.5 font-mono text-xs font-medium text-foreground/80">
                   {formatMonth(row.cohortMonth)}
                 </div>
-                <div className="w-16 shrink-0 px-2 py-2.5 text-xs text-center font-semibold text-muted-foreground">
+                <div className="w-16 shrink-0 px-2 py-2.5 text-center text-xs font-semibold text-muted-foreground">
                   {row.initialCount}
                 </div>
                 {row.buckets.map((bucket, colIdx) => {
@@ -76,7 +79,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
                   return (
                     <div
                       key={bucket.monthOffset}
-                      className={`w-14 shrink-0 flex items-center justify-center py-2 text-center text-[10px] font-bold rounded m-0.5 transition-all duration-200 hover:scale-110 hover:shadow-md cursor-default ${style.bg} ${style.text}`}
+                      className={`m-0.5 flex w-14 shrink-0 cursor-default items-center justify-center rounded py-2 text-center text-[10px] font-bold transition-all duration-200 hover:scale-110 hover:shadow-md ${style.bg} ${style.text}`}
                       title={`${bucket.retainedCount} retained (${bucket.retentionRate.toFixed(1)}%)`}
                       style={{ animationDelay: `${(rowIdx * maxColumns + colIdx) * 15}ms` }}
                     >
@@ -92,7 +95,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
             ))}
 
             {cohortData.cohorts.length === 0 && (
-              <div className="text-center py-16 text-sm text-muted-foreground">
+              <div className="py-16 text-center text-sm text-muted-foreground">
                 {t("entitlements.analytics.retention.noData")}
               </div>
             )}
@@ -101,7 +104,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
       </Card>
 
       {/* Legend */}
-      <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
         <span className="font-semibold">{t("entitlements.analytics.retention.legend")}:</span>
         <div className="flex items-center gap-2">
           {[
@@ -114,7 +117,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
             { label: "90%+", bg: "bg-emerald-500" },
           ].map((step) => (
             <div key={step.label} className="flex items-center gap-1">
-              <div className={`w-4 h-3 rounded ${step.bg}`} />
+              <div className={`h-3 w-4 rounded ${step.bg}`} />
               <span className="text-[10px]">{step.label}</span>
             </div>
           ))}

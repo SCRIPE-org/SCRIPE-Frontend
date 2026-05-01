@@ -46,7 +46,7 @@ export function TenantsView() {
         <div className="flex items-start justify-between">
           <div>
             <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-72 mt-2" />
+            <Skeleton className="mt-2 h-4 w-72" />
           </div>
           <Skeleton className="h-10 w-32" />
         </div>
@@ -76,18 +76,14 @@ export function TenantsView() {
       {/* Tenant cards */}
       {vm.filteredTree.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="rounded-full bg-muted/50 p-4 mb-4">
+          <div className="mb-4 rounded-full bg-muted/50 p-4">
             <Inbox className="h-10 w-10 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-semibold">
-            {vm.search
-              ? t("tenant.noTenantsFound")
-              : t("tenant.noTenantsFound")}
+            {vm.search ? t("tenant.noTenantsFound") : t("tenant.noTenantsFound")}
           </h3>
-          <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-            {vm.search
-              ? t("tenant.searchPlaceholder")
-              : t("tenant.noTenantsDescription")}
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            {vm.search ? t("tenant.searchPlaceholder") : t("tenant.noTenantsDescription")}
           </p>
         </div>
       ) : (

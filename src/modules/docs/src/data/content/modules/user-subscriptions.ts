@@ -6,7 +6,8 @@ const sections: DocSection[] = [
 
   // ─── UserSubscription Entity ──────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.entityTitle",
     id: "user-subscription-entity",
   },
@@ -31,7 +32,8 @@ const sections: DocSection[] = [
 
   // ─── Status Lifecycle ─────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.statusTitle",
     id: "status-lifecycle",
   },
@@ -74,13 +76,16 @@ const sections: DocSection[] = [
 
   // ─── UserFeatureCheckerService ────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.featureCheckerTitle",
     id: "feature-checker",
   },
   { type: "paragraph", contentKey: "modules.userSubscriptions.featureCheckerIntro" },
   {
-    type: "code", language: "csharp", filename: "UserFeatureCheckerService.cs",
+    type: "code",
+    language: "csharp",
+    filename: "UserFeatureCheckerService.cs",
     code: `// Resolve features for a user
 var features = await _userFeatureChecker.GetFeaturesAsync(userId);
 // Returns key/value dict from the user's active TenantPlanFeature records
@@ -92,7 +97,8 @@ int maxProjects = int.Parse(features.GetValueOrDefault("maxProjects", "-1"));`,
 
   // ─── Reconciliation Job ───────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.reconciliationTitle",
     id: "reconciliation-job",
   },
@@ -101,7 +107,11 @@ int maxProjects = int.Parse(features.GetValueOrDefault("maxProjects", "-1"));`,
     type: "table",
     headers: ["Transition", "Condition", "Action"],
     rows: [
-      ["Trial → Active", "TrialEndsAt ≤ now, AutoRenew = true", "Create new Active row for next period"],
+      [
+        "Trial → Active",
+        "TrialEndsAt ≤ now, AutoRenew = true",
+        "Create new Active row for next period",
+      ],
       ["Trial → Expired", "TrialEndsAt ≤ now, AutoRenew = false", "Mark current row as Expired"],
       ["Active → Expired", "EndDate ≤ now, AutoRenew = false", "Mark current row as Expired"],
       ["Auto-Renew", "EndDate ≤ now, AutoRenew = true", "Create new Active row for next period"],
@@ -110,25 +120,29 @@ int maxProjects = int.Parse(features.GetValueOrDefault("maxProjects", "-1"));`,
 
   // ─── Immutable Design ─────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.immutableTitle",
     id: "immutable-design",
   },
   { type: "paragraph", contentKey: "modules.userSubscriptions.immutableIntro" },
   {
-    type: "info", variant: "note",
+    type: "info",
+    variant: "note",
     contentKey: "modules.userSubscriptions.immutableIntro",
   },
 
   // ─── Self-Service /me ─────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.selfServiceTitle",
     id: "self-service-me",
   },
   { type: "paragraph", contentKey: "modules.userSubscriptions.selfServiceIntro" },
   {
-    type: "code", language: "http",
+    type: "code",
+    language: "http",
     code: `GET /api/v1/user-subscriptions/me
 Authorization: Bearer <user-jwt>
 
@@ -146,7 +160,8 @@ Authorization: Bearer <user-jwt>
 
   // ─── Domain Events ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.eventsTitle",
     id: "domain-events",
   },
@@ -163,7 +178,8 @@ Authorization: Bearer <user-jwt>
 
   // ─── Tenant Context Required ──────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.contextTitle",
     id: "tenant-context",
   },
@@ -171,7 +187,8 @@ Authorization: Bearer <user-jwt>
 
   // ─── API Endpoints ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.userSubscriptions.endpointsTitle",
     id: "api-endpoints",
   },
@@ -179,12 +196,48 @@ Authorization: Bearer <user-jwt>
   {
     type: "api-table",
     endpoints: [
-      { method: "GET", path: "/api/v1/user-subscriptions", descriptionKey: "modules.userSubscriptions.ep.list", auth: "JWT", permission: "user_subscriptions.view" },
-      { method: "GET", path: "/api/v1/user-subscriptions/{id}", descriptionKey: "modules.userSubscriptions.ep.get", auth: "JWT", permission: "user_subscriptions.view" },
-      { method: "POST", path: "/api/v1/user-subscriptions", descriptionKey: "modules.userSubscriptions.ep.create", auth: "JWT", permission: "user_subscriptions.create" },
-      { method: "POST", path: "/api/v1/user-subscriptions/{id}/cancel", descriptionKey: "modules.userSubscriptions.ep.cancel", auth: "JWT", permission: "user_subscriptions.update" },
-      { method: "POST", path: "/api/v1/user-subscriptions/{id}/renew", descriptionKey: "modules.userSubscriptions.ep.renew", auth: "JWT", permission: "user_subscriptions.update" },
-      { method: "GET", path: "/api/v1/user-subscriptions/me", descriptionKey: "modules.userSubscriptions.ep.me", auth: "JWT (User)", permission: "" },
+      {
+        method: "GET",
+        path: "/api/v1/user-subscriptions",
+        descriptionKey: "modules.userSubscriptions.ep.list",
+        auth: "JWT",
+        permission: "user_subscriptions.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/user-subscriptions/{id}",
+        descriptionKey: "modules.userSubscriptions.ep.get",
+        auth: "JWT",
+        permission: "user_subscriptions.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-subscriptions",
+        descriptionKey: "modules.userSubscriptions.ep.create",
+        auth: "JWT",
+        permission: "user_subscriptions.create",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-subscriptions/{id}/cancel",
+        descriptionKey: "modules.userSubscriptions.ep.cancel",
+        auth: "JWT",
+        permission: "user_subscriptions.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-subscriptions/{id}/renew",
+        descriptionKey: "modules.userSubscriptions.ep.renew",
+        auth: "JWT",
+        permission: "user_subscriptions.update",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/user-subscriptions/me",
+        descriptionKey: "modules.userSubscriptions.ep.me",
+        auth: "JWT (User)",
+        permission: "",
+      },
     ],
   },
 ];

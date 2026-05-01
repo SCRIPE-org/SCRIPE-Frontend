@@ -25,10 +25,10 @@ export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
     <Card className="border-border/50">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
             <Package className="h-4 w-4 text-primary" />
           </div>
-          <CardTitle className="text-sm font-semibold">Plan Details</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t("entSubscriptions.planDetails") || "Plan Details"}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-0">
@@ -42,7 +42,13 @@ export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
           icon={<RefreshCcw className="h-3.5 w-3.5" />}
           label={t("entSubscriptions.type") || "Type"}
           value={
-            <Badge variant={(TYPE_VARIANTS as Record<string, "default" | "secondary" | "outline">)[sub.type] ?? "outline"} className="text-[11px]">
+            <Badge
+              variant={
+                (TYPE_VARIANTS as Record<string, "default" | "secondary" | "outline">)[sub.type] ??
+                "outline"
+              }
+              className="text-[11px]"
+            >
               {t(`entSubscriptions.${typeKey}`) || sub.type}
             </Badge>
           }
@@ -62,7 +68,7 @@ export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
             <Separator />
             <InfoRow
               icon={<Sparkles className="h-3.5 w-3.5" />}
-              label="Fallback Edition"
+              label={t("entSubscriptions.fallbackEdition") || "Fallback Edition"}
               value={sub.fallbackEditionName}
               muted
             />

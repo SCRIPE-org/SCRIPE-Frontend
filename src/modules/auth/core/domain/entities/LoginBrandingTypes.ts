@@ -9,28 +9,28 @@
 
 // ─── Login Layout (22 unique layouts) ──────────────────
 export type LoginLayout =
-  | "split-right"      // Branding left, form right (default)
-  | "split-left"       // Branding right, form left
-  | "centered"         // Animated gradient ring card, centered
-  | "branded-full"     // Full-screen bg, frosted glass card
-  | "minimal"          // Clean modern, dot-pattern bg, strong shadow
-  | "overlay"          // True glassmorphism over bg image
-  | "magazine"         // Editorial hero text, gradient fade, 60/40
-  | "stacked"          // Wave SVG divider, banner top, form below
-  | "sidebar-compact"  // 200px sidebar with icons + labels
-  | "asymmetric"       // Diagonal clip-path, overlapping content
-  | "floating"         // Floating card with gradient border + dot-grid
-  | "immersive"        // Full-bleed cinematic hero, no card
-  | "split-diagonal"   // Diagonal SVG clip separating brand/form
-  | "carousel"         // Auto-rotating testimonials branding panel
-  | "glass-morphism"   // Extreme glass: thick blur, luminous border
-  | "gradient-wave"    // Animated SVG wave between sections
-  | "spotlight"        // Dark bg with radial glow behind form
-  | "dual-panel"       // Three zones: header + features left + form right
-  | "corner-card"      // Small form bottom-right, large brand hero
-  | "vertical-split"   // Top half branding, bottom half form
-  | "fullscreen-form"  // Full-screen form, zero distraction
-  | "mosaic";          // CSS grid mosaic bg, form card centered
+  | "split-right" // Branding left, form right (default)
+  | "split-left" // Branding right, form left
+  | "centered" // Animated gradient ring card, centered
+  | "branded-full" // Full-screen bg, frosted glass card
+  | "minimal" // Clean modern, dot-pattern bg, strong shadow
+  | "overlay" // True glassmorphism over bg image
+  | "magazine" // Editorial hero text, gradient fade, 60/40
+  | "stacked" // Wave SVG divider, banner top, form below
+  | "sidebar-compact" // 200px sidebar with icons + labels
+  | "asymmetric" // Diagonal clip-path, overlapping content
+  | "floating" // Floating card with gradient border + dot-grid
+  | "immersive" // Full-bleed cinematic hero, no card
+  | "split-diagonal" // Diagonal SVG clip separating brand/form
+  | "carousel" // Auto-rotating testimonials branding panel
+  | "glass-morphism" // Extreme glass: thick blur, luminous border
+  | "gradient-wave" // Animated SVG wave between sections
+  | "spotlight" // Dark bg with radial glow behind form
+  | "dual-panel" // Three zones: header + features left + form right
+  | "corner-card" // Small form bottom-right, large brand hero
+  | "vertical-split" // Top half branding, bottom half form
+  | "fullscreen-form" // Full-screen form, zero distraction
+  | "mosaic"; // CSS grid mosaic bg, form card centered
 
 // ─── Design Tokens ─────────────────────────────────────
 export interface LoginDesignTokens {
@@ -139,12 +139,19 @@ export const TOKEN_TO_CSS_VAR: Record<string, string> = {
 };
 
 // ─── Common Block Props (shared by all blocks) ────────
-export type BlockAnimation = "none" | "fade-in" | "slide-up" | "slide-left" | "slide-right" | "scale-in" | "bounce";
+export type BlockAnimation =
+  | "none"
+  | "fade-in"
+  | "slide-up"
+  | "slide-left"
+  | "slide-right"
+  | "scale-in"
+  | "bounce";
 export type BlockPadding = "none" | "sm" | "md" | "lg";
 export type BlockMargin = "none" | "sm" | "md" | "lg";
 
 export interface BaseBlockProps {
-  visible?: boolean;       // default true — hide without deleting
+  visible?: boolean; // default true — hide without deleting
   animation?: BlockAnimation;
   padding?: BlockPadding;
   marginBottom?: BlockMargin;
@@ -152,10 +159,27 @@ export interface BaseBlockProps {
 
 // ─── Block Type Union (21 types) ───────────────────────
 export type BlockType =
-  | "text" | "image" | "featureList" | "testimonial" | "ctaButton" | "divider"
-  | "heading" | "badge" | "spacer" | "alert" | "statsRow" | "socialLinks"
-  | "logoCloud" | "rating" | "iconRow" | "video" | "countdown" | "accordion"
-  | "progressSteps" | "avatarStack" | "gradientText";
+  | "text"
+  | "image"
+  | "featureList"
+  | "testimonial"
+  | "ctaButton"
+  | "divider"
+  | "heading"
+  | "badge"
+  | "spacer"
+  | "alert"
+  | "statsRow"
+  | "socialLinks"
+  | "logoCloud"
+  | "rating"
+  | "iconRow"
+  | "video"
+  | "countdown"
+  | "accordion"
+  | "progressSteps"
+  | "avatarStack"
+  | "gradientText";
 
 // ═══════════════════════════════════════════════════════
 // EXISTING BLOCKS (Enhanced)
@@ -164,11 +188,11 @@ export type BlockType =
 export interface TextBlock {
   type: "text";
   props: BaseBlockProps & {
-    content: string;  // max 500 chars
+    content: string; // max 500 chars
     alignment?: "left" | "center" | "right";
     fontSize?: "sm" | "base" | "lg" | "xl" | "2xl";
     fontWeight?: "normal" | "medium" | "semibold" | "bold";
-    color?: string;   // "auto" | "primary" | "muted" | hex
+    color?: string; // "auto" | "primary" | "muted" | hex
     textTransform?: "none" | "uppercase" | "capitalize";
     maxWidth?: string;
     lineClamp?: number; // 0=off, 1-5
@@ -182,10 +206,10 @@ export interface ImageBlock {
     src: string;
     alt: string;
     maxWidth?: string;
-    borderRadius?: number;  // 0-32px
-    maxHeight?: number;     // px
+    borderRadius?: number; // 0-32px
+    maxHeight?: number; // px
     objectFit?: "cover" | "contain" | "fill" | "none";
-    linkUrl?: string;       // clickable wrapper
+    linkUrl?: string; // clickable wrapper
     caption?: string;
     shadow?: "none" | "sm" | "md" | "lg" | "xl";
     hoverEffect?: "none" | "zoom" | "brightness" | "grayscale";
@@ -199,7 +223,7 @@ export interface FeatureListBlock {
     items: Array<{ icon: string; title: string; description: string }>; // max 6
     columns?: 1 | 2 | 3;
     iconSize?: "sm" | "md" | "lg";
-    iconColor?: string;  // "auto" | "primary" | hex
+    iconColor?: string; // "auto" | "primary" | hex
     titleColor?: string;
     compactMode?: boolean;
     numberedMode?: boolean;
@@ -214,7 +238,7 @@ export interface TestimonialBlock {
     role?: string;
     avatar?: string;
     displayStyle?: "card" | "bubble" | "minimal" | "large-quote";
-    rating?: number;     // 0-5
+    rating?: number; // 0-5
     companyName?: string;
     companyLogo?: string;
     borderColor?: string;
@@ -229,8 +253,8 @@ export interface CtaButtonBlock {
     variant?: "default" | "outline" | "ghost";
     size?: "sm" | "md" | "lg" | "xl";
     fullWidth?: boolean;
-    color?: string;        // "primary" | "secondary" | "success" | hex
-    icon?: string;         // emoji/text before label
+    color?: string; // "primary" | "secondary" | "success" | hex
+    icon?: string; // emoji/text before label
     borderRadius?: number;
     shadow?: boolean;
     secondaryText?: string; // small text below button
@@ -241,11 +265,11 @@ export interface DividerBlock {
   type: "divider";
   props: BaseBlockProps & {
     style?: "line" | "space" | "dots";
-    color?: string;        // "auto" | "primary" | hex
-    thickness?: number;    // 1-5px
-    width?: number;        // 25-100%
+    color?: string; // "auto" | "primary" | hex
+    thickness?: number; // 1-5px
+    width?: number; // 25-100%
     lineStyle?: "solid" | "dashed" | "dotted" | "double";
-    label?: string;        // text in middle of line
+    label?: string; // text in middle of line
     labelBg?: string;
   };
 }
@@ -257,7 +281,7 @@ export interface DividerBlock {
 export interface HeadingBlock {
   type: "heading";
   props: BaseBlockProps & {
-    text: string;           // max 200 chars
+    text: string; // max 200 chars
     level: "h2" | "h3" | "h4";
     alignment?: "left" | "center" | "right";
     color?: string;
@@ -269,18 +293,18 @@ export interface HeadingBlock {
 export interface BadgeBlock {
   type: "badge";
   props: BaseBlockProps & {
-    label: string;          // max 50 chars
+    label: string; // max 50 chars
     variant: "success" | "warning" | "info" | "neutral" | "premium";
-    icon?: string;          // emoji
+    icon?: string; // emoji
     size?: "sm" | "md";
-    pill?: boolean;         // rounded-full vs rounded-md
+    pill?: boolean; // rounded-full vs rounded-md
   };
 }
 
 export interface SpacerBlock {
   type: "spacer";
   props: BaseBlockProps & {
-    height: number;         // 8-80px
+    height: number; // 8-80px
     responsiveHalve?: boolean; // halve on mobile
   };
 }
@@ -289,7 +313,7 @@ export interface AlertBlock {
   type: "alert";
   props: BaseBlockProps & {
     title?: string;
-    message: string;        // max 300 chars
+    message: string; // max 300 chars
     variant: "info" | "warning" | "success" | "error";
     showIcon?: boolean;
     compact?: boolean;
@@ -327,8 +351,8 @@ export interface LogoCloudBlock {
 export interface RatingBlock {
   type: "rating";
   props: BaseBlockProps & {
-    value: number;          // 1-5 (0.5 steps)
-    label?: string;         // max 100 chars
+    value: number; // 1-5 (0.5 steps)
+    label?: string; // max 100 chars
     style?: "stars" | "hearts" | "number-badge";
     size?: "sm" | "md" | "lg";
     color?: string;
@@ -348,8 +372,8 @@ export interface IconRowBlock {
 export interface VideoBlock {
   type: "video";
   props: BaseBlockProps & {
-    url: string;            // YouTube/Vimeo only
-    thumbnailUrl?: string;  // optional override
+    url: string; // YouTube/Vimeo only
+    thumbnailUrl?: string; // optional override
     aspectRatio?: "16:9" | "4:3";
     playButtonStyle?: "centered" | "corner";
     overlayText?: string;
@@ -359,11 +383,11 @@ export interface VideoBlock {
 export interface CountdownBlock {
   type: "countdown";
   props: BaseBlockProps & {
-    targetDate: string;     // ISO date string
+    targetDate: string; // ISO date string
     label?: string;
     expiredText?: string;
     style?: "flip" | "simple" | "minimal";
-    showLabels?: boolean;   // days/hrs/min/sec labels
+    showLabels?: boolean; // days/hrs/min/sec labels
   };
 }
 
@@ -390,8 +414,8 @@ export interface ProgressStepsBlock {
 export interface AvatarStackBlock {
   type: "avatarStack";
   props: BaseBlockProps & {
-    avatarUrls: string[];   // max 5 URLs
-    totalCount?: string;    // e.g. "1,200+"
+    avatarUrls: string[]; // max 5 URLs
+    totalCount?: string; // e.g. "1,200+"
     label?: string;
     size?: "sm" | "md" | "lg";
   };
@@ -400,7 +424,7 @@ export interface AvatarStackBlock {
 export interface GradientTextBlock {
   type: "gradientText";
   props: BaseBlockProps & {
-    text: string;           // max 200 chars
+    text: string; // max 200 chars
     fromColor: string;
     toColor: string;
     direction?: "left-right" | "top-bottom" | "diagonal";
@@ -472,8 +496,12 @@ export function isValidCtaUrl(url: string): boolean {
 
 // ─── Video URL Validation (YouTube/Vimeo only) ─────────
 const VIDEO_HOST_WHITELIST = [
-  "youtube.com", "www.youtube.com", "youtu.be",
-  "vimeo.com", "www.vimeo.com", "player.vimeo.com",
+  "youtube.com",
+  "www.youtube.com",
+  "youtu.be",
+  "vimeo.com",
+  "www.vimeo.com",
+  "player.vimeo.com",
 ];
 
 export function isValidVideoUrl(url: string): boolean {
@@ -481,7 +509,9 @@ export function isValidVideoUrl(url: string): boolean {
   try {
     const parsed = new URL(url.trim());
     if (parsed.protocol !== "https:") return false;
-    return VIDEO_HOST_WHITELIST.some((h) => parsed.hostname === h || parsed.hostname.endsWith("." + h));
+    return VIDEO_HOST_WHITELIST.some(
+      (h) => parsed.hostname === h || parsed.hostname.endsWith("." + h)
+    );
   } catch {
     return false;
   }
@@ -524,10 +554,31 @@ export function parseSlotConfig(json: string | null | undefined): SlotConfig {
 }
 
 function isValidLayout(layout: unknown): layout is LoginLayout {
-  return typeof layout === "string" &&
-    ["split-right", "split-left", "centered", "branded-full", "minimal",
-     "overlay", "magazine", "stacked", "sidebar-compact", "asymmetric",
-     "floating", "immersive", "split-diagonal", "carousel", "glass-morphism",
-     "gradient-wave", "spotlight", "dual-panel", "corner-card",
-     "vertical-split", "fullscreen-form", "mosaic"].includes(layout);
+  return (
+    typeof layout === "string" &&
+    [
+      "split-right",
+      "split-left",
+      "centered",
+      "branded-full",
+      "minimal",
+      "overlay",
+      "magazine",
+      "stacked",
+      "sidebar-compact",
+      "asymmetric",
+      "floating",
+      "immersive",
+      "split-diagonal",
+      "carousel",
+      "glass-morphism",
+      "gradient-wave",
+      "spotlight",
+      "dual-panel",
+      "corner-card",
+      "vertical-split",
+      "fullscreen-form",
+      "mosaic",
+    ].includes(layout)
+  );
 }

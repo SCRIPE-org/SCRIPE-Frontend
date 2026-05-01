@@ -63,7 +63,10 @@ const ProfessionalChartsTab = dynamic(
 );
 
 export function SettingsView() {
-  useModuleLocales(() => import("@modules/customization/settings/locales"), "customization-settings");
+  useModuleLocales(
+    () => import("@modules/customization/settings/locales"),
+    "customization-settings"
+  );
   const { t } = useI18n();
   const settings = useSettings();
   const { toast } = useToast();

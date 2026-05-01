@@ -2,47 +2,61 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "frontend.localization.intro" },
+  { type: "paragraph", contentKey: "frontend.localization.intro" },
 
-      // ─── Architecture ─────────────────────────────────────────
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.localization.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Localization Architecture",
+    direction: "horizontal",
+    nodes: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.localization.architectureTitle", id: "architecture",
+        id: "provider",
+        label: "LanguageProvider",
+        type: "primary",
+        description: "React Context + localStorage",
       },
       {
-            type: "flowchart",
-            title: "Localization Architecture",
-            direction: "horizontal",
-            nodes: [
-                  { id: "provider", label: "LanguageProvider", type: "primary", description: "React Context + localStorage" },
-                  { id: "hook", label: "Language() Hook", type: "info", description: "language, direction, t()" },
-                  { id: "en", label: "en.ts Dictionary", type: "success" },
-                  { id: "ar", label: "ar.ts Dictionary", type: "success" },
-                  { id: "html", label: "<html> Element", type: "warning", description: "dir, lang attributes" },
-                  { id: "body", label: "<body> Element", type: "warning", description: "font-class" },
-            ],
-            connections: [
-                  { from: "provider", to: "hook" },
-                  { from: "provider", to: "en" },
-                  { from: "provider", to: "ar" },
-                  { from: "provider", to: "html", label: "sets dir/lang" },
-                  { from: "provider", to: "body", label: "sets font" },
-            ],
+        id: "hook",
+        label: "Language() Hook",
+        type: "info",
+        description: "language, direction, t()",
       },
+      { id: "en", label: "en.ts Dictionary", type: "success" },
+      { id: "ar", label: "ar.ts Dictionary", type: "success" },
+      { id: "html", label: "<html> Element", type: "warning", description: "dir, lang attributes" },
+      { id: "body", label: "<body> Element", type: "warning", description: "font-class" },
+    ],
+    connections: [
+      { from: "provider", to: "hook" },
+      { from: "provider", to: "en" },
+      { from: "provider", to: "ar" },
+      { from: "provider", to: "html", label: "sets dir/lang" },
+      { from: "provider", to: "body", label: "sets font" },
+    ],
+  },
 
-      // ─── Dictionary Structure ─────────────────────────────────
+  // ─── Dictionary Structure ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.localization.dictionaryTitle",
+    id: "dictionary",
+  },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.localization.dictionaryTitle", id: "dictionary",
-      },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "English (en.ts)",
-                        language: "typescript",
-                        filename: "src/core/locales/en.ts — Sample",
-                        code: `export const en = {
+        label: "English (en.ts)",
+        language: "typescript",
+        filename: "src/core/locales/en.ts — Sample",
+        code: `export const en = {
   common: {
     loading: "Loading...",
     save: "Save",
@@ -81,12 +95,12 @@ const sections: DocSection[] = [
     serverError: "An error occurred. Please try again.",
   },
 };`,
-                  },
-                  {
-                        label: "Arabic (ar.ts)",
-                        language: "typescript",
-                        filename: "src/core/locales/ar.ts — Sample",
-                        code: `export const ar = {
+      },
+      {
+        label: "Arabic (ar.ts)",
+        language: "typescript",
+        filename: "src/core/locales/ar.ts — Sample",
+        code: `export const ar = {
   common: {
     loading: "جاري التحميل...",
     save: "حفظ",
@@ -125,20 +139,22 @@ const sections: DocSection[] = [
     serverError: "حدث خطأ. يرجى المحاولة مرة أخرى.",
   },
 };`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── t() Function Usage ───────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.localization.tFunctionTitle", id: "t-function",
-      },
-      {
-            type: "code",
-            language: "typescript",
-            filename: "t() Function — Usage Examples",
-            code: `import { Language } from '@core/providers/LanguageProvider';
+  // ─── t() Function Usage ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.localization.tFunctionTitle",
+    id: "t-function",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "t() Function — Usage Examples",
+    code: `import { Language } from '@core/providers/LanguageProvider';
 
 export function AdminForm() {
   const { t, language, direction } = Language();
@@ -166,64 +182,68 @@ export function AdminForm() {
     </form>
   );
 }`,
-      },
+  },
 
-      // ─── RTL Support ──────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "frontend.localization.rtlTitle", id: "rtl-support",
-      },
-      { type: "paragraph", contentKey: "frontend.localization.rtlIntro" },
-      {
-            type: "table",
-            headers: ["Feature", "LTR (English)", "RTL (Arabic)"],
-            rows: [
-                  ["<html dir>", "ltr", "rtl"],
-                  ["<html lang>", "en", "ar"],
-                  ["<body class>", "font-english", "font-arabic"],
-                  ["Text alignment", "text-left", "text-right"],
-                  ["Sidebar position", "Left", "Right"],
-                  ["Icon direction", "→", "←"],
-                  ["Number format", "1,234.56", "١٬٢٣٤٫٥٦"],
-            ],
-      },
+  // ─── RTL Support ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.localization.rtlTitle",
+    id: "rtl-support",
+  },
+  { type: "paragraph", contentKey: "frontend.localization.rtlIntro" },
+  {
+    type: "table",
+    headers: ["Feature", "LTR (English)", "RTL (Arabic)"],
+    rows: [
+      ["<html dir>", "ltr", "rtl"],
+      ["<html lang>", "en", "ar"],
+      ["<body class>", "font-english", "font-arabic"],
+      ["Text alignment", "text-left", "text-right"],
+      ["Sidebar position", "Left", "Right"],
+      ["Icon direction", "→", "←"],
+      ["Number format", "1,234.56", "١٬٢٣٤٫٥٦"],
+    ],
+  },
 
-      // ─── Adding New Keys ──────────────────────────────────────
+  // ─── Adding New Keys ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.localization.addingKeysTitle",
+    id: "adding-keys",
+  },
+  {
+    type: "step-guide",
+    steps: [
       {
-            type: "heading", level: 2,
-            titleKey: "frontend.localization.addingKeysTitle", id: "adding-keys",
+        titleKey: "frontend.localization.step1Title",
+        contentKey: "frontend.localization.step1Desc",
       },
       {
-            type: "step-guide",
-            steps: [
-                  {
-                        titleKey: "frontend.localization.step1Title",
-                        contentKey: "frontend.localization.step1Desc",
-                  },
-                  {
-                        titleKey: "frontend.localization.step2Title",
-                        contentKey: "frontend.localization.step2Desc",
-                  },
-                  {
-                        titleKey: "frontend.localization.step3Title",
-                        contentKey: "frontend.localization.step3Desc",
-                  },
-            ],
+        titleKey: "frontend.localization.step2Title",
+        contentKey: "frontend.localization.step2Desc",
       },
       {
-            type: "info",
-            variant: "warning",
-            contentKey: "frontend.localization.noLocaleRoutes",
+        titleKey: "frontend.localization.step3Title",
+        contentKey: "frontend.localization.step3Desc",
       },
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "frontend.localization.noLocaleRoutes",
+  },
 ];
 
 registerPage({
-      slug: "frontend/localization",
-      titleKey: "frontend.localization.title",
-      descriptionKey: "frontend.localization.description",
-      category: "frontend",
-      order: 4,
-      sections,
-      relatedSlugs: ["frontend/state-management", "architecture/frontend", "frontend/crud-system"],
-      lastUpdated: "2026-02-20",
+  slug: "frontend/localization",
+  titleKey: "frontend.localization.title",
+  descriptionKey: "frontend.localization.description",
+  category: "frontend",
+  order: 4,
+  sections,
+  relatedSlugs: ["frontend/state-management", "architecture/frontend", "frontend/crud-system"],
+  lastUpdated: "2026-02-20",
 });

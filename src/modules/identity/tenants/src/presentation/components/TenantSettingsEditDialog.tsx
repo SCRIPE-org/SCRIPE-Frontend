@@ -46,12 +46,12 @@ export function TenantSettingsEditDialog({
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevSettings, setPrevSettings] = useState(settings);
   const [prevInitialSection, setPrevInitialSection] = useState(initialSection);
-  
+
   if (open !== prevOpen || settings !== prevSettings || initialSection !== prevInitialSection) {
     setPrevOpen(open);
     setPrevSettings(settings);
     setPrevInitialSection(initialSection);
-    
+
     if (open) {
       setFormData({ ...settings });
       if (initialSection) {
@@ -134,7 +134,12 @@ export function TenantSettingsEditDialog({
                 <Input
                   type="number"
                   value={formData.passwordExpiryDays ?? ""}
-                  onChange={(e) => handleChange("passwordExpiryDays", e.target.value ? parseInt(e.target.value) : undefined)}
+                  onChange={(e) =>
+                    handleChange(
+                      "passwordExpiryDays",
+                      e.target.value ? parseInt(e.target.value) : undefined
+                    )
+                  }
                   placeholder={t("tenant.neverExpires") || "Leave empty for never"}
                 />
                 <p className="text-xs text-muted-foreground">
@@ -277,7 +282,9 @@ export function TenantSettingsEditDialog({
                 <Input
                   value={formData.loginSubtitle || ""}
                   onChange={(e) => handleChange("loginSubtitle", e.target.value)}
-                  placeholder={t("tenant.loginSubtitlePlaceholder") || "Manage your business efficiently"}
+                  placeholder={
+                    t("tenant.loginSubtitlePlaceholder") || "Manage your business efficiently"
+                  }
                 />
               </div>
             </div>

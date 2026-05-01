@@ -6,9 +6,8 @@ import { Button } from "@core/ui/button";
 import { GenericForm } from "@core/ui/forms/generic-form";
 import { GenericModal } from "./generic-modal";
 import GenericSelect from "./generic-select";
-import {
-  // Pagination imports removed in favor of direct standard UI buttons
-} from "@core/ui/pagination";
+import {} from // Pagination imports removed in favor of direct standard UI buttons
+"@core/ui/pagination";
 import { Plus } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
@@ -204,7 +203,12 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               title={t("table.firstPage") || "First Page"}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                />
               </svg>
             </Button>
 
@@ -218,7 +222,12 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               title={t("table.previousPage") || "Previous Page"}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </Button>
 
@@ -281,13 +290,20 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => vm.changePage(Math.min(vm.pagination.pagesCount, vm.pagination.page + 1))}
+              onClick={() =>
+                vm.changePage(Math.min(vm.pagination.pagesCount, vm.pagination.page + 1))
+              }
               disabled={vm.pagination.page === vm.pagination.pagesCount}
               className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
               title={t("table.nextPage") || "Next Page"}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Button>
 
@@ -301,7 +317,12 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               title={t("table.lastPage") || "Last Page"}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                />
               </svg>
             </Button>
           </div>
@@ -335,52 +356,52 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           vm.config.selectable
             ? undefined
             : (n) => {
-              const actions = [];
-              // Add Child - requires create permission
-              if (effectivePermissions.canCreate) {
-                actions.push({
-                  label: t("common.add_child") ?? "Add child",
-                  onClick: () => vm.openAddChild(n),
-                  disabled: vm.loading,
-                });
-              }
-              // Edit - requires update permission
-              if (effectivePermissions.canUpdate) {
-                actions.push({
-                  label: t("common.edit"),
-                  onClick: () => vm.openEdit(n),
-                  disabled: vm.loading,
-                });
-              }
-              // Custom actions (added before Delete)
-              if (customActions) {
-                const custom = customActions(n);
-                custom.forEach((action) => {
-                  if (action.show && !action.show(n)) return;
-                  if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
-                    return;
-                  }
-
+                const actions = [];
+                // Add Child - requires create permission
+                if (effectivePermissions.canCreate) {
                   actions.push({
-                    label: action.label,
-                    onClick: action.onClick,
-                    variant: action.variant,
-                    icon: action.icon,
-                    disabled: action.disabled || vm.loading,
+                    label: t("common.add_child") ?? "Add child",
+                    onClick: () => vm.openAddChild(n),
+                    disabled: vm.loading,
                   });
-                });
+                }
+                // Edit - requires update permission
+                if (effectivePermissions.canUpdate) {
+                  actions.push({
+                    label: t("common.edit"),
+                    onClick: () => vm.openEdit(n),
+                    disabled: vm.loading,
+                  });
+                }
+                // Custom actions (added before Delete)
+                if (customActions) {
+                  const custom = customActions(n);
+                  custom.forEach((action) => {
+                    if (action.show && !action.show(n)) return;
+                    if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+                      return;
+                    }
+
+                    actions.push({
+                      label: action.label,
+                      onClick: action.onClick,
+                      variant: action.variant,
+                      icon: action.icon,
+                      disabled: action.disabled || vm.loading,
+                    });
+                  });
+                }
+                // Delete - requires delete permission (stays at bottom)
+                if (effectivePermissions.canDelete) {
+                  actions.push({
+                    label: t("common.delete"),
+                    onClick: () => vm.deleteItem(n),
+                    variant: "destructive" as const,
+                    disabled: vm.loading,
+                  });
+                }
+                return actions;
               }
-              // Delete - requires delete permission (stays at bottom)
-              if (effectivePermissions.canDelete) {
-                actions.push({
-                  label: t("common.delete"),
-                  onClick: () => vm.deleteItem(n),
-                  variant: "destructive" as const,
-                  disabled: vm.loading,
-                });
-              }
-              return actions;
-            }
         }
         selectable={vm.config.selectable}
         selectedValues={vm.selectedValues}

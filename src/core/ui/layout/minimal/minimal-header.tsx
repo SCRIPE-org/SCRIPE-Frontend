@@ -42,9 +42,7 @@ export function MinimalHeader() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                 <Logo size="sm" className="text-primary-foreground" />
               </div>
-              <span className="hidden text-sm font-bold text-foreground sm:block">
-                {appName}
-              </span>
+              <span className="hidden text-sm font-bold text-foreground sm:block">{appName}</span>
             </Link>
 
             {/* Desktop horizontal nav */}
@@ -55,7 +53,9 @@ export function MinimalHeader() {
                 }
 
                 // Simple link (no children)
-                const isActive = item.href ? isNavigationItemActive(item, pathname, navigation) : false;
+                const isActive = item.href
+                  ? isNavigationItemActive(item, pathname, navigation)
+                  : false;
                 return (
                   <Link
                     key={item.name}

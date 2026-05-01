@@ -13,28 +13,28 @@ import { NotificationBellRepository } from "./repositories/NotificationBellRepos
 import type { INotificationBellRepository } from "./interfaces/INotificationBellRepository";
 
 export interface NotificationBellContainer {
-      notificationBellRepository: INotificationBellRepository;
+  notificationBellRepository: INotificationBellRepository;
 }
 
 let _container: NotificationBellContainer | null = null;
 
 export function getNotificationBellContainer(): NotificationBellContainer {
-      if (!_container) {
-            const apiService = getModuleApiService("IDENTITY");
-            const service = new NotificationBellService(apiService);
+  if (!_container) {
+    const apiService = getModuleApiService("IDENTITY");
+    const service = new NotificationBellService(apiService);
 
-            _container = {
-                  notificationBellRepository: new NotificationBellRepository(service),
-            };
-      }
-      return _container;
+    _container = {
+      notificationBellRepository: new NotificationBellRepository(service),
+    };
+  }
+  return _container;
 }
 
 /**
  * Lazy accessor for use in hooks / components.
  */
 export const notificationBellContainer = {
-      get notificationBellRepository() {
-            return getNotificationBellContainer().notificationBellRepository;
-      },
+  get notificationBellRepository() {
+    return getNotificationBellContainer().notificationBellRepository;
+  },
 };

@@ -11,20 +11,24 @@ interface GatewaySelectionDialogProps {
   onSelect: (gateway: string) => void;
 }
 
-export function GatewaySelectionDialog({ open, onOpenChange, onSelect }: GatewaySelectionDialogProps) {
+export function GatewaySelectionDialog({
+  open,
+  onOpenChange,
+  onSelect,
+}: GatewaySelectionDialogProps) {
   const { gateways, isLoading } = usePaymentGatewaysViewModel();
-  
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-transparent border-0 shadow-none p-0 overflow-hidden">
+      <DialogContent className="max-w-md overflow-hidden border-0 bg-transparent p-0 shadow-none">
         {isLoading ? (
-          <div className="flex justify-center items-center p-8 bg-card rounded-lg h-[300px]">
+          <div className="flex h-[300px] items-center justify-center rounded-lg bg-card p-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <GatewaySelectionStep 
-            gateways={gateways.filter(g => g.enabled && g.gateway !== "Manual")} 
-            onSelect={onSelect} 
+          <GatewaySelectionStep
+            gateways={gateways.filter((g) => g.enabled && g.gateway !== "Manual")}
+            onSelect={onSelect}
           />
         )}
       </DialogContent>

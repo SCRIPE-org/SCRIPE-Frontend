@@ -13,12 +13,7 @@ interface DocsSearchProps {
   basePath?: string;
 }
 
-export function DocsSearch({
-  isOpen,
-  onClose,
-  onSearch,
-  basePath = "/docs",
-}: DocsSearchProps) {
+export function DocsSearch({ isOpen, onClose, onSearch, basePath = "/docs" }: DocsSearchProps) {
   const { t } = useDocsI18n();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -175,9 +170,7 @@ export function DocsSearch({
               onClick={() => navigateToResult(result)}
               onMouseEnter={() => setSelectedIdx(idx)}
             >
-              <span className="docs-search-result-title">
-                {t(result.titleKey)}
-              </span>
+              <span className="docs-search-result-title">{t(result.titleKey)}</span>
               <span className="docs-search-result-category">
                 {result.category}
                 {result.matchedHeadingKey && ` → ${t(result.matchedHeadingKey)}`}
@@ -211,10 +204,7 @@ export function DocsSearch({
 /**
  * Highlight the query match within a snippet.
  */
-function highlightSnippet(
-  snippet: string,
-  query: string
-): React.ReactNode {
+function highlightSnippet(snippet: string, query: string): React.ReactNode {
   const lowerSnippet = snippet.toLowerCase();
   const lowerQuery = query.toLowerCase();
   const idx = lowerSnippet.indexOf(lowerQuery);

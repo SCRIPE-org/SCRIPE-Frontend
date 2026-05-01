@@ -15,9 +15,12 @@ interface TenantPlanStepBasicsProps {
 export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasicsProps) {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="name">{t("entitlements.tenantPlans.planName") || "Plan Name"} <span className="text-destructive">*</span></Label>
+          <Label htmlFor="name">
+            {t("entitlements.tenantPlans.planName") || "Plan Name"}{" "}
+            <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="name"
             value={form.name || ""}
@@ -26,7 +29,9 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="color">{t("entitlements.tenantPlans.color") || "Brand Color (Hex)"}</Label>
+          <Label htmlFor="color">
+            {t("entitlements.tenantPlans.color") || "Brand Color (Hex)"}
+          </Label>
           <div className="flex gap-2">
             <Input
               id="color"
@@ -34,15 +39,17 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
               onChange={(e) => updateForm({ color: e.target.value })}
               placeholder="#3b82f6"
             />
-            <div 
-              className="w-10 h-10 rounded-md border shrink-0" 
+            <div
+              className="h-10 w-10 shrink-0 rounded-md border"
               style={{ backgroundColor: form.color || "transparent" }}
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="displayNameEn">{t("entitlements.tenantPlans.displayNameEn") || "Display Name (EN)"}</Label>
+          <Label htmlFor="displayNameEn">
+            {t("entitlements.tenantPlans.displayNameEn") || "Display Name (EN)"}
+          </Label>
           <Input
             id="displayNameEn"
             value={form.displayNameEn || ""}
@@ -51,7 +58,9 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="displayNameAr">{t("entitlements.tenantPlans.displayNameAr") || "Display Name (AR)"}</Label>
+          <Label htmlFor="displayNameAr">
+            {t("entitlements.tenantPlans.displayNameAr") || "Display Name (AR)"}
+          </Label>
           <Input
             id="displayNameAr"
             value={form.displayNameAr || ""}
@@ -67,11 +76,15 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
             id="tagline"
             value={form.tagline || ""}
             onChange={(e) => updateForm({ tagline: e.target.value })}
-            placeholder={t("entitlements.tenantPlans.taglinePlaceholder") || "Best for growing teams"}
+            placeholder={
+              t("entitlements.tenantPlans.taglinePlaceholder") || "Best for growing teams"
+            }
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="badgeText">{t("entitlements.tenantPlans.badgeText") || "Badge Text"}</Label>
+          <Label htmlFor="badgeText">
+            {t("entitlements.tenantPlans.badgeText") || "Badge Text"}
+          </Label>
           <Input
             id="badgeText"
             value={form.badgeText || ""}
@@ -91,7 +104,9 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="sortOrder">{t("entitlements.tenantPlans.sortOrder") || "Sort Order"}</Label>
+          <Label htmlFor="sortOrder">
+            {t("entitlements.tenantPlans.sortOrder") || "Sort Order"}
+          </Label>
           <Input
             id="sortOrder"
             type="number"
@@ -109,16 +124,19 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           value={form.description || ""}
           onChange={(e) => updateForm({ description: e.target.value })}
           rows={3}
-          placeholder={t("entitlements.tenantPlans.descriptionPlaceholder") || "Brief description..."}
+          placeholder={
+            t("entitlements.tenantPlans.descriptionPlaceholder") || "Brief description..."
+          }
         />
       </div>
 
-      <div className="space-y-4 rounded-lg border p-4 bg-muted/20">
+      <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label>{t("entitlements.tenantPlans.isPublic") || "Publicly Visible"}</Label>
             <p className="text-sm text-muted-foreground">
-              {t("entitlements.tenantPlans.isPublicDesc") || "Show this plan on the public pricing page."}
+              {t("entitlements.tenantPlans.isPublicDesc") ||
+                "Show this plan on the public pricing page."}
             </p>
           </div>
           <Switch
@@ -128,9 +146,12 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
         </div>
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label>{t("entitlements.tenantPlans.isContactSalesOnly") || "Contact Sales Only"}</Label>
+            <Label>
+              {t("entitlements.tenantPlans.isContactSalesOnly") || "Contact Sales Only"}
+            </Label>
             <p className="text-sm text-muted-foreground">
-              {t("entitlements.tenantPlans.isContactSalesOnlyDesc") || "Hide prices and show 'Contact Us' button."}
+              {t("entitlements.tenantPlans.isContactSalesOnlyDesc") ||
+                "Hide prices and show 'Contact Us' button."}
             </p>
           </div>
           <Switch

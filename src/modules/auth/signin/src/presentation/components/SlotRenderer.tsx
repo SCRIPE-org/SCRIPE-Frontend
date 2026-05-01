@@ -10,7 +10,11 @@
 "use client";
 
 import { ContentBlockRenderer } from "./ContentBlockRenderer";
-import type { ContentBlock, LoginSlotId, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type {
+  ContentBlock,
+  LoginSlotId,
+  SlotConfig,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 // v1 slot constraints (§11)
 const SLOT_MAX_ITEMS: Record<LoginSlotId, number> = {
@@ -30,7 +34,7 @@ interface SlotRendererProps {
 
 export function SlotRenderer({ slotId, slotConfig, className = "" }: SlotRendererProps) {
   const blocks = slotConfig.slots[slotId];
-  
+
   // No blocks assigned to this slot
   if (!blocks || !Array.isArray(blocks) || blocks.length === 0) {
     return null;

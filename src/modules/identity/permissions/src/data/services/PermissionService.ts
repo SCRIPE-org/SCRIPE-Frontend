@@ -23,7 +23,7 @@ import type { IPermissionService } from "../../domain/interfaces/IPermissionServ
 import type { PermissionListParams } from "../../domain/interfaces/IPermissionRepository";
 
 export class PermissionService implements IPermissionService {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
   async getAll(params?: PermissionListParams): Promise<PermissionModel[]> {
     const url = buildUrl(API_ENDPOINTS.PERMISSIONS.LIST, {

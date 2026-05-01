@@ -12,7 +12,11 @@ import type {
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
-import type { SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../types/SubscriptionTypes";
+import type {
+  SubscriptionModel,
+  PagedEditionResult,
+  DowngradeImpactReport,
+} from "../types/SubscriptionTypes";
 import type { TenantDomainJson } from "./ITenantService";
 
 /** Domain-level alias for tenant domain data */
@@ -145,33 +149,73 @@ export interface ITenantRepository {
   /**
    * Get available editions (plans) for assignment
    */
-  getAvailableEditions(page?: number, pageSize?: number, search?: string): Promise<PagedEditionResult>;
+  getAvailableEditions(
+    page?: number,
+    pageSize?: number,
+    search?: string
+  ): Promise<PagedEditionResult>;
 
   /**
    * Get available promotions for a specific edition
    */
-  getEditionPromotions(editionId: string): Promise<Array<{
-    id: string; name: string; type: string; discountValue: number;
-    discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
-    promoCode?: string;
-    isActive: boolean; validFrom?: string; validUntil?: string;
-    maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
-  }>>;
+  getEditionPromotions(editionId: string): Promise<
+    Array<{
+      id: string;
+      name: string;
+      type: string;
+      discountValue: number;
+      discountCurrency?: string;
+      applicableCycle?: string;
+      requiresCode: boolean;
+      promoCode?: string;
+      isActive: boolean;
+      validFrom?: string;
+      validUntil?: string;
+      maxRedemptions?: number;
+      currentRedemptions: number;
+      firstTimeOnly: boolean;
+    }>
+  >;
 
   /**
    * Validate a promo code for a specific edition (backend validates)
    */
-  validatePromoCode(editionId: string, promoCode: string): Promise<{ isValid: boolean; errorCode?: string; errorMessage?: string; promotionName?: string; discountType?: string; discountValue?: number }>;
+  validatePromoCode(
+    editionId: string,
+    promoCode: string
+  ): Promise<{
+    isValid: boolean;
+    errorCode?: string;
+    errorMessage?: string;
+    promotionName?: string;
+    discountType?: string;
+    discountValue?: number;
+  }>;
 
   /**
    * Assign a base edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<{ id: string }>;
+  assignEdition(
+    tenantId: string,
+    editionId: string,
+    type?: string,
+    endDate?: string,
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant
    */
-  changeEdition(tenantId: string, editionId: string, type?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<void>;
+  changeEdition(
+    tenantId: string,
+    editionId: string,
+    type?: string,
+    currency?: string,
+    promoCode?: string,
+    promotionId?: string
+  ): Promise<void>;
 
   /** Renew (extend) the current subscription period */
   renewSubscription(tenantId: string, type: string): Promise<string>;
@@ -180,13 +224,25 @@ export interface ITenantRepository {
   convertTrial(tenantId: string, type: string): Promise<string>;
 
   /** Suspend a subscription (admin action for rules violation) */
-  suspendSubscription(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string>;
+  suspendSubscription(
+    tenantId: string,
+    reason: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string>;
 
   /** Resume a previously suspended subscription */
   resumeSubscription(tenantId: string, type?: string): Promise<string>;
 
   /** Cancel a subscription permanently */
-  cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<string>;
+  cancelSubscription(
+    tenantId: string,
+    reason?: string,
+    useFallback?: boolean,
+    refundType?: string,
+    customRefundAmount?: number
+  ): Promise<string>;
 
   /** Re-sync tenant permissions from current edition (data backfill) */
   resyncPermissions(tenantId: string): Promise<void>;
@@ -199,7 +255,19 @@ export interface ITenantRepository {
   /**
    * Get resolved features (edition + overrides) for a tenant
    */
-  getResolvedFeatures(tenantId: string): Promise<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>>;
+  getResolvedFeatures(
+    tenantId: string
+  ): Promise<
+    Array<{
+      featureId: string;
+      key: string;
+      nameEn: string;
+      nameAr: string;
+      effectiveValue: string;
+      valueType: string;
+      source: string;
+    }>
+  >;
 
   /** Change the billing currency of the active subscription */
   changeCurrency(tenantId: string, currency: string): Promise<string>;
@@ -213,7 +281,9 @@ export interface ITenantRepository {
   // ── Domain Management ─────────────────────────────────────
 
   /** Get all domains for a tenant */
-  getDomains(tenantId: string): Promise<{ domains: TenantDomainData[]; cnameTarget: string; verificationPrefix: string }>;
+  getDomains(
+    tenantId: string
+  ): Promise<{ domains: TenantDomainData[]; cnameTarget: string; verificationPrefix: string }>;
 
   /** Add a custom domain to a tenant */
   addDomain(tenantId: string, domain: string): Promise<void>;

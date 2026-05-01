@@ -54,16 +54,16 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
       // Choose appropriate endpoint based on options
       const res = useMyTenant
         ? await roleRepository.getMyTenantRoles({
-          page: queryParams.page,
-          pageSize: queryParams.pageSize,
-          search: queryParams.search,
-        })
+            page: queryParams.page,
+            pageSize: queryParams.pageSize,
+            search: queryParams.search,
+          })
         : await roleRepository.getAll({
-          page: queryParams.page,
-          pageSize: queryParams.pageSize,
-          search: queryParams.search,
-          tenantId,
-        });
+            page: queryParams.page,
+            pageSize: queryParams.pageSize,
+            search: queryParams.search,
+            tenantId,
+          });
       return {
         items: res.items || [],
         pagination: {

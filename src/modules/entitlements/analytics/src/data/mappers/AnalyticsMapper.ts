@@ -36,7 +36,6 @@ import type {
 } from "../../domain/entities/AnalyticsEntities";
 
 export class AnalyticsMapper {
-
   // ── Overview ──
   // Backend: currentMrr, currentArr, netRevenueDelta, newSubscriptionsThisPeriod, etc.
   // Domain: totalMrr, totalArr, mrrChange, newSubscriptions, etc.
@@ -54,9 +53,15 @@ export class AnalyticsMapper {
       trialConversionRate: dto.trialConversionRate ?? 0,
       arpu: dto.arpu ?? 0,
       // NRR: compute from delta if backend doesn't provide explicit NRR
-      netRevenueRetention: dto.previousMrr > 0
-        ? Math.round(((dto.currentMrr ?? 0) - (dto.newSubscriptionsThisPeriod ?? 0) * (dto.arpu ?? 0)) / dto.previousMrr * 100 * 10) / 10
-        : 100,
+      netRevenueRetention:
+        dto.previousMrr > 0
+          ? Math.round(
+              (((dto.currentMrr ?? 0) - (dto.newSubscriptionsThisPeriod ?? 0) * (dto.arpu ?? 0)) /
+                dto.previousMrr) *
+                100 *
+                10
+            ) / 10
+          : 100,
       grossRevenueRetention: 100, // Backend doesn't provide this separately
       currency: dto.currency ?? "USD",
       periodStart: "",
@@ -139,9 +144,10 @@ export class AnalyticsMapper {
   static toLtvResponse(dto: LtvResponseModel): LtvResponse {
     const editions = (dto.editions ?? []).map(AnalyticsMapper.toEditionLtv);
     const totalSubs = editions.reduce((sum, e) => sum + e.subscriberCount, 0);
-    const weightedLtv = totalSubs > 0
-      ? editions.reduce((sum, e) => sum + e.averageLtv * e.subscriberCount, 0) / totalSubs
-      : 0;
+    const weightedLtv =
+      totalSubs > 0
+        ? editions.reduce((sum, e) => sum + e.averageLtv * e.subscriberCount, 0) / totalSubs
+        : 0;
     return {
       editions,
       platformAverageLtv: Math.round(weightedLtv),

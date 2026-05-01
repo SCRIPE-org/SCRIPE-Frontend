@@ -25,7 +25,7 @@ import type {
 } from "../../domain/interfaces/IAdminService";
 
 export class AdminService implements IAdminService {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
   async getAll(params: ServiceAdminListParams): Promise<AdminListResult> {
     const url = buildUrl(API_ENDPOINTS.ADMINS.LIST, {
@@ -172,8 +172,6 @@ export class AdminService implements IAdminService {
   async bulkDeleteAll(filter: BulkAdminsFilterJson): Promise<number> {
     return this.api.post<number>(API_ENDPOINTS.ADMINS.BULK.DELETE_ALL, filter);
   }
-
-
 
   async transfer(
     id: string,

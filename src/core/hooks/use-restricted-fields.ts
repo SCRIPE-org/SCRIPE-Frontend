@@ -20,9 +20,9 @@ const EMPTY: string[] = [];
  * Returns a stable empty array if no resource is provided or no restrictions exist.
  */
 export function useRestrictedFields(resource?: string): string[] {
-      const allRestrictedFields = useAppStore((state) => state.restrictedFields);
-      return useMemo(() => {
-            if (!resource) return EMPTY;
-            return allRestrictedFields[resource] ?? EMPTY;
-      }, [allRestrictedFields, resource]);
+  const allRestrictedFields = useAppStore((state) => state.restrictedFields);
+  return useMemo(() => {
+    if (!resource) return EMPTY;
+    return allRestrictedFields[resource] ?? EMPTY;
+  }, [allRestrictedFields, resource]);
 }

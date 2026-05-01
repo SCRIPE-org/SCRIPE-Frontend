@@ -24,7 +24,13 @@ export const AVAILABLE_GATEWAYS = [
     fields: [
       { key: "apiKey", label: "Publishable Key", placeholder: "pk_live_..." },
       { key: "secretKey", label: "Secret Key", placeholder: "sk_live_...", secret: true },
-      { key: "webhookSecret", label: "Webhook Signing Secret", placeholder: "whsec_...", secret: true, optional: true },
+      {
+        key: "webhookSecret",
+        label: "Webhook Signing Secret",
+        placeholder: "whsec_...",
+        secret: true,
+        optional: true,
+      },
     ],
   },
   {
@@ -46,7 +52,13 @@ export const AVAILABLE_GATEWAYS = [
     fields: [
       { key: "apiKey", label: "API Key", placeholder: "ZXlKaGJH..." },
       { key: "secretKey", label: "Integration ID", placeholder: "123456" },
-      { key: "webhookSecret", label: "HMAC Secret", placeholder: "hmac_...", secret: true, optional: true },
+      {
+        key: "webhookSecret",
+        label: "HMAC Secret",
+        placeholder: "hmac_...",
+        secret: true,
+        optional: true,
+      },
       { key: "merchantId", label: "Merchant ID", placeholder: "MID-...", optional: true },
     ],
   },
@@ -76,8 +88,7 @@ export function useTenantGatewaysViewModel() {
 
   // ── Mutations ──
   const configureMutation = useMutation({
-    mutationFn: (data: ConfigureGatewayRequest) =>
-      tenantGatewayRepository.configureGateway(data),
+    mutationFn: (data: ConfigureGatewayRequest) => tenantGatewayRepository.configureGateway(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       closeForm();
@@ -85,16 +96,14 @@ export function useTenantGatewaysViewModel() {
   });
 
   const verifyMutation = useMutation({
-    mutationFn: (gatewayType: string) =>
-      tenantGatewayRepository.verifyGateway(gatewayType),
+    mutationFn: (gatewayType: string) => tenantGatewayRepository.verifyGateway(gatewayType),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
 
   const removeMutation = useMutation({
-    mutationFn: (gatewayType: string) =>
-      tenantGatewayRepository.removeGateway(gatewayType),
+    mutationFn: (gatewayType: string) => tenantGatewayRepository.removeGateway(gatewayType),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
@@ -113,9 +122,7 @@ export function useTenantGatewaysViewModel() {
   const configuredTypes = new Set(gateways.map((g: TenantGateway) => g.gateway));
 
   /** Gateways available to add (not yet configured) */
-  const availableToAdd = AVAILABLE_GATEWAYS.filter(
-    (g) => !configuredTypes.has(g.type)
-  );
+  const availableToAdd = AVAILABLE_GATEWAYS.filter((g) => !configuredTypes.has(g.type));
 
   return {
     // State

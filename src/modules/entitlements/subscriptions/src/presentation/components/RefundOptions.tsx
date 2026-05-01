@@ -63,7 +63,8 @@ export function RefundOptions({
       {refundType === "ProRata" && (
         <div className="space-y-2">
           <Label className="text-sm">
-            {t("entSubscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
+            {t("entSubscriptions.customRefundAmount") ||
+              "Custom Amount (optional — leave empty for auto-calculate)"}
           </Label>
           <Input
             type="number"
@@ -75,7 +76,8 @@ export function RefundOptions({
             className="font-mono"
           />
           <p className="text-xs text-muted-foreground">
-            {t("entSubscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
+            {t("entSubscriptions.customAmountHint") ||
+              "If empty, the system auto-calculates based on remaining subscription time."}
           </p>
         </div>
       )}

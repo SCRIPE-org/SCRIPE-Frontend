@@ -29,17 +29,13 @@ export function ComparisonColumnHeader({
 
   // Derive badge list from either new badges[] or legacy isRecommended flag
   const badgeList =
-    badges.length > 0
-      ? badges
-      : isRecommended && recommendedLabel
-      ? [recommendedLabel]
-      : [];
+    badges.length > 0 ? badges : isRecommended && recommendedLabel ? [recommendedLabel] : [];
 
   return (
     <TableHead
       className={cn(
-        "text-center min-w-[180px]",
-        highlighted && "bg-primary/5 border-x-2 border-primary/20"
+        "min-w-[180px] text-center",
+        highlighted && "border-x-2 border-primary/20 bg-primary/5"
       )}
     >
       <div className="flex flex-col items-center gap-1.5 py-1">
@@ -51,7 +47,7 @@ export function ComparisonColumnHeader({
             ))}
           </div>
         )}
-        <span className="font-semibold text-base">{displayName}</span>
+        <span className="text-base font-semibold">{displayName}</span>
         <span className="text-xs text-muted-foreground">Tier {tierLevel}</span>
       </div>
     </TableHead>

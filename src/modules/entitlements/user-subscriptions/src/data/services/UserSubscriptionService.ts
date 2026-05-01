@@ -5,8 +5,14 @@
  * TenantId is resolved server-side from JWT context.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { IUserSubscriptionService, UserSearchDto } from "../../domain/interfaces/IUserSubscriptionService";
-import type { UserSubscriptionModel, UserSubscriptionListModel } from "../models/UserSubscriptionModels";
+import type {
+  IUserSubscriptionService,
+  UserSearchDto,
+} from "../../domain/interfaces/IUserSubscriptionService";
+import type {
+  UserSubscriptionModel,
+  UserSubscriptionListModel,
+} from "../models/UserSubscriptionModels";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
@@ -28,12 +34,16 @@ export class UserSubscriptionService implements IUserSubscriptionService {
   }
 
   async getById(id: string): Promise<UserSubscriptionModel> {
-    return this.api.get<UserSubscriptionModel>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.BY_ID(id));
+    return this.api.get<UserSubscriptionModel>(
+      API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.BY_ID(id)
+    );
   }
 
   async getMySubscription(): Promise<UserSubscriptionModel | null> {
     try {
-      return await this.api.get<UserSubscriptionModel>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.ME);
+      return await this.api.get<UserSubscriptionModel>(
+        API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.ME
+      );
     } catch {
       // 204 No Content → null
       return null;
@@ -41,7 +51,10 @@ export class UserSubscriptionService implements IUserSubscriptionService {
   }
 
   async create(data: CreateUserSubscriptionRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CREATE, data);
+    return this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CREATE,
+      data
+    );
   }
 
   async cancel(id: string): Promise<void> {
@@ -52,8 +65,14 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.RENEW(id), {});
   }
 
-  async changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CHANGE_PLAN(id), data);
+  async changePlan(
+    id: string,
+    data: { newTenantPlanId: string; billingCycle: string; reason?: string }
+  ): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CHANGE_PLAN(id),
+      data
+    );
   }
 
   /**

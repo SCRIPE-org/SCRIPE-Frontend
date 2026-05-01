@@ -295,7 +295,10 @@ export const isNavigationItemActive = (
   // ── Prefix fallback for detail/child pages ──
   // Only when full tree context is provided AND no exact match anywhere
   if (allItems) {
-    const { isMatchWithFallback, hasActiveChildWithFallback } = require("@core/ui/layout/navigation/nav-utils");
+    const {
+      isMatchWithFallback,
+      hasActiveChildWithFallback,
+    } = require("@core/ui/layout/navigation/nav-utils");
     if (item.href && isMatchWithFallback(item.href, pathname, allItems)) return true;
     if (item.children) {
       return item.children.some(

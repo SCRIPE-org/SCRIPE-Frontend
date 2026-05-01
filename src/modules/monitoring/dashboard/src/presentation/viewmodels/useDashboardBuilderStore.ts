@@ -54,7 +54,7 @@ interface DashboardBuilderState {
   updateWidget: (id: string, updates: Partial<DashboardWidget>) => void;
   moveWidget: (id: string, gridColumn: string, gridRow: string) => void;
   selectWidget: (id: string | null) => void;
-  reorderZ: (id: string, direction: 'forward' | 'back') => void;
+  reorderZ: (id: string, direction: "forward" | "back") => void;
   duplicateWidget: (id: string) => void;
   toggleVisibility: (id: string) => void;
   setGridRows: (rows: number) => void;
@@ -69,7 +69,7 @@ interface DashboardBuilderState {
 // ── Helpers ───────────────────────────────────────────────
 function takeSnapshot(state: DashboardBuilderState): CanvasSnapshot {
   return {
-    widgets: state.widgets.map(w => ({ ...w, props: { ...w.props } })),
+    widgets: state.widgets.map((w) => ({ ...w, props: { ...w.props } })),
     gridRows: state.gridRows,
   };
 }
@@ -117,7 +117,7 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
   // ── Add Widget ──
   addWidget: (type) => {
     const state = get();
-    const catalog = WIDGET_CATALOG.find(c => c.type === type);
+    const catalog = WIDGET_CATALOG.find((c) => c.type === type);
     if (!catalog) return null;
 
     if (catalog.singleton && hasSingletonWidget(state.widgets, type)) {
@@ -130,7 +130,7 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
       type,
       gridColumn: catalog.defaultGridColumn,
       gridRow: `${nextRow} / ${nextRow + 1}`,
-      alignment: 'stretch',
+      alignment: "stretch",
       props: { ...catalog.defaultProps },
       zIndex: 1,
       visible: true,
@@ -151,13 +151,13 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
   // ── Remove Widget ──
   removeWidget: (id) => {
     const state = get();
-    const widget = state.widgets.find(w => w.id === id);
+    const widget = state.widgets.find((w) => w.id === id);
     if (!widget) return false;
 
     const history = pushHistory(state);
     set({
       ...history,
-      widgets: state.widgets.filter(w => w.id !== id),
+      widgets: state.widgets.filter((w) => w.id !== id),
       selectedWidgetId: state.selectedWidgetId === id ? null : state.selectedWidgetId,
     });
     return true;
@@ -169,7 +169,7 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
     const history = pushHistory(state);
     set({
       ...history,
-      widgets: state.widgets.map(w =>
+      widgets: state.widgets.map((w) =>
         w.id === id
           ? { ...w, ...updates, props: updates.props ? { ...w.props, ...updates.props } : w.props }
           : w
@@ -183,9 +183,7 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
     const history = pushHistory(state);
     set({
       ...history,
-      widgets: state.widgets.map(w =>
-        w.id === id ? { ...w, gridColumn, gridRow } : w
-      ),
+      widgets: state.widgets.map((w) => (w.id === id ? { ...w, gridColumn, gridRow } : w)),
     });
   },
 
@@ -194,14 +192,14 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
   // ── Reorder Z ──
   reorderZ: (id, direction) => {
     const state = get();
-    const widget = state.widgets.find(w => w.id === id);
+    const widget = state.widgets.find((w) => w.id === id);
     if (!widget) return;
 
     const history = pushHistory(state);
-    const delta = direction === 'forward' ? 1 : -1;
+    const delta = direction === "forward" ? 1 : -1;
     set({
       ...history,
-      widgets: state.widgets.map(w =>
+      widgets: state.widgets.map((w) =>
         w.id === id ? { ...w, zIndex: Math.max(0, w.zIndex + delta) } : w
       ),
     });
@@ -210,10 +208,10 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
   // ── Duplicate Widget ──
   duplicateWidget: (id) => {
     const state = get();
-    const widget = state.widgets.find(w => w.id === id);
+    const widget = state.widgets.find((w) => w.id === id);
     if (!widget) return;
 
-    const catalog = WIDGET_CATALOG.find(c => c.type === widget.type);
+    const catalog = WIDGET_CATALOG.find((c) => c.type === widget.type);
     if (catalog?.singleton && hasSingletonWidget(state.widgets, widget.type)) return;
 
     const nextRow = findNextAvailableRow(state.widgets);
@@ -240,9 +238,7 @@ export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get)
     const history = pushHistory(state);
     set({
       ...history,
-      widgets: state.widgets.map(w =>
-        w.id === id ? { ...w, visible: !w.visible } : w
-      ),
+      widgets: state.widgets.map((w) => (w.id === id ? { ...w, visible: !w.visible } : w)),
     });
   },
 

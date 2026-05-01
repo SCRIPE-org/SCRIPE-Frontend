@@ -6,7 +6,10 @@ import { EditionVersion } from "../../domain/entities/EditionVersion";
 import type { EditionData } from "../../domain/entities/Edition";
 import type { EditionModel } from "../models/EditionModels";
 import type { EditionVersionModel } from "../models/EditionModels";
-import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
+import type {
+  CreateEditionRequest,
+  UpdateEditionRequest,
+} from "../../domain/entities/EditionRequests";
 
 export class EditionMapper {
   static toEntity(model: EditionModel): Edition {
@@ -96,11 +99,15 @@ export class EditionMapper {
     if (request.allowTrial !== undefined) json.allowTrial = request.allowTrial;
     if (request.trialDurationDays !== undefined) json.trialDurationDays = request.trialDurationDays;
     if (request.trialIsFree !== undefined) json.trialIsFree = request.trialIsFree;
-    if (request.trialDiscountPercent !== undefined) json.trialDiscountPercent = request.trialDiscountPercent;
+    if (request.trialDiscountPercent !== undefined)
+      json.trialDiscountPercent = request.trialDiscountPercent;
     if (request.gracePeriodDays !== undefined) json.gracePeriodDays = request.gracePeriodDays;
-    if (request.maxActiveSubscriptions !== undefined) json.maxActiveSubscriptions = request.maxActiveSubscriptions;
-    if (request.isSelfServiceEnabled !== undefined) json.isSelfServiceEnabled = request.isSelfServiceEnabled;
-    if (request.isContactSalesOnly !== undefined) json.isContactSalesOnly = request.isContactSalesOnly;
+    if (request.maxActiveSubscriptions !== undefined)
+      json.maxActiveSubscriptions = request.maxActiveSubscriptions;
+    if (request.isSelfServiceEnabled !== undefined)
+      json.isSelfServiceEnabled = request.isSelfServiceEnabled;
+    if (request.isContactSalesOnly !== undefined)
+      json.isContactSalesOnly = request.isContactSalesOnly;
     return json;
   }
 }

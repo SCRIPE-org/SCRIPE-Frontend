@@ -39,5 +39,7 @@ export interface IRecycleBinRepository {
    * Bulk restore multiple deleted items
    * @returns Count of items successfully restored
    */
-  bulkRestore(items: { entityType: string; id: string; restoreAdmins?: boolean }[]): Promise<number>;
+  bulkRestore(
+    items: { entityType: string; id: string; restoreAdmins?: boolean }[]
+  ): Promise<number>;
 }

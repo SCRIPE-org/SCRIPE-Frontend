@@ -27,7 +27,7 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <Clock className="h-4 w-4 text-muted-foreground" />
           Subscription History
         </CardTitle>
@@ -52,7 +52,10 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">{item.editionName}</span>
-                      <Badge variant={STATUS_VARIANTS[item.status] ?? "outline"} className="text-[10px]">
+                      <Badge
+                        variant={STATUS_VARIANTS[item.status] ?? "outline"}
+                        className="text-[10px]"
+                      >
                         {t(`entSubscriptions.${statusKey}`) || item.status}
                       </Badge>
                       <Badge variant="outline" className="text-[10px]">
@@ -66,9 +69,11 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
                   </div>
                 </div>
                 {item.totalAmount != null && item.currency && (
-                  <span className="text-sm tabular-nums font-medium text-muted-foreground">
+                  <span className="text-sm font-medium tabular-nums text-muted-foreground">
                     {new Intl.NumberFormat("en-US", {
-                      style: "currency", currency: item.currency, minimumFractionDigits: 2,
+                      style: "currency",
+                      currency: item.currency,
+                      minimumFractionDigits: 2,
                     }).format(item.totalAmount)}
                   </span>
                 )}

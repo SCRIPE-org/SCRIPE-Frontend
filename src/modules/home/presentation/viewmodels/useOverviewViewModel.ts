@@ -83,7 +83,6 @@ export function useOverviewViewModel(hasDashboardPermission = true) {
   const refetchAll = useCallback(() => {
     summary.refetch();
     recentActivity.refetch();
-
   }, [summary, recentActivity]);
 
   return {

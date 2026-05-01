@@ -89,9 +89,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
       >
         <div className="flex items-center gap-3">
           <Logo size="sm" />
-          <span className="hidden text-sm font-bold text-foreground sm:block">
-            {appName}
-          </span>
+          <span className="hidden text-sm font-bold text-foreground sm:block">{appName}</span>
         </div>
 
         <div className="flex items-center gap-2">

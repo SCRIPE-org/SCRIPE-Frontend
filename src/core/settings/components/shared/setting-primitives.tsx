@@ -111,11 +111,7 @@ export function SettingToggle({
           </div>
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
-        <Switch
-          checked={checked}
-          onCheckedChange={onCheckedChange}
-          disabled={isLocked}
-        />
+        <Switch checked={checked} onCheckedChange={onCheckedChange} disabled={isLocked} />
       </div>
       {showSeparator && <Separator />}
     </>
@@ -136,12 +132,7 @@ export interface SettingSectionProps {
   className?: string;
 }
 
-export function SettingSection({
-  title,
-  description,
-  children,
-  className,
-}: SettingSectionProps) {
+export function SettingSection({ title, description, children, className }: SettingSectionProps) {
   return (
     <Card className={className}>
       <CardHeader>
@@ -228,9 +219,7 @@ export function ColorSwatchGrid<T extends string = string>({
                   c.color
                 )}
               >
-                {selected === c.value && (
-                  <Check className="h-4 w-4 text-white" />
-                )}
+                {selected === c.value && <Check className="h-4 w-4 text-white" />}
               </div>
               <span className="max-w-full truncate text-[10px] font-medium text-muted-foreground">
                 {c.label ?? getLabel?.(c.value) ?? c.value}
@@ -294,12 +283,7 @@ export function StyleCardPicker<T extends string = string>({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div
-          className={cn(
-            "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4",
-            gridClassName
-          )}
-        >
+        <div className={cn("grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4", gridClassName)}>
           {options.map((option) => {
             const isSelected = selected === option.value;
 
@@ -393,12 +377,7 @@ export function ModePicker<T extends string = string>({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div
-          className={cn(
-            "grid grid-cols-1 gap-3 sm:grid-cols-3",
-            gridClassName
-          )}
-        >
+        <div className={cn("grid grid-cols-1 gap-3 sm:grid-cols-3", gridClassName)}>
           {modes.map((mode) => (
             <button
               key={mode.value}
@@ -461,17 +440,13 @@ export function EditionGatedControl({
   return (
     <div className={cn("relative", className)}>
       {/* Blurred/disabled children as background */}
-      <div className="pointer-events-none select-none opacity-30 blur-[1px]">
-        {children}
-      </div>
+      <div className="pointer-events-none select-none opacity-30 blur-[1px]">{children}</div>
       {/* Upgrade overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-50/90 px-6 py-4 shadow-lg backdrop-blur-sm dark:border-amber-600/30 dark:bg-amber-950/90">
           <Lock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
           <span className="text-sm font-semibold text-amber-800 dark:text-amber-200">
-            {requiredEdition
-              ? `${requiredEdition} Edition Required`
-              : "Upgrade Required"}
+            {requiredEdition ? `${requiredEdition} Edition Required` : "Upgrade Required"}
           </span>
           {upgradePrompt && (
             <span className="text-center text-xs text-amber-600 dark:text-amber-400">

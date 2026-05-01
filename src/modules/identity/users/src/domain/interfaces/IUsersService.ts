@@ -5,11 +5,17 @@
  * Matches the backend UsersController endpoints 1:1.
  */
 
-import type { UsersListModel, UsersDetailModel, UpdateUserModel } from "../../data/models/UsersModel";
+import type {
+  UsersListModel,
+  UsersDetailModel,
+  UpdateUserModel,
+} from "../../data/models/UsersModel";
 
 export interface IUsersService {
   /** GET /api/v1/Users — paginated list */
-  getAll(params?: Record<string, unknown>): Promise<{ items: UsersListModel[]; totalCount: number }>;
+  getAll(
+    params?: Record<string, unknown>
+  ): Promise<{ items: UsersListModel[]; totalCount: number }>;
 
   /** GET /api/v1/Users/{id} — full detail */
   getById(id: string): Promise<UsersDetailModel>;

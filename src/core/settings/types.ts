@@ -260,8 +260,24 @@ export type LoadingStyle =
   | "quantum"
   | "morphing";
 
-export type TooltipStyle = "default" | "rounded" | "sharp" | "bubble" | "glass" | "neon" | "minimal" | "elegant";
-export type ModalStyle = "default" | "centered" | "fullscreen" | "drawer" | "glass" | "floating" | "card" | "overlay";
+export type TooltipStyle =
+  | "default"
+  | "rounded"
+  | "sharp"
+  | "bubble"
+  | "glass"
+  | "neon"
+  | "minimal"
+  | "elegant";
+export type ModalStyle =
+  | "default"
+  | "centered"
+  | "fullscreen"
+  | "drawer"
+  | "glass"
+  | "floating"
+  | "card"
+  | "overlay";
 
 export type TreeStyle =
   | "lines"
@@ -279,36 +295,134 @@ export type TreeStyle =
 
 export type ToastDesign = "minimal" | "modern" | "gradient" | "outlined" | "filled";
 
-export type DatePickerStyle = "default" | "modern" | "glass" | "outlined" | "filled" | "minimal" | "elegant";
+export type DatePickerStyle =
+  | "default"
+  | "modern"
+  | "glass"
+  | "outlined"
+  | "filled"
+  | "minimal"
+  | "elegant";
 export type CalendarStyle = "default" | "modern" | "glass" | "elegant" | "minimal" | "dark";
 
 export type SelectStyle =
-  | "default" | "modern" | "glass" | "outlined" | "filled" | "minimal" | "elegant"
-  | "professional" | "neon" | "gradient" | "neumorphism" | "cyberpunk" | "luxury"
-  | "aurora" | "matrix" | "diamond" | "holographic" | "cosmic" | "liquid"
-  | "crystal" | "plasma" | "quantum" | "nebula" | "prism" | "stellar" | "vortex" | "phoenix";
+  | "default"
+  | "modern"
+  | "glass"
+  | "outlined"
+  | "filled"
+  | "minimal"
+  | "elegant"
+  | "professional"
+  | "neon"
+  | "gradient"
+  | "neumorphism"
+  | "cyberpunk"
+  | "luxury"
+  | "aurora"
+  | "matrix"
+  | "diamond"
+  | "holographic"
+  | "cosmic"
+  | "liquid"
+  | "crystal"
+  | "plasma"
+  | "quantum"
+  | "nebula"
+  | "prism"
+  | "stellar"
+  | "vortex"
+  | "phoenix";
 
 export type SwitchStyle =
-  | "default" | "modern" | "ios" | "android" | "toggle" | "slider" | "neon"
-  | "neumorphism" | "liquid" | "cyberpunk" | "glassmorphism" | "aurora" | "matrix" | "cosmic" | "retro";
+  | "default"
+  | "modern"
+  | "ios"
+  | "android"
+  | "toggle"
+  | "slider"
+  | "neon"
+  | "neumorphism"
+  | "liquid"
+  | "cyberpunk"
+  | "glassmorphism"
+  | "aurora"
+  | "matrix"
+  | "cosmic"
+  | "retro";
 
 export type CheckboxStyle =
-  | "default" | "modern" | "glass" | "neon" | "gradient" | "neumorphism" | "cyberpunk"
-  | "luxury" | "aurora" | "cosmic" | "minimal" | "elegant" | "organic" | "retro"
-  | "matrix" | "diamond" | "liquid" | "crystal" | "plasma" | "quantum"
-  | "holographic" | "stellar" | "vortex" | "phoenix";
+  | "default"
+  | "modern"
+  | "glass"
+  | "neon"
+  | "gradient"
+  | "neumorphism"
+  | "cyberpunk"
+  | "luxury"
+  | "aurora"
+  | "cosmic"
+  | "minimal"
+  | "elegant"
+  | "organic"
+  | "retro"
+  | "matrix"
+  | "diamond"
+  | "liquid"
+  | "crystal"
+  | "plasma"
+  | "quantum"
+  | "holographic"
+  | "stellar"
+  | "vortex"
+  | "phoenix";
 
 export type RadioStyle =
-  | "default" | "modern" | "glass" | "neon" | "gradient" | "neumorphism" | "cyberpunk"
-  | "luxury" | "aurora" | "cosmic" | "minimal" | "elegant" | "organic" | "retro"
-  | "matrix" | "diamond" | "liquid" | "crystal" | "plasma" | "quantum"
-  | "holographic" | "stellar" | "vortex" | "phoenix";
+  | "default"
+  | "modern"
+  | "glass"
+  | "neon"
+  | "gradient"
+  | "neumorphism"
+  | "cyberpunk"
+  | "luxury"
+  | "aurora"
+  | "cosmic"
+  | "minimal"
+  | "elegant"
+  | "organic"
+  | "retro"
+  | "matrix"
+  | "diamond"
+  | "liquid"
+  | "crystal"
+  | "plasma"
+  | "quantum"
+  | "holographic"
+  | "stellar"
+  | "vortex"
+  | "phoenix";
 
 export type ToastStyle =
-  | "classic" | "neon" | "glassmorphism" | "neumorphism" | "aurora"
-  | "cosmic" | "minimal" | "modern" | "gradient" | "outlined";
+  | "classic"
+  | "neon"
+  | "glassmorphism"
+  | "neumorphism"
+  | "aurora"
+  | "cosmic"
+  | "minimal"
+  | "modern"
+  | "gradient"
+  | "outlined";
 
-export type HoverEffectType = "none" | "elevate" | "scale" | "glow" | "shimmer" | "rotate" | "slide";
+export type HoverEffectType =
+  | "none"
+  | "elevate"
+  | "scale"
+  | "glow"
+  | "shimmer"
+  | "rotate"
+  | "slide";
 export type HoverEffectIntensity = "none" | "small" | "medium" | "strong";
 
 // ── Settings Interface ────────────────────────────────────

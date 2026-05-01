@@ -21,12 +21,14 @@ export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) 
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-[#635bff]" />
-          <CardTitle className="text-base">{t("entitlements.platformStripe.connectAccounts")}</CardTitle>
+          <CardTitle className="text-base">
+            {t("entitlements.platformStripe.connectAccounts")}
+          </CardTitle>
         </div>
         <CardDescription>{t("entitlements.platformStripe.connectDescription")}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatBlock
             label={t("entitlements.platformStripe.total")}
             value={connectSummary.totalAccounts}
@@ -55,20 +57,24 @@ export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) 
 
         <Separator className="my-4" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-emerald-500" />
-              <span className="text-sm text-muted-foreground">{t("entitlements.platformStripe.totalCommissionsEarned")}</span>
+              <span className="text-sm text-muted-foreground">
+                {t("entitlements.platformStripe.totalCommissionsEarned")}
+              </span>
             </div>
             <span className="font-bold text-emerald-600">
               ${connectSummary.totalCommissionsEarned.toFixed(2)}
             </span>
           </div>
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+          <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
             <div className="flex items-center gap-2">
               <Percent className="h-4 w-4 text-amber-500" />
-              <span className="text-sm text-muted-foreground">{t("entitlements.platformStripe.commissionsPending")}</span>
+              <span className="text-sm text-muted-foreground">
+                {t("entitlements.platformStripe.commissionsPending")}
+              </span>
             </div>
             <span className="font-bold text-amber-600">
               ${connectSummary.totalCommissionsPending.toFixed(2)}
@@ -94,8 +100,8 @@ function StatBlock({
   color: string;
 }) {
   return (
-    <div className="text-center p-3 rounded-lg bg-muted/30">
-      <Icon className={`h-5 w-5 mx-auto mb-1.5 ${color}`} />
+    <div className="rounded-lg bg-muted/30 p-3 text-center">
+      <Icon className={`mx-auto mb-1.5 h-5 w-5 ${color}`} />
       <p className="text-2xl font-bold">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>

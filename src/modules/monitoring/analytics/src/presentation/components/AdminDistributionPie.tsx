@@ -99,7 +99,6 @@ export const AdminDistributionPie = memo(function AdminDistributionPie({
                 labelStyle={{
                   color: "hsl(var(--popover-foreground))",
                 }}
-
                 formatter={(value: any) => {
                   const num = Number(value) || 0;
                   const pct = total > 0 ? ((num / total) * 100).toFixed(1) : "0";

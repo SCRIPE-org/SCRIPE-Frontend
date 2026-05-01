@@ -1,3 +1,3 @@
-export { NotificationBell } from './NotificationBell';
-export { useNotificationViewModel } from './useNotificationViewModel';
-export type { NotificationViewModel } from './useNotificationViewModel';
+export { NotificationBell } from "./NotificationBell";
+export { useNotificationViewModel } from "./useNotificationViewModel";
+export type { NotificationViewModel } from "./useNotificationViewModel";

@@ -51,8 +51,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html suppressHydrationWarning>
       <head>
         {/* P1.11: Preconnect to shared API server */}
-        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} />
-        <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} crossOrigin="anonymous" />
+        <link
+          rel="dns-prefetch"
+          href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}
+        />
+        <link
+          rel="preconnect"
+          href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="font-cairo antialiased" suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>

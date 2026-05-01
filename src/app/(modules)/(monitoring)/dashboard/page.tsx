@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const DashboardView = dynamic(
-  () => import("@modules/monitoring/dashboard").then((m) => ({ default: m.DashboardView }))
+const DashboardView = dynamic(() =>
+  import("@modules/monitoring/dashboard").then((m) => ({ default: m.DashboardView }))
 );
 
 export const metadata: Metadata = {

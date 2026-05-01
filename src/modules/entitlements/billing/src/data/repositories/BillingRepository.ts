@@ -15,7 +15,10 @@ import type {
   PaymentLink,
 } from "../../domain/entities/Invoice";
 import { BillingDashboard } from "../../domain/entities/Invoice";
-import type { IBillingService, GatewayListResponseModel } from "../../domain/interfaces/IBillingService";
+import type {
+  IBillingService,
+  GatewayListResponseModel,
+} from "../../domain/interfaces/IBillingService";
 import { BillingMapper } from "../mappers/BillingMapper";
 
 export class BillingRepository implements IBillingRepository {
@@ -136,7 +139,10 @@ export class BillingRepository implements IBillingRepository {
     return this.service.testGatewayConnection(gateway);
   }
 
-  async toggleGatewayStatus(gateway: string, enabled: boolean): Promise<{ success: boolean; message: string; enabled: boolean }> {
+  async toggleGatewayStatus(
+    gateway: string,
+    enabled: boolean
+  ): Promise<{ success: boolean; message: string; enabled: boolean }> {
     return this.service.toggleGatewayStatus(gateway, enabled);
   }
 }

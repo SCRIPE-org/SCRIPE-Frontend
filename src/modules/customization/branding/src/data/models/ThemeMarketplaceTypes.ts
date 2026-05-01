@@ -119,13 +119,25 @@ export function getThemeBadge(theme: ThemeCardDto): {
 
   if (theme.pricingType === "StandaloneOnly") {
     const priceLabel = theme.price ? `$${theme.price.toFixed(2)}` : "Premium";
-    return { label: `💰 ${priceLabel}`, color: "bg-violet-500/10 text-violet-600", variant: "buyable" };
+    return {
+      label: `💰 ${priceLabel}`,
+      color: "bg-violet-500/10 text-violet-600",
+      variant: "buyable",
+    };
   }
 
   // EditionGated but not included — locked
   if (theme.isBuyable && theme.price) {
-    return { label: `🔒 Upgrade or $${theme.price.toFixed(2)}`, color: "bg-amber-500/10 text-amber-600", variant: "locked" };
+    return {
+      label: `🔒 Upgrade or $${theme.price.toFixed(2)}`,
+      color: "bg-amber-500/10 text-amber-600",
+      variant: "locked",
+    };
   }
 
-  return { label: "🔒 Upgrade to unlock", color: "bg-amber-500/10 text-amber-600", variant: "locked" };
+  return {
+    label: "🔒 Upgrade to unlock",
+    color: "bg-amber-500/10 text-amber-600",
+    variant: "locked",
+  };
 }

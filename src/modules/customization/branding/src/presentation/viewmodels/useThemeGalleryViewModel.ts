@@ -20,10 +20,16 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
 // ── Constants ──
 const GALLERY_CATEGORIES = [
-  "all", "corporate", "creative", "minimal", "industry", "dark", "colorful",
+  "all",
+  "corporate",
+  "creative",
+  "minimal",
+  "industry",
+  "dark",
+  "colorful",
 ] as const;
 
-type GalleryCategory = typeof GALLERY_CATEGORIES[number];
+type GalleryCategory = (typeof GALLERY_CATEGORIES)[number];
 
 type GallerySortKey = "popular" | "newest" | "trending" | "nameAsc" | "nameDesc";
 
@@ -73,12 +79,18 @@ export function useThemeGalleryViewModel() {
   // ─── Derived sort key ───
   const apiSortBy = useMemo(() => {
     switch (filters.sortBy) {
-      case "popular": return "usageCount";
-      case "newest": return "publishedAt";
-      case "trending": return "likeCount";
-      case "nameAsc": return "name";
-      case "nameDesc": return "name_desc";
-      default: return "name";
+      case "popular":
+        return "usageCount";
+      case "newest":
+        return "publishedAt";
+      case "trending":
+        return "likeCount";
+      case "nameAsc":
+        return "name";
+      case "nameDesc":
+        return "name_desc";
+      default:
+        return "name";
     }
   }, [filters.sortBy]);
 
@@ -233,17 +245,20 @@ export function useThemeGalleryViewModel() {
     );
   }, [filters]);
 
-  const toggleCompareTheme = useCallback((slug: string) => {
-    if (compareSlug1 === slug) {
-      setCompareSlug1(null);
-    } else if (compareSlug2 === slug) {
-      setCompareSlug2(null);
-    } else if (!compareSlug1) {
-      setCompareSlug1(slug);
-    } else if (!compareSlug2) {
-      setCompareSlug2(slug);
-    }
-  }, [compareSlug1, compareSlug2]);
+  const toggleCompareTheme = useCallback(
+    (slug: string) => {
+      if (compareSlug1 === slug) {
+        setCompareSlug1(null);
+      } else if (compareSlug2 === slug) {
+        setCompareSlug2(null);
+      } else if (!compareSlug1) {
+        setCompareSlug1(slug);
+      } else if (!compareSlug2) {
+        setCompareSlug2(slug);
+      }
+    },
+    [compareSlug1, compareSlug2]
+  );
 
   return {
     // Tab
@@ -283,8 +298,7 @@ export function useThemeGalleryViewModel() {
     // Actions
     toggleFavorite: (slug: string) => favoriteMutation.mutate(slug),
     isTogglingFavorite: favoriteMutation.isPending,
-    applyTheme: (slug: string, merge: boolean) =>
-      applyMutation.mutate({ slug, merge }),
+    applyTheme: (slug: string, merge: boolean) => applyMutation.mutate({ slug, merge }),
     isApplying: applyMutation.isPending,
     // i18n
     t,

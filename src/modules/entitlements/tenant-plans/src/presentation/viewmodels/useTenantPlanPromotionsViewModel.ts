@@ -10,7 +10,10 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantPlanPromotion } from "../../domain/entities/TenantPlan";
-import type { CreatePromotionRequest, UpdatePromotionRequest } from "../../domain/entities/TenantPlanRequests";
+import type {
+  CreatePromotionRequest,
+  UpdatePromotionRequest,
+} from "../../domain/entities/TenantPlanRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -41,11 +44,14 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
   const createMutation = useMutation({
     mutationFn: (req: CreatePromotionRequest) => tenantPlanRepository.createPromotion(req),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plan-promotions", planId] });
+      queryClient.invalidateQueries({
+        queryKey: ["entitlements", "tenant-plan-promotions", planId],
+      });
       setIsCreateOpen(false);
       success({
         title: t("common.created") || "Promotion Created",
-        description: t("entitlements.promotions.createSuccess") || "Promotion code has been created.",
+        description:
+          t("entitlements.promotions.createSuccess") || "Promotion code has been created.",
       });
     },
     onError: () => {
@@ -61,7 +67,9 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
     mutationFn: ({ id, data }: { id: string; data: UpdatePromotionRequest }) =>
       tenantPlanRepository.updatePromotion(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plan-promotions", planId] });
+      queryClient.invalidateQueries({
+        queryKey: ["entitlements", "tenant-plan-promotions", planId],
+      });
       setIsEditOpen(false);
       setSelectedPromotion(null);
       success({
@@ -81,7 +89,9 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => tenantPlanRepository.deletePromotion(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plan-promotions", planId] });
+      queryClient.invalidateQueries({
+        queryKey: ["entitlements", "tenant-plan-promotions", planId],
+      });
       success({
         title: t("common.deleted") || "Promotion Deleted",
         description: t("entitlements.promotions.deleteSuccess") || "Promotion has been removed.",

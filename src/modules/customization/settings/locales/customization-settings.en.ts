@@ -429,7 +429,8 @@ export const en = {
       description: "Choose the animation level for the interface",
     },
     resetSettings: "Reset Settings",
-    resetDescription: "Reset all interface settings to default. This will undo all customizations you have made.",
+    resetDescription:
+      "Reset all interface settings to default. This will undo all customizations you have made.",
     resetAll: "Reset All Settings",
     saveSettings: "Save Settings",
     settingsSaved: "Saved!",
@@ -938,7 +939,8 @@ export const en = {
       lightGradientsDesc: "Gradient backgrounds for light mode",
       darkGradients: "Dark Gradients",
       darkGradientsDesc: "Gradient backgrounds for dark mode",
-      customColorsInfo: "Custom colors override preset selections. Clear a custom color to use the preset value instead.",
+      customColorsInfo:
+        "Custom colors override preset selections. Clear a custom color to use the preset value instead.",
       customPrimary: "Custom Primary",
       customPrimaryDesc: "Override the primary accent color",
       customSecondary: "Custom Secondary",
@@ -947,7 +949,8 @@ export const en = {
       customLightBgDesc: "Override the light mode background color",
       customDarkBg: "Custom Dark Background",
       customDarkBgDesc: "Override the dark mode background color",
-      palettesInfo: "Apply a complete color palette in one click. Sets primary, secondary, and background colors together.",
+      palettesInfo:
+        "Apply a complete color palette in one click. Sets primary, secondary, and background colors together.",
     },
     lightBgCategories: {
       bright: "Bright - Near White",
@@ -1043,13 +1046,16 @@ export const en = {
       custom: "Custom",
       customDesc: "Use your own hex colors for the background",
     },
-    gradientWarning: "Gradient mode is not active. Gradient settings will not take effect until you switch the background mode to Gradient.",
+    gradientWarning:
+      "Gradient mode is not active. Gradient settings will not take effect until you switch the background mode to Gradient.",
     switchToGradient: "Switch to Gradient mode †’",
-    customBgWarning: "Custom background mode is not active. Custom colors will not take effect until you switch the background mode to Custom.",
+    customBgWarning:
+      "Custom background mode is not active. Custom colors will not take effect until you switch the background mode to Custom.",
     switchToCustom: "Switch to Custom mode †’",
     gradient: {
       customColors: "Custom Gradient Colors",
-      customColorsDesc: "Pick your own start and end colors for the gradient. These override preset gradients when set.",
+      customColorsDesc:
+        "Pick your own start and end colors for the gradient. These override preset gradients when set.",
       startColor: "Start Color",
       endColor: "End Color",
       preview: "Live Preview",
@@ -1496,11 +1502,12 @@ export const en = {
         },
       },
       testButton: "Test {{style}}",
-      testInstructions: "Click \"Test\" buttons to preview each modal style with sample content",
+      testInstructions: 'Click "Test" buttons to preview each modal style with sample content',
       previewTitle: "{{style}} Modal Style Preview",
       previewDescription: "This is a preview of the {{style}} modal style.",
       sampleContentTitle: "Sample Content",
-      sampleContentDescription: "This modal demonstrates the visual appearance and behavior of the {{style}} style. Notice the unique styling, positioning, and visual effects.",
+      sampleContentDescription:
+        "This modal demonstrates the visual appearance and behavior of the {{style}} style. Notice the unique styling, positioning, and visual effects.",
       closePreview: "Close Preview",
       applyStyle: "Apply This Style",
     },

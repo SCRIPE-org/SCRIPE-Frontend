@@ -14,10 +14,7 @@ import {
   type AdminJson,
   type AdminRoleJson,
 } from "../models/AdminModel";
-import type {
-  CreateAdminRequest,
-  UpdateAdminRequest,
-} from "../../domain/entities/AdminRequests";
+import type { CreateAdminRequest, UpdateAdminRequest } from "../../domain/entities/AdminRequests";
 
 export class AdminMapper {
   /**
@@ -145,4 +142,3 @@ export class AdminMapper {
     };
   }
 }
-

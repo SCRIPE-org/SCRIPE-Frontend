@@ -1,11 +1,7 @@
 /**
  * Billing Mapper — DTO → Entity conversion
  */
-import {
-  Invoice,
-  InvoiceListItem,
-  BillingDashboard,
-} from "../../domain/entities/Invoice";
+import { Invoice, InvoiceListItem, BillingDashboard } from "../../domain/entities/Invoice";
 import type {
   InvoiceData,
   InvoiceListItemData,
@@ -150,4 +146,3 @@ export class BillingMapper {
     };
   }
 }
-

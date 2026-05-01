@@ -3,7 +3,8 @@ export const en = {
     editions: {
       title: "Editions",
       displayName: "Display Name",
-      description: "Manage subscription plans - bundle features into editions like Basic, Pro, Enterprise.",
+      description:
+        "Manage subscription plans - bundle features into editions like Basic, Pro, Enterprise.",
       name: "Edition Name",
       namePlaceholder: "e.g. Basic, Professional, Enterprise",
       displayNameEn: "Display Name (English)",
@@ -17,7 +18,8 @@ export const en = {
       edit: "Edit Edition",
       editDesc: "Update edition metadata.",
       deleteConfirmTitle: "Delete Edition",
-      deleteConfirmDesc: "This will soft-delete the edition. Active subscriptions will not be affected.",
+      deleteConfirmDesc:
+        "This will soft-delete the edition. Active subscriptions will not be affected.",
       wizard: {
         // ── Step labels ──
         stepBasics: "Basics",
@@ -29,10 +31,12 @@ export const en = {
         identitySectionDesc: "Core identifiers and customer-facing display names.",
         internalName: "Internal Name",
         internalNamePlaceholder: "e.g. standard, enterprise",
-        internalNameDesc: "Unique slug used in API endpoints and configurations. Cannot be changed after creation.",
+        internalNameDesc:
+          "Unique slug used in API endpoints and configurations. Cannot be changed after creation.",
         tierLevel: "Tier Level",
         tierLevelPlaceholder: "0",
-        tierLevelDesc: "Priority level (0–100). 0 = Free tier, higher = more premium. Used for upgrade/downgrade paths.",
+        tierLevelDesc:
+          "Priority level (0–100). 0 = Free tier, higher = more premium. Used for upgrade/downgrade paths.",
         displaySection: "Customer-Facing Display",
         displaySectionDesc: "How this edition appears to tenants on pricing pages.",
         displayNameEn: "Display Name (English)",
@@ -42,14 +46,16 @@ export const en = {
         tagline: "Tagline",
         taglinePlaceholder: "e.g. Best for growing teams",
         description: "Description",
-        descriptionPlaceholder: "A detailed description of what this edition includes and who it's for...",
+        descriptionPlaceholder:
+          "A detailed description of what this edition includes and who it's for...",
         badgeSection: "Recommendation Badges",
         badgeSectionDesc: "Badges displayed on the pricing card to attract attention.",
         badgeLabels: "Badge Labels",
         badgeLabelsPlaceholder: '["Most Popular", "Best Value"]',
         badgeLabelsDesc: "JSON array of badge strings. Leave empty for no badges.",
         overflowSection: "Downgrade Policy",
-        overflowSectionDesc: "What happens when a tenant's resources exceed limits after downgrading.",
+        overflowSectionDesc:
+          "What happens when a tenant's resources exceed limits after downgrading.",
         overflowPolicy: "Overflow Policy",
         overflowBlock: "Block — Reject downgrade until excess removed",
         overflowArchive: "Archive — Archive excess data on downgrade",
@@ -73,17 +79,22 @@ export const en = {
         checkoutSection: "Checkout Mode",
         checkoutSectionDesc: "Control how tenants can subscribe to this edition.",
         selfService: "Self-Service Checkout",
-        selfServiceDesc: "Tenants can subscribe instantly via Stripe Checkout without contacting sales.",
+        selfServiceDesc:
+          "Tenants can subscribe instantly via Stripe Checkout without contacting sales.",
         contactSalesOnly: "Contact Sales Only",
-        contactSalesOnlyDesc: "Disable self-service checkout. Admins generate payment links manually.",
+        contactSalesOnlyDesc:
+          "Disable self-service checkout. Admins generate payment links manually.",
         // ── Pricing step ──
         pricingSection: "Multi-Currency Pricing",
         pricingSectionDesc: "Set base prices for each currency and billing cycle combination.",
-        pricingDesc: "Configure pricing for each enabled billing cycle. Leave blank for combinations that shouldn't be offered.",
+        pricingDesc:
+          "Configure pricing for each enabled billing cycle. Leave blank for combinations that shouldn't be offered.",
         currency: "Currency",
         freeTierTitle: "Free Tier — No Pricing Needed",
-        freeTierDesc: "Tier Level 0 editions are free by design. No pricing records will be created.",
-        noBillingCycles: "No billing cycles enabled. Go back to Billing and enable at least one cycle.",
+        freeTierDesc:
+          "Tier Level 0 editions are free by design. No pricing records will be created.",
+        noBillingCycles:
+          "No billing cycles enabled. Go back to Billing and enable at least one cycle.",
         // ── Review step ──
         reviewSection: "Review & Confirm",
         reviewSectionDesc: "Verify all settings before creating the edition.",
@@ -152,9 +163,11 @@ export const en = {
       recommendationLabels: "Recommendation Badges",
       recommendationPlaceholder: 'e.g. ["Best Value","Most Popular"]',
       tierLevel: "Tier Level",
-      tierLevelDesc: "Priority level (0-100) used for edition ordering and upgrade/downgrade paths.",
+      tierLevelDesc:
+        "Priority level (0-100) used for edition ordering and upgrade/downgrade paths.",
       overflowPolicy: "Downgrade Overflow Policy",
-      overflowPolicyDesc: "What happens when a tenant's resources exceed limits after downgrading to this edition.",
+      overflowPolicyDesc:
+        "What happens when a tenant's resources exceed limits after downgrading to this edition.",
       overflowPolicies: {
         Block: "Block (Reject Change)",
         GracefulFreeze: "Graceful Freeze (Read-Only)",
@@ -180,7 +193,8 @@ export const en = {
       trialDurationDays: "Trial Duration (Days)",
       trialDurationDaysDesc: "Number of days for the trial period (1-730).",
       trialIsFree: "Free Trial",
-      trialIsFreeDesc: "If enabled, trial is completely free. If disabled, trial uses discounted pricing.",
+      trialIsFreeDesc:
+        "If enabled, trial is completely free. If disabled, trial uses discounted pricing.",
       trialDiscountPercent: "Trial Discount %",
       trialDiscountPercentDesc: "Discount percentage applied during paid trial (0-100).",
       gracePeriodDays: "Grace Period (Days)",
@@ -237,9 +251,11 @@ export const en = {
         published: "Version Published",
         publishedDesc: "Rollout started successfully.",
         created: "Version Created",
-        createdDesc: "Feature changes saved as a new draft version. Publish it to apply to tenants.",
+        createdDesc:
+          "Feature changes saved as a new draft version. Publish it to apply to tenants.",
         includePricing: "Include Pricing Changes",
-        includePricingDesc: "Attach new pricing to this version. Existing subscribers keep their current pricing (grandfathered).",
+        includePricingDesc:
+          "Attach new pricing to this version. Existing subscribers keep their current pricing (grandfathered).",
         pricingIncluded: "Pricing Changes",
         noPricingChanges: "No pricing changes",
         canceled: "Version Canceled",
@@ -272,11 +288,14 @@ export const en = {
       pendingChanges: "You have unsaved changes",
       pendingChangesCount: "{{count}} feature(s) modified",
       saveAsVersion: "Save as Version",
-      saveAsVersionDesc: "Create a draft version with your changes. You can review and publish it later with a rollout strategy.",
+      saveAsVersionDesc:
+        "Create a draft version with your changes. You can review and publish it later with a rollout strategy.",
       directApply: "Apply Now",
-      directApplyDesc: "Apply changes immediately to the edition and sync all affected tenants. No version record will be created.",
+      directApplyDesc:
+        "Apply changes immediately to the edition and sync all affected tenants. No version record will be created.",
       directApplyConfirmTitle: "Apply Changes Now?",
-      directApplyConfirmDesc: "This will immediately update the edition features and sync all affected tenant permissions. No version record will be created.",
+      directApplyConfirmDesc:
+        "This will immediately update the edition features and sync all affected tenant permissions. No version record will be created.",
       applyNow: "Yes, Apply Now",
       versionNotesLabel: "Change Notes",
       createAndPublish: "Create Version",
@@ -310,7 +329,8 @@ export const en = {
       trialSettings: "Trial & Grace Settings",
       maxSubs: "Max Active Subscriptions",
       maxActiveSubscriptions: "Max Active Subscriptions",
-      maxActiveSubscriptionsDesc: "Maximum concurrent subscriptions for this edition. -1 = unlimited.",
+      maxActiveSubscriptionsDesc:
+        "Maximum concurrent subscriptions for this edition. -1 = unlimited.",
     },
     pricing: {
       title: "Pricing",
@@ -325,11 +345,14 @@ export const en = {
       optional: "Optional",
       currencyOverrides: "Currency Overrides",
       addOverride: "Add Currency Override",
-      addOverrideDesc: "Select a currency to set fixed pricing for. Prices will be auto-suggested from the current exchange rate.",
-      noOverridesDesc: "All currencies will auto-convert from USD. Add overrides for specific markets where you want fixed pricing.",
+      addOverrideDesc:
+        "Select a currency to set fixed pricing for. Prices will be auto-suggested from the current exchange rate.",
+      noOverridesDesc:
+        "All currencies will auto-convert from USD. Add overrides for specific markets where you want fixed pricing.",
       selectCurrency: "Search currency...",
       searchCurrency: "Search...",
-      autoConvertInfo: "Currencies without explicit overrides will auto-convert from USD at live exchange rates.",
+      autoConvertInfo:
+        "Currencies without explicit overrides will auto-convert from USD at live exchange rates.",
       suggestedYearly: "Suggested",
       livePreview: "Live Preview",
       previewDesc: "What tenants will actually pay in each currency.",
@@ -351,8 +374,10 @@ export const en = {
       billingCurrency: "Billing Currency",
       applyNowTitle: "Apply Pricing Immediately?",
       applyNowDesc: "Are you sure you want to apply these pricing changes to the live edition?",
-      applyWarning: "Warning: Existing subscriptions will keep their grandfathered pricing. New subscriptions and renewals will use these new rates.",
-      versionHint: "Save as version to grandfather existing subscribers, or apply now to update immediately.",
+      applyWarning:
+        "Warning: Existing subscriptions will keep their grandfathered pricing. New subscriptions and renewals will use these new rates.",
+      versionHint:
+        "Save as version to grandfather existing subscribers, or apply now to update immediately.",
       saveAsVersionDesc: "Snapshot these pricing changes as a new version draft.",
       versionChangesIncluded: "Pricing changes will be included in this version.",
     },

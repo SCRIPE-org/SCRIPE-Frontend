@@ -6,7 +6,10 @@
  *
  * TenantId is resolved server-side from JWT context.
  */
-import type { UserSubscriptionModel, UserSubscriptionListModel } from "../../data/models/UserSubscriptionModels";
+import type {
+  UserSubscriptionModel,
+  UserSubscriptionListModel,
+} from "../../data/models/UserSubscriptionModels";
 import type { CreateUserSubscriptionRequest } from "../entities/UserSubscriptionRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
@@ -18,13 +21,18 @@ export interface UserSearchDto {
 }
 
 export interface IUserSubscriptionService {
-  getAll(params: PaginationParams & { planId?: string; status?: string }): Promise<PagedResult<UserSubscriptionListModel>>;
+  getAll(
+    params: PaginationParams & { planId?: string; status?: string }
+  ): Promise<PagedResult<UserSubscriptionListModel>>;
   getById(id: string): Promise<UserSubscriptionModel>;
   getMySubscription(): Promise<UserSubscriptionModel | null>;
   create(data: CreateUserSubscriptionRequest): Promise<{ id: string }>;
   cancel(id: string): Promise<void>;
   renew(id: string): Promise<void>;
-  changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<{ id: string }>;
+  changePlan(
+    id: string,
+    data: { newTenantPlanId: string; billingCycle: string; reason?: string }
+  ): Promise<{ id: string }>;
   /** Search users by name or email for the Create form user combobox. */
   searchUsers(query: string): Promise<UserSearchDto[]>;
 }

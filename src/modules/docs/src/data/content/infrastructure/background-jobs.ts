@@ -2,54 +2,85 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "infrastructure.backgroundJobs.intro" },
+  { type: "paragraph", contentKey: "infrastructure.backgroundJobs.intro" },
 
-      // ─── Hangfire Architecture ────────────────────────────────
+  // ─── Hangfire Architecture ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.backgroundJobs.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Background Job Processing Pipeline",
+    direction: "vertical",
+    nodes: [
       {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.backgroundJobs.architectureTitle", id: "architecture",
+        id: "trigger",
+        label: "Job Trigger",
+        type: "primary",
+        description: "Recurring, Enqueued, Scheduled, or Continuation",
       },
       {
-            type: "flowchart",
-            title: "Background Job Processing Pipeline",
-            direction: "vertical",
-            nodes: [
-                  { id: "trigger", label: "Job Trigger", type: "primary", description: "Recurring, Enqueued, Scheduled, or Continuation" },
-                  { id: "hangfire", label: "Hangfire Server", type: "info", description: "Worker threads process jobs" },
-                  { id: "storage", label: "Job Storage", type: "warning", description: "SQL Server / Memory" },
-                  { id: "dashboard", label: "Hangfire Dashboard", type: "success", description: "/hangfire (admin-only)" },
-                  { id: "retry", label: "Retry Policy", type: "danger", description: "Auto-retry on failure" },
-            ],
-            connections: [
-                  { from: "trigger", to: "hangfire" },
-                  { from: "hangfire", to: "storage", label: "persists state" },
-                  { from: "storage", to: "dashboard", label: "visualizes" },
-                  { from: "hangfire", to: "retry", label: "on failure" },
-            ],
+        id: "hangfire",
+        label: "Hangfire Server",
+        type: "info",
+        description: "Worker threads process jobs",
       },
+      { id: "storage", label: "Job Storage", type: "warning", description: "SQL Server / Memory" },
+      {
+        id: "dashboard",
+        label: "Hangfire Dashboard",
+        type: "success",
+        description: "/hangfire (admin-only)",
+      },
+      { id: "retry", label: "Retry Policy", type: "danger", description: "Auto-retry on failure" },
+    ],
+    connections: [
+      { from: "trigger", to: "hangfire" },
+      { from: "hangfire", to: "storage", label: "persists state" },
+      { from: "storage", to: "dashboard", label: "visualizes" },
+      { from: "hangfire", to: "retry", label: "on failure" },
+    ],
+  },
 
-      // ─── Recurring Jobs ───────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.backgroundJobs.recurringTitle", id: "recurring-jobs",
-      },
-      {
-            type: "table",
-            headers: ["Job", "Schedule", "Description"],
-            rows: [
-                  ["SoftDeleteCleanupJob", "Daily at 2:00 AM", "Permanently deletes soft-deleted entities older than retention period"],
-                  ["OutboxProcessorJob", "Every 30 seconds", "Processes pending domain events from Outbox table"],
-                  ["OutboxCleanupJob", "Daily at 3:00 AM", "Removes processed outbox messages older than 7 days"],
-                  ["TokenCleanupJob", "Every 6 hours", "Removes expired refresh tokens and 2FA session tokens"],
-                  ["AuditLogArchiveJob", "Weekly on Sunday", "Archives old audit logs to compressed storage"],
-                  ["TenantQuotaCheckJob", "Every hour", "Checks tenant storage/user quotas and sends warnings"],
-            ],
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Recurring Job Registration — Program.cs",
-            code: `// In BackgroundJobsConfiguration.RegisterRecurringJobs()
+  // ─── Recurring Jobs ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.backgroundJobs.recurringTitle",
+    id: "recurring-jobs",
+  },
+  {
+    type: "table",
+    headers: ["Job", "Schedule", "Description"],
+    rows: [
+      [
+        "SoftDeleteCleanupJob",
+        "Daily at 2:00 AM",
+        "Permanently deletes soft-deleted entities older than retention period",
+      ],
+      [
+        "OutboxProcessorJob",
+        "Every 30 seconds",
+        "Processes pending domain events from Outbox table",
+      ],
+      [
+        "OutboxCleanupJob",
+        "Daily at 3:00 AM",
+        "Removes processed outbox messages older than 7 days",
+      ],
+      ["TokenCleanupJob", "Every 6 hours", "Removes expired refresh tokens and 2FA session tokens"],
+      ["AuditLogArchiveJob", "Weekly on Sunday", "Archives old audit logs to compressed storage"],
+      ["TenantQuotaCheckJob", "Every hour", "Checks tenant storage/user quotas and sends warnings"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Recurring Job Registration — Program.cs",
+    code: `// In BackgroundJobsConfiguration.RegisterRecurringJobs()
 RecurringJob.AddOrUpdate<ISoftDeleteCleanupJob>(
     "identity-soft-delete-cleanup",
     x => x.ExecuteAsync(CancellationToken.None),
@@ -69,19 +100,21 @@ RecurringJob.AddOrUpdate<IOutboxCleanupJob>(
     x => x.ExecuteAsync(CancellationToken.None),
     Cron.Daily(3, 0)               // 3:00 AM
 );`,
-      },
+  },
 
-      // ─── Soft Delete Cleanup ──────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.backgroundJobs.softDeleteTitle", id: "soft-delete-cleanup",
-      },
-      { type: "paragraph", contentKey: "infrastructure.backgroundJobs.softDeleteIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "SoftDeleteCleanupJob — Deletion Order",
-            code: `/// <summary>
+  // ─── Soft Delete Cleanup ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.backgroundJobs.softDeleteTitle",
+    id: "soft-delete-cleanup",
+  },
+  { type: "paragraph", contentKey: "infrastructure.backgroundJobs.softDeleteIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SoftDeleteCleanupJob — Deletion Order",
+    code: `/// <summary>
 /// Permanently deletes soft-deleted entities older than retention period.
 /// CRITICAL: Must delete in correct order to respect foreign key constraints.
 /// The tenant hierarchy (ParentTenantId → self-referencing FK) requires
@@ -121,20 +154,22 @@ public class SoftDeleteCleanupJob : ISoftDeleteCleanupJob
         }
     }
 }`,
-            highlightLines: [10, 11, 19, 32, 33],
-      },
+    highlightLines: [10, 11, 19, 32, 33],
+  },
 
-      // ─── Dashboard ────────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.backgroundJobs.dashboardTitle", id: "dashboard",
-      },
-      { type: "paragraph", contentKey: "infrastructure.backgroundJobs.dashboardIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Dashboard Authorization Filter",
-            code: `// Only authenticated admins can access /hangfire dashboard
+  // ─── Dashboard ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.backgroundJobs.dashboardTitle",
+    id: "dashboard",
+  },
+  { type: "paragraph", contentKey: "infrastructure.backgroundJobs.dashboardIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Dashboard Authorization Filter",
+    code: `// Only authenticated admins can access /hangfire dashboard
 public class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
 {
     public bool Authorize(DashboardContext context)
@@ -154,18 +189,20 @@ app.MapHangfireDashboard("/hangfire", new DashboardOptions
     IsReadOnlyFunc = _ => false,
     DashboardTitle = "NEXORA Background Jobs",
 });`,
-      },
+  },
 
-      // ─── Configuration ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "infrastructure.backgroundJobs.configTitle", id: "configuration",
-      },
-      {
-            type: "code",
-            language: "json",
-            filename: "appsettings.json — Hangfire Configuration",
-            code: `{
+  // ─── Configuration ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.backgroundJobs.configTitle",
+    id: "configuration",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json — Hangfire Configuration",
+    code: `{
   "Hangfire": {
     "WorkerCount": 5,
     "ServerName": "nexora-identity",
@@ -184,21 +221,25 @@ app.MapHangfireDashboard("/hangfire", new DashboardOptions
     "RetryDelaySeconds": 60
   }
 }`,
-      },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "infrastructure.backgroundJobs.tenantWarning",
-      },
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "infrastructure.backgroundJobs.tenantWarning",
+  },
 ];
 
 registerPage({
-      slug: "infrastructure/background-jobs",
-      titleKey: "infrastructure.backgroundJobs.title",
-      descriptionKey: "infrastructure.backgroundJobs.description",
-      category: "infrastructure",
-      order: 2,
-      sections,
-      relatedSlugs: ["architecture/domain-events", "security/audit-compliance", "infrastructure/resilience"],
-      lastUpdated: "2026-02-20",
+  slug: "infrastructure/background-jobs",
+  titleKey: "infrastructure.backgroundJobs.title",
+  descriptionKey: "infrastructure.backgroundJobs.description",
+  category: "infrastructure",
+  order: 2,
+  sections,
+  relatedSlugs: [
+    "architecture/domain-events",
+    "security/audit-compliance",
+    "infrastructure/resilience",
+  ],
+  lastUpdated: "2026-02-20",
 });

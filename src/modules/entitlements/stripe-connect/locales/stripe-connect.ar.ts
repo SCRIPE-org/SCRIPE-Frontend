@@ -45,7 +45,8 @@ export const ar = {
       totalPayoutsAmount: "إجمالي مبلغ المدفوعات",
       commissionRate: "نسبة العمولة",
       commissionRateOverride: "تجاوز النسبة",
-      commissionRateDesc: "حدد تجاوزًا للعمولة لكل مستأجر. اتركه فارغًا لاستخدام نسبة الإصدار أو الافتراضية.",
+      commissionRateDesc:
+        "حدد تجاوزًا للعمولة لكل مستأجر. اتركه فارغًا لاستخدام نسبة الإصدار أو الافتراضية.",
       commissionRateUpdated: "تم تحديث نسبة العمولة",
       commissionRateUpdatedDesc: "تم حفظ تجاوز نسبة العمولة.",
       commissionRateCleared: "تم مسح نسبة العمولة",
@@ -80,8 +81,6 @@ export const ar = {
         totalAmount: "الإجمالي",
         actions: "إجراءات",
       },
-
-      // ── صفحة المدفوعات (نطاق المستأجر) ──
       payoutsTitle: "مدفوعات المستأجر",
       payoutsDesc: "إدارة المدفوعات وعرض سجل العمولات لهذا المستأجر.",
       stripeAccount: "حساب Stripe",
@@ -110,9 +109,10 @@ export const ar = {
       readyToConnectDesc: "أنشئ حساب Stripe Express لهذا المستأجر لبدء معالجة المدفوعات.",
       continueOnboarding: "متابعة الإعداد",
       actionRequired: "إجراء مطلوب",
-      actionRequiredDesc: "إعداد Stripe لهذا المستأجر غير مكتمل. يحتاج إلى إنهاء الإعداد لتلقي المدفوعات.",
+      actionRequiredDesc:
+        "إعداد Stripe لهذا المستأجر غير مكتمل. يحتاج إلى إنهاء الإعداد لتلقي المدفوعات.",
+      alreadyOnboarded: "[مفقود] Already Onboarded",
     },
-
     commissions: {
       title: "لوحة العمولات",
       description: "تحليلات إيرادات العمولات على مستوى المنصة وتفاصيل كل مستأجر.",
@@ -147,19 +147,15 @@ export const ar = {
       fromDate: "من",
       toDate: "إلى",
     },
-
     tenantConnect: {
-      // الصفحة
       pageTitle: "حساب الدفع",
-      pageDesc: "قم بإعداد وإدارة حساب Stripe Connect Express الخاص بك لتلقي المدفوعات التلقائية من مبيعاتك.",
+      pageDesc:
+        "قم بإعداد وإدارة حساب Stripe Connect Express الخاص بك لتلقي المدفوعات التلقائية من مبيعاتك.",
       verified: "موثّق",
-
-      // البطل (غير مُعدّ)
       heroTitle: "ابدأ في تلقي المدفوعات",
-      heroDesc: "اربط حسابك البنكي عبر Stripe لتلقي مدفوعات تلقائية وآمنة من مبيعاتك. الإعداد يستغرق دقائق فقط.",
+      heroDesc:
+        "اربط حسابك البنكي عبر Stripe لتلقي مدفوعات تلقائية وآمنة من مبيعاتك. الإعداد يستغرق دقائق فقط.",
       getStartedBtn: "ابدأ الآن",
-
-      // الخطوات
       step1Title: "إنشاء الحساب",
       step1Desc: "سننشئ لك حساب Stripe Express آمنًا.",
       step2Title: "التحقق من الهوية",
@@ -168,17 +164,12 @@ export const ar = {
       step3Desc: "اربط حسابك البنكي لتلقي المدفوعات.",
       step4Title: "ابدأ الربح",
       step4Desc: "أنت جاهز — المدفوعات تتدفق تلقائيًا.",
-
-      // الأمان
-      securityNote: "تتم معالجة معلوماتك بأمان عبر Stripe. لا تطّلع NEXORA أبدًا على تفاصيل حسابك البنكي ولا تخزّنها.",
-
-      // قيد التقدم
+      securityNote:
+        "تتم معالجة معلوماتك بأمان عبر Stripe. لا تطّلع NEXORA أبدًا على تفاصيل حسابك البنكي ولا تخزّنها.",
       setupInProgress: "إعداد الحساب قيد التقدم",
       setupInProgressDesc: "أكمل الخطوات المتبقية لبدء قبول المدفوعات.",
       setupProgress: "تقدم الإعداد",
       restrictedDesc: "يتطلب Stripe معلومات إضافية للتحقق من هويتك. يرجى إكمال التحقق للمتابعة.",
-
-      // مكتمل
       accountReady: "حسابك جاهز",
       accountReadyDesc: "المدفوعات والعمليات مفعّلة بالكامل.",
       totalPayouts: "إجمالي المدفوعات",
@@ -195,18 +186,13 @@ export const ar = {
       currency: "العملة",
       country: "الدولة",
       verifiedAt: "تاريخ التوثيق",
-
-      // حالة الخطأ
       errorTitle: "تعذّر تحميل الحساب",
-      errorDesc: "لم نتمكن من تحميل معلومات حساب الدفع الخاص بك. قد لا تملك صلاحية الوصول إلى هذه الصفحة، أو حدث خطأ في الشبكة.",
-
-      // المزامنة
+      errorDesc:
+        "لم نتمكن من تحميل معلومات حساب الدفع الخاص بك. قد لا تملك صلاحية الوصول إلى هذه الصفحة، أو حدث خطأ في الشبكة.",
       syncBtn: "مزامنة البيانات",
       syncSuccess: "تمت مزامنة الحساب",
       syncSuccessDesc: "تم تحديث بيانات حسابك من Stripe.",
       syncFailed: "فشلت المزامنة. يرجى المحاولة لاحقاً.",
-
-      // المعاملات
       txn: {
         title: "المعاملات الأخيرة",
         desc: "المدفوعات المستلمة ورسوم المنصة والمبالغ المستردة",

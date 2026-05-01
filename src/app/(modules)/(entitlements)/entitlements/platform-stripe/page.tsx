@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const PlatformStripeDashboardView = dynamic(
-  () =>
-    import("@modules/entitlements/platform-stripe").then((m) => ({
-      default: m.PlatformStripeDashboardView,
-    }))
+const PlatformStripeDashboardView = dynamic(() =>
+  import("@modules/entitlements/platform-stripe").then((m) => ({
+    default: m.PlatformStripeDashboardView,
+  }))
 );
 
 export const metadata: Metadata = {

@@ -2,7 +2,11 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { complianceContainer } from "@modules/compliance/di";
-import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../../domain/entities/DsrRequests";
+import type {
+  DsrListParams,
+  SubmitDsrRequest,
+  ReviewDsrRequest,
+} from "../../domain/entities/DsrRequests";
 
 export function useDsrViewModel(params: DsrListParams = {}) {
   const { dsrRepository } = complianceContainer;

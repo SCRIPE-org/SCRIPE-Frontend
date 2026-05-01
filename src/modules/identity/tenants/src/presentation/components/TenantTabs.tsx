@@ -94,10 +94,10 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
         {/* ── Tab Navigation ── */}
         <div
           className={cn(
-            "flex overflow-x-auto scrollbar-none",
+            "scrollbar-none flex overflow-x-auto",
             "gap-1 pb-3",
             // Hide scrollbar cross-browser
-            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           )}
         >
           {tabs.map((tab) => {
@@ -113,15 +113,11 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
                   "border",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                   isActive
-                    ? cn(
-                      "bg-card border-border/80 shadow-md",
-                      tab.activeBg,
-                      tab.color
-                    )
+                    ? cn("border-border/80 bg-card shadow-md", tab.activeBg, tab.color)
                     : cn(
-                      "border-transparent text-muted-foreground",
-                      "hover:bg-muted/50 hover:text-foreground hover:border-border/30"
-                    )
+                        "border-transparent text-muted-foreground",
+                        "hover:border-border/30 hover:bg-muted/50 hover:text-foreground"
+                      )
                 )}
               >
                 <tab.icon
@@ -137,13 +133,19 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
         </div>
 
         {/* ── Tab Content ── */}
-        <div className={cn(
-          "rounded-2xl border border-border/50 bg-card",
-          "shadow-xl shadow-primary/5",
-          "overflow-hidden"
-        )}>
+        <div
+          className={cn(
+            "rounded-2xl border border-border/50 bg-card",
+            "shadow-xl shadow-primary/5",
+            "overflow-hidden"
+          )}
+        >
           <div className="p-6">
-            <TabsContent value="entitlements" className="m-0" forceMount={activeTab === "entitlements" ? undefined : undefined}>
+            <TabsContent
+              value="entitlements"
+              className="m-0"
+              forceMount={activeTab === "entitlements" ? undefined : undefined}
+            >
               <TenantEntitlementsTab tenantId={tenantId} />
             </TabsContent>
 

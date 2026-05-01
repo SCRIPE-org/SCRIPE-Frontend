@@ -6,7 +6,8 @@ const sections: DocSection[] = [
 
   // ─── B2B2C Concept ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.conceptTitle",
     id: "b2b2c-model",
   },
@@ -22,14 +23,17 @@ const sections: DocSection[] = [
       { id: "E", label: "End Users (UserSubscription)", type: "success" },
     ],
     connections: [
-      { from: "A", to: "B" }, { from: "B", to: "C" },
-      { from: "C", to: "D" }, { from: "D", to: "E" },
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
     ],
   },
 
   // ─── TenantPlan Entity ────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.entityTitle",
     id: "tenantplan-entity",
   },
@@ -52,13 +56,15 @@ const sections: DocSection[] = [
 
   // ─── TenantPlanFeature ────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.featureEntityTitle",
     id: "plan-features",
   },
   { type: "paragraph", contentKey: "modules.tenantPlans.featureEntityIntro" },
   {
-    type: "code", language: "json",
+    type: "code",
+    language: "json",
     code: `// Example TenantPlanFeature records for a "Pro" plan
 [
   { "Key": "maxProjects", "Value": "50" },
@@ -70,7 +76,8 @@ const sections: DocSection[] = [
 
   // ─── Plan Lifecycle ───────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.lifecycleTitle",
     id: "plan-lifecycle",
   },
@@ -78,19 +85,22 @@ const sections: DocSection[] = [
 
   // ─── Tenant Context Required ──────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.contextTitle",
     id: "tenant-context",
   },
   { type: "paragraph", contentKey: "modules.tenantPlans.contextIntro" },
   {
-    type: "info", variant: "warning",
+    type: "info",
+    variant: "warning",
     contentKey: "modules.tenantPlans.contextIntro",
   },
 
   // ─── API Endpoints ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.endpointsTitle",
     id: "api-endpoints",
   },
@@ -98,17 +108,48 @@ const sections: DocSection[] = [
   {
     type: "api-table",
     endpoints: [
-      { method: "GET", path: "/api/v1/tenant-plans", descriptionKey: "modules.tenantPlans.ep.list", auth: "JWT", permission: "tenant_plans.view" },
-      { method: "GET", path: "/api/v1/tenant-plans/{id}", descriptionKey: "modules.tenantPlans.ep.get", auth: "JWT", permission: "tenant_plans.view" },
-      { method: "POST", path: "/api/v1/tenant-plans", descriptionKey: "modules.tenantPlans.ep.create", auth: "JWT", permission: "tenant_plans.create" },
-      { method: "PUT", path: "/api/v1/tenant-plans/{id}", descriptionKey: "modules.tenantPlans.ep.update", auth: "JWT", permission: "tenant_plans.update" },
-      { method: "DELETE", path: "/api/v1/tenant-plans/{id}", descriptionKey: "modules.tenantPlans.ep.delete", auth: "JWT", permission: "tenant_plans.delete" },
+      {
+        method: "GET",
+        path: "/api/v1/tenant-plans",
+        descriptionKey: "modules.tenantPlans.ep.list",
+        auth: "JWT",
+        permission: "tenant_plans.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenant-plans/{id}",
+        descriptionKey: "modules.tenantPlans.ep.get",
+        auth: "JWT",
+        permission: "tenant_plans.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/tenant-plans",
+        descriptionKey: "modules.tenantPlans.ep.create",
+        auth: "JWT",
+        permission: "tenant_plans.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenant-plans/{id}",
+        descriptionKey: "modules.tenantPlans.ep.update",
+        auth: "JWT",
+        permission: "tenant_plans.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/tenant-plans/{id}",
+        descriptionKey: "modules.tenantPlans.ep.delete",
+        auth: "JWT",
+        permission: "tenant_plans.delete",
+      },
     ],
   },
 
   // ─── Permissions ──────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "modules.tenantPlans.permissionsTitle",
     id: "permissions",
   },
@@ -132,6 +173,10 @@ registerPage({
   category: "modules",
   order: 9,
   sections,
-  relatedSlugs: ["modules/user-subscriptions", "modules/entitlements-overview", "features/tenant-context-gate"],
+  relatedSlugs: [
+    "modules/user-subscriptions",
+    "modules/entitlements-overview",
+    "features/tenant-context-gate",
+  ],
   lastUpdated: "2026-04-18",
 });

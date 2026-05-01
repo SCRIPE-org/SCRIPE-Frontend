@@ -6,7 +6,10 @@ import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Tag, Globe, Award, ShieldAlert } from "lucide-react";
-import type { CreateEditionRequest, UpdateEditionRequest } from "../../../domain/entities/EditionRequests";
+import type {
+  CreateEditionRequest,
+  UpdateEditionRequest,
+} from "../../../domain/entities/EditionRequests";
 
 interface WizardStepBasicsProps {
   form: CreateEditionRequest | UpdateEditionRequest;
@@ -14,15 +17,23 @@ interface WizardStepBasicsProps {
   isEditMode?: boolean;
 }
 
-function SectionHeader({ icon: Icon, title, desc }: { icon: React.ElementType; title: string; desc: string }) {
+function SectionHeader({
+  icon: Icon,
+  title,
+  desc,
+}: {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+}) {
   return (
-    <div className="flex items-start gap-3 pb-4 border-b border-border mb-5">
-      <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center mt-0.5">
+    <div className="mb-5 flex items-start gap-3 border-b border-border pb-4">
+      <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
         <Icon className="h-4.5 w-4.5 text-primary" />
       </div>
       <div>
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
       </div>
     </div>
   );
@@ -38,9 +49,12 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
         <SectionHeader
           icon={Tag}
           title={t("entitlements.editions.wizard.identitySection") || "Identity & Metadata"}
-          desc={t("entitlements.editions.wizard.identitySectionDesc") || "Core identifiers and customer-facing display names."}
+          desc={
+            t("entitlements.editions.wizard.identitySectionDesc") ||
+            "Core identifiers and customer-facing display names."
+          }
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">
               {t("entitlements.editions.wizard.internalName") || "Internal Name"}{" "}
@@ -50,12 +64,16 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
               id="name"
               value={form.name ?? ""}
               onChange={(e) => onChange({ name: e.target.value })}
-              placeholder={t("entitlements.editions.wizard.internalNamePlaceholder") || "e.g. standard, enterprise"}
+              placeholder={
+                t("entitlements.editions.wizard.internalNamePlaceholder") ||
+                "e.g. standard, enterprise"
+              }
               className="font-mono text-sm"
               disabled={isEditMode}
             />
             <p className="text-xs text-muted-foreground">
-              {t("entitlements.editions.wizard.internalNameDesc") || "Unique slug used in API endpoints and configurations."}
+              {t("entitlements.editions.wizard.internalNameDesc") ||
+                "Unique slug used in API endpoints and configurations."}
             </p>
           </div>
           <div className="space-y-2">
@@ -73,7 +91,8 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
               placeholder={t("entitlements.editions.wizard.tierLevelPlaceholder") || "0"}
             />
             <p className="text-xs text-muted-foreground">
-              {t("entitlements.editions.wizard.tierLevelDesc") || "Priority level (0–100). 0 = Free tier, higher = more premium."}
+              {t("entitlements.editions.wizard.tierLevelDesc") ||
+                "Priority level (0–100). 0 = Free tier, higher = more premium."}
             </p>
           </div>
         </div>
@@ -84,10 +103,13 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
         <SectionHeader
           icon={Globe}
           title={t("entitlements.editions.wizard.displaySection") || "Customer-Facing Display"}
-          desc={t("entitlements.editions.wizard.displaySectionDesc") || "How this edition appears to tenants on pricing pages."}
+          desc={
+            t("entitlements.editions.wizard.displaySectionDesc") ||
+            "How this edition appears to tenants on pricing pages."
+          }
         />
         <div className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="displayNameEn">
                 {t("entitlements.editions.wizard.displayNameEn") || "Display Name (English)"}{" "}
@@ -97,7 +119,10 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
                 id="displayNameEn"
                 value={form.displayNameEn ?? ""}
                 onChange={(e) => onChange({ displayNameEn: e.target.value })}
-                placeholder={t("entitlements.editions.wizard.displayNameEnPlaceholder") || "e.g. Standard, Professional"}
+                placeholder={
+                  t("entitlements.editions.wizard.displayNameEnPlaceholder") ||
+                  "e.g. Standard, Professional"
+                }
               />
             </div>
             <div className="space-y-2">
@@ -114,22 +139,32 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="tagline">{t("entitlements.editions.wizard.tagline") || "Tagline"}</Label>
+            <Label htmlFor="tagline">
+              {t("entitlements.editions.wizard.tagline") || "Tagline"}
+            </Label>
             <Input
               id="tagline"
               value={form.tagline ?? ""}
               onChange={(e) => onChange({ tagline: e.target.value })}
-              placeholder={t("entitlements.editions.wizard.taglinePlaceholder") || "e.g. Best for growing teams"}
+              placeholder={
+                t("entitlements.editions.wizard.taglinePlaceholder") ||
+                "e.g. Best for growing teams"
+              }
               maxLength={200}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">{t("entitlements.editions.wizard.description") || "Description"}</Label>
+            <Label htmlFor="description">
+              {t("entitlements.editions.wizard.description") || "Description"}
+            </Label>
             <Textarea
               id="description"
               value={form.description ?? ""}
               onChange={(e) => onChange({ description: e.target.value })}
-              placeholder={t("entitlements.editions.wizard.descriptionPlaceholder") || "A detailed description..."}
+              placeholder={
+                t("entitlements.editions.wizard.descriptionPlaceholder") ||
+                "A detailed description..."
+              }
               rows={3}
               className="resize-none"
             />
@@ -142,7 +177,10 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
         <SectionHeader
           icon={Award}
           title={t("entitlements.editions.wizard.badgeSection") || "Recommendation Badges"}
-          desc={t("entitlements.editions.wizard.badgeSectionDesc") || "Badges displayed on the pricing card to attract attention."}
+          desc={
+            t("entitlements.editions.wizard.badgeSectionDesc") ||
+            "Badges displayed on the pricing card to attract attention."
+          }
         />
         <div className="space-y-2">
           <Label htmlFor="recommendationLabels">
@@ -152,11 +190,15 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
             id="recommendationLabels"
             value={form.recommendationLabels ?? ""}
             onChange={(e) => onChange({ recommendationLabels: e.target.value })}
-            placeholder={t("entitlements.editions.wizard.badgeLabelsPlaceholder") || '["Most Popular", "Best Value"]'}
+            placeholder={
+              t("entitlements.editions.wizard.badgeLabelsPlaceholder") ||
+              '["Most Popular", "Best Value"]'
+            }
             className="font-mono text-sm"
           />
           <p className="text-xs text-muted-foreground">
-            {t("entitlements.editions.wizard.badgeLabelsDesc") || "JSON array of badge strings. Leave empty for no badges."}
+            {t("entitlements.editions.wizard.badgeLabelsDesc") ||
+              "JSON array of badge strings. Leave empty for no badges."}
           </p>
         </div>
       </section>
@@ -167,7 +209,10 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
           <SectionHeader
             icon={ShieldAlert}
             title={t("entitlements.editions.wizard.overflowSection") || "Downgrade Policy"}
-            desc={t("entitlements.editions.wizard.overflowSectionDesc") || "What happens when tenant resources exceed limits after downgrading."}
+            desc={
+              t("entitlements.editions.wizard.overflowSectionDesc") ||
+              "What happens when tenant resources exceed limits after downgrading."
+            }
           />
           <div className="space-y-2">
             <Label htmlFor="overflowPolicy">
@@ -185,10 +230,12 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
                   {t("entitlements.editions.wizard.overflowBlock") || "Block — Reject downgrade"}
                 </SelectItem>
                 <SelectItem value="Archive">
-                  {t("entitlements.editions.wizard.overflowArchive") || "Archive — Archive excess data"}
+                  {t("entitlements.editions.wizard.overflowArchive") ||
+                    "Archive — Archive excess data"}
                 </SelectItem>
                 <SelectItem value="Delete">
-                  {t("entitlements.editions.wizard.overflowDelete") || "Delete — Remove excess data"}
+                  {t("entitlements.editions.wizard.overflowDelete") ||
+                    "Delete — Remove excess data"}
                 </SelectItem>
               </SelectContent>
             </Select>

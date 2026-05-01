@@ -28,7 +28,7 @@ interface CommandLayoutProps {
  * Navigation happens entirely via  command palette.
  *
  * Structure:
- *  
+ *
  *  CONTEXT BAR (36px)  breadcrumbs +    ‚
  * ¤
  * ‚                                          ‚
@@ -85,7 +85,10 @@ export function CommandLayout({ children }: CommandLayoutProps) {
                 {i === breadcrumbs.length - 1 ? (
                   <span className="truncate font-medium text-foreground">{crumb.label}</span>
                 ) : (
-                  <Link href={crumb.href} className="truncate transition-colors hover:text-foreground">
+                  <Link
+                    href={crumb.href}
+                    className="truncate transition-colors hover:text-foreground"
+                  >
                     {crumb.label}
                   </Link>
                 )}
@@ -106,9 +109,7 @@ export function CommandLayout({ children }: CommandLayoutProps) {
           >
             <CommandIcon className="h-3 w-3" />
             <span className="hidden sm:inline">{t("common.search") || "Search"}</span>
-            <kbd className="ml-1 hidden rounded bg-muted px-1 py-0.5 font-mono text-[10px] sm:inline">
-
-            </kbd>
+            <kbd className="ml-1 hidden rounded bg-muted px-1 py-0.5 font-mono text-[10px] sm:inline"></kbd>
           </button>
 
           <ThemeSwitcher

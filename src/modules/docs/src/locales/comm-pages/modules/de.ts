@@ -7,29 +7,41 @@ export const de = {
     moduleCatalog: {
       tblCoreR7C1: "Berechtigungen",
       tblCoreR7C2: "Editionsbasiertes Feature-Gating & Planverwaltung",
-      tblCoreR7C3: "Funktionen, Editionen, Abonnements, Überschreibungen, Kontingentdurchsetzung, versionierte Rollouts, Reseller-Eingrenzung",
-      businessContent: "NEXORA ist keine leere Hülle; es ist vom ersten Tag an ein funktionierendes Enterprise-Ökosystem. Nutzen Sie unsere bestehenden Geschäftsmodule – wie Benutzerverwaltung, Audit-Logging und Benachrichtigungen – als sofortige Startpunkte oder klonen Sie diese, um proprietäre Funktionen schnell aufzubauen.",
+      tblCoreR7C3:
+        "Funktionen, Editionen, Abonnements, Überschreibungen, Kontingentdurchsetzung, versionierte Rollouts, Reseller-Eingrenzung",
+      businessContent:
+        "NEXORA ist keine leere Hülle; es ist vom ersten Tag an ein funktionierendes Enterprise-Ökosystem. Nutzen Sie unsere bestehenden Geschäftsmodule – wie Benutzerverwaltung, Audit-Logging und Benachrichtigungen – als sofortige Startpunkte oder klonen Sie diese, um proprietäre Funktionen schnell aufzubauen.",
       businessTitle: "Beschleunigte Geschäftslogik",
       commTitle: "Kommunikation & Webhooks",
-      coreContent: "Die Foundation-Schicht bietet das absolut Nicht-Verhandelbare: den Identity Provider, Multi-Tenant-Auflösungsstrategien, EF Core-Context-Abstraktionen und den zentralisierten MediatR-Dispatcher. Sie ist das felsenfeste Fundament, auf dem Ihre gesamte Anwendung skaliert.",
+      coreContent:
+        "Die Foundation-Schicht bietet das absolut Nicht-Verhandelbare: den Identity Provider, Multi-Tenant-Auflösungsstrategien, EF Core-Context-Abstraktionen und den zentralisierten MediatR-Dispatcher. Sie ist das felsenfeste Fundament, auf dem Ihre gesamte Anwendung skaliert.",
       coreTitle: "Das Kern-Fundament (Core Foundation)",
       crmModule: "Headless CRM Modul",
-      crmModuleDesc: "Verwalten Sie Organisationshierarchien, Kundenbeziehungen und benutzerdefinierte Attribute mit einer vollständig API-gesteuerten CRM-Architektur.",
+      crmModuleDesc:
+        "Verwalten Sie Organisationshierarchien, Kundenbeziehungen und benutzerdefinierte Attribute mit einer vollständig API-gesteuerten CRM-Architektur.",
       customModule: "Proprietäres Integrationsmodul",
-      customModuleDesc: "Eine makellose Sandbox, die exakt dieselben Clean Architecture-Grenzen nutzt, um Ihre einzigartige Branchenlogik aufzunehmen.",
+      customModuleDesc:
+        "Eine makellose Sandbox, die exakt dieselben Clean Architecture-Grenzen nutzt, um Ihre einzigartige Branchenlogik aufzunehmen.",
       dataTitle: "Daten & Auditing",
-      description: "Ein umfassendes Verzeichnis der vorgefertigten, produktionsreifen Enterprise-Bounded-Contexts, die in der NEXORA-Plattform enthalten sind.",
+      description:
+        "Ein umfassendes Verzeichnis der vorgefertigten, produktionsreifen Enterprise-Bounded-Contexts, die in der NEXORA-Plattform enthalten sind.",
       financeModule: "Invoicing & Billing Engine",
-      financeModuleDesc: "Generieren Sie PDF-Rechnungen, verwalten Sie Steuerlokalitäten und integrieren Sie Stripe oder benutzerdefinierte Zahlungs-Gateways.",
+      financeModuleDesc:
+        "Generieren Sie PDF-Rechnungen, verwalten Sie Steuerlokalitäten und integrieren Sie Stripe oder benutzerdefinierte Zahlungs-Gateways.",
       hrModule: "Identity & Access Management",
-      hrModuleDesc: "Steuern Sie granulare rollenbasierte Berechtigungen, JWT-Lebensdauern und Verzeichnissynchronisationen.",
-      independenceContent: "Jedes Modul im Katalog ist streng isoliert. Das Notification-Modul teilt null Status mit dem User Management-Modul. Sie kommunizieren rein über asynchrone Events, was garantiert, dass ein katastrophaler Ausfall in einer Domain niemals auf eine andere übergreift.",
+      hrModuleDesc:
+        "Steuern Sie granulare rollenbasierte Berechtigungen, JWT-Lebensdauern und Verzeichnissynchronisationen.",
+      independenceContent:
+        "Jedes Modul im Katalog ist streng isoliert. Das Notification-Modul teilt null Status mit dem User Management-Modul. Sie kommunizieren rein über asynchrone Events, was garantiert, dass ein katastrophaler Ausfall in einer Domain niemals auf eine andere übergreift.",
       independenceTitle: "Kryptographische Modulisolierung",
-      intro: "NEXORA wird mit einer massiven Bibliothek an Enterprise-tauglichen, vorgetesteten Bounded Contexts ausgeliefert. Vom ersten Tag an besitzen Sie die operative Reife einer 5 Jahre alten SaaS-Anwendung.",
+      intro:
+        "NEXORA wird mit einer massiven Bibliothek an Enterprise-tauglichen, vorgetesteten Bounded Contexts ausgeliefert. Vom ersten Tag an besitzen Sie die operative Reife einer 5 Jahre alten SaaS-Anwendung.",
       inventoryModule: "Asset Tracking Modul",
-      inventoryModuleDesc: "Bilden Sie komplexe hierarchische Bestände ab und verfolgen Sie Statusänderungen durch strikt angewendete Domain-Events.",
+      inventoryModuleDesc:
+        "Bilden Sie komplexe hierarchische Bestände ab und verfolgen Sie Statusänderungen durch strikt angewendete Domain-Events.",
       projectModule: "Workflow & Project Modul",
-      projectModuleDesc: "Verwalten Sie komplexe Zustandsautomaten (State Machines) und mehrstufige organisatorische Genehmigungs-Workflows.",
+      projectModuleDesc:
+        "Verwalten Sie komplexe Zustandsautomaten (State Machines) und mehrstufige organisatorische Genehmigungs-Workflows.",
       title: "Katalog der Enterprise-Module",
       tblCoreHeader1: "Modul",
       tblCoreHeader2: "Beschreibung",
@@ -39,57 +51,70 @@ export const de = {
       tblCoreR1C3: "JWT, 2FA, Session Management, Geräte-Tracking, Social Login",
       tblCoreR2C1: "Mandantenfähigkeit (Multi-Tenancy)",
       tblCoreR2C2: "Mandantenisolierung und hierarchische Organisation",
-      tblCoreR2C3: "Isolierung auf Zeilenebene, Parent/Child-Mandanten, mandantenspezifische Einstellungen, White-Labeling",
+      tblCoreR2C3:
+        "Isolierung auf Zeilenebene, Parent/Child-Mandanten, mandantenspezifische Einstellungen, White-Labeling",
       tblCoreR3C1: "Rollen & Berechtigungen",
       tblCoreR3C2: "Feingranulare Zugriffskontrolle",
       tblCoreR3C3: "RBAC, Einschränkungen auf Feldebene, Berechtigungskategorien, Rollen-Klonen",
       tblCoreR4C1: "Audit System",
       tblCoreR4C2: "Umfassende Aktivitätsverfolgung",
-      tblCoreR4C3: "4-Quellen-Pipeline: API, Entitätsänderungen, Sicherheitsereignisse, Geschäftsoperationen",
+      tblCoreR4C3:
+        "4-Quellen-Pipeline: API, Entitätsänderungen, Sicherheitsereignisse, Geschäftsoperationen",
       tblCoreR5C1: "Menü-System",
       tblCoreR5C2: "Dynamisches Navigationsmanagement",
       tblCoreR5C3: "Selbstreferenzierender Baum, Mandanten-Overrides, rollenbasierte Sichtbarkeit",
       tblCoreR6C1: "Benutzergruppen (User Groups)",
       tblCoreR6C2: "Batch-Zuweisung von Rollen & Einschränkungen",
-      tblCoreR6C3: "Gruppenbasierte RBAC, Feldeinschränkungen, Mitgliederverwaltung, mandantenbezogene Gruppen",
+      tblCoreR6C3:
+        "Gruppenbasierte RBAC, Feldeinschränkungen, Mitgliederverwaltung, mandantenbezogene Gruppen",
       tblCommHeader1: "Modul",
       tblCommHeader2: "Beschreibung",
       tblCommHeader3: "Kernfunktionen",
       tblCommR1C1: "Benachrichtigungen",
       tblCommR1C2: "Echtzeit-Push-Benachrichtigungen",
-      tblCommR1C3: "SignalR WebSockets, Auto-Join nach Mandant, als gelesen/ungelesen markieren, Glocken-UI",
+      tblCommR1C3:
+        "SignalR WebSockets, Auto-Join nach Mandant, als gelesen/ungelesen markieren, Glocken-UI",
       tblCommR2C1: "E-Mail-System",
       tblCommR2C2: "Transaktionale E-Mail-Pipeline",
-      tblCommR2C3: "Warteschlangenbasierter Versand, Scriban-Templates, Retry mit Backoff, SMTP/SendGrid",
+      tblCommR2C3:
+        "Warteschlangenbasierter Versand, Scriban-Templates, Retry mit Backoff, SMTP/SendGrid",
       tblCommR3C1: "Webhooks",
       tblCommR3C2: "Ereignisgesteuerte Integrationen",
-      tblCommR3C3: "HMAC-SHA256 signiert, exponentieller Retry, Abonnementverwaltung, Event-Katalog",
+      tblCommR3C3:
+        "HMAC-SHA256 signiert, exponentieller Retry, Abonnementverwaltung, Event-Katalog",
       tblCommR4C1: "Nachrichtenvorlagen",
       tblCommR4C2: "Zweisprachiges Nachrichten-Rendering",
-      tblCommR4C3: "Scriban-Syntax, Variablenvorschau, 6 integrierte Vorlagen, zweisprachige Entität",
+      tblCommR4C3:
+        "Scriban-Syntax, Variablenvorschau, 6 integrierte Vorlagen, zweisprachige Entität",
       tblDataHeader1: "Modul",
       tblDataHeader2: "Beschreibung",
       tblDataHeader3: "Kernfunktionen",
       tblDataR1C1: "Datei-Upload",
       tblDataR1C2: "Sichere Dateiverarbeitung",
-      tblDataR1C3: "Bildverarbeitungs-Pipeline, Virus-Scan bereit, mandantenbezogener Speicher, 4 Backends",
+      tblDataR1C3:
+        "Bildverarbeitungs-Pipeline, Virus-Scan bereit, mandantenbezogener Speicher, 4 Backends",
       tblDataR2C1: "Download & Export",
       tblDataR2C2: "Datenexport und Dateiauslieferung",
-      tblDataR2C3: "Fortsetzbare Downloads (Range), ETag Caching, Session-basiert, Schutz vor Path-Traversal",
+      tblDataR2C3:
+        "Fortsetzbare Downloads (Range), ETag Caching, Session-basiert, Schutz vor Path-Traversal",
       tblDataR3C1: "Papierkorb",
       tblDataR3C2: "Soft-Delete Management",
-      tblDataR3C3: "Wiederherstellung mit Abhängigkeiten, geplante Bereinigung, kaskadierende Wiederherstellung, Richtlinien pro Entität",
+      tblDataR3C3:
+        "Wiederherstellung mit Abhängigkeiten, geplante Bereinigung, kaskadierende Wiederherstellung, Richtlinien pro Entität",
       tblDataR4C1: "User Management",
       tblDataR4C2: "Administrative Benutzeroperationen",
-      tblDataR4C3: "27 Endpunkte, Bulk-Operationen, Enterprise-Operationen, geschützte Admin-Regeln",
+      tblDataR4C3:
+        "27 Endpunkte, Bulk-Operationen, Enterprise-Operationen, geschützte Admin-Regeln",
       tblAnalyticsHeader1: "Modul",
       tblAnalyticsHeader2: "Beschreibung",
       tblAnalyticsHeader3: "Kernfähigkeiten",
       tblAnalyticsR1C1: "Revenue Analytics",
       tblAnalyticsR1C2: "BI-Grade Umsatzintelligenz-Dashboard",
-      tblAnalyticsR1C3: "MRR/ARR-Tracking, Kohortenanalyse, LTV-Modellierung, Umsatzprognose, Gesundheitsbewertung, PDF-Berichte",
+      tblAnalyticsR1C3:
+        "MRR/ARR-Tracking, Kohortenanalyse, LTV-Modellierung, Umsatzprognose, Gesundheitsbewertung, PDF-Berichte",
       analyticsTitle: "Umsatzintelligenz",
-      analyticsContent: "Die Revenue-Analytics-Engine transformiert rohe Abonnementdaten in umsetzbare Business-Intelligence. Mit 7 spezialisierten Dashboard-Tabs, automatisierten nächtlichen Snapshots und prädiktiver Prognose erhalten Plattformbetreiber CFO-Level-Sichtbarkeit ohne externe BI-Tools. Das Tenant-Gesundheitsscoring identifiziert Abwanderungsrisiken proaktiv, bevor sie sich materialisieren.",
+      analyticsContent:
+        "Die Revenue-Analytics-Engine transformiert rohe Abonnementdaten in umsetzbare Business-Intelligence. Mit 7 spezialisierten Dashboard-Tabs, automatisierten nächtlichen Snapshots und prädiktiver Prognose erhalten Plattformbetreiber CFO-Level-Sichtbarkeit ohne externe BI-Tools. Das Tenant-Gesundheitsscoring identifiziert Abwanderungsrisiken proaktiv, bevor sie sich materialisieren.",
     },
   },
 };

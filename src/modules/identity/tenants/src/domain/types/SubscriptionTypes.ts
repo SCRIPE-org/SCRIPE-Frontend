@@ -11,7 +11,13 @@
 // ── Enums / Unions ───────────────────────────────────────
 
 export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn";
-export type SubscriptionStatus = "Active" | "Trialing" | "PastDue" | "Suspended" | "Canceled" | "Expired";
+export type SubscriptionStatus =
+  | "Active"
+  | "Trialing"
+  | "PastDue"
+  | "Suspended"
+  | "Canceled"
+  | "Expired";
 export type ExpiryBehavior = "Fallback" | "Suspend";
 export type RefundType = "None" | "Full" | "ProRata";
 

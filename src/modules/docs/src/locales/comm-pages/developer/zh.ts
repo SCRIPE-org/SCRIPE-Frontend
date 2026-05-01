@@ -6,12 +6,16 @@ export const zh = {
   commercial: {
     cliTooling: {
       commandsTitle: "生成词典",
-      customizeContent: "NEXORA 坚决拒绝僵化的生成限制。整个内部架构由 66 个高度可配置的 Handlebars 模板驱动，使您的首席架构师能够在细粒度级别覆盖渲染行为。生成的每个字节都完全由您掌控。",
+      customizeContent:
+        "NEXORA 坚决拒绝僵化的生成限制。整个内部架构由 66 个高度可配置的 Handlebars 模板驱动，使您的首席架构师能够在细粒度级别覆盖渲染行为。生成的每个字节都完全由您掌控。",
       customizeTitle: "不受限制的模板扩展性",
-      description: "将工程吞吐量提高一个数量级。专有的 NEXORA CLI 通过按需确定性地生成完美无瑕的整洁架构拓扑，根除了架构摩擦。",
+      description:
+        "将工程吞吐量提高一个数量级。专有的 NEXORA CLI 通过按需确定性地生成完美无瑕的整洁架构拓扑，根除了架构摩擦。",
       generatedTitle: "可证明的架构完美性",
-      intro: "NEXORA 不仅仅是一个应用程序框架；它是一个工业级的开发者倍增器。我们定制的跨平台 CLI 彻底废除了样板代码。通过瞬间连接复杂的多层依赖关系，您的工程师将立即从繁琐的基础搭建转向积极的领域业务功能交付。",
-      scaffoldContent: "从源头消除架构衰退。NEXORA CLI 确定性地执行复杂的全栈脚手架操作——从隔离的 Entity Framework 聚合到类型极其严格的 Next.js Zustand 状态库，所有内容的编译都在物理上绝对符合严格的整洁架构设计原语。",
+      intro:
+        "NEXORA 不仅仅是一个应用程序框架；它是一个工业级的开发者倍增器。我们定制的跨平台 CLI 彻底废除了样板代码。通过瞬间连接复杂的多层依赖关系，您的工程师将立即从繁琐的基础搭建转向积极的领域业务功能交付。",
+      scaffoldContent:
+        "从源头消除架构衰退。NEXORA CLI 确定性地执行复杂的全栈脚手架操作——从隔离的 Entity Framework 聚合到类型极其严格的 Next.js Zustand 状态库，所有内容的编译都在物理上绝对符合严格的整洁架构设计原语。",
       scaffoldTitle: "确定性脚手架引擎",
       title: "强大的确定性工具",
       descMod: "瞬间搭建完整的端到端限界上下文 (Bounded Context)。",
@@ -49,19 +53,24 @@ export const zh = {
       step1Title: "1. 定义领域目标",
       step1Content: "仅向 CLI 提供限界上下文的名称。它将立即计算容纳新功能所需的多层结构拓扑。",
       step2Title: "2. Handlebars 执行阶段",
-      step2Content: "引擎按顺序计算 66 个嵌入的 Handlebars 布局。它在无需人工干预的情况下动态解析命名空间、实体关联和 React 组件树结构。",
+      step2Content:
+        "引擎按顺序计算 66 个嵌入的 Handlebars 布局。它在无需人工干预的情况下动态解析命名空间、实体关联和 React 组件树结构。",
       step3Title: "3. 绝对的依赖关系连接",
-      step3Content: "每个生成的 C# 仓储和 TypeScript Zod 模式都在全局依赖注入 (DI) 容器内自动注册，彻底消除了配置漂移和运行时的 `NullReference` 异常。",
+      step3Content:
+        "每个生成的 C# 仓储和 TypeScript Zod 模式都在全局依赖注入 (DI) 容器内自动注册，彻底消除了配置漂移和运行时的 `NullReference` 异常。",
       step4Title: "4. 立即具备部署就绪性",
-      step4Content: "在 0.8 秒内，CLI 执行完毕。整个端到端限界上下文已完成、已编译并处于活跃的安全保护中。您的工程师可以立即开始编写原生业务逻辑。",
+      step4Content:
+        "在 0.8 秒内，CLI 执行完毕。整个端到端限界上下文已完成、已编译并处于活跃的安全保护中。您的工程师可以立即开始编写原生业务逻辑。",
     },
     ciCdPipeline: {
       description: "统包的、经过实战检验的持续集成和部署管道配置。",
-      dockerContent: "生成后立即包含生产就绪的 Dockerfiles。它们采用多阶段的 Alpine Linux 构建，从而大幅减少攻击面并生成极其小巧、启动极快的容器有效载荷。",
+      dockerContent:
+        "生成后立即包含生产就绪的 Dockerfiles。它们采用多阶段的 Alpine Linux 构建，从而大幅减少攻击面并生成极其小巧、启动极快的容器有效载荷。",
       dockerTitle: "多阶段 Docker 化",
       environmentsTitle: "环境一致性",
       hostingTitle: "平台无关托管",
-      intro: "NEXORA 消除了“在我的机器上能运行”综合症。从第一天起，您就能获得企业级的 CI/CD 管道定义，该定义自动完成测试、容器化并部署到 AWS、Azure、GCP 或裸机。",
+      intro:
+        "NEXORA 消除了“在我的机器上能运行”综合症。从第一天起，您就能获得企业级的 CI/CD 管道定义，该定义自动完成测试、容器化并部署到 AWS、Azure、GCP 或裸机。",
       title: "CI/CD 与 DevOps 自动化",
       workflowTitle: "自动化工作流",
     },
@@ -69,18 +78,23 @@ export const zh = {
       custom: "定制咨询",
       customDesc: "聘请 NEXORA 核心架构团队进行深度的架构审查、定制模块开发和高可用性系统设计。",
       description: "全面的架构蓝图、交互式教程和嵌入式培训跟踪。",
-      docsContent: "我们的文档站点不仅仅是 API 参考。它包含对整洁架构理论、CQRS 模式的深入探讨，以及扩展平台的逐步指南。每一个架构决策都由可公开访问的决策记录 (ADR) 作为后盾。",
+      docsContent:
+        "我们的文档站点不仅仅是 API 参考。它包含对整洁架构理论、CQRS 模式的深入探讨，以及扩展平台的逐步指南。每一个架构决策都由可公开访问的决策记录 (ADR) 作为后盾。",
       docsTitle: "架构圣经",
-      intro: "采用速度决定了投资回报率 (ROI)。NEXORA 提供世界一流的文档、即时可操作的教程和结构化的培训轨道，旨在将初级开发人员在极短的时间内过渡为企业架构师。",
-      kbContent: "探索数以千计的分类知识库文章，涵盖了从配置分布式缓存失效到使用 Testcontainers 编写复杂的集成测试的方方面面。",
+      intro:
+        "采用速度决定了投资回报率 (ROI)。NEXORA 提供世界一流的文档、即时可操作的教程和结构化的培训轨道，旨在将初级开发人员在极短的时间内过渡为企业架构师。",
+      kbContent:
+        "探索数以千计的分类知识库文章，涵盖了从配置分布式缓存失效到使用 Testcontainers 编写复杂的集成测试的方方面面。",
       kbTitle: "广泛的知识库",
       live: "讲师指导的实时培训",
       liveDesc: "参加由高级 .NET 和 Next.js 工程师带领的现场、实践性质的架构研讨会。",
       onSite: "现场孵化 (On-Site)",
       onSiteDesc: "派我们的专家工程师飞往您的总部，进行为期一周的专门冲刺加速。",
-      onb1Content: "开发人员在第一周内通过自定进度的视频课程，了解精确的实体、仓储和 UI 元素的映射关系。",
+      onb1Content:
+        "开发人员在第一周内通过自定进度的视频课程，了解精确的实体、仓储和 UI 元素的映射关系。",
       onb1Title: "路线 1：架构基础",
-      onb2Content: "掌握前端 SOLID View/ViewModel 模式，以快速构建复杂的状态驱动界面，避免出现杂乱无章的 React 意大利面条代码。",
+      onb2Content:
+        "掌握前端 SOLID View/ViewModel 模式，以快速构建复杂的状态驱动界面，避免出现杂乱无章的 React 意大利面条代码。",
       onb2Title: "路线 2：快速 UI 开发",
       onb3Content: "学习如何使用 CAP 和 RabbitMQ 在不同的限界上下文之间建立分布式事件驱动边界。",
       onb3Title: "路线 3：微服务扩展性",
@@ -95,20 +109,26 @@ export const zh = {
     },
     gettingStartedGuide: {
       credentialsTitle: "环境初始化",
-      credentialsWarning: "重要提示：永远不要将敏感的连接字符串或 JWT 密钥提交到源代码控制中。在生产部署中始终使用 Azure Key Vault、AWS Secrets Manager 或 HashiCorp Vault。",
+      credentialsWarning:
+        "重要提示：永远不要将敏感的连接字符串或 JWT 密钥提交到源代码控制中。在生产部署中始终使用 Azure Key Vault、AWS Secrets Manager 或 HashiCorp Vault。",
       description: "从克隆到生产。逐步部署 NEXORA 架构基础的终极权威指南。",
       firstModuleTitle: "生成您的第一个限界上下文",
-      intro: "实现价值的时间 (Time to value) 是唯一重要的指标。这份详尽的指南能在 15 分钟内，将您的工程团队从拉取代码库加速引导到使用完全初始化的数据库成功执行他们的第一次认证 API 调用。",
+      intro:
+        "实现价值的时间 (Time to value) 是唯一重要的指标。这份详尽的指南能在 15 分钟内，将您的工程团队从拉取代码库加速引导到使用完全初始化的数据库成功执行他们的第一次认证 API 调用。",
       nextStepsTitle: "接下来的架构步骤",
       prereqTitle: "系统前置要求",
       quickStartTitle: "15 分钟快速入门",
-      step1Content: "确保您的开发机器上已安装并可全局访问 .NET 9 SDK、Node.js 20+ 以及您首选的 Docker 引擎。",
+      step1Content:
+        "确保您的开发机器上已安装并可全局访问 .NET 9 SDK、Node.js 20+ 以及您首选的 Docker 引擎。",
       step1Title: "1. 工具链验证",
-      step2Content: "执行专有的 NEXORA 初始化脚本。这会自动配置本地开发证书、执行初始的 EF Core 迁移并生成根超级管理员 (SuperAdmin) 租户。",
+      step2Content:
+        "执行专有的 NEXORA 初始化脚本。这会自动配置本地开发证书、执行初始的 EF Core 迁移并生成根超级管理员 (SuperAdmin) 租户。",
       step2Title: "2. 自动化引导启动",
-      step3Content: "使用提供的 Docker Compose 拓扑或原生的 IDE 启动配置文件，并发启动后端 API 和 Next.js 前端。",
+      step3Content:
+        "使用提供的 Docker Compose 拓扑或原生的 IDE 启动配置文件，并发启动后端 API 和 Next.js 前端。",
       step3Title: "3. 并发服务启动",
-      step4Content: "使用生成的超级管理员凭据向 Swagger UI 或 Postman 集合进行身份验证，以获取您的第一个 JWT。",
+      step4Content:
+        "使用生成的超级管理员凭据向 Swagger UI 或 Postman 集合进行身份验证，以获取您的第一个 JWT。",
       step4Title: "4. 密码学身份验证",
       step5Content: "利用 NEXORA CLI 立即生成您的第一个自定义业务模块，无缝扩展核心架构。",
       step5Title: "5. 模块生成",
@@ -157,11 +177,14 @@ export const zh = {
       lstNextI6: "探索完整的技术文档以进行深入研究",
     },
     systemRequirements: {
-      cloudTip: "云迁移提示：NEXORA 完全不受云平台的限制 (Cloud-agnostic)。使用我们提供的基础设施即代码 (IaC) 模板部署到 AWS ECS、Azure App Services 或 Google Kubernetes Engine (GKE)。",
+      cloudTip:
+        "云迁移提示：NEXORA 完全不受云平台的限制 (Cloud-agnostic)。使用我们提供的基础设施即代码 (IaC) 模板部署到 AWS ECS、Azure App Services 或 Google Kubernetes Engine (GKE)。",
       dbTitle: "数据库硬件基准线",
-      description: "在各种部署规模下托管 NEXORA 所需的基准硬件配置文件、必要的软件工具链和确切的网络配置。",
+      description:
+        "在各种部署规模下托管 NEXORA 所需的基准硬件配置文件、必要的软件工具链和确切的网络配置。",
       devTitle: "本地开发工作站",
-      intro: "NEXORA 的设计极其注重资源效率。尽管它可以动态扩展以消费庞大的云集群，但它也可以在标准开发人员笔记本电脑上舒适地启动并执行其整个测试套件。",
+      intro:
+        "NEXORA 的设计极其注重资源效率。尽管它可以动态扩展以消费庞大的云集群，但它也可以在标准开发人员笔记本电脑上舒适地启动并执行其整个测试套件。",
       networkTitle: "网络拓扑与端口",
       prodMicroTitle: "全球微服务拓扑",
       prodMonoTitle: "生产环境单体服务器",

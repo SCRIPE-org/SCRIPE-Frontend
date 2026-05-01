@@ -106,8 +106,8 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
           {/* Background glow on hover */}
           <div
             className={cn(
-              "absolute -top-12 -end-12 h-24 w-24 rounded-full opacity-0",
-              "transition-opacity duration-500 group-hover:opacity-10 blur-2xl",
+              "absolute -end-12 -top-12 h-24 w-24 rounded-full opacity-0",
+              "blur-2xl transition-opacity duration-500 group-hover:opacity-10",
               stat.bgGlow
             )}
           />
@@ -116,7 +116,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
           <stat.icon
             className={cn(
               "absolute -bottom-2 opacity-[0.03] transition-all duration-500",
-              "group-hover:opacity-[0.06] group-hover:scale-110",
+              "group-hover:scale-110 group-hover:opacity-[0.06]",
               isRtl ? "-left-2" : "-right-2",
               "h-20 w-20"
             )}
@@ -143,16 +143,14 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
               ) : (
                 <AnimatedNumber value={stat.value} />
               )}
-              <p className="text-xs text-muted-foreground mt-0.5 font-medium">
-                {stat.label}
-              </p>
+              <p className="mt-0.5 text-xs font-medium text-muted-foreground">{stat.label}</p>
             </div>
           </div>
 
           {/* Bottom gradient line */}
           <div
             className={cn(
-              "absolute bottom-0 inset-x-0 h-0.5 opacity-0",
+              "absolute inset-x-0 bottom-0 h-0.5 opacity-0",
               "transition-opacity duration-300 group-hover:opacity-100",
               "bg-gradient-to-r",
               stat.gradient

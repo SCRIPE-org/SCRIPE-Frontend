@@ -43,7 +43,8 @@ export function CommissionInvoicesView() {
           {t("entitlements.commissionLedger.invoices") || "Commission Invoices"}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {t("entitlements.commissionLedger.invoicesSubtitle") || "View your commission invoices charged by the platform."}
+          {t("entitlements.commissionLedger.invoicesSubtitle") ||
+            "View your commission invoices charged by the platform."}
         </p>
       </div>
 

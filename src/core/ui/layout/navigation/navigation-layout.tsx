@@ -154,13 +154,15 @@ export function NavigationLayout({
         settings.highContrast === true && "high-contrast",
         settings.reducedMotion === true && "reduce-motion"
       )}
-      style={{
-        fontSize: "var(--font-size-base)",
-        // CSS custom properties for sidebar widths — single source of truth
-        "--main-sidebar-w": "6rem",
-        "--panel-sidebar-w": "16rem",
-        "--total-sidebar-w": "22rem",
-      } as React.CSSProperties}
+      style={
+        {
+          fontSize: "var(--font-size-base)",
+          // CSS custom properties for sidebar widths — single source of truth
+          "--main-sidebar-w": "6rem",
+          "--panel-sidebar-w": "16rem",
+          "--total-sidebar-w": "22rem",
+        } as React.CSSProperties
+      }
     >
       {/* Main Sidebar - Primary Navigation */}
       <NavigationMainSidebar
@@ -202,14 +204,8 @@ export function NavigationLayout({
           getAnimationClass(),
           // Dynamic margins using CSS variables
           direction === "rtl"
-            ? cn(
-              "lg:mr-[var(--main-sidebar-w)]",
-              nav.panelOpen && "lg:mr-[var(--total-sidebar-w)]"
-            )
-            : cn(
-              "lg:ml-[var(--main-sidebar-w)]",
-              nav.panelOpen && "lg:ml-[var(--total-sidebar-w)]"
-            )
+            ? cn("lg:mr-[var(--main-sidebar-w)]", nav.panelOpen && "lg:mr-[var(--total-sidebar-w)]")
+            : cn("lg:ml-[var(--main-sidebar-w)]", nav.panelOpen && "lg:ml-[var(--total-sidebar-w)]")
         )}
       >
         <main className="flex-1 bg-background">

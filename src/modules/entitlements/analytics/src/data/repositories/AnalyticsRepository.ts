@@ -52,9 +52,16 @@ export class AnalyticsRepository implements IAnalyticsRepository {
     sortBy?: string,
     sortDesc?: boolean,
     minScore?: number,
-    maxScore?: number,
+    maxScore?: number
   ): Promise<TenantHealthScoresResponse> {
-    const dto = await this.service.getHealthScores(page, pageSize, sortBy, sortDesc, minScore, maxScore);
+    const dto = await this.service.getHealthScores(
+      page,
+      pageSize,
+      sortBy,
+      sortDesc,
+      minScore,
+      maxScore
+    );
     return AnalyticsMapper.toHealthScoresResponse(dto);
   }
 
@@ -74,11 +81,25 @@ export class AnalyticsRepository implements IAnalyticsRepository {
     await this.service.updateReportPreferences(model);
   }
 
-  async exportAnalytics(data: { format: string; from?: string; to?: string; tenantId?: string; includeMrrMovement: boolean; includeCohort: boolean; includeHealth: boolean; includeForecast: boolean }): Promise<Blob> {
+  async exportAnalytics(data: {
+    format: string;
+    from?: string;
+    to?: string;
+    tenantId?: string;
+    includeMrrMovement: boolean;
+    includeCohort: boolean;
+    includeHealth: boolean;
+    includeForecast: boolean;
+  }): Promise<Blob> {
     return this.service.exportAnalytics(data);
   }
 
-  async generateReport(data: { from?: string; to?: string; tenantId?: string; currency: string }): Promise<Blob> {
+  async generateReport(data: {
+    from?: string;
+    to?: string;
+    tenantId?: string;
+    currency: string;
+  }): Promise<Blob> {
     return this.service.generateReport(data);
   }
 }

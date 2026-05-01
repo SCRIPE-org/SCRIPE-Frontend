@@ -2,11 +2,10 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const ProfileSecurityView = dynamic(
-  () =>
-    import("@modules/profile/src/presentation/views/ProfileSecurityView").then((m) => ({
-      default: m.ProfileSecurityView,
-    }))
+const ProfileSecurityView = dynamic(() =>
+  import("@modules/profile/src/presentation/views/ProfileSecurityView").then((m) => ({
+    default: m.ProfileSecurityView,
+  }))
 );
 
 export const metadata: Metadata = {

@@ -33,18 +33,21 @@ export function FeatureRow({
   language,
   t,
 }: FeatureRowProps) {
-  const displayName = language === "ar"
-    ? definition.displayNameAr
-    : definition.displayNameEn;
+  const displayName = language === "ar" ? definition.displayNameAr : definition.displayNameEn;
 
   return (
-    <div className="flex items-center justify-between py-3 gap-4">
-      <div className="space-y-0.5 flex-1 min-w-0">
+    <div className="flex items-center justify-between gap-4 py-3">
+      <div className="min-w-0 flex-1 space-y-0.5">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm">{displayName}</span>
-          <Badge variant="outline" className="text-[10px]">{definition.valueType}</Badge>
+          <span className="text-sm font-medium">{displayName}</span>
+          <Badge variant="outline" className="text-[10px]">
+            {definition.valueType}
+          </Badge>
           {isNew && (
-            <Badge variant="default" className="text-[10px] h-4 bg-green-100 text-green-700 border-green-200">
+            <Badge
+              variant="default"
+              className="h-4 border-green-200 bg-green-100 text-[10px] text-green-700"
+            >
               {t("common.new") || "New"}
             </Badge>
           )}
@@ -55,15 +58,11 @@ export function FeatureRow({
             />
           )}
         </div>
-        <p className="text-xs text-muted-foreground font-mono">{definition.key}</p>
+        <p className="font-mono text-xs text-muted-foreground">{definition.key}</p>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
-        <FeatureControl
-          valueType={definition.valueType}
-          value={value}
-          onChange={onValueChange}
-        />
+      <div className="flex shrink-0 items-center gap-2">
+        <FeatureControl valueType={definition.valueType} value={value} onChange={onValueChange} />
         <Button
           variant="ghost"
           size="icon"

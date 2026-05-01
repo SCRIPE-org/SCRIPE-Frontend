@@ -79,11 +79,14 @@ export const en = {
       optional: "Optional",
       currencyOverrides: "Currency Overrides",
       addOverride: "Add Currency Override",
-      addOverrideDesc: "Select a currency to set fixed pricing for. Prices will be auto-suggested from the current exchange rate.",
-      noOverridesDesc: "All currencies will auto-convert from USD. Add overrides for specific markets where you want fixed pricing.",
+      addOverrideDesc:
+        "Select a currency to set fixed pricing for. Prices will be auto-suggested from the current exchange rate.",
+      noOverridesDesc:
+        "All currencies will auto-convert from USD. Add overrides for specific markets where you want fixed pricing.",
       selectCurrency: "Search currency...",
       searchCurrency: "Search...",
-      autoConvertInfo: "Currencies without explicit overrides will auto-convert from USD at live exchange rates.",
+      autoConvertInfo:
+        "Currencies without explicit overrides will auto-convert from USD at live exchange rates.",
       suggestedYearly: "Suggested",
       livePreview: "Live Preview",
       previewDesc: "What tenants will actually pay in each currency.",
@@ -149,5 +152,8 @@ export const en = {
       customDays: "Enter days...",
       noPromotion: "No Promotion",
     },
+  },
+  common: {
+    noResultsForSearch: "No Results For Search",
   },
 };

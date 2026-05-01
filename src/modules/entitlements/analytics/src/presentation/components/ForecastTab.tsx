@@ -38,7 +38,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold">{t("entitlements.analytics.forecast.title")}</h2>
-          <Badge variant="secondary" className="text-[10px] font-mono">
+          <Badge variant="secondary" className="font-mono text-[10px]">
             R² = {forecastData.rSquared.toFixed(3)}
           </Badge>
         </div>
@@ -56,12 +56,12 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
 
       {/* Forecast Chart */}
       {allPoints.length === 0 ? (
-        <div className="text-center py-16 text-sm text-muted-foreground">
+        <div className="py-16 text-center text-sm text-muted-foreground">
           {t("entitlements.analytics.forecast.noData")}
         </div>
       ) : (
-        <Card className="border border-border/30 shadow-sm overflow-hidden">
-          <CardHeader className="pb-2 bg-muted/20">
+        <Card className="overflow-hidden border border-border/30 shadow-sm">
+          <CardHeader className="bg-muted/20 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {t("entitlements.analytics.forecast.projectedMrr")}
             </CardTitle>
@@ -75,16 +75,20 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                 const isProjected = point.confidence > 0;
 
                 return (
-                  <div key={point.month} className="group" style={{ animationDelay: `${idx * 40}ms` }}>
+                  <div
+                    key={point.month}
+                    className="group"
+                    style={{ animationDelay: `${idx * 40}ms` }}
+                  >
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground w-16 shrink-0 font-mono">
+                      <span className="w-16 shrink-0 font-mono text-xs text-muted-foreground">
                         {formatMonth(point.month)}
                       </span>
-                      <div className="flex-1 relative h-10 bg-muted/15 rounded-lg overflow-hidden">
+                      <div className="relative h-10 flex-1 overflow-hidden rounded-lg bg-muted/15">
                         {/* Confidence interval background */}
                         {isProjected && (
                           <div
-                            className="absolute h-full bg-blue-500/10 rounded-lg border-l border-r border-blue-500/20"
+                            className="absolute h-full rounded-lg border-l border-r border-blue-500/20 bg-blue-500/10"
                             style={{
                               left: `${lowerWidth}%`,
                               width: `${Math.max(upperWidth - lowerWidth, 1)}%`,
@@ -101,24 +105,33 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                           style={{ width: `${Math.max(projWidth, 3)}%` }}
                         />
                         {/* Labels */}
-                        <div className="absolute inset-0 flex items-center px-3 justify-between">
-                          <span className="text-xs font-bold">{formatCurrency(point.projectedMrr)}</span>
+                        <div className="absolute inset-0 flex items-center justify-between px-3">
+                          <span className="text-xs font-bold">
+                            {formatCurrency(point.projectedMrr)}
+                          </span>
                           {isProjected && (
-                            <span className="text-[10px] text-muted-foreground font-mono">
-                              {formatCurrency(point.lowerBound)} – {formatCurrency(point.upperBound)}
+                            <span className="font-mono text-[10px] text-muted-foreground">
+                              {formatCurrency(point.lowerBound)} –{" "}
+                              {formatCurrency(point.upperBound)}
                             </span>
                           )}
                         </div>
                       </div>
                       {/* Confidence or type badge */}
                       {isProjected ? (
-                        <span className={`text-[10px] font-semibold w-10 text-right ${
-                          point.confidence >= 80 ? "text-emerald-600" : point.confidence >= 50 ? "text-amber-600" : "text-rose-600"
-                        }`}>
+                        <span
+                          className={`w-10 text-right text-[10px] font-semibold ${
+                            point.confidence >= 80
+                              ? "text-emerald-600"
+                              : point.confidence >= 50
+                                ? "text-amber-600"
+                                : "text-rose-600"
+                          }`}
+                        >
                           {point.confidence.toFixed(0)}%
                         </span>
                       ) : (
-                        <span className="text-[10px] text-muted-foreground w-10 text-right">●</span>
+                        <span className="w-10 text-right text-[10px] text-muted-foreground">●</span>
                       )}
                     </div>
                   </div>
@@ -132,15 +145,15 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
       {/* Legend */}
       <div className="flex items-center gap-5 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-3 rounded bg-gradient-to-r from-emerald-500/60 to-teal-500/40" />
+          <div className="h-3 w-4 rounded bg-gradient-to-r from-emerald-500/60 to-teal-500/40" />
           <span className="font-medium">{t("entitlements.analytics.forecast.historical")}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-3 rounded bg-gradient-to-r from-blue-500/60 to-indigo-500/40" />
+          <div className="h-3 w-4 rounded bg-gradient-to-r from-blue-500/60 to-indigo-500/40" />
           <span className="font-medium">{t("entitlements.analytics.forecast.projected")}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-3 rounded bg-blue-500/10 border border-blue-500/20" />
+          <div className="h-3 w-4 rounded border border-blue-500/20 bg-blue-500/10" />
           <span className="font-medium">{t("entitlements.analytics.forecast.confidence")}</span>
         </div>
       </div>

@@ -61,7 +61,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       toast.success(t("tenant.domainsAddedSuccess"));
       await fetchDomains();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsAddFailed"));
+      toast.error(
+        err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsAddFailed")
+      );
       throw err; // Re-throw so component can handle UI state
     } finally {
       setIsAdding(false);
@@ -94,7 +96,11 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       toast.success(t("tenant.domainsRemoved"));
       await fetchDomains();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsRemoveFailed"));
+      toast.error(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          t("tenant.domainsRemoveFailed")
+      );
     }
   };
 

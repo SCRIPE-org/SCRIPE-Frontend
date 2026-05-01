@@ -48,7 +48,7 @@ interface ProductionCanvasRendererProps {
   gridRows: number;
   canvasBackground?: CanvasBackgroundData;
   /** Position mode: 'grid' = CSS Grid, 'absolute' = free-form x/y */
-  positionMode?: 'grid' | 'absolute';
+  positionMode?: "grid" | "absolute";
   /** The REAL form content (CredentialsForm + SSO + SlotRenderers) */
   formContent: React.ReactNode;
   /** Logo URL from tenant branding */
@@ -71,7 +71,7 @@ export function ProductionCanvasRenderer({
   components,
   gridRows,
   canvasBackground,
-  positionMode = 'grid',
+  positionMode = "grid",
   formContent,
   logoUrl,
   companyName,
@@ -88,23 +88,25 @@ export function ProductionCanvasRenderer({
     bg = canvasBackground.value;
   }
 
-  const alignMap: Record<string, string> = { start: 'flex-start', center: 'center', end: 'flex-end' };
+  const alignMap: Record<string, string> = {
+    start: "flex-start",
+    center: "center",
+    end: "flex-end",
+  };
 
-  const visibleComponents = components
-    .filter((c) => c.visible)
-    .sort((a, b) => a.zIndex - b.zIndex);
+  const visibleComponents = components.filter((c) => c.visible).sort((a, b) => a.zIndex - b.zIndex);
 
   // Top actions bar (always visible, floating)
   const topActions = (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         left: 32,
         right: 32,
         top: 32,
         zIndex: 50,
-        display: 'flex',
-        justifyContent: 'flex-end',
+        display: "flex",
+        justifyContent: "flex-end",
         gap: 8,
       }}
     >
@@ -116,25 +118,25 @@ export function ProductionCanvasRenderer({
   );
 
   const commonStyle: React.CSSProperties = {
-    fontFamily: 'var(--login-font-body, inherit)',
-    lineHeight: 'var(--login-line-height, 1.5)',
-    letterSpacing: 'var(--login-letter-spacing, 0px)',
+    fontFamily: "var(--login-font-body, inherit)",
+    lineHeight: "var(--login-line-height, 1.5)",
+    letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
   // ── Free-Form (Absolute) Mode ──
-  if (positionMode === 'absolute') {
+  if (positionMode === "absolute") {
     return (
       <div
-        className="login-page w-full min-h-screen selection:bg-primary/20"
+        className="login-page min-h-screen w-full selection:bg-primary/20"
         dir={direction}
         style={{
-          position: 'relative',
-          minHeight: '100vh',
-          width: '100%',
-          maxWidth: '800px',
-          margin: '0 auto',
+          position: "relative",
+          minHeight: "100vh",
+          width: "100%",
+          maxWidth: "800px",
+          margin: "0 auto",
           background: bg,
-          overflow: 'hidden',
+          overflow: "hidden",
           ...commonStyle,
         }}
       >
@@ -143,15 +145,15 @@ export function ProductionCanvasRenderer({
           <div
             key={comp.id}
             style={{
-              position: 'absolute',
+              position: "absolute",
               insetInlineStart: `${comp.x || 0}px`,
               top: `${comp.y || 0}px`,
-              width: comp.width ? `${comp.width}px` : 'auto',
-              height: comp.height ? `${comp.height}px` : 'auto',
+              width: comp.width ? `${comp.width}px` : "auto",
+              height: comp.height ? `${comp.height}px` : "auto",
               zIndex: comp.zIndex,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <ProductionComponent
@@ -173,14 +175,14 @@ export function ProductionCanvasRenderer({
   // ── Grid Mode ──
   return (
     <div
-      className="login-page w-full min-h-screen selection:bg-primary/20"
+      className="login-page min-h-screen w-full selection:bg-primary/20"
       dir={direction}
       style={{
-        display: 'grid',
+        display: "grid",
         gridTemplateColumns: `repeat(${GRID_COLUMNS}, 1fr)`,
         gridTemplateRows: `repeat(${gridRows}, minmax(60px, auto))`,
-        minHeight: '100vh',
-        gap: '0px',
+        minHeight: "100vh",
+        gap: "0px",
         background: bg,
         ...commonStyle,
       }}
@@ -188,30 +190,30 @@ export function ProductionCanvasRenderer({
       {topActions}
 
       {visibleComponents.map((comp) => (
-          <div
-            key={comp.id}
-            style={{
-              gridColumn: comp.gridColumn,
-              gridRow: comp.gridRow,
-              display: 'flex',
-              alignItems: alignMap[comp.verticalAlignment] || 'center',
-              justifyContent: alignMap[comp.alignment] || 'center',
-              padding: '8px',
-              zIndex: comp.zIndex,
-            }}
-          >
-            <ProductionComponent
-              type={comp.type}
-              props={comp.props}
-              formContent={formContent}
-              logoUrl={logoUrl}
-              companyName={companyName}
-              headline={headline}
-              subtitle={subtitle}
-              copyrightText={copyrightText}
-            />
-          </div>
-        ))}
+        <div
+          key={comp.id}
+          style={{
+            gridColumn: comp.gridColumn,
+            gridRow: comp.gridRow,
+            display: "flex",
+            alignItems: alignMap[comp.verticalAlignment] || "center",
+            justifyContent: alignMap[comp.alignment] || "center",
+            padding: "8px",
+            zIndex: comp.zIndex,
+          }}
+        >
+          <ProductionComponent
+            type={comp.type}
+            props={comp.props}
+            formContent={formContent}
+            logoUrl={logoUrl}
+            companyName={companyName}
+            headline={headline}
+            subtitle={subtitle}
+            copyrightText={copyrightText}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -245,7 +247,7 @@ function ProductionComponent({
     case "logo":
       return (
         <div
-          className="login-logo flex items-center justify-center overflow-hidden bg-background border border-border shadow-sm"
+          className="login-logo flex items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
           style={{
             maxWidth: `${(props.maxWidth as number) || 200}px`,
             width: "100%",
@@ -256,7 +258,9 @@ function ProductionComponent({
             src={logoUrl}
             alt={`${companyName} Logo`}
             className="h-full w-full object-contain"
-            onError={(e) => { e.currentTarget.style.display = "none"; }}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
           />
         </div>
       );
@@ -304,9 +308,20 @@ function ProductionComponent({
       return (
         <ul className="space-y-3">
           {items.map((item, i) => (
-            <li key={i} className="flex items-center gap-2 text-[var(--login-text,hsl(var(--foreground)))]">
-              <svg className="h-4 w-4 text-[var(--login-primary,hsl(var(--primary)))]" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            <li
+              key={i}
+              className="flex items-center gap-2 text-[var(--login-text,hsl(var(--foreground)))]"
+            >
+              <svg
+                className="h-4 w-4 text-[var(--login-primary,hsl(var(--primary)))]"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span className="text-sm">{item}</span>
             </li>
@@ -322,7 +337,9 @@ function ProductionComponent({
           {(props.author as string) && (
             <footer className="text-xs font-medium">
               — {props.author as string}
-              {(props.role as string) && <span className="text-muted-foreground ml-1">({props.role as string})</span>}
+              {(props.role as string) && (
+                <span className="ml-1 text-muted-foreground">({props.role as string})</span>
+              )}
             </footer>
           )}
         </blockquote>
@@ -364,7 +381,7 @@ function ProductionComponent({
 
     case "divider":
       return (
-        <div className="w-full flex items-center">
+        <div className="flex w-full items-center">
           <div
             className="w-full"
             style={{
@@ -379,14 +396,17 @@ function ProductionComponent({
       return (
         <div className="flex items-center justify-center gap-4 text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
           <Button variant="ghost" size="sm" className="text-xs" asChild>
-            <Link href="/docs"><BookOpen className="h-3 w-3 mr-1" />{t("auth.branding.docs")}</Link>
+            <Link href="/docs">
+              <BookOpen className="mr-1 h-3 w-3" />
+              {t("auth.branding.docs")}
+            </Link>
           </Button>
         </div>
       );
 
     case "copyright":
       return (
-        <p className="text-center text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50">
+        <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50 text-center text-[11px] font-medium">
           © {new Date().getFullYear()} {companyName}
           {copyrightText ? ` — ${copyrightText}` : ""}
         </p>
@@ -405,7 +425,7 @@ function ProductionComponent({
           muted={(props.muted as boolean) ?? true}
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover -z-10"
+          className="absolute inset-0 -z-10 h-full w-full object-cover"
         />
       ) : null;
 

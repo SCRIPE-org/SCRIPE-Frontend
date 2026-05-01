@@ -49,7 +49,9 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
       )}
     >
       {/* Gradient overlay */}
-      <div className={cn("absolute inset-0 bg-gradient-to-br pointer-events-none", style.gradient)} />
+      <div
+        className={cn("pointer-events-none absolute inset-0 bg-gradient-to-br", style.gradient)}
+      />
 
       <CardHeader className="relative pb-2">
         <div className="flex items-start justify-between gap-4">
@@ -57,25 +59,35 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2">
-                <span className={cn("h-2.5 w-2.5 rounded-full animate-pulse", style.dotColor)} />
+                <span className={cn("h-2.5 w-2.5 animate-pulse rounded-full", style.dotColor)} />
                 {style.icon}
               </div>
-              <Badge variant={STATUS_VARIANTS[sub.status] ?? "outline"} className="text-xs font-semibold uppercase tracking-wider">
+              <Badge
+                variant={STATUS_VARIANTS[sub.status] ?? "outline"}
+                className="text-xs font-semibold uppercase tracking-wider"
+              >
                 {t(`entSubscriptions.${STATUS_KEY_MAP[sub.status] ?? sub.status}`) || sub.status}
               </Badge>
-              <Badge variant={(TYPE_VARIANTS as Record<string, "default" | "secondary" | "outline">)[sub.type] ?? "outline"} className="text-xs">
+              <Badge
+                variant={
+                  (TYPE_VARIANTS as Record<string, "default" | "secondary" | "outline">)[
+                    sub.type
+                  ] ?? "outline"
+                }
+                className="text-xs"
+              >
                 {billingCycle}
               </Badge>
             </div>
 
             <div className="flex items-center gap-2.5">
-              <Crown className="h-6 w-6 text-primary shrink-0" />
+              <Crown className="h-6 w-6 shrink-0 text-primary" />
               <h2 className="text-2xl font-bold tracking-tight">{sub.editionName}</h2>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
             <HeroActions sub={sub} vm={vm} t={t} />
           </div>
         </div>
@@ -89,7 +101,9 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
             <span>
               {sub.startDate ? format(new Date(sub.startDate), "MMM d, yyyy") : "—"}
               {" → "}
-              {sub.endDate ? format(new Date(sub.endDate), "MMM d, yyyy") : (
+              {sub.endDate ? (
+                format(new Date(sub.endDate), "MMM d, yyyy")
+              ) : (
                 <span className="inline-flex items-center gap-1">
                   <Infinity className="h-3.5 w-3.5" />
                   <span>{t("entSubscriptions.lifetime")}</span>
@@ -111,16 +125,14 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
               <span className="text-lg font-semibold tabular-nums">{formattedAmount}</span>
-              <span className="text-xs text-muted-foreground">
-                / {billingCycle.toLowerCase()}
-              </span>
+              <span className="text-xs text-muted-foreground">/ {billingCycle.toLowerCase()}</span>
             </div>
           )}
 
           {/* Promo */}
           {sub.appliedPromoCode && (
-            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
-              <Tag className="h-3 w-3 me-1" />
+            <Badge variant="outline" className="border-primary/30 text-xs text-primary">
+              <Tag className="me-1 h-3 w-3" />
               {sub.appliedPromoCode}
               {sub.promotionDiscount != null && sub.promotionDiscount > 0 && (
                 <span className="ms-1 text-emerald-600">-{sub.promotionDiscount}%</span>

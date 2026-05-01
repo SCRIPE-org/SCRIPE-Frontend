@@ -11,7 +11,11 @@
  */
 "use client";
 
-import type { CanvasComponent, CanvasBackground, PositionMode } from "../../../domain/entities/CanvasComponent";
+import type {
+  CanvasComponent,
+  CanvasBackground,
+  PositionMode,
+} from "../../../domain/entities/CanvasComponent";
 import { CANVAS_GRID_COLUMNS, CANVAS_WIDTH } from "../../../domain/entities/CanvasComponent";
 import { ComponentRenderer } from "./ComponentRenderer";
 
@@ -22,36 +26,39 @@ interface CanvasRendererProps {
   positionMode?: PositionMode;
 }
 
-export function CanvasRenderer({ components, gridRows, canvasBackground, positionMode = 'grid' }: CanvasRendererProps) {
+export function CanvasRenderer({
+  components,
+  gridRows,
+  canvasBackground,
+  positionMode = "grid",
+}: CanvasRendererProps) {
   // Resolve background
-  let bg = 'var(--login-bg, hsl(var(--background)))';
-  if (canvasBackground && canvasBackground.type !== 'inherit' && canvasBackground.value) {
+  let bg = "var(--login-bg, hsl(var(--background)))";
+  if (canvasBackground && canvasBackground.type !== "inherit" && canvasBackground.value) {
     bg = canvasBackground.value;
   }
 
-  const visibleComponents = components
-    .filter(c => c.visible)
-    .sort((a, b) => a.zIndex - b.zIndex);
+  const visibleComponents = components.filter((c) => c.visible).sort((a, b) => a.zIndex - b.zIndex);
 
   const commonStyle: React.CSSProperties = {
-    fontFamily: 'var(--login-font-body, inherit)',
-    lineHeight: 'var(--login-line-height, 1.5)',
-    letterSpacing: 'var(--login-letter-spacing, 0px)',
+    fontFamily: "var(--login-font-body, inherit)",
+    lineHeight: "var(--login-line-height, 1.5)",
+    letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
   // ── Free-Form (Absolute) Mode ──
-  if (positionMode === 'absolute') {
+  if (positionMode === "absolute") {
     return (
       <div
-        className="login-page w-full min-h-screen selection:bg-primary/20"
+        className="login-page min-h-screen w-full selection:bg-primary/20"
         style={{
-          position: 'relative',
-          minHeight: '100vh',
-          width: '100%',
+          position: "relative",
+          minHeight: "100vh",
+          width: "100%",
           maxWidth: `${CANVAS_WIDTH}px`,
-          margin: '0 auto',
+          margin: "0 auto",
           background: bg,
-          overflow: 'hidden',
+          overflow: "hidden",
           ...commonStyle,
         }}
       >
@@ -59,15 +66,15 @@ export function CanvasRenderer({ components, gridRows, canvasBackground, positio
           <div
             key={comp.id}
             style={{
-              position: 'absolute',
+              position: "absolute",
               insetInlineStart: `${comp.x}px`,
               top: `${comp.y}px`,
-              width: comp.width ? `${comp.width}px` : 'auto',
-              height: comp.height ? `${comp.height}px` : 'auto',
+              width: comp.width ? `${comp.width}px` : "auto",
+              height: comp.height ? `${comp.height}px` : "auto",
               zIndex: comp.zIndex,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <ComponentRenderer type={comp.type} props={comp.props} />
@@ -78,17 +85,21 @@ export function CanvasRenderer({ components, gridRows, canvasBackground, positio
   }
 
   // ── Grid Mode ──
-  const alignMap: Record<string, string> = { start: 'flex-start', center: 'center', end: 'flex-end' };
+  const alignMap: Record<string, string> = {
+    start: "flex-start",
+    center: "center",
+    end: "flex-end",
+  };
 
   return (
     <div
-      className="login-page w-full min-h-screen selection:bg-primary/20"
+      className="login-page min-h-screen w-full selection:bg-primary/20"
       style={{
-        display: 'grid',
+        display: "grid",
         gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
         gridTemplateRows: `repeat(${gridRows}, minmax(60px, auto))`,
-        minHeight: '100vh',
-        gap: '0px',
+        minHeight: "100vh",
+        gap: "0px",
         background: bg,
         ...commonStyle,
       }}
@@ -99,10 +110,10 @@ export function CanvasRenderer({ components, gridRows, canvasBackground, positio
           style={{
             gridColumn: comp.gridColumn,
             gridRow: comp.gridRow,
-            display: 'flex',
-            alignItems: alignMap[comp.verticalAlignment] || 'center',
-            justifyContent: alignMap[comp.alignment] || 'center',
-            padding: '8px',
+            display: "flex",
+            alignItems: alignMap[comp.verticalAlignment] || "center",
+            justifyContent: alignMap[comp.alignment] || "center",
+            padding: "8px",
             zIndex: comp.zIndex,
           }}
         >

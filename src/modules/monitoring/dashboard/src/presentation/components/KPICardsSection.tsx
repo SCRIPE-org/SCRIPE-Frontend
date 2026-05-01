@@ -11,7 +11,17 @@ import type { DashboardSummary } from "../../domain/entities/DashboardEntities";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { Users, ShieldCheck, Building2, KeyRound, LogIn, ShieldAlert, DollarSign, CreditCard, Clock } from "lucide-react";
+import {
+  Users,
+  ShieldCheck,
+  Building2,
+  KeyRound,
+  LogIn,
+  ShieldAlert,
+  DollarSign,
+  CreditCard,
+  Clock,
+} from "lucide-react";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 
 interface Props {
@@ -115,17 +125,14 @@ export const KPICardsSection = memo(function KPICardsSection({
   cardClasses,
   gridClasses,
 }: Props) {
-  const gridClass = gridClasses || "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
+  const gridClass =
+    gridClasses || "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
   const { t } = useI18n();
   const { formatDisplay, getConversionTooltip, isConverting } = useConvertedAmount();
 
   if (isLoading) {
     return (
-      <div
-        className={gridClass}
-        role="status"
-        aria-label={t("common.loading")}
-      >
+      <div className={gridClass} role="status" aria-label={t("common.loading")}>
         {kpiConfig.map((_, i) => (
           <Card key={i}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -183,12 +190,14 @@ export const KPICardsSection = memo(function KPICardsSection({
                   ? formatDisplay(Number(value), "USD")
                   : Number(value).toLocaleString()}
               </div>
-              {kpi.format === "currency" && isConverting && (() => {
-                const tip = getConversionTooltip(Number(value), "USD");
-                return tip ? (
-                  <p className="mt-0.5 text-[10px] text-muted-foreground/60 italic">{tip}</p>
-                ) : null;
-              })()}
+              {kpi.format === "currency" &&
+                isConverting &&
+                (() => {
+                  const tip = getConversionTooltip(Number(value), "USD");
+                  return tip ? (
+                    <p className="mt-0.5 text-[10px] italic text-muted-foreground/60">{tip}</p>
+                  ) : null;
+                })()}
               {secondary !== undefined && kpi.secondaryLabel && (
                 <p className="mt-1 text-xs tabular-nums text-muted-foreground">
                   {secondary} {t(kpi.secondaryLabel)}

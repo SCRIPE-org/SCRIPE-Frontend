@@ -26,7 +26,7 @@ export interface MenuItemData extends BaseEntity {
  * Menu item entity class with bilingual support
  */
 export class MenuItem {
-  constructor(public readonly data: MenuItemData) { }
+  constructor(public readonly data: MenuItemData) {}
 
   get id(): string {
     return this.data.id;

@@ -52,30 +52,70 @@ export class BrandingConfig {
 
   // ===== Getters =====
 
-  get companyName(): string | null { return this.props.companyName; }
-  get logoUrl(): string | null { return this.props.logoUrl; }
-  get faviconUrl(): string | null { return this.props.faviconUrl; }
-  get loginHeadline(): string | null { return this.props.loginHeadline; }
-  get loginSubtitle(): string | null { return this.props.loginSubtitle; }
-  get primaryColor(): string | null { return this.props.primaryColor; }
-  get secondaryColor(): string | null { return this.props.secondaryColor; }
+  get companyName(): string | null {
+    return this.props.companyName;
+  }
+  get logoUrl(): string | null {
+    return this.props.logoUrl;
+  }
+  get faviconUrl(): string | null {
+    return this.props.faviconUrl;
+  }
+  get loginHeadline(): string | null {
+    return this.props.loginHeadline;
+  }
+  get loginSubtitle(): string | null {
+    return this.props.loginSubtitle;
+  }
+  get primaryColor(): string | null {
+    return this.props.primaryColor;
+  }
+  get secondaryColor(): string | null {
+    return this.props.secondaryColor;
+  }
 
-  get loginBrandingJson(): string | null { return this.props.loginBrandingJson; }
-  get draftBrandingJson(): string | null { return this.props.draftBrandingJson; }
-  get slotConfigJson(): string | null { return this.props.slotConfigJson; }
-  get dashboardThemeJson(): string | null { return this.props.dashboardThemeJson; }
+  get loginBrandingJson(): string | null {
+    return this.props.loginBrandingJson;
+  }
+  get draftBrandingJson(): string | null {
+    return this.props.draftBrandingJson;
+  }
+  get slotConfigJson(): string | null {
+    return this.props.slotConfigJson;
+  }
+  get dashboardThemeJson(): string | null {
+    return this.props.dashboardThemeJson;
+  }
 
-  get allowedLayoutsJson(): string | null { return this.props.allowedLayoutsJson; }
-  get allowAdminThemeOverride(): boolean { return this.props.allowAdminThemeOverride; }
-  get allowedAdminSettingsJson(): string | null { return this.props.allowedAdminSettingsJson; }
-  get loginTextOverridesJson(): string | null { return this.props.loginTextOverridesJson; }
-  get customFeaturesJson(): string | null { return this.props.customFeaturesJson; }
+  get allowedLayoutsJson(): string | null {
+    return this.props.allowedLayoutsJson;
+  }
+  get allowAdminThemeOverride(): boolean {
+    return this.props.allowAdminThemeOverride;
+  }
+  get allowedAdminSettingsJson(): string | null {
+    return this.props.allowedAdminSettingsJson;
+  }
+  get loginTextOverridesJson(): string | null {
+    return this.props.loginTextOverridesJson;
+  }
+  get customFeaturesJson(): string | null {
+    return this.props.customFeaturesJson;
+  }
 
-  get termsOfServiceUrl(): string | null { return this.props.termsOfServiceUrl; }
-  get privacyPolicyUrl(): string | null { return this.props.privacyPolicyUrl; }
+  get termsOfServiceUrl(): string | null {
+    return this.props.termsOfServiceUrl;
+  }
+  get privacyPolicyUrl(): string | null {
+    return this.props.privacyPolicyUrl;
+  }
 
-  get settingsVersion(): number { return this.props.settingsVersion; }
-  get isSafeMode(): boolean { return this.props.isSafeMode; }
+  get settingsVersion(): number {
+    return this.props.settingsVersion;
+  }
+  get isSafeMode(): boolean {
+    return this.props.isSafeMode;
+  }
 
   // ===== Business Logic =====
 

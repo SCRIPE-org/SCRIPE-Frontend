@@ -92,8 +92,7 @@ export class AuthMapper {
    */
   static userFromJson(json: UserProfileJson | string): User {
     // Defensive guard: if middleware double-serializes, parse the string
-    const data: UserProfileJson =
-      typeof json === "string" ? JSON.parse(json) : json;
+    const data: UserProfileJson = typeof json === "string" ? JSON.parse(json) : json;
 
     return new User({
       id: data.id || "",

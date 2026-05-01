@@ -61,7 +61,11 @@ const PaginationPrevious = ({
       className={cn("gap-1 pl-2.5", className)}
       {...props}
     >
-      {direction === "rtl" ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+      {direction === "rtl" ? (
+        <ChevronRight className="h-4 w-4" />
+      ) : (
+        <ChevronLeft className="h-4 w-4" />
+      )}
       <span>{t("common.previous") || "Previous"}</span>
     </PaginationLink>
   );
@@ -78,7 +82,11 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
       {...props}
     >
       <span>{t("common.next") || "Next"}</span>
-      {direction === "rtl" ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      {direction === "rtl" ? (
+        <ChevronLeft className="h-4 w-4" />
+      ) : (
+        <ChevronRight className="h-4 w-4" />
+      )}
     </PaginationLink>
   );
 };

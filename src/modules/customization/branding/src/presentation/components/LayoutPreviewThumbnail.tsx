@@ -22,9 +22,12 @@ interface LayoutPreviewThumbnailProps {
 /** Get thumbnail dimensions based on size variant */
 function getDimensions(size: "sm" | "md" | "lg") {
   switch (size) {
-    case "sm": return { w: 80, h: 56 };
-    case "md": return { w: 120, h: 80 };
-    case "lg": return { w: 180, h: 120 };
+    case "sm":
+      return { w: 80, h: 56 };
+    case "md":
+      return { w: 120, h: 80 };
+    case "lg":
+      return { w: 180, h: 120 };
   }
 }
 
@@ -122,15 +125,14 @@ export function LayoutPreviewThumbnail({
   return (
     <div
       className={cn(
-        "relative rounded-md overflow-hidden border border-border/40 shrink-0",
-        className,
+        "relative shrink-0 overflow-hidden rounded-md border border-border/40",
+        className
       )}
       style={{
         width: dims.w,
         height: dims.h,
-        background: structure.style === "split" || structure.style === "full"
-          ? accentColor
-          : surfaceColor,
+        background:
+          structure.style === "split" || structure.style === "full" ? accentColor : surfaceColor,
       }}
     >
       {/* Branding panel (for split layouts) */}
@@ -178,13 +180,12 @@ export function LayoutPreviewThumbnail({
           top: structure.formPanel.y,
           width: structure.formPanel.w,
           height: structure.formPanel.h,
-          background: structure.style === "overlay"
-            ? `rgba(255,255,255,0.85)`
-            : surfaceColor,
+          background: structure.style === "overlay" ? `rgba(255,255,255,0.85)` : surfaceColor,
           border: `1px solid rgba(0,0,0,0.06)`,
-          boxShadow: structure.style === "overlay" || structure.style === "centered"
-            ? "0 2px 8px rgba(0,0,0,0.08)"
-            : "none",
+          boxShadow:
+            structure.style === "overlay" || structure.style === "centered"
+              ? "0 2px 8px rgba(0,0,0,0.08)"
+              : "none",
         }}
       >
         {/* Mock form elements */}

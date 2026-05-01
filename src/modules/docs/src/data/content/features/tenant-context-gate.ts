@@ -6,7 +6,8 @@ const sections: DocSection[] = [
 
   // ─── The Problem ──────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.problemTitle",
     id: "the-problem",
   },
@@ -14,7 +15,8 @@ const sections: DocSection[] = [
 
   // ─── The Solution ─────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.solutionTitle",
     id: "solution",
   },
@@ -22,7 +24,8 @@ const sections: DocSection[] = [
 
   // ─── Multi-Layer Defense ──────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.layersTitle",
     id: "multi-layer-defense",
   },
@@ -30,13 +33,16 @@ const sections: DocSection[] = [
 
   // Layer 1
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "features.tenantContextGate.layer1Title",
     id: "layer-1-backend",
   },
   { type: "paragraph", contentKey: "features.tenantContextGate.layer1Intro" },
   {
-    type: "code", language: "csharp", filename: "GetMyMenuQueryHandler.cs",
+    type: "code",
+    language: "csharp",
+    filename: "GetMyMenuQueryHandler.cs",
     code: `// Applied BEFORE system-admin bypass — it's an absolute gate
 if (menuItem.RequiresTenantContext && currentUser.EffectiveTenantId == null)
 {
@@ -53,7 +59,8 @@ if (currentUser.IsSystemProtectedAdmin)
 
   // Layer 2
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "features.tenantContextGate.layer2Title",
     id: "layer-2-frontend",
   },
@@ -61,13 +68,16 @@ if (currentUser.IsSystemProtectedAdmin)
 
   // Layer 3
   {
-    type: "heading", level: 3,
+    type: "heading",
+    level: 3,
     titleKey: "features.tenantContextGate.layer3Title",
     id: "layer-3-controller",
   },
   { type: "paragraph", contentKey: "features.tenantContextGate.layer3Intro" },
   {
-    type: "code", language: "csharp", filename: "TenantPlansController.cs",
+    type: "code",
+    language: "csharp",
+    filename: "TenantPlansController.cs",
     code: `[HttpGet]
 [Authorize]
 [PermissionRequired("tenant_plans.view")]
@@ -85,7 +95,8 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
 
   // ─── Drill-Down ───────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.drillDownTitle",
     id: "drill-down",
   },
@@ -102,18 +113,23 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
       { id: "F", label: "Admin sees tenant data with full permissions", type: "success" },
     ],
     connections: [
-      { from: "A", to: "B" }, { from: "B", to: "C" },
-      { from: "C", to: "D" }, { from: "D", to: "E" }, { from: "E", to: "F" },
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
     ],
   },
   {
-    type: "info", variant: "note",
+    type: "info",
+    variant: "note",
     contentKey: "features.tenantContextGate.drillDownNote",
   },
 
   // ─── Impersonation ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.impersonationTitle",
     id: "impersonation",
   },
@@ -122,15 +138,31 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
     type: "table",
     headers: ["Mode", "Who is the user?", "Permissions", "TenantId source"],
     rows: [
-      ["Normal (no context)", "System Admin themselves", "System admin bypass (all)", "null — RequiresTenantContext blocked"],
-      ["Drill-Down", "System Admin themselves", "System admin bypass (all)", "DrillDownTenantId from session"],
-      ["Impersonation", "The impersonated admin", "That admin's roles/permissions only", "Impersonated admin's TenantId"],
+      [
+        "Normal (no context)",
+        "System Admin themselves",
+        "System admin bypass (all)",
+        "null — RequiresTenantContext blocked",
+      ],
+      [
+        "Drill-Down",
+        "System Admin themselves",
+        "System admin bypass (all)",
+        "DrillDownTenantId from session",
+      ],
+      [
+        "Impersonation",
+        "The impersonated admin",
+        "That admin's roles/permissions only",
+        "Impersonated admin's TenantId",
+      ],
     ],
   },
 
   // ─── Flagged Pages ────────────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.flaggedPagesTitle",
     id: "flagged-pages",
   },
@@ -150,13 +182,16 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
 
   // ─── Adding RequiresTenantContext ─────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.addingTitle",
     id: "adding-flag",
   },
   { type: "paragraph", contentKey: "features.tenantContextGate.addingIntro" },
   {
-    type: "code", language: "csharp", filename: "MenuItemSeeder.cs",
+    type: "code",
+    language: "csharp",
+    filename: "MenuItemSeeder.cs",
     code: `new MenuItem
 {
     Slug = "my-tenant-module",
@@ -169,13 +204,15 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
 },`,
   },
   {
-    type: "info", variant: "tip",
+    type: "info",
+    variant: "tip",
     contentKey: "features.tenantContextGate.addingTip",
   },
 
   // ─── MenuItemSeeder Config ────────────────────────────────────
   {
-    type: "heading", level: 2,
+    type: "heading",
+    level: 2,
     titleKey: "features.tenantContextGate.seederTitle",
     id: "seeder-config",
   },

@@ -70,9 +70,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
       >
         <div className="flex items-center gap-3">
           <Logo size="sm" />
-          <span className="hidden text-sm font-semibold text-foreground sm:block">
-            {appName}
-          </span>
+          <span className="hidden text-sm font-semibold text-foreground sm:block">{appName}</span>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />

@@ -2,86 +2,112 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.intro" },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.intro" },
 
-      // ─── Pipeline Overview ────────────────────────────────────
+  // ─── Pipeline Overview ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.overviewTitle",
+    id: "pipeline-overview",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.overviewIntro" },
+  {
+    type: "flowchart",
+    title: "MediatR Pipeline — Request Lifecycle",
+    direction: "horizontal",
+    nodes: [
+      { id: "controller", label: "Controller", type: "default", description: "API endpoint entry" },
+      { id: "mediator", label: "IMediator.Send()", type: "primary" },
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.overviewTitle", id: "pipeline-overview",
+        id: "validation",
+        label: "ValidationBehavior",
+        type: "warning",
+        description: "FluentValidation rules",
       },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.overviewIntro" },
       {
-            type: "flowchart",
-            title: "MediatR Pipeline — Request Lifecycle",
-            direction: "horizontal",
-            nodes: [
-                  { id: "controller", label: "Controller", type: "default", description: "API endpoint entry" },
-                  { id: "mediator", label: "IMediator.Send()", type: "primary" },
-                  { id: "validation", label: "ValidationBehavior", type: "warning", description: "FluentValidation rules" },
-                  { id: "logging", label: "LoggingBehavior", type: "info", description: "Structured request logging" },
-                  { id: "caching", label: "CachingBehavior", type: "success", description: "Cache hit/miss check" },
-                  { id: "handler", label: "Command/Query Handler", type: "primary", description: "Business logic" },
-                  { id: "result", label: "Result<T>", type: "success", description: "Success or error" },
-            ],
-            connections: [
-                  { from: "controller", to: "mediator" },
-                  { from: "mediator", to: "validation", label: "1st behavior" },
-                  { from: "validation", to: "logging", label: "if valid" },
-                  { from: "logging", to: "caching", label: "2nd behavior" },
-                  { from: "caching", to: "handler", label: "cache miss" },
-                  { from: "handler", to: "result" },
-            ],
+        id: "logging",
+        label: "LoggingBehavior",
+        type: "info",
+        description: "Structured request logging",
       },
+      {
+        id: "caching",
+        label: "CachingBehavior",
+        type: "success",
+        description: "Cache hit/miss check",
+      },
+      {
+        id: "handler",
+        label: "Command/Query Handler",
+        type: "primary",
+        description: "Business logic",
+      },
+      { id: "result", label: "Result<T>", type: "success", description: "Success or error" },
+    ],
+    connections: [
+      { from: "controller", to: "mediator" },
+      { from: "mediator", to: "validation", label: "1st behavior" },
+      { from: "validation", to: "logging", label: "if valid" },
+      { from: "logging", to: "caching", label: "2nd behavior" },
+      { from: "caching", to: "handler", label: "cache miss" },
+      { from: "handler", to: "result" },
+    ],
+  },
 
-      // ─── Command vs Query Separation ─────────────────────────
+  // ─── Command vs Query Separation ─────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.separationTitle",
+    id: "cqrs-separation",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.separationIntro" },
+  {
+    type: "comparison",
+    columns: [
       {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.separationTitle", id: "cqrs-separation",
+        titleKey: "architecture.cqrsPipeline.commandsTitle",
+        variant: "positive",
+        items: [
+          "Modify state (Create, Update, Delete)",
+          "Return Result<T> with success value or error",
+          "Validated by FluentValidation",
+          "Trigger domain events",
+          "Invalidate caches",
+          "Logged with full request body",
+          "Example: CreateAdminCommand, DeleteUserCommand",
+        ],
       },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.separationIntro" },
       {
-            type: "comparison",
-            columns: [
-                  {
-                        titleKey: "architecture.cqrsPipeline.commandsTitle",
-                        variant: "positive",
-                        items: [
-                              "Modify state (Create, Update, Delete)",
-                              "Return Result<T> with success value or error",
-                              "Validated by FluentValidation",
-                              "Trigger domain events",
-                              "Invalidate caches",
-                              "Logged with full request body",
-                              "Example: CreateAdminCommand, DeleteUserCommand",
-                        ],
-                  },
-                  {
-                        titleKey: "architecture.cqrsPipeline.queriesTitle",
-                        variant: "neutral",
-                        items: [
-                              "Read-only — never modify state",
-                              "Return Result<T> with data or error",
-                              "May use caching (CachingBehavior)",
-                              "No side effects",
-                              "May use IDataScopeService for tenant filtering",
-                              "Optimized with AsNoTracking()",
-                              "Example: GetAdminsQuery, GetTenantByIdQuery",
-                        ],
-                  },
-            ],
+        titleKey: "architecture.cqrsPipeline.queriesTitle",
+        variant: "neutral",
+        items: [
+          "Read-only — never modify state",
+          "Return Result<T> with data or error",
+          "May use caching (CachingBehavior)",
+          "No side effects",
+          "May use IDataScopeService for tenant filtering",
+          "Optimized with AsNoTracking()",
+          "Example: GetAdminsQuery, GetTenantByIdQuery",
+        ],
       },
+    ],
+  },
 
-      // ─── Result Pattern ───────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.resultPatternTitle", id: "result-pattern",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.resultPatternIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Application/Common/Result.cs",
-            code: `/// <summary>
+  // ─── Result Pattern ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.resultPatternTitle",
+    id: "result-pattern",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.resultPatternIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/Common/Result.cs",
+    code: `/// <summary>
 /// Discriminated union for operation results.
 /// Eliminates exceptions for expected failure cases.
 /// </summary>
@@ -109,12 +135,12 @@ public record AppError(
     string Message,        // e.g., "Admin with ID {id} was not found"
     object? Details = null  // Optional additional context
 );`,
-      },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Controller — Pattern matching on Result",
-            code: `[HttpGet("{id}")]
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Controller — Pattern matching on Result",
+    code: `[HttpGet("{id}")]
 public async Task<IActionResult> GetAdmin(string id)
 {
     var result = await _mediator.Send(new GetAdminByIdQuery(id));
@@ -125,19 +151,21 @@ public async Task<IActionResult> GetAdmin(string id)
             error = result.Error.Message
         });
 }`,
-      },
+  },
 
-      // ─── ValidationBehavior ───────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.validationTitle", id: "validation-behavior",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.validationIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Application/Behaviors/ValidationBehavior.cs",
-            code: `/// <summary>
+  // ─── ValidationBehavior ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.validationTitle",
+    id: "validation-behavior",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.validationIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/Behaviors/ValidationBehavior.cs",
+    code: `/// <summary>
 /// MediatR pipeline behavior that runs FluentValidation validators
 /// BEFORE the request handler executes.
 /// If validation fails, returns Result.Failure without hitting the handler.
@@ -180,22 +208,24 @@ public class ValidationBehavior<TRequest, TResponse>
         return await next(); // All valid — proceed to handler
     }
 }`,
-            highlightLines: [20, 21, 25, 26, 27, 28, 29, 32, 33, 34, 35, 38],
-      },
+    highlightLines: [20, 21, 25, 26, 27, 28, 29, 32, 33, 34, 35, 38],
+  },
 
-      // ─── Example Validator ────────────────────────────────────
+  // ─── Example Validator ────────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.cqrsPipeline.validatorExampleTitle",
+    id: "validator-example",
+  },
+  {
+    type: "tabs",
+    tabs: [
       {
-            type: "heading", level: 3,
-            titleKey: "architecture.cqrsPipeline.validatorExampleTitle", id: "validator-example",
-      },
-      {
-            type: "tabs",
-            tabs: [
-                  {
-                        label: "CreateAdminValidator",
-                        language: "csharp",
-                        filename: "CreateAdminCommandValidator.cs",
-                        code: `public class CreateAdminCommandValidator
+        label: "CreateAdminValidator",
+        language: "csharp",
+        filename: "CreateAdminCommandValidator.cs",
+        code: `public class CreateAdminCommandValidator
     : AbstractValidator<CreateAdminCommand>
 {
     public CreateAdminCommandValidator(IAdminRepository repo)
@@ -220,12 +250,12 @@ public class ValidationBehavior<TRequest, TResponse>
             .Matches("[^a-zA-Z0-9]").WithMessage("Must contain special char");
     }
 }`,
-                  },
-                  {
-                        label: "AdminLoginValidator",
-                        language: "csharp",
-                        filename: "AdminLoginCommandValidator.cs",
-                        code: `public class AdminLoginCommandValidator
+      },
+      {
+        label: "AdminLoginValidator",
+        language: "csharp",
+        filename: "AdminLoginCommandValidator.cs",
+        code: `public class AdminLoginCommandValidator
     : AbstractValidator<AdminLoginCommand>
 {
     public AdminLoginCommandValidator()
@@ -238,12 +268,12 @@ public class ValidationBehavior<TRequest, TResponse>
             .NotEmpty().WithMessage("Password is required");
     }
 }`,
-                  },
-                  {
-                        label: "CreateTenantValidator",
-                        language: "csharp",
-                        filename: "CreateTenantCommandValidator.cs",
-                        code: `public class CreateTenantCommandValidator
+      },
+      {
+        label: "CreateTenantValidator",
+        language: "csharp",
+        filename: "CreateTenantCommandValidator.cs",
+        code: `public class CreateTenantCommandValidator
     : AbstractValidator<CreateTenantCommand>
 {
     public CreateTenantCommandValidator(ITenantRepository repo)
@@ -261,21 +291,23 @@ public class ValidationBehavior<TRequest, TResponse>
             .WithMessage("Slug must be lowercase alphanumeric with dashes");
     }
 }`,
-                  },
-            ],
       },
+    ],
+  },
 
-      // ─── LoggingBehavior ──────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.loggingTitle", id: "logging-behavior",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.loggingIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Application/Behaviors/LoggingBehavior.cs",
-            code: `/// <summary>
+  // ─── LoggingBehavior ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.loggingTitle",
+    id: "logging-behavior",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.loggingIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/Behaviors/LoggingBehavior.cs",
+    code: `/// <summary>
 /// Pipeline behavior that logs every MediatR request with timing.
 /// Logs: request type, user ID, tenant ID, execution time, and outcome.
 /// Warns if execution exceeds 500ms threshold.
@@ -319,20 +351,22 @@ public class LoggingBehavior<TRequest, TResponse>
         return response;
     }
 }`,
-            highlightLines: [28, 29, 30, 31, 32],
-      },
+    highlightLines: [28, 29, 30, 31, 32],
+  },
 
-      // ─── CachingBehavior ──────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.cachingTitle", id: "caching-behavior",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.cachingIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Application/Behaviors/CachingBehavior.cs",
-            code: `/// <summary>
+  // ─── CachingBehavior ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.cachingTitle",
+    id: "caching-behavior",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.cachingIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/Behaviors/CachingBehavior.cs",
+    code: `/// <summary>
 /// Pipeline behavior that caches query results.
 /// Queries opt-in by implementing ICacheable interface.
 /// Supports both MemoryCache and Redis via ICacheService.
@@ -382,51 +416,125 @@ public interface ICacheable
     string CacheKey { get; }
     TimeSpan? CacheDuration => null; // Default: 5 minutes
 }`,
-            highlightLines: [18, 19, 22, 23, 33, 34, 35, 36],
-      },
+    highlightLines: [18, 19, 22, 23, 33, 34, 35, 36],
+  },
 
-      // ─── Command/Query Map ────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.commandMapTitle", id: "command-map",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.commandMapIntro" },
-      {
-            type: "table",
-            headers: ["Category", "Commands", "Queries", "Validators"],
-            rows: [
-                  ["Admin Management", "Create, Update, Delete, SetActive, BulkActivate, BulkDeactivate, BulkDelete, ChangePassword, ResetPassword", "GetAdmins, GetAdminById, GetCurrentAdmin, GetAdminRoles, MySecurityLog, MySessions", "CreateAdminValidator, AssignRoleValidator"],
-                  ["Admin Auth", "Login, RefreshToken, Logout, UpdateProfile, ChangePassword, UploadAvatar, RemoveAvatar", "GetCurrentAdmin", "AdminLoginValidator"],
-                  ["User Management", "Update, Delete, SetActive, Unlock, BulkActivate, BulkDeactivate, BulkDelete, BulkAll variants", "GetUsers, GetUserById, GetCurrentUser", "RegisterUserValidator, UserLoginValidator"],
-                  ["User Auth", "Login, Register, ExternalLogin, RefreshToken, Logout, VerifyEmail, VerifyPhone, SendVerification, RequestPasswordReset, ResetPassword", "GetCurrentUser", "—"],
-                  ["2FA (Admin & User)", "Enable2FA, Confirm2FA, Disable2FA, RegenerateBackupCodes", "— (part of auth flow)", "—"],
-                  ["Roles", "Create, Update, Delete, AssignPermissions, Clone, SyncScopes", "GetRoles, GetRoleById, GetRolePermissions, MyTenantRoles, MyTenantAvailablePermissions", "CreateRoleValidator"],
-                  ["Tenants", "Create, Update, Delete, UpdateSettings, UpdateMySettings", "GetTenants, GetById, Hierarchy, Children, MyChildren, Settings, Stats, Admins, Roles, Permissions", "CreateTenantValidator"],
-                  ["Permissions", "— (seeded at startup)", "GetAll, GetMyPermissions, GetById, GetCategories, AvailableForTenantCreation", "—"],
-                  ["Menus", "Create, Update, Delete, Reorder, SetRoleVisibility, SetTenantOverride", "GetAllMenuItems, GetMyMenu, GetMyOverrides", "—"],
-                  ["Impersonation", "Impersonate, StopImpersonation, TransferAdmin, TransferProtection", "—", "—"],
-                  ["Emails", "SendManual, SendBulk, Cancel, Resend", "EmailQueries (list, stats), SearchRecipients", "SendManualEmailValidator"],
-                  ["Webhooks", "Subscribe, Update, Delete, Test", "GetSubscriptions", "—"],
-                  ["Notifications", "Send (via service), MarkAsRead, MarkAllAsRead, Delete", "GetNotifications, GetUnreadCount, SearchTargets", "—"],
-                  ["Message Templates", "Create, Update, Delete", "GetAll, GetById, Preview, Render", "CreateValidator, UpdateValidator"],
-                  ["Dashboard", "— (read-only)", "Summary, LoginActivity, RecentChanges, EventDistribution, SecurityEvents, TopBlockedIPs", "—"],
-                  ["Dashboard Export", "ExportOverview, ExportAnalytics, ExportSecurity", "—", "—"],
-                  ["RecycleBin", "Restore, Purge", "GetDeletedItems", "—"],
-                  ["Audit", "— (auto-captured)", "Search, Export", "—"],
-            ],
-      },
+  // ─── Command/Query Map ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.commandMapTitle",
+    id: "command-map",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.commandMapIntro" },
+  {
+    type: "table",
+    headers: ["Category", "Commands", "Queries", "Validators"],
+    rows: [
+      [
+        "Admin Management",
+        "Create, Update, Delete, SetActive, BulkActivate, BulkDeactivate, BulkDelete, ChangePassword, ResetPassword",
+        "GetAdmins, GetAdminById, GetCurrentAdmin, GetAdminRoles, MySecurityLog, MySessions",
+        "CreateAdminValidator, AssignRoleValidator",
+      ],
+      [
+        "Admin Auth",
+        "Login, RefreshToken, Logout, UpdateProfile, ChangePassword, UploadAvatar, RemoveAvatar",
+        "GetCurrentAdmin",
+        "AdminLoginValidator",
+      ],
+      [
+        "User Management",
+        "Update, Delete, SetActive, Unlock, BulkActivate, BulkDeactivate, BulkDelete, BulkAll variants",
+        "GetUsers, GetUserById, GetCurrentUser",
+        "RegisterUserValidator, UserLoginValidator",
+      ],
+      [
+        "User Auth",
+        "Login, Register, ExternalLogin, RefreshToken, Logout, VerifyEmail, VerifyPhone, SendVerification, RequestPasswordReset, ResetPassword",
+        "GetCurrentUser",
+        "—",
+      ],
+      [
+        "2FA (Admin & User)",
+        "Enable2FA, Confirm2FA, Disable2FA, RegenerateBackupCodes",
+        "— (part of auth flow)",
+        "—",
+      ],
+      [
+        "Roles",
+        "Create, Update, Delete, AssignPermissions, Clone, SyncScopes",
+        "GetRoles, GetRoleById, GetRolePermissions, MyTenantRoles, MyTenantAvailablePermissions",
+        "CreateRoleValidator",
+      ],
+      [
+        "Tenants",
+        "Create, Update, Delete, UpdateSettings, UpdateMySettings",
+        "GetTenants, GetById, Hierarchy, Children, MyChildren, Settings, Stats, Admins, Roles, Permissions",
+        "CreateTenantValidator",
+      ],
+      [
+        "Permissions",
+        "— (seeded at startup)",
+        "GetAll, GetMyPermissions, GetById, GetCategories, AvailableForTenantCreation",
+        "—",
+      ],
+      [
+        "Menus",
+        "Create, Update, Delete, Reorder, SetRoleVisibility, SetTenantOverride",
+        "GetAllMenuItems, GetMyMenu, GetMyOverrides",
+        "—",
+      ],
+      [
+        "Impersonation",
+        "Impersonate, StopImpersonation, TransferAdmin, TransferProtection",
+        "—",
+        "—",
+      ],
+      [
+        "Emails",
+        "SendManual, SendBulk, Cancel, Resend",
+        "EmailQueries (list, stats), SearchRecipients",
+        "SendManualEmailValidator",
+      ],
+      ["Webhooks", "Subscribe, Update, Delete, Test", "GetSubscriptions", "—"],
+      [
+        "Notifications",
+        "Send (via service), MarkAsRead, MarkAllAsRead, Delete",
+        "GetNotifications, GetUnreadCount, SearchTargets",
+        "—",
+      ],
+      [
+        "Message Templates",
+        "Create, Update, Delete",
+        "GetAll, GetById, Preview, Render",
+        "CreateValidator, UpdateValidator",
+      ],
+      [
+        "Dashboard",
+        "— (read-only)",
+        "Summary, LoginActivity, RecentChanges, EventDistribution, SecurityEvents, TopBlockedIPs",
+        "—",
+      ],
+      ["Dashboard Export", "ExportOverview, ExportAnalytics, ExportSecurity", "—", "—"],
+      ["RecycleBin", "Restore, Purge", "GetDeletedItems", "—"],
+      ["Audit", "— (auto-captured)", "Search, Export", "—"],
+    ],
+  },
 
-      // ─── Registration ─────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "architecture.cqrsPipeline.registrationTitle", id: "registration",
-      },
-      { type: "paragraph", contentKey: "architecture.cqrsPipeline.registrationIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Core.Application/DependencyInjection.cs",
-            code: `public static IServiceCollection AddCoreApplication(
+  // ─── Registration ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrsPipeline.registrationTitle",
+    id: "registration",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrsPipeline.registrationIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/DependencyInjection.cs",
+    code: `public static IServiceCollection AddCoreApplication(
     this IServiceCollection services,
     IEnumerable<Assembly> moduleAssemblies)
 {
@@ -449,22 +557,22 @@ public interface ICacheable
 
     return services;
 }`,
-            highlightLines: [11, 12, 13, 14, 15, 16, 20],
-      },
-      {
-            type: "info",
-            variant: "tip",
-            contentKey: "architecture.cqrsPipeline.behaviorOrderTip",
-      },
+    highlightLines: [11, 12, 13, 14, 15, 16, 20],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "architecture.cqrsPipeline.behaviorOrderTip",
+  },
 ];
 
 registerPage({
-      slug: "architecture/cqrs-pipeline",
-      titleKey: "architecture.cqrsPipeline.title",
-      descriptionKey: "architecture.cqrsPipeline.description",
-      category: "architecture",
-      order: 11,
-      sections,
-      relatedSlugs: ["architecture/cqrs", "architecture/domain-events", "architecture/backend"],
-      lastUpdated: "2026-02-20",
+  slug: "architecture/cqrs-pipeline",
+  titleKey: "architecture.cqrsPipeline.title",
+  descriptionKey: "architecture.cqrsPipeline.description",
+  category: "architecture",
+  order: 11,
+  sections,
+  relatedSlugs: ["architecture/cqrs", "architecture/domain-events", "architecture/backend"],
+  lastUpdated: "2026-02-20",
 });

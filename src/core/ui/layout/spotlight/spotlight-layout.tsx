@@ -12,9 +12,7 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import {
-  isNavigationItemActive,
-} from "@core/config/navigation";
+import { isNavigationItemActive } from "@core/config/navigation";
 import { Search } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";

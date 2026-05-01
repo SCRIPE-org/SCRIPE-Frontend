@@ -2,68 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      { type: "paragraph", contentKey: "security.middlewarePipeline.intro" },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.intro" },
 
-      // ─── Pipeline Overview ────────────────────────────────────
+  // ─── Pipeline Overview ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.overviewTitle",
+    id: "pipeline-overview",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.overviewIntro" },
+  {
+    type: "flowchart",
+    title: "Full Middleware Pipeline (Order of Execution)",
+    direction: "vertical",
+    nodes: [
       {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.overviewTitle", id: "pipeline-overview",
+        id: "m1",
+        label: "1. GlobalExceptionMiddleware",
+        type: "danger",
+        description: "Catches all unhandled exceptions",
       },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.overviewIntro" },
       {
-            type: "flowchart",
-            title: "Full Middleware Pipeline (Order of Execution)",
-            direction: "vertical",
-            nodes: [
-                  { id: "m1", label: "1. GlobalExceptionMiddleware", type: "danger", description: "Catches all unhandled exceptions" },
-                  { id: "m2", label: "2. CorrelationIdMiddleware", type: "info", description: "Assigns X-Correlation-Id to every request" },
-                  { id: "m3", label: "3. RequestLoggingMiddleware", type: "info", description: "Structured logging with timing" },
-                  { id: "m4", label: "4. CORS Middleware", type: "default" },
-                  { id: "m5", label: "5. HSTS Middleware", type: "default", description: "Production only" },
-                  { id: "m6", label: "6. Rate Limiter", type: "warning" },
-                  { id: "m7", label: "7. CsrfMiddleware", type: "warning", description: "Double-submit cookie validation" },
-                  { id: "m8", label: "8. ReplayProtectionMiddleware", type: "warning", description: "Nonce-based replay prevention" },
-                  { id: "m9", label: "9. Authentication", type: "primary" },
-                  { id: "m10", label: "10. CookieAuthMiddleware", type: "primary", description: "Cookie-based auth fallback" },
-                  { id: "m11", label: "11. TenantContextMiddleware", type: "success", description: "Sets tenant scope from JWT" },
-                  { id: "m12", label: "12. Authorization", type: "primary" },
-                  { id: "m13", label: "13. FieldProjectionMiddleware", type: "info", description: "Restricted field filtering" },
-                  { id: "m14", label: "14. CacheHeadersMiddleware", type: "success", description: "ETag + Cache-Control" },
-                  { id: "m15", label: "15. ObservabilityMiddleware", type: "info", description: "Metrics + distributed tracing" },
-                  { id: "m16", label: "16. Response Compression", type: "success" },
-                  { id: "controller", label: "Controller / Endpoint", type: "primary" },
-            ],
-            connections: [
-                  { from: "m1", to: "m2" },
-                  { from: "m2", to: "m3" },
-                  { from: "m3", to: "m4" },
-                  { from: "m4", to: "m5" },
-                  { from: "m5", to: "m6" },
-                  { from: "m6", to: "m7" },
-                  { from: "m7", to: "m8" },
-                  { from: "m8", to: "m9" },
-                  { from: "m9", to: "m10" },
-                  { from: "m10", to: "m11" },
-                  { from: "m11", to: "m12" },
-                  { from: "m12", to: "m13" },
-                  { from: "m13", to: "m14" },
-                  { from: "m14", to: "m15" },
-                  { from: "m15", to: "m16" },
-                  { from: "m16", to: "controller" },
-            ],
+        id: "m2",
+        label: "2. CorrelationIdMiddleware",
+        type: "info",
+        description: "Assigns X-Correlation-Id to every request",
       },
+      {
+        id: "m3",
+        label: "3. RequestLoggingMiddleware",
+        type: "info",
+        description: "Structured logging with timing",
+      },
+      { id: "m4", label: "4. CORS Middleware", type: "default" },
+      { id: "m5", label: "5. HSTS Middleware", type: "default", description: "Production only" },
+      { id: "m6", label: "6. Rate Limiter", type: "warning" },
+      {
+        id: "m7",
+        label: "7. CsrfMiddleware",
+        type: "warning",
+        description: "Double-submit cookie validation",
+      },
+      {
+        id: "m8",
+        label: "8. ReplayProtectionMiddleware",
+        type: "warning",
+        description: "Nonce-based replay prevention",
+      },
+      { id: "m9", label: "9. Authentication", type: "primary" },
+      {
+        id: "m10",
+        label: "10. CookieAuthMiddleware",
+        type: "primary",
+        description: "Cookie-based auth fallback",
+      },
+      {
+        id: "m11",
+        label: "11. TenantContextMiddleware",
+        type: "success",
+        description: "Sets tenant scope from JWT",
+      },
+      { id: "m12", label: "12. Authorization", type: "primary" },
+      {
+        id: "m13",
+        label: "13. FieldProjectionMiddleware",
+        type: "info",
+        description: "Restricted field filtering",
+      },
+      {
+        id: "m14",
+        label: "14. CacheHeadersMiddleware",
+        type: "success",
+        description: "ETag + Cache-Control",
+      },
+      {
+        id: "m15",
+        label: "15. ObservabilityMiddleware",
+        type: "info",
+        description: "Metrics + distributed tracing",
+      },
+      { id: "m16", label: "16. Response Compression", type: "success" },
+      { id: "controller", label: "Controller / Endpoint", type: "primary" },
+    ],
+    connections: [
+      { from: "m1", to: "m2" },
+      { from: "m2", to: "m3" },
+      { from: "m3", to: "m4" },
+      { from: "m4", to: "m5" },
+      { from: "m5", to: "m6" },
+      { from: "m6", to: "m7" },
+      { from: "m7", to: "m8" },
+      { from: "m8", to: "m9" },
+      { from: "m9", to: "m10" },
+      { from: "m10", to: "m11" },
+      { from: "m11", to: "m12" },
+      { from: "m12", to: "m13" },
+      { from: "m13", to: "m14" },
+      { from: "m14", to: "m15" },
+      { from: "m15", to: "m16" },
+      { from: "m16", to: "controller" },
+    ],
+  },
 
-      // ─── 1. GlobalExceptionMiddleware ────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.globalExceptionTitle", id: "global-exception",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.globalExceptionIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "GlobalExceptionMiddleware.cs",
-            code: `/// <summary>
+  // ─── 1. GlobalExceptionMiddleware ────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.globalExceptionTitle",
+    id: "global-exception",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.globalExceptionIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "GlobalExceptionMiddleware.cs",
+    code: `/// <summary>
 /// Top-level exception handler. Catches ALL unhandled exceptions
 /// and returns a structured error response instead of exposing stack traces.
 /// Must be FIRST in the pipeline to catch errors from all middleware.
@@ -117,20 +171,22 @@ public class GlobalExceptionMiddleware
         }
     }
 }`,
-            highlightLines: [3, 4, 14, 23, 32, 37, 42, 43],
-      },
+    highlightLines: [3, 4, 14, 23, 32, 37, 42, 43],
+  },
 
-      // ─── 2. CorrelationIdMiddleware ──────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.correlationIdTitle", id: "correlation-id",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.correlationIdIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "CorrelationIdMiddleware.cs",
-            code: `/// <summary>
+  // ─── 2. CorrelationIdMiddleware ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.correlationIdTitle",
+    id: "correlation-id",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.correlationIdIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "CorrelationIdMiddleware.cs",
+    code: `/// <summary>
 /// Assigns a unique correlation ID to every request for distributed tracing.
 /// If the client sends X-Correlation-Id, it is reused; otherwise generated.
 /// The correlation ID is:
@@ -159,20 +215,22 @@ public class CorrelationIdMiddleware
         }
     }
 }`,
-            highlightLines: [15, 16, 18, 19, 21, 22, 23],
-      },
+    highlightLines: [15, 16, 18, 19, 21, 22, 23],
+  },
 
-      // ─── 3. RequestLoggingMiddleware ─────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.requestLoggingTitle", id: "request-logging",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.requestLoggingIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "RequestLoggingMiddleware.cs",
-            code: `/// <summary>
+  // ─── 3. RequestLoggingMiddleware ─────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.requestLoggingTitle",
+    id: "request-logging",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.requestLoggingIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "RequestLoggingMiddleware.cs",
+    code: `/// <summary>
 /// Logs every HTTP request with structured data:
 /// Method, Path, StatusCode, Duration, UserId, TenantId, IP, UserAgent.
 /// Also creates audit log entries for state-changing requests.
@@ -219,20 +277,22 @@ public class RequestLoggingMiddleware
         }
     }
 }`,
-            highlightLines: [10, 25, 26, 27, 31, 32, 33, 34],
-      },
+    highlightLines: [10, 25, 26, 27, 31, 32, 33, 34],
+  },
 
-      // ─── 4. CookieAuthMiddleware ─────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.cookieAuthTitle", id: "cookie-auth",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.cookieAuthIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "CookieAuthMiddleware.cs",
-            code: `/// <summary>
+  // ─── 4. CookieAuthMiddleware ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.cookieAuthTitle",
+    id: "cookie-auth",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.cookieAuthIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "CookieAuthMiddleware.cs",
+    code: `/// <summary>
 /// Fallback authentication middleware that reads JWT from HttpOnly cookie
 /// when the Authorization header is missing.
 /// This supports browser-based flows where cookies are more secure than
@@ -257,32 +317,36 @@ public class CookieAuthMiddleware
         await _next(context);
     }
 }`,
-            highlightLines: [14, 15, 17, 18, 20],
-      },
+    highlightLines: [14, 15, 17, 18, 20],
+  },
 
-      // ─── 5. TenantContextMiddleware ──────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.tenantContextTitle", id: "tenant-context",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.tenantContextIntro" },
-      {
-            type: "info",
-            variant: "note",
-            contentKey: "security.middlewarePipeline.tenantContextNote",
-      },
+  // ─── 5. TenantContextMiddleware ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.tenantContextTitle",
+    id: "tenant-context",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.tenantContextIntro" },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "security.middlewarePipeline.tenantContextNote",
+  },
 
-      // ─── 6. FieldProjectionMiddleware ────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.fieldProjectionTitle", id: "field-projection",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.fieldProjectionIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "FieldProjectionMiddleware.cs",
-            code: `/// <summary>
+  // ─── 6. FieldProjectionMiddleware ────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.fieldProjectionTitle",
+    id: "field-projection",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.fieldProjectionIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "FieldProjectionMiddleware.cs",
+    code: `/// <summary>
 /// Filters response JSON to only include fields the user's role permits.
 /// Uses RestrictedFields from role configuration.
 /// Runs AFTER the controller has produced the response.
@@ -314,20 +378,22 @@ public class FieldProjectionMiddleware
         await originalBodyStream.WriteAsync(bytes);
     }
 }`,
-            highlightLines: [21, 22, 23, 24, 25],
-      },
+    highlightLines: [21, 22, 23, 24, 25],
+  },
 
-      // ─── 7. CacheHeadersMiddleware ───────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.cacheHeadersTitle", id: "cache-headers",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.cacheHeadersIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "CacheHeadersMiddleware.cs",
-            code: `/// <summary>
+  // ─── 7. CacheHeadersMiddleware ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.cacheHeadersTitle",
+    id: "cache-headers",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.cacheHeadersIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "CacheHeadersMiddleware.cs",
+    code: `/// <summary>
 /// Implements conditional caching with ETag support:
 /// 1. Computes ETag (MD5 hash of response body)
 /// 2. Handles If-None-Match → returns 304 Not Modified
@@ -357,20 +423,22 @@ public class CacheHeadersMiddleware
         }
     }
 }`,
-            highlightLines: [13, 14, 17, 21, 22, 23, 24],
-      },
+    highlightLines: [13, 14, 17, 21, 22, 23, 24],
+  },
 
-      // ─── 8. ObservabilityMiddleware ──────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.observabilityTitle", id: "observability",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.observabilityIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "ObservabilityMiddleware.cs",
-            code: `/// <summary>
+  // ─── 8. ObservabilityMiddleware ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.observabilityTitle",
+    id: "observability",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.observabilityIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ObservabilityMiddleware.cs",
+    code: `/// <summary>
 /// Enriches distributed traces and metrics for monitoring:
 /// 1. Adds custom tags to Activity (OpenTelemetry span)
 /// 2. Records request duration histogram
@@ -411,20 +479,22 @@ public class ObservabilityMiddleware
         }
     }
 }`,
-            highlightLines: [9, 10, 12, 13, 20, 21, 36, 37],
-      },
+    highlightLines: [9, 10, 12, 13, 20, 21, 36, 37],
+  },
 
-      // ─── Middleware Registration ──────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.registrationTitle", id: "registration",
-      },
-      { type: "paragraph", contentKey: "security.middlewarePipeline.registrationIntro" },
-      {
-            type: "code",
-            language: "csharp",
-            filename: "Program.cs — Middleware Pipeline Registration",
-            code: `var app = builder.Build();
+  // ─── Middleware Registration ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.registrationTitle",
+    id: "registration",
+  },
+  { type: "paragraph", contentKey: "security.middlewarePipeline.registrationIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Program.cs — Middleware Pipeline Registration",
+    code: `var app = builder.Build();
 
 // ─── Middleware Pipeline (ORDER MATTERS!) ───────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();      // 1. Catch all errors
@@ -454,50 +524,106 @@ app.MapControllers();
 app.MapHub<AuditHub>("/hubs/audit");
 app.MapHub<NotificationHub>("/hubs/notification");
 app.Run();`,
-            highlightLines: [3, 4, 5, 6, 12, 13, 14, 16, 17, 18, 20, 21, 22, 23],
-      },
-      {
-            type: "info",
-            variant: "warning",
-            contentKey: "security.middlewarePipeline.orderWarning",
-      },
+    highlightLines: [3, 4, 5, 6, 12, 13, 14, 16, 17, 18, 20, 21, 22, 23],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "security.middlewarePipeline.orderWarning",
+  },
 
-      // ─── Summary Table ────────────────────────────────────────
-      {
-            type: "heading", level: 2,
-            titleKey: "security.middlewarePipeline.summaryTitle", id: "summary",
-      },
-      {
-            type: "table",
-            headers: ["#", "Middleware", "Purpose", "Short-Circuits?", "Scope"],
-            rows: [
-                  ["1", "GlobalExceptionMiddleware", "Structured error responses", "On exception", "All requests"],
-                  ["2", "CorrelationIdMiddleware", "Distributed tracing via X-Correlation-Id", "No", "All requests"],
-                  ["3", "RequestLoggingMiddleware", "Structured request logging + audit trail", "No", "All requests"],
-                  ["4", "CORS", "Cross-origin request validation", "On invalid origin", "Cross-origin"],
-                  ["5", "HSTS", "Force HTTPS in production", "No", "Production only"],
-                  ["6", "Rate Limiter", "Request throttling", "On rate limit exceeded (429)", "Configurable per policy"],
-                  ["7", "CsrfMiddleware", "CSRF token validation", "On invalid token (403)", "State-changing methods"],
-                  ["8", "ReplayProtectionMiddleware", "Nonce-based replay prevention", "On duplicate nonce (409)", "All with nonce header"],
-                  ["9", "Authentication", "JWT token validation", "No (sets User)", "All requests"],
-                  ["10", "CookieAuthMiddleware", "Cookie-to-Bearer fallback", "No", "Requests without Auth header"],
-                  ["11", "TenantContextMiddleware", "Sets tenant scope for DB queries", "No", "Authenticated requests"],
-                  ["12", "Authorization", "Permission/role checks", "On denied (403)", "Attributed endpoints"],
-                  ["13", "FieldProjectionMiddleware", "Filters response fields by role", "No", "GET responses"],
-                  ["14", "CacheHeadersMiddleware", "ETag + conditional 304 responses", "On cache hit (304)", "GET requests"],
-                  ["15", "ObservabilityMiddleware", "Metrics + OpenTelemetry enrichment", "No", "All requests"],
-                  ["16", "Response Compression", "Brotli + Gzip compression", "No", "Responses > threshold"],
-            ],
-      },
+  // ─── Summary Table ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.middlewarePipeline.summaryTitle",
+    id: "summary",
+  },
+  {
+    type: "table",
+    headers: ["#", "Middleware", "Purpose", "Short-Circuits?", "Scope"],
+    rows: [
+      [
+        "1",
+        "GlobalExceptionMiddleware",
+        "Structured error responses",
+        "On exception",
+        "All requests",
+      ],
+      [
+        "2",
+        "CorrelationIdMiddleware",
+        "Distributed tracing via X-Correlation-Id",
+        "No",
+        "All requests",
+      ],
+      [
+        "3",
+        "RequestLoggingMiddleware",
+        "Structured request logging + audit trail",
+        "No",
+        "All requests",
+      ],
+      ["4", "CORS", "Cross-origin request validation", "On invalid origin", "Cross-origin"],
+      ["5", "HSTS", "Force HTTPS in production", "No", "Production only"],
+      [
+        "6",
+        "Rate Limiter",
+        "Request throttling",
+        "On rate limit exceeded (429)",
+        "Configurable per policy",
+      ],
+      [
+        "7",
+        "CsrfMiddleware",
+        "CSRF token validation",
+        "On invalid token (403)",
+        "State-changing methods",
+      ],
+      [
+        "8",
+        "ReplayProtectionMiddleware",
+        "Nonce-based replay prevention",
+        "On duplicate nonce (409)",
+        "All with nonce header",
+      ],
+      ["9", "Authentication", "JWT token validation", "No (sets User)", "All requests"],
+      [
+        "10",
+        "CookieAuthMiddleware",
+        "Cookie-to-Bearer fallback",
+        "No",
+        "Requests without Auth header",
+      ],
+      [
+        "11",
+        "TenantContextMiddleware",
+        "Sets tenant scope for DB queries",
+        "No",
+        "Authenticated requests",
+      ],
+      ["12", "Authorization", "Permission/role checks", "On denied (403)", "Attributed endpoints"],
+      ["13", "FieldProjectionMiddleware", "Filters response fields by role", "No", "GET responses"],
+      [
+        "14",
+        "CacheHeadersMiddleware",
+        "ETag + conditional 304 responses",
+        "On cache hit (304)",
+        "GET requests",
+      ],
+      ["15", "ObservabilityMiddleware", "Metrics + OpenTelemetry enrichment", "No", "All requests"],
+      ["16", "Response Compression", "Brotli + Gzip compression", "No", "Responses > threshold"],
+    ],
+  },
 ];
 
 registerPage({
-      slug: "security/middleware-pipeline",
-      titleKey: "security.middlewarePipeline.title",
-      descriptionKey: "security.middlewarePipeline.description",
-      category: "security",
-      order: 5,
-      sections,
-      relatedSlugs: ["security/api-security", "architecture/backend", "security/authentication-deep"],
-      lastUpdated: "2026-02-20",
+  slug: "security/middleware-pipeline",
+  titleKey: "security.middlewarePipeline.title",
+  descriptionKey: "security.middlewarePipeline.description",
+  category: "security",
+  order: 5,
+  sections,
+  relatedSlugs: ["security/api-security", "architecture/backend", "security/authentication-deep"],
+  lastUpdated: "2026-02-20",
 });

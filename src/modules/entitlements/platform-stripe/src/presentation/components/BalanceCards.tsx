@@ -16,7 +16,7 @@ export function BalanceCards({ balance }: BalanceCardsProps) {
   const { t } = useI18n();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <BalanceCard
         title={t("entitlements.platformStripe.balanceAvailable")}
         amounts={balance.available}
@@ -58,11 +58,11 @@ function BalanceCard({
   iconColor: string;
 }) {
   return (
-    <Card className="relative overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradient}`} />
+    <Card className="relative overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-lg">
+      <div className={`absolute left-0 right-0 top-0 h-0.5 bg-gradient-to-r ${gradient}`} />
       <CardContent className="p-5">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-muted-foreground font-medium">{title}</span>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-sm font-medium text-muted-foreground">{title}</span>
           <Icon className={`h-4 w-4 ${iconColor}`} />
         </div>
         {amounts.length === 0 ? (

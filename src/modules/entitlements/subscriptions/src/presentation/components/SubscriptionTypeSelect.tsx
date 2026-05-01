@@ -54,9 +54,7 @@ export function SubscriptionTypeSelect({
       },
     ];
 
-    return all
-      .filter((o) => o.show)
-      .map(({ value, label }) => ({ value, label }));
+    return all.filter((o) => o.show).map(({ value, label }) => ({ value, label }));
   }, [edition, showTrial, t]);
 
   return (

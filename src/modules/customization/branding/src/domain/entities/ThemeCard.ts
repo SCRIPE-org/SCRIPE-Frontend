@@ -52,44 +52,112 @@ export interface ThemeCardData {
 export class ThemeCard {
   constructor(private readonly data: ThemeCardData) {}
 
-  get id() { return this.data.id; }
-  get slug() { return this.data.slug; }
-  get name() { return this.data.name; }
-  get description() { return this.data.description; }
-  get category() { return this.data.category; }
-  get targetIndustry() { return this.data.targetIndustry; }
-  get thumbnailImageUrl() { return this.data.thumbnailImageUrl; }
-  get accentColor() { return this.data.accentColor; }
-  get tags() { return this.data.tags; }
-  get isFree() { return this.data.isFree; }
-  get isSystem() { return this.data.isSystem; }
-  get isFeatured() { return this.data.isFeatured; }
-  get isNew() { return this.data.isNew; }
-  get hasDarkMode() { return this.data.hasDarkMode; }
-  get hasAccessibilityPreset() { return this.data.hasAccessibilityPreset; }
-  get hasContentBlocks() { return this.data.hasContentBlocks; }
-  get usageCount() { return this.data.usageCount; }
-  get likeCount() { return this.data.likeCount; }
-  get authorName() { return this.data.authorName; }
-  get version() { return this.data.version; }
-  get publishedAt() { return this.data.publishedAt; }
-  get deprecationNotice() { return this.data.deprecationNotice; }
+  get id() {
+    return this.data.id;
+  }
+  get slug() {
+    return this.data.slug;
+  }
+  get name() {
+    return this.data.name;
+  }
+  get description() {
+    return this.data.description;
+  }
+  get category() {
+    return this.data.category;
+  }
+  get targetIndustry() {
+    return this.data.targetIndustry;
+  }
+  get thumbnailImageUrl() {
+    return this.data.thumbnailImageUrl;
+  }
+  get accentColor() {
+    return this.data.accentColor;
+  }
+  get tags() {
+    return this.data.tags;
+  }
+  get isFree() {
+    return this.data.isFree;
+  }
+  get isSystem() {
+    return this.data.isSystem;
+  }
+  get isFeatured() {
+    return this.data.isFeatured;
+  }
+  get isNew() {
+    return this.data.isNew;
+  }
+  get hasDarkMode() {
+    return this.data.hasDarkMode;
+  }
+  get hasAccessibilityPreset() {
+    return this.data.hasAccessibilityPreset;
+  }
+  get hasContentBlocks() {
+    return this.data.hasContentBlocks;
+  }
+  get usageCount() {
+    return this.data.usageCount;
+  }
+  get likeCount() {
+    return this.data.likeCount;
+  }
+  get authorName() {
+    return this.data.authorName;
+  }
+  get version() {
+    return this.data.version;
+  }
+  get publishedAt() {
+    return this.data.publishedAt;
+  }
+  get deprecationNotice() {
+    return this.data.deprecationNotice;
+  }
   // Pricing
-  get pricingType() { return this.data.pricingType; }
-  get minTierLevel() { return this.data.minTierLevel; }
-  get isAlsoBuyable() { return this.data.isAlsoBuyable; }
-  get price() { return this.data.price; }
-  get priceCurrency() { return this.data.priceCurrency; }
+  get pricingType() {
+    return this.data.pricingType;
+  }
+  get minTierLevel() {
+    return this.data.minTierLevel;
+  }
+  get isAlsoBuyable() {
+    return this.data.isAlsoBuyable;
+  }
+  get price() {
+    return this.data.price;
+  }
+  get priceCurrency() {
+    return this.data.priceCurrency;
+  }
   // Access status
-  get isFavorited() { return this.data.isFavorited; }
-  get isApplied() { return this.data.isApplied; }
-  get isAvailable() { return this.data.isAvailable; }
-  get isPurchased() { return this.data.isPurchased; }
-  get isIncluded() { return this.data.isIncluded; }
-  get isBuyable() { return this.data.isBuyable; }
+  get isFavorited() {
+    return this.data.isFavorited;
+  }
+  get isApplied() {
+    return this.data.isApplied;
+  }
+  get isAvailable() {
+    return this.data.isAvailable;
+  }
+  get isPurchased() {
+    return this.data.isPurchased;
+  }
+  get isIncluded() {
+    return this.data.isIncluded;
+  }
+  get isBuyable() {
+    return this.data.isBuyable;
+  }
 
   /** Is this theme deprecated? */
-  get isDeprecated() { return !!this.data.deprecationNotice; }
+  get isDeprecated() {
+    return !!this.data.deprecationNotice;
+  }
 
   /** Clone with updated data (for optimistic updates) */
   copyWith(updates: Partial<ThemeCardData>): ThemeCard {

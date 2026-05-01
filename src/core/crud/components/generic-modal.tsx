@@ -2,7 +2,6 @@
 
 import React, { memo } from "react";
 
-
 import {
   Dialog,
   DialogContent,
@@ -131,7 +130,7 @@ function GenericModalInner({
       (el as any).__prevAriaHidden = el.getAttribute("aria-hidden");
       try {
         (el as any).inert = true;
-      } catch { }
+      } catch {}
       el.setAttribute("aria-hidden", "true");
       disabledElements.push(el as any);
     });
@@ -146,7 +145,7 @@ function GenericModalInner({
         else el.setAttribute("aria-hidden", prevHidden);
         try {
           (el as any).inert = (el as any).__prevInert;
-        } catch { }
+        } catch {}
         delete (el as any).__prevAriaHidden;
         delete (el as any).__prevInert;
       });

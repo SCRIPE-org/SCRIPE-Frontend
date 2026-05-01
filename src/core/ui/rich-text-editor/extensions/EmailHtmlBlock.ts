@@ -15,112 +15,111 @@ import { mergeAttributes, Node, ReactNodeViewRenderer } from "@tiptap/react";
 import EmailHtmlBlockView from "../EmailHtmlBlockView";
 
 export interface EmailHtmlBlockOptions {
-      /** HTML attributes added to the wrapper element in the editor */
-      HTMLAttributes: Record<string, string>;
+  /** HTML attributes added to the wrapper element in the editor */
+  HTMLAttributes: Record<string, string>;
 }
 
 declare module "@tiptap/react" {
-      interface Commands<ReturnType> {
-            emailHtmlBlock: {
-                  /**
-                   * Insert an opaque email HTML block at the current cursor position.
-                   */
-                  insertEmailHtmlBlock: (attrs: {
-                        html: string;
-                        label?: string;
-                        blockType?: string;
-                  }) => ReturnType;
-            };
-      }
+  interface Commands<ReturnType> {
+    emailHtmlBlock: {
+      /**
+       * Insert an opaque email HTML block at the current cursor position.
+       */
+      insertEmailHtmlBlock: (attrs: {
+        html: string;
+        label?: string;
+        blockType?: string;
+      }) => ReturnType;
+    };
+  }
 }
 
 export const EmailHtmlBlock = Node.create<EmailHtmlBlockOptions>({
-      name: "emailHtmlBlock",
+  name: "emailHtmlBlock",
 
-      group: "block",
+  group: "block",
 
-      // Treated as a single atom — not editable inline
-      atom: true,
+  // Treated as a single atom — not editable inline
+  atom: true,
 
-      // Draggable in editor
-      draggable: true,
+  // Draggable in editor
+  draggable: true,
 
-      // Isolating prevents cursor from entering
-      isolating: true,
+  // Isolating prevents cursor from entering
+  isolating: true,
 
-      addOptions() {
-            return {
-                  HTMLAttributes: {},
-            };
+  addOptions() {
+    return {
+      HTMLAttributes: {},
+    };
+  },
+
+  addAttributes() {
+    return {
+      /** The raw email HTML stored verbatim */
+      html: {
+        default: "",
+        parseHTML: (el: HTMLElement) => el.getAttribute("data-email-html") || "",
+        renderHTML: (attrs: Record<string, unknown>) => ({
+          "data-email-html": attrs.html as string,
+        }),
       },
-
-      addAttributes() {
-            return {
-                  /** The raw email HTML stored verbatim */
-                  html: {
-                        default: "",
-                        parseHTML: (el: HTMLElement) => el.getAttribute("data-email-html") || "",
-                        renderHTML: (attrs: Record<string, unknown>) => ({
-                              "data-email-html": attrs.html as string,
-                        }),
-                  },
-                  /** A human-friendly label (e.g. "CTA Button", "Social Links") */
-                  label: {
-                        default: "Email Block",
-                        parseHTML: (el: HTMLElement) => el.getAttribute("data-label") || "Email Block",
-                        renderHTML: (attrs: Record<string, unknown>) => ({
-                              "data-label": attrs.label as string,
-                        }),
-                  },
-                  /** Block type for icon differentiation */
-                  blockType: {
-                        default: "generic",
-                        parseHTML: (el: HTMLElement) => el.getAttribute("data-block-type") || "generic",
-                        renderHTML: (attrs: Record<string, unknown>) => ({
-                              "data-block-type": attrs.blockType as string,
-                        }),
-                  },
-            };
+      /** A human-friendly label (e.g. "CTA Button", "Social Links") */
+      label: {
+        default: "Email Block",
+        parseHTML: (el: HTMLElement) => el.getAttribute("data-label") || "Email Block",
+        renderHTML: (attrs: Record<string, unknown>) => ({
+          "data-label": attrs.label as string,
+        }),
       },
-
-      parseHTML() {
-            return [
-                  {
-                        tag: 'div[data-email-html-block="true"]',
-                  },
-            ];
+      /** Block type for icon differentiation */
+      blockType: {
+        default: "generic",
+        parseHTML: (el: HTMLElement) => el.getAttribute("data-block-type") || "generic",
+        renderHTML: (attrs: Record<string, unknown>) => ({
+          "data-block-type": attrs.blockType as string,
+        }),
       },
+    };
+  },
 
-      renderHTML({ HTMLAttributes }) {
-            return [
-                  "div",
-                  mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-                        "data-email-html-block": "true",
-                  }),
-            ];
+  parseHTML() {
+    return [
+      {
+        tag: 'div[data-email-html-block="true"]',
       },
+    ];
+  },
 
-      renderText({ node }) {
-            return (node.attrs.label as string) || "Email Block";
-      },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "div",
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+        "data-email-html-block": "true",
+      }),
+    ];
+  },
 
-      addNodeView() {
-            return ReactNodeViewRenderer(EmailHtmlBlockView);
-      },
+  renderText({ node }) {
+    return (node.attrs.label as string) || "Email Block";
+  },
 
-      addCommands() {
-            return {
-                  insertEmailHtmlBlock:
-                        (attrs: { html: string; label?: string; blockType?: string }) =>
+  addNodeView() {
+    return ReactNodeViewRenderer(EmailHtmlBlockView);
+  },
 
-                              ({ commands }: any) => {
-                                    return commands.insertContent({
-                                          type: this.name,
-                                          attrs,
-                                    });
-                              },
-            };
-      },
+  addCommands() {
+    return {
+      insertEmailHtmlBlock:
+        (attrs: { html: string; label?: string; blockType?: string }) =>
+        ({ commands }: any) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs,
+          });
+        },
+    };
+  },
 });
 
 export default EmailHtmlBlock;

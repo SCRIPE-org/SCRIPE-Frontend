@@ -15,11 +15,11 @@ interface SessionCardProps {
   isRevoking?: boolean;
 }
 
-
 export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps) {
   const { t } = useI18n();
   const lowerInfo = session.deviceInfo.toLowerCase();
-  const isMobile = lowerInfo.includes("mobile") || lowerInfo.includes("iphone") || lowerInfo.includes("android");
+  const isMobile =
+    lowerInfo.includes("mobile") || lowerInfo.includes("iphone") || lowerInfo.includes("android");
 
   return (
     <div

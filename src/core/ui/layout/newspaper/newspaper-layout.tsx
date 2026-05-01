@@ -211,7 +211,8 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
                       )}
                     >
                       {tab.children!.map((child) => {
-                        const childActive = child.href && isNavigationItemActive(child, pathname, navigation);
+                        const childActive =
+                          child.href && isNavigationItemActive(child, pathname, navigation);
                         const ChildIcon = child.icon;
                         return (
                           <button

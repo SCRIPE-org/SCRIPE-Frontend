@@ -25,7 +25,7 @@ import type {
 } from "../../domain/interfaces/IRoleService";
 
 export class RoleService implements IRoleService {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly api: IApiService) {}
 
   async getAll(params: ServiceRoleListParams): Promise<RoleListResult> {
     const url = buildUrl(API_ENDPOINTS.ROLES.LIST, {
@@ -141,7 +141,10 @@ export class RoleService implements IRoleService {
   }
 
   async bulkDelete(ids: string[]): Promise<number> {
-    const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.ROLES.BULK.DELETE, { ids });
+    const response = await this.api.post<{ affectedRows?: number } | number>(
+      API_ENDPOINTS.ROLES.BULK.DELETE,
+      { ids }
+    );
     if (typeof response === "number") return response;
     return response.affectedRows ?? ids.length;
   }

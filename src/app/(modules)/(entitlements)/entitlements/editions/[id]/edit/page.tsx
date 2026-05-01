@@ -2,13 +2,14 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const EditionEditWizardView = dynamic(
-  () => import("@modules/entitlements/editions").then((m) => ({ default: m.EditionEditWizardView }))
+const EditionEditWizardView = dynamic(() =>
+  import("@modules/entitlements/editions").then((m) => ({ default: m.EditionEditWizardView }))
 );
 
 export const metadata: Metadata = {
   title: "Edit Edition | NEXORA",
-  description: "Edit subscription edition settings — billing cycles, trial configuration, and core metadata",
+  description:
+    "Edit subscription edition settings — billing cycles, trial configuration, and core metadata",
 };
 
 interface Props {

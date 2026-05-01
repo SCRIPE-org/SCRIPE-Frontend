@@ -25,41 +25,41 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 /** Public branding DTO returned by the resolve endpoint */
 export interface TenantBranding {
-      tenantId: string;
-      name: string;
-      companyName: string | null;
-      logoUrl: string | null;
-      faviconUrl: string | null;
-      primaryColor: string | null;
-      secondaryColor: string | null;
-      loginHeadline: string | null;
-      loginSubtitle: string | null;
-      identityProviderMode: string; // "inherit" | "custom"
-      status: string | null;        // "suspended" | "canceled" | null (active)
-      statusReason: string | null;  // reason for suspension/cancellation
-      // Customization system (login rendering engine)
-      loginBrandingJson: string | null;
-      slotConfigJson: string | null;
-      dashboardThemeJson: string | null;
-      isSafeMode: boolean;
+  tenantId: string;
+  name: string;
+  companyName: string | null;
+  logoUrl: string | null;
+  faviconUrl: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  loginHeadline: string | null;
+  loginSubtitle: string | null;
+  identityProviderMode: string; // "inherit" | "custom"
+  status: string | null; // "suspended" | "canceled" | null (active)
+  statusReason: string | null; // reason for suspension/cancellation
+  // Customization system (login rendering engine)
+  loginBrandingJson: string | null;
+  slotConfigJson: string | null;
+  dashboardThemeJson: string | null;
+  isSafeMode: boolean;
 }
 
 /** Hook return value */
 export interface TenantResolutionResult {
-      /** Resolved tenant ID (encrypted), null if not on a tenant subdomain */
-      tenantId: string | null;
-      /** Branding data, null if not resolved */
-      branding: TenantBranding | null;
-      /** Whether the domain was successfully resolved to a tenant */
-      isResolved: boolean;
-      /** Whether the resolution request is in-flight */
-      isLoading: boolean;
-      /**
-       * True when the API call failed due to a network/CORS/mixed-content error.
-       * LoginView uses this to distinguish "API unreachable" (show platform login)
-       * from "API says no tenant" (show Tenant Not Found).
-       */
-      isApiError: boolean;
+  /** Resolved tenant ID (encrypted), null if not on a tenant subdomain */
+  tenantId: string | null;
+  /** Branding data, null if not resolved */
+  branding: TenantBranding | null;
+  /** Whether the domain was successfully resolved to a tenant */
+  isResolved: boolean;
+  /** Whether the resolution request is in-flight */
+  isLoading: boolean;
+  /**
+   * True when the API call failed due to a network/CORS/mixed-content error.
+   * LoginView uses this to distinguish "API unreachable" (show platform login)
+   * from "API says no tenant" (show Tenant Not Found).
+   */
+  isApiError: boolean;
 }
 
 // ─── Domains to skip ──────────────────────────────────────
@@ -67,10 +67,7 @@ export interface TenantResolutionResult {
 const SKIP_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
 
 function isDevDomain(hostname: string): boolean {
-      return (
-            SKIP_DOMAINS.includes(hostname) ||
-            hostname.endsWith(".localhost")
-      );
+  return SKIP_DOMAINS.includes(hostname) || hostname.endsWith(".localhost");
 }
 
 /**
@@ -78,9 +75,9 @@ function isDevDomain(hostname: string): boolean {
  * Returns null if not present.
  */
 function getDevTenantCode(): string | null {
-      if (typeof window === "undefined") return null;
-      const params = new URLSearchParams(window.location.search);
-      return params.get("_tenant");
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  return params.get("_tenant");
 }
 
 // ─── Hook ─────────────────────────────────────────────────
@@ -91,84 +88,87 @@ function getDevTenantCode(): string | null {
  *               into the returned LoginBrandingJson so CSS tokens are page-aware.
  */
 export function useTenantResolution(page?: string): TenantResolutionResult {
-      const [tenantId, setTenantId] = useState<string | null>(null);
-      const [branding, setBranding] = useState<TenantBranding | null>(null);
-      const [isLoading, setIsLoading] = useState(true);
-      const [isApiError, setIsApiError] = useState(false);
+  const [tenantId, setTenantId] = useState<string | null>(null);
+  const [branding, setBranding] = useState<TenantBranding | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApiError, setIsApiError] = useState(false);
 
-      useEffect(() => {
-            let cancelled = false;
+  useEffect(() => {
+    let cancelled = false;
 
-            async function resolve() {
-                  // SSR guard
-                  if (typeof window === "undefined") {
-                        setIsLoading(false);
-                        return;
-                  }
+    async function resolve() {
+      // SSR guard
+      if (typeof window === "undefined") {
+        setIsLoading(false);
+        return;
+      }
 
-                  const hostname = window.location.hostname;
-                  const devCode = getDevTenantCode();
+      const hostname = window.location.hostname;
+      const devCode = getDevTenantCode();
 
-                  // On dev domains, resolve by code if ?_tenant=CODE is present.
-                  // Otherwise, call resolve with no params to get system-level defaults.
+      // On dev domains, resolve by code if ?_tenant=CODE is present.
+      // Otherwise, call resolve with no params to get system-level defaults.
 
-                  try {
-                        const api = getModuleApiService("IDENTITY");
-                        // Dev: use ?code=CODE, Prod: use ?domain=hostname
-                        const queryParams: Record<string, string> = devCode
-                              ? { code: devCode }
-                              : { domain: hostname };
-                        // Pass page identifier for server-side per-page branding merge
-                        if (page) queryParams.page = page;
-                        const url = buildUrl(API_ENDPOINTS.TENANTS.RESOLVE, queryParams);
-                        const data = await api.get<TenantBranding>(url);
+      try {
+        const api = getModuleApiService("IDENTITY");
+        // Dev: use ?code=CODE, Prod: use ?domain=hostname
+        const queryParams: Record<string, string> = devCode
+          ? { code: devCode }
+          : { domain: hostname };
+        // Pass page identifier for server-side per-page branding merge
+        if (page) queryParams.page = page;
+        const url = buildUrl(API_ENDPOINTS.TENANTS.RESOLVE, queryParams);
+        const data = await api.get<TenantBranding>(url);
 
-                        if (!cancelled && data) {
-                              setTenantId(data.tenantId);
-                              setBranding(data);
+        if (!cancelled && data) {
+          setTenantId(data.tenantId);
+          setBranding(data);
 
-                              // ── Pre-auth prefs sync: write nexora_pref_* from DashboardThemeJson ──
-                              // Only writes reference keys (nexora_pref_*) — NOT the active "theme"/"language" keys.
-                              // The active keys are set by LoginView's one-time initial sync effect,
-                              // so manual changes from the language/theme switcher are NOT overridden.
-                              if (data.dashboardThemeJson) {
-                                    try {
-                                          const prefs = JSON.parse(data.dashboardThemeJson);
-                                          if (prefs.theme) localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefs.theme);
-                                          if (prefs.language) localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefs.language);
-                                          if (prefs.sidebarCollapsed !== undefined)
-                                                localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
-                                          // Full dashboard settings for settings-provider Layer 3
-                                          localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, data.dashboardThemeJson);
-                                    } catch { /* invalid JSON — skip */ }
-                              }
-                        }
-                  } catch {
-                        // API call failed (network error, CORS, mixed content, etc.)
-                        // This is NOT the same as "tenant not found" — the API may simply be unreachable.
-                        if (!cancelled) {
-                              setTenantId(null);
-                              setBranding(null);
-                              setIsApiError(true);
-                        }
-                  } finally {
-                        if (!cancelled) setIsLoading(false);
-                  }
+          // ── Pre-auth prefs sync: write nexora_pref_* from DashboardThemeJson ──
+          // Only writes reference keys (nexora_pref_*) — NOT the active "theme"/"language" keys.
+          // The active keys are set by LoginView's one-time initial sync effect,
+          // so manual changes from the language/theme switcher are NOT overridden.
+          if (data.dashboardThemeJson) {
+            try {
+              const prefs = JSON.parse(data.dashboardThemeJson);
+              if (prefs.theme) localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefs.theme);
+              if (prefs.language) localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefs.language);
+              if (prefs.sidebarCollapsed !== undefined)
+                localStorage.setItem(
+                  STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED,
+                  String(prefs.sidebarCollapsed)
+                );
+              // Full dashboard settings for settings-provider Layer 3
+              localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, data.dashboardThemeJson);
+            } catch {
+              /* invalid JSON — skip */
             }
+          }
+        }
+      } catch {
+        // API call failed (network error, CORS, mixed content, etc.)
+        // This is NOT the same as "tenant not found" — the API may simply be unreachable.
+        if (!cancelled) {
+          setTenantId(null);
+          setBranding(null);
+          setIsApiError(true);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
 
-            resolve();
-            return () => {
-                  cancelled = true;
-            };
-       
-      }, [page]);
+    resolve();
+    return () => {
+      cancelled = true;
+    };
+  }, [page]);
 
-      return {
-            tenantId,
-            branding,
-            isResolved: branding !== null,
-            isLoading,
-            isApiError,
-      };
+  return {
+    tenantId,
+    branding,
+    isResolved: branding !== null,
+    isLoading,
+    isApiError,
+  };
 }
-

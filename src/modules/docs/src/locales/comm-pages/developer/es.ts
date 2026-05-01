@@ -6,111 +6,152 @@ export const es = {
   commercial: {
     cliTooling: {
       commandsTitle: "Léxico Generativo",
-      customizeContent: "NEXORA rechaza categóricamente las restricciones de generación rígidas. Todo el esquema interno está impulsado por 66 plantillas Handlebars profundamente configurables, lo que permite a sus arquitectos principales anular el comportamiento de renderizado a un nivel granular. Cada byte generado está completamente bajo su dominio.",
+      customizeContent:
+        "NEXORA rechaza categóricamente las restricciones de generación rígidas. Todo el esquema interno está impulsado por 66 plantillas Handlebars profundamente configurables, lo que permite a sus arquitectos principales anular el comportamiento de renderizado a un nivel granular. Cada byte generado está completamente bajo su dominio.",
       customizeTitle: "Extensibilidad de Plantillas Sin Restricciones",
-      description: "Aumente el rendimiento de ingeniería en un orden de magnitud. La CLI propietaria de NEXORA erradica la fricción arquitectónica al generar de forma determinista topologías impecables de Arquitectura Limpia a pedido.",
+      description:
+        "Aumente el rendimiento de ingeniería en un orden de magnitud. La CLI propietaria de NEXORA erradica la fricción arquitectónica al generar de forma determinista topologías impecables de Arquitectura Limpia a pedido.",
       generatedTitle: "Perfección Arquitectónica Demostrable",
-      intro: "NEXORA no es simplemente un framework de aplicaciones; es un multiplicador de desarrolladores a escala industrial. Nuestra CLI multiplataforma personalizada elimina el código repetitivo (boilerplate) de forma permanente. Al conectar instantáneamente dependencias complejas de múltiples capas, sus ingenieros pasan inmediatamente de la tediosa configuración inicial a la entrega agresiva de características del dominio.",
-      scaffoldContent: "Elimine la degradación arquitectónica desde su origen. La CLI de NEXORA ejecuta de forma determinista operaciones complejas de generación de estructura (scaffolding) full-stack, compilando todo, desde agregados aislados de Entity Framework hasta tiendas Zustand de Next.js meticulosamente tipadas, en absoluta conformidad física con las primitivas de diseño de la Arquitectura Limpia.",
+      intro:
+        "NEXORA no es simplemente un framework de aplicaciones; es un multiplicador de desarrolladores a escala industrial. Nuestra CLI multiplataforma personalizada elimina el código repetitivo (boilerplate) de forma permanente. Al conectar instantáneamente dependencias complejas de múltiples capas, sus ingenieros pasan inmediatamente de la tediosa configuración inicial a la entrega agresiva de características del dominio.",
+      scaffoldContent:
+        "Elimine la degradación arquitectónica desde su origen. La CLI de NEXORA ejecuta de forma determinista operaciones complejas de generación de estructura (scaffolding) full-stack, compilando todo, desde agregados aislados de Entity Framework hasta tiendas Zustand de Next.js meticulosamente tipadas, en absoluta conformidad física con las primitivas de diseño de la Arquitectura Limpia.",
       scaffoldTitle: "El Motor de Scaffolding Determinista",
       title: "Herramientas Deterministas Supercargadas",
-      descMod: "Genere un Contexto Delimitado (Bounded Context) completo de extremo a extremo instantáneamente.",
+      descMod:
+        "Genere un Contexto Delimitado (Bounded Context) completo de extremo a extremo instantáneamente.",
       descEnt: "Genere entidades DDD y configuraciones matemáticamente sólidas.",
       descCmd: "Cree manejadores de mutación (Crear/Actualizar/Eliminar) de CQRS aislados.",
-      descQry: "Construya manejadores de búsqueda de CQRS optimizados para lectura de forma transparente.",
-      descMig: "Compile de forma autónoma migraciones de bases de datos abstractas entre proveedores.",
+      descQry:
+        "Construya manejadores de búsqueda de CQRS optimizados para lectura de forma transparente.",
+      descMig:
+        "Compile de forma autónoma migraciones de bases de datos abstractas entre proveedores.",
       descDev: "Ejecute toda la microinfraestructura local contenedorizada.",
       hdrLayer: "Frontera Arquitectónica",
       hdrFiles: "Topología Generada",
       hdrIncs: "Artefactos Funcionales Incluidos",
       layerDomain: "Motor de Dominio",
       layerDomainFiles: "2 Archivos Centrales",
-      layerDomainIncs: "Clase de Entidad enriquecida, interfaz de especificación de Repositorio agnóstica.",
+      layerDomainIncs:
+        "Clase de Entidad enriquecida, interfaz de especificación de Repositorio agnóstica.",
       layerApp: "Canalización de Aplicación",
       layerAppFiles: "4 Archivos de Canalización",
-      layerAppIncs: "Comando Crear + manejador, consulta de lista + manejador, Fluent Validation rigurosa.",
+      layerAppIncs:
+        "Comando Crear + manejador, consulta de lista + manejador, Fluent Validation rigurosa.",
       layerInfra: "Capa de Infraestructura",
       layerInfraFiles: "4 Archivos Concretos",
-      layerInfraIncs: "Implementación del repositorio, mapeo de EF Core, resolución DI, siembra de permisos.",
+      layerInfraIncs:
+        "Implementación del repositorio, mapeo de EF Core, resolución DI, siembra de permisos.",
       layerFront: "Superficie de Presentación",
       layerFrontFiles: "5 Archivos Modulares",
-      layerFrontIncs: "Esquema Zod, integración con TanStack Query, Vista, orquestador ViewModel, registro DI.",
+      layerFrontIncs:
+        "Esquema Zod, integración con TanStack Query, Vista, orquestador ViewModel, registro DI.",
       layerRoute: "Enrutamiento Conectivo",
       layerRouteFiles: "1 Punto de Entrada",
       layerRouteIncs: "Diseño (Layout) del App Router de Next.js y conector dinámico de datos.",
       itemConfig: "Control granular mediante esquemas rigurosos de nexora.config.json.",
-      itemArch: "Fuerza matemáticamente la Arquitectura Limpia, eliminando físicamente la desviación del desarrollador.",
+      itemArch:
+        "Fuerza matemáticamente la Arquitectura Limpia, eliminando físicamente la desviación del desarrollador.",
       itemHbs: "66 archivos independientes de Handlebars dictan los diseños sintácticos exactos.",
-      itemSec: "Los endpoints REST se inyectan inmediatamente con criptografía estricta enfocada en el inquilino.",
-      itemBoil: "Abole por completo la carga cognitiva de escribir código repetitivo (boilerplate).",
+      itemSec:
+        "Los endpoints REST se inyectan inmediatamente con criptografía estricta enfocada en el inquilino.",
+      itemBoil:
+        "Abole por completo la carga cognitiva de escribir código repetitivo (boilerplate).",
       tblCmdHeader1: "Sintaxis de Ejecución",
       tblCmdHeader2: "Concepto Empresarial",
       tblCmdHeader3: "Ejemplo de Comando",
       step1Title: "1. Definir el Objetivo del Dominio",
-      step1Content: "Proporcione a la CLI estrictamente el nombre del Contexto Delimitado (Bounded Context). Calculará inmediatamente la topología estructural de múltiples capas necesaria para albergar la nueva característica.",
+      step1Content:
+        "Proporcione a la CLI estrictamente el nombre del Contexto Delimitado (Bounded Context). Calculará inmediatamente la topología estructural de múltiples capas necesaria para albergar la nueva característica.",
       step2Title: "2. Fase de Ejecución de Handlebars",
-      step2Content: "El motor evalúa secuencialmente 66 diseños de Handlebars integrados. Analiza dinámicamente espacios de nombres, asociaciones de entidades y estructuras de árboles de componentes de React sin intervención humana.",
+      step2Content:
+        "El motor evalúa secuencialmente 66 diseños de Handlebars integrados. Analiza dinámicamente espacios de nombres, asociaciones de entidades y estructuras de árboles de componentes de React sin intervención humana.",
       step3Title: "3. Conexión Absoluta de Dependencias",
-      step3Content: "Cada repositorio de C# y esquema de Zod en TypeScript generado se registra de forma autónoma dentro de los contenedores globales de Inyección de Dependencias, eliminando por completo la desviación de la configuración y las excepciones de tipo `NullReference` en tiempo de ejecución.",
+      step3Content:
+        "Cada repositorio de C# y esquema de Zod en TypeScript generado se registra de forma autónoma dentro de los contenedores globales de Inyección de Dependencias, eliminando por completo la desviación de la configuración y las excepciones de tipo `NullReference` en tiempo de ejecución.",
       step4Title: "4. Preparación Inmediata para el Despliegue",
-      step4Content: "En 0.8 segundos, la CLI termina. Todo el Contexto Delimitado de extremo a extremo está completo, compilado y activamente asegurado. Sus ingenieros pueden comenzar inmediatamente a escribir la lógica de negocio pura.",
+      step4Content:
+        "En 0.8 segundos, la CLI termina. Todo el Contexto Delimitado de extremo a extremo está completo, compilado y activamente asegurado. Sus ingenieros pueden comenzar inmediatamente a escribir la lógica de negocio pura.",
     },
     ciCdPipeline: {
-      description: "Configuraciones de canalización de integración y despliegue continuo (CI/CD) probadas en batalla y listas para usar.",
-      dockerContent: "Se incluyen Dockerfiles listos para producción inmediatamente tras la generación. Presentan compilaciones de Alpine Linux de múltiples etapas que reducen drásticamente las superficies de ataque y generan cargas útiles de contenedores increíblemente pequeñas y de inicio rápido.",
+      description:
+        "Configuraciones de canalización de integración y despliegue continuo (CI/CD) probadas en batalla y listas para usar.",
+      dockerContent:
+        "Se incluyen Dockerfiles listos para producción inmediatamente tras la generación. Presentan compilaciones de Alpine Linux de múltiples etapas que reducen drásticamente las superficies de ataque y generan cargas útiles de contenedores increíblemente pequeñas y de inicio rápido.",
       dockerTitle: "Dockerización Multietapa",
       environmentsTitle: "Paridad de Entornos",
       hostingTitle: "Alojamiento Agnóstico",
-      intro: "NEXORA elimina el síndrome de 'funciona en mi máquina'. Desde el primer día, recibe definiciones de canalizaciones CI/CD de grado empresarial que automatizan las pruebas, la contenedorización y el despliegue en AWS, Azure, GCP o en infraestructura física (bare metal).",
+      intro:
+        "NEXORA elimina el síndrome de 'funciona en mi máquina'. Desde el primer día, recibe definiciones de canalizaciones CI/CD de grado empresarial que automatizan las pruebas, la contenedorización y el despliegue en AWS, Azure, GCP o en infraestructura física (bare metal).",
       title: "Automatización de CI/CD y DevOps",
       workflowTitle: "Flujos de Trabajo Automatizados",
     },
     documentationTraining: {
       custom: "Consultoría a Medida",
-      customDesc: "Contrate al equipo arquitectónico central de NEXORA para revisiones arquitectónicas profundas, desarrollo de módulos personalizados y diseño de sistemas de alta disponibilidad.",
-      description: "Planos arquitectónicos integrales, tutoriales interactivos y pistas de capacitación integradas.",
-      docsContent: "Nuestro sitio de documentación no es solo una referencia de API. Presenta inmersiones profundas en la teoría de la Arquitectura Limpia, patrones CQRS y guías paso a paso para extender la plataforma. Cada decisión arquitectónica está respaldada por un Registro de Decisiones de Arquitectura (ADR) de acceso público.",
+      customDesc:
+        "Contrate al equipo arquitectónico central de NEXORA para revisiones arquitectónicas profundas, desarrollo de módulos personalizados y diseño de sistemas de alta disponibilidad.",
+      description:
+        "Planos arquitectónicos integrales, tutoriales interactivos y pistas de capacitación integradas.",
+      docsContent:
+        "Nuestro sitio de documentación no es solo una referencia de API. Presenta inmersiones profundas en la teoría de la Arquitectura Limpia, patrones CQRS y guías paso a paso para extender la plataforma. Cada decisión arquitectónica está respaldada por un Registro de Decisiones de Arquitectura (ADR) de acceso público.",
       docsTitle: "La Biblia de la Arquitectura",
-      intro: "La velocidad de adopción define el ROI. NEXORA proporciona documentación de primer nivel, tutoriales aplicables de inmediato y pistas de capacitación estructuradas diseñadas para transformar a los desarrolladores junior en arquitectos empresariales en una fracción del tiempo.",
-      kbContent: "Explore miles de artículos categorizados en la base de conocimientos que cubren todo, desde la configuración de la invalidación de caché distribuida hasta la escritura de pruebas de integración complejas utilizando Testcontainers.",
+      intro:
+        "La velocidad de adopción define el ROI. NEXORA proporciona documentación de primer nivel, tutoriales aplicables de inmediato y pistas de capacitación estructuradas diseñadas para transformar a los desarrolladores junior en arquitectos empresariales en una fracción del tiempo.",
+      kbContent:
+        "Explore miles de artículos categorizados en la base de conocimientos que cubren todo, desde la configuración de la invalidación de caché distribuida hasta la escritura de pruebas de integración complejas utilizando Testcontainers.",
       kbTitle: "Base de Conocimientos Extensa",
       live: "Clases con Instructor en Vivo",
-      liveDesc: "Participe en talleres arquitectónicos prácticos y en vivo dirigidos por ingenieros senior de .NET y Next.js.",
+      liveDesc:
+        "Participe en talleres arquitectónicos prácticos y en vivo dirigidos por ingenieros senior de .NET y Next.js.",
       onSite: "Incubación Presencial (On-Site)",
-      onSiteDesc: "Enviamos a nuestros ingenieros expertos a su sede para sprints dedicados de aceleración durante una semana.",
-      onb1Content: "Los desarrolladores mapean entidades exactas, repositorios y elementos de la interfaz de usuario durante su primera semana a través de lecciones en video a su propio ritmo.",
+      onSiteDesc:
+        "Enviamos a nuestros ingenieros expertos a su sede para sprints dedicados de aceleración durante una semana.",
+      onb1Content:
+        "Los desarrolladores mapean entidades exactas, repositorios y elementos de la interfaz de usuario durante su primera semana a través de lecciones en video a su propio ritmo.",
       onb1Title: "Pista 1: Fundamentos Arquitectónicos",
-      onb2Content: "Domine el patrón SOLID View/ViewModel del frontend para crear rápidamente interfaces complejas impulsadas por el estado sin código espagueti de React.",
+      onb2Content:
+        "Domine el patrón SOLID View/ViewModel del frontend para crear rápidamente interfaces complejas impulsadas por el estado sin código espagueti de React.",
       onb2Title: "Pista 2: Desarrollo Rápido de UI",
-      onb3Content: "Aprenda a establecer fronteras distribuidas y controladas por eventos entre los Contextos Delimitados (Bounded Contexts) utilizando CAP y RabbitMQ.",
+      onb3Content:
+        "Aprenda a establecer fronteras distribuidas y controladas por eventos entre los Contextos Delimitados (Bounded Contexts) utilizando CAP y RabbitMQ.",
       onb3Title: "Pista 3: Extensibilidad de Microservicios",
-      onb4Content: "Comprenda cómo aplicar de manera segura las migraciones de entidades, implementar despliegues Blue/Green y gestionar actualizaciones sin tiempo de inactividad (zero-downtime).",
+      onb4Content:
+        "Comprenda cómo aplicar de manera segura las migraciones de entidades, implementar despliegues Blue/Green y gestionar actualizaciones sin tiempo de inactividad (zero-downtime).",
       onb4Title: "Pista 4: DevOps Empresarial y CI/CD",
       onboardingTitle: "Aceleradores de Inducción (Onboarding) Estructurados",
       selfPaced: "Certificación a su Propio Ritmo",
-      selfPacedDesc: "Certifique a los miembros de su equipo como Arquitectos NEXORA a través de nuestro completo sistema de gestión de aprendizaje en línea.",
+      selfPacedDesc:
+        "Certifique a los miembros de su equipo como Arquitectos NEXORA a través de nuestro completo sistema de gestión de aprendizaje en línea.",
       title: "Documentación y Capacitación Técnica",
       tracksTitle: "Pistas de Competencia para Desarrolladores",
       trainingTitle: "Seminarios de Capacitación Empresarial",
     },
     gettingStartedGuide: {
       credentialsTitle: "Inicialización del Entorno",
-      credentialsWarning: "Importante: Nunca confirme (commit) cadenas de conexión sensibles ni secretos JWT en el control de versiones. Utilice siempre Azure Key Vault, AWS Secrets Manager o HashiCorp Vault para los despliegues de producción.",
-      description: "Desde la clonación hasta la producción. La clase magistral definitiva, paso a paso, para implementar la base arquitectónica de NEXORA.",
+      credentialsWarning:
+        "Importante: Nunca confirme (commit) cadenas de conexión sensibles ni secretos JWT en el control de versiones. Utilice siempre Azure Key Vault, AWS Secrets Manager o HashiCorp Vault para los despliegues de producción.",
+      description:
+        "Desde la clonación hasta la producción. La clase magistral definitiva, paso a paso, para implementar la base arquitectónica de NEXORA.",
       firstModuleTitle: "Generación de su Primer Contexto Delimitado",
-      intro: "El tiempo de valor (time to value) es la única métrica que importa. Esta guía completa acelera a su equipo de ingeniería desde la extracción (pull) del repositorio hasta la ejecución exitosa de su primera invocación de API autenticada en una base de datos completamente poblada (seeded) en menos de 15 minutos.",
+      intro:
+        "El tiempo de valor (time to value) es la única métrica que importa. Esta guía completa acelera a su equipo de ingeniería desde la extracción (pull) del repositorio hasta la ejecución exitosa de su primera invocación de API autenticada en una base de datos completamente poblada (seeded) en menos de 15 minutos.",
       nextStepsTitle: "Próximos Pasos Arquitectónicos",
       prereqTitle: "Requisitos del Sistema",
       quickStartTitle: "El Inicio Rápido de 15 Minutos",
-      step1Content: "Asegúrese de que el SDK de .NET 9, Node.js 20+ y su motor de Docker preferido estén instalados y sean accesibles a nivel global en su máquina de desarrollo.",
+      step1Content:
+        "Asegúrese de que el SDK de .NET 9, Node.js 20+ y su motor de Docker preferido estén instalados y sean accesibles a nivel global en su máquina de desarrollo.",
       step1Title: "1. Verificación del Conjunto de Herramientas (Toolchain)",
-      step2Content: "Ejecute el script de inicialización propietario de NEXORA. Esto proporciona automáticamente certificados de desarrollo local, ejecuta las migraciones iniciales de EF Core y siembra (seeds) al inquilino raíz SuperAdmin.",
+      step2Content:
+        "Ejecute el script de inicialización propietario de NEXORA. Esto proporciona automáticamente certificados de desarrollo local, ejecuta las migraciones iniciales de EF Core y siembra (seeds) al inquilino raíz SuperAdmin.",
       step2Title: "2. Arranque Automatizado (Bootstrapping)",
-      step3Content: "Inicie la API del backend y el frontend de Next.js simultáneamente utilizando la topología de Docker Compose proporcionada o los perfiles de inicio de su IDE nativo.",
+      step3Content:
+        "Inicie la API del backend y el frontend de Next.js simultáneamente utilizando la topología de Docker Compose proporcionada o los perfiles de inicio de su IDE nativo.",
       step3Title: "3. Lanzamiento de Servicios Concurrentes",
-      step4Content: "Autentíquese contra la interfaz Swagger UI o la colección Postman utilizando las credenciales de SuperAdmin generadas para adquirir su primer JWT.",
+      step4Content:
+        "Autentíquese contra la interfaz Swagger UI o la colección Postman utilizando las credenciales de SuperAdmin generadas para adquirir su primer JWT.",
       step4Title: "4. Autenticación Criptográfica",
-      step5Content: "Utilice la CLI de NEXORA para generar inmediatamente su primer módulo de negocio personalizado, ampliando la arquitectura base sin problemas.",
+      step5Content:
+        "Utilice la CLI de NEXORA para generar inmediatamente su primer módulo de negocio personalizado, ampliando la arquitectura base sin problemas.",
       step5Title: "5. Generación de Módulos",
       structureTitle: "Topografía de la Solución",
       title: "Guía de Despliegue Empresarial",
@@ -157,11 +198,14 @@ export const es = {
       lstNextI6: "Explore la documentación técnica completa para profundizar",
     },
     systemRequirements: {
-      cloudTip: "Consejo para la migración a la nube: NEXORA es completamente agnóstico respecto a la nube. Implemente en AWS ECS, Azure App Services o Google Kubernetes Engine (GKE) utilizando nuestras plantillas de Infraestructura como Código (IaC).",
+      cloudTip:
+        "Consejo para la migración a la nube: NEXORA es completamente agnóstico respecto a la nube. Implemente en AWS ECS, Azure App Services o Google Kubernetes Engine (GKE) utilizando nuestras plantillas de Infraestructura como Código (IaC).",
       dbTitle: "Líneas Base de Hardware para Bases de Datos",
-      description: "Perfiles de hardware de referencia, cadenas de herramientas (toolchains) de software necesarias y configuraciones de red exactas requeridas para alojar NEXORA en diversas escalas de implementación.",
+      description:
+        "Perfiles de hardware de referencia, cadenas de herramientas (toolchains) de software necesarias y configuraciones de red exactas requeridas para alojar NEXORA en diversas escalas de implementación.",
       devTitle: "Estaciones de Trabajo de Desarrollo Local",
-      intro: "NEXORA está diseñado para ser extraordinariamente eficiente en el uso de los recursos. Si bien se escala dinámicamente para consumir clústeres masivos en la nube, puede iniciarse cómodamente y ejecutar todo su conjunto de pruebas en la computadora portátil de un desarrollador estándar.",
+      intro:
+        "NEXORA está diseñado para ser extraordinariamente eficiente en el uso de los recursos. Si bien se escala dinámicamente para consumir clústeres masivos en la nube, puede iniciarse cómodamente y ejecutar todo su conjunto de pruebas en la computadora portátil de un desarrollador estándar.",
       networkTitle: "Topología de Red y Puertos",
       prodMicroTitle: "Topologías de Microservicios Globales",
       prodMonoTitle: "Servidores Monolíticos de Producción",

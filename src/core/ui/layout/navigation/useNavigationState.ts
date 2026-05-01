@@ -147,8 +147,7 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-     
-  }, []);  
+  }, []);
 
   // ── Actions ──
 

@@ -2,8 +2,19 @@
  * TenantPlan Repository Interface — Elevated Tier 2
  * TenantId is resolved server-side from JWT context.
  */
-import type { TenantPlan, TenantFeatureDefinition, TenantPlanPromotion } from "../entities/TenantPlan";
-import type { CreateTenantPlanRequest, UpdateTenantPlanRequest, CreateFeatureDefinitionRequest, UpdateFeatureDefinitionRequest, CreatePromotionRequest, UpdatePromotionRequest } from "../entities/TenantPlanRequests";
+import type {
+  TenantPlan,
+  TenantFeatureDefinition,
+  TenantPlanPromotion,
+} from "../entities/TenantPlan";
+import type {
+  CreateTenantPlanRequest,
+  UpdateTenantPlanRequest,
+  CreateFeatureDefinitionRequest,
+  UpdateFeatureDefinitionRequest,
+  CreatePromotionRequest,
+  UpdatePromotionRequest,
+} from "../entities/TenantPlanRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
 export interface ITenantPlanRepository {
@@ -17,7 +28,9 @@ export interface ITenantPlanRepository {
   archive(id: string): Promise<void>;
 
   // Feature Definitions
-  getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinition>>;
+  getFeatureDefinitions(
+    params: PaginationParams & { category?: string }
+  ): Promise<PagedResult<TenantFeatureDefinition>>;
   getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinition>;
   getActiveFeatureDefinitions(): Promise<TenantFeatureDefinition[]>;
   createFeatureDefinition(request: CreateFeatureDefinitionRequest): Promise<string>;
@@ -25,7 +38,9 @@ export interface ITenantPlanRepository {
   deleteFeatureDefinition(id: string): Promise<void>;
 
   // Promotions
-  getPromotions(params: PaginationParams & { planId?: string }): Promise<PagedResult<TenantPlanPromotion>>;
+  getPromotions(
+    params: PaginationParams & { planId?: string }
+  ): Promise<PagedResult<TenantPlanPromotion>>;
   createPromotion(request: CreatePromotionRequest): Promise<string>;
   updatePromotion(id: string, request: UpdatePromotionRequest): Promise<void>;
   deletePromotion(id: string): Promise<void>;

@@ -63,7 +63,7 @@ function clearAllLocalStorage(): void {
  * Uses AuthService for API calls (SOLID compliant).
  */
 export class AuthRepository implements IAuthRepository {
-  constructor(private readonly service: IAuthService) { }
+  constructor(private readonly service: IAuthService) {}
 
   async login(credentials: LoginRequest): Promise<LoginResult> {
     const requestModel = new LoginRequestModel(
@@ -84,7 +84,7 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      
+
       let user: User;
       if (responseModel.userProfile) {
         user = AuthMapper.userFromJson(responseModel.userProfile);
@@ -107,7 +107,12 @@ export class AuthRepository implements IAuthRepository {
    * Verify 2FA code during login.
    * Called after login() throws TwoFactorRequiredError.
    */
-  async verify2FA(identifier: string, password: string, code: string, tenantId?: string): Promise<LoginResult> {
+  async verify2FA(
+    identifier: string,
+    password: string,
+    code: string,
+    tenantId?: string
+  ): Promise<LoginResult> {
     const requestModel = new Verify2FARequestModel(identifier, password, code, tenantId);
     const responseModel = await this.service.verify2FA(requestModel);
 
@@ -115,7 +120,7 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      
+
       let user: User;
       if (responseModel.userProfile) {
         user = AuthMapper.userFromJson(responseModel.userProfile);
@@ -243,7 +248,10 @@ export class AuthRepository implements IAuthRepository {
    * Abstract the OIDC Consent form parameters generation out of the Presentation layer.
    * Delegates entirely to the AuthService.
    */
-  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> } {
+  buildOidcConsentForm(
+    searchParams: URLSearchParams,
+    accessToken: string
+  ): { action: string; params: Record<string, string> } {
     return this.service.buildOidcConsentForm(searchParams, accessToken);
   }
 

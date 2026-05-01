@@ -47,41 +47,58 @@ function countJsonArray(json: string | undefined): number {
 }
 
 // ── Version Card ──
-function VersionCard({ version, isLatest }: { version: TenantPlanVersionData; isLatest: boolean }) {
+function VersionCard({ version, isLatest, t }: { version: TenantPlanVersionData; isLatest: boolean; t: (key: string) => string }) {
   const [showSnapshot, setShowSnapshot] = useState(false);
 
   const featureCount = countJsonArray(version.featureValuesJson);
   const priceCount = countJsonArray(version.pricingSnapshotJson);
 
   const statusVariant =
-    version.status === "Published" ? "success" :
-    version.status === "Archived" ? "secondary" : "outline";
+    version.status === "Published"
+      ? "success"
+      : version.status === "Archived"
+        ? "secondary"
+        : "outline";
 
   return (
-    <div className={`rounded-lg border transition-colors ${isLatest ? "border-primary/40 bg-primary/5" : "bg-card"}`}>
+    <div
+      className={`rounded-lg border transition-colors ${isLatest ? "border-primary/40 bg-primary/5" : "bg-card"}`}
+    >
       <div className="flex items-start gap-3 p-3">
         {/* Version badge */}
-        <div className={`flex items-center justify-center h-9 w-9 rounded-full shrink-0 text-sm font-bold ${
-          isLatest ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-        }`}>
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+            isLatest ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          }`}
+        >
           v{version.versionNumber}
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-semibold">Version {version.versionNumber}</span>
-            <Badge variant={statusVariant} className="text-[10px]">{version.status}</Badge>
-            {isLatest && <Badge variant="outline" className="text-[10px] border-primary/40 text-primary">Latest</Badge>}
+            <Badge variant={statusVariant} className="text-[10px]">
+              {version.status}
+            </Badge>
+            {isLatest && (
+              <Badge variant="outline" className="border-primary/40 text-[10px] text-primary">
+                {t("entitlements.tenantPlans.activeBadge") || "Latest"}
+              </Badge>
+            )}
           </div>
 
           {version.changeNotes && (
-            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{version.changeNotes}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+              {version.changeNotes}
+            </p>
           )}
 
-          <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground flex-wrap">
+          <div className="mt-1.5 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {version.publishedAt ? format(new Date(version.publishedAt), "PPp") : format(new Date(version.createdAt), "PPp")}
+              {version.publishedAt
+                ? format(new Date(version.publishedAt), "PPp")
+                : format(new Date(version.createdAt), "PPp")}
             </span>
             {version.publishedBy && (
               <span className="flex items-center gap-1">
@@ -89,8 +106,8 @@ function VersionCard({ version, isLatest }: { version: TenantPlanVersionData; is
                 {version.publishedBy}
               </span>
             )}
-            <span>{featureCount} features</span>
-            <span>{priceCount} prices</span>
+            <span>{featureCount} {t("entitlements.tenantPlans.features") || "features"}</span>
+            <span>{priceCount} {t("entitlements.tenantPlans.priceCount") || "prices"}</span>
           </div>
         </div>
 
@@ -99,10 +116,10 @@ function VersionCard({ version, isLatest }: { version: TenantPlanVersionData; is
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 text-xs shrink-0"
-            onClick={() => setShowSnapshot(s => !s)}
+            className="h-7 shrink-0 text-xs"
+            onClick={() => setShowSnapshot((s) => !s)}
           >
-            <Code2 className="h-3 w-3 me-1" />
+            <Code2 className="me-1 h-3 w-3" />
             {showSnapshot ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </Button>
         )}
@@ -111,7 +128,7 @@ function VersionCard({ version, isLatest }: { version: TenantPlanVersionData; is
       {/* Collapsible snapshot */}
       {showSnapshot && version.featureValuesJson && (
         <div className="px-3 pb-3">
-          <div className="rounded-md bg-muted/50 p-2 border text-[10px] font-mono overflow-auto max-h-40 text-muted-foreground leading-relaxed">
+          <div className="max-h-40 overflow-auto rounded-md border bg-muted/50 p-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
             {JSON.stringify(JSON.parse(version.featureValuesJson), null, 2)}
           </div>
         </div>
@@ -144,7 +161,9 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
                 {t("entitlements.tenantPlans.versionHistory") || "Version History"}
               </CardTitle>
               {versions.length > 0 && (
-                <Badge variant="secondary" className="text-xs">{versions.length}</Badge>
+                <Badge variant="secondary" className="text-xs">
+                  {versions.length}
+                </Badge>
               )}
             </div>
 
@@ -154,9 +173,9 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
                 size="sm"
                 onClick={() => setIsPublishOpen(true)}
                 loading={isPublishing}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-green-600 text-white hover:bg-green-700"
               >
-                {!isPublishing && <Rocket className="h-4 w-4 me-1" />}
+                {!isPublishing && <Rocket className="me-1 h-4 w-4" />}
                 {t("entitlements.tenantPlans.publish") || "Publish New Version"}
               </Button>
             )}
@@ -170,11 +189,11 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
         <CardContent>
           {versions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <GitBranch className="h-10 w-10 text-muted-foreground/30 mb-3" />
+              <GitBranch className="mb-3 h-10 w-10 text-muted-foreground/30" />
               <p className="text-sm text-muted-foreground">
                 {t("entitlements.tenantPlans.noVersions") || "No versions published yet."}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {t("entitlements.tenantPlans.noVersionsHint") ||
                   "Click 'Publish New Version' to create the first snapshot."}
               </p>
@@ -182,7 +201,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
           ) : (
             <div className="space-y-2">
               {versions.map((v, i) => (
-                <VersionCard key={v.id} version={v} isLatest={i === 0} />
+                <VersionCard key={v.id} version={v} isLatest={i === 0} t={t} />
               ))}
             </div>
           )}
@@ -195,13 +214,13 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Rocket className="h-4 w-4 text-green-600" />
-              Publish New Version
+              {t("entitlements.tenantPlans.publish") || "Publish New Version"}
             </DialogTitle>
             <DialogDescription>
-              This will create an immutable snapshot of the current features and pricing.
+              {t("entitlements.tenantPlans.publishDesc") || "This will create an immutable snapshot of the current features and pricing."}
               {plan.hasActiveSubscribers && (
-                <span className="block mt-1 text-amber-600 font-medium">
-                  ⚠ {plan.activeSubscriberCount} active subscriber(s) will be grandfathered to the current terms.
+                <span className="mt-1 block font-medium text-amber-600">
+                  ⚠ {plan.activeSubscriberCount} {t("entitlements.tenantPlans.subscribers") || "active subscriber(s) will be grandfathered to the current terms."}
                 </span>
               )}
             </DialogDescription>
@@ -209,45 +228,50 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
 
           <div className="space-y-3 py-2">
             <div className="space-y-1.5">
-              <Label htmlFor="changeNotes">Change Notes <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Label htmlFor="changeNotes">
+                {t("entitlements.tenantPlans.versionNotes") || "Change Notes"}{" "}
+                <span className="text-xs text-muted-foreground">({t("common.optional") || "optional"})</span>
+              </Label>
               <Textarea
                 id="changeNotes"
                 placeholder="What changed in this version? e.g. 'Added storage limit, updated pricing'"
                 value={changeNotes}
-                onChange={e => setChangeNotes(e.target.value)}
+                onChange={(e) => setChangeNotes(e.target.value)}
                 rows={3}
-                className="text-sm resize-none"
+                className="resize-none text-sm"
               />
             </div>
 
-            <div className="rounded-md bg-muted/50 border p-3 text-xs text-muted-foreground space-y-1">
+            <div className="space-y-1 rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
               <div className="flex justify-between">
-                <span>Current version</span>
+                <span>{t("entitlements.tenantPlans.versionNumber") || "Current version"}</span>
                 <span className="font-medium">v{plan.currentVersion}</span>
               </div>
               <div className="flex justify-between">
-                <span>New version</span>
+                <span>{t("entitlements.tenantPlans.tabVersions") || "New version"}</span>
                 <span className="font-medium text-primary">v{plan.currentVersion + 1}</span>
               </div>
               <div className="flex justify-between">
-                <span>Features snapshot</span>
+                <span>{t("entitlements.tenantPlans.features") || "Features snapshot"}</span>
                 <span className="font-medium">{plan.featureCount}</span>
               </div>
               <div className="flex justify-between">
-                <span>Price points snapshot</span>
+                <span>{t("entitlements.tenantPlans.priceCount") || "Price points snapshot"}</span>
                 <span className="font-medium">{plan.priceCount}</span>
               </div>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>
+              {t("common.cancel") || "Cancel"}
+            </Button>
             <Button
               onClick={handlePublish}
               loading={isPublishing}
-              className="bg-green-600 hover:bg-green-700 text-white min-w-[120px]"
+              className="min-w-[120px] bg-green-600 text-white hover:bg-green-700"
             >
-              Publish
+              {t("entitlements.tenantPlans.publish") || "Publish"}
             </Button>
           </DialogFooter>
         </DialogContent>

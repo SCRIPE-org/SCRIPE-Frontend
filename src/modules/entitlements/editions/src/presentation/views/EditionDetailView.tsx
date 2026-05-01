@@ -14,9 +14,7 @@ import { useMemo, useState } from "react";
 import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import {
-  ArrowLeft, Loader2, Zap, GitBranch, DollarSign, Tag, Settings2,
-} from "lucide-react";
+import { ArrowLeft, Loader2, Zap, GitBranch, DollarSign, Tag, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -38,7 +36,9 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   const vm = useEditionDetailViewModel(editionId);
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<"features" | "pricing" | "versions" | "promotions">("features");
+  const [activeTab, setActiveTab] = useState<"features" | "pricing" | "versions" | "promotions">(
+    "features"
+  );
 
   // ── Count modified features (needed by ChangeActionBar) ──
   const modifiedCount = useMemo(() => {
@@ -46,7 +46,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
     let count = 0;
     for (const feature of vm.features) {
       const effectiveVal = vm.getEffectiveValue(feature);
-      const serverFeature = vm.edition.features.find(ef => ef.featureName === feature.name);
+      const serverFeature = vm.edition.features.find((ef) => ef.featureName === feature.name);
       const serverVal = serverFeature?.value ?? getFeatureDisabledDefault(feature.valueType);
       if (effectiveVal !== serverVal) count++;
     }
@@ -57,7 +57,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   // ── Loading ──
   if (vm.isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex min-h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
@@ -65,11 +65,13 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
 
   if (vm.error || !vm.edition) {
     return (
-      <div className="text-center p-8">
-        <p className="text-destructive">{vm.error?.message || t("entitlements.editions.notFound") || "Edition not found"}</p>
+      <div className="p-8 text-center">
+        <p className="text-destructive">
+          {vm.error?.message || t("entitlements.editions.notFound") || "Edition not found"}
+        </p>
         <Link href="/entitlements/editions">
           <Button variant="ghost" className="mt-4">
-            <ArrowLeft className="h-4 w-4 me-2" />
+            <ArrowLeft className="me-2 h-4 w-4" />
             {t("common.back")}
           </Button>
         </Link>
@@ -80,10 +82,26 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   const edition = vm.edition;
 
   const tabs = [
-    { id: "features" as const, label: t("entitlements.features.title") || "Features", icon: <Zap className="h-3.5 w-3.5" /> },
-    { id: "pricing" as const, label: t("entitlements.pricing.title") || "Pricing", icon: <DollarSign className="h-3.5 w-3.5" /> },
-    { id: "promotions" as const, label: t("entitlements.promotions.title") || "Promotions", icon: <Tag className="h-3.5 w-3.5" /> },
-    { id: "versions" as const, label: t("entitlements.editions.versions.title") || "Versions", icon: <GitBranch className="h-3.5 w-3.5" /> },
+    {
+      id: "features" as const,
+      label: t("entitlements.features.title") || "Features",
+      icon: <Zap className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "pricing" as const,
+      label: t("entitlements.pricing.title") || "Pricing",
+      icon: <DollarSign className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "promotions" as const,
+      label: t("entitlements.promotions.title") || "Promotions",
+      icon: <Tag className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "versions" as const,
+      label: t("entitlements.editions.versions.title") || "Versions",
+      icon: <GitBranch className="h-3.5 w-3.5" />,
+    },
   ];
 
   return (
@@ -95,11 +113,9 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {edition.getDisplayName(language)}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-bold tracking-tight">{edition.getDisplayName(language)}</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">
             {edition.description || t("entitlements.editions.manageFeaturesDescription")}
           </p>
         </div>
@@ -107,7 +123,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
         <Button
           variant="outline"
           size="sm"
-          className="gap-1.5 shrink-0"
+          className="shrink-0 gap-1.5"
           onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
         >
           <Settings2 className="h-4 w-4" />
@@ -121,10 +137,10 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+            className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab.id
                 ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
             }`}
           >
             {tab.icon}
@@ -168,9 +184,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
         />
       )}
 
-      {activeTab === "versions" && (
-        <VersionsTab editionId={editionId} />
-      )}
+      {activeTab === "versions" && <VersionsTab editionId={editionId} />}
 
       {/* ─────── STICKY ACTION BAR (only when changes pending) ─────── */}
       {vm.hasUnsavedChanges && (

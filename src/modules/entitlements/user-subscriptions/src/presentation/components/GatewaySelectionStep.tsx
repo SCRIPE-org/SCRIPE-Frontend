@@ -40,19 +40,24 @@ export function GatewaySelectionStep({ gateways, onSelect }: GatewaySelectionSte
 
   const getGatewayLabel = (type: string) => {
     switch (type.toLowerCase()) {
-      case "stripe": return t("billing.gateways.stripe") || "Pay with Card (Stripe)";
-      case "paypal": return t("billing.gateways.paypal") || "Pay with PayPal";
-      case "paymob": return t("billing.gateways.paymob") || "Pay with Paymob";
-      default: return type;
+      case "stripe":
+        return t("billing.gateways.stripe") || "Pay with Card (Stripe)";
+      case "paypal":
+        return t("billing.gateways.paypal") || "Pay with PayPal";
+      case "paymob":
+        return t("billing.gateways.paymob") || "Pay with Paymob";
+      default:
+        return type;
     }
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="mx-auto w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle>{t("billing.choosePaymentMethod") || "Choose Payment Method"}</CardTitle>
         <CardDescription>
-          {t("billing.choosePaymentMethodDesc") || "Select how you would like to pay for your subscription."}
+          {t("billing.choosePaymentMethodDesc") ||
+            "Select how you would like to pay for your subscription."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -60,7 +65,7 @@ export function GatewaySelectionStep({ gateways, onSelect }: GatewaySelectionSte
           <Button
             key={gw.gateway}
             variant="outline"
-            className="w-full h-16 justify-start px-6 gap-4 hover:border-primary/50 hover:bg-primary/5"
+            className="h-16 w-full justify-start gap-4 px-6 hover:border-primary/50 hover:bg-primary/5"
             onClick={() => onSelect(gw.gateway)}
           >
             {getGatewayIcon(gw.gateway)}

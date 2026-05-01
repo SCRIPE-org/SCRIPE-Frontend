@@ -3,15 +3,7 @@
 import type React from "react";
 import { useState, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Inbox,
-  Send,
-  FileText,
-  Trash2,
-  Tag,
-  Menu,
-  X,
-} from "lucide-react";
+import { Inbox, Send, FileText, Trash2, Tag, Menu, X } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
@@ -106,9 +98,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
             {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
           <Logo size="sm" />
-          <span className="hidden text-sm font-semibold text-foreground sm:block">
-            {appName}
-          </span>
+          <span className="hidden text-sm font-semibold text-foreground sm:block">{appName}</span>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
@@ -224,7 +214,8 @@ export function InboxLayout({ children }: InboxLayoutProps) {
                         ?.filter((c) => c.href)
                         .map((child) => {
                           const ChildIcon = child.icon;
-                          const isActive = child.href && isNavigationItemActive(child, pathname, navigation);
+                          const isActive =
+                            child.href && isNavigationItemActive(child, pathname, navigation);
                           return (
                             <button
                               key={child.name}

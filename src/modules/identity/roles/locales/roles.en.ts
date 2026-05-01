@@ -15,7 +15,8 @@ export const en = {
     searchPermissions: "Search permissions...",
     searchRoles: "Search roles...",
     createRole: "Create Role",
-    createRoleDescription: "Add a new role to the system. You can assign permissions after creating.",
+    createRoleDescription:
+      "Add a new role to the system. You can assign permissions after creating.",
     editRole: "Edit Role",
     editRoleDescription: "Update role details for",
     deleteRole: "Delete Role",
@@ -59,5 +60,13 @@ export const en = {
     permissionsSaved: "Permissions saved successfully",
     fetchError: "Failed to fetch role permissions",
     otherCategory: "Other",
+  },
+  role: {
+    deleteConfirm: "Delete Confirm",
+    hasAdmins: "Has Admins",
+    selectFallback: "Select Fallback",
+    selectFallbackPlaceholder: "Select Fallback Placeholder",
+    permissionsSaved: "Permissions Saved",
+    permissionsSaveError: "Permissions Save Error",
   },
 };

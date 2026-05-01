@@ -16,7 +16,8 @@ export const en = {
     editGroup: "Edit User Group",
     deleteGroup: "Delete User Group",
     deleteConfirmTitle: "Delete User Group",
-    deleteConfirmDesc: "This will permanently delete this group and remove all member assignments, role bindings, and restrictions.",
+    deleteConfirmDesc:
+      "This will permanently delete this group and remove all member assignments, role bindings, and restrictions.",
     members: "Members",
     roles: "Roles",
     restrictions: "Restrictions",
@@ -32,15 +33,18 @@ export const en = {
     descriptionAr: "Description (Arabic)",
     descArPlaceholder: "ÙˆØ£Ø¶Ù ÙˆØµÙØ§Ù‹ Ù‡Ù†Ø§...",
     cascadeDeleteWarning: "Warning: This action can affect assigned admins.",
-    cascadeDeleteDesc: "If you don't delete the admins, they will be removed from this group. Admins left with no roles or groups will be assigned a default system role.",
+    cascadeDeleteDesc:
+      "If you don't delete the admins, they will be removed from this group. Admins left with no roles or groups will be assigned a default system role.",
     alsoDeleteAdmins: "Also delete assigned admins",
-    alsoDeleteAdminsDesc: "Check this to soft-delete all admins that are currently assigned to this group.",
+    alsoDeleteAdminsDesc:
+      "Check this to soft-delete all admins that are currently assigned to this group.",
     cascadeStatusWarning: "Warning: This action can affect assigned admins.",
     cascadeStatusDesc: "You can optionally {status} all admins assigned to this group as well.",
     alsoStatusAdmins: "Also {status} assigned admins",
     alsoStatusAdminsDesc: "Check this to cascade this status change to all admins in the group.",
     restoreAdminsTitle: "Restore Associated Admins",
-    restoreAdminsDesc: "This user group may have administrators associated with it that were deleted when the group was deleted. You can choose to restore them along with the group.",
+    restoreAdminsDesc:
+      "This user group may have administrators associated with it that were deleted when the group was deleted. You can choose to restore them along with the group.",
     alsoRestoreAdmins: "Also restore assigned admins",
     backToList: "Back to User Groups",
     notFound: "User group not found",
@@ -50,7 +54,8 @@ export const en = {
       addMembers: "Add Members",
       addMembersDesc: "Select administrators to add to this group.",
       removeMember: "Remove Member",
-      removeConfirm: "Remove this admin from the group? They will lose inherited roles and restrictions.",
+      removeConfirm:
+        "Remove this admin from the group? They will lose inherited roles and restrictions.",
       searchAdmins: "Search admins...",
       selectMembers: "Select Admins",
       selectMembersPlaceholder: "Search and select admins...",
@@ -117,5 +122,12 @@ export const en = {
     saveSuccess: "Save Success",
     membersUpdated: "Members Updated",
     failedToLoad: "Failed To Load",
+  },
+  admin: {
+    admins: "Admins",
+  },
+  roles: {
+    roles: "Roles",
+    noResults: "No Results",
   },
 };

@@ -1,20 +1,15 @@
 /// NEXORA Service Worker — P5.1
 /// Cache Strategy: App shell (cache-first), API (network-first), Assets (stale-while-revalidate)
 
-const CACHE_VERSION = 'nexora-v1';
+const CACHE_VERSION = "nexora-v1";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 
 // App shell — cached on install
-const APP_SHELL = [
-  '/',
-  '/manifest.json',
-  '/app-logo.png',
-  '/offline.html',
-];
+const APP_SHELL = ["/", "/manifest.json", "/app-logo.png", "/offline.html"];
 
 // Install: Pre-cache app shell
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       return cache.addAll(APP_SHELL);
@@ -24,7 +19,7 @@ self.addEventListener('install', (event) => {
 });
 
 // Activate: Clean old caches
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -38,21 +33,21 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch: Strategy per request type
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
   // Skip non-GET requests
-  if (request.method !== 'GET') return;
+  if (request.method !== "GET") return;
 
   // API requests → Network-first, fallback to cache
-  if (url.pathname.startsWith('/api/')) {
+  if (url.pathname.startsWith("/api/")) {
     event.respondWith(networkFirst(request));
     return;
   }
 
   // Font files → Cache-first (immutable)
-  if (url.pathname.startsWith('/fonts/')) {
+  if (url.pathname.startsWith("/fonts/")) {
     event.respondWith(cacheFirst(request));
     return;
   }
@@ -64,10 +59,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Navigation (HTML pages) → Network-first, offline fallback
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(() => caches.match('/offline.html'))
-    );
+  if (request.mode === "navigate") {
+    event.respondWith(fetch(request).catch(() => caches.match("/offline.html")));
     return;
   }
 
@@ -87,10 +80,13 @@ async function networkFirst(request) {
     return response;
   } catch {
     const cached = await caches.match(request);
-    return cached || new Response('{}', {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return (
+      cached ||
+      new Response("{}", {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
   }
 }
 
@@ -106,7 +102,7 @@ async function cacheFirst(request) {
     }
     return response;
   } catch {
-    return new Response('', { status: 503 });
+    return new Response("", { status: 503 });
   }
 }
 

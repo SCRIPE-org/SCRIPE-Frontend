@@ -7,11 +7,7 @@
  *
  * @module customization/domain
  */
-import type {
-  ThemeCardDto,
-  ThemeDetailDto,
-  ThemePagedResult,
-} from "../types/ThemeServiceTypes";
+import type { ThemeCardDto, ThemeDetailDto, ThemePagedResult } from "../types/ThemeServiceTypes";
 
 export interface ThemeListParams {
   page: number;

@@ -29,7 +29,7 @@ export const zh = {
       rtlDesc: "语言切换为阿拉伯语时，整个表格镜像翻转排版。",
       formTitle: "表单系统 (Forms)",
       formIntro: "使用 Zod 驱动验证，将新增/编辑操作接入标准的模态弹窗系统。",
-      extensionTip: "系统的设计初衷是可扩展而非可修改。通过属性传入或外层包裹 (Wrap) 来拓展功能。"
+      extensionTip: "系统的设计初衷是可扩展而非可修改。通过属性传入或外层包裹 (Wrap) 来拓展功能。",
     },
     stateManagement: {
       title: "前端状态管理 (State Management)",
@@ -43,7 +43,7 @@ export const zh = {
       zustandIntro: "轻量化的 Store，仅维护 UI 控制（如明暗主题、菜单开合、用户登录状态）。",
       languageTitle: "本地化状态",
       languageIntro: "基于 localStorage 持久化的上下文进行维护。",
-      antiPatternsTitle: "常见反模式 (Anti-Patterns)"
+      antiPatternsTitle: "常见反模式 (Anti-Patterns)",
     },
     localization: {
       title: "本地化 (i18n)",
@@ -61,8 +61,10 @@ export const zh = {
       step2Desc: "使用点操作符 (dot-notation) 获取。",
       step3Title: "3. 处理插值变量",
       step3Desc: "使用双大括号 {{variable}} 动态传入数值。",
-      noLocaleRoutes: "为了极致的 SSR (服务端渲染) 性能，我们没有采用基于文件夹的区域路由 ([locale]) 方案。",
-      moduleLocaleNote: "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching."
+      noLocaleRoutes:
+        "为了极致的 SSR (服务端渲染) 性能，我们没有采用基于文件夹的区域路由 ([locale]) 方案。",
+      moduleLocaleNote:
+        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "表单验证",
@@ -73,7 +75,8 @@ export const zh = {
       rhfTitle: "React Hook Form 高效集成",
       rulesTitle: "验证规则字典",
       serverErrorTitle: "服务器拒绝与错误映射",
-      serverErrorIntro: "如果后端 FluentValidation 拦截了数据，前端会直接捕获抛出的错误，将其精准对应到红色警告输入框上。"
+      serverErrorIntro:
+        "如果后端 FluentValidation 拦截了数据，前端会直接捕获抛出的错误，将其精准对应到红色警告输入框上。",
     },
     componentLibrary: {
       title: "组件库 (Component Library)",
@@ -87,13 +90,14 @@ export const zh = {
       layoutTitle: "布局控制组件",
       chartsTitle: "统计及图表组件 (Charts)",
       genericSelectTitle: "GenericSelect 复合组件",
-      genericSelectIntro: "一个带有搜索、分页防抖拉取的高性能层级树状下拉框，应用于关联租户和角色等复杂场景。",
+      genericSelectIntro:
+        "一个带有搜索、分页防抖拉取的高性能层级树状下拉框，应用于关联租户和角色等复杂场景。",
       themeTitle: "主题系统 (Theme)",
       responsiveTitle: "响应式设计",
       a11yTitle: "无障碍访问 (A11y)",
       placementTitle: "组件的绝对安放规则",
       architectureTitle: "组件的复用设计",
-      neverInApp: "永远不得在 src/app/ (Next.js 路由核心) 内存放独立的业务逻辑或提取的组件代码。"
+      neverInApp: "永远不得在 src/app/ (Next.js 路由核心) 内存放独立的业务逻辑或提取的组件代码。",
     },
     realtime: {
       title: "实时通信 (SignalR)",
@@ -104,7 +108,8 @@ export const zh = {
       hooksTitle: "前端连接的 React Hooks",
       providerTitle: "全局网络提供者 (Provider)",
       connectionStatesTitle: "连接状态监测与重连",
-      tenantGroupNote: "由于安全设计，Socket 在服务端便通过 JWT 将各租户分组。A 公司绝无可能收到 B 公司的实时告警通知。"
-    }
-  }
+      tenantGroupNote:
+        "由于安全设计，Socket 在服务端便通过 JWT 将各租户分组。A 公司绝无可能收到 B 公司的实时告警通知。",
+    },
+  },
 };

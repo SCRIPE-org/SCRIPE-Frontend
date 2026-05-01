@@ -4,12 +4,12 @@
 
 // Domain entities
 export type {
-      OAuthApp,
-      OAuthAppListItem,
-      RegenerateSecretResult,
-      OAuthAppListResponse,
-      CreateOAuthAppRequest,
-      UpdateOAuthAppRequest,
+  OAuthApp,
+  OAuthAppListItem,
+  RegenerateSecretResult,
+  OAuthAppListResponse,
+  CreateOAuthAppRequest,
+  UpdateOAuthAppRequest,
 } from "./src/domain/entities/OAuthApp";
 
 // Domain interfaces

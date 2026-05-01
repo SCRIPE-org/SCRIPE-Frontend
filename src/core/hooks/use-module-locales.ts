@@ -44,7 +44,8 @@ export function useModuleLocales(
 
     let cancelled = false;
 
-    loaderRef.current()
+    loaderRef
+      .current()
       .then((mod) => {
         if (cancelled) return;
         // Register BOTH languages in a single O(1) call
@@ -60,7 +61,6 @@ export function useModuleLocales(
     return () => {
       cancelled = true;
     };
-
   }, [isLoaded, moduleKey, registerBothLanguages, markModuleLoaded]);
 
   return { isLoaded };

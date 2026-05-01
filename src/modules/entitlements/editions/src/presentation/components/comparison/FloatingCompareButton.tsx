@@ -21,10 +21,9 @@ export function FloatingCompareButton({ label, targetRef }: FloatingCompareButto
     const target = targetRef.current;
     if (!target) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(!entry.isIntersecting),
-      { threshold: 0.15 }
-    );
+    const observer = new IntersectionObserver(([entry]) => setVisible(!entry.isIntersecting), {
+      threshold: 0.15,
+    });
 
     observer.observe(target);
     return () => observer.disconnect();
@@ -37,15 +36,10 @@ export function FloatingCompareButton({ label, targetRef }: FloatingCompareButto
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 pointer-events-none">
+    <div className="pointer-events-none fixed bottom-8 left-1/2 z-50 -translate-x-1/2">
       <button
         onClick={scrollToTable}
-        className="pointer-events-auto flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold shadow-2xl
-          bg-primary text-primary-foreground
-          border border-primary/40
-          hover:scale-105 active:scale-95
-          transition-all duration-200 ease-out
-          animate-in fade-in slide-in-from-bottom-4"
+        className="pointer-events-auto flex items-center gap-2 rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-2xl transition-all duration-200 ease-out animate-in fade-in slide-in-from-bottom-4 hover:scale-105 active:scale-95"
         style={{
           boxShadow: "0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset",
         }}

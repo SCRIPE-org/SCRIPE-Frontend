@@ -92,15 +92,15 @@ export { de as revenueAnalyticsDe } from "./revenue-analytics/de";
 
 // Lazy loader map for dynamic imports
 export const pageLoaders: Record<string, () => Promise<any>> = {
-  'common': () => import('./common/en'),
-  'get-started': () => import('./get-started/en'),
-  'architecture': () => import('./architecture/en'),
-  'features': () => import('./features/en'),
-  'modules': () => import('./modules/en'),
-  'security': () => import('./security/en'),
-  'frontend': () => import('./frontend/en'),
-  'infrastructure': () => import('./infrastructure/en'),
-  'tutorials': () => import('./tutorials/en'),
-  'api-reference': () => import('./api-reference/en'),
-  'revenue-analytics': () => import('./revenue-analytics/en'),
+  common: () => import("./common/en"),
+  "get-started": () => import("./get-started/en"),
+  architecture: () => import("./architecture/en"),
+  features: () => import("./features/en"),
+  modules: () => import("./modules/en"),
+  security: () => import("./security/en"),
+  frontend: () => import("./frontend/en"),
+  infrastructure: () => import("./infrastructure/en"),
+  tutorials: () => import("./tutorials/en"),
+  "api-reference": () => import("./api-reference/en"),
+  "revenue-analytics": () => import("./revenue-analytics/en"),
 };
