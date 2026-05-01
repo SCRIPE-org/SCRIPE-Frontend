@@ -63,6 +63,8 @@ import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
+import { en as complianceEn, ar as complianceAr } from "@modules/compliance/locales";
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, any> = deepMerge(
   {},
@@ -81,6 +83,7 @@ export const allModulesEn: Record<string, any> = deepMerge(
   recycleBinEn,
   // Profile
   profileEn,
+  complianceEn,
 );
 
 export const allModulesAr: Record<string, any> = deepMerge(
@@ -100,4 +103,5 @@ export const allModulesAr: Record<string, any> = deepMerge(
   recycleBinAr,
   // Profile
   profileAr,
+  complianceAr,
 );
