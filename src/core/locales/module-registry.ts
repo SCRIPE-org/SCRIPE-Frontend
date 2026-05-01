@@ -63,7 +63,14 @@ import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
-import { en as complianceEn, ar as complianceAr } from "@modules/compliance/locales";
+// ─── Compliance ─────────────────────────────────────────────────
+// 6 sub-modules, each owning their own slice of the "compliance" key
+import { en as compDashboardEn, ar as compDashboardAr }         from "@modules/compliance/dashboard/locales";
+import { en as compDsrEn, ar as compDsrAr }                     from "@modules/compliance/dsr/locales";
+import { en as compConsentEn, ar as compConsentAr }             from "@modules/compliance/consent/locales";
+import { en as compRetentionEn, ar as compRetentionAr }         from "@modules/compliance/retention/locales";
+import { en as compInventoryEn, ar as compInventoryAr }         from "@modules/compliance/inventory/locales";
+import { en as compReportsEn, ar as compReportsAr }             from "@modules/compliance/reports/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, any> = deepMerge(
@@ -83,7 +90,8 @@ export const allModulesEn: Record<string, any> = deepMerge(
   recycleBinEn,
   // Profile
   profileEn,
-  complianceEn,
+  // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
+  compDashboardEn, compDsrEn, compConsentEn, compRetentionEn, compInventoryEn, compReportsEn,
 );
 
 export const allModulesAr: Record<string, any> = deepMerge(
@@ -103,5 +111,6 @@ export const allModulesAr: Record<string, any> = deepMerge(
   recycleBinAr,
   // Profile
   profileAr,
-  complianceAr,
+  // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
+  compDashboardAr, compDsrAr, compConsentAr, compRetentionAr, compInventoryAr, compReportsAr,
 );

@@ -1,0 +1,22 @@
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
+import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
+
+const InventoryView = dynamic(
+  () => import("@modules/compliance/inventory").then((m) => ({ default: m.InventoryView }))
+);
+
+export const metadata: Metadata = {
+  title: "Data Inventory | NEXORA",
+  description: "View data inventory — browse all tracked personal data fields, legal bases, and export/anonymization configurations",
+};
+
+export default function ComplianceInventoryPage() {
+  return (
+    <main>
+      <ModuleErrorBoundary moduleName="Data Inventory">
+        <InventoryView />
+      </ModuleErrorBoundary>
+    </main>
+  );
+}

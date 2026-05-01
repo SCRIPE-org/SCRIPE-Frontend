@@ -6,20 +6,24 @@ export interface PagedResultModel<T> {
 export interface CommissionLedgerEntryModel {
   id: string;
   tenantId: string;
-  userSubscriptionId: string;
+  userSubscriptionId: string | null;
   paymentTransactionId: string | null;
   commissionInvoiceId: string | null;
-  gateway: string;
+  gateway: string;                       // e.g. "StripeConnect" | "PayPal" | "Paymob"
   gatewayTransactionId: string;
   grossAmount: number;
   commissionRate: number;
   commissionAmount: number;
+  netAmount: number;
   currency: string;
-  status: string;
+  status: string;                        // "Collected" | "Unbilled" | "Invoiced" | "Paid" | "Waived"
+  collectionMethod: string;              // "Instant" | "PostBilling"
+  stripePaymentIntentId: string | null;
   notes: string | null;
   createdAt: string;
-  modifiedAt: string | null;
+  updatedAt: string | null;
 }
+
 
 export interface CommissionInvoiceModel {
   id: string;

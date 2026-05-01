@@ -1,13 +1,18 @@
 /**
- * Compliance Module Public Exports
+ * Compliance Module Public API
+ *
+ * Re-exports all sub-module public APIs for external consumption.
+ * Internal implementation details are NOT exported.
  */
 
-// Views
-export { ComplianceListView } from "./src/presentation/views/ComplianceListView";
+// ── Sub-module views ────────────────────────────────────────────────────────
+export { ComplianceDashboardView } from "./dashboard";
+export { DsrView }        from "./dsr";
+export { ConsentView }    from "./consent";
+export { RetentionView }  from "./retention";
+export { InventoryView }  from "./inventory";
+export { ReportsView }    from "./reports";
 
-// Entities
-export { Compliance } from "./src/domain/entities/Compliance";
-export type { ComplianceData } from "./src/domain/entities/Compliance";
-
-// Interfaces
-export type { IComplianceRepository } from "./src/domain/interfaces/IComplianceRepository";
+// ── DI Container ────────────────────────────────────────────────────────────
+export { complianceContainer, getComplianceContainer } from "./di";
+export type { ComplianceContainer } from "./di";

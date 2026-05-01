@@ -60,16 +60,31 @@ export function useCommissionLedgerViewModel() {
     {
       key: "gateway",
       label: t("entitlements.commissionLedger.gateway") || "Gateway",
+      render: (_value, item) => item.displayGateway,
+    },
+    {
+      key: "collectionMethod",
+      label: t("entitlements.commissionLedger.collectionMethod") || "Type",
+      render: (_value, item) =>
+        item.isInstant
+          ? "⚡ Instant"      // Stripe Connect — already collected
+          : "📋 Post-Billing", // PayPal/Paymob — will be invoiced
     },
     {
       key: "grossAmount",
       label: t("entitlements.commissionLedger.grossAmount") || "Gross Amount",
-      render: (value, item) => `${value} ${item.currency}`,
+      render: (value, item) => `${(value as number).toFixed(2)} ${item.currency}`,
     },
     {
       key: "commissionAmount",
       label: t("entitlements.commissionLedger.commission") || "Commission",
-      render: (value, item) => `${value} ${item.currency}`,
+      render: (value, item) =>
+        `${(value as number).toFixed(2)} ${item.currency} (${item.commissionRateDisplay})`,
+    },
+    {
+      key: "netAmount",
+      label: t("entitlements.commissionLedger.netAmount") || "Net to Tenant",
+      render: (value, item) => `${(value as number).toFixed(2)} ${item.currency}`,
     },
     {
       key: "status",
@@ -78,9 +93,10 @@ export function useCommissionLedgerViewModel() {
     {
       key: "createdAt",
       label: t("entitlements.commissionLedger.date") || "Date",
-      render: (value) => new Date(value).toLocaleString(),
+      render: (value) => new Date(value as string).toLocaleString(),
     },
   ];
+
 
   const invoiceColumns: CrudColumn<CommissionInvoice>[] = [
     {
