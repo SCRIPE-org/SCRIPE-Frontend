@@ -11,7 +11,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 
 import { Button } from "@core/ui/button";
-import type { SsoProvider } from "../viewmodels/useSsoProviders";
+import type { SsoProvider } from "@modules/auth/core/domain/entities/SsoProvider";
 import { resolveFileUrl } from "@core/common/utils";
 
 interface SsoProviderButtonsProps {

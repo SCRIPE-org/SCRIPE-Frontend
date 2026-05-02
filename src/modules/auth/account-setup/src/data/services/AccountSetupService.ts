@@ -1,61 +1,29 @@
 /**
  * Account Setup Service
  *
- * Handles public (no-auth) API calls for the account activation flow.
- * Uses a raw axios instance because these endpoints don't require JWT.
+ * Handles public API calls for the account activation flow through IApiService.
  *
  * @module auth/account-setup
  */
-import axios from "axios";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import type {
+  ActivateAccountRequest,
+  ActivateAccountResponse,
+  IAccountSetupService,
+  ValidateTokenResponse,
+} from "../../../../core/domain/interfaces/IAccountSetupService";
+import type { PublicApiService } from "../../../../core/data/services/PublicApiService";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+export type { ActivateAccountRequest, ActivateAccountResponse, ValidateTokenResponse };
 
-/** Response from GET /account-setup/validate */
-export interface ValidateTokenResponse {
-  isValid: boolean;
-  adminEmail?: string;
-  adminUsername?: string;
-  tenantName?: string;
-  tenantCode?: string;
-  expiresAt?: string;
-  error?: string;
-}
+export class AccountSetupService implements IAccountSetupService {
+  constructor(private readonly api: PublicApiService) {}
 
-/** Request body for POST /account-setup/activate */
-export interface ActivateAccountRequest {
-  token: string;
-  password: string;
-  confirmPassword: string;
-}
-
-/** Response from POST /account-setup/activate */
-export interface ActivateAccountResponse {
-  success: boolean;
-  message?: string;
-  error?: string;
-}
-
-const api = axios.create({
-  baseURL: API_BASE,
-  headers: { "Content-Type": "application/json" },
-});
-
-export const AccountSetupService = {
-  /**
-   * Validate a setup token (public, no auth)
-   */
   async validateToken(token: string): Promise<ValidateTokenResponse> {
-    const { data } = await api.get<ValidateTokenResponse>(`/v1/account-setup/validate`, {
-      params: { token },
-    });
-    return data;
-  },
+    return this.api.get<ValidateTokenResponse>(API_ENDPOINTS.ACCOUNT_SETUP.VALIDATE_TOKEN(token));
+  }
 
-  /**
-   * Activate account — set password and consume the token (public, no auth)
-   */
   async activateAccount(request: ActivateAccountRequest): Promise<ActivateAccountResponse> {
-    const { data } = await api.post<ActivateAccountResponse>(`/v1/account-setup/activate`, request);
-    return data;
-  },
-};
+    return this.api.post<ActivateAccountResponse>(API_ENDPOINTS.ACCOUNT_SETUP.ACTIVATE, request);
+  }
+}

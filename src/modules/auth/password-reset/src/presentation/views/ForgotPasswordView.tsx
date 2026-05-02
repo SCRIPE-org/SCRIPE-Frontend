@@ -6,27 +6,25 @@
  */
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { ArrowLeft, Mail, CheckCircle, ShieldAlert } from "lucide-react";
-import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
+import { useLoginBrandingTokens } from "@modules/auth/core/src/presentation/viewmodels/useLoginBrandingTokens";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
-import { useTenantResolution } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { useTenantResolution } from "@modules/auth/core/src/presentation/viewmodels/useTenantResolution";
 // ARCH-EXCEPTION: pre-auth view — cannot use DI container (no auth context yet).
-import { getModuleApiService } from "@core/services/api-factory";
+import { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
 
 export function ForgotPasswordView() {
   const { t, direction } = useI18n();
-  const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { email, setEmail, isSubmitted, submit, reset, canSubmit } = useForgotPasswordViewModel();
 
   // Resolve tenant branding
   const { branding } = useTenantResolution("forgot-password");
@@ -71,27 +69,6 @@ export function ForgotPasswordView() {
       document.title = `${headline} — ${companyName}`;
     }
   }, [headline, companyName]);
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!email.trim()) return;
-
-      try {
-        // ARCH-EXCEPTION: pre-auth view — getModuleApiService used directly.
-        const api = getModuleApiService("IDENTITY");
-        // Use admin-specific reset endpoint (targets Admins table, not Users)
-        await api.postPublic(API_ENDPOINTS.AUTH.ADMIN_REQUEST_PASSWORD_RESET, {
-          email: email.trim(),
-        });
-      } catch {
-        // Intentionally silent — don't reveal whether email exists (anti-enumeration)
-      }
-      // Always show success regardless of result to prevent email enumeration
-      setIsSubmitted(true);
-    },
-    [email]
-  );
 
   const wrapperStyle: React.CSSProperties = {
     background:
@@ -161,7 +138,7 @@ export function ForgotPasswordView() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="login-label">
                 {t("auth.email") || "Email"}
@@ -179,7 +156,7 @@ export function ForgotPasswordView() {
               />
             </div>
 
-            <Button type="submit" className="login-button w-full" disabled={!email.trim()}>
+            <Button type="submit" className="login-button w-full" disabled={!canSubmit}>
               {t("auth.sendResetLink") || "Send Reset Instructions"}
             </Button>
           </form>
@@ -232,10 +209,7 @@ export function ForgotPasswordView() {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => {
-                setIsSubmitted(false);
-                setEmail("");
-              }}
+              onClick={reset}
             >
               {t("auth.tryAnotherEmail") || "Try another email"}
             </Button>

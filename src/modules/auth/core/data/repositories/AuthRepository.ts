@@ -12,6 +12,9 @@
  * Refresh tokens are managed exclusively by httpOnly cookies —
  * the repository never reads, stores, or sends them.
  *
+ * Impersonation, external login linking, and OIDC consent form
+ * building are delegated to ImpersonationRepository.
+ *
  * @module auth/data
  */
 import { secureTokenService } from "@core/common/secure-token-service";
@@ -21,12 +24,14 @@ import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import { AuthMapper } from "../mappers/AuthMapper";
 import { appLogger } from "@core/common/logger";
-import { LoginRequestModel } from "../models/AuthModel";
+import { LoginRequestModel, type UserProfileJson } from "../models/AuthModel";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type { IAuthRepository, LoginResult } from "../../domain/interfaces/IAuthRepository";
+import { WorkspaceInfo } from "../../domain/entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
-import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
+import { clearAllLocalStorage } from "../utils/auth-storage-cleanup";
+import { ImpersonationRepository } from "./ImpersonationRepository";
 
 /**
  * Import from domain layer + re-export for backward compatibility.
@@ -35,35 +40,17 @@ import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "../../d
 export { TwoFactorRequiredError, WorkspaceSelectionRequiredError };
 
 /**
- * Clear all authentication related data from local storage
- */
-function clearAllLocalStorage(): void {
-  if (typeof window !== "undefined") {
-    // Clear known keys using centralized constants
-    AUTH_STORAGE_KEYS_TO_CLEAR.forEach((key) => {
-      localStorage.removeItem(key);
-    });
-    // M11: Clear next-themes raw key (not in STORAGE_KEYS — library hardcodes "theme")
-    localStorage.removeItem("theme");
-    // M11: Clear legacy key from old implementation
-    localStorage.removeItem("nexora_admin_prefs_version");
-    // Clear SecureTokenService tokens (in-memory + legacy localStorage keys)
-    secureTokenService.clearTokens();
-    // TARGETED sessionStorage cleanup — NEVER call sessionStorage.clear()!
-    // That would wipe tenant_context (drill-down state) which must survive auth events.
-    sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
-    sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
-    appLogger.auth("Auth data, settings, and cache cleared (drill-down state preserved)");
-  }
-}
-
-/**
  * Auth Repository
  *
  * Uses AuthService for API calls (SOLID compliant).
+ * Delegates impersonation operations to ImpersonationRepository.
  */
 export class AuthRepository implements IAuthRepository {
-  constructor(private readonly service: IAuthService) {}
+  private readonly impersonation: ImpersonationRepository;
+
+  constructor(private readonly service: IAuthService) {
+    this.impersonation = new ImpersonationRepository(service);
+  }
 
   async login(credentials: LoginRequest): Promise<LoginResult> {
     const requestModel = new LoginRequestModel(
@@ -77,15 +64,11 @@ export class AuthRepository implements IAuthRepository {
 
     appLogger.auth("Login response received");
 
-    // Check if 2FA is required — throw specific error for UI to catch
     if (responseModel.requires2FA) {
       appLogger.auth("2FA verification required");
       throw new TwoFactorRequiredError();
     }
 
-    // Check if workspace selection is required (email belongs to multiple tenants)
-    // Credentials have been validated ✓ — no tokens issued yet.
-    // Throw a typed error so the UI can show the workspace picker.
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
       appLogger.auth(`Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`);
       throw new WorkspaceSelectionRequiredError(
@@ -102,13 +85,13 @@ export class AuthRepository implements IAuthRepository {
       );
     }
 
-
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
 
       let user: User;
-      if (responseModel.userProfile) {
-        user = AuthMapper.userFromJson(responseModel.userProfile);
+      const mappedUser = AuthMapper.userFromUnknown(responseModel.userProfile);
+      if (mappedUser) {
+        user = mappedUser;
       } else {
         user = await this.getMe();
       }
@@ -116,9 +99,9 @@ export class AuthRepository implements IAuthRepository {
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
-        subscriptionStatus: responseModel.subscriptionStatus,
-        gracePhase: responseModel.gracePhase,
-        editionName: responseModel.editionName,
+        subscriptionStatus: responseModel.subscriptionStatus ?? null,
+        gracePhase: responseModel.gracePhase ?? null,
+        editionName: responseModel.editionName ?? null,
       };
     }
     throw new Error("Login failed: No access token received.");
@@ -143,8 +126,9 @@ export class AuthRepository implements IAuthRepository {
       secureTokenService.setAccessToken(responseModel.accessToken);
 
       let user: User;
-      if (responseModel.userProfile) {
-        user = AuthMapper.userFromJson(responseModel.userProfile);
+      const mappedUser = AuthMapper.userFromUnknown(responseModel.userProfile);
+      if (mappedUser) {
+        user = mappedUser;
       } else {
         user = await this.getMe();
       }
@@ -152,9 +136,9 @@ export class AuthRepository implements IAuthRepository {
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
-        subscriptionStatus: responseModel.subscriptionStatus,
-        gracePhase: responseModel.gracePhase,
-        editionName: responseModel.editionName,
+        subscriptionStatus: responseModel.subscriptionStatus ?? null,
+        gracePhase: responseModel.gracePhase ?? null,
+        editionName: responseModel.editionName ?? null,
       };
     }
     throw new Error("2FA verification failed: No access token received.");
@@ -167,14 +151,13 @@ export class AuthRepository implements IAuthRepository {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
       clearAllLocalStorage();
-      // Broadcast to all tabs so they logout too
       authBroadcast.broadcastLogout();
     }
   }
 
   async getMe(): Promise<User> {
     try {
-      const response = await this.service.getMe<any>();
+      const response = await this.service.getMe<UserProfileJson | string>();
       return AuthMapper.userFromJson(response);
     } catch (error) {
       appLogger.error("Failed to get current user:", error);
@@ -197,7 +180,6 @@ export class AuthRepository implements IAuthRepository {
 
       if (responseModel.isSuccessful) {
         secureTokenService.setAccessToken(responseModel.accessToken);
-        // Broadcast to other tabs so they use the new token
         authBroadcast.broadcastTokenRefreshed(responseModel.accessToken);
         const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
         return Result.ok(loginResponse);
@@ -213,73 +195,52 @@ export class AuthRepository implements IAuthRepository {
     return secureTokenService.hasToken();
   }
 
+  async discoverWorkspaces(email: string): Promise<{
+    workspaces: WorkspaceInfo[];
+    hasPlatformAccess: boolean;
+  }> {
+    const data = await this.service.discoverWorkspaces(email);
+    return {
+      hasPlatformAccess: data.hasPlatformAccess ?? false,
+      workspaces: (data.workspaces ?? []).map(
+        (workspace) =>
+          new WorkspaceInfo({
+            tenantCode: workspace.tenantCode,
+            tenantName: workspace.tenantName,
+            logoUrl: workspace.logoUrl,
+            isPlatformAdmin: workspace.isPlatformAdmin,
+            isActivated: workspace.isActivated,
+            loginUrl: workspace.isPlatformAdmin
+              ? "/login"
+              : `/login?_tenant=${encodeURIComponent(workspace.tenantCode)}`,
+          })
+      ),
+    };
+  }
+
   clearTokens(): void {
     clearAllLocalStorage();
-    // Also clear impersonation state on logout
     if (typeof window !== "undefined") {
       sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
     }
   }
 
-  /**
-   * Start impersonation — calls auth endpoint, sets access token.
-   * CookieAuthMiddleware handles the httpOnly refresh token cookie.
-   */
+  // ── Impersonation (delegated) ──────────────────────────────────────────
   async impersonate(adminId: string): Promise<void> {
-    const responseModel = await this.service.impersonate(adminId);
-
-    if (responseModel.accessToken) {
-      secureTokenService.setAccessToken(responseModel.accessToken);
-      // Persist impersonation state so the UI banner survives page reload
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
-        // Clear navigation cache so menu items reload with the impersonated identity
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-      }
-      authBroadcast.broadcastImpersonationStart();
-    } else {
-      throw new Error("Impersonation failed: No access token received.");
-    }
+    return this.impersonation.impersonate(adminId);
   }
 
-  /**
-   * Stop impersonation — restores the original admin session.
-   * CookieAuthMiddleware reads refresh token from cookie and replaces it.
-   */
   async stopImpersonation(): Promise<void> {
-    const responseModel = await this.service.stopImpersonation();
-
-    if (responseModel.accessToken) {
-      secureTokenService.setAccessToken(responseModel.accessToken);
-      // Clear impersonation state + nav cache so original admin menus reload
-      if (typeof window !== "undefined") {
-        sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
-        sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-      }
-      authBroadcast.broadcastImpersonationStop();
-    } else {
-      throw new Error("Stop impersonation failed: No access token received.");
-    }
+    return this.impersonation.stopImpersonation();
   }
 
-  /**
-   * Abstract the OIDC Consent form parameters generation out of the Presentation layer.
-   * Delegates entirely to the AuthService.
-   */
   buildOidcConsentForm(
     searchParams: URLSearchParams,
     accessToken: string
   ): { action: string; params: Record<string, string> } {
-    return this.service.buildOidcConsentForm(searchParams, accessToken);
+    return this.impersonation.buildOidcConsentForm(searchParams, accessToken);
   }
 
-  /**
-   * Link an external SSO account to the currently authenticated admin profile.
-   * Used by SSO/SAML callback views when auto-linking during a linking session.
-   */
   async linkExternalLogin(data: {
     identityProviderId: string;
     providerName: string;
@@ -287,6 +248,6 @@ export class AuthRepository implements IAuthRepository {
     email: string;
     displayName?: string;
   }): Promise<void> {
-    await this.service.linkExternalLogin(data);
+    return this.impersonation.linkExternalLogin(data);
   }
 }

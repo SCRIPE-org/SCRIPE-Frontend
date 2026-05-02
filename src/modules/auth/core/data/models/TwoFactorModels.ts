@@ -11,6 +11,8 @@
  * @module auth/data
  */
 
+import type { UserProfileJson } from "./AuthModel";
+
 // ===== JSON Shapes =====
 
 export interface Verify2FARequestJson {
@@ -27,7 +29,7 @@ export interface Verify2FAResponseJson {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
-  userProfile?: any;
+  userProfile?: UserProfileJson | null;
 }
 
 // ===== Model Classes =====
@@ -64,7 +66,7 @@ export class Verify2FAResponseModel {
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
-    public readonly userProfile: any = null
+    public readonly userProfile: UserProfileJson | null = null
   ) {}
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {

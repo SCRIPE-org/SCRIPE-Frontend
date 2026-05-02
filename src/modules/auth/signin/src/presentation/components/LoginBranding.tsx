@@ -1,11 +1,15 @@
 "use client";
 
-import type { TenantBranding } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
+import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SlotRenderer } from "./SlotRenderer";
 import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+
+interface BrandingCopyright {
+  copyrightText?: string | null;
+}
 
 export interface LoginBrandingProps {
   branding?: TenantBranding | null;
@@ -32,17 +36,17 @@ export function LoginBranding({
     {
       icon: "🛡️",
       label: t("auth.branding.featureSecurity"),
-      desc: "Military-grade end-to-end encryption",
+      desc: t("auth.branding.featureSecurityDesc"),
     },
     {
       icon: "🏢",
       label: t("auth.branding.featureMultiTenant"),
-      desc: "Complete architectural data isolation",
+      desc: t("auth.branding.featureMultiTenantDesc"),
     },
     {
       icon: "⚡",
       label: t("auth.branding.featureRealtime"),
-      desc: "Instant bi-directional state sync",
+      desc: t("auth.branding.featureRealtimeDesc"),
     },
   ];
 
@@ -52,6 +56,10 @@ export function LoginBranding({
   const headline = branding?.loginHeadline || t("auth.branding.headline");
   const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
+  const copyrightText =
+    branding && "copyrightText" in branding
+      ? (branding as TenantBranding & BrandingCopyright).copyrightText
+      : null;
 
   // Check if we have custom slot content
   const hasCustomSidebarContent = slotConfig?.slots?.["login.sidebar.content"]?.length;
@@ -179,9 +187,7 @@ export function LoginBranding({
       <div className="relative z-10 space-y-4">
         {slotConfig && <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} />}
         <div className="flex items-center gap-4 text-sm font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-          <span>
-            {(branding as any)?.copyrightText || `© ${new Date().getFullYear()} ${companyName}`}
-          </span>
+          <span>{copyrightText || `© ${new Date().getFullYear()} ${companyName}`}</span>
           <span className="h-1 w-1 rounded-full bg-[var(--login-accent,hsl(var(--border)))]" />
           <span className="text-xs uppercase tracking-widest opacity-80">
             {t("auth.branding.trust")}

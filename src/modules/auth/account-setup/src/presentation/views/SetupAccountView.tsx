@@ -1,221 +1,58 @@
 /**
- * SetupAccountView — Public Account Activation Page
+ * SetupAccountView — Public Account Activation Page (thin orchestrator)
  *
  * Token-based password setup for new tenant admins.
  * Flow: Validate token → Show form → Set password → Redirect to login
  *
- * Security:
- * - Token is single-use (consumed on activation)
- * - 24-hour expiry
- * - Rate-limited on backend
- * - No auth required (public page)
- *
+ * State sub-views extracted to SetupAccountStateViews.
  * @module auth/account-setup
  */
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import {
-  Shield,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-  Eye,
-  EyeOff,
-  KeyRound,
-  Building2,
-  AlertTriangle,
-} from "lucide-react";
+import { Shield, XCircle, Eye, EyeOff, KeyRound, Building2 } from "lucide-react";
 import { BRAND } from "@core/config/branding";
+import { useI18n } from "@core/providers/i18n-provider";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
+import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
 import {
-  AccountSetupService,
-  type ValidateTokenResponse,
-} from "../../data/services/AccountSetupService";
-
-type PageState = "loading" | "valid" | "invalid" | "activating" | "success" | "error";
+  SetupLoadingView, SetupInvalidView, SetupSuccessView, SetupErrorView, PasswordCheck,
+} from "../components/SetupAccountStateViews";
 
 export function SetupAccountView() {
+  const { t } = useI18n();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const token = searchParams.get("token") || "";
 
-  const [pageState, setPageState] = useState<PageState>(!token ? "invalid" : "loading");
-  const [tokenData, setTokenData] = useState<ValidateTokenResponse | null>(null);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>(
-    !token ? "No setup token provided. Please use the link from your email." : ""
-  );
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const vm = useAccountSetupViewModel({
+    token,
+    missingTokenMessage: t("auth.accountSetup.missingToken"),
+    invalidTokenMessage: t("auth.accountSetup.invalidToken"),
+    validationFailedMessage: t("auth.accountSetup.validationFailed"),
+    activationFailedMessage: t("auth.accountSetup.activationFailed"),
+    activationUnexpectedMessage: t("auth.accountSetup.activationUnexpected"),
+    passwordValidationMessages: {
+      minLength: t("auth.accountSetup.passwordMinLength"),
+      hasUpper: t("auth.accountSetup.passwordUpper"),
+      hasLower: t("auth.accountSetup.passwordLower"),
+      hasNumber: t("auth.accountSetup.passwordNumber"),
+      hasSpecial: t("auth.accountSetup.passwordSpecial"),
+      matches: t("auth.accountSetup.passwordsMatch"),
+    },
+  });
 
-  // Password strength validation
-  const passwordChecks = {
-    minLength: password.length >= 8,
-    hasUpper: /[A-Z]/.test(password),
-    hasLower: /[a-z]/.test(password),
-    hasNumber: /\d/.test(password),
-    hasSpecial: /[^A-Za-z0-9]/.test(password),
-    matches: password === confirmPassword && confirmPassword.length > 0,
-  };
+  // ── State routing ─────────────────────────────────────────────────────────
+  if (vm.pageState === "loading") return <PageWrapper><SetupLoadingView /></PageWrapper>;
+  if (vm.pageState === "invalid") return <PageWrapper><SetupInvalidView errorMessage={vm.errorMessage} /></PageWrapper>;
+  if (vm.pageState === "success") return <PageWrapper><SetupSuccessView tokenData={vm.tokenData} /></PageWrapper>;
+  if (vm.pageState === "error") return <PageWrapper><SetupErrorView errorMessage={vm.errorMessage} onRetry={() => vm.setPageState("valid")} /></PageWrapper>;
 
-  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
-
-  // Validate token on mount
-  useEffect(() => {
-    if (!token) return;
-
-    const validate = async () => {
-      try {
-        const result = await AccountSetupService.validateToken(token);
-        if (result.isValid) {
-          setTokenData(result);
-          setPageState("valid");
-        } else {
-          setPageState("invalid");
-          setErrorMessage(result.error || "This setup link is invalid or has expired.");
-        }
-      } catch (err: any) {
-        setPageState("invalid");
-        const msg =
-          err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          "Failed to validate setup token. The link may have expired.";
-        setErrorMessage(msg);
-      }
-    };
-
-    validate();
-  }, [token]);
-
-  // Handle form submission
-  const handleActivate = useCallback(async () => {
-    setValidationErrors([]);
-
-    if (!isPasswordValid) {
-      const errors: string[] = [];
-      if (!passwordChecks.minLength) errors.push("Password must be at least 8 characters");
-      if (!passwordChecks.hasUpper) errors.push("Must include an uppercase letter");
-      if (!passwordChecks.hasLower) errors.push("Must include a lowercase letter");
-      if (!passwordChecks.hasNumber) errors.push("Must include a number");
-      if (!passwordChecks.hasSpecial) errors.push("Must include a special character");
-      if (!passwordChecks.matches) errors.push("Passwords do not match");
-      setValidationErrors(errors);
-      return;
-    }
-
-    setPageState("activating");
-    try {
-      const result = await AccountSetupService.activateAccount({
-        token,
-        password,
-        confirmPassword,
-      });
-
-      if (result.success) {
-        setPageState("success");
-      } else {
-        setPageState("error");
-        setErrorMessage(result.error || "Account activation failed.");
-      }
-    } catch (err: any) {
-      setPageState("error");
-      const msg =
-        err?.response?.data?.error ||
-        err?.response?.data?.message ||
-        "An unexpected error occurred during activation.";
-      setErrorMessage(msg);
-    }
-  }, [token, password, confirmPassword, isPasswordValid, passwordChecks]);
-
-  // ── Loading state ──
-  if (pageState === "loading") {
-    return (
-      <PageWrapper>
-        <Card className="w-full max-w-md border-border/50 shadow-xl">
-          <CardContent className="flex flex-col items-center justify-center gap-4 py-16">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Validating your setup link...</p>
-          </CardContent>
-        </Card>
-      </PageWrapper>
-    );
-  }
-
-  // ── Invalid / expired token ──
-  if (pageState === "invalid") {
-    return (
-      <PageWrapper>
-        <Card className="w-full max-w-md border-destructive/30 shadow-xl">
-          <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
-            <div className="rounded-full bg-destructive/10 p-4">
-              <XCircle className="h-10 w-10 text-destructive" />
-            </div>
-            <h2 className="text-xl font-semibold text-foreground">Invalid Setup Link</h2>
-            <p className="max-w-xs text-center text-sm text-muted-foreground">{errorMessage}</p>
-            <Button variant="outline" className="mt-4" onClick={() => router.push("/login")}>
-              Go to Login
-            </Button>
-          </CardContent>
-        </Card>
-      </PageWrapper>
-    );
-  }
-
-  // ── Success state ──
-  if (pageState === "success") {
-    return (
-      <PageWrapper>
-        <Card className="w-full max-w-md border-green-500/30 shadow-xl">
-          <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
-            <div className="rounded-full bg-green-500/10 p-4">
-              <CheckCircle2 className="h-10 w-10 text-green-500" />
-            </div>
-            <h2 className="text-xl font-semibold text-foreground">Account Activated!</h2>
-            <p className="max-w-xs text-center text-sm text-muted-foreground">
-              Your password has been set successfully. You can now sign in with your credentials.
-            </p>
-            <div className="mt-2 rounded-lg bg-muted/50 px-4 py-2 text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{tokenData?.adminUsername}</span>
-            </div>
-            <Button className="mt-4 w-full max-w-[200px]" onClick={() => router.push("/login")}>
-              Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </PageWrapper>
-    );
-  }
-
-  // ── Error state (after failed activation) ──
-  if (pageState === "error") {
-    return (
-      <PageWrapper>
-        <Card className="w-full max-w-md border-destructive/30 shadow-xl">
-          <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
-            <div className="rounded-full bg-destructive/10 p-4">
-              <AlertTriangle className="h-10 w-10 text-destructive" />
-            </div>
-            <h2 className="text-xl font-semibold text-foreground">Activation Failed</h2>
-            <p className="max-w-xs text-center text-sm text-muted-foreground">{errorMessage}</p>
-            <Button variant="outline" className="mt-4" onClick={() => setPageState("valid")}>
-              Try Again
-            </Button>
-          </CardContent>
-        </Card>
-      </PageWrapper>
-    );
-  }
-
-  // ── Main form (valid token) ──
+  // ── Main form (valid token) ───────────────────────────────────────────────
   return (
     <PageWrapper>
       <Card className="w-full max-w-md border-border/50 shadow-xl">
@@ -223,117 +60,63 @@ export function SetupAccountView() {
           <div className="mx-auto mb-3 rounded-full bg-primary/10 p-3">
             <KeyRound className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="text-xl">Set Your Password</CardTitle>
+          <CardTitle className="text-xl">{t("auth.accountSetup.setPasswordTitle")}</CardTitle>
           <CardDescription>
-            Complete your account setup for{" "}
-            <span className="font-medium text-foreground">{tokenData?.tenantName}</span>
+            {t("auth.accountSetup.completeFor")}{" "}
+            <span className="font-medium text-foreground">{vm.tokenData?.tenantName}</span>
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-5">
           {/* Account info */}
           <div className="space-y-1.5 rounded-lg border border-border/50 bg-muted/30 p-3">
-            <div className="flex items-center gap-2 text-sm">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Organization:</span>
-              <span className="font-medium text-foreground">{tokenData?.tenantName}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Shield className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Username:</span>
-              <span className="font-medium text-foreground">{tokenData?.adminUsername}</span>
-            </div>
+            <InfoRow icon={<Building2 className="h-4 w-4 text-muted-foreground" />} label={t("auth.accountSetup.organization")} value={vm.tokenData?.tenantName} />
+            <InfoRow icon={<Shield className="h-4 w-4 text-muted-foreground" />} label={t("auth.accountSetup.username")} value={vm.tokenData?.adminUsername} />
           </div>
 
           {/* Password field */}
           <div className="space-y-2">
-            <Label htmlFor="setup-password">Password</Label>
-            <div className="relative">
-              <Input
-                id="setup-password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create a strong password"
-                className="pe-10"
-                autoFocus
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
+            <Label htmlFor="setup-password">{t("auth.password")}</Label>
+            <PasswordField id="setup-password" value={vm.password} show={vm.showPassword} placeholder={t("auth.accountSetup.passwordPlaceholder")} onChange={vm.setPassword} onToggle={() => vm.setShowPassword(!vm.showPassword)} autoFocus />
           </div>
 
-          {/* Password strength indicators */}
-          {password.length > 0 && (
+          {/* Strength indicators */}
+          {vm.password.length > 0 && (
             <div className="grid grid-cols-2 gap-1.5 text-xs">
-              <PasswordCheck label="8+ characters" ok={passwordChecks.minLength} />
-              <PasswordCheck label="Uppercase" ok={passwordChecks.hasUpper} />
-              <PasswordCheck label="Lowercase" ok={passwordChecks.hasLower} />
-              <PasswordCheck label="Number" ok={passwordChecks.hasNumber} />
-              <PasswordCheck label="Special char" ok={passwordChecks.hasSpecial} />
+              <PasswordCheck label={t("auth.accountSetup.passwordMinLengthShort")} ok={vm.passwordChecks.minLength} />
+              <PasswordCheck label={t("auth.accountSetup.passwordUpperShort")} ok={vm.passwordChecks.hasUpper} />
+              <PasswordCheck label={t("auth.accountSetup.passwordLowerShort")} ok={vm.passwordChecks.hasLower} />
+              <PasswordCheck label={t("auth.accountSetup.passwordNumberShort")} ok={vm.passwordChecks.hasNumber} />
+              <PasswordCheck label={t("auth.accountSetup.passwordSpecialShort")} ok={vm.passwordChecks.hasSpecial} />
             </div>
           )}
 
-          {/* Confirm password */}
+          {/* Confirm field */}
           <div className="space-y-2">
-            <Label htmlFor="setup-confirm">Confirm Password</Label>
-            <div className="relative">
-              <Input
-                id="setup-confirm"
-                type={showConfirm ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter your password"
-                className="pe-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-            {confirmPassword.length > 0 && (
-              <PasswordCheck label="Passwords match" ok={passwordChecks.matches} />
-            )}
+            <Label htmlFor="setup-confirm">{t("auth.confirmPassword")}</Label>
+            <PasswordField id="setup-confirm" value={vm.confirmPassword} show={vm.showConfirm} placeholder={t("auth.confirmPasswordPlaceholder")} onChange={vm.setConfirmPassword} onToggle={() => vm.setShowConfirm(!vm.showConfirm)} />
+            {vm.confirmPassword.length > 0 && <PasswordCheck label={t("auth.accountSetup.passwordsMatch")} ok={vm.passwordChecks.matches} />}
           </div>
 
           {/* Validation errors */}
-          {validationErrors.length > 0 && (
+          {vm.validationErrors.length > 0 && (
             <div className="space-y-1 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
-              {validationErrors.map((err, i) => (
+              {vm.validationErrors.map((err, i) => (
                 <p key={i} className="flex items-center gap-1.5 text-xs text-destructive">
-                  <XCircle className="h-3 w-3 shrink-0" />
-                  {err}
+                  <XCircle className="h-3 w-3 shrink-0" />{err}
                 </p>
               ))}
             </div>
           )}
 
-          {/* Submit button */}
-          <Button
-            className="w-full"
-            size="lg"
-            disabled={!isPasswordValid}
-            loading={pageState === "activating"}
-            onClick={handleActivate}
-          >
-            {pageState !== "activating" && <Shield className="me-2 h-4 w-4" />}
-            {pageState === "activating" ? "Activating..." : "Activate Account"}
+          <Button className="w-full" size="lg" disabled={!vm.isPasswordValid} loading={vm.pageState === "activating"} onClick={vm.activate}>
+            {vm.pageState !== "activating" && <Shield className="me-2 h-4 w-4" />}
+            {vm.pageState === "activating" ? t("auth.accountSetup.activating") : t("auth.accountSetup.activate")}
           </Button>
 
-          {/* Expiry note */}
-          {tokenData?.expiresAt && (
+          {vm.tokenData?.expiresAt && (
             <p className="text-center text-xs text-muted-foreground">
-              This link expires on {new Date(tokenData.expiresAt).toLocaleString()}
+              {t("auth.accountSetup.expiresOn")} {new Date(vm.tokenData.expiresAt).toLocaleString()}
             </p>
           )}
         </CardContent>
@@ -342,52 +125,45 @@ export function SetupAccountView() {
   );
 }
 
-// ── Helper components ──
+// ── Micro-components (below 15 lines each — too small to extract separately) ─
 
-function PageWrapper({ children }: { children: React.ReactNode }) {
+function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string }) {
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-12">
-      {/* Top actions */}
-      <div className="absolute right-6 top-6 z-20 flex items-center gap-1">
-        <LanguageSwitcher />
-        <ThemeSwitcher />
-      </div>
-
-      {/* Logo */}
-      <div className="mb-8 flex flex-col items-center gap-3">
-        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-          <img
-            src="/app-logo.png"
-            alt={`${BRAND.name} Logo`}
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        </div>
-      </div>
-
-      {children}
-
-      {/* Footer */}
-      <p className="mt-8 text-[11px] font-medium text-muted-foreground/50">
-        © {new Date().getFullYear()} {BRAND.name}
-      </p>
+    <div className="flex items-center gap-2 text-sm">
+      {icon}
+      <span className="text-muted-foreground">{label}:</span>
+      <span className="font-medium text-foreground">{value}</span>
     </div>
   );
 }
 
-function PasswordCheck({ label, ok }: { label: string; ok: boolean }) {
+function PasswordField({ id, value, show, placeholder, onChange, onToggle, autoFocus }: {
+  id: string; value: string; show: boolean; placeholder: string;
+  onChange: (v: string) => void; onToggle: () => void; autoFocus?: boolean;
+}) {
   return (
-    <div
-      className={`flex items-center gap-1.5 ${ok ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}
-    >
-      {ok ? (
-        <CheckCircle2 className="h-3 w-3" />
-      ) : (
-        <div className="h-3 w-3 rounded-full border border-muted-foreground/30" />
-      )}
-      {label}
+    <div className="relative">
+      <Input id={id} type={show ? "text" : "password"} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="pe-10" autoFocus={autoFocus} />
+      <button type="button" onClick={onToggle} className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground" tabIndex={-1}>
+        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+    </div>
+  );
+}
+
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-12">
+      <div className="absolute right-6 top-6 z-20 flex items-center gap-1">
+        <LanguageSwitcher /><ThemeSwitcher />
+      </div>
+      <div className="mb-8 flex flex-col items-center gap-3">
+        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+          <img src="/app-logo.png" alt={`${BRAND.name} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+        </div>
+      </div>
+      {children}
+      <p className="mt-8 text-[11px] font-medium text-muted-foreground/50">© {new Date().getFullYear()} {BRAND.name}</p>
     </div>
   );
 }

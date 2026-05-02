@@ -10,6 +10,12 @@ import { getAuthContainer } from "@modules/auth/di";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
 import type { IAuthService } from "@modules/auth/core/domain/interfaces/IAuthService";
+import type {
+  IAccountSetupRepository,
+  IPasswordResetRepository,
+  ISsoRepository,
+  ITenantResolutionRepository,
+} from "@modules/auth/core/domain/interfaces";
 
 /**
  * Services Interface
@@ -25,6 +31,10 @@ interface Services {
   navigationService: NavigationService;
   authService: IAuthService;
   authRepository: IAuthRepository;
+  tenantResolutionRepository: ITenantResolutionRepository;
+  ssoRepository: ISsoRepository;
+  passwordResetRepository: IPasswordResetRepository;
+  accountSetupRepository: IAccountSetupRepository;
 }
 
 const ServiceContext = createContext<Services | null>(null);
@@ -42,7 +52,14 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
     const navigationService = new NavigationService(apiService);
 
     // Auth DI Container (triggers refresh handler wiring on first access)
-    const { authService, authRepository } = getAuthContainer();
+    const {
+      authService,
+      authRepository,
+      tenantResolutionRepository,
+      ssoRepository,
+      passwordResetRepository,
+      accountSetupRepository,
+    } = getAuthContainer();
 
     return {
       apiService,
@@ -50,6 +67,10 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
       navigationService,
       authService,
       authRepository,
+      tenantResolutionRepository,
+      ssoRepository,
+      passwordResetRepository,
+      accountSetupRepository,
     };
   }, []);
 

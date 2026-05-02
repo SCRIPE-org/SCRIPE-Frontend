@@ -13,6 +13,7 @@
  */
 
 // ─── Auth ──────────────────────────────────────────────
+import { en as authEn, ar as authAr } from "@modules/auth/locales";
 import { en as signinEn, ar as signinAr } from "@modules/auth/signin/locales";
 
 // ─── Monitoring ────────────────────────────────────────
@@ -106,8 +107,9 @@ import {
 import { en as compReportsEn, ar as compReportsAr } from "@modules/compliance/reports/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
-export const allModulesEn: Record<string, any> = deepMerge(
+export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
+  authEn,
   signinEn,
   // Monitoring
   analyticsEn,
@@ -156,8 +158,9 @@ export const allModulesEn: Record<string, any> = deepMerge(
   compReportsEn
 );
 
-export const allModulesAr: Record<string, any> = deepMerge(
+export const allModulesAr: Record<string, unknown> = deepMerge(
   {},
+  authAr,
   signinAr,
   // Monitoring
   analyticsAr,

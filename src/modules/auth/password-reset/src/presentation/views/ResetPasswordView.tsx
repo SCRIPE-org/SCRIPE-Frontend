@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -14,15 +14,13 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { PasswordInput } from "@core/ui/password-input";
 import { ArrowLeft, Lock, CheckCircle, AlertTriangle } from "lucide-react";
-import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
+import { useLoginBrandingTokens } from "@modules/auth/core/src/presentation/viewmodels/useLoginBrandingTokens";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
-import { useTenantResolution } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
-// ARCH-EXCEPTION: pre-auth view — cannot use DI container (no auth context yet).
-import { getModuleApiService } from "@core/services/api-factory";
+import { useTenantResolution } from "@modules/auth/core/src/presentation/viewmodels/useTenantResolution";
+import { useResetPasswordViewModel } from "../viewmodels/useResetPasswordViewModel";
 
 export function ResetPasswordView() {
   const { t, direction } = useI18n();
@@ -31,12 +29,6 @@ export function ResetPasswordView() {
   const token = searchParams?.get("token") || "";
   const otp = searchParams?.get("otp") || token; // Support both ?otp= and legacy ?token=
   const email = searchParams?.get("email") || "";
-
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Resolve tenant branding
   const { branding } = useTenantResolution("reset-password");
@@ -68,6 +60,25 @@ export function ResetPasswordView() {
   const headline = pageOverride?.headline || t("auth.resetPassword") || "Reset Password";
   const subtitle =
     pageOverride?.subtitle || t("auth.resetPasswordDesc") || "Enter your new password below.";
+  const {
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    isSubmitting,
+    isSuccess,
+    error,
+    isValid,
+    submit,
+  } = useResetPasswordViewModel({
+    email,
+    otp,
+    invalidLinkMessage:
+      t("auth.resetNotAvailable") ||
+      "Invalid reset link. Please request a new one from the forgot password page.",
+    fallbackErrorMessage:
+      t("auth.resetFailed") || "Failed to reset password. The link may have expired.",
+  });
 
   // Dynamic document title
   useEffect(() => {
@@ -75,48 +86,6 @@ export function ResetPasswordView() {
       document.title = `${headline} — ${companyName}`;
     }
   }, [headline, companyName]);
-
-  const isValid = password.length >= 8 && password === confirmPassword;
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!isValid) return;
-
-      setIsSubmitting(true);
-      setError(null);
-
-      try {
-        if (!otp || !email) {
-          setError(
-            t("auth.resetNotAvailable") ||
-              "Invalid reset link. Please request a new one from the forgot password page."
-          );
-          return;
-        }
-
-        // ARCH-EXCEPTION: pre-auth view — getModuleApiService used directly.
-        const api = getModuleApiService("IDENTITY");
-        // Use admin-specific endpoint (targets Admins table, not Users)
-        await api.postPublic(API_ENDPOINTS.AUTH.ADMIN_RESET_PASSWORD, {
-          email,
-          otp,
-          newPassword: password,
-        });
-
-        setIsSuccess(true);
-      } catch (err: unknown) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : t("auth.resetFailed") || "Failed to reset password. The link may have expired."
-        );
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [email, otp, password, isValid, t]
-  );
 
   const wrapperStyle: React.CSSProperties = {
     background:
@@ -254,7 +223,7 @@ export function ResetPasswordView() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={submit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="password" className="login-label">
                     {t("auth.newPassword") || "New Password"}

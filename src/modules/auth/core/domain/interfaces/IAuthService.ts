@@ -7,7 +7,11 @@
  * @module auth/core/domain
  */
 import type { LoginRequestModel, LoginResponseModel } from "../types/AuthTypes";
-import type { Verify2FARequestModel, Verify2FAResponseModel } from "../types/AuthTypes";
+import type {
+  DiscoverWorkspacesResponseDto,
+  Verify2FARequestModel,
+  Verify2FAResponseModel,
+} from "../types/AuthTypes";
 
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;
@@ -15,6 +19,7 @@ export interface IAuthService {
   logout(): Promise<void>;
   refreshToken(): Promise<LoginResponseModel>;
   getMe<T>(): Promise<T>;
+  discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto>;
   impersonate(adminId: string): Promise<LoginResponseModel>;
   stopImpersonation(): Promise<LoginResponseModel>;
   buildOidcConsentForm(

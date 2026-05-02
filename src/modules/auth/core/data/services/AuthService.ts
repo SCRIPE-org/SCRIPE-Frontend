@@ -21,6 +21,9 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
+import type { DiscoverWorkspacesResponseDto } from "../models/WorkspaceModels";
+
+const allowedOidcParams = new Set<string>(ALLOWED_OIDC_PARAMS);
 
 export class AuthService implements IAuthService {
   constructor(private readonly api: IApiService) {}
@@ -62,6 +65,13 @@ export class AuthService implements IAuthService {
     return this.api.get<T>(API_ENDPOINTS.AUTH.ME);
   }
 
+  async discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto> {
+    return this.api.postPublic<DiscoverWorkspacesResponseDto>(
+      API_ENDPOINTS.AUTH.DISCOVER_WORKSPACES,
+      { email: email.trim() }
+    );
+  }
+
   /**
    * Impersonate an admin — httpOnly cookie set by CookieAuthMiddleware.
    * Returns access token (same shape as login response).
@@ -97,7 +107,7 @@ export class AuthService implements IAuthService {
 
     const params: Record<string, string> = {};
     searchParams.forEach((value, key) => {
-      if (ALLOWED_OIDC_PARAMS.includes(key as any)) {
+      if (allowedOidcParams.has(key)) {
         params[key] = value;
       }
     });

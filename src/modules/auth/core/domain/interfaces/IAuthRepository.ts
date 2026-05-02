@@ -1,5 +1,6 @@
 import { LoginRequest, LoginResponse } from "../entities/Auth";
 import { User } from "../entities/User";
+import type { WorkspaceInfo } from "../entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
 
 /** Result of a successful login, carrying subscription metadata alongside the User */
@@ -25,6 +26,10 @@ export interface IAuthRepository {
   refreshToken(): Promise<Result<LoginResponse, Error>>;
   clearTokens(): void;
   isAuthenticated(): boolean;
+  discoverWorkspaces(email: string): Promise<{
+    workspaces: WorkspaceInfo[];
+    hasPlatformAccess: boolean;
+  }>;
   /** Start impersonation — sets httpOnly cookie, returns access token */
   impersonate(adminId: string): Promise<void>;
   /** Stop impersonation — restores original admin session */

@@ -12,7 +12,7 @@ import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { AlertTriangle, XCircle, SearchX } from "lucide-react";
 import Link from "next/link";
-import type { TenantBranding } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
+import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
 
 // ─── Suspended / Canceled View ────────────────────────────
 

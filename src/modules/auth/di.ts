@@ -3,37 +3,59 @@
  *
  * Auth is part of the Identity backend module.
  * Uses NEXT_PUBLIC_IDENTITY_API_URL with fallback to NEXT_PUBLIC_API_URL.
- *
- * This is the SINGLE source of truth for AuthService + AuthRepository.
- * The refresh handler is wired here so ApiService can auto-refresh tokens.
  */
-import { getModuleApiService } from "@core/services/api-factory";
-import { getBaseApiService } from "@core/services/api-factory";
-import { AuthService } from "./core/data/services/AuthService";
-import { AuthRepository } from "./core/data/repositories/AuthRepository";
-import type { IAuthRepository } from "./core/domain/interfaces/IAuthRepository";
-import type { IAuthService } from "./core/domain/interfaces/IAuthService";
+import { getBaseApiService, getModuleApiService } from "@core/services/api-factory";
 import { useAppStore } from "@core/store/useAppStore";
 import { authBroadcast } from "@core/common/broadcast-auth";
+
+import { AuthService } from "./core/data/services/AuthService";
+import { PublicApiService } from "./core/data/services/PublicApiService";
+import { TenantResolutionService } from "./core/data/services/TenantResolutionService";
+import { SsoService } from "./core/data/services/SsoService";
+import { PasswordResetService } from "./core/data/services/PasswordResetService";
+import { AccountSetupService } from "./account-setup/src/data/services/AccountSetupService";
+
+import { AuthRepository } from "./core/data/repositories/AuthRepository";
+import { TenantResolutionRepository } from "./core/data/repositories/TenantResolutionRepository";
+import { SsoRepository } from "./core/data/repositories/SsoRepository";
+import { PasswordResetRepository } from "./core/data/repositories/PasswordResetRepository";
+import { AccountSetupRepository } from "./account-setup/src/data/repositories/AccountSetupRepository";
+
+import type { IAuthRepository } from "./core/domain/interfaces/IAuthRepository";
+import type { IAuthService } from "./core/domain/interfaces/IAuthService";
+import type { ITenantResolutionRepository } from "./core/domain/interfaces/ITenantResolutionRepository";
+import type { ISsoRepository } from "./core/domain/interfaces/ISsoRepository";
+import type { IPasswordResetRepository } from "./core/domain/interfaces/IPasswordResetRepository";
+import type { IAccountSetupRepository } from "./core/domain/interfaces/IAccountSetupRepository";
 
 export interface AuthContainer {
   authService: IAuthService;
   authRepository: IAuthRepository;
+  tenantResolutionRepository: ITenantResolutionRepository;
+  ssoRepository: ISsoRepository;
+  passwordResetRepository: IPasswordResetRepository;
+  accountSetupRepository: IAccountSetupRepository;
 }
 
 let _instance: AuthContainer | null = null;
 
 function createContainer(): AuthContainer {
-  // Use Identity module API (falls back to base URL)
   const apiService = getModuleApiService("IDENTITY");
+  const publicApiService = new PublicApiService(apiService);
 
-  // Create auth chain: Service → Repository
   const authService = new AuthService(apiService);
   const authRepository = new AuthRepository(authService);
+  const tenantResolutionRepository = new TenantResolutionRepository(
+    new TenantResolutionService(publicApiService)
+  );
+  const ssoRepository = new SsoRepository(new SsoService(publicApiService));
+  const passwordResetRepository = new PasswordResetRepository(
+    new PasswordResetService(publicApiService)
+  );
+  const accountSetupRepository = new AccountSetupRepository(
+    new AccountSetupService(publicApiService)
+  );
 
-  // Wire the token refresh handler into the BASE ApiService.
-  // The refresh endpoint reads the refresh token from the httpOnly cookie
-  // automatically via CookieAuthMiddleware — no explicit token needed.
   const baseApi = getBaseApiService();
   baseApi.setRefreshHandler(async () => {
     const result = await authRepository.refreshToken();
@@ -44,24 +66,24 @@ function createContainer(): AuthContainer {
     return result.value.accessToken;
   });
 
-  // Wire the logout handler called when auth is irrecoverably lost (401 after refresh fails).
-  // This avoids a circular dependency: ApiService → useAppStore (via require).
   baseApi.setLogoutHandler(() => {
     useAppStore.getState().logout();
   });
 
-  // Register cross-tab broadcast listener.
-  // When another tab broadcasts "LOGOUT", this tab also logs out.
   authBroadcast.onLogout(() => {
     useAppStore.getState().logout();
   });
 
-  return { authService, authRepository };
+  return {
+    authService,
+    authRepository,
+    tenantResolutionRepository,
+    ssoRepository,
+    passwordResetRepository,
+    accountSetupRepository,
+  };
 }
 
-/**
- * Get the auth container singleton
- */
 export function getAuthContainer(): AuthContainer {
   if (!_instance) {
     _instance = createContainer();
@@ -69,7 +91,6 @@ export function getAuthContainer(): AuthContainer {
   return _instance;
 }
 
-// Backward compatibility: named export
 export const authContainer = new Proxy({} as AuthContainer, {
   get(_target, prop: keyof AuthContainer) {
     return getAuthContainer()[prop];

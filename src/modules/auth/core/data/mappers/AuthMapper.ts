@@ -15,7 +15,27 @@
 
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
-import { LoginResponseModel, UserProfileJson } from "../models/AuthModel";
+import {
+  type LoginRequestJson,
+  type LoginResponseJson,
+  type UserProfileJson,
+} from "../models/AuthModel";
+
+interface LoginResponseLike {
+  isSuccessful: boolean;
+  accessToken: string;
+  mustChangePassword?: boolean;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
+  userProfile?: unknown;
+}
+
+function isUserProfileJson(value: unknown): value is UserProfileJson {
+  if (!value || typeof value !== "object") return false;
+  const profile = value as Record<string, unknown>;
+  return typeof profile.id === "string" && typeof profile.username === "string";
+}
 
 export class AuthMapper {
   // ===== Login Request =====
@@ -23,7 +43,7 @@ export class AuthMapper {
   /**
    * Convert JSON/API response to LoginRequest domain model
    */
-  static loginRequestFromJson(json: any): LoginRequest {
+  static loginRequestFromJson(json: LoginRequestJson): LoginRequest {
     return new LoginRequest({
       identifier: json.identifier || "",
       password: json.password || "",
@@ -35,7 +55,7 @@ export class AuthMapper {
   /**
    * Convert LoginRequest domain model to JSON for API requests
    */
-  static loginRequestToJson(request: LoginRequest): any {
+  static loginRequestToJson(request: LoginRequest): LoginRequestJson {
     return {
       identifier: request.identifier,
       password: request.password,
@@ -49,7 +69,7 @@ export class AuthMapper {
   /**
    * Convert JSON/API response to LoginResponse domain model
    */
-  static loginResponseFromJson(json: any): LoginResponse {
+  static loginResponseFromJson(json: LoginResponseJson): LoginResponse {
     return new LoginResponse({
       success: json.success || false,
       accessToken: json.accessToken || "",
@@ -59,7 +79,7 @@ export class AuthMapper {
   /**
    * Convert LoginResponseModel to LoginResponse entity
    */
-  static loginResponseFromModel(model: LoginResponseModel): LoginResponse {
+  static loginResponseFromModel(model: LoginResponseLike): LoginResponse {
     return new LoginResponse({
       success: model.isSuccessful,
       accessToken: model.accessToken,
@@ -67,14 +87,14 @@ export class AuthMapper {
       subscriptionStatus: model.subscriptionStatus,
       gracePhase: model.gracePhase,
       editionName: model.editionName,
-      userProfile: model.userProfile ? AuthMapper.userFromJson(model.userProfile) : null,
+      userProfile: AuthMapper.userFromUnknown(model.userProfile),
     });
   }
 
   /**
    * Convert LoginResponse domain model to JSON
    */
-  static loginResponseToJson(response: LoginResponse): any {
+  static loginResponseToJson(response: LoginResponse): LoginResponseJson {
     return {
       success: response.success,
       accessToken: response.accessToken,
@@ -108,5 +128,11 @@ export class AuthMapper {
       tenantId: data.tenantId ?? null,
       restrictedFields: data.restrictedFields ?? undefined,
     });
+  }
+
+  static userFromUnknown(value: unknown): User | null {
+    if (typeof value === "string") return AuthMapper.userFromJson(value);
+    if (isUserProfileJson(value)) return AuthMapper.userFromJson(value);
+    return null;
   }
 }

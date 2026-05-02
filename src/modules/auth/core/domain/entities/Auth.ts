@@ -31,7 +31,7 @@ export interface LoginResponseData {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
-  userProfile?: any;
+  userProfile?: unknown;
 }
 
 /**
@@ -87,7 +87,7 @@ export class LoginResponse {
   public readonly subscriptionStatus: string | null;
   public readonly gracePhase: string | null;
   public readonly editionName: string | null;
-  public readonly userProfile: any;
+  public readonly userProfile: unknown;
 
   constructor(data: LoginResponseData) {
     this.success = data.success;
