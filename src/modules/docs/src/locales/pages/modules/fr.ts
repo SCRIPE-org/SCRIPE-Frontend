@@ -347,5 +347,14 @@ export const fr = {
           "Obtenir toutes les valeurs de fonctionnalités résolues pour un locataire (affiche la source : Dérogation/Édition/Défaut)",
       },
     },
+
+    compliance: {
+      overview: { title: "Compliance Module" },
+      dsr: { title: "Data Subject Requests (DSR)" },
+      consent: { title: "Consent Management" },
+      retention: { title: "Data Retention Policies" },
+      inventory: { title: "Data Inventory" },
+      reports: { title: "Compliance Reports" },
+    },
   },
 };

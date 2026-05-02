@@ -301,5 +301,14 @@ export const zh = {
         resolved: "获取租户所有已解析的功能值（显示来源：覆盖/版本/默认值）",
       },
     },
+
+    compliance: {
+      overview: { title: "Compliance Module" },
+      dsr: { title: "Data Subject Requests (DSR)" },
+      consent: { title: "Consent Management" },
+      retention: { title: "Data Retention Policies" },
+      inventory: { title: "Data Inventory" },
+      reports: { title: "Compliance Reports" },
+    },
   },
 };

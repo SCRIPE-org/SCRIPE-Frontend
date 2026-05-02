@@ -70,5 +70,7 @@ export const en = {
     commercialSupport: "Support & Resources",
     commercialModules: "Modules",
     commercialEntitlements: "Entitlements",
+    compliance: "Compliance",
+    commercialCompliance: "Compliance",
   },
 };

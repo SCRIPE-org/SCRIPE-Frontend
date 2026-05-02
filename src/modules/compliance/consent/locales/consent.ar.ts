@@ -23,7 +23,11 @@ export const ar = {
     // Messages
     consentRecorded: "تم تسجيل الموافقة بنجاح",
 
+    // Dialogs
+    withdrawConfirmDesc: "هل أنت متأكد من سحب موافقتك على هذا الغرض؟ يمكنك إعادة منحها في أي وقت.",
+
     // Empty states
     noConsents: "لا توجد سجلات موافقة",
+    noConsentsDesc: "ستظهر سجلات الموافقة هنا بعد تكوين الأغراض.",
   },
 };

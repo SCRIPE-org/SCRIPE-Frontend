@@ -72,5 +72,15 @@ export const ar = {
     dsrRejected: "تم رفض الطلب",
     dsrCancelled: "تم إلغاء الطلب",
     erasureConfirmed: "تم تأكيد الحذف — بدأت فترة السماح",
+
+    // Dialog / form extras
+    submitDsrDesc: "تقديم طلب بيانات جديد نيابةً عن صاحب البيانات.",
+    resolutionPlaceholder: "أضف ملاحظات القرار…",
+    notesPlaceholder: "ملاحظات اختيارية لمقدم الطلب…",
+
+    // Shared labels
+    active: "نشط",
+    inactive: "غير نشط",
+    regulation: "اللائحة",
   },
 };

@@ -20,6 +20,11 @@ export const API_ENDPOINTS = {
     ME: `${V1}/auth/admin/me`,
     IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
     STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
+    // ── Admin Password Reset (targets Admins table, not Users) ──
+    ADMIN_REQUEST_PASSWORD_RESET: `${V1}/auth/admin/request-password-reset`,
+    ADMIN_RESET_PASSWORD: `${V1}/auth/admin/reset-password`,
+    // ── Workspace Discovery — returns all tenants for an email ──
+    DISCOVER_WORKSPACES: `${V1}/auth/admin/discover-workspaces`,
     TWO_FA: {
       ENABLE: `${V1}/auth/admin/2fa/enable`,
       CONFIRM: `${V1}/auth/admin/2fa/confirm`,

@@ -70,5 +70,7 @@ export const ar = {
     commercialSupport: "الدعم والموارد",
     commercialModules: "الوحدات",
     commercialEntitlements: "الصلاحيات",
+    compliance: "الامتثال",
+    commercialCompliance: "الامتثال",
   },
 };

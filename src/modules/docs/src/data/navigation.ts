@@ -601,9 +601,53 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
+      // ── Compliance Module ──────────────────────────────────────
+      {
+        id: "mod-compliance",
+        titleKey: "nav.compliance",
+        icon: "shield-check",
+        order: 2,
+        children: [
+          {
+            id: "mod-comp-overview",
+            titleKey: "modules.compliance.overview.title",
+            slug: "modules/compliance-overview",
+            order: 1,
+          },
+          {
+            id: "mod-comp-dsr",
+            titleKey: "modules.compliance.dsr.title",
+            slug: "modules/compliance-dsr",
+            order: 2,
+          },
+          {
+            id: "mod-comp-consent",
+            titleKey: "modules.compliance.consent.title",
+            slug: "modules/compliance-consent",
+            order: 3,
+          },
+          {
+            id: "mod-comp-retention",
+            titleKey: "modules.compliance.retention.title",
+            slug: "modules/compliance-retention",
+            order: 4,
+          },
+          {
+            id: "mod-comp-inventory",
+            titleKey: "modules.compliance.inventory.title",
+            slug: "modules/compliance-inventory",
+            order: 5,
+          },
+          {
+            id: "mod-comp-reports",
+            titleKey: "modules.compliance.reports.title",
+            slug: "modules/compliance-reports",
+            order: 6,
+          },
+        ],
+      },
       // Future modules:
-      // { id: "mod-inventory", titleKey: "nav.inventory", order: 2, children: [...] },
-      // { id: "mod-crm", titleKey: "nav.crm", order: 3, children: [...] },
+      // { id: "mod-inventory", titleKey: "nav.inventory", order: 3, children: [...] },
     ],
   },
 
@@ -1041,8 +1085,39 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // Future commercial modules:
-      // { id: "comm-mod-inventory", titleKey: "nav.commercialInventory", order: 2, children: [...] },
+      // ── Compliance Module (Commercial) ─────────────────────────
+      {
+        id: "comm-mod-compliance",
+        titleKey: "nav.commercialCompliance",
+        icon: "shield-check",
+        order: 2,
+        children: [
+          {
+            id: "comm-mod-comp-overview",
+            titleKey: "commercial.complianceOverview.title",
+            slug: "commercial/compliance-overview",
+            order: 1,
+          },
+          {
+            id: "comm-mod-comp-gdpr",
+            titleKey: "commercial.complianceGdpr.title",
+            slug: "commercial/compliance-gdpr",
+            order: 2,
+          },
+          {
+            id: "comm-mod-comp-dsr",
+            titleKey: "commercial.complianceDsr.title",
+            slug: "commercial/compliance-dsr",
+            order: 3,
+          },
+          {
+            id: "comm-mod-comp-roi",
+            titleKey: "commercial.complianceRoi.title",
+            slug: "commercial/compliance-roi",
+            order: 4,
+          },
+        ],
+      },
     ],
   },
 ];

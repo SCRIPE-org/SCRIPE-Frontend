@@ -22,7 +22,15 @@ export const ar = {
     // Messages
     policyUpdated: "تم تحديث سياسة الاحتفاظ",
 
+    // Edit dialog
+    activePolicyDesc: "تفعيل أو تعطيل سياسة الاحتفاظ هذه",
+
     // Empty states
     noPolicies: "لم يتم تكوين سياسات احتفاظ",
+
+    // Shared
+    active: "نشط",
+    inactive: "غير نشط",
+    total: "الإجمالي",
   },
 };

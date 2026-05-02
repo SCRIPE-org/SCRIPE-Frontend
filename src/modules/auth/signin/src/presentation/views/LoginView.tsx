@@ -30,6 +30,8 @@ import { CredentialsForm } from "../components/CredentialsForm";
 import { TwoFactorForm } from "../components/TwoFactorForm";
 import { SsoProviderButtons } from "../components/SsoProviderButtons";
 import { SlotRenderer } from "../components/SlotRenderer";
+
+import { PostCredentialWorkspaceSelector } from "../components/PostCredentialWorkspaceSelector";
 import { useSsoProviders } from "../viewmodels/useSsoProviders";
 import { useTenantResolution } from "../viewmodels/useTenantResolution";
 import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
@@ -41,6 +43,7 @@ export function LoginView() {
   const { t, language, direction, setLanguage } = useI18n();
   const isRTL = language === "ar";
   const hasCheckedAuth = useRef(false);
+
 
   // Pre-auth domain resolution for white-label branding
   const {
@@ -125,12 +128,12 @@ export function LoginView() {
     vm.checkAndRedirect();
   }, [vm.hasHydrated, vm.checkAndRedirect, isPreviewMode]);
 
-  // Wire resolved tenant ID into the login viewmodel for tenant-scoped login
+  // Wire resolved tenant ID into the login viewmodel for tenant-scoped login.
+  // The ref is updated synchronously (no setState delay) to avoid the race condition
+  // where handleLogin fires before the useEffect setState settles.
   useEffect(() => {
-    if (tenantId) {
-      vm.setTenantId(tenantId);
-    }
-  }, [tenantId, vm.setTenantId]);
+    vm.setTenantId(tenantId ?? undefined);
+  }, [tenantId]);
 
   // Dynamic document title — a11y page title override takes priority
   useEffect(() => {
@@ -230,7 +233,16 @@ export function LoginView() {
       {/* Slot: form.above */}
       <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-6" />
 
-      {vm.loginStep === "credentials" ? (
+      {vm.loginStep === "workspace-selection" ? (
+        <PostCredentialWorkspaceSelector
+          email={vm.formData.identifier}
+          workspaces={vm.availableWorkspaces}
+          onSelect={vm.selectWorkspace}
+          onBack={vm.goBackToCredentials}
+          isLoading={vm.isLoading}
+          error={vm.error}
+        />
+      ) : vm.loginStep === "credentials" ? (
         <>
           <CredentialsForm
             formData={vm.formData}
@@ -241,7 +253,9 @@ export function LoginView() {
             isRTL={isRTL}
             updateField={vm.updateField}
             togglePasswordVisibility={vm.togglePasswordVisibility}
-            handleLogin={vm.handleLogin}
+            // Pass tenantId directly at call time — eliminates the useEffect race condition
+            // where handleLogin() could fire before setState(tenantId) settled.
+            handleLogin={() => vm.handleLogin(tenantId ?? undefined)}
             errorAnnounce={a11y.errorAnnounce}
           />
           <SsoProviderButtons
@@ -250,6 +264,7 @@ export function LoginView() {
             error={sso.error}
             onProviderClick={sso.initiateSsoLogin}
           />
+
         </>
       ) : (
         <TwoFactorForm

@@ -15,8 +15,14 @@ export const en = {
 
     // Messages
     reportQueued: "Report generation queued",
+    reportQueuedDesc: "Refresh in a few minutes to see your report.",
+
+    // Dialog
+    generateReportDesc: "Select a report type and optional date range to generate a compliance report.",
+    reportQueuedInfo: "Reports are generated asynchronously. Refresh the list after a few minutes to see your report.",
 
     // Empty states
     noReports: "No reports generated",
+    noReportsDesc: "Generate your first compliance report to get started.",
   },
 };

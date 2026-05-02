@@ -325,5 +325,14 @@ export const de = {
           "Alle aufgelösten Funktionswerte für einen Mandanten abrufen (zeigt Quelle: Override/Edition/Default)",
       },
     },
+
+    compliance: {
+      overview: { title: "Compliance Module" },
+      dsr: { title: "Data Subject Requests (DSR)" },
+      consent: { title: "Consent Management" },
+      retention: { title: "Data Retention Policies" },
+      inventory: { title: "Data Inventory" },
+      reports: { title: "Compliance Reports" },
+    },
   },
 };

@@ -20,12 +20,16 @@ import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useTenantResolution } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
+// ARCH-EXCEPTION: pre-auth view — cannot use DI container (no auth context yet).
+import { getModuleApiService } from "@core/services/api-factory";
 
 export function ResetPasswordView() {
   const { t, direction } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get("token") || "";
+  const otp = searchParams?.get("otp") || token; // Support both ?otp= and legacy ?token=
   const email = searchParams?.get("email") || "";
 
   const [password, setPassword] = useState("");
@@ -83,25 +87,35 @@ export function ResetPasswordView() {
       setError(null);
 
       try {
-        if (!token) {
+        if (!otp || !email) {
           setError(
             t("auth.resetNotAvailable") ||
-              "Self-service password reset is not yet available. Please contact your administrator."
+              "Invalid reset link. Please request a new one from the forgot password page."
           );
           return;
         }
+
+        // ARCH-EXCEPTION: pre-auth view — getModuleApiService used directly.
+        const api = getModuleApiService("IDENTITY");
+        // Use admin-specific endpoint (targets Admins table, not Users)
+        await api.postPublic(API_ENDPOINTS.AUTH.ADMIN_RESET_PASSWORD, {
+          email,
+          otp,
+          newPassword: password,
+        });
+
         setIsSuccess(true);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError(
-          err?.message ||
-            t("auth.resetFailed") ||
-            "Failed to reset password. The link may have expired."
+          err instanceof Error
+            ? err.message
+            : t("auth.resetFailed") || "Failed to reset password. The link may have expired."
         );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [email, token, password, isValid, t]
+    [email, otp, password, isValid, t]
   );
 
   const wrapperStyle: React.CSSProperties = {

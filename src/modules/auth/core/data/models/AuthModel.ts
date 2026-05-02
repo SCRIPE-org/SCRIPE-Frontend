@@ -63,10 +63,24 @@ export interface UserProfileJson {
   restrictedFields?: Record<string, string[]> | null;
 }
 
+export interface WorkspaceChoiceJson {
+  tenantId: string;
+  tenantCode: string;
+  tenantName: string;
+  logoUrl: string | null;
+  isPlatformAdmin: boolean;
+  isActivated: boolean;
+  isDisabled?: boolean;
+  disabledReason?: string | null;
+}
+
+
 export interface LoginResponseJson {
   success?: boolean;
   accessToken: string;
   requires2FA?: boolean;
+  requiresWorkspaceSelection?: boolean;
+  availableWorkspaces?: WorkspaceChoiceJson[] | null;
   mustChangePassword?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
@@ -109,6 +123,8 @@ export class LoginResponseModel {
     public readonly accessToken: string,
     public readonly success: boolean = true,
     public readonly requires2FA: boolean = false,
+    public readonly requiresWorkspaceSelection: boolean = false,
+    public readonly availableWorkspaces: WorkspaceChoiceJson[] | null = null,
     public readonly mustChangePassword: boolean = false,
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
@@ -118,9 +134,11 @@ export class LoginResponseModel {
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
     return new LoginResponseModel(
-      json.accessToken,
+      json.accessToken ?? "",
       json.success ?? true,
       json.requires2FA ?? false,
+      json.requiresWorkspaceSelection ?? false,
+      json.availableWorkspaces ?? null,
       json.mustChangePassword ?? false,
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
@@ -134,6 +152,8 @@ export class LoginResponseModel {
       success: this.success,
       accessToken: this.accessToken,
       requires2FA: this.requires2FA,
+      requiresWorkspaceSelection: this.requiresWorkspaceSelection,
+      availableWorkspaces: this.availableWorkspaces,
       mustChangePassword: this.mustChangePassword,
       subscriptionStatus: this.subscriptionStatus,
       gracePhase: this.gracePhase,

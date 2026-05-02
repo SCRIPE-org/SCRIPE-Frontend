@@ -71,5 +71,15 @@ export const en = {
     dsrRejected: "DSR rejected",
     dsrCancelled: "DSR cancelled",
     erasureConfirmed: "Erasure confirmed — grace period started",
+
+    // Dialog / form extras
+    submitDsrDesc: "Submit a new data subject request on behalf of the subject.",
+    resolutionPlaceholder: "Add resolution notes…",
+    notesPlaceholder: "Optional notes for the requester…",
+
+    // Shared labels
+    active: "Active",
+    inactive: "Inactive",
+    regulation: "Regulation",
   },
 };

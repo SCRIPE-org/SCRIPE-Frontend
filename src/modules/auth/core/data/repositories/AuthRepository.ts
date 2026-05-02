@@ -31,8 +31,8 @@ import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 /**
  * Import from domain layer + re-export for backward compatibility.
  */
-import { TwoFactorRequiredError } from "../../domain/errors/AuthErrors";
-export { TwoFactorRequiredError };
+import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "../../domain/errors/AuthErrors";
+export { TwoFactorRequiredError, WorkspaceSelectionRequiredError };
 
 /**
  * Clear all authentication related data from local storage
@@ -82,6 +82,26 @@ export class AuthRepository implements IAuthRepository {
       throw new TwoFactorRequiredError();
     }
 
+    // Check if workspace selection is required (email belongs to multiple tenants)
+    // Credentials have been validated ✓ — no tokens issued yet.
+    // Throw a typed error so the UI can show the workspace picker.
+    if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
+      appLogger.auth(`Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`);
+      throw new WorkspaceSelectionRequiredError(
+        responseModel.availableWorkspaces.map((w) => ({
+          tenantId: w.tenantId,
+          tenantCode: w.tenantCode,
+          tenantName: w.tenantName,
+          logoUrl: w.logoUrl,
+          isPlatformAdmin: w.isPlatformAdmin,
+          isActivated: w.isActivated,
+          isDisabled: w.isDisabled ?? false,
+          disabledReason: w.disabledReason ?? null,
+        }))
+      );
+    }
+
+
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
 
@@ -130,7 +150,7 @@ export class AuthRepository implements IAuthRepository {
 
       return {
         user,
-        mustChangePassword: false, // 2FA flow doesn't carry this flag separately
+        mustChangePassword: responseModel.mustChangePassword ?? false,
         subscriptionStatus: responseModel.subscriptionStatus,
         gracePhase: responseModel.gracePhase,
         editionName: responseModel.editionName,

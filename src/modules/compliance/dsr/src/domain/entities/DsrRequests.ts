@@ -7,8 +7,8 @@ export interface SubmitDsrRequest {
   requestType: string;
   regulationCode: string;
   requesterNotes?: string;
-  subjectId: string;
-  subjectEmail: string;
+  subjectId?: string;
+  subjectEmail?: string;
   subjectType?: string;
 }
 

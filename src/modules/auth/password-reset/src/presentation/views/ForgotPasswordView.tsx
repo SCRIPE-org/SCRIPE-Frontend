@@ -19,6 +19,9 @@ import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useTenantResolution } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
+// ARCH-EXCEPTION: pre-auth view — cannot use DI container (no auth context yet).
+import { getModuleApiService } from "@core/services/api-factory";
 
 export function ForgotPasswordView() {
   const { t, direction } = useI18n();
@@ -73,6 +76,18 @@ export function ForgotPasswordView() {
     async (e: React.FormEvent) => {
       e.preventDefault();
       if (!email.trim()) return;
+
+      try {
+        // ARCH-EXCEPTION: pre-auth view — getModuleApiService used directly.
+        const api = getModuleApiService("IDENTITY");
+        // Use admin-specific reset endpoint (targets Admins table, not Users)
+        await api.postPublic(API_ENDPOINTS.AUTH.ADMIN_REQUEST_PASSWORD_RESET, {
+          email: email.trim(),
+        });
+      } catch {
+        // Intentionally silent — don't reveal whether email exists (anti-enumeration)
+      }
+      // Always show success regardless of result to prevent email enumeration
       setIsSubmitted(true);
     },
     [email]

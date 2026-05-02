@@ -23,6 +23,7 @@ export interface Verify2FARequestJson {
 export interface Verify2FAResponseJson {
   accessToken: string;
   expiresAt: string;
+  mustChangePassword?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -59,6 +60,7 @@ export class Verify2FAResponseModel {
   constructor(
     public readonly accessToken: string,
     public readonly expiresAt: string,
+    public readonly mustChangePassword: boolean = false,
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
@@ -69,6 +71,7 @@ export class Verify2FAResponseModel {
     return new Verify2FAResponseModel(
       json.accessToken,
       json.expiresAt,
+      json.mustChangePassword ?? false,
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
       json.editionName ?? null,

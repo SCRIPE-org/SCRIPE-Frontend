@@ -22,7 +22,15 @@ export const en = {
     // Messages
     policyUpdated: "Retention policy updated",
 
+    // Edit dialog
+    activePolicyDesc: "Enable or disable this retention policy",
+
     // Empty states
     noPolicies: "No retention policies configured",
+
+    // Shared
+    active: "Active",
+    inactive: "Inactive",
+    total: "total",
   },
 };

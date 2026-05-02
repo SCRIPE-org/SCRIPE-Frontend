@@ -13,7 +13,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { appLogger } from "@/core/common/logger";
 import { LoginRequest } from "../../../domain/entities/Auth";
-import { TwoFactorRequiredError } from "../../../domain/errors/AuthErrors";
+import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "../../../domain/errors/AuthErrors";
 
 export function useAuthLogin() {
   const { authRepository } = useServices();
@@ -76,6 +76,8 @@ export function useAuthLogin() {
     onError: (error: Error) => {
       // Don't show toast for 2FA required — it's not an error, it's a flow step
       if (error instanceof TwoFactorRequiredError) return;
+      // Don't show toast for workspace selection — it's a UX step, not an error
+      if (error instanceof WorkspaceSelectionRequiredError) return;
       operationError(error.message || "Login failed");
     },
   });

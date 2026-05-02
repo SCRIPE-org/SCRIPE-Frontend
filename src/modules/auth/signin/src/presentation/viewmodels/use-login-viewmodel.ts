@@ -7,7 +7,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { validateForm, VALIDATION_SETS, isFormValid } from "@core/common/validation";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { TwoFactorRequiredError } from "@modules/auth/core/domain/errors/AuthErrors";
+import { TwoFactorRequiredError, WorkspaceSelectionRequiredError, WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import { useServices } from "@core/providers/service-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";
@@ -19,7 +19,7 @@ export interface LoginFormData {
   password: string;
 }
 
-export type LoginStep = "credentials" | "two-factor";
+export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
 
 export function useLoginViewModel() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -30,12 +30,18 @@ export function useLoginViewModel() {
   const [error, setError] = useState("");
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // 2FA state
+  // 2FA + workspace-selection state
   const [loginStep, setLoginStep] = useState<LoginStep>("credentials");
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [useBackupCode, setUseBackupCode] = useState(false);
   const [isVerifying2FA, setIsVerifying2FA] = useState(false);
   const [tenantId, setTenantId] = useState<string | undefined>(undefined);
+  const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
+
+  // Ref to hold the LATEST resolved tenantId without triggering re-renders.
+  // This eliminates the race condition where handleLogin captures a stale
+  // tenantId value from useState before LoginView's useEffect can update it.
+  const tenantIdRef = useRef<string | undefined>(undefined);
 
   const loginMutation = useAuthLogin();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
@@ -107,7 +113,9 @@ export function useLoginViewModel() {
   }, [hasHydrated, isAuthenticated, isRedirecting, redirectPath, handleRedirect]);
 
   // Login submission handler
-  const handleLogin = useCallback(async () => {
+  // Accepts an optional tenantIdOverride to bypass the state-based race condition.
+  // LoginView should always pass its resolved tenantId here directly.
+  const handleLogin = useCallback(async (tenantIdOverride?: string) => {
     // Validate form data
     const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
 
@@ -119,6 +127,9 @@ export function useLoginViewModel() {
 
     setError("");
 
+    // Resolve tenantId: prefer direct override, then ref, then state
+    const resolvedTenantId = tenantIdOverride ?? tenantIdRef.current ?? tenantId;
+
     try {
       // Extract tenant code from URL for tenant-aware logout redirect
       const devTenantCode =
@@ -129,7 +140,7 @@ export function useLoginViewModel() {
       await loginMutation.mutateAsync({
         identifier: formData.identifier,
         password: formData.password,
-        tenantId,
+        tenantId: resolvedTenantId,
         tenantCode: devTenantCode,
       });
 
@@ -153,6 +164,13 @@ export function useLoginViewModel() {
       if (err instanceof TwoFactorRequiredError) {
         setLoginStep("two-factor");
         setTwoFactorCode("");
+        setError("");
+        return;
+      }
+      // If the email belongs to multiple tenants, show the workspace picker
+      if (err instanceof WorkspaceSelectionRequiredError) {
+        setAvailableWorkspaces(err.availableWorkspaces);
+        setLoginStep("workspace-selection");
         setError("");
         return;
       }
@@ -219,6 +237,7 @@ export function useLoginViewModel() {
   }, [
     twoFactorCode,
     formData,
+    tenantId,
     authRepository,
     setAuth,
     operationSuccess,
@@ -234,8 +253,65 @@ export function useLoginViewModel() {
     setLoginStep("credentials");
     setTwoFactorCode("");
     setUseBackupCode(false);
+    setAvailableWorkspaces([]);
     setError("");
+    // Reset the redirect guard so a fresh login attempt can redirect normally
+    hasTriggeredRedirect.current = false;
   }, []);
+
+  /**
+   * Select a workspace from the post-credential picker.
+   * Re-calls login with the chosen tenant ID — this hits Case A in the handler
+   * (tenant-scoped login) which issues a real JWT.
+   */
+  const selectWorkspace = useCallback(
+    async (workspace: WorkspaceChoice) => {
+      // Guard: disabled cards (suspended tenant, deactivated account, setup pending)
+      if (!workspace.isActivated || workspace.isDisabled) return;
+
+      setError("");
+
+      // For platform admin: no tenantId needed (empty string in backend DTO)
+      const chosenTenantId = workspace.isPlatformAdmin ? undefined : workspace.tenantId;
+
+      // Build the tenant code for logout redirect
+      const tenantCode = workspace.isPlatformAdmin ? undefined : workspace.tenantCode;
+
+      try {
+        await loginMutation.mutateAsync({
+          identifier: formData.identifier,
+          password: formData.password,
+          tenantId: chosenTenantId,
+          tenantCode,
+        });
+
+        setIsRedirecting(true);
+        if (!hasTriggeredRedirect.current) {
+          hasTriggeredRedirect.current = true;
+          const mustChange = useAppStore.getState().mustChangePassword;
+          const targetPath = mustChange ? "/change-password" : redirectPath;
+          setTimeout(() => handleRedirect(targetPath), 100);
+        }
+      } catch (err: unknown) {
+        if (err instanceof TwoFactorRequiredError) {
+          // CRITICAL: Persist the selected workspace's tenantId so handleVerify2FA
+          // sends the 2FA verification to the correct tenant-scoped admin record.
+          // Without this, tenantId would remain undefined (from URL resolution)
+          // and the backend would look up the wrong admin.
+          tenantIdRef.current = chosenTenantId;
+          setTenantId(chosenTenantId);
+
+          setLoginStep("two-factor");
+          setTwoFactorCode("");
+          setError("");
+          return;
+        }
+        const errorMessage = err instanceof Error ? err.message : "Login failed";
+        setError(errorMessage);
+      }
+    },
+    [formData, loginMutation, handleRedirect, redirectPath]
+  );
 
   // Toggle between TOTP and backup code input
   const toggleBackupCode = useCallback(() => {
@@ -253,6 +329,7 @@ export function useLoginViewModel() {
     setLoginStep("credentials");
     setTwoFactorCode("");
     setUseBackupCode(false);
+    setAvailableWorkspaces([]);
     hasTriggeredRedirect.current = false;
   }, []);
 
@@ -272,12 +349,13 @@ export function useLoginViewModel() {
     hasHydrated,
     isRedirecting,
 
-    // 2FA state
+    // 2FA + workspace selection state
     loginStep,
     twoFactorCode,
     setTwoFactorCode,
     useBackupCode,
     isVerifying2FA,
+    availableWorkspaces,
 
     // Actions
     updateField,
@@ -288,7 +366,12 @@ export function useLoginViewModel() {
     toggleBackupCode,
     checkAndRedirect,
     resetForm,
-    setTenantId,
+    selectWorkspace,
+    // Pass resolved tenantId into the ref immediately (no re-render needed)
+    setTenantId: (id: string | undefined) => {
+      tenantIdRef.current = id;
+      setTenantId(id);
+    },
 
     // Computed
     isFormValid: isFormValid(validateForm(formData, VALIDATION_SETS.LOGIN_FORM)),
