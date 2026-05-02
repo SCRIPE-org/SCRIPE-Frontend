@@ -77,7 +77,10 @@ function isDevDomain(hostname: string): boolean {
 function getDevTenantCode(): string | null {
   if (typeof window === "undefined") return null;
   const params = new URLSearchParams(window.location.search);
-  return params.get("_tenant");
+  const code = params.get("_tenant");
+  // Normalize to uppercase — codes are stored as uppercase in the DB.
+  // This ensures ?_tenant=acme, ?_tenant=Acme, ?_tenant=ACME all resolve identically.
+  return code ? code.toUpperCase() : null;
 }
 
 // ─── Hook ─────────────────────────────────────────────────

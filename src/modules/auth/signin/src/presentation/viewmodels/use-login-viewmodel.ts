@@ -131,11 +131,12 @@ export function useLoginViewModel() {
     const resolvedTenantId = tenantIdOverride ?? tenantIdRef.current ?? tenantId;
 
     try {
-      // Extract tenant code from URL for tenant-aware logout redirect
-      const devTenantCode =
+      // Extract tenant code from URL for tenant-aware logout redirect (normalize case)
+      const rawDevCode =
         typeof window !== "undefined"
           ? (new URLSearchParams(window.location.search).get("_tenant") ?? undefined)
           : undefined;
+      const devTenantCode = rawDevCode ? rawDevCode.toUpperCase() : undefined;
 
       await loginMutation.mutateAsync({
         identifier: formData.identifier,
