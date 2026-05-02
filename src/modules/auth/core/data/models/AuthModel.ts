@@ -23,6 +23,8 @@ export interface LoginRequestJson {
   password: string;
   tenantId?: string;
   deviceInfo?: string;
+  /** Signals explicit platform admin workspace selection — prevents discovery loop */
+  isPlatformAdmin?: boolean;
 }
 
 export interface UserProfileJson {
@@ -98,11 +100,18 @@ export class LoginRequestModel {
     public readonly identifier: string,
     public readonly password: string,
     public readonly tenantId?: string,
-    public readonly deviceInfo?: string
+    public readonly deviceInfo?: string,
+    public readonly isPlatformAdmin: boolean = false
   ) {}
 
   static fromJson(json: LoginRequestJson): LoginRequestModel {
-    return new LoginRequestModel(json.identifier, json.password, json.tenantId, json.deviceInfo);
+    return new LoginRequestModel(
+      json.identifier,
+      json.password,
+      json.tenantId,
+      json.deviceInfo,
+      json.isPlatformAdmin ?? false
+    );
   }
 
   toJson(): LoginRequestJson {
@@ -111,6 +120,7 @@ export class LoginRequestModel {
       password: this.password,
       tenantId: this.tenantId,
       deviceInfo: this.deviceInfo,
+      isPlatformAdmin: this.isPlatformAdmin || undefined, // omit when false to keep payload lean
     };
   }
 }

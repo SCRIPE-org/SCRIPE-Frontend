@@ -4,6 +4,61 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "security.authDeep.intro" },
 
+  // ─── Multi-Workspace Login Routing ────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.workspaceRoutingTitle",
+    id: "workspace-routing",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.workspaceRoutingIntro" },
+  {
+    type: "flowchart",
+    title: "Multi-Workspace Login Routing",
+    direction: "vertical",
+    nodes: [
+      { id: "login", label: "POST /auth/login", type: "primary" },
+      { id: "route", label: "Route Decision", type: "info", description: "Inspect tenantId & isPlatformAdmin" },
+      { id: "caseA", label: "Case A: Tenant-Scoped", type: "primary", description: "tenantId present → strict isolation" },
+      { id: "caseAp", label: "Case A': Platform Admin", type: "success", description: "isPlatformAdmin=true → TenantId=null lookup" },
+      { id: "caseB", label: "Case B: Discovery", type: "warning", description: "No tenantId → search all tenants" },
+      { id: "found0", label: "0 Matches", type: "danger", description: "Invalid credentials" },
+      { id: "found1", label: "1 Match", type: "success", description: "Direct auth for that tenant" },
+      { id: "foundN", label: "N Matches", type: "info", description: "Return workspace list" },
+      { id: "picker", label: "Workspace Picker (Frontend)", type: "info" },
+      { id: "relogin", label: "Re-login with tenantId", type: "primary" },
+      { id: "auth", label: "Authenticate", type: "success" },
+    ],
+    connections: [
+      { from: "login", to: "route" },
+      { from: "route", to: "caseA", label: "has tenantId" },
+      { from: "route", to: "caseAp", label: "isPlatformAdmin" },
+      { from: "route", to: "caseB", label: "neither" },
+      { from: "caseA", to: "auth" },
+      { from: "caseAp", to: "auth" },
+      { from: "caseB", to: "found0", label: "no results" },
+      { from: "caseB", to: "found1", label: "exact one" },
+      { from: "caseB", to: "foundN", label: "multiple" },
+      { from: "found1", to: "auth" },
+      { from: "foundN", to: "picker" },
+      { from: "picker", to: "relogin" },
+      { from: "relogin", to: "caseA", style: "dashed" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Flag", "Type", "Purpose"],
+    rows: [
+      ["tenantId", "string?", "Encrypted tenant ID from workspace selection or domain resolution. Triggers Case A."],
+      ["isPlatformAdmin", "boolean", "Set to true when user selects 'Platform Administration' workspace. Triggers Case A' to prevent infinite discovery loop."],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "security.authDeep.workspaceRoutingTip",
+  },
+
   // ─── JWT Lifecycle ────────────────────────────────────────
   {
     type: "heading",
@@ -23,6 +78,12 @@ const sections: DocSection[] = [
         label: "Validate Credentials",
         type: "warning",
         description: "BCrypt verify + account checks",
+      },
+      {
+        id: "pwExpiry",
+        label: "Password Expiry Check",
+        type: "warning",
+        description: "ITenantPasswordValidator → MustChangePassword",
       },
       {
         id: "issue",
@@ -53,7 +114,8 @@ const sections: DocSection[] = [
     ],
     connections: [
       { from: "login", to: "validate" },
-      { from: "validate", to: "issue", label: "success" },
+      { from: "validate", to: "pwExpiry" },
+      { from: "pwExpiry", to: "issue", label: "not expired" },
       { from: "issue", to: "use" },
       { from: "use", to: "expire", label: "after 15min" },
       { from: "expire", to: "refresh" },
@@ -287,6 +349,29 @@ var isValid = BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);
     highlightLines: [3, 4, 5, 6, 27, 28, 29, 30],
   },
 
+  // ─── Password Expiry Enforcement ─────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.passwordExpiryTitle",
+    id: "password-expiry",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.passwordExpiryIntro" },
+  {
+    type: "table",
+    headers: ["Check", "Source", "Outcome"],
+    rows: [
+      ["PasswordExpiryDays > 0", "TenantSettings", "Feature enabled for tenant"],
+      ["PasswordLastChanged + ExpiryDays < Now", "Admin entity", "Password is expired"],
+      ["MustChangePassword = true", "TokenResponse", "Frontend forces redirect to change-password"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "security.authDeep.passwordExpiryNote",
+  },
+
   // ─── External Authentication ──────────────────────────────
   {
     type: "heading",
@@ -486,6 +571,20 @@ public record ExternalUserInfo(
     variant: "tip",
     contentKey: "security.authDeep.cookieAuthTip",
   },
+
+  // ─── SSO Tenant Suspension Gate ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.ssoSuspensionTitle",
+    id: "sso-suspension-gate",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.ssoSuspensionIntro" },
+  {
+    type: "info",
+    variant: "danger",
+    contentKey: "security.authDeep.ssoSuspensionWarning",
+  },
 ];
 
 registerPage({
@@ -495,6 +594,6 @@ registerPage({
   category: "security",
   order: 2,
   sections,
-  relatedSlugs: ["security/overview", "security/data-protection", "security/api-security"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["security/overview", "security/data-protection", "security/api-security", "features/authentication"],
+  lastUpdated: "2026-05-02",
 });

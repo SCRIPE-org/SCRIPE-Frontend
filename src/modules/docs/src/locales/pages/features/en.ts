@@ -7,10 +7,23 @@ export const en = {
     authentication: {
       title: "Authentication",
       description:
-        "Dual auth (Admin + User), JWT tokens, 2FA with backup codes, and tenant-scoped password policy.",
+        "Dual auth (Admin + User), multi-workspace routing, JWT tokens, 2FA with backup codes, password expiry enforcement, SSO suspension gate, and tenant-scoped password policy.",
       intro:
-        "NEXORA provides a secure authentication system with JWT access tokens, refresh token rotation, optional two-factor authentication, and comprehensive rate limiting. The system supports separate Admin and User authentication flows with different JWT claims and permissions.",
+        "NEXORA provides a secure authentication system with JWT access tokens, refresh token rotation, optional two-factor authentication, multi-workspace login discovery, password expiry enforcement, and comprehensive rate limiting. The system supports separate Admin and User authentication flows with different JWT claims and permissions.",
       flowTitle: "Authentication Flow",
+      workspaceTitle: "Multi-Workspace Login Discovery",
+      workspaceIntro:
+        "When an admin logs in from the platform domain (no pre-resolved tenant), the backend executes a 3-case routing algorithm. Case A uses a provided tenantId for strict domain isolation. Case A' triggers when the isPlatformAdmin flag is set — this directly looks up the platform admin (TenantId = null) and bypasses workspace discovery entirely, preventing an infinite loop. Case B performs workspace discovery: it first checks for a platform admin, then searches all tenants by email — returning a workspace picker if multiple matches are found.",
+      workspaceNote:
+        "The isPlatformAdmin flag was introduced to solve a critical loop: when a platform admin selected 'Platform Administration' from the workspace picker, it would re-trigger workspace discovery (since there is no tenantId for the platform). The flag now signals the backend to skip discovery and authenticate directly against the platform-level admin record.",
+      passwordExpiryTitle: "Password Expiry Enforcement",
+      passwordExpiryIntro:
+        "During login, after BCrypt verification and lockout checks, the handler invokes ITenantPasswordValidator to check if the admin's password has exceeded the tenant's PasswordExpiryDays setting. If expired, the response includes MustChangePassword = true, forcing the frontend to redirect the admin to the change-password page. The admin receives a valid JWT but cannot access the dashboard until the password is updated.",
+      ssoSuspensionTitle: "SSO Tenant Suspension Gate",
+      ssoSuspensionIntro:
+        "The ExternalLoginCommandHandler includes a tenant suspension security gate. After SSO token validation and account linking, the handler checks the admin's tenant status. If the tenant is Suspended or Cancelled, login is rejected with a localized error — preventing deactivated users from bypassing standard login checks via SSO providers like Google or Azure AD.",
+      ssoSuspensionWarning:
+        "Without this gate, SSO users could authenticate via an external identity provider and receive a valid NEXORA JWT even if their tenant has been suspended. All SSO login paths now enforce the same tenant status checks as the standard password login.",
       jwtTitle: "JWT Token Configuration",
       jwtIntro:
         "The system uses short-lived access tokens (15 minutes) with long-lived refresh tokens (7 days). Refresh tokens are rotated on each use to prevent reuse attacks.",

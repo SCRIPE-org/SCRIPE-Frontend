@@ -70,7 +70,8 @@ export class AuthRepository implements IAuthRepository {
       credentials.identifier,
       credentials.password,
       credentials.tenantId,
-      credentials.deviceInfo
+      credentials.deviceInfo,
+      credentials.isPlatformAdmin
     );
     const responseModel = await this.service.login(requestModel);
 

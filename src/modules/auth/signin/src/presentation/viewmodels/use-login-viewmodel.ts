@@ -261,8 +261,10 @@ export function useLoginViewModel() {
 
   /**
    * Select a workspace from the post-credential picker.
-   * Re-calls login with the chosen tenant ID — this hits Case A in the handler
-   * (tenant-scoped login) which issues a real JWT.
+   *
+   * For tenant workspaces   → hits CASE A (tenant-scoped login, issues JWT for that tenant)
+   * For platform admin      → hits CASE A' (isPlatformAdmin = true, issues platform JWT)
+   *                           WITHOUT isPlatformAdmin, backend re-runs CASE B → infinite loop!
    */
   const selectWorkspace = useCallback(
     async (workspace: WorkspaceChoice) => {
@@ -271,7 +273,7 @@ export function useLoginViewModel() {
 
       setError("");
 
-      // For platform admin: no tenantId needed (empty string in backend DTO)
+      // For platform admin: no tenantId needed — flag the backend to authenticate directly
       const chosenTenantId = workspace.isPlatformAdmin ? undefined : workspace.tenantId;
 
       // Build the tenant code for logout redirect
@@ -283,6 +285,9 @@ export function useLoginViewModel() {
           password: formData.password,
           tenantId: chosenTenantId,
           tenantCode,
+          // ★ CRITICAL: tell backend this is an explicit platform admin selection
+          // Without this, backend sees tenantId=null → re-runs CASE B → workspace picker again → ∞
+          isPlatformAdmin: workspace.isPlatformAdmin,
         });
 
         setIsRedirecting(true);
@@ -306,11 +311,17 @@ export function useLoginViewModel() {
           setError("");
           return;
         }
-        const errorMessage = err instanceof Error ? err.message : "Login failed";
+        // WorkspaceSelectionRequiredError in this context means something went wrong
+        // (the backend returned a discovery response instead of a token). Show a clear message.
+        if (err instanceof WorkspaceSelectionRequiredError) {
+          setError(t("auth.loginFailed"));
+          return;
+        }
+        const errorMessage = err instanceof Error ? err.message : t("auth.loginFailed");
         setError(errorMessage);
       }
     },
-    [formData, loginMutation, handleRedirect, redirectPath]
+    [formData, loginMutation, handleRedirect, redirectPath, t]
   );
 
   // Toggle between TOTP and backup code input

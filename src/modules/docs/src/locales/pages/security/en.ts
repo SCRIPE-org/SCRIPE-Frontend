@@ -41,22 +41,32 @@ export const en = {
     authDeep: {
       title: "Authentication Deep Dive",
       description:
-        "JWT lifecycle, BCrypt hashing, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, and session management.",
+        "Multi-workspace routing, JWT lifecycle, BCrypt hashing, password expiry enforcement, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, SSO suspension gate, and session management.",
       intro:
-        "This page dives deep into every authentication mechanism in NEXORA  from JWT token issuance and refresh rotation, through BCrypt password hashing and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, and session management.",
+        "This page dives deep into every authentication mechanism in NEXORA — from multi-workspace login routing and JWT token issuance, through BCrypt password hashing, password expiry enforcement, and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, SSO tenant suspension gates, and session management.",
+      workspaceRoutingTitle: "Multi-Workspace Login Routing",
+      workspaceRoutingIntro:
+        "When an admin logs in from the platform domain without a pre-resolved tenant, the login handler executes a 3-case routing algorithm: Case A (tenant-scoped login with a provided tenantId), Case A' (explicit platform admin selection via the isPlatformAdmin flag — bypasses workspace discovery entirely), and Case B (workspace discovery — searches all tenants by email, returns a workspace picker if multiple matches are found). The isPlatformAdmin flag was introduced to prevent an infinite loop where selecting 'Platform Administration' from the workspace picker would re-trigger discovery.",
+      workspaceRoutingTip:
+        "The isPlatformAdmin flag is set by the frontend when the user explicitly selects 'Platform Administration' from the workspace picker. This flag signals the backend to look up the admin with TenantId = null (platform-level) instead of running workspace discovery again.",
       jwtLifecycleTitle: "JWT Token Lifecycle",
       jwtLifecycleIntro:
         "Access tokens are short-lived (15 minutes) JWT tokens signed with HMAC-SHA256. When an access token expires, the client uses the refresh token to obtain a new token pair. Refresh tokens are single-use and rotated on every use.",
       tokenStructureTitle: "JWT Token Structure",
       bcryptTitle: "BCrypt Password Hashing",
       bcryptIntro:
-        "Passwords are hashed using BCrypt with a configurable work factor (default: 12). BCrypt is intentionally slow to resist brute-force attacks  each hash takes ~250ms, making mass password cracking impractical.",
+        "Passwords are hashed using BCrypt with a configurable work factor (default: 12). BCrypt is intentionally slow to resist brute-force attacks — each hash takes ~250ms, making mass password cracking impractical.",
       lockoutTitle: "Account Lockout",
       lockoutIntro:
         "After 5 consecutive failed login attempts, the account is locked for 5 minutes. The counter resets on successful login. Admins can manually unlock accounts via the admin panel.",
       tfaTitle: "Two-Factor Authentication (TOTP)",
       tfaIntro:
         "NEXORA supports TOTP-based 2FA compatible with Google Authenticator, Authy, and Microsoft Authenticator. When enabled, users must enter a 6-digit time-based code after password verification.",
+      passwordExpiryTitle: "Password Expiry Enforcement",
+      passwordExpiryIntro:
+        "After credentials are validated and lockout checks pass, the login handler invokes ITenantPasswordValidator.IsPasswordExpiredAsync to check if the admin's password has exceeded the tenant's configured PasswordExpiryDays. If expired, the TokenResponse includes MustChangePassword = true, which forces the frontend to redirect the admin to the change-password page before granting dashboard access. This check uses the admin's PasswordLastChanged field against the tenant's security policy.",
+      passwordExpiryNote:
+        "Password expiry is a per-tenant setting configured via TenantSettings.PasswordExpiryDays. A value of 0 disables expiry entirely. When the feature is active, the ITenantPasswordValidator computes (PasswordLastChanged + ExpiryDays) and compares it to DateTime.UtcNow. The admin is never locked out — they receive a valid JWT but with the MustChangePassword flag set, which the frontend enforces as a redirect.",
       externalAuthTitle: "External Authentication (OAuth)",
       externalAuthIntro:
         "NEXORA integrates with Google, Facebook, Apple, and Microsoft OAuth providers. External tokens are validated server-side before creating or linking local accounts.",
@@ -73,6 +83,11 @@ export const en = {
         "NEXORA uses a stateless JWT-based session model. Access tokens are held in client memory (never localStorage), refresh tokens are stored as HttpOnly secure cookies or in the database, and 2FA session tokens are temporary in-memory tokens valid for 5 minutes.",
       cookieAuthTip:
         "For maximum security, configure refresh tokens to be sent as HttpOnly, Secure, SameSite=Strict cookies. This prevents XSS attacks from accessing refresh tokens via JavaScript.",
+      ssoSuspensionTitle: "SSO Tenant Suspension Gate",
+      ssoSuspensionIntro:
+        "The ExternalLoginCommandHandler now includes a tenant suspension security gate. Before issuing a JWT after SSO/OIDC authentication, the handler checks the admin's tenant status. If the tenant is Suspended or Cancelled, the login is rejected with a localized error — preventing deactivated users from bypassing the standard login checks via SSO. This gate runs after token validation and account linking but before JWT issuance.",
+      ssoSuspensionWarning:
+        "Without this gate, SSO users could authenticate via an external IdP (e.g., Google, Azure AD) and receive a valid NEXORA JWT even if their tenant has been suspended or cancelled. This was a critical security gap that has been remediated.",
     },
     dataProtection: {
       title: "Data Protection",

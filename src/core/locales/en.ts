@@ -6,6 +6,8 @@ export const en = {
     password: "Password",
     loginButton: "Sign In",
     loginError: "Invalid username or password",
+    loginSuccess: "Login successful",
+    loginFailed: "Login failed. Please try again.",
     welcome: "NEXORA",
     pleaseLogin: "Please sign in to continue",
     usernamePlaceholder: "name@company.com or username",

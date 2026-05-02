@@ -1,4 +1,4 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
@@ -17,23 +17,84 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "login", label: "POST /auth/login", type: "default" },
+      { id: "route", label: "Route Decision", type: "info", description: "Check tenantId & isPlatformAdmin flags" },
+      { id: "caseA", label: "Case A: Tenant-Scoped", type: "primary", description: "tenantId provided → strict domain isolation" },
+      { id: "caseAp", label: "Case A': Platform Admin", type: "primary", description: "isPlatformAdmin = true → direct platform auth" },
+      { id: "caseB", label: "Case B: Discovery", type: "warning", description: "No tenantId → workspace discovery" },
       { id: "validate", label: "Validate Credentials + BCrypt", type: "warning" },
       { id: "lockout", label: "Check Lockout (5 attempts / 15 min)", type: "danger" },
+      { id: "pwExpiry", label: "Password Expiry Check", type: "warning", description: "ITenantPasswordValidator → MustChangePassword" },
       { id: "2fa", label: "2FA Required?", type: "info" },
       { id: "no2fa", label: "Issue JWT + Refresh Token", type: "success" },
       { id: "yes2fa", label: "Issue Temporary 2FA Token", type: "info" },
       { id: "verify2fa", label: "POST /auth/verify-2fa", type: "default" },
       { id: "jwt", label: "Issue Full JWT + Refresh Token", type: "success" },
+      { id: "workspace", label: "Workspace Picker", type: "info", description: "Frontend shows workspace list" },
     ],
     connections: [
-      { from: "login", to: "validate" },
+      { from: "login", to: "route" },
+      { from: "route", to: "caseA", label: "has tenantId" },
+      { from: "route", to: "caseAp", label: "isPlatformAdmin" },
+      { from: "route", to: "caseB", label: "neither" },
+      { from: "caseA", to: "validate" },
+      { from: "caseAp", to: "validate" },
+      { from: "caseB", to: "validate", label: "1 match" },
+      { from: "caseB", to: "workspace", label: "N matches" },
+      { from: "workspace", to: "login", label: "re-login with tenantId", style: "dashed" },
       { from: "validate", to: "lockout" },
-      { from: "lockout", to: "2fa" },
+      { from: "lockout", to: "pwExpiry" },
+      { from: "pwExpiry", to: "2fa" },
       { from: "2fa", to: "no2fa", label: "No" },
       { from: "2fa", to: "yes2fa", label: "Yes" },
       { from: "yes2fa", to: "verify2fa" },
       { from: "verify2fa", to: "jwt" },
     ],
+  },
+
+  // — Multi-Workspace Login Discovery
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.workspaceTitle",
+    id: "workspace-discovery",
+  },
+  { type: "paragraph", contentKey: "features.authentication.workspaceIntro" },
+  {
+    type: "table",
+    headers: ["Case", "Condition", "Behavior"],
+    rows: [
+      ["A — Tenant-Scoped", "tenantId is provided", "Strict domain isolation. Only the admin within that exact tenant is matched."],
+      ["A' — Platform Admin", "isPlatformAdmin = true", "Bypasses workspace discovery. Looks up admin with TenantId = null (platform-level). Prevents workspace picker infinite loop."],
+      ["B — Discovery", "No tenantId, not isPlatformAdmin", "Step 1: Check for platform admin (TenantId = null). Step 2: Search all tenants by email. 0 → invalid, 1 → direct login, N → return workspace list."],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.authentication.workspaceNote",
+  },
+
+  // — Password Expiry Enforcement
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.passwordExpiryTitle",
+    id: "password-expiry",
+  },
+  { type: "paragraph", contentKey: "features.authentication.passwordExpiryIntro" },
+
+  // — SSO Tenant Suspension Gate
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.ssoSuspensionTitle",
+    id: "sso-suspension-gate",
+  },
+  { type: "paragraph", contentKey: "features.authentication.ssoSuspensionIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.authentication.ssoSuspensionWarning",
   },
 
   // € JWT Config €
@@ -359,6 +420,6 @@ registerPage({
   category: "features",
   order: 1,
   sections,
-  relatedSlugs: ["features/role-permissions", "features/audit-system"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["features/role-permissions", "features/audit-system", "security/authentication-deep"],
+  lastUpdated: "2026-05-02",
 });

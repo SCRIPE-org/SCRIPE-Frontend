@@ -11,6 +11,7 @@ import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";
+import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@/core/common/logger";
 import { LoginRequest } from "../../../domain/entities/Auth";
 import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "../../../domain/errors/AuthErrors";
@@ -21,6 +22,7 @@ export function useAuthLogin() {
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const { operationError, operationSuccess } = useEnhancedToast();
   const { refreshNavigation } = useNavigation();
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -29,14 +31,16 @@ export function useAuthLogin() {
       password,
       tenantId,
       tenantCode,
+      isPlatformAdmin,
     }: {
       identifier: string;
       password: string;
       tenantId?: string;
       tenantCode?: string;
+      isPlatformAdmin?: boolean;
     }) => {
       // Construct domain entity — repository handles mapping to API model
-      const request = new LoginRequest({ identifier, password, tenantId });
+      const request = new LoginRequest({ identifier, password, tenantId, isPlatformAdmin });
       return authRepository.login(request);
     },
     onSuccess: async (result, variables) => {
@@ -56,8 +60,8 @@ export function useAuthLogin() {
         useAppStore.getState().setTenantCode(variables.tenantCode);
       }
 
-      // 4. Show success toast
-      operationSuccess("Login successful!");
+      // 4. Show success toast (localized)
+      operationSuccess(t("auth.loginSuccess"));
 
       // 5. Skip navigation & data fetch if user must change password first
       // They'll be redirected to /change-password immediately — no need to load menus
@@ -78,7 +82,7 @@ export function useAuthLogin() {
       if (error instanceof TwoFactorRequiredError) return;
       // Don't show toast for workspace selection — it's a UX step, not an error
       if (error instanceof WorkspaceSelectionRequiredError) return;
-      operationError(error.message || "Login failed");
+      operationError(error.message || t("auth.loginFailed"));
     },
   });
 }

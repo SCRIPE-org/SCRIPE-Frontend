@@ -15,6 +15,13 @@ export interface LoginRequestData {
   password: string;
   tenantId?: string;
   deviceInfo?: string;
+  /**
+   * Set to true when the user explicitly selects the Platform Administration
+   * workspace from the workspace picker. Prevents the workspace discovery
+   * infinite loop by telling the backend to authenticate directly as
+   * platform admin (TenantId = null) rather than re-running CASE B discovery.
+   */
+  isPlatformAdmin?: boolean;
 }
 
 export interface LoginResponseData {
@@ -50,11 +57,13 @@ export class LoginRequest {
   public readonly password: string;
   public readonly tenantId?: string;
   public readonly deviceInfo: string;
+  public readonly isPlatformAdmin: boolean;
 
   constructor(data: LoginRequestData) {
     this.identifier = data.identifier;
     this.password = data.password;
     this.tenantId = data.tenantId;
+    this.isPlatformAdmin = data.isPlatformAdmin ?? false;
     // Auto-populate device info if not provided
     this.deviceInfo = data.deviceInfo || getDeviceInfo();
   }
