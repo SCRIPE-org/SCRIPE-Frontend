@@ -1,5 +1,7 @@
 import { NotificationService } from "./services/notification.service";
+import { PublicApiService } from "./services/public-api.service";
 import type { IApiService } from "./interfaces/api.interface";
+import type { IPublicApiService } from "./interfaces/public-api.interface";
 import { getBaseApiService } from "./services/api-factory";
 
 /**
@@ -8,12 +10,13 @@ import { getBaseApiService } from "./services/api-factory";
  * This is the SINGLE source of truth for core service instantiation.
  *
  * Clean Architecture:
- * - Core only owns ApiService + NotificationService
+ * - Core owns ApiService, PublicApiService + NotificationService
  * - Auth module owns its own AuthService + AuthRepository (see auth/di.ts)
  * - ServiceProvider wraps this for React access
  */
 export interface CoreContainer {
   apiService: IApiService;
+  publicApiService: IPublicApiService;
   notificationService: NotificationService;
 }
 
@@ -26,9 +29,11 @@ let container: CoreContainer | null = null;
 function initContainer(): CoreContainer {
   const apiService = getBaseApiService();
   const notificationService = new NotificationService();
+  const publicApiService = new PublicApiService(apiService);
 
   return {
     apiService,
+    publicApiService,
     notificationService,
   };
 }

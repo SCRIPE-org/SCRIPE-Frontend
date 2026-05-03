@@ -9,7 +9,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { authBroadcast } from "@core/common/broadcast-auth";
 
 import { AuthService } from "./core/data/services/AuthService";
-import { PublicApiService } from "./core/data/services/PublicApiService";
+import { PublicApiService } from "@core/services";
 import { TenantResolutionService } from "./core/data/services/TenantResolutionService";
 import { SsoService } from "./core/data/services/SsoService";
 import { PasswordResetService } from "./core/data/services/PasswordResetService";

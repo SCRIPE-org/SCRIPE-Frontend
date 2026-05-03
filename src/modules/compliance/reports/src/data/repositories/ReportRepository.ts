@@ -25,6 +25,11 @@ export class ReportRepository implements IReportRepository {
     return result.id;
   }
 
+  async getById(id: string): Promise<ComplianceReport> {
+    const model = await this.service.getById(id);
+    return ReportMapper.toEntity(model);
+  }
+
   download(id: string): Promise<Blob> {
     return this.service.download(id);
   }

@@ -1,6 +1,6 @@
 /**
  * Report Mapper — Model ↔ Entity conversion.
- * Repositories MUST use this mapper. Never construct entities directly.
+ * Derives status string from backend's isReady boolean.
  */
 import { ComplianceReport } from "../../domain/entities/ComplianceReport";
 import type { ComplianceReportData } from "../../domain/entities/ComplianceReport";
@@ -12,13 +12,12 @@ export class ReportMapper {
       id: model.id,
       reportType: model.reportType ?? "",
       regulationCode: model.regulationCode ?? "",
-      periodStart: model.periodStart,
-      periodEnd: model.periodEnd,
-      status: (model.status ?? "Pending") as ComplianceReportData["status"],
+      periodStart: model.periodStart ?? "",
+      periodEnd: model.periodEnd ?? "",
+      // Derive status from isReady — backend doesn't have a status string field
+      status: model.isReady ? "Ready" : "Pending",
       generatedAt: model.generatedAt ?? null,
-      downloadUrl: model.downloadUrl ?? null,
-      requestedBy: model.requestedBy,
-      requestedAt: model.requestedAt,
+      downloadUrl: model.fileUrl ?? null,
     };
     return new ComplianceReport(data);
   }

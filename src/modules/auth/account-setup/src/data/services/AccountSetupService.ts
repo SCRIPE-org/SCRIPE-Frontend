@@ -12,12 +12,12 @@ import type {
   IAccountSetupService,
   ValidateTokenResponse,
 } from "../../../../core/domain/interfaces/IAccountSetupService";
-import type { PublicApiService } from "../../../../core/data/services/PublicApiService";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 
 export type { ActivateAccountRequest, ActivateAccountResponse, ValidateTokenResponse };
 
 export class AccountSetupService implements IAccountSetupService {
-  constructor(private readonly api: PublicApiService) {}
+  constructor(private readonly api: IPublicApiService) {}
 
   async validateToken(token: string): Promise<ValidateTokenResponse> {
     return this.api.get<ValidateTokenResponse>(API_ENDPOINTS.ACCOUNT_SETUP.VALIDATE_TOKEN(token));

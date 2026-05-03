@@ -21,9 +21,8 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
-import { Separator } from "@core/ui/separator";
 import { toast } from "@core/ui/use-toast";
+import { GenericModal } from "@core/crud/components/generic-modal";
 
 // ── Consent Card ──────────────────────────────────────────────────────────────
 
@@ -117,10 +116,9 @@ function ConsentCard({
   );
 }
 
-// ── Withdraw Confirm Dialog ───────────────────────────────────────────────────
+// ── Withdraw Confirm Dialog (GenericModal) ────────────────────────────────────
 
 function WithdrawConfirmDialog({
-  purposeId,
   open,
   onConfirm,
   onCancel,
@@ -134,30 +132,27 @@ function WithdrawConfirmDialog({
 }) {
   const { t } = useI18n();
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onCancel()}>
-      <DialogContent className="sm:max-w-[400px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="rounded-lg bg-destructive/10 p-1.5">
-              <XCircle className="h-4 w-4 text-destructive" />
-            </div>
-            {t("compliance.withdrawn")}
-          </DialogTitle>
-          <DialogDescription>{t("compliance.withdrawConfirmDesc") ?? "Are you sure you want to withdraw your consent for this purpose?"}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={onCancel}>{t("common.cancel")}</Button>
-          <Button
-            id="consent-withdraw-confirm"
-            variant="destructive"
-            disabled={isWithdrawing}
-            onClick={onConfirm}
-          >
-            {isWithdrawing ? t("common.loading") : t("compliance.withdrawn")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <GenericModal
+      open={open}
+      onOpenChange={(v) => !v && onCancel()}
+      title={t("compliance.withdrawn")}
+      description={t("compliance.withdrawConfirmDesc") ?? "Are you sure you want to withdraw your consent for this purpose?"}
+      size="sm"
+    >
+      <div className="flex justify-end gap-2 border-t pt-4">
+        <Button variant="outline" onClick={onCancel}>
+          {t("common.cancel")}
+        </Button>
+        <Button
+          id="consent-withdraw-confirm"
+          variant="destructive"
+          disabled={isWithdrawing}
+          onClick={onConfirm}
+        >
+          {isWithdrawing ? t("common.loading") : t("compliance.withdrawn")}
+        </Button>
+      </div>
+    </GenericModal>
   );
 }
 

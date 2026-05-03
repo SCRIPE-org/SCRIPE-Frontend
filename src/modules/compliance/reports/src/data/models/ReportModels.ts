@@ -6,12 +6,20 @@
 export interface ReportModel {
   id: string;
   reportType: string;
-  regulationCode: string;
-  periodStart: string;
-  periodEnd: string;
-  status: string;
+  title: string;
+  regulationCode: string | null;
+  periodStart: string | null;
+  periodEnd: string | null;
+  fileUrl: string | null;
+  fileSizeBytes: number | null;
+  /** Backend sends isReady (bool), not a status string */
+  isReady: boolean;
   generatedAt: string | null;
-  downloadUrl: string | null;
-  requestedBy?: string;
-  requestedAt?: string;
+}
+
+export interface ReportListResponse {
+  items: ReportModel[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }

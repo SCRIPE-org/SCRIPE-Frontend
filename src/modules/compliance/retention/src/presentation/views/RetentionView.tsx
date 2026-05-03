@@ -22,12 +22,12 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { toast } from "@core/ui/use-toast";
+import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 
 // ── Category Icons ─────────────────────────────────────────────────────────────
 
@@ -53,6 +53,13 @@ const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode; cls:
     cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
   },
 };
+
+// ── Expiry Action options ──────────────────────────────────────────────────────
+
+const EXPIRY_ACTION_OPTIONS: GenericSelectOption[] = [
+  { value: "Delete", label: "Delete" },
+  { value: "Anonymize", label: "Anonymize" },
+];
 
 // ── Edit Policy Dialog ─────────────────────────────────────────────────────────
 
@@ -94,58 +101,54 @@ function EditPolicyDialog({
   const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
 
   return (
-    <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogContent className="sm:max-w-[460px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className={`rounded-lg border p-1.5 ${meta.cls}`}>{meta.icon}</div>
-            {t("compliance.updatePolicy")}
-          </DialogTitle>
-          <DialogDescription>{meta.label} · {t("compliance.retentionCategory")}: {policy.category}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-5 py-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="ret-days">{t("compliance.retentionDays")}</Label>
-            <Input
-              id="ret-days"
-              type="number"
-              min={policy.minRetentionDays}
-              max={policy.maxRetentionDays}
-              value={days}
-              onChange={(e) => setDays(Number(e.target.value))}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t("compliance.minRetention")}: {policy.minRetentionDays} · {t("compliance.maxRetention")}: {policy.maxRetentionDays}
-            </p>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="ret-action">{t("compliance.expiryAction")}</Label>
-            <Select value={action} onValueChange={(v) => setAction(v as ExpiryAction)}>
-              <SelectTrigger id="ret-action">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" className="z-[200]">
-                <SelectItem value="Delete">{t("compliance.delete")}</SelectItem>
-                <SelectItem value="Anonymize">{t("compliance.anonymize")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
-            <div>
-              <p className="text-sm font-medium">{t("compliance.active")}</p>
-              <p className="text-xs text-muted-foreground">{t("compliance.activePolicyDesc") ?? "Enable or disable this retention policy"}</p>
-            </div>
-            <Switch id="ret-active" checked={active} onCheckedChange={setActive} />
-          </div>
+    <GenericModal
+      open={open}
+      onOpenChange={handleOpen}
+      title={t("compliance.updatePolicy") ?? "Update Policy"}
+      description={`${meta.label} · ${t("compliance.retentionCategory")}: ${policy.category}`}
+      size="sm"
+      formKey={open ? `policy-${policy.id}` : undefined}
+    >
+      <div className="space-y-5 py-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="ret-days">{t("compliance.retentionDays")}</Label>
+          <Input
+            id="ret-days"
+            type="number"
+            min={policy.minRetentionDays}
+            max={policy.maxRetentionDays}
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t("compliance.minRetention")}: {policy.minRetentionDays} · {t("compliance.maxRetention")}: {policy.maxRetentionDays}
+          </p>
         </div>
-        <DialogFooter>
+        <div className="space-y-1.5">
+          <Label>{t("compliance.expiryAction")}</Label>
+          <GenericSelect
+            options={EXPIRY_ACTION_OPTIONS}
+            value={action}
+            onValueChange={(v: string | string[]) => setAction(v as ExpiryAction)}
+            placeholder={t("compliance.expiryAction") ?? "Expiry action"}
+            type="single"
+          />
+        </div>
+        <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
+          <div>
+            <p className="text-sm font-medium">{t("compliance.active")}</p>
+            <p className="text-xs text-muted-foreground">{t("compliance.activePolicyDesc") ?? "Enable or disable this retention policy"}</p>
+          </div>
+          <Switch id="ret-active" checked={active} onCheckedChange={setActive} />
+        </div>
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button id="retention-save-btn" onClick={handleSave} disabled={isSaving}>
             {isSaving ? t("common.loading") : t("common.save")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </GenericModal>
   );
 }
 

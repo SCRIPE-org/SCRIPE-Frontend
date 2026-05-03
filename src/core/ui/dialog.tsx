@@ -74,12 +74,15 @@ const DialogContent = React.forwardRef<
           e.preventDefault();
         }}
         onInteractOutside={(e) => {
-          // Allow interaction with dropdown portals
+          // Allow interaction with dropdown portals (Select, DatePicker, etc.)
           const target = e.target as Element;
           if (
             target.closest("[data-dropdown-portal]") ||
             target.closest("[data-searchable-select]") ||
-            target.closest("[data-date-picker]")
+            target.closest("[data-date-picker]") ||
+            target.closest("[data-radix-popper-content-wrapper]") ||
+            target.closest("[role='listbox']") ||
+            target.closest("[role='option']")
           ) {
             e.preventDefault();
           }
@@ -91,12 +94,15 @@ const DialogContent = React.forwardRef<
           if (button !== 0) {
             e.preventDefault();
           }
-          // Allow interaction with dropdown portals
+          // Allow interaction with dropdown portals (Select, DatePicker, etc.)
           const target = e.target as Element;
           if (
             target.closest("[data-dropdown-portal]") ||
             target.closest("[data-searchable-select]") ||
-            target.closest("[data-date-picker]")
+            target.closest("[data-date-picker]") ||
+            target.closest("[data-radix-popper-content-wrapper]") ||
+            target.closest("[role='listbox']") ||
+            target.closest("[role='option']")
           ) {
             e.preventDefault();
           }
@@ -107,7 +113,10 @@ const DialogContent = React.forwardRef<
           if (
             target.closest("[data-dropdown-portal]") ||
             target.closest("[data-searchable-select]") ||
-            target.closest("[data-date-picker]")
+            target.closest("[data-date-picker]") ||
+            target.closest("[data-radix-popper-content-wrapper]") ||
+            target.closest("[role='listbox']") ||
+            target.closest("[role='option']")
           ) {
             // Do not prevent default: we WANT focus to leave content and move to portal
             return;

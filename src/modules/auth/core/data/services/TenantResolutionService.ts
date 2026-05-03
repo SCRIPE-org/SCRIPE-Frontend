@@ -1,12 +1,12 @@
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { ITenantResolutionService } from "../../domain/interfaces/ITenantResolutionService";
 import type { TenantBranding } from "../../domain/entities/TenantBranding";
-import type { PublicApiService } from "./PublicApiService";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import { TenantBrandingMapper } from "../mappers/TenantBrandingMapper";
 import type { TenantBrandingModel } from "../models/TenantBrandingModel";
 
 export class TenantResolutionService implements ITenantResolutionService {
-  constructor(private readonly api: PublicApiService) {}
+  constructor(private readonly api: IPublicApiService) {}
 
   async resolveTenant(params: {
     code?: string | null;

@@ -1,12 +1,12 @@
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { ISsoService } from "../../domain/interfaces/ISsoService";
 import type { SsoCallbackResult, SsoProvider } from "../../domain/entities/SsoProvider";
-import type { PublicApiService } from "./PublicApiService";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import { SsoMapper } from "../mappers/SsoMapper";
 import type { SsoCallbackResultDto, SsoChallengeDto, SsoProviderDto } from "../models/SsoModels";
 
 export class SsoService implements ISsoService {
-  constructor(private readonly api: PublicApiService) {}
+  constructor(private readonly api: IPublicApiService) {}
 
   async getProviders(params: {
     tenantId?: string | null;

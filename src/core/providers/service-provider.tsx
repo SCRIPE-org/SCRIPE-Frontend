@@ -8,6 +8,7 @@ import { NotificationService, NavigationService } from "@core/services";
 import { getCoreContainer } from "@core/di";
 import { getAuthContainer } from "@modules/auth/di";
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
 import type { IAuthService } from "@modules/auth/core/domain/interfaces/IAuthService";
 import type {
@@ -22,11 +23,14 @@ import type {
  *
  * SOLID: Interface Segregation - expose interfaces not implementations
  *
- * Core services (apiService, notificationService) come from core/di.ts
- * Auth services (authService, authRepository) come from auth/di.ts
+ * Core services (apiService, publicApiService, notificationService) come from core/di.ts
+ * Auth services (authService, authRepository, ...) come from auth/di.ts
  */
 interface Services {
+  /** Authenticated HTTP client — requires Bearer token */
   apiService: IApiService;
+  /** Unauthenticated HTTP client — no auth headers, no CSRF */
+  publicApiService: IPublicApiService;
   notificationService: NotificationService;
   navigationService: NavigationService;
   authService: IAuthService;
@@ -48,7 +52,7 @@ const ServiceContext = createContext<Services | null>(null);
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
     // Core DI Container
-    const { apiService, notificationService } = getCoreContainer();
+    const { apiService, publicApiService, notificationService } = getCoreContainer();
     const navigationService = new NavigationService(apiService);
 
     // Auth DI Container (triggers refresh handler wiring on first access)
@@ -63,6 +67,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
 
     return {
       apiService,
+      publicApiService,
       notificationService,
       navigationService,
       authService,

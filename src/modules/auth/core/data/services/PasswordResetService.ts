@@ -1,10 +1,10 @@
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IPasswordResetService } from "../../domain/interfaces/IPasswordResetService";
-import type { PublicApiService } from "./PublicApiService";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import type { RequestPasswordResetDto, ResetPasswordDto } from "../models/PasswordResetModels";
 
 export class PasswordResetService implements IPasswordResetService {
-  constructor(private readonly api: PublicApiService) {}
+  constructor(private readonly api: IPublicApiService) {}
 
   async requestReset(email: string): Promise<void> {
     const request: RequestPasswordResetDto = { email };

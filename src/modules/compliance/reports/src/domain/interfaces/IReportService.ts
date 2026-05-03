@@ -10,5 +10,6 @@ export interface ReportParams {
 export interface IReportService {
   getAll(params: ReportParams): Promise<PagedResult<ReportModel>>;
   generate(data: GenerateReportRequest): Promise<{ id: string }>;
+  getById(id: string): Promise<ReportModel>;
   download(id: string): Promise<Blob>;
 }

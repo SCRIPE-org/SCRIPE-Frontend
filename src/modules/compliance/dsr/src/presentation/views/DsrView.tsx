@@ -28,11 +28,9 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +39,8 @@ import {
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
 import { toast } from "@core/ui/use-toast";
+import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -113,6 +113,21 @@ function FilterPill({
   );
 }
 
+// ── Option constants ───────────────────────────────────────────────────────────
+
+const DSR_TYPE_OPTIONS: GenericSelectOption[] = [
+  { value: "Export", label: "Export" },
+  { value: "Erasure", label: "Erasure" },
+  { value: "Rectification", label: "Rectification" },
+  { value: "Restriction", label: "Restriction" },
+];
+
+const REGULATION_OPTIONS: GenericSelectOption[] = [
+  { value: "GDPR", label: "GDPR" },
+  { value: "CCPA", label: "CCPA" },
+  { value: "PDPA", label: "PDPA" },
+];
+
 // ── Submit DSR Dialog ─────────────────────────────────────────────────────────
 
 function SubmitDsrDialog({
@@ -147,75 +162,64 @@ function SubmitDsrDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="rounded-lg bg-blue-500/10 p-1.5">
-              <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            </div>
-            {t("compliance.submitDsr")}
-          </DialogTitle>
-          <DialogDescription>{t("compliance.submitDsrDesc")}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="dsr-subject-email">{t("compliance.subjectEmail")}</Label>
-            <Input
-              id="dsr-subject-email"
-              type="email"
-              placeholder="subject@example.com"
-              value={form.subjectEmail}
-              onChange={(e) => setForm((f) => ({ ...f, subjectEmail: e.target.value }))}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="dsr-request-type">{t("compliance.requestType")}</Label>
-              <Select value={form.requestType} onValueChange={(v) => setForm((f) => ({ ...f, requestType: v }))}>
-                <SelectTrigger id="dsr-request-type">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent position="popper" className="z-[200]">
-                  <SelectItem value="Export">{t("compliance.export")}</SelectItem>
-                  <SelectItem value="Erasure">{t("compliance.erasure")}</SelectItem>
-                  <SelectItem value="Rectification">{t("compliance.rectification")}</SelectItem>
-                  <SelectItem value="Restriction">{t("compliance.restriction")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="dsr-regulation">{t("compliance.regulation")}</Label>
-              <Select value={form.regulationCode} onValueChange={(v) => setForm((f) => ({ ...f, regulationCode: v }))}>
-                <SelectTrigger id="dsr-regulation">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent position="popper" className="z-[200]">
-                  <SelectItem value="GDPR">GDPR</SelectItem>
-                  <SelectItem value="CCPA">CCPA</SelectItem>
-                  <SelectItem value="PDPA">PDPA</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="dsr-notes">{t("compliance.requesterNotes")}</Label>
-            <Textarea
-              id="dsr-notes"
-              placeholder={t("compliance.notesPlaceholder") ?? "Optional notes…"}
-              rows={3}
-              value={form.requesterNotes}
-              onChange={(e) => setForm((f) => ({ ...f, requesterNotes: e.target.value }))}
-            />
-          </div>
-          {form.requestType === "Erasure" && (
-            <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
-              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
-              <p className="text-xs text-red-600 dark:text-red-400">{t("compliance.erasureGateWarning")}</p>
-            </div>
-          )}
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t("compliance.submitDsr") ?? "Submit Data Subject Request"}
+      description={t("compliance.submitDsrDesc") ?? "Submit a new data subject request on behalf of a subject."}
+      size="md"
+      formKey={open ? "dsr-submit" : undefined}
+    >
+      <div className="space-y-4 py-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="dsr-subject-email">{t("compliance.subjectEmail")}</Label>
+          <Input
+            id="dsr-subject-email"
+            type="email"
+            placeholder="subject@example.com"
+            value={form.subjectEmail}
+            onChange={(e) => setForm((f) => ({ ...f, subjectEmail: e.target.value }))}
+          />
         </div>
-        <DialogFooter>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>{t("compliance.requestType")}</Label>
+            <GenericSelect
+              options={DSR_TYPE_OPTIONS}
+              value={form.requestType}
+              onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, requestType: v as string }))}
+              placeholder={t("compliance.requestType") ?? "Request type"}
+              type="single"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{t("compliance.regulation")}</Label>
+            <GenericSelect
+              options={REGULATION_OPTIONS}
+              value={form.regulationCode}
+              onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, regulationCode: v as string }))}
+              placeholder={t("compliance.regulation") ?? "Regulation"}
+              type="single"
+            />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="dsr-notes">{t("compliance.requesterNotes")}</Label>
+          <Textarea
+            id="dsr-notes"
+            placeholder={t("compliance.notesPlaceholder") ?? "Optional notes…"}
+            rows={3}
+            value={form.requesterNotes}
+            onChange={(e) => setForm((f) => ({ ...f, requesterNotes: e.target.value }))}
+          />
+        </div>
+        {form.requestType === "Erasure" && (
+          <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+            <p className="text-xs text-red-600 dark:text-red-400">{t("compliance.erasureGateWarning")}</p>
+          </div>
+        )}
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button
             id="dsr-submit-confirm"
@@ -224,9 +228,9 @@ function SubmitDsrDialog({
           >
             {isSubmitting ? t("common.loading") : t("compliance.submitDsr")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </GenericModal>
   );
 }
 
@@ -259,27 +263,25 @@ function ReviewDsrDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[440px]">
-        <DialogHeader>
-          <DialogTitle>{t("compliance.approveDsr")} / {t("compliance.rejectDsr")}</DialogTitle>
-          <DialogDescription>
-            {dsr?.subjectEmail} · {dsr?.requestType} · {dsr?.regulationCode}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="review-resolution">{t("compliance.resolution")}</Label>
-            <Textarea
-              id="review-resolution"
-              placeholder={t("compliance.resolutionPlaceholder") ?? "Add resolution notes…"}
-              rows={3}
-              value={resolution}
-              onChange={(e) => setResolution(e.target.value)}
-            />
-          </div>
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={`${t("compliance.approveDsr")} / ${t("compliance.rejectDsr")}`}
+      description={dsr ? `${dsr.subjectEmail} · ${dsr.requestType} · ${dsr.regulationCode}` : ""}
+      size="sm"
+    >
+      <div className="space-y-4 py-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="review-resolution">{t("compliance.resolution")}</Label>
+          <Textarea
+            id="review-resolution"
+            placeholder={t("compliance.resolutionPlaceholder") ?? "Add resolution notes…"}
+            rows={3}
+            value={resolution}
+            onChange={(e) => setResolution(e.target.value)}
+          />
         </div>
-        <DialogFooter className="gap-2">
+        <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button
             variant="destructive"
@@ -298,9 +300,9 @@ function ReviewDsrDialog({
             <ThumbsUp className="me-2 h-4 w-4" />
             {isReviewing && decision === true ? t("common.loading") : t("compliance.approveDsr")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </GenericModal>
   );
 }
 

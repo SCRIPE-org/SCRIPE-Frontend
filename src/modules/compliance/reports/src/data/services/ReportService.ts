@@ -24,6 +24,10 @@ export class ReportService implements IReportService {
     return this.api.post<{ id: string }>(API_ENDPOINTS.COMPLIANCE.GENERATE_REPORT, data);
   }
 
+  getById(id: string): Promise<ReportModel> {
+    return this.api.get<ReportModel>(`${API_ENDPOINTS.COMPLIANCE.REPORTS}/${id}`);
+  }
+
   download(id: string): Promise<Blob> {
     return this.api.get<Blob>(`${API_ENDPOINTS.COMPLIANCE.REPORTS}/${id}/download`);
   }

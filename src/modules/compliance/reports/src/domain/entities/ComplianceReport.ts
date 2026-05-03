@@ -13,8 +13,7 @@ export interface ComplianceReportData {
   status: ReportStatus;
   generatedAt: string | null;
   downloadUrl: string | null;
-  requestedBy?: string;
-  requestedAt?: string;
+  title?: string;
 }
 
 export class ComplianceReport {
@@ -25,6 +24,9 @@ export class ComplianceReport {
   }
   get reportType() {
     return this.data.reportType ?? "";
+  }
+  get title() {
+    return this.data.title ?? this.data.reportType ?? "";
   }
   get regulationCode() {
     return this.data.regulationCode ?? "";
@@ -49,12 +51,6 @@ export class ComplianceReport {
   }
   get downloadUrl() {
     return this.data.downloadUrl ?? null;
-  }
-  get requestedBy() {
-    return this.data.requestedBy ?? null;
-  }
-  get requestedAt() {
-    return this.data.requestedAt ? new Date(this.data.requestedAt) : null;
   }
 
   copyWith(updates: Partial<ComplianceReportData>): ComplianceReport {

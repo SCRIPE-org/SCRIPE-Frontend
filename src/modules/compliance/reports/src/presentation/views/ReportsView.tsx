@@ -24,11 +24,11 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { DatePicker } from "@core/ui/date-picker";
 import { toast } from "@core/ui/use-toast";
+import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 
 // ── Report type metadata ───────────────────────────────────────────────────────
 
@@ -47,7 +47,15 @@ const STATUS_META: Record<string, { label: string; variant: "default" | "seconda
   Failed: { label: "Failed", variant: "destructive", icon: <AlertTriangle className="h-3 w-3" /> },
 };
 
-// ── Generate Dialog ────────────────────────────────────────────────────────────
+// ── Report type options for GenericSelect ──────────────────────────────────────
+
+const REPORT_TYPE_OPTIONS: GenericSelectOption[] = REPORT_TYPES.map((r) => ({
+  value: r.value,
+  label: `${r.label} — ${r.regulation}`,
+  description: r.regulation,
+}));
+
+// ── Generate Dialog ─────────────────────────────────────────────────────────
 
 function GenerateReportDialog({
   open,
@@ -80,62 +88,52 @@ function GenerateReportDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="rounded-lg bg-indigo-500/10 p-1.5">
-              <FileText className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-            </div>
-            {t("compliance.generateReport")}
-          </DialogTitle>
-          <DialogDescription>{t("compliance.generateReportDesc") ?? "Select a report type and optional date range to generate a compliance report."}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t("compliance.generateReport") ?? "Generate Compliance Report"}
+      description={t("compliance.generateReportDesc") ?? "Select a report type and optional date range."}
+      size="md"
+      formKey={open ? "report-generate" : undefined}
+    >
+      <div className="space-y-4 py-2">
+        <div className="space-y-1.5">
+          <Label>{t("compliance.reportType")}</Label>
+          <GenericSelect
+            options={REPORT_TYPE_OPTIONS}
+            value={form.reportType}
+            onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, reportType: v as string }))}
+            placeholder={t("compliance.reportType") ?? "Select report type"}
+            type="single"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="report-type">{t("compliance.reportType")}</Label>
-            <Select value={form.reportType} onValueChange={(v) => setForm((f) => ({ ...f, reportType: v }))}>
-              <SelectTrigger id="report-type">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" className="z-[200]">
-                {REPORT_TYPES.map((r) => (
-                  <SelectItem key={r.value} value={r.value}>
-                    <span>{r.label}</span>
-                    <span className="ms-2 text-xs text-muted-foreground">{r.regulation}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="report-period-start">{t("compliance.periodStart")}</Label>
+            <DatePicker
+              id="report-period-start"
+              value={form.periodStart}
+              onChange={(v) => setForm((f) => ({ ...f, periodStart: v }))}
+              placeholder={t("compliance.periodStart")}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="report-period-start">{t("compliance.periodStart")}</Label>
-              <DatePicker
-                id="report-period-start"
-                value={form.periodStart}
-                onChange={(v) => setForm((f) => ({ ...f, periodStart: v }))}
-                placeholder={t("compliance.periodStart")}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="report-period-end">{t("compliance.periodEnd")}</Label>
-              <DatePicker
-                id="report-period-end"
-                value={form.periodEnd}
-                onChange={(v) => setForm((f) => ({ ...f, periodEnd: v }))}
-                placeholder={t("compliance.periodEnd")}
-              />
-            </div>
-          </div>
-          <div className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
-            <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-            <p className="text-xs text-blue-600 dark:text-blue-400">
-              {t("compliance.reportQueuedInfo") ?? "Reports are generated asynchronously. Refresh the list after a few minutes to see your report."}
-            </p>
+          <div className="space-y-1.5">
+            <Label htmlFor="report-period-end">{t("compliance.periodEnd")}</Label>
+            <DatePicker
+              id="report-period-end"
+              value={form.periodEnd}
+              onChange={(v) => setForm((f) => ({ ...f, periodEnd: v }))}
+              placeholder={t("compliance.periodEnd")}
+            />
           </div>
         </div>
-        <DialogFooter>
+        <div className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
+          <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+          <p className="text-xs text-blue-600 dark:text-blue-400">
+            {t("compliance.reportQueuedInfo") ?? "Reports are generated asynchronously. Refresh after a few minutes."}
+          </p>
+        </div>
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button
             id="report-generate-confirm"
@@ -154,9 +152,9 @@ function GenerateReportDialog({
               </>
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </GenericModal>
   );
 }
 
@@ -164,11 +162,15 @@ function GenerateReportDialog({
 
 function ReportCard({ report }: { report: ComplianceReport }) {
   const { t } = useI18n();
+  const router = useRouter();
   const meta = STATUS_META[report.status] ?? STATUS_META.Pending;
   const typeLabel = REPORT_TYPES.find((r) => r.value === report.reportType)?.label ?? report.reportType;
 
   return (
-    <Card className={`border transition-all hover:shadow-md ${report.isReady ? "border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-green-500/5" : "border-border/50"}`}>
+    <Card
+      className={`cursor-pointer border transition-all hover:shadow-md ${report.isReady ? "border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-green-500/5" : "border-border/50"}`}
+      onClick={() => router.push(`/compliance/reports/${report.id}`)}
+    >
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
@@ -199,18 +201,29 @@ function ReportCard({ report }: { report: ComplianceReport }) {
               )}
             </div>
           </div>
-          {report.isReady && report.downloadUrl && (
+          <div className="flex shrink-0 items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            {report.isReady && report.downloadUrl && (
+              <Button
+                id={`report-download-${report.id}`}
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={() => window.open(report.downloadUrl!, "_blank")}
+              >
+                <Download className="me-1.5 h-3 w-3" />
+                {t("compliance.downloadReport")}
+              </Button>
+            )}
             <Button
-              id={`report-download-${report.id}`}
-              variant="outline"
+              id={`report-view-${report.id}`}
+              variant="ghost"
               size="sm"
-              className="h-7 shrink-0 text-xs"
-              onClick={() => window.open(report.downloadUrl!, "_blank")}
+              className="h-7 text-xs"
+              onClick={() => router.push(`/compliance/reports/${report.id}`)}
             >
-              <Download className="me-1.5 h-3 w-3" />
-              {t("compliance.downloadReport")}
+              {t("common.view") ?? "View"}
             </Button>
-          )}
+          </div>
         </div>
       </CardContent>
     </Card>
