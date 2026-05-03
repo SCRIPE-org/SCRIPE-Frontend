@@ -12,6 +12,7 @@ export const en = {
     reportReady: "Ready",
     reportPending: "Generating...",
     downloadReport: "Download",
+    reportDetail: "Report Detail",
 
     // Messages
     reportQueued: "Report generation queued",

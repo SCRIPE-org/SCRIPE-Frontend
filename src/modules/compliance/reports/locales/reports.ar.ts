@@ -12,6 +12,7 @@ export const ar = {
     reportReady: "جاهز",
     reportPending: "قيد الإنشاء...",
     downloadReport: "تحميل",
+    reportDetail: "تفاصيل التقرير",
 
     // Messages
     reportQueued: "تم جدولة إنشاء التقرير",

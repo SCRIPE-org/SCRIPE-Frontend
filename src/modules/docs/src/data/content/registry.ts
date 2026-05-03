@@ -67,6 +67,14 @@ import "./modules/user-subscriptions";
 // Modules (Revenue Analytics — Phase 11)
 import "./modules/revenue-analytics";
 
+// Modules (Compliance — Phase 12)
+import "./modules/compliance-overview";
+import "./modules/compliance-dsr";
+import "./modules/compliance-consent";
+import "./modules/compliance-retention";
+import "./modules/compliance-inventory";
+import "./modules/compliance-reports";
+
 // Security
 import "./security/overview";
 import "./security/authentication-deep";
@@ -191,3 +199,9 @@ import "./commercial/entitlements-overrides";
 import "./commercial/billing-payments";
 import "./commercial/entitlements-tenant-plans";
 import "./commercial/entitlements-user-subscriptions";
+
+// Modules (Commercial Compliance — Phase 12)
+import "./commercial/compliance-overview";
+import "./commercial/compliance-gdpr";
+import "./commercial/compliance-dsr";
+import "./commercial/compliance-roi";

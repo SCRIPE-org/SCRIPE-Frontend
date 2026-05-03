@@ -440,6 +440,26 @@ services.AddScoped<IAutoRegisteredJob>(sp =>
   },
   { type: "paragraph", contentKey: "infrastructure.backgroundJobs.softDeleteIntro" },
   {
+    type: "flowchart",
+    title: "infrastructure.backgroundJobs.softDeleteFlowTitle",
+    direction: "vertical",
+    nodes: [
+      { id: "cron", label: "Cron Tick (3:00 AM)", type: "info", description: "Default cron for Soft Delete jobs" },
+      { id: "init", label: "SoftDeleteCleanupJob<TContext>", type: "primary", description: "Instantiated by DI container" },
+      { id: "scan", label: "Discover ISoftDeletable", type: "warning", description: "Reflection scan on DbContext for entities implementing ISoftDeletable" },
+      { id: "filter", label: "Filter Expired Entities", type: "warning", description: "Find records where IsDeleted = true AND DeletedAt < DateTime.UtcNow.AddDays(-30)" },
+      { id: "cascade", label: "FK-Aware Cascading", type: "default", description: "Handles foreign key constraints in correct deletion order" },
+      { id: "execute", label: "Hard Delete", type: "success", description: "Execute native SQL for bulk deletion, bypassing EF change tracking" },
+    ],
+    connections: [
+      { from: "cron", to: "init", label: "triggers" },
+      { from: "init", to: "scan", label: "starts" },
+      { from: "scan", to: "filter", label: "builds query" },
+      { from: "filter", to: "cascade", label: "orders" },
+      { from: "cascade", to: "execute", label: "removes" },
+    ],
+  },
+  {
     type: "code",
     language: "bash",
     filename: "CLI — One Command to Add SoftDeleteCleanupJob",

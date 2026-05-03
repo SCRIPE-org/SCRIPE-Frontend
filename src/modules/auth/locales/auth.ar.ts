@@ -90,6 +90,13 @@ export const ar = {
     loginFormAriaLabel: "نموذج تسجيل الدخول",
     showPassword: "إظهار كلمة المرور",
     hidePassword: "إخفاء كلمة المرور",
+    resetNotAvailable: "إعادة تعيين كلمة المرور غير متاحة.",
+    resetFailed: "فشل إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.",
+    passwordMinLength: "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
+    passwordMismatch: "كلمتا المرور غير متطابقتين.",
+    resetPasswordAction: "إعادة تعيين كلمة المرور",
+    passwordResetSuccess: "تم إعادة تعيين كلمة المرور بنجاح",
+    passwordResetSuccessDesc: "تم إعادة تعيين كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
     a11y: {
       skipToContent: "تخطي إلى المحتوى الرئيسي",
       topActionsLabel: "إجراءات الصفحة",
