@@ -5,22 +5,149 @@
 export const fr = {
   infrastructure: {
     backgroundJobs: {
-      title: "Tches en Arrière-plan (Background Jobs)",
+      title: "Tâches en Arrière-plan (Background Jobs)",
       description:
-        "Traitement asynchrone via Hangfire : nettoyage régulier, processeur d'Outbox, et tableau de bord.",
+        "Tâches récurrentes auto-découvertes et agnostiques du fournisseur (Native, Hangfire, Quartz.NET) — 24 tâches à travers 4 modules, aucun câblage manuel.",
       intro:
-        "Évite les temps de réponse API lents en déléguant le travail lourd (e-mails, nettoyages) aux processus en arrière-plan.",
-      architectureTitle: "Architecture Hangfire",
-      recurringTitle: "Tches Récurrentes (Cron)",
-      softDeleteTitle: "Tche de Nettoyage des Suppressions Logiques",
+        "Le système de tâches en arrière-plan de NEXORA repose sur un principe : écrire une fois, exécuter sur n'importe quel fournisseur. Chaque tâche implémente IAutoRegisteredJob et est découverte automatiquement au démarrage. Basculer entre Native, Hangfire ou Quartz est un simple changement de configuration dans appsettings.json — aucune modification de code n'est requise.",
+
+      // Architecture
+      architectureTitle: "Aperçu de l'Architecture",
+      architectureIntro:
+        "Au démarrage, BackgroundJobsConfiguration lit le fournisseur actif depuis appsettings.json et appelle GetServices<IAutoRegisteredJob>() pour découvrir chaque tâche enregistrée depuis le conteneur DI. Pour chaque tâche, il vérifie un remplacement appsettings par tâche, résout Enabled et CronExpression, puis planifie la tâche avec l'API du fournisseur. La tâche elle-même ne contient aucun code spécifique au fournisseur.",
+      architectureFlowTitle: "Pipeline d'Auto-Découverte",
+
+      // IAutoRegisteredJob Contract
+      contractTitle: "Contrat IAutoRegisteredJob",
+      contractIntro:
+        "Chaque tâche en arrière-plan récurrente dans NEXORA implémente une interface : IAutoRegisteredJob. Ceci est le contrat complet — trois propriétés et une méthode. L'interface exclut délibérément tout concept spécifique au fournisseur (pas d'attributs Hangfire, pas d'annotations Quartz). La tâche n'a aucune connaissance du fournisseur qui l'exécute.",
+
+      // DI Registration
+      diTitle: "Enregistrement DI — Le Modèle Critique à Deux Lignes",
+      diIntro:
+        "Chaque tâche nécessite exactement deux enregistrements DI dans le DependencyInjection.cs de son module. Omettre la deuxième ligne rend la tâche complètement invisible à tous les fournisseurs — elle ne sera jamais découverte ni planifiée, sans erreur ni avertissement.",
+      diWarningTitle: "Ne Sautez Jamais la Ligne 2",
+      diWarning:
+        "Le délégué d'usine IAutoRegisteredJob (ligne 2) est ce qui fait fonctionner l'auto-découverte. GetServices<IAutoRegisteredJob>() retourne uniquement les tâches enregistrées EN TANT QUE IAutoRegisteredJob. Une tâche enregistrée uniquement par son type concret est invisible pour les trois fournisseurs.",
+
+      // Class Hierarchy
+      hierarchyTitle: "Hiérarchie des Classes — Choisissez Votre Base",
+      hierarchyIntro:
+        "Trois options existent selon la structure dont vous avez besoin. Les tâches légères implémentent IAutoRegisteredJob directement. Les tâches qui nécessitent des journaux de minutage structurés étendent RecurringJobBase. Les tâches qui nettoient les entités supprimées logiquement étendent SoftDeleteCleanupJob<TContext>.",
+      hierarchyColClass: "Classe",
+      hierarchyColUseWhen: "Utiliser Quand",
+      hierarchyColGets: "Ce que Vous Obtenez",
+      hierarchyRow1When: "La tâche est simple, peu de code boilerplate nécessaire",
+      hierarchyRow1Gets: "Juste le contrat — contrôle total, aucun supplément",
+      hierarchyRow2When: "Vous voulez des journaux de minutage et d'erreurs structurés",
+      hierarchyRow2Gets: "Journaux de démarrage/achèvement/erreur automatiques avec temps écoulé",
+      hierarchyRow3When: "Le module a besoin d'une tâche de nettoyage permanent des suppressions logiques",
+      hierarchyRow3Gets: "Découverte automatique des entités, suppression ordonnée par FK, traitement par lots",
+
+      // Providers
+      providersTitle: "Comparaison des Fournisseurs",
+      providersIntro:
+        "Les trois fournisseurs utilisent exactement la même interface IAutoRegisteredJob. La seule différence réside dans la manière dont ils planifient et persistent les tâches. Configurez le fournisseur dans appsettings.json — aucune modification de code requise pour basculer.",
+      providerColFeature: "Fonctionnalité",
+      providerColNative: "Native",
+      providerColHangfire: "Hangfire",
+      providerColQuartz: "Quartz",
+      providerRowPersistence: "Persistance des Tâches",
+      providerNativeNo: "En mémoire uniquement — perdu au redémarrage",
+      providerHangfireYes: "Sauvegardé sur SQL — survit aux redémarrages",
+      providerQuartzOptional: "En mémoire (stockage DB en option)",
+      providerRowDashboard: "Tableau de Bord",
+      providerNativeDash: "Aucun",
+      providerHangfireDash: "/hangfire (SuperAdmin uniquement)",
+      providerQuartzDash: "Aucun (Quartz.UI disponible séparément)",
+      providerRowRetry: "Nouvelle Tentative Auto",
+      providerNativeRetry: "Non",
+      providerHangfireRetry: "Oui (tentatives configurables)",
+      providerQuartzRetry: "Oui (via politique de misfire)",
+      providerRowBestFor: "Idéal Pour",
+      providerNativeBest: "Développement local, tests unitaires",
+      providerHangfireBest: "Production avec SQL Server",
+      providerQuartzBest: "Production avec Oracle ou PostgreSQL",
+
+      // Jobs Inventory
+      inventoryTitle: "Inventaire Complet des Tâches — 24 Tâches",
+      inventoryIntro:
+        "Les 24 tâches en arrière-plan récurrentes à travers les quatre modules. Chaque tâche implémente IAutoRegisteredJob. Le Cron par défaut peut être remplacé par environnement dans appsettings.json.",
+      inventoryColPurpose: "Objectif",
+      inventoryCoreTitle: "Module Core (1 tâche)",
+      inventoryIdentityTitle: "Module Identity (4 tâches)",
+      inventoryEntitlementsTitle: "Module Entitlements (12 tâches)",
+      inventoryComplianceTitle: "Module Compliance (7 tâches)",
+
+      // Job purpose descriptions
+      jobOutboxCleanup: "Supprime les messages outbox traités de plus de 7 jours",
+      jobIdentitySoftDelete: "Supprime définitivement les entités Identity supprimées logiquement",
+      jobEmailProcessing: "Interroge et envoie les emails différés via EmailJobProcessor",
+      jobWebhookRetry: "Traite la file d'attente de relance de webhook persistant par lots de 50",
+      jobWebhookLogCleanup: "Supprime les journaux de livraison webhook de plus de 90 jours",
+      identityNote:
+        "EmailProcessingJob et WebhookRetryJob/WebhookLogCleanupJob sont des tâches d'infrastructure de base enregistrées dans l'injection de dépendances du module Identity car elles dépendent de services de l'Identity.",
+      jobEntitlementsSoftDelete: "Supprime définitivement les entités Entitlements supprimées logiquement",
+      jobSubscriptionReconciliation: "Expire les essais, renouvelle les abonnements actifs",
+      jobTrialNotification: "Envoie des rappels pour les essais expirant dans 7, 3 ou 1 jour",
+      jobDunningNotification: "Avis d'échec de paiement avec urgence croissante",
+      jobEditionRollout: "Applique les mises à niveau et rétrogradations d'édition planifiées",
+      jobUserSubscriptionReconciliation: "Réconciliation d'abonnement au niveau utilisateur Tier 2",
+      jobAnalyticsSnapshot: "Agrégation quotidienne des instantanés de revenus/MRR/ARR",
+      jobTenantHealthScore: "Recalcule le score de santé pour tous les locataires actifs",
+      jobAnalyticsReport: "Génération de rapport d'analyse hebdomadaire",
+      jobCommissionInvoicing: "Consolidation de la facture de commission mensuelle",
+      jobCommissionAutoCharge: "Relance les frais automatiques de commission échoués",
+      jobPaymobRecurringBilling: "Frais récurrents de carte au dossier Paymob",
+      jobComplianceSoftDelete: "Supprime définitivement les entités Compliance supprimées logiquement",
+      jobDsrExecution: "Exécute les Demandes de Personnes Concernées en attente toutes les 5 minutes",
+      jobDsrEscalation: "Alerte sur les DSR approchant de leur délai SLA",
+      jobDsrExportCleanup: "Supprime les fichiers d'exportation DSR expirés",
+      jobRetentionEnforcement: "Applique les politiques de rétention des données",
+      jobConsentExpiry: "Expire les consentements utilisateurs périmés",
+      jobReportGeneration: "Interroge et génère les rapports de conformité en attente toutes les 2 min",
+
+      // Creating a New Job
+      newJobTitle: "Créer une Nouvelle Tâche en Arrière-plan",
+      newJobIntro:
+        "Suivez exactement ces quatre étapes. Les seuls fichiers obligatoires sont la classe de tâche elle-même et les deux lignes d'enregistrement DI. Tout le reste est câblé automatiquement.",
+      newJobStep1Title: "Étape 1 — Créer la Classe de Tâche",
+      newJobStep1Desc:
+        "Créez un nouveau fichier dans {Module}.Infrastructure/BackgroundJobs/. Utilisez la convention JobId : '{module}-{purpose}' en kebab-case. Implémentez ExecuteAsync de manière idempotente.",
+      newJobStep2Title: "Étape 2 — Enregistrer les DEUX Lignes DI",
+      newJobStep2Desc:
+        "Dans DependencyInjection.cs du module, ajoutez exactement deux enregistrements. La ligne 1 active l'injection de constructeur. La ligne 2 active l'auto-découverte. Ne sautez jamais la ligne 2.",
+      newJobStep3Title: "Étape 3 — Ajouter un Remplacement appsettings (Facultatif)",
+      newJobStep3Desc:
+        "Pour un calendrier spécifique à l'environnement ou pour désactiver la tâche, ajoutez un remplacement sous BackgroundJobs.Jobs en utilisant le JobId comme clé.",
+      newJobStep4Title: "Étape 4 — Compiler et Vérifier",
+      newJobStep4Desc:
+        "Exécutez la compilation du backend. Zéro erreur signifie que la tâche est prête. L'auto-découverte gère le reste — aucune inscription manuelle nulle part.",
+
+      // SoftDelete
+      softDeleteTitle: "SoftDeleteCleanupJob — Suppression Automatique Ordonnée par FK",
       softDeleteIntro:
-        "Les enregistrements logiques dépassant leur délai de rétention légal sont supprimés physiquement de manière ordonnée pour respecter les clés étrangères.",
-      dashboardTitle: "Tableau de Bord Hangfire",
-      dashboardIntro:
-        "Tableau de bord de monitoring intégré et protégé, réservé exclusivement aux rôles SuperAdmin.",
-      configTitle: "Configuration",
+        "La classe de base SoftDeleteCleanupJob<TContext> est l'option la plus sophistiquée. Elle découvre automatiquement tous les types d'entités ISoftDeletable dans le DbContext, les trie topologiquement et supprime par lots.",
+      softDeleteTip:
+        "La commande CLI 'nexora add-bg-service {Module}' génère le fichier de tâche et ajoute les deux enregistrements DI en une seule étape.",
+
+      // Rules
+      rulesTitle: "Règles",
+      rulesMustTitle: "✅ À Faire Obligatoirement",
+      rulesNeverTitle: "❌ À Ne Jamais Faire",
+      ruleMust1: "Une classe par fichier dans le dossier BackgroundJobs/",
+      ruleMust2: "Enregistrer les DEUX lignes DI (concret + délégué d'usine)",
+      ruleMust3: "Utiliser CRON à 5 champs (pas de format Quartz à 6 champs)",
+      ruleMust4: "Rendre ExecuteAsync idempotent",
+      ruleMust5: "Compiler après chaque changement — nexora build backend",
+      ruleNever1: "Ne jamais importer les espaces de noms Hangfire ou Quartz dans les tâches",
+      ruleNever2: "Ne jamais utiliser [AutomaticRetry] — la relance globale est dans BackgroundJobsConfiguration",
+      ruleNever3: "Ne jamais appeler RecurringJob.AddOrUpdate<T>() dans le code du module",
+      ruleNever4: "Ne jamais placer de tâches dans Services/ ou tout autre dossier",
+      ruleNever5: "Ne jamais enregistrer en tant que Singleton — toujours AddScoped",
+
       tenantWarning:
-        "Avertissement : Les tches d'arrière-plan ne disposent d'aucun contexte HTTP. Le code doit forcer l'imitation d'un ID de locataire s'il souhaite accéder aux tables isolées.",
+        "Les tâches en arrière-plan s'exécutent en dehors du contexte HTTP — il n'y a pas de contexte de locataire disponible. Les tâches qui traitent des données spécifiques au locataire doivent créer une portée explicite à l'aide de IServiceScopeFactory.",
     },
     fileStorage: {
       title: "Stockage de Fichiers (File Storage)",

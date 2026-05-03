@@ -7,20 +7,147 @@ export const en = {
     backgroundJobs: {
       title: "Background Jobs",
       description:
-        "Background job processing (Native, Hangfire, Quartz.NET)  recurring cleanup, outbox processor, token cleanup, and dashboard.",
+        "Provider-agnostic auto-discovered recurring jobs (Native, Hangfire, Quartz.NET) — 24 jobs across 4 modules, zero manual wiring.",
       intro:
-        "NEXORA uses multiple providers (Native, Hangfire, Quartz.NET) setup via appsettings.json for background job processing. Jobs include soft-delete cleanup, outbox event processing, token cleanup, audit log archiving, and tenant quota monitoring.",
-      architectureTitle: "Background Job Architecture",
-      recurringTitle: "Recurring Jobs",
-      softDeleteTitle: "Soft-Delete Cleanup Job",
+        "NEXORA's background job system is built on one principle: write once, run on any provider. Every job implements IAutoRegisteredJob and is discovered automatically at startup. Switching between Native, Hangfire, or Quartz is a single config change in appsettings.json — no code modifications required.",
+
+      // Architecture
+      architectureTitle: "Architecture Overview",
+      architectureIntro:
+        "At startup, BackgroundJobsConfiguration reads the active provider from appsettings.json and calls GetServices<IAutoRegisteredJob>() to discover every registered job from the DI container. For each job, it checks for a per-job appsettings override, resolves Enabled and CronExpression, then schedules the job with the provider API. The job itself has zero provider-specific code.",
+      architectureFlowTitle: "Auto-Discovery Pipeline",
+
+      // IAutoRegisteredJob Contract
+      contractTitle: "IAutoRegisteredJob Contract",
+      contractIntro:
+        "Every recurring background job in NEXORA implements one interface: IAutoRegisteredJob. This is the complete contract — three properties and one method. The interface deliberately excludes any provider-specific concepts (no Hangfire attributes, no Quartz annotations). The job has zero knowledge of which provider executes it.",
+
+      // DI Registration
+      diTitle: "DI Registration — The Critical Two-Line Pattern",
+      diIntro:
+        "Every job requires exactly two DI registrations in its module's DependencyInjection.cs. Skipping the second line renders the job completely invisible to all providers — it will never be discovered or scheduled, with no error or warning.",
+      diWarningTitle: "Never Skip Line 2",
+      diWarning:
+        "The IAutoRegisteredJob factory delegate (line 2) is what makes auto-discovery work. GetServices<IAutoRegisteredJob>() only returns jobs registered AS IAutoRegisteredJob. A job registered only by its concrete type is invisible to all three providers. This is the most common mistake when adding a new job.",
+
+      // Class Hierarchy
+      hierarchyTitle: "Class Hierarchy — Choose Your Base",
+      hierarchyIntro:
+        "Three options exist depending on how much structure you need. Lightweight jobs implement IAutoRegisteredJob directly. Jobs that need structured timing logs extend RecurringJobBase. Jobs that clean up soft-deleted entities extend SoftDeleteCleanupJob<TContext>, which auto-discovers ISoftDeletable entities and sorts them topologically by FK order.",
+      hierarchyColClass: "Class",
+      hierarchyColUseWhen: "Use When",
+      hierarchyColGets: "Gets You",
+      hierarchyRow1When: "Job is simple, minimal boilerplate needed",
+      hierarchyRow1Gets: "Just the contract — full control, zero extras",
+      hierarchyRow2When: "You want timing, error logging, structured output",
+      hierarchyRow2Gets: "Auto start/complete/error logging with elapsed time",
+      hierarchyRow3When: "Module needs a soft-delete permanent-cleanup job",
+      hierarchyRow3Gets: "Auto entity discovery, FK-ordered deletion, batch processing",
+
+      // Providers
+      providersTitle: "Provider Comparison",
+      providersIntro:
+        "All three providers use the exact same IAutoRegisteredJob interface. The only difference is how they schedule and persist jobs. Configure the provider in appsettings.json — no code changes required to switch.",
+      providerColFeature: "Feature",
+      providerColNative: "Native",
+      providerColHangfire: "Hangfire",
+      providerColQuartz: "Quartz",
+      providerRowPersistence: "Job Persistence",
+      providerNativeNo: "In-memory only — lost on restart",
+      providerHangfireYes: "SQL-backed — survives restarts",
+      providerQuartzOptional: "In-memory (DB store optional)",
+      providerRowDashboard: "Dashboard",
+      providerNativeDash: "None",
+      providerHangfireDash: "/hangfire (SuperAdmin only)",
+      providerQuartzDash: "None (Quartz.UI available separately)",
+      providerRowRetry: "Auto Retry",
+      providerNativeRetry: "No",
+      providerHangfireRetry: "Yes (configurable attempts)",
+      providerQuartzRetry: "Yes (via misfire policy)",
+      providerRowBestFor: "Best For",
+      providerNativeBest: "Local development, unit testing",
+      providerHangfireBest: "Production with SQL Server",
+      providerQuartzBest: "Production with Oracle or PostgreSQL",
+
+      // Jobs Inventory
+      inventoryTitle: "Complete Jobs Inventory — 24 Jobs",
+      inventoryIntro:
+        "All 24 recurring background jobs across the four modules. Every job implements IAutoRegisteredJob. The Default Cron can be overridden per-environment in appsettings.json under BackgroundJobs.Jobs.",
+      inventoryColPurpose: "Purpose",
+      inventoryCoreTitle: "Core Module (1 job)",
+      inventoryIdentityTitle: "Identity Module (4 jobs)",
+      inventoryEntitlementsTitle: "Entitlements Module (12 jobs)",
+      inventoryComplianceTitle: "Compliance Module (7 jobs)",
+
+      // Job purpose descriptions
+      jobOutboxCleanup: "Deletes processed outbox messages older than 7 days",
+      jobIdentitySoftDelete: "Permanently deletes soft-deleted Identity entities after retention period",
+      jobEmailProcessing: "Polls and dispatches deferred emails via EmailJobProcessor",
+      jobWebhookRetry: "Processes persistent webhook retry queue in batches of 50",
+      jobWebhookLogCleanup: "Deletes webhook delivery logs older than 90 days",
+      identityNote:
+        "EmailProcessingJob and WebhookRetryJob/WebhookLogCleanupJob are core infrastructure jobs registered in the Identity module's DI because they depend on Identity-scoped services (IUnitOfWork, IWebhookRepository, EmailJobProcessor).",
+      jobEntitlementsSoftDelete: "Permanently deletes soft-deleted Entitlements entities after retention period",
+      jobSubscriptionReconciliation: "Expires trials, renews active subscriptions, handles grace periods",
+      jobTrialNotification: "Sends reminders for trials expiring in 7, 3, or 1 day",
+      jobDunningNotification: "Payment failure notices with escalating urgency",
+      jobEditionRollout: "Applies scheduled edition upgrades and downgrades",
+      jobUserSubscriptionReconciliation: "Tier 2 user-level subscription reconciliation",
+      jobAnalyticsSnapshot: "Daily revenue/MRR/ARR snapshot aggregation",
+      jobTenantHealthScore: "Recalculates health score for all active tenants",
+      jobAnalyticsReport: "Weekly analytics report generation",
+      jobCommissionInvoicing: "Monthly commission invoice rollup",
+      jobCommissionAutoCharge: "Retries failed commission auto-charges",
+      jobPaymobRecurringBilling: "Paymob card-on-file recurring charges",
+      jobComplianceSoftDelete: "Permanently deletes soft-deleted Compliance entities after retention period",
+      jobDsrExecution: "Executes pending Data Subject Requests every 5 minutes",
+      jobDsrEscalation: "Escalates DSRs approaching their SLA deadline",
+      jobDsrExportCleanup: "Deletes expired DSR export files",
+      jobRetentionEnforcement: "Enforces data retention policies (runs every Sunday at 1:00 AM)",
+      jobConsentExpiry: "Expires lapsed user consents (runs at midnight daily)",
+      jobReportGeneration: "Polls and generates pending compliance reports every 2 minutes",
+
+      // Creating a New Job
+      newJobTitle: "Creating a New Background Job",
+      newJobIntro:
+        "Follow these four steps exactly. The only mandatory files are the job class itself and the two DI registration lines. Everything else is auto-wired by the discovery engine.",
+      newJobStep1Title: "Step 1 — Create the Job Class",
+      newJobStep1Desc:
+        "Create a new file in {Module}.Infrastructure/BackgroundJobs/. One class per file. Use JobId convention: '{module}-{purpose}' in kebab-case. Implement ExecuteAsync as an idempotent operation — it must be safe to call multiple times.",
+      newJobStep2Title: "Step 2 — Register BOTH DI Lines",
+      newJobStep2Desc:
+        "In the module's DependencyInjection.cs, add exactly two registrations. Line 1 enables constructor injection. Line 2 enables auto-discovery via GetServices<IAutoRegisteredJob>(). Never skip line 2 — missing it means the job is invisible to all providers.",
+      newJobStep3Title: "Step 3 — Add appsettings Override (Optional)",
+      newJobStep3Desc:
+        "If you want environment-specific schedule or want to disable the job in certain environments, add an override under BackgroundJobs.Jobs using the JobId as the key. This is completely optional — the job's default CronExpression and Enabled=true will be used if no override exists.",
+      newJobStep4Title: "Step 4 — Build and Verify",
+      newJobStep4Desc:
+        "Run the backend build. Zero errors means the job is ready. Auto-discovery handles the rest — no changes to BackgroundJobsConfiguration.cs, no changes to any host extension, no manual registration anywhere.",
+
+      // SoftDelete
+      softDeleteTitle: "SoftDeleteCleanupJob — Auto FK-Ordered Deletion",
       softDeleteIntro:
-        "The SoftDeleteCleanupJob permanently deletes soft-deleted entities older than the retention period (default: 30 days). It processes entities in dependency order to respect foreign key constraints.",
-      dashboardTitle: "Background Jobs Dashboard (Hangfire)",
-      dashboardIntro:
-        "The Hangfire Dashboard (if Hangfire is selected as provider) is available at /hangfire and requires SuperAdmin authentication. It shows job status, history, recurring job schedules, and allows manual job triggering.",
-      configTitle: "Configuration",
+        "The SoftDeleteCleanupJob<TContext> base class is the most sophisticated option. It automatically discovers all ISoftDeletable entity types in the DbContext, sorts them topologically based on FK relationships (children before parents), and batch-deletes records that have passed the retention period. Override PreCleanupAsync to unlock guardian-protected entities before deletion, or GetCustomCleanupOrder() to specify explicit entity ordering.",
+      softDeleteTip:
+        "The CLI command 'nexora add-bg-service {Module}' generates the job file and adds both DI registrations in one step. It is the recommended way to add a SoftDeleteCleanupJob.",
+
+      // Rules
+      rulesTitle: "Rules",
+      rulesMustTitle: "✅ Must Do",
+      rulesNeverTitle: "❌ Never Do",
+      ruleMust1: "One class per file in BackgroundJobs/ folder",
+      ruleMust2: "Register BOTH DI lines (concrete + factory delegate)",
+      ruleMust3: "Use 5-field CRON (not 6-field Quartz format)",
+      ruleMust4: "Make ExecuteAsync idempotent",
+      ruleMust5: "Build after every change — nexora build backend",
+      ruleNever1: "Never import Hangfire or Quartz namespaces in job classes",
+      ruleNever2: "Never use [AutomaticRetry] — global retry is in BackgroundJobsConfiguration",
+      ruleNever3: "Never call RecurringJob.AddOrUpdate<T>() in module code",
+      ruleNever4: "Never put jobs in Services/ or any other folder",
+      ruleNever5: "Never register as Singleton — always AddScoped",
+
       tenantWarning:
-        "Background jobs run outside of HTTP request context, so there is no tenant context available. Jobs that process tenant-specific data must explicitly set the tenant scope for each operation.",
+        "Background jobs run outside of HTTP request context — there is no tenant context available. Jobs that process tenant-specific data must create explicit tenant scope per operation using IServiceScopeFactory. Never assume HttpContext is available inside a background job.",
     },
     fileStorage: {
       title: "File Storage",
