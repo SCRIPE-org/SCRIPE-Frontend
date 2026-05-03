@@ -7,20 +7,147 @@ export const es = {
     backgroundJobs: {
       title: "Trabajos en Segundo Plano (Background Jobs)",
       description:
-        "Motor de procesamiento Hangfire: limpieza, procesadores de Outbox y el propio panel de supervisión.",
+        "Trabajos recurrentes autodescubiertos, independientes del proveedor (Native, Hangfire, Quartz.NET) — 24 trabajos en 4 módulos sin cableado manual.",
       intro:
-        "Asegura la operatividad asincrónica evitando penalizar los tiempos de la API principal.",
-      architectureTitle: "Arquitectura de Hangfire",
-      recurringTitle: "Trabajos Recurrentes Cron",
-      softDeleteTitle: "Trabajo de Limpieza de Soft-Delete",
+        "El sistema de trabajos en segundo plano de NEXORA se basa en un principio: escribir una vez, ejecutar en cualquier proveedor. Cada trabajo implementa IAutoRegisteredJob y se descubre automáticamente al inicio. Cambiar entre Native, Hangfire o Quartz es solo un cambio de configuración en appsettings.json — cero cambios de código.",
+
+      // Architecture
+      architectureTitle: "Visión General de la Arquitectura",
+      architectureIntro:
+        "Al inicio, BackgroundJobsConfiguration lee el proveedor activo de appsettings.json y llama a GetServices<IAutoRegisteredJob>() para descubrir cada trabajo registrado en el contenedor DI. Para cada trabajo, verifica si hay anulaciones de appsettings por trabajo, analiza Enabled y CronExpression, y luego programa el trabajo utilizando la API del proveedor. Los trabajos en sí no contienen código específico del proveedor.",
+      architectureFlowTitle: "El Pipeline de Autodescubrimiento",
+
+      // IAutoRegisteredJob Contract
+      contractTitle: "El Contrato IAutoRegisteredJob",
+      contractIntro:
+        "Cada trabajo recurrente en segundo plano en NEXORA implementa una única interfaz: IAutoRegisteredJob. Ese es todo el contrato — tres propiedades y un método. La interfaz excluye intencionalmente cualquier concepto específico del proveedor (sin atributos de Hangfire, sin anotaciones de Quartz). El trabajo no sabe qué proveedor lo está ejecutando.",
+
+      // DI Registration
+      diTitle: "Registro DI — El Patrón Crítico de Dos Líneas",
+      diIntro:
+        "Cada trabajo requiere exactamente dos líneas de registro DI en el DependencyInjection.cs de su módulo. Omitir la segunda línea hace que el trabajo sea completamente invisible para todos los proveedores — nunca será descubierto ni programado, y no habrá error ni advertencia.",
+      diWarningTitle: "NUNCA Omitas la Línea 2",
+      diWarning:
+        "El delegado de fábrica de IAutoRegisteredJob (Línea 2) es la clave que hace que funcione el autodescubrimiento. GetServices<IAutoRegisteredJob>() solo devuelve trabajos registrados como IAutoRegisteredJob. Los trabajos registrados solo por su tipo concreto son invisibles para los tres proveedores.",
+
+      // Class Hierarchy
+      hierarchyTitle: "Jerarquía de Clases — Elige tu Clase Base",
+      hierarchyIntro:
+        "Tienes tres opciones dependiendo de la estructura que necesites. Los trabajos ligeros implementan IAutoRegisteredJob directamente. Los trabajos que necesitan registros estructurados de tiempo heredan RecurringJobBase. Los trabajos de limpieza para entidades eliminadas lógicamente heredan SoftDeleteCleanupJob<TContext>.",
+      hierarchyColClass: "Clase",
+      hierarchyColUseWhen: "Cuándo usar",
+      hierarchyColGets: "Qué obtienes",
+      hierarchyRow1When: "El trabajo es simple y no necesita estructura",
+      hierarchyRow1Gets: "Solo el contrato — control total, nada extra",
+      hierarchyRow2When: "Necesitas registros estructurados de tiempo y errores",
+      hierarchyRow2Gets: "Registros automáticos de inicio/completado/error con tiempo",
+      hierarchyRow3When: "El módulo necesita limpieza permanente de eliminación lógica",
+      hierarchyRow3Gets: "Descubrimiento automático de entidades, eliminación ordenada FK, lotes",
+
+      // Providers
+      providersTitle: "Comparación de Proveedores",
+      providersIntro:
+        "Los tres proveedores usan exactamente la misma interfaz IAutoRegisteredJob. La única diferencia es cómo programan y persisten los trabajos. Configure el proveedor en appsettings.json — el cambio requiere cero cambios de código.",
+      providerColFeature: "Característica",
+      providerColNative: "Nativo",
+      providerColHangfire: "Hangfire",
+      providerColQuartz: "Quartz",
+      providerRowPersistence: "Persistencia de Trabajos",
+      providerNativeNo: "Solo memoria — perdido en reinicio",
+      providerHangfireYes: "Guardado en SQL — sobrevive reinicios",
+      providerQuartzOptional: "Memoria (almacenamiento en base de datos opcional)",
+      providerRowDashboard: "Dashboard",
+      providerNativeDash: "Ninguno",
+      providerHangfireDash: "/hangfire (Solo SuperAdministrador)",
+      providerQuartzDash: "Ninguno (Quartz.UI por separado)",
+      providerRowRetry: "Reintentos Automáticos",
+      providerNativeRetry: "No",
+      providerHangfireRetry: "Sí (conteo de reintentos configurable)",
+      providerQuartzRetry: "Sí (vía políticas misfire)",
+      providerRowBestFor: "Mejor Para",
+      providerNativeBest: "Desarrollo local, pruebas unitarias",
+      providerHangfireBest: "Producción con SQL Server",
+      providerQuartzBest: "Producción con Oracle o PostgreSQL",
+
+      // Jobs Inventory
+      inventoryTitle: "Inventario Completo de Trabajos — Todos los 24",
+      inventoryIntro:
+        "Los 24 trabajos recurrentes en segundo plano en los cuatro módulos. Cada trabajo implementa IAutoRegisteredJob. Los Cron predeterminados se pueden anular por entorno en appsettings.json.",
+      inventoryColPurpose: "Propósito",
+      inventoryCoreTitle: "Módulo Core (1 Trabajo)",
+      inventoryIdentityTitle: "Módulo Identity (4 Trabajos)",
+      inventoryEntitlementsTitle: "Módulo Entitlements (12 Trabajos)",
+      inventoryComplianceTitle: "Módulo Compliance (7 Trabajos)",
+
+      // Job purpose descriptions
+      jobOutboxCleanup: "Elimina mensajes outbox procesados de más de 7 días",
+      jobIdentitySoftDelete: "Elimina permanentemente entidades Identity eliminadas lógicamente",
+      jobEmailProcessing: "Consulta y envía correos electrónicos retrasados a través de EmailJobProcessor",
+      jobWebhookRetry: "Procesa la cola de reintentos de webhooks guardados en lotes de 50",
+      jobWebhookLogCleanup: "Elimina registros de entrega de webhooks de más de 90 días",
+      identityNote:
+        "EmailProcessingJob y WebhookRetryJob/WebhookLogCleanupJob son trabajos de infraestructura subyacente registrados en DI del módulo Identity porque dependen de los servicios de Identity.",
+      jobEntitlementsSoftDelete: "Elimina permanentemente entidades Entitlements eliminadas lógicamente",
+      jobSubscriptionReconciliation: "Expira pruebas, renueva suscripciones activas de usuarios",
+      jobTrialNotification: "Envía recordatorios de fin de prueba a 7, 3 o 1 días de la expiración",
+      jobDunningNotification: "Envía notificaciones de pago fallido cada vez más urgentes",
+      jobEditionRollout: "Aplica subidas y bajadas de categoría programadas",
+      jobUserSubscriptionReconciliation: "Conciliación de suscripciones a nivel de usuario Nivel 2",
+      jobAnalyticsSnapshot: "Agregación de instantáneas diarias de Ingresos/MRR/ARR",
+      jobTenantHealthScore: "Recalcula puntajes de salud para todos los inquilinos activos",
+      jobAnalyticsReport: "Generación de informes de análisis semanales",
+      jobCommissionInvoicing: "Generación consolidada de facturas de comisiones mensuales",
+      jobCommissionAutoCharge: "Reintentos de autodescargas fallidas de comisiones",
+      jobPaymobRecurringBilling: "Cargos recurrentes guardados en tarjetas de crédito Paymob",
+      jobComplianceSoftDelete: "Elimina permanentemente entidades Compliance eliminadas lógicamente",
+      jobDsrExecution: "Ejecuta solicitudes DSR pendientes cada 5 minutos",
+      jobDsrEscalation: "Advierte sobre plazos SLA de DSR próximos",
+      jobDsrExportCleanup: "Elimina exportaciones DSR expiradas",
+      jobRetentionEnforcement: "Aplica políticas de retención de datos",
+      jobConsentExpiry: "Invalida el consentimiento de usuario expirado",
+      jobReportGeneration: "Consulta y genera informes de cumplimiento pendientes cada 2 minutos",
+
+      // Creating a New Job
+      newJobTitle: "Creación de un Nuevo Trabajo",
+      newJobIntro:
+        "Siga estos cuatro pasos exactamente. Los únicos archivos requeridos son la clase del trabajo en sí y las dos líneas de registro DI. Todo lo demás se conecta automáticamente.",
+      newJobStep1Title: "Paso 1 — Crear la Clase del Trabajo",
+      newJobStep1Desc:
+        "Cree un nuevo archivo en {Module}.Infrastructure/BackgroundJobs/. Utilice la convención kebab-case de JobId: '{module}-{purpose}'. Haga que ExecuteAsync sea idempotente.",
+      newJobStep2Title: "Paso 2 — Registrar DI de Dos Líneas",
+      newJobStep2Desc:
+        "En el DependencyInjection.cs del módulo, agregue las dos líneas exactas de registro. La línea 1 habilita la inyección en el constructor. La línea 2 habilita el autodescubrimiento. NUNCA omita la línea 2.",
+      newJobStep3Title: "Paso 3 — Agregar anulación appsettings (Opcional)",
+      newJobStep3Desc:
+        "Para horarios específicos del entorno o para deshabilitar el trabajo, agregue una anulación en BackgroundJobs.Jobs utilizando el JobId como clave.",
+      newJobStep4Title: "Paso 4 — Compilar y Verificar",
+      newJobStep4Desc:
+        "Ejecute nexora build backend. Cero errores significa que el trabajo está listo. El autodescubrimiento maneja todo lo demás — no es necesario ningún registro manual en ningún lugar.",
+
+      // SoftDelete
+      softDeleteTitle: "SoftDeleteCleanupJob — Eliminación Automática Ordenada por FK",
       softDeleteIntro:
-        "Busca registros viejos pasados de su ventana de retención y lanza los verdaderos DELETE respetando llaves foráneas.",
-      dashboardTitle: "Dashboard Hangfire",
-      dashboardIntro:
-        "Panel nativo de monitoreo de trabajos. Accesible únicamente en NEXORA bajo tokens SuperAdmin.",
-      configTitle: "Configuración",
+        "La clase base SoftDeleteCleanupJob<TContext> es la opción más avanzada. Descubre automáticamente todos los tipos de entidades ISoftDeletable en el DbContext, los clasifica topológicamente y los elimina en lotes.",
+      softDeleteTip:
+        "El comando CLI 'nexora add-bg-service {Module}' genera el archivo de trabajo y agrega los dos registros de DI en un solo paso.",
+
+      // Rules
+      rulesTitle: "Las Reglas Inquebrantables",
+      rulesMustTitle: "✅ DEBE HACER",
+      rulesNeverTitle: "❌ NUNCA",
+      ruleMust1: "Una clase por archivo en la carpeta BackgroundJobs/",
+      ruleMust2: "Registre DOS líneas en DI (tipo concreto + delegado de fábrica)",
+      ruleMust3: "Use CRON de 5 campos (NO use el formato Quartz de 6 campos)",
+      ruleMust4: "Haga ExecuteAsync idempotente",
+      ruleMust5: "Compile después de cada cambio — nexora build backend",
+      ruleNever1: "Nunca importe namespaces de Hangfire o Quartz en trabajos",
+      ruleNever2: "Nunca use [AutomaticRetry] — los reintentos globales se configuran centralmente",
+      ruleNever3: "Nunca llame a RecurringJob.AddOrUpdate<T>() en el código del módulo",
+      ruleNever4: "Nunca ponga trabajos en Services/ ni en ninguna otra carpeta",
+      ruleNever5: "Nunca registre como Singleton — use siempre AddScoped",
+
       tenantWarning:
-        "Los trabajos (Jobs) de fondo se levantan sin la firma de ningún inquilino, la lógica del código del Job asume un cambio artificial de inquilino al correr la acción.",
+        "Los trabajos en segundo plano se ejecutan FUERA del contexto HTTP — no hay contexto de inquilino disponible. Los trabajos que manipulan datos específicos del inquilino DEBEN usar IServiceScopeFactory para crear un alcance (scope) de inquilino explícito.",
     },
     fileStorage: {
       title: "Almacenamiento de Archivos (Storage)",

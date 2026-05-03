@@ -6,17 +6,148 @@ export const zh = {
   infrastructure: {
     backgroundJobs: {
       title: "后台任务 (Background Jobs)",
-      description: "基于 Hangfire 的延时处理：垃圾清理、消息队列与后台监控面板。",
-      intro: "利用挂起任务保障 HTTP 接口在处理发信或繁重运算时的超高吞吐率。",
-      architectureTitle: "Hangfire 架构体系",
-      recurringTitle: "定时调度任务 (Cron Jobs)",
-      softDeleteTitle: "软删除物理擦除任务",
-      softDeleteIntro: "定期查询数据库，按外键依赖安全地将已超过宽限期的软删除数据彻底抹除。",
-      dashboardTitle: "Hangfire 监控大屏",
-      dashboardIntro: "仅对平台超级管理员暴露的内部诊断仪表盘，可随时停止或重试报错任务。",
-      configTitle: "系统配置",
+      description:
+        "自动发现、与提供商无关的 (Native, Hangfire, Quartz.NET) 循环任务 — 在 4 个模块中包含 24 个任务，无需手动配置。",
+      intro:
+        "NEXORA 的后台任务系统建立在一个原则之上：一次编写，在任何提供商上运行。每个任务实现 IAutoRegisteredJob 并在启动时被自动发现。在 Native、Hangfire 或 Quartz 之间切换只需在 appsettings.json 中更改配置 — 无需修改任何代码。",
+
+      // Architecture
+      architectureTitle: "架构概览",
+      architectureIntro:
+        "启动时，BackgroundJobsConfiguration 从 appsettings.json 读取活动的提供商，并调用 GetServices<IAutoRegisteredJob>() 来发现 DI 容器中注册的每个任务。对于每个任务，它检查每个任务的 appsettings 覆盖，解析 Enabled 和 CronExpression，然后使用提供商的 API 调度任务。任务本身不包含特定于提供商的代码。",
+      architectureFlowTitle: "自动发现管道",
+
+      // IAutoRegisteredJob Contract
+      contractTitle: "IAutoRegisteredJob 契约",
+      contractIntro:
+        "NEXORA 中的每个循环后台任务都实现一个接口：IAutoRegisteredJob。这就是整个契约 — 三个属性和一个方法。该接口故意排除了任何特定于提供商的概念（没有 Hangfire 属性，没有 Quartz 注解）。任务不知道是哪个提供商在运行它。",
+
+      // DI Registration
+      diTitle: "DI 注册 — 关键的两行模式",
+      diIntro:
+        "每个任务需要在其模块的 DependencyInjection.cs 中进行精确的两行 DI 注册。缺少第二行会使任务对所有提供商完全不可见 — 它永远不会被发现或调度，并且没有错误或警告。",
+      diWarningTitle: "永远不要跳过第 2 行",
+      diWarning:
+        "IAutoRegisteredJob 工厂委托（第 2 行）是使自动发现工作的关键。GetServices<IAutoRegisteredJob>() 仅返回作为 IAutoRegisteredJob 注册的任务。仅按其具体类型注册的任务对所有三个提供商都是不可见的。",
+
+      // Class Hierarchy
+      hierarchyTitle: "类层次结构 — 选择您的基类",
+      hierarchyIntro:
+        "根据您需要的结构有三种选择。轻量级任务直接实现 IAutoRegisteredJob。需要结构化计时日志的任务继承 RecurringJobBase。清理软删除实体的任务继承 SoftDeleteCleanupJob<TContext>。",
+      hierarchyColClass: "类",
+      hierarchyColUseWhen: "何时使用",
+      hierarchyColGets: "你得到了什么",
+      hierarchyRow1When: "任务很简单，不需要太多样板代码",
+      hierarchyRow1Gets: "只有契约 — 完全控制，没有额外内容",
+      hierarchyRow2When: "你需要结构化的计时和错误日志",
+      hierarchyRow2Gets: "带有经过时间的自动启动/完成/错误日志",
+      hierarchyRow3When: "模块需要一个软删除永久清理任务",
+      hierarchyRow3Gets: "自动实体发现、FK 有序删除、批处理",
+
+      // Providers
+      providersTitle: "提供商比较",
+      providersIntro:
+        "这三个提供商使用完全相同的 IAutoRegisteredJob 接口。唯一的区别是它们如何调度和持久化任务。在 appsettings.json 中配置提供商 — 切换无需更改代码。",
+      providerColFeature: "特性",
+      providerColNative: "Native",
+      providerColHangfire: "Hangfire",
+      providerColQuartz: "Quartz",
+      providerRowPersistence: "任务持久化",
+      providerNativeNo: "仅限内存 — 重启后丢失",
+      providerHangfireYes: "保存到 SQL — 重启后保留",
+      providerQuartzOptional: "内存（可选的数据库存储）",
+      providerRowDashboard: "仪表板",
+      providerNativeDash: "无",
+      providerHangfireDash: "/hangfire (仅限超级管理员)",
+      providerQuartzDash: "无 (单独提供 Quartz.UI)",
+      providerRowRetry: "自动重试",
+      providerNativeRetry: "否",
+      providerHangfireRetry: "是 (可配置重试次数)",
+      providerQuartzRetry: "是 (通过 misfire 策略)",
+      providerRowBestFor: "最适合",
+      providerNativeBest: "本地开发，单元测试",
+      providerHangfireBest: "带有 SQL Server 的生产环境",
+      providerQuartzBest: "带有 Oracle 或 PostgreSQL 的生产环境",
+
+      // Jobs Inventory
+      inventoryTitle: "完整任务清单 — 24 个任务",
+      inventoryIntro:
+        "跨四个模块的全部 24 个循环后台任务。每个任务都实现了 IAutoRegisteredJob。可以在 appsettings.json 中按环境覆盖默认 Cron。",
+      inventoryColPurpose: "目的",
+      inventoryCoreTitle: "Core 模块 (1 个任务)",
+      inventoryIdentityTitle: "Identity 模块 (4 个任务)",
+      inventoryEntitlementsTitle: "Entitlements 模块 (12 个任务)",
+      inventoryComplianceTitle: "Compliance 模块 (7 个任务)",
+
+      // Job purpose descriptions
+      jobOutboxCleanup: "删除 7 天前已处理的 outbox 消息",
+      jobIdentitySoftDelete: "永久删除软删除的 Identity 实体",
+      jobEmailProcessing: "通过 EmailJobProcessor 轮询并发送延迟电子邮件",
+      jobWebhookRetry: "以 50 批次处理持久化的 Webhook 重试队列",
+      jobWebhookLogCleanup: "删除 90 天前的 webhook 交付日志",
+      identityNote:
+        "EmailProcessingJob 和 WebhookRetryJob/WebhookLogCleanupJob 是基础基础设施任务，注册在 Identity 模块 DI 中，因为它们依赖于 Identity 服务。",
+      jobEntitlementsSoftDelete: "永久删除软删除的 Entitlements 实体",
+      jobSubscriptionReconciliation: "使用户试用期满，续订活跃订阅",
+      jobTrialNotification: "发送试用期在 7、3 或 1 天内到期的提醒",
+      jobDunningNotification: "发送越来越紧急的付款失败通知",
+      jobEditionRollout: "应用计划的版本升级和降级",
+      jobUserSubscriptionReconciliation: "Tier 2 用户级订阅对账",
+      jobAnalyticsSnapshot: "每日收入/MRR/ARR 快照聚合",
+      jobTenantHealthScore: "重新计算所有活跃租户的健康分数",
+      jobAnalyticsReport: "每周生成分析报告",
+      jobCommissionInvoicing: "每月综合生成佣金发票",
+      jobCommissionAutoCharge: "重试失败的佣金自动扣款",
+      jobPaymobRecurringBilling: "存储的 Paymob 信用卡的定期收费",
+      jobComplianceSoftDelete: "永久删除软删除的 Compliance 实体",
+      jobDsrExecution: "每 5 分钟执行未决的数据主体请求 (DSR)",
+      jobDsrEscalation: "警告即将达到 SLA 截止日期的 DSR",
+      jobDsrExportCleanup: "删除过期的 DSR 导出文件",
+      jobRetentionEnforcement: "执行数据保留策略",
+      jobConsentExpiry: "使过期的用户同意失效",
+      jobReportGeneration: "每 2 分钟轮询并生成未决的合规性报告",
+
+      // Creating a New Job
+      newJobTitle: "创建新的后台任务",
+      newJobIntro:
+        "完全按照这四个步骤操作。唯一必需的文件是任务类本身和两行 DI 注册。其他一切都是自动连接的。",
+      newJobStep1Title: "第 1 步 — 创建任务类",
+      newJobStep1Desc:
+        "在 {Module}.Infrastructure/BackgroundJobs/ 中创建一个新文件。使用 kebab-case JobId 约定：'{module}-{purpose}'。将 ExecuteAsync 实现为幂等操作。",
+      newJobStep2Title: "第 2 步 — 注册两行 DI",
+      newJobStep2Desc:
+        "在模块的 DependencyInjection.cs 中，添加确切的两条注册。第 1 行启用构造函数注入。第 2 行启用自动发现。永远不要跳过第 2 行。",
+      newJobStep3Title: "第 3 步 — 添加 appsettings 覆盖 (可选)",
+      newJobStep3Desc:
+        "要进行特定于环境的计划设置或禁用任务，请在 BackgroundJobs.Jobs 下使用 JobId 作为键添加覆盖。",
+      newJobStep4Title: "第 4 步 — 构建并验证",
+      newJobStep4Desc:
+        "运行后端构建。零错误意味着任务已准备就绪。自动发现会处理其余的一切 — 任何地方都无需手动注册。",
+
+      // SoftDelete
+      softDeleteTitle: "SoftDeleteCleanupJob — FK 有序自动删除",
+      softDeleteIntro:
+        "SoftDeleteCleanupJob<TContext> 基类是最高级的选项。它自动发现 DbContext 中所有的 ISoftDeletable 实体类型，对其进行拓扑排序，并进行批处理删除。",
+      softDeleteTip:
+        "CLI 命令 'nexora add-bg-service {Module}' 会一步生成任务文件并添加这两行 DI 注册。",
+
+      // Rules
+      rulesTitle: "规则",
+      rulesMustTitle: "✅ 必须执行",
+      rulesNeverTitle: "❌ 永远不要",
+      ruleMust1: "在 BackgroundJobs/ 文件夹中每个文件一个类",
+      ruleMust2: "注册两行 DI（具体类型 + 工厂委托）",
+      ruleMust3: "使用 5 字段 CRON（不要使用 Quartz 6 字段格式）",
+      ruleMust4: "使 ExecuteAsync 幂等",
+      ruleMust5: "每次更改后构建 — nexora build backend",
+      ruleNever1: "永远不要在任务中导入 Hangfire 或 Quartz 命名空间",
+      ruleNever2: "永远不要使用 [AutomaticRetry] — 全局重试在 BackgroundJobsConfiguration 中配置",
+      ruleNever3: "永远不要在模块代码中调用 RecurringJob.AddOrUpdate<T>()",
+      ruleNever4: "永远不要将任务放在 Services/ 或其他任何文件夹中",
+      ruleNever5: "永远不要注册为 Singleton — 总是使用 AddScoped",
+
       tenantWarning:
-        "后台 Worker 进程中不存在 HTTP 请求流，所以任何涉及数据的操作必须手动向其传入租户标识以获得访问权限。",
+        "后台任务在 HTTP 上下文之外运行 — 没有可用的租户上下文。处理租户特定数据的任务必须使用 IServiceScopeFactory 创建显式的作用域。",
     },
     fileStorage: {
       title: "文件存储系统 (File Storage)",

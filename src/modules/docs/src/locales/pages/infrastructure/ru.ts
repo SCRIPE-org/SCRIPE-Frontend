@@ -7,17 +7,147 @@ export const ru = {
     backgroundJobs: {
       title: "Фоновые задачи (Background Jobs)",
       description:
-        "Обработка задач через Hangfire: очистка БД, процессор Outbox и панель управления.",
-      intro: "Делегирование тяжелых операций в фон для поддержания высокой отзывчивости API.",
-      architectureTitle: "Архитектура Hangfire",
-      recurringTitle: "Регулярные задачи (Cron)",
-      softDeleteTitle: "Задача очистки мягкого удаления (Soft-Delete Cleanup)",
-      softDeleteIntro: "Удаляет записи старше 30 дней с учетом внешних ключей (foreign keys).",
-      dashboardTitle: "Панель управления Hangfire",
-      dashboardIntro: "Встроенный дашборд по адресу /hangfire, доступный только для SuperAdmin.",
-      configTitle: "Конфигурация",
+        "Автоматически обнаруживаемые, независимые от провайдера (Native, Hangfire, Quartz.NET) повторяющиеся задачи — 24 задачи в 4 модулях, без ручного связывания.",
+      intro:
+        "Система фоновых задач NEXORA построена на принципе: написать один раз, запустить на любом провайдере. Каждая задача реализует интерфейс IAutoRegisteredJob и автоматически обнаруживается при запуске. Переключение между Native, Hangfire или Quartz — это просто изменение конфигурации в appsettings.json, без необходимости изменения кода.",
+      
+      // Architecture
+      architectureTitle: "Обзор архитектуры",
+      architectureIntro:
+        "При запуске BackgroundJobsConfiguration считывает активный провайдер из appsettings.json и вызывает GetServices<IAutoRegisteredJob>() для обнаружения каждой зарегистрированной задачи из DI-контейнера. Для каждой задачи проверяется переопределение настроек (appsettings), разрешаются Enabled и CronExpression, затем задача планируется с использованием API провайдера. Сама задача не содержит кода, специфичного для провайдера.",
+      architectureFlowTitle: "Пайплайн автоматического обнаружения",
+
+      // IAutoRegisteredJob Contract
+      contractTitle: "Контракт IAutoRegisteredJob",
+      contractIntro:
+        "Каждая повторяющаяся фоновая задача в NEXORA реализует один интерфейс: IAutoRegisteredJob. Это весь контракт — три свойства и один метод. Интерфейс намеренно исключает любые концепции, специфичные для провайдера (никаких атрибутов Hangfire или аннотаций Quartz). Задача ничего не знает о провайдере, который ее запускает.",
+
+      // DI Registration
+      diTitle: "Регистрация DI — критический шаблон из двух строк",
+      diIntro:
+        "Каждая задача требует ровно двух регистраций DI в файле DependencyInjection.cs ее модуля. Отсутствие второй строки делает задачу полностью невидимой для всех провайдеров — она никогда не будет обнаружена или запланирована, и при этом не будет никаких ошибок или предупреждений.",
+      diWarningTitle: "Никогда не пропускайте строку 2",
+      diWarning:
+        "Делегат фабрики IAutoRegisteredJob (Строка 2) — это то, что обеспечивает автоматическое обнаружение. GetServices<IAutoRegisteredJob>() возвращает только задачи, зарегистрированные КАК IAutoRegisteredJob. Задача, зарегистрированная только по ее конкретному типу, невидима для всех трех провайдеров.",
+
+      // Class Hierarchy
+      hierarchyTitle: "Иерархия классов — Выберите свою базу",
+      hierarchyIntro:
+        "В зависимости от необходимой структуры существуют три варианта. Легковесные задачи реализуют IAutoRegisteredJob напрямую. Задачи, которым нужны структурированные журналы тайминга, расширяют RecurringJobBase. Задачи, очищающие мягко удаленные сущности, расширяют SoftDeleteCleanupJob<TContext>.",
+      hierarchyColClass: "Класс",
+      hierarchyColUseWhen: "Использовать когда",
+      hierarchyColGets: "Что вы получаете",
+      hierarchyRow1When: "Задача проста, не требует много шаблонного кода",
+      hierarchyRow1Gets: "Только контракт — полный контроль, никаких дополнений",
+      hierarchyRow2When: "Нужны структурированные журналы времени и ошибок",
+      hierarchyRow2Gets: "Автоматические журналы запуска/завершения/ошибок с указанием затраченного времени",
+      hierarchyRow3When: "Модулю нужна задача окончательной очистки мягко удаленных записей",
+      hierarchyRow3Gets: "Автоматическое обнаружение сущностей, удаление с учетом внешних ключей, пакетная обработка",
+
+      // Providers
+      providersTitle: "Сравнение провайдеров",
+      providersIntro:
+        "Все три провайдера используют один и тот же интерфейс IAutoRegisteredJob. Единственное отличие заключается в том, как они планируют и сохраняют задачи. Настройте провайдера в appsettings.json — для переключения не требуется никаких изменений кода.",
+      providerColFeature: "Функция",
+      providerColNative: "Native",
+      providerColHangfire: "Hangfire",
+      providerColQuartz: "Quartz",
+      providerRowPersistence: "Сохранение задач",
+      providerNativeNo: "Только в памяти — теряется при перезапуске",
+      providerHangfireYes: "Сохраняется в SQL — сохраняется при перезапусках",
+      providerQuartzOptional: "В памяти (дополнительно хранилище БД)",
+      providerRowDashboard: "Панель управления",
+      providerNativeDash: "Нет",
+      providerHangfireDash: "/hangfire (только для SuperAdmin)",
+      providerQuartzDash: "Нет (Quartz.UI доступен отдельно)",
+      providerRowRetry: "Автоматические повторные попытки",
+      providerNativeRetry: "Нет",
+      providerHangfireRetry: "Да (настраиваемые попытки)",
+      providerQuartzRetry: "Да (через политику misfire)",
+      providerRowBestFor: "Лучше всего для",
+      providerNativeBest: "Локальная разработка, модульные тесты",
+      providerHangfireBest: "Продакшн с SQL Server",
+      providerQuartzBest: "Продакшн с Oracle или PostgreSQL",
+
+      // Jobs Inventory
+      inventoryTitle: "Полный реестр задач — 24 задачи",
+      inventoryIntro:
+        "Все 24 повторяющиеся фоновые задачи в четырех модулях. Каждая задача реализует IAutoRegisteredJob. Cron по умолчанию можно переопределить для каждого окружения в appsettings.json.",
+      inventoryColPurpose: "Назначение",
+      inventoryCoreTitle: "Модуль Core (1 задача)",
+      inventoryIdentityTitle: "Модуль Identity (4 задачи)",
+      inventoryEntitlementsTitle: "Модуль Entitlements (12 задач)",
+      inventoryComplianceTitle: "Модуль Compliance (7 задач)",
+
+      // Job purpose descriptions
+      jobOutboxCleanup: "Удаляет обработанные сообщения outbox старше 7 дней",
+      jobIdentitySoftDelete: "Навсегда удаляет мягко удаленные сущности Identity",
+      jobEmailProcessing: "Опрашивает и отправляет отложенные email через EmailJobProcessor",
+      jobWebhookRetry: "Обрабатывает постоянную очередь повторных попыток вебхуков порциями по 50",
+      jobWebhookLogCleanup: "Удаляет журналы доставки вебхуков старше 90 дней",
+      identityNote:
+        "EmailProcessingJob и WebhookRetryJob/WebhookLogCleanupJob являются базовыми инфраструктурными задачами, зарегистрированными в DI-контейнере модуля Identity, так как они зависят от сервисов Identity.",
+      jobEntitlementsSoftDelete: "Навсегда удаляет мягко удаленные сущности Entitlements",
+      jobSubscriptionReconciliation: "Завершает пробные периоды, продлевает активные подписки",
+      jobTrialNotification: "Отправляет напоминания о пробных периодах, истекающих через 7, 3 или 1 день",
+      jobDunningNotification: "Уведомления об ошибках платежей с нарастающей срочностью",
+      jobEditionRollout: "Применяет запланированные обновления и понижения редакций",
+      jobUserSubscriptionReconciliation: "Сверка пользовательских подписок уровня 2",
+      jobAnalyticsSnapshot: "Ежедневная агрегация снимков дохода/MRR/ARR",
+      jobTenantHealthScore: "Пересчитывает оценку здоровья (health score) для всех активных арендаторов",
+      jobAnalyticsReport: "Еженедельная генерация аналитических отчетов",
+      jobCommissionInvoicing: "Ежемесячная консолидация счетов по комиссиям",
+      jobCommissionAutoCharge: "Повторные попытки списания неудачных автоматических платежей по комиссиям",
+      jobPaymobRecurringBilling: "Регулярные платежи по сохраненным картам Paymob",
+      jobComplianceSoftDelete: "Навсегда удаляет мягко удаленные сущности Compliance",
+      jobDsrExecution: "Выполняет ожидающие запросы субъектов данных (DSR) каждые 5 минут",
+      jobDsrEscalation: "Создает оповещения для DSR, приближающихся к крайнему сроку SLA",
+      jobDsrExportCleanup: "Удаляет просроченные файлы экспорта DSR",
+      jobRetentionEnforcement: "Обеспечивает соблюдение политик хранения данных",
+      jobConsentExpiry: "Завершает срок действия просроченных согласий пользователей",
+      jobReportGeneration: "Опрашивает и генерирует ожидающие отчеты соответствия каждые 2 минуты",
+
+      // Creating a New Job
+      newJobTitle: "Создание новой фоновой задачи",
+      newJobIntro:
+        "Выполните ровно эти четыре шага. Единственные обязательные файлы — это сам класс задачи и две строки регистрации DI. Все остальное подключается автоматически.",
+      newJobStep1Title: "Шаг 1 — Создание класса задачи",
+      newJobStep1Desc:
+        "Создайте новый файл в {Module}.Infrastructure/BackgroundJobs/. Используйте соглашение об именовании JobId: '{module}-{purpose}' (kebab-case). Реализуйте ExecuteAsync как идемпотентный метод.",
+      newJobStep2Title: "Шаг 2 — Регистрация ДВУХ строк DI",
+      newJobStep2Desc:
+        "В DependencyInjection.cs модуля добавьте ровно две регистрации. Строка 1 обеспечивает внедрение зависимостей через конструктор. Строка 2 обеспечивает автоматическое обнаружение. Никогда не пропускайте строку 2.",
+      newJobStep3Title: "Шаг 3 — Добавление переопределения appsettings (Необязательно)",
+      newJobStep3Desc:
+        "Для расписания, зависящего от окружения, или для отключения задачи, добавьте переопределение в раздел BackgroundJobs.Jobs, используя JobId в качестве ключа.",
+      newJobStep4Title: "Шаг 4 — Сборка и проверка",
+      newJobStep4Desc:
+        "Выполните сборку бэкенда. Отсутствие ошибок означает, что задача готова. Автоматическое обнаружение позаботится обо всем остальном — никакой ручной регистрации нигде не требуется.",
+
+      // SoftDelete
+      softDeleteTitle: "SoftDeleteCleanupJob — Автоматическое удаление с учетом внешних ключей",
+      softDeleteIntro:
+        "Базовый класс SoftDeleteCleanupJob<TContext> — это наиболее продвинутый вариант. Он автоматически обнаруживает все типы сущностей ISoftDeletable в DbContext, выполняет топологическую сортировку и пакетное удаление.",
+      softDeleteTip:
+        "Команда CLI 'nexora add-bg-service {Module}' генерирует файл задачи и добавляет обе регистрации DI за один шаг.",
+
+      // Rules
+      rulesTitle: "Правила",
+      rulesMustTitle: "✅ Обязательно к выполнению",
+      rulesNeverTitle: "❌ Никогда не делать",
+      ruleMust1: "Один класс на файл в папке BackgroundJobs/",
+      ruleMust2: "Регистрировать ОБЕ строки DI (конкретный тип + делегат фабрики)",
+      ruleMust3: "Использовать 5-полевой CRON (не 6-полевой формат Quartz)",
+      ruleMust4: "Сделать ExecuteAsync идемпотентным",
+      ruleMust5: "Выполнять сборку после каждого изменения — nexora build backend",
+      ruleNever1: "Никогда не импортировать пространства имен Hangfire или Quartz в задачи",
+      ruleNever2: "Никогда не использовать [AutomaticRetry] — глобальные повторные попытки находятся в BackgroundJobsConfiguration",
+      ruleNever3: "Никогда не вызывать RecurringJob.AddOrUpdate<T>() в коде модуля",
+      ruleNever4: "Никогда не размещать задачи в Services/ или любой другой папке",
+      ruleNever5: "Никогда не регистрировать как Singleton — всегда AddScoped",
+
       tenantWarning:
-        "Фоновые задачи выполняются без HTTP-контекста. Необходимо вручную устанавливать область тенанта в коде (Tenant Scope) для доступа к данным.",
+        "Фоновые задачи выполняются вне контекста HTTP — контекст арендатора (tenant context) недоступен. Задачи, обрабатывающие данные арендаторов, должны создавать явную область действия (scope) с использованием IServiceScopeFactory.",
     },
     fileStorage: {
       title: "Файловое хранилище (File Storage)",
