@@ -18,7 +18,21 @@ export const de = {
       architectureFlowTitle: "Die Auto-Discovery Pipeline",
 
       // IAutoRegisteredJob Contract
-      contractTitle: "Der IAutoRegisteredJob-Vertrag",
+      nodeConfig: "[DE] appsettings.json\nProvider + Per-Job Overrides",
+        descConfig: "[DE] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+        nodeStartup: "[DE] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+        descStartup: "[DE] Reads provider, discovers all jobs, schedules them",
+        nodeDiscovery: "[DE] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+        descDiscovery: "[DE] Scans DI container for every registered IAutoRegisteredJob",
+        nodeSchedule: "[DE] Schedule Each Job\nIf Enabled -> Register with provider API",
+        descSchedule: "[DE] Uses CronExpression from appsettings override or job default",
+        nodeExecute: "[DE] job.ExecuteAsync(ct)\nAt every cron tick",
+        descExecute: "[DE] Provider-agnostic - job has zero knowledge of which provider runs it",
+        conn1: "[DE] drives",
+        conn2: "[DE] triggers",
+        conn3: "[DE] for each job",
+        conn4: "[DE] on cron tick",
+        contractTitle: "Der IAutoRegisteredJob-Vertrag",
       contractIntro:
         "Jeder wiederkehrende Hintergrundjob in NEXORA implementiert eine einzige Schnittstelle: IAutoRegisteredJob. Das ist der gesamte Vertrag — drei Eigenschaften und eine Methode. Die Schnittstelle schließt absichtlich jedes anbieterspezifische Konzept aus (keine Hangfire-Attribute, keine Quartz-Annotationen). Der Job weiß nicht, welcher Anbieter ihn ausführt.",
 
@@ -129,10 +143,26 @@ export const de = {
       softDeleteIntro:
         "Die Basisklasse SoftDeleteCleanupJob<TContext> ist die fortschrittlichste Option. Sie erkennt automatisch alle ISoftDeletable-Entitätstypen im DbContext, sortiert sie topologisch und führt Batch-Löschungen durch.",
       softDeleteTip:
-        "Der CLI-Befehl 'nexora add-bg-service {Module}' generiert die Jobdatei und fügt die beiden DI-Registrierungen in einem Schritt hinzu.",
-
-      // Rules
-      rulesTitle: "Die unumstößlichen Regeln",
+        "Der CLI-Befehl 'nexora add-bg-service {Module}' generiert die Job-Datei und fügt beide DI-Registrierungen in einem Schritt hinzu. Dies ist der empfohlene Weg, um einen SoftDeleteCleanupJob hinzuzufügen.",
+      softDeleteFlowTitle: "Ausführungsfluss für weiches Löschen",
+      flowCronLabel: "Cron Tick (3:00 Uhr)",
+      flowCronDesc: "Standard-Cron für Soft-Delete-Aufgaben",
+      flowInitLabel: "SoftDeleteCleanupJob<TContext>",
+      flowInitDesc: "Vom DI-Container instanziiert",
+      flowScanLabel: "ISoftDeletable entdecken",
+      flowScanDesc: "Reflexionsscan im DbContext für Entitäten, die ISoftDeletable implementieren",
+      flowFilterLabel: "Abgelaufene Entitäten filtern",
+      flowFilterDesc: "Datensätze finden, bei denen IsDeleted = true UND DeletedAt < DateTime.UtcNow.AddDays(-30)",
+      flowCascadeLabel: "FK-bewusste Kaskade",
+      flowCascadeDesc: "Behandelt Fremdschlüsseleinschränkungen in der richtigen Löschreihenfolge",
+      flowExecuteLabel: "Hartes Löschen",
+      flowExecuteDesc: "Ausführen von nativem SQL zum massenhaften Löschen unter Umgehung der EF-Änderungsverfolgung",
+      connTriggers: "löst aus",
+      connStarts: "startet",
+      connBuilds: "erstellt Abfrage",
+      connOrders: "ordnet",
+      connRemoves: "entfernt",
+      rulesTitle: "Regeln",
       rulesMustTitle: "✅ MUST DO",
       rulesNeverTitle: "❌ NEVER",
       ruleMust1: "Eine Klasse pro Datei im BackgroundJobs/ Ordner",

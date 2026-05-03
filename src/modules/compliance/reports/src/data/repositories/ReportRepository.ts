@@ -30,7 +30,7 @@ export class ReportRepository implements IReportRepository {
     return ReportMapper.toEntity(model);
   }
 
-  download(id: string): Promise<Blob> {
-    return this.service.download(id);
+  download(id: string, format?: string): Promise<Blob> {
+    return this.service.download(id, format);
   }
 }

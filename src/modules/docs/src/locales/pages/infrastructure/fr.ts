@@ -18,7 +18,21 @@ export const fr = {
       architectureFlowTitle: "Pipeline d'Auto-Découverte",
 
       // IAutoRegisteredJob Contract
-      contractTitle: "Contrat IAutoRegisteredJob",
+      nodeConfig: "[FR] appsettings.json\nProvider + Per-Job Overrides",
+        descConfig: "[FR] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+        nodeStartup: "[FR] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+        descStartup: "[FR] Reads provider, discovers all jobs, schedules them",
+        nodeDiscovery: "[FR] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+        descDiscovery: "[FR] Scans DI container for every registered IAutoRegisteredJob",
+        nodeSchedule: "[FR] Schedule Each Job\nIf Enabled -> Register with provider API",
+        descSchedule: "[FR] Uses CronExpression from appsettings override or job default",
+        nodeExecute: "[FR] job.ExecuteAsync(ct)\nAt every cron tick",
+        descExecute: "[FR] Provider-agnostic - job has zero knowledge of which provider runs it",
+        conn1: "[FR] drives",
+        conn2: "[FR] triggers",
+        conn3: "[FR] for each job",
+        conn4: "[FR] on cron tick",
+        contractTitle: "Contrat IAutoRegisteredJob",
       contractIntro:
         "Chaque tâche en arrière-plan récurrente dans NEXORA implémente une interface : IAutoRegisteredJob. Ceci est le contrat complet — trois propriétés et une méthode. L'interface exclut délibérément tout concept spécifique au fournisseur (pas d'attributs Hangfire, pas d'annotations Quartz). La tâche n'a aucune connaissance du fournisseur qui l'exécute.",
 
@@ -129,9 +143,25 @@ export const fr = {
       softDeleteIntro:
         "La classe de base SoftDeleteCleanupJob<TContext> est l'option la plus sophistiquée. Elle découvre automatiquement tous les types d'entités ISoftDeletable dans le DbContext, les trie topologiquement et supprime par lots.",
       softDeleteTip:
-        "La commande CLI 'nexora add-bg-service {Module}' génère le fichier de tâche et ajoute les deux enregistrements DI en une seule étape.",
-
-      // Rules
+        "La commande CLI 'nexora add-bg-service {Module}' génère le fichier de tâche et ajoute les deux enregistrements DI en une seule étape. C'est la méthode recommandée pour ajouter un SoftDeleteCleanupJob.",
+      softDeleteFlowTitle: "Flux d'exécution de suppression douce",
+      flowCronLabel: "Tick Cron (3h00)",
+      flowCronDesc: "Cron par défaut pour les tâches de suppression douce",
+      flowInitLabel: "SoftDeleteCleanupJob<TContext>",
+      flowInitDesc: "Instancié par le conteneur DI",
+      flowScanLabel: "Découvrir ISoftDeletable",
+      flowScanDesc: "Scan de réflexion sur DbContext pour les entités implémentant ISoftDeletable",
+      flowFilterLabel: "Filtrer les entités expirées",
+      flowFilterDesc: "Trouver les enregistrements où IsDeleted = true ET DeletedAt < DateTime.UtcNow.AddDays(-30)",
+      flowCascadeLabel: "Cascade sensible aux FK",
+      flowCascadeDesc: "Gère les contraintes de clés étrangères dans l'ordre de suppression correct",
+      flowExecuteLabel: "Suppression définitive",
+      flowExecuteDesc: "Exécuter SQL natif pour la suppression en masse, en contournant le suivi des modifications EF",
+      connTriggers: "déclenche",
+      connStarts: "démarre",
+      connBuilds: "construit la requête",
+      connOrders: "ordonne",
+      connRemoves: "supprime",
       rulesTitle: "Règles",
       rulesMustTitle: "✅ À Faire Obligatoirement",
       rulesNeverTitle: "❌ À Ne Jamais Faire",

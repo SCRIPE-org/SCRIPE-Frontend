@@ -1,5 +1,5 @@
-import { registerPage } from "../../repositories/DocsRepository";
-import type { DocSection } from "../../../domain/entities/DocSection";
+import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "modules.dunning.intro" },

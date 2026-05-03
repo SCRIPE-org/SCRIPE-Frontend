@@ -18,7 +18,21 @@ export const en = {
       architectureFlowTitle: "Auto-Discovery Pipeline",
 
       // IAutoRegisteredJob Contract
-      contractTitle: "IAutoRegisteredJob Contract",
+      nodeConfig: "appsettings.json\nProvider + Per-Job Overrides",
+        descConfig: "Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+        nodeStartup: "BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+        descStartup: "Reads provider, discovers all jobs, schedules them",
+        nodeDiscovery: "Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+        descDiscovery: "Scans DI container for every registered IAutoRegisteredJob",
+        nodeSchedule: "Schedule Each Job\nIf Enabled -> Register with provider API",
+        descSchedule: "Uses CronExpression from appsettings override or job default",
+        nodeExecute: "job.ExecuteAsync(ct)\nAt every cron tick",
+        descExecute: "Provider-agnostic - job has zero knowledge of which provider runs it",
+        conn1: "drives",
+        conn2: "triggers",
+        conn3: "for each job",
+        conn4: "on cron tick",
+        contractTitle: "IAutoRegisteredJob Contract",
       contractIntro:
         "Every recurring background job in NEXORA implements one interface: IAutoRegisteredJob. This is the complete contract — three properties and one method. The interface deliberately excludes any provider-specific concepts (no Hangfire attributes, no Quartz annotations). The job has zero knowledge of which provider executes it.",
 
@@ -130,6 +144,24 @@ export const en = {
         "The SoftDeleteCleanupJob<TContext> base class is the most sophisticated option. It automatically discovers all ISoftDeletable entity types in the DbContext, sorts them topologically based on FK relationships (children before parents), and batch-deletes records that have passed the retention period. Override PreCleanupAsync to unlock guardian-protected entities before deletion, or GetCustomCleanupOrder() to specify explicit entity ordering.",
       softDeleteTip:
         "The CLI command 'nexora add-bg-service {Module}' generates the job file and adds both DI registrations in one step. It is the recommended way to add a SoftDeleteCleanupJob.",
+      softDeleteFlowTitle: "Soft Delete Execution Flow",
+      flowCronLabel: "Cron Tick (3:00 AM)",
+      flowCronDesc: "Default cron for Soft Delete jobs",
+      flowInitLabel: "SoftDeleteCleanupJob<TContext>",
+      flowInitDesc: "Instantiated by DI container",
+      flowScanLabel: "Discover ISoftDeletable",
+      flowScanDesc: "Reflection scan on DbContext for entities implementing ISoftDeletable",
+      flowFilterLabel: "Filter Expired Entities",
+      flowFilterDesc: "Find records where IsDeleted = true AND DeletedAt < DateTime.UtcNow.AddDays(-30)",
+      flowCascadeLabel: "FK-Aware Cascading",
+      flowCascadeDesc: "Handles foreign key constraints in correct deletion order",
+      flowExecuteLabel: "Hard Delete",
+      flowExecuteDesc: "Execute native SQL for bulk deletion, bypassing EF change tracking",
+      connTriggers: "triggers",
+      connStarts: "starts",
+      connBuilds: "builds query",
+      connOrders: "orders",
+      connRemoves: "removes",
 
       // Rules
       rulesTitle: "Rules",

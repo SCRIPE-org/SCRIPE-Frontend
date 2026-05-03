@@ -7,5 +7,5 @@ export interface IReportRepository {
   getAll(params: ReportParams): Promise<PagedResult<ComplianceReport>>;
   generate(data: GenerateReportRequest): Promise<string>;
   getById(id: string): Promise<ComplianceReport>;
-  download(id: string): Promise<Blob>;
+  download(id: string, format?: string): Promise<Blob>;
 }

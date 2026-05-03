@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -7,9 +8,13 @@ import {
   ArrowRight,
   BarChart3,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Download,
+  FileSpreadsheet,
   FileText,
+  FileJson,
+  FileType,
   Loader2,
   AlertTriangle,
   Calendar,
@@ -22,6 +27,13 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/ui/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@core/ui/dropdown-menu";
 import { complianceContainer } from "@modules/compliance/di";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";
 
@@ -42,6 +54,24 @@ const REPORT_TYPE_LABELS: Record<string, string> = {
   Data_Inventory: "Data Inventory Export",
 };
 
+// ── Format Options ─────────────────────────────────────────────────────────────
+
+type ExportFormat = "csv" | "json" | "xlsx" | "pdf";
+
+const FORMAT_OPTIONS: { value: ExportFormat; label: string; icon: React.ReactNode; description: string }[] = [
+  { value: "csv", label: "CSV", icon: <FileText className="h-4 w-4" />, description: "Comma-separated values" },
+  { value: "xlsx", label: "Excel (XLSX)", icon: <FileSpreadsheet className="h-4 w-4" />, description: "Microsoft Excel format" },
+  { value: "json", label: "JSON", icon: <FileJson className="h-4 w-4" />, description: "Structured JSON data" },
+  { value: "pdf", label: "PDF", icon: <FileType className="h-4 w-4" />, description: "Portable Document Format" },
+];
+
+const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
+  csv: ".csv",
+  json: ".json",
+  xlsx: ".xlsx",
+  pdf: ".pdf",
+};
+
 // ── Report Detail View ─────────────────────────────────────────────────────────
 
 export function ReportDetailView({ id }: { id: string }) {
@@ -51,6 +81,7 @@ export function ReportDetailView({ id }: { id: string }) {
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const { reportRepository } = complianceContainer;
   const queryClient = useQueryClient();
+  const [downloadFormat, setDownloadFormat] = useState<ExportFormat>("csv");
 
   const query = useQuery({
     queryKey: ["compliance", "report", id],
@@ -63,14 +94,16 @@ export function ReportDetailView({ id }: { id: string }) {
   });
 
   const downloadMutation = useMutation({
-    mutationFn: () => reportRepository.download(id),
-    onSuccess: (blob) => {
+    mutationFn: (format: ExportFormat) => reportRepository.download(id, format),
+    onSuccess: (blob, format) => {
+      const ext = FORMAT_EXTENSIONS[format];
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `compliance-report-${id}.json`;
+      a.download = `compliance-report-${id}${ext}`;
       a.click();
       URL.revokeObjectURL(url);
+      toast({ title: t("common.success") ?? "Download started", variant: "default" });
     },
     onError: () => toast({ title: t("common.error"), variant: "destructive" }),
   });
@@ -78,6 +111,7 @@ export function ReportDetailView({ id }: { id: string }) {
   const report = query.data;
   const meta = report ? (STATUS_META[report.status] ?? STATUS_META.Pending) : null;
   const typeLabel = report ? (REPORT_TYPE_LABELS[report.reportType] ?? report.reportType) : "";
+  const selectedFormat = FORMAT_OPTIONS.find((f) => f.value === downloadFormat) ?? FORMAT_OPTIONS[0];
 
   return (
     <div className="space-y-6">
@@ -141,21 +175,80 @@ export function ReportDetailView({ id }: { id: string }) {
                     <p className="mt-1 font-mono text-xs text-muted-foreground">{report.id}</p>
                   </div>
                 </div>
+
+                {/* Download Actions — Format Dropdown + Download Button */}
                 {report.isReady && (
-                  <Button
-                    id="report-detail-download"
-                    onClick={() => downloadMutation.mutate()}
-                    disabled={downloadMutation.isPending}
-                    className="shrink-0"
-                  >
-                    {downloadMutation.isPending ? (
-                      <Loader2 className="me-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Download className="me-2 h-4 w-4" />
-                    )}
-                    {t("compliance.downloadReport")}
-                  </Button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {/* Format selector dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          id="report-format-selector"
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 min-w-[140px]"
+                        >
+                          {selectedFormat.icon}
+                          <span>{selectedFormat.label}</span>
+                          <ChevronDown className="h-3 w-3 opacity-50" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align={direction === "rtl" ? "start" : "end"} className="w-[220px]">
+                        {FORMAT_OPTIONS.map((opt) => (
+                          <DropdownMenuItem
+                            key={opt.value}
+                            onClick={() => setDownloadFormat(opt.value)}
+                            className="flex items-center gap-3 py-2.5"
+                          >
+                            <div className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+                              downloadFormat === opt.value
+                                ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                                : "border-border/50 bg-muted/30 text-muted-foreground"
+                            }`}>
+                              {opt.icon}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium">{opt.label}</span>
+                              <span className="text-xs text-muted-foreground">{opt.description}</span>
+                            </div>
+                            {downloadFormat === opt.value && (
+                              <CheckCircle2 className="ms-auto h-4 w-4 text-indigo-500" />
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Download button */}
+                    <Button
+                      id="report-detail-download"
+                      onClick={() => downloadMutation.mutate(downloadFormat)}
+                      disabled={downloadMutation.isPending}
+                    >
+                      {downloadMutation.isPending ? (
+                        <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="me-2 h-4 w-4" />
+                      )}
+                      {t("compliance.downloadReport")}
+                    </Button>
+                  </div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* MVP Info banner */}
+          <Card className="border-indigo-500/20 bg-indigo-500/5">
+            <CardContent className="flex items-start gap-3 p-4">
+              <FileText className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
+              <div>
+                <p className="text-sm font-medium text-indigo-700 dark:text-indigo-400">
+                  {t("compliance.mvpExportTitle") ?? "MVP Export Notice"}
+                </p>
+                <p className="mt-0.5 text-xs text-indigo-600/70 dark:text-indigo-400/70">
+                  {t("compliance.mvpExportDesc") ?? "Compliance reporting is currently in MVP. Downloads contain metadata summaries. Full rich data with charts and detailed breakdowns are planned for a future release."}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -201,7 +294,7 @@ export function ReportDetailView({ id }: { id: string }) {
                     {t("compliance.reportQueuedInfo") ?? "Report generation is in progress…"}
                   </p>
                   <p className="mt-0.5 text-xs text-blue-600/70 dark:text-blue-400/70">
-                    This page will refresh automatically. This usually completes within seconds.
+                    {t("compliance.reportQueuedDesc") ?? "This page will refresh automatically. This usually completes within seconds."}
                   </p>
                 </div>
               </CardContent>

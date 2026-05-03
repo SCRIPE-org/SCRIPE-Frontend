@@ -6,15 +6,19 @@
 // ─── Flowchart Types ───────────────────────────────────────────────
 export interface FlowNode {
   id: string;
-  label: string;
+  label?: string;
+  labelKey?: string;
   type?: "default" | "primary" | "success" | "warning" | "danger" | "info";
   description?: string;
+  descriptionKey?: string;
+  icon?: string;
 }
 
 export interface FlowConnection {
   from: string;
   to: string;
   label?: string;
+  labelKey?: string;
   style?: "solid" | "dashed";
 }
 
@@ -109,6 +113,7 @@ export interface FlowchartSection extends DocSectionBase {
   connections: FlowConnection[];
   direction?: "vertical" | "horizontal";
   title?: string;
+  titleKey?: string;
 }
 
 export interface ApiTableSection extends DocSectionBase {

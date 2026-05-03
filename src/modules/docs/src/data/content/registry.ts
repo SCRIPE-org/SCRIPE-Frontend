@@ -51,29 +51,29 @@ import "./features/dashboard-hub";
 import "./features/tenant-context-gate";
 
 // Modules (Entitlements)
-import "./modules/entitlements-overview";
-import "./modules/editions";
-import "./modules/subscriptions";
-import "./modules/features";
-import "./modules/overrides";
+import "./modules/entitlements/entitlements-overview";
+import "./modules/entitlements/editions";
+import "./modules/entitlements/subscriptions";
+import "./modules/entitlements/features";
+import "./modules/entitlements/overrides";
 
 // Modules (Billing & Tier 2 — Phases 0–9)
-import "./modules/billing-engine";
-import "./modules/invoices";
-import "./modules/dunning";
-import "./modules/tenant-plans";
-import "./modules/user-subscriptions";
+import "./modules/entitlements/billing-engine";
+import "./modules/entitlements/invoices";
+import "./modules/entitlements/dunning";
+import "./modules/entitlements/tenant-plans";
+import "./modules/entitlements/user-subscriptions";
 
 // Modules (Revenue Analytics — Phase 11)
-import "./modules/revenue-analytics";
+import "./modules/entitlements/revenue-analytics";
 
 // Modules (Compliance — Phase 12)
-import "./modules/compliance-overview";
-import "./modules/compliance-dsr";
-import "./modules/compliance-consent";
-import "./modules/compliance-retention";
-import "./modules/compliance-inventory";
-import "./modules/compliance-reports";
+import "./modules/compliance/compliance-overview";
+import "./modules/compliance/compliance-dsr";
+import "./modules/compliance/compliance-consent";
+import "./modules/compliance/compliance-retention";
+import "./modules/compliance/compliance-inventory";
+import "./modules/compliance/compliance-reports";
 
 // Security
 import "./security/overview";

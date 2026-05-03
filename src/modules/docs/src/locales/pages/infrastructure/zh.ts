@@ -18,7 +18,21 @@ export const zh = {
       architectureFlowTitle: "自动发现管道",
 
       // IAutoRegisteredJob Contract
-      contractTitle: "IAutoRegisteredJob 契约",
+      nodeConfig: "[ZH] appsettings.json\nProvider + Per-Job Overrides",
+        descConfig: "[ZH] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+        nodeStartup: "[ZH] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+        descStartup: "[ZH] Reads provider, discovers all jobs, schedules them",
+        nodeDiscovery: "[ZH] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+        descDiscovery: "[ZH] Scans DI container for every registered IAutoRegisteredJob",
+        nodeSchedule: "[ZH] Schedule Each Job\nIf Enabled -> Register with provider API",
+        descSchedule: "[ZH] Uses CronExpression from appsettings override or job default",
+        nodeExecute: "[ZH] job.ExecuteAsync(ct)\nAt every cron tick",
+        descExecute: "[ZH] Provider-agnostic - job has zero knowledge of which provider runs it",
+        conn1: "[ZH] drives",
+        conn2: "[ZH] triggers",
+        conn3: "[ZH] for each job",
+        conn4: "[ZH] on cron tick",
+        contractTitle: "IAutoRegisteredJob 契约",
       contractIntro:
         "NEXORA 中的每个循环后台任务都实现一个接口：IAutoRegisteredJob。这就是整个契约 — 三个属性和一个方法。该接口故意排除了任何特定于提供商的概念（没有 Hangfire 属性，没有 Quartz 注解）。任务不知道是哪个提供商在运行它。",
 
@@ -129,9 +143,25 @@ export const zh = {
       softDeleteIntro:
         "SoftDeleteCleanupJob<TContext> 基类是最高级的选项。它自动发现 DbContext 中所有的 ISoftDeletable 实体类型，对其进行拓扑排序，并进行批处理删除。",
       softDeleteTip:
-        "CLI 命令 'nexora add-bg-service {Module}' 会一步生成任务文件并添加这两行 DI 注册。",
-
-      // Rules
+        "CLI 命令 'nexora add-bg-service {Module}' 可一步生成作业文件并添加两个 DI 注册。这是添加 SoftDeleteCleanupJob 的推荐方法。",
+      softDeleteFlowTitle: "软删除执行流程",
+      flowCronLabel: "Cron 滴答 (凌晨 3:00)",
+      flowCronDesc: "软删除作业的默认 Cron",
+      flowInitLabel: "SoftDeleteCleanupJob<TContext>",
+      flowInitDesc: "由 DI 容器实例化",
+      flowScanLabel: "发现 ISoftDeletable",
+      flowScanDesc: "对实现 ISoftDeletable 的实体进行 DbContext 反射扫描",
+      flowFilterLabel: "过滤过期实体",
+      flowFilterDesc: "查找 IsDeleted = true 且 DeletedAt < DateTime.UtcNow.AddDays(-30) 的记录",
+      flowCascadeLabel: "FK 感知级联",
+      flowCascadeDesc: "以正确的删除顺序处理外键约束",
+      flowExecuteLabel: "硬删除",
+      flowExecuteDesc: "执行原生 SQL 进行批量删除，绕过 EF 更改跟踪",
+      connTriggers: "触发",
+      connStarts: "开始",
+      connBuilds: "构建查询",
+      connOrders: "排序",
+      connRemoves: "移除",
       rulesTitle: "规则",
       rulesMustTitle: "✅ 必须执行",
       rulesNeverTitle: "❌ 永远不要",

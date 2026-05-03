@@ -36,9 +36,9 @@ export function FlowChart({ nodes, connections, direction = "vertical", title }:
               <div
                 className="docs-flow-node"
                 data-type={node.type || "default"}
-                title={node.description ? t(node.description) : undefined}
+                title={node.descriptionKey ? t(node.descriptionKey) : node.description}
               >
-                {t(node.label)}
+                {t(node.labelKey || node.label || node.id)}
               </div>
 
               {conn &&
@@ -46,16 +46,16 @@ export function FlowChart({ nodes, connections, direction = "vertical", title }:
                 (direction === "vertical" ? (
                   <div className="docs-flow-connector docs-flow-connector-vertical">
                     <div className="docs-flow-connector-line" />
-                    {conn.label && (
-                      <span className="docs-flow-connector-label">{t(conn.label)}</span>
+                    {(conn.labelKey || conn.label) && (
+                      <span className="docs-flow-connector-label">{t(conn.labelKey || conn.label || "")}</span>
                     )}
                     <div className="docs-flow-connector-arrow" />
                   </div>
                 ) : (
                   <div className="docs-flow-connector docs-flow-connector-horizontal">
                     <div className="docs-flow-connector-h-line" />
-                    {conn.label && (
-                      <span className="docs-flow-connector-label">{t(conn.label)}</span>
+                    {(conn.labelKey || conn.label) && (
+                      <span className="docs-flow-connector-label">{t(conn.labelKey || conn.label || "")}</span>
                     )}
                     <div className="docs-flow-connector-h-arrow" />
                   </div>
