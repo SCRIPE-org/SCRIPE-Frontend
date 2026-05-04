@@ -25,5 +25,15 @@ export const en = {
     // Empty states
     noReports: "No reports generated",
     noReportsDesc: "Generate your first compliance report to get started.",
+
+    // Report detail actions
+    mvpExportTitle: "MVP Export",
+    mvpExportDesc: "Full OpenXML/PDF exports with charts are planned. For now, download as CSV or TSV.",
+
+    // Download format labels
+    downloadCsv: "Download CSV",
+    downloadTsv: "Download Spreadsheet (TSV)",
+    downloadJson: "Download JSON",
+    downloadTxt: "Download Text Summary",
   },
 };

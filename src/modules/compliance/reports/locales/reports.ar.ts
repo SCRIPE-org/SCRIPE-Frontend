@@ -25,5 +25,15 @@ export const ar = {
     // Empty states
     noReports: "لم يتم إنشاء تقارير",
     noReportsDesc: "أنشئ أول تقرير امتثال للبدء.",
+
+    // Report detail actions
+    mvpExportTitle: "تصدير أساسي",
+    mvpExportDesc: "تصدير OpenXML/PDF الكامل مع الرسوم البيانية مخطط له. في الوقت الحالي، قم بالتنزيل بصيغة CSV أو TSV.",
+
+    // Download format labels
+    downloadCsv: "تحميل CSV",
+    downloadTsv: "تحميل جدول بيانات (TSV)",
+    downloadJson: "تحميل JSON",
+    downloadTxt: "تحميل ملخص نصي",
   },
 };

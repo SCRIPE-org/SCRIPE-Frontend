@@ -605,7 +605,7 @@ export const navigationData: DocCategoryData[] = [
       {
         id: "mod-compliance",
         titleKey: "nav.compliance",
-        icon: "shield-check",
+        icon: "scale",
         order: 2,
         children: [
           {

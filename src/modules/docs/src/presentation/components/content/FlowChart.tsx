@@ -68,41 +68,53 @@ export function FlowChart({ nodes, connections, direction = "vertical", title }:
   );
 }
 
-/** Extract ordered sequence from connections graph */
+/** Extract ordered sequence from connections graph via topological sort (handles branching). */
 function getOrderedNodes(nodes: FlowNode[], connections: FlowConnection[]): FlowNode[] {
   if (connections.length === 0) return nodes;
 
   const nodeMap = new Map(nodes.map((n) => [n.id, n]));
-  const incoming = new Set(connections.map((c) => c.to));
 
-  // Find root (node not targeted by any connection)
-  let rootId = connections[0]?.from;
+  // Build adjacency and in-degree maps
+  const outEdges = new Map<string, string[]>();
+  const inDegree = new Map<string, number>();
+
   for (const node of nodes) {
-    if (!incoming.has(node.id)) {
-      rootId = node.id;
-      break;
-    }
+    outEdges.set(node.id, []);
+    inDegree.set(node.id, 0);
   }
 
-  // Walk the chain
+  for (const conn of connections) {
+    outEdges.get(conn.from)?.push(conn.to);
+    inDegree.set(conn.to, (inDegree.get(conn.to) ?? 0) + 1);
+  }
+
+  // Kahn's algorithm — start from nodes with no incoming edges
+  const queue: string[] = [];
+  for (const [id, degree] of inDegree.entries()) {
+    if (degree === 0) queue.push(id);
+  }
+
   const ordered: FlowNode[] = [];
   const visited = new Set<string>();
-  let current: string | undefined = rootId;
 
-  while (current && !visited.has(current)) {
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    if (visited.has(current)) continue;
     visited.add(current);
+
     const node = nodeMap.get(current);
     if (node) ordered.push(node);
 
-    const next = connections.find((c) => c.from === current);
-    current = next?.to;
+    for (const neighbor of outEdges.get(current) ?? []) {
+      const newDegree = (inDegree.get(neighbor) ?? 0) - 1;
+      inDegree.set(neighbor, newDegree);
+      if (newDegree === 0) queue.push(neighbor);
+    }
   }
 
-  // Add any remaining unvisited nodes
+  // Append any unvisited nodes (disconnected or in a cycle)
   for (const node of nodes) {
-    if (!visited.has(node.id)) {
-      ordered.push(node);
-    }
+    if (!visited.has(node.id)) ordered.push(node);
   }
 
   return ordered;
