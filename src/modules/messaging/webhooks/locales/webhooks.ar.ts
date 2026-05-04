@@ -370,6 +370,18 @@ export const ar = {
         published: "تم نشر خطة المستأجر",
         archived: "تم أرشفة خطة المستأجر",
       },
+      // ─── الامتثال وطلبات مواضيع البيانات (DSR) ─────────────
+      compliance: {
+        consent_granted: "تم منح الموافقة",
+        consent_withdrawn: "تم سحب الموافقة",
+        dsr_submitted: "تم تقديم طلب موضوع البيانات (DSR)",
+        dsr_status_changed: "تغيرت حالة طلب موضوع البيانات (DSR)",
+        dsr_completed: "تم إكمال طلب موضوع البيانات (DSR)",
+        dsr_erasure_confirmed: "تم تأكيد مسح طلب موضوع البيانات (DSR)",
+        dsr_cancelled: "تم إلغاء طلب موضوع البيانات (DSR)",
+        report_generated: "تم إنشاء تقرير الامتثال",
+        report_failed: "فشل إنشاء تقرير الامتثال",
+      },
       // ─── البنية التحتية الأساسية ─────────────────────────────
       notification: {
         sent: "تم إرسال الإشعار",

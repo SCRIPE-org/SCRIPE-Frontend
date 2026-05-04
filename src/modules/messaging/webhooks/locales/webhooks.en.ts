@@ -368,6 +368,18 @@ export const en = {
         published: "Tenant Plan Published",
         archived: "Tenant Plan Archived",
       },
+      // ─── Compliance & DSR ─────────────────────────────────
+      compliance: {
+        consent_granted: "Consent Granted",
+        consent_withdrawn: "Consent Withdrawn",
+        dsr_submitted: "DSR Submitted",
+        dsr_status_changed: "DSR Status Changed",
+        dsr_completed: "DSR Completed",
+        dsr_erasure_confirmed: "DSR Erasure Confirmed",
+        dsr_cancelled: "DSR Cancelled",
+        report_generated: "Compliance Report Generated",
+        report_failed: "Compliance Report Failed",
+      },
       // ─── Core Infrastructure ──────────────────────────────
       notification: {
         sent: "Notification Sent",
