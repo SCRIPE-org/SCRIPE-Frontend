@@ -33,27 +33,21 @@ import { GenericSelect, type GenericSelectOption } from "@core/crud/components/g
 // ── Report type metadata ───────────────────────────────────────────────────────
 
 const REPORT_TYPES = [
-  { value: "GDPR_Overview", label: "GDPR Overview", regulation: "GDPR" },
-  { value: "DSR_Summary", label: "DSR Activity Summary", regulation: "GDPR" },
-  { value: "Consent_Audit", label: "Consent Audit", regulation: "CCPA" },
-  { value: "Retention_Analysis", label: "Retention Analysis", regulation: "GDPR" },
-  { value: "Data_Inventory", label: "Data Inventory Export", regulation: "CCPA" },
+  { value: "GDPR_Overview", labelKey: "compliance.reportTypes.gdprOverview", regulation: "GDPR" },
+  { value: "DSR_Summary", labelKey: "compliance.reportTypes.dsrSummary", regulation: "GDPR" },
+  { value: "Consent_Audit", labelKey: "compliance.reportTypes.consentAudit", regulation: "CCPA" },
+  { value: "Retention_Analysis", labelKey: "compliance.reportTypes.retentionAnalysis", regulation: "GDPR" },
+  { value: "Data_Inventory", labelKey: "compliance.reportTypes.dataInventory", regulation: "CCPA" },
 ];
 
-const STATUS_META: Record<string, { label: string; variant: "default" | "secondary" | "outline" | "destructive"; icon: React.ReactNode }> = {
-  Ready: { label: "Ready", variant: "default", icon: <CheckCircle2 className="h-3 w-3" /> },
-  Generating: { label: "Generating…", variant: "secondary", icon: <Loader2 className="h-3 w-3 animate-spin" /> },
-  Pending: { label: "Pending", variant: "outline", icon: <Clock className="h-3 w-3" /> },
-  Failed: { label: "Failed", variant: "destructive", icon: <AlertTriangle className="h-3 w-3" /> },
+const STATUS_META: Record<string, { labelKey: string; variant: "default" | "secondary" | "outline" | "destructive"; icon: React.ReactNode }> = {
+  Ready: { labelKey: "compliance.status.ready", variant: "default", icon: <CheckCircle2 className="h-3 w-3" /> },
+  Generating: { labelKey: "compliance.status.generating", variant: "secondary", icon: <Loader2 className="h-3 w-3 animate-spin" /> },
+  Pending: { labelKey: "compliance.status.pending", variant: "outline", icon: <Clock className="h-3 w-3" /> },
+  Failed: { labelKey: "compliance.status.failed", variant: "destructive", icon: <AlertTriangle className="h-3 w-3" /> },
 };
 
 // ── Report type options for GenericSelect ──────────────────────────────────────
-
-const REPORT_TYPE_OPTIONS: GenericSelectOption[] = REPORT_TYPES.map((r) => ({
-  value: r.value,
-  label: `${r.label} — ${r.regulation}`,
-  description: r.regulation,
-}));
 
 // ── Generate Dialog ─────────────────────────────────────────────────────────
 
@@ -91,8 +85,8 @@ function GenerateReportDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("compliance.generateReport") ?? "Generate Compliance Report"}
-      description={t("compliance.generateReportDesc") ?? "Select a report type and optional date range."}
+      title={t("compliance.generateReport")}
+      description={t("compliance.generateReportDesc")}
       size="md"
       formKey={open ? "report-generate" : undefined}
     >
@@ -100,10 +94,14 @@ function GenerateReportDialog({
         <div className="space-y-1.5">
           <Label>{t("compliance.reportType")}</Label>
           <GenericSelect
-            options={REPORT_TYPE_OPTIONS}
+            options={REPORT_TYPES.map((r) => ({
+              value: r.value,
+              label: `${t(r.labelKey)} — ${r.regulation}`,
+              description: r.regulation,
+            }))}
             value={form.reportType}
             onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, reportType: v as string }))}
-            placeholder={t("compliance.reportType") ?? "Select report type"}
+            placeholder={t("compliance.reportType")}
             type="single"
           />
         </div>
@@ -130,7 +128,7 @@ function GenerateReportDialog({
         <div className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
           <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
           <p className="text-xs text-blue-600 dark:text-blue-400">
-            {t("compliance.reportQueuedInfo") ?? "Reports are generated asynchronously. Refresh after a few minutes."}
+            {t("compliance.reportQueuedInfo")}
           </p>
         </div>
         <div className="flex justify-end gap-2 border-t pt-4">
@@ -164,7 +162,8 @@ function ReportCard({ report }: { report: ComplianceReport }) {
   const { t } = useI18n();
   const router = useRouter();
   const meta = STATUS_META[report.status] ?? STATUS_META.Pending;
-  const typeLabel = REPORT_TYPES.find((r) => r.value === report.reportType)?.label ?? report.reportType;
+  const typeLabelKey = REPORT_TYPES.find((r) => r.value === report.reportType)?.labelKey;
+  const typeLabel = typeLabelKey ? t(typeLabelKey) : report.reportType;
 
   return (
     <Card
@@ -185,7 +184,7 @@ function ReportCard({ report }: { report: ComplianceReport }) {
                 )}
                 <Badge variant={meta.variant} className="h-5 gap-1 px-1.5 text-[10px]">
                   {meta.icon}
-                  {report.status === "Ready" ? t("compliance.reportReady") : report.status === "Pending" || report.status === "Generating" ? t("compliance.reportPending") : report.status}
+                  {t(meta.labelKey)}
                 </Badge>
               </div>
               {(report.periodStart || report.periodEnd) && (
@@ -221,7 +220,7 @@ function ReportCard({ report }: { report: ComplianceReport }) {
               className="h-7 text-xs"
               onClick={() => router.push(`/compliance/reports/${report.id}`)}
             >
-              {t("common.view") ?? "View"}
+              {t("common.view")}
             </Button>
           </div>
         </div>
@@ -249,7 +248,7 @@ export function ReportsView() {
       await generateReport(data);
       toast({
         title: t("compliance.reportQueued"),
-        description: t("compliance.reportQueuedDesc") ?? "Refresh in a few minutes to see your report.",
+        description: t("compliance.reportQueuedDesc"),
       });
     } catch {
       toast({ title: t("common.error"), variant: "destructive" });
@@ -320,7 +319,7 @@ export function ReportsView() {
               <BarChart3 className="h-8 w-8 text-indigo-500" />
             </div>
             <p className="font-semibold">{t("compliance.noReports")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noReportsDesc") ?? "Generate your first compliance report to get started."}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noReportsDesc")}</p>
             <Button className="mt-4" size="sm" onClick={() => setGenerateOpen(true)}>
               <Plus className="me-2 h-4 w-4" />
               {t("compliance.generateReport")}

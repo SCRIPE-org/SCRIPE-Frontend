@@ -24,13 +24,22 @@ export function useConsentViewModel() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] }),
   });
 
+  const analyticsQuery = useQuery({
+    queryKey: ["compliance", "consent", "analytics"],
+    queryFn: () => consentRepository.getAnalytics(),
+    staleTime: 5 * 60_000,
+  });
+
   return {
     consents: query.data ?? [],
+    analytics: analyticsQuery.data ?? null,
     grantedCount: (query.data ?? []).filter((c) => c.isGranted).length,
     withdrawnCount: (query.data ?? []).filter((c) => !c.isGranted).length,
     reConsentCount: (query.data ?? []).filter((c) => c.requiresReConsent).length,
     isLoading: query.isLoading,
     isError: query.isError,
+    isAnalyticsLoading: analyticsQuery.isLoading,
+    isAnalyticsError: analyticsQuery.isError,
     refetch: query.refetch,
     recordConsent: recordMutation.mutateAsync,
     withdrawConsent: withdrawMutation.mutateAsync,

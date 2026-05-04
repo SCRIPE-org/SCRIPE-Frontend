@@ -36,10 +36,11 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 function CategoryBadge({ category }: { category: string }) {
+  const { t } = useI18n();
   const cls = CATEGORY_COLORS[category] ?? "bg-muted text-muted-foreground border-border";
   return (
     <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${cls}`}>
-      {category}
+      {t(`compliance.categories.${category}`) ?? category}
     </span>
   );
 }
@@ -118,7 +119,7 @@ export function InventoryView() {
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             id="compliance-inventory-search"
-            placeholder={t("common.search") ?? "Search fields, entities, modules…"}
+            placeholder={t("common.search")}
             className="ps-9"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
@@ -175,7 +176,7 @@ export function InventoryView() {
                 <FileSearch className="h-8 w-8 text-slate-500" />
               </div>
               <p className="font-semibold">{t("compliance.noInventory")}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noInventoryDesc") ?? "No matching fields found."}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noInventoryDesc")}</p>
             </div>
           ) : (
             <Table>
@@ -226,7 +227,7 @@ export function InventoryView() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
-            {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} {t("common.of") ?? "of"} {totalCount}
+            {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} {t("common.of")} {totalCount}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => handlePage(page - 1)}>

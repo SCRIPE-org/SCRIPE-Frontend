@@ -18,11 +18,4 @@ export class RetentionService implements IRetentionService {
   update(id: string, data: UpdateRetentionPolicyRequest): Promise<void> {
     return this.api.put<void>(`${API_ENDPOINTS.COMPLIANCE.RETENTION_UPDATE}/${id}`, data);
   }
-
-  trigger(policyId: string): Promise<void> {
-    return this.api.post<void>(
-      `${API_ENDPOINTS.COMPLIANCE.RETENTION_LIST}/${policyId}/trigger`,
-      {}
-    );
-  }
 }

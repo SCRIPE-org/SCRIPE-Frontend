@@ -377,6 +377,8 @@ export const en = {
         dsr_completed: "DSR Completed",
         dsr_erasure_confirmed: "DSR Erasure Confirmed",
         dsr_cancelled: "DSR Cancelled",
+        retention_policy_updated: "Retention Policy Updated",
+        retention_execution_completed: "Retention Execution Completed",
         report_generated: "Compliance Report Generated",
         report_failed: "Compliance Report Failed",
       },

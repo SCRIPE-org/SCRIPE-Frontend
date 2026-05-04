@@ -12,3 +12,10 @@ export interface ConsentStatusModel {
   lastUpdatedAt: string;
   consentVersion?: string;
 }
+
+export interface ConsentAnalyticsModel {
+  optInRates: Record<string, number>;
+  totalSubjects: number;
+  subjectsRequiringReConsent: number;
+  generatedAt: string;
+}

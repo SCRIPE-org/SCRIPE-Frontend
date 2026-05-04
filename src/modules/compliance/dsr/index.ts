@@ -1,4 +1,5 @@
 export { DsrView } from "./src/presentation/views/DsrView";
+export { DsrDetailView } from "./src/presentation/views/DsrDetailView";
 export { DataSubjectRequest } from "./src/domain/entities/DataSubjectRequest";
 export type {
   DataSubjectRequestData,

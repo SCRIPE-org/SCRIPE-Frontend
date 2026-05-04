@@ -16,6 +16,23 @@ export type DsrStatus =
   | "Cancelled";
 export type SubjectType = "Admin" | "User";
 
+export interface DsrStatusHistory {
+  fromStatus: string;
+  toStatus: string;
+  changedByAdminId?: string;
+  notes?: string;
+  occurredAt: string;
+}
+
+export interface DsrModuleExecution {
+  moduleName: string;
+  isCompleted: boolean;
+  processedCount: number;
+  errorMessage?: string;
+  retryCount: number;
+  completedAt?: string;
+}
+
 export interface DataSubjectRequestData {
   id: string;
   subjectEmail: string;
@@ -97,6 +114,40 @@ export class DataSubjectRequest {
   }
   get resolution() {
     return this.data.resolution ?? null;
+  }
+  
+  // Detail properties
+  get dsrDeadlineDays() {
+    return (this.data as any).dsrDeadlineDays ?? 0;
+  }
+  get assignedToAdminId() {
+    return (this.data as any).assignedToAdminId ?? null;
+  }
+  get exportFileUrl() {
+    return (this.data as any).exportFileUrl ?? null;
+  }
+  get erasureConfirmed() {
+    return (this.data as any).erasureConfirmed ?? false;
+  }
+  get erasureExecuteAfter() {
+    return (this.data as any).erasureExecuteAfter ? new Date((this.data as any).erasureExecuteAfter) : null;
+  }
+  get requesterNotes() {
+    return (this.data as any).requesterNotes ?? null;
+  }
+  get statusHistory(): DsrStatusHistory[] {
+    return (this.data as any).statusHistory ?? [];
+  }
+  get moduleExecutions(): DsrModuleExecution[] {
+    return (this.data as any).moduleExecutions ?? [];
+  }
+
+  get canConfirmErasure() {
+    return this.requestType === "Erasure" && this.status === "Approved" && !this.erasureConfirmed;
+  }
+
+  get canDownloadExport() {
+    return this.requestType === "Export" && this.status === "Completed" && !!this.exportFileUrl;
   }
 
   copyWith(updates: Partial<DataSubjectRequestData>): DataSubjectRequest {

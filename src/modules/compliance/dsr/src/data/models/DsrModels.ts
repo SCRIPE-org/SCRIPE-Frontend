@@ -20,3 +20,31 @@ export interface DsrModel {
   notes?: string;
   resolution?: string;
 }
+
+export interface DsrStatusHistoryModel {
+  fromStatus: string;
+  toStatus: string;
+  changedByAdminId?: string;
+  notes?: string;
+  occurredAt: string;
+}
+
+export interface DsrModuleExecutionModel {
+  moduleName: string;
+  isCompleted: boolean;
+  processedCount: number;
+  errorMessage?: string;
+  retryCount: number;
+  completedAt?: string;
+}
+
+export interface DsrDetailModel extends DsrModel {
+  dsrDeadlineDays: number;
+  assignedToAdminId?: string;
+  exportFileUrl?: string;
+  erasureConfirmed: boolean;
+  erasureExecuteAfter?: string;
+  requesterNotes?: string;
+  statusHistory: DsrStatusHistoryModel[];
+  moduleExecutions: DsrModuleExecutionModel[];
+}

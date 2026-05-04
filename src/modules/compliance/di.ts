@@ -18,6 +18,7 @@ import { ConsentService } from "./consent/src/data/services/ConsentService";
 import { RetentionService } from "./retention/src/data/services/RetentionService";
 import { InventoryService } from "./inventory/src/data/services/InventoryService";
 import { ReportService } from "./reports/src/data/services/ReportService";
+import { RegulationService } from "./regulations/src/data/services/RegulationService";
 
 // ── Repository Implementations ───────────────────────────────────────────────
 import { DashboardRepository } from "./dashboard/src/data/repositories/DashboardRepository";
@@ -26,6 +27,7 @@ import { ConsentRepository } from "./consent/src/data/repositories/ConsentReposi
 import { RetentionRepository } from "./retention/src/data/repositories/RetentionRepository";
 import { InventoryRepository } from "./inventory/src/data/repositories/InventoryRepository";
 import { ReportRepository } from "./reports/src/data/repositories/ReportRepository";
+import { RegulationRepository } from "./regulations/src/data/repositories/RegulationRepository";
 
 // ── Repository Interfaces (exposed to consumers) ─────────────────────────────
 import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
@@ -34,6 +36,7 @@ import type { IConsentRepository } from "./consent/src/domain/interfaces/IConsen
 import type { IRetentionRepository } from "./retention/src/domain/interfaces/IRetentionRepository";
 import type { IInventoryRepository } from "./inventory/src/domain/interfaces/IInventoryRepository";
 import type { IReportRepository } from "./reports/src/domain/interfaces/IReportRepository";
+import type { IRegulationRepository } from "./regulations/src/domain/interfaces/IRegulationRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ───────────────────────
 import type { IDashboardService } from "./dashboard/src/domain/interfaces/IDashboardService";
@@ -42,6 +45,7 @@ import type { IConsentService } from "./consent/src/domain/interfaces/IConsentSe
 import type { IRetentionService } from "./retention/src/domain/interfaces/IRetentionService";
 import type { IInventoryService } from "./inventory/src/domain/interfaces/IInventoryService";
 import type { IReportService } from "./reports/src/domain/interfaces/IReportService";
+import type { IRegulationService } from "./regulations/src/domain/interfaces/IRegulationService";
 
 // ── Container Interface ───────────────────────────────────────────────────────
 
@@ -52,6 +56,7 @@ export interface ComplianceContainer {
   retentionRepository: IRetentionRepository;
   inventoryRepository: IInventoryRepository;
   reportRepository: IReportRepository;
+  regulationRepository: IRegulationRepository;
 }
 
 let _container: ComplianceContainer | null = null;
@@ -70,6 +75,7 @@ export function getComplianceContainer(): ComplianceContainer {
     const retentionService: IRetentionService = new RetentionService(apiService);
     const inventoryService: IInventoryService = new InventoryService(apiService);
     const reportService: IReportService = new ReportService(apiService);
+    const regulationService: IRegulationService = new RegulationService(apiService);
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {
@@ -79,6 +85,7 @@ export function getComplianceContainer(): ComplianceContainer {
       retentionRepository: new RetentionRepository(retentionService),
       inventoryRepository: new InventoryRepository(inventoryService),
       reportRepository: new ReportRepository(reportService),
+      regulationRepository: new RegulationRepository(regulationService),
     };
   }
 
@@ -106,5 +113,8 @@ export const complianceContainer = {
   },
   get reportRepository() {
     return getComplianceContainer().reportRepository;
+  },
+  get regulationRepository() {
+    return getComplianceContainer().regulationRepository;
   },
 };

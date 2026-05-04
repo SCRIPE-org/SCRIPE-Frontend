@@ -18,6 +18,12 @@ export const ar = {
     recordsAnonymized: "مجهَّلة",
     recordsDeleted: "محذوفة",
     updatePolicy: "تحديث السياسة",
+    categories: {
+      personalData: "البيانات الشخصية",
+      financialData: "البيانات المالية",
+      auditLogs: "سجلات التدقيق",
+      marketingData: "بيانات التسويق",
+    },
 
     // Messages
     policyUpdated: "تم تحديث سياسة الاحتفاظ",

@@ -5,6 +5,7 @@
 import type { IConsentRepository } from "../../domain/interfaces/IConsentRepository";
 import type { IConsentService } from "../../domain/interfaces/IConsentService";
 import type { ConsentStatus } from "../../domain/entities/ConsentStatus";
+import { ConsentAnalytics } from "../../domain/entities/ConsentStatus";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 import { ConsentMapper } from "../mappers/ConsentMapper";
 
@@ -22,5 +23,10 @@ export class ConsentRepository implements IConsentRepository {
 
   withdrawConsent(purposeId: string): Promise<void> {
     return this.service.withdrawConsent(purposeId);
+  }
+
+  async getAnalytics(): Promise<ConsentAnalytics> {
+    const model = await this.service.getAnalytics();
+    return new ConsentAnalytics(model);
   }
 }

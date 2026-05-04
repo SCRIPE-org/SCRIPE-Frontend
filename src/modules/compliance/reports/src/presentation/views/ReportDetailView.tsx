@@ -103,7 +103,7 @@ export function ReportDetailView({ id }: { id: string }) {
       a.download = `compliance-report-${id}${ext}`;
       a.click();
       URL.revokeObjectURL(url);
-      toast({ title: t("common.success") ?? "Download started", variant: "default" });
+      toast({ title: t("common.success"), variant: "default" });
     },
     onError: () => toast({ title: t("common.error"), variant: "destructive" }),
   });
@@ -126,7 +126,7 @@ export function ReportDetailView({ id }: { id: string }) {
           </div>
           <div>
             <h2 className="text-2xl font-bold tracking-tight">{t("compliance.reportsTitle")}</h2>
-            <p className="text-sm text-muted-foreground">{t("compliance.reportDetail") ?? "Report Details"}</p>
+            <p className="text-sm text-muted-foreground">{t("compliance.reportDetail")}</p>
           </div>
         </div>
       </div>
@@ -244,10 +244,10 @@ export function ReportDetailView({ id }: { id: string }) {
               <FileText className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
               <div>
                 <p className="text-sm font-medium text-indigo-700 dark:text-indigo-400">
-                  {t("compliance.mvpExportTitle") ?? "MVP Export Notice"}
+                  {t("compliance.mvpExportTitle")}
                 </p>
-                <p className="mt-0.5 text-xs text-indigo-600/70 dark:text-indigo-400/70">
-                  {t("compliance.mvpExportDesc") ?? "Compliance reporting is currently in MVP. Downloads contain metadata summaries. Full rich data with charts and detailed breakdowns are planned for a future release."}
+                <p className="text-sm text-muted-foreground">
+                  {t("compliance.mvpExportDesc")}
                 </p>
               </div>
             </CardContent>
@@ -257,17 +257,17 @@ export function ReportDetailView({ id }: { id: string }) {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[
               {
-                label: t("compliance.periodStart") ?? "Period Start",
+                label: t("compliance.periodStart"),
                 value: report.periodStart?.toLocaleDateString() ?? "—",
                 icon: <Calendar className="h-3.5 w-3.5" />,
               },
               {
-                label: t("compliance.periodEnd") ?? "Period End",
+                label: t("compliance.periodEnd"),
                 value: report.periodEnd?.toLocaleDateString() ?? "—",
                 icon: <Calendar className="h-3.5 w-3.5" />,
               },
               {
-                label: t("compliance.period") ?? "Generated At",
+                label: t("compliance.period"),
                 value: report.generatedAt?.toLocaleDateString() ?? "—",
                 icon: <CheckCircle2 className="h-3.5 w-3.5" />,
               },
@@ -290,11 +290,11 @@ export function ReportDetailView({ id }: { id: string }) {
               <CardContent className="flex items-start gap-3 p-4">
                 <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-blue-500" />
                 <div>
-                  <p className="text-sm font-medium text-blue-700 dark:text-blue-400">
-                    {t("compliance.reportQueuedInfo") ?? "Report generation is in progress…"}
+                  <p className="font-medium text-blue-600 dark:text-blue-400">
+                    {t("compliance.reportQueuedInfo")}
                   </p>
-                  <p className="mt-0.5 text-xs text-blue-600/70 dark:text-blue-400/70">
-                    {t("compliance.reportQueuedDesc") ?? "This page will refresh automatically. This usually completes within seconds."}
+                  <p className="text-sm text-muted-foreground">
+                    {t("compliance.reportQueuedDesc")}
                   </p>
                 </div>
               </CardContent>

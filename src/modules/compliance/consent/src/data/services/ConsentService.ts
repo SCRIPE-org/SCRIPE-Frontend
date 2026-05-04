@@ -5,7 +5,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IConsentService } from "../../domain/interfaces/IConsentService";
-import type { ConsentStatusModel } from "../models/ConsentModels";
+import type { ConsentStatusModel, ConsentAnalyticsModel } from "../models/ConsentModels";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 
 export class ConsentService implements IConsentService {
@@ -21,5 +21,9 @@ export class ConsentService implements IConsentService {
 
   withdrawConsent(purposeId: string): Promise<void> {
     return this.api.delete<void>(`${API_ENDPOINTS.COMPLIANCE.RECORD_CONSENT}/${purposeId}`);
+  }
+
+  getAnalytics(): Promise<ConsentAnalyticsModel> {
+    return this.api.get<ConsentAnalyticsModel>(API_ENDPOINTS.COMPLIANCE.CONSENT_ANALYTICS);
   }
 }

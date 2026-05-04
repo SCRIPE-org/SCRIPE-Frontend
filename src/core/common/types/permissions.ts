@@ -481,9 +481,12 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Compliance Module
   "/compliance": [SYSTEM_PERMISSIONS.COMPLIANCE_DASHBOARD_VIEW],
+  "/compliance/regulations": [SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW],
   "/compliance/dsr": [SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW],
+  "/compliance/dsr/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW],
   "/compliance/consent": [SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW],
   "/compliance/retention": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
   "/compliance/inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
   "/compliance/reports": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
+  "/compliance/reports/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
 };

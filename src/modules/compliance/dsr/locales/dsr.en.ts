@@ -33,6 +33,18 @@ export const en = {
     rectification: "Rectification",
     restriction: "Processing Restriction",
 
+    requestTypes: {
+      export: "Export",
+      erasure: "Erasure",
+      rectification: "Rectification",
+      restriction: "Restriction",
+    },
+    regulations: {
+      gdpr: "GDPR",
+      ccpa: "CCPA",
+      pdpa: "PDPA",
+    },
+
     // DSR Status
     pending: "Pending",
     inReview: "In Review",
@@ -57,6 +69,29 @@ export const en = {
     erasureGateWarning: "This action is irreversible. All PII will be anonymized permanently.",
     erasureGraceNotice: "A grace period applies before execution.",
     confirmErasureTitle: "Confirm Irreversible Erasure",
+    
+    // Detail View Keys
+    dsrDetailTitle: "DSR Details",
+    confirmErasureBtn: "Confirm Erasure",
+    downloadExportBtn: "Download Export",
+    details: "Details",
+    records: "records",
+    statusHistory: "Status History",
+    noHistory: "No history available.",
+    erasureStatusTitle: "Erasure Status",
+    erasureScheduledDesc: "Erasure confirmed. Execution scheduled.",
+    erasurePendingDesc: "Awaiting final erasure confirmation.",
+    confirmErasureDialogTitle: "Confirm Data Erasure",
+    confirmErasureDialogDesc: "This action is irreversible. All associated personal data across all modules will be permanently anonymized or deleted according to retention policies.",
+    typeConfirmToContinue: "Type CONFIRM to execute the erasure:",
+    executeErasureBtn: "Execute Erasure",
+    columns: {
+      requestType: "Request Type",
+      status: "Status",
+      deadline: "Deadline",
+      regulation: "Regulation",
+      subjectEmail: "Subject",
+    },
 
     // Empty states & errors
     noDsrs: "No data subject requests",

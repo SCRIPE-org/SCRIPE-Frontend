@@ -33,6 +33,18 @@ export const ar = {
     rectification: "تصحيح البيانات",
     restriction: "تقييد المعالجة",
 
+    requestTypes: {
+      export: "تصدير",
+      erasure: "حذف",
+      rectification: "تصحيح",
+      restriction: "تقييد",
+    },
+    regulations: {
+      gdpr: "GDPR",
+      ccpa: "CCPA",
+      pdpa: "PDPA",
+    },
+
     // DSR Status
     pending: "قيد الانتظار",
     inReview: "قيد المراجعة",
@@ -58,6 +70,29 @@ export const ar = {
       "هذا الإجراء لا يمكن التراجع عنه. ستُجهَّل جميع البيانات الشخصية بشكل دائم.",
     erasureGraceNotice: "تنطبق فترة سماح قبل التنفيذ.",
     confirmErasureTitle: "تأكيد الحذف النهائي",
+
+    // Detail View Keys
+    dsrDetailTitle: "تفاصيل طلب موضوع البيانات",
+    confirmErasureBtn: "تأكيد الحذف",
+    downloadExportBtn: "تحميل التصدير",
+    details: "التفاصيل",
+    records: "سجلات",
+    statusHistory: "سجل الحالة",
+    noHistory: "لا يوجد سجل متاح.",
+    erasureStatusTitle: "حالة الحذف",
+    erasureScheduledDesc: "تم تأكيد الحذف. التنفيذ مجدول.",
+    erasurePendingDesc: "في انتظار تأكيد الحذف النهائي.",
+    confirmErasureDialogTitle: "تأكيد حذف البيانات",
+    confirmErasureDialogDesc: "هذا الإجراء لا يمكن التراجع عنه. سيتم تجهيل أو حذف جميع البيانات الشخصية المرتبطة عبر جميع الوحدات بشكل دائم وفقاً لسياسات الاحتفاظ.",
+    typeConfirmToContinue: "اكتب CONFIRM لتنفيذ الحذف:",
+    executeErasureBtn: "تنفيذ الحذف",
+    columns: {
+      requestType: "نوع الطلب",
+      status: "الحالة",
+      deadline: "الموعد النهائي",
+      regulation: "اللائحة",
+      subjectEmail: "الموضوع",
+    },
 
     // Empty states & errors
     noDsrs: "لا توجد طلبات موضوع بيانات",

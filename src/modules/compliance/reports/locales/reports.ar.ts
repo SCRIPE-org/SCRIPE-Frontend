@@ -13,6 +13,19 @@ export const ar = {
     reportPending: "قيد الإنشاء...",
     downloadReport: "تحميل",
     reportDetail: "تفاصيل التقرير",
+    reportTypes: {
+      gdprOverview: "نظرة عامة على اللائحة العامة لحماية البيانات (GDPR)",
+      dsrSummary: "ملخص نشاط حقوق أصحاب البيانات (DSR)",
+      consentAudit: "تدقيق الموافقة",
+      retentionAnalysis: "تحليل الاحتفاظ",
+      dataInventory: "تصدير مخزون البيانات",
+    },
+    status: {
+      ready: "جاهز",
+      generating: "قيد الإنشاء...",
+      pending: "قيد الانتظار",
+      failed: "فشل",
+    },
 
     // Messages
     reportQueued: "تم جدولة إنشاء التقرير",

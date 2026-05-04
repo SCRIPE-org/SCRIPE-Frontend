@@ -31,24 +31,24 @@ import { GenericSelect, type GenericSelectOption } from "@core/crud/components/g
 
 // ── Category Icons ─────────────────────────────────────────────────────────────
 
-const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode; cls: string }> = {
+const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
   PersonalData: {
-    label: "Personal Data",
+    labelKey: "compliance.categories.personalData",
     icon: <ShieldAlert className="h-4 w-4" />,
     cls: "border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 text-blue-600 dark:text-blue-400",
   },
   FinancialData: {
-    label: "Financial Data",
+    labelKey: "compliance.categories.financialData",
     icon: <Archive className="h-4 w-4" />,
     cls: "border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-purple-500/5 text-violet-600 dark:text-violet-400",
   },
   AuditLogs: {
-    label: "Audit Logs",
+    labelKey: "compliance.categories.auditLogs",
     icon: <Clock className="h-4 w-4" />,
     cls: "border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 text-amber-600 dark:text-amber-400",
   },
   MarketingData: {
-    label: "Marketing Data",
+    labelKey: "compliance.categories.marketingData",
     icon: <CheckCircle2 className="h-4 w-4" />,
     cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
   },
@@ -56,10 +56,8 @@ const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode; cls:
 
 // ── Expiry Action options ──────────────────────────────────────────────────────
 
-const EXPIRY_ACTION_OPTIONS: GenericSelectOption[] = [
-  { value: "Delete", label: "Delete" },
-  { value: "Anonymize", label: "Anonymize" },
-];
+  // Will be populated dynamically inside the component
+
 
 // ── Edit Policy Dialog ─────────────────────────────────────────────────────────
 
@@ -104,8 +102,8 @@ function EditPolicyDialog({
     <GenericModal
       open={open}
       onOpenChange={handleOpen}
-      title={t("compliance.updatePolicy") ?? "Update Policy"}
-      description={`${meta.label} · ${t("compliance.retentionCategory")}: ${policy.category}`}
+      title={t("compliance.updatePolicy")}
+      description={`${t(meta.labelKey)} · ${t("compliance.retentionCategory")}: ${policy.category}`}
       size="sm"
       formKey={open ? `policy-${policy.id}` : undefined}
     >
@@ -127,17 +125,20 @@ function EditPolicyDialog({
         <div className="space-y-1.5">
           <Label>{t("compliance.expiryAction")}</Label>
           <GenericSelect
-            options={EXPIRY_ACTION_OPTIONS}
+            options={[
+              { value: "Delete", label: t("compliance.delete") },
+              { value: "Anonymize", label: t("compliance.anonymize") },
+            ]}
             value={action}
             onValueChange={(v: string | string[]) => setAction(v as ExpiryAction)}
-            placeholder={t("compliance.expiryAction") ?? "Expiry action"}
+            placeholder={t("compliance.expiryAction")}
             type="single"
           />
         </div>
         <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
           <div>
             <p className="text-sm font-medium">{t("compliance.active")}</p>
-            <p className="text-xs text-muted-foreground">{t("compliance.activePolicyDesc") ?? "Enable or disable this retention policy"}</p>
+            <p className="text-xs text-muted-foreground">{t("compliance.activePolicyDesc")}</p>
           </div>
           <Switch id="ret-active" checked={active} onCheckedChange={setActive} />
         </div>
@@ -157,13 +158,9 @@ function EditPolicyDialog({
 function PolicyCard({
   policy,
   onEdit,
-  onTrigger,
-  isTriggering,
 }: {
   policy: RetentionPolicy;
   onEdit: (p: RetentionPolicy) => void;
-  onTrigger: (id: string) => void;
-  isTriggering: boolean;
 }) {
   const { t } = useI18n();
   const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
@@ -178,7 +175,7 @@ function PolicyCard({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">{meta.label}</p>
+                <p className="text-sm font-semibold">{t(meta.labelKey)}</p>
                 <Badge variant={policy.isActive ? "default" : "secondary"} className="h-5 px-1.5 text-[10px]">
                   {policy.isActive ? t("compliance.active") : t("compliance.inactive")}
                 </Badge>
@@ -187,17 +184,6 @@ function PolicyCard({
             </div>
           </div>
           <div className="flex shrink-0 gap-2">
-            <Button
-              id={`retention-trigger-${policy.id}`}
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs"
-              disabled={isTriggering || !policy.isActive}
-              onClick={() => onTrigger(policy.id)}
-            >
-              <Play className="me-1.5 h-3 w-3" />
-              {t("common.run") ?? "Run"}
-            </Button>
             <Button
               id={`retention-edit-${policy.id}`}
               variant="outline"
@@ -221,7 +207,7 @@ function PolicyCard({
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.retentionCategory")}</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold tabular-nums">{policy.expiryAction}</p>
+            <p className="text-lg font-bold tabular-nums">{policy.expiryAction === "Delete" ? t("compliance.delete") : t("compliance.anonymize")}</p>
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.expiryAction")}</p>
           </div>
         </div>
@@ -253,21 +239,12 @@ export function RetentionView() {
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
   const [editPolicy, setEditPolicy] = useState<RetentionPolicy | null>(null);
-  const { policies, activeCount, totalCount, isLoading, isError, refetch, updatePolicy, triggerPolicy, isUpdating, isTriggering } =
+  const { policies, activeCount, totalCount, isLoading, isError, refetch, updatePolicy, isUpdating } =
     useRetentionViewModel();
 
   const handleSave = async (id: string, retentionDays: number, expiryAction: string, isActive: boolean) => {
     try {
       await updatePolicy({ id, data: { policyId: id, retentionDays, expiryAction, isActive } });
-      toast({ title: t("compliance.policyUpdated") });
-    } catch {
-      toast({ title: t("common.error"), variant: "destructive" });
-    }
-  };
-
-  const handleTrigger = async (id: string) => {
-    try {
-      await triggerPolicy(id);
       toast({ title: t("compliance.policyUpdated") });
     } catch {
       toast({ title: t("common.error"), variant: "destructive" });
@@ -336,8 +313,6 @@ export function RetentionView() {
               key={policy.id}
               policy={policy}
               onEdit={setEditPolicy}
-              onTrigger={handleTrigger}
-              isTriggering={isTriggering}
             />
           ))}
         </div>

@@ -53,3 +53,20 @@ export interface RecordConsentRequest {
   consentVersion: string;
   collectionMethod?: string;
 }
+
+export class ConsentAnalytics {
+  constructor(private readonly data: any) {}
+
+  get optInRates(): Record<string, number> {
+    return this.data.optInRates ?? {};
+  }
+  get totalSubjects() {
+    return this.data.totalSubjects ?? 0;
+  }
+  get subjectsRequiringReConsent() {
+    return this.data.subjectsRequiringReConsent ?? 0;
+  }
+  get generatedAt() {
+    return new Date(this.data.generatedAt);
+  }
+}

@@ -13,6 +13,19 @@ export const en = {
     reportPending: "Generating...",
     downloadReport: "Download",
     reportDetail: "Report Detail",
+    reportTypes: {
+      gdprOverview: "GDPR Overview",
+      dsrSummary: "DSR Activity Summary",
+      consentAudit: "Consent Audit",
+      retentionAnalysis: "Retention Analysis",
+      dataInventory: "Data Inventory Export",
+    },
+    status: {
+      ready: "Ready",
+      generating: "Generating...",
+      pending: "Pending",
+      failed: "Failed",
+    },
 
     // Messages
     reportQueued: "Report generation queued",

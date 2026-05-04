@@ -18,6 +18,12 @@ export const en = {
     recordsAnonymized: "Anonymized",
     recordsDeleted: "Deleted",
     updatePolicy: "Update Policy",
+    categories: {
+      personalData: "Personal Data",
+      financialData: "Financial Data",
+      auditLogs: "Audit Logs",
+      marketingData: "Marketing Data",
+    },
 
     // Messages
     policyUpdated: "Retention policy updated",

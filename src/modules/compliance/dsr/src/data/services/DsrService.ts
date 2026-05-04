@@ -42,4 +42,12 @@ export class DsrService implements IDsrService {
   cancel(id: string): Promise<void> {
     return this.api.post<void>(API_ENDPOINTS.COMPLIANCE.DSR_CANCEL(id), {});
   }
+
+  confirmErasure(id: string): Promise<void> {
+    return this.api.post<void>(API_ENDPOINTS.COMPLIANCE.DSR_CONFIRM_ERASURE(id), {});
+  }
+
+  downloadExport(id: string): Promise<Blob> {
+    return this.api.getBlob(API_ENDPOINTS.COMPLIANCE.DSR_DOWNLOAD(id));
+  }
 }

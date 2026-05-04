@@ -115,17 +115,17 @@ function FilterPill({
 
 // ── Option constants ───────────────────────────────────────────────────────────
 
-const DSR_TYPE_OPTIONS: GenericSelectOption[] = [
-  { value: "Export", label: "Export" },
-  { value: "Erasure", label: "Erasure" },
-  { value: "Rectification", label: "Rectification" },
-  { value: "Restriction", label: "Restriction" },
+const DSR_TYPE_OPTIONS = [
+  { value: "Export", labelKey: "compliance.requestTypes.export" },
+  { value: "Erasure", labelKey: "compliance.requestTypes.erasure" },
+  { value: "Rectification", labelKey: "compliance.requestTypes.rectification" },
+  { value: "Restriction", labelKey: "compliance.requestTypes.restriction" },
 ];
 
-const REGULATION_OPTIONS: GenericSelectOption[] = [
-  { value: "GDPR", label: "GDPR" },
-  { value: "CCPA", label: "CCPA" },
-  { value: "PDPA", label: "PDPA" },
+const REGULATION_OPTIONS = [
+  { value: "GDPR", labelKey: "compliance.regulations.gdpr" },
+  { value: "CCPA", labelKey: "compliance.regulations.ccpa" },
+  { value: "PDPA", labelKey: "compliance.regulations.pdpa" },
 ];
 
 // ── Submit DSR Dialog ─────────────────────────────────────────────────────────
@@ -165,8 +165,8 @@ function SubmitDsrDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("compliance.submitDsr") ?? "Submit Data Subject Request"}
-      description={t("compliance.submitDsrDesc") ?? "Submit a new data subject request on behalf of a subject."}
+      title={t("compliance.submitDsr")}
+      description={t("compliance.submitDsrDesc")}
       size="md"
       formKey={open ? "dsr-submit" : undefined}
     >
@@ -185,20 +185,20 @@ function SubmitDsrDialog({
           <div className="space-y-1.5">
             <Label>{t("compliance.requestType")}</Label>
             <GenericSelect
-              options={DSR_TYPE_OPTIONS}
+              options={DSR_TYPE_OPTIONS.map((o) => ({ value: o.value, label: t(o.labelKey) }))}
               value={form.requestType}
               onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, requestType: v as string }))}
-              placeholder={t("compliance.requestType") ?? "Request type"}
+              placeholder={t("compliance.requestType")}
               type="single"
             />
           </div>
           <div className="space-y-1.5">
             <Label>{t("compliance.regulation")}</Label>
             <GenericSelect
-              options={REGULATION_OPTIONS}
+              options={REGULATION_OPTIONS.map((o) => ({ value: o.value, label: t(o.labelKey) }))}
               value={form.regulationCode}
               onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, regulationCode: v as string }))}
-              placeholder={t("compliance.regulation") ?? "Regulation"}
+              placeholder={t("compliance.regulation")}
               type="single"
             />
           </div>
@@ -207,7 +207,7 @@ function SubmitDsrDialog({
           <Label htmlFor="dsr-notes">{t("compliance.requesterNotes")}</Label>
           <Textarea
             id="dsr-notes"
-            placeholder={t("compliance.notesPlaceholder") ?? "Optional notes…"}
+            placeholder={t("compliance.notesPlaceholder")}
             rows={3}
             value={form.requesterNotes}
             onChange={(e) => setForm((f) => ({ ...f, requesterNotes: e.target.value }))}
@@ -275,7 +275,7 @@ function ReviewDsrDialog({
           <Label htmlFor="review-resolution">{t("compliance.resolution")}</Label>
           <Textarea
             id="review-resolution"
-            placeholder={t("compliance.resolutionPlaceholder") ?? "Add resolution notes…"}
+            placeholder={t("compliance.resolutionPlaceholder")}
             rows={3}
             value={resolution}
             onChange={(e) => setResolution(e.target.value)}
@@ -404,7 +404,7 @@ export function DsrView() {
             {statuses.map((s) => (
               <FilterPill
                 key={s || "all-status"}
-                label={s ? t(`compliance.${s.charAt(0).toLowerCase() + s.slice(1)}`) || s : t("common.all") || "All"}
+                label={s ? t(`compliance.${s.charAt(0).toLowerCase() + s.slice(1)}`) : t("common.all")}
                 active={statusFilter === s}
                 onClick={() => { setStatusFilter(s); setPage(1); }}
               />
@@ -415,7 +415,7 @@ export function DsrView() {
             {types.map((type) => (
               <FilterPill
                 key={type || "all-types"}
-                label={type ? t(`compliance.${type.toLowerCase()}`) || type : t("compliance.allTypes") || "All Types"}
+                label={type ? t(`compliance.${type.toLowerCase()}`) : t("compliance.allTypes")}
                 active={typeFilter === type}
                 onClick={() => { setTypeFilter(type); setPage(1); }}
               />
@@ -498,11 +498,11 @@ export function DsrView() {
                     <TableCell>
                       <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${TYPE_COLORS[dsr.requestType] ?? ""}`}>
                         {TYPE_ICONS[dsr.requestType]}
-                        {dsr.requestType}
+                        {t(`compliance.${dsr.requestType.toLowerCase()}`)}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={STATUS_VARIANT[dsr.status] ?? "outline"}>{dsr.status}</Badge>
+                      <Badge variant={STATUS_VARIANT[dsr.status] ?? "outline"}>{t(`compliance.${dsr.status.charAt(0).toLowerCase() + dsr.status.slice(1)}`)}</Badge>
                     </TableCell>
                     <TableCell>
                       <SlaBar percent={dsr.slaPercent} color={dsr.slaColor} />
@@ -533,7 +533,7 @@ export function DsrView() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-44">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => router.push(`/compliance/dsr/${dsr.id}`)}>
                             <Eye className="me-2 h-4 w-4" />
                             {t("compliance.viewDetail")}
                           </DropdownMenuItem>
@@ -573,7 +573,7 @@ export function DsrView() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{t("common.showing") ?? "Showing"} {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} {t("common.of") ?? "of"} {totalCount}</span>
+          <span>{t("common.showing")} {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} {t("common.of")} {totalCount}</span>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="h-4 w-4" />

@@ -19,8 +19,4 @@ export class RetentionRepository implements IRetentionRepository {
   update(id: string, data: UpdateRetentionPolicyRequest): Promise<void> {
     return this.service.update(id, data);
   }
-
-  trigger(policyId: string): Promise<void> {
-    return this.service.trigger(policyId);
-  }
 }

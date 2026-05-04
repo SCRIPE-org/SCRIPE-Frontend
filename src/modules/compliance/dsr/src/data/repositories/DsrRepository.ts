@@ -41,4 +41,12 @@ export class DsrRepository implements IDsrRepository {
   cancel(id: string): Promise<void> {
     return this.service.cancel(id);
   }
+
+  confirmErasure(id: string): Promise<void> {
+    return this.service.confirmErasure(id);
+  }
+
+  downloadExport(id: string): Promise<Blob> {
+    return this.service.downloadExport(id);
+  }
 }

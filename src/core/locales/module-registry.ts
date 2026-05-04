@@ -105,6 +105,10 @@ import {
   ar as compInventoryAr,
 } from "@modules/compliance/inventory/locales";
 import { en as compReportsEn, ar as compReportsAr } from "@modules/compliance/reports/locales";
+import {
+  en as compRegulationsEn,
+  ar as compRegulationsAr,
+} from "@modules/compliance/regulations/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -155,7 +159,8 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compConsentEn,
   compRetentionEn,
   compInventoryEn,
-  compReportsEn
+  compReportsEn,
+  compRegulationsEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -206,5 +211,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compConsentAr,
   compRetentionAr,
   compInventoryAr,
-  compReportsAr
+  compReportsAr,
+  compRegulationsAr
 );

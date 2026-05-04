@@ -23,6 +23,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/ui/use-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // ── Consent Card ──────────────────────────────────────────────────────────────
 
@@ -165,8 +168,23 @@ export function ConsentView() {
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
   const [withdrawTarget, setWithdrawTarget] = useState<string | null>(null);
-  const { consents, grantedCount, reConsentCount, isLoading, isError, refetch, recordConsent, withdrawConsent, isRecording, isWithdrawing } =
-    useConsentViewModel();
+  const canViewAnalytics = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW_ANALYTICS);
+
+  const {
+    consents,
+    analytics,
+    grantedCount,
+    reConsentCount,
+    isLoading,
+    isError,
+    isAnalyticsLoading,
+    isAnalyticsError,
+    refetch,
+    recordConsent,
+    withdrawConsent,
+    isRecording,
+    isWithdrawing,
+  } = useConsentViewModel();
 
   const handleRecord = async (purposeId: string, action: "Granted" | "Withdrawn") => {
     try {
@@ -222,7 +240,16 @@ export function ConsentView() {
         </Button>
       </div>
 
-      {/* Summary stats */}
+      <Tabs defaultValue="my-consents" className="space-y-4">
+        {canViewAnalytics && (
+          <TabsList className="bg-muted/50">
+            <TabsTrigger value="my-consents">{t("compliance.myConsents") ?? "My Consents"}</TabsTrigger>
+            <TabsTrigger value="analytics">{t("compliance.analytics") ?? "Analytics"}</TabsTrigger>
+          </TabsList>
+        )}
+
+        <TabsContent value="my-consents" className="space-y-6">
+          {/* Summary stats */}
       {!isLoading && !isError && consents.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
           {[
@@ -309,6 +336,66 @@ export function ConsentView() {
           </Card>
         </div>
       )}
+        </TabsContent>
+
+        {canViewAnalytics && (
+          <TabsContent value="analytics" className="space-y-6 mt-4">
+            {isAnalyticsLoading ? (
+              <Skeleton className="h-[300px] rounded-xl" />
+            ) : isAnalyticsError || !analytics ? (
+              <Card className="border-destructive/20 bg-destructive/5">
+                <CardContent className="flex flex-col items-center justify-center py-14 text-center">
+                  <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
+                  <p className="font-semibold">{t("common.error")}</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("compliance.totalSubjects") ?? "Total Data Subjects"}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{analytics.totalSubjects}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("compliance.subjectsRequiringReConsent") ?? "Requiring Re-Consent"}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-amber-600">{analytics.subjectsRequiringReConsent}</div>
+                  </CardContent>
+                </Card>
+                <Card className="md:col-span-2">
+                  <CardHeader>
+                    <CardTitle>{t("compliance.optInRates") ?? "Opt-In Rates by Purpose"}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {Object.entries(analytics.optInRates).map(([key, rate]) => (
+                      <div key={key} className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-medium">{key}</span>
+                          <span className="text-muted-foreground">{rate.toFixed(1)}%</span>
+                        </div>
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                          <div
+                            className="h-full bg-emerald-500 transition-all duration-500"
+                            style={{ width: `${rate}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {Object.keys(analytics.optInRates).length === 0 && (
+                      <p className="text-sm text-muted-foreground">{t("common.noData")}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </TabsContent>
+        )}
+      </Tabs>
 
       <WithdrawConfirmDialog
         purposeId={withdrawTarget}

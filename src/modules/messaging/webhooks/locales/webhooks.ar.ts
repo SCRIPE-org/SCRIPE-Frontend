@@ -379,6 +379,8 @@ export const ar = {
         dsr_completed: "تم إكمال طلب موضوع البيانات (DSR)",
         dsr_erasure_confirmed: "تم تأكيد مسح طلب موضوع البيانات (DSR)",
         dsr_cancelled: "تم إلغاء طلب موضوع البيانات (DSR)",
+        retention_policy_updated: "تم تحديث سياسة الاحتفاظ",
+        retention_execution_completed: "تم إكمال تنفيذ الاحتفاظ",
         report_generated: "تم إنشاء تقرير الامتثال",
         report_failed: "فشل إنشاء تقرير الامتثال",
       },

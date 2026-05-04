@@ -10,8 +10,16 @@ export const ar = {
     dataCategory: "فئة البيانات",
     legalBasis: "الأساس القانوني",
     isAnonymized: "يُجهَّل عند الحذف",
-    isExported: "مشمول في التصدير",
+    isExported: "مدرج في التصدير",
     total: "الإجمالي",
+    categories: {
+      ContactData: "بيانات الاتصال",
+      IdentityData: "بيانات الهوية",
+      FinancialData: "البيانات المالية",
+      TechnicalData: "البيانات الفنية",
+      OrganisationData: "البيانات المؤسسية",
+      ContentData: "بيانات المحتوى",
+    },
 
     // Empty states
     noInventory: "لا توجد عناصر في جرد البيانات",

@@ -20,11 +20,6 @@ export function useRetentionViewModel() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["compliance", "retention"] }),
   });
 
-  const triggerMutation = useMutation({
-    mutationFn: (policyId: string) => retentionRepository.trigger(policyId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["compliance", "retention"] }),
-  });
-
   const policies = query.data ?? [];
   const activeCount = policies.filter((p) => p.isActive).length;
 
@@ -36,8 +31,6 @@ export function useRetentionViewModel() {
     isError: query.isError,
     refetch: query.refetch,
     updatePolicy: updateMutation.mutateAsync,
-    triggerPolicy: triggerMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
-    isTriggering: triggerMutation.isPending,
   };
 }
