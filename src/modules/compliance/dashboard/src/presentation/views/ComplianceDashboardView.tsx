@@ -181,6 +181,8 @@ export function ComplianceDashboardView() {
             { label: t("compliance.manageConsent"), href: "/compliance/consent" },
             { label: t("compliance.manageRetention"), href: "/compliance/retention" },
             { label: t("compliance.viewInventory"), href: "/compliance/inventory" },
+            { label: t("compliance.regulations"), href: "/compliance/regulations" },
+            { label: t("compliance.viewReports"), href: "/compliance/reports" },
           ].map((action) => (
             <Button
               key={action.href}

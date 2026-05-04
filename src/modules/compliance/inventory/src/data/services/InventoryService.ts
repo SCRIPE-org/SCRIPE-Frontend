@@ -5,7 +5,11 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IInventoryService, InventoryParams } from "../../domain/interfaces/IInventoryService";
-import type { InventoryItemModel } from "../models/InventoryModels";
+import type { 
+  InventoryItemModel, 
+  CreateDataInventoryRequest, 
+  UpdateDataInventoryRequest 
+} from "../models/InventoryModels";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
 export class InventoryService implements IInventoryService {
@@ -18,5 +22,17 @@ export class InventoryService implements IInventoryService {
       ...(params.search && { search: params.search }),
     });
     return this.api.get<PagedResult<InventoryItemModel>>(url);
+  }
+
+  create(data: CreateDataInventoryRequest): Promise<string> {
+    return this.api.post<string>(API_ENDPOINTS.COMPLIANCE.DATA_INVENTORY, data);
+  }
+
+  update(id: string, data: UpdateDataInventoryRequest): Promise<void> {
+    return this.api.put<void>(API_ENDPOINTS.COMPLIANCE.DATA_INVENTORY_BY_ID(id), data);
+  }
+
+  delete(id: string): Promise<void> {
+    return this.api.delete<void>(API_ENDPOINTS.COMPLIANCE.DATA_INVENTORY_BY_ID(id));
   }
 }

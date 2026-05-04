@@ -598,6 +598,8 @@ export const API_ENDPOINTS = {
     // Regulations
     REGULATIONS: `${V1}/compliance/regulations`,
     REGULATION_BY_ID: (id: string) => `${V1}/compliance/regulations/${id}`,
+    REGULATION_PURPOSES: (id: string) => `${V1}/compliance/regulations/${id}/purposes`,
+    REGULATION_PURPOSE_BY_ID: (id: string, purposeId: string) => `${V1}/compliance/regulations/${id}/purposes/${purposeId}`,
 
     // Consent
     RECORD_CONSENT: `${V1}/compliance/consent`,
@@ -618,10 +620,12 @@ export const API_ENDPOINTS = {
     // Retention
     RETENTION_LIST: `${V1}/compliance/retention`,
     RETENTION_UPDATE: `${V1}/compliance/retention`,
+    RETENTION_BY_ID: (id: string) => `${V1}/compliance/retention/${id}`,
     RETENTION_EXECUTIONS: `${V1}/compliance/retention/executions`,
 
     // Data Inventory
     DATA_INVENTORY: `${V1}/compliance/data-inventory`,
+    DATA_INVENTORY_BY_ID: (id: string) => `${V1}/compliance/data-inventory/${id}`,
 
     // Reports
     REPORTS: `${V1}/compliance/reports`,

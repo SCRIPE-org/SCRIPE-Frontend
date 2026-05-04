@@ -20,7 +20,28 @@ export const ar = {
       OrganisationData: "البيانات المؤسسية",
       ContentData: "بيانات المحتوى",
     },
-
+    // New keys for GenericCrudView and modals
+    addInventory: "إضافة جرد",
+    inventoryAdded: "تمت إضافة الجرد بنجاح",
+    inventoryUpdated: "تم تحديث الجرد بنجاح",
+    inventoryDeleted: "تم حذف الجرد بنجاح",
+    inventoryAddFailed: "فشل في إضافة الجرد",
+    requiredFieldsMissing: "الحقول المطلوبة مفقودة",
+    placeholders: {
+      moduleName: "مثال: الهوية",
+      entityName: "مثال: مستخدم",
+      fieldName: "مثال: عنوان البريد الإلكتروني",
+      selectCategory: "حدد الفئة",
+      selectLegalBasis: "حدد الأساس القانوني"
+    },
+    legalBases: {
+      Consent: "موافقة",
+      Contract: "عقد",
+      LegalObligation: "التزام قانوني",
+      VitalInterests: "مصالح حيوية",
+      PublicTask: "مهمة عامة",
+      LegitimateInterest: "مصلحة مشروعة"
+    },
     // Empty states
     noInventory: "لا توجد عناصر في جرد البيانات",
     noInventoryDesc: "لم يتم العثور على حقول مطابقة. حاول تعديل بحثك.",

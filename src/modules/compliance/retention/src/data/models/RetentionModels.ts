@@ -17,3 +17,12 @@ export interface RetentionPolicyModel {
   recordsProcessedLast?: number;
   isActive: boolean;
 }
+
+export interface CreateRetentionPolicyRequest {
+  category: string;
+  name: string;
+  description?: string;
+  retentionDays: number;
+  expiryAction: string;
+  isActive: boolean;
+}

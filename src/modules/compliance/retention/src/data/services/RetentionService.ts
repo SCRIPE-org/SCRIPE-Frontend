@@ -5,7 +5,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IRetentionService } from "../../domain/interfaces/IRetentionService";
-import type { RetentionPolicyModel } from "../models/RetentionModels";
+import type { RetentionPolicyModel, CreateRetentionPolicyRequest } from "../models/RetentionModels";
 import type { UpdateRetentionPolicyRequest } from "../../domain/entities/RetentionPolicy";
 
 export class RetentionService implements IRetentionService {
@@ -15,7 +15,15 @@ export class RetentionService implements IRetentionService {
     return this.api.get<RetentionPolicyModel[]>(API_ENDPOINTS.COMPLIANCE.RETENTION_LIST);
   }
 
+  create(data: CreateRetentionPolicyRequest): Promise<string> {
+    return this.api.post<string>(API_ENDPOINTS.COMPLIANCE.RETENTION_UPDATE, data);
+  }
+
   update(id: string, data: UpdateRetentionPolicyRequest): Promise<void> {
     return this.api.put<void>(`${API_ENDPOINTS.COMPLIANCE.RETENTION_UPDATE}/${id}`, data);
+  }
+
+  delete(id: string): Promise<void> {
+    return this.api.delete<void>(API_ENDPOINTS.COMPLIANCE.RETENTION_BY_ID(id));
   }
 }

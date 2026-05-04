@@ -6,7 +6,8 @@ export const en = {
     active: "Active",
     inactive: "Inactive",
     jurisdiction: "Jurisdiction",
-    dsrDeadlineDays: "DSR Deadline",
+    dsrDeadlineDays: "DSR Deadline (Days)",
+    referenceUrl: "Reference URL",
     days: "days",
     purposes: "Consent Purposes",
     viewOfficialDocs: "Official Documentation",
@@ -22,6 +23,17 @@ export const en = {
     addRegulation: "Add Regulation",
     editRegulation: "Edit Regulation",
     deleteRegulation: "Delete Regulation",
+    regulationAdded: "Regulation added successfully",
+    regulationUpdated: "Regulation updated successfully",
+    regulationDeleted: "Regulation deleted successfully",
+    regulationAddFailed: "Failed to add regulation",
+    requiredFieldsMissing: "Required fields missing",
+    placeholders: {
+      code: "e.g., GDPR",
+      name: "e.g., General Data Protection Regulation",
+      jurisdiction: "e.g., European Union",
+      referenceUrl: "https://..."
+    },
     search: "Search regulations...",
     required: "Required",
     statuses: {

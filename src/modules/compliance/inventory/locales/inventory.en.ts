@@ -20,7 +20,28 @@ export const en = {
       OrganisationData: "Organisation Data",
       ContentData: "Content Data",
     },
-
+    // New keys for GenericCrudView and modals
+    addInventory: "Add Inventory",
+    inventoryAdded: "Inventory added successfully",
+    inventoryUpdated: "Inventory updated successfully",
+    inventoryDeleted: "Inventory deleted successfully",
+    inventoryAddFailed: "Failed to add inventory",
+    requiredFieldsMissing: "Required fields missing",
+    placeholders: {
+      moduleName: "e.g., Identity",
+      entityName: "e.g., User",
+      fieldName: "e.g., EmailAddress",
+      selectCategory: "Select category",
+      selectLegalBasis: "Select legal basis"
+    },
+    legalBases: {
+      Consent: "Consent",
+      Contract: "Contract",
+      LegalObligation: "Legal Obligation",
+      VitalInterests: "Vital Interests",
+      PublicTask: "Public Task",
+      LegitimateInterest: "Legitimate Interest"
+    },
     // Empty states
     noInventory: "No data inventory items",
     noInventoryDesc: "No matching fields found. Try adjusting your search.",

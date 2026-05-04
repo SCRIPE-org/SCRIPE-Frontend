@@ -1,23 +1,28 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRegulationViewModel } from "../viewmodels/useRegulationViewModel";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
+import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericForm } from "@core/ui/forms/generic-form";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import {
   ChevronLeft,
   ChevronRight,
-  Shield,
-  ExternalLink,
   RefreshCw,
   AlertTriangle,
   BookOpen,
-  Scale
+  Plus
 } from "lucide-react";
+import { RegulationCard } from "../components/RegulationCard";
+
+import type { Regulation } from "../../domain/entities/Regulation";
 
 export function RegulationView() {
   useModuleLocales(() => import("../../../locales"), "compliance-regulations");
@@ -25,7 +30,66 @@ export function RegulationView() {
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
-  const { regulations, isLoading, isError, refetch } = useRegulationViewModel();
+  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE || "compliance_regulations.manage");
+  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE || "compliance_regulations.manage");
+
+  const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
+  const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
+
+  const { 
+    regulations, 
+    isLoading, 
+    isError, 
+    refetch,
+    createRegulation,
+    updateRegulation,
+    isMutating,
+    getFormFields
+  } = useRegulationViewModel();
+
+  const handleCreate = async (data: Record<string, any>) => {
+    await createRegulation(data as any);
+    setModalMode(null);
+  };
+
+  const handleUpdate = async (data: Record<string, any>) => {
+    if (!selectedRegulation) return;
+    await updateRegulation({ id: selectedRegulation.id, data: data as any });
+    setModalMode(null);
+  };
+
+  const openCreateModal = () => {
+    setSelectedRegulation(null);
+    setModalMode("create");
+  };
+
+  const openEditModal = (regulation: Regulation) => {
+    setSelectedRegulation(regulation);
+    setModalMode("edit");
+  };
+
+  const closeModals = (open: boolean) => {
+    if (!open) setModalMode(null);
+  };
+
+  const fields = getFormFields();
+
+  const initialValues = useMemo(() => {
+    if (modalMode === "edit" && selectedRegulation) {
+      return {
+        code: selectedRegulation.code,
+        name: selectedRegulation.name,
+        jurisdiction: selectedRegulation.jurisdiction,
+        dsrDeadlineDays: selectedRegulation.dsrDeadlineDays,
+        referenceUrl: selectedRegulation.referenceUrl,
+        isActive: selectedRegulation.isActive,
+      };
+    }
+    return {
+      isActive: true,
+      dsrDeadlineDays: 30,
+    };
+  }, [modalMode, selectedRegulation]);
 
   return (
     <div className="space-y-6">
@@ -46,10 +110,18 @@ export function RegulationView() {
             </div>
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-          {t("common.refresh")}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button id="compliance-regulations-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+            <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            {t("common.refresh")}
+          </Button>
+          {canCreate && (
+            <Button onClick={openCreateModal} size="sm" className="gradient-primary">
+              <Plus className="me-2 h-4 w-4" />
+              {t("regulations.addRegulation")}
+            </Button>
+          )}
+        </div>
       </div>
 
       {isLoading ? (
@@ -75,67 +147,32 @@ export function RegulationView() {
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {regulations.map((reg) => (
-            <Card key={reg.id} className={`flex flex-col overflow-hidden transition-all hover:shadow-md ${!reg.isActive ? "opacity-60" : ""}`}>
-              <CardHeader className="border-b bg-muted/20 pb-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-indigo-500/10 p-2 text-indigo-600">
-                      <Scale className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{reg.name}</CardTitle>
-                      <CardDescription className="font-mono text-xs font-semibold">{reg.code}</CardDescription>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={reg.isActive ? "default" : "secondary"}>
-                      {reg.isActive ? t("regulations.active") : t("regulations.inactive")}
-                    </Badge>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4 pt-4">
-                <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground">{t("regulations.jurisdiction")}</p>
-                    <p className="text-sm font-medium">{reg.jurisdiction || "Global"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">{t("regulations.dsrDeadlineDays")}</p>
-                    <p className="text-sm font-medium">{reg.dsrDeadlineDays} {t("regulations.days")}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="mb-2 text-sm font-semibold">{t("regulations.purposes")}</h4>
-                  <div className="space-y-2">
-                    {reg.purposes.map((p) => (
-                      <div key={p.id} className="flex items-start gap-2 text-sm">
-                        <Shield className={`mt-0.5 h-4 w-4 shrink-0 ${p.isRequired ? "text-red-500" : "text-emerald-500"}`} />
-                        <div>
-                          <p className="font-medium">
-                            {p.name}
-                            {p.isRequired && <span className="ms-2 text-[10px] uppercase text-red-500 tracking-wider">{t("regulations.required")}</span>}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{p.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-              {reg.referenceUrl && (
-                <div className="border-t bg-muted/10 px-6 py-3 text-right">
-                  <a href={reg.referenceUrl} target="_blank" rel="noreferrer" className="inline-flex items-center text-xs font-medium text-blue-600 hover:underline">
-                    {t("regulations.viewOfficialDocs")}
-                    <ExternalLink className="ms-1 h-3 w-3" />
-                  </a>
-                </div>
-              )}
-            </Card>
+            <RegulationCard key={reg.id} regulation={reg} onEdit={openEditModal} />
           ))}
         </div>
       )}
+
+      {/* Generic Modal with Form */}
+      <GenericModal
+        open={modalMode !== null}
+        onOpenChange={closeModals}
+        title={modalMode === "edit" ? t("regulations.updateRegulation") : t("regulations.addRegulation")}
+        description={
+          modalMode === "edit"
+            ? `${t("regulations.code")}: ${selectedRegulation?.code}`
+            : t("regulations.addRegulation")
+        }
+        size="md"
+        formKey={modalMode === "edit" ? `edit-regulation-${selectedRegulation?.id}` : "create-regulation"}
+      >
+        <GenericForm
+          fields={fields}
+          initialValues={initialValues}
+          onSubmit={modalMode === "edit" ? handleUpdate : handleCreate}
+          onCancel={() => closeModals(false)}
+          readOnly={false}
+        />
+      </GenericModal>
     </div>
   );
 }

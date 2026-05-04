@@ -1,255 +1,95 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   RefreshCw,
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
-  Pencil,
-  Play,
-  ShieldAlert,
-  CheckCircle2,
   Clock,
-  Archive,
+  Plus
 } from "lucide-react";
+import { PolicyCard } from "../components/PolicyCard";
 import { useRetentionViewModel } from "../viewmodels/useRetentionViewModel";
-import type { RetentionPolicy, UpdateRetentionPolicyRequest, ExpiryAction } from "../../domain/entities/RetentionPolicy";
+import type { RetentionPolicy } from "../../domain/entities/RetentionPolicy";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { Label } from "@core/ui/label";
-import { Input } from "@core/ui/input";
-import { Switch } from "@core/ui/switch";
-import { toast } from "@core/ui/use-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
-import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-
-// ── Category Icons ─────────────────────────────────────────────────────────────
-
-const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
-  PersonalData: {
-    labelKey: "compliance.categories.personalData",
-    icon: <ShieldAlert className="h-4 w-4" />,
-    cls: "border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 text-blue-600 dark:text-blue-400",
-  },
-  FinancialData: {
-    labelKey: "compliance.categories.financialData",
-    icon: <Archive className="h-4 w-4" />,
-    cls: "border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-purple-500/5 text-violet-600 dark:text-violet-400",
-  },
-  AuditLogs: {
-    labelKey: "compliance.categories.auditLogs",
-    icon: <Clock className="h-4 w-4" />,
-    cls: "border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 text-amber-600 dark:text-amber-400",
-  },
-  MarketingData: {
-    labelKey: "compliance.categories.marketingData",
-    icon: <CheckCircle2 className="h-4 w-4" />,
-    cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
-  },
-};
-
-// ── Expiry Action options ──────────────────────────────────────────────────────
-
-  // Will be populated dynamically inside the component
-
-
-// ── Edit Policy Dialog ─────────────────────────────────────────────────────────
-
-function EditPolicyDialog({
-  policy,
-  open,
-  onOpenChange,
-  onSave,
-  isSaving,
-}: {
-  policy: RetentionPolicy | null;
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  onSave: (id: string, retentionDays: number, expiryAction: string, isActive: boolean) => Promise<void>;
-  isSaving: boolean;
-}) {
-  const { t } = useI18n();
-  const [days, setDays] = useState(policy?.retentionDays ?? 365);
-  const [action, setAction] = useState<ExpiryAction>(policy?.expiryAction ?? "Delete");
-  const [active, setActive] = useState(policy?.isActive ?? true);
-
-  const handleOpen = (v: boolean) => {
-    if (v && policy) {
-      setDays(policy.retentionDays);
-      setAction(policy.expiryAction);
-      setActive(policy.isActive);
-    }
-    onOpenChange(v);
-  };
-
-  const handleSave = async () => {
-    if (!policy) return;
-    await onSave(policy.id, days, action, active);
-    onOpenChange(false);
-  };
-
-  if (!policy) return null;
-
-  const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
-
-  return (
-    <GenericModal
-      open={open}
-      onOpenChange={handleOpen}
-      title={t("compliance.updatePolicy")}
-      description={`${t(meta.labelKey)} · ${t("compliance.retentionCategory")}: ${policy.category}`}
-      size="sm"
-      formKey={open ? `policy-${policy.id}` : undefined}
-    >
-      <div className="space-y-5 py-2">
-        <div className="space-y-1.5">
-          <Label htmlFor="ret-days">{t("compliance.retentionDays")}</Label>
-          <Input
-            id="ret-days"
-            type="number"
-            min={policy.minRetentionDays}
-            max={policy.maxRetentionDays}
-            value={days}
-            onChange={(e) => setDays(Number(e.target.value))}
-          />
-          <p className="text-xs text-muted-foreground">
-            {t("compliance.minRetention")}: {policy.minRetentionDays} · {t("compliance.maxRetention")}: {policy.maxRetentionDays}
-          </p>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("compliance.expiryAction")}</Label>
-          <GenericSelect
-            options={[
-              { value: "Delete", label: t("compliance.delete") },
-              { value: "Anonymize", label: t("compliance.anonymize") },
-            ]}
-            value={action}
-            onValueChange={(v: string | string[]) => setAction(v as ExpiryAction)}
-            placeholder={t("compliance.expiryAction")}
-            type="single"
-          />
-        </div>
-        <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
-          <div>
-            <p className="text-sm font-medium">{t("compliance.active")}</p>
-            <p className="text-xs text-muted-foreground">{t("compliance.activePolicyDesc")}</p>
-          </div>
-          <Switch id="ret-active" checked={active} onCheckedChange={setActive} />
-        </div>
-        <div className="flex justify-end gap-2 border-t pt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button id="retention-save-btn" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? t("common.loading") : t("common.save")}
-          </Button>
-        </div>
-      </div>
-    </GenericModal>
-  );
-}
-
-// ── Policy Card ────────────────────────────────────────────────────────────────
-
-function PolicyCard({
-  policy,
-  onEdit,
-}: {
-  policy: RetentionPolicy;
-  onEdit: (p: RetentionPolicy) => void;
-}) {
-  const { t } = useI18n();
-  const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
-
-  return (
-    <Card className={`border transition-all hover:shadow-md ${!policy.isActive ? "opacity-60" : ""} ${meta.cls.split(" ").slice(0, 2).join(" ")}`}>
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${meta.cls}`}>
-              {meta.icon}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">{t(meta.labelKey)}</p>
-                <Badge variant={policy.isActive ? "default" : "secondary"} className="h-5 px-1.5 text-[10px]">
-                  {policy.isActive ? t("compliance.active") : t("compliance.inactive")}
-                </Badge>
-              </div>
-              <p className="mt-0.5 text-xs text-muted-foreground font-mono">{policy.category}</p>
-            </div>
-          </div>
-          <div className="flex shrink-0 gap-2">
-            <Button
-              id={`retention-edit-${policy.id}`}
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={() => onEdit(policy)}
-            >
-              <Pencil className="me-1.5 h-3 w-3" />
-              {t("compliance.updatePolicy")}
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-3 rounded-lg bg-background/60 p-3 border border-border/30">
-          <div className="text-center">
-            <p className="text-lg font-bold tabular-nums">{policy.retentionDays}</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.retentionDays")}</p>
-          </div>
-          <div className="text-center border-x border-border/30">
-            <p className="text-lg font-bold tabular-nums">{policy.retentionYears}y</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.retentionCategory")}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-lg font-bold tabular-nums">{policy.expiryAction === "Delete" ? t("compliance.delete") : t("compliance.anonymize")}</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.expiryAction")}</p>
-          </div>
-        </div>
-
-        {policy.nextEvaluationAt && (
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {t("compliance.nextEvaluation")}: <span className="ms-1 font-medium text-foreground">{policy.nextEvaluationAt.toLocaleDateString()}</span>
-            </span>
-            {policy.lastExecutionAt && (
-              <span>
-                {t("compliance.executionHistory")}: <span className="font-medium text-foreground">{policy.lastExecutionAt.toLocaleDateString()}</span>
-              </span>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+import { GenericForm } from "@core/ui/forms/generic-form";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
 export function RetentionView() {
-  useModuleLocales(() => import("../../../locales"), "compliance-retention");
+  useModuleLocales(() => import("../../../locales"), "compliance");
   const { t, direction } = useI18n();
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
+  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_MANAGE || "compliance_retention.manage");
 
-  const [editPolicy, setEditPolicy] = useState<RetentionPolicy | null>(null);
-  const { policies, activeCount, totalCount, isLoading, isError, refetch, updatePolicy, isUpdating } =
-    useRetentionViewModel();
+  const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
+  const [selectedPolicy, setSelectedPolicy] = useState<RetentionPolicy | null>(null);
+  
+  const { 
+    policies, 
+    activeCount, 
+    totalCount, 
+    isLoading, 
+    isError, 
+    refetch, 
+    createPolicy,
+    updatePolicy, 
+    isMutating,
+    getFormFields 
+  } = useRetentionViewModel();
 
-  const handleSave = async (id: string, retentionDays: number, expiryAction: string, isActive: boolean) => {
-    try {
-      await updatePolicy({ id, data: { policyId: id, retentionDays, expiryAction, isActive } });
-      toast({ title: t("compliance.policyUpdated") });
-    } catch {
-      toast({ title: t("common.error"), variant: "destructive" });
-    }
+  const handleCreate = async (data: Record<string, any>) => {
+    await createPolicy(data as any);
+    setModalMode(null);
   };
+
+  const handleUpdate = async (data: Record<string, any>) => {
+    if (!selectedPolicy) return;
+    await updatePolicy({ id: selectedPolicy.id, data: data as any });
+    setModalMode(null);
+  };
+
+  const openCreateModal = () => {
+    setSelectedPolicy(null);
+    setModalMode("create");
+  };
+
+  const openEditModal = (policy: RetentionPolicy) => {
+    setSelectedPolicy(policy);
+    setModalMode("edit");
+  };
+
+  const closeModals = (open: boolean) => {
+    if (!open) setModalMode(null);
+  };
+
+  const fields = getFormFields();
+
+  const initialValues = useMemo(() => {
+    if (modalMode === "edit" && selectedPolicy) {
+      return {
+        category: selectedPolicy.category,
+        retentionDays: selectedPolicy.retentionDays,
+        expiryAction: selectedPolicy.expiryAction,
+        isActive: selectedPolicy.isActive,
+      };
+    }
+    return {
+      isActive: true,
+      retentionDays: 365,
+    };
+  }, [modalMode, selectedPolicy]);
 
   return (
     <div className="space-y-6">
@@ -261,7 +101,7 @@ export function RetentionView() {
           </Button>
           <div className="flex items-center gap-3">
             <div className="rounded-xl border border-violet-500/20 bg-gradient-to-br from-violet-500/15 to-purple-500/10 p-2.5 shadow-sm">
-              <ShieldAlert className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+              <Clock className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{t("compliance.retentionTitle")}</h2>
@@ -273,10 +113,18 @@ export function RetentionView() {
             </div>
           </div>
         </div>
-        <Button id="compliance-retention-refresh" variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-          {t("common.refresh")}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button id="compliance-retention-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+            <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            {t("common.refresh")}
+          </Button>
+          {canCreate && (
+            <Button onClick={openCreateModal} size="sm" className="gradient-primary">
+              <Plus className="me-2 h-4 w-4" />
+              {t("compliance.addPolicy")}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -301,7 +149,7 @@ export function RetentionView() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-4 rounded-xl border border-violet-500/20 bg-violet-500/10 p-4">
-              <ShieldAlert className="h-8 w-8 text-violet-500" />
+              <Clock className="h-8 w-8 text-violet-500" />
             </div>
             <p className="font-semibold">{t("compliance.noPolicies")}</p>
           </CardContent>
@@ -312,19 +160,33 @@ export function RetentionView() {
             <PolicyCard
               key={policy.id}
               policy={policy}
-              onEdit={setEditPolicy}
+              onEdit={openEditModal}
             />
           ))}
         </div>
       )}
 
-      <EditPolicyDialog
-        policy={editPolicy}
-        open={editPolicy !== null}
-        onOpenChange={(v) => { if (!v) setEditPolicy(null); }}
-        onSave={handleSave}
-        isSaving={isUpdating}
-      />
+      {/* Generic Modal with Form */}
+      <GenericModal
+        open={modalMode !== null}
+        onOpenChange={closeModals}
+        title={modalMode === "edit" ? t("compliance.updatePolicy") : t("compliance.addPolicy")}
+        description={
+          modalMode === "edit"
+            ? `${t("compliance.retentionCategory")}: ${selectedPolicy?.category}`
+            : t("compliance.addPolicy")
+        }
+        size="sm"
+        formKey={modalMode === "edit" ? `edit-policy-${selectedPolicy?.id}` : "create-policy"}
+      >
+        <GenericForm
+          fields={fields}
+          initialValues={initialValues}
+          onSubmit={modalMode === "edit" ? handleUpdate : handleCreate}
+          onCancel={() => closeModals(false)}
+          readOnly={false}
+        />
+      </GenericModal>
     </div>
   );
 }

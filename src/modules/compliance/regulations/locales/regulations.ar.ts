@@ -6,7 +6,8 @@ export const ar = {
     active: "نشط",
     inactive: "غير نشط",
     jurisdiction: "الاختصاص القضائي",
-    dsrDeadlineDays: "الموعد النهائي لطلبات DSR",
+    dsrDeadlineDays: "الموعد النهائي لطلبات DSR (أيام)",
+    referenceUrl: "رابط المرجع",
     days: "أيام",
     purposes: "أغراض الموافقة",
     viewOfficialDocs: "الوثائق الرسمية",
@@ -22,6 +23,17 @@ export const ar = {
     addRegulation: "إضافة لائحة",
     editRegulation: "تعديل لائحة",
     deleteRegulation: "حذف لائحة",
+    regulationAdded: "تمت إضافة اللائحة بنجاح",
+    regulationUpdated: "تم تحديث اللائحة بنجاح",
+    regulationDeleted: "تم حذف اللائحة بنجاح",
+    regulationAddFailed: "فشل في إضافة اللائحة",
+    requiredFieldsMissing: "الحقول المطلوبة مفقودة",
+    placeholders: {
+      code: "مثال: GDPR",
+      name: "مثال: اللائحة العامة لحماية البيانات",
+      jurisdiction: "مثال: الاتحاد الأوروبي",
+      referenceUrl: "https://..."
+    },
     search: "البحث في اللوائح...",
     required: "مطلوب",
     statuses: {

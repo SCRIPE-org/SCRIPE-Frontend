@@ -355,6 +355,7 @@ export const SYSTEM_PERMISSIONS = {
   COMPLIANCE_DASHBOARD_EXPORT: "compliance_dashboard.export",
   // Regulation Profiles
   COMPLIANCE_REGULATIONS_VIEW: "compliance_regulations.view",
+  COMPLIANCE_REGULATIONS_MANAGE: "compliance_regulations.manage",
   // Consent Management
   COMPLIANCE_CONSENT_VIEW: "compliance_consent.view",
   COMPLIANCE_CONSENT_MANAGE: "compliance_consent.manage",
@@ -370,6 +371,7 @@ export const SYSTEM_PERMISSIONS = {
   COMPLIANCE_RETENTION_MANAGE: "compliance_retention.manage",
   // Data Inventory
   COMPLIANCE_DATA_INVENTORY_VIEW: "compliance_data_inventory.view",
+  COMPLIANCE_DATA_INVENTORY_MANAGE: "compliance_data_inventory.manage",
   // Reports
   COMPLIANCE_REPORTS_VIEW: "compliance_reports.view",
   COMPLIANCE_REPORTS_GENERATE: "compliance_reports.generate",

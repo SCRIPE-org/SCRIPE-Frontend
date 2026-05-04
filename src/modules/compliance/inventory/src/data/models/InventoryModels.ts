@@ -15,3 +15,15 @@ export interface InventoryItemModel {
   isActive: boolean;
   notes?: string;
 }
+
+export interface CreateDataInventoryRequest {
+  moduleName: string;
+  entityName: string;
+  fieldName: string;
+  dataCategory: string;
+  isAnonymizedOnErasure: boolean;
+  isIncludedInExport: boolean;
+  legalBasis: string;
+}
+
+export interface UpdateDataInventoryRequest extends CreateDataInventoryRequest {}
