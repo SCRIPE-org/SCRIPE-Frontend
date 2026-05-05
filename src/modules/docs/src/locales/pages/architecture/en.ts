@@ -13,7 +13,7 @@ export const en = {
       layersTitle: "Clean Architecture Layers",
       backendArchTitle: "Backend Architecture",
       backendArchIntro:
-        "The backend follows a request pipeline architecture where every HTTP request flows through middleware, controllers, MediatR behaviors, and finally the CQRS handler. This ensures consistent validation, auditing, and error handling.",
+        "The backend follows a request pipeline architecture where every HTTP request flows through middleware, controllers, NEXORA mediator behaviors, and finally the CQRS handler. This ensures consistent validation, auditing, and error handling.",
       frontendArchTitle: "Frontend Architecture",
       frontendArchIntro:
         "The frontend uses a SOLID View/ViewModel pattern where Views are pure UI (no state, no logic) and ViewModels contain all business logic. The connector pattern separates Next.js routing (Server Components) from application logic (Client Components).",
@@ -46,7 +46,7 @@ export const en = {
         "Every new module follows the same DI registration pattern. The AddXxxModule() extension method registers the module's DbContext, repositories, services, and module registration marker.",
       controllersTitle: "Controllers",
       controllerTip:
-        "All controllers inherit from a base ApiController that provides standardized Result<T> response mapping. Controllers should be thin  they only validate the request model and delegate to MediatR.",
+        "All controllers inherit from a base ApiController that provides standardized Result<T> response mapping. Controllers should be thin  they only validate the request model and delegate to NEXORA mediator.",
     },
     frontend: {
       title: "Frontend Architecture",
@@ -74,15 +74,15 @@ export const en = {
     cqrs: {
       title: "CQRS Pattern",
       description:
-        "Command/Query Responsibility Segregation with MediatR pipeline, behaviors, validation, and caching.",
+        "Command/Query Responsibility Segregation with NEXORA mediator pipeline, behaviors, validation, and caching.",
       intro:
-        "NEXORA uses the CQRS (Command Query Responsibility Segregation) pattern to separate read and write operations. Commands mutate state and go through validation + audit behaviors. Queries read state and can leverage caching. MediatR acts as the mediator between controllers and handlers.",
+        "NEXORA uses the CQRS (Command Query Responsibility Segregation) pattern to separate read and write operations. Commands mutate state and go through validation + audit behaviors. Queries read state and can leverage caching. NEXORA mediator acts as the mediator between controllers and handlers.",
       whatIsCqrsTitle: "What is CQRS?",
       whatIsCqrsIntro:
         "CQRS separates your application into two sides: Commands (writes) and Queries (reads). Each side can be optimized independently  commands focus on data integrity and validation, while queries focus on performance and caching.",
       commandSide: "Command Side (Write)",
       querySide: "Query Side (Read)",
-      pipelineTitle: "MediatR Pipeline",
+      pipelineTitle: "NEXORA Mediator Pipeline",
       validationBehaviorTitle: "Validation Behavior",
       commandExampleTitle: "Command Example",
       queryExampleTitle: "Query Example",
@@ -180,7 +180,7 @@ export const en = {
       mutationFlowTitle: "Mutation Flow (Write)",
       backendPipelineTitle: "Backend Request Pipeline",
       backendPipelineIntro:
-        "Every backend request passes through 10 middleware components and 4 MediatR pipeline behaviors before reaching the handler. This ensures consistent logging, authentication, authorization, validation, feature gating, and auditing.",
+        "Every backend request passes through 10 middleware components and 4 NEXORA mediator pipeline behaviors before reaching the handler. This ensures consistent logging, authentication, authorization, validation, feature gating, and auditing.",
       errorFlowTitle: "Error Handling",
       errorFlowIntro:
         "Errors are handled at multiple levels. Each error source has a specific handler, response code, and frontend handling strategy.",
@@ -237,10 +237,10 @@ export const en = {
         "Domain events represent significant occurrences in the business domain. NEXORA uses the Outbox Pattern to guarantee reliable event delivery — events are persisted in the same database transaction as entity changes and published asynchronously by a background processor.",
       interfaceTitle: "IDomainEvent Interface",
       interfaceIntro:
-        "All domain events implement the IDomainEvent interface, which inherits from MediatR's INotification. This enables in-process pub/sub where multiple handlers can subscribe to the same event type. Each event carries a unique EventId and OccurredAt timestamp.",
+        "All domain events implement the IDomainEvent interface, which inherits from NEXORA mediator's INotification. This enables in-process pub/sub where multiple handlers can subscribe to the same event type. Each event carries a unique EventId and OccurredAt timestamp.",
       publishingTitle: "Publishing & Handling Flow",
       publishingIntro:
-        "Domain events follow a 6-step lifecycle: the entity raises an event via RaiseDomainEvent(), the OutboxInterceptor captures it during SaveChanges, the event is persisted as an OutboxMessage in the same transaction, the OutboxProcessor polls for unprocessed messages, deserializes the event, and publishes it via MediatR.",
+        "Domain events follow a 6-step lifecycle: the entity raises an event via RaiseDomainEvent(), the OutboxInterceptor captures it during SaveChanges, the event is persisted as an OutboxMessage in the same transaction, the OutboxProcessor polls for unprocessed messages, deserializes the event, and publishes it via NEXORA mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Outbox Pattern",
       outboxIntro:
@@ -253,7 +253,7 @@ export const en = {
         "The OutboxInterceptor is an EF Core SaveChanges interceptor that runs BEFORE the transaction is committed. It collects all domain events from tracked entities, serializes them as OutboxMessage records, and adds them to the same database context — ensuring atomicity.",
       outboxProcessorTitle: "OutboxProcessor",
       outboxProcessorIntro:
-        "The OutboxProcessor is a BackgroundService that polls the OutboxMessage table every 5 seconds for unprocessed messages. It processes them in batches of 20, deserializing each event and publishing it via MediatR. Failed events are retried with an incrementing RetryCount.",
+        "The OutboxProcessor is a BackgroundService that polls the OutboxMessage table every 5 seconds for unprocessed messages. It processes them in batches of 20, deserializing each event and publishing it via NEXORA mediator. Failed events are retried with an incrementing RetryCount.",
       outboxCleanupTitle: "Outbox Cleanup Job",
       outboxCleanupIntro:
         "A background recurring job (e.g., via Hangfire) runs daily at 2:00 AM UTC to delete processed outbox messages older than 7 days. This prevents unbounded table growth while keeping recent messages for debugging.",
@@ -277,12 +277,12 @@ export const en = {
     cqrsPipeline: {
       title: "CQRS Pipeline",
       description:
-        "MediatR pipeline behaviors — ValidationBehavior, LoggingBehavior, CachingBehavior, FeatureCheckBehavior, Result pattern, and full command/query map.",
+        "NEXORA mediator pipeline behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, Result pattern, and full command/query map.",
       intro:
-        "Every command and query in NEXORA flows through a MediatR pipeline with 4 behaviors: LoggingBehavior (structured logging with timing), CachingBehavior (ICacheable queries), ValidationBehavior (FluentValidation), and FeatureCheckBehavior (edition-based feature gating). This page dissects each behavior with source code, configuration, and the complete command/query catalog.",
+        "Every command and query in NEXORA flows through a configurable NEXORA mediator pipeline with 5 built-in behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, and CachingBehavior. The order is managed from appsettings or environment variables and validated at startup.",
       overviewTitle: "Pipeline Overview",
       overviewIntro:
-        "The MediatR pipeline executes behaviors in registration order: Logging → Caching → Validation → FeatureCheck → Handler. Each behavior can short-circuit the pipeline (validation returns errors without hitting the handler, caching returns cached results without hitting the handler, feature check blocks requests for disabled features).",
+        "The default NEXORA mediator order is Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. Validation and feature checks intentionally run before cache lookup, while cache invalidation unwinds before webhook dispatch after successful mutations.",
       separationTitle: "Command vs Query Separation",
       separationIntro:
         "CQRS separates the application into two distinct paths: Commands (writes) mutate state and go through full validation + audit, while Queries (reads) are optimized for performance with caching and AsNoTracking.",
@@ -293,11 +293,11 @@ export const en = {
         "All handlers return Result<T> instead of throwing exceptions for expected failures. Result<T> is a discriminated union with IsSuccess/IsFailure, Value (on success), and AppError (on failure). This eliminates try-catch blocks in controllers and enables pattern matching.",
       validationTitle: "ValidationBehavior",
       validationIntro:
-        "The ValidationBehavior is the first pipeline behavior. It collects all IValidator<TRequest> registered for the command, runs them, and throws ValidationException with structured field-level errors if validation fails — before the handler ever executes.",
+        "The ValidationBehavior runs immediately after logging. It collects all IValidator<TRequest> validators, returns structured Result failures for invalid requests, and prevents invalid requests from reaching handlers or caches.",
       validatorExampleTitle: "Validator Examples",
       loggingTitle: "LoggingBehavior",
       loggingIntro:
-        "The LoggingBehavior logs every MediatR request with the user ID, tenant ID, request type, and execution time. Requests exceeding 500ms are logged as warnings for performance monitoring.",
+        "The LoggingBehavior logs every NEXORA mediator request with the user ID, tenant ID, request type, and execution time. Requests exceeding 500ms are logged as warnings for performance monitoring.",
       cachingTitle: "CachingBehavior",
       cachingIntro:
         "The CachingBehavior intercepts queries that implement the ICacheable interface. It checks the cache for existing results before executing the handler. On cache miss, it executes the handler and stores the result with a configurable duration (default: 5 minutes).",
@@ -306,9 +306,9 @@ export const en = {
         "The following table lists every command, query, and validator registered in the system, organized by domain area. This is the complete CQRS surface area of NEXORA.",
       registrationTitle: "Pipeline Registration",
       registrationIntro:
-        "Pipeline behaviors are registered in AddCoreApplication() in the order they should execute. All MediatR handlers and FluentValidation validators are auto-discovered from module assemblies.",
+        "Pipeline behaviors are registered by AddCoreApplication() from Mediator options. Handler scanning, request coverage validation, notification failure policy, and pipeline order are controlled from configuration.",
       behaviorOrderTip:
-        "Pipeline behavior registration order determines execution order. Validation runs before feature checks to reject invalid requests early. Changing this order can lead to cached invalid data or missing audit logs.",
+        "Default safety validation rejects pipeline orders where Caching runs before Validation or FeatureCheck. Override Mediator__EnforceSecurityPipelineOrder only when you fully own the risk.",
       featureCheckTitle: "FeatureCheckBehavior",
       featureCheckIntro:
         "The FeatureCheckBehavior intercepts commands that implement IRequireFeature. It checks whether the tenant's Edition allows the requested feature by calling IFeatureChecker.IsEnabledAsync. If the feature is disabled, it returns a Forbidden error without executing the handler. System-level operations (no TenantId) bypass this check.",
@@ -321,10 +321,10 @@ export const en = {
       description:
         "Program.cs registration flow, module DI pattern, service discovery, core + identity service maps, lifetime rules, and YARP gateway.",
       intro:
-        "NEXORA uses .NET's built-in Dependency Injection container with a structured registration pattern. Program.cs orchestrates all registrations: core infrastructure first, then modules conditionally based on MODULE_NAME, and finally the application layer with MediatR. This page documents every service registration, lifetime decision, and the module DI pattern.",
+        "NEXORA uses .NET's built-in Dependency Injection container with a structured registration pattern. Program.cs orchestrates all registrations: core infrastructure first, then modules conditionally based on MODULE_NAME, and finally the application layer with NEXORA mediator. This page documents every service registration, lifetime decision, and the module DI pattern.",
       architectureTitle: "DI Registration Architecture",
       architectureIntro:
-        "Program.cs follows a strict 4-phase registration order: (1) Core Infrastructure — cache, blob storage, audit, etc. (2) CORS & Rate Limiting. (3) Modules — each module registers its own DbContext, repositories, and services. (4) Application Layer — MediatR, behaviors, validators.",
+        "Program.cs follows a strict 4-phase registration order: (1) Core Infrastructure — cache, blob storage, audit, etc. (2) CORS & Rate Limiting. (3) Modules — each module registers its own DbContext, repositories, and services. (4) Application Layer — NEXORA mediator, behaviors, validators.",
       moduleRegTitle: "Module Registration Pattern",
       moduleRegIntro:
         "Each module exposes an AddXxxModule() extension method that registers all its services. The MODULE_NAME environment variable controls which modules are loaded: empty = monolith (all modules), 'Identity' = only Identity module, 'Gateway' = API gateway mode.",

@@ -7,7 +7,7 @@ export const zh = {
     platformArchitecture: {
       title: "平台架构",
       description:
-        "探索专为大规模企业设计的 NEXORA 的整洁架构、MediatR 管道以及不可穿透的模块边界在结构上的完美性。",
+        "探索专为大规模企业设计的 NEXORA 的整洁架构、NEXORA mediator 管道以及不可穿透的模块边界在结构上的完美性。",
       intro:
         "体验超强水平扩展性与纯粹代码组织的完美融合。NEXORA 架构是一个精心设计的工程基础，能够经受数十年的企业演进。",
       modularTitle: "演进式模块化单体",
@@ -21,7 +21,7 @@ export const zh = {
         "跨模块的命名空间污染在物理上是不可能的。NEXORA 通过严格的工具和自动化的 CI 验证来强制执行明确的模块隔离，确保庞大的开发团队能够完全自主运作且不会出现代码合并冲突。",
       cqrsTitle: "久经考验的 CQRS 事件管道",
       cqrsContent:
-        "彻底摧毁数据库死锁。通过 MediatR 管道明确分离命令（写）和查询（读）职责，NEXORA 允许您独立地扩展、缓存和优化激进的数据摄取流，而完全不会影响亚秒级的读取延迟。",
+        "彻底摧毁数据库死锁。通过 NEXORA mediator 管道明确分离命令（写）和查询（读）职责，NEXORA 允许您独立地扩展、缓存和优化激进的数据摄取流，而完全不会影响亚秒级的读取延迟。",
       deploymentTitle: "无摩擦的部署拓扑",
       monolith: "单体优势",
       gateway: "网关敏捷性",
@@ -83,7 +83,7 @@ export const zh = {
       layersTitle: "严格的架构分层",
       cqrsTitle: "高性能 CQRS 操作",
       cqrsContent:
-        "打破事务瓶颈。通过 MediatR 管道明确分离命令 (写) 和查询 (读) 职责，NEXORA 允许您独立扩展、缓存和优化大量数据摄入流，而不会影响亚秒级的读取延迟。",
+        "打破事务瓶颈。通过 NEXORA mediator 管道明确分离命令 (写) 和查询 (读) 职责，NEXORA 允许您独立扩展、缓存和优化大量数据摄入流，而不会影响亚秒级的读取延迟。",
       solidTitle: "数学上可证明的 SOLID 设计",
       singleResp: "单一职责 (Single Responsibility)",
       singleRespDesc: "每个类精确地编排一项操作，彻底消除了全能类 (god-classes) 和合并冲突。",
@@ -263,7 +263,7 @@ export const zh = {
       tblBackR3C2: "10",
       tblBackR3C3: "ORM 与数据访问",
       tblBackR3C4: "多数据库提供商支持，优雅的迁移机制，LINQ 查询",
-      tblBackR4C1: "MediatR",
+      tblBackR4C1: "NEXORA mediator",
       tblBackR4C2: "12+",
       tblBackR4C3: "CQRS 中介者",
       tblBackR4C4: "干净的处理程序 (Handler) 分离，支持管道行为",

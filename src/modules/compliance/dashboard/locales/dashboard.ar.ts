@@ -34,6 +34,7 @@ export const ar = {
     manageConsent: "إدارة الموافقة",
     manageRetention: "إدارة الاحتفاظ",
     viewInventory: "عرض الجرد",
+    viewReports: "عرض التقارير",
     viewAll: "عرض الكل",
     tenants: "مستأجرين",
 

@@ -147,7 +147,7 @@ export const fr = {
       description:
         "Pipeline à 4 sources, plus de 35 types d'événements, 7 événements Guardian, SignalR en temps réel et export CSV/PDF.",
       intro:
-        "NEXORA capture chaque action significative dans le journal d'audit via MediatR, EF Core, les middlewares et les appels de services.",
+        "NEXORA capture chaque action significative dans le journal d'audit via NEXORA mediator, EF Core, les middlewares et les appels de services.",
       architectureTitle: "Architecture d'Audit",
       eventTypesTitle: "Types d'Événements (Plus de 35 Catégories)",
       authEventsTitle: "Événements d'Authentification",

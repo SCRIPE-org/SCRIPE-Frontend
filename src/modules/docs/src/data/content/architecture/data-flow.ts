@@ -74,7 +74,7 @@ const sections: DocSection[] = [
       { id: "reqlog", label: "Request Logger", type: "info" },
       { id: "auth2", label: "JWT Authentication", type: "primary" },
       { id: "authz2", label: "Authorization", type: "primary" },
-      { id: "ctrl", label: "Controller → MediatR.Send()", type: "success" },
+      { id: "ctrl", label: "Controller → NEXORA mediator.Send()", type: "success" },
       { id: "val", label: "ValidationBehavior", type: "warning" },
       { id: "audit", label: "AuditBehavior", type: "info" },
       { id: "handler2", label: "Handler → Repository → DbContext", type: "success" },

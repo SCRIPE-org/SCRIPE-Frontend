@@ -37,21 +37,21 @@ export function useInventoryViewModel() {
     create: async (data) => {
       await inventoryRepository.create(data);
       success({
-        title: t("compliance.inventoryAdded") || "Inventory added successfully",
+        title: t("compliance.inventoryAdded"),
       });
       return {} as InventoryItem;
     },
     update: async (id, data) => {
       await inventoryRepository.update(id, data);
       success({
-        title: t("compliance.inventoryUpdated") || "Inventory updated successfully",
+        title: t("compliance.inventoryUpdated"),
       });
       return {} as InventoryItem;
     },
     delete: async (id) => {
       await inventoryRepository.delete(id);
       success({
-        title: t("compliance.inventoryDeleted") || "Inventory deleted successfully",
+        title: t("compliance.inventoryDeleted"),
       });
     },
   });
@@ -61,63 +61,63 @@ export function useInventoryViewModel() {
       const baseFields = [
         {
           name: "moduleName",
-          label: t("compliance.module") || "Module",
+          label: t("compliance.module"),
           type: "text" as const,
-          placeholder: t("compliance.placeholders.moduleName") || "e.g., Identity",
+          placeholder: t("compliance.placeholders.moduleName"),
           required: true,
         },
         {
           name: "entityName",
-          label: t("compliance.entity") || "Entity",
+          label: t("compliance.entity"),
           type: "text" as const,
-          placeholder: t("compliance.placeholders.entityName") || "e.g., User",
+          placeholder: t("compliance.placeholders.entityName"),
           required: true,
         },
         {
           name: "fieldName",
-          label: t("compliance.field") || "Field",
+          label: t("compliance.field"),
           type: "text" as const,
-          placeholder: t("compliance.placeholders.fieldName") || "e.g., EmailAddress",
+          placeholder: t("compliance.placeholders.fieldName"),
           required: true,
         },
         {
           name: "dataCategory",
-          label: t("compliance.dataCategory") || "Category",
+          label: t("compliance.dataCategory"),
           type: "select" as const,
-          placeholder: t("compliance.placeholders.selectCategory") || "Select category",
+          placeholder: t("compliance.placeholders.selectCategory"),
           required: true,
           options: [
-            { value: "Contact", label: t("compliance.categories.ContactData") || "Contact Data" },
-            { value: "Profile", label: t("compliance.categories.IdentityData") || "Profile Data" },
-            { value: "Financial", label: t("compliance.categories.FinancialData") || "Financial Data" },
-            { value: "Security", label: t("compliance.categories.TechnicalData") || "Security Data" },
-            { value: "Organisation", label: t("compliance.categories.OrganisationData") || "Organisation Data" },
-            { value: "Content", label: t("compliance.categories.ContentData") || "Content Data" },
+            { value: "Contact", label: t("compliance.categories.ContactData") },
+            { value: "Profile", label: t("compliance.categories.IdentityData") },
+            { value: "Financial", label: t("compliance.categories.FinancialData") },
+            { value: "Security", label: t("compliance.categories.TechnicalData") },
+            { value: "Organisation", label: t("compliance.categories.OrganisationData") },
+            { value: "Content", label: t("compliance.categories.ContentData") },
           ],
         },
         {
           name: "legalBasis",
-          label: t("compliance.legalBasis") || "Legal Basis",
+          label: t("compliance.legalBasis"),
           type: "select" as const,
-          placeholder: t("compliance.placeholders.selectLegalBasis") || "Select legal basis",
+          placeholder: t("compliance.placeholders.selectLegalBasis"),
           required: true,
           options: [
-            { value: "Consent", label: t("compliance.legalBases.Consent") || "Consent" },
-            { value: "Contract", label: t("compliance.legalBases.Contract") || "Contract" },
-            { value: "LegalObligation", label: t("compliance.legalBases.LegalObligation") || "Legal Obligation" },
-            { value: "VitalInterests", label: t("compliance.legalBases.VitalInterests") || "Vital Interests" },
-            { value: "PublicTask", label: t("compliance.legalBases.PublicTask") || "Public Task" },
-            { value: "LegitimateInterest", label: t("compliance.legalBases.LegitimateInterest") || "Legitimate Interest" },
+            { value: "Consent", label: t("compliance.legalBases.Consent") },
+            { value: "Contract", label: t("compliance.legalBases.Contract") },
+            { value: "LegalObligation", label: t("compliance.legalBases.LegalObligation") },
+            { value: "VitalInterests", label: t("compliance.legalBases.VitalInterests") },
+            { value: "PublicTask", label: t("compliance.legalBases.PublicTask") },
+            { value: "LegitimateInterest", label: t("compliance.legalBases.LegitimateInterest") },
           ],
         },
         {
           name: "isAnonymizedOnErasure",
-          label: t("compliance.isAnonymized") || "Anonymized on Erasure",
+          label: t("compliance.isAnonymized"),
           type: "checkbox" as const,
         },
         {
           name: "isIncludedInExport",
-          label: t("compliance.isExported") || "Included in Export",
+          label: t("compliance.isExported"),
           type: "checkbox" as const,
         },
       ];

@@ -31,10 +31,10 @@ export function useRegulationViewModel() {
     mutationFn: (data: CreateRegulationRequest) => regulationRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      success({ title: t("regulations.regulationAdded") || "Regulation added successfully" });
+      success({ title: t("compliance.regulations.regulationAdded") });
     },
     onError: () => {
-      error({ title: t("regulations.regulationAddFailed") || "Failed to add regulation" });
+      error({ title: t("compliance.regulations.regulationAddFailed") });
     }
   });
 
@@ -42,7 +42,7 @@ export function useRegulationViewModel() {
     mutationFn: ({ id, data }: { id: string; data: UpdateRegulationRequest }) => regulationRepository.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      success({ title: t("regulations.regulationUpdated") || "Regulation updated successfully" });
+      success({ title: t("compliance.regulations.regulationUpdated") });
     },
   });
 
@@ -50,7 +50,7 @@ export function useRegulationViewModel() {
     mutationFn: (id: string) => regulationRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      success({ title: t("regulations.regulationDeleted") || "Regulation deleted successfully" });
+      success({ title: t("compliance.regulations.regulationDeleted") });
     },
   });
 
@@ -73,40 +73,40 @@ export function useRegulationViewModel() {
     (): FieldConfig[] => [
       {
         name: "code",
-        label: t("regulations.code") || "Code",
+        label: t("compliance.regulations.code"),
         type: "text" as const,
-        placeholder: t("regulations.placeholders.code") || "e.g., GDPR",
+        placeholder: t("compliance.regulations.placeholders.code"),
         required: true,
       },
       {
         name: "name",
-        label: t("regulations.name") || "Name",
+        label: t("compliance.regulations.name"),
         type: "text" as const,
-        placeholder: t("regulations.placeholders.name") || "e.g., General Data Protection Regulation",
+        placeholder: t("compliance.regulations.placeholders.name"),
         required: true,
       },
       {
         name: "jurisdiction",
-        label: t("regulations.jurisdiction") || "Jurisdiction",
+        label: t("compliance.regulations.jurisdiction"),
         type: "text" as const,
-        placeholder: t("regulations.placeholders.jurisdiction") || "e.g., European Union",
+        placeholder: t("compliance.regulations.placeholders.jurisdiction"),
         required: true,
       },
       {
         name: "dsrDeadlineDays",
-        label: t("regulations.dsrDeadlineDays") || "DSR Deadline (Days)",
+        label: t("compliance.regulations.dsrDeadlineDays"),
         type: "number" as const,
         required: true,
       },
       {
         name: "referenceUrl",
-        label: t("regulations.referenceUrl") || "Reference URL",
+        label: t("compliance.regulations.referenceUrl"),
         type: "text" as const,
-        placeholder: t("regulations.placeholders.referenceUrl") || "https://...",
+        placeholder: t("compliance.regulations.placeholders.referenceUrl"),
       },
       {
         name: "isActive",
-        label: t("regulations.active") || "Active",
+        label: t("compliance.regulations.active"),
         type: "checkbox" as const,
       },
     ],

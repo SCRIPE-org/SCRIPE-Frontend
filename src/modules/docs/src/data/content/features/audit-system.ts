@@ -1,10 +1,10 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.auditSystem.intro" },
 
-  // € Architecture €
+  //  Architecture 
   {
     type: "heading",
     level: 2,
@@ -16,7 +16,7 @@ const sections: DocSection[] = [
     title: "4-Source Audit Pipeline",
     direction: "vertical",
     nodes: [
-      { id: "source1", label: "MediatR AuditBehavior (CQRS commands)", type: "info" },
+      { id: "source1", label: "NEXORA mediator AuditBehavior (CQRS commands)", type: "info" },
       { id: "source2", label: "EF Core AuditableEntityInterceptor", type: "warning" },
       { id: "source3", label: "RequestLoggingMiddleware (HTTP)", type: "primary" },
       { id: "source4", label: "Explicit IAuditService calls (security events)", type: "danger" },
@@ -34,7 +34,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Event Types
+  //  Event Types
   {
     type: "heading",
     level: 2,
@@ -190,7 +190,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Guardian Events
+  //  Guardian Events
   {
     type: "heading",
     level: 2,
@@ -241,7 +241,7 @@ const sections: DocSection[] = [
     contentKey: "features.auditSystem.guardianIntro",
   },
 
-  // € Service Methods
+  //  Service Methods
   {
     type: "heading",
     level: 2,
@@ -275,7 +275,7 @@ const sections: DocSection[] = [
     highlightLines: [4, 7, 10, 14, 18],
   },
 
-  // € Real-Time Broadcasting €
+  //  Real-Time Broadcasting 
   {
     type: "heading",
     level: 2,
@@ -306,7 +306,7 @@ await _hubContext.Clients
     highlightLines: [3, 15],
   },
 
-  // € Export €
+  //  Export 
   {
     type: "heading",
     level: 2,
@@ -315,7 +315,7 @@ await _hubContext.Clients
   },
   { type: "paragraph", contentKey: "features.auditSystem.exportIntro" },
 
-  // € API Endpoints
+  //  API Endpoints
   {
     type: "heading",
     level: 2,

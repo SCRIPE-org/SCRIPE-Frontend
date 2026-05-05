@@ -65,7 +65,7 @@ export const zh = {
       tblValR5C1: "功能发布",
       tblValR5C2: "大规模部署会危及所有租户",
       tblValR5C3: "灰度发布 (Canary) 和计划发布策略",
-      tip: "权益模块已完全集成到 MediatR 管道中。实现了 IRequireFeature 的命令将被自动进行门控检查 —— 您的业务逻辑将保持纯粹和聚焦。",
+      tip: "权益模块已完全集成到 NEXORA mediator 管道中。实现了 IRequireFeature 的命令将被自动进行门控检查 —— 您的业务逻辑将保持纯粹和聚焦。",
     },
     entEditions: {
       title: "版本与计划 (Editions & Plans)",

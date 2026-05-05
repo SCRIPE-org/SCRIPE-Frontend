@@ -265,7 +265,7 @@ export const ru = {
       newModuleIntro: "Создает 3-х уровневую DDD-структуру бэкенда и скелет фронтенда.",
       newFeatureTitle: "Генерация функции: new-feature",
       newFeatureIntro:
-        "Создает полноценный CRUD-цикл (26 файлов: контроллеры, MediatR, UI, схемы Zod).",
+        "Создает полноценный CRUD-цикл (26 файлов: контроллеры, NEXORA mediator, UI, схемы Zod).",
       destructionTitle: "Инструменты уничтожения (Откат)",
       destructionIntro: "Безопасное удаление сгенерированных модулей без разрушения компиляции.",
       bgJobsTitle: "Генерация фоновых задач",

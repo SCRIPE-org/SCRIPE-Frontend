@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Admin vs User
+  //  Admin vs User
   {
     type: "heading",
     level: 2,
@@ -25,7 +25,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € AdminsController CRUD
+  //  AdminsController CRUD
   { type: "heading", level: 2, titleKey: "features.userManagement.crudTitle", id: "crud" },
   {
     type: "api-table",
@@ -89,7 +89,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Account Operations €
+  //  Account Operations 
   {
     type: "heading",
     level: 2,
@@ -122,7 +122,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Role Management
+  //  Role Management
   { type: "heading", level: 2, titleKey: "features.userManagement.roleMgmtTitle", id: "role-mgmt" },
   {
     type: "api-table",
@@ -158,7 +158,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Bulk Operations
+  //  Bulk Operations
   { type: "heading", level: 2, titleKey: "features.userManagement.bulkOpsTitle", id: "bulk-ops" },
   {
     type: "api-table",
@@ -208,7 +208,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Enterprise Operations
+  //  Enterprise Operations
   {
     type: "heading",
     level: 2,
@@ -239,7 +239,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Protected Admin Rules
+  //  Protected Admin Rules
   {
     type: "heading",
     level: 2,
@@ -277,7 +277,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Nuke & Pave Pattern
+  //  Nuke & Pave Pattern
   { type: "heading", level: 2, titleKey: "features.userManagement.nukePaveTitle", id: "nuke-pave" },
   {
     type: "code",

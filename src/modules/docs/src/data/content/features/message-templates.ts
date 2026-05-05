@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Template Architecture
+  //  Template Architecture
   {
     type: "heading",
     level: 2,
@@ -35,7 +35,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Scriban Syntax €
+  //  Scriban Syntax 
   { type: "heading", level: 2, titleKey: "features.messageTemplates.syntaxTitle", id: "syntax" },
   {
     type: "code",
@@ -46,7 +46,7 @@ Hello {{ admin.name }},
 
 <!-- Conditional content -->
 {{ if admin.is_protected }}
-š ï¸ You are the super admin for {{ tenant.name }}.
+ ï¸ You are the super admin for {{ tenant.name }}.
 {{ end }}
 
 <!-- Loops -->
@@ -59,7 +59,7 @@ Created: {{ created_at | date.to_string "%B %d, %Y" }}
 Amount: {{ amount | math.format "0.00" }}`,
   },
 
-  // € Built-in Templates €
+  //  Built-in Templates 
   { type: "heading", level: 2, titleKey: "features.messageTemplates.builtInTitle", id: "built-in" },
   {
     type: "table",
@@ -74,7 +74,7 @@ Amount: {{ amount | math.format "0.00" }}`,
     ],
   },
 
-  // € Template Entity
+  //  Template Entity
   { type: "heading", level: 2, titleKey: "features.messageTemplates.entityTitle", id: "entity" },
   {
     type: "code",
@@ -104,7 +104,7 @@ Amount: {{ amount | math.format "0.00" }}`,
 }`,
   },
 
-  // € Template Renderer
+  //  Template Renderer
   {
     type: "heading",
     level: 2,
@@ -136,7 +136,7 @@ Amount: {{ amount | math.format "0.00" }}`,
 }`,
   },
 
-  // € Controller Endpoints €
+  //  Controller Endpoints 
   {
     type: "heading",
     level: 2,
@@ -191,7 +191,7 @@ Amount: {{ amount | math.format "0.00" }}`,
     ],
   },
 
-  // € Preview Feature
+  //  Preview Feature
   { type: "heading", level: 2, titleKey: "features.messageTemplates.previewTitle", id: "preview" },
   { type: "paragraph", contentKey: "features.messageTemplates.previewIntro" },
   {

@@ -7,13 +7,13 @@ export const ar = {
     overview: {
       title: "نظرة عامة على البنية",
       description:
-        "طبقات البنية النظيفة (Clean Architecture)، مسار الواجهة الخلفية، التدفق في الواجهة الأمامية، وقواعد حدود الوحدات.",
+        "طبقات Clean Architecture ومسار الخلفية وتدفق SOLID في الواجهة وقواعد حدود الوحدات.",
       intro:
-        "تتبع NEXORA بنية نظيفة صارمة تتكون من أربع طبقات: العرض (Presentation)، التطبيق (Application)، النطاق (Domain)، والبنية التحتية (Infrastructure). تضمن قاعدة التبعية ألا تعتمد الطبقات الداخلية أبداً على الطبقات الخارجية. تُطبق هذه البنية باستمرار على كل من الواجهة الخلفية (.NET) والواجهة الأمامية (Next.js).",
+        "تتبع NEXORA بنية Clean Architecture صارمة بأربع طبقات: العرض، التطبيق، المجال، والبنية التحتية. تضمن قاعدة الاعتماد ألا تعتمد الطبقات الداخلية على الطبقات الخارجية، ويطبق ذلك في الخلفية والواجهة.",
       layersTitle: "طبقات البنية النظيفة",
       backendArchTitle: "بنية الواجهة الخلفية",
       backendArchIntro:
-        "تتبع الواجهة الخلفية بنية مسار الطلبات حيث يتدفق كل طلب HTTP عبر البرمجيات الوسيطة (Middleware)، وحدات التحكم (Controllers)، سلوكيات MediatR، وأخيراً معالج CQRS. يضمن هذا التحقق المتسق والتدقيق والتعامل مع الأخطاء.",
+        "تتبع الواجهة الخلفية بنية مسار الطلبات حيث يتدفق كل طلب HTTP عبر البرمجيات الوسيطة (Middleware)، وحدات التحكم (Controllers)، سلوكيات NEXORA mediator، وأخيراً معالج CQRS. يضمن هذا التحقق المتسق والتدقيق والتعامل مع الأخطاء.",
       frontendArchTitle: "بنية الواجهة الأمامية",
       frontendArchIntro:
         "تستخدم الواجهة الأمامية نمط (View/ViewModel) المتوافق مع مبادئ SOLID حيث تكون المشاهد (Views) مجرد واجهة مستخدم نقية (بدون حالة أو منطق) وتحتوي ViewModels على جميع منطق الأعمال. يفصل نمط الموصل (Connector) توجيه Next.js (مكونات الخادم) عن منطق التطبيق (مكونات العميل).",
@@ -46,7 +46,7 @@ export const ar = {
         "تتبع كل وحدة جديدة نفس نمط تسجيل الـ DI. تقوم طريقة الامتداد AddXxxModule() بتسجيل الـ DbContext الخاص بالوحدة، والمستودعات، والخدمات، وعلامة تسجيل الوحدة.",
       controllersTitle: "وحدات التحكم (Controllers)",
       controllerTip:
-        "ترث جميع وحدات التحكم من وحدة تحكم أساسية (ApiController) توفر تخطيط استجابة موحد باستخدام Result<T>. يجب أن تكون وحدات التحكم نحيفة - حيث تكتفي بالتحقق من نموذج الطلب وتفويض العمل إلى MediatR.",
+        "ترث جميع وحدات التحكم من وحدة تحكم أساسية (ApiController) توفر تخطيط استجابة موحد باستخدام Result<T>. يجب أن تكون وحدات التحكم نحيفة - حيث تكتفي بالتحقق من نموذج الطلب وتفويض العمل إلى NEXORA mediator.",
     },
     frontend: {
       title: "بنية الواجهة الأمامية",
@@ -74,15 +74,15 @@ export const ar = {
     cqrs: {
       title: "نمط CQRS",
       description:
-        "فصل مسؤولية الأوامر والاستعلامات عبر مسار MediatR، السلوكيات، التحقق، والتخزين المؤقت (Caching).",
+        "فصل مسؤولية الأوامر والاستعلامات عبر مسار NEXORA mediator، السلوكيات، التحقق، والتخزين المؤقت (Caching).",
       intro:
-        "تستخدم NEXORA نمط CQRS (فصل مسؤولية الأوامر والاستعلامات) لفصل عمليات القراءة عن عمليات الكتابة. تقوم الأوامر بتغيير الحالة وتمر عبر سلوكيات التحقق والتدقيق. بينما تقرأ الاستعلامات الحالة ويمكنها الاستفادة من التخزين المؤقت. يعمل MediatR كوسيط بين وحدات التحكم والمعالجات.",
+        "تستخدم NEXORA نمط CQRS (فصل مسؤولية الأوامر والاستعلامات) لفصل عمليات القراءة عن عمليات الكتابة. تقوم الأوامر بتغيير الحالة وتمر عبر سلوكيات التحقق والتدقيق. بينما تقرأ الاستعلامات الحالة ويمكنها الاستفادة من التخزين المؤقت. يعمل NEXORA mediator كوسيط بين وحدات التحكم والمعالجات.",
       whatIsCqrsTitle: "ما هو CQRS؟",
       whatIsCqrsIntro:
         "يقسم CQRS تطبيقك إلى جانبين: الأوامر (الكتابة) والاستعلامات (القراءة). يمكن تحسين كل جانب بشكل مستقل - تركز الأوامر على سلامة البيانات والتحقق منها، بينما تركز الاستعلامات على الأداء والتخزين المؤقت.",
       commandSide: "جانب الأوامر (الكتابة)",
       querySide: "جانب الاستعلامات (القراءة)",
-      pipelineTitle: "مسار MediatR",
+      pipelineTitle: "مسار NEXORA mediator",
       validationBehaviorTitle: "سلوك التحقق",
       commandExampleTitle: "مثال على أمر (Command)",
       queryExampleTitle: "مثال على استعلام (Query)",
@@ -180,7 +180,7 @@ export const ar = {
       mutationFlowTitle: "تدفق التعديل (الكتابة)",
       backendPipelineTitle: "مسار طلبات الواجهة الخلفية",
       backendPipelineIntro:
-        "يمر كل طلب واجهة خلفية عبر 10 مكونات وسيطة (Middleware) و 4 سلوكيات لـ MediatR قبل الوصول إلى المعالج. يضمن هذا التسجيل الموحد والمصادقة والتفويض والتحقق وبوابة الميزات.",
+        "يمر كل طلب واجهة خلفية عبر المكونات الوسيطة ثم سلوكيات وسيط NEXORA قبل الوصول إلى المعالج. يضمن هذا التسجيل الموحد والمصادقة والتفويض والتحقق وبوابة الميزات وإرسال Webhook بعد النجاح.",
       errorFlowTitle: "معالجة الأخطاء",
       errorFlowIntro:
         "يتم التعامل مع الأخطاء على عدة مستويات. لكل مصدر خطأ معالج محدد، ورمز استجابة، واستراتيجية معالجة في الواجهة الأمامية.",
@@ -237,7 +237,7 @@ export const ar = {
         "تمثل أحداث النطاق وقوع أحداث مهمة في نطاق الأعمال. تستخدم NEXORA نمط الـ Outbox لضمان تسليم الأحداث بشكل موثوق.",
       interfaceTitle: "واجهة IDomainEvent",
       interfaceIntro:
-        "تنفذ جميع أحداث النطاق واجهة IDomainEvent، والتي ترث من INotification الخاصة بـ MediatR. يمكّن هذا اشتراكات متعددة لنفس الحدث.",
+        "تنفذ جميع أحداث النطاق واجهة IDomainEvent، والتي ترث من INotification الخاصة بـ NEXORA mediator. يمكّن هذا اشتراكات متعددة لنفس الحدث.",
       publishingTitle: "تدفق النشر والمعالجة",
       publishingIntro:
         "تتبع أحداث النطاق دورة حياة من 6 خطوات: إثارة الحدث، التقاطه بواسطة OutboxInterceptor، حفظه في قاعدة البيانات كـ OutboxMessage، استطلاعه بواسطة OutboxProcessor، ثم نشره.",
@@ -273,12 +273,12 @@ export const ar = {
     cqrsPipeline: {
       title: "مسار CQRS",
       description:
-        "سلوكيات مسار MediatR — ValidationBehavior، LoggingBehavior، CachingBehavior، FeatureCheckBehavior، ونمط الـ Result.",
+        "سلوكيات مسار وسيط NEXORA: LoggingBehavior و ValidationBehavior و FeatureCheckBehavior و WebhookDispatchBehavior و CachingBehavior ونمط Result وخريطة الأوامر والاستعلامات.",
       intro:
-        "يمر كل أمر واستعلام في NEXORA عبر مسار MediatR بـ 4 سلوكيات: التسجيل (Logging)، التخزين المؤقت (Caching)، التحقق (Validation)، وبوابة الميزات (FeatureCheck).",
+        "يمر كل أمر واستعلام في NEXORA عبر مسار وسيط قابل للضبط يضم خمسة سلوكيات مدمجة: LoggingBehavior و ValidationBehavior و FeatureCheckBehavior و WebhookDispatchBehavior و CachingBehavior. تتم إدارة الترتيب من appsettings أو متغيرات البيئة ويتم التحقق منه عند بدء التشغيل.",
       overviewTitle: "نظرة عامة على المسار",
       overviewIntro:
-        "ينفذ مسار MediatR السلوكيات بترتيب التسجيل: التسجيل ← التخزين المؤقت ← التحقق ← بوابة الميزات ← المعالج. يمكن لكل سلوك إنهاء المسار مبكراً.",
+        "الترتيب الافتراضي هو Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. يعمل التحقق وبوابة الميزات قبل قراءة التخزين المؤقت، بينما يحدث إبطال التخزين المؤقت قبل إرسال الويبهوك بعد نجاح أوامر التعديل.",
       separationTitle: "فصل الأوامر عن الاستعلامات",
       separationIntro:
         "يقسم CQRS التطبيق إلى مسارين مميزين: الأوامر (تغيير الحالة وتمر بتحقق كامل) والاستعلامات (للقراءة وتُحسن بالأداء مع التخزين المؤقت).",
@@ -288,10 +288,10 @@ export const ar = {
       resultPatternIntro: "تُرجع جميع المعالجات Result<T> بدلاً من رمي الاستثناءات للفشل المتوقع.",
       validationTitle: "سلوك التحقق (ValidationBehavior)",
       validationIntro:
-        "يُجمّع ValidationBehavior جميع مدققي IValidator<TRequest> ويُشغلها، ويرمي استثناء بأخطاء التحقق إن فشلت — قبل تنفيذ المعالج.",
+        "يعمل ValidationBehavior مباشرة بعد التسجيل. يجمع كل مدققي IValidator<TRequest>، ويرجع أخطاء Result منظمة للطلبات غير الصالحة، ويمنعها من الوصول إلى المعالجات أو التخزين المؤقت.",
       validatorExampleTitle: "أمثلة على أدوات التحقق",
       loggingTitle: "سلوك التسجيل (LoggingBehavior)",
-      loggingIntro: "يسجل كل طلب MediatR معرّف المستخدم، معرّف المستأجر، نوع الطلب، ووقت التنفيذ.",
+      loggingIntro: "يسجل كل طلب NEXORA mediator معرّف المستخدم، معرّف المستأجر، نوع الطلب، ووقت التنفيذ.",
       cachingTitle: "سلوك التخزين المؤقت (CachingBehavior)",
       cachingIntro:
         "يعترض CachingBehavior الاستعلامات التي تنفذ واجهة ICacheable ويفحص ذاكرة التخزين المؤقت أولاً.",
@@ -300,7 +300,7 @@ export const ar = {
       registrationTitle: "تسجيل المسار",
       registrationIntro: "يتم تسجيل سلوكيات المسار في AddCoreApplication() بترتيب التنفيذ.",
       behaviorOrderTip:
-        "ترتيب تسجيل السلوكيات يحدد ترتيب التنفيذ. يتم التحقق قبل بوابة الميزات لرفض الطلبات غير الصالحة مبكراً.",
+        "يرفض التحقق الآمن الافتراضي أي ترتيب يجعل Caching يعمل قبل Validation أو FeatureCheck. لا تعطل Mediator__EnforceSecurityPipelineOrder إلا إذا كنت تتحمل المخاطر بالكامل.",
       featureCheckTitle: "سلوك بوابة الميزات (FeatureCheckBehavior)",
       featureCheckIntro:
         "يعترض FeatureCheckBehavior الأوامر التي تنفذ IRequireFeature. يتحقق مما إذا كانت خطة المستأجر (Edition) تسمح بالميزة المطلوبة عبر IFeatureChecker.IsEnabledAsync. إذا كانت الميزة معطلة، يُرجع خطأ Forbidden دون تنفيذ المعالج.",
@@ -316,7 +316,7 @@ export const ar = {
         "تستخدم NEXORA حاوية DI المدمجة في .NET بنمط تسجيل مهيكل. ينسق Program.cs جميع التسجيلات.",
       architectureTitle: "بنية تسجيل الـ DI",
       architectureIntro:
-        "يتبع Program.cs ترتيب تسجيل صارم من 4 مراحل: (1) البنية التحتية الأساسية. (2) CORS وقيود الطلبات. (3) الوحدات. (4) طبقة التطبيق مع MediatR.",
+        "يتبع Program.cs ترتيب تسجيل صارم من 4 مراحل: (1) البنية التحتية الأساسية. (2) CORS وقيود الطلبات. (3) الوحدات. (4) طبقة التطبيق مع NEXORA mediator.",
       moduleRegTitle: "نمط تسجيل الوحدات",
       moduleRegIntro:
         "تعرض كل وحدة طريقة امتداد AddXxxModule() لتسجيل كافة خدماتها. يتحكم متغير البيئة MODULE_NAME في الوحدات التي يتم تحميلها.",

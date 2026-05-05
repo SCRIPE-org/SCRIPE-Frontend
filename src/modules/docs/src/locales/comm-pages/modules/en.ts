@@ -10,7 +10,7 @@ export const en = {
       businessTitle: "Accelerated Business Logic",
       commTitle: "Communication & Webhooks",
       coreContent:
-        "The Foundation layer provides the absolute non-negotiables: the Identity Provider, multi-tenant resolution strategies, EF Core context abstractions, and the centralized MediatR dispatcher. It is the rock-solid bedrock upon which your entire application scales.",
+        "The Foundation layer provides the absolute non-negotiables: the Identity Provider, multi-tenant resolution strategies, EF Core context abstractions, and the centralized NEXORA mediator dispatcher. It is the rock-solid bedrock upon which your entire application scales.",
       coreTitle: "The Core Foundation",
       crmModule: "Headless CRM Module",
       crmModuleDesc:

@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Architecture €
+  //  Architecture 
   {
     type: "heading",
     level: 2,
@@ -27,9 +27,9 @@ const sections: DocSection[] = [
         type: "warning",
       },
       { id: "ds", label: "DownloadService", type: "primary" },
-      { id: "cache", label: "Cache: ETag check †’ 304", type: "info" },
-      { id: "range", label: "Range: partial †’ 206", type: "info" },
-      { id: "stream", label: "FileStream: 64KB buffer †’ 200", type: "success" },
+      { id: "cache", label: "Cache: ETag check  304", type: "info" },
+      { id: "range", label: "Range: partial  206", type: "info" },
+      { id: "stream", label: "FileStream: 64KB buffer  200", type: "success" },
     ],
     connections: [
       { from: "auth", to: "ds" },
@@ -41,7 +41,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Controller Endpoints €
+  //  Controller Endpoints 
   {
     type: "heading",
     level: 2,
@@ -72,7 +72,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Resumable Downloads
+  //  Resumable Downloads
   {
     type: "heading",
     level: 2,
@@ -93,7 +93,7 @@ private (long? Start, long? End) ParseRangeHeader(long fileSize)
     long? start = string.IsNullOrEmpty(parts[0]) ? null : long.Parse(parts[0]);
     long? end = string.IsNullOrEmpty(parts[1]) ? null : long.Parse(parts[1]);
 
-    // Handle suffix range (last N bytes): "bytes=-500" †’ last 500 bytes
+    // Handle suffix range (last N bytes): "bytes=-500"  last 500 bytes
     if (!start.HasValue && end.HasValue)
     {
         start = fileSize - end.Value;
@@ -112,7 +112,7 @@ Content-Range: bytes 1024-2048/10240
 Accept-Ranges: bytes`,
   },
 
-  // € ETag Caching €
+  //  ETag Caching 
   { type: "heading", level: 2, titleKey: "features.downloadExport.etagTitle", id: "etag" },
   {
     type: "code",
@@ -128,7 +128,7 @@ private static string GenerateETag(FileInfo fileInfo)
   },
   { type: "paragraph", contentKey: "features.downloadExport.etagNote" },
 
-  // € Session-Based Downloads
+  //  Session-Based Downloads
   { type: "heading", level: 2, titleKey: "features.downloadExport.sessionTitle", id: "session" },
   { type: "paragraph", contentKey: "features.downloadExport.sessionIntro" },
   {
@@ -150,7 +150,7 @@ private static string GenerateETag(FileInfo fileInfo)
   },
   { type: "info", variant: "warning", contentKey: "features.downloadExport.sessionWarning" },
 
-  // € Path Traversal Prevention
+  //  Path Traversal Prevention
   {
     type: "heading",
     level: 2,
@@ -169,7 +169,7 @@ private static string GenerateETag(FileInfo fileInfo)
   },
   { type: "paragraph", contentKey: "features.downloadExport.pathTraversalNote" },
 
-  // € FileStream Configuration €
+  //  FileStream Configuration 
   {
     type: "heading",
     level: 2,
@@ -185,7 +185,7 @@ private static string GenerateETag(FileInfo fileInfo)
     FileMode.Open,
     FileAccess.Read,
     FileShare.Read,      // Allow concurrent reads
-    bufferSize: 64 * 1024, // 64KB buffer (4Ã— default)
+    bufferSize: 64 * 1024, // 64KB buffer (4Ã default)
     useAsync: true         // Async I/O for non-blocking reads
 );`,
   },

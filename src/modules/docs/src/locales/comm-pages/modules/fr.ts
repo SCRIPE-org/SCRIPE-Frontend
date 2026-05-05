@@ -15,7 +15,7 @@ export const fr = {
       businessTitle: "Logique Métier Accélérée",
       commTitle: "Communication & Webhooks",
       coreContent:
-        "La couche Fondation fournit les éléments absolument non négociables : le fournisseur d'identité, les stratégies de résolution multi-tenant, les abstractions de contexte EF Core et le répartiteur centralisé MediatR. C'est le socle solide sur lequel repose l'ensemble de votre application.",
+        "La couche Fondation fournit les éléments absolument non négociables : le fournisseur d'identité, les stratégies de résolution multi-tenant, les abstractions de contexte EF Core et le répartiteur centralisé NEXORA mediator. C'est le socle solide sur lequel repose l'ensemble de votre application.",
       coreTitle: "Le Cœur de Fondation",
       crmModule: "Module CRM Headless",
       crmModuleDesc:

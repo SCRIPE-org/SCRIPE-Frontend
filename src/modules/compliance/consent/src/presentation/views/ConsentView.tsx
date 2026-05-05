@@ -139,7 +139,7 @@ function WithdrawConfirmDialog({
       open={open}
       onOpenChange={(v) => !v && onCancel()}
       title={t("compliance.withdrawn")}
-      description={t("compliance.withdrawConfirmDesc") ?? "Are you sure you want to withdraw your consent for this purpose?"}
+      description={t("compliance.withdrawConfirmDesc")}
       size="sm"
     >
       <div className="flex justify-end gap-2 border-t pt-4">
@@ -243,8 +243,8 @@ export function ConsentView() {
       <Tabs defaultValue="my-consents" className="space-y-4">
         {canViewAnalytics && (
           <TabsList className="bg-muted/50">
-            <TabsTrigger value="my-consents">{t("compliance.myConsents") ?? "My Consents"}</TabsTrigger>
-            <TabsTrigger value="analytics">{t("compliance.analytics") ?? "Analytics"}</TabsTrigger>
+            <TabsTrigger value="my-consents">{t("compliance.myConsents")}</TabsTrigger>
+            <TabsTrigger value="analytics">{t("compliance.analytics")}</TabsTrigger>
           </TabsList>
         )}
 
@@ -311,7 +311,7 @@ export function ConsentView() {
               <BarChart3 className="h-8 w-8 text-emerald-500" />
             </div>
             <p className="font-semibold">{t("compliance.noConsents")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noConsentsDesc") ?? "Consent records will appear here once created."}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noConsentsDesc")}</p>
           </CardContent>
         </Card>
       ) : (
@@ -353,7 +353,7 @@ export function ConsentView() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t("compliance.totalSubjects") ?? "Total Data Subjects"}</CardTitle>
+                    <CardTitle>{t("compliance.totalSubjects")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-3xl font-bold">{analytics.totalSubjects}</div>
@@ -361,7 +361,7 @@ export function ConsentView() {
                 </Card>
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t("compliance.subjectsRequiringReConsent") ?? "Requiring Re-Consent"}</CardTitle>
+                    <CardTitle>{t("compliance.subjectsRequiringReConsent")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-3xl font-bold text-amber-600">{analytics.subjectsRequiringReConsent}</div>
@@ -369,7 +369,7 @@ export function ConsentView() {
                 </Card>
                 <Card className="md:col-span-2">
                   <CardHeader>
-                    <CardTitle>{t("compliance.optInRates") ?? "Opt-In Rates by Purpose"}</CardTitle>
+                    <CardTitle>{t("compliance.optInRates")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {Object.entries(analytics.optInRates).map(([key, rate]) => (

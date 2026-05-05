@@ -16,24 +16,20 @@ const sections: DocSection[] = [
     type: "code",
     language: "csharp",
     filename: "Core.Domain/Events/IDomainEvent.cs",
-    code: `using MediatR;
-
-/// <summary>
-/// Marker interface for domain events.
-/// Domain events represent something meaningful that happened in the domain.
-/// Inherits from MediatR.INotification for in-process pub/sub.
+    code: `/// <summary>
+/// Marker interface for domain events. Enables event-driven architecture.
+/// Domain events stay domain-pure; the Application layer wraps them for dispatch.
 /// </summary>
-public interface IDomainEvent : INotification
+public interface IDomainEvent
 {
-    /// <summary>
-    /// Unique identifier for this event instance.
-    /// </summary>
-    Guid EventId => Guid.NewGuid();
+    DateTime OccurredOn { get; }
+    Guid EventId { get; }
+}
 
-    /// <summary>
-    /// When this event occurred.
-    /// </summary>
-    DateTime OccurredAt => DateTime.UtcNow;
+public abstract record DomainEvent : IDomainEvent
+{
+    public DateTime OccurredOn { get; } = DateTime.UtcNow;
+    public Guid EventId { get; } = Guid.NewGuid();
 }`,
   },
 
@@ -69,7 +65,7 @@ public interface IDomainEvent : INotification
         type: "success",
         description: "Background job, polls every 5s",
       },
-      { id: "mediator", label: "MediatR Publish", type: "primary" },
+      { id: "mediator", label: "NEXORA mediator Publish", type: "primary" },
       {
         id: "handler",
         label: "IDomainEventHandler<T>",
@@ -102,36 +98,43 @@ public interface IDomainEvent : INotification
         filename: "IDomainEventPublisher.cs",
         code: `/// <summary>
 /// Abstraction for publishing domain events.
-/// Default implementation uses MediatR for in-process pub/sub.
+/// Default implementation uses NEXORA mediator for in-process pub/sub.
 /// </summary>
 public interface IDomainEventPublisher
 {
-    Task PublishAsync(IDomainEvent domainEvent, CancellationToken ct = default);
-    Task PublishManyAsync(IEnumerable<IDomainEvent> events, CancellationToken ct = default);
+    Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken ct = default)
+        where TEvent : IDomainEvent;
+    Task PublishAllAsync(IEnumerable<IDomainEvent> events, CancellationToken ct = default);
 }`,
       },
       {
-        label: "MediatR Implementation",
+        label: "NEXORA mediator Implementation",
         language: "csharp",
-        filename: "MediatRDomainEventPublisher.cs",
-        code: `public class MediatRDomainEventPublisher : IDomainEventPublisher
+        filename: "NexoraDomainEventPublisher.cs",
+        code: `public class NexoraDomainEventPublisher : IDomainEventPublisher
 {
-    private readonly IMediator _mediator;
+    private readonly IPublisher _publisher;
 
-    public MediatRDomainEventPublisher(IMediator mediator)
-        => _mediator = mediator;
+    public NexoraDomainEventPublisher(IPublisher publisher)
+        => _publisher = publisher;
 
-    public async Task PublishAsync(IDomainEvent domainEvent, CancellationToken ct)
+    public async Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken ct)
+        where TEvent : IDomainEvent
     {
-        // Wrap in DomainEventNotification for MediatR
-        var notification = new DomainEventNotification(domainEvent);
-        await _mediator.Publish(notification, ct);
+        var notification = new DomainEventNotification<TEvent>(domainEvent);
+        await _publisher.Publish(notification, ct);
     }
 
-    public async Task PublishManyAsync(IEnumerable<IDomainEvent> events, CancellationToken ct)
+    public async Task PublishAllAsync(IEnumerable<IDomainEvent> events, CancellationToken ct)
     {
-        foreach (var evt in events)
-            await PublishAsync(evt, ct);
+        foreach (var domainEvent in events)
+        {
+            var notificationType = typeof(DomainEventNotification<>)
+                .MakeGenericType(domainEvent.GetType());
+            var notification = Activator.CreateInstance(notificationType, domainEvent);
+            if (notification != null)
+                await _publisher.Publish(notification, ct);
+        }
     }
 }`,
       },
@@ -144,11 +147,9 @@ public interface IDomainEventPublisher
 /// Multiple handlers can subscribe to the same event type.
 /// </summary>
 public interface IDomainEventHandler<TEvent> :
-    INotificationHandler<DomainEventNotification>
+    INotificationHandler<DomainEventNotification<TEvent>>
     where TEvent : IDomainEvent
-{
-    Task Handle(TEvent domainEvent, CancellationToken ct);
-}`,
+{ }`,
       },
     ],
   },
@@ -265,7 +266,7 @@ public class OutboxInterceptor : SaveChangesInterceptor
     filename: "Core.Infrastructure/Outbox/OutboxProcessor.cs — Simplified",
     code: `/// <summary>
 /// Background service that polls the Outbox table for unprocessed messages
-/// and publishes them via MediatR. Runs every 5 seconds.
+/// and publishes them via NEXORA mediator. Runs every 5 seconds.
 /// </summary>
 public class OutboxProcessor : BackgroundService
 {
@@ -293,7 +294,7 @@ public class OutboxProcessor : BackgroundService
                     var domainEvent = (IDomainEvent)JsonSerializer
                         .Deserialize(message.Content, type)!;
 
-                    // 3. Publish via MediatR
+                    // 3. Publish via NEXORA mediator
                     await publisher.PublishAsync(domainEvent, ct);
 
                     // 4. Mark as processed
@@ -381,9 +382,9 @@ public class OutboxCleanupJob : RecurringJobBase
         "Abstraction for publishing domain events",
       ],
       [
-        "MediatRDomainEventPublisher",
-        "Events/MediatRDomainEventPublisher.cs",
-        "In-process pub/sub via MediatR",
+        "NexoraDomainEventPublisher",
+        "Events/NexoraDomainEventPublisher.cs",
+        "In-process pub/sub via NEXORA mediator",
       ],
       [
         "DomainEventNotification",
@@ -420,7 +421,7 @@ public record AdminCreatedEvent(
         titleKey: "architecture.domainEvents.step2Title",
         contentKey: "architecture.domainEvents.step2Content",
         code: `// 2. Raise the event from entity/command handler
-public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Result<Guid>>
+public class CreateAdminCommandHandler : ICommandHandler<CreateAdminCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateAdminCommand command, CancellationToken ct)
     {

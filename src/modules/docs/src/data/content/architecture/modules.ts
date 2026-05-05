@@ -62,7 +62,7 @@ const sections: DocSection[] = [
 │   │   ├── Get{Entity}ById/
 │   │   └── List{Entities}/
 │   ├── DTOs/                  # Data transfer objects
-│   ├── Mappings/              # AutoMapper profiles
+│   ├── Mappings/              # Explicit DTO mapping rules
 │   └── DependencyInjection.cs # Assembly marker
 │
 └── {Module}.Infrastructure/

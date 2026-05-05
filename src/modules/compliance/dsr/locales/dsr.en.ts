@@ -45,7 +45,7 @@ export const en = {
       pdpa: "PDPA",
     },
 
-    // DSR Status
+    // DSR Status (flat — used by DsrView filter pills via dynamic key construction)
     pending: "Pending",
     inReview: "In Review",
     approved: "Approved",
@@ -53,6 +53,18 @@ export const en = {
     partiallyCompleted: "Partially Completed",
     rejected: "Rejected",
     cancelled: "Cancelled",
+
+    // DSR Status labels (nested — used by DsrDetailView STATUS_META.labelKey)
+    statusLabels: {
+      pending: "Pending",
+      inReview: "In Review",
+      approved: "Approved",
+      processing: "Processing",
+      partiallyCompleted: "Partially Completed",
+      completed: "Completed",
+      rejected: "Rejected",
+      cancelled: "Cancelled",
+    },
 
     // DSR Actions
     approveDsr: "Approve DSR",

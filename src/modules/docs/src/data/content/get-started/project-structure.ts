@@ -45,7 +45,7 @@ const sections: DocSection[] = [
 │   │       └── Middleware/             # Request logging, audit
 │   │
 │   ├── Core/
-│   │   ├── Core.Application/           # MediatR, Behaviors, CQRS
+│   │   ├── Core.Application/           # NEXORA mediator, Behaviors, CQRS
 │   │   ├── Core.Domain/                # Base entities, Result<T>
 │   │   └── Core.Infrastructure/        # DI, Caching, Events, Blob
 │   │

@@ -28,15 +28,15 @@ builder.Services.AddRateLimitingConfiguration();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
 // ─── 3. Module Registration (guarded by mode) ───────────
-var mediatRAssemblies = new List<Assembly>();
+var handlerAssemblies = new List<Assembly>();
 if (isMonolith || moduleName == "Identity")
 {
-    mediatRAssemblies.Add(typeof(Identity.Application.DependencyInjection));
+    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));
     builder.Services.AddIdentityModule(builder.Configuration);
 }
 
 // ─── 4. Application Layer (needs module assemblies) ─────
-builder.Services.AddCoreApplication(mediatRAssemblies);
+builder.Services.AddCoreApplication(handlerAssemblies);
 
 // ─── 5. Build & Configure Pipeline ─────────────────────
 var app = builder.Build();

@@ -236,7 +236,7 @@ export const fr = {
       intro: "NEXORA est dotée d'une suite permettant une piste d'audit juridique inaltérable.",
       architectureTitle: "Architecture d'Audit",
       architectureIntro:
-        "Combine l'AuditableEntityInterceptor d'EF Core, l'AuditBehavior de MediatR et le RequestLoggingMiddleware.",
+        "Combine l'AuditableEntityInterceptor d'EF Core, l'AuditBehavior de NEXORA mediator et le RequestLoggingMiddleware.",
       interceptorTitle: "Intercepteur de Changement d'Entité",
       interceptorIntro:
         "S'exécute à l'intérieur de l'ORM, calculant l'ancienne et la nouvelle valeur, l'auteur de l'action, puis sérialise le tout en JSON.",

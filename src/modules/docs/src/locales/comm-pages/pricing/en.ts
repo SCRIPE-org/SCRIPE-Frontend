@@ -5,6 +5,24 @@
 export const en = {
   commercial: {
     licensingModel: {
+      runtimeOwnershipTitle: "Runtime Ownership and License Independence",
+      runtimeOwnershipIntro:
+        "NEXORA backend request dispatch and DTO projection are implemented by NEXORA-owned code. Production builds do not depend on Lucky Penny license keys or runtime license enforcement for mediator or mapping paths.",
+      tblRuntimeHeader1: "Area",
+      tblRuntimeHeader2: "NEXORA-owned replacement",
+      tblRuntimeHeader3: "Production effect",
+      tblRuntimeR1C1: "Request dispatch",
+      tblRuntimeR1C2: "NexoraMediator with cached delegates and ordered behaviors",
+      tblRuntimeR1C3: "No third-party mediator license key or package-policy risk",
+      tblRuntimeR2C1: "DTO mapping",
+      tblRuntimeR2C2: "Explicit mapping rules plus EncryptedIdMapper",
+      tblRuntimeR2C3: "Auditable response shapes and preserved encrypted IDs",
+      tblRuntimeR3C1: "CLI scaffolding",
+      tblRuntimeR3C2: "Templates emit NEXORA mediator namespaces and mapping rules",
+      tblRuntimeR3C3: "New modules do not reintroduce removed packages",
+      tblRuntimeR4C1: "Operations",
+      tblRuntimeR4C2: "No phone-home checks on these core paths",
+      tblRuntimeR4C3: "Safer offline, air-gapped, and enterprise deployments",
       comparisonTitle: "License Tier Comparison",
       description:
         "Transparent, predictable, and scalable licensing structures designed for technical founders and massive corporate entities alike.",
@@ -135,7 +153,7 @@ export const en = {
       entVersioningDesc:
         "Create edition versions with feature snapshots and deploy via immediate, canary, or scheduled rollout strategies without interrupting existing tenants.",
       entitlementsTip:
-        "The Entitlements module integrates directly into the MediatR pipeline — commands implementing IRequireFeature are automatically gated by the tenant's resolved feature values. No custom middleware needed.",
+        "The Entitlements module integrates directly into the NEXORA mediator pipeline — commands implementing IRequireFeature are automatically gated by the tenant's resolved feature values. No custom middleware needed.",
     },
     supportPlans: {
       communityAccess: "Global Discord & GitHub Access",
@@ -307,7 +325,7 @@ export const en = {
       aHowLongSetup:
         "You can have NEXORA running locally in under 15 minutes. Clone the repository, configure your database connection (SQL Server, Oracle, PostgreSQL, or SQLite), run the migrations, and start the development server. The nexora-cli tool further accelerates development by scaffolding new modules, entities, and boilerplate code in seconds. Most teams are productive within the first day.",
       q4: "What technology stack does NEXORA use?",
-      a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, MediatR (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
+      a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, NEXORA mediator (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
       q5: "Can NEXORA scale from monolith to microservices?",
       a5: "Yes — this is a core design principle. NEXORA uses strict module boundaries with no cross-module imports. Each module follows Clean Architecture with its own domain, data, and presentation layers. You can start as a monolith for simplicity, move to a gateway topology to separate frontend/backend, and eventually extract individual modules into independent microservices — all without refactoring your code.",
       q6: "What databases are supported?",

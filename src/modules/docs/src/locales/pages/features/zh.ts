@@ -131,7 +131,7 @@ export const zh = {
       title: "审计系统 (Audit System)",
       description: "4 源管道、35+ 种事件类型、7 种守护事件、实时 SignalR 广播以及 CSV/PDF 导出。",
       intro:
-        "NEXORA 通过 MediatR 行为、EF Core 拦截器、中间件和安全服务显式调用来记录所有重大操作。",
+        "NEXORA 通过 NEXORA mediator 行为、EF Core 拦截器、中间件和安全服务显式调用来记录所有重大操作。",
       architectureTitle: "审计架构",
       eventTypesTitle: "事件类型 (35+ 类别)",
       authEventsTitle: "身份验证事件",

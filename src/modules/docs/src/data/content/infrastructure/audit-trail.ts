@@ -23,7 +23,7 @@ const sections: DocSection[] = [
         type: "info",
         description: "HTTP request capture",
       },
-      { id: "behavior", label: "AuditBehavior", type: "info", description: "MediatR pipeline" },
+      { id: "behavior", label: "AuditBehavior", type: "info", description: "NEXORA mediator pipeline" },
       { id: "service", label: "AuditService", type: "warning", description: "Module auto-detect" },
       { id: "db", label: "AuditLogs Table", type: "success", description: "Persistent storage" },
       { id: "signalr", label: "SignalR Hub", type: "danger", description: "Real-time broadcast" },

@@ -336,7 +336,7 @@ export const ar = {
       description:
         "تتبع موزع عبر OpenTelemetry ومقاييس Prometheus وتسجيل مركزي عبر Grafana Loki وتصور التتبع عبر Jaeger مع قواعد تنبيه جاهزة.",
       intro:
-        "تُنفذ NEXORA مكدس مراقبة كامل مبني على معايير مفتوحة: OpenTelemetry للتتبع الموزع وPrometheus لجمع المقاييس وGrafana Loki للتسجيل المركزي وJaeger لتصور التتبع. يتم تتبع كل معالج MediatR تلقائيًا. المكدس بالكامل اختياري — في بيئة التطوير يمكنك التشغيل مع إخراج وحدة التحكم فقط وبدون تبعيات خارجية.",
+        "تُنفذ NEXORA مكدس مراقبة كامل مبني على معايير مفتوحة: OpenTelemetry للتتبع الموزع وPrometheus لجمع المقاييس وGrafana Loki للتسجيل المركزي وJaeger لتصور التتبع. يتم تتبع كل معالج NEXORA mediator تلقائيًا. المكدس بالكامل اختياري — في بيئة التطوير يمكنك التشغيل مع إخراج وحدة التحكم فقط وبدون تبعيات خارجية.",
       stackTitle: "بنية مكدس المراقبة",
       tracingTitle: "التتبع الموزع (OpenTelemetry)",
       tracingIntro:

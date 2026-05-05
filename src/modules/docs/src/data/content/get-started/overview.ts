@@ -68,7 +68,7 @@ const sections: DocSection[] = [
       { id: "host", label: "Host Layer — Program.cs", type: "default" },
       { id: "middleware", label: "10 Middleware Pipeline", type: "warning" },
       { id: "controllers", label: "18 REST Controllers", type: "default" },
-      { id: "cqrs", label: "MediatR CQRS + 3 Behaviors", type: "success" },
+      { id: "cqrs", label: "NEXORA mediator CQRS + 3 Behaviors", type: "success" },
       { id: "domain", label: "Domain Layer — 15 Entities", type: "primary" },
       { id: "infra", label: "Infrastructure — Multi-DB + Cache", type: "danger" },
     ],
@@ -114,7 +114,7 @@ var isGateway = moduleName.Equals("Gateway", StringComparison.OrdinalIgnoreCase)
 // Gate each module behind a simple check:
 if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCase))
 {
-    mediatRAssemblies.Add(typeof(Identity.Application.DependencyInjection));
+    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));
     builder.Services.AddIdentityModule(builder.Configuration);
 }`,
     highlightLines: [1, 2, 3],
@@ -131,7 +131,7 @@ if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCa
     rows: [
       ["Backend Framework", ".NET", "10", "Core runtime and SDK"],
       ["API Style", "ASP.NET Core Web API", "10", "REST controllers with Swagger"],
-      ["CQRS", "MediatR", "12+", "Command/Query separation"],
+      ["CQRS", "NEXORA mediator", "12+", "Command/Query separation"],
       ["Validation", "FluentValidation", "11+", "Request validation pipeline"],
       ["ORM", "Entity Framework Core", "10", "Multi-database O/R mapping"],
       ["Caching", "IMemoryCache + Redis", "—", "L1/L2 cache layers"],
@@ -171,7 +171,7 @@ if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCa
       ["6", "AddCoreInfrastructure", "11KB", "ICurrentUser, Audit, Cache, DI container"],
       ["7", "AddBlobStorage", "2KB", "Local / Azure / S3 / MinIO storage"],
       ["8", "AddIdentityModule", "Module", "Identity-specific services"],
-      ["9", "AddCoreApplication", "2KB", "MediatR + Behaviors + Domain Events"],
+      ["9", "AddCoreApplication", "2KB", "NEXORA mediator + Behaviors + Domain Events"],
       ["10", "AddHealthCheckConfiguration", "2KB", "Health endpoints"],
       ["11", "AddBackgroundJobsConfiguration", "9KB", "Hangfire + recurring jobs"],
       ["12", "AddSignalRConfiguration", "2KB", "Real-time WebSocket hubs"],

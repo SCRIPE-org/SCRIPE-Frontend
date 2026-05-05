@@ -5,6 +5,24 @@
 export const es = {
   commercial: {
     licensingModel: {
+      runtimeOwnershipTitle: "Propiedad de runtime e independencia de licencia",
+      runtimeOwnershipIntro:
+        "El despacho de solicitudes del backend y la proyección de DTO están implementados con código propio de NEXORA. Las compilaciones de producción no dependen de claves Lucky Penny ni de validación de licencia en runtime para los caminos de mediador o mapeo.",
+      tblRuntimeHeader1: "Área",
+      tblRuntimeHeader2: "Reemplazo propiedad de NEXORA",
+      tblRuntimeHeader3: "Efecto en producción",
+      tblRuntimeR1C1: "Despacho de solicitudes",
+      tblRuntimeR1C2: "NexoraMediator con delegados cacheados y comportamientos ordenados",
+      tblRuntimeR1C3: "Sin riesgo de clave de licencia de mediador externo ni de política del paquete",
+      tblRuntimeR2C1: "Mapeo DTO",
+      tblRuntimeR2C2: "Reglas explícitas de mapeo más EncryptedIdMapper",
+      tblRuntimeR2C3: "Formas de respuesta auditables e IDs cifrados preservados",
+      tblRuntimeR3C1: "Scaffolding CLI",
+      tblRuntimeR3C2: "Las plantillas emiten namespaces del mediador NEXORA y reglas de mapeo",
+      tblRuntimeR3C3: "Los módulos nuevos no reintroducen los paquetes eliminados",
+      tblRuntimeR4C1: "Operaciones",
+      tblRuntimeR4C2: "Sin verificaciones phone-home en estos caminos centrales",
+      tblRuntimeR4C3: "Despliegues offline, aislados y empresariales más seguros",
       entitlementsTitle: "Diferenciación de Planes Impulsada por Derechos",
       entitlementsIntro:
         "El módulo de Derechos integrado de NEXORA impulsa la diferenciación real de planes detrás de cada nivel de licencia. Las ediciones definen qué funciones incluye cada plan, las suscripciones vinculan a los inquilinos con los planes y las sobreescrituras permiten acuerdos personalizados, todo aplicado automáticamente a nivel de API.",
@@ -21,7 +39,7 @@ export const es = {
       entVersioningDesc:
         "Cree versiones de edición con instantáneas de funciones e impleméntelas mediante estrategias de implementación inmediata, canary o programada sin interrumpir a los inquilinos existentes.",
       entitlementsTip:
-        "El módulo de Derechos se integra directamente en la pipeline de MediatR: los comandos que implementan IRequireFeature son controlados automáticamente por los valores de las funciones resueltas del inquilino. No se necesita middleware personalizado.",
+        "El módulo de Derechos se integra directamente en la pipeline de NEXORA mediator: los comandos que implementan IRequireFeature son controlados automáticamente por los valores de las funciones resueltas del inquilino. No se necesita middleware personalizado.",
       comparisonTitle: "Comparación de Niveles de Licencia",
       description:
         "Estructuras de licencias transparentes, predecibles y escalables diseñadas tanto para fundadores técnicos como para entidades corporativas masivas.",
@@ -312,7 +330,7 @@ export const es = {
       aHowLongSetup:
         "Puede tener NEXORA funcionando localmente en menos de 15 minutos. Clone el repositorio, configure su conexión a la base de datos (SQL Server, Oracle, PostgreSQL o SQLite), ejecute las migraciones e inicie el servidor de desarrollo. La herramienta nexora-cli acelera aún más el desarrollo mediante la generación (scaffolding) de nuevos módulos, entidades y código repetitivo en segundos. La mayoría de los equipos son productivos durante el primer día.",
       q4: "¿Qué stack tecnológico utiliza NEXORA?",
-      a4: "El backend está construido con ASP.NET Core (.NET 9) con Entity Framework Core, MediatR (CQRS) y FluentValidation. El frontend utiliza Next.js 15 con TypeScript, TanStack Query, Zustand y un sistema de diseño personalizado construido sobre Radix UI. Las características en tiempo real están impulsadas por SignalR WebSockets, y la plataforma admite la contenedorización con Docker para el despliegue.",
+      a4: "El backend está construido con ASP.NET Core (.NET 9) con Entity Framework Core, NEXORA mediator (CQRS) y FluentValidation. El frontend utiliza Next.js 15 con TypeScript, TanStack Query, Zustand y un sistema de diseño personalizado construido sobre Radix UI. Las características en tiempo real están impulsadas por SignalR WebSockets, y la plataforma admite la contenedorización con Docker para el despliegue.",
       q5: "¿Puede NEXORA escalar de monolito a microservicios?",
       a5: "Sí, este es un principio de diseño central. NEXORA utiliza límites estrictos de módulos sin importaciones entre módulos. Cada módulo sigue la Arquitectura Limpia con sus propias capas de dominio, datos y presentación. Puede comenzar como un monolito por simplicidad, pasar a una topología de puerta de enlace (gateway) para separar el frontend del backend y, eventualmente, extraer módulos individuales en microservicios independientes, todo sin refactorizar su código.",
       q6: "¿Qué bases de datos son compatibles?",

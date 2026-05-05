@@ -4,6 +4,44 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.licensingModel.intro" },
 
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.licensingModel.runtimeOwnershipTitle",
+    id: "runtime-ownership",
+  },
+  { type: "paragraph", contentKey: "commercial.licensingModel.runtimeOwnershipIntro" },
+  {
+    type: "table",
+    headers: [
+      "commercial.licensingModel.tblRuntimeHeader1",
+      "commercial.licensingModel.tblRuntimeHeader2",
+      "commercial.licensingModel.tblRuntimeHeader3",
+    ],
+    rows: [
+      [
+        "commercial.licensingModel.tblRuntimeR1C1",
+        "commercial.licensingModel.tblRuntimeR1C2",
+        "commercial.licensingModel.tblRuntimeR1C3",
+      ],
+      [
+        "commercial.licensingModel.tblRuntimeR2C1",
+        "commercial.licensingModel.tblRuntimeR2C2",
+        "commercial.licensingModel.tblRuntimeR2C3",
+      ],
+      [
+        "commercial.licensingModel.tblRuntimeR3C1",
+        "commercial.licensingModel.tblRuntimeR3C2",
+        "commercial.licensingModel.tblRuntimeR3C3",
+      ],
+      [
+        "commercial.licensingModel.tblRuntimeR4C1",
+        "commercial.licensingModel.tblRuntimeR4C2",
+        "commercial.licensingModel.tblRuntimeR4C3",
+      ],
+    ],
+  },
+
   // ─── License Types ──────────────────────────────────────────
   {
     type: "heading",

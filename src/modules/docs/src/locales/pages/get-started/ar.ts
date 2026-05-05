@@ -12,7 +12,7 @@ export const ar = {
       featureModular: "نظام متجانس معياري",
       featureModularDesc:
         "وحدات معزولة بحدود واضحة؛ طوّر، اختبر، وانشر بشكل مستقل. نفس الملف التنفيذي، مع مرونة في النشر.",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "فصل الأوامر عن الاستعلامات عبر مسار بأربعة سلوكيات: التحقق، بوابة الميزات، التخزين المؤقت، ومراقبة الأداء.",
       featureSecurity: "أمان بمستوى المؤسسات",
@@ -39,9 +39,9 @@ export const ar = {
       techStackTitle: "حزمة التقنيات",
       serviceRegistrationTitle: "ترتيب تسجيل الخدمات",
       serviceRegistrationIntro:
-        "ترتيب تسجيل الخدمات في ملف Program.cs له أهمية هيكلية كبيرة. تغيير الترتيب قد يتسبب في أعطال أثناء التشغيل. يجب تسجيل البنية التحتية الأساسية قبل الوحدات، ويحتاج MediatR إلى تجميع علامات التجميع الخاصة بالوحدات أولاً.",
+        "ترتيب تسجيل الخدمات في ملف Program.cs له أهمية هيكلية كبيرة. تغيير الترتيب قد يتسبب في أعطال أثناء التشغيل. يجب تسجيل البنية التحتية الأساسية قبل الوحدات، ويحتاج NEXORA mediator إلى تجميع علامات التجميع الخاصة بالوحدات أولاً.",
       registrationOrderWarning:
-        "لا تقم بإعادة ترتيب تسجيلات الخدمات في Program.cs. يجب أن يأتي AddCoreInfrastructure قبل الوحدات (لأنها تعتمد على ICurrentUser)، ويجب أن يأتي AddCoreApplication بعد الوحدات (لأن MediatR يحتاج إلى تجميعاتها).",
+        "لا تقم بإعادة ترتيب تسجيلات الخدمات في Program.cs. يجب أن يأتي AddCoreInfrastructure قبل الوحدات (لأنها تعتمد على ICurrentUser)، ويجب أن يأتي AddCoreApplication بعد الوحدات (لأن NEXORA mediator يحتاج إلى تجميعاتها).",
       environmentProfilesTitle: "ملفات البيئة",
       envVarPrefixTip:
         "يتم تحميل متغيرات البيئة التي تبدأ بـ NEXORA_ فقط. على سبيل المثال، يقوم NEXORA_ConnectionStrings__DefaultConnection بتجاوز سلسلة الاتصال. تمثل الشرطتان السفليتان (__) التداخل في إعدادات JSON.",

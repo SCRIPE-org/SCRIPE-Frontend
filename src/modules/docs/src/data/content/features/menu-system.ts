@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Architecture €
+  //  Architecture 
   {
     type: "heading",
     level: 2,
@@ -31,7 +31,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € MenuItem Entity
+  //  MenuItem Entity
   { type: "heading", level: 2, titleKey: "features.menuSystem.entityTitle", id: "entity" },
   {
     type: "code",
@@ -56,10 +56,10 @@ const sections: DocSection[] = [
     
     public int Order { get; set; }             // Sort position within parent
     
-    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK †’ tree
+    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK  tree
     
     [MaxLength(100)]
-    public string? Resource { get; set; }      // Permission resource e.g. "admins" †’ checks "admins.view"
+    public string? Resource { get; set; }      // Permission resource e.g. "admins"  checks "admins.view"
     
     [MaxLength(2000)]
     public string? TenantScopeJson { get; set; } // null = all tenants, ["id1","id2"] = specific
@@ -74,7 +74,7 @@ const sections: DocSection[] = [
 }`,
   },
 
-  // € Controller Endpoints €
+  //  Controller Endpoints 
   { type: "heading", level: 2, titleKey: "features.menuSystem.endpointsTitle", id: "endpoints" },
   {
     type: "api-table",
@@ -148,7 +148,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Filtering Pipeline €
+  //  Filtering Pipeline 
   { type: "heading", level: 2, titleKey: "features.menuSystem.filteringTitle", id: "filtering" },
   { type: "paragraph", contentKey: "features.menuSystem.filteringIntro" },
   {
@@ -174,7 +174,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Override System
+  //  Override System
   { type: "heading", level: 2, titleKey: "features.menuSystem.overrideTitle", id: "overrides" },
   {
     type: "table",
@@ -186,7 +186,7 @@ const sections: DocSection[] = [
   },
   { type: "paragraph", contentKey: "features.menuSystem.overrideNote" },
 
-  // € Drag-Drop Reorder
+  //  Drag-Drop Reorder
   { type: "heading", level: 2, titleKey: "features.menuSystem.reorderTitle", id: "reorder" },
   {
     type: "code",

@@ -35,6 +35,7 @@ export const en = {
     manageConsent: "Manage Consent",
     manageRetention: "Manage Retention",
     viewInventory: "View Inventory",
+    viewReports: "View Reports",
     viewAll: "View All",
     tenants: "tenants",
 

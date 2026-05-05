@@ -32,7 +32,7 @@ const sections: DocSection[] = [
       },
       {
         id: "behavior",
-        label: "AuditBehavior (MediatR)",
+        label: "AuditBehavior (NEXORA mediator)",
         type: "success",
         description: "Business-level audit events",
       },

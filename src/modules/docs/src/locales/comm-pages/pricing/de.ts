@@ -5,6 +5,24 @@
 export const de = {
   commercial: {
     licensingModel: {
+      runtimeOwnershipTitle: "Runtime-Eigentum und Lizenzunabhängigkeit",
+      runtimeOwnershipIntro:
+        "Backend-Request-Dispatching und DTO-Projektion werden durch NEXORA-eigenen Code umgesetzt. Produktions-Builds benötigen für Mediator- oder Mapping-Pfade keine Lucky-Penny-Lizenzschlüssel und keine Runtime-Lizenzprüfung.",
+      tblRuntimeHeader1: "Bereich",
+      tblRuntimeHeader2: "NEXORA-eigener Ersatz",
+      tblRuntimeHeader3: "Produktionseffekt",
+      tblRuntimeR1C1: "Request-Dispatching",
+      tblRuntimeR1C2: "NexoraMediator mit gecachten Delegates und geordneten Behaviors",
+      tblRuntimeR1C3: "Kein Drittanbieter-Mediator-Lizenzschlüssel und kein Paketpolitik-Risiko",
+      tblRuntimeR2C1: "DTO-Mapping",
+      tblRuntimeR2C2: "Explizite Mapping-Regeln plus EncryptedIdMapper",
+      tblRuntimeR2C3: "Auditierbare Antwortformen und erhaltene verschlüsselte IDs",
+      tblRuntimeR3C1: "CLI-Scaffolding",
+      tblRuntimeR3C2: "Templates erzeugen NEXORA-Mediator-Namespaces und Mapping-Regeln",
+      tblRuntimeR3C3: "Neue Module führen entfernte Pakete nicht wieder ein",
+      tblRuntimeR4C1: "Betrieb",
+      tblRuntimeR4C2: "Keine Phone-Home-Prüfungen auf diesen Kernpfaden",
+      tblRuntimeR4C3: "Sicherere Offline-, Air-Gap- und Enterprise-Deployments",
       entitlementsTitle: "Berechtigungsgesteuerte Plan-Differenzierung",
       entitlementsIntro:
         "NEXORAs integriertes Berechtigungsmodul steuert die eigentliche Plan-Differenzierung hinter jeder Lizenzstufe. Editionen definieren, welche Funktionen jeder Plan enthält, Abonnements verknüpfen Mandanten mit Plänen und Überschreibungen ermöglichen maßgeschneiderte Deals — alles automatisch auf API-Ebene durchgesetzt.",
@@ -21,7 +39,7 @@ export const de = {
       entVersioningDesc:
         "Erstellen Sie Editionsversionen mit Funktions-Snapshots und stellen Sie sie über sofortige, Canary- oder geplante Rollout-Strategien bereit, ohne bestehende Mandanten zu stören.",
       entitlementsTip:
-        "Das Berechtigungsmodul integriert sich direkt in die MediatR-Pipeline — Befehle, die IRequireFeature implementieren, werden automatisch durch die aufgelösten Funktionswerte des Mandanten überwacht. Keine benutzerdefinierte Middleware erforderlich.",
+        "Das Berechtigungsmodul integriert sich direkt in die NEXORA mediator-Pipeline — Befehle, die IRequireFeature implementieren, werden automatisch durch die aufgelösten Funktionswerte des Mandanten überwacht. Keine benutzerdefinierte Middleware erforderlich.",
       comparisonTitle: "Vergleich der Lizenzstufen",
       description:
         "Transparente, vorhersehbare und skalierbare Lizenzstrukturen, entwickelt für technische Gründer und massive Unternehmenseinheiten gleichermaßen.",
@@ -308,7 +326,7 @@ export const de = {
       aHowLongSetup:
         "Sie können NEXORA lokal in unter 15 Minuten ausführen. Klonen Sie das Repository, konfigurieren Sie Ihre Datenbankverbindung (SQL Server, Oracle, PostgreSQL oder SQLite), führen Sie die Migrationen aus und starten Sie den Entwicklungsserver. Das nexora-cli Tool beschleunigt die Entwicklung weiter, indem es neue Module, Entitäten und Boilerplate-Code in Sekunden generiert (Scaffolding). Die meisten Teams sind bereits am ersten Tag produktiv.",
       q4: "Welchen Technologie-Stack verwendet NEXORA?",
-      a4: "Das Backend basiert auf ASP.NET Core (.NET 9) mit Entity Framework Core, MediatR (CQRS) und FluentValidation. Das Frontend nutzt Next.js 15 mit TypeScript, TanStack Query, Zustand und einem benutzerdefinierten Designsystem auf Basis von Radix UI. Echtzeitfunktionen werden von SignalR WebSockets betrieben, und die Plattform unterstützt die Docker-Containerisierung für Deployments.",
+      a4: "Das Backend basiert auf ASP.NET Core (.NET 9) mit Entity Framework Core, NEXORA mediator (CQRS) und FluentValidation. Das Frontend nutzt Next.js 15 mit TypeScript, TanStack Query, Zustand und einem benutzerdefinierten Designsystem auf Basis von Radix UI. Echtzeitfunktionen werden von SignalR WebSockets betrieben, und die Plattform unterstützt die Docker-Containerisierung für Deployments.",
       q5: "Kann NEXORA vom Monolithen zu Microservices skalieren?",
       a5: "Ja – das ist ein zentrales Designprinzip. NEXORA verwendet strikte Modulgrenzen ohne modulübergreifende Imports. Jedes Modul folgt der Clean Architecture mit eigenen Domain-, Daten- und Präsentationsschichten. Sie können der Einfachheit halber als Monolith beginnen, zu einer Gateway-Topologie wechseln, um Frontend/Backend zu trennen, und schließlich einzelne Module zu unabhängigen Microservices extrahieren – alles ohne Refactoring Ihres Codes.",
       q6: "Welche Datenbanken werden unterstützt?",

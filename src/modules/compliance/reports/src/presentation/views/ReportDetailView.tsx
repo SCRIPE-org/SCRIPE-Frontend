@@ -37,32 +37,34 @@ import {
 import { complianceContainer } from "@modules/compliance/di";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";
 
-// ── Status meta ────────────────────────────────────────────────────────────────
+// ── Status meta — uses labelKey resolved via t() ───────────────────────────────
 
-const STATUS_META = {
-  Ready: { label: "Ready", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "bg-emerald-500" },
-  Pending: { label: "Pending", icon: <Clock className="h-4 w-4 text-amber-500" />, cls: "bg-amber-500" },
-  Generating: { label: "Generating…", icon: <Loader2 className="h-4 w-4 animate-spin text-blue-500" />, cls: "bg-blue-500" },
-  Failed: { label: "Failed", icon: <AlertTriangle className="h-4 w-4 text-destructive" />, cls: "bg-destructive" },
+const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
+  Ready: { labelKey: "compliance.status.ready", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "bg-emerald-500" },
+  Pending: { labelKey: "compliance.status.pending", icon: <Clock className="h-4 w-4 text-amber-500" />, cls: "bg-amber-500" },
+  Generating: { labelKey: "compliance.status.generating", icon: <Loader2 className="h-4 w-4 animate-spin text-blue-500" />, cls: "bg-blue-500" },
+  Failed: { labelKey: "compliance.status.failed", icon: <AlertTriangle className="h-4 w-4 text-destructive" />, cls: "bg-destructive" },
 };
 
-const REPORT_TYPE_LABELS: Record<string, string> = {
-  GDPR_Overview: "GDPR Overview Report",
-  DSR_Summary: "DSR Activity Summary",
-  Consent_Audit: "Consent Audit Report",
-  Retention_Analysis: "Retention Analysis Report",
-  Data_Inventory: "Data Inventory Export",
+// ── Report type label keys ─────────────────────────────────────────────────────
+
+const REPORT_TYPE_KEYS: Record<string, string> = {
+  GDPR_Overview: "compliance.reportTypes.gdprOverview",
+  DSR_Summary: "compliance.reportTypes.dsrSummary",
+  Consent_Audit: "compliance.reportTypes.consentAudit",
+  Retention_Analysis: "compliance.reportTypes.retentionAnalysis",
+  Data_Inventory: "compliance.reportTypes.dataInventory",
 };
 
 // ── Format Options ─────────────────────────────────────────────────────────────
 
 type ExportFormat = "csv" | "json" | "xlsx" | "pdf";
 
-const FORMAT_OPTIONS: { value: ExportFormat; label: string; icon: React.ReactNode; description: string }[] = [
-  { value: "csv", label: "CSV", icon: <FileText className="h-4 w-4" />, description: "Comma-separated values" },
-  { value: "xlsx", label: "Excel (XLSX)", icon: <FileSpreadsheet className="h-4 w-4" />, description: "Microsoft Excel format" },
-  { value: "json", label: "JSON", icon: <FileJson className="h-4 w-4" />, description: "Structured JSON data" },
-  { value: "pdf", label: "PDF", icon: <FileType className="h-4 w-4" />, description: "Portable Document Format" },
+const FORMAT_OPTIONS: { value: ExportFormat; label: string; descKey: string; icon: React.ReactNode }[] = [
+  { value: "csv", label: "CSV", descKey: "compliance.format.csvDesc", icon: <FileText className="h-4 w-4" /> },
+  { value: "xlsx", label: "Excel (XLSX)", descKey: "compliance.format.xlsxDesc", icon: <FileSpreadsheet className="h-4 w-4" /> },
+  { value: "json", label: "JSON", descKey: "compliance.format.jsonDesc", icon: <FileJson className="h-4 w-4" /> },
+  { value: "pdf", label: "PDF", descKey: "compliance.format.pdfDesc", icon: <FileType className="h-4 w-4" /> },
 ];
 
 const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
@@ -110,7 +112,8 @@ export function ReportDetailView({ id }: { id: string }) {
 
   const report = query.data;
   const meta = report ? (STATUS_META[report.status] ?? STATUS_META.Pending) : null;
-  const typeLabel = report ? (REPORT_TYPE_LABELS[report.reportType] ?? report.reportType) : "";
+  const typeKey = report ? (REPORT_TYPE_KEYS[report.reportType] ?? null) : null;
+  const typeLabel = report ? (typeKey ? t(typeKey) : report.reportType) : "";
   const selectedFormat = FORMAT_OPTIONS.find((f) => f.value === downloadFormat) ?? FORMAT_OPTIONS[0];
 
   return (
@@ -166,10 +169,10 @@ export function ReportDetailView({ id }: { id: string }) {
                       )}
                       <Badge variant={report.isReady ? "default" : "secondary"} className="gap-1">
                         {meta.icon}
-                        {meta.label}
+                        {t(meta.labelKey)}
                       </Badge>
                       {report.isPending && (
-                        <span className="text-xs text-muted-foreground">Auto-refreshing…</span>
+                        <span className="text-xs text-muted-foreground">{t("compliance.autoRefreshing")}</span>
                       )}
                     </div>
                     <p className="mt-1 font-mono text-xs text-muted-foreground">{report.id}</p>
@@ -209,7 +212,7 @@ export function ReportDetailView({ id }: { id: string }) {
                             </div>
                             <div className="flex flex-col">
                               <span className="text-sm font-medium">{opt.label}</span>
-                              <span className="text-xs text-muted-foreground">{opt.description}</span>
+                              <span className="text-xs text-muted-foreground">{t(opt.descKey)}</span>
                             </div>
                             {downloadFormat === opt.value && (
                               <CheckCircle2 className="ms-auto h-4 w-4 text-indigo-500" />

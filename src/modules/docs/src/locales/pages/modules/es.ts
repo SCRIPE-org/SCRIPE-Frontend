@@ -23,7 +23,7 @@ export const es = {
         "Cuando el sistema necesita determinar un valor de función para un inquilino, sigue una estricta cadena de prioridad. Gana la fuente de mayor prioridad que proporciona un valor.",
       pipelineTitle: "Integración de la Pipeline",
       pipelineIntro:
-        "NEXORA integra los derechos directamente en la pipeline CQRS de MediatR a través de FeatureCheckBehavior. Los comandos y consultas que implementan IRequireFeature se controlan automáticamente: si el valor de la función resuelta del inquilino está desactivado, la solicitud se rechaza antes de llegar al manejador.",
+        "NEXORA integra los derechos directamente en la pipeline CQRS de NEXORA mediator a través de FeatureCheckBehavior. Los comandos y consultas que implementan IRequireFeature se controlan automáticamente: si el valor de la función resuelta del inquilino está desactivado, la solicitud se rechaza antes de llegar al manejador.",
       pipelineTip:
         "Para restringir un comando detrás de una función, simplemente implemente IRequireFeature y establezca RequiredFeatureName en la clave de sistema estable de la función (ej. 'Chat.Enabled'). No se necesita código adicional.",
       backendTitle: "Estructura del Backend",
@@ -47,7 +47,7 @@ export const es = {
         "La cadena de resolución se evalúa de forma diferida (lazy): los valores se almacenan en caché después de la primera resolución y se invalidan cuando cambian las suscripciones, las ediciones o las sobreescrituras.",
       cqrsMapTitle: "Mapa de Comandos y Consultas CQRS",
       cqrsMapIntro:
-        "El módulo de Derechos registra 31 manejadores MediatR que abarcan los cuatro dominios. Cada comando tiene un validador FluentValidation correspondiente para la validación de entrada.",
+        "El módulo de Derechos registra 31 manejadores NEXORA mediator que abarcan los cuatro dominios. Cada comando tiene un validador FluentValidation correspondiente para la validación de entrada.",
       diTitle: "Registro de Inyección de Dependencias",
       diIntro:
         "Todos los servicios de Derechos se registran a través del método de extensión AddEntitlementsModule en DependencyInjection.cs. El módulo sigue el patrón de registro estándar de NEXORA.",

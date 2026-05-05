@@ -23,7 +23,7 @@ export const fr = {
         "Lorsque le système a besoin de déterminer la valeur d'une fonctionnalité pour un locataire, il suit une chaîne de priorité stricte. La source de priorité la plus élevée qui fournit une valeur l'emporte.",
       pipelineTitle: "Intégration au Pipeline",
       pipelineIntro:
-        "NEXORA intègre les droits directement dans le pipeline CQRS de MediatR via FeatureCheckBehavior. Les commandes et requêtes (queries) qui implémentent IRequireFeature sont automatiquement contrôlées — si la valeur résolue de la fonctionnalité pour le locataire est désactivée, la requête est rejetée avant d'atteindre le gestionnaire (handler).",
+        "NEXORA intègre les droits directement dans le pipeline CQRS de NEXORA mediator via FeatureCheckBehavior. Les commandes et requêtes (queries) qui implémentent IRequireFeature sont automatiquement contrôlées — si la valeur résolue de la fonctionnalité pour le locataire est désactivée, la requête est rejetée avant d'atteindre le gestionnaire (handler).",
       pipelineTip:
         "Pour conditionner une commande à une fonctionnalité, implémentez simplement IRequireFeature et définissez RequiredFeatureName sur la clé système stable de la fonctionnalité (ex. 'Chat.Enabled'). Aucun code supplémentaire n'est nécessaire.",
       backendTitle: "Structure du Backend",
@@ -47,7 +47,7 @@ export const fr = {
         "La chaîne de résolution est évaluée de manière paresseuse (lazy) — les valeurs sont mises en cache après la première résolution et invalidées lorsque les abonnements, les éditions ou les surcharges changent.",
       cqrsMapTitle: "Carte des Commandes et Requêtes CQRS",
       cqrsMapIntro:
-        "Le module des Droits enregistre 31 gestionnaires (handlers) MediatR couvrant les quatre domaines. Chaque commande possède un validateur FluentValidation correspondant pour la validation des entrées.",
+        "Le module des Droits enregistre 31 gestionnaires (handlers) NEXORA mediator couvrant les quatre domaines. Chaque commande possède un validateur FluentValidation correspondant pour la validation des entrées.",
       diTitle: "Enregistrement de l'Injection de Dépendances",
       diIntro:
         "Tous les services de Droits sont enregistrés via la méthode d'extension AddEntitlementsModule dans DependencyInjection.cs. Le module suit le modèle d'enregistrement standard de NEXORA.",

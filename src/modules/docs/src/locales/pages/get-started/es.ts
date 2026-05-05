@@ -13,7 +13,7 @@ export const es = {
       featureModular: "Monolito Modular",
       featureModularDesc:
         "Módulos aislados con límites claros: desarrolla, prueba y despliega de forma independiente. Mismo binario, despliegue flexible.",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "Separación de Comandos/Consultas con un pipeline de 4 comportamientos: validación, feature gating (control de funciones), caché y monitoreo de rendimiento.",
       featureSecurity: "Seguridad Enterprise",
@@ -40,9 +40,9 @@ export const es = {
       techStackTitle: "Stack Tecnológico",
       serviceRegistrationTitle: "Orden de Registro de Servicios",
       serviceRegistrationIntro:
-        "El orden del registro de servicios en Program.cs es arquitectónicamente significativo. Alterar el orden puede causar fallos en tiempo de ejecución. La infraestructura central debe registrarse antes que los módulos, y MediatR necesita que se recopilen primero los marcadores de ensamblado de los módulos.",
+        "El orden del registro de servicios en Program.cs es arquitectónicamente significativo. Alterar el orden puede causar fallos en tiempo de ejecución. La infraestructura central debe registrarse antes que los módulos, y NEXORA mediator necesita que se recopilen primero los marcadores de ensamblado de los módulos.",
       registrationOrderWarning:
-        "NO reordene los registros de servicios en Program.cs. AddCoreInfrastructure debe ir antes que los módulos (dependen de ICurrentUser), y AddCoreApplication debe ir después de los módulos (MediatR necesita sus ensamblados).",
+        "NO reordene los registros de servicios en Program.cs. AddCoreInfrastructure debe ir antes que los módulos (dependen de ICurrentUser), y AddCoreApplication debe ir después de los módulos (NEXORA mediator necesita sus ensamblados).",
       environmentProfilesTitle: "Perfiles de Entorno",
       envVarPrefixTip:
         "Solo se cargan las variables de entorno que comienzan con NEXORA_. Por ejemplo, NEXORA_ConnectionStrings__DefaultConnection anula la cadena de conexión. Los guiones bajos dobles (__) representan anidamiento en la configuración JSON.",

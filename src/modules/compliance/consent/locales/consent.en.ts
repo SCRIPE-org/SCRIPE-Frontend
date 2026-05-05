@@ -20,6 +20,18 @@ export const en = {
     optional: "Optional",
     purposes: "Consent Purposes",
 
+    // Tab labels
+    myConsents: "My Consents",
+    analytics: "Analytics",
+
+    // Analytics panel
+    totalSubjects: "Total Data Subjects",
+    subjectsRequiringReConsent: "Requiring Re-Consent",
+    optInRates: "Opt-In Rates by Purpose",
+    legalBasisBreakdown: "Legal Basis Breakdown",
+    consentTrends: "Consent Trends",
+    noAnalyticsData: "No analytics data available",
+
     // Messages
     consentRecorded: "Consent recorded successfully",
 
@@ -31,3 +43,4 @@ export const en = {
     noConsentsDesc: "Consent records will appear here once purposes are configured.",
   },
 };
+

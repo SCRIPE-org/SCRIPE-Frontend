@@ -61,7 +61,7 @@ const sections: DocSection[] = [
       { id: "sub", label: "Subscriptions", description: "Tenant ↔ Edition binding" },
       { id: "ovr", label: "Overrides", description: "Per-tenant custom values" },
       { id: "cache", label: "FeatureCache", description: "In-memory resolved values" },
-      { id: "pipe", label: "FeatureCheckBehavior", description: "MediatR pipeline gate" },
+      { id: "pipe", label: "FeatureCheckBehavior", description: "NEXORA mediator pipeline gate" },
     ],
     connections: [
       { from: "feat", to: "ed", label: "bundled into" },
@@ -167,7 +167,7 @@ Resolution Order:
     language: "csharp",
     filename: "IRequireFeature Interface",
     code: `// Mark a command to require a feature
-public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
+public class CreateChatRoomCommand : ICommand<Guid>, IRequireFeature
 {
     public string RequiredFeatureName => "Chat.Enabled";
     
@@ -293,7 +293,7 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
         services.AddScoped<IOverflowPolicyExecutor, OverflowPolicyExecutor>();
         services.AddScoped<IQuotaCounterProvisioner, QuotaCounterProvisioner>();
         
-        // MediatR pipeline behavior
+        // NEXORA mediator pipeline behavior
         services.AddTransient(typeof(IPipelineBehavior<,>), 
             typeof(FeatureCheckBehavior<,>));
         
@@ -356,7 +356,7 @@ public class CreateChatRoomCommand : IRequest<Result<Guid>>, IRequireFeature
 │   │   ├── Subscriptions/ # GetSubscriptions, GetById, GetDowngradeImpact
 │   │   └── Overrides/    # GetOverrides, GetResolvedFeatures
 │   ├── DTOs/             # Request/Response DTOs
-│   ├── Mapping/          # AutoMapper profiles
+│   ├── Mapping/          # explicit DTO mapping rules
 │   ├── Services/
 │   │   └── EditionConstraintValidator.cs
 │   └── Abstractions/

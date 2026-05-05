@@ -162,7 +162,7 @@ export const en = {
       description:
         "4-source pipeline, 35+ event types, 7 Guardian events, real-time SignalR, and CSV/PDF export.",
       intro:
-        "NEXORA captures every significant action in the audit log through a 4-source pipeline: MediatR behaviors (CQRS commands), EF Core interceptors (entity changes), middleware (HTTP requests), and explicit service calls (security events). All events are broadcasted in real-time via SignalR to tenant-scoped groups.",
+        "NEXORA captures every significant action in the audit log through a 4-source pipeline: NEXORA mediator behaviors (CQRS commands), EF Core interceptors (entity changes), middleware (HTTP requests), and explicit service calls (security events). All events are broadcasted in real-time via SignalR to tenant-scoped groups.",
       architectureTitle: "Audit Architecture",
       eventTypesTitle: "Event Types (35+ Categories)",
       authEventsTitle: "Authentication Events",

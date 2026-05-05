@@ -12,7 +12,7 @@ export const zh = {
       featureModular: "模块化单体",
       featureModularDesc:
         "边界清晰的隔离模块：独立开发、测试和部署。相同的二进制文件，灵活的部署方式。",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "具有 4 个行为管道的命令/查询分离：验证、功能控制 (feature gating)、缓存和性能监控。",
       featureSecurity: "企业级安全",
@@ -38,9 +38,9 @@ export const zh = {
       techStackTitle: "技术栈",
       serviceRegistrationTitle: "服务注册顺序",
       serviceRegistrationIntro:
-        "Program.cs 中的服务注册顺序在架构上具有重要意义。改变顺序会导致运行时失败。核心基础设施必须在模块之前注册，并且 MediatR 需要首先收集模块程序集标记。",
+        "Program.cs 中的服务注册顺序在架构上具有重要意义。改变顺序会导致运行时失败。核心基础设施必须在模块之前注册，并且 NEXORA mediator 需要首先收集模块程序集标记。",
       registrationOrderWarning:
-        "请勿重新排列 Program.cs 中的服务注册顺序。AddCoreInfrastructure 必须在模块之前（模块依赖 ICurrentUser），AddCoreApplication 必须在模块之后（MediatR 需要其程序集）。",
+        "请勿重新排列 Program.cs 中的服务注册顺序。AddCoreInfrastructure 必须在模块之前（模块依赖 ICurrentUser），AddCoreApplication 必须在模块之后（NEXORA mediator 需要其程序集）。",
       environmentProfilesTitle: "环境变量配置",
       envVarPrefixTip:
         "仅加载以 NEXORA_ 开头的环境变量。例如，NEXORA_ConnectionStrings__DefaultConnection 会覆盖连接字符串。双下划线 (__) 代表 JSON 配置中的嵌套层级。",

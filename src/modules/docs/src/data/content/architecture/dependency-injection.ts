@@ -33,7 +33,7 @@ const sections: DocSection[] = [
         id: "core-app",
         label: "AddCoreApplication()",
         type: "info",
-        description: "MediatR, behaviors, validators",
+        description: "NEXORA mediator, behaviors, validators",
       },
       {
         id: "identity",
@@ -83,23 +83,23 @@ builder.Services.AddRateLimitingConfiguration();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
 // ─── Module Registration (conditional) ──────────────────
-var mediatRAssemblies = new List<Assembly>();
+var mediatorAssemblies = new List<Type>();
 
 if (isMonolith || moduleName == "Identity")
 {
-    mediatRAssemblies.Add(typeof(Identity.Application.DependencyInjection).Assembly);
+    mediatorAssemblies.Add(typeof(Identity.Application.DependencyInjection));
     builder.Services.AddIdentityModule(builder.Configuration);
 }
 
 // Future modules follow same pattern:
 // if (isMonolith || moduleName == "Inventory")
 // {
-//     mediatRAssemblies.Add(typeof(Inventory.Application.DependencyInjection).Assembly);
+//     mediatorAssemblies.Add(typeof(Inventory.Application.DependencyInjection));
 //     builder.Services.AddInventoryModule(builder.Configuration);
 // }
 
 // ─── Application Layer (needs all module assemblies) ────
-builder.Services.AddCoreApplication(mediatRAssemblies);`,
+builder.Services.AddCoreApplication(mediatorAssemblies.ToArray());`,
     highlightLines: [4, 5, 6, 17, 18, 19, 20],
   },
   {
@@ -422,7 +422,7 @@ public static class GatewayConfiguration
       "Use IServiceScopeFactory in Singleton services that need Scoped dependencies",
       "Keep DependencyInjection.cs in each module as the single registration point",
       "Use MODULE_NAME environment variable to control which modules are loaded",
-      "Register MediatR assemblies from each active module for handler discovery",
+      "Register NEXORA mediator assemblies from each active module for handler discovery",
       "Use [BelongsToModule] on every controller for microservice compatibility",
       "Test DI registration at startup to catch missing dependencies early",
     ],

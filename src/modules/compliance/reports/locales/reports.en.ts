@@ -14,10 +14,10 @@ export const en = {
     downloadReport: "Download",
     reportDetail: "Report Detail",
     reportTypes: {
-      gdprOverview: "GDPR Overview",
+      gdprOverview: "GDPR Overview Report",
       dsrSummary: "DSR Activity Summary",
-      consentAudit: "Consent Audit",
-      retentionAnalysis: "Retention Analysis",
+      consentAudit: "Consent Audit Report",
+      retentionAnalysis: "Retention Analysis Report",
       dataInventory: "Data Inventory Export",
     },
     status: {
@@ -25,6 +25,17 @@ export const en = {
       generating: "Generating...",
       pending: "Pending",
       failed: "Failed",
+    },
+
+    // Auto-refresh indicator
+    autoRefreshing: "Auto-refreshing\u2026",
+
+    // Format dropdown descriptions
+    format: {
+      csvDesc: "Comma-separated values",
+      xlsxDesc: "Microsoft Excel format",
+      jsonDesc: "Structured JSON data",
+      pdfDesc: "Portable Document Format",
     },
 
     // Messages

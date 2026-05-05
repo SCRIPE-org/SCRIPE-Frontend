@@ -285,7 +285,7 @@ export const en = {
         "Creates a complete, strongly-typed architecture pattern. It generates a 3-project DDD backend structure (Domain, Application, Infrastructure) and a unified frontend module directory.",
       newFeatureTitle: "Feature Scaffolding: new-feature",
       newFeatureIntro:
-        "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS MediatR, Solid Rect Components, TanStack Query models, and EF Core configurations.",
+        "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS NEXORA mediator, Solid Rect Components, TanStack Query models, and EF Core configurations.",
       destructionTitle: "Destructive Tools",
       destructionIntro:
         "Because the CLI wires deeply into the core fabric of NEXORA, it provides powerful destruction operations to execute perfect code rollback when testing layouts rapidly.",
@@ -400,11 +400,11 @@ export const en = {
       description:
         "OpenTelemetry distributed tracing, Prometheus metrics, Grafana Loki centralized logging, and Jaeger trace visualization with pre-built alert rules.",
       intro:
-        "NEXORA implements a complete observability stack built on open standards: OpenTelemetry for distributed tracing, Prometheus for metrics collection, Grafana Loki for centralized logging, and Jaeger for trace visualization. Every MediatR handler is automatically traced, every HTTP request generates metrics, and every log entry is enriched with CorrelationId, TenantId, and ModuleTag. The entire stack is opt-in — in development you can run with console-only output and zero external dependencies.",
+        "NEXORA implements a complete observability stack built on open standards: OpenTelemetry for distributed tracing, Prometheus for metrics collection, Grafana Loki for centralized logging, and Jaeger for trace visualization. Every NEXORA request handler is automatically traced, every HTTP request generates metrics, and every log entry is enriched with CorrelationId, TenantId, and ModuleTag. The entire stack is opt-in — in development you can run with console-only output and zero external dependencies.",
       stackTitle: "Observability Stack Architecture",
       tracingTitle: "Distributed Tracing (OpenTelemetry)",
       tracingIntro:
-        "The TracingBehavior MediatR pipeline creates an OpenTelemetry span for every command and query handler. Spans include auto-detected module names, request types, and duration measurements. Errors are automatically recorded with exception details. Traces flow to Jaeger via OTLP gRPC protocol (:4317) for visualization and analysis.",
+        "The TracingBehavior NEXORA mediator pipeline creates an OpenTelemetry span for every command and query handler. Spans include auto-detected module names, request types, and duration measurements. Errors are automatically recorded with exception details. Traces flow to Jaeger via OTLP gRPC protocol (:4317) for visualization and analysis.",
       prometheusTitle: "Prometheus Metrics",
       prometheusIntro:
         "The /metrics endpoint exposes OpenTelemetry metrics in Prometheus text format. Prometheus scrapes this endpoint at 15-second intervals, collecting HTTP request durations (histogram), active requests (gauge), GC collections, CPU time, and working set memory. In monolith mode, a single scrape target is needed. In microservice mode, configure one scrape job per module service.",

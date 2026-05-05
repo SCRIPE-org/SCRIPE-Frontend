@@ -7,13 +7,13 @@ export const de = {
     overview: {
       title: "Architektur-Übersicht",
       description:
-        "Clean Architecture-Schichten, Backend-Pipeline, Frontend-SOLID-Ablauf und Regeln für Modulgrenzen.",
+        "Clean-Architecture-Schichten, Backend-Pipeline, Frontend-SOLID-Fluss und Modulgrenzen.",
       intro:
-        "NEXORA folgt einer strengen Clean Architecture mit vier Schichten: Presentation, Application, Domain und Infrastructure. Die Dependency Rule stellt sicher, dass innere Schichten niemals von äußeren abhängen. Diese Architektur wird konsistent im Backend (.NET) und Frontend (Next.js) angewendet.",
+        "NEXORA folgt einer strikten Clean Architecture mit vier Schichten: Presentation, Application, Domain und Infrastructure. Die Dependency Rule stellt sicher, dass innere Schichten nie von äußeren abhängen. Dieses Muster gilt konsistent für Backend und Frontend.",
       layersTitle: "Clean Architecture Schichten",
       backendArchTitle: "Backend-Architektur",
       backendArchIntro:
-        "Das Backend folgt einer Request-Pipeline-Architektur, bei der jede HTTP-Anfrage durch Middleware, Controller, MediatR-Verhaltensweisen (Behaviors) und schließlich den CQRS-Handler fließt. Dies gewährleistet konsistente Validierung, Auditierung und Fehlerbehandlung.",
+        "Das Backend folgt einer Request-Pipeline-Architektur, bei der jede HTTP-Anfrage durch Middleware, Controller, NEXORA mediator-Verhaltensweisen (Behaviors) und schließlich den CQRS-Handler fließt. Dies gewährleistet konsistente Validierung, Auditierung und Fehlerbehandlung.",
       frontendArchTitle: "Frontend-Architektur",
       frontendArchIntro:
         "Das Frontend verwendet ein SOLID View/ViewModel-Muster, bei dem Views reine Benutzeroberflächen sind (kein State, keine Logik) und ViewModels die gesamte Geschäftslogik enthalten. Das Connector-Muster trennt das Next.js-Routing (Server Components) von der Anwendungslogik (Client Components).",
@@ -46,7 +46,7 @@ export const de = {
         "Jedes neue Modul folgt dem gleichen DI-Registrierungsmuster. Die Erweiterungsmethode AddXxxModule() registriert den DbContext des Moduls, Repositories, Services und den Modul-Registrierungsmarker.",
       controllersTitle: "Controller",
       controllerTip:
-        "Alle Controller erben von einem Basis-ApiController, der eine standardisierte Result<T>-Antwortzuordnung bietet. Controller sollten schlank sein – sie validieren nur das Request-Modell und delegieren an MediatR.",
+        "Alle Controller erben von einem Basis-ApiController, der eine standardisierte Result<T>-Antwortzuordnung bietet. Controller sollten schlank sein – sie validieren nur das Request-Modell und delegieren an NEXORA mediator.",
     },
     frontend: {
       title: "Frontend-Architektur",
@@ -74,15 +74,15 @@ export const de = {
     cqrs: {
       title: "CQRS-Muster",
       description:
-        "Trennung von Befehlen und Abfragen (CQRS) mit MediatR-Pipeline, Behaviors, Validierung und Caching.",
+        "Trennung von Befehlen und Abfragen (CQRS) mit NEXORA mediator-Pipeline, Behaviors, Validierung und Caching.",
       intro:
-        "NEXORA verwendet das CQRS-Muster (Command Query Responsibility Segregation), um Lese- und Schreibvorgänge zu trennen. Befehle (Commands) ändern den Zustand und durchlaufen Validierungs- und Audit-Behaviors. Abfragen (Queries) lesen den Zustand und können Caching nutzen. MediatR fungiert als Vermittler zwischen Controllern und Handlern.",
+        "NEXORA verwendet das CQRS-Muster (Command Query Responsibility Segregation), um Lese- und Schreibvorgänge zu trennen. Befehle (Commands) ändern den Zustand und durchlaufen Validierungs- und Audit-Behaviors. Abfragen (Queries) lesen den Zustand und können Caching nutzen. NEXORA mediator fungiert als Vermittler zwischen Controllern und Handlern.",
       whatIsCqrsTitle: "Was ist CQRS?",
       whatIsCqrsIntro:
         "CQRS trennt Ihre Anwendung in zwei Seiten: Befehle (Schreibvorgänge) und Abfragen (Lesevorgänge). Jede Seite kann unabhängig optimiert werden – Befehle konzentrieren sich auf Datenintegrität und Validierung, während Abfragen auf Leistung und Caching fokussiert sind.",
       commandSide: "Befehlsseite (Schreiben)",
       querySide: "Abfrageseite (Lesen)",
-      pipelineTitle: "MediatR-Pipeline",
+      pipelineTitle: "NEXORA mediator-Pipeline",
       validationBehaviorTitle: "Validierungs-Behavior",
       commandExampleTitle: "Befehls-Beispiel (Command)",
       queryExampleTitle: "Abfrage-Beispiel (Query)",
@@ -181,7 +181,7 @@ export const de = {
       mutationFlowTitle: "Mutations-Fluss (Schreiben)",
       backendPipelineTitle: "Backend-Request-Pipeline",
       backendPipelineIntro:
-        "Jede Backend-Anfrage durchläuft 10 Middleware-Komponenten und 3 MediatR-Pipeline-Behaviors, bevor sie den Handler erreicht. Dies gewährleistet konsistente Protokollierung, Authentifizierung, Autorisierung, Validierung und Auditierung.",
+        "Jede Backend-Anfrage durchläuft 10 Middleware-Komponenten und 3 NEXORA mediator-Pipeline-Behaviors, bevor sie den Handler erreicht. Dies gewährleistet konsistente Protokollierung, Authentifizierung, Autorisierung, Validierung und Auditierung.",
       errorFlowTitle: "Fehlerbehandlung",
       errorFlowIntro:
         "Fehler werden auf mehreren Ebenen behandelt. Jede Fehlerquelle hat einen spezifischen Handler, Antwortcode und eine Frontend-Behandlungsstrategie.",
@@ -238,10 +238,10 @@ export const de = {
         "Domain-Events repräsentieren signifikante Vorkommnisse in der Geschäftsdomäne. NEXORA verwendet das Outbox-Pattern, um eine zuverlässige Übermittlung zu garantieren.",
       interfaceTitle: "IDomainEvent-Schnittstelle",
       interfaceIntro:
-        "Alle Domain-Events implementieren die IDomainEvent-Schnittstelle, die von MediatRs INotification erbt. Dies ermöglicht In-Process-Pub/Sub.",
+        "Alle Domain-Events implementieren die IDomainEvent-Schnittstelle, die von NEXORA mediators INotification erbt. Dies ermöglicht In-Process-Pub/Sub.",
       publishingTitle: "Veröffentlichungs- & Behandlungsfluss",
       publishingIntro:
-        "Domain-Events folgen einem 6-stufigen Lebenszyklus: Entität löst Event aus, OutboxInterceptor fängt es ab, wird als OutboxMessage persistiert, OutboxProcessor ruft es ab und veröffentlicht es via MediatR.",
+        "Domain-Events folgen einem 6-stufigen Lebenszyklus: Entität löst Event aus, OutboxInterceptor fängt es ab, wird als OutboxMessage persistiert, OutboxProcessor ruft es ab und veröffentlicht es via NEXORA mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Outbox-Pattern",
       outboxIntro:
@@ -274,12 +274,12 @@ export const de = {
     cqrsPipeline: {
       title: "CQRS-Pipeline",
       description:
-        "MediatR-Pipeline-Behaviors — ValidationBehavior, LoggingBehavior, CachingBehavior, Result-Pattern und vollständiger Command/Query-Katalog.",
+        "NEXORA-Mediator-Pipeline-Behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, Result-Pattern und vollständiger Command/Query-Katalog.",
       intro:
-        "Jeder Befehl und jede Abfrage fließt durch eine MediatR-Pipeline mit 3 Behaviors: Validierung, Protokollierung und Caching.",
+        "Jeder Command und jede Query in NEXORA läuft durch eine konfigurierbare NEXORA-Mediator-Pipeline mit 5 integrierten Behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior und CachingBehavior. Die Reihenfolge wird über appsettings oder Umgebungsvariablen gesteuert und beim Start validiert.",
       overviewTitle: "Pipeline-Übersicht",
       overviewIntro:
-        "Die MediatR-Pipeline führt Behaviors in der Registrierungsreihenfolge aus. Jedes Behavior kann die Pipeline kurzschließen.",
+        "Die Standardreihenfolge ist Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. Validierung und Feature-Prüfung laufen bewusst vor dem Cache-Lookup, während Cache-Invalidierung nach erfolgreichen Mutationen vor dem Webhook-Versand entrollt.",
       separationTitle: "Trennung von Command vs Query",
       separationIntro: "CQRS trennt Schreibvorgänge (Commands) von Lesevorgängen (Queries).",
       commandsTitle: "Commands (Schreiben)",
@@ -289,11 +289,11 @@ export const de = {
         "Alle Handler geben Result<T> zurück, anstatt Exceptions für erwartete Fehler auszulösen.",
       validationTitle: "ValidationBehavior",
       validationIntro:
-        "Sammelt alle IValidator<TRequest> und löst eine ValidationException mit strukturierten Fehlern aus, falls die Validierung fehlschlägt.",
+        "ValidationBehavior läuft direkt nach dem Logging. Es sammelt alle IValidator<TRequest>-Validatoren, gibt strukturierte Result-Fehler für ungültige Requests zurück und verhindert, dass ungültige Requests Handler oder Cache erreichen.",
       validatorExampleTitle: "Beispiele für Validatoren",
       loggingTitle: "LoggingBehavior",
       loggingIntro:
-        "Protokolliert jede MediatR-Anfrage mit Benutzer-ID, Mandanten-ID, Request-Typ und Ausführungszeit.",
+        "Protokolliert jede NEXORA mediator-Anfrage mit Benutzer-ID, Mandanten-ID, Request-Typ und Ausführungszeit.",
       cachingTitle: "CachingBehavior",
       cachingIntro:
         "Überprüft den Cache auf vorhandene Ergebnisse für ICacheable-Abfragen, bevor der Handler ausgeführt wird.",
@@ -303,7 +303,7 @@ export const de = {
       registrationTitle: "Pipeline-Registrierung",
       registrationIntro: "Behaviors werden in AddCoreApplication() registriert.",
       behaviorOrderTip:
-        "Die Validierung MUSS zuerst erfolgen, um ungültige Anfragen vor der Protokollierung oder Zwischenspeicherung abzulehnen.",
+        "Die Standardsicherheitsprüfung lehnt Pipeline-Reihenfolgen ab, in denen Caching vor Validation oder FeatureCheck läuft. Deaktiviere Mediator__EnforceSecurityPipelineOrder nur, wenn du das Risiko vollständig kontrollierst.",
       featureCheckTitle: "FeatureCheckBehavior",
       featureCheckIntro:
         "Das FeatureCheckBehavior fängt Commands ab, die IRequireFeature implementieren. Es prüft, ob die Edition des Mandanten das angeforderte Feature erlaubt, indem IFeatureChecker.IsEnabledAsync aufgerufen wird. Ist das Feature deaktiviert, wird ein Forbidden-Fehler zurückgegeben, ohne den Handler auszuführen. Operationen auf Systemebene (ohne TenantId) umgehen diese Prüfung.",
@@ -319,7 +319,7 @@ export const de = {
         "NEXORA verwendet den in .NET integrierten Dependency-Injection-Container mit einem strukturierten Registrierungsmuster.",
       architectureTitle: "DI-Registrierungsarchitektur",
       architectureIntro:
-        "Die Program.cs folgt einer strengen 4-Phasen-Registrierungsreihenfolge: (1) Kerninfrastruktur, (2) CORS & Rate Limiting, (3) Module, (4) Application Layer (MediatR).",
+        "Die Program.cs folgt einer strengen 4-Phasen-Registrierungsreihenfolge: (1) Kerninfrastruktur, (2) CORS & Rate Limiting, (3) Module, (4) Application Layer (NEXORA mediator).",
       moduleRegTitle: "Modul-Registrierungsmuster",
       moduleRegIntro:
         "Jedes Modul stellt eine Erweiterungsmethode AddXxxModule() bereit, die all seine Services registriert.",

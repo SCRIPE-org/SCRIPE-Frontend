@@ -14,17 +14,11 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "architecture.cqrsPipeline.overviewIntro" },
   {
     type: "flowchart",
-    title: "MediatR Pipeline — Request Lifecycle",
+    title: "NEXORA Mediator Pipeline — Request Lifecycle",
     direction: "horizontal",
     nodes: [
       { id: "controller", label: "Controller", type: "default", description: "API endpoint entry" },
-      { id: "mediator", label: "IMediator.Send()", type: "primary" },
-      {
-        id: "validation",
-        label: "ValidationBehavior",
-        type: "warning",
-        description: "FluentValidation rules",
-      },
+      { id: "mediator", label: "ISender.Send()", type: "primary" },
       {
         id: "logging",
         label: "LoggingBehavior",
@@ -32,10 +26,28 @@ const sections: DocSection[] = [
         description: "Structured request logging",
       },
       {
+        id: "validation",
+        label: "ValidationBehavior",
+        type: "warning",
+        description: "FluentValidation rules",
+      },
+      {
+        id: "feature",
+        label: "FeatureCheckBehavior",
+        type: "warning",
+        description: "Edition feature gates",
+      },
+      {
+        id: "webhook",
+        label: "WebhookDispatchBehavior",
+        type: "info",
+        description: "Post-handler webhook dispatch",
+      },
+      {
         id: "caching",
         label: "CachingBehavior",
         type: "success",
-        description: "Cache hit/miss check",
+        description: "Cache hit/miss and post-handler invalidation",
       },
       {
         id: "handler",
@@ -47,10 +59,12 @@ const sections: DocSection[] = [
     ],
     connections: [
       { from: "controller", to: "mediator" },
-      { from: "mediator", to: "validation", label: "1st behavior" },
-      { from: "validation", to: "logging", label: "if valid" },
-      { from: "logging", to: "caching", label: "2nd behavior" },
-      { from: "caching", to: "handler", label: "cache miss" },
+      { from: "mediator", to: "logging", label: "1st behavior" },
+      { from: "logging", to: "validation", label: "2nd behavior" },
+      { from: "validation", to: "feature", label: "if valid" },
+      { from: "feature", to: "webhook", label: "if enabled" },
+      { from: "webhook", to: "caching", label: "pre-handler pass" },
+      { from: "caching", to: "handler", label: "cache miss / mutation" },
       { from: "handler", to: "result" },
     ],
   },
@@ -166,13 +180,13 @@ public async Task<IActionResult> GetAdmin(string id)
     language: "csharp",
     filename: "Core.Application/Behaviors/ValidationBehavior.cs",
     code: `/// <summary>
-/// MediatR pipeline behavior that runs FluentValidation validators
+/// NEXORA mediator pipeline behavior that runs FluentValidation validators
 /// BEFORE the request handler executes.
 /// If validation fails, returns Result.Failure without hitting the handler.
 /// </summary>
 public class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : Core.Application.Messaging.IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -308,13 +322,13 @@ public class ValidationBehavior<TRequest, TResponse>
     language: "csharp",
     filename: "Core.Application/Behaviors/LoggingBehavior.cs",
     code: `/// <summary>
-/// Pipeline behavior that logs every MediatR request with timing.
+/// Pipeline behavior that logs every NEXORA mediator request with timing.
 /// Logs: request type, user ID, tenant ID, execution time, and outcome.
 /// Warns if execution exceeds 500ms threshold.
 /// </summary>
 public class LoggingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : Core.Application.Messaging.IRequest<TResponse>
 {
     public async Task<TResponse> Handle(
         TRequest request,
@@ -373,7 +387,7 @@ public class LoggingBehavior<TRequest, TResponse>
 /// </summary>
 public class CachingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : Core.Application.Messaging.IRequest<TResponse>
 {
     private readonly ICacheService _cache;
 
@@ -536,28 +550,25 @@ public interface ICacheable
     filename: "Core.Application/DependencyInjection.cs",
     code: `public static IServiceCollection AddCoreApplication(
     this IServiceCollection services,
-    IEnumerable<Assembly> moduleAssemblies)
+    IConfiguration? configuration = null,
+    params Type[] handlerAssemblyMarkerTypes)
 {
-    // 1. Register all MediatR handlers from module assemblies
-    services.AddMediatR(cfg =>
-    {
-        cfg.RegisterServicesFromAssemblies(moduleAssemblies.ToArray());
+    var mediatorOptions = configuration?
+        .GetSection(MediatorOptions.SectionName)
+        .Get<MediatorOptions>() ?? new MediatorOptions();
 
-        // 2. Register pipeline behaviors (order matters!)
-        cfg.AddBehavior(typeof(IPipelineBehavior<,>),
-            typeof(ValidationBehavior<,>));   // 1st: Validate input
-        cfg.AddBehavior(typeof(IPipelineBehavior<,>),
-            typeof(LoggingBehavior<,>));       // 2nd: Log request
-        cfg.AddBehavior(typeof(IPipelineBehavior<,>),
-            typeof(CachingBehavior<,>));       // 3rd: Check cache
-    });
+    services.AddNexoraMediator(
+        validateRequestCoverage: mediatorOptions.ValidateRequestHandlerCoverage,
+        assemblyMarkerTypes: handlerAssemblyMarkerTypes);
 
-    // 3. Register all FluentValidation validators
-    services.AddValidatorsFromAssemblies(moduleAssemblies);
+    RegisterConfiguredPipelineBehaviors(services, mediatorOptions);
+
+    foreach (var markerType in handlerAssemblyMarkerTypes)
+        services.AddValidatorsFromAssemblyContaining(markerType);
 
     return services;
 }`,
-    highlightLines: [11, 12, 13, 14, 15, 16, 20],
+    highlightLines: [4, 5, 8, 9, 12, 15, 16],
   },
   {
     type: "info",

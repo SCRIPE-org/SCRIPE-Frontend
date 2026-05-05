@@ -13,7 +13,7 @@ export const ru = {
       featureModular: "Модульный монолит",
       featureModularDesc:
         "Изолированные модули с четкими границами: разрабатывайте, тестируйте и развертывайте независимо. Один бинарник, гибкое развертывание.",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "Разделение команд и запросов с 4-этапным пайплайном: валидация, проверка функций (feature gating), кэширование и мониторинг производительности.",
       featureSecurity: "Безопасность Enterprise-уровня",
@@ -40,9 +40,9 @@ export const ru = {
       techStackTitle: "Технологический стек",
       serviceRegistrationTitle: "Порядок регистрации сервисов",
       serviceRegistrationIntro:
-        "Порядок регистрации сервисов в Program.cs имеет важное архитектурное значение. Изменение порядка может вызвать ошибки во время выполнения. Базовая инфраструктура должна регистрироваться до модулей, а MediatR требует предварительного сбора сборок модулей.",
+        "Порядок регистрации сервисов в Program.cs имеет важное архитектурное значение. Изменение порядка может вызвать ошибки во время выполнения. Базовая инфраструктура должна регистрироваться до модулей, а NEXORA mediator требует предварительного сбора сборок модулей.",
       registrationOrderWarning:
-        "НЕ меняйте порядок регистрации сервисов в Program.cs. AddCoreInfrastructure должен идти перед модулями (они зависят от ICurrentUser), а AddCoreApplication — после модулей (MediatR нужны их сборки).",
+        "НЕ меняйте порядок регистрации сервисов в Program.cs. AddCoreInfrastructure должен идти перед модулями (они зависят от ICurrentUser), а AddCoreApplication — после модулей (NEXORA mediator нужны их сборки).",
       environmentProfilesTitle: "Профили окружения",
       envVarPrefixTip:
         "Загружаются только переменные среды, начинающиеся с NEXORA_. Например, NEXORA_ConnectionStrings__DefaultConnection переопределяет строку подключения. Двойное подчеркивание (__) представляет вложенность в JSON.",

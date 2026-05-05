@@ -43,9 +43,9 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "TracingBehavior.cs — MediatR Pipeline Tracing",
+    filename: "TracingBehavior.cs — NEXORA Mediator Pipeline Tracing",
     code: `/// <summary>
-/// Creates an OpenTelemetry span for every MediatR handler.
+/// Creates an OpenTelemetry span for every NEXORA request handler.
 /// Auto-detects the module from the handler's namespace.
 /// Pipeline order: Exception → Validation → Auth → FeatureCheck →
 ///                 Cache → TRACING → Audit → Handler
@@ -53,7 +53,7 @@ const sections: DocSection[] = [
 public class TracingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
 {
-    private static readonly ActivitySource Source = new("NEXORA.MediatR");
+    private static readonly ActivitySource Source = new("NEXORA.Mediator");
 
     public async Task<TResponse> Handle(
         TRequest request, RequestHandlerDelegate<TResponse> next,
@@ -65,7 +65,7 @@ public class TracingBehavior<TRequest, TResponse>
         var module = DetectModule(typeof(TRequest).Namespace);
 
         using var activity = Source.StartActivity(
-            $"MediatR {kind}: {requestName}",
+            $"NEXORA mediator {kind}: {requestName}",
             ActivityKind.Internal);
 
         activity?.SetTag("mediatr.request_type", requestName);

@@ -94,14 +94,14 @@ public async Task<Result<EmployeeDto>> Handle(CreateEmployeeCommand cmd)
 }`,
   },
 
-  // ─── MediatR Pipeline ──────────────────────────────────────
+  // ─── NEXORA Mediator Pipeline ──────────────────────────────────────
   { type: "heading", level: 2, titleKey: "commercial.apiDesign.pipelineTitle", id: "pipeline" },
   { type: "paragraph", contentKey: "commercial.apiDesign.pipelineContent" },
   {
     type: "list",
     variant: "ordered",
     items: [
-      "Request received → Controller forwards to MediatR",
+      "Request received → Controller forwards to NEXORA mediator",
       "ValidationBehavior → FluentValidation runs first",
       "AuthorizationBehavior → Permission checks",
       "TenantResolutionBehavior → Tenant context applied",

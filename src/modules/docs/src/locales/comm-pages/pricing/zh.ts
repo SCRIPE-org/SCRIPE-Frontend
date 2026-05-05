@@ -5,6 +5,24 @@
 export const zh = {
   commercial: {
     licensingModel: {
+      runtimeOwnershipTitle: "运行时所有权与许可证独立性",
+      runtimeOwnershipIntro:
+        "NEXORA 后端请求分发和 DTO 投影现在由 NEXORA 自有代码实现。生产构建在中介器和映射路径上不依赖 Lucky Penny 许可证密钥，也不依赖运行时许可证校验。",
+      tblRuntimeHeader1: "领域",
+      tblRuntimeHeader2: "NEXORA 自有替代",
+      tblRuntimeHeader3: "生产影响",
+      tblRuntimeR1C1: "请求分发",
+      tblRuntimeR1C2: "带缓存委托和有序行为的 NexoraMediator",
+      tblRuntimeR1C3: "没有第三方中介器许可证密钥或包策略风险",
+      tblRuntimeR2C1: "DTO 映射",
+      tblRuntimeR2C2: "显式映射规则加 EncryptedIdMapper",
+      tblRuntimeR2C3: "响应形状可审计，并保留加密 ID",
+      tblRuntimeR3C1: "CLI 脚手架",
+      tblRuntimeR3C2: "模板输出 NEXORA 中介器命名空间和映射规则",
+      tblRuntimeR3C3: "新模块不会重新引入已移除的包",
+      tblRuntimeR4C1: "运维",
+      tblRuntimeR4C2: "这些核心路径没有 phone-home 检查",
+      tblRuntimeR4C3: "更安全地支持离线、隔离和企业部署",
       entitlementsTitle: "基于权益的计划差异化",
       entitlementsIntro:
         "NEXORA 内置的权益模块为每个许可证层级背后的实际计划差异化提供动力。版本定义了每个计划包含的功能，订阅将租户与计划联系起来，而覆盖则支持自定义交易 —— 所有这些都在 API 级别自动强制执行。",
@@ -21,7 +39,7 @@ export const zh = {
       entVersioningDesc:
         "创建带有功能快照的发布版本，并通过立即、灰度 (canary) 或计划发布策略进行部署，而不会中断现有租户的服务。",
       entitlementsTip:
-        "权益模块直接集成到 MediatR 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
+        "权益模块直接集成到 NEXORA mediator 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
       comparisonTitle: "许可证层级对比",
       description: "为技术创始人以及庞大的企业实体量身设计的透明、可预测和可扩展的许可结构。",
       intro:
@@ -292,7 +310,7 @@ export const zh = {
       aHowLongSetup:
         "您可以在不到 15 分钟内在本地运行 NEXORA。克隆代码库，配置您的数据库连接（SQL Server、Oracle、PostgreSQL 或 SQLite），运行迁移，然后启动开发服务器。nexora-cli 工具通过在几秒钟内生成新模块、实体和样板代码来进一步加速开发。大多数团队在第一天就能投入生产开发。",
       q4: "NEXORA 使用什么技术栈？",
-      a4: "后端构建在 ASP.NET Core (.NET 9) 之上，搭配 Entity Framework Core、MediatR (用于 CQRS) 和 FluentValidation。前端使用 Next.js 15，结合 TypeScript、TanStack Query、Zustand 以及基于 Radix UI 构建的定制设计系统。实时功能由 SignalR WebSockets 提供支持，平台支持使用 Docker 容器化进行部署。",
+      a4: "后端构建在 ASP.NET Core (.NET 9) 之上，搭配 Entity Framework Core、NEXORA mediator (用于 CQRS) 和 FluentValidation。前端使用 Next.js 15，结合 TypeScript、TanStack Query、Zustand 以及基于 Radix UI 构建的定制设计系统。实时功能由 SignalR WebSockets 提供支持，平台支持使用 Docker 容器化进行部署。",
       q5: "NEXORA 能从单体架构扩展到微服务吗？",
       a5: "是的——这是核心设计原则。NEXORA 使用严格的模块边界，没有跨模块的直接导入。每个模块都遵循整洁架构，拥有自己的领域层、数据层和表现层。为了简单起见，您可以从单体架构开始，随时转移到网关拓扑以分离前端/后端，并最终将各个模块提取到独立的微服务中——这一切都无需重构您的代码。",
       q6: "支持哪些数据库？",

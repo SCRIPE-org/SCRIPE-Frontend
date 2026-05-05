@@ -1,10 +1,10 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.rolePermissions.intro" },
 
-  // € Permission Hierarchy €
+  //  Permission Hierarchy 
   {
     type: "heading",
     level: 2,
@@ -28,7 +28,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Permission System
+  //  Permission System
   {
     type: "heading",
     level: 2,
@@ -69,7 +69,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Scope Override €
+  //  Scope Override 
   {
     type: "heading",
     level: 2,
@@ -121,7 +121,7 @@ const sections: DocSection[] = [
     contentKey: "features.rolePermissions.scopeOverrideIntro",
   },
 
-  // € Authorization Pipeline €
+  //  Authorization Pipeline 
   {
     type: "heading",
     level: 2,
@@ -170,7 +170,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Restricted Fields
+  //  Restricted Fields
   {
     type: "heading",
     level: 2,
@@ -200,7 +200,7 @@ const sections: DocSection[] = [
     highlightLines: [3, 4, 11, 12, 13],
   },
 
-  // € Clone Role €
+  //  Clone Role 
   {
     type: "heading",
     level: 2,
@@ -215,7 +215,7 @@ const sections: DocSection[] = [
     nodes: [
       { id: "admin", label: "Admin (has 40 permissions)", type: "primary" },
       { id: "source", label: "Source Role (has 60 permissions)", type: "info" },
-      { id: "intersect", label: "Intersection: 40 ˆ© 60 = 35", type: "warning" },
+      { id: "intersect", label: "Intersection: 40 © 60 = 35", type: "warning" },
       { id: "clone", label: "Cloned Role (gets 35 permissions)", type: "success" },
     ],
     connections: [
@@ -225,7 +225,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Role Properties
+  //  Role Properties
   {
     type: "heading",
     level: 2,
@@ -249,7 +249,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Role CRUD Endpoints
+  //  Role CRUD Endpoints
   {
     type: "heading",
     level: 2,
@@ -322,7 +322,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € My Tenant Endpoints
+  //  My Tenant Endpoints
   {
     type: "heading",
     level: 2,
@@ -353,7 +353,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Permission Endpoints €
+  //  Permission Endpoints 
   {
     type: "heading",
     level: 2,

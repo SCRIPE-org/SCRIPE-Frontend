@@ -36,7 +36,7 @@ const sections: DocSection[] = [
         type: "danger",
         description: "Server-side validators",
       },
-      { id: "pipeline", label: "ValidationBehavior (MediatR)", type: "danger" },
+      { id: "pipeline", label: "ValidationBehavior (NEXORA mediator)", type: "danger" },
     ],
     connections: [
       { from: "frontend", to: "zod" },

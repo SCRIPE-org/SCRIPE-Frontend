@@ -153,7 +153,7 @@ export const zh = {
       corsTitle: "跨域配置",
       corsIntro: "严格控制 Allowed Origins 和 HTTP 谓词限制。",
       inputValidationTitle: "输入验证 (Input Validation)",
-      inputValidationIntro: "集成 FluentValidation 在 MediatR 管道层进行数据清洗拦截。",
+      inputValidationIntro: "集成 FluentValidation 在 NEXORA mediator 管道层进行数据清洗拦截。",
       csrfTitle: "CSRF 防护",
       csrfIntro: "得益于 Bearer 令牌及 SameSite=Strict 的机制，API 天然具备抗 CSRF 的特性。",
       headersTitle: "安全响应头",
@@ -195,7 +195,7 @@ export const zh = {
       description: "由拦截器、实体跟踪驱动的完整审计管道，支持 SignalR 流式推送和导出。",
       intro: "审计系统自动化记录了每个数据库操作并生成无法篡改的历史证据。",
       architectureTitle: "审计架构",
-      architectureIntro: "涉及 EF Core 拦截器机制、MediatR 行为拦截以及请求日志跟踪。",
+      architectureIntro: "涉及 EF Core 拦截器机制、NEXORA mediator 行为拦截以及请求日志跟踪。",
       interceptorTitle: "实体变更拦截器",
       interceptorIntro:
         "在 SaveChanges 之前，AuditableEntityInterceptor 计算新旧快照数据并转换为 JSON。",

@@ -23,7 +23,7 @@ export const ar = {
         "عندما يحتاج النظام لتحديد قيمة ميزة لمستأجر، يتبع سلسلة أولوية صارمة. المصدر الأعلى أولوية هو الذي يسود.",
       pipelineTitle: "التكامل مع المسار",
       pipelineIntro:
-        "تدمج NEXORA الاستحقاقات مباشرة في مسار MediatR عبر FeatureCheckBehavior. الأوامر والاستعلامات التي تنفذ IRequireFeature يتم بوابتها تلقائياً.",
+        "تدمج NEXORA الاستحقاقات مباشرة في مسار NEXORA mediator عبر FeatureCheckBehavior. الأوامر والاستعلامات التي تنفذ IRequireFeature يتم بوابتها تلقائياً.",
       pipelineTip:
         "لبوابة أمر خلف ميزة، قم ببساطة بتنفيذ IRequireFeature وعيّن RequiredFeatureName لمفتاح الميزة الثابت. لا حاجة لكود إضافي.",
       backendTitle: "هيكل الواجهة الخلفية",
@@ -47,7 +47,7 @@ export const ar = {
         "The resolution chain is evaluated lazily — values are cached after first resolution and invalidated when subscriptions, editions, or overrides change.",
       cqrsMapTitle: "CQRS Command & Query Map",
       cqrsMapIntro:
-        "The Entitlements module registers 31 MediatR handlers spanning the four domains. Each command has a corresponding FluentValidation validator for input validation.",
+        "The Entitlements module registers 31 NEXORA request handlers spanning the four domains. Each command has a corresponding FluentValidation validator for input validation.",
       diTitle: "Dependency Injection Registration",
       diIntro:
         "All Entitlements services are registered via the AddEntitlementsModule extension method in DependencyInjection.cs. The module follows NEXORA's standard registration pattern.",

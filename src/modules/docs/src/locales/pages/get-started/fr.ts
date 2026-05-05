@@ -13,7 +13,7 @@ export const fr = {
       featureModular: "Monolithe Modulaire",
       featureModularDesc:
         "Modules isolés avec des frontières claires : développez, testez et déployez indépendamment. Même binaire, déploiement flexible.",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "Séparation des Commandes/Requêtes avec un pipeline à 4 comportements : validation, feature gating (contrôle des fonctionnalités), mise en cache et surveillance des performances.",
       featureSecurity: "Sécurité d'Entreprise",
@@ -40,9 +40,9 @@ export const fr = {
       techStackTitle: "Stack Technologique",
       serviceRegistrationTitle: "Ordre d'Enregistrement des Services",
       serviceRegistrationIntro:
-        "L'ordre d'enregistrement des services dans Program.cs a une importance architecturale capitale. Modifier cet ordre peut provoquer des erreurs d'exécution. L'infrastructure de base doit être enregistrée avant les modules, et MediatR a besoin que les marqueurs d'assemblage des modules soient collectés en premier.",
+        "L'ordre d'enregistrement des services dans Program.cs a une importance architecturale capitale. Modifier cet ordre peut provoquer des erreurs d'exécution. L'infrastructure de base doit être enregistrée avant les modules, et NEXORA mediator a besoin que les marqueurs d'assemblage des modules soient collectés en premier.",
       registrationOrderWarning:
-        "NE modifiez PAS l'ordre des enregistrements de services dans Program.cs. AddCoreInfrastructure doit précéder les modules (ils dépendent de ICurrentUser), et AddCoreApplication doit suivre les modules (MediatR a besoin de leurs assemblages).",
+        "NE modifiez PAS l'ordre des enregistrements de services dans Program.cs. AddCoreInfrastructure doit précéder les modules (ils dépendent de ICurrentUser), et AddCoreApplication doit suivre les modules (NEXORA mediator a besoin de leurs assemblages).",
       environmentProfilesTitle: "Profils d'Environnement",
       envVarPrefixTip:
         "Seules les variables d'environnement commençant par NEXORA_ sont chargées. Par exemple, NEXORA_ConnectionStrings__DefaultConnection remplace la chaîne de connexion. Les doubles traits de soulignement (__) représentent l'imbrication dans la configuration JSON.",

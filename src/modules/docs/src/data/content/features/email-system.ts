@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Pipeline Architecture
+  //  Pipeline Architecture
   { type: "heading", level: 2, titleKey: "features.emailSystem.pipelineTitle", id: "pipeline" },
   { type: "paragraph", contentKey: "features.emailSystem.pipelineIntro" },
   {
@@ -37,7 +37,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Controller Endpoints €
+  //  Controller Endpoints 
   { type: "heading", level: 2, titleKey: "features.emailSystem.endpointsTitle", id: "endpoints" },
   {
     type: "api-table",
@@ -45,7 +45,7 @@ const sections: DocSection[] = [
       {
         method: "POST",
         path: "/emails/send",
-        descriptionKey: "Send manual email †’ queued",
+        descriptionKey: "Send manual email  queued",
         auth: "JWT",
         permission: "emails.create",
       },
@@ -101,7 +101,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Queue Implementations
+  //  Queue Implementations
   { type: "heading", level: 2, titleKey: "features.emailSystem.queueTitle", id: "queue" },
   { type: "heading", level: 3, titleKey: "features.emailSystem.inMemoryTitle", id: "in-memory" },
   {
@@ -126,7 +126,7 @@ var message = await _channel.Reader.ReadAsync(stoppingToken);`,
 BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject, body, ...));`,
   },
 
-  // € Sender Implementations €
+  //  Sender Implementations 
   { type: "heading", level: 2, titleKey: "features.emailSystem.sendersTitle", id: "senders" },
   {
     type: "table",
@@ -139,7 +139,7 @@ BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject,
   },
   { type: "info", variant: "note", contentKey: "features.emailSystem.senderNote" },
 
-  // € Background Worker Pattern
+  //  Background Worker Pattern
   { type: "heading", level: 2, titleKey: "features.emailSystem.workerTitle", id: "worker" },
   {
     type: "code",
@@ -166,7 +166,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 }`,
   },
 
-  // € Error Handling €
+  //  Error Handling 
   { type: "heading", level: 2, titleKey: "features.emailSystem.errorTitle", id: "errors" },
   {
     type: "list",
@@ -179,7 +179,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     ],
   },
 
-  // € HTML Sanitizer €
+  //  HTML Sanitizer 
   { type: "heading", level: 2, titleKey: "features.emailSystem.sanitizerTitle", id: "sanitizer" },
   { type: "paragraph", contentKey: "features.emailSystem.sanitizerIntro" },
   {

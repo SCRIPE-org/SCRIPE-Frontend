@@ -103,9 +103,9 @@ export function RegulationView() {
               <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t("regulations.title")}</h2>
+              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.regulations.title")}</h2>
               <p className="text-sm text-muted-foreground">
-                {t("regulations.description")}
+                {t("compliance.regulations.description")}
               </p>
             </div>
           </div>
@@ -118,7 +118,7 @@ export function RegulationView() {
           {canCreate && (
             <Button onClick={openCreateModal} size="sm" className="gradient-primary">
               <Plus className="me-2 h-4 w-4" />
-              {t("regulations.addRegulation")}
+              {t("compliance.regulations.addRegulation")}
             </Button>
           )}
         </div>
@@ -141,7 +141,7 @@ export function RegulationView() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <BookOpen className="mb-4 h-10 w-10 text-muted-foreground opacity-50" />
-            <p className="font-semibold">{t("regulations.noRegulations")}</p>
+            <p className="font-semibold">{t("compliance.regulations.noRegulations")}</p>
           </CardContent>
         </Card>
       ) : (
@@ -156,11 +156,11 @@ export function RegulationView() {
       <GenericModal
         open={modalMode !== null}
         onOpenChange={closeModals}
-        title={modalMode === "edit" ? t("regulations.updateRegulation") : t("regulations.addRegulation")}
+        title={modalMode === "edit" ? t("compliance.regulations.editRegulation") : t("compliance.regulations.addRegulation")}
         description={
           modalMode === "edit"
-            ? `${t("regulations.code")}: ${selectedRegulation?.code}`
-            : t("regulations.addRegulation")
+            ? `${t("compliance.regulations.code")}: ${selectedRegulation?.code}`
+            : t("compliance.regulations.addRegulation")
         }
         size="md"
         formKey={modalMode === "edit" ? `edit-regulation-${selectedRegulation?.id}` : "create-regulation"}

@@ -20,6 +20,18 @@ export const ar = {
     optional: "اختياري",
     purposes: "أغراض الموافقة",
 
+    // Tab labels
+    myConsents: "موافقاتي",
+    analytics: "التحليلات",
+
+    // Analytics panel
+    totalSubjects: "إجمالي أصحاب البيانات",
+    subjectsRequiringReConsent: "يتطلبون إعادة موافقة",
+    optInRates: "معدلات الموافقة حسب الغرض",
+    legalBasisBreakdown: "توزيع الأساس القانوني",
+    consentTrends: "اتجاهات الموافقة",
+    noAnalyticsData: "لا تتوفر بيانات تحليلية",
+
     // Messages
     consentRecorded: "تم تسجيل الموافقة بنجاح",
 
@@ -31,3 +43,4 @@ export const ar = {
     noConsentsDesc: "ستظهر سجلات الموافقة هنا بعد تكوين الأغراض.",
   },
 };
+

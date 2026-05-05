@@ -121,7 +121,7 @@ const sections: DocSection[] = [
     language: "csharp",
     filename: "SubmitDsrCommandHandler.cs",
     highlightLines: [9, 13, 20],
-    code: `public class SubmitDsrCommandHandler : IRequestHandler<SubmitDsrCommand, Result<Guid>>
+    code: `public class SubmitDsrCommandHandler : ICommandHandler<SubmitDsrCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(SubmitDsrCommand request, CancellationToken ct)
     {

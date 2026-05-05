@@ -42,14 +42,14 @@ import { Input } from "@core/ui/input";
 
 // ── Status meta ────────────────────────────────────────────────────────────────
 const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
-  Pending: { labelKey: "compliance.status.pending", icon: <Clock className="h-4 w-4 text-amber-500" />, cls: "border-amber-500/20 bg-amber-500/10 text-amber-600" },
-  InReview: { labelKey: "compliance.status.inReview", icon: <Info className="h-4 w-4 text-blue-500" />, cls: "border-blue-500/20 bg-blue-500/10 text-blue-600" },
-  Approved: { labelKey: "compliance.status.approved", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
-  Processing: { labelKey: "compliance.status.processing", icon: <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />, cls: "border-indigo-500/20 bg-indigo-500/10 text-indigo-600" },
-  PartiallyCompleted: { labelKey: "compliance.status.partiallyCompleted", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
-  Completed: { labelKey: "compliance.status.completed", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
-  Rejected: { labelKey: "compliance.status.rejected", icon: <AlertTriangle className="h-4 w-4 text-destructive" />, cls: "border-destructive/20 bg-destructive/10 text-destructive" },
-  Cancelled: { labelKey: "compliance.status.cancelled", icon: <AlertTriangle className="h-4 w-4 text-muted-foreground" />, cls: "border-border/50 bg-muted/50 text-muted-foreground" },
+  Pending: { labelKey: "compliance.statusLabels.pending", icon: <Clock className="h-4 w-4 text-amber-500" />, cls: "border-amber-500/20 bg-amber-500/10 text-amber-600" },
+  InReview: { labelKey: "compliance.statusLabels.inReview", icon: <Info className="h-4 w-4 text-blue-500" />, cls: "border-blue-500/20 bg-blue-500/10 text-blue-600" },
+  Approved: { labelKey: "compliance.statusLabels.approved", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
+  Processing: { labelKey: "compliance.statusLabels.processing", icon: <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />, cls: "border-indigo-500/20 bg-indigo-500/10 text-indigo-600" },
+  PartiallyCompleted: { labelKey: "compliance.statusLabels.partiallyCompleted", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
+  Completed: { labelKey: "compliance.statusLabels.completed", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
+  Rejected: { labelKey: "compliance.statusLabels.rejected", icon: <AlertTriangle className="h-4 w-4 text-destructive" />, cls: "border-destructive/20 bg-destructive/10 text-destructive" },
+  Cancelled: { labelKey: "compliance.statusLabels.cancelled", icon: <AlertTriangle className="h-4 w-4 text-muted-foreground" />, cls: "border-border/50 bg-muted/50 text-muted-foreground" },
 };
 
 // ── Type Meta ────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export function DsrDetailView({ id }: { id: string }) {
       queryClient.invalidateQueries({ queryKey: ["compliance", "dsr", id] });
       setIsConfirmingErasure(false);
       setErasureInput("");
-      toast({ title: t("compliance.erasureConfirmed") ?? "Erasure confirmed and execution scheduled.", variant: "default" });
+      toast({ title: t("compliance.erasureConfirmed"), variant: "default" });
     },
     onError: () => toast({ title: t("common.error"), variant: "destructive" }),
   });
@@ -100,7 +100,7 @@ export function DsrDetailView({ id }: { id: string }) {
       a.download = `dsr-export-${id}.zip`;
       a.click();
       URL.revokeObjectURL(url);
-      toast({ title: t("common.success") ?? "Download started", variant: "default" });
+      toast({ title: t("common.success"), variant: "default" });
     },
     onError: () => toast({ title: t("common.error"), variant: "destructive" }),
   });
@@ -122,7 +122,7 @@ export function DsrDetailView({ id }: { id: string }) {
               <User className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.dsrDetailTitle") ?? "DSR Details"}</h2>
+              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.dsrDetailTitle")}</h2>
               <p className="text-sm text-muted-foreground">{dsr?.subjectEmail ?? t("common.loading")}</p>
             </div>
           </div>
@@ -133,13 +133,13 @@ export function DsrDetailView({ id }: { id: string }) {
             {dsr.canConfirmErasure && (
               <Button variant="destructive" onClick={() => setIsConfirmingErasure(true)}>
                 <ShieldAlert className="me-2 h-4 w-4" />
-                {t("compliance.confirmErasureBtn") ?? "Confirm Erasure"}
+                {t("compliance.confirmErasureBtn")}
               </Button>
             )}
             {dsr.canDownloadExport && (
               <Button onClick={() => downloadMutation.mutate()} disabled={downloadMutation.isPending}>
                 {downloadMutation.isPending ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Download className="me-2 h-4 w-4" />}
-                {t("compliance.downloadExportBtn") ?? "Download Export"}
+                {t("compliance.downloadExportBtn")}
               </Button>
             )}
           </div>
@@ -171,34 +171,34 @@ export function DsrDetailView({ id }: { id: string }) {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <Card className="border-border/50">
               <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.requestType") ?? "Request Type"}</p>
+                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.requestType")}</p>
                 <div className={`font-medium ${typeMeta.color}`}>
-                  {t(typeMeta.labelKey) ?? dsr.requestType}
+                  {t(typeMeta.labelKey)}
                 </div>
               </CardContent>
             </Card>
             <Card className="border-border/50">
               <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.status") ?? "Status"}</p>
+                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.status")}</p>
                 <Badge variant="outline" className={`w-fit gap-1 ${statusMeta.cls} border-0 px-2`}>
                   {statusMeta.icon}
-                  {t(statusMeta.labelKey) ?? dsr.status}
+                  {t(statusMeta.labelKey)}
                 </Badge>
               </CardContent>
             </Card>
             <Card className="border-border/50">
               <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.deadline") ?? "Deadline"}</p>
+                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.deadline")}</p>
                 <p className="font-medium text-sm">
                   {dsr.deadline.toLocaleDateString()}
-                  {dsr.daysRemaining > 0 && <span className="ms-2 text-xs text-muted-foreground">({dsr.daysRemaining} days)</span>}
-                  {dsr.isOverdue && <span className="ms-2 text-xs text-destructive">(Overdue)</span>}
+                  {dsr.daysRemaining > 0 && <span className="ms-2 text-xs text-muted-foreground">({dsr.daysRemaining} {t("compliance.remaining")})</span>}
+                  {dsr.isOverdue && <span className="ms-2 text-xs text-destructive">({t("compliance.overdue")})</span>}
                 </p>
               </CardContent>
             </Card>
             <Card className="border-border/50">
               <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.regulation") ?? "Regulation"}</p>
+                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.regulation")}</p>
                 <p className="font-mono text-sm font-medium">{dsr.regulationCode}</p>
               </CardContent>
             </Card>
@@ -211,33 +211,33 @@ export function DsrDetailView({ id }: { id: string }) {
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
                     <Info className="h-4 w-4" />
-                    {t("compliance.details") ?? "Details"}
+                    {t("compliance.details")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-sm font-medium">{t("compliance.columns.subjectEmail") ?? "Subject"}</p>
+                    <p className="text-sm font-medium">{t("compliance.columns.subjectEmail")}</p>
                     <p className="text-sm text-muted-foreground">{dsr.subjectEmail} ({dsr.subjectType})</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{t("compliance.submittedAt") ?? "Submitted At"}</p>
+                    <p className="text-sm font-medium">{t("compliance.submittedAt")}</p>
                     <p className="text-sm text-muted-foreground">{new Date(dsr.submittedAt).toLocaleString()}</p>
                   </div>
                   {dsr.completedAt && (
                     <div>
-                      <p className="text-sm font-medium">{t("compliance.completedAt") ?? "Completed At"}</p>
+                      <p className="text-sm font-medium">{t("compliance.completedAt")}</p>
                       <p className="text-sm text-muted-foreground">{new Date(dsr.completedAt).toLocaleString()}</p>
                     </div>
                   )}
                   {dsr.requesterNotes && (
                     <div>
-                      <p className="text-sm font-medium">{t("compliance.requesterNotes") ?? "Requester Notes"}</p>
+                      <p className="text-sm font-medium">{t("compliance.requesterNotes")}</p>
                       <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-1">{dsr.requesterNotes}</p>
                     </div>
                   )}
                   {dsr.resolution && (
                     <div>
-                      <p className="text-sm font-medium">{t("compliance.resolution") ?? "Resolution"}</p>
+                      <p className="text-sm font-medium">{t("compliance.resolution")}</p>
                       <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-1">{dsr.resolution}</p>
                     </div>
                   )}
@@ -249,7 +249,7 @@ export function DsrDetailView({ id }: { id: string }) {
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2">
                       <Server className="h-4 w-4" />
-                      {t("compliance.moduleExecutions") ?? "Module Executions"}
+                      {t("compliance.moduleExecutions")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -269,7 +269,7 @@ export function DsrDetailView({ id }: { id: string }) {
                           </div>
                         </div>
                         <div className="text-right">
-                          <Badge variant="secondary">{exec.processedCount} {t("compliance.records") ?? "records"}</Badge>
+                          <Badge variant="secondary">{exec.processedCount} {t("compliance.records")}</Badge>
                         </div>
                       </div>
                     ))}
@@ -284,7 +284,7 @@ export function DsrDetailView({ id }: { id: string }) {
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
                     <History className="h-4 w-4" />
-                    {t("compliance.statusHistory") ?? "Status History"}
+                    {t("compliance.statusHistory")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -301,7 +301,7 @@ export function DsrDetailView({ id }: { id: string }) {
                           </div>
                           <div>
                             <p className="text-sm font-medium flex items-center gap-2">
-                              {t(fromMeta.labelKey) ?? history.fromStatus} <ArrowRight className="h-3 w-3" /> {t(toMeta.labelKey) ?? history.toStatus}
+                              {t(fromMeta.labelKey)} <ArrowRight className="h-3 w-3" /> {t(toMeta.labelKey)}
                             </p>
                             <p className="text-xs text-muted-foreground">{new Date(history.occurredAt).toLocaleString()}</p>
                             {history.notes && <p className="text-sm mt-1 text-muted-foreground">{history.notes}</p>}
@@ -310,7 +310,7 @@ export function DsrDetailView({ id }: { id: string }) {
                       );
                     })}
                     {(!dsr.statusHistory || dsr.statusHistory.length === 0) && (
-                      <p className="text-sm text-muted-foreground">{t("compliance.noHistory") ?? "No history available."}</p>
+                      <p className="text-sm text-muted-foreground">{t("compliance.noHistory")}</p>
                     )}
                   </div>
                 </CardContent>
@@ -323,12 +323,12 @@ export function DsrDetailView({ id }: { id: string }) {
                     <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
                     <div>
                       <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
-                        {t("compliance.erasureStatusTitle") ?? "Erasure Status"}
+                        {t("compliance.erasureStatusTitle")}
                       </p>
                       <p className="mt-0.5 text-xs text-amber-600/70 dark:text-amber-400/70">
                         {dsr.erasureConfirmed 
-                          ? (t("compliance.erasureScheduledDesc") ?? "Erasure confirmed. Execution scheduled.")
-                          : (t("compliance.erasurePendingDesc") ?? "Awaiting final erasure confirmation.")}
+                          ? t("compliance.erasureScheduledDesc")
+                          : t("compliance.erasurePendingDesc")}
                       </p>
                     </div>
                   </CardContent>
@@ -345,15 +345,15 @@ export function DsrDetailView({ id }: { id: string }) {
           <DialogHeader>
             <DialogTitle className="text-destructive flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
-              {t("compliance.confirmErasureDialogTitle") ?? "Confirm Data Erasure"}
+              {t("compliance.confirmErasureDialogTitle")}
             </DialogTitle>
             <DialogDescription>
-              {t("compliance.confirmErasureDialogDesc") ?? "This action is irreversible. All associated personal data across all modules will be permanently anonymized or deleted according to retention policies."}
+              {t("compliance.confirmErasureDialogDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <p className="text-sm font-medium">
-              {t("compliance.typeConfirmToContinue") ?? "Type CONFIRM to execute the erasure:"}
+              {t("compliance.typeConfirmToContinue")}
             </p>
             <Input 
               value={erasureInput} 
@@ -372,7 +372,7 @@ export function DsrDetailView({ id }: { id: string }) {
               disabled={erasureInput !== "CONFIRM" || confirmErasureMutation.isPending}
             >
               {confirmErasureMutation.isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-              {t("compliance.executeErasureBtn") ?? "Execute Erasure"}
+              {t("compliance.executeErasureBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -23,7 +23,7 @@ export const en = {
         "When the system needs to determine a feature value for a tenant, it follows a strict priority chain. The highest-priority source that provides a value wins.",
       pipelineTitle: "Pipeline Integration",
       pipelineIntro:
-        "NEXORA integrates entitlements directly into the MediatR CQRS pipeline via FeatureCheckBehavior. Commands and queries that implement IRequireFeature are automatically gated — if the tenant's resolved feature value is disabled, the request is rejected before reaching the handler.",
+        "NEXORA integrates entitlements directly into the NEXORA mediator CQRS pipeline via FeatureCheckBehavior. Commands and queries that implement IRequireFeature are automatically gated — if the tenant's resolved feature value is disabled, the request is rejected before reaching the handler.",
       pipelineTip:
         "To gate a command behind a feature, simply implement IRequireFeature and set RequiredFeatureName to the feature's stable system key (e.g. 'Chat.Enabled'). No additional code is needed.",
       backendTitle: "Backend Structure",
@@ -44,7 +44,7 @@ export const en = {
         "The resolution chain is evaluated lazily — values are cached after first resolution and invalidated when subscriptions, editions, or overrides change.",
       cqrsMapTitle: "CQRS Command & Query Map",
       cqrsMapIntro:
-        "The Entitlements module registers 31 MediatR handlers spanning the four domains. Each command has a corresponding FluentValidation validator for input validation.",
+        "The Entitlements module registers 31 NEXORA request handlers spanning the four domains. Each command has a corresponding FluentValidation validator for input validation.",
       diTitle: "Dependency Injection Registration",
       diIntro:
         "All Entitlements services are registered via the AddEntitlementsModule extension method in DependencyInjection.cs. The module follows NEXORA's standard registration pattern.",
@@ -174,7 +174,7 @@ export const en = {
         "Each TenantSubscription has a ConcurrencyStamp (Guid) marked with [ConcurrencyCheck]. The stamp is refreshed (Guid.NewGuid()) on every write operation. This prevents race conditions — for example, a concurrent cancel + reconciliation job — by throwing DbUpdateConcurrencyException on mid-air collisions.",
       validationTitle: "Input Validation (G1)",
       validationIntro:
-        "All 8 subscription commands have dedicated FluentValidation validators in SubscriptionCommandValidators.cs. Validators inject ILocalizer for localized error messages (EN + AR). Business rules include: cannot renew as Trial, cannot convert to Trial, positive refund amounts, string length limits, and required field checks. Validation runs in the MediatR pipeline before the handler executes.",
+        "All 8 subscription commands have dedicated FluentValidation validators in SubscriptionCommandValidators.cs. Validators inject ILocalizer for localized error messages (EN + AR). Business rules include: cannot renew as Trial, cannot convert to Trial, positive refund amounts, string length limits, and required field checks. Validation runs in the NEXORA mediator pipeline before the handler executes.",
       crossModuleTitle: "Cross-Module Integration (H1)",
       crossModuleIntro:
         "Subscription lifecycle events publish domain events consumed by the Identity module. When a subscription is suspended, all tenant admins are deactivated with DeactivationReason='SubscriptionSuspended'. On resume, only admins with that specific reason are reactivated — manually-deactivated admins stay off. Expiry cascades deactivation to all descendant tenants.",
@@ -390,7 +390,7 @@ export const en = {
         backendIntro: "The Compliance backend follows the standard NEXORA 3-project module layout (Domain / Application / Infrastructure) with a dedicated ComplianceDbContext and ComplianceController.",
         // CQRS
         cqrsTitle: "CQRS Commands & Queries",
-        cqrsIntro: "The Compliance module uses the standard MediatR CQRS pattern. Commands handle write operations and Queries handle read operations, each with dedicated FluentValidation validators.",
+        cqrsIntro: "The Compliance module uses the standard NEXORA mediator CQRS pattern. Commands handle write operations and Queries handle read operations, each with dedicated FluentValidation validators.",
         cqrsType: "Type",
         cqrsExample: "Handler",
         cqrsDesc: "Description",

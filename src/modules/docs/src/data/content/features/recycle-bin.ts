@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € How Soft-Delete Works
+  //  How Soft-Delete Works
   { type: "heading", level: 2, titleKey: "features.recycleBin.softDeleteTitle", id: "soft-delete" },
   { type: "paragraph", contentKey: "features.recycleBin.softDeleteIntro" },
   {
@@ -35,7 +35,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € IgnoreQueryFilters Pattern €
+  //  IgnoreQueryFilters Pattern 
   {
     type: "heading",
     level: 2,
@@ -57,7 +57,7 @@ const sections: DocSection[] = [
   },
   { type: "info", variant: "warning", contentKey: "features.recycleBin.ignoreFiltersWarning" },
 
-  // € Cascade Restore
+  //  Cascade Restore
   { type: "heading", level: 2, titleKey: "features.recycleBin.cascadeTitle", id: "cascade" },
   { type: "paragraph", contentKey: "features.recycleBin.cascadeIntro" },
   {
@@ -88,7 +88,7 @@ const sections: DocSection[] = [
 }`,
   },
 
-  // € ExecuteUpdateAsync Comparison
+  //  ExecuteUpdateAsync Comparison
   {
     type: "heading",
     level: 3,
@@ -108,7 +108,7 @@ const sections: DocSection[] = [
   },
   { type: "info", variant: "note", contentKey: "features.recycleBin.interceptorNote" },
 
-  // € Controller Endpoints €
+  //  Controller Endpoints 
   { type: "heading", level: 2, titleKey: "features.recycleBin.endpointsTitle", id: "endpoints" },
   {
     type: "api-table",
@@ -151,7 +151,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Purge vs Restore €
+  //  Purge vs Restore 
   {
     type: "heading",
     level: 2,

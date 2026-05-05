@@ -315,7 +315,7 @@ if (resolved.ValueType == FeatureValueType.Numeric)
     language: "csharp",
     filename: "Using IRequireFeature",
     code: `// Step 1: Mark your command
-public class SendBulkEmailCommand : IRequest<Result>, IRequireFeature
+public class SendBulkEmailCommand : ICommand, IRequireFeature
 {
     public string RequiredFeatureName => "BulkEmail.Enabled";
     
@@ -329,7 +329,7 @@ public class SendBulkEmailCommand : IRequest<Result>, IRequireFeature
 // If "BulkEmail.Enabled" is true → command proceeds normally
 
 // For numeric features with quotas:
-public class CreateProjectCommand : IRequest<Result<Guid>>, IRequireFeature
+public class CreateProjectCommand : ICommand<Guid>, IRequireFeature
 {
     public string RequiredFeatureName => "MaxProjects";
     

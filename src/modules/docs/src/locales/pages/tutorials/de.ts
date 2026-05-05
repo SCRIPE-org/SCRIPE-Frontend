@@ -38,7 +38,7 @@ export const de = {
     addBackendModule: {
       title: "Backend-Modul hinzufügen",
       description: "Erstellung eines Moduls mit Clean Architecture und CQRS.",
-      intro: "Von der Entität über MediatR bis zum Controller.",
+      intro: "Von der Entität über NEXORA mediator bis zum Controller.",
       prerequisitesTitle: "Voraussetzungen",
       stepsTitle: "Schritt-für-Schritt",
       step1Title: "1. Projektstruktur",

@@ -277,7 +277,7 @@ export const fr = {
         "Crée des partitions logiques isolées DDD en Backend (Application, Domain, Infrastructure) et le squelette en Frontend simultanément.",
       newFeatureTitle: "Génération de Fonctionnalités : new-feature",
       newFeatureIntro:
-        "Crée 26 fichiers parfaitement reliés pour des opérations CRUD (APIs, Interfaces REST, Handlers MediatR, Zod) en utilisant un DSL.",
+        "Crée 26 fichiers parfaitement reliés pour des opérations CRUD (APIs, Interfaces REST, Handlers NEXORA mediator, Zod) en utilisant un DSL.",
       destructionTitle: "Outils de Destruction (Rollback)",
       destructionIntro:
         "Permet de revenir en arrière instantanément si vous n'êtes pas satisfait d'un module généré en nettoyant proprement les références.",

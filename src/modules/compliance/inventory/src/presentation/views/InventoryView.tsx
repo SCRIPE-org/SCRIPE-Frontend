@@ -22,7 +22,7 @@ export function InventoryView() {
       columns: [
         {
           key: "moduleName",
-          label: t("compliance.module") || "Module",
+          label: t("compliance.module"),
           sortable: true,
           render: (_val: unknown, item: InventoryItem) => (
             <span className="font-medium">{item.moduleName}</span>
@@ -30,41 +30,45 @@ export function InventoryView() {
         },
         {
           key: "entityName",
-          label: t("compliance.entity") || "Entity",
+          label: t("compliance.entity"),
           sortable: true,
           render: (_val: unknown, item: InventoryItem) => <span>{item.entityName}</span>,
         },
         {
           key: "fieldName",
-          label: t("compliance.field") || "Field",
+          label: t("compliance.field"),
           render: (_val: unknown, item: InventoryItem) => <span>{item.fieldName}</span>,
         },
         {
           key: "dataCategory",
-          label: t("compliance.dataCategory") || "Category",
+          label: t("compliance.dataCategory"),
           render: (_val: unknown, item: InventoryItem) => (
-            <Badge variant="outline">{item.dataCategory}</Badge>
+            <Badge variant="outline">
+              {t(`compliance.categories.${item.dataCategory}`)}
+            </Badge>
           ),
         },
         {
           key: "legalBasis",
-          label: t("compliance.legalBasis") || "Legal Basis",
+          label: t("compliance.legalBasis"),
           render: (_val: unknown, item: InventoryItem) => (
-            <Badge variant="secondary">{item.legalBasis}</Badge>
+            <Badge variant="secondary">
+              {t(`compliance.legalBases.${item.legalBasis}`)}
+            </Badge>
           ),
         },
         {
           key: "isAnonymizedOnErasure",
-          label: t("compliance.isAnonymized") || "Anonymized",
+          label: t("compliance.isAnonymized"),
           render: (_val: unknown, item: InventoryItem) => (
-            <span>{item.isAnonymizedOnErasure ? "Yes" : "No"}</span>
+            <span>{item.isAnonymizedOnErasure ? t("common.yes") : t("common.no")}</span>
           ),
         },
         {
           key: "isIncludedInExport",
-          label: t("compliance.isExported") || "Exported",
+          label: t("compliance.isExported"),
           render: (_val: unknown, item: InventoryItem) => (
-            <span>{item.isIncludedInExport ? "Yes" : "No"}</span>
+            <span>{item.isIncludedInExport ? t("common.yes") : t("common.no")}</span>
           ),
         },
       ],

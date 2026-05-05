@@ -17,7 +17,7 @@ const sections: DocSection[] = [
     items: [
       ".NET 8 SDK installed",
       "Oracle or SQL Server database configured",
-      "Understanding of CQRS, MediatR, and Clean Architecture",
+      "Understanding of CQRS, NEXORA mediator, and Clean Architecture",
     ],
   },
 
@@ -99,7 +99,7 @@ const sections: DocSection[] = [
 │   │   ├── ProductDto.cs
 │   │   └── CreateProductDto.cs
 │   └── Mappings/
-│       └── ProductMappingProfile.cs
+│       └── ProductMappingRule.cs
 │
 ├── Inventory.Domain/
 │   ├── Entities/
@@ -181,17 +181,17 @@ public class Product : AuditableEntity, ITenantAwareEntity
     decimal Price,
     int Quantity,
     string Category
-) : IRequest<Result<ProductDto>>;`,
+) : ICommand<ProductDto>;`,
       },
       {
         label: "Handler",
         language: "csharp",
         filename: "Commands/CreateProduct/CreateProductHandler.cs",
         code: `public class CreateProductHandler
-    : IRequestHandler<CreateProductCommand, Result<ProductDto>>
+    : ICommandHandler<CreateProductCommand, ProductDto>
 {
     private readonly IProductRepository _repo;
-    private readonly IMapper _mapper;
+    private readonly Core.Application.Mapping.IMapper _mapper;
     private readonly IDataScopeService _scope;
 
     public async Task<Result<ProductDto>> Handle(
@@ -266,12 +266,8 @@ public class Product : AuditableEntity, ITenantAwareEntity
         // Repositories
         services.AddScoped<IProductRepository, ProductRepository>();
 
-        // MediatR handlers from this assembly
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
-
-        // FluentValidation validators
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        // Request handlers and validators are scanned centrally by AddCoreApplication
+        // from the module marker types collected in API ModuleRegistration.
 
         return services;
     }
@@ -295,29 +291,29 @@ public class Product : AuditableEntity, ITenantAwareEntity
 [PermissionRequired("products.view")]
 public class ProductsController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _sender;
 
     [HttpGet]
     public async Task<IActionResult> GetProducts(
         [FromQuery] GetProductsQuery query)
-        => HandleResult(await _mediator.Send(query));
+        => HandleResult(await _sender.Send(query));
 
     [HttpPost]
     [PermissionRequired("products.create")]
     public async Task<IActionResult> CreateProduct(
         [FromBody] CreateProductCommand command)
-        => HandleResult(await _mediator.Send(command));
+        => HandleResult(await _sender.Send(command));
 
     [HttpPut("{id}")]
     [PermissionRequired("products.update")]
     public async Task<IActionResult> UpdateProduct(
         Guid id, [FromBody] UpdateProductCommand command)
-        => HandleResult(await _mediator.Send(command with { Id = id }));
+        => HandleResult(await _sender.Send(command with { Id = id }));
 
     [HttpDelete("{id}")]
     [PermissionRequired("products.delete")]
     public async Task<IActionResult> DeleteProduct(Guid id)
-        => HandleResult(await _mediator.Send(new DeleteProductCommand(id)));
+        => HandleResult(await _sender.Send(new DeleteProductCommand(id)));
 }`,
     highlightLines: [4, 15, 21, 27],
   },

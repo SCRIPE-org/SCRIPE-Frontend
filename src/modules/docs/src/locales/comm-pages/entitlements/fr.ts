@@ -71,7 +71,7 @@ export const fr = {
       tblValR5C1: "Déploiements de fonctionnalités",
       tblValR5C2: "Déploiements massifs risquant d'impacter tous les locataires",
       tblValR5C3: "Stratégies de déploiement canary et planifié",
-      tip: "Le module de Droits est entièrement intégré au pipeline MediatR. Les commandes implémentant IRequireFeature sont automatiquement contrôlées — votre logique métier reste propre et concentrée.",
+      tip: "Le module de Droits est entièrement intégré au pipeline NEXORA mediator. Les commandes implémentant IRequireFeature sont automatiquement contrôlées — votre logique métier reste propre et concentrée.",
     },
     entEditions: {
       title: "Éditions & Plans",

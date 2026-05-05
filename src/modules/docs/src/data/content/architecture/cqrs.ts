@@ -45,21 +45,25 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "MediatR Pipeline (3 Behaviors)",
+    title: "NEXORA Mediator Pipeline (5 Behaviors)",
     direction: "vertical",
     nodes: [
-      { id: "send", label: "mediator.Send(command)", type: "primary" },
-      { id: "validation", label: "1. ValidationBehavior — FluentValidation", type: "warning" },
-      { id: "audit", label: "2. AuditBehavior — Log to AuditLog table", type: "info" },
-      { id: "perf", label: "3. PerformanceBehavior — Log slow queries", type: "danger" },
+      { id: "send", label: "ISender.Send(command)", type: "primary" },
+      { id: "logging", label: "1. LoggingBehavior", type: "info" },
+      { id: "validation", label: "2. ValidationBehavior", type: "warning" },
+      { id: "feature", label: "3. FeatureCheckBehavior", type: "warning" },
+      { id: "webhook", label: "4. WebhookDispatchBehavior", type: "info" },
+      { id: "cache", label: "5. CachingBehavior", type: "success" },
       { id: "handler", label: "CommandHandler.Handle()", type: "success" },
       { id: "result", label: "Result<T>", type: "primary" },
     ],
     connections: [
-      { from: "send", to: "validation" },
-      { from: "validation", to: "audit", label: "Valid ✓" },
-      { from: "audit", to: "perf" },
-      { from: "perf", to: "handler" },
+      { from: "send", to: "logging" },
+      { from: "logging", to: "validation" },
+      { from: "validation", to: "feature", label: "Valid" },
+      { from: "feature", to: "webhook", label: "Allowed" },
+      { from: "webhook", to: "cache" },
+      { from: "cache", to: "handler", label: "Cache miss / mutation" },
       { from: "handler", to: "result" },
     ],
   },
@@ -75,7 +79,7 @@ const sections: DocSection[] = [
     filename: "ValidationBehavior.cs",
     code: `public class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : Core.Application.Messaging.IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -118,7 +122,7 @@ const sections: DocSection[] = [
     string Email,
     string Password,
     Guid? TenantId
-) : IRequest<Result<AdminResponse>>;`,
+) : ICommand<AdminResponse>;`,
       },
       {
         label: "Validator",
@@ -149,11 +153,11 @@ const sections: DocSection[] = [
         label: "Handler",
         language: "csharp",
         code: `public class CreateAdminCommandHandler
-    : IRequestHandler<CreateAdminCommand, Result<AdminResponse>>
+    : ICommandHandler<CreateAdminCommand, AdminResponse>
 {
     private readonly IAdminRepository _repo;
     private readonly IPasswordHasher _hasher;
-    private readonly IMapper _mapper;
+    private readonly Core.Application.Mapping.IMapper _mapper;
 
     public async Task<Result<AdminResponse>> Handle(
         CreateAdminCommand request, CancellationToken ct)
@@ -192,14 +196,14 @@ const sections: DocSection[] = [
     language: "csharp",
     filename: "GetAdminByIdQuery + Handler",
     code: `// Query
-public record GetAdminByIdQuery(Guid Id) : IRequest<Result<AdminDetailResponse>>;
+public record GetAdminByIdQuery(Guid Id) : IQuery<AdminDetailResponse>;
 
 // Handler
 public class GetAdminByIdQueryHandler
-    : IRequestHandler<GetAdminByIdQuery, Result<AdminDetailResponse>>
+    : IQueryHandler<GetAdminByIdQuery, AdminDetailResponse>
 {
     private readonly IAdminRepository _repo;
-    private readonly IMapper _mapper;
+    private readonly Core.Application.Mapping.IMapper _mapper;
     private readonly ICacheService _cache;
 
     public async Task<Result<AdminDetailResponse>> Handle(

@@ -13,7 +13,7 @@ export const de = {
       featureModular: "Modularer Monolith",
       featureModularDesc:
         "Isolierte Module mit klaren Grenzen – unabhängig entwickeln, testen und bereitstellen. Gleiche Binärdatei, flexibles Deployment.",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "Trennung von Befehlen und Abfragen mit einer 4-stufigen Pipeline: Validierung, Feature-Gating, Caching und Leistungsüberwachung.",
       featureSecurity: "Enterprise-Sicherheit",
@@ -40,9 +40,9 @@ export const de = {
       techStackTitle: "Technologie-Stack",
       serviceRegistrationTitle: "Reihenfolge der Service-Registrierung",
       serviceRegistrationIntro:
-        "Die Reihenfolge der Service-Registrierung in der Program.cs ist architektonisch von Bedeutung. Eine Änderung der Reihenfolge kann zu Laufzeitfehlern führen. Die Kerninfrastruktur muss vor den Modulen registriert werden, und MediatR benötigt zuerst die Assembly-Marker der Module.",
+        "Die Reihenfolge der Service-Registrierung in der Program.cs ist architektonisch von Bedeutung. Eine Änderung der Reihenfolge kann zu Laufzeitfehlern führen. Die Kerninfrastruktur muss vor den Modulen registriert werden, und NEXORA mediator benötigt zuerst die Assembly-Marker der Module.",
       registrationOrderWarning:
-        "Ändern Sie NICHT die Reihenfolge der Service-Registrierungen in der Program.cs. AddCoreInfrastructure muss vor den Modulen stehen (sie hängen von ICurrentUser ab) und AddCoreApplication muss nach den Modulen stehen (MediatR benötigt deren Assemblies).",
+        "Ändern Sie NICHT die Reihenfolge der Service-Registrierungen in der Program.cs. AddCoreInfrastructure muss vor den Modulen stehen (sie hängen von ICurrentUser ab) und AddCoreApplication muss nach den Modulen stehen (NEXORA mediator benötigt deren Assemblies).",
       environmentProfilesTitle: "Umgebungsprofile",
       envVarPrefixTip:
         "Es werden nur Umgebungsvariablen geladen, die mit NEXORA_ beginnen. Beispielsweise überschreibt NEXORA_ConnectionStrings__DefaultConnection den Connection String. Doppelte Unterstriche (__) repräsentieren Verschachtelungen in der JSON-Konfiguration.",

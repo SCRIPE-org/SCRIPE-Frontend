@@ -32,7 +32,7 @@ export const ar = {
         "Paymob Accept — متخصص في الشرق الأوسط: الدفع، التكرار عبر بطاقات مُرمّزة، المحافظ الإلكترونية. يدعم عملات EGP وSAR وAED وPKR. تحقق HMAC-SHA512 من Webhook.",
       webhookTitle: "معالجات Webhook",
       webhookIntro:
-        "لكل بوابة نقطة نهاية Webhook خاصة بها مع تحقق توقيع خاص بالمزود. Stripe يستخدم HMAC-SHA256 في POST /api/stripe-webhooks، PayPal يستخدم تحقق توقيع الإرسال في POST /api/paypal-webhooks، وPaymob يستخدم HMAC-SHA512 في POST /api/paymob-webhooks. جميع المعالجات ترسل إلى أوامر MediatR للمعالجة.",
+        "لكل بوابة نقطة نهاية Webhook خاصة بها مع تحقق توقيع خاص بالمزود. Stripe يستخدم HMAC-SHA256 في POST /api/stripe-webhooks، PayPal يستخدم تحقق توقيع الإرسال في POST /api/paypal-webhooks، وPaymob يستخدم HMAC-SHA512 في POST /api/paymob-webhooks. جميع المعالجات ترسل إلى أوامر NEXORA mediator للمعالجة.",
       webhookEvents:
         "Stripe: checkout.session.completed, invoice.paid, invoice.payment_failed, customer.subscription.updated, customer.subscription.deleted, charge.refunded. PayPal: BILLING.SUBSCRIPTION.ACTIVATED, PAYMENT.SALE.COMPLETED, BILLING.SUBSCRIPTION.CANCELLED. Paymob: transaction.success, transaction.failed, transaction.refunded.",
       idempotencyTitle: "العمليات المتكررة الآمنة",

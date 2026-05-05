@@ -23,7 +23,7 @@ export const de = {
         "Wenn das System einen Funktionswert für einen Mandanten ermitteln muss, folgt es einer strikten Prioritätskette. Die Quelle mit der höchsten Priorität, die einen Wert liefert, gewinnt.",
       pipelineTitle: "Pipeline-Integration",
       pipelineIntro:
-        "NEXORA integriert Berechtigungen über das FeatureCheckBehavior direkt in die MediatR-CQRS-Pipeline. Befehle und Abfragen, die IRequireFeature implementieren, werden automatisch überwacht — ist der ermittelte Funktionswert des Mandanten deaktiviert, wird die Anfrage abgelehnt, bevor sie den Handler erreicht.",
+        "NEXORA integriert Berechtigungen über das FeatureCheckBehavior direkt in die NEXORA mediator-CQRS-Pipeline. Befehle und Abfragen, die IRequireFeature implementieren, werden automatisch überwacht — ist der ermittelte Funktionswert des Mandanten deaktiviert, wird die Anfrage abgelehnt, bevor sie den Handler erreicht.",
       pipelineTip:
         "Um einen Befehl hinter einer Funktion zu verbergen, implementieren Sie einfach IRequireFeature und setzen Sie RequiredFeatureName auf den stabilen Systemschlüssel der Funktion (z. B. 'Chat.Enabled'). Es ist kein zusätzlicher Code erforderlich.",
       backendTitle: "Backend-Struktur",
@@ -47,7 +47,7 @@ export const de = {
         "Die Auflösungskette wird Lazy evaluiert — Werte werden nach der ersten Auflösung zwischengespeichert und invalidiert, wenn sich Abonnements, Editionen oder Überschreibungen ändern.",
       cqrsMapTitle: "CQRS Command & Query Map",
       cqrsMapIntro:
-        "Das Berechtigungsmodul registriert 31 MediatR-Handler, die sich über die vier Domänen erstrecken. Jeder Befehl hat einen entsprechenden FluentValidation-Validator zur Eingabeüberprüfung.",
+        "Das Berechtigungsmodul registriert 31 NEXORA mediator-Handler, die sich über die vier Domänen erstrecken. Jeder Befehl hat einen entsprechenden FluentValidation-Validator zur Eingabeüberprüfung.",
       diTitle: "Dependency Injection Registrierung",
       diIntro:
         "Alle Berechtigungsdienste werden über die Erweiterungsmethode AddEntitlementsModule in DependencyInjection.cs registriert. Das Modul folgt NEXORAs Standard-Registrierungsmuster.",

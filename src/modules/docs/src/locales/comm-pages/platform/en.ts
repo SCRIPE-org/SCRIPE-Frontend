@@ -7,7 +7,7 @@ export const en = {
     platformArchitecture: {
       title: "Platform Architecture",
       description:
-        "Explore the structural perfection of NEXORA's Clean Architecture, MediatR pipelines, and impenetrable module boundaries designed for massive enterprise scale.",
+        "Explore the structural perfection of NEXORA's Clean Architecture, NEXORA mediator pipelines, and impenetrable module boundaries designed for massive enterprise scale.",
       intro:
         "Experience the convergence of massive horizontal scalability and pristine code organization. NEXORA's architecture is a meticulously engineered foundation built to withstand decades of enterprise evolution.",
       modularTitle: "The Evolutionary Modular Monolith",
@@ -21,7 +21,7 @@ export const en = {
         "Cross-module namespace pollution is physically impossible. NEXORA enforces definitive module segregation via strict tooling and automated CI validation, ensuring massive development teams operate with total autonomy and zero merge collisions.",
       cqrsTitle: "Battle-Tested CQRS Event Pipelines",
       cqrsContent:
-        "Demolish database deadlocks by definitively splitting read and write operational responsibilities. The MediatR request pipeline acts as a high-speed central nervous system, aggressively intercepting, validating, authenticating, and cryptographically logging every atomic action before execution.",
+        "Demolish database deadlocks by definitively splitting read and write operational responsibilities. The NEXORA mediator request pipeline acts as a high-speed central nervous system, aggressively intercepting, validating, authenticating, and cryptographically logging every atomic action before execution.",
       deploymentTitle: "Frictionless Deployment Topologies",
       monolith: "Monolithic Dominance",
       gateway: "Gateway Agility",
@@ -84,7 +84,7 @@ export const en = {
       layersTitle: "Strict Architectural Stratification",
       cqrsTitle: "High-Performance CQRS Operations",
       cqrsContent:
-        "Demolish transactional bottlenecks. By segregating Command (Write) and Query (Read) responsibilities through the MediatR pipeline, NEXORA allows you to independently scale, cache, and optimize aggressive data ingestion flows without impacting sub-second read latency.",
+        "Demolish transactional bottlenecks. By segregating Command (Write) and Query (Read) responsibilities through the NEXORA mediator pipeline, NEXORA allows you to independently scale, cache, and optimize aggressive data ingestion flows without impacting sub-second read latency.",
       solidTitle: "Mathematically Provable SOLID Design",
       singleResp: "Single Responsibility",
       singleRespDesc:
@@ -271,7 +271,7 @@ export const en = {
       tblBackR3C2: "10",
       tblBackR3C3: "ORM & data access",
       tblBackR3C4: "Multi-provider support, migrations, LINQ queries",
-      tblBackR4C1: "MediatR",
+      tblBackR4C1: "NEXORA mediator",
       tblBackR4C2: "12+",
       tblBackR4C3: "CQRS mediator",
       tblBackR4C4: "Clean handler separation, pipeline behaviors",

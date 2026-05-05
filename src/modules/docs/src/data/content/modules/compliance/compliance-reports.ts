@@ -78,7 +78,7 @@ const sections: DocSection[] = [
     type: "code",
     language: "csharp",
     filename: "GenerateReportCommand.cs",
-    code: `public class GenerateReportCommandHandler : IRequestHandler<GenerateReportCommand, Result<Guid>>
+    code: `public class GenerateReportCommandHandler : ICommandHandler<GenerateReportCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(GenerateReportCommand request, CancellationToken ct)
     {

@@ -8,11 +8,11 @@ export const zh = {
       title: "架构概述",
       description: "整洁架构分层、后端管道、前端 SOLID 流程和模块边界规则。",
       intro:
-        "NEXORA 遵循严格的整洁架构 (Clean Architecture)，分为四层：表现层 (Presentation)、应用层 (Application)、领域层 (Domain) 和基础设施层 (Infrastructure)。依赖规则确保内层永远不依赖于外层。这种架构在后端 (.NET) 和前端 (Next.js) 中都得到了一致的应用。",
+        "NEXORA 遵循严格的 Clean Architecture，包含 Presentation、Application、Domain 和 Infrastructure 四层。依赖规则确保内部层永远不依赖外部层，并在后端与前端一致应用。",
       layersTitle: "整洁架构分层",
       backendArchTitle: "后端架构",
       backendArchIntro:
-        "后端遵循请求管道 (Request Pipeline) 架构，每个 HTTP 请求流经中间件、控制器、MediatR 行为管道，最后到达 CQRS 处理程序。这确保了验证、审计和错误处理的一致性。",
+        "后端遵循请求管道 (Request Pipeline) 架构，每个 HTTP 请求流经中间件、控制器、NEXORA mediator 行为管道，最后到达 CQRS 处理程序。这确保了验证、审计和错误处理的一致性。",
       frontendArchTitle: "前端架构",
       frontendArchIntro:
         "前端使用 SOLID View/ViewModel 模式，其中视图 (View) 是纯 UI（无状态、无逻辑），而视图模型 (ViewModel) 包含所有业务逻辑。连接器模式将 Next.js 路由（服务端组件）与应用逻辑（客户端组件）分离。",
@@ -44,7 +44,7 @@ export const zh = {
         "每个新模块都遵循相同的 DI 注册模式。AddXxxModule() 扩展方法注册该模块的 DbContext、仓储、服务和模块注册标记。",
       controllersTitle: "控制器 (Controllers)",
       controllerTip:
-        "所有控制器都继承自一个基础 ApiController，该控制器提供标准化的 Result<T> 响应映射。控制器应保持轻量 —— 它们仅验证请求模型并委派给 MediatR 处理。",
+        "所有控制器都继承自一个基础 ApiController，该控制器提供标准化的 Result<T> 响应映射。控制器应保持轻量 —— 它们仅验证请求模型并委派给 NEXORA mediator 处理。",
     },
     frontend: {
       title: "前端架构",
@@ -70,15 +70,15 @@ export const zh = {
     },
     cqrs: {
       title: "CQRS 模式",
-      description: "通过 MediatR 管道、行为 (Behaviors)、验证和缓存实现命令查询职责分离。",
+      description: "通过 NEXORA mediator 管道、行为 (Behaviors)、验证和缓存实现命令查询职责分离。",
       intro:
-        "NEXORA 使用 CQRS (命令查询职责分离) 模式将读写操作分开。命令 (Commands) 改变状态并经过验证和审计行为。查询 (Queries) 读取状态并可以利用缓存。MediatR 充当控制器和处理程序之间的中介。",
+        "NEXORA 使用 CQRS (命令查询职责分离) 模式将读写操作分开。命令 (Commands) 改变状态并经过验证和审计行为。查询 (Queries) 读取状态并可以利用缓存。NEXORA mediator 充当控制器和处理程序之间的中介。",
       whatIsCqrsTitle: "什么是 CQRS？",
       whatIsCqrsIntro:
         "CQRS 将您的应用程序分为两端：命令（写入）和查询（读取）。每一端都可以独立优化 —— 命令侧重于数据完整性和验证，而查询侧重于性能和缓存。",
       commandSide: "命令端 (写入)",
       querySide: "查询端 (读取)",
-      pipelineTitle: "MediatR 管道",
+      pipelineTitle: "NEXORA mediator 管道",
       validationBehaviorTitle: "验证行为 (Validation Behavior)",
       commandExampleTitle: "命令示例",
       queryExampleTitle: "查询示例",
@@ -141,7 +141,7 @@ export const zh = {
     stateManagement: {
       title: "状态管理",
       description:
-        "TanStack Query 用于服务器状态，Zustand 用于全局 UI 状态，LanguageProvider 用于本地化。",
+        "Clean Architecture 分层、后端管道、前端 SOLID 流程以及模块边界规则。",
       intro:
         "NEXORA 使用三种状态管理工具，每种用于特定类别：TanStack Query 用于服务器数据（API 结果），Zustand 用于全局 UI 状态（认证、侧边栏、主题），useState 用于组件本地状态（表单、切换开关）。",
       decisionTitle: "决策矩阵",
@@ -171,7 +171,7 @@ export const zh = {
       mutationFlowTitle: "变更流 (写入)",
       backendPipelineTitle: "后端请求管道",
       backendPipelineIntro:
-        "每个后端请求在到达处理程序之前，都会经过 10 个中间件组件和 3 个 MediatR 管道行为。这确保了一致的日志记录、身份验证、授权、验证和审计。",
+        "每个后端请求在到达处理程序之前，都会经过 10 个中间件组件和 3 个 NEXORA mediator 管道行为。这确保了一致的日志记录、身份验证、授权、验证和审计。",
       errorFlowTitle: "错误处理",
       errorFlowIntro:
         "错误在多个层面进行处理。每个错误源都有特定的处理程序、响应代码和前端处理策略。",
@@ -228,10 +228,10 @@ export const zh = {
         "领域事件代表业务领域中发生的重大事件。NEXORA 使用发件箱模式 (Outbox Pattern) 来保证事件的可靠投递 —— 事件与实体变更在同一个数据库事务中持久化，并由后台处理器异步发布。",
       interfaceTitle: "IDomainEvent 接口",
       interfaceIntro:
-        "所有领域事件都实现 IDomainEvent 接口，该接口继承自 MediatR 的 INotification。这使得进程内能够实现发布/订阅 (Pub/Sub) 模型。",
+        "所有领域事件都实现 IDomainEvent 接口，该接口继承自 NEXORA mediator 的 INotification。这使得进程内能够实现发布/订阅 (Pub/Sub) 模型。",
       publishingTitle: "发布与处理流程",
       publishingIntro:
-        "领域事件遵循 6 步生命周期：触发事件 -> 拦截器捕获 -> 作为 OutboxMessage 持久化 -> 后台轮询 -> 反序列化 -> 通过 MediatR 发布。",
+        "领域事件遵循 6 步生命周期：触发事件 -> 拦截器捕获 -> 作为 OutboxMessage 持久化 -> 后台轮询 -> 反序列化 -> 通过 NEXORA mediator 发布。",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "发件箱模式 (Outbox Pattern)",
       outboxIntro:
@@ -244,7 +244,7 @@ export const zh = {
         "它是一个 EF Core SaveChanges 拦截器，在事务提交前运行。它收集被追踪实体的所有领域事件，并将其序列化为 OutboxMessage 记录加入上下文中。",
       outboxProcessorTitle: "OutboxProcessor (发件箱处理器)",
       outboxProcessorIntro:
-        "这是一个后台服务 (BackgroundService)，每 5 秒轮询一次 OutboxMessage 表。它批量处理事件并通过 MediatR 发布。失败的事件将进行重试。",
+        "这是一个后台服务 (BackgroundService)，每 5 秒轮询一次 OutboxMessage 表。它批量处理事件并通过 NEXORA mediator 发布。失败的事件将进行重试。",
       outboxCleanupTitle: "发件箱清理任务",
       outboxCleanupIntro:
         "一个 Hangfire 周期性任务，每天凌晨 2:00 UTC 运行，删除 7 天前已处理的发件箱消息，防止表无限增长。",
@@ -265,12 +265,12 @@ export const zh = {
     cqrsPipeline: {
       title: "CQRS 管道",
       description:
-        "MediatR 管道行为 — ValidationBehavior、LoggingBehavior、CachingBehavior、Result 模式以及完整的命令/查询映射。",
+        "NEXORA 中介器管道行为：LoggingBehavior、ValidationBehavior、FeatureCheckBehavior、WebhookDispatchBehavior、CachingBehavior、Result 模式以及完整的命令/查询映射。",
       intro:
-        "NEXORA 中的每一个命令和查询都流经一个包含 3 个行为的 MediatR 管道：验证行为 (FluentValidation)、日志行为 (结构化日志记录与计时) 和缓存行为 (ICacheable 查询)。",
+        "NEXORA 中的每个命令和查询都会经过可配置的 NEXORA 中介器管道，内置 5 个行为：LoggingBehavior、ValidationBehavior、FeatureCheckBehavior、WebhookDispatchBehavior 和 CachingBehavior。顺序可通过 appsettings 或环境变量管理，并在启动时校验。",
       overviewTitle: "管道概述",
       overviewIntro:
-        "MediatR 管道按注册顺序执行行为：验证 → 日志 → 缓存 → 处理程序 (Handler)。每个行为都能短路管道（例如，验证失败直接返回错误）。",
+        "默认顺序为 Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler。验证和功能检查会先于缓存读取执行；成功变更后，缓存失效会先于 webhook 分发完成。",
       separationTitle: "命令与查询分离",
       separationIntro:
         "CQRS 将应用程序清晰地分为两条路径：命令 (写入) 改变状态并经过全面验证，查询 (读取) 针对性能进行优化 (无跟踪 AsNoTracking 及缓存)。",
@@ -281,11 +281,11 @@ export const zh = {
         "所有处理程序都返回 Result<T>，而不是针对预期的故障抛出异常。这消除了控制器中的 try-catch 块，并支持模式匹配。",
       validationTitle: "验证行为 (ValidationBehavior)",
       validationIntro:
-        "作为管道的第一个行为，它收集为该请求注册的所有 IValidator，执行它们，如果失败则抛出带有结构化字段级错误的 ValidationException。",
+        "ValidationBehavior 紧跟日志记录之后执行。它收集所有 IValidator<TRequest> 验证器，为无效请求返回结构化 Result 失败，并阻止无效请求进入处理器或缓存。",
       validatorExampleTitle: "验证器示例",
       loggingTitle: "日志行为 (LoggingBehavior)",
       loggingIntro:
-        "记录每个 MediatR 请求的用户 ID、租户 ID、请求类型和执行时间。超过 500ms 的请求将作为警告记录，以进行性能监控。",
+        "记录每个 NEXORA mediator 请求的用户 ID、租户 ID、请求类型和执行时间。超过 500ms 的请求将作为警告记录，以进行性能监控。",
       cachingTitle: "缓存行为 (CachingBehavior)",
       cachingIntro:
         "拦截实现 ICacheable 接口的查询。在执行处理程序之前检查缓存是否存在现有结果，如果未命中则执行处理并存储结果。",
@@ -294,7 +294,7 @@ export const zh = {
       registrationTitle: "管道注册",
       registrationIntro: "管道行为在 AddCoreApplication() 中按其应执行的顺序进行注册。",
       behaviorOrderTip:
-        "管道行为的注册顺序决定了执行顺序。验证必须是第一个，以便在日志或缓存之前拒绝无效请求。",
+        "默认安全校验会拒绝让 Caching 早于 Validation 或 FeatureCheck 执行的管道顺序。只有在完全掌控风险时才应关闭 Mediator__EnforceSecurityPipelineOrder。",
       featureCheckTitle: "FeatureCheckBehavior (功能检查行为)",
       featureCheckIntro:
         "FeatureCheckBehavior 拦截实现了 IRequireFeature 的命令。它通过调用 IFeatureChecker.IsEnabledAsync 检查租户的版本 (Edition) 是否允许所请求的功能。如果功能被禁用，它将返回 Forbidden 错误而不执行处理程序。系统级操作（无 TenantId）会绕过此检查。",
@@ -307,7 +307,7 @@ export const zh = {
       description:
         "Program.cs 注册流程、模块 DI 模式、服务发现、核心与身份服务映射、生命周期规则和 YARP 网关。",
       intro:
-        "NEXORA 使用 .NET 内置的依赖注入容器，并采用结构化的注册模式。Program.cs 协调所有注册：核心基础设施 -> 根据 MODULE_NAME 的模块 -> MediatR 应用层。",
+        "NEXORA 使用 .NET 内置的依赖注入容器，并采用结构化的注册模式。Program.cs 协调所有注册：核心基础设施 -> 根据 MODULE_NAME 的模块 -> NEXORA mediator 应用层。",
       architectureTitle: "DI 注册架构",
       architectureIntro:
         "Program.cs 遵循严格的 4 阶段注册顺序：(1) 核心基础设施 (缓存, 存储等) (2) CORS 和 限流 (3) 模块 (4) 应用层。",

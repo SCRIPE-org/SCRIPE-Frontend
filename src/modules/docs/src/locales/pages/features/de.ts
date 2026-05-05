@@ -135,7 +135,7 @@ export const de = {
       description:
         "4-Quellen-Pipeline, 35+ Ereignistypen, 7 Guardian-Ereignisse, Echtzeit-SignalR und CSV/PDF-Export.",
       intro:
-        "NEXORA erfasst jede wichtige Aktion im Audit-Log durch MediatR, EF Core, Middleware und Services.",
+        "NEXORA erfasst jede wichtige Aktion im Audit-Log durch NEXORA mediator, EF Core, Middleware und Services.",
       architectureTitle: "Audit-Architektur",
       eventTypesTitle: "Ereignistypen (35+ Kategorien)",
       authEventsTitle: "Authentifizierungsereignisse",

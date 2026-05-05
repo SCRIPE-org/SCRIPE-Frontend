@@ -7,7 +7,7 @@ export const fr = {
     platformArchitecture: {
       title: "Architecture de la Plateforme",
       description:
-        "Explorez la perfection structurelle de la Clean Architecture de NEXORA, des pipelines MediatR et des frontières de modules impénétrables conçues pour une échelle d'entreprise massive.",
+        "Explorez la perfection structurelle de la Clean Architecture de NEXORA, des pipelines NEXORA mediator et des frontières de modules impénétrables conçues pour une échelle d'entreprise massive.",
       intro:
         "Expérimentez la convergence entre une scalabilité horizontale massive et une organisation de code immaculée. L'architecture de NEXORA est une fondation méticuleusement conçue pour résister à des décennies d'évolution d'entreprise.",
       modularTitle: "Le Monolithe Modulaire Évolutif",
@@ -21,7 +21,7 @@ export const fr = {
         "La pollution de l'espace de noms entre les modules est physiquement impossible. NEXORA impose une ségrégation définitive des modules via des outils stricts et une validation CI automatisée, garantissant que des équipes de développement massives opèrent avec une autonomie totale et sans conflits de fusion (merge collisions).",
       cqrsTitle: "Pipelines d'Événements CQRS Éprouvés",
       cqrsContent:
-        "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes MediatR agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
+        "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes NEXORA mediator agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
       deploymentTitle: "Topologies de Déploiement Sans Friction",
       monolith: "Domination Monolithique",
       gateway: "Agilité de la Passerelle (Gateway)",
@@ -84,7 +84,7 @@ export const fr = {
       layersTitle: "Stratification Architecturale Stricte",
       cqrsTitle: "Opérations CQRS Hautes Performances",
       cqrsContent:
-        "Démolissez les goulots d'étranglement transactionnels. En séparant les responsabilités de Commande (Écriture) et de Requête (Lecture) via le pipeline MediatR, NEXORA vous permet de mettre à l'échelle, de mettre en cache et d'optimiser indépendamment les flux d'ingestion de données agressifs sans impacter la latence de lecture sous la seconde.",
+        "Démolissez les goulots d'étranglement transactionnels. En séparant les responsabilités de Commande (Écriture) et de Requête (Lecture) via le pipeline NEXORA mediator, NEXORA vous permet de mettre à l'échelle, de mettre en cache et d'optimiser indépendamment les flux d'ingestion de données agressifs sans impacter la latence de lecture sous la seconde.",
       solidTitle: "Conception SOLID Mathématiquement Prouvable",
       singleResp: "Responsabilité Unique",
       singleRespDesc:
@@ -273,7 +273,7 @@ export const fr = {
       tblBackR3C2: "10",
       tblBackR3C3: "ORM & accès aux données",
       tblBackR3C4: "Support multi-fournisseurs, migrations, requêtes LINQ",
-      tblBackR4C1: "MediatR",
+      tblBackR4C1: "NEXORA mediator",
       tblBackR4C2: "12+",
       tblBackR4C3: "Médiateur CQRS",
       tblBackR4C4: "Séparation propre des gestionnaires, comportements de pipeline",

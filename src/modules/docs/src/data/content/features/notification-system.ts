@@ -1,8 +1,8 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Architecture €
+  //  Architecture 
   {
     type: "heading",
     level: 2,
@@ -29,7 +29,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € NotificationHub
+  //  NotificationHub
   { type: "heading", level: 2, titleKey: "features.notificationSystem.hubTitle", id: "hub" },
   { type: "paragraph", contentKey: "features.notificationSystem.hubIntro" },
   {
@@ -54,7 +54,7 @@ const sections: DocSection[] = [
 }`,
   },
 
-  // € Auto-Join Pattern
+  //  Auto-Join Pattern
   {
     type: "heading",
     level: 3,
@@ -71,7 +71,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Hub Client Interface €
+  //  Hub Client Interface 
   {
     type: "heading",
     level: 2,
@@ -89,7 +89,7 @@ const sections: DocSection[] = [
 }`,
   },
 
-  // € NotificationService Methods
+  //  NotificationService Methods
   {
     type: "heading",
     level: 2,
@@ -108,7 +108,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Controller Endpoints €
+  //  Controller Endpoints 
   {
     type: "heading",
     level: 2,

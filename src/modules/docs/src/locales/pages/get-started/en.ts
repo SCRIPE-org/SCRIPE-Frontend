@@ -13,7 +13,7 @@ export const en = {
       featureModular: "Modular Monolith",
       featureModularDesc:
         "Isolated modules with clean boundaries  develop, test, and deploy independently. Same binary, flexible deployment.",
-      featureCQRS: "CQRS + MediatR",
+      featureCQRS: "CQRS + NEXORA mediator",
       featureCQRSDesc:
         "Command/Query separation with a 4-behavior pipeline: validation, feature gating, caching, and performance monitoring.",
       featureSecurity: "Enterprise Security",
@@ -40,9 +40,9 @@ export const en = {
       techStackTitle: "Technology Stack",
       serviceRegistrationTitle: "Service Registration Order",
       serviceRegistrationIntro:
-        "The order of service registration in Program.cs is architecturally significant. Changing the order can cause runtime failures. Core infrastructure must register before modules, and MediatR needs module assembly markers collected first.",
+        "The order of service registration in Program.cs is architecturally significant. Changing the order can cause runtime failures. Core infrastructure must register before modules, and NEXORA mediator needs module assembly markers collected first.",
       registrationOrderWarning:
-        "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (MediatR needs their assemblies).",
+        "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (NEXORA mediator needs their assemblies).",
       environmentProfilesTitle: "Environment Profiles",
       envVarPrefixTip:
         "Only environment variables starting with NEXORA_ are loaded. For example, NEXORA_ConnectionStrings__DefaultConnection overrides the connection string. Double underscores (__) represent nesting in JSON config.",

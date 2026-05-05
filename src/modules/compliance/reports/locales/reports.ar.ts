@@ -27,11 +27,20 @@ export const ar = {
       failed: "فشل",
     },
 
+    // Auto-refresh indicator
+    autoRefreshing: "يتحدث تلقائياً…",
+
+    // Format dropdown descriptions
+    format: {
+      csvDesc: "قيم مفصولة بفاصلة",
+      xlsxDesc: "تنسيق Microsoft Excel",
+      jsonDesc: "بيانات JSON منظمة",
+      pdfDesc: "تنسيق المستند المحمول",
+    },
+
     // Messages
     reportQueued: "تم جدولة إنشاء التقرير",
     reportQueuedDesc: "أعد تحديث الصفحة بعد دقائق قليلة لرؤية تقريرك.",
-
-    // Dialog
     generateReportDesc: "حدد نوع التقرير ونطاق التاريخ الاختياري لإنشاء تقرير امتثال.",
     reportQueuedInfo: "تُنشأ التقارير بشكل غير متزامن. أعد تحديث القائمة بعد دقائق قليلة لرؤية تقريرك.",
 

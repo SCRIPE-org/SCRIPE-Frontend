@@ -45,7 +45,7 @@ export const ar = {
       pdpa: "PDPA",
     },
 
-    // DSR Status
+    // DSR Status (flat — used by DsrView filter pills via dynamic key construction)
     pending: "قيد الانتظار",
     inReview: "قيد المراجعة",
     approved: "تمت الموافقة",
@@ -53,6 +53,18 @@ export const ar = {
     partiallyCompleted: "مكتمل جزئياً",
     rejected: "مرفوض",
     cancelled: "ملغى",
+
+    // DSR Status labels (nested — used by DsrDetailView STATUS_META.labelKey)
+    statusLabels: {
+      pending: "قيد الانتظار",
+      inReview: "قيد المراجعة",
+      approved: "تمت الموافقة",
+      processing: "قيد المعالجة",
+      partiallyCompleted: "مكتمل جزئياً",
+      completed: "مكتمل",
+      rejected: "مرفوض",
+      cancelled: "ملغى",
+    },
 
     // DSR Actions
     approveDsr: "الموافقة على الطلب",

@@ -27,10 +27,10 @@ export function useRetentionViewModel() {
     mutationFn: (data: CreateRetentionPolicyRequest) => retentionRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      success({ title: t("compliance.policyAdded") || "Policy added successfully" });
+      success({ title: t("compliance.policyAdded") });
     },
     onError: () => {
-      error({ title: t("compliance.policyAddFailed") || "Failed to add policy" });
+      error({ title: t("compliance.policyAddFailed") });
     }
   });
 
@@ -39,7 +39,7 @@ export function useRetentionViewModel() {
       retentionRepository.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      success({ title: t("compliance.policyUpdated") || "Policy updated successfully" });
+      success({ title: t("compliance.policyUpdated") });
     },
   });
 
@@ -47,7 +47,7 @@ export function useRetentionViewModel() {
     mutationFn: (id: string) => retentionRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      success({ title: t("compliance.policyDeleted") || "Policy deleted successfully" });
+      success({ title: t("compliance.policyDeleted") });
     },
   });
 
@@ -58,38 +58,38 @@ export function useRetentionViewModel() {
     (): FieldConfig[] => [
       {
         name: "category",
-        label: t("compliance.retentionCategory") || "Category",
+        label: t("compliance.retentionCategory"),
         type: "select" as const,
-        placeholder: t("compliance.placeholders.selectCategory") || "Select category",
+        placeholder: t("compliance.placeholders.selectCategory"),
         required: true,
         options: [
-          { value: "PersonalData", label: t("compliance.categories.personalData") || "Personal Data" },
-          { value: "FinancialData", label: t("compliance.categories.financialData") || "Financial Data" },
-          { value: "AuditLogs", label: t("compliance.categories.auditLogs") || "Audit Logs" },
-          { value: "MarketingData", label: t("compliance.categories.marketingData") || "Marketing Data" },
+          { value: "PersonalData", label: t("compliance.categories.personalData") },
+          { value: "FinancialData", label: t("compliance.categories.financialData") },
+          { value: "AuditLogs", label: t("compliance.categories.auditLogs") },
+          { value: "MarketingData", label: t("compliance.categories.marketingData") },
         ],
       },
       {
         name: "retentionDays",
-        label: t("compliance.retentionDays") || "Retention Days",
+        label: t("compliance.retentionDays"),
         type: "number" as const,
         required: true,
       },
       {
         name: "expiryAction",
-        label: t("compliance.expiryAction") || "Expiry Action",
+        label: t("compliance.expiryAction"),
         type: "select" as const,
-        placeholder: t("compliance.placeholders.selectExpiryAction") || "Select action",
+        placeholder: t("compliance.placeholders.selectExpiryAction"),
         required: true,
         options: [
-          { value: "Delete", label: t("compliance.expiryActions.Delete") || "Delete" },
-          { value: "Anonymize", label: t("compliance.expiryActions.Anonymize") || "Anonymize" },
-          { value: "Archive", label: t("compliance.expiryActions.Archive") || "Archive" },
+          { value: "Delete", label: t("compliance.expiryActions.Delete") },
+          { value: "Anonymize", label: t("compliance.expiryActions.Anonymize") },
+          { value: "Archive", label: t("compliance.expiryActions.Archive") },
         ],
       },
       {
         name: "isActive",
-        label: t("compliance.active") || "Active",
+        label: t("compliance.active"),
         type: "checkbox" as const,
       },
     ],
