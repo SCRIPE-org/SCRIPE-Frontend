@@ -18,6 +18,8 @@ export interface CreateMenuItemRequest {
   resource?: string;
   tenantScopeJson?: string;
   featureFlag?: string;
+  /** Workspace this item belongs to (null = global / all workspaces) */
+  workspaceId?: string;
 }
 
 /**
@@ -35,6 +37,8 @@ export interface UpdateMenuItemRequest {
   tenantScopeJson?: string;
   featureFlag?: string;
   isActive: boolean;
+  /** Workspace this item belongs to (null = global / all workspaces) */
+  workspaceId?: string;
 }
 
 /**

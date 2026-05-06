@@ -97,6 +97,23 @@ export class NavigationMapper {
         ? json.menuItems.map((item: any) => this.menuItemFromJson(item))
         : [],
       routes: json.routes || json.allowedPages || json.pages || [],
+      // Nexus: preserve workspace groups if present
+      workspaceGroups: json.workspaceGroups
+        ? json.workspaceGroups.map((g: any) => ({
+            // New canonical format (backend sends workspace-prefixed names)
+            workspaceId: g.workspaceId ?? g.id ?? "",
+            workspaceKey: g.workspaceKey ?? g.key ?? "",
+            workspaceNameEn: g.workspaceNameEn ?? g.nameEn ?? g.workspaceName ?? "",
+            workspaceNameAr: g.workspaceNameAr ?? g.nameAr ?? g.workspaceNameEn ?? g.nameEn ?? "",
+            workspaceIcon: g.workspaceIcon ?? g.icon ?? "LayoutDashboard",
+            workspaceSortOrder: g.workspaceSortOrder ?? g.sortOrder ?? 0,
+            colorHue: g.colorHue ?? null,
+            colorChroma: g.colorChroma ?? null,
+            menuItems: g.menuItems
+              ? g.menuItems.map((item: any) => this.menuItemFromJson(item))
+              : [],
+          }))
+        : undefined,
     });
   }
 
@@ -174,33 +191,40 @@ export class NavigationMapper {
   }
 
   /**
-   * Handle different API response formats
+   * Handle different API response formats.
+   * Supports both the legacy flat response (menuItems/routes) and
+   * the Nexus dual-rail grouped response (workspaceGroups).
    */
   static handleApiResponse(response: any): NavigationData {
     // Handle different possible response structures
     if (response && (response.statusCode === 200 || !response.statusCode)) {
       let menuItems: any[] = [];
       let routes: string[] = [];
+      let workspaceGroups: any[] | undefined;
 
-      // Check if response has data property
+      // Check if response has data property (standard NEXORA envelope)
       if (response.data) {
         menuItems = response.data.menuItems || [];
         routes = response.data.routes || response.data.pages || [];
+        // Nexus: workspace groups
+        workspaceGroups = response.data.workspaceGroups;
       } else if (Array.isArray(response)) {
-        // Direct array response
+        // Direct array response (legacy)
         menuItems = response;
         routes = response
           .map((item: any) => item.href)
           .filter((href: any): href is string => href !== null);
       } else if (response.menuItems) {
-        // Direct menuItems property
+        // Direct menuItems property (legacy)
         menuItems = response.menuItems;
         routes = response.routes || response.pages || [];
+        workspaceGroups = response.workspaceGroups;
       }
 
       return this.navigationDataFromJson({
         menuItems,
         routes,
+        workspaceGroups,
       });
     }
 

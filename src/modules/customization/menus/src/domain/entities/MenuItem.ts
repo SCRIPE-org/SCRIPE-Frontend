@@ -20,6 +20,8 @@ export interface MenuItemData extends BaseEntity {
   resource?: string;
   isActive: boolean;
   children?: MenuItemData[];
+  /** Workspace this item is assigned to (null = global) */
+  workspaceId?: string;
 }
 
 /**
@@ -113,6 +115,10 @@ export interface MenuTreeNode {
   isActive: boolean;
   parentMenuItemId?: string;
   children: MenuTreeNode[];
+  /** Workspace this item is assigned to (null = global) */
+  workspaceId?: string;
+  /** True if this item is a system item seeded by the platform (cannot be deleted) */
+  isSystem?: boolean;
   /** User-scope override for this item (null if none) */
   userOverride?: MenuItemOverrideInfo;
   /** Tenant-scope override for this item (null if none) */

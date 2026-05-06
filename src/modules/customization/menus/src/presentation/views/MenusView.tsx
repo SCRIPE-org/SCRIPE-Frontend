@@ -2,17 +2,23 @@
  * Menus View (Pure UI) — Admin Management
  *
  * Composes all menu-tree components with native HTML5 DnD.
- * Handles CRUD operations and base reordering only.
+ * Now includes workspace filter tabs and a workspace management slide-out panel.
+ *
+ * Workspace filter tabs: shows one tab per workspace + "All" tab.
+ * Clicking a tab filters the menu tree to show only items belonging to that workspace.
+ *
  * Override customization is on a separate page: /customization/menus/customize
  */
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { useMenusViewModel } from "../viewmodels/useMenusViewModel";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { ScrollArea, ScrollBar } from "@core/ui/scroll-area";
 
 import { MenuTreeItem } from "../components/MenuTreeItem";
 import { MenuFormDialog } from "../components/MenuFormDialog";
@@ -27,18 +33,64 @@ import {
   ChevronRight,
   ArrowDownToLine,
   Palette,
+  Layers,
+  Grid3X3,
+  ChevronRight as ChevronRightIcon,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import type { MenuTreeNode } from "../../domain/entities/MenuItem";
+import type { WorkspaceGroup } from "@core/domain/entities/Navigation";
+
+/** Filter menu tree to only nodes belonging to a workspace (by workspaceId) */
+function filterByWorkspace(
+  nodes: MenuTreeNode[],
+  workspaceId: string | null
+): MenuTreeNode[] {
+  if (!workspaceId) return nodes;
+
+  const filterRecursive = (items: MenuTreeNode[]): MenuTreeNode[] =>
+    items.reduce<MenuTreeNode[]>((acc, node) => {
+      const filteredChildren = filterRecursive(node.children);
+      const matches = node.workspaceId === workspaceId;
+      if (matches || filteredChildren.length > 0) {
+        acc.push({ ...node, children: filteredChildren });
+      }
+      return acc;
+    }, []);
+
+  return filterRecursive(nodes);
+}
 
 export function MenusView() {
   useModuleLocales(() => import("../../../locales"), "menus");
 
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const vm = useMenusViewModel();
+  const { workspaceGroups, activeWorkspace } = useWorkspace();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // ── Workspace filter state ─────────────────────────────────────────
+  // null = "All workspaces" tab active
+  const [filterWorkspaceId, setFilterWorkspaceId] = useState<string | null>(null);
+
+  // Filtered tree based on active workspace tab
+  const filteredTree = filterByWorkspace(vm.menuTree, filterWorkspaceId);
+
+  // Count per workspace for badge
+  const workspaceCounts = useCallback(
+    (workspaceId: string) => {
+      const countRecursive = (nodes: MenuTreeNode[]): number =>
+        nodes.reduce(
+          (sum, n) => sum + (n.workspaceId === workspaceId ? 1 : 0) + countRecursive(n.children),
+          0
+        );
+      return countRecursive(vm.menuTree);
+    },
+    [vm.menuTree]
+  );
 
   // ── Auto-scroll when dragging near edges ───────────────────────────
   useEffect(() => {
@@ -103,7 +155,7 @@ export function MenusView() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t("menus.title")}</h1>
@@ -149,7 +201,42 @@ export function MenusView() {
         </div>
       </div>
 
-      {/* Menu Tree */}
+      {/* ── Workspace Filter Tabs ───────────────────────────────────────── */}
+      {workspaceGroups.length > 0 && (
+        <div className="relative">
+          <ScrollArea className="w-full">
+            <div className="flex items-center gap-1 pb-1">
+              {/* "All" tab */}
+              <WorkspaceFilterTab
+                label={t("menus.allWorkspaces") ?? "All Workspaces"}
+                count={vm.totalItems}
+                isActive={filterWorkspaceId === null}
+                accentColor={null}
+                onClick={() => setFilterWorkspaceId(null)}
+              />
+
+              {/* One tab per workspace */}
+              {workspaceGroups
+                .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)
+                .map((ws) => (
+                  <WorkspaceFilterTab
+                    key={ws.workspaceKey}
+                    label={ws.getLocalizedName(language)}
+                    count={workspaceCounts(ws.workspaceId ?? ws.workspaceKey)}
+                    isActive={filterWorkspaceId === (ws.workspaceId ?? ws.workspaceKey)}
+                    accentColor={ws.accentColor}
+                    onClick={() =>
+                      setFilterWorkspaceId(ws.workspaceId ?? ws.workspaceKey)
+                    }
+                  />
+                ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
+      )}
+
+      {/* ── Menu Tree ──────────────────────────────────────────────────── */}
       {vm.isLoading ? (
         <Card>
           <CardContent className="py-12">
@@ -177,12 +264,36 @@ export function MenusView() {
             )}
           </CardContent>
         </Card>
+      ) : filteredTree.length === 0 && filterWorkspaceId !== null ? (
+        /* Empty state for workspace filter */
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <div className="mb-4 rounded-full bg-muted p-4">
+              <Grid3X3 className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">
+              {t("menus.noWorkspaceItems") ?? "No items in this workspace"}
+            </h3>
+            <p className="mb-6 max-w-sm text-center text-muted-foreground">
+              {t("menus.noWorkspaceItemsDesc") ??
+                "Add menu items and assign them to this workspace."}
+            </p>
+            {vm.canCreate && (
+              <Button onClick={() => vm.openCreateDialog()}>
+                <Plus className="mr-2 h-4 w-4" />
+                {t("menus.createMenuItem")}
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       ) : (
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t("menus.structure")}
+                {filterWorkspaceId !== null
+                  ? `${t("menus.workspaceItems") ?? "Workspace Items"} · ${filteredTree.length}`
+                  : t("menus.structure")}
               </CardTitle>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
@@ -204,14 +315,14 @@ export function MenusView() {
           </CardHeader>
           <CardContent ref={scrollContainerRef}>
             <div className="space-y-0.5">
-              {vm.menuTree
+              {filteredTree
                 .sort((a, b) => a.order - b.order)
                 .map((node, index, arr) => (
                   <MenuTreeItem
                     key={node.id}
                     node={node}
                     language={vm.language}
-                    canReorder={vm.canReorder}
+                    canReorder={vm.canReorder && filterWorkspaceId === null}
                     expandedNodes={vm.expandedNodes}
                     onToggleExpand={vm.toggleExpand}
                     draggedNode={vm.draggedNode}
@@ -238,8 +349,8 @@ export function MenusView() {
                 ))}
             </div>
 
-            {/* Root Drop Zone — visible only during drag */}
-            {showRootDropZone && (
+            {/* Root Drop Zone — visible only during drag, disabled when filter is active */}
+            {showRootDropZone && filterWorkspaceId === null && (
               <div
                 onDragOver={handleRootDragOver}
                 onDrop={handleRootDrop}
@@ -258,7 +369,19 @@ export function MenusView() {
         </Card>
       )}
 
-      {/* Dialogs — Admin CRUD only */}
+      {/* ── Workspace Overview Panel ────────────────────────────────────── */}
+      {workspaceGroups.length > 0 && (
+        <WorkspaceOverviewPanel
+          workspaceGroups={workspaceGroups}
+          menuTree={vm.menuTree}
+          language={language}
+          workspaceCounts={workspaceCounts}
+          onFilterSelect={(id) => setFilterWorkspaceId(id)}
+          t={t}
+        />
+      )}
+
+      {/* ── Dialogs — Admin CRUD only ────────────────────────────────── */}
       <MenuFormDialog
         open={vm.createDialogOpen}
         onOpenChange={vm.setCreateDialogOpen}
@@ -283,6 +406,149 @@ export function MenusView() {
         isPending={vm.isDeleting}
       />
     </div>
+  );
+}
+
+// ── Workspace Filter Tab ──────────────────────────────────────────────────────
+
+interface WorkspaceFilterTabProps {
+  label: string;
+  count: number;
+  isActive: boolean;
+  accentColor: string | null;
+  onClick: () => void;
+}
+
+function WorkspaceFilterTab({
+  label,
+  count,
+  isActive,
+  accentColor,
+  onClick,
+}: WorkspaceFilterTabProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium",
+        "border transition-all duration-150",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        isActive
+          ? "border-transparent text-white shadow-sm"
+          : "border-border bg-background text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground"
+      )}
+      style={
+        isActive && accentColor
+          ? { background: accentColor, borderColor: accentColor }
+          : isActive
+            ? undefined
+            : undefined
+      }
+    >
+      {!accentColor && isActive && (
+        <Layers className="h-3.5 w-3.5" />
+      )}
+      <span>{label}</span>
+      <span
+        className={cn(
+          "rounded-full px-1.5 py-0.5 text-xs leading-none",
+          isActive
+            ? "bg-white/20 text-white"
+            : "bg-muted text-muted-foreground"
+        )}
+      >
+        {count}
+      </span>
+    </button>
+  );
+}
+
+// ── Workspace Overview Panel ──────────────────────────────────────────────────
+
+interface WorkspaceOverviewPanelProps {
+  workspaceGroups: WorkspaceGroup[];
+  menuTree: MenuTreeNode[];
+  language: string;
+  workspaceCounts: (id: string) => number;
+  onFilterSelect: (id: string) => void;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}
+
+function WorkspaceOverviewPanel({
+  workspaceGroups,
+  menuTree,
+  language,
+  workspaceCounts,
+  onFilterSelect,
+  t,
+}: WorkspaceOverviewPanelProps) {
+  const unassignedCount = menuTree.filter((n) => !n.workspaceId).length;
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <Grid3X3 className="h-4 w-4" />
+          {t("menus.workspaceOverview") ?? "Workspace Overview"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {workspaceGroups
+            .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)
+            .map((ws) => {
+              const id = ws.workspaceId ?? ws.workspaceKey;
+              const count = workspaceCounts(id);
+              const name = ws.getLocalizedName(language);
+
+              return (
+                <button
+                  key={ws.workspaceKey}
+                  type="button"
+                  onClick={() => onFilterSelect(id)}
+                  className={cn(
+                    "group flex items-center justify-between rounded-lg border px-4 py-3",
+                    "bg-muted/30 text-left transition-all duration-150",
+                    "hover:border-muted-foreground/40 hover:bg-muted/60",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Workspace color indicator */}
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ background: ws.accentColor ?? "var(--muted-foreground)" }}
+                    />
+                    <span className="text-sm font-medium">{name}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Badge variant="secondary" className="text-xs">
+                      {count}
+                    </Badge>
+                    <ChevronRightIcon className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                  </div>
+                </button>
+              );
+            })}
+
+          {/* Unassigned items tile */}
+          {unassignedCount > 0 && (
+            <div className="flex items-center justify-between rounded-lg border border-dashed px-4 py-3 bg-muted/10">
+              <div className="flex items-center gap-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/40" />
+                <span className="text-sm text-muted-foreground">
+                  {t("menus.unassigned") ?? "Unassigned"}
+                </span>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {unassignedCount}
+              </Badge>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

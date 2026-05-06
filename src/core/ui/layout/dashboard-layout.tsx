@@ -250,6 +250,11 @@ const TerminalLayout = dynamic(
     import("@core/ui/layout/terminal/terminal-layout").then((m) => ({ default: m.TerminalLayout })),
   { ssr: false }
 );
+// Nexus — dual-rail workspace layout (always lazy, significant weight savings)
+const NexusLayout = dynamic(
+  () => import("@core/ui/layout/nexus/nexus-layout").then((m) => ({ default: m.NexusLayout })),
+  { ssr: false }
+);
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -312,6 +317,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // ── Compute layout content (rendered below the tenant banner) ──
   const renderLayout = () => {
+    // ── Nexus: dual-rail workspace layout (highest priority — checked first) ──
+    // NexusLayout manages its own full chrome (primary rail, secondary rail, topbar)
+    // so it bypasses the TenantContextBanner and GracePeriodBanner wrapper below.
+    if (layoutTemplate === "nexus") {
+      return <NexusLayout>{children}</NexusLayout>;
+    }
+
     // ── Layouts that manage their own sidebar ──
 
     // Classic Layout

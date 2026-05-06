@@ -23,7 +23,7 @@ export const defaultSettings: Settings = {
   backgroundMode: "preset",
   gradientStartColor: "",
   gradientEndColor: "",
-  layoutTemplate: "navigation",
+  layoutTemplate: "nexus",
   cardStyle: "default",
   animationLevel: "moderate",
   fontSize: "medium",

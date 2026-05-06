@@ -24,6 +24,8 @@ export const en = {
     icon: "Icon",
     resource: "Permission Resource",
     resourceHint: "Links this menu item to a permission resource for visibility control.",
+    workspace: "Workspace",
+    workspaceGlobal: "Global (all workspaces)",
     createTitle: "Create Menu Item",
     createDesc: "Add a new top-level menu item.",
     editTitle: "Edit Menu Item",
@@ -107,5 +109,12 @@ export const en = {
     noActiveOverridesDesc: "No Active Overrides Desc",
     noPermission: "No Permission",
     noCustomizePermission: "No Customize Permission",
+    // Workspace filter tabs
+    allWorkspaces: "All Workspaces",
+    workspaceItems: "Workspace Items",
+    workspaceOverview: "Workspace Overview",
+    noWorkspaceItems: "No Items in This Workspace",
+    noWorkspaceItemsDesc: "Add menu items and assign them to this workspace.",
+    unassigned: "Unassigned",
   },
 };

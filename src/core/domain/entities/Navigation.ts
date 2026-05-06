@@ -120,22 +120,85 @@ export class MenuItem {
 }
 
 // ============================================================================
+// WORKSPACE GROUPS (Nexus dual-rail layout)
+// ============================================================================
+
+/** Raw DTO shape for a single workspace group as returned by /menus/my (no WorkspaceKey param) */
+export interface WorkspaceGroupData {
+  workspaceId: string;
+  workspaceKey: string;
+  workspaceNameEn: string;
+  workspaceNameAr: string;
+  workspaceIcon: string;
+  workspaceSortOrder: number;
+  /** OKLCH hue (0–360). Null = use theme default accent. */
+  colorHue: number | null;
+  /** OKLCH chroma (0–0.4). Null = use theme default chroma. */
+  colorChroma: number | null;
+  menuItems: MenuItemData[];
+}
+
+/** Rich domain model for a workspace navigation group */
+export class WorkspaceGroup {
+  public readonly workspaceId: string;
+  public readonly workspaceKey: string;
+  public readonly workspaceNameEn: string;
+  public readonly workspaceNameAr: string;
+  public readonly workspaceIcon: string;
+  public readonly workspaceSortOrder: number;
+  public readonly colorHue: number | null;
+  public readonly colorChroma: number | null;
+  public readonly menuItems: MenuItem[];
+
+  constructor(data: WorkspaceGroupData) {
+    this.workspaceId = data.workspaceId;
+    this.workspaceKey = data.workspaceKey;
+    this.workspaceNameEn = data.workspaceNameEn;
+    this.workspaceNameAr = data.workspaceNameAr;
+    this.workspaceIcon = data.workspaceIcon;
+    this.workspaceSortOrder = data.workspaceSortOrder;
+    this.colorHue = data.colorHue ?? null;
+    this.colorChroma = data.colorChroma ?? null;
+    this.menuItems = data.menuItems.map((item) => new MenuItem(item));
+  }
+
+  getLocalizedName(language: string): string {
+    return language === "ar"
+      ? this.workspaceNameAr || this.workspaceNameEn || "Workspace"
+      : this.workspaceNameEn || this.workspaceNameAr || "Workspace";
+  }
+
+  /** Returns a CSS oklch() color string or null when no custom color is set */
+  get accentColor(): string | null {
+    if (this.colorHue === null) return null;
+    const chroma = this.colorChroma ?? 0.18;
+    return `oklch(0.6 ${chroma} ${this.colorHue})`;
+  }
+}
+
+// ============================================================================
 // NAVIGATION DATA (Full Response)
 // ============================================================================
 
 export interface NavigationDataData {
   menuItems: MenuItemData[];
   routes: string[];
+  /** Nexus dual-rail: workspace-grouped menu trees (present when WorkspaceKey is null on /menus/my) */
+  workspaceGroups?: WorkspaceGroupData[];
 }
 
 export class NavigationData {
   public readonly menuItems: MenuItem[];
   public readonly routes: string[];
+  /** Nexus dual-rail: all workspaces with their filtered menu trees. Empty for legacy layouts. */
+  public readonly workspaceGroups: WorkspaceGroup[];
 
   constructor(data: NavigationDataData) {
     this.menuItems = data.menuItems.map((item) => new MenuItem(item));
     this.routes = data.routes;
+    this.workspaceGroups = (data.workspaceGroups ?? []).map((g) => new WorkspaceGroup(g));
   }
+
 
   /**
    * Get root level menu items

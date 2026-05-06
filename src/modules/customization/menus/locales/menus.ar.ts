@@ -40,6 +40,8 @@ export const ar = {
     icon: "الأيقونة",
     resource: "مورد الصلاحية",
     resourceHint: "يربط عنصر القائمة هذا بمورد صلاحية للتحكم في الرؤية.",
+    workspace: "مساحة العمل",
+    workspaceGlobal: "عام (كل مساحات العمل)",
     createTitle: "إنشاء عنصر قائمة",
     createDesc: "إضافة عنصر قائمة رئيسي جديد.",
     editTitle: "تعديل عنصر القائمة",
@@ -106,5 +108,12 @@ export const ar = {
     overrideRemoved: "Customization removed.",
     noPermission: "[مفقود] No Permission",
     noCustomizePermission: "[مفقود] No Customize Permission",
+    // تبويبات تصفية الفضاء
+    allWorkspaces: "جميع الفضاءات",
+    workspaceItems: "عناصر الفضاء",
+    workspaceOverview: "نظرة عامة على الفضاءات",
+    noWorkspaceItems: "لا توجد عناصر في هذا الفضاء",
+    noWorkspaceItemsDesc: "أضف عناصر قائمة وخصّصها لهذا الفضاء.",
+    unassigned: "غير مُعيّن",
   },
 };

@@ -7,6 +7,7 @@ import { I18nProvider } from "@core/providers/i18n-provider";
 import { ServiceProvider } from "@core/providers/service-provider";
 import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
+import { WorkspaceProvider } from "@core/providers/workspace-provider";
 import { RouteGuard } from "@core/providers/route-guard";
 import { PermissionProvider } from "@core/providers/permission-provider";
 import { TenantContextProvider } from "@core/providers/tenant-context-provider";
@@ -80,9 +81,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                       <SignalRProvider>
                         <NotificationSignalRProvider>
                           <NavigationProvider>
-                            <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
-                              <RouteGuard>{children}</RouteGuard>
-                            </AuthRefreshProvider>
+                            <WorkspaceProvider>
+                              <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
+                                <RouteGuard>{children}</RouteGuard>
+                              </AuthRefreshProvider>
+                            </WorkspaceProvider>
                           </NavigationProvider>
                         </NotificationSignalRProvider>
                       </SignalRProvider>

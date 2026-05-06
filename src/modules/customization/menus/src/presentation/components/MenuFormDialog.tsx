@@ -3,6 +3,7 @@
  *
  * Bilingual create / edit form for menu items.
  * Uses GenericModal + GenericForm for consistent form handling and working selects.
+ * Supports workspace assignment for the Nexus dual-rail navigation system.
  */
 "use client";
 
@@ -16,6 +17,7 @@ import type {
   UpdateMenuItemRequest,
 } from "../../domain/entities/MenuItemRequests";
 import { PAGE_REGISTRY } from "@core/common/pageRegistry";
+import { useWorkspace } from "@core/providers/workspace-provider";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -53,6 +55,21 @@ export function MenuFormDialog({
   isPending,
 }: MenuFormDialogProps) {
   const { t, language } = useI18n();
+  const { workspaceGroups } = useWorkspace();
+
+  // ── Workspace options ─────────────────────────────────────────────
+  const workspaceOptions = useMemo(() => {
+    const opts = workspaceGroups.map((ws) => ({
+      value: ws.workspaceId,
+      label: language === "ar" ? ws.workspaceNameAr || ws.workspaceNameEn : ws.workspaceNameEn,
+    }));
+    // Prepend "Global (all workspaces)" option
+    opts.unshift({
+      value: "",
+      label: t("menus.workspaceGlobal") || "Global (all workspaces)",
+    });
+    return opts;
+  }, [workspaceGroups, language, t]);
 
   // ── Build page options from PAGE_REGISTRY ──────────────────────────
   const pageOptions = useMemo(() => {
@@ -83,6 +100,7 @@ export function MenuFormDialog({
         nameAr: editNode.nameAr,
         icon: editNode.icon ?? "",
         resource: editNode.resource ?? "",
+        workspaceId: editNode.workspaceId ?? "",
       };
     }
     return {
@@ -93,6 +111,7 @@ export function MenuFormDialog({
       nameAr: "",
       icon: "",
       resource: "",
+      workspaceId: "",
     };
   }, [mode, editNode]);
 
@@ -164,8 +183,20 @@ export function MenuFormDialog({
         type: "text",
         placeholder: "users",
       },
+      // ── Workspace assignment (only shown when workspaces exist) ──
+      ...(workspaceGroups.length > 0
+        ? [
+            {
+              name: "workspaceId",
+              label: t("menus.workspace") || "Workspace",
+              type: "select" as const,
+              options: workspaceOptions,
+              placeholder: t("menus.workspaceGlobal") || "Global (all workspaces)",
+            },
+          ]
+        : []),
     ],
-    [t, pageOptions]
+    [t, pageOptions, workspaceGroups, workspaceOptions]
   );
 
   // ── Dialog title / description ─────────────────────────────────────
@@ -190,6 +221,8 @@ export function MenuFormDialog({
         ? data.customHref?.trim() || undefined
         : data.href?.trim() || undefined;
 
+    const workspaceId = data.workspaceId?.trim() || undefined;
+
     if (mode === "create") {
       await onSubmit({
         slug: data.slug.trim(),
@@ -199,6 +232,7 @@ export function MenuFormDialog({
         icon: data.icon?.trim() || undefined,
         parentMenuItemId: parentNode?.id,
         resource: data.resource?.trim() || undefined,
+        workspaceId,
       } as CreateMenuItemRequest);
     } else if (editNode) {
       await onSubmit({
@@ -213,6 +247,7 @@ export function MenuFormDialog({
           parentMenuItemId: editNode.parentMenuItemId,
           resource: data.resource?.trim() || undefined,
           isActive: editNode.isActive,
+          workspaceId,
         },
       });
     }

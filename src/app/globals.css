@@ -15,6 +15,18 @@
   --font-size-base: 16px;
   --spacing-unit: 1rem;
 
+  /* ── Nexus workspace OKLCH accent tokens ──
+     WorkspaceProvider injects --workspace-hue & --workspace-chroma on <html>.
+     These derived tokens adapt per light/dark mode for consistent contrast. */
+  --workspace-hue: 262;
+  --workspace-chroma: 0.14;
+  --ws-accent: oklch(0.62 var(--workspace-chroma) var(--workspace-hue));
+  --ws-accent-light: oklch(0.92 calc(var(--workspace-chroma) * 0.3) var(--workspace-hue));
+  --ws-accent-muted: oklch(0.72 calc(var(--workspace-chroma) * 0.5) var(--workspace-hue));
+  --ws-accent-fg: oklch(0.98 0.005 var(--workspace-hue));
+  --ws-rail-bg: oklch(0.18 0.02 var(--workspace-hue));
+  --ws-rail-hover: oklch(0.24 0.03 var(--workspace-hue));
+
   /* Light theme colors - Default Purple */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
@@ -486,6 +498,14 @@ html {
   --chart-3: 43 96% 56%;
   --chart-4: 270 70% 65%;
   --chart-5: 0 72% 51%;
+
+  /* Nexus workspace OKLCH — dark mode overrides */
+  --ws-accent: oklch(0.72 var(--workspace-chroma) var(--workspace-hue));
+  --ws-accent-light: oklch(0.22 calc(var(--workspace-chroma) * 0.25) var(--workspace-hue));
+  --ws-accent-muted: oklch(0.55 calc(var(--workspace-chroma) * 0.4) var(--workspace-hue));
+  --ws-accent-fg: oklch(0.98 0.005 var(--workspace-hue));
+  --ws-rail-bg: oklch(0.12 0.015 var(--workspace-hue));
+  --ws-rail-hover: oklch(0.18 0.025 var(--workspace-hue));
 }
 
 /* ========================================

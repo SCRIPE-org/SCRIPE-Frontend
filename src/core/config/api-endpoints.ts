@@ -207,6 +207,16 @@ export const API_ENDPOINTS = {
     DELETE_OVERRIDE: (id: string) => `${V1}/Menus/overrides/${id}`,
   },
 
+  // ===== WORKSPACES (Nexus primary-rail navigation) =====
+  WORKSPACES: {
+    LIST: `${V1}/Workspaces`,
+    CREATE: `${V1}/Workspaces`,
+    UPDATE: (id: string) => `${V1}/Workspaces/${id}`,
+    DELETE: (id: string) => `${V1}/Workspaces/${id}`,
+    REORDER: `${V1}/Workspaces/reorder`,
+  },
+
+
   // ===== DASHBOARD =====
   DASHBOARD: {
     SUMMARY: `${V1}/Dashboard/summary`,
