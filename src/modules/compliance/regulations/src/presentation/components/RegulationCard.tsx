@@ -4,8 +4,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
-import { usePermission } from "@core/hooks/use-permission";
-import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import {
   Shield,
   ExternalLink,
@@ -17,12 +15,11 @@ import type { Regulation } from "../../domain/entities/Regulation";
 
 export interface RegulationCardProps {
   regulation: Regulation;
-  onEdit: (regulation: Regulation) => void;
+  onEdit?: (regulation: Regulation) => void;
 }
 
 export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
   const { t } = useI18n();
-  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
 
   return (
     <Card className={`flex flex-col overflow-hidden transition-all hover:shadow-md ${!regulation.isActive ? "opacity-60" : ""}`}>
@@ -41,7 +38,7 @@ export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
             <Badge variant={regulation.isActive ? "default" : "secondary"}>
               {regulation.isActive ? t("compliance.regulations.active") : t("compliance.regulations.inactive")}
             </Badge>
-            {canUpdate && (
+            {onEdit && (
               <Button
                 variant="ghost"
                 size="icon"

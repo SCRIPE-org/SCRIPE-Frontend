@@ -327,10 +327,12 @@ export function ReportsView() {
             </div>
             <p className="font-semibold">{t("compliance.noReports")}</p>
             <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noReportsDesc")}</p>
-            <Button className="mt-4" size="sm" onClick={() => setGenerateOpen(true)}>
-              <Plus className="me-2 h-4 w-4" />
-              {t("compliance.generateReport")}
-            </Button>
+            {canGenerate && (
+              <Button className="mt-4" size="sm" onClick={() => setGenerateOpen(true)}>
+                <Plus className="me-2 h-4 w-4" />
+                {t("compliance.generateReport")}
+              </Button>
+            )}
           </CardContent>
         </Card>
       ) : (

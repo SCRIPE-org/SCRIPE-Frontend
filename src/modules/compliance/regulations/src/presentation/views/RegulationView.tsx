@@ -12,6 +12,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm } from "@core/ui/forms/generic-form";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAppStore } from "@core/store/useAppStore";
 import {
   ChevronLeft,
   ChevronRight,
@@ -30,8 +31,11 @@ export function RegulationView() {
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
-  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
-  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
+  // Super Admin has no tenantCode — regulations are tenant-scoped so only tenant admins can write
+  const { tenantCode } = useAppStore();
+  const hasRegulationManage = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
+  const canCreate = hasRegulationManage && !!tenantCode;
+  const canUpdate = hasRegulationManage && !!tenantCode;
 
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
@@ -147,7 +151,11 @@ export function RegulationView() {
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {regulations.map((reg) => (
-            <RegulationCard key={reg.id} regulation={reg} onEdit={openEditModal} />
+            <RegulationCard
+              key={reg.id}
+              regulation={reg}
+              onEdit={canUpdate ? openEditModal : undefined}
+            />
           ))}
         </div>
       )}

@@ -30,6 +30,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/ui/use-toast";
 import { complianceContainer } from "@modules/compliance/di";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
+import { useAppStore } from "@/core/store/useAppStore";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +68,7 @@ export function DsrDetailView({ id }: { id: string }) {
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   const { dsrRepository } = complianceContainer;
   const queryClient = useQueryClient();
+  const { tenantCode } = useAppStore();
 
   const [isConfirmingErasure, setIsConfirmingErasure] = useState(false);
   const [erasureInput, setErasureInput] = useState("");
@@ -130,13 +132,15 @@ export function DsrDetailView({ id }: { id: string }) {
 
         {dsr && (
           <div className="flex items-center gap-2">
-            {dsr.canConfirmErasure && (
+            {/* Confirm Erasure — only for tenant admins (tenantCode required) */}
+            {dsr.canConfirmErasure && !!tenantCode && (
               <Button variant="destructive" onClick={() => setIsConfirmingErasure(true)}>
                 <ShieldAlert className="me-2 h-4 w-4" />
                 {t("compliance.confirmErasureBtn")}
               </Button>
             )}
-            {dsr.canDownloadExport && (
+            {/* Download Export — only for tenant admins (tenantCode required) */}
+            {dsr.canDownloadExport && !!tenantCode && (
               <Button onClick={() => downloadMutation.mutate()} disabled={downloadMutation.isPending}>
                 {downloadMutation.isPending ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Download className="me-2 h-4 w-4" />}
                 {t("compliance.downloadExportBtn")}
