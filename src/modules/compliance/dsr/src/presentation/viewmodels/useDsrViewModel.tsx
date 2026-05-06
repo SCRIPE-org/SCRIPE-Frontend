@@ -11,13 +11,14 @@ import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
+import type { DataSubjectRequest, DsrStatus, DsrRequestType } from "../../domain/entities/DataSubjectRequest";
 import type { SubmitDsrRequest, ReviewDsrRequest } from "../../domain/entities/DsrRequests";
 import { DsrSlaCell } from "../components/DsrSlaCell";
 import { DsrTypeCell } from "../components/DsrTypeCell";
 import { DsrDeadlineCell } from "../components/DsrDeadlineCell";
 import { Badge } from "@core/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DsrFilterBar } from "../components/DsrFilterBar";
 
 // ── Status badge variant mapping ──────────────────────────────────────────────
 
@@ -43,24 +44,32 @@ export function useDsrViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // ── Permissions ──────────────────────────────────────────────────────────────
+  // ── Permissions ───────────────────────────────────────────────────────────────
+  // Super Admin (no tenantCode): read-only — can see all DSRs across tenants but cannot
+  // submit, approve, or cancel any request. All write actions are tenant-scoped.
   const canCreate = !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DSR_CREATE);
   const canReview = !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DSR_REVIEW);
   const canCancel = !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DSR_CANCEL);
+
+  // ── Filter state ──────────────────────────────────────────────────────────────
+  const [statusFilter, setStatusFilter] = useState<DsrStatus | "">("");
+  const [typeFilter, setTypeFilter] = useState<DsrRequestType | "">("");
 
   // ── Modal state ───────────────────────────────────────────────────────────────
   const [submitOpen, setSubmitOpen] = useState(false);
   const [reviewDsr, setReviewDsr] = useState<DataSubjectRequest | null>(null);
 
-  // ── CRUD ViewModel (handles list / search / pagination / loading) ─────────────
+  // ── CRUD ViewModel ────────────────────────────────────────────────────────────
   const vm = useCrudViewModel<DataSubjectRequest, SubmitDsrRequest, never>(
-    ["compliance", "dsr", tenantCode],
+    ["compliance", "dsr", tenantCode, statusFilter, typeFilter],
     {
       getAll: async (params) => {
         const res = await dsrRepository.getAll({
           page: params.page,
           pageSize: params.pageSize,
           search: params.search,
+          status: statusFilter || undefined,
+          requestType: typeFilter || undefined,
         });
         return {
           items: res.items ?? [],
@@ -72,13 +81,16 @@ export function useDsrViewModel() {
           },
         };
       },
-      // DSR "create" is the "submit" flow — handled by submitMutation below
+      // "create" is intercepted by onCreateClick — this stub is never called
       create: async () => ({} as DataSubjectRequest),
     }
   );
 
-  // ── DSR-specific mutations ────────────────────────────────────────────────────
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["compliance", "dsr"] });
+  // ── Mutations ─────────────────────────────────────────────────────────────────
+  const invalidate = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: ["compliance", "dsr"] }),
+    [queryClient]
+  );
 
   const submitMutation = useMutation({
     mutationFn: (data: SubmitDsrRequest) => dsrRepository.submit(data),
@@ -108,7 +120,7 @@ export function useDsrViewModel() {
     onError: () => toastError({ title: t("common.error") }),
   });
 
-  // ── Action handlers ───────────────────────────────────────────────────────────
+  // ── Handlers ──────────────────────────────────────────────────────────────────
   const handleSubmit = useCallback(
     async (data: { requestType: string; regulationCode: string; subjectEmail: string; requesterNotes?: string }) => {
       await submitMutation.mutateAsync({
@@ -139,7 +151,19 @@ export function useDsrViewModel() {
   // ── GenericCrudView config ────────────────────────────────────────────────────
   const getConfigBase = useCallback(
     (): Partial<CrudConfig<DataSubjectRequest>> => ({
-      // Columns
+      // ── Filter bar above the table ──────────────────────────────────────────
+      customHeaderContent: (
+        <DsrFilterBar
+          statusFilter={statusFilter}
+          typeFilter={typeFilter}
+          onStatusChange={(v: DsrStatus | "") => setStatusFilter(v)}
+          onTypeChange={(v: DsrRequestType | "") => setTypeFilter(v)}
+          onClear={() => { setStatusFilter(""); setTypeFilter(""); }}
+          t={t}
+        />
+      ),
+
+      // ── Columns ─────────────────────────────────────────────────────────────
       columns: [
         {
           key: "subjectEmail",
@@ -147,7 +171,7 @@ export function useDsrViewModel() {
           sortable: true,
           render: (_val, dsr) => (
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/10 to-indigo-500/10 font-semibold text-sm text-blue-600 dark:text-blue-400">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/10 to-indigo-500/10 text-sm font-semibold text-blue-600 dark:text-blue-400">
                 {dsr.subjectEmail.charAt(0).toUpperCase()}
               </div>
               <div>
@@ -195,7 +219,7 @@ export function useDsrViewModel() {
         },
       ],
 
-      // Row actions
+      // ── Row actions ──────────────────────────────────────────────────────────
       getActions: () => [
         {
           label: t("compliance.viewDetail"),
@@ -229,10 +253,10 @@ export function useDsrViewModel() {
           : []),
       ],
 
-      // Intercept the built-in Add button to open our custom modal
+      // Intercept the built-in Add button → open SubmitDsrModal
       onCreateClick: () => setSubmitOpen(true),
 
-      // No generic form — DSR "create" uses a custom modal
+      // No generic form — DSR create uses custom modal
       createFields: undefined,
       editFields: undefined,
 
@@ -244,13 +268,16 @@ export function useDsrViewModel() {
 
       getItemDisplayName: (dsr) => dsr.subjectEmail,
     }),
-    [t, router, canCreate, canReview, canCancel, handleCancel, setSubmitOpen]
+    [t, router, statusFilter, typeFilter, canCreate, canReview, canCancel, handleCancel, setSubmitOpen]
   );
 
   return {
     vm,
     getConfigBase,
     t,
+    // Filters
+    statusFilter,
+    typeFilter,
     // Submit modal
     submitOpen,
     setSubmitOpen,

@@ -26,6 +26,8 @@ export const ar = {
     completed: "مكتمل",
     allTypes: "جميع الأنواع",
     total: "الإجمالي",
+    filterByStatus: "تصفية حسب الحالة",
+    filterByType: "تصفية حسب النوع",
 
     // DSR Types
     export: "تصدير البيانات",

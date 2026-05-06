@@ -26,6 +26,8 @@ export const en = {
     completed: "Completed",
     allTypes: "All Types",
     total: "total",
+    filterByStatus: "Filter by Status",
+    filterByType: "Filter by Type",
 
     // DSR Types
     export: "Data Export",
