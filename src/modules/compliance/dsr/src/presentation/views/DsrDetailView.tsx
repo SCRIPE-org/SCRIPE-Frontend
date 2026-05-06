@@ -12,20 +12,14 @@ import {
   Download,
   Loader2,
   AlertTriangle,
-  Calendar,
   RefreshCw,
   Info,
-  Server,
   User,
-  Activity,
-  History,
-  FileCheck
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/ui/use-toast";
 import { complianceContainer } from "@modules/compliance/di";
@@ -40,6 +34,12 @@ import {
   DialogTitle,
 } from "@core/ui/dialog";
 import { Input } from "@core/ui/input";
+
+import { DsrDetailMetadata } from "../components/DsrDetailMetadata";
+import { DsrDetailInfo } from "../components/DsrDetailInfo";
+import { DsrModuleExecutions } from "../components/DsrModuleExecutions";
+import { DsrDetailTimeline } from "../components/DsrDetailTimeline";
+import { DsrErasureState } from "../components/DsrErasureState";
 
 // ── Status meta ────────────────────────────────────────────────────────────────
 const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
@@ -132,14 +132,12 @@ export function DsrDetailView({ id }: { id: string }) {
 
         {dsr && (
           <div className="flex items-center gap-2">
-            {/* Confirm Erasure — only for tenant admins (tenantCode required) */}
             {dsr.canConfirmErasure && !!tenantCode && (
               <Button variant="destructive" onClick={() => setIsConfirmingErasure(true)}>
                 <ShieldAlert className="me-2 h-4 w-4" />
                 {t("compliance.confirmErasureBtn")}
               </Button>
             )}
-            {/* Download Export — only for tenant admins (tenantCode required) */}
             {dsr.canDownloadExport && !!tenantCode && (
               <Button onClick={() => downloadMutation.mutate()} disabled={downloadMutation.isPending}>
                 {downloadMutation.isPending ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Download className="me-2 h-4 w-4" />}
@@ -171,179 +169,22 @@ export function DsrDetailView({ id }: { id: string }) {
         </Card>
       ) : dsr && statusMeta && typeMeta ? (
         <>
-          {/* Top Metadata */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Card className="border-border/50">
-              <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.requestType")}</p>
-                <div className={`font-medium ${typeMeta.color}`}>
-                  {t(typeMeta.labelKey)}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-border/50">
-              <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.status")}</p>
-                <Badge variant="outline" className={`w-fit gap-1 ${statusMeta.cls} border-0 px-2`}>
-                  {statusMeta.icon}
-                  {t(statusMeta.labelKey)}
-                </Badge>
-              </CardContent>
-            </Card>
-            <Card className="border-border/50">
-              <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.deadline")}</p>
-                <p className="font-medium text-sm">
-                  {dsr.deadline.toLocaleDateString()}
-                  {dsr.daysRemaining > 0 && <span className="ms-2 text-xs text-muted-foreground">({dsr.daysRemaining} {t("compliance.remaining")})</span>}
-                  {dsr.isOverdue && <span className="ms-2 text-xs text-destructive">({t("compliance.overdue")})</span>}
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/50">
-              <CardContent className="p-4 flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.regulation")}</p>
-                <p className="font-mono text-sm font-medium">{dsr.regulationCode}</p>
-              </CardContent>
-            </Card>
-          </div>
+          <DsrDetailMetadata dsr={dsr} t={t} statusMeta={statusMeta} typeMeta={typeMeta} />
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Left Column: Details & Modules */}
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Info className="h-4 w-4" />
-                    {t("compliance.details")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium">{t("compliance.columns.subjectEmail")}</p>
-                    <p className="text-sm text-muted-foreground">{dsr.subjectEmail} ({dsr.subjectType})</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{t("compliance.submittedAt")}</p>
-                    <p className="text-sm text-muted-foreground">{new Date(dsr.submittedAt).toLocaleString()}</p>
-                  </div>
-                  {dsr.completedAt && (
-                    <div>
-                      <p className="text-sm font-medium">{t("compliance.completedAt")}</p>
-                      <p className="text-sm text-muted-foreground">{new Date(dsr.completedAt).toLocaleString()}</p>
-                    </div>
-                  )}
-                  {dsr.requesterNotes && (
-                    <div>
-                      <p className="text-sm font-medium">{t("compliance.requesterNotes")}</p>
-                      <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-1">{dsr.requesterNotes}</p>
-                    </div>
-                  )}
-                  {dsr.resolution && (
-                    <div>
-                      <p className="text-sm font-medium">{t("compliance.resolution")}</p>
-                      <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-1">{dsr.resolution}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {dsr.moduleExecutions && dsr.moduleExecutions.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Server className="h-4 w-4" />
-                      {t("compliance.moduleExecutions")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {dsr.moduleExecutions.map((exec, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 border rounded-md">
-                        <div className="flex items-center gap-3">
-                          {exec.isCompleted ? (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                          ) : exec.errorMessage ? (
-                            <AlertTriangle className="h-4 w-4 text-destructive" />
-                          ) : (
-                            <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
-                          )}
-                          <div>
-                            <p className="text-sm font-medium">{exec.moduleName}</p>
-                            {exec.errorMessage && <p className="text-xs text-destructive">{exec.errorMessage}</p>}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge variant="secondary">{exec.processedCount} {t("compliance.records")}</Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
+              <DsrDetailInfo dsr={dsr} t={t} />
+              <DsrModuleExecutions dsr={dsr} t={t} />
             </div>
 
-            {/* Right Column: Timeline */}
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <History className="h-4 w-4" />
-                    {t("compliance.statusHistory")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {dsr.statusHistory?.map((history, idx) => {
-                      const isLast = idx === dsr.statusHistory.length - 1;
-                      const fromMeta = STATUS_META[history.fromStatus] ?? STATUS_META.Pending;
-                      const toMeta = STATUS_META[history.toStatus] ?? STATUS_META.Pending;
-                      return (
-                        <div key={idx} className="relative pl-6">
-                          {!isLast && <div className="absolute left-[11px] top-6 h-full w-[2px] bg-border" />}
-                          <div className="absolute left-0 top-1.5 h-6 w-6 rounded-full border bg-background flex items-center justify-center">
-                            <div className="h-2 w-2 rounded-full bg-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium flex items-center gap-2">
-                              {t(fromMeta.labelKey)} <ArrowRight className="h-3 w-3" /> {t(toMeta.labelKey)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{new Date(history.occurredAt).toLocaleString()}</p>
-                            {history.notes && <p className="text-sm mt-1 text-muted-foreground">{history.notes}</p>}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {(!dsr.statusHistory || dsr.statusHistory.length === 0) && (
-                      <p className="text-sm text-muted-foreground">{t("compliance.noHistory")}</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Erasure State Info */}
-              {dsr.requestType === "Erasure" && (
-                <Card className="border-amber-500/20 bg-amber-500/5">
-                  <CardContent className="flex items-start gap-3 p-4">
-                    <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                    <div>
-                      <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
-                        {t("compliance.erasureStatusTitle")}
-                      </p>
-                      <p className="mt-0.5 text-xs text-amber-600/70 dark:text-amber-400/70">
-                        {dsr.erasureConfirmed 
-                          ? t("compliance.erasureScheduledDesc")
-                          : t("compliance.erasurePendingDesc")}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+              <DsrDetailTimeline dsr={dsr} t={t} statusMetaMap={STATUS_META} />
+              <DsrErasureState dsr={dsr} t={t} />
             </div>
           </div>
         </>
       ) : null}
 
-      {/* Erasure Confirmation Dialog */}
       <Dialog open={isConfirmingErasure} onOpenChange={setIsConfirmingErasure}>
         <DialogContent>
           <DialogHeader>
