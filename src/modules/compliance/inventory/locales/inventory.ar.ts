@@ -20,6 +20,16 @@ export const ar = {
       TechnicalData: "البيانات الفنية",
       OrganisationData: "البيانات المؤسسية",
       ContentData: "بيانات المحتوى",
+      // Database value aliases
+      Contact: "بيانات الاتصال",
+      Profile: "بيانات الملف الشخصي",
+      Identity: "بيانات الهوية",
+      Financial: "البيانات المالية",
+      Security: "بيانات الأمان",
+      Organisation: "البيانات المؤسسية",
+      Content: "بيانات المحتوى",
+      Behavioral: "البيانات السلوكية",
+      Technical: "البيانات الفنية",
     },
     // New keys for GenericCrudView and modals
     addInventory: "إضافة جرد",
@@ -41,7 +51,14 @@ export const ar = {
       LegalObligation: "التزام قانوني",
       VitalInterests: "مصالح حيوية",
       PublicTask: "مهمة عامة",
-      LegitimateInterest: "مصلحة مشروعة"
+      LegitimateInterest: "مصلحة مشروعة",
+      // Database value aliases (lowercase/snake_case)
+      consent: "موافقة",
+      contract: "عقد",
+      legal_obligation: "التزام قانوني",
+      vital_interests: "مصالح حيوية",
+      public_task: "مهمة عامة",
+      legitimate_interest: "مصلحة مشروعة",
     },
     // Empty states
     noInventory: "لا توجد عناصر في جرد البيانات",

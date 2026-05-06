@@ -20,6 +20,16 @@ export const en = {
       TechnicalData: "Technical Data",
       OrganisationData: "Organisation Data",
       ContentData: "Content Data",
+      // Database value aliases
+      Contact: "Contact Data",
+      Profile: "Profile Data",
+      Identity: "Identity Data",
+      Financial: "Financial Data",
+      Security: "Security Data",
+      Organisation: "Organisation Data",
+      Content: "Content Data",
+      Behavioral: "Behavioral Data",
+      Technical: "Technical Data",
     },
     // New keys for GenericCrudView and modals
     addInventory: "Add Inventory",
@@ -41,7 +51,14 @@ export const en = {
       LegalObligation: "Legal Obligation",
       VitalInterests: "Vital Interests",
       PublicTask: "Public Task",
-      LegitimateInterest: "Legitimate Interest"
+      LegitimateInterest: "Legitimate Interest",
+      // Database value aliases (lowercase/snake_case)
+      consent: "Consent",
+      contract: "Contract",
+      legal_obligation: "Legal Obligation",
+      vital_interests: "Vital Interests",
+      public_task: "Public Task",
+      legitimate_interest: "Legitimate Interest",
     },
     // Empty states
     noInventory: "No data inventory items",

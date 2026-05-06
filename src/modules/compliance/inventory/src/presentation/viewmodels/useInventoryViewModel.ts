@@ -91,12 +91,12 @@ export function useInventoryViewModel() {
           placeholder: t("compliance.placeholders.selectCategory"),
           required: true,
           options: [
-            { value: "Contact", label: t("compliance.categories.ContactData") },
-            { value: "Profile", label: t("compliance.categories.IdentityData") },
-            { value: "Financial", label: t("compliance.categories.FinancialData") },
-            { value: "Security", label: t("compliance.categories.TechnicalData") },
-            { value: "Organisation", label: t("compliance.categories.OrganisationData") },
-            { value: "Content", label: t("compliance.categories.ContentData") },
+            { value: "Contact", label: t("compliance.categories.Contact") },
+            { value: "Profile", label: t("compliance.categories.Profile") },
+            { value: "Financial", label: t("compliance.categories.Financial") },
+            { value: "Security", label: t("compliance.categories.Security") },
+            { value: "Organisation", label: t("compliance.categories.Organisation") },
+            { value: "Content", label: t("compliance.categories.Content") },
           ],
         },
         {
