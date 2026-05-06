@@ -15,6 +15,7 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAppStore } from "@/core/store/useAppStore";
 
 const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
   PersonalData: {
@@ -50,7 +51,9 @@ export function PolicyCard({
 }: PolicyCardProps) {
   const { t } = useI18n();
   const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
-  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_MANAGE || "compliance_retention.manage");
+  const { tenantCode } = useAppStore();
+  const hasPermission = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_MANAGE);
+  const canUpdate = hasPermission && !!tenantCode;
 
   return (
     <Card className={`border transition-all hover:shadow-md ${!policy.isActive ? "opacity-60" : ""} ${meta.cls.split(" ").slice(0, 2).join(" ")}`}>

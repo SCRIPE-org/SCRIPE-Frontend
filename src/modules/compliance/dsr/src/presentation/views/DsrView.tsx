@@ -23,6 +23,9 @@ import { useDsrViewModel } from "../viewmodels/useDsrViewModel";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAppStore } from "@/core/store/useAppStore";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -314,6 +317,11 @@ export function DsrView() {
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
+  const { tenantCode } = useAppStore();
+  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_DSR_CREATE) && !!tenantCode;
+  const canReview = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_DSR_REVIEW) && !!tenantCode;
+  const canCancel = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_DSR_CANCEL) && !!tenantCode;
+
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [page, setPage] = useState(1);
@@ -389,10 +397,12 @@ export function DsrView() {
             <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             {t("common.refresh")}
           </Button>
-          <Button id="compliance-dsr-new" size="sm" onClick={() => setSubmitOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t("compliance.submitDsr")}
-          </Button>
+          {canCreate && (
+            <Button id="compliance-dsr-new" size="sm" onClick={() => setSubmitOpen(true)}>
+              <Plus className="me-2 h-4 w-4" />
+              {t("compliance.submitDsr")}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -537,7 +547,7 @@ export function DsrView() {
                             <Eye className="me-2 h-4 w-4" />
                             {t("compliance.viewDetail")}
                           </DropdownMenuItem>
-                          {(dsr.status === "Pending" || dsr.status === "InReview") && (
+                          {canReview && (dsr.status === "Pending" || dsr.status === "InReview") && (
                             <>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem onClick={() => setReviewDsr(dsr)}>
@@ -546,7 +556,7 @@ export function DsrView() {
                               </DropdownMenuItem>
                             </>
                           )}
-                          {(dsr.status === "Pending" || dsr.status === "Approved") && (
+                          {canCancel && (dsr.status === "Pending" || dsr.status === "Approved") && (
                             <>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem

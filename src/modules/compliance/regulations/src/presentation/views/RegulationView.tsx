@@ -30,8 +30,8 @@ export function RegulationView() {
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
-  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE || "compliance_regulations.manage");
-  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE || "compliance_regulations.manage");
+  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
+  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
 
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);

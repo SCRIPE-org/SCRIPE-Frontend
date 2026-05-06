@@ -17,7 +17,7 @@ export function InventoryView() {
   const config: CrudConfig<InventoryItem> = useMemo(
     () => ({
       titleKey: "compliance.dataInventory",
-      subtitleKey: "compliance.dataInventory",
+      subtitleKey: "compliance.dataInventoryDesc",
       resource: "compliance",
       columns: [
         {

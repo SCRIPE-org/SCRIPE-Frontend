@@ -29,6 +29,9 @@ import { DatePicker } from "@core/ui/date-picker";
 import { toast } from "@core/ui/use-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAppStore } from "@/core/store/useAppStore";
 
 // ── Report type metadata ───────────────────────────────────────────────────────
 
@@ -236,6 +239,8 @@ export function ReportsView() {
   const { t, direction } = useI18n();
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
+  const { tenantCode } = useAppStore();
+  const canGenerate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_GENERATE) && !!tenantCode;
 
   const [generateOpen, setGenerateOpen] = useState(false);
   const { reports, totalCount, isLoading, isError, refetch, generateReport, isGenerating } = useReportViewModel();
@@ -287,10 +292,12 @@ export function ReportsView() {
             <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             {t("common.refresh")}
           </Button>
-          <Button id="compliance-reports-generate" size="sm" onClick={() => setGenerateOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t("compliance.generateReport")}
-          </Button>
+          {canGenerate && (
+            <Button id="compliance-reports-generate" size="sm" onClick={() => setGenerateOpen(true)}>
+              <Plus className="me-2 h-4 w-4" />
+              {t("compliance.generateReport")}
+            </Button>
+          )}
         </div>
       </div>
 

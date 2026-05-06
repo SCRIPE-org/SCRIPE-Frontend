@@ -4,6 +4,7 @@
 export const ar = {
   compliance: {
     dataInventory: "جرد البيانات",
+    dataInventoryDesc: "إدارة وتتبع حقول البيانات عبر جميع وحدات المنصة.",
     module: "الوحدة",
     entity: "الكيان",
     field: "الحقل",

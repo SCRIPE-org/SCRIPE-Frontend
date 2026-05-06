@@ -9,13 +9,17 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import type { InventoryItem } from "../../domain/entities/InventoryItem";
 import type { CreateDataInventoryRequest, UpdateDataInventoryRequest } from "../../data/models/InventoryModels";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { usePermissions } from "@core/hooks/use-permissions";
+import { useAppStore } from "@core/store/useAppStore";
 
 export function useInventoryViewModel() {
   const { inventoryRepository } = complianceContainer;
-  const { t } = useI18n();
+    const { t } = useI18n();
   const { success } = useEnhancedToast();
+  const { hasPermission } = usePermissions();
+  const tenantCode = useAppStore((state) => state.tenantCode);
 
-  const queryKey = ["compliance", "inventory"];
+  const queryKey = ["compliance", "inventory", tenantCode];
 
   const vm = useCrudViewModel<InventoryItem, CreateDataInventoryRequest, UpdateDataInventoryRequest>(queryKey, {
     getAll: async (params) => {
@@ -145,15 +149,27 @@ export function useInventoryViewModel() {
         }),
         getItemDisplayName: (item: InventoryItem) => item.displayName,
         enableBulkActions: true,
+        getActions: (vm, t, handleDelete) => [
+          {
+            label: t("common.edit"),
+            onClick: (item) => vm.openEditModal(item),
+            show: () => !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_MANAGE),
+          },
+          {
+            label: t("common.delete"),
+            variant: "destructive",
+            onClick: handleDelete,
+            show: () => !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_MANAGE),
+          }
+        ],
         permissions: {
-          // Fallbacks for types if SYSTEM_PERMISSIONS doesn't have COMPLIANCE specifically
-          canCreate: "compliance.create" as any,
-          canUpdate: "compliance.update" as any,
-          canDelete: "compliance.delete" as any,
+          canCreate: !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_MANAGE),
+          canUpdate: !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_MANAGE),
+          canDelete: !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_MANAGE),
         },
       };
     },
-    [t]
+    [t, tenantCode, hasPermission]
   );
 
   return {

@@ -4,6 +4,7 @@
 export const en = {
   compliance: {
     dataInventory: "Data Inventory",
+    dataInventoryDesc: "Manage and track data fields across all platform modules.",
     module: "Module",
     entity: "Entity",
     field: "Field",

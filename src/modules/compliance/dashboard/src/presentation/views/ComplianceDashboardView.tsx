@@ -19,6 +19,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
+import { usePermissions } from "@core/hooks/use-permissions";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
 
@@ -90,6 +92,7 @@ export function ComplianceDashboardView() {
   const { t } = useI18n();
   const router = useRouter();
   const { dashboard, isLoading, refetch } = useDashboardViewModel();
+  const { hasPermission } = usePermissions();
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -177,13 +180,15 @@ export function ComplianceDashboardView() {
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            { label: t("compliance.manageDsr"), href: "/compliance/dsr" },
-            { label: t("compliance.manageConsent"), href: "/compliance/consent" },
-            { label: t("compliance.manageRetention"), href: "/compliance/retention" },
-            { label: t("compliance.viewInventory"), href: "/compliance/inventory" },
-            { label: t("compliance.regulations"), href: "/compliance/regulations" },
-            { label: t("compliance.viewReports"), href: "/compliance/reports" },
-          ].map((action) => (
+            { label: t("compliance.manageDsr"), href: "/compliance/dsr", permission: SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW },
+            { label: t("compliance.manageConsent"), href: "/compliance/consent", permission: SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW },
+            { label: t("compliance.manageRetention"), href: "/compliance/retention", permission: SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW },
+            { label: t("compliance.viewInventory"), href: "/compliance/inventory", permission: SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW },
+            { label: t("compliance.regulations"), href: "/compliance/regulations", permission: SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW },
+            { label: t("compliance.viewReports"), href: "/compliance/reports", permission: SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW },
+          ]
+            .filter((action) => hasPermission(action.permission))
+            .map((action) => (
             <Button
               key={action.href}
               variant="outline"

@@ -23,6 +23,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm } from "@core/ui/forms/generic-form";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAppStore } from "@/core/store/useAppStore";
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
@@ -31,7 +32,9 @@ export function RetentionView() {
   const { t, direction } = useI18n();
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
-  const canCreate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_MANAGE || "compliance_retention.manage");
+  const { tenantCode } = useAppStore();
+  const hasPermission = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_MANAGE);
+  const canCreate = hasPermission && !!tenantCode;
 
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedPolicy, setSelectedPolicy] = useState<RetentionPolicy | null>(null);

@@ -26,6 +26,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAppStore } from "@/core/store/useAppStore";
 
 // ── Consent Card ──────────────────────────────────────────────────────────────
 
@@ -34,11 +35,13 @@ function ConsentCard({
   onRecord,
   onWithdraw,
   isActing,
+  canManage,
 }: {
   consent: ConsentStatus;
   onRecord: (purposeId: string, action: "Granted" | "Withdrawn") => Promise<void>;
   onWithdraw: (purposeId: string) => void;
   isActing: boolean;
+  canManage: boolean;
 }) {
   const { t } = useI18n();
 
@@ -90,27 +93,29 @@ function ConsentCard({
             >
               {consent.isGranted ? t("compliance.granted") : t("compliance.withdrawn")}
             </Badge>
-            {consent.isGranted ? (
-              <Button
-                id={`consent-withdraw-${consent.purposeId}`}
-                variant="outline"
-                size="sm"
-                className="h-7 border-destructive/40 text-xs text-destructive hover:border-destructive hover:bg-destructive/10"
-                disabled={isActing}
-                onClick={() => onWithdraw(consent.purposeId)}
-              >
-                {t("compliance.withdrawn")}
-              </Button>
-            ) : (
-              <Button
-                id={`consent-grant-${consent.purposeId}`}
-                size="sm"
-                className="h-7 bg-emerald-600 text-xs hover:bg-emerald-700"
-                disabled={isActing}
-                onClick={() => onRecord(consent.purposeId, "Granted")}
-              >
-                {t("compliance.recordConsent")}
-              </Button>
+            {canManage && (
+              consent.isGranted ? (
+                <Button
+                  id={`consent-withdraw-${consent.purposeId}`}
+                  variant="outline"
+                  size="sm"
+                  className="h-7 border-destructive/40 text-xs text-destructive hover:border-destructive hover:bg-destructive/10"
+                  disabled={isActing}
+                  onClick={() => onWithdraw(consent.purposeId)}
+                >
+                  {t("compliance.withdrawn")}
+                </Button>
+              ) : (
+                <Button
+                  id={`consent-grant-${consent.purposeId}`}
+                  size="sm"
+                  className="h-7 bg-emerald-600 text-xs hover:bg-emerald-700"
+                  disabled={isActing}
+                  onClick={() => onRecord(consent.purposeId, "Granted")}
+                >
+                  {t("compliance.recordConsent")}
+                </Button>
+              )
             )}
           </div>
         </div>
@@ -169,6 +174,8 @@ export function ConsentView() {
 
   const [withdrawTarget, setWithdrawTarget] = useState<string | null>(null);
   const canViewAnalytics = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW_ANALYTICS);
+  const { tenantCode } = useAppStore();
+  const canManage = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_MANAGE) && !!tenantCode;
 
   const {
     consents,
@@ -329,6 +336,7 @@ export function ConsentView() {
                     onRecord={handleRecord}
                     onWithdraw={setWithdrawTarget}
                     isActing={isRecording || isWithdrawing}
+                    canManage={canManage}
                   />
                 </div>
               ))}

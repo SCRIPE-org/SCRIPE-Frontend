@@ -22,7 +22,7 @@ export interface RegulationCardProps {
 
 export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
   const { t } = useI18n();
-  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE || "compliance_regulations.manage");
+  const canUpdate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
 
   return (
     <Card className={`flex flex-col overflow-hidden transition-all hover:shadow-md ${!regulation.isActive ? "opacity-60" : ""}`}>
