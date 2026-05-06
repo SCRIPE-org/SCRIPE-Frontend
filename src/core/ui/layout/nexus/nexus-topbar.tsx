@@ -26,7 +26,7 @@ interface NexusTopbarProps {
 
 export function NexusTopbar({ onMobileMenuOpen }: NexusTopbarProps) {
   const { direction, language } = useI18n();
-  const { accentColor, activeWorkspace } = useWorkspace();
+  const { accentColor, activeWorkspace, isModuleMode } = useWorkspace();
   const pathname = usePathname();
   const user = useAppStore((s) => s.user);
 
@@ -177,7 +177,7 @@ export function NexusTopbar({ onMobileMenuOpen }: NexusTopbarProps) {
           className="h-[28px] w-[28px] text-[#2F3C55] hover:text-[#8A9BBF] hover:bg-white/5 rounded-[7px]"
         />
 
-        {/* Context pill — tenant name / workspace color */}
+        {/* Context pill — changes styling based on workspace mode */}
         <div
           style={{
             display: "flex",
@@ -185,14 +185,16 @@ export function NexusTopbar({ onMobileMenuOpen }: NexusTopbarProps) {
             gap: 5,
             padding: "3px 9px",
             borderRadius: 20,
-            background: "#1E1A50",
-            border: "1px solid #332D80",
+            background: isModuleMode
+              ? `${resolvedAccent}22`
+              : "#1E1A50",
+            border: `1px solid ${isModuleMode ? `${resolvedAccent}55` : "#332D80"}`,
             fontSize: 11,
             fontWeight: 500,
-            color: "#AFA9EC",
+            color: isModuleMode ? resolvedAccent : "#AFA9EC",
             cursor: "default",
             flexShrink: 0,
-            transition: "background 300ms, border-color 300ms",
+            transition: "background 300ms, border-color 300ms, color 300ms",
           }}
         >
           <div

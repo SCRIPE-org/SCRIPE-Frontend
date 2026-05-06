@@ -3,16 +3,19 @@
 /**
  * NexusLayout
  *
- * Dual-rail layout matching the Nexus ERP reference design exactly:
+ * Dual-rail layout:
  *
  * ┌──────┬─────────┬──────────────────────────────────────────┐
  * │  56  │  210px  │  Topbar (46px)                           │
- * │  PRI │  SECOND │  ────────────────────────────────────── │
- * │  MA  │  ARY    │  Content (#080B15, padding 16px)         │
- * │  RY  │  RAIL   │                                          │
- * │  RAI │         │                                          │
+ * │  PRI │  PANEL  │  ────────────────────────────────────── │
+ * │  MA  │  (sec-  │  Content (theme bg, padding 16px)        │
+ * │  RY  │  ondary │                                          │
+ * │  RAI │  rail)  │                                          │
  * │  L   │         │                                          │
  * └──────┴─────────┴──────────────────────────────────────────┘
+ *
+ * All background colours are driven by CSS variables (--background, --sidebar)
+ * so the layout responds correctly to the next-themes light/dark toggle.
  */
 
 import React, { useState, useCallback } from "react";
@@ -39,14 +42,14 @@ export function NexusLayout({ children }: NexusLayoutProps) {
         height: "100vh",
         width: "100vw",
         overflow: "hidden",
-        background: "#080B15",
+        background: "hsl(var(--background))",
         position: "relative",
       }}
     >
       {/* Workspace transition overlay */}
       <NexusTransitionOverlay />
 
-      {/* Primary rail — 56px */}
+      {/* Primary rail — 56px icon buttons for root menu groups */}
       <NexusPrimaryRail />
 
       {/* Secondary rail + main area */}
@@ -54,7 +57,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
         {/* Tenant context banner */}
         <TenantContextBanner />
 
-        {/* Secondary rail + page */}
+        {/* Secondary rail (panel) + page */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
           <NexusSecondaryRail
             mobileOpen={mobileMenuOpen}
@@ -70,9 +73,9 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 flex: 1,
                 overflowY: "auto",
                 padding: 16,
-                background: "#080B15",
+                background: "hsl(var(--background))",
                 scrollbarWidth: "thin",
-                scrollbarColor: "#263050 transparent",
+                scrollbarColor: "hsl(var(--border)) transparent",
               }}
             >
               {children}

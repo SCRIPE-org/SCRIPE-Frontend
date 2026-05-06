@@ -1,14 +1,16 @@
 "use client";
 
 /**
- * NexusSecondaryRail
+ * NexusSecondaryRail — 210px panel sidebar
  *
- * Matches the Nexus ERP reference design exactly:
- *  - 210px dark (#0C0F1C) sidebar
- *  - Header: tiny context label + bold section title
- *  - Nav items: dot + label, active = subtle white bg
- *  - Group labels (uppercase, very faint)
- *  - Scrollable nav area
+ * Shows the CHILDREN of the selected root menu item from the primary rail.
+ *
+ * - Header: icon + name of the selected root item (context label + workspace name)
+ * - Body: nav rows for the root item's children
+ *   - Groups: items with no href but with children → group label + indented children
+ *   - Leaf items: items with href → clickable nav link
+ *
+ * Theme-aware: adapts to light/dark using useTheme.
  */
 
 import React, { useState, useCallback } from "react";
@@ -16,7 +18,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { useTheme } from "next-themes";
 import type { MenuItem } from "@core/domain/entities/Navigation";
 
 interface NexusSecondaryRailProps {
@@ -24,18 +26,27 @@ interface NexusSecondaryRailProps {
   onMobileClose?: () => void;
 }
 
-function isPathActive(href: string | null, pathname: string): boolean {
-  if (!href) return false;
-  if (href === "/" || href === "") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+// ── Theme palette helper ───────────────────────────────────────────────────────
+function usePalette(isDark: boolean, accentColor: string) {
+  return {
+    railBg: isDark ? "#0C0F1C" : "#f4f6fb",
+    railBorder: isDark ? "1px solid #111626" : "1px solid #e4e8f0",
+    labelColor: isDark ? "#2F3C55" : "#a0aec0",
+    headerLabel: isDark ? "#AFA9EC" : "#6258c4",
+    headerTitle: isDark ? "#D0DCEF" : "#1e2030",
+    dotDefault: isDark ? "#2F3C55" : "#cdd5e0",
+    dotActive: accentColor,
+    itemBgActive: isDark ? "rgba(255,255,255,0.05)" : "rgba(99,89,196,0.08)",
+    itemBgHover: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
+    textActive: isDark ? "#D0DCEF" : "#2d3361",
+    textMuted: isDark ? "#8A9BBF" : "#8a9cc0",
+    scrollbarTrack: isDark ? "#263050" : "#d1d8e8",
+    chevronColor: isDark ? "#2F3C55" : "#cdd5e0",
+    groupLabelColor: isDark ? "#2F3C55" : "#a0aec0",
+  };
 }
 
-function hasActiveDescendant(item: MenuItem, pathname: string): boolean {
-  if (isPathActive(item.href, pathname)) return true;
-  return item.children.some((child) => hasActiveDescendant(child, pathname));
-}
-
-// ── Nav Item ─────────────────────────────────────────────────────────────────
+// ── NavItem ───────────────────────────────────────────────────────────────────
 interface NavItemProps {
   item: MenuItem;
   depth?: number;
@@ -43,7 +54,7 @@ interface NavItemProps {
   expandedIds: string[];
   onToggle: (id: string) => void;
   onNavigate: () => void;
-  accentColor: string;
+  palette: ReturnType<typeof usePalette>;
   language: string;
 }
 
@@ -54,34 +65,42 @@ function NavItem({
   expandedIds,
   onToggle,
   onNavigate,
-  accentColor,
+  palette,
   language,
 }: NavItemProps) {
-  const hasChildren = item.children.length > 0;
-  const isActive = isPathActive(item.href, pathname);
-  const hasActiveChild = hasChildren && hasActiveDescendant(item, pathname);
-  const isExpanded = expandedIds.includes(item.id);
-  const label = item.getLocalizedName(language);
-
   const [hovered, setHovered] = useState(false);
+  const label =
+    language === "ar"
+      ? item.nameAr || item.nameEn
+      : item.nameEn || item.nameAr;
+
+  const isActive =
+    !!item.href &&
+    (pathname === item.href || pathname.startsWith(item.href + "/"));
+
+  const hasChildren = item.children.length > 0;
+  const isExpanded = expandedIds.includes(item.id);
+  const hasActiveChild = item.children.some(
+    (c) => !!c.href && (pathname === c.href || pathname.startsWith(c.href + "/"))
+  );
+
+  const indent = depth * 10;
 
   const itemStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     gap: 8,
-    padding: depth > 0 ? "6px 8px 6px 20px" : "6px 8px",
-    borderRadius: 7,
+    padding: `5px 8px 5px ${10 + indent}px`,
+    borderRadius: 6,
     cursor: "pointer",
-    transition: "background 130ms ease",
-    marginBottom: 1,
-    whiteSpace: "nowrap",
     textDecoration: "none",
-    background:
-      isActive
-        ? "rgba(255,255,255,0.07)"
-        : hovered
-        ? "rgba(255,255,255,0.04)"
-        : "transparent",
+    transition: "background 120ms",
+    background: isActive
+      ? palette.itemBgActive
+      : hovered
+      ? palette.itemBgHover
+      : "transparent",
+    userSelect: "none",
   };
 
   const dotStyle: React.CSSProperties = {
@@ -89,14 +108,13 @@ function NavItem({
     height: 4,
     borderRadius: "50%",
     flexShrink: 0,
-    background: isActive ? accentColor : "#2F3C55",
+    background: isActive ? palette.dotActive : palette.dotDefault,
     transition: "background 130ms",
   };
 
   const labelStyle: React.CSSProperties = {
     fontSize: 12,
-    color:
-      isActive || hovered ? "#D0DCEF" : "#8A9BBF",
+    color: isActive || hovered ? palette.textActive : palette.textMuted,
     flex: 1,
     transition: "color 130ms",
     fontWeight: isActive ? 500 : 400,
@@ -116,7 +134,7 @@ function NavItem({
           <span
             style={{
               fontSize: 10,
-              color: "#2F3C55",
+              color: palette.chevronColor,
               transition: "transform 150ms",
               transform: isExpanded || hasActiveChild ? "rotate(90deg)" : "none",
             }}
@@ -125,7 +143,7 @@ function NavItem({
           </span>
         </div>
         {(isExpanded || hasActiveChild) && (
-          <div style={{ paddingLeft: 12 }}>
+          <div>
             {item.children.map((child) => (
               <NavItem
                 key={child.id}
@@ -135,7 +153,7 @@ function NavItem({
                 expandedIds={expandedIds}
                 onToggle={onToggle}
                 onNavigate={onNavigate}
-                accentColor={accentColor}
+                palette={palette}
                 language={language}
               />
             ))}
@@ -161,13 +179,13 @@ function NavItem({
 }
 
 // ── Group Label ───────────────────────────────────────────────────────────────
-function GroupLabel({ label }: { label: string }) {
+function GroupLabel({ label, palette }: { label: string; palette: ReturnType<typeof usePalette> }) {
   return (
     <div
       style={{
         fontSize: 9,
         fontWeight: 600,
-        color: "#2F3C55",
+        color: palette.groupLabelColor,
         textTransform: "uppercase",
         letterSpacing: "0.7px",
         padding: "10px 8px 4px",
@@ -179,17 +197,17 @@ function GroupLabel({ label }: { label: string }) {
   );
 }
 
-// ── Secondary Rail Content ────────────────────────────────────────────────────
+// ── Rail Content ──────────────────────────────────────────────────────────────
 function RailContent({
   menuItems,
   pathname,
-  accentColor,
+  palette,
   language,
   onNavigate,
 }: {
   menuItems: MenuItem[];
   pathname: string;
-  accentColor: string;
+  palette: ReturnType<typeof usePalette>;
   language: string;
   onNavigate: () => void;
 }) {
@@ -209,16 +227,19 @@ function RailContent({
         overflowY: "auto",
         padding: 8,
         scrollbarWidth: "thin",
-        scrollbarColor: "#263050 transparent",
+        scrollbarColor: `${palette.scrollbarTrack} transparent`,
       }}
     >
-      {menuItems.map((item, idx) => {
-        // If item has no href and children, treat it as a group header
+      {menuItems.map((item) => {
+        // Item has no href but has children → treat as group header
         const isGroup = item.children.length > 0 && !item.href;
         if (isGroup) {
           return (
             <div key={item.id}>
-              <GroupLabel label={item.getLocalizedName(language)} />
+              <GroupLabel
+                label={language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr}
+                palette={palette}
+              />
               {item.children.map((child) => (
                 <NavItem
                   key={child.id}
@@ -228,7 +249,7 @@ function RailContent({
                   expandedIds={expandedIds}
                   onToggle={handleToggle}
                   onNavigate={onNavigate}
-                  accentColor={accentColor}
+                  palette={palette}
                   language={language}
                 />
               ))}
@@ -244,7 +265,7 @@ function RailContent({
             expandedIds={expandedIds}
             onToggle={handleToggle}
             onNavigate={onNavigate}
-            accentColor={accentColor}
+            palette={palette}
             language={language}
           />
         );
@@ -253,78 +274,114 @@ function RailContent({
   );
 }
 
+// ── Rail Header ───────────────────────────────────────────────────────────────
+function RailHeader({
+  contextLabel,
+  title,
+  palette,
+}: {
+  contextLabel: string;
+  title: string;
+  palette: ReturnType<typeof usePalette>;
+}) {
+  return (
+    <div
+      style={{
+        padding: "16px 14px 12px",
+        borderBottom: palette.railBorder,
+        flexShrink: 0,
+      }}
+    >
+      <div
+        style={{
+          fontSize: 9,
+          color: palette.headerLabel,
+          textTransform: "uppercase",
+          letterSpacing: "0.7px",
+          fontWeight: 600,
+          marginBottom: 4,
+          transition: "color 300ms",
+        }}
+      >
+        {contextLabel}
+      </div>
+      <div
+        style={{
+          fontSize: 13,
+          fontWeight: 600,
+          color: palette.headerTitle,
+          whiteSpace: "nowrap",
+          letterSpacing: "-0.2px",
+        }}
+      >
+        {title}
+      </div>
+    </div>
+  );
+}
+
 // ── Secondary Rail ────────────────────────────────────────────────────────────
 export function NexusSecondaryRail({ mobileOpen, onMobileClose }: NexusSecondaryRailProps) {
-  const { activeWorkspace, accentColor } = useWorkspace();
+  const { activeWorkspace, activeRootItem, isModuleMode, accentColor } = useWorkspace();
   const { language } = useI18n();
+  const { resolvedTheme } = useTheme();
   const pathname = usePathname();
 
-  const workspaceName = activeWorkspace?.getLocalizedName(language) ?? "Workspace";
-  const contextLabel = "CONTROL PLANE"; // workspace context label
-  const menuItems: MenuItem[] = activeWorkspace?.menuItems ?? [];
-  const resolvedAccent = accentColor ?? "#534AB7";
+  const isDark = resolvedTheme === "dark";
+  const palette = usePalette(isDark, accentColor ?? (isDark ? "#7C6FD4" : "#6258c4"));
+
+  // ── Context label ─────────────────────────────────────────────────────────
+  const contextLabel = isModuleMode
+    ? (activeWorkspace?.workspaceKey?.toUpperCase() ?? "MODULE")
+    : "CONTROL PLANE";
+
+  // ── Title: selected root item name ────────────────────────────────────────
+  const title = activeRootItem
+    ? language === "ar"
+      ? activeRootItem.nameAr || activeRootItem.nameEn
+      : activeRootItem.nameEn || activeRootItem.nameAr
+    : activeWorkspace?.getLocalizedName(language) ?? "Workspace";
+
+  // ── Menu items to display: children of the selected root item ─────────────
+  const menuItems: MenuItem[] = activeRootItem?.children ?? [];
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
 
   const railStyle: React.CSSProperties = {
     width: 210,
     height: "100vh",
-    background: "#0C0F1C",
-    borderRight: "1px solid #111626",
+    background: palette.railBg,
+    borderRight: palette.railBorder,
     display: "flex",
     flexDirection: "column",
     flexShrink: 0,
     overflow: "hidden",
-    transition: "width 280ms cubic-bezier(0.4,0,0.2,1)",
+    transition: "background 200ms ease, border-color 200ms ease",
     zIndex: 9,
   };
+
+  const railContent = (
+    <>
+      <RailHeader
+        contextLabel={contextLabel}
+        title={title}
+        palette={palette}
+      />
+      <RailContent
+        menuItems={menuItems}
+        pathname={pathname}
+        palette={palette}
+        language={language}
+        onNavigate={handleNavigate}
+      />
+    </>
+  );
 
   return (
     <>
       {/* Desktop */}
-      <aside style={railStyle} className="hidden lg:flex">
-        {/* Header */}
-        <div
-          style={{
-            padding: "16px 14px 12px",
-            borderBottom: "1px solid #111626",
-            flexShrink: 0,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9,
-              color: accentColor ?? "#AFA9EC",
-              textTransform: "uppercase",
-              letterSpacing: "0.7px",
-              fontWeight: 600,
-              marginBottom: 4,
-              transition: "color 300ms",
-            }}
-          >
-            {contextLabel}
-          </div>
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: "#D0DCEF",
-              whiteSpace: "nowrap",
-              letterSpacing: "-0.2px",
-            }}
-          >
-            {workspaceName}
-          </div>
-        </div>
-
-        {/* Nav */}
-        <RailContent
-          menuItems={menuItems}
-          pathname={pathname}
-          accentColor={resolvedAccent}
-          language={language}
-          onNavigate={handleNavigate}
-        />
+      <aside style={railStyle} className="hidden lg:flex lg:flex-col">
+        {railContent}
       </aside>
 
       {/* Mobile overlay */}
@@ -332,7 +389,10 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose }: NexusSecondary
         <>
           <div
             className="fixed inset-0 z-40 lg:hidden"
-            style={{ background: "rgba(8,11,21,0.6)", backdropFilter: "blur(8px)" }}
+            style={{
+              background: isDark ? "rgba(8,11,21,0.6)" : "rgba(30,40,60,0.4)",
+              backdropFilter: "blur(8px)",
+            }}
             onClick={onMobileClose}
             aria-hidden
           />
@@ -341,47 +401,11 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose }: NexusSecondary
             style={{
               left: 56,
               width: 210,
-              background: "#0C0F1C",
-              borderRight: "1px solid #111626",
+              background: palette.railBg,
+              borderRight: palette.railBorder,
             }}
           >
-            <div
-              style={{
-                padding: "16px 14px 12px",
-                borderBottom: "1px solid #111626",
-                flexShrink: 0,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 9,
-                  color: resolvedAccent,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.7px",
-                  fontWeight: 600,
-                  marginBottom: 4,
-                }}
-              >
-                {contextLabel}
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#D0DCEF",
-                  letterSpacing: "-0.2px",
-                }}
-              >
-                {workspaceName}
-              </div>
-            </div>
-            <RailContent
-              menuItems={menuItems}
-              pathname={pathname}
-              accentColor={resolvedAccent}
-              language={language}
-              onNavigate={handleNavigate}
-            />
+            {railContent}
           </aside>
         </>
       )}

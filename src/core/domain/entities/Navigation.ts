@@ -135,6 +135,13 @@ export interface WorkspaceGroupData {
   colorHue: number | null;
   /** OKLCH chroma (0–0.4). Null = use theme default chroma. */
   colorChroma: number | null;
+  /**
+   * Backend-driven workspace classification.
+   * "Admin" = system/tenant management workspaces (icon buttons in primary rail).
+   * "Module" = enterprise module workspaces (colored pills in primary rail).
+   * Absent in legacy responses — treated as "Admin" for backward compat.
+   */
+  workspaceType?: "Admin" | "Module";
   menuItems: MenuItemData[];
 }
 
@@ -148,6 +155,11 @@ export class WorkspaceGroup {
   public readonly workspaceSortOrder: number;
   public readonly colorHue: number | null;
   public readonly colorChroma: number | null;
+  /**
+   * Backend-driven classification. "Admin" = primary rail icon button.
+   * "Module" = colored pill below MODULES divider. Never guess from key strings.
+   */
+  public readonly workspaceType: "Admin" | "Module";
   public readonly menuItems: MenuItem[];
 
   constructor(data: WorkspaceGroupData) {
@@ -159,6 +171,7 @@ export class WorkspaceGroup {
     this.workspaceSortOrder = data.workspaceSortOrder;
     this.colorHue = data.colorHue ?? null;
     this.colorChroma = data.colorChroma ?? null;
+    this.workspaceType = data.workspaceType ?? "Admin";
     this.menuItems = data.menuItems.map((item) => new MenuItem(item));
   }
 
@@ -173,6 +186,24 @@ export class WorkspaceGroup {
     if (this.colorHue === null) return null;
     const chroma = this.colorChroma ?? 0.18;
     return `oklch(0.6 ${chroma} ${this.colorHue})`;
+  }
+
+  /** True when this workspace is a module workspace (CRM, HRMS, Finance, etc.) */
+  get isModuleWorkspace(): boolean {
+    return this.workspaceType === "Module";
+  }
+
+  /** True when this workspace is an admin control-plane workspace */
+  get isAdminWorkspace(): boolean {
+    return this.workspaceType === "Admin";
+  }
+
+  /** Short 2-char abbreviation for pill labels */
+  get abbreviation(): string {
+    const name = this.workspaceNameEn || this.workspaceKey;
+    const words = name.trim().split(/\s+/);
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
   }
 }
 
