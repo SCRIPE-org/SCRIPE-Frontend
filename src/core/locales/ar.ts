@@ -1209,6 +1209,7 @@ export const ar = {
     free: "مجانا",
     clear: "مسح",
     send: "ارسال",
+    noResultsFound: "لا توجد نتائج",
     serial: "م",
     updatedAt: "تم التحديث في",
     logout: "تسجيل الخروج",
@@ -1925,9 +1926,12 @@ export const ar = {
     },
   },
   validation: {
-    required: "[مفقود] Required",
+    required: "مطلوب",
   },
   footer: {
-    allRightsReserved: "[مفقود] All Rights Reserved",
+    allRightsReserved: "جميع الحقوق محفوظة",
+  },
+  navigation: {
+    searchPlaceholder: "ابحث عن صفحة",
   },
 };

@@ -109,6 +109,7 @@ export class NavigationMapper {
             workspaceSortOrder: g.workspaceSortOrder ?? g.sortOrder ?? 0,
             colorHue: g.colorHue ?? null,
             colorChroma: g.colorChroma ?? null,
+            workspaceType: g.workspaceType ?? "Admin",
             menuItems: g.menuItems
               ? g.menuItems.map((item: any) => this.menuItemFromJson(item))
               : [],
@@ -128,13 +129,30 @@ export class NavigationMapper {
   }
 
   /**
-   * Convert NavigationData domain model to plain object
+   * Convert NavigationData domain model to plain object (used for localStorage caching).
+   * Includes workspaceGroups so the Nexus dual-rail is fully hydrated from cache on reload.
    */
-  static navigationDataToPlainObject(navigationData: NavigationData): NavigationDataData {
-    return {
+  static navigationDataToPlainObject(navigationData: NavigationData): any {
+    const obj: any = {
       menuItems: navigationData.menuItems.map((item) => this.menuItemToPlainObject(item)),
       routes: navigationData.routes,
     };
+    // Serialize workspaceGroups for dual-rail cache persistence
+    if (navigationData.workspaceGroups && navigationData.workspaceGroups.length > 0) {
+      obj.workspaceGroups = navigationData.workspaceGroups.map((ws) => ({
+        workspaceId: ws.workspaceId,
+        workspaceKey: ws.workspaceKey,
+        workspaceNameEn: ws.workspaceNameEn,
+        workspaceNameAr: ws.workspaceNameAr,
+        workspaceIcon: ws.workspaceIcon,
+        workspaceSortOrder: ws.workspaceSortOrder,
+        colorHue: ws.colorHue,
+        colorChroma: ws.colorChroma,
+        workspaceType: ws.workspaceType,
+        menuItems: ws.menuItems.map((item) => this.menuItemToPlainObject(item)),
+      }));
+    }
+    return obj;
   }
 
   /**

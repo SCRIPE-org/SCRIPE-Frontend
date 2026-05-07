@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Bell, Check, CheckCheck, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { useNotificationViewModel } from "./useNotificationViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useTheme } from "next-themes";
+import ReactDOM from "react-dom";
 
 interface NotificationBellProps {
   /** Icon size class */
@@ -15,138 +17,295 @@ interface NotificationBellProps {
 }
 
 /**
- * NotificationBell — reusable bell icon with unread badge and dropdown panel.
- * Drop-in replacement for static Bell icons in layout headers.
+ * NotificationBell — reusable bell icon with unread badge and smart-positioned dropdown.
+ * Uses a portal so the dropdown is never clipped by overflow-hidden parents.
+ * Positioning is viewport-aware: opens upward if there's insufficient space below.
  */
 export function NotificationBell({
-  iconClassName = "h-10 w-10",
+  iconClassName = "h-5 w-5",
   className,
 }: NotificationBellProps) {
   const vm = useNotificationViewModel();
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const isRTL = direction === "rtl";
+
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  // Viewport-aware panel position
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({});
+
+  const recalcPosition = useCallback(() => {
+    const btn = triggerRef.current;
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const panelWidth = 320;
+    const panelHeight = 420; // max estimated
+    const viewport = { w: window.innerWidth, h: window.innerHeight };
+
+    // Vertical: prefer below, flip to above if not enough space
+    const spaceBelow = viewport.h - rect.bottom;
+    const spaceAbove = rect.top;
+    const openAbove = spaceBelow < panelHeight && spaceAbove > spaceBelow;
+
+    // Horizontal: align to inlineEnd of trigger
+    let left: number;
+    if (isRTL) {
+      // panel's right edge aligns with trigger's right edge
+      left = rect.right - panelWidth;
+    } else {
+      // panel's right edge aligns with trigger's right edge
+      left = rect.right - panelWidth;
+    }
+    // Clamp within viewport
+    left = Math.max(8, Math.min(left, viewport.w - panelWidth - 8));
+
+    setPanelStyle({
+      position: "fixed",
+      zIndex: 9999,
+      width: panelWidth,
+      left,
+      ...(openAbove
+        ? { bottom: viewport.h - rect.top + 8 }
+        : { top: rect.bottom + 8 }),
+    });
+  }, [isRTL]);
+
+  const handleToggle = useCallback(() => {
+    vm.toggleOpen();
+    // recalc after state flips
+    setTimeout(recalcPosition, 0);
+  }, [vm, recalcPosition]);
 
   // Close on outside click
   useEffect(() => {
     if (!vm.isOpen) return;
+    recalcPosition();
     const handler = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(target) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(target)
+      ) {
         vm.close();
       }
     };
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [vm.isOpen, vm.close]);
+    window.addEventListener("scroll", recalcPosition, true);
+    window.addEventListener("resize", recalcPosition);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      window.removeEventListener("scroll", recalcPosition, true);
+      window.removeEventListener("resize", recalcPosition);
+    };
+  }, [vm.isOpen, vm.close, recalcPosition]);
+
+  // ── Panel colours ───────────────────────────────────────────────────────────
+  const panelBg = isDark ? "#111827" : "#ffffff";
+  const panelBorder = isDark ? "#1f2937" : "#e5e7eb";
+  const headerBorderColor = isDark ? "#1f2937" : "#f3f4f6";
+  const unreadBg = isDark ? "rgba(99,91,196,0.08)" : "rgba(99,91,196,0.04)";
+  const hoverBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)";
+  const badgeBg = isDark ? "#7C6FD4" : "#6258c4";
+
+  const dropdownPanel = vm.isOpen ? (
+    <div
+      ref={panelRef}
+      style={{
+        ...panelStyle,
+        background: panelBg,
+        border: `1px solid ${panelBorder}`,
+        borderRadius: 14,
+        boxShadow: isDark
+          ? "0 20px 60px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset"
+          : "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
+        overflow: "hidden",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        animation: "nexus-fade-in 180ms cubic-bezier(0.16,1,0.3,1)",
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 16px 12px",
+          borderBottom: `1px solid ${headerBorderColor}`,
+        }}
+      >
+        <div>
+          <h3 style={{ fontSize: 14, fontWeight: 700, color: isDark ? "#f1f5f9" : "#0f172a", margin: 0 }}>
+            {t("notifications.title") || "Notifications"}
+          </h3>
+          {vm.unreadCount > 0 && (
+            <p style={{ fontSize: 11, color: isDark ? "#6b7280" : "#9ca3af", margin: "2px 0 0" }}>
+              {vm.unreadCount} unread
+            </p>
+          )}
+        </div>
+        {vm.unreadCount > 0 && (
+          <button
+            onClick={vm.markAllAsRead}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              fontSize: 11,
+              fontWeight: 500,
+              color: badgeBg,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "4px 8px",
+              borderRadius: 6,
+              transition: "background 150ms",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = isDark ? "rgba(124,111,212,0.12)" : "rgba(98,88,196,0.08)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+          >
+            <CheckCheck size={12} />
+            {t("notifications.markAllRead") || "Mark all read"}
+          </button>
+        )}
+      </div>
+
+      {/* List */}
+      <div style={{ maxHeight: 320, overflowY: "auto" }}>
+        {vm.isLoading ? (
+          <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
+            <Loader2 size={20} style={{ animation: "spin 1s linear infinite", color: isDark ? "#6b7280" : "#9ca3af" }} />
+          </div>
+        ) : vm.notifications.length === 0 ? (
+          <div style={{ padding: "32px 16px", textAlign: "center" }}>
+            <Bell size={28} style={{ color: isDark ? "#374151" : "#d1d5db", margin: "0 auto 8px" }} />
+            <p style={{ fontSize: 13, color: isDark ? "#6b7280" : "#9ca3af", margin: 0 }}>
+              {t("notifications.empty") || "No notifications yet"}
+            </p>
+          </div>
+        ) : (
+          vm.notifications.map((n) => (
+            <button
+              key={n.id}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 12,
+                width: "100%",
+                textAlign: "start",
+                padding: "12px 16px",
+                cursor: "pointer",
+                border: "none",
+                background: !n.isRead ? unreadBg : "transparent",
+                transition: "background 150ms",
+                borderBottom: `1px solid ${headerBorderColor}`,
+              }}
+              onMouseEnter={(e) => { if (n.isRead) (e.currentTarget as HTMLElement).style.background = hoverBg; }}
+              onMouseLeave={(e) => { if (n.isRead) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+              onClick={() => {
+                if (!n.isRead) vm.markAsRead(n.id);
+                if (n.actionUrl) window.location.href = n.actionUrl;
+                vm.close();
+              }}
+            >
+              {/* Indicator */}
+              <div style={{ paddingTop: 3, flexShrink: 0 }}>
+                {n.isRead ? (
+                  <Check size={12} style={{ color: isDark ? "#374151" : "#d1d5db" }} />
+                ) : (
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: badgeBg, boxShadow: `0 0 6px ${badgeBg}60` }} />
+                )}
+              </div>
+
+              {/* Content */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{
+                  fontSize: 13,
+                  fontWeight: n.isRead ? 400 : 600,
+                  color: isDark ? (n.isRead ? "#9ca3af" : "#f1f5f9") : (n.isRead ? "#6b7280" : "#111827"),
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  margin: 0,
+                }}>
+                  {n.title}
+                </p>
+                <p style={{ fontSize: 12, color: isDark ? "#6b7280" : "#9ca3af", margin: "3px 0 4px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                  {n.body}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <time style={{ fontSize: 10, color: isDark ? "#4b5563" : "#d1d5db" }}>
+                    {formatTimeAgo(n.createdAt)}
+                  </time>
+                  {n.actionUrl && <ExternalLink size={10} style={{ color: isDark ? "#4b5563" : "#d1d5db" }} />}
+                </div>
+              </div>
+            </button>
+          ))
+        )}
+      </div>
+    </div>
+  ) : null;
 
   return (
-    <div className="relative" ref={panelRef}>
-      {/* Bell Button */}
+    <>
       <Button
+        ref={triggerRef}
         variant="ghost"
         size="icon"
-        className={cn("hover-lift relative", className)}
-        onClick={vm.toggleOpen}
+        className={cn("relative", className)}
+        onClick={handleToggle}
         aria-label={t("notifications.title") || "Notifications"}
       >
         <Bell className={iconClassName} />
         {vm.unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+          <span
+            style={{
+              position: "absolute",
+              top: -2,
+              right: -2,
+              minWidth: 16,
+              height: 16,
+              borderRadius: 8,
+              background: badgeBg,
+              boxShadow: `0 0 8px ${badgeBg}60`,
+              fontSize: 9,
+              fontWeight: 700,
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 3px",
+              lineHeight: 1,
+            }}
+          >
             {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
           </span>
         )}
       </Button>
 
-      {/* Dropdown Panel */}
-      {vm.isOpen && (
-        <div className="absolute end-0 top-full z-50 mt-2 w-80 rounded-lg border border-border bg-popover shadow-xl animate-in fade-in slide-in-from-top-2">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <h3 className="text-sm font-semibold">{t("notifications.title") || "Notifications"}</h3>
-            {vm.unreadCount > 0 && (
-              <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={vm.markAllAsRead}>
-                <CheckCheck className="mr-1 h-3 w-3" />
-                {t("notifications.markAllRead") || "Mark all read"}
-              </Button>
-            )}
-          </div>
-
-          {/* Notification List */}
-          <div className="max-h-80 overflow-y-auto">
-            {vm.isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-              </div>
-            ) : vm.notifications.length === 0 ? (
-              <div className="py-8 text-center text-sm text-muted-foreground">
-                {t("notifications.empty") || "No notifications"}
-              </div>
-            ) : (
-              vm.notifications.map((n) => (
-                <button
-                  key={n.id}
-                  className={cn(
-                    "flex w-full items-start gap-3 px-4 py-3 text-start transition-colors hover:bg-muted/50",
-                    !n.isRead && "bg-primary/5"
-                  )}
-                  onClick={() => {
-                    if (!n.isRead) vm.markAsRead(n.id);
-                    if (n.actionUrl) window.location.href = n.actionUrl;
-                  }}
-                >
-                  {/* Unread indicator */}
-                  <div className="mt-1.5 flex-shrink-0">
-                    {n.isRead ? (
-                      <Check className="h-3 w-3 text-muted-foreground/50" />
-                    ) : (
-                      <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className={cn(
-                        "truncate text-sm",
-                        !n.isRead ? "font-medium" : "text-muted-foreground"
-                      )}
-                    >
-                      {n.title}
-                    </p>
-                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{n.body}</p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <time className="text-[10px] text-muted-foreground/70">
-                        {formatTimeAgo(n.createdAt)}
-                      </time>
-                      {n.actionUrl && (
-                        <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/50" />
-                      )}
-                    </div>
-                  </div>
-                </button>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+      {/* Portal: dropdown is rendered at document.body to escape any overflow clipping */}
+      {typeof document !== "undefined" && ReactDOM.createPortal(dropdownPanel, document.body)}
+    </>
   );
 }
 
-/**
- * Simple time-ago formatter.
- */
 function formatTimeAgo(dateStr: string): string {
   const now = Date.now();
   const date = new Date(dateStr).getTime();
   const diff = now - date;
-
   const seconds = Math.floor(diff / 1000);
   if (seconds < 60) return "just now";
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
+  if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d`;
+  if (days < 7) return `${days}d ago`;
   return new Date(dateStr).toLocaleDateString();
 }

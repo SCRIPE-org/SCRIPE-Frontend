@@ -54,6 +54,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         const navData = NavigationMapper.navigationDataFromJson({
           menuItems: parsedData.menuItems,
           routes: parsedData.routes,
+          workspaceGroups: parsedData.workspaceGroups,
         });
 
         appLogger.debug("Navigation data loaded from cache on initialization");
@@ -103,6 +104,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       const navigationData = NavigationMapper.navigationDataFromJson({
         menuItems: parsedData.menuItems,
         routes: parsedData.routes,
+        workspaceGroups: parsedData.workspaceGroups,
       });
 
       appLogger.debug("Navigation data loaded from cache");

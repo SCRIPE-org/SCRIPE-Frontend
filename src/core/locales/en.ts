@@ -248,6 +248,7 @@ export const en = {
   common: {
     free: "Free",
     step: "Step",
+    noResultsFound: "No results found",
     serial: "No.",
     clear: "Clear",
     none: "None",
@@ -1931,4 +1932,7 @@ export const en = {
   footer: {
     allRightsReserved: "All Rights Reserved",
   },
+  navigation:{
+    searchPlaceholder: "Search a page",
+  }
 };

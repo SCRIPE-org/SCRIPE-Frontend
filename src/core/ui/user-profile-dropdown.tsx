@@ -18,6 +18,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { appLogger } from "@core/common/logger";
+import { useTheme } from "next-themes";
+import { useWorkspace } from "@core/providers/workspace-provider";
 
 const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
 
@@ -38,12 +40,16 @@ interface UserProfileDropdownProps {
   variant?: "default" | "compact" | "minimal" | "elegant" | "floating" | "navigation";
   showName?: boolean;
   className?: string;
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
 }
 
 export function UserProfileDropdown({
   variant = "default",
   showName = true,
   className,
+  side,
+  align = "end",
 }: UserProfileDropdownProps) {
   const user = useAppStore((state) => state.user);
   const { logout } = useAuthLogout();
@@ -51,13 +57,19 @@ export function UserProfileDropdown({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const settings = useSettings();
+  const { resolvedTheme } = useTheme();
+  const { accentColor } = useWorkspace();
+  const isDark = resolvedTheme === "dark";
+  const accent = accentColor ?? (isDark ? "#7C6FD4" : "#6258c4");
 
   if (!user || !settings.showUserAvatar) return null;
 
   const avatarUrl = getAvatarUrl(user.profileImageUrl);
 
+  // Avatar gradient that matches the Nexus accent colour
+  const avatarGradient = `linear-gradient(135deg, ${accent}CC 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
+
   const getInitials = () => {
-    // Safe handling of user name
     const firstName = user.firstName || "";
     const lastName = user.lastName || "";
     const firstInitial = firstName.charAt(0)?.toUpperCase() || "";
@@ -87,8 +99,6 @@ export function UserProfileDropdown({
       setIsOpen(false);
     } catch (error) {
       appLogger.error("Logout failed:", error);
-      // Keep dropdown open if logout fails so user can try again
-      // You could also show a toast notification here
     }
   };
 
@@ -134,16 +144,19 @@ export function UserProfileDropdown({
             className
           )}
         >
-          <Avatar className={cn(getAvatarSize(), "border-2 border-primary/20")}>
+          <Avatar className={cn(getAvatarSize(), "border-2 border-white/20 shadow-md")}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-semibold text-white">
+            <AvatarFallback
+              style={{ background: avatarGradient }}
+              className="text-sm font-semibold text-white"
+            >
               {getInitials()}
             </AvatarFallback>
           </Avatar>
 
           {showName && (
             <div className="flex min-w-0 items-center gap-2">
-              <div className="min-w-0 text-right rtl:text-left">
+              <div className="min-w-0 text-start">
                 <p className={cn("max-w-[120px] truncate font-medium", getTextSize())}>
                   {getDisplayName()}
                 </p>
@@ -169,48 +182,63 @@ export function UserProfileDropdown({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        align="end"
-        className="w-56 p-2"
-        side={variant === "navigation" ? "bottom" : "bottom"}
+        align={align}
+        className={cn(
+          "w-60 p-2 border",
+          isDark
+            ? "bg-[#0d1117] border-white/[0.08] shadow-2xl shadow-black/50"
+            : "bg-white border-black/[0.08] shadow-xl shadow-black/10"
+        )}
+        side={side || (variant === "navigation" ? "bottom" : "bottom")}
+        sideOffset={6}
       >
-        <div className="mb-2 flex items-center gap-3 p-2">
-          <Avatar className="h-10 w-10 border-2 border-primary/20">
+        {/* User info header */}
+        <div
+          className={cn(
+            "mb-2 flex items-center gap-3 p-3 rounded-lg",
+            isDark ? "bg-white/[0.03]" : "bg-black/[0.02]"
+          )}
+        >
+          <Avatar className="h-10 w-10 border-2 border-white/20 shadow-md">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 font-semibold text-white">
+            <AvatarFallback
+              style={{ background: avatarGradient }}
+              className="font-semibold text-white"
+            >
               {getInitials()}
             </AvatarFallback>
           </Avatar>
-          <div className="min-w-0 text-right rtl:text-left">
-            <p className="truncate text-sm font-medium">{getDisplayName()}</p>
+          <div className="min-w-0 text-start flex-1">
+            <p className="truncate text-sm font-semibold">{getDisplayName()}</p>
             <p className="truncate text-xs text-muted-foreground">
               {user.adminTypeName || (user as any).role || t("common.user")}
             </p>
           </div>
         </div>
 
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className={isDark ? "bg-white/[0.06]" : "bg-black/[0.06]"} />
 
         <DropdownMenuItem
           onClick={handleProfileClick}
-          className="flex cursor-pointer items-center gap-3 rounded-md p-3 hover:bg-accent/50"
+          className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent/50 focus:bg-accent/50"
         >
-          <User className="h-4 w-4" />
+          <User className="h-4 w-4 text-muted-foreground" />
           <span>{t("nav.profile")}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={handleSettingsClick}
-          className="flex cursor-pointer items-center gap-3 rounded-md p-3 hover:bg-accent/50"
+          className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent/50 focus:bg-accent/50"
         >
-          <Settings className="h-4 w-4" />
+          <Settings className="h-4 w-4 text-muted-foreground" />
           <span>{t("nav.settings")}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className={cn("my-1", isDark ? "bg-white/[0.06]" : "bg-black/[0.06]")} />
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex cursor-pointer items-center gap-3 rounded-md p-3 text-destructive hover:bg-destructive/10"
+          className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
         >
           <LogOut className="h-4 w-4" />
           <span>{t("nav.logout")}</span>
