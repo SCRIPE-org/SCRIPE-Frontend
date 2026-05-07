@@ -75,7 +75,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
   // ─── Loading state ────────────────────────────────────────
   if (vm.isLoading) {
     return (
-      <div className="space-y-6 p-6">
+      <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Skeleton className="h-10 w-10 rounded-lg" />
           <div className="space-y-2">

@@ -109,13 +109,13 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 flex: 1,
                 overflowY: "auto",
                 overflowX: "hidden",
-                padding: "24px 32px",
+                padding: "16px 20px",
                 background: "hsl(var(--background))",
                 scrollbarWidth: "thin",
                 scrollbarColor: "hsl(var(--border)) transparent",
               }}
             >
-              <div className="mx-auto max-w-7xl animate-in fade-in duration-500">
+              <div className="animate-in fade-in duration-500">
                 {children}
               </div>
             </main>

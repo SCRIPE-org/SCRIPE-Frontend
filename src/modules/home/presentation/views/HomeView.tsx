@@ -33,7 +33,7 @@ export function HomeView() {
   useOverviewRealtime(); // Silent real-time cache invalidation
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-6">
       {/* Greeting — always shown */}
       <WelcomeHeader greeting={vm.greeting} displayName={vm.displayName} />
 

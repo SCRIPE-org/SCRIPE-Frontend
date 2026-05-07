@@ -13,7 +13,7 @@ export default function RoleDetailView() {
   const vm = useRoleDetailViewModel();
 
   return (
-    <div className="container mx-auto space-y-6 py-6">
+    <div className="space-y-6">
       {/* Header with breadcrumbs and save button */}
       <RoleDetailHeader {...vm.header} />
 
