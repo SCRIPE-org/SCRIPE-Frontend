@@ -7,6 +7,7 @@ import {
   PanelTop,
   SplitSquareHorizontal,
   Mail,
+  Columns2,
 } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -190,6 +191,44 @@ function WorkspacePreview({ variant }: { variant: string }) {
     );
   }
 
+  if (variant === "nexus") {
+    return (
+      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
+        {/* Primary rail: narrow icon strip */}
+        <div className="flex w-[8%] flex-col items-center gap-1 border-e border-slate-200 bg-slate-900 p-1 pt-1.5 dark:border-slate-700">
+          <div className="h-2 w-2 rounded-full bg-primary" />
+          <div className="mt-1 space-y-1">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-2 w-2 rounded bg-slate-600 dark:bg-slate-600"
+                style={{ opacity: i === 1 ? 1 : 0.4 }}
+              />
+            ))}
+          </div>
+        </div>
+        {/* Secondary rail: panel sidebar */}
+        <div className="w-[22%] space-y-0.5 border-e border-slate-200 bg-slate-800 p-1 pt-1.5 dark:border-slate-700">
+          {[65, 50, 55, 45, 60].map((w, i) => (
+            <div
+              key={i}
+              className="h-0.5 rounded-full"
+              style={{
+                width: `${w}%`,
+                background: i === 0 ? "oklch(0.65 0.18 var(--workspace-hue, 250))" : "rgba(148,163,184,0.3)",
+              }}
+            />
+          ))}
+        </div>
+        {/* Content area */}
+        <div className="flex-1 p-1.5">
+          <div className="mb-1 h-1 w-2/3 rounded-full bg-slate-200 dark:bg-slate-800" />
+          <div className="h-0.5 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+        </div>
+      </div>
+    );
+  }
+
   return null;
 }
 
@@ -211,6 +250,7 @@ const workspaceLayouts: LayoutOption[] = [
     preview: <WorkspacePreview variant="splitpane" />,
   },
   { value: "inbox", icon: Mail, preview: <WorkspacePreview variant="inbox" /> },
+  { value: "nexus", icon: Columns2, preview: <WorkspacePreview variant="nexus" /> },
 ];
 
 export const WORKSPACE_LAYOUT_VALUES = workspaceLayouts.map((l) => l.value);

@@ -332,6 +332,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
     workspaceGroups,
     setActiveWorkspace,
     accentColor,
+    switchToModuleWorkspace,
   } = useWorkspace();
   const { language, direction } = useI18n();
   const { resolvedTheme } = useTheme();
@@ -350,6 +351,18 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
       }
     },
     [setActiveRootItemId, isPanelCollapsed, onTogglePanel]
+  );
+
+  // ── Handle modules-group click: switches to the CRM workspace ────────────
+  const handleModulesGroupClick = useCallback(
+    (_item: MenuItem) => {
+      switchToModuleWorkspace();
+      // Also open panel if it was collapsed
+      if (isPanelCollapsed && onTogglePanel) {
+        onTogglePanel();
+      }
+    },
+    [switchToModuleWorkspace, isPanelCollapsed, onTogglePanel]
   );
 
   // ── Separate "modules-group" from regular root items ──────────────────────
@@ -505,12 +518,12 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
             <RootItemButton
               key={modulesGroupItem!.id}
               item={modulesGroupItem!}
-              isActive={activeRootItem?.id === modulesGroupItem!.id}
+              isActive={isModulesActive || isModuleMode}
               isRTL={isRTL}
               accentColor={isDark ? "#9B8FE0" : "#6258c4"}
               isDark={isDark}
               language={language}
-              onClick={handleRootItemClick}
+              onClick={handleModulesGroupClick}
             />
           </>
         )}

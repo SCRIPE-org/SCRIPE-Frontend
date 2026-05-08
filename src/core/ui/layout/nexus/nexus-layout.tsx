@@ -5,17 +5,19 @@
  *
  * Dual-rail layout with premium glassmorphism and animations.
  *
- * ┌──────┬─────────┬──────────────────────────────────────────┐
- * │ 64px │  240px  │  Topbar (56px)                           │
- * │  PRI │  PANEL  │  ────────────────────────────────────── │
- * │  MA  │  (sec-  │  Content (theme bg, padding 24px)        │
- * │  RY  │  ondary │                                          │
- * │  RAI │  rail)  │                                          │
- * │  L   │         │                                          │
- * └──────┴─────────┴──────────────────────────────────────────┘
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │  TenantContextBanner (fixed, full-width, z-[70])            │
+ * ├──────┬─────────┬──────────────────────────────────────────  │
+ * │ 64px │  240px  │  Topbar (56px)                             │
+ * │  PRI │  PANEL  │  ──────────────────────────────────────── │
+ * │  MA  │  (sec-  │  Content (scrollable)                      │
+ * │  RY  │  ondary │                                            │
+ * │  RAI │  rail)  │                                            │
+ * │  L   │         │                                            │
+ * └──────┴─────────┴────────────────────────────────────────────┘
  */
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { NexusPrimaryRail } from "./nexus-primary-rail";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
 import { NexusTopbar } from "./nexus-topbar";
@@ -42,84 +44,82 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   return (
     <div
       className={cn(
-        "min-h-screen bg-background text-foreground",
+        "bg-background text-foreground",
         direction === "rtl" ? "rtl" : "ltr"
       )}
-      style={
-        {
-          display: "flex",
-          height: "100vh",
-          width: "100vw",
-          overflow: "hidden",
-          position: "relative",
-          "--nexus-primary-w": "64px",
-          "--nexus-panel-w": isPanelCollapsed ? "0px" : "240px",
-          "--nexus-topbar-h": "56px",
-        } as React.CSSProperties
-      }
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        minHeight: 0,
+        width: "100%",
+        overflow: "hidden",
+        position: "relative",
+        "--nexus-primary-w": "64px",
+        "--nexus-panel-w": isPanelCollapsed ? "0px" : "240px",
+        "--nexus-topbar-h": "56px",
+      } as React.CSSProperties}
     >
       {/* Workspace transition overlay */}
       <NexusTransitionOverlay />
 
-      {/* Primary rail — fixed on the side */}
-      <NexusPrimaryRail 
-        onTogglePanel={togglePanel} 
-        isPanelCollapsed={isPanelCollapsed} 
-      />
+      {/*
+       * ── Global Banner (impersonation / tenant drilldown) ──────────────────
+       * Banner is now managed by DashboardLayout above us.
+       */}
 
-      {/* Main Content Area */}
-      <div 
-        style={{ 
-          display: "flex", 
-          flex: 1, 
-          flexDirection: "column", 
+      {/* ── Rail + Content row (fills remaining height) ──────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          flex: 1,
           overflow: "hidden",
-          transition: "padding 300ms cubic-bezier(0.2, 0, 0, 1)"
+          minHeight: 0, // critical: allows flex child to shrink below content size
         }}
       >
-        <TenantContextBanner />
+        {/* Primary rail — full height of this row */}
+        <NexusPrimaryRail
+          onTogglePanel={togglePanel}
+          isPanelCollapsed={isPanelCollapsed}
+        />
 
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-          {/* Secondary rail (panel) */}
-          <NexusSecondaryRail
-            mobileOpen={mobileMenuOpen}
-            onMobileClose={closeMobile}
-            isCollapsed={isPanelCollapsed}
+        {/* Secondary rail (panel) */}
+        <NexusSecondaryRail
+          mobileOpen={mobileMenuOpen}
+          onMobileClose={closeMobile}
+          isCollapsed={isPanelCollapsed}
+        />
+
+        {/* Page area: topbar + scrollable main */}
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            flexDirection: "column",
+            overflow: "hidden",
+            background: "hsl(var(--background))",
+          }}
+        >
+          <NexusTopbar
+            onMobileMenuOpen={openMobile}
+            onTogglePanel={togglePanel}
+            onOpenSearch={() => setSearchOpen(true)}
+            isPanelCollapsed={isPanelCollapsed}
           />
-
-          {/* Page area */}
-          <div 
-            style={{ 
-              display: "flex", 
-              flex: 1, 
-              flexDirection: "column", 
-              overflow: "hidden",
+          <main
+            id="nexus-content"
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              overflowX: "hidden",
+              padding: "16px 20px",
               background: "hsl(var(--background))",
+              scrollbarWidth: "thin",
+              scrollbarColor: "hsl(var(--border)) transparent",
             }}
           >
-            <NexusTopbar 
-              onMobileMenuOpen={openMobile} 
-              onTogglePanel={togglePanel}
-              onOpenSearch={() => setSearchOpen(true)}
-              isPanelCollapsed={isPanelCollapsed}
-            />
-            <main
-              id="nexus-content"
-              style={{
-                flex: 1,
-                overflowY: "auto",
-                overflowX: "hidden",
-                padding: "16px 20px",
-                background: "hsl(var(--background))",
-                scrollbarWidth: "thin",
-                scrollbarColor: "hsl(var(--border)) transparent",
-              }}
-            >
-              <div className="animate-in fade-in duration-500">
-                {children}
-              </div>
-            </main>
-          </div>
+            <div className="animate-in fade-in duration-500">{children}</div>
+          </main>
         </div>
       </div>
 

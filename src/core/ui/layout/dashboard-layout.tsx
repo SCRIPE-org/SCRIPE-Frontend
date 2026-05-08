@@ -530,6 +530,28 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }; // end renderLayout
 
+  // Nexus needs a flex-column wrapper so the banners flow above it
+  // and the layout fills the remaining viewport without fighting 100vh calculations.
+  if (layoutTemplate === "nexus") {
+    return (
+      <TenantBrandingProvider>
+        <PaymentWallDialog />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100dvh",
+            overflow: "hidden",
+          }}
+        >
+          <TenantContextBanner />
+          <GracePeriodBanner />
+          {renderLayout()}
+        </div>
+      </TenantBrandingProvider>
+    );
+  }
+
   return (
     <TenantBrandingProvider>
       <TenantContextBanner />

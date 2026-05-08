@@ -77,6 +77,16 @@ interface WorkspaceContextType {
   previousWorkspaceKey: string | null;
   /** Return to the previous admin workspace (exit module mode) */
   goBack: () => void;
+  /**
+   * Switch to the first available module workspace (e.g. CRM),
+   * saving the current workspace so goBack() can return to it.
+   */
+  switchToModuleWorkspace: () => void;
+  /**
+   * Switch to a specific module workspace by its key,
+   * saving the current workspace so goBack() can return to it.
+   */
+  switchToModuleWorkspaceByKey: (key: string) => void;
   /** @deprecated use rootMenuItems + activeRootItem instead */
   adminWorkspaces: WorkspaceGroup[];
   /** @deprecated use rootMenuItems + activeRootItem instead */
@@ -214,6 +224,42 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }
   }, [previousWorkspaceKey]);
 
+  /**
+   * Switch to the first module workspace (e.g. CRM), saving the current
+   * admin workspace key so goBack() can restore it later.
+   */
+  const switchToModuleWorkspace = useCallback(() => {
+    const firstModule = moduleWorkspaces[0];
+    if (!firstModule) return; // no module workspaces registered yet
+    const currentKey = activeKey ?? activeWorkspace?.workspaceKey ?? null;
+    if (currentKey) setPreviousWorkspaceKey(currentKey);
+    setActiveKey(firstModule.workspaceKey);
+    // Reset active root item so the new workspace picks its first item
+    setActiveRootItemIdState(null);
+    try {
+      localStorage.setItem(WORKSPACE_KEY, firstModule.workspaceKey);
+      localStorage.removeItem(ROOT_ITEM_KEY);
+    } catch {
+      // ignore
+    }
+  }, [moduleWorkspaces, activeKey, activeWorkspace]);
+
+  const switchToModuleWorkspaceByKey = useCallback(
+    (key: string) => {
+      const currentKey = activeKey ?? activeWorkspace?.workspaceKey ?? null;
+      if (currentKey) setPreviousWorkspaceKey(currentKey);
+      setActiveKey(key);
+      setActiveRootItemIdState(null);
+      try {
+        localStorage.setItem(WORKSPACE_KEY, key);
+        localStorage.removeItem(ROOT_ITEM_KEY);
+      } catch {
+        // ignore
+      }
+    },
+    [activeKey, activeWorkspace]
+  );
+
   const accentColor = activeWorkspace?.accentColor ?? null;
   const isLoading = workspaceGroups.length === 0 && navigationData !== null;
 
@@ -232,6 +278,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       isModuleMode,
       previousWorkspaceKey,
       goBack,
+      switchToModuleWorkspace,
+      switchToModuleWorkspaceByKey,
     }),
     [
       workspaceGroups,
@@ -247,6 +295,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       isModuleMode,
       previousWorkspaceKey,
       goBack,
+      switchToModuleWorkspace,
+      switchToModuleWorkspaceByKey,
     ]
   );
 

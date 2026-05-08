@@ -65,6 +65,14 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        ws: {
+          accent: "var(--ws-accent)",
+          "accent-light": "var(--ws-accent-light)",
+          "accent-muted": "var(--ws-accent-muted)",
+          "accent-fg": "var(--ws-accent-fg)",
+          "rail-bg": "var(--ws-rail-bg)",
+          "rail-hover": "var(--ws-rail-hover)",
+        },
       },
       transitionDuration: {
         500: "500ms",

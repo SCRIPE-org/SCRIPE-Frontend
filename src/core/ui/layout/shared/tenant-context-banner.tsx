@@ -55,7 +55,7 @@ export function TenantContextBanner() {
       <div
         ref={bannerRef}
         className={cn(
-          "relative z-[60] flex w-full items-center justify-center gap-3 border-b px-4 py-2",
+          "sticky top-0 z-[100] flex w-full items-center justify-center gap-3 border-b px-4 py-2",
           "border-red-300 bg-red-100 text-red-800",
           "dark:border-red-800 dark:bg-red-950/60 dark:text-red-200"
         )}
@@ -78,7 +78,7 @@ export function TenantContextBanner() {
       <div
         ref={bannerRef}
         className={cn(
-          "relative z-[60] flex w-full items-center justify-center gap-3 border-b px-4 py-2",
+          "sticky top-0 z-[100] flex w-full items-center justify-center gap-3 border-b px-4 py-2",
           "border-blue-300 bg-blue-100 text-blue-800",
           "dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-200"
         )}

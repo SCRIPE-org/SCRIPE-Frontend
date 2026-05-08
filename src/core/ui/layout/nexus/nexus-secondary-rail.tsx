@@ -21,7 +21,7 @@ import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTheme } from "next-themes";
 import type { MenuItem } from "@core/domain/entities/Navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowRightLeft } from "lucide-react";
 
 interface NexusSecondaryRailProps {
   mobileOpen?: boolean;
@@ -73,10 +73,16 @@ function NavItem({
   language,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
+  const { switchToModuleWorkspaceByKey } = useWorkspace();
   const label =
     language === "ar"
       ? item.nameAr || item.nameEn
       : item.nameEn || item.nameAr;
+
+  // Detect workspace-switch hrefs (#workspace:<key>)
+  const workspaceKey =
+    item.href?.startsWith("#workspace:") ? item.href.slice("#workspace:".length) : null;
+  const isWorkspaceSwitcher = !!workspaceKey;
 
   const isActive =
     !!item.href &&
@@ -184,6 +190,41 @@ function NavItem({
               ))}
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Workspace-switcher items render as interactive divs (not links)
+  if (isWorkspaceSwitcher) {
+    return (
+      <div className="mb-0.5">
+        <div
+          role="button"
+          tabIndex={0}
+          style={{
+            ...itemStyle,
+            cursor: "pointer",
+          }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onClick={() => {
+            switchToModuleWorkspaceByKey(workspaceKey!);
+            onNavigate();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              switchToModuleWorkspaceByKey(workspaceKey!);
+              onNavigate();
+            }
+          }}
+        >
+          <div style={dotStyle} />
+          <span style={labelStyle}>{label}</span>
+          <ArrowRightLeft
+            size={12}
+            style={{ color: palette.chevronColor, flexShrink: 0 }}
+          />
         </div>
       </div>
     );
