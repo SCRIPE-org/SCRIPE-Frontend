@@ -35,10 +35,11 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useNavigation } from "@core/providers/navigation-provider";
+import { authBroadcast } from "@core/common/broadcast-auth";
 import { useI18n } from "@core/providers/i18n-provider";
-import { usePathname } from "next/navigation";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import type { WorkspaceGroup, MenuItem } from "@core/navigation";
 import { NavigationData } from "@core/navigation";
 import { appLogger } from "@core/common/logger";
@@ -180,6 +181,39 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   /** True while we're doing a JIT network request for a workspace */
   const [isWorkspaceLoading, setIsWorkspaceLoading] = useState(false);
 
+  // ── Auth & Tenant Context Listeners ────────────────────────────────────────
+
+  const { currentTenant } = useTenantContext();
+  const tenantIdRef = useRef(currentTenant?.id ?? null);
+
+  useEffect(() => {
+    const newTenantId = currentTenant?.id ?? null;
+    if (newTenantId !== tenantIdRef.current) {
+      tenantIdRef.current = newTenantId;
+      setActiveKey(null);
+      setPreviousWorkspaceKey(null);
+      setUserSelectedRootItemId(null);
+      setWsDataCache({});
+      try {
+        localStorage.removeItem(WORKSPACE_KEY);
+        localStorage.removeItem(ROOT_ITEM_KEY);
+      } catch { /* ignore */ }
+    }
+  }, [currentTenant]);
+
+  useEffect(() => {
+    authBroadcast.onImpersonation(() => {
+      setActiveKey(null);
+      setPreviousWorkspaceKey(null);
+      setUserSelectedRootItemId(null);
+      setWsDataCache({});
+      try {
+        localStorage.removeItem(WORKSPACE_KEY);
+        localStorage.removeItem(ROOT_ITEM_KEY);
+      } catch { /* ignore */ }
+    });
+  }, []);
+
   // ── Resolve WorkspaceGroup ─────────────────────────────────────────────────
   const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
     if (workspaceGroups.length === 0) return null;
@@ -194,6 +228,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     if (!activeWorkspace) return [];
     const jitData = activeWorkspace ? wsDataCache[activeWorkspace.workspaceKey] : null;
     if (jitData) {
+      // API returns the items for the requested workspace in the top-level menuItems
+      if (jitData.menuItems && jitData.menuItems.length > 0) return jitData.menuItems;
+
       const jitGroup = jitData.workspaceGroups.find(
         (g) => g.workspaceKey === activeWorkspace.workspaceKey
       );
@@ -291,8 +328,14 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!pathname || workspaceGroups.length === 0) return;
     
-    // Skip root and known system paths
-    if (cleanedPathname === "" || cleanedPathname === "/profile" || cleanedPathname === "/not-authorized") return;
+    // Switch to default admin workspace on root or known system paths
+    if (cleanedPathname === "" || cleanedPathname === "/profile" || cleanedPathname === "/not-authorized") {
+      const defaultWs = workspaceGroups.find(g => g.isAdminWorkspace) || workspaceGroups[0];
+      if (defaultWs && defaultWs.workspaceKey !== activeKey) {
+        doSwitchWorkspace(defaultWs.workspaceKey, false);
+      }
+      return;
+    }
 
     // Is the current path already handled by the active workspace?
     const currentMatches = rootMenuItems.some((root) => {
@@ -338,11 +381,20 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         appLogger.debug(`Workspace "${workspaceKey}" already in memory cache`);
         if (navigate) {
           const cached = wsDataCache[workspaceKey];
-          const targetGroup = cached.workspaceGroups.find((g) => g.workspaceKey === workspaceKey);
-          if (targetGroup) {
-            const page = firstPageOf(targetGroup);
-            if (page) router.push(page);
+          let page: string | null = null;
+          if (cached.menuItems && cached.menuItems.length > 0) {
+            for (const root of cached.menuItems) {
+              if (root.href && !root.href.startsWith("#")) { page = root.href; break; }
+              for (const child of root.children ?? []) {
+                if (child.href && !child.href.startsWith("#")) { page = child.href; break; }
+              }
+              if (page) break;
+            }
+          } else {
+            const targetGroup = cached.workspaceGroups.find((g) => g.workspaceKey === workspaceKey);
+            if (targetGroup) page = firstPageOf(targetGroup);
           }
+          if (page) router.push(page);
         }
         return;
       }
@@ -355,11 +407,20 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         if (data) {
           setWsDataCache((prev) => ({ ...prev, [workspaceKey]: data }));
           if (navigate) {
-            const targetGroup = data.workspaceGroups.find((g) => g.workspaceKey === workspaceKey);
-            if (targetGroup) {
-              const page = firstPageOf(targetGroup);
-              if (page) router.push(page);
+            let page: string | null = null;
+            if (data.menuItems && data.menuItems.length > 0) {
+              for (const root of data.menuItems) {
+                if (root.href && !root.href.startsWith("#")) { page = root.href; break; }
+                for (const child of root.children ?? []) {
+                  if (child.href && !child.href.startsWith("#")) { page = child.href; break; }
+                }
+                if (page) break;
+              }
+            } else {
+              const targetGroup = data.workspaceGroups.find((g) => g.workspaceKey === workspaceKey);
+              if (targetGroup) page = firstPageOf(targetGroup);
             }
+            if (page) router.push(page);
           }
         }
       } catch (err) {

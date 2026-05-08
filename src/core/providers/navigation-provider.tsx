@@ -145,6 +145,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
    * condition where the guard would deny access before JIT data was loaded.
    */
   const [jitRoutes, setJitRoutes] = useState<string[]>([]);
+  const [jitMenus, setJitMenus] = useState<Record<string, NavigationData>>({});
+
 
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const mustChangePassword = useAppStore((s) => s.mustChangePassword);
@@ -197,8 +199,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
   const fetchWorkspaceMenu = useCallback(
     async (workspaceKey: string): Promise<NavigationData | null> => {
-      // Helper: merge routes into the reactive jitRoutes state
-      const mergeRoutes = (data: NavigationData) => {
+      // Helper: merge routes and menus into reactive states
+      const mergeJitData = (key: string, data: NavigationData) => {
+        setJitMenus((prev) => {
+          if (prev[key]) return prev;
+          return { ...prev, [key]: data };
+        });
         if (data.routes.length > 0) {
           setJitRoutes((prev) => {
             const set = new Set(prev);
@@ -218,7 +224,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       const lsCached = readWsCache(workspaceKey);
       if (lsCached) {
         appLogger.debug(`Nav localStorage cache HIT for workspace "${workspaceKey}"`);
-        mergeRoutes(lsCached);
+        mergeJitData(workspaceKey, lsCached);
         return lsCached;
       }
       try {
@@ -226,9 +232,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         const data = await navigationRepository.fetchWorkspaceMenu(workspaceKey);
         // Persist to localStorage for next reload
         writeWsCache(workspaceKey, data);
-        // Merge the workspace's routes into the reactive jitRoutes state
+        // Merge the workspace's routes into the reactive state
         // so hasPageAccess picks them up immediately
-        mergeRoutes(data);
+        mergeJitData(workspaceKey, data);
         return data;
       } catch (err) {
         appLogger.error(`JIT fetch failed for workspace "${workspaceKey}":`, err);
@@ -248,6 +254,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       setIsLoading(false);
       setHasTriggeredRefresh(false);
       setJitRoutes([]);
+      setJitMenus({});
     }
   }, [isAuthenticated, navigationRepository]);
 
@@ -288,6 +295,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       clearAllWsCaches();
       setHasTriggeredRefresh(false);
       setJitRoutes([]);
+      setJitMenus({});
       if (isAuthenticated && !isDocsRoute && !mustChangePassword) {
         refreshNavigation(false, true);
       }
@@ -304,6 +312,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       clearAllWsCaches();
       setHasTriggeredRefresh(false);
       setJitRoutes([]);
+      setJitMenus({});
     });
     // authBroadcast is a singleton — no cleanup needed
   }, [navigationRepository]);
@@ -368,6 +377,11 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       for (let i = segments.length - 1; i > 0; i--) {
         const ancestor = "/" + segments.slice(0, i).join("/");
         if (jitRoutes.some((r) => r.toLowerCase() === ancestor.toLowerCase())) return true;
+      }
+
+      // Check JIT menus directly (if explicit routes array was empty)
+      for (const key in jitMenus) {
+        if (jitMenus[key].hasPageAccess(cleanPath)) return true;
       }
 
       // Check the repository's in-memory cache (non-reactive fallback)
