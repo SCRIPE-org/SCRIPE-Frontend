@@ -9,15 +9,21 @@
  *  - Maintain in-memory per-workspace cache (Map<key, NavigationData>)
  *  - Expose clearAllCaches() for impersonation lifecycle management
  *
- * JIT Architecture (two-phase initial load):
- *   Phase 1 — Parallel fetch:
- *     GET /Menus/my/workspaces  → lightweight workspace stubs (no menu items)
- *     GET /Menus/my             → default workspace menu items + routes
- *   Phase 2 — On workspace switch:
- *     GET /Menus/my?workspace=X → specific workspace menu items (JIT on demand)
+ * JIT Architecture (true on-demand loading):
+ *   Phase 1 — Login / page refresh:
+ *     GET /Menus/my  →  default (admin) workspace menu items + routes
+ *     No other calls are made. A single WorkspaceGroup is synthesised
+ *     from this response so the primary rail renders immediately.
  *
- * This gives the WorkspaceProvider all workspace metadata on first render
- * AND the default workspace's menu items — no extra round-trips needed.
+ *   Phase 2 — User switches to a module workspace (e.g. CRM):
+ *     GET /Menus/my?workspace=crm  →  CRM menu items (JIT, cached after first load)
+ *
+ *   The GET /Menus/my/workspaces endpoint is NEVER called on login.
+ *   It is only called when the WorkspaceProvider needs to discover
+ *   available module workspaces (e.g. to populate a picker or after
+ *   a drill-down context change). This keeps the initial payload tiny
+ *   and avoids leaking module workspace metadata to users who have
+ *   no business seeing it.
  */
 
 import type { IApiService } from "@core/interfaces/api.interface";
@@ -39,26 +45,14 @@ export class NavigationRepository implements INavigationRepository {
 
   constructor(private readonly apiService: IApiService) {}
 
-  // ── Step 1: Default workspace (parallel fetch + merge) ────────────────────
+  // ── Phase 1: Default workspace (admin menu only — no stubs) ───────────────
 
   async fetchDefaultWorkspace(): Promise<NavigationData> {
-    appLogger.debug(
-      "[NavigationRepository] Fetching workspace stubs + default menu in parallel…"
-    );
+    appLogger.debug("[NavigationRepository] Fetching default (admin) workspace menu…");
 
-    // ── Parallel fetch ─────────────────────────────────────────────────────
-    const [stubsRaw, menuRaw] = await Promise.all([
-      this.apiService.get<unknown>(API_ENDPOINTS.MENUS.MY_WORKSPACES).catch((err) => {
-        appLogger.warn(
-          "[NavigationRepository] Workspace stubs fetch failed — using fallback:",
-          err
-        );
-        return null;
-      }),
-      this.apiService.get<unknown>(API_ENDPOINTS.MENUS.MY),
-    ]);
+    // Single call — only the admin workspace menu. No workspace stubs.
+    const menuRaw = await this.apiService.get<unknown>(API_ENDPOINTS.MENUS.MY);
 
-    // ── Extract menu items from default workspace response ─────────────────
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const menuData = ((menuRaw as any)?.data ?? menuRaw ?? {}) as Record<string, unknown>;
     const rawMenuItems = Array.isArray(menuData.menuItems)
@@ -68,84 +62,47 @@ export class NavigationRepository implements INavigationRepository {
       ? (menuData.routes as string[])
       : [];
 
-    const parsedMenuItems = rawMenuItems.map((item) =>
-      MenuItemMapper.fromJson(item)
-    );
+    const parsedMenuItems = rawMenuItems.map((item) => MenuItemMapper.fromJson(item));
 
-    // ── Extract workspace stubs ────────────────────────────────────────────
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const stubsData = (stubsRaw as any)?.data ?? stubsRaw;
-    const rawStubs = Array.isArray(stubsData) ? stubsData : [];
-
-    // ── Build workspaceGroups ──────────────────────────────────────────────
-    // Each stub becomes a WorkspaceGroupData. The default workspace (lowest
-    // sortOrder Admin workspace) gets the menu items we already fetched.
-    let defaultKeyAssigned = false;
-    const workspaceGroups: WorkspaceGroupData[] = rawStubs
-      // Sort by sortOrder so we can identify the default workspace consistently
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .sort((a: any, b: any) => (a.workspaceSortOrder ?? 0) - (b.workspaceSortOrder ?? 0))
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((stub: any) => {
-        const base = WorkspaceGroupMapper.fromDto(stub);
-        const isAdminType = (base.workspaceType ?? "Admin") !== "Module";
-
-        // Assign default menu items to the first Admin workspace
-        let menuItems = base.menuItems; // (empty for stubs)
-        if (isAdminType && !defaultKeyAssigned && parsedMenuItems.length > 0) {
-          menuItems = parsedMenuItems.map((item) => item.toData());
-          defaultKeyAssigned = true;
-          appLogger.debug(
-            `[NavigationRepository] Assigned ${menuItems.length} default menu items to workspace "${base.workspaceKey}"`
-          );
-        }
-
-        return { ...base, menuItems };
-      });
-
-    // ── Fallback: no stubs returned — synthesise a single admin group ──────
-    if (workspaceGroups.length === 0) {
-      appLogger.warn(
-        "[NavigationRepository] No workspace stubs — synthesising default admin workspace"
-      );
-      workspaceGroups.push({
-        workspaceId: "admin",
-        workspaceKey: "admin",
-        workspaceNameEn: "Administration",
-        workspaceNameAr: "الإدارة",
-        workspaceIcon: "ShieldCheck",
-        workspaceSortOrder: 1,
-        colorHue: 270,
-        colorChroma: 0.22,
-        workspaceType: "Admin",
-        menuItems: parsedMenuItems.map((item) => item.toData()),
-      });
-    }
+    // Synthesise a single Admin WorkspaceGroup — no stubs needed.
+    // The primary rail only shows admin items at this stage; module workspace
+    // icons are NOT rendered until the user explicitly navigates to one.
+    const adminGroup: WorkspaceGroupData = {
+      workspaceId: "admin",
+      workspaceKey: "admin",
+      workspaceNameEn: "Administration",
+      workspaceNameAr: "الإدارة",
+      workspaceIcon: "ShieldCheck",
+      workspaceSortOrder: 1,
+      colorHue: 270,
+      colorChroma: 0.22,
+      workspaceType: "Admin",
+      menuItems: parsedMenuItems.map((item) => item.toData()),
+    };
 
     const input: NavigationDataInput = {
       menuItems: parsedMenuItems.map((item) => item.toData()),
       routes: rawRoutes,
-      workspaceGroups,
+      workspaceGroups: [adminGroup],
     };
 
     const data = new NavigationData(input);
     this.defaultData = data;
 
-    // Seed the in-memory cache with the first workspace
-    const firstKey = workspaceGroups[0]?.workspaceKey;
-    if (firstKey && !this.cache.has(firstKey)) {
-      this.cache.set(firstKey, data);
+    // Seed the admin workspace cache entry
+    if (!this.cache.has("admin")) {
+      this.cache.set("admin", data);
     }
 
     appLogger.debug(
-      `[NavigationRepository] Ready — ${workspaceGroups.length} workspace(s), ` +
+      `[NavigationRepository] Ready — 1 workspace (admin), ` +
         `${parsedMenuItems.length} root item(s), ${rawRoutes.length} route(s)`
     );
 
     return data;
   }
 
-  // ── Step 2: JIT per-workspace fetch ───────────────────────────────────────
+  // ── Phase 2: JIT per-workspace fetch (triggered by user action) ───────────
 
   async fetchWorkspaceMenu(workspaceKey: string): Promise<NavigationData> {
     // Return in-memory cached version immediately (no network)
@@ -172,13 +129,33 @@ export class NavigationRepository implements INavigationRepository {
 
     const parsedMenuItems = rawMenuItems.map((item) => MenuItemMapper.fromJson(item));
 
-    // Inject the fetched items into the matching workspace group in the existing groups list
+    // Inject fetched items into the matching workspace group in the existing groups list.
+    // If the workspace group doesn't exist yet (first visit after stub discovery),
+    // append it to the list.
     const existingGroups = this.defaultData?.workspaceGroups.map((g) => g.toData()) ?? [];
-    const updatedGroups = existingGroups.map((g) =>
-      g.workspaceKey === workspaceKey
-        ? { ...g, menuItems: parsedMenuItems.map((item) => item.toData()) }
-        : g
-    );
+    const alreadyInList = existingGroups.some((g) => g.workspaceKey === workspaceKey);
+
+    const updatedGroups = alreadyInList
+      ? existingGroups.map((g) =>
+          g.workspaceKey === workspaceKey
+            ? { ...g, menuItems: parsedMenuItems.map((item) => item.toData()) }
+            : g
+        )
+      : [
+          ...existingGroups,
+          {
+            workspaceId: workspaceKey,
+            workspaceKey,
+            workspaceNameEn: workspaceKey,
+            workspaceNameAr: workspaceKey,
+            workspaceIcon: "Boxes",
+            workspaceSortOrder: 99,
+            colorHue: 240,
+            colorChroma: 0.2,
+            workspaceType: "Module",
+            menuItems: parsedMenuItems.map((item) => item.toData()),
+          } satisfies WorkspaceGroupData,
+        ];
 
     const data = new NavigationData({
       menuItems: parsedMenuItems.map((item) => item.toData()),
@@ -188,6 +165,35 @@ export class NavigationRepository implements INavigationRepository {
 
     this.cache.set(workspaceKey, data);
     return data;
+  }
+
+  // ── JIT workspace stub discovery (called only when switching to a module) ─
+
+  /**
+   * Fetches lightweight workspace stubs from GET /Menus/my/workspaces.
+   * Called ONLY when the WorkspaceProvider needs to discover module workspaces
+   * (e.g. after a drill-down or when the user first enters a module workspace).
+   * Never called at startup.
+   */
+  async fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]> {
+    appLogger.debug("[NavigationRepository] JIT fetch of workspace stubs…");
+
+    const raw = await this.apiService.get<unknown>(API_ENDPOINTS.MENUS.MY_WORKSPACES).catch(
+      (err) => {
+        appLogger.warn("[NavigationRepository] Workspace stubs fetch failed:", err);
+        return null;
+      }
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stubsData = (raw as any)?.data ?? raw;
+    const rawStubs = Array.isArray(stubsData) ? stubsData : [];
+
+    return rawStubs
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .sort((a: any, b: any) => (a.workspaceSortOrder ?? 0) - (b.workspaceSortOrder ?? 0))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((stub: any) => WorkspaceGroupMapper.fromDto(stub));
   }
 
   // ── Cache management ───────────────────────────────────────────────────────

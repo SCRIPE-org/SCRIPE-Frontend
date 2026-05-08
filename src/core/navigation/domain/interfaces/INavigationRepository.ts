@@ -8,20 +8,22 @@
  */
 
 import type { NavigationData } from "../entities/NavigationData";
+import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
 
 export interface INavigationRepository {
   /**
-   * Step 1 — JIT bootstrap.
+   * Phase 1 — JIT bootstrap (login / hard reload).
    *
-   * Fetches the DEFAULT workspace menu + lightweight workspace stubs for the
-   * primary rail. Called once after login / on hard reload.
+   * Fetches ONLY the default (admin) workspace menu and routes.
+   * No workspace stubs are fetched here — module workspace discovery
+   * is deferred until the user explicitly navigates to a module.
    *
    * Backend: GET /Menus/my  (no workspace param)
    */
   fetchDefaultWorkspace(): Promise<NavigationData>;
 
   /**
-   * Step 2 — JIT on-demand.
+   * Phase 2 — JIT on-demand (user switches workspace).
    *
    * Fetches (and in-memory caches) the full menu tree for a specific workspace.
    * Returns the cached copy instantly if already loaded.
@@ -29,6 +31,16 @@ export interface INavigationRepository {
    * Backend: GET /Menus/my?workspace={key}
    */
   fetchWorkspaceMenu(workspaceKey: string): Promise<NavigationData>;
+
+  /**
+   * Phase 2b — JIT stub discovery (user navigates to a module workspace).
+   *
+   * Fetches lightweight workspace stubs so the provider can discover
+   * which module workspaces are available. Never called at startup.
+   *
+   * Backend: GET /Menus/my/workspaces
+   */
+  fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]>;
 
   /**
    * Purge ALL in-memory workspace caches.

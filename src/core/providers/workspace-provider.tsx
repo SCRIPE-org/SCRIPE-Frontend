@@ -103,6 +103,16 @@ interface WorkspaceContextType {
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
+// ── Helper: clean pathname ────────────────────────────────────────────────────
+function cleanPath(p: string | undefined | null): string {
+  if (!p) return "";
+  let cleaned = p.split("?")[0].split("#")[0];
+  if (cleaned.endsWith("/")) {
+    cleaned = cleaned.slice(0, -1);
+  }
+  return cleaned;
+}
+
 // ── Helper: first page of a workspace ─────────────────────────────────────────
 function firstPageOf(ws: WorkspaceGroup): string | null {
   for (const root of ws.menuItems ?? []) {
@@ -186,24 +196,66 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     return activeWorkspace.menuItems;
   }, [activeWorkspace, wsDataCache]);
 
+  const cleanedPathname = cleanPath(pathname);
 
   // ── Resolve activeRootItem ─────────────────────────────────────────────────
   const activeRootItem = useMemo<MenuItem | null>(() => {
     if (rootMenuItems.length === 0) return null;
-    const found = rootMenuItems.find((item) => item.id === activeRootItemId);
-    // Auto-select: prefer the item whose children contain the current pathname
-    if (!found && pathname) {
-      const matchByPath = rootMenuItems.find((root) =>
-        root.children.some(
-          (child) =>
-            child.href === pathname ||
-            (child.href && pathname.startsWith(child.href + "/"))
-        )
-      );
-      if (matchByPath) return matchByPath;
+
+    if (!cleanedPathname || cleanedPathname === "") {
+      const explicitMatch = rootMenuItems.find((item) => item.id === activeRootItemId);
+      return explicitMatch ?? rootMenuItems[0] ?? null;
     }
-    return found ?? rootMenuItems[0] ?? null;
-  }, [rootMenuItems, activeRootItemId, pathname]);
+
+    let bestRootMatch: MenuItem | null = null;
+    let maxMatchLength = -1;
+
+    const traverse = (node: MenuItem, rootAncestor: MenuItem) => {
+      const nodeHref = cleanPath(node.href);
+      if (
+        nodeHref &&
+        (cleanedPathname === nodeHref || cleanedPathname.startsWith(nodeHref + "/"))
+      ) {
+        if (nodeHref.length > maxMatchLength) {
+          maxMatchLength = nodeHref.length;
+          bestRootMatch = rootAncestor;
+        }
+      }
+      if (node.children) {
+        node.children.forEach((child) => traverse(child, rootAncestor));
+      }
+    };
+
+    rootMenuItems.forEach((root) => {
+      // Check the root itself
+      const rootHref = cleanPath(root.href);
+      if (
+        rootHref &&
+        (cleanedPathname === rootHref || cleanedPathname.startsWith(rootHref + "/"))
+      ) {
+        if (rootHref.length > maxMatchLength) {
+          maxMatchLength = rootHref.length;
+          bestRootMatch = root;
+        }
+      }
+      // Check all descendants
+      if (root.children) {
+        root.children.forEach((child) => traverse(child, root));
+      }
+    });
+
+    if (bestRootMatch) {
+      return bestRootMatch;
+    }
+
+    // If there's an activeRootItemId set explicitly and it exists
+    const explicitMatch = rootMenuItems.find((item) => item.id === activeRootItemId);
+    if (explicitMatch) return explicitMatch;
+    
+    // Graceful Fallback: if we are on a known path but no menu item matches, return null
+    // This allows the UI to not highlight any primary item when on a "system" route.
+    return null;
+  }, [rootMenuItems, activeRootItemId, cleanedPathname]);
 
   /** True when the active workspace is a Module-type workspace */
   const isModuleMode = activeWorkspace?.isModuleWorkspace ?? false;
@@ -229,6 +281,37 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }
     html.setAttribute("data-nexus-mode", isModuleMode ? "module" : "admin");
   }, [activeWorkspace, isModuleMode]);
+
+  // ── Auto-Switch Workspace Based on URL (Deep Linking) ──────────────────────
+  useEffect(() => {
+    if (!pathname || workspaceGroups.length === 0) return;
+    
+    // Skip root and known system paths
+    if (cleanedPathname === "" || cleanedPathname === "/profile" || cleanedPathname === "/not-authorized") return;
+
+    // Is the current path already handled by the active workspace?
+    const currentMatches = rootMenuItems.some((root) => {
+      const rHref = cleanPath(root.href);
+      if (rHref && (cleanedPathname === rHref || cleanedPathname.startsWith(rHref + "/"))) return true;
+      return root.children?.some((child) => {
+        const cHref = cleanPath(child.href);
+        return cHref && (cleanedPathname === cHref || cleanedPathname.startsWith(cHref + "/"));
+      });
+    });
+
+    if (currentMatches) return; // All good, current workspace owns this path
+
+    // It doesn't match the active workspace. See if it strictly maps to another workspace's key/route.
+    // We assume module workspaces map to `/{workspaceKey}`
+    const possibleWorkspace = workspaceGroups.find((wg) => 
+      cleanedPathname === `/${wg.workspaceKey}` || cleanedPathname.startsWith(`/${wg.workspaceKey}/`)
+    );
+
+    if (possibleWorkspace && possibleWorkspace.workspaceKey !== activeKey) {
+      appLogger.debug(`URL-sync: switching to workspace "${possibleWorkspace.workspaceKey}" based on deep-link ${cleanedPathname}`);
+      doSwitchWorkspace(possibleWorkspace.workspaceKey, false); // false = do not push state/navigate
+    }
+  }, [cleanedPathname, workspaceGroups, activeKey, rootMenuItems]);
 
   // ── JIT fetch on workspace switch ─────────────────────────────────────────
 

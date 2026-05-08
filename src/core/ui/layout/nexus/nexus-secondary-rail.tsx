@@ -64,6 +64,15 @@ interface NavItemProps {
   activeHref: string;
 }
 
+function cleanPath(p: string | undefined | null): string {
+  if (!p) return "";
+  let cleaned = p.split("?")[0].split("#")[0];
+  if (cleaned.endsWith("/")) {
+    cleaned = cleaned.slice(0, -1);
+  }
+  return cleaned;
+}
+
 function NavItem({
   item,
   depth = 0,
@@ -95,8 +104,9 @@ function NavItem({
   
   const hasActiveChild = React.useMemo(() => {
     if (!activeHref) return false;
+    const cleanedActive = cleanPath(activeHref);
     const check = (node: MenuItem): boolean => {
-      if (node.href === activeHref) return true;
+      if (cleanPath(node.href) === cleanedActive) return true;
       if (node.children) return node.children.some(check);
       return false;
     };
@@ -318,14 +328,16 @@ function RailContent({
   // Find the most specific active href
   const activeHref = React.useMemo(() => {
     let bestMatch = "";
+    const cleanedPathname = cleanPath(pathname);
     const traverse = (items: MenuItem[]) => {
       for (const item of items) {
         if (item.href) {
-          if (pathname === item.href) {
+          const itemHref = cleanPath(item.href);
+          if (cleanedPathname === itemHref) {
             bestMatch = item.href;
             return; // exact match
           }
-          if (pathname.startsWith(item.href + "/") && item.href.length > bestMatch.length) {
+          if (cleanedPathname.startsWith(itemHref + "/") && itemHref.length > cleanPath(bestMatch).length) {
             bestMatch = item.href;
           }
         }
