@@ -3,12 +3,15 @@
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
 
-// Core services
-import { NotificationService, NavigationService } from "@core/services";
+// Core DI
 import { getCoreContainer } from "@core/di";
-import { getAuthContainer } from "@modules/auth/di";
+import { NotificationService } from "@core/services";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
+import type { INavigationRepository } from "@core/navigation";
+
+// Auth DI
+import { getAuthContainer } from "@modules/auth/di";
 import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
 import type { IAuthService } from "@modules/auth/core/domain/interfaces/IAuthService";
 import type {
@@ -21,10 +24,11 @@ import type {
 /**
  * Services Interface
  *
- * SOLID: Interface Segregation - expose interfaces not implementations
+ * SOLID: Interface Segregation — expose interfaces, not implementations.
  *
- * Core services (apiService, publicApiService, notificationService) come from core/di.ts
- * Auth services (authService, authRepository, ...) come from auth/di.ts
+ * Core services come from core/di.ts.
+ * Auth services come from auth/di.ts.
+ * No service instances are created here — this is pure wiring.
  */
 interface Services {
   /** Authenticated HTTP client — requires Bearer token */
@@ -32,7 +36,11 @@ interface Services {
   /** Unauthenticated HTTP client — no auth headers, no CSRF */
   publicApiService: IPublicApiService;
   notificationService: NotificationService;
-  navigationService: NavigationService;
+  /**
+   * Navigation data repository — JIT workspace fetching + access checks.
+   * Implements INavigationRepository.
+   */
+  navigationRepository: INavigationRepository;
   authService: IAuthService;
   authRepository: IAuthRepository;
   tenantResolutionRepository: ITenantResolutionRepository;
@@ -51,9 +59,13 @@ const ServiceContext = createContext<Services | null>(null);
  */
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
-    // Core DI Container
-    const { apiService, publicApiService, notificationService } = getCoreContainer();
-    const navigationService = new NavigationService(apiService);
+    // Core DI Container — singleton, instantiated once
+    const {
+      apiService,
+      publicApiService,
+      notificationService,
+      navigationRepository,
+    } = getCoreContainer();
 
     // Auth DI Container (triggers refresh handler wiring on first access)
     const {
@@ -69,7 +81,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
       apiService,
       publicApiService,
       notificationService,
-      navigationService,
+      navigationRepository,
       authService,
       authRepository,
       tenantResolutionRepository,

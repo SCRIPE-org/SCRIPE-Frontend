@@ -20,8 +20,9 @@ import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTheme } from "next-themes";
-import type { MenuItem } from "@core/domain/entities/Navigation";
+import type { MenuItem } from "@core/navigation";
 import { ChevronRight, ArrowRightLeft } from "lucide-react";
+import { useWorkspaceTransitionContext } from "./nexus-layout";
 
 interface NexusSecondaryRailProps {
   mobileOpen?: boolean;
@@ -73,7 +74,7 @@ function NavItem({
   language,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
-  const { switchToModuleWorkspaceByKey } = useWorkspace();
+  const { switchWorkspace } = useWorkspaceTransitionContext();
   const label =
     language === "ar"
       ? item.nameAr || item.nameEn
@@ -209,12 +210,12 @@ function NavItem({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => {
-            switchToModuleWorkspaceByKey(workspaceKey!);
+            switchWorkspace(workspaceKey!);
             onNavigate();
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
-              switchToModuleWorkspaceByKey(workspaceKey!);
+              switchWorkspace(workspaceKey!);
               onNavigate();
             }
           }}

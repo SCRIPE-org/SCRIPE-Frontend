@@ -194,7 +194,12 @@ export const API_ENDPOINTS = {
 
   // ===== MENUS =====
   MENUS: {
+    /** GET /Menus/my — returns default workspace menu + WorkspaceStubs for primary rail */
     MY: `${V1}/Menus/my`,
+    /** GET /Menus/my?workspace={key} — JIT load menu for a specific workspace */
+    MY_WORKSPACE: (workspaceKey: string) => `${V1}/Menus/my?workspace=${encodeURIComponent(workspaceKey)}`,
+    /** GET /Menus/my/workspaces — lightweight workspace stubs (no menu items) */
+    MY_WORKSPACES: `${V1}/Menus/my/workspaces`,
     MY_OVERRIDES: `${V1}/Menus/overrides/my`,
     LIST: `${V1}/Menus`,
     BY_ID: (id: string) => `${V1}/Menus/${id}`,

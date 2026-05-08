@@ -746,6 +746,10 @@ export const ar = {
         industryDesc: "تخطيطات مخصصة لسير عمل متخصص",
       },
       options: {
+        nexus: {
+          name: "نيكسوس",
+          description: "شريط جانبي تقليدي مع منطقة محتوى",
+        },
         modern: {
           name: "عصري",
           description: "شريط جانبي يتوسع تلقائياً مع تأثيرات تمرير أنيقة",

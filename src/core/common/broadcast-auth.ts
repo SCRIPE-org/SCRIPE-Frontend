@@ -25,6 +25,7 @@
 import { secureTokenService } from "./secure-token-service";
 import { appLogger } from "./logger";
 import { BRAND } from "@core/config/branding";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 type AuthBroadcastEvent =
   | { type: "LOGOUT" }
@@ -73,11 +74,20 @@ class AuthBroadcastService {
 
       case "IMPERSONATION_START":
         appLogger.debug("[AuthBroadcast] Received IMPERSONATION_START from another tab");
+        // Sync sessionStorage so this tab's banner also shows
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
+        }
         this.onImpersonationCallback?.("start");
         break;
 
       case "IMPERSONATION_STOP":
         appLogger.debug("[AuthBroadcast] Received IMPERSONATION_STOP from another tab");
+        // Clear sessionStorage so this tab's banner also hides
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
+          sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
+        }
         this.onImpersonationCallback?.("stop");
         break;
     }

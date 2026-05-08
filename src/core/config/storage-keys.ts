@@ -32,8 +32,14 @@ export const STORAGE_KEYS = {
   ROLES: "roles",
 
   // Navigation cache
+  // Legacy single-key cache (kept for backward compat during migration)
   NAVIGATION_CACHE: "navigation_data",
   NAVIGATION_CACHE_EXPIRY: "navigation_data_expiry",
+  // JIT per-workspace navigation cache — key format: navigation_ws_{workspaceKey}
+  NAVIGATION_WORKSPACE_PREFIX: "navigation_ws_",
+  // Lightweight workspace stubs cache (primary rail metadata, no menu items)
+  WORKSPACE_STUBS_CACHE: "navigation_workspace_stubs",
+  WORKSPACE_STUBS_CACHE_EXPIRY: "navigation_workspace_stubs_expiry",
 
   // Language & i18n
   LANGUAGE: "language",

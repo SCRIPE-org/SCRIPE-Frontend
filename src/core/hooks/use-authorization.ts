@@ -3,6 +3,7 @@
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
+import { useNavigation } from "@core/providers/navigation-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -13,14 +14,16 @@ export interface AuthorizationState {
 }
 
 /**
- * Hook to check if user is authorized to access current page
+ * Hook to check if user is authorized to access current page.
+ *
+ * Uses NavigationRepository (via useNavigation context) for access checks
+ * instead of the deprecated NavigationService.
  */
 export function useAuthorization(): AuthorizationState {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
-  // const { isLoading: authLoading } = useAuth(); // Removed
   const authLoading = !hasHydrated;
-  const { navigationService } = useServices();
+  const { navigationData, hasPageAccess } = useNavigation();
   const pathname = usePathname();
   const router = useRouter();
   const [asyncAuthState, setAsyncAuthState] = useState<{
@@ -34,18 +37,15 @@ export function useAuthorization(): AuthorizationState {
       return;
     }
 
-    // Check authorization for the current page
     const checkAuthorization = async () => {
       try {
-        const navigationData = navigationService.getNavigationData();
-
         if (!navigationData) {
-          // Navigation data not loaded yet, redirect to login to refresh
-          router.push("/login");
+          // Navigation data not loaded yet — allow access until it is (provider handles loading state)
+          setAsyncAuthState({ isAuthorized: true, routes: [], checkedPath: pathname });
           return;
         }
 
-        const isAuthorized = navigationService.hasPageAccess(pathname);
+        const isAuthorized = hasPageAccess(pathname);
 
         setAsyncAuthState({
           isAuthorized,
@@ -53,7 +53,6 @@ export function useAuthorization(): AuthorizationState {
           checkedPath: pathname,
         });
 
-        // Redirect to not authorized page if user doesn't have access
         if (!isAuthorized && pathname !== "/not-authorized") {
           router.push("/not-authorized");
         }
@@ -68,9 +67,8 @@ export function useAuthorization(): AuthorizationState {
     };
 
     checkAuthorization();
-  }, [isAuthenticated, authLoading, pathname, navigationService, router]);
+  }, [isAuthenticated, authLoading, pathname, navigationData, hasPageAccess, router]);
 
-  // Compute final state synchronously (no setState in effect for early exits)
   if (authLoading) {
     return { isAuthorized: false, isLoading: true, routes: [] };
   }
@@ -90,17 +88,18 @@ export function useAuthorization(): AuthorizationState {
 }
 
 /**
- * Hook to check if user has access to a specific page
+ * Hook to check if user has access to a specific page.
+ * Uses the NavigationProvider context (no service coupling).
  */
 export function usePageAccess(pagePath: string): boolean {
-  const { navigationService } = useServices();
+  const { hasPageAccess } = useNavigation();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
 
   if (!isAuthenticated) {
     return false;
   }
 
-  return navigationService.hasPageAccess(pagePath);
+  return hasPageAccess(pagePath);
 }
 
 /**
@@ -114,7 +113,6 @@ export function withAuthorization<T extends object>(
     const { isAuthorized, isLoading } = useAuthorization();
 
     if (isLoading) {
-      // Return loading component (this would need to be in a .tsx file)
       return null;
     }
 

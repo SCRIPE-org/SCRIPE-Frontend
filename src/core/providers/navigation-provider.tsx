@@ -9,19 +9,32 @@ import {
   useMemo,
   useRef,
 } from "react";
+import type React from "react";
+import { authBroadcast } from "@core/common/broadcast-auth";
 import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
-import { NavigationData, MenuItemActions } from "@core/domain/entities";
-import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
+import type { MenuItemActions } from "@core/navigation";
+import type { NavigationData } from "@core/navigation";
+import { NavigationDataMapper } from "@core/navigation";
 import { appLogger } from "@core/common/logger";
 import { STORAGE_KEYS, CACHE_EXPIRY } from "@core/config/storage-keys";
+
+// ── Context shape ──────────────────────────────────────────────────────────────
 
 interface NavigationContextType {
   navigationData: NavigationData | null;
   isLoading: boolean;
+  /** (Re)fetch the default workspace menu. Pass forceRefresh=true to bypass cache. */
   refreshNavigation: (skipLoading?: boolean, forceRefresh?: boolean) => Promise<void>;
+  /**
+   * JIT: fetch and cache menu items for a specific workspace.
+   * Returns cached data instantly if already loaded.
+   * Delegates to the in-memory cache inside NavigationRepository,
+   * and persists to localStorage for page-reload resilience.
+   */
+  fetchWorkspaceMenu: (workspaceKey: string) => Promise<NavigationData | null>;
   hasPageAccess: (pathname: string) => boolean;
   getRoutes: () => string[];
   getPageActions: (pathname: string) => MenuItemActions | null;
@@ -29,196 +42,192 @@ interface NavigationContextType {
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
-export function NavigationProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with cached data immediately (sync operation)
-  const [navigationData, setNavigationData] = useState<NavigationData | null>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cachedData = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        const cacheExpiry = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+// ── localStorage cache helpers ─────────────────────────────────────────────────
+// These helpers live in the Provider (React layer) — not in the Repository.
+// The Repository owns in-memory caching; localStorage is the persistence layer.
 
-        if (!cachedData || !cacheExpiry) {
-          return null;
-        }
+const wsKey = (key: string) => `${STORAGE_KEYS.NAVIGATION_WORKSPACE_PREFIX}${key}`;
+const wsExpKey = (key: string) => `${wsKey(key)}_expiry`;
 
-        const expiryTime = parseInt(cacheExpiry, 10);
-        const now = Date.now();
-
-        if (now > expiryTime) {
-          localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-          localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-          return null;
-        }
-
-        const parsedData = JSON.parse(cachedData);
-        const navData = NavigationMapper.navigationDataFromJson({
-          menuItems: parsedData.menuItems,
-          routes: parsedData.routes,
-          workspaceGroups: parsedData.workspaceGroups,
-        });
-
-        appLogger.debug("Navigation data loaded from cache on initialization");
-        return navData;
-      } catch (error) {
-        appLogger.error("Failed to load navigation from cache on init:", error);
-        return null;
-      }
+function readWsCache(workspaceKey: string): NavigationData | null {
+  try {
+    const raw = localStorage.getItem(wsKey(workspaceKey));
+    const exp = localStorage.getItem(wsExpKey(workspaceKey));
+    if (!raw || !exp) return null;
+    if (Date.now() > parseInt(exp, 10)) {
+      localStorage.removeItem(wsKey(workspaceKey));
+      localStorage.removeItem(wsExpKey(workspaceKey));
+      return null;
     }
+    return NavigationDataMapper.fromPlainObject(JSON.parse(raw));
+  } catch {
     return null;
-  });
+  }
+}
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasTriggeredRefresh, setHasTriggeredRefresh] = useState(false);
-  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
-  const mustChangePassword = useAppStore((state) => state.mustChangePassword);
-  const user = useAppStore((state) => state.user);
-  const { navigationService } = useServices();
-  const pathname = usePathname();
-  const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
+function writeWsCache(workspaceKey: string, data: NavigationData) {
+  try {
+    const plain = NavigationDataMapper.toPlainObject(data);
+    localStorage.setItem(wsKey(workspaceKey), JSON.stringify(plain));
+    localStorage.setItem(
+      wsExpKey(workspaceKey),
+      (Date.now() + CACHE_EXPIRY.NAVIGATION).toString()
+    );
+  } catch {
+    // Storage quota exceeded — silently ignore
+  }
+}
 
-  /**
-   * Load navigation data from localStorage cache
-   */
-  const loadFromCache = useCallback((): NavigationData | null => {
-    try {
-      const cachedData = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE);
-      const cacheExpiry = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+function clearAllWsCaches() {
+  try {
+    const toRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith(STORAGE_KEYS.NAVIGATION_WORKSPACE_PREFIX)) toRemove.push(k);
+    }
+    toRemove.forEach((k) => localStorage.removeItem(k));
+    // Also clear the legacy single-key cache
+    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+    localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE);
+    localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE_EXPIRY);
+  } catch {
+    // ignore
+  }
+}
 
-      if (!cachedData || !cacheExpiry) {
-        return null;
-      }
-
-      const expiryTime = parseInt(cacheExpiry, 10);
-      const now = Date.now();
-
-      // Check if cache is expired
-      if (now > expiryTime) {
-        appLogger.debug("Navigation cache expired, clearing...");
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-        return null;
-      }
-
-      // Parse and return cached data
-      const parsedData = JSON.parse(cachedData);
-      const navigationData = NavigationMapper.navigationDataFromJson({
-        menuItems: parsedData.menuItems,
-        routes: parsedData.routes,
-        workspaceGroups: parsedData.workspaceGroups,
-      });
-
-      appLogger.debug("Navigation data loaded from cache");
-      return navigationData;
-    } catch (error) {
-      appLogger.error("Failed to load navigation from cache:", error);
-      // Clear invalid cache
+function readDefaultCache(): NavigationData | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE);
+    const exp = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+    if (!raw || !exp) return null;
+    if (Date.now() > parseInt(exp, 10)) {
       localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
       localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
       return null;
     }
-  }, []);
+    return NavigationDataMapper.fromPlainObject(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
 
-  /**
-   * Save navigation data to localStorage cache
-   */
-  const saveToCache = useCallback((data: NavigationData) => {
-    try {
-      const cacheData = NavigationMapper.navigationDataToPlainObject(data);
-      localStorage.setItem(STORAGE_KEYS.NAVIGATION_CACHE, JSON.stringify(cacheData));
-      localStorage.setItem(
-        STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY,
-        (Date.now() + CACHE_EXPIRY.NAVIGATION).toString()
-      );
-      appLogger.debug("Navigation data saved to cache");
-    } catch (error) {
-      appLogger.error("Failed to save navigation to cache:", error);
-    }
-  }, []);
+function writeDefaultCache(data: NavigationData) {
+  try {
+    const plain = NavigationDataMapper.toPlainObject(data);
+    localStorage.setItem(STORAGE_KEYS.NAVIGATION_CACHE, JSON.stringify(plain));
+    localStorage.setItem(
+      STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY,
+      (Date.now() + CACHE_EXPIRY.NAVIGATION).toString()
+    );
+  } catch {
+    // ignore
+  }
+}
 
-  /**
-   * Clear navigation cache
-   */
-  const clearCache = useCallback(() => {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-      appLogger.debug("Navigation cache cleared");
-    } catch (error) {
-      appLogger.error("Failed to clear navigation cache:", error);
-    }
-  }, []);
+// ── Provider ───────────────────────────────────────────────────────────────────
+
+export function NavigationProvider({ children }: { children: React.ReactNode }) {
+  // Seed from localStorage cache on first render (SSR-safe)
+  const [navigationData, setNavigationData] = useState<NavigationData | null>(() => {
+    if (typeof window === "undefined") return null;
+    return readDefaultCache();
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasTriggeredRefresh, setHasTriggeredRefresh] = useState(false);
+
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const mustChangePassword = useAppStore((s) => s.mustChangePassword);
+  const { navigationRepository } = useServices();
+  const pathname = usePathname();
+  const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
+
+  // ── Step 1: Fetch default workspace (called on login / missing data) ─────────
 
   const refreshNavigation = useCallback(
     async (skipLoading = false, forceRefresh = false) => {
-      // When force refreshing (e.g., after login), skip the isAuthenticated check
-      // because the store may not have updated yet
       if (!forceRefresh && !isAuthenticated) {
         setNavigationData(null);
-        navigationService.clearNavigationData();
-        clearCache();
+        navigationRepository.clearAllCaches();
+        clearAllWsCaches();
         return;
       }
 
-      // Allow force refresh from login hook
-      if (forceRefresh) {
-        setHasTriggeredRefresh(false);
-      }
+      if (forceRefresh) setHasTriggeredRefresh(false);
 
-      // Don't set loading state if we're refreshing in background with existing data
-      if (!skipLoading) {
-        setIsLoading(true);
-      }
+      if (!skipLoading) setIsLoading(true);
 
       try {
-        const data = await navigationService.fetchMenuItems();
+        const data = await navigationRepository.fetchDefaultWorkspace();
         setNavigationData(data);
-        saveToCache(data); // Save to cache after successful fetch
+        writeDefaultCache(data);
+        // Persist the default workspace's menu items to per-workspace cache too
+        if (data.workspaceGroups.length > 0) {
+          const firstKey = data.workspaceGroups[0].workspaceKey;
+          writeWsCache(firstKey, data);
+        }
         setHasTriggeredRefresh(true);
       } catch (error) {
         appLogger.error("Failed to fetch navigation data:", error);
-        // Try to load from cache as fallback
-        const cachedData = loadFromCache();
-        if (cachedData) {
-          appLogger.debug("Using cached navigation data due to fetch error");
-          setNavigationData(cachedData);
-        } else {
-          setNavigationData(null);
-        }
+        const cached = readDefaultCache();
+        setNavigationData(cached ?? null);
       } finally {
-        if (!skipLoading) {
-          setIsLoading(false);
-        }
+        if (!skipLoading) setIsLoading(false);
       }
     },
-    [isAuthenticated, navigationService, saveToCache, loadFromCache, clearCache]
+    [isAuthenticated, navigationRepository]
   );
 
-  // Handle logout - clear navigation data when user logs out
-  // Navigation fetch is now handled explicitly by useAuthLogin.onSuccess
+  // ── Step 2: JIT per-workspace fetch ─────────────────────────────────────────
+  //
+  // Strategy:
+  //   1. Repository in-memory cache  (instant, lives for session duration)
+  //   2. localStorage cache          (survives page reload, has TTL)
+  //   3. Network fetch               (JIT on first access or cache miss)
+
+  const fetchWorkspaceMenu = useCallback(
+    async (workspaceKey: string): Promise<NavigationData | null> => {
+      // Check localStorage first (survives page reload)
+      const lsCached = readWsCache(workspaceKey);
+      if (lsCached) {
+        appLogger.debug(`Nav localStorage cache HIT for workspace "${workspaceKey}"`);
+        return lsCached;
+      }
+      try {
+        // Repository handles in-memory cache + HTTP fetch
+        const data = await navigationRepository.fetchWorkspaceMenu(workspaceKey);
+        // Persist to localStorage for next reload
+        writeWsCache(workspaceKey, data);
+        return data;
+      } catch (err) {
+        appLogger.error(`JIT fetch failed for workspace "${workspaceKey}":`, err);
+        return null;
+      }
+    },
+    [navigationRepository]
+  );
+
+  // ── Logout: clear everything ─────────────────────────────────────────────────
+
   useEffect(() => {
     if (!isAuthenticated) {
-      // Clear everything on logout
       setNavigationData(null);
-      navigationService.clearNavigationData();
-      clearCache();
+      navigationRepository.clearAllCaches();
+      clearAllWsCaches();
       setIsLoading(false);
-      setHasTriggeredRefresh(false); // Allow refresh on next login
+      setHasTriggeredRefresh(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigationRepository]);
 
-  // ========================================
-  // AUTO-REFRESH ON EXPIRY / MISSING DATA
-  // ========================================
-  // When user is authenticated but navigation data is null (expired or missing),
-  // automatically trigger a refresh instead of leaving the user stuck.
+  // ── Auto-refresh: data missing for authenticated user ────────────────────────
+
   useEffect(() => {
-    if (isDocsRoute) return; // Skip navigation fetch on docs routes
-    // Skip navigation fetch when user must change password first.
-    // The MCP middleware blocks /Menus/my with 403, which would cause an infinite loop.
+    if (isDocsRoute) return;
     if (mustChangePassword) return;
     if (isAuthenticated && !navigationData && !isLoading && !hasTriggeredRefresh) {
-      appLogger.debug("Navigation data missing for authenticated user, auto-refreshing...");
-      refreshNavigation(false, true); // forceRefresh = true
+      appLogger.debug("Navigation data missing, auto-refreshing...");
+      refreshNavigation(false, true);
     }
   }, [
     isAuthenticated,
@@ -230,98 +239,73 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     isDocsRoute,
   ]);
 
-  // ========================================
-  // TENANT CONTEXT CHANGE → NAVIGATION REFETCH
-  // ========================================
-  // When the admin enters or exits a tenant's world, the backend returns
-  // different menu items (RequiresPlatformContext / RequiresTenantContext).
-  // We must clear the stale in-memory navigation and refetch immediately.
+  // ── Tenant context change: clear all and refetch ─────────────────────────────
+
   const { currentTenant } = useTenantContext();
   const tenantIdRef = useRef(currentTenant?.id ?? null);
 
   useEffect(() => {
     const newTenantId = currentTenant?.id ?? null;
     const prevTenantId = tenantIdRef.current;
-
-    // Only act when the value actually changes (not on initial mount)
     if (newTenantId !== prevTenantId) {
       tenantIdRef.current = newTenantId;
       appLogger.debug(
-        `Tenant context changed: ${prevTenantId ?? "platform"} → ${newTenantId ?? "platform"}, refreshing navigation...`
+        `Tenant context changed: ${prevTenantId ?? "platform"} → ${newTenantId ?? "platform"}, purging all workspace caches...`
       );
-
-      // Clear stale in-memory state so the auto-refresh effect can trigger
       setNavigationData(null);
-      clearCache();
+      navigationRepository.clearAllCaches();
+      clearAllWsCaches();
       setHasTriggeredRefresh(false);
-
-      // If not doing a full page reload (exitTenantWorld), force refetch now
       if (isAuthenticated && !isDocsRoute && !mustChangePassword) {
         refreshNavigation(false, true);
       }
     }
-  }, [
-    currentTenant,
-    isAuthenticated,
-    isDocsRoute,
-    mustChangePassword,
-    refreshNavigation,
-    clearCache,
-  ]);
+  }, [currentTenant, isAuthenticated, isDocsRoute, mustChangePassword, refreshNavigation, navigationRepository]);
 
-  // ========================================
-  // PERIODIC REFRESH CHECK (every 5 minutes)
-  // ========================================
-  // Periodically check if cache is about to expire and refresh proactively
+  // ── Impersonation: listen via shared authBroadcast singleton ─────────────────
+
+  useEffect(() => {
+    authBroadcast.onImpersonation((type) => {
+      appLogger.auth(`Impersonation "${type}" — purging all workspace caches`);
+      setNavigationData(null);
+      navigationRepository.clearAllCaches();
+      clearAllWsCaches();
+      setHasTriggeredRefresh(false);
+    });
+    // authBroadcast is a singleton — no cleanup needed
+  }, [navigationRepository]);
+
+  // ── Periodic refresh check ────────────────────────────────────────────────────
+
   useEffect(() => {
     if (!isAuthenticated || isDocsRoute || mustChangePassword) return;
-
     const checkAndRefresh = () => {
       try {
-        const cacheExpiry = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-        if (!cacheExpiry) {
-          // No expiry means no cache, trigger refresh
-          appLogger.debug("Periodic check: No navigation cache, refreshing...");
-          refreshNavigation(true, true); // skipLoading=true, forceRefresh=true
+        const exp = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+        if (!exp) {
+          refreshNavigation(true, true);
           return;
         }
-
-        const expiryTime = parseInt(cacheExpiry, 10);
-        const now = Date.now();
-        const timeUntilExpiry = expiryTime - now;
-
-        // If cache expires in less than 5 minutes, proactively refresh
+        const timeUntilExpiry = parseInt(exp, 10) - Date.now();
         if (timeUntilExpiry < CACHE_EXPIRY.NAVIGATION_REFRESH_CHECK) {
-          appLogger.debug("Periodic check: Navigation cache expiring soon, refreshing...");
-          refreshNavigation(true, true); // Background refresh
+          refreshNavigation(true, true);
         }
-      } catch (error) {
-        appLogger.error("Periodic refresh check failed:", error);
-      }
+      } catch {}
     };
-
-    // Initial check after mount
-    const initialCheckTimeout = setTimeout(checkAndRefresh, 1000);
-
-    // Periodic checks
-    const intervalId = setInterval(checkAndRefresh, CACHE_EXPIRY.NAVIGATION_REFRESH_CHECK);
-
+    const t = setTimeout(checkAndRefresh, 1000);
+    const iv = setInterval(checkAndRefresh, CACHE_EXPIRY.NAVIGATION_REFRESH_CHECK);
     return () => {
-      clearTimeout(initialCheckTimeout);
-      clearInterval(intervalId);
+      clearTimeout(t);
+      clearInterval(iv);
     };
-  }, [isAuthenticated, refreshNavigation, isDocsRoute]);
+  }, [isAuthenticated, refreshNavigation, isDocsRoute, mustChangePassword]);
+
+  // ── Route guards ──────────────────────────────────────────────────────────────
 
   const hasPageAccess = useCallback(
-    (pathname: string): boolean => {
-      if (!isAuthenticated) {
-        return false;
-      }
-
-      // Remove query parameters and trailing slashes for comparison
-      const cleanPath = pathname.split("?")[0].replace(/\/$/, "") || "/";
-
-      // Always allow access to system pages for authenticated users
+    (path: string): boolean => {
+      if (!isAuthenticated) return false;
+      const cleanPath = path.split("?")[0].replace(/\/$/, "") || "/";
       const systemPages = [
         "/",
         "",
@@ -335,50 +319,50 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         "/global-error",
         "/error",
       ];
-
-      if (systemPages.includes(cleanPath)) {
-        return true;
-      }
-
-      // If no navigation data yet, allow access temporarily (RouteGuard will re-check)
-      if (!navigationData) {
-        return true;
-      }
-
+      if (systemPages.includes(cleanPath)) return true;
+      if (!navigationData) return true;
       return navigationData.hasPageAccess(cleanPath);
     },
     [navigationData, isAuthenticated]
   );
 
-  const getRoutes = useCallback((): string[] => {
-    return navigationData?.routes || [];
-  }, [navigationData]);
-
-  /**
-   * Get page-level actions (canView, canCreate, canUpdate, canDelete)
-   */
-  const getPageActions = useCallback(
-    (pathname: string): MenuItemActions | null => {
-      if (!navigationData) return null;
-      return navigationData.getPageActions(pathname);
-    },
+  const getRoutes = useCallback(
+    (): string[] => navigationData?.routes ?? [],
     [navigationData]
   );
 
-  // P0.4: Memoize context value to prevent unnecessary re-renders of all consumers
+  const getPageActions = useCallback(
+    (path: string): MenuItemActions | null =>
+      navigationData?.getPageActions(path) ?? null,
+    [navigationData]
+  );
+
   const contextValue = useMemo(
     () => ({
       navigationData,
       isLoading,
       refreshNavigation,
+      fetchWorkspaceMenu,
       hasPageAccess,
       getRoutes,
       getPageActions,
     }),
-    [navigationData, isLoading, refreshNavigation, hasPageAccess, getRoutes, getPageActions]
+    [
+      navigationData,
+      isLoading,
+      refreshNavigation,
+      fetchWorkspaceMenu,
+      hasPageAccess,
+      getRoutes,
+      getPageActions,
+    ]
   );
 
-  return <NavigationContext.Provider value={contextValue}>{children}</NavigationContext.Provider>;
+  return (
+    <NavigationContext.Provider value={contextValue}>
+      {children}
+    </NavigationContext.Provider>
+  );
 }
 
 export function useNavigation() {

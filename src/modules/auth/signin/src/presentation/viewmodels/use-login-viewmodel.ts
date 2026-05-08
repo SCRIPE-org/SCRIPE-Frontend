@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthLogin } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogin";
 import { useAppStore } from "@core/store/useAppStore";
@@ -10,6 +10,7 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "@modules/auth/core/domain/errors/AuthErrors";
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
+import { clearSessionOnLoginMount } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
 export interface LoginFormData {
   identifier: string;
@@ -31,6 +32,10 @@ export function useLoginViewModel() {
   // useEffect can update it.
   const tenantIdRef = useRef<string | undefined>(undefined);
   const hasTriggeredRedirect = useRef(false);
+
+  // 🔒 Guard: clear stale impersonation flags on login page mount.
+  // Runs once in the ViewModel (data-layer concern) — never in the View.
+  useEffect(() => { clearSessionOnLoginMount(); }, []);
 
   const loginMutation = useAuthLogin();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);

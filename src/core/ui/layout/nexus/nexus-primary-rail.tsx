@@ -13,7 +13,7 @@
 import React, { useCallback, useState } from "react";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { MenuItem } from "@core/domain/entities/Navigation";
+import type { MenuItem } from "@core/navigation";
 import * as LucideIcons from "lucide-react";
 import {
   LayoutDashboard,
@@ -30,6 +30,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@core/common/utils";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { useRouter } from "next/navigation";
+import { useWorkspaceTransitionContext } from "./nexus-layout";
 
 // ── Icon resolver ─────────────────────────────────────────────────────────────
 function DynamicIcon({ name, size = 18 }: { name: string; size?: number }) {
@@ -333,6 +334,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
   } = useWorkspace();
   const { language, direction } = useI18n();
   const { resolvedTheme } = useTheme();
+  const { goBackWorkspace } = useWorkspaceTransitionContext();
 
   const isDark = resolvedTheme === "dark";
   const isRTL = direction === "rtl";
@@ -465,7 +467,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
             isRTL={isRTL}
             isDark={isDark}
             label={language === "ar" ? "العودة" : "Back to Admin"}
-            onClick={goBack}
+            onClick={goBackWorkspace}
           />
           <Divider />
         </>

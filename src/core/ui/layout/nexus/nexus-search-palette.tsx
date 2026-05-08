@@ -13,7 +13,7 @@ import {
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import * as LucideIcons from "lucide-react";
-import { MenuItem } from "@core/domain/entities/Navigation";
+import { MenuItem } from "@core/navigation";
 
 interface NexusSearchPaletteProps {
   open: boolean;

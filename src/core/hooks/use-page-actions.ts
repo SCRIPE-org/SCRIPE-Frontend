@@ -1,7 +1,7 @@
 "use client";
 
 import { useNavigation } from "@core/providers/navigation-provider";
-import type { MenuItemActions } from "@core/domain/entities/Navigation";
+import type { MenuItemActions } from "@core/navigation";
 
 /**
  * usePageActions Hook

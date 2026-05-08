@@ -41,7 +41,7 @@ import { cn } from "@core/common/utils";
 import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
-import type { WorkspaceGroup } from "@core/domain/entities/Navigation";
+import type { WorkspaceGroup } from "@core/navigation";
 
 /** Filter menu tree to only nodes belonging to a workspace (by workspaceId) */
 function filterByWorkspace(

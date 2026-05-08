@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Silence the "multiple lockfiles" warning in the NEXORA monorepo
+  turbopack: {
+    root: __dirname,
+  },
   experimental: {
     // Tree-shake heavy libraries — only bundle what's actually imported
     optimizePackageImports: [

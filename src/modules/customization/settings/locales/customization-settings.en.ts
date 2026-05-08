@@ -28,6 +28,10 @@ export const en = {
         industryDesc: "Domain-specific layouts for specialized workflows",
       },
       options: {
+        nexus: {
+          name: "Nexus",
+          description: "Auto-expanding sidebar with sleek hover effects",
+        },
         modern: {
           name: "Modern",
           description: "Auto-expanding sidebar with sleek hover effects",

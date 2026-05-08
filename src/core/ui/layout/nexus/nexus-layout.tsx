@@ -17,15 +17,29 @@
  * └──────┴─────────┴────────────────────────────────────────────┘
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, createContext, useContext } from "react";
 import { NexusPrimaryRail } from "./nexus-primary-rail";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
 import { NexusTopbar } from "./nexus-topbar";
 import { NexusTransitionOverlay } from "./nexus-transition";
-import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
+import { NexusWorkspaceLoader } from "./nexus-workspace-loader";
 import { NexusSearchPalette } from "./nexus-search-palette";
+import { useWorkspaceTransition } from "./use-workspace-transition";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
+
+// ── Workspace transition context ─────────────────────────────────────────────
+interface WorkspaceTransitionContextType {
+  switchWorkspace: (key: string) => void;
+  goBackWorkspace: () => void;
+}
+const WorkspaceTransitionContext = createContext<WorkspaceTransitionContextType>({
+  switchWorkspace: () => {},
+  goBackWorkspace: () => {},
+});
+export function useWorkspaceTransitionContext() {
+  return useContext(WorkspaceTransitionContext);
+}
 
 interface NexusLayoutProps {
   children: React.ReactNode;
@@ -41,7 +55,11 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
   const togglePanel = useCallback(() => setIsPanelCollapsed((prev) => !prev), []);
 
+  // Workspace transition (loader + navigation)
+  const { loaderState, switchWorkspace, goBackWorkspace } = useWorkspaceTransition();
+
   return (
+    <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
     <div
       className={cn(
         "bg-background text-foreground",
@@ -60,8 +78,16 @@ export function NexusLayout({ children }: NexusLayoutProps) {
         "--nexus-topbar-h": "56px",
       } as React.CSSProperties}
     >
-      {/* Workspace transition overlay */}
+      {/* Workspace transition overlay (color-sweep on workspace change) */}
       <NexusTransitionOverlay />
+
+      {/* Module loading overlay (shown while switching + navigating) */}
+      <NexusWorkspaceLoader
+        show={loaderState.show}
+        workspaceName={loaderState.workspaceName}
+        workspaceAbbr={loaderState.workspaceAbbr}
+        accentColor={loaderState.accentColor}
+      />
 
       {/*
        * ── Global Banner (impersonation / tenant drilldown) ──────────────────
@@ -125,5 +151,6 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
       <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
+    </WorkspaceTransitionContext.Provider>
   );
 }
