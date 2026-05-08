@@ -75,7 +75,9 @@ interface WorkspaceContextType {
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 // ── Helper: first navigable page of a workspace ────────────────────────────
-function firstPageOf(ws: WorkspaceGroup): string | null {
+// Accepts any object with a menuItems array — works with WorkspaceGroup AND NavigationData.
+type WithMenuItems = { menuItems?: Array<{ href?: string | null; children?: Array<{ href?: string | null }> }> };
+function firstPageOf(ws: WithMenuItems): string | null {
   for (const root of ws.menuItems ?? []) {
     if (root.href && !root.href.startsWith("#")) return root.href;
     for (const child of root.children ?? []) {
@@ -173,37 +175,31 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         await fetchWorkspaceMenu(workspaceKey);
       }
 
-      // Navigate to workspace's first page if requested
+      // Navigate to workspace's first page using replace() — kills history stack
+      // so the browser Back button cannot jump between workspaces.
       if (navigateTo) {
         const ws = store.workspaces.get(workspaceKey) ?? null;
-        if (ws) {
-          // Build a temporary WorkspaceGroup-like to get first page
-          const items = ws.menuItems ?? [];
-          for (const root of items) {
-            if (root.href && !root.href.startsWith("#")) {
-              router.push(root.href);
-              return;
-            }
-            for (const child of root.children ?? []) {
-              if (child.href && !child.href.startsWith("#")) {
-                router.push(child.href);
-                return;
-              }
-            }
-          }
+        const firstHref = ws ? firstPageOf(ws) : null;
+        if (firstHref) {
+          router.replace(firstHref);
+          return;
         }
       }
     },
     [store, fetchWorkspaceMenu, router]
   );
 
-  const goBack = useCallback(() => {
+
+  const goBack = useCallback(async () => {
     const prev = previousWorkspaceKey ?? adminWorkspaces[0]?.workspaceKey;
     if (prev) {
-      setActiveWorkspace(prev);
+      // Navigate to the first page of the destination workspace using replace()
+      // so there's no dangling module-workspace history entry.
+      await setActiveWorkspace(prev, true);
     }
     store.setPreviousWorkspace(null);
   }, [previousWorkspaceKey, adminWorkspaces, setActiveWorkspace, store]);
+
 
   const switchToModuleWorkspaceByKey = useCallback(
     (key: string) => {
