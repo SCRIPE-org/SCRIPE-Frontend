@@ -61,6 +61,7 @@ interface NavItemProps {
   onNavigate: () => void;
   palette: ReturnType<typeof usePalette>;
   language: string;
+  activeHref: string;
 }
 
 function NavItem({
@@ -72,6 +73,7 @@ function NavItem({
   onNavigate,
   palette,
   language,
+  activeHref,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
   const { switchWorkspace } = useWorkspaceTransitionContext();
@@ -86,14 +88,20 @@ function NavItem({
   const isWorkspaceSwitcher = !!workspaceKey;
 
   const isActive =
-    !!item.href &&
-    (pathname === item.href || pathname.startsWith(item.href + "/"));
+    !!item.href && item.href === activeHref;
 
   const hasChildren = item.children.length > 0;
   const isExpanded = expandedIds.includes(item.id);
-  const hasActiveChild = item.children.some(
-    (c) => !!c.href && (pathname === c.href || pathname.startsWith(c.href + "/"))
-  );
+  
+  const hasActiveChild = React.useMemo(() => {
+    if (!activeHref) return false;
+    const check = (node: MenuItem): boolean => {
+      if (node.href === activeHref) return true;
+      if (node.children) return node.children.some(check);
+      return false;
+    };
+    return item.children.some(check);
+  }, [item.children, activeHref]);
 
   // Auto-expand if a child is active
   useEffect(() => {
@@ -187,6 +195,7 @@ function NavItem({
                   onNavigate={onNavigate}
                   palette={palette}
                   language={language}
+                  activeHref={activeHref}
                 />
               ))}
             </div>
@@ -306,6 +315,29 @@ function RailContent({
     []
   );
 
+  // Find the most specific active href
+  const activeHref = React.useMemo(() => {
+    let bestMatch = "";
+    const traverse = (items: MenuItem[]) => {
+      for (const item of items) {
+        if (item.href) {
+          if (pathname === item.href) {
+            bestMatch = item.href;
+            return; // exact match
+          }
+          if (pathname.startsWith(item.href + "/") && item.href.length > bestMatch.length) {
+            bestMatch = item.href;
+          }
+        }
+        if (item.children?.length > 0) {
+          traverse(item.children);
+        }
+      }
+    };
+    traverse(menuItems);
+    return bestMatch;
+  }, [menuItems, pathname]);
+
   return (
     <div
       style={{
@@ -338,6 +370,7 @@ function RailContent({
                   onNavigate={onNavigate}
                   palette={palette}
                   language={language}
+                  activeHref={activeHref}
                 />
               ))}
             </div>
@@ -354,6 +387,7 @@ function RailContent({
             onNavigate={onNavigate}
             palette={palette}
             language={language}
+            activeHref={activeHref}
           />
         );
       })}
