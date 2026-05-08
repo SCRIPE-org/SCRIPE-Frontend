@@ -158,8 +158,14 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   // ── Previous workspace key for Back button ─────────────────────────────────
   const [previousWorkspaceKey, setPreviousWorkspaceKey] = useState<string | null>(null);
 
-  // ── Active root item id (persisted) ───────────────────────────────────────
-  const [activeRootItemId, setActiveRootItemIdState] = useState<string | null>(() => {
+  /**
+   * User's EXPLICIT selection — set when the user clicks a root item in the primary rail.
+   * This overrides the URL-derived item so the user can browse any section
+   * without being forced to stay on the current page's parent.
+   * Cleared automatically when the URL changes to a page that belongs to
+   * a recognised root item (i.e., the user navigated via a secondary rail link).
+   */
+  const [userSelectedRootItemId, setUserSelectedRootItemId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem(ROOT_ITEM_KEY) ?? null;
   });
@@ -198,64 +204,63 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   const cleanedPathname = cleanPath(pathname);
 
+  // ── URL-derived root item (pure computation — no state, no side-effects) ───
+  // Finds which root item's subtree the current pathname belongs to.
+  // This is the ground-truth "you are here" based solely on the URL.
+  const urlRootItemId = useMemo<string | null>(() => {
+    if (!cleanedPathname || rootMenuItems.length === 0) return null;
+
+    let bestId: string | null = null;
+    let bestLen = -1;
+
+    function searchNode(node: MenuItem, rootId: string): void {
+      const href = cleanPath(node.href);
+      if (href && (cleanedPathname === href || cleanedPathname.startsWith(href + "/"))) {
+        if (href.length > bestLen) {
+          bestLen = href.length;
+          bestId = rootId;
+        }
+      }
+      for (const child of node.children ?? []) {
+        searchNode(child, rootId);
+      }
+    }
+
+    for (const root of rootMenuItems) {
+      searchNode(root, root.id);
+    }
+
+    return bestId;
+  }, [rootMenuItems, cleanedPathname]);
+
+  // ── Clear user selection when URL changes to a page under a known root item ──
+  // This makes the URL take over after the user navigates via a secondary rail link.
+  // If the URL doesn't match any root item (e.g. /profile), the user’s browsing
+  // selection is preserved so the panel doesn’t snap away.
+  const prevPathnameRef = useRef(cleanedPathname);
+  useEffect(() => {
+    if (cleanedPathname === prevPathnameRef.current) return;
+    prevPathnameRef.current = cleanedPathname;
+
+    if (urlRootItemId !== null) {
+      // Real navigation happened and the new URL belongs to a root section.
+      // Drop the user’s manual selection so the URL drives the active state.
+      setUserSelectedRootItemId(null);
+      try { localStorage.removeItem(ROOT_ITEM_KEY); } catch { /* ignore */ }
+    }
+    // If urlRootItemId is null (system page like /profile), keep user selection.
+  }, [cleanedPathname, urlRootItemId]);
+
+  // ── Effective active root item ID ─────────────────────────────────────────
+  // User’s explicit click always wins; URL-derived is the fallback.
+  const effectiveRootItemId = userSelectedRootItemId ?? urlRootItemId;
+
   // ── Resolve activeRootItem ─────────────────────────────────────────────────
   const activeRootItem = useMemo<MenuItem | null>(() => {
     if (rootMenuItems.length === 0) return null;
-
-    if (!cleanedPathname || cleanedPathname === "") {
-      const explicitMatch = rootMenuItems.find((item) => item.id === activeRootItemId);
-      return explicitMatch ?? rootMenuItems[0] ?? null;
-    }
-
-    let bestRootMatch: MenuItem | null = null;
-    let maxMatchLength = -1;
-
-    const traverse = (node: MenuItem, rootAncestor: MenuItem) => {
-      const nodeHref = cleanPath(node.href);
-      if (
-        nodeHref &&
-        (cleanedPathname === nodeHref || cleanedPathname.startsWith(nodeHref + "/"))
-      ) {
-        if (nodeHref.length > maxMatchLength) {
-          maxMatchLength = nodeHref.length;
-          bestRootMatch = rootAncestor;
-        }
-      }
-      if (node.children) {
-        node.children.forEach((child) => traverse(child, rootAncestor));
-      }
-    };
-
-    rootMenuItems.forEach((root) => {
-      // Check the root itself
-      const rootHref = cleanPath(root.href);
-      if (
-        rootHref &&
-        (cleanedPathname === rootHref || cleanedPathname.startsWith(rootHref + "/"))
-      ) {
-        if (rootHref.length > maxMatchLength) {
-          maxMatchLength = rootHref.length;
-          bestRootMatch = root;
-        }
-      }
-      // Check all descendants
-      if (root.children) {
-        root.children.forEach((child) => traverse(child, root));
-      }
-    });
-
-    if (bestRootMatch) {
-      return bestRootMatch;
-    }
-
-    // If there's an activeRootItemId set explicitly and it exists
-    const explicitMatch = rootMenuItems.find((item) => item.id === activeRootItemId);
-    if (explicitMatch) return explicitMatch;
-    
-    // Graceful Fallback: if we are on a known path but no menu item matches, return null
-    // This allows the UI to not highlight any primary item when on a "system" route.
-    return null;
-  }, [rootMenuItems, activeRootItemId, cleanedPathname]);
+    if (!effectiveRootItemId) return null;
+    return rootMenuItems.find((item) => item.id === effectiveRootItemId) ?? null;
+  }, [rootMenuItems, effectiveRootItemId]);
 
   /** True when the active workspace is a Module-type workspace */
   const isModuleMode = activeWorkspace?.isModuleWorkspace ?? false;
@@ -322,7 +327,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     async (workspaceKey: string, navigate = true) => {
       // Persist immediately for instant visual feedback
       setActiveKey(workspaceKey);
-      setActiveRootItemIdState(null);
+      setUserSelectedRootItemId(null);
       try {
         localStorage.setItem(WORKSPACE_KEY, workspaceKey);
         localStorage.removeItem(ROOT_ITEM_KEY);
@@ -376,7 +381,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   );
 
   const setActiveRootItemId = useCallback((id: string) => {
-    setActiveRootItemIdState(id);
+    setUserSelectedRootItemId(id);
     try {
       localStorage.setItem(ROOT_ITEM_KEY, id);
     } catch { /* ignore */ }
