@@ -30,21 +30,7 @@ import { getAuthContainer } from "@modules/auth/di";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { authBroadcast } from "@core/common/broadcast-auth";
 
-/** Purge all per-workspace navigation caches from localStorage. */
-function purgeNavCaches(): void {
-  if (typeof window === "undefined") return;
-  const toRemove: string[] = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k?.startsWith(STORAGE_KEYS.NAVIGATION_WORKSPACE_PREFIX)) toRemove.push(k);
-  }
-  toRemove.forEach((k) => localStorage.removeItem(k));
-  localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-  localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE);
-  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE_EXPIRY);
-  appLogger.auth("All workspace navigation caches purged (impersonation lifecycle)");
-}
+import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
 /**
  * Check if we're currently impersonating (read from sessionStorage).
@@ -72,8 +58,7 @@ export function useImpersonation() {
       } else {
         setIsImpersonating(false);
         // Clear navigation cache so menu reloads with restored identity
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+        clearNavigationCaches();
         queryClient.invalidateQueries();
       }
     });
@@ -99,7 +84,7 @@ export function useImpersonation() {
         appLogger.auth(`Impersonation started for admin: ${adminId}`);
 
         // Purge all workspace navigation caches so the new identity loads fresh data
-        purgeNavCaches();
+        clearNavigationCaches();
 
         // Navigate to home with full reload — fresh data with new identity
         window.location.href = "/";
@@ -134,7 +119,7 @@ export function useImpersonation() {
       appLogger.auth("Impersonation stopped, original admin restored");
 
       // Purge all workspace navigation caches so the original admin loads fresh data
-      purgeNavCaches();
+      clearNavigationCaches();
 
       // Navigate to home with full reload — fresh data with original identity
       window.location.href = "/";

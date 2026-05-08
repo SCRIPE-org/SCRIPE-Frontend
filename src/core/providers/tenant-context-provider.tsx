@@ -23,6 +23,7 @@ import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "../common/logger";
+import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
 /**
  * Tenant information for context
@@ -127,8 +128,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       // full-page redirect below, NavigationProvider mounts fresh and fetches
       // from the backend with the new X-Tenant-Context header.
       // Without this, the sidebar keeps showing platform-only items.
-      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+      clearNavigationCaches();
 
       // Invalidate ALL TanStack Query cache so data refetches with new context.
       queryClient.invalidateQueries();
@@ -158,8 +158,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
     // CRITICAL: Clear the navigation cache so NavigationProvider
     // auto-refreshes and fetches the platform-level menu (no tenant context).
-    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+    clearNavigationCaches();
 
     // Invalidate ALL TanStack Query cache so data refetches without context.
     queryClient.invalidateQueries();

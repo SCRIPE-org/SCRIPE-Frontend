@@ -10,6 +10,7 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
+import { clearNavigationCaches } from "../utils/auth-storage-cleanup";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 
 export class ImpersonationRepository {
@@ -28,8 +29,7 @@ export class ImpersonationRepository {
       if (typeof window !== "undefined") {
         sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
         // Clear navigation cache so menu items reload with the impersonated identity
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+        clearNavigationCaches();
       }
 
       authBroadcast.broadcastImpersonationStart();
@@ -51,8 +51,7 @@ export class ImpersonationRepository {
       if (typeof window !== "undefined") {
         sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
         sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+        clearNavigationCaches();
       }
 
       authBroadcast.broadcastImpersonationStop();

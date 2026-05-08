@@ -14,6 +14,29 @@ import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-k
 import { appLogger } from "@core/common/logger";
 
 /**
+ * Completely purge all navigation and workspace caches.
+ * Removes the legacy generic cache, the new workspace stubs cache,
+ * and iterates through localStorage to remove all JIT workspace keys.
+ */
+export function clearNavigationCaches(): void {
+  if (typeof window === "undefined") return;
+
+  const toRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k?.startsWith(STORAGE_KEYS.NAVIGATION_WORKSPACE_PREFIX)) toRemove.push(k);
+  }
+  toRemove.forEach((k) => localStorage.removeItem(k));
+
+  localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+  localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE);
+  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE_EXPIRY);
+  
+  appLogger.debug("Navigation caches completely purged.");
+}
+
+/**
  * Clear all authentication data from localStorage / sessionStorage.
  *
  * NEVER calls sessionStorage.clear() — that would wipe tenant_context
@@ -26,6 +49,9 @@ export function clearAllLocalStorage(): void {
   AUTH_STORAGE_KEYS_TO_CLEAR.forEach((key) => {
     localStorage.removeItem(key);
   });
+  
+  // Clear all dynamic and static navigation caches
+  clearNavigationCaches();
 
   // next-themes raw key (library hardcodes "theme" — not in STORAGE_KEYS)
   localStorage.removeItem("theme");
@@ -61,14 +87,7 @@ export function clearSessionOnLoginMount(): void {
 
   // Purge all per-workspace navigation caches — prevents stale JIT-cached
   // menus from a previous (possibly impersonated) session bleeding into the next login.
-  const toRemove: string[] = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k?.startsWith(STORAGE_KEYS.NAVIGATION_WORKSPACE_PREFIX)) toRemove.push(k);
-  }
-  toRemove.forEach((k) => localStorage.removeItem(k));
-  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE);
-  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE_EXPIRY);
+  clearNavigationCaches();
 
   appLogger.auth("Login page mounted: stale impersonation flags and workspace caches cleared");
 }
