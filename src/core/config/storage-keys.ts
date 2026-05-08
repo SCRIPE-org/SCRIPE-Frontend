@@ -1,11 +1,10 @@
 /**
- * Storage Keys Constants
+ * Storage Keys Constants — v2 (Clean Slate)
  *
- * Centralized storage key definitions for localStorage/sessionStorage.
- * All storage keys should be defined here to:
- * - Avoid typos and key mismatches
- * - Enable easy key management
- * - Provide single source of truth
+ * Centralized storage key definitions for localStorage / sessionStorage.
+ * All legacy keys from v1 have been removed. Any cached data under the old
+ * schema is intentionally ignored — the new NavigationStore (Zustand persist)
+ * manages navigation persistence automatically under versioned keys.
  *
  * Cookie/auth keys are derived from branding.ts for easy rebranding.
  *
@@ -14,58 +13,58 @@
 import { BRAND } from "./branding";
 
 /**
- * Authentication related storage keys
+ * Authentication related storage keys (v2)
  */
 export const STORAGE_KEYS = {
-  // Auth tokens (managed by SecureTokenService — access token only, refresh is in httpOnly cookie)
-  ACCESS_TOKEN: "verified_access_token",
+  // ── Auth Tokens ────────────────────────────────────────────────────────────
+  /** Access token (managed by SecureTokenService) */
+  ACCESS_TOKEN: "nxr_access_token",
 
-  // Auth state & context (derived from BRAND config for easy rebranding)
-  tenant_context: "tenant_context",
+  // ── Auth State ─────────────────────────────────────────────────────────────
+  /** Tenant context (tenantId + tenantName for drilldown) */
+  tenant_context: "nxr_tenant_ctx",
+  /** Auth state cookie — derived from BRAND config */
   nexora_auth_state: BRAND.cookies.authState,
+  /** Refresh token cookie — httpOnly, managed by backend */
   nexora_refresh_token: BRAND.cookies.refreshToken,
-  lastAuthRefresh: "lastAuthRefresh",
+  /** Timestamp of last auth token refresh */
+  lastAuthRefresh: "nxr_last_auth_refresh",
 
-  // User data
-  USER_DATA: "user-data",
-  PERMISSIONS: "permissions",
-  ROLES: "roles",
+  // ── User Data ──────────────────────────────────────────────────────────────
+  USER_DATA: "nxr_user",
+  PERMISSIONS: "nxr_permissions",
 
-  // Navigation cache
-  // Legacy single-key cache (kept for backward compat during migration)
-  NAVIGATION_CACHE: "navigation_data",
-  NAVIGATION_CACHE_EXPIRY: "navigation_data_expiry",
-  // JIT per-workspace navigation cache — key format: navigation_ws_{workspaceKey}
-  NAVIGATION_WORKSPACE_PREFIX: "navigation_ws_",
-  // Lightweight workspace stubs cache (primary rail metadata, no menu items)
-  WORKSPACE_STUBS_CACHE: "navigation_workspace_stubs",
-  WORKSPACE_STUBS_CACHE_EXPIRY: "navigation_workspace_stubs_expiry",
+  // ── Navigation (v2 — Zustand persist, managed by useNavigationStore) ────────
+  /**
+   * Zustand persist store key for the navigation store.
+   * Contains: allRoutes, workspaceGroups, workspaces map, activeWorkspaceKey.
+   * Versioned internally by the store — bumping NAV_STORE_VERSION will
+   * automatically discard old cached data on next load.
+   */
+  NAV_STORE: "nxr_nav_v2",
 
-  // Language & i18n
-  LANGUAGE: "language",
+  // ── Preferences ────────────────────────────────────────────────────────────
+  LANGUAGE: "nxr_lang",
+  DASHBOARD_SETTINGS: "nxr_dash_settings",
+  PREF_THEME: "nxr_pref_theme",
+  PREF_LANG: "nxr_pref_lang",
+  PREF_SIDEBAR_COLLAPSED: "nxr_pref_sidebar",
+  PREF_DASHBOARD_SETTINGS: "nxr_pref_dash",
 
-  // Dashboard & Settings
-  DASHBOARD_SETTINGS: "dashboard-settings",
+  // ── Builder ────────────────────────────────────────────────────────────────
+  BUILDER_TEMPLATES: "nxr_builder_tpl",
 
-  // Impersonation (sessionStorage — survives reload, not new tabs)
+  // ── Impersonation (sessionStorage — survives reload, not new tabs) ──────────
   IMPERSONATING: BRAND.impersonatingKey,
-  admin_backup_token: "admin_backup_token",
+  admin_backup_token: "nxr_admin_bkp_token",
 
-  // Admin preferences — tenant defaults (fallback when primary keys are missing)
-  PREF_THEME: "nexora_pref_theme",
-  PREF_LANG: "nexora_pref_lang",
-  PREF_SIDEBAR_COLLAPSED: "nexora_pref_sidebar_collapsed",
-  // Tenant default dashboard settings (Layer 3 — synced from DashboardThemeJson)
-  PREF_DASHBOARD_SETTINGS: "nexora_pref_dashboard_settings",
-
-  // Builder (login page DnD builder saved templates)
-  BUILDER_TEMPLATES: "nexora_builder_templates",
-
-  // M11: Deferred flush — persists pending admin settings across logout/login.
-  // When beforeunload fires and JWT is expired, the pending payload is written here.
-  // On the next successful login, the hook reads + flushes this key before fetching fresh settings.
-  // ⚠️ Intentionally NOT in AUTH_STORAGE_KEYS_TO_CLEAR — must survive logout.
-  PENDING_SETTINGS_FLUSH: "nexora_pending_settings_flush",
+  // ── Deferred Flush ─────────────────────────────────────────────────────────
+  /**
+   * Persists pending admin settings across logout/login.
+   * ⚠️ Intentionally NOT in AUTH_STORAGE_KEYS_TO_CLEAR — must survive logout.
+   * Cleared ONLY after successful flush in loadAdminSettings().
+   */
+  PENDING_SETTINGS_FLUSH: "nxr_pending_settings",
 } as const;
 
 /**
@@ -74,32 +73,30 @@ export const STORAGE_KEYS = {
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
 
 /**
- * List of all auth-related keys to clear on logout
+ * All auth-related keys to clear on logout (v2).
+ * Note: NAV_STORE is included so navigation state resets on every logout.
+ * PENDING_SETTINGS_FLUSH is intentionally excluded.
  */
 export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
-  // Auth data
-  STORAGE_KEYS.NAVIGATION_CACHE,
-  STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY,
+  STORAGE_KEYS.ACCESS_TOKEN,
   STORAGE_KEYS.USER_DATA,
   STORAGE_KEYS.PERMISSIONS,
-  STORAGE_KEYS.ROLES,
   STORAGE_KEYS.nexora_refresh_token,
   STORAGE_KEYS.tenant_context,
-  // M11: Dashboard settings (prevent cross-admin leaking on shared browser)
+  STORAGE_KEYS.NAV_STORE,
   STORAGE_KEYS.DASHBOARD_SETTINGS,
   STORAGE_KEYS.PREF_DASHBOARD_SETTINGS,
   STORAGE_KEYS.PREF_THEME,
   STORAGE_KEYS.PREF_LANG,
   STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED,
-  // ⚠️ PENDING_SETTINGS_FLUSH is intentionally EXCLUDED from this list!
-  // It must survive logout so it can be flushed on the next login.
-  // It is cleared ONLY after successful flush in loadAdminSettings().
 ] as const;
 
 /**
  * Cache expiry times (in milliseconds)
  */
 export const CACHE_EXPIRY = {
-  NAVIGATION: 1000 * 60 * 30, // 30 minutes
-  NAVIGATION_REFRESH_CHECK: 1000 * 60 * 5, // 5 minutes
+  /** Navigation store rehydrates from persist but re-fetches from API after 30 min */
+  NAVIGATION: 1000 * 60 * 30,
+  /** Background refresh interval check */
+  NAVIGATION_REFRESH_CHECK: 1000 * 60 * 5,
 } as const;

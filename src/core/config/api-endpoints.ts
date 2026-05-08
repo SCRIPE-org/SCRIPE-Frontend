@@ -192,14 +192,20 @@ export const API_ENDPOINTS = {
     SAVE: `${V1}/ThemeBundles/save-current`,
   },
 
-  // ===== MENUS =====
   MENUS: {
-    /** GET /Menus/my — returns default workspace menu + WorkspaceStubs for primary rail */
+    /** GET /Menus/my — returns default workspace menu + WorkspaceGroups for all workspaces */
     MY: `${V1}/Menus/my`,
-    /** GET /Menus/my?workspace={key} — JIT load menu for a specific workspace */
+    /** GET /Menus/my?workspace={key} — JIT load full menu tree for a specific workspace */
     MY_WORKSPACE: (workspaceKey: string) => `${V1}/Menus/my?workspace=${encodeURIComponent(workspaceKey)}`,
     /** GET /Menus/my/workspaces — lightweight workspace stubs (no menu items) */
     MY_WORKSPACES: `${V1}/Menus/my/workspaces`,
+    /**
+     * GET /Menus/my/routes — EAGER routes load (Option B).
+     * Returns flat array of ALL accessible routes across ALL workspaces.
+     * Called ONCE on login to populate useNavigationStore.allRoutes.
+     * Eliminates route-guard race conditions during JIT workspace fetches.
+     */
+    MY_ROUTES: `${V1}/Menus/my/routes`,
     MY_OVERRIDES: `${V1}/Menus/overrides/my`,
     LIST: `${V1}/Menus`,
     BY_ID: (id: string) => `${V1}/Menus/${id}`,

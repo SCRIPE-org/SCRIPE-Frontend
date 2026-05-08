@@ -10,7 +10,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useNavigation } from "@core/providers/navigation-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@/core/common/logger";
 import { LoginRequest } from "../../../domain/entities/Auth";
@@ -21,7 +20,6 @@ export function useAuthLogin() {
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const { operationError, operationSuccess } = useEnhancedToast();
-  const { refreshNavigation } = useNavigation();
   const { t } = useI18n();
   const queryClient = useQueryClient();
 
@@ -66,14 +64,9 @@ export function useAuthLogin() {
       // 5. Skip navigation & data fetch if user must change password first
       // They'll be redirected to /change-password immediately — no need to load menus
       if (!mustChangePassword) {
-        // Fetch navigation data immediately after login (force refresh)
-        try {
-          await refreshNavigation(false, true);
-        } catch (error) {
-          appLogger.error("Failed to fetch navigation after login:", error);
-        }
-
-        // Invalidate any cached queries to ensure fresh data on protected pages
+        // v2: NavigationProvider's TanStack queries fire automatically when
+        // isAuthenticated becomes true — no explicit refresh call needed here.
+        // Just invalidate cached queries to ensure fresh data on protected pages.
         queryClient.invalidateQueries();
       }
     },

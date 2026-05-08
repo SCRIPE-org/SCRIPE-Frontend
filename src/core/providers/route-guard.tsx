@@ -1,23 +1,36 @@
 "use client";
 
+/**
+ * RouteGuard (v2)
+ *
+ * Changes vs v1:
+ *  - Navigation access check is now a SINGLE call: store.hasRouteAccess(pathname)
+ *    instead of the old 7-tier waterfall (navLoading guard + hasPageAccess())
+ *  - The store's allRoutes Set is eagerly populated on login (via NavigationProvider)
+ *    so there is ZERO race condition between route guard and JIT menu fetches.
+ *  - Removed dependency on STORAGE_KEYS.NAVIGATION_CACHE (deleted in v2)
+ *  - forceLogout() now calls store.reset() instead of manual localStorage cleanup
+ *
+ * 4-case auth logic is preserved exactly from v1 (token × store state matrix).
+ */
+
 import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
-import { useNavigation } from "@core/providers/navigation-provider";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { appLogger } from "../common/logger";
+import { appLogger } from "@core/common/logger";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 
 interface RouteGuardProps {
   children: React.ReactNode;
 }
 
-// Define public pages that don't require authentication or authorization
+// ── Public pages (auth not required) ──────────────────────────────────────
 const PUBLIC_PAGES = [
   "/login",
   "/forgot-password",
@@ -46,40 +59,35 @@ const PUBLIC_PAGES = [
   "/change-password",
 ];
 
-// Route prefixes that are always public (no auth checks at all)
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
 
-/** Check if a pathname is a public page (no auth required) */
 function isPublicPage(pathname: string): boolean {
   if (PUBLIC_PAGES.includes(pathname)) return true;
   return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix + "/"));
 }
 
-/**
- * Force clear auth tokens on logout (preserves user settings)
- */
 function forceLogout() {
   secureTokenService.clearTokens();
-
-  // Clear navigation cache
-  if (typeof window !== "undefined") {
-    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-  }
-
-  appLogger.debug("[RouteGuard] Forced logout - cleared auth tokens and cache");
+  // Reset navigation store — replaces old manual localStorage.removeItem calls
+  useNavigationStore.getState().reset();
+  appLogger.debug("[RouteGuard] Forced logout — cleared tokens + navigation store");
 }
 
+// ── Component ──────────────────────────────────────────────────────────────
 export function RouteGuard({ children }: RouteGuardProps) {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const logout = useAppStore((state) => state.logout);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
-  // NOTE: mustChangePassword is NOT a dep of the main effect — read via getState() to avoid loops
   const { authRepository } = useServices();
   const authLoading = !hasHydrated;
-  const { hasPageAccess, isLoading: navLoading } = useNavigation();
+
+  // ── v2: single store-based nav check (replaces navLoading + hasPageAccess) ──
+  const navStore = useNavigationStore();
+  const hasRouteAccess = navStore.hasRouteAccess.bind(navStore);
+  const navReady = navStore.allRoutes.size > 0;
+
   const { canAccessPage } = usePermissions();
   const router = useRouter();
   const pathname = usePathname();
@@ -87,76 +95,57 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const { t } = useI18n();
   const [isMounted] = useState(() => typeof window !== "undefined");
 
-  // Track if we've already redirected to prevent loops
   const hasRedirected = useRef(false);
-  const lastPathname = useRef(pathname);
-  // Track if we're currently refreshing to prevent duplicate calls
   const isRefreshing = useRef(false);
 
-  // Reset redirect tracking when pathname changes
+  // Reset redirect tracking on pathname change
   useEffect(() => {
     hasRedirected.current = false;
   }, [pathname]);
 
   useEffect(() => {
     const checkAccess = async () => {
-      // Skip check if still loading
-      if (authLoading) {
-        return;
-      }
+      if (authLoading) return;
 
       const isAuthPage =
         pathname === "/login" ||
         pathname === "/forgot-password" ||
         pathname === "/reset-password" ||
         pathname.startsWith("/sso");
+
       const hasToken = secureTokenService.hasToken();
 
-      // ─── Redirect authenticated users AWAY from auth pages ───
-      // If user is already logged in and tries to visit /login (via URL bar,
-      // browser back button, or bookmark), redirect to dashboard.
+      // ── Redirect authenticated users away from auth pages ──────────────
       if (isAuthPage && hasToken && isAuthenticated) {
-        appLogger.debug("[RouteGuard] Authenticated user on auth page, redirecting to dashboard");
+        appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
-        // Check MCP — if must change password, redirect to /change-password instead of home
         const mcp = useAppStore.getState().mustChangePassword;
         router.replace(mcp ? "/change-password" : "/");
         return;
       }
 
-      // Check if this is a public page FIRST - always allow
       if (isPublicPage(pathname)) {
-        // BUT if it's an auth page, and the store says we're authenticated, but we lack an in-memory token
-        // (which happens on a hard browser reload), we must bypass this early return.
-        // This allows we to hit Case 2 below, which will attempt a silent refresh.
-        // If refresh succeeds, user is redirected to /. If it fails, they stay on the login page.
         const needsSilentRefreshOnAuthPage = isAuthPage && !hasToken && isAuthenticated;
-
         if (!needsSilentRefreshOnAuthPage) {
           setIsChecking(false);
           return;
         }
       }
 
-      // Prevent redirect loops
-      if (hasRedirected.current) {
-        return;
-      }
+      if (hasRedirected.current) return;
 
-      // ─── Case 1: Has in-memory token AND authenticated → normal RBAC flow ───
+      // ── Case 1: Token + authenticated → RBAC check ─────────────────────
       if (hasToken && isAuthenticated) {
-        // ─── Must Change Password enforcement ───
-        // Read from store directly (not as a dep) to avoid re-trigger loops.
         const mcp = useAppStore.getState().mustChangePassword;
         if (mcp && pathname !== "/change-password") {
-          appLogger.debug("[RouteGuard] Must change password, redirecting to /change-password");
+          appLogger.debug("[RouteGuard] Must change password → /change-password");
           hasRedirected.current = true;
           router.replace("/change-password");
           return;
         }
 
         if (!canAccessPage(pathname)) {
-          appLogger.debug("[RouteGuard] Access denied by permissions");
+          appLogger.debug("[RouteGuard] Access denied by permission system");
           hasRedirected.current = true;
           router.push("/not-authorized");
           return;
@@ -167,13 +156,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
           return;
         }
 
-        if (navLoading) {
+        // ── v2: wait for eager routes to be populated (usually instant from cache) ──
+        if (!navReady) {
+          // Routes not yet loaded — allow render, NavigationProvider is fetching
+          setIsChecking(false);
           return;
         }
 
-        const hasAccess = hasPageAccess(pathname);
-        if (!hasAccess) {
-          appLogger.debug("[RouteGuard] Access denied by dynamic navigation");
+        if (!hasRouteAccess(pathname)) {
+          appLogger.debug("[RouteGuard] Access denied by navigation store");
           hasRedirected.current = true;
           router.push("/not-authorized");
           return;
@@ -183,38 +174,30 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      // ─── Case 2: No in-memory token but store hints authenticated (page reload) ───
-      // The access token was in memory and is now gone after reload.
-      // Attempt silent refresh using the httpOnly refresh token cookie.
+      // ── Case 2: No token but store says authenticated (page reload) ─────
       if (!hasToken && isAuthenticated) {
-        if (isRefreshing.current) return; // Prevent duplicate refreshes
+        if (isRefreshing.current) return;
         isRefreshing.current = true;
 
-        appLogger.debug(
-          "[RouteGuard] No in-memory token but store says authenticated. Attempting silent refresh..."
-        );
+        appLogger.debug("[RouteGuard] No token, store=authenticated → silent refresh");
 
         try {
           const result = await authRepository.refreshToken();
           if (result.kind === "ok") {
-            appLogger.debug("[RouteGuard] Silent refresh succeeded, restoring session");
+            appLogger.debug("[RouteGuard] Silent refresh succeeded");
 
-            // Update subscription info from the fresh token response
             const refreshData = result.value;
             setSubscriptionInfo(
               refreshData.subscriptionStatus ?? null,
               refreshData.gracePhase ?? null,
               refreshData.editionName ?? null
             );
-
-            // Sync MCP from the fresh token (may have been cleared server-side)
             useAppStore.getState().setMustChangePassword(refreshData.mustChangePassword ?? false);
 
             const user = await authRepository.getMe();
             if (user) {
               setAuth(user, user.permissions || [], []);
               isRefreshing.current = false;
-              // Token is now in memory. Next render cycle will hit Case 1 or Auth Page Redirect.
               return;
             }
           }
@@ -223,8 +206,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         isRefreshing.current = false;
-        // Refresh failed → session is truly expired
-        appLogger.debug("[RouteGuard] Session expired, redirecting to login");
+        appLogger.debug("[RouteGuard] Session expired → /login");
 
         if (!isAuthPage && !hasRedirected.current) {
           hasRedirected.current = true;
@@ -234,16 +216,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
         } else if (isAuthPage) {
           forceLogout();
           logout();
-          // Already on auth page, just stop checking so it renders the form
           setIsChecking(false);
         }
         return;
       }
 
-      // ─── Case 3: No token AND not authenticated → redirect to login ───
+      // ── Case 3: No token + not authenticated → /login ──────────────────
       if (!hasToken && !isAuthenticated) {
         if (!isAuthPage && !hasRedirected.current) {
-          appLogger.debug("[RouteGuard] Not authenticated, redirecting to login");
+          appLogger.debug("[RouteGuard] Not authenticated → /login");
           hasRedirected.current = true;
           forceLogout();
           router.push("/login");
@@ -253,27 +234,23 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      // ─── Case 4: Has token but store NOT authenticated (e.g. after impersonation) ───
-      // Attempt to restore session from the in-memory token
+      // ── Case 4: Token exists but store NOT authenticated ────────────────
       if (hasToken && !isAuthenticated) {
-        appLogger.debug(
-          "[RouteGuard] Token exists but state missing. Attempting to restore session..."
-        );
+        appLogger.debug("[RouteGuard] Token exists, store empty → restoring session");
 
         try {
           const user = await authRepository.getMe();
           if (user) {
-            appLogger.debug("[RouteGuard] Session restored successfully");
+            appLogger.debug("[RouteGuard] Session restored");
             setAuth(user, user.permissions || [], []);
             return;
           }
         } catch (error) {
-          appLogger.error("[RouteGuard] Failed to restore session:", error);
+          appLogger.error("[RouteGuard] Session restore failed:", error);
           hasRedirected.current = true;
           forceLogout();
           logout();
           router.push("/login");
-          return;
         }
       }
     };
@@ -282,23 +259,20 @@ export function RouteGuard({ children }: RouteGuardProps) {
   }, [
     isAuthenticated,
     authLoading,
-    navLoading,
+    navReady,
     pathname,
-    hasPageAccess,
     canAccessPage,
     router,
     logout,
     authRepository,
     setAuth,
-    // NOTE: mustChangePassword is intentionally NOT here — read via getState() to prevent loops
+    setSubscriptionInfo,
+    hasRouteAccess,
+    // NOTE: mustChangePassword intentionally NOT here — read via getState()
   ]);
 
-  // For SSR/prerendering, render children without checks
-  if (!isMounted) {
-    return <>{children}</>;
-  }
+  if (!isMounted) return <>{children}</>;
 
-  // Show loading only when actually checking auth (not navigation loading for public pages)
   if (authLoading || (isChecking && !isPublicPage(pathname))) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -310,17 +284,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
     );
   }
 
-  // Always render children for public pages
-  if (isPublicPage(pathname)) {
-    return <>{children}</>;
-  }
+  if (isPublicPage(pathname)) return <>{children}</>;
 
-  // For protected pages, render if authenticated (token is in memory after refresh)
-  if (isAuthenticated && secureTokenService.hasToken()) {
-    return <>{children}</>;
-  }
+  if (isAuthenticated && secureTokenService.hasToken()) return <>{children}</>;
 
-  // Default fallback - show loading (redirects should have happened)
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">

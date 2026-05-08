@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useNavigation } from "@core/providers/navigation-provider";
+import { useNavigation as _useNavigation } from "@core/providers/navigation-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
@@ -51,7 +51,6 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);
   const { operationSuccess, operationError: _operationError } = useEnhancedToast();
-  const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
 
   const handleVerify2FA = useCallback(async () => {
@@ -82,11 +81,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
 
       const mustChange = result.mustChangePassword ?? false;
       if (!mustChange) {
-        try {
-          await refreshNavigation(false, true);
-        } catch (navError) {
-          appLogger.error("Failed to fetch navigation after 2FA:", navError);
-        }
+        // v2: NavigationProvider auto-fetches when isAuthenticated changes
         queryClient.invalidateQueries();
       }
 
@@ -101,7 +96,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
     }
   }, [
     twoFactorCode, formIdentifier, formPassword, tenantId,
-    authRepository, setAuth, operationSuccess, refreshNavigation,
+    authRepository, setAuth, operationSuccess,
     queryClient, router, t, setError, redirectPath, hasTriggeredRedirect,
   ]);
 

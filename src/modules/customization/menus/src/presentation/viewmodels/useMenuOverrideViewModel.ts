@@ -154,7 +154,7 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
     mutationFn: (request: SaveMenuOverrideRequest) => menuRepository.saveOverride(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
-      refreshNavigation(true, true);
+      refreshNavigation();
       const scopeLabel =
         scope === MenuOverrideScope.User
           ? t("menus.overrideSavedUser")
@@ -173,7 +173,7 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
     mutationFn: (id: string) => menuRepository.deleteOverride(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
-      refreshNavigation(true, true);
+      refreshNavigation();
       success({ title: t("menus.overrideDeleted") });
     },
     onError: () => {

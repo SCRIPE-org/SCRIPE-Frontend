@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useNavigation } from "@core/providers/navigation-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { useServices } from "@core/providers/service-provider";
@@ -33,7 +32,6 @@ export function ForceChangePasswordView() {
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const logout = useAppStore((state) => state.logout);
   const { operationSuccess, operationError } = useEnhancedToast();
-  const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
   const { profileRepository } = container;
   const { authRepository } = useServices();
@@ -112,12 +110,7 @@ export function ForceChangePasswordView() {
 
         operationSuccess(t("profile.security.passwordChanged"));
 
-        // Step 5: Fetch navigation & invalidate all stale queries with the clean token.
-        try {
-          await refreshNavigation(false, true);
-        } catch {
-          /* non-critical */
-        }
+        // v2: NavigationProvider auto-fetches when mustChangePassword becomes false
         queryClient.invalidateQueries();
 
         // Step 6: Redirect to home
@@ -143,7 +136,6 @@ export function ForceChangePasswordView() {
       operationError,
       router,
       t,
-      refreshNavigation,
       queryClient,
     ]
   );

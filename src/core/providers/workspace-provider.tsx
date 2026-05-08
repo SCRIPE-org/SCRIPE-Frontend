@@ -1,54 +1,39 @@
 "use client";
 
 /**
- * WorkspaceProvider
+ * WorkspaceProvider — Pure UI State Manager (v2)
  *
- * Provides the active workspace state AND active root-item state for the Nexus dual-rail layout.
+ * Responsibilities (v2 — simplified):
+ *  1. Reads workspace groups + active workspace key FROM useNavigationStore
+ *  2. Provides computed values for the Nexus dual-rail layout (via useMemo)
+ *  3. Handles workspace switch → delegates JIT fetch to NavigationProvider
+ *  4. Manages activeRootItem selection (secondary rail panel content)
  *
- * JIT Architecture:
- *  - On first load the default workspace menu is already in NavigationContext (fetched at login).
- *  - When the user switches to a different workspace, we call fetchWorkspaceMenu(key) from
- *    NavigationContext which either returns a cached result instantly OR makes a single network
- *    request for that workspace's menu items and caches them for the session.
- *  - No workspace data is fetched until the user explicitly switches to it.
+ * What this provider does NOT do (v2):
+ *  ❌ Maintain wsDataCache (store.workspaces Map handles this)
+ *  ❌ Read/write WORKSPACE_KEY from localStorage (store persist handles this)
+ *  ❌ Subscribe to authBroadcast (NavigationProvider handles this)
+ *  ❌ Subscribe to tenant changes (NavigationProvider handles this)
  *
- * Exports:
- *  - workspaceGroups     — all workspaces ordered by sortOrder
- *  - activeWorkspace     — currently selected WorkspaceGroup
- *  - setActiveWorkspace  — switch workspace (JIT fetch + persisted to localStorage)
- *  - rootMenuItems       — root menu items of the active workspace (for primary rail)
- *  - activeRootItem      — selected root item (for secondary rail panel)
- *  - setActiveRootItemId — select which root item's children to show
- *  - accentColor         — CSS oklch() string or null
- *  - isModuleMode        — true when active workspace is classified as Module
- *  - isWorkspaceLoading  — true while the JIT fetch for the active workspace is in-flight
- *  - previousWorkspaceKey — set when entering module mode (for Back button)
- *  - goBack              — exit module mode, restore previous admin workspace
+ * The full workspace context API surface is preserved for backwards compatibility
+ * so existing consumers (layout, rail components) don't need changes.
  */
 
 import {
   createContext,
   useContext,
-  useState,
-  useEffect,
   useCallback,
   useMemo,
-  useRef,
 } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import type React from "react";
+import { useRouter } from "next/navigation";
 import { useNavigation } from "@core/providers/navigation-provider";
-import { authBroadcast } from "@core/common/broadcast-auth";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { WorkspaceGroup, MenuItem } from "@core/navigation";
-import { NavigationData } from "@core/navigation";
 import { appLogger } from "@core/common/logger";
 
-// ── Storage keys ───────────────────────────────────────────────────────────────
-const WORKSPACE_KEY = "nexora:active-workspace";
-const ROOT_ITEM_KEY = "nexora:active-root-item";
-
-// ── Context shape ─────────────────────────────────────────────────────────────
+// ── Context shape ──────────────────────────────────────────────────────────
 interface WorkspaceContextType {
   /** All workspaces sorted by sortOrder */
   workspaceGroups: WorkspaceGroup[];
@@ -56,65 +41,40 @@ interface WorkspaceContextType {
   activeWorkspace: WorkspaceGroup | null;
   /**
    * Switch the active workspace. Triggers JIT fetch if not cached.
-   * Also navigates to the workspace's first page.
+   * Also navigates to the workspace's first page if navigateTo is true.
    */
-  setActiveWorkspace: (workspaceKey: string) => void;
-  /**
-   * Root-level menu items of the active workspace.
-   * These are rendered as icon buttons in the primary rail.
-   */
+  setActiveWorkspace: (workspaceKey: string, navigateTo?: boolean) => void;
+  /** Root-level menu items of the active workspace (for primary rail) */
   rootMenuItems: MenuItem[];
-  /**
-   * The currently selected root item. Its children appear in the secondary rail.
-   * Null when no root item is selected yet.
-   */
+  /** The currently selected root item (secondary rail panel content) */
   activeRootItem: MenuItem | null;
   /** Select a root item by its ID */
-  setActiveRootItemId: (id: string) => void;
+  setActiveRootItemId: (id: string | null) => void;
   /** CSS oklch() color string for active workspace accent, or null */
   accentColor: string | null;
-  /** True while navigation data is still loading (initial) */
+  /** True while initial navigation data is loading */
   isLoading: boolean;
-  /** True while the JIT network request for a workspace is in-flight */
+  /** True while a JIT workspace fetch is in-flight */
   isWorkspaceLoading: boolean;
-  /**
-   * True when the active workspace is a Module-type workspace.
-   * Triggers layout mode switch (back button etc.)
-   */
+  /** True when active workspace is a Module-type (triggers layout mode switch) */
   isModuleMode: boolean;
-  /** Previous admin workspace key, set when entering module mode */
+  /** Previous admin workspace key for Back button */
   previousWorkspaceKey: string | null;
   /** Return to the previous admin workspace (exit module mode) */
   goBack: () => void;
-  /**
-   * Switch to the first available module workspace (e.g. CRM),
-   * saving the current workspace so goBack() can return to it.
-   */
+  /** Switch to first available module workspace, saving current for goBack() */
   switchToModuleWorkspace: () => void;
-  /**
-   * Switch to a specific module workspace by its key,
-   * saving the current workspace so goBack() can return to it.
-   */
+  /** Switch to a specific module workspace by key, saving current for goBack() */
   switchToModuleWorkspaceByKey: (key: string) => void;
-  /** @deprecated use rootMenuItems + activeRootItem instead */
+  /** @deprecated use workspaceGroups.filter(ws => ws.isAdminWorkspace) */
   adminWorkspaces: WorkspaceGroup[];
-  /** @deprecated use rootMenuItems + activeRootItem instead */
+  /** @deprecated use workspaceGroups.filter(ws => ws.isModuleWorkspace) */
   moduleWorkspaces: WorkspaceGroup[];
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
-// ── Helper: clean pathname ────────────────────────────────────────────────────
-function cleanPath(p: string | undefined | null): string {
-  if (!p) return "";
-  let cleaned = p.split("?")[0].split("#")[0];
-  if (cleaned.endsWith("/")) {
-    cleaned = cleaned.slice(0, -1);
-  }
-  return cleaned;
-}
-
-// ── Helper: first page of a workspace ─────────────────────────────────────────
+// ── Helper: first navigable page of a workspace ────────────────────────────
 function firstPageOf(ws: WorkspaceGroup): string | null {
   for (const root of ws.menuItems ?? []) {
     if (root.href && !root.href.startsWith("#")) return root.href;
@@ -125,421 +85,174 @@ function firstPageOf(ws: WorkspaceGroup): string | null {
   return null;
 }
 
-// ── Provider ──────────────────────────────────────────────────────────────────
+// ── Helper: oklch accent color from workspace ──────────────────────────────
+function getAccentColor(ws: WorkspaceGroup | null): string | null {
+  if (!ws || ws.colorHue === null || ws.colorHue === undefined) return null;
+  const chroma = ws.colorChroma ?? 0.18;
+  return `oklch(0.6 ${chroma} ${ws.colorHue})`;
+}
+
+// ── Provider ──────────────────────────────────────────────────────────────
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const { navigationData, fetchWorkspaceMenu } = useNavigation();
+  const { fetchWorkspaceMenu } = useNavigation();
   const { language } = useI18n();
-  const pathname = usePathname();
   const router = useRouter();
 
-  // ── Sorted workspace list ──────────────────────────────────────────────────
-  const workspaceGroups = useMemo<WorkspaceGroup[]>(() => {
-    if (!navigationData) return [];
-    return [...navigationData.workspaceGroups].sort(
-      (a, b) => a.workspaceSortOrder - b.workspaceSortOrder
-    );
-  }, [navigationData]);
+  // ── Read all state from the single store ──────────────────────────────────
+  const store = useNavigationStore();
+  const {
+    workspaceGroups,
+    activeWorkspaceKey,
+    activeRootItemId,
+    previousWorkspaceKey,
+    isInitialLoading,
+    isWorkspaceSwitching,
+  } = store;
 
-  // ── Legacy compat: split by backend classification ─────────────────────────
-  const adminWorkspaces = useMemo(
-    () => workspaceGroups.filter((ws) => ws.isAdminWorkspace),
+  // ── Sorted workspace list ─────────────────────────────────────────────────
+  const sortedGroups = useMemo(
+    () => [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder),
     [workspaceGroups]
+  );
+
+  // ── Active workspace entity ───────────────────────────────────────────────
+  const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
+    if (!activeWorkspaceKey) return sortedGroups[0] ?? null;
+    return sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? sortedGroups[0] ?? null;
+  }, [activeWorkspaceKey, sortedGroups]);
+
+  // ── Root menu items for active workspace ─────────────────────────────────
+  const rootMenuItems = useMemo<MenuItem[]>(() => {
+    return store.getActiveRootMenuItems();
+  }, [store, activeWorkspaceKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Active root item entity ───────────────────────────────────────────────
+  const activeRootItem = useMemo<MenuItem | null>(() => {
+    if (!activeRootItemId) return null;
+    return rootMenuItems.find((m) => m.id === activeRootItemId) ?? null;
+  }, [activeRootItemId, rootMenuItems]);
+
+  // ── Legacy splits ─────────────────────────────────────────────────────────
+  const adminWorkspaces = useMemo(
+    () => sortedGroups.filter((ws) => ws.isAdminWorkspace),
+    [sortedGroups]
   );
   const moduleWorkspaces = useMemo(
-    () => workspaceGroups.filter((ws) => ws.isModuleWorkspace),
-    [workspaceGroups]
+    () => sortedGroups.filter((ws) => ws.isModuleWorkspace),
+    [sortedGroups]
   );
 
-  // ── Active workspace key (persisted) ───────────────────────────────────────
-  const [activeKey, setActiveKey] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem(WORKSPACE_KEY) ?? null;
-  });
+  // ── Accent color ──────────────────────────────────────────────────────────
+  const accentColor = useMemo(() => getAccentColor(activeWorkspace), [activeWorkspace]);
 
-  // ── Previous workspace key for Back button ─────────────────────────────────
-  const [previousWorkspaceKey, setPreviousWorkspaceKey] = useState<string | null>(null);
+  // ── isModuleMode ──────────────────────────────────────────────────────────
+  const isModuleMode = useMemo(
+    () => activeWorkspace?.isModuleWorkspace ?? false,
+    [activeWorkspace]
+  );
 
-  /**
-   * User's EXPLICIT selection — set when the user clicks a root item in the primary rail.
-   * This overrides the URL-derived item so the user can browse any section
-   * without being forced to stay on the current page's parent.
-   * Cleared automatically when the URL changes to a page that belongs to
-   * a recognised root item (i.e., the user navigated via a secondary rail link).
-   */
-  const [userSelectedRootItemId, setUserSelectedRootItemId] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem(ROOT_ITEM_KEY) ?? null;
-  });
+  // ── Actions ───────────────────────────────────────────────────────────────
 
-  /**
-   * Per-workspace NavigationData cache — populated by JIT fetches.
-   * The default workspace data comes from the global navigationData,
-   * while other workspaces land here when fetched on demand.
-   */
-  const [wsDataCache, setWsDataCache] = useState<Record<string, NavigationData>>({});
-
-  /** True while we're doing a JIT network request for a workspace */
-  const [isWorkspaceLoading, setIsWorkspaceLoading] = useState(false);
-
-  // ── Auth & Tenant Context Listeners ────────────────────────────────────────
-
-  const { currentTenant } = useTenantContext();
-  const tenantIdRef = useRef(currentTenant?.id ?? null);
-
-  useEffect(() => {
-    const newTenantId = currentTenant?.id ?? null;
-    if (newTenantId !== tenantIdRef.current) {
-      tenantIdRef.current = newTenantId;
-      setActiveKey(null);
-      setPreviousWorkspaceKey(null);
-      setUserSelectedRootItemId(null);
-      setWsDataCache({});
-      try {
-        localStorage.removeItem(WORKSPACE_KEY);
-        localStorage.removeItem(ROOT_ITEM_KEY);
-      } catch { /* ignore */ }
-    }
-  }, [currentTenant]);
-
-  useEffect(() => {
-    authBroadcast.onImpersonation(() => {
-      setActiveKey(null);
-      setPreviousWorkspaceKey(null);
-      setUserSelectedRootItemId(null);
-      setWsDataCache({});
-      try {
-        localStorage.removeItem(WORKSPACE_KEY);
-        localStorage.removeItem(ROOT_ITEM_KEY);
-      } catch { /* ignore */ }
-    });
-  }, []);
-
-  // ── Resolve WorkspaceGroup ─────────────────────────────────────────────────
-  const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
-    if (workspaceGroups.length === 0) return null;
-    const found = workspaceGroups.find((g) => g.workspaceKey === activeKey);
-    return found ?? workspaceGroups[0] ?? null;
-  }, [workspaceGroups, activeKey]);
-
-  // ── Root menu items of the active workspace ────────────────────────────────
-  // JIT: if the workspace was loaded on-demand, use its menu items from the cache.
-  // Otherwise fall back to what came with the default workspace response.
-  const rootMenuItems = useMemo<MenuItem[]>(() => {
-    if (!activeWorkspace) return [];
-    const jitData = activeWorkspace ? wsDataCache[activeWorkspace.workspaceKey] : null;
-    if (jitData) {
-      // API returns the items for the requested workspace in the top-level menuItems
-      if (jitData.menuItems && jitData.menuItems.length > 0) return jitData.menuItems;
-
-      const jitGroup = jitData.workspaceGroups.find(
-        (g) => g.workspaceKey === activeWorkspace.workspaceKey
-      );
-      if (jitGroup && jitGroup.menuItems.length > 0) return jitGroup.menuItems;
-    }
-    return activeWorkspace.menuItems;
-  }, [activeWorkspace, wsDataCache]);
-
-  const cleanedPathname = cleanPath(pathname);
-
-  // ── URL-derived root item (pure computation — no state, no side-effects) ───
-  // Finds which root item's subtree the current pathname belongs to.
-  // This is the ground-truth "you are here" based solely on the URL.
-  const urlRootItemId = useMemo<string | null>(() => {
-    if (!cleanedPathname || rootMenuItems.length === 0) return null;
-
-    let bestId: string | null = null;
-    let bestLen = -1;
-
-    function searchNode(node: MenuItem, rootId: string): void {
-      const href = cleanPath(node.href);
-      if (href && (cleanedPathname === href || cleanedPathname.startsWith(href + "/"))) {
-        if (href.length > bestLen) {
-          bestLen = href.length;
-          bestId = rootId;
-        }
-      }
-      for (const child of node.children ?? []) {
-        searchNode(child, rootId);
-      }
-    }
-
-    for (const root of rootMenuItems) {
-      searchNode(root, root.id);
-    }
-
-    return bestId;
-  }, [rootMenuItems, cleanedPathname]);
-
-  // ── Clear user selection when URL changes to a page under a known root item ──
-  // This makes the URL take over after the user navigates via a secondary rail link.
-  // If the URL doesn't match any root item (e.g. /profile), the user’s browsing
-  // selection is preserved so the panel doesn’t snap away.
-  const prevPathnameRef = useRef(cleanedPathname);
-  useEffect(() => {
-    if (cleanedPathname === prevPathnameRef.current) return;
-    prevPathnameRef.current = cleanedPathname;
-
-    if (urlRootItemId !== null) {
-      // Real navigation happened and the new URL belongs to a root section.
-      // Drop the user’s manual selection so the URL drives the active state.
-      setUserSelectedRootItemId(null);
-      try { localStorage.removeItem(ROOT_ITEM_KEY); } catch { /* ignore */ }
-    }
-    // If urlRootItemId is null (system page like /profile), keep user selection.
-  }, [cleanedPathname, urlRootItemId]);
-
-  // ── Effective active root item ID ─────────────────────────────────────────
-  // User’s explicit click always wins; URL-derived is the fallback.
-  const effectiveRootItemId = userSelectedRootItemId ?? urlRootItemId;
-
-  // ── Resolve activeRootItem ─────────────────────────────────────────────────
-  const activeRootItem = useMemo<MenuItem | null>(() => {
-    if (rootMenuItems.length === 0) return null;
-    if (!effectiveRootItemId) return null;
-    return rootMenuItems.find((item) => item.id === effectiveRootItemId) ?? null;
-  }, [rootMenuItems, effectiveRootItemId]);
-
-  /** True when the active workspace is a Module-type workspace */
-  const isModuleMode = activeWorkspace?.isModuleWorkspace ?? false;
-
-  // ── CSS injection ──────────────────────────────────────────────────────────
-  const htmlRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    htmlRef.current = document.documentElement;
-  }, []);
-
-  useEffect(() => {
-    const html = htmlRef.current ?? document.documentElement;
-    if (activeWorkspace?.colorHue != null) {
-      html.style.setProperty("--workspace-hue", String(activeWorkspace.colorHue));
-      html.style.setProperty(
-        "--workspace-chroma",
-        String(activeWorkspace.colorChroma ?? 0.18)
-      );
-    } else {
-      html.style.removeProperty("--workspace-hue");
-      html.style.removeProperty("--workspace-chroma");
-    }
-    html.setAttribute("data-nexus-mode", isModuleMode ? "module" : "admin");
-  }, [activeWorkspace, isModuleMode]);
-
-  // ── Auto-Switch Workspace Based on URL (Deep Linking) ──────────────────────
-  useEffect(() => {
-    if (!pathname || workspaceGroups.length === 0) return;
-    
-    // Switch to default admin workspace on root or known system paths
-    if (cleanedPathname === "" || cleanedPathname === "/profile" || cleanedPathname === "/not-authorized") {
-      const defaultWs = workspaceGroups.find(g => g.isAdminWorkspace) || workspaceGroups[0];
-      if (defaultWs && defaultWs.workspaceKey !== activeKey) {
-        doSwitchWorkspace(defaultWs.workspaceKey, false);
-      }
-      return;
-    }
-
-    // Is the current path already handled by the active workspace?
-    const currentMatches = rootMenuItems.some((root) => {
-      const rHref = cleanPath(root.href);
-      if (rHref && (cleanedPathname === rHref || cleanedPathname.startsWith(rHref + "/"))) return true;
-      return root.children?.some((child) => {
-        const cHref = cleanPath(child.href);
-        return cHref && (cleanedPathname === cHref || cleanedPathname.startsWith(cHref + "/"));
-      });
-    });
-
-    if (currentMatches) return; // All good, current workspace owns this path
-
-    // It doesn't match the active workspace. See if it strictly maps to another workspace's key/route.
-    // We assume module workspaces map to `/{workspaceKey}`
-    const possibleWorkspace = workspaceGroups.find((wg) => 
-      cleanedPathname === `/${wg.workspaceKey}` || cleanedPathname.startsWith(`/${wg.workspaceKey}/`)
-    );
-
-    if (possibleWorkspace && possibleWorkspace.workspaceKey !== activeKey) {
-      appLogger.debug(`URL-sync: switching to workspace "${possibleWorkspace.workspaceKey}" based on deep-link ${cleanedPathname}`);
-      doSwitchWorkspace(possibleWorkspace.workspaceKey, false); // false = do not push state/navigate
-    }
-  }, [cleanedPathname, workspaceGroups, activeKey, rootMenuItems]);
-
-  // ── JIT fetch on workspace switch ─────────────────────────────────────────
-
-  /**
-   * Internal: switch workspace key, trigger JIT fetch, navigate to first page.
-   */
-  const doSwitchWorkspace = useCallback(
-    async (workspaceKey: string, navigate = true) => {
-      // Persist immediately for instant visual feedback
-      setActiveKey(workspaceKey);
-      setUserSelectedRootItemId(null);
-      try {
-        localStorage.setItem(WORKSPACE_KEY, workspaceKey);
-        localStorage.removeItem(ROOT_ITEM_KEY);
-      } catch { /* ignore */ }
-
-      // Check if already in cache
-      if (wsDataCache[workspaceKey]) {
-        appLogger.debug(`Workspace "${workspaceKey}" already in memory cache`);
-        if (navigate) {
-          const cached = wsDataCache[workspaceKey];
-          let page: string | null = null;
-          if (cached.menuItems && cached.menuItems.length > 0) {
-            for (const root of cached.menuItems) {
-              if (root.href && !root.href.startsWith("#")) { page = root.href; break; }
-              for (const child of root.children ?? []) {
-                if (child.href && !child.href.startsWith("#")) { page = child.href; break; }
-              }
-              if (page) break;
-            }
-          } else {
-            const targetGroup = cached.workspaceGroups.find((g) => g.workspaceKey === workspaceKey);
-            if (targetGroup) page = firstPageOf(targetGroup);
-          }
-          if (page) router.push(page);
-        }
-        return;
-      }
-
-      // JIT fetch
-      setIsWorkspaceLoading(true);
-      try {
-        appLogger.debug(`JIT fetch for workspace "${workspaceKey}"`);
-        const data = await fetchWorkspaceMenu(workspaceKey);
-        if (data) {
-          setWsDataCache((prev) => ({ ...prev, [workspaceKey]: data }));
-          if (navigate) {
-            let page: string | null = null;
-            if (data.menuItems && data.menuItems.length > 0) {
-              for (const root of data.menuItems) {
-                if (root.href && !root.href.startsWith("#")) { page = root.href; break; }
-                for (const child of root.children ?? []) {
-                  if (child.href && !child.href.startsWith("#")) { page = child.href; break; }
-                }
-                if (page) break;
-              }
-            } else {
-              const targetGroup = data.workspaceGroups.find((g) => g.workspaceKey === workspaceKey);
-              if (targetGroup) page = firstPageOf(targetGroup);
-            }
-            if (page) router.push(page);
-          }
-        }
-      } catch (err) {
-        appLogger.error(`Failed to load workspace "${workspaceKey}":`, err);
-      } finally {
-        setIsWorkspaceLoading(false);
-      }
+  const setActiveRootItemId = useCallback(
+    (id: string | null) => {
+      store.setActiveRootItem(id);
     },
-    [fetchWorkspaceMenu, wsDataCache, router]
+    [store]
   );
-
-  // ── Public setActiveWorkspace ──────────────────────────────────────────────
 
   const setActiveWorkspace = useCallback(
-    (workspaceKey: string) => {
-      doSwitchWorkspace(workspaceKey, true);
+    async (workspaceKey: string, navigateTo = false) => {
+      appLogger.debug(`[WorkspaceProvider] Switching to workspace: ${workspaceKey}`);
+
+      // Update active key immediately — UI reacts right away
+      store.setActiveWorkspace(workspaceKey);
+      store.setActiveRootItem(null);
+
+      // JIT fetch if not cached
+      if (!store.hasWorkspaceData(workspaceKey)) {
+        await fetchWorkspaceMenu(workspaceKey);
+      }
+
+      // Navigate to workspace's first page if requested
+      if (navigateTo) {
+        const ws = store.workspaces.get(workspaceKey) ?? null;
+        if (ws) {
+          // Build a temporary WorkspaceGroup-like to get first page
+          const items = ws.menuItems ?? [];
+          for (const root of items) {
+            if (root.href && !root.href.startsWith("#")) {
+              router.push(root.href);
+              return;
+            }
+            for (const child of root.children ?? []) {
+              if (child.href && !child.href.startsWith("#")) {
+                router.push(child.href);
+                return;
+              }
+            }
+          }
+        }
+      }
     },
-    [doSwitchWorkspace]
+    [store, fetchWorkspaceMenu, router]
   );
 
-  const setActiveRootItemId = useCallback((id: string) => {
-    setUserSelectedRootItemId(id);
-    try {
-      localStorage.setItem(ROOT_ITEM_KEY, id);
-    } catch { /* ignore */ }
-  }, []);
-
   const goBack = useCallback(() => {
-    if (previousWorkspaceKey) {
-      const key = previousWorkspaceKey;
-      setPreviousWorkspaceKey(null);
-      doSwitchWorkspace(key, true);
+    const prev = previousWorkspaceKey ?? adminWorkspaces[0]?.workspaceKey;
+    if (prev) {
+      setActiveWorkspace(prev);
     }
-  }, [previousWorkspaceKey, doSwitchWorkspace]);
-
-  /**
-   * Switch to the first module workspace (e.g. CRM), saving the current
-   * admin workspace key so goBack() can restore it later.
-   */
-  const switchToModuleWorkspace = useCallback(() => {
-    const firstModule = moduleWorkspaces[0];
-    if (!firstModule) return;
-    const currentKey = activeKey ?? activeWorkspace?.workspaceKey ?? null;
-    if (currentKey) setPreviousWorkspaceKey(currentKey);
-    doSwitchWorkspace(firstModule.workspaceKey, true);
-  }, [moduleWorkspaces, activeKey, activeWorkspace, doSwitchWorkspace]);
+    store.setPreviousWorkspace(null);
+  }, [previousWorkspaceKey, adminWorkspaces, setActiveWorkspace, store]);
 
   const switchToModuleWorkspaceByKey = useCallback(
     (key: string) => {
-      const currentKey = activeKey ?? activeWorkspace?.workspaceKey ?? null;
-      if (currentKey) setPreviousWorkspaceKey(currentKey);
-      doSwitchWorkspace(key, true);
+      // Save current workspace for goBack()
+      store.setPreviousWorkspace(activeWorkspaceKey ?? adminWorkspaces[0]?.workspaceKey ?? null);
+      setActiveWorkspace(key, true);
     },
-    [activeKey, activeWorkspace, doSwitchWorkspace]
+    [store, activeWorkspaceKey, adminWorkspaces, setActiveWorkspace]
   );
 
-  // ── Clear JIT cache on navigation cache invalidation ──────────────────────
-  // When NavigationProvider purges all caches (impersonation/tenant change),
-  // the workspaceGroups will become empty, then repopulate. Clear local cache.
-  const prevGroupCount = useRef(workspaceGroups.length);
-  useEffect(() => {
-    const newCount = workspaceGroups.length;
-    if (prevGroupCount.current > 0 && newCount === 0) {
-      // Navigation was just cleared — wipe local JIT cache too
-      setWsDataCache({});
+  const switchToModuleWorkspace = useCallback(() => {
+    const firstModule = moduleWorkspaces[0];
+    if (firstModule) {
+      switchToModuleWorkspaceByKey(firstModule.workspaceKey);
     }
-    prevGroupCount.current = newCount;
-  }, [workspaceGroups.length]);
+  }, [moduleWorkspaces, switchToModuleWorkspaceByKey]);
 
-  const accentColor = activeWorkspace?.accentColor ?? null;
-  const isLoading = workspaceGroups.length === 0 && navigationData !== null;
+  // ── Context value ─────────────────────────────────────────────────────────
+  const value: WorkspaceContextType = {
+    workspaceGroups: sortedGroups,
+    activeWorkspace,
+    setActiveWorkspace,
+    rootMenuItems,
+    activeRootItem,
+    setActiveRootItemId,
+    accentColor,
+    isLoading: isInitialLoading,
+    isWorkspaceLoading: isWorkspaceSwitching,
+    isModuleMode,
+    previousWorkspaceKey,
+    goBack,
+    switchToModuleWorkspace,
+    switchToModuleWorkspaceByKey,
+    adminWorkspaces,
+    moduleWorkspaces,
+  };
 
-  const value = useMemo<WorkspaceContextType>(
-    () => ({
-      workspaceGroups,
-      adminWorkspaces,
-      moduleWorkspaces,
-      activeWorkspace,
-      setActiveWorkspace,
-      rootMenuItems,
-      activeRootItem,
-      setActiveRootItemId,
-      accentColor,
-      isLoading,
-      isWorkspaceLoading,
-      isModuleMode,
-      previousWorkspaceKey,
-      goBack,
-      switchToModuleWorkspace,
-      switchToModuleWorkspaceByKey,
-    }),
-    [
-      workspaceGroups,
-      adminWorkspaces,
-      moduleWorkspaces,
-      activeWorkspace,
-      setActiveWorkspace,
-      rootMenuItems,
-      activeRootItem,
-      setActiveRootItemId,
-      accentColor,
-      isLoading,
-      isWorkspaceLoading,
-      isModuleMode,
-      previousWorkspaceKey,
-      goBack,
-      switchToModuleWorkspace,
-      switchToModuleWorkspaceByKey,
-    ]
+  return (
+    <WorkspaceContext.Provider value={value}>
+      {children}
+    </WorkspaceContext.Provider>
   );
-
-  return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }
 
-// ── Public hook ───────────────────────────────────────────────────────────────
+// ── Hooks ──────────────────────────────────────────────────────────────────
 export function useWorkspace(): WorkspaceContextType {
   const ctx = useContext(WorkspaceContext);
-  if (ctx === undefined) {
-    throw new Error("useWorkspace must be used within a WorkspaceProvider");
+  if (!ctx) {
+    throw new Error("useWorkspace must be used within WorkspaceProvider");
   }
   return ctx;
 }

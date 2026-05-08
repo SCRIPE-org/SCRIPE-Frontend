@@ -22,7 +22,7 @@ export interface SsoCallbackDeps {
   ssoRepository: ISsoRepository;
   setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
   setSubscriptionInfo: (status: string | null, grace: string | null, edition: string | null) => void;
-  refreshNavigation: (a: boolean, b: boolean) => Promise<void>;
+  refreshNavigation: () => Promise<void>;
   invalidateQueries: () => void;
   operationSuccess: (msg: string) => void;
   t: (key: string) => string;
@@ -72,12 +72,7 @@ async function completeAdminLogin(
   );
   deps.operationSuccess(deps.t("auth.welcomeBack"));
 
-  try {
-    await deps.refreshNavigation(false, true);
-  } catch (navError) {
-    appLogger.error("Failed to fetch navigation after SSO:", navError);
-  }
-
+  // v2: NavigationProvider auto-fetches when isAuthenticated changes
   deps.invalidateQueries();
   setters.setState("success");
   setTimeout(() => setters.redirectTo("/"), 300);

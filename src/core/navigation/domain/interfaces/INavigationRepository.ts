@@ -12,11 +12,24 @@ import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
 
 export interface INavigationRepository {
   /**
-   * Phase 1 — JIT bootstrap (login / hard reload).
+   * Phase 0 — Eager routes load (called ONCE on login, before any menu trees).
    *
-   * Fetches ONLY the default (admin) workspace menu and routes.
-   * No workspace stubs are fetched here — module workspace discovery
-   * is deferred until the user explicitly navigates to a module.
+   * Fetches ALL accessible routes across ALL workspaces in a single lightweight call.
+   * This seeds the allRoutes Set in useNavigationStore, guaranteeing that the
+   * RouteGuard never gets a false "not-authorized" while menu trees are loading.
+   *
+   * Backend: GET /Menus/my/routes
+   */
+  fetchRoutes(): Promise<{
+    routes: string[];
+    workspaceRouteMap: Record<string, string[]>;
+  }>;
+
+  /**
+   * Phase 1 — Default workspace load (login / hard reload).
+   *
+   * Fetches the default (admin) workspace menu tree + workspace group metadata.
+   * No workspace stubs are fetched separately — groups come in this response.
    *
    * Backend: GET /Menus/my  (no workspace param)
    */

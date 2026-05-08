@@ -281,7 +281,7 @@ export function useMenuCustomizeViewModel() {
     mutationFn: (request: SaveMenuOverrideRequest) => menuRepository.saveOverride(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
-      refreshNavigation(true, true);
+      refreshNavigation();
       const scopeLabel =
         scope === MenuOverrideScope.User
           ? t("menus.overrideSavedUser")
@@ -315,7 +315,7 @@ export function useMenuCustomizeViewModel() {
     mutationFn: (overrideId: string) => menuRepository.deleteOverride(overrideId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
-      refreshNavigation(true, true);
+      refreshNavigation();
       success({ title: t("menus.overrideRemoved") || "Override removed" });
     },
     onError: (err: any) => {
@@ -379,7 +379,7 @@ export function useMenuCustomizeViewModel() {
         await menuRepository.deleteOverride(entry.overrideId);
       }
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
-      refreshNavigation(true, true);
+      refreshNavigation();
       success({ title: t("menus.allOverridesReset") || "All customizations removed" });
     } catch (err: any) {
       toastError({ title: err?.message ?? t("common.error") });

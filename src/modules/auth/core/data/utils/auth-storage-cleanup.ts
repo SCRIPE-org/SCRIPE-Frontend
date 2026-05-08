@@ -1,39 +1,31 @@
 /**
- * auth-storage-cleanup.ts
+ * auth-storage-cleanup.ts (v2)
  *
  * Centralised utility that clears all authentication-related browser
- * storage in one place. Extracted from AuthRepository so the function
- * can be unit-tested in isolation and reused across the auth module.
+ * storage in one place.
  *
- * Rules:
- *  - clearAllLocalStorage()      → full cleanup on logout / token expiry
- *  - clearSessionOnLoginMount()  → targeted guard on login page mount (ViewModel layer only)
+ * v2 changes:
+ *  - clearNavigationCaches() now delegates to useNavigationStore.reset()
+ *    which clears the Zustand store AND its persisted localStorage entry.
+ *  - All legacy v1 navigation key references (NAVIGATION_WORKSPACE_PREFIX,
+ *    NAVIGATION_CACHE, etc.) have been removed since those keys no longer exist.
  */
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
 
 /**
- * Completely purge all navigation and workspace caches.
- * Removes the legacy generic cache, the new workspace stubs cache,
- * and iterates through localStorage to remove all JIT workspace keys.
+ * Purge the navigation store and its localStorage cache.
+ * In v2 this is just one key — the Zustand persist entry.
+ * The store's internal reset() call handles clearing the in-memory state.
  */
 export function clearNavigationCaches(): void {
   if (typeof window === "undefined") return;
 
-  const toRemove: string[] = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k?.startsWith(STORAGE_KEYS.NAVIGATION_WORKSPACE_PREFIX)) toRemove.push(k);
-  }
-  toRemove.forEach((k) => localStorage.removeItem(k));
+  // v2: only one key — the versioned Zustand persist entry
+  localStorage.removeItem(STORAGE_KEYS.NAV_STORE);
 
-  localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
-  localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
-  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE);
-  localStorage.removeItem(STORAGE_KEYS.WORKSPACE_STUBS_CACHE_EXPIRY);
-  
-  appLogger.debug("Navigation caches completely purged.");
+  appLogger.debug("[auth-storage-cleanup] Navigation store cache cleared");
 }
 
 /**
@@ -49,8 +41,8 @@ export function clearAllLocalStorage(): void {
   AUTH_STORAGE_KEYS_TO_CLEAR.forEach((key) => {
     localStorage.removeItem(key);
   });
-  
-  // Clear all dynamic and static navigation caches
+
+  // NAV_STORE is already in AUTH_STORAGE_KEYS_TO_CLEAR but call for clarity
   clearNavigationCaches();
 
   // next-themes raw key (library hardcodes "theme" — not in STORAGE_KEYS)
@@ -67,7 +59,7 @@ export function clearAllLocalStorage(): void {
   // Clear impersonation flag so a logout+login never shows a stale banner
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
 
-  appLogger.auth("Auth data, settings, and cache cleared (drill-down state preserved)");
+  appLogger.auth("[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state preserved)");
 }
 
 /**
@@ -76,19 +68,15 @@ export function clearAllLocalStorage(): void {
  * Covers the case where a user navigates directly to /login without going through
  * the normal logout flow (e.g. expired session, direct URL entry, browser back-button
  * after a hard close).
- *
- * NEVER call sessionStorage.clear() — that would wipe tenant_context (drill-down state)
- * which must survive auth events.
  */
 export function clearSessionOnLoginMount(): void {
   if (typeof window === "undefined") return;
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
   sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
 
-  // Purge all per-workspace navigation caches — prevents stale JIT-cached
-  // menus from a previous (possibly impersonated) session bleeding into the next login.
+  // Purge navigation store cache — prevents stale menus from a previous
+  // (possibly impersonated) session bleeding into the next login.
   clearNavigationCaches();
 
-  appLogger.auth("Login page mounted: stale impersonation flags and workspace caches cleared");
+  appLogger.auth("[auth-storage-cleanup] Login page mounted: stale flags and navigation cache cleared");
 }
-
