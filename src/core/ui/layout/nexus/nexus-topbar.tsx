@@ -171,10 +171,11 @@ export function NexusTopbar({
 
   const isOnHome = pathname === "/";
 
-  if (!mounted) return <header style={{ height: 56, flexShrink: 0 }} />;
+  if (!mounted) return <header data-nexus-topbar="" style={{ height: 56, flexShrink: 0 }} />;
 
   return (
     <header
+      data-nexus-topbar=""
       style={{
         height: 56,
         minHeight: 56,

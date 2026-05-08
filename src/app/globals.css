@@ -2386,8 +2386,11 @@ html[data-compact-mode="true"] {
   --tenant-banner-height: 0px;
 }
 
-/* Offset ALL fixed headers that sit at top:0 */
-html[data-tenant-banner] header {
+/* Offset fixed headers that sit at top:0.
+   Exclude the Nexus layout topbar — Nexus places its banner in-flow above the
+   layout, so no CSS-variable offset is needed. Applying top: to a
+   position:relative header still offsets it, causing visible overlap. */
+html[data-tenant-banner] header:not([data-nexus-topbar]) {
   top: var(--tenant-banner-height) !important;
 }
 

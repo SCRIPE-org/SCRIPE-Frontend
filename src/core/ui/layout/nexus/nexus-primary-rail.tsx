@@ -329,10 +329,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
     isModuleMode,
     previousWorkspaceKey,
     goBack,
-    workspaceGroups,
-    setActiveWorkspace,
     accentColor,
-    switchToModuleWorkspace,
   } = useWorkspace();
   const { language, direction } = useI18n();
   const { resolvedTheme } = useTheme();
@@ -353,16 +350,18 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
     [setActiveRootItemId, isPanelCollapsed, onTogglePanel]
   );
 
-  // ── Handle modules-group click: switches to the CRM workspace ────────────
+  // ── Handle modules-group click: show its children in secondary rail ─────────
+  // The actual workspace switch happens when the user clicks a child
+  // (e.g. CRM) in the secondary rail via the #workspace:<key> mechanism.
   const handleModulesGroupClick = useCallback(
-    (_item: MenuItem) => {
-      switchToModuleWorkspace();
-      // Also open panel if it was collapsed
+    (item: MenuItem) => {
+      setActiveRootItemId(item.id);
+      // Auto-open panel if it was collapsed
       if (isPanelCollapsed && onTogglePanel) {
         onTogglePanel();
       }
     },
-    [switchToModuleWorkspace, isPanelCollapsed, onTogglePanel]
+    [setActiveRootItemId, isPanelCollapsed, onTogglePanel]
   );
 
   // ── Separate "modules-group" from regular root items ──────────────────────
