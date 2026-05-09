@@ -62,13 +62,16 @@ interface NavItemProps {
   palette: ReturnType<typeof usePalette>;
   language: string;
   activeHref: string;
+  /** Passed from RailContent — avoids per-instance context call */
+  switchWorkspace: (key: string) => void;
 }
 
 function cleanPath(p: string | undefined | null): string {
   if (!p) return "";
-  let cleaned = p.split("?")[0].split("#")[0];
-  if (cleaned.endsWith("/")) {
-    cleaned = cleaned.slice(0, -1);
+  const cleaned = p.split("?")[0].split("#")[0];
+  // Preserve the root "/" — only strip trailing slash from longer paths
+  if (cleaned.length > 1 && cleaned.endsWith("/")) {
+    return cleaned.slice(0, -1);
   }
   return cleaned;
 }
@@ -83,9 +86,9 @@ function NavItem({
   palette,
   language,
   activeHref,
+  switchWorkspace,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
-  const { switchWorkspace } = useWorkspaceTransitionContext();
   const label =
     language === "ar"
       ? item.nameAr || item.nameEn
@@ -97,7 +100,7 @@ function NavItem({
   const isWorkspaceSwitcher = !!workspaceKey;
 
   const isActive =
-    !!item.href && item.href === activeHref;
+    !!item.href && cleanPath(item.href) === cleanPath(activeHref);
 
   const hasChildren = item.children.length > 0;
   const isExpanded = expandedIds.includes(item.id);
@@ -206,6 +209,7 @@ function NavItem({
                   palette={palette}
                   language={language}
                   activeHref={activeHref}
+                  switchWorkspace={switchWorkspace}
                 />
               ))}
             </div>
@@ -316,6 +320,9 @@ function RailContent({
   language: string;
   onNavigate: () => void;
 }) {
+  // Single context call at this level — passed down as a stable prop
+  // instead of being called inside each NavItem instance.
+  const { switchWorkspace } = useWorkspaceTransitionContext();
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const handleToggle = useCallback(
     (id: string) =>
@@ -335,9 +342,14 @@ function RailContent({
           const itemHref = cleanPath(item.href);
           if (cleanedPathname === itemHref) {
             bestMatch = item.href;
-            return; // exact match
+            return; // exact match — stop immediately
           }
-          if (cleanedPathname.startsWith(itemHref + "/") && itemHref.length > cleanPath(bestMatch).length) {
+          // Prefix match only for non-root paths (avoid "/" matching everything)
+          if (
+            itemHref !== "/" &&
+            cleanedPathname.startsWith(itemHref + "/") &&
+            itemHref.length > cleanPath(bestMatch).length
+          ) {
             bestMatch = item.href;
           }
         }
@@ -383,6 +395,7 @@ function RailContent({
                   palette={palette}
                   language={language}
                   activeHref={activeHref}
+                  switchWorkspace={switchWorkspace}
                 />
               ))}
             </div>
@@ -400,6 +413,7 @@ function RailContent({
             palette={palette}
             language={language}
             activeHref={activeHref}
+            switchWorkspace={switchWorkspace}
           />
         );
       })}

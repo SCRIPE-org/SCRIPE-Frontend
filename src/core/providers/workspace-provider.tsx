@@ -23,10 +23,11 @@ import {
   createContext,
   useContext,
   useCallback,
+  useEffect,
   useMemo,
 } from "react";
 import type React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
@@ -124,15 +125,105 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [activeWorkspaceKey, sortedGroups]);
 
   // ── Root menu items for active workspace ─────────────────────────────────
+  // Use getState() inside the memo so we read the latest store data without
+  // adding `store` (a new snapshot object every render) to the deps array.
   const rootMenuItems = useMemo<MenuItem[]>(() => {
-    return store.getActiveRootMenuItems();
-  }, [store, activeWorkspaceKey]); // eslint-disable-line react-hooks/exhaustive-deps
+    return useNavigationStore.getState().getActiveRootMenuItems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeWorkspaceKey]);
 
   // ── Active root item entity ───────────────────────────────────────────────
   const activeRootItem = useMemo<MenuItem | null>(() => {
     if (!activeRootItemId) return null;
     return rootMenuItems.find((m) => m.id === activeRootItemId) ?? null;
   }, [activeRootItemId, rootMenuItems]);
+
+  // ── Auto-sync activeRootItem from URL ─────────────────────────────────────
+  // When the user navigates (hard-nav, refresh, or workspace switch lands on a
+  // page), derive the best-matching root item from the current pathname so that
+  // the primary rail icon and the secondary rail panel are always in sync with
+  // the actual URL — even if no root item was explicitly clicked.
+  const pathname = usePathname();
+  useEffect(() => {
+    if (!rootMenuItems.length) return;
+
+    // Helper: clean path (same logic as secondary rail)
+    const clean = (p: string | undefined | null) => {
+      if (!p) return "";
+      const c = p.split("?")[0].split("#")[0];
+      return c.length > 1 && c.endsWith("/") ? c.slice(0, -1) : c;
+    };
+
+    const cleanedPathname = clean(pathname);
+
+    // Check if current activeRootItem already covers this pathname
+    if (activeRootItemId) {
+      const current = rootMenuItems.find((m) => m.id === activeRootItemId);
+      if (current) {
+        const containsCurrent = (items: MenuItem[]): boolean =>
+          items.some((item) => {
+            if (item.href && !item.href.startsWith("#")) {
+              const h = clean(item.href);
+              if (cleanedPathname === h) return true;
+              if (h !== "/" && cleanedPathname.startsWith(h + "/")) return true;
+            }
+            return item.children?.length ? containsCurrent(item.children) : false;
+          });
+        // If current root item still covers the pathname, leave it alone
+        if (
+          (current.href && clean(current.href) === cleanedPathname) ||
+          containsCurrent(current.children ?? [])
+        ) {
+          return;
+        }
+      }
+    }
+
+    // Find the best-matching root item for the current pathname
+    let bestRootId: string | null = null;
+    let bestLen = -1;
+
+    const scoreRoot = (root: MenuItem) => {
+      const check = (items: MenuItem[]): number => {
+        let score = -1;
+        for (const item of items) {
+          if (item.href && !item.href.startsWith("#")) {
+            const h = clean(item.href);
+            if (cleanedPathname === h) return h.length; // exact wins
+            if (h !== "/" && cleanedPathname.startsWith(h + "/")) {
+              score = Math.max(score, h.length);
+            }
+          }
+          if (item.children?.length) {
+            const childScore = check(item.children);
+            if (childScore > score) score = childScore;
+          }
+        }
+        return score;
+      };
+
+      // Also check the root item's own href
+      if (root.href && !root.href.startsWith("#")) {
+        const h = clean(root.href);
+        if (cleanedPathname === h) return h.length;
+        if (h !== "/" && cleanedPathname.startsWith(h + "/")) return h.length;
+      }
+      return check(root.children ?? []);
+    };
+
+    for (const root of rootMenuItems) {
+      const score = scoreRoot(root);
+      if (score > bestLen) {
+        bestLen = score;
+        bestRootId = root.id;
+      }
+    }
+
+    if (bestRootId && bestRootId !== activeRootItemId) {
+      store.setActiveRootItem(bestRootId);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, rootMenuItems]);
 
   // ── Legacy splits ─────────────────────────────────────────────────────────
   const adminWorkspaces = useMemo(
@@ -155,38 +246,51 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
-  const setActiveRootItemId = useCallback(
-    (id: string | null) => {
-      store.setActiveRootItem(id);
-    },
-    [store]
-  );
+  // Zustand action functions are stable references — no wrapper needed.
+  const setActiveRootItemId = useNavigationStore((s) => s.setActiveRootItem);
 
   const setActiveWorkspace = useCallback(
     async (workspaceKey: string, navigateTo = false) => {
       appLogger.debug(`[WorkspaceProvider] Switching to workspace: ${workspaceKey}`);
 
-      // Update active key immediately — UI reacts right away
-      store.setActiveWorkspace(workspaceKey);
-      store.setActiveRootItem(null);
+      // All store WRITES use getState() so we always hit the live store,
+      // not a stale React-render snapshot captured in the closure.
+      useNavigationStore.getState().setActiveWorkspace(workspaceKey);
+      useNavigationStore.getState().setActiveRootItem(null);
 
-      // JIT fetch if not cached
-      if (!store.hasWorkspaceData(workspaceKey)) {
+      // JIT fetch if not cached — also via getState() to avoid stale cache check.
+      if (!useNavigationStore.getState().hasWorkspaceData(workspaceKey)) {
         await fetchWorkspaceMenu(workspaceKey);
       }
 
       // Navigate to workspace's first page using replace() — kills history stack
       // so the browser Back button cannot jump between workspaces.
+      //
+      // Must read FRESH state here: fetchWorkspaceMenu() has written the new
+      // workspace data into the store, but `store` (React render snapshot) still
+      // has the old state. getState() always returns the current live state.
       if (navigateTo) {
-        const ws = store.workspaces.get(workspaceKey) ?? null;
-        const firstHref = ws ? firstPageOf(ws) : null;
+        const freshState = useNavigationStore.getState();
+        const wsData = freshState.workspaces.get(workspaceKey) ?? null;
+        const firstHref = wsData ? firstPageOf(wsData) : null;
         if (firstHref) {
           router.replace(firstHref);
           return;
         }
+        // Fallback: workspace has no JIT data yet — use WorkspaceGroup menuItems
+        // (populated from the initial eagerly-loaded groups response)
+        const wsGroup = freshState.workspaceGroups.find(
+          (g) => g.workspaceKey === workspaceKey
+        ) ?? null;
+        const groupFirstHref = wsGroup ? firstPageOf(wsGroup) : null;
+        if (groupFirstHref) {
+          router.replace(groupFirstHref);
+        }
       }
     },
-    [store, fetchWorkspaceMenu, router]
+    // `store` intentionally excluded — all reads/writes go through getState().
+    // Only truly external dependencies that can change belong here.
+    [fetchWorkspaceMenu, router]
   );
 
 

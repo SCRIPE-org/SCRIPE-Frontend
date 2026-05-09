@@ -61,14 +61,17 @@ export function useWorkspaceTransition() {
   };
 
   /**
-   * Dismiss loader when:
-   *  - The JIT fetch has completed (isWorkspaceLoading went false) AND
-   *  - The active workspace matches the target we switched to
+   * Dismiss the loader once:
+   *  - The JIT fetch has finished (isWorkspaceLoading = false)
+   *  - The active workspace matches our target
+   * Triggered by any of: fetch completion, workspace-key change, or pathname
+   * settling after navigation. Merged into ONE effect so there is never more
+   * than one timer in flight (two separate effects could race each other).
    * Respects MIN_VISIBLE_MS so fast cache-hits don't flash too briefly.
    */
   useEffect(() => {
     if (!loaderState.show) return;
-    if (isWorkspaceLoading) return; // still fetching
+    if (isWorkspaceLoading) return;
     if (!targetKey.current) return;
     if (activeWorkspace?.workspaceKey !== targetKey.current) return;
 
@@ -82,24 +85,9 @@ export function useWorkspaceTransition() {
     }, remaining + SETTLE_MS);
 
     return () => clearSettle();
+    // pathname included so navigation completing also triggers the dismiss
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWorkspaceLoading, activeWorkspace?.workspaceKey]);
-
-  // Also hide loader on pathname change if it already resolved
-  useEffect(() => {
-    if (!loaderState.show || isWorkspaceLoading) return;
-    if (!targetKey.current) return;
-    if (activeWorkspace?.workspaceKey !== targetKey.current) return;
-
-    const elapsed = Date.now() - loaderStartAt.current;
-    const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
-    clearSettle();
-    settleTimer.current = setTimeout(() => {
-      setLoaderState((s) => ({ ...s, show: false }));
-      targetKey.current = null;
-    }, remaining + SETTLE_MS);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [isWorkspaceLoading, activeWorkspace?.workspaceKey, pathname]);
 
   const showLoader = useCallback(
     (name: string, abbr: string, accent: string | null, key: string) => {
