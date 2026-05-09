@@ -6,8 +6,18 @@ import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function ImmersiveLayout({
-  branding, slotConfig, formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep, t,
+  branding,
+  slotConfig,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -18,7 +28,8 @@ export function ImmersiveLayout({
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)",
+          background:
+            "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)",
           opacity: "var(--login-overlay-opacity, 0.7)",
           backdropFilter: "blur(var(--login-overlay-blur, 0px))",
         }}

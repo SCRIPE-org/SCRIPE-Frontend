@@ -55,7 +55,9 @@ export function OAuthAppsView() {
           {generatedSecret && (
             <div className="mt-2 space-y-3">
               <div>
-                <label className="text-xs font-medium text-muted-foreground">{t("oauthApps.clientId") || "Client ID"}</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  {t("oauthApps.clientId") || "Client ID"}
+                </label>
                 <div className="mt-1 flex items-center gap-2">
                   <code className="flex-1 truncate rounded border bg-muted/50 p-2 font-mono text-sm">
                     {generatedSecret.clientId}
@@ -75,7 +77,9 @@ export function OAuthAppsView() {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">{t("oauthApps.clientSecret") || "Client Secret"}</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  {t("oauthApps.clientSecret") || "Client Secret"}
+                </label>
                 <div className="mt-1 flex items-center gap-2">
                   <code className="flex-1 break-all rounded border border-amber-200 bg-amber-50 p-2 font-mono text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-300">
                     {generatedSecret.secret}

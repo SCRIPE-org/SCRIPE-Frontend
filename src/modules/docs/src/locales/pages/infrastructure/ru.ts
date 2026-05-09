@@ -10,7 +10,7 @@ export const ru = {
         "Автоматически обнаруживаемые, независимые от провайдера (Native, Hangfire, Quartz.NET) повторяющиеся задачи — 24 задачи в 4 модулях, без ручного связывания.",
       intro:
         "Система фоновых задач NEXORA построена на принципе: написать один раз, запустить на любом провайдере. Каждая задача реализует интерфейс IAutoRegisteredJob и автоматически обнаруживается при запуске. Переключение между Native, Hangfire или Quartz — это просто изменение конфигурации в appsettings.json, без необходимости изменения кода.",
-      
+
       // Architecture
       architectureTitle: "Обзор архитектуры",
       architectureIntro:
@@ -19,20 +19,21 @@ export const ru = {
 
       // IAutoRegisteredJob Contract
       nodeConfig: "[RU] appsettings.json\nProvider + Per-Job Overrides",
-        descConfig: "[RU] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
-        nodeStartup: "[RU] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
-        descStartup: "[RU] Reads provider, discovers all jobs, schedules them",
-        nodeDiscovery: "[RU] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
-        descDiscovery: "[RU] Scans DI container for every registered IAutoRegisteredJob",
-        nodeSchedule: "[RU] Schedule Each Job\nIf Enabled -> Register with provider API",
-        descSchedule: "[RU] Uses CronExpression from appsettings override or job default",
-        nodeExecute: "[RU] job.ExecuteAsync(ct)\nAt every cron tick",
-        descExecute: "[RU] Provider-agnostic - job has zero knowledge of which provider runs it",
-        conn1: "[RU] drives",
-        conn2: "[RU] triggers",
-        conn3: "[RU] for each job",
-        conn4: "[RU] on cron tick",
-        contractTitle: "Контракт IAutoRegisteredJob",
+      descConfig:
+        "[RU] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+      nodeStartup: "[RU] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+      descStartup: "[RU] Reads provider, discovers all jobs, schedules them",
+      nodeDiscovery: "[RU] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+      descDiscovery: "[RU] Scans DI container for every registered IAutoRegisteredJob",
+      nodeSchedule: "[RU] Schedule Each Job\nIf Enabled -> Register with provider API",
+      descSchedule: "[RU] Uses CronExpression from appsettings override or job default",
+      nodeExecute: "[RU] job.ExecuteAsync(ct)\nAt every cron tick",
+      descExecute: "[RU] Provider-agnostic - job has zero knowledge of which provider runs it",
+      conn1: "[RU] drives",
+      conn2: "[RU] triggers",
+      conn3: "[RU] for each job",
+      conn4: "[RU] on cron tick",
+      contractTitle: "Контракт IAutoRegisteredJob",
       contractIntro:
         "Каждая повторяющаяся фоновая задача в NEXORA реализует один интерфейс: IAutoRegisteredJob. Это весь контракт — три свойства и один метод. Интерфейс намеренно исключает любые концепции, специфичные для провайдера (никаких атрибутов Hangfire или аннотаций Quartz). Задача ничего не знает о провайдере, который ее запускает.",
 
@@ -54,9 +55,11 @@ export const ru = {
       hierarchyRow1When: "Задача проста, не требует много шаблонного кода",
       hierarchyRow1Gets: "Только контракт — полный контроль, никаких дополнений",
       hierarchyRow2When: "Нужны структурированные журналы времени и ошибок",
-      hierarchyRow2Gets: "Автоматические журналы запуска/завершения/ошибок с указанием затраченного времени",
+      hierarchyRow2Gets:
+        "Автоматические журналы запуска/завершения/ошибок с указанием затраченного времени",
       hierarchyRow3When: "Модулю нужна задача окончательной очистки мягко удаленных записей",
-      hierarchyRow3Gets: "Автоматическое обнаружение сущностей, удаление с учетом внешних ключей, пакетная обработка",
+      hierarchyRow3Gets:
+        "Автоматическое обнаружение сущностей, удаление с учетом внешних ключей, пакетная обработка",
 
       // Providers
       providersTitle: "Сравнение провайдеров",
@@ -103,15 +106,18 @@ export const ru = {
         "EmailProcessingJob и WebhookRetryJob/WebhookLogCleanupJob являются базовыми инфраструктурными задачами, зарегистрированными в DI-контейнере модуля Identity, так как они зависят от сервисов Identity.",
       jobEntitlementsSoftDelete: "Навсегда удаляет мягко удаленные сущности Entitlements",
       jobSubscriptionReconciliation: "Завершает пробные периоды, продлевает активные подписки",
-      jobTrialNotification: "Отправляет напоминания о пробных периодах, истекающих через 7, 3 или 1 день",
+      jobTrialNotification:
+        "Отправляет напоминания о пробных периодах, истекающих через 7, 3 или 1 день",
       jobDunningNotification: "Уведомления об ошибках платежей с нарастающей срочностью",
       jobEditionRollout: "Применяет запланированные обновления и понижения редакций",
       jobUserSubscriptionReconciliation: "Сверка пользовательских подписок уровня 2",
       jobAnalyticsSnapshot: "Ежедневная агрегация снимков дохода/MRR/ARR",
-      jobTenantHealthScore: "Пересчитывает оценку здоровья (health score) для всех активных арендаторов",
+      jobTenantHealthScore:
+        "Пересчитывает оценку здоровья (health score) для всех активных арендаторов",
       jobAnalyticsReport: "Еженедельная генерация аналитических отчетов",
       jobCommissionInvoicing: "Ежемесячная консолидация счетов по комиссиям",
-      jobCommissionAutoCharge: "Повторные попытки списания неудачных автоматических платежей по комиссиям",
+      jobCommissionAutoCharge:
+        "Повторные попытки списания неудачных автоматических платежей по комиссиям",
       jobPaymobRecurringBilling: "Регулярные платежи по сохраненным картам Paymob",
       jobComplianceSoftDelete: "Навсегда удаляет мягко удаленные сущности Compliance",
       jobDsrExecution: "Выполняет ожидающие запросы субъектов данных (DSR) каждые 5 минут",
@@ -152,11 +158,13 @@ export const ru = {
       flowScanLabel: "Обнаружение ISoftDeletable",
       flowScanDesc: "Рефлексивное сканирование DbContext для сущностей, реализующих ISoftDeletable",
       flowFilterLabel: "Фильтрация просроченных сущностей",
-      flowFilterDesc: "Поиск записей, где IsDeleted = true И DeletedAt < DateTime.UtcNow.AddDays(-30)",
+      flowFilterDesc:
+        "Поиск записей, где IsDeleted = true И DeletedAt < DateTime.UtcNow.AddDays(-30)",
       flowCascadeLabel: "Каскадирование с учетом FK",
       flowCascadeDesc: "Обрабатывает ограничения внешних ключей в правильном порядке удаления",
       flowExecuteLabel: "Жесткое удаление",
-      flowExecuteDesc: "Выполнение нативного SQL для массового удаления в обход отслеживания изменений EF",
+      flowExecuteDesc:
+        "Выполнение нативного SQL для массового удаления в обход отслеживания изменений EF",
       connTriggers: "запускает",
       connStarts: "начинает",
       connBuilds: "строит запрос",
@@ -171,7 +179,8 @@ export const ru = {
       ruleMust4: "Сделать ExecuteAsync идемпотентным",
       ruleMust5: "Выполнять сборку после каждого изменения — nexora build backend",
       ruleNever1: "Никогда не импортировать пространства имен Hangfire или Quartz в задачи",
-      ruleNever2: "Никогда не использовать [AutomaticRetry] — глобальные повторные попытки находятся в BackgroundJobsConfiguration",
+      ruleNever2:
+        "Никогда не использовать [AutomaticRetry] — глобальные повторные попытки находятся в BackgroundJobsConfiguration",
       ruleNever3: "Никогда не вызывать RecurringJob.AddOrUpdate<T>() в коде модуля",
       ruleNever4: "Никогда не размещать задачи в Services/ или любой другой папке",
       ruleNever5: "Никогда не регистрировать как Singleton — всегда AddScoped",

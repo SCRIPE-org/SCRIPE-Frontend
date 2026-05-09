@@ -15,20 +15,20 @@ const sections: DocSection[] = [
       {
         titleKey: "commercial.complianceOverview.featureAutomatedDsrTitle",
         descriptionKey: "commercial.complianceOverview.featureAutomatedDsrDesc",
-        icon: "zap"
+        icon: "zap",
       },
       {
         titleKey: "commercial.complianceOverview.featureConsentTitle",
         descriptionKey: "commercial.complianceOverview.featureConsentDesc",
-        icon: "shield-check"
+        icon: "shield-check",
       },
       {
         titleKey: "commercial.complianceOverview.featureRetentionTitle",
         descriptionKey: "commercial.complianceOverview.featureRetentionDesc",
-        icon: "trash-2"
-      }
-    ]
-  }
+        icon: "trash-2",
+      },
+    ],
+  },
 ];
 
 registerPage({

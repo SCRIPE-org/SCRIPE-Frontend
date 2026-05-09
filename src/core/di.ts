@@ -53,4 +53,3 @@ export function getCoreContainer(): CoreContainer {
   }
   return container;
 }
-

@@ -52,7 +52,8 @@ export const es = {
       step2Title: "2. Establecer Entidad (Domain)",
       step2Desc: "Configurar modelo y validar requerimientos heredados desde AuditableEntity.",
       step3Title: "3. Comandos de Escritura",
-      step3Desc: "Manejadores NEXORA mediator enfocados únicamente a crear, mutar o destruir registros.",
+      step3Desc:
+        "Manejadores NEXORA mediator enfocados únicamente a crear, mutar o destruir registros.",
       step4Title: "4. Consultas (Queries)",
       step4Desc: "Lecturas ultrarrápidas con uso intensivo de mapeo y proyecciones No-Tracking.",
       step5Title: "5. Capa Repositorio",

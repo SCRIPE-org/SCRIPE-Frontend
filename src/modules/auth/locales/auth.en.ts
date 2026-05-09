@@ -96,7 +96,8 @@ export const en = {
     passwordMismatch: "Passwords do not match.",
     resetPasswordAction: "Reset Password",
     passwordResetSuccess: "Password Reset Successfully",
-    passwordResetSuccessDesc: "Your password has been reset. You can now log in with your new password.",
+    passwordResetSuccessDesc:
+      "Your password has been reset. You can now log in with your new password.",
     a11y: {
       skipToContent: "Skip to main content",
       topActionsLabel: "Page actions",

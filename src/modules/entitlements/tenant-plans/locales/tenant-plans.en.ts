@@ -178,7 +178,8 @@ export const en = {
       editing: "Editing",
       createPlan: "Create Plan",
       createPlanDesc: "Define a new pricing plan for your users.",
-      reviewNote: "Pricing values and detailed feature toggles are configured on the Pricing and Features tabs after the plan is initially created.",
+      reviewNote:
+        "Pricing values and detailed feature toggles are configured on the Pricing and Features tabs after the plan is initially created.",
     },
     featureDefinitions: {
       title: "Feature Catalog",

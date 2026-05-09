@@ -17,13 +17,25 @@ import { ProductionComponent } from "./ProductionComponent";
 
 // ── Minimal type defs (avoid importing from customization module) ─────────
 interface CanvasComponentData {
-  id: string; type: string; gridColumn: string; gridRow: string;
-  alignment: string; verticalAlignment: string;
-  x: number; y: number; width: number; height: number;
-  props: Record<string, unknown>; zIndex: number; visible: boolean;
+  id: string;
+  type: string;
+  gridColumn: string;
+  gridRow: string;
+  alignment: string;
+  verticalAlignment: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  props: Record<string, unknown>;
+  zIndex: number;
+  visible: boolean;
 }
 
-interface CanvasBackgroundData { type: string; value: string; }
+interface CanvasBackgroundData {
+  type: string;
+  value: string;
+}
 
 interface ProductionCanvasRendererProps {
   components: CanvasComponentData[];
@@ -44,7 +56,9 @@ interface ProductionCanvasRendererProps {
 const GRID_COLUMNS = 12;
 
 const alignMap: Record<string, string> = {
-  start: "flex-start", center: "center", end: "flex-end",
+  start: "flex-start",
+  center: "center",
+  end: "flex-end",
 };
 
 const commonStyle: React.CSSProperties = {
@@ -55,7 +69,18 @@ const commonStyle: React.CSSProperties = {
 
 function TopActionsBar() {
   return (
-    <div style={{ position: "fixed", left: 32, right: 32, top: 32, zIndex: 50, display: "flex", justifyContent: "flex-end", gap: 8 }}>
+    <div
+      style={{
+        position: "fixed",
+        left: 32,
+        right: 32,
+        top: 32,
+        zIndex: 50,
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: 8,
+      }}
+    >
       <div className="flex gap-1">
         <LanguageSwitcher />
         <ThemeSwitcher />
@@ -65,8 +90,17 @@ function TopActionsBar() {
 }
 
 export function ProductionCanvasRenderer({
-  components, gridRows, canvasBackground, positionMode = "grid",
-  formContent, logoUrl, companyName, direction, headline, subtitle, copyrightText,
+  components,
+  gridRows,
+  canvasBackground,
+  positionMode = "grid",
+  formContent,
+  logoUrl,
+  companyName,
+  direction,
+  headline,
+  subtitle,
+  copyrightText,
 }: ProductionCanvasRendererProps) {
   let bg = "var(--login-bg, hsl(var(--background)))";
   if (canvasBackground && canvasBackground.type !== "inherit" && canvasBackground.value) {
@@ -90,10 +124,36 @@ export function ProductionCanvasRenderer({
 
   if (positionMode === "absolute") {
     return (
-      <div className="login-page min-h-screen w-full selection:bg-primary/20" dir={direction} style={{ position: "relative", minHeight: "100vh", width: "100%", maxWidth: "800px", margin: "0 auto", background: bg, overflow: "hidden", ...commonStyle }}>
+      <div
+        className="login-page min-h-screen w-full selection:bg-primary/20"
+        dir={direction}
+        style={{
+          position: "relative",
+          minHeight: "100vh",
+          width: "100%",
+          maxWidth: "800px",
+          margin: "0 auto",
+          background: bg,
+          overflow: "hidden",
+          ...commonStyle,
+        }}
+      >
         <TopActionsBar />
         {visibleComponents.map((comp) => (
-          <div key={comp.id} style={{ position: "absolute", insetInlineStart: `${comp.x || 0}px`, top: `${comp.y || 0}px`, width: comp.width ? `${comp.width}px` : "auto", height: comp.height ? `${comp.height}px` : "auto", zIndex: comp.zIndex, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div
+            key={comp.id}
+            style={{
+              position: "absolute",
+              insetInlineStart: `${comp.x || 0}px`,
+              top: `${comp.y || 0}px`,
+              width: comp.width ? `${comp.width}px` : "auto",
+              height: comp.height ? `${comp.height}px` : "auto",
+              zIndex: comp.zIndex,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             {renderComponent(comp)}
           </div>
         ))}
@@ -102,10 +162,33 @@ export function ProductionCanvasRenderer({
   }
 
   return (
-    <div className="login-page min-h-screen w-full selection:bg-primary/20" dir={direction} style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLUMNS}, 1fr)`, gridTemplateRows: `repeat(${gridRows}, minmax(60px, auto))`, minHeight: "100vh", gap: "0px", background: bg, ...commonStyle }}>
+    <div
+      className="login-page min-h-screen w-full selection:bg-primary/20"
+      dir={direction}
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${GRID_COLUMNS}, 1fr)`,
+        gridTemplateRows: `repeat(${gridRows}, minmax(60px, auto))`,
+        minHeight: "100vh",
+        gap: "0px",
+        background: bg,
+        ...commonStyle,
+      }}
+    >
       <TopActionsBar />
       {visibleComponents.map((comp) => (
-        <div key={comp.id} style={{ gridColumn: comp.gridColumn, gridRow: comp.gridRow, display: "flex", alignItems: alignMap[comp.verticalAlignment] || "center", justifyContent: alignMap[comp.alignment] || "center", padding: "8px", zIndex: comp.zIndex }}>
+        <div
+          key={comp.id}
+          style={{
+            gridColumn: comp.gridColumn,
+            gridRow: comp.gridRow,
+            display: "flex",
+            alignItems: alignMap[comp.verticalAlignment] || "center",
+            justifyContent: alignMap[comp.alignment] || "center",
+            padding: "8px",
+            zIndex: comp.zIndex,
+          }}
+        >
           {renderComponent(comp)}
         </div>
       ))}

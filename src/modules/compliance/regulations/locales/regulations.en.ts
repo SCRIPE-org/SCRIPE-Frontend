@@ -34,7 +34,7 @@ export const en = {
         code: "e.g., GDPR",
         name: "e.g., General Data Protection Regulation",
         jurisdiction: "e.g., European Union",
-        referenceUrl: "https://..."
+        referenceUrl: "https://...",
       },
       search: "Search regulations...",
       required: "Required",
@@ -46,4 +46,3 @@ export const en = {
     },
   },
 };
-

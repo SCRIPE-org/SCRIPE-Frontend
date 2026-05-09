@@ -15,16 +15,16 @@ export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMet
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       <Card className="border-border/50">
-        <CardContent className="p-4 flex flex-col justify-center">
-          <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.requestType")}</p>
-          <div className={`font-medium ${typeMeta.color}`}>
-            {t(typeMeta.labelKey)}
-          </div>
+        <CardContent className="flex flex-col justify-center p-4">
+          <p className="mb-1 text-xs text-muted-foreground">
+            {t("compliance.columns.requestType")}
+          </p>
+          <div className={`font-medium ${typeMeta.color}`}>{t(typeMeta.labelKey)}</div>
         </CardContent>
       </Card>
       <Card className="border-border/50">
-        <CardContent className="p-4 flex flex-col justify-center">
-          <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.status")}</p>
+        <CardContent className="flex flex-col justify-center p-4">
+          <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.status")}</p>
           <Badge variant="outline" className={`w-fit gap-1 ${statusMeta.cls} border-0 px-2`}>
             {statusMeta.icon}
             {t(statusMeta.labelKey)}
@@ -32,18 +32,24 @@ export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMet
         </CardContent>
       </Card>
       <Card className="border-border/50">
-        <CardContent className="p-4 flex flex-col justify-center">
-          <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.deadline")}</p>
-          <p className="font-medium text-sm">
+        <CardContent className="flex flex-col justify-center p-4">
+          <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.deadline")}</p>
+          <p className="text-sm font-medium">
             {dsr.deadline.toLocaleDateString()}
-            {dsr.daysRemaining > 0 && <span className="ms-2 text-xs text-muted-foreground">({dsr.daysRemaining} {t("compliance.remaining")})</span>}
-            {dsr.isOverdue && <span className="ms-2 text-xs text-destructive">({t("compliance.overdue")})</span>}
+            {dsr.daysRemaining > 0 && (
+              <span className="ms-2 text-xs text-muted-foreground">
+                ({dsr.daysRemaining} {t("compliance.remaining")})
+              </span>
+            )}
+            {dsr.isOverdue && (
+              <span className="ms-2 text-xs text-destructive">({t("compliance.overdue")})</span>
+            )}
           </p>
         </CardContent>
       </Card>
       <Card className="border-border/50">
-        <CardContent className="p-4 flex flex-col justify-center">
-          <p className="text-xs text-muted-foreground mb-1">{t("compliance.columns.regulation")}</p>
+        <CardContent className="flex flex-col justify-center p-4">
+          <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.regulation")}</p>
           <p className="font-mono text-sm font-medium">{dsr.regulationCode}</p>
         </CardContent>
       </Card>

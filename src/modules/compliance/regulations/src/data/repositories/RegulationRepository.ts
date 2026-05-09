@@ -16,11 +16,16 @@ export class RegulationRepository implements IRegulationRepository {
     return RegulationMapper.toEntity(model);
   }
 
-  create(data: import("../../data/models/RegulationModels").CreateRegulationRequest): Promise<string> {
+  create(
+    data: import("../../data/models/RegulationModels").CreateRegulationRequest
+  ): Promise<string> {
     return this.service.create(data);
   }
 
-  update(id: string, data: import("../../data/models/RegulationModels").UpdateRegulationRequest): Promise<void> {
+  update(
+    id: string,
+    data: import("../../data/models/RegulationModels").UpdateRegulationRequest
+  ): Promise<void> {
     return this.service.update(id, data);
   }
 
@@ -28,11 +33,18 @@ export class RegulationRepository implements IRegulationRepository {
     return this.service.delete(id);
   }
 
-  addPurpose(id: string, data: import("../../data/models/RegulationModels").AddConsentPurposeRequest): Promise<string> {
+  addPurpose(
+    id: string,
+    data: import("../../data/models/RegulationModels").AddConsentPurposeRequest
+  ): Promise<string> {
     return this.service.addPurpose(id, data);
   }
 
-  updatePurpose(id: string, purposeId: string, data: import("../../data/models/RegulationModels").UpdateConsentPurposeRequest): Promise<void> {
+  updatePurpose(
+    id: string,
+    purposeId: string,
+    data: import("../../data/models/RegulationModels").UpdateConsentPurposeRequest
+  ): Promise<void> {
     return this.service.updatePurpose(id, purposeId, data);
   }
 

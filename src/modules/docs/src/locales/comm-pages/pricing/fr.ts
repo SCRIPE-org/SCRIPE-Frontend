@@ -18,7 +18,8 @@ export const fr = {
       tblRuntimeR2C2: "Règles de mapping explicites plus EncryptedIdMapper",
       tblRuntimeR2C3: "Formes de réponse auditables et IDs chiffrés préservés",
       tblRuntimeR3C1: "Scaffolding CLI",
-      tblRuntimeR3C2: "Les templates émettent les namespaces du médiateur NEXORA et les règles de mapping",
+      tblRuntimeR3C2:
+        "Les templates émettent les namespaces du médiateur NEXORA et les règles de mapping",
       tblRuntimeR3C3: "Les nouveaux modules ne réintroduisent pas les packages supprimés",
       tblRuntimeR4C1: "Opérations",
       tblRuntimeR4C2: "Aucune vérification phone-home sur ces chemins centraux",

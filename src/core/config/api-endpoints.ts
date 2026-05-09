@@ -196,7 +196,8 @@ export const API_ENDPOINTS = {
     /** GET /Menus/my — returns default workspace menu + WorkspaceGroups for all workspaces */
     MY: `${V1}/Menus/my`,
     /** GET /Menus/my?workspace={key} — JIT load full menu tree for a specific workspace */
-    MY_WORKSPACE: (workspaceKey: string) => `${V1}/Menus/my?workspace=${encodeURIComponent(workspaceKey)}`,
+    MY_WORKSPACE: (workspaceKey: string) =>
+      `${V1}/Menus/my?workspace=${encodeURIComponent(workspaceKey)}`,
     /** GET /Menus/my/workspaces — lightweight workspace stubs (no menu items) */
     MY_WORKSPACES: `${V1}/Menus/my/workspaces`,
     /**
@@ -226,7 +227,6 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${V1}/Workspaces/${id}`,
     REORDER: `${V1}/Workspaces/reorder`,
   },
-
 
   // ===== DASHBOARD =====
   DASHBOARD: {
@@ -620,7 +620,8 @@ export const API_ENDPOINTS = {
     REGULATIONS: `${V1}/compliance/regulations`,
     REGULATION_BY_ID: (id: string) => `${V1}/compliance/regulations/${id}`,
     REGULATION_PURPOSES: (id: string) => `${V1}/compliance/regulations/${id}/purposes`,
-    REGULATION_PURPOSE_BY_ID: (id: string, purposeId: string) => `${V1}/compliance/regulations/${id}/purposes/${purposeId}`,
+    REGULATION_PURPOSE_BY_ID: (id: string, purposeId: string) =>
+      `${V1}/compliance/regulations/${id}/purposes/${purposeId}`,
 
     // Consent
     RECORD_CONSENT: `${V1}/compliance/consent`,

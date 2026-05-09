@@ -2,14 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  RefreshCw,
-  AlertTriangle,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Plus
-} from "lucide-react";
+import { RefreshCw, AlertTriangle, ChevronLeft, ChevronRight, Clock, Plus } from "lucide-react";
 import { PolicyCard } from "../components/PolicyCard";
 import { useRetentionViewModel } from "../viewmodels/useRetentionViewModel";
 import type { RetentionPolicy } from "../../domain/entities/RetentionPolicy";
@@ -38,18 +31,18 @@ export function RetentionView() {
 
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedPolicy, setSelectedPolicy] = useState<RetentionPolicy | null>(null);
-  
-  const { 
-    policies, 
-    activeCount, 
-    totalCount, 
-    isLoading, 
-    isError, 
-    refetch, 
+
+  const {
+    policies,
+    activeCount,
+    totalCount,
+    isLoading,
+    isError,
+    refetch,
     createPolicy,
-    updatePolicy, 
+    updatePolicy,
     isMutating,
-    getFormFields 
+    getFormFields,
   } = useRetentionViewModel();
 
   const handleCreate = async (data: Record<string, any>) => {
@@ -99,7 +92,12 @@ export function RetentionView() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => router.push("/compliance")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={() => router.push("/compliance")}
+          >
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
@@ -107,17 +105,26 @@ export function RetentionView() {
               <Clock className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.retentionTitle")}</h2>
+              <h2 className="text-2xl font-bold tracking-tight">
+                {t("compliance.retentionTitle")}
+              </h2>
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{activeCount}</span> {t("compliance.active")}
+                <span className="font-medium text-foreground">{activeCount}</span>{" "}
+                {t("compliance.active")}
                 {" · "}
-                <span className="font-medium text-foreground">{totalCount}</span> {t("compliance.total")}
+                <span className="font-medium text-foreground">{totalCount}</span>{" "}
+                {t("compliance.total")}
               </p>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Button id="compliance-retention-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+          <Button
+            id="compliance-retention-refresh"
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+          >
             <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             {t("common.refresh")}
           </Button>
@@ -160,11 +167,7 @@ export function RetentionView() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {policies.map((policy: RetentionPolicy) => (
-            <PolicyCard
-              key={policy.id}
-              policy={policy}
-              onEdit={openEditModal}
-            />
+            <PolicyCard key={policy.id} policy={policy} onEdit={openEditModal} />
           ))}
         </div>
       )}

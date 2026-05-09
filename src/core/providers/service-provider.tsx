@@ -60,12 +60,8 @@ const ServiceContext = createContext<Services | null>(null);
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
     // Core DI Container — singleton, instantiated once
-    const {
-      apiService,
-      publicApiService,
-      notificationService,
-      navigationRepository,
-    } = getCoreContainer();
+    const { apiService, publicApiService, notificationService, navigationRepository } =
+      getCoreContainer();
 
     // Auth DI Container (triggers refresh handler wiring on first access)
     const {

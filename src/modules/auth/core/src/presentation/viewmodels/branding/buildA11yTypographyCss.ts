@@ -71,7 +71,9 @@ export function buildA11yTypographyCss(
   const contentScaling = parseInt(tokens["a11y.contentScaling"] || "100");
   if (contentScaling !== 100) {
     const scale = contentScaling / 100;
-    css.push(`.login-page .login-form-wrapper { transform: scale(${scale}) !important; transform-origin: top center !important; }`);
+    css.push(
+      `.login-page .login-form-wrapper { transform: scale(${scale}) !important; transform-origin: top center !important; }`
+    );
   }
 
   // 12. Line Height
@@ -103,7 +105,9 @@ export function buildA11yTypographyCss(
   // 16. Text Align
   const textAlign = tokens["a11y.textAlign"] || "inherit";
   if (textAlign !== "inherit") {
-    css.push(`.login-page p, .login-page label, .login-page span, .login-page .login-heading, .login-page .login-subtitle, .login-page .login-footer { text-align: ${textAlign} !important; }`);
+    css.push(
+      `.login-page p, .login-page label, .login-page span, .login-page .login-heading, .login-page .login-subtitle, .login-page .login-footer { text-align: ${textAlign} !important; }`
+    );
   }
 
   // 18. Reading Guide

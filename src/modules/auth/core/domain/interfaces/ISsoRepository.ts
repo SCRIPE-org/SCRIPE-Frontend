@@ -5,4 +5,3 @@ export interface ISsoRepository {
   initiateLogin(providerId: string, protocol?: string): Promise<void>;
   completeCallback(code: string, state: string): Promise<SsoCallbackResult>;
 }
-

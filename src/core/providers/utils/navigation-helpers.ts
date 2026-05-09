@@ -1,6 +1,8 @@
 import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 
-type WithMenuItems = { menuItems?: Array<{ href?: string | null; children?: Array<{ href?: string | null }> }> };
+type WithMenuItems = {
+  menuItems?: Array<{ href?: string | null; children?: Array<{ href?: string | null }> }>;
+};
 
 export function firstPageOf(ws: WithMenuItems): string | null {
   const findHref = (items: any[]): string | null => {

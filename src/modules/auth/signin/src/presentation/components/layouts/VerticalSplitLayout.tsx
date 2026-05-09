@@ -5,8 +5,15 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function VerticalSplitLayout({
-  branding, formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  branding,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -17,9 +24,16 @@ export function VerticalSplitLayout({
       {topActions}
       <div
         className="relative flex flex-1 flex-col items-center justify-center px-8 py-16 text-center"
-        style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+        style={{
+          backgroundImage: "var(--login-bg-image, none)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        <div className="absolute inset-0" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.6))" }} />
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.6))" }}
+        />
         <div className="relative z-10 flex flex-col items-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-background shadow-lg">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />

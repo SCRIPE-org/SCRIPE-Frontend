@@ -110,10 +110,13 @@ export const en = {
     },
     complianceOverview: {
       title: "Compliance Module",
-      description: "Built-in GDPR, CCPA, and PDPA compliance automation — protect your customers' data rights without hiring a team of legal engineers.",
-      intro: "NEXORA's Compliance Module gives every tenant on your platform enterprise-grade data protection compliance out of the box. From automated DSR handling to real-time consent tracking and audit-ready reports, your customers stay compliant without building anything.",
+      description:
+        "Built-in GDPR, CCPA, and PDPA compliance automation — protect your customers' data rights without hiring a team of legal engineers.",
+      intro:
+        "NEXORA's Compliance Module gives every tenant on your platform enterprise-grade data protection compliance out of the box. From automated DSR handling to real-time consent tracking and audit-ready reports, your customers stay compliant without building anything.",
       valueTitle: "Why Compliance Matters",
-      valueIntro: "Data protection regulations carry significant penalties: GDPR fines can reach €20M or 4% of global annual turnover (whichever is higher). NEXORA's Compliance module helps your customers avoid these risks while building trust with their end users.",
+      valueIntro:
+        "Data protection regulations carry significant penalties: GDPR fines can reach €20M or 4% of global annual turnover (whichever is higher). NEXORA's Compliance module helps your customers avoid these risks while building trust with their end users.",
       capabilitiesTitle: "Module Capabilities",
       cap1: "DSR Management — Automated workflow for data export, erasure, rectification, and restriction requests with SLA tracking.",
       cap2: "Consent Audit Trail — Immutable record of every consent grant and withdrawal with timestamp, IP, and consent version.",
@@ -121,45 +124,64 @@ export const en = {
       cap4: "Data Inventory — Article 30 Records of Processing Activities (RoPA) registry with export capability.",
       cap5: "Compliance Reports — Async generation of GDPR Overview, DSR Summary, Consent Audit, and more.",
       targetTitle: "Who Benefits",
-      target1: "SaaS platforms serving EU/UK customers who need GDPR compliance tools for their tenants.",
-      target2: "Businesses operating in California that need CCPA consumer rights request handling.",
-      target3: "Healthcare and financial services with strict data retention and audit requirements.",
+      target1:
+        "SaaS platforms serving EU/UK customers who need GDPR compliance tools for their tenants.",
+      target2:
+        "Businesses operating in California that need CCPA consumer rights request handling.",
+      target3:
+        "Healthcare and financial services with strict data retention and audit requirements.",
     },
     complianceGdpr: {
       title: "GDPR Compliance",
-      description: "How NEXORA helps your platform and tenants meet GDPR obligations across all six compliance domains.",
-      intro: "The General Data Protection Regulation (GDPR) applies to any organization that processes personal data of EU/EEA residents. NEXORA's Compliance module addresses all key GDPR obligations through built-in tooling, reducing compliance overhead for you and your tenants.",
+      description:
+        "How NEXORA helps your platform and tenants meet GDPR obligations across all six compliance domains.",
+      intro:
+        "The General Data Protection Regulation (GDPR) applies to any organization that processes personal data of EU/EEA residents. NEXORA's Compliance module addresses all key GDPR obligations through built-in tooling, reducing compliance overhead for you and your tenants.",
       articlesTitle: "Key GDPR Articles Addressed",
-      art12: "Article 12-14 — Transparency. Consent records document exactly what was shown to users and when.",
-      art15: "Article 15-22 — Data Subject Rights. DSR workflow handles all 8 rights: access, erasure, rectification, restriction, portability, objection, profiling, and automated decisions.",
-      art25: "Article 25 — Privacy by Design. The system is architected with data minimization, retention limits, and purpose limitation built in.",
-      art30: "Article 30 — Records of Processing Activities. The Data Inventory serves as a live RoPA registry.",
-      art32: "Article 32 — Security of Processing. All data is encrypted at rest and in transit; access is audited.",
+      art12:
+        "Article 12-14 — Transparency. Consent records document exactly what was shown to users and when.",
+      art15:
+        "Article 15-22 — Data Subject Rights. DSR workflow handles all 8 rights: access, erasure, rectification, restriction, portability, objection, profiling, and automated decisions.",
+      art25:
+        "Article 25 — Privacy by Design. The system is architected with data minimization, retention limits, and purpose limitation built in.",
+      art30:
+        "Article 30 — Records of Processing Activities. The Data Inventory serves as a live RoPA registry.",
+      art32:
+        "Article 32 — Security of Processing. All data is encrypted at rest and in transit; access is audited.",
     },
     complianceDsr: {
       title: "Data Subject Requests",
-      description: "How NEXORA handles DSR requests end-to-end, keeping your customers compliant with GDPR Article 15-22 and CCPA rights.",
-      intro: "Data Subject Requests (DSRs) are formal rights requests from individuals. Under GDPR, controllers must respond within 30 days. NEXORA automates the entire DSR workflow — from submission to assignment to fulfillment — with SLA tracking built in.",
+      description:
+        "How NEXORA handles DSR requests end-to-end, keeping your customers compliant with GDPR Article 15-22 and CCPA rights.",
+      intro:
+        "Data Subject Requests (DSRs) are formal rights requests from individuals. Under GDPR, controllers must respond within 30 days. NEXORA automates the entire DSR workflow — from submission to assignment to fulfillment — with SLA tracking built in.",
       workflowTitle: "DSR Workflow",
       step1: "User submits a DSR (export, erasure, rectification, or restriction).",
-      step2: "System creates a DSR record with status 'Pending' and records the submission timestamp.",
+      step2:
+        "System creates a DSR record with status 'Pending' and records the submission timestamp.",
       step3: "Compliance officer is assigned and status moves to 'InProgress'.",
       step4: "Request is fulfilled and status is set to 'Completed' or 'Rejected' with a reason.",
       slaTitle: "SLA Compliance",
-      slaIntro: "NEXORA tracks the submission date for every DSR. Your compliance team can filter by age to identify requests approaching the 30-day GDPR deadline.",
+      slaIntro:
+        "NEXORA tracks the submission date for every DSR. Your compliance team can filter by age to identify requests approaching the 30-day GDPR deadline.",
     },
     complianceRoi: {
       title: "Compliance ROI",
-      description: "The business case for built-in compliance — cost savings, risk reduction, and competitive advantage.",
-      intro: "Regulatory compliance is no longer optional — and building it from scratch is expensive. NEXORA's built-in Compliance module turns a regulatory requirement into a competitive advantage.",
+      description:
+        "The business case for built-in compliance — cost savings, risk reduction, and competitive advantage.",
+      intro:
+        "Regulatory compliance is no longer optional — and building it from scratch is expensive. NEXORA's built-in Compliance module turns a regulatory requirement into a competitive advantage.",
       savingsTitle: "Cost Savings",
       savings1: "Avoid €20M+ in GDPR fines through automated compliance enforcement.",
-      savings2: "Save 200+ engineering hours per year versus building DSR, consent, and retention systems from scratch.",
+      savings2:
+        "Save 200+ engineering hours per year versus building DSR, consent, and retention systems from scratch.",
       savings3: "Reduce legal overhead with audit-ready reports generated in seconds.",
       competitiveTitle: "Competitive Advantage",
       competitive1: "Win enterprise deals by demonstrating built-in compliance capabilities.",
-      competitive2: "Serve EU, UK, and California markets without additional compliance engineering.",
-      competitive3: "Build customer trust with transparent consent management and data rights handling.",
+      competitive2:
+        "Serve EU, UK, and California markets without additional compliance engineering.",
+      competitive3:
+        "Build customer trust with transparent consent management and data rights handling.",
     },
   },
 };

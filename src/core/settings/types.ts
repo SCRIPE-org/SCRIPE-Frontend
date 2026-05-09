@@ -175,7 +175,6 @@ export type LayoutTemplate =
   // Nexus — Dual-rail workspace layout
   | "nexus";
 
-
 // ── Component Styles ──────────────────────────────────────
 
 export type CardStyle = "default" | "glass" | "solid" | "bordered" | "elevated";

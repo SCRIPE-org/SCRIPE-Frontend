@@ -180,25 +180,49 @@ export function ComplianceDashboardView() {
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            { label: t("compliance.manageDsr"), href: "/compliance/dsr", permission: SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW },
-            { label: t("compliance.manageConsent"), href: "/compliance/consent", permission: SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW },
-            { label: t("compliance.manageRetention"), href: "/compliance/retention", permission: SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW },
-            { label: t("compliance.viewInventory"), href: "/compliance/inventory", permission: SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW },
-            { label: t("compliance.regulations"), href: "/compliance/regulations", permission: SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW },
-            { label: t("compliance.viewReports"), href: "/compliance/reports", permission: SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW },
+            {
+              label: t("compliance.manageDsr"),
+              href: "/compliance/dsr",
+              permission: SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW,
+            },
+            {
+              label: t("compliance.manageConsent"),
+              href: "/compliance/consent",
+              permission: SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW,
+            },
+            {
+              label: t("compliance.manageRetention"),
+              href: "/compliance/retention",
+              permission: SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW,
+            },
+            {
+              label: t("compliance.viewInventory"),
+              href: "/compliance/inventory",
+              permission: SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW,
+            },
+            {
+              label: t("compliance.regulations"),
+              href: "/compliance/regulations",
+              permission: SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW,
+            },
+            {
+              label: t("compliance.viewReports"),
+              href: "/compliance/reports",
+              permission: SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW,
+            },
           ]
             .filter((action) => hasPermission(action.permission))
             .map((action) => (
-            <Button
-              key={action.href}
-              variant="outline"
-              className="h-auto justify-between px-4 py-3"
-              onClick={() => router.push(action.href)}
-            >
-              {action.label}
-              <ChevronRight className="ms-2 h-4 w-4 flex-shrink-0" />
-            </Button>
-          ))}
+              <Button
+                key={action.href}
+                variant="outline"
+                className="h-auto justify-between px-4 py-3"
+                onClick={() => router.push(action.href)}
+              >
+                {action.label}
+                <ChevronRight className="ms-2 h-4 w-4 flex-shrink-0" />
+              </Button>
+            ))}
         </CardContent>
       </Card>
 

@@ -59,7 +59,9 @@ export function clearAllLocalStorage(): void {
   // Clear impersonation flag so a logout+login never shows a stale banner
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
 
-  appLogger.auth("[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state preserved)");
+  appLogger.auth(
+    "[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state preserved)"
+  );
 }
 
 /**
@@ -78,5 +80,7 @@ export function clearSessionOnLoginMount(): void {
   // (possibly impersonated) session bleeding into the next login.
   clearNavigationCaches();
 
-  appLogger.auth("[auth-storage-cleanup] Login page mounted: stale flags and navigation cache cleared");
+  appLogger.auth(
+    "[auth-storage-cleanup] Login page mounted: stale flags and navigation cache cleared"
+  );
 }

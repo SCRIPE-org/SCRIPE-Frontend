@@ -62,7 +62,9 @@ export function buildA11yFocusCss(
 
   // 23. Large Click Targets
   if (tokens["a11y.largeTargets"] === "true") {
-    css.push(`.login-page input, .login-page button, .login-page select, .login-page a, .login-page [role="button"] { min-height: 44px !important; min-width: 44px !important; padding-top: 8px !important; padding-bottom: 8px !important; }`);
+    css.push(
+      `.login-page input, .login-page button, .login-page select, .login-page a, .login-page [role="button"] { min-height: 44px !important; min-width: 44px !important; padding-top: 8px !important; padding-bottom: 8px !important; }`
+    );
   }
 
   return css;

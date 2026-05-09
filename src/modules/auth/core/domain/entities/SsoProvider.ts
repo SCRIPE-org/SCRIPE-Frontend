@@ -12,14 +12,30 @@ export interface SsoProviderData {
 export class SsoProvider {
   constructor(private readonly data: SsoProviderData) {}
 
-  get id() { return this.data.id; }
-  get name() { return this.data.name; }
-  get slug() { return this.data.slug; }
-  get protocol() { return this.data.protocol; }
-  get iconUrl() { return this.data.iconUrl; }
-  get buttonColor() { return this.data.buttonColor; }
-  get buttonLabel() { return this.data.buttonLabel; }
-  get displayOrder() { return this.data.displayOrder; }
+  get id() {
+    return this.data.id;
+  }
+  get name() {
+    return this.data.name;
+  }
+  get slug() {
+    return this.data.slug;
+  }
+  get protocol() {
+    return this.data.protocol;
+  }
+  get iconUrl() {
+    return this.data.iconUrl;
+  }
+  get buttonColor() {
+    return this.data.buttonColor;
+  }
+  get buttonLabel() {
+    return this.data.buttonLabel;
+  }
+  get displayOrder() {
+    return this.data.displayOrder;
+  }
 
   get isSaml() {
     return this.protocol.toLowerCase() === "saml";

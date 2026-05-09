@@ -1932,7 +1932,7 @@ export const en = {
   footer: {
     allRightsReserved: "All Rights Reserved",
   },
-  navigation:{
+  navigation: {
     searchPlaceholder: "Search a page",
-  }
+  },
 };

@@ -28,7 +28,9 @@ export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
             <Package className="h-4 w-4 text-primary" />
           </div>
-          <CardTitle className="text-sm font-semibold">{t("entSubscriptions.planDetails") || "Plan Details"}</CardTitle>
+          <CardTitle className="text-sm font-semibold">
+            {t("entSubscriptions.planDetails") || "Plan Details"}
+          </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-0">

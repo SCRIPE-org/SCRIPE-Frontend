@@ -5,8 +5,14 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function SpotlightLayout({
-  formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -17,7 +23,10 @@ export function SpotlightLayout({
       {/* Radial spotlight glow */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)",
+        }}
       />
       {topActions}
       <div

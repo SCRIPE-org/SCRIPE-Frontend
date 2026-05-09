@@ -13,14 +13,7 @@ import { GenericForm } from "@core/ui/forms/generic-form";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
-import {
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  AlertTriangle,
-  BookOpen,
-  Plus
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw, AlertTriangle, BookOpen, Plus } from "lucide-react";
 import { RegulationCard } from "../components/RegulationCard";
 
 import type { Regulation } from "../../domain/entities/Regulation";
@@ -40,15 +33,15 @@ export function RegulationView() {
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
 
-  const { 
-    regulations, 
-    isLoading, 
-    isError, 
+  const {
+    regulations,
+    isLoading,
+    isError,
     refetch,
     createRegulation,
     updateRegulation,
     isMutating,
-    getFormFields
+    getFormFields,
   } = useRegulationViewModel();
 
   const handleCreate = async (data: Record<string, any>) => {
@@ -99,7 +92,12 @@ export function RegulationView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => router.push("/compliance")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={() => router.push("/compliance")}
+          >
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
@@ -107,7 +105,9 @@ export function RegulationView() {
               <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.regulations.title")}</h2>
+              <h2 className="text-2xl font-bold tracking-tight">
+                {t("compliance.regulations.title")}
+              </h2>
               <p className="text-sm text-muted-foreground">
                 {t("compliance.regulations.description")}
               </p>
@@ -115,7 +115,12 @@ export function RegulationView() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Button id="compliance-regulations-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+          <Button
+            id="compliance-regulations-refresh"
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+          >
             <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             {t("common.refresh")}
           </Button>
@@ -164,14 +169,20 @@ export function RegulationView() {
       <GenericModal
         open={modalMode !== null}
         onOpenChange={closeModals}
-        title={modalMode === "edit" ? t("compliance.regulations.editRegulation") : t("compliance.regulations.addRegulation")}
+        title={
+          modalMode === "edit"
+            ? t("compliance.regulations.editRegulation")
+            : t("compliance.regulations.addRegulation")
+        }
         description={
           modalMode === "edit"
             ? `${t("compliance.regulations.code")}: ${selectedRegulation?.code}`
             : t("compliance.regulations.addRegulation")
         }
         size="md"
-        formKey={modalMode === "edit" ? `edit-regulation-${selectedRegulation?.id}` : "create-regulation"}
+        formKey={
+          modalMode === "edit" ? `edit-regulation-${selectedRegulation?.id}` : "create-regulation"
+        }
       >
         <GenericForm
           fields={fields}

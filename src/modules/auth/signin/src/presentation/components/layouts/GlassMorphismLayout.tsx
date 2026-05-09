@@ -5,8 +5,14 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function GlassMorphismLayout({
-  formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -26,13 +32,17 @@ export function GlassMorphismLayout({
       <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 pointer-events-none absolute start-1/4 top-1/4 h-64 w-64 rounded-full blur-[100px]" />
       <div className="bg-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full blur-[80px]" />
       {topActions}
-      <div className="relative z-10 mx-4 w-full" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
+      <div
+        className="relative z-10 mx-4 w-full"
+        style={{ maxWidth: "var(--login-form-width, 440px)" }}
+      >
         <div
           className="border-[var(--login-accent,hsl(var(--border)))]/20 border shadow-2xl backdrop-blur-3xl"
           style={{
             borderRadius: "var(--login-radius-card, 24px)",
             padding: "var(--login-card-padding, 40px)",
-            backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)",
+            backgroundColor:
+              "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)",
           }}
         >
           <div className="from-[var(--login-primary,hsl(var(--primary)))]/30 to-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br via-transparent" />
@@ -40,7 +50,10 @@ export function GlassMorphismLayout({
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <div
                 className="h-18 w-18 border-[var(--login-accent,hsl(var(--border)))]/20 flex items-center justify-center overflow-hidden rounded-2xl border shadow-xl backdrop-blur-md"
-                style={{ backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 50%, transparent)" }}
+                style={{
+                  backgroundColor:
+                    "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 50%, transparent)",
+                }}
               >
                 <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
               </div>

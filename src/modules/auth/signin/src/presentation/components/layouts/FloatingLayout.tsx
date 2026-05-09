@@ -5,8 +5,14 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function FloatingLayout({
-  formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div

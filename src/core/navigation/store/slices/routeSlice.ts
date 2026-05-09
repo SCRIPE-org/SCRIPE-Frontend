@@ -1,15 +1,12 @@
 import { StateCreator } from "zustand";
 import { NavigationStoreState, RouteSlice } from "../types";
 
-const SYSTEM_PAGES = new Set([
-  "/not-authorized",
-  "/not-found",
-  "/500",
-  "/login",
-  "/",
-]);
+const SYSTEM_PAGES = new Set(["/not-authorized", "/not-found", "/500", "/login", "/"]);
 
-export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteSlice> = (set, get) => ({
+export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteSlice> = (
+  set,
+  get
+) => ({
   allRoutes: new Set<string>(),
   allRoutesSorted: [] as string[],
   workspaceRouteMap: {},
@@ -34,9 +31,8 @@ export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteS
     const { allRoutes, allRoutesSorted } = get();
     if (allRoutes.size === 0) return true;
 
-    const normalized = pathname.endsWith("/") && pathname !== "/"
-      ? pathname.slice(0, -1)
-      : pathname;
+    const normalized =
+      pathname.endsWith("/") && pathname !== "/" ? pathname.slice(0, -1) : pathname;
 
     if (allRoutes.has(normalized)) return true;
 

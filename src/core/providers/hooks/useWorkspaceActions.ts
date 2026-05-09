@@ -24,17 +24,16 @@ export function useWorkspaceActions() {
         const freshState = useNavigationStore.getState();
         const wsData = freshState.workspaces.get(workspaceKey) ?? null;
         const firstHref = wsData ? firstPageOf(wsData) : null;
-        
+
         if (firstHref) {
           router.replace(firstHref);
           return;
         }
 
-        const wsGroup = freshState.workspaceGroups.find(
-          (g) => g.workspaceKey === workspaceKey
-        ) ?? null;
+        const wsGroup =
+          freshState.workspaceGroups.find((g) => g.workspaceKey === workspaceKey) ?? null;
         const groupFirstHref = wsGroup ? firstPageOf(wsGroup) : null;
-        
+
         if (groupFirstHref) {
           router.replace(groupFirstHref);
         }

@@ -102,9 +102,7 @@ export class EditionService implements IEditionService {
   }
 
   // ── Pricing ──
-  async getEditionPrices(
-    editionId: string
-  ): Promise<{
+  async getEditionPrices(editionId: string): Promise<{
     editionId: string;
     prices: Array<{ currency: string; billingCycle: string; amount: number }>;
   }> {

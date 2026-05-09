@@ -351,10 +351,13 @@ export const fr = {
     compliance: {
       overview: {
         title: "Module de conformité",
-        description: "Automatisation de la conformité RGPD, CCPA et PDPA : profils, gestion DSR, consentement, conservation, inventaire et rapports.",
-        intro: "Le module Conformité est le moteur de conformité réglementaire intégré à NEXORA. Il aide les opérateurs et locataires à respecter les principales lois (RGPD, CCPA, PDPA) via des outils automatisés.",
+        description:
+          "Automatisation de la conformité RGPD, CCPA et PDPA : profils, gestion DSR, consentement, conservation, inventaire et rapports.",
+        intro:
+          "Le module Conformité est le moteur de conformité réglementaire intégré à NEXORA. Il aide les opérateurs et locataires à respecter les principales lois (RGPD, CCPA, PDPA) via des outils automatisés.",
         infoTitle: "Avis de conformité",
-        infoContent: "Ce module est essentiel pour maintenir la conformité et éviter les amendes. Assurez-vous que toutes les fonctionnalités sont mappées correctement.",
+        infoContent:
+          "Ce module est essentiel pour maintenir la conformité et éviter les amendes. Assurez-vous que toutes les fonctionnalités sont mappées correctement.",
         descDsr: "Gère les demandes des sujets (Export, Effacement, Rectification)",
         descConsent: "Suivi immuable des états de consentement",
         descRet: "Applique les politiques de destruction des données",
@@ -378,7 +381,8 @@ export const fr = {
         tr2_1: "ConsentRecordView",
         tr2_2: "Affiche le snapshot immuable du consentement avec les métadonnées.",
         whatIsTitle: "Qu'est-ce que le module Conformité ?",
-        whatIsIntro: "Le module offre six sous-systèmes couvrant tout le cycle de conformité. Les locataires NEXORA obtiennent un système prêt pour la production.",
+        whatIsIntro:
+          "Le module offre six sous-systèmes couvrant tout le cycle de conformité. Les locataires NEXORA obtiennent un système prêt pour la production.",
         subModulesTitle: "Six Sous-systèmes",
         subModulesIntro: "Chaque sous-système gère un domaine de conformité spécifique :",
         sub1: "Profils de réglementation — Stocke les cadres réglementaires (RGPD, CCPA, PDPA).",
@@ -388,21 +392,30 @@ export const fr = {
         sub5: "Inventaire des données — Un registre de toutes les catégories de données personnelles.",
         sub6: "Rapports de conformité — Génère des rapports asynchrones (Aperçu RGPD, Résumé DSR, Audit des consentements, etc.).",
         backendTitle: "Architecture Backend",
-        backendIntro: "Suit la structure NEXORA à 3 projets (Domain / Application / Infrastructure) avec un ComplianceDbContext.",
+        backendIntro:
+          "Suit la structure NEXORA à 3 projets (Domain / Application / Infrastructure) avec un ComplianceDbContext.",
         frontendTitle: "Architecture Frontend",
-        frontendIntro: "Organisé en six sous-modules indépendants dans src/modules/compliance/ suivant le modèle View/ViewModel.",
+        frontendIntro:
+          "Organisé en six sous-modules indépendants dans src/modules/compliance/ suivant le modèle View/ViewModel.",
         endpointsTitle: "Aperçu des Endpoints API",
-        endpointsIntro: "Tous les endpoints sont sous /api/v1/compliances/ et nécessitent l'authentification.",
+        endpointsIntro:
+          "Tous les endpoints sont sous /api/v1/compliances/ et nécessitent l'authentification.",
       },
       dsr: {
         title: "Demandes des sujets de données (DSR)",
-        description: "Gérer les demandes de droits RGPD/CCPA (export, effacement, rectification, restriction) avec suivi du cycle de vie.",
-        intro: "Les DSR sont des demandes formelles des individus exerçant leurs droits. Le module fournit un flux de travail DSR complet : soumission, assignation, traitement et clôture.",
+        description:
+          "Gérer les demandes de droits RGPD/CCPA (export, effacement, rectification, restriction) avec suivi du cycle de vie.",
+        intro:
+          "Les DSR sont des demandes formelles des individus exerçant leurs droits. Le module fournit un flux de travail DSR complet : soumission, assignation, traitement et clôture.",
         typesTitle: "Types de demandes",
-        typesIntro: "Le système prend en charge quatre types de DSR définis par l'Article 17 du RGPD et le CCPA :",
-        type1: "Export — Demande de portabilité. Le sujet souhaite une copie de ses données personnelles.",
-        type2: "Effacement — Droit à l'oubli. Toutes les données doivent être supprimées ou anonymisées.",
-        type3: "Rectification — Demande de correction. Les données inexactes doivent être mises à jour.",
+        typesIntro:
+          "Le système prend en charge quatre types de DSR définis par l'Article 17 du RGPD et le CCPA :",
+        type1:
+          "Export — Demande de portabilité. Le sujet souhaite une copie de ses données personnelles.",
+        type2:
+          "Effacement — Droit à l'oubli. Toutes les données doivent être supprimées ou anonymisées.",
+        type3:
+          "Rectification — Demande de correction. Les données inexactes doivent être mises à jour.",
         type4: "Restriction — Les données peuvent être conservées mais non traitées activement.",
         lifecycleTitle: "Cycle de vie de la demande",
         lifecycleIntro: "Les DSR passent par un ensemble défini de statuts :",
@@ -411,7 +424,8 @@ export const fr = {
         status3: "Terminé (Completed) — La demande a été satisfaite.",
         status4: "Rejeté (Rejected) — La demande a été rejetée (ex: vérification insuffisante).",
         slasTitle: "Exigences SLA du RGPD",
-        slasIntro: "Selon l'Article 12 du RGPD, les responsables doivent répondre aux DSR dans les 30 jours (extensible à 3 mois).",
+        slasIntro:
+          "Selon l'Article 12 du RGPD, les responsables doivent répondre aux DSR dans les 30 jours (extensible à 3 mois).",
         lifecycleFlowTitle: "Flux du cycle de vie DSR",
         nodeSubmit: "Soumettre la demande",
         descSubmit: "Demande d'Export, d'Effacement ou de Rectification",
@@ -451,8 +465,10 @@ export const fr = {
       },
       consent: {
         title: "Gestion du consentement",
-        description: "Enregistrer, suivre et auditer les consentements pour la conformité à l'Article 6 du RGPD et au CCPA.",
-        intro: "La gestion du consentement enregistre chaque fois qu'un utilisateur accorde ou révoque son consentement pour un objectif spécifique. NEXORA stocke la piste d'audit complète.",
+        description:
+          "Enregistrer, suivre et auditer les consentements pour la conformité à l'Article 6 du RGPD et au CCPA.",
+        intro:
+          "La gestion du consentement enregistre chaque fois qu'un utilisateur accorde ou révoque son consentement pour un objectif spécifique. NEXORA stocke la piste d'audit complète.",
         purposesTitle: "Objectifs du consentement",
         purposesIntro: "Chaque consentement est lié à un objectif spécifique :",
         purpose1: "Marketing — Emails marketing et communications promotionnelles.",
@@ -460,9 +476,11 @@ export const fr = {
         purpose3: "Tiers — Partage de données avec des services tiers.",
         purpose4: "Personnalisation — Contenu personnalisé et recommandations.",
         gdprTitle: "Base légale du RGPD",
-        gdprIntro: "L'Article 6 du RGPD exige que le consentement soit libre, spécifique, éclairé et univoque. NEXORA enregistre la version exacte du texte de consentement affiché à l'utilisateur.",
+        gdprIntro:
+          "L'Article 6 du RGPD exige que le consentement soit libre, spécifique, éclairé et univoque. NEXORA enregistre la version exacte du texte de consentement affiché à l'utilisateur.",
         withdrawalTitle: "Révocation du consentement",
-        withdrawalIntro: "Les utilisateurs peuvent révoquer leur consentement à tout moment. ConsentRecord est mis à jour avec WithdrawnAt.",
+        withdrawalIntro:
+          "Les utilisateurs peuvent révoquer leur consentement à tout moment. ConsentRecord est mis à jour avec WithdrawnAt.",
         flowTitle: "Flux de l'état du consentement",
         nodePurpose: "Objectif de consentement",
         descPurpose: "Définit à quoi on consent (ex: Marketing)",
@@ -487,20 +505,24 @@ export const fr = {
       },
       retention: {
         title: "Politiques de conservation des données",
-        description: "Définir les périodes de conservation et les actions d'expiration (Suppression ou Anonymisation) pour l'Article 5(1)(e) du RGPD.",
-        intro: "Définissez la durée de conservation de catégories de données et ce qui se passe à l'expiration. NEXORA applique cela automatiquement via des tâches en arrière-plan.",
+        description:
+          "Définir les périodes de conservation et les actions d'expiration (Suppression ou Anonymisation) pour l'Article 5(1)(e) du RGPD.",
+        intro:
+          "Définissez la durée de conservation de catégories de données et ce qui se passe à l'expiration. NEXORA applique cela automatiquement via des tâches en arrière-plan.",
         policiesTitle: "Configuration de la politique",
         policiesIntro: "Chaque politique de conservation spécifie :",
         field1: "DataCategory — Le type de données (ex: 'Profils Utilisateurs').",
         field2: "RetentionDays — Combien de jours les données doivent être conservées.",
-        field3: "ExpiryAction — Ce qui se passe à l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
+        field3:
+          "ExpiryAction — Ce qui se passe à l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
         field4: "RegulationCode — Quelle réglementation l'exige (RGPD, CCPA, etc.).",
         actionsTitle: "Actions d'expiration",
         actionsIntro: "À l'expiration, NEXORA applique l'une des deux actions :",
         action1: "Delete — Supprime définitivement tous les enregistrements correspondants.",
         action2: "Anonymize — Remplace les PII par des jetons pseudonymes.",
         automationTitle: "Application automatisée",
-        automationIntro: "La tâche RetentionEnforcementJob s'exécute quotidiennement à 3h00 UTC, scannant toutes les politiques actives et appliquant l'action configurée.",
+        automationIntro:
+          "La tâche RetentionEnforcementJob s'exécute quotidiennement à 3h00 UTC, scannant toutes les politiques actives et appliquant l'action configurée.",
         nodePolicy: "Politique de conservation",
         descPolicy: "Définit le type d'entité, la durée de vie et la stratégie",
         nodeEnforcement: "Tâche d'application de la conservation",
@@ -521,8 +543,10 @@ export const fr = {
       },
       inventory: {
         title: "Inventaire des données",
-        description: "Un registre de toutes les catégories de données personnelles traitées — requis pour les Registres d'activités de traitement (RoPA) Article 30 du RGPD.",
-        intro: "L'inventaire des données est un registre structuré de toutes les catégories de données personnelles que la plateforme traite.",
+        description:
+          "Un registre de toutes les catégories de données personnelles traitées — requis pour les Registres d'activités de traitement (RoPA) Article 30 du RGPD.",
+        intro:
+          "L'inventaire des données est un registre structuré de toutes les catégories de données personnelles que la plateforme traite.",
         fieldsTitle: "Champs de l'inventaire",
         fieldsIntro: "Chaque élément documente :",
         field1: "DataCategory — Nom lisible (ex: 'Adresses e-mail').",
@@ -533,7 +557,8 @@ export const fr = {
         field6: "RetentionPeriod — Durée de conservation (lié à la politique).",
         field7: "ThirdPartySharing — Si partagé avec des tiers.",
         ropaTitle: "Conformité à l'Article 30",
-        ropaIntro: "Les organisations de plus de 250 employés doivent maintenir un RoPA. L'inventaire sert de RoPA en direct et interrogeable.",
+        ropaIntro:
+          "Les organisations de plus de 250 employés doivent maintenir un RoPA. L'inventaire sert de RoPA en direct et interrogeable.",
         endpointsTitle: "Endpoints API",
         ep: {
           list: "Lister tous les éléments de l'inventaire (paginé, cherchable)",
@@ -545,20 +570,27 @@ export const fr = {
       },
       reports: {
         title: "Rapports de conformité",
-        description: "Générer des rapports asynchrones prêts pour l'audit (Aperçu RGPD, Résumé DSR, Audit Consentement, Analyse Conservation, Export Inventaire).",
-        intro: "Les rapports de conformité sont générés de manière asynchrone et fournissent des résumés prêts pour l'audit. Ils sont générés en arrière-plan et stockés pour le téléchargement.",
+        description:
+          "Générer des rapports asynchrones prêts pour l'audit (Aperçu RGPD, Résumé DSR, Audit Consentement, Analyse Conservation, Export Inventaire).",
+        intro:
+          "Les rapports de conformité sont générés de manière asynchrone et fournissent des résumés prêts pour l'audit. Ils sont générés en arrière-plan et stockés pour le téléchargement.",
         reportTypesTitle: "Types de rapports",
         reportTypesIntro: "Cinq types sont disponibles :",
         type1: "Aperçu RGPD — Résumé de haut niveau du statut RGPD.",
-        type2: "Résumé de l'activité DSR — Statistiques sur les volumes DSR, types, taux d'achèvement.",
+        type2:
+          "Résumé de l'activité DSR — Statistiques sur les volumes DSR, types, taux d'achèvement.",
         type3: "Audit du consentement — Journal complet des accords et révocations.",
         type4: "Analyse de la conservation — État d'application actuel des politiques actives.",
-        type5: "Export de l'inventaire des données — Export complet de l'inventaire (Article 30 RoPA).",
+        type5:
+          "Export de l'inventaire des données — Export complet de l'inventaire (Article 30 RoPA).",
         asyncTitle: "Génération asynchrone",
-        asyncIntro: "Les rapports sont asynchrones pour éviter de bloquer les requêtes HTTP. Le système crée immédiatement un ComplianceReport (IsReady=false) et met la tâche en file d'attente.",
-        asyncTip: "Utilisez le bouton Rafraîchir pour vérifier si le rapport est prêt (généralement 30-60 secondes).",
+        asyncIntro:
+          "Les rapports sont asynchrones pour éviter de bloquer les requêtes HTTP. Le système crée immédiatement un ComplianceReport (IsReady=false) et met la tâche en file d'attente.",
+        asyncTip:
+          "Utilisez le bouton Rafraîchir pour vérifier si le rapport est prêt (généralement 30-60 secondes).",
         downloadTitle: "Téléchargement des rapports",
-        downloadIntro: "Une fois prêt (IsReady=true), DownloadUrl est disponible. Les fichiers sont conservés 90 jours.",
+        downloadIntro:
+          "Une fois prêt (IsReady=true), DownloadUrl est disponible. Les fichiers sont conservés 90 jours.",
         endpointsTitle: "Endpoints API",
         ep: {
           list: "Lister tous les rapports de conformité",
@@ -567,6 +599,6 @@ export const fr = {
           download: "Télécharger le fichier généré",
         },
       },
-    }
+    },
   },
 };

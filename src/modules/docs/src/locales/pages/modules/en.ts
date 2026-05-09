@@ -321,23 +321,32 @@ export const en = {
     compliance: {
       overview: {
         title: "Compliance Module",
-        description: "GDPR, CCPA, and PDPA compliance automation — regulations, DSR handling, consent management, data retention, inventory, and report generation.",
-        intro: "The Compliance module is NEXORA's built-in regulatory compliance engine. It helps platform operators and their tenants stay compliant with major data protection laws (GDPR, CCPA, PDPA) through automated tools for managing data subject requests, consent records, retention policies, and generating audit-ready compliance reports.",
+        description:
+          "GDPR, CCPA, and PDPA compliance automation — regulations, DSR handling, consent management, data retention, inventory, and report generation.",
+        intro:
+          "The Compliance module is NEXORA's built-in regulatory compliance engine. It helps platform operators and their tenants stay compliant with major data protection laws (GDPR, CCPA, PDPA) through automated tools for managing data subject requests, consent records, retention policies, and generating audit-ready compliance reports.",
         infoTitle: "Compliance Notice",
-        infoContent: "The Compliance module is critical for maintaining regulatory adherence and avoiding fines. Ensure all features are correctly mapped to data processing policies.",
+        infoContent:
+          "The Compliance module is critical for maintaining regulatory adherence and avoiding fines. Ensure all features are correctly mapped to data processing policies.",
         // Feature Grid
         featureDsr: "Data Subject Requests",
-        featureDsrDesc: "Handles Subject Requests including Export, Erasure, Rectification, and Restriction with full lifecycle tracking and SLA monitoring.",
+        featureDsrDesc:
+          "Handles Subject Requests including Export, Erasure, Rectification, and Restriction with full lifecycle tracking and SLA monitoring.",
         featureConsent: "Consent Management",
-        featureConsentDesc: "Immutable tracking of consent states, snapshots, and audit trails for GDPR Article 6 and CCPA compliance.",
+        featureConsentDesc:
+          "Immutable tracking of consent states, snapshots, and audit trails for GDPR Article 6 and CCPA compliance.",
         featureRetention: "Retention Policies",
-        featureRetentionDesc: "Enforces data destruction policies based on configurable retention periods with automated Delete or Anonymize actions.",
+        featureRetentionDesc:
+          "Enforces data destruction policies based on configurable retention periods with automated Delete or Anonymize actions.",
         featureInventory: "Data Inventory",
-        featureInventoryDesc: "Maps sensitive PII locations across modules — required for GDPR Article 30 Records of Processing Activities (RoPA).",
+        featureInventoryDesc:
+          "Maps sensitive PII locations across modules — required for GDPR Article 30 Records of Processing Activities (RoPA).",
         featureReports: "Compliance Reports",
-        featureReportsDesc: "Generates async audit-ready reports (GDPR Overview, DSR Summary, Consent Audit, Retention Analysis, Data Inventory Export).",
+        featureReportsDesc:
+          "Generates async audit-ready reports (GDPR Overview, DSR Summary, Consent Audit, Retention Analysis, Data Inventory Export).",
         featureWebhooks: "Webhook Events",
-        featureWebhooksDesc: "11 real-time webhook events covering DSR lifecycle, consent changes, retention enforcement, and report generation.",
+        featureWebhooksDesc:
+          "11 real-time webhook events covering DSR lifecycle, consent changes, retention enforcement, and report generation.",
         // Sub-Modules
         descDsr: "Handles Subject Requests (Export, Erasure, Rectification)",
         descConsent: "Immutable tracking of consent states & snapshots",
@@ -359,12 +368,15 @@ export const en = {
         th1: "Component",
         th2: "Responsibility",
         tr1_1: "DsrListViewModel",
-        tr1_2: "Handles the pagination, filtering, and assignment of incoming Data Subject Requests.",
+        tr1_2:
+          "Handles the pagination, filtering, and assignment of incoming Data Subject Requests.",
         tr2_1: "ConsentRecordView",
-        tr2_2: "Renders the immutable consent snapshot alongside user agent and timestamp metadata.",
+        tr2_2:
+          "Renders the immutable consent snapshot alongside user agent and timestamp metadata.",
         // What Is
         whatIsTitle: "What is the Compliance Module?",
-        whatIsIntro: "The Compliance module provides six interconnected sub-systems that cover the full compliance lifecycle. Instead of building compliance tooling from scratch, NEXORA tenants get a production-ready system that tracks, automates, and reports on their data protection obligations.",
+        whatIsIntro:
+          "The Compliance module provides six interconnected sub-systems that cover the full compliance lifecycle. Instead of building compliance tooling from scratch, NEXORA tenants get a production-ready system that tracks, automates, and reports on their data protection obligations.",
         subModulesTitle: "Six Sub-Systems",
         subModulesIntro: "Each sub-system handles a specific compliance domain:",
         sub1: "Regulation Profiles — Stores the regulatory frameworks (GDPR, CCPA, PDPA) that the platform operates under.",
@@ -375,7 +387,8 @@ export const en = {
         sub6: "Compliance Reports — Generates async audit-ready reports (GDPR Overview, DSR Summary, Consent Audit, etc.).",
         // Regulations
         regulationsTitle: "Supported Regulations",
-        regulationsIntro: "NEXORA's Compliance module supports enforcement of these major data protection regulations. Each regulation is pre-seeded with its SLA deadlines and penalty structures.",
+        regulationsIntro:
+          "NEXORA's Compliance module supports enforcement of these major data protection regulations. Each regulation is pre-seeded with its SLA deadlines and penalty structures.",
         regName: "Regulation",
         regRegion: "Region / Jurisdiction",
         regSla: "Response SLA",
@@ -387,10 +400,12 @@ export const en = {
         regPdpaRegion: "Singapore",
         // Backend Architecture
         backendTitle: "Backend Architecture",
-        backendIntro: "The Compliance backend follows the standard NEXORA 3-project module layout (Domain / Application / Infrastructure) with a dedicated ComplianceDbContext and ComplianceController.",
+        backendIntro:
+          "The Compliance backend follows the standard NEXORA 3-project module layout (Domain / Application / Infrastructure) with a dedicated ComplianceDbContext and ComplianceController.",
         // CQRS
         cqrsTitle: "CQRS Commands & Queries",
-        cqrsIntro: "The Compliance module uses the standard NEXORA mediator CQRS pattern. Commands handle write operations and Queries handle read operations, each with dedicated FluentValidation validators.",
+        cqrsIntro:
+          "The Compliance module uses the standard NEXORA mediator CQRS pattern. Commands handle write operations and Queries handle read operations, each with dedicated FluentValidation validators.",
         cqrsType: "Type",
         cqrsExample: "Handler",
         cqrsDesc: "Description",
@@ -403,12 +418,15 @@ export const en = {
         cqrsDashboard: "Returns a summary dashboard with counts across all compliance sub-systems",
         // Frontend Architecture
         frontendTitle: "Frontend Architecture",
-        frontendIntro: "The frontend is organized as six independent sub-modules under src/modules/compliance/, each with its own domain, data, and presentation layers following the View/ViewModel pattern.",
+        frontendIntro:
+          "The frontend is organized as six independent sub-modules under src/modules/compliance/, each with its own domain, data, and presentation layers following the View/ViewModel pattern.",
         // API Endpoints
         endpointsTitle: "API Endpoints Overview",
-        endpointsIntro: "All endpoints are under /api/v1/compliances/ and require authentication with the compliance.view permission.",
+        endpointsIntro:
+          "All endpoints are under /api/v1/compliances/ and require authentication with the compliance.view permission.",
         apiRegList: "List all regulation profiles configured for the platform",
-        apiDsrSubmit: "Submit a new Data Subject Request (Export, Erasure, Rectification, Restriction)",
+        apiDsrSubmit:
+          "Submit a new Data Subject Request (Export, Erasure, Rectification, Restriction)",
         apiDsrList: "List all DSRs with pagination, filtering by status/type/regulation",
         apiDsrReview: "Review a DSR — approve, reject, or mark as completed with resolution notes",
         apiConsentRecord: "Record a new consent grant with full audit metadata",
@@ -422,12 +440,14 @@ export const en = {
         apiDashboard: "Retrieve the compliance dashboard summary (counts, SLA status, alerts)",
         // Webhook Events
         webhooksTitle: "Webhook Events",
-        webhooksIntro: "The Compliance module fires 11 real-time webhook events that external systems can subscribe to. Events are auto-registered via the ComplianceWebhookEventCatalog and dispatched through the IWebhookDispatcher pipeline.",
+        webhooksIntro:
+          "The Compliance module fires 11 real-time webhook events that external systems can subscribe to. Events are auto-registered via the ComplianceWebhookEventCatalog and dispatched through the IWebhookDispatcher pipeline.",
         webhookEvent: "Event Key",
         webhookCategory: "Category",
         webhookDesc: "Description",
         whDsrSubmitted: "Fired when a new Data Subject Request is submitted",
-        whDsrStatusChanged: "Fired when a DSR status transitions (Pending → InProgress → Completed/Rejected)",
+        whDsrStatusChanged:
+          "Fired when a DSR status transitions (Pending → InProgress → Completed/Rejected)",
         whDsrCompleted: "Fired when a DSR is fully completed (data exported, erased, or rectified)",
         whDsrErasure: "Fired when an erasure DSR is confirmed by an admin (nuclear action)",
         whDsrCancelled: "Fired when a DSR is cancelled before completion",
@@ -440,20 +460,27 @@ export const en = {
         // Quick Start Guide
         quickStartTitle: "Quick Start Guide",
         step1Title: "Seed Compliance Data",
-        step1Content: "Run the development seeder to populate regulation profiles, sample consent purposes, and retention policies for your test environment.",
+        step1Content:
+          "Run the development seeder to populate regulation profiles, sample consent purposes, and retention policies for your test environment.",
         step2Title: "Configure Regulation Profiles",
-        step2Content: "Navigate to Compliance → Regulations in the admin panel. Enable the regulations your platform operates under (GDPR, CCPA, PDPA). Each regulation defines the SLA deadlines and penalty structures that will be enforced.",
+        step2Content:
+          "Navigate to Compliance → Regulations in the admin panel. Enable the regulations your platform operates under (GDPR, CCPA, PDPA). Each regulation defines the SLA deadlines and penalty structures that will be enforced.",
         step3Title: "Submit a Test DSR",
-        step3Content: "Create a Data Subject Request to test the full lifecycle. The system will validate the request, calculate the SLA deadline, and make it available for assignment to a compliance officer.",
+        step3Content:
+          "Create a Data Subject Request to test the full lifecycle. The system will validate the request, calculate the SLA deadline, and make it available for assignment to a compliance officer.",
         step4Title: "Record Consent & Configure Retention",
-        step4Content: "Set up consent purposes (Marketing, Analytics, Third-Party) and configure retention policies for each data category. The retention enforcement job will automatically apply the configured actions when data ages past the retention period.",
+        step4Content:
+          "Set up consent purposes (Marketing, Analytics, Third-Party) and configure retention policies for each data category. The retention enforcement job will automatically apply the configured actions when data ages past the retention period.",
         step5Title: "Generate a Compliance Report",
-        step5Content: "Queue an async compliance report. The report will be generated in the background and appear in the Reports list once ready. Download it in CSV, JSON, XLSX, or PDF format.",
+        step5Content:
+          "Queue an async compliance report. The report will be generated in the background and appear in the Reports list once ready. Download it in CSV, JSON, XLSX, or PDF format.",
         // Security
         securityTitle: "Security Considerations",
-        securityIntro: "Compliance data is among the most sensitive in the platform. All endpoints are protected by JWT authentication, role-based authorization, and encrypted ID transit. Personal data in DSRs and consent records is subject to field-level security restrictions.",
+        securityIntro:
+          "Compliance data is among the most sensitive in the platform. All endpoints are protected by JWT authentication, role-based authorization, and encrypted ID transit. Personal data in DSRs and consent records is subject to field-level security restrictions.",
         securityWarningTitle: "Data Protection Warning",
-        securityWarningContent: "Compliance data contains personally identifiable information (PII). Ensure proper access controls, audit logging, and data encryption are configured. Never expose raw compliance endpoints without authentication.",
+        securityWarningContent:
+          "Compliance data contains personally identifiable information (PII). Ensure proper access controls, audit logging, and data encryption are configured. Never expose raw compliance endpoints without authentication.",
         secDoTitle: "Recommended Practices",
         secDo1: "Enable field-level security for PII fields in DSR responses",
         secDo2: "Configure webhook secrets for all compliance event subscriptions",
@@ -467,22 +494,29 @@ export const en = {
       },
       dsr: {
         title: "Data Subject Requests (DSR)",
-        description: "Manage GDPR/CCPA rights requests — export, erasure, rectification, and restriction — with full lifecycle tracking.",
-        intro: "Data Subject Requests (DSRs) are formal requests from individuals exercising their rights under data protection laws. The Compliance module provides a complete DSR workflow: submission, assignment, processing, and closure — with full audit trail and SLA tracking.",
+        description:
+          "Manage GDPR/CCPA rights requests — export, erasure, rectification, and restriction — with full lifecycle tracking.",
+        intro:
+          "Data Subject Requests (DSRs) are formal requests from individuals exercising their rights under data protection laws. The Compliance module provides a complete DSR workflow: submission, assignment, processing, and closure — with full audit trail and SLA tracking.",
         typesTitle: "Request Types",
         typesIntro: "The system supports four DSR types as defined by GDPR Article 17 and CCPA:",
-        type1: "Export — Data portability request. The subject wants a copy of their personal data.",
+        type1:
+          "Export — Data portability request. The subject wants a copy of their personal data.",
         type2: "Erasure — Right to be forgotten. All personal data must be deleted or anonymized.",
         type3: "Rectification — Correction request. Inaccurate personal data must be updated.",
-        type4: "Restriction — Processing restriction. Data can be retained but not actively processed.",
+        type4:
+          "Restriction — Processing restriction. Data can be retained but not actively processed.",
         lifecycleTitle: "Request Lifecycle",
         lifecycleIntro: "DSRs move through a defined set of statuses from submission to closure:",
         status1: "Pending — Initial state when the request is received.",
-        status2: "InProgress — A compliance officer has been assigned and is processing the request.",
-        status3: "Completed — The request has been fulfilled (data exported, erased, corrected, or restricted).",
+        status2:
+          "InProgress — A compliance officer has been assigned and is processing the request.",
+        status3:
+          "Completed — The request has been fulfilled (data exported, erased, corrected, or restricted).",
         status4: "Rejected — The request was rejected (e.g. insufficient identity verification).",
         slasTitle: "GDPR SLA Requirements",
-        slasIntro: "Under GDPR Article 12, data controllers must respond to DSRs within 30 days (extendable to 3 months for complex requests). NEXORA tracks the submission date for each DSR to help you meet these deadlines.",
+        slasIntro:
+          "Under GDPR Article 12, data controllers must respond to DSRs within 30 days (extendable to 3 months for complex requests). NEXORA tracks the submission date for each DSR to help you meet these deadlines.",
         lifecycleFlowTitle: "DSR Lifecycle Flow",
         nodeSubmit: "Submit Request",
         descSubmit: "Subject requests Export, Erasure, or Rectification",
@@ -522,18 +556,23 @@ export const en = {
       },
       consent: {
         title: "Consent Management",
-        description: "Record, track, and audit user consent grants and withdrawals for GDPR Article 6 and CCPA compliance.",
-        intro: "Consent Management records every time a user grants or withdraws consent for a specific purpose (e.g. marketing emails, analytics tracking). NEXORA stores the full consent audit trail including timestamp, IP address, user agent, and the exact consent version shown.",
+        description:
+          "Record, track, and audit user consent grants and withdrawals for GDPR Article 6 and CCPA compliance.",
+        intro:
+          "Consent Management records every time a user grants or withdraws consent for a specific purpose (e.g. marketing emails, analytics tracking). NEXORA stores the full consent audit trail including timestamp, IP address, user agent, and the exact consent version shown.",
         purposesTitle: "Consent Purposes",
-        purposesIntro: "Each consent record is tied to a specific purpose. Common purposes include:",
+        purposesIntro:
+          "Each consent record is tied to a specific purpose. Common purposes include:",
         purpose1: "Marketing — Email marketing and promotional communications.",
         purpose2: "Analytics — Usage analytics and product improvement.",
         purpose3: "ThirdParty — Sharing data with third-party services.",
         purpose4: "Personalization — Personalized content and recommendations.",
         gdprTitle: "GDPR Lawful Basis",
-        gdprIntro: "Under GDPR Article 6, consent must be: freely given, specific, informed, and unambiguous. NEXORA records the exact consent text version shown to the user and the timestamp it was accepted, providing a legally defensible audit trail.",
+        gdprIntro:
+          "Under GDPR Article 6, consent must be: freely given, specific, informed, and unambiguous. NEXORA records the exact consent text version shown to the user and the timestamp it was accepted, providing a legally defensible audit trail.",
         withdrawalTitle: "Consent Withdrawal",
-        withdrawalIntro: "Users can withdraw consent at any time. When consent is withdrawn, the ConsentRecord is updated with WithdrawnAt timestamp. Downstream systems should be notified via domain events to stop processing data for the withdrawn purpose.",
+        withdrawalIntro:
+          "Users can withdraw consent at any time. When consent is withdrawn, the ConsentRecord is updated with WithdrawnAt timestamp. Downstream systems should be notified via domain events to stop processing data for the withdrawn purpose.",
         flowTitle: "Consent State Flow",
         nodePurpose: "Consent Purpose",
         descPurpose: "Defines what is being consented to (e.g. Marketing)",
@@ -558,20 +597,26 @@ export const en = {
       },
       retention: {
         title: "Data Retention Policies",
-        description: "Define data retention periods and automated expiry actions (Delete or Anonymize) for GDPR Article 5(1)(e) compliance.",
-        intro: "Data Retention Policies define how long specific categories of data must be kept and what happens when the retention period expires. NEXORA enforces these policies automatically via background jobs, removing the manual overhead of managing data lifecycles.",
+        description:
+          "Define data retention periods and automated expiry actions (Delete or Anonymize) for GDPR Article 5(1)(e) compliance.",
+        intro:
+          "Data Retention Policies define how long specific categories of data must be kept and what happens when the retention period expires. NEXORA enforces these policies automatically via background jobs, removing the manual overhead of managing data lifecycles.",
         policiesTitle: "Policy Configuration",
         policiesIntro: "Each retention policy specifies:",
-        field1: "DataCategory — The type of data (e.g. 'User Profiles', 'Transaction Logs', 'Consent Records').",
+        field1:
+          "DataCategory — The type of data (e.g. 'User Profiles', 'Transaction Logs', 'Consent Records').",
         field2: "RetentionDays — How many days the data must be retained.",
         field3: "ExpiryAction — What happens when the period expires: Delete or Anonymize.",
-        field4: "RegulationCode — Which regulation requires this retention period (GDPR, CCPA, etc.).",
+        field4:
+          "RegulationCode — Which regulation requires this retention period (GDPR, CCPA, etc.).",
         actionsTitle: "Expiry Actions",
         actionsIntro: "When a retention period expires, NEXORA applies one of two actions:",
         action1: "Delete — Permanently removes all records matching the data category.",
-        action2: "Anonymize — Replaces personally identifiable information with pseudonymous tokens, preserving aggregate analytics data.",
+        action2:
+          "Anonymize — Replaces personally identifiable information with pseudonymous tokens, preserving aggregate analytics data.",
         automationTitle: "Automated Enforcement",
-        automationIntro: "The RetentionEnforcementJob runs daily at 3:00 AM UTC, scanning all active retention policies and applying the configured expiry action to eligible records. Each enforcement run creates a RetentionExecution audit record.",
+        automationIntro:
+          "The RetentionEnforcementJob runs daily at 3:00 AM UTC, scanning all active retention policies and applying the configured expiry action to eligible records. Each enforcement run creates a RetentionExecution audit record.",
         nodePolicy: "Retention Policy",
         descPolicy: "Defines entity type, age limit, and destruction strategy",
         nodeEnforcement: "Retention Enforcement Job",
@@ -592,19 +637,27 @@ export const en = {
       },
       inventory: {
         title: "Data Inventory",
-        description: "A registry of all personal data categories the platform processes — required for GDPR Article 30 Records of Processing Activities (RoPA).",
-        intro: "The Data Inventory is a structured registry of all personal data categories that the platform processes. Under GDPR Article 30, controllers must maintain Records of Processing Activities (RoPA) — the Data Inventory is NEXORA's implementation of this requirement.",
+        description:
+          "A registry of all personal data categories the platform processes — required for GDPR Article 30 Records of Processing Activities (RoPA).",
+        intro:
+          "The Data Inventory is a structured registry of all personal data categories that the platform processes. Under GDPR Article 30, controllers must maintain Records of Processing Activities (RoPA) — the Data Inventory is NEXORA's implementation of this requirement.",
         fieldsTitle: "Inventory Fields",
         fieldsIntro: "Each inventory item documents:",
-        field1: "DataCategory — Human-readable name of the data category (e.g. 'Email Addresses', 'Payment Information').",
-        field2: "LegalBasis — The GDPR lawful basis for processing (Consent, Contract, Legal Obligation, Vital Interests, Public Task, Legitimate Interests).",
-        field3: "DataSubjects — Who the data belongs to (e.g. 'End users', 'Employees', 'Customers').",
-        field4: "ProcessingPurpose — Why the data is processed (e.g. 'Order fulfillment', 'Marketing', 'Legal compliance').",
-        field5: "StorageLocation — Where the data is stored (country/region for cross-border transfer compliance).",
+        field1:
+          "DataCategory — Human-readable name of the data category (e.g. 'Email Addresses', 'Payment Information').",
+        field2:
+          "LegalBasis — The GDPR lawful basis for processing (Consent, Contract, Legal Obligation, Vital Interests, Public Task, Legitimate Interests).",
+        field3:
+          "DataSubjects — Who the data belongs to (e.g. 'End users', 'Employees', 'Customers').",
+        field4:
+          "ProcessingPurpose — Why the data is processed (e.g. 'Order fulfillment', 'Marketing', 'Legal compliance').",
+        field5:
+          "StorageLocation — Where the data is stored (country/region for cross-border transfer compliance).",
         field6: "RetentionPeriod — How long the data is retained (linked to the retention policy).",
         field7: "ThirdPartySharing — Whether the data is shared with third parties and which ones.",
         ropaTitle: "Article 30 Compliance",
-        ropaIntro: "Organizations with 250+ employees or processing high-risk data must maintain a RoPA under GDPR Article 30. NEXORA's Data Inventory serves as a live, queryable RoPA that can be exported for regulatory inspections.",
+        ropaIntro:
+          "Organizations with 250+ employees or processing high-risk data must maintain a RoPA under GDPR Article 30. NEXORA's Data Inventory serves as a live, queryable RoPA that can be exported for regulatory inspections.",
         endpointsTitle: "API Endpoints",
         ep: {
           list: "List all data inventory items (paginated, searchable)",
@@ -616,20 +669,28 @@ export const en = {
       },
       reports: {
         title: "Compliance Reports",
-        description: "Generate async audit-ready compliance reports (GDPR Overview, DSR Summary, Consent Audit, Retention Analysis, Data Inventory Export).",
-        intro: "Compliance Reports are asynchronously generated documents that provide audit-ready summaries of your compliance posture. Reports are generated in the background and stored for download once ready, supporting regulatory inspections, internal audits, and executive reporting.",
+        description:
+          "Generate async audit-ready compliance reports (GDPR Overview, DSR Summary, Consent Audit, Retention Analysis, Data Inventory Export).",
+        intro:
+          "Compliance Reports are asynchronously generated documents that provide audit-ready summaries of your compliance posture. Reports are generated in the background and stored for download once ready, supporting regulatory inspections, internal audits, and executive reporting.",
         reportTypesTitle: "Report Types",
         reportTypesIntro: "Five report types are available:",
-        type1: "GDPR Overview — High-level summary of GDPR compliance status across all sub-modules.",
-        type2: "DSR Activity Summary — Statistics on DSR volume, types, completion rates, and SLA adherence.",
-        type3: "Consent Audit — Full log of consent grants and withdrawals by purpose and time period.",
+        type1:
+          "GDPR Overview — High-level summary of GDPR compliance status across all sub-modules.",
+        type2:
+          "DSR Activity Summary — Statistics on DSR volume, types, completion rates, and SLA adherence.",
+        type3:
+          "Consent Audit — Full log of consent grants and withdrawals by purpose and time period.",
         type4: "Retention Analysis — Current enforcement status of all active retention policies.",
         type5: "Data Inventory Export — Full export of the data inventory (Article 30 RoPA).",
         asyncTitle: "Asynchronous Generation",
-        asyncIntro: "Reports are generated asynchronously to avoid blocking HTTP requests for large datasets. When you request a report, the system immediately creates a ComplianceReport record with IsReady=false and queues the generation job. Poll the reports list to check when IsReady becomes true.",
-        asyncTip: "Use the Refresh button in the Reports UI to poll for report readiness. Reports typically complete within 30–60 seconds for datasets up to 10,000 records.",
+        asyncIntro:
+          "Reports are generated asynchronously to avoid blocking HTTP requests for large datasets. When you request a report, the system immediately creates a ComplianceReport record with IsReady=false and queues the generation job. Poll the reports list to check when IsReady becomes true.",
+        asyncTip:
+          "Use the Refresh button in the Reports UI to poll for report readiness. Reports typically complete within 30–60 seconds for datasets up to 10,000 records.",
         downloadTitle: "Downloading Reports",
-        downloadIntro: "Once a report is ready (IsReady=true), a DownloadUrl is available. The download endpoint serves the report file securely. Report files are retained for 90 days before automatic cleanup.",
+        downloadIntro:
+          "Once a report is ready (IsReady=true), a DownloadUrl is available. The download endpoint serves the report file securely. Report files are retained for 90 days before automatic cleanup.",
         endpointsTitle: "API Endpoints",
         ep: {
           list: "List all compliance reports (paginated, filterable by type/status)",
@@ -641,4 +702,3 @@ export const en = {
     },
   },
 };
-

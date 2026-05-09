@@ -34,7 +34,9 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-500/10">
               <CreditCard className="h-4 w-4 text-zinc-500" />
             </div>
-            <CardTitle className="text-sm font-semibold">{t("entSubscriptions.paymentGateway") || "Payment Gateway"}</CardTitle>
+            <CardTitle className="text-sm font-semibold">
+              {t("entSubscriptions.paymentGateway") || "Payment Gateway"}
+            </CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -42,8 +44,12 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted/50">
               <Sparkles className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="text-sm font-medium text-muted-foreground">{t("entSubscriptions.freeEdition") || "Free Edition"}</p>
-            <p className="mt-1 text-xs text-muted-foreground/70">{t("entSubscriptions.noPaymentGateway") || "No payment gateway required"}</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t("entSubscriptions.freeEdition") || "Free Edition"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground/70">
+              {t("entSubscriptions.noPaymentGateway") || "No payment gateway required"}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -79,7 +85,9 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <span className="text-xs text-muted-foreground">{t("entSubscriptions.notCreated") || "Not created"}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("entSubscriptions.notCreated") || "Not created"}
+              </span>
             )
           }
         />
@@ -100,7 +108,9 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <span className="text-xs text-muted-foreground">{t("entSubscriptions.notLinked") || "Not linked"}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("entSubscriptions.notLinked") || "Not linked"}
+              </span>
             )
           }
         />

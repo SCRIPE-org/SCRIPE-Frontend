@@ -44,7 +44,7 @@ export function findActiveMenuItem(items: MenuItem[], pathname: string): MenuIte
  */
 export function findBestRootMatch(rootMenuItems: MenuItem[], pathname: string): MenuItem | null {
   const cleanedPathname = cleanPath(pathname);
-  
+
   let bestRoot: MenuItem | null = null;
   let bestLen = -1;
 
@@ -91,17 +91,17 @@ export function findBestRootMatch(rootMenuItems: MenuItem[], pathname: string): 
  */
 export function containsPath(item: MenuItem, pathname: string): boolean {
   const cleanedPathname = cleanPath(pathname);
-  
+
   if (item.href && !item.href.startsWith("#")) {
     const h = cleanPath(item.href);
     if (cleanedPathname === h) return true;
     if (h !== "/" && cleanedPathname.startsWith(h + "/")) return true;
   }
-  
+
   if (item.children?.length) {
-    return item.children.some(child => containsPath(child, pathname));
+    return item.children.some((child) => containsPath(child, pathname));
   }
-  
+
   return false;
 }
 
@@ -110,14 +110,14 @@ export function containsPath(item: MenuItem, pathname: string): boolean {
  */
 export function buildBreadcrumbs(root: MenuItem | null, pathname: string): MenuItem[] {
   if (!root) return [];
-  
+
   const cleanedPathname = cleanPath(pathname);
   let bestPath: MenuItem[] = [];
   let maxLen = 0;
 
   const search = (node: MenuItem, currentPath: MenuItem[]) => {
     const newPath = [...currentPath, node];
-    
+
     if (node.href && !node.href.startsWith("#")) {
       const h = cleanPath(node.href);
       if (cleanedPathname === h || (h !== "/" && cleanedPathname.startsWith(h + "/"))) {
@@ -127,7 +127,7 @@ export function buildBreadcrumbs(root: MenuItem | null, pathname: string): MenuI
         }
       }
     }
-    
+
     if (node.children) {
       for (const child of node.children) {
         search(child, newPath);
@@ -136,6 +136,6 @@ export function buildBreadcrumbs(root: MenuItem | null, pathname: string): MenuI
   };
 
   search(root, []);
-  
+
   return bestPath;
 }

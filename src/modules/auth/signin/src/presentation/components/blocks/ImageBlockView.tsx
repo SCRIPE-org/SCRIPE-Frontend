@@ -1,7 +1,10 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { type ImageBlock, isValidCtaUrl } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import {
+  type ImageBlock,
+  isValidCtaUrl,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ASPECT_MAP, HOVER_MAP, SHADOW_MAP } from "./block-constants";
 
 export function ImageBlockView({ block }: { block: ImageBlock }) {
@@ -34,7 +37,9 @@ export function ImageBlockView({ block }: { block: ImageBlock }) {
     <figure className="flex flex-col items-center gap-2" style={wrapperStyle}>
       {content}
       {props.caption && (
-        <figcaption className="text-center text-xs text-muted-foreground">{props.caption}</figcaption>
+        <figcaption className="text-center text-xs text-muted-foreground">
+          {props.caption}
+        </figcaption>
       )}
     </figure>
   );

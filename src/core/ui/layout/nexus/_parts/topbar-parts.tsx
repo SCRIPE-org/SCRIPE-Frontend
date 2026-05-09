@@ -162,16 +162,12 @@ export function TopbarPanelToggle({
               borderRadius: 9,
               cursor: "pointer",
               color: isDark ? "#AFA9EC" : "#6258c4",
-              border: isDark
-                ? "1px solid rgba(255,255,255,0.08)"
-                : "1px solid rgba(0,0,0,0.07)",
-              background: isDark
-                ? "rgba(255,255,255,0.03)"
-                : "rgba(98,88,196,0.04)",
+              border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
+              background: isDark ? "rgba(255,255,255,0.03)" : "rgba(98,88,196,0.04)",
               flexShrink: 0,
               transition: "all 200ms ease",
             }}
-            className="hover:bg-accent/60 hover:text-accent-foreground hover:scale-105 active:scale-95"
+            className="hover:scale-105 hover:bg-accent/60 hover:text-accent-foreground active:scale-95"
           >
             {renderPanelIcon()}
           </button>
@@ -209,22 +205,18 @@ export function TopbarContextPill({
         background: isModuleMode
           ? `${resolvedAccent}15`
           : isDark
-          ? "rgba(255,255,255,0.03)"
-          : "rgba(0,0,0,0.03)",
+            ? "rgba(255,255,255,0.03)"
+            : "rgba(0,0,0,0.03)",
         border: `1px solid ${
           isModuleMode
             ? `${resolvedAccent}40`
             : isDark
-            ? "rgba(255,255,255,0.08)"
-            : "rgba(0,0,0,0.05)"
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(0,0,0,0.05)"
         }`,
         fontSize: 11,
         fontWeight: 600,
-        color: isModuleMode
-          ? resolvedAccent
-          : isDark
-          ? "#E2E8F0"
-          : "#334155",
+        color: isModuleMode ? resolvedAccent : isDark ? "#E2E8F0" : "#334155",
         cursor: "default",
         flexShrink: 0,
         transition: "all 300ms ease",
@@ -265,16 +257,12 @@ export function TopbarSearchButton({
   return (
     <button
       onClick={onOpenSearch}
-      className="hidden md:flex transition-all duration-200 hover:scale-[1.02] active:scale-95 group"
+      className="group hidden transition-all duration-200 hover:scale-[1.02] active:scale-95 md:flex"
       style={{
         alignItems: "center",
         gap: 8,
-        background: isDark
-          ? "rgba(255,255,255,0.03)"
-          : "rgba(0,0,0,0.02)",
-        border: isDark
-          ? "1px solid rgba(255,255,255,0.08)"
-          : "1px solid rgba(0,0,0,0.07)",
+        background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+        border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
         boxShadow: isDark
           ? "inset 0 1px 0 rgba(255,255,255,0.04)"
           : "inset 0 1px 0 rgba(255,255,255,0.5)",
@@ -290,12 +278,12 @@ export function TopbarSearchButton({
     >
       <Search
         size={13}
-        className="group-hover:text-foreground transition-colors"
+        className="transition-colors group-hover:text-foreground"
         style={{ flexShrink: 0 }}
       />
       <span
         style={{ flex: 1, userSelect: "none", textAlign: isRTL ? "right" : "left" }}
-        className="group-hover:text-foreground transition-colors"
+        className="transition-colors group-hover:text-foreground"
       >
         {placeholder}
       </span>
@@ -303,12 +291,8 @@ export function TopbarSearchButton({
         style={{
           fontSize: "10px",
           fontWeight: 600,
-          background: isDark
-            ? "rgba(255,255,255,0.05)"
-            : "rgba(0,0,0,0.04)",
-          border: isDark
-            ? "1px solid rgba(255,255,255,0.08)"
-            : "1px solid rgba(0,0,0,0.06)",
+          background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+          border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
           borderRadius: 4,
           padding: "2px 6px",
           color: isDark ? "#CBD5E1" : "#475569",
@@ -328,11 +312,7 @@ export interface TopbarHomeButtonProps {
   onClick: () => void;
 }
 
-export function TopbarHomeButton({
-  isDark,
-  ariaLabel,
-  onClick,
-}: TopbarHomeButtonProps) {
+export function TopbarHomeButton({ isDark, ariaLabel, onClick }: TopbarHomeButtonProps) {
   return (
     <TooltipProvider delayDuration={50}>
       <Tooltip>
@@ -350,14 +330,12 @@ export function TopbarHomeButton({
               borderRadius: 9,
               cursor: "pointer",
               color: isDark ? "#94A3B8" : "#64748B",
-              border: isDark
-                ? "1px solid rgba(255,255,255,0.08)"
-                : "1px solid rgba(0,0,0,0.07)",
+              border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
               background: "transparent",
               flexShrink: 0,
               transition: "all 200ms ease",
             }}
-            className="hover:bg-secondary hover:text-foreground hover:scale-105 active:scale-95"
+            className="hover:scale-105 hover:bg-secondary hover:text-foreground active:scale-95"
           >
             <Home size={15} strokeWidth={2} />
           </button>
@@ -373,10 +351,10 @@ export function TopbarHomeButton({
 // ── Mobile Controls ───────────────────────────────────────────────────────────
 export function TopbarMobileControls() {
   return (
-    <div className="flex lg:hidden items-center gap-3">
+    <div className="flex items-center gap-3 lg:hidden">
       <NotificationBell
         iconClassName="h-[16px] w-[16px]"
-        className="h-[33px] w-[33px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all"
+        className="h-[33px] w-[33px] rounded-[9px] text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
       />
       <UserProfileDropdown variant="compact" showName={false} />
     </div>

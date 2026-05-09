@@ -255,9 +255,7 @@ export interface ITenantRepository {
   /**
    * Get resolved features (edition + overrides) for a tenant
    */
-  getResolvedFeatures(
-    tenantId: string
-  ): Promise<
+  getResolvedFeatures(tenantId: string): Promise<
     Array<{
       featureId: string;
       key: string;

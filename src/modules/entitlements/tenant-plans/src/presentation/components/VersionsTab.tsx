@@ -47,7 +47,15 @@ function countJsonArray(json: string | undefined): number {
 }
 
 // ── Version Card ──
-function VersionCard({ version, isLatest, t }: { version: TenantPlanVersionData; isLatest: boolean; t: (key: string) => string }) {
+function VersionCard({
+  version,
+  isLatest,
+  t,
+}: {
+  version: TenantPlanVersionData;
+  isLatest: boolean;
+  t: (key: string) => string;
+}) {
   const [showSnapshot, setShowSnapshot] = useState(false);
 
   const featureCount = countJsonArray(version.featureValuesJson);
@@ -106,8 +114,12 @@ function VersionCard({ version, isLatest, t }: { version: TenantPlanVersionData;
                 {version.publishedBy}
               </span>
             )}
-            <span>{featureCount} {t("entitlements.tenantPlans.features") || "features"}</span>
-            <span>{priceCount} {t("entitlements.tenantPlans.priceCount") || "prices"}</span>
+            <span>
+              {featureCount} {t("entitlements.tenantPlans.features") || "features"}
+            </span>
+            <span>
+              {priceCount} {t("entitlements.tenantPlans.priceCount") || "prices"}
+            </span>
           </div>
         </div>
 
@@ -217,10 +229,13 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
               {t("entitlements.tenantPlans.publish") || "Publish New Version"}
             </DialogTitle>
             <DialogDescription>
-              {t("entitlements.tenantPlans.publishDesc") || "This will create an immutable snapshot of the current features and pricing."}
+              {t("entitlements.tenantPlans.publishDesc") ||
+                "This will create an immutable snapshot of the current features and pricing."}
               {plan.hasActiveSubscribers && (
                 <span className="mt-1 block font-medium text-amber-600">
-                  ⚠ {plan.activeSubscriberCount} {t("entitlements.tenantPlans.subscribers") || "active subscriber(s) will be grandfathered to the current terms."}
+                  ⚠ {plan.activeSubscriberCount}{" "}
+                  {t("entitlements.tenantPlans.subscribers") ||
+                    "active subscriber(s) will be grandfathered to the current terms."}
                 </span>
               )}
             </DialogDescription>
@@ -230,7 +245,9 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
             <div className="space-y-1.5">
               <Label htmlFor="changeNotes">
                 {t("entitlements.tenantPlans.versionNotes") || "Change Notes"}{" "}
-                <span className="text-xs text-muted-foreground">({t("common.optional") || "optional"})</span>
+                <span className="text-xs text-muted-foreground">
+                  ({t("common.optional") || "optional"})
+                </span>
               </Label>
               <Textarea
                 id="changeNotes"

@@ -11,13 +11,8 @@ export class PasswordResetService implements IPasswordResetService {
     await this.api.post(API_ENDPOINTS.AUTH.ADMIN_REQUEST_PASSWORD_RESET, request);
   }
 
-  async resetPassword(params: {
-    email: string;
-    otp: string;
-    newPassword: string;
-  }): Promise<void> {
+  async resetPassword(params: { email: string; otp: string; newPassword: string }): Promise<void> {
     const request: ResetPasswordDto = params;
     await this.api.post(API_ENDPOINTS.AUTH.ADMIN_RESET_PASSWORD, request);
   }
 }
-

@@ -47,9 +47,7 @@ export class MenuItemMapper {
         ? MenuItemMapper.actionsFromDto(json.actions as MenuItemActionsDto)
         : null,
       children: Array.isArray(json.children)
-        ? json.children.map((c: unknown) =>
-            MenuItemMapper.fromJson(c as Record<string, unknown>)
-          )
+        ? json.children.map((c: unknown) => MenuItemMapper.fromJson(c as Record<string, unknown>))
         : [],
     });
   }

@@ -91,11 +91,25 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
                 {t("entitlements.tenantPlans.supportedCycles") || "Supported Cycles"}
               </p>
               <div className="flex gap-2">
-                {form.allowMonthly && <Badge variant="secondary">{t("entitlements.tenantPlans.monthly") || "Monthly"}</Badge>}
-                {form.allowYearly && <Badge variant="secondary">{t("entitlements.tenantPlans.yearly") || "Yearly"}</Badge>}
-                {form.allowLifetime && <Badge variant="secondary">{t("entitlements.tenantPlans.lifetime") || "Lifetime"}</Badge>}
+                {form.allowMonthly && (
+                  <Badge variant="secondary">
+                    {t("entitlements.tenantPlans.monthly") || "Monthly"}
+                  </Badge>
+                )}
+                {form.allowYearly && (
+                  <Badge variant="secondary">
+                    {t("entitlements.tenantPlans.yearly") || "Yearly"}
+                  </Badge>
+                )}
+                {form.allowLifetime && (
+                  <Badge variant="secondary">
+                    {t("entitlements.tenantPlans.lifetime") || "Lifetime"}
+                  </Badge>
+                )}
                 {!form.allowMonthly && !form.allowYearly && !form.allowLifetime && (
-                  <span className="text-sm text-muted-foreground">{t("common.noneSelected") || "None selected"}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t("common.noneSelected") || "None selected"}
+                  </span>
                 )}
               </div>
             </div>
@@ -106,7 +120,9 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
                   {t("entitlements.tenantPlans.maxUsers") || "Max Users"}
                 </p>
                 <p className="font-medium">
-                  {form.maxUsers === -1 ? t("entitlements.tenantPlans.unlimited") || "Unlimited (\u221e)" : form.maxUsers}
+                  {form.maxUsers === -1
+                    ? t("entitlements.tenantPlans.unlimited") || "Unlimited (\u221e)"
+                    : form.maxUsers}
                 </p>
               </div>
               <div>
@@ -114,7 +130,9 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
                   {t("entitlements.tenantPlans.allowTrial") || "Trial"}
                 </p>
                 <p className="font-medium">
-                  {form.allowTrial ? `${form.trialDays} ${t("entitlements.tenantPlans.trialDays") || "Days"}` : t("common.noTrial") || "No Trial"}
+                  {form.allowTrial
+                    ? `${form.trialDays} ${t("entitlements.tenantPlans.trialDays") || "Days"}`
+                    : t("common.noTrial") || "No Trial"}
                 </p>
               </div>
             </div>
@@ -132,7 +150,8 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
       <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
         <p>
           <strong>{t("common.note") || "Note"}:</strong>{" "}
-          {t("entitlements.tenantPlans.reviewNote") || "Pricing values and detailed feature toggles are configured on the Pricing and Features tabs after the plan is initially created."}
+          {t("entitlements.tenantPlans.reviewNote") ||
+            "Pricing values and detailed feature toggles are configured on the Pricing and Features tabs after the plan is initially created."}
         </p>
       </div>
     </div>

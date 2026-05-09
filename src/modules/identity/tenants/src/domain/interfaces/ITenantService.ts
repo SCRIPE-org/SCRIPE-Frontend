@@ -250,9 +250,7 @@ export interface ITenantService {
    * Get resolved features (edition + overrides) for a tenant
    * Used by TenantStats to show quota limits without cross-module import
    */
-  getResolvedFeatures(
-    tenantId: string
-  ): Promise<
+  getResolvedFeatures(tenantId: string): Promise<
     Array<{
       featureId: string;
       key: string;

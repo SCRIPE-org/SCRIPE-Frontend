@@ -305,10 +305,13 @@ export const zh = {
     compliance: {
       overview: {
         title: "合规模块",
-        description: "GDPR、CCPA和PDPA合规自动化——法规、DSR处理、同意管理、数据保留、清单和报告生成。",
-        intro: "合规模块是NEXORA内置的监管合规引擎。它通过提供自动化工具管理数据主体请求、同意记录、保留政策并生成支持审计的合规报告，帮助平台运营商及其租户遵守主要的数据保护法（GDPR、CCPA、PDPA）。",
+        description:
+          "GDPR、CCPA和PDPA合规自动化——法规、DSR处理、同意管理、数据保留、清单和报告生成。",
+        intro:
+          "合规模块是NEXORA内置的监管合规引擎。它通过提供自动化工具管理数据主体请求、同意记录、保留政策并生成支持审计的合规报告，帮助平台运营商及其租户遵守主要的数据保护法（GDPR、CCPA、PDPA）。",
         infoTitle: "合规注意事项",
-        infoContent: "合规模块对于维持监管遵循和避免罚款至关重要。请确保所有功能都正确映射到数据处理政策。",
+        infoContent:
+          "合规模块对于维持监管遵循和避免罚款至关重要。请确保所有功能都正确映射到数据处理政策。",
         descDsr: "处理主体请求（导出、删除、纠正）",
         descConsent: "对同意状态和快照的不可变跟踪",
         descRet: "根据时长执行数据销毁政策",
@@ -332,7 +335,8 @@ export const zh = {
         tr2_1: "ConsentRecordView",
         tr2_2: "渲染不可变的同意快照，以及用户代理和时间戳元数据。",
         whatIsTitle: "什么是合规模块？",
-        whatIsIntro: "合规模块提供了涵盖完整合规生命周期的六个相互关联的子系统。NEXORA租户无需从头开始构建合规工具，即可获得一个支持生产环境的系统，用于跟踪、自动化和报告其数据保护义务。",
+        whatIsIntro:
+          "合规模块提供了涵盖完整合规生命周期的六个相互关联的子系统。NEXORA租户无需从头开始构建合规工具，即可获得一个支持生产环境的系统，用于跟踪、自动化和报告其数据保护义务。",
         subModulesTitle: "六个子系统",
         subModulesIntro: "每个子系统负责特定的合规领域：",
         sub1: "法规配置文件 — 存储平台运营所在的监管框架（GDPR、CCPA、PDPA）。",
@@ -342,16 +346,20 @@ export const zh = {
         sub5: "数据清单 — 平台处理的所有个人数据类别的注册表。",
         sub6: "合规报告 — 生成异步的审计就绪报告（GDPR概览、DSR摘要、同意审计等）。",
         backendTitle: "后端架构",
-        backendIntro: "合规后端遵循标准的NEXORA 3项目模块布局（领域 / 应用 / 基础设施），并拥有专用的ComplianceDbContext和ComplianceController。",
+        backendIntro:
+          "合规后端遵循标准的NEXORA 3项目模块布局（领域 / 应用 / 基础设施），并拥有专用的ComplianceDbContext和ComplianceController。",
         frontendTitle: "前端架构",
-        frontendIntro: "前端被组织为src/modules/compliance/下的六个独立子模块，每个子模块都遵循View/ViewModel模式拥有自己的领域、数据和展示层。",
+        frontendIntro:
+          "前端被组织为src/modules/compliance/下的六个独立子模块，每个子模块都遵循View/ViewModel模式拥有自己的领域、数据和展示层。",
         endpointsTitle: "API端点概览",
-        endpointsIntro: "所有端点都在/api/v1/compliances/下，需要拥有compliance.view权限的身份验证。",
+        endpointsIntro:
+          "所有端点都在/api/v1/compliances/下，需要拥有compliance.view权限的身份验证。",
       },
       dsr: {
         title: "数据主体请求 (DSR)",
         description: "管理GDPR/CCPA权利请求——导出、删除、纠正和限制——并提供完整的生命周期跟踪。",
-        intro: "数据主体请求（DSR）是个人行使数据保护法规定权利的正式请求。合规模块提供完整的DSR工作流：提交、分配、处理和关闭——带有完整的审计跟踪和SLA跟踪。",
+        intro:
+          "数据主体请求（DSR）是个人行使数据保护法规定权利的正式请求。合规模块提供完整的DSR工作流：提交、分配、处理和关闭——带有完整的审计跟踪和SLA跟踪。",
         typesTitle: "请求类型",
         typesIntro: "系统支持GDPR第17条和CCPA定义的四种DSR类型：",
         type1: "导出 — 数据可移植性请求。主体希望获得其个人数据的副本。",
@@ -365,7 +373,8 @@ export const zh = {
         status3: "已完成 — 请求已满足（数据已导出、删除、纠正或限制）。",
         status4: "已拒绝 — 请求被拒绝（例如，身份验证不足）。",
         slasTitle: "GDPR SLA要求",
-        slasIntro: "根据GDPR第12条，数据控制者必须在30天内响应DSR（复杂请求可延长至3个月）。NEXORA跟踪每个DSR的提交日期以帮助您满足这些截止日期。",
+        slasIntro:
+          "根据GDPR第12条，数据控制者必须在30天内响应DSR（复杂请求可延长至3个月）。NEXORA跟踪每个DSR的提交日期以帮助您满足这些截止日期。",
         lifecycleFlowTitle: "DSR生命周期流",
         nodeSubmit: "提交请求",
         descSubmit: "主体请求导出、删除或纠正",
@@ -406,7 +415,8 @@ export const zh = {
       consent: {
         title: "同意管理",
         description: "记录、跟踪和审计用户同意的授予和撤销，以遵守GDPR第6条和CCPA。",
-        intro: "同意管理记录用户每次为特定目的（例如营销电子邮件、分析跟踪）授予或撤销同意的操作。NEXORA存储完整的同意审计跟踪，包括时间戳、IP地址、用户代理和显示的确切同意版本。",
+        intro:
+          "同意管理记录用户每次为特定目的（例如营销电子邮件、分析跟踪）授予或撤销同意的操作。NEXORA存储完整的同意审计跟踪，包括时间戳、IP地址、用户代理和显示的确切同意版本。",
         purposesTitle: "同意目的",
         purposesIntro: "每项同意记录都与特定目的绑定。常见目的包括：",
         purpose1: "营销 — 电子邮件营销和促销通信。",
@@ -414,9 +424,11 @@ export const zh = {
         purpose3: "第三方 — 与第三方服务共享数据。",
         purpose4: "个性化 — 个性化内容和推荐。",
         gdprTitle: "GDPR合法基础",
-        gdprIntro: "根据GDPR第6条，同意必须是：自愿、具体、知情和毫不含糊的。NEXORA记录向用户显示的确切同意文本版本以及被接受的时间戳，提供合法且可辩护的审计跟踪。",
+        gdprIntro:
+          "根据GDPR第6条，同意必须是：自愿、具体、知情和毫不含糊的。NEXORA记录向用户显示的确切同意文本版本以及被接受的时间戳，提供合法且可辩护的审计跟踪。",
         withdrawalTitle: "撤销同意",
-        withdrawalIntro: "用户可以随时撤销同意。当同意被撤销时，ConsentRecord将更新为WithdrawnAt时间戳。应通过领域事件通知下游系统停止为已撤销目的处理数据。",
+        withdrawalIntro:
+          "用户可以随时撤销同意。当同意被撤销时，ConsentRecord将更新为WithdrawnAt时间戳。应通过领域事件通知下游系统停止为已撤销目的处理数据。",
         flowTitle: "同意状态流",
         nodePurpose: "同意目的",
         descPurpose: "定义正在同意的内容（例如营销）",
@@ -442,7 +454,8 @@ export const zh = {
       retention: {
         title: "数据保留政策",
         description: "定义数据保留期和自动过期操作（删除或匿名化），以遵守GDPR第5(1)(e)条。",
-        intro: "数据保留政策定义必须将特定类别的数据保留多长时间，以及保留期满后会发生什么。NEXORA通过后台作业自动执行这些政策，消除了管理数据生命周期的手动开销。",
+        intro:
+          "数据保留政策定义必须将特定类别的数据保留多长时间，以及保留期满后会发生什么。NEXORA通过后台作业自动执行这些政策，消除了管理数据生命周期的手动开销。",
         policiesTitle: "政策配置",
         policiesIntro: "每项保留政策规定：",
         field1: "DataCategory — 数据类型（例如“用户档案”、“交易日志”、“同意记录”）。",
@@ -454,7 +467,8 @@ export const zh = {
         action1: "删除 — 永久删除匹配数据类别的所有记录。",
         action2: "匿名化 — 将个人可识别信息替换为假名令牌，同时保留汇总分析数据。",
         automationTitle: "自动执行",
-        automationIntro: "RetentionEnforcementJob在每天世界协调时(UTC)凌晨3:00运行，扫描所有活动保留政策并对合格记录应用配置的过期操作。每次执行都会创建RetentionExecution审计记录。",
+        automationIntro:
+          "RetentionEnforcementJob在每天世界协调时(UTC)凌晨3:00运行，扫描所有活动保留政策并对合格记录应用配置的过期操作。每次执行都会创建RetentionExecution审计记录。",
         nodePolicy: "保留政策",
         descPolicy: "定义实体类型、寿命限制和销毁策略",
         nodeEnforcement: "保留执行作业",
@@ -476,18 +490,21 @@ export const zh = {
       inventory: {
         title: "数据清单",
         description: "平台处理的所有个人数据类别的注册表——GDPR第30条处理活动记录 (RoPA) 要求。",
-        intro: "数据清单是平台处理的所有个人数据类别的结构化注册表。根据GDPR第30条，控制者必须维护处理活动记录（RoPA）——数据清单即是NEXORA对此要求的实现。",
+        intro:
+          "数据清单是平台处理的所有个人数据类别的结构化注册表。根据GDPR第30条，控制者必须维护处理活动记录（RoPA）——数据清单即是NEXORA对此要求的实现。",
         fieldsTitle: "清单字段",
         fieldsIntro: "每个清单项目记录：",
         field1: "DataCategory — 数据类别的易读名称（例如“电子邮件地址”、“支付信息”）。",
-        field2: "LegalBasis — 处理的GDPR合法基础（同意、合同、法定义务、重要利益、公共任务、合法利益）。",
+        field2:
+          "LegalBasis — 处理的GDPR合法基础（同意、合同、法定义务、重要利益、公共任务、合法利益）。",
         field3: "DataSubjects — 数据属于谁（例如“最终用户”、“员工”、“客户”）。",
         field4: "ProcessingPurpose — 处理数据的原因（例如“订单履行”、“营销”、“合规”）。",
         field5: "StorageLocation — 数据存储的位置（针对跨境转移合规性的国家/地区）。",
         field6: "RetentionPeriod — 数据保留多长时间（链接到保留政策）。",
         field7: "ThirdPartySharing — 数据是否与第三方共享以及是哪些第三方。",
         ropaTitle: "第30条合规",
-        ropaIntro: "拥有250名以上员工或处理高风险数据的组织必须根据GDPR第30条维护RoPA。NEXORA的数据清单充当实时、可查询的RoPA，可导出以供监管检查。",
+        ropaIntro:
+          "拥有250名以上员工或处理高风险数据的组织必须根据GDPR第30条维护RoPA。NEXORA的数据清单充当实时、可查询的RoPA，可导出以供监管检查。",
         endpointsTitle: "API端点",
         ep: {
           list: "列出所有数据清单项目（分页，可搜索）",
@@ -499,8 +516,10 @@ export const zh = {
       },
       reports: {
         title: "合规报告",
-        description: "生成异步的支持审计的合规报告（GDPR概览、DSR摘要、同意审计、保留分析、数据清单导出）。",
-        intro: "合规报告是异步生成的文档，可提供合规状态的审计就绪摘要。报告在后台生成，准备好后即存储供下载，支持监管检查、内部审计和高管汇报。",
+        description:
+          "生成异步的支持审计的合规报告（GDPR概览、DSR摘要、同意审计、保留分析、数据清单导出）。",
+        intro:
+          "合规报告是异步生成的文档，可提供合规状态的审计就绪摘要。报告在后台生成，准备好后即存储供下载，支持监管检查、内部审计和高管汇报。",
         reportTypesTitle: "报告类型",
         reportTypesIntro: "提供五种报告类型：",
         type1: "GDPR概览 — 各子模块GDPR合规状态的高层次摘要。",
@@ -509,10 +528,13 @@ export const zh = {
         type4: "保留分析 — 所有活动保留政策的当前执行状态。",
         type5: "数据清单导出 — 数据清单的完整导出（第30条RoPA）。",
         asyncTitle: "异步生成",
-        asyncIntro: "报告是异步生成的，以避免阻塞大型数据集的HTTP请求。当您请求一份报告时，系统立即创建IsReady=false的ComplianceReport记录并对生成作业进行排队。轮询报告列表以检查IsReady何时变为true。",
-        asyncTip: "在报告UI中使用刷新按钮以轮询报告就绪状态。对于多达10,000条记录的数据集，报告通常在30-60秒内完成。",
+        asyncIntro:
+          "报告是异步生成的，以避免阻塞大型数据集的HTTP请求。当您请求一份报告时，系统立即创建IsReady=false的ComplianceReport记录并对生成作业进行排队。轮询报告列表以检查IsReady何时变为true。",
+        asyncTip:
+          "在报告UI中使用刷新按钮以轮询报告就绪状态。对于多达10,000条记录的数据集，报告通常在30-60秒内完成。",
         downloadTitle: "下载报告",
-        downloadIntro: "一旦报告准备就绪（IsReady=true），就会提供DownloadUrl。下载端点安全地提供报告文件。报告文件在自动清理前保留90天。",
+        downloadIntro:
+          "一旦报告准备就绪（IsReady=true），就会提供DownloadUrl。下载端点安全地提供报告文件。报告文件在自动清理前保留90天。",
         endpointsTitle: "API端点",
         ep: {
           list: "列出所有合规报告（分页，按类型/状态过滤）",
@@ -521,6 +543,6 @@ export const zh = {
           download: "下载生成的报告文件",
         },
       },
-    }
+    },
   },
 };

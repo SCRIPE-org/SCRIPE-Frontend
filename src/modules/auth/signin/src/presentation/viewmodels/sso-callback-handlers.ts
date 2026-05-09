@@ -21,7 +21,11 @@ export interface SsoCallbackDeps {
   authRepository: IAuthRepository;
   ssoRepository: ISsoRepository;
   setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
-  setSubscriptionInfo: (status: string | null, grace: string | null, edition: string | null) => void;
+  setSubscriptionInfo: (
+    status: string | null,
+    grace: string | null,
+    edition: string | null
+  ) => void;
   refreshNavigation: () => Promise<void>;
   invalidateQueries: () => void;
   operationSuccess: (msg: string) => void;
@@ -83,11 +87,13 @@ async function tryLinkExternalLogin(
   deps: SsoCallbackDeps,
   setters: SsoCallbackSetters
 ): Promise<boolean> {
-  const isAuthenticated = (await import("@core/store/useAppStore")).useAppStore.getState().isAuthenticated;
+  const isAuthenticated = (await import("@core/store/useAppStore")).useAppStore.getState()
+    .isAuthenticated;
   const isLinkingSession = sessionStorage.getItem("sso_linking") === "true";
 
   if (!isAuthenticated && !isLinkingSession) return false;
-  if (!params.identityProviderId || !params.providerName || !params.providerKey || !params.email) return false;
+  if (!params.identityProviderId || !params.providerName || !params.providerKey || !params.email)
+    return false;
 
   sessionStorage.removeItem("sso_linking");
   await deps.authRepository.linkExternalLogin({
@@ -114,7 +120,10 @@ export async function handleOidcCallback(
 
   if (!code || !stateParam) {
     setters.setState("error");
-    setters.setErrorInfo({ title: deps.t("auth.sso.callbackError"), message: deps.t("auth.sso.missingParams") });
+    setters.setErrorInfo({
+      title: deps.t("auth.sso.callbackError"),
+      message: deps.t("auth.sso.missingParams"),
+    });
     return;
   }
 
@@ -124,35 +133,53 @@ export async function handleOidcCallback(
     if (result.type === "admin" && result.accessToken) {
       await completeAdminLogin(
         result.accessToken,
-        { status: result.subscriptionStatus, gracePhase: result.gracePhase, editionName: result.editionName },
-        deps, setters
+        {
+          status: result.subscriptionStatus,
+          gracePhase: result.gracePhase,
+          editionName: result.editionName,
+        },
+        deps,
+        setters
       );
       return;
     }
 
     setters.setState("error");
-    setters.setErrorInfo({ title: deps.t("auth.sso.callbackError"), message: deps.t("auth.sso.unsupportedAccountType") });
+    setters.setErrorInfo({
+      title: deps.t("auth.sso.callbackError"),
+      message: deps.t("auth.sso.unsupportedAccountType"),
+    });
   } catch (error) {
     if (isNoLinkedAccountError(error)) {
       const details = (error as { details?: Record<string, string> })?.details;
       try {
-        const linked = await tryLinkExternalLogin({
-          identityProviderId: details?.identityProviderId,
-          providerName: details?.providerName || details?.provider,
-          providerKey: details?.providerKey || details?.subject,
-          email: details?.email,
-          displayName: details?.name,
-        }, deps, setters);
+        const linked = await tryLinkExternalLogin(
+          {
+            identityProviderId: details?.identityProviderId,
+            providerName: details?.providerName || details?.provider,
+            providerKey: details?.providerKey || details?.subject,
+            email: details?.email,
+            displayName: details?.name,
+          },
+          deps,
+          setters
+        );
         if (linked) return;
       } catch (linkError) {
         appLogger.error("Auto-link failed:", linkError);
       }
       setters.setState("no_linked_account");
-      setters.setErrorInfo({ title: deps.t("auth.sso.noLinkedAccount"), message: deps.t("auth.sso.noLinkedAccountDesc") });
+      setters.setErrorInfo({
+        title: deps.t("auth.sso.noLinkedAccount"),
+        message: deps.t("auth.sso.noLinkedAccountDesc"),
+      });
       return;
     }
     setters.setState("error");
-    setters.setErrorInfo({ title: deps.t("auth.sso.callbackError"), message: error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric") });
+    setters.setErrorInfo({
+      title: deps.t("auth.sso.callbackError"),
+      message: error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric"),
+    });
   }
 }
 
@@ -169,23 +196,31 @@ export async function handleSamlCallback(
 
   if (errorParam) {
     const errorMessage = decodeURIComponent(errorParam);
-    const isLinkingIssue = errorMessage.includes("no_linked_account") || errorMessage.includes("automatically linked");
+    const isLinkingIssue =
+      errorMessage.includes("no_linked_account") || errorMessage.includes("automatically linked");
 
     if (isLinkingIssue) {
       try {
-        const linked = await tryLinkExternalLogin({
-          identityProviderId: searchParams.get("providerId"),
-          providerName: searchParams.get("providerName"),
-          providerKey: searchParams.get("subject"),
-          email: searchParams.get("email"),
-          displayName: searchParams.get("name"),
-        }, deps, setters);
+        const linked = await tryLinkExternalLogin(
+          {
+            identityProviderId: searchParams.get("providerId"),
+            providerName: searchParams.get("providerName"),
+            providerKey: searchParams.get("subject"),
+            email: searchParams.get("email"),
+            displayName: searchParams.get("name"),
+          },
+          deps,
+          setters
+        );
         if (linked) return;
       } catch (linkError) {
         appLogger.error("SAML auto-link failed:", linkError);
       }
       setters.setState("no_linked_account");
-      setters.setErrorInfo({ title: deps.t("auth.sso.noLinkedAccount"), message: deps.t("auth.sso.noLinkedAccountDesc") });
+      setters.setErrorInfo({
+        title: deps.t("auth.sso.noLinkedAccount"),
+        message: deps.t("auth.sso.noLinkedAccountDesc"),
+      });
       return;
     }
 
@@ -196,24 +231,38 @@ export async function handleSamlCallback(
 
   if (!accessToken) {
     setters.setState("error");
-    setters.setErrorInfo({ title: deps.t("auth.sso.callbackError"), message: deps.t("auth.sso.missingParams") });
+    setters.setErrorInfo({
+      title: deps.t("auth.sso.callbackError"),
+      message: deps.t("auth.sso.missingParams"),
+    });
     return;
   }
 
   if (type !== "admin") {
     setters.setState("error");
-    setters.setErrorInfo({ title: deps.t("auth.sso.callbackError"), message: deps.t("auth.sso.unsupportedAccountType") });
+    setters.setErrorInfo({
+      title: deps.t("auth.sso.callbackError"),
+      message: deps.t("auth.sso.unsupportedAccountType"),
+    });
     return;
   }
 
   try {
     await completeAdminLogin(
       accessToken,
-      { status: searchParams.get("subscription_status"), gracePhase: searchParams.get("grace_phase"), editionName: searchParams.get("edition_name") },
-      deps, setters
+      {
+        status: searchParams.get("subscription_status"),
+        gracePhase: searchParams.get("grace_phase"),
+        editionName: searchParams.get("edition_name"),
+      },
+      deps,
+      setters
     );
   } catch (error) {
     setters.setState("error");
-    setters.setErrorInfo({ title: deps.t("auth.sso.callbackError"), message: error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric") });
+    setters.setErrorInfo({
+      title: deps.t("auth.sso.callbackError"),
+      message: error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric"),
+    });
   }
 }

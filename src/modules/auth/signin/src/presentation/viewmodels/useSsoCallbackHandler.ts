@@ -62,7 +62,17 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
         handleSamlCallback(searchParams, deps, setters);
       }
     }, 0);
-  }, [kind, operationSuccess, queryClient, refreshNavigation, router, searchParams, setAuth, setSubscriptionInfo, t]);
+  }, [
+    kind,
+    operationSuccess,
+    queryClient,
+    refreshNavigation,
+    router,
+    searchParams,
+    setAuth,
+    setSubscriptionInfo,
+    t,
+  ]);
 
   return { state, errorInfo };
 }

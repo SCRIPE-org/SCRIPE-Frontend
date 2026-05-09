@@ -1,9 +1,9 @@
-import type { 
-  RegulationProfileModel, 
-  CreateRegulationRequest, 
-  UpdateRegulationRequest, 
-  AddConsentPurposeRequest, 
-  UpdateConsentPurposeRequest 
+import type {
+  RegulationProfileModel,
+  CreateRegulationRequest,
+  UpdateRegulationRequest,
+  AddConsentPurposeRequest,
+  UpdateConsentPurposeRequest,
 } from "../../data/models/RegulationModels";
 
 export interface IRegulationService {

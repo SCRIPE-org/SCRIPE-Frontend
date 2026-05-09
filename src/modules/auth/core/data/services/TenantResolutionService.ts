@@ -22,4 +22,3 @@ export class TenantResolutionService implements ITenantResolutionService {
     return model ? TenantBrandingMapper.toDomain(model) : null;
   }
 }
-

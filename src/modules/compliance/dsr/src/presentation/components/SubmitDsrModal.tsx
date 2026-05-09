@@ -13,10 +13,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 // ── Option constants ──────────────────────────────────────────────────────────
 
 const DSR_TYPE_OPTIONS = [
-  { value: "Export",        labelKey: "compliance.requestTypes.export" },
-  { value: "Erasure",       labelKey: "compliance.requestTypes.erasure" },
+  { value: "Export", labelKey: "compliance.requestTypes.export" },
+  { value: "Erasure", labelKey: "compliance.requestTypes.erasure" },
   { value: "Rectification", labelKey: "compliance.requestTypes.rectification" },
-  { value: "Restriction",   labelKey: "compliance.requestTypes.restriction" },
+  { value: "Restriction", labelKey: "compliance.requestTypes.restriction" },
 ];
 
 const REGULATION_OPTIONS = [
@@ -43,7 +43,12 @@ interface SubmitDsrModalProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function SubmitDsrModal({ open, onOpenChange, onSubmit, isSubmitting }: SubmitDsrModalProps) {
+export function SubmitDsrModal({
+  open,
+  onOpenChange,
+  onSubmit,
+  isSubmitting,
+}: SubmitDsrModalProps) {
   const { t } = useI18n();
 
   const [form, setForm] = useState<SubmitDsrFormData>({
@@ -57,7 +62,12 @@ export function SubmitDsrModal({ open, onOpenChange, onSubmit, isSubmitting }: S
     if (!form.subjectEmail.trim()) return;
     await onSubmit(form);
     onOpenChange(false);
-    setForm({ requestType: "Export", regulationCode: "GDPR", subjectEmail: "", requesterNotes: "" });
+    setForm({
+      requestType: "Export",
+      regulationCode: "GDPR",
+      subjectEmail: "",
+      requesterNotes: "",
+    });
   };
 
   return (
@@ -87,7 +97,9 @@ export function SubmitDsrModal({ open, onOpenChange, onSubmit, isSubmitting }: S
             <GenericSelect
               options={DSR_TYPE_OPTIONS.map((o) => ({ value: o.value, label: t(o.labelKey) }))}
               value={form.requestType}
-              onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, requestType: v as string }))}
+              onValueChange={(v: string | string[]) =>
+                setForm((f) => ({ ...f, requestType: v as string }))
+              }
               placeholder={t("compliance.requestType")}
               type="single"
             />
@@ -97,7 +109,9 @@ export function SubmitDsrModal({ open, onOpenChange, onSubmit, isSubmitting }: S
             <GenericSelect
               options={REGULATION_OPTIONS.map((o) => ({ value: o.value, label: t(o.labelKey) }))}
               value={form.regulationCode}
-              onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, regulationCode: v as string }))}
+              onValueChange={(v: string | string[]) =>
+                setForm((f) => ({ ...f, regulationCode: v as string }))
+              }
               placeholder={t("compliance.regulation")}
               type="single"
             />
@@ -118,7 +132,9 @@ export function SubmitDsrModal({ open, onOpenChange, onSubmit, isSubmitting }: S
         {form.requestType === "Erasure" && (
           <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
-            <p className="text-xs text-red-600 dark:text-red-400">{t("compliance.erasureGateWarning")}</p>
+            <p className="text-xs text-red-600 dark:text-red-400">
+              {t("compliance.erasureGateWarning")}
+            </p>
           </div>
         )}
 

@@ -22,13 +22,13 @@ import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { useRouter } from "next/navigation";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { useNexusPalette } from "./_parts/nexus-theme-utils";
-import { 
-  BackButton, 
-  Divider, 
-  RootItemButton, 
+import {
+  BackButton,
+  Divider,
+  RootItemButton,
   TogglePanelButton,
   PrimaryRailLogo,
-  ActiveIndicator
+  ActiveIndicator,
 } from "./_parts/primary-rail-parts";
 
 interface NexusPrimaryRailProps {
@@ -37,7 +37,10 @@ interface NexusPrimaryRailProps {
 }
 
 // ── Primary Rail ──────────────────────────────────────────────────────────────
-export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: NexusPrimaryRailProps) {
+export function NexusPrimaryRail({
+  onTogglePanel,
+  isPanelCollapsed = false,
+}: NexusPrimaryRailProps) {
   const router = useRouter();
   const { logoUrl: tenantLogoUrl } = useTenantBranding();
   const {
@@ -84,19 +87,15 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
   );
 
   // ── Separate "modules-group" from regular root items ──────────────────────
-  const regularRootItems = rootMenuItems.filter(
-    (item) => item.slug !== "modules-group"
-  );
-  const modulesGroupItem = rootMenuItems.find(
-    (item) => item.slug === "modules-group"
-  );
+  const regularRootItems = rootMenuItems.filter((item) => item.slug !== "modules-group");
+  const modulesGroupItem = rootMenuItems.find((item) => item.slug === "modules-group");
 
   const hasModules = !!modulesGroupItem;
-  
+
   // Calculate index for the magic indicator
-  const activeIndex = regularRootItems.findIndex(i => i.id === activeRootItem?.id);
+  const activeIndex = regularRootItems.findIndex((i) => i.id === activeRootItem?.id);
   const isModulesActive = activeRootItem?.id === modulesGroupItem?.id;
-  
+
   // Position the indicator based on which item is active
   // 52px = 44px height + 8px margin (4px top + 4px bottom)
   let indicatorTop = -100; // Hidden offscreen by default
@@ -108,7 +107,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
     indicatorVisible = true;
   } else if (isModulesActive && hasModules) {
     // Regular items height + divider height (25px) + 52px per item
-    indicatorTop = (regularRootItems.length * 52) + 25; 
+    indicatorTop = regularRootItems.length * 52 + 25;
     indicatorColor = isDark ? "#9B8FE0" : "#6258c4";
     indicatorVisible = true;
   }
@@ -116,7 +115,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
   return (
     <nav
       aria-label="Primary navigation"
-      className="relative flex flex-col items-center flex-shrink-0 z-20"
+      className="relative z-20 flex flex-shrink-0 flex-col items-center"
       style={{
         width: "var(--nexus-primary-w)",
         minWidth: "var(--nexus-primary-w)",
@@ -157,7 +156,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
 
       {/* ── Root items (never scrolls — icon rail is always compact) ── */}
       <div
-        className="flex flex-col items-center flex-1 w-full overflow-hidden relative"
+        className="relative flex w-full flex-1 flex-col items-center overflow-hidden"
         style={{
           padding: "4px 0 16px",
         }}
@@ -203,7 +202,7 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
       </div>
 
       {/* ── Bottom actions ─────────────────────────────────────── */}
-      <div className="flex flex-col items-center shrink-0 gap-2 pb-2 pt-4 relative">
+      <div className="relative flex shrink-0 flex-col items-center gap-2 pb-2 pt-4">
         {onTogglePanel && (
           <TogglePanelButton
             isRTL={isRTL}
@@ -213,32 +212,31 @@ export function NexusPrimaryRail({ onTogglePanel, isPanelCollapsed = false }: Ne
             onClick={onTogglePanel}
           />
         )}
-        
+
         <Divider />
 
-        <div className="group relative flex items-center justify-center w-full">
+        <div className="group relative flex w-full items-center justify-center">
           <NotificationBell
             iconClassName="h-[20px] w-[20px]"
             className={cn(
-              "h-[44px] w-[44px] rounded-[12px] transition-all duration-200 border border-transparent",
+              "h-[44px] w-[44px] rounded-[12px] border border-transparent transition-all duration-200",
               isDark
-                ? "text-[rgba(255,255,255,0.7)] hover:bg-white/5 hover:text-white hover:border-white/10"
-                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-200"
+                ? "text-[rgba(255,255,255,0.7)] hover:border-white/10 hover:bg-white/5 hover:text-white"
+                : "text-slate-500 hover:border-slate-200 hover:bg-slate-100 hover:text-slate-900"
             )}
           />
         </div>
 
-        <div className="group relative flex items-center justify-center w-full mt-1">
+        <div className="group relative mt-1 flex w-full items-center justify-center">
           <UserProfileDropdown
             variant="compact"
             showName={false}
             side={isRTL ? "left" : "right"}
             align="end"
-            className="h-[40px] w-[40px] rounded-full !p-0 shadow-sm border-[1.5px] border-border/50 hover:border-border transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="h-[40px] w-[40px] cursor-pointer rounded-full border-[1.5px] border-border/50 !p-0 shadow-sm transition-all hover:scale-105 hover:border-border active:scale-95"
           />
         </div>
       </div>
     </nav>
   );
 }
-

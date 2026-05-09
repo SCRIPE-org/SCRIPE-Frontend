@@ -1,4 +1,7 @@
-import type { RetentionPolicyModel, CreateRetentionPolicyRequest } from "../../data/models/RetentionModels";
+import type {
+  RetentionPolicyModel,
+  CreateRetentionPolicyRequest,
+} from "../../data/models/RetentionModels";
 import type { UpdateRetentionPolicyRequest } from "../entities/RetentionPolicy";
 
 export interface IRetentionService {

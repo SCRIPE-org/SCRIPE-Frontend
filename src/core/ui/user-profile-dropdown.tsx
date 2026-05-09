@@ -184,10 +184,10 @@ export function UserProfileDropdown({
       <DropdownMenuContent
         align={align}
         className={cn(
-          "w-60 p-2 border",
+          "w-60 border p-2",
           isDark
-            ? "bg-[#0d1117] border-white/[0.08] shadow-2xl shadow-black/50"
-            : "bg-white border-black/[0.08] shadow-xl shadow-black/10"
+            ? "border-white/[0.08] bg-[#0d1117] shadow-2xl shadow-black/50"
+            : "border-black/[0.08] bg-white shadow-xl shadow-black/10"
         )}
         side={side || (variant === "navigation" ? "bottom" : "bottom")}
         sideOffset={6}
@@ -195,7 +195,7 @@ export function UserProfileDropdown({
         {/* User info header */}
         <div
           className={cn(
-            "mb-2 flex items-center gap-3 p-3 rounded-lg",
+            "mb-2 flex items-center gap-3 rounded-lg p-3",
             isDark ? "bg-white/[0.03]" : "bg-black/[0.02]"
           )}
         >
@@ -208,7 +208,7 @@ export function UserProfileDropdown({
               {getInitials()}
             </AvatarFallback>
           </Avatar>
-          <div className="min-w-0 text-start flex-1">
+          <div className="min-w-0 flex-1 text-start">
             <p className="truncate text-sm font-semibold">{getDisplayName()}</p>
             <p className="truncate text-xs text-muted-foreground">
               {user.adminTypeName || (user as any).role || t("common.user")}
@@ -234,7 +234,9 @@ export function UserProfileDropdown({
           <span>{t("nav.settings")}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className={cn("my-1", isDark ? "bg-white/[0.06]" : "bg-black/[0.06]")} />
+        <DropdownMenuSeparator
+          className={cn("my-1", isDark ? "bg-white/[0.06]" : "bg-black/[0.06]")}
+        />
 
         <DropdownMenuItem
           onClick={handleSignOut}

@@ -2,18 +2,33 @@
 
 import type { ReactNode } from "react";
 import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
-import type { LoginLayout, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type {
+  LoginLayout,
+  SlotConfig,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ProductionCanvasRenderer } from "./ProductionCanvasRenderer";
 import { SplitRightLayout, LAYOUT_REGISTRY } from "./layouts";
 
 // ── Canvas type guards (for builder mode) ──────────────────────────────────
 interface CanvasComponentData {
-  id: string; type: string; gridColumn: string; gridRow: string;
-  alignment: string; verticalAlignment: string; x: number; y: number;
-  width: number; height: number; props: Record<string, unknown>;
-  zIndex: number; visible: boolean;
+  id: string;
+  type: string;
+  gridColumn: string;
+  gridRow: string;
+  alignment: string;
+  verticalAlignment: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  props: Record<string, unknown>;
+  zIndex: number;
+  visible: boolean;
 }
-interface CanvasBackgroundData { type: string; value: string; }
+interface CanvasBackgroundData {
+  type: string;
+  value: string;
+}
 
 function isCanvasComponent(v: unknown): v is CanvasComponentData {
   if (!v || typeof v !== "object") return false;
@@ -56,22 +71,38 @@ export interface LoginLayoutRouterProps {
  *  2. Template mode — looks up layout in LAYOUT_REGISTRY and renders it
  */
 export function LoginLayoutRouter({
-  layout, slotConfig, loginBrandingJson, branding,
-  formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep, t,
+  layout,
+  slotConfig,
+  loginBrandingJson,
+  branding,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
+  t,
 }: LoginLayoutRouterProps) {
   // ── Builder mode: full canvas from studio ──────────────────────────────
   const parsedBranding = (() => {
     if (!loginBrandingJson) return null;
-    try { return JSON.parse(loginBrandingJson) as Record<string, unknown>; }
-    catch { return null; }
+    try {
+      return JSON.parse(loginBrandingJson) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
   })();
 
   if (parsedBranding?.canvasMode === "builder" && isCanvasComponents(parsedBranding.components)) {
     return (
       <ProductionCanvasRenderer
         components={parsedBranding.components}
-        gridRows={typeof parsedBranding.canvasGridRows === "number" ? parsedBranding.canvasGridRows : 8}
+        gridRows={
+          typeof parsedBranding.canvasGridRows === "number" ? parsedBranding.canvasGridRows : 8
+        }
         canvasBackground={toCanvasBackground(parsedBranding.canvasBackground)}
         positionMode={parsedBranding.canvasPositionMode === "absolute" ? "absolute" : "grid"}
         formContent={formContent}
@@ -80,7 +111,9 @@ export function LoginLayoutRouter({
         direction={direction}
         headline={branding?.loginHeadline || t("auth.branding.headline")}
         subtitle={branding?.loginSubtitle || t("auth.branding.subtitle")}
-        copyrightText={typeof parsedBranding.copyrightText === "string" ? parsedBranding.copyrightText : ""}
+        copyrightText={
+          typeof parsedBranding.copyrightText === "string" ? parsedBranding.copyrightText : ""
+        }
       />
     );
   }
@@ -88,8 +121,18 @@ export function LoginLayoutRouter({
   // ── Template mode: dispatch to layout component ─────────────────────────
   const LayoutComponent = LAYOUT_REGISTRY[layout] ?? SplitRightLayout;
   const layoutProps = {
-    branding, slotConfig, formContent, topActions, footer, footerSlot,
-    logoSrc, logoAlt, companyName, direction, loginStep, t,
+    branding,
+    slotConfig,
+    formContent,
+    topActions,
+    footer,
+    footerSlot,
+    logoSrc,
+    logoAlt,
+    companyName,
+    direction,
+    loginStep,
+    t,
   };
 
   return <LayoutComponent {...layoutProps} />;

@@ -13,13 +13,21 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
       className={framed ? "rounded-lg border bg-background/80 p-4 shadow-sm" : "space-y-3"}
       style={{ borderColor: props.borderColor }}
     >
-      {rating > 0 && <div className="mb-2 text-sm text-primary">{"*".repeat(Math.round(rating))}</div>}
-      <blockquote className={props.displayStyle === "large-quote" ? "text-xl font-semibold" : "text-sm"}>
+      {rating > 0 && (
+        <div className="mb-2 text-sm text-primary">{"*".repeat(Math.round(rating))}</div>
+      )}
+      <blockquote
+        className={props.displayStyle === "large-quote" ? "text-xl font-semibold" : "text-sm"}
+      >
         &ldquo;{props.quote}&rdquo;
       </blockquote>
       <figcaption className="mt-4 flex items-center gap-3 text-sm">
         {props.avatar && (
-          <img src={props.avatar} alt={props.author} className="h-10 w-10 rounded-full object-cover" />
+          <img
+            src={props.avatar}
+            alt={props.author}
+            className="h-10 w-10 rounded-full object-cover"
+          />
         )}
         <span>
           <span className="block font-medium">{props.author}</span>

@@ -87,7 +87,11 @@ export function NexusWorkspaceLoader({
   // ── Progress bar width based on phase ────────────────────────────────────
   const barWidth = phase === "entering" ? "30%" : phase === "visible" ? "75%" : "100%";
   const barDuration =
-    phase === "entering" ? `${ENTER_MS}ms` : phase === "visible" ? `${MIN_VISIBLE_MS}ms` : `${EXIT_MS}ms`;
+    phase === "entering"
+      ? `${ENTER_MS}ms`
+      : phase === "visible"
+        ? `${MIN_VISIBLE_MS}ms`
+        : `${EXIT_MS}ms`;
 
   const opacity = phase === "exiting" ? 0 : 1;
   const scale = phase === "entering" ? 0.96 : 1;
@@ -106,9 +110,7 @@ export function NexusWorkspaceLoader({
         flexDirection: "column",
         gap: 24,
         // Background — dark glass
-        background: isDark
-          ? "rgba(8, 10, 20, 0.92)"
-          : "rgba(248, 250, 252, 0.94)",
+        background: isDark ? "rgba(8, 10, 20, 0.92)" : "rgba(248, 250, 252, 0.94)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         // Transition

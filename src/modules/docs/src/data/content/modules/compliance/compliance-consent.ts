@@ -8,7 +8,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "note",
     titleKey: "modules.compliance.consent.infoTitle",
-    contentKey: "modules.compliance.consent.infoContent"
+    contentKey: "modules.compliance.consent.infoContent",
   },
 
   // ─── Consent Flow ─────────────────────────────────────────
@@ -24,15 +24,35 @@ const sections: DocSection[] = [
     titleKey: "modules.compliance.consent.flowTitle",
     direction: "vertical",
     nodes: [
-      { id: "purpose", labelKey: "modules.compliance.consent.nodePurpose", type: "primary", descriptionKey: "modules.compliance.consent.descPurpose" },
-      { id: "record", labelKey: "modules.compliance.consent.nodeRecord", type: "info", descriptionKey: "modules.compliance.consent.descRecord" },
-      { id: "snapshot", labelKey: "modules.compliance.consent.nodeSnapshot", type: "warning", descriptionKey: "modules.compliance.consent.descSnapshot" },
-      { id: "job", labelKey: "modules.compliance.consent.nodeJob", type: "default", descriptionKey: "modules.compliance.consent.descJob" }
+      {
+        id: "purpose",
+        labelKey: "modules.compliance.consent.nodePurpose",
+        type: "primary",
+        descriptionKey: "modules.compliance.consent.descPurpose",
+      },
+      {
+        id: "record",
+        labelKey: "modules.compliance.consent.nodeRecord",
+        type: "info",
+        descriptionKey: "modules.compliance.consent.descRecord",
+      },
+      {
+        id: "snapshot",
+        labelKey: "modules.compliance.consent.nodeSnapshot",
+        type: "warning",
+        descriptionKey: "modules.compliance.consent.descSnapshot",
+      },
+      {
+        id: "job",
+        labelKey: "modules.compliance.consent.nodeJob",
+        type: "default",
+        descriptionKey: "modules.compliance.consent.descJob",
+      },
     ],
     connections: [
       { from: "purpose", to: "record", labelKey: "modules.compliance.consent.conn1" },
       { from: "record", to: "snapshot", labelKey: "modules.compliance.consent.conn2" },
-      { from: "job", to: "record", labelKey: "modules.compliance.consent.conn3" }
+      { from: "job", to: "record", labelKey: "modules.compliance.consent.conn3" },
     ],
   },
 
@@ -49,14 +69,30 @@ const sections: DocSection[] = [
     headers: [
       "modules.compliance.consent.purposesCode",
       "modules.compliance.consent.purposesDesc",
-      "modules.compliance.consent.purposesBasis"
+      "modules.compliance.consent.purposesBasis",
     ],
     rows: [
-      ["Marketing", "modules.compliance.consent.purposesMarketingDesc", "modules.compliance.consent.basisConsent"],
-      ["Analytics", "modules.compliance.consent.purposesAnalyticsDesc", "modules.compliance.consent.basisConsent"],
-      ["ThirdParty", "modules.compliance.consent.purposesThirdPartyDesc", "modules.compliance.consent.basisConsent"],
-      ["Essential", "modules.compliance.consent.purposesEssentialDesc", "modules.compliance.consent.basisLegitimate"]
-    ]
+      [
+        "Marketing",
+        "modules.compliance.consent.purposesMarketingDesc",
+        "modules.compliance.consent.basisConsent",
+      ],
+      [
+        "Analytics",
+        "modules.compliance.consent.purposesAnalyticsDesc",
+        "modules.compliance.consent.basisConsent",
+      ],
+      [
+        "ThirdParty",
+        "modules.compliance.consent.purposesThirdPartyDesc",
+        "modules.compliance.consent.basisConsent",
+      ],
+      [
+        "Essential",
+        "modules.compliance.consent.purposesEssentialDesc",
+        "modules.compliance.consent.basisLegitimate",
+      ],
+    ],
   },
 
   // ─── Snapshot Immutability ────────────────────────────────
@@ -80,7 +116,7 @@ const sections: DocSection[] = [
     // Hash of (RecordId + State + Timestamp + PreviousHash) for tampering detection
     [MaxLength(256)]
     public string IntegrityHash { get; set; } = null!;
-}`
+}`,
   },
 
   // ─── Entity Reference ─────────────────────────────────────
@@ -93,7 +129,11 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "modules.compliance.consent.entitiesIntro" },
   {
     type: "table",
-    headers: ["modules.compliance.consent.field", "modules.compliance.consent.type", "modules.compliance.consent.description"],
+    headers: [
+      "modules.compliance.consent.field",
+      "modules.compliance.consent.type",
+      "modules.compliance.consent.description",
+    ],
     rows: [
       ["Id", "Guid", "modules.compliance.consent.fId"],
       ["TenantId", "Guid", "modules.compliance.consent.fTenantId"],
@@ -102,8 +142,8 @@ const sections: DocSection[] = [
       ["State", "Enum", "modules.compliance.consent.fState"],
       ["IpAddress", "String", "modules.compliance.consent.fIpAddress"],
       ["UserAgent", "String", "modules.compliance.consent.fUserAgent"],
-      ["PolicyVersion", "String", "modules.compliance.consent.fPolicyVersion"]
-    ]
+      ["PolicyVersion", "String", "modules.compliance.consent.fPolicyVersion"],
+    ],
   },
 
   // ─── Best Practices ───────────────────────────────────────
@@ -122,8 +162,8 @@ const sections: DocSection[] = [
         items: [
           "modules.compliance.consent.do1",
           "modules.compliance.consent.do2",
-          "modules.compliance.consent.do3"
-        ]
+          "modules.compliance.consent.do3",
+        ],
       },
       {
         titleKey: "modules.compliance.consent.dontTitle",
@@ -131,10 +171,10 @@ const sections: DocSection[] = [
         items: [
           "modules.compliance.consent.dont1",
           "modules.compliance.consent.dont2",
-          "modules.compliance.consent.dont3"
-        ]
-      }
-    ]
+          "modules.compliance.consent.dont3",
+        ],
+      },
+    ],
   },
 
   // ─── API Endpoints ────────────────────────────────────────
@@ -147,11 +187,29 @@ const sections: DocSection[] = [
   {
     type: "api-table",
     endpoints: [
-      { method: "POST", path: "/api/v1/compliance/consent", descriptionKey: "modules.compliance.consent.epRecord", auth: "AdminOnly", permission: "compliance_consent.manage" },
-      { method: "GET", path: "/api/v1/compliance/consent", descriptionKey: "modules.compliance.consent.epList", auth: "AdminOnly", permission: "compliance_consent.view" },
-      { method: "GET", path: "/api/v1/compliance/consent/analytics", descriptionKey: "modules.compliance.consent.epAnalytics", auth: "AdminOnly", permission: "compliance_consent.view_analytics" }
-    ]
-  }
+      {
+        method: "POST",
+        path: "/api/v1/compliance/consent",
+        descriptionKey: "modules.compliance.consent.epRecord",
+        auth: "AdminOnly",
+        permission: "compliance_consent.manage",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/consent",
+        descriptionKey: "modules.compliance.consent.epList",
+        auth: "AdminOnly",
+        permission: "compliance_consent.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/consent/analytics",
+        descriptionKey: "modules.compliance.consent.epAnalytics",
+        auth: "AdminOnly",
+        permission: "compliance_consent.view_analytics",
+      },
+    ],
+  },
 ];
 
 registerPage({

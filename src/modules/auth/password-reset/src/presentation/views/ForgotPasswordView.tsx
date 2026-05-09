@@ -206,11 +206,7 @@ export function ForgotPasswordView() {
             </p>
           </div>
           <div className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={reset}
-            >
+            <Button variant="outline" className="w-full" onClick={reset}>
               {t("auth.tryAnotherEmail") || "Try another email"}
             </Button>
             <Link href="/login" className="block">

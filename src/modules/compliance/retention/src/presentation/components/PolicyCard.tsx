@@ -1,13 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  ShieldAlert,
-  CheckCircle2,
-  Clock,
-  Archive,
-  Pencil
-} from "lucide-react";
+import { ShieldAlert, CheckCircle2, Clock, Archive, Pencil } from "lucide-react";
 import type { RetentionPolicy } from "../../domain/entities/RetentionPolicy";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -45,10 +39,7 @@ export interface PolicyCardProps {
   onEdit: (policy: RetentionPolicy) => void;
 }
 
-export function PolicyCard({
-  policy,
-  onEdit,
-}: PolicyCardProps) {
+export function PolicyCard({ policy, onEdit }: PolicyCardProps) {
   const { t } = useI18n();
   const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
   const { tenantCode } = useAppStore();
@@ -56,21 +47,28 @@ export function PolicyCard({
   const canUpdate = hasPermission && !!tenantCode;
 
   return (
-    <Card className={`border transition-all hover:shadow-md ${!policy.isActive ? "opacity-60" : ""} ${meta.cls.split(" ").slice(0, 2).join(" ")}`}>
+    <Card
+      className={`border transition-all hover:shadow-md ${!policy.isActive ? "opacity-60" : ""} ${meta.cls.split(" ").slice(0, 2).join(" ")}`}
+    >
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${meta.cls}`}>
+            <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${meta.cls}`}
+            >
               {meta.icon}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold">{t(meta.labelKey)}</p>
-                <Badge variant={policy.isActive ? "default" : "secondary"} className="h-5 px-1.5 text-[10px]">
+                <Badge
+                  variant={policy.isActive ? "default" : "secondary"}
+                  className="h-5 px-1.5 text-[10px]"
+                >
                   {policy.isActive ? t("compliance.active") : t("compliance.inactive")}
                 </Badge>
               </div>
-              <p className="mt-0.5 text-xs text-muted-foreground font-mono">{policy.category}</p>
+              <p className="mt-0.5 font-mono text-xs text-muted-foreground">{policy.category}</p>
             </div>
           </div>
           {canUpdate && (
@@ -89,18 +87,28 @@ export function PolicyCard({
           )}
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-3 rounded-lg bg-background/60 p-3 border border-border/30">
+        <div className="mt-4 grid grid-cols-3 gap-3 rounded-lg border border-border/30 bg-background/60 p-3">
           <div className="text-center">
             <p className="text-lg font-bold tabular-nums">{policy.retentionDays}</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.retentionDays")}</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {t("compliance.retentionDays")}
+            </p>
           </div>
-          <div className="text-center border-x border-border/30">
+          <div className="border-x border-border/30 text-center">
             <p className="text-lg font-bold tabular-nums">{policy.retentionYears}y</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.retentionCategory")}</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {t("compliance.retentionCategory")}
+            </p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold tabular-nums">{policy.expiryAction === "Delete" ? t("compliance.delete") : t("compliance.anonymize")}</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("compliance.expiryAction")}</p>
+            <p className="text-lg font-bold tabular-nums">
+              {policy.expiryAction === "Delete"
+                ? t("compliance.delete")
+                : t("compliance.anonymize")}
+            </p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {t("compliance.expiryAction")}
+            </p>
           </div>
         </div>
 
@@ -108,11 +116,17 @@ export function PolicyCard({
           <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {t("compliance.nextEvaluation")}: <span className="ms-1 font-medium text-foreground">{policy.nextEvaluationAt.toLocaleDateString()}</span>
+              {t("compliance.nextEvaluation")}:{" "}
+              <span className="ms-1 font-medium text-foreground">
+                {policy.nextEvaluationAt.toLocaleDateString()}
+              </span>
             </span>
             {policy.lastExecutionAt && (
               <span>
-                {t("compliance.executionHistory")}: <span className="font-medium text-foreground">{policy.lastExecutionAt.toLocaleDateString()}</span>
+                {t("compliance.executionHistory")}:{" "}
+                <span className="font-medium text-foreground">
+                  {policy.lastExecutionAt.toLocaleDateString()}
+                </span>
               </span>
             )}
           </div>

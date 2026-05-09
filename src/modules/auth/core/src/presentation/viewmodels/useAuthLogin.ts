@@ -13,7 +13,10 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@/core/common/logger";
 import { LoginRequest } from "../../../domain/entities/Auth";
-import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "../../../domain/errors/AuthErrors";
+import {
+  TwoFactorRequiredError,
+  WorkspaceSelectionRequiredError,
+} from "../../../domain/errors/AuthErrors";
 
 export function useAuthLogin() {
   const { authRepository } = useServices();

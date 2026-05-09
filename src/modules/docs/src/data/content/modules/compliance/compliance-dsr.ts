@@ -8,7 +8,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "note",
     titleKey: "modules.compliance.dsr.infoTitle",
-    contentKey: "modules.compliance.dsr.infoContent"
+    contentKey: "modules.compliance.dsr.infoContent",
   },
 
   // ─── Request Types ────────────────────────────────────────
@@ -24,15 +24,15 @@ const sections: DocSection[] = [
     headers: [
       "modules.compliance.dsr.typesType",
       "modules.compliance.dsr.typesDesc",
-      "modules.compliance.dsr.typesGdpr"
+      "modules.compliance.dsr.typesGdpr",
     ],
     rows: [
       ["Access", "modules.compliance.dsr.typesAccessDesc", "Article 15"],
       ["Export", "modules.compliance.dsr.typesExportDesc", "Article 20"],
       ["Erasure", "modules.compliance.dsr.typesErasureDesc", "Article 17"],
       ["Rectification", "modules.compliance.dsr.typesRectificationDesc", "Article 16"],
-      ["Restriction", "modules.compliance.dsr.typesRestrictionDesc", "Article 18"]
-    ]
+      ["Restriction", "modules.compliance.dsr.typesRestrictionDesc", "Article 18"],
+    ],
   },
 
   // ─── DSR Lifecycle ────────────────────────────────────────
@@ -48,12 +48,42 @@ const sections: DocSection[] = [
     titleKey: "modules.compliance.dsr.lifecycleFlowTitle",
     direction: "vertical",
     nodes: [
-      { id: "create", labelKey: "modules.compliance.dsr.nodeSubmit", type: "info", descriptionKey: "modules.compliance.dsr.descSubmit" },
-      { id: "pending", labelKey: "modules.compliance.dsr.nodePending", type: "primary", descriptionKey: "modules.compliance.dsr.descPending" },
-      { id: "processing", labelKey: "modules.compliance.dsr.nodeProcessing", type: "warning", descriptionKey: "modules.compliance.dsr.descProcessing" },
-      { id: "approval", labelKey: "modules.compliance.dsr.nodeApproval", type: "default", descriptionKey: "modules.compliance.dsr.descApproval" },
-      { id: "completed", labelKey: "modules.compliance.dsr.nodeCompleted", type: "success", descriptionKey: "modules.compliance.dsr.descCompleted" },
-      { id: "rejected", labelKey: "modules.compliance.dsr.nodeRejected", type: "danger", descriptionKey: "modules.compliance.dsr.descRejected" }
+      {
+        id: "create",
+        labelKey: "modules.compliance.dsr.nodeSubmit",
+        type: "info",
+        descriptionKey: "modules.compliance.dsr.descSubmit",
+      },
+      {
+        id: "pending",
+        labelKey: "modules.compliance.dsr.nodePending",
+        type: "primary",
+        descriptionKey: "modules.compliance.dsr.descPending",
+      },
+      {
+        id: "processing",
+        labelKey: "modules.compliance.dsr.nodeProcessing",
+        type: "warning",
+        descriptionKey: "modules.compliance.dsr.descProcessing",
+      },
+      {
+        id: "approval",
+        labelKey: "modules.compliance.dsr.nodeApproval",
+        type: "default",
+        descriptionKey: "modules.compliance.dsr.descApproval",
+      },
+      {
+        id: "completed",
+        labelKey: "modules.compliance.dsr.nodeCompleted",
+        type: "success",
+        descriptionKey: "modules.compliance.dsr.descCompleted",
+      },
+      {
+        id: "rejected",
+        labelKey: "modules.compliance.dsr.nodeRejected",
+        type: "danger",
+        descriptionKey: "modules.compliance.dsr.descRejected",
+      },
     ],
     connections: [
       { from: "create", to: "pending", labelKey: "modules.compliance.dsr.conn1" },
@@ -77,7 +107,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "warning",
     titleKey: "modules.compliance.dsr.slaWarningTitle",
-    contentKey: "modules.compliance.dsr.slaWarningContent"
+    contentKey: "modules.compliance.dsr.slaWarningContent",
   },
 
   // ─── Entities Reference ───────────────────────────────────
@@ -93,7 +123,7 @@ const sections: DocSection[] = [
     headers: [
       "modules.compliance.dsr.field",
       "modules.compliance.dsr.type",
-      "modules.compliance.dsr.description"
+      "modules.compliance.dsr.description",
     ],
     rows: [
       ["Id", "Guid", "modules.compliance.dsr.fId"],
@@ -105,7 +135,7 @@ const sections: DocSection[] = [
       ["ErasureConfirmed", "Boolean", "modules.compliance.dsr.fErasureConfirmed"],
       ["ExportFileUrl", "String", "modules.compliance.dsr.fExportFileUrl"],
       ["AssignedTo", "Guid?", "modules.compliance.dsr.fAssignedTo"],
-    ]
+    ],
   },
 
   // ─── Command Handlers ─────────────────────────────────────
@@ -148,7 +178,7 @@ const sections: DocSection[] = [
         
         return Result<Guid>.Success(dsr.Id);
     }
-}`
+}`,
   },
 
   // ─── Webhooks ─────────────────────────────────────────────
@@ -163,7 +193,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "tip",
     titleKey: "modules.compliance.dsr.webhooksSuccessTitle",
-    contentKey: "modules.compliance.dsr.webhooksSuccessContent"
+    contentKey: "modules.compliance.dsr.webhooksSuccessContent",
   },
 
   // ─── API Endpoints ─────────────────────────────────────────
@@ -176,11 +206,41 @@ const sections: DocSection[] = [
   {
     type: "api-table",
     endpoints: [
-      { method: "POST", path: "/api/v1/compliance/dsr", descriptionKey: "modules.compliance.dsr.epSubmit", auth: "AdminOnly", permission: "compliance_dsr.create" },
-      { method: "GET", path: "/api/v1/compliance/dsr", descriptionKey: "modules.compliance.dsr.epList", auth: "AdminOnly", permission: "compliance_dsr.view" },
-      { method: "GET", path: "/api/v1/compliance/dsr/{id}", descriptionKey: "modules.compliance.dsr.epGet", auth: "AdminOnly", permission: "compliance_dsr.view" },
-      { method: "POST", path: "/api/v1/compliance/dsr/{id}/review", descriptionKey: "modules.compliance.dsr.epReview", auth: "AdminOnly", permission: "compliance_dsr.review" },
-      { method: "POST", path: "/api/v1/compliance/dsr/{id}/assign", descriptionKey: "modules.compliance.dsr.epAssign", auth: "AdminOnly", permission: "compliance_dsr.manage" },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr",
+        descriptionKey: "modules.compliance.dsr.epSubmit",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.create",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/dsr",
+        descriptionKey: "modules.compliance.dsr.epList",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/dsr/{id}",
+        descriptionKey: "modules.compliance.dsr.epGet",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr/{id}/review",
+        descriptionKey: "modules.compliance.dsr.epReview",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.review",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr/{id}/assign",
+        descriptionKey: "modules.compliance.dsr.epAssign",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.manage",
+      },
     ],
   },
 
@@ -207,14 +267,14 @@ const sections: DocSection[] = [
   "regulationCode": "GDPR",
   "subjectEmail": "user@example.com"
 }`,
-        codeLanguage: "json"
+        codeLanguage: "json",
       },
       {
         titleKey: "modules.compliance.dsr.step3Title",
         contentKey: "modules.compliance.dsr.step3Content",
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 registerPage({
@@ -224,9 +284,6 @@ registerPage({
   category: "modules",
   order: 2,
   sections,
-  relatedSlugs: [
-    "modules/compliance-overview",
-    "infrastructure/background-jobs"
-  ],
+  relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
   lastUpdated: "2026-05-03",
 });

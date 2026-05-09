@@ -44,10 +44,7 @@ import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import type { WorkspaceGroup } from "@core/navigation";
 
 /** Filter menu tree to only nodes belonging to a workspace (by workspaceId) */
-function filterByWorkspace(
-  nodes: MenuTreeNode[],
-  workspaceId: string | null
-): MenuTreeNode[] {
+function filterByWorkspace(nodes: MenuTreeNode[], workspaceId: string | null): MenuTreeNode[] {
   if (!workspaceId) return nodes;
 
   const filterRecursive = (items: MenuTreeNode[]): MenuTreeNode[] =>
@@ -225,9 +222,7 @@ export function MenusView() {
                     count={workspaceCounts(ws.workspaceId ?? ws.workspaceKey)}
                     isActive={filterWorkspaceId === (ws.workspaceId ?? ws.workspaceKey)}
                     accentColor={ws.accentColor}
-                    onClick={() =>
-                      setFilterWorkspaceId(ws.workspaceId ?? ws.workspaceKey)
-                    }
+                    onClick={() => setFilterWorkspaceId(ws.workspaceId ?? ws.workspaceKey)}
                   />
                 ))}
             </div>
@@ -446,16 +441,12 @@ function WorkspaceFilterTab({
             : undefined
       }
     >
-      {!accentColor && isActive && (
-        <Layers className="h-3.5 w-3.5" />
-      )}
+      {!accentColor && isActive && <Layers className="h-3.5 w-3.5" />}
       <span>{label}</span>
       <span
         className={cn(
           "rounded-full px-1.5 py-0.5 text-xs leading-none",
-          isActive
-            ? "bg-white/20 text-white"
-            : "bg-muted text-muted-foreground"
+          isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
         )}
       >
         {count}
@@ -534,7 +525,7 @@ function WorkspaceOverviewPanel({
 
           {/* Unassigned items tile */}
           {unassignedCount > 0 && (
-            <div className="flex items-center justify-between rounded-lg border border-dashed px-4 py-3 bg-muted/10">
+            <div className="flex items-center justify-between rounded-lg border border-dashed bg-muted/10 px-4 py-3">
               <div className="flex items-center gap-3">
                 <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/40" />
                 <span className="text-sm text-muted-foreground">

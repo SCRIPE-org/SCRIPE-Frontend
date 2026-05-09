@@ -140,8 +140,7 @@ export const zh = {
     },
     stateManagement: {
       title: "状态管理",
-      description:
-        "Clean Architecture 分层、后端管道、前端 SOLID 流程以及模块边界规则。",
+      description: "Clean Architecture 分层、后端管道、前端 SOLID 流程以及模块边界规则。",
       intro:
         "NEXORA 使用三种状态管理工具，每种用于特定类别：TanStack Query 用于服务器数据（API 结果），Zustand 用于全局 UI 状态（认证、侧边栏、主题），useState 用于组件本地状态（表单、切换开关）。",
       decisionTitle: "决策矩阵",

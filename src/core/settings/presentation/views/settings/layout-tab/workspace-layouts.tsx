@@ -215,7 +215,8 @@ function WorkspacePreview({ variant }: { variant: string }) {
               className="h-0.5 rounded-full"
               style={{
                 width: `${w}%`,
-                background: i === 0 ? "oklch(0.65 0.18 var(--workspace-hue, 250))" : "rgba(148,163,184,0.3)",
+                background:
+                  i === 0 ? "oklch(0.65 0.18 var(--workspace-hue, 250))" : "rgba(148,163,184,0.3)",
               }}
             />
           ))}

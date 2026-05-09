@@ -6,8 +6,17 @@ import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function SplitLeftLayout({
-  branding, slotConfig, formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep,
+  branding,
+  slotConfig,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
 }: LoginLayoutProps) {
   return (
     <div

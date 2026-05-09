@@ -2,7 +2,10 @@ import { StateCreator } from "zustand";
 import { NavigationStoreState, WorkspaceSlice } from "../types";
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 
-export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], WorkspaceSlice> = (set, get) => ({
+export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], WorkspaceSlice> = (
+  set,
+  get
+) => ({
   workspaceGroups: [],
   workspaces: new Map<string, NavigationData>(),
   defaultWorkspace: null,
@@ -10,7 +13,9 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
   initializeDefaultWorkspace: (data, groups) => {
     const current = get().allRoutes;
     const merged = new Set(current);
-    data.routes.forEach((r) => { if (r) merged.add(r); });
+    data.routes.forEach((r) => {
+      if (r) merged.add(r);
+    });
     const sorted = [...merged].sort((a, b) => b.length - a.length);
 
     const defaultGroup = groups.find((g) => g.workspaceType === "Admin") ?? groups[0];
@@ -21,10 +26,7 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       allRoutesSorted: sorted,
       workspaceGroups: groups,
       defaultWorkspace: data,
-      workspaces: new Map(state.workspaces).set(
-        defaultKey ?? "__default__",
-        data
-      ),
+      workspaces: new Map(state.workspaces).set(defaultKey ?? "__default__", data),
       activeWorkspaceKey: state.activeWorkspaceKey ?? defaultKey,
       isInitialLoading: false,
     }));
@@ -33,7 +35,9 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
   setWorkspaceData: (key, data) => {
     const current = get().allRoutes;
     const merged = new Set(current);
-    data.routes.forEach((r) => { if (r) merged.add(r); });
+    data.routes.forEach((r) => {
+      if (r) merged.add(r);
+    });
     const sorted = [...merged].sort((a, b) => b.length - a.length);
 
     set((state) => ({
@@ -60,9 +64,8 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
 
   getPageActions: (pathname) => {
     const items = get().getActiveRootMenuItems();
-    const normalized = pathname.endsWith("/") && pathname !== "/"
-      ? pathname.slice(0, -1)
-      : pathname;
+    const normalized =
+      pathname.endsWith("/") && pathname !== "/" ? pathname.slice(0, -1) : pathname;
 
     const queue = [...items];
     while (queue.length > 0) {

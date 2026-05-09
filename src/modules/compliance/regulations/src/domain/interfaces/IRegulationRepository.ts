@@ -1,9 +1,9 @@
 import type { Regulation } from "../entities/Regulation";
-import type { 
-  CreateRegulationRequest, 
-  UpdateRegulationRequest, 
-  AddConsentPurposeRequest, 
-  UpdateConsentPurposeRequest 
+import type {
+  CreateRegulationRequest,
+  UpdateRegulationRequest,
+  AddConsentPurposeRequest,
+  UpdateConsentPurposeRequest,
 } from "../../data/models/RegulationModels";
 
 export interface IRegulationRepository {

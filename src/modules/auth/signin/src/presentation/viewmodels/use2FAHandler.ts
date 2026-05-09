@@ -87,7 +87,9 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
 
       hasTriggeredRedirect.current = true;
       const targetPath = mustChange ? "/change-password" : redirectPath;
-      setTimeout(() => { router.replace(targetPath); }, 100);
+      setTimeout(() => {
+        router.replace(targetPath);
+      }, 100);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t("auth.twoFactor.invalidCode");
       setError(errorMessage);
@@ -95,9 +97,19 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
       setIsVerifying2FA(false);
     }
   }, [
-    twoFactorCode, formIdentifier, formPassword, tenantId,
-    authRepository, setAuth, operationSuccess,
-    queryClient, router, t, setError, redirectPath, hasTriggeredRedirect,
+    twoFactorCode,
+    formIdentifier,
+    formPassword,
+    tenantId,
+    authRepository,
+    setAuth,
+    operationSuccess,
+    queryClient,
+    router,
+    t,
+    setError,
+    redirectPath,
+    hasTriggeredRedirect,
   ]);
 
   const toggleBackupCode = useCallback(() => {
@@ -119,9 +131,13 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
   }, [setLoginStep, setError]);
 
   return {
-    twoFactorCode, setTwoFactorCode,
-    useBackupCode, isVerifying2FA,
-    handleVerify2FA, toggleBackupCode,
-    reset2FA, enterTwoFactor,
+    twoFactorCode,
+    setTwoFactorCode,
+    useBackupCode,
+    isVerifying2FA,
+    handleVerify2FA,
+    toggleBackupCode,
+    reset2FA,
+    enterTwoFactor,
   };
 }

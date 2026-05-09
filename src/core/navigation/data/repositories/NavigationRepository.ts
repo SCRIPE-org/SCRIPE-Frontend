@@ -59,7 +59,9 @@ export class NavigationRepository implements INavigationRepository {
         ? ((payload as RoutesApiResponse).workspaceRouteMap as Record<string, string[]>)
         : {};
 
-    appLogger.debug(`[NavigationRepository] Got ${routes.length} total routes across ${Object.keys(workspaceRouteMap).length} workspace(s)`);
+    appLogger.debug(
+      `[NavigationRepository] Got ${routes.length} total routes across ${Object.keys(workspaceRouteMap).length} workspace(s)`
+    );
 
     return { routes, workspaceRouteMap };
   }
@@ -76,7 +78,9 @@ export class NavigationRepository implements INavigationRepository {
    * If no workspaceKey is provided, fetches the default workspace.
    */
   async fetchWorkspaceMenu(workspaceKey?: string): Promise<NavigationData> {
-    appLogger.debug(`[NavigationRepository] Fetching workspace menu for "${workspaceKey || "default"}"…`);
+    appLogger.debug(
+      `[NavigationRepository] Fetching workspace menu for "${workspaceKey || "default"}"…`
+    );
 
     const endpoint =
       workspaceKey && workspaceKey !== "admin"

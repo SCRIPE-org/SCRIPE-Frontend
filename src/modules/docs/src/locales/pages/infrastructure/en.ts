@@ -19,20 +19,20 @@ export const en = {
 
       // IAutoRegisteredJob Contract
       nodeConfig: "appsettings.json\nProvider + Per-Job Overrides",
-        descConfig: "Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
-        nodeStartup: "BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
-        descStartup: "Reads provider, discovers all jobs, schedules them",
-        nodeDiscovery: "Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
-        descDiscovery: "Scans DI container for every registered IAutoRegisteredJob",
-        nodeSchedule: "Schedule Each Job\nIf Enabled -> Register with provider API",
-        descSchedule: "Uses CronExpression from appsettings override or job default",
-        nodeExecute: "job.ExecuteAsync(ct)\nAt every cron tick",
-        descExecute: "Provider-agnostic - job has zero knowledge of which provider runs it",
-        conn1: "drives",
-        conn2: "triggers",
-        conn3: "for each job",
-        conn4: "on cron tick",
-        contractTitle: "IAutoRegisteredJob Contract",
+      descConfig: "Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+      nodeStartup: "BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+      descStartup: "Reads provider, discovers all jobs, schedules them",
+      nodeDiscovery: "Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+      descDiscovery: "Scans DI container for every registered IAutoRegisteredJob",
+      nodeSchedule: "Schedule Each Job\nIf Enabled -> Register with provider API",
+      descSchedule: "Uses CronExpression from appsettings override or job default",
+      nodeExecute: "job.ExecuteAsync(ct)\nAt every cron tick",
+      descExecute: "Provider-agnostic - job has zero knowledge of which provider runs it",
+      conn1: "drives",
+      conn2: "triggers",
+      conn3: "for each job",
+      conn4: "on cron tick",
+      contractTitle: "IAutoRegisteredJob Contract",
       contractIntro:
         "Every recurring background job in NEXORA implements one interface: IAutoRegisteredJob. This is the complete contract — three properties and one method. The interface deliberately excludes any provider-specific concepts (no Hangfire attributes, no Quartz annotations). The job has zero knowledge of which provider executes it.",
 
@@ -95,14 +95,17 @@ export const en = {
 
       // Job purpose descriptions
       jobOutboxCleanup: "Deletes processed outbox messages older than 7 days",
-      jobIdentitySoftDelete: "Permanently deletes soft-deleted Identity entities after retention period",
+      jobIdentitySoftDelete:
+        "Permanently deletes soft-deleted Identity entities after retention period",
       jobEmailProcessing: "Polls and dispatches deferred emails via EmailJobProcessor",
       jobWebhookRetry: "Processes persistent webhook retry queue in batches of 50",
       jobWebhookLogCleanup: "Deletes webhook delivery logs older than 90 days",
       identityNote:
         "EmailProcessingJob and WebhookRetryJob/WebhookLogCleanupJob are core infrastructure jobs registered in the Identity module's DI because they depend on Identity-scoped services (IUnitOfWork, IWebhookRepository, EmailJobProcessor).",
-      jobEntitlementsSoftDelete: "Permanently deletes soft-deleted Entitlements entities after retention period",
-      jobSubscriptionReconciliation: "Expires trials, renews active subscriptions, handles grace periods",
+      jobEntitlementsSoftDelete:
+        "Permanently deletes soft-deleted Entitlements entities after retention period",
+      jobSubscriptionReconciliation:
+        "Expires trials, renews active subscriptions, handles grace periods",
       jobTrialNotification: "Sends reminders for trials expiring in 7, 3, or 1 day",
       jobDunningNotification: "Payment failure notices with escalating urgency",
       jobEditionRollout: "Applies scheduled edition upgrades and downgrades",
@@ -113,7 +116,8 @@ export const en = {
       jobCommissionInvoicing: "Monthly commission invoice rollup",
       jobCommissionAutoCharge: "Retries failed commission auto-charges",
       jobPaymobRecurringBilling: "Paymob card-on-file recurring charges",
-      jobComplianceSoftDelete: "Permanently deletes soft-deleted Compliance entities after retention period",
+      jobComplianceSoftDelete:
+        "Permanently deletes soft-deleted Compliance entities after retention period",
       jobDsrExecution: "Executes pending Data Subject Requests every 5 minutes",
       jobDsrEscalation: "Escalates DSRs approaching their SLA deadline",
       jobDsrExportCleanup: "Deletes expired DSR export files",
@@ -152,7 +156,8 @@ export const en = {
       flowScanLabel: "Discover ISoftDeletable",
       flowScanDesc: "Reflection scan on DbContext for entities implementing ISoftDeletable",
       flowFilterLabel: "Filter Expired Entities",
-      flowFilterDesc: "Find records where IsDeleted = true AND DeletedAt < DateTime.UtcNow.AddDays(-30)",
+      flowFilterDesc:
+        "Find records where IsDeleted = true AND DeletedAt < DateTime.UtcNow.AddDays(-30)",
       flowCascadeLabel: "FK-Aware Cascading",
       flowCascadeDesc: "Handles foreign key constraints in correct deletion order",
       flowExecuteLabel: "Hard Delete",

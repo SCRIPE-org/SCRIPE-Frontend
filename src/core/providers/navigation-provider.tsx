@@ -26,14 +26,7 @@
  *  defaultWorkspace) use granular Zustand selectors.
  */
 
-import {
-  createContext,
-  useContext,
-  useCallback,
-  useEffect,
-  useRef,
-  useMemo,
-} from "react";
+import { createContext, useContext, useCallback, useEffect, useRef, useMemo } from "react";
 import type React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -53,7 +46,8 @@ import { CACHE_EXPIRY } from "@core/config/storage-keys";
 export const NAV_QUERY_KEYS = {
   routes: (contextKey: string) => ["navigation", "routes", contextKey] as const,
   defaultWorkspace: (contextKey: string) => ["navigation", "default", contextKey] as const,
-  workspace: (key: string, contextKey: string) => ["navigation", "workspace", key, contextKey] as const,
+  workspace: (key: string, contextKey: string) =>
+    ["navigation", "workspace", key, contextKey] as const,
 };
 
 // ── Context (minimal surface) ───────────────────────────────────────────────
@@ -92,7 +86,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // All WRITE operations use getState() so this provider doesn't subscribe to
   // the full store snapshot and re-render on unrelated state changes.
   const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
-  const defaultWorkspace  = useNavigationStore((s) => s.defaultWorkspace);
+  const defaultWorkspace = useNavigationStore((s) => s.defaultWorkspace);
   // Read persisted contextKey exactly once — used in the one-time guard effect.
   const persistedContextKey = useNavigationStore((s) => s.contextKey);
 
@@ -110,11 +104,13 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     guardedOnce.current = true;
 
     if (persistedContextKey && persistedContextKey !== contextKey) {
-      appLogger.auth(`[NavigationProvider] Context mismatch (${persistedContextKey} ≠ ${contextKey}) — resetting store`);
+      appLogger.auth(
+        `[NavigationProvider] Context mismatch (${persistedContextKey} ≠ ${contextKey}) — resetting store`
+      );
       useNavigationStore.getState().reset();
     }
-  // persistedContextKey is read once at guard time — after that guardedOnce prevents re-runs.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // persistedContextKey is read once at guard time — after that guardedOnce prevents re-runs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, contextKey]);
 
   // ── Query 1: Eager routes load ────────────────────────────────────────────
@@ -136,9 +132,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     queryKey: NAV_QUERY_KEYS.defaultWorkspace(contextKey),
     queryFn: async () => {
       const data = await navigationRepository.fetchDefaultWorkspace();
-      const groups = (data.workspaceGroups ?? []).map(
-        (g) => new WorkspaceGroup(g)
-      );
+      const groups = (data.workspaceGroups ?? []).map((g) => new WorkspaceGroup(g));
       useNavigationStore.getState().initializeDefaultWorkspace(data, groups);
       return data;
     },
@@ -163,10 +157,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         const data = await navigationRepository.fetchWorkspaceMenu(workspaceKey);
         useNavigationStore.getState().setWorkspaceData(workspaceKey, data);
         // Seed TanStack Query cache too — so it knows this is fresh
-        queryClient.setQueryData(
-          NAV_QUERY_KEYS.workspace(workspaceKey, contextKey),
-          data
-        );
+        queryClient.setQueryData(NAV_QUERY_KEYS.workspace(workspaceKey, contextKey), data);
         return data;
       } finally {
         useNavigationStore.getState().setIsWorkspaceSwitching(false);
@@ -218,7 +209,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     }
     if (prevTenantRef.current !== tenantId) {
       prevTenantRef.current = tenantId;
-      appLogger.auth(`[NavigationProvider] Tenant changed (${prevTenantRef.current} → ${tenantId}) — resetting navigation`);
+      appLogger.auth(
+        `[NavigationProvider] Tenant changed (${prevTenantRef.current} → ${tenantId}) — resetting navigation`
+      );
       useNavigationStore.getState().reset();
       queryClient.invalidateQueries({ queryKey: ["navigation"] });
     }
@@ -227,22 +220,21 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ── Context value (backwards-compat delegation to store) ─────────────────
   // isInitialLoading + defaultWorkspace come from granular selectors above.
   // All method calls go through getState() to stay decoupled from the render cycle.
-  const value = useMemo<NavigationContextType>(() => ({
-    fetchWorkspaceMenu,
-    refreshNavigation,
-    // Legacy compat — reads always go via getState() so no stale closure risk
-    hasPageAccess: (pathname) => useNavigationStore.getState().hasRouteAccess(pathname),
-    getPageActions: (pathname) => useNavigationStore.getState().getPageActions(pathname),
-    getRoutes: () => Array.from(useNavigationStore.getState().allRoutes),
-    navigationData: defaultWorkspace,
-    isLoading: isInitialLoading,
-  }), [fetchWorkspaceMenu, refreshNavigation, defaultWorkspace, isInitialLoading]);
-
-  return (
-    <NavigationContext.Provider value={value}>
-      {children}
-    </NavigationContext.Provider>
+  const value = useMemo<NavigationContextType>(
+    () => ({
+      fetchWorkspaceMenu,
+      refreshNavigation,
+      // Legacy compat — reads always go via getState() so no stale closure risk
+      hasPageAccess: (pathname) => useNavigationStore.getState().hasRouteAccess(pathname),
+      getPageActions: (pathname) => useNavigationStore.getState().getPageActions(pathname),
+      getRoutes: () => Array.from(useNavigationStore.getState().allRoutes),
+      navigationData: defaultWorkspace,
+      isLoading: isInitialLoading,
+    }),
+    [fetchWorkspaceMenu, refreshNavigation, defaultWorkspace, isInitialLoading]
   );
+
+  return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;
 }
 
 // ── Hooks ───────────────────────────────────────────────────────────────────

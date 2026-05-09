@@ -330,10 +330,13 @@ export const es = {
     compliance: {
       overview: {
         title: "Módulo de Cumplimiento",
-        description: "Automatización de cumplimiento de GDPR, CCPA y PDPA — regulaciones, manejo de DSR, gestión de consentimiento, retención de datos, inventario y reportes.",
-        intro: "El módulo de Cumplimiento es el motor regulatorio integrado de NEXORA. Ayuda a los operadores de la plataforma y a sus inquilinos a cumplir con las principales leyes de protección de datos (GDPR, CCPA, PDPA) mediante herramientas automatizadas para gestionar solicitudes de sujetos de datos, registros de consentimiento, políticas de retención y la generación de reportes listos para auditorías.",
+        description:
+          "Automatización de cumplimiento de GDPR, CCPA y PDPA — regulaciones, manejo de DSR, gestión de consentimiento, retención de datos, inventario y reportes.",
+        intro:
+          "El módulo de Cumplimiento es el motor regulatorio integrado de NEXORA. Ayuda a los operadores de la plataforma y a sus inquilinos a cumplir con las principales leyes de protección de datos (GDPR, CCPA, PDPA) mediante herramientas automatizadas para gestionar solicitudes de sujetos de datos, registros de consentimiento, políticas de retención y la generación de reportes listos para auditorías.",
         infoTitle: "Aviso de Cumplimiento",
-        infoContent: "El módulo de Cumplimiento es crítico para mantener la adherencia regulatoria y evitar multas. Asegúrese de que todas las funciones estén mapeadas correctamente a las políticas de procesamiento de datos.",
+        infoContent:
+          "El módulo de Cumplimiento es crítico para mantener la adherencia regulatoria y evitar multas. Asegúrese de que todas las funciones estén mapeadas correctamente a las políticas de procesamiento de datos.",
         descDsr: "Maneja las Solicitudes de Sujetos (Exportación, Borrado, Rectificación)",
         descConsent: "Seguimiento inmutable de los estados y capturas de consentimiento",
         descRet: "Hace cumplir las políticas de destrucción de datos según la antigüedad",
@@ -353,11 +356,14 @@ export const es = {
         th1: "Componente",
         th2: "Responsabilidad",
         tr1_1: "DsrListViewModel",
-        tr1_2: "Maneja la paginación, filtrado y asignación de las Solicitudes de Sujetos de Datos entrantes.",
+        tr1_2:
+          "Maneja la paginación, filtrado y asignación de las Solicitudes de Sujetos de Datos entrantes.",
         tr2_1: "ConsentRecordView",
-        tr2_2: "Representa la captura de consentimiento inmutable junto con metadatos del agente de usuario y de fecha y hora.",
+        tr2_2:
+          "Representa la captura de consentimiento inmutable junto con metadatos del agente de usuario y de fecha y hora.",
         whatIsTitle: "¿Qué es el Módulo de Cumplimiento?",
-        whatIsIntro: "El módulo de Cumplimiento proporciona seis subsistemas interconectados que cubren todo el ciclo de vida de cumplimiento. En lugar de construir herramientas desde cero, los inquilinos de NEXORA obtienen un sistema listo para producción.",
+        whatIsIntro:
+          "El módulo de Cumplimiento proporciona seis subsistemas interconectados que cubren todo el ciclo de vida de cumplimiento. En lugar de construir herramientas desde cero, los inquilinos de NEXORA obtienen un sistema listo para producción.",
         subModulesTitle: "Seis Subsistemas",
         subModulesIntro: "Cada subsistema maneja un dominio de cumplimiento específico:",
         sub1: "Perfiles de Regulación — Almacena los marcos regulatorios (GDPR, CCPA, PDPA) bajo los cuales opera la plataforma.",
@@ -367,30 +373,42 @@ export const es = {
         sub5: "Inventario de Datos — Un registro de todas las categorías de datos personales que la plataforma procesa.",
         sub6: "Reportes de Cumplimiento — Genera reportes asíncronos listos para auditorías (Resumen GDPR, Resumen DSR, Auditoría de Consentimiento, etc.).",
         backendTitle: "Arquitectura Backend",
-        backendIntro: "Sigue la disposición estándar de 3 proyectos de NEXORA (Domain / Application / Infrastructure) con ComplianceDbContext.",
+        backendIntro:
+          "Sigue la disposición estándar de 3 proyectos de NEXORA (Domain / Application / Infrastructure) con ComplianceDbContext.",
         frontendTitle: "Arquitectura Frontend",
-        frontendIntro: "El frontend está organizado como seis submódulos independientes bajo src/modules/compliance/, cada uno con sus propias capas.",
+        frontendIntro:
+          "El frontend está organizado como seis submódulos independientes bajo src/modules/compliance/, cada uno con sus propias capas.",
         endpointsTitle: "Resumen de Endpoints API",
-        endpointsIntro: "Todos los endpoints están bajo /api/v1/compliances/ y requieren autenticación con el permiso compliance.view.",
+        endpointsIntro:
+          "Todos los endpoints están bajo /api/v1/compliances/ y requieren autenticación con el permiso compliance.view.",
       },
       dsr: {
         title: "Solicitudes de Sujetos de Datos (DSR)",
-        description: "Gestión de solicitudes de derechos GDPR/CCPA — exportación, borrado, rectificación y restricción — con seguimiento del ciclo de vida.",
-        intro: "Las Solicitudes de Sujetos de Datos (DSR) son peticiones formales de individuos que ejercen sus derechos. El módulo proporciona un flujo de trabajo DSR completo: envío, asignación, procesamiento y cierre.",
+        description:
+          "Gestión de solicitudes de derechos GDPR/CCPA — exportación, borrado, rectificación y restricción — con seguimiento del ciclo de vida.",
+        intro:
+          "Las Solicitudes de Sujetos de Datos (DSR) son peticiones formales de individuos que ejercen sus derechos. El módulo proporciona un flujo de trabajo DSR completo: envío, asignación, procesamiento y cierre.",
         typesTitle: "Tipos de Solicitud",
-        typesIntro: "El sistema soporta cuatro tipos de DSR como se define en el Artículo 17 de GDPR y CCPA:",
-        type1: "Exportación — Solicitud de portabilidad de datos. El sujeto desea una copia de sus datos personales.",
-        type2: "Borrado — Derecho al olvido. Todos los datos personales deben ser eliminados o anonimizados.",
+        typesIntro:
+          "El sistema soporta cuatro tipos de DSR como se define en el Artículo 17 de GDPR y CCPA:",
+        type1:
+          "Exportación — Solicitud de portabilidad de datos. El sujeto desea una copia de sus datos personales.",
+        type2:
+          "Borrado — Derecho al olvido. Todos los datos personales deben ser eliminados o anonimizados.",
         type3: "Rectification — Solicitud de corrección. Los datos inexactos deben actualizarse.",
-        type4: "Restricción — Restricción del procesamiento. Los datos pueden conservarse pero no procesarse activamente.",
+        type4:
+          "Restricción — Restricción del procesamiento. Los datos pueden conservarse pero no procesarse activamente.",
         lifecycleTitle: "Ciclo de vida de la solicitud",
         lifecycleIntro: "Las DSR pasan por un conjunto definido de estados:",
         status1: "Pendiente (Pending) — Estado inicial cuando se recibe la solicitud.",
         status2: "En Progreso (InProgress) — Un oficial de cumplimiento ha sido asignado.",
-        status3: "Completada (Completed) — La solicitud ha sido cumplida (datos exportados, borrados, corregidos o restringidos).",
-        status4: "Rechazada (Rejected) — La solicitud fue rechazada (ej. insuficiente verificación de identidad).",
+        status3:
+          "Completada (Completed) — La solicitud ha sido cumplida (datos exportados, borrados, corregidos o restringidos).",
+        status4:
+          "Rechazada (Rejected) — La solicitud fue rechazada (ej. insuficiente verificación de identidad).",
         slasTitle: "Requisitos de SLA de GDPR",
-        slasIntro: "Bajo el Artículo 12 de GDPR, los controladores deben responder a las DSR dentro de los 30 días (extensible a 3 meses para casos complejos). NEXORA rastrea esto.",
+        slasIntro:
+          "Bajo el Artículo 12 de GDPR, los controladores deben responder a las DSR dentro de los 30 días (extensible a 3 meses para casos complejos). NEXORA rastrea esto.",
         lifecycleFlowTitle: "Flujo de Vida DSR",
         nodeSubmit: "Enviar solicitud",
         descSubmit: "El sujeto solicita Exportación, Borrado o Rectificación",
@@ -399,7 +417,8 @@ export const es = {
         nodeProcessing: "Estado: En Progreso",
         descProcessing: "DsrExecutionJob procesa los módulos vía ISuspendableModule",
         nodeApproval: "Esperar a Admin",
-        descApproval: "Acciones nucleares (Borrado) requieren confirmación manual del administrador",
+        descApproval:
+          "Acciones nucleares (Borrado) requieren confirmación manual del administrador",
         nodeCompleted: "Estado: Completada",
         descCompleted: "Exportación generada o datos borrados; SLA cumplido",
         nodeRejected: "Estado: Rechazada",
@@ -430,8 +449,10 @@ export const es = {
       },
       consent: {
         title: "Gestión de Consentimiento",
-        description: "Registrar, rastrear y auditar los consentimientos de los usuarios para cumplir con el Artículo 6 de GDPR y CCPA.",
-        intro: "La Gestión de Consentimiento registra cada vez que un usuario otorga o revoca su consentimiento. NEXORA almacena toda la pista de auditoría.",
+        description:
+          "Registrar, rastrear y auditar los consentimientos de los usuarios para cumplir con el Artículo 6 de GDPR y CCPA.",
+        intro:
+          "La Gestión de Consentimiento registra cada vez que un usuario otorga o revoca su consentimiento. NEXORA almacena toda la pista de auditoría.",
         purposesTitle: "Propósitos del Consentimiento",
         purposesIntro: "Cada registro de consentimiento está vinculado a un propósito específico:",
         purpose1: "Marketing — Emails de marketing y comunicaciones promocionales.",
@@ -439,9 +460,11 @@ export const es = {
         purpose3: "Terceros — Compartición de datos con servicios de terceros.",
         purpose4: "Personalización — Contenido personalizado y recomendaciones.",
         gdprTitle: "Base Legal GDPR",
-        gdprIntro: "El Artículo 6 de GDPR establece que el consentimiento debe ser: libremente dado, específico, informado e inequívoco. NEXORA registra el texto exacto mostrado al usuario.",
+        gdprIntro:
+          "El Artículo 6 de GDPR establece que el consentimiento debe ser: libremente dado, específico, informado e inequívoco. NEXORA registra el texto exacto mostrado al usuario.",
         withdrawalTitle: "Retirada del Consentimiento",
-        withdrawalIntro: "Los usuarios pueden retirar su consentimiento en cualquier momento. El ConsentRecord se actualiza con WithdrawnAt.",
+        withdrawalIntro:
+          "Los usuarios pueden retirar su consentimiento en cualquier momento. El ConsentRecord se actualiza con WithdrawnAt.",
         flowTitle: "Flujo de Estado de Consentimiento",
         nodePurpose: "Propósito del Consentimiento",
         descPurpose: "Define a qué se está consintiendo (ej. Marketing)",
@@ -466,20 +489,25 @@ export const es = {
       },
       retention: {
         title: "Políticas de Retención de Datos",
-        description: "Definir periodos de retención de datos y acciones automatizadas de expiración para el cumplimiento del Artículo 5(1)(e) del GDPR.",
-        intro: "Las Políticas de Retención de Datos definen cuánto tiempo se deben conservar las categorías de datos. NEXORA hace cumplir estas políticas automáticamente a través de trabajos en segundo plano.",
+        description:
+          "Definir periodos de retención de datos y acciones automatizadas de expiración para el cumplimiento del Artículo 5(1)(e) del GDPR.",
+        intro:
+          "Las Políticas de Retención de Datos definen cuánto tiempo se deben conservar las categorías de datos. NEXORA hace cumplir estas políticas automáticamente a través de trabajos en segundo plano.",
         policiesTitle: "Configuración de la Política",
         policiesIntro: "Cada política de retención especifica:",
-        field1: "DataCategory — El tipo de datos (ej. 'Perfiles de Usuario', 'Registros de Consentimiento').",
+        field1:
+          "DataCategory — El tipo de datos (ej. 'Perfiles de Usuario', 'Registros de Consentimiento').",
         field2: "RetentionDays — Cuántos días deben conservarse los datos.",
-        field3: "ExpiryAction — Qué ocurre cuando el periodo expira: Eliminar (Delete) o Anonimizar (Anonymize).",
+        field3:
+          "ExpiryAction — Qué ocurre cuando el periodo expira: Eliminar (Delete) o Anonimizar (Anonymize).",
         field4: "RegulationCode — Qué regulación exige esto (GDPR, CCPA, etc.).",
         actionsTitle: "Acciones de Expiración",
         actionsIntro: "Al expirar, NEXORA aplica una de dos acciones:",
         action1: "Eliminar (Delete) — Elimina permanentemente todos los registros.",
         action2: "Anonimizar (Anonymize) — Reemplaza la PII con tokens seudónimos.",
         automationTitle: "Aplicación Automatizada",
-        automationIntro: "La tarea RetentionEnforcementJob se ejecuta diariamente escaneando políticas y aplicando la acción. Se crea un registro de auditoría RetentionExecution.",
+        automationIntro:
+          "La tarea RetentionEnforcementJob se ejecuta diariamente escaneando políticas y aplicando la acción. Se crea un registro de auditoría RetentionExecution.",
         nodePolicy: "Política de Retención",
         descPolicy: "Define el tipo de entidad, límite de edad y estrategia",
         nodeEnforcement: "Tarea de Aplicación de Retención",
@@ -500,8 +528,10 @@ export const es = {
       },
       inventory: {
         title: "Inventario de Datos",
-        description: "Un registro de todas las categorías de datos personales procesadas — requerido por el Artículo 30 del GDPR (RoPA).",
-        intro: "El Inventario de Datos es un registro estructurado. Según el Artículo 30 del GDPR, los controladores deben mantener un Registro de Actividades de Procesamiento (RoPA).",
+        description:
+          "Un registro de todas las categorías de datos personales procesadas — requerido por el Artículo 30 del GDPR (RoPA).",
+        intro:
+          "El Inventario de Datos es un registro estructurado. Según el Artículo 30 del GDPR, los controladores deben mantener un Registro de Actividades de Procesamiento (RoPA).",
         fieldsTitle: "Campos del Inventario",
         fieldsIntro: "Cada elemento documenta:",
         field1: "DataCategory — Nombre legible de la categoría (ej. 'Direcciones de Email').",
@@ -512,7 +542,8 @@ export const es = {
         field6: "RetentionPeriod — Cuánto tiempo se conservan.",
         field7: "ThirdPartySharing — Si los datos se comparten con terceros.",
         ropaTitle: "Cumplimiento del Artículo 30",
-        ropaIntro: "Organizaciones con más de 250 empleados deben mantener un RoPA. El inventario de NEXORA sirve como un RoPA en vivo y exportable.",
+        ropaIntro:
+          "Organizaciones con más de 250 empleados deben mantener un RoPA. El inventario de NEXORA sirve como un RoPA en vivo y exportable.",
         endpointsTitle: "Endpoints API",
         ep: {
           list: "Listar elementos del inventario (paginado, buscable)",
@@ -524,20 +555,29 @@ export const es = {
       },
       reports: {
         title: "Reportes de Cumplimiento",
-        description: "Generar reportes asíncronos listos para auditorías (Resumen GDPR, DSR, Auditoría de Consentimiento, Retención, Inventario).",
-        intro: "Los Reportes de Cumplimiento son documentos generados de forma asíncrona que proporcionan resúmenes para inspecciones regulatorias o auditorías internas.",
+        description:
+          "Generar reportes asíncronos listos para auditorías (Resumen GDPR, DSR, Auditoría de Consentimiento, Retención, Inventario).",
+        intro:
+          "Los Reportes de Cumplimiento son documentos generados de forma asíncrona que proporcionan resúmenes para inspecciones regulatorias o auditorías internas.",
         reportTypesTitle: "Tipos de Reportes",
         reportTypesIntro: "Hay cinco tipos de reportes disponibles:",
         type1: "Resumen GDPR — Resumen de alto nivel del estado de cumplimiento de GDPR.",
-        type2: "Resumen de Actividad DSR — Estadísticas sobre volumen, tipos y tasas de cumplimiento de DSR.",
-        type3: "Auditoría de Consentimiento — Registro completo de consentimientos otorgados y retirados.",
-        type4: "Análisis de Retención — Estado actual de cumplimiento de todas las políticas activas.",
-        type5: "Exportación de Inventario de Datos — Exportación completa del inventario (RoPA Artículo 30).",
+        type2:
+          "Resumen de Actividad DSR — Estadísticas sobre volumen, tipos y tasas de cumplimiento de DSR.",
+        type3:
+          "Auditoría de Consentimiento — Registro completo de consentimientos otorgados y retirados.",
+        type4:
+          "Análisis de Retención — Estado actual de cumplimiento de todas las políticas activas.",
+        type5:
+          "Exportación de Inventario de Datos — Exportación completa del inventario (RoPA Artículo 30).",
         asyncTitle: "Generación Asíncrona",
-        asyncIntro: "Los reportes se generan de forma asíncrona para no bloquear las peticiones HTTP. Cuando solicita un reporte, el sistema crea un registro ComplianceReport (IsReady=false) y encola la generación.",
-        asyncTip: "Use el botón de Actualizar para comprobar cuándo está listo (generalmente 30-60 segundos).",
+        asyncIntro:
+          "Los reportes se generan de forma asíncrona para no bloquear las peticiones HTTP. Cuando solicita un reporte, el sistema crea un registro ComplianceReport (IsReady=false) y encola la generación.",
+        asyncTip:
+          "Use el botón de Actualizar para comprobar cuándo está listo (generalmente 30-60 segundos).",
         downloadTitle: "Descarga de Reportes",
-        downloadIntro: "Una vez que un reporte está listo (IsReady=true), el DownloadUrl está disponible. Los reportes se retienen por 90 días.",
+        downloadIntro:
+          "Una vez que un reporte está listo (IsReady=true), el DownloadUrl está disponible. Los reportes se retienen por 90 días.",
         endpointsTitle: "Endpoints API",
         ep: {
           list: "Listar todos los reportes de cumplimiento (paginado)",
@@ -546,6 +586,6 @@ export const es = {
           download: "Descargar el archivo del reporte generado",
         },
       },
-    }
+    },
   },
 };

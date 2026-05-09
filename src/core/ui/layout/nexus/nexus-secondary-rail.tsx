@@ -30,7 +30,11 @@ interface NexusSecondaryRailProps {
 }
 
 // ── Secondary Rail ────────────────────────────────────────────────────────────
-export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: NexusSecondaryRailProps) {
+export function NexusSecondaryRail({
+  mobileOpen,
+  onMobileClose,
+  isCollapsed,
+}: NexusSecondaryRailProps) {
   const { activeWorkspace, activeRootItem, isModuleMode, accentColor } = useWorkspace();
   const { language } = useI18n();
   const { resolvedTheme } = useTheme();
@@ -42,14 +46,16 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: N
   // ── Context label ─────────────────────────────────────────────────────────
   const contextLabel = activeWorkspace
     ? (activeWorkspace.getLocalizedName(language) ?? activeWorkspace.workspaceKey.toUpperCase())
-    : (isModuleMode ? "MODULE" : "PLATFORM");
+    : isModuleMode
+      ? "MODULE"
+      : "PLATFORM";
 
   // ── Title: selected root item name ────────────────────────────────────────
   const title = activeRootItem
     ? language === "ar"
       ? activeRootItem.nameAr || activeRootItem.nameEn
       : activeRootItem.nameEn || activeRootItem.nameAr
-    : activeWorkspace?.getLocalizedName(language) ?? "Workspace";
+    : (activeWorkspace?.getLocalizedName(language) ?? "Workspace");
 
   // ── Menu items to display: children of the selected root item ─────────────
   const menuItems: MenuItem[] = activeRootItem?.children ?? [];
@@ -68,7 +74,8 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: N
     flexDirection: "column",
     flexShrink: 0,
     overflow: "hidden",
-    transition: "width 300ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), background 200ms ease, border-inline-end-color 200ms ease",
+    transition:
+      "width 300ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), background 200ms ease, border-inline-end-color 200ms ease",
     zIndex: 9,
     boxShadow: isDark ? "inset -1px 0 0 rgba(255,255,255,0.02)" : "inset -1px 0 0 rgba(0,0,0,0.01)",
   };
@@ -82,11 +89,7 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: N
 
   const railContent = (
     <div style={innerContainerStyle}>
-      <RailHeader
-        contextLabel={contextLabel}
-        title={title}
-        palette={palette}
-      />
+      <RailHeader contextLabel={contextLabel} title={title} palette={palette} />
       <RailContent
         menuItems={menuItems}
         pathname={pathname}
@@ -100,7 +103,7 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: N
   return (
     <>
       {/* Desktop */}
-      <aside style={railStyle} className="hidden lg:flex lg:flex-col relative">
+      <aside style={railStyle} className="relative hidden lg:flex lg:flex-col">
         {railContent}
       </aside>
 
@@ -132,7 +135,13 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: N
           >
             <div style={{ width: 260, height: "100%", display: "flex", flexDirection: "column" }}>
               <RailHeader contextLabel={contextLabel} title={title} palette={palette} />
-              <RailContent menuItems={menuItems} pathname={pathname} palette={palette} language={language} onNavigate={handleNavigate} />
+              <RailContent
+                menuItems={menuItems}
+                pathname={pathname}
+                palette={palette}
+                language={language}
+                onNavigate={handleNavigate}
+              />
             </div>
           </aside>
         </>
@@ -140,5 +149,3 @@ export function NexusSecondaryRail({ mobileOpen, onMobileClose, isCollapsed }: N
     </>
   );
 }
-
-

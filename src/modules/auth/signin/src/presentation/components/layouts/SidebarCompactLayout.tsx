@@ -5,8 +5,16 @@ import { MobileLogo, DesktopHeading, LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function SidebarCompactLayout({
-  formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep, t,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
+  t,
 }: LoginLayoutProps) {
   return (
     <div

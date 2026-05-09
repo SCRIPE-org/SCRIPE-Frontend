@@ -346,9 +346,7 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async getResolvedFeatures(
-    tenantId: string
-  ): Promise<
+  async getResolvedFeatures(tenantId: string): Promise<
     Array<{
       featureId: string;
       key: string;

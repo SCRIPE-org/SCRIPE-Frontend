@@ -22,7 +22,9 @@ export function ProgressStepsBlockView({ block }: { block: ProgressStepsBlock })
             </span>
             <span className={isVertical ? "block" : "mt-2 block"}>
               <span className="block text-sm font-medium">{item.label}</span>
-              {item.description && <span className="block text-xs text-muted-foreground">{item.description}</span>}
+              {item.description && (
+                <span className="block text-xs text-muted-foreground">{item.description}</span>
+              )}
             </span>
           </li>
         );

@@ -46,4 +46,3 @@ export class SsoService implements ISsoService {
     return `${backendUrl}${API_ENDPOINTS.AUTH.SAML.LOGIN}?${query.toString()}`;
   }
 }
-

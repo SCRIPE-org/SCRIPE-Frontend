@@ -21,7 +21,9 @@ export function AlertBlockView({ block }: { block: AlertBlock }) {
         VARIANT_CLASS[props.variant || "info"],
       ].join(" ")}
     >
-      {props.showIcon !== false && <span className="text-xs font-bold">{ICON[props.variant || "info"]}</span>}
+      {props.showIcon !== false && (
+        <span className="text-xs font-bold">{ICON[props.variant || "info"]}</span>
+      )}
       <div>
         {props.title && <h3 className="font-semibold">{props.title}</h3>}
         <p className={props.title ? "mt-1 text-sm" : "text-sm"}>{props.message}</p>

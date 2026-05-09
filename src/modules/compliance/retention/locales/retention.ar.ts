@@ -31,7 +31,7 @@ export const ar = {
       name: "مثال: سجلات تدقيق التطبيق",
       description: "وصف اختياري",
       selectCategory: "حدد الفئة",
-      selectExpiryAction: "حدد الإجراء"
+      selectExpiryAction: "حدد الإجراء",
     },
     categories: {
       UserProfile: "ملف تعريف المستخدم",
@@ -50,7 +50,7 @@ export const ar = {
     expiryActions: {
       Delete: "حذف نهائي",
       Anonymize: "تجهيل",
-      Archive: "أرشفة"
+      Archive: "أرشفة",
     },
 
     // Edit dialog

@@ -13,4 +13,3 @@ export class TenantResolutionRepository implements ITenantResolutionRepository {
     return this.service.resolveTenant(params);
   }
 }
-

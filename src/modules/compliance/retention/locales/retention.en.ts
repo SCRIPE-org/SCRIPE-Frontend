@@ -31,7 +31,7 @@ export const en = {
       name: "e.g., Application Audit Logs",
       description: "Optional description",
       selectCategory: "Select category",
-      selectExpiryAction: "Select action"
+      selectExpiryAction: "Select action",
     },
     categories: {
       UserProfile: "User Profile",
@@ -50,7 +50,7 @@ export const en = {
     expiryActions: {
       Delete: "Hard Delete",
       Anonymize: "Anonymize",
-      Archive: "Archive"
+      Archive: "Archive",
     },
 
     // Edit dialog

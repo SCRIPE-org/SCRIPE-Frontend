@@ -9,7 +9,10 @@ export function DividerBlockView({ block }: { block: DividerBlock }) {
   if (props.style === "dots") return <div className="text-center text-muted-foreground">...</div>;
 
   return (
-    <div className="flex items-center gap-3" style={{ width: `${clamp(props.width, 25, 100, 100)}%` }}>
+    <div
+      className="flex items-center gap-3"
+      style={{ width: `${clamp(props.width, 25, 100, 100)}%` }}
+    >
       <div
         className="flex-1"
         style={{

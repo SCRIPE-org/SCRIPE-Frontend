@@ -17,19 +17,49 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "login", label: "POST /auth/login", type: "default" },
-      { id: "route", label: "Route Decision", type: "info", description: "Check tenantId & isPlatformAdmin flags" },
-      { id: "caseA", label: "Case A: Tenant-Scoped", type: "primary", description: "tenantId provided → strict domain isolation" },
-      { id: "caseAp", label: "Case A': Platform Admin", type: "primary", description: "isPlatformAdmin = true → direct platform auth" },
-      { id: "caseB", label: "Case B: Discovery", type: "warning", description: "No tenantId → workspace discovery" },
+      {
+        id: "route",
+        label: "Route Decision",
+        type: "info",
+        description: "Check tenantId & isPlatformAdmin flags",
+      },
+      {
+        id: "caseA",
+        label: "Case A: Tenant-Scoped",
+        type: "primary",
+        description: "tenantId provided → strict domain isolation",
+      },
+      {
+        id: "caseAp",
+        label: "Case A': Platform Admin",
+        type: "primary",
+        description: "isPlatformAdmin = true → direct platform auth",
+      },
+      {
+        id: "caseB",
+        label: "Case B: Discovery",
+        type: "warning",
+        description: "No tenantId → workspace discovery",
+      },
       { id: "validate", label: "Validate Credentials + BCrypt", type: "warning" },
       { id: "lockout", label: "Check Lockout (5 attempts / 15 min)", type: "danger" },
-      { id: "pwExpiry", label: "Password Expiry Check", type: "warning", description: "ITenantPasswordValidator → MustChangePassword" },
+      {
+        id: "pwExpiry",
+        label: "Password Expiry Check",
+        type: "warning",
+        description: "ITenantPasswordValidator → MustChangePassword",
+      },
       { id: "2fa", label: "2FA Required?", type: "info" },
       { id: "no2fa", label: "Issue JWT + Refresh Token", type: "success" },
       { id: "yes2fa", label: "Issue Temporary 2FA Token", type: "info" },
       { id: "verify2fa", label: "POST /auth/verify-2fa", type: "default" },
       { id: "jwt", label: "Issue Full JWT + Refresh Token", type: "success" },
-      { id: "workspace", label: "Workspace Picker", type: "info", description: "Frontend shows workspace list" },
+      {
+        id: "workspace",
+        label: "Workspace Picker",
+        type: "info",
+        description: "Frontend shows workspace list",
+      },
     ],
     connections: [
       { from: "login", to: "route" },
@@ -63,9 +93,21 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Case", "Condition", "Behavior"],
     rows: [
-      ["A — Tenant-Scoped", "tenantId is provided", "Strict domain isolation. Only the admin within that exact tenant is matched."],
-      ["A' — Platform Admin", "isPlatformAdmin = true", "Bypasses workspace discovery. Looks up admin with TenantId = null (platform-level). Prevents workspace picker infinite loop."],
-      ["B — Discovery", "No tenantId, not isPlatformAdmin", "Step 1: Check for platform admin (TenantId = null). Step 2: Search all tenants by email. 0 → invalid, 1 → direct login, N → return workspace list."],
+      [
+        "A — Tenant-Scoped",
+        "tenantId is provided",
+        "Strict domain isolation. Only the admin within that exact tenant is matched.",
+      ],
+      [
+        "A' — Platform Admin",
+        "isPlatformAdmin = true",
+        "Bypasses workspace discovery. Looks up admin with TenantId = null (platform-level). Prevents workspace picker infinite loop.",
+      ],
+      [
+        "B — Discovery",
+        "No tenantId, not isPlatformAdmin",
+        "Step 1: Check for platform admin (TenantId = null). Step 2: Search all tenants by email. 0 → invalid, 1 → direct login, N → return workspace list.",
+      ],
     ],
   },
   {
@@ -420,6 +462,10 @@ registerPage({
   category: "features",
   order: 1,
   sections,
-  relatedSlugs: ["features/role-permissions", "features/audit-system", "security/authentication-deep"],
+  relatedSlugs: [
+    "features/role-permissions",
+    "features/audit-system",
+    "security/authentication-deep",
+  ],
   lastUpdated: "2026-05-02",
 });

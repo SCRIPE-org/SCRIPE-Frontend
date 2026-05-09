@@ -42,7 +42,8 @@ export const ar = {
     reportQueued: "تم جدولة إنشاء التقرير",
     reportQueuedDesc: "أعد تحديث الصفحة بعد دقائق قليلة لرؤية تقريرك.",
     generateReportDesc: "حدد نوع التقرير ونطاق التاريخ الاختياري لإنشاء تقرير امتثال.",
-    reportQueuedInfo: "تُنشأ التقارير بشكل غير متزامن. أعد تحديث القائمة بعد دقائق قليلة لرؤية تقريرك.",
+    reportQueuedInfo:
+      "تُنشأ التقارير بشكل غير متزامن. أعد تحديث القائمة بعد دقائق قليلة لرؤية تقريرك.",
 
     // Empty states
     noReports: "لم يتم إنشاء تقارير",
@@ -50,7 +51,8 @@ export const ar = {
 
     // Report detail actions
     mvpExportTitle: "تصدير أساسي",
-    mvpExportDesc: "تصدير OpenXML/PDF الكامل مع الرسوم البيانية مخطط له. في الوقت الحالي، قم بالتنزيل بصيغة CSV أو TSV.",
+    mvpExportDesc:
+      "تصدير OpenXML/PDF الكامل مع الرسوم البيانية مخطط له. في الوقت الحالي، قم بالتنزيل بصيغة CSV أو TSV.",
 
     // Download format labels
     downloadCsv: "تحميل CSV",

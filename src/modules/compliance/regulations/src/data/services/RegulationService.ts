@@ -1,12 +1,12 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IRegulationService } from "../../domain/interfaces/IRegulationService";
-import type { 
-  RegulationProfileModel, 
-  CreateRegulationRequest, 
-  UpdateRegulationRequest, 
-  AddConsentPurposeRequest, 
-  UpdateConsentPurposeRequest 
+import type {
+  RegulationProfileModel,
+  CreateRegulationRequest,
+  UpdateRegulationRequest,
+  AddConsentPurposeRequest,
+  UpdateConsentPurposeRequest,
 } from "../models/RegulationModels";
 
 export class RegulationService implements IRegulationService {
@@ -37,7 +37,10 @@ export class RegulationService implements IRegulationService {
   }
 
   updatePurpose(id: string, purposeId: string, data: UpdateConsentPurposeRequest): Promise<void> {
-    return this.api.put<void>(API_ENDPOINTS.COMPLIANCE.REGULATION_PURPOSE_BY_ID(id, purposeId), data);
+    return this.api.put<void>(
+      API_ENDPOINTS.COMPLIANCE.REGULATION_PURPOSE_BY_ID(id, purposeId),
+      data
+    );
   }
 
   removePurpose(id: string, purposeId: string): Promise<void> {

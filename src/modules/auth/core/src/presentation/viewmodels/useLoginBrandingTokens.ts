@@ -34,23 +34,45 @@ import { parseA11yConfig } from "./branding/parseA11yConfig";
 // ─── Accessibility config type ─────────────────────────────────────────────
 export interface AccessibilityConfig {
   // Focus & Keyboard
-  focusRingEnabled: boolean; focusRingColor: string; focusRingWidth: number;
-  focusRingStyle: string; skipLinkEnabled: boolean; highlightFocus: boolean;
+  focusRingEnabled: boolean;
+  focusRingColor: string;
+  focusRingWidth: number;
+  focusRingStyle: string;
+  skipLinkEnabled: boolean;
+  highlightFocus: boolean;
   // Screen Reader
-  ariaLandmarks: boolean; formLabelsVisible: boolean; errorAnnounce: boolean; pageTitle: string;
+  ariaLandmarks: boolean;
+  formLabelsVisible: boolean;
+  errorAnnounce: boolean;
+  pageTitle: string;
   // Contrast & Colors
-  highContrastMode: boolean; contrastPreset: string; saturation: number; highlightLinks: boolean;
+  highContrastMode: boolean;
+  contrastPreset: string;
+  saturation: number;
+  highlightLinks: boolean;
   // Typography & Readability
-  minFontSize: number; contentScaling: number; lineHeight: number;
-  letterSpacing: number; wordSpacing: number; dyslexicFont: boolean; textAlign: string;
+  minFontSize: number;
+  contentScaling: number;
+  lineHeight: number;
+  letterSpacing: number;
+  wordSpacing: number;
+  dyslexicFont: boolean;
+  textAlign: string;
   // Cursor & Reading Aids
-  cursorSize: string; readingGuide: boolean; readingMask: boolean;
+  cursorSize: string;
+  readingGuide: boolean;
+  readingMask: boolean;
   // Motion & Animation
-  reducedMotion: string; animationDuration: number; autoplayDisabled: boolean; pauseAnimations: boolean;
+  reducedMotion: string;
+  animationDuration: number;
+  autoplayDisabled: boolean;
+  pauseAnimations: boolean;
   // Content & Media
-  hideImages: boolean; tooltips: boolean;
+  hideImages: boolean;
+  tooltips: boolean;
   // Touch & Target Size
-  largeTargets: boolean; forcedColorsSupport: boolean;
+  largeTargets: boolean;
+  forcedColorsSupport: boolean;
 }
 
 export interface LoginBrandingTokensResult {
@@ -134,7 +156,9 @@ export function useLoginBrandingTokens({
     try {
       const raw = loginBrandingJson ? JSON.parse(loginBrandingJson) : {};
       customCss = raw.customCss || "";
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     if (!customCss) return;
 
     document.querySelector("[data-studio-custom-css]")?.remove();
@@ -142,7 +166,9 @@ export function useLoginBrandingTokens({
     styleEl.setAttribute("data-studio-custom-css", "true");
     styleEl.textContent = customCss;
     document.head.appendChild(styleEl);
-    return () => { styleEl.remove(); };
+    return () => {
+      styleEl.remove();
+    };
   }, [loginBrandingJson, isSafeMode]);
 
   // ── Parse a11y config for DOM rendering ───────────────────────────────

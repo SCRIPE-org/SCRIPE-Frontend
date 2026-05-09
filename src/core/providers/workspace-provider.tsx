@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { createContext, useContext, useCallback, useMemo } from "react";
 import type React from "react";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { WorkspaceGroup, MenuItem } from "@core/navigation";
@@ -40,14 +35,14 @@ const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefin
 // ── Provider ──────────────────────────────────────────────────────────────
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   // ── Granular selectors ──
-  const workspaceGroups   = useNavigationStore((s) => s.workspaceGroups);
+  const workspaceGroups = useNavigationStore((s) => s.workspaceGroups);
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
-  const activeRootItemId  = useNavigationStore((s) => s.activeRootItemId);
+  const activeRootItemId = useNavigationStore((s) => s.activeRootItemId);
   const previousWorkspaceKey = useNavigationStore((s) => s.previousWorkspaceKey);
-  const isInitialLoading  = useNavigationStore((s) => s.isInitialLoading);
+  const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
   const isWorkspaceSwitching = useNavigationStore((s) => s.isWorkspaceSwitching);
-  const workspacesMap     = useNavigationStore((s) => s.workspaces);
-  const defaultWorkspace  = useNavigationStore((s) => s.defaultWorkspace);
+  const workspacesMap = useNavigationStore((s) => s.workspaces);
+  const defaultWorkspace = useNavigationStore((s) => s.defaultWorkspace);
 
   // ── Sorted workspace list ──
   const sortedGroups = useMemo(
@@ -58,7 +53,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   // ── Active workspace entity ──
   const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
     if (!activeWorkspaceKey) return sortedGroups[0] ?? null;
-    return sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? sortedGroups[0] ?? null;
+    return (
+      sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? sortedGroups[0] ?? null
+    );
   }, [activeWorkspaceKey, sortedGroups]);
 
   // ── Root menu items for active workspace ──
@@ -123,47 +120,46 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [moduleWorkspaces, switchToModuleWorkspaceByKey]);
 
   // ── Context value ──
-  const value = useMemo<WorkspaceContextType>(() => ({
-    workspaceGroups: sortedGroups,
-    activeWorkspace,
-    setActiveWorkspace,
-    rootMenuItems,
-    activeRootItem,
-    setActiveRootItemId,
-    accentColor,
-    isLoading: isInitialLoading,
-    isWorkspaceLoading: isWorkspaceSwitching,
-    isModuleMode,
-    previousWorkspaceKey,
-    goBack,
-    switchToModuleWorkspace,
-    switchToModuleWorkspaceByKey,
-    adminWorkspaces,
-    moduleWorkspaces,
-  }), [
-    sortedGroups,
-    activeWorkspace,
-    setActiveWorkspace,
-    rootMenuItems,
-    activeRootItem,
-    setActiveRootItemId,
-    accentColor,
-    isInitialLoading,
-    isWorkspaceSwitching,
-    isModuleMode,
-    previousWorkspaceKey,
-    goBack,
-    switchToModuleWorkspace,
-    switchToModuleWorkspaceByKey,
-    adminWorkspaces,
-    moduleWorkspaces,
-  ]);
-
-  return (
-    <WorkspaceContext.Provider value={value}>
-      {children}
-    </WorkspaceContext.Provider>
+  const value = useMemo<WorkspaceContextType>(
+    () => ({
+      workspaceGroups: sortedGroups,
+      activeWorkspace,
+      setActiveWorkspace,
+      rootMenuItems,
+      activeRootItem,
+      setActiveRootItemId,
+      accentColor,
+      isLoading: isInitialLoading,
+      isWorkspaceLoading: isWorkspaceSwitching,
+      isModuleMode,
+      previousWorkspaceKey,
+      goBack,
+      switchToModuleWorkspace,
+      switchToModuleWorkspaceByKey,
+      adminWorkspaces,
+      moduleWorkspaces,
+    }),
+    [
+      sortedGroups,
+      activeWorkspace,
+      setActiveWorkspace,
+      rootMenuItems,
+      activeRootItem,
+      setActiveRootItemId,
+      accentColor,
+      isInitialLoading,
+      isWorkspaceSwitching,
+      isModuleMode,
+      previousWorkspaceKey,
+      goBack,
+      switchToModuleWorkspace,
+      switchToModuleWorkspaceByKey,
+      adminWorkspaces,
+      moduleWorkspaces,
+    ]
   );
+
+  return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }
 
 // ── Hooks ──

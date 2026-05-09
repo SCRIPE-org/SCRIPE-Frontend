@@ -1,8 +1,6 @@
 "use client";
 
-import {
-  Building2, ShieldCheck, ArrowRight, Loader2, Clock, Ban,
-} from "lucide-react";
+import { Building2, ShieldCheck, ArrowRight, Loader2, Clock, Ban } from "lucide-react";
 import { resolveFileUrl } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
@@ -21,7 +19,12 @@ interface WorkspaceCardProps {
  * component under 200 lines. Purely presentational — all
  * selection logic stays in the parent.
  */
-export function WorkspaceCard({ workspace: ws, isThisLoading, isDisabled, onSelect }: WorkspaceCardProps) {
+export function WorkspaceCard({
+  workspace: ws,
+  isThisLoading,
+  isDisabled,
+  onSelect,
+}: WorkspaceCardProps) {
   const { t } = useI18n();
 
   return (
@@ -33,8 +36,8 @@ export function WorkspaceCard({ workspace: ws, isThisLoading, isDisabled, onSele
         !ws.isActivated
           ? ` — ${t("auth.workspaceSelection.setupPending") || "Setup pending"}`
           : ws.isDisabled
-          ? ` — ${ws.disabledReason || "Unavailable"}`
-          : ""
+            ? ` — ${ws.disabledReason || "Unavailable"}`
+            : ""
       }`}
       aria-busy={isThisLoading}
       className={[
@@ -43,7 +46,9 @@ export function WorkspaceCard({ workspace: ws, isThisLoading, isDisabled, onSele
         ws.isActivated && !ws.isDisabled && !isDisabled
           ? "cursor-pointer border-border bg-card hover:border-primary/40 hover:bg-muted/40 hover:shadow-sm active:scale-[0.99]"
           : "cursor-not-allowed border-border/50 bg-muted/20 opacity-60",
-      ].filter(Boolean).join(" ")}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {/* Logo / icon */}
       <div
@@ -60,7 +65,9 @@ export function WorkspaceCard({ workspace: ws, isThisLoading, isDisabled, onSele
             src={resolveFileUrl(ws.logoUrl)}
             alt=""
             className="h-full w-full object-cover"
-            onError={(e) => { e.currentTarget.style.display = "none"; }}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
           />
         ) : ws.isPlatformAdmin ? (
           <ShieldCheck className="h-5 w-5" />
@@ -71,7 +78,9 @@ export function WorkspaceCard({ workspace: ws, isThisLoading, isDisabled, onSele
 
       {/* Info */}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="truncate text-sm font-semibold leading-tight text-foreground">{ws.tenantName}</span>
+        <span className="truncate text-sm font-semibold leading-tight text-foreground">
+          {ws.tenantName}
+        </span>
         <div className="flex flex-wrap items-center gap-1.5">
           {ws.isPlatformAdmin && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
@@ -102,7 +111,10 @@ export function WorkspaceCard({ workspace: ws, isThisLoading, isDisabled, onSele
         {isThisLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
         ) : ws.isActivated ? (
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+          <ArrowRight
+            className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
         ) : null}
       </div>
     </button>

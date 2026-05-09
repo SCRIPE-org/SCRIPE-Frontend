@@ -19,20 +19,21 @@ export const es = {
 
       // IAutoRegisteredJob Contract
       nodeConfig: "[ES] appsettings.json\nProvider + Per-Job Overrides",
-        descConfig: "[ES] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
-        nodeStartup: "[ES] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
-        descStartup: "[ES] Reads provider, discovers all jobs, schedules them",
-        nodeDiscovery: "[ES] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
-        descDiscovery: "[ES] Scans DI container for every registered IAutoRegisteredJob",
-        nodeSchedule: "[ES] Schedule Each Job\nIf Enabled -> Register with provider API",
-        descSchedule: "[ES] Uses CronExpression from appsettings override or job default",
-        nodeExecute: "[ES] job.ExecuteAsync(ct)\nAt every cron tick",
-        descExecute: "[ES] Provider-agnostic - job has zero knowledge of which provider runs it",
-        conn1: "[ES] drives",
-        conn2: "[ES] triggers",
-        conn3: "[ES] for each job",
-        conn4: "[ES] on cron tick",
-        contractTitle: "El Contrato IAutoRegisteredJob",
+      descConfig:
+        "[ES] Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+      nodeStartup: "[ES] BackgroundJobsConfiguration\nAddBackgroundJobsConfiguration()",
+      descStartup: "[ES] Reads provider, discovers all jobs, schedules them",
+      nodeDiscovery: "[ES] Auto-Discovery Loop\nGetServices<IAutoRegisteredJob>()",
+      descDiscovery: "[ES] Scans DI container for every registered IAutoRegisteredJob",
+      nodeSchedule: "[ES] Schedule Each Job\nIf Enabled -> Register with provider API",
+      descSchedule: "[ES] Uses CronExpression from appsettings override or job default",
+      nodeExecute: "[ES] job.ExecuteAsync(ct)\nAt every cron tick",
+      descExecute: "[ES] Provider-agnostic - job has zero knowledge of which provider runs it",
+      conn1: "[ES] drives",
+      conn2: "[ES] triggers",
+      conn3: "[ES] for each job",
+      conn4: "[ES] on cron tick",
+      contractTitle: "El Contrato IAutoRegisteredJob",
       contractIntro:
         "Cada trabajo recurrente en segundo plano en NEXORA implementa una única interfaz: IAutoRegisteredJob. Ese es todo el contrato — tres propiedades y un método. La interfaz excluye intencionalmente cualquier concepto específico del proveedor (sin atributos de Hangfire, sin anotaciones de Quartz). El trabajo no sabe qué proveedor lo está ejecutando.",
 
@@ -96,12 +97,14 @@ export const es = {
       // Job purpose descriptions
       jobOutboxCleanup: "Elimina mensajes outbox procesados de más de 7 días",
       jobIdentitySoftDelete: "Elimina permanentemente entidades Identity eliminadas lógicamente",
-      jobEmailProcessing: "Consulta y envía correos electrónicos retrasados a través de EmailJobProcessor",
+      jobEmailProcessing:
+        "Consulta y envía correos electrónicos retrasados a través de EmailJobProcessor",
       jobWebhookRetry: "Procesa la cola de reintentos de webhooks guardados en lotes de 50",
       jobWebhookLogCleanup: "Elimina registros de entrega de webhooks de más de 90 días",
       identityNote:
         "EmailProcessingJob y WebhookRetryJob/WebhookLogCleanupJob son trabajos de infraestructura subyacente registrados en DI del módulo Identity porque dependen de los servicios de Identity.",
-      jobEntitlementsSoftDelete: "Elimina permanentemente entidades Entitlements eliminadas lógicamente",
+      jobEntitlementsSoftDelete:
+        "Elimina permanentemente entidades Entitlements eliminadas lógicamente",
       jobSubscriptionReconciliation: "Expira pruebas, renueva suscripciones activas de usuarios",
       jobTrialNotification: "Envía recordatorios de fin de prueba a 7, 3 o 1 días de la expiración",
       jobDunningNotification: "Envía notificaciones de pago fallido cada vez más urgentes",
@@ -113,7 +116,8 @@ export const es = {
       jobCommissionInvoicing: "Generación consolidada de facturas de comisiones mensuales",
       jobCommissionAutoCharge: "Reintentos de autodescargas fallidas de comisiones",
       jobPaymobRecurringBilling: "Cargos recurrentes guardados en tarjetas de crédito Paymob",
-      jobComplianceSoftDelete: "Elimina permanentemente entidades Compliance eliminadas lógicamente",
+      jobComplianceSoftDelete:
+        "Elimina permanentemente entidades Compliance eliminadas lógicamente",
       jobDsrExecution: "Ejecuta solicitudes DSR pendientes cada 5 minutos",
       jobDsrEscalation: "Advierte sobre plazos SLA de DSR próximos",
       jobDsrExportCleanup: "Elimina exportaciones DSR expiradas",
@@ -150,13 +154,17 @@ export const es = {
       flowInitLabel: "SoftDeleteCleanupJob<TContext>",
       flowInitDesc: "Instanciado por el contenedor DI",
       flowScanLabel: "Descubrir ISoftDeletable",
-      flowScanDesc: "Escaneo de reflexión en DbContext para entidades que implementan ISoftDeletable",
+      flowScanDesc:
+        "Escaneo de reflexión en DbContext para entidades que implementan ISoftDeletable",
       flowFilterLabel: "Filtrar entidades caducadas",
-      flowFilterDesc: "Buscar registros donde IsDeleted = true Y DeletedAt < DateTime.UtcNow.AddDays(-30)",
+      flowFilterDesc:
+        "Buscar registros donde IsDeleted = true Y DeletedAt < DateTime.UtcNow.AddDays(-30)",
       flowCascadeLabel: "Cascada consciente de FK",
-      flowCascadeDesc: "Maneja las restricciones de clave externa en el orden de eliminación correcto",
+      flowCascadeDesc:
+        "Maneja las restricciones de clave externa en el orden de eliminación correcto",
       flowExecuteLabel: "Eliminación definitiva",
-      flowExecuteDesc: "Ejecutar SQL nativo para la eliminación masiva, evitando el seguimiento de cambios de EF",
+      flowExecuteDesc:
+        "Ejecutar SQL nativo para la eliminación masiva, evitando el seguimiento de cambios de EF",
       connTriggers: "desencadena",
       connStarts: "inicia",
       connBuilds: "construye consulta",

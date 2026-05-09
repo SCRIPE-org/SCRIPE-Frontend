@@ -21,7 +21,13 @@ interface ReviewDsrModalProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function ReviewDsrModal({ dsr, open, onOpenChange, onReview, isReviewing }: ReviewDsrModalProps) {
+export function ReviewDsrModal({
+  dsr,
+  open,
+  onOpenChange,
+  onReview,
+  isReviewing,
+}: ReviewDsrModalProps) {
   const { t } = useI18n();
   const [resolution, setResolution] = useState("");
   const [decision, setDecision] = useState<boolean | null>(null);

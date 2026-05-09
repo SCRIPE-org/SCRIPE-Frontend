@@ -2,9 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getAuthContainer } from "@modules/auth/di";
-import type { SsoCallbackResult, SsoProvider } from "@modules/auth/core/domain/entities/SsoProvider";
+import type {
+  SsoCallbackResult,
+  SsoProvider,
+} from "@modules/auth/core/domain/entities/SsoProvider";
 
-export type { SsoCallbackResult, SsoNoLinkedAccountError, SsoProvider } from "@modules/auth/core/domain/entities/SsoProvider";
+export type {
+  SsoCallbackResult,
+  SsoNoLinkedAccountError,
+  SsoProvider,
+} from "@modules/auth/core/domain/entities/SsoProvider";
 
 interface UseSsoProvidersOptions {
   tenantId?: string | null;

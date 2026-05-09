@@ -115,7 +115,7 @@ export class DataSubjectRequest {
   get resolution() {
     return this.data.resolution ?? null;
   }
-  
+
   // Detail properties
   get dsrDeadlineDays() {
     return (this.data as any).dsrDeadlineDays ?? 0;
@@ -130,7 +130,9 @@ export class DataSubjectRequest {
     return (this.data as any).erasureConfirmed ?? false;
   }
   get erasureExecuteAfter() {
-    return (this.data as any).erasureExecuteAfter ? new Date((this.data as any).erasureExecuteAfter) : null;
+    return (this.data as any).erasureExecuteAfter
+      ? new Date((this.data as any).erasureExecuteAfter)
+      : null;
   }
   get requesterNotes() {
     return (this.data as any).requesterNotes ?? null;

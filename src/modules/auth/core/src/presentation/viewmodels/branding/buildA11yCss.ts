@@ -12,7 +12,8 @@ import { buildA11yFocusCss } from "./buildA11yFocusCss";
 import { buildA11yTypographyCss } from "./buildA11yTypographyCss";
 
 export function buildA11yCss(tokens: Record<string, string | undefined>): string {
-  const focusColor = tokens["a11y.focusRing.color"] || tokens["color.primary"] || "hsl(var(--primary))";
+  const focusColor =
+    tokens["a11y.focusRing.color"] || tokens["color.primary"] || "hsl(var(--primary))";
   const focusWidth = tokens["a11y.focusRing.width"] || "3px";
   const focusStyle = tokens["a11y.focusRing.style"] || "solid";
   const animDuration = tokens["a11y.animationDuration"] || "200";
@@ -39,7 +40,9 @@ export function buildA11yCss(tokens: Record<string, string | undefined>): string
 
   // 20. Pause Animations
   if (tokens["a11y.pauseAnimations"] === "true") {
-    css.push(`.login-page, .login-page * { animation-play-state: paused !important; animation-duration: 0s !important; transition-duration: 0s !important; transition-delay: 0s !important; }`);
+    css.push(
+      `.login-page, .login-page * { animation-play-state: paused !important; animation-duration: 0s !important; transition-duration: 0s !important; transition-delay: 0s !important; }`
+    );
   }
 
   return css.filter(Boolean).join("\n\n");

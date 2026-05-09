@@ -55,7 +55,9 @@ export function DsrView() {
       <ReviewDsrModal
         dsr={reviewDsr}
         open={reviewDsr !== null}
-        onOpenChange={(v) => { if (!v) setReviewDsr(null); }}
+        onOpenChange={(v) => {
+          if (!v) setReviewDsr(null);
+        }}
         onReview={handleReview}
         isReviewing={isReviewing}
       />

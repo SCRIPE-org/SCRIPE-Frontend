@@ -49,7 +49,6 @@ export interface WorkspaceChoice {
   disabledReason?: string | null;
 }
 
-
 /**
  * Thrown when the email belongs to multiple tenant admins.
  * Credentials have been validated ✓ — no tokens issued yet.

@@ -41,7 +41,9 @@ export function SetupInvalidView({ errorMessage }: StateViewProps) {
         <div className="rounded-full bg-destructive/10 p-4">
           <XCircle className="h-10 w-10 text-destructive" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">{t("auth.accountSetup.invalidTitle")}</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          {t("auth.accountSetup.invalidTitle")}
+        </h2>
         <p className="max-w-xs text-center text-sm text-muted-foreground">{errorMessage}</p>
         <Button variant="outline" className="mt-4" onClick={() => router.push("/login")}>
           {t("auth.goToLogin")}
@@ -60,8 +62,12 @@ export function SetupSuccessView({ tokenData }: StateViewProps) {
         <div className="rounded-full bg-green-500/10 p-4">
           <CheckCircle2 className="h-10 w-10 text-green-500" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">{t("auth.accountSetup.successTitle")}</h2>
-        <p className="max-w-xs text-center text-sm text-muted-foreground">{t("auth.accountSetup.successDescription")}</p>
+        <h2 className="text-xl font-semibold text-foreground">
+          {t("auth.accountSetup.successTitle")}
+        </h2>
+        <p className="max-w-xs text-center text-sm text-muted-foreground">
+          {t("auth.accountSetup.successDescription")}
+        </p>
         <div className="mt-2 rounded-lg bg-muted/50 px-4 py-2 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{tokenData?.adminUsername}</span>
         </div>
@@ -81,7 +87,9 @@ export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
         <div className="rounded-full bg-destructive/10 p-4">
           <AlertTriangle className="h-10 w-10 text-destructive" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">{t("auth.accountSetup.activationFailedTitle")}</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          {t("auth.accountSetup.activationFailedTitle")}
+        </h2>
         <p className="max-w-xs text-center text-sm text-muted-foreground">{errorMessage}</p>
         <Button variant="outline" className="mt-4" onClick={onRetry}>
           {t("auth.accountSetup.tryAgain")}
@@ -93,8 +101,14 @@ export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
 
 export function PasswordCheck({ label, ok }: { label: string; ok: boolean }) {
   return (
-    <div className={`flex items-center gap-1.5 ${ok ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
-      {ok ? <CheckCircle2 className="h-3 w-3" /> : <div className="h-3 w-3 rounded-full border border-muted-foreground/30" />}
+    <div
+      className={`flex items-center gap-1.5 ${ok ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}
+    >
+      {ok ? (
+        <CheckCircle2 className="h-3 w-3" />
+      ) : (
+        <div className="h-3 w-3 rounded-full border border-muted-foreground/30" />
+      )}
       {label}
     </div>
   );

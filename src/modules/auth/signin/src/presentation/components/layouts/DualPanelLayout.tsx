@@ -8,8 +8,15 @@ import { MobileLogo, LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function DualPanelLayout({
-  branding, slotConfig, formContent, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  branding,
+  slotConfig,
+  formContent,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -26,7 +33,9 @@ export function DualPanelLayout({
           <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
-          <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</span>
+          <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+            {companyName}
+          </span>
         </div>
         <div className="flex gap-1">
           <LanguageSwitcher />

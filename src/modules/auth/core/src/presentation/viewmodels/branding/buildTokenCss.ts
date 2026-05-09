@@ -22,9 +22,12 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
   }
 
   // Background image — ALWAYS emit
-  rootRules.push(`  --login-bg-image: ${tokens["bg.image"] ? `url(${tokens["bg.image"]})` : "none"};`);
+  rootRules.push(
+    `  --login-bg-image: ${tokens["bg.image"] ? `url(${tokens["bg.image"]})` : "none"};`
+  );
   if (tokens["bg.image.fit"]) rootRules.push(`  --login-bg-image-fit: ${tokens["bg.image.fit"]};`);
-  if (tokens["bg.image.position"]) rootRules.push(`  --login-bg-image-position: ${tokens["bg.image.position"]};`);
+  if (tokens["bg.image.position"])
+    rootRules.push(`  --login-bg-image-position: ${tokens["bg.image.position"]};`);
 
   // Gradient overrides solid bg
   if (tokens["bg.gradient"]) {
@@ -33,9 +36,13 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
   }
 
   // Panel bg image — ALWAYS emit
-  rootRules.push(`  --login-panel-bg-image: ${tokens["panel.bg.image"] ? `url(${tokens["panel.bg.image"]})` : "none"};`);
-  if (tokens["panel.bg.image.fit"]) rootRules.push(`  --login-panel-bg-image-fit: ${tokens["panel.bg.image.fit"]};`);
-  if (tokens["panel.bg.image.position"]) rootRules.push(`  --login-panel-bg-image-position: ${tokens["panel.bg.image.position"]};`);
+  rootRules.push(
+    `  --login-panel-bg-image: ${tokens["panel.bg.image"] ? `url(${tokens["panel.bg.image"]})` : "none"};`
+  );
+  if (tokens["panel.bg.image.fit"])
+    rootRules.push(`  --login-panel-bg-image-fit: ${tokens["panel.bg.image.fit"]};`);
+  if (tokens["panel.bg.image.position"])
+    rootRules.push(`  --login-panel-bg-image-position: ${tokens["panel.bg.image.position"]};`);
   if (tokens["panel.bg.gradient"]) {
     rootRules.push(`  --login-panel-bg-gradient: ${tokens["panel.bg.gradient"]};`);
     rootRules.push(`  --login-panel-bg: ${tokens["panel.bg.gradient"]};`);
@@ -88,11 +95,17 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
     darkRules.push(`  --login-bg: ${tokens["dark.bg.gradient"]};`);
     darkRules.push(`  --login-bg-gradient: ${tokens["dark.bg.gradient"]};`);
   }
-  darkRules.push(`  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`);
+  darkRules.push(
+    `  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`
+  );
 
-  if (tokens["dark.panel.color.background"]) darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.color.background"]};`);
-  if (tokens["dark.panel.bg.gradient"]) darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);
-  darkRules.push(`  --login-panel-bg-image: ${tokens["dark.panel.bg.image"] ? `url(${tokens["dark.panel.bg.image"]})` : "none"};`);
+  if (tokens["dark.panel.color.background"])
+    darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.color.background"]};`);
+  if (tokens["dark.panel.bg.gradient"])
+    darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);
+  darkRules.push(
+    `  --login-panel-bg-image: ${tokens["dark.panel.bg.image"] ? `url(${tokens["dark.panel.bg.image"]})` : "none"};`
+  );
 
   const blocks: string[] = [];
   if (rootRules.length) blocks.push(`:root {\n${rootRules.join("\n")}\n}`);

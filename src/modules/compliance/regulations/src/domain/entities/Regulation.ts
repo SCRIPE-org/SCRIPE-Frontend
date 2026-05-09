@@ -1,4 +1,7 @@
-import type { RegulationProfileModel, ConsentPurposeModel } from "../../data/models/RegulationModels";
+import type {
+  RegulationProfileModel,
+  ConsentPurposeModel,
+} from "../../data/models/RegulationModels";
 
 export class Regulation {
   constructor(private readonly data: RegulationProfileModel) {}

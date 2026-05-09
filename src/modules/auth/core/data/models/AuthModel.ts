@@ -76,7 +76,6 @@ export interface WorkspaceChoiceJson {
   disabledReason?: string | null;
 }
 
-
 export interface LoginResponseJson {
   success?: boolean;
   accessToken: string;

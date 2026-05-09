@@ -43,9 +43,7 @@ export interface IEditionService {
   directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void>;
 
   // ── Pricing ──
-  getEditionPrices(
-    editionId: string
-  ): Promise<{
+  getEditionPrices(editionId: string): Promise<{
     editionId: string;
     prices: Array<{ currency: string; billingCycle: string; amount: number }>;
   }>;

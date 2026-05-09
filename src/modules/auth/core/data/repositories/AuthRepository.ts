@@ -36,7 +36,10 @@ import { ImpersonationRepository } from "./ImpersonationRepository";
 /**
  * Import from domain layer + re-export for backward compatibility.
  */
-import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "../../domain/errors/AuthErrors";
+import {
+  TwoFactorRequiredError,
+  WorkspaceSelectionRequiredError,
+} from "../../domain/errors/AuthErrors";
 export { TwoFactorRequiredError, WorkspaceSelectionRequiredError };
 
 /**
@@ -70,7 +73,9 @@ export class AuthRepository implements IAuthRepository {
     }
 
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
-      appLogger.auth(`Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`);
+      appLogger.auth(
+        `Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`
+      );
       throw new WorkspaceSelectionRequiredError(
         responseModel.availableWorkspaces.map((w) => ({
           tenantId: w.tenantId,

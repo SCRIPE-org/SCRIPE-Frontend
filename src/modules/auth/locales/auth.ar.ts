@@ -96,7 +96,8 @@ export const ar = {
     passwordMismatch: "كلمتا المرور غير متطابقتين.",
     resetPasswordAction: "إعادة تعيين كلمة المرور",
     passwordResetSuccess: "تم إعادة تعيين كلمة المرور بنجاح",
-    passwordResetSuccessDesc: "تم إعادة تعيين كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+    passwordResetSuccessDesc:
+      "تم إعادة تعيين كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
     a11y: {
       skipToContent: "تخطي إلى المحتوى الرئيسي",
       topActionsLabel: "إجراءات الصفحة",

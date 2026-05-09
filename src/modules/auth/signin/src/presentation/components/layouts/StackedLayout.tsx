@@ -6,8 +6,15 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function StackedLayout({
-  slotConfig, formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  slotConfig,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -19,7 +26,11 @@ export function StackedLayout({
       {/* Brand Banner */}
       <div
         className="relative w-full overflow-hidden px-8 py-12 text-center"
-        style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+        style={{
+          backgroundImage: "var(--login-bg-image, none)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         <div className="absolute inset-0 bg-[var(--login-surface,hsl(var(--muted)/0.4))]" />
         <div className="relative z-10 flex flex-col items-center gap-4">
@@ -33,7 +44,11 @@ export function StackedLayout({
             {t("auth.pleaseLogin")}
           </p>
         </div>
-        <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="relative z-10 mt-6" />
+        <SlotRenderer
+          slotId="login.sidebar.content"
+          slotConfig={slotConfig}
+          className="relative z-10 mt-6"
+        />
       </div>
       {/* Form */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">

@@ -17,4 +17,3 @@ export interface DiscoverWorkspacesResponseDto {
   workspaces: WorkspaceInfoDto[];
   hasPlatformAccess: boolean;
 }
-

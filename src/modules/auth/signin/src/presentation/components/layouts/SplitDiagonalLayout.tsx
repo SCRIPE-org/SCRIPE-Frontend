@@ -6,8 +6,17 @@ import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function SplitDiagonalLayout({
-  branding, slotConfig, formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep,
+  branding,
+  slotConfig,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
 }: LoginLayoutProps) {
   return (
     <div
@@ -17,7 +26,10 @@ export function SplitDiagonalLayout({
     >
       <div
         className="absolute inset-0 hidden w-[55%] lg:block"
-        style={{ clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)", backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+        style={{
+          clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)",
+          backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))",
+        }}
       >
         <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
       </div>

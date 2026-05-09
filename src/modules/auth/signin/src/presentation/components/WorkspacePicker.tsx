@@ -81,9 +81,7 @@ export function WorkspacePicker({
               reset();
             }}
             onKeyDown={handleKeyDown}
-            placeholder={
-              t("auth.workspacePicker.emailPlaceholder") || "admin@company.com"
-            }
+            placeholder={t("auth.workspacePicker.emailPlaceholder") || "admin@company.com"}
             autoComplete="email"
             disabled={isLoading}
             className="h-9 flex-1 text-sm"
@@ -118,8 +116,7 @@ export function WorkspacePicker({
           {hasWorkspaces ? (
             <div className="flex flex-col gap-1.5">
               <p className="text-xs text-muted-foreground">
-                {t("auth.workspacePicker.selectWorkspace") ||
-                  "Select a workspace to continue:"}
+                {t("auth.workspacePicker.selectWorkspace") || "Select a workspace to continue:"}
               </p>
               <ul className="flex flex-col gap-1.5" role="list">
                 {workspaces.map((ws) => (
@@ -142,11 +139,7 @@ export function WorkspacePicker({
                         }`}
                         aria-hidden
                       >
-                        {ws.isPlatformAdmin ? (
-                          <ShieldCheck size={16} />
-                        ) : (
-                          <Building2 size={16} />
-                        )}
+                        {ws.isPlatformAdmin ? <ShieldCheck size={16} /> : <Building2 size={16} />}
                       </span>
 
                       {/* Workspace info */}
@@ -157,15 +150,13 @@ export function WorkspacePicker({
                         <div className="flex items-center gap-1.5">
                           {ws.isPlatformAdmin && (
                             <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                              {t("auth.workspacePicker.platformAdmin") ||
-                                "Platform"}
+                              {t("auth.workspacePicker.platformAdmin") || "Platform"}
                             </span>
                           )}
                           {!ws.isActivated && (
                             <span className="flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 dark:text-amber-400">
                               <Clock size={10} aria-hidden />
-                              {t("auth.workspacePicker.setupPending") ||
-                                "Setup pending"}
+                              {t("auth.workspacePicker.setupPending") || "Setup pending"}
                             </span>
                           )}
                         </div>

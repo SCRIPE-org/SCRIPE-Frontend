@@ -35,11 +35,13 @@ export const useNavigationStore = create<NavigationStoreState>()(
     {
       name: STORAGE_KEYS.NAV_STORE,
       storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? localStorage : {
-          getItem: () => null,
-          setItem: () => {},
-          removeItem: () => {},
-        }
+        typeof window !== "undefined"
+          ? localStorage
+          : {
+              getItem: () => null,
+              setItem: () => {},
+              removeItem: () => {},
+            }
       ),
       partialize: (state): PersistedNavState => ({
         version: NAV_STORE_VERSION,
@@ -72,17 +74,14 @@ export const useNavigationStore = create<NavigationStoreState>()(
 );
 
 // Convenience selectors
-export const selectHasRouteAccess = (pathname: string) =>
-  (state: NavigationStoreState) => state.hasRouteAccess(pathname);
+export const selectHasRouteAccess = (pathname: string) => (state: NavigationStoreState) =>
+  state.hasRouteAccess(pathname);
 
-export const selectActiveWorkspaceKey = (state: NavigationStoreState) =>
-  state.activeWorkspaceKey;
+export const selectActiveWorkspaceKey = (state: NavigationStoreState) => state.activeWorkspaceKey;
 
-export const selectWorkspaceGroups = (state: NavigationStoreState) =>
-  state.workspaceGroups;
+export const selectWorkspaceGroups = (state: NavigationStoreState) => state.workspaceGroups;
 
-export const selectIsInitialLoading = (state: NavigationStoreState) =>
-  state.isInitialLoading;
+export const selectIsInitialLoading = (state: NavigationStoreState) => state.isInitialLoading;
 
 export const selectIsWorkspaceSwitching = (state: NavigationStoreState) =>
   state.isWorkspaceSwitching;

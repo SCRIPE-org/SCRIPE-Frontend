@@ -43,8 +43,10 @@ export const en = {
     reportQueuedDesc: "Refresh in a few minutes to see your report.",
 
     // Dialog
-    generateReportDesc: "Select a report type and optional date range to generate a compliance report.",
-    reportQueuedInfo: "Reports are generated asynchronously. Refresh the list after a few minutes to see your report.",
+    generateReportDesc:
+      "Select a report type and optional date range to generate a compliance report.",
+    reportQueuedInfo:
+      "Reports are generated asynchronously. Refresh the list after a few minutes to see your report.",
 
     // Empty states
     noReports: "No reports generated",
@@ -52,7 +54,8 @@ export const en = {
 
     // Report detail actions
     mvpExportTitle: "MVP Export",
-    mvpExportDesc: "Full OpenXML/PDF exports with charts are planned. For now, download as CSV or TSV.",
+    mvpExportDesc:
+      "Full OpenXML/PDF exports with charts are planned. For now, download as CSV or TSV.",
 
     // Download format labels
     downloadCsv: "Download CSV",

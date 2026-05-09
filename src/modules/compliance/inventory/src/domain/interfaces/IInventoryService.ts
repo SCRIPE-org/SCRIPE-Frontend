@@ -1,7 +1,7 @@
-import type { 
-  InventoryItemModel, 
-  CreateDataInventoryRequest, 
-  UpdateDataInventoryRequest 
+import type {
+  InventoryItemModel,
+  CreateDataInventoryRequest,
+  UpdateDataInventoryRequest,
 } from "../../data/models/InventoryModels";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 

@@ -12,4 +12,3 @@ export class PasswordResetRepository implements IPasswordResetRepository {
     return this.service.resetPassword(params);
   }
 }
-

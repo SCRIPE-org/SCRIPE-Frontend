@@ -13,7 +13,8 @@ export const es = {
       tblRuntimeHeader3: "Efecto en producción",
       tblRuntimeR1C1: "Despacho de solicitudes",
       tblRuntimeR1C2: "NexoraMediator con delegados cacheados y comportamientos ordenados",
-      tblRuntimeR1C3: "Sin riesgo de clave de licencia de mediador externo ni de política del paquete",
+      tblRuntimeR1C3:
+        "Sin riesgo de clave de licencia de mediador externo ni de política del paquete",
       tblRuntimeR2C1: "Mapeo DTO",
       tblRuntimeR2C2: "Reglas explícitas de mapeo más EncryptedIdMapper",
       tblRuntimeR2C3: "Formas de respuesta auditables e IDs cifrados preservados",

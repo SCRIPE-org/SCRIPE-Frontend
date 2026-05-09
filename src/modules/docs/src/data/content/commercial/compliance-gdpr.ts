@@ -15,9 +15,9 @@ const sections: DocSection[] = [
     rows: [
       ["Article 15: Right of Access", "commercial.complianceGdpr.featureAccess"],
       ["Article 17: Right to Erasure", "commercial.complianceGdpr.featureErasure"],
-      ["Article 30: Records of Processing", "commercial.complianceGdpr.featureRopa"]
-    ]
-  }
+      ["Article 30: Records of Processing", "commercial.complianceGdpr.featureRopa"],
+    ],
+  },
 ];
 
 registerPage({

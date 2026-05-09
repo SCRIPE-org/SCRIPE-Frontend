@@ -36,7 +36,13 @@ export function LoginView() {
   const hasCheckedAuth = useRef(false);
 
   // Pre-auth domain resolution for white-label branding
-  const { tenantId, branding, isResolved, isLoading: isTenantLoading, isApiError } = useTenantResolution();
+  const {
+    tenantId,
+    branding,
+    isResolved,
+    isLoading: isTenantLoading,
+    isApiError,
+  } = useTenantResolution();
 
   // Studio preview mode (§22)
   const { isPreviewMode, previewOverrides } = usePreviewMode();
@@ -49,7 +55,9 @@ export function LoginView() {
       const prefs = JSON.parse(branding.dashboardThemeJson);
       if (prefs.language === "ar" || prefs.language === "en") setLanguage(prefs.language);
       hasAppliedInitialPrefs.current = true;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, [branding?.dashboardThemeJson, setLanguage]);
 
   // Login rendering engine — CSS token injection + layout + accessibility
@@ -71,18 +79,25 @@ export function LoginView() {
     vm.checkAndRedirect();
   }, [vm.hasHydrated, vm.checkAndRedirect, isPreviewMode]);
 
-  useEffect(() => { vm.setTenantId(tenantId ?? undefined); }, [tenantId, vm.setTenantId]);
+  useEffect(() => {
+    vm.setTenantId(tenantId ?? undefined);
+  }, [tenantId, vm.setTenantId]);
 
   // Dynamic title + favicon
   useEffect(() => {
     if (typeof document === "undefined") return;
-    document.title = a11y.pageTitle || (isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`);
+    document.title =
+      a11y.pageTitle || (isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`);
   }, [isResolved, companyName, a11y.pageTitle]);
 
   useEffect(() => {
     if (typeof document === "undefined" || !branding?.faviconUrl) return;
     let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
-    if (!link) { link = document.createElement("link"); link.rel = "icon"; document.head.appendChild(link); }
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
     link.href = branding.faviconUrl;
   }, [branding?.faviconUrl]);
 
@@ -93,7 +108,11 @@ export function LoginView() {
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-2">
             {[0, 150, 300].map((delay) => (
-              <div key={delay} className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: `${delay}ms` }} />
+              <div
+                key={delay}
+                className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40"
+                style={{ animationDelay: `${delay}ms` }}
+              />
             ))}
           </div>
         </div>
@@ -106,17 +125,32 @@ export function LoginView() {
     return <TenantSuspendedView branding={branding} />;
   }
 
-  if (!isPreviewMode && !isTenantLoading && !isResolved && !isApiError && typeof window !== "undefined") {
+  if (
+    !isPreviewMode &&
+    !isTenantLoading &&
+    !isResolved &&
+    !isApiError &&
+    typeof window !== "undefined"
+  ) {
     const hostname = window.location.hostname;
     const devCode = new URLSearchParams(window.location.search).get("_tenant");
-    const isTenantExpected = devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));
+    const isTenantExpected =
+      devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));
     if (isTenantExpected) return <TenantNotFoundView />;
   }
 
   const safeModeActive = branding?.isSafeMode === true;
 
   const formContent = (
-    <LoginFormRouter vm={vm} sso={sso} tenantId={tenantId} slotConfig={slotConfig} a11y={a11y} isRTL={isRTL} safeModeActive={safeModeActive} />
+    <LoginFormRouter
+      vm={vm}
+      sso={sso}
+      tenantId={tenantId}
+      slotConfig={slotConfig}
+      a11y={a11y}
+      isRTL={isRTL}
+      safeModeActive={safeModeActive}
+    />
   );
 
   const topActions = (
@@ -131,16 +165,26 @@ export function LoginView() {
     </div>
   );
 
-  const footerSlot = <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />;
+  const footerSlot = (
+    <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />
+  );
 
   return (
     <LoginLayoutRouter
-      layout={layout} slotConfig={slotConfig}
+      layout={layout}
+      slotConfig={slotConfig}
       loginBrandingJson={previewOverrides?.loginBrandingJson ?? branding?.loginBrandingJson ?? null}
-      branding={branding} formContent={formContent} topActions={topActions}
-      footer={footer} footerSlot={footerSlot}
-      logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName}
-      direction={direction} loginStep={vm.loginStep} t={t}
+      branding={branding}
+      formContent={formContent}
+      topActions={topActions}
+      footer={footer}
+      footerSlot={footerSlot}
+      logoSrc={logoSrc}
+      logoAlt={logoAlt}
+      companyName={companyName}
+      direction={direction}
+      loginStep={vm.loginStep}
+      t={t}
     />
   );
 }

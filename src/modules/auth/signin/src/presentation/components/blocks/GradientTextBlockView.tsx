@@ -3,7 +3,13 @@
 import type { GradientTextBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ALIGN_MAP, FONT_WEIGHT_MAP } from "./block-constants";
 
-const SIZE_CLASS = { lg: "text-lg", xl: "text-xl", "2xl": "text-2xl", "3xl": "text-3xl", "4xl": "text-4xl" };
+const SIZE_CLASS = {
+  lg: "text-lg",
+  xl: "text-xl",
+  "2xl": "text-2xl",
+  "3xl": "text-3xl",
+  "4xl": "text-4xl",
+};
 const DIRECTION = {
   "left-right": "to right",
   "top-bottom": "to bottom",

@@ -5,8 +5,15 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function GradientWaveLayout({
-  branding, formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  branding,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -30,8 +37,16 @@ export function GradientWaveLayout({
           {branding?.loginSubtitle || t("auth.branding.subtitle")}
         </p>
         {/* Wave SVG divider */}
-        <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 1440 100" preserveAspectRatio="none" style={{ height: "60px" }}>
-          <path d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z" fill="var(--login-bg, hsl(var(--background)))" />
+        <svg
+          className="absolute -bottom-1 left-0 w-full"
+          viewBox="0 0 1440 100"
+          preserveAspectRatio="none"
+          style={{ height: "60px" }}
+        >
+          <path
+            d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z"
+            fill="var(--login-bg, hsl(var(--background)))"
+          />
         </svg>
       </div>
       {/* Bottom form section */}

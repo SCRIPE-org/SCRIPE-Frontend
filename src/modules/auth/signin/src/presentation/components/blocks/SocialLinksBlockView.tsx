@@ -1,6 +1,9 @@
 "use client";
 
-import { type SocialLinksBlock, isValidCtaUrl } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import {
+  type SocialLinksBlock,
+  isValidCtaUrl,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { SOCIAL_ICONS } from "./block-constants";
 import { safeItems } from "./block-style-utils";
 
@@ -24,7 +27,9 @@ export function SocialLinksBlockView({ block }: { block: SocialLinksBlock }) {
             ].join(" ")}
             aria-label={item.platform}
           >
-            <span>{SOCIAL_ICONS[item.platform.toLowerCase()] || item.platform.slice(0, 2).toUpperCase()}</span>
+            <span>
+              {SOCIAL_ICONS[item.platform.toLowerCase()] || item.platform.slice(0, 2).toUpperCase()}
+            </span>
             {props.style === "with-labels" && <span>{item.platform}</span>}
           </a>
         ))}

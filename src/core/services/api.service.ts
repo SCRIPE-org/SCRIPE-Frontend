@@ -290,7 +290,6 @@ export class ApiService implements IApiService {
           );
         }
 
-
         // Log other errors
         const message = this.extractErrorMessage(error);
         appLogger.error(`API Error: ${message}`);

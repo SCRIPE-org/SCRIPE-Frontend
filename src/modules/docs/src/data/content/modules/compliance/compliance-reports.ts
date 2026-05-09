@@ -8,7 +8,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "tip",
     titleKey: "modules.compliance.reports.infoTitle",
-    contentKey: "modules.compliance.reports.infoContent"
+    contentKey: "modules.compliance.reports.infoContent",
   },
 
   // ─── Report Types ─────────────────────────────────────────
@@ -24,15 +24,35 @@ const sections: DocSection[] = [
     headers: [
       "modules.compliance.reports.reportType",
       "modules.compliance.reports.reportDesc",
-      "modules.compliance.reports.reportAudience"
+      "modules.compliance.reports.reportAudience",
     ],
     rows: [
-      ["GDPR Overview", "modules.compliance.reports.gdprDesc", "modules.compliance.reports.gdprAudience"],
-      ["DSR Summary", "modules.compliance.reports.dsrDesc", "modules.compliance.reports.dsrAudience"],
-      ["Consent Audit", "modules.compliance.reports.consentAuditDesc", "modules.compliance.reports.consentAudience"],
-      ["Retention Log", "modules.compliance.reports.retentionLogDesc", "modules.compliance.reports.retentionAudience"],
-      ["Data Inventory", "modules.compliance.reports.inventoryDesc", "modules.compliance.reports.inventoryAudience"]
-    ]
+      [
+        "GDPR Overview",
+        "modules.compliance.reports.gdprDesc",
+        "modules.compliance.reports.gdprAudience",
+      ],
+      [
+        "DSR Summary",
+        "modules.compliance.reports.dsrDesc",
+        "modules.compliance.reports.dsrAudience",
+      ],
+      [
+        "Consent Audit",
+        "modules.compliance.reports.consentAuditDesc",
+        "modules.compliance.reports.consentAudience",
+      ],
+      [
+        "Retention Log",
+        "modules.compliance.reports.retentionLogDesc",
+        "modules.compliance.reports.retentionAudience",
+      ],
+      [
+        "Data Inventory",
+        "modules.compliance.reports.inventoryDesc",
+        "modules.compliance.reports.inventoryAudience",
+      ],
+    ],
   },
 
   // ─── Async Flow ───────────────────────────────────────────
@@ -47,7 +67,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "note",
     titleKey: "modules.compliance.reports.formatsTitle",
-    contentKey: "modules.compliance.reports.formatsContent"
+    contentKey: "modules.compliance.reports.formatsContent",
   },
   {
     type: "flowchart",
@@ -57,13 +77,13 @@ const sections: DocSection[] = [
       { id: "queue", labelKey: "modules.compliance.reports.nodeQueue", type: "info" },
       { id: "job", labelKey: "modules.compliance.reports.nodeJob", type: "warning" },
       { id: "ready", labelKey: "modules.compliance.reports.nodeReady", type: "success" },
-      { id: "download", labelKey: "modules.compliance.reports.nodeDownload", type: "primary" }
+      { id: "download", labelKey: "modules.compliance.reports.nodeDownload", type: "primary" },
     ],
     connections: [
       { from: "queue", to: "job" },
       { from: "job", to: "ready" },
-      { from: "ready", to: "download" }
-    ]
+      { from: "ready", to: "download" },
+    ],
   },
 
   // ─── Code Example ─────────────────────────────────────────
@@ -99,7 +119,7 @@ const sections: DocSection[] = [
         
         return Result<Guid>.Success(report.Id);
     }
-}`
+}`,
   },
 
   // ─── API Endpoints ────────────────────────────────────────
@@ -112,12 +132,36 @@ const sections: DocSection[] = [
   {
     type: "api-table",
     endpoints: [
-      { method: "POST", path: "/api/v1/compliance/reports/generate", descriptionKey: "modules.compliance.reports.epGenerate", auth: "AdminOnly", permission: "compliance_reports.generate" },
-      { method: "GET", path: "/api/v1/compliance/reports", descriptionKey: "modules.compliance.reports.epList", auth: "AdminOnly", permission: "compliance_reports.view" },
-      { method: "GET", path: "/api/v1/compliance/reports/{id}", descriptionKey: "modules.compliance.reports.epGet", auth: "AdminOnly", permission: "compliance_reports.view" },
-      { method: "GET", path: "/api/v1/compliance/reports/{id}/download", descriptionKey: "modules.compliance.reports.epDownload", auth: "AdminOnly", permission: "compliance_reports.view" }
-    ]
-  }
+      {
+        method: "POST",
+        path: "/api/v1/compliance/reports/generate",
+        descriptionKey: "modules.compliance.reports.epGenerate",
+        auth: "AdminOnly",
+        permission: "compliance_reports.generate",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/reports",
+        descriptionKey: "modules.compliance.reports.epList",
+        auth: "AdminOnly",
+        permission: "compliance_reports.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/reports/{id}",
+        descriptionKey: "modules.compliance.reports.epGet",
+        auth: "AdminOnly",
+        permission: "compliance_reports.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/reports/{id}/download",
+        descriptionKey: "modules.compliance.reports.epDownload",
+        auth: "AdminOnly",
+        permission: "compliance_reports.view",
+      },
+    ],
+  },
 ];
 
 registerPage({

@@ -6,8 +6,15 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function CenteredLayout({
-  slotConfig, formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  slotConfig,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -24,7 +31,11 @@ export function CenteredLayout({
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">{companyName}</h1>
           <p className="text-sm text-muted-foreground">{t("auth.pleaseLogin")}</p>
         </div>
-        <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mb-8 w-full" />
+        <SlotRenderer
+          slotId="login.sidebar.content"
+          slotConfig={slotConfig}
+          className="mb-8 w-full"
+        />
         {formContent}
         {footerSlot}
         <p className="mt-12 text-[11px] font-medium text-muted-foreground/50">

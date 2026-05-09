@@ -155,8 +155,9 @@ export function WebhooksView() {
               <div className="flex items-center gap-2">
                 <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
                   <div
-                    className={`h-full rounded-full ${rate >= 95 ? "bg-emerald-500" : rate >= 80 ? "bg-amber-500" : "bg-red-500"
-                      }`}
+                    className={`h-full rounded-full ${
+                      rate >= 95 ? "bg-emerald-500" : rate >= 80 ? "bg-amber-500" : "bg-red-500"
+                    }`}
                     style={{ width: `${Math.min(rate, 100)}%` }}
                   />
                 </div>
@@ -188,34 +189,34 @@ export function WebhooksView() {
         tFn: (key: string) => string,
         handleDeleteFn?: (item: WebhookSubscriptionListItem) => void
       ): CrudAction<WebhookSubscriptionListItem>[] => [
-          {
-            label: tFn("common.view") || "View Details",
-            onClick: (item: WebhookSubscriptionListItem) =>
-              router.push(`/messaging/webhooks/${item.id}`),
-            variant: "ghost" as const,
-            icon: <Eye className="h-4 w-4" />,
-          },
-          {
-            label: tFn("webhooks.toggleStatus") || "Toggle Status",
-            onClick: (item: WebhookSubscriptionListItem) => handleToggle(item.id),
-            variant: "ghost" as const,
-            icon: <ToggleLeft className="h-4 w-4" />,
-            requiredPermission: "webhooks:update",
-          },
-          {
-            label: tFn("common.delete") || "Delete",
-            onClick: (item: WebhookSubscriptionListItem) => handleDeleteFn?.(item),
-            variant: "ghost" as const,
-            className: "text-red-600 hover:text-red-700",
-            icon: <Trash2 className="h-4 w-4" />,
-            requiredPermission: "webhooks:delete",
-            confirmTitle: tFn("webhooks.deleteConfirmTitle") || "Delete Webhook",
-            confirmDescription:
-              tFn("webhooks.deleteConfirmDesc") ||
-              "This will permanently delete this webhook and all delivery logs.",
-            confirmVariant: "destructive" as const,
-          },
-        ],
+        {
+          label: tFn("common.view") || "View Details",
+          onClick: (item: WebhookSubscriptionListItem) =>
+            router.push(`/messaging/webhooks/${item.id}`),
+          variant: "ghost" as const,
+          icon: <Eye className="h-4 w-4" />,
+        },
+        {
+          label: tFn("webhooks.toggleStatus") || "Toggle Status",
+          onClick: (item: WebhookSubscriptionListItem) => handleToggle(item.id),
+          variant: "ghost" as const,
+          icon: <ToggleLeft className="h-4 w-4" />,
+          requiredPermission: "webhooks:update",
+        },
+        {
+          label: tFn("common.delete") || "Delete",
+          onClick: (item: WebhookSubscriptionListItem) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-red-600 hover:text-red-700",
+          icon: <Trash2 className="h-4 w-4" />,
+          requiredPermission: "webhooks:delete",
+          confirmTitle: tFn("webhooks.deleteConfirmTitle") || "Delete Webhook",
+          confirmDescription:
+            tFn("webhooks.deleteConfirmDesc") ||
+            "This will permanently delete this webhook and all delivery logs.",
+          confirmVariant: "destructive" as const,
+        },
+      ],
     }),
     [t, configBase, handleToggle, router]
   );

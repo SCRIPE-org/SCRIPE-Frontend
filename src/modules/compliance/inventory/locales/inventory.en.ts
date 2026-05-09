@@ -43,7 +43,7 @@ export const en = {
       entityName: "e.g., User",
       fieldName: "e.g., EmailAddress",
       selectCategory: "Select category",
-      selectLegalBasis: "Select legal basis"
+      selectLegalBasis: "Select legal basis",
     },
     legalBases: {
       Consent: "Consent",

@@ -2,7 +2,10 @@
 
 import { useCallback, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { WorkspaceSelectionRequiredError, TwoFactorRequiredError } from "@modules/auth/core/domain/errors/AuthErrors";
+import {
+  WorkspaceSelectionRequiredError,
+  TwoFactorRequiredError,
+} from "@modules/auth/core/domain/errors/AuthErrors";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { LoginStep } from "./use2FAHandler";
 
@@ -37,20 +40,31 @@ interface UseWorkspaceSelectorOptions {
  */
 export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
   const {
-    redirectPath, formIdentifier, formPassword,
-    loginMutateAsync, setIsRedirecting, setLoginStep, setError,
-    setTenantId, hasTriggeredRedirect, handleRedirect,
-    enterTwoFactor, onTenantResolved,
+    redirectPath,
+    formIdentifier,
+    formPassword,
+    loginMutateAsync,
+    setIsRedirecting,
+    setLoginStep,
+    setError,
+    setTenantId,
+    hasTriggeredRedirect,
+    handleRedirect,
+    enterTwoFactor,
+    onTenantResolved,
   } = opts;
 
   const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
   const { t } = useI18n();
 
-  const showWorkspaces = useCallback((workspaces: WorkspaceChoice[]) => {
-    setAvailableWorkspaces(workspaces);
-    setLoginStep("workspace-selection");
-    setError("");
-  }, [setLoginStep, setError]);
+  const showWorkspaces = useCallback(
+    (workspaces: WorkspaceChoice[]) => {
+      setAvailableWorkspaces(workspaces);
+      setLoginStep("workspace-selection");
+      setError("");
+    },
+    [setLoginStep, setError]
+  );
 
   /**
    * Select a workspace from the post-credential picker.
@@ -101,9 +115,18 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
       }
     },
     [
-      formIdentifier, formPassword, loginMutateAsync, redirectPath,
-      setIsRedirecting, setError, setTenantId, hasTriggeredRedirect,
-      handleRedirect, enterTwoFactor, onTenantResolved, t,
+      formIdentifier,
+      formPassword,
+      loginMutateAsync,
+      redirectPath,
+      setIsRedirecting,
+      setError,
+      setTenantId,
+      hasTriggeredRedirect,
+      handleRedirect,
+      enterTwoFactor,
+      onTenantResolved,
+      t,
     ]
   );
 

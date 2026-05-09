@@ -22,7 +22,8 @@ export const BG_STYLE = "selection:bg-primary/20";
 
 /** Full-page wrapper background (uses CSS vars for image + solid fallback) */
 export const WRAPPER_STYLE = {
-  background: "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
+  background:
+    "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
   lineHeight: "var(--login-line-height, 1.5)",
   letterSpacing: "var(--login-letter-spacing, 0px)",
 } as const;

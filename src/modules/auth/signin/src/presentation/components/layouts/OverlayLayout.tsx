@@ -5,8 +5,14 @@ import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function OverlayLayout({
-  formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -30,7 +36,8 @@ export function OverlayLayout({
           padding: "var(--login-card-padding, 32px)",
           borderRadius: "var(--login-radius-card, 24px)",
           boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-          backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)",
+          backgroundColor:
+            "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)",
         }}
       >
         <div className="from-[var(--login-primary,hsl(var(--primary)))]/20 to-[var(--login-primary,hsl(var(--primary)))]/10 pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-b via-transparent" />
@@ -38,7 +45,10 @@ export function OverlayLayout({
           <div className="mb-8 flex flex-col items-center gap-3 text-center">
             <div
               className="border-[var(--login-accent,hsl(var(--border)))]/30 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border shadow-lg backdrop-blur-sm"
-              style={{ backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 60%, transparent)" }}
+              style={{
+                backgroundColor:
+                  "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 60%, transparent)",
+              }}
             >
               <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
             </div>

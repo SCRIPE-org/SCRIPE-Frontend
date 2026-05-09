@@ -60,97 +60,93 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
   return (
     <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
-    <div
-      className={cn(
-        "bg-background text-foreground",
-        direction === "rtl" ? "rtl" : "ltr"
-      )}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flex: 1,
-        minHeight: 0,
-        width: "100%",
-        overflow: "hidden",
-        position: "relative",
-        "--nexus-primary-w": "64px",
-        "--nexus-panel-w": isPanelCollapsed ? "0px" : "240px",
-        "--nexus-topbar-h": "56px",
-      } as React.CSSProperties}
-    >
-      {/* Workspace transition overlay (color-sweep on workspace change) */}
-      <NexusTransitionOverlay />
-
-      {/* Module loading overlay (shown while switching + navigating) */}
-      <NexusWorkspaceLoader
-        show={loaderState.show}
-        workspaceName={loaderState.workspaceName}
-        workspaceAbbr={loaderState.workspaceAbbr}
-        accentColor={loaderState.accentColor}
-      />
-
-      {/*
-       * ── Global Banner (impersonation / tenant drilldown) ──────────────────
-       * Banner is now managed by DashboardLayout above us.
-       */}
-
-      {/* ── Rail + Content row (fills remaining height) ──────────────────── */}
       <div
-        style={{
-          display: "flex",
-          flex: 1,
-          overflow: "hidden",
-          minHeight: 0, // critical: allows flex child to shrink below content size
-        }}
+        className={cn("bg-background text-foreground", direction === "rtl" ? "rtl" : "ltr")}
+        style={
+          {
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            minHeight: 0,
+            width: "100%",
+            overflow: "hidden",
+            position: "relative",
+            "--nexus-primary-w": "64px",
+            "--nexus-panel-w": isPanelCollapsed ? "0px" : "240px",
+            "--nexus-topbar-h": "56px",
+          } as React.CSSProperties
+        }
       >
-        {/* Primary rail — full height of this row */}
-        <NexusPrimaryRail
-          onTogglePanel={togglePanel}
-          isPanelCollapsed={isPanelCollapsed}
+        {/* Workspace transition overlay (color-sweep on workspace change) */}
+        <NexusTransitionOverlay />
+
+        {/* Module loading overlay (shown while switching + navigating) */}
+        <NexusWorkspaceLoader
+          show={loaderState.show}
+          workspaceName={loaderState.workspaceName}
+          workspaceAbbr={loaderState.workspaceAbbr}
+          accentColor={loaderState.accentColor}
         />
 
-        {/* Secondary rail (panel) */}
-        <NexusSecondaryRail
-          mobileOpen={mobileMenuOpen}
-          onMobileClose={closeMobile}
-          isCollapsed={isPanelCollapsed}
-        />
+        {/*
+         * ── Global Banner (impersonation / tenant drilldown) ──────────────────
+         * Banner is now managed by DashboardLayout above us.
+         */}
 
-        {/* Page area: topbar + scrollable main */}
+        {/* ── Rail + Content row (fills remaining height) ──────────────────── */}
         <div
           style={{
             display: "flex",
             flex: 1,
-            flexDirection: "column",
             overflow: "hidden",
-            background: "hsl(var(--background))",
+            minHeight: 0, // critical: allows flex child to shrink below content size
           }}
         >
-          <NexusTopbar
-            onMobileMenuOpen={openMobile}
-            onTogglePanel={togglePanel}
-            onOpenSearch={() => setSearchOpen(true)}
-            isPanelCollapsed={isPanelCollapsed}
+          {/* Primary rail — full height of this row */}
+          <NexusPrimaryRail onTogglePanel={togglePanel} isPanelCollapsed={isPanelCollapsed} />
+
+          {/* Secondary rail (panel) */}
+          <NexusSecondaryRail
+            mobileOpen={mobileMenuOpen}
+            onMobileClose={closeMobile}
+            isCollapsed={isPanelCollapsed}
           />
-          <main
-            id="nexus-content"
+
+          {/* Page area: topbar + scrollable main */}
+          <div
             style={{
+              display: "flex",
               flex: 1,
-              overflowY: "auto",
-              overflowX: "hidden",
-              padding: "16px 20px",
+              flexDirection: "column",
+              overflow: "hidden",
               background: "hsl(var(--background))",
-              scrollbarWidth: "thin",
-              scrollbarColor: "hsl(var(--border)) transparent",
             }}
           >
-            <div className="animate-in fade-in duration-500">{children}</div>
-          </main>
+            <NexusTopbar
+              onMobileMenuOpen={openMobile}
+              onTogglePanel={togglePanel}
+              onOpenSearch={() => setSearchOpen(true)}
+              isPanelCollapsed={isPanelCollapsed}
+            />
+            <main
+              id="nexus-content"
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                overflowX: "hidden",
+                padding: "16px 20px",
+                background: "hsl(var(--background))",
+                scrollbarWidth: "thin",
+                scrollbarColor: "hsl(var(--border)) transparent",
+              }}
+            >
+              <div className="duration-500 animate-in fade-in">{children}</div>
+            </main>
+          </div>
         </div>
-      </div>
 
-      <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
-    </div>
+        <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
+      </div>
     </WorkspaceTransitionContext.Provider>
   );
 }

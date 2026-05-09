@@ -16,9 +16,7 @@ import { cn } from "@core/common/utils";
 
 // ── Icon resolver ─────────────────────────────────────────────────────────────
 export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }) {
-  const PascalName = name?.replace(/(^|[-_])(\w)/g, (_, __, c: string) =>
-    c.toUpperCase()
-  );
+  const PascalName = name?.replace(/(^|[-_])(\w)/g, (_, __, c: string) => c.toUpperCase());
   const Icon = (LucideIcons as Record<string, any>)[PascalName ?? ""];
   if (Icon) return <Icon width={size} height={size} strokeWidth={1.8} />;
   return <LayoutDashboard width={size} height={size} strokeWidth={1.8} />;
@@ -55,10 +53,8 @@ export function RootItemButton({
 
   // ── Light/dark aware colours ─────────────────────────────────────────────
   const bgColor = (() => {
-    if (isActive)
-      return isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
-    if (hovered)
-      return isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)";
+    if (isActive) return isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
+    if (hovered) return isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)";
     return "transparent";
   })();
 
@@ -93,10 +89,12 @@ export function RootItemButton({
               boxShadow: isActive ? `0 4px 12px ${accentColor}15` : "none",
             }}
           >
-            <span className={cn(
-              "transition-transform duration-200",
-              hovered && !isActive ? "scale-110" : "scale-100"
-            )}>
+            <span
+              className={cn(
+                "transition-transform duration-200",
+                hovered && !isActive ? "scale-110" : "scale-100"
+              )}
+            >
               <DynamicIcon name={item.icon} size={20} />
             </span>
           </button>
@@ -120,9 +118,7 @@ export interface BackButtonProps {
 export function BackButton({ isRTL, isDark, label, onClick }: BackButtonProps) {
   const [hovered, setHovered] = useState(false);
   const btnRef = React.useRef<HTMLButtonElement>(null);
-  const iconColor = hovered
-    ? isDark ? "#ffffff" : "#000000"
-    : isDark ? "#8A9CC0" : "#64748B";
+  const iconColor = hovered ? (isDark ? "#ffffff" : "#000000") : isDark ? "#8A9CC0" : "#64748B";
 
   return (
     <TooltipProvider delayDuration={50}>
@@ -143,16 +139,20 @@ export function BackButton({ isRTL, isDark, label, onClick }: BackButtonProps) {
               cursor: "pointer",
               border: "1px solid transparent",
               background: hovered
-                ? isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"
+                ? isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(0,0,0,0.05)"
                 : "transparent",
               color: iconColor,
               marginBottom: 8,
             }}
           >
-            <span className={cn(
-              "transition-transform duration-200",
-              hovered ? (isRTL ? "translate-x-1" : "-translate-x-1") : "translate-x-0"
-            )}>
+            <span
+              className={cn(
+                "transition-transform duration-200",
+                hovered ? (isRTL ? "translate-x-1" : "-translate-x-1") : "translate-x-0"
+              )}
+            >
               {isRTL ? (
                 <ArrowRight width={20} height={20} strokeWidth={2} />
               ) : (
@@ -178,12 +178,16 @@ export interface TogglePanelButtonProps {
   onClick: () => void;
 }
 
-export function TogglePanelButton({ isRTL, isDark, label, isCollapsed, onClick }: TogglePanelButtonProps) {
+export function TogglePanelButton({
+  isRTL,
+  isDark,
+  label,
+  isCollapsed,
+  onClick,
+}: TogglePanelButtonProps) {
   const [hovered, setHovered] = useState(false);
   const btnRef = React.useRef<HTMLButtonElement>(null);
-  const iconColor = hovered
-    ? isDark ? "#ffffff" : "#000000"
-    : isDark ? "#8A9CC0" : "#64748B";
+  const iconColor = hovered ? (isDark ? "#ffffff" : "#000000") : isDark ? "#8A9CC0" : "#64748B";
 
   // Determine icon based on RTL and collapsed state
   let Icon = PanelLeftClose;
@@ -212,16 +216,20 @@ export function TogglePanelButton({ isRTL, isDark, label, isCollapsed, onClick }
               cursor: "pointer",
               border: "1px solid transparent",
               background: hovered
-                ? isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"
+                ? isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(0,0,0,0.05)"
                 : "transparent",
               color: iconColor,
               marginBottom: 8,
             }}
           >
-            <span className={cn(
-              "transition-transform duration-200",
-              hovered ? "scale-110" : "scale-100"
-            )}>
+            <span
+              className={cn(
+                "transition-transform duration-200",
+                hovered ? "scale-110" : "scale-100"
+              )}
+            >
               <Icon width={20} height={20} strokeWidth={2} />
             </span>
           </button>
@@ -267,11 +275,11 @@ export function PrimaryRailLogo({
   isDark,
   isModuleMode,
   language,
-  onClick
+  onClick,
 }: PrimaryRailLogoProps) {
   return (
     <div
-      className="flex items-center justify-center shrink-0 cursor-pointer transition-all hover:scale-105 duration-300"
+      className="flex shrink-0 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-105"
       style={{
         width: 48,
         height: 48,
@@ -295,7 +303,9 @@ export function PrimaryRailLogo({
           src={tenantLogoUrl}
           alt="Logo"
           style={{ width: 48, height: 48, objectFit: "contain", borderRadius: 14 }}
-          onError={(e) => { e.currentTarget.style.display = "none"; }}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
         />
       ) : (
         <span
@@ -328,10 +338,10 @@ export function ActiveIndicator({
   indicatorTop,
   indicatorColor,
   indicatorVisible,
-  isRTL
+  isRTL,
 }: ActiveIndicatorProps) {
   return (
-    <div 
+    <div
       style={{
         position: "absolute",
         [isRTL ? "right" : "left"]: 0,

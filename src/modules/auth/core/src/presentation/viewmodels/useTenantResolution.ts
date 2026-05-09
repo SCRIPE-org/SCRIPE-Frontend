@@ -95,4 +95,3 @@ export function useTenantResolution(page?: string): TenantResolutionResult {
     isApiError,
   };
 }
-

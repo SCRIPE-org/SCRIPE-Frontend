@@ -15,4 +15,3 @@ export interface ISsoService {
   }): Promise<SsoCallbackResult>;
   buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string;
 }
-

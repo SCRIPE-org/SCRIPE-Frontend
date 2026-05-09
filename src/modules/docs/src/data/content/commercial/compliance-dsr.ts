@@ -9,7 +9,7 @@ const sections: DocSection[] = [
     titleKey: "commercial.complianceDsr.automationTitle",
     id: "dsr-automation",
   },
-  { type: "paragraph", contentKey: "commercial.complianceDsr.automationIntro" }
+  { type: "paragraph", contentKey: "commercial.complianceDsr.automationIntro" },
 ];
 
 registerPage({

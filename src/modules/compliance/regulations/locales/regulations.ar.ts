@@ -34,7 +34,7 @@ export const ar = {
         code: "مثال: GDPR",
         name: "مثال: اللائحة العامة لحماية البيانات",
         jurisdiction: "مثال: الاتحاد الأوروبي",
-        referenceUrl: "https://..."
+        referenceUrl: "https://...",
       },
       search: "البحث في اللوائح...",
       required: "مطلوب",
@@ -46,4 +46,3 @@ export const ar = {
     },
   },
 };
-

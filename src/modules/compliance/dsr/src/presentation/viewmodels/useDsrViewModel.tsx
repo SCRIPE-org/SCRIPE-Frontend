@@ -11,7 +11,11 @@ import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import type { DataSubjectRequest, DsrStatus, DsrRequestType } from "../../domain/entities/DataSubjectRequest";
+import type {
+  DataSubjectRequest,
+  DsrStatus,
+  DsrRequestType,
+} from "../../domain/entities/DataSubjectRequest";
 import type { SubmitDsrRequest, ReviewDsrRequest } from "../../domain/entities/DsrRequests";
 import { DsrSlaCell } from "../components/DsrSlaCell";
 import { DsrTypeCell } from "../components/DsrTypeCell";
@@ -82,7 +86,7 @@ export function useDsrViewModel() {
         };
       },
       // "create" is intercepted by onCreateClick — this stub is never called
-      create: async () => ({} as DataSubjectRequest),
+      create: async () => ({}) as DataSubjectRequest,
     }
   );
 
@@ -106,7 +110,9 @@ export function useDsrViewModel() {
       dsrRepository.review(id, data),
     onSuccess: (_data, { data }) => {
       invalidate();
-      success({ title: data.isApproved ? t("compliance.dsrApproved") : t("compliance.dsrRejected") });
+      success({
+        title: data.isApproved ? t("compliance.dsrApproved") : t("compliance.dsrRejected"),
+      });
     },
     onError: () => toastError({ title: t("common.error") }),
   });
@@ -122,7 +128,12 @@ export function useDsrViewModel() {
 
   // ── Handlers ──────────────────────────────────────────────────────────────────
   const handleSubmit = useCallback(
-    async (data: { requestType: string; regulationCode: string; subjectEmail: string; requesterNotes?: string }) => {
+    async (data: {
+      requestType: string;
+      regulationCode: string;
+      subjectEmail: string;
+      requesterNotes?: string;
+    }) => {
       await submitMutation.mutateAsync({
         requestType: data.requestType,
         regulationCode: data.regulationCode,
@@ -158,7 +169,10 @@ export function useDsrViewModel() {
           typeFilter={typeFilter}
           onStatusChange={(v: DsrStatus | "") => setStatusFilter(v)}
           onTypeChange={(v: DsrRequestType | "") => setTypeFilter(v)}
-          onClear={() => { setStatusFilter(""); setTypeFilter(""); }}
+          onClear={() => {
+            setStatusFilter("");
+            setTypeFilter("");
+          }}
           t={t}
         />
       ),
@@ -268,7 +282,17 @@ export function useDsrViewModel() {
 
       getItemDisplayName: (dsr) => dsr.subjectEmail,
     }),
-    [t, router, statusFilter, typeFilter, canCreate, canReview, canCancel, handleCancel, setSubmitOpen]
+    [
+      t,
+      router,
+      statusFilter,
+      typeFilter,
+      canCreate,
+      canReview,
+      canCancel,
+      handleCancel,
+      setSubmitOpen,
+    ]
   );
 
   return {

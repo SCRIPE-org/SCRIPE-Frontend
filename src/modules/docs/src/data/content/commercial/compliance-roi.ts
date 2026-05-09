@@ -14,9 +14,9 @@ const sections: DocSection[] = [
     headers: ["commercial.complianceRoi.metricCol", "commercial.complianceRoi.impactCol"],
     rows: [
       ["commercial.complianceRoi.metricManualDsr", "commercial.complianceRoi.impactManualDsr"],
-      ["commercial.complianceRoi.metricFines", "commercial.complianceRoi.impactFines"]
-    ]
-  }
+      ["commercial.complianceRoi.metricFines", "commercial.complianceRoi.impactFines"],
+    ],
+  },
 ];
 
 registerPage({

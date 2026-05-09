@@ -27,7 +27,7 @@ import {
   TopbarHomeButton,
   TopbarMobileControls,
   TopbarPanelToggle,
-  TopbarSearchButton
+  TopbarSearchButton,
 } from "./_parts/topbar-parts";
 
 interface NexusTopbarProps {
@@ -55,16 +55,17 @@ export function NexusTopbar({
   useEffect(() => setMounted(true), []);
 
   const isRTL = direction === "rtl";
-  const { isDark, accent: resolvedAccent } = useNexusPalette(resolvedTheme === "dark", accentColor || "#6258c4");
+  const { isDark, accent: resolvedAccent } = useNexusPalette(
+    resolvedTheme === "dark",
+    accentColor || "#6258c4"
+  );
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
   const segments = pathname.split("/").filter(Boolean);
   const pageName = segments[segments.length - 1] ?? "";
-  const formattedPage = pageName
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const formattedPage = pageName.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-  const workspaceName = activeWorkspace?.getLocalizedName(language) ?? (BRAND?.name ?? "Platform");
+  const workspaceName = activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? "Platform";
   const activeRootName = activeRootItem
     ? language === "ar"
       ? activeRootItem.nameAr || activeRootItem.nameEn
@@ -88,9 +89,10 @@ export function NexusTopbar({
     };
     search(activeRootItem.children);
     if (bestMatch) {
-      displayPageName = language === "ar"
-        ? bestMatch.nameAr || bestMatch.nameEn || formattedPage
-        : bestMatch.nameEn || bestMatch.nameAr || formattedPage;
+      displayPageName =
+        language === "ar"
+          ? bestMatch.nameAr || bestMatch.nameEn || formattedPage
+          : bestMatch.nameEn || bestMatch.nameAr || formattedPage;
     }
   }
 
@@ -105,9 +107,7 @@ export function NexusTopbar({
   const bgStyle = (() => {
     if (cardStyle === "glass") {
       return {
-        background: isDark
-          ? "rgba(10, 15, 28, 0.55)"
-          : "rgba(255, 255, 255, 0.72)",
+        background: isDark ? "rgba(10, 15, 28, 0.55)" : "rgba(255, 255, 255, 0.72)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
       };
@@ -137,9 +137,7 @@ export function NexusTopbar({
         height: 56,
         minHeight: 56,
         flexShrink: 0,
-        borderBottom: isDark
-          ? "1px solid rgba(255,255,255,0.05)"
-          : "1px solid rgba(0,0,0,0.05)",
+        borderBottom: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
         display: "flex",
         alignItems: "center",
         padding: isRTL ? "0 20px 0 12px" : "0 12px 0 20px",

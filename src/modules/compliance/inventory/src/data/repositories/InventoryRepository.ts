@@ -7,7 +7,10 @@ import type { IInventoryService, InventoryParams } from "../../domain/interfaces
 import type { InventoryItem } from "../../domain/entities/InventoryItem";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import { InventoryMapper } from "../mappers/InventoryMapper";
-import type { CreateDataInventoryRequest, UpdateDataInventoryRequest } from "../models/InventoryModels";
+import type {
+  CreateDataInventoryRequest,
+  UpdateDataInventoryRequest,
+} from "../models/InventoryModels";
 
 export class InventoryRepository implements IInventoryRepository {
   constructor(private readonly service: IInventoryService) {}

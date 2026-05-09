@@ -8,7 +8,7 @@ const sections: DocSection[] = [
     type: "info",
     variant: "note",
     titleKey: "modules.compliance.inventory.infoTitle",
-    contentKey: "modules.compliance.inventory.infoContent"
+    contentKey: "modules.compliance.inventory.infoContent",
   },
 
   // ─── Sensitivity Levels ───────────────────────────────────
@@ -24,14 +24,30 @@ const sections: DocSection[] = [
     headers: [
       "modules.compliance.inventory.sensLevel",
       "modules.compliance.inventory.sensDesc",
-      "modules.compliance.inventory.sensExamples"
+      "modules.compliance.inventory.sensExamples",
     ],
     rows: [
-      ["Public", "modules.compliance.inventory.sensPublicDesc", "modules.compliance.inventory.sensPublicEx"],
-      ["Internal", "modules.compliance.inventory.sensInternalDesc", "modules.compliance.inventory.sensInternalEx"],
-      ["Confidential", "modules.compliance.inventory.sensConfDesc", "modules.compliance.inventory.sensConfEx"],
-      ["Restricted", "modules.compliance.inventory.sensRestDesc", "modules.compliance.inventory.sensRestEx"]
-    ]
+      [
+        "Public",
+        "modules.compliance.inventory.sensPublicDesc",
+        "modules.compliance.inventory.sensPublicEx",
+      ],
+      [
+        "Internal",
+        "modules.compliance.inventory.sensInternalDesc",
+        "modules.compliance.inventory.sensInternalEx",
+      ],
+      [
+        "Confidential",
+        "modules.compliance.inventory.sensConfDesc",
+        "modules.compliance.inventory.sensConfEx",
+      ],
+      [
+        "Restricted",
+        "modules.compliance.inventory.sensRestDesc",
+        "modules.compliance.inventory.sensRestEx",
+      ],
+    ],
   },
 
   // ─── Entity Structure ─────────────────────────────────────
@@ -63,7 +79,7 @@ const sections: DocSection[] = [
     // Identifies the system or module that owns this data
     [MaxLength(200)]
     public string StorageSystem { get; set; } = null!;
-}`
+}`,
   },
 
   // ─── Entity Reference ─────────────────────────────────────
@@ -75,15 +91,19 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["modules.compliance.inventory.field", "modules.compliance.inventory.type", "modules.compliance.inventory.description"],
+    headers: [
+      "modules.compliance.inventory.field",
+      "modules.compliance.inventory.type",
+      "modules.compliance.inventory.description",
+    ],
     rows: [
       ["EntityName", "String", "modules.compliance.inventory.fEntityName"],
       ["FieldName", "String", "modules.compliance.inventory.fFieldName"],
       ["Sensitivity", "Enum", "modules.compliance.inventory.fSensitivity"],
       ["StorageSystem", "String", "modules.compliance.inventory.fStorageSystem"],
       ["LegalBasis", "String", "modules.compliance.inventory.fLegalBasis"],
-      ["RetentionPolicyId", "Guid?", "modules.compliance.inventory.fRetentionId"]
-    ]
+      ["RetentionPolicyId", "Guid?", "modules.compliance.inventory.fRetentionId"],
+    ],
   },
 
   // ─── API Endpoints ────────────────────────────────────────
@@ -96,11 +116,29 @@ const sections: DocSection[] = [
   {
     type: "api-table",
     endpoints: [
-      { method: "GET", path: "/api/v1/compliance/data-inventory", descriptionKey: "modules.compliance.inventory.epList", auth: "AdminOnly", permission: "compliance_data_inventory.view" },
-      { method: "POST", path: "/api/v1/compliance/data-inventory", descriptionKey: "modules.compliance.inventory.epCreate", auth: "AdminOnly", permission: "compliance_data_inventory.manage" },
-      { method: "PUT", path: "/api/v1/compliance/data-inventory/{id}", descriptionKey: "modules.compliance.inventory.epUpdate", auth: "AdminOnly", permission: "compliance_data_inventory.manage" }
-    ]
-  }
+      {
+        method: "GET",
+        path: "/api/v1/compliance/data-inventory",
+        descriptionKey: "modules.compliance.inventory.epList",
+        auth: "AdminOnly",
+        permission: "compliance_data_inventory.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/data-inventory",
+        descriptionKey: "modules.compliance.inventory.epCreate",
+        auth: "AdminOnly",
+        permission: "compliance_data_inventory.manage",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/compliance/data-inventory/{id}",
+        descriptionKey: "modules.compliance.inventory.epUpdate",
+        auth: "AdminOnly",
+        permission: "compliance_data_inventory.manage",
+      },
+    ],
+  },
 ];
 
 registerPage({

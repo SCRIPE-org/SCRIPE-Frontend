@@ -90,15 +90,21 @@ function PromoRow({
           )}
         </div>
         <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-          <span>{promo.formattedDiscount} {t("entitlements.promotions.off") || "off"}</span>
+          <span>
+            {promo.formattedDiscount} {t("entitlements.promotions.off") || "off"}
+          </span>
           <span>·</span>
           <span>
-            {promo.currentRedemptions}/{promo.maxRedemptions ?? "∞"} {t("entitlements.promotions.used") || "used"}
+            {promo.currentRedemptions}/{promo.maxRedemptions ?? "∞"}{" "}
+            {t("entitlements.promotions.used") || "used"}
           </span>
           {promo.expiresAt && (
             <>
               <span>·</span>
-              <span>{t("entitlements.promotions.expires") || "Expires"} {new Date(promo.expiresAt).toLocaleDateString()}</span>
+              <span>
+                {t("entitlements.promotions.expires") || "Expires"}{" "}
+                {new Date(promo.expiresAt).toLocaleDateString()}
+              </span>
             </>
           )}
         </div>
@@ -193,9 +199,15 @@ function PromotionForm({
             onChange={(e) => setForm((f) => ({ ...f, discountType: e.target.value }))}
             className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
           >
-            <option value="Percentage">{t("entitlements.promotions.percentage") || "Percentage"}</option>
-            <option value="FixedAmount">{t("entitlements.promotions.fixedAmount") || "Fixed Amount"}</option>
-            <option value="FreeTrial">{t("entitlements.promotions.freeTrial") || "Free Trial (days)"}</option>
+            <option value="Percentage">
+              {t("entitlements.promotions.percentage") || "Percentage"}
+            </option>
+            <option value="FixedAmount">
+              {t("entitlements.promotions.fixedAmount") || "Fixed Amount"}
+            </option>
+            <option value="FreeTrial">
+              {t("entitlements.promotions.freeTrial") || "Free Trial (days)"}
+            </option>
           </select>
         </div>
         <div className="space-y-1">
@@ -334,9 +346,12 @@ export function PromotionsTab({ planId, t }: PromotionsTabProps) {
         ) : vm.promotions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <Tag className="mb-3 h-10 w-10 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">{t("entitlements.promotions.noPromotions") || "No promotions yet"}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("entitlements.promotions.noPromotions") || "No promotions yet"}
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {t("entitlements.promotions.createFirst") || "Create your first promo code for this plan."}
+              {t("entitlements.promotions.createFirst") ||
+                "Create your first promo code for this plan."}
             </p>
           </div>
         ) : (

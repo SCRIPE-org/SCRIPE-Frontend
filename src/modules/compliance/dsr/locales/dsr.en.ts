@@ -83,7 +83,7 @@ export const en = {
     erasureGateWarning: "This action is irreversible. All PII will be anonymized permanently.",
     erasureGraceNotice: "A grace period applies before execution.",
     confirmErasureTitle: "Confirm Irreversible Erasure",
-    
+
     // Detail View Keys
     dsrDetailTitle: "DSR Details",
     confirmErasureBtn: "Confirm Erasure",
@@ -96,7 +96,8 @@ export const en = {
     erasureScheduledDesc: "Erasure confirmed. Execution scheduled.",
     erasurePendingDesc: "Awaiting final erasure confirmation.",
     confirmErasureDialogTitle: "Confirm Data Erasure",
-    confirmErasureDialogDesc: "This action is irreversible. All associated personal data across all modules will be permanently anonymized or deleted according to retention policies.",
+    confirmErasureDialogDesc:
+      "This action is irreversible. All associated personal data across all modules will be permanently anonymized or deleted according to retention policies.",
     typeConfirmToContinue: "Type CONFIRM to execute the erasure:",
     executeErasureBtn: "Execute Erasure",
     columns: {

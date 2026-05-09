@@ -43,7 +43,7 @@ export const ar = {
       entityName: "مثال: مستخدم",
       fieldName: "مثال: عنوان البريد الإلكتروني",
       selectCategory: "حدد الفئة",
-      selectLegalBasis: "حدد الأساس القانوني"
+      selectLegalBasis: "حدد الأساس القانوني",
     },
     legalBases: {
       Consent: "موافقة",

@@ -19,7 +19,10 @@ export function RatingBlockView({ block }: { block: RatingBlock }) {
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className={`${SIZE_CLASS[props.size || "md"]} tracking-wide`} style={{ color: blockColor(props.color, "var(--login-primary, hsl(var(--primary)))") }}>
+      <div
+        className={`${SIZE_CLASS[props.size || "md"]} tracking-wide`}
+        style={{ color: blockColor(props.color, "var(--login-primary, hsl(var(--primary)))") }}
+      >
         {Array.from({ length: 5 }, (_, index) => (index < Math.round(value) ? "*" : "-")).join(" ")}
       </div>
       {props.label && <div className="text-sm text-muted-foreground">{props.label}</div>}

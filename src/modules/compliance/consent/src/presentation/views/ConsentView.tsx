@@ -55,7 +55,7 @@ function ConsentCard({
     >
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3 min-w-0">
+          <div className="flex min-w-0 items-start gap-3">
             <div
               className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
                 consent.isGranted
@@ -63,7 +63,11 @@ function ConsentCard({
                   : "border-muted bg-muted/50 text-muted-foreground"
               }`}
             >
-              {consent.isGranted ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+              {consent.isGranted ? (
+                <CheckCircle2 className="h-4 w-4" />
+              ) : (
+                <XCircle className="h-4 w-4" />
+              )}
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
@@ -82,7 +86,8 @@ function ConsentCard({
                   {consent.lastUpdatedAt.toLocaleDateString()}
                 </span>
                 {" · "}
-                {t("compliance.consentVersion")} <span className="font-medium text-foreground">{consent.consentVersion}</span>
+                {t("compliance.consentVersion")}{" "}
+                <span className="font-medium text-foreground">{consent.consentVersion}</span>
               </p>
             </div>
           </div>
@@ -93,8 +98,8 @@ function ConsentCard({
             >
               {consent.isGranted ? t("compliance.granted") : t("compliance.withdrawn")}
             </Badge>
-            {canManage && (
-              consent.isGranted ? (
+            {canManage &&
+              (consent.isGranted ? (
                 <Button
                   id={`consent-withdraw-${consent.purposeId}`}
                   variant="outline"
@@ -115,8 +120,7 @@ function ConsentCard({
                 >
                   {t("compliance.recordConsent")}
                 </Button>
-              )
-            )}
+              ))}
           </div>
         </div>
       </CardContent>
@@ -195,7 +199,12 @@ export function ConsentView() {
 
   const handleRecord = async (purposeId: string, action: "Granted" | "Withdrawn") => {
     try {
-      await recordConsent({ purposeId, action, consentVersion: "1.0", collectionMethod: "settings" });
+      await recordConsent({
+        purposeId,
+        action,
+        consentVersion: "1.0",
+        collectionMethod: "settings",
+      });
       toast({ title: t("compliance.consentRecorded") });
     } catch {
       toast({ title: t("common.error"), variant: "destructive" });
@@ -219,7 +228,12 @@ export function ConsentView() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => router.push("/compliance")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={() => router.push("/compliance")}
+          >
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
@@ -229,7 +243,8 @@ export function ConsentView() {
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{t("compliance.consentTitle")}</h2>
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{grantedCount}</span> {t("compliance.granted")}
+                <span className="font-medium text-foreground">{grantedCount}</span>{" "}
+                {t("compliance.granted")}
                 {reConsentCount > 0 && (
                   <>
                     {" · "}
@@ -241,7 +256,12 @@ export function ConsentView() {
             </div>
           </div>
         </div>
-        <Button id="compliance-consent-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+        <Button
+          id="compliance-consent-refresh"
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+        >
           <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
           {t("common.refresh")}
         </Button>
@@ -257,97 +277,103 @@ export function ConsentView() {
 
         <TabsContent value="my-consents" className="space-y-6">
           {/* Summary stats */}
-      {!isLoading && !isError && consents.length > 0 && (
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            {
-              label: t("compliance.granted"),
-              value: grantedCount,
-              icon: <CheckCircle2 className="h-4 w-4" />,
-              cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
-            },
-            {
-              label: t("compliance.withdrawn"),
-              value: consents.length - grantedCount,
-              icon: <XCircle className="h-4 w-4" />,
-              cls: "border-border/50 bg-muted/30 text-muted-foreground",
-            },
-            {
-              label: t("compliance.reConsentRequired"),
-              value: reConsentCount,
-              icon: <Bell className="h-4 w-4" />,
-              cls: "border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 text-amber-600 dark:text-amber-400",
-            },
-          ].map((s) => (
-            <Card key={s.label} className={`border ${s.cls}`}>
-              <CardContent className="flex items-center gap-3 p-4">
-                <div className="rounded-lg bg-background/60 p-2 shadow-sm">{s.icon}</div>
-                <div>
-                  <p className="text-xl font-bold tabular-nums">{s.value}</p>
-                  <p className="text-xs opacity-80">{s.label}</p>
-                </div>
+          {!isLoading && !isError && consents.length > 0 && (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                {
+                  label: t("compliance.granted"),
+                  value: grantedCount,
+                  icon: <CheckCircle2 className="h-4 w-4" />,
+                  cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
+                },
+                {
+                  label: t("compliance.withdrawn"),
+                  value: consents.length - grantedCount,
+                  icon: <XCircle className="h-4 w-4" />,
+                  cls: "border-border/50 bg-muted/30 text-muted-foreground",
+                },
+                {
+                  label: t("compliance.reConsentRequired"),
+                  value: reConsentCount,
+                  icon: <Bell className="h-4 w-4" />,
+                  cls: "border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 text-amber-600 dark:text-amber-400",
+                },
+              ].map((s) => (
+                <Card key={s.label} className={`border ${s.cls}`}>
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <div className="rounded-lg bg-background/60 p-2 shadow-sm">{s.icon}</div>
+                    <div>
+                      <p className="text-xl font-bold tabular-nums">{s.value}</p>
+                      <p className="text-xs opacity-80">{s.label}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Content */}
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-[90px] rounded-xl" />
+              ))}
+            </div>
+          ) : isError ? (
+            <Card className="border-destructive/20 bg-destructive/5">
+              <CardContent className="flex flex-col items-center justify-center py-14 text-center">
+                <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
+                <p className="font-semibold">{t("common.error")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("common.tryAgain")}</p>
+                <Button className="mt-4" variant="outline" size="sm" onClick={() => refetch()}>
+                  <RefreshCw className="me-2 h-4 w-4" />
+                  {t("common.refresh")}
+                </Button>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Content */}
-      {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-[90px] rounded-xl" />
-          ))}
-        </div>
-      ) : isError ? (
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-            <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
-            <p className="font-semibold">{t("common.error")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("common.tryAgain")}</p>
-            <Button className="mt-4" variant="outline" size="sm" onClick={() => refetch()}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t("common.refresh")}
-            </Button>
-          </CardContent>
-        </Card>
-      ) : consents.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-              <BarChart3 className="h-8 w-8 text-emerald-500" />
-            </div>
-            <p className="font-semibold">{t("compliance.noConsents")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noConsentsDesc")}</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          <Card className="border-border/40">
-            <CardHeader className="border-b border-border/40 bg-muted/20 px-5 py-4">
-              <CardTitle className="text-sm font-semibold">{t("compliance.purposes")}</CardTitle>
-              <CardDescription className="text-xs">{t("compliance.consentStatus")}</CardDescription>
-            </CardHeader>
-            <CardContent className="divide-y divide-border/40 p-0">
-              {consents.map((consent: ConsentStatus, idx) => (
-                <div key={consent.purposeId} className={idx === 0 ? "pt-4 px-4 pb-4" : "p-4"}>
-                  <ConsentCard
-                    consent={consent}
-                    onRecord={handleRecord}
-                    onWithdraw={setWithdrawTarget}
-                    isActing={isRecording || isWithdrawing}
-                    canManage={canManage}
-                  />
+          ) : consents.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+                  <BarChart3 className="h-8 w-8 text-emerald-500" />
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                <p className="font-semibold">{t("compliance.noConsents")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("compliance.noConsentsDesc")}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              <Card className="border-border/40">
+                <CardHeader className="border-b border-border/40 bg-muted/20 px-5 py-4">
+                  <CardTitle className="text-sm font-semibold">
+                    {t("compliance.purposes")}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {t("compliance.consentStatus")}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="divide-y divide-border/40 p-0">
+                  {consents.map((consent: ConsentStatus, idx) => (
+                    <div key={consent.purposeId} className={idx === 0 ? "px-4 pb-4 pt-4" : "p-4"}>
+                      <ConsentCard
+                        consent={consent}
+                        onRecord={handleRecord}
+                        onWithdraw={setWithdrawTarget}
+                        isActing={isRecording || isWithdrawing}
+                        canManage={canManage}
+                      />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </TabsContent>
 
         {canViewAnalytics && (
-          <TabsContent value="analytics" className="space-y-6 mt-4">
+          <TabsContent value="analytics" className="mt-4 space-y-6">
             {isAnalyticsLoading ? (
               <Skeleton className="h-[300px] rounded-xl" />
             ) : isAnalyticsError || !analytics ? (
@@ -372,7 +398,9 @@ export function ConsentView() {
                     <CardTitle>{t("compliance.subjectsRequiringReConsent")}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-amber-600">{analytics.subjectsRequiringReConsent}</div>
+                    <div className="text-3xl font-bold text-amber-600">
+                      {analytics.subjectsRequiringReConsent}
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="md:col-span-2">

@@ -18,12 +18,37 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "login", label: "POST /auth/login", type: "primary" },
-      { id: "route", label: "Route Decision", type: "info", description: "Inspect tenantId & isPlatformAdmin" },
-      { id: "caseA", label: "Case A: Tenant-Scoped", type: "primary", description: "tenantId present → strict isolation" },
-      { id: "caseAp", label: "Case A': Platform Admin", type: "success", description: "isPlatformAdmin=true → TenantId=null lookup" },
-      { id: "caseB", label: "Case B: Discovery", type: "warning", description: "No tenantId → search all tenants" },
+      {
+        id: "route",
+        label: "Route Decision",
+        type: "info",
+        description: "Inspect tenantId & isPlatformAdmin",
+      },
+      {
+        id: "caseA",
+        label: "Case A: Tenant-Scoped",
+        type: "primary",
+        description: "tenantId present → strict isolation",
+      },
+      {
+        id: "caseAp",
+        label: "Case A': Platform Admin",
+        type: "success",
+        description: "isPlatformAdmin=true → TenantId=null lookup",
+      },
+      {
+        id: "caseB",
+        label: "Case B: Discovery",
+        type: "warning",
+        description: "No tenantId → search all tenants",
+      },
       { id: "found0", label: "0 Matches", type: "danger", description: "Invalid credentials" },
-      { id: "found1", label: "1 Match", type: "success", description: "Direct auth for that tenant" },
+      {
+        id: "found1",
+        label: "1 Match",
+        type: "success",
+        description: "Direct auth for that tenant",
+      },
       { id: "foundN", label: "N Matches", type: "info", description: "Return workspace list" },
       { id: "picker", label: "Workspace Picker (Frontend)", type: "info" },
       { id: "relogin", label: "Re-login with tenantId", type: "primary" },
@@ -49,8 +74,16 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Flag", "Type", "Purpose"],
     rows: [
-      ["tenantId", "string?", "Encrypted tenant ID from workspace selection or domain resolution. Triggers Case A."],
-      ["isPlatformAdmin", "boolean", "Set to true when user selects 'Platform Administration' workspace. Triggers Case A' to prevent infinite discovery loop."],
+      [
+        "tenantId",
+        "string?",
+        "Encrypted tenant ID from workspace selection or domain resolution. Triggers Case A.",
+      ],
+      [
+        "isPlatformAdmin",
+        "boolean",
+        "Set to true when user selects 'Platform Administration' workspace. Triggers Case A' to prevent infinite discovery loop.",
+      ],
     ],
   },
   {
@@ -594,6 +627,11 @@ registerPage({
   category: "security",
   order: 2,
   sections,
-  relatedSlugs: ["security/overview", "security/data-protection", "security/api-security", "features/authentication"],
+  relatedSlugs: [
+    "security/overview",
+    "security/data-protection",
+    "security/api-security",
+    "features/authentication",
+  ],
   lastUpdated: "2026-05-02",
 });

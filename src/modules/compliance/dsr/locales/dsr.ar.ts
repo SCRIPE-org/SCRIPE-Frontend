@@ -97,7 +97,8 @@ export const ar = {
     erasureScheduledDesc: "تم تأكيد الحذف. التنفيذ مجدول.",
     erasurePendingDesc: "في انتظار تأكيد الحذف النهائي.",
     confirmErasureDialogTitle: "تأكيد حذف البيانات",
-    confirmErasureDialogDesc: "هذا الإجراء لا يمكن التراجع عنه. سيتم تجهيل أو حذف جميع البيانات الشخصية المرتبطة عبر جميع الوحدات بشكل دائم وفقاً لسياسات الاحتفاظ.",
+    confirmErasureDialogDesc:
+      "هذا الإجراء لا يمكن التراجع عنه. سيتم تجهيل أو حذف جميع البيانات الشخصية المرتبطة عبر جميع الوحدات بشكل دائم وفقاً لسياسات الاحتفاظ.",
     typeConfirmToContinue: "اكتب CONFIRM لتنفيذ الحذف:",
     executeErasureBtn: "تنفيذ الحذف",
     columns: {

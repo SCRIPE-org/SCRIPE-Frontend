@@ -9,11 +9,12 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
   isInitialLoading: true,
   isWorkspaceSwitching: false,
 
-  setActiveWorkspace: (key) => set((state) => ({
-    activeWorkspaceKey: key,
-    previousWorkspaceKey: state.activeWorkspaceKey,
-    activeRootItemId: null,
-  })),
+  setActiveWorkspace: (key) =>
+    set((state) => ({
+      activeWorkspaceKey: key,
+      previousWorkspaceKey: state.activeWorkspaceKey,
+      activeRootItemId: null,
+    })),
 
   setActiveRootItem: (id) => set({ activeRootItemId: id }),
   setPreviousWorkspace: (key) => set({ previousWorkspaceKey: key }),
@@ -27,19 +28,20 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
     return items.find((m) => m.id === activeRootItemId) ?? null;
   },
 
-  reset: () => set({
-    allRoutes: new Set<string>(),
-    allRoutesSorted: [],
-    workspaceRouteMap: {},
-    routesLoadedAt: null,
-    workspaceGroups: [],
-    workspaces: new Map<string, NavigationData>(),
-    defaultWorkspace: null,
-    activeWorkspaceKey: null,
-    activeRootItemId: null,
-    previousWorkspaceKey: null,
-    isInitialLoading: true,
-    isWorkspaceSwitching: false,
-    contextKey: "",
-  }),
+  reset: () =>
+    set({
+      allRoutes: new Set<string>(),
+      allRoutesSorted: [],
+      workspaceRouteMap: {},
+      routesLoadedAt: null,
+      workspaceGroups: [],
+      workspaces: new Map<string, NavigationData>(),
+      defaultWorkspace: null,
+      activeWorkspaceKey: null,
+      activeRootItemId: null,
+      previousWorkspaceKey: null,
+      isInitialLoading: true,
+      isWorkspaceSwitching: false,
+      contextKey: "",
+    }),
 });

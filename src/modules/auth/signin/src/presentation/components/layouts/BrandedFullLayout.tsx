@@ -6,8 +6,14 @@ import { LogoImg, OverlayDiv } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function BrandedFullLayout({
-  slotConfig, formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction,
+  slotConfig,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
 }: LoginLayoutProps) {
   return (
     <div
@@ -24,7 +30,8 @@ export function BrandedFullLayout({
           borderRadius: "var(--login-radius-card, 16px)",
           padding: "var(--login-card-padding, 32px)",
           boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-          backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)",
+          backgroundColor:
+            "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)",
         }}
       >
         <div className="mb-8 flex flex-col items-center gap-3 text-center">

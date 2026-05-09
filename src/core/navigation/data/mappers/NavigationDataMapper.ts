@@ -62,13 +62,9 @@ export class NavigationDataMapper {
     }
 
     return new NavigationData({
-      menuItems: rawItems.map((item) =>
-        MenuItemMapper.fromJson(item as Record<string, unknown>)
-      ),
+      menuItems: rawItems.map((item) => MenuItemMapper.fromJson(item as Record<string, unknown>)),
       routes: rawRoutes,
-      workspaceGroups: rawGroups
-        ? rawGroups.map(WorkspaceGroupMapper.fromDto)
-        : undefined,
+      workspaceGroups: rawGroups ? rawGroups.map(WorkspaceGroupMapper.fromDto) : undefined,
     });
   }
 

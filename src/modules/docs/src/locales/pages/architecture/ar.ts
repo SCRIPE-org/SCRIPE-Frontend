@@ -291,7 +291,8 @@ export const ar = {
         "يعمل ValidationBehavior مباشرة بعد التسجيل. يجمع كل مدققي IValidator<TRequest>، ويرجع أخطاء Result منظمة للطلبات غير الصالحة، ويمنعها من الوصول إلى المعالجات أو التخزين المؤقت.",
       validatorExampleTitle: "أمثلة على أدوات التحقق",
       loggingTitle: "سلوك التسجيل (LoggingBehavior)",
-      loggingIntro: "يسجل كل طلب NEXORA mediator معرّف المستخدم، معرّف المستأجر، نوع الطلب، ووقت التنفيذ.",
+      loggingIntro:
+        "يسجل كل طلب NEXORA mediator معرّف المستخدم، معرّف المستأجر، نوع الطلب، ووقت التنفيذ.",
       cachingTitle: "سلوك التخزين المؤقت (CachingBehavior)",
       cachingIntro:
         "يعترض CachingBehavior الاستعلامات التي تنفذ واجهة ICacheable ويفحص ذاكرة التخزين المؤقت أولاً.",

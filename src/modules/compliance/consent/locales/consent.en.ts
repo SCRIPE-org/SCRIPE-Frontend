@@ -36,11 +36,11 @@ export const en = {
     consentRecorded: "Consent recorded successfully",
 
     // Dialogs
-    withdrawConfirmDesc: "Are you sure you want to withdraw your consent for this purpose? You can re-grant it at any time.",
+    withdrawConfirmDesc:
+      "Are you sure you want to withdraw your consent for this purpose? You can re-grant it at any time.",
 
     // Empty states
     noConsents: "No consent records found",
     noConsentsDesc: "Consent records will appear here once purposes are configured.",
   },
 };
-

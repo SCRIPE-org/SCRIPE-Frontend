@@ -1,10 +1,18 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { type CtaButtonBlock, isValidCtaUrl } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import {
+  type CtaButtonBlock,
+  isValidCtaUrl,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { blockColor } from "./block-style-utils";
 
-const SIZE_CLASS = { sm: "h-8 px-3 text-xs", md: "h-10 px-4 text-sm", lg: "h-12 px-5", xl: "h-14 px-6 text-lg" };
+const SIZE_CLASS = {
+  sm: "h-8 px-3 text-xs",
+  md: "h-10 px-4 text-sm",
+  lg: "h-12 px-5",
+  xl: "h-14 px-6 text-lg",
+};
 
 export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
   const props = block.props;
@@ -37,7 +45,9 @@ export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
         {props.icon && <span aria-hidden="true">{props.icon}</span>}
         <span>{props.label}</span>
       </a>
-      {props.secondaryText && <p className="mt-1 text-center text-xs text-muted-foreground">{props.secondaryText}</p>}
+      {props.secondaryText && (
+        <p className="mt-1 text-center text-xs text-muted-foreground">{props.secondaryText}</p>
+      )}
     </div>
   );
 }

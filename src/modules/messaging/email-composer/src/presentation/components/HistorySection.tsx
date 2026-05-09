@@ -111,13 +111,17 @@ function ExpandedEmailRow({
 
           {/* Subject */}
           <div>
-            <p className="mb-1 text-xs font-medium text-muted-foreground">{t("messaging.email.subject") || "Subject"}</p>
+            <p className="mb-1 text-xs font-medium text-muted-foreground">
+              {t("messaging.email.subject") || "Subject"}
+            </p>
             <p className="text-sm font-medium">{email.subject}</p>
           </div>
 
           {/* Body Preview */}
           <div>
-            <p className="mb-1 text-xs font-medium text-muted-foreground">{t("messaging.email.bodyPreview") || "Body Preview"}</p>
+            <p className="mb-1 text-xs font-medium text-muted-foreground">
+              {t("messaging.email.bodyPreview") || "Body Preview"}
+            </p>
             <div className="max-h-[200px] overflow-hidden rounded-lg border bg-white dark:bg-background">
               {email.body.includes("<") ? (
                 <iframe
@@ -184,7 +188,9 @@ function ExpandedEmailRow({
                 onClick={() => onResend(email)}
               >
                 <RefreshCcw className="h-3 w-3" />
-                {email.status === "Failed" ? t("messaging.email.retry") || "Retry" : t("messaging.email.resend") || "Resend"}
+                {email.status === "Failed"
+                  ? t("messaging.email.retry") || "Retry"
+                  : t("messaging.email.resend") || "Resend"}
               </Button>
             )}
             {onUseAsTemplate && (
@@ -274,7 +280,9 @@ export function HistorySection(vm: HistorySectionProps) {
           <div className="py-12 text-center text-muted-foreground">
             <Mail className="mx-auto mb-3 h-12 w-12 opacity-30" />
             <p className="font-medium">{t("common.noData") || "No sent emails yet"}</p>
-            <p className="mt-1 text-sm">{t("messaging.email.emptyHint") || "Emails you send will appear here"}</p>
+            <p className="mt-1 text-sm">
+              {t("messaging.email.emptyHint") || "Emails you send will appear here"}
+            </p>
           </div>
         ) : (
           <>

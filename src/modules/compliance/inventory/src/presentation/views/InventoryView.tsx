@@ -43,18 +43,14 @@ export function InventoryView() {
           key: "dataCategory",
           label: t("compliance.dataCategory"),
           render: (_val: unknown, item: InventoryItem) => (
-            <Badge variant="outline">
-              {t(`compliance.categories.${item.dataCategory}`)}
-            </Badge>
+            <Badge variant="outline">{t(`compliance.categories.${item.dataCategory}`)}</Badge>
           ),
         },
         {
           key: "legalBasis",
           label: t("compliance.legalBasis"),
           render: (_val: unknown, item: InventoryItem) => (
-            <Badge variant="secondary">
-              {t(`compliance.legalBases.${item.legalBasis}`)}
-            </Badge>
+            <Badge variant="secondary">{t(`compliance.legalBases.${item.legalBasis}`)}</Badge>
           ),
         },
         {

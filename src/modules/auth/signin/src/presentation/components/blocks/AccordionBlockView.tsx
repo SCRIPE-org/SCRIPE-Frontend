@@ -24,13 +24,25 @@ export function AccordionBlockView({ block }: { block: AccordionBlock }) {
         return (
           <div
             key={`${item.title}-${index}`}
-            className={props.style === "ghost" ? "" : props.style === "card" ? "rounded-lg bg-background shadow-sm" : "rounded-lg border"}
+            className={
+              props.style === "ghost"
+                ? ""
+                : props.style === "card"
+                  ? "rounded-lg bg-background shadow-sm"
+                  : "rounded-lg border"
+            }
           >
-            <button type="button" className="flex w-full items-center justify-between px-3 py-2 text-start text-sm font-medium" onClick={() => toggle(index)}>
+            <button
+              type="button"
+              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm font-medium"
+              onClick={() => toggle(index)}
+            >
               <span>{item.title}</span>
               <span>{isOpen ? "-" : "+"}</span>
             </button>
-            {isOpen && <div className="px-3 pb-3 text-sm text-muted-foreground">{item.content}</div>}
+            {isOpen && (
+              <div className="px-3 pb-3 text-sm text-muted-foreground">{item.content}</div>
+            )}
           </div>
         );
       })}

@@ -1,14 +1,22 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { type LogoCloudBlock, isValidCtaUrl } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import {
+  type LogoCloudBlock,
+  isValidCtaUrl,
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { safeItems } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "h-8", md: "h-10", lg: "h-14" };
 
 export function LogoCloudBlockView({ block }: { block: LogoCloudBlock }) {
   const props = block.props;
-  const columns = props.columns === 3 ? "grid-cols-3" : props.columns === 4 ? "grid-cols-4" : "grid-cols-2 sm:grid-cols-4";
+  const columns =
+    props.columns === 3
+      ? "grid-cols-3"
+      : props.columns === 4
+        ? "grid-cols-4"
+        : "grid-cols-2 sm:grid-cols-4";
 
   return (
     <div className={`grid items-center gap-4 ${columns}`}>

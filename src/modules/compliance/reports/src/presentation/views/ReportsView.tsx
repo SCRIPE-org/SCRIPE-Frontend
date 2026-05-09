@@ -39,15 +39,42 @@ const REPORT_TYPES = [
   { value: "GDPR_Overview", labelKey: "compliance.reportTypes.gdprOverview", regulation: "GDPR" },
   { value: "DSR_Summary", labelKey: "compliance.reportTypes.dsrSummary", regulation: "GDPR" },
   { value: "Consent_Audit", labelKey: "compliance.reportTypes.consentAudit", regulation: "CCPA" },
-  { value: "Retention_Analysis", labelKey: "compliance.reportTypes.retentionAnalysis", regulation: "GDPR" },
+  {
+    value: "Retention_Analysis",
+    labelKey: "compliance.reportTypes.retentionAnalysis",
+    regulation: "GDPR",
+  },
   { value: "Data_Inventory", labelKey: "compliance.reportTypes.dataInventory", regulation: "CCPA" },
 ];
 
-const STATUS_META: Record<string, { labelKey: string; variant: "default" | "secondary" | "outline" | "destructive"; icon: React.ReactNode }> = {
-  Ready: { labelKey: "compliance.status.ready", variant: "default", icon: <CheckCircle2 className="h-3 w-3" /> },
-  Generating: { labelKey: "compliance.status.generating", variant: "secondary", icon: <Loader2 className="h-3 w-3 animate-spin" /> },
-  Pending: { labelKey: "compliance.status.pending", variant: "outline", icon: <Clock className="h-3 w-3" /> },
-  Failed: { labelKey: "compliance.status.failed", variant: "destructive", icon: <AlertTriangle className="h-3 w-3" /> },
+const STATUS_META: Record<
+  string,
+  {
+    labelKey: string;
+    variant: "default" | "secondary" | "outline" | "destructive";
+    icon: React.ReactNode;
+  }
+> = {
+  Ready: {
+    labelKey: "compliance.status.ready",
+    variant: "default",
+    icon: <CheckCircle2 className="h-3 w-3" />,
+  },
+  Generating: {
+    labelKey: "compliance.status.generating",
+    variant: "secondary",
+    icon: <Loader2 className="h-3 w-3 animate-spin" />,
+  },
+  Pending: {
+    labelKey: "compliance.status.pending",
+    variant: "outline",
+    icon: <Clock className="h-3 w-3" />,
+  },
+  Failed: {
+    labelKey: "compliance.status.failed",
+    variant: "destructive",
+    icon: <AlertTriangle className="h-3 w-3" />,
+  },
 };
 
 // ── Report type options for GenericSelect ──────────────────────────────────────
@@ -62,7 +89,12 @@ function GenerateReportDialog({
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  onGenerate: (data: { reportType: string; regulationCode?: string; periodStart?: string; periodEnd?: string }) => Promise<void>;
+  onGenerate: (data: {
+    reportType: string;
+    regulationCode?: string;
+    periodStart?: string;
+    periodEnd?: string;
+  }) => Promise<void>;
   isGenerating: boolean;
 }) {
   const { t } = useI18n();
@@ -103,7 +135,9 @@ function GenerateReportDialog({
               description: r.regulation,
             }))}
             value={form.reportType}
-            onValueChange={(v: string | string[]) => setForm((f) => ({ ...f, reportType: v as string }))}
+            onValueChange={(v: string | string[]) =>
+              setForm((f) => ({ ...f, reportType: v as string }))
+            }
             placeholder={t("compliance.reportType")}
             type="single"
           />
@@ -135,12 +169,10 @@ function GenerateReportDialog({
           </p>
         </div>
         <div className="flex justify-end gap-2 border-t pt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button
-            id="report-generate-confirm"
-            onClick={handleGenerate}
-            disabled={isGenerating}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t("common.cancel")}
+          </Button>
+          <Button id="report-generate-confirm" onClick={handleGenerate} disabled={isGenerating}>
             {isGenerating ? (
               <>
                 <Loader2 className="me-2 h-4 w-4 animate-spin" />
@@ -176,14 +208,22 @@ function ReportCard({ report }: { report: ComplianceReport }) {
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${report.isReady ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "border-border/50 bg-muted/50 text-muted-foreground"}`}>
-              {report.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+            <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${report.isReady ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "border-border/50 bg-muted/50 text-muted-foreground"}`}
+            >
+              {report.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <FileText className="h-4 w-4" />
+              )}
             </div>
             <div>
               <p className="text-sm font-semibold">{typeLabel}</p>
               <div className="mt-1 flex items-center gap-2">
                 {report.regulationCode && (
-                  <Badge variant="outline" className="h-5 px-1.5 font-mono text-[10px]">{report.regulationCode}</Badge>
+                  <Badge variant="outline" className="h-5 px-1.5 font-mono text-[10px]">
+                    {report.regulationCode}
+                  </Badge>
                 )}
                 <Badge variant={meta.variant} className="h-5 gap-1 px-1.5 text-[10px]">
                   {meta.icon}
@@ -193,12 +233,16 @@ function ReportCard({ report }: { report: ComplianceReport }) {
               {(report.periodStart || report.periodEnd) && (
                 <div className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  {report.periodStart?.toLocaleDateString()} – {report.periodEnd?.toLocaleDateString()}
+                  {report.periodStart?.toLocaleDateString()} –{" "}
+                  {report.periodEnd?.toLocaleDateString()}
                 </div>
               )}
               {report.generatedAt && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t("compliance.period")}: <span className="font-medium text-foreground">{report.generatedAt.toLocaleDateString()}</span>
+                  {t("compliance.period")}:{" "}
+                  <span className="font-medium text-foreground">
+                    {report.generatedAt.toLocaleDateString()}
+                  </span>
                 </p>
               )}
             </div>
@@ -243,12 +287,18 @@ export function ReportsView() {
   const canGenerate = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_GENERATE) && !!tenantCode;
 
   const [generateOpen, setGenerateOpen] = useState(false);
-  const { reports, totalCount, isLoading, isError, refetch, generateReport, isGenerating } = useReportViewModel();
+  const { reports, totalCount, isLoading, isError, refetch, generateReport, isGenerating } =
+    useReportViewModel();
 
   const readyCount = reports.filter((r) => r.isReady).length;
   const pendingCount = reports.filter((r) => r.isPending).length;
 
-  const handleGenerate = async (data: { reportType: string; regulationCode?: string; periodStart?: string; periodEnd?: string }) => {
+  const handleGenerate = async (data: {
+    reportType: string;
+    regulationCode?: string;
+    periodStart?: string;
+    periodEnd?: string;
+  }) => {
     try {
       await generateReport(data);
       toast({
@@ -265,7 +315,12 @@ export function ReportsView() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => router.push("/compliance")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={() => router.push("/compliance")}
+          >
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
@@ -275,7 +330,8 @@ export function ReportsView() {
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{t("compliance.reportsTitle")}</h2>
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{readyCount}</span> {t("compliance.reportReady")}
+                <span className="font-medium text-foreground">{readyCount}</span>{" "}
+                {t("compliance.reportReady")}
                 {pendingCount > 0 && (
                   <>
                     {" · "}
@@ -288,12 +344,21 @@ export function ReportsView() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button id="compliance-reports-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+          <Button
+            id="compliance-reports-refresh"
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+          >
             <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             {t("common.refresh")}
           </Button>
           {canGenerate && (
-            <Button id="compliance-reports-generate" size="sm" onClick={() => setGenerateOpen(true)}>
+            <Button
+              id="compliance-reports-generate"
+              size="sm"
+              onClick={() => setGenerateOpen(true)}
+            >
               <Plus className="me-2 h-4 w-4" />
               {t("compliance.generateReport")}
             </Button>

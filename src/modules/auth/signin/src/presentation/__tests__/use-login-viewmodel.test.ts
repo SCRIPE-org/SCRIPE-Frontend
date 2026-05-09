@@ -28,7 +28,11 @@ vi.mock("../../../../hooks/useAuthLogin", () => ({
 
 vi.mock("@core/store/useAppStore", () => ({
   useAppStore: (
-    selector: (state: { isAuthenticated: boolean; _hasHydrated: boolean; setAuth: typeof mockSetAuth }) => unknown
+    selector: (state: {
+      isAuthenticated: boolean;
+      _hasHydrated: boolean;
+      setAuth: typeof mockSetAuth;
+    }) => unknown
   ) => {
     // Mock state
     const state = {

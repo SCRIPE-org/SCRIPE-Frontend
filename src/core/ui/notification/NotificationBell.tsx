@@ -21,10 +21,7 @@ interface NotificationBellProps {
  * Uses a portal so the dropdown is never clipped by overflow-hidden parents.
  * Positioning is viewport-aware: opens upward if there's insufficient space below.
  */
-export function NotificationBell({
-  iconClassName = "h-5 w-5",
-  className,
-}: NotificationBellProps) {
+export function NotificationBell({ iconClassName = "h-5 w-5", className }: NotificationBellProps) {
   const vm = useNotificationViewModel();
   const { t, direction } = useI18n();
   const { resolvedTheme } = useTheme();
@@ -67,9 +64,7 @@ export function NotificationBell({
       zIndex: 9999,
       width: panelWidth,
       left,
-      ...(openAbove
-        ? { bottom: viewport.h - rect.top + 8 }
-        : { top: rect.bottom + 8 }),
+      ...(openAbove ? { bottom: viewport.h - rect.top + 8 } : { top: rect.bottom + 8 }),
     });
   }, [isRTL]);
 
@@ -140,7 +135,14 @@ export function NotificationBell({
         }}
       >
         <div>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: isDark ? "#f1f5f9" : "#0f172a", margin: 0 }}>
+          <h3
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: isDark ? "#f1f5f9" : "#0f172a",
+              margin: 0,
+            }}
+          >
             {t("notifications.title") || "Notifications"}
           </h3>
           {vm.unreadCount > 0 && (
@@ -166,8 +168,14 @@ export function NotificationBell({
               borderRadius: 6,
               transition: "background 150ms",
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = isDark ? "rgba(124,111,212,0.12)" : "rgba(98,88,196,0.08)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = isDark
+                ? "rgba(124,111,212,0.12)"
+                : "rgba(98,88,196,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
           >
             <CheckCheck size={12} />
             {t("notifications.markAllRead") || "Mark all read"}
@@ -179,11 +187,20 @@ export function NotificationBell({
       <div style={{ maxHeight: 320, overflowY: "auto" }}>
         {vm.isLoading ? (
           <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
-            <Loader2 size={20} style={{ animation: "spin 1s linear infinite", color: isDark ? "#6b7280" : "#9ca3af" }} />
+            <Loader2
+              size={20}
+              style={{
+                animation: "spin 1s linear infinite",
+                color: isDark ? "#6b7280" : "#9ca3af",
+              }}
+            />
           </div>
         ) : vm.notifications.length === 0 ? (
           <div style={{ padding: "32px 16px", textAlign: "center" }}>
-            <Bell size={28} style={{ color: isDark ? "#374151" : "#d1d5db", margin: "0 auto 8px" }} />
+            <Bell
+              size={28}
+              style={{ color: isDark ? "#374151" : "#d1d5db", margin: "0 auto 8px" }}
+            />
             <p style={{ fontSize: 13, color: isDark ? "#6b7280" : "#9ca3af", margin: 0 }}>
               {t("notifications.empty") || "No notifications yet"}
             </p>
@@ -205,8 +222,12 @@ export function NotificationBell({
                 transition: "background 150ms",
                 borderBottom: `1px solid ${headerBorderColor}`,
               }}
-              onMouseEnter={(e) => { if (n.isRead) (e.currentTarget as HTMLElement).style.background = hoverBg; }}
-              onMouseLeave={(e) => { if (n.isRead) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+              onMouseEnter={(e) => {
+                if (n.isRead) (e.currentTarget as HTMLElement).style.background = hoverBg;
+              }}
+              onMouseLeave={(e) => {
+                if (n.isRead) (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
               onClick={() => {
                 if (!n.isRead) vm.markAsRead(n.id);
                 if (n.actionUrl) window.location.href = n.actionUrl;
@@ -218,31 +239,59 @@ export function NotificationBell({
                 {n.isRead ? (
                   <Check size={12} style={{ color: isDark ? "#374151" : "#d1d5db" }} />
                 ) : (
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: badgeBg, boxShadow: `0 0 6px ${badgeBg}60` }} />
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: badgeBg,
+                      boxShadow: `0 0 6px ${badgeBg}60`,
+                    }}
+                  />
                 )}
               </div>
 
               {/* Content */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{
-                  fontSize: 13,
-                  fontWeight: n.isRead ? 400 : 600,
-                  color: isDark ? (n.isRead ? "#9ca3af" : "#f1f5f9") : (n.isRead ? "#6b7280" : "#111827"),
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  margin: 0,
-                }}>
+                <p
+                  style={{
+                    fontSize: 13,
+                    fontWeight: n.isRead ? 400 : 600,
+                    color: isDark
+                      ? n.isRead
+                        ? "#9ca3af"
+                        : "#f1f5f9"
+                      : n.isRead
+                        ? "#6b7280"
+                        : "#111827",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    margin: 0,
+                  }}
+                >
                   {n.title}
                 </p>
-                <p style={{ fontSize: 12, color: isDark ? "#6b7280" : "#9ca3af", margin: "3px 0 4px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                <p
+                  style={{
+                    fontSize: 12,
+                    color: isDark ? "#6b7280" : "#9ca3af",
+                    margin: "3px 0 4px",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
                   {n.body}
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <time style={{ fontSize: 10, color: isDark ? "#4b5563" : "#d1d5db" }}>
                     {formatTimeAgo(n.createdAt)}
                   </time>
-                  {n.actionUrl && <ExternalLink size={10} style={{ color: isDark ? "#4b5563" : "#d1d5db" }} />}
+                  {n.actionUrl && (
+                    <ExternalLink size={10} style={{ color: isDark ? "#4b5563" : "#d1d5db" }} />
+                  )}
                 </div>
               </div>
             </button>

@@ -6,8 +6,18 @@ import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function MagazineLayout({
-  branding, slotConfig, formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep, t,
+  branding,
+  slotConfig,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -17,7 +27,11 @@ export function MagazineLayout({
     >
       <div
         className="relative hidden flex-col justify-end overflow-hidden p-16 lg:flex lg:w-3/5"
-        style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+        style={{
+          backgroundImage: "var(--login-bg-image, none)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         <div className="relative z-10 max-w-2xl">
@@ -28,7 +42,11 @@ export function MagazineLayout({
             {branding?.loginSubtitle || t("auth.branding.subtitle")}
           </p>
         </div>
-        <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="relative z-10 mt-8" />
+        <SlotRenderer
+          slotId="login.sidebar.content"
+          slotConfig={slotConfig}
+          className="relative z-10 mt-8"
+        />
       </div>
       <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-2/5">
         {topActions}

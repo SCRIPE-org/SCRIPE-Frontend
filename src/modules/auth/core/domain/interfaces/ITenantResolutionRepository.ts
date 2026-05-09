@@ -7,4 +7,3 @@ export interface ITenantResolutionRepository {
     page?: string | null;
   }): Promise<TenantBranding | null>;
 }
-

@@ -7,7 +7,10 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { validateForm, VALIDATION_SETS, isFormValid } from "@core/common/validation";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { TwoFactorRequiredError, WorkspaceSelectionRequiredError } from "@modules/auth/core/domain/errors/AuthErrors";
+import {
+  TwoFactorRequiredError,
+  WorkspaceSelectionRequiredError,
+} from "@modules/auth/core/domain/errors/AuthErrors";
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { clearSessionOnLoginMount } from "@modules/auth/core/data/utils/auth-storage-cleanup";
@@ -35,7 +38,9 @@ export function useLoginViewModel() {
 
   // 🔒 Guard: clear stale impersonation flags on login page mount.
   // Runs once in the ViewModel (data-layer concern) — never in the View.
-  useEffect(() => { clearSessionOnLoginMount(); }, []);
+  useEffect(() => {
+    clearSessionOnLoginMount();
+  }, []);
 
   const loginMutation = useAuthLogin();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
@@ -78,8 +83,7 @@ export function useLoginViewModel() {
     redirectPath,
     formIdentifier: formData.identifier,
     formPassword: formData.password,
-    loginMutateAsync: (params) =>
-      loginMutation.mutateAsync(params),
+    loginMutateAsync: (params) => loginMutation.mutateAsync(params),
     setIsRedirecting,
     setLoginStep,
     setError,
@@ -87,7 +91,9 @@ export function useLoginViewModel() {
     hasTriggeredRedirect,
     handleRedirect,
     enterTwoFactor: twoFA.enterTwoFactor,
-    onTenantResolved: (id) => { tenantIdRef.current = id; },
+    onTenantResolved: (id) => {
+      tenantIdRef.current = id;
+    },
   });
 
   // ── Auth redirect check ────────────────────────────────────────────────
@@ -106,49 +112,54 @@ export function useLoginViewModel() {
   }, [hasHydrated, isAuthenticated, isRedirecting, redirectPath, handleRedirect]);
 
   // ── Login submission ────────────────────────────────────────────────────
-  const handleLogin = useCallback(async (tenantIdOverride?: string) => {
-    const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
-    if (!isFormValid(validationResults)) {
-      const firstError = Object.values(validationResults).find((r) => !r.isValid);
-      setError(firstError?.message || t("auth.validationError"));
-      return;
-    }
-
-    setError("");
-    const resolvedTenantId = tenantIdOverride ?? tenantIdRef.current ?? tenantId;
-
-    try {
-      const rawDevCode =
-        typeof window !== "undefined"
-          ? (new URLSearchParams(window.location.search).get("_tenant") ?? undefined)
-          : undefined;
-      const devTenantCode = rawDevCode ? rawDevCode.toUpperCase() : undefined;
-
-      await loginMutation.mutateAsync({
-        identifier: formData.identifier,
-        password: formData.password,
-        tenantId: resolvedTenantId,
-        tenantCode: devTenantCode,
-      });
-
-      setIsRedirecting(true);
-      if (!hasTriggeredRedirect.current) {
-        hasTriggeredRedirect.current = true;
-        const mustChange = useAppStore.getState().mustChangePassword;
-        setTimeout(() => { handleRedirect(mustChange ? "/change-password" : redirectPath); }, 100);
-      }
-    } catch (err: unknown) {
-      if (err instanceof TwoFactorRequiredError) {
-        twoFA.enterTwoFactor();
+  const handleLogin = useCallback(
+    async (tenantIdOverride?: string) => {
+      const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
+      if (!isFormValid(validationResults)) {
+        const firstError = Object.values(validationResults).find((r) => !r.isValid);
+        setError(firstError?.message || t("auth.validationError"));
         return;
       }
-      if (err instanceof WorkspaceSelectionRequiredError) {
-        workspaceSelector.showWorkspaces(err.availableWorkspaces);
-        return;
+
+      setError("");
+      const resolvedTenantId = tenantIdOverride ?? tenantIdRef.current ?? tenantId;
+
+      try {
+        const rawDevCode =
+          typeof window !== "undefined"
+            ? (new URLSearchParams(window.location.search).get("_tenant") ?? undefined)
+            : undefined;
+        const devTenantCode = rawDevCode ? rawDevCode.toUpperCase() : undefined;
+
+        await loginMutation.mutateAsync({
+          identifier: formData.identifier,
+          password: formData.password,
+          tenantId: resolvedTenantId,
+          tenantCode: devTenantCode,
+        });
+
+        setIsRedirecting(true);
+        if (!hasTriggeredRedirect.current) {
+          hasTriggeredRedirect.current = true;
+          const mustChange = useAppStore.getState().mustChangePassword;
+          setTimeout(() => {
+            handleRedirect(mustChange ? "/change-password" : redirectPath);
+          }, 100);
+        }
+      } catch (err: unknown) {
+        if (err instanceof TwoFactorRequiredError) {
+          twoFA.enterTwoFactor();
+          return;
+        }
+        if (err instanceof WorkspaceSelectionRequiredError) {
+          workspaceSelector.showWorkspaces(err.availableWorkspaces);
+          return;
+        }
+        setError(err instanceof Error ? err.message : "Login failed");
       }
-      setError(err instanceof Error ? err.message : "Login failed");
-    }
-  }, [formData, loginMutation, handleRedirect, redirectPath, t, tenantId, twoFA, workspaceSelector]);
+    },
+    [formData, loginMutation, handleRedirect, redirectPath, t, tenantId, twoFA, workspaceSelector]
+  );
 
   // ── Form helpers ───────────────────────────────────────────────────────
   const updateField = useCallback(
@@ -186,21 +197,27 @@ export function useLoginViewModel() {
   const isTrulyAuthenticated = hasHydrated && isAuthenticated && secureTokenService.hasToken();
 
   return {
-    formData, showPassword, isLoading, error,
+    formData,
+    showPassword,
+    isLoading,
+    error,
     isAuthenticated: isTrulyAuthenticated,
-    hasHydrated, isRedirecting,
+    hasHydrated,
+    isRedirecting,
     loginStep,
     twoFactorCode: twoFA.twoFactorCode,
     setTwoFactorCode: twoFA.setTwoFactorCode,
     useBackupCode: twoFA.useBackupCode,
     isVerifying2FA: twoFA.isVerifying2FA,
     availableWorkspaces: workspaceSelector.availableWorkspaces,
-    updateField, togglePasswordVisibility,
+    updateField,
+    togglePasswordVisibility,
     handleLogin,
     handleVerify2FA: twoFA.handleVerify2FA,
     goBackToCredentials,
     toggleBackupCode: twoFA.toggleBackupCode,
-    checkAndRedirect, resetForm,
+    checkAndRedirect,
+    resetForm,
     selectWorkspace: workspaceSelector.selectWorkspace,
     setTenantId,
     isFormValid: isFormValid(validateForm(formData, VALIDATION_SETS.LOGIN_FORM)),

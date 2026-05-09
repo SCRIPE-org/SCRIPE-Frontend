@@ -6,8 +6,16 @@ import { LogoImg, OverlayDiv } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function CornerCardLayout({
-  branding, slotConfig, formContent, topActions, footerSlot,
-  logoSrc, logoAlt, companyName, direction, t,
+  branding,
+  slotConfig,
+  formContent,
+  topActions,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -37,7 +45,9 @@ export function CornerCardLayout({
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
               <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
             </div>
-            <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</span>
+            <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+              {companyName}
+            </span>
           </div>
           {formContent}
           {footerSlot}

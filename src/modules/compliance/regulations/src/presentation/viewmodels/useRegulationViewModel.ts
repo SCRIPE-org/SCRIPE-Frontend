@@ -6,11 +6,11 @@ import { complianceContainer } from "@modules/compliance/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import type { 
-  CreateRegulationRequest, 
-  UpdateRegulationRequest, 
-  AddConsentPurposeRequest, 
-  UpdateConsentPurposeRequest 
+import type {
+  CreateRegulationRequest,
+  UpdateRegulationRequest,
+  AddConsentPurposeRequest,
+  UpdateConsentPurposeRequest,
 } from "../../data/models/RegulationModels";
 
 export function useRegulationViewModel() {
@@ -35,11 +35,12 @@ export function useRegulationViewModel() {
     },
     onError: () => {
       error({ title: t("compliance.regulations.regulationAddFailed") });
-    }
+    },
   });
 
   const updateRegulation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateRegulationRequest }) => regulationRepository.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateRegulationRequest }) =>
+      regulationRepository.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       success({ title: t("compliance.regulations.regulationUpdated") });
@@ -55,17 +56,27 @@ export function useRegulationViewModel() {
   });
 
   const addPurpose = useMutation({
-    mutationFn: ({ regId, data }: { regId: string; data: AddConsentPurposeRequest }) => regulationRepository.addPurpose(regId, data),
+    mutationFn: ({ regId, data }: { regId: string; data: AddConsentPurposeRequest }) =>
+      regulationRepository.addPurpose(regId, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const updatePurpose = useMutation({
-    mutationFn: ({ regId, purposeId, data }: { regId: string; purposeId: string; data: UpdateConsentPurposeRequest }) => regulationRepository.updatePurpose(regId, purposeId, data),
+    mutationFn: ({
+      regId,
+      purposeId,
+      data,
+    }: {
+      regId: string;
+      purposeId: string;
+      data: UpdateConsentPurposeRequest;
+    }) => regulationRepository.updatePurpose(regId, purposeId, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const deletePurpose = useMutation({
-    mutationFn: ({ regId, purposeId }: { regId: string; purposeId: string }) => regulationRepository.removePurpose(regId, purposeId),
+    mutationFn: ({ regId, purposeId }: { regId: string; purposeId: string }) =>
+      regulationRepository.removePurpose(regId, purposeId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -118,25 +129,25 @@ export function useRegulationViewModel() {
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,
-    
+
     // Regulation Mutations
     createRegulation: createRegulation.mutateAsync,
     updateRegulation: updateRegulation.mutateAsync,
     deleteRegulation: deleteRegulation.mutateAsync,
-    
+
     // Purpose Mutations
     addPurpose: addPurpose.mutateAsync,
     updatePurpose: updatePurpose.mutateAsync,
     deletePurpose: deletePurpose.mutateAsync,
-    
-    isMutating: 
-      createRegulation.isPending || 
-      updateRegulation.isPending || 
+
+    isMutating:
+      createRegulation.isPending ||
+      updateRegulation.isPending ||
       deleteRegulation.isPending ||
       addPurpose.isPending ||
       updatePurpose.isPending ||
       deletePurpose.isPending,
-      
+
     getFormFields,
   };
 }

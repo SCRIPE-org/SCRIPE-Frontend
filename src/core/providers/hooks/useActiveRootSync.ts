@@ -26,6 +26,6 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
     if (bestRoot && bestRoot.id !== activeRootItemId) {
       useNavigationStore.getState().setActiveRootItem(bestRoot.id);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, rootMenuItems]);
 }

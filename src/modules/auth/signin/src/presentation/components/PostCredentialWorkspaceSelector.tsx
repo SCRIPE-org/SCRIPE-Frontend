@@ -62,11 +62,15 @@ export function PostCredentialWorkspaceSelector({
             {t("auth.workspaceSelection.credentialsVerified") || "Credentials verified"}
           </p>
         </div>
-        <h2 id="workspace-selector-heading" className="text-xl font-semibold tracking-tight text-foreground">
+        <h2
+          id="workspace-selector-heading"
+          className="text-xl font-semibold tracking-tight text-foreground"
+        >
           {t("auth.workspaceSelection.heading") || "Choose a workspace"}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          {t("auth.workspaceSelection.subtitle") || `Your account (${email}) belongs to multiple workspaces.`}
+          {t("auth.workspaceSelection.subtitle") ||
+            `Your account (${email}) belongs to multiple workspaces.`}
         </p>
       </div>
 

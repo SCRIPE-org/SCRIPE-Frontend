@@ -234,7 +234,9 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
 
             {value.recurring?.frequency === "monthly" && (
               <div className="space-y-1.5">
-                <Label className="text-xs">{t("messaging.email.dayOfMonth") || "Day of Month"}</Label>
+                <Label className="text-xs">
+                  {t("messaging.email.dayOfMonth") || "Day of Month"}
+                </Label>
                 <Select
                   value={String(value.recurring?.dayOfMonth ?? 1)}
                   onValueChange={(v) =>

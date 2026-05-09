@@ -6,8 +6,18 @@ import { MobileLogo, DesktopHeading, LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 export function CarouselLayout({
-  branding, slotConfig, formContent, topActions, footer, footerSlot,
-  logoSrc, logoAlt, companyName, direction, loginStep, t,
+  branding,
+  slotConfig,
+  formContent,
+  topActions,
+  footer,
+  footerSlot,
+  logoSrc,
+  logoAlt,
+  companyName,
+  direction,
+  loginStep,
+  t,
 }: LoginLayoutProps) {
   return (
     <div
@@ -28,7 +38,11 @@ export function CarouselLayout({
           {branding?.loginSubtitle || t("auth.branding.subtitle")}
         </p>
         <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
-        <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} className="mt-auto pt-10" />
+        <SlotRenderer
+          slotId="login.sidebar.bottom"
+          slotConfig={slotConfig}
+          className="mt-auto pt-10"
+        />
       </div>
       <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
         {topActions}

@@ -24,13 +24,10 @@ export interface WorkspaceSlice {
   workspaces: Map<string, NavigationData>;
   defaultWorkspace: NavigationData | null;
 
-  initializeDefaultWorkspace: (
-    data: NavigationData,
-    groups: WorkspaceGroup[]
-  ) => void;
+  initializeDefaultWorkspace: (data: NavigationData, groups: WorkspaceGroup[]) => void;
   setWorkspaceData: (key: string, data: NavigationData) => void;
   hasWorkspaceData: (key: string) => boolean;
-  
+
   getActiveWorkspaceGroup: () => WorkspaceGroup | null;
   getActiveRootMenuItems: () => MenuItem[];
   getPageActions: (pathname: string) => MenuItemActions | null;
@@ -48,9 +45,9 @@ export interface UiSlice {
   setPreviousWorkspace: (key: string | null) => void;
   setIsInitialLoading: (loading: boolean) => void;
   setIsWorkspaceSwitching: (loading: boolean) => void;
-  
+
   getActiveRootItem: () => MenuItem | null;
-  
+
   reset: () => void;
 }
 

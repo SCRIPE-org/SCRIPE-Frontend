@@ -43,14 +43,46 @@ import { DsrErasureState } from "../components/DsrErasureState";
 
 // ── Status meta ────────────────────────────────────────────────────────────────
 const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
-  Pending: { labelKey: "compliance.statusLabels.pending", icon: <Clock className="h-4 w-4 text-amber-500" />, cls: "border-amber-500/20 bg-amber-500/10 text-amber-600" },
-  InReview: { labelKey: "compliance.statusLabels.inReview", icon: <Info className="h-4 w-4 text-blue-500" />, cls: "border-blue-500/20 bg-blue-500/10 text-blue-600" },
-  Approved: { labelKey: "compliance.statusLabels.approved", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
-  Processing: { labelKey: "compliance.statusLabels.processing", icon: <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />, cls: "border-indigo-500/20 bg-indigo-500/10 text-indigo-600" },
-  PartiallyCompleted: { labelKey: "compliance.statusLabels.partiallyCompleted", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
-  Completed: { labelKey: "compliance.statusLabels.completed", icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />, cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600" },
-  Rejected: { labelKey: "compliance.statusLabels.rejected", icon: <AlertTriangle className="h-4 w-4 text-destructive" />, cls: "border-destructive/20 bg-destructive/10 text-destructive" },
-  Cancelled: { labelKey: "compliance.statusLabels.cancelled", icon: <AlertTriangle className="h-4 w-4 text-muted-foreground" />, cls: "border-border/50 bg-muted/50 text-muted-foreground" },
+  Pending: {
+    labelKey: "compliance.statusLabels.pending",
+    icon: <Clock className="h-4 w-4 text-amber-500" />,
+    cls: "border-amber-500/20 bg-amber-500/10 text-amber-600",
+  },
+  InReview: {
+    labelKey: "compliance.statusLabels.inReview",
+    icon: <Info className="h-4 w-4 text-blue-500" />,
+    cls: "border-blue-500/20 bg-blue-500/10 text-blue-600",
+  },
+  Approved: {
+    labelKey: "compliance.statusLabels.approved",
+    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+    cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+  },
+  Processing: {
+    labelKey: "compliance.statusLabels.processing",
+    icon: <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />,
+    cls: "border-indigo-500/20 bg-indigo-500/10 text-indigo-600",
+  },
+  PartiallyCompleted: {
+    labelKey: "compliance.statusLabels.partiallyCompleted",
+    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+    cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+  },
+  Completed: {
+    labelKey: "compliance.statusLabels.completed",
+    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+    cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+  },
+  Rejected: {
+    labelKey: "compliance.statusLabels.rejected",
+    icon: <AlertTriangle className="h-4 w-4 text-destructive" />,
+    cls: "border-destructive/20 bg-destructive/10 text-destructive",
+  },
+  Cancelled: {
+    labelKey: "compliance.statusLabels.cancelled",
+    icon: <AlertTriangle className="h-4 w-4 text-muted-foreground" />,
+    cls: "border-border/50 bg-muted/50 text-muted-foreground",
+  },
 };
 
 // ── Type Meta ────────────────────────────────────────────────────────────────
@@ -109,14 +141,21 @@ export function DsrDetailView({ id }: { id: string }) {
 
   const dsr = query.data;
   const statusMeta = dsr ? (STATUS_META[dsr.status] ?? STATUS_META.Pending) : null;
-  const typeMeta = dsr ? (TYPE_META[dsr.requestType] ?? { labelKey: dsr.requestType, color: "" }) : null;
+  const typeMeta = dsr
+    ? (TYPE_META[dsr.requestType] ?? { labelKey: dsr.requestType, color: "" })
+    : null;
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => router.push("/compliance/dsr")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={() => router.push("/compliance/dsr")}
+          >
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
@@ -124,8 +163,12 @@ export function DsrDetailView({ id }: { id: string }) {
               <User className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.dsrDetailTitle")}</h2>
-              <p className="text-sm text-muted-foreground">{dsr?.subjectEmail ?? t("common.loading")}</p>
+              <h2 className="text-2xl font-bold tracking-tight">
+                {t("compliance.dsrDetailTitle")}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {dsr?.subjectEmail ?? t("common.loading")}
+              </p>
             </div>
           </div>
         </div>
@@ -139,8 +182,15 @@ export function DsrDetailView({ id }: { id: string }) {
               </Button>
             )}
             {dsr.canDownloadExport && !!tenantCode && (
-              <Button onClick={() => downloadMutation.mutate()} disabled={downloadMutation.isPending}>
-                {downloadMutation.isPending ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Download className="me-2 h-4 w-4" />}
+              <Button
+                onClick={() => downloadMutation.mutate()}
+                disabled={downloadMutation.isPending}
+              >
+                {downloadMutation.isPending ? (
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="me-2 h-4 w-4" />
+                )}
                 {t("compliance.downloadExportBtn")}
               </Button>
             )}
@@ -188,21 +238,17 @@ export function DsrDetailView({ id }: { id: string }) {
       <Dialog open={isConfirmingErasure} onOpenChange={setIsConfirmingErasure}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-destructive flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle className="h-5 w-5" />
               {t("compliance.confirmErasureDialogTitle")}
             </DialogTitle>
-            <DialogDescription>
-              {t("compliance.confirmErasureDialogDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("compliance.confirmErasureDialogDesc")}</DialogDescription>
           </DialogHeader>
-          <div className="py-4 space-y-4">
-            <p className="text-sm font-medium">
-              {t("compliance.typeConfirmToContinue")}
-            </p>
-            <Input 
-              value={erasureInput} 
-              onChange={(e) => setErasureInput(e.target.value)} 
+          <div className="space-y-4 py-4">
+            <p className="text-sm font-medium">{t("compliance.typeConfirmToContinue")}</p>
+            <Input
+              value={erasureInput}
+              onChange={(e) => setErasureInput(e.target.value)}
               placeholder="CONFIRM"
               autoComplete="off"
             />
@@ -211,12 +257,14 @@ export function DsrDetailView({ id }: { id: string }) {
             <Button variant="outline" onClick={() => setIsConfirmingErasure(false)}>
               {t("common.cancel")}
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={() => confirmErasureMutation.mutate()} 
+            <Button
+              variant="destructive"
+              onClick={() => confirmErasureMutation.mutate()}
               disabled={erasureInput !== "CONFIRM" || confirmErasureMutation.isPending}
             >
-              {confirmErasureMutation.isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+              {confirmErasureMutation.isPending && (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              )}
               {t("compliance.executeErasureBtn")}
             </Button>
           </DialogFooter>

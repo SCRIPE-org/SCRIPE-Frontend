@@ -13,10 +13,15 @@ export function FeatureListBlockView({ block }: { block: FeatureListBlock }) {
       className={`grid gap-4 ${columns === 2 ? "sm:grid-cols-2" : ""} ${columns === 3 ? "sm:grid-cols-3" : ""}`}
     >
       {safeItems(props.items, 6).map((item, index) => (
-        <div key={`${item.title}-${index}`} className={props.compactMode ? "flex gap-3" : "space-y-2"}>
+        <div
+          key={`${item.title}-${index}`}
+          className={props.compactMode ? "flex gap-3" : "space-y-2"}
+        >
           <div
             className={`${ICON_SIZE[props.iconSize || "md"]} leading-none`}
-            style={{ color: blockColor(props.iconColor, "var(--login-primary, hsl(var(--primary)))") }}
+            style={{
+              color: blockColor(props.iconColor, "var(--login-primary, hsl(var(--primary)))"),
+            }}
           >
             {props.numberedMode ? index + 1 : item.icon}
           </div>

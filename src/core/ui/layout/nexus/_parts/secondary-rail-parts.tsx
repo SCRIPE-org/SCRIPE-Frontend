@@ -43,22 +43,19 @@ export function NavItem({
   switchWorkspace,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
-  const label =
-    language === "ar"
-      ? item.nameAr || item.nameEn
-      : item.nameEn || item.nameAr;
+  const label = language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
 
   // Detect workspace-switch hrefs (#workspace:<key>)
-  const workspaceKey =
-    item.href?.startsWith("#workspace:") ? item.href.slice("#workspace:".length) : null;
+  const workspaceKey = item.href?.startsWith("#workspace:")
+    ? item.href.slice("#workspace:".length)
+    : null;
   const isWorkspaceSwitcher = !!workspaceKey;
 
-  const isActive =
-    !!item.href && cleanPath(item.href) === cleanPath(activeHref);
+  const isActive = !!item.href && cleanPath(item.href) === cleanPath(activeHref);
 
   const hasChildren = item.children.length > 0;
   const isExpanded = expandedIds.includes(item.id);
-  
+
   const hasActiveChild = React.useMemo(() => {
     if (!activeHref) return false;
     const cleanedActive = cleanPath(activeHref);
@@ -89,11 +86,7 @@ export function NavItem({
     cursor: "pointer",
     textDecoration: "none",
     transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
-    background: isActive
-      ? palette.itemBgActive
-      : hovered
-      ? palette.itemBgHover
-      : "transparent",
+    background: isActive ? palette.itemBgActive : hovered ? palette.itemBgHover : "transparent",
     userSelect: "none",
     position: "relative",
     overflow: "hidden",
@@ -138,7 +131,14 @@ export function NavItem({
             style={{
               color: palette.chevronColor,
               transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1)",
-              transform: isExpanded || hasActiveChild ? (language === "ar" ? "rotate(-90deg)" : "rotate(90deg)") : (language === "ar" ? "rotate(180deg)" : "none"),
+              transform:
+                isExpanded || hasActiveChild
+                  ? language === "ar"
+                    ? "rotate(-90deg)"
+                    : "rotate(90deg)"
+                  : language === "ar"
+                    ? "rotate(180deg)"
+                    : "none",
             }}
           />
         </div>
@@ -199,10 +199,7 @@ export function NavItem({
         >
           <div style={dotStyle} />
           <span style={labelStyle}>{label}</span>
-          <ArrowRightLeft
-            size={12}
-            style={{ color: palette.chevronColor, flexShrink: 0 }}
-          />
+          <ArrowRightLeft size={12} style={{ color: palette.chevronColor, flexShrink: 0 }} />
         </div>
       </div>
     );
@@ -220,10 +217,10 @@ export function NavItem({
       >
         <div style={dotStyle} />
         <span style={labelStyle}>{label}</span>
-        
+
         {/* Active Item Accent Line */}
         {isActive && (
-          <div 
+          <div
             style={{
               position: "absolute",
               insetInlineStart: 0,
@@ -241,7 +238,13 @@ export function NavItem({
   );
 }
 
-export function GroupLabel({ label, palette }: { label: string; palette: ReturnType<typeof useNexusPalette> }) {
+export function GroupLabel({
+  label,
+  palette,
+}: {
+  label: string;
+  palette: ReturnType<typeof useNexusPalette>;
+}) {
   return (
     <div
       style={{
@@ -276,9 +279,7 @@ export function RailContent({
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const handleToggle = useCallback(
     (id: string) =>
-      setExpandedIds((prev) =>
-        prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-      ),
+      setExpandedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id])),
     []
   );
 
@@ -390,7 +391,7 @@ export function RailHeader({
       }}
     >
       {/* Subtle top gradient glow effect */}
-      <div 
+      <div
         style={{
           position: "absolute",
           top: 0,
@@ -402,7 +403,7 @@ export function RailHeader({
           pointerEvents: "none",
         }}
       />
-      
+
       <div
         style={{
           fontSize: 10,

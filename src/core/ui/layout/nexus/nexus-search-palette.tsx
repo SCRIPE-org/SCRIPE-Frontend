@@ -41,10 +41,10 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
 
     workspaceGroups.forEach((workspace) => {
       const workspaceName = workspace.getLocalizedName(language);
-      
+
       workspace.menuItems.forEach((rootItem) => {
         const rootName = rootItem.getLocalizedName(language);
-        
+
         // Add root item if it has an href
         if (rootItem.href && rootItem.href !== "#") {
           items.push({
@@ -63,7 +63,7 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
           children.forEach((child) => {
             const childName = child.getLocalizedName(language);
             const fullPathNames = [...parentNames, childName];
-            
+
             if (child.href && child.href !== "#") {
               items.push({
                 id: child.id,
@@ -75,7 +75,7 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
                 groupName: workspaceName,
               });
             }
-            
+
             traverse(child.children, fullPathNames);
           });
         };
@@ -127,20 +127,20 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
       <CommandInput placeholder={t("common.search") || "Search pages..."} />
       <CommandList>
         <CommandEmpty>{t("common.noResultsFound") || "No results found."}</CommandEmpty>
-        
+
         {Object.entries(groupedItems).map(([groupName, items]) => (
           <CommandGroup key={groupName} heading={groupName}>
             {items.map((item) => {
               // Dynamically resolve icon from Lucide
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const IconComponent = (LucideIcons as any)[item.iconName] || LucideIcons.FileText;
-              
+
               return (
                 <CommandItem
                   key={item.id}
                   value={item.title + " " + item.href} // Index by title and href for better matching
                   onSelect={() => handleSelect(item)}
-                  className="flex items-center gap-2 cursor-pointer"
+                  className="flex cursor-pointer items-center gap-2"
                 >
                   <IconComponent className="h-4 w-4 text-muted-foreground" />
                   <span>{item.title}</span>

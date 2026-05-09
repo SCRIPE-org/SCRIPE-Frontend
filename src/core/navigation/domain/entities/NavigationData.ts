@@ -37,9 +37,7 @@ export class NavigationData {
   constructor(input: NavigationDataInput) {
     this.menuItems = input.menuItems.map((item) => new MenuItem(item));
     this.routes = input.routes;
-    this.workspaceGroups = (input.workspaceGroups ?? []).map(
-      (g) => new WorkspaceGroup(g)
-    );
+    this.workspaceGroups = (input.workspaceGroups ?? []).map((g) => new WorkspaceGroup(g));
   }
 
   // ── Convenience accessors ───────────────────────────────────────────────────
@@ -72,8 +70,7 @@ export class NavigationData {
     const segments = cleanPath.split("/").filter(Boolean);
     for (let i = segments.length - 1; i > 0; i--) {
       const ancestor = "/" + segments.slice(0, i).join("/");
-      if (this.routes.some((r) => r.toLowerCase() === ancestor.toLowerCase()))
-        return true;
+      if (this.routes.some((r) => r.toLowerCase() === ancestor.toLowerCase())) return true;
     }
 
     return false;

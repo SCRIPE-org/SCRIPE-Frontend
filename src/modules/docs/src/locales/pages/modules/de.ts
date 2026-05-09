@@ -329,10 +329,13 @@ export const de = {
     compliance: {
       overview: {
         title: "Compliance-Modul",
-        description: "GDPR, CCPA und PDPA Compliance-Automatisierung — Richtlinien, DSR-Verarbeitung, Einwilligungsmanagement, Datenaufbewahrung, Inventar und Berichtserstellung.",
-        intro: "Das Compliance-Modul ist die integrierte Regulierungs-Engine von NEXORA. Es hilft Betreibern und deren Mandanten, Datenschutzgesetze (GDPR, CCPA, PDPA) durch automatisierte Werkzeuge einzuhalten.",
+        description:
+          "GDPR, CCPA und PDPA Compliance-Automatisierung — Richtlinien, DSR-Verarbeitung, Einwilligungsmanagement, Datenaufbewahrung, Inventar und Berichtserstellung.",
+        intro:
+          "Das Compliance-Modul ist die integrierte Regulierungs-Engine von NEXORA. Es hilft Betreibern und deren Mandanten, Datenschutzgesetze (GDPR, CCPA, PDPA) durch automatisierte Werkzeuge einzuhalten.",
         infoTitle: "Compliance-Hinweis",
-        infoContent: "Das Modul ist entscheidend für die Einhaltung gesetzlicher Vorschriften und die Vermeidung von Strafen. Stellen Sie sicher, dass alle Funktionen korrekt den Datenverarbeitungsrichtlinien zugeordnet sind.",
+        infoContent:
+          "Das Modul ist entscheidend für die Einhaltung gesetzlicher Vorschriften und die Vermeidung von Strafen. Stellen Sie sicher, dass alle Funktionen korrekt den Datenverarbeitungsrichtlinien zugeordnet sind.",
         descDsr: "Verarbeitet Betroffenenanfragen (Export, Löschung, Berichtigung)",
         descConsent: "Unveränderliche Verfolgung von Einwilligungsstatus und Snapshots",
         descRet: "Setzt Datenlöschrichtlinien basierend auf dem Alter durch",
@@ -352,11 +355,13 @@ export const de = {
         th1: "Komponente",
         th2: "Verantwortung",
         tr1_1: "DsrListViewModel",
-        tr1_2: "Behandelt Paginierung, Filterung und Zuweisung von eingehenden Betroffenenanfragen.",
+        tr1_2:
+          "Behandelt Paginierung, Filterung und Zuweisung von eingehenden Betroffenenanfragen.",
         tr2_1: "ConsentRecordView",
         tr2_2: "Rendert den unveränderlichen Einwilligungs-Snapshot zusammen mit Metadaten.",
         whatIsTitle: "Was ist das Compliance-Modul?",
-        whatIsIntro: "Das Modul bietet sechs miteinander verbundene Subsysteme, die den gesamten Compliance-Lebenszyklus abdecken. Mandanten erhalten ein produktionsbereites System.",
+        whatIsIntro:
+          "Das Modul bietet sechs miteinander verbundene Subsysteme, die den gesamten Compliance-Lebenszyklus abdecken. Mandanten erhalten ein produktionsbereites System.",
         subModulesTitle: "Sechs Subsysteme",
         subModulesIntro: "Jedes Subsystem behandelt eine bestimmte Compliance-Domäne:",
         sub1: "Regulierungsprofile — Speichert die rechtlichen Rahmenbedingungen (GDPR, CCPA, PDPA).",
@@ -366,30 +371,39 @@ export const de = {
         sub5: "Dateninventar — Ein Register aller personenbezogenen Datenkategorien, die die Plattform verarbeitet.",
         sub6: "Compliance-Berichte — Generiert asynchrone, revisionssichere Berichte (GDPR-Übersicht, DSR-Zusammenfassung usw.).",
         backendTitle: "Backend-Architektur",
-        backendIntro: "Folgt dem NEXORA-Standardlayout für 3-Projekt-Module (Domain / Application / Infrastructure) mit ComplianceDbContext.",
+        backendIntro:
+          "Folgt dem NEXORA-Standardlayout für 3-Projekt-Module (Domain / Application / Infrastructure) mit ComplianceDbContext.",
         frontendTitle: "Frontend-Architektur",
-        frontendIntro: "Organisiert in sechs unabhängigen Submodulen unter src/modules/compliance/, die dem View/ViewModel-Muster folgen.",
+        frontendIntro:
+          "Organisiert in sechs unabhängigen Submodulen unter src/modules/compliance/, die dem View/ViewModel-Muster folgen.",
         endpointsTitle: "API Endpoints Übersicht",
-        endpointsIntro: "Alle Endpoints befinden sich unter /api/v1/compliances/ und erfordern eine Authentifizierung mit compliance.view.",
+        endpointsIntro:
+          "Alle Endpoints befinden sich unter /api/v1/compliances/ und erfordern eine Authentifizierung mit compliance.view.",
       },
       dsr: {
         title: "Betroffenenanfragen (DSR)",
-        description: "GDPR/CCPA-Rechteanfragen verwalten — Export, Löschung, Berichtigung und Einschränkung.",
-        intro: "Betroffenenanfragen (DSRs) sind formelle Anfragen von Einzelpersonen zur Ausübung ihrer Rechte. Das Modul bietet einen vollständigen DSR-Workflow.",
+        description:
+          "GDPR/CCPA-Rechteanfragen verwalten — Export, Löschung, Berichtigung und Einschränkung.",
+        intro:
+          "Betroffenenanfragen (DSRs) sind formelle Anfragen von Einzelpersonen zur Ausübung ihrer Rechte. Das Modul bietet einen vollständigen DSR-Workflow.",
         typesTitle: "Anfragetypen",
         typesIntro: "Das System unterstützt vier DSR-Typen gemäß DSGVO-Artikel 17 und CCPA:",
         type1: "Export — Recht auf Datenübertragbarkeit. Die betroffene Person wünscht eine Kopie.",
-        type2: "Löschung — Recht auf Vergessenwerden. Alle personenbezogenen Daten müssen gelöscht oder anonymisiert werden.",
+        type2:
+          "Löschung — Recht auf Vergessenwerden. Alle personenbezogenen Daten müssen gelöscht oder anonymisiert werden.",
         type3: "Berichtigung — Korrekturanfrage. Ungenaue Daten müssen aktualisiert werden.",
-        type4: "Einschränkung — Verarbeitungsbeschränkung. Daten können gespeichert, aber nicht aktiv verarbeitet werden.",
+        type4:
+          "Einschränkung — Verarbeitungsbeschränkung. Daten können gespeichert, aber nicht aktiv verarbeitet werden.",
         lifecycleTitle: "Anfrage-Lebenszyklus",
         lifecycleIntro: "DSRs durchlaufen eine definierte Reihe von Statuswerten:",
         status1: "Ausstehend (Pending) — Anfänglicher Zustand bei Erhalt.",
         status2: "In Bearbeitung (InProgress) — Ein Compliance-Beauftragter wurde zugewiesen.",
         status3: "Abgeschlossen (Completed) — Die Anfrage wurde erfüllt.",
-        status4: "Abgelehnt (Rejected) — Die Anfrage wurde abgelehnt (z. B. unzureichende Identitätsprüfung).",
+        status4:
+          "Abgelehnt (Rejected) — Die Anfrage wurde abgelehnt (z. B. unzureichende Identitätsprüfung).",
         slasTitle: "GDPR SLA-Anforderungen",
-        slasIntro: "Gemäß Artikel 12 DSGVO müssen Verantwortliche innerhalb von 30 Tagen auf DSRs reagieren (auf 3 Monate verlängerbar). NEXORA verfolgt dies.",
+        slasIntro:
+          "Gemäß Artikel 12 DSGVO müssen Verantwortliche innerhalb von 30 Tagen auf DSRs reagieren (auf 3 Monate verlängerbar). NEXORA verfolgt dies.",
         lifecycleFlowTitle: "DSR-Lebenszyklus-Flow",
         nodeSubmit: "Anfrage einreichen",
         descSubmit: "Betroffener beantragt Export, Löschung oder Berichtigung",
@@ -429,8 +443,10 @@ export const de = {
       },
       consent: {
         title: "Einwilligungsmanagement",
-        description: "Einwilligungen aufzeichnen, verfolgen und prüfen für GDPR-Artikel 6 und CCPA.",
-        intro: "Das Einwilligungsmanagement protokolliert jedes Mal, wenn ein Benutzer eine Einwilligung erteilt oder widerruft. NEXORA speichert den vollständigen Audit-Trail.",
+        description:
+          "Einwilligungen aufzeichnen, verfolgen und prüfen für GDPR-Artikel 6 und CCPA.",
+        intro:
+          "Das Einwilligungsmanagement protokolliert jedes Mal, wenn ein Benutzer eine Einwilligung erteilt oder widerruft. NEXORA speichert den vollständigen Audit-Trail.",
         purposesTitle: "Zwecke der Einwilligung",
         purposesIntro: "Jeder Einwilligungsdatensatz ist an einen bestimmten Zweck gebunden:",
         purpose1: "Marketing — E-Mail-Marketing und werbliche Kommunikation.",
@@ -438,9 +454,11 @@ export const de = {
         purpose3: "Drittanbieter — Datenfreigabe an Drittanbieter-Dienste.",
         purpose4: "Personalisierung — Personalisierte Inhalte und Empfehlungen.",
         gdprTitle: "GDPR Rechtsgrundlage",
-        gdprIntro: "Gemäß Artikel 6 DSGVO muss die Einwilligung freiwillig, spezifisch, informiert und unmissverständlich sein. NEXORA speichert den exakten Text.",
+        gdprIntro:
+          "Gemäß Artikel 6 DSGVO muss die Einwilligung freiwillig, spezifisch, informiert und unmissverständlich sein. NEXORA speichert den exakten Text.",
         withdrawalTitle: "Widerruf der Einwilligung",
-        withdrawalIntro: "Benutzer können ihre Einwilligung jederzeit widerrufen. ConsentRecord wird mit WithdrawnAt aktualisiert.",
+        withdrawalIntro:
+          "Benutzer können ihre Einwilligung jederzeit widerrufen. ConsentRecord wird mit WithdrawnAt aktualisiert.",
         flowTitle: "Einwilligungs-Status-Flow",
         nodePurpose: "Zweck der Einwilligung",
         descPurpose: "Definiert, worin eingewilligt wird (z. B. Marketing)",
@@ -465,20 +483,24 @@ export const de = {
       },
       retention: {
         title: "Datenaufbewahrungsrichtlinien",
-        description: "Definieren Sie Aufbewahrungsfristen und automatische Ablaufaktionen (Löschen oder Anonymisieren) für DSGVO-Artikel 5(1)(e).",
-        intro: "Aufbewahrungsrichtlinien definieren, wie lange Daten aufbewahrt werden müssen. NEXORA setzt diese automatisch durch.",
+        description:
+          "Definieren Sie Aufbewahrungsfristen und automatische Ablaufaktionen (Löschen oder Anonymisieren) für DSGVO-Artikel 5(1)(e).",
+        intro:
+          "Aufbewahrungsrichtlinien definieren, wie lange Daten aufbewahrt werden müssen. NEXORA setzt diese automatisch durch.",
         policiesTitle: "Richtlinienkonfiguration",
         policiesIntro: "Jede Richtlinie legt Folgendes fest:",
         field1: "DataCategory — Datentyp (z. B. 'Benutzerprofile').",
         field2: "RetentionDays — Wie viele Tage die Daten aufbewahrt werden müssen.",
-        field3: "ExpiryAction — Was bei Ablauf geschieht: Delete (Löschen) oder Anonymize (Anonymisieren).",
+        field3:
+          "ExpiryAction — Was bei Ablauf geschieht: Delete (Löschen) oder Anonymize (Anonymisieren).",
         field4: "RegulationCode — Welche Verordnung dies erfordert (GDPR, CCPA usw.).",
         actionsTitle: "Ablaufaktionen",
         actionsIntro: "Bei Ablauf wendet NEXORA eine von zwei Aktionen an:",
         action1: "Delete — Löscht dauerhaft alle passenden Datensätze.",
         action2: "Anonymize — Ersetzt personenbezogene Daten durch pseudonyme Token.",
         automationTitle: "Automatisierte Durchsetzung",
-        automationIntro: "Der RetentionEnforcementJob läuft täglich um 3:00 Uhr UTC und verarbeitet Richtlinien. Ein Audit-Eintrag RetentionExecution wird erstellt.",
+        automationIntro:
+          "Der RetentionEnforcementJob läuft täglich um 3:00 Uhr UTC und verarbeitet Richtlinien. Ein Audit-Eintrag RetentionExecution wird erstellt.",
         nodePolicy: "Aufbewahrungsrichtlinie",
         descPolicy: "Definiert Entitätstyp, Altersgrenze und Zerstörungsstrategie",
         nodeEnforcement: "Aufbewahrungs-Durchsetzungs-Job",
@@ -499,19 +521,23 @@ export const de = {
       },
       inventory: {
         title: "Dateninventar",
-        description: "Ein Register aller verarbeiteten personenbezogenen Datenkategorien — erforderlich für GDPR Artikel 30 (RoPA).",
-        intro: "Das Dateninventar ist ein strukturiertes Register. Gemäß Artikel 30 DSGVO müssen Verantwortliche ein Verzeichnis von Verarbeitungstätigkeiten (RoPA) führen.",
+        description:
+          "Ein Register aller verarbeiteten personenbezogenen Datenkategorien — erforderlich für GDPR Artikel 30 (RoPA).",
+        intro:
+          "Das Dateninventar ist ein strukturiertes Register. Gemäß Artikel 30 DSGVO müssen Verantwortliche ein Verzeichnis von Verarbeitungstätigkeiten (RoPA) führen.",
         fieldsTitle: "Inventarfelder",
         fieldsIntro: "Jedes Element dokumentiert:",
         field1: "DataCategory — Lesbarer Name der Kategorie (z. B. 'E-Mail-Adressen').",
-        field2: "LegalBasis — DSGVO-Rechtsgrundlage für die Verarbeitung (Einwilligung, Vertrag usw.).",
+        field2:
+          "LegalBasis — DSGVO-Rechtsgrundlage für die Verarbeitung (Einwilligung, Vertrag usw.).",
         field3: "DataSubjects — Wem die Daten gehören (z. B. 'Endbenutzer').",
         field4: "ProcessingPurpose — Warum die Daten verarbeitet werden (z. B. 'Marketing').",
         field5: "StorageLocation — Wo die Daten gespeichert sind (Land/Region).",
         field6: "RetentionPeriod — Wie lange die Daten aufbewahrt werden.",
         field7: "ThirdPartySharing — Ob Daten mit Dritten geteilt werden.",
         ropaTitle: "Artikel 30 Compliance",
-        ropaIntro: "Organisationen mit 250+ Mitarbeitern müssen ein RoPA führen. Das Inventar von NEXORA dient als abfragbares RoPA für Inspektionen.",
+        ropaIntro:
+          "Organisationen mit 250+ Mitarbeitern müssen ein RoPA führen. Das Inventar von NEXORA dient als abfragbares RoPA für Inspektionen.",
         endpointsTitle: "API Endpoints",
         ep: {
           list: "Alle Dateninventarelemente auflisten (paginiert)",
@@ -523,20 +549,26 @@ export const de = {
       },
       reports: {
         title: "Compliance-Berichte",
-        description: "Asynchrone, revisionssichere Berichte generieren (GDPR-Übersicht, DSR-Zusammenfassung, Einwilligungs-Audit, Aufbewahrungsanalyse, Inventar-Export).",
-        intro: "Compliance-Berichte sind asynchron generierte Dokumente, die revisionssichere Zusammenfassungen Ihrer Compliance-Lage bieten. Berichte werden im Hintergrund erstellt und zum Download bereitgestellt.",
+        description:
+          "Asynchrone, revisionssichere Berichte generieren (GDPR-Übersicht, DSR-Zusammenfassung, Einwilligungs-Audit, Aufbewahrungsanalyse, Inventar-Export).",
+        intro:
+          "Compliance-Berichte sind asynchron generierte Dokumente, die revisionssichere Zusammenfassungen Ihrer Compliance-Lage bieten. Berichte werden im Hintergrund erstellt und zum Download bereitgestellt.",
         reportTypesTitle: "Berichtstypen",
         reportTypesIntro: "Fünf Berichtstypen sind verfügbar:",
         type1: "GDPR-Übersicht — Zusammenfassung des DSGVO-Compliance-Status.",
-        type2: "DSR-Aktivitätszusammenfassung — Statistiken zu DSR-Volumen, Typen und SLA-Einhaltung.",
+        type2:
+          "DSR-Aktivitätszusammenfassung — Statistiken zu DSR-Volumen, Typen und SLA-Einhaltung.",
         type3: "Einwilligungs-Audit — Vollständiges Protokoll der Einwilligungen und Widerrufe.",
         type4: "Aufbewahrungsanalyse — Aktueller Durchsetzungsstatus aller aktiven Richtlinien.",
         type5: "Dateninventar-Export — Vollständiger Export des Dateninventars (Artikel 30 RoPA).",
         asyncTitle: "Asynchrone Generierung",
-        asyncIntro: "Berichte werden asynchron erstellt, um HTTP-Anfragen nicht zu blockieren. Das System erstellt einen ComplianceReport (IsReady=false) und reiht den Job ein.",
-        asyncTip: "Verwenden Sie die Schaltfläche Aktualisieren im UI, um die Bereitschaft zu prüfen (normalerweise 30-60 Sekunden).",
+        asyncIntro:
+          "Berichte werden asynchron erstellt, um HTTP-Anfragen nicht zu blockieren. Das System erstellt einen ComplianceReport (IsReady=false) und reiht den Job ein.",
+        asyncTip:
+          "Verwenden Sie die Schaltfläche Aktualisieren im UI, um die Bereitschaft zu prüfen (normalerweise 30-60 Sekunden).",
         downloadTitle: "Berichte herunterladen",
-        downloadIntro: "Sobald ein Bericht bereit ist (IsReady=true), ist die DownloadUrl verfügbar. Berichte werden 90 Tage lang aufbewahrt.",
+        downloadIntro:
+          "Sobald ein Bericht bereit ist (IsReady=true), ist die DownloadUrl verfügbar. Berichte werden 90 Tage lang aufbewahrt.",
         endpointsTitle: "API Endpoints",
         ep: {
           list: "Alle Compliance-Berichte auflisten (paginiert)",
@@ -545,6 +577,6 @@ export const de = {
           download: "Die generierte Berichtsdatei herunterladen",
         },
       },
-    }
+    },
   },
 };

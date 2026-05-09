@@ -14,9 +14,7 @@ interface CrmPlaceholderProps {
 }
 
 function DynamicIcon({ name, size = 32 }: { name: string; size?: number }) {
-  const PascalName = name?.replace(/(^|[-_])(\w)/g, (_, __, c: string) =>
-    c.toUpperCase()
-  );
+  const PascalName = name?.replace(/(^|[-_])(\w)/g, (_, __, c: string) => c.toUpperCase());
   const Icon = (LucideIcons as Record<string, any>)[PascalName ?? ""];
   if (Icon) return <Icon width={size} height={size} strokeWidth={1.5} />;
   return <Construction width={size} height={size} strokeWidth={1.5} />;
@@ -62,8 +60,7 @@ export function CrmPlaceholder({
           maxWidth: 560,
           borderRadius: 20,
           overflow: "hidden",
-          boxShadow:
-            "0 0 0 1px hsl(var(--border)), 0 20px 60px rgba(0,0,0,0.08)",
+          boxShadow: "0 0 0 1px hsl(var(--border)), 0 20px 60px rgba(0,0,0,0.08)",
           background: "hsl(var(--card))",
         }}
       >
