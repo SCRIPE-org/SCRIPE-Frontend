@@ -32,6 +32,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from "react";
 import type React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -194,7 +195,11 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ── Impersonation listener ─────────────────────────────────────────────────
   // Note: authBroadcast is a singleton with no unsubscribe API — this is intentional.
   // The handler is registered once and lives for the lifetime of the app.
+  const impersonationListenerRegistered = useRef(false);
   useEffect(() => {
+    if (impersonationListenerRegistered.current) return;
+    impersonationListenerRegistered.current = true;
+
     authBroadcast.onImpersonation(async () => {
       appLogger.auth("[NavigationProvider] Impersonation event — resetting navigation");
       useNavigationStore.getState().reset();
@@ -222,7 +227,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ── Context value (backwards-compat delegation to store) ─────────────────
   // isInitialLoading + defaultWorkspace come from granular selectors above.
   // All method calls go through getState() to stay decoupled from the render cycle.
-  const value: NavigationContextType = {
+  const value = useMemo<NavigationContextType>(() => ({
     fetchWorkspaceMenu,
     refreshNavigation,
     // Legacy compat — reads always go via getState() so no stale closure risk
@@ -231,7 +236,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     getRoutes: () => Array.from(useNavigationStore.getState().allRoutes),
     navigationData: defaultWorkspace,
     isLoading: isInitialLoading,
-  };
+  }), [fetchWorkspaceMenu, refreshNavigation, defaultWorkspace, isInitialLoading]);
 
   return (
     <NavigationContext.Provider value={value}>
