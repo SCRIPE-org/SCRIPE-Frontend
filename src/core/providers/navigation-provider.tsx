@@ -17,6 +17,13 @@
  *
  * Context API surface is intentionally minimal — most consumers should read
  * from useNavigationStore directly rather than through this context.
+ *
+ * Performance (v2.1):
+ *  All WRITE operations use useNavigationStore.getState() directly — this avoids
+ *  subscribing to the full Zustand snapshot, which would cause the provider to
+ *  re-render on every unrelated store change (activeRootItemId, isWorkspaceSwitching…).
+ *  Only the two slices that drive the legacy context value (isInitialLoading,
+ *  defaultWorkspace) use granular Zustand selectors.
  */
 
 import {
@@ -57,7 +64,7 @@ interface NavigationContextType {
   fetchWorkspaceMenu: (workspaceKey: string) => Promise<NavigationData | null>;
   /** Force re-fetch of default workspace + routes (e.g. after settings change) */
   refreshNavigation: () => Promise<void>;
-  // ── Legacy compat — delegates to store ─────────────────────────────────
+  // ── Legacy compat — delegates to store ─────────────────────────────
   /** @deprecated Use useNavigationStore().hasRouteAccess() directly */
   hasPageAccess: (pathname: string) => boolean;
   /** @deprecated Use useNavigationStore().getPageActions() directly */
@@ -80,7 +87,13 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const tenantId = currentTenant?.id ?? null;
   const queryClient = useQueryClient();
 
-  const store = useNavigationStore();
+  // ── Granular selectors — only the two slices we need in the render path ───
+  // All WRITE operations use getState() so this provider doesn't subscribe to
+  // the full store snapshot and re-render on unrelated state changes.
+  const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
+  const defaultWorkspace  = useNavigationStore((s) => s.defaultWorkspace);
+  // Read persisted contextKey exactly once — used in the one-time guard effect.
+  const persistedContextKey = useNavigationStore((s) => s.contextKey);
 
   // ── Context key — identifies this user+tenant combination ─────────────────
   const userId = useAppStore((s) => s.user?.id ?? "");
@@ -95,18 +108,20 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     if (!isReady || guardedOnce.current) return;
     guardedOnce.current = true;
 
-    if (store.contextKey && store.contextKey !== contextKey) {
-      appLogger.auth(`[NavigationProvider] Context mismatch (${store.contextKey} ≠ ${contextKey}) — resetting store`);
-      store.reset();
+    if (persistedContextKey && persistedContextKey !== contextKey) {
+      appLogger.auth(`[NavigationProvider] Context mismatch (${persistedContextKey} ≠ ${contextKey}) — resetting store`);
+      useNavigationStore.getState().reset();
     }
-  }, [isReady, contextKey, store]);
+  // persistedContextKey is read once at guard time — after that guardedOnce prevents re-runs.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady, contextKey]);
 
   // ── Query 1: Eager routes load ────────────────────────────────────────────
   useQuery({
     queryKey: NAV_QUERY_KEYS.routes(contextKey),
     queryFn: async () => {
       const { routes, workspaceRouteMap } = await navigationRepository.fetchRoutes();
-      store.initializeRoutes(routes, workspaceRouteMap, contextKey);
+      useNavigationStore.getState().initializeRoutes(routes, workspaceRouteMap, contextKey);
       return { routes, workspaceRouteMap };
     },
     enabled: isReady,
@@ -123,7 +138,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       const groups = (data.workspaceGroups ?? []).map(
         (g) => new WorkspaceGroup(g)
       );
-      store.initializeDefaultWorkspace(data, groups);
+      useNavigationStore.getState().initializeDefaultWorkspace(data, groups);
       return data;
     },
     enabled: isReady,
@@ -135,15 +150,17 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ── Mutation: JIT workspace fetch ─────────────────────────────────────────
   const workspaceMutation = useMutation({
     mutationFn: async (workspaceKey: string) => {
+      // Always read from live state to avoid stale closure cache hits
+      const s = useNavigationStore.getState();
       // Return cached data from store if already loaded
-      if (store.hasWorkspaceData(workspaceKey)) {
-        return store.workspaces.get(workspaceKey)!;
+      if (s.hasWorkspaceData(workspaceKey)) {
+        return s.workspaces.get(workspaceKey)!;
       }
 
-      store.setIsWorkspaceSwitching(true);
+      useNavigationStore.getState().setIsWorkspaceSwitching(true);
       try {
         const data = await navigationRepository.fetchWorkspaceMenu(workspaceKey);
-        store.setWorkspaceData(workspaceKey, data);
+        useNavigationStore.getState().setWorkspaceData(workspaceKey, data);
         // Seed TanStack Query cache too — so it knows this is fresh
         queryClient.setQueryData(
           NAV_QUERY_KEYS.workspace(workspaceKey, contextKey),
@@ -151,7 +168,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         );
         return data;
       } finally {
-        store.setIsWorkspaceSwitching(false);
+        useNavigationStore.getState().setIsWorkspaceSwitching(false);
       }
     },
   });
@@ -170,9 +187,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   );
 
   const refreshNavigation = useCallback(async () => {
-    store.reset();
+    useNavigationStore.getState().reset();
     await queryClient.invalidateQueries({ queryKey: ["navigation"] });
-  }, [store, queryClient]);
+  }, [queryClient]);
 
   // ── Impersonation listener ─────────────────────────────────────────────────
   // Note: authBroadcast is a singleton with no unsubscribe API — this is intentional.
@@ -180,11 +197,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     authBroadcast.onImpersonation(async () => {
       appLogger.auth("[NavigationProvider] Impersonation event — resetting navigation");
-      store.reset();
+      useNavigationStore.getState().reset();
       await queryClient.invalidateQueries({ queryKey: ["navigation"] });
     });
     // authBroadcast is a singleton — no cleanup needed (matches pattern in useImpersonation.ts)
-  }, [store, queryClient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryClient]);
 
   // When tenant context changes, reset and refetch
   const prevTenantRef = useRef<string | null | undefined>("__initial__");
@@ -196,21 +214,23 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     if (prevTenantRef.current !== tenantId) {
       prevTenantRef.current = tenantId;
       appLogger.auth(`[NavigationProvider] Tenant changed (${prevTenantRef.current} → ${tenantId}) — resetting navigation`);
-      store.reset();
+      useNavigationStore.getState().reset();
       queryClient.invalidateQueries({ queryKey: ["navigation"] });
     }
-  }, [tenantId, store, queryClient]);
+  }, [tenantId, queryClient]);
 
   // ── Context value (backwards-compat delegation to store) ─────────────────
+  // isInitialLoading + defaultWorkspace come from granular selectors above.
+  // All method calls go through getState() to stay decoupled from the render cycle.
   const value: NavigationContextType = {
     fetchWorkspaceMenu,
     refreshNavigation,
-    // Legacy compat
-    hasPageAccess: (pathname) => store.hasRouteAccess(pathname),
-    getPageActions: (pathname) => store.getPageActions(pathname),
-    getRoutes: () => Array.from(store.allRoutes),
-    navigationData: store.defaultWorkspace,
-    isLoading: store.isInitialLoading,
+    // Legacy compat — reads always go via getState() so no stale closure risk
+    hasPageAccess: (pathname) => useNavigationStore.getState().hasRouteAccess(pathname),
+    getPageActions: (pathname) => useNavigationStore.getState().getPageActions(pathname),
+    getRoutes: () => Array.from(useNavigationStore.getState().allRoutes),
+    navigationData: defaultWorkspace,
+    isLoading: isInitialLoading,
   };
 
   return (

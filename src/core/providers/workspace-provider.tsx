@@ -17,6 +17,10 @@
  *
  * The full workspace context API surface is preserved for backwards compatibility
  * so existing consumers (layout, rail components) don't need changes.
+ *
+ * Performance note:
+ *  Each slice below uses a granular Zustand selector so only the specific piece
+ *  of state that changed triggers a re-render — never the full store snapshot.
  */
 
 import {
@@ -101,16 +105,16 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const { language } = useI18n();
   const router = useRouter();
 
-  // ── Read all state from the single store ──────────────────────────────────
-  const store = useNavigationStore();
-  const {
-    workspaceGroups,
-    activeWorkspaceKey,
-    activeRootItemId,
-    previousWorkspaceKey,
-    isInitialLoading,
-    isWorkspaceSwitching,
-  } = store;
+  // ── Granular selectors — each triggers re-render ONLY when its slice changes ──
+  const workspaceGroups   = useNavigationStore((s) => s.workspaceGroups);
+  const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
+  const activeRootItemId  = useNavigationStore((s) => s.activeRootItemId);
+  const previousWorkspaceKey = useNavigationStore((s) => s.previousWorkspaceKey);
+  const isInitialLoading  = useNavigationStore((s) => s.isInitialLoading);
+  const isWorkspaceSwitching = useNavigationStore((s) => s.isWorkspaceSwitching);
+  // workspaces Map — used to reactively recompute rootMenuItems after JIT loads
+  const workspacesMap     = useNavigationStore((s) => s.workspaces);
+  const defaultWorkspace  = useNavigationStore((s) => s.defaultWorkspace);
 
   // ── Sorted workspace list ─────────────────────────────────────────────────
   const sortedGroups = useMemo(
@@ -125,12 +129,13 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [activeWorkspaceKey, sortedGroups]);
 
   // ── Root menu items for active workspace ─────────────────────────────────
-  // Use getState() inside the memo so we read the latest store data without
-  // adding `store` (a new snapshot object every render) to the deps array.
+  // Depends on BOTH activeWorkspaceKey AND the workspaces Map so that loading
+  // a new JIT workspace triggers a re-compute without any manual invalidation.
   const rootMenuItems = useMemo<MenuItem[]>(() => {
-    return useNavigationStore.getState().getActiveRootMenuItems();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeWorkspaceKey]);
+    const key = activeWorkspaceKey ?? "__default__";
+    const data = workspacesMap.get(key) ?? defaultWorkspace;
+    return data?.menuItems ?? [];
+  }, [activeWorkspaceKey, workspacesMap, defaultWorkspace]);
 
   // ── Active root item entity ───────────────────────────────────────────────
   const activeRootItem = useMemo<MenuItem | null>(() => {
@@ -220,7 +225,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (bestRootId && bestRootId !== activeRootItemId) {
-      store.setActiveRootItem(bestRootId);
+      useNavigationStore.getState().setActiveRootItem(bestRootId);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, rootMenuItems]);
@@ -267,8 +272,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       // so the browser Back button cannot jump between workspaces.
       //
       // Must read FRESH state here: fetchWorkspaceMenu() has written the new
-      // workspace data into the store, but `store` (React render snapshot) still
-      // has the old state. getState() always returns the current live state.
+      // workspace data into the store, but the React snapshot still has the old
+      // state. getState() always returns the current live state.
       if (navigateTo) {
         const freshState = useNavigationStore.getState();
         const wsData = freshState.workspaces.get(workspaceKey) ?? null;
@@ -288,7 +293,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         }
       }
     },
-    // `store` intentionally excluded — all reads/writes go through getState().
+    // `workspacesMap` intentionally excluded — all reads/writes go through getState().
     // Only truly external dependencies that can change belong here.
     [fetchWorkspaceMenu, router]
   );
@@ -301,17 +306,17 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       // so there's no dangling module-workspace history entry.
       await setActiveWorkspace(prev, true);
     }
-    store.setPreviousWorkspace(null);
-  }, [previousWorkspaceKey, adminWorkspaces, setActiveWorkspace, store]);
+    useNavigationStore.getState().setPreviousWorkspace(null);
+  }, [previousWorkspaceKey, adminWorkspaces, setActiveWorkspace]);
 
 
   const switchToModuleWorkspaceByKey = useCallback(
     (key: string) => {
-      // Save current workspace for goBack()
-      store.setPreviousWorkspace(activeWorkspaceKey ?? adminWorkspaces[0]?.workspaceKey ?? null);
+      // The store's setActiveWorkspace atomically saves current → previousWorkspaceKey,
+      // so no separate setPreviousWorkspace call is needed.
       setActiveWorkspace(key, true);
     },
-    [store, activeWorkspaceKey, adminWorkspaces, setActiveWorkspace]
+    [setActiveWorkspace]
   );
 
   const switchToModuleWorkspace = useCallback(() => {

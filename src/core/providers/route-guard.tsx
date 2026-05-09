@@ -14,7 +14,7 @@
  * 4-case auth logic is preserved exactly from v1 (token × store state matrix).
  */
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
@@ -84,9 +84,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const authLoading = !hasHydrated;
 
   // ── v2: single store-based nav check (replaces navLoading + hasPageAccess) ──
-  const navStore = useNavigationStore();
-  const hasRouteAccess = navStore.hasRouteAccess.bind(navStore);
-  const navReady = navStore.allRoutes.size > 0;
+  // Use granular selectors so only their specific slice triggers a re-render,
+  // not the entire store snapshot (which changes on JIT loads, workspace switches, etc.)
+  const navReady = useNavigationStore((s) => s.allRoutes.size > 0);
+  // hasRouteAccess is a method on the store — read via getState() in the effect
+  // so we never capture a stale reference and don't need it as a dependency.
+  const hasRouteAccess = useCallback(
+    (p: string) => useNavigationStore.getState().hasRouteAccess(p),
+    []
+  );
 
   const { canAccessPage } = usePermissions();
   const router = useRouter();
@@ -269,6 +275,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     setSubscriptionInfo,
     hasRouteAccess,
     // NOTE: mustChangePassword intentionally NOT here — read via getState()
+    // NOTE: hasRouteAccess is stable (useCallback with [] deps)
   ]);
 
   if (!isMounted) return <>{children}</>;
