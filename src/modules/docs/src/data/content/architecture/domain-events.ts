@@ -65,7 +65,7 @@ public abstract record DomainEvent : IDomainEvent
         type: "success",
         description: "Background job, polls every 5s",
       },
-      { id: "mediator", label: "NEXORA mediator Publish", type: "primary" },
+      { id: "mediator", label: "AstraFlow mediator Publish", type: "primary" },
       {
         id: "handler",
         label: "IDomainEventHandler<T>",
@@ -98,7 +98,7 @@ public abstract record DomainEvent : IDomainEvent
         filename: "IDomainEventPublisher.cs",
         code: `/// <summary>
 /// Abstraction for publishing domain events.
-/// Default implementation uses NEXORA mediator for in-process pub/sub.
+/// Default implementation uses AstraFlow mediator for in-process pub/sub.
 /// </summary>
 public interface IDomainEventPublisher
 {
@@ -108,7 +108,7 @@ public interface IDomainEventPublisher
 }`,
       },
       {
-        label: "NEXORA mediator Implementation",
+        label: "AstraFlow mediator Implementation",
         language: "csharp",
         filename: "NexoraDomainEventPublisher.cs",
         code: `public class NexoraDomainEventPublisher : IDomainEventPublisher
@@ -266,7 +266,7 @@ public class OutboxInterceptor : SaveChangesInterceptor
     filename: "Core.Infrastructure/Outbox/OutboxProcessor.cs — Simplified",
     code: `/// <summary>
 /// Background service that polls the Outbox table for unprocessed messages
-/// and publishes them via NEXORA mediator. Runs every 5 seconds.
+/// and publishes them via AstraFlow mediator. Runs every 5 seconds.
 /// </summary>
 public class OutboxProcessor : BackgroundService
 {
@@ -294,7 +294,7 @@ public class OutboxProcessor : BackgroundService
                     var domainEvent = (IDomainEvent)JsonSerializer
                         .Deserialize(message.Content, type)!;
 
-                    // 3. Publish via NEXORA mediator
+                    // 3. Publish via AstraFlow mediator
                     await publisher.PublishAsync(domainEvent, ct);
 
                     // 4. Mark as processed
@@ -384,7 +384,7 @@ public class OutboxCleanupJob : RecurringJobBase
       [
         "NexoraDomainEventPublisher",
         "Events/NexoraDomainEventPublisher.cs",
-        "In-process pub/sub via NEXORA mediator",
+        "In-process pub/sub via AstraFlow mediator",
       ],
       [
         "DomainEventNotification",

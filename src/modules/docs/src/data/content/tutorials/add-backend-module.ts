@@ -17,7 +17,7 @@ const sections: DocSection[] = [
     items: [
       ".NET 8 SDK installed",
       "Oracle or SQL Server database configured",
-      "Understanding of CQRS, NEXORA mediator, and Clean Architecture",
+      "Understanding of CQRS, AstraFlow mediator, and Clean Architecture",
     ],
   },
 
@@ -191,7 +191,7 @@ public class Product : AuditableEntity, ITenantAwareEntity
     : ICommandHandler<CreateProductCommand, ProductDto>
 {
     private readonly IProductRepository _repo;
-    private readonly Core.Application.Mapping.IMapper _mapper;
+    private readonly AstraFlow.Mapper.IMapper _mapper;
     private readonly IDataScopeService _scope;
 
     public async Task<Result<ProductDto>> Handle(

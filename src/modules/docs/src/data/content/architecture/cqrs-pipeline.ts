@@ -14,7 +14,7 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "architecture.cqrsPipeline.overviewIntro" },
   {
     type: "flowchart",
-    title: "NEXORA Mediator Pipeline — Request Lifecycle",
+    title: "AstraFlow mediator Pipeline — Request Lifecycle",
     direction: "horizontal",
     nodes: [
       { id: "controller", label: "Controller", type: "default", description: "API endpoint entry" },
@@ -157,7 +157,7 @@ public record AppError(
     code: `[HttpGet("{id}")]
 public async Task<IActionResult> GetAdmin(string id)
 {
-    var result = await _mediator.Send(new GetAdminByIdQuery(id));
+    var result = await _sender.Send(new GetAdminByIdQuery(id));
 
     return result.IsSuccess
         ? Ok(result.Value)         // 200 with data
@@ -180,13 +180,13 @@ public async Task<IActionResult> GetAdmin(string id)
     language: "csharp",
     filename: "Core.Application/Behaviors/ValidationBehavior.cs",
     code: `/// <summary>
-/// NEXORA mediator pipeline behavior that runs FluentValidation validators
+/// AstraFlow mediator pipeline behavior that runs FluentValidation validators
 /// BEFORE the request handler executes.
 /// If validation fails, returns Result.Failure without hitting the handler.
 /// </summary>
 public class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : Core.Application.Messaging.IRequest<TResponse>
+    where TRequest : AstraFlow.Mediator.IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -322,13 +322,13 @@ public class ValidationBehavior<TRequest, TResponse>
     language: "csharp",
     filename: "Core.Application/Behaviors/LoggingBehavior.cs",
     code: `/// <summary>
-/// Pipeline behavior that logs every NEXORA mediator request with timing.
+/// Pipeline behavior that logs every AstraFlow mediator request with timing.
 /// Logs: request type, user ID, tenant ID, execution time, and outcome.
 /// Warns if execution exceeds 500ms threshold.
 /// </summary>
 public class LoggingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : Core.Application.Messaging.IRequest<TResponse>
+    where TRequest : AstraFlow.Mediator.IRequest<TResponse>
 {
     public async Task<TResponse> Handle(
         TRequest request,
@@ -387,7 +387,7 @@ public class LoggingBehavior<TRequest, TResponse>
 /// </summary>
 public class CachingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : Core.Application.Messaging.IRequest<TResponse>
+    where TRequest : AstraFlow.Mediator.IRequest<TResponse>
 {
     private readonly ICacheService _cache;
 

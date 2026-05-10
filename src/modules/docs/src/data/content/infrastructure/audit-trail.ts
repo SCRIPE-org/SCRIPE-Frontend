@@ -27,7 +27,7 @@ const sections: DocSection[] = [
         id: "behavior",
         label: "AuditBehavior",
         type: "info",
-        description: "NEXORA mediator pipeline",
+        description: "AstraFlow mediator pipeline",
       },
       { id: "service", label: "AuditService", type: "warning", description: "Module auto-detect" },
       { id: "db", label: "AuditLogs Table", type: "success", description: "Persistent storage" },

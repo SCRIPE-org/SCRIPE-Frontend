@@ -61,7 +61,7 @@ const sections: DocSection[] = [
       { id: "sub", label: "Subscriptions", description: "Tenant ↔ Edition binding" },
       { id: "ovr", label: "Overrides", description: "Per-tenant custom values" },
       { id: "cache", label: "FeatureCache", description: "In-memory resolved values" },
-      { id: "pipe", label: "FeatureCheckBehavior", description: "NEXORA mediator pipeline gate" },
+      { id: "pipe", label: "FeatureCheckBehavior", description: "AstraFlow mediator pipeline gate" },
     ],
     connections: [
       { from: "feat", to: "ed", label: "bundled into" },
@@ -293,7 +293,7 @@ public class CreateChatRoomCommand : ICommand<Guid>, IRequireFeature
         services.AddScoped<IOverflowPolicyExecutor, OverflowPolicyExecutor>();
         services.AddScoped<IQuotaCounterProvisioner, QuotaCounterProvisioner>();
         
-        // NEXORA mediator pipeline behavior
+        // AstraFlow mediator pipeline behavior
         services.AddTransient(typeof(IPipelineBehavior<,>), 
             typeof(FeatureCheckBehavior<,>));
         

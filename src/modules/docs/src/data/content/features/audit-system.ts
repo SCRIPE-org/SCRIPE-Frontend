@@ -16,7 +16,7 @@ const sections: DocSection[] = [
     title: "4-Source Audit Pipeline",
     direction: "vertical",
     nodes: [
-      { id: "source1", label: "NEXORA mediator AuditBehavior (CQRS commands)", type: "info" },
+      { id: "source1", label: "AstraFlow mediator AuditBehavior (CQRS commands)", type: "info" },
       { id: "source2", label: "EF Core AuditableEntityInterceptor", type: "warning" },
       { id: "source3", label: "RequestLoggingMiddleware (HTTP)", type: "primary" },
       { id: "source4", label: "Explicit IAuditService calls (security events)", type: "danger" },

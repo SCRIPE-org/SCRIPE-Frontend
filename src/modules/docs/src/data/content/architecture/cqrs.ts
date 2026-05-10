@@ -45,7 +45,7 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "NEXORA Mediator Pipeline (5 Behaviors)",
+    title: "AstraFlow mediator Pipeline (5 Behaviors)",
     direction: "vertical",
     nodes: [
       { id: "send", label: "ISender.Send(command)", type: "primary" },
@@ -79,7 +79,7 @@ const sections: DocSection[] = [
     filename: "ValidationBehavior.cs",
     code: `public class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : Core.Application.Messaging.IRequest<TResponse>
+    where TRequest : AstraFlow.Mediator.IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -157,7 +157,7 @@ const sections: DocSection[] = [
 {
     private readonly IAdminRepository _repo;
     private readonly IPasswordHasher _hasher;
-    private readonly Core.Application.Mapping.IMapper _mapper;
+    private readonly AstraFlow.Mapper.IMapper _mapper;
 
     public async Task<Result<AdminResponse>> Handle(
         CreateAdminCommand request, CancellationToken ct)
@@ -203,7 +203,7 @@ public class GetAdminByIdQueryHandler
     : IQueryHandler<GetAdminByIdQuery, AdminDetailResponse>
 {
     private readonly IAdminRepository _repo;
-    private readonly Core.Application.Mapping.IMapper _mapper;
+    private readonly AstraFlow.Mapper.IMapper _mapper;
     private readonly ICacheService _cache;
 
     public async Task<Result<AdminDetailResponse>> Handle(

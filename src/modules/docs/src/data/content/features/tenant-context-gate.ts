@@ -88,7 +88,7 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
     if (tenantId == null)
         return Unauthorized("Tenant context required for this endpoint.");
 
-    var result = await _mediator.Send(new GetTenantPlansQuery(tenantId.Value, page, pageSize));
+    var result = await _sender.Send(new GetTenantPlansQuery(tenantId.Value, page, pageSize));
     return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
 }`,
   },

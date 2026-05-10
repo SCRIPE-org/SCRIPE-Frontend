@@ -24,7 +24,7 @@ const sections: DocSection[] = [
 │  18 REST Controllers · 400+ Endpoints · Swagger/OpenAPI    │
 ├─────────────────────────────────────────────────────────────┤
 │                     Application Layer                        │
-│  NEXORA mediator commands/queries · FluentValidation · explicit DTO mapping  │
+│  AstraFlow mediator commands/queries · FluentValidation · explicit DTO mapping  │
 ├─────────────────────────────────────────────────────────────┤
 │                       Domain Layer                          │
 │  Entities · Value Objects · Domain Events · Specifications  │
@@ -106,7 +106,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // ─── CQRS + NEXORA Mediator Pipeline ────────────────────────────
+  // ─── CQRS + AstraFlow mediator Pipeline ────────────────────────────
   { type: "heading", level: 2, titleKey: "commercial.platformArchitecture.cqrsTitle", id: "cqrs" },
   { type: "paragraph", contentKey: "commercial.platformArchitecture.cqrsContent" },
   {

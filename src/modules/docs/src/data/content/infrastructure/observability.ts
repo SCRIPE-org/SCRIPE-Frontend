@@ -43,7 +43,7 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "TracingBehavior.cs — NEXORA Mediator Pipeline Tracing",
+    filename: "TracingBehavior.cs — AstraFlow mediator Pipeline Tracing",
     code: `/// <summary>
 /// Creates an OpenTelemetry span for every NEXORA request handler.
 /// Auto-detects the module from the handler's namespace.
@@ -65,7 +65,7 @@ public class TracingBehavior<TRequest, TResponse>
         var module = DetectModule(typeof(TRequest).Namespace);
 
         using var activity = Source.StartActivity(
-            $"NEXORA mediator {kind}: {requestName}",
+            $"AstraFlow mediator {kind}: {requestName}",
             ActivityKind.Internal);
 
         activity?.SetTag("mediatr.request_type", requestName);
