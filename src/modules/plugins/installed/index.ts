@@ -1,0 +1,11 @@
+export { InstalledPluginsView } from "./src/presentation/views/InstalledPluginsView";
+export { InstalledPluginRow } from "./src/presentation/components/InstalledPluginRow";
+export { PluginHealthBadge } from "./src/presentation/components/PluginHealthBadge";
+export { PluginStatusBadge } from "./src/presentation/components/PluginStatusBadge";
+export { useInstalledViewModel } from "./src/presentation/viewmodels/useInstalledViewModel";
+export { PluginInstallation } from "./src/domain/entities/PluginInstallation";
+export type { IInstalledRepository } from "./src/domain/interfaces/IInstalledRepository";
+export type { IInstalledService } from "./src/domain/interfaces/IInstalledService";
+export type { PluginInstallationModel } from "./src/data/models/InstalledModels";
+export { InstalledService } from "./src/data/services/InstalledService";
+export { InstalledRepository } from "./src/data/repositories/InstalledRepository";

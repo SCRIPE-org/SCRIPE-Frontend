@@ -67,6 +67,10 @@ import "./modules/entitlements/user-subscriptions";
 // Modules (Revenue Analytics — Phase 11)
 import "./modules/entitlements/revenue-analytics";
 
+// Modules (Plugins — Phase 15)
+import "./modules/plugins/plugins-overview";
+import "./modules/plugins/plugins-sdk";
+
 // Modules (Compliance — Phase 12)
 import "./modules/compliance/compliance-overview";
 import "./modules/compliance/compliance-dsr";
@@ -199,6 +203,9 @@ import "./commercial/entitlements-overrides";
 import "./commercial/billing-payments";
 import "./commercial/entitlements-tenant-plans";
 import "./commercial/entitlements-user-subscriptions";
+
+// Modules (Commercial Plugins — Phase 15)
+import "./commercial/plugins-overview";
 
 // Modules (Commercial Compliance — Phase 12)
 import "./commercial/compliance-overview";

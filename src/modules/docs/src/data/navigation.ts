@@ -646,8 +646,29 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
+      // ── Plugin System (Phase 15) ───────────────────────────────
+      {
+        id: "mod-plugins",
+        titleKey: "nav.plugins",
+        icon: "puzzle",
+        order: 3,
+        children: [
+          {
+            id: "mod-plug-overview",
+            titleKey: "modules.plugins.overview.title",
+            slug: "modules/plugins-overview",
+            order: 1,
+          },
+          {
+            id: "mod-plug-sdk",
+            titleKey: "modules.plugins.sdk.title",
+            slug: "modules/plugins-sdk",
+            order: 2,
+          },
+        ],
+      },
       // Future modules:
-      // { id: "mod-inventory", titleKey: "nav.inventory", order: 3, children: [...] },
+      // { id: "mod-inventory", titleKey: "nav.inventory", order: 4, children: [...] },
     ],
   },
 
@@ -1085,12 +1106,27 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
+      // ── Plugin System (Commercial — Phase 15) ─────────────────
+      {
+        id: "comm-mod-plugins",
+        titleKey: "nav.commercialPlugins",
+        icon: "puzzle",
+        order: 3,
+        children: [
+          {
+            id: "comm-mod-plug-overview",
+            titleKey: "commercial.pluginsOverview.title",
+            slug: "commercial/plugins-overview",
+            order: 1,
+          },
+        ],
+      },
       // ── Compliance Module (Commercial) ─────────────────────────
       {
         id: "comm-mod-compliance",
         titleKey: "nav.commercialCompliance",
         icon: "shield-check",
-        order: 2,
+        order: 4,
         children: [
           {
             id: "comm-mod-comp-overview",

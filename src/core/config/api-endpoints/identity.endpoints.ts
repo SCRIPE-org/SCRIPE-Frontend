@@ -1,0 +1,101 @@
+import { V1 } from "./_shared";
+
+export const IDENTITY_ENDPOINTS = {
+  ADMINS: {
+    LIST: `${V1}/Admins`,
+    BY_ID: (id: string) => `${V1}/Admins/${id}`,
+    BY_TENANT_ID: (tenantId: string) => `${V1}/Admins/byTenantId/${tenantId}`,
+    MY_TENANT_ADMINS: `${V1}/Admins/myTenantAdmins`,
+    CREATE: `${V1}/Admins`,
+    CREATE_FOR_MY_TENANT: `${V1}/Admins/createForMyTenant`,
+    UPDATE: (id: string) => `${V1}/Admins/${id}`,
+    DELETE: (id: string) => `${V1}/Admins/${id}`,
+    SET_ACTIVE: (id: string) => `${V1}/Admins/${id}/active`,
+    ROLES: (id: string) => `${V1}/Admins/${id}/roles`,
+    REMOVE_ROLE: (adminId: string, roleId: string) => `${V1}/Admins/${adminId}/roles/${roleId}`,
+    RESET_PASSWORD: (id: string) => `${V1}/Admins/${id}/reset-password`,
+    CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
+    BULK: {
+      ACTIVATE: `${V1}/Admins/bulk/activate`,
+      DEACTIVATE: `${V1}/Admins/bulk/deactivate`,
+      DELETE: `${V1}/Admins/bulk/delete`,
+      ACTIVATE_ALL: `${V1}/Admins/bulk/activate-all`,
+      DEACTIVATE_ALL: `${V1}/Admins/bulk/deactivate-all`,
+      DELETE_ALL: `${V1}/Admins/bulk/delete-all`,
+    },
+
+    TRANSFER: (id: string) => `${V1}/Admins/${id}/transfer`,
+    TRANSFER_PROTECTION: `${V1}/Admins/transfer-protection`,
+    SYNC_ROLES: (id: string) => `${V1}/Admins/${id}/roles/sync`,
+  },
+
+  ROLES: {
+    LIST: `${V1}/Roles`,
+    BY_ID: (id: string) => `${V1}/Roles/${id}`,
+    BY_TENANT_ID: (tenantId: string) => `${V1}/Roles/byTenantId/${tenantId}`,
+    MY_TENANT_ROLES: `${V1}/Roles/myTenantRoles`,
+    MY_TENANT_AVAILABLE_PERMISSIONS: `${V1}/Roles/myTenant/available-permissions`,
+    CREATE: `${V1}/Roles`,
+    CREATE_FOR_MY_TENANT: `${V1}/Roles/createForMyTenant`,
+    UPDATE: (id: string) => `${V1}/Roles/${id}`,
+    DELETE: (id: string) => `${V1}/Roles/${id}`,
+    PERMISSIONS: (id: string) => `${V1}/Roles/${id}/permissions`,
+    REMOVE_PERMISSION: (roleId: string, permissionId: string) =>
+      `${V1}/Roles/${roleId}/permissions/${permissionId}`,
+    CLONE: (id: string) => `${V1}/Roles/${id}/clone`,
+    BULK: {
+      DELETE: `${V1}/Roles/bulk/delete`,
+      DELETE_ALL: `${V1}/Roles/bulk/delete-all`,
+    },
+  },
+
+  PERMISSIONS: {
+    LIST: `${V1}/Permissions`,
+    MY: `${V1}/Permissions/my`,
+    BY_ID: (id: string) => `${V1}/Permissions/${id}`,
+    CREATE: `${V1}/Permissions`,
+    UPDATE: (id: string) => `${V1}/Permissions/${id}`,
+    DELETE: (id: string) => `${V1}/Permissions/${id}`,
+    CATEGORIES: `${V1}/Permissions/categories`,
+  },
+
+  USER_GROUPS: {
+    LIST: `${V1}/UserGroups`,
+    MY_TENANT_GROUPS: `${V1}/UserGroups/myTenantGroups`,
+    BY_ID: (id: string) => `${V1}/UserGroups/${id}`,
+    BY_TENANT: (tenantId: string) => `${V1}/UserGroups/byTenant/${tenantId}`,
+    CREATE: `${V1}/UserGroups`,
+    CREATE_FOR_MY_TENANT: `${V1}/UserGroups/createForMyTenant`,
+    UPDATE: (id: string) => `${V1}/UserGroups/${id}`,
+    DELETE: (id: string) => `${V1}/UserGroups/${id}`,
+    ADD_MEMBERS: (id: string) => `${V1}/UserGroups/${id}/members`,
+    REMOVE_MEMBER: (id: string, adminId: string) => `${V1}/UserGroups/${id}/members/${adminId}`,
+    SET_ROLES: (id: string) => `${V1}/UserGroups/${id}/roles`,
+    SET_RESTRICTIONS: (id: string) => `${V1}/UserGroups/${id}/restrictions`,
+    BULK: {
+      ACTIVATE: `${V1}/UserGroups/bulk/activate`,
+      DEACTIVATE: `${V1}/UserGroups/bulk/deactivate`,
+      DELETE: `${V1}/UserGroups/bulk/delete`,
+      ACTIVATE_ALL: `${V1}/UserGroups/bulk/activate-all`,
+      DEACTIVATE_ALL: `${V1}/UserGroups/bulk/deactivate-all`,
+      DELETE_ALL: `${V1}/UserGroups/bulk/delete-all`,
+    },
+  },
+
+  USERS: {
+    LIST: `${V1}/Users`,
+    BY_ID: (id: string) => `${V1}/Users/${id}`,
+    UPDATE: (id: string) => `${V1}/Users/${id}`,
+    DELETE: (id: string) => `${V1}/Users/${id}`,
+    SET_ACTIVE: (id: string) => `${V1}/Users/${id}/active`,
+    UNLOCK: (id: string) => `${V1}/Users/${id}/unlock`,
+    BULK: {
+      ACTIVATE: `${V1}/Users/bulk/activate`,
+      DEACTIVATE: `${V1}/Users/bulk/deactivate`,
+      DELETE: `${V1}/Users/bulk/delete`,
+      ACTIVATE_ALL: `${V1}/Users/bulk/activate-all`,
+      DEACTIVATE_ALL: `${V1}/Users/bulk/deactivate-all`,
+      DELETE_ALL: `${V1}/Users/bulk/delete-all`,
+    },
+  },
+};

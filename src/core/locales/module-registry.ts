@@ -88,6 +88,20 @@ import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
+// ─── Plugins ────────────────────────────────────────────────────
+// 4 sub-modules + shared, each owning their slice of the "plugins" key
+import { en as pluginsSharedEn, ar as pluginsSharedAr } from "@modules/plugins/locales";
+import { en as pluginsCatalogEn, ar as pluginsCatalogAr } from "@modules/plugins/catalog/locales";
+import {
+  en as pluginsInstalledEn,
+  ar as pluginsInstalledAr,
+} from "@modules/plugins/installed/locales";
+import { en as pluginsLogsEn, ar as pluginsLogsAr } from "@modules/plugins/logs/locales";
+import {
+  en as pluginsSettingsEn,
+  ar as pluginsSettingsAr,
+} from "@modules/plugins/settings/locales";
+
 // ─── Compliance ─────────────────────────────────────────────────
 // 6 sub-modules, each owning their own slice of the "compliance" key
 import {
@@ -153,6 +167,12 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   recycleBinEn,
   // Profile
   profileEn,
+  // Plugins (5 slices, all merge into "plugins" key — deepMerge required)
+  pluginsSharedEn,
+  pluginsCatalogEn,
+  pluginsInstalledEn,
+  pluginsLogsEn,
+  pluginsSettingsEn,
   // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
   compDashboardEn,
   compDsrEn,
@@ -205,6 +225,12 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   recycleBinAr,
   // Profile
   profileAr,
+  // Plugins (5 slices, all merge into "plugins" key — deepMerge required)
+  pluginsSharedAr,
+  pluginsCatalogAr,
+  pluginsInstalledAr,
+  pluginsLogsAr,
+  pluginsSettingsAr,
   // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
   compDashboardAr,
   compDsrAr,

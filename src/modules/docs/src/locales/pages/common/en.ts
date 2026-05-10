@@ -72,5 +72,7 @@ export const en = {
     commercialEntitlements: "Entitlements",
     compliance: "Compliance",
     commercialCompliance: "Compliance",
+    plugins: "Plugin System",
+    commercialPlugins: "Plugin System",
   },
 };
