@@ -80,7 +80,7 @@ export function PluginFrame({ pluginKey, frontendUrl, installationId, className 
         ref={iframeRef}
         src={`${frontendUrl}?installationId=${installationId}`}
         title={`Plugin: ${pluginKey}`}
-        sandbox="allow-scripts allow-forms allow-same-origin"
+        sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
         className="w-full border-0 rounded-xl"
         style={{ height, display: hasError ? "none" : "block" }}
         onError={() => setHasError(true)}
