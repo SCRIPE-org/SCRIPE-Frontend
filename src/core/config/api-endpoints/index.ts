@@ -9,6 +9,7 @@ import { WEBHOOKS_ENDPOINTS } from "./webhooks.endpoints";
 import { SYSTEM_ENDPOINTS } from "./system.endpoints";
 import { COMPLIANCE_ENDPOINTS } from "./compliance.endpoints";
 import { PLUGINS_ENDPOINTS } from "./plugins.endpoints";
+import { MARKETPLACE_ENDPOINTS } from "./marketplace.endpoints";
 
 export { buildUrl } from "./_shared";
 
@@ -24,4 +25,5 @@ export const API_ENDPOINTS = {
   ...SYSTEM_ENDPOINTS,
   ...COMPLIANCE_ENDPOINTS,
   ...PLUGINS_ENDPOINTS,
+  ...MARKETPLACE_ENDPOINTS,
 };

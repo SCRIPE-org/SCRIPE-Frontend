@@ -375,6 +375,49 @@ export const SYSTEM_PERMISSIONS = {
   // Reports
   COMPLIANCE_REPORTS_VIEW: "compliance_reports.view",
   COMPLIANCE_REPORTS_GENERATE: "compliance_reports.generate",
+
+  // ── Plugins Module ──────────────────────────────────────────
+  // Catalog
+  PLUGINS_CATALOG_VIEW: "plugins_catalog.view",
+  PLUGINS_CATALOG_INSTALL: "plugins_catalog.install",
+  PLUGINS_CATALOG_UNINSTALL: "plugins_catalog.uninstall",
+  // Installed
+  PLUGINS_INSTALLED_VIEW: "plugins_installed.view",
+  PLUGINS_INSTALLED_MANAGE: "plugins_installed.manage",
+  PLUGINS_INSTALLED_CONFIGURE: "plugins_installed.configure",
+  // Definitions (Developer)
+  PLUGINS_DEFINITION_CREATE: "plugins_definition.create",
+  PLUGINS_DEFINITION_UPDATE: "plugins_definition.update",
+  PLUGINS_DEFINITION_DELETE: "plugins_definition.delete",
+  // Data Store
+  PLUGINS_DATA_STORE_VIEW: "plugins_data_store.view",
+  PLUGINS_DATA_STORE_MANAGE: "plugins_data_store.manage",
+  // Execution Logs
+  PLUGINS_EXECUTION_LOGS_VIEW: "plugins_execution_logs.view",
+
+  // ── Marketplace Module ─────────────────────────────────────
+  // App Listings
+  APP_LISTINGS_VIEW: "applistings.view",
+  APP_LISTINGS_CREATE: "applistings.create",
+  APP_LISTINGS_UPDATE: "applistings.update",
+  APP_LISTINGS_DELETE: "applistings.delete",
+  // App Submissions
+  APP_SUBMISSIONS_VIEW: "appsubmissions.view",
+  APP_SUBMISSIONS_CREATE: "appsubmissions.create",
+  APP_SUBMISSIONS_UPDATE: "appsubmissions.update",
+  // Developer Profiles
+  DEVELOPER_PROFILES_VIEW: "developerprofiles.view",
+  DEVELOPER_PROFILES_CREATE: "developerprofiles.create",
+  DEVELOPER_PROFILES_UPDATE: "developerprofiles.update",
+  DEVELOPER_PROFILES_VERIFY: "developerprofiles.verify",
+  // App Reviews
+  APP_REVIEWS_VIEW: "appreviews.view",
+  APP_REVIEWS_CREATE: "appreviews.create",
+  APP_REVIEWS_DELETE: "appreviews.delete",
+  // Financials
+  APP_PURCHASES_VIEW: "apppurchases.view",
+  DEVELOPER_PAYOUTS_VIEW: "developerpayouts.view",
+  DEVELOPER_PAYOUTS_PROCESS: "developerpayouts.process",
 } as const;
 
 /**
@@ -491,4 +534,26 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/compliance/inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
   "/compliance/reports": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
   "/compliance/reports/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
+
+  // Plugins Module
+  "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
+  "/plugins/catalog": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
+  "/plugins/installed": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
+  "/plugins/installed/[installationId]": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
+  "/plugins/installed/[installationId]/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
+  "/plugins/installed/[installationId]/settings": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_CONFIGURE],
+  "/plugins/definitions": [SYSTEM_PERMISSIONS.PLUGINS_DEFINITION_CREATE],
+
+  // Marketplace Module
+  "/marketplace": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
+  "/marketplace/catalog": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
+  "/marketplace/catalog/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
+  "/marketplace/categories": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
+  "/marketplace/submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
+  "/marketplace/submissions/[id]": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
+  "/marketplace/developers": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
+  "/marketplace/developers/[id]": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
+  "/marketplace/reviews": [SYSTEM_PERMISSIONS.APP_REVIEWS_VIEW],
+  "/marketplace/financials": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
+  "/marketplace/financials/payouts": [SYSTEM_PERMISSIONS.DEVELOPER_PAYOUTS_VIEW],
 };
