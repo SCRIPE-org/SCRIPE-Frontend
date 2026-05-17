@@ -1,8 +1,48 @@
 /**
  * Plugins — Catalog sub-module locale (English)
+ *
+ * Also includes shared keys (nav, tiers, statuses, actions, health)
+ * that are used across multiple plugin sub-modules. The catalog submodule
+ * is the primary entry point so it owns the shared namespace.
  */
 export const en = {
   plugins: {
+    // ── Navigation / section titles (shared) ──────────────────────
+    title: "Plugin System",
+    catalog: "Plugin Catalog",
+    installed: "Installed Plugins",
+    logs: "Execution Logs",
+    settings: "Plugin Settings",
+
+    // ── Shared tier labels ───────────────────────────────────────
+    tier1: "Tier 1",
+    tier1Label: "Tier 1 — Certified",
+    tier2: "Tier 2",
+    tier2Label: "Tier 2 — Sandboxed",
+
+    // ── Shared status labels ─────────────────────────────────────
+    statusActive: "Active",
+    statusDisabled: "Disabled",
+    statusInstalling: "Installing",
+    statusUninstalling: "Uninstalling",
+    statusFailed: "Failed",
+    statusUnknown: "Unknown",
+
+    // ── Shared actions ───────────────────────────────────────────
+    install: "Install",
+    uninstall: "Uninstall",
+    activate: "Activate",
+    deactivate: "Deactivate",
+    installing: "Installing...",
+    retry: "Retry",
+    refresh: "Refresh",
+
+    // ── Shared health ────────────────────────────────────────────
+    healthy: "Healthy",
+    unhealthy: "Unhealthy",
+    healthUnknown: "Health status unknown",
+    lastChecked: "Last checked {{time}}",
+
     // ── Catalog page ─────────────────────────────────────────────
     catalogEmpty: "No plugins available in the catalog.",
     catalogError: "Failed to load plugin catalog.",

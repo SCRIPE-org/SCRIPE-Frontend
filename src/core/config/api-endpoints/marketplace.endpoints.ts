@@ -58,6 +58,8 @@ export const MARKETPLACE_ENDPOINTS = {
     PURCHASES: `${V1}/marketplace/financials/purchases`,
     /** List developer payouts */
     PAYOUTS: `${V1}/marketplace/financials/payouts`,
+    /** Process a pending developer payout */
+    PAYOUT_PROCESS: (id: string) => `${V1}/marketplace/financials/payouts/${id}/process`,
 
     // ── Developer Profiles ───────────────────────────────────────
     /** List all developer profiles */

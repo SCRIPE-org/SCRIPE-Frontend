@@ -13,6 +13,23 @@ import { MARKETPLACE_ENDPOINTS } from "./marketplace.endpoints";
 
 export { buildUrl } from "./_shared";
 
+// ── Named re-exports (import individual namespaces in data-layer files) ──────
+export {
+  AUTH_ENDPOINTS,
+  IDENTITY_ENDPOINTS,
+  TENANTS_ENDPOINTS,
+  NAVIGATION_ENDPOINTS,
+  CUSTOMIZATION_ENDPOINTS,
+  ENTITLEMENTS_ENDPOINTS,
+  MESSAGING_ENDPOINTS,
+  WEBHOOKS_ENDPOINTS,
+  SYSTEM_ENDPOINTS,
+  COMPLIANCE_ENDPOINTS,
+  PLUGINS_ENDPOINTS,
+  MARKETPLACE_ENDPOINTS,
+};
+
+// ── Merged object (import API_ENDPOINTS in files that span multiple modules) ──
 export const API_ENDPOINTS = {
   ...AUTH_ENDPOINTS,
   ...IDENTITY_ENDPOINTS,

@@ -2,22 +2,20 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const MarketplaceListView = dynamic(() =>
-  import("@modules/marketplace/src/presentation/views/MarketplaceListView").then(
-    (m) => ({ default: m.MarketplaceListView })
-  )
+const AppListingsView = dynamic(() =>
+  import("@modules/marketplace").then((m) => ({ default: m.AppListingsView }))
 );
 
 export const metadata: Metadata = {
-  title: "Marketplace | NEXORA",
-  description: "Browse and manage marketplace app listings, submissions, and developer profiles",
+  title: "App Listings | Marketplace | NEXORA",
+  description: "Browse and manage all marketplace app listings — publish, feature, and set pricing.",
 };
 
 export default function MarketplacePage() {
   return (
     <main>
       <ModuleErrorBoundary moduleName="Marketplace">
-        <MarketplaceListView />
+        <AppListingsView />
       </ModuleErrorBoundary>
     </main>
   );

@@ -88,9 +88,7 @@ import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
-// ─── Plugins ────────────────────────────────────────────────────
-// 4 sub-modules + shared, each owning their slice of the "plugins" key
-import { en as pluginsSharedEn, ar as pluginsSharedAr } from "@modules/plugins/locales";
+// ─── Plugins (4 sub-modules, each owning their slice of the "plugins" key) ──
 import { en as pluginsCatalogEn, ar as pluginsCatalogAr } from "@modules/plugins/catalog/locales";
 import {
   en as pluginsInstalledEn,
@@ -102,8 +100,7 @@ import {
   ar as pluginsSettingsAr,
 } from "@modules/plugins/settings/locales";
 
-// ─── Compliance ─────────────────────────────────────────────────
-// 6 sub-modules, each owning their own slice of the "compliance" key
+// ─── Compliance (7 sub-modules) ─────────────────────────────────────────────
 import {
   en as compDashboardEn,
   ar as compDashboardAr,
@@ -124,7 +121,31 @@ import {
   ar as compRegulationsAr,
 } from "@modules/compliance/regulations/locales";
 
-import { en as marketplaceEn, ar as marketplaceAr } from "@modules/marketplace/locales";
+// ─── Marketplace (6 sub-modules, each owning their slice of the "marketplace" key) ──
+import {
+  en as mktListingsEn,
+  ar as mktListingsAr,
+} from "@modules/marketplace/app-listings/locales";
+import {
+  en as mktCategoriesEn,
+  ar as mktCategoriesAr,
+} from "@modules/marketplace/categories/locales";
+import {
+  en as mktSubmissionsEn,
+  ar as mktSubmissionsAr,
+} from "@modules/marketplace/submissions/locales";
+import {
+  en as mktDevelopersEn,
+  ar as mktDevelopersAr,
+} from "@modules/marketplace/developers/locales";
+import {
+  en as mktReviewsEn,
+  ar as mktReviewsAr,
+} from "@modules/marketplace/reviews/locales";
+import {
+  en as mktFinancialsEn,
+  ar as mktFinancialsAr,
+} from "@modules/marketplace/financials/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -169,13 +190,12 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   recycleBinEn,
   // Profile
   profileEn,
-  // Plugins (5 slices, all merge into "plugins" key — deepMerge required)
-  pluginsSharedEn,
+  // Plugins (4 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogEn,
   pluginsInstalledEn,
   pluginsLogsEn,
   pluginsSettingsEn,
-  // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
+  // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardEn,
   compDsrEn,
   compConsentEn,
@@ -183,8 +203,13 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compInventoryEn,
   compReportsEn,
   compRegulationsEn,
-  // Marketplace
-  marketplaceEn,
+  // Marketplace (6 sub-modules, all merge into "marketplace" key)
+  mktListingsEn,
+  mktCategoriesEn,
+  mktSubmissionsEn,
+  mktDevelopersEn,
+  mktReviewsEn,
+  mktFinancialsEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -229,13 +254,12 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   recycleBinAr,
   // Profile
   profileAr,
-  // Plugins (5 slices, all merge into "plugins" key — deepMerge required)
-  pluginsSharedAr,
+  // Plugins (4 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogAr,
   pluginsInstalledAr,
   pluginsLogsAr,
   pluginsSettingsAr,
-  // Compliance (6 sub-modules, each owns their slice of the "compliance" key)
+  // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardAr,
   compDsrAr,
   compConsentAr,
@@ -243,6 +267,11 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compInventoryAr,
   compReportsAr,
   compRegulationsAr,
-  // Marketplace
-  marketplaceAr,
+  // Marketplace (6 sub-modules, all merge into "marketplace" key)
+  mktListingsAr,
+  mktCategoriesAr,
+  mktSubmissionsAr,
+  mktDevelopersAr,
+  mktReviewsAr,
+  mktFinancialsAr,
 );

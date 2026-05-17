@@ -3,6 +3,8 @@
  *
  * Re-exports all sub-module public APIs for external consumption.
  * Internal implementation details are NOT exported.
+ *
+ * Architecture: ALL code lives in sub-modules. No root-level src/ folder.
  */
 
 // ── Sub-module views ────────────────────────────────────────────────────────
@@ -27,13 +29,15 @@ export { PluginCatalogItem } from "./catalog";
 export { PluginInstallation } from "./installed";
 export { PluginExecutionLog } from "./logs";
 
-// ── Shared domain (manifest — still lives in src/ as it's cross-cutting) ────
-export { parsePluginManifest } from "./src/domain/entities/PluginManifest";
+// ── Cross-cutting domain (manifest & definition — owned by catalog) ─────────
+export { parsePluginManifest } from "./catalog/src/domain/entities/PluginManifest";
 export type {
   PluginManifest,
   PluginManifestEntryPoint,
   PluginManifestMenuItem,
-} from "./src/domain/entities/PluginManifest";
+} from "./catalog/src/domain/entities/PluginManifest";
+export { PluginDefinition } from "./catalog/src/domain/entities/PluginDefinition";
+export type { PluginDefinitionModel } from "./catalog/src/domain/entities/PluginDefinition";
 
 // ── DI Container ─────────────────────────────────────────────────────────────
 export { pluginsContainer, getPluginsContainer } from "./di";
