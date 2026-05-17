@@ -85,7 +85,7 @@ NEXT_PUBLIC_APP_NAME=NEXORA`,
     type: "table",
     headers: ["Role", "Email", "Password", "Permissions"],
     rows: [
-      ["Super Admin", "admin@nexora.com", "Admin@123", "Full system access, all modules"],
+      ["Super Admin", "admin@nexora.com", "P@ssw0rd", "Full system access, all modules"],
       ["Tenant Admin", "tenant@nexora.com", "Tenant@123", "Scoped to tenant, manage users"],
       ["Regular User", "user@nexora.com", "User@123", "Read-only, limited actions"],
     ],
@@ -127,7 +127,7 @@ NEXT_PUBLIC_APP_NAME=NEXORA`,
         language: "bash",
         code: `curl -X POST https://localhost:5001/api/v1/auth/login \\
   -H "Content-Type: application/json" \\
-  -d '{"email":"admin@nexora.com","password":"Admin@123"}'
+  -d '{"email":"admin@nexora.com","password":"P@ssw0rd"}'
 
 # Expected: { "accessToken": "...", "refreshToken": "..." }`,
       },

@@ -181,7 +181,7 @@ export const es = {
       tblCredR1C1: "Email del Administrador",
       tblCredR1C2: "admin@nexora.io",
       tblCredR2C1: "Contraseña",
-      tblCredR2C2: "Admin@123",
+      tblCredR2C2: "P@ssw0rd",
       tblCredR3C1: "Inquilino por Defecto",
       tblCredR3C2: "Root Tenant (Inquilino Raíz)",
       tblCredR4C1: "URL de API",

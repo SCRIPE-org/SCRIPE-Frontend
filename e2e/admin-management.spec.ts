@@ -13,7 +13,7 @@ async function loginAsAdmin(page: Page) {
   const passwordInput = page.locator('input[name="password"], input[type="password"]').first();
 
   await usernameInput.fill("system_superadmin");
-  await passwordInput.fill("Admin@123");
+  await passwordInput.fill("P@ssw0rd");
 
   const submitButton = page.locator('button[type="submit"]').first();
   await submitButton.click();

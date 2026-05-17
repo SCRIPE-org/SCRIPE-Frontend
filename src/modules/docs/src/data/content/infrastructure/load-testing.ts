@@ -105,7 +105,7 @@ const tokenRefreshDuration = new Trend('nexora_token_refresh_duration', true);
 // ── Environment Configuration ──
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';
 const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@nexora.com';
-const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'Admin@123';
+const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'P@ssw0rd';
 
 export const options = {
   stages: [

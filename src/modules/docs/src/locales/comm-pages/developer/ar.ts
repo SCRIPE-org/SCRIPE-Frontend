@@ -170,7 +170,7 @@ export const ar = {
       tblCredR1C1: "البريد الإلكتروني للمسؤول",
       tblCredR1C2: "admin@nexora.io",
       tblCredR2C1: "كلمة المرور",
-      tblCredR2C2: "Admin@123",
+      tblCredR2C2: "P@ssw0rd",
       tblCredR3C1: "المستأجر الافتراضي",
       tblCredR3C2: "مستأجر الجذر (Root Tenant)",
       tblCredR4C1: "رابط API",

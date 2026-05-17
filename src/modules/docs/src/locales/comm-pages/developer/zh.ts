@@ -160,7 +160,7 @@ export const zh = {
       tblCredR1C1: "管理员邮箱",
       tblCredR1C2: "admin@nexora.io",
       tblCredR2C1: "密码",
-      tblCredR2C2: "Admin@123",
+      tblCredR2C2: "P@ssw0rd",
       tblCredR3C1: "默认租户",
       tblCredR3C2: "根租户 (Root Tenant)",
       tblCredR4C1: "API URL",
