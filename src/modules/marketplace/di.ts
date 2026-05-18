@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Marketplace Module DI Container
  *

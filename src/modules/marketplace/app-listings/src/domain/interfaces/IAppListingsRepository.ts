@@ -1,5 +1,3 @@
-"use client";
-
 import type { AppListing } from "../entities/AppListing";
 
 /** Shared paged-result shape for list endpoints */

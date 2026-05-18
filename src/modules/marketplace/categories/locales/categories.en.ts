@@ -9,5 +9,10 @@ export const en = {
     categoryName: "Category Name",
     categoryIcon: "Icon",
     categorySortOrder: "Sort Order",
+    categoriesCount: "categories",
+    categoriesActiveCount: "active",
+    categoriesAppsCount: "apps",
+    categoryActive: "Active",
+    categoryInactive: "Inactive",
   },
 };

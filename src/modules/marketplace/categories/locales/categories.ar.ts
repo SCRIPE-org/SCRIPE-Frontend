@@ -9,5 +9,10 @@ export const ar = {
     categoryName: "اسم الفئة",
     categoryIcon: "الأيقونة",
     categorySortOrder: "ترتيب العرض",
+    categoriesCount: "فئات",
+    categoriesActiveCount: "نشطة",
+    categoriesAppsCount: "تطبيقات",
+    categoryActive: "نشطة",
+    categoryInactive: "غير نشطة",
   },
 };

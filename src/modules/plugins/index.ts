@@ -12,6 +12,7 @@ export { PluginCatalogView } from "./catalog";
 export { InstalledPluginsView } from "./installed";
 export { PluginLogsView } from "./logs";
 export { PluginSettingsView } from "./settings";
+export { DefinitionsView } from "./definitions";
 
 // ── Sub-module components (used by app routes / other modules) ──────────────
 export { PluginCard, PluginInstallDialog } from "./catalog";
@@ -23,6 +24,7 @@ export { useCatalogViewModel } from "./catalog";
 export { useInstalledViewModel } from "./installed";
 export { useLogsViewModel } from "./logs";
 export { useSettingsViewModel } from "./settings";
+export { useDefinitionsViewModel } from "./definitions";
 
 // ── Domain entities ─────────────────────────────────────────────────────────
 export { PluginCatalogItem } from "./catalog";

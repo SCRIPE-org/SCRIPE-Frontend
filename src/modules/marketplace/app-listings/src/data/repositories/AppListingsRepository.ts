@@ -1,5 +1,3 @@
-"use client";
-
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IAppListingsRepository, PagedResult } from "../../domain/interfaces/IAppListingsRepository";
 import type { AppListing } from "../../domain/entities/AppListing";

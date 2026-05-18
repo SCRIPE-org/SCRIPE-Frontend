@@ -1,5 +1,3 @@
-"use client";
-
 import type { IApiService } from "@core/interfaces/api.interface";
 import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
 import { AppPurchase, DeveloperPayout } from "../../domain/entities/FinancialEntities";

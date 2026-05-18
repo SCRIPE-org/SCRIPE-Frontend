@@ -99,6 +99,10 @@ import {
   en as pluginsSettingsEn,
   ar as pluginsSettingsAr,
 } from "@modules/plugins/settings/locales";
+import {
+  en as pluginsDefinitionsEn,
+  ar as pluginsDefinitionsAr,
+} from "@modules/plugins/definitions/locales";
 
 // ─── Compliance (7 sub-modules) ─────────────────────────────────────────────
 import {
@@ -190,11 +194,12 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   recycleBinEn,
   // Profile
   profileEn,
-  // Plugins (4 sub-modules, all merge into "plugins" key — deepMerge required)
+  // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogEn,
   pluginsInstalledEn,
   pluginsLogsEn,
   pluginsSettingsEn,
+  pluginsDefinitionsEn,
   // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardEn,
   compDsrEn,
@@ -254,11 +259,12 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   recycleBinAr,
   // Profile
   profileAr,
-  // Plugins (4 sub-modules, all merge into "plugins" key — deepMerge required)
+  // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogAr,
   pluginsInstalledAr,
   pluginsLogsAr,
   pluginsSettingsAr,
+  pluginsDefinitionsAr,
   // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardAr,
   compDsrAr,
