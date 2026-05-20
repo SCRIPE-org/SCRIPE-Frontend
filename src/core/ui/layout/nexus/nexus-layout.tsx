@@ -24,9 +24,11 @@ import { NexusTopbar } from "./nexus-topbar";
 import { NexusTransitionOverlay } from "./nexus-transition";
 import { NexusWorkspaceLoader } from "./nexus-workspace-loader";
 import { NexusSearchPalette } from "./nexus-search-palette";
+import { NexusAppLauncher } from "./nexus-app-launcher";
 import { useWorkspaceTransition } from "./use-workspace-transition";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
+import { NEXUS_PANEL_W, NEXUS_PRIMARY_RAIL_W, NEXUS_TOPBAR_H } from "./_parts/nexus-layout-constants";
 
 // ── Workspace transition context ─────────────────────────────────────────────
 interface WorkspaceTransitionContextType {
@@ -49,6 +51,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [appLauncherOpen, setAppLauncherOpen] = useState(false);
   const { direction } = useI18n();
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
@@ -71,9 +74,9 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             width: "100%",
             overflow: "hidden",
             position: "relative",
-            "--nexus-primary-w": "64px",
-            "--nexus-panel-w": isPanelCollapsed ? "0px" : "240px",
-            "--nexus-topbar-h": "56px",
+            "--nexus-primary-w": `${NEXUS_PRIMARY_RAIL_W}px`,
+            "--nexus-panel-w": isPanelCollapsed ? "0px" : `${NEXUS_PANEL_W}px`,
+            "--nexus-topbar-h": `${NEXUS_TOPBAR_H}px`,
           } as React.CSSProperties
         }
       >
@@ -103,7 +106,11 @@ export function NexusLayout({ children }: NexusLayoutProps) {
           }}
         >
           {/* Primary rail — full height of this row */}
-          <NexusPrimaryRail onTogglePanel={togglePanel} isPanelCollapsed={isPanelCollapsed} />
+          <NexusPrimaryRail
+            onTogglePanel={togglePanel}
+            isPanelCollapsed={isPanelCollapsed}
+            onOpenAppLauncher={() => setAppLauncherOpen(true)}
+          />
 
           {/* Secondary rail (panel) */}
           <NexusSecondaryRail
@@ -146,6 +153,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
         </div>
 
         <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
+        <NexusAppLauncher open={appLauncherOpen} onOpenChange={setAppLauncherOpen} />
       </div>
     </WorkspaceTransitionContext.Provider>
   );

@@ -22,6 +22,7 @@ import { useTheme } from "next-themes";
 import type { MenuItem } from "@core/navigation";
 import { useNexusPalette } from "./_parts/nexus-theme-utils";
 import { RailHeader, RailContent } from "./_parts/secondary-rail-parts";
+import { NEXUS_PANEL_W } from "./_parts/nexus-layout-constants";
 
 interface NexusSecondaryRailProps {
   mobileOpen?: boolean;
@@ -63,9 +64,10 @@ export function NexusSecondaryRail({
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
 
   const railStyle: React.CSSProperties = {
-    width: isCollapsed ? 0 : 240, // Slightly wider for a more premium feel
+    width: isCollapsed ? 0 : NEXUS_PANEL_W,
     opacity: isCollapsed ? 0 : 1,
     height: "100%",
+    minHeight: 0, // critical: allows flex child to scroll
     background: palette.railBg,
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
@@ -81,10 +83,12 @@ export function NexusSecondaryRail({
   };
 
   const innerContainerStyle: React.CSSProperties = {
-    width: 240, // Fixed width to prevent wrapping during collapse animation
+    width: NEXUS_PANEL_W, // Fixed width to prevent wrapping during collapse animation
     display: "flex",
     flexDirection: "column",
     height: "100%",
+    minHeight: 0, // critical: allows flex child to scroll
+    overflow: "hidden",
   };
 
   const railContent = (

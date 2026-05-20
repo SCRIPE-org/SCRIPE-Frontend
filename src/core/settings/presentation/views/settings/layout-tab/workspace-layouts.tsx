@@ -237,6 +237,8 @@ function WorkspacePreview({ variant }: { variant: string }) {
 // Layout Data
 // ────────────────────────────────────────────
 const workspaceLayouts: LayoutOption[] = [
+  // Nexus is first — it's the system default
+  { value: "nexus", icon: Columns2, preview: <WorkspacePreview variant="nexus" /> },
   { value: "hub", icon: LayoutDashboard, preview: <WorkspacePreview variant="hub" /> },
   { value: "wizard", icon: Footprints, preview: <WorkspacePreview variant="wizard" /> },
   { value: "shelf", icon: BookDown, preview: <WorkspacePreview variant="shelf" /> },
@@ -251,7 +253,6 @@ const workspaceLayouts: LayoutOption[] = [
     preview: <WorkspacePreview variant="splitpane" />,
   },
   { value: "inbox", icon: Mail, preview: <WorkspacePreview variant="inbox" /> },
-  { value: "nexus", icon: Columns2, preview: <WorkspacePreview variant="nexus" /> },
 ];
 
 export const WORKSPACE_LAYOUT_VALUES = workspaceLayouts.map((l) => l.value);

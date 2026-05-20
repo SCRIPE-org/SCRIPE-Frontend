@@ -30,6 +30,8 @@ export class WorkspaceGroupMapper {
     const colorHue = (raw.colorHue as number | null) ?? null;
     const colorChroma = (raw.colorChroma as number | null) ?? null;
     const wsType = (raw.workspaceType as "Admin" | "Module") ?? "Admin";
+    const isLocked = Boolean(raw.isLocked ?? false);
+    const homeRoute = (raw.homeRoute as string | null | undefined) ?? null;
 
     const rawItems = Array.isArray(raw.menuItems) ? raw.menuItems : [];
     const menuItems = rawItems.map((item) =>
@@ -47,6 +49,9 @@ export class WorkspaceGroupMapper {
       colorChroma,
       workspaceType: wsType,
       menuItems,
+      isLocked,
+      homeRoute,
     };
   }
 }
+

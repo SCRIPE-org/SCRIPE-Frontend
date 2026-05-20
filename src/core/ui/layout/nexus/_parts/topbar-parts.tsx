@@ -282,7 +282,7 @@ export function TopbarSearchButton({
         style={{ flexShrink: 0 }}
       />
       <span
-        style={{ flex: 1, userSelect: "none", textAlign: isRTL ? "right" : "left" }}
+        style={{ flex: 1, userSelect: "none", textAlign: "start" }}
         className="transition-colors group-hover:text-foreground"
       >
         {placeholder}

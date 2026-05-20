@@ -18,6 +18,10 @@ export interface WorkspaceGroupDto {
   /** "Admin" | "Module" — absent in legacy responses */
   workspaceType?: "Admin" | "Module";
   menuItems?: MenuItemDto[];
+  /** True when this workspace is visible but not licensed for the current tenant. Backend-authoritative. */
+  isLocked?: boolean;
+  /** The workspace home/landing page route. Null = derive from first menu item. */
+  homeRoute?: string | null;
 }
 
 /**
@@ -34,4 +38,8 @@ export interface WorkspaceStubDto {
   colorHue?: number | null;
   colorChroma?: number | null;
   workspaceType?: string;
+  /** True when this workspace is visible but not licensed for the current tenant. Backend-authoritative. */
+  isLocked?: boolean;
+  /** The workspace home/landing page route. Null = derive from first menu item. */
+  homeRoute?: string | null;
 }

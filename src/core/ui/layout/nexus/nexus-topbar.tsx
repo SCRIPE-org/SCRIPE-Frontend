@@ -126,7 +126,10 @@ export function NexusTopbar({
     };
   })();
 
-  const isOnHome = pathname === "/";
+  // ── Home route — backend-authoritative per workspace ────────────────────────
+  // Falls back to "/" if the workspace has no homeRoute declared.
+  const workspaceHomeRoute = activeWorkspace?.homeRoute ?? "/";
+  const isOnHome = pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
 
   if (!mounted) return <header data-nexus-topbar="" style={{ height: 56, flexShrink: 0 }} />;
 
@@ -140,7 +143,8 @@ export function NexusTopbar({
         borderBottom: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
         display: "flex",
         alignItems: "center",
-        padding: isRTL ? "0 20px 0 12px" : "0 12px 0 20px",
+        paddingInlineStart: 20,
+        paddingInlineEnd: 12,
         gap: 12,
         zIndex: 30,
         position: "relative",
@@ -199,7 +203,7 @@ export function NexusTopbar({
           <TopbarHomeButton
             isDark={isDark}
             ariaLabel={language === "ar" ? "الصفحة الرئيسية" : "Go to Home"}
-            onClick={() => router.push("/")}
+            onClick={() => router.push(workspaceHomeRoute)}
           />
         )}
 

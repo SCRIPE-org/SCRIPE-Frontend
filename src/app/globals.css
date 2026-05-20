@@ -2473,3 +2473,52 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     transform: scale(1);
   }
 }
+
+/* ========================================
+   NEXUS PRIMARY RAIL — Ultra-Thin Scrollbar
+   Hidden by default, 3px translucent on hover
+   ======================================== */
+.nexus-rail-scroll::-webkit-scrollbar {
+  width: 0px;
+  transition: width 0.3s ease;
+}
+.nexus-rail-scroll:hover::-webkit-scrollbar {
+  width: 3px;
+}
+.nexus-rail-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nexus-rail-scroll::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.25);
+  border-radius: 99px;
+}
+.nexus-rail-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.4);
+}
+/* Firefox: thin scrollbar on hover via JS class toggle */
+.nexus-rail-scroll.is-hovered {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
+}
+
+/* ========================================
+   NEXUS SECONDARY RAIL — Thin Scrollbar
+   Matches the primary rail's ultra-thin aesthetic
+   ======================================== */
+.nexus-custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+.nexus-custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nexus-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.25);
+  border-radius: 99px;
+}
+.nexus-custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.4);
+}
+.nexus-custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.25) transparent;
+}

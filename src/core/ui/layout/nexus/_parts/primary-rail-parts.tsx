@@ -80,6 +80,7 @@ export function RootItemButton({
             style={{
               width: 44,
               height: 44,
+              flexShrink: 0,
               borderRadius: 12,
               cursor: "pointer",
               border: isActive ? `1px solid ${accentColor}33` : "1px solid transparent",
@@ -135,6 +136,7 @@ export function BackButton({ isRTL, isDark, label, onClick }: BackButtonProps) {
             style={{
               width: 44,
               height: 44,
+              flexShrink: 0,
               borderRadius: 12,
               cursor: "pointer",
               border: "1px solid transparent",
@@ -212,6 +214,7 @@ export function TogglePanelButton({
             style={{
               width: 44,
               height: 44,
+              flexShrink: 0,
               borderRadius: 12,
               cursor: "pointer",
               border: "1px solid transparent",
@@ -344,12 +347,15 @@ export function ActiveIndicator({
     <div
       style={{
         position: "absolute",
-        [isRTL ? "right" : "left"]: 0,
-        top: indicatorTop + 4, // +4px to account for the margin-top of the first item
+        insetInlineStart: 0,
+        top: indicatorTop, // aligned with container's own 4px top-padding — no extra offset needed
         width: 4,
         height: 44,
         background: indicatorColor,
-        borderRadius: isRTL ? "4px 0 0 4px" : "0 4px 4px 0",
+        borderStartStartRadius: 0,
+        borderEndStartRadius: 0,
+        borderStartEndRadius: 4,
+        borderEndEndRadius: 4,
         transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
         opacity: indicatorVisible ? 1 : 0,
         transform: indicatorVisible ? "scaleY(1)" : "scaleY(0.3)",

@@ -172,7 +172,7 @@ export type LayoutTemplate =
   | "calendar"
   | "crm"
   | "terminal"
-  // Nexus — Dual-rail workspace layout
+  // Nexus — Dual-rail workspace layout (system default)
   | "nexus";
 
 // ── Component Styles ──────────────────────────────────────

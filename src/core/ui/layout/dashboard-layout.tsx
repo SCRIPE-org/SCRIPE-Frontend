@@ -256,6 +256,7 @@ const NexusLayout = dynamic(
   { ssr: false }
 );
 
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -317,6 +318,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // ── Compute layout content (rendered below the tenant banner) ──
   const renderLayout = () => {
+
+
     // ── Nexus: dual-rail workspace layout (highest priority — checked first) ──
     // NexusLayout manages its own full chrome (primary rail, secondary rail, topbar)
     // so it bypasses the TenantContextBanner and GracePeriodBanner wrapper below.

@@ -32,6 +32,19 @@ export interface WorkspaceGroupData {
    */
   workspaceType?: "Admin" | "Module";
   menuItems: MenuItemData[];
+  /**
+   * Backend-authoritative licensing state.
+   * True = workspace exists but the current tenant does NOT have a license for it.
+   * Frontend shows it as a locked card with an upgrade CTA.
+   * Never computed client-side.
+   */
+  isLocked: boolean;
+  /**
+   * The workspace-specific home/landing page route.
+   * Used by the Home button (topbar) and workspace switch navigation.
+   * Null = fall back to first leaf-page in menuItems.
+   */
+  homeRoute: string | null;
 }
 
 // ── Rich domain class ─────────────────────────────────────────────────────────
@@ -47,6 +60,10 @@ export class WorkspaceGroup {
   public readonly colorChroma: number | null;
   public readonly workspaceType: "Admin" | "Module";
   public readonly menuItems: MenuItem[];
+  /** Backend-authoritative: true = workspace is visible but not licensed for this tenant. */
+  public readonly isLocked: boolean;
+  /** Workspace-specific landing route. Null = use first leaf-page from menu. */
+  public readonly homeRoute: string | null;
 
   constructor(data: WorkspaceGroupData) {
     this.workspaceId = data.workspaceId;
@@ -59,6 +76,8 @@ export class WorkspaceGroup {
     this.colorChroma = data.colorChroma ?? null;
     this.workspaceType = data.workspaceType ?? "Admin";
     this.menuItems = data.menuItems.map((item) => new MenuItem(item));
+    this.isLocked = data.isLocked ?? false;
+    this.homeRoute = data.homeRoute ?? null;
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -113,6 +132,8 @@ export class WorkspaceGroup {
       colorChroma: this.colorChroma,
       workspaceType: this.workspaceType,
       menuItems: this.menuItems.map((item) => item.toData()),
+      isLocked: this.isLocked,
+      homeRoute: this.homeRoute,
     };
   }
 }
