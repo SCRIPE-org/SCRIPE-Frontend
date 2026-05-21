@@ -31,6 +31,12 @@ export interface WorkspaceSlice {
   getActiveWorkspaceGroup: () => WorkspaceGroup | null;
   getActiveRootMenuItems: () => MenuItem[];
   getPageActions: (pathname: string) => MenuItemActions | null;
+
+  /**
+   * Optimistically toggle the isPinned / pinSortOrder of a workspace group.
+   * Called AFTER the API confirms the new state — updates Zustand in-memory.
+   */
+  toggleWorkspacePinLocal: (workspaceKey: string, isPinned: boolean, pinSortOrder: number | null) => void;
 }
 
 export interface UiSlice {

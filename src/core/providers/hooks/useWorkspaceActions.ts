@@ -14,11 +14,22 @@ export function useWorkspaceActions() {
     async (workspaceKey: string, navigateTo = false) => {
       appLogger.debug(`[WorkspaceActions] Switching to workspace: ${workspaceKey}`);
 
+      // Bug 1 guard: setActiveWorkspace in the store now no-ops when the key
+      // matches the current activeWorkspaceKey (prevents previousWorkspaceKey
+      // from being overwritten with itself and breaking the Back button).
       useNavigationStore.getState().setActiveWorkspace(workspaceKey);
       useNavigationStore.getState().setActiveRootItem(null);
 
+      // Bug 5 fix: wrap JIT fetch in try/catch so a network or server error
+      // never leaves the workspace transition loader stuck in an infinite spin.
       if (!useNavigationStore.getState().hasWorkspaceData(workspaceKey)) {
-        await fetchWorkspaceMenu(workspaceKey);
+        try {
+          await fetchWorkspaceMenu(workspaceKey);
+        } catch (err) {
+          // Log and continue — landing on an empty workspace is better than
+          // being stuck on the loader overlay forever.
+          appLogger.error(`[WorkspaceActions] JIT fetch failed for "${workspaceKey}":`, err);
+        }
       }
 
       if (navigateTo) {

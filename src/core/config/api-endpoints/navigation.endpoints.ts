@@ -9,6 +9,9 @@ export const NAVIGATION_ENDPOINTS = {
       `${V1}/Menus/my?workspace=${encodeURIComponent(workspaceKey)}`,
     /** GET /Menus/my/workspaces — lightweight workspace stubs (no menu items) */
     MY_WORKSPACES: `${V1}/Menus/my/workspaces`,
+    /** POST /Menus/my/workspaces/{key}/pin — toggle pin state for current admin */
+    TOGGLE_PIN: (workspaceKey: string) =>
+      `${V1}/Menus/my/workspaces/${encodeURIComponent(workspaceKey)}/pin`,
     /**
      * GET /Menus/my/routes — EAGER routes load (Option B).
      * Returns flat array of ALL accessible routes across ALL workspaces.

@@ -58,6 +58,7 @@ export const ar = {
     notifications: "الإشعارات",
     "message-templates": "قوالب الرسائل",
     emails: "البريد الإلكتروني",
+    pinToggleFailed: "فشل تحديث تثبيت مساحة العمل. يرجى المحاولة مرة أخرى.",
   },
   role: {
     scopeOwnTenant: "مستوى المستأجر",

@@ -7,6 +7,7 @@ import type { WorkspaceGroup, MenuItem } from "@core/navigation";
 import { useActiveRootSync } from "./hooks/useActiveRootSync";
 import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
 import { getAccentColor } from "./utils/navigation-helpers";
+import { getCoreContainer } from "@core/di";
 
 // ── Context shape ──────────────────────────────────────────────────────────
 interface WorkspaceContextType {
@@ -24,6 +25,8 @@ interface WorkspaceContextType {
   goBack: () => void;
   switchToModuleWorkspace: () => void;
   switchToModuleWorkspaceByKey: (key: string) => void;
+  /** Toggle pin state for a workspace. Returns the new isPinned boolean. */
+  togglePin: (workspaceKey: string) => Promise<boolean>;
   /** @deprecated use workspaceGroups.filter(ws => ws.isAdminWorkspace) */
   adminWorkspaces: WorkspaceGroup[];
   /** @deprecated use workspaceGroups.filter(ws => ws.isModuleWorkspace) */
@@ -105,6 +108,18 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     useNavigationStore.getState().setPreviousWorkspace(null);
   }, [previousWorkspaceKey, adminWorkspaces, setActiveWorkspace]);
 
+  const togglePin = useCallback(
+    async (workspaceKey: string): Promise<boolean> => {
+      const { navigationRepository } = getCoreContainer();
+      // Backend returns both isPinned AND the authoritative pinSortOrder —
+      // never compute sort order on the client (diverges from backend gap-10 scheme).
+      const { isPinned, pinSortOrder } = await navigationRepository.toggleWorkspacePin(workspaceKey);
+      useNavigationStore.getState().toggleWorkspacePinLocal(workspaceKey, isPinned, pinSortOrder);
+      return isPinned;
+    },
+    []
+  );
+
   const switchToModuleWorkspaceByKey = useCallback(
     (key: string) => {
       setActiveWorkspace(key, true);
@@ -136,6 +151,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       goBack,
       switchToModuleWorkspace,
       switchToModuleWorkspaceByKey,
+      togglePin,
       adminWorkspaces,
       moduleWorkspaces,
     }),
@@ -154,6 +170,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       goBack,
       switchToModuleWorkspace,
       switchToModuleWorkspaceByKey,
+      togglePin,
       adminWorkspaces,
       moduleWorkspaces,
     ]

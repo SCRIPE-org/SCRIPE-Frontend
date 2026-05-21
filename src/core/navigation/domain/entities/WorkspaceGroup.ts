@@ -45,6 +45,16 @@ export interface WorkspaceGroupData {
    * Null = fall back to first leaf-page in menuItems.
    */
   homeRoute: string | null;
+  /**
+   * Whether this workspace is pinned by the current admin.
+   * Backend-authoritative — set via POST /Menus/my/workspaces/{key}/pin.
+   */
+  isPinned: boolean;
+  /**
+   * Sort order for pinned workspaces. Null when not pinned.
+   * Lower values appear first in the pinned section of the rail.
+   */
+  pinSortOrder: number | null;
 }
 
 // ── Rich domain class ─────────────────────────────────────────────────────────
@@ -64,6 +74,10 @@ export class WorkspaceGroup {
   public readonly isLocked: boolean;
   /** Workspace-specific landing route. Null = use first leaf-page from menu. */
   public readonly homeRoute: string | null;
+  /** Whether the current admin has pinned this workspace. */
+  public readonly isPinned: boolean;
+  /** Sort order for pinned workspaces. Null when not pinned. */
+  public readonly pinSortOrder: number | null;
 
   constructor(data: WorkspaceGroupData) {
     this.workspaceId = data.workspaceId;
@@ -78,6 +92,8 @@ export class WorkspaceGroup {
     this.menuItems = data.menuItems.map((item) => new MenuItem(item));
     this.isLocked = data.isLocked ?? false;
     this.homeRoute = data.homeRoute ?? null;
+    this.isPinned = data.isPinned ?? false;
+    this.pinSortOrder = data.pinSortOrder ?? null;
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -134,6 +150,8 @@ export class WorkspaceGroup {
       menuItems: this.menuItems.map((item) => item.toData()),
       isLocked: this.isLocked,
       homeRoute: this.homeRoute,
+      isPinned: this.isPinned,
+      pinSortOrder: this.pinSortOrder,
     };
   }
 }

@@ -32,6 +32,8 @@ export class WorkspaceGroupMapper {
     const wsType = (raw.workspaceType as "Admin" | "Module") ?? "Admin";
     const isLocked = Boolean(raw.isLocked ?? false);
     const homeRoute = (raw.homeRoute as string | null | undefined) ?? null;
+    const isPinned = Boolean(raw.isPinned ?? false);
+    const pinSortOrder = raw.pinSortOrder != null ? Number(raw.pinSortOrder) : null;
 
     const rawItems = Array.isArray(raw.menuItems) ? raw.menuItems : [];
     const menuItems = rawItems.map((item) =>
@@ -51,6 +53,8 @@ export class WorkspaceGroupMapper {
       menuItems,
       isLocked,
       homeRoute,
+      isPinned,
+      pinSortOrder,
     };
   }
 }

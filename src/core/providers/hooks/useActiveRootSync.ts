@@ -77,6 +77,12 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
 
     if (bestRoot && bestRoot.id !== activeRootItemId) {
       useNavigationStore.getState().setActiveRootItem(bestRoot.id);
+    } else if (!bestRoot && !activeRootItemId && rootMenuItems.length > 0) {
+      // No URL match and no active root — auto-select the first root item.
+      // This covers the workspace-switch case where activeRootItemId was cleared
+      // to null by setActiveWorkspace: without this, the secondary rail renders
+      // completely empty until the user manually clicks a primary rail item.
+      useNavigationStore.getState().setActiveRootItem(rootMenuItems[0].id);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, rootMenuItems]);

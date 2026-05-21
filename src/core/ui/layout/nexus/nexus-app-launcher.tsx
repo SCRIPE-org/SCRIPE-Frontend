@@ -17,15 +17,18 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
+import { toast } from "@core/ui/use-toast";
 
-import { Search, X, Lock, Check, LayoutGrid, Clock, ArrowUpCircle } from "lucide-react";
+import { Search, X, Lock, Check, LayoutGrid, Clock, ArrowUpCircle, Pin, PinOff } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { DynamicIcon } from "./_parts/primary-rail-parts";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 
-// ── Types ───────────────────────────────────────────────────────────────────
-type WorkspaceStatus = "active" | "available" | "locked" | "coming-soon";
+// Active workspace is filtered out of the grid entirely — you are already there.
+// Cards only ever appear as: available (switch to it), locked, or coming-soon.
+type WorkspaceStatus = "available" | "locked" | "coming-soon";
 
 interface NexusAppLauncherProps {
   open: boolean;
@@ -45,14 +48,12 @@ function withOpacity(color: string, alpha: number): string {
 }
 
 // ── Status derivation ─ backend-authoritative ───────────────────────────────
-// The backend populates WorkspaceGroup.isLocked based on the tenant's license.
-// No client-side guessing. The hook is kept for call-site compat only.
+// Active workspace is filtered before reaching this function, so we only
+// need to distinguish locked vs available (coming-soon is future extension).
 function deriveWorkspaceStatus(
-  ws: { workspaceKey: string; isLocked: boolean },
-  activeWsKey: string | undefined
+  ws: { workspaceKey: string; isLocked: boolean }
 ): WorkspaceStatus {
   if (ws.isLocked) return "locked";
-  if (activeWsKey === ws.workspaceKey) return "active";
   return "available";
 }
 
@@ -90,14 +91,15 @@ function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active:
 
 // ── Main Component ───────────────────────────────────────────────────────────
 export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) {
-  const { workspaceGroups, activeWorkspace } = useWorkspace();
-  const { language, direction } = useI18n();
+  const { workspaceGroups, activeWorkspace, togglePin } = useWorkspace();
+  const { language, direction, t } = useI18n();
   const { resolvedTheme } = useTheme();
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
+  const [pinningKey, setPinningKey] = useState<string | null>(null); // loading state for pin toggle
   const searchRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLDivElement>(null);
 
@@ -139,16 +141,47 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     );
   }, [workspaceGroups, search]);
 
-  const adminItems = useMemo(
-    () => filteredWorkspaces.filter((ws) => ws.isAdminWorkspace),
-    [filteredWorkspaces]
-  );
-  const moduleItems = useMemo(
-    () => filteredWorkspaces.filter((ws) => ws.isModuleWorkspace),
-    [filteredWorkspaces]
+  // Sort helper: pinned items first (by pinSortOrder asc), then unpinned (by workspaceSortOrder asc)
+  const sortByPinThenCatalog = useCallback(
+    (items: typeof workspaceGroups) =>
+      [...items].sort((a, b) => {
+        const aPinned = a.isPinned;
+        const bPinned = b.isPinned;
+        if (aPinned && bPinned) {
+          // Both pinned → use PinSortOrder
+          const aOrder = a.pinSortOrder ?? Infinity;
+          const bOrder = b.pinSortOrder ?? Infinity;
+          return aOrder !== bOrder ? aOrder - bOrder : a.workspaceSortOrder - b.workspaceSortOrder;
+        }
+        if (aPinned) return -1; // pinned first
+        if (bPinned) return 1;
+        // Both unpinned → catalog order
+        return a.workspaceSortOrder - b.workspaceSortOrder;
+      }),
+    []
   );
 
-  // Handle card click — locked → show upgrade dialog, else switch
+  const adminItems = useMemo(
+    () => sortByPinThenCatalog(
+      filteredWorkspaces.filter(
+        (ws) => ws.isAdminWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
+      )
+    ),
+    [filteredWorkspaces, sortByPinThenCatalog, activeWorkspace?.workspaceKey]
+  );
+  const moduleItems = useMemo(
+    () => sortByPinThenCatalog(
+      filteredWorkspaces.filter(
+        (ws) => ws.isModuleWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
+      )
+    ),
+    [filteredWorkspaces, sortByPinThenCatalog, activeWorkspace?.workspaceKey]
+  );
+
+  const { currentTenant } = useTenantContext();
+  const hasTenantContext = !!currentTenant;
+
+  // Handle card click — locked → show upgrade/context dialog, else switch
   const handleSelect = useCallback(
     (wsKey: string, status: WorkspaceStatus) => {
       if (status === "locked") {
@@ -160,6 +193,29 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
       onOpenChange(false);
     },
     [switchWorkspace, onOpenChange]
+  );
+
+  // Handle pin toggle — calls backend, updates store optimistically
+  const handleTogglePin = useCallback(
+    async (wsKey: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (pinningKey) return; // debounce concurrent requests
+      setPinningKey(wsKey);
+      try {
+        await togglePin(wsKey);
+      } catch {
+        // Show user-facing error feedback — store was NOT updated (no optimistic mutation here)
+        toast({
+          title: t("common.error"),
+          description: t("nav.pinToggleFailed"),
+          variant: "destructive",
+        });
+      } finally {
+        setPinningKey(null);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [togglePin, pinningKey]
   );
 
   // Issue 5: Focus trap — active when launcher is open and no upgrade dialog shown
@@ -297,22 +353,24 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                   gap: 10,
                 }}
               >
-                {adminItems.map((ws) => {
-                  // Issue 2: Admin cards also show active badge when current workspace
-                  const adminStatus: WorkspaceStatus =
-                    activeWorkspace?.workspaceKey === ws.workspaceKey ? "active" : "available";
+                              {adminItems.map((ws) => {
+                  const status = deriveWorkspaceStatus(ws);
                   return (
                     <WorkspaceCard
                       key={ws.workspaceKey}
                       name={ws.getLocalizedName(language)}
                       icon={ws.workspaceIcon}
                       accentColor={ws.accentColor}
-                      isActive={adminStatus === "active"}
-                      status={adminStatus}
-                      onClick={() => handleSelect(ws.workspaceKey, adminStatus)}
+                      isActive={false}
+                      isPinned={ws.isPinned}
+                      isPinLoading={pinningKey === ws.workspaceKey}
+                      status={status}
+                      onClick={() => handleSelect(ws.workspaceKey, status)}
+                      onTogglePin={!ws.isLocked ? (e) => handleTogglePin(ws.workspaceKey, e) : undefined}
                     />
                   );
                 })}
+
               </div>
             </section>
           )}
@@ -328,17 +386,20 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                   gap: 10,
                 }}
               >
-                {moduleItems.map((ws) => {
-                  const status = deriveWorkspaceStatus(ws, activeWorkspace?.workspaceKey);
+                                {moduleItems.map((ws) => {
+                  const status = deriveWorkspaceStatus(ws);
                   return (
                     <WorkspaceCard
                       key={ws.workspaceKey}
                       name={ws.getLocalizedName(language)}
                       icon={ws.workspaceIcon}
                       accentColor={ws.accentColor}
-                      isActive={status === "active"}
+                      isActive={false}
+                      isPinned={ws.isPinned}
+                      isPinLoading={pinningKey === ws.workspaceKey}
                       status={status}
                       onClick={() => handleSelect(ws.workspaceKey, status)}
+                      onTogglePin={(e) => handleTogglePin(ws.workspaceKey, e)}
                     />
                   );
                 })}
@@ -375,6 +436,11 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             label={language === "ar" ? "نشط" : "Active"}
           />
           <LegendItem
+            icon={<Pin size={9} />}
+            colorClass="text-primary"
+            label={language === "ar" ? "مثبّت" : "Pinned"}
+          />
+          <LegendItem
             icon={<Lock size={9} />}
             colorClass="text-amber-500"
             label={language === "ar" ? "مقفل" : "Locked"}
@@ -396,11 +462,17 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           }
           language={language}
           isDark={isDark}
+          // Bug 7 fix: platform admins (no tenant context) see a locked module
+          // because modules require a tenant to be active — show "Select a Tenant"
+          // rather than the misleading "Upgrade your plan" copy.
+          isNeedsTenant={!hasTenantContext}
           onClose={() => setUpgradeTarget(null)}
           onUpgrade={() => {
             setUpgradeTarget(null);
             onOpenChange(false);
-            router.push("/my-subscription"); // Issue 7: SPA navigation, no full reload
+            // If the user has no tenant context, navigate to the tenants list
+            // so they can drill into one. Otherwise go to billing/subscription.
+            router.push(hasTenantContext ? "/my-subscription" : "/tenants");
           }}
         />
       )}
@@ -444,15 +516,21 @@ function WorkspaceCard({
   icon,
   accentColor,
   isActive,
+  isPinned = false,
+  isPinLoading = false,
   status,
   onClick,
+  onTogglePin,
 }: {
   name: string;
   icon: string;
   accentColor: string | null;
   isActive: boolean;
+  isPinned?: boolean;
+  isPinLoading?: boolean;
   status: WorkspaceStatus;
   onClick: () => void;
+  onTogglePin?: (e: React.MouseEvent) => void;
 }) {
   const [hovered, setHovered] = useState(false);
   const color = accentColor || "hsl(var(--primary))";
@@ -491,7 +569,34 @@ function WorkspaceCard({
             : "none",
       }}
     >
-      {/* Status badge — only for active, locked, coming-soon (not available) */}
+      {/* Pin toggle button — appears on hover (top-left corner) */}
+      {onTogglePin && !isLocked && !isComingSoon && (
+        <button
+          type="button"
+          onClick={onTogglePin}
+          disabled={isPinLoading}
+          aria-label={isPinned ? "Unpin workspace" : "Pin workspace"}
+          className={cn(
+            "absolute flex items-center justify-center rounded-md transition-all duration-150",
+            "opacity-0 group-hover:opacity-100",
+            isPinned ? "opacity-100" : ""
+          )}
+          style={{
+            top: 5,
+            insetInlineStart: 5,
+            width: 20,
+            height: 20,
+            background: isPinned ? "hsl(var(--primary) / 0.15)" : "hsl(var(--muted))",
+            border: isPinned ? "1px solid hsl(var(--primary) / 0.3)" : "1px solid transparent",
+            color: isPinned ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+            cursor: isPinLoading ? "wait" : "pointer",
+          }}
+        >
+          {isPinned ? <PinOff size={10} /> : <Pin size={10} />}
+        </button>
+      )}
+
+      {/* Status badge — only for active, locked, coming-soon */}
       {(isActive || isLocked || isComingSoon) && (
         <div
           className="absolute flex items-center gap-0.5"
@@ -557,12 +662,16 @@ function UpgradeDialog({
   workspaceName,
   language,
   isDark,
+  isNeedsTenant,
   onClose,
   onUpgrade,
 }: {
   workspaceName: string;
   language: string;
   isDark: boolean; // Issue 3: consistent theme
+  /** True when the module is locked only because no tenant context is active.
+   *  Changes the dialog copy to "Select a Tenant" instead of "Upgrade Plan". */
+  isNeedsTenant: boolean;
   onClose: () => void;
   onUpgrade: () => void;
 }) {
@@ -609,13 +718,19 @@ function UpgradeDialog({
         </div>
 
         <h3 className="text-foreground font-bold mb-2" style={{ fontSize: 17, margin: "0 0 8px" }}>
-          {language === "ar" ? "ترقية مطلوبة" : "Upgrade Required"}
+          {isNeedsTenant
+            ? (language === "ar" ? "اختر مستأجراً" : "Select a Tenant")
+            : (language === "ar" ? "ترقية مطلوبة" : "Upgrade Required")}
         </h3>
 
         <p className="text-muted-foreground" style={{ fontSize: 13, lineHeight: 1.55, margin: "0 0 24px" }}>
-          {language === "ar"
-            ? `وحدة "${workspaceName}" غير مضمّنة في خطتك الحالية. قم بالترقية لفتح هذه الوحدة.`
-            : `"${workspaceName}" is not included in your current plan. Upgrade your plan to unlock this module.`}
+          {isNeedsTenant
+            ? (language === "ar"
+                ? `وحدة "${workspaceName}" تتطلب سياق مستأجر. انتقل إلى قائمة المستأجرين وادخل إلى مستأجر أولاً.`
+                : `"${workspaceName}" requires a tenant context. Go to the Tenants list and drill into a tenant first.`)
+            : (language === "ar"
+                ? `وحدة "${workspaceName}" غير مضمّنة في خطتك الحالية. قم بالترقية لفتح هذه الوحدة.`
+                : `"${workspaceName}" is not included in your current plan. Upgrade your plan to unlock this module.`)}
         </p>
 
         <div className="flex gap-3">
@@ -634,11 +749,17 @@ function UpgradeDialog({
             style={{
               padding: "10px 0",
               cursor: "pointer",
-              background: "linear-gradient(135deg, hsl(38 92% 50%), hsl(28 90% 48%))",
-              boxShadow: "0 4px 14px hsl(38 92% 50% / 0.35)",
+              background: isNeedsTenant
+                ? "linear-gradient(135deg, hsl(210 90% 50%), hsl(220 88% 46%))"
+                : "linear-gradient(135deg, hsl(38 92% 50%), hsl(28 90% 48%))",
+              boxShadow: isNeedsTenant
+                ? "0 4px 14px hsl(210 90% 50% / 0.35)"
+                : "0 4px 14px hsl(38 92% 50% / 0.35)",
             }}
           >
-            {language === "ar" ? "ترقية الآن" : "Upgrade Plan"}
+            {isNeedsTenant
+              ? (language === "ar" ? "انتقل إلى المستأجرين" : "Go to Tenants")
+              : (language === "ar" ? "ترقية الآن" : "Upgrade Plan")}
           </button>
         </div>
       </div>

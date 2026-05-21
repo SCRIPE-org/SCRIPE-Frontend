@@ -10,11 +10,17 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
   isWorkspaceSwitching: false,
 
   setActiveWorkspace: (key) =>
-    set((state) => ({
-      activeWorkspaceKey: key,
-      previousWorkspaceKey: state.activeWorkspaceKey,
-      activeRootItemId: null,
-    })),
+    set((state) => {
+      // Guard: clicking the already-active workspace must not overwrite
+      // previousWorkspaceKey with itself — that would break the Back button
+      // (goBack would loop back to the same workspace).
+      if (state.activeWorkspaceKey === key) return {};
+      return {
+        activeWorkspaceKey: key,
+        previousWorkspaceKey: state.activeWorkspaceKey,
+        activeRootItemId: null,
+      };
+    }),
 
   setActiveRootItem: (id) => set({ activeRootItemId: id }),
   setPreviousWorkspace: (key) => set({ previousWorkspaceKey: key }),

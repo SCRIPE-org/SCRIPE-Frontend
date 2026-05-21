@@ -17,6 +17,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
+import { useWorkspaceActions } from "@core/providers/hooks/useWorkspaceActions";
 import type { WorkspaceGroup } from "@core/navigation";
 
 /** How long to wait AFTER the JIT fetch + pathname settle before hiding the loader */
@@ -36,11 +37,11 @@ export function useWorkspaceTransition() {
   const {
     switchToModuleWorkspaceByKey,
     workspaceGroups,
-    goBack,
-    previousWorkspaceKey,
     isWorkspaceLoading,
     activeWorkspace,
   } = useWorkspace();
+
+  const { setActiveWorkspace } = useWorkspaceActions();
 
   const [loaderState, setLoaderState] = useState<WorkspaceLoaderState>({
     show: false,
@@ -89,6 +90,20 @@ export function useWorkspaceTransition() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWorkspaceLoading, activeWorkspace?.workspaceKey, pathname]);
 
+  // Safety net: if the loader is still visible after 8 seconds, dismiss it.
+  // This handles edge-cases where the JIT fetch resolves but the workspace key
+  // never matches (e.g. rapid workspace switches, stale closures, or network
+  // errors that were swallowed before reaching this effect).
+  const SAFETY_TIMEOUT_MS = 8000;
+  useEffect(() => {
+    if (!loaderState.show) return;
+    const timeout = setTimeout(() => {
+      setLoaderState((s) => ({ ...s, show: false }));
+      targetKey.current = null;
+    }, SAFETY_TIMEOUT_MS);
+    return () => clearTimeout(timeout);
+  }, [loaderState.show]);
+
   const showLoader = useCallback(
     (name: string, abbr: string, accent: string | null, key: string) => {
       clearSettle();
@@ -121,21 +136,28 @@ export function useWorkspaceTransition() {
   );
 
   /**
-   * Go back to the previous admin workspace.
+  /**
+   * Always go to the PRIMARY admin workspace (adminWorkspaces[0]).
+   * This is a "Go Home" button, not a browser-history back.
+   * It works correctly regardless of previousWorkspaceKey state.
    */
   const goBackWorkspace = useCallback(() => {
-    const prevWs = previousWorkspaceKey
-      ? workspaceGroups.find((ws) => ws.workspaceKey === previousWorkspaceKey)
-      : null;
+    const adminWs = workspaceGroups
+      .filter((ws) => ws.isAdminWorkspace)
+      .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0];
 
-    const name = prevWs ? prevWs.workspaceNameEn || prevWs.workspaceKey : "Platform";
-    const abbr = prevWs?.abbreviation ?? "PL";
-    const accent = prevWs?.accentColor ?? null;
-    const key = previousWorkspaceKey ?? "admin";
+    if (!adminWs) return; // safety: should never happen (admin is always seeded)
+
+    const name = adminWs.workspaceNameEn || adminWs.workspaceKey;
+    const abbr = adminWs.abbreviation ?? "AD";
+    const accent = adminWs.accentColor ?? null;
+    const key = adminWs.workspaceKey;
 
     showLoader(name, abbr, accent, key);
-    goBack();
-  }, [goBack, previousWorkspaceKey, workspaceGroups, showLoader]);
+    // Use switchWorkspace directly — avoids the history-based goBack() path
+    // which would restore previousWorkspaceKey (wrong for a "go home" action).
+    setActiveWorkspace(key, true);
+  }, [workspaceGroups, showLoader, setActiveWorkspace]);
 
   return {
     loaderState,

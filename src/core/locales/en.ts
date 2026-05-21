@@ -58,6 +58,7 @@ export const en = {
     home: "Home",
     "er-ps": "Er-ps",
     webhooks: "Webhooks",
+    pinToggleFailed: "Failed to update workspace pin. Please try again.",
   },
   currency: {
     displayToggle: "Display Currency",

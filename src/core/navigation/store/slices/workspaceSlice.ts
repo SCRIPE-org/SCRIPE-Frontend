@@ -1,6 +1,7 @@
 import { StateCreator } from "zustand";
 import { NavigationStoreState, WorkspaceSlice } from "../types";
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
+import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 
 export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], WorkspaceSlice> = (
   set,
@@ -76,5 +77,15 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       if (item.children?.length) queue.push(...item.children);
     }
     return null;
+  },
+
+  toggleWorkspacePinLocal: (workspaceKey, isPinned, pinSortOrder) => {
+    set((state) => {
+      const updatedGroups = state.workspaceGroups.map((g) => {
+        if (g.workspaceKey !== workspaceKey) return g;
+        return new WorkspaceGroup({ ...g.toData(), isPinned, pinSortOrder });
+      });
+      return { workspaceGroups: updatedGroups };
+    });
   },
 });

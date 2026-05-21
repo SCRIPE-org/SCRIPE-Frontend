@@ -162,6 +162,11 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
     // Invalidate ALL TanStack Query cache so data refetches without context.
     queryClient.invalidateQueries();
+
+    // Navigate to home — mirrors enterTenantWorld behavior.
+    // Without this the user stays on a module page that is now locked (or
+    // shows stale tenant data) after the context has been cleared.
+    window.location.href = "/";
   }, [apiService, queryClient]);
 
   const navigateToBreadcrumb = useCallback(

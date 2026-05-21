@@ -46,6 +46,15 @@ export interface INavigationRepository {
   fetchWorkspaceMenu(workspaceKey: string): Promise<NavigationData>;
 
   /**
+   * Toggle pin state for a workspace.
+   *
+   * Backend: POST /Menus/my/workspaces/{key}/pin
+   * Returns both the new isPinned state AND the backend-authoritative pinSortOrder.
+   * Never compute pinSortOrder client-side — always use the value returned here.
+   */
+  toggleWorkspacePin(workspaceKey: string): Promise<{ isPinned: boolean; pinSortOrder: number | null }>;
+
+  /**
    * Phase 2b — JIT stub discovery (user navigates to a module workspace).
    *
    * Fetches lightweight workspace stubs so the provider can discover

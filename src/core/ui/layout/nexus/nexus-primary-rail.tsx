@@ -5,17 +5,17 @@
  *
  * Architecture (per wireframes):
  *
- *  ┌──────────┐
+ *  ┌──────────┬
  *  │   LOGO   │  ← Click = navigate home
  *  ├──────────┤
- *  │ 🛡️ Admin │  ← Always present. ONE icon for ALL admin features.
+ *  │ Admin    │  ← Current workspace root menu items (icon buttons)
+ *  │ items... │
  *  ├──────────┤
- *  │ ════════ │  ← Divider (only if module workspaces exist)
+ *  │ ════════ │  ← Divider (only if pinned workspaces exist)
  *  ├──────────┤
- *  │  [CRM]   │  ← Module workspaces (scrollable)
- *  │  [HRMS]  │     Each is a SEPARATE icon in the rail.
- *  │  [INV]   │     Accent-colored pill icons.
- *  │  [...]   │     ↕ SCROLLABLE if many modules
+ *  │  [CRM]   │  ← PINNED workspaces (scrollable)
+ *  │  [HRMS]  │     Pin/unpin from the App Launcher.
+ *  │  [...]   │     Sorted by pinSortOrder (backend-authoritative).
  *  ├──────────┤
  *  │ ════════ │
  *  ├──────────┤
@@ -25,7 +25,7 @@
  *  └──────────┘
  *
  * Clicking an Admin root item → secondary rail shows its children.
- * Clicking a Module workspace icon → full workspace transition.
+ * Clicking a pinned workspace icon → full workspace transition.
  */
 
 import React, { useCallback, useMemo } from "react";
@@ -43,6 +43,7 @@ import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { useRouter } from "next/navigation";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { useNexusPalette } from "./_parts/nexus-theme-utils";
+import { toast } from "@core/ui/use-toast";
 import {
   BackButton,
   Divider,
@@ -72,10 +73,8 @@ export function NexusPrimaryRail({
     activeRootItem,
     setActiveRootItemId,
     isModuleMode,
-    previousWorkspaceKey,
-    goBack,
     accentColor,
-    moduleWorkspaces,
+    workspaceGroups,
   } = useWorkspace();
   const { language, direction } = useI18n();
   const { resolvedTheme } = useTheme();
@@ -97,21 +96,89 @@ export function NexusPrimaryRail({
   );
 
   // ── Handle module workspace click → full workspace transition ────────────
+  // Bug 6 fix: locked workspaces show a toast instead of silently trying to
+  // switch. Bug 1 fix: clicking the active workspace is a no-op (the store
+  // already guards against self-switch, but we skip the network round-trip).
   const handleModuleClick = useCallback(
-    (wsKey: string) => {
+    (wsKey: string, isLocked: boolean) => {
+      if (isLocked) {
+        // Show contextual toast — the workspace is locked
+        const ws = workspaceGroups.find((g) => g.workspaceKey === wsKey);
+        const name = language === "ar"
+          ? (ws?.workspaceNameAr || ws?.workspaceNameEn || wsKey)
+          : (ws?.workspaceNameEn || wsKey);
+        toast({
+          title: language === "ar" ? `${name} مقفول` : `${name} is locked`,
+          description: language === "ar"
+            ? "افتح تطبيق المشغّل لمعرفة كيفية إلغاء القفل."
+            : "Open the App Launcher to learn how to unlock this workspace.",
+          variant: "default",
+          duration: 3000,
+        });
+        return;
+      }
+      // Self-switch guard: do nothing if already on this workspace
+      if (activeWorkspace?.workspaceKey === wsKey) return;
       switchWorkspace(wsKey);
     },
-    [switchWorkspace]
+    [switchWorkspace, workspaceGroups, activeWorkspace, language]
   );
 
-  // ── Filter out "modules-group" from root items (it's legacy; modules are in the rail now) ──
+  // Filter out "modules-group" from root items (it's legacy; workspaces are in the rail now)
   const adminRootItems = useMemo(
     () => rootMenuItems.filter((item) => item.slug !== "modules-group"),
     [rootMenuItems]
   );
 
-  // Module workspaces to show as separate icons in the rail
-  const hasModules = moduleWorkspaces.length > 0;
+  // Pinned workspaces — sorted by pinSortOrder, then alphabetically as tiebreaker.
+  // Rules:
+  //   1. The ACTIVE workspace is always excluded (you're already there — no point showing it).
+  //   2. The PRIMARY ADMIN workspace is ALWAYS included, even without a DB pin row.
+  //      "Admin is always pinned" is a UX guarantee, not just a bootstrap promise.
+  //      This covers: pre-existing sessions, bootstrap race conditions, pin being toggled off.
+  const pinnedWorkspaces = useMemo(() => {
+    const activeKey = activeWorkspace?.workspaceKey;
+
+    // Sort all workspaces by sortOrder to reliably find the primary admin
+    const sorted = [...workspaceGroups].sort(
+      (a, b) => a.workspaceSortOrder - b.workspaceSortOrder
+    );
+    const primaryAdmin = sorted.find((ws) => ws.isAdminWorkspace);
+
+    const pinned = sorted.filter(
+      (ws) =>
+        ws.workspaceKey !== activeKey && // never show active
+        (ws.isPinned || ws.workspaceKey === primaryAdmin?.workspaceKey) // pinned OR always-admin
+    );
+
+    // Sort: pinSortOrder asc, then alphabetical. Primary admin (sort 0) always floats first.
+    return pinned.sort((a, b) => {
+      // Primary admin always goes first in the pinned section
+      if (a.workspaceKey === primaryAdmin?.workspaceKey) return -1;
+      if (b.workspaceKey === primaryAdmin?.workspaceKey) return 1;
+      const aOrder = a.pinSortOrder ?? Infinity;
+      const bOrder = b.pinSortOrder ?? Infinity;
+      return aOrder !== bOrder
+        ? aOrder - bOrder
+        : a.workspaceNameEn.localeCompare(b.workspaceNameEn);
+    });
+  }, [workspaceGroups, activeWorkspace?.workspaceKey]);
+
+  // Primary admin workspace = the admin-type workspace with the lowest sort order.
+  // The back button shows whenever you're NOT on this workspace.
+  // Admin is always bootstrapped-pinned, so if you're elsewhere, you always have
+  // a quick-jump back home.
+  const primaryAdminKey = useMemo(
+    () =>
+      workspaceGroups
+        .filter((ws) => ws.isAdminWorkspace)
+        .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0]
+        ?.workspaceKey,
+    [workspaceGroups]
+  );
+  const isOnPrimaryAdmin = activeWorkspace?.workspaceKey === primaryAdminKey;
+
+  const hasPinnedWorkspaces = pinnedWorkspaces.length > 0;
 
   // Calculate index for the magic indicator (admin items only)
   const activeIndex = adminRootItems.findIndex((i) => i.id === activeRootItem?.id);
@@ -157,11 +224,9 @@ export function NexusPrimaryRail({
         onClick={() => router.push("/")}
       />
 
-      {/* ── Back button (module mode) ──────────────────────────── */}
-      {/* Gap A fix: always show when in module mode — goBackWorkspace falls back
-          to adminWorkspaces[0] when previousWorkspaceKey is null, so this is
-          safe for both click-navigation AND direct URL navigation to a module. */}
-      {isModuleMode && (
+      {/* ── Back button — visible on any workspace that is NOT the primary admin ── */}
+      {/* Admin is the "home". Compliance, Plugins, Marketplace, CRM — all non-home. */}
+      {!isOnPrimaryAdmin && primaryAdminKey && (
         <>
           <BackButton
             isRTL={isRTL}
@@ -173,7 +238,7 @@ export function NexusPrimaryRail({
         </>
       )}
 
-      {/* ── Scrollable area: Admin items + Module workspace icons ── */}
+      {/* ── Scrollable area: Admin items + Pinned workspace icons ── */}
       <div
         className="nexus-rail-scroll relative flex w-full flex-1 flex-col items-center"
         style={{
@@ -207,11 +272,12 @@ export function NexusPrimaryRail({
           />
         ))}
 
-        {/* ── Module workspaces (individual icons below divider) ──────── */}
-        {hasModules && (
+        {/* ── Pinned workspaces (individual icons below divider) ────────── */}
+        {/* Only pinned workspaces show here. Pin/unpin from App Launcher (⊞ button) */}
+        {hasPinnedWorkspaces && (
           <>
             <Divider />
-            {moduleWorkspaces.map((ws) => {
+            {pinnedWorkspaces.map((ws) => {
               const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
               const wsAccent = ws.accentColor || (isDark ? "#9B8FE0" : "#6258c4");
               const wsLabel = language === "ar"
@@ -229,7 +295,7 @@ export function NexusPrimaryRail({
                   isDark={isDark}
                   isRTL={isRTL}
                   isLocked={ws.isLocked}
-                  onClick={() => handleModuleClick(ws.workspaceKey)}
+                  onClick={() => handleModuleClick(ws.workspaceKey, ws.isLocked)}
                 />
               );
             })}

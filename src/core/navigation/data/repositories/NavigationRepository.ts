@@ -135,6 +135,30 @@ export class NavigationRepository implements INavigationRepository {
     return rawGroups.map((group) => WorkspaceGroupMapper.fromDto(group));
   }
 
+  /**
+   * Toggles the pin state for a workspace.
+   * Returns { isPinned, pinSortOrder } from the backend — never compute sort order client-side.
+   */
+  async toggleWorkspacePin(workspaceKey: string): Promise<{ isPinned: boolean; pinSortOrder: number | null }> {
+    appLogger.debug(`[NavigationRepository] Toggling pin for workspace "${workspaceKey}"…`);
+
+    const raw = await this.apiService.post<unknown>(
+      API_ENDPOINTS.MENUS.TOGGLE_PIN(workspaceKey),
+      {}
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const payload = ((raw as any)?.data ?? raw ?? {}) as Record<string, unknown>;
+    const isPinned = Boolean(payload.isPinned ?? false);
+    const pinSortOrder = payload.pinSortOrder != null ? Number(payload.pinSortOrder) : null;
+
+    appLogger.debug(
+      `[NavigationRepository] Workspace "${workspaceKey}" is now ${isPinned ? "pinned" : "unpinned"} (sortOrder=${pinSortOrder})`
+    );
+
+    return { isPinned, pinSortOrder };
+  }
+
   // ── Legacy compatibility — kept for interface compliance ──────────────────
   clearAllCaches(): void {
     // No-op: caching handled by Zustand persist + TanStack Query
