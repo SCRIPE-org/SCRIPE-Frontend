@@ -249,6 +249,8 @@ export const en = {
   common: {
     free: "Free",
     step: "Step",
+    descriptionAr: "Description (Ar)",
+    descriptionEn: "Description (En)",
     noResultsFound: "No results found",
     serial: "No.",
     clear: "Clear",

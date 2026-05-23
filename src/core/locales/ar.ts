@@ -1209,6 +1209,8 @@ export const ar = {
   common: {
     free: "مجانا",
     clear: "مسح",
+    descriptionAr: "الوصف",
+    descriptionEn: "الوصف",
     send: "ارسال",
     noResultsFound: "لا توجد نتائج",
     serial: "م",
