@@ -38,7 +38,7 @@ export const ar = {
     defStatusPending: "قيد المراجعة",
     defStatusApproved: "مُعتمدة",
     defStatusPublished: "منشورة",
-    defStatusRejected: "مرفوضة",
+    defStatusSuspended: "معلَّقة",
     defStatusDeprecated: "مهجورة",
 
     // ── Scope labels ─────────────────────────────────────────────────
@@ -48,7 +48,9 @@ export const ar = {
 
     // ── Actions ──────────────────────────────────────────────────────
     defCreate: "تعريف جديد",
+    defCreateDesc: "تسجيل تعريف إضافة جديدة على المنصة.",
     defEdit: "تعديل التعريف",
+    defEditDesc: "تحديث تفاصيل تعريف الإضافة.",
     defDelete: "حذف التعريف",
     defPublish: "نشر",
     defDeprecate: "إهمال",

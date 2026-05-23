@@ -5,7 +5,7 @@
  * (it is the primary sub-module that owns the cross-cutting definition entity).
  * This sub-module RE-USES it — no duplication.
  */
-import type { PluginDefinition } from "@modules/plugins/catalog";
+import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/catalog";
 
 export interface CreateDefinitionRequest {
   key: string;
@@ -13,10 +13,8 @@ export interface CreateDefinitionRequest {
   nameAr: string;
   description: string;
   descriptionAr: string;
-  /** 1 = Tier 1 (in-process/certified), 2 = Tier 2 (sandboxed) */
-  tier: 1 | 2;
-  /** Scope bitmask: 1=Global, 2=Tenant, 4=User */
-  scope: number;
+  tier: PluginTierValue;
+  scope: PluginScopeValue;
   manifestJson: string;
   iconUrl?: string;
   colorHue?: number;

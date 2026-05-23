@@ -386,6 +386,7 @@ export const SYSTEM_PERMISSIONS = {
   PLUGINS_INSTALLED_MANAGE: "plugins_installed.manage",
   PLUGINS_INSTALLED_CONFIGURE: "plugins_installed.configure",
   // Definitions (Developer)
+  PLUGINS_DEFINITION_VIEW: "plugins_definition.view",
   PLUGINS_DEFINITION_CREATE: "plugins_definition.create",
   PLUGINS_DEFINITION_UPDATE: "plugins_definition.update",
   PLUGINS_DEFINITION_DELETE: "plugins_definition.delete",
@@ -544,7 +545,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/plugins/installed/[installationId]": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
   "/plugins/installed/[installationId]/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
   "/plugins/installed/[installationId]/settings": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_CONFIGURE],
-  "/plugins/definitions": [SYSTEM_PERMISSIONS.PLUGINS_DEFINITION_CREATE],
+  "/plugins/definitions": [SYSTEM_PERMISSIONS.PLUGINS_DEFINITION_VIEW],
   "/plugins/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
 
 

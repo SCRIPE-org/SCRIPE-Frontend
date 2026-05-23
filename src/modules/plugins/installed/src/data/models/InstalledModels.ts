@@ -1,4 +1,5 @@
-export type InstallationStatus = 1 | 2 | 3 | 4 | 5;
+/** Backend InstallationStatus enum (serialized as JSON strings). */
+export type InstallationStatus = "Installing" | "Active" | "Disabled" | "Uninstalling" | "Failed";
 
 export interface PluginInstallationModel {
   id: string;

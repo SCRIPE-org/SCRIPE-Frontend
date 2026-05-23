@@ -1,5 +1,5 @@
 import { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem";
-import type { PluginCatalogItemModel } from "../models/CatalogModels";
+import type { PluginCatalogItemModel, PluginTier } from "../models/CatalogModels";
 import { z } from "zod";
 import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 
@@ -12,7 +12,7 @@ const PluginCatalogItemModelSchema = z.object({
   nameAr: optionalString(),
   description: optionalString(),
   descriptionAr: optionalString(),
-  tier: z.union([z.literal(1), z.literal(2)]).optional().default(2),
+  tier: z.string().optional().default("Tier2"),
   iconUrl: z.string().optional().nullable(),
   colorHue: z.number().optional().nullable(),
   colorChroma: z.number().optional().nullable(),
@@ -30,7 +30,7 @@ export class CatalogMapper {
       nameAr: validated.nameAr ?? "",
       description: validated.description ?? "",
       descriptionAr: validated.descriptionAr ?? "",
-      tier: (validated.tier ?? 2) as 1 | 2,
+      tier: (validated.tier ?? "Tier2") as PluginTier,
       iconUrl: validated.iconUrl ?? undefined,
       colorHue: validated.colorHue ?? undefined,
       colorChroma: validated.colorChroma ?? undefined,

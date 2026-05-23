@@ -1,4 +1,5 @@
-export type PluginTier = 1 | 2;
+import type { PluginTierValue } from "../../domain/entities/PluginDefinition";
+export type PluginTier = PluginTierValue;
 
 export interface PluginCatalogItemModel {
   id: string;

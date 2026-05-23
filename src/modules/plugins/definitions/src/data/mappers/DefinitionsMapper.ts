@@ -1,9 +1,10 @@
 import { PluginDefinition } from "@modules/plugins/catalog";
-import type { PluginDefinitionModel } from "@modules/plugins/catalog";
+import type { PluginDefinitionModel, PluginTierValue, PluginStatusValue, PluginScopeValue } from "@modules/plugins/catalog";
 import { z } from "zod";
 import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
+// Enums arrive as JSON strings from the backend (JsonStringEnumConverter).
 
 const PluginDefinitionModelSchema = z.object({
   id: uuidField(),
@@ -12,9 +13,9 @@ const PluginDefinitionModelSchema = z.object({
   nameAr: optionalString(),
   description: optionalString(),
   descriptionAr: optionalString(),
-  tier: z.number().int().optional().default(2),
-  status: z.number().int().optional().default(1),
-  scope: z.number().int().optional().default(0),
+  tier: z.string().optional().default("Tier2"),
+  status: z.string().optional().default("Draft"),
+  scope: z.string().optional().default("Tenant"),
   iconUrl: z.string().optional().nullable(),
   colorHue: z.number().optional().nullable(),
   colorChroma: z.number().optional().nullable(),
@@ -36,9 +37,9 @@ export class DefinitionsMapper {
       nameAr: validated.nameAr ?? "",
       description: validated.description ?? "",
       descriptionAr: validated.descriptionAr ?? "",
-      tier: (validated.tier ?? 2) as 1 | 2,
-      status: (validated.status ?? 1) as 1 | 2 | 3 | 4 | 5 | 6,
-      scope: validated.scope ?? 0,
+      tier: (validated.tier ?? "Tier2") as PluginTierValue,
+      status: (validated.status ?? "Draft") as PluginStatusValue,
+      scope: (validated.scope ?? "Tenant") as PluginScopeValue,
       iconUrl: validated.iconUrl ?? undefined,
       colorHue: validated.colorHue ?? undefined,
       colorChroma: validated.colorChroma ?? undefined,

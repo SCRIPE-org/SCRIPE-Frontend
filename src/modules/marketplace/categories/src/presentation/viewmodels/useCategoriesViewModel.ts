@@ -1,9 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { marketplaceContainer } from "../../../../di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import type { AppCategory } from "../../domain/entities/AppCategory";
+import type { CategoryFormData } from "../components/CategoryFormDialog";
+
+const QUERY_KEY = ["marketplace", "categories"];
 
 export function useCategoriesViewModel() {
   const queryClient = useQueryClient();
@@ -11,24 +16,82 @@ export function useCategoriesViewModel() {
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "categories"] });
+  // ── Form State ──────────────────────────────────────────────────────────────
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<AppCategory | null>(null);
 
+  const openCreateForm = () => {
+    setEditingCategory(null);
+    setIsFormOpen(true);
+  };
+
+  const openEditForm = (cat: AppCategory) => {
+    setEditingCategory(cat);
+    setIsFormOpen(true);
+  };
+
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingCategory(null);
+  };
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+
+  // ── Query ───────────────────────────────────────────────────────────────────
   const categoriesQuery = useQuery({
-    queryKey: ["marketplace", "categories"],
+    queryKey: QUERY_KEY,
     queryFn: () => categoriesRepository.getAll(),
-    staleTime: 10 * 60 * 1000, // categories are stable
+    staleTime: 10 * 60 * 1000,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => categoriesRepository.delete(id),
+  // ── Create Mutation ─────────────────────────────────────────────────────────
+  const createMutation = useMutation({
+    mutationFn: (data: CategoryFormData) =>
+      categoriesRepository.create(data),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.categories.deleted") || "Category deleted" });
+      success({ title: t("marketplace.categoryCreated") || "Category created" });
+      closeForm();
     },
     onError: (err: Error) => {
       showError({ title: t("common.error") || "Error", description: err.message });
     },
   });
+
+  // ── Update Mutation ─────────────────────────────────────────────────────────
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CategoryFormData> }) =>
+      categoriesRepository.update(id, data),
+    onSuccess: () => {
+      invalidate();
+      success({ title: t("marketplace.categoryUpdated") || "Category updated" });
+      closeForm();
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
+    },
+  });
+
+  // ── Delete Mutation ─────────────────────────────────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => categoriesRepository.delete(id),
+    onSuccess: () => {
+      invalidate();
+      success({ title: t("marketplace.categoryDeleted") || "Category deleted" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
+    },
+  });
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
+  const handleFormSubmit = (data: CategoryFormData) => {
+    if (editingCategory) {
+      updateMutation.mutate({ id: editingCategory.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
 
   const categories = categoriesQuery.data ?? [];
 
@@ -36,8 +99,22 @@ export function useCategoriesViewModel() {
     categories,
     isLoading: categoriesQuery.isLoading,
     error: categoriesQuery.error,
-    delete: deleteMutation.mutate,
+    stats: {
+      total: categories.length,
+      active: categories.filter((c) => c.isActive).length,
+    },
+
+    // Form
+    isFormOpen,
+    editingCategory,
+    openCreateForm,
+    openEditForm,
+    closeForm,
+    handleFormSubmit,
+    isSubmitting: createMutation.isPending || updateMutation.isPending,
+
+    // Actions
+    delete: (id: string) => deleteMutation.mutate(id),
     isDeleting: deleteMutation.isPending,
-    stats: { total: categories.length, active: categories.filter((c) => c.isActive).length },
   };
 }

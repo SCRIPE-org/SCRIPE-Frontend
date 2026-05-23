@@ -99,6 +99,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ── Cross-context cache invalidation guard ────────────────────────────────
   // If the rehydrated store was for a different user/tenant, reset it first.
   const guardedOnce = useRef(false);
+  const autoFetchDone = useRef(false);
+
   useEffect(() => {
     if (!isReady || guardedOnce.current) return;
     guardedOnce.current = true;
@@ -108,6 +110,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         `[NavigationProvider] Context mismatch (${persistedContextKey} ≠ ${contextKey}) — resetting store`
       );
       useNavigationStore.getState().reset();
+      autoFetchDone.current = false; // Allow auto-fetch to fire for the new context
     }
     // persistedContextKey is read once at guard time — after that guardedOnce prevents re-runs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,6 +183,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
   const refreshNavigation = useCallback(async () => {
     useNavigationStore.getState().reset();
+    autoFetchDone.current = false; // Allow auto-fetch to fire after full refresh
     await queryClient.invalidateQueries({ queryKey: ["navigation"] });
   }, [queryClient]);
 
@@ -194,6 +198,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     authBroadcast.onImpersonation(async () => {
       appLogger.auth("[NavigationProvider] Impersonation event — resetting navigation");
       useNavigationStore.getState().reset();
+      autoFetchDone.current = false; // Allow auto-fetch for impersonated user
       await queryClient.invalidateQueries({ queryKey: ["navigation"] });
     });
     // authBroadcast is a singleton — no cleanup needed (matches pattern in useImpersonation.ts)
@@ -213,9 +218,46 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         `[NavigationProvider] Tenant changed (${prevTenantRef.current} → ${tenantId}) — resetting navigation`
       );
       useNavigationStore.getState().reset();
+      autoFetchDone.current = false; // Allow auto-fetch for the new tenant context
       queryClient.invalidateQueries({ queryKey: ["navigation"] });
     }
   }, [tenantId, queryClient]);
+
+  // ── Auto-fetch active workspace on boot (Gap 1 + Gap 5 fix) ───────────────
+  // After page refresh, activeWorkspaceKey is restored from localStorage but
+  // the workspaces Map is empty (not persisted). This effect detects that the
+  // persisted activeWorkspaceKey differs from the default workspace key and
+  // triggers a JIT fetch so the sidebar renders the correct menu items instead
+  // of falling back to admin items.
+  const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
+
+  useEffect(() => {
+    if (!isReady || isInitialLoading || autoFetchDone.current) return;
+
+    const state = useNavigationStore.getState();
+    const { workspaceGroups } = state;
+
+    // workspaceGroups are loaded by Query 2 — if empty, Query 2 hasn't resolved yet
+    if (workspaceGroups.length === 0) return;
+
+    const defaultGroup =
+      workspaceGroups.find((g) => g.workspaceType === "Admin") ?? workspaceGroups[0];
+    const defaultKey = defaultGroup?.workspaceKey ?? null;
+
+    // Guard: skip the "__default__" sentinel key — it's an internal Map key, not a real workspace
+    if (
+      activeWorkspaceKey &&
+      activeWorkspaceKey !== "__default__" &&
+      activeWorkspaceKey !== defaultKey &&
+      !state.hasWorkspaceData(activeWorkspaceKey)
+    ) {
+      autoFetchDone.current = true;
+      appLogger.debug(
+        `[NavigationProvider] Boot: active workspace "${activeWorkspaceKey}" differs from default "${defaultKey}" — auto-fetching menu data`
+      );
+      fetchWorkspaceMenu(activeWorkspaceKey);
+    }
+  }, [isReady, isInitialLoading, activeWorkspaceKey, fetchWorkspaceMenu]);
 
   // ── Context value (backwards-compat delegation to store) ─────────────────
   // isInitialLoading + defaultWorkspace come from granular selectors above.

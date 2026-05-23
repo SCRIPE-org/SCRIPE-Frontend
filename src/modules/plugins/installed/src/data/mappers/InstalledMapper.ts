@@ -14,7 +14,7 @@ const PluginInstallationModelSchema = z.object({
   iconUrl: urlField(),
   /** Plugin's embedded web app URL — distinct from iconUrl (logo). Used by PluginFrame. */
   frontendUrl: urlField(),
-  status: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+  status: z.string(),
   settingsJson: optionalString(),
   installedAt: isoDateString(),
   healthCheckPassing: z.boolean(),

@@ -11,8 +11,10 @@ import {
   Trash2,
   ShieldCheck,
   ArrowDownFromLine,
+  Pencil,
 } from "lucide-react";
 import { useDefinitionsViewModel } from "../viewmodels/useDefinitionsViewModel";
+import { DefinitionFormDialog } from "../components/DefinitionFormDialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
@@ -30,27 +32,24 @@ import {
 } from "@core/ui/table";
 import type { PluginDefinition } from "@modules/plugins/catalog";
 
-// ── Status Badge Map ──────────────────────────────────────────────────────────
-
-const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  published: "default",
-  draft: "secondary",
-  pendingReview: "outline",
-  deprecated: "destructive",
-};
+// ── Status Badge ──────────────────────────────────────────────────────────────
 
 function StatusBadge({ def }: { def: PluginDefinition }) {
   const { t } = useI18n();
   if (def.isPublished)
     return <Badge variant="default">{t("plugins.defStatusPublished")}</Badge>;
-  if (def.isPendingReview)
+  if (def.isInReview)
     return <Badge variant="outline">{t("plugins.defStatusPending")}</Badge>;
+  if (def.isSuspended)
+    return <Badge variant="destructive">{t("plugins.defStatusSuspended") ?? "Suspended"}</Badge>;
   if (def.isDeprecated)
     return <Badge variant="destructive">{t("plugins.defStatusDeprecated")}</Badge>;
+  if (def.isApproved)
+    return <Badge variant="default">{t("plugins.defStatusApproved") ?? "Approved"}</Badge>;
   return <Badge variant="secondary">{t("plugins.defStatusDraft")}</Badge>;
 }
 
-// ── Skeleton ─────────────────────────────────────────────────────────────────
+// ── Skeleton ──────────────────────────────────────────────────────────────────
 
 function DefinitionsSkeleton() {
   return (
@@ -101,6 +100,15 @@ export function DefinitionsView() {
     isError,
     refetch,
     stats,
+    // Form
+    isFormOpen,
+    editingDefinition,
+    openCreateForm,
+    openEditForm,
+    closeForm,
+    handleFormSubmit,
+    isSubmitting,
+    // Actions
     publish,
     deprecate,
     deleteDefinition,
@@ -147,7 +155,7 @@ export function DefinitionsView() {
             <RefreshCw className="me-2 h-4 w-4" />
             {t("common.refresh")}
           </Button>
-          <Button id="definitions-new" size="sm">
+          <Button id="definitions-new" size="sm" onClick={openCreateForm}>
             <Plus className="me-2 h-4 w-4" />
             {t("plugins.defNew")}
           </Button>
@@ -248,7 +256,19 @@ export function DefinitionsView() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-1">
-                          {!def.isPublished && (
+                          {/* Edit */}
+                          <Button
+                            id={`def-edit-${def.id}`}
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => openEditForm(def)}
+                            title={t("plugins.defEdit") || "Edit"}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          {/* Publish */}
+                          {!def.isPublished && !def.isDeprecated && (
                             <Button
                               id={`def-publish-${def.id}`}
                               variant="ghost"
@@ -261,6 +281,7 @@ export function DefinitionsView() {
                               <ShieldCheck className="h-4 w-4" />
                             </Button>
                           )}
+                          {/* Deprecate */}
                           {def.isPublished && (
                             <Button
                               id={`def-deprecate-${def.id}`}
@@ -274,6 +295,7 @@ export function DefinitionsView() {
                               <ArrowDownFromLine className="h-4 w-4" />
                             </Button>
                           )}
+                          {/* Delete */}
                           <Button
                             id={`def-delete-${def.id}`}
                             variant="ghost"
@@ -295,6 +317,15 @@ export function DefinitionsView() {
           )}
         </CardContent>
       </Card>
+
+      {/* Form Dialog */}
+      <DefinitionFormDialog
+        open={isFormOpen}
+        onOpenChange={(open) => { if (!open) closeForm(); }}
+        onSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+        editingDefinition={editingDefinition}
+      />
     </div>
   );
 }

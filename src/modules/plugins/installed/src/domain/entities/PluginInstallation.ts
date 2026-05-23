@@ -12,8 +12,11 @@ export class PluginInstallation {
   /** The plugin's own frontend app URL — load this in PluginFrame. Distinct from iconUrl. */
   get frontendUrl() { return this.data.frontendUrl ?? null; }
   get status() { return this.data.status; }
-  get isActive() { return this.data.status === 2; }
-  get isDisabled() { return this.data.status === 3; }
+  get isInstalling() { return this.data.status === "Installing"; }
+  get isActive() { return this.data.status === "Active"; }
+  get isDisabled() { return this.data.status === "Disabled"; }
+  get isUninstalling() { return this.data.status === "Uninstalling"; }
+  get isFailed() { return this.data.status === "Failed"; }
   get installedAt() { return new Date(this.data.installedAt); }
   get healthCheckPassing() { return this.data.healthCheckPassing; }
   get lastHealthCheckAt() {

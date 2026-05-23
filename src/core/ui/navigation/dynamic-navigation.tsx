@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import {
   convertMenuItemsToNavigation,
   getNavigationItems,
@@ -47,8 +48,10 @@ interface DynamicNavigationProps {
  * Automatically handles static/dynamic navigation switching
  */
 export function DynamicNavigation({ children }: DynamicNavigationProps) {
-  const { navigationData, isLoading } = useNavigation();
+  const { isLoading } = useNavigation();
   const { t } = useI18n();
+  // Read active workspace menu items from the store (Gap 3 fix)
+  const activeMenuItems = useNavigationStore((s) => s.getActiveRootMenuItems());
 
   // Check if we should use dynamic navigation
   if (!USE_DYNAMIC_NAVIGATION) {
@@ -58,13 +61,13 @@ export function DynamicNavigation({ children }: DynamicNavigationProps) {
   }
 
   // If still loading, use fallback navigation
-  if (isLoading || !navigationData) {
+  if (isLoading || activeMenuItems.length === 0) {
     const translatedFallback = getNavigationItems(t, fallbackNavigation);
     return <>{children(translatedFallback)}</>;
   }
 
   // Convert backend menu items to navigation format
-  const backendNavigation = convertMenuItemsToNavigation(navigationData.menuItems);
+  const backendNavigation = convertMenuItemsToNavigation(activeMenuItems);
 
   // Translate and render via children
   const translatedBackend = getNavigationItems(t, backendNavigation);
@@ -76,11 +79,18 @@ export function DynamicNavigation({ children }: DynamicNavigationProps) {
  *
  * Simply call: const navigation = useDynamicNavigation();
  * Everything else is handled automatically!
+ *
+ * Gap 3 fix: Now reads from the ACTIVE workspace's menu items via the Zustand
+ * store (getActiveRootMenuItems) instead of always reading from the navigation
+ * context's `navigationData` (which is fixed to the default/admin workspace).
+ * This ensures non-Nexus layout sidebars show the correct workspace menu items.
  */
 export function useDynamicNavigation(): NavigationItem[] {
   // ⚠️ All hooks MUST be called before any early returns (React Rules of Hooks)
-  const navContext = useNavigation();
+  const { isLoading } = useNavigation();
   const { t } = useI18n();
+  // Read active workspace menu items from the store — reacts to workspace switches
+  const activeMenuItems = useNavigationStore((s) => s.getActiveRootMenuItems());
 
   return useMemo(() => {
     // SSR safety — return empty during server-side rendering
@@ -88,20 +98,19 @@ export function useDynamicNavigation(): NavigationItem[] {
       return [];
     }
 
-    const { navigationData, isLoading } = navContext;
-
     // Static mode — return hardcoded navigation
     if (!USE_DYNAMIC_NAVIGATION) {
       return getNavigationItems(t, navigation);
     }
 
     // Loading or no data — use fallback navigation
-    if (isLoading || !navigationData) {
+    if (isLoading || activeMenuItems.length === 0) {
       return getNavigationItems(t, fallbackNavigation);
     }
 
-    // Dynamic mode — convert backend menu items to navigation format
-    const backendNavigation = convertMenuItemsToNavigation(navigationData.menuItems);
+    // Dynamic mode — convert active workspace menu items to navigation format
+    const backendNavigation = convertMenuItemsToNavigation(activeMenuItems);
     return getNavigationItems(t, backendNavigation);
-  }, [navContext, t]);
+  }, [isLoading, activeMenuItems, t]);
 }
+

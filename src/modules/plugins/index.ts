@@ -43,7 +43,12 @@ export type {
   PluginManifestMenuItem,
 } from "./catalog/src/domain/entities/PluginManifest";
 export { PluginDefinition } from "./catalog/src/domain/entities/PluginDefinition";
-export type { PluginDefinitionModel } from "./catalog/src/domain/entities/PluginDefinition";
+export type {
+  PluginDefinitionModel,
+  PluginTierValue,
+  PluginStatusValue,
+  PluginScopeValue,
+} from "./catalog/src/domain/entities/PluginDefinition";
 
 // ── DI Container ─────────────────────────────────────────────────────────────
 export { pluginsContainer, getPluginsContainer } from "./di";

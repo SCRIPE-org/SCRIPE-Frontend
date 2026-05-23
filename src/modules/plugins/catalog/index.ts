@@ -11,7 +11,12 @@ export { CatalogRepository } from "./src/data/repositories/CatalogRepository";
 
 // ── Cross-cutting domain entities (owned by catalog as the primary submodule) ──
 export { PluginDefinition } from "./src/domain/entities/PluginDefinition";
-export type { PluginDefinitionModel } from "./src/domain/entities/PluginDefinition";
+export type {
+  PluginDefinitionModel,
+  PluginTierValue,
+  PluginStatusValue,
+  PluginScopeValue,
+} from "./src/domain/entities/PluginDefinition";
 export { parsePluginManifest } from "./src/domain/entities/PluginManifest";
 export type {
   PluginManifest,

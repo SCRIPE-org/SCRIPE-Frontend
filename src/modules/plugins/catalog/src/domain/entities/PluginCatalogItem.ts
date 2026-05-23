@@ -14,7 +14,8 @@ export class PluginCatalogItem {
   get colorHue() { return this.data.colorHue ?? null; }
   get colorChroma() { return this.data.colorChroma ?? null; }
   get isInstalled() { return this.data.isInstalled; }
-  get isTier2() { return this.data.tier === 2; }
+  get isTier1() { return this.data.tier === "Tier1"; }
+  get isTier2() { return this.data.tier === "Tier2"; }
 
   toModel() { return this.data; }
 }

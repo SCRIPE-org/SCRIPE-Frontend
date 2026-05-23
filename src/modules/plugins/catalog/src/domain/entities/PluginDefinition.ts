@@ -1,4 +1,22 @@
-// Status codes: 1=Draft, 2=PendingReview, 3=Approved, 4=Published, 5=Deprecated, 6=Rejected
+// Backend enum values (serialized as JSON strings via JsonStringEnumConverter):
+//   PluginTier:   "Tier1" | "Tier2"
+//   PluginStatus: "Draft" | "InReview" | "Approved" | "Published" | "Suspended" | "Deprecated"
+//   PluginScope:  "Tenant" | "Global"
+
+/** String union matching backend PluginTier enum. */
+export type PluginTierValue = "Tier1" | "Tier2";
+
+/** String union matching backend PluginStatus enum. */
+export type PluginStatusValue =
+  | "Draft"
+  | "InReview"
+  | "Approved"
+  | "Published"
+  | "Suspended"
+  | "Deprecated";
+
+/** String union matching backend PluginScope enum. */
+export type PluginScopeValue = "Tenant" | "Global";
 
 export interface PluginDefinitionModel {
   id: string;
@@ -7,12 +25,12 @@ export interface PluginDefinitionModel {
   nameAr: string;
   description: string;
   descriptionAr: string;
-  /** 1 = Tier 1 (in-process / certified), 2 = Tier 2 (sandboxed) */
-  tier: 1 | 2;
-  /** 1=Draft, 2=PendingReview, 3=Approved, 4=Published, 5=Deprecated, 6=Rejected */
-  status: 1 | 2 | 3 | 4 | 5 | 6;
-  /** Scope bitmask: 1=Global, 2=Tenant, 4=User */
-  scope: number;
+  /** Backend PluginTier: "Tier1" (in-process / certified), "Tier2" (sandboxed) */
+  tier: PluginTierValue;
+  /** Backend PluginStatus lifecycle */
+  status: PluginStatusValue;
+  /** Backend PluginScope */
+  scope: PluginScopeValue;
   iconUrl?: string;
   colorHue?: number;
   colorChroma?: number;
@@ -45,16 +63,23 @@ export class PluginDefinition {
   get frontendUrl() { return this.data.frontendUrl ?? null; }
 
   // ── Tier helpers ───────────────────────────────────────────────────────────
-  get isTier1() { return this.data.tier === 1; }
-  get isTier2() { return this.data.tier === 2; }
+  get isTier1() { return this.data.tier === "Tier1"; }
+  get isTier2() { return this.data.tier === "Tier2"; }
 
   // ── Status helpers ─────────────────────────────────────────────────────────
-  get isDraft() { return this.data.status === 1; }
-  get isPendingReview() { return this.data.status === 2; }
-  get isApproved() { return this.data.status === 3; }
-  get isPublished() { return this.data.status === 4; }
-  get isDeprecated() { return this.data.status === 5; }
-  get isRejected() { return this.data.status === 6; }
+  get isDraft() { return this.data.status === "Draft"; }
+  get isInReview() { return this.data.status === "InReview"; }
+  get isApproved() { return this.data.status === "Approved"; }
+  get isPublished() { return this.data.status === "Published"; }
+  get isSuspended() { return this.data.status === "Suspended"; }
+  get isDeprecated() { return this.data.status === "Deprecated"; }
+
+  /** True when the plugin can be installed by tenants (Published and not suspended). */
+  get isAvailable() { return this.isPublished; }
+
+  // ── Scope helpers ──────────────────────────────────────────────────────────
+  get isTenantScoped() { return this.data.scope === "Tenant"; }
+  get isGlobalScoped() { return this.data.scope === "Global"; }
 
   // ── Date helpers ───────────────────────────────────────────────────────────
   get createdAt() { return new Date(this.data.createdAt); }

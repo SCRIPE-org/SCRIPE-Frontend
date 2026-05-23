@@ -42,7 +42,7 @@ export const en = {
     defStatusPending: "Pending Review",
     defStatusApproved: "Approved",
     defStatusPublished: "Published",
-    defStatusRejected: "Rejected",
+    defStatusSuspended: "Suspended",
     defStatusDeprecated: "Deprecated",
 
     // ── Scope labels ─────────────────────────────────────────────────
@@ -52,7 +52,9 @@ export const en = {
 
     // ── Actions ──────────────────────────────────────────────────────
     defCreate: "New Definition",
+    defCreateDesc: "Register a new plugin definition on the platform.",
     defEdit: "Edit Definition",
+    defEditDesc: "Update the plugin definition details.",
     defDelete: "Delete Definition",
     defPublish: "Publish",
     defDeprecate: "Deprecate",
