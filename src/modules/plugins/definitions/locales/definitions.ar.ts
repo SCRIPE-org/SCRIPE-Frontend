@@ -55,5 +55,16 @@ export const ar = {
     defPublish: "نشر",
     defDeprecate: "إهمال",
     defViewManifest: "عرض الملف التعريفي",
+
+    // ── Additional Fields & Placeholders ─────────────────────────────
+    defColBaseUrl: "رابط القاعدة (API)",
+    defColFrontendUrl: "رابط الواجهة الأمامية",
+    defColIconUrl: "رابط الأيقونة",
+    defColManifest: "ملف المانيفست (JSON)",
+    defErrKeyFormat: "يجب أن يتكون المفتاح من أحرف وأرقام صغيرة فقط (a-z، 0-9، -، .)",
+    defErrInvalidJson: "صيغة JSON غير صالحة",
+    defPlaceholderName: "إضافتي المميزة",
+    defPlaceholderDesc: "وصف موجز للإضافة...",
+    defPlaceholderDescAr: "وصف موجز باللغة العربية...",
   },
 };

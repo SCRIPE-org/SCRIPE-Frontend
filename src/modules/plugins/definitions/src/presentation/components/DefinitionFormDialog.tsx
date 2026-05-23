@@ -108,14 +108,14 @@ export function DefinitionFormDialog({
     if (!form.name.trim()) errs.name = t("common.required") || "Required";
     // Validate key format: lowercase letters, numbers, hyphens, dots
     if (form.key.trim() && !/^[a-z0-9][a-z0-9\-\.]*$/.test(form.key.trim())) {
-      errs.key = "Key must be lowercase alphanumeric (a-z, 0-9, -, .)";
+      errs.key = t("plugins.defErrKeyFormat") || "Key must be lowercase alphanumeric (a-z, 0-9, -, .)";
     }
     // Validate manifestJson is valid JSON
     if (form.manifestJson.trim()) {
       try {
         JSON.parse(form.manifestJson);
       } catch {
-        errs.manifestJson = "Invalid JSON";
+        errs.manifestJson = t("plugins.defErrInvalidJson") || "Invalid JSON";
       }
     }
     setErrors(errs);
@@ -169,7 +169,7 @@ export function DefinitionFormDialog({
               </Label>
               <Input
                 id="def-name"
-                placeholder="My Plugin"
+                placeholder={t("plugins.defPlaceholderName") || "My Plugin"}
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 className={errors.name ? "border-destructive" : ""}
@@ -198,7 +198,7 @@ export function DefinitionFormDialog({
             <Textarea
               id="def-desc"
               rows={2}
-              placeholder="A brief description of the plugin..."
+              placeholder={t("plugins.defPlaceholderDesc") || "A brief description of the plugin..."}
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
             />
@@ -211,7 +211,7 @@ export function DefinitionFormDialog({
               id="def-desc-ar"
               dir="rtl"
               rows={2}
-              placeholder="وصف موجز..."
+              placeholder={t("plugins.defPlaceholderDescAr") || "وصف موجز..."}
               value={form.descriptionAr}
               onChange={(e) => updateField("descriptionAr", e.target.value)}
             />
@@ -254,7 +254,7 @@ export function DefinitionFormDialog({
           {/* URLs */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="def-base-url">Base URL</Label>
+              <Label htmlFor="def-base-url">{t("plugins.defColBaseUrl") || "Base URL"}</Label>
               <Input
                 id="def-base-url"
                 type="url"
@@ -264,7 +264,7 @@ export function DefinitionFormDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="def-frontend-url">Frontend URL</Label>
+              <Label htmlFor="def-frontend-url">{t("plugins.defColFrontendUrl") || "Frontend URL"}</Label>
               <Input
                 id="def-frontend-url"
                 type="url"
@@ -277,7 +277,7 @@ export function DefinitionFormDialog({
 
           {/* Icon URL */}
           <div className="space-y-2">
-            <Label htmlFor="def-icon-url">Icon URL</Label>
+            <Label htmlFor="def-icon-url">{t("plugins.defColIconUrl") || "Icon URL"}</Label>
             <Input
               id="def-icon-url"
               type="url"
@@ -289,7 +289,7 @@ export function DefinitionFormDialog({
 
           {/* Manifest JSON */}
           <div className="space-y-2">
-            <Label htmlFor="def-manifest">Manifest JSON</Label>
+            <Label htmlFor="def-manifest">{t("plugins.defColManifest") || "Manifest JSON"}</Label>
             <Textarea
               id="def-manifest"
               rows={4}

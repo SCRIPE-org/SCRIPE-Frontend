@@ -14,5 +14,17 @@ export const ar = {
     categoriesAppsCount: "تطبيقات",
     categoryActive: "نشطة",
     categoryInactive: "غير نشطة",
+
+    // ── Form Dialog Keys ─────────────────────────────────────────────
+    categoryCreate: "فئة جديدة",
+    categoryEdit: "تعديل الفئة",
+    categoryCreateDesc: "إنشاء فئة تطبيقات جديدة للمتجر.",
+    categoryEditDesc: "تحديث تفاصيل فئة المتجر.",
+    categorySlug: "المُعرّف اللطيف (Slug)",
+    categorySlugErr: "يجب أن يتكون المعرف من أحرف صغيرة وأرقام وشرطات فقط",
+    categoryPlaceholderNameEn: "الإنتاجية (Productivity)",
+    categoryPlaceholderNameAr: "إنتاجية",
+    categoryPlaceholderIcon: "briefcase",
+    categoryPlaceholderDesc: "وصف موجز لهذه الفئة...",
   },
 };

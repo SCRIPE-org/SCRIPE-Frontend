@@ -59,5 +59,16 @@ export const en = {
     defPublish: "Publish",
     defDeprecate: "Deprecate",
     defViewManifest: "View Manifest",
+
+    // ── Additional Fields & Placeholders ─────────────────────────────
+    defColBaseUrl: "Base URL",
+    defColFrontendUrl: "Frontend URL",
+    defColIconUrl: "Icon URL",
+    defColManifest: "Manifest JSON",
+    defErrKeyFormat: "Key must be lowercase alphanumeric (a-z, 0-9, -, .)",
+    defErrInvalidJson: "Invalid JSON format",
+    defPlaceholderName: "My Plugin",
+    defPlaceholderDesc: "A brief description of the plugin...",
+    defPlaceholderDescAr: "Arabic description...",
   },
 };

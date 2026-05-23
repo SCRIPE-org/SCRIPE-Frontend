@@ -14,5 +14,17 @@ export const en = {
     categoriesAppsCount: "apps",
     categoryActive: "Active",
     categoryInactive: "Inactive",
+
+    // ── Form Dialog Keys ─────────────────────────────────────────────
+    categoryCreate: "New Category",
+    categoryEdit: "Edit Category",
+    categoryCreateDesc: "Create a new app category for the marketplace.",
+    categoryEditDesc: "Update the marketplace category details.",
+    categorySlug: "Slug",
+    categorySlugErr: "Slug must be lowercase alphanumeric with hyphens",
+    categoryPlaceholderNameEn: "Productivity",
+    categoryPlaceholderNameAr: "Arabic name...",
+    categoryPlaceholderIcon: "briefcase",
+    categoryPlaceholderDesc: "A brief description of this category...",
   },
 };

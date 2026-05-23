@@ -107,7 +107,7 @@ export function CategoryFormDialog({
     if (!form.nameEn.trim()) errs.nameEn = t("common.required") || "Required";
     if (!form.slug.trim()) errs.slug = t("common.required") || "Required";
     if (form.slug.trim() && !/^[a-z0-9][a-z0-9\-]*$/.test(form.slug.trim())) {
-      errs.slug = "Slug must be lowercase alphanumeric with hyphens";
+      errs.slug = t("marketplace.categorySlugErr") || "Slug must be lowercase alphanumeric with hyphens";
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -129,8 +129,8 @@ export function CategoryFormDialog({
           </DialogTitle>
           <DialogDescription>
             {isEditMode
-              ? "Update the marketplace category details."
-              : "Create a new app category for the marketplace."}
+              ? (t("marketplace.categoryEditDesc") || "Update the marketplace category details.")
+              : (t("marketplace.categoryCreateDesc") || "Create a new app category for the marketplace.")}
           </DialogDescription>
         </DialogHeader>
 
@@ -140,7 +140,7 @@ export function CategoryFormDialog({
             <Label htmlFor="cat-name-en">{t("common.nameEn") || "Name (English)"} *</Label>
             <Input
               id="cat-name-en"
-              placeholder="Productivity"
+              placeholder={t("marketplace.categoryPlaceholderNameEn") || "Productivity"}
               value={form.nameEn}
               onChange={(e) => updateField("nameEn", e.target.value)}
               className={errors.nameEn ? "border-destructive" : ""}
@@ -154,7 +154,7 @@ export function CategoryFormDialog({
             <Input
               id="cat-name-ar"
               dir="rtl"
-              placeholder="إنتاجية"
+              placeholder={t("marketplace.categoryPlaceholderNameAr") || "إنتاجية"}
               value={form.nameAr}
               onChange={(e) => updateField("nameAr", e.target.value)}
             />
@@ -162,10 +162,10 @@ export function CategoryFormDialog({
 
           {/* Slug */}
           <div className="space-y-2">
-            <Label htmlFor="cat-slug">Slug *</Label>
+            <Label htmlFor="cat-slug">{t("marketplace.categorySlug") || "Slug"} *</Label>
             <Input
               id="cat-slug"
-              placeholder="productivity"
+              placeholder={t("marketplace.categorySlug") ? t("marketplace.categorySlug").toLowerCase() : "productivity"}
               value={form.slug}
               onChange={(e) => updateField("slug", e.target.value)}
               className={errors.slug ? "border-destructive" : ""}
@@ -178,7 +178,7 @@ export function CategoryFormDialog({
             <Label htmlFor="cat-icon">{t("common.icon") || "Icon Name"}</Label>
             <Input
               id="cat-icon"
-              placeholder="briefcase"
+              placeholder={t("marketplace.categoryPlaceholderIcon") || "briefcase"}
               value={form.icon}
               onChange={(e) => updateField("icon", e.target.value)}
             />
@@ -190,7 +190,7 @@ export function CategoryFormDialog({
             <Textarea
               id="cat-desc"
               rows={2}
-              placeholder="A brief description of this category..."
+              placeholder={t("marketplace.categoryPlaceholderDesc") || "A brief description of this category..."}
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
             />
