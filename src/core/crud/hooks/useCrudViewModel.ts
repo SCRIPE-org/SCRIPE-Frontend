@@ -42,6 +42,7 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
 
   // 2. Mutations
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
+    optimisticDelete: true,
     onSuccess: () => {
       setIsCreateModalOpen(false);
       closeEditModal();

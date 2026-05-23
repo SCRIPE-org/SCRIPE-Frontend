@@ -1,4 +1,3 @@
-"use client";
 
 export interface AppSubmissionData {
   id: string;

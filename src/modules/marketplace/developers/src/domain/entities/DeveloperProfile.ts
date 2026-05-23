@@ -1,4 +1,3 @@
-"use client";
 
 export interface DeveloperProfileData {
   id: string;

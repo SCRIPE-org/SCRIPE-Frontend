@@ -13,41 +13,80 @@ import type {
   CreateFeatureRequest,
   UpdateFeatureRequest,
 } from "../../domain/entities/FeatureRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const FeatureModelSchema = z.object({
+  id: uuidField(),
+  name: z.string().min(1),
+  displayNameEn: z.string(),
+  displayNameAr: z.string().optional().nullable(),
+  category: z.string().optional().nullable(),
+  sortOrder: z.number().int().optional().default(0),
+  isVisibleInUI: z.boolean().optional().default(true),
+  valueType: z.string(),
+  defaultValue: z.string().optional().nullable(),
+  module: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  isSystem: z.boolean().optional().default(false),
+  createdAt: optionalIsoDate(),
+  modifiedAt: optionalIsoDate(),
+});
+
+const TenantEffectiveFeatureModelSchema = z.object({
+  featureId: uuidField(),
+  name: z.string().min(1),
+  displayNameEn: z.string(),
+  displayNameAr: z.string().optional().nullable(),
+  valueType: optionalString(),
+  editionValue: optionalString(),
+  overrideValue: z.string().optional().nullable(),
+  effectiveValue: optionalString(),
+  category: z.string().optional().nullable(),
+  module: z.string().optional().nullable(),
+  hasOverride: z.boolean().optional().default(false),
+});
 
 export class FeatureMapper {
   static toEntity(model: FeatureModel): Feature {
+    const validated = safeParseApiResponse(FeatureModelSchema, model, "Feature");
+
     const data: FeatureData = {
-      id: model.id,
-      name: model.name,
-      displayNameEn: model.displayNameEn,
-      displayNameAr: model.displayNameAr,
-      category: model.category,
-      sortOrder: model.sortOrder ?? 0,
-      isVisibleInUI: model.isVisibleInUI ?? true,
-      valueType: model.valueType as FeatureValueType,
-      defaultValue: model.defaultValue,
-      module: model.module,
-      description: model.description,
-      isSystem: model.isSystem,
-      createdAt: model.createdAt,
-      modifiedAt: model.modifiedAt,
+      id: validated.id,
+      name: validated.name,
+      displayNameEn: validated.displayNameEn,
+      displayNameAr: validated.displayNameAr ?? "",
+      category: validated.category ?? "",
+      sortOrder: validated.sortOrder ?? 0,
+      isVisibleInUI: validated.isVisibleInUI ?? true,
+      valueType: validated.valueType as FeatureValueType,
+      defaultValue: validated.defaultValue ?? "",
+      module: validated.module ?? "",
+      description: validated.description ?? "",
+      isSystem: validated.isSystem,
+      createdAt: validated.createdAt ?? new Date().toISOString(),
+      modifiedAt: validated.modifiedAt ?? new Date().toISOString(),
     };
     return new Feature(data);
   }
 
   static toEffectiveEntity(model: TenantEffectiveFeatureModel): TenantEffectiveFeature {
+    const validated = safeParseApiResponse(TenantEffectiveFeatureModelSchema, model, "TenantEffectiveFeature");
+
     const data: TenantEffectiveFeatureData = {
-      featureId: model.featureId,
-      name: model.name,
-      displayNameEn: model.displayNameEn,
-      displayNameAr: model.displayNameAr,
-      valueType: model.valueType ?? "",
-      editionValue: model.editionValue ?? "",
-      overrideValue: model.overrideValue ?? null,
-      effectiveValue: model.effectiveValue ?? "",
-      category: model.category,
-      module: model.module,
-      hasOverride: model.hasOverride ?? false,
+      featureId: validated.featureId,
+      name: validated.name,
+      displayNameEn: validated.displayNameEn,
+      displayNameAr: validated.displayNameAr ?? "",
+      valueType: validated.valueType ?? "",
+      editionValue: validated.editionValue ?? "",
+      overrideValue: validated.overrideValue ?? null,
+      effectiveValue: validated.effectiveValue ?? "",
+      category: validated.category ?? "",
+      module: validated.module ?? "",
+      hasOverride: validated.hasOverride ?? false,
     };
     return new TenantEffectiveFeature(data);
   }

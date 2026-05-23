@@ -18,8 +18,8 @@ import type {
   CloneRoleRequest,
 } from "../../domain/entities/RoleRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+import { qk } from "@core/common/query-keys";
 
 interface UseRolesViewModelParams {
   page?: number;
@@ -41,11 +41,11 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   const { success, error: toastError } = useEnhancedToast();
   const { roleRepository } = systemContainer;
 
-  // Build query key based on mode
-  const queryKey = useMemo(() => {
-    if (tenantId) return ["roles", "tenant", tenantId];
-    if (useMyTenant) return ["roles", "myTenant"];
-    return ["roles"];
+  // Build query key using the factory
+  const queryKey: string[] = useMemo(() => {
+    if (tenantId) return [...qk.roles.active(tenantId)];
+    if (useMyTenant) return [...qk.roles.all, "myTenant"];
+    return [...qk.roles.all];
   }, [tenantId, useMyTenant]);
 
   // Core CRUD viewModel using useCrudViewModel
@@ -139,7 +139,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     mutationFn: ({ roleId, request }: { roleId: string; request: AssignPermissionsRequest }) =>
       roleRepository.assignPermissions(roleId, request),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
+      queryClient.invalidateQueries({ queryKey: qk.roles.all });
       success({
         title: "Permissions Assigned",
         description: "Permissions have been updated successfully.",

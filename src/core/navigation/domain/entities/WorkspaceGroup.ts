@@ -40,11 +40,16 @@ export interface WorkspaceGroupData {
    */
   isLocked: boolean;
   /**
-   * The workspace-specific home/landing page route.
+   * The workspace-specific home/landing page route for TENANT context.
    * Used by the Home button (topbar) and workspace switch navigation.
    * Null = fall back to first leaf-page in menuItems.
    */
   homeRoute: string | null;
+  /**
+   * The workspace-specific home/landing page route for PLATFORM context (no tenant selected).
+   * Null = fall back to homeRoute.
+   */
+  platformHomeRoute: string | null;
   /**
    * Whether this workspace is pinned by the current admin.
    * Backend-authoritative — set via POST /Menus/my/workspaces/{key}/pin.
@@ -72,8 +77,10 @@ export class WorkspaceGroup {
   public readonly menuItems: MenuItem[];
   /** Backend-authoritative: true = workspace is visible but not licensed for this tenant. */
   public readonly isLocked: boolean;
-  /** Workspace-specific landing route. Null = use first leaf-page from menu. */
+  /** Workspace landing route for TENANT context. Null = use first leaf-page from menu. */
   public readonly homeRoute: string | null;
+  /** Workspace landing route for PLATFORM context (no tenant). Null = falls back to homeRoute. */
+  public readonly platformHomeRoute: string | null;
   /** Whether the current admin has pinned this workspace. */
   public readonly isPinned: boolean;
   /** Sort order for pinned workspaces. Null when not pinned. */
@@ -92,6 +99,7 @@ export class WorkspaceGroup {
     this.menuItems = data.menuItems.map((item) => new MenuItem(item));
     this.isLocked = data.isLocked ?? false;
     this.homeRoute = data.homeRoute ?? null;
+    this.platformHomeRoute = data.platformHomeRoute ?? null;
     this.isPinned = data.isPinned ?? false;
     this.pinSortOrder = data.pinSortOrder ?? null;
   }
@@ -150,6 +158,7 @@ export class WorkspaceGroup {
       menuItems: this.menuItems.map((item) => item.toData()),
       isLocked: this.isLocked,
       homeRoute: this.homeRoute,
+      platformHomeRoute: this.platformHomeRoute,
       isPinned: this.isPinned,
       pinSortOrder: this.pinSortOrder,
     };

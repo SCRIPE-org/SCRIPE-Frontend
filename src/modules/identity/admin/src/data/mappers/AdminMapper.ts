@@ -15,35 +15,74 @@ import {
   type AdminRoleJson,
 } from "../models/AdminModel";
 import type { CreateAdminRequest, UpdateAdminRequest } from "../../domain/entities/AdminRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, isoDateString, optionalIsoDate } from "@core/common/zod-utils";
+
+// ─── Admin Response Schema ────────────────────────────────────────────────────
+
+const AdminRoleJsonSchema = z.object({
+  id: uuidField(),
+  nameEn: z.string(),
+  nameAr: z.string().optional().default(""),
+});
+
+const AdminModelSchema = z.object({
+  id: uuidField(),
+  username: z.string().min(1),
+  isActive: z.boolean(),
+  createdAt: isoDateString().optional(),
+  firstName: optionalString(),
+  lastName: optionalString(),
+  phoneNumber: optionalString(),
+  email: optionalString(),
+  lastLoginAt: optionalIsoDate(),
+  notes: optionalString(),
+  roles: z.array(AdminRoleJsonSchema).optional(),
+  roleNamesEn: z.array(z.string()).optional(),
+  roleNamesAr: z.array(z.string()).optional(),
+  groupNamesEn: z.array(z.string()).optional(),
+  groupNamesAr: z.array(z.string()).optional(),
+  tenantId: optionalString(),
+  tenantName: optionalString(),
+  isSuperAdmin: z.boolean().optional().default(false),
+  canModify: z.boolean().optional().default(true),
+  isAccountActivated: z.boolean().optional().default(false),
+  mustChangePassword: z.boolean().optional().default(false),
+  isProtected: z.boolean().optional().default(false),
+});
 
 export class AdminMapper {
   /**
    * Convert AdminModel to Admin Entity
    */
   static toEntity(model: AdminModel): Admin {
+    // Validate API response shape before consuming — logs warnings on contract drift
+    const validated = safeParseApiResponse(AdminModelSchema, model, "Admin");
     const data: AdminData = {
-      id: model.id,
-      username: model.username,
-      isActive: model.isActive,
-      createdAt: model.createdAt,
-      firstName: model.firstName,
-      lastName: model.lastName,
-      phoneNumber: model.phoneNumber,
-      email: model.email,
-      lastLoginAt: model.lastLoginAt,
-      notes: model.notes,
-      roles: model.roles ? AdminMapper.toRoleDataList(model.roles) : undefined,
-      roleNamesEn: model.roleNamesEn,
-      roleNamesAr: model.roleNamesAr,
-      tenantId: model.tenantId,
-      tenantName: model.tenantName,
-      isSuperAdmin: model.isSuperAdmin,
-      canModify: model.canModify,
-      groupNamesEn: model.groupNamesEn,
-      groupNamesAr: model.groupNamesAr,
-      isAccountActivated: model.isAccountActivated,
-      mustChangePassword: model.mustChangePassword,
-      isProtected: model.isProtected,
+      id: validated.id,
+      username: validated.username,
+      isActive: validated.isActive,
+      createdAt: validated.createdAt ?? "",
+      firstName: validated.firstName ?? undefined,
+      lastName: validated.lastName ?? undefined,
+      phoneNumber: validated.phoneNumber ?? undefined,
+      email: validated.email ?? undefined,
+      lastLoginAt: validated.lastLoginAt ?? undefined,
+      notes: validated.notes ?? undefined,
+      roles: validated.roles
+        ? AdminMapper.toRoleDataList((validated.roles as unknown) as AdminRoleJson[])
+        : undefined,
+      roleNamesEn: validated.roleNamesEn,
+      roleNamesAr: validated.roleNamesAr,
+      tenantId: validated.tenantId ?? undefined,
+      tenantName: validated.tenantName ?? undefined,
+      isSuperAdmin: validated.isSuperAdmin,
+      canModify: validated.canModify,
+      groupNamesEn: validated.groupNamesEn,
+      groupNamesAr: validated.groupNamesAr,
+      isAccountActivated: validated.isAccountActivated,
+      mustChangePassword: validated.mustChangePassword,
+      isProtected: validated.isProtected,
     };
     return new Admin(data);
   }

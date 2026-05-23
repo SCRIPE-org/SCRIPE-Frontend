@@ -1,14 +1,21 @@
 "use client";
 
 import { useFinancialsViewModel } from "../viewmodels/useFinancialsViewModel";
+import { RevenueChart, type RevenueDataPoint } from "../components/RevenueChart";
+import type { AppPurchase } from "../../domain/entities/FinancialEntities";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Card, CardContent, CardHeader } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { DollarSign, Play } from "lucide-react";
 
 export function FinancialsView() {
   const vm = useFinancialsViewModel();
+
+  // Build chart data from purchases grouped by month (Phase 5.4)
+  const chartData = buildMonthlyRevenueData(vm.purchases);
+  const totalRevenue = vm.purchases.reduce((sum, p) => sum + p.amount, 0);
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -16,11 +23,21 @@ export function FinancialsView() {
         <p className="text-sm text-muted-foreground">Purchases and developer payouts</p>
       </div>
 
+      {/* Revenue chart (Phase 5.4) */}
+      {!vm.isLoadingPurchases && chartData.length > 0 && (
+        <RevenueChart
+          data={chartData}
+          totalRevenue={totalRevenue}
+          title="Revenue Over Time"
+        />
+      )}
+
       <Tabs defaultValue="purchases">
         <TabsList>
           <TabsTrigger value="purchases">Purchases ({vm.purchasesPagination.totalCount})</TabsTrigger>
           <TabsTrigger value="payouts">Payouts</TabsTrigger>
         </TabsList>
+
 
         {/* Purchases tab */}
         <TabsContent value="purchases" className="mt-4">
@@ -82,4 +99,25 @@ export function FinancialsView() {
       </Tabs>
     </div>
   );
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+/**
+ * Groups a list of purchases into monthly buckets for the RevenueChart.
+ * Returns a sorted array of { label, revenue } data points.
+ */
+function buildMonthlyRevenueData(purchases: AppPurchase[]): RevenueDataPoint[] {
+  const buckets: Record<string, number> = {};
+  for (const p of purchases) {
+    const d = new Date(p.purchasedAt);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    buckets[key] = (buckets[key] ?? 0) + p.amount;
+  }
+  return Object.entries(buckets)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, revenue]) => ({
+      label: new Date(key).toLocaleDateString("en-US", { month: "short", year: "2-digit" }),
+      revenue,
+    }));
 }

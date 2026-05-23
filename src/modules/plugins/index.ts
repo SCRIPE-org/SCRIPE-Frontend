@@ -10,6 +10,7 @@
 // ── Sub-module views ────────────────────────────────────────────────────────
 export { PluginCatalogView } from "./catalog";
 export { InstalledPluginsView } from "./installed";
+export { InstalledPluginDetailView } from "./installed";
 export { PluginLogsView } from "./logs";
 export { PluginSettingsView } from "./settings";
 export { DefinitionsView } from "./definitions";
@@ -18,6 +19,9 @@ export { DefinitionsView } from "./definitions";
 export { PluginCard, PluginInstallDialog } from "./catalog";
 export { PluginHealthBadge, PluginStatusBadge, InstalledPluginRow } from "./installed";
 export { LogRow, LogsPagination } from "./logs";
+export { DynamicSettingsForm } from "./settings";
+export type { PluginSettingsSchema, JsonSchemaField, SettingsValues } from "./settings";
+
 
 // ── Sub-module ViewModels (for advanced composition) ────────────────────────
 export { useCatalogViewModel } from "./catalog";

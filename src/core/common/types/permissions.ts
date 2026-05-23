@@ -416,6 +416,7 @@ export const SYSTEM_PERMISSIONS = {
   APP_REVIEWS_DELETE: "appreviews.delete",
   // Financials
   APP_PURCHASES_VIEW: "apppurchases.view",
+  APP_PURCHASES_CREATE: "apppurchases.create",
   DEVELOPER_PAYOUTS_VIEW: "developerpayouts.view",
   DEVELOPER_PAYOUTS_PROCESS: "developerpayouts.process",
 } as const;
@@ -539,10 +540,13 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/catalog": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/installed": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
+  "/plugins/[installationId]": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
   "/plugins/installed/[installationId]": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
   "/plugins/installed/[installationId]/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
   "/plugins/installed/[installationId]/settings": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_CONFIGURE],
   "/plugins/definitions": [SYSTEM_PERMISSIONS.PLUGINS_DEFINITION_CREATE],
+  "/plugins/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
+
 
   // Marketplace Module
   "/marketplace": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
@@ -556,4 +560,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/marketplace/reviews": [SYSTEM_PERMISSIONS.APP_REVIEWS_VIEW],
   "/marketplace/financials": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
   "/marketplace/financials/payouts": [SYSTEM_PERMISSIONS.DEVELOPER_PAYOUTS_VIEW],
+  // Marketplace Vendor (Tenant) Self-Service
+  "/marketplace/my-profile": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
+  "/marketplace/my-submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
+  "/marketplace/my-earnings": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
 };

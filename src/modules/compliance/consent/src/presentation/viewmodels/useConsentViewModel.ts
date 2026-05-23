@@ -2,11 +2,15 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { complianceContainer } from "@modules/compliance/di";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 
 export function useConsentViewModel() {
   const { consentRepository } = complianceContainer;
   const queryClient = useQueryClient();
+  const { success, error: showError } = useEnhancedToast();
+  const { t } = useI18n();
 
   const query = useQuery({
     queryKey: ["compliance", "consent", "me"],
@@ -16,12 +20,24 @@ export function useConsentViewModel() {
 
   const recordMutation = useMutation({
     mutationFn: (data: RecordConsentRequest) => consentRepository.recordConsent(data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] });
+      success({ title: t("compliance.consent.recorded") || "Consent recorded" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
+    },
   });
 
   const withdrawMutation = useMutation({
     mutationFn: (purposeId: string) => consentRepository.withdrawConsent(purposeId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] });
+      success({ title: t("compliance.consent.withdrawn") || "Consent withdrawn" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
+    },
   });
 
   const analyticsQuery = useQuery({

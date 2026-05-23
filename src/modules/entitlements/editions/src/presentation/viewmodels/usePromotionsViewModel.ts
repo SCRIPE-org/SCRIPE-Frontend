@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { qk } from "@core/common/query-keys";
 import type {
   EditionPromotionData,
   CreatePromotionRequest,
@@ -88,7 +89,7 @@ export function usePromotionsViewModel(editionId: string): PromotionsViewModelRe
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
 
-  const queryKey = ["entitlements", "editions", editionId, "promotions"];
+  const queryKey = qk.editions.promotions(editionId);
 
   // ── Fetch promotions ──
   const { data, isLoading, error } = useQuery({
@@ -214,15 +215,27 @@ export function usePromotionsViewModel(editionId: string): PromotionsViewModelRe
     },
   });
 
-  // ── Toggle Active ──
+  // ── Toggle Active — optimistic update ──
   const { mutate: toggleActive, isPending: isToggling } = useMutation({
     mutationFn: ({ id, active }: { id: string; active: boolean }) =>
       editionRepository.updatePromotion(editionId, id, { isActive: active }),
-    onSuccess: () => {
-      invalidate();
+    onMutate: async ({ id, active }) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData(queryKey);
+      queryClient.setQueryData(queryKey, (old: unknown) => {
+        if (!Array.isArray(old)) return old;
+        return (old as EditionPromotionData[]).map((p) =>
+          p.id === id ? { ...p, isActive: active } : p
+        );
+      });
+      return { previous };
     },
-    onError: (err: Error) => {
+    onError: (err: Error, __, context?: { previous: unknown }) => {
+      if (context?.previous !== undefined) queryClient.setQueryData(queryKey, context.previous);
       showError({ title: t("common.error") || "Error", description: err.message });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 

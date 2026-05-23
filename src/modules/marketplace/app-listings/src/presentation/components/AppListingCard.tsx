@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import type { AppListing } from "../../domain/entities/AppListing";
-import { Star, Globe, EyeOff, Trash2, Zap } from "lucide-react";
+import { Star, Globe, EyeOff, Trash2, Zap, ExternalLink } from "lucide-react";
+
 
 interface AppListingCardProps {
   listing: AppListing;
@@ -96,6 +98,13 @@ export function AppListingCard({
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1 border-t">
+          {/* View details link (Phase 5.1) */}
+          <Button size="sm" variant="ghost" className="gap-1" asChild>
+            <Link href={`/marketplace/${listing.id}`}>
+              <ExternalLink className="size-3.5" /> Details
+            </Link>
+          </Button>
+
           {listing.isPublished ? (
             <Button
               size="sm"

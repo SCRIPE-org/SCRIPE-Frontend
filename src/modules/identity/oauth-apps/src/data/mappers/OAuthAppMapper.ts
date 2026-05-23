@@ -24,33 +24,87 @@ import {
   type CreateOAuthAppResponseJson,
 } from "../models/OAuthAppModel";
 import { resolveFileUrl, unresolveFileUrl } from "@core/common/utils";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const OAuthAppModelSchema = z.object({
+  id: uuidField(),
+  displayName: z.string().min(1),
+  protocol: optionalString(),
+  clientId: optionalString(),
+  hasClientSecret: z.boolean().optional().default(false),
+  clientType: optionalString(),
+  redirectUrisJson: z.string().optional().nullable(),
+  postLogoutRedirectUrisJson: z.string().optional().nullable(),
+  allowedScopes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
+  allowedGrantTypes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
+  tenantId: z.string().optional().nullable(),
+  requireConsent: z.boolean().optional().default(false),
+  requirePkce: z.boolean().optional().default(false),
+  logoUri: z.string().optional().nullable(),
+  samlAcsUrl: z.string().optional().nullable(),
+  samlSpEntityId: z.string().optional().nullable(),
+  samlSpCertificate: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  accessTokenLifetimeMinutes: z.number().int().optional().nullable(),
+  refreshTokenLifetimeDays: z.number().int().optional().nullable(),
+  isActive: z.boolean().optional().default(true),
+  createdAt: optionalString(),
+  modifiedAt: z.string().optional().nullable(),
+});
+
+const OAuthAppListItemModelSchema = z.object({
+  id: uuidField(),
+  displayName: z.string().min(1),
+  protocol: optionalString(),
+  clientId: optionalString(),
+  clientType: optionalString(),
+  allowedScopes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
+  allowedGrantTypes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
+  isActive: z.boolean().optional().default(true),
+  requirePkce: z.boolean().optional().default(false),
+  logoUri: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  createdAt: optionalString(),
+});
+
+/** Normalise scopes/grantTypes: backend may send string or string[] */
+function normaliseSpaceList(raw: string | string[] | null | undefined): string {
+  if (!raw) return "";
+  if (Array.isArray(raw)) return raw.join(" ");
+  return raw;
+}
 
 export class OAuthAppMapper {
   static toEntity(model: OAuthAppModel): OAuthApp {
+    const validated = safeParseApiResponse(OAuthAppModelSchema, model, "OAuthApp");
+
     const data: OAuthAppData = {
-      id: model.id,
-      displayName: model.displayName,
-      protocol: model.protocol,
-      clientId: model.clientId,
-      hasClientSecret: model.hasClientSecret,
-      clientType: model.clientType,
-      redirectUrisJson: model.redirectUrisJson,
-      postLogoutRedirectUrisJson: model.postLogoutRedirectUrisJson,
-      allowedScopes: model.allowedScopes,
-      allowedGrantTypes: model.allowedGrantTypes,
-      tenantId: model.tenantId,
-      requireConsent: model.requireConsent,
-      requirePkce: model.requirePkce,
-      logoUri: resolveFileUrl(model.logoUri),
-      samlAcsUrl: model.samlAcsUrl,
-      samlSpEntityId: model.samlSpEntityId,
-      samlSpCertificate: model.samlSpCertificate,
-      description: model.description,
-      accessTokenLifetimeMinutes: model.accessTokenLifetimeMinutes,
-      refreshTokenLifetimeDays: model.refreshTokenLifetimeDays,
-      isActive: model.isActive,
-      createdAt: model.createdAt,
-      modifiedAt: model.modifiedAt,
+      id: validated.id,
+      displayName: validated.displayName,
+      protocol: validated.protocol ?? "",
+      clientId: validated.clientId ?? "",
+      hasClientSecret: validated.hasClientSecret ?? false,
+      clientType: validated.clientType ?? "",
+      redirectUrisJson: validated.redirectUrisJson ?? "[]",
+      postLogoutRedirectUrisJson: validated.postLogoutRedirectUrisJson ?? "[]",
+      allowedScopes: normaliseSpaceList(validated.allowedScopes),
+      allowedGrantTypes: normaliseSpaceList(validated.allowedGrantTypes),
+      tenantId: validated.tenantId ?? null,
+      requireConsent: validated.requireConsent ?? false,
+      requirePkce: validated.requirePkce ?? false,
+      logoUri: resolveFileUrl(validated.logoUri),
+      samlAcsUrl: validated.samlAcsUrl ?? null,
+      samlSpEntityId: validated.samlSpEntityId ?? null,
+      samlSpCertificate: validated.samlSpCertificate ?? null,
+      description: validated.description ?? null,
+      accessTokenLifetimeMinutes: validated.accessTokenLifetimeMinutes ?? 60,
+      refreshTokenLifetimeDays: validated.refreshTokenLifetimeDays ?? 30,
+      isActive: validated.isActive ?? true,
+      createdAt: validated.createdAt ?? "",
+      modifiedAt: validated.modifiedAt ?? null,
     };
     return new OAuthApp(data);
   }
@@ -61,19 +115,21 @@ export class OAuthAppMapper {
   }
 
   static toListItemEntity(model: OAuthAppListItemModel): OAuthAppListItem {
+    const validated = safeParseApiResponse(OAuthAppListItemModelSchema, model, "OAuthAppListItem");
+
     const data: OAuthAppListItemData = {
-      id: model.id,
-      displayName: model.displayName,
-      protocol: model.protocol,
-      clientId: model.clientId,
-      clientType: model.clientType,
-      allowedScopes: model.allowedScopes,
-      allowedGrantTypes: model.allowedGrantTypes,
-      isActive: model.isActive,
-      requirePkce: model.requirePkce,
-      logoUri: resolveFileUrl(model.logoUri),
-      description: model.description,
-      createdAt: model.createdAt,
+      id: validated.id,
+      displayName: validated.displayName,
+      protocol: validated.protocol ?? "",
+      clientId: validated.clientId ?? "",
+      clientType: validated.clientType ?? "",
+      allowedScopes: normaliseSpaceList(validated.allowedScopes),
+      allowedGrantTypes: normaliseSpaceList(validated.allowedGrantTypes),
+      isActive: validated.isActive ?? true,
+      requirePkce: validated.requirePkce ?? false,
+      logoUri: resolveFileUrl(validated.logoUri),
+      description: validated.description ?? null,
+      createdAt: validated.createdAt ?? "",
     };
     return new OAuthAppListItem(data);
   }

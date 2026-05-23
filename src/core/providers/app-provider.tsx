@@ -13,8 +13,20 @@ import { PermissionProvider } from "@core/providers/permission-provider";
 import { TenantContextProvider } from "@core/providers/tenant-context-provider";
 import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
-import { ErrorBoundary } from "@core/ui/error-boundary";
+import { QueryAwareErrorBoundary } from "@core/ui/error-boundary";
 import { TooltipProvider } from "@core/ui/tooltip";
+
+// Lazy-load React Query DevTools — dev only, zero production bundle cost
+const ReactQueryDevtools =
+  process.env.NODE_ENV === "development"
+    ? dynamic(
+        () =>
+          import("@tanstack/react-query-devtools").then((m) => ({
+            default: m.ReactQueryDevtools,
+          })),
+        { ssr: false }
+      )
+    : null;
 
 // Lazy-load SignalR providers (~100KB @microsoft/signalr) — not needed for initial render
 const SignalRProvider = dynamic(
@@ -69,13 +81,14 @@ const queryClient = new QueryClient({
  */
 export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" disableTransitionOnChange={false}>
-        <TooltipProvider>
-          <ServiceProvider>
+    <>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" disableTransitionOnChange={false}>
+          <TooltipProvider>
+            <ServiceProvider>
             <SettingsProvider>
               <I18nProvider>
-                <ErrorBoundary>
+                <QueryAwareErrorBoundary>
                   <PermissionProvider>
                     <TenantContextProvider>
                       <SignalRProvider>
@@ -91,13 +104,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                       </SignalRProvider>
                     </TenantContextProvider>
                   </PermissionProvider>
-                </ErrorBoundary>
+                </QueryAwareErrorBoundary>
                 <EnhancedToaster />
               </I18nProvider>
             </SettingsProvider>
           </ServiceProvider>
         </TooltipProvider>
       </ThemeProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+      {/* React Query DevTools — only rendered in development */}
+      {process.env.NODE_ENV === "development" && ReactQueryDevtools && (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        <ReactQueryDevtools {...({ initialIsOpen: false, buttonPosition: "bottom-right" } as any)} />
+      )}
+    </>
   );
 }

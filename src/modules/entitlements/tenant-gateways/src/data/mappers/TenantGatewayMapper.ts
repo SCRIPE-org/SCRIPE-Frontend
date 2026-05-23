@@ -1,19 +1,38 @@
 import { TenantGateway } from "../../domain/entities/TenantGateway";
 import type { TenantGatewayModel } from "../models/TenantGatewayModels";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const TenantGatewayModelSchema = z.object({
+  id: uuidField(),
+  gateway: optionalString(),
+  displayLabel: optionalString(),
+  merchantId: optionalString(),
+  isEnabled: z.boolean().optional().default(false),
+  isVerified: z.boolean().optional().default(false),
+  isTestMode: z.boolean().optional().default(false),
+  lastVerifiedAt: optionalIsoDate(),
+  createdAt: optionalString(),
+  modifiedAt: z.string().optional().nullable(),
+});
 
 export class TenantGatewayMapper {
   static toEntity(dto: TenantGatewayModel): TenantGateway {
+    const validated = safeParseApiResponse(TenantGatewayModelSchema, dto, "TenantGateway");
+
     return new TenantGateway({
-      id: dto.id,
-      gateway: dto.gateway ?? "",
-      displayLabel: dto.displayLabel ?? "",
-      merchantId: dto.merchantId ?? "",
-      isEnabled: dto.isEnabled ?? false,
-      isVerified: dto.isVerified ?? false,
-      isTestMode: dto.isTestMode ?? false,
-      lastVerifiedAt: dto.lastVerifiedAt ?? null,
-      createdAt: dto.createdAt ?? "",
-      modifiedAt: dto.modifiedAt ?? null,
+      id: validated.id,
+      gateway: validated.gateway ?? "",
+      displayLabel: validated.displayLabel ?? "",
+      merchantId: validated.merchantId ?? "",
+      isEnabled: validated.isEnabled ?? false,
+      isVerified: validated.isVerified ?? false,
+      isTestMode: validated.isTestMode ?? false,
+      lastVerifiedAt: validated.lastVerifiedAt ?? null,
+      createdAt: validated.createdAt ?? "",
+      modifiedAt: validated.modifiedAt ?? null,
     });
   }
 }

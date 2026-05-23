@@ -1,4 +1,3 @@
-"use client";
 
 export interface AppReviewData {
   id: string;

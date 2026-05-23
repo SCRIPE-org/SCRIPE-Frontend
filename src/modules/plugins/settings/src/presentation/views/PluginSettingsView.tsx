@@ -31,7 +31,7 @@ export function PluginSettingsView({ installationId }: PluginSettingsViewProps) 
     );
   }
 
-  if (!installation.iconUrl) {
+  if (!installation.frontendUrl) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
         <Settings className="h-10 w-10" />
@@ -43,7 +43,7 @@ export function PluginSettingsView({ installationId }: PluginSettingsViewProps) 
   return (
     <PluginFrame
       pluginKey={installation.pluginKey}
-      frontendUrl={`${installation.iconUrl}/settings`}
+      frontendUrl={`${installation.frontendUrl}/settings`}
       installationId={installationId}
       className="min-h-[500px]"
     />

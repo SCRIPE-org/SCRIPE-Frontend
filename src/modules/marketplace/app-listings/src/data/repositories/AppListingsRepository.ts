@@ -1,21 +1,21 @@
-import type { IApiService } from "@core/interfaces/api.interface";
-import type { IAppListingsRepository, PagedResult } from "../../domain/interfaces/IAppListingsRepository";
-import type { AppListing } from "../../domain/entities/AppListing";
-import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
-import { AppListingMapper } from "../mappers/AppListingMapper";
-import type { AppListingDto, AppListingListDto } from "../models/AppListingModel";
-
-
 /**
  * AppListingsRepository
  *
- * Bridges the data and domain layers:
- * 1. Calls the service (or IApiService directly) to fetch DTOs
- * 2. Uses AppListingMapper to convert DTOs → Entities
+ * Bridges the service and domain layers:
+ * 1. Delegates HTTP calls to AppListingsService (injected via IAppListingsService)
+ * 2. Uses AppListingMapper to convert DTOs → Domain Entities
  * 3. Returns typed domain entities to the presentation layer
+ *
+ * Architecture (H-02 refactor):
+ *   ViewModel → AppListingsRepository (this) → IAppListingsService → IApiService → HTTP
  */
+import type { IAppListingsService } from "../../domain/interfaces/IAppListingsService";
+import type { IAppListingsRepository, PagedResult } from "../../domain/interfaces/IAppListingsRepository";
+import type { AppListing } from "../../domain/entities/AppListing";
+import { AppListingMapper } from "../mappers/AppListingMapper";
+
 export class AppListingsRepository implements IAppListingsRepository {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly service: IAppListingsService) {}
 
   async getAll(params: {
     page: number;
@@ -24,22 +24,14 @@ export class AppListingsRepository implements IAppListingsRepository {
     categoryId?: string;
     isPublished?: boolean;
     isFeatured?: boolean;
+    sortBy?: "popular" | "rating" | "newest" | "price";
+    pricingModel?: "Free" | "OneTime" | "Subscription";
   }): Promise<PagedResult<AppListing>> {
-    const query = new URLSearchParams({
-      page: String(params.page),
-      pageSize: String(params.pageSize),
-      ...(params.search && { search: params.search }),
-      ...(params.categoryId && { categoryId: params.categoryId }),
-      ...(params.isPublished !== undefined && { isPublished: String(params.isPublished) }),
-      ...(params.isFeatured !== undefined && { isFeatured: String(params.isFeatured) }),
-    });
-    const data = await this.api.get<AppListingListDto>(
-      `${MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG}?${query}`
-    );
+    const data = await this.service.getAll(params);
     return {
       items: data.items.map(AppListingMapper.toEntity),
       totalCount: data.totalCount,
-      page: data.page,
+      page: data.pageNumber,
       pageSize: data.pageSize,
       totalPages: data.totalPages,
       hasNextPage: data.hasNextPage,
@@ -48,48 +40,41 @@ export class AppListingsRepository implements IAppListingsRepository {
   }
 
   async getById(id: string): Promise<AppListing> {
-    const data = await this.api.get<AppListingDto>(
-      MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_BY_ID(id)
-    );
+    const data = await this.service.getById(id);
     return AppListingMapper.toEntity(data);
   }
 
   async getFeatured(): Promise<AppListing[]> {
-    const data = await this.api.get<AppListingDto[]>(
-      MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_FEATURED
-    );
+    const data = await this.service.getFeatured();
     return data.map(AppListingMapper.toEntity);
   }
 
-  async create(data: Parameters<IAppListingsRepository["create"]>[0]): Promise<string> {
-    const result = await this.api.post<{ id: string }>(
-      MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG,
-      data
-    );
+  async create(payload: Parameters<IAppListingsRepository["create"]>[0]): Promise<string> {
+    const result = await this.service.create(payload);
     return result.id;
   }
 
-  async update(id: string, data: Parameters<IAppListingsRepository["update"]>[1]): Promise<void> {
-    await this.api.put(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_BY_ID(id), data);
+  async update(id: string, payload: Parameters<IAppListingsRepository["update"]>[1]): Promise<void> {
+    await this.service.update(id, payload);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_BY_ID(id));
+    await this.service.delete(id);
   }
 
   async publish(id: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_PUBLISH(id), {});
+    await this.service.publish(id);
   }
 
   async unpublish(id: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_UNPUBLISH(id), {});
+    await this.service.unpublish(id);
   }
 
   async toggleFeatured(id: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_FEATURE(id), {});
+    await this.service.toggleFeatured(id);
   }
 
-  async setPricing(id: string, data: Parameters<IAppListingsRepository["setPricing"]>[1]): Promise<void> {
-    await this.api.put(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG_PRICING(id), data);
+  async setPricing(id: string, payload: Parameters<IAppListingsRepository["setPricing"]>[1]): Promise<void> {
+    await this.service.setPricing(id, payload);
   }
 }

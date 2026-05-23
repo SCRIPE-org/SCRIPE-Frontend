@@ -13,35 +13,66 @@ import type {
   UpdateRoleRequest,
   AssignPermissionsRequest,
 } from "../../domain/entities/RoleRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+
+// ─── Role Response Schema ────────────────────────────────────────────────────
+
+const RolePermissionModelSchema = z.object({
+  permissionId: uuidField(),
+  permissionCode: z.string().min(1),
+  scope: z.string().optional().nullable(),
+});
+
+const RoleModelSchema = z.object({
+  id: uuidField(),
+  nameEn: z.string().min(1),
+  nameAr: z.string().optional().default(""),
+  code: z.string().optional().nullable(),
+  isSystem: z.boolean().optional().default(false),
+  priority: z.number().int().optional().default(0),
+  isActive: z.boolean(),
+  permissions: z.array(RolePermissionModelSchema).optional().default([]),
+  createdAt: isoDateString().optional(),
+  descriptionEn: optionalString(),
+  descriptionAr: optionalString(),
+  tenantId: optionalString(),
+  tenantName: optionalString(),
+  modifiedAt: isoDateString().optional().nullable(),
+  groupNamesEn: z.array(z.string()).optional(),
+  groupNamesAr: z.array(z.string()).optional(),
+});
 
 export class RoleMapper {
   /**
    * Map Model (DTO) to Domain Entity
    */
   static toEntity(model: RoleModel.RoleModel): Role {
-    const permissions: RolePermission[] = model.permissions.map((p) => ({
+    // Validate API response shape — logs warnings on contract drift
+    const validated = safeParseApiResponse(RoleModelSchema, model, "Role");
+    const permissions: RolePermission[] = (validated.permissions ?? []).map((p) => ({
       permissionId: p.permissionId,
       permissionCode: p.permissionCode,
-      scope: p.scope,
+      scope: p.scope ?? undefined,
     }));
 
     const props: RoleProps = {
-      id: model.id,
-      nameEn: model.nameEn,
-      nameAr: model.nameAr,
-      code: model.code,
-      isSystem: model.isSystem,
-      priority: model.priority,
-      isActive: model.isActive,
+      id: validated.id,
+      nameEn: validated.nameEn,
+      nameAr: validated.nameAr ?? "",
+      code: validated.code ?? "",
+      isSystem: validated.isSystem,
+      priority: validated.priority,
+      isActive: validated.isActive,
       permissions,
-      createdAt: model.createdAt,
-      descriptionEn: model.descriptionEn,
-      descriptionAr: model.descriptionAr,
-      tenantId: model.tenantId,
-      tenantName: model.tenantName,
-      modifiedAt: model.modifiedAt,
-      groupNamesEn: model.groupNamesEn,
-      groupNamesAr: model.groupNamesAr,
+      createdAt: validated.createdAt ?? "",
+      descriptionEn: validated.descriptionEn ?? undefined,
+      descriptionAr: validated.descriptionAr ?? undefined,
+      tenantId: validated.tenantId ?? undefined,
+      tenantName: validated.tenantName ?? undefined,
+      modifiedAt: validated.modifiedAt ?? undefined,
+      groupNamesEn: validated.groupNamesEn,
+      groupNamesAr: validated.groupNamesAr,
     };
 
     return new Role(props);

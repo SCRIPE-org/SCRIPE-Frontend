@@ -1,4 +1,3 @@
-"use client";
 
 export type PayoutStatus = "Pending" | "Processing" | "Paid" | "Failed";
 

@@ -8,11 +8,18 @@
 
 // ── Sub-module Views ─────────────────────────────────────────────────────────
 export { AppListingsView } from "./app-listings/src/presentation/views/AppListingsView";
+export { AppDetailView } from "./app-listings/src/presentation/views/AppDetailView";
 export { CategoriesView } from "./categories/src/presentation/views/CategoriesView";
 export { SubmissionsView } from "./submissions/src/presentation/views/SubmissionsView";
 export { DevelopersView } from "./developers/src/presentation/views/DevelopersView";
 export { ReviewsView } from "./reviews/src/presentation/views/ReviewsView";
 export { FinancialsView } from "./financials/src/presentation/views/FinancialsView";
+
+// ── Reusable Components (Phase 5.4) ──────────────────────────────────────────
+export { DeveloperBadge } from "./developers/src/presentation/components/DeveloperBadge";
+export { RevenueChart } from "./financials/src/presentation/components/RevenueChart";
+export type { RevenueDataPoint } from "./financials/src/presentation/components/RevenueChart";
+
 
 // ── Domain Entities (shared) ─────────────────────────────────────────────────
 export { AppListing } from "./app-listings/src/domain/entities/AppListing";

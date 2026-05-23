@@ -1,45 +1,62 @@
-import type { IApiService } from "@core/interfaces/api.interface";
-import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
+/**
+ * SubmissionsRepository
+ *
+ * Bridges the service and domain layers:
+ * 1. Delegates HTTP calls to SubmissionsService (injected via ISubmissionsService)
+ * 2. Maps DTOs → AppSubmission domain entities
+ * 3. Returns typed domain entities to the presentation layer
+ *
+ * Architecture (H-02 refactor):
+ *   ViewModel → SubmissionsRepository (this) → ISubmissionsService → IApiService → HTTP
+ */
+import type { ISubmissionsService } from "../../domain/interfaces/ISubmissionsService";
 import { AppSubmission } from "../../domain/entities/AppSubmission";
+import type { AppSubmissionData } from "../../domain/entities/AppSubmission";
 import type { ISubmissionsRepository } from "../../domain/interfaces/ISubmissionsRepository";
+import type { SubmissionDto } from "../../domain/interfaces/ISubmissionsService";
 
 export class SubmissionsRepository implements ISubmissionsRepository {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly service: ISubmissionsService) {}
 
   async getAll(params: { page: number; pageSize: number; status?: string }) {
-    const q = new URLSearchParams({ page: String(params.page), pageSize: String(params.pageSize), ...(params.status && { status: params.status }) });
-    const data = await this.api.get<any>(`${MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSIONS}?${q}`);
+    const data = await this.service.getAll(params);
     return { ...data, items: (data.items ?? []).map(this.map) };
   }
 
   async getById(id: string): Promise<AppSubmission> {
-    const data = await this.api.get<any>(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSION_BY_ID(id));
-    return this.map(data);
+    return this.map(await this.service.getById(id));
   }
 
-  async create(payload: any): Promise<string> {
-    const r = await this.api.post<{ id: string }>(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSIONS, payload);
+  async create(payload: Parameters<ISubmissionsRepository["create"]>[0]): Promise<string> {
+    const r = await this.service.create(payload);
     return r.id;
   }
 
-  async approve(id: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSION_APPROVE(id), {});
+  /** M-10 fix: sends { feedback } as body, matching ReviewSubmissionRequest. */
+  async approve(id: string, feedback: string = ""): Promise<void> {
+    await this.service.approve(id, feedback);
   }
 
-  async reject(id: string, notes: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSION_REJECT(id), { notes });
+  /** M-11 fix: sends { feedback } matching backend expectation. */
+  async reject(id: string, feedback: string): Promise<void> {
+    await this.service.reject(id, feedback);
   }
 
-  async requestRevisions(id: string, notes: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSION_REQUEST_REVISIONS(id), { notes });
+  async requestRevisions(id: string, feedback: string): Promise<void> {
+    await this.service.requestRevisions(id, feedback);
   }
 
-  private map(d: any): AppSubmission {
+  private map(d: SubmissionDto): AppSubmission {
     return new AppSubmission({
-      id: d.id, appListingId: d.appListingId, appName: d.appName ?? "",
-      developerName: d.developerName ?? "", submittedVersion: d.submittedVersion ?? "",
-      status: d.status ?? "Pending", reviewerNotes: d.reviewerNotes ?? null,
-      submittedAt: d.submittedAt ?? new Date().toISOString(), reviewedAt: d.reviewedAt ?? null,
+      id: d.id,
+      appListingId: d.appListingId,
+      appName: d.appName ?? "",
+      developerName: d.developerName ?? "",
+      submittedVersion: d.submittedVersion ?? "",
+      status: (d.status ?? "Pending") as AppSubmissionData["status"],
+      reviewerNotes: d.reviewerNotes ?? null,
+      submittedAt: d.submittedAt ?? new Date().toISOString(),
+      reviewedAt: d.reviewedAt ?? null,
     });
   }
 }

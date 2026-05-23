@@ -23,31 +23,76 @@ import type {
   CreateTenantRequest,
   UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, isoDateString, optionalIsoDate } from "@core/common/zod-utils";
+
+// ─── Tenant Response Schema ────────────────────────────────────────────────────
+
+const TenantModelSchema = z.object({
+  id: z.string().optional().nullable(), // nullable: system tenant
+  name: z.string().min(1),
+  code: optionalString(),
+  level: z.number().int().optional().default(0),
+  path: optionalString(),
+  isActive: z.boolean(),
+  createdAt: isoDateString().optional(),
+  parentId: optionalString(),
+  parentName: optionalString(),
+  description: optionalString(),
+  settings: z.record(z.string(), z.unknown()).optional().nullable(),
+  modifiedAt: optionalIsoDate(),
+  editionName: optionalString(),
+  editionEndDate: optionalIsoDate(),
+  primaryDomain: optionalString(),
+  domainCount: z.number().int().optional().default(0),
+  adminEmail: optionalString(),
+  children: z.array(z.unknown()).optional(),
+});
+
+const TenantTreeNodeModelSchema = z.object({
+  id: z.string().optional().nullable(),
+  name: z.string().min(1),
+  code: z.string().optional().nullable(),
+  level: z.number().int().optional().default(0),
+  isActive: z.boolean().optional().default(true),
+  isSuspended: z.boolean().optional().default(false),
+  // suspensionType and subscriptionStatus: backend sends number, entity stores as string
+  suspensionType: z.union([z.number(), z.string()]).optional().nullable(),
+  suspensionReason: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  parentId: z.string().optional().nullable(),
+  editionName: z.string().optional().nullable(),
+  editionEndDate: z.string().optional().nullable(),
+  subscriptionStatus: z.union([z.number(), z.string()]).optional().nullable(),
+  children: z.array(z.unknown()).optional().default([]),
+});
 
 export class TenantMapper {
   /**
    * Map Model (DTO) to Domain Entity
    */
   static toEntity(model: TenantModel): Tenant {
+    // Validate API response shape — logs warnings on contract drift
+    const validated = safeParseApiResponse(TenantModelSchema, model, "Tenant");
     const props: TenantProps = {
-      id: model.id ?? SYSTEM_TENANT_ID,
-      name: model.name,
-      code: model.code,
-      level: model.level,
-      path: model.path,
-      isActive: model.isActive,
-      createdAt: model.createdAt,
-      parentId: model.parentId,
-      parentName: model.parentName,
-      description: model.description,
-      settings: model.settings,
-      modifiedAt: model.modifiedAt,
-      editionName: model.editionName,
-      editionEndDate: model.editionEndDate,
-      primaryDomain: model.primaryDomain,
-      domainCount: model.domainCount,
-      adminEmail: model.adminEmail,
-      children: model.children?.map((c) => TenantMapper.toEntity(c).toProps()),
+      id: (validated.id as string | null | undefined) ?? SYSTEM_TENANT_ID,
+      name: validated.name,
+      code: validated.code ?? "",
+      level: validated.level,
+      path: validated.path ?? "",
+      isActive: validated.isActive,
+      createdAt: validated.createdAt ?? "",
+      parentId: validated.parentId ?? undefined,
+      parentName: validated.parentName ?? undefined,
+      description: validated.description ?? undefined,
+      settings: validated.settings as Record<string, unknown> | undefined,
+      modifiedAt: validated.modifiedAt ?? undefined,
+      editionName: validated.editionName ?? undefined,
+      editionEndDate: validated.editionEndDate ?? undefined,
+      primaryDomain: validated.primaryDomain ?? undefined,
+      domainCount: validated.domainCount,
+      adminEmail: validated.adminEmail ?? undefined,
+      children: model.children?.map((c) => TenantMapper.toEntity(c as TenantModel).toProps()),
     };
     return new Tenant(props);
   }
@@ -56,21 +101,25 @@ export class TenantMapper {
    * Map TenantTreeNodeModel to TenantTreeNode
    */
   static toTreeNode(model: TenantTreeNodeModel): TenantTreeNode {
+    const validated = safeParseApiResponse(TenantTreeNodeModelSchema, model, "TenantTreeNode");
     const props: TenantTreeNodeProps = {
-      id: model.id ?? SYSTEM_TENANT_ID,
-      name: model.name,
-      code: model.code,
-      level: model.level,
-      isActive: model.isActive,
-      isSuspended: model.isSuspended,
-      suspensionType: model.suspensionType,
-      suspensionReason: model.suspensionReason,
-      description: model.description,
-      parentId: model.parentId,
-      editionName: model.editionName,
-      editionEndDate: model.editionEndDate,
-      subscriptionStatus: model.subscriptionStatus,
-      children: model.children.map((c) => TenantMapper.toTreeNode(c)),
+      id: (validated.id as string | null | undefined) ?? SYSTEM_TENANT_ID,
+      name: validated.name,
+      code: validated.code ?? "",
+      level: validated.level,
+      isActive: validated.isActive,
+      isSuspended: validated.isSuspended,
+      // suspensionType may come as number from backend — entity stores as string
+      suspensionType:
+        validated.suspensionType != null ? String(validated.suspensionType) : undefined,
+      suspensionReason: validated.suspensionReason ?? undefined,
+      description: validated.description ?? undefined,
+      parentId: validated.parentId ?? undefined,
+      editionName: validated.editionName ?? undefined,
+      editionEndDate: validated.editionEndDate ?? undefined,
+      subscriptionStatus:
+        validated.subscriptionStatus != null ? String(validated.subscriptionStatus) : undefined,
+      children: (model.children ?? []).map((c) => TenantMapper.toTreeNode(c as TenantTreeNodeModel)),
     };
     return props as TenantTreeNode;
   }

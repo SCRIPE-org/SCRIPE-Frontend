@@ -74,10 +74,19 @@ async function loadFederatedModule(
   const container = (window as unknown as Record<string, unknown>)[scope] as FederationContainer | undefined;
   if (!container) throw new Error(`Remote container "${scope}" not found on window`);
 
-  await container.init(__webpack_share_scopes__.default);
+  // G12 Fix: __webpack_share_scopes__ is a webpack-only global.
+  // Under Turbopack (Next.js --turbo), this global does not exist.
+  // We use an empty shared scope as a safe fallback — the plugin's own
+  // internal dependencies will still resolve via its own bundled scope.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const shareScope = typeof __webpack_share_scopes__ !== "undefined"
+    ? __webpack_share_scopes__.default
+    : {};
+  await container.init(shareScope);
   const factory = await container.get(module);
   const mod = factory() as { default: ComponentType<{ installationId: string }> };
   return mod.default;
+
 }
 
 function loadScript(url: string): Promise<void> {
@@ -99,4 +108,4 @@ interface FederationContainer {
   get(module: string): Promise<() => unknown>;
 }
 
-declare const __webpack_share_scopes__: { default: unknown };
+declare const __webpack_share_scopes__: { default: unknown } | undefined;

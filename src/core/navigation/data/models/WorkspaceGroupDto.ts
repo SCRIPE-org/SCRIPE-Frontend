@@ -20,8 +20,10 @@ export interface WorkspaceGroupDto {
   menuItems?: MenuItemDto[];
   /** True when this workspace is visible but not licensed for the current tenant. Backend-authoritative. */
   isLocked?: boolean;
-  /** The workspace home/landing page route. Null = derive from first menu item. */
+  /** The workspace home/landing page route for tenant context. Null = derive from first menu item. */
   homeRoute?: string | null;
+  /** The workspace home/landing page route for platform context (no tenant). Null = falls back to homeRoute. */
+  platformHomeRoute?: string | null;
 }
 
 /**
@@ -40,6 +42,8 @@ export interface WorkspaceStubDto {
   workspaceType?: string;
   /** True when this workspace is visible but not licensed for the current tenant. Backend-authoritative. */
   isLocked?: boolean;
-  /** The workspace home/landing page route. Null = derive from first menu item. */
+  /** The workspace home/landing page route for tenant context. Null = derive from first menu item. */
   homeRoute?: string | null;
+  /** The workspace home/landing page route for platform context (no tenant). Null = falls back to homeRoute. */
+  platformHomeRoute?: string | null;
 }

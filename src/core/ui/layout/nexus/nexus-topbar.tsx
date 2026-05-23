@@ -49,6 +49,7 @@ export function NexusTopbar({
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
+  const tenantCode = useAppStore((s) => s.tenantCode);
   const { resolvedTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
@@ -126,9 +127,13 @@ export function NexusTopbar({
     };
   })();
 
-  // ── Home route — backend-authoritative per workspace ────────────────────────
-  // Falls back to "/" if the workspace has no homeRoute declared.
-  const workspaceHomeRoute = activeWorkspace?.homeRoute ?? "/";
+  // ── Home route — context-aware, backend-authoritative per workspace ───────────
+  // Platform context (no tenant): use platformHomeRoute > homeRoute > "/"
+  // Tenant context: use homeRoute > "/"
+  const isPlatformContext = tenantCode === null;
+  const workspaceHomeRoute = isPlatformContext
+    ? (activeWorkspace?.platformHomeRoute ?? activeWorkspace?.homeRoute ?? "/")
+    : (activeWorkspace?.homeRoute ?? "/");
   const isOnHome = pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
 
   if (!mounted) return <header data-nexus-topbar="" style={{ height: 56, flexShrink: 0 }} />;

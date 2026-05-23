@@ -18,6 +18,7 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { qk } from "@core/common/query-keys";
 
 export function useUsersViewModel() {
   const { usersRepository } = identityContainer;
@@ -25,7 +26,7 @@ export function useUsersViewModel() {
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
 
-  const queryKey = ["users"];
+  const queryKey = [...qk.users.all];
 
   // ============ Core CRUD ViewModel ============
   // No create (users self-register). Update + Delete only.
@@ -67,8 +68,22 @@ export function useUsersViewModel() {
   const toggleActiveMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       usersRepository.setActive(id, isActive),
+    onMutate: async ({ id, isActive }) => {
+      await queryClient.cancelQueries({ queryKey: qk.users.all });
+      const previous = queryClient.getQueryData(queryKey);
+      queryClient.setQueryData(queryKey, (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const data = old as { items?: Array<{ id: string; isActive: boolean }> };
+        if (!data.items) return old;
+        return { ...data, items: data.items.map((u) => (u.id === id ? { ...u, isActive } : u)) };
+      });
+      return { previous };
+    },
+    onError: (err: Error, __, context?: { previous: unknown }) => {
+      if (context?.previous !== undefined) queryClient.setQueryData(queryKey, context.previous);
+      toastError({ title: t("common.error") || "Error", description: err.message });
+    },
     onSuccess: (_, { isActive }) => {
-      queryClient.invalidateQueries({ queryKey });
       success({
         title: isActive
           ? t("users.activated") || "User Activated"
@@ -78,8 +93,8 @@ export function useUsersViewModel() {
           : t("users.deactivatedDesc") || "User has been deactivated.",
       });
     },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: qk.users.all });
     },
   });
 
@@ -87,7 +102,7 @@ export function useUsersViewModel() {
   const unlockMutation = useMutation({
     mutationFn: (id: string) => usersRepository.unlock(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
         title: t("users.unlocked") || "Account Unlocked",
         description: t("users.unlockedDesc") || "User account has been unlocked.",
@@ -102,7 +117,7 @@ export function useUsersViewModel() {
   const bulkActivateMutation = useMutation({
     mutationFn: (ids: string[]) => usersRepository.bulkActivate(ids),
     onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
         title: t("users.bulkActivated") || "Bulk Activated",
         description: `${count} ${t("users.usersActivated") || "users activated"}.`,
@@ -116,7 +131,7 @@ export function useUsersViewModel() {
   const bulkDeactivateMutation = useMutation({
     mutationFn: (ids: string[]) => usersRepository.bulkDeactivate(ids),
     onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
         title: t("users.bulkDeactivated") || "Bulk Deactivated",
         description: `${count} ${t("users.usersDeactivated") || "users deactivated"}.`,
@@ -130,7 +145,7 @@ export function useUsersViewModel() {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: string[]) => usersRepository.bulkDelete(ids),
     onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
         title: t("users.bulkDeleted") || "Bulk Deleted",
         description: `${count} ${t("users.usersDeleted") || "users deleted"}.`,
@@ -252,3 +267,4 @@ export function useUsersViewModel() {
     t,
   };
 }
+

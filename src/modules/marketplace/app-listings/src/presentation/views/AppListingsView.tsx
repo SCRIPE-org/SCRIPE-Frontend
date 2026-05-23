@@ -34,6 +34,10 @@ export function AppListingsView() {
         onSearch={vm.setSearch}
         onCategoryFilter={vm.setCategoryFilter}
         onPublishedFilter={vm.setPublishedFilter}
+        onSortChange={vm.setSortBy}
+        onPricingFilter={vm.setPricingModel}
+        sortBy={vm.sortBy}
+        pricingModel={vm.pricingModel}
       />
 
       {/* Listings grid */}

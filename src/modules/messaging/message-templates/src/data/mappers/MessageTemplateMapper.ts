@@ -22,36 +22,63 @@ import type {
   UpdateMessageTemplateJson,
   PreviewTemplateJson,
 } from "../models/MessageTemplateModel";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const MessageTemplateJsonSchema = z.object({
+  id: uuidField(),
+  key: z.string().min(1),
+  channel: z.string().min(1),
+  subject: optionalString(),
+  body: z.string().optional().nullable(),
+  language: z.string().optional().default("en"),
+  isActive: z.boolean().optional().default(true),
+  tenantId: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  placeholderSchema: z.string().optional().nullable(),
+  designVariables: z.string().optional().nullable(),
+  version: z.number().int().optional().default(1),
+  createdAt: z.string().optional().nullable(),
+  modifiedAt: z.string().optional().nullable(),
+  category: z.string().optional().nullable(),
+  tags: z.string().optional().nullable(),
+  usageCount: z.number().int().optional().default(0),
+  lastUsedAt: z.string().optional().nullable(),
+});
 
 export class MessageTemplateMapper {
   /**
    * Convert MessageTemplateJson → MessageTemplate Entity
    */
   static toEntity(json: MessageTemplateJson): MessageTemplate {
+    const validated = safeParseApiResponse(MessageTemplateJsonSchema, json, "MessageTemplate");
+
     let placeholderSchema: PlaceholderDefinition[] = [];
-    if (json.placeholderSchema) {
+    if (validated.placeholderSchema) {
       try {
-        placeholderSchema = JSON.parse(json.placeholderSchema);
+        placeholderSchema = JSON.parse(validated.placeholderSchema);
       } catch {
         placeholderSchema = [];
       }
     }
 
     let designVariables: Record<string, string> | null = null;
-    if (json.designVariables) {
+    if (validated.designVariables) {
       try {
-        designVariables = JSON.parse(json.designVariables);
+        designVariables = JSON.parse(validated.designVariables);
       } catch {
         designVariables = null;
       }
     }
 
     let tags: string[] | undefined;
-    if (json.tags) {
+    if (validated.tags) {
       try {
-        tags = JSON.parse(json.tags);
+        tags = JSON.parse(validated.tags);
       } catch {
-        tags = json.tags
+        tags = validated.tags
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean);
@@ -59,24 +86,24 @@ export class MessageTemplateMapper {
     }
 
     const data: MessageTemplateData = {
-      id: json.id,
-      key: json.key,
-      channel: json.channel as MessageTemplate["channel"],
-      subject: json.subject,
-      body: json.body,
-      language: json.language,
-      isActive: json.isActive,
-      tenantId: json.tenantId,
-      description: json.description,
+      id: validated.id,
+      key: validated.key,
+      channel: validated.channel as MessageTemplate["channel"],
+      subject: validated.subject ?? null,
+      body: validated.body ?? "",
+      language: validated.language ?? "en",
+      isActive: validated.isActive ?? true,
+      tenantId: validated.tenantId ?? null,
+      description: validated.description ?? null,
       placeholderSchema,
       designVariables,
-      version: json.version,
-      createdAt: json.createdAt,
-      modifiedAt: json.modifiedAt,
-      category: json.category as MessageTemplateData["category"],
+      version: validated.version ?? 1,
+      createdAt: validated.createdAt ?? "",
+      modifiedAt: validated.modifiedAt ?? null,
+      category: validated.category as MessageTemplateData["category"],
       tags,
-      usageCount: json.usageCount,
-      lastUsedAt: json.lastUsedAt,
+      usageCount: validated.usageCount ?? undefined,
+      lastUsedAt: validated.lastUsedAt ?? undefined,
     };
     return new MessageTemplate(data);
   }

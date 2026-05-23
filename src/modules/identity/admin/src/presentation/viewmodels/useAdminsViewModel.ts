@@ -25,6 +25,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { useImpersonation } from "@modules/auth/core/src/presentation/viewmodels/useImpersonation";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { qk } from "@core/common/query-keys";
 
 /**
  * useAdminsViewModel hook options
@@ -53,12 +54,12 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);
 
-  // Build query key based on mode
-  const queryKey = tenantId
-    ? ["admins", "tenant", tenantId]
+  // Build query key using the factory — consistent with invalidation
+  const queryKey: string[] = tenantId
+    ? [...qk.admins.active(tenantId)]
     : useMyTenant
-      ? ["admins", "myTenant"]
-      : ["admins"];
+      ? [...qk.admins.all, "myTenant"]
+      : [...qk.admins.all];
 
   // ============ Core CRUD ViewModel (React Query Engine) ============
   // Using 'any' for Create/Update types as repository returns string/void but useCrudViewModel expects entities
@@ -137,12 +138,36 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
   // ============ Additional Admin-Specific Operations ============
 
-  // Toggle active status mutation
+  // Toggle active status mutation — optimistic update
   const toggleActiveMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       adminRepository.setActive(id, isActive),
+    onMutate: async ({ id, isActive }) => {
+      // Cancel any in-flight refetches to avoid overwriting optimistic state
+      await queryClient.cancelQueries({ queryKey: qk.admins.all });
+      const previous = queryClient.getQueryData(queryKey);
+      // Optimistically flip isActive on the matching admin in the list
+      queryClient.setQueryData(queryKey, (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const data = old as { items?: Array<{ id: string; isActive: boolean }> };
+        if (!data.items) return old;
+        return {
+          ...data,
+          items: data.items.map((item) =>
+            item.id === id ? { ...item, isActive } : item
+          ),
+        };
+      });
+      return { previous };
+    },
+    onError: (err: Error, __, context?: { previous: unknown }) => {
+      // Roll back optimistic update
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
+      toastError({ title: t("common.error") || "Error", description: err.message });
+    },
     onSuccess: (_, { isActive }) => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
       success({
         title: isActive
           ? t("admin.activated") || "Admin Activated"
@@ -150,8 +175,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         description: `Administrator has been ${isActive ? "activated" : "deactivated"}.`,
       });
     },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+    onSettled: () => {
+      // Always re-sync with server after settle
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
     },
   });
 
@@ -160,7 +186,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     mutationFn: ({ adminId, request }: { adminId: string; request: AssignRoleRequest }) =>
       adminRepository.assignRole(adminId, request),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
         title: t("admin.role.assigned") || "Role Assigned",
         description: t("admin.role.assignedDesc") || "Role assigned successfully.",
@@ -183,7 +209,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       tenantId?: string;
     }) => adminRepository.removeRole(adminId, roleId, tenantId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
         title: t("admin.role.removed") || "Role Removed",
         description: t("admin.role.removedDesc") || "Role removed successfully.",
@@ -199,7 +225,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     mutationFn: ({ adminId, newPassword }: { adminId: string; newPassword: string }) =>
       adminRepository.resetPassword(adminId, newPassword),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
         title: t("admin.passwordReset") || "Password Reset",
         description: t("admin.passwordResetDesc") || "Password has been reset successfully.",
@@ -229,7 +255,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       request: import("../../domain/entities/AdminRequests").TransferAdminRequest;
     }) => adminRepository.transfer(id, request),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
         title: t("admin.transferred") || "Admin Transferred",
         description: t("admin.transferredDesc") || "Admin transferred successfully.",
@@ -245,9 +271,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     mutationFn: ({ targetAdminId }: { targetAdminId: string }) =>
       adminRepository.transferProtection({ targetAdminId }),
     onSuccess: async () => {
-      // Refresh admin list
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
-      // Refresh current user data (isProtected has changed)
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       try {
         const user = await authRepository.getMe();
         if (user) {
@@ -271,7 +295,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const resendSetupEmailMutation = useMutation({
     mutationFn: ({ adminId }: { adminId: string }) => adminRepository.resendSetupEmail(adminId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
         title: t("admin.setupEmailResent") || "Setup Email Resent",
         description:
@@ -287,7 +311,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const bulkActivateMutation = useMutation({
     mutationFn: (ids: string[]) => adminRepository.bulkActivate(ids),
     onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({ title: "Bulk Activated", description: `${count} admins activated.` });
     },
   });
@@ -296,7 +320,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const bulkDeactivateMutation = useMutation({
     mutationFn: (ids: string[]) => adminRepository.bulkDeactivate(ids),
     onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({ title: "Bulk Deactivated", description: `${count} admins deactivated.` });
     },
   });
@@ -305,7 +329,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: string[]) => adminRepository.bulkDelete(ids),
     onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({ title: "Bulk Deleted", description: `${count} admins deleted.` });
     },
   });

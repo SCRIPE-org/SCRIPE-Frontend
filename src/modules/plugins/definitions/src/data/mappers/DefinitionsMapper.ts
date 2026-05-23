@@ -1,26 +1,52 @@
 import { PluginDefinition } from "@modules/plugins/catalog";
 import type { PluginDefinitionModel } from "@modules/plugins/catalog";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const PluginDefinitionModelSchema = z.object({
+  id: uuidField(),
+  key: z.string().min(1),
+  name: z.string().min(1),
+  nameAr: optionalString(),
+  description: optionalString(),
+  descriptionAr: optionalString(),
+  tier: z.number().int().optional().default(2),
+  status: z.number().int().optional().default(1),
+  scope: z.number().int().optional().default(0),
+  iconUrl: z.string().optional().nullable(),
+  colorHue: z.number().optional().nullable(),
+  colorChroma: z.number().optional().nullable(),
+  workspaceKey: z.string().optional().nullable(),
+  manifestJson: z.string().optional().default("{}"),
+  baseUrl: z.string().optional().nullable(),
+  frontendUrl: z.string().optional().nullable(),
+  createdAt: z.string().optional().nullable(),
+});
 
 export class DefinitionsMapper {
   static toEntity(model: PluginDefinitionModel): PluginDefinition {
+    const validated = safeParseApiResponse(PluginDefinitionModelSchema, model, "PluginDefinition");
+
     return new PluginDefinition({
-      id: model.id ?? "",
-      key: model.key ?? "",
-      name: model.name ?? "",
-      nameAr: model.nameAr ?? "",
-      description: model.description ?? "",
-      descriptionAr: model.descriptionAr ?? "",
-      tier: model.tier ?? 2,
-      status: model.status ?? 1,
-      scope: model.scope ?? 0,
-      iconUrl: model.iconUrl,
-      colorHue: model.colorHue,
-      colorChroma: model.colorChroma,
-      workspaceKey: model.workspaceKey,
-      manifestJson: model.manifestJson ?? "{}",
-      baseUrl: model.baseUrl,
-      frontendUrl: model.frontendUrl,
-      createdAt: model.createdAt ?? new Date().toISOString(),
+      id: validated.id ?? "",
+      key: validated.key ?? "",
+      name: validated.name ?? "",
+      nameAr: validated.nameAr ?? "",
+      description: validated.description ?? "",
+      descriptionAr: validated.descriptionAr ?? "",
+      tier: (validated.tier ?? 2) as 1 | 2,
+      status: (validated.status ?? 1) as 1 | 2 | 3 | 4 | 5 | 6,
+      scope: validated.scope ?? 0,
+      iconUrl: validated.iconUrl ?? undefined,
+      colorHue: validated.colorHue ?? undefined,
+      colorChroma: validated.colorChroma ?? undefined,
+      workspaceKey: validated.workspaceKey ?? undefined,
+      manifestJson: validated.manifestJson ?? "{}",
+      baseUrl: validated.baseUrl ?? undefined,
+      frontendUrl: validated.frontendUrl ?? undefined,
+      createdAt: validated.createdAt ?? new Date().toISOString(),
     });
   }
 

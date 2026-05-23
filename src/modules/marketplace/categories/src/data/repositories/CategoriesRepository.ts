@@ -1,44 +1,70 @@
-import type { IApiService } from "@core/interfaces/api.interface";
-import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
+/**
+ * CategoriesRepository
+ *
+ * Bridges the service and domain layers:
+ * 1. Delegates HTTP calls to CategoriesService (injected via ICategoriesService)
+ * 2. Maps DTOs → AppCategory domain entities
+ * 3. Returns typed domain entities to the presentation layer
+ *
+ * Architecture (H-02 refactor):
+ *   ViewModel → CategoriesRepository (this) → ICategoriesService → IApiService → HTTP
+ */
+import type { ICategoriesService } from "../../domain/interfaces/ICategoriesService";
 import { AppCategory } from "../../domain/entities/AppCategory";
 import type { AppCategoryData } from "../../domain/entities/AppCategory";
 import type { ICategoriesRepository } from "../../domain/interfaces/ICategoriesRepository";
+import type { CategoryDto } from "../../domain/interfaces/ICategoriesService";
 
 export class CategoriesRepository implements ICategoriesRepository {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly service: ICategoriesService) {}
 
   async getAll(): Promise<AppCategory[]> {
-    const data = await this.api.get<any[]>(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORIES);
+    const data = await this.service.getAll();
     return data.map((d) => this.map(d));
   }
 
   async getById(id: string): Promise<AppCategory> {
-    const data = await this.api.get<any>(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORY_BY_ID(id));
-    return this.map(data);
+    return this.map(await this.service.getById(id));
   }
 
-  async create(payload: any): Promise<string> {
-    const r = await this.api.post<{ id: string }>(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORIES, payload);
+  async create(payload: Parameters<ICategoriesRepository["create"]>[0]): Promise<string> {
+    const r = await this.service.create({
+      nameEn: payload.nameEn ?? "",
+      nameAr: payload.nameAr ?? "",
+      slug: payload.slug ?? "",
+      icon: payload.icon ?? "",
+      description: payload.description ?? "",
+      sortOrder: payload.sortOrder ?? 0,
+    });
     return r.id;
   }
 
-  async update(id: string, payload: any): Promise<void> {
-    await this.api.put(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORY_BY_ID(id), payload);
+  async update(id: string, payload: Parameters<ICategoriesRepository["update"]>[1]): Promise<void> {
+    await this.service.update(id, {
+      nameEn: payload.nameEn ?? "",
+      nameAr: payload.nameAr ?? "",
+      slug: payload.slug ?? "",
+      icon: payload.icon ?? "",
+      description: payload.description ?? "",
+      sortOrder: payload.sortOrder ?? 0,
+    });
   }
+
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORY_BY_ID(id));
+    await this.service.delete(id);
   }
 
-  private map(d: any): AppCategory {
+  /** M-14 fix: Map d.icon (backend field) not d.iconUrl (non-existent). */
+  private map(d: CategoryDto): AppCategory {
     return new AppCategory({
       id: d.id ?? "",
-      name: d.name ?? "",
+      name: d.nameEn ?? "",
       nameAr: d.nameAr ?? "",
       slug: d.slug ?? "",
-      iconUrl: d.iconUrl ?? null,
+      iconUrl: d.icon ?? null,
       description: d.description ?? "",
-      descriptionAr: d.descriptionAr ?? "",
+      descriptionAr: "",
       appCount: d.appCount ?? 0,
       sortOrder: d.sortOrder ?? 0,
       isActive: d.isActive ?? true,

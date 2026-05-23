@@ -26,7 +26,10 @@ export interface IAppListingsRepository {
     categoryId?: string;
     isPublished?: boolean;
     isFeatured?: boolean;
+    sortBy?: "popular" | "rating" | "newest" | "price";
+    pricingModel?: "Free" | "OneTime" | "Subscription";
   }): Promise<PagedResult<AppListing>>;
+
 
   /** Single listing by encrypted ID */
   getById(id: string): Promise<AppListing>;
@@ -36,6 +39,7 @@ export interface IAppListingsRepository {
 
   /** Create a new listing */
   create(data: {
+    developerProfileId: string;
     name: string;
     nameAr: string;
     description: string;
@@ -50,6 +54,7 @@ export interface IAppListingsRepository {
     iconUrl?: string;
     screenshotUrls?: string[];
   }): Promise<string>;
+
 
   /** Update an existing listing */
   update(id: string, data: Partial<{

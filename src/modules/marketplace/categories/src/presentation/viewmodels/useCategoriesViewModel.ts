@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { marketplaceContainer } from "../../../../di";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export function useCategoriesViewModel() {
   const queryClient = useQueryClient();
   const { categoriesRepository } = marketplaceContainer;
+  const { success, error: showError } = useEnhancedToast();
+  const { t } = useI18n();
+
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "categories"] });
 
   const categoriesQuery = useQuery({
@@ -17,7 +21,13 @@ export function useCategoriesViewModel() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => categoriesRepository.delete(id),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      success({ title: t("marketplace.categories.deleted") || "Category deleted" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
+    },
   });
 
   const categories = categoriesQuery.data ?? [];

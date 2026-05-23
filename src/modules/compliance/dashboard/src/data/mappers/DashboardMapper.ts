@@ -5,11 +5,34 @@
 import { ComplianceDashboard } from "../../domain/entities/DashboardData";
 import type { DashboardData, RegulationCoverageData } from "../../domain/entities/DashboardData";
 import type { DashboardModel, RegulationCoverageModel } from "../models/DashboardModels";
+import { z } from "zod";
+import { safeParseApiResponse, optionalString } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const RegulationCoverageSchema = z.object({
+  code: optionalString(),
+  name: optionalString(),
+  isActive: z.boolean().optional().default(false),
+  tenantsUsingCount: z.number().int().optional().default(0),
+});
+
+const DashboardModelSchema = z.object({
+  openDsrCount: z.number().int().optional().default(0),
+  pendingDsrCount: z.number().int().optional().default(0),
+  overdueDsrCount: z.number().int().optional().default(0),
+  slaCompliancePercent: z.number().optional().default(0),
+  consentOptInRate: z.number().optional().default(0),
+  subjectsRequiringReConsent: z.number().int().optional().default(0),
+  regulationCoverage: z.array(RegulationCoverageSchema).optional().default([]),
+});
 
 export class DashboardMapper {
   static toEntity(model: DashboardModel): ComplianceDashboard {
-    const coverage: RegulationCoverageData[] = (model.regulationCoverage ?? []).map(
-      (r: RegulationCoverageModel): RegulationCoverageData => ({
+    const validated = safeParseApiResponse(DashboardModelSchema, model, "ComplianceDashboard");
+
+    const coverage: RegulationCoverageData[] = (validated.regulationCoverage ?? []).map(
+      (r): RegulationCoverageData => ({
         code: r.code ?? "",
         name: r.name ?? "",
         isActive: r.isActive ?? false,
@@ -18,12 +41,12 @@ export class DashboardMapper {
     );
 
     const data: DashboardData = {
-      openDsrCount: model.openDsrCount ?? 0,
-      pendingDsrCount: model.pendingDsrCount ?? 0,
-      overdueDsrCount: model.overdueDsrCount ?? 0,
-      slaCompliancePercent: model.slaCompliancePercent ?? 0,
-      consentOptInRate: model.consentOptInRate ?? 0,
-      subjectsRequiringReConsent: model.subjectsRequiringReConsent ?? 0,
+      openDsrCount: validated.openDsrCount ?? 0,
+      pendingDsrCount: validated.pendingDsrCount ?? 0,
+      overdueDsrCount: validated.overdueDsrCount ?? 0,
+      slaCompliancePercent: validated.slaCompliancePercent ?? 0,
+      consentOptInRate: validated.consentOptInRate ?? 0,
+      subjectsRequiringReConsent: validated.subjectsRequiringReConsent ?? 0,
       regulationCoverage: coverage,
     };
     return new ComplianceDashboard(data);

@@ -9,6 +9,8 @@ export class PluginInstallation {
   get pluginName() { return this.data.pluginName; }
   get pluginNameAr() { return this.data.pluginNameAr; }
   get iconUrl() { return this.data.iconUrl ?? null; }
+  /** The plugin's own frontend app URL — load this in PluginFrame. Distinct from iconUrl. */
+  get frontendUrl() { return this.data.frontendUrl ?? null; }
   get status() { return this.data.status; }
   get isActive() { return this.data.status === 2; }
   get isDisabled() { return this.data.status === 3; }

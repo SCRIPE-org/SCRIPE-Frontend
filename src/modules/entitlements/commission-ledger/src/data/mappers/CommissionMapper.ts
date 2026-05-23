@@ -4,28 +4,55 @@ import {
   CommissionLedgerEntryData,
 } from "../../domain/entities/CommissionLedgerEntry";
 import { CommissionInvoice, CommissionInvoiceData } from "../../domain/entities/CommissionInvoice";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const CommissionLedgerEntrySchema = z.object({
+  id: uuidField(),
+  tenantId: uuidField(),
+  userSubscriptionId: z.string().optional().nullable(),
+  paymentTransactionId: z.string().optional().nullable(),
+  commissionInvoiceId: z.string().optional().nullable(),
+  gateway: optionalString(),
+  gatewayTransactionId: optionalString(),
+  grossAmount: z.number().optional().default(0),
+  commissionRate: z.number().optional().default(0),
+  commissionAmount: z.number().optional().default(0),
+  netAmount: z.number().optional().default(0),
+  currency: z.string().optional().default("USD"),
+  status: optionalString(),
+  collectionMethod: z.string().optional().default("PostBilling"),
+  stripePaymentIntentId: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  createdAt: optionalIsoDate(),
+  updatedAt: z.string().optional().nullable(),
+});
 
 export class CommissionMapper {
   static toLedgerEntity(model: CommissionLedgerEntryModel): CommissionLedgerEntry {
+    const validated = safeParseApiResponse(CommissionLedgerEntrySchema, model, "CommissionLedgerEntry");
+
     const data: CommissionLedgerEntryData = {
-      id: model.id,
-      tenantId: model.tenantId,
-      userSubscriptionId: model.userSubscriptionId ?? null,
-      paymentTransactionId: model.paymentTransactionId ?? null,
-      commissionInvoiceId: model.commissionInvoiceId ?? null,
-      gateway: model.gateway ?? "",
-      gatewayTransactionId: model.gatewayTransactionId ?? "",
-      grossAmount: model.grossAmount ?? 0,
-      commissionRate: model.commissionRate ?? 0,
-      commissionAmount: model.commissionAmount ?? 0,
-      netAmount: model.netAmount ?? 0,
-      currency: model.currency ?? "USD",
-      status: model.status ?? "",
-      collectionMethod: model.collectionMethod ?? "PostBilling",
-      stripePaymentIntentId: model.stripePaymentIntentId ?? null,
-      notes: model.notes ?? null,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt ?? null,
+      id: validated.id,
+      tenantId: validated.tenantId,
+      userSubscriptionId: validated.userSubscriptionId ?? null,
+      paymentTransactionId: validated.paymentTransactionId ?? null,
+      commissionInvoiceId: validated.commissionInvoiceId ?? null,
+      gateway: validated.gateway ?? "",
+      gatewayTransactionId: validated.gatewayTransactionId ?? "",
+      grossAmount: validated.grossAmount ?? 0,
+      commissionRate: validated.commissionRate ?? 0,
+      commissionAmount: validated.commissionAmount ?? 0,
+      netAmount: validated.netAmount ?? 0,
+      currency: validated.currency ?? "USD",
+      status: validated.status ?? "",
+      collectionMethod: validated.collectionMethod ?? "PostBilling",
+      stripePaymentIntentId: validated.stripePaymentIntentId ?? null,
+      notes: validated.notes ?? null,
+      createdAt: validated.createdAt ?? "",
+      updatedAt: validated.updatedAt ?? null,
     };
     return new CommissionLedgerEntry(data);
   }

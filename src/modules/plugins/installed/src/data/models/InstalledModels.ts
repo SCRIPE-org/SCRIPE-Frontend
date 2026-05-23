@@ -7,6 +7,8 @@ export interface PluginInstallationModel {
   pluginName: string;
   pluginNameAr: string;
   iconUrl?: string;
+  /** Base URL of the plugin's embedded frontend app (for PluginFrame iframe). Distinct from iconUrl. */
+  frontendUrl?: string;
   status: InstallationStatus;
   settingsJson?: string;
   installedAt: string;

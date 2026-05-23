@@ -1,4 +1,3 @@
-"use client";
 
 /**
  * AppListing Data Models (DTOs)
@@ -36,7 +35,7 @@ export interface AppListingDto {
 export interface AppListingListDto {
   items: AppListingDto[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

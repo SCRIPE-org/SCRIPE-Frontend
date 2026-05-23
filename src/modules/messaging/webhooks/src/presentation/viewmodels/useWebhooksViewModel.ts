@@ -19,12 +19,14 @@ import type {
   CreateWebhookRequest,
   UpdateWebhookRequest,
 } from "../../domain/entities/WebhookRequests";
+import { qk } from "@core/common/query-keys";
 
+// Backward-compatible local keys (delegates to qk factory)
 export const webhookKeys = {
-  all: ["webhooks"] as const,
-  list: (filters: Record<string, unknown>) => [...webhookKeys.all, "list", filters] as const,
-  detail: (id: string) => [...webhookKeys.all, "detail", id] as const,
-  deliveries: (id: string) => [...webhookKeys.all, "deliveries", id] as const,
+  all: qk.webhooks.all,
+  list: (filters: Record<string, unknown>) => qk.webhooks.list(filters),
+  detail: (id: string) => qk.webhooks.detail(id),
+  deliveries: (id: string, params?: Record<string, unknown>) => qk.webhooks.deliveries(id, params),
   events: ["webhooks", "events"] as const,
   health: ["webhooks", "health"] as const,
 };
@@ -82,21 +84,41 @@ export function useWebhooksViewModel() {
     },
   });
 
-  // ============ Toggle Mutation ============
+  // ============ Toggle Mutation — Optimistic Update ============
   const toggleMutation = useMutation({
     mutationFn: (id: string) => webhookRepository.toggle(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: qk.webhooks.all });
+      const previousData = queryClient.getQueriesData({ queryKey: qk.webhooks.lists() });
+      // Optimistically flip isActive on the matching webhook in all list caches
+      queryClient.setQueriesData({ queryKey: qk.webhooks.lists() }, (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const data = old as { items?: Array<{ id: string; isActive: boolean }> };
+        if (!data.items) return old;
+        return {
+          ...data,
+          items: data.items.map((item) =>
+            item.id === id ? { ...item, isActive: !item.isActive } : item
+          ),
+        };
+      });
+      return { previousData };
+    },
+    onError: (err: Error, _, context?: { previousData: [readonly unknown[], unknown][] }) => {
+      // Roll back all list caches
+      context?.previousData?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
+      toastError({ title: t("common.error") || "Error", description: err.message });
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: webhookKeys.all });
       success({
         title: t("webhooks.toggled") || "Webhook Toggled",
         description: t("webhooks.toggledDesc") || "Webhook status updated.",
       });
     },
-    onError: (err: Error) => {
-      toastError({
-        title: t("common.error") || "Error",
-        description: err.message,
-      });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: qk.webhooks.all });
     },
   });
 

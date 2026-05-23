@@ -12,6 +12,10 @@ import {
   type ThemeBundleContents,
 } from "../../domain/entities/ThemeBundle";
 import type { ThemeBundleDto } from "../models/ThemeBundleTypes";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
 const VALID_BUNDLE_TYPES: BundleType[] = [
   "login-only",
@@ -20,41 +24,74 @@ const VALID_BUNDLE_TYPES: BundleType[] = [
   "full-bundle",
 ];
 
+const ThemeBundleContentsSchema = z.object({
+  loginThemeJson: z.string().optional().nullable(),
+  authPageOverrides: z.string().optional().nullable(),
+  dashboardThemeJson: z.string().optional().nullable(),
+  loginCanvasJson: z.string().optional().nullable(),
+  dashboardCanvasJson: z.string().optional().nullable(),
+}).optional().nullable();
+
+const ThemeBundleDtoSchema = z.object({
+  id: uuidField(),
+  slug: optionalString(),
+  name: optionalString(),
+  description: optionalString(),
+  bundleType: z.string().optional().default("full-bundle"),
+  contents: ThemeBundleContentsSchema,
+  accentColor: z.string().optional().default("#6366f1"),
+  thumbnailUrl: optionalString(),
+  screenshots: z.array(z.string()).optional().default([]),
+  tags: z.array(z.string()).optional().default([]),
+  authorName: z.string().optional().default("NEXORA"),
+  version: z.string().optional().default("1.0.0"),
+  publishedAt: optionalString(),
+  isFree: z.boolean().optional().default(true),
+  isSystem: z.boolean().optional().default(false),
+  isFeatured: z.boolean().optional().default(false),
+  minTierLevel: z.number().int().optional().default(0),
+  isFavorited: z.boolean().optional().default(false),
+  isApplied: z.boolean().optional().default(false),
+  isAvailable: z.boolean().optional().default(true),
+});
+
 export class ThemeBundleMapper {
   static toEntity(dto: ThemeBundleDto): ThemeBundle {
-    const bundleType: BundleType = VALID_BUNDLE_TYPES.includes(dto.bundleType as BundleType)
-      ? (dto.bundleType as BundleType)
+    const validated = safeParseApiResponse(ThemeBundleDtoSchema, dto, "ThemeBundle");
+
+    const bundleType: BundleType = VALID_BUNDLE_TYPES.includes(validated.bundleType as BundleType)
+      ? (validated.bundleType as BundleType)
       : "full-bundle";
 
     const contents: ThemeBundleContents = {
-      loginThemeJson: dto.contents?.loginThemeJson ?? undefined,
-      authPageOverrides: dto.contents?.authPageOverrides ?? undefined,
-      dashboardThemeJson: dto.contents?.dashboardThemeJson ?? undefined,
-      loginCanvasJson: dto.contents?.loginCanvasJson ?? undefined,
-      dashboardCanvasJson: dto.contents?.dashboardCanvasJson ?? undefined,
+      loginThemeJson: validated.contents?.loginThemeJson ?? undefined,
+      authPageOverrides: validated.contents?.authPageOverrides ?? undefined,
+      dashboardThemeJson: validated.contents?.dashboardThemeJson ?? undefined,
+      loginCanvasJson: validated.contents?.loginCanvasJson ?? undefined,
+      dashboardCanvasJson: validated.contents?.dashboardCanvasJson ?? undefined,
     };
 
     return new ThemeBundle({
-      id: dto.id ?? "",
-      slug: dto.slug ?? "",
-      name: dto.name ?? "",
-      description: dto.description ?? "",
+      id: validated.id ?? "",
+      slug: validated.slug ?? "",
+      name: validated.name ?? "",
+      description: validated.description ?? "",
       bundleType,
       contents,
-      accentColor: dto.accentColor ?? "#6366f1",
-      thumbnailUrl: dto.thumbnailUrl ?? "",
-      screenshots: dto.screenshots ?? [],
-      tags: dto.tags ?? [],
-      authorName: dto.authorName ?? "NEXORA",
-      version: dto.version ?? "1.0.0",
-      publishedAt: dto.publishedAt ?? "",
-      isFree: dto.isFree ?? true,
-      isSystem: dto.isSystem ?? false,
-      isFeatured: dto.isFeatured ?? false,
-      minTierLevel: dto.minTierLevel ?? 0,
-      isFavorited: dto.isFavorited ?? false,
-      isApplied: dto.isApplied ?? false,
-      isAvailable: dto.isAvailable ?? true,
+      accentColor: validated.accentColor ?? "#6366f1",
+      thumbnailUrl: validated.thumbnailUrl ?? "",
+      screenshots: validated.screenshots ?? [],
+      tags: validated.tags ?? [],
+      authorName: validated.authorName ?? "NEXORA",
+      version: validated.version ?? "1.0.0",
+      publishedAt: validated.publishedAt ?? "",
+      isFree: validated.isFree ?? true,
+      isSystem: validated.isSystem ?? false,
+      isFeatured: validated.isFeatured ?? false,
+      minTierLevel: validated.minTierLevel ?? 0,
+      isFavorited: validated.isFavorited ?? false,
+      isApplied: validated.isApplied ?? false,
+      isAvailable: validated.isAvailable ?? true,
     });
   }
 }

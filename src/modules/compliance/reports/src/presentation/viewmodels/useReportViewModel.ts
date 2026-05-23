@@ -2,11 +2,15 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { complianceContainer } from "@modules/compliance/di";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
 
 export function useReportViewModel() {
   const { reportRepository } = complianceContainer;
   const queryClient = useQueryClient();
+  const { success, error: showError } = useEnhancedToast();
+  const { t } = useI18n();
 
   const query = useQuery({
     queryKey: ["compliance", "reports"],
@@ -25,6 +29,10 @@ export function useReportViewModel() {
     onSuccess: () => {
       // Immediately refetch so the new Pending report appears and polling kicks in
       queryClient.invalidateQueries({ queryKey: ["compliance", "reports"] });
+      success({ title: t("compliance.reports.generating") || "Report generation started" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
     },
   });
 

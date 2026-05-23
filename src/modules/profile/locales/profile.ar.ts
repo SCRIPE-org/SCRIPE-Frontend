@@ -5,6 +5,7 @@ export const ar = {
       security: "الأمان",
       sessions: "الجلسات",
       activity: "النشاط",
+      notifications: "الإشعارات",
     },
     avatar: {
       clickOrDrag: "انقر أو اسحب لتحميل صورة جديدة",
@@ -106,6 +107,20 @@ export const ar = {
       title: "سجل النشاط",
       description: "مراجعة نشاطك الأمني الأخير.",
       noEntries: "لا يوجد نشاط مسجل حتى الآن.",
+    },
+    notifications: {
+      title: "الإشعارات",
+      description: "إدارة الإشعارات والتنبيهات التي تتلقاها.",
+      channels: {
+        heading: "قنوات الإشعارات",
+        inApp: "الإشعارات داخل المنصة",
+        inAppDescription: "تلقّ التنبيهات والتحديثات داخل المنصة.",
+        email: "إشعارات البريد الإلكتروني",
+        emailDescription: "احصل على التحديثات المهمة عبر بريدك الإلكتروني.",
+        push: "الإشعارات الفورية",
+        pushDescription: "تلقّ إشعارات المتصفح الفورية عند فتح التطبيق.",
+      },
+      comingSoon: "إدارة تفضيلات الإشعارات الكاملة قادمة قريباً.",
     },
   },
   common: {

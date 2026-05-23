@@ -1,14 +1,36 @@
+"use client";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
+import type { QueryKey } from "@core/common/query-keys";
 
 interface MutationOptions<T> {
-  invalidateKeys?: any[][];
+  /** Additional query keys to invalidate on any success */
+  invalidateKeys?: QueryKey[];
+  /** Called after successful create/update */
   onSuccess?: (data: T) => void;
+  /** Called on any mutation error */
   onError?: (error: Error) => void;
+  /**
+   * Custom i18n toast message keys (falls back to common.* defaults).
+   * Pass a translated string from `t()` — NOT a raw key.
+   */
+  successMessages?: {
+    create?: string;
+    update?: string;
+    delete?: string;
+  };
+  /**
+   * Optimistic delete: immediately removes the item from the list cache
+   * on `onMutate` and rolls back on error. Requires `baseKey` to be a
+   * list query key containing `{ items: T[] }` shaped data.
+   */
+  optimisticDelete?: boolean;
 }
 
-export function useGenericMutations<T, TCreate = any, TUpdate = any>(
-  baseKey: any[],
+export function useGenericMutations<T extends { id: string }, TCreate = unknown, TUpdate = unknown>(
+  baseKey: QueryKey,
   services: {
     create?: (data: TCreate) => Promise<T>;
     update?: (id: string, data: TUpdate) => Promise<T>;
@@ -18,12 +40,16 @@ export function useGenericMutations<T, TCreate = any, TUpdate = any>(
 ) {
   const queryClient = useQueryClient();
   const { operationSuccess, operationError } = useEnhancedToast();
+  const { t } = useI18n();
 
   const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: baseKey });
-    options?.invalidateKeys?.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+    queryClient.invalidateQueries({ queryKey: baseKey as readonly unknown[] });
+    options?.invalidateKeys?.forEach((key) =>
+      queryClient.invalidateQueries({ queryKey: key as readonly unknown[] })
+    );
   };
 
+  // ── Create ──────────────────────────────────────────────────────────────────
   const createMutation = useMutation({
     mutationFn: async (data: TCreate) => {
       if (!services.create) throw new Error("Create service not implemented");
@@ -31,15 +57,16 @@ export function useGenericMutations<T, TCreate = any, TUpdate = any>(
     },
     onSuccess: (data) => {
       invalidate();
-      operationSuccess("Item created successfully"); // TODO: localize
+      operationSuccess(options?.successMessages?.create ?? t("common.messages.created"));
       options?.onSuccess?.(data);
     },
-    onError: (error: any) => {
-      operationError(error.message || "Failed to create item");
+    onError: (error: Error) => {
+      operationError(error.message || t("common.messages.createFailed"));
       options?.onError?.(error);
     },
   });
 
+  // ── Update ──────────────────────────────────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: TUpdate }) => {
       if (!services.update) throw new Error("Update service not implemented");
@@ -47,26 +74,60 @@ export function useGenericMutations<T, TCreate = any, TUpdate = any>(
     },
     onSuccess: (data) => {
       invalidate();
-      operationSuccess("Item updated successfully");
+      operationSuccess(options?.successMessages?.update ?? t("common.messages.updated"));
       options?.onSuccess?.(data);
     },
-    onError: (error: any) => {
-      operationError(error.message || "Failed to update item");
+    onError: (error: Error) => {
+      operationError(error.message || t("common.messages.updateFailed"));
       options?.onError?.(error);
     },
   });
 
+  // ── Delete ──────────────────────────────────────────────────────────────────
   const deleteMutation = useMutation({
+    // mutationKey prevents double-deletion race conditions
+    mutationKey: [...(baseKey as unknown[]), "delete"],
     mutationFn: async (id: string) => {
       if (!services.delete) throw new Error("Delete service not implemented");
       return services.delete(id);
     },
+    onMutate: options?.optimisticDelete
+      ? async (id: string) => {
+          await queryClient.cancelQueries({ queryKey: baseKey as readonly unknown[] });
+          const previous = queryClient.getQueryData(baseKey as readonly unknown[]);
+          // Optimistically remove from list cache
+          queryClient.setQueryData(baseKey as readonly unknown[], (old: unknown) => {
+            if (!old || typeof old !== "object") return old;
+            const data = old as { items?: T[]; data?: T[] };
+            const items = data.items ?? data.data ?? [];
+            const filtered = items.filter((item: T) => item.id !== id);
+            if (data.items) return { ...data, items: filtered };
+            if (data.data) return { ...data, data: filtered };
+            // Handle plain array responses
+            if (Array.isArray(old)) return (old as T[]).filter((item: T) => item.id !== id);
+            return old;
+          });
+          return { previous };
+        }
+      : undefined,
+    onError: options?.optimisticDelete
+      ? (_, __, context?: { previous: unknown }) => {
+          if (context?.previous !== undefined) {
+            queryClient.setQueryData(baseKey as readonly unknown[], context.previous);
+          }
+          operationError(options?.successMessages?.delete ?? t("common.messages.deleteFailed"));
+          options?.onError?.(_ as Error);
+        }
+      : (error: Error) => {
+          operationError(error.message || t("common.messages.deleteFailed"));
+          options?.onError?.(error);
+        },
     onSuccess: () => {
-      invalidate();
-      operationSuccess("Item deleted successfully");
+      operationSuccess(options?.successMessages?.delete ?? t("common.messages.deleted"));
     },
-    onError: (error: any) => {
-      operationError(error.message || "Failed to delete item");
+    onSettled: () => {
+      // Always re-sync after delete regardless of optimistic result
+      invalidate();
     },
   });
 
@@ -77,5 +138,8 @@ export function useGenericMutations<T, TCreate = any, TUpdate = any>(
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    createError: createMutation.error,
+    updateError: updateMutation.error,
+    deleteError: deleteMutation.error,
   };
 }

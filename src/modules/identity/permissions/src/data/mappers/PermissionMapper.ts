@@ -3,11 +3,6 @@
  *
  * Maps between Permission Model (API DTO) and Permission Entity (Domain).
  *
- * Clean Architecture:
- * - API Response → Model.fromJson() → Model
- * - Model → Mapper.toEntity() → Entity (used in app)
- * - Entity → Mapper.toModel() → Model.toJson() → API Request
- *
  * @module permissions/data
  */
 
@@ -21,24 +16,44 @@ import type {
   CreatePermissionRequest,
   UpdatePermissionRequest,
 } from "../../domain/entities/PermissionRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const PermissionModelSchema = z.object({
+  id: uuidField(),
+  resource: z.string().min(1),
+  action: z.string().min(1),
+  permissionCode: z.string().min(1),
+  defaultScope: optionalString(),
+  category: optionalString(),
+  displayOrder: z.number().int().optional().default(0),
+  descriptionEn: optionalString(),
+  descriptionAr: optionalString(),
+  nameEn: optionalString(),
+  nameAr: optionalString(),
+});
 
 export class PermissionMapper {
   /**
    * Map Model (DTO) to Domain Entity
    */
   static toEntity(model: PermissionModel): Permission {
+    const validated = safeParseApiResponse(PermissionModelSchema, model, "Permission");
+
     const props: PermissionProps = {
-      id: model.id,
-      resource: model.resource,
-      action: model.action,
-      code: model.permissionCode,
-      defaultScope: model.defaultScope,
-      category: model.category,
-      displayOrder: model.displayOrder,
-      descriptionEn: model.descriptionEn,
-      descriptionAr: model.descriptionAr,
-      nameEn: model.nameEn,
-      nameAr: model.nameAr,
+      id: validated.id,
+      resource: validated.resource,
+      action: validated.action,
+      code: validated.permissionCode,
+      defaultScope: validated.defaultScope ?? "",
+      category: validated.category ?? "",
+      displayOrder: validated.displayOrder ?? 0,
+      descriptionEn: validated.descriptionEn ?? undefined,
+      descriptionAr: validated.descriptionAr ?? undefined,
+      nameEn: validated.nameEn ?? undefined,
+      nameAr: validated.nameAr ?? undefined,
     };
     return new Permission(props);
   }

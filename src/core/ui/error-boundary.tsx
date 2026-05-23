@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
@@ -13,6 +14,8 @@ interface Props {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  /** Called when the user clicks Retry — use to reset query error state */
+  onReset?: () => void;
 }
 
 interface State {
@@ -45,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      return <ErrorFallback error={this.state.error} />;
+      return <ErrorFallback error={this.state.error} onReset={this.props.onReset} />;
     }
 
     return this.props.children;
@@ -54,14 +57,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
 interface ErrorFallbackProps {
   error?: Error;
+  /** Called on retry — resets query error state */
+  onReset?: () => void;
 }
 
-function ErrorFallback({ error }: ErrorFallbackProps) {
+function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
   const router = useRouter();
   const { t } = useI18n();
 
   const handleRetry = () => {
-    // Use Next.js router for navigation instead of window.location.reload
+    // Reset query error state first, then refresh the route
+    onReset?.();
     router.refresh();
   };
 
@@ -137,4 +143,27 @@ export function withErrorBoundary<P extends object>(
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
 
   return WrappedComponent;
+}
+
+/**
+ * QueryAwareErrorBoundary
+ *
+ * Wraps children in both `QueryErrorResetBoundary` (TanStack Query) and
+ * `ErrorBoundary` (React class boundary). When the user clicks Retry:
+ *  1. All failed queries are reset so they re-fetch on next render
+ *  2. The React component error state is cleared
+ *  3. Next.js router refreshes the route
+ *
+ * Use this instead of bare `<ErrorBoundary>` anywhere queries are rendered.
+ */
+export function QueryAwareErrorBoundary({ children }: { children: ReactNode }) {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset}>
+          {children}
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
 }

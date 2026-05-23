@@ -10,43 +10,87 @@ import type {
   CreateEditionRequest,
   UpdateEditionRequest,
 } from "../../domain/entities/EditionRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+
+// ─── Edition Response Schema ────────────────────────────────────────────────────
+
+const EditionModelSchema = z.object({
+  id: uuidField(),
+  name: z.string().min(1),
+  displayNameEn: z.string().optional().default(""),
+  displayNameAr: z.string().optional().default(""),
+  description: optionalString(),
+  tagline: optionalString(),
+  recommendationLabels: z.array(z.string()).optional().nullable(),
+  isSystem: z.boolean().optional().default(false),
+  isRetired: z.boolean().optional().default(false),
+  tierLevel: z.number().int().optional().default(0),
+  createdByTenantId: optionalString(),
+  featureCount: z.number().int().optional().default(0),
+  features: z.array(z.unknown()).optional().default([]),
+  prices: z.array(z.unknown()).optional().default([]),
+  fallbackEditionId: optionalString(),
+  fallbackEditionName: optionalString(),
+  overflowPolicy: optionalString(),
+  baseMonthlyPriceUsd: z.number().optional().nullable(),
+  allowMonthly: z.boolean().optional().nullable(),
+  allowYearly: z.boolean().optional().nullable(),
+  allowLifetime: z.boolean().optional().nullable(),
+  allowTrial: z.boolean().optional().nullable(),
+  trialDurationDays: z.number().int().optional().nullable(),
+  trialIsFree: z.boolean().optional().nullable(),
+  trialDiscountPercent: z.number().optional().nullable(),
+  gracePeriodDays: z.number().int().optional().nullable(),
+  maxActiveSubscriptions: z.number().int().optional().nullable(),
+  isSelfServiceEnabled: z.boolean().optional().nullable(),
+  isContactSalesOnly: z.boolean().optional().nullable(),
+  createdAt: isoDateString().optional(),
+  modifiedAt: isoDateString().optional().nullable(),
+});
 
 export class EditionMapper {
   static toEntity(model: EditionModel): Edition {
+    // Validate API response shape — logs warnings on contract drift
+    const validated = safeParseApiResponse(EditionModelSchema, model, "Edition");
     const data: EditionData = {
-      id: model.id,
-      name: model.name,
-      displayNameEn: model.displayNameEn,
-      displayNameAr: model.displayNameAr,
-      description: model.description,
-      tagline: model.tagline,
-      recommendationLabels: model.recommendationLabels,
-      isSystem: model.isSystem,
-      isRetired: model.isRetired,
-      tierLevel: model.tierLevel ?? 0,
-      createdByTenantId: model.createdByTenantId,
-      featureCount: model.featureCount,
-      features: model.features,
-      prices: model.prices ?? [],
-      fallbackEditionId: model.fallbackEditionId,
-      fallbackEditionName: model.fallbackEditionName,
-      overflowPolicy: model.overflowPolicy,
-      baseMonthlyPriceUsd: model.baseMonthlyPriceUsd,
-      // ── Billing Controls ──
-      allowMonthly: model.allowMonthly,
-      allowYearly: model.allowYearly,
-      allowLifetime: model.allowLifetime,
-      allowTrial: model.allowTrial,
-      trialDurationDays: model.trialDurationDays,
-      trialIsFree: model.trialIsFree,
-      trialDiscountPercent: model.trialDiscountPercent,
-      gracePeriodDays: model.gracePeriodDays,
-      maxActiveSubscriptions: model.maxActiveSubscriptions ?? -1,
+      id: validated.id,
+      name: validated.name,
+      displayNameEn: validated.displayNameEn ?? "",
+      displayNameAr: validated.displayNameAr ?? "",
+      description: validated.description ?? undefined,
+      tagline: validated.tagline ?? undefined,
+      // recommendationLabels is stored as JSON string in entity, API may send array or string
+      recommendationLabels:
+        Array.isArray(validated.recommendationLabels)
+          ? JSON.stringify(validated.recommendationLabels)
+          : (validated.recommendationLabels as string | null | undefined) ?? undefined,
+      isSystem: validated.isSystem,
+      isRetired: validated.isRetired,
+      tierLevel: validated.tierLevel,
+      createdByTenantId: validated.createdByTenantId ?? undefined,
+      featureCount: validated.featureCount,
+      features: (validated.features as EditionData["features"]) ?? [],
+      prices: (validated.prices as EditionData["prices"]) ?? [],
+      fallbackEditionId: validated.fallbackEditionId ?? undefined,
+      fallbackEditionName: validated.fallbackEditionName ?? undefined,
+      overflowPolicy: validated.overflowPolicy ?? undefined,
+      baseMonthlyPriceUsd: validated.baseMonthlyPriceUsd ?? undefined,
+      // ── Billing Controls (required booleans/numbers — default to safe values) ──
+      allowMonthly: validated.allowMonthly ?? true,
+      allowYearly: validated.allowYearly ?? true,
+      allowLifetime: validated.allowLifetime ?? true,
+      allowTrial: validated.allowTrial ?? true,
+      trialDurationDays: validated.trialDurationDays ?? 14,
+      trialIsFree: validated.trialIsFree ?? true,
+      trialDiscountPercent: validated.trialDiscountPercent ?? 100,
+      gracePeriodDays: validated.gracePeriodDays ?? 0,
+      maxActiveSubscriptions: validated.maxActiveSubscriptions ?? -1,
       // ── Self-Service Controls ──
-      isSelfServiceEnabled: model.isSelfServiceEnabled ?? true,
-      isContactSalesOnly: model.isContactSalesOnly ?? false,
-      createdAt: model.createdAt,
-      modifiedAt: model.modifiedAt,
+      isSelfServiceEnabled: validated.isSelfServiceEnabled ?? true,
+      isContactSalesOnly: validated.isContactSalesOnly ?? false,
+      createdAt: validated.createdAt ?? "",
+      modifiedAt: validated.modifiedAt ?? undefined,
     };
     return new Edition(data);
   }

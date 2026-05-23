@@ -11,11 +11,15 @@ import { useState, useCallback } from "react";
 import { container } from "../../../di";
 import { profileKeys } from "./useProfilePageViewModel";
 import { useAppStore } from "@core/store/useAppStore";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export function useAvatarViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { success, error: showError } = useEnhancedToast();
+  const { t } = useI18n();
 
   const uploadMutation = useMutation({
     mutationFn: (file: File) => repo.uploadAvatar(file),
@@ -30,6 +34,10 @@ export function useAvatarViewModel() {
           .getState()
           .setUser(currentUser.update({ profileImageUrl: data.profileImageUrl }));
       }
+      success({ title: t("profile.avatar.uploaded") || "Avatar updated" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
     },
   });
 
@@ -44,6 +52,10 @@ export function useAvatarViewModel() {
       if (currentUser) {
         useAppStore.getState().setUser(currentUser.update({ profileImageUrl: null }));
       }
+      success({ title: t("profile.avatar.removed") || "Avatar removed" });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("common.error") || "Error", description: err.message });
     },
   });
 

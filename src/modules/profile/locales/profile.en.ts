@@ -5,6 +5,7 @@ export const en = {
       security: "Security",
       sessions: "Sessions",
       activity: "Activity",
+      notifications: "Notifications",
     },
     avatar: {
       clickOrDrag: "Click or drag to upload a new photo",
@@ -109,6 +110,20 @@ export const en = {
       title: "Activity Log",
       description: "Review your recent security-related activity.",
       noEntries: "No activity recorded yet.",
+    },
+    notifications: {
+      title: "Notifications",
+      description: "Manage which notifications and alerts you receive.",
+      channels: {
+        heading: "Notification Channels",
+        inApp: "In-App Notifications",
+        inAppDescription: "Receive alerts and updates inside the platform.",
+        email: "Email Notifications",
+        emailDescription: "Get important updates sent to your email address.",
+        push: "Push Notifications",
+        pushDescription: "Receive browser push notifications when the app is open.",
+      },
+      comingSoon: "Full notification preference management is coming soon.",
     },
   },
   common: {

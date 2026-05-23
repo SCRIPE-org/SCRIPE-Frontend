@@ -38,35 +38,82 @@ import type {
   CreateWebhookRequest,
   UpdateWebhookRequest,
 } from "../../domain/entities/WebhookRequests";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+
+// ─── Webhook Subscription Schema ──────────────────────────────────────────────────
+
+const WebhookSubscriptionModelSchema = z.object({
+  id: uuidField(),
+  scope: optionalString(),
+  tenantId: optionalString(),
+  tenantName: optionalString(),
+  url: z.string().url(),
+  description: optionalString(),
+  events: z.array(z.string()).optional().default([]),
+  isActive: z.boolean().optional().default(true),
+  secret: optionalString(),
+  hasPreviousSecret: z.boolean().optional().default(false),
+  previousSecretExpiresAt: z.string().optional().nullable(),
+  maxRetries: z.number().int().optional().nullable(),
+  consecutiveFailures: z.number().int().optional().default(0),
+  maxConsecutiveFailures: z.number().int().optional().nullable(),
+  lastDeliveryAt: z.string().optional().nullable(),
+  lastDeliveryStatus: z.string().optional().nullable(),
+  totalDeliveries: z.number().int().optional().default(0),
+  successfulDeliveries: z.number().int().optional().default(0),
+  failedDeliveries: z.number().int().optional().default(0),
+  successRate: z.number().optional().default(0),
+  createdAt: isoDateString().optional(),
+  modifiedAt: z.string().optional().nullable(),
+});
+
+const WebhookListItemModelSchema = z.object({
+  id: uuidField(),
+  scope: optionalString(),
+  tenantName: optionalString(),
+  url: z.string().url(),
+  description: optionalString(),
+  events: z.array(z.string()).optional().default([]),
+  isActive: z.boolean().optional().default(true),
+  lastDeliveryAt: z.string().optional().nullable(),
+  lastDeliveryStatus: z.string().optional().nullable(),
+  successRate: z.number().optional().default(0),
+  totalDeliveries: z.number().int().optional().default(0),
+  successfulDeliveries: z.number().int().optional().default(0),
+  failedDeliveries: z.number().int().optional().default(0),
+});
 
 export class WebhookMapper {
   /**
    * Convert WebhookSubscriptionModel → WebhookSubscription Entity
    */
   static toEntity(model: WebhookSubscriptionModel): WebhookSubscription {
+    // Validate API response shape — logs warnings on contract drift
+    const validated = safeParseApiResponse(WebhookSubscriptionModelSchema, model, "WebhookSubscription");
     const data: WebhookSubscriptionData = {
-      id: model.id,
-      scope: model.scope,
-      tenantId: model.tenantId,
-      tenantName: model.tenantName,
-      url: model.url,
-      description: model.description,
-      events: model.events,
-      isActive: model.isActive,
-      secret: model.secret,
-      hasPreviousSecret: model.hasPreviousSecret,
-      previousSecretExpiresAt: model.previousSecretExpiresAt,
-      maxRetries: model.maxRetries,
-      consecutiveFailures: model.consecutiveFailures,
-      maxConsecutiveFailures: model.maxConsecutiveFailures,
-      lastDeliveryAt: model.lastDeliveryAt,
-      lastDeliveryStatus: model.lastDeliveryStatus,
-      totalDeliveries: model.totalDeliveries,
-      successfulDeliveries: model.successfulDeliveries,
-      failedDeliveries: model.failedDeliveries,
-      successRate: model.successRate,
-      createdAt: model.createdAt,
-      modifiedAt: model.modifiedAt,
+      id: validated.id,
+      scope: validated.scope ?? "",
+      tenantId: validated.tenantId ?? null,
+      tenantName: validated.tenantName ?? null,
+      url: validated.url,
+      description: validated.description ?? null,
+      events: (validated.events as string[]) ?? [],
+      isActive: validated.isActive,
+      secret: validated.secret ?? "",
+      hasPreviousSecret: validated.hasPreviousSecret,
+      previousSecretExpiresAt: validated.previousSecretExpiresAt ?? null,
+      maxRetries: validated.maxRetries ?? 3,
+      consecutiveFailures: validated.consecutiveFailures,
+      maxConsecutiveFailures: validated.maxConsecutiveFailures ?? 10,
+      lastDeliveryAt: validated.lastDeliveryAt ?? null,
+      lastDeliveryStatus: validated.lastDeliveryStatus ?? null,
+      totalDeliveries: validated.totalDeliveries,
+      successfulDeliveries: validated.successfulDeliveries,
+      failedDeliveries: validated.failedDeliveries,
+      successRate: validated.successRate,
+      createdAt: validated.createdAt ?? "",
+      modifiedAt: validated.modifiedAt ?? null,
     };
     return new WebhookSubscription(data);
   }
@@ -84,20 +131,22 @@ export class WebhookMapper {
    * Convert WebhookListItemModel → WebhookSubscriptionListItem Entity
    */
   static toListItemEntity(model: WebhookListItemModel): WebhookSubscriptionListItem {
+    // Validate API response shape — logs warnings on contract drift
+    const validated = safeParseApiResponse(WebhookListItemModelSchema, model, "WebhookListItem");
     const data: WebhookSubscriptionListItemData = {
-      id: model.id,
-      scope: model.scope,
-      tenantName: model.tenantName,
-      url: model.url,
-      description: model.description,
-      events: model.events,
-      isActive: model.isActive,
-      lastDeliveryAt: model.lastDeliveryAt,
-      lastDeliveryStatus: model.lastDeliveryStatus,
-      successRate: model.successRate,
-      totalDeliveries: model.totalDeliveries,
-      successfulDeliveries: model.successfulDeliveries,
-      failedDeliveries: model.failedDeliveries,
+      id: validated.id,
+      scope: validated.scope ?? "",
+      tenantName: validated.tenantName ?? null,
+      url: validated.url,
+      description: validated.description ?? null,
+      events: (validated.events as string[]) ?? [],
+      isActive: validated.isActive,
+      lastDeliveryAt: validated.lastDeliveryAt ?? null,
+      lastDeliveryStatus: validated.lastDeliveryStatus ?? null,
+      successRate: validated.successRate,
+      totalDeliveries: validated.totalDeliveries,
+      successfulDeliveries: validated.successfulDeliveries,
+      failedDeliveries: validated.failedDeliveries,
     };
     return new WebhookSubscriptionListItem(data);
   }

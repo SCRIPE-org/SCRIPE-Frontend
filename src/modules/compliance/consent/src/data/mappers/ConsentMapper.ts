@@ -5,17 +5,33 @@
 import { ConsentStatus } from "../../domain/entities/ConsentStatus";
 import type { ConsentStatusData } from "../../domain/entities/ConsentStatus";
 import type { ConsentStatusModel } from "../models/ConsentModels";
+import { z } from "zod";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const ConsentStatusModelSchema = z.object({
+  purposeId: z.string().min(1),
+  purposeKey: optionalString(),
+  purposeName: optionalString(),
+  currentAction: z.enum(["Granted", "Withdrawn", "Pending"]).optional().default("Withdrawn"),
+  requiresReConsent: z.boolean().optional().default(false),
+  lastUpdatedAt: z.string().optional().nullable(),
+  consentVersion: z.string().optional().default("1.0"),
+});
 
 export class ConsentMapper {
   static toEntity(model: ConsentStatusModel): ConsentStatus {
+    const validated = safeParseApiResponse(ConsentStatusModelSchema, model, "ConsentStatus");
+
     const data: ConsentStatusData = {
-      purposeId: model.purposeId,
-      purposeKey: model.purposeKey ?? "",
-      purposeName: model.purposeName ?? model.purposeKey ?? "",
-      currentAction: (model.currentAction ?? "Withdrawn") as ConsentStatusData["currentAction"],
-      requiresReConsent: model.requiresReConsent ?? false,
-      lastUpdatedAt: model.lastUpdatedAt,
-      consentVersion: model.consentVersion ?? "1.0",
+      purposeId: validated.purposeId,
+      purposeKey: validated.purposeKey ?? "",
+      purposeName: validated.purposeName ?? validated.purposeKey ?? "",
+      currentAction: (validated.currentAction ?? "Withdrawn") as ConsentStatusData["currentAction"],
+      requiresReConsent: validated.requiresReConsent ?? false,
+      lastUpdatedAt: validated.lastUpdatedAt ?? "",
+      consentVersion: validated.consentVersion ?? "1.0",
     };
     return new ConsentStatus(data);
   }
