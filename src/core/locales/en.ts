@@ -254,6 +254,8 @@ export const en = {
     noResultsFound: "No results found",
     serial: "No.",
     clear: "Clear",
+    nameAr: "Name (Ar)",
+    nameEn: "Name (En)",
     none: "None",
     updatedAt: "Updated at",
     logout: "Logout",

@@ -22,6 +22,7 @@ interface PersistedNavState {
   allRoutesArray: string[];
   workspaceRouteMap: WorkspaceRouteMap;
   activeWorkspaceKey: string | null;
+  previousWorkspaceKey: string | null;
   routesLoadedAt: number | null;
 }
 
@@ -49,6 +50,7 @@ export const useNavigationStore = create<NavigationStoreState>()(
         allRoutesArray: Array.from(state.allRoutes),
         workspaceRouteMap: state.workspaceRouteMap,
         activeWorkspaceKey: state.activeWorkspaceKey,
+        previousWorkspaceKey: state.previousWorkspaceKey,
         routesLoadedAt: state.routesLoadedAt,
       }),
       merge: (persistedRaw, currentState) => {
@@ -66,6 +68,7 @@ export const useNavigationStore = create<NavigationStoreState>()(
           workspaceRouteMap: persisted.workspaceRouteMap ?? {},
           routesLoadedAt: persisted.routesLoadedAt ?? null,
           activeWorkspaceKey: persisted.activeWorkspaceKey ?? null,
+          previousWorkspaceKey: persisted.previousWorkspaceKey ?? null,
           contextKey: persisted.contextKey ?? "",
         };
       },

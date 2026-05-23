@@ -153,6 +153,7 @@ export function DefinitionFormDialog({
               </Label>
               <Input
                 id="def-key"
+                dir="ltr"
                 placeholder="com.acme.my-plugin"
                 value={form.key}
                 onChange={(e) => updateField("key", e.target.value)}
@@ -257,6 +258,7 @@ export function DefinitionFormDialog({
               <Label htmlFor="def-base-url">{t("plugins.defColBaseUrl") || "Base URL"}</Label>
               <Input
                 id="def-base-url"
+                dir="ltr"
                 type="url"
                 placeholder="https://plugin.example.com/api"
                 value={form.baseUrl ?? ""}
@@ -267,6 +269,7 @@ export function DefinitionFormDialog({
               <Label htmlFor="def-frontend-url">{t("plugins.defColFrontendUrl") || "Frontend URL"}</Label>
               <Input
                 id="def-frontend-url"
+                dir="ltr"
                 type="url"
                 placeholder="https://plugin.example.com/ui"
                 value={form.frontendUrl ?? ""}
@@ -280,6 +283,7 @@ export function DefinitionFormDialog({
             <Label htmlFor="def-icon-url">{t("plugins.defColIconUrl") || "Icon URL"}</Label>
             <Input
               id="def-icon-url"
+              dir="ltr"
               type="url"
               placeholder="https://cdn.example.com/icon.png"
               value={form.iconUrl ?? ""}
@@ -292,8 +296,9 @@ export function DefinitionFormDialog({
             <Label htmlFor="def-manifest">{t("plugins.defColManifest") || "Manifest JSON"}</Label>
             <Textarea
               id="def-manifest"
+              dir="ltr"
               rows={4}
-              className={`font-mono text-xs ${errors.manifestJson ? "border-destructive" : ""}`}
+              className={`font-mono text-xs text-left ${errors.manifestJson ? "border-destructive" : ""}`}
               placeholder='{"entryPoints": [], "permissions": []}'
               value={form.manifestJson}
               onChange={(e) => updateField("manifestJson", e.target.value)}
