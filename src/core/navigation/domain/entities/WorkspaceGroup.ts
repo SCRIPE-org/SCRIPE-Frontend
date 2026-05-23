@@ -60,6 +60,14 @@ export interface WorkspaceGroupData {
    * Lower values appear first in the pinned section of the rail.
    */
   pinSortOrder: number | null;
+  /**
+   * Backend-driven context scope.
+   * "Both" = visible in platform and tenant contexts.
+   * "PlatformOnly" = visible only at platform level (no tenant selected).
+   * "TenantOnly" = visible only when drilled into a tenant.
+   * Backend already filters by context, but frontend uses this defensively.
+   */
+  contextScope?: "Both" | "PlatformOnly" | "TenantOnly";
 }
 
 // ── Rich domain class ─────────────────────────────────────────────────────────
@@ -85,6 +93,8 @@ export class WorkspaceGroup {
   public readonly isPinned: boolean;
   /** Sort order for pinned workspaces. Null when not pinned. */
   public readonly pinSortOrder: number | null;
+  /** Context scope: Both, PlatformOnly, or TenantOnly. Backend filters, frontend uses defensively. */
+  public readonly contextScope: "Both" | "PlatformOnly" | "TenantOnly";
 
   constructor(data: WorkspaceGroupData) {
     this.workspaceId = data.workspaceId;
@@ -102,6 +112,7 @@ export class WorkspaceGroup {
     this.platformHomeRoute = data.platformHomeRoute ?? null;
     this.isPinned = data.isPinned ?? false;
     this.pinSortOrder = data.pinSortOrder ?? null;
+    this.contextScope = data.contextScope ?? "Both";
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -127,6 +138,16 @@ export class WorkspaceGroup {
   /** True when this is an admin / control-plane workspace. */
   get isAdminWorkspace(): boolean {
     return this.workspaceType === "Admin";
+  }
+
+  /** True when this workspace should only appear in tenant context. */
+  get isTenantOnly(): boolean {
+    return this.contextScope === "TenantOnly";
+  }
+
+  /** True when this workspace should only appear in platform context. */
+  get isPlatformOnly(): boolean {
+    return this.contextScope === "PlatformOnly";
   }
 
   /** Short 2-char abbreviation used in pill labels. */
@@ -161,6 +182,7 @@ export class WorkspaceGroup {
       platformHomeRoute: this.platformHomeRoute,
       isPinned: this.isPinned,
       pinSortOrder: this.pinSortOrder,
+      contextScope: this.contextScope,
     };
   }
 }

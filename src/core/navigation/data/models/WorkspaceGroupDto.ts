@@ -24,6 +24,12 @@ export interface WorkspaceGroupDto {
   homeRoute?: string | null;
   /** The workspace home/landing page route for platform context (no tenant). Null = falls back to homeRoute. */
   platformHomeRoute?: string | null;
+  /** Context scope: 'Both' | 'PlatformOnly' | 'TenantOnly'. Backend filters by context. */
+  contextScope?: "Both" | "PlatformOnly" | "TenantOnly";
+  /** Whether the current admin has pinned this workspace. Backend-authoritative. */
+  isPinned?: boolean;
+  /** Sort order for pinned workspaces. Null when not pinned. */
+  pinSortOrder?: number | null;
 }
 
 /**
@@ -46,4 +52,10 @@ export interface WorkspaceStubDto {
   homeRoute?: string | null;
   /** The workspace home/landing page route for platform context (no tenant). Null = falls back to homeRoute. */
   platformHomeRoute?: string | null;
+  /** Context scope: 'Both' | 'PlatformOnly' | 'TenantOnly'. Backend filters by context. */
+  contextScope?: "Both" | "PlatformOnly" | "TenantOnly";
+  /** Whether the current admin has pinned this workspace. Backend-authoritative. */
+  isPinned?: boolean;
+  /** Sort order for pinned workspaces. Null when not pinned. */
+  pinSortOrder?: number | null;
 }

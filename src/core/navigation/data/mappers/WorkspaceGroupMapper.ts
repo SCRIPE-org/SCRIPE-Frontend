@@ -35,6 +35,7 @@ export class WorkspaceGroupMapper {
     const platformHomeRoute = (raw.platformHomeRoute as string | null | undefined) ?? null;
     const isPinned = Boolean(raw.isPinned ?? false);
     const pinSortOrder = raw.pinSortOrder != null ? Number(raw.pinSortOrder) : null;
+    const contextScope = (raw.contextScope as "Both" | "PlatformOnly" | "TenantOnly" | undefined) ?? "Both";
 
     const rawItems = Array.isArray(raw.menuItems) ? raw.menuItems : [];
     const menuItems = rawItems.map((item) =>
@@ -57,6 +58,7 @@ export class WorkspaceGroupMapper {
       platformHomeRoute,
       isPinned,
       pinSortOrder,
+      contextScope,
     };
   }
 }

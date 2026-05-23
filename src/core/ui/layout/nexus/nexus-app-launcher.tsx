@@ -399,7 +399,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                       isPinLoading={pinningKey === ws.workspaceKey}
                       status={status}
                       onClick={() => handleSelect(ws.workspaceKey, status)}
-                      onTogglePin={(e) => handleTogglePin(ws.workspaceKey, e)}
+                      onTogglePin={!ws.isLocked ? (e) => handleTogglePin(ws.workspaceKey, e) : undefined}
                     />
                   );
                 })}
