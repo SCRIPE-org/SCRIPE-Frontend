@@ -68,6 +68,11 @@ export interface WorkspaceGroupData {
    * Backend already filters by context, but frontend uses this defensively.
    */
   contextScope?: "Both" | "PlatformOnly" | "TenantOnly";
+  /**
+   * Number of menu items accessible to this admin in this workspace.
+   * Used by the Workspace Hub to show item counts on workspace cards.
+   */
+  accessibleItemCount: number;
 }
 
 // ── Rich domain class ─────────────────────────────────────────────────────────
@@ -95,6 +100,8 @@ export class WorkspaceGroup {
   public readonly pinSortOrder: number | null;
   /** Context scope: Both, PlatformOnly, or TenantOnly. Backend filters, frontend uses defensively. */
   public readonly contextScope: "Both" | "PlatformOnly" | "TenantOnly";
+  /** Number of accessible menu items for this workspace (for Hub card stats). */
+  public readonly accessibleItemCount: number;
 
   constructor(data: WorkspaceGroupData) {
     this.workspaceId = data.workspaceId;
@@ -113,6 +120,7 @@ export class WorkspaceGroup {
     this.isPinned = data.isPinned ?? false;
     this.pinSortOrder = data.pinSortOrder ?? null;
     this.contextScope = data.contextScope ?? "Both";
+    this.accessibleItemCount = data.accessibleItemCount ?? 0;
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -183,6 +191,7 @@ export class WorkspaceGroup {
       isPinned: this.isPinned,
       pinSortOrder: this.pinSortOrder,
       contextScope: this.contextScope,
+      accessibleItemCount: this.accessibleItemCount,
     };
   }
 }

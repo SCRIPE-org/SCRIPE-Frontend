@@ -54,10 +54,13 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   );
 
   // ── Active workspace entity ──
+  // Returns null when no workspace is selected (e.g. on the Hub page at "/").
+  // Previously defaulted to sortedGroups[0], which caused the sidebar to show
+  // the first workspace's items even when the admin hadn't selected one yet.
   const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
-    if (!activeWorkspaceKey) return sortedGroups[0] ?? null;
+    if (!activeWorkspaceKey) return null;
     return (
-      sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? sortedGroups[0] ?? null
+      sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? null
     );
   }, [activeWorkspaceKey, sortedGroups]);
 

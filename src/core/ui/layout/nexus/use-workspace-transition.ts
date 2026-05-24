@@ -136,7 +136,6 @@ export function useWorkspaceTransition() {
   );
 
   /**
-  /**
    * Always go to the PRIMARY admin workspace (adminWorkspaces[0]).
    * This is a "Go Home" button, not a browser-history back.
    * It works correctly regardless of previousWorkspaceKey state.

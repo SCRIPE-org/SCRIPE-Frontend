@@ -29,6 +29,7 @@ import { useWorkspaceTransition } from "./use-workspace-transition";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { NEXUS_PANEL_W, NEXUS_PRIMARY_RAIL_W, NEXUS_TOPBAR_H } from "./_parts/nexus-layout-constants";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 
 // ── Workspace transition context ─────────────────────────────────────────────
 interface WorkspaceTransitionContextType {
@@ -53,6 +54,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [appLauncherOpen, setAppLauncherOpen] = useState(false);
   const { direction } = useI18n();
+  const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
+  const isHubPage = !activeWorkspaceKey; // No workspace selected = Hub state
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
@@ -75,7 +78,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             overflow: "hidden",
             position: "relative",
             "--nexus-primary-w": `${NEXUS_PRIMARY_RAIL_W}px`,
-            "--nexus-panel-w": isPanelCollapsed ? "0px" : `${NEXUS_PANEL_W}px`,
+            "--nexus-panel-w": (isPanelCollapsed || isHubPage) ? "0px" : `${NEXUS_PANEL_W}px`,
             "--nexus-topbar-h": `${NEXUS_TOPBAR_H}px`,
           } as React.CSSProperties
         }

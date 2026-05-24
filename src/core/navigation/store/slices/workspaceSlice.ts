@@ -28,7 +28,17 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       workspaceGroups: groups,
       defaultWorkspace: data,
       workspaces: new Map(state.workspaces).set(defaultKey ?? "__default__", data),
-      activeWorkspaceKey: state.activeWorkspaceKey ?? defaultKey,
+      // Only auto-set the workspace key when it hasn't been set yet (undefined).
+      // If it's explicitly null (user navigated to Hub via logo click), preserve
+      // that null so the sidebar stays collapsed on refresh.
+      // However, on first load (pathname !== "/"), null means "not initialized yet",
+      // so we DO set it. We distinguish via: if we're on "/" and key is null, keep null.
+      activeWorkspaceKey:
+        state.activeWorkspaceKey !== null
+          ? state.activeWorkspaceKey  // Already set — preserve it
+          : (typeof window !== "undefined" && window.location.pathname === "/")
+            ? null                    // On Hub — keep null (user explicitly navigated here)
+            : defaultKey,             // First load on a sub-page — auto-activate default
       isInitialLoading: false,
     }));
   },

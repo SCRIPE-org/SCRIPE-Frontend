@@ -30,6 +30,8 @@ export interface WorkspaceGroupDto {
   isPinned?: boolean;
   /** Sort order for pinned workspaces. Null when not pinned. */
   pinSortOrder?: number | null;
+  /** Number of menu items accessible to this admin in this workspace. */
+  accessibleItemCount?: number;
 }
 
 /**
@@ -58,4 +60,6 @@ export interface WorkspaceStubDto {
   isPinned?: boolean;
   /** Sort order for pinned workspaces. Null when not pinned. */
   pinSortOrder?: number | null;
+  /** Number of menu items accessible to this admin in this workspace. */
+  accessibleItemCount?: number;
 }

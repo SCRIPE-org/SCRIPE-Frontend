@@ -41,6 +41,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/
 import { DynamicIcon } from "./_parts/primary-rail-parts";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { useRouter } from "next/navigation";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { useNexusPalette } from "./_parts/nexus-theme-utils";
 import { toast } from "@core/ui/use-toast";
@@ -133,29 +134,30 @@ export function NexusPrimaryRail({
   // Pinned workspaces — sorted by pinSortOrder, then alphabetically as tiebreaker.
   // Rules:
   //   1. The ACTIVE workspace is always excluded (you're already there — no point showing it).
-  //   2. The PRIMARY ADMIN workspace is ALWAYS included, even without a DB pin row.
-  //      "Admin is always pinned" is a UX guarantee, not just a bootstrap promise.
-  //      This covers: pre-existing sessions, bootstrap race conditions, pin being toggled off.
+  //   2. The FIRST workspace in sort order is ALWAYS included, even without a DB pin row.
+  //      This ensures the admin always has a quick-jump to their primary workspace.
+  //      "First-accessible is always pinned" replaces the old "Admin is always pinned" UX.
   const pinnedWorkspaces = useMemo(() => {
     const activeKey = activeWorkspace?.workspaceKey;
 
-    // Sort all workspaces by sortOrder to reliably find the primary admin
+    // Sort all workspaces by sortOrder to reliably find the first one
     const sorted = [...workspaceGroups].sort(
       (a, b) => a.workspaceSortOrder - b.workspaceSortOrder
     );
-    const primaryAdmin = sorted.find((ws) => ws.isAdminWorkspace);
+    const primaryWorkspace = sorted[0];
 
     const pinned = sorted.filter(
       (ws) =>
         ws.workspaceKey !== activeKey && // never show active
-        (ws.isPinned || ws.workspaceKey === primaryAdmin?.workspaceKey) // pinned OR always-admin
+        !ws.isLocked && // never pin locked workspaces
+        (ws.isPinned || ws.workspaceKey === primaryWorkspace?.workspaceKey) // pinned OR first-accessible
     );
 
-    // Sort: pinSortOrder asc, then alphabetical. Primary admin (sort 0) always floats first.
+    // Sort: pinSortOrder asc, then alphabetical. Primary (sort 0) always floats first.
     return pinned.sort((a, b) => {
-      // Primary admin always goes first in the pinned section
-      if (a.workspaceKey === primaryAdmin?.workspaceKey) return -1;
-      if (b.workspaceKey === primaryAdmin?.workspaceKey) return 1;
+      // Primary workspace always goes first in the pinned section
+      if (a.workspaceKey === primaryWorkspace?.workspaceKey) return -1;
+      if (b.workspaceKey === primaryWorkspace?.workspaceKey) return 1;
       const aOrder = a.pinSortOrder ?? Infinity;
       const bOrder = b.pinSortOrder ?? Infinity;
       return aOrder !== bOrder
@@ -164,19 +166,23 @@ export function NexusPrimaryRail({
     });
   }, [workspaceGroups, activeWorkspace?.workspaceKey]);
 
-  // Primary admin workspace = the admin-type workspace with the lowest sort order.
-  // The back button shows whenever you're NOT on this workspace.
-  // Admin is always bootstrapped-pinned, so if you're elsewhere, you always have
-  // a quick-jump back home.
+  // Primary admin workspace: the admin-type workspace with the lowest sort order.
+  // The back button shows ONLY when the admin actually has an admin workspace in their
+  // accessible list. CRM-only operators never see a back button.
   const primaryAdminKey = useMemo(
     () =>
       workspaceGroups
-        .filter((ws) => ws.isAdminWorkspace)
+        .filter((ws) => ws.isAdminWorkspace && !ws.isLocked)
         .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0]
-        ?.workspaceKey,
+        ?.workspaceKey ?? null,
     [workspaceGroups]
   );
   const isOnPrimaryAdmin = activeWorkspace?.workspaceKey === primaryAdminKey;
+  // Only show back button when:
+  //   1. Admin has an admin workspace in their access list
+  //   2. A workspace IS selected (not on the Hub page where activeWorkspace is null)
+  //   3. Not already on the primary admin workspace
+  const showBackButton = primaryAdminKey !== null && activeWorkspace !== null && !isOnPrimaryAdmin;
 
   const hasPinnedWorkspaces = pinnedWorkspaces.length > 0;
 
@@ -221,12 +227,17 @@ export function NexusPrimaryRail({
         isDark={isDark}
         isModuleMode={isModuleMode}
         language={language}
-        onClick={() => router.push("/")}
+        onClick={() => {
+          // Clear workspace key so Hub page shows clean state
+          // (secondary rail collapses, back button hides, admin items clear)
+          useNavigationStore.getState().setActiveWorkspace(null);
+          router.push("/");
+        }}
       />
 
-      {/* ── Back button — visible on any workspace that is NOT the primary admin ── */}
-      {/* Admin is the "home". Compliance, Plugins, Marketplace, CRM — all non-home. */}
-      {!isOnPrimaryAdmin && primaryAdminKey && (
+      {/* ── Back button — visible only when admin has an admin workspace AND is not on it ── */}
+      {/* CRM-only operators never see this — they have no admin workspace in their access list. */}
+      {showBackButton && (
         <>
           <BackButton
             isRTL={isRTL}

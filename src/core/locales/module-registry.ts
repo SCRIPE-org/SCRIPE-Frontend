@@ -85,6 +85,9 @@ import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recyc
 // ─── Profile ───────────────────────────────────────────
 import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 
+// ─── Home ──────────────────────────────────────────────
+import { en as homeEn, ar as homeAr } from "@modules/home/locales";
+
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
@@ -194,6 +197,8 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   recycleBinEn,
   // Profile
   profileEn,
+  // Home
+  homeEn,
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogEn,
   pluginsInstalledEn,
@@ -259,6 +264,8 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   recycleBinAr,
   // Profile
   profileAr,
+  // Home
+  homeAr,
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogAr,
   pluginsInstalledAr,

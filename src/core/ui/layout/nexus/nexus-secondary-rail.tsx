@@ -63,15 +63,18 @@ export function NexusSecondaryRail({
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
 
+  // Auto-collapse when no workspace is selected (Hub page)
+  const effectiveCollapsed = isCollapsed || !activeWorkspace;
+
   const railStyle: React.CSSProperties = {
-    width: isCollapsed ? 0 : NEXUS_PANEL_W,
-    opacity: isCollapsed ? 0 : 1,
+    width: effectiveCollapsed ? 0 : NEXUS_PANEL_W,
+    opacity: effectiveCollapsed ? 0 : 1,
     height: "100%",
     minHeight: 0, // critical: allows flex child to scroll
     background: palette.railBg,
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
-    borderInlineEnd: isCollapsed ? "none" : palette.railBorder,
+    borderInlineEnd: effectiveCollapsed ? "none" : palette.railBorder,
     display: "flex",
     flexDirection: "column",
     flexShrink: 0,
@@ -112,7 +115,7 @@ export function NexusSecondaryRail({
       </aside>
 
       {/* Mobile overlay */}
-      {mobileOpen && (
+      {mobileOpen && !effectiveCollapsed && (
         <>
           <div
             className="fixed inset-0 z-40 lg:hidden"
