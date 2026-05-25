@@ -28,17 +28,21 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       workspaceGroups: groups,
       defaultWorkspace: data,
       workspaces: new Map(state.workspaces).set(defaultKey ?? "__default__", data),
-      // Only auto-set the workspace key when it hasn't been set yet (undefined).
-      // If it's explicitly null (user navigated to Hub via logo click), preserve
-      // that null so the sidebar stays collapsed on refresh.
-      // However, on first load (pathname !== "/"), null means "not initialized yet",
-      // so we DO set it. We distinguish via: if we're on "/" and key is null, keep null.
+      // Auto-activate the default workspace when none is selected yet.
+      // Previously this block tried to keep key=null when pathname="/", assuming
+      // that "/" was the Hub page. But "/" is now the real dashboard — the hub
+      // lives at "/hub" and sets activeWorkspaceKey=null itself on mount.
+      //
+      // Rules:
+      //  - null (uninitialized) AND on /hub → keep null (hub is standalone, no workspace)
+      //  - null (uninitialized) on ANY other page → auto-activate default workspace
+      //  - has a value (user navigated)           → preserve as-is
       activeWorkspaceKey:
         state.activeWorkspaceKey !== null
-          ? state.activeWorkspaceKey  // Already set — preserve it
-          : (typeof window !== "undefined" && window.location.pathname === "/")
-            ? null                    // On Hub — keep null (user explicitly navigated here)
-            : defaultKey,             // First load on a sub-page — auto-activate default
+          ? state.activeWorkspaceKey  // Already chosen — preserve it
+          : (typeof window !== "undefined" && window.location.pathname === "/hub")
+            ? null      // Explicitly on /hub — keep null (hub manages its own state)
+            : defaultKey, // First load on dashboard or any module page — auto-activate
       isInitialLoading: false,
     }));
   },
