@@ -63,8 +63,13 @@ export function NexusSecondaryRail({
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
 
-  // Auto-collapse when no workspace is selected (Hub page)
-  const effectiveCollapsed = isCollapsed || !activeWorkspace;
+  // Auto-collapse when panel is explicitly collapsed by user action.
+  // Do NOT collapse when activeWorkspace is null — that is a transient state
+  // during JIT workspace activation (one React tick before useActiveRootSync fires).
+  // Collapsing on null would cause the secondary rail to flash empty on every
+  // page navigation where the workspace key momentarily resets.
+  const effectiveCollapsed = !!isCollapsed;
+
 
   const railStyle: React.CSSProperties = {
     width: effectiveCollapsed ? 0 : NEXUS_PANEL_W,

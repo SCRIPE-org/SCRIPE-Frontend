@@ -38,8 +38,20 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
     } = state;
 
     const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "");
-    // For the root path: auto-activate the primary admin workspace if none is active
-    if (!normalizedPath || normalizedPath === "/") {
+
+    // ── System pages: treat same as root for workspace activation ────────────
+    // Pages like /overview, /settings, /profile are "system-wide" — they don't
+    // belong to a specific workspace URL prefix, so workspaceRouteMap won't match them.
+    // If the user lands on one with no active workspace, activate the primary admin
+    // workspace so the nav rails remain populated.
+    //
+    // We detect this case AFTER the route-map strategies run (below), but we handle
+    // the root "/" case here first for clarity.
+    const isRootOrSystemPage =
+      !normalizedPath ||
+      normalizedPath === "/";
+
+    if (isRootOrSystemPage) {
       if (!activeWorkspaceKey && workspaceGroups.length > 0) {
         // Pick primary admin workspace (first admin workspace by sort order)
         const adminWs = workspaceGroups
@@ -56,6 +68,7 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
       }
       return;
     }
+
 
     // ── Strategy 1: Use workspaceRouteMap (authoritative, persisted) ──────────
     // workspaceRouteMap: Record<workspaceKey, string[]> — populated by Query 1
@@ -88,7 +101,30 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
       if (match) matchingKey = match.workspaceKey;
     }
 
-    if (!matchingKey) return; // Not a workspace URL — nothing to do
+    if (!matchingKey) {
+      // No workspace URL match found.
+      // This happens when:
+      //   (a) The page is genuinely not a workspace route (e.g. /settings, /profile), OR
+      //   (b) workspaceRouteMap is still empty (first load, route map fetch in flight).
+      //
+      // In case (b), the layout would show an empty secondary rail until the map loads.
+      // Fix: activate the primary admin workspace as a sensible default so the rail
+      // remains populated. When the route map loads, routesLoadedAt changes and this
+      // effect re-fires, finding the correct workspace and switching if needed.
+      if (!activeWorkspaceKey && workspaceGroups.length > 0) {
+        const adminWs = workspaceGroups
+          .filter((ws) => ws.isAdminWorkspace)
+          .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0];
+        const target = adminWs ?? workspaceGroups[0];
+        if (target) {
+          setActiveWorkspace(target.workspaceKey);
+          if (!hasWorkspaceData(target.workspaceKey)) {
+            fetchWorkspaceMenu(target.workspaceKey).catch(() => {});
+          }
+        }
+      }
+      return;
+    }
 
     // Already on the right workspace and data is loaded → nothing to do
     if (activeWorkspaceKey === matchingKey && hasWorkspaceData(matchingKey)) return;

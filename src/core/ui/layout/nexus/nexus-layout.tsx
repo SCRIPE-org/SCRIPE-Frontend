@@ -58,9 +58,23 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const { direction } = useI18n();
   const pathname = usePathname();
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
-  // Hub mode: only when explicitly on /hub route
-  // The / route is the real dashboard — never hub mode.
-  const isHubPage = pathname === "/hub" || (!activeWorkspaceKey && pathname !== "/");
+  const workspaceGroups = useNavigationStore((s) => s.workspaceGroups);
+  //
+  // Hub mode detection — ONLY the explicit /hub route.
+  //
+  // Do NOT use `!activeWorkspaceKey` as a hub signal on other pages:
+  // activeWorkspaceKey is transiently null while useActiveRootSync fires its
+  // JIT workspace activation (a single React tick). Using it as hub signal
+  // caused the secondary rail to vanish and isHubPage to flip true on every
+  // navigation (e.g. /overview, /settings) before the JIT completes.
+  //
+  // Rule: we are in hub mode if and only if:
+  //   (a) the URL is /hub (explicit standalone hub page), OR
+  //   (b) no workspaces have been loaded yet AND the user is not on a concrete page
+  //       (workspaceGroups.length === 0 means NavigationProvider is still bootstrapping)
+  const isHubPage =
+    pathname === "/hub" ||
+    (workspaceGroups.length === 0 && !activeWorkspaceKey && pathname === "/");
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
