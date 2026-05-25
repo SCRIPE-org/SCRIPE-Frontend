@@ -39,6 +39,10 @@ interface AppState {
   mustChangePassword: boolean;
   setMustChangePassword: (must: boolean) => void;
 
+  // Post-login redirect path from backend
+  defaultRedirectPath: string;
+  setDefaultRedirectPath: (path: string) => void;
+
   // Tenant context (for tenant-aware logout redirect)
   tenantCode: string | null;
   setTenantCode: (code: string | null) => void;
@@ -95,6 +99,7 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
+          defaultRedirectPath: "/",
         });
       },
 
@@ -108,6 +113,10 @@ export const useAppStore = create<AppState>()(
       // Must Change Password
       mustChangePassword: false,
       setMustChangePassword: (must) => set({ mustChangePassword: must }),
+
+      // Post-login redirect path
+      defaultRedirectPath: "/",
+      setDefaultRedirectPath: (path) => set({ defaultRedirectPath: path }),
 
       // Tenant context
       tenantCode: null,

@@ -30,6 +30,7 @@ export interface Verify2FAResponseJson {
   gracePhase?: string | null;
   editionName?: string | null;
   userProfile?: UserProfileJson | null;
+  defaultRedirectPath?: string | null;
 }
 
 // ===== Model Classes =====
@@ -66,7 +67,8 @@ export class Verify2FAResponseModel {
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
-    public readonly userProfile: UserProfileJson | null = null
+    public readonly userProfile: UserProfileJson | null = null,
+    public readonly defaultRedirectPath: string = "/"
   ) {}
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
@@ -77,7 +79,8 @@ export class Verify2FAResponseModel {
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
       json.editionName ?? null,
-      json.userProfile ?? null
+      json.userProfile ?? null,
+      json.defaultRedirectPath ?? "/"
     );
   }
 }

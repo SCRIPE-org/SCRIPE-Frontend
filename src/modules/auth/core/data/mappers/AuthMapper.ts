@@ -29,6 +29,8 @@ interface LoginResponseLike {
   gracePhase?: string | null;
   editionName?: string | null;
   userProfile?: unknown;
+  defaultRedirectPath?: string | null;
+  lastWorkspaceKey?: string | null;
 }
 
 function isUserProfileJson(value: unknown): value is UserProfileJson {
@@ -88,6 +90,8 @@ export class AuthMapper {
       gracePhase: model.gracePhase,
       editionName: model.editionName,
       userProfile: AuthMapper.userFromUnknown(model.userProfile),
+      defaultRedirectPath: model.defaultRedirectPath ?? "/",
+      lastWorkspaceKey: model.lastWorkspaceKey ?? null,
     });
   }
 

@@ -32,6 +32,10 @@ export interface LoginResponseData {
   gracePhase?: string | null;
   editionName?: string | null;
   userProfile?: unknown;
+  /** Backend-authoritative redirect path after successful login */
+  defaultRedirectPath?: string | null;
+  /** Last active workspace key for seamless re-entry */
+  lastWorkspaceKey?: string | null;
 }
 
 /**
@@ -88,6 +92,9 @@ export class LoginResponse {
   public readonly gracePhase: string | null;
   public readonly editionName: string | null;
   public readonly userProfile: unknown;
+  /** Backend-authoritative redirect path: "/" or "/hub" */
+  public readonly defaultRedirectPath: string;
+  public readonly lastWorkspaceKey: string | null;
 
   constructor(data: LoginResponseData) {
     this.success = data.success;
@@ -97,6 +104,8 @@ export class LoginResponse {
     this.gracePhase = data.gracePhase ?? null;
     this.editionName = data.editionName ?? null;
     this.userProfile = data.userProfile ?? null;
+    this.defaultRedirectPath = data.defaultRedirectPath ?? "/";
+    this.lastWorkspaceKey = data.lastWorkspaceKey ?? null;
   }
 
   /**

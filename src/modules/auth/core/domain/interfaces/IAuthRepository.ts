@@ -10,6 +10,8 @@ export interface LoginResult {
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
+  /** Backend-authoritative redirect path: "/" for dashboard, "/hub" for workspace hub */
+  defaultRedirectPath: string;
 }
 
 export interface IAuthRepository {

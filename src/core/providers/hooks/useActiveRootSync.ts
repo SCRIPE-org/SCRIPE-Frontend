@@ -38,7 +38,24 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
     } = state;
 
     const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "");
-    if (!normalizedPath || normalizedPath === "/") return;
+    // For the root path: auto-activate the primary admin workspace if none is active
+    if (!normalizedPath || normalizedPath === "/") {
+      if (!activeWorkspaceKey && workspaceGroups.length > 0) {
+        // Pick primary admin workspace (first admin workspace by sort order)
+        const adminWs = workspaceGroups
+          .filter((ws) => ws.isAdminWorkspace)
+          .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0];
+        const target = adminWs ?? workspaceGroups[0];
+        if (target) {
+          setActiveWorkspace(target.workspaceKey);
+          // JIT fetch if needed
+          if (!hasWorkspaceData(target.workspaceKey)) {
+            fetchWorkspaceMenu(target.workspaceKey).catch(() => {});
+          }
+        }
+      }
+      return;
+    }
 
     // ── Strategy 1: Use workspaceRouteMap (authoritative, persisted) ──────────
     // workspaceRouteMap: Record<workspaceKey, string[]> — populated by Query 1

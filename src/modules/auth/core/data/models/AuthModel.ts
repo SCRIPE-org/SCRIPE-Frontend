@@ -87,6 +87,10 @@ export interface LoginResponseJson {
   gracePhase?: string | null;
   editionName?: string | null;
   userProfile?: UserProfileJson | null;
+  /** Backend-authoritative redirect path: "/" for dashboard, "/hub" for workspace picker */
+  defaultRedirectPath?: string | null;
+  /** Last active workspace key for seamless re-entry */
+  lastWorkspaceKey?: string | null;
 }
 
 // ===== Model Classes =====
@@ -138,7 +142,9 @@ export class LoginResponseModel {
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
-    public readonly userProfile: UserProfileJson | null = null
+    public readonly userProfile: UserProfileJson | null = null,
+    public readonly defaultRedirectPath: string = "/",
+    public readonly lastWorkspaceKey: string | null = null
   ) {}
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
@@ -152,7 +158,9 @@ export class LoginResponseModel {
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
       json.editionName ?? null,
-      json.userProfile ?? null
+      json.userProfile ?? null,
+      json.defaultRedirectPath ?? "/",
+      json.lastWorkspaceKey ?? null
     );
   }
 

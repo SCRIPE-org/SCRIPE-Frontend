@@ -20,6 +20,7 @@ export const SYSTEM_ENDPOINTS = {
     ANALYTICS: `${V1}/Audit/analytics`,
     TOP_USERS: `${V1}/Audit/analytics/top-users`,
     COMPLIANCE_REPORT: `${V1}/Audit/compliance-report`,
+    HUB_SUMMARY: `${V1}/Audit/hub-summary`,
   },
 
   RECYCLE_BIN: {

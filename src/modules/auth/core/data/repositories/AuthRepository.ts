@@ -107,6 +107,7 @@ export class AuthRepository implements IAuthRepository {
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
+        defaultRedirectPath: responseModel.defaultRedirectPath ?? "/",
       };
     }
     throw new Error("Login failed: No access token received.");
@@ -144,6 +145,7 @@ export class AuthRepository implements IAuthRepository {
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
+        defaultRedirectPath: responseModel.defaultRedirectPath ?? "/",
       };
     }
     throw new Error("2FA verification failed: No access token received.");

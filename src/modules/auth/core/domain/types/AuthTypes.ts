@@ -38,6 +38,10 @@ export interface LoginResponseJson {
   gracePhase?: string | null;
   editionName?: string | null;
   isSuccessful?: boolean;
+  /** Backend-authoritative redirect path: "/" for dashboard, "/hub" for workspace picker */
+  defaultRedirectPath?: string | null;
+  /** Last active workspace key for seamless re-entry */
+  lastWorkspaceKey?: string | null;
 }
 
 export interface LoginResponseModel extends LoginResponseJson {
@@ -60,6 +64,7 @@ export interface LoginResponseModel extends LoginResponseJson {
   editionName: string | null;
   userProfile: unknown | null;
   isSuccessful: boolean;
+  defaultRedirectPath: string;
   toJson(): LoginResponseJson;
 }
 
@@ -82,6 +87,7 @@ export interface Verify2FAResponseJson {
   gracePhase?: string | null;
   editionName?: string | null;
   userProfile?: unknown;
+  defaultRedirectPath?: string | null;
 }
 
 export interface Verify2FAResponseModel extends Verify2FAResponseJson {
@@ -89,6 +95,7 @@ export interface Verify2FAResponseModel extends Verify2FAResponseJson {
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
+  defaultRedirectPath: string;
 }
 
 export interface WorkspaceInfoDto {

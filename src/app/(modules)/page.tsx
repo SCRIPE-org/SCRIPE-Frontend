@@ -2,20 +2,20 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-const WorkspaceHubView = dynamic(
-  () => import("@modules/home").then((m) => ({ default: m.WorkspaceHubView }))
+const HomeView = dynamic(
+  () => import("@modules/home").then((m) => ({ default: m.HomeView }))
 );
 
 export const metadata: Metadata = {
-  title: "Workspace Hub | NEXORA",
-  description: "Choose your workspace to get started",
+  title: "Dashboard | NEXORA",
+  description: "Your NEXORA administration dashboard",
 };
 
 export default function HomePage() {
   return (
     <main>
-      <ModuleErrorBoundary moduleName="Workspace Hub">
-        <WorkspaceHubView />
+      <ModuleErrorBoundary moduleName="Dashboard">
+        <HomeView />
       </ModuleErrorBoundary>
     </main>
   );

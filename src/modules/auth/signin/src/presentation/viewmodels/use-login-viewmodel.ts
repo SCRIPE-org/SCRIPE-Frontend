@@ -45,10 +45,13 @@ export function useLoginViewModel() {
   const loginMutation = useAuthLogin();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
+  // Backend-authoritative redirect path (stored after login by useAuthLogin)
+  const backendRedirectPath = useAppStore((state) => state.defaultRedirectPath);
   const { t } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/";
+  // URL ?redirect= param overrides backend path (deep-link scenario)
+  const redirectPath = searchParams.get("redirect") || backendRedirectPath || "/";
 
   // Helper to handle external vs internal redirects
   const handleRedirect = useCallback(

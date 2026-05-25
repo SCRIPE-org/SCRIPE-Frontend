@@ -61,6 +61,28 @@ const PUBLIC_PAGES = [
 
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
 
+/**
+ * System pages: require authentication but bypass the navigation store
+ * route-access check. These are always accessible to any authenticated
+ * admin regardless of their menu permissions.
+ */
+const SYSTEM_PAGES = [
+  "/hub",            // Workspace picker — for tenant-only module admins
+  "/change-password",
+  "/profile",
+  "/profile/security",
+  "/profile/activity",
+  "/profile/sessions",
+  "/profile/notifications",
+  "/profile/settings",
+  "/settings",
+  "/overview",
+];
+
+function isSystemPage(pathname: string): boolean {
+  return SYSTEM_PAGES.some((p) => pathname === p || pathname.startsWith(p + "/"));
+}
+
 function isPublicPage(pathname: string): boolean {
   if (PUBLIC_PAGES.includes(pathname)) return true;
   return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix + "/"));
@@ -126,7 +148,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
-        router.replace(mcp ? "/change-password" : "/");
+        const defaultPath = useAppStore.getState().defaultRedirectPath || "/";
+        router.replace(mcp ? "/change-password" : defaultPath);
         return;
       }
 
@@ -158,6 +181,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         if (!USE_DYNAMIC_NAVIGATION) {
+          setIsChecking(false);
+          return;
+        }
+
+        // ── v2: system pages bypass nav store RBAC (always allowed when authenticated) ──
+        if (isSystemPage(pathname)) {
           setIsChecking(false);
           return;
         }

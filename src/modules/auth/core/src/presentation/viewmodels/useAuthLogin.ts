@@ -22,6 +22,7 @@ export function useAuthLogin() {
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
+  const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
   const { operationError, operationSuccess } = useEnhancedToast();
   const { t } = useI18n();
   const queryClient = useQueryClient();
@@ -45,7 +46,7 @@ export function useAuthLogin() {
       return authRepository.login(request);
     },
     onSuccess: async (result, variables) => {
-      const { user, subscriptionStatus, gracePhase, editionName, mustChangePassword } = result;
+      const { user, subscriptionStatus, gracePhase, editionName, mustChangePassword, defaultRedirectPath } = result;
 
       // 1. Set user in store with permissions and roles
       setAuth(user, user.permissions || [], []);
@@ -55,6 +56,9 @@ export function useAuthLogin() {
 
       // 2b. Store must-change-password flag for route guard enforcement
       useAppStore.getState().setMustChangePassword(mustChangePassword ?? false);
+
+      // 2c. Store backend-provided redirect path — authoritative, not guessed
+      setDefaultRedirectPath(defaultRedirectPath ?? "/");
 
       // 3. Persist tenant code for tenant-aware logout redirect
       if (variables.tenantCode) {
