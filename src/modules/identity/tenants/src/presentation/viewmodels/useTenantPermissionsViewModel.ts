@@ -34,10 +34,12 @@ export interface UseTenantPermissionsDialogResult {
   search: string;
   setSearch: (value: string) => void;
   selectedCodes: Set<string>;
-  /** Per-module expanded category keys. Record<moduleKey, categoryKey[]>.
-   *  Each module's accordion reads only its own slice — no cross-module interference. */
+  /** Which module cards are open (module-level collapse/expand). */
+  expandedModules: string[];
+  /** Update the list of open module cards. */
+  setExpandedModules: (moduleKeys: string[]) => void;
+  /** Per-module expanded category keys. */
   expandedGroups: Record<string, string[]>;
-  /** Update one module's open categories without touching any other module. */
   setModuleExpanded: (moduleKey: string, openKeys: string[]) => void;
 
   // Data — backend-grouped, client-search-filtered (NO client-side groupBy)
@@ -79,6 +81,7 @@ export function useTenantPermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
+  const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
 
   // Track which tenant we have already initialized selections for
@@ -90,6 +93,7 @@ export function useTenantPermissionsDialog({
     if (!open) {
       setSearch("");
       setSelectedCodes(new Set());
+      setExpandedModules([]);
       setExpandedGroups({});
       setInitializedTenantId(null);
     }
@@ -100,6 +104,7 @@ export function useTenantPermissionsDialog({
     if (open && tenantId) {
       setSearch("");
       setSelectedCodes(new Set());
+      setExpandedModules([]);
       setExpandedGroups({});
       setInitializedTenantId(null);
     }
@@ -189,12 +194,14 @@ export function useTenantPermissionsDialog({
     });
     // Build per-module record: { [moduleKey]: categoryKey[] }
     const perModuleExpanded: Record<string, string[]> = {};
+    const modulesWithSelection = new Set<string>();
     groupsWithSelection.forEach((key) => {
-      // key = `${module}-${category}`
       const dashIdx = key.indexOf("-");
       const mod = dashIdx !== -1 ? key.slice(0, dashIdx) : key;
       perModuleExpanded[mod] = [...(perModuleExpanded[mod] ?? []), key];
+      modulesWithSelection.add(mod);
     });
+    setExpandedModules(Array.from(modulesWithSelection));
     setExpandedGroups(perModuleExpanded);
     setInitializedTenantId(tenantId);
   }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant, initializedTenantId]);
@@ -245,16 +252,19 @@ export function useTenantPermissionsDialog({
     setExpandedGroups((prev) => ({ ...prev, [moduleKey]: openKeys }));
   };
 
-  // Expand / Collapse all accordion panels
+  // Expand / Collapse ALL — controls both module-level AND category-level
   const expandAll = () => {
+    const allModuleKeys = parentPermissionGroups.map((m) => m.module);
     const perModule: Record<string, string[]> = {};
     parentPermissionGroups.forEach((m) => {
       perModule[m.module] = m.categories.map((c) => `${m.module}-${c.category}`);
     });
+    setExpandedModules(allModuleKeys);
     setExpandedGroups(perModule);
   };
 
   const collapseAll = () => {
+    setExpandedModules([]);
     setExpandedGroups({});
   };
 
@@ -298,6 +308,8 @@ export function useTenantPermissionsDialog({
     search,
     setSearch,
     selectedCodes,
+    expandedModules,
+    setExpandedModules,
     expandedGroups,
     setModuleExpanded,
 

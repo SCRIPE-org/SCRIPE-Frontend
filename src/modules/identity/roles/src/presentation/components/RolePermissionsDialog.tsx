@@ -220,14 +220,23 @@ interface PermissionModulesTreeProps {
 /**
  * Renders the Module → Category → Permission tree.
  * Data comes 100% backend-grouped — zero client-side groupBy.
+ *
+ * Two-level accordion:
+ *   Level 1 (outer): expandedModules — which module cards are open
+ *   Level 2 (inner): expandedGroups[moduleKey] — which categories inside a module are open
  */
 function PermissionModulesTree({ vm }: PermissionModulesTreeProps) {
   return (
-    <div className="space-y-4">
+    <Accordion
+      type="multiple"
+      value={vm.expandedModules}
+      onValueChange={vm.setExpandedModules}
+      className="space-y-3"
+    >
       {vm.groupedModules.map((moduleGroup) => (
         <PermissionModule key={moduleGroup.module} moduleGroup={moduleGroup} vm={vm} />
       ))}
-    </div>
+    </Accordion>
   );
 }
 
@@ -241,50 +250,57 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
   const allCodes = moduleGroup.categories.flatMap((c) => c.permissions.map((p) => p.code));
   const stats = vm.getGroupStats(allCodes);
 
-  // ── Each module reads ONLY its own slice of the expand-state map ──
-  // This prevents one module's accordion onValueChange from wiping another's state.
+  // ── Each module reads ONLY its own slice of the category expand-state map ──
   const moduleOpenKeys = vm.expandedGroups[moduleGroup.module] ?? [];
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-      {/* Module Header */}
-      <div className="flex items-center gap-3 border-b bg-muted/40 px-4 py-2.5">
+    <AccordionItem
+      value={moduleGroup.module}
+      className="overflow-hidden rounded-xl border bg-card shadow-sm"
+    >
+      {/* Module Header — this IS the accordion trigger (the collapse/expand for the whole module) */}
+      <AccordionTrigger className="flex items-center gap-3 border-b bg-muted/40 px-4 py-2.5 hover:bg-muted/60 hover:no-underline [&>svg]:text-muted-foreground">
         <div
           className={cn(
             "flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-primary",
             stats.allChecked && "bg-primary",
             stats.someChecked && "bg-primary/50"
           )}
-          onClick={() => vm.toggleGroup(allCodes)}
+          onClick={(e) => {
+            e.stopPropagation(); // don't toggle the module accordion when clicking the checkbox
+            vm.toggleGroup(allCodes);
+          }}
         >
           {(stats.allChecked || stats.someChecked) && (
             <Check className="h-3 w-3 text-primary-foreground" />
           )}
         </div>
         <span className="text-sm font-semibold capitalize">{moduleGroup.module}</span>
-        <div className="ms-auto text-xs text-muted-foreground">
+        <div className="me-2 ms-auto text-xs text-muted-foreground">
           <span className={stats.count > 0 ? "font-medium text-primary" : ""}>{stats.count}</span>
           <span> / {stats.total}</span>
         </div>
-      </div>
+      </AccordionTrigger>
 
-      {/* Categories — isolated accordion per module */}
-      <Accordion
-        type="multiple"
-        value={moduleOpenKeys}
-        onValueChange={(openKeys) => vm.setModuleExpanded(moduleGroup.module, openKeys)}
-        className="divide-y"
-      >
-        {moduleGroup.categories.map((catGroup) => (
-          <PermissionCategory
-            key={`${moduleGroup.module}-${catGroup.category}`}
-            moduleKey={moduleGroup.module}
-            catGroup={catGroup}
-            vm={vm}
-          />
-        ))}
-      </Accordion>
-    </div>
+      <AccordionContent className="pb-0">
+        {/* Categories — isolated accordion per module */}
+        <Accordion
+          type="multiple"
+          value={moduleOpenKeys}
+          onValueChange={(openKeys) => vm.setModuleExpanded(moduleGroup.module, openKeys)}
+          className="divide-y"
+        >
+          {moduleGroup.categories.map((catGroup) => (
+            <PermissionCategory
+              key={`${moduleGroup.module}-${catGroup.category}`}
+              moduleKey={moduleGroup.module}
+              catGroup={catGroup}
+              vm={vm}
+            />
+          ))}
+        </Accordion>
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 
