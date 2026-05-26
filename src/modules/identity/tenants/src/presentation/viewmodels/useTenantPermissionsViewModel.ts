@@ -13,7 +13,7 @@
  */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -47,6 +47,8 @@ export interface UseTenantPermissionsDialogResult {
   // Actions
   toggle: (code: string) => void;
   toggleGroup: (codes: string[]) => void;
+  expandAll: () => void;
+  collapseAll: () => void;
   save: () => void;
   isSaving: boolean;
 
@@ -76,33 +78,30 @@ export function useTenantPermissionsDialog({
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
-  // Track if we've initialized for this tenant to prevent infinite loops
+  // Track which tenant we have already initialized selections for
   const [initializedTenantId, setInitializedTenantId] = useState<string | null>(null);
 
-  // Reset when dialog opens with a different tenant
-  const [prevOpen, setPrevOpen] = useState(open);
-  const [prevTenantId, setPrevTenantId] = useState(tenantId);
-  const [prevInitializedTenantId, setPrevInitializedTenantId] = useState(initializedTenantId);
-
-  if (
-    open !== prevOpen ||
-    tenantId !== prevTenantId ||
-    initializedTenantId !== prevInitializedTenantId
-  ) {
-    setPrevOpen(open);
-    setPrevTenantId(tenantId);
-    setPrevInitializedTenantId(initializedTenantId);
-
-    if (open && tenantId && tenantId !== initializedTenantId) {
+  // ── Reset state when dialog closes ──
+  // useEffect prevents the React render-body setState anti-pattern.
+  useEffect(() => {
+    if (!open) {
       setSearch("");
       setSelectedCodes(new Set());
       setExpandedGroups([]);
       setInitializedTenantId(null);
     }
-    if (!open) {
+  }, [open]);
+
+  // ── Reset when the target tenant changes while dialog is open ──
+  useEffect(() => {
+    if (open && tenantId) {
+      setSearch("");
+      setSelectedCodes(new Set());
+      setExpandedGroups([]);
       setInitializedTenantId(null);
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenantId]);
 
   // ── Fetch PARENT's available permissions GROUPED from backend ──
   // Uses Repository (Clean Architecture), NOT direct service calls.
@@ -156,35 +155,38 @@ export function useTenantPermissionsDialog({
     return parentPermissionGroups.flatMap((m) => m.categories.flatMap((c) => c.permissions));
   }, [parentPermissionGroups]);
 
-  // Initialize selection from tenant's permissions (only once per tenant)
-  const isReadyToInit =
-    open &&
-    !!tenantId &&
-    allPermissions.length > 0 &&
-    !loadingTenant &&
-    initializedTenantId !== tenantId;
-  const [prevIsReadyToInit, setPrevIsReadyToInit] = useState(isReadyToInit);
+  // ── Initialize selected codes from tenant's permissions (once per tenant) ──
+  // useEffect is the correct place for derived state initialization.
+  useEffect(() => {
+    if (
+      !open ||
+      !tenantId ||
+      allPermissions.length === 0 ||
+      loadingTenant ||
+      initializedTenantId === tenantId
+    ) {
+      return;
+    }
 
-  if (isReadyToInit && isReadyToInit !== prevIsReadyToInit) {
-    setPrevIsReadyToInit(isReadyToInit);
     const validCodes = new Set(allPermissions.map((p) => p.code));
     const tenantCodes = tenantPermissions.map((p) => p.code);
     const selectedFromTenant = tenantCodes.filter((code: string) => validCodes.has(code));
 
     setSelectedCodes(new Set(selectedFromTenant));
 
-    // Auto-expand groups with selected permissions
+    // Auto-expand accordion categories that have selected permissions.
+    // Key format matches AccordionItem value: `${module}-${category}`.
     const groupsWithSelection = new Set<string>();
     allPermissions.forEach((p) => {
       if (selectedFromTenant.includes(p.code)) {
-        groupsWithSelection.add(p.resource);
+        const mod = p.module || "General";
+        const cat = p.category || p.resource || "General";
+        groupsWithSelection.add(`${mod}-${cat}`);
       }
     });
     setExpandedGroups(Array.from(groupsWithSelection));
     setInitializedTenantId(tenantId);
-  } else if (!isReadyToInit && prevIsReadyToInit) {
-    setPrevIsReadyToInit(isReadyToInit);
-  }
+  }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant, initializedTenantId]);
 
   // Save mutation — uses repository for write operations
   const saveMutation = useMutation({
@@ -224,6 +226,18 @@ export function useTenantPermissionsDialog({
       codes.forEach((c) => (allSelected ? next.delete(c) : next.add(c)));
       return next;
     });
+  };
+
+  // Expand / Collapse all accordion panels
+  const expandAll = () => {
+    const allKeys = parentPermissionGroups.flatMap((m) =>
+      m.categories.map((c) => `${m.module}-${c.category}`)
+    );
+    setExpandedGroups(allKeys);
+  };
+
+  const collapseAll = () => {
+    setExpandedGroups([]);
   };
 
   // ── Client-side SEARCH FILTER only — preserves group structure from backend ──
@@ -279,6 +293,8 @@ export function useTenantPermissionsDialog({
     // Actions
     toggle,
     toggleGroup,
+    expandAll,
+    collapseAll,
     save: () => saveMutation.mutate(),
     isSaving: saveMutation.isPending,
 

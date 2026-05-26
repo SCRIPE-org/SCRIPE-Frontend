@@ -16,7 +16,7 @@
  */
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -53,6 +53,8 @@ export interface UseRolePermissionsDialogResult {
   toggle: (code: string) => void;
   updateAssignment: (code: string, assignment: PermissionAssignmentJson) => void;
   toggleGroup: (codes: string[]) => void;
+  expandAll: () => void;
+  collapseAll: () => void;
   save: () => void;
   bulkUpdateScope: (scope: string) => void;
   bulkScopeValue: string;
@@ -85,24 +87,33 @@ export function useRolePermissionsDialog({
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
-  // Reset when dialog opens with a different role
-  const [prevOpen, setPrevOpen] = useState(open);
-  const [prevRoleId, setPrevRoleId] = useState(role?.id);
+  // Track which role we have already initialized assignments for
   const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
 
-  if (open !== prevOpen || role?.id !== prevRoleId) {
-    setPrevOpen(open);
-    setPrevRoleId(role?.id);
-    if (open && role?.id !== initializedRoleId) {
+  // ── Reset state when dialog closes or switches to a different role ──
+  // useEffect prevents the React render-body setState anti-pattern.
+  useEffect(() => {
+    if (!open) {
+      // Dialog closed — clear all transient state so the next open is fresh
       setSearch("");
       setAssignments(new Map());
       setExpandedGroups([]);
+      setBulkScopeValue("");
       setInitializedRoleId(null);
     }
-    if (!open) {
+  }, [open]);
+
+  useEffect(() => {
+    if (open && role?.id) {
+      // Role changed while dialog is open — reset so we re-initialize below
+      setSearch("");
+      setAssignments(new Map());
+      setExpandedGroups([]);
+      setBulkScopeValue("");
       setInitializedRoleId(null);
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [role?.id]);
 
   // ── Fetch tenant's available permissions GROUPED from backend ──
   // Returns PermissionModuleGroup[] (Module → Category → Permissions)
@@ -130,17 +141,19 @@ export function useRolePermissionsDialog({
     enabled: open && !!role?.id,
   });
 
-  // Initialize selection from role's permissions (only once per role)
-  const isReadyToInitRole =
-    open &&
-    !!role?.id &&
-    allPermissions.length > 0 &&
-    !loadingRole &&
-    initializedRoleId !== role?.id;
-  const [prevIsReadyToInitRole, setPrevIsReadyToInitRole] = useState(isReadyToInitRole);
+  // ── Initialize assignments from role's permissions (once per role) ──
+  // useEffect is the correct place for derived state initialization.
+  useEffect(() => {
+    if (
+      !open ||
+      !role?.id ||
+      allPermissions.length === 0 ||
+      loadingRole ||
+      initializedRoleId === role.id
+    ) {
+      return;
+    }
 
-  if (isReadyToInitRole && isReadyToInitRole !== prevIsReadyToInitRole) {
-    setPrevIsReadyToInitRole(isReadyToInitRole);
     const validCodes = new Map<string, string>(); // code → id
     allPermissions.forEach((p) => validCodes.set(p.code, p.id));
 
@@ -167,20 +180,21 @@ export function useRolePermissionsDialog({
           })(),
         });
 
-        // Auto-expand groups that have selected permissions
+        // Auto-expand accordion categories that have selected permissions.
+        // Key format matches AccordionItem value: `${module}-${category}`.
         const permissionDef = allPermissions.find((p) => p.code === rp.permissionCode);
-        if (permissionDef?.resource) {
-          groupsWithSelection.add(permissionDef.resource);
+        if (permissionDef) {
+          const mod = permissionDef.module || "General";
+          const cat = permissionDef.category || permissionDef.resource || "General";
+          groupsWithSelection.add(`${mod}-${cat}`);
         }
       }
     });
 
     setAssignments(newAssignments);
     setExpandedGroups(Array.from(groupsWithSelection));
-    if (role?.id) setInitializedRoleId(role.id);
-  } else if (!isReadyToInitRole && prevIsReadyToInitRole) {
-    setPrevIsReadyToInitRole(isReadyToInitRole);
-  }
+    setInitializedRoleId(role.id);
+  }, [open, role?.id, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
 
   // Save mutation
   const saveMutation = useMutation({
@@ -264,6 +278,18 @@ export function useRolePermissionsDialog({
     });
   };
 
+  // Expand / Collapse all accordion panels
+  const expandAll = () => {
+    const allKeys = tenantPermissionGroups.flatMap((m) =>
+      m.categories.map((c) => `${m.module}-${c.category}`)
+    );
+    setExpandedGroups(allKeys);
+  };
+
+  const collapseAll = () => {
+    setExpandedGroups([]);
+  };
+
   const bulkUpdateScope = (scope: string) => {
     const scopeValue = scope === PermissionScopes.Default ? undefined : scope;
     setAssignments((prev) => {
@@ -331,6 +357,8 @@ export function useRolePermissionsDialog({
     toggle,
     updateAssignment,
     toggleGroup,
+    expandAll,
+    collapseAll,
     bulkUpdateScope,
     bulkScopeValue,
     setBulkScopeValue,

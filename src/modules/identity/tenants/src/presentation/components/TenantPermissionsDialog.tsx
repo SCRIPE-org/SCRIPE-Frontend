@@ -30,6 +30,8 @@ import {
   FolderOpen,
   Building,
   Lock,
+  ChevronsUpDown,
+  ChevronsDownUp,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useTenantPermissionsDialog } from "../viewmodels/useTenantPermissionsViewModel";
@@ -98,7 +100,31 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
                 className="bg-background ps-9"
               />
             </div>
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2 text-sm">
+              {/* Expand / Collapse All */}
+              <Button
+                id="tenant-permissions-expand-all"
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
+                onClick={vm.expandAll}
+                disabled={vm.isLoading || moduleCount === 0}
+              >
+                <ChevronsUpDown className="h-3.5 w-3.5" />
+                {t("common.expandAll") || "Expand All"}
+              </Button>
+              <Button
+                id="tenant-permissions-collapse-all"
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
+                onClick={vm.collapseAll}
+                disabled={vm.isLoading || moduleCount === 0}
+              >
+                <ChevronsDownUp className="h-3.5 w-3.5" />
+                {t("common.collapseAll") || "Collapse All"}
+              </Button>
+              <Separator orientation="vertical" className="h-4" />
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Layers className="h-4 w-4" />
                 <span>{moduleCount}</span>
