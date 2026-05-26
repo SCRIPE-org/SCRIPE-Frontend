@@ -241,6 +241,10 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
   const allCodes = moduleGroup.categories.flatMap((c) => c.permissions.map((p) => p.code));
   const stats = vm.getGroupStats(allCodes);
 
+  // ── Each module reads ONLY its own slice of the expand-state map ──
+  // This prevents one module's accordion onValueChange from wiping another's state.
+  const moduleOpenKeys = vm.expandedGroups[moduleGroup.module] ?? [];
+
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       {/* Module Header */}
@@ -264,11 +268,11 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
         </div>
       </div>
 
-      {/* Categories */}
+      {/* Categories — isolated accordion per module */}
       <Accordion
         type="multiple"
-        value={vm.expandedGroups}
-        onValueChange={vm.setExpandedGroups}
+        value={moduleOpenKeys}
+        onValueChange={(openKeys) => vm.setModuleExpanded(moduleGroup.module, openKeys)}
         className="divide-y"
       >
         {moduleGroup.categories.map((catGroup) => (

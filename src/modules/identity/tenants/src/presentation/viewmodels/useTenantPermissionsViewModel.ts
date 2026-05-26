@@ -34,8 +34,11 @@ export interface UseTenantPermissionsDialogResult {
   search: string;
   setSearch: (value: string) => void;
   selectedCodes: Set<string>;
-  expandedGroups: string[];
-  setExpandedGroups: (groups: string[]) => void;
+  /** Per-module expanded category keys. Record<moduleKey, categoryKey[]>.
+   *  Each module's accordion reads only its own slice — no cross-module interference. */
+  expandedGroups: Record<string, string[]>;
+  /** Update one module's open categories without touching any other module. */
+  setModuleExpanded: (moduleKey: string, openKeys: string[]) => void;
 
   // Data — backend-grouped, client-search-filtered (NO client-side groupBy)
   groupedModules: PermissionModuleGroup[];
@@ -76,7 +79,7 @@ export function useTenantPermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
-  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
 
   // Track which tenant we have already initialized selections for
   const [initializedTenantId, setInitializedTenantId] = useState<string | null>(null);
@@ -87,7 +90,7 @@ export function useTenantPermissionsDialog({
     if (!open) {
       setSearch("");
       setSelectedCodes(new Set());
-      setExpandedGroups([]);
+      setExpandedGroups({});
       setInitializedTenantId(null);
     }
   }, [open]);
@@ -97,7 +100,7 @@ export function useTenantPermissionsDialog({
     if (open && tenantId) {
       setSearch("");
       setSelectedCodes(new Set());
-      setExpandedGroups([]);
+      setExpandedGroups({});
       setInitializedTenantId(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,7 +187,15 @@ export function useTenantPermissionsDialog({
         groupsWithSelection.add(`${mod}-${cat}`);
       }
     });
-    setExpandedGroups(Array.from(groupsWithSelection));
+    // Build per-module record: { [moduleKey]: categoryKey[] }
+    const perModuleExpanded: Record<string, string[]> = {};
+    groupsWithSelection.forEach((key) => {
+      // key = `${module}-${category}`
+      const dashIdx = key.indexOf("-");
+      const mod = dashIdx !== -1 ? key.slice(0, dashIdx) : key;
+      perModuleExpanded[mod] = [...(perModuleExpanded[mod] ?? []), key];
+    });
+    setExpandedGroups(perModuleExpanded);
     setInitializedTenantId(tenantId);
   }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant, initializedTenantId]);
 
@@ -228,16 +239,23 @@ export function useTenantPermissionsDialog({
     });
   };
 
+  // ── Per-module expand state updater ──
+  // Only touches one module's slice — all other modules remain unchanged.
+  const setModuleExpanded = (moduleKey: string, openKeys: string[]) => {
+    setExpandedGroups((prev) => ({ ...prev, [moduleKey]: openKeys }));
+  };
+
   // Expand / Collapse all accordion panels
   const expandAll = () => {
-    const allKeys = parentPermissionGroups.flatMap((m) =>
-      m.categories.map((c) => `${m.module}-${c.category}`)
-    );
-    setExpandedGroups(allKeys);
+    const perModule: Record<string, string[]> = {};
+    parentPermissionGroups.forEach((m) => {
+      perModule[m.module] = m.categories.map((c) => `${m.module}-${c.category}`);
+    });
+    setExpandedGroups(perModule);
   };
 
   const collapseAll = () => {
-    setExpandedGroups([]);
+    setExpandedGroups({});
   };
 
   // ── Client-side SEARCH FILTER only — preserves group structure from backend ──
@@ -281,7 +299,7 @@ export function useTenantPermissionsDialog({
     setSearch,
     selectedCodes,
     expandedGroups,
-    setExpandedGroups,
+    setModuleExpanded,
 
     // Data — backend-grouped, client-search-filtered
     groupedModules,

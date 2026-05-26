@@ -40,8 +40,11 @@ export interface UseRolePermissionsDialogResult {
   search: string;
   setSearch: (value: string) => void;
   assignments: Map<string, PermissionAssignmentJson>;
-  expandedGroups: string[];
-  setExpandedGroups: (groups: string[]) => void;
+  /** Per-module expanded category keys. Record<moduleKey, categoryKey[]>.
+   *  Each module's accordion reads only its own slice — no cross-module interference. */
+  expandedGroups: Record<string, string[]>;
+  /** Update one module's open categories without touching any other module. */
+  setModuleExpanded: (moduleKey: string, openKeys: string[]) => void;
 
   // Data — backend-grouped, client-search-filtered (NO client-side groupBy)
   groupedModules: PermissionModuleGroup[];
@@ -84,7 +87,7 @@ export function useRolePermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
-  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
   // Track which role we have already initialized assignments for
@@ -97,7 +100,7 @@ export function useRolePermissionsDialog({
       // Dialog closed — clear all transient state so the next open is fresh
       setSearch("");
       setAssignments(new Map());
-      setExpandedGroups([]);
+      setExpandedGroups({});
       setBulkScopeValue("");
       setInitializedRoleId(null);
     }
@@ -108,7 +111,7 @@ export function useRolePermissionsDialog({
       // Role changed while dialog is open — reset so we re-initialize below
       setSearch("");
       setAssignments(new Map());
-      setExpandedGroups([]);
+      setExpandedGroups({});
       setBulkScopeValue("");
       setInitializedRoleId(null);
     }
@@ -191,8 +194,17 @@ export function useRolePermissionsDialog({
       }
     });
 
+    // Build per-module record: { [moduleKey]: categoryKey[] }
+    const perModuleExpanded: Record<string, string[]> = {};
+    groupsWithSelection.forEach((key) => {
+      // key = `${module}-${category}`
+      const dashIdx = key.indexOf("-");
+      const mod = dashIdx !== -1 ? key.slice(0, dashIdx) : key;
+      perModuleExpanded[mod] = [...(perModuleExpanded[mod] ?? []), key];
+    });
+
     setAssignments(newAssignments);
-    setExpandedGroups(Array.from(groupsWithSelection));
+    setExpandedGroups(perModuleExpanded);
     setInitializedRoleId(role.id);
   }, [open, role?.id, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
 
@@ -278,16 +290,23 @@ export function useRolePermissionsDialog({
     });
   };
 
+  // ── Per-module expand state updater ──
+  // Only touches one module's slice — all other modules remain unchanged.
+  const setModuleExpanded = (moduleKey: string, openKeys: string[]) => {
+    setExpandedGroups((prev) => ({ ...prev, [moduleKey]: openKeys }));
+  };
+
   // Expand / Collapse all accordion panels
   const expandAll = () => {
-    const allKeys = tenantPermissionGroups.flatMap((m) =>
-      m.categories.map((c) => `${m.module}-${c.category}`)
-    );
-    setExpandedGroups(allKeys);
+    const perModule: Record<string, string[]> = {};
+    tenantPermissionGroups.forEach((m) => {
+      perModule[m.module] = m.categories.map((c) => `${m.module}-${c.category}`);
+    });
+    setExpandedGroups(perModule);
   };
 
   const collapseAll = () => {
-    setExpandedGroups([]);
+    setExpandedGroups({});
   };
 
   const bulkUpdateScope = (scope: string) => {
@@ -345,7 +364,7 @@ export function useRolePermissionsDialog({
     setSearch,
     assignments,
     expandedGroups,
-    setExpandedGroups,
+    setModuleExpanded,
 
     // Data — backend-grouped, client-search-filtered
     groupedModules,
