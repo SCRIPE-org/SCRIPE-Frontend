@@ -6,11 +6,14 @@
  * @module permissions/data
  */
 
-import { Permission, type PermissionProps } from "../../domain/entities/Permission";
+import { Permission, type PermissionProps, type PermissionCategoryGroup, type PermissionModuleGroup } from "../../domain/entities/Permission";
 import {
   PermissionModel,
   CreatePermissionModel,
   UpdatePermissionModel,
+} from "../models/PermissionModel";
+import type {
+  PermissionModuleGroupJson,
 } from "../models/PermissionModel";
 import type {
   CreatePermissionRequest,
@@ -28,6 +31,7 @@ const PermissionModelSchema = z.object({
   permissionCode: z.string().min(1),
   defaultScope: optionalString(),
   category: optionalString(),
+  module: optionalString(),
   displayOrder: z.number().int().optional().default(0),
   descriptionEn: optionalString(),
   descriptionAr: optionalString(),
@@ -49,6 +53,7 @@ export class PermissionMapper {
       code: validated.permissionCode,
       defaultScope: validated.defaultScope ?? "",
       category: validated.category ?? "",
+      module: validated.module ?? "",
       displayOrder: validated.displayOrder ?? 0,
       descriptionEn: validated.descriptionEn ?? undefined,
       descriptionAr: validated.descriptionAr ?? undefined,
@@ -82,6 +87,37 @@ export class PermissionMapper {
    */
   static toEntityList(models: PermissionModel[]): Permission[] {
     return models.map((model) => PermissionMapper.toEntity(model));
+  }
+
+  /**
+   * Map backend-grouped response (Module → Category → PermissionJson[])
+   * to domain PermissionModuleGroup[].
+   * Called by PermissionRepository.getGrouped() — no client-side logic needed.
+   */
+  static toEntityGrouped(groupJson: PermissionModuleGroupJson[]): PermissionModuleGroup[] {
+    return groupJson.map((moduleGroup) => ({
+      module: moduleGroup.module,
+      categories: moduleGroup.categories.map((catGroup) => ({
+        category: catGroup.category,
+        permissions: catGroup.permissions.map((pJson) => {
+          const props: PermissionProps = {
+            id: pJson.id,
+            resource: pJson.resource,
+            action: pJson.action,
+            code: pJson.code,
+            defaultScope: pJson.defaultScope ?? "",
+            category: pJson.category ?? "",
+            module: moduleGroup.module,
+            displayOrder: pJson.displayOrder ?? 0,
+            descriptionEn: pJson.descriptionEn,
+            descriptionAr: pJson.descriptionAr,
+            nameEn: pJson.nameEn,
+            nameAr: pJson.nameAr,
+          };
+          return new Permission(props);
+        }),
+      })) as PermissionCategoryGroup[],
+    }));
   }
 
   /**

@@ -5,27 +5,24 @@
  * SOLID: All state, queries, mutations, and handlers live here.
  * View is pure UI (~60 lines).
  *
- * NOTE: Permission matching uses `code` instead of `id` because
- * the backend returns different encrypted IDs for rolePermissions vs allPermissions.
+ * NOTE: Permission grouping is done 100% by the backend.
+ * The frontend receives PermissionModuleGroup[] directly — no reduce/groupBy.
  */
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/identity/di";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission, PermissionModuleGroup, PermissionCategoryGroup } from "@modules/identity/permissions";
 import type { Role } from "../../domain/entities/Role";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 // === Types ===
-export interface PermissionCategory {
-  category: string;
-  permissions: Permission[];
-}
+export type { PermissionModuleGroup, PermissionCategoryGroup };
 
 export interface RoleDetailHeaderProps {
   role: Role | undefined;
@@ -42,13 +39,13 @@ export interface RoleInfoCardProps {
 }
 
 export interface PermissionTreeProps {
-  categories: PermissionCategory[];
+  moduleGroups: PermissionModuleGroup[];
   isLoading: boolean;
-  expandedCategories: Set<string>;
+  expandedKeys: Set<string>;
   selectedPermissionCodes: Set<string>;
   searchQuery: string;
   onSearchChange: (value: string) => void;
-  onToggleCategory: (category: string) => void;
+  onToggleExpand: (key: string) => void;
   onToggleAllInCategory: (permissions: Permission[]) => void;
   onTogglePermission: (code: string) => void;
   onExpandAll: () => void;
@@ -62,17 +59,16 @@ export interface PermissionTreeProps {
 
 // === ViewModel ===
 export function useRoleDetailViewModel() {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const params = useParams();
   const roleId = params.id as string;
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
-  const { roleRepository, permissionRepository } = systemContainer;
+  const { roleRepository } = systemContainer;
 
   // === STATE ===
-  // Changed from Set<string> to Map to hold config (scope, restrictions)
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
@@ -81,7 +77,7 @@ export function useRoleDetailViewModel() {
     queryKey: ["role", roleId],
     queryFn: () => roleRepository.getById(roleId),
     enabled: !!roleId,
-    staleTime: 0, // Always refetch on mount to avoid stale data after saves
+    staleTime: 0,
     gcTime: 0,
   });
 
@@ -93,13 +89,14 @@ export function useRoleDetailViewModel() {
     gcTime: 0,
   });
 
-  // Use roleRepository's available permissions (tenant-scoped)
-  const { data: allPermissions, isLoading: permissionsLoading } = useQuery<Permission[]>({
-    queryKey: ["myTenantAvailablePermissions"],
-    queryFn: () => roleRepository.getMyTenantAvailablePermissions(),
+  // ── Backend-driven grouped permissions (Module → Category → Permissions) ──
+  // ZERO client-side grouping: backend sends the tree, frontend renders it.
+  const { data: moduleGroups = [], isLoading: permissionsLoading } = useQuery<PermissionModuleGroup[]>({
+    queryKey: ["myTenantAvailablePermissionsGrouped", searchQuery],
+    queryFn: () => roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined),
   });
 
-  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (render-time state-sync) ===
+  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS ===
   const [prevRolePerms, setPrevRolePerms] = useState(rolePermissions);
   if (rolePermissions && rolePermissions !== prevRolePerms) {
     setPrevRolePerms(rolePermissions);
@@ -109,7 +106,6 @@ export function useRoleDetailViewModel() {
       const newAssignments = new Map<string, PermissionAssignmentJson>();
 
       rolePermissions.forEach((rp: any) => {
-        // Handle various casing from backend
         const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
 
         if (code) {
@@ -126,16 +122,20 @@ export function useRoleDetailViewModel() {
     }
   }
 
+  // Helper: flatten all permissions from module groups (for save payload)
+  const getAllPermissionsFlat = (): Permission[] => {
+    return moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.permissions));
+  };
+
   // === MUTATION ===
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const allPermissions = getAllPermissionsFlat();
       const codeToIdMap = new Map<string, string>();
-      allPermissions?.forEach((p) => {
+      allPermissions.forEach((p) => {
         codeToIdMap.set(p.code, p.id);
       });
 
-      // Convert map values to array for payload
-      // Ensure permissionId is set (if missing in map, try to lookup from code)
       const permissionsPayload = Array.from(assignments.entries())
         .map(([code, assignment]) => {
           let id = assignment.permissionId;
@@ -157,7 +157,6 @@ export function useRoleDetailViewModel() {
       });
     },
     onSuccess: () => {
-      // Invalidate both role and permissions queries to ensure fresh data
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["role", roleId] });
       success({
@@ -173,42 +172,11 @@ export function useRoleDetailViewModel() {
     },
   });
 
-  // === COMPUTED: Group permissions by category ===
-  const categories = useMemo((): PermissionCategory[] => {
-    if (!allPermissions) return [];
-
-    const filtered = searchQuery
-      ? allPermissions.filter((p) => {
-          const name = p.getLocalizedName(language);
-          const code = p.code.toLowerCase();
-          const query = searchQuery.toLowerCase();
-          return name.toLowerCase().includes(query) || code.includes(query);
-        })
-      : allPermissions;
-
-    const grouped = filtered.reduce(
-      (acc, permission) => {
-        const category = permission.category || t("roleDetail.otherCategory");
-        if (!acc[category]) acc[category] = [];
-        acc[category].push(permission);
-        return acc;
-      },
-      {} as Record<string, Permission[]>
-    );
-
-    return Object.entries(grouped)
-      .map(([category, permissions]) => ({
-        category,
-        permissions: permissions.sort((a, b) => a.displayOrder - b.displayOrder),
-      }))
-      .sort((a, b) => a.category.localeCompare(b.category));
-  }, [allPermissions, searchQuery, language, t]);
-
   // === HANDLERS ===
-  const toggleCategory = useCallback((category: string) => {
-    setExpandedCategories((prev) => {
+  const toggleExpand = useCallback((key: string) => {
+    setExpandedKeys((prev) => {
       const next = new Set(prev);
-      next.has(category) ? next.delete(category) : next.add(category);
+      next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
   }, []);
@@ -220,18 +188,19 @@ export function useRoleDetailViewModel() {
         if (next.has(permissionCode)) {
           next.delete(permissionCode);
         } else {
-          // Find permission ID from allPermissions if possible
-          const permission = allPermissions?.find((p) => p.code === permissionCode);
+          // Find permission ID from module groups
+          const allPerms = moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.permissions));
+          const permission = allPerms.find((p) => p.code === permissionCode);
           next.set(permissionCode, {
             permissionId: permission?.id || "",
-            scopeOverride: "Tenant", // Default to Tenant scope
+            scopeOverride: "Tenant",
             restrictedFields: [],
           });
         }
         return next;
       });
     },
-    [allPermissions]
+    [moduleGroups]
   );
 
   const updateAssignment = useCallback((code: string, assignment: PermissionAssignmentJson) => {
@@ -270,11 +239,19 @@ export function useRoleDetailViewModel() {
   );
 
   const expandAll = useCallback(() => {
-    setExpandedCategories(new Set(categories.map((c) => c.category)));
-  }, [categories]);
+    // Expand both module and category keys
+    const keys = new Set<string>();
+    moduleGroups.forEach((mg) => {
+      keys.add(`module:${mg.module}`);
+      mg.categories.forEach((cat) => {
+        keys.add(`cat:${mg.module}:${cat.category}`);
+      });
+    });
+    setExpandedKeys(keys);
+  }, [moduleGroups]);
 
   const collapseAll = useCallback(() => {
-    setExpandedCategories(new Set());
+    setExpandedKeys(new Set());
   }, []);
 
   const handleSave = useCallback(() => {
@@ -282,12 +259,10 @@ export function useRoleDetailViewModel() {
   }, [saveMutation]);
 
   const bulkUpdateScope = useCallback((scope: string) => {
-    // "own_tenant" means default/no override (undefined)
     const scopeValue = scope === "own_tenant" ? undefined : scope;
 
     setAssignments((prev) => {
       const next = new Map(prev);
-      // Update all SELECTED permissions
       Array.from(next.keys()).forEach((key) => {
         const current = next.get(key)!;
         next.set(key, { ...current, scopeOverride: scopeValue });
@@ -299,10 +274,13 @@ export function useRoleDetailViewModel() {
   // === DERIVED STATE ===
   const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
   const selectedPermissionCodes = new Set(assignments.keys());
+  const totalPermCount = moduleGroups.reduce(
+    (sum, mg) => sum + mg.categories.reduce((s, cat) => s + cat.permissions.length, 0),
+    0
+  );
 
   // === RETURN PROPS FOR VIEW ===
   return {
-    // Header section props
     header: {
       role,
       isLoading: roleLoading,
@@ -310,23 +288,21 @@ export function useRoleDetailViewModel() {
       onSave: handleSave,
     } as RoleDetailHeaderProps,
 
-    // Info card props
     info: {
       role,
       isLoading: roleLoading,
       selectedCount: assignments.size,
-      totalCount: allPermissions?.length || 0,
+      totalCount: totalPermCount,
     } as RoleInfoCardProps,
 
-    // Permission tree props
     permissions: {
-      categories,
+      moduleGroups,
       isLoading,
-      expandedCategories,
+      expandedKeys,
       selectedPermissionCodes,
       searchQuery,
       onSearchChange: setSearchQuery,
-      onToggleCategory: toggleCategory,
+      onToggleExpand: toggleExpand,
       onToggleAllInCategory: toggleCategoryPermissions,
       onTogglePermission: togglePermission,
       onExpandAll: expandAll,

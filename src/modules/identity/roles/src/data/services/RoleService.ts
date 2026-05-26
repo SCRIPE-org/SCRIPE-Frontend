@@ -16,7 +16,8 @@ import {
   type UpdateRoleJson,
   type AssignPermissionsJson,
 } from "../models/RoleModel";
-import { PermissionModel } from "@modules/identity/permissions/src/data/models/PermissionModel";
+import { PermissionModel } from "@modules/identity/permissions";
+import type { PermissionModuleGroupJson } from "@modules/identity/permissions";
 import type {
   IRoleService,
   RoleListResult,
@@ -116,6 +117,15 @@ export class RoleService implements IRoleService {
     return response.map((p) => PermissionModel.fromJson(p));
   }
 
+  async getTenantPermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]> {
+    // GET /Tenants/{id}/permissions/grouped — backend groups by Module → Category
+    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
+    return this.api.get(url);
+  }
+
   async getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
     const params = new URLSearchParams();
     if (category) params.set("category", category);
@@ -127,6 +137,11 @@ export class RoleService implements IRoleService {
 
     const response = await this.api.get<any[]>(url);
     return response.map((p) => PermissionModel.fromJson(p));
+  }
+
+  async getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroupJson[]> {
+    const url = buildUrl(API_ENDPOINTS.ROLES.MY_TENANT_AVAILABLE_PERMISSIONS_GROUPED, { search });
+    return this.api.get(url);
   }
 
   async getAdminCount(roleId: string): Promise<number> {

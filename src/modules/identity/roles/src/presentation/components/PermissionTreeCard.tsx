@@ -1,38 +1,32 @@
 /**
  * Permission Tree Card Component
  *
- * Displays the permissions tree with search, expand/collapse controls.
- * SOLID: Pure UI - receives all props from ViewModel.
+ * Displays the backend-driven Module → Category → Permission hierarchy.
+ * ZERO client-side grouping — the tree comes from the backend.
+ *
+ * Consumed in: RoleDetailView (Permissions Tab)
+ * Data source: GET /roles/myTenant/available-permissions/grouped
  */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
-import { Search, Lock, Shield, Users, Settings, Layout } from "lucide-react";
+import { Badge } from "@core/ui/badge";
+import { Search, Lock, Layers, Key, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BulkScopeSelect } from "./BulkScopeSelect";
 import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
 
-// Category Icons mapping
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  "Admin Management": <Users className="h-4 w-4" />,
-  "Role Management": <Shield className="h-4 w-4" />,
-  "Permission Management": <Lock className="h-4 w-4" />,
-  "Tenant Management": <Layout className="h-4 w-4" />,
-  "User Management": <Users className="h-4 w-4" />,
-  "Menu Management": <Settings className="h-4 w-4" />,
-};
-
 export function PermissionTreeCard({
-  categories,
+  moduleGroups,
   isLoading,
-  expandedCategories,
+  expandedKeys,
   selectedPermissionCodes,
   searchQuery,
   onSearchChange,
-  onToggleCategory,
+  onToggleExpand,
   onToggleAllInCategory,
   onTogglePermission,
   onExpandAll,
@@ -89,22 +83,76 @@ export function PermissionTreeCard({
         {isLoading ? (
           <PermissionTreeSkeleton />
         ) : (
-          <div className="space-y-2">
-            {categories.map((cat) => (
-              <PermissionCategoryRow
-                key={cat.category}
-                category={cat.category}
-                permissions={cat.permissions}
-                isExpanded={expandedCategories.has(cat.category)}
-                selectedPermissionCodes={selectedPermissionCodes}
-                assignments={assignments}
-                categoryIcon={CATEGORY_ICONS[cat.category]}
-                onToggleCategory={() => onToggleCategory(cat.category)}
-                onToggleAllInCategory={() => onToggleAllInCategory(cat.permissions)}
-                onTogglePermission={onTogglePermission}
-                onUpdateConfig={onUpdateConfig}
-              />
-            ))}
+          <div className="space-y-3">
+            {moduleGroups.map((moduleGroup) => {
+              const moduleKey = `module:${moduleGroup.module}`;
+              // Key in expandedKeys = expanded; not present = collapsed (default: all modules open).
+              // expandAll() populates all module:X and cat:X:Y keys. collapseAll() empties the Set.
+              const isModuleExpanded = expandedKeys.size === 0 ? true : expandedKeys.has(moduleKey);
+              const totalInModule = moduleGroup.categories.reduce(
+                (sum, cat) => sum + cat.permissions.length,
+                0
+              );
+              const selectedInModule = moduleGroup.categories.reduce(
+                (sum, cat) =>
+                  sum + cat.permissions.filter((p) => selectedPermissionCodes.has(p.code)).length,
+                0
+              );
+
+              return (
+                <div
+                  key={moduleGroup.module}
+                  className="overflow-hidden rounded-lg border bg-card"
+                >
+                  {/* ── Module Header ── */}
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2.5 border-b bg-muted/30 px-4 py-2.5 text-left transition-colors hover:bg-muted/50"
+                    onClick={() => onToggleExpand(moduleKey)}
+                  >
+                    {isModuleExpanded ? (
+                      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rtl:rotate-180" />
+                    )}
+                    <Layers className="h-4 w-4 shrink-0 text-primary" />
+                    <span className="text-sm font-semibold tracking-wide">{moduleGroup.module}</span>
+                    <div className="ms-auto flex items-center gap-2">
+                      {selectedInModule > 0 && (
+                        <Badge className="text-xs">{selectedInModule} selected</Badge>
+                      )}
+                      <Badge variant="secondary" className="text-xs">
+                        {totalInModule}
+                      </Badge>
+                    </div>
+                  </button>
+
+                  {/* ── Category rows within the module ── */}
+                  {isModuleExpanded && (
+                    <div className="divide-y">
+                      {moduleGroup.categories.map((cat) => {
+                        const catKey = `cat:${moduleGroup.module}:${cat.category}`;
+                        return (
+                          <PermissionCategoryRow
+                            key={catKey}
+                            category={cat.category}
+                            permissions={cat.permissions}
+                            isExpanded={expandedKeys.has(catKey)}
+                            selectedPermissionCodes={selectedPermissionCodes}
+                            assignments={assignments}
+                            categoryIcon={<Key className="h-3.5 w-3.5" />}
+                            onToggleCategory={() => onToggleExpand(catKey)}
+                            onToggleAllInCategory={() => onToggleAllInCategory(cat.permissions)}
+                            onTogglePermission={onTogglePermission}
+                            onUpdateConfig={onUpdateConfig}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </CardContent>

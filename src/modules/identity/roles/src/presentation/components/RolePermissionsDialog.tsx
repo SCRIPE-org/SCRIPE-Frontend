@@ -4,6 +4,9 @@
  * Professional dialog for managing permissions assigned to a role.
  * Pure UI component - all logic is in useRolePermissionsDialog ViewModel.
  *
+ * Renders backend-grouped PermissionModuleGroup[] (Module → Category → Permissions).
+ * Zero client-side groupBy — hierarchy comes 100% from the backend.
+ *
  * @module roles/presentation/components
  */
 "use client";
@@ -27,11 +30,16 @@ import {
   Layers,
   FolderOpen,
   Settings,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog } from "../viewmodels/useRolePermissionsDialog";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import type {
+  Permission,
+  PermissionModuleGroup,
+  PermissionCategoryGroup,
+} from "@modules/identity/permissions";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import { BulkScopeSelect } from "./BulkScopeSelect";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
@@ -47,6 +55,8 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
   const { open, onOpenChange, role } = props;
   const { t, language } = useI18n();
   const vm = useRolePermissionsDialog(props);
+
+  const moduleCount = vm.groupedModules.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -99,11 +109,13 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                   }}
                 />
               </div>
+              {/* Module count */}
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Layers className="h-4 w-4" />
-                <span>{vm.groupCount}</span>
+                <span>{moduleCount}</span>
               </div>
               <Separator orientation="vertical" className="h-4" />
+              {/* Selected count */}
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-primary" />
                 <span className="font-medium text-primary">{vm.selectedCount}</span>
@@ -119,10 +131,10 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
             <div className="px-6 py-4">
               {vm.isLoading ? (
                 <LoadingState />
-              ) : vm.groupCount === 0 ? (
+              ) : moduleCount === 0 ? (
                 <EmptyState />
               ) : (
-                <PermissionGroups vm={vm} />
+                <PermissionModulesTree vm={vm} />
               )}
             </div>
           </ScrollArea>
@@ -174,43 +186,96 @@ function EmptyState() {
   );
 }
 
-interface PermissionGroupsProps {
+interface PermissionModulesTreeProps {
   vm: ReturnType<typeof useRolePermissionsDialog>;
 }
 
-function PermissionGroups({ vm }: PermissionGroupsProps) {
+/**
+ * Renders the Module → Category → Permission tree.
+ * Data comes 100% backend-grouped — zero client-side groupBy.
+ */
+function PermissionModulesTree({ vm }: PermissionModulesTreeProps) {
   return (
-    <Accordion
-      type="multiple"
-      value={vm.expandedGroups}
-      onValueChange={vm.setExpandedGroups}
-      className="space-y-3"
-    >
-      {Object.entries(vm.grouped).map(([resource, perms]) => (
-        <PermissionGroup key={resource} resource={resource} permissions={perms} vm={vm} />
+    <div className="space-y-4">
+      {vm.groupedModules.map((moduleGroup) => (
+        <PermissionModule key={moduleGroup.module} moduleGroup={moduleGroup} vm={vm} />
       ))}
-    </Accordion>
+    </div>
   );
 }
 
-interface PermissionGroupProps {
-  resource: string;
-  permissions: Permission[];
+interface PermissionModuleProps {
+  moduleGroup: PermissionModuleGroup;
   vm: ReturnType<typeof useRolePermissionsDialog>;
 }
 
-function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
-  const codes = permissions.map((p) => p.code);
-  const stats = vm.getGroupStats(codes);
+function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
+  // Aggregate stats across all categories in this module
+  const allCodes = moduleGroup.categories.flatMap((c) => c.permissions.map((p) => p.code));
+  const stats = vm.getGroupStats(allCodes);
 
   return (
-    <AccordionItem value={resource} className="overflow-hidden rounded-xl border bg-card shadow-sm">
-      <AccordionTrigger className="px-4 py-3 hover:bg-muted/50 hover:no-underline [&>svg]:text-muted-foreground">
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      {/* Module Header */}
+      <div className="flex items-center gap-3 border-b bg-muted/40 px-4 py-2.5">
+        <div
+          className={cn(
+            "flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-primary",
+            stats.allChecked && "bg-primary",
+            stats.someChecked && "bg-primary/50"
+          )}
+          onClick={() => vm.toggleGroup(allCodes)}
+        >
+          {(stats.allChecked || stats.someChecked) && (
+            <Check className="h-3 w-3 text-primary-foreground" />
+          )}
+        </div>
+        <span className="text-sm font-semibold capitalize">{moduleGroup.module}</span>
+        <div className="ms-auto text-xs text-muted-foreground">
+          <span className={stats.count > 0 ? "font-medium text-primary" : ""}>{stats.count}</span>
+          <span> / {stats.total}</span>
+        </div>
+      </div>
+
+      {/* Categories */}
+      <Accordion
+        type="multiple"
+        value={vm.expandedGroups}
+        onValueChange={vm.setExpandedGroups}
+        className="divide-y"
+      >
+        {moduleGroup.categories.map((catGroup) => (
+          <PermissionCategory
+            key={`${moduleGroup.module}-${catGroup.category}`}
+            moduleKey={moduleGroup.module}
+            catGroup={catGroup}
+            vm={vm}
+          />
+        ))}
+      </Accordion>
+    </div>
+  );
+}
+
+interface PermissionCategoryProps {
+  moduleKey: string;
+  catGroup: PermissionCategoryGroup;
+  vm: ReturnType<typeof useRolePermissionsDialog>;
+}
+
+function PermissionCategory({ moduleKey, catGroup, vm }: PermissionCategoryProps) {
+  const codes = catGroup.permissions.map((p) => p.code);
+  const stats = vm.getGroupStats(codes);
+  const accordionKey = `${moduleKey}-${catGroup.category}`;
+
+  return (
+    <AccordionItem value={accordionKey} className="border-0">
+      <AccordionTrigger className="px-4 py-3 hover:bg-muted/30 hover:no-underline [&>svg]:text-muted-foreground">
         <div className="flex flex-1 items-center gap-3">
-          {/* Move checkbox outside trigger - use div with checkbox indicator */}
+          {/* Category toggle checkbox */}
           <div
             className={cn(
-              "flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-primary",
+              "flex h-3.5 w-3.5 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-primary/70",
               stats.allChecked && "bg-primary",
               stats.someChecked && "bg-primary/50"
             )}
@@ -220,16 +285,14 @@ function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
             }}
           >
             {(stats.allChecked || stats.someChecked) && (
-              <Check className="h-3 w-3 text-primary-foreground" />
+              <Check className="h-2.5 w-2.5 text-primary-foreground" />
             )}
           </div>
-          <Badge variant={stats.count > 0 ? "default" : "secondary"} className="capitalize">
-            {resource}
+          <Badge variant={stats.count > 0 ? "default" : "secondary"} className="capitalize text-xs">
+            {catGroup.category}
           </Badge>
           <div className="me-2 ms-auto text-sm">
-            <span
-              className={stats.count > 0 ? "font-medium text-primary" : "text-muted-foreground"}
-            >
+            <span className={stats.count > 0 ? "font-medium text-primary" : "text-muted-foreground"}>
               {stats.count}
             </span>
             <span className="text-muted-foreground"> / {stats.total}</span>
@@ -238,7 +301,7 @@ function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
       </AccordionTrigger>
       <AccordionContent className="px-4 pb-3">
         <div className="grid gap-1.5 pt-1">
-          {permissions.map((p) => (
+          {catGroup.permissions.map((p) => (
             <PermissionItem key={p.id} permission={p} vm={vm} />
           ))}
         </div>
@@ -260,7 +323,6 @@ function PermissionItem({ permission, vm }: PermissionItemProps) {
   const hasCustomConfig =
     !!assignment?.scopeOverride || (assignment?.restrictedFields?.length ?? 0) > 0;
 
-  // Construct simple permission object for dialog
   const permissionSimple = {
     id: permission.id,
     code: permission.code,
@@ -309,7 +371,6 @@ function PermissionItem({ permission, vm }: PermissionItemProps) {
         )}
       </label>
 
-      {/* Config Button - Absolute positioned or standard layout? Relative creates stacking context */}
       {isChecked && (
         <Button
           variant="ghost"

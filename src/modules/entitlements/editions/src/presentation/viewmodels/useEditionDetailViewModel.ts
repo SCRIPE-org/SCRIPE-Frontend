@@ -7,7 +7,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import type { Edition } from "../../domain/entities/Edition";
-import { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
+import { Feature, type FeatureModuleGroup } from "@modules/entitlements/features/src/domain/entities/Feature";
 
 // ── Disabled defaults ──
 function getDisabledDefault(valueType: string): string {
@@ -23,7 +23,11 @@ function getDisabledDefault(valueType: string): string {
 
 export interface EditionDetailViewModelResult {
   edition: Edition | undefined;
-  features: Feature[] | undefined;
+  /**
+   * Backend-grouped features: Module → Category → Feature[].
+   * ZERO client-side groupBy. FeaturesTab renders this tree directly.
+   */
+  moduleGroups: FeatureModuleGroup[];
   isLoading: boolean;
   error: Error | null;
 
@@ -44,7 +48,7 @@ export interface EditionDetailViewModelResult {
   // ── Discard ──
   discardChanges: () => void;
 
-  // ── Module/Category grouping ──
+  // ── Module/Category collapse state ──
   collapsedModules: Record<string, boolean>;
   toggleModule: (moduleName: string) => void;
   expandAll: () => void;
@@ -71,7 +75,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   const userTenantId = useAppStore((s) => s.user?.tenantId);
   const isSystemAdmin = !userTenantId;
 
-  // ── Queries ──
+  // ── Edition Query ──
   const {
     data: edition,
     isLoading: isEditionLoading,
@@ -82,18 +86,19 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     enabled: !!editionId,
   });
 
-  // System admin: fetch ALL features from catalog (auto-paginates)
+  // ── System admin: grouped features from backend (Module → Category → Feature[]) ──
+  // Backend sends the tree — ZERO client-side groupBy.
   const {
-    data: allCatalogFeatures,
+    data: catalogModuleGroups = [],
     isLoading: isCatalogLoading,
     error: catalogError,
   } = useQuery({
-    queryKey: ["entitlements", "features", "all"],
-    queryFn: () => featureRepository.getAllFeatures(),
+    queryKey: ["entitlements", "features", "grouped"],
+    queryFn: () => featureRepository.getGrouped(),
     enabled: isSystemAdmin,
   });
 
-  // Tenant admin: fetch only their effective features
+  // ── Tenant admin: fetch only their effective features ──
   const {
     data: effectiveFeatures,
     isLoading: isEffectiveLoading,
@@ -104,34 +109,62 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     enabled: !isSystemAdmin,
   });
 
-  // ── Map effective features to Feature-compatible objects ──
-  const { mappedFeatures, tenantEffectiveCaps } = useMemo(() => {
+  // ── Map effective features → FeatureModuleGroup[] for tenant admins ──
+  // This mapping is needed because tenant gets TenantEffectiveFeature (not Feature).
+  // We reconstruct a Module → Category tree from the flat effective list.
+  const { tenantModuleGroups, tenantEffectiveCaps } = useMemo(() => {
     if (isSystemAdmin || !effectiveFeatures) {
-      return { mappedFeatures: undefined, tenantEffectiveCaps: {} as Record<string, string> };
+      return {
+        tenantModuleGroups: [] as FeatureModuleGroup[],
+        tenantEffectiveCaps: {} as Record<string, string>,
+      };
     }
+
     const caps: Record<string, string> = {};
-    const features: Feature[] = effectiveFeatures.map((ef) => {
+    const moduleMap = new Map<string, Map<string, Feature[]>>();
+
+    effectiveFeatures.forEach((ef) => {
       caps[ef.name] = ef.effectiveValue;
-      return new Feature({
-        id: ef.featureId,
-        name: ef.name,
-        displayNameEn: ef.displayNameEn,
-        displayNameAr: ef.displayNameAr,
-        category: ef.category,
-        sortOrder: 0,
-        isVisibleInUI: true,
-        valueType: ef.valueType as "Boolean" | "Numeric" | "String",
-        defaultValue: ef.effectiveValue,
-        module: ef.module || "Other",
-        isSystem: false,
-        createdAt: "",
-      });
+
+      const mod = ef.module || "General";
+      const cat = ef.category || "General";
+
+      if (!moduleMap.has(mod)) moduleMap.set(mod, new Map());
+      const catMap = moduleMap.get(mod)!;
+      if (!catMap.has(cat)) catMap.set(cat, []);
+
+      catMap.get(cat)!.push(
+        new Feature({
+          id: ef.featureId,
+          name: ef.name,
+          displayNameEn: ef.displayNameEn,
+          displayNameAr: ef.displayNameAr,
+          category: cat,
+          sortOrder: 0,
+          isVisibleInUI: true,
+          valueType: ef.valueType as "Boolean" | "Numeric" | "String",
+          defaultValue: ef.effectiveValue,
+          module: mod,
+          isSystem: false,
+          createdAt: "",
+        })
+      );
     });
-    return { mappedFeatures: features, tenantEffectiveCaps: caps };
+
+    const groups: FeatureModuleGroup[] = Array.from(moduleMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([module, catMap]) => ({
+        module,
+        categories: Array.from(catMap.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([category, features]) => ({ category, features })),
+      }));
+
+    return { tenantModuleGroups: groups, tenantEffectiveCaps: caps };
   }, [isSystemAdmin, effectiveFeatures]);
 
-  // ── Resolved features list ──
-  const resolvedFeatures = isSystemAdmin ? allCatalogFeatures : mappedFeatures;
+  // ── Resolved module groups ──
+  const moduleGroups = isSystemAdmin ? catalogModuleGroups : tenantModuleGroups;
   const isFeaturesLoading = isSystemAdmin ? isCatalogLoading : isEffectiveLoading;
   const featuresError = isSystemAdmin ? catalogError : effectiveError;
 
@@ -178,7 +211,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // Check for unsaved changes (features + overflow policy)
   const hasUnsavedChanges = useMemo(() => {
     if (!edition) return false;
-    // Check feature changes
     for (const [name, val] of Object.entries(pendingValues)) {
       if (serverValueMap[name] !== val) return true;
     }
@@ -206,7 +238,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // ── Create Version with pending changes + pricing snapshot ──
   const createVersionMutation = useMutation({
     mutationFn: async ({ changeNotes }: { changeNotes?: string }) => {
-      // Fetch current pricing to include in the version snapshot
       let pricingSnapshot:
         | Array<{ currency: string; billingCycle: string; amount: number }>
         | undefined;
@@ -224,7 +255,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       } catch {
         // If pricing fetch fails, still create version with just features
       }
-      // Send ALL pending feature values (full snapshot) + pricing snapshot
       return editionRepository.createVersion(
         editionId,
         changeNotes,
@@ -261,7 +291,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // ── Direct Apply (save features immediately + sync tenants) ──
   const directApplyMutation = useMutation({
     mutationFn: async () => {
-      // Update overflow policy first (independent of feature changes)
       if (localOverflowPolicy !== (edition?.overflowPolicy ?? "Block")) {
         await editionRepository.update(editionId, {
           name: edition!.name,
@@ -299,7 +328,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     directApplyMutation.mutate();
   }, [directApplyMutation]);
 
-  // ── Module/Category grouping ──
+  // ── Module/Category collapse state ──
   const [collapsedModules, setCollapsedModules] = useState<Record<string, boolean>>({});
 
   const toggleModule = useCallback((moduleName: string) => {
@@ -310,17 +339,14 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   }, []);
 
   // Auto-collapse all modules on first load
-  const [prevResolvedFeatures, setPrevResolvedFeatures] = useState(resolvedFeatures);
-  if (resolvedFeatures !== prevResolvedFeatures) {
-    setPrevResolvedFeatures(resolvedFeatures);
-    if (resolvedFeatures) {
-      const modules = new Set(resolvedFeatures.map((f: Feature) => f.module));
-      const collapsed: Record<string, boolean> = {};
-      modules.forEach((m: string) => {
-        collapsed[m] = true;
-      });
-      setCollapsedModules(collapsed);
-    }
+  const [prevModuleGroups, setPrevModuleGroups] = useState(moduleGroups);
+  if (moduleGroups !== prevModuleGroups && moduleGroups.length > 0) {
+    setPrevModuleGroups(moduleGroups);
+    const collapsed: Record<string, boolean> = {};
+    moduleGroups.forEach((mg) => {
+      collapsed[mg.module] = true;
+    });
+    setCollapsedModules(collapsed);
   }
 
   const expandAll = useCallback(() => {
@@ -362,7 +388,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
   return {
     edition,
-    features: resolvedFeatures,
+    moduleGroups,
     isLoading: isEditionLoading || isFeaturesLoading,
     error: (editionError as Error) || (featuresError as Error) || null,
 

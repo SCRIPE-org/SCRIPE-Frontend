@@ -11,7 +11,7 @@ import type {
   DeleteTenantRequest,
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/identity/core/domain/types";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
 import type {
   SubscriptionModel,
   PagedEditionResult,
@@ -138,6 +138,13 @@ export interface ITenantRepository {
    * @param permissionIds - Array of permission IDs to assign.
    */
   updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void>;
+
+  /**
+   * Get permissions for a tenant, pre-grouped by Module → Category.
+   * Backend returns the hierarchy — no client-side grouping needed.
+   */
+  getTenantPermissionsGrouped(tenantId: string, search?: string): Promise<PermissionModuleGroup[]>;
+
 
   /**
    * Set the current tenant context for multi-tenant API calls.

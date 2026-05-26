@@ -7,6 +7,11 @@
  * Clean Architecture: ViewModel → Repository → Service → API
  * No direct API calls or inline DTOs.
  *
+ * GROUPING IS 100% BACKEND-DRIVEN:
+ * - getTenantAvailablePermissionsGrouped returns PermissionModuleGroup[] (Module → Category → Permissions)
+ * - Zero client-side reduce / useMemo groupBy in this viewmodel
+ * - Client-side only: search FILTER (structure-preserving, not grouping)
+ *
  * @module roles/presentation/viewmodels
  */
 "use client";
@@ -17,15 +22,9 @@ import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 import { PermissionScopes } from "../../domain/types/PermissionTypes";
-
-// ── Grouped permissions by resource ──
-
-export interface GroupedPermissions {
-  [resource: string]: Permission[];
-}
 
 // ── Props & Result interfaces ──
 
@@ -44,11 +43,10 @@ export interface UseRolePermissionsDialogResult {
   expandedGroups: string[];
   setExpandedGroups: (groups: string[]) => void;
 
-  // Data
-  grouped: GroupedPermissions;
+  // Data — backend-grouped, client-search-filtered (NO client-side groupBy)
+  groupedModules: PermissionModuleGroup[];
   totalCount: number;
   selectedCount: number;
-  groupCount: number;
   isLoading: boolean;
 
   // Actions
@@ -87,9 +85,6 @@ export function useRolePermissionsDialog({
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
-  // Track if we've initialized for this role to prevent infinite loops
-  const initializedRoleRef = useRef<string | null>(null);
-
   // Reset when dialog opens with a different role
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevRoleId, setPrevRoleId] = useState(role?.id);
@@ -102,21 +97,30 @@ export function useRolePermissionsDialog({
       setSearch("");
       setAssignments(new Map());
       setExpandedGroups([]);
-      setInitializedRoleId(null); // Mark as not initialized
+      setInitializedRoleId(null);
     }
     if (!open) {
-      setInitializedRoleId(null); // Reset when dialog closes
+      setInitializedRoleId(null);
     }
   }
 
-  // ── Fetch tenant's available permissions via Repository (clean architecture) ──
-  const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
-    queryKey: ["tenant-permissions", tenantId],
-    queryFn: () => systemContainer.roleRepository.getTenantAvailablePermissions(tenantId),
+  // ── Fetch tenant's available permissions GROUPED from backend ──
+  // Returns PermissionModuleGroup[] (Module → Category → Permissions)
+  // Zero client-side groupBy needed — backend does all grouping.
+  const { data: tenantPermissionGroups = [], isLoading: loadingTenant } = useQuery({
+    queryKey: ["tenant-permissions-grouped", tenantId],
+    queryFn: () => systemContainer.roleRepository.getTenantAvailablePermissionsGrouped(tenantId),
     enabled: open && !!tenantId,
   });
 
-  // ── Fetch role's current permissions via Repository ──
+  // Flat permission list derived from groups (for toggle/lookup logic only)
+  const allPermissions = useMemo((): Permission[] => {
+    return tenantPermissionGroups.flatMap((m) =>
+      m.categories.flatMap((c) => c.permissions)
+    );
+  }, [tenantPermissionGroups]);
+
+  // ── Fetch role's current permissions ──
   const { data: rolePermissions = [], isLoading: loadingRole } = useQuery({
     queryKey: ["role-permissions", role?.id],
     queryFn: async () => {
@@ -130,15 +134,15 @@ export function useRolePermissionsDialog({
   const isReadyToInitRole =
     open &&
     !!role?.id &&
-    tenantPermissions.length > 0 &&
+    allPermissions.length > 0 &&
     !loadingRole &&
     initializedRoleId !== role?.id;
   const [prevIsReadyToInitRole, setPrevIsReadyToInitRole] = useState(isReadyToInitRole);
 
   if (isReadyToInitRole && isReadyToInitRole !== prevIsReadyToInitRole) {
     setPrevIsReadyToInitRole(isReadyToInitRole);
-    const validCodes = new Map<string, string>(); // code -> id
-    tenantPermissions.forEach((p) => validCodes.set(p.code, p.id));
+    const validCodes = new Map<string, string>(); // code → id
+    allPermissions.forEach((p) => validCodes.set(p.code, p.id));
 
     const newAssignments = new Map<string, PermissionAssignmentJson>();
     const groupsWithSelection = new Set<string>();
@@ -163,8 +167,8 @@ export function useRolePermissionsDialog({
           })(),
         });
 
-        // Find generic resource group
-        const permissionDef = tenantPermissions.find((p) => p.code === rp.permissionCode);
+        // Auto-expand groups that have selected permissions
+        const permissionDef = allPermissions.find((p) => p.code === rp.permissionCode);
         if (permissionDef?.resource) {
           groupsWithSelection.add(permissionDef.resource);
         }
@@ -173,8 +177,6 @@ export function useRolePermissionsDialog({
 
     setAssignments(newAssignments);
     setExpandedGroups(Array.from(groupsWithSelection));
-
-    // Mark as initialized for this role
     if (role?.id) setInitializedRoleId(role.id);
   } else if (!isReadyToInitRole && prevIsReadyToInitRole) {
     setPrevIsReadyToInitRole(isReadyToInitRole);
@@ -217,8 +219,7 @@ export function useRolePermissionsDialog({
       if (next.has(code)) {
         next.delete(code);
       } else {
-        // Find permission ID
-        const permission = tenantPermissions.find((p) => p.code === code);
+        const permission = allPermissions.find((p) => p.code === code);
         if (permission) {
           next.set(code, {
             permissionId: permission.id,
@@ -248,7 +249,7 @@ export function useRolePermissionsDialog({
           next.delete(c);
         } else {
           if (!next.has(c)) {
-            const permission = tenantPermissions.find((p) => p.code === c);
+            const permission = allPermissions.find((p) => p.code === c);
             if (permission) {
               next.set(c, {
                 permissionId: permission.id,
@@ -265,7 +266,6 @@ export function useRolePermissionsDialog({
 
   const bulkUpdateScope = (scope: string) => {
     const scopeValue = scope === PermissionScopes.Default ? undefined : scope;
-
     setAssignments((prev) => {
       const next = new Map(prev);
       Array.from(next.keys()).forEach((key) => {
@@ -276,25 +276,31 @@ export function useRolePermissionsDialog({
     });
   };
 
-  // Filter and group permissions
-  const grouped = useMemo(() => {
-    const searchLower = search.toLowerCase();
-    const filtered = tenantPermissions.filter((p) => {
-      if (!search) return true;
-      const name = p.getLocalizedName(language);
-      return name.toLowerCase().includes(searchLower) || p.code.toLowerCase().includes(searchLower);
-    });
+  // ── Client-side SEARCH FILTER only — preserves group structure from backend ──
+  // This is NOT a grouping operation. It's a UI filter that keeps the Module→Category→Permission
+  // tree intact while hiding non-matching items. The hierarchy itself comes from the backend.
+  const groupedModules = useMemo((): PermissionModuleGroup[] => {
+    if (!search.trim()) return tenantPermissionGroups;
 
-    return filtered.reduce((acc, p) => {
-      const key = p.resource || "other";
-      (acc[key] = acc[key] || []).push(p);
-      return acc;
-    }, {} as GroupedPermissions);
-  }, [tenantPermissions, search, language]);
+    const q = search.toLowerCase();
+    return tenantPermissionGroups
+      .map((moduleGroup) => ({
+        ...moduleGroup,
+        categories: moduleGroup.categories
+          .map((categoryGroup) => ({
+            ...categoryGroup,
+            permissions: categoryGroup.permissions.filter((p) => {
+              const name = p.getLocalizedName(language);
+              return name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
+            }),
+          }))
+          .filter((c) => c.permissions.length > 0),
+      }))
+      .filter((m) => m.categories.length > 0);
+  }, [tenantPermissionGroups, search, language]);
 
   // Helpers
   const getName = (p: Permission) => p.getLocalizedName(language);
-
   const isChecked = (code: string) => assignments.has(code);
 
   const getGroupStats = (codes: string[]) => {
@@ -315,11 +321,10 @@ export function useRolePermissionsDialog({
     expandedGroups,
     setExpandedGroups,
 
-    // Data
-    grouped,
-    totalCount: tenantPermissions.length,
+    // Data — backend-grouped, client-search-filtered
+    groupedModules,
+    totalCount: allPermissions.length,
     selectedCount: assignments.size,
-    groupCount: Object.keys(grouped).length,
     isLoading: loadingTenant || loadingRole,
 
     // Actions

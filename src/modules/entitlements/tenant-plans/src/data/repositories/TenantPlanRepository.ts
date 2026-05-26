@@ -88,6 +88,14 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     return models.map((m) => TenantPlanMapper.toFeatureDefinitionEntity(m));
   }
 
+  async getActiveGroupedFeatureDefinitions(): Promise<
+    import("../../domain/entities/TenantPlan").TenantFeatureDefinitionCategoryGroup[]
+  > {
+    // GET /tenant-feature-definitions/active/grouped — backend pre-groups by category
+    const models = await this.service.getActiveGroupedFeatureDefinitions();
+    return TenantPlanMapper.toFeatureDefinitionCategoryGroupList(models);
+  }
+
   async getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinition> {
     const model = await this.service.getFeatureDefinitionById(id);
     return TenantPlanMapper.toFeatureDefinitionEntity(model);

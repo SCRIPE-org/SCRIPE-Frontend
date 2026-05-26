@@ -18,7 +18,11 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import type { TenantPlan, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
+import type {
+  TenantPlan,
+  TenantFeatureDefinition,
+  TenantFeatureDefinitionCategoryGroup,
+} from "../../domain/entities/TenantPlan";
 import type {
   UpdateTenantPlanRequest,
   UpsertTenantPlanFeatureRequest,
@@ -65,12 +69,29 @@ export function useTenantPlanDetailViewModel(planId: string) {
     enabled: !!planId,
   });
 
-  // ── Fetch Feature Catalog (for the features tab dropdown) ──
-  const { data: featureCatalog = [] } = useQuery<TenantFeatureDefinition[]>({
-    queryKey: ["entitlements", "feature-definitions", "active"],
-    queryFn: () => tenantPlanRepository.getActiveFeatureDefinitions(),
+  // ── Fetch Feature Catalog — backend-grouped by category (zero client-side groupBy) ──
+  const { data: activeFeatureGroups = [] } = useQuery<TenantFeatureDefinitionCategoryGroup[]>({
+    queryKey: ["entitlements", "feature-definitions", "active-grouped"],
+    queryFn: () => tenantPlanRepository.getActiveGroupedFeatureDefinitions(),
     staleTime: 5 * 60 * 1000,
   });
+
+  // Flatten active groups to a lookup map (id → entity) for assignments and catalog access
+  const featureCatalogMap = useMemo(() => {
+    const map = new Map<string, TenantFeatureDefinition>();
+    for (const group of activeFeatureGroups) {
+      for (const def of group.definitions) {
+        map.set(def.id, def);
+      }
+    }
+    return map;
+  }, [activeFeatureGroups]);
+
+  // Flat list of ALL active features (for badge counts, etc.)
+  const featureCatalog = useMemo(
+    () => Array.from(featureCatalogMap.values()),
+    [featureCatalogMap]
+  );
 
   // ── Fetch Exchange Rates (for currency overrides — mirrors Edition) ──
   const { data: exchangeRates, isLoading: ratesLoading } = useQuery<Record<string, number>>({
@@ -553,6 +574,53 @@ export function useTenantPlanDetailViewModel(planId: string) {
     error,
     refetch,
     featureCatalog,
+
+    // ── Backend-grouped features for the FeaturesTab (ZERO client-side groupBy) ──
+    // groupedByCategory: assigned features, enriched with catalog data, grouped by category.
+    // availableGrouped: unassigned active features grouped by category (for FeatureCatalogPicker).
+    groupedByCategory: useMemo((): Array<{
+      category: string;
+      items: Array<{
+        definition: TenantFeatureDefinition;
+        value: string;
+        overrideLabel?: string;
+        isModified: boolean;
+        isNew: boolean;
+      }>;
+    }> => {
+      return activeFeatureGroups
+        .map((group) => {
+          const items = group.definitions
+            .filter((def) => localFeatures.has(def.id))
+            .map((def) => {
+              const data = localFeatures.get(def.id)!;
+              const originalFeature = (plan?.features ?? []).find(
+                (f) => f.featureDefinitionId === def.id
+              );
+              return {
+                definition: def,
+                value: data.value,
+                overrideLabel: data.overrideLabel,
+                isModified: originalFeature ? originalFeature.value !== data.value : true,
+                isNew: !originalFeature,
+              };
+            })
+            .sort((a, b) => a.definition.sortOrder - b.definition.sortOrder);
+          return { category: group.category, items };
+        })
+        .filter((g) => g.items.length > 0);
+    }, [activeFeatureGroups, localFeatures, plan]),
+
+    availableGrouped: useMemo((): TenantFeatureDefinitionCategoryGroup[] => {
+      return activeFeatureGroups
+        .map((group) => ({
+          category: group.category,
+          definitions: group.definitions.filter(
+            (def) => def.isActive && !localFeatures.has(def.id)
+          ),
+        }))
+        .filter((g) => g.definitions.length > 0);
+    }, [activeFeatureGroups, localFeatures]),
 
     // Lifecycle
     publishPlan: publishMutation.mutate,

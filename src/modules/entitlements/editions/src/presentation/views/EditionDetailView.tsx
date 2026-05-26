@@ -42,9 +42,10 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
 
   // ── Count modified features (needed by ChangeActionBar) ──
   const modifiedCount = useMemo(() => {
-    if (!vm.edition || !vm.features) return 0;
+    if (!vm.edition || !vm.moduleGroups.length) return 0;
+    const allFeatures = vm.moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.features));
     let count = 0;
-    for (const feature of vm.features) {
+    for (const feature of allFeatures) {
       const effectiveVal = vm.getEffectiveValue(feature);
       const serverFeature = vm.edition.features.find((ef) => ef.featureName === feature.name);
       const serverVal = serverFeature?.value ?? getFeatureDisabledDefault(feature.valueType);
@@ -153,7 +154,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       {activeTab === "features" && (
         <FeaturesTab
           edition={edition}
-          features={vm.features || []}
+          moduleGroups={vm.moduleGroups}
           getEffectiveValue={vm.getEffectiveValue}
           setLocalValue={vm.setLocalValue}
           overflowPolicy={vm.overflowPolicy}

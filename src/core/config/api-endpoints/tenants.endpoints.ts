@@ -31,6 +31,7 @@ export const TENANTS_ENDPOINTS = {
     SAVE_PRESET: `${V1}/Tenants/my/dashboard-presets/save`,
     SAFE_MODE: (id: string) => `${V1}/Tenants/${id}/safe-mode`,
     PERMISSIONS: (id: string) => `${V1}/Tenants/${id}/permissions`,
+    PERMISSIONS_GROUPED: (id: string) => `${V1}/Tenants/${id}/permissions/grouped`,
     // ── Domain Management ──
     DOMAINS: (id: string) => `${V1}/Tenants/${id}/domains`,
     DOMAIN_BY_ID: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}`,

@@ -1,15 +1,16 @@
 /**
  * FeaturesTab — Feature assignment editor for an edition.
  *
+ * Consumes backend-pre-grouped FeatureModuleGroup[] — NO client-side useMemo groupBy.
+ * Backend delivers Module → Category → Feature[] hierarchy via GET /features/grouped.
+ *
  * Includes:
  * - Overflow policy selector
- * - Collapsible feature module cards
+ * - Collapsible feature module cards (from backend groups)
  * - FeatureControl (Boolean switch, numeric input, enum select, text input)
- * - getFeatureDisabledDefault / getEnumFeatureOptions helpers
  */
 "use client";
 
-import { useMemo } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -18,7 +19,7 @@ import { Switch } from "@core/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { ChevronDown, ChevronRight, Zap, ChevronsUpDown, Shield } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
+import type { Feature, FeatureModuleGroup } from "@modules/entitlements/features/src/domain/entities/Feature";
 import type { Edition } from "../../domain/entities/Edition";
 
 // ── Types ──
@@ -26,7 +27,8 @@ type TFn = (key: string) => string;
 
 interface FeaturesTabProps {
   edition: Edition;
-  features: Feature[];
+  /** Backend-pre-grouped: Module → Category → Feature[]. Zero client-side groupBy. */
+  moduleGroups: FeatureModuleGroup[];
   getEffectiveValue: (feature: Feature) => string;
   setLocalValue: (featureName: string, value: string) => void;
   overflowPolicy: string;
@@ -40,7 +42,7 @@ interface FeaturesTabProps {
 
 export function FeaturesTab({
   edition,
-  features,
+  moduleGroups,
   getEffectiveValue,
   setLocalValue,
   overflowPolicy,
@@ -53,24 +55,12 @@ export function FeaturesTab({
 }: FeaturesTabProps) {
   const { t, language } = useI18n();
 
-  // ── Group features by module → category ──
-  const featuresByModule = useMemo(() => {
-    if (!features) return {};
-    const grouped: Record<string, Record<string, Feature[]>> = {};
-    for (const f of features) {
-      const mod = f.module || "Other";
-      const cat = f.category || "General";
-      if (!grouped[mod]) grouped[mod] = {};
-      if (!grouped[mod][cat]) grouped[mod][cat] = [];
-      grouped[mod][cat].push(f);
-    }
-    for (const mod of Object.keys(grouped)) {
-      for (const cat of Object.keys(grouped[mod])) {
-        grouped[mod][cat].sort((a, b) => a.sortOrder - b.sortOrder);
-      }
-    }
-    return grouped;
-  }, [features]);
+  // ── Total counts from backend groups (no client-side computation) ──
+  const allFeatures = moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.features));
+  const enabledTotal = allFeatures.filter((f) => {
+    const val = getEffectiveValue(f);
+    return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
+  }).length;
 
   return (
     <>
@@ -119,14 +109,7 @@ export function FeaturesTab({
           <Zap className="h-5 w-5 text-primary" />
           <h2 className="text-lg font-semibold">{t("entitlements.features.title")}</h2>
           <Badge variant="secondary" className="text-xs">
-            {(() => {
-              const allFeats = features || [];
-              const enabledTotal = allFeats.filter((f) => {
-                const val = getEffectiveValue(f);
-                return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
-              }).length;
-              return `${enabledTotal}/${allFeats.length}`;
-            })()}
+            {enabledTotal}/{allFeatures.length}
           </Badge>
         </div>
         <Button
@@ -144,11 +127,11 @@ export function FeaturesTab({
         </Button>
       </div>
 
-      {/* ─────── FEATURE MODULE CARDS ─────── */}
-      {Object.entries(featuresByModule).map(([moduleName, categories]) => {
+      {/* ─────── FEATURE MODULE CARDS (backend-grouped) ─────── */}
+      {moduleGroups.map(({ module: moduleName, categories }) => {
         const isCollapsed = collapsedModules[moduleName] ?? true;
-        const allFeatures = Object.values(categories).flat();
-        const enabledCount = allFeatures.filter((f) => {
+        const moduleFeatures = categories.flatMap((cat) => cat.features);
+        const enabledCount = moduleFeatures.filter((f) => {
           const val = getEffectiveValue(f);
           return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
         }).length;
@@ -169,16 +152,16 @@ export function FeaturesTab({
                   <CardTitle className="text-base">{moduleName}</CardTitle>
                 </div>
                 <Badge variant="outline">
-                  {enabledCount}/{allFeatures.length}
+                  {enabledCount}/{moduleFeatures.length}
                 </Badge>
               </div>
             </CardHeader>
 
             {!isCollapsed && (
               <CardContent className="pt-0">
-                {Object.entries(categories).map(([categoryName, categoryFeatures]) => (
+                {categories.map(({ category: categoryName, features: categoryFeatures }) => (
                   <div key={categoryName}>
-                    {Object.keys(categories).length > 1 && (
+                    {categories.length > 1 && (
                       <div className="mt-2 flex items-center gap-2 border-b border-dashed py-2">
                         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                           {categoryName}

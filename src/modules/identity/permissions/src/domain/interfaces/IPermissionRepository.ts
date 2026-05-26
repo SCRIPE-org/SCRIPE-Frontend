@@ -3,7 +3,7 @@
  *
  * Defines the contract for permission data operations.
  */
-import type { Permission } from "../entities/Permission";
+import type { Permission, PermissionModuleGroup } from "../entities/Permission";
 import type {
   CreatePermissionRequest,
   UpdatePermissionRequest,
@@ -47,6 +47,12 @@ export interface IPermissionRepository {
   getCategories(): Promise<string[]>;
 
   /**
+   * Get ALL permissions grouped by Module → Category (backend-driven).
+   * Used by the Permissions page. Zero client-side grouping.
+   */
+  getGrouped(search?: string): Promise<PermissionModuleGroup[]>;
+
+  /**
    * Create a new permission
    */
   create(request: CreatePermissionRequest): Promise<string>;
@@ -61,3 +67,4 @@ export interface IPermissionRepository {
    */
   delete(id: string): Promise<void>;
 }
+

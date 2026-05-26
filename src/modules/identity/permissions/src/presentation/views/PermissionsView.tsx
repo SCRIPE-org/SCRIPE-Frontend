@@ -23,7 +23,7 @@ export function PermissionsView() {
   useModuleLocales(() => import("../../../locales"), "permissions");
 
   const { t } = useI18n();
-  const { groupedPermissions, categories, totalCount, isLoading, refetch, filter } =
+  const { groupedPermissions, categories, totalCount, isLoading, isGroupedLoading, refetch, filter } =
     usePermissionsViewModel();
 
   const hasFilters = !!filter.searchValue || !!filter.categoryFilter;
@@ -68,7 +68,7 @@ export function PermissionsView() {
       {/* Content */}
       <Card>
         <CardContent className="pt-6">
-          {isLoading ? (
+          {isLoading || isGroupedLoading ? (
             <PermissionTableSkeleton groupCount={3} rowsPerGroup={4} />
           ) : groupedPermissions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">

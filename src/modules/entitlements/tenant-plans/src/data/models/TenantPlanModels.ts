@@ -139,6 +139,12 @@ export interface TenantFeatureDefinitionListModel {
   createdAt: string;
 }
 
+/** Grouped response from GET /tenant-feature-definitions/active/grouped */
+export interface TenantFeatureDefinitionCategoryGroupModel {
+  category: string;
+  definitions: TenantFeatureDefinitionListModel[];
+}
+
 // ── Promotion ──
 export interface TenantPlanPromotionModel {
   id: string;

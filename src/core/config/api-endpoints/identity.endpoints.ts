@@ -35,6 +35,7 @@ export const IDENTITY_ENDPOINTS = {
     BY_TENANT_ID: (tenantId: string) => `${V1}/Roles/byTenantId/${tenantId}`,
     MY_TENANT_ROLES: `${V1}/Roles/myTenantRoles`,
     MY_TENANT_AVAILABLE_PERMISSIONS: `${V1}/Roles/myTenant/available-permissions`,
+    MY_TENANT_AVAILABLE_PERMISSIONS_GROUPED: `${V1}/Roles/myTenant/available-permissions/grouped`,
     CREATE: `${V1}/Roles`,
     CREATE_FOR_MY_TENANT: `${V1}/Roles/createForMyTenant`,
     UPDATE: (id: string) => `${V1}/Roles/${id}`,
@@ -57,6 +58,7 @@ export const IDENTITY_ENDPOINTS = {
     UPDATE: (id: string) => `${V1}/Permissions/${id}`,
     DELETE: (id: string) => `${V1}/Permissions/${id}`,
     CATEGORIES: `${V1}/Permissions/categories`,
+    GROUPED: `${V1}/Permissions/grouped`,
   },
 
   USER_GROUPS: {

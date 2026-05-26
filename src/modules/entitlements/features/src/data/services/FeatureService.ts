@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
-import type { FeatureModel, TenantEffectiveFeatureModel } from "../models/FeatureModels";
+import type { FeatureModel, TenantEffectiveFeatureModel, FeatureModuleGroupModel } from "../models/FeatureModels";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
@@ -52,6 +52,15 @@ export class FeatureService implements IFeatureService {
     if (tenantId) params.tenantId = tenantId;
     return this.api.get<TenantEffectiveFeatureModel[]>(
       API_ENDPOINTS.ENTITLEMENTS.FEATURES.EFFECTIVE,
+      params
+    );
+  }
+
+  async getGrouped(search?: string): Promise<FeatureModuleGroupModel[]> {
+    const params: Record<string, string> = {};
+    if (search) params.search = search;
+    return this.api.get<FeatureModuleGroupModel[]>(
+      API_ENDPOINTS.ENTITLEMENTS.FEATURES.GROUPED,
       params
     );
   }

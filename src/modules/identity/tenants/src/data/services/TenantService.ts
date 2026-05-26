@@ -25,10 +25,8 @@ import type {
   TenantTreeListResult,
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
-import {
-  PermissionModel,
-  type PermissionJson,
-} from "@modules/identity/permissions/src/data/models/PermissionModel";
+import { PermissionModel } from "@modules/identity/permissions";
+import type { PermissionModuleGroupJson, PermissionJson } from "@modules/identity/permissions";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
@@ -146,9 +144,19 @@ export class TenantService implements ITenantService {
     return jsonList.map((json) => PermissionModel.fromJson(json));
   }
 
+  /** GET /Tenants/{id}/permissions/grouped — backend groups by Module → Category */
+  async getTenantPermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]> {
+    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
+    return this.api.get(url);
+  }
+
   async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
     await this.api.put(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), { permissionIds });
   }
+
 
   async toggleStatus(id: string, isActive: boolean): Promise<void> {
     // Backend requires Name/Description/Address for any update

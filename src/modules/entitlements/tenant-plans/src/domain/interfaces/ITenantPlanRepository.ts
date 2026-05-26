@@ -33,6 +33,9 @@ export interface ITenantPlanRepository {
   ): Promise<PagedResult<TenantFeatureDefinition>>;
   getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinition>;
   getActiveFeatureDefinitions(): Promise<TenantFeatureDefinition[]>;
+  /** Returns active feature definitions pre-grouped by category from the backend. Zero client-side groupBy needed. */
+  getActiveGroupedFeatureDefinitions(): Promise<import("../entities/TenantPlan").TenantFeatureDefinitionCategoryGroup[]>;
+
   createFeatureDefinition(request: CreateFeatureDefinitionRequest): Promise<string>;
   updateFeatureDefinition(id: string, request: UpdateFeatureDefinitionRequest): Promise<void>;
   deleteFeatureDefinition(id: string): Promise<void>;

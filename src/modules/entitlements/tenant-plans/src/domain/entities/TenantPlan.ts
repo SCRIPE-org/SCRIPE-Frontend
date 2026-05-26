@@ -349,6 +349,16 @@ export class TenantFeatureDefinition {
   }
 }
 
+/**
+ * Backend-pre-grouped category bucket for tenant feature definitions.
+ * Returned by GET /tenant-feature-definitions/active/grouped.
+ * Zero client-side reduce/groupBy needed — backend provides the structure.
+ */
+export interface TenantFeatureDefinitionCategoryGroup {
+  category: string;
+  definitions: TenantFeatureDefinition[];
+}
+
 // ── Promotion Entity ──
 export interface TenantPlanPromotionData {
   id: string;

@@ -18,6 +18,7 @@ import {
   type PermissionJson,
   type CreatePermissionJson,
   type UpdatePermissionJson,
+  type PermissionModuleGroupJson,
 } from "../models/PermissionModel";
 import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
 import type { PermissionListParams } from "../../domain/interfaces/IPermissionRepository";
@@ -58,6 +59,11 @@ export class PermissionService implements IPermissionService {
 
   async getCategories(): Promise<string[]> {
     return this.api.get<string[]>(API_ENDPOINTS.PERMISSIONS.CATEGORIES);
+  }
+
+  async getGrouped(search?: string): Promise<PermissionModuleGroupJson[]> {
+    const url = buildUrl(API_ENDPOINTS.PERMISSIONS.GROUPED, { search });
+    return this.api.get<PermissionModuleGroupJson[]>(url);
   }
 
   async create(json: CreatePermissionJson): Promise<{ id: string }> {

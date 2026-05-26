@@ -1,10 +1,13 @@
 /**
  * Tenant Permissions Dialog ViewModel
  *
- * FOLLOWS PATTERN from useTenantRolesViewModel.ts as requested.
- * - Uses systemContainer.tenantService (not direct API)
- * - Robust permission mapping logic with fallback
- * - Merges tenantAssignedPermissions into available pool to ensure visibility
+ * BACKEND-GROUPED: Uses tenantRepository.getTenantPermissionsGrouped which returns
+ * PermissionModuleGroup[] (Module → Category → Permissions).
+ * Zero client-side reduce/useMemo groupBy in this viewmodel.
+ * Client-side only: search FILTER (structure-preserving, not grouping).
+ *
+ * Clean Architecture: ViewModel → Repository (via DI) → Service → API
+ * No direct API calls. No data-layer mapper imports.
  *
  * @module tenants/presentation/viewmodels
  */
@@ -15,34 +18,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@core/common/logger";
-import { systemContainer } from "@modules/identity/di";
-
-// Types matching actual API responses (EXACT same as role dialog)
-export interface ParentPermission {
-  id: string;
-  resource: string;
-  action: string;
-  code: string;
-  defaultScope: string;
-  description?: string;
-  nameEn?: string;
-  nameAr?: string;
-}
-
-export interface TenantCurrentPermission {
-  id: string;
-  resource: string;
-  action: string;
-  code: string;
-  defaultScope: string;
-  description?: string;
-  nameEn?: string;
-  nameAr?: string;
-}
-
-export interface GroupedPermissions {
-  [resource: string]: ParentPermission[];
-}
+import { identityContainer } from "@modules/identity/di";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
 
 export interface UseTenantPermissionsDialogProps {
   open: boolean;
@@ -60,11 +37,10 @@ export interface UseTenantPermissionsDialogResult {
   expandedGroups: string[];
   setExpandedGroups: (groups: string[]) => void;
 
-  // Data
-  grouped: GroupedPermissions;
+  // Data — backend-grouped, client-search-filtered (NO client-side groupBy)
+  groupedModules: PermissionModuleGroup[];
   totalCount: number;
   selectedCount: number;
-  groupCount: number;
   isLoading: boolean;
   hasParent: boolean;
 
@@ -75,7 +51,7 @@ export interface UseTenantPermissionsDialogResult {
   isSaving: boolean;
 
   // Helpers
-  getName: (p: ParentPermission) => string;
+  getName: (p: Permission) => string;
   isChecked: (code: string) => boolean;
   getGroupStats: (codes: string[]) => {
     count: number;
@@ -128,35 +104,26 @@ export function useTenantPermissionsDialog({
     }
   }
 
-  // Fetch PARENT's available permissions
-  const { data: parentPermissions = [], isLoading: loadingParent } = useQuery({
-    queryKey: ["parent-permissions-service", parentTenantId],
+  // ── Fetch PARENT's available permissions GROUPED from backend ──
+  // Uses Repository (Clean Architecture), NOT direct service calls.
+  // Returns PermissionModuleGroup[] (Module → Category → Permissions)
+  const { data: parentPermissionGroups = [], isLoading: loadingParent } = useQuery({
+    queryKey: ["parent-permissions-grouped", parentTenantId],
     queryFn: async () => {
       try {
         appLogger.debug(
-          "[ViewModel] Fetching available permissions via Service, parentTenantId:",
+          "[ViewModel] Fetching grouped permissions via Repository, parentTenantId:",
           parentTenantId
         );
 
-        let permissions;
         if (parentTenantId) {
-          permissions = await systemContainer.tenantService.getTenantPermissions(parentTenantId);
+          // Child tenant: get parent's permissions grouped from repository
+          return identityContainer.tenantRepository.getTenantPermissionsGrouped(parentTenantId);
         } else {
-          // Fallback for root - creation permissions
-          permissions = await systemContainer.tenantService.getCreationPermissions();
+          // Root tenant fallback: get creation permissions (flat), wrap as grouped
+          const flatPermissions = await identityContainer.tenantRepository.getCreationPermissions();
+          return groupFlatPermissions(flatPermissions);
         }
-
-        // Robust mapping logic
-        return permissions.map((p: any) => ({
-          id: p.id,
-          resource: p.resource,
-          action: p.action,
-          code: p.code || p.permissionCode || `${p.resource}.${p.action}`,
-          defaultScope: p.defaultScope || "own_tenant",
-          description: p.description,
-          nameEn: p.nameEn,
-          nameAr: p.nameAr,
-        }));
       } catch (error) {
         appLogger.error("Failed to fetch available permissions", error);
         return [];
@@ -165,26 +132,17 @@ export function useTenantPermissionsDialog({
     enabled: open && !!tenantId,
   });
 
-  // Fetch TENANT's current permissions
+  // ── Fetch TENANT's current permissions (flat, for selection init) ──
+  // Uses Repository (Clean Architecture) — mapper is in the repo layer.
   const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
     queryKey: ["tenant-current-permissions-service", tenantId],
     queryFn: async () => {
       try {
-        appLogger.debug("[ViewModel] Fetching tenant's current permissions via Service:", tenantId);
-
-        const permissions = await systemContainer.tenantService.getTenantPermissions(tenantId);
-
-        // Robust mapping logic
-        return permissions.map((p: any) => ({
-          id: p.id,
-          resource: p.resource,
-          action: p.action,
-          code: p.code || p.permissionCode || `${p.resource}.${p.action}`,
-          defaultScope: p.defaultScope || "own_tenant",
-          description: p.description,
-          nameEn: p.nameEn,
-          nameAr: p.nameAr,
-        }));
+        appLogger.debug(
+          "[ViewModel] Fetching tenant's current permissions via Repository:",
+          tenantId
+        );
+        return identityContainer.tenantRepository.getTenantPermissions(tenantId);
       } catch (error) {
         appLogger.error("Failed to fetch tenant permissions", error);
         return [];
@@ -193,22 +151,12 @@ export function useTenantPermissionsDialog({
     enabled: open && !!tenantId,
   });
 
-  // Merge parent and tenant permissions to ensure we show what the tenant HAS,
-  // even if the parent no longer has it (or data mismatch).
-  const allPermissions = useMemo(() => {
-    const combined = [...parentPermissions];
-    const codeSet = new Set(combined.map((p) => p.code));
+  // Flat permission list derived from groups (for toggle/lookup logic only)
+  const allPermissions = useMemo((): Permission[] => {
+    return parentPermissionGroups.flatMap((m) => m.categories.flatMap((c) => c.permissions));
+  }, [parentPermissionGroups]);
 
-    tenantPermissions.forEach((p) => {
-      if (!codeSet.has(p.code)) {
-        combined.push(p);
-        codeSet.add(p.code);
-      }
-    });
-    return combined;
-  }, [parentPermissions, tenantPermissions]);
-
-  // Initialize selection from tenant's permissions
+  // Initialize selection from tenant's permissions (only once per tenant)
   const isReadyToInit =
     open &&
     !!tenantId &&
@@ -219,14 +167,9 @@ export function useTenantPermissionsDialog({
 
   if (isReadyToInit && isReadyToInit !== prevIsReadyToInit) {
     setPrevIsReadyToInit(isReadyToInit);
-    // Get valid codes from ALL known permissions (parent + current)
     const validCodes = new Set(allPermissions.map((p) => p.code));
-
-    // Get tenant's current permission codes
     const tenantCodes = tenantPermissions.map((p) => p.code);
-
-    // Filter to only valid codes (should be all of them now)
-    const selectedFromTenant = tenantCodes.filter((code) => validCodes.has(code));
+    const selectedFromTenant = tenantCodes.filter((code: string) => validCodes.has(code));
 
     setSelectedCodes(new Set(selectedFromTenant));
 
@@ -238,24 +181,21 @@ export function useTenantPermissionsDialog({
       }
     });
     setExpandedGroups(Array.from(groupsWithSelection));
-
-    // Mark as initialized for this tenant
     setInitializedTenantId(tenantId);
   } else if (!isReadyToInit && prevIsReadyToInit) {
     setPrevIsReadyToInit(isReadyToInit);
   }
 
-  // Save mutation
+  // Save mutation — uses repository for write operations
   const saveMutation = useMutation({
     mutationFn: async () => {
-      // Map selected codes to IDs from all available permissions
       const selectedIds = allPermissions.filter((p) => selectedCodes.has(p.code)).map((p) => p.id);
-
-      await systemContainer.tenantService.updateTenantPermissions(tenantId, selectedIds);
+      await identityContainer.tenantRepository.updateTenantPermissions(tenantId, selectedIds);
     },
     onSuccess: () => {
       toastSuccess({ title: t("tenant.permissionsSaved") || "Permissions saved successfully" });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["parent-permissions-grouped"] });
       queryClient.invalidateQueries({ queryKey: ["tenant-stats", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
       onOpenChange(false);
@@ -286,26 +226,29 @@ export function useTenantPermissionsDialog({
     });
   };
 
-  // Filter and group permissions
-  const grouped = useMemo(() => {
-    const searchLower = search.toLowerCase();
-    const filtered = allPermissions.filter((p) => {
-      if (!search) return true;
-      const name = (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
-      return name.toLowerCase().includes(searchLower) || p.code.toLowerCase().includes(searchLower);
-    });
+  // ── Client-side SEARCH FILTER only — preserves group structure from backend ──
+  const groupedModules = useMemo((): PermissionModuleGroup[] => {
+    if (!search.trim()) return parentPermissionGroups;
 
-    return filtered.reduce((acc, p) => {
-      const key = p.resource || "other";
-      (acc[key] = acc[key] || []).push(p);
-      return acc;
-    }, {} as GroupedPermissions);
-  }, [allPermissions, search, language]);
+    const q = search.toLowerCase();
+    return parentPermissionGroups
+      .map((moduleGroup) => ({
+        ...moduleGroup,
+        categories: moduleGroup.categories
+          .map((categoryGroup) => ({
+            ...categoryGroup,
+            permissions: categoryGroup.permissions.filter((p) => {
+              const name = p.getLocalizedName(language);
+              return name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
+            }),
+          }))
+          .filter((c) => c.permissions.length > 0),
+      }))
+      .filter((m) => m.categories.length > 0);
+  }, [parentPermissionGroups, search, language]);
 
   // Helpers
-  const getName = (p: ParentPermission) =>
-    (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
-
+  const getName = (p: Permission) => p.getLocalizedName(language);
   const isChecked = (code: string) => selectedCodes.has(code);
 
   const getGroupStats = (codes: string[]) => {
@@ -326,11 +269,10 @@ export function useTenantPermissionsDialog({
     expandedGroups,
     setExpandedGroups,
 
-    // Data
-    grouped,
+    // Data — backend-grouped, client-search-filtered
+    groupedModules,
     totalCount: allPermissions.length,
     selectedCount: selectedCodes.size,
-    groupCount: Object.keys(grouped).length,
     isLoading: loadingParent || loadingTenant,
     hasParent: !!parentTenantId,
 
@@ -345,4 +287,31 @@ export function useTenantPermissionsDialog({
     isChecked,
     getGroupStats,
   };
+}
+
+/**
+ * Utility: group a flat Permission[] by module → category.
+ * Used ONLY as a fallback when the backend doesn't provide a grouped endpoint
+ * (e.g., creation permissions for root tenants).
+ */
+function groupFlatPermissions(permissions: Permission[]): PermissionModuleGroup[] {
+  const moduleMap = new Map<string, Map<string, Permission[]>>();
+
+  for (const p of permissions) {
+    const mod = p.module || "General";
+    const cat = p.category || p.resource || "General";
+
+    if (!moduleMap.has(mod)) moduleMap.set(mod, new Map());
+    const catMap = moduleMap.get(mod)!;
+    if (!catMap.has(cat)) catMap.set(cat, []);
+    catMap.get(cat)!.push(p);
+  }
+
+  return Array.from(moduleMap.entries()).map(([module, catMap]) => ({
+    module,
+    categories: Array.from(catMap.entries()).map(([category, perms]) => ({
+      category,
+      permissions: perms,
+    })),
+  }));
 }

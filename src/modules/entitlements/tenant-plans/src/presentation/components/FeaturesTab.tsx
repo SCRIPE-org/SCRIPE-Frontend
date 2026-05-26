@@ -4,16 +4,15 @@
  * NOW USES LIFTED STATE from the viewmodel (passed via props).
  * This ensures state persists when the user switches tabs.
  *
- * Features:
- * - Pull features from TenantFeatureDefinition catalog
- * - Boolean: Toggle Switch / Numeric: Number Input / String: Text Input
- * - Grouped by category with collapse/expand
- * - Change tracking with modified indicators
- * - Add/remove features from the catalog
+ * Grouping comes 100% from the backend via useTenantPlanDetailViewModel:
+ * - groupedByCategory: assigned features grouped by category (backend-structured)
+ * - availableGrouped: unassigned active features grouped by category (backend-structured)
+ *
+ * ZERO client-side useMemo+reduce for grouping — backend does all of it.
  */
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -26,14 +25,33 @@ import {
   Save,
   CheckCircle2,
 } from "lucide-react";
-import type { TenantPlan, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
+import type { TenantPlan, TenantFeatureDefinition, TenantFeatureDefinitionCategoryGroup } from "../../domain/entities/TenantPlan";
 import { FeatureCatalogPicker } from "./features-tab/FeatureCatalogPicker";
 import { FeatureRow } from "./features-tab/FeatureRow";
 import Link from "next/link";
 
+// ── Types from the viewmodel (passed as props) ──
+interface AssignedFeatureItem {
+  definition: TenantFeatureDefinition;
+  value: string;
+  overrideLabel?: string;
+  isModified: boolean;
+  isNew: boolean;
+}
+
+interface AssignedFeatureCategoryGroup {
+  category: string;
+  items: AssignedFeatureItem[];
+}
+
 interface FeaturesTabProps {
   plan: TenantPlan;
-  featureCatalog: TenantFeatureDefinition[];
+  /** Total count of active features (for badge: assigned/total) */
+  totalActiveFeatureCount: number;
+  /** Assigned features pre-grouped by category — backend-structured, zero client-side groupBy */
+  groupedByCategory: AssignedFeatureCategoryGroup[];
+  /** Unassigned active features pre-grouped by category — for FeatureCatalogPicker */
+  availableGrouped: TenantFeatureDefinitionCategoryGroup[];
   /** Lifted state from viewmodel */
   localFeatures: Map<string, { value: string; overrideLabel?: string }>;
   setFeatureValue: (defId: string, value: string) => void;
@@ -48,8 +66,9 @@ interface FeaturesTabProps {
 
 export function FeaturesTab({
   plan,
-  featureCatalog,
-  localFeatures,
+  totalActiveFeatureCount,
+  groupedByCategory,
+  availableGrouped,
   setFeatureValue,
   addFeature,
   removeFeature,
@@ -62,43 +81,8 @@ export function FeaturesTab({
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   const [showPicker, setShowPicker] = useState(false);
 
-  // ── Compute assigned feature IDs ──
-  const assignedIds = useMemo(() => new Set(localFeatures.keys()), [localFeatures]);
-
-  // ── Available (unassigned) features from catalog ──
-  const availableFeatures = useMemo(
-    () => featureCatalog.filter((f) => f.isActive && !assignedIds.has(f.id)),
-    [featureCatalog, assignedIds]
-  );
-
-  // ── Assigned features enriched with catalog metadata ──
-  const assignedFeatures = useMemo(() => {
-    const catalogMap = new Map(featureCatalog.map((f) => [f.id, f]));
-    const result: Array<{
-      definition: TenantFeatureDefinition;
-      value: string;
-      overrideLabel?: string;
-    }> = [];
-    for (const [defId, data] of localFeatures) {
-      const def = catalogMap.get(defId);
-      if (def) {
-        result.push({ definition: def, ...data });
-      }
-    }
-    result.sort((a, b) => a.definition.sortOrder - b.definition.sortOrder);
-    return result;
-  }, [localFeatures, featureCatalog]);
-
-  // ── Group by category ──
-  const groupedByCategory = useMemo(() => {
-    const groups: Record<string, typeof assignedFeatures> = {};
-    for (const item of assignedFeatures) {
-      const cat = item.definition.category || "General";
-      if (!groups[cat]) groups[cat] = [];
-      groups[cat].push(item);
-    }
-    return groups;
-  }, [assignedFeatures]);
+  // Total assigned count across all groups
+  const assignedCount = groupedByCategory.reduce((sum, g) => sum + g.items.length, 0);
 
   // ── Handlers ──
   const handleAddFeature = useCallback(
@@ -114,19 +98,21 @@ export function FeaturesTab({
   }, []);
 
   const toggleAll = useCallback(() => {
-    const allCollapsed = Object.values(collapsedCategories).every((v) => v);
+    const allCollapsed = groupedByCategory.every((g) => collapsedCategories[g.category]);
     const newState: Record<string, boolean> = {};
-    for (const cat of Object.keys(groupedByCategory)) {
-      newState[cat] = !allCollapsed;
+    for (const g of groupedByCategory) {
+      newState[g.category] = !allCollapsed;
     }
     setCollapsedCategories(newState);
   }, [collapsedCategories, groupedByCategory]);
 
-  const categories = Object.keys(groupedByCategory);
-  const allCollapsed = categories.length > 0 && categories.every((c) => collapsedCategories[c]);
+  const allCollapsed =
+    groupedByCategory.length > 0 && groupedByCategory.every((g) => collapsedCategories[g.category]);
 
-  // ── Empty State ──
-  if (featureCatalog.length === 0) {
+  const hasAvailable = availableGrouped.some((g) => g.definitions.length > 0);
+
+  // ── Empty Catalog State ──
+  if (totalActiveFeatureCount === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -156,7 +142,7 @@ export function FeaturesTab({
             {t("entitlements.tenantPlans.tabFeatures") || "Features"}
           </h2>
           <Badge variant="secondary" className="text-xs">
-            {assignedFeatures.length}/{featureCatalog.filter((f) => f.isActive).length}
+            {assignedCount}/{totalActiveFeatureCount}
           </Badge>
           {hasChanges && (
             <Badge
@@ -169,7 +155,7 @@ export function FeaturesTab({
         </div>
 
         <div className="flex items-center gap-2">
-          {categories.length > 1 && (
+          {groupedByCategory.length > 1 && (
             <Button variant="ghost" size="sm" onClick={toggleAll}>
               <ChevronsUpDown className="me-1 h-4 w-4" />
               {allCollapsed
@@ -186,7 +172,7 @@ export function FeaturesTab({
             variant="outline"
             size="sm"
             onClick={() => setShowPicker(true)}
-            disabled={availableFeatures.length === 0}
+            disabled={!hasAvailable}
           >
             <Plus className="me-1 h-4 w-4" />
             {t("entitlements.featureDefinitions.addFeature") || "Add Feature"}
@@ -201,7 +187,7 @@ export function FeaturesTab({
       {/* ─────── FEATURE CATALOG PICKER DIALOG ─────── */}
       {showPicker && (
         <FeatureCatalogPicker
-          availableFeatures={availableFeatures}
+          availableGrouped={availableGrouped}
           onSelect={handleAddFeature}
           onClose={() => setShowPicker(false)}
           t={t}
@@ -210,7 +196,7 @@ export function FeaturesTab({
       )}
 
       {/* ─────── FEATURE GROUPS ─────── */}
-      {assignedFeatures.length === 0 ? (
+      {groupedByCategory.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <CheckCircle2 className="mb-3 h-10 w-10 text-muted-foreground/40" />
@@ -224,7 +210,7 @@ export function FeaturesTab({
           </CardContent>
         </Card>
       ) : (
-        Object.entries(groupedByCategory).map(([category, items]) => {
+        groupedByCategory.map(({ category, items }) => {
           const isCollapsed = collapsedCategories[category] ?? false;
 
           return (
@@ -249,29 +235,19 @@ export function FeaturesTab({
               {!isCollapsed && (
                 <CardContent className="pt-0">
                   <div className="divide-y">
-                    {items.map((item) => {
-                      // Track if this value was modified vs. the server state
-                      const originalFeature = (plan.features || []).find(
-                        (f) => f.featureDefinitionId === item.definition.id
-                      );
-                      const isModified = originalFeature
-                        ? originalFeature.value !== item.value
-                        : true; // newly added = modified
-
-                      return (
-                        <FeatureRow
-                          key={item.definition.id}
-                          definition={item.definition}
-                          value={item.value}
-                          isModified={isModified}
-                          isNew={!originalFeature}
-                          onValueChange={(v) => setFeatureValue(item.definition.id, v)}
-                          onRemove={() => removeFeature(item.definition.id)}
-                          language={language}
-                          t={t}
-                        />
-                      );
-                    })}
+                    {items.map((item) => (
+                      <FeatureRow
+                        key={item.definition.id}
+                        definition={item.definition}
+                        value={item.value}
+                        isModified={item.isModified}
+                        isNew={item.isNew}
+                        onValueChange={(v) => setFeatureValue(item.definition.id, v)}
+                        onRemove={() => removeFeature(item.definition.id)}
+                        language={language}
+                        t={t}
+                      />
+                    ))}
                   </div>
                 </CardContent>
               )}

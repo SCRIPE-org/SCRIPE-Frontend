@@ -215,9 +215,11 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
       {/* ─────── TAB CONTENT ─────── */}
       {activeTab === "general" && <GeneralTab plan={plan} t={t} />}
       {activeTab === "features" && (
-        <FeaturesTab
+      <FeaturesTab
           plan={plan}
-          featureCatalog={vm.featureCatalog}
+          totalActiveFeatureCount={vm.featureCatalog.length}
+          groupedByCategory={vm.groupedByCategory}
+          availableGrouped={vm.availableGrouped}
           localFeatures={vm.localFeatures}
           setFeatureValue={vm.setFeatureValue}
           addFeature={vm.addFeature}

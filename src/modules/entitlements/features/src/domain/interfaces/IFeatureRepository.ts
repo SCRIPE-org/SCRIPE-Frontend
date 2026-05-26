@@ -4,7 +4,7 @@
  * Returns domain entities — never raw DTOs.
  * Implemented by FeatureRepository in the data layer.
  */
-import type { Feature } from "../entities/Feature";
+import type { Feature, FeatureModuleGroup } from "../entities/Feature";
 import type { TenantEffectiveFeature } from "../entities/TenantEffectiveFeature";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
@@ -18,4 +18,11 @@ export interface IFeatureRepository {
   delete(id: string): Promise<void>;
   getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeature[]>;
   getEffective(tenantId?: string): Promise<TenantEffectiveFeature[]>;
+  /**
+   * Get ALL active features grouped by Module → Category (backend-driven).
+   * Used by FeaturesTab and Features Catalog page.
+   * Zero client-side groupBy needed.
+   */
+  getGrouped(search?: string): Promise<FeatureModuleGroup[]>;
 }
+

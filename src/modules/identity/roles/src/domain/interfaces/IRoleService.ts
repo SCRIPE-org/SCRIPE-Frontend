@@ -13,7 +13,7 @@ import type {
   UpdateRoleJson,
   AssignPermissionsJson,
 } from "../types/RoleModelTypes";
-import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
+import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/permissions";
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
 export interface ServiceRoleListParams {
@@ -41,6 +41,7 @@ export interface IRoleService {
   getAll(params: ServiceRoleListParams): Promise<RoleListResult>;
   getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult>;
   getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]>;
+  getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroupJson[]>;
   getById(id: string): Promise<RoleModel>;
   create(json: CreateRoleJson): Promise<{ id: string }>;
   createForMyTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }>;
@@ -50,6 +51,16 @@ export interface IRoleService {
   removePermission(roleId: string, permissionId: string): Promise<void>;
   getRolePermissions(roleId: string): Promise<RoleJson["permissions"]>;
   getTenantPermissions(tenantId: string): Promise<PermissionModel[]>;
+  /** GET /Tenants/{id}/permissions/grouped — backend groups by Module → Category */
+  getTenantPermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]>;
+  /** GET /roles/my-tenant/available-permissions/grouped — grouped for current tenant role assignment */
+  getMyTenantAvailablePermissionsGrouped(
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]>;
+
   getAdminCount(roleId: string): Promise<number>;
   clone(
     id: string,

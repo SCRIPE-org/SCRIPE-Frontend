@@ -17,7 +17,7 @@ import type {
   UpdateTenantJson,
 } from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
-import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
+import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/permissions";
 import type {
   SubscriptionModel,
   PagedEditionResult,
@@ -104,11 +104,20 @@ export interface ITenantService {
    */
   getTenantPermissions(tenantId: string, search?: string): Promise<PermissionModel[]>;
   /**
+   * Get permissions available to a specific tenant, grouped by Module → Category.
+   * Backend-pre-grouped — no client-side reduce needed.
+   */
+  getTenantPermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]>;
+  /**
    * Update permissions for a tenant
    * @param tenantId - The tenant ID to update permissions for
    * @param permissionIds - Array of permission IDs to assign
    */
   updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void>;
+
   /**
    * Set the current tenant context for multi-tenant API calls.
    * @param tenantId - The tenant ID to set, or null to clear

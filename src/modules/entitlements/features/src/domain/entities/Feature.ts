@@ -71,3 +71,23 @@ export class Feature {
     return new Feature({ ...this.data, ...updates });
   }
 }
+
+/**
+ * Feature grouped by category within a module.
+ * Backend delivers this shape from GET /features/grouped.
+ */
+export interface FeatureCategoryGroup {
+  category: string;
+  features: Feature[];
+}
+
+/**
+ * Features grouped by Module → Category.
+ * Backend delivers this shape — zero client-side groupBy needed.
+ * Used by FeaturesTab (Edition Detail) and Features Catalog page.
+ */
+export interface FeatureModuleGroup {
+  module: string;
+  categories: FeatureCategoryGroup[];
+}
+

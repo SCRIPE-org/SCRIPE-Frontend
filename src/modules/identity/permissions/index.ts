@@ -10,7 +10,11 @@ export { usePermissionsViewModel } from "./src/presentation/viewmodels/usePermis
 
 // Entities
 export { Permission } from "./src/domain/entities/Permission";
-export type { PermissionProps, PermissionCategoryGroup } from "./src/domain/entities/Permission";
+export type {
+  PermissionProps,
+  PermissionCategoryGroup,
+  PermissionModuleGroup,
+} from "./src/domain/entities/Permission";
 export type {
   CreatePermissionRequest,
   UpdatePermissionRequest,
@@ -21,6 +25,13 @@ export type {
   IPermissionRepository,
   PermissionListParams,
 } from "./src/domain/interfaces/IPermissionRepository";
+
+// Mappers (for sibling sub-modules: roles, tenants)
+export { PermissionMapper } from "./src/data/mappers/PermissionMapper";
+
+// Data Models (for sibling sub-modules: roles, tenants service layer)
+export type { PermissionModuleGroupJson, PermissionJson } from "./src/data/models/PermissionModel";
+export { PermissionModel } from "./src/data/models/PermissionModel";
 
 // Services (for DI)
 export { PermissionService } from "./src/data/services/PermissionService";

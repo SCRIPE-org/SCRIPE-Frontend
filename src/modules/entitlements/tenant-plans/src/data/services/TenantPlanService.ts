@@ -82,6 +82,13 @@ export class TenantPlanService implements ITenantPlanService {
     );
   }
 
+  async getActiveGroupedFeatureDefinitions(): Promise<
+    import("../models/TenantPlanModels").TenantFeatureDefinitionCategoryGroupModel[]
+  > {
+    // GET /tenant-feature-definitions/active/grouped — backend already groups by category
+    return this.api.get(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.ACTIVE_GROUPED);
+  }
+
   async getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinitionModel> {
     return this.api.get<TenantFeatureDefinitionModel>(
       API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.BY_ID(id)

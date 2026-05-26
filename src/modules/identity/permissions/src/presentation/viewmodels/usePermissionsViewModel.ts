@@ -8,13 +8,13 @@
  */
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { systemContainer } from "@modules/identity/di";
 import { useDebounce } from "@core/hooks/use-validation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
-import type { Permission, PermissionCategoryGroup } from "../../domain/entities/Permission";
+import type { PermissionModuleGroup } from "../../domain/entities/Permission";
 import type {
   CreatePermissionRequest,
   UpdatePermissionRequest,
@@ -75,24 +75,18 @@ export function usePermissionsViewModel() {
   });
 
   // Group permissions by category
-  const groupedPermissions = useMemo((): PermissionCategoryGroup[] => {
-    if (!permissions) return [];
+  // ── CATALOG MODE GROUPED: backend-driven Module → Category → Permission[] ──
+  // ZERO client-side groupBy — backend sends the tree.
+  const groupedQuery = useQuery({
+    queryKey: ["permissions", "grouped", { search }],
+    queryFn: () => permissionRepository.getGrouped(search || undefined),
+    enabled: isSystemCatalogMode,
+  });
 
-    const groups = new Map<string, Permission[]>();
+  const groupedPermissions: PermissionModuleGroup[] = isSystemCatalogMode
+    ? (groupedQuery.data ?? [])
+    : []; // Tenant mode: flat list still used in the view
 
-    permissions.forEach((permission) => {
-      const cat = permission.category || "Uncategorized";
-      const existing = groups.get(cat) || [];
-      groups.set(cat, [...existing, permission]);
-    });
-
-    return Array.from(groups.entries())
-      .map(([category, perms]) => ({
-        category,
-        permissions: perms.sort((a, b) => a.displayOrder - b.displayOrder),
-      }))
-      .sort((a, b) => a.category.localeCompare(b.category));
-  }, [permissions]);
 
   // Create permission mutation
   const createMutation = useMutation({
@@ -172,6 +166,7 @@ export function usePermissionsViewModel() {
     categories: categories ?? [],
     totalCount: permissions?.length ?? 0,
     isSystemCatalogMode,
+    isGroupedLoading: isSystemCatalogMode && groupedQuery.isLoading,
 
     // Filter state (View binds to these, no useState in View)
     filter: {

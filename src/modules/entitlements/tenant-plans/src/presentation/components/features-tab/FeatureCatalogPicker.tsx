@@ -2,11 +2,12 @@
  * FeatureCatalogPicker — Dialog for adding features from the catalog to a plan.
  *
  * Shows unassigned features grouped by category with search filtering.
- * Uses a Dialog from @core/ui.
+ * Groups come pre-structured from the backend via the viewmodel — zero client-side groupBy.
+ * Only search filtering is done client-side (it's a UI filter, not a grouping operation).
  */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import {
@@ -17,10 +18,11 @@ import {
   DialogDescription,
 } from "@core/ui/dialog";
 import { Zap, Search, Plus } from "lucide-react";
-import type { TenantFeatureDefinition } from "../../../domain/entities/TenantPlan";
+import type { TenantFeatureDefinition, TenantFeatureDefinitionCategoryGroup } from "../../../domain/entities/TenantPlan";
 
 interface FeatureCatalogPickerProps {
-  availableFeatures: TenantFeatureDefinition[];
+  /** Backend-pre-grouped available (unassigned) active feature definitions */
+  availableGrouped: TenantFeatureDefinitionCategoryGroup[];
   onSelect: (feature: TenantFeatureDefinition) => void;
   onClose: () => void;
   t: (key: string) => string;
@@ -28,7 +30,7 @@ interface FeatureCatalogPickerProps {
 }
 
 export function FeatureCatalogPicker({
-  availableFeatures,
+  availableGrouped,
   onSelect,
   onClose,
   t,
@@ -36,28 +38,25 @@ export function FeatureCatalogPicker({
 }: FeatureCatalogPickerProps) {
   const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => {
-    if (!search.trim()) return availableFeatures;
-    const q = search.toLowerCase();
-    return availableFeatures.filter(
-      (f) =>
-        f.key.toLowerCase().includes(q) ||
-        f.displayNameEn.toLowerCase().includes(q) ||
-        f.displayNameAr.toLowerCase().includes(q) ||
-        (f.category ?? "").toLowerCase().includes(q)
-    );
-  }, [availableFeatures, search]);
+  // Client-side search filter only — group structure comes from the backend
+  const filteredGroups = search.trim()
+    ? availableGrouped
+        .map((group) => ({
+          ...group,
+          definitions: group.definitions.filter((f) => {
+            const q = search.toLowerCase();
+            return (
+              f.key.toLowerCase().includes(q) ||
+              f.displayNameEn.toLowerCase().includes(q) ||
+              f.displayNameAr.toLowerCase().includes(q) ||
+              f.category.toLowerCase().includes(q)
+            );
+          }),
+        }))
+        .filter((g) => g.definitions.length > 0)
+    : availableGrouped;
 
-  // Group by category
-  const grouped = useMemo(() => {
-    const groups: Record<string, TenantFeatureDefinition[]> = {};
-    for (const f of filtered) {
-      const cat = f.category || "General";
-      if (!groups[cat]) groups[cat] = [];
-      groups[cat].push(f);
-    }
-    return groups;
-  }, [filtered]);
+  const isEmpty = filteredGroups.length === 0;
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -86,20 +85,20 @@ export function FeatureCatalogPicker({
           />
         </div>
 
-        {/* ── Feature List ── */}
+        {/* ── Feature List (backend-grouped — no client-side groupBy) ── */}
         <div className="-mx-6 flex-1 overflow-y-auto px-6">
-          {Object.keys(grouped).length === 0 ? (
+          {isEmpty ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
               {t("common.noResults") || "No features found."}
             </div>
           ) : (
-            Object.entries(grouped).map(([category, features]) => (
+            filteredGroups.map(({ category, definitions }) => (
               <div key={category} className="mb-4">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {category}
                 </p>
                 <div className="space-y-1">
-                  {features.map((feature) => (
+                  {definitions.map((feature) => (
                     <button
                       key={feature.id}
                       onClick={() => onSelect(feature)}

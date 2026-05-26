@@ -21,8 +21,8 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
-import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import { PermissionMapper } from "@modules/identity/permissions";
 import { appLogger } from "@core/common/logger";
 import type {
   SubscriptionModel,
@@ -157,6 +157,11 @@ export class TenantRepository implements ITenantRepository {
 
   async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
     await this.service.updateTenantPermissions(tenantId, permissionIds);
+  }
+
+  async getTenantPermissionsGrouped(tenantId: string, search?: string): Promise<PermissionModuleGroup[]> {
+    const json = await this.service.getTenantPermissionsGrouped(tenantId, search);
+    return PermissionMapper.toEntityGrouped(json);
   }
 
   setTenantContext(tenantId: string | null): void {

@@ -9,6 +9,7 @@ export const ENTITLEMENTS_ENDPOINTS = {
       CREATE: `${V1}/features`,
       UPDATE: (id: string) => `${V1}/features/${id}`,
       DELETE: (id: string) => `${V1}/features/${id}`,
+      GROUPED: `${V1}/features/grouped`,
     },
     EDITIONS: {
       LIST: `${V1}/editions`,
@@ -134,6 +135,7 @@ export const ENTITLEMENTS_ENDPOINTS = {
     TENANT_FEATURE_DEFINITIONS: {
       LIST: `${V1}/tenant-feature-definitions`,
       ACTIVE: `${V1}/tenant-feature-definitions/active`,
+      ACTIVE_GROUPED: `${V1}/tenant-feature-definitions/active/grouped`,
       BY_ID: (id: string) => `${V1}/tenant-feature-definitions/${id}`,
       CREATE: `${V1}/tenant-feature-definitions`,
       UPDATE: (id: string) => `${V1}/tenant-feature-definitions/${id}`,

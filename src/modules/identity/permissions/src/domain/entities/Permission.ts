@@ -14,6 +14,7 @@ export interface PermissionProps {
   code: string;
   defaultScope: string;
   category: string;
+  module: string;
   displayOrder: number;
   descriptionEn?: string;
   descriptionAr?: string;
@@ -55,6 +56,10 @@ export class Permission {
 
   get category(): string {
     return this.props.category;
+  }
+
+  get module(): string {
+    return this.props.module ?? "";
   }
 
   get displayOrder(): number {
@@ -128,4 +133,15 @@ export class Permission {
 export interface PermissionCategoryGroup {
   category: string;
   permissions: Permission[];
+}
+
+/**
+ * Permission grouped by module → category.
+ * Backend delivers this shape from /permissions/grouped and
+ * /roles/myTenant/available-permissions/grouped.
+ * Zero client-side grouping logic needed.
+ */
+export interface PermissionModuleGroup {
+  module: string;
+  categories: PermissionCategoryGroup[];
 }

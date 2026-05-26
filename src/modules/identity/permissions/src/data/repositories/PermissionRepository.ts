@@ -16,6 +16,7 @@ import type {
   PermissionListParams,
 } from "../../domain/interfaces/IPermissionRepository";
 import { Permission } from "../../domain/entities/Permission";
+import type { PermissionModuleGroup } from "../../domain/entities/Permission";
 import type {
   CreatePermissionRequest,
   UpdatePermissionRequest,
@@ -48,6 +49,11 @@ export class PermissionRepository implements IPermissionRepository {
 
   async getCategories(): Promise<string[]> {
     return this.service.getCategories();
+  }
+
+  async getGrouped(search?: string): Promise<PermissionModuleGroup[]> {
+    const json = await this.service.getGrouped(search);
+    return PermissionMapper.toEntityGrouped(json);
   }
 
   async create(request: CreatePermissionRequest): Promise<string> {

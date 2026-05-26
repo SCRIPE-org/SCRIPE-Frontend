@@ -19,6 +19,7 @@ import type {
   TenantPlanListModel,
   TenantFeatureDefinitionModel,
   TenantFeatureDefinitionListModel,
+  TenantFeatureDefinitionCategoryGroupModel,
   TenantPlanPromotionModel,
   TenantPlanPromotionListModel,
 } from "../models/TenantPlanModels";
@@ -207,6 +208,19 @@ export class TenantPlanMapper {
       updatedAt: "updatedAt" in model ? model.updatedAt : undefined,
     };
     return new TenantFeatureDefinition(data);
+  }
+
+  /**
+   * Convert backend-grouped feature definitions to domain entities.
+   * Preserves the category structure — zero client-side groupBy needed.
+   */
+  static toFeatureDefinitionCategoryGroupList(
+    models: TenantFeatureDefinitionCategoryGroupModel[]
+  ): import("../../domain/entities/TenantPlan").TenantFeatureDefinitionCategoryGroup[] {
+    return models.map((group) => ({
+      category: group.category,
+      definitions: group.definitions.map((d) => TenantPlanMapper.toFeatureDefinitionEntity(d)),
+    }));
   }
 
   // ── Promotion Mappers ──

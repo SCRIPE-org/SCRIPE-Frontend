@@ -6,7 +6,7 @@
  */
 import type { IFeatureRepository } from "../../domain/interfaces/IFeatureRepository";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
-import type { Feature } from "../../domain/entities/Feature";
+import type { Feature, FeatureModuleGroup, FeatureCategoryGroup } from "../../domain/entities/Feature";
 import type { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
 import { FeatureMapper } from "../mappers/FeatureMapper";
 import type {
@@ -80,5 +80,20 @@ export class FeatureRepository implements IFeatureRepository {
     }
 
     return allItems;
+  }
+
+  /**
+   * Get ALL active features grouped by Module → Category.
+   * Backend does the grouping — zero client-side reduce/groupBy.
+   */
+  async getGrouped(search?: string): Promise<FeatureModuleGroup[]> {
+    const raw = await this.service.getGrouped(search);
+    return raw.map((mg) => ({
+      module: mg.module,
+      categories: mg.categories.map((cat) => ({
+        category: cat.category,
+        features: cat.features.map((f) => FeatureMapper.toEntity(f)),
+      })) as FeatureCategoryGroup[],
+    }));
   }
 }

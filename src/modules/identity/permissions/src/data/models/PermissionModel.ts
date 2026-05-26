@@ -24,6 +24,18 @@ export interface PermissionJson {
   displayOrder: number;
 }
 
+/** Backend response for a single category within a module group */
+export interface PermissionCategoryGroupJson {
+  category: string;
+  permissions: PermissionJson[];
+}
+
+/** Backend response for grouped permissions: Module → Category → Permissions */
+export interface PermissionModuleGroupJson {
+  module: string;
+  categories: PermissionCategoryGroupJson[];
+}
+
 export interface CreatePermissionJson {
   resource: string;
   action: string;

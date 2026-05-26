@@ -33,3 +33,16 @@ export interface TenantEffectiveFeatureModel {
   module?: string;
   hasOverride: boolean;
 }
+
+/** Backend response: features in a category within a module group */
+export interface FeatureCategoryGroupModel {
+  category: string;
+  features: FeatureModel[];
+}
+
+/** Backend response: GET /features/grouped — Module → Category → Feature[] */
+export interface FeatureModuleGroupModel {
+  module: string;
+  categories: FeatureCategoryGroupModel[];
+}
+

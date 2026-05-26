@@ -22,8 +22,8 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
-import { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
-import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
+import { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import { PermissionMapper } from "@modules/identity/permissions";
 
 export class RoleRepository implements IRoleRepository {
   constructor(private readonly service: IRoleService) {}
@@ -117,9 +117,23 @@ export class RoleRepository implements IRoleRepository {
     return PermissionMapper.toEntityList(models);
   }
 
+  async getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroup[]> {
+    const json = await this.service.getMyTenantAvailablePermissionsGrouped(search);
+    return PermissionMapper.toEntityGrouped(json);
+  }
+
   async getTenantAvailablePermissions(tenantId: string): Promise<Permission[]> {
     const models = await this.service.getTenantPermissions(tenantId);
     return PermissionMapper.toEntityList(models);
+  }
+
+  async getTenantAvailablePermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroup[]> {
+    // GET /Tenants/{id}/permissions/grouped — backend already groups by Module → Category
+    const json = await this.service.getTenantPermissionsGrouped(tenantId, search);
+    return PermissionMapper.toEntityGrouped(json);
   }
 
   async bulkDelete(ids: string[]): Promise<number> {

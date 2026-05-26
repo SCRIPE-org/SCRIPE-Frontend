@@ -4,7 +4,7 @@
  * Defines the contract for role data operations.
  */
 import type { Role } from "../entities/Role";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
 import type {
   CreateRoleRequest,
   UpdateRoleRequest,
@@ -92,10 +92,26 @@ export interface IRoleRepository {
   getMyTenantAvailablePermissions(category?: string): Promise<Permission[]>;
 
   /**
+   * Get available permissions grouped by Module → Category (backend-driven).
+   * Used by Role Detail page permission tree — zero client-side grouping.
+   */
+  getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroup[]>;
+
+  /**
    * Get available permissions for a specific tenant (for role permissions dialog)
    * Falls back to creation-permissions if tenant has no assigned permissions
    */
   getTenantAvailablePermissions(tenantId: string): Promise<Permission[]>;
+
+  /**
+   * Get available permissions for a specific tenant grouped by Module → Category.
+   * Backend-pre-grouped — no client-side reduce/useMemo needed.
+   * Used by RolePermissionsDialog (permission tree).
+   */
+  getTenantAvailablePermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroup[]>;
 
   /**
    * Get count of admins assigned to this role

@@ -39,6 +39,9 @@ export interface ITenantPlanService {
   ): Promise<PagedResult<TenantFeatureDefinitionListModel>>;
   getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinitionModel>;
   getActiveFeatureDefinitions(): Promise<TenantFeatureDefinitionListModel[]>;
+  /** GET /tenant-feature-definitions/active/grouped — backend groups by category. Zero client-side groupBy needed. */
+  getActiveGroupedFeatureDefinitions(): Promise<import("../../data/models/TenantPlanModels").TenantFeatureDefinitionCategoryGroupModel[]>;
+
   createFeatureDefinition(data: CreateFeatureDefinitionRequest): Promise<{ id: string }>;
   updateFeatureDefinition(id: string, data: UpdateFeatureDefinitionRequest): Promise<void>;
   deleteFeatureDefinition(id: string): Promise<void>;
