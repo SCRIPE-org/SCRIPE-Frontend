@@ -221,22 +221,18 @@ interface PermissionModulesTreeProps {
  * Renders the Module → Category → Permission tree.
  * Data comes 100% backend-grouped — zero client-side groupBy.
  *
- * Two-level accordion:
- *   Level 1 (outer): expandedModules — which module cards are open
- *   Level 2 (inner): expandedGroups[moduleKey] — which categories inside a module are open
+ * Module-level expand/collapse uses MANUAL toggle state (no outer Radix Accordion).
+ * Category-level expand/collapse uses an isolated Radix Accordion per module.
+ * This prevents nested Accordion interference that was causing all modules to
+ * expand/collapse together.
  */
 function PermissionModulesTree({ vm }: PermissionModulesTreeProps) {
   return (
-    <Accordion
-      type="multiple"
-      value={vm.expandedModules}
-      onValueChange={vm.setExpandedModules}
-      className="space-y-3"
-    >
+    <div className="space-y-3">
       {vm.groupedModules.map((moduleGroup) => (
         <PermissionModule key={moduleGroup.module} moduleGroup={moduleGroup} vm={vm} />
       ))}
-    </Accordion>
+    </div>
   );
 }
 
@@ -253,13 +249,16 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
   // ── Each module reads ONLY its own slice of the category expand-state map ──
   const moduleOpenKeys = vm.expandedGroups[moduleGroup.module] ?? [];
 
+  const isExpanded = vm.isModuleExpanded(moduleGroup.module);
+
   return (
-    <AccordionItem
-      value={moduleGroup.module}
-      className="overflow-hidden rounded-xl border bg-card shadow-sm"
-    >
-      {/* Module Header — this IS the accordion trigger (the collapse/expand for the whole module) */}
-      <AccordionTrigger className="flex items-center gap-3 border-b bg-muted/40 px-4 py-2.5 hover:bg-muted/60 hover:no-underline [&>svg]:text-muted-foreground">
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      {/* Module Header — manual toggle (no Radix AccordionTrigger) */}
+      <button
+        type="button"
+        className="flex w-full items-center gap-3 border-b bg-muted/40 px-4 py-2.5 text-left hover:bg-muted/60 transition-colors"
+        onClick={() => vm.toggleModule(moduleGroup.module)}
+      >
         <div
           className={cn(
             "flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-primary",
@@ -267,7 +266,7 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
             stats.someChecked && "bg-primary/50"
           )}
           onClick={(e) => {
-            e.stopPropagation(); // don't toggle the module accordion when clicking the checkbox
+            e.stopPropagation(); // don't toggle the module when clicking the checkbox
             vm.toggleGroup(allCodes);
           }}
         >
@@ -280,27 +279,36 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
           <span className={stats.count > 0 ? "font-medium text-primary" : ""}>{stats.count}</span>
           <span> / {stats.total}</span>
         </div>
-      </AccordionTrigger>
+        <ChevronRight
+          className={cn(
+            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+            isExpanded && "rotate-90"
+          )}
+        />
+      </button>
 
-      <AccordionContent className="pb-0">
-        {/* Categories — isolated accordion per module */}
-        <Accordion
-          type="multiple"
-          value={moduleOpenKeys}
-          onValueChange={(openKeys) => vm.setModuleExpanded(moduleGroup.module, openKeys)}
-          className="divide-y"
-        >
-          {moduleGroup.categories.map((catGroup) => (
-            <PermissionCategory
-              key={`${moduleGroup.module}-${catGroup.category}`}
-              moduleKey={moduleGroup.module}
-              catGroup={catGroup}
-              vm={vm}
-            />
-          ))}
-        </Accordion>
-      </AccordionContent>
-    </AccordionItem>
+      {/* Module Content — conditionally rendered based on manual toggle state */}
+      {isExpanded && (
+        <div>
+          {/* Categories — isolated Radix accordion per module */}
+          <Accordion
+            type="multiple"
+            value={moduleOpenKeys}
+            onValueChange={(openKeys) => vm.setModuleExpanded(moduleGroup.module, openKeys)}
+            className="divide-y"
+          >
+            {moduleGroup.categories.map((catGroup) => (
+              <PermissionCategory
+                key={`${moduleGroup.module}-${catGroup.category}`}
+                moduleKey={moduleGroup.module}
+                catGroup={catGroup}
+                vm={vm}
+              />
+            ))}
+          </Accordion>
+        </div>
+      )}
+    </div>
   );
 }
 

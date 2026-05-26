@@ -40,10 +40,10 @@ export interface UseRolePermissionsDialogResult {
   search: string;
   setSearch: (value: string) => void;
   assignments: Map<string, PermissionAssignmentJson>;
-  /** Which module cards are open (module-level collapse/expand). */
-  expandedModules: string[];
-  /** Update the list of open module cards. */
-  setExpandedModules: (moduleKeys: string[]) => void;
+  /** Check if a module card is expanded. */
+  isModuleExpanded: (moduleKey: string) => boolean;
+  /** Toggle a single module open/closed without affecting others. */
+  toggleModule: (moduleKey: string) => void;
   /** Per-module expanded category keys. Record<moduleKey, categoryKey[]>.
    *  Each module's inner accordion reads only its own slice. */
   expandedGroups: Record<string, string[]>;
@@ -91,7 +91,7 @@ export function useRolePermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
-  const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
   const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
@@ -105,7 +105,7 @@ export function useRolePermissionsDialog({
       // Dialog closed — clear all transient state so the next open is fresh
       setSearch("");
       setAssignments(new Map());
-      setExpandedModules([]);
+      setExpandedModules(new Set());
       setExpandedGroups({});
       setBulkScopeValue("");
       setInitializedRoleId(null);
@@ -117,7 +117,7 @@ export function useRolePermissionsDialog({
       // Role changed while dialog is open — reset so we re-initialize below
       setSearch("");
       setAssignments(new Map());
-      setExpandedModules([]);
+      setExpandedModules(new Set());
       setExpandedGroups({});
       setBulkScopeValue("");
       setInitializedRoleId(null);
@@ -213,7 +213,7 @@ export function useRolePermissionsDialog({
     });
 
     setAssignments(newAssignments);
-    setExpandedModules(Array.from(modulesWithSelection)); // auto-open modules that have selections
+    setExpandedModules(new Set(modulesWithSelection)); // auto-open modules that have selections
     setExpandedGroups(perModuleExpanded);
     setInitializedRoleId(role.id);
   }, [open, role?.id, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
@@ -305,9 +305,24 @@ export function useRolePermissionsDialog({
     setExpandedGroups((prev) => ({ ...prev, [moduleKey]: openKeys }));
   };
 
+  // ── Toggle a single module open/closed (manual — no Radix interference) ──
+  const toggleModule = (moduleKey: string) => {
+    setExpandedModules((prev) => {
+      const next = new Set(prev);
+      if (next.has(moduleKey)) {
+        next.delete(moduleKey);
+      } else {
+        next.add(moduleKey);
+      }
+      return next;
+    });
+  };
+
+  const isModuleExpanded = (moduleKey: string) => expandedModules.has(moduleKey);
+
   // Expand / Collapse ALL — controls both module-level AND category-level
   const expandAll = () => {
-    const allModuleKeys = tenantPermissionGroups.map((m) => m.module);
+    const allModuleKeys = new Set(tenantPermissionGroups.map((m) => m.module));
     const perModule: Record<string, string[]> = {};
     tenantPermissionGroups.forEach((m) => {
       perModule[m.module] = m.categories.map((c) => `${m.module}-${c.category}`);
@@ -317,7 +332,7 @@ export function useRolePermissionsDialog({
   };
 
   const collapseAll = () => {
-    setExpandedModules([]);
+    setExpandedModules(new Set());
     setExpandedGroups({});
   };
 
@@ -375,8 +390,8 @@ export function useRolePermissionsDialog({
     search,
     setSearch,
     assignments,
-    expandedModules,
-    setExpandedModules,
+    isModuleExpanded,
+    toggleModule,
     expandedGroups,
     setModuleExpanded,
 

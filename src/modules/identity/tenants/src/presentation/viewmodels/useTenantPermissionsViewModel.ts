@@ -34,10 +34,10 @@ export interface UseTenantPermissionsDialogResult {
   search: string;
   setSearch: (value: string) => void;
   selectedCodes: Set<string>;
-  /** Which module cards are open (module-level collapse/expand). */
-  expandedModules: string[];
-  /** Update the list of open module cards. */
-  setExpandedModules: (moduleKeys: string[]) => void;
+  /** Check if a module card is expanded. */
+  isModuleExpanded: (moduleKey: string) => boolean;
+  /** Toggle a single module open/closed without affecting others. */
+  toggleModule: (moduleKey: string) => void;
   /** Per-module expanded category keys. */
   expandedGroups: Record<string, string[]>;
   setModuleExpanded: (moduleKey: string, openKeys: string[]) => void;
@@ -81,7 +81,7 @@ export function useTenantPermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
-  const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
   const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
 
   // Track which tenant we have already initialized selections for
@@ -93,7 +93,7 @@ export function useTenantPermissionsDialog({
     if (!open) {
       setSearch("");
       setSelectedCodes(new Set());
-      setExpandedModules([]);
+      setExpandedModules(new Set());
       setExpandedGroups({});
       setInitializedTenantId(null);
     }
@@ -104,7 +104,7 @@ export function useTenantPermissionsDialog({
     if (open && tenantId) {
       setSearch("");
       setSelectedCodes(new Set());
-      setExpandedModules([]);
+      setExpandedModules(new Set());
       setExpandedGroups({});
       setInitializedTenantId(null);
     }
@@ -201,7 +201,7 @@ export function useTenantPermissionsDialog({
       perModuleExpanded[mod] = [...(perModuleExpanded[mod] ?? []), key];
       modulesWithSelection.add(mod);
     });
-    setExpandedModules(Array.from(modulesWithSelection));
+    setExpandedModules(new Set(modulesWithSelection));
     setExpandedGroups(perModuleExpanded);
     setInitializedTenantId(tenantId);
   }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant, initializedTenantId]);
@@ -252,9 +252,24 @@ export function useTenantPermissionsDialog({
     setExpandedGroups((prev) => ({ ...prev, [moduleKey]: openKeys }));
   };
 
+  // ── Toggle a single module open/closed (manual — no Radix interference) ──
+  const toggleModule = (moduleKey: string) => {
+    setExpandedModules((prev) => {
+      const next = new Set(prev);
+      if (next.has(moduleKey)) {
+        next.delete(moduleKey);
+      } else {
+        next.add(moduleKey);
+      }
+      return next;
+    });
+  };
+
+  const isModuleExpanded = (moduleKey: string) => expandedModules.has(moduleKey);
+
   // Expand / Collapse ALL — controls both module-level AND category-level
   const expandAll = () => {
-    const allModuleKeys = parentPermissionGroups.map((m) => m.module);
+    const allModuleKeys = new Set(parentPermissionGroups.map((m) => m.module));
     const perModule: Record<string, string[]> = {};
     parentPermissionGroups.forEach((m) => {
       perModule[m.module] = m.categories.map((c) => `${m.module}-${c.category}`);
@@ -264,7 +279,7 @@ export function useTenantPermissionsDialog({
   };
 
   const collapseAll = () => {
-    setExpandedModules([]);
+    setExpandedModules(new Set());
     setExpandedGroups({});
   };
 
@@ -308,8 +323,8 @@ export function useTenantPermissionsDialog({
     search,
     setSearch,
     selectedCodes,
-    expandedModules,
-    setExpandedModules,
+    isModuleExpanded,
+    toggleModule,
     expandedGroups,
     setModuleExpanded,
 
