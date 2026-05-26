@@ -88,7 +88,7 @@ export function PermissionTreeCard({
               const moduleKey = `module:${moduleGroup.module}`;
               // Key in expandedKeys = expanded; not present = collapsed (default: all modules open).
               // expandAll() populates all module:X and cat:X:Y keys. collapseAll() empties the Set.
-              const isModuleExpanded = expandedKeys.size === 0 ? true : expandedKeys.has(moduleKey);
+              const isModuleExpanded = expandedKeys.has(moduleKey);
               const totalInModule = moduleGroup.categories.reduce(
                 (sum, cat) => sum + cat.permissions.length,
                 0

@@ -10,7 +10,7 @@
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@core/common/logger";
@@ -95,6 +95,22 @@ export function useRoleDetailViewModel() {
     queryKey: ["myTenantAvailablePermissionsGrouped", searchQuery],
     queryFn: () => roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined),
   });
+
+  // ── Auto-expand all modules when data first loads ──
+  // This replaces the broken `expandedKeys.size === 0 ? true` fallback.
+  // When moduleGroups loads, populate expandedKeys with all module keys
+  // so every module starts expanded. Users can then collapse individually.
+  const hasInitializedExpand = useRef(false);
+  useEffect(() => {
+    if (moduleGroups.length > 0 && !hasInitializedExpand.current) {
+      hasInitializedExpand.current = true;
+      const keys = new Set<string>();
+      moduleGroups.forEach((mg) => {
+        keys.add(`module:${mg.module}`);
+      });
+      setExpandedKeys(keys);
+    }
+  }, [moduleGroups]);
 
   // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS ===
   const [prevRolePerms, setPrevRolePerms] = useState(rolePermissions);
