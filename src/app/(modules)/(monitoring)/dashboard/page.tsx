@@ -7,7 +7,7 @@ const DashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "System Dashboard | NEXORA",
+  title: "System Dashboard | SCRIPE",
   description: "System dashboard with KPIs, activity charts, and security monitoring",
 };
 

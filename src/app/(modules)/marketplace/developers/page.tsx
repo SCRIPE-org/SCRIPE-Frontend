@@ -7,7 +7,7 @@ const DevelopersView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Developers | Marketplace | NEXORA",
+  title: "Developers | Marketplace | SCRIPE",
   description: "Manage developer profiles and verify trusted publishers.",
 };
 

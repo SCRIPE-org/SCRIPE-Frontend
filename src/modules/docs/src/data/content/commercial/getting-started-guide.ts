@@ -96,11 +96,11 @@ const sections: DocSection[] = [
     type: "code",
     language: "bash",
     filename: "Create Your First Module",
-    code: `# 1. Use NEXORA CLI to scaffold
-nexora new-module --name "MyFirstModule"
+    code: `# 1. Use SCRIPE CLI to scaffold
+scripe new-module --name "MyFirstModule"
 
 # 2. Run both backend and frontend
-nexora dev
+scripe dev
 
 # 3. Navigate to http://localhost:3000/my-first-module
 # Your new module is ready with full CRUD!`,
@@ -117,22 +117,22 @@ nexora dev
     type: "code",
     language: "text",
     filename: "Repository Structure",
-    code: `NEXORA/
-├── NEXORA-Backend/          # .NET 10 backend
+    code: `SCRIPE/
+├── SCRIPE-Backend/          # .NET 10 backend
 │   ├── src/
 │   │   ├── Core/            # Domain + Application layers
 │   │   ├── Infrastructure/  # EF Core, external services
 │   │   └── Presentation/    # Controllers, middleware
 │   └── appsettings.json     # Configuration
 │
-├── NEXORA-Frontend/         # Next.js 16 frontend
+├── SCRIPE-Frontend/         # Next.js 16 frontend
 │   ├── src/
 │   │   ├── core/            # Shared UI, providers, stores
 │   │   ├── modules/         # Feature modules
 │   │   └── app/             # Next.js routing
 │   └── package.json
 │
-└── tools/nexora-cli/        # CLI scaffolding tool`,
+└── tools/scripe-cli/        # CLI scaffolding tool`,
   },
 
   // ─── Default Credentials ────────────────────────────────────

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 export const metadata: Metadata = {
-  title: "SSO Login | NEXORA",
+  title: "SSO Login | SCRIPE",
   description: "Processing SSO authentication",
 };
 

@@ -2,7 +2,7 @@
  * Marketplace Module DI Container
  *
  * Central dependency injection for all 6 Marketplace sub-modules.
- * Follows the NEXORA Architecture 3-layer pattern (H-02):
+ * Follows the SCRIPE Architecture 3-layer pattern (H-02):
  *
  *   ViewModel → Repository (domain interface) → Service → IApiService → HTTP
  *

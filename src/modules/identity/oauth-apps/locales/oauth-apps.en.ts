@@ -1,10 +1,10 @@
 export const en = {
   oauthApps: {
     samlSpCertificateHelp:
-      "The SP certificate is used to sign SAML requests to NEXORA. It is required for SAML authentication.",
+      "The SP certificate is used to sign SAML requests to SCRIPE. It is required for SAML authentication.",
     samlSpCertificate: "SP Certificate",
     title: "OAuth Applications",
-    description: "Manage third-party applications that authenticate via NEXORA (OIDC Server)",
+    description: "Manage third-party applications that authenticate via SCRIPE (OIDC Server)",
     // Detail page titles
     createTitle: "New OAuth Application",
     editTitle: "Edit Application",
@@ -107,7 +107,7 @@ export const en = {
   },
   oauth: {
     consentTitle: "Authorize App",
-    isRequestingAccess: "is requesting access to your NEXORA account.",
+    isRequestingAccess: "is requesting access to your SCRIPE account.",
     willBeAbleTo: "This application will be able to:",
     scopes: {
       openid: "Verify your identity",

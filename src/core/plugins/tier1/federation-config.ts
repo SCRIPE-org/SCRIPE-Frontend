@@ -2,7 +2,7 @@
  * Module Federation shared dependency manifest for Tier 1 plugins.
  *
  * Tier 1 plugins are trusted, in-process certified modules that use
- * Module Federation to share React, ReactDOM, and NEXORA's design system
+ * Module Federation to share React, ReactDOM, and SCRIPE's design system
  * from the host bundle. This avoids duplicate React instances.
  *
  * To wire a Tier 1 plugin's remote into the host:

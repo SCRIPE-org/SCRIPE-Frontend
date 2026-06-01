@@ -3,7 +3,7 @@ import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 import { PluginExecutionLogsView } from "@modules/plugins/installed/src/presentation/views/PluginExecutionLogsView";
 
 export const metadata: Metadata = {
-  title: "Execution Logs | Plugins | NEXORA",
+  title: "Execution Logs | Plugins | SCRIPE",
   description: "Browse execution logs across all installed plugins",
 };
 

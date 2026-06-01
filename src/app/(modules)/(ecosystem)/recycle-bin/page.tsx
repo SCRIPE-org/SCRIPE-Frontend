@@ -7,7 +7,7 @@ const RecycleBinView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Recycle Bin | NEXORA",
+  title: "Recycle Bin | SCRIPE",
   description: "View and restore recently soft-deleted items",
 };
 

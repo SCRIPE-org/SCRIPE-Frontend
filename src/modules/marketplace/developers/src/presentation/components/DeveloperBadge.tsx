@@ -12,7 +12,7 @@ import { CheckCircle2, ShieldCheck } from "lucide-react";
 interface DeveloperBadgeProps {
   /** Display name for the developer. */
   displayName: string;
-  /** Whether the developer account is verified by NEXORA marketplace admins. */
+  /** Whether the developer account is verified by SCRIPE marketplace admins. */
   isVerified: boolean;
   /** Number of published apps for this developer. */
   appCount?: number;

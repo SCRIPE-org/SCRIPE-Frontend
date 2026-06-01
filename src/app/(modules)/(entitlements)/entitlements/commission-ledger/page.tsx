@@ -9,7 +9,7 @@ const CommissionLedgerView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Commission Ledger | NEXORA",
+  title: "Commission Ledger | SCRIPE",
   description: "View platform-wide commissions and manage invoices",
 };
 

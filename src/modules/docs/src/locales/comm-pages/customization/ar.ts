@@ -9,7 +9,7 @@ export const ar = {
       description:
         "حوِّل تجربة تسجيل الدخول باستخدام استوديو بصري بدون كود — 22 تخطيطاً متميزاً، ومجموعة إتاحة WCAG AA، ومعاينة فورية، وسير عمل آمن على مستوى المؤسسات.",
       intro:
-        "الانطباعات الأولى تحدد الثقة. يُمكِّن استوديو مُخصِّص تسجيل الدخول من NEXORA مسؤولي المستأجرين من تصميم تجارب تسجيل دخول مذهلة ومتوافقة مع الهوية البصرية وقابلة للوصول بالكامل من خلال محرر بصري بديهي — لا حاجة لمطورين. مع 22 تخطيطاً جاهزاً للإنتاج، ومجموعة شاملة لإتاحة WCAG AA، ومعاينة فورية في بيئة معزولة، وسير عمل آمن للمسودة والنشر، يمكن لمؤسستك الحفاظ على اتساق مثالي للعلامة التجارية وتصميم شامل عبر كل مستأجر.",
+        "الانطباعات الأولى تحدد الثقة. يُمكِّن استوديو مُخصِّص تسجيل الدخول من SCRIPE مسؤولي المستأجرين من تصميم تجارب تسجيل دخول مذهلة ومتوافقة مع الهوية البصرية وقابلة للوصول بالكامل من خلال محرر بصري بديهي — لا حاجة لمطورين. مع 22 تخطيطاً جاهزاً للإنتاج، ومجموعة شاملة لإتاحة WCAG AA، ومعاينة فورية في بيئة معزولة، وسير عمل آمن للمسودة والنشر، يمكن لمؤسستك الحفاظ على اتساق مثالي للعلامة التجارية وتصميم شامل عبر كل مستأجر.",
       brandTitle: "تحكم كامل بهوية العلامة التجارية",
       brandContent:
         "تملَّك الهوية البصرية لصفحة تسجيل الدخول بالكامل. قم بتحميل شعارات الشركة، وتكوين أنظمة الألوان مع معاينة حية، واختيار من خطوط Google المتميزة، وتطبيق خلفيات متطورة تشمل التدرجات والصور المرفوعة وتأثيرات التراكب. كل تغيير ينعكس فوراً في المعاينة المعزولة — بدون أي مخاطر على صفحة الإنتاج.",
@@ -24,7 +24,7 @@ export const ar = {
         "قدِّم تجارب مثالية في جميع ظروف الإضاءة مع بنية سمات ذكية. كوِّن أنظمة ألوان مستقلة وخلفيات النماذج وألوان النصوص وتأثيرات التراكب لكل وضع. يُصدِر النظام مجموعات منفصلة من متغيرات CSS لضمان عدم المساومة البصرية في أي سمة. يستمتع المستخدمون بانتقالات سلسة تحترم تفضيلات نظامهم.",
       a11yTitle: "مجموعة إتاحة WCAG AA",
       a11yContent:
-        "الشمولية ليست اختيارية — إنها ميزة تنافسية. توفر مجموعة الإتاحة المدمجة في NEXORA أكثر من 32 إعداداً عبر 8 فئات (مؤشرات التركيز، التباين العالي، وضوح النص، الحركة والرسوم المتحركة، أهداف اللمس، الألوان والرؤية، قارئ الشاشة، مساعدة القراءة)، مما يضمن أن كل صفحة تسجيل دخول تلبي معايير WCAG AA من البداية. بدون أدوات خارجية، بدون تدقيقات إضافية، بدون تكلفة إضافية.",
+        "الشمولية ليست اختيارية — إنها ميزة تنافسية. توفر مجموعة الإتاحة المدمجة في SCRIPE أكثر من 32 إعداداً عبر 8 فئات (مؤشرات التركيز، التباين العالي، وضوح النص، الحركة والرسوم المتحركة، أهداف اللمس، الألوان والرؤية، قارئ الشاشة، مساعدة القراءة)، مما يضمن أن كل صفحة تسجيل دخول تلبي معايير WCAG AA من البداية. بدون أدوات خارجية، بدون تدقيقات إضافية، بدون تكلفة إضافية.",
       a11yProfilesTitle: "6 ملفات إتاحة بنقرة واحدة",
       a11yProfilesContent:
         "انشر تجارب تسجيل دخول شاملة في ثوانٍ. اختر من 6 ملفات مُعدَّة مسبقاً — خط أساس WCAG AA، ضعف البصر، الإعاقة الحركية، الإعاقة الإدراكية، مُحسَّن لقارئ الشاشة، وإعادة التعيين للافتراضي. كل ملف يُطبِّق إعدادات محسنة دفعةً واحدة تستهدف احتياجات مستخدمين محددة، ويمكن تخصيصه بشكل إضافي بعد التطبيق.",
@@ -36,7 +36,7 @@ export const ar = {
         "تلبية معايير الإتاحة لا تتعلق فقط بالامتثال — بل بتوسيع سوقك المستهدف بنسبة 15-20% وتقليل المخاطر القانونية. يتم حقن عناصر التحكم في الإتاحة عبر نفس أنبوب رموز CSS مثل العلامة التجارية، مما يضمن عدم وجود أي عبء على الأداء. جميع 23+ قاعدة CSS للإتاحة تتراكب بشكل صحيح فوق أنماط العلامة التجارية الأساسية، وتعمل عبر جميع التخطيطات الـ 22، وتُعاين في الوقت الفعلي.",
       safetyTitle: "سير عمل أمان على مستوى المؤسسات",
       safetyContent:
-        "تتطلب صفحات تسجيل الدخول المؤسسية موثوقية بلا توقف. ينفذ مُخصِّص NEXORA سير عمل مسودة ← معاينة ← نشر مدعوماً بالتحكم التفاؤلي في التزامن. كل إصدار منشور يُنشئ نسخة غير قابلة للتغيير للتراجع الفوري. يوفر الوضع الآمن بنقرة واحدة استعادة فورية للإعدادات الافتراضية. كل تغيير يُسجَّل في سجل التدقيق مع لقطات كاملة قبل/بعد.",
+        "تتطلب صفحات تسجيل الدخول المؤسسية موثوقية بلا توقف. ينفذ مُخصِّص SCRIPE سير عمل مسودة ← معاينة ← نشر مدعوماً بالتحكم التفاؤلي في التزامن. كل إصدار منشور يُنشئ نسخة غير قابلة للتغيير للتراجع الفوري. يوفر الوضع الآمن بنقرة واحدة استعادة فورية للإعدادات الافتراضية. كل تغيير يُسجَّل في سجل التدقيق مع لقطات كاملة قبل/بعد.",
       tenantTitle: "عزل العلامة التجارية متعدد المستأجرين",
       tenantContent:
         "يعمل كل مستأجر في نطاق علامة تجارية معزول تماماً. لا يمكن لتسجيل دخول المستأجر A رؤية تكوين المستأجر B. الإعدادات مرتبطة تشفيرياً بـ JWT الخاص بالمستأجر، مما يمنع أي تسريب للبيانات عبر المستأجرين. يمكن للمسؤولين الأعلى إدارة ومعاينة علامة أي مستأجر عبر قدرة 'دخول عالم المستأجر' بدون التأثير على الإنتاج.",
@@ -47,7 +47,7 @@ export const ar = {
         "قوة خارقة لـ SaaS B2B: يمكن لعملائك تخصيص صفحات تسجيل الدخول بالكامل وجعلها قابلة للوصول بأنفسهم. يمكن لمسؤول المستأجر الدخول إلى لوحة الإدارة وفتح الاستوديو وتطبيق ملف WCAG AA وتخصيص التصميم والنشر — كل ذلك في أقل من 10 دقائق. بدون أي تدخل هندسي.",
       relatedTitle: "Complete Customization Ecosystem",
       relatedIntro:
-        "The Login Customizer is just the beginning. NEXORA's customization platform includes a premium Theme Marketplace and a full No-Code Page Builder — expanding your branding capabilities far beyond what any competitor offers.",
+        "The Login Customizer is just the beginning. SCRIPE's customization platform includes a premium Theme Marketplace and a full No-Code Page Builder — expanding your branding capabilities far beyond what any competitor offers.",
       relatedMarketplace:
         "Theme Marketplace — 40 premium branding packages across 7 categories and 5 pricing tiers. Browse, preview, and deploy enterprise-grade visual identities in seconds.",
       relatedBuilder:
@@ -58,10 +58,10 @@ export const ar = {
       description:
         "تفضيلات مشرف متزامنة مع الخادم بمستوى مؤسسي مع 61 إعدادًا قابلاً للتخصيص، مزامنة عبر الأجهزة، محرك دمج رباعي الطبقات، وبوابة ميزات قائمة على الإصدارات.",
       intro:
-        "لوحة التحكم هي حيث تتحقق الإنتاجية. بينما يقدم المنافسون زر تبديل لـ 'الوضع الداكن' ويسمونه تخصيصًا، توفر NEXORA 61 إعدادًا قابلاً للتكوين بشكل فردي — من قوالب التخطيط وسمات الألوان إلى أنماط المكونات وتأثيرات التمرير — جميعها محفوظة على الخادم مع مزامنة عبر الأجهزة، وتطبيق العلامة التجارية على مستوى المستأجر، وتحقيق الدخل القائم على الإصدارات. يحول منشئ لوحة التحكم تخصيص مساحة عمل المشرف من ميزة ثانوية إلى ميزة تنافسية استراتيجية.",
+        "لوحة التحكم هي حيث تتحقق الإنتاجية. بينما يقدم المنافسون زر تبديل لـ 'الوضع الداكن' ويسمونه تخصيصًا، توفر SCRIPE 61 إعدادًا قابلاً للتكوين بشكل فردي — من قوالب التخطيط وسمات الألوان إلى أنماط المكونات وتأثيرات التمرير — جميعها محفوظة على الخادم مع مزامنة عبر الأجهزة، وتطبيق العلامة التجارية على مستوى المستأجر، وتحقيق الدخل القائم على الإصدارات. يحول منشئ لوحة التحكم تخصيص مساحة عمل المشرف من ميزة ثانوية إلى ميزة تنافسية استراتيجية.",
       valueTitle: "القيمة التجارية",
       valueIntro:
-        "تزيد مساحات العمل المخصصة من تفاعل المستخدمين بنسبة 40% وتقلل وقت إعداد المشرفين الجدد بنسبة 60%. يحول منشئ لوحة التحكم في NEXORA هذه الرؤية إلى إيرادات من خلال حجب ميزات التخصيص المتقدمة خلف مستويات الإصدارات، مما يخلق فرص ترقية طبيعية.",
+        "تزيد مساحات العمل المخصصة من تفاعل المستخدمين بنسبة 40% وتقلل وقت إعداد المشرفين الجدد بنسبة 60%. يحول منشئ لوحة التحكم في SCRIPE هذه الرؤية إلى إيرادات من خلال حجب ميزات التخصيص المتقدمة خلف مستويات الإصدارات، مما يخلق فرص ترقية طبيعية.",
       howItWorksTitle: "كيف يعمل",
       howItWorksIntro:
         "يستخدم منشئ لوحة التحكم محرك حل إعدادات رباعي الطبقات يدمج بذكاء الإعدادات الافتراضية للمنصة ومعايير العلامة التجارية للمستأجر وتفضيلات المشرف الفردية. يتم تخزين الإعدادات مؤقتًا محليًا للعرض الفوري ومزامنتها مع الخادم للاستمرارية عبر الأجهزة — كل ذلك بشفافية تامة بدون تدخل المستخدم.",
@@ -86,7 +86,7 @@ export const ar = {
         "ينفذ منشئ لوحة التحكم أمانًا دفاعيًا عميقًا في كل طبقة — من عزل تخزين المتصفح عند تسجيل الخروج إلى التحقق من الإعدادات من جانب الخادم وحل نزاعات التزامن.",
       integrationTitle: "تكامل سلس مع المنصة",
       integrationIntro:
-        "منشئ لوحة التحكم متكامل بعمق مع نظام التخصيص الحالي في NEXORA، مما يضاعف قيمة كل ميزة أخرى في المنصة.",
+        "منشئ لوحة التحكم متكامل بعمق مع نظام التخصيص الحالي في SCRIPE، مما يضاعف قيمة كل ميزة أخرى في المنصة.",
       integrationTip:
         "منشئ لوحة التحكم هو المكمل المثالي لمُخصص تسجيل الدخول — معًا، يوفران تحكمًا بصريًا شاملاً في تجربة المنصة بأكملها. يمكن أن تتضمن الحزمة الكاملة في سوق السمات كلاً من إعدادات العلامة التجارية لتسجيل الدخول ولوحة التحكم، مما يتيح نشر المنصة الكاملة بنقرة واحدة.",
     },
@@ -95,13 +95,13 @@ export const ar = {
       description:
         "40 meticulously designed branding packages across 7 categories, 5 edition-aligned pricing tiers, per-page branding for all auth flows, engagement analytics, and one-click tenant deployment — transforming your login experience into a competitive advantage.",
       intro:
-        "Your login page is the first impression of your enterprise platform. While competitors offer a handful of generic color themes, NEXORA ships with a curated marketplace of 40 premium branding packages — each a complete visual identity with 50+ design tokens spanning colors, typography, spacing, dark mode, overlays, and independent branding for Login, Forgot Password, and Reset Password pages. Each theme is crafted by professional designers to serve specific market segments: corporate boardrooms, creative agencies, luxury brands, tech startups, and more. The marketplace is integrated directly into the admin panel with rich browsing, real-time preview, and one-click deployment — enabling tenant administrators to transform their platform's identity in under 60 seconds.",
+        "Your login page is the first impression of your enterprise platform. While competitors offer a handful of generic color themes, SCRIPE ships with a curated marketplace of 40 premium branding packages — each a complete visual identity with 50+ design tokens spanning colors, typography, spacing, dark mode, overlays, and independent branding for Login, Forgot Password, and Reset Password pages. Each theme is crafted by professional designers to serve specific market segments: corporate boardrooms, creative agencies, luxury brands, tech startups, and more. The marketplace is integrated directly into the admin panel with rich browsing, real-time preview, and one-click deployment — enabling tenant administrators to transform their platform's identity in under 60 seconds.",
       valueTitle: "The Business Value of Curated Branding",
       valueContent:
-        "Brand-aligned login pages increase user trust by 40% and reduce support tickets by 25% (Forrester Research). NEXORA's Theme Marketplace eliminates the $15,000–50,000 cost of custom branding projects by providing production-ready visual identities that can be deployed without designers, developers, or agencies. For SaaS operators, the 5-tier pricing model creates a natural upsell path — tenants on free plans see premium themes they can access by upgrading their subscription.",
+        "Brand-aligned login pages increase user trust by 40% and reduce support tickets by 25% (Forrester Research). SCRIPE's Theme Marketplace eliminates the $15,000–50,000 cost of custom branding projects by providing production-ready visual identities that can be deployed without designers, developers, or agencies. For SaaS operators, the 5-tier pricing model creates a natural upsell path — tenants on free plans see premium themes they can access by upgrading their subscription.",
       tblValH1: "Challenge",
       tblValH2: "Traditional Approach",
-      tblValH3: "With NEXORA Theme Marketplace",
+      tblValH3: "With SCRIPE Theme Marketplace",
       tblValR1C1: "Enterprise branding project",
       tblValR1C2: "3-6 months with design agency ($15K–$50K)",
       tblValR1C3: "60 seconds — browse, preview, apply. Zero cost on Pro+ plans.",
@@ -191,7 +191,7 @@ export const ar = {
         "Every theme tracks LikesCount and AppliedCount — revealing which designs resonate most with your tenant base. Use these metrics to inform new theme development and edition/tier placement decisions.",
       perPageTitle: "Per-Page Branding — Complete Auth Experience",
       perPageContent:
-        "Unlike basic theme systems that apply one look across all pages, every NEXORA theme can define independent visual treatments for Login, Forgot Password, and Reset Password. This lets tenants present context-appropriate messaging: a strong brand statement on login, a reassuring message on forgot-password, and a clear action prompt on reset-password — all within a cohesive visual identity.",
+        "Unlike basic theme systems that apply one look across all pages, every SCRIPE theme can define independent visual treatments for Login, Forgot Password, and Reset Password. This lets tenants present context-appropriate messaging: a strong brand statement on login, a reassuring message on forgot-password, and a clear action prompt on reset-password — all within a cohesive visual identity.",
       safetyTitle: "Copy-on-Apply — Enterprise-Grade Safety",
       safetyContent:
         "When a theme is applied, it's COPIED — not linked. Your tenant's branding is permanently isolated from future marketplace updates. If the marketplace theme is updated to v2.0, tenants who applied v1.0 retain their exact snapshot. This architectural decision trades storage efficiency for deployment safety — a critical requirement for enterprises whose branding is contractually defined.",
@@ -221,7 +221,7 @@ export const ar = {
       tblCompH1: "Capability",
       tblCompH2: "Auth0 / Okta",
       tblCompH3: "Keycloak",
-      tblCompH4: "NEXORA",
+      tblCompH4: "SCRIPE",
       tblCompR1C1: "Theme count",
       tblCompR1C2: "1 (custom only)",
       tblCompR1C3: "0 (manual styling)",
@@ -253,7 +253,7 @@ export const ar = {
       description:
         "A comprehensive visual design platform — drag-and-drop login page builder with 14 component types, 3 canvas modes, multi-page branding, dashboard theming, bundle marketplace, and enterprise safety workflows — enabling complete tenant-level platform customization without writing a single line of code.",
       intro:
-        "NEXORA doesn't just let you pick colors — it gives your tenants a complete visual design platform. The No-Code Page Builder combines a drag-and-drop login page builder, multi-page branding for all authentication flows, dashboard theming with 8 layouts and 12 color schemes, and a bundle marketplace for saving and sharing complete configurations. Tenant administrators gain the power of a professional design team through an intuitive visual interface, while your engineering team focuses on delivering business value instead of implementing custom branding requests.",
+        "SCRIPE doesn't just let you pick colors — it gives your tenants a complete visual design platform. The No-Code Page Builder combines a drag-and-drop login page builder, multi-page branding for all authentication flows, dashboard theming with 8 layouts and 12 color schemes, and a bundle marketplace for saving and sharing complete configurations. Tenant administrators gain the power of a professional design team through an intuitive visual interface, while your engineering team focuses on delivering business value instead of implementing custom branding requests.",
       builderValueTitle: "The Login Page Builder",
       builderValueContent:
         "The Login Page Builder is a fully visual drag-and-drop canvas — like Figma or Wix, but purpose-built for enterprise login pages. Tenant administrators place pre-built components (logos, headings, forms, social login buttons, images) onto a responsive canvas, configure properties through a visual panel, and preview results in real-time. Three design modes (Freeform, Grid, Builder) accommodate every skill level — from pixel-perfect creative control to structured one-click assembly.",
@@ -313,7 +313,7 @@ export const ar = {
         "The action-oriented page. Clear, focused messaging ('Create your new password') with minimal distractions. Independent layout for optimal form visibility.",
       multiPageAdvantage: "Competitive Advantage",
       multiPageAdvantageDesc:
-        "No competitor (Auth0, Okta, Keycloak) offers per-page branding for authentication flows. Most connect all auth pages to a single theme with no page-level customization. NEXORA's multi-page branding enables context-appropriate user experiences across the entire authentication journey.",
+        "No competitor (Auth0, Okta, Keycloak) offers per-page branding for authentication flows. Most connect all auth pages to a single theme with no page-level customization. SCRIPE's multi-page branding enables context-appropriate user experiences across the entire authentication journey.",
       dashboardTitle: "Dashboard Theming — Platform-Wide Visual Control",
       dashboardContent:
         "Branding doesn't stop at the login page. The Dashboard Theming panel extends visual customization to the admin dashboard itself. Tenants configure layout templates, color themes, theme modes, and sidebar preferences — all through the same zero-code studio interface with the same draft/publish safety workflow.",
@@ -343,7 +343,7 @@ export const ar = {
         "The ultimate time-saver. A single Complete bundle sets up everything: login page branding, builder layout, per-page overrides for forgot/reset pages, dashboard theme, color scheme, and WCAG AA accessibility settings. From blank canvas to fully branded platform in one click.",
       safetyTitle: "Enterprise-Grade Safety & Governance",
       safetyContent:
-        "Every customization operation is protected by NEXORA's enterprise safety framework. Draft/Publish separation ensures production is never affected until explicit deployment. Optimistic concurrency prevents concurrent edit conflicts. Safe Mode provides emergency bypass for corrupted configurations. Full audit trails track who changed what, when, with before/after snapshots. Permission-based access control ensures only authorized administrators can modify branding.",
+        "Every customization operation is protected by SCRIPE's enterprise safety framework. Draft/Publish separation ensures production is never affected until explicit deployment. Optimistic concurrency prevents concurrent edit conflicts. Safe Mode provides emergency bypass for corrupted configurations. Full audit trails track who changed what, when, with before/after snapshots. Permission-based access control ensures only authorized administrators can modify branding.",
       fgDraft: "Draft → Preview → Publish",
       fgDraftDesc:
         "All changes operate in draft mode until explicitly published. Preview in a sandboxed iframe. Publish with one click. Rollback instantly if needed.",
@@ -358,8 +358,8 @@ export const ar = {
         "Every change is recorded: who, what, when, before/after. Supports compliance requirements (SOX, HIPAA, ISO 27001) for branding governance.",
       roiTitle: "Platform Customization ROI",
       tblRoiH1: "Scenario",
-      tblRoiH2: "Without NEXORA",
-      tblRoiH3: "With NEXORA Page Builder",
+      tblRoiH2: "Without SCRIPE",
+      tblRoiH3: "With SCRIPE Page Builder",
       tblRoiR1C1: "Custom login page per tenant",
       tblRoiR1C2: "1-2 weeks developer time ($5K–$10K)",
       tblRoiR1C3: "15 minutes — tenant admin self-service",
@@ -382,7 +382,7 @@ export const ar = {
       tblCompH1: "Feature",
       tblCompH2: "Auth0",
       tblCompH3: "Keycloak",
-      tblCompH4: "NEXORA",
+      tblCompH4: "SCRIPE",
       tblCompR1C1: "Visual page builder",
       tblCompR1C2: "No (code required)",
       tblCompR1C3: "No (FreeMarker templates)",
@@ -415,7 +415,7 @@ export const ar = {
       tblCompR8C2: "No (live-edit)",
       tblCompR8C3: "No (direct deploy)",
       tblCompR8C4: "Yes (with concurrency + rollback + safe mode)",
-      tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions NEXORA as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform.",
+      tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions SCRIPE as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform.",
     },
   },
 };

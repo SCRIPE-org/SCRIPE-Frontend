@@ -59,7 +59,7 @@ export const en = {
     security: "Security",
     apiReference: "API Reference",
     infrastructure: "Infrastructure",
-    commercialWhyNexora: "Why NEXORA",
+    commercialWhyScripe: "Why SCRIPE",
     commercialPlatform: "Platform Overview",
     commercialEnterprise: "Enterprise Features",
     commercialSecurity: "Security & Compliance",

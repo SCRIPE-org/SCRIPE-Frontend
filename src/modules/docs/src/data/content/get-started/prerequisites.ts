@@ -69,7 +69,7 @@ const sections: DocSection[] = [
       {
         titleKey: "getStarted.prerequisites.step2Title",
         contentKey: "getStarted.prerequisites.step2Content",
-        code: "git clone https://github.com/seifmoustafa/NEXORA.git\ncd NEXORA\ngit submodule update --init --recursive",
+        code: "git clone https://github.com/seifmoustafa/SCRIPE.git\ncd SCRIPE\ngit submodule update --init --recursive",
         codeLanguage: "bash",
         codeFilename: "Clone with submodules",
       },
@@ -79,7 +79,7 @@ const sections: DocSection[] = [
         code: `// appsettings.Development.json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=NEXORA;Trusted_Connection=true;TrustServerCertificate=true;"
+    "DefaultConnection": "Server=localhost;Database=SCRIPE;Trusted_Connection=true;TrustServerCertificate=true;"
   },
   "DatabaseProvider": "SqlServer"
 }`,
@@ -89,14 +89,14 @@ const sections: DocSection[] = [
       {
         titleKey: "getStarted.prerequisites.step4Title",
         contentKey: "getStarted.prerequisites.step4Content",
-        code: "cd NEXORA-Backend\ndotnet restore\ndotnet ef database update -p src/Modules/Identity/Identity.Infrastructure -s src/Host/API",
+        code: "cd SCRIPE-Backend\ndotnet restore\ndotnet ef database update -p src/Modules/Identity/Identity.Infrastructure -s src/Host/API",
         codeLanguage: "bash",
         codeFilename: "Backend setup",
       },
       {
         titleKey: "getStarted.prerequisites.step5Title",
         contentKey: "getStarted.prerequisites.step5Content",
-        code: "cd NEXORA-Frontend\npnpm install\ncp .env.example .env.local",
+        code: "cd SCRIPE-Frontend\npnpm install\ncp .env.example .env.local",
         codeLanguage: "bash",
         codeFilename: "Frontend setup",
       },
@@ -114,7 +114,7 @@ const sections: DocSection[] = [
     filename: "docker-compose.yml (development)",
     code: `version: '3.8'
 services:
-  nexora-db:
+  scripe-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "Y"
@@ -122,28 +122,28 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - nexora-data:/var/opt/mssql
+      - scripe-data:/var/opt/mssql
 
-  nexora-redis:
+  scripe-redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
 
-  nexora-api:
+  scripe-api:
     build:
-      context: ./NEXORA-Backend
+      context: ./SCRIPE-Backend
       dockerfile: Dockerfile
     environment:
-      ConnectionStrings__DefaultConnection: "Server=nexora-db;Database=NEXORA;User=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true"
+      ConnectionStrings__DefaultConnection: "Server=scripe-db;Database=SCRIPE;User=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true"
       DatabaseProvider: "SqlServer"
     ports:
       - "5000:5000"
     depends_on:
-      - nexora-db
-      - nexora-redis
+      - scripe-db
+      - scripe-redis
 
 volumes:
-  nexora-data:`,
+  scripe-data:`,
   },
   {
     type: "info",

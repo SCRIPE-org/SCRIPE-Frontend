@@ -7,7 +7,7 @@ const AccountingDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Accounting | NEXORA",
+  title: "Accounting | SCRIPE",
   description: "Financial Accounting Module",
 };
 

@@ -9,8 +9,8 @@ const CreateTenantView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Tenant | NEXORA",
-  description: "Provision a new tenant organization on the NEXORA platform",
+  title: "Create Tenant | SCRIPE",
+  description: "Provision a new tenant organization on the SCRIPE platform",
 };
 
 export default function CreateTenantPage() {

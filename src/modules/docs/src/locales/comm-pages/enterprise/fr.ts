@@ -8,7 +8,7 @@ export const fr = {
       contactNote:
         "Vous avez besoin d'un module complémentaire qui ne figure pas ici ? Notre équipe de solutions d'entreprise est disponible pour prototyper rapidement des intégrations spécialisées.",
       customContent:
-        "Avez-vous des exigences réglementaires très spécifiques ? L'équipe d'ingénierie de NEXORA peut agir comme une extension de la vôtre, fournissant rapidement des modules sur mesure intégrés directement dans la hiérarchie de votre locataire.",
+        "Avez-vous des exigences réglementaires très spécifiques ? L'équipe d'ingénierie de SCRIPE peut agir comme une extension de la vôtre, fournissant rapidement des modules sur mesure intégrés directement dans la hiérarchie de votre locataire.",
       customDev: "Ingénierie de Modules Sur Mesure",
       customDevDesc:
         "Nous concevons, documentons et testons des contextes délimités (Bounded Contexts) hautement spécifiques adaptés exactement à vos flux de travail uniques.",
@@ -19,7 +19,7 @@ export const fr = {
         "Besoin de synchroniser des données avec Salesforce, SAP ou un ancien mainframe AS400 ? Nous fournissons des adaptateurs d'intégration prêts à l'emploi et très résilients utilisant Apache Kafka ou Azure Service Bus pour combler le fossé de manière transparente.",
       integrationTitle: "Intégrations de Systèmes Existants (Legacy)",
       intro:
-        "Bien que NEXORA soit extraordinairement puissant dès sa sortie de boîte, les grandes organisations ont souvent besoin de services de pointe. Notre niveau Entreprise offre des heures d'ingénierie dédiées, une prise en charge de bases de données exotiques et des modules métiers spécialisés.",
+        "Bien que SCRIPE soit extraordinairement puissant dès sa sortie de boîte, les grandes organisations ont souvent besoin de services de pointe. Notre niveau Entreprise offre des heures d'ingénierie dédiées, une prise en charge de bases de données exotiques et des modules métiers spécialisés.",
       migrationIntro:
         "La transition d'un système monolithique existant est la phase la plus risquée de la modernisation. Notre équipe fournit des scripts ETLA (Extraction, Transformation, Chargement, Audit) éprouvés sur le terrain et une assistance de mappage manuel.",
       migrationTitle: "Services de Migration Haut de Gamme",
@@ -56,7 +56,7 @@ export const fr = {
       tblMigHeader2: "Description",
       tblMigHeader3: "Livrable",
       tblMigR1C1: "Migration Legacy",
-      tblMigR1C2: "Migrer du système existant vers NEXORA",
+      tblMigR1C2: "Migrer du système existant vers SCRIPE",
       tblMigR1C3: "Scripts de migration de données, plan de double run",
       tblMigR2C1: "Revue d'architecture",
       tblMigR2C2: "Évaluer le système actuel, concevoir la migration",
@@ -114,7 +114,7 @@ export const fr = {
       tblPriceR5C3: "Annuel ou ponctuel",
       entitlementsTitle: "Droits et Gestion des Plans",
       entitlementsIntro:
-        "Transformez votre plateforme en un véritable moteur SaaS avec le module de Droits intégré de NEXORA. Définissez des éditions (plans), gérez les cycles de vie des abonnements et personnalisez l'accès aux fonctionnalités par locataire — le tout appliqué automatiquement au niveau du pipeline CQRS.",
+        "Transformez votre plateforme en un véritable moteur SaaS avec le module de Droits intégré de SCRIPE. Définissez des éditions (plans), gérez les cycles de vie des abonnements et personnalisez l'accès aux fonctionnalités par locataire — le tout appliqué automatiquement au niveau du pipeline CQRS.",
       entReseller: "Portée des Éditions Revendeur",
       entResellerDesc:
         "Les locataires revendeurs peuvent créer leurs propres éditions de détail pour leurs sous-locataires, permettant une gestion des plans en marque blanche avec une isolation complète des autres revendeurs.",
@@ -154,12 +154,12 @@ export const fr = {
       settEntitlementsDesc:
         "Attribuez des locataires à des éditions (plans) via le module des Droits, avec des surcharges de fonctionnalités par locataire, une gestion du cycle de vie des abonnements et une application automatique des quotas.",
       architectureContent:
-        "Nous avons abandonné l'approche risquée 'base de données partagée, soft-delete'. NEXORA implémente une multi-location (multi-tenancy) stricte basée sur un discriminateur au niveau des lignes, imposée physiquement par les filtres de requêtes globaux d'Entity Framework. Les développeurs ne peuvent littéralement pas interroger les données d'un autre locataire, éliminant ainsi la classe la plus dévastatrice de vulnérabilités SaaS.",
+        "Nous avons abandonné l'approche risquée 'base de données partagée, soft-delete'. SCRIPE implémente une multi-location (multi-tenancy) stricte basée sur un discriminateur au niveau des lignes, imposée physiquement par les filtres de requêtes globaux d'Entity Framework. Les développeurs ne peuvent littéralement pas interroger les données d'un autre locataire, éliminant ainsi la classe la plus dévastatrice de vulnérabilités SaaS.",
       architectureTitle: "Isolation Mathématiquement Prouvable",
       description:
         "Architecture multi-tenant d'entreprise de niveau militaire offrant une isolation stricte des lignes, un héritage hiérarchique infini et des surcharges de configuration massives par locataire.",
       intro:
-        "NEXORA a été conçu pour l'échelle B2B. Il fournit une véritable architecture multi-tenant hiérarchique qui vous permet d'héberger en toute confiance des clients du Fortune 500 au sein du même déploiement mondial tout en garantissant une isolation cryptographique absolue.",
+        "SCRIPE a été conçu pour l'échelle B2B. Il fournit une véritable architecture multi-tenant hiérarchique qui vous permet d'héberger en toute confiance des clients du Fortune 500 au sein du même déploiement mondial tout en garantissant une isolation cryptographique absolue.",
       isolationTitle: "La Garantie d'Isolation",
       managementTitle: "Plan de Contrôle Hiérarchique",
       settBranding: "Marque Blanche (White-Label) Profonde",
@@ -218,9 +218,9 @@ export const fr = {
         "Les rôles système standard (par exemple, 'Tenant_Admin') sont physiquement verrouillés et ne peuvent pas être supprimés ou mal configurés de façon désastreuse par les utilisateurs finaux, garantissant ainsi la stabilité de la plateforme principale.",
       fieldTitle: "Rôles Système Immuables",
       intro:
-        "Dans un environnement B2B SaaS, les notions d''Admin' et d''Utilisateur' sont totalement insuffisantes. NEXORA fournit un moteur de rôles et d'autorisations profondément granulaire et intrinsèquement multi-tenant qui permet à vos clients d'entreprise de mapper explicitement l'accès au système sur leurs hiérarchies d'entreprise complexes.",
+        "Dans un environnement B2B SaaS, les notions d''Admin' et d''Utilisateur' sont totalement insuffisantes. SCRIPE fournit un moteur de rôles et d'autorisations profondément granulaire et intrinsèquement multi-tenant qui permet à vos clients d'entreprise de mapper explicitement l'accès au système sur leurs hiérarchies d'entreprise complexes.",
       rbacContent:
-        "Au lieu de coder en dur les vérifications de rôle (`if (user.Role == 'Admin')`), NEXORA vérifie les capacités granulaires (`[HasPermission(Permissions.Invoices.Delete)]`). Cela découple fondamentalement votre logique d'autorisation métier de la nature en constante évolution des intitulés de poste.",
+        "Au lieu de coder en dur les vérifications de rôle (`if (user.Role == 'Admin')`), SCRIPE vérifie les capacités granulaires (`[HasPermission(Permissions.Invoices.Delete)]`). Cela découple fondamentalement votre logique d'autorisation métier de la nature en constante évolution des intitulés de poste.",
       rbacTitle: "Autorisation Basée sur les Capacités",
       roleCloning: "Clonage de Rôles Sans Friction",
       roleCloningDesc:
@@ -233,7 +233,7 @@ export const fr = {
         "Les configurations de rôles appartiennent exclusivement au Locataire (Tenant). Un 'Manager' chez le Locataire A a des limites complètement différentes d'un 'Manager' chez le Locataire B.",
       userGroupsTitle: "Attribution par Lots Basée sur les Groupes",
       userGroupsContent:
-        "Arrêtez d'attribuer des rôles à un administrateur à la fois. La fonctionnalité de Groupes d'Utilisateurs de NEXORA vous permet de créer des groupes nommés, d'assigner des rôles et des restrictions au niveau des champs au groupe, puis d'ajouter des administrateurs comme membres. Tous les membres héritent instantanément des autorisations du groupe lors de leur prochaine connexion — avec toute la puissance de la fusion additive et de la propagation des restrictions au niveau des champs.",
+        "Arrêtez d'attribuer des rôles à un administrateur à la fois. La fonctionnalité de Groupes d'Utilisateurs de SCRIPE vous permet de créer des groupes nommés, d'assigner des rôles et des restrictions au niveau des champs au groupe, puis d'ajouter des administrateurs comme membres. Tous les membres héritent instantanément des autorisations du groupe lors de leur prochaine connexion — avec toute la puissance de la fusion additive et de la propagation des restrictions au niveau des champs.",
       groupBatchAssign: "Attribution par Lots Instantanée",
       groupBatchAssignDesc:
         "Attribuez simultanément des rôles complexes et des matrices de restrictions à des centaines d'administrateurs via l'appartenance à un groupe nommé.",
@@ -253,7 +253,7 @@ export const fr = {
       description:
         "Gérez sans effort des milliers d'administrateurs avec des groupes d'utilisateurs hiérarchiques, une fusion de sécurité additive et des opérations massives en cascade.",
       intro:
-        "L'attribution d'autorisations individuelles à une flotte de 5 000 utilisateurs professionnels est un cauchemar opérationnel. NEXORA résout ce problème avec les Groupes d'Utilisateurs d'Entreprise. Définissez un groupe organisationnel une fois — attribuez ses rôles actifs, verrouillez ses restrictions de champs spécifiques et ajoutez-y des utilisateurs. Ils hériteront instantanément d'une matrice de sécurité mathématiquement compilée et incassable lors de leur prochaine connexion.",
+        "L'attribution d'autorisations individuelles à une flotte de 5 000 utilisateurs professionnels est un cauchemar opérationnel. SCRIPE résout ce problème avec les Groupes d'Utilisateurs d'Entreprise. Définissez un groupe organisationnel une fois — attribuez ses rôles actifs, verrouillez ses restrictions de champs spécifiques et ajoutez-y des utilisateurs. Ils hériteront instantanément d'une matrice de sécurité mathématiquement compilée et incassable lors de leur prochaine connexion.",
       batchAssignTitle: "Provisionnement Instantané de Flotte",
       batchAssignContent:
         "Développez vos effectifs sans augmenter vos frais généraux informatiques. Créez un groupe 'Responsables Financiers' avec un accès en lecture/écriture aux registres, attachez 50 nouvelles recrues en une seule opération de masse, et garantissez complètement leurs postures de sécurité identiques.",
@@ -262,7 +262,7 @@ export const fr = {
         "La sécurité est strictement additive et le 'Refus' gagne toujours. Si un cadre a un accès direct pour voir les profils des employés, mais est temporairement placé dans le groupe 'Auditeurs Externes' qui restreint la visualisation des numéros de sécurité sociale, la charge utile (payload) de l'API résultante annulera (null) de manière transparente les champs SSN. Le frontend s'affichera parfaitement sans planter, et les données ne quitteront jamais le serveur.",
       cascadeTitle: "Opérations Massives en Cascade",
       cascadeContent:
-        "Lorsqu'un service entier est fermé ou compromis, les administrateurs n'ont pas le temps de désactiver minutieusement les utilisateurs un par un. Les groupes d'utilisateurs NEXORA prennent en charge des opérations de masse en cascade et instantanées qui propagent agressivement les changements d'état aux administrateurs associés.",
+        "Lorsqu'un service entier est fermé ou compromis, les administrateurs n'ont pas le temps de désactiver minutieusement les utilisateurs un par un. Les groupes d'utilisateurs SCRIPE prennent en charge des opérations de masse en cascade et instantanées qui propagent agressivement les changements d'état aux administrateurs associés.",
       cascadeDelete: "Suppressions Douces en Cascade",
       cascadeDeleteDesc:
         "Éliminez un groupe d'utilisateurs et, en option, effectuez instantanément une suppression douce (soft-delete) de chaque administrateur dépendant exclusivement de ce groupe.",
@@ -274,10 +274,10 @@ export const fr = {
         "Les opérations de masse sont dangereuses. Notre architecture immunise nativement les administrateurs racines 'Protégés'. Même si une suppression en cascade frappe l'ensemble du locataire, le propriétaire du système d'origine reste totalement épargné.",
       fallbackSafety: "Filets de Sécurité Architecturaux",
       fallbackSafetyDesc:
-        "NEXORA vous empêche de laisser des administrateurs complètement orphelins. Lorsqu'un groupe est supprimé, les utilisateurs sont récupérés en toute sécurité et réaffectés à un rôle 'System_default' immuable, garantissant qu'ils peuvent toujours s'authentifier mais ne possèdent aucune capacité destructrice.",
+        "SCRIPE vous empêche de laisser des administrateurs complètement orphelins. Lorsqu'un groupe est supprimé, les utilisateurs sont récupérés en toute sécurité et réaffectés à un rôle 'System_default' immuable, garantissant qu'ils peuvent toujours s'authentifier mais ne possèdent aucune capacité destructrice.",
       roiTitle: "ROI d'Entreprise et Mise à l'Échelle Débloqués",
       roiContent:
-        "Cessez de gaspiller des cycles d'ingénierie coûteux à construire des pipelines de provisionnement personnalisés. La mise en œuvre des groupes d'utilisateurs natifs de NEXORA permet d'économiser des mois de dette architecturale. Observez comment la transition d'une attribution de rôles plate 1:1 améliore considérablement la posture de sécurité et réduit la charge opérationnelle informatique de plus de 90 %.",
+        "Cessez de gaspiller des cycles d'ingénierie coûteux à construire des pipelines de provisionnement personnalisés. La mise en œuvre des groupes d'utilisateurs natifs de SCRIPE permet d'économiser des mois de dette architecturale. Observez comment la transition d'une attribution de rôles plate 1:1 améliore considérablement la posture de sécurité et réduit la charge opérationnelle informatique de plus de 90 %.",
       complianceGridTitle: "Conçu pour la Gouvernance Organisationnelle",
       auditTrackingTitle: "Piste d'Audit Granulaire",
       auditTrackingDesc:
@@ -294,7 +294,7 @@ export const fr = {
     },
     localizationI18n: {
       bilingualContent:
-        "Ne créez pas deux applications distinctes. Le moteur de rendu bilingue de NEXORA échange instantanément les mises en page complexes de l'interface utilisateur, les systèmes de typographie et le formatage des données entièrement en fonction de l'état régional (locale) actif de l'utilisateur authentifié.",
+        "Ne créez pas deux applications distinctes. Le moteur de rendu bilingue de SCRIPE échange instantanément les mises en page complexes de l'interface utilisateur, les systèmes de typographie et le formatage des données entièrement en fonction de l'état régional (locale) actif de l'utilisateur authentifié.",
       bilingualTitle: "Rendu Bilingue Dynamique",
       competitorRTL: "Les Solutions Bricolées de la Concurrence",
       description:
@@ -303,9 +303,9 @@ export const fr = {
         "Le frontend Next.js exploite un fournisseur de traduction hautement optimisé et axé sur le contexte. Il charge dynamiquement des dictionnaires JSON hautement compartimentés, assurant un changement de langue à latence zéro sans encourir de pénalités massives sur la taille du bundle.",
       frontendTitle: "Traductions d'UI à Latence Zéro",
       intro:
-        "Un logiciel d'entreprise mondial doit parler la langue de ses utilisateurs. NEXORA fournit une infrastructure d'internationalisation (i18n) inégalée qui ne se contente pas d'échanger des chaînes de texte—elle remodèle fondamentalement toute l'architecture de l'application pour prendre en charge une véritable localisation sémantique.",
+        "Un logiciel d'entreprise mondial doit parler la langue de ses utilisateurs. SCRIPE fournit une infrastructure d'internationalisation (i18n) inégalée qui ne se contente pas d'échanger des chaînes de texte—elle remodèle fondamentalement toute l'architecture de l'application pour prendre en charge une véritable localisation sémantique.",
       languagesTitle: "Portée Mondiale Immédiate",
-      nexoraRTL: "Le Standard NEXORA",
+      scripeRTL: "Le Standard SCRIPE",
       rtlContent:
         "Nous ne nous sommes pas contentés d'inverser le CSS. Les interfaces en arabe et en hébreu sont structurellement repensées. Notre système de conception atomique inverse intelligemment les marges, les remplissages (paddings), les icônes vectorielles et les hiérarchies de mise en page pour offrir une expérience RTL véritablement native qui ravit les utilisateurs.",
       rtlTitle: "Matrice Architecturale RTL Impeccable",

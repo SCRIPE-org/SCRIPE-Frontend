@@ -2,7 +2,7 @@ import SamlAcsCallbackView from "@/modules/auth/signin/src/presentation/views/Sa
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "SAML Redirecting | NEXORA",
+  title: "SAML Redirecting | SCRIPE",
   description: "Processing your SAML Sign-in...",
 };
 

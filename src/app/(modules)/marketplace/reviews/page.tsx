@@ -7,7 +7,7 @@ const ReviewsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Reviews | Marketplace | NEXORA",
+  title: "Reviews | Marketplace | SCRIPE",
   description: "Moderate app reviews submitted by tenants.",
 };
 

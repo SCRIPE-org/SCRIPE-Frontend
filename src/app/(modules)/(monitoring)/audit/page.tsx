@@ -7,7 +7,7 @@ const AuditView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Audit Log | NEXORA",
+  title: "Audit Log | SCRIPE",
   description: "View and search the complete audit trail of all system events",
 };
 

@@ -59,7 +59,7 @@ export const de = {
     infrastructure: "Infrastruktur",
     modules: "Module",
     entitlements: "Berechtigungen",
-    commercialWhyNexora: "Warum NEXORA",
+    commercialWhyScripe: "Warum SCRIPE",
     commercialPlatform: "Plattform-Übersicht",
     commercialEnterprise: "Enterprise-Funktionen",
     commercialSecurity: "Sicherheit & Compliance",

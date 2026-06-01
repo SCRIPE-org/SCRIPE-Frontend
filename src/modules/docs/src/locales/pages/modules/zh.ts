@@ -8,7 +8,7 @@ export const zh = {
       title: "权益总览 (Entitlements Overview)",
       description: "基于版本的功能门控，包含功能、版本、订阅以及基于租户的自定义覆盖。",
       intro:
-        "权益模块是 NEXORA 的计划与功能管理引擎。它定义了每个租户 (tenant) 能获得哪些能力，计划（版本）如何打包这些能力，以及订阅如何将租户与计划关联起来。",
+        "权益模块是 SCRIPE 的计划与功能管理引擎。它定义了每个租户 (tenant) 能获得哪些能力，计划（版本）如何打包这些能力，以及订阅如何将租户与计划关联起来。",
       whatIsTitle: "什么是权益 (Entitlements)？",
       whatIsIntro:
         "权益模块负责根据租户订阅的版本（计划）控制其可访问的功能。它提供了一个三级解析链：功能默认值 → 版本值 → 租户自定义覆盖，从而确保为平台运营商和经销商租户提供最大的灵活性。",
@@ -22,12 +22,12 @@ export const zh = {
         "当系统需要确定某个租户的功能值时，它会遵循严格的优先级链。提供值的最高优先级来源将胜出。",
       pipelineTitle: "管道集成 (Pipeline Integration)",
       pipelineIntro:
-        "NEXORA 通过 FeatureCheckBehavior 将权益直接集成到 NEXORA mediator CQRS 管道中。实现 IRequireFeature 的命令和查询会自动受到门控保护 —— 如果解析出的租户功能值为禁用状态，请求将在到达处理程序之前被拒绝。",
+        "SCRIPE 通过 FeatureCheckBehavior 将权益直接集成到 SCRIPE mediator CQRS 管道中。实现 IRequireFeature 的命令和查询会自动受到门控保护 —— 如果解析出的租户功能值为禁用状态，请求将在到达处理程序之前被拒绝。",
       pipelineTip:
         "要将命令隐藏在功能门控之后，只需实现 IRequireFeature 并将 RequiredFeatureName 设置为该功能的稳定系统键（例如 'Chat.Enabled'）。无需编写额外代码。",
       backendTitle: "后端结构",
       backendIntro:
-        "权益后端遵循 NEXORA 标准的整洁架构 (Clean Architecture) 模块布局，包含领域层 (Domain)、应用层 (Application) 和基础设施层 (Infrastructure)。",
+        "权益后端遵循 SCRIPE 标准的整洁架构 (Clean Architecture) 模块布局，包含领域层 (Domain)、应用层 (Application) 和基础设施层 (Infrastructure)。",
       frontendTitle: "前端结构",
       frontendIntro:
         "前端与后端相呼应，包含四个子模块（版本、功能、订阅、覆盖），每个模块都遵循 SOLID 视图/视图模型 (View/ViewModel) 模式。",
@@ -36,7 +36,7 @@ export const zh = {
         "权益模块跨 4 个控制器暴露了 31 个 API 端点 (endpoints)，所有端点均经过 JWT 身份验证，并受基于权限的授权保护。",
       noOpTitle: "NoOp 后备机制 (Fallback)",
       noOpIntro:
-        "当未加载权益模块时（例如在不包含权益的微服务中），NEXORA 会注册一个 NoOpFeatureCache。这允许 IRequireFeature 命令无错误地通过 —— 所有功能默认被视为已启用。",
+        "当未加载权益模块时（例如在不包含权益的微服务中），SCRIPE 会注册一个 NoOpFeatureCache。这允许 IRequireFeature 命令无错误地通过 —— 所有功能默认被视为已启用。",
       noOpNote:
         "NoOp 后备机制确保模块可以使用 IRequireFeature 而无需硬依赖权益模块。在生产环境的单体模式下，真实的 FeatureCache 始终可用。",
       contextAwareTitle: "上下文感知范围筛选",
@@ -46,10 +46,10 @@ export const zh = {
         "解析链采用延迟评估 (lazy evaluation) —— 值在首次解析后会被缓存，并在订阅、版本或覆盖发生变化时失效。",
       cqrsMapTitle: "CQRS 命令与查询映射",
       cqrsMapIntro:
-        "权益模块注册了跨越四个领域的 31 个 NEXORA mediator 处理程序。每个命令都有一个对应的 FluentValidation 验证器用于输入验证。",
+        "权益模块注册了跨越四个领域的 31 个 SCRIPE mediator 处理程序。每个命令都有一个对应的 FluentValidation 验证器用于输入验证。",
       diTitle: "依赖注入 (DI) 注册",
       diIntro:
-        "所有权益服务均通过 DependencyInjection.cs 中的 AddEntitlementsModule 扩展方法进行注册。该模块遵循 NEXORA 的标准注册模式。",
+        "所有权益服务均通过 DependencyInjection.cs 中的 AddEntitlementsModule 扩展方法进行注册。该模块遵循 SCRIPE 的标准注册模式。",
       comparisonTitle: "启用与禁用权益的对比",
       comparisonIntro: "下表展示了启用权益模块与在没有该模块的情况下运行时的功能差异：",
       gettingStartedTitle: "快速入门",
@@ -76,7 +76,7 @@ export const zh = {
       rolloutTitle: "发布策略 (Rollout Strategies)",
       rolloutIntro: "发布版本时，管理员可以选择如何将更改部署给已订阅的租户：",
       workflowTitle: "立即应用 vs 另存为版本",
-      workflowIntro: "NEXORA 提供了两种更新版本功能的方法，各自适用于不同的场景：",
+      workflowIntro: "SCRIPE 提供了两种更新版本功能的方法，各自适用于不同的场景：",
       workflowTip:
         "使用“立即应用”进行紧急修复和较小更改。使用“另存为版本”进行需要阶段性发布和审计跟踪的重大计划更新。",
       endpointsTitle: "API 端点 (Endpoints)",
@@ -86,7 +86,7 @@ export const zh = {
         "当系统管理员下钻到租户时，版本列表会自动限制为该租户可见的版本。后端使用 X-Tenant-Context 头进行筛选：系统版本 + 所选租户创建的零售版本。前端在下钻模式下隐藏 CRUD 操作。",
       scopingTitle: "系统版本 vs 零售版本",
       scopingIntro:
-        "NEXORA 支持两种类型的版本：平台管理员创建对所有租户可见的系统版本，以及经销商租户仅为其子租户创建的零售版本。",
+        "SCRIPE 支持两种类型的版本：平台管理员创建对所有租户可见的系统版本，以及经销商租户仅为其子租户创建的零售版本。",
       scopingNote:
         "租户管理员只能看到系统版本及其自己的零售版本。这确保了经销商租户之间的版本隔离。",
       featuresTip:
@@ -217,7 +217,7 @@ export const zh = {
         "对于数字 (Numeric) 功能，使用 -1 表示“无限制”。FeatureCheckBehavior 将 -1 视为特殊值，绝不会拦截具有无限配额的请求。",
       systemVsCustomTitle: "系统功能 vs 自定义功能",
       systemVsCustomIntro:
-        "NEXORA 区分了系统功能（启动时自动植入，只读）和自定义功能（由管理员通过 API 创建）：",
+        "SCRIPE 区分了系统功能（启动时自动植入，只读）和自定义功能（由管理员通过 API 创建）：",
       cacheTitle: "功能缓存 (Feature Cache)",
       cacheIntro:
         "解析后的功能值缓存在 IFeatureCache 中，以避免每次请求都查询数据库。每当版本功能发生更改、订阅被修改或覆盖被设置/移除时，缓存就会失效。在没有权益模块的微服务部署中，NoOpFeatureCache 会将所有功能视为已启用。",
@@ -308,7 +308,7 @@ export const zh = {
         description:
           "GDPR、CCPA和PDPA合规自动化——法规、DSR处理、同意管理、数据保留、清单和报告生成。",
         intro:
-          "合规模块是NEXORA内置的监管合规引擎。它通过提供自动化工具管理数据主体请求、同意记录、保留政策并生成支持审计的合规报告，帮助平台运营商及其租户遵守主要的数据保护法（GDPR、CCPA、PDPA）。",
+          "合规模块是SCRIPE内置的监管合规引擎。它通过提供自动化工具管理数据主体请求、同意记录、保留政策并生成支持审计的合规报告，帮助平台运营商及其租户遵守主要的数据保护法（GDPR、CCPA、PDPA）。",
         infoTitle: "合规注意事项",
         infoContent:
           "合规模块对于维持监管遵循和避免罚款至关重要。请确保所有功能都正确映射到数据处理政策。",
@@ -336,7 +336,7 @@ export const zh = {
         tr2_2: "渲染不可变的同意快照，以及用户代理和时间戳元数据。",
         whatIsTitle: "什么是合规模块？",
         whatIsIntro:
-          "合规模块提供了涵盖完整合规生命周期的六个相互关联的子系统。NEXORA租户无需从头开始构建合规工具，即可获得一个支持生产环境的系统，用于跟踪、自动化和报告其数据保护义务。",
+          "合规模块提供了涵盖完整合规生命周期的六个相互关联的子系统。SCRIPE租户无需从头开始构建合规工具，即可获得一个支持生产环境的系统，用于跟踪、自动化和报告其数据保护义务。",
         subModulesTitle: "六个子系统",
         subModulesIntro: "每个子系统负责特定的合规领域：",
         sub1: "法规配置文件 — 存储平台运营所在的监管框架（GDPR、CCPA、PDPA）。",
@@ -347,7 +347,7 @@ export const zh = {
         sub6: "合规报告 — 生成异步的审计就绪报告（GDPR概览、DSR摘要、同意审计等）。",
         backendTitle: "后端架构",
         backendIntro:
-          "合规后端遵循标准的NEXORA 3项目模块布局（领域 / 应用 / 基础设施），并拥有专用的ComplianceDbContext和ComplianceController。",
+          "合规后端遵循标准的SCRIPE 3项目模块布局（领域 / 应用 / 基础设施），并拥有专用的ComplianceDbContext和ComplianceController。",
         frontendTitle: "前端架构",
         frontendIntro:
           "前端被组织为src/modules/compliance/下的六个独立子模块，每个子模块都遵循View/ViewModel模式拥有自己的领域、数据和展示层。",
@@ -374,7 +374,7 @@ export const zh = {
         status4: "已拒绝 — 请求被拒绝（例如，身份验证不足）。",
         slasTitle: "GDPR SLA要求",
         slasIntro:
-          "根据GDPR第12条，数据控制者必须在30天内响应DSR（复杂请求可延长至3个月）。NEXORA跟踪每个DSR的提交日期以帮助您满足这些截止日期。",
+          "根据GDPR第12条，数据控制者必须在30天内响应DSR（复杂请求可延长至3个月）。SCRIPE跟踪每个DSR的提交日期以帮助您满足这些截止日期。",
         lifecycleFlowTitle: "DSR生命周期流",
         nodeSubmit: "提交请求",
         descSubmit: "主体请求导出、删除或纠正",
@@ -416,7 +416,7 @@ export const zh = {
         title: "同意管理",
         description: "记录、跟踪和审计用户同意的授予和撤销，以遵守GDPR第6条和CCPA。",
         intro:
-          "同意管理记录用户每次为特定目的（例如营销电子邮件、分析跟踪）授予或撤销同意的操作。NEXORA存储完整的同意审计跟踪，包括时间戳、IP地址、用户代理和显示的确切同意版本。",
+          "同意管理记录用户每次为特定目的（例如营销电子邮件、分析跟踪）授予或撤销同意的操作。SCRIPE存储完整的同意审计跟踪，包括时间戳、IP地址、用户代理和显示的确切同意版本。",
         purposesTitle: "同意目的",
         purposesIntro: "每项同意记录都与特定目的绑定。常见目的包括：",
         purpose1: "营销 — 电子邮件营销和促销通信。",
@@ -425,7 +425,7 @@ export const zh = {
         purpose4: "个性化 — 个性化内容和推荐。",
         gdprTitle: "GDPR合法基础",
         gdprIntro:
-          "根据GDPR第6条，同意必须是：自愿、具体、知情和毫不含糊的。NEXORA记录向用户显示的确切同意文本版本以及被接受的时间戳，提供合法且可辩护的审计跟踪。",
+          "根据GDPR第6条，同意必须是：自愿、具体、知情和毫不含糊的。SCRIPE记录向用户显示的确切同意文本版本以及被接受的时间戳，提供合法且可辩护的审计跟踪。",
         withdrawalTitle: "撤销同意",
         withdrawalIntro:
           "用户可以随时撤销同意。当同意被撤销时，ConsentRecord将更新为WithdrawnAt时间戳。应通过领域事件通知下游系统停止为已撤销目的处理数据。",
@@ -455,7 +455,7 @@ export const zh = {
         title: "数据保留政策",
         description: "定义数据保留期和自动过期操作（删除或匿名化），以遵守GDPR第5(1)(e)条。",
         intro:
-          "数据保留政策定义必须将特定类别的数据保留多长时间，以及保留期满后会发生什么。NEXORA通过后台作业自动执行这些政策，消除了管理数据生命周期的手动开销。",
+          "数据保留政策定义必须将特定类别的数据保留多长时间，以及保留期满后会发生什么。SCRIPE通过后台作业自动执行这些政策，消除了管理数据生命周期的手动开销。",
         policiesTitle: "政策配置",
         policiesIntro: "每项保留政策规定：",
         field1: "DataCategory — 数据类型（例如“用户档案”、“交易日志”、“同意记录”）。",
@@ -463,7 +463,7 @@ export const zh = {
         field3: "ExpiryAction — 过期后会发生什么：删除或匿名化。",
         field4: "RegulationCode — 需要此保留期的法规（GDPR，CCPA等）。",
         actionsTitle: "过期操作",
-        actionsIntro: "当保留期满时，NEXORA应用两种操作之一：",
+        actionsIntro: "当保留期满时，SCRIPE应用两种操作之一：",
         action1: "删除 — 永久删除匹配数据类别的所有记录。",
         action2: "匿名化 — 将个人可识别信息替换为假名令牌，同时保留汇总分析数据。",
         automationTitle: "自动执行",
@@ -491,7 +491,7 @@ export const zh = {
         title: "数据清单",
         description: "平台处理的所有个人数据类别的注册表——GDPR第30条处理活动记录 (RoPA) 要求。",
         intro:
-          "数据清单是平台处理的所有个人数据类别的结构化注册表。根据GDPR第30条，控制者必须维护处理活动记录（RoPA）——数据清单即是NEXORA对此要求的实现。",
+          "数据清单是平台处理的所有个人数据类别的结构化注册表。根据GDPR第30条，控制者必须维护处理活动记录（RoPA）——数据清单即是SCRIPE对此要求的实现。",
         fieldsTitle: "清单字段",
         fieldsIntro: "每个清单项目记录：",
         field1: "DataCategory — 数据类别的易读名称（例如“电子邮件地址”、“支付信息”）。",
@@ -504,7 +504,7 @@ export const zh = {
         field7: "ThirdPartySharing — 数据是否与第三方共享以及是哪些第三方。",
         ropaTitle: "第30条合规",
         ropaIntro:
-          "拥有250名以上员工或处理高风险数据的组织必须根据GDPR第30条维护RoPA。NEXORA的数据清单充当实时、可查询的RoPA，可导出以供监管检查。",
+          "拥有250名以上员工或处理高风险数据的组织必须根据GDPR第30条维护RoPA。SCRIPE的数据清单充当实时、可查询的RoPA，可导出以供监管检查。",
         endpointsTitle: "API端点",
         ep: {
           list: "列出所有数据清单项目（分页，可搜索）",

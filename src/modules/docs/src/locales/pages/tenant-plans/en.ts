@@ -5,10 +5,10 @@ export const en = {
       description:
         "B2B2C plan builder allowing tenants to create subscription plans for their end-users with feature bundling, pricing, and lifecycle management.",
       intro:
-        "Tenant Plans enable NEXORA's B2B2C model — the platform operator sells subscriptions to tenants (B2B), and those tenants can in turn create their own subscription plans for their end-users (B2C). This is the 'Tier 2' subscription system. Each tenant can define multiple plans with different features, pricing, and billing cycles.",
+        "Tenant Plans enable SCRIPE's B2B2C model — the platform operator sells subscriptions to tenants (B2B), and those tenants can in turn create their own subscription plans for their end-users (B2C). This is the 'Tier 2' subscription system. Each tenant can define multiple plans with different features, pricing, and billing cycles.",
       conceptTitle: "B2B2C Subscription Model",
       conceptIntro:
-        "The standard NEXORA Entitlements module manages Tenant → Platform subscriptions (Tier 1). The Tenant Plans module adds Tier 2: User → Tenant subscriptions. This two-tier model enables SaaS resellers, multi-sided marketplaces, and platform operators who want to monetize their end-users.",
+        "The standard SCRIPE Entitlements module manages Tenant → Platform subscriptions (Tier 1). The Tenant Plans module adds Tier 2: User → Tenant subscriptions. This two-tier model enables SaaS resellers, multi-sided marketplaces, and platform operators who want to monetize their end-users.",
       entityTitle: "TenantPlan Entity",
       entityIntro:
         "A TenantPlan is created by a tenant admin and defines a subscription offering for their end-users. Plans are scoped to the creating tenant and are not visible to other tenants.",

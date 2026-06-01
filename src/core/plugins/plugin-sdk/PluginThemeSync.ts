@@ -12,7 +12,7 @@ export interface PluginTheme {
 }
 
 /**
- * Pushes the current NEXORA theme into a Tier 2 plugin iframe whenever it changes.
+ * Pushes the current SCRIPE theme into a Tier 2 plugin iframe whenever it changes.
  * Call sync() after mounting the bridge and whenever the host theme updates.
  */
 export class PluginThemeSync {

@@ -22,7 +22,7 @@ export const OIDC_KEYS = {
   CODE_CHALLENGE: "code_challenge",
   CODE_CHALLENGE_METHOD: "code_challenge_method",
 
-  // Custom NEXORA Parameters
+  // Custom SCRIPE Parameters
   CONSENT_TICKET: "consent_ticket",
 } as const;
 

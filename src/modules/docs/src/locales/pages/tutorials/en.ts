@@ -60,7 +60,7 @@ export const en = {
       step5Desc: "Create the EF Core repository with the generic repository base class.",
       step6Title: "6. Register with DI",
       step6Desc:
-        "Configure dependency injection for the module's services, repositories, and NEXORA request handlers.",
+        "Configure dependency injection for the module's services, repositories, and SCRIPE request handlers.",
       step7Title: "7. Add Controller",
       step7Desc:
         "Create the API controller with RESTful endpoints, Swagger docs, and authorization attributes.",

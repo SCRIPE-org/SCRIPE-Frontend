@@ -108,7 +108,7 @@ export const en = {
   app: {
     title: "Admin Dashboard",
     subtitle: "Administrative",
-    tagline: "NEXORA",
+    tagline: "SCRIPE",
     modern: "Modern",
     classic: "Classic",
     elegant: "Elegant",

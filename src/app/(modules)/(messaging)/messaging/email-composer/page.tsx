@@ -9,7 +9,7 @@ const EmailComposerView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Email Composer | NEXORA",
+  title: "Email Composer | SCRIPE",
   description: "Compose and send emails to administrators and users",
 };
 

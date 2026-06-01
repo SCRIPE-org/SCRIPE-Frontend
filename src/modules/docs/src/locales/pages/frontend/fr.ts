@@ -63,7 +63,7 @@ export const fr = {
       title: "Localisation (i18n)",
       description: "LanguageProvider, fonction t(), support RTL et structure du dictionnaire.",
       intro:
-        "NEXORA embarque un système de localisation propriétaire extrêmement léger et natif à React.",
+        "SCRIPE embarque un système de localisation propriétaire extrêmement léger et natif à React.",
       architectureTitle: "Architecture",
       dictionaryTitle: "Structure du Dictionnaire",
       tFunctionTitle: "Utilisation de la Fonction t()",
@@ -80,7 +80,7 @@ export const fr = {
       noLocaleRoutes:
         "L'application évite volontairement l'enrutement basé sur la langue (type /fr/page) afin de réduire massivement les temps de rendu serveur (SSR).",
       moduleLocaleNote:
-        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
+        "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "Validation de Formulaires",

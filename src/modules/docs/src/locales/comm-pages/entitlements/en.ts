@@ -9,10 +9,10 @@ export const en = {
       description:
         "A complete, enterprise-grade entitlements engine that transforms your platform into a differentiated SaaS product with editions, subscriptions, and per-tenant feature control.",
       intro:
-        "Stop hardcoding plan checks into your codebase. NEXORA's Entitlements module provides a full-stack, API-level feature gating engine that automatically enforces what each tenant can and cannot do — based on their subscribed edition, active overrides, and real-time quota counters.",
+        "Stop hardcoding plan checks into your codebase. SCRIPE's Entitlements module provides a full-stack, API-level feature gating engine that automatically enforces what each tenant can and cannot do — based on their subscribed edition, active overrides, and real-time quota counters.",
       whyTitle: "Why Built-In Entitlements?",
       whyContent:
-        "Most SaaS platforms bolt on feature flags as an afterthought. NEXORA integrates entitlements directly into the CQRS pipeline via the IRequireFeature interface, meaning every command can be automatically gated without a single line of custom middleware.",
+        "Most SaaS platforms bolt on feature flags as an afterthought. SCRIPE integrates entitlements directly into the CQRS pipeline via the IRequireFeature interface, meaning every command can be automatically gated without a single line of custom middleware.",
       fgEditions: "Editions (Plans)",
       fgEditionsDesc:
         "Named feature bundles like Basic, Pro, Enterprise that define what each plan includes.",
@@ -54,8 +54,8 @@ export const en = {
       tblResR4C3: "Fallback when no other source applies",
       valueTitle: "Business Value",
       tblValH1: "Challenge",
-      tblValH2: "Without NEXORA",
-      tblValH3: "With NEXORA Entitlements",
+      tblValH2: "Without SCRIPE",
+      tblValH3: "With SCRIPE Entitlements",
       tblValR1C1: "Plan differentiation",
       tblValR1C2: "Hardcoded if/else checks scattered everywhere",
       tblValR1C3: "Automatic pipeline-level gating per edition",
@@ -71,12 +71,12 @@ export const en = {
       tblValR5C1: "Feature rollouts",
       tblValR5C2: "Big-bang deployments risking all tenants",
       tblValR5C3: "Canary and scheduled rollout strategies",
-      tip: "The Entitlements module is fully integrated into the NEXORA mediator pipeline. Commands implementing IRequireFeature are automatically gated — your business logic stays clean and focused.",
+      tip: "The Entitlements module is fully integrated into the SCRIPE mediator pipeline. Commands implementing IRequireFeature are automatically gated — your business logic stays clean and focused.",
     },
     entEditions: {
       title: "Editions & Plans",
       description:
-        "Define, manage, and version your SaaS product plans using NEXORA's powerful Editions engine.",
+        "Define, manage, and version your SaaS product plans using SCRIPE's powerful Editions engine.",
       intro:
         "Editions are the building blocks of your SaaS pricing strategy. Each edition bundles a specific set of feature values (Boolean toggles, numeric limits, string configurations) into a named plan that can be assigned to tenants via subscriptions.",
       whatTitle: "What Are Editions?",
@@ -124,7 +124,7 @@ export const en = {
       description:
         "Full lifecycle management for tenant subscriptions with multi-currency pricing, promotional discounts, upgrade/downgrade impact analysis, trials, expiry handling, and comprehensive analytics export.",
       intro:
-        "Subscriptions are the bridge between tenants and editions. They define which plan a tenant is on, when it starts and expires, and how the system behaves when the subscription lifecycle changes. With built-in multi-currency pricing and promotional discount tracking, NEXORA provides everything you need for monetization.",
+        "Subscriptions are the bridge between tenants and editions. They define which plan a tenant is on, when it starts and expires, and how the system behaves when the subscription lifecycle changes. With built-in multi-currency pricing and promotional discount tracking, SCRIPE provides everything you need for monetization.",
       lifecycleTitle: "Subscription Lifecycle",
       lifecycleContent:
         "Every subscription follows a well-defined state machine. The system automatically enforces valid transitions and emits domain events at each stage for audit and integration purposes.",

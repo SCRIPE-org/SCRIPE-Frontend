@@ -51,7 +51,7 @@ export const ar = {
       step5Title: "5. تنفيذ المستودع",
       step5Desc: "إنشاء مستودع EF Core مع فئة المستودع الأساسية.",
       step6Title: "6. التسجيل في حاوية الـ DI",
-      step6Desc: "تكوين حقن التبعيات لخدمات الوحدة ومعالجات NEXORA mediator.",
+      step6Desc: "تكوين حقن التبعيات لخدمات الوحدة ومعالجات SCRIPE mediator.",
       step7Title: "7. إضافة وحدة التحكم (Controller)",
       step7Desc: "إنشاء وحدة تحكم الـ API مع نقاط نهاية RESTful ووثائق Swagger.",
       step8Title: "8. تسجيل الوحدة",

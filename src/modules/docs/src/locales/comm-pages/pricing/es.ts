@@ -7,26 +7,26 @@ export const es = {
     licensingModel: {
       runtimeOwnershipTitle: "Propiedad de runtime e independencia de licencia",
       runtimeOwnershipIntro:
-        "El despacho de solicitudes del backend y la proyección de DTO están implementados con código propio de NEXORA. Las compilaciones de producción no dependen de claves Lucky Penny ni de validación de licencia en runtime para los caminos de mediador o mapeo.",
+        "El despacho de solicitudes del backend y la proyección de DTO están implementados con código propio de SCRIPE. Las compilaciones de producción no dependen de claves Lucky Penny ni de validación de licencia en runtime para los caminos de mediador o mapeo.",
       tblRuntimeHeader1: "Área",
-      tblRuntimeHeader2: "Reemplazo propiedad de NEXORA",
+      tblRuntimeHeader2: "Reemplazo propiedad de SCRIPE",
       tblRuntimeHeader3: "Efecto en producción",
       tblRuntimeR1C1: "Despacho de solicitudes",
-      tblRuntimeR1C2: "NexoraMediator con delegados cacheados y comportamientos ordenados",
+      tblRuntimeR1C2: "ScripeMediator con delegados cacheados y comportamientos ordenados",
       tblRuntimeR1C3:
         "Sin riesgo de clave de licencia de mediador externo ni de política del paquete",
       tblRuntimeR2C1: "Mapeo DTO",
       tblRuntimeR2C2: "Reglas explícitas de mapeo más EncryptedIdMapper",
       tblRuntimeR2C3: "Formas de respuesta auditables e IDs cifrados preservados",
       tblRuntimeR3C1: "Scaffolding CLI",
-      tblRuntimeR3C2: "Las plantillas emiten namespaces del mediador NEXORA y reglas de mapeo",
+      tblRuntimeR3C2: "Las plantillas emiten namespaces del mediador SCRIPE y reglas de mapeo",
       tblRuntimeR3C3: "Los módulos nuevos no reintroducen los paquetes eliminados",
       tblRuntimeR4C1: "Operaciones",
       tblRuntimeR4C2: "Sin verificaciones phone-home en estos caminos centrales",
       tblRuntimeR4C3: "Despliegues offline, aislados y empresariales más seguros",
       entitlementsTitle: "Diferenciación de Planes Impulsada por Derechos",
       entitlementsIntro:
-        "El módulo de Derechos integrado de NEXORA impulsa la diferenciación real de planes detrás de cada nivel de licencia. Las ediciones definen qué funciones incluye cada plan, las suscripciones vinculan a los inquilinos con los planes y las sobreescrituras permiten acuerdos personalizados, todo aplicado automáticamente a nivel de API.",
+        "El módulo de Derechos integrado de SCRIPE impulsa la diferenciación real de planes detrás de cada nivel de licencia. Las ediciones definen qué funciones incluye cada plan, las suscripciones vinculan a los inquilinos con los planes y las sobreescrituras permiten acuerdos personalizados, todo aplicado automáticamente a nivel de API.",
       entEditions: "Agrupación de Funciones Basada en Ediciones",
       entEditionsDesc:
         "Defina planes con nombre (Básico, Pro, Enterprise) que agrupan valores de funciones booleanos, numéricos y de cadena. La edición suscrita de cada inquilino determina automáticamente su acceso a las funciones.",
@@ -40,18 +40,18 @@ export const es = {
       entVersioningDesc:
         "Cree versiones de edición con instantáneas de funciones e impleméntelas mediante estrategias de implementación inmediata, canary o programada sin interrumpir a los inquilinos existentes.",
       entitlementsTip:
-        "El módulo de Derechos se integra directamente en la pipeline de NEXORA mediator: los comandos que implementan IRequireFeature son controlados automáticamente por los valores de las funciones resueltas del inquilino. No se necesita middleware personalizado.",
+        "El módulo de Derechos se integra directamente en la pipeline de SCRIPE mediator: los comandos que implementan IRequireFeature son controlados automáticamente por los valores de las funciones resueltas del inquilino. No se necesita middleware personalizado.",
       comparisonTitle: "Comparación de Niveles de Licencia",
       description:
         "Estructuras de licencias transparentes, predecibles y escalables diseñadas tanto para fundadores técnicos como para entidades corporativas masivas.",
       intro:
-        "A diferencia de los modelos SaaS que penalizan su crecimiento con facturación por puesto (per-seat), NEXORA proporciona previsibilidad fiscal absoluta. Está adquiriendo derechos perpetuos sobre la propiedad intelectual de la arquitectura central, lo que le permite construir y escalar infinitamente.",
+        "A diferencia de los modelos SaaS que penalizan su crecimiento con facturación por puesto (per-seat), SCRIPE proporciona previsibilidad fiscal absoluta. Está adquiriendo derechos perpetuos sobre la propiedad intelectual de la arquitectura central, lo que le permite construir y escalar infinitamente.",
       renewalContent:
         "Cada licencia incluye 12 meses completos de acceso directo a nuestro repositorio privado de GitHub. Recibe continuos refinamientos arquitectónicos, correcciones de errores semanales y actualizaciones masivas de versiones (por ejemplo, la migración a .NET 10) de forma totalmente gratuita durante este período.",
       renewalTitle: "Entrega Arquitectónica Continua",
       sourcCodeTitle: "Propiedad Absoluta del Código",
       sourceCodeContent:
-        "Usted no alquila NEXORA; es suyo. Recibe el código fuente completo, no ofuscado, de TypeScript y C#. Es libre legalmente de auditar, modificar, bifurcar (fork) e incrustar el framework directamente en sus ofertas SaaS comerciales propietarias.",
+        "Usted no alquila SCRIPE; es suyo. Recibe el código fuente completo, no ofuscado, de TypeScript y C#. Es libre legalmente de auditar, modificar, bifurcar (fork) e incrustar el framework directamente en sus ofertas SaaS comerciales propietarias.",
       termsTitle: "Términos Comerciales Claros",
       title: "Licenciamiento Comercial y ROI",
       trialTip:
@@ -161,7 +161,7 @@ export const es = {
     supportPlans: {
       communityAccess: "Acceso Global a Discord y GitHub",
       communityAccessDesc:
-        "Colabore directamente con cientos de ingenieros de software de élite que construyen sobre NEXORA.",
+        "Colabore directamente con cientos de ingenieros de software de élite que construyen sobre SCRIPE.",
       description:
         "Acuerdos de Nivel de Servicio (SLAs) dedicados, revisiones arquitectónicas y soporte de ingeniería priorizado adaptado estrictamente para clientes corporativos.",
       hotfixes: "Enrutamiento de Parches de Emergencia",
@@ -304,7 +304,7 @@ export const es = {
         "¿Tiene un requisito crítico? Los titulares de licencias Enterprise determinan nuestras prioridades de backlog. Comuníquese con el equipo de arquitectura.",
       inProgressTitle: "Ingeniería Activa",
       intro:
-        "NEXORA evoluciona continuamente. Nuestra hoja de ruta de ingeniería es pública, predecible y se centra agresivamente en la eliminación de código repetitivo (boilerplate) para equipos de desarrollo empresariales masivos.",
+        "SCRIPE evoluciona continuamente. Nuestra hoja de ruta de ingeniería es pública, predecible y se centra agresivamente en la eliminación de código repetitivo (boilerplate) para equipos de desarrollo empresariales masivos.",
       multiRegion: "Región Múltiple Activo-Activo",
       multiRegionDesc:
         "Arquitecturas soportadas de forma nativa para topologías de bases de datos distribuidas globalmente y sin nodos maestros (masterless).",
@@ -318,67 +318,67 @@ export const es = {
       visionTitle: "La Visión Arquitectónica a Largo Plazo",
     },
     faq: {
-      q1: "¿Qué es NEXORA?",
-      a1: "NEXORA es una plataforma ERP modular de grado empresarial construida con .NET 9 y Next.js 15. Proporciona una base lista para producción con Arquitectura Limpia, multitenencia, control de acceso basado en roles, capacidades en tiempo real y un catálogo creciente de módulos comerciales, todo desde una única base de código que admite implementaciones de monolito, puerta de enlace (gateway) y microservicios.",
-      q2: "¿Para quién está diseñado NEXORA?",
-      a2: "NEXORA está diseñado para equipos de desarrollo y organizaciones que necesitan lanzar aplicaciones empresariales rápidamente sin sacrificar la calidad arquitectónica. Ya sea que sea una startup que busca una base escalable, una empresa de software (software house) que entrega proyectos a clientes o una empresa que moderniza sistemas heredados, NEXORA elimina meses de código repetitivo fundacional (boilerplate) para que pueda concentrarse en la lógica de negocio.",
-      q3: "¿En qué se diferencia NEXORA de otras plataformas ERP?",
-      a3: "A diferencia de los sistemas ERP tradicionales que lo bloquean en flujos de trabajo rígidos, NEXORA le brinda acceso completo al código fuente con principios de Arquitectura Limpia. Obtiene un verdadero aislamiento de módulos (cada módulo puede extraerse a su propio microservicio), multitenencia incorporada con aislamiento de datos a nivel de fila, 4 proveedores de bases de datos, i18n en 7 idiomas con soporte completo RTL y características de seguridad empresarial como el modelo de seguridad de 8 capas, todo diseñado para ser extendido, no solo configurado.",
-      qWhatIndustries: "¿Para qué industrias es adecuado NEXORA?",
+      q1: "¿Qué es SCRIPE?",
+      a1: "SCRIPE es una plataforma ERP modular de grado empresarial construida con .NET 9 y Next.js 15. Proporciona una base lista para producción con Arquitectura Limpia, multitenencia, control de acceso basado en roles, capacidades en tiempo real y un catálogo creciente de módulos comerciales, todo desde una única base de código que admite implementaciones de monolito, puerta de enlace (gateway) y microservicios.",
+      q2: "¿Para quién está diseñado SCRIPE?",
+      a2: "SCRIPE está diseñado para equipos de desarrollo y organizaciones que necesitan lanzar aplicaciones empresariales rápidamente sin sacrificar la calidad arquitectónica. Ya sea que sea una startup que busca una base escalable, una empresa de software (software house) que entrega proyectos a clientes o una empresa que moderniza sistemas heredados, SCRIPE elimina meses de código repetitivo fundacional (boilerplate) para que pueda concentrarse en la lógica de negocio.",
+      q3: "¿En qué se diferencia SCRIPE de otras plataformas ERP?",
+      a3: "A diferencia de los sistemas ERP tradicionales que lo bloquean en flujos de trabajo rígidos, SCRIPE le brinda acceso completo al código fuente con principios de Arquitectura Limpia. Obtiene un verdadero aislamiento de módulos (cada módulo puede extraerse a su propio microservicio), multitenencia incorporada con aislamiento de datos a nivel de fila, 4 proveedores de bases de datos, i18n en 7 idiomas con soporte completo RTL y características de seguridad empresarial como el modelo de seguridad de 8 capas, todo diseñado para ser extendido, no solo configurado.",
+      qWhatIndustries: "¿Para qué industrias es adecuado SCRIPE?",
       aWhatIndustries:
-        "NEXORA es independiente de la industria por diseño. Su arquitectura modular le permite crear soluciones para atención médica, finanzas, manufactura, logística, educación, gobierno, comercio minorista, bienes raíces y más. La plataforma central proporciona la infraestructura común (autenticación, tenencia, auditoría, permisos), mientras que los módulos específicos del negocio se pueden agregar o crear a medida siguiendo los patrones establecidos.",
+        "SCRIPE es independiente de la industria por diseño. Su arquitectura modular le permite crear soluciones para atención médica, finanzas, manufactura, logística, educación, gobierno, comercio minorista, bienes raíces y más. La plataforma central proporciona la infraestructura común (autenticación, tenencia, auditoría, permisos), mientras que los módulos específicos del negocio se pueden agregar o crear a medida siguiendo los patrones establecidos.",
       qHowLongSetup: "¿Cuánto tiempo se tarda en empezar?",
       aHowLongSetup:
-        "Puede tener NEXORA funcionando localmente en menos de 15 minutos. Clone el repositorio, configure su conexión a la base de datos (SQL Server, Oracle, PostgreSQL o SQLite), ejecute las migraciones e inicie el servidor de desarrollo. La herramienta nexora-cli acelera aún más el desarrollo mediante la generación (scaffolding) de nuevos módulos, entidades y código repetitivo en segundos. La mayoría de los equipos son productivos durante el primer día.",
-      q4: "¿Qué stack tecnológico utiliza NEXORA?",
-      a4: "El backend está construido con ASP.NET Core (.NET 9) con Entity Framework Core, NEXORA mediator (CQRS) y FluentValidation. El frontend utiliza Next.js 15 con TypeScript, TanStack Query, Zustand y un sistema de diseño personalizado construido sobre Radix UI. Las características en tiempo real están impulsadas por SignalR WebSockets, y la plataforma admite la contenedorización con Docker para el despliegue.",
-      q5: "¿Puede NEXORA escalar de monolito a microservicios?",
-      a5: "Sí, este es un principio de diseño central. NEXORA utiliza límites estrictos de módulos sin importaciones entre módulos. Cada módulo sigue la Arquitectura Limpia con sus propias capas de dominio, datos y presentación. Puede comenzar como un monolito por simplicidad, pasar a una topología de puerta de enlace (gateway) para separar el frontend del backend y, eventualmente, extraer módulos individuales en microservicios independientes, todo sin refactorizar su código.",
+        "Puede tener SCRIPE funcionando localmente en menos de 15 minutos. Clone el repositorio, configure su conexión a la base de datos (SQL Server, Oracle, PostgreSQL o SQLite), ejecute las migraciones e inicie el servidor de desarrollo. La herramienta scripe-cli acelera aún más el desarrollo mediante la generación (scaffolding) de nuevos módulos, entidades y código repetitivo en segundos. La mayoría de los equipos son productivos durante el primer día.",
+      q4: "¿Qué stack tecnológico utiliza SCRIPE?",
+      a4: "El backend está construido con ASP.NET Core (.NET 9) con Entity Framework Core, SCRIPE mediator (CQRS) y FluentValidation. El frontend utiliza Next.js 15 con TypeScript, TanStack Query, Zustand y un sistema de diseño personalizado construido sobre Radix UI. Las características en tiempo real están impulsadas por SignalR WebSockets, y la plataforma admite la contenedorización con Docker para el despliegue.",
+      q5: "¿Puede SCRIPE escalar de monolito a microservicios?",
+      a5: "Sí, este es un principio de diseño central. SCRIPE utiliza límites estrictos de módulos sin importaciones entre módulos. Cada módulo sigue la Arquitectura Limpia con sus propias capas de dominio, datos y presentación. Puede comenzar como un monolito por simplicidad, pasar a una topología de puerta de enlace (gateway) para separar el frontend del backend y, eventualmente, extraer módulos individuales en microservicios independientes, todo sin refactorizar su código.",
       q6: "¿Qué bases de datos son compatibles?",
-      a6: "NEXORA admite 3 proveedores de bases de datos a través de Entity Framework Core: SQL Server, Oracle y PostgreSQL. Cambiar de proveedor solo requiere un cambio de configuración. Además, la configuración Database.Mode controla el aislamiento de la base de datos: el modo 'Single' coloca todas las tablas de los módulos en una base de datos compartida, mientras que el modo 'Multi' (predeterminado) permite que cada módulo tenga su propia base de datos con cadenas de conexión separadas e incluso proveedores diferentes. Cada proveedor tiene su propio conjunto de migraciones, y la plataforma maneja las peculiaridades específicas del proveedor de forma transparente.",
-      qCanWeCustomize: "¿Podemos personalizar y ampliar los módulos de NEXORA?",
+      a6: "SCRIPE admite 3 proveedores de bases de datos a través de Entity Framework Core: SQL Server, Oracle y PostgreSQL. Cambiar de proveedor solo requiere un cambio de configuración. Además, la configuración Database.Mode controla el aislamiento de la base de datos: el modo 'Single' coloca todas las tablas de los módulos en una base de datos compartida, mientras que el modo 'Multi' (predeterminado) permite que cada módulo tenga su propia base de datos con cadenas de conexión separadas e incluso proveedores diferentes. Cada proveedor tiene su propio conjunto de migraciones, y la plataforma maneja las peculiaridades específicas del proveedor de forma transparente.",
+      qCanWeCustomize: "¿Podemos personalizar y ampliar los módulos de SCRIPE?",
       aCanWeCustomize:
-        "Absolutamente. Recibe acceso completo al código fuente, y cada módulo sigue el patrón SOLID View/ViewModel con una clara separación de preocupaciones (separation of concerns). Puede modificar los módulos existentes, extenderlos con nuevas características o crear módulos completamente nuevos utilizando la herramienta de generación de estructura nexora-cli. El principio Abierto/Cerrado (Open/Closed) garantiza que pueda ampliar el comportamiento mediante composición sin modificar el framework central.",
+        "Absolutamente. Recibe acceso completo al código fuente, y cada módulo sigue el patrón SOLID View/ViewModel con una clara separación de preocupaciones (separation of concerns). Puede modificar los módulos existentes, extenderlos con nuevas características o crear módulos completamente nuevos utilizando la herramienta de generación de estructura scripe-cli. El principio Abierto/Cerrado (Open/Closed) garantiza que pueda ampliar el comportamiento mediante composición sin modificar el framework central.",
       qDatabaseSupport:
-        "¿Cómo maneja NEXORA las migraciones de bases de datos en diferentes proveedores?",
+        "¿Cómo maneja SCRIPE las migraciones de bases de datos en diferentes proveedores?",
       aDatabaseSupport:
         "Cada proveedor de base de datos tiene su propia carpeta de migración dedicada administrada por EF Core. Al agregar o modificar entidades, genera migraciones específicas del proveedor que tienen en cuenta los tipos de datos y las restricciones de cada base de datos. La plataforma incluye utilidades de migración y la CLI puede generar migraciones para todos los proveedores configurados simultáneamente, lo que garantiza la coherencia en todos los entornos.",
       q7: "¿Qué opciones de licencia hay disponibles?",
-      a7: "NEXORA ofrece niveles de licencia flexibles diseñados para escalar con su organización. Las opciones incluyen una licencia Starter para equipos pequeños y proyectos individuales, una licencia Professional para empresas en crecimiento con funciones avanzadas y una licencia Enterprise con implementaciones ilimitadas, soporte prioritario y SLAs personalizados. Todas las licencias incluyen acceso completo al código fuente y el derecho a utilizar NEXORA en producción.",
+      a7: "SCRIPE ofrece niveles de licencia flexibles diseñados para escalar con su organización. Las opciones incluyen una licencia Starter para equipos pequeños y proyectos individuales, una licencia Professional para empresas en crecimiento con funciones avanzadas y una licencia Enterprise con implementaciones ilimitadas, soporte prioritario y SLAs personalizados. Todas las licencias incluyen acceso completo al código fuente y el derecho a utilizar SCRIPE en producción.",
       q8: "¿Existe un modelo de precios por asiento (per-seat) o por usuario?",
-      a8: "No. NEXORA utiliza un modelo de licencia por proyecto, no por asiento. Esto significa que su equipo de desarrollo y los usuarios finales son ilimitados. Usted paga por el nivel de licencia en función de las características y el nivel de soporte, no por la cantidad de desarrolladores o usuarios de la aplicación. Esto hace que NEXORA sea particularmente rentable para organizaciones con equipos grandes o recuentos altos de usuarios.",
-      q9: "¿Podemos utilizar NEXORA para varios proyectos de clientes?",
+      a8: "No. SCRIPE utiliza un modelo de licencia por proyecto, no por asiento. Esto significa que su equipo de desarrollo y los usuarios finales son ilimitados. Usted paga por el nivel de licencia en función de las características y el nivel de soporte, no por la cantidad de desarrolladores o usuarios de la aplicación. Esto hace que SCRIPE sea particularmente rentable para organizaciones con equipos grandes o recuentos altos de usuarios.",
+      q9: "¿Podemos utilizar SCRIPE para varios proyectos de clientes?",
       a9: "Esto depende de su nivel de licencia. La licencia Starter cubre un solo proyecto, mientras que las licencias Professional y Enterprise admiten múltiples implementaciones. El nivel Enterprise proporciona implementaciones de proyectos ilimitadas, por lo que es ideal para empresas de software (software houses) y firmas de consultoría que crean soluciones para múltiples clientes. Cada despliegue se puede personalizar de forma independiente.",
       qTrialPeriod: "¿Existe un período de prueba o evaluación?",
       aTrialPeriod:
-        "Sí. NEXORA ofrece un período de evaluación de 30 días con acceso completo a las funciones, la documentación y el soporte de la comunidad de la plataforma. Durante la prueba, puede crear una prueba de concepto (PoC), explorar la arquitectura y evaluar si NEXORA se adapta a sus requisitos técnicos. No se requiere tarjeta de crédito para iniciar la evaluación.",
+        "Sí. SCRIPE ofrece un período de evaluación de 30 días con acceso completo a las funciones, la documentación y el soporte de la comunidad de la plataforma. Durante la prueba, puede crear una prueba de concepto (PoC), explorar la arquitectura y evaluar si SCRIPE se adapta a sus requisitos técnicos. No se requiere tarjeta de crédito para iniciar la evaluación.",
       qUpgradePath: "¿Cuál es la vía de actualización entre los niveles de licencia?",
       aUpgradePath:
         "Puede actualizar su nivel de licencia en cualquier momento pagando la diferencia entre su nivel actual y el nuevo. Las actualizaciones son inmediatas: recibirá acceso a funciones adicionales, canales de soporte y derechos de implementación tan pronto como se procese la actualización. No hay penalizaciones ni períodos de bloqueo (lock-in). Las rebajas (downgrades) se gestionan en el momento de la renovación.",
-      qDataResidency: "¿Cómo maneja NEXORA los requisitos de residencia de datos?",
+      qDataResidency: "¿Cómo maneja SCRIPE los requisitos de residencia de datos?",
       aDataResidency:
-        "NEXORA es autohospedado (self-hosted), lo que significa que usted tiene el control total sobre dónde residen sus datos. Despliegue en su propia infraestructura: en las instalaciones (on-premises), en su región de nube preferida (AWS, Azure, GCP) o en un centro de datos privado. El sistema multitenencia admite la configuración por inquilino, por lo que puede incluso alojar diferentes inquilinos en diferentes regiones para cumplir con GDPR, HIPAA o las regulaciones locales de soberanía de datos.",
-      qAuditLogs: "¿Qué capacidades de auditoría proporciona NEXORA?",
+        "SCRIPE es autohospedado (self-hosted), lo que significa que usted tiene el control total sobre dónde residen sus datos. Despliegue en su propia infraestructura: en las instalaciones (on-premises), en su región de nube preferida (AWS, Azure, GCP) o en un centro de datos privado. El sistema multitenencia admite la configuración por inquilino, por lo que puede incluso alojar diferentes inquilinos en diferentes regiones para cumplir con GDPR, HIPAA o las regulaciones locales de soberanía de datos.",
+      qAuditLogs: "¿Qué capacidades de auditoría proporciona SCRIPE?",
       aAuditLogs:
-        "NEXORA captura eventos de auditoría desde 4 fuentes: registros de solicitudes HTTP (cada llamada de API con tiempos y códigos de respuesta), seguimiento de cambios de entidades (quién cambió qué, cuándo, con instantáneas del antes/después), eventos de seguridad (intentos de inicio de sesión, cambios de contraseña, modificaciones de permisos) y registros de operaciones comerciales. Todos los datos de auditoría se pueden transmitir en tiempo real a través de SignalR, exportar a CSV/Excel y admiten políticas de retención configurables.",
-      qSSOIntegration: "¿Es compatible NEXORA con SSO y proveedores de identidad externos?",
+        "SCRIPE captura eventos de auditoría desde 4 fuentes: registros de solicitudes HTTP (cada llamada de API con tiempos y códigos de respuesta), seguimiento de cambios de entidades (quién cambió qué, cuándo, con instantáneas del antes/después), eventos de seguridad (intentos de inicio de sesión, cambios de contraseña, modificaciones de permisos) y registros de operaciones comerciales. Todos los datos de auditoría se pueden transmitir en tiempo real a través de SignalR, exportar a CSV/Excel y admiten políticas de retención configurables.",
+      qSSOIntegration: "¿Es compatible SCRIPE con SSO y proveedores de identidad externos?",
       aSSOIntegration:
-        "NEXORA incluye un sistema de autenticación basado en JWT integrado con soporte para autenticación de dos factores (2FA), gestión de sesiones y políticas de contraseñas configurables. La arquitectura está diseñada para integrarse con proveedores de identidad externos (OAuth2, OIDC, SAML) a través de middleware de autenticación estándar de ASP.NET Core. Los clientes Enterprise también pueden integrarse con Active Directory, Azure AD u Okta para el inicio de sesión único (SSO).",
-      qUpdateFrequency: "¿Con qué frecuencia se actualiza NEXORA?",
+        "SCRIPE incluye un sistema de autenticación basado en JWT integrado con soporte para autenticación de dos factores (2FA), gestión de sesiones y políticas de contraseñas configurables. La arquitectura está diseñada para integrarse con proveedores de identidad externos (OAuth2, OIDC, SAML) a través de middleware de autenticación estándar de ASP.NET Core. Los clientes Enterprise también pueden integrarse con Active Directory, Azure AD u Okta para el inicio de sesión único (SSO).",
+      qUpdateFrequency: "¿Con qué frecuencia se actualiza SCRIPE?",
       aUpdateFrequency:
-        "NEXORA sigue una cadencia de lanzamiento regular con actualizaciones menores cada 2 a 4 semanas y versiones mayores alineadas con los ciclos de versiones de .NET y Next.js. Cada versión incluye registros de cambios detallados (changelogs), guías de migración y notas de retrocompatibilidad. Los parches de seguridad se publican según sea necesario, normalmente en un plazo de 48 horas tras la divulgación de la vulnerabilidad. Los clientes de Enterprise reciben acceso anticipado a los candidatos de lanzamiento (release candidates).",
-      qBreakingChanges: "¿Cómo maneja NEXORA los cambios importantes (breaking changes)?",
+        "SCRIPE sigue una cadencia de lanzamiento regular con actualizaciones menores cada 2 a 4 semanas y versiones mayores alineadas con los ciclos de versiones de .NET y Next.js. Cada versión incluye registros de cambios detallados (changelogs), guías de migración y notas de retrocompatibilidad. Los parches de seguridad se publican según sea necesario, normalmente en un plazo de 48 horas tras la divulgación de la vulnerabilidad. Los clientes de Enterprise reciben acceso anticipado a los candidatos de lanzamiento (release candidates).",
+      qBreakingChanges: "¿Cómo maneja SCRIPE los cambios importantes (breaking changes)?",
       aBreakingChanges:
-        "Los cambios importantes se minimizan mediante la adherencia de NEXORA al principio Abierto/Cerrado (Open/Closed): las nuevas características se agregan mediante extensión, no mediante modificación. Cuando los cambios importantes son inevitables (como en las actualizaciones principales de frameworks), se documentan claramente con guías de migración paso a paso, scripts de migración automatizados cuando sea posible y un período de obsolescencia (deprecation) de al menos un ciclo de versión principal. Los clientes Enterprise reciben asistencia dedicada para la migración.",
+        "Los cambios importantes se minimizan mediante la adherencia de SCRIPE al principio Abierto/Cerrado (Open/Closed): las nuevas características se agregan mediante extensión, no mediante modificación. Cuando los cambios importantes son inevitables (como en las actualizaciones principales de frameworks), se documentan claramente con guías de migración paso a paso, scripts de migración automatizados cuando sea posible y un período de obsolescencia (deprecation) de al menos un ciclo de versión principal. Los clientes Enterprise reciben asistencia dedicada para la migración.",
       qMigrationHelp: "¿Podemos obtener ayuda para migrar desde un sistema existente?",
       aMigrationHelp:
-        "Sí. Los titulares de licencias Professional y Enterprise tienen acceso a servicios de consultoría de migración. El equipo de NEXORA puede ayudar con la planificación de la migración de datos, el mapeo de esquemas, los scripts ETL y las estrategias de transición en fases (phased cutover). Para migraciones complejas, hay soporte de ingeniería dedicado disponible para acelerar la transición y minimizar el tiempo de inactividad. Los recursos de la comunidad y las guías de migración también están disponibles para migraciones de autoservicio.",
+        "Sí. Los titulares de licencias Professional y Enterprise tienen acceso a servicios de consultoría de migración. El equipo de SCRIPE puede ayudar con la planificación de la migración de datos, el mapeo de esquemas, los scripts ETL y las estrategias de transición en fases (phased cutover). Para migraciones complejas, hay soporte de ingeniería dedicado disponible para acelerar la transición y minimizar el tiempo de inactividad. Los recursos de la comunidad y las guías de migración también están disponibles para migraciones de autoservicio.",
       contactNote:
-        "¿Tiene alguna pregunta que no esté cubierta aquí? Póngase en contacto con nuestro equipo en support@nexora.dev o únase a la comunidad de Discord para obtener asistencia en tiempo real.",
-      description: "Preguntas frecuentes sobre NEXORA.",
+        "¿Tiene alguna pregunta que no esté cubierta aquí? Póngase en contacto con nuestro equipo en support@scripe.dev o únase a la comunidad de Discord para obtener asistencia en tiempo real.",
+      description: "Preguntas frecuentes sobre SCRIPE.",
       generalTitle: "General",
       intro:
-        "Respuestas a las preguntas más frecuentes sobre la arquitectura, las licencias, el despliegue y las capacidades de NEXORA.",
+        "Respuestas a las preguntas más frecuentes sobre la arquitectura, las licencias, el despliegue y las capacidades de SCRIPE.",
       licensingTitle: "Licenciamiento",
       securityTitle: "Seguridad",
       supportTitle: "Soporte",

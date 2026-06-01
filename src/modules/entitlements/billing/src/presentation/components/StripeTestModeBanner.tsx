@@ -2,7 +2,7 @@
  * StripeTestModeBanner (E-07)
  *
  * A prominent banner displayed when the platform is using Stripe test keys.
- * Uses @core/ui components exclusively per NEXORA UI rules.
+ * Uses @core/ui components exclusively per SCRIPE UI rules.
  *
  * Detection: reads NEXT_PUBLIC_STRIPE_TEST_MODE env var.
  * Set to "true" in development/staging, omit or "false" in production.

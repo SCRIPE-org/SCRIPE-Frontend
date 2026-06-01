@@ -7,7 +7,7 @@ const EditionOverviewView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edition Overview | NEXORA",
+  title: "Edition Overview | SCRIPE",
   description: "View the complete configuration of this subscription edition",
 };
 

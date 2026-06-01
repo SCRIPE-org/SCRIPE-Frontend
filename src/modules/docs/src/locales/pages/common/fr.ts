@@ -59,7 +59,7 @@ export const fr = {
     security: "Sécurité",
     apiReference: "Référence API",
     infrastructure: "Infrastructure",
-    commercialWhyNexora: "Pourquoi NEXORA",
+    commercialWhyScripe: "Pourquoi SCRIPE",
     commercialPlatform: "Aperçu de la Plateforme",
     commercialEnterprise: "Fonctionnalités Enterprise",
     commercialSecurity: "Sécurité & Conformité",

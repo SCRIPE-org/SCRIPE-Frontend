@@ -34,7 +34,7 @@ export const zh = {
     stateManagement: {
       title: "前端状态管理 (State Management)",
       description: "应用 TanStack Query, Zustand 以及局部 useState 的正确边界。",
-      intro: "NEXORA 将前端状态剥离为 3 种完全独立的库以确保最高性能及杜绝数据混乱。",
+      intro: "SCRIPE 将前端状态剥离为 3 种完全独立的库以确保最高性能及杜绝数据混乱。",
       categoriesTitle: "状态分类",
       tanstackTitle: "TanStack Query (服务端状态)",
       tanstackIntro: "绝对禁止将 API 返回的数据存入全局状态。由 TanStack Query 专职缓存并同步。",
@@ -48,7 +48,7 @@ export const zh = {
     localization: {
       title: "本地化 (i18n)",
       description: "LanguageProvider, t() 函数, RTL 自动化与翻译词典架构。",
-      intro: "NEXORA 实现了一套基于 React Context 的极速本地化方案，无需路由干预。",
+      intro: "SCRIPE 实现了一套基于 React Context 的极速本地化方案，无需路由干预。",
       architectureTitle: "系统架构",
       dictionaryTitle: "词典文件结构",
       tFunctionTitle: "使用 t() 函数进行多语言读取",
@@ -64,7 +64,7 @@ export const zh = {
       noLocaleRoutes:
         "为了极致的 SSR (服务端渲染) 性能，我们没有采用基于文件夹的区域路由 ([locale]) 方案。",
       moduleLocaleNote:
-        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
+        "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "表单验证",
@@ -102,7 +102,7 @@ export const zh = {
     realtime: {
       title: "实时通信 (SignalR)",
       description: "后端 Hub 定义、前端 React Hooks 以及租户安全分组隔离。",
-      intro: "NEXORA 使用 SignalR 建立双向 WebSocket 长连接，实现事件主动下发以取代 HTTP 轮询。",
+      intro: "SCRIPE 使用 SignalR 建立双向 WebSocket 长连接，实现事件主动下发以取代 HTTP 轮询。",
       architectureTitle: "实时系统架构",
       hubsTitle: "后端的 SignalR Hubs",
       hooksTitle: "前端连接的 React Hooks",

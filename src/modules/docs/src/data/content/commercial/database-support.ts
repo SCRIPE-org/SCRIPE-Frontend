@@ -34,7 +34,7 @@ const sections: DocSection[] = [
 {
   "DatabaseSettings": {
     "DBProvider": "postgresql",        // or "mssql", "oracle", "sqlite"
-    "ConnectionString": "Host=localhost;Database=nexora;Username=admin;Password=..."
+    "ConnectionString": "Host=localhost;Database=scripe;Username=admin;Password=..."
   }
 }
 

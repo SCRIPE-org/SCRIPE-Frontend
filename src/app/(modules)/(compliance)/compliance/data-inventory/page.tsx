@@ -7,7 +7,7 @@ const InventoryView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Data Inventory | NEXORA",
+  title: "Data Inventory | SCRIPE",
   description:
     "View data inventory — browse all tracked personal data fields, legal bases, and export/anonymization configurations",
 };

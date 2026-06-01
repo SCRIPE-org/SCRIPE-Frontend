@@ -9,7 +9,7 @@ const TenantFeatureDefinitionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Feature Definitions | NEXORA",
+  title: "Feature Definitions | SCRIPE",
   description: "Manage the catalog of feature definitions available for tenant plans",
 };
 

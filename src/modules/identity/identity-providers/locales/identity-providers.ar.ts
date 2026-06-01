@@ -29,7 +29,7 @@ export const ar = {
     scopesHelp: "قائمة نطاقات OIDC مفصولة بمسافات",
     redirectUri: "رابط إعادة التوجيه",
     redirectUriPlaceholder: "يتم توليده تلقائياً إذا ترك فارغاً",
-    redirectUriHelp: "اتركه فارغاً لاستخدام رابط إعادة التوجيه الافتراضي لـ NEXORA",
+    redirectUriHelp: "اتركه فارغاً لاستخدام رابط إعادة التوجيه الافتراضي لـ SCRIPE",
     enabledForAdmins: "تفعيل للمشرفين",
     enabledForAdminsHelp: "السماح للمشرفين بتسجيل الدخول عبر هذا الموفر",
     enabledForUsers: "تفعيل للمستخدمين",
@@ -59,9 +59,9 @@ export const ar = {
     accessSection: "التحكم بالوصول",
     accessSectionDesc: "التحكم بمن يستطيع استخدام هذا الموفر لتسجيل الدخول",
     claimMappingsSection: "ربط المطالبات",
-    claimMappingsSectionDesc: "ربط المطالبات الخارجية بسمات مستخدمي NEXORA (أزواج مفتاح/قيمة JSON)",
+    claimMappingsSectionDesc: "ربط المطالبات الخارجية بسمات مستخدمي SCRIPE (أزواج مفتاح/قيمة JSON)",
     claimMappingsHelp:
-      "تربط مطالبات موفر الهوية الخارجي بسمات NEXORA الداخلية. المفاتيح هي حقول NEXORA، والقيم هي معرّفات مطالبات الموفر.",
+      "تربط مطالبات موفر الهوية الخارجي بسمات SCRIPE الداخلية. المفاتيح هي حقول SCRIPE، والقيم هي معرّفات مطالبات الموفر.",
     invalidJson: "صيغة JSON غير صالحة",
     // الإجراءات
     test: "اختبار",

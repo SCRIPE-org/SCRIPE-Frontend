@@ -9,7 +9,7 @@ const ThemeManagementView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Theme Management | NEXORA",
+  title: "Theme Management | SCRIPE",
   description: "Manage, create, and organize login page themes for the marketplace",
 };
 

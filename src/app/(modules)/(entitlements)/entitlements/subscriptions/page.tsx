@@ -9,7 +9,7 @@ const SubscriptionsOverviewView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Subscriptions Overview | NEXORA",
+  title: "Subscriptions Overview | SCRIPE",
   description: "View all active subscriptions across all tenants",
 };
 

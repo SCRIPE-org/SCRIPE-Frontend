@@ -7,7 +7,7 @@ const CrmDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "CRM | NEXORA",
+  title: "CRM | SCRIPE",
   description: "Customer Relationship Management",
 };
 

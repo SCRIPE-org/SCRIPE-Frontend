@@ -9,18 +9,18 @@ export const zh = {
       tblCoreR7C2: "基于版本的功能门控与计划管理",
       tblCoreR7C3: "功能、版本、订阅、覆盖、配额执行、版本化发布、经销商隔离",
       businessContent:
-        "NEXORA 不是一个空壳；它从第一天起就是一个运转中的企业生态系统。使用我们现有的业务模块（如用户管理、审计日志和通知）作为直接起点，或者克隆它们以快速构建专有功能。",
+        "SCRIPE 不是一个空壳；它从第一天起就是一个运转中的企业生态系统。使用我们现有的业务模块（如用户管理、审计日志和通知）作为直接起点，或者克隆它们以快速构建专有功能。",
       businessTitle: "加速的业务逻辑",
       commTitle: "通信与 Webhooks",
       coreContent:
-        "基础架构 (Foundation) 层提供绝对不可协商的基础设施：身份提供商、多租户解析策略、EF Core 上下文抽象以及集中式的 NEXORA mediator 调度器。它是您的整个应用程序得以扩展的坚如磐石的基石。",
+        "基础架构 (Foundation) 层提供绝对不可协商的基础设施：身份提供商、多租户解析策略、EF Core 上下文抽象以及集中式的 SCRIPE mediator 调度器。它是您的整个应用程序得以扩展的坚如磐石的基石。",
       coreTitle: "核心基石",
       crmModule: "Headless CRM 模块",
       crmModuleDesc: "通过完全由 API 驱动的 CRM 架构管理组织层级、客户关系和自定义属性。",
       customModule: "专有集成模块",
       customModuleDesc: "一个纯净的沙盒，利用完全相同的整洁架构边界来容纳您独特的行业逻辑。",
       dataTitle: "数据与审计",
-      description: "NEXORA 平台中包含的预构建、生产就绪的企业级限界上下文目录的全面汇总。",
+      description: "SCRIPE 平台中包含的预构建、生产就绪的企业级限界上下文目录的全面汇总。",
       financeModule: "开票与计费引擎",
       financeModuleDesc: "生成 PDF 发票，管理税收区域，并集成 Stripe 或自定义支付网关。",
       hrModule: "身份与访问管理 (IAM)",
@@ -29,7 +29,7 @@ export const zh = {
         "目录中的每个模块都严格隔离。通知模块与用户管理模块绝对不共享任何状态。它们纯粹通过异步事件进行通信，保证一个领域的灾难性故障绝不会级联到另一个领域。",
       independenceTitle: "加密级的模块隔离",
       intro:
-        "NEXORA 自带庞大的、经过预先测试的企业级限界上下文库。从第一天起，您就拥有了一款已有 5 年历史的 SaaS 应用程序的运维成熟度。",
+        "SCRIPE 自带庞大的、经过预先测试的企业级限界上下文库。从第一天起，您就拥有了一款已有 5 年历史的 SaaS 应用程序的运维成熟度。",
       inventoryModule: "资产跟踪模块",
       inventoryModuleDesc:
         "映射复杂的层级库存，并通过严格应用领域事件 (domain events) 跟踪状态变化。",

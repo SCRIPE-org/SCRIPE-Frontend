@@ -7,7 +7,7 @@ const HrmsEmployeesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "HRMS – Employees | NEXORA",
+  title: "HRMS – Employees | SCRIPE",
   description: "Employee management",
 };
 

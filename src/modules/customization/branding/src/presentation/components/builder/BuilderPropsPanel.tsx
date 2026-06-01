@@ -1466,7 +1466,7 @@ function ComponentSpecificProps({
             height={120}
             showPreview
             renderPreview={() => (
-              <div className="nexora-custom-html text-sm">
+              <div className="scripe-custom-html text-sm">
                 {(props.css as string) && (
                   <style dangerouslySetInnerHTML={{ __html: props.css as string }} />
                 )}

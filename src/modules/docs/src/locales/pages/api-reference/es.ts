@@ -24,7 +24,7 @@ export const es = {
     authApi: {
       title: "API de Autenticación (Admin)",
       description: "Login para Operadores, gestión 2FA, perfiles y bitácora criptográfica.",
-      intro: "El portal general para acceso al panel administrativo de la consola de NEXORA.",
+      intro: "El portal general para acceso al panel administrativo de la consola de SCRIPE.",
       configTitle: "Puntos de Operación (Base)",
       loginTitle: "Login (Ingreso)",
       loginDesc:
@@ -66,7 +66,7 @@ export const es = {
       description:
         "Login autoservicio (Self-Service) para las personas que consumen al inquilino, reseteo, OAuth y 2FA móvil.",
       intro:
-        "La entrada para los clientes o usuarios comunes externos al personal corporativo NEXORA.",
+        "La entrada para los clientes o usuarios comunes externos al personal corporativo SCRIPE.",
       configTitle: "Puntos de Operación (Base)",
       registerTitle: "Registro Autoservicio",
       registerDesc: "Darse de alta. Envía correo en automático tras almacenar contraseña cifrada.",
@@ -74,7 +74,7 @@ export const es = {
       loginDesc: "Expide la cadena JWT exclusiva para permisos y tokens de usuario común.",
       externalTitle: "OAuth Externos (SSO)",
       externalIntro:
-        "Derivaciones de Tokens a proveedores sociales. NEXORA validará que Apple o Google no emitan tokens falsos y los enlazará.",
+        "Derivaciones de Tokens a proveedores sociales. SCRIPE validará que Apple o Google no emitan tokens falsos y los enlazará.",
       externalLoginDesc: "Firma única, asocia a la cuenta un perfil social externo.",
       verificationTitle: "Activación (Correo y SMS)",
       verifyEmailDesc:
@@ -109,7 +109,7 @@ export const es = {
       description:
         "Operaciones de CRUD de personas, congelamiento, expulsiones masivas y la arquitectura de suplantación técnica.",
       intro:
-        "Motor de búsqueda, control y represión/ayuda a los operadores integrados a un Inquilino de NEXORA.",
+        "Motor de búsqueda, control y represión/ayuda a los operadores integrados a un Inquilino de SCRIPE.",
       crudTitle: "Comandos CRUD Directos",
       listDesc:
         "Motor de búsqueda con parámetros y proyecciones acotadas de todos los miembros del equipo.",
@@ -154,7 +154,7 @@ export const es = {
       description:
         "CRUD de empresas, gestión de configuraciones internas, límites numéricos y visibilidad del árbol de dependencias.",
       intro:
-        "La orquestación de la arquitectura NEXORA donde los inquilinos tienen a sus operarios bajo la sombrilla del tenant. Soporta sucursales anidadas al infinito.",
+        "La orquestación de la arquitectura SCRIPE donde los inquilinos tienen a sus operarios bajo la sombrilla del tenant. Soporta sucursales anidadas al infinito.",
       crudTitle: "Comandos CRUD del Inquilino",
       listDesc: "Busca con indexación todos los hijos y los lista al árbol en modo tabla general.",
       getByIdDesc: "Pide metadatos de cuotas y propiedades del inquilino objetivo.",
@@ -190,7 +190,7 @@ export const es = {
       description:
         "Generación de entidades de rol (Job Titles), incrustación destructiva de JSONs y el inventario sembrado del código fuente.",
       intro:
-        "NEXORA usa perfiles en lugar de permisos directos a las personas, las personas heredan el Perfil (Rol) atado al Inquilino, el cual lleva todas las llaves y candados.",
+        "SCRIPE usa perfiles en lugar de permisos directos a las personas, las personas heredan el Perfil (Rol) atado al Inquilino, el cual lleva todas las llaves y candados.",
       rolesCrudTitle: "Comandos CRUD del Rol (Job Title)",
       listRolesDesc: "Buscador de los Títulos de Trabajo dentro del Inquilino.",
       getRoleDesc:
@@ -282,7 +282,7 @@ export const es = {
         "No se interviene con la carga de la API, estas operaciones se meten a túneles asíncronos respaldados por colas de eventos (Hangfire).",
       webhooksTitle: "Suscripciones (Webhooks)",
       webhooksIntro:
-        "Tiras un evento, NEXORA tira un POST JSON con la información en bruto con firma HMAC al servidor de tu cliente para actualizar sus inventarios automáticos fuera de NEXORA.",
+        "Tiras un evento, SCRIPE tira un POST JSON con la información en bruto con firma HMAC al servidor de tu cliente para actualizar sus inventarios automáticos fuera de SCRIPE.",
       listWebhooksDesc: "Paginador estándar.",
       createWebhookDesc:
         "Crear suscripción de Webhook que emite el HASH Seed originario de seguridad.",
@@ -290,7 +290,7 @@ export const es = {
         "Alteración transitoria (poner en pausa / cambiar la URL objetivo de envío).",
       deleteWebhookDesc: "Matar suscripción (desvincula a tus sistemas externos de eventos).",
       testWebhookDesc:
-        "Validar ping entre tu servidor y NEXORA para descartar bloqueos de firewall antes de usarlo.",
+        "Validar ping entre tu servidor y SCRIPE para descartar bloqueos de firewall antes de usarlo.",
       emailTitle: "Motor de Email Centralizado",
       emailIntro:
         "Canalizado con protección de repetición y reintentos (SMTP Protocol) blindado con encolador. Cero atascos en el cliente Frontend Web que generó la llamada.",
@@ -390,7 +390,7 @@ export const es = {
       deleteFileDesc: "Matar un documento del disco y la tabla.",
       settingsTitle: "Inyección al Core de Parámetros Generales. (Global Settings)",
       getSettingsDesc:
-        "Lo que usa toda la maquinaria del Nexora. El token Master que el sistema trae del Redis o la DB en milisegundos al levantar.",
+        "Lo que usa toda la maquinaria del Scripe. El token Master que el sistema trae del Redis o la DB en milisegundos al levantar.",
       updateSettingsDesc:
         "Sobreescritura en caliente. Un Save apaga configuraciones globales al segundo.",
       resetSettingsDesc:

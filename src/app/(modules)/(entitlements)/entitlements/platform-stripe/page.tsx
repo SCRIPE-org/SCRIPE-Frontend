@@ -9,7 +9,7 @@ const PlatformStripeDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Platform Stripe | NEXORA",
+  title: "Platform Stripe | SCRIPE",
   description: "View your platform Stripe account details, balances, transactions, and payouts",
 };
 

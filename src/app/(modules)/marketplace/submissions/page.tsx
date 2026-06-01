@@ -7,7 +7,7 @@ const SubmissionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Submissions | Marketplace | NEXORA",
+  title: "Submissions | Marketplace | SCRIPE",
   description: "Review and approve app submissions from developers.",
 };
 

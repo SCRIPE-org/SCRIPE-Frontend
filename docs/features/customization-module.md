@@ -8,7 +8,7 @@
 
 The Login Customizer Studio (`/system/customization`) is a visual design tool that lets tenant admins customize their login page through a split-pane editor with live preview.
 
-**Architecture**: Domain-driven modular design following the NEXORA clean architecture pattern:
+**Architecture**: Domain-driven modular design following the SCRIPE clean architecture pattern:
 
 ```
 customization/

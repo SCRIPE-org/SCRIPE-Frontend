@@ -91,12 +91,12 @@ const sections: DocSection[] = [
     "AllowedExtensions": [".pdf", ".docx", ".png", ".jpg", ".xlsx"],
     "Azure": {
       "ConnectionString": "DefaultEndpointsProtocol=https;...",
-      "ContainerName": "nexora-files"
+      "ContainerName": "scripe-files"
     },
     "S3": {
       "AccessKey": "...",
       "SecretKey": "...",
-      "BucketName": "nexora-files",
+      "BucketName": "scripe-files",
       "Region": "us-east-1"
     }
   }

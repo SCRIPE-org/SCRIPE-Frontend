@@ -9,10 +9,10 @@ export const zh = {
       description:
         "一个完整的企业级权益引擎，通过版本、订阅和基于租户的功能控制，将您的平台转化为具有差异化竞争力的 SaaS 产品。",
       intro:
-        "停止在代码库中硬编码计划检查。NEXORA 的权益模块提供了一个全栈式的、API 级别的功能门控 (feature gating) 引擎。它基于租户订阅的版本、活动中的自定义覆盖以及实时的配额计数器，自动强制执行每个租户能做和不能做的事情。",
+        "停止在代码库中硬编码计划检查。SCRIPE 的权益模块提供了一个全栈式的、API 级别的功能门控 (feature gating) 引擎。它基于租户订阅的版本、活动中的自定义覆盖以及实时的配额计数器，自动强制执行每个租户能做和不能做的事情。",
       whyTitle: "为什么选择内置的权益系统？",
       whyContent:
-        "大多数 SaaS 平台只是将功能开关 (feature flags) 作为事后的补救措施。NEXORA 通过 IRequireFeature 接口将权益直接集成到 CQRS 管道中，这意味着您可以自动对每个命令进行门控保护，而无需编写任何一行自定义中间件代码。",
+        "大多数 SaaS 平台只是将功能开关 (feature flags) 作为事后的补救措施。SCRIPE 通过 IRequireFeature 接口将权益直接集成到 CQRS 管道中，这意味着您可以自动对每个命令进行门控保护，而无需编写任何一行自定义中间件代码。",
       fgEditions: "版本 (计划)",
       fgEditionsDesc: "命名的功能包，如基础版、专业版、企业版，用于定义每个计划包含的内容。",
       fgSubscriptions: "订阅生命周期",
@@ -48,8 +48,8 @@ export const zh = {
       tblResR4C3: "没有其他数据源适用时的后备选项 (Fallback)",
       valueTitle: "商业价值",
       tblValH1: "面临挑战",
-      tblValH2: "没有 NEXORA",
-      tblValH3: "使用 NEXORA 权益模块",
+      tblValH2: "没有 SCRIPE",
+      tblValH3: "使用 SCRIPE 权益模块",
       tblValR1C1: "计划差异化",
       tblValR1C2: "硬编码的 if/else 检查散布在代码各处",
       tblValR1C3: "每个版本的自动化管道级别门控",
@@ -65,11 +65,11 @@ export const zh = {
       tblValR5C1: "功能发布",
       tblValR5C2: "大规模部署会危及所有租户",
       tblValR5C3: "灰度发布 (Canary) 和计划发布策略",
-      tip: "权益模块已完全集成到 NEXORA mediator 管道中。实现了 IRequireFeature 的命令将被自动进行门控检查 —— 您的业务逻辑将保持纯粹和聚焦。",
+      tip: "权益模块已完全集成到 SCRIPE mediator 管道中。实现了 IRequireFeature 的命令将被自动进行门控检查 —— 您的业务逻辑将保持纯粹和聚焦。",
     },
     entEditions: {
       title: "版本与计划 (Editions & Plans)",
-      description: "使用 NEXORA 强大的版本引擎来定义、管理和版本化您的 SaaS 产品计划。",
+      description: "使用 SCRIPE 强大的版本引擎来定义、管理和版本化您的 SaaS 产品计划。",
       intro:
         "版本是您的 SaaS 定价策略的构建块。每个版本将特定的一组功能值（布尔开关、数字限制、字符串配置）捆绑到一个命名的计划中，该计划可以通过订阅分配给租户。",
       whatTitle: "什么是版本 (Editions)？",
@@ -117,7 +117,7 @@ export const zh = {
       description:
         "租户订阅的完整生命周期管理，提供多币种定价、促销折扣、升级/降级影响分析、试用机制、过期处理以及全面的分析导出。",
       intro:
-        "订阅是租户和版本之间的桥梁。它们定义了租户当前所在的计划、开始和过期时间，以及订阅生命周期发生变化时系统应如何表现。凭借内置的多币种定价和促销折扣跟踪，NEXORA 提供了货币化所需的一切。",
+        "订阅是租户和版本之间的桥梁。它们定义了租户当前所在的计划、开始和过期时间，以及订阅生命周期发生变化时系统应如何表现。凭借内置的多币种定价和促销折扣跟踪，SCRIPE 提供了货币化所需的一切。",
       lifecycleTitle: "订阅生命周期",
       lifecycleContent:
         "每个订阅都遵循一个明确定义的状态机。系统会自动强制执行有效的状态转换，并在每个阶段发出领域事件，以用于审计和集成目的。",

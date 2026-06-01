@@ -385,7 +385,7 @@ const sections: DocSection[] = [
       {
         titleKey: "modules.plugins.overview.step1Title",
         contentKey: "modules.plugins.overview.step1Content",
-        code: "nexora db add-migration Initial -m Plugins\nnexora db update -m Plugins",
+        code: "scripe db add-migration Initial -m Plugins\nscripe db update -m Plugins",
         codeLanguage: "bash",
       },
       {

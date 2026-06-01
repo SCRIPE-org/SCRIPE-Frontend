@@ -8,7 +8,7 @@ export const ar = {
     loginError: "خطأ في اسم المستخدم أو كلمة المرور",
     loginSuccess: "تم تسجيل الدخول بنجاح",
     loginFailed: "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
-    welcome: "NEXORA",
+    welcome: "SCRIPE",
     pleaseLogin: "يرجى تسجيل الدخول للمتابعة",
     usernamePlaceholder: "name@company.com أو اسم المستخدم",
     connectionError: "خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى.",

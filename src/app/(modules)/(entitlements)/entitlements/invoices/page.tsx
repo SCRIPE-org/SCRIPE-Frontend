@@ -7,7 +7,7 @@ const InvoiceListView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Invoices | NEXORA",
+  title: "Invoices | SCRIPE",
   description: "View and manage billing invoices",
 };
 

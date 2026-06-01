@@ -7,15 +7,15 @@ export const de = {
     cliTooling: {
       commandsTitle: "Generatives Lexikon",
       customizeContent:
-        "NEXORA lehnt starre Generierungsbeschränkungen kategorisch ab. Das gesamte interne Schema wird durch 66 tiefgreifend konfigurierbare Handlebars-Vorlagen angetrieben, sodass Ihre Chefarchitekten das Rendering-Verhalten auf granularer Ebene überschreiben können. Jedes generierte Byte steht vollständig unter Ihrer Kontrolle.",
+        "SCRIPE lehnt starre Generierungsbeschränkungen kategorisch ab. Das gesamte interne Schema wird durch 66 tiefgreifend konfigurierbare Handlebars-Vorlagen angetrieben, sodass Ihre Chefarchitekten das Rendering-Verhalten auf granularer Ebene überschreiben können. Jedes generierte Byte steht vollständig unter Ihrer Kontrolle.",
       customizeTitle: "Uneingeschränkte Vorlagenerweiterbarkeit",
       description:
-        "Steigern Sie den Engineering-Durchsatz um eine Größenordnung. Die proprietäre NEXORA-CLI beseitigt architektonische Reibungsverluste, indem sie bei Bedarf deterministisch fehlerfreie Clean-Architecture-Topologien generiert.",
+        "Steigern Sie den Engineering-Durchsatz um eine Größenordnung. Die proprietäre SCRIPE-CLI beseitigt architektonische Reibungsverluste, indem sie bei Bedarf deterministisch fehlerfreie Clean-Architecture-Topologien generiert.",
       generatedTitle: "Nachweisbare architektonische Perfektion",
       intro:
-        "NEXORA ist nicht nur ein Anwendungs-Framework, es ist ein Entwickler-Multiplikator im industriellen Maßstab. Unsere maßgeschneiderte, plattformübergreifende CLI schafft Boilerplate dauerhaft ab. Durch die sofortige Verknüpfung komplexer mehrschichtiger Abhängigkeiten können Ihre Ingenieure sofort von lästiger Vorarbeit zur aggressiven Bereitstellung von Domain-Features übergehen.",
+        "SCRIPE ist nicht nur ein Anwendungs-Framework, es ist ein Entwickler-Multiplikator im industriellen Maßstab. Unsere maßgeschneiderte, plattformübergreifende CLI schafft Boilerplate dauerhaft ab. Durch die sofortige Verknüpfung komplexer mehrschichtiger Abhängigkeiten können Ihre Ingenieure sofort von lästiger Vorarbeit zur aggressiven Bereitstellung von Domain-Features übergehen.",
       scaffoldContent:
-        "Beseitigen Sie architektonischen Verfall an der Quelle. Die NEXORA-CLI führt deterministisch komplexe Full-Stack-Scaffolding-Operationen durch – vom Kompilieren isolierter Entity Framework-Aggregate bis hin zu akribisch typisierten Next.js Zustand-Stores – in absoluter physischer Übereinstimmung mit strengen Clean-Architecture-Designprinzipien.",
+        "Beseitigen Sie architektonischen Verfall an der Quelle. Die SCRIPE-CLI führt deterministisch komplexe Full-Stack-Scaffolding-Operationen durch – vom Kompilieren isolierter Entity Framework-Aggregate bis hin zu akribisch typisierten Next.js Zustand-Stores – in absoluter physischer Übereinstimmung mit strengen Clean-Architecture-Designprinzipien.",
       scaffoldTitle: "Die deterministische Scaffolding-Engine",
       title: "Hochleistungsfähiges deterministisches Tooling",
       descMod: "Erstellen Sie sofort einen gesamten End-to-End Bounded Context.",
@@ -45,7 +45,7 @@ export const de = {
       layerRoute: "Verbindendes Routing",
       layerRouteFiles: "1 Einstiegspunkt",
       layerRouteIncs: "Next.js App Router-Layout und dynamischer Datenkonnektor.",
-      itemConfig: "Granulare Kontrolle über strenge nexora.config.json-Schemata.",
+      itemConfig: "Granulare Kontrolle über strenge scripe.config.json-Schemata.",
       itemArch:
         "Erzwingt mathematisch Clean Architecture und eliminiert physisch architektonischen Drift.",
       itemHbs: "66 unabhängige Handlebars-Dateien diktieren exakte syntaktische Layouts.",
@@ -78,21 +78,21 @@ export const de = {
       environmentsTitle: "Umgebungsparität",
       hostingTitle: "Agnostisches Hosting",
       intro:
-        "NEXORA eliminiert das 'works on my machine'-Syndrom. Vom ersten Tag an erhalten Sie CI/CD-Pipeline-Definitionen auf Enterprise-Niveau, die Tests, Containerisierung und Bereitstellung auf AWS, Azure, GCP oder Bare-Metal automatisieren.",
+        "SCRIPE eliminiert das 'works on my machine'-Syndrom. Vom ersten Tag an erhalten Sie CI/CD-Pipeline-Definitionen auf Enterprise-Niveau, die Tests, Containerisierung und Bereitstellung auf AWS, Azure, GCP oder Bare-Metal automatisieren.",
       title: "CI/CD & DevOps-Automatisierung",
       workflowTitle: "Automatisierte Workflows",
     },
     documentationTraining: {
       custom: "Maßgeschneidertes Consulting",
       customDesc:
-        "Beauftragen Sie das NEXORA-Kernarchitekturteam für tiefgreifende architektonische Überprüfungen, benutzerdefinierte Modulentwicklung und hochverfügbares Systemdesign.",
+        "Beauftragen Sie das SCRIPE-Kernarchitekturteam für tiefgreifende architektonische Überprüfungen, benutzerdefinierte Modulentwicklung und hochverfügbares Systemdesign.",
       description:
         "Umfassende architektonische Blaupausen, interaktive Tutorials und eingebettete Schulungspfade.",
       docsContent:
         "Unsere Dokumentationsseite ist nicht nur eine API-Referenz. Sie bietet Deep-Dives in die Theorie der Clean Architecture, CQRS-Muster und Schritt-für-Schritt-Anleitungen zur Erweiterung der Plattform. Jede architektonische Entscheidung wird durch ein öffentlich zugängliches Decision Record (ADR) gestützt.",
       docsTitle: "Die Architektur-Bibel",
       intro:
-        "Adoptionsgeschwindigkeit definiert den ROI. NEXORA bietet eine erstklassige Dokumentation, sofort umsetzbare Tutorials und strukturierte Schulungspfade, die darauf ausgelegt sind, Junior-Entwickler in einem Bruchteil der Zeit zu Enterprise-Architekten zu machen.",
+        "Adoptionsgeschwindigkeit definiert den ROI. SCRIPE bietet eine erstklassige Dokumentation, sofort umsetzbare Tutorials und strukturierte Schulungspfade, die darauf ausgelegt sind, Junior-Entwickler in einem Bruchteil der Zeit zu Enterprise-Architekten zu machen.",
       kbContent:
         "Erkunden Sie Tausende von kategorisierten Knowledge-Base-Artikeln, die von der Konfiguration der Invalidierung verteilter Caches bis zum Schreiben komplexer Integrationstests mit Testcontainers alles abdecken.",
       kbTitle: "Umfangreiche Knowledge Base",
@@ -117,7 +117,7 @@ export const de = {
       onboardingTitle: "Strukturierte Onboarding-Beschleuniger",
       selfPaced: "Zertifizierung im eigenen Tempo",
       selfPacedDesc:
-        "Zertifizieren Sie Ihre Teammitglieder als NEXORA-Architekten über unser umfassendes Online-Learning-Management-System.",
+        "Zertifizieren Sie Ihre Teammitglieder als SCRIPE-Architekten über unser umfassendes Online-Learning-Management-System.",
       title: "Dokumentation & technisches Training",
       tracksTitle: "Pfade für die Entwicklerkompetenz",
       trainingTitle: "Enterprise-Trainingsseminare",
@@ -127,7 +127,7 @@ export const de = {
       credentialsWarning:
         "Wichtig: Committen Sie niemals sensible Connection Strings oder JWT-Geheimnisse in die Versionskontrolle. Verwenden Sie für Produktions-Deployments immer Azure Key Vault, AWS Secrets Manager oder HashiCorp Vault.",
       description:
-        "Vom Clone zur Produktion. Die ultimative Schritt-für-Schritt-Meisterklasse zur Bereitstellung der architektonischen NEXORA-Grundlage.",
+        "Vom Clone zur Produktion. Die ultimative Schritt-für-Schritt-Meisterklasse zur Bereitstellung der architektonischen SCRIPE-Grundlage.",
       firstModuleTitle: "Scaffolding Ihres ersten Bounded Context",
       intro:
         "Time-to-Value ist die einzige Metrik, die zählt. Dieser umfassende Leitfaden beschleunigt Ihr Engineering-Team vom Pull des Repositories bis zur erfolgreichen Ausführung ihres ersten authentifizierten API-Aufrufs gegen eine vollständig gefüllte Datenbank in unter 15 Minuten.",
@@ -138,7 +138,7 @@ export const de = {
         "Stellen Sie sicher, dass das .NET 9 SDK, Node.js 20+ und Ihre bevorzugte Docker-Engine installiert und global auf Ihrem Entwicklungsrechner zugänglich sind.",
       step1Title: "1. Verifizierung der Toolchain",
       step2Content:
-        "Führen Sie das proprietäre NEXORA-Initialisierungsskript aus. Dies stellt automatisch lokale Entwicklungszertifikate bereit, führt anfängliche EF Core-Migrationen aus und generiert den Root-SuperAdmin-Mandanten.",
+        "Führen Sie das proprietäre SCRIPE-Initialisierungsskript aus. Dies stellt automatisch lokale Entwicklungszertifikate bereit, führt anfängliche EF Core-Migrationen aus und generiert den Root-SuperAdmin-Mandanten.",
       step2Title: "2. Automatisiertes Bootstrapping",
       step3Content:
         "Starten Sie die Backend-API und das Next.js-Frontend gleichzeitig mit der bereitgestellten Docker Compose-Topologie oder nativen IDE-Startprofilen.",
@@ -147,7 +147,7 @@ export const de = {
         "Authentifizieren Sie sich gegen die Swagger UI oder die Postman-Collection mit den generierten SuperAdmin-Anmeldeinformationen, um Ihr erstes JWT zu erwerben.",
       step4Title: "4. Kryptographische Authentifizierung",
       step5Content:
-        "Nutzen Sie die NEXORA CLI, um sofort Ihr erstes benutzerdefiniertes Geschäftsmodul zu generieren und so die Kernarchitektur nahtlos zu erweitern.",
+        "Nutzen Sie die SCRIPE CLI, um sofort Ihr erstes benutzerdefiniertes Geschäftsmodul zu generieren und so die Kernarchitektur nahtlos zu erweitern.",
       step5Title: "5. Modul-Generierung",
       structureTitle: "Lösungs-Topographie (Solution Topography)",
       title: "Enterprise Deployment Guide",
@@ -175,7 +175,7 @@ export const de = {
       tblCredHeader1: "Feld",
       tblCredHeader2: "Wert",
       tblCredR1C1: "Admin E-Mail",
-      tblCredR1C2: "admin@nexora.io",
+      tblCredR1C2: "admin@scripe.com",
       tblCredR2C1: "Passwort",
       tblCredR2C2: "P@ssw0rd",
       tblCredR3C1: "Standard-Mandant",
@@ -195,13 +195,13 @@ export const de = {
     },
     systemRequirements: {
       cloudTip:
-        "Tipp für die Cloud-Migration: NEXORA ist vollständig Cloud-agnostisch. Stellen Sie auf AWS ECS, Azure App Services oder Google Kubernetes Engine (GKE) bereit, indem Sie unsere bereitgestellten Infrastructure-as-Code (IaC) Vorlagen verwenden.",
+        "Tipp für die Cloud-Migration: SCRIPE ist vollständig Cloud-agnostisch. Stellen Sie auf AWS ECS, Azure App Services oder Google Kubernetes Engine (GKE) bereit, indem Sie unsere bereitgestellten Infrastructure-as-Code (IaC) Vorlagen verwenden.",
       dbTitle: "Hardware-Baselines für Datenbanken",
       description:
-        "Hardware-Basisprofile, erforderliche Software-Toolchains und exakte Netzwerkkonfigurationen, die benötigt werden, um NEXORA in verschiedenen Deployment-Maßstäben zu hosten.",
+        "Hardware-Basisprofile, erforderliche Software-Toolchains und exakte Netzwerkkonfigurationen, die benötigt werden, um SCRIPE in verschiedenen Deployment-Maßstäben zu hosten.",
       devTitle: "Lokale Entwicklungs-Workstations",
       intro:
-        "NEXORA ist darauf ausgelegt, außerordentlich ressourceneffizient zu sein. Während es dynamisch skaliert, um massive Cloud-Cluster zu bedienen, kann es problemlos auf einem Standard-Entwickler-Laptop booten und die gesamte Test-Suite ausführen.",
+        "SCRIPE ist darauf ausgelegt, außerordentlich ressourceneffizient zu sein. Während es dynamisch skaliert, um massive Cloud-Cluster zu bedienen, kann es problemlos auf einem Standard-Entwickler-Laptop booten und die gesamte Test-Suite ausführen.",
       networkTitle: "Netzwerktopologie & Ports",
       prodMicroTitle: "Globale Microservice-Topologien",
       prodMonoTitle: "Produktions-Monolith-Server",

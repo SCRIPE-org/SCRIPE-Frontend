@@ -1,7 +1,7 @@
 /**
  * OAuth Application Entities — Domain types for OIDC Server app management.
  *
- * Third‑party applications that authenticate against NEXORA.
+ * Third‑party applications that authenticate against SCRIPE.
  *
  * @module oauth-apps/domain
  */

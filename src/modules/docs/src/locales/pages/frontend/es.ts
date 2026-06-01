@@ -78,7 +78,7 @@ export const es = {
       noLocaleRoutes:
         "No utilizamos sistema de enrutamiento basado en archivos ([locale]) por temas drásticos de desempeño Server-Side.",
       moduleLocaleNote:
-        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
+        "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "Validación de Formularios",
@@ -123,7 +123,7 @@ export const es = {
       title: "Tiempo Real (SignalR)",
       description: "Hubs del Backend y hooks de React conectados persistentemente.",
       intro:
-        "NEXORA respira en el navegador: actualiza sin pedir autorización al usuario las grillas y campanillas de notificaciones.",
+        "SCRIPE respira en el navegador: actualiza sin pedir autorización al usuario las grillas y campanillas de notificaciones.",
       architectureTitle: "Arquitectura en Tiempo Real",
       hubsTitle: "Hubs de SignalR",
       hooksTitle: "Hooks de React para SignalR",

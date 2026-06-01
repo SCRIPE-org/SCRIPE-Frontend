@@ -422,7 +422,7 @@ const sections: DocSection[] = [
       {
         titleKey: "modules.compliance.overview.step1Title",
         contentKey: "modules.compliance.overview.step1Content",
-        code: "nexora db seed --dev -m Compliance",
+        code: "scripe db seed --dev -m Compliance",
         codeLanguage: "bash",
       },
       {

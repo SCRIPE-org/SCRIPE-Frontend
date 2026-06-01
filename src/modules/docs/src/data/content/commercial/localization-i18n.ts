@@ -30,7 +30,7 @@ const sections: DocSection[] = [
     type: "comparison",
     columns: [
       {
-        titleKey: "commercial.localizationI18n.nexoraRTL",
+        titleKey: "commercial.localizationI18n.scripeRTL",
         variant: "positive",
         items: [
           "Full RTL layout system built from day 1",

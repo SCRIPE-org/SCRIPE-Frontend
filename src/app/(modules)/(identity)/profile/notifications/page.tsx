@@ -11,7 +11,7 @@ const ProfileNotificationsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Notifications | NEXORA",
+  title: "Notifications | SCRIPE",
   description: "Manage your notification preferences and alert settings",
 };
 

@@ -7,7 +7,7 @@ const DefinitionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Definitions | Plugins | NEXORA",
+  title: "Plugin Definitions | Plugins | SCRIPE",
   description:
     "Register and manage plugin definitions — the platform-level registry of all available plugins.",
 };

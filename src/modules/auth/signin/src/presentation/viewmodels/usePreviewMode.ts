@@ -11,7 +11,7 @@ export interface PreviewOverrides {
  * usePreviewMode — Manages studio preview mode state.
  *
  * Extracted from LoginView to keep that view under 200 lines.
- * Listens for postMessage events from the NEXORA studio iframe
+ * Listens for postMessage events from the SCRIPE studio iframe
  * when ?_preview=true is in the URL.
  *
  * §22 Studio Preview Mode
@@ -27,14 +27,14 @@ export function usePreviewMode() {
     if (!isPreviewMode) return;
 
     // Signal to studio that preview is ready
-    window.parent?.postMessage({ type: "NEXORA_PREVIEW_READY" }, window.location.origin);
+    window.parent?.postMessage({ type: "SCRIPE_PREVIEW_READY" }, window.location.origin);
 
     const handler = (e: MessageEvent) => {
       if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "NEXORA_STUDIO_DRAFT_UPDATE") {
+      if (e.data?.type === "SCRIPE_STUDIO_DRAFT_UPDATE") {
         setPreviewOverrides(e.data.payload as PreviewOverrides);
       }
-      if (e.data?.type === "NEXORA_STUDIO_RESET") {
+      if (e.data?.type === "SCRIPE_STUDIO_RESET") {
         setPreviewOverrides(null);
       }
     };

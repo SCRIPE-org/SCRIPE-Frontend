@@ -113,7 +113,7 @@ import "./infrastructure/file-storage";
 import "./infrastructure/resilience";
 import "./infrastructure/gateway-deployment";
 import "./infrastructure/database-migrations";
-import "./infrastructure/nexora-cli";
+import "./infrastructure/scripe-cli";
 import "./infrastructure/health-checks";
 import "./infrastructure/observability";
 import "./infrastructure/audit-trail";
@@ -127,8 +127,8 @@ import "./tutorials/add-backend-module";
 //  COMMERCIAL DOCUMENTATION
 // ═══════════════════════════════════════════════════════════
 
-// Why NEXORA
-import "./commercial/why-nexora-overview";
+// Why SCRIPE
+import "./commercial/why-scripe-overview";
 import "./commercial/competitive-advantages";
 import "./commercial/target-industries";
 import "./commercial/success-metrics";

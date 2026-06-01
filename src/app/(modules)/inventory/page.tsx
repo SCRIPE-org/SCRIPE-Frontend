@@ -7,7 +7,7 @@ const InventoryDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Inventory | NEXORA",
+  title: "Inventory | SCRIPE",
   description: "Inventory Management System",
 };
 

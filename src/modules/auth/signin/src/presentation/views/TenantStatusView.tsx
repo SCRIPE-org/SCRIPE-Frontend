@@ -80,7 +80,7 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
 
         {/* Contact Support Link */}
         <a
-          href={`mailto:support@${BRAND.domain || "nexora.com"}`}
+          href={`mailto:support@${BRAND.domain || "scripe.com"}`}
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
         >
           {t("tenantStatus.contactSupport") || "Contact Support"}

@@ -166,7 +166,7 @@ export const en = {
       step4Title: "Start Earning",
       step4Desc: "You're all set — payments flow automatically.",
       securityNote:
-        "Your information is securely processed by Stripe. NEXORA never sees or stores your bank account details.",
+        "Your information is securely processed by Stripe. SCRIPE never sees or stores your bank account details.",
       setupInProgress: "Account Setup In Progress",
       setupInProgressDesc: "Complete the remaining steps to start accepting payments.",
       setupProgress: "Setup Progress",

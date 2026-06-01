@@ -8,11 +8,11 @@ export const zh = {
       title: "架构概述",
       description: "整洁架构分层、后端管道、前端 SOLID 流程和模块边界规则。",
       intro:
-        "NEXORA 遵循严格的 Clean Architecture，包含 Presentation、Application、Domain 和 Infrastructure 四层。依赖规则确保内部层永远不依赖外部层，并在后端与前端一致应用。",
+        "SCRIPE 遵循严格的 Clean Architecture，包含 Presentation、Application、Domain 和 Infrastructure 四层。依赖规则确保内部层永远不依赖外部层，并在后端与前端一致应用。",
       layersTitle: "整洁架构分层",
       backendArchTitle: "后端架构",
       backendArchIntro:
-        "后端遵循请求管道 (Request Pipeline) 架构，每个 HTTP 请求流经中间件、控制器、NEXORA mediator 行为管道，最后到达 CQRS 处理程序。这确保了验证、审计和错误处理的一致性。",
+        "后端遵循请求管道 (Request Pipeline) 架构，每个 HTTP 请求流经中间件、控制器、SCRIPE mediator 行为管道，最后到达 CQRS 处理程序。这确保了验证、审计和错误处理的一致性。",
       frontendArchTitle: "前端架构",
       frontendArchIntro:
         "前端使用 SOLID View/ViewModel 模式，其中视图 (View) 是纯 UI（无状态、无逻辑），而视图模型 (ViewModel) 包含所有业务逻辑。连接器模式将 Next.js 路由（服务端组件）与应用逻辑（客户端组件）分离。",
@@ -29,7 +29,7 @@ export const zh = {
       title: "后端架构",
       description: "Program.cs 解剖、中间件管道、DI 服务映射、模块注册模式和控制器目录。",
       intro:
-        "NEXORA 后端是一个 .NET 10 模块化单体，在 Program.cs 中仅用 288 行代码就串联了 16 个服务注册、10 个中间件组件和 18 个 REST 控制器。本页将解剖后端架构的每一层。",
+        "SCRIPE 后端是一个 .NET 10 模块化单体，在 Program.cs 中仅用 288 行代码就串联了 16 个服务注册、10 个中间件组件和 18 个 REST 控制器。本页将解剖后端架构的每一层。",
       programCsTitle: "Program.cs 解剖",
       programCsIntro:
         "Program.cs 是应用程序的入口点和组装中心。它检测部署模式，以特定顺序注册服务，并构建中间件管道。该文件遵循清晰的 5 节结构。",
@@ -44,13 +44,13 @@ export const zh = {
         "每个新模块都遵循相同的 DI 注册模式。AddXxxModule() 扩展方法注册该模块的 DbContext、仓储、服务和模块注册标记。",
       controllersTitle: "控制器 (Controllers)",
       controllerTip:
-        "所有控制器都继承自一个基础 ApiController，该控制器提供标准化的 Result<T> 响应映射。控制器应保持轻量 —— 它们仅验证请求模型并委派给 NEXORA mediator 处理。",
+        "所有控制器都继承自一个基础 ApiController，该控制器提供标准化的 Result<T> 响应映射。控制器应保持轻量 —— 它们仅验证请求模型并委派给 SCRIPE mediator 处理。",
     },
     frontend: {
       title: "前端架构",
       description: "SOLID View/ViewModel 模式、模块结构以及用于 Next.js 集成的连接器模式。",
       intro:
-        "NEXORA 前端使用 Next.js 16 (App Router) 构建，遵循严格的 SOLID View/ViewModel 模式。每个页面均由一个纯 UI 视图组成，该视图将所有逻辑委派给 ViewModel Hooks。这种分离确保了可测试性、可重用性和可维护性。",
+        "SCRIPE 前端使用 Next.js 16 (App Router) 构建，遵循严格的 SOLID View/ViewModel 模式。每个页面均由一个纯 UI 视图组成，该视图将所有逻辑委派给 ViewModel Hooks。这种分离确保了可测试性、可重用性和可维护性。",
       solidPatternTitle: "SOLID View/ViewModel 模式",
       solidPatternIntro:
         "SOLID 模式确保 UI 的每个部分都具有单一职责。视图 (View) 渲染 JSX，视图模型 (ViewModel) 管理状态和逻辑，组件 (Components) 提供可重用的 UI 块。",
@@ -70,15 +70,15 @@ export const zh = {
     },
     cqrs: {
       title: "CQRS 模式",
-      description: "通过 NEXORA mediator 管道、行为 (Behaviors)、验证和缓存实现命令查询职责分离。",
+      description: "通过 SCRIPE mediator 管道、行为 (Behaviors)、验证和缓存实现命令查询职责分离。",
       intro:
-        "NEXORA 使用 CQRS (命令查询职责分离) 模式将读写操作分开。命令 (Commands) 改变状态并经过验证和审计行为。查询 (Queries) 读取状态并可以利用缓存。NEXORA mediator 充当控制器和处理程序之间的中介。",
+        "SCRIPE 使用 CQRS (命令查询职责分离) 模式将读写操作分开。命令 (Commands) 改变状态并经过验证和审计行为。查询 (Queries) 读取状态并可以利用缓存。SCRIPE mediator 充当控制器和处理程序之间的中介。",
       whatIsCqrsTitle: "什么是 CQRS？",
       whatIsCqrsIntro:
         "CQRS 将您的应用程序分为两端：命令（写入）和查询（读取）。每一端都可以独立优化 —— 命令侧重于数据完整性和验证，而查询侧重于性能和缓存。",
       commandSide: "命令端 (写入)",
       querySide: "查询端 (读取)",
-      pipelineTitle: "NEXORA mediator 管道",
+      pipelineTitle: "SCRIPE mediator 管道",
       validationBehaviorTitle: "验证行为 (Validation Behavior)",
       commandExampleTitle: "命令示例",
       queryExampleTitle: "查询示例",
@@ -89,7 +89,7 @@ export const zh = {
       title: "模块系统",
       description: "模块隔离规则、后端/前端模板、模块注册表和跨模块通信。",
       intro:
-        "NEXORA 使用严格的模块系统，每个模块都是具有清晰边界的孤立岛屿。模块不能互相导入 —— 它们只能通过 URL、共享 ID 或核心事件总线进行通信。这确保了独立性、可测试性，并具备将模块提取到独立代码库的能力。",
+        "SCRIPE 使用严格的模块系统，每个模块都是具有清晰边界的孤立岛屿。模块不能互相导入 —— 它们只能通过 URL、共享 ID 或核心事件总线进行通信。这确保了独立性、可测试性，并具备将模块提取到独立代码库的能力。",
       isolationRulesTitle: "模块隔离规则",
       allowedImportsTitle: "允许的导入",
       forbiddenImportsTitle: "禁止的导入",
@@ -142,7 +142,7 @@ export const zh = {
       title: "状态管理",
       description: "Clean Architecture 分层、后端管道、前端 SOLID 流程以及模块边界规则。",
       intro:
-        "NEXORA 使用三种状态管理工具，每种用于特定类别：TanStack Query 用于服务器数据（API 结果），Zustand 用于全局 UI 状态（认证、侧边栏、主题），useState 用于组件本地状态（表单、切换开关）。",
+        "SCRIPE 使用三种状态管理工具，每种用于特定类别：TanStack Query 用于服务器数据（API 结果），Zustand 用于全局 UI 状态（认证、侧边栏、主题），useState 用于组件本地状态（表单、切换开关）。",
       decisionTitle: "决策矩阵",
       tanstackTitle: "TanStack Query (服务器状态)",
       tanstackIntro:
@@ -163,14 +163,14 @@ export const zh = {
       title: "数据流",
       description: "端到端数据流图：查询、变更、后端管道、错误处理和缓存策略。",
       intro:
-        "了解数据如何流经 NEXORA 对于调试和扩展系统至关重要。本页面追踪了从 UI 中的按钮点击一直到数据库并返回的完整数据流动。",
+        "了解数据如何流经 SCRIPE 对于调试和扩展系统至关重要。本页面追踪了从 UI 中的按钮点击一直到数据库并返回的完整数据流动。",
       queryFlowTitle: "查询流 (读取)",
       queryFlowIntro:
         "当用户查看数据（例如打开用户页面）时，流程从 View 开始，经过 ViewModel、TanStack Query、仓储 (Repository)、API 服务，最后到达后端 API。",
       mutationFlowTitle: "变更流 (写入)",
       backendPipelineTitle: "后端请求管道",
       backendPipelineIntro:
-        "每个后端请求在到达处理程序之前，都会经过 10 个中间件组件和 3 个 NEXORA mediator 管道行为。这确保了一致的日志记录、身份验证、授权、验证和审计。",
+        "每个后端请求在到达处理程序之前，都会经过 10 个中间件组件和 3 个 SCRIPE mediator 管道行为。这确保了一致的日志记录、身份验证、授权、验证和审计。",
       errorFlowTitle: "错误处理",
       errorFlowIntro:
         "错误在多个层面进行处理。每个错误源都有特定的处理程序、响应代码和前端处理策略。",
@@ -185,7 +185,7 @@ export const zh = {
       description:
         "实体继承层次结构、AuditableEntity、ITenantAwareEntity、软删除生命周期、仓储抽象和全局查询过滤器。",
       intro:
-        "NEXORA 的领域模型遵循严格的继承层次结构：所有业务实体都继承自 AuditableEntity，它提供了审计字段和软删除支持。租户作用域的实体额外实现 ITenantAwareEntity，以实现自动的行级数据隔离。",
+        "SCRIPE 的领域模型遵循严格的继承层次结构：所有业务实体都继承自 AuditableEntity，它提供了审计字段和软删除支持。租户作用域的实体额外实现 ITenantAwareEntity，以实现自动的行级数据隔离。",
       entityHierarchyTitle: "实体继承层次",
       entityHierarchyIntro:
         "所有领域实体遵循三个层级的继承链：IEntity (标记接口) → Entity<TId> (身份+相等性+领域事件) → AuditableEntity (审计字段+软删除)。属于特定租户的实体还实现了 ITenantAwareEntity 接口。",
@@ -208,7 +208,7 @@ export const zh = {
         "所有实体都使用 IsDeleted 标志实现软删除。当调用 DELETE 端点时，拦截器会将硬删除转换为软删除，在普通查询中被隐藏。",
       repositoryTitle: "仓储抽象 (Repository)",
       repositoryIntro:
-        "NEXORA 在领域层定义了三种仓储接口：用于查询的 IReadRepository<T>、用于变更的 IWriteRepository<T>，以及结合两者并带有 SaveChangesAsync 的 IRepository<T>。",
+        "SCRIPE 在领域层定义了三种仓储接口：用于查询的 IReadRepository<T>、用于变更的 IWriteRepository<T>，以及结合两者并带有 SaveChangesAsync 的 IRepository<T>。",
       concreteEntitiesTitle: "具体实体注册表",
       queryFiltersTitle: "全局查询过滤器",
       queryFiltersIntro:
@@ -224,13 +224,13 @@ export const zh = {
       description:
         "IDomainEvent 接口、发件箱模式 (Outbox Pattern)、OutboxInterceptor、OutboxProcessor 以及可靠的事件投递。",
       intro:
-        "领域事件代表业务领域中发生的重大事件。NEXORA 使用发件箱模式 (Outbox Pattern) 来保证事件的可靠投递 —— 事件与实体变更在同一个数据库事务中持久化，并由后台处理器异步发布。",
+        "领域事件代表业务领域中发生的重大事件。SCRIPE 使用发件箱模式 (Outbox Pattern) 来保证事件的可靠投递 —— 事件与实体变更在同一个数据库事务中持久化，并由后台处理器异步发布。",
       interfaceTitle: "IDomainEvent 接口",
       interfaceIntro:
-        "所有领域事件都实现 IDomainEvent 接口，该接口继承自 NEXORA mediator 的 INotification。这使得进程内能够实现发布/订阅 (Pub/Sub) 模型。",
+        "所有领域事件都实现 IDomainEvent 接口，该接口继承自 SCRIPE mediator 的 INotification。这使得进程内能够实现发布/订阅 (Pub/Sub) 模型。",
       publishingTitle: "发布与处理流程",
       publishingIntro:
-        "领域事件遵循 6 步生命周期：触发事件 -> 拦截器捕获 -> 作为 OutboxMessage 持久化 -> 后台轮询 -> 反序列化 -> 通过 NEXORA mediator 发布。",
+        "领域事件遵循 6 步生命周期：触发事件 -> 拦截器捕获 -> 作为 OutboxMessage 持久化 -> 后台轮询 -> 反序列化 -> 通过 SCRIPE mediator 发布。",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "发件箱模式 (Outbox Pattern)",
       outboxIntro:
@@ -243,13 +243,13 @@ export const zh = {
         "它是一个 EF Core SaveChanges 拦截器，在事务提交前运行。它收集被追踪实体的所有领域事件，并将其序列化为 OutboxMessage 记录加入上下文中。",
       outboxProcessorTitle: "OutboxProcessor (发件箱处理器)",
       outboxProcessorIntro:
-        "这是一个后台服务 (BackgroundService)，每 5 秒轮询一次 OutboxMessage 表。它批量处理事件并通过 NEXORA mediator 发布。失败的事件将进行重试。",
+        "这是一个后台服务 (BackgroundService)，每 5 秒轮询一次 OutboxMessage 表。它批量处理事件并通过 SCRIPE mediator 发布。失败的事件将进行重试。",
       outboxCleanupTitle: "发件箱清理任务",
       outboxCleanupIntro:
         "一个 Hangfire 周期性任务，每天凌晨 2:00 UTC 运行，删除 7 天前已处理的发件箱消息，防止表无限增长。",
       architectureSummaryTitle: "发件箱架构总结",
       customEventsTitle: "创建自定义领域事件",
-      customEventsIntro: "遵循以下 3 个步骤将新的领域事件添加到 NEXORA。",
+      customEventsIntro: "遵循以下 3 个步骤将新的领域事件添加到 SCRIPE。",
       step1Title: "1. 定义事件",
       step1Content: "在模块的 Domain/Events/ 目录中创建实现 IDomainEvent 的 Record。",
       step2Title: "2. 从命令处理程序触发",
@@ -264,9 +264,9 @@ export const zh = {
     cqrsPipeline: {
       title: "CQRS 管道",
       description:
-        "NEXORA 中介器管道行为：LoggingBehavior、ValidationBehavior、FeatureCheckBehavior、WebhookDispatchBehavior、CachingBehavior、Result 模式以及完整的命令/查询映射。",
+        "SCRIPE 中介器管道行为：LoggingBehavior、ValidationBehavior、FeatureCheckBehavior、WebhookDispatchBehavior、CachingBehavior、Result 模式以及完整的命令/查询映射。",
       intro:
-        "NEXORA 中的每个命令和查询都会经过可配置的 NEXORA 中介器管道，内置 5 个行为：LoggingBehavior、ValidationBehavior、FeatureCheckBehavior、WebhookDispatchBehavior 和 CachingBehavior。顺序可通过 appsettings 或环境变量管理，并在启动时校验。",
+        "SCRIPE 中的每个命令和查询都会经过可配置的 SCRIPE 中介器管道，内置 5 个行为：LoggingBehavior、ValidationBehavior、FeatureCheckBehavior、WebhookDispatchBehavior 和 CachingBehavior。顺序可通过 appsettings 或环境变量管理，并在启动时校验。",
       overviewTitle: "管道概述",
       overviewIntro:
         "默认顺序为 Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler。验证和功能检查会先于缓存读取执行；成功变更后，缓存失效会先于 webhook 分发完成。",
@@ -284,7 +284,7 @@ export const zh = {
       validatorExampleTitle: "验证器示例",
       loggingTitle: "日志行为 (LoggingBehavior)",
       loggingIntro:
-        "记录每个 NEXORA mediator 请求的用户 ID、租户 ID、请求类型和执行时间。超过 500ms 的请求将作为警告记录，以进行性能监控。",
+        "记录每个 SCRIPE mediator 请求的用户 ID、租户 ID、请求类型和执行时间。超过 500ms 的请求将作为警告记录，以进行性能监控。",
       cachingTitle: "缓存行为 (CachingBehavior)",
       cachingIntro:
         "拦截实现 ICacheable 接口的查询。在执行处理程序之前检查缓存是否存在现有结果，如果未命中则执行处理并存储结果。",
@@ -306,7 +306,7 @@ export const zh = {
       description:
         "Program.cs 注册流程、模块 DI 模式、服务发现、核心与身份服务映射、生命周期规则和 YARP 网关。",
       intro:
-        "NEXORA 使用 .NET 内置的依赖注入容器，并采用结构化的注册模式。Program.cs 协调所有注册：核心基础设施 -> 根据 MODULE_NAME 的模块 -> NEXORA mediator 应用层。",
+        "SCRIPE 使用 .NET 内置的依赖注入容器，并采用结构化的注册模式。Program.cs 协调所有注册：核心基础设施 -> 根据 MODULE_NAME 的模块 -> SCRIPE mediator 应用层。",
       architectureTitle: "DI 注册架构",
       architectureIntro:
         "Program.cs 遵循严格的 4 阶段注册顺序：(1) 核心基础设施 (缓存, 存储等) (2) CORS 和 限流 (3) 模块 (4) 应用层。",
@@ -320,7 +320,7 @@ export const zh = {
         "根据部署模式过滤启动时加载的控制器，仅加载符合 [BelongsToModule] 标记的控制器。",
       serviceDiscoveryTitle: "服务发现 (Service Discovery)",
       serviceDiscoveryIntro:
-        "在微服务模式下，NEXORA 使用基于配置的服务发现 (来自 appsettings.json) 将服务名称解析为 URL。",
+        "在微服务模式下，SCRIPE 使用基于配置的服务发现 (来自 appsettings.json) 将服务名称解析为 URL。",
       coreServicesTitle: "核心基础设施服务",
       coreServicesIntro:
         "由 AddCoreInfrastructure() 注册的服务，可供所有模块使用，提供跨切面功能（缓存、审计、Webhook等）。",

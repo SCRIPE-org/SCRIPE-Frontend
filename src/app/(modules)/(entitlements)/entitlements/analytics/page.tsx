@@ -9,7 +9,7 @@ const AnalyticsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Revenue Analytics | NEXORA",
+  title: "Revenue Analytics | SCRIPE",
   description: "Monitor MRR, retention, LTV, forecasts, and tenant health scores",
 };
 

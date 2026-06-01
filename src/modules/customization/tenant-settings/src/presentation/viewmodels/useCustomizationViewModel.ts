@@ -50,14 +50,14 @@ function parsePrefsJson(json: string | null | undefined): PrefsForm {
  *
  * Source of truth: TenantSettings.DashboardThemeJson (tenant-level)
  * Returned by: GET /tenants/my/branding (post-auth), GET /tenants/resolve (pre-auth)
- * Read globally: TenantBrandingProvider → writes nexora_pref_* localStorage keys
+ * Read globally: TenantBrandingProvider → writes scr_pref_* localStorage keys
  * Applied by: theme-provider (preseed), i18n-provider (fallback), useAppStore (rehydrate)
  *
  * This viewmodel:
  *   - Reads current DashboardThemeJson from TenantBranding context (already fetched globally)
  *   - Shows form to edit prefs
  *   - Saves to DashboardThemeJson on TenantSettings via PUT /tenants/my/settings
- *   - On save: also applies immediately + writes nexora_pref_* keys
+ *   - On save: also applies immediately + writes scr_pref_* keys
  */
 export function useCustomizationViewModel() {
   const { t, setLanguage } = useI18n();
@@ -89,7 +89,7 @@ export function useCustomizationViewModel() {
   });
 
   // ─── Read current DashboardThemeJson from branding (already fetched globally) ──
-  // We read from nexora_pref_* keys which are synced by TenantBrandingProvider
+  // We read from scr_pref_* keys which are synced by TenantBrandingProvider
   const [hasInitializedPrefs, setHasInitializedPrefs] = useState(false);
   if (!hasInitializedPrefs && typeof window !== "undefined") {
     setHasInitializedPrefs(true);
@@ -188,7 +188,7 @@ export function useCustomizationViewModel() {
     onSuccess: () => {
       toastSuccess({ title: t("tenantSettings.customization.prefsSaved") || "Preferences saved" });
 
-      // 1. Write nexora_pref_* keys (tenant fallback defaults)
+      // 1. Write scr_pref_* keys (tenant fallback defaults)
       localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefsForm.theme);
       localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefsForm.language);
       localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefsForm.sidebarCollapsed));

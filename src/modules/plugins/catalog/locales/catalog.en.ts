@@ -62,12 +62,12 @@ export const en = {
     dialogTier2ConsentDesc: "This third-party plugin will receive the following access:",
     dialogTier2ConsentCheck: "I understand and consent to these permissions",
     dialogTier1Warning:
-      "Tier 1 plugins run in-process and have full access to NEXORA infrastructure. Only install certified plugins from trusted sources.",
+      "Tier 1 plugins run in-process and have full access to SCRIPE infrastructure. Only install certified plugins from trusted sources.",
 
     // ── Tier 2 permission list ────────────────────────────────────
     perm1: "Read your tenant profile and feature flags",
     perm2: "Store isolated key-value data in sandbox",
     perm3: "Register webhook subscriptions for platform events",
-    perm4: "Call NEXORA APIs via rate-limited gateway (60 req/min)",
+    perm4: "Call SCRIPE APIs via rate-limited gateway (60 req/min)",
   },
 };

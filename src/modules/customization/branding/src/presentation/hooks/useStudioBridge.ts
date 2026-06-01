@@ -11,9 +11,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 // ── Message Types ──────────────────────────────────────
 export const STUDIO_MSG = {
-  DRAFT_UPDATE: "NEXORA_STUDIO_DRAFT_UPDATE",
-  RESET: "NEXORA_STUDIO_RESET",
-  PREVIEW_READY: "NEXORA_PREVIEW_READY",
+  DRAFT_UPDATE: "SCRIPE_STUDIO_DRAFT_UPDATE",
+  RESET: "SCRIPE_STUDIO_RESET",
+  PREVIEW_READY: "SCRIPE_PREVIEW_READY",
 } as const;
 
 export interface StudioDraftPayload {

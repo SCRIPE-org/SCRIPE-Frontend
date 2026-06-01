@@ -9,7 +9,7 @@ export const en = {
       description:
         "5-layer defense strategy, security features, CORS configuration, rate limiting, and password policies.",
       intro:
-        "NEXORA implements a defense-in-depth security strategy with five layers: network protection, authentication, authorization, data isolation, and audit logging. Every request passes through multiple security checks before reaching business logic.",
+        "SCRIPE implements a defense-in-depth security strategy with five layers: network protection, authentication, authorization, data isolation, and audit logging. Every request passes through multiple security checks before reaching business logic.",
       layersTitle: "Security Defense Layers",
       featuresTitle: "Security Features",
       featureJwt: "JWT Authentication",
@@ -43,7 +43,7 @@ export const en = {
       description:
         "Multi-workspace routing, JWT lifecycle, BCrypt hashing, password expiry enforcement, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, SSO suspension gate, and session management.",
       intro:
-        "This page dives deep into every authentication mechanism in NEXORA — from multi-workspace login routing and JWT token issuance, through BCrypt password hashing, password expiry enforcement, and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, SSO tenant suspension gates, and session management.",
+        "This page dives deep into every authentication mechanism in SCRIPE — from multi-workspace login routing and JWT token issuance, through BCrypt password hashing, password expiry enforcement, and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, SSO tenant suspension gates, and session management.",
       workspaceRoutingTitle: "Multi-Workspace Login Routing",
       workspaceRoutingIntro:
         "When an admin logs in from the platform domain without a pre-resolved tenant, the login handler executes a 3-case routing algorithm: Case A (tenant-scoped login with a provided tenantId), Case A' (explicit platform admin selection via the isPlatformAdmin flag — bypasses workspace discovery entirely), and Case B (workspace discovery — searches all tenants by email, returns a workspace picker if multiple matches are found). The isPlatformAdmin flag was introduced to prevent an infinite loop where selecting 'Platform Administration' from the workspace picker would re-trigger discovery.",
@@ -61,7 +61,7 @@ export const en = {
         "After 5 consecutive failed login attempts, the account is locked for 5 minutes. The counter resets on successful login. Admins can manually unlock accounts via the admin panel.",
       tfaTitle: "Two-Factor Authentication (TOTP)",
       tfaIntro:
-        "NEXORA supports TOTP-based 2FA compatible with Google Authenticator, Authy, and Microsoft Authenticator. When enabled, users must enter a 6-digit time-based code after password verification.",
+        "SCRIPE supports TOTP-based 2FA compatible with Google Authenticator, Authy, and Microsoft Authenticator. When enabled, users must enter a 6-digit time-based code after password verification.",
       passwordExpiryTitle: "Password Expiry Enforcement",
       passwordExpiryIntro:
         "After credentials are validated and lockout checks pass, the login handler invokes ITenantPasswordValidator.IsPasswordExpiredAsync to check if the admin's password has exceeded the tenant's configured PasswordExpiryDays. If expired, the TokenResponse includes MustChangePassword = true, which forces the frontend to redirect the admin to the change-password page before granting dashboard access. This check uses the admin's PasswordLastChanged field against the tenant's security policy.",
@@ -69,7 +69,7 @@ export const en = {
         "Password expiry is a per-tenant setting configured via TenantSettings.PasswordExpiryDays. A value of 0 disables expiry entirely. When the feature is active, the ITenantPasswordValidator computes (PasswordLastChanged + ExpiryDays) and compares it to DateTime.UtcNow. The admin is never locked out — they receive a valid JWT but with the MustChangePassword flag set, which the frontend enforces as a redirect.",
       externalAuthTitle: "External Authentication (OAuth)",
       externalAuthIntro:
-        "NEXORA integrates with Google, Facebook, Apple, and Microsoft OAuth providers. External tokens are validated server-side before creating or linking local accounts.",
+        "SCRIPE integrates with Google, Facebook, Apple, and Microsoft OAuth providers. External tokens are validated server-side before creating or linking local accounts.",
       otpTitle: "OTP System (One-Time Passwords)",
       otpIntro:
         "OTP codes are used for email verification, phone verification, and password reset flows. Codes are 6-digit, cryptographically random, stored as BCrypt hashes, and expire after 15 minutes with a maximum of 3 verification attempts.",
@@ -80,21 +80,21 @@ export const en = {
         "Impersonation is a privileged operation. The impersonator must be a SuperAdmin, cannot impersonate protected admins or admins with equal/higher roles, and all actions are logged with the impersonator's identity for accountability.",
       sessionTitle: "Session Management",
       sessionIntro:
-        "NEXORA uses a stateless JWT-based session model. Access tokens are held in client memory (never localStorage), refresh tokens are stored as HttpOnly secure cookies or in the database, and 2FA session tokens are temporary in-memory tokens valid for 5 minutes.",
+        "SCRIPE uses a stateless JWT-based session model. Access tokens are held in client memory (never localStorage), refresh tokens are stored as HttpOnly secure cookies or in the database, and 2FA session tokens are temporary in-memory tokens valid for 5 minutes.",
       cookieAuthTip:
         "For maximum security, configure refresh tokens to be sent as HttpOnly, Secure, SameSite=Strict cookies. This prevents XSS attacks from accessing refresh tokens via JavaScript.",
       ssoSuspensionTitle: "SSO Tenant Suspension Gate",
       ssoSuspensionIntro:
         "The ExternalLoginCommandHandler now includes a tenant suspension security gate. Before issuing a JWT after SSO/OIDC authentication, the handler checks the admin's tenant status. If the tenant is Suspended or Cancelled, the login is rejected with a localized error — preventing deactivated users from bypassing the standard login checks via SSO. This gate runs after token validation and account linking but before JWT issuance.",
       ssoSuspensionWarning:
-        "Without this gate, SSO users could authenticate via an external IdP (e.g., Google, Azure AD) and receive a valid NEXORA JWT even if their tenant has been suspended or cancelled. This was a critical security gap that has been remediated.",
+        "Without this gate, SSO users could authenticate via an external IdP (e.g., Google, Azure AD) and receive a valid SCRIPE JWT even if their tenant has been suspended or cancelled. This was a critical security gap that has been remediated.",
     },
     dataProtection: {
       title: "Data Protection",
       description:
         "Tenant isolation, data encryption at rest and in transit, restricted fields, ID encryption, and GDPR compliance.",
       intro:
-        "NEXORA protects data at every layer  from network encryption (TLS 1.2+) and database encryption (TDE), through row-level tenant isolation and field-level access control, to GDPR-compliant data portability and right-to-delete mechanisms.",
+        "SCRIPE protects data at every layer  from network encryption (TLS 1.2+) and database encryption (TDE), through row-level tenant isolation and field-level access control, to GDPR-compliant data portability and right-to-delete mechanisms.",
       tenantIsolationTitle: "Tenant Data Isolation",
       tenantIsolationIntro:
         "Every query is automatically scoped to the current tenant via EF Core global query filters. The ITenantAwareEntity interface marks entities that must be tenant-scoped, and the TenantContextMiddleware extracts the tenant ID from the JWT token.",
@@ -113,10 +113,10 @@ export const en = {
         "Roles can restrict access to specific entity fields. When a role has restricted fields configured, the FieldProjectionMiddleware automatically removes those fields from API responses, preventing unauthorized data exposure.",
       idEncryptionTitle: "ID Encryption",
       idEncryptionIntro:
-        "NEXORA can encrypt Guid entity IDs in API responses using AES-256. This prevents enumeration attacks and hides internal database identifiers from external consumers.",
+        "SCRIPE can encrypt Guid entity IDs in API responses using AES-256. This prevents enumeration attacks and hides internal database identifiers from external consumers.",
       gdprTitle: "GDPR Compliance",
       gdprIntro:
-        "NEXORA provides mechanisms for GDPR compliance including data portability (export user data as JSON), right to delete (anonymize or purge user data), consent tracking, and configurable data retention policies.",
+        "SCRIPE provides mechanisms for GDPR compliance including data portability (export user data as JSON), right to delete (anonymize or purge user data), consent tracking, and configurable data retention policies.",
       rightToDeleteTitle: "Right to Delete",
       dataPortabilityTitle: "Data Portability",
       consentTitle: "Consent Management",
@@ -130,24 +130,24 @@ export const en = {
       description:
         "Rate limiting, CORS configuration, input validation, CSRF protection, security headers, and replay attack prevention.",
       intro:
-        "NEXORA applies multiple layers of API security: rate limiting prevents abuse, CORS restricts cross-origin access, input validation rejects malformed data, security headers protect against common web attacks, and anti-replay mechanisms prevent request replay attacks.",
+        "SCRIPE applies multiple layers of API security: rate limiting prevents abuse, CORS restricts cross-origin access, input validation rejects malformed data, security headers protect against common web attacks, and anti-replay mechanisms prevent request replay attacks.",
       rateLimitTitle: "Rate Limiting",
       rateLimitIntro:
-        "NEXORA implements 4-tier rate limiting using ASP.NET Core's built-in rate limiter: global DDoS protection, per-IP limits, per-endpoint limits, and authentication-specific limits for login and token refresh.",
+        "SCRIPE implements 4-tier rate limiting using ASP.NET Core's built-in rate limiter: global DDoS protection, per-IP limits, per-endpoint limits, and authentication-specific limits for login and token refresh.",
       corsTitle: "CORS Configuration",
       corsIntro:
         "Cross-Origin Resource Sharing policies differ between environments. Development allows all localhost origins. Production requires explicitly configured allowed origins, methods, and headers.",
       inputValidationTitle: "Input Validation",
       inputValidationIntro:
-        "All incoming requests are validated through FluentValidation at the NEXORA mediator pipeline level. The ValidationBehavior runs before the command handler and returns structured validation errors with field-level messages.",
+        "All incoming requests are validated through FluentValidation at the SCRIPE mediator pipeline level. The ValidationBehavior runs before the command handler and returns structured validation errors with field-level messages.",
       csrfTitle: "CSRF Protection",
       csrfIntro:
-        "NEXORA uses the SameSite cookie attribute and anti-forgery tokens to prevent Cross-Site Request Forgery attacks. API endpoints rely on Bearer token authentication which is inherently CSRF-resistant.",
+        "SCRIPE uses the SameSite cookie attribute and anti-forgery tokens to prevent Cross-Site Request Forgery attacks. API endpoints rely on Bearer token authentication which is inherently CSRF-resistant.",
       headersTitle: "Security Headers",
       headersIntro:
         "Production responses include security headers: X-Content-Type-Options (nosniff), X-Frame-Options (DENY), X-XSS-Protection, Referrer-Policy, and Content-Security-Policy.",
       headersTip:
-        "Test your security headers using securityheaders.com. NEXORA's default configuration scores A+ when properly configured.",
+        "Test your security headers using securityheaders.com. SCRIPE's default configuration scores A+ when properly configured.",
       replayTitle: "Replay Attack Prevention",
       replayIntro:
         "Short-lived access tokens (15 minutes), single-use refresh tokens with rotation, and TOTP time-step validation prevent replay attacks across all authentication flows.",
@@ -157,7 +157,7 @@ export const en = {
       description:
         "11 middleware components in execution order  from exception handling through tenant context to field projection.",
       intro:
-        "NEXORA's HTTP request pipeline consists of 11 middleware components executed in a specific order. Each middleware has a single responsibility and can short-circuit the pipeline on failure. Understanding the order is critical for debugging and extending the system.",
+        "SCRIPE's HTTP request pipeline consists of 11 middleware components executed in a specific order. Each middleware has a single responsibility and can short-circuit the pipeline on failure. Understanding the order is critical for debugging and extending the system.",
       overviewTitle: "Pipeline Overview",
       overviewIntro:
         "Requests flow through the middleware pipeline from top to bottom. Each middleware can process the request, modify it, or short-circuit by returning a response directly. The order matters  tenant context must be established before any tenant-scoped operation.",
@@ -199,10 +199,10 @@ export const en = {
       description:
         "Complete audit pipeline  interceptors, entity tracking, SignalR streaming, CSV/Excel/PDF export, and compliance features.",
       intro:
-        "NEXORA provides a comprehensive audit system that tracks every data modification, API request, and security event. Audit logs are automatically generated by EF Core interceptors, streamed in real-time via SignalR, and exportable in CSV, Excel, and PDF formats.",
+        "SCRIPE provides a comprehensive audit system that tracks every data modification, API request, and security event. Audit logs are automatically generated by EF Core interceptors, streamed in real-time via SignalR, and exportable in CSV, Excel, and PDF formats.",
       architectureTitle: "Audit Architecture",
       architectureIntro:
-        "The audit system consists of three layers: the AuditableEntityInterceptor captures entity changes during SaveChanges, the AuditBehavior in the NEXORA mediator pipeline logs command execution, and the RequestLoggingMiddleware records HTTP request metadata.",
+        "The audit system consists of three layers: the AuditableEntityInterceptor captures entity changes during SaveChanges, the AuditBehavior in the SCRIPE mediator pipeline logs command execution, and the RequestLoggingMiddleware records HTTP request metadata.",
       interceptorTitle: "Entity Change Interceptor",
       interceptorIntro:
         "The AuditableEntityInterceptor hooks into EF Core's SaveChangesAsync pipeline. For every Added, Modified, or Deleted entity, it captures the old and new values as JSON, the user who made the change, and the timestamp.",
@@ -233,10 +233,10 @@ export const en = {
       description:
         "OIDC/OAuth2 SSO architecture, PKCE flow, identity provider model, external login linking, OAuth applications, claim mapping, and full API reference.",
       intro:
-        "NEXORA supports Single Sign-On (SSO) via external OIDC identity providers. This page covers the complete SSO architecture: PKCE authorization code flow, the identity provider entity model, external login linking, OAuth application registration, claim mapping, tenant scoping, and all API endpoints.",
+        "SCRIPE supports Single Sign-On (SSO) via external OIDC identity providers. This page covers the complete SSO architecture: PKCE authorization code flow, the identity provider entity model, external login linking, OAuth application registration, claim mapping, tenant scoping, and all API endpoints.",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -260,13 +260,13 @@ export const en = {
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingTitle: "External Login Linking",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",

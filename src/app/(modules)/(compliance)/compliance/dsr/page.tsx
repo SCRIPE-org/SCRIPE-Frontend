@@ -7,7 +7,7 @@ const DsrView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Data Subject Requests | NEXORA",
+  title: "Data Subject Requests | SCRIPE",
   description: "Manage Data Subject Requests (DSR) — export, erasure, rectification, restriction",
 };
 

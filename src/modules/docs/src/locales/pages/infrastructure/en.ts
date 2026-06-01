@@ -9,7 +9,7 @@ export const en = {
       description:
         "Provider-agnostic auto-discovered recurring jobs (Native, Hangfire, Quartz.NET) — 24 jobs across 4 modules, zero manual wiring.",
       intro:
-        "NEXORA's background job system is built on one principle: write once, run on any provider. Every job implements IAutoRegisteredJob and is discovered automatically at startup. Switching between Native, Hangfire, or Quartz is a single config change in appsettings.json — no code modifications required.",
+        "SCRIPE's background job system is built on one principle: write once, run on any provider. Every job implements IAutoRegisteredJob and is discovered automatically at startup. Switching between Native, Hangfire, or Quartz is a single config change in appsettings.json — no code modifications required.",
 
       // Architecture
       architectureTitle: "Architecture Overview",
@@ -34,7 +34,7 @@ export const en = {
       conn4: "on cron tick",
       contractTitle: "IAutoRegisteredJob Contract",
       contractIntro:
-        "Every recurring background job in NEXORA implements one interface: IAutoRegisteredJob. This is the complete contract — three properties and one method. The interface deliberately excludes any provider-specific concepts (no Hangfire attributes, no Quartz annotations). The job has zero knowledge of which provider executes it.",
+        "Every recurring background job in SCRIPE implements one interface: IAutoRegisteredJob. This is the complete contract — three properties and one method. The interface deliberately excludes any provider-specific concepts (no Hangfire attributes, no Quartz annotations). The job has zero knowledge of which provider executes it.",
 
       // DI Registration
       diTitle: "DI Registration — The Critical Two-Line Pattern",
@@ -147,7 +147,7 @@ export const en = {
       softDeleteIntro:
         "The SoftDeleteCleanupJob<TContext> base class is the most sophisticated option. It automatically discovers all ISoftDeletable entity types in the DbContext, sorts them topologically based on FK relationships (children before parents), and batch-deletes records that have passed the retention period. Override PreCleanupAsync to unlock guardian-protected entities before deletion, or GetCustomCleanupOrder() to specify explicit entity ordering.",
       softDeleteTip:
-        "The CLI command 'nexora add-bg-service {Module}' generates the job file and adds both DI registrations in one step. It is the recommended way to add a SoftDeleteCleanupJob.",
+        "The CLI command 'scripe add-bg-service {Module}' generates the job file and adds both DI registrations in one step. It is the recommended way to add a SoftDeleteCleanupJob.",
       softDeleteFlowTitle: "Soft Delete Execution Flow",
       flowCronLabel: "Cron Tick (3:00 AM)",
       flowCronDesc: "Default cron for Soft Delete jobs",
@@ -176,7 +176,7 @@ export const en = {
       ruleMust2: "Register BOTH DI lines (concrete + factory delegate)",
       ruleMust3: "Use 5-field CRON (not 6-field Quartz format)",
       ruleMust4: "Make ExecuteAsync idempotent",
-      ruleMust5: "Build after every change — nexora build backend",
+      ruleMust5: "Build after every change — scripe build backend",
       ruleNever1: "Never import Hangfire or Quartz namespaces in job classes",
       ruleNever2: "Never use [AutomaticRetry] — global retry is in BackgroundJobsConfiguration",
       ruleNever3: "Never call RecurringJob.AddOrUpdate<T>() in module code",
@@ -191,7 +191,7 @@ export const en = {
       description:
         "Strategy pattern with 4 providers (Local, Azure Blob, AWS S3, MinIO) with tenant-scoped directories.",
       intro:
-        "NEXORA uses the Strategy pattern for file storage, allowing seamless switching between local filesystem, Azure Blob Storage, AWS S3, and MinIO. All storage is tenant-scoped with configurable directories.",
+        "SCRIPE uses the Strategy pattern for file storage, allowing seamless switching between local filesystem, Azure Blob Storage, AWS S3, and MinIO. All storage is tenant-scoped with configurable directories.",
       architectureTitle: "Storage Architecture",
       providersTitle: "Storage Providers",
       validationTitle: "File Validation",
@@ -203,7 +203,7 @@ export const en = {
       description:
         "Polly-based retry, circuit breaker, and timeout policies for HTTP clients and external services.",
       intro:
-        "NEXORA uses Polly resilience policies for all external HTTP calls and service integrations. The three core policies  retry with exponential backoff, circuit breaker, and timeout  protect against transient failures and cascading outages.",
+        "SCRIPE uses Polly resilience policies for all external HTTP calls and service integrations. The three core policies  retry with exponential backoff, circuit breaker, and timeout  protect against transient failures and cascading outages.",
       architectureTitle: "Resilience Architecture",
       retryTitle: "Retry Policy",
       circuitBreakerTitle: "Circuit Breaker",
@@ -218,7 +218,7 @@ export const en = {
       description:
         "YARP reverse proxy gateway, module system, IIS deployment, and Kestrel configuration.",
       intro:
-        "NEXORA uses YARP (Yet Another Reverse Proxy) as an API gateway that routes requests to backend modules. The MODULE_NAME environment variable controls which modules are active, enabling monolith, microservice, or hybrid deployment.",
+        "SCRIPE uses YARP (Yet Another Reverse Proxy) as an API gateway that routes requests to backend modules. The MODULE_NAME environment variable controls which modules are active, enabling monolith, microservice, or hybrid deployment.",
       yarpTitle: "YARP Gateway",
       yarpIntro:
         "YARP routes incoming API requests to the appropriate backend module based on URL path prefix matching. The gateway handles SSL termination, request buffering, and load balancing.",
@@ -247,24 +247,24 @@ export const en = {
       description:
         "Auto-adaptive EF Core multi-database architecture supporting SQL Server, Oracle, and PostgreSQL.",
       intro:
-        "NEXORA employs a highly sophisticated, multi-provider database architecture. Rather than relying on a single monolith `DbContext` that behaves erratically across different SQL dialects, the platform utilizes strictly typed **Derived DbContexts**. This completely isolates `ModelSnapshot` files per database provider, allowing infinite scalability without EF Core migration collisions.",
+        "SCRIPE employs a highly sophisticated, multi-provider database architecture. Rather than relying on a single monolith `DbContext` that behaves erratically across different SQL dialects, the platform utilizes strictly typed **Derived DbContexts**. This completely isolates `ModelSnapshot` files per database provider, allowing infinite scalability without EF Core migration collisions.",
       architectureTitle: "Derived DbContext Topology",
       architectureContent:
-        "At the core of a NEXORA module lies an abstract base DbContext (e.g., `IdentityDbContext`). This base class contains all `DbSet` properties and business-level schema configurations. We then generate sealed derived classes for each supported provider: `SqlServerIdentityDbContext`, `OracleIdentityDbContext`, and `PostgreSqlIdentityDbContext`.",
+        "At the core of a SCRIPE module lies an abstract base DbContext (e.g., `IdentityDbContext`). This base class contains all `DbSet` properties and business-level schema configurations. We then generate sealed derived classes for each supported provider: `SqlServerIdentityDbContext`, `OracleIdentityDbContext`, and `PostgreSqlIdentityDbContext`.",
       diTitle: "Runtime Provider Injection",
       diContent:
         "Repositories exclusively reference the abstract base context, remaining completely agnostic to the underlying database engine. At initialization, the core infrastructure reads your `DatabaseProvider` flag from `appsettings.json` and dynamically registers the appropriate derived context via our proprietary `AddMultiProviderDatabase` extension.",
       cliTitle: "Generating Multi-Provider Migrations",
       cliContent:
-        "The `nexora-cli` eliminates the tedious process of maintaining parallel migrations. With a single command, the CLI spawns child processes that generate distinct, dialect-perfect migrations for all supported providers simultaneously.",
+        "The `scripe-cli` eliminates the tedious process of maintaining parallel migrations. With a single command, the CLI spawns child processes that generate distinct, dialect-perfect migrations for all supported providers simultaneously.",
       cliWarning:
         "Important: Never manually edit the generated `ModelSnapshot` files. Always use the CLI to ensure consistency across the three supported dialects.",
       cliUpdateTitle: "Auto-Detecting Provider Updates",
       cliUpdateContent:
-        "When applying migrations with `nexora db update`, the CLI automatically parses your backend `appsettings.json` to detect the currently active `DatabaseProvider`. It seamlessly executes the update against the correct database engine without requiring you to manually specify the provider flag. For edge cases, you can override this behavior using the `-p` parameter.",
+        "When applying migrations with `scripe db update`, the CLI automatically parses your backend `appsettings.json` to detect the currently active `DatabaseProvider`. It seamlessly executes the update against the correct database engine without requiring you to manually specify the provider flag. For edge cases, you can override this behavior using the `-p` parameter.",
       cliRemoveTitle: "Smart Force Removal",
       cliRemoveContent:
-        "To rollback migrations safely and automatically across providers, use `nexora db remove-migration`. By parsing your active provider, the CLI safely reverts the migration logic and applies a standard removal check. Validated, it then aggressively cleans up inactive providers sequentially using aggressive force techniques, avoiding irrelevant connection timeouts and ensuring all branches are neatly reset simultaneously.",
+        "To rollback migrations safely and automatically across providers, use `scripe db remove-migration`. By parsing your active provider, the CLI safely reverts the migration logic and applies a standard removal check. Validated, it then aggressively cleans up inactive providers sequentially using aggressive force techniques, avoiding irrelevant connection timeouts and ensuring all branches are neatly reset simultaneously.",
       newProviderTitle: "Adding a New Database Engine",
       newProviderContent:
         "To introduce a new provider (e.g., SQLite for testing), follow the Clean Architecture extension pattern:",
@@ -274,14 +274,14 @@ export const en = {
       newProviderStep3:
         "Update `InfrastructureDI.cs` to include the new context in the provider registration array.",
       newProviderStep4:
-        "Execute `nexora db add-migration Initial -m Identity` to generate the initial snapshot.",
+        "Execute `scripe db add-migration Initial -m Identity` to generate the initial snapshot.",
     },
-    nexoraCli: {
-      title: "NEXORA CLI Tooling",
+    scripeCli: {
+      title: "SCRIPE CLI Tooling",
       description:
         "Massive productivity with 66 scaffolding templates, multi-database commands, and deep auto-wiring.",
       intro:
-        "The NEXORA CLI is a production-quality node-based scaffolding tool strictly engineered for the NEXORA modular monolith. It generates full-stack modules and CRUD features across the .NET backend and Next.js frontend, executing autonomous, surgical wiring connecting Solutions, Configurations, DI containers, Docker services, and permission constants.",
+        "The SCRIPE CLI is a production-quality node-based scaffolding tool strictly engineered for the SCRIPE modular monolith. It generates full-stack modules and CRUD features across the .NET backend and Next.js frontend, executing autonomous, surgical wiring connecting Solutions, Configurations, DI containers, Docker services, and permission constants.",
       commandsTitle: "Core Scaffolding Commands",
       commandsIntro:
         "There are vast arrays of CLI commands. At the heart are two fundamental scaffolders that deeply integrate all baseline requirements.",
@@ -290,10 +290,10 @@ export const en = {
         "Creates a complete, strongly-typed architecture pattern. It generates a 3-project DDD backend structure (Domain, Application, Infrastructure) and a unified frontend module directory.",
       newFeatureTitle: "Feature Scaffolding: new-feature",
       newFeatureIntro:
-        "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS NEXORA mediator, Solid Rect Components, TanStack Query models, and EF Core configurations.",
+        "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS SCRIPE mediator, Solid Rect Components, TanStack Query models, and EF Core configurations.",
       destructionTitle: "Destructive Tools",
       destructionIntro:
-        "Because the CLI wires deeply into the core fabric of NEXORA, it provides powerful destruction operations to execute perfect code rollback when testing layouts rapidly.",
+        "Because the CLI wires deeply into the core fabric of SCRIPE, it provides powerful destruction operations to execute perfect code rollback when testing layouts rapidly.",
       bgJobsTitle: "Background Service Operations",
       bgJobsIntro:
         "Immediately hook a module into the background job engine using standalone initialization tooling.",
@@ -328,7 +328,7 @@ export const en = {
         "Consumes a remote Swagger/OpenAPI endpoint, parsing into pixel-perfect TypeScript Zod schemas, React controllers, and structured models instantly.",
       configTitle: "CLI Project Configuration Mapping",
       configIntro:
-        "The NEXORA CLI parses `nexora.config.json` files walking rapidly up the filesystem to construct its universal path configurations binding to your mono-repo.",
+        "The SCRIPE CLI parses `scripe.config.json` files walking rapidly up the filesystem to construct its universal path configurations binding to your mono-repo.",
       namingTitle: "Intelligent Naming Mutations",
       namingIntro:
         "Provide a singular PascalCase entity name and the CLI generates infinite pluralized, kebab-cased, and CONSTANT_MAPPED variations flawlessly across the stack.",
@@ -336,18 +336,18 @@ export const en = {
       utilityIntro:
         "Control build pipelines, package installations, and live development servers spanning across Node.js and .NET instantly from a unified prompt.",
     },
-    nexoraStudio: {
-      title: "NEXORA Studio",
+    scripeStudio: {
+      title: "SCRIPE Studio",
       description:
         "Visual developer dashboard with real-time module management, code generators, dev server controls, and embedded terminal.",
       intro:
-        "NEXORA Studio is a full-featured visual developer dashboard that runs alongside your NEXORA development environment. It provides a real-time web UI for managing modules, running code generators, controlling dev servers, performing database operations, managing Docker containers, and more — all from a single browser tab.",
+        "SCRIPE Studio is a full-featured visual developer dashboard that runs alongside your SCRIPE development environment. It provides a real-time web UI for managing modules, running code generators, controlling dev servers, performing database operations, managing Docker containers, and more — all from a single browser tab.",
       architectureTitle: "Studio Architecture",
       architectureIntro:
         "Studio consists of two components: the Engine (Express + Socket.io + SQLite on port 4201) handles API requests, command execution, and real-time streaming. The UI (Next.js on port 4200) provides 19 pages covering all aspects of the development workflow. Communication between UI and Engine uses authenticated HTTP requests and WebSocket connections.",
       securityTitle: "Security Model",
       securityIntro:
-        "Studio implements defense-in-depth security: session-based token authentication (generated per startup, stored in .studio/token), command whitelist validation (only nexora CLI commands allowed), centralized input sanitization against shell injection and path traversal, rate limiting (200 req/min per IP), CORS whitelist (localhost only), and URL validation for browser-open operations.",
+        "Studio implements defense-in-depth security: session-based token authentication (generated per startup, stored in .studio/token), command whitelist validation (only scripe CLI commands allowed), centralized input sanitization against shell injection and path traversal, rate limiting (200 req/min per IP), CORS whitelist (localhost only), and URL validation for browser-open operations.",
       featuresTitle: "Studio Features",
       featureDashboard:
         "Dashboard — Health score, activity feed, module statistics, and system overview.",
@@ -364,21 +364,21 @@ export const en = {
       featureTerminal:
         "Terminal — Embedded terminal with command history, ANSI output rendering, and streaming via WebSocket.",
       featureConfig:
-        "Config Editor — View and edit environment variables across .env, appsettings.json, and nexora.config.json.",
+        "Config Editor — View and edit environment variables across .env, appsettings.json, and scripe.config.json.",
       featurePackages:
         "Package Manager — Add, remove, and update npm and NuGet packages for frontend and backend.",
       featureSecurity:
         "Security Tools — Generate JWT/AES secrets, run vulnerability audits, and validate environment completeness.",
       cliCommandsTitle: "Studio CLI Commands",
       cliCommandsIntro:
-        "Studio is launched and managed entirely through the NEXORA CLI. The nexora studio command supports dev mode (--dev) with hot-reload, production mode (pre-built), build-only mode (studio build), custom ports (--port, --engine-port), and headless mode (--no-browser).",
+        "Studio is launched and managed entirely through the SCRIPE CLI. The scripe studio command supports dev mode (--dev) with hot-reload, production mode (pre-built), build-only mode (studio build), custom ports (--port, --engine-port), and headless mode (--no-browser).",
     },
     healthChecks: {
       title: "Health Checks & K8s Probes",
       description:
         "Enterprise health endpoints for Kubernetes liveness, readiness, and startup probes with 6 individual checks covering Database, Redis, SMTP, Storage, Startup, and Module health.",
       intro:
-        "NEXORA provides 5 enterprise-grade health endpoints designed for Kubernetes orchestration, load balancer integration, and operations monitoring. Each endpoint validates specific infrastructure dependencies and returns structured JSON responses. The system uses a tag-based architecture where each check is tagged (db, cache, smtp, storage, startup, modules, ready, deep) and endpoints filter by tags to include only relevant checks.",
+        "SCRIPE provides 5 enterprise-grade health endpoints designed for Kubernetes orchestration, load balancer integration, and operations monitoring. Each endpoint validates specific infrastructure dependencies and returns structured JSON responses. The system uses a tag-based architecture where each check is tagged (db, cache, smtp, storage, startup, modules, ready, deep) and endpoints filter by tags to include only relevant checks.",
       architectureTitle: "Health Endpoint Architecture",
       endpointsTitle: "Health Endpoints",
       checksTitle: "Individual Health Checks",
@@ -389,13 +389,13 @@ export const en = {
         "Health checks are registered centrally in HealthCheckExtensions.cs with explicit tags and failure statuses. Tags determine which endpoint includes each check. The tag-based design means adding a new check is a single line change — register it with the appropriate tags and it automatically appears in the correct endpoints.",
       k8sTitle: "Kubernetes Probe Configuration",
       k8sIntro:
-        "NEXORA's health endpoints map directly to Kubernetes probe types. The startup probe allows up to 5 minutes (30 failures × 10s interval) for database migration on first deployment. The readiness probe gates traffic routing — if Database or Redis fails, K8s removes the pod from load balancer endpoints. The liveness probe detects hung processes with no dependency checks.",
+        "SCRIPE's health endpoints map directly to Kubernetes probe types. The startup probe allows up to 5 minutes (30 failures × 10s interval) for database migration on first deployment. The readiness probe gates traffic routing — if Database or Redis fails, K8s removes the pod from load balancer endpoints. The liveness probe detects hung processes with no dependency checks.",
       dockerTitle: "Docker Compose Health Check",
       dockerIntro:
         "For Docker Compose deployments, configure health checks on the service definition. Use /health/live for basic liveness and /health/ready for readiness. Set start_period to allow time for database migrations before health checks begin. In microservice mode, each module service gets its own health check.",
       responseTitle: "Response Format",
       responseIntro:
-        "NEXORA supports two response formats depending on the endpoint. Public probe endpoints (/health/live, /health/startup, /health/ready) return a minimal JSON with status, duration, and check names. Authenticated endpoints (/health, /health/deep) return a detailed response including per-check durations, tags, data payloads, and exception details for operations teams.",
+        "SCRIPE supports two response formats depending on the endpoint. Public probe endpoints (/health/live, /health/startup, /health/ready) return a minimal JSON with status, duration, and check names. Authenticated endpoints (/health, /health/deep) return a detailed response including per-check durations, tags, data payloads, and exception details for operations teams.",
       environmentsTitle: "Environment-Specific Guide",
       dockerTip:
         "For IIS deployments: configure the Application Request Routing (ARR) health probe to use /health/ready as the health check URL. Set the response match to 'Healthy'. For Azure App Service: configure the Health Check feature in Configuration → General settings → Health check path = /health/ready.",
@@ -405,17 +405,17 @@ export const en = {
       description:
         "OpenTelemetry distributed tracing, Prometheus metrics, Grafana Loki centralized logging, and Jaeger trace visualization with pre-built alert rules.",
       intro:
-        "NEXORA implements a complete observability stack built on open standards: OpenTelemetry for distributed tracing, Prometheus for metrics collection, Grafana Loki for centralized logging, and Jaeger for trace visualization. Every NEXORA request handler is automatically traced, every HTTP request generates metrics, and every log entry is enriched with CorrelationId, TenantId, and ModuleTag. The entire stack is opt-in — in development you can run with console-only output and zero external dependencies.",
+        "SCRIPE implements a complete observability stack built on open standards: OpenTelemetry for distributed tracing, Prometheus for metrics collection, Grafana Loki for centralized logging, and Jaeger for trace visualization. Every SCRIPE request handler is automatically traced, every HTTP request generates metrics, and every log entry is enriched with CorrelationId, TenantId, and ModuleTag. The entire stack is opt-in — in development you can run with console-only output and zero external dependencies.",
       stackTitle: "Observability Stack Architecture",
       tracingTitle: "Distributed Tracing (OpenTelemetry)",
       tracingIntro:
-        "The TracingBehavior NEXORA mediator pipeline creates an OpenTelemetry span for every command and query handler. Spans include auto-detected module names, request types, and duration measurements. Errors are automatically recorded with exception details. Traces flow to Jaeger via OTLP gRPC protocol (:4317) for visualization and analysis.",
+        "The TracingBehavior SCRIPE mediator pipeline creates an OpenTelemetry span for every command and query handler. Spans include auto-detected module names, request types, and duration measurements. Errors are automatically recorded with exception details. Traces flow to Jaeger via OTLP gRPC protocol (:4317) for visualization and analysis.",
       prometheusTitle: "Prometheus Metrics",
       prometheusIntro:
         "The /metrics endpoint exposes OpenTelemetry metrics in Prometheus text format. Prometheus scrapes this endpoint at 15-second intervals, collecting HTTP request durations (histogram), active requests (gauge), GC collections, CPU time, and working set memory. In monolith mode, a single scrape target is needed. In microservice mode, configure one scrape job per module service.",
       loggingTitle: "Centralized Logging (Serilog + Loki)",
       loggingIntro:
-        "Serilog enriches every log entry with machine name, environment, correlation ID, tenant ID, and module tag. When Loki is configured (Loki:Url is set), logs are pushed in real-time via the GrafanaLoki sink. When Loki:Url is empty, logging falls back to console only — this is the default in Development. The 'Application' label is always set to 'NEXORA' to distinguish from other services in a shared Loki instance.",
+        "Serilog enriches every log entry with machine name, environment, correlation ID, tenant ID, and module tag. When Loki is configured (Loki:Url is set), logs are pushed in real-time via the GrafanaLoki sink. When Loki:Url is empty, logging falls back to console only — this is the default in Development. The 'Application' label is always set to 'SCRIPE' to distinguish from other services in a shared Loki instance.",
       alertsTitle: "Alert Rules",
       alertsIntro:
         "Pre-configured Prometheus alert rules detect critical and warning conditions. Critical alerts fire immediately for high error rates, database outages, and extreme latency. Warning alerts track P95 degradation, auth anomalies, memory pressure, CPU spikes, and disk space. Alert rules are stored in infrastructure/monitoring/prometheus/alerts/ and auto-loaded by Prometheus.",
@@ -424,14 +424,14 @@ export const en = {
         "A pre-built Docker Compose file (infrastructure/monitoring/docker-compose.monitoring.yml) launches the complete monitoring stack: Prometheus v3.2.1, Grafana v11.5.2, Loki v3.4.2, and Jaeger v2.4.0. All datasources, dashboards, and alert rules are auto-provisioned via Grafana's provisioning system. Grafana runs on port 3001 to avoid conflicts with the Next.js dev server on 3000.",
       configTitle: "Observability Configuration",
       productionWarning:
-        "In production: set TraceSampleRatio to 0.1 (10% sampling) to reduce performance overhead, change the default Grafana password (admin/nexora-admin), restrict /metrics endpoint access via reverse proxy IP whitelist, never expose monitoring ports (9090, 3001, 16686) to the public internet, and configure Prometheus storage retention (default: 30 days, 10GB).",
+        "In production: set TraceSampleRatio to 0.1 (10% sampling) to reduce performance overhead, change the default Grafana password (admin/scripe-admin), restrict /metrics endpoint access via reverse proxy IP whitelist, never expose monitoring ports (9090, 3001, 16686) to the public internet, and configure Prometheus storage retention (default: 30 days, 10GB).",
     },
     auditTrail: {
       title: "Enterprise Audit Trail",
       description:
         "Full audit logging with 23 entity fields, module auto-detection, correlation tracking, real-time SignalR broadcasting, and 45+ event types across 13 categories.",
       intro:
-        "NEXORA's enterprise audit trail captures every significant action across the platform — from authentication events and entity mutations to permission changes, security incidents, and guardian protection enforcement. Each audit entry records 23 fields including CorrelationId for request tracing, TenantId for multi-tenant isolation, ModuleTag for module-level filtering, and IpAddress/UserAgent for forensic analysis. Events are broadcast in real-time via SignalR to connected dashboards.",
+        "SCRIPE's enterprise audit trail captures every significant action across the platform — from authentication events and entity mutations to permission changes, security incidents, and guardian protection enforcement. Each audit entry records 23 fields including CorrelationId for request tracing, TenantId for multi-tenant isolation, ModuleTag for module-level filtering, and IpAddress/UserAgent for forensic analysis. Events are broadcast in real-time via SignalR to connected dashboards.",
       architectureTitle: "Audit Trail Architecture",
       entityTitle: "AuditLog Entity Schema (23 Fields)",
       entityIntro:
@@ -454,21 +454,21 @@ export const en = {
       description:
         "k6 performance test suites with custom metrics, SLA thresholds, CI/CD pipeline integration, and multi-provider backup/DR strategy with actual recovery commands.",
       intro:
-        "NEXORA includes enterprise-grade k6 load testing scripts that validate performance SLAs under realistic workloads using custom NEXORA-specific metrics. Combined with a comprehensive backup and disaster recovery strategy covering SQL Server, Oracle, PostgreSQL, and Redis — including actual recovery commands — the platform ensures both performance confidence and data durability across all deployment environments.",
+        "SCRIPE includes enterprise-grade k6 load testing scripts that validate performance SLAs under realistic workloads using custom SCRIPE-specific metrics. Combined with a comprehensive backup and disaster recovery strategy covering SQL Server, Oracle, PostgreSQL, and Redis — including actual recovery commands — the platform ensures both performance confidence and data durability across all deployment environments.",
       overviewTitle: "k6 Test Suites",
       overviewIntro:
         "Two pre-built k6 test suites cover the critical user journeys: authentication flows (login, JWT retrieval, protected endpoints, health checks) and CRUD operations (pagination, filtering, spike scenarios). Each suite defines VU ramp stages and custom metrics tracked in Grafana.",
       thresholdsTitle: "SLA Thresholds",
       authFlowTitle: "Auth Flow Test Script",
       authFlowIntro:
-        "The auth-flow.js test simulates realistic user authentication patterns: login with credentials, access a protected endpoint with the JWT token, and verify the health check endpoint. Custom metrics (nexora_login_duration, nexora_login_fail_rate) track auth-specific SLAs independently from general HTTP metrics.",
+        "The auth-flow.js test simulates realistic user authentication patterns: login with credentials, access a protected endpoint with the JWT token, and verify the health check endpoint. Custom metrics (scr_login_duration, scr_login_fail_rate) track auth-specific SLAs independently from general HTTP metrics.",
       runningTitle: "Running Load Tests",
       cicdTitle: "CI/CD Integration",
       cicdIntro:
         "k6 integrates into GitHub Actions, GitLab CI, and Azure Pipelines. Tests run against a containerized backend instance with health readiness wait before execution. The pipeline fails automatically if any SLA threshold is breached. Results are uploaded as artifacts for trend analysis.",
       backupTitle: "Backup & Disaster Recovery",
       backupIntro:
-        "NEXORA supports multi-provider backup strategies with specific tools, frequencies, and recovery commands tailored to each database engine. The backup strategy ensures compliance with enterprise RPO (Recovery Point Objective) and RTO (Recovery Time Objective) requirements. Audit logs have a separate backup with extended retention for compliance.",
+        "SCRIPE supports multi-provider backup strategies with specific tools, frequencies, and recovery commands tailored to each database engine. The backup strategy ensures compliance with enterprise RPO (Recovery Point Objective) and RTO (Recovery Time Objective) requirements. Audit logs have a separate backup with extended retention for compliance.",
       drWarning:
         "Critical: Test your disaster recovery procedures quarterly. A backup that has never been restored is not a backup — it is a hope. Schedule DR drills on a calendar, document the recovery steps, and measure actual RTO.",
     },

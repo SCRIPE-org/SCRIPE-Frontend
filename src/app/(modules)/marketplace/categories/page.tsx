@@ -7,7 +7,7 @@ const CategoriesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Categories | Marketplace | NEXORA",
+  title: "Categories | Marketplace | SCRIPE",
   description: "Manage app categories for the marketplace storefront.",
 };
 

@@ -557,7 +557,7 @@ public interface ICacheable
         .GetSection(MediatorOptions.SectionName)
         .Get<MediatorOptions>() ?? new MediatorOptions();
 
-    services.AddNexoraMediator(
+    services.AddScripeMediator(
         validateRequestCoverage: mediatorOptions.ValidateRequestHandlerCoverage,
         assemblyMarkerTypes: handlerAssemblyMarkerTypes);
 

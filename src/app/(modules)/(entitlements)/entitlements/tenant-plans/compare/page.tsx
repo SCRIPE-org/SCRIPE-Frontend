@@ -11,7 +11,7 @@ const TenantPlanComparisonView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compare Tenant Plans | NEXORA",
+  title: "Compare Tenant Plans | SCRIPE",
   description: "Side-by-side comparison of tenant plans and their feature sets",
 };
 

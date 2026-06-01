@@ -9,7 +9,7 @@ export const ru = {
       description:
         "Полная документация по REST API: эндпоинты, примеры запросов/ответов, авторизация и лимиты.",
       intro:
-        "NEXORA API — это RESTful JSON API. Все эндпоинты требуют авторизации через JWT (Bearer-token), за исключением публичных.",
+        "SCRIPE API — это RESTful JSON API. Все эндпоинты требуют авторизации через JWT (Bearer-token), за исключением публичных.",
       baseInfoTitle: "Базовая информация",
       authEndpointsTitle: "Эндпоинты аутентификации",
       adminEndpointsTitle: "Эндпоинты управления администраторами",
@@ -229,7 +229,7 @@ export const ru = {
       intro: "Асинхронные коммуникации с внешним миром через фоновые задачи (Hangfire).",
       webhooksTitle: "Событийные Webhooks",
       webhooksIntro:
-        "При наступлении системных событий (создание пользователя и т.д.) NEXORA отправляет HTTP POST-запрос с JSON (payload) и подписью HMAC внешнему подписчику.",
+        "При наступлении системных событий (создание пользователя и т.д.) SCRIPE отправляет HTTP POST-запрос с JSON (payload) и подписью HMAC внешнему подписчику.",
       listWebhooksDesc: "Список webhook-подписок тенанта.",
       createWebhookDesc: "Создание подписки с генерацией HMAC-секрета.",
       updateWebhookDesc: "Обновление URL или статуса webhook.",
@@ -268,7 +268,7 @@ export const ru = {
       title: "Системное API (Global & Dashboard)",
       description:
         "Аналитика дашборда, динамические меню, корзина, загрузка файлов и метрики работоспособности (Health Checks).",
-      intro: "Платформенные операции центрального ядра системы NEXORA.",
+      intro: "Платформенные операции центрального ядра системы SCRIPE.",
       dashboardTitle: "Аналитика Дашборда (KPIs)",
       dashboardIntro:
         "Предоставляет метрики и графики в реальном времени с автоматической фильтрацией по тенанту администратора.",

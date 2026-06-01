@@ -11,7 +11,7 @@ const EditionComparisonView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compare Editions | NEXORA",
+  title: "Compare Editions | SCRIPE",
   description: "Side-by-side comparison of platform editions and their feature allocations",
 };
 

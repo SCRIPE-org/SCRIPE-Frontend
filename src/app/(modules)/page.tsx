@@ -7,8 +7,8 @@ const HomeView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Dashboard | NEXORA",
-  description: "Your NEXORA administration dashboard",
+  title: "Dashboard | SCRIPE",
+  description: "Your SCRIPE administration dashboard",
 };
 
 export default function HomePage() {

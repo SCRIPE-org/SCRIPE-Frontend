@@ -51,7 +51,7 @@ export const ar = {
       description:
         "LanguageProvider، ترجمات الوحدات، خطاف useModuleLocales، وظيفة t()، دعم RTL، وإضافة مفاتيح ترجمة جديدة.",
       intro:
-        "يستخدم NEXORA نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. كل وحدة تملك ترجماتها في مجلد locales/ خاص بها، يتم تحميلها كسولاً عبر خطاف useModuleLocales(). يدعم العربية (RTL) والإنجليزية (LTR) مع تبديل تلقائي للاتجاه والخطوط وحفظ التفضيلات في localStorage.",
+        "يستخدم SCRIPE نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. كل وحدة تملك ترجماتها في مجلد locales/ خاص بها، يتم تحميلها كسولاً عبر خطاف useModuleLocales(). يدعم العربية (RTL) والإنجليزية (LTR) مع تبديل تلقائي للاتجاه والخطوط وحفظ التفضيلات في localStorage.",
       architectureTitle: "البنية",
       dictionaryTitle: "هيكل القواميس",
       tFunctionTitle: "استخدام وظيفة t()",
@@ -69,7 +69,7 @@ export const ar = {
         "استدعِ t('moduleName.keyPath') باستخدام مساحة الاسم من ملف الترجمة. للمتغيرات، استخدم صيغة {{variable}} ومرر المتغيرات كمعامل ثانٍ.",
       noLocaleRoutes: "لا يتم استخدام طرق توجيه الملفات لترجمة اللغات للحفاظ على أداء الواجهة.",
       moduleLocaleNote:
-        "أداة nexora CLI تنشئ مجلد locales/ تلقائياً عند إنشاء وحدات جديدة عبر nexora new-module. كل ملف ترجمة يحتوي على ترجمات EN و AR، مجمعة في حزمة واحدة للتبديل الفوري بين اللغات.",
+        "أداة scripe CLI تنشئ مجلد locales/ تلقائياً عند إنشاء وحدات جديدة عبر scripe new-module. كل ملف ترجمة يحتوي على ترجمات EN و AR، مجمعة في حزمة واحدة للتبديل الفوري بين اللغات.",
     },
     formValidation: {
       title: "التحقق من النماذج",
@@ -105,7 +105,7 @@ export const ar = {
     realtime: {
       title: "البث اللحظي (SignalR)",
       description: "نظام قوي للتواصل المباشر مع الأحداث وتحديثها فوراً.",
-      intro: "NEXORA تستخدم SignalR لتقديم التدفق الفوري للبيانات.",
+      intro: "SCRIPE تستخدم SignalR لتقديم التدفق الفوري للبيانات.",
       architectureTitle: "بنية الوقت الفعلي",
       hubsTitle: "محطات SignalR (Hubs)",
       hooksTitle: "خطافات React (Hooks)",

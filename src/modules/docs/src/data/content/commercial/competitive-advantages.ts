@@ -16,14 +16,14 @@ const sections: DocSection[] = [
     type: "comparison",
     columns: [
       {
-        titleKey: "commercial.competitiveAdvantages.nexoraApproach",
+        titleKey: "commercial.competitiveAdvantages.scripeApproach",
         variant: "positive",
         items: [
-          "commercial.competitiveAdvantages.compNexoraI1",
-          "commercial.competitiveAdvantages.compNexoraI2",
-          "commercial.competitiveAdvantages.compNexoraI3",
-          "commercial.competitiveAdvantages.compNexoraI4",
-          "commercial.competitiveAdvantages.compNexoraI5",
+          "commercial.competitiveAdvantages.compScripeI1",
+          "commercial.competitiveAdvantages.compScripeI2",
+          "commercial.competitiveAdvantages.compScripeI3",
+          "commercial.competitiveAdvantages.compScripeI4",
+          "commercial.competitiveAdvantages.compScripeI5",
         ],
       },
       {
@@ -264,9 +264,9 @@ registerPage({
   slug: "commercial/competitive-advantages",
   titleKey: "commercial.competitiveAdvantages.title",
   descriptionKey: "commercial.competitiveAdvantages.description",
-  category: "commercial-why-nexora",
+  category: "commercial-why-scripe",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/why-nexora-overview", "commercial/target-industries"],
+  relatedSlugs: ["commercial/why-scripe-overview", "commercial/target-industries"],
   lastUpdated: "2026-02-20",
 });

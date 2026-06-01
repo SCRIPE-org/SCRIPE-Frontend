@@ -102,7 +102,7 @@ const sections: DocSection[] = [
         ],
       },
       {
-        titleKey: "NEXORA Group Provisioning",
+        titleKey: "SCRIPE Group Provisioning",
         variant: "positive",
         items: [
           "O(1) Role assignments via Group inheritance",

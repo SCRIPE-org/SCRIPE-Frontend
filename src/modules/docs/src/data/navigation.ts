@@ -466,9 +466,9 @@ export const navigationData: DocCategoryData[] = [
         order: 5,
       },
       {
-        id: "infra-nexora-cli",
-        titleKey: "infrastructure.nexoraCli.title",
-        slug: "infrastructure/nexora-cli",
+        id: "infra-scripe-cli",
+        titleKey: "infrastructure.scripeCli.title",
+        slug: "infrastructure/scripe-cli",
         order: 6,
       },
       {
@@ -676,17 +676,17 @@ export const navigationData: DocCategoryData[] = [
   //  COMMERCIAL DOCUMENTATION
   // ═══════════════════════════════════════════════════════════
 
-  // ─── Why NEXORA ────────────────────────────────────────────
+  // ─── Why SCRIPE ────────────────────────────────────────────
   {
-    id: "commercial-why-nexora",
-    titleKey: "nav.commercialWhyNexora",
+    id: "commercial-why-scripe",
+    titleKey: "nav.commercialWhyScripe",
     icon: "rocket",
     order: 10,
     items: [
       {
         id: "comm-why-overview",
-        titleKey: "commercial.whyNexoraOverview.title",
-        slug: "commercial/why-nexora-overview",
+        titleKey: "commercial.whyScripeOverview.title",
+        slug: "commercial/why-scripe-overview",
         order: 1,
       },
       {

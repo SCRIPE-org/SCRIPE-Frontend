@@ -9,7 +9,7 @@
 Unlike a standard Next.js app where code is scattered by type (components, hooks, pages), we organize code by **Business Domain**:
 
 ```
-Standard Next.js:                    NEXORA Modular:
+Standard Next.js:                    SCRIPE Modular:
 ├── components/                     ├── src/core/          (shared infra)
 │   ├── AdminTable.tsx              └── src/modules/
 │   ├── AuthForm.tsx                    ├── auth/          (authentication)

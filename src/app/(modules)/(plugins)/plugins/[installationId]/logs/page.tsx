@@ -7,7 +7,7 @@ const PluginLogsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Execution Logs | NEXORA",
+  title: "Plugin Execution Logs | SCRIPE",
   description: "View execution logs for an installed plugin",
 };
 

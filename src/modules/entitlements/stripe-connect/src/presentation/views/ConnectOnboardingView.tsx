@@ -2,7 +2,7 @@
  * ConnectOnboardingView
  * Full-page view for managing Stripe Connect Express accounts.
  *
- * Rewritten to use the standard NEXORA GenericCrudView architecture.
+ * Rewritten to use the standard SCRIPE GenericCrudView architecture.
  */
 "use client";
 

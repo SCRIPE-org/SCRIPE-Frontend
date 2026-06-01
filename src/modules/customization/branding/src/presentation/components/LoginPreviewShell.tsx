@@ -50,7 +50,7 @@ export function LoginPreviewShell() {
   useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "NEXORA_STUDIO_SET_THEME") {
+      if (e.data?.type === "SCRIPE_STUDIO_SET_THEME") {
         setTheme(e.data.theme);
       }
     };
@@ -68,14 +68,14 @@ export function LoginPreviewShell() {
   // Listen for postMessage from studio parent
   useEffect(() => {
     // Signal to studio that preview is ready
-    window.parent?.postMessage({ type: "NEXORA_PREVIEW_READY" }, window.location.origin);
+    window.parent?.postMessage({ type: "SCRIPE_PREVIEW_READY" }, window.location.origin);
 
     const handler = (e: MessageEvent) => {
       if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "NEXORA_STUDIO_DRAFT_UPDATE") {
+      if (e.data?.type === "SCRIPE_STUDIO_DRAFT_UPDATE") {
         setDraftOverrides(e.data.payload);
       }
-      if (e.data?.type === "NEXORA_STUDIO_RESET") {
+      if (e.data?.type === "SCRIPE_STUDIO_RESET") {
         setDraftOverrides(null);
       }
     };

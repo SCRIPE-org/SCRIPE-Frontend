@@ -9,7 +9,7 @@ const IdentityProviderDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Identity Provider | NEXORA",
+  title: "Create Identity Provider | SCRIPE",
   description: "Configure a new external identity provider for SSO",
 };
 

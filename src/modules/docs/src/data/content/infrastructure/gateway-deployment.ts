@@ -205,7 +205,7 @@ builder.Services.AddControllers()
       "Https": {
         "Url": "https://0.0.0.0:7001",
         "Certificate": {
-          "Path": "/certs/nexora.pfx",
+          "Path": "/certs/scripe.pfx",
           "Password": "cert-password"
         }
       },

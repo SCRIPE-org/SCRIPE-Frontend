@@ -236,7 +236,7 @@ const sections: DocSection[] = [
         filename: "POST /auth/2fa/enable — Response",
         code: `{
   "secret": "JBSWY3DPEHPK3PXP",
-  "qrCodeUri": "otpauth://totp/NEXORA:admin@company.com?secret=JBSWY3DPEHPK3PXP&issuer=NEXORA",
+  "qrCodeUri": "otpauth://totp/SCRIPE:admin@company.com?secret=JBSWY3DPEHPK3PXP&issuer=SCRIPE",
   "qrCodeBase64": "data:image/png;base64,iVBOR..."
 }`,
       },

@@ -32,7 +32,7 @@ const sections: DocSection[] = [
     "MinimumLevel": { "Default": "Information" },
     "WriteTo": [
       { "Name": "Console" },
-      { "Name": "File", "Args": { "path": "logs/nexora-.log", "rollingInterval": "Day" } },
+      { "Name": "File", "Args": { "path": "logs/scripe-.log", "rollingInterval": "Day" } },
       { "Name": "Seq", "Args": { "serverUrl": "http://localhost:5341" } }
     ],
     "Enrich": ["FromLogContext", "WithMachineName", "WithThreadId"]
@@ -78,12 +78,12 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Metric", "Type", "Description"],
     rows: [
-      ["nexora_http_requests_total", "Counter", "Total HTTP requests by method, path, status"],
-      ["nexora_http_request_duration_ms", "Histogram", "Request latency distribution"],
-      ["nexora_db_query_duration_ms", "Histogram", "Database query execution time"],
-      ["nexora_cache_hits_total", "Counter", "Cache hit/miss ratio tracking"],
-      ["nexora_active_sessions", "Gauge", "Currently active user sessions"],
-      ["nexora_background_jobs_total", "Counter", "Background job executions by type"],
+      ["scr_http_requests_total", "Counter", "Total HTTP requests by method, path, status"],
+      ["scr_http_request_duration_ms", "Histogram", "Request latency distribution"],
+      ["scr_db_query_duration_ms", "Histogram", "Database query execution time"],
+      ["scr_cache_hits_total", "Counter", "Cache hit/miss ratio tracking"],
+      ["scr_active_sessions", "Gauge", "Currently active user sessions"],
+      ["scr_background_jobs_total", "Counter", "Background job executions by type"],
     ],
   },
 

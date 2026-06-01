@@ -4,9 +4,9 @@
  */
 export const en = {
   commercial: {
-    whyNexoraOverview: {
+    whyScripeOverview: {
       description:
-        "A definitive, executive-level summary of exactly why choosing the NEXORA framework fundamentally derisks your entire enterprise software journey.",
+        "A definitive, executive-level summary of exactly why choosing the SCRIPE framework fundamentally derisks your entire enterprise software journey.",
       glanceTitle: "The Architecture at a Glance",
       idealEnterprise: "Established Corporate Infrastructures",
       idealEnterpriseDesc:
@@ -22,17 +22,17 @@ export const en = {
       idealStartupDesc:
         "Achieve the engineering throughput of a 20-person team with only 3 full-stack developers.",
       intro:
-        "NEXORA empowers visionary organizations with a battle-tested, infinitely scalable architectural foundation, guaranteeing massive performance, perfect multi-tenant security, and unparalleled engineering velocity.",
+        "SCRIPE empowers visionary organizations with a battle-tested, infinitely scalable architectural foundation, guaranteeing massive performance, perfect multi-tenant security, and unparalleled engineering velocity.",
       problemContent:
-        "Traditional implementations drain massive capital battling architectural indecision, brittle security postures, and disconnected scaling models. NEXORA completely bypasses these bottlenecks.",
+        "Traditional implementations drain massive capital battling architectural indecision, brittle security postures, and disconnected scaling models. SCRIPE completely bypasses these bottlenecks.",
       problemTitle: "The Friction of Custom Implementations",
       savingsTitle: "Provable Engineering Metrics",
       solutionContent:
-        "Transcend traditional development bottlenecks by leveraging a pristine, production-ready enterprise foundation. NEXORA equips your engineering teams with a pristine Clean Architecture backend, a blazing-fast Next.js frontend, and distributed observability tools out of the box.",
+        "Transcend traditional development bottlenecks by leveraging a pristine, production-ready enterprise foundation. SCRIPE equips your engineering teams with a pristine Clean Architecture backend, a blazing-fast Next.js frontend, and distributed observability tools out of the box.",
       solutionTitle: "The Definitive Solution Provider",
       startTip:
         "Architectural Action: Don't guess. Clone the repository today, initialize the system in 15 minutes, and experience absolute architectural clarity.",
-      title: "Why Choose NEXORA?",
+      title: "Why Choose SCRIPE?",
       visionContent:
         "We don't just provide code; we actively partner in your scale. Our vision is to absolutely eliminate the concept of 'Technical Debt' by providing a framework so inherently structured and logically perfect that it elegantly absorbs decades of aggressive feature development.",
       visionTitle: "The Infinite Scale Horizon",
@@ -80,9 +80,9 @@ export const en = {
       tblMetricsR10C1: "Background Processing",
       tblMetricsR10C2: "Channel-based queues + Native / Hangfire / Quartz.NET",
       tblMetricsR11C1: "CLI Tooling",
-      tblMetricsR11C2: "nexora-cli for module/entity scaffolding",
-      tblSavingsHeader1: "Without NEXORA",
-      tblSavingsHeader2: "With NEXORA",
+      tblMetricsR11C2: "scripe-cli for module/entity scaffolding",
+      tblSavingsHeader1: "Without SCRIPE",
+      tblSavingsHeader2: "With SCRIPE",
       tblSavingsHeader3: "Savings",
       tblSavingsR1C1: "6 months to build auth + RBAC",
       tblSavingsR1C2: "Day 1: Full auth, roles, permissions",
@@ -105,27 +105,27 @@ export const en = {
     },
     competitiveAdvantages: {
       architectureContent:
-        "We refuse to compromise. NEXORA strictly adheres to Domain-Driven Design (DDD) and Clean Architecture principles. Unlike flat MVC templates that buckle under enterprise scale, our architecture guarantees that presentation and infrastructure never leak into your core business logic.",
+        "We refuse to compromise. SCRIPE strictly adheres to Domain-Driven Design (DDD) and Clean Architecture principles. Unlike flat MVC templates that buckle under enterprise scale, our architecture guarantees that presentation and infrastructure never leak into your core business logic.",
       architectureTitle: "Uncompromising Architecture",
-      comparisonTitle: "The NEXORA Paradigm",
+      comparisonTitle: "The SCRIPE Paradigm",
       databaseContent:
-        "Locking into a single vendor is a massive liability. With NEXORA, you can seamlessly migrate between SQL Server, Oracle, and PostgreSQL with a single configuration flag. Additionally, the Database.Mode toggle lets you consolidate all modules into one shared database (Single mode) or isolate each module into its own database (Multi mode)—without rewriting a solitary line of data access code.",
+        "Locking into a single vendor is a massive liability. With SCRIPE, you can seamlessly migrate between SQL Server, Oracle, and PostgreSQL with a single configuration flag. Additionally, the Database.Mode toggle lets you consolidate all modules into one shared database (Single mode) or isolate each module into its own database (Multi mode)—without rewriting a solitary line of data access code.",
       databaseTitle: "Zero Database Lock-in",
       description:
         "Architected for visionary enterprises to dominate their markets through uncompromising design, military-grade security, and frictionless scalability.",
       evaluationTip:
-        "Important: Conduct a proof-of-concept. NEXORA's 30-day trial allows your lead engineers to validate our architectural claims directly against your hardest technical challenges.",
+        "Important: Conduct a proof-of-concept. SCRIPE's 30-day trial allows your lead engineers to validate our architectural claims directly against your hardest technical challenges.",
       intro:
-        "NEXORA is engineered to utterly obliterate the conventional limitations of enterprise software development: vendor dependencies, architectural entropy, and glacial release cycles. Here is how visionary organizations compound their engineering capital.",
-      nexoraApproach: "The NEXORA Advantage",
+        "SCRIPE is engineered to utterly obliterate the conventional limitations of enterprise software development: vendor dependencies, architectural entropy, and glacial release cycles. Here is how visionary organizations compound their engineering capital.",
+      scripeApproach: "The SCRIPE Advantage",
       productivityContent:
-        "Startups and enterprises alike use NEXORA to bypass 6-12 months of foundational development. By providing production-ready authentication, multi-tenancy, and audit logs on day one, teams immediately begin delivering unique business value.",
+        "Startups and enterprises alike use SCRIPE to bypass 6-12 months of foundational development. By providing production-ready authentication, multi-tenancy, and audit logs on day one, teams immediately begin delivering unique business value.",
       productivityTitle: "Unprecedented Productivity",
       securityContent:
         "An 8-layer deep defense-in-depth security model out-of-the-box. We provide row-level tenant isolation, rate-limiting, JWT revocation, fine-grained RBAC, and immutable audit logs—features that typically require millions in R&D.",
       securityTitle: "Military-Grade Security",
       tenancyContent:
-        "Most SaaS starters use 'soft' isolation where a single bug exposes another tenant's data. NEXORA features strict, discriminator-based row-level tenancy deeply tied to the EF Core query pipeline, making cross-tenant data leaks mathematically impossible.",
+        "Most SaaS starters use 'soft' isolation where a single bug exposes another tenant's data. SCRIPE features strict, discriminator-based row-level tenancy deeply tied to the EF Core query pipeline, making cross-tenant data leaks mathematically impossible.",
       tenancyTitle: "Cryptographic Tenant Isolation",
       tenantBranding: "White-Label Readiness",
       tenantBrandingDesc:
@@ -138,11 +138,11 @@ export const en = {
         "Guarantee global compliance. A user's Identity JWT is cryptographically bound to their tenant, preventing lateral movement.",
       title: "Competitive Advantages",
       traditionalApproach: "The Legacy Dilemma",
-      compNexoraI1: "Modular Monolith → API Gateway → Microservices evolutionary architecture",
-      compNexoraI2: "Single codebase, three dynamic deployment modes",
-      compNexoraI3: "Module capabilities mathematically enforced at compile time",
-      compNexoraI4: "Extract any module to a separate service without a single rewrite",
-      compNexoraI5: "Pristine shared core infrastructure compounding across all modules",
+      compScripeI1: "Modular Monolith → API Gateway → Microservices evolutionary architecture",
+      compScripeI2: "Single codebase, three dynamic deployment modes",
+      compScripeI3: "Module capabilities mathematically enforced at compile time",
+      compScripeI4: "Extract any module to a separate service without a single rewrite",
+      compScripeI5: "Pristine shared core infrastructure compounding across all modules",
       compTradI1: "Forced to choose monolith OR microservices upfront",
       compTradI2: "Complete rewrite required to change deployment topologies",
       compTradI3: "Spaghetti dependencies between highly coupled services",
@@ -174,7 +174,7 @@ export const en = {
       flowSecN8: "Layer 8: Comprehensive Audit Trail",
       tblProdHeader1: "Capability",
       tblProdHeader2: "Enterprise Impact",
-      tblProdR1C1: "NEXORA CLI scaffolding",
+      tblProdR1C1: "SCRIPE CLI scaffolding",
       tblProdR1C2: "Generate full vertical slices (Domain → API → React UI) in under a second",
       tblProdR2C1: "SOLID View/ViewModel pattern",
       tblProdR2C2: "Mathematically consistent UI architecture across hundreds of pages",
@@ -187,7 +187,7 @@ export const en = {
       tblProdR6C1: "Hot reload synergy",
       tblProdR6C2: "Observe complex full-stack changes instantly during compilation",
       tblCompHeader1: "Capability",
-      tblCompHeader2: "NEXORA",
+      tblCompHeader2: "SCRIPE",
       tblCompHeader3: "Legacy Frameworks",
       tblCompHeader4: "Custom Build",
       tblCompR1C1: "Deployment Modes",
@@ -229,7 +229,7 @@ export const en = {
     },
     targetIndustries: {
       description:
-        "A deep dive into how specific high-compliance industries leverage NEXORA to build secure, scalable, and radically isolated applications.",
+        "A deep dive into how specific high-compliance industries leverage SCRIPE to build secure, scalable, and radically isolated applications.",
       educationContent:
         "Manage massive university directories and strictly isolate student PII data hierarchically across distinct campuses and associated regional departments.",
       educationTitle: "Higher Education & EdTech",
@@ -246,15 +246,15 @@ export const en = {
       healthSecurityDesc:
         "Native support for AES-256 database encryption at rest and strictly enforced TLS 1.3 in transit.",
       healthcareContent:
-        "When data breaches mean catastrophic legal liabilities, healthcare providers turn to NEXORA's EF Core global query filters to mathematically guarantee that patient data is never accidentally mixed across different isolated medical facilities.",
+        "When data breaches mean catastrophic legal liabilities, healthcare providers turn to SCRIPE's EF Core global query filters to mathematically guarantee that patient data is never accidentally mixed across different isolated medical facilities.",
       healthcareTitle: "Healthcare & Telemedicine",
       intro:
-        "NEXORA isn't just a generic application framework. Its strictly enforced architectural boundaries, cryptographic multi-tenancy, and forensic auditing capabilities make it the definitive choice for highly regulated, high-risk operational environments.",
+        "SCRIPE isn't just a generic application framework. Its strictly enforced architectural boundaries, cryptographic multi-tenancy, and forensic auditing capabilities make it the definitive choice for highly regulated, high-risk operational environments.",
       matrixTitle: "Industry Suitability Matrix",
       menaBuiltIn: "Native Localization",
       menaCompetitor: "The Broken Alternative",
       menaContent:
-        "NEXORA provides flawless, beautifully formatted Right-To-Left (RTL) Arabic support out-of-the-box, ensuring immediate regional adoption without complex CSS hacking.",
+        "SCRIPE provides flawless, beautifully formatted Right-To-Left (RTL) Arabic support out-of-the-box, ensuring immediate regional adoption without complex CSS hacking.",
       menaTitle: "MENA Region Headquarters",
       retailContent:
         "Handle explosive Black Friday transaction spikes gracefully using the RabbitMQ-backed resilient email systems and highly-concurrent distributed caching algorithms.",
@@ -276,7 +276,7 @@ export const en = {
         "Allow your massive corporate clients to dynamically inject their own logos, typography, and email domains globally.",
       title: "Vertical Industry Applications",
       tblGovHeader1: "Requirement",
-      tblGovHeader2: "NEXORA Capability",
+      tblGovHeader2: "SCRIPE Capability",
       tblGovR1C1: "Data sovereignty",
       tblGovR1C2: "On-premise deployment, no cloud dependency required",
       tblGovR2C1: "Audit compliance",
@@ -306,7 +306,7 @@ export const en = {
       compMenaI4Neg: "System fonts with broken Arabic rendering",
       compMenaI5Neg: "Western date/number formats hardcoded",
       tblMatrixHeader1: "Industry",
-      tblMatrixHeader2: "Key NEXORA Features Used",
+      tblMatrixHeader2: "Key SCRIPE Features Used",
       tblMatrixHeader3: "Fit Score",
       tblMatrixR1C1: "Enterprise SaaS",
       tblMatrixR1C2: "Multi-tenancy, white-labeling, scalable deployment",
@@ -332,25 +332,25 @@ export const en = {
     },
     roiAnalysis: {
       caseStudyContent:
-        "A recent enterprise client migrated to NEXORA after 18 months of struggling with a catastrophic custom-built infrastructure. Within 30 days, they completely eliminated their authentication service overhead, permanently reduced infrastructure OpEx by 60%, and redirected 4 senior engineers directly back to aggressive feature development. Their subsequent Series B was secured largely on the provable infinite scalability of their new architectural foundation.",
+        "A recent enterprise client migrated to SCRIPE after 18 months of struggling with a catastrophic custom-built infrastructure. Within 30 days, they completely eliminated their authentication service overhead, permanently reduced infrastructure OpEx by 60%, and redirected 4 senior engineers directly back to aggressive feature development. Their subsequent Series B was secured largely on the provable infinite scalability of their new architectural foundation.",
       caseStudyTitle: "Proven Financial Impact",
       costIntro:
         "By purchasing a perpetual license, you avoid the compounding, punitive cost of PaaS/SaaS subscriptions that aggressively scale with your success.",
       costTitle: "Predictable Capital Expenditure",
       description:
-        "A forensic financial breakdown comparing the Total Cost of Ownership (TCO) of NEXORA versus building an equivalent enterprise architecture entirely from scratch.",
+        "A forensic financial breakdown comparing the Total Cost of Ownership (TCO) of SCRIPE versus building an equivalent enterprise architecture entirely from scratch.",
       intro:
-        "Enterprise architecture is arguably the most expensive risk a technical founder will take. NEXORA eliminates this risk entirely, guaranteeing a massive, mathematically provable Return on Investment prior to writing your first line of business logic.",
+        "Enterprise architecture is arguably the most expensive risk a technical founder will take. SCRIPE eliminates this risk entirely, guaranteeing a massive, mathematically provable Return on Investment prior to writing your first line of business logic.",
       ongoingTitle: "Drastically Reduced Maintenance",
       teamContent:
-        "NEXORA allows a lean team of 3 engineers to deliver the throughput, stability, and scale of a traditional 15-person enterprise department, maximizing headcount efficiency.",
+        "SCRIPE allows a lean team of 3 engineers to deliver the throughput, stability, and scale of a traditional 15-person enterprise department, maximizing headcount efficiency.",
       teamTitle: "Engineering Headcount Multiplier",
       timeTitle: "Accelerated Time-To-Market",
       tip: "ROI Tip: Redirect thousands of engineering hours from foundational infrastructure directly into proprietary feature development and market differentiation.",
       title: "Executive ROI & TCO Analysis",
       tblCostHeader1: "Component",
       tblCostHeader2: "Build from Scratch",
-      tblCostHeader3: "With NEXORA",
+      tblCostHeader3: "With SCRIPE",
       tblCostHeader4: "Savings",
       tblCostR1C1: "Authentication + RBAC",
       tblCostR1C2: "$50,000 - $80,000",
@@ -389,8 +389,8 @@ export const en = {
       tblCostR9C3: "**License cost**",
       tblCostR9C4: "**$200K+**",
       tblTimeHeader1: "Phase",
-      tblTimeHeader2: "Without NEXORA",
-      tblTimeHeader3: "With NEXORA",
+      tblTimeHeader2: "Without SCRIPE",
+      tblTimeHeader3: "With SCRIPE",
       tblTimeR1C1: "Infrastructure (auth, multi-tenant, audit)",
       tblTimeR1C2: "3-6 months",
       tblTimeR1C3: "0 (Day 1)",
@@ -407,8 +407,8 @@ export const en = {
       tblTimeR5C2: "**12-18 months**",
       tblTimeR5C3: "**3-6 months**",
       tblTeamHeader1: "Role",
-      tblTeamHeader2: "Without NEXORA",
-      tblTeamHeader3: "With NEXORA",
+      tblTeamHeader2: "Without SCRIPE",
+      tblTeamHeader3: "With SCRIPE",
       tblTeamR1C1: "Senior Backend Developer",
       tblTeamR1C2: "3-4",
       tblTeamR1C3: "1-2",
@@ -459,7 +459,7 @@ export const en = {
         "A quantifiable breakdown of the engineering throughput, security enhancements, and scaling capabilities provided immediately upon adoption.",
       ecosystemTitle: "Integrated Ecosystem Advantages",
       intro:
-        "The true value of NEXORA isn't just code; it's velocity. We provide the quantifiable engineering metrics necessary to justify architectural adoption to technical stakeholders.",
+        "The true value of SCRIPE isn't just code; it's velocity. We provide the quantifiable engineering metrics necessary to justify architectural adoption to technical stakeholders.",
       patterns: "Battle-Tested CQRS Patterns",
       patternsDesc: "Separation of reads and writes prevents catastrophic deadlocks.",
       performanceContent:
@@ -528,8 +528,8 @@ export const en = {
       tblPerfR8C2: "< 15s",
       tblPerfR8C3: "Next.js turbopack",
       tblVelHeader1: "Task",
-      tblVelHeader2: "Without NEXORA",
-      tblVelHeader3: "With NEXORA",
+      tblVelHeader2: "Without SCRIPE",
+      tblVelHeader3: "With SCRIPE",
       tblVelR1C1: "New module (full stack)",
       tblVelR1C2: "2-4 weeks",
       tblVelR1C3: "1 CLI command (< 1 min)",

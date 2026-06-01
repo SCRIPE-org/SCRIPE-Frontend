@@ -7,7 +7,7 @@ const PayrollRunsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Payroll – Salary Slips | NEXORA",
+  title: "Payroll – Salary Slips | SCRIPE",
   description: "Salary slip management",
 };
 

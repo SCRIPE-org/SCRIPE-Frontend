@@ -10,7 +10,7 @@ export interface ToastHandlers {
 }
 
 /**
- * Allows a Tier 2 plugin iframe to trigger NEXORA host toast notifications.
+ * Allows a Tier 2 plugin iframe to trigger SCRIPE host toast notifications.
  */
 export class PluginToastBridge {
   private unsubscribe?: () => void;

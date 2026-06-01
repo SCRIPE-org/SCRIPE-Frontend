@@ -9,11 +9,11 @@ export const de = {
       description:
         "Clean-Architecture-Schichten, Backend-Pipeline, Frontend-SOLID-Fluss und Modulgrenzen.",
       intro:
-        "NEXORA folgt einer strikten Clean Architecture mit vier Schichten: Presentation, Application, Domain und Infrastructure. Die Dependency Rule stellt sicher, dass innere Schichten nie von äußeren abhängen. Dieses Muster gilt konsistent für Backend und Frontend.",
+        "SCRIPE folgt einer strikten Clean Architecture mit vier Schichten: Presentation, Application, Domain und Infrastructure. Die Dependency Rule stellt sicher, dass innere Schichten nie von äußeren abhängen. Dieses Muster gilt konsistent für Backend und Frontend.",
       layersTitle: "Clean Architecture Schichten",
       backendArchTitle: "Backend-Architektur",
       backendArchIntro:
-        "Das Backend folgt einer Request-Pipeline-Architektur, bei der jede HTTP-Anfrage durch Middleware, Controller, NEXORA mediator-Verhaltensweisen (Behaviors) und schließlich den CQRS-Handler fließt. Dies gewährleistet konsistente Validierung, Auditierung und Fehlerbehandlung.",
+        "Das Backend folgt einer Request-Pipeline-Architektur, bei der jede HTTP-Anfrage durch Middleware, Controller, SCRIPE mediator-Verhaltensweisen (Behaviors) und schließlich den CQRS-Handler fließt. Dies gewährleistet konsistente Validierung, Auditierung und Fehlerbehandlung.",
       frontendArchTitle: "Frontend-Architektur",
       frontendArchIntro:
         "Das Frontend verwendet ein SOLID View/ViewModel-Muster, bei dem Views reine Benutzeroberflächen sind (kein State, keine Logik) und ViewModels die gesamte Geschäftslogik enthalten. Das Connector-Muster trennt das Next.js-Routing (Server Components) von der Anwendungslogik (Client Components).",
@@ -31,7 +31,7 @@ export const de = {
       description:
         "Anatomie der Program.cs, Middleware-Pipeline, DI-Service-Map, Modulregistrierungsmuster und Controller-Katalog.",
       intro:
-        "Das NEXORA-Backend ist ein .NET 10 Modular Monolith mit 288 Zeilen in der Program.cs, die 16 Service-Registrierungen, 10 Middleware-Komponenten und 18 REST-Controller miteinander verbinden. Diese Seite zerlegt jede Schicht der Backend-Architektur.",
+        "Das SCRIPE-Backend ist ein .NET 10 Modular Monolith mit 288 Zeilen in der Program.cs, die 16 Service-Registrierungen, 10 Middleware-Komponenten und 18 REST-Controller miteinander verbinden. Diese Seite zerlegt jede Schicht der Backend-Architektur.",
       programCsTitle: "Anatomie der Program.cs",
       programCsIntro:
         "Die Program.cs ist der Einstiegspunkt und das Verdrahtungszentrum der Anwendung. Sie erkennt den Deployment-Modus, registriert Services in einer bestimmten Reihenfolge und baut die Middleware-Pipeline auf. Die Datei folgt einer klaren 5-Abschnitts-Struktur.",
@@ -46,14 +46,14 @@ export const de = {
         "Jedes neue Modul folgt dem gleichen DI-Registrierungsmuster. Die Erweiterungsmethode AddXxxModule() registriert den DbContext des Moduls, Repositories, Services und den Modul-Registrierungsmarker.",
       controllersTitle: "Controller",
       controllerTip:
-        "Alle Controller erben von einem Basis-ApiController, der eine standardisierte Result<T>-Antwortzuordnung bietet. Controller sollten schlank sein – sie validieren nur das Request-Modell und delegieren an NEXORA mediator.",
+        "Alle Controller erben von einem Basis-ApiController, der eine standardisierte Result<T>-Antwortzuordnung bietet. Controller sollten schlank sein – sie validieren nur das Request-Modell und delegieren an SCRIPE mediator.",
     },
     frontend: {
       title: "Frontend-Architektur",
       description:
         "SOLID View/ViewModel-Muster, Modulstruktur und das Connector-Muster für die Next.js-Integration.",
       intro:
-        "Das NEXORA-Frontend basiert auf Next.js 16 (App Router) und folgt einem strengen SOLID View/ViewModel-Muster. Jede Seite besteht aus einer reinen UI-View, die die gesamte Logik an ViewModel-Hooks delegiert. Diese Trennung gewährleistet Testbarkeit, Wiederverwendbarkeit und Wartbarkeit.",
+        "Das SCRIPE-Frontend basiert auf Next.js 16 (App Router) und folgt einem strengen SOLID View/ViewModel-Muster. Jede Seite besteht aus einer reinen UI-View, die die gesamte Logik an ViewModel-Hooks delegiert. Diese Trennung gewährleistet Testbarkeit, Wiederverwendbarkeit und Wartbarkeit.",
       solidPatternTitle: "SOLID View/ViewModel-Muster",
       solidPatternIntro:
         "Das SOLID-Muster stellt sicher, dass jeder Teil der Benutzeroberfläche eine einzige Verantwortung hat. Views rendern JSX, ViewModels verwalten Zustand und Logik, und Components bieten wiederverwendbare UI-Abschnitte.",
@@ -74,15 +74,15 @@ export const de = {
     cqrs: {
       title: "CQRS-Muster",
       description:
-        "Trennung von Befehlen und Abfragen (CQRS) mit NEXORA mediator-Pipeline, Behaviors, Validierung und Caching.",
+        "Trennung von Befehlen und Abfragen (CQRS) mit SCRIPE mediator-Pipeline, Behaviors, Validierung und Caching.",
       intro:
-        "NEXORA verwendet das CQRS-Muster (Command Query Responsibility Segregation), um Lese- und Schreibvorgänge zu trennen. Befehle (Commands) ändern den Zustand und durchlaufen Validierungs- und Audit-Behaviors. Abfragen (Queries) lesen den Zustand und können Caching nutzen. NEXORA mediator fungiert als Vermittler zwischen Controllern und Handlern.",
+        "SCRIPE verwendet das CQRS-Muster (Command Query Responsibility Segregation), um Lese- und Schreibvorgänge zu trennen. Befehle (Commands) ändern den Zustand und durchlaufen Validierungs- und Audit-Behaviors. Abfragen (Queries) lesen den Zustand und können Caching nutzen. SCRIPE mediator fungiert als Vermittler zwischen Controllern und Handlern.",
       whatIsCqrsTitle: "Was ist CQRS?",
       whatIsCqrsIntro:
         "CQRS trennt Ihre Anwendung in zwei Seiten: Befehle (Schreibvorgänge) und Abfragen (Lesevorgänge). Jede Seite kann unabhängig optimiert werden – Befehle konzentrieren sich auf Datenintegrität und Validierung, während Abfragen auf Leistung und Caching fokussiert sind.",
       commandSide: "Befehlsseite (Schreiben)",
       querySide: "Abfrageseite (Lesen)",
-      pipelineTitle: "NEXORA mediator-Pipeline",
+      pipelineTitle: "SCRIPE mediator-Pipeline",
       validationBehaviorTitle: "Validierungs-Behavior",
       commandExampleTitle: "Befehls-Beispiel (Command)",
       queryExampleTitle: "Abfrage-Beispiel (Query)",
@@ -94,7 +94,7 @@ export const de = {
       description:
         "Regeln zur Modulisolierung, Backend-/Frontend-Templates, Modul-Registry und modulübergreifende Kommunikation.",
       intro:
-        "NEXORA verwendet ein strenges Modulsystem, bei dem jedes Modul eine isolierte Insel mit klaren Grenzen ist. Module können nicht voneinander importieren – sie kommunizieren nur über URLs, gemeinsame IDs oder den Core-Event-Bus. Dies sichert Unabhängigkeit, Testbarkeit und die Möglichkeit zur Auslagerung.",
+        "SCRIPE verwendet ein strenges Modulsystem, bei dem jedes Modul eine isolierte Insel mit klaren Grenzen ist. Module können nicht voneinander importieren – sie kommunizieren nur über URLs, gemeinsame IDs oder den Core-Event-Bus. Dies sichert Unabhängigkeit, Testbarkeit und die Möglichkeit zur Auslagerung.",
       isolationRulesTitle: "Regeln zur Modulisolierung",
       allowedImportsTitle: "Erlaubte Importe",
       forbiddenImportsTitle: "Verbotene Importe",
@@ -152,7 +152,7 @@ export const de = {
       description:
         "TanStack Query für Server-State, Zustand für globalen UI-State und LanguageProvider für Lokalisierung.",
       intro:
-        "NEXORA verwendet drei Tools zur Zustandsverwaltung, jedes für eine bestimmte Kategorie: TanStack Query für Serverdaten (API-Ergebnisse), Zustand für den globalen UI-State (Auth, Sidebar, Theme) und useState für komponentenlokalen State (Formulare, Toggles).",
+        "SCRIPE verwendet drei Tools zur Zustandsverwaltung, jedes für eine bestimmte Kategorie: TanStack Query für Serverdaten (API-Ergebnisse), Zustand für den globalen UI-State (Auth, Sidebar, Theme) und useState für komponentenlokalen State (Formulare, Toggles).",
       decisionTitle: "Entscheidungsmatrix",
       tanstackTitle: "TanStack Query (Server State)",
       tanstackIntro:
@@ -174,14 +174,14 @@ export const de = {
       description:
         "End-to-End Datenflussdiagramme: Abfrage, Mutation, Backend-Pipeline, Fehlerbehandlung und Caching-Strategie.",
       intro:
-        "Das Verständnis des Datenflusses durch NEXORA ist entscheidend für das Debugging und die Erweiterung des Systems. Diese Seite verfolgt die Daten von einem Klick in der Benutzeroberfläche bis zur Datenbank und zurück.",
+        "Das Verständnis des Datenflusses durch SCRIPE ist entscheidend für das Debugging und die Erweiterung des Systems. Diese Seite verfolgt die Daten von einem Klick in der Benutzeroberfläche bis zur Datenbank und zurück.",
       queryFlowTitle: "Abfrage-Fluss (Lesen)",
       queryFlowIntro:
         "Wenn ein Benutzer Daten betrachtet (z. B. das Öffnen der Benutzerseite), beginnt der Fluss bei der View, geht durch das ViewModel, TanStack Query, das Repository, den API-Service und schließlich die Backend-API.",
       mutationFlowTitle: "Mutations-Fluss (Schreiben)",
       backendPipelineTitle: "Backend-Request-Pipeline",
       backendPipelineIntro:
-        "Jede Backend-Anfrage durchläuft 10 Middleware-Komponenten und 3 NEXORA mediator-Pipeline-Behaviors, bevor sie den Handler erreicht. Dies gewährleistet konsistente Protokollierung, Authentifizierung, Autorisierung, Validierung und Auditierung.",
+        "Jede Backend-Anfrage durchläuft 10 Middleware-Komponenten und 3 SCRIPE mediator-Pipeline-Behaviors, bevor sie den Handler erreicht. Dies gewährleistet konsistente Protokollierung, Authentifizierung, Autorisierung, Validierung und Auditierung.",
       errorFlowTitle: "Fehlerbehandlung",
       errorFlowIntro:
         "Fehler werden auf mehreren Ebenen behandelt. Jede Fehlerquelle hat einen spezifischen Handler, Antwortcode und eine Frontend-Behandlungsstrategie.",
@@ -196,7 +196,7 @@ export const de = {
       description:
         "Entitätsvererbungshierarchie, AuditableEntity, ITenantAwareEntity, Soft-Delete-Lebenszyklus, Repository-Abstraktionen und globale Abfragefilter.",
       intro:
-        "Das Domain-Modell von NEXORA folgt einer strengen Vererbungshierarchie, bei der alle Geschäftsentitäten von AuditableEntity erben, die Audit-Felder und Soft-Delete-Unterstützung bietet. Mandantenspezifische Entitäten implementieren zusätzlich ITenantAwareEntity für eine automatische Isolierung auf Zeilenebene.",
+        "Das Domain-Modell von SCRIPE folgt einer strengen Vererbungshierarchie, bei der alle Geschäftsentitäten von AuditableEntity erben, die Audit-Felder und Soft-Delete-Unterstützung bietet. Mandantenspezifische Entitäten implementieren zusätzlich ITenantAwareEntity für eine automatische Isolierung auf Zeilenebene.",
       entityHierarchyTitle: "Entitätsvererbungshierarchie",
       entityHierarchyIntro:
         "Alle Domain-Entitäten folgen einer dreistufigen Vererbungskette: IEntity (Marker-Interface) → Entity<TId> (Identität + Gleichheit + Domain-Events) → AuditableEntity (Audit-Felder + Soft-Delete). Entitäten, die zu einem bestimmten Mandanten gehören, implementieren zudem die Schnittstelle ITenantAwareEntity.",
@@ -219,7 +219,7 @@ export const de = {
         "Alle Entitäten verwenden Soft-Delete über das IsDeleted-Flag. Ein DELETE-Endpunkt wandelt die Anforderung in ein Soft-Delete um. Die Entität bleibt in der Datenbank, ist aber verborgen.",
       repositoryTitle: "Repository-Abstraktionen",
       repositoryIntro:
-        "NEXORA definiert drei Repository-Schnittstellen: IReadRepository<T> für Abfragen, IWriteRepository<T> für Mutationen und IRepository<T>, das beide mit einer SaveChangesAsync-Methode kombiniert.",
+        "SCRIPE definiert drei Repository-Schnittstellen: IReadRepository<T> für Abfragen, IWriteRepository<T> für Mutationen und IRepository<T>, das beide mit einer SaveChangesAsync-Methode kombiniert.",
       concreteEntitiesTitle: "Register der konkreten Entitäten",
       queryFiltersTitle: "Globale Abfragefilter (Query Filters)",
       queryFiltersIntro:
@@ -235,13 +235,13 @@ export const de = {
       description:
         "IDomainEvent-Schnittstelle, Outbox-Pattern, OutboxInterceptor, OutboxProcessor und zuverlässige Ereignisübermittlung.",
       intro:
-        "Domain-Events repräsentieren signifikante Vorkommnisse in der Geschäftsdomäne. NEXORA verwendet das Outbox-Pattern, um eine zuverlässige Übermittlung zu garantieren.",
+        "Domain-Events repräsentieren signifikante Vorkommnisse in der Geschäftsdomäne. SCRIPE verwendet das Outbox-Pattern, um eine zuverlässige Übermittlung zu garantieren.",
       interfaceTitle: "IDomainEvent-Schnittstelle",
       interfaceIntro:
-        "Alle Domain-Events implementieren die IDomainEvent-Schnittstelle, die von NEXORA mediators INotification erbt. Dies ermöglicht In-Process-Pub/Sub.",
+        "Alle Domain-Events implementieren die IDomainEvent-Schnittstelle, die von SCRIPE mediators INotification erbt. Dies ermöglicht In-Process-Pub/Sub.",
       publishingTitle: "Veröffentlichungs- & Behandlungsfluss",
       publishingIntro:
-        "Domain-Events folgen einem 6-stufigen Lebenszyklus: Entität löst Event aus, OutboxInterceptor fängt es ab, wird als OutboxMessage persistiert, OutboxProcessor ruft es ab und veröffentlicht es via NEXORA mediator.",
+        "Domain-Events folgen einem 6-stufigen Lebenszyklus: Entität löst Event aus, OutboxInterceptor fängt es ab, wird als OutboxMessage persistiert, OutboxProcessor ruft es ab und veröffentlicht es via SCRIPE mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Outbox-Pattern",
       outboxIntro:
@@ -274,9 +274,9 @@ export const de = {
     cqrsPipeline: {
       title: "CQRS-Pipeline",
       description:
-        "NEXORA-Mediator-Pipeline-Behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, Result-Pattern und vollständiger Command/Query-Katalog.",
+        "SCRIPE-Mediator-Pipeline-Behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, Result-Pattern und vollständiger Command/Query-Katalog.",
       intro:
-        "Jeder Command und jede Query in NEXORA läuft durch eine konfigurierbare NEXORA-Mediator-Pipeline mit 5 integrierten Behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior und CachingBehavior. Die Reihenfolge wird über appsettings oder Umgebungsvariablen gesteuert und beim Start validiert.",
+        "Jeder Command und jede Query in SCRIPE läuft durch eine konfigurierbare SCRIPE-Mediator-Pipeline mit 5 integrierten Behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior und CachingBehavior. Die Reihenfolge wird über appsettings oder Umgebungsvariablen gesteuert und beim Start validiert.",
       overviewTitle: "Pipeline-Übersicht",
       overviewIntro:
         "Die Standardreihenfolge ist Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. Validierung und Feature-Prüfung laufen bewusst vor dem Cache-Lookup, während Cache-Invalidierung nach erfolgreichen Mutationen vor dem Webhook-Versand entrollt.",
@@ -293,7 +293,7 @@ export const de = {
       validatorExampleTitle: "Beispiele für Validatoren",
       loggingTitle: "LoggingBehavior",
       loggingIntro:
-        "Protokolliert jede NEXORA mediator-Anfrage mit Benutzer-ID, Mandanten-ID, Request-Typ und Ausführungszeit.",
+        "Protokolliert jede SCRIPE mediator-Anfrage mit Benutzer-ID, Mandanten-ID, Request-Typ und Ausführungszeit.",
       cachingTitle: "CachingBehavior",
       cachingIntro:
         "Überprüft den Cache auf vorhandene Ergebnisse für ICacheable-Abfragen, bevor der Handler ausgeführt wird.",
@@ -316,10 +316,10 @@ export const de = {
       description:
         "Program.cs Registrierungsablauf, Modul-DI-Muster, Service Discovery, Core + Identity Service Maps, Lebenszyklus-Regeln und YARP Gateway.",
       intro:
-        "NEXORA verwendet den in .NET integrierten Dependency-Injection-Container mit einem strukturierten Registrierungsmuster.",
+        "SCRIPE verwendet den in .NET integrierten Dependency-Injection-Container mit einem strukturierten Registrierungsmuster.",
       architectureTitle: "DI-Registrierungsarchitektur",
       architectureIntro:
-        "Die Program.cs folgt einer strengen 4-Phasen-Registrierungsreihenfolge: (1) Kerninfrastruktur, (2) CORS & Rate Limiting, (3) Module, (4) Application Layer (NEXORA mediator).",
+        "Die Program.cs folgt einer strengen 4-Phasen-Registrierungsreihenfolge: (1) Kerninfrastruktur, (2) CORS & Rate Limiting, (3) Module, (4) Application Layer (SCRIPE mediator).",
       moduleRegTitle: "Modul-Registrierungsmuster",
       moduleRegIntro:
         "Jedes Modul stellt eine Erweiterungsmethode AddXxxModule() bereit, die all seine Services registriert.",

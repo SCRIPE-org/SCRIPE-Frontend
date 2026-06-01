@@ -3,7 +3,7 @@ export const ar = {
     samlSpCertificate: "الشهادة العامة لموفر الخدمة",
     samlSpCertificateHelp: "الشهادة العامة لموفر الخدمة (Base64/PEM)",
     title: "تطبيقات OAuth",
-    description: "إدارة التطبيقات الخارجية التي تعتمد على NEXORA للمصادقة (خادم OIDC)",
+    description: "إدارة التطبيقات الخارجية التي تعتمد على SCRIPE للمصادقة (خادم OIDC)",
     // عناوين الصفحة التفصيلية
     createTitle: "تطبيق OAuth جديد",
     samlAcsUrl: "رابط خدمة المصادقة (ACS)",
@@ -103,7 +103,7 @@ export const ar = {
   },
   oauth: {
     consentTitle: "تفويض التطبيق",
-    isRequestingAccess: "يطلب الوصول إلى حسابك على NEXORA.",
+    isRequestingAccess: "يطلب الوصول إلى حسابك على SCRIPE.",
     willBeAbleTo: "سيكون هذا التطبيق قادرًا على:",
     scopes: {
       openid: "التحقق من هويتك",

@@ -7,7 +7,7 @@ const FinancialsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Financials | Marketplace | NEXORA",
+  title: "Financials | Marketplace | SCRIPE",
   description: "Track app purchases and process developer payouts.",
 };
 

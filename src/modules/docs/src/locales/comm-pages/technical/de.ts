@@ -9,14 +9,14 @@ export const de = {
         "Unsere Architektur priorisiert Geschwindigkeit, ohne Abstraktion zu opfern. Jede Schicht der API wird strengen Benchmarks unterzogen, um minimale Allokationen und maximalen Durchsatz zu gewährleisten.",
       apiTitle: "Anhaltende API-Geschwindigkeit",
       cachingContent:
-        "Wir fragen die Datenbank nicht ab, es sei denn, es ist zwingend erforderlich. NEXORA implementiert eine ausgeklügelte, mehrstufige Caching-Strategie. Kurzlebige L1-Memory-Caches fangen identische gleichzeitige Anfragen ab, während der verteilte L2-Redis-Cache massiven knotenübergreifenden Lesedurchsatz bietet.",
+        "Wir fragen die Datenbank nicht ab, es sei denn, es ist zwingend erforderlich. SCRIPE implementiert eine ausgeklügelte, mehrstufige Caching-Strategie. Kurzlebige L1-Memory-Caches fangen identische gleichzeitige Anfragen ab, während der verteilte L2-Redis-Cache massiven knotenübergreifenden Lesedurchsatz bietet.",
       cachingTitle: "Mehrstufiges aggressives Caching",
       dbTitle: "Entity Framework Optimierung",
       description:
         "Transparente, reale Leistungsmetriken, Optimierungsstrategien und Fähigkeiten zur horizontalen Skalierung.",
       frontendTitle: "Next.js Rendering-Engine",
       intro:
-        "NEXORA ist nicht nur skalierbar, es ist explosiv schnell. Durch die Nutzung der neuesten Leistungsverbesserungen von .NET 9 und aggressives verteiltes Caching bewältigt die Plattform massive gleichzeitige Lasten mit Effizienz auf Hardware-Niveau.",
+        "SCRIPE ist nicht nur skalierbar, es ist explosiv schnell. Durch die Nutzung der neuesten Leistungsverbesserungen von .NET 9 und aggressives verteiltes Caching bewältigt die Plattform massive gleichzeitige Lasten mit Effizienz auf Hardware-Niveau.",
       scaleTitle: "Unendliche horizontale Skalierung",
       tip: "Performance-Hinweis: Die enthaltenen mehrstufigen Dockerfiles garantieren die absolut kleinsten Container-Footprints, wodurch Instanz-Cluster in Millisekunden automatisch skalieren können.",
       title: "Performance Benchmarks",
@@ -28,7 +28,7 @@ export const de = {
       description:
         "Modernste WebSockets-Integration, die Live-Dashboards im Sub-Sekunden-Bereich, systemweites Broadcasting und kollaboratives Presence-Tracking ermöglicht.",
       intro:
-        "Moderne Unternehmensanwendungen müssen lebendig sein. NEXORA integriert out-of-the-box eine hochoptimierte, verteilte SignalR WebSocket-Backplane und liefert Echtzeit-, bidirektionale Kommunikation an Millionen gleichzeitiger Clients.",
+        "Moderne Unternehmensanwendungen müssen lebendig sein. SCRIPE integriert out-of-the-box eine hochoptimierte, verteilte SignalR WebSocket-Backplane und liefert Echtzeit-, bidirektionale Kommunikation an Millionen gleichzeitiger Clients.",
       liveAudit: "Echtzeit forensisches Streaming",
       liveAuditDesc:
         "Streamen Sie kritische Sicherheits- und Audit-Protokolle direkt an Administrator-Dashboards, während sie global auftreten.",
@@ -52,19 +52,19 @@ export const de = {
     },
     resiliencePatterns: {
       circuitContent:
-        "Wenn ein Zahlungsgateway eines Drittanbieters offline geht, 'lösen' die Circuit Breaker (Schutzschalter) von NEXORA nach einem konfigurierten Schwellenwert von Fehlern sofort aus. Dies verhindert physisch, dass Ihre Anwendung Tausende zum Scheitern verurteilte Anfragen sendet, und gibt dem externen Dienst Zeit, sich zu erholen, während Ihre App schnell fehlschlägt (fail-fast).",
+        "Wenn ein Zahlungsgateway eines Drittanbieters offline geht, 'lösen' die Circuit Breaker (Schutzschalter) von SCRIPE nach einem konfigurierten Schwellenwert von Fehlern sofort aus. Dies verhindert physisch, dass Ihre Anwendung Tausende zum Scheitern verurteilte Anfragen sendet, und gibt dem externen Dienst Zeit, sich zu erholen, während Ihre App schnell fehlschlägt (fail-fast).",
       circuitTitle: "Automatisierte Circuit Breakers",
       configTitle: "Dynamische Richtlinienkonfiguration",
       degradationContent:
-        "Wenn eine externe Abhängigkeit fehlschlägt, stürzt das System nicht ab – es degradiert elegant. Wenn die Live-API für Versandtarife nicht erreichbar ist, stellt NEXORA automatisch die zuletzt bekannten, zwischengespeicherten Tarife bereit, um sicherzustellen, dass Checkout-Abläufe ununterbrochen bleiben.",
+        "Wenn eine externe Abhängigkeit fehlschlägt, stürzt das System nicht ab – es degradiert elegant. Wenn die Live-API für Versandtarife nicht erreichbar ist, stellt SCRIPE automatisch die zuletzt bekannten, zwischengespeicherten Tarife bereit, um sicherzustellen, dass Checkout-Abläufe ununterbrochen bleiben.",
       degradationTitle: "Elegante Graceful Degradation",
       description:
         "Fehlertoleranz auf militärischem Niveau durch intelligente Retry-Pipelines, automatisierte Circuit Breaker und elegante Fallback-Strategien.",
       healthContent:
-        "NEXORA wartet nicht darauf, dass ein Benutzer einen Fehler meldet. Das System führt kontinuierlich proaktive Health Checks gegen Datenbanken, Caches und Drittanbieter-APIs durch. Wenn eine Verschlechterung festgestellt wird, versucht es automatisch Abhilfemaßnahmen oder alarmiert sofort DevOps.",
+        "SCRIPE wartet nicht darauf, dass ein Benutzer einen Fehler meldet. Das System führt kontinuierlich proaktive Health Checks gegen Datenbanken, Caches und Drittanbieter-APIs durch. Wenn eine Verschlechterung festgestellt wird, versucht es automatisch Abhilfemaßnahmen oder alarmiert sofort DevOps.",
       healthTitle: "Proaktive Gesundheits-Telemetrie",
       intro:
-        "In einer verteilten Enterprise-Umgebung sind Netzwerkausfälle keine Möglichkeit; sie sind eine mathematische Gewissheit. NEXORA ist darauf ausgelegt, katastrophale externe Ausfälle zu überleben, ohne das Kern-Benutzererlebnis zu beeinträchtigen.",
+        "In einer verteilten Enterprise-Umgebung sind Netzwerkausfälle keine Möglichkeit; sie sind eine mathematische Gewissheit. SCRIPE ist darauf ausgelegt, katastrophale externe Ausfälle zu überleben, ohne das Kern-Benutzererlebnis zu beeinträchtigen.",
       retryTitle: "Jittered Exponential Backoff",
       tip: "Architektonischer Tipp: Schreiben Sie niemals Standard-try/catch-Blöcke für Netzwerkaufrufe. Nutzen Sie immer die zentralisierten Polly HTTP-Interceptoren, die in der gesamten Plattform injiziert werden.",
       title: "Defensive Resilience-Architektur",
@@ -85,12 +85,12 @@ export const de = {
         "Out-of-the-box Kubernetes-native Liveness- und Readiness-Probes. Die API meldet kontinuierlich selbst den Betriebsstatus der SQL-Datenbank, des Redis-Caches und externer Abhängigkeiten. Fällt ein Node aus, nimmt ihn der Orchestrator sofort aus der Load-Balancer-Rotation.",
       healthTitle: "Kubernetes-Native Probes",
       intro:
-        "Sie können nicht verwalten, was Sie nicht messen können. NEXORA integriert einen Elite-Observability-Stack, der SREs und DevSecOps-Teams forensische Echtzeiteinblicke in das verteilte Verhalten der Plattform bietet.",
+        "Sie können nicht verwalten, was Sie nicht messen können. SCRIPE integriert einen Elite-Observability-Stack, der SREs und DevSecOps-Teams forensische Echtzeiteinblicke in das verteilte Verhalten der Plattform bietet.",
       loggingContent:
-        "Traditionelle Textprotokolle sind bei Skalierung nutzlos. NEXORA nutzt Serilog, um tief strukturiert JSON-Ereignisprotokolle zu generieren, die automatisch mit Correlation-IDs, Mandantenkontexten und Maschinennamen angereichert werden, um sie sofort in Datadog oder ELK abfragen zu können.",
+        "Traditionelle Textprotokolle sind bei Skalierung nutzlos. SCRIPE nutzt Serilog, um tief strukturiert JSON-Ereignisprotokolle zu generieren, die automatisch mit Correlation-IDs, Mandantenkontexten und Maschinennamen angereichert werden, um sie sofort in Datadog oder ELK abfragen zu können.",
       loggingTitle: "Strukturiertes forensisches Logging",
       metricsIntro:
-        "Durch die Integration von OpenTelemetry-Standardprotokollen macht NEXORA Tausende von internen Plattformmetriken direkt für Ihre bestehenden Prometheus- und Grafana-Dashboards zugänglich.",
+        "Durch die Integration von OpenTelemetry-Standardprotokollen macht SCRIPE Tausende von internen Plattformmetriken direkt für Ihre bestehenden Prometheus- und Grafana-Dashboards zugänglich.",
       metricsTitle: "OpenTelemetry-Integration",
       requestMetrics: "API-Request-Durchsatz",
       requestMetricsDesc:
@@ -121,15 +121,15 @@ export const de = {
         "Testen ohne absolute Automatisierung ist ein Risiko. Das mitgelieferte Repository wird nativ mit einer massiv parallelisierten GitHub Actions / GitLab CI-Pipeline ausgeliefert. Sie verbarrikadiert aktiv den `main`-Branch und weist physisch jeden Code zurück, der Domänengrenzen verletzt, mathematische Assertions nicht besteht oder Regressionen auslöst.",
       ciTitle: "Kontinuierliche Sicherheits- & Integritäts-Pipelines",
       description:
-        "Eine tiefgehende Analyse der NEXORA-Testpyramide: Blitzschnelle CQRS-Unit-Assertions, ephemere Docker-Datenbank-Integrationen und unerbittliche Playwright-UI-Automatisierung.",
+        "Eine tiefgehende Analyse der SCRIPE-Testpyramide: Blitzschnelle CQRS-Unit-Assertions, ephemere Docker-Datenbank-Integrationen und unerbittliche Playwright-UI-Automatisierung.",
       e2eContent:
         "User Acceptance Testing (UAT) darf sich nicht auf menschliches Versagen verlassen. Wir integrieren Playwright, um Headless-Chromium-Ausführungscluster hochzufahren. Diese Cluster simulieren massive, hochkomplexe Benutzerinteraktionen – führen komplette mandantenfähige Onboarding-Abläufe aus, validieren den Status der React-Komponenten und stellen sicher, dass die Benutzeroberfläche unter aggressiv chaotischen Bedingungen perfekt widerstandsfähig bleibt, bevor manuelle QA sie jemals berührt.",
       e2eTitle: "Unerbittliche End-To-End Browser-Automatisierung",
       integrationContent:
-        "Umfassendes Mocking der Datenbank führt zu gefährlichen False Positives. NEXORA setzt Testcontainers ein, um reale physische Instanzen von PostgreSQL und Redis spezifisch für jede Test-Suite dynamisch bereitzustellen, auszuführen und zu zerstören. Dies stellt sicher, dass Ihre EF Core-Schemata gegen echte Infrastruktur getestet werden, anstatt gegen fragile In-Memory-Mocks.",
+        "Umfassendes Mocking der Datenbank führt zu gefährlichen False Positives. SCRIPE setzt Testcontainers ein, um reale physische Instanzen von PostgreSQL und Redis spezifisch für jede Test-Suite dynamisch bereitzustellen, auszuführen und zu zerstören. Dies stellt sicher, dass Ihre EF Core-Schemata gegen echte Infrastruktur getestet werden, anstatt gegen fragile In-Memory-Mocks.",
       integrationTitle: "Ephemere Infrastruktur-Tests",
       intro:
-        "Ein kaskadierender Enterprise-Bug kostet Hunderttausende Dollar durch systemweite Ausfallzeiten. NEXORA erzwingt eine rücksichtslose, mathematisch wasserdichte Teststrategie. Von isolierten Clean Architecture Logik-Tests bis hin zur destruktiven Headless-Browser-Automatisierung wird jedes einzelne Byte Code vor dem Mergen aggressiv geprüft und zertifiziert.",
+        "Ein kaskadierender Enterprise-Bug kostet Hunderttausende Dollar durch systemweite Ausfallzeiten. SCRIPE erzwingt eine rücksichtslose, mathematisch wasserdichte Teststrategie. Von isolierten Clean Architecture Logik-Tests bis hin zur destruktiven Headless-Browser-Automatisierung wird jedes einzelne Byte Code vor dem Mergen aggressiv geprüft und zertifiziert.",
       pyramidTitle: "Die geschichtete Code-Zertifizierungspyramide",
       pyramidLvl: "Zertifizierungs-Stratum",
       pyramidTech: "Ausführungs-Engine",
@@ -150,7 +150,7 @@ export const de = {
       tip: "Architektonische Direktive: Streben Sie nicht nach Vanity-Metriken. Erzwingen Sie eine Baseline von 100 % Abdeckung für Kern-Domain-Entitäten und CQRS-Handler und nutzen Sie Playwright UI-Cluster, um die Presentation-Oberfläche abzudecken.",
       title: "Automatisierte Resilienz & Testing",
       unitContent:
-        "Durch die strikte Einhaltung der Clean Architecture-Prinzipien bleibt die Geschäftslogik von NEXORA physisch von HTTP-Kontexten und SQL-Schemata isoliert. Ihr Engineering-Team kann sofort Tausende von xUnit-Testsuiten in nur wenigen Millisekunden gegen Core-Handler und Domain-Entitäten ausführen, was die Entwicklergeschwindigkeit und das Vertrauen in Deployments maximiert.",
+        "Durch die strikte Einhaltung der Clean Architecture-Prinzipien bleibt die Geschäftslogik von SCRIPE physisch von HTTP-Kontexten und SQL-Schemata isoliert. Ihr Engineering-Team kann sofort Tausende von xUnit-Testsuiten in nur wenigen Millisekunden gegen Core-Handler und Domain-Entitäten ausführen, was die Entwicklergeschwindigkeit und das Vertrauen in Deployments maximiert.",
       unitTitle: "Blitzschnelle isolierte Unit-Ausführung",
       lstIntI1: "WebApplicationFactory für realistische HTTP-Pipeline-Tests",
       lstIntI2: "TestContainers für Wegwerf-Datenbankinstanzen",
@@ -196,7 +196,7 @@ export const de = {
       imageProcessingDesc:
         "Hochgeladene Bilder automatisch komprimieren, in der Größe ändern und in moderne WebP-Formate konvertieren.",
       intro:
-        "Unternehmensanwendungen generieren Terabytes an Binärdaten. NEXORA abstrahiert den physischen Speicherort vollständig. Sie können während der Inkubation auf der lokalen Festplatte beginnen und in der Produktion mit einem einzigen Konfigurationsstring in globale AWS S3-Buckets migrieren, ohne ein einziges Modul neu schreiben zu müssen.",
+        "Unternehmensanwendungen generieren Terabytes an Binärdaten. SCRIPE abstrahiert den physischen Speicherort vollständig. Sie können während der Inkubation auf der lokalen Festplatte beginnen und in der Produktion mit einem einzigen Konfigurationsstring in globale AWS S3-Buckets migrieren, ohne ein einziges Modul neu schreiben zu müssen.",
       mig1Content: "Entwickeln Sie in rasender Geschwindigkeit mit dem lokalen Dateisystem.",
       mig1Title: "1. Lokale Entwicklung",
       mig2Content:

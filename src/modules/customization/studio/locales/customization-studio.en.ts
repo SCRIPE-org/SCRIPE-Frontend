@@ -32,7 +32,7 @@ export const en = {
       globalDefault: "System Defaults",
       globalDefaultDesc: "Use platform-wide default branding",
       factoryDefault: "Factory Reset",
-      factoryDefaultDesc: "Reset to NEXORA default theme",
+      factoryDefaultDesc: "Reset to SCRIPE default theme",
     },
     resetSuccess: "Branding reset successfully",
     resetFailed: "Failed to reset branding",
@@ -758,7 +758,7 @@ export const en = {
         xl: "XL",
       },
       logoText: "Logo Text",
-      logoTextPlaceholder: "NEXORA",
+      logoTextPlaceholder: "SCRIPE",
       showLogo: "Show Logo",
       navigationStyle: "Navigation Style",
       navStyles: {

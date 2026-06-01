@@ -7,7 +7,7 @@ const PayrollDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Payroll | NEXORA",
+  title: "Payroll | SCRIPE",
   description: "Payroll Management System",
 };
 

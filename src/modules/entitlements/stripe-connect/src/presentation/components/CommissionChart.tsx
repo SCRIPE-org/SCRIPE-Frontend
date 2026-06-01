@@ -1,7 +1,7 @@
 /**
  * CommissionChart
  * Line chart showing daily commission amount over a configurable period.
- * Uses recharts (already a NEXORA dependency).
+ * Uses recharts (already a SCRIPE dependency).
  */
 "use client";
 

@@ -9,7 +9,7 @@ const UserGroupDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "User Group Detail | Nexora",
+  title: "User Group Detail | Scripe",
   description: "View and manage user group details, members, roles, and restrictions",
 };
 

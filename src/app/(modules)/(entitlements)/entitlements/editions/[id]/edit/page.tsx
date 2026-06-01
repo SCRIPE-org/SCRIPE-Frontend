@@ -7,7 +7,7 @@ const EditionEditWizardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edit Edition | NEXORA",
+  title: "Edit Edition | SCRIPE",
   description:
     "Edit subscription edition settings — billing cycles, trial configuration, and core metadata",
 };

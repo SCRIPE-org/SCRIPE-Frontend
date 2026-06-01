@@ -7,7 +7,7 @@ const BillingDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Revenue Dashboard | NEXORA",
+  title: "Revenue Dashboard | SCRIPE",
   description: "Real-time billing analytics, MRR, ARR, churn rate, and revenue trends",
 };
 

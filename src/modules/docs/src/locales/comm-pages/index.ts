@@ -2,13 +2,13 @@
  * Barrel file — re-exports all page locale chunks.
  */
 
-export { en as whyNexoraEn } from "./why-nexora/en";
-export { ar as whyNexoraAr } from "./why-nexora/ar";
-export { fr as whyNexoraFr } from "./why-nexora/fr";
-export { ru as whyNexoraRu } from "./why-nexora/ru";
-export { zh as whyNexoraZh } from "./why-nexora/zh";
-export { es as whyNexoraEs } from "./why-nexora/es";
-export { de as whyNexoraDe } from "./why-nexora/de";
+export { en as whyScripeEn } from "./why-scripe/en";
+export { ar as whyScripeAr } from "./why-scripe/ar";
+export { fr as whyScripeFr } from "./why-scripe/fr";
+export { ru as whyScripeRu } from "./why-scripe/ru";
+export { zh as whyScripeZh } from "./why-scripe/zh";
+export { es as whyScripeEs } from "./why-scripe/es";
+export { de as whyScripeDe } from "./why-scripe/de";
 
 export { en as platformEn } from "./platform/en";
 export { ar as platformAr } from "./platform/ar";
@@ -92,7 +92,7 @@ export { de as customizationDe } from "./customization/de";
 
 // Lazy loader map for dynamic imports
 export const pageLoaders: Record<string, () => Promise<any>> = {
-  "why-nexora": () => import("./why-nexora/en"),
+  "why-scripe": () => import("./why-scripe/en"),
   platform: () => import("./platform/en"),
   enterprise: () => import("./enterprise/en"),
   security: () => import("./security/en"),

@@ -170,8 +170,8 @@ Authorization: Bearer <admin-jwt>
     "SecretKey": "sk_test_...",
     "PublishableKey": "pk_test_...",
     "WebhookSecret": "whsec_...",
-    "SuccessUrl": "https://app.nexora.io/billing/success",
-    "CancelUrl": "https://app.nexora.io/billing/cancel"
+    "SuccessUrl": "https://app.scripe.com/billing/success",
+    "CancelUrl": "https://app.scripe.com/billing/cancel"
   }
 }`,
   },

@@ -7,7 +7,7 @@ const ReportsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compliance Reports | NEXORA",
+  title: "Compliance Reports | SCRIPE",
   description:
     "Generate and download compliance reports — GDPR, CCPA, DSR summaries, consent audits, and retention analysis",
 };

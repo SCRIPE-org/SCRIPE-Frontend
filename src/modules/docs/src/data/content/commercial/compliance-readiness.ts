@@ -14,7 +14,7 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.complianceReadiness.frameworkIntro" },
   {
     type: "table",
-    headers: ["Framework", "Focus Area", "NEXORA Coverage", "Ready"],
+    headers: ["Framework", "Focus Area", "SCRIPE Coverage", "Ready"],
     rows: [
       [
         "SOX",
@@ -145,7 +145,7 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Requirement", "NEXORA Feature", "Status"],
+    headers: ["Requirement", "SCRIPE Feature", "Status"],
     rows: [
       ["Encryption at rest", "AES-256 database encryption", "✓ Built-in"],
       ["Encryption in transit", "TLS 1.3 enforced", "✓ Built-in"],

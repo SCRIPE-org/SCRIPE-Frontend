@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 export const metadata: Metadata = {
-  title: "Workspace Hub | NEXORA",
+  title: "Workspace Hub | SCRIPE",
   description: "Select your workspace to get started",
 };
 

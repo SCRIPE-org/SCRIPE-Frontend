@@ -301,7 +301,7 @@ export function ProductListView() {
 import { ProductListView } from '@modules/inventory';
 
 export const metadata: Metadata = {
-  title: 'Inventory | NEXORA',
+  title: 'Inventory | SCRIPE',
   description: 'Manage products and inventory',
 };
 

@@ -7,13 +7,13 @@ export const de = {
     securityOverview: {
       complianceTitle: "Grundlage für Compliance",
       description:
-        "Eine umfassende Aufschlüsselung von NEXORAs mehrschichtigem Defense-in-Depth Sicherheitsperimeter, der alles von der Routing-Schicht bis zur Persistenz-Schicht schützt.",
+        "Eine umfassende Aufschlüsselung von SCRIPEs mehrschichtigem Defense-in-Depth Sicherheitsperimeter, der alles von der Routing-Schicht bis zur Persistenz-Schicht schützt.",
       gdpr: "DSGVO Recht auf Vergessenwerden (Let-To-Forget)",
       gdprDesc:
         "Out-of-the-box-Unterstützung für strikte PII-Anonymisierung und Hard-Deletion-Protokolle.",
       headersTitle: "Defensive HTTP-Header",
       intro:
-        "Wir vertrauen dem Netzwerk nicht, wir vertrauen dem Client nicht und wir vertrauen dem Payload nicht. NEXORA basiert auf einer Zero-Trust-Architekturmethodik und erzwingt aggressive Sicherheitsprotokolle an jeder einzelnen Grenze der Anwendungsmatrix.",
+        "Wir vertrauen dem Netzwerk nicht, wir vertrauen dem Client nicht und wir vertrauen dem Payload nicht. SCRIPE basiert auf einer Zero-Trust-Architekturmethodik und erzwingt aggressive Sicherheitsprotokolle an jeder einzelnen Grenze der Anwendungsmatrix.",
       modelContent:
         "Jede einzelne API-Anfrage wird sofort gegen die FluentValidation-Engine ausgewertet. Wenn eine Payload Domain-Einschränkungen verletzt (z. B. ungültige E-Mail-Formate, Zahlen außerhalb des zulässigen Bereichs), weist die Pipeline die Payload sofort mit einem 400 Bad Request ab, bevor jemals ein Controller instanziiert wird.",
       modelTitle: "Strikte Pipeline-Validierung",
@@ -31,7 +31,7 @@ export const de = {
       description:
         "Erweiterte JWT-Authentifizierung, Brute-Force-Schutz, Multi-Faktor-Sicherheit und gehärtete Passwortrichtlinien.",
       intro:
-        "Sicherheit ist fest in der DNA von NEXORA verankert. Unsere Zero-Trust-Identitätsarchitektur nutzt branchenführende Kryptographie, hochgradig konfigurierbare Passwortrichtlinien und strikte JWT-Validierung, um Ihre Anwendung vor modernen Angriffsvektoren zu schützen.",
+        "Sicherheit ist fest in der DNA von SCRIPE verankert. Unsere Zero-Trust-Identitätsarchitektur nutzt branchenführende Kryptographie, hochgradig konfigurierbare Passwortrichtlinien und strikte JWT-Validierung, um Ihre Anwendung vor modernen Angriffsvektoren zu schützen.",
       jwtContent:
         "Wir verwenden schnelle, zustandslose JSON Web Tokens (JWT), die mit asymmetrischen RSA-Schlüsseln signiert sind. Access-Tokens haben eine kurze Lebensdauer, während sichere, HTTP-only Refresh-Tokens eine reibungslose Benutzererfahrung ohne Kompromisse bei der Sicherheit gewährleisten.",
       jwtTitle: "Asymmetrisches JWT-Protokoll",
@@ -53,12 +53,12 @@ export const de = {
         "Stellen Sie druckbare, kryptographisch sichere Wiederherstellungscodes für Disaster-Recovery-Szenarien bereit.",
       twoFa4Title: "Sichere Wiederherstellungscodes",
       twoFaContent:
-        "Passwörter allein reichen nicht aus. NEXORA erfordert nativ dynamische sekundäre Verifizierungsbarrieren, die Ihre Benutzer selbst im Falle von Credential Stuffing oder Phishing schützen.",
+        "Passwörter allein reichen nicht aus. SCRIPE erfordert nativ dynamische sekundäre Verifizierungsbarrieren, die Ihre Benutzer selbst im Falle von Credential Stuffing oder Phishing schützen.",
       twoFaTitle: "Multi-Faktor-Authentifizierung (MFA)",
     },
     dataProtection: {
       csrfContent:
-        "Stoppen Sie Cross-Origin-Bleeding sofort. Alle mutierbaren API-Endpunkte erfordern kryptographische Antiforgery-Tokens. Indem CSRF-Zusicherungen automatisch an die JWT des Benutzers und sichere SameSite-Cookies gebunden werden, eliminiert NEXORA Cross-Site-Request-Forgery-Vektoren vollständig.",
+        "Stoppen Sie Cross-Origin-Bleeding sofort. Alle mutierbaren API-Endpunkte erfordern kryptographische Antiforgery-Tokens. Indem CSRF-Zusicherungen automatisch an die JWT des Benutzers und sichere SameSite-Cookies gebunden werden, eliminiert SCRIPE Cross-Site-Request-Forgery-Vektoren vollständig.",
       csrfTitle: "Undurchdringliche CSRF-Verteidigung",
       description:
         "Kryptographische Schutzmaßnahmen, At-Rest-Verschlüsselungsstrategien und umfassende Datenschutzkontrollen.",
@@ -70,7 +70,7 @@ export const de = {
         "Wir verwenden robuste, sequenzielle UUIDs (v7) und Hashids, um zu verhindern, dass leicht zu erratende sequenzielle Integer Geschäftsgeschwindigkeiten preisgeben. Objekt-IDs sind von Natur aus obskur und von der physischen Datenbankidentität entkoppelt.",
       idEncTitle: "Opake ID-Generierung",
       intro:
-        "Der Schutz von Benutzerdaten steht an erster Stelle. NEXORA wendet Defense-in-Depth-Strategien an und nutzt militärische Kryptographie sowie logische Barrieren, um sicherzustellen, dass ein unautorisierter Datenzugriff mathematisch unmöglich ist.",
+        "Der Schutz von Benutzerdaten steht an erster Stelle. SCRIPE wendet Defense-in-Depth-Strategien an und nutzt militärische Kryptographie sowie logische Barrieren, um sicherzustellen, dass ein unautorisierter Datenzugriff mathematisch unmöglich ist.",
       replayContent:
         "Durch die Durchsetzung einer strikten JWT-Nonce-Validierung, Token-Ablauf und kryptographisch signierter Zeitstempel weist unser API-Gateway abgefangene oder duplizierte Request-Payloads automatisch zurück.",
       replayTitle: "Verhinderung von Replay-Angriffen",
@@ -78,7 +78,7 @@ export const de = {
     },
     infraSecurity: {
       corsContent:
-        "Stoppen Sie Cross-Origin-Bleeding direkt im Ansatz. Die Standard-CORS-Richtlinien von NEXORA sind mit einem strikten Whitelist-Paradigma gesperrt, das unautorisierte Pre-Flight-Anfragen von schurkischen Domains sofort ablehnt.",
+        "Stoppen Sie Cross-Origin-Bleeding direkt im Ansatz. Die Standard-CORS-Richtlinien von SCRIPE sind mit einem strikten Whitelist-Paradigma gesperrt, das unautorisierte Pre-Flight-Anfragen von schurkischen Domains sofort ablehnt.",
       corsTitle: "Strikte Cross-Origin-Richtlinien",
       cspContent:
         "Unsere vorkonfigurierten Content Security Policy (CSP)-Header eliminieren mathematisch massive Klassen von XSS-Schwachstellen, indem sie genau vorschreiben, welche externen Skripte, Schriftarten und Stylesheets der Browser legal ausführen darf.",
@@ -86,7 +86,7 @@ export const de = {
       description:
         "Ein Deep-Dive in den äußeren Verteidigungsgürtel: Rate Limiting, CORS, Eingabevalidierung und physische Infrastrukturhärtung.",
       intro:
-        "Sicherheit darf kein nachträglicher Gedanke sein, der auf die Anwendungsebene aufgesetzt wird. NEXORA härtet den Perimeter auf Infrastrukturebene und baut einen gewaltigen Schutzschild gegen volumetrische DDoS-Angriffe, Cross-Site Scripting und unautorisiertes Netzwerk-Traversal auf.",
+        "Sicherheit darf kein nachträglicher Gedanke sein, der auf die Anwendungsebene aufgesetzt wird. SCRIPE härtet den Perimeter auf Infrastrukturebene und baut einen gewaltigen Schutzschild gegen volumetrische DDoS-Angriffe, Cross-Site Scripting und unautorisiertes Netzwerk-Traversal auf.",
       ipFiltering: "Schicht-4-IP-Whitelisting",
       ipFilteringDesc:
         "Beschränken Sie hochsensible administrative Endpunkte auf Datenverkehr, der strikt aus Ihrem Unternehmens-VPN oder physischen Büro-Subnetzen stammt.",
@@ -95,13 +95,13 @@ export const de = {
         "Isolieren Sie Datenbanken und Background-Worker in private, nicht routbare Subnetze, die vollständig vom öffentlichen Internet getrennt sind.",
       networkTitle: "Topologische Abschirmung",
       rateLimitContent:
-        "Überleben Sie plötzliche Verkehrsspitzen und Brute-Force-Sweeps. NEXORA enthält ein verteiltes, Redis-gestütztes Rate Limiting, das missbräuchliche IP-Adressen oder spezifische JWTs dynamisch drosselt, bevor sie Datenbank-Verbindungspools erschöpfen können.",
+        "Überleben Sie plötzliche Verkehrsspitzen und Brute-Force-Sweeps. SCRIPE enthält ein verteiltes, Redis-gestütztes Rate Limiting, das missbräuchliche IP-Adressen oder spezifische JWTs dynamisch drosselt, bevor sie Datenbank-Verbindungspools erschöpfen können.",
       rateLimitTitle: "Verteiltes Throttling",
       reverseProxy: "Proxy-Header-Validierung",
       reverseProxyDesc:
         "Lösen Sie ursprüngliche Client-IPs sicher hinter Load Balancern mithilfe streng validierter X-Forwarded-For-Header auf und verhindern Sie so IP-Spoofing.",
       secretsContent:
-        "Hardcodierte Passwörter sind eine katastrophale Schwachstelle. Die NEXORA-Konfigurations-Pipeline fängt sichere Zeichenfolgen beim Booten dynamisch ab und injiziert sie direkt aus Enterprise-Secret-Managern.",
+        "Hardcodierte Passwörter sind eine katastrophale Schwachstelle. Die SCRIPE-Konfigurations-Pipeline fängt sichere Zeichenfolgen beim Booten dynamisch ab und injiziert sie direkt aus Enterprise-Secret-Managern.",
       secretsTitle: "Zero-Trust Secret-Management",
       title: "Perimeter- & Infrastruktursicherheit",
       tlsInspection: "Zwingendes TLS 1.3",
@@ -112,7 +112,7 @@ export const de = {
     },
     complianceReadiness: {
       auditReadyContent:
-        "Prüfer wollen keine Versprechungen; sie wollen Beweise. NEXORA bietet exportierbare, manipulationssichere Protokolle für jeden API-Aufruf, jede Privilegienerweiterung und Datenmutation und verwandelt eine 6-monatige SOC 2-Vorbereitung in eine 2-wöchige Formalität.",
+        "Prüfer wollen keine Versprechungen; sie wollen Beweise. SCRIPE bietet exportierbare, manipulationssichere Protokolle für jeden API-Aufruf, jede Privilegienerweiterung und Datenmutation und verwandelt eine 6-monatige SOC 2-Vorbereitung in eine 2-wöchige Formalität.",
       auditReadyTitle: "Sofortige Beweisartefakte",
       checklistTitle: "Der Compliance-Fast-Track",
       consentMgmt: "Erweitertes Consent-Management",
@@ -127,13 +127,13 @@ export const de = {
       description:
         "Vorkonfigurierte technische Kontrollen, die eine extrem schnelle Zertifizierung für ISO 27001, SOC 2 und DSGVO ermöglichen.",
       disclaimer:
-        "Haftungsausschluss: NEXORA bietet die technische Grundlage; konsultieren Sie für verfahrenstechnische Compliance einen Rechtsbeistand.",
+        "Haftungsausschluss: SCRIPE bietet die technische Grundlage; konsultieren Sie für verfahrenstechnische Compliance einen Rechtsbeistand.",
       frameworkIntro:
-        "Das Erreichen von Compliance entgleist technische Roadmaps normalerweise für Monate. NEXORA verkürzt diese Kurve drastisch, indem die schwierigsten technischen Kontrollen direkt in das grundlegende Framework integriert sind.",
+        "Das Erreichen von Compliance entgleist technische Roadmaps normalerweise für Monate. SCRIPE verkürzt diese Kurve drastisch, indem die schwierigsten technischen Kontrollen direkt in das grundlegende Framework integriert sind.",
       frameworkTitle: "Beschleunigter Framework-Support",
       gdprTitle: "DSGVO & CCPA Nativ",
       intro:
-        "Regulatorische Frameworks fordern eine strenge Data Governance. NEXORA beschleunigt Ihren Weg zur Zertifizierung durch die Einbettung von militärischen Audit-, Verschlüsselungs- und Datenschutzkontrollen tief in die Anwendungsarchitektur.",
+        "Regulatorische Frameworks fordern eine strenge Data Governance. SCRIPE beschleunigt Ihren Weg zur Zertifizierung durch die Einbettung von militärischen Audit-, Verschlüsselungs- und Datenschutzkontrollen tief in die Anwendungsarchitektur.",
       rightToErasure: "Orchestrierte Recht auf Löschung",
       rightToErasureDesc:
         "Führen Sie plattformweite Soft- oder Hard-Deletes aus, die automatisch über alle relationalen Tabellen hinweg kaskadieren.",
@@ -145,7 +145,7 @@ export const de = {
       alertingDesc:
         "Automatisieren Sie Sicherheitswarnungen über Webhooks oder Slack, wenn bestimmte hochprivilegierte Audit-Grenzwerte überschritten werden.",
       complianceContent:
-        "NEXORA bietet einen schlüsselfertigen Weg zur Einhaltung von ISO 27001, SOC 2, HIPAA und DSGVO. Mit unveränderlicher Ereigniserfassung, garantierter Zuordnung und strikter Isolierung können Prüfer die Integrität der Daten Ihres Mandanten (Tenant) sofort verifizieren.",
+        "SCRIPE bietet einen schlüsselfertigen Weg zur Einhaltung von ISO 27001, SOC 2, HIPAA und DSGVO. Mit unveränderlicher Ereigniserfassung, garantierter Zuordnung und strikter Isolierung können Prüfer die Integrität der Daten Ihres Mandanten (Tenant) sofort verifizieren.",
       complianceTitle: "Gebaut für Compliance",
       dashboard: "Visuelles Dashboard",
       dashboardDesc:
@@ -156,7 +156,7 @@ export const de = {
         "Exportieren Sie massive Audit-Datensätze direkt in verschlüsselte CSV- oder Excel-Formate, oder streamen Sie diese sicher in Ihre bestehenden SIEM-Lösungen wie Splunk oder Datadog.",
       exportTitle: "Forensischer Export & SIEM",
       intro:
-        "Data Governance ist nicht verhandelbar. NEXORA verfügt über ein im Hintergrund laufendes, militärisch sicheres Audit-Log-System, das jede Mutation, jeden Authentifizierungsversuch und jeden kritischen Lesezugriff im gesamten Monolithen erfasst, ohne die API-Leistung zu beeinträchtigen.",
+        "Data Governance ist nicht verhandelbar. SCRIPE verfügt über ein im Hintergrund laufendes, militärisch sicheres Audit-Log-System, das jede Mutation, jeden Authentifizierungsversuch und jeden kritischen Lesezugriff im gesamten Monolithen erfasst, ohne die API-Leistung zu beeinträchtigen.",
       liveStream: "Live-SignalR-Stream",
       liveStreamDesc:
         "Beobachten Sie administrative und sicherheitsrelevante Ereignisse in Echtzeit über geschützte WebSockets auf der gesamten Plattform.",

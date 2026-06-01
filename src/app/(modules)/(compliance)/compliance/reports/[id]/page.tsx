@@ -7,7 +7,7 @@ const ReportDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Report Details | NEXORA",
+  title: "Report Details | SCRIPE",
   description: "View compliance report details",
 };
 

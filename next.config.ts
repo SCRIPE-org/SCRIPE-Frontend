@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Silence the "multiple lockfiles" warning in the NEXORA monorepo
+  // Silence the "multiple lockfiles" warning in the SCRIPE monorepo
   turbopack: {
     root: __dirname,
   },

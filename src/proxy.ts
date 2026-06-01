@@ -25,7 +25,7 @@ const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/verify-email"
 // Everything under (modules) is protected by the layout, but this adds server-level guard
 const PROTECTED_PREFIXES = ["/admin", "/profile", "/settings", "/recycle-bin"];
 
-const AUTH_STATE_COOKIE = STORAGE_KEYS.nexora_auth_state;
+const AUTH_STATE_COOKIE = STORAGE_KEYS.scr_auth_state;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

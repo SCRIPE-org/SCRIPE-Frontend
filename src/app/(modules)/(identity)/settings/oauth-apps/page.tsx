@@ -9,8 +9,8 @@ const OAuthAppsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "OAuth Applications | NEXORA",
-  description: "Manage third-party applications that authenticate via NEXORA (OIDC Server)",
+  title: "OAuth Applications | SCRIPE",
+  description: "Manage third-party applications that authenticate via SCRIPE (OIDC Server)",
 };
 
 export default function OAuthAppsPage() {

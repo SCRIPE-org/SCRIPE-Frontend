@@ -201,6 +201,6 @@ registerPage({
   category: "commercial-support",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/faq", "commercial/why-nexora-overview"],
+  relatedSlugs: ["commercial/faq", "commercial/why-scripe-overview"],
   lastUpdated: "2026-02-20",
 });

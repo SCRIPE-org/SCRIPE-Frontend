@@ -8,7 +8,7 @@ export const ar = {
       title: "نظرة عامة على الأمان",
       description: "استراتيجية دفاعية من 5 طبقات، ميزات الأمان، إعدادات CORS، وتقييد معدل الطلبات.",
       intro:
-        "تنفذ NEXORA استراتيجية دفاعية عميقة بخمس طبقات: حماية الشبكة، المصادقة، التفويض، عزل البيانات، وسجلات التدقيق.",
+        "تنفذ SCRIPE استراتيجية دفاعية عميقة بخمس طبقات: حماية الشبكة، المصادقة، التفويض، عزل البيانات، وسجلات التدقيق.",
       layersTitle: "طبقات الدفاع الأمني",
       featuresTitle: "ميزات الأمان",
       featureJwt: "مصادقة JWT",
@@ -35,7 +35,7 @@ export const ar = {
       description:
         "توجيه تسجيل الدخول متعدد مساحات العمل، دورة حياة JWT، تشفير BCrypt، فرض انتهاء كلمة المرور، أقفال الحسابات، 2FA، تعليق SSO، وجلسات المستخدمين.",
       intro:
-        "تستكشف هذه الصفحة آليات المصادقة في NEXORA بعمق — من توجيه تسجيل الدخول متعدد مساحات العمل وإصدار رموز JWT، مروراً بتشفير BCrypt وفرض انتهاء كلمة المرور وأقفال الحسابات، إلى المصادقة الثنائية TOTP والمصادقة الخارجية وبوابة تعليق SSO وإدارة الجلسات.",
+        "تستكشف هذه الصفحة آليات المصادقة في SCRIPE بعمق — من توجيه تسجيل الدخول متعدد مساحات العمل وإصدار رموز JWT، مروراً بتشفير BCrypt وفرض انتهاء كلمة المرور وأقفال الحسابات، إلى المصادقة الثنائية TOTP والمصادقة الخارجية وبوابة تعليق SSO وإدارة الجلسات.",
       workspaceRoutingTitle: "توجيه تسجيل الدخول متعدد مساحات العمل",
       workspaceRoutingIntro:
         "عند تسجيل الدخول من نطاق المنصة بدون مستأجر محدد مسبقاً، ينفذ معالج تسجيل الدخول خوارزمية توجيه من 3 حالات: الحالة A (تسجيل دخول مُقيَّد بمعرّف المستأجر)، الحالة A' (اختيار صريح لإدارة المنصة عبر علامة isPlatformAdmin — يتجاوز اكتشاف مساحات العمل تماماً)، والحالة B (اكتشاف مساحات العمل — البحث في جميع المستأجرين بالبريد الإلكتروني وعرض مُنتقي مساحات العمل عند تعدد النتائج). تم إدخال علامة isPlatformAdmin لمنع حلقة لا نهائية عند اختيار 'إدارة المنصة' من المُنتقي.",
@@ -64,18 +64,18 @@ export const ar = {
         "المشرف العام (SuperAdmin) يمكنه الانتحال للمساعدة الفنية مع ربط التدقيق الصارم.",
       impersonationWarning: "عملية خطيرة ومقيدة جداً.",
       sessionTitle: "إدارة الجلسة",
-      sessionIntro: "NEXORA تستخدم جلسات عديمة الحالة (Stateless JWT).",
+      sessionIntro: "SCRIPE تستخدم جلسات عديمة الحالة (Stateless JWT).",
       cookieAuthTip: "للأمان الأقصى، يتم تعيين الـ Cookies لتكون HttpOnly.",
       ssoSuspensionTitle: "بوابة تعليق SSO للمستأجر",
       ssoSuspensionIntro:
         "يتضمن معالج المصادقة الخارجية (ExternalLoginCommandHandler) الآن بوابة أمان لتعليق المستأجر. قبل إصدار رمز JWT بعد مصادقة SSO/OIDC، يتحقق المعالج من حالة مستأجر المشرف. إذا كان المستأجر مُعلَّقاً أو مُلغى، يُرفض تسجيل الدخول برسالة خطأ مُترجمة — مما يمنع المستخدمين المُعطَّلين من تجاوز فحوصات تسجيل الدخول القياسية عبر SSO.",
       ssoSuspensionWarning:
-        "بدون هذه البوابة، كان بإمكان مستخدمي SSO المصادقة عبر موفر هوية خارجي والحصول على رمز JWT صالح من NEXORA حتى لو كان مستأجرهم مُعلَّقاً أو مُلغى. تم معالجة هذه الثغرة الأمنية الحرجة.",
+        "بدون هذه البوابة، كان بإمكان مستخدمي SSO المصادقة عبر موفر هوية خارجي والحصول على رمز JWT صالح من SCRIPE حتى لو كان مستأجرهم مُعلَّقاً أو مُلغى. تم معالجة هذه الثغرة الأمنية الحرجة.",
     },
     dataProtection: {
       title: "حماية البيانات",
       description: "عزل المستأجرين، التشفير، الحقول المقيدة، وامتثال GDPR.",
-      intro: "NEXORA تحمي البيانات في التخزين، النقل، ومن خلال عزل المستأجرين وتقييد الحقول.",
+      intro: "SCRIPE تحمي البيانات في التخزين، النقل، ومن خلال عزل المستأجرين وتقييد الحقول.",
       tenantIsolationTitle: "عزل بيانات المستأجر",
       tenantIsolationIntro: "يتم تحديد كل استعلام تلقائياً بناءً على فلاتر EF Core.",
       tenantScopingTitle: "نطاق فلتر الاستعلام",
@@ -107,12 +107,12 @@ export const ar = {
       corsTitle: "تكوين CORS",
       corsIntro: "التكوين يختلف بناءً على البيئة لضمان التشغيل الآمن للواجهات.",
       inputValidationTitle: "التحقق من المدخلات",
-      inputValidationIntro: "يُعالج من خلال FluentValidation المدمج في مسار NEXORA mediator.",
+      inputValidationIntro: "يُعالج من خلال FluentValidation المدمج في مسار SCRIPE mediator.",
       csrfTitle: "حماية CSRF",
       csrfIntro: "الـ API آمن بطبيعته بفضل الرموز (Bearer) وقواعد (SameSite).",
       headersTitle: "رؤوس الأمان (Security Headers)",
       headersIntro: "إعدادات صارمة للرؤوس لمنع XSS والـ Clickjacking.",
-      headersTip: "تصل دائمًا لتقييم +A بفضل تكوينات NEXORA.",
+      headersTip: "تصل دائمًا لتقييم +A بفضل تكوينات SCRIPE.",
       replayTitle: "منع هجمات إعادة الإرسال (Replay Attacks)",
       replayIntro: "محمي بالرموز قصيرة الأمد وصلاحية الاستخدام الواحد.",
     },
@@ -149,7 +149,7 @@ export const ar = {
       description: "سجلات شاملة والتقاط الإحداثيات وتصديرها بصيغ متعددة.",
       intro: "يضمن النظام أن كل تعديل محفوظ في السجلات ليوافق متطلبات الامتثال القانونية.",
       architectureTitle: "بنية التدقيق",
-      architectureIntro: "طبقات من التسجيل تغطي مستوى NEXORA mediator و EF Core.",
+      architectureIntro: "طبقات من التسجيل تغطي مستوى SCRIPE mediator و EF Core.",
       interceptorTitle: "معترض تغييرات الكيان",
       interceptorIntro: "AuditableEntityInterceptor يقوم بتسجيل القيم القديمة والجديدة لأي تعديل.",
       auditLogEntityTitle: "هيكل كيان سجل التدقيق",
@@ -175,7 +175,7 @@ export const ar = {
       title: "تسجيل الدخول الموحد (SSO)",
       description: "مصادقة OIDC، ربط هوية خارجي، وتطبيقات OAuth.",
       intro:
-        "يدعم نظام NEXORA المصادقة عبر موفرين خارجيين مبنيين على بروتوكول OIDC وتوفير بيانات اعتماد عبر تطبيقات OAuth. يتم تصميم النظام لتعدد المستأجرين مع تركيز عالٍ على أمان PKCE.",
+        "يدعم نظام SCRIPE المصادقة عبر موفرين خارجيين مبنيين على بروتوكول OIDC وتوفير بيانات اعتماد عبر تطبيقات OAuth. يتم تصميم النظام لتعدد المستأجرين مع تركيز عالٍ على أمان PKCE.",
       architectureTitle: "بنية مصادقة OIDC/OAuth",
       endpointsTitle: "نقاط النهاية والتدفق (Endpoints & Flow)",
       flowIntro: "عملية مصادقة SSO تتكون من تدفق مكون من عدة خطوات لتحقيق أقصى قدر من الأمان:",
@@ -187,12 +187,12 @@ export const ar = {
         "يتم استقبال المستخدم بعد المصادقة بنجاح واستبدال كود التفويض (Authorization Code) بالرموز المؤمنة على الخادم، دون تدخل المتصفح.",
       linkingTitle: "ربط ومعالجة الهويات",
       linkingIntro:
-        "عندما يكمل المستخدم تسجيل الدخول، يتم مطابقة البريد الإلكتروني مع قاعدة بيانات المستخدمين الموجودة. إذا كان هذا أول دخول، يتم ربط حساب OIDC الخارجي مع الحساب الداخلي في NEXORA لمنع ازدواجية الحسابات.",
+        "عندما يكمل المستخدم تسجيل الدخول، يتم مطابقة البريد الإلكتروني مع قاعدة بيانات المستخدمين الموجودة. إذا كان هذا أول دخول، يتم ربط حساب OIDC الخارجي مع الحساب الداخلي في SCRIPE لمنع ازدواجية الحسابات.",
       pkceWarning:
         "لا يتوفر دعم لتدفقات OAuth الضمنية (Implicit Flow) المنتهية الصلاحية؛ بدلاً من ذلك يُفرض تدفق PKCE في جميع الأشكال (التطبيقات العامة والسرية).",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -215,13 +215,13 @@ export const ar = {
       entityModelContent:
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",

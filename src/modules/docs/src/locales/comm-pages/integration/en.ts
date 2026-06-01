@@ -6,13 +6,13 @@ export const en = {
   commercial: {
     restApiOverview: {
       authContent:
-        "Every single controller is locked down by default. NEXORA utilizes robust JWT token validation, requiring precise granular permissions and validated tenant claims before a single byte of JSON is returned.",
+        "Every single controller is locked down by default. SCRIPE utilizes robust JWT token validation, requiring precise granular permissions and validated tenant claims before a single byte of JSON is returned.",
       authTitle: "Strict Cryptographic Authorization",
       controllersTitle: "Strict Controller Topography",
       description:
         "An immaculate, fully documented RESTful API surface area featuring dynamic filtering, cursor-based pagination, and rich HATEOAS responses.",
       intro:
-        "The backend isn't just a database wrapper; it is a meticulously crafted HTTP surface. NEXORA exposes a pristine RESTful API that adheres strictly to standard HTTP verbs, status codes, and hypermedia conventions.",
+        "The backend isn't just a database wrapper; it is a meticulously crafted HTTP surface. SCRIPE exposes a pristine RESTful API that adheres strictly to standard HTTP verbs, status codes, and hypermedia conventions.",
       paginationTitle: "Cursor & Offset Pagination",
       responseContent:
         "No more parsing random error strings. Every API response—whether successful or a catastrophic failure—is wrapped in our standardized `Result<T>` Problem Details structure, guaranteeing absolute predictability for frontend and third-party consumers.",
@@ -85,15 +85,15 @@ export const en = {
     apiDesign: {
       conventionsTitle: "Enterprise Conventions",
       description:
-        "Discover the rigorous RESTful API design principles, strictly enforced versioning, and predictable conventions that power NEXORA.",
+        "Discover the rigorous RESTful API design principles, strictly enforced versioning, and predictable conventions that power SCRIPE.",
       errorTitle: "Standardized Error Handling",
       intro:
-        "NEXORA's API surface is designed for scale and predictability. From consistent naming conventions to standardized pagination and RFC 7807 problem details for error handling, our stateless RESTful architecture ensures friction-free integration for downstream consumers.",
+        "SCRIPE's API surface is designed for scale and predictability. From consistent naming conventions to standardized pagination and RFC 7807 problem details for error handling, our stateless RESTful architecture ensures friction-free integration for downstream consumers.",
       pipelineContent:
-        "The API pipeline utilizes a highly optimized NEXORA mediator request lifecycle. Every endpoint automatically inherits validation, performance tracking, caching, and audit logging before a single line of business logic executes.",
+        "The API pipeline utilizes a highly optimized SCRIPE mediator request lifecycle. Every endpoint automatically inherits validation, performance tracking, caching, and audit logging before a single line of business logic executes.",
       pipelineTitle: "Robust Request Pipeline",
       resultContent:
-        "NEXORA eliminates try-catch hell through a unified Result pattern. Every API response is strictly typed and mathematically predictable, ensuring consumers receive standard HTTP status codes wrapping an identical JSON response structure regardless of the module being accessed.",
+        "SCRIPE eliminates try-catch hell through a unified Result pattern. Every API response is strictly typed and mathematically predictable, ensuring consumers receive standard HTTP status codes wrapping an identical JSON response structure regardless of the module being accessed.",
       resultTitle: "Predictable Result Pattern",
       statusCodesTitle: "Semantic Status Codes",
       swaggerContent:
@@ -106,14 +106,14 @@ export const en = {
         "A massively resilient, asynchronous, event-driven Webhook dispatcher enabling secure, instantaneous data synchronization with immense external APIs.",
       eventsTitle: "Globally Broadcast Supported Events",
       intro:
-        "Modern enterprise systems must communicate. Instead of forcing clients to aggressively poll your REST API, NEXORA includes a native, massively efficient outbound Webhook dispatcher. Push critical domain events instantly to any external system securely over HTTPS.",
+        "Modern enterprise systems must communicate. Instead of forcing clients to aggressively poll your REST API, SCRIPE includes a native, massively efficient outbound Webhook dispatcher. Push critical domain events instantly to any external system securely over HTTPS.",
       logsTitle: "Forensic Dispatch Auditing",
       managementTitle: "Dynamic Subscription Management",
       retryContent:
-        "If a subscriber's server goes offline, NEXORA does not discard the payload. Utilizing an intelligent, exponentially backed-off persistent outbox pattern, it mathematically retries the request (e.g., 5 seconds, 1 minute, 1 hour, 1 day) until receipt is confirmed via an HTTP 2xx status.",
+        "If a subscriber's server goes offline, SCRIPE does not discard the payload. Utilizing an intelligent, exponentially backed-off persistent outbox pattern, it mathematically retries the request (e.g., 5 seconds, 1 minute, 1 hour, 1 day) until receipt is confirmed via an HTTP 2xx status.",
       retryTitle: "Exponential Persistent Backoff",
       securityContent:
-        "Every outbound payload is securely signed using an HMAC-SHA256 signature generated from the tenant's secret key. Third-party integrations can definitively verify that the webhook originated from your NEXORA servers and the payload was not intercepted or mutated globally.",
+        "Every outbound payload is securely signed using an HMAC-SHA256 signature generated from the tenant's secret key. Third-party integrations can definitively verify that the webhook originated from your SCRIPE servers and the payload was not intercepted or mutated globally.",
       securityTitle: "HMAC Cryptographic Signatures",
       title: "High-Volume Webhook Dispatch",
     },
@@ -126,7 +126,7 @@ export const en = {
         "Asynchronous, queue-based transactional email delivery with rich customizable Scriban templating.",
       featuresTitle: "Enterprise Delivery Features",
       intro:
-        "Transactional communications must never block an API request. NEXORA includes an outbox-pattern, queue-based dispatch system leveraging background worker processes to guarantee hyper-fast, reliable email delivery via standard SMTP or direct REST APIs like SendGrid and Mailgun.",
+        "Transactional communications must never block an API request. SCRIPE includes an outbox-pattern, queue-based dispatch system leveraging background worker processes to guarantee hyper-fast, reliable email delivery via standard SMTP or direct REST APIs like SendGrid and Mailgun.",
       pipelineTitle: "The Transactional Pipeline",
       providersTitle: "Agnostic Transport Providers",
       queueBased: "Background Dispatches",
@@ -151,10 +151,10 @@ export const en = {
       description:
         "Turing-complete Scriban-powered dynamic template engine for localized emails, SMS, notifications, and PDF document generation.",
       engineContent:
-        "Why recompile code to change an email subject line? NEXORA utilizes Scriban—a blazing fast, Liquid-compatible templating language. It safely evaluates if/else logic, string manipulations, and data loops directly within the content, executing in under a millisecond.",
+        "Why recompile code to change an email subject line? SCRIPE utilizes Scriban—a blazing fast, Liquid-compatible templating language. It safely evaluates if/else logic, string manipulations, and data loops directly within the content, executing in under a millisecond.",
       engineTitle: "Turing-Complete Templating",
       intro:
-        "Customer communications must be dynamic, deeply personalized, and instantly deployable. NEXORA decouples communication markup from the underlying application logic using a highly secure, sandboxed templating engine.",
+        "Customer communications must be dynamic, deeply personalized, and instantly deployable. SCRIPE decouples communication markup from the underlying application logic using a highly secure, sandboxed templating engine.",
       managementTitle: "Centralized Template Hub",
       previewContent:
         "Developers and product owners can instantly iterate on template designs via the integrated live-preview interface. Inject mock JSON payloads to test complex logic loops and error handling without ever deploying code.",
@@ -170,9 +170,9 @@ export const en = {
     ssoEnterprise: {
       title: "Enterprise SSO & Identity Federation",
       description:
-        "NEXORA serves as a standalone, enterprise-grade OIDC/OAuth2 Server—eliminating the need for external identity brokers like Keycloak or Auth0. It handles multi-provider Single Sign-On, tenant-scoped federated identity, PKCE security, and zero-code admin panel configuration for both Client and Server modes.",
+        "SCRIPE serves as a standalone, enterprise-grade OIDC/OAuth2 Server—eliminating the need for external identity brokers like Keycloak or Auth0. It handles multi-provider Single Sign-On, tenant-scoped federated identity, PKCE security, and zero-code admin panel configuration for both Client and Server modes.",
       intro:
-        "Eliminate password fatigue and centralize identity management completely. NEXORA goes far beyond simple social logins. It is a full-fledged Identity and Access Management (IAM) engine. You can effortlessly federate external identity providers (like corporate Azure AD or Google Workspace) inward, while simultaneously registering third-party business applications outward to authenticate against NEXORA's secure identity store. All of this is managed through a zero-code, highly intuitive Admin Panel.",
+        "Eliminate password fatigue and centralize identity management completely. SCRIPE goes far beyond simple social logins. It is a full-fledged Identity and Access Management (IAM) engine. You can effortlessly federate external identity providers (like corporate Azure AD or Google Workspace) inward, while simultaneously registering third-party business applications outward to authenticate against SCRIPE's secure identity store. All of this is managed through a zero-code, highly intuitive Admin Panel.",
       valueTitle: "Strategic IAM Value",
       val1Title: "Zero-Trust Identity Protocol",
       val1Desc:
@@ -180,9 +180,9 @@ export const en = {
       val2Title: "Zero-Code Federation (IdP)",
       val2Desc:
         "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
-      val3Title: "NEXORA as the Identity Server",
+      val3Title: "SCRIPE as the Identity Server",
       val3Desc:
-        "Why pay for Auth0 or deploy Keycloak? Turn NEXORA into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume NEXORA's JWTs.",
+        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
       val4Title: "Absolute Tenant IAM Isolation",
       val4Desc:
         "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
@@ -191,23 +191,23 @@ export const en = {
         "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
       val6Title: "Future-Proof Standardization",
       val6Desc:
-        "NEXORA relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
+        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
       protocolsTitle: "Supported Authentication Protocols",
       protocolsContent:
-        "NEXORA mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
-      comparisonTitle: "How NEXORA Compares",
+        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
+      comparisonTitle: "How SCRIPE Compares",
       multiIdpTitle: "Infinite Multi-IdP Per Tenant",
       multiIdpContent:
-        "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. NEXORA natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
+        "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. SCRIPE natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
       brandingTitle: "Architected for Corporate Branding",
       brandingContent:
         "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
       securityModelTitle: "PKCE Security Architecture",
       securityModelContent:
         "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
-      oauthTitle: "OAuth Application Registry (NEXORA as Server)",
+      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
       oauthContent:
-        "Invert the identity paradigm. By registering third-party software as OAuth Applications within NEXORA, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on NEXORA for unified identity resolution.",
+        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
       oauth1Title: "Confidential Clients (Backend)",
       oauth1Desc:
         "Server-side applications with secure backend storage for client secrets. Perfect for B2B API integrations enforcing the full Authorization Code flow with PKCE.",

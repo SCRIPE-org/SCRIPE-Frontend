@@ -7,13 +7,13 @@ export const en = {
     overview: {
       title: "Overview",
       description:
-        "Introduction to the NEXORA Enterprise Platform  architecture, capabilities, and technology stack.",
+        "Introduction to the SCRIPE Enterprise Platform  architecture, capabilities, and technology stack.",
       intro:
-        "NEXORA is a production-ready enterprise platform built with a Modular Monolith architecture. It provides everything you need to build scalable business applications  authentication, authorization, multi-tenancy, audit logging, real-time events, and a comprehensive admin panel  all out of the box. The platform runs as a single binary that can be deployed as a monolith or decomposed into microservices without code changes.",
+        "SCRIPE is a production-ready enterprise platform built with a Modular Monolith architecture. It provides everything you need to build scalable business applications  authentication, authorization, multi-tenancy, audit logging, real-time events, and a comprehensive admin panel  all out of the box. The platform runs as a single binary that can be deployed as a monolith or decomposed into microservices without code changes.",
       featureModular: "Modular Monolith",
       featureModularDesc:
         "Isolated modules with clean boundaries  develop, test, and deploy independently. Same binary, flexible deployment.",
-      featureCQRS: "CQRS + NEXORA mediator",
+      featureCQRS: "CQRS + SCRIPE mediator",
       featureCQRSDesc:
         "Command/Query separation with a 4-behavior pipeline: validation, feature gating, caching, and performance monitoring.",
       featureSecurity: "Enterprise Security",
@@ -33,29 +33,29 @@ export const en = {
         "Native OIDC/OAuth2 Identity Provider enabling true Single Sign-On across your ecosystem. Act as a primary IDP (like Keycloak) managing external client applications seamlessly.",
       architectureTitle: "Architecture Topology",
       architectureIntro:
-        "NEXORA operates in three deployment modes controlled entirely by a single environment variable. The same compiled binary can run as a monolith (all modules), a microservice (single module), or an API gateway (YARP proxy).",
+        "SCRIPE operates in three deployment modes controlled entirely by a single environment variable. The same compiled binary can run as a monolith (all modules), a microservice (single module), or an API gateway (YARP proxy).",
       deploymentModesTitle: "Deployment Modes",
       deploymentModesIntro:
         "The MODULE_NAME environment variable determines which modules load at startup. When empty, all modules register (monolith mode). When set to a module name, only that module loads (microservice mode). When set to 'Gateway', YARP reverse proxy activates.",
       techStackTitle: "Technology Stack",
       serviceRegistrationTitle: "Service Registration Order",
       serviceRegistrationIntro:
-        "The order of service registration in Program.cs is architecturally significant. Changing the order can cause runtime failures. Core infrastructure must register before modules, and NEXORA mediator needs module assembly markers collected first.",
+        "The order of service registration in Program.cs is architecturally significant. Changing the order can cause runtime failures. Core infrastructure must register before modules, and SCRIPE mediator needs module assembly markers collected first.",
       registrationOrderWarning:
-        "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (NEXORA mediator needs their assemblies).",
+        "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (SCRIPE mediator needs their assemblies).",
       environmentProfilesTitle: "Environment Profiles",
       envVarPrefixTip:
-        "Only environment variables starting with NEXORA_ are loaded. For example, NEXORA_ConnectionStrings__DefaultConnection overrides the connection string. Double underscores (__) represent nesting in JSON config.",
+        "Only environment variables starting with SCRIPE_ are loaded. For example, SCRIPE_ConnectionStrings__DefaultConnection overrides the connection string. Double underscores (__) represent nesting in JSON config.",
     },
     prerequisites: {
       title: "Prerequisites",
       description: "Required tools, database setup, and environment configuration for development.",
       intro:
-        "Before you begin developing with NEXORA, ensure your development machine has the required tools installed. This page covers exact version requirements, database support, step-by-step setup, and Docker quickstart.",
+        "Before you begin developing with SCRIPE, ensure your development machine has the required tools installed. This page covers exact version requirements, database support, step-by-step setup, and Docker quickstart.",
       requiredToolsTitle: "Required Tools",
       databaseTitle: "Database Support",
       databaseIntro:
-        "NEXORA supports three database providers out of the box: SQL Server, PostgreSQL, and Oracle. The provider is configured via Database.Provider in appsettings.json. Additionally, the Database.Mode setting controls database isolation: 'Single' puts all module tables in one shared database, while 'Multi' (default) allows each module to have its own database with separate connection strings.",
+        "SCRIPE supports three database providers out of the box: SQL Server, PostgreSQL, and Oracle. The provider is configured via Database.Provider in appsettings.json. Additionally, the Database.Mode setting controls database isolation: 'Single' puts all module tables in one shared database, while 'Multi' (default) allows each module to have its own database with separate connection strings.",
       databaseTip:
         "For local development, SQL Server with Docker is the fastest setup. Use the Docker Compose file below to spin up SQL Server and Redis in seconds.",
       envSetupTitle: "Environment Setup",
@@ -75,12 +75,12 @@ export const en = {
         "Install npm dependencies and create your local environment configuration file.",
       dockerTitle: "Docker Quickstart",
       dockerNote:
-        "The Docker Compose file above sets up SQL Server 2022 and Redis 7 for local development. The nexora-api service builds from the backend Dockerfile and connects to both services automatically.",
+        "The Docker Compose file above sets up SQL Server 2022 and Redis 7 for local development. The scripe-api service builds from the backend Dockerfile and connects to both services automatically.",
     },
     quickStart: {
       title: "Quick Start",
       description:
-        "Get NEXORA running locally in under 5 minutes with backend, frontend, and verification steps.",
+        "Get SCRIPE running locally in under 5 minutes with backend, frontend, and verification steps.",
       intro:
         "This guide walks you through starting both the backend API server and the frontend development server, then verifying everything works with health checks and API tests.",
       backendTitle: "Start the Backend",
@@ -107,57 +107,57 @@ export const en = {
       verifyInstallTitle: "Verify Installation",
       verifyInstallIntro:
         "Once both servers are running, verify the installation using these checks.",
-      nexoraCliTitle: "NEXORA CLI",
-      nexoraCliIntro:
-        "The NEXORA CLI (nexora-cli) provides scaffolding commands to generate modules, entities, commands, queries, and more. It follows the project's architecture conventions automatically.",
+      scripeCliTitle: "SCRIPE CLI",
+      scripeCliIntro:
+        "The SCRIPE CLI (scripe-cli) provides scaffolding commands to generate modules, entities, commands, queries, and more. It follows the project's architecture conventions automatically.",
       cliDevTitle: "Development with the CLI",
       cliDevIntro:
-        "Instead of manually starting backend and frontend servers, use the NEXORA CLI for a streamlined development experience. The CLI automatically handles port resolution, browser launching, and concurrent server management.",
+        "Instead of manually starting backend and frontend servers, use the SCRIPE CLI for a streamlined development experience. The CLI automatically handles port resolution, browser launching, and concurrent server management.",
       cliDevAllCmd:
-        "nexora dev all — Start both backend and frontend servers concurrently with labeled output and auto-open browser.",
+        "scripe dev all — Start both backend and frontend servers concurrently with labeled output and auto-open browser.",
       cliDevFrontendCmd:
-        "nexora dev frontend — Start the Next.js dev server with auto-detected port and browser launch.",
-      cliDevBackendCmd: "nexora dev backend — Start the .NET backend in development mode.",
+        "scripe dev frontend — Start the Next.js dev server with auto-detected port and browser launch.",
+      cliDevBackendCmd: "scripe dev backend — Start the .NET backend in development mode.",
       cliDevNoBrowser:
         "Add --no-browser flag to any dev command to prevent auto-opening the browser (useful for CI/headless environments).",
-      studioTitle: "NEXORA Studio",
+      studioTitle: "SCRIPE Studio",
       studioIntro:
-        "NEXORA Studio is a visual developer dashboard that provides a real-time UI for managing your entire development workflow. It includes module management, code generators, dev server controls, database operations, terminal access, and more.",
+        "SCRIPE Studio is a visual developer dashboard that provides a real-time UI for managing your entire development workflow. It includes module management, code generators, dev server controls, database operations, terminal access, and more.",
       studioDevCmd:
-        "nexora studio --dev — Launch Studio in development mode with hot-reload. Auto-opens browser on port 4200.",
+        "scripe studio --dev — Launch Studio in development mode with hot-reload. Auto-opens browser on port 4200.",
       studioProdCmd:
-        "nexora studio — Launch Studio in production mode. Builds engine and UI if not already built.",
+        "scripe studio — Launch Studio in production mode. Builds engine and UI if not already built.",
       studioBuildCmd:
-        "nexora studio build — Pre-compile the Studio engine (TypeScript) and UI (Next.js) without starting.",
+        "scripe studio build — Pre-compile the Studio engine (TypeScript) and UI (Next.js) without starting.",
       studioPortCmd:
         "Use --port and --engine-port flags to customize the UI (default: 4200) and engine (default: 4201) ports.",
       productionTitle: "Production Servers",
       productionIntro:
-        "For production deployment, use the nexora start command which runs servers in release/production mode with optimized performance.",
+        "For production deployment, use the scripe start command which runs servers in release/production mode with optimized performance.",
       prodStartAllCmd:
-        "nexora start all — Start backend (Release mode) and frontend (next start) concurrently. Auto-opens browser.",
+        "scripe start all — Start backend (Release mode) and frontend (next start) concurrently. Auto-opens browser.",
       prodStartPublishedCmd:
-        "nexora start all --published — Run from pre-compiled DLL for fastest startup. Requires nexora build backend first.",
-      prodStartFrontendCmd: "nexora start frontend — Start only the production frontend server.",
+        "scripe start all --published — Run from pre-compiled DLL for fastest startup. Requires scripe build backend first.",
+      prodStartFrontendCmd: "scripe start frontend — Start only the production frontend server.",
       prodStartBackendCmd:
-        "nexora start backend — Start only the production backend server (dotnet run --configuration Release).",
+        "scripe start backend — Start only the production backend server (dotnet run --configuration Release).",
       prodBuildAllCmd:
-        "nexora build all — Build both backend and frontend for production deployment.",
+        "scripe build all — Build both backend and frontend for production deployment.",
       prodNoBrowser:
         "Add --no-browser flag to prevent auto-opening the browser in production mode.",
     },
     projectStructure: {
       title: "Project Structure",
       description:
-        "Complete directory layout of the NEXORA monorepo  root, backend, frontend, and module anatomy.",
+        "Complete directory layout of the SCRIPE monorepo  root, backend, frontend, and module anatomy.",
       intro:
-        "NEXORA is organized as a Git submodule monorepo with three main parts: the root repository, backend submodule, and frontend submodule. Understanding this structure is essential for navigating the codebase.",
+        "SCRIPE is organized as a Git submodule monorepo with three main parts: the root repository, backend submodule, and frontend submodule. Understanding this structure is essential for navigating the codebase.",
       rootTitle: "Root Monorepo",
       backendTitle: "Backend Structure",
       frontendTitle: "Frontend Structure",
       toolsTitle: "Developer Tools",
       toolsIntro:
-        "The tools/ directory contains the NEXORA CLI and Studio. The CLI provides 62 commands for scaffolding, builds, migrations, and deployment. Studio is a visual developer dashboard built with Express (engine) and Next.js (UI).",
+        "The tools/ directory contains the SCRIPE CLI and Studio. The CLI provides 62 commands for scaffolding, builds, migrations, and deployment. Studio is a visual developer dashboard built with Express (engine) and Next.js (UI).",
       moduleAnatomyTitle: "Module Anatomy",
       moduleAnatomyIntro:
         "Every frontend module follows an identical structure. This consistency makes it easy to navigate any module once you understand one. Each layer has strict responsibilities and import rules.",

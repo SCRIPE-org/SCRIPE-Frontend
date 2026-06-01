@@ -15,11 +15,11 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "text",
-    filename: "NEXORA/ (Root Monorepo)",
-    code: `NEXORA/
-├── NEXORA-Backend/          # .NET 10 Backend (Git Submodule)
-├── NEXORA-Frontend/         # Next.js 16 Frontend (Git Submodule)
-├── tools/nexora-cli/        # CLI scaffolding tool
+    filename: "SCRIPE/ (Root Monorepo)",
+    code: `SCRIPE/
+├── SCRIPE-Backend/          # .NET 10 Backend (Git Submodule)
+├── SCRIPE-Frontend/         # Next.js 16 Frontend (Git Submodule)
+├── tools/scripe-cli/        # CLI scaffolding tool
 ├── docs/                    # Technical documentation (67 files)
 ├── docs-commercial/         # Commercial documentation (25 files)
 ├── .gitmodules              # Submodule configuration
@@ -34,8 +34,8 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "text",
-    filename: "NEXORA-Backend/ Structure",
-    code: `NEXORA-Backend/
+    filename: "SCRIPE-Backend/ Structure",
+    code: `SCRIPE-Backend/
 ├── src/
 │   ├── Host/
 │   │   └── API/
@@ -71,8 +71,8 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "text",
-    filename: "NEXORA-Frontend/ Structure",
-    code: `NEXORA-Frontend/
+    filename: "SCRIPE-Frontend/ Structure",
+    code: `SCRIPE-Frontend/
 ├── src/
 │   ├── app/                            # Next.js App Router (connectors only)
 │   │   ├── (auth)/                     # Auth pages (login, register)

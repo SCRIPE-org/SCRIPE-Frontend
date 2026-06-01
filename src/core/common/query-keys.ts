@@ -1,5 +1,5 @@
 /**
- * Query Keys Factory — NEXORA Frontend
+ * Query Keys Factory — SCRIPE Frontend
  *
  * Centralized factory for ALL React Query cache keys across every module.
  * This ensures:

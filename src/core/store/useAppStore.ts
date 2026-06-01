@@ -72,7 +72,7 @@ export const useAppStore = create<AppState>()(
       // ... existing code in setAuth ...
       setAuth: (user, permissions, roles) => {
         if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.nexora_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
+          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
         }
         set({
           user,
@@ -84,7 +84,7 @@ export const useAppStore = create<AppState>()(
       },
       logout: () => {
         if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.nexora_auth_state}=; path=/; max-age=0; samesite=Lax`;
+          document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
         }
         // Also clear tokens when logging out from store
         secureTokenService.clearTokens();

@@ -15,7 +15,7 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "text",
-    filename: "NEXORA Architecture Layers",
+    filename: "SCRIPE Architecture Layers",
     code: `┌─────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                       │
 │  Next.js 16 App Router · React · TanStack Query · Zustand  │

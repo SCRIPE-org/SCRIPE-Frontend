@@ -7,7 +7,7 @@ export const de = {
     overview: {
       title: "API-Referenz",
       description: "Vollständige REST-API-Dokumentation mit Authentifizierung und Beispielen.",
-      intro: "Die NEXORA API ist eine RESTful JSON API, gesichert durch JWT Bearer-Tokens.",
+      intro: "Die SCRIPE API ist eine RESTful JSON API, gesichert durch JWT Bearer-Tokens.",
       baseInfoTitle: "Basis-Informationen",
       authEndpointsTitle: "Authentifizierungs-Endpunkte",
       adminEndpointsTitle: "Admin-Verwaltungs-Endpunkte",

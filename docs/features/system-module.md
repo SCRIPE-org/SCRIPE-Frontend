@@ -263,12 +263,12 @@ src/app/(modules)/
 ## Related Docs
 
 - [Messaging Module](messaging-module.md) — Frontend messaging sub-modules
-- [Backend — Admin Management](../../NEXORA-Backend/docs/features/admin-management.md)
-- [Backend — Role Management](../../NEXORA-Backend/docs/features/role-management.md)
-- [Backend — Permission System](../../NEXORA-Backend/docs/features/permission-system.md)
-- [Backend — Tenant Management](../../NEXORA-Backend/docs/features/tenant-management.md)
-- [Backend — Menu System](../../NEXORA-Backend/docs/features/menu-system.md)
-- [Backend — Messaging & Communication](../../NEXORA-Backend/docs/messaging-communication-center.md)
-- [Backend — Dashboard & Analytics](../../NEXORA-Backend/docs/features/dashboard-analytics.md)
-- [Backend — Audit Logging](../../NEXORA-Backend/docs/features/audit-logging.md)
-- [Backend — Recycle Bin](../../NEXORA-Backend/docs/features/recycle-bin.md)
+- [Backend — Admin Management](../../SCRIPE-Backend/docs/features/admin-management.md)
+- [Backend — Role Management](../../SCRIPE-Backend/docs/features/role-management.md)
+- [Backend — Permission System](../../SCRIPE-Backend/docs/features/permission-system.md)
+- [Backend — Tenant Management](../../SCRIPE-Backend/docs/features/tenant-management.md)
+- [Backend — Menu System](../../SCRIPE-Backend/docs/features/menu-system.md)
+- [Backend — Messaging & Communication](../../SCRIPE-Backend/docs/messaging-communication-center.md)
+- [Backend — Dashboard & Analytics](../../SCRIPE-Backend/docs/features/dashboard-analytics.md)
+- [Backend — Audit Logging](../../SCRIPE-Backend/docs/features/audit-logging.md)
+- [Backend — Recycle Bin](../../SCRIPE-Backend/docs/features/recycle-bin.md)

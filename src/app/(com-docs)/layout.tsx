@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { DocsLayout } from "@modules/docs/src/presentation/components/layout/DocsLayout";
 
 export const metadata: Metadata = {
-  title: "Commercial Documentation | NEXORA Platform",
+  title: "Commercial Documentation | SCRIPE Platform",
   description:
-    "Enterprise features, pricing, security, and deployment options for the NEXORA ERP Platform.",
-  keywords: ["nexora", "commercial", "enterprise", "erp", "pricing", "security", "deployment"],
+    "Enterprise features, pricing, security, and deployment options for the SCRIPE ERP Platform.",
+  keywords: ["scripe", "commercial", "enterprise", "erp", "pricing", "security", "deployment"],
 };
 
 /**

@@ -9,7 +9,7 @@ export const fr = {
       description:
         "Contrôle d'accès aux fonctionnalités basé sur les éditions avec Fonctionnalités, Éditions, Abonnements et Surcharges par locataire.",
       intro:
-        "Le module des Droits (Entitlements) est le moteur de gestion des plans et des fonctionnalités de NEXORA. Il définit les capacités que chaque locataire (tenant) obtient, comment les plans (éditions) regroupent ces capacités, et comment les abonnements lient les locataires aux plans.",
+        "Le module des Droits (Entitlements) est le moteur de gestion des plans et des fonctionnalités de SCRIPE. Il définit les capacités que chaque locataire (tenant) obtient, comment les plans (éditions) regroupent ces capacités, et comment les abonnements lient les locataires aux plans.",
       whatIsTitle: "Que sont les Droits ?",
       whatIsIntro:
         "Les Droits sont le module responsable de contrôler à quelles fonctionnalités un locataire peut accéder en fonction de son édition (plan) souscrite. Il fournit une chaîne de résolution à trois niveaux : Valeurs par défaut de la fonctionnalité → Valeurs de l'édition → Surcharges par locataire, garantissant une flexibilité maximale pour les opérateurs de la plateforme et les locataires revendeurs.",
@@ -23,12 +23,12 @@ export const fr = {
         "Lorsque le système a besoin de déterminer la valeur d'une fonctionnalité pour un locataire, il suit une chaîne de priorité stricte. La source de priorité la plus élevée qui fournit une valeur l'emporte.",
       pipelineTitle: "Intégration au Pipeline",
       pipelineIntro:
-        "NEXORA intègre les droits directement dans le pipeline CQRS de NEXORA mediator via FeatureCheckBehavior. Les commandes et requêtes (queries) qui implémentent IRequireFeature sont automatiquement contrôlées — si la valeur résolue de la fonctionnalité pour le locataire est désactivée, la requête est rejetée avant d'atteindre le gestionnaire (handler).",
+        "SCRIPE intègre les droits directement dans le pipeline CQRS de SCRIPE mediator via FeatureCheckBehavior. Les commandes et requêtes (queries) qui implémentent IRequireFeature sont automatiquement contrôlées — si la valeur résolue de la fonctionnalité pour le locataire est désactivée, la requête est rejetée avant d'atteindre le gestionnaire (handler).",
       pipelineTip:
         "Pour conditionner une commande à une fonctionnalité, implémentez simplement IRequireFeature et définissez RequiredFeatureName sur la clé système stable de la fonctionnalité (ex. 'Chat.Enabled'). Aucun code supplémentaire n'est nécessaire.",
       backendTitle: "Structure du Backend",
       backendIntro:
-        "Le backend des Droits suit l'architecture standard des modules Clean Architecture de NEXORA avec les couches Domain, Application et Infrastructure.",
+        "Le backend des Droits suit l'architecture standard des modules Clean Architecture de SCRIPE avec les couches Domain, Application et Infrastructure.",
       frontendTitle: "Structure du Frontend",
       frontendIntro:
         "Le frontend reflète le backend avec quatre sous-modules (éditions, fonctionnalités, abonnements, surcharges), chacun suivant le modèle SOLID View/ViewModel.",
@@ -37,7 +37,7 @@ export const fr = {
         "Le module des Droits expose 31 points de terminaison (endpoints) API répartis sur 4 contrôleurs, tous authentifiés par JWT et protégés par une autorisation basée sur les permissions.",
       noOpTitle: "Solution de repli NoOp (Fallback)",
       noOpIntro:
-        "Lorsque le module des Droits n'est pas chargé (ex. dans un microservice qui n'inclut pas les Droits), NEXORA enregistre un NoOpFeatureCache. Cela permet aux commandes IRequireFeature de passer sans erreur — toutes les fonctionnalités sont traitées comme activées par défaut.",
+        "Lorsque le module des Droits n'est pas chargé (ex. dans un microservice qui n'inclut pas les Droits), SCRIPE enregistre un NoOpFeatureCache. Cela permet aux commandes IRequireFeature de passer sans erreur — toutes les fonctionnalités sont traitées comme activées par défaut.",
       noOpNote:
         "La solution de repli NoOp garantit que les modules peuvent utiliser IRequireFeature sans dépendance stricte au module des Droits. En mode monolithe de production, le véritable FeatureCache est toujours disponible.",
       contextAwareTitle: "Filtrage contextuel des périmètres",
@@ -47,10 +47,10 @@ export const fr = {
         "La chaîne de résolution est évaluée de manière paresseuse (lazy) — les valeurs sont mises en cache après la première résolution et invalidées lorsque les abonnements, les éditions ou les surcharges changent.",
       cqrsMapTitle: "Carte des Commandes et Requêtes CQRS",
       cqrsMapIntro:
-        "Le module des Droits enregistre 31 gestionnaires (handlers) NEXORA mediator couvrant les quatre domaines. Chaque commande possède un validateur FluentValidation correspondant pour la validation des entrées.",
+        "Le module des Droits enregistre 31 gestionnaires (handlers) SCRIPE mediator couvrant les quatre domaines. Chaque commande possède un validateur FluentValidation correspondant pour la validation des entrées.",
       diTitle: "Enregistrement de l'Injection de Dépendances",
       diIntro:
-        "Tous les services de Droits sont enregistrés via la méthode d'extension AddEntitlementsModule dans DependencyInjection.cs. Le module suit le modèle d'enregistrement standard de NEXORA.",
+        "Tous les services de Droits sont enregistrés via la méthode d'extension AddEntitlementsModule dans DependencyInjection.cs. Le module suit le modèle d'enregistrement standard de SCRIPE.",
       comparisonTitle: "Avec vs Sans Droits",
       comparisonIntro:
         "Le tableau suivant montre la différence de capacités lorsque le module des Droits est activé par rapport à une exécution sans celui-ci :",
@@ -81,7 +81,7 @@ export const fr = {
         "Lors de la publication d'une version d'édition, les administrateurs choisissent comment les changements sont déployés pour les locataires abonnés :",
       workflowTitle: "Appliquer Maintenant vs Enregistrer comme Version",
       workflowIntro:
-        "NEXORA offre deux façons de mettre à jour les fonctionnalités d'une édition, chacune adaptée à des scénarios différents :",
+        "SCRIPE offre deux façons de mettre à jour les fonctionnalités d'une édition, chacune adaptée à des scénarios différents :",
       workflowTip:
         "Utilisez 'Appliquer Maintenant' pour les correctifs urgents et les petits changements. Utilisez 'Enregistrer comme Version' pour les mises à jour majeures du plan qui nécessitent un déploiement progressif et une piste d'audit.",
       endpointsTitle: "Points de terminaison API (Endpoints)",
@@ -92,7 +92,7 @@ export const fr = {
         "Lorsqu'un administrateur système descend dans un locataire (drill-down), la liste des éditions est automatiquement limitée aux éditions visibles par ce locataire. Le backend utilise l'en-tête X-Tenant-Context pour le filtrage : éditions système + éditions de détail créées par le locataire sélectionné. Le frontend masque les actions CRUD en mode drill-down.",
       scopingTitle: "Éditions Système vs Détail (Retail)",
       scopingIntro:
-        "NEXORA prend en charge deux types d'éditions : Les éditions Système, créées par les administrateurs de la plateforme et visibles par tous les locataires, et les éditions de Détail (Retail), créées par les locataires revendeurs uniquement pour leurs sous-locataires.",
+        "SCRIPE prend en charge deux types d'éditions : Les éditions Système, créées par les administrateurs de la plateforme et visibles par tous les locataires, et les éditions de Détail (Retail), créées par les locataires revendeurs uniquement pour leurs sous-locataires.",
       scopingNote:
         "Les administrateurs de locataires ne voient que les éditions système plus leurs propres éditions de détail. Cela garantit l'isolation des éditions entre les locataires revendeurs.",
       featuresTip:
@@ -236,7 +236,7 @@ export const fr = {
         "Pour les fonctionnalités Numériques, utilisez -1 pour représenter 'illimité'. Le FeatureCheckBehavior reconnaît -1 comme une valeur spéciale et ne bloque jamais les requêtes pour les fonctionnalités ayant un quota illimité.",
       systemVsCustomTitle: "Fonctionnalités Système vs Personnalisées",
       systemVsCustomIntro:
-        "NEXORA fait la distinction entre les fonctionnalités système (insérées au démarrage, en lecture seule) et les fonctionnalités personnalisées (créées par les administrateurs via l'API) :",
+        "SCRIPE fait la distinction entre les fonctionnalités système (insérées au démarrage, en lecture seule) et les fonctionnalités personnalisées (créées par les administrateurs via l'API) :",
       cacheTitle: "Cache des Fonctionnalités",
       cacheIntro:
         "Les valeurs de fonctionnalités résolues sont mises en cache dans le IFeatureCache pour éviter des requêtes à la base de données à chaque demande. Le cache est invalidé chaque fois que les fonctionnalités d'une édition changent, qu'un abonnement est modifié ou qu'une surcharge est définie/supprimée. Dans les déploiements de microservices sans le module des Droits, un NoOpFeatureCache traite toutes les fonctionnalités comme activées.",
@@ -354,7 +354,7 @@ export const fr = {
         description:
           "Automatisation de la conformité RGPD, CCPA et PDPA : profils, gestion DSR, consentement, conservation, inventaire et rapports.",
         intro:
-          "Le module Conformité est le moteur de conformité réglementaire intégré à NEXORA. Il aide les opérateurs et locataires à respecter les principales lois (RGPD, CCPA, PDPA) via des outils automatisés.",
+          "Le module Conformité est le moteur de conformité réglementaire intégré à SCRIPE. Il aide les opérateurs et locataires à respecter les principales lois (RGPD, CCPA, PDPA) via des outils automatisés.",
         infoTitle: "Avis de conformité",
         infoContent:
           "Ce module est essentiel pour maintenir la conformité et éviter les amendes. Assurez-vous que toutes les fonctionnalités sont mappées correctement.",
@@ -382,7 +382,7 @@ export const fr = {
         tr2_2: "Affiche le snapshot immuable du consentement avec les métadonnées.",
         whatIsTitle: "Qu'est-ce que le module Conformité ?",
         whatIsIntro:
-          "Le module offre six sous-systèmes couvrant tout le cycle de conformité. Les locataires NEXORA obtiennent un système prêt pour la production.",
+          "Le module offre six sous-systèmes couvrant tout le cycle de conformité. Les locataires SCRIPE obtiennent un système prêt pour la production.",
         subModulesTitle: "Six Sous-systèmes",
         subModulesIntro: "Chaque sous-système gère un domaine de conformité spécifique :",
         sub1: "Profils de réglementation — Stocke les cadres réglementaires (RGPD, CCPA, PDPA).",
@@ -393,7 +393,7 @@ export const fr = {
         sub6: "Rapports de conformité — Génère des rapports asynchrones (Aperçu RGPD, Résumé DSR, Audit des consentements, etc.).",
         backendTitle: "Architecture Backend",
         backendIntro:
-          "Suit la structure NEXORA à 3 projets (Domain / Application / Infrastructure) avec un ComplianceDbContext.",
+          "Suit la structure SCRIPE à 3 projets (Domain / Application / Infrastructure) avec un ComplianceDbContext.",
         frontendTitle: "Architecture Frontend",
         frontendIntro:
           "Organisé en six sous-modules indépendants dans src/modules/compliance/ suivant le modèle View/ViewModel.",
@@ -468,7 +468,7 @@ export const fr = {
         description:
           "Enregistrer, suivre et auditer les consentements pour la conformité à l'Article 6 du RGPD et au CCPA.",
         intro:
-          "La gestion du consentement enregistre chaque fois qu'un utilisateur accorde ou révoque son consentement pour un objectif spécifique. NEXORA stocke la piste d'audit complète.",
+          "La gestion du consentement enregistre chaque fois qu'un utilisateur accorde ou révoque son consentement pour un objectif spécifique. SCRIPE stocke la piste d'audit complète.",
         purposesTitle: "Objectifs du consentement",
         purposesIntro: "Chaque consentement est lié à un objectif spécifique :",
         purpose1: "Marketing — Emails marketing et communications promotionnelles.",
@@ -477,7 +477,7 @@ export const fr = {
         purpose4: "Personnalisation — Contenu personnalisé et recommandations.",
         gdprTitle: "Base légale du RGPD",
         gdprIntro:
-          "L'Article 6 du RGPD exige que le consentement soit libre, spécifique, éclairé et univoque. NEXORA enregistre la version exacte du texte de consentement affiché à l'utilisateur.",
+          "L'Article 6 du RGPD exige que le consentement soit libre, spécifique, éclairé et univoque. SCRIPE enregistre la version exacte du texte de consentement affiché à l'utilisateur.",
         withdrawalTitle: "Révocation du consentement",
         withdrawalIntro:
           "Les utilisateurs peuvent révoquer leur consentement à tout moment. ConsentRecord est mis à jour avec WithdrawnAt.",
@@ -508,7 +508,7 @@ export const fr = {
         description:
           "Définir les périodes de conservation et les actions d'expiration (Suppression ou Anonymisation) pour l'Article 5(1)(e) du RGPD.",
         intro:
-          "Définissez la durée de conservation de catégories de données et ce qui se passe à l'expiration. NEXORA applique cela automatiquement via des tâches en arrière-plan.",
+          "Définissez la durée de conservation de catégories de données et ce qui se passe à l'expiration. SCRIPE applique cela automatiquement via des tâches en arrière-plan.",
         policiesTitle: "Configuration de la politique",
         policiesIntro: "Chaque politique de conservation spécifie :",
         field1: "DataCategory — Le type de données (ex: 'Profils Utilisateurs').",
@@ -517,7 +517,7 @@ export const fr = {
           "ExpiryAction — Ce qui se passe à l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
         field4: "RegulationCode — Quelle réglementation l'exige (RGPD, CCPA, etc.).",
         actionsTitle: "Actions d'expiration",
-        actionsIntro: "À l'expiration, NEXORA applique l'une des deux actions :",
+        actionsIntro: "À l'expiration, SCRIPE applique l'une des deux actions :",
         action1: "Delete — Supprime définitivement tous les enregistrements correspondants.",
         action2: "Anonymize — Remplace les PII par des jetons pseudonymes.",
         automationTitle: "Application automatisée",

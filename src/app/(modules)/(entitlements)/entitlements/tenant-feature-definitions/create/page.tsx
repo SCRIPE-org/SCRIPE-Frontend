@@ -9,7 +9,7 @@ const FeatureDefinitionFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Feature Definition | NEXORA",
+  title: "Create Feature Definition | SCRIPE",
   description: "Create a new feature definition for use in tenant edition plans",
 };
 

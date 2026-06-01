@@ -9,10 +9,10 @@ export const es = {
       description:
         "Un motor de derechos completo de nivel empresarial que transforma su plataforma en un producto SaaS diferenciado con ediciones, suscripciones y control de funciones por inquilino.",
       intro:
-        "Deje de codificar (hardcoding) las comprobaciones de planes en su código. El módulo de Derechos de NEXORA proporciona un motor de control de funciones (feature gating) de pila completa a nivel de API que aplica automáticamente lo que cada inquilino puede y no puede hacer, según su edición suscrita, sobreescrituras activas y contadores de cuota en tiempo real.",
+        "Deje de codificar (hardcoding) las comprobaciones de planes en su código. El módulo de Derechos de SCRIPE proporciona un motor de control de funciones (feature gating) de pila completa a nivel de API que aplica automáticamente lo que cada inquilino puede y no puede hacer, según su edición suscrita, sobreescrituras activas y contadores de cuota en tiempo real.",
       whyTitle: "¿Por qué Derechos Integrados?",
       whyContent:
-        "La mayoría de las plataformas SaaS añaden feature flags (indicadores de funciones) como una idea de último momento. NEXORA integra los derechos directamente en la pipeline CQRS a través de la interfaz IRequireFeature, lo que significa que cada comando puede ser controlado automáticamente sin una sola línea de middleware personalizado.",
+        "La mayoría de las plataformas SaaS añaden feature flags (indicadores de funciones) como una idea de último momento. SCRIPE integra los derechos directamente en la pipeline CQRS a través de la interfaz IRequireFeature, lo que significa que cada comando puede ser controlado automáticamente sin una sola línea de middleware personalizado.",
       fgEditions: "Ediciones (Planes)",
       fgEditionsDesc:
         "Paquetes de funciones con nombre como Básico, Pro, Enterprise que definen lo que incluye cada plan.",
@@ -54,8 +54,8 @@ export const es = {
       tblResR4C3: "Fallback cuando no se aplica ninguna otra fuente",
       valueTitle: "Valor Comercial",
       tblValH1: "Desafío",
-      tblValH2: "Sin NEXORA",
-      tblValH3: "Con Derechos de NEXORA",
+      tblValH2: "Sin SCRIPE",
+      tblValH3: "Con Derechos de SCRIPE",
       tblValR1C1: "Diferenciación de planes",
       tblValR1C2: "Comprobaciones if/else hardcodeadas dispersas por todas partes",
       tblValR1C3: "Control automático a nivel de pipeline por edición",
@@ -71,12 +71,12 @@ export const es = {
       tblValR5C1: "Lanzamiento de funciones",
       tblValR5C2: "Implementaciones masivas que ponen en riesgo a todos los inquilinos",
       tblValR5C3: "Estrategias de implementación canary y programadas",
-      tip: "El módulo de Derechos está completamente integrado en la pipeline de NEXORA mediator. Los comandos que implementan IRequireFeature se controlan automáticamente: su lógica de negocio se mantiene limpia y enfocada.",
+      tip: "El módulo de Derechos está completamente integrado en la pipeline de SCRIPE mediator. Los comandos que implementan IRequireFeature se controlan automáticamente: su lógica de negocio se mantiene limpia y enfocada.",
     },
     entEditions: {
       title: "Ediciones y Planes",
       description:
-        "Defina, gestione y versione los planes de sus productos SaaS utilizando el potente motor de Ediciones de NEXORA.",
+        "Defina, gestione y versione los planes de sus productos SaaS utilizando el potente motor de Ediciones de SCRIPE.",
       intro:
         "Las ediciones son los bloques de construcción de su estrategia de precios SaaS. Cada edición agrupa un conjunto específico de valores de funciones (interruptores booleanos, límites numéricos, configuraciones de cadena) en un plan con nombre que se puede asignar a los inquilinos a través de suscripciones.",
       whatTitle: "¿Qué son las Ediciones?",
@@ -125,7 +125,7 @@ export const es = {
       description:
         "Gestión completa del ciclo de vida de las suscripciones de los inquilinos con precios multidivisa, descuentos promocionales, análisis de impacto de upgrade/downgrade, pruebas, manejo de expiraciones y exportación analítica integral.",
       intro:
-        "Las suscripciones son el puente entre los inquilinos y las ediciones. Definen en qué plan se encuentra un inquilino, cuándo comienza y expira, y cómo se comporta el sistema cuando cambia el ciclo de vida de la suscripción. Con precios multidivisa integrados y seguimiento de descuentos promocionales, NEXORA proporciona todo lo necesario para la monetización.",
+        "Las suscripciones son el puente entre los inquilinos y las ediciones. Definen en qué plan se encuentra un inquilino, cuándo comienza y expira, y cómo se comporta el sistema cuando cambia el ciclo de vida de la suscripción. Con precios multidivisa integrados y seguimiento de descuentos promocionales, SCRIPE proporciona todo lo necesario para la monetización.",
       lifecycleTitle: "Ciclo de Vida de la Suscripción",
       lifecycleContent:
         "Toda suscripción sigue una máquina de estados bien definida. El sistema impone automáticamente transiciones válidas y emite eventos de dominio en cada etapa para fines de auditoría e integración.",

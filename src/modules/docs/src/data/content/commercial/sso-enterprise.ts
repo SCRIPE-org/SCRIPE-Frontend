@@ -74,7 +74,7 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Capability", "NEXORA", "Azure AD B2C", "Keycloak"],
+    headers: ["Capability", "SCRIPE", "Azure AD B2C", "Keycloak"],
     rows: [
       [
         "Multi-tenant SSO",

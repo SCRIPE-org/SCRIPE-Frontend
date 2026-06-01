@@ -7,8 +7,8 @@ const PluginCatalogView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Catalog | NEXORA",
-  description: "Browse and install plugins from the NEXORA marketplace",
+  title: "Plugin Catalog | SCRIPE",
+  description: "Browse and install plugins from the SCRIPE marketplace",
 };
 
 export default function PluginCatalogPage() {

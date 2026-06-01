@@ -7,7 +7,7 @@
  *   NavigationData → plain JSON object (write to cache)
  *   plain JSON object → NavigationData (read from cache)
  *
- * Supports the NEXORA API envelope format:
+ * Supports the SCRIPE API envelope format:
  *   { statusCode, message, data: { menuItems, routes, workspaceGroups? } }
  * As well as legacy formats (direct array, menuItems at root, etc.).
  */
@@ -22,7 +22,7 @@ export class NavigationDataMapper {
   /**
    * Parse any raw API response shape into a NavigationData entity.
    *
-   * The NEXORA backend always returns one of:
+   * The SCRIPE backend always returns one of:
    *   A) { statusCode: 200, data: { menuItems, routes, workspaceGroups? } }
    *   B) { menuItems, routes }   (legacy / direct)
    *   C) [ ...menuItems ]        (very old legacy)
@@ -44,7 +44,7 @@ export class NavigationDataMapper {
     let rawGroups: any[] | undefined;
 
     if (raw.data) {
-      // Standard NEXORA envelope
+      // Standard SCRIPE envelope
       rawItems = raw.data.menuItems ?? [];
       rawRoutes = raw.data.routes ?? raw.data.pages ?? [];
       rawGroups = raw.data.workspaceGroups;

@@ -18,7 +18,7 @@ const sections: DocSection[] = [
       {
         titleKey: "getStarted.quickStart.backendStep1Title",
         contentKey: "getStarted.quickStart.backendStep1Content",
-        code: "cd NEXORA-Backend\ndotnet restore",
+        code: "cd SCRIPE-Backend\ndotnet restore",
         codeLanguage: "bash",
       },
       {
@@ -55,7 +55,7 @@ const sections: DocSection[] = [
       {
         titleKey: "getStarted.quickStart.frontendStep1Title",
         contentKey: "getStarted.quickStart.frontendStep1Content",
-        code: "cd NEXORA-Frontend\npnpm install",
+        code: "cd SCRIPE-Frontend\npnpm install",
         codeLanguage: "bash",
       },
       {
@@ -63,7 +63,7 @@ const sections: DocSection[] = [
         contentKey: "getStarted.quickStart.frontendStep2Content",
         code: `# .env.local
 NEXT_PUBLIC_API_URL=https://localhost:5001
-NEXT_PUBLIC_APP_NAME=NEXORA`,
+NEXT_PUBLIC_APP_NAME=SCRIPE`,
         codeLanguage: "bash",
         codeFilename: ".env.local",
       },
@@ -85,9 +85,9 @@ NEXT_PUBLIC_APP_NAME=NEXORA`,
     type: "table",
     headers: ["Role", "Email", "Password", "Permissions"],
     rows: [
-      ["Super Admin", "admin@nexora.com", "P@ssw0rd", "Full system access, all modules"],
-      ["Tenant Admin", "tenant@nexora.com", "Tenant@123", "Scoped to tenant, manage users"],
-      ["Regular User", "user@nexora.com", "User@123", "Read-only, limited actions"],
+      ["Super Admin", "admin@scripe.com", "P@ssw0rd", "Full system access, all modules"],
+      ["Tenant Admin", "tenant@scripe.com", "Tenant@123", "Scoped to tenant, manage users"],
+      ["Regular User", "user@scripe.com", "User@123", "Read-only, limited actions"],
     ],
   },
   {
@@ -127,7 +127,7 @@ NEXT_PUBLIC_APP_NAME=NEXORA`,
         language: "bash",
         code: `curl -X POST https://localhost:5001/api/v1/auth/login \\
   -H "Content-Type: application/json" \\
-  -d '{"email":"admin@nexora.com","password":"P@ssw0rd"}'
+  -d '{"email":"admin@scripe.com","password":"P@ssw0rd"}'
 
 # Expected: { "accessToken": "...", "refreshToken": "..." }`,
       },
@@ -136,34 +136,34 @@ NEXT_PUBLIC_APP_NAME=NEXORA`,
   {
     type: "heading",
     level: 2,
-    titleKey: "getStarted.quickStart.nexoraCliTitle",
-    id: "nexora-cli",
+    titleKey: "getStarted.quickStart.scripeCliTitle",
+    id: "scripe-cli",
   },
   {
     type: "paragraph",
-    contentKey: "getStarted.quickStart.nexoraCliIntro",
+    contentKey: "getStarted.quickStart.scripeCliIntro",
   },
   {
     type: "code",
     language: "bash",
-    filename: "NEXORA CLI Commands",
+    filename: "SCRIPE CLI Commands",
     code: `# Automatically create a 3-project backend module and frontend route
-nexora new-module Inventory
+scripe new-module Inventory
 
 # Scaffold 26 full-stack files (Controllers, Handlers, ViewModels, Zod schemas, Views)
-nexora new-feature Inventory Product -p "Name:string:required:max(100),Price:decimal:required,CategoryId:FK:Category:required"
+scripe new-feature Inventory Product -p "Name:string:required:max(100),Price:decimal:required,CategoryId:FK:Category:required"
 
 # Generate EF migrations across 3 Databases (SqlServer, Oracle, PostgreSql) simultaneously
-nexora db add-migration Initial -m Inventory
+scripe db add-migration Initial -m Inventory
 
 # Auto-detect your configured Database provider and update it
-nexora db update -m Inventory
+scripe db update -m Inventory
 
 # Auto-generate TypeScript models and API clients from Swagger
-nexora sync-api https://localhost:5001/swagger/v1/swagger.json -m inventory
+scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m inventory
 
 # Build the entire platform
-nexora build all`,
+scripe build all`,
   },
 ];
 

@@ -9,7 +9,7 @@ export const fr = {
       description:
         "Documentation exhaustive de l'API REST : endpoints, exemples de requêtes et de réponses, modèles d'authentification.",
       intro:
-        "L'API NEXORA est une API JSON RESTful complète. À l'exception des terminaux publics, toutes les routes nécessitent un jeton d'authentification Bearer (JWT).",
+        "L'API SCRIPE est une API JSON RESTful complète. À l'exception des terminaux publics, toutes les routes nécessitent un jeton d'authentification Bearer (JWT).",
       baseInfoTitle: "Renseignements de Base",
       authEndpointsTitle: "Endpoints d'Authentification",
       adminEndpointsTitle: "Endpoints de Gestion des Administrateurs",
@@ -161,7 +161,7 @@ export const fr = {
       description:
         "Endpoints pour isoler, créer, étager, limiter les quotas et brasser la hiérarchie commerciale de l'application.",
       intro:
-        "La fondation du Monolithe : NEXORA traite les entreprises et les branches départementales en tant que locataires (Tenants).",
+        "La fondation du Monolithe : SCRIPE traite les entreprises et les branches départementales en tant que locataires (Tenants).",
       crudTitle: "CRUD du Locataire Central",
       listDesc:
         "Exécution de requêtes par l'Administrateur actuel limitées à son niveau de visionnage des locataires enfants et de la racine.",
@@ -202,7 +202,7 @@ export const fr = {
       description:
         "Ingénierie des Profils Métiers (Roles), remplacement destructif de JSONs de permission et isolation fine des champs de base de données.",
       intro:
-        "Dans NEXORA, les humains n'ont pas de droits ; ils n'ont que des Rôles, lesquels sont détenteurs d'une copie paramétrée et restreinte des clés du système de l'entreprise.",
+        "Dans SCRIPE, les humains n'ont pas de droits ; ils n'ont que des Rôles, lesquels sont détenteurs d'une copie paramétrée et restreinte des clés du système de l'entreprise.",
       rolesCrudTitle: "Endpoints CRUD du Rôle",
       listRolesDesc:
         "Exploration des Rôles et affichage analytique du nombre de personnes assujetties à chacun d'entre eux.",
@@ -294,10 +294,10 @@ export const fr = {
       description:
         "Le cblage sortant de l'application vers les CRM, passerelles SMS et boîtes e-mail via des événements d'observabilité système.",
       intro:
-        "Ce compartiment assure que NEXORA ne se fatigue pas de requêtes lentes, en externalisant tout le réseau distant sur les processus (Workers) en tche de fond Hangfire.",
+        "Ce compartiment assure que SCRIPE ne se fatigue pas de requêtes lentes, en externalisant tout le réseau distant sur les processus (Workers) en tche de fond Hangfire.",
       webhooksTitle: "Points de Terminaison Webhook",
       webhooksIntro:
-        "Inverser l'API : NEXORA devient l'émetteur HTTP. Les systèmes externes (Serveurs de vos clients) consomment ces Post signés par sécurité cryptographique (HMAC) en cas d'événements de vie (Créations, Mises à jour, Activations).",
+        "Inverser l'API : SCRIPE devient l'émetteur HTTP. Les systèmes externes (Serveurs de vos clients) consomment ces Post signés par sécurité cryptographique (HMAC) en cas d'événements de vie (Créations, Mises à jour, Activations).",
       listWebhooksDesc: "Consultation paginée.",
       createWebhookDesc:
         "Déclare la route distante, la clé secrète partagée, et la collection de mots clés d'événements déclencheurs désirés.",

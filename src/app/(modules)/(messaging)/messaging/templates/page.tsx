@@ -9,7 +9,7 @@ const MessageTemplatesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Message Templates | NEXORA",
+  title: "Message Templates | SCRIPE",
   description: "Manage email, SMS, and push notification templates",
 };
 

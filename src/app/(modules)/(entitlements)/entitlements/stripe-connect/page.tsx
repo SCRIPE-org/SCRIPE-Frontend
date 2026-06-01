@@ -9,7 +9,7 @@ const ConnectOnboardingView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Marketplace Accounts | NEXORA",
+  title: "Marketplace Accounts | SCRIPE",
   description: "Manage connected gateway accounts and onboarding for platform tenants",
 };
 

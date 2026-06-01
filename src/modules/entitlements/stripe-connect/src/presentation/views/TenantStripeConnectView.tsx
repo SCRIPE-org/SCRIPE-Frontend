@@ -274,7 +274,7 @@ function NotOnboardedState({
         <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
         <p className="leading-relaxed text-muted-foreground">
           {t("entitlements.tenantConnect.securityNote") ||
-            "Your information is securely processed by Stripe. NEXORA never sees or stores your bank account details."}
+            "Your information is securely processed by Stripe. SCRIPE never sees or stores your bank account details."}
         </p>
       </div>
     </div>

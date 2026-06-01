@@ -9,7 +9,7 @@ export const es = {
       description:
         "Estrategia de defensa en 5 capas, características de seguridad, configuración CORS, limitación de tasa y políticas de contraseñas.",
       intro:
-        "NEXORA implementa una defensa en profundidad con cinco capas: protección de red, autenticación, autorización, aislamiento de datos y registros de auditoría.",
+        "SCRIPE implementa una defensa en profundidad con cinco capas: protección de red, autenticación, autorización, aislamiento de datos y registros de auditoría.",
       layersTitle: "Capas de Defensa de Seguridad",
       featuresTitle: "Características de Seguridad",
       featureJwt: "Autenticación JWT",
@@ -40,7 +40,7 @@ export const es = {
       title: "Autenticación a Fondo",
       description:
         "Ciclo de vida del JWT, hash BCrypt, bloqueo de cuentas, 2FA, OAuth, OTP, suplantación y gestión de sesiones.",
-      intro: "Exploración exhaustiva de los mecanismos de identidad de NEXORA.",
+      intro: "Exploración exhaustiva de los mecanismos de identidad de SCRIPE.",
       jwtLifecycleTitle: "Ciclo de Vida del Token JWT",
       jwtLifecycleIntro:
         "Acceso ultracorto (15 min) respaldado por refrescos (7 días) que se destruyen y renuevan en cada solicitud exitosa.",
@@ -75,7 +75,7 @@ export const es = {
       title: "Single Sign-On (SSO)",
       description: "Autenticación OIDC, vinculación de identidad externa y aplicaciones OAuth.",
       intro:
-        "El sistema NEXORA soporta autenticación mediante proveedores externos basándose en el protocolo OIDC, y el suministro de credenciales a través de Aplicaciones OAuth. El sistema es consciente del inquilino, con un enfoque contundente en la seguridad PKCE.",
+        "El sistema SCRIPE soporta autenticación mediante proveedores externos basándose en el protocolo OIDC, y el suministro de credenciales a través de Aplicaciones OAuth. El sistema es consciente del inquilino, con un enfoque contundente en la seguridad PKCE.",
       architectureTitle: "Arquitectura de Autenticación OIDC / OAuth",
       endpointsTitle: "Endpoints y Flujo Operacional",
       flowIntro:
@@ -88,12 +88,12 @@ export const es = {
         "Recibe al usuario después de una autenticación exitosa e intercambia el código de autorización por tokens de seguridad, ejecutado enteramente del lado del servidor sin intervención del navegador.",
       linkingTitle: "Vinculación y Manejo de Identidades",
       linkingIntro:
-        "Cuando el usuario completa el inicio de sesión, el correo electrónico se verifica con la base de datos de usuarios existentes. Si es su primer inicio de sesión, el registro OIDC se vincula de manera opaca al registro interno de NEXORA, evitando conflictos de duplicidad.",
+        "Cuando el usuario completa el inicio de sesión, el correo electrónico se verifica con la base de datos de usuarios existentes. Si es su primer inicio de sesión, el registro OIDC se vincula de manera opaca al registro interno de SCRIPE, evitando conflictos de duplicidad.",
       pkceWarning:
         "Soporte para flujos implícitos (Implicit flow) obsoleto de OAuth eliminado. Se exige PKCE obligatorio en todas las variantes.",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -116,13 +116,13 @@ export const es = {
       entityModelContent:
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
@@ -135,7 +135,7 @@ export const es = {
       description:
         "Aislamiento de inquilinos, encriptación en reposo y tránsito, campos restringidos y cumplimiento GDPR.",
       intro:
-        "Toda la infraestructura de protección detrás de la manipulación interna de la información en NEXORA.",
+        "Toda la infraestructura de protección detrás de la manipulación interna de la información en SCRIPE.",
       tenantIsolationTitle: "Aislamiento de Datos de Inquilinos",
       tenantIsolationIntro:
         "El middleware contextual del JWT impone el aislamiento desde el nivel más bajo (EF Core Global Filters).",
@@ -170,7 +170,7 @@ export const es = {
       title: "Seguridad de la API",
       description:
         "Limitación de tasa, CORS, validación de entrada, protección CSRF y prevención contra ataques de repetición.",
-      intro: "El escudo defensivo del canal de comunicación del Backend NEXORA.",
+      intro: "El escudo defensivo del canal de comunicación del Backend SCRIPE.",
       rateLimitTitle: "Limitación de Tasa (Rate Limiting)",
       rateLimitIntro:
         "La limitación del servidor protege por IP e incluso ajusta las ráfagas sobre operaciones criptográficas densas (logins).",
@@ -178,7 +178,7 @@ export const es = {
       corsIntro: "Solo dominios conocidos y encabezados controlados.",
       inputValidationTitle: "Validación de Entradas (Input Validation)",
       inputValidationIntro:
-        "Se realiza a través del marco de validación FluentValidation en un paso que intercepta (Behavior) NEXORA mediator.",
+        "Se realiza a través del marco de validación FluentValidation en un paso que intercepta (Behavior) SCRIPE mediator.",
       csrfTitle: "Protección CSRF",
       csrfIntro: "Manejo inteligente del Token Bearer y las directivas SameSite Strict.",
       headersTitle: "Encabezados de Seguridad (Security Headers)",
@@ -194,7 +194,7 @@ export const es = {
       title: "Pipeline de Middleware",
       description:
         "11 componentes ejecutados en riguroso orden para orquestar de manera limpia cada solicitud al servidor.",
-      intro: "La cinta transportadora del sistema en ASP.NET Core y el corazón de NEXORA.",
+      intro: "La cinta transportadora del sistema en ASP.NET Core y el corazón de SCRIPE.",
       overviewTitle: "Visión General del Pipeline",
       overviewIntro:
         "El proceso es de caída libre: un error superior cancelará la ejecución de las capas subyacentes.",

@@ -9,7 +9,7 @@ const CustomizerStudioView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Login Customizer Studio | NEXORA",
+  title: "Login Customizer Studio | SCRIPE",
   description: "Customize your tenant's login page with live preview",
 };
 

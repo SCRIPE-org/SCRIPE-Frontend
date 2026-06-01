@@ -167,7 +167,7 @@ if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCa
       ["2", "AddCorsConfiguration", "5KB", "Dev vs Production CORS policies"],
       ["3", "AddRateLimitingConfiguration", "13KB", "DDoS prevention, per-IP, login rate limits"],
       ["4", "AddSwaggerConfiguration", "8KB", "OpenAPI documentation"],
-      ["5", "AddNexoraObservability", "8KB", "OpenTelemetry tracing + metrics"],
+      ["5", "AddScripeObservability", "8KB", "OpenTelemetry tracing + metrics"],
       ["6", "AddCoreInfrastructure", "11KB", "ICurrentUser, Audit, Cache, DI container"],
       ["7", "AddBlobStorage", "2KB", "Local / Azure / S3 / MinIO storage"],
       ["8", "AddIdentityModule", "Module", "Identity-specific services"],
@@ -209,7 +209,7 @@ if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCa
     filename: "Secrets Provider Chain (highest wins)",
     code: `Priority (highest wins):
   1. UserSecrets          (Development only)
-  2. Environment Variables (prefix: NEXORA_)
+  2. Environment Variables (prefix: SCRIPE_)
   3. appsettings.Secrets.json (optional)
   4. appsettings.json         (base)`,
   },

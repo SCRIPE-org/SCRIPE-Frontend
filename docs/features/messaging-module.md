@@ -258,6 +258,6 @@ src/app/(modules)/messaging/
 
 ## Related Docs
 
-- [Backend — Messaging & Communication Center](../../NEXORA-Backend/docs/messaging-communication-center.md)
-- [Backend — Notification Center](../../NEXORA-Backend/docs/features/notification-center.md)
-- [Backend — File Management](../../NEXORA-Backend/docs/features/file-management.md)
+- [Backend — Messaging & Communication Center](../../SCRIPE-Backend/docs/messaging-communication-center.md)
+- [Backend — Notification Center](../../SCRIPE-Backend/docs/features/notification-center.md)
+- [Backend — File Management](../../SCRIPE-Backend/docs/features/file-management.md)

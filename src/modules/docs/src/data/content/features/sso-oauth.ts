@@ -79,7 +79,7 @@ const sections: DocSection[] = [
         "OAuth Applications",
         "/settings/oauth-apps",
         "oauth_apps.view",
-        "Register third-party apps that login via NEXORA as OIDC server",
+        "Register third-party apps that login via SCRIPE as OIDC server",
       ],
     ],
   },

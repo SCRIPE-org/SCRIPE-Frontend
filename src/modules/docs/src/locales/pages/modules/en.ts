@@ -9,7 +9,7 @@ export const en = {
       description:
         "Edition-based feature gating with Features, Editions, Subscriptions, and per-tenant Overrides.",
       intro:
-        "The Entitlements module is NEXORA's plan-and-feature management engine. It defines what capabilities each tenant gets, how plans (editions) bundle those capabilities, and how subscriptions link tenants to plans.",
+        "The Entitlements module is SCRIPE's plan-and-feature management engine. It defines what capabilities each tenant gets, how plans (editions) bundle those capabilities, and how subscriptions link tenants to plans.",
       whatIsTitle: "What is Entitlements?",
       whatIsIntro:
         "Entitlements is the module responsible for controlling which features a tenant can access based on their subscribed edition (plan). It provides a three-level resolution chain: Feature defaults → Edition values → Per-tenant overrides, ensuring maximum flexibility for both platform operators and reseller tenants.",
@@ -23,12 +23,12 @@ export const en = {
         "When the system needs to determine a feature value for a tenant, it follows a strict priority chain. The highest-priority source that provides a value wins.",
       pipelineTitle: "Pipeline Integration",
       pipelineIntro:
-        "NEXORA integrates entitlements directly into the NEXORA mediator CQRS pipeline via FeatureCheckBehavior. Commands and queries that implement IRequireFeature are automatically gated — if the tenant's resolved feature value is disabled, the request is rejected before reaching the handler.",
+        "SCRIPE integrates entitlements directly into the SCRIPE mediator CQRS pipeline via FeatureCheckBehavior. Commands and queries that implement IRequireFeature are automatically gated — if the tenant's resolved feature value is disabled, the request is rejected before reaching the handler.",
       pipelineTip:
         "To gate a command behind a feature, simply implement IRequireFeature and set RequiredFeatureName to the feature's stable system key (e.g. 'Chat.Enabled'). No additional code is needed.",
       backendTitle: "Backend Structure",
       backendIntro:
-        "The Entitlements backend follows NEXORA's standard Clean Architecture module layout with Domain, Application, and Infrastructure layers.",
+        "The Entitlements backend follows SCRIPE's standard Clean Architecture module layout with Domain, Application, and Infrastructure layers.",
       frontendTitle: "Frontend Structure",
       frontendIntro:
         "The frontend mirrors the backend with four sub-modules (editions, features, subscriptions, overrides), each following the SOLID View/ViewModel pattern.",
@@ -37,17 +37,17 @@ export const en = {
         "The Entitlements module exposes 31 API endpoints across 4 controllers, all authenticated with JWT and protected by permission-based authorization.",
       noOpTitle: "NoOp Fallback",
       noOpIntro:
-        "When the Entitlements module is not loaded (e.g. in a microservice that doesn't include Entitlements), NEXORA registers a NoOpFeatureCache. This allows IRequireFeature commands to pass through without errors — all features are treated as enabled by default.",
+        "When the Entitlements module is not loaded (e.g. in a microservice that doesn't include Entitlements), SCRIPE registers a NoOpFeatureCache. This allows IRequireFeature commands to pass through without errors — all features are treated as enabled by default.",
       noOpNote:
         "The NoOp fallback ensures that modules can use IRequireFeature without a hard dependency on the Entitlements module. In production monolith mode, the real FeatureCache is always available.",
       resolutionTip:
         "The resolution chain is evaluated lazily — values are cached after first resolution and invalidated when subscriptions, editions, or overrides change.",
       cqrsMapTitle: "CQRS Command & Query Map",
       cqrsMapIntro:
-        "The Entitlements module registers 31 NEXORA request handlers spanning the four domains. Each command has a corresponding FluentValidation validator for input validation.",
+        "The Entitlements module registers 31 SCRIPE request handlers spanning the four domains. Each command has a corresponding FluentValidation validator for input validation.",
       diTitle: "Dependency Injection Registration",
       diIntro:
-        "All Entitlements services are registered via the AddEntitlementsModule extension method in DependencyInjection.cs. The module follows NEXORA's standard registration pattern.",
+        "All Entitlements services are registered via the AddEntitlementsModule extension method in DependencyInjection.cs. The module follows SCRIPE's standard registration pattern.",
       comparisonTitle: "With vs Without Entitlements",
       comparisonIntro:
         "The following table shows the difference in capabilities when the Entitlements module is enabled versus running without it:",
@@ -81,7 +81,7 @@ export const en = {
         "When publishing an edition version, admins choose how the changes are deployed to subscribed tenants:",
       workflowTitle: "Apply Now vs Save as Version",
       workflowIntro:
-        "NEXORA provides two ways to update edition features, each suited for different scenarios:",
+        "SCRIPE provides two ways to update edition features, each suited for different scenarios:",
       workflowTip:
         "Use 'Apply Now' for urgent fixes and small changes. Use 'Save as Version' for major plan updates that need staged rollout and audit trail.",
       endpointsTitle: "API Endpoints",
@@ -89,7 +89,7 @@ export const en = {
         "The Editions controller exposes 11 endpoints for managing editions, their features, and version lifecycle:",
       scopingTitle: "System vs Retail Editions",
       scopingIntro:
-        "NEXORA supports two types of editions: System editions created by platform admins visible to all tenants, and Retail editions created by reseller tenants for their child tenants only.",
+        "SCRIPE supports two types of editions: System editions created by platform admins visible to all tenants, and Retail editions created by reseller tenants for their child tenants only.",
       scopingNote:
         "Tenant administrators only see system editions plus their own retail editions. During drill-down, the system admin sees only the drilled-down tenant's visible editions (system + that tenant's retail). This ensures edition isolation between reseller tenants.",
       drillDownTitle: "Drill-Down Behavior",
@@ -174,7 +174,7 @@ export const en = {
         "Each TenantSubscription has a ConcurrencyStamp (Guid) marked with [ConcurrencyCheck]. The stamp is refreshed (Guid.NewGuid()) on every write operation. This prevents race conditions — for example, a concurrent cancel + reconciliation job — by throwing DbUpdateConcurrencyException on mid-air collisions.",
       validationTitle: "Input Validation (G1)",
       validationIntro:
-        "All 8 subscription commands have dedicated FluentValidation validators in SubscriptionCommandValidators.cs. Validators inject ILocalizer for localized error messages (EN + AR). Business rules include: cannot renew as Trial, cannot convert to Trial, positive refund amounts, string length limits, and required field checks. Validation runs in the NEXORA mediator pipeline before the handler executes.",
+        "All 8 subscription commands have dedicated FluentValidation validators in SubscriptionCommandValidators.cs. Validators inject ILocalizer for localized error messages (EN + AR). Business rules include: cannot renew as Trial, cannot convert to Trial, positive refund amounts, string length limits, and required field checks. Validation runs in the SCRIPE mediator pipeline before the handler executes.",
       crossModuleTitle: "Cross-Module Integration (H1)",
       crossModuleIntro:
         "Subscription lifecycle events publish domain events consumed by the Identity module. When a subscription is suspended, all tenant admins are deactivated with DeactivationReason='SubscriptionSuspended'. On resume, only admins with that specific reason are reactivated — manually-deactivated admins stay off. Expiry cascades deactivation to all descendant tenants.",
@@ -229,7 +229,7 @@ export const en = {
         "For Numeric features, use -1 to represent 'unlimited'. The FeatureCheckBehavior recognizes -1 as a special value and never blocks requests for features with an unlimited quota.",
       systemVsCustomTitle: "System vs Custom Features",
       systemVsCustomIntro:
-        "NEXORA distinguishes between system features (seeded at startup, read-only) and custom features (created by admins via API):",
+        "SCRIPE distinguishes between system features (seeded at startup, read-only) and custom features (created by admins via API):",
       cacheTitle: "Feature Cache",
       cacheIntro:
         "Resolved feature values are cached in the IFeatureCache to avoid database queries on every request. The cache is invalidated whenever an edition's features change, a subscription is modified, or an override is set/removed. In microservice deployments without the Entitlements module, a NoOpFeatureCache treats all features as enabled.",
@@ -324,7 +324,7 @@ export const en = {
         description:
           "GDPR, CCPA, and PDPA compliance automation — regulations, DSR handling, consent management, data retention, inventory, and report generation.",
         intro:
-          "The Compliance module is NEXORA's built-in regulatory compliance engine. It helps platform operators and their tenants stay compliant with major data protection laws (GDPR, CCPA, PDPA) through automated tools for managing data subject requests, consent records, retention policies, and generating audit-ready compliance reports.",
+          "The Compliance module is SCRIPE's built-in regulatory compliance engine. It helps platform operators and their tenants stay compliant with major data protection laws (GDPR, CCPA, PDPA) through automated tools for managing data subject requests, consent records, retention policies, and generating audit-ready compliance reports.",
         infoTitle: "Compliance Notice",
         infoContent:
           "The Compliance module is critical for maintaining regulatory adherence and avoiding fines. Ensure all features are correctly mapped to data processing policies.",
@@ -376,7 +376,7 @@ export const en = {
         // What Is
         whatIsTitle: "What is the Compliance Module?",
         whatIsIntro:
-          "The Compliance module provides six interconnected sub-systems that cover the full compliance lifecycle. Instead of building compliance tooling from scratch, NEXORA tenants get a production-ready system that tracks, automates, and reports on their data protection obligations.",
+          "The Compliance module provides six interconnected sub-systems that cover the full compliance lifecycle. Instead of building compliance tooling from scratch, SCRIPE tenants get a production-ready system that tracks, automates, and reports on their data protection obligations.",
         subModulesTitle: "Six Sub-Systems",
         subModulesIntro: "Each sub-system handles a specific compliance domain:",
         sub1: "Regulation Profiles — Stores the regulatory frameworks (GDPR, CCPA, PDPA) that the platform operates under.",
@@ -388,7 +388,7 @@ export const en = {
         // Regulations
         regulationsTitle: "Supported Regulations",
         regulationsIntro:
-          "NEXORA's Compliance module supports enforcement of these major data protection regulations. Each regulation is pre-seeded with its SLA deadlines and penalty structures.",
+          "SCRIPE's Compliance module supports enforcement of these major data protection regulations. Each regulation is pre-seeded with its SLA deadlines and penalty structures.",
         regName: "Regulation",
         regRegion: "Region / Jurisdiction",
         regSla: "Response SLA",
@@ -401,11 +401,11 @@ export const en = {
         // Backend Architecture
         backendTitle: "Backend Architecture",
         backendIntro:
-          "The Compliance backend follows the standard NEXORA 3-project module layout (Domain / Application / Infrastructure) with a dedicated ComplianceDbContext and ComplianceController.",
+          "The Compliance backend follows the standard SCRIPE 3-project module layout (Domain / Application / Infrastructure) with a dedicated ComplianceDbContext and ComplianceController.",
         // CQRS
         cqrsTitle: "CQRS Commands & Queries",
         cqrsIntro:
-          "The Compliance module uses the standard NEXORA mediator CQRS pattern. Commands handle write operations and Queries handle read operations, each with dedicated FluentValidation validators.",
+          "The Compliance module uses the standard SCRIPE mediator CQRS pattern. Commands handle write operations and Queries handle read operations, each with dedicated FluentValidation validators.",
         cqrsType: "Type",
         cqrsExample: "Handler",
         cqrsDesc: "Description",
@@ -516,7 +516,7 @@ export const en = {
         status4: "Rejected — The request was rejected (e.g. insufficient identity verification).",
         slasTitle: "GDPR SLA Requirements",
         slasIntro:
-          "Under GDPR Article 12, data controllers must respond to DSRs within 30 days (extendable to 3 months for complex requests). NEXORA tracks the submission date for each DSR to help you meet these deadlines.",
+          "Under GDPR Article 12, data controllers must respond to DSRs within 30 days (extendable to 3 months for complex requests). SCRIPE tracks the submission date for each DSR to help you meet these deadlines.",
         lifecycleFlowTitle: "DSR Lifecycle Flow",
         nodeSubmit: "Submit Request",
         descSubmit: "Subject requests Export, Erasure, or Rectification",
@@ -559,7 +559,7 @@ export const en = {
         description:
           "Record, track, and audit user consent grants and withdrawals for GDPR Article 6 and CCPA compliance.",
         intro:
-          "Consent Management records every time a user grants or withdraws consent for a specific purpose (e.g. marketing emails, analytics tracking). NEXORA stores the full consent audit trail including timestamp, IP address, user agent, and the exact consent version shown.",
+          "Consent Management records every time a user grants or withdraws consent for a specific purpose (e.g. marketing emails, analytics tracking). SCRIPE stores the full consent audit trail including timestamp, IP address, user agent, and the exact consent version shown.",
         purposesTitle: "Consent Purposes",
         purposesIntro:
           "Each consent record is tied to a specific purpose. Common purposes include:",
@@ -569,7 +569,7 @@ export const en = {
         purpose4: "Personalization — Personalized content and recommendations.",
         gdprTitle: "GDPR Lawful Basis",
         gdprIntro:
-          "Under GDPR Article 6, consent must be: freely given, specific, informed, and unambiguous. NEXORA records the exact consent text version shown to the user and the timestamp it was accepted, providing a legally defensible audit trail.",
+          "Under GDPR Article 6, consent must be: freely given, specific, informed, and unambiguous. SCRIPE records the exact consent text version shown to the user and the timestamp it was accepted, providing a legally defensible audit trail.",
         withdrawalTitle: "Consent Withdrawal",
         withdrawalIntro:
           "Users can withdraw consent at any time. When consent is withdrawn, the ConsentRecord is updated with WithdrawnAt timestamp. Downstream systems should be notified via domain events to stop processing data for the withdrawn purpose.",
@@ -600,7 +600,7 @@ export const en = {
         description:
           "Define data retention periods and automated expiry actions (Delete or Anonymize) for GDPR Article 5(1)(e) compliance.",
         intro:
-          "Data Retention Policies define how long specific categories of data must be kept and what happens when the retention period expires. NEXORA enforces these policies automatically via background jobs, removing the manual overhead of managing data lifecycles.",
+          "Data Retention Policies define how long specific categories of data must be kept and what happens when the retention period expires. SCRIPE enforces these policies automatically via background jobs, removing the manual overhead of managing data lifecycles.",
         policiesTitle: "Policy Configuration",
         policiesIntro: "Each retention policy specifies:",
         field1:
@@ -610,7 +610,7 @@ export const en = {
         field4:
           "RegulationCode — Which regulation requires this retention period (GDPR, CCPA, etc.).",
         actionsTitle: "Expiry Actions",
-        actionsIntro: "When a retention period expires, NEXORA applies one of two actions:",
+        actionsIntro: "When a retention period expires, SCRIPE applies one of two actions:",
         action1: "Delete — Permanently removes all records matching the data category.",
         action2:
           "Anonymize — Replaces personally identifiable information with pseudonymous tokens, preserving aggregate analytics data.",
@@ -640,7 +640,7 @@ export const en = {
         description:
           "A registry of all personal data categories the platform processes — required for GDPR Article 30 Records of Processing Activities (RoPA).",
         intro:
-          "The Data Inventory is a structured registry of all personal data categories that the platform processes. Under GDPR Article 30, controllers must maintain Records of Processing Activities (RoPA) — the Data Inventory is NEXORA's implementation of this requirement.",
+          "The Data Inventory is a structured registry of all personal data categories that the platform processes. Under GDPR Article 30, controllers must maintain Records of Processing Activities (RoPA) — the Data Inventory is SCRIPE's implementation of this requirement.",
         fieldsTitle: "Inventory Fields",
         fieldsIntro: "Each inventory item documents:",
         field1:
@@ -657,7 +657,7 @@ export const en = {
         field7: "ThirdPartySharing — Whether the data is shared with third parties and which ones.",
         ropaTitle: "Article 30 Compliance",
         ropaIntro:
-          "Organizations with 250+ employees or processing high-risk data must maintain a RoPA under GDPR Article 30. NEXORA's Data Inventory serves as a live, queryable RoPA that can be exported for regulatory inspections.",
+          "Organizations with 250+ employees or processing high-risk data must maintain a RoPA under GDPR Article 30. SCRIPE's Data Inventory serves as a live, queryable RoPA that can be exported for regulatory inspections.",
         endpointsTitle: "API Endpoints",
         ep: {
           list: "List all data inventory items (paginated, searchable)",
@@ -705,11 +705,11 @@ export const en = {
       overview: {
         title: "Plugin System Overview",
         description: "Two-Tier enterprise plugin platform with certified in-process plugins and sandboxed marketplace plugins.",
-        intro: "The Plugin System is NEXORA's extensibility engine. It allows platform operators to install certified Tier 1 plugins that run in-process with full infrastructure access, and third-party Tier 2 plugins that run in a sandboxed REST gateway with an isolated key-value data store.",
+        intro: "The Plugin System is SCRIPE's extensibility engine. It allows platform operators to install certified Tier 1 plugins that run in-process with full infrastructure access, and third-party Tier 2 plugins that run in a sandboxed REST gateway with an isolated key-value data store.",
         infoTitle: "Phase 15 — Enterprise Plugin Platform",
         infoContent: "The Plugin System was introduced in Phase 15. It covers the full plugin lifecycle: definition, installation, activation, upgrade, health monitoring, execution logging, webhook subscriptions, and a complete frontend SDK for host–iframe communication.",
         whatIsTitle: "What Is the Plugin System?",
-        whatIsIntro: "The Plugin System provides a Two-Tier architecture for extending NEXORA with additional capabilities. Tier 1 plugins are trusted, certified modules that integrate directly into the .NET runtime via IPluginStartup. Tier 2 plugins are third-party applications that integrate via a secure REST gateway and communicate with the host using a postMessage-based SDK.",
+        whatIsIntro: "The Plugin System provides a Two-Tier architecture for extending SCRIPE with additional capabilities. Tier 1 plugins are trusted, certified modules that integrate directly into the .NET runtime via IPluginStartup. Tier 2 plugins are third-party applications that integrate via a secure REST gateway and communicate with the host using a postMessage-based SDK.",
         featureTier1: "Tier 1 — Certified Plugins",
         featureTier1Desc: "In-process plugins with full DI access, Module Federation frontend, and IPluginStartup contract.",
         featureTier2: "Tier 2 — Sandboxed Plugins",
@@ -765,7 +765,7 @@ export const en = {
         connRate: "rate check",
         connLog: "log result",
         backendTitle: "Backend Architecture",
-        backendIntro: "The backend follows NEXORA's standard 3-project Clean Architecture module layout: Plugins.Domain → Plugins.Application → Plugins.Infrastructure.",
+        backendIntro: "The backend follows SCRIPE's standard 3-project Clean Architecture module layout: Plugins.Domain → Plugins.Application → Plugins.Infrastructure.",
         cqrsTitle: "CQRS Commands & Queries",
         cqrsIntro: "The Plugins module registers 15 request handlers via AstraFlow.Mediator. All commands have a corresponding FluentValidation validator.",
         cqrsType: "Type",
@@ -800,7 +800,7 @@ export const en = {
         entityWebhookPurpose: "Webhook subscription to platform events",
         entityLogPurpose: "Append-only gateway call log (no soft-delete)",
         frontendTitle: "Frontend Architecture",
-        frontendIntro: "The frontend follows NEXORA's MVVM pattern with strict layer separation. Views are dumb UI; ViewModels handle all state and mutations via TanStack Query.",
+        frontendIntro: "The frontend follows SCRIPE's MVVM pattern with strict layer separation. Views are dumb UI; ViewModels handle all state and mutations via TanStack Query.",
         sdkTitle: "Plugin SDK",
         sdkIntro: "The Plugin SDK lives in src/core/plugins/ and provides all infrastructure for host-plugin communication via iframe postMessage for Tier 2, and Module Federation for Tier 1.",
         endpointsTitle: "API Endpoints",
@@ -868,7 +868,7 @@ export const en = {
         permWebhooks: "Subscribe and unsubscribe webhook events",
         quickStartTitle: "Quick Start Guide",
         step1Title: "Run Database Migration",
-        step1Content: "Create the Plugins module database and apply migrations using the NEXORA CLI.",
+        step1Content: "Create the Plugins module database and apply migrations using the SCRIPE CLI.",
         step2Title: "Register a Plugin Definition",
         step2Content: "Register your plugin in the catalog by calling the definitions endpoint as super admin.",
         step3Title: "Install for a Tenant",
@@ -880,7 +880,7 @@ export const en = {
         securityTitle: "Security",
         securityIntro: "The Plugin System enforces multiple security boundaries to protect tenants from malicious or buggy plugins.",
         securityWarningTitle: "Tier 1 plugins run in-process",
-        securityWarningContent: "Tier 1 plugins have full access to NEXORA's DI container and database. Only install certified plugins from your own team or thoroughly audited sources. The plugins_definition.create permission is restricted to super admins by default.",
+        securityWarningContent: "Tier 1 plugins have full access to SCRIPE's DI container and database. Only install certified plugins from your own team or thoroughly audited sources. The plugins_definition.create permission is restricted to super admins by default.",
         secDoTitle: "Do",
         secDontTitle: "Don't",
         secDo1: "Validate event.origin in every iframe message listener",
@@ -895,7 +895,7 @@ export const en = {
       sdk: {
         title: "Plugin SDK Reference",
         description: "Complete reference for the host-plugin communication SDK — PluginBridge, message types, bridge classes, and Tier 1/2 development guides.",
-        intro: "The Plugin SDK provides all infrastructure for bidirectional communication between the NEXORA host application and plugin frontends. Tier 2 plugins communicate via iframe postMessage; Tier 1 plugins use Module Federation with shared React.",
+        intro: "The Plugin SDK provides all infrastructure for bidirectional communication between the SCRIPE host application and plugin frontends. Tier 2 plugins communicate via iframe postMessage; Tier 1 plugins use Module Federation with shared React.",
         infoTitle: "SDK lives in src/core/plugins/",
         infoContent: "The SDK is framework-agnostic at the message protocol level. Tier 2 plugin iframes can be built with any framework (React, Vue, Svelte, vanilla JS) as long as they implement the postMessage contract.",
         protocolTitle: "Message Protocol",

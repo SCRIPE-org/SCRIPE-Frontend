@@ -7,7 +7,7 @@ const MenusView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Menu Management | NEXORA",
+  title: "Menu Management | SCRIPE",
   description: "Manage sidebar navigation menus and menu items",
 };
 

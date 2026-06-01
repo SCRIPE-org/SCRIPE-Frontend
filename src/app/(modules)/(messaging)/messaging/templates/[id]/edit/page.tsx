@@ -9,7 +9,7 @@ const TemplateFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edit Template | NEXORA",
+  title: "Edit Template | SCRIPE",
   description: "Edit message template details",
 };
 

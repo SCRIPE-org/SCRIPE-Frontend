@@ -7,7 +7,7 @@ const ConsentView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Consent Management | NEXORA",
+  title: "Consent Management | SCRIPE",
   description: "Manage data subject consent — grant, withdraw, and audit consent purposes",
 };
 

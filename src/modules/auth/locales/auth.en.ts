@@ -8,7 +8,7 @@ export const en = {
     loginError: "Invalid username or password",
     loginSuccess: "Login successful",
     loginFailed: "Login failed. Please try again.",
-    welcome: "NEXORA",
+    welcome: "SCRIPE",
     pleaseLogin: "Please sign in to continue",
     usernamePlaceholder: "name@company.com or username",
     connectionError: "Server connection error. Please try again.",

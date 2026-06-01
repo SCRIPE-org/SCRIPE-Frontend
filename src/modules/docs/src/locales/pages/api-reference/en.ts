@@ -9,7 +9,7 @@ export const en = {
       description:
         "Complete REST API documentation with endpoints, request/response examples, authentication, and rate limiting.",
       intro:
-        "The NEXORA API is a RESTful JSON API. All endpoints use JWT Bearer-token authentication (unless marked public), standard HTTP status codes, and a consistent envelope response format. Swagger UI is available at /swagger for interactive testing.",
+        "The SCRIPE API is a RESTful JSON API. All endpoints use JWT Bearer-token authentication (unless marked public), standard HTTP status codes, and a consistent envelope response format. Swagger UI is available at /swagger for interactive testing.",
       baseInfoTitle: "Base Information",
       authEndpointsTitle: "Authentication Endpoints",
       adminEndpointsTitle: "Admin Management Endpoints",
@@ -38,7 +38,7 @@ export const en = {
         "Revoke all refresh tokens for the authenticated user. Access token remains valid until expiry.",
       tfaTitle: "Two-Factor Authentication",
       tfaIntro:
-        "NEXORA supports TOTP-based 2FA using authenticator apps (Google Authenticator, Authy, Microsoft Authenticator). Once enabled, login returns a session token instead of access tokens — the client must verify the TOTP code to complete authentication.",
+        "SCRIPE supports TOTP-based 2FA using authenticator apps (Google Authenticator, Authy, Microsoft Authenticator). Once enabled, login returns a session token instead of access tokens — the client must verify the TOTP code to complete authentication.",
       tfaEnableDesc: "Generate a TOTP secret and QR code URI for setup in an authenticator app.",
       tfaConfirmDesc: "Confirm 2FA setup by verifying the first TOTP code. Returns backup codes.",
       tfaVerifyDesc: "Complete login by verifying the TOTP code with the 2FA session token.",
@@ -74,7 +74,7 @@ export const en = {
       loginDesc: "Authenticate user with email and password. Returns JWT access + refresh tokens.",
       externalTitle: "External Authentication",
       externalIntro:
-        "NEXORA supports OAuth authentication via Google, Facebook, Apple, or Microsoft. The client obtains a provider token and sends it to the external-login endpoint. NEXORA validates the token, creates or links the account, and returns JWT tokens.",
+        "SCRIPE supports OAuth authentication via Google, Facebook, Apple, or Microsoft. The client obtains a provider token and sends it to the external-login endpoint. SCRIPE validates the token, creates or links the account, and returns JWT tokens.",
       externalLoginDesc:
         "Authenticate via Google, Facebook, Apple, or Microsoft OAuth. Creates or links account.",
       verificationTitle: "Email & Phone Verification",
@@ -261,7 +261,7 @@ export const en = {
         "The Webhook, Email & Notification API provides event-driven integrations, transactional email delivery, template management, and real-time in-app notifications. Webhooks use HMAC signature verification for security.",
       webhooksTitle: "Webhooks",
       webhooksIntro:
-        "Webhooks allow external systems to subscribe to NEXORA events. When an event occurs (admin created, user registered, etc.), NEXORA sends an HTTP POST to the subscriber URL with a signed payload. Failed deliveries are retried up to 3 times with exponential backoff.",
+        "Webhooks allow external systems to subscribe to SCRIPE events. When an event occurs (admin created, user registered, etc.), SCRIPE sends an HTTP POST to the subscriber URL with a signed payload. Failed deliveries are retried up to 3 times with exponential backoff.",
       listWebhooksDesc: "List all webhook subscriptions for the current tenant.",
       createWebhookDesc: "Create a new webhook subscription with URL, events, and HMAC secret.",
       updateWebhookDesc: "Update a webhook's URL, events, or active status.",

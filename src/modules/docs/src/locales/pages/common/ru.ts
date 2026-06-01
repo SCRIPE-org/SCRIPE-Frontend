@@ -59,7 +59,7 @@ export const ru = {
     security: "Безопасность",
     apiReference: "Справочник API",
     infrastructure: "Инфраструктура",
-    commercialWhyNexora: "Почему NEXORA",
+    commercialWhyScripe: "Почему SCRIPE",
     commercialPlatform: "Обзор платформы",
     commercialEnterprise: "Возможности Enterprise",
     commercialSecurity: "Безопасность и комплаенс",

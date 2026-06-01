@@ -9,7 +9,7 @@ const TenantDetailPage = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Tenant Details | NEXORA",
+  title: "Tenant Details | SCRIPE",
   description: "View and manage tenant settings, roles, and permissions",
 };
 

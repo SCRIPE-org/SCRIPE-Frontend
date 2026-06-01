@@ -8,7 +8,7 @@ export const zh = {
       title: "API 参考手册",
       description: "全面的 REST API 接口文档，包含调用格式、请求返回样例及限流防范说明。",
       intro:
-        "NEXORA 所有端点均以标准 JSON 承载。除公开路由外，所有访问强制要求具备有效的 JWT Bearer 令牌鉴权。我们通过统一封装的格式返回响应。",
+        "SCRIPE 所有端点均以标准 JSON 承载。除公开路由外，所有访问强制要求具备有效的 JWT Bearer 令牌鉴权。我们通过统一封装的格式返回响应。",
       baseInfoTitle: "API 基础约定",
       authEndpointsTitle: "认证及权限换发端点",
       adminEndpointsTitle: "管理员运维操作端点",
@@ -23,7 +23,7 @@ export const zh = {
     authApi: {
       title: "管理端认证 API",
       description: "运营面板专属：登录请求、令牌置换、注销退出、2FA 两步验证及账户审计信息获取。",
-      intro: "支撑 NEXORA 平台内部人员日常运作的核心大门。所有请求前缀为 /api/v1/auth。",
+      intro: "支撑 SCRIPE 平台内部人员日常运作的核心大门。所有请求前缀为 /api/v1/auth。",
       configTitle: "请求基础信息",
       loginTitle: "管理员登录",
       loginDesc: "使用邮箱与密码核验。校验无误即签发访问令牌和加密的刷新令牌。",
@@ -89,7 +89,7 @@ export const zh = {
       changePasswordDesc: "修改自己的当前密码。",
       summaryTitle: "接口分割要点",
       diffNote:
-        "NEXORA 前后管接口 (/user-auth vs /auth) 从数据库底层就是绝缘的，互相调用的 Token 会被立即阻截返回 401。",
+        "SCRIPE 前后管接口 (/user-auth vs /auth) 从数据库底层就是绝缘的，互相调用的 Token 会被立即阻截返回 401。",
     },
     adminApi: {
       title: "操作员管理 API (Admin Management)",
@@ -270,7 +270,7 @@ export const zh = {
       title: "系统维护、大屏数据及基础设施 API",
       description:
         "主宰大盘数据透视、管理树状可折叠导航菜单、统管文件上传并对底层核心进行状态切脉。 ",
-      intro: "该节点覆盖了日常支撑功能的集成。这部分也是 NEXORA 作为企业级总线的基石。",
+      intro: "该节点覆盖了日常支撑功能的集成。这部分也是 SCRIPE 作为企业级总线的基石。",
       dashboardTitle: "全维数据监视面板 (Dashboard)",
       dashboardIntro: "提取底层运转记录，在经过租户隔离与授权确认后分发至图形化大屏。",
       summaryDesc: "生成核心卡片数据，快速聚合使用率、账单容量和人员盘点。",

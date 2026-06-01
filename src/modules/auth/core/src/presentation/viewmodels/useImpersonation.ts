@@ -4,7 +4,7 @@
  * Clean Architecture:
  * View → ViewModel → useImpersonation → AuthRepository → AuthService → API
  *
- * Impersonation state is persisted in sessionStorage ("nexora_impersonating")
+ * Impersonation state is persisted in sessionStorage ("scr_impersonating")
  * so the header banner survives page reloads within the same tab.
  *
  * Flow:

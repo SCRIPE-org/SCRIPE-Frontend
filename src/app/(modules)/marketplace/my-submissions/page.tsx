@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Submissions | NEXORA Marketplace",
+  title: "My Submissions | SCRIPE Marketplace",
   description: "Manage your app submissions and reviews.",
 };
 

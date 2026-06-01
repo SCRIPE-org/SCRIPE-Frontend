@@ -7,7 +7,7 @@ export const ar = {
     overview: {
       title: "مرجع واجهة برمجة التطبيقات (API)",
       description: "توثيق شامل لـ REST API مع أمثلة للطلبات/الاستجابات والمصادقة والقيود.",
-      intro: "واجهة NEXORA هي RESTful JSON API. تستخدم جميع نقاط النهاية مصادقة Bearer-token.",
+      intro: "واجهة SCRIPE هي RESTful JSON API. تستخدم جميع نقاط النهاية مصادقة Bearer-token.",
       baseInfoTitle: "المعلومات الأساسية",
       authEndpointsTitle: "نقاط نهاية المصادقة",
       adminEndpointsTitle: "نقاط نهاية إدارة المشرفين",
@@ -204,7 +204,7 @@ export const ar = {
       title: "واجهة Webhooks, البريد والإشعارات",
       description: "إدارة الردود التلقائية ورسائل التنبيهات المباشرة والنصية.",
       intro:
-        "تعالج واجهة البريد وخطافات الويب (Webhooks) عمليات الاتصال مع الأنظمة والأشخاص خارج NEXORA.",
+        "تعالج واجهة البريد وخطافات الويب (Webhooks) عمليات الاتصال مع الأنظمة والأشخاص خارج SCRIPE.",
       webhooksTitle: "خطافات الويب (Webhooks)",
       webhooksIntro: "تسمح بإرسال الحزم والبيانات للأنظمة الخارجية كإشعار بالأحداث.",
       listWebhooksDesc: "قائمة بالـ Webhooks التابعة للمستأجر.",

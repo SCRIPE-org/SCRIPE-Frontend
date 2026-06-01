@@ -192,14 +192,14 @@ const sections: DocSection[] = [
     code: `apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nexora-api
+  name: scripe-api
 spec:
   replicas: 3
   template:
     spec:
       containers:
-        - name: nexora
-          image: nexora-api:latest
+        - name: scripe
+          image: scripe-api:latest
           ports:
             - containerPort: 5001
           # STARTUP: Allow up to 5 minutes for DB migration on first deploy
@@ -242,8 +242,8 @@ spec:
     language: "yaml",
     filename: "docker-compose.yml — Health Check Configuration",
     code: `services:
-  nexora-api:
-    image: nexora-api:latest
+  scripe-api:
+    image: scripe-api:latest
     ports:
       - "5001:5001"
     healthcheck:
@@ -260,8 +260,8 @@ spec:
 
   # Monolith mode: single service with all modules
   # Microservice mode: one service per module with MODULE_NAME env var
-  nexora-identity:
-    image: nexora-api:latest
+  scripe-identity:
+    image: scripe-api:latest
     environment:
       - MODULE_NAME=Identity
     healthcheck:

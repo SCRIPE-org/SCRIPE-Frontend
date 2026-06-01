@@ -1,7 +1,7 @@
-/// NEXORA Service Worker — P5.1
+/// SCRIPE Service Worker — P5.1
 /// Cache Strategy: App shell (cache-first), API (network-first), Assets (stale-while-revalidate)
 
-const CACHE_VERSION = "nexora-v1";
+const CACHE_VERSION = "scripe-v1";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 

@@ -12,7 +12,7 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "architecture.frontend.solidPatternIntro" },
   {
     type: "table",
-    headers: ["Principle", "Application in NEXORA"],
+    headers: ["Principle", "Application in SCRIPE"],
     rows: [
       ["S — Single Responsibility", "Each ViewModel handles ONE concern (filter, stats, table)"],
       ["O — Open/Closed", "Base hooks extended via composition, not modification"],
@@ -165,7 +165,7 @@ import { Metadata } from 'next';
 import { UserManagementView } from '@modules/admin/user-management';
 
 export const metadata: Metadata = {
-  title: 'User Management | NEXORA',
+  title: 'User Management | SCRIPE',
 };
 
 export default function Page() {

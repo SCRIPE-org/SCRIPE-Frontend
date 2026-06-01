@@ -7,15 +7,15 @@ export const es = {
     cliTooling: {
       commandsTitle: "Léxico Generativo",
       customizeContent:
-        "NEXORA rechaza categóricamente las restricciones de generación rígidas. Todo el esquema interno está impulsado por 66 plantillas Handlebars profundamente configurables, lo que permite a sus arquitectos principales anular el comportamiento de renderizado a un nivel granular. Cada byte generado está completamente bajo su dominio.",
+        "SCRIPE rechaza categóricamente las restricciones de generación rígidas. Todo el esquema interno está impulsado por 66 plantillas Handlebars profundamente configurables, lo que permite a sus arquitectos principales anular el comportamiento de renderizado a un nivel granular. Cada byte generado está completamente bajo su dominio.",
       customizeTitle: "Extensibilidad de Plantillas Sin Restricciones",
       description:
-        "Aumente el rendimiento de ingeniería en un orden de magnitud. La CLI propietaria de NEXORA erradica la fricción arquitectónica al generar de forma determinista topologías impecables de Arquitectura Limpia a pedido.",
+        "Aumente el rendimiento de ingeniería en un orden de magnitud. La CLI propietaria de SCRIPE erradica la fricción arquitectónica al generar de forma determinista topologías impecables de Arquitectura Limpia a pedido.",
       generatedTitle: "Perfección Arquitectónica Demostrable",
       intro:
-        "NEXORA no es simplemente un framework de aplicaciones; es un multiplicador de desarrolladores a escala industrial. Nuestra CLI multiplataforma personalizada elimina el código repetitivo (boilerplate) de forma permanente. Al conectar instantáneamente dependencias complejas de múltiples capas, sus ingenieros pasan inmediatamente de la tediosa configuración inicial a la entrega agresiva de características del dominio.",
+        "SCRIPE no es simplemente un framework de aplicaciones; es un multiplicador de desarrolladores a escala industrial. Nuestra CLI multiplataforma personalizada elimina el código repetitivo (boilerplate) de forma permanente. Al conectar instantáneamente dependencias complejas de múltiples capas, sus ingenieros pasan inmediatamente de la tediosa configuración inicial a la entrega agresiva de características del dominio.",
       scaffoldContent:
-        "Elimine la degradación arquitectónica desde su origen. La CLI de NEXORA ejecuta de forma determinista operaciones complejas de generación de estructura (scaffolding) full-stack, compilando todo, desde agregados aislados de Entity Framework hasta tiendas Zustand de Next.js meticulosamente tipadas, en absoluta conformidad física con las primitivas de diseño de la Arquitectura Limpia.",
+        "Elimine la degradación arquitectónica desde su origen. La CLI de SCRIPE ejecuta de forma determinista operaciones complejas de generación de estructura (scaffolding) full-stack, compilando todo, desde agregados aislados de Entity Framework hasta tiendas Zustand de Next.js meticulosamente tipadas, en absoluta conformidad física con las primitivas de diseño de la Arquitectura Limpia.",
       scaffoldTitle: "El Motor de Scaffolding Determinista",
       title: "Herramientas Deterministas Supercargadas",
       descMod:
@@ -49,7 +49,7 @@ export const es = {
       layerRoute: "Enrutamiento Conectivo",
       layerRouteFiles: "1 Punto de Entrada",
       layerRouteIncs: "Diseño (Layout) del App Router de Next.js y conector dinámico de datos.",
-      itemConfig: "Control granular mediante esquemas rigurosos de nexora.config.json.",
+      itemConfig: "Control granular mediante esquemas rigurosos de scripe.config.json.",
       itemArch:
         "Fuerza matemáticamente la Arquitectura Limpia, eliminando físicamente la desviación del desarrollador.",
       itemHbs: "66 archivos independientes de Handlebars dictan los diseños sintácticos exactos.",
@@ -82,21 +82,21 @@ export const es = {
       environmentsTitle: "Paridad de Entornos",
       hostingTitle: "Alojamiento Agnóstico",
       intro:
-        "NEXORA elimina el síndrome de 'funciona en mi máquina'. Desde el primer día, recibe definiciones de canalizaciones CI/CD de grado empresarial que automatizan las pruebas, la contenedorización y el despliegue en AWS, Azure, GCP o en infraestructura física (bare metal).",
+        "SCRIPE elimina el síndrome de 'funciona en mi máquina'. Desde el primer día, recibe definiciones de canalizaciones CI/CD de grado empresarial que automatizan las pruebas, la contenedorización y el despliegue en AWS, Azure, GCP o en infraestructura física (bare metal).",
       title: "Automatización de CI/CD y DevOps",
       workflowTitle: "Flujos de Trabajo Automatizados",
     },
     documentationTraining: {
       custom: "Consultoría a Medida",
       customDesc:
-        "Contrate al equipo arquitectónico central de NEXORA para revisiones arquitectónicas profundas, desarrollo de módulos personalizados y diseño de sistemas de alta disponibilidad.",
+        "Contrate al equipo arquitectónico central de SCRIPE para revisiones arquitectónicas profundas, desarrollo de módulos personalizados y diseño de sistemas de alta disponibilidad.",
       description:
         "Planos arquitectónicos integrales, tutoriales interactivos y pistas de capacitación integradas.",
       docsContent:
         "Nuestro sitio de documentación no es solo una referencia de API. Presenta inmersiones profundas en la teoría de la Arquitectura Limpia, patrones CQRS y guías paso a paso para extender la plataforma. Cada decisión arquitectónica está respaldada por un Registro de Decisiones de Arquitectura (ADR) de acceso público.",
       docsTitle: "La Biblia de la Arquitectura",
       intro:
-        "La velocidad de adopción define el ROI. NEXORA proporciona documentación de primer nivel, tutoriales aplicables de inmediato y pistas de capacitación estructuradas diseñadas para transformar a los desarrolladores junior en arquitectos empresariales en una fracción del tiempo.",
+        "La velocidad de adopción define el ROI. SCRIPE proporciona documentación de primer nivel, tutoriales aplicables de inmediato y pistas de capacitación estructuradas diseñadas para transformar a los desarrolladores junior en arquitectos empresariales en una fracción del tiempo.",
       kbContent:
         "Explore miles de artículos categorizados en la base de conocimientos que cubren todo, desde la configuración de la invalidación de caché distribuida hasta la escritura de pruebas de integración complejas utilizando Testcontainers.",
       kbTitle: "Base de Conocimientos Extensa",
@@ -121,7 +121,7 @@ export const es = {
       onboardingTitle: "Aceleradores de Inducción (Onboarding) Estructurados",
       selfPaced: "Certificación a su Propio Ritmo",
       selfPacedDesc:
-        "Certifique a los miembros de su equipo como Arquitectos NEXORA a través de nuestro completo sistema de gestión de aprendizaje en línea.",
+        "Certifique a los miembros de su equipo como Arquitectos SCRIPE a través de nuestro completo sistema de gestión de aprendizaje en línea.",
       title: "Documentación y Capacitación Técnica",
       tracksTitle: "Pistas de Competencia para Desarrolladores",
       trainingTitle: "Seminarios de Capacitación Empresarial",
@@ -131,7 +131,7 @@ export const es = {
       credentialsWarning:
         "Importante: Nunca confirme (commit) cadenas de conexión sensibles ni secretos JWT en el control de versiones. Utilice siempre Azure Key Vault, AWS Secrets Manager o HashiCorp Vault para los despliegues de producción.",
       description:
-        "Desde la clonación hasta la producción. La clase magistral definitiva, paso a paso, para implementar la base arquitectónica de NEXORA.",
+        "Desde la clonación hasta la producción. La clase magistral definitiva, paso a paso, para implementar la base arquitectónica de SCRIPE.",
       firstModuleTitle: "Generación de su Primer Contexto Delimitado",
       intro:
         "El tiempo de valor (time to value) es la única métrica que importa. Esta guía completa acelera a su equipo de ingeniería desde la extracción (pull) del repositorio hasta la ejecución exitosa de su primera invocación de API autenticada en una base de datos completamente poblada (seeded) en menos de 15 minutos.",
@@ -142,7 +142,7 @@ export const es = {
         "Asegúrese de que el SDK de .NET 9, Node.js 20+ y su motor de Docker preferido estén instalados y sean accesibles a nivel global en su máquina de desarrollo.",
       step1Title: "1. Verificación del Conjunto de Herramientas (Toolchain)",
       step2Content:
-        "Ejecute el script de inicialización propietario de NEXORA. Esto proporciona automáticamente certificados de desarrollo local, ejecuta las migraciones iniciales de EF Core y siembra (seeds) al inquilino raíz SuperAdmin.",
+        "Ejecute el script de inicialización propietario de SCRIPE. Esto proporciona automáticamente certificados de desarrollo local, ejecuta las migraciones iniciales de EF Core y siembra (seeds) al inquilino raíz SuperAdmin.",
       step2Title: "2. Arranque Automatizado (Bootstrapping)",
       step3Content:
         "Inicie la API del backend y el frontend de Next.js simultáneamente utilizando la topología de Docker Compose proporcionada o los perfiles de inicio de su IDE nativo.",
@@ -151,7 +151,7 @@ export const es = {
         "Autentíquese contra la interfaz Swagger UI o la colección Postman utilizando las credenciales de SuperAdmin generadas para adquirir su primer JWT.",
       step4Title: "4. Autenticación Criptográfica",
       step5Content:
-        "Utilice la CLI de NEXORA para generar inmediatamente su primer módulo de negocio personalizado, ampliando la arquitectura base sin problemas.",
+        "Utilice la CLI de SCRIPE para generar inmediatamente su primer módulo de negocio personalizado, ampliando la arquitectura base sin problemas.",
       step5Title: "5. Generación de Módulos",
       structureTitle: "Topografía de la Solución",
       title: "Guía de Despliegue Empresarial",
@@ -179,7 +179,7 @@ export const es = {
       tblCredHeader1: "Campo",
       tblCredHeader2: "Valor",
       tblCredR1C1: "Email del Administrador",
-      tblCredR1C2: "admin@nexora.io",
+      tblCredR1C2: "admin@scripe.com",
       tblCredR2C1: "Contraseña",
       tblCredR2C2: "P@ssw0rd",
       tblCredR3C1: "Inquilino por Defecto",
@@ -199,13 +199,13 @@ export const es = {
     },
     systemRequirements: {
       cloudTip:
-        "Consejo para la migración a la nube: NEXORA es completamente agnóstico respecto a la nube. Implemente en AWS ECS, Azure App Services o Google Kubernetes Engine (GKE) utilizando nuestras plantillas de Infraestructura como Código (IaC).",
+        "Consejo para la migración a la nube: SCRIPE es completamente agnóstico respecto a la nube. Implemente en AWS ECS, Azure App Services o Google Kubernetes Engine (GKE) utilizando nuestras plantillas de Infraestructura como Código (IaC).",
       dbTitle: "Líneas Base de Hardware para Bases de Datos",
       description:
-        "Perfiles de hardware de referencia, cadenas de herramientas (toolchains) de software necesarias y configuraciones de red exactas requeridas para alojar NEXORA en diversas escalas de implementación.",
+        "Perfiles de hardware de referencia, cadenas de herramientas (toolchains) de software necesarias y configuraciones de red exactas requeridas para alojar SCRIPE en diversas escalas de implementación.",
       devTitle: "Estaciones de Trabajo de Desarrollo Local",
       intro:
-        "NEXORA está diseñado para ser extraordinariamente eficiente en el uso de los recursos. Si bien se escala dinámicamente para consumir clústeres masivos en la nube, puede iniciarse cómodamente y ejecutar todo su conjunto de pruebas en la computadora portátil de un desarrollador estándar.",
+        "SCRIPE está diseñado para ser extraordinariamente eficiente en el uso de los recursos. Si bien se escala dinámicamente para consumir clústeres masivos en la nube, puede iniciarse cómodamente y ejecutar todo su conjunto de pruebas en la computadora portátil de un desarrollador estándar.",
       networkTitle: "Topología de Red y Puertos",
       prodMicroTitle: "Topologías de Microservicios Globales",
       prodMonoTitle: "Servidores Monolíticos de Producción",

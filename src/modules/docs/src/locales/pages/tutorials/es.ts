@@ -9,7 +9,7 @@ export const es = {
       description:
         "Paso a paso para integrar un nuevo Módulo Frontend con patrón SOLID View/ViewModel.",
       intro:
-        "Este tutorial garantiza que evites el código espagueti guiándote en la construcción exacta validada por las reglas arquitectónicas de NEXORA.",
+        "Este tutorial garantiza que evites el código espagueti guiándote en la construcción exacta validada por las reglas arquitectónicas de SCRIPE.",
       prerequisitesTitle: "Requisitos Previos",
       stepsTitle: "Guía Paso a Paso",
       step1Title: "1. Crear Estructura",
@@ -53,7 +53,7 @@ export const es = {
       step2Desc: "Configurar modelo y validar requerimientos heredados desde AuditableEntity.",
       step3Title: "3. Comandos de Escritura",
       step3Desc:
-        "Manejadores NEXORA mediator enfocados únicamente a crear, mutar o destruir registros.",
+        "Manejadores SCRIPE mediator enfocados únicamente a crear, mutar o destruir registros.",
       step4Title: "4. Consultas (Queries)",
       step4Desc: "Lecturas ultrarrápidas con uso intensivo de mapeo y proyecciones No-Tracking.",
       step5Title: "5. Capa Repositorio",

@@ -7,7 +7,7 @@ const WebhookDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Webhook Details | NEXORA",
+  title: "Webhook Details | SCRIPE",
   description: "View webhook subscription details and delivery history",
 };
 

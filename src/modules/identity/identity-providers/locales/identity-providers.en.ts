@@ -29,7 +29,7 @@ export const en = {
     scopesHelp: "Space-separated list of OIDC scopes to request",
     redirectUri: "Redirect URI",
     redirectUriPlaceholder: "Auto-generated if blank",
-    redirectUriHelp: "Leave empty to use the default NEXORA callback URL",
+    redirectUriHelp: "Leave empty to use the default SCRIPE callback URL",
     enabledForAdmins: "Enable for Admins",
     enabledForAdminsHelp: "Allow administrators to sign in using this provider",
     enabledForUsers: "Enable for Users",
@@ -60,9 +60,9 @@ export const en = {
     accessSectionDesc: "Control who can use this provider to sign in",
     claimMappingsSection: "Claim Mappings",
     claimMappingsSectionDesc:
-      "Map external claims to NEXORA user attributes (JSON key †’ value pairs)",
+      "Map external claims to SCRIPE user attributes (JSON key †’ value pairs)",
     claimMappingsHelp:
-      "Maps external IdP claims to internal NEXORA attributes. Keys are NEXORA fields, values are the IdP claim URIs.",
+      "Maps external IdP claims to internal SCRIPE attributes. Keys are SCRIPE fields, values are the IdP claim URIs.",
     invalidJson: "Invalid JSON format",
     // Actions
     test: "Test",

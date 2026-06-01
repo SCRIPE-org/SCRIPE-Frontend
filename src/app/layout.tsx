@@ -6,12 +6,12 @@ import { AppProvider } from "@core/providers/app-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
-  title: "NEXORA",
-  description: "Professional NEXORA with multi-language support",
-  keywords: ["NEXORA", "next template", "administration", "system"],
-  authors: [{ name: "NEXORA Team" }],
-  creator: "NEXORA",
-  publisher: "NEXORA",
+  title: "SCRIPE",
+  description: "Professional SCRIPE with multi-language support",
+  keywords: ["SCRIPE", "next template", "administration", "system"],
+  authors: [{ name: "SCRIPE Team" }],
+  creator: "SCRIPE",
+  publisher: "SCRIPE",
   icons: {
     icon: [
       { url: "/app-logo.png", sizes: "32x32", type: "image/png" },
@@ -22,16 +22,16 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   openGraph: {
-    title: "NEXORA",
-    description: "Professional NEXORA with multi-language support",
+    title: "SCRIPE",
+    description: "Professional SCRIPE with multi-language support",
     url: "https://app-name.com",
-    siteName: "NEXORA",
+    siteName: "SCRIPE",
     images: [
       {
         url: "/app-logo.png",
         width: 512,
         height: 512,
-        alt: "NEXORA Logo",
+        alt: "SCRIPE Logo",
       },
     ],
     locale: "ar_SA",
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NEXORA",
-    description: "Professional NEXORA with multi-language support",
+    title: "SCRIPE",
+    description: "Professional SCRIPE with multi-language support",
     images: ["/app-logo.png"],
   },
 };

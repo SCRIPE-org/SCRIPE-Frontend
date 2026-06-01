@@ -7,7 +7,7 @@ const EditionWizardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Edition | NEXORA",
+  title: "Create Edition | SCRIPE",
   description:
     "Create a new subscription edition with billing cycles, pricing, and feature configuration",
 };

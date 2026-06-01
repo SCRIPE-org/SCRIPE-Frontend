@@ -7,7 +7,7 @@ const PluginSettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Settings | NEXORA",
+  title: "Plugin Settings | SCRIPE",
   description: "Configure settings for an installed plugin",
 };
 

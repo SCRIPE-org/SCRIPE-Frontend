@@ -7,7 +7,7 @@ const RegulationView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Regulations & Frameworks | NEXORA",
+  title: "Regulations & Frameworks | SCRIPE",
   description: "Manage compliance regulations and control frameworks",
 };
 

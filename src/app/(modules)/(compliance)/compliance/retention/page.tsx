@@ -7,7 +7,7 @@ const RetentionView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Retention Policies | NEXORA",
+  title: "Retention Policies | SCRIPE",
   description:
     "Manage data retention policies — configure retention periods, expiry actions, and scheduled execution",
 };

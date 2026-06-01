@@ -24,9 +24,9 @@ export const STORAGE_KEYS = {
   /** Tenant context (tenantId + tenantName for drilldown) */
   tenant_context: "nxr_tenant_ctx",
   /** Auth state cookie — derived from BRAND config */
-  nexora_auth_state: BRAND.cookies.authState,
+  scr_auth_state: BRAND.cookies.authState,
   /** Refresh token cookie — httpOnly, managed by backend */
-  nexora_refresh_token: BRAND.cookies.refreshToken,
+  scr_refresh_token: BRAND.cookies.refreshToken,
   /** Timestamp of last auth token refresh */
   lastAuthRefresh: "nxr_last_auth_refresh",
 
@@ -81,7 +81,7 @@ export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.ACCESS_TOKEN,
   STORAGE_KEYS.USER_DATA,
   STORAGE_KEYS.PERMISSIONS,
-  STORAGE_KEYS.nexora_refresh_token,
+  STORAGE_KEYS.scr_refresh_token,
   STORAGE_KEYS.tenant_context,
   STORAGE_KEYS.NAV_STORE,
   STORAGE_KEYS.DASHBOARD_SETTINGS,

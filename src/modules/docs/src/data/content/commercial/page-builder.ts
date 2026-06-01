@@ -166,7 +166,7 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Scenario", "Without NEXORA", "With NEXORA Page Builder"],
+    headers: ["Scenario", "Without SCRIPE", "With SCRIPE Page Builder"],
     rows: [
       [
         "Custom login page per tenant",
@@ -210,7 +210,7 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Feature", "Auth0", "Keycloak", "NEXORA"],
+    headers: ["Feature", "Auth0", "Keycloak", "SCRIPE"],
     rows: [
       [
         "Visual page builder",

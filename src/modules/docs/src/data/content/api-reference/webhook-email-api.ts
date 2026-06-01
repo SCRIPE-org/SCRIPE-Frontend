@@ -55,7 +55,7 @@ const sections: DocSection[] = [
         language: "json",
         filename: "POST /webhooks — Request",
         code: `{
-  "url": "https://api.example.com/webhooks/nexora",
+  "url": "https://api.example.com/webhooks/scripe",
   "secret": "whsec_a1b2c3d4e5f6...",
   "events": [
     "admin.created",
@@ -176,12 +176,12 @@ const sections: DocSection[] = [
         filename: "POST /emails/send — Request",
         code: `{
   "to": "user@example.com",
-  "subject": "Welcome to NEXORA",
+  "subject": "Welcome to SCRIPE",
   "templateId": "template-uuid",
   "variables": {
     "name": "Alice Johnson",
     "companyName": "Acme Corp",
-    "activationUrl": "https://app.nexora.dev/activate?token=..."
+    "activationUrl": "https://app.scripe.dev/activate?token=..."
   },
   "priority": "high",
   "scheduledAt": null

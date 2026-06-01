@@ -9,7 +9,7 @@ export const en = {
       description:
         "Transform your login experience with a zero-code visual studio — 22 premium layouts, WCAG AA accessibility suite, real-time preview, and enterprise-grade safety workflows.",
       intro:
-        "First impressions define trust. NEXORA's Login Customizer Studio empowers tenant administrators to craft stunning, brand-aligned, and fully accessible login experiences through an intuitive visual editor — no developers required. With 22 production-ready layouts, a comprehensive WCAG AA accessibility suite, real-time sandboxed preview, and a safe draft-publish workflow, your organization can maintain pixel-perfect brand consistency and inclusive design across every tenant.",
+        "First impressions define trust. SCRIPE's Login Customizer Studio empowers tenant administrators to craft stunning, brand-aligned, and fully accessible login experiences through an intuitive visual editor — no developers required. With 22 production-ready layouts, a comprehensive WCAG AA accessibility suite, real-time sandboxed preview, and a safe draft-publish workflow, your organization can maintain pixel-perfect brand consistency and inclusive design across every tenant.",
       brandTitle: "Complete Brand Identity Control",
       brandContent:
         "Take full ownership of your login page's visual identity. Upload corporate logos, configure color systems with live preview, select from premium Google Fonts, and apply sophisticated background treatments including gradients, uploaded images, and overlay effects. Every change is instantly reflected in the sandboxed preview — zero risk to your production login.",
@@ -24,7 +24,7 @@ export const en = {
         "Deliver optimal user experiences across all lighting conditions with intelligent light/dark theme architecture. Configure independent color schemes, form backgrounds, text colors, and overlay effects for each mode. The system emits separate CSS variable sets ensuring zero visual compromise in either theme. Users experience seamless transitions that respect their system preferences.",
       a11yTitle: "WCAG AA Accessibility Suite",
       a11yContent:
-        "Inclusivity is not optional — it's a competitive advantage. NEXORA's built-in Accessibility Suite provides 32 settings across 8 categories (Focus Indicators, High Contrast, Text Readability, Motion & Animation, Touch Targets, Color & Vision, Screen Reader, Reading Assistance), ensuring every login page meets WCAG AA compliance standards out of the box. No third-party tools, no external audits, no additional cost.",
+        "Inclusivity is not optional — it's a competitive advantage. SCRIPE's built-in Accessibility Suite provides 32 settings across 8 categories (Focus Indicators, High Contrast, Text Readability, Motion & Animation, Touch Targets, Color & Vision, Screen Reader, Reading Assistance), ensuring every login page meets WCAG AA compliance standards out of the box. No third-party tools, no external audits, no additional cost.",
       a11yProfilesTitle: "6 One-Click Accessibility Profiles",
       a11yProfilesContent:
         "Deploy inclusive login experiences in seconds. Choose from 6 pre-configured profiles — WCAG AA Baseline, Low Vision, Motor Impairment, Cognitive, Screen Reader Optimized, and Reset to Defaults. Each profile applies batch-optimized settings targeting specific user needs, and can be further customized after application.",
@@ -33,10 +33,10 @@ export const en = {
         "Eliminate compliance guesswork entirely. The integrated audit engine runs 4 automated WCAG checks in real-time: Contrast Ratio validation (4.5:1 for text), Touch Target sizing (44px minimum), Overlay Readability, and Motion settings. Each check returns pass/warn/fail severity with actionable recommendations — and the built-in Auto-Fix mechanism can automatically resolve failing checks with a single click.",
       a11yEnterpriseTitle: "Enterprise-Grade Inclusive Design",
       a11yEnterpriseContent:
-        "Meeting accessibility standards isn't just about compliance — it's about expanding your addressable market by 15-20% and reducing legal risk. NEXORA's accessibility controls are injected via the same CSS token pipeline as branding, ensuring zero performance overhead. All 23+ accessibility CSS rules cascade correctly over base branding styles, work across all 22 layouts, and preview in real-time.",
+        "Meeting accessibility standards isn't just about compliance — it's about expanding your addressable market by 15-20% and reducing legal risk. SCRIPE's accessibility controls are injected via the same CSS token pipeline as branding, ensuring zero performance overhead. All 23+ accessibility CSS rules cascade correctly over base branding styles, work across all 22 layouts, and preview in real-time.",
       safetyTitle: "Enterprise-Grade Safety Workflow",
       safetyContent:
-        "Enterprise login pages demand zero-downtime reliability. NEXORA's Customizer implements a rigorous Draft → Preview → Publish workflow backed by optimistic concurrency control. Every published version creates an immutable snapshot for instant rollback. Safe Mode provides a one-click emergency bypass that restores platform defaults. Every change is captured in the audit trail with full before/after snapshots.",
+        "Enterprise login pages demand zero-downtime reliability. SCRIPE's Customizer implements a rigorous Draft → Preview → Publish workflow backed by optimistic concurrency control. Every published version creates an immutable snapshot for instant rollback. Safe Mode provides a one-click emergency bypass that restores platform defaults. Every change is captured in the audit trail with full before/after snapshots.",
       tenantTitle: "Multi-Tenant Brand Isolation",
       tenantContent:
         "Each tenant operates in a completely isolated branding realm. Tenant A's premium corporate login has zero visibility into Tenant B's configuration. Settings are cryptographically scoped to the tenant's JWT, preventing any cross-tenant data leakage. SuperAdmins can manage and preview any tenant's branding through the 'Enter Tenant World' capability without affecting production.",
@@ -47,7 +47,7 @@ export const en = {
         "A B2B SaaS super-power: Your customers can fully brand AND make accessible their login pages themselves. A tenant admin can log into the Admin Panel, open the Customizer Studio, apply a WCAG AA profile, customize the design, and publish — all in under 10 minutes. Zero engineering involvement.",
       relatedTitle: "Complete Customization Ecosystem",
       relatedIntro:
-        "The Login Customizer is just the beginning. NEXORA's customization platform includes a premium Theme Marketplace and a full No-Code Page Builder — expanding your branding capabilities far beyond what any competitor offers.",
+        "The Login Customizer is just the beginning. SCRIPE's customization platform includes a premium Theme Marketplace and a full No-Code Page Builder — expanding your branding capabilities far beyond what any competitor offers.",
       relatedMarketplace:
         "Theme Marketplace — 40 premium branding packages across 7 categories and 5 pricing tiers. Browse, preview, and deploy enterprise-grade visual identities in seconds.",
       relatedBuilder:
@@ -58,13 +58,13 @@ export const en = {
       description:
         "40 meticulously designed branding packages across 7 categories, 5 edition-aligned pricing tiers, per-page branding for all auth flows, engagement analytics, and one-click tenant deployment — transforming your login experience into a competitive advantage.",
       intro:
-        "Your login page is the first impression of your enterprise platform. While competitors offer a handful of generic color themes, NEXORA ships with a curated marketplace of 40 premium branding packages — each a complete visual identity with 50+ design tokens spanning colors, typography, spacing, dark mode, overlays, and independent branding for Login, Forgot Password, and Reset Password pages. Each theme is crafted by professional designers to serve specific market segments: corporate boardrooms, creative agencies, luxury brands, tech startups, and more. The marketplace is integrated directly into the admin panel with rich browsing, real-time preview, and one-click deployment — enabling tenant administrators to transform their platform's identity in under 60 seconds.",
+        "Your login page is the first impression of your enterprise platform. While competitors offer a handful of generic color themes, SCRIPE ships with a curated marketplace of 40 premium branding packages — each a complete visual identity with 50+ design tokens spanning colors, typography, spacing, dark mode, overlays, and independent branding for Login, Forgot Password, and Reset Password pages. Each theme is crafted by professional designers to serve specific market segments: corporate boardrooms, creative agencies, luxury brands, tech startups, and more. The marketplace is integrated directly into the admin panel with rich browsing, real-time preview, and one-click deployment — enabling tenant administrators to transform their platform's identity in under 60 seconds.",
       valueTitle: "The Business Value of Curated Branding",
       valueContent:
-        "Brand-aligned login pages increase user trust by 40% and reduce support tickets by 25% (Forrester Research). NEXORA's Theme Marketplace eliminates the $15,000–50,000 cost of custom branding projects by providing production-ready visual identities that can be deployed without designers, developers, or agencies. For SaaS operators, the 5-tier pricing model creates a natural upsell path — tenants on free plans see premium themes they can access by upgrading their subscription.",
+        "Brand-aligned login pages increase user trust by 40% and reduce support tickets by 25% (Forrester Research). SCRIPE's Theme Marketplace eliminates the $15,000–50,000 cost of custom branding projects by providing production-ready visual identities that can be deployed without designers, developers, or agencies. For SaaS operators, the 5-tier pricing model creates a natural upsell path — tenants on free plans see premium themes they can access by upgrading their subscription.",
       tblValH1: "Challenge",
       tblValH2: "Traditional Approach",
-      tblValH3: "With NEXORA Theme Marketplace",
+      tblValH3: "With SCRIPE Theme Marketplace",
       tblValR1C1: "Enterprise branding project",
       tblValR1C2: "3-6 months with design agency ($15K–$50K)",
       tblValR1C3: "60 seconds — browse, preview, apply. Zero cost on Pro+ plans.",
@@ -154,7 +154,7 @@ export const en = {
         "Every theme tracks LikesCount and AppliedCount — revealing which designs resonate most with your tenant base. Use these metrics to inform new theme development and edition/tier placement decisions.",
       perPageTitle: "Per-Page Branding — Complete Auth Experience",
       perPageContent:
-        "Unlike basic theme systems that apply one look across all pages, every NEXORA theme can define independent visual treatments for Login, Forgot Password, and Reset Password. This lets tenants present context-appropriate messaging: a strong brand statement on login, a reassuring message on forgot-password, and a clear action prompt on reset-password — all within a cohesive visual identity.",
+        "Unlike basic theme systems that apply one look across all pages, every SCRIPE theme can define independent visual treatments for Login, Forgot Password, and Reset Password. This lets tenants present context-appropriate messaging: a strong brand statement on login, a reassuring message on forgot-password, and a clear action prompt on reset-password — all within a cohesive visual identity.",
       safetyTitle: "Copy-on-Apply — Enterprise-Grade Safety",
       safetyContent:
         "When a theme is applied, it's COPIED — not linked. Your tenant's branding is permanently isolated from future marketplace updates. If the marketplace theme is updated to v2.0, tenants who applied v1.0 retain their exact snapshot. This architectural decision trades storage efficiency for deployment safety — a critical requirement for enterprises whose branding is contractually defined.",
@@ -184,7 +184,7 @@ export const en = {
       tblCompH1: "Capability",
       tblCompH2: "Auth0 / Okta",
       tblCompH3: "Keycloak",
-      tblCompH4: "NEXORA",
+      tblCompH4: "SCRIPE",
       tblCompR1C1: "Theme count",
       tblCompR1C2: "1 (custom only)",
       tblCompR1C3: "0 (manual styling)",
@@ -216,7 +216,7 @@ export const en = {
       description:
         "A comprehensive visual design platform — drag-and-drop login page builder with 14 component types, 3 canvas modes, multi-page branding, dashboard theming, bundle marketplace, and enterprise safety workflows — enabling complete tenant-level platform customization without writing a single line of code.",
       intro:
-        "NEXORA doesn't just let you pick colors — it gives your tenants a complete visual design platform. The No-Code Page Builder combines a drag-and-drop login page builder, multi-page branding for all authentication flows, dashboard theming with 8 layouts and 12 color schemes, and a bundle marketplace for saving and sharing complete configurations. Tenant administrators gain the power of a professional design team through an intuitive visual interface, while your engineering team focuses on delivering business value instead of implementing custom branding requests.",
+        "SCRIPE doesn't just let you pick colors — it gives your tenants a complete visual design platform. The No-Code Page Builder combines a drag-and-drop login page builder, multi-page branding for all authentication flows, dashboard theming with 8 layouts and 12 color schemes, and a bundle marketplace for saving and sharing complete configurations. Tenant administrators gain the power of a professional design team through an intuitive visual interface, while your engineering team focuses on delivering business value instead of implementing custom branding requests.",
       builderValueTitle: "The Login Page Builder",
       builderValueContent:
         "The Login Page Builder is a fully visual drag-and-drop canvas — like Figma or Wix, but purpose-built for enterprise login pages. Tenant administrators place pre-built components (logos, headings, forms, social login buttons, images) onto a responsive canvas, configure properties through a visual panel, and preview results in real-time. Three design modes (Freeform, Grid, Builder) accommodate every skill level — from pixel-perfect creative control to structured one-click assembly.",
@@ -276,7 +276,7 @@ export const en = {
         "The action-oriented page. Clear, focused messaging ('Create your new password') with minimal distractions. Independent layout for optimal form visibility.",
       multiPageAdvantage: "Competitive Advantage",
       multiPageAdvantageDesc:
-        "No competitor (Auth0, Okta, Keycloak) offers per-page branding for authentication flows. Most connect all auth pages to a single theme with no page-level customization. NEXORA's multi-page branding enables context-appropriate user experiences across the entire authentication journey.",
+        "No competitor (Auth0, Okta, Keycloak) offers per-page branding for authentication flows. Most connect all auth pages to a single theme with no page-level customization. SCRIPE's multi-page branding enables context-appropriate user experiences across the entire authentication journey.",
       dashboardTitle: "Dashboard Theming — Platform-Wide Visual Control",
       dashboardContent:
         "Branding doesn't stop at the login page. The Dashboard Theming panel extends visual customization to the admin dashboard itself. Tenants configure layout templates, color themes, theme modes, and sidebar preferences — all through the same zero-code studio interface with the same draft/publish safety workflow.",
@@ -306,7 +306,7 @@ export const en = {
         "The ultimate time-saver. A single Complete bundle sets up everything: login page branding, builder layout, per-page overrides for forgot/reset pages, dashboard theme, color scheme, and WCAG AA accessibility settings. From blank canvas to fully branded platform in one click.",
       safetyTitle: "Enterprise-Grade Safety & Governance",
       safetyContent:
-        "Every customization operation is protected by NEXORA's enterprise safety framework. Draft/Publish separation ensures production is never affected until explicit deployment. Optimistic concurrency prevents concurrent edit conflicts. Safe Mode provides emergency bypass for corrupted configurations. Full audit trails track who changed what, when, with before/after snapshots. Permission-based access control ensures only authorized administrators can modify branding.",
+        "Every customization operation is protected by SCRIPE's enterprise safety framework. Draft/Publish separation ensures production is never affected until explicit deployment. Optimistic concurrency prevents concurrent edit conflicts. Safe Mode provides emergency bypass for corrupted configurations. Full audit trails track who changed what, when, with before/after snapshots. Permission-based access control ensures only authorized administrators can modify branding.",
       fgDraft: "Draft → Preview → Publish",
       fgDraftDesc:
         "All changes operate in draft mode until explicitly published. Preview in a sandboxed iframe. Publish with one click. Rollback instantly if needed.",
@@ -321,8 +321,8 @@ export const en = {
         "Every change is recorded: who, what, when, before/after. Supports compliance requirements (SOX, HIPAA, ISO 27001) for branding governance.",
       roiTitle: "Platform Customization ROI",
       tblRoiH1: "Scenario",
-      tblRoiH2: "Without NEXORA",
-      tblRoiH3: "With NEXORA Page Builder",
+      tblRoiH2: "Without SCRIPE",
+      tblRoiH3: "With SCRIPE Page Builder",
       tblRoiR1C1: "Custom login page per tenant",
       tblRoiR1C2: "1-2 weeks developer time ($5K–$10K)",
       tblRoiR1C3: "15 minutes — tenant admin self-service",
@@ -345,7 +345,7 @@ export const en = {
       tblCompH1: "Feature",
       tblCompH2: "Auth0",
       tblCompH3: "Keycloak",
-      tblCompH4: "NEXORA",
+      tblCompH4: "SCRIPE",
       tblCompR1C1: "Visual page builder",
       tblCompR1C2: "No (code required)",
       tblCompR1C3: "No (FreeMarker templates)",
@@ -378,17 +378,17 @@ export const en = {
       tblCompR8C2: "No (live-edit)",
       tblCompR8C3: "No (direct deploy)",
       tblCompR8C4: "Yes (with concurrency + rollback + safe mode)",
-      tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions NEXORA as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform.",
+      tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions SCRIPE as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform.",
     },
     dashboardBuilder: {
       title: "Dashboard Builder — Admin Preference Engine",
       description:
         "Enterprise-grade server-synced admin preferences with 61 customizable settings, cross-device persistence, 4-layer merge engine, and edition-based feature gating.",
       intro:
-        "Your dashboard is where productivity happens. While competitors offer a toggle for 'dark mode' and call it customization, NEXORA provides 61 individually configurable settings — from layout templates and color themes to component styles and hover effects — all persisted to the server with cross-device sync, tenant-level brand enforcement, and edition-based monetization. The Dashboard Builder transforms admin workspace customization from a nice-to-have into a strategic business differentiator.",
+        "Your dashboard is where productivity happens. While competitors offer a toggle for 'dark mode' and call it customization, SCRIPE provides 61 individually configurable settings — from layout templates and color themes to component styles and hover effects — all persisted to the server with cross-device sync, tenant-level brand enforcement, and edition-based monetization. The Dashboard Builder transforms admin workspace customization from a nice-to-have into a strategic business differentiator.",
       valueTitle: "Business Value",
       valueIntro:
-        "Personalized workspaces increase user engagement by 40% and reduce admin onboarding time by 60%. NEXORA's Dashboard Builder turns this insight into revenue by gating advanced customization features behind edition tiers, creating natural upsell opportunities.",
+        "Personalized workspaces increase user engagement by 40% and reduce admin onboarding time by 60%. SCRIPE's Dashboard Builder turns this insight into revenue by gating advanced customization features behind edition tiers, creating natural upsell opportunities.",
       howItWorksTitle: "How It Works",
       howItWorksIntro:
         "The Dashboard Builder uses a 4-layer settings resolution engine that intelligently merges platform defaults, tenant branding standards, and individual admin preferences. Settings are cached locally for instant rendering and synced to the server for cross-device persistence — all transparently, with zero user intervention.",
@@ -413,7 +413,7 @@ export const en = {
         "The Dashboard Builder implements defense-in-depth security at every layer — from browser storage isolation on logout to server-side settings validation and concurrency conflict resolution.",
       integrationTitle: "Seamless Platform Integration",
       integrationIntro:
-        "The Dashboard Builder is deeply integrated with NEXORA's existing customization ecosystem, amplifying the value of every other platform feature.",
+        "The Dashboard Builder is deeply integrated with SCRIPE's existing customization ecosystem, amplifying the value of every other platform feature.",
       integrationTip:
         "The Dashboard Builder is the perfect complement to the Login Customizer — together, they provide end-to-end visual control of the entire platform experience. A Complete Bundle in the Theme Marketplace can include both login branding and dashboard settings, enabling one-click full-platform deployment.",
     },

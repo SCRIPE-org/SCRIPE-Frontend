@@ -18,7 +18,7 @@ const AppDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "App Detail | Marketplace | NEXORA",
+  title: "App Detail | Marketplace | SCRIPE",
   description: "View details, screenshots, pricing, and reviews for a marketplace app listing.",
 };
 

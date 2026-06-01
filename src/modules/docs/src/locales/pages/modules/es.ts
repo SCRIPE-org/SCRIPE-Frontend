@@ -9,7 +9,7 @@ export const es = {
       description:
         "Control de acceso a funciones basado en ediciones mediante Funciones, Ediciones, Suscripciones y Sobreescrituras por inquilino.",
       intro:
-        "El módulo de Derechos (Entitlements) es el motor de gestión de planes y funciones de NEXORA. Define qué capacidades obtiene cada inquilino (tenant), cómo los planes (ediciones) agrupan esas capacidades y cómo las suscripciones vinculan a los inquilinos con los planes.",
+        "El módulo de Derechos (Entitlements) es el motor de gestión de planes y funciones de SCRIPE. Define qué capacidades obtiene cada inquilino (tenant), cómo los planes (ediciones) agrupan esas capacidades y cómo las suscripciones vinculan a los inquilinos con los planes.",
       whatIsTitle: "¿Qué son los Derechos?",
       whatIsIntro:
         "Derechos es el módulo responsable de controlar a qué funciones puede acceder un inquilino en función de su edición (plan) suscrita. Proporciona una cadena de resolución de tres niveles: Valores predeterminados de la función → Valores de la edición → Sobreescrituras por inquilino, lo que garantiza la máxima flexibilidad tanto para los operadores de la plataforma como para los inquilinos revendedores.",
@@ -23,12 +23,12 @@ export const es = {
         "Cuando el sistema necesita determinar un valor de función para un inquilino, sigue una estricta cadena de prioridad. Gana la fuente de mayor prioridad que proporciona un valor.",
       pipelineTitle: "Integración de la Pipeline",
       pipelineIntro:
-        "NEXORA integra los derechos directamente en la pipeline CQRS de NEXORA mediator a través de FeatureCheckBehavior. Los comandos y consultas que implementan IRequireFeature se controlan automáticamente: si el valor de la función resuelta del inquilino está desactivado, la solicitud se rechaza antes de llegar al manejador.",
+        "SCRIPE integra los derechos directamente en la pipeline CQRS de SCRIPE mediator a través de FeatureCheckBehavior. Los comandos y consultas que implementan IRequireFeature se controlan automáticamente: si el valor de la función resuelta del inquilino está desactivado, la solicitud se rechaza antes de llegar al manejador.",
       pipelineTip:
         "Para restringir un comando detrás de una función, simplemente implemente IRequireFeature y establezca RequiredFeatureName en la clave de sistema estable de la función (ej. 'Chat.Enabled'). No se necesita código adicional.",
       backendTitle: "Estructura del Backend",
       backendIntro:
-        "El backend de Derechos sigue el diseño estándar de módulos de Arquitectura Limpia de NEXORA con capas de Dominio, Aplicación e Infraestructura.",
+        "El backend de Derechos sigue el diseño estándar de módulos de Arquitectura Limpia de SCRIPE con capas de Dominio, Aplicación e Infraestructura.",
       frontendTitle: "Estructura del Frontend",
       frontendIntro:
         "El frontend refleja el backend con cuatro submódulos (ediciones, funciones, suscripciones, sobreescrituras), cada uno siguiendo el patrón SOLID View/ViewModel.",
@@ -37,7 +37,7 @@ export const es = {
         "El módulo de Derechos expone 31 puntos de conexión (endpoints) API a través de 4 controladores, todos autenticados con JWT y protegidos por autorización basada en permisos.",
       noOpTitle: "Fallback NoOp",
       noOpIntro:
-        "Cuando el módulo de Derechos no está cargado (por ejemplo, en un microservicio que no incluye Derechos), NEXORA registra un NoOpFeatureCache. Esto permite que los comandos IRequireFeature pasen sin errores: todas las funciones se tratan como habilitadas de forma predeterminada.",
+        "Cuando el módulo de Derechos no está cargado (por ejemplo, en un microservicio que no incluye Derechos), SCRIPE registra un NoOpFeatureCache. Esto permite que los comandos IRequireFeature pasen sin errores: todas las funciones se tratan como habilitadas de forma predeterminada.",
       noOpNote:
         "El fallback NoOp garantiza que los módulos puedan usar IRequireFeature sin una fuerte dependencia del módulo de Derechos. En el modo monolito de producción, el FeatureCache real siempre está disponible.",
       contextAwareTitle: "Alcance Contextual",
@@ -47,10 +47,10 @@ export const es = {
         "La cadena de resolución se evalúa de forma diferida (lazy): los valores se almacenan en caché después de la primera resolución y se invalidan cuando cambian las suscripciones, las ediciones o las sobreescrituras.",
       cqrsMapTitle: "Mapa de Comandos y Consultas CQRS",
       cqrsMapIntro:
-        "El módulo de Derechos registra 31 manejadores NEXORA mediator que abarcan los cuatro dominios. Cada comando tiene un validador FluentValidation correspondiente para la validación de entrada.",
+        "El módulo de Derechos registra 31 manejadores SCRIPE mediator que abarcan los cuatro dominios. Cada comando tiene un validador FluentValidation correspondiente para la validación de entrada.",
       diTitle: "Registro de Inyección de Dependencias",
       diIntro:
-        "Todos los servicios de Derechos se registran a través del método de extensión AddEntitlementsModule en DependencyInjection.cs. El módulo sigue el patrón de registro estándar de NEXORA.",
+        "Todos los servicios de Derechos se registran a través del método de extensión AddEntitlementsModule en DependencyInjection.cs. El módulo sigue el patrón de registro estándar de SCRIPE.",
       comparisonTitle: "Con vs Sin Derechos",
       comparisonIntro:
         "La siguiente tabla muestra la diferencia de capacidades cuando el módulo de Derechos está habilitado frente a cuando se ejecuta sin él:",
@@ -81,7 +81,7 @@ export const es = {
         "Al publicar una versión de edición, los administradores eligen cómo se implementan los cambios en los inquilinos suscritos:",
       workflowTitle: "Aplicar Ahora vs Guardar como Versión",
       workflowIntro:
-        "NEXORA ofrece dos formas de actualizar las funciones de la edición, cada una adecuada para diferentes escenarios:",
+        "SCRIPE ofrece dos formas de actualizar las funciones de la edición, cada una adecuada para diferentes escenarios:",
       workflowTip:
         "Utilice 'Aplicar Ahora' para correcciones urgentes y pequeños cambios. Utilice 'Guardar como Versión' para actualizaciones importantes del plan que necesiten una implementación gradual y un registro de auditoría.",
       endpointsTitle: "Puntos de Conexión API (Endpoints)",
@@ -92,7 +92,7 @@ export const es = {
         "Cuando un administrador del sistema hace drill-down en un inquilino, la lista de ediciones se limita automáticamente a mostrar solo las ediciones visibles para ese inquilino. El backend usa el encabezado X-Tenant-Context para filtrar: ediciones del sistema + ediciones minoristas creadas por el inquilino en drill-down. El frontend oculta las acciones CRUD en el modo drill-down.",
       scopingTitle: "Ediciones del Sistema vs Minoristas (Retail)",
       scopingIntro:
-        "NEXORA admite dos tipos de ediciones: las ediciones del Sistema, creadas por administradores de la plataforma y visibles para todos los inquilinos, y las ediciones Minoristas, creadas por inquilinos revendedores solo para sus inquilinos secundarios.",
+        "SCRIPE admite dos tipos de ediciones: las ediciones del Sistema, creadas por administradores de la plataforma y visibles para todos los inquilinos, y las ediciones Minoristas, creadas por inquilinos revendedores solo para sus inquilinos secundarios.",
       scopingNote:
         "Los administradores de inquilinos solo ven las ediciones del sistema más sus propias ediciones minoristas. Esto garantiza el aislamiento de la edición entre los inquilinos revendedores.",
       featuresTip:
@@ -231,7 +231,7 @@ export const es = {
         "Para funciones Numéricas, use -1 para representar 'ilimitado'. FeatureCheckBehavior reconoce -1 como un valor especial y nunca bloquea las solicitudes de funciones con una cuota ilimitada.",
       systemVsCustomTitle: "Funciones del Sistema vs Personalizadas",
       systemVsCustomIntro:
-        "NEXORA distingue entre funciones del sistema (creadas al inicio, de solo lectura) y funciones personalizadas (creadas por los administradores a través de la API):",
+        "SCRIPE distingue entre funciones del sistema (creadas al inicio, de solo lectura) y funciones personalizadas (creadas por los administradores a través de la API):",
       cacheTitle: "Caché de Funciones",
       cacheIntro:
         "Los valores de las funciones resueltas se almacenan en caché en IFeatureCache para evitar consultas a la base de datos en cada solicitud. La caché se invalida cada vez que cambian las funciones de una edición, se modifica una suscripción o se establece/elimina una sobreescritura. En implementaciones de microservicios sin el módulo de Derechos, un NoOpFeatureCache trata todas las funciones como habilitadas.",
@@ -333,7 +333,7 @@ export const es = {
         description:
           "Automatización de cumplimiento de GDPR, CCPA y PDPA — regulaciones, manejo de DSR, gestión de consentimiento, retención de datos, inventario y reportes.",
         intro:
-          "El módulo de Cumplimiento es el motor regulatorio integrado de NEXORA. Ayuda a los operadores de la plataforma y a sus inquilinos a cumplir con las principales leyes de protección de datos (GDPR, CCPA, PDPA) mediante herramientas automatizadas para gestionar solicitudes de sujetos de datos, registros de consentimiento, políticas de retención y la generación de reportes listos para auditorías.",
+          "El módulo de Cumplimiento es el motor regulatorio integrado de SCRIPE. Ayuda a los operadores de la plataforma y a sus inquilinos a cumplir con las principales leyes de protección de datos (GDPR, CCPA, PDPA) mediante herramientas automatizadas para gestionar solicitudes de sujetos de datos, registros de consentimiento, políticas de retención y la generación de reportes listos para auditorías.",
         infoTitle: "Aviso de Cumplimiento",
         infoContent:
           "El módulo de Cumplimiento es crítico para mantener la adherencia regulatoria y evitar multas. Asegúrese de que todas las funciones estén mapeadas correctamente a las políticas de procesamiento de datos.",
@@ -363,7 +363,7 @@ export const es = {
           "Representa la captura de consentimiento inmutable junto con metadatos del agente de usuario y de fecha y hora.",
         whatIsTitle: "¿Qué es el Módulo de Cumplimiento?",
         whatIsIntro:
-          "El módulo de Cumplimiento proporciona seis subsistemas interconectados que cubren todo el ciclo de vida de cumplimiento. En lugar de construir herramientas desde cero, los inquilinos de NEXORA obtienen un sistema listo para producción.",
+          "El módulo de Cumplimiento proporciona seis subsistemas interconectados que cubren todo el ciclo de vida de cumplimiento. En lugar de construir herramientas desde cero, los inquilinos de SCRIPE obtienen un sistema listo para producción.",
         subModulesTitle: "Seis Subsistemas",
         subModulesIntro: "Cada subsistema maneja un dominio de cumplimiento específico:",
         sub1: "Perfiles de Regulación — Almacena los marcos regulatorios (GDPR, CCPA, PDPA) bajo los cuales opera la plataforma.",
@@ -374,7 +374,7 @@ export const es = {
         sub6: "Reportes de Cumplimiento — Genera reportes asíncronos listos para auditorías (Resumen GDPR, Resumen DSR, Auditoría de Consentimiento, etc.).",
         backendTitle: "Arquitectura Backend",
         backendIntro:
-          "Sigue la disposición estándar de 3 proyectos de NEXORA (Domain / Application / Infrastructure) con ComplianceDbContext.",
+          "Sigue la disposición estándar de 3 proyectos de SCRIPE (Domain / Application / Infrastructure) con ComplianceDbContext.",
         frontendTitle: "Arquitectura Frontend",
         frontendIntro:
           "El frontend está organizado como seis submódulos independientes bajo src/modules/compliance/, cada uno con sus propias capas.",
@@ -408,7 +408,7 @@ export const es = {
           "Rechazada (Rejected) — La solicitud fue rechazada (ej. insuficiente verificación de identidad).",
         slasTitle: "Requisitos de SLA de GDPR",
         slasIntro:
-          "Bajo el Artículo 12 de GDPR, los controladores deben responder a las DSR dentro de los 30 días (extensible a 3 meses para casos complejos). NEXORA rastrea esto.",
+          "Bajo el Artículo 12 de GDPR, los controladores deben responder a las DSR dentro de los 30 días (extensible a 3 meses para casos complejos). SCRIPE rastrea esto.",
         lifecycleFlowTitle: "Flujo de Vida DSR",
         nodeSubmit: "Enviar solicitud",
         descSubmit: "El sujeto solicita Exportación, Borrado o Rectificación",
@@ -452,7 +452,7 @@ export const es = {
         description:
           "Registrar, rastrear y auditar los consentimientos de los usuarios para cumplir con el Artículo 6 de GDPR y CCPA.",
         intro:
-          "La Gestión de Consentimiento registra cada vez que un usuario otorga o revoca su consentimiento. NEXORA almacena toda la pista de auditoría.",
+          "La Gestión de Consentimiento registra cada vez que un usuario otorga o revoca su consentimiento. SCRIPE almacena toda la pista de auditoría.",
         purposesTitle: "Propósitos del Consentimiento",
         purposesIntro: "Cada registro de consentimiento está vinculado a un propósito específico:",
         purpose1: "Marketing — Emails de marketing y comunicaciones promocionales.",
@@ -461,7 +461,7 @@ export const es = {
         purpose4: "Personalización — Contenido personalizado y recomendaciones.",
         gdprTitle: "Base Legal GDPR",
         gdprIntro:
-          "El Artículo 6 de GDPR establece que el consentimiento debe ser: libremente dado, específico, informado e inequívoco. NEXORA registra el texto exacto mostrado al usuario.",
+          "El Artículo 6 de GDPR establece que el consentimiento debe ser: libremente dado, específico, informado e inequívoco. SCRIPE registra el texto exacto mostrado al usuario.",
         withdrawalTitle: "Retirada del Consentimiento",
         withdrawalIntro:
           "Los usuarios pueden retirar su consentimiento en cualquier momento. El ConsentRecord se actualiza con WithdrawnAt.",
@@ -492,7 +492,7 @@ export const es = {
         description:
           "Definir periodos de retención de datos y acciones automatizadas de expiración para el cumplimiento del Artículo 5(1)(e) del GDPR.",
         intro:
-          "Las Políticas de Retención de Datos definen cuánto tiempo se deben conservar las categorías de datos. NEXORA hace cumplir estas políticas automáticamente a través de trabajos en segundo plano.",
+          "Las Políticas de Retención de Datos definen cuánto tiempo se deben conservar las categorías de datos. SCRIPE hace cumplir estas políticas automáticamente a través de trabajos en segundo plano.",
         policiesTitle: "Configuración de la Política",
         policiesIntro: "Cada política de retención especifica:",
         field1:
@@ -502,7 +502,7 @@ export const es = {
           "ExpiryAction — Qué ocurre cuando el periodo expira: Eliminar (Delete) o Anonimizar (Anonymize).",
         field4: "RegulationCode — Qué regulación exige esto (GDPR, CCPA, etc.).",
         actionsTitle: "Acciones de Expiración",
-        actionsIntro: "Al expirar, NEXORA aplica una de dos acciones:",
+        actionsIntro: "Al expirar, SCRIPE aplica una de dos acciones:",
         action1: "Eliminar (Delete) — Elimina permanentemente todos los registros.",
         action2: "Anonimizar (Anonymize) — Reemplaza la PII con tokens seudónimos.",
         automationTitle: "Aplicación Automatizada",
@@ -543,7 +543,7 @@ export const es = {
         field7: "ThirdPartySharing — Si los datos se comparten con terceros.",
         ropaTitle: "Cumplimiento del Artículo 30",
         ropaIntro:
-          "Organizaciones con más de 250 empleados deben mantener un RoPA. El inventario de NEXORA sirve como un RoPA en vivo y exportable.",
+          "Organizaciones con más de 250 empleados deben mantener un RoPA. El inventario de SCRIPE sirve como un RoPA en vivo y exportable.",
         endpointsTitle: "Endpoints API",
         ep: {
           list: "Listar elementos del inventario (paginado, buscable)",

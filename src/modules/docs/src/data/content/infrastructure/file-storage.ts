@@ -112,10 +112,10 @@ const sections: DocSection[] = [
     "Provider": "AzureBlob",
     "AzureBlob": {
       "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=...",
-      "ContainerName": "nexora-uploads",
+      "ContainerName": "scripe-uploads",
       "MaxFileSizeMB": 50,
       "EnableCDN": true,
-      "CDNEndpoint": "https://cdn.nexora.dev"
+      "CDNEndpoint": "https://cdn.scripe.dev"
     }
   }
 }`,
@@ -128,7 +128,7 @@ const sections: DocSection[] = [
   "FileStorage": {
     "Provider": "AwsS3",
     "AwsS3": {
-      "BucketName": "nexora-uploads",
+      "BucketName": "scripe-uploads",
       "Region": "us-east-1",
       "AccessKeyId": "AKIA...",
       "SecretAccessKey": "...",
@@ -146,7 +146,7 @@ const sections: DocSection[] = [
     "Provider": "MinIO",
     "MinIO": {
       "Endpoint": "minio.internal:9000",
-      "BucketName": "nexora-uploads",
+      "BucketName": "scripe-uploads",
       "AccessKey": "minioadmin",
       "SecretKey": "minioadmin",
       "UseSSL": false

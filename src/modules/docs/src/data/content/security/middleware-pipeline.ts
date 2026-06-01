@@ -300,7 +300,7 @@ public class RequestLoggingMiddleware
 /// </summary>
 public class CookieAuthMiddleware
 {
-    private const string CookieName = "nexora-auth";
+    private const string CookieName = "scripe-auth";
 
     public async Task InvokeAsync(HttpContext context)
     {

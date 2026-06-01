@@ -48,7 +48,7 @@ export function clearAllLocalStorage(): void {
   // next-themes raw key (library hardcodes "theme" — not in STORAGE_KEYS)
   localStorage.removeItem("theme");
   // Legacy key from old implementation
-  localStorage.removeItem("nexora_admin_prefs_version");
+  localStorage.removeItem("scr_admin_prefs_version");
 
   // Clear SecureTokenService tokens (in-memory + legacy localStorage keys)
   secureTokenService.clearTokens();

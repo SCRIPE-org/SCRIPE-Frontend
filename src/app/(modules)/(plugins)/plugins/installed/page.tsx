@@ -7,7 +7,7 @@ const InstalledPluginsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Installed Plugins | NEXORA",
+  title: "Installed Plugins | SCRIPE",
   description: "Manage your installed plugins",
 };
 

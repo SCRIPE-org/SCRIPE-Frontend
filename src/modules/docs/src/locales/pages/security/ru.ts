@@ -9,7 +9,7 @@ export const ru = {
       description:
         "5-уровневая стратегия защиты, настройки CORS, ограничение скорости (rate limiting) и политики паролей.",
       intro:
-        "NEXORA реализует стратегию глубокой защиты (defense-in-depth) на пяти уровнях: сеть, аутентификация, авторизация, изоляция данных и аудит.",
+        "SCRIPE реализует стратегию глубокой защиты (defense-in-depth) на пяти уровнях: сеть, аутентификация, авторизация, изоляция данных и аудит.",
       layersTitle: "Слои безопасности (Defense Layers)",
       featuresTitle: "Функции безопасности",
       featureJwt: "Аутентификация JWT",
@@ -37,7 +37,7 @@ export const ru = {
       title: "Углубленная аутентификация",
       description:
         "Жизненный цикл JWT, хэширование BCrypt, блокировка (Lockout), 2FA, OAuth, OTP и управление сессиями.",
-      intro: "Подробный обзор всех механизмов аутентификации NEXORA.",
+      intro: "Подробный обзор всех механизмов аутентификации SCRIPE.",
       jwtLifecycleTitle: "Жизненный цикл токенов JWT",
       jwtLifecycleIntro:
         "Refresh-токены одноразовые и ротируются (обновляются) при каждом использовании для предотвращения кражи.",
@@ -69,7 +69,7 @@ export const ru = {
       title: "Единый вход (SSO)",
       description: "Аутентификация OIDC, привязка внешней идентичности и приложения OAuth.",
       intro:
-        "Система NEXORA поддерживает аутентификацию через внешних провайдеров на базе протокола OIDC и предоставление учетных данных через приложения OAuth. Система учитывает разделение тенантов со строгой защитой PKCE.",
+        "Система SCRIPE поддерживает аутентификацию через внешних провайдеров на базе протокола OIDC и предоставление учетных данных через приложения OAuth. Система учитывает разделение тенантов со строгой защитой PKCE.",
       architectureTitle: "Архитектура аутентификации OIDC / OAuth",
       endpointsTitle: "Эндпоинты и потоки (Flows)",
       flowIntro:
@@ -82,12 +82,12 @@ export const ru = {
         "Принимает пользователя после успешной аутентификации и обменивает код авторизации на токены на стороне сервера — без участия браузера.",
       linkingTitle: "Привязка и обработка идентичности",
       linkingIntro:
-        "После успешного входа email проверяется по базе данных. Если это первый вход пользователя, запись OIDC привязывается к внутреннему аккаунту NEXORA для предотвращения дублирования данных.",
+        "После успешного входа email проверяется по базе данных. Если это первый вход пользователя, запись OIDC привязывается к внутреннему аккаунту SCRIPE для предотвращения дублирования данных.",
       pkceWarning:
         "Поддержка устаревших потоков Implicit OAuth удалена. Протокол PKCE обязателен для всех вариантов авторизации.",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -110,13 +110,13 @@ export const ru = {
       entityModelContent:
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
@@ -129,7 +129,7 @@ export const ru = {
       description:
         "Изоляция тенантов, шифрование в покое и при передаче, скрытие полей и соблюдение GDPR.",
       intro:
-        "NEXORA защищает данные на всех уровнях: от сети (TLS) до конкретных строк и ячеек базы данных.",
+        "SCRIPE защищает данные на всех уровнях: от сети (TLS) до конкретных строк и ячеек базы данных.",
       tenantIsolationTitle: "Изоляция данных тенантов",
       tenantIsolationIntro:
         "Глобальные фильтры запросов EF Core обеспечивают изоляцию на самом низком уровне ORM.",
@@ -163,14 +163,14 @@ export const ru = {
       title: "Безопасность API",
       description:
         "Rate Limiting, CORS, валидация входных данных, защита от CSRF и атак повторного воспроизведения (Replay Attacks).",
-      intro: "Многоуровневая защита API NEXORA от распространенных веб-уязвимостей.",
+      intro: "Многоуровневая защита API SCRIPE от распространенных веб-уязвимостей.",
       rateLimitTitle: "Ограничение скорости (Rate Limiting)",
       rateLimitIntro: "4 уровня защиты от DDoS и брутфорса, встроенные в ASP.NET Core.",
       corsTitle: "Настройка CORS",
       corsIntro: "Ограничивает возможность выполнения кросс-доменных запросов в браузере.",
       inputValidationTitle: "Валидация входных данных",
       inputValidationIntro:
-        "FluentValidation в пайплайне NEXORA mediator отклоняет вредоносные или некорректные payload-ы до выполнения логики.",
+        "FluentValidation в пайплайне SCRIPE mediator отклоняет вредоносные или некорректные payload-ы до выполнения логики.",
       csrfTitle: "Защита от CSRF",
       csrfIntro:
         "Bear-токены в сочетании с директивой SameSite делают API невосприимчивым к подделке межсайтовых запросов (CSRF).",
@@ -187,7 +187,7 @@ export const ru = {
       description:
         "11 компонентов middleware, выполняемых в строгом порядке, от перехвата исключений до контекста тенанта.",
       intro:
-        "Пайплайн запросов NEXORA — это сердце приложения. Порядок исполнения имеет критическое значение.",
+        "Пайплайн запросов SCRIPE — это сердце приложения. Порядок исполнения имеет критическое значение.",
       overviewTitle: "Обзор пайплайна",
       overviewIntro:
         "Каждый компонент выполняет единственную ответственность и может «замкнуть» (Short-circuit) запрос.",
@@ -224,7 +224,7 @@ export const ru = {
       description:
         "Абсолютная прозрачность: перехватчики БД, потоковое вещание SignalR и экспорт CSV/Excel/PDF.",
       intro:
-        "NEXORA предоставляет комплексную систему аудита, отслеживающую каждое изменение данных (кто, что, когда).",
+        "SCRIPE предоставляет комплексную систему аудита, отслеживающую каждое изменение данных (кто, что, когда).",
       architectureTitle: "Архитектура аудита",
       architectureIntro:
         "Основана на AuditableEntityInterceptor в EF Core и логировании команд CQRS.",

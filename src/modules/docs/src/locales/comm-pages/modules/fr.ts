@@ -11,11 +11,11 @@ export const fr = {
       tblCoreR7C3:
         "Fonctionnalités, éditions, abonnements, surcharges, application des quotas, déploiements versionnés, portée revendeur",
       businessContent:
-        "NEXORA n'est pas une coquille vide ; c'est un écosystème d'entreprise fonctionnel dès le premier jour. Utilisez nos modules métier existants — tels que la gestion des utilisateurs, les journaux d'audit et les notifications — comme points de départ immédiats, ou clonez-les pour construire rapidement des fonctionnalités propriétaires.",
+        "SCRIPE n'est pas une coquille vide ; c'est un écosystème d'entreprise fonctionnel dès le premier jour. Utilisez nos modules métier existants — tels que la gestion des utilisateurs, les journaux d'audit et les notifications — comme points de départ immédiats, ou clonez-les pour construire rapidement des fonctionnalités propriétaires.",
       businessTitle: "Logique Métier Accélérée",
       commTitle: "Communication & Webhooks",
       coreContent:
-        "La couche Fondation fournit les éléments absolument non négociables : le fournisseur d'identité, les stratégies de résolution multi-tenant, les abstractions de contexte EF Core et le répartiteur centralisé NEXORA mediator. C'est le socle solide sur lequel repose l'ensemble de votre application.",
+        "La couche Fondation fournit les éléments absolument non négociables : le fournisseur d'identité, les stratégies de résolution multi-tenant, les abstractions de contexte EF Core et le répartiteur centralisé SCRIPE mediator. C'est le socle solide sur lequel repose l'ensemble de votre application.",
       coreTitle: "Le Cœur de Fondation",
       crmModule: "Module CRM Headless",
       crmModuleDesc:
@@ -25,7 +25,7 @@ export const fr = {
         "Une sandbox immaculée utilisant exactement les mêmes frontières de la Clean Architecture pour héberger votre logique industrielle unique.",
       dataTitle: "Données & Audit",
       description:
-        "Un répertoire complet des contextes délimités (Bounded Contexts) d'entreprise pré-construits et prêts pour la production inclus dans la plateforme NEXORA.",
+        "Un répertoire complet des contextes délimités (Bounded Contexts) d'entreprise pré-construits et prêts pour la production inclus dans la plateforme SCRIPE.",
       financeModule: "Moteur de Facturation",
       financeModuleDesc:
         "Générez des factures PDF, gérez les localités fiscales et intégrez Stripe ou des passerelles de paiement personnalisées.",
@@ -36,7 +36,7 @@ export const fr = {
         "Chaque module du catalogue est strictement isolé. Le module de Notification ne partage aucun état avec le module de Gestion des Utilisateurs. Ils communiquent purement par des événements asynchrones, garantissant qu'une défaillance catastrophique dans un domaine ne se répercute jamais sur un autre.",
       independenceTitle: "Isolation Cryptographique des Modules",
       intro:
-        "NEXORA est livré avec une bibliothèque massive de contextes délimités testés et de qualité professionnelle. Dès le premier jour, vous possédez la maturité opérationnelle d'une application SaaS vieille de 5 ans.",
+        "SCRIPE est livré avec une bibliothèque massive de contextes délimités testés et de qualité professionnelle. Dès le premier jour, vous possédez la maturité opérationnelle d'une application SaaS vieille de 5 ans.",
       inventoryModule: "Module de Suivi des Actifs",
       inventoryModuleDesc:
         "Cartographiez des inventaires hiérarchiques complexes et suivez les changements d'état grce à des événements de domaine strictement appliqués.",

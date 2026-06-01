@@ -4,37 +4,37 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.intro",
+    contentKey: "infrastructure.scripeCli.intro",
   },
 
   // ─── Core Scaffolding Commands ─────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.commandsTitle",
+    titleKey: "infrastructure.scripeCli.commandsTitle",
     id: "commands",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.commandsIntro",
+    contentKey: "infrastructure.scripeCli.commandsIntro",
   },
 
   // new-module
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.nexoraCli.newModuleTitle",
+    titleKey: "infrastructure.scripeCli.newModuleTitle",
     id: "new-module",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.newModuleIntro",
+    contentKey: "infrastructure.scripeCli.newModuleIntro",
   },
   {
     type: "code",
     language: "bash",
     filename: "New Module Command",
-    code: `$ nexora new-module <name> [options]
+    code: `$ scripe new-module <name> [options]
 
 # Options:
 # --backend-only          Generate only the backend module
@@ -70,18 +70,18 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.nexoraCli.newFeatureTitle",
+    titleKey: "infrastructure.scripeCli.newFeatureTitle",
     id: "new-feature",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.newFeatureIntro",
+    contentKey: "infrastructure.scripeCli.newFeatureIntro",
   },
   {
     type: "code",
     language: "bash",
     filename: "New Feature Command",
-    code: `$ nexora new-feature <module> <entity> -p <properties> [options]
+    code: `$ scripe new-feature <module> <entity> -p <properties> [options]
 
 # Options:
 # -p, --properties <props>  (Required) Property definitions string
@@ -92,7 +92,7 @@ const sections: DocSection[] = [
 # --no-cleaner-bg-service   Skip adding entity to soft-delete cleanup job
 
 # Example: E-commerce Invoice
-$ nexora new-feature Products Invoice \\
+$ scripe new-feature Products Invoice \\
   -p "Title:string:required:max(200),Amount:decimal:required:min(0),Status:enum(Draft|Sent|Paid):required"`,
   },
 
@@ -100,63 +100,63 @@ $ nexora new-feature Products Invoice \\
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.nexoraCli.destructionTitle",
+    titleKey: "infrastructure.scripeCli.destructionTitle",
     id: "destructive-commands",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.destructionIntro",
+    contentKey: "infrastructure.scripeCli.destructionIntro",
   },
   {
     type: "code",
     language: "bash",
     filename: "Destructive Commands",
     code: `# Remove a full module and aggressively rollback ALL auto-wiring safely
-$ nexora remove-module Products --confirm
+$ scripe remove-module Products --confirm
 
 # Remove a specific feature/entity and rollback its DI and permissions
-$ nexora remove-feature Products Invoice --confirm
+$ scripe remove-feature Products Invoice --confirm
 
 # Auto-detect the most recent scaffolding and obliterate it
-$ nexora remove-module --last --confirm`,
+$ scripe remove-module --last --confirm`,
   },
 
   // Background Jobs
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.nexoraCli.bgJobsTitle",
+    titleKey: "infrastructure.scripeCli.bgJobsTitle",
     id: "bg-jobs",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.bgJobsIntro",
+    contentKey: "infrastructure.scripeCli.bgJobsIntro",
   },
   {
     type: "code",
     language: "bash",
     filename: "Background Job Tooling",
     code: `# Automatically generate and wire a Hangfire Soft-Delete Cleanup Job
-$ nexora add-bg-service Products
+$ scripe add-bg-service Products
 
-$ nexora remove-bg-service Products`,
+$ scripe remove-bg-service Products`,
   },
 
   // ─── Property DSL Syntax ──────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.dslTitle",
+    titleKey: "infrastructure.scripeCli.dslTitle",
     id: "dsl-syntax",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.dslIntro",
+    contentKey: "infrastructure.scripeCli.dslIntro",
   },
   {
     type: "info",
     variant: "note",
-    contentKey: "infrastructure.nexoraCli.dslSyntaxInfo",
+    contentKey: "infrastructure.scripeCli.dslSyntaxInfo",
   },
   {
     type: "table",
@@ -186,12 +186,12 @@ $ nexora remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.templatesTitle",
+    titleKey: "infrastructure.scripeCli.templatesTitle",
     id: "templates",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.templatesIntro",
+    contentKey: "infrastructure.scripeCli.templatesIntro",
   },
   {
     type: "table",
@@ -226,12 +226,12 @@ $ nexora remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.securityTitle",
+    titleKey: "infrastructure.scripeCli.securityTitle",
     id: "security-defaults",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.securityIntro",
+    contentKey: "infrastructure.scripeCli.securityIntro",
   },
   {
     type: "table",
@@ -249,99 +249,99 @@ $ nexora remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.autoWiringTitle",
+    titleKey: "infrastructure.scripeCli.autoWiringTitle",
     id: "auto-wiring",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.autoWiringIntro",
+    contentKey: "infrastructure.scripeCli.autoWiringIntro",
   },
   {
     type: "list",
     variant: "unordered",
     items: [
-      "infrastructure.nexoraCli.wiringSln",
-      "infrastructure.nexoraCli.wiringProgram",
-      "infrastructure.nexoraCli.wiringSettings",
-      "infrastructure.nexoraCli.wiringDocker",
-      "infrastructure.nexoraCli.wiringPermissions",
-      "infrastructure.nexoraCli.wiringFrontendApp",
-      "infrastructure.nexoraCli.wiringFrontEnv",
+      "infrastructure.scripeCli.wiringSln",
+      "infrastructure.scripeCli.wiringProgram",
+      "infrastructure.scripeCli.wiringSettings",
+      "infrastructure.scripeCli.wiringDocker",
+      "infrastructure.scripeCli.wiringPermissions",
+      "infrastructure.scripeCli.wiringFrontendApp",
+      "infrastructure.scripeCli.wiringFrontEnv",
     ],
   },
   {
     type: "info",
     variant: "tip",
-    contentKey: "infrastructure.nexoraCli.revertSafely",
+    contentKey: "infrastructure.scripeCli.revertSafely",
   },
 
   // ─── Database & API Synchronization ───────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.dbSyncTitle",
+    titleKey: "infrastructure.scripeCli.dbSyncTitle",
     id: "db-sync",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.dbSyncIntro",
+    contentKey: "infrastructure.scripeCli.dbSyncIntro",
   },
   {
     type: "list",
     variant: "unordered",
-    items: ["infrastructure.nexoraCli.dbCliCmd", "infrastructure.nexoraCli.syncApiCmd"],
+    items: ["infrastructure.scripeCli.dbCliCmd", "infrastructure.scripeCli.syncApiCmd"],
   },
   {
     type: "code",
     language: "bash",
     filename: "Database Migration Commands",
     code: `# Generate migration for all 3 providers (SqlServer, Oracle, PostgreSql)
-$ nexora db add-migration Initial -m CRM
+$ scripe db add-migration Initial -m CRM
 
 # Generate migration for a specific provider only
-$ nexora db add-migration Initial -m CRM -p SqlServer
+$ scripe db add-migration Initial -m CRM -p SqlServer
 
 # Apply migrations (auto-detects provider from appsettings.json)
-$ nexora db update -m CRM
+$ scripe db update -m CRM
 
 # Override provider for update
-$ nexora db update -m CRM -p Oracle
+$ scripe db update -m CRM -p Oracle
 
 # Remove last migration from all 3 providers
-$ nexora db remove-migration -m CRM
+$ scripe db remove-migration -m CRM
 
 # Remove last migration from a specific provider only
-$ nexora db remove-migration -m CRM -p SqlServer
+$ scripe db remove-migration -m CRM -p SqlServer
 
 # Rebuild frontend schemas to mirror live Backend structure
-$ nexora sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
+$ scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
   },
 
   // ─── Project Configuration ──────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.configTitle",
+    titleKey: "infrastructure.scripeCli.configTitle",
     id: "configuration",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.configIntro",
+    contentKey: "infrastructure.scripeCli.configIntro",
   },
   {
     type: "code",
     language: "json",
-    filename: "nexora.config.json",
+    filename: "scripe.config.json",
     code: `{
   "backend": {
-    "root": "./NEXORA-Backend",
-    "solutionFile": "NEXORA-Backend.sln",
+    "root": "./SCRIPE-Backend",
+    "solutionFile": "SCRIPE-Backend.sln",
     "modulesDir": "src/Modules",
     "hostDir": "src/Host/API",
     "coreDir": "src/Core"
   },
   "frontend": {
-    "root": "./NEXORA-Frontend",
+    "root": "./SCRIPE-Frontend",
     "modulesDir": "src/modules",
     "appDir": "src/app",
     "coreDir": "src/core",
@@ -358,12 +358,12 @@ $ nexora sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.nexoraCli.namingTitle",
+    titleKey: "infrastructure.scripeCli.namingTitle",
     id: "naming-conventions",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.namingIntro",
+    contentKey: "infrastructure.scripeCli.namingIntro",
   },
   {
     type: "table",
@@ -385,35 +385,35 @@ $ nexora sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.nexoraCli.utilityTitle",
+    titleKey: "infrastructure.scripeCli.utilityTitle",
     id: "utility",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.nexoraCli.utilityIntro",
+    contentKey: "infrastructure.scripeCli.utilityIntro",
   },
   {
     type: "code",
     language: "bash",
     filename: "Utility Build Trees",
     code: `# Fast installation trees targeting specific ecosystems
-$ nexora install all        # Both CLI and Frontend via npm/pnpm
-$ nexora install frontend   # Only Frontend
+$ scripe install all        # Both CLI and Frontend via npm/pnpm
+$ scripe install frontend   # Only Frontend
 
 # Fast compilation targets
-$ nexora build all          # Typescript CLI -> dotnet build -> pnpm build
-$ nexora build backend      # dotnet build 
+$ scripe build all          # Typescript CLI -> dotnet build -> pnpm build
+$ scripe build backend      # dotnet build 
 
 # Local Server Proxies
-$ nexora dev frontend       # Next.js Server
-$ nexora dev backend        # Kestrel .NET Engine`,
+$ scripe dev frontend       # Next.js Server
+$ scripe dev backend        # Kestrel .NET Engine`,
   },
 ];
 
 registerPage({
-  slug: "infrastructure/nexora-cli",
-  titleKey: "infrastructure.nexoraCli.title",
-  descriptionKey: "infrastructure.nexoraCli.description",
+  slug: "infrastructure/scripe-cli",
+  titleKey: "infrastructure.scripeCli.title",
+  descriptionKey: "infrastructure.scripeCli.description",
   category: "infrastructure",
   order: 2,
   sections,

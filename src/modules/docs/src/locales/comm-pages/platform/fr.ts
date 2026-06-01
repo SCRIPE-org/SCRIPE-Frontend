@@ -7,21 +7,21 @@ export const fr = {
     platformArchitecture: {
       title: "Architecture de la Plateforme",
       description:
-        "Explorez la perfection structurelle de la Clean Architecture de NEXORA, des pipelines NEXORA mediator et des frontières de modules impénétrables conçues pour une échelle d'entreprise massive.",
+        "Explorez la perfection structurelle de la Clean Architecture de SCRIPE, des pipelines SCRIPE mediator et des frontières de modules impénétrables conçues pour une échelle d'entreprise massive.",
       intro:
-        "Expérimentez la convergence entre une scalabilité horizontale massive et une organisation de code immaculée. L'architecture de NEXORA est une fondation méticuleusement conçue pour résister à des décennies d'évolution d'entreprise.",
+        "Expérimentez la convergence entre une scalabilité horizontale massive et une organisation de code immaculée. L'architecture de SCRIPE est une fondation méticuleusement conçue pour résister à des décennies d'évolution d'entreprise.",
       modularTitle: "Le Monolithe Modulaire Évolutif",
       modularContent:
-        "Commencez par une simplicité opérationnelle radicale et évoluez dynamiquement vers une profonde complexité de microservices sans jamais réécrire votre base fondamentale. L'isolation absolue des modules de NEXORA garantit une friction nulle lorsque vous passez d'un MVP rapide à une armada universellement distribuée.",
+        "Commencez par une simplicité opérationnelle radicale et évoluez dynamiquement vers une profonde complexité de microservices sans jamais réécrire votre base fondamentale. L'isolation absolue des modules de SCRIPE garantit une friction nulle lorsque vous passez d'un MVP rapide à une armada universellement distribuée.",
       cleanTitle: "Architecture Propre (Clean Architecture) Intransigeante",
       cleanContent:
         "Votre logique métier propriétaire réside dans le noyau protégé. En isolant mathématiquement le domaine de l'infrastructure et des couches de transport HTTP, nous garantissons que votre propriété intellectuelle de base reste parfaitement lisible, technologiquement agnostique et testable sans effort.",
       boundariesTitle: "Frontières Imperméables des Modules",
       boundariesContent:
-        "La pollution de l'espace de noms entre les modules est physiquement impossible. NEXORA impose une ségrégation définitive des modules via des outils stricts et une validation CI automatisée, garantissant que des équipes de développement massives opèrent avec une autonomie totale et sans conflits de fusion (merge collisions).",
+        "La pollution de l'espace de noms entre les modules est physiquement impossible. SCRIPE impose une ségrégation définitive des modules via des outils stricts et une validation CI automatisée, garantissant que des équipes de développement massives opèrent avec une autonomie totale et sans conflits de fusion (merge collisions).",
       cqrsTitle: "Pipelines d'Événements CQRS Éprouvés",
       cqrsContent:
-        "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes NEXORA mediator agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
+        "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes SCRIPE mediator agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
       deploymentTitle: "Topologies de Déploiement Sans Friction",
       monolith: "Domination Monolithique",
       gateway: "Agilité de la Passerelle (Gateway)",
@@ -78,13 +78,13 @@ export const fr = {
     cleanArchitecture: {
       title: "Architecture Propre (Clean Architecture)",
       description:
-        "Une exploration approfondie des dépendances mathématiquement isolées, des primitives DDD et des modèles SOLID qui pilotent le moteur central de NEXORA.",
+        "Une exploration approfondie des dépendances mathématiquement isolées, des primitives DDD et des modèles SOLID qui pilotent le moteur central de SCRIPE.",
       intro:
-        "Transformez des dépendances chaotiques en une clarté organisationnelle profonde. L'implémentation de la Clean Architecture de NEXORA empêche physiquement la dégradation structurelle, garantissant que votre base de code reste immaculée, lisible et infiniment évolutive sur des décennies d'itérations continues.",
+        "Transformez des dépendances chaotiques en une clarté organisationnelle profonde. L'implémentation de la Clean Architecture de SCRIPE empêche physiquement la dégradation structurelle, garantissant que votre base de code reste immaculée, lisible et infiniment évolutive sur des décennies d'itérations continues.",
       layersTitle: "Stratification Architecturale Stricte",
       cqrsTitle: "Opérations CQRS Hautes Performances",
       cqrsContent:
-        "Démolissez les goulots d'étranglement transactionnels. En séparant les responsabilités de Commande (Écriture) et de Requête (Lecture) via le pipeline NEXORA mediator, NEXORA vous permet de mettre à l'échelle, de mettre en cache et d'optimiser indépendamment les flux d'ingestion de données agressifs sans impacter la latence de lecture sous la seconde.",
+        "Démolissez les goulots d'étranglement transactionnels. En séparant les responsabilités de Commande (Écriture) et de Requête (Lecture) via le pipeline SCRIPE mediator, SCRIPE vous permet de mettre à l'échelle, de mettre en cache et d'optimiser indépendamment les flux d'ingestion de données agressifs sans impacter la latence de lecture sous la seconde.",
       solidTitle: "Conception SOLID Mathématiquement Prouvable",
       singleResp: "Responsabilité Unique",
       singleRespDesc:
@@ -103,7 +103,7 @@ export const fr = {
         "Comblez le fossé entre l'implémentation technique et la stratégie commerciale. Nos primitives DDD robustes—Entités Riches, Objets de Valeur (Value Objects) et Événements de Domaine—garantissent que votre base de code reflète physiquement la réalité opérationnelle complexe de votre entreprise, rendant le système instantanément compréhensible pour les experts métier comme pour les ingénieurs.",
       frontendTitle: "Déterminisme Frontend via SOLID",
       frontendContent:
-        "NEXORA étend la discipline du backend directement dans l'écosystème React. En séparant strictement les Vues (Views) sans état et à itération rapide des ViewModels lourds en logique, nous garantissons une prévisibilité absolue de l'interface utilisateur et éliminons définitivement les comportements de rendu erratiques.",
+        "SCRIPE étend la discipline du backend directement dans l'écosystème React. En séparant strictement les Vues (Views) sans état et à itération rapide des ViewModels lourds en logique, nous garantissons une prévisibilité absolue de l'interface utilisateur et éliminons définitivement les comportements de rendu erratiques.",
       benefitsTitle: "Le ROI Exponentiel d'une Conception Propre",
       tblLayersHeader1: "Couche",
       tblLayersHeader2: "Responsabilité",
@@ -159,16 +159,16 @@ export const fr = {
         "À mesure que votre organisation se développe, la topologie Gateway introduit Ocelot ou YARP pour découpler le frontend des services backend. Cela fournit une terminaison SSL centralisée, une limitation de débit unifiée et un routage des requêtes sans modifier aucune logique interne des modules.",
       gatewayTitle: "Passerelle Distribuée (API Gateway)",
       intro:
-        "NEXORA a été conçu pour résoudre le problème le plus difficile dans les systèmes distribués : décider quand se séparer. Notre architecture prend en charge trois modes de déploiement prêts à l'emploi à partir de la même base de code, vous permettant de commencer simple et de mettre à l'échelle de manière infinie sans le coût d'une refactorisation massive.",
+        "SCRIPE a été conçu pour résoudre le problème le plus difficile dans les systèmes distribués : décider quand se séparer. Notre architecture prend en charge trois modes de déploiement prêts à l'emploi à partir de la même base de code, vous permettant de commencer simple et de mettre à l'échelle de manière infinie sans le coût d'une refactorisation massive.",
       keyPoint: "Garantie Architecturale",
       microContent:
-        "Lorsque les modules individuels nécessitent des profils de mise à l'échelle distincts (par exemple, le module de messagerie gère des millions de webhooks tandis que le module RH a un faible trafic), NEXORA vous permet de déployer des contextes délimités (Bounded Contexts) en tant que microservices entièrement autonomes. Chaque microservice gère son propre pipeline de déploiement et sa propre base de données.",
+        "Lorsque les modules individuels nécessitent des profils de mise à l'échelle distincts (par exemple, le module de messagerie gère des millions de webhooks tandis que le module RH a un faible trafic), SCRIPE vous permet de déployer des contextes délimités (Bounded Contexts) en tant que microservices entièrement autonomes. Chaque microservice gère son propre pipeline de déploiement et sa propre base de données.",
       microTitle: "Microservices Autonomes",
       migrationContent:
         "La transition entre les modes de déploiement est fluide. Passer d'un monolithe à des microservices ne nécessite aucune réécriture logique — reconfigurez simplement les conteneurs DI, lancez un courtier de messages (RabbitMQ/Kafka) en utilisant nos abstractions pré-construites, et déployez les modules dans des conteneurs Docker indépendants.",
       migrationTitle: "Architecture Évolutive Sans Friction",
       monolithContent:
-        "Démarrez rapidement et réduisez les frais généraux opérationnels initiaux. L'ensemble de l'écosystème NEXORA — y compris tous les modules, l'API unifiée et le frontend React — est compilé en une unité de déploiement unique hautement optimisée. Une isolation stricte des modules garantit que la base de code reste immaculée même au sein d'un monolithe.",
+        "Démarrez rapidement et réduisez les frais généraux opérationnels initiaux. L'ensemble de l'écosystème SCRIPE — y compris tous les modules, l'API unifiée et le frontend React — est compilé en une unité de déploiement unique hautement optimisée. Une isolation stricte des modules garantit que la base de code reste immaculée même au sein d'un monolithe.",
       monolithTitle: "Le Monolithe Modulaire",
       step1Content: "Définissez des limites strictes à l'aide du Domain-Driven Design.",
       step1Title: "1. Création du Contexte Délimité",
@@ -216,12 +216,12 @@ export const fr = {
     },
     databaseSupport: {
       description:
-        "Déployez NEXORA de manière transparente sur SQL Server, PostgreSQL, Oracle ou SQLite sans réécrire une seule requête.",
+        "Déployez SCRIPE de manière transparente sur SQL Server, PostgreSQL, Oracle ou SQLite sans réécrire une seule requête.",
       featuresTitle: "Capacités Indépendantes du Fournisseur",
       intro:
-        "NEXORA utilise Entity Framework Core pour abstraire complètement les interactions avec la base de données. Choisissez le moteur relationnel qui correspond à votre budget de licences, vos exigences de haute disponibilité ou vos mandats d'entreprise. Le paramètre Database.Mode ('Single' ou 'Multi') contrôle si tous les modules partagent une seule base de données ou si chacun dispose de la sienne — configurable sans aucune modification de code.",
+        "SCRIPE utilise Entity Framework Core pour abstraire complètement les interactions avec la base de données. Choisissez le moteur relationnel qui correspond à votre budget de licences, vos exigences de haute disponibilité ou vos mandats d'entreprise. Le paramètre Database.Mode ('Single' ou 'Multi') contrôle si tous les modules partagent une seule base de données ou si chacun dispose de la sienne — configurable sans aucune modification de code.",
       mig1Content:
-        "Oubliez les scripts SQL manuels. NEXORA utilise les migrations Code-First d'EF Core, générant automatiquement une syntaxe spécifique pour le fournisseur choisi.",
+        "Oubliez les scripts SQL manuels. SCRIPE utilise les migrations Code-First d'EF Core, générant automatiquement une syntaxe spécifique pour le fournisseur choisi.",
       mig1Title: "Génération Automatisée Multi-Schémas",
       mig2Content:
         "Déployez les modifications de schéma en toute confiance dans les environnements de développement, de préproduction (staging) et de production à l'aide de nos packages de migration isolés de manière déterministe.",
@@ -230,14 +230,14 @@ export const fr = {
         "Suivez les migrations appliquées dans une table d'historique dédiée, garantissant que les clusters distribués ne tentent pas de modifier le schéma simultanément.",
       mig3Title: "Mises à Niveau Concurrentes Sécurisées",
       mig4Content:
-        "Pour les refactorisations de schéma complexes, NEXORA fournit des crochets (hooks) de pré/post migration permettant des transformations de données sans temps d'arrêt (zero-downtime).",
+        "Pour les refactorisations de schéma complexes, SCRIPE fournit des crochets (hooks) de pré/post migration permettant des transformations de données sans temps d'arrêt (zero-downtime).",
       mig4Title: "Transformations Sans Temps d'Arrêt",
       migrationContent:
         "Le moteur de déploiement évalue l'état actuel de la base de données et applique les opérations en attente automatiquement au démarrage. Chaque migration est transactionnelle : soit l'ensemble du schéma est mis à niveau parfaitement, soit le système est restauré en toute sécurité.",
       migrationTitle: "Évolutions de Schémas Transactionnelles",
       perfTitle: "Compilation de Requêtes Optimisée",
       providersIntro:
-        "NEXORA traite la base de données comme une couche de persistance interchangeable. Notre modèle de référentiel (Repository) isole proprement la logique spécifique au fournisseur.",
+        "SCRIPE traite la base de données comme une couche de persistance interchangeable. Notre modèle de référentiel (Repository) isole proprement la logique spécifique au fournisseur.",
       providersTitle: "Moteurs de Déploiement Agnostiques",
       switchContent:
         "Changez de fournisseur de base de données via une seule ligne dans appsettings.json. Basculez entre le mode base de données unique (tous les modules partagent une BD) et le mode multi-bases de données (chaque module a sa propre BD) avec le paramètre Database.Mode. Passez d'une seule instance PostgreSQL en développement à des bases de données Oracle RAC isolées par module en production — de manière transparente.",
@@ -249,13 +249,13 @@ export const fr = {
       backendTitle: "La Matrice Architecturale du Backend",
       compatibilityTitle: "Verrouillage Strict des Dépendances",
       description:
-        "Une ventilation totalement transparente des frameworks exacts, des bibliothèques et des packages open-source qui font fonctionner le moteur principal de NEXORA.",
+        "Une ventilation totalement transparente des frameworks exacts, des bibliothèques et des packages open-source qui font fonctionner le moteur principal de SCRIPE.",
       frontendTitle: "La Matrice Architecturale du Frontend",
       futureTip:
-        "Note d'Architecture : NEXORA évite délibérément les frameworks en version 'alpha' à la pointe de la technologie. Chaque technologie choisie bénéficie d'un soutien massif d'entreprise, garantissant un support pour les 15 prochaines années.",
+        "Note d'Architecture : SCRIPE évite délibérément les frameworks en version 'alpha' à la pointe de la technologie. Chaque technologie choisie bénéficie d'un soutien massif d'entreprise, garantissant un support pour les 15 prochaines années.",
       infraTitle: "Infrastructure DevOps & Déploiement",
       intro:
-        "Nous ne réinventons pas la roue. NEXORA agit comme le ciment architectural ultime, intégrant de manière transparente les meilleurs frameworks modernes éprouvés sur le terrain (.NET 9, Next.js 15, React 19) dans une vision d'entreprise singulière et cohérente.",
+        "Nous ne réinventons pas la roue. SCRIPE agit comme le ciment architectural ultime, intégrant de manière transparente les meilleurs frameworks modernes éprouvés sur le terrain (.NET 9, Next.js 15, React 19) dans une vision d'entreprise singulière et cohérente.",
       title: "La Pile Technologique (Stack) d'Entreprise",
       tblBackHeader1: "Technologie",
       tblBackHeader2: "Version",
@@ -273,7 +273,7 @@ export const fr = {
       tblBackR3C2: "10",
       tblBackR3C3: "ORM & accès aux données",
       tblBackR3C4: "Support multi-fournisseurs, migrations, requêtes LINQ",
-      tblBackR4C1: "NEXORA mediator",
+      tblBackR4C1: "SCRIPE mediator",
       tblBackR4C2: "12+",
       tblBackR4C3: "Médiateur CQRS",
       tblBackR4C4: "Séparation propre des gestionnaires, comportements de pipeline",

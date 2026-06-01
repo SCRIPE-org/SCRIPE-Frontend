@@ -16,7 +16,7 @@ const sections: DocSection[] = [
     type: "flowchart",
     direction: "vertical",
     nodes: [
-      { id: "A", label: "NEXORA Platform (Operator)", type: "primary" },
+      { id: "A", label: "SCRIPE Platform (Operator)", type: "primary" },
       { id: "B", label: "Tier 1: Editions → Tenants", type: "info" },
       { id: "C", label: "Tenant Admin", type: "default" },
       { id: "D", label: "Tier 2: TenantPlans → Users", type: "info" },

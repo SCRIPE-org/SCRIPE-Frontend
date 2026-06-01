@@ -14,7 +14,7 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.themeMarketplace.valueContent" },
   {
     type: "table",
-    headers: ["Challenge", "Traditional Approach", "With NEXORA Theme Marketplace"],
+    headers: ["Challenge", "Traditional Approach", "With SCRIPE Theme Marketplace"],
     rows: [
       [
         "Enterprise branding project",
@@ -188,7 +188,7 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Capability", "Auth0 / Okta", "Keycloak", "NEXORA"],
+    headers: ["Capability", "Auth0 / Okta", "Keycloak", "SCRIPE"],
     rows: [
       ["Theme count", "1 (custom only)", "0 (manual styling)", "40 premium packages"],
       ["Per-page branding", "No", "No", "Yes (Login + Forgot + Reset)"],

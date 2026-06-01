@@ -6,11 +6,11 @@ export const en = {
   commercial: {
     moduleCatalog: {
       businessContent:
-        "NEXORA isn't an empty shell; it's a functioning enterprise ecosystem from day one. Use our existing business modules—such as User Management, Audit Logging, and Notifications—as immediate starting points, or clone them to rapidly build proprietary features.",
+        "SCRIPE isn't an empty shell; it's a functioning enterprise ecosystem from day one. Use our existing business modules—such as User Management, Audit Logging, and Notifications—as immediate starting points, or clone them to rapidly build proprietary features.",
       businessTitle: "Accelerated Business Logic",
       commTitle: "Communication & Webhooks",
       coreContent:
-        "The Foundation layer provides the absolute non-negotiables: the Identity Provider, multi-tenant resolution strategies, EF Core context abstractions, and the centralized NEXORA mediator dispatcher. It is the rock-solid bedrock upon which your entire application scales.",
+        "The Foundation layer provides the absolute non-negotiables: the Identity Provider, multi-tenant resolution strategies, EF Core context abstractions, and the centralized SCRIPE mediator dispatcher. It is the rock-solid bedrock upon which your entire application scales.",
       coreTitle: "The Core Foundation",
       crmModule: "Headless CRM Module",
       crmModuleDesc:
@@ -20,7 +20,7 @@ export const en = {
         "A pristine sandbox utilizing the exact same Clean Architecture boundaries to house your unique industry logic.",
       dataTitle: "Data & Auditing",
       description:
-        "A comprehensive directory of the pre-built, production-ready enterprise bounded contexts included within the NEXORA platform.",
+        "A comprehensive directory of the pre-built, production-ready enterprise bounded contexts included within the SCRIPE platform.",
       financeModule: "Invoicing & Billing Engine",
       financeModuleDesc:
         "Generate PDF invoices, manage tax localities, and integrate with Stripe or custom payment gateways.",
@@ -31,7 +31,7 @@ export const en = {
         "Every module in the catalog is strictly isolated. The Notification module shares zero state with the User Management module. They communicate purely through asynchronous events, guaranteeing that a catastrophic failure in one domain never cascades to another.",
       independenceTitle: "Cryptographic Module Isolation",
       intro:
-        "NEXORA ships with a massive library of enterprise-grade, pre-tested bounded contexts. From day one, you possess the operational maturity of a 5-year-old SaaS application.",
+        "SCRIPE ships with a massive library of enterprise-grade, pre-tested bounded contexts. From day one, you possess the operational maturity of a 5-year-old SaaS application.",
       inventoryModule: "Asset Tracking Module",
       inventoryModuleDesc:
         "Map complex hierarchical inventories and track state changes through strictly applied domain events.",
@@ -113,10 +113,10 @@ export const en = {
       description:
         "Built-in GDPR, CCPA, and PDPA compliance automation — protect your customers' data rights without hiring a team of legal engineers.",
       intro:
-        "NEXORA's Compliance Module gives every tenant on your platform enterprise-grade data protection compliance out of the box. From automated DSR handling to real-time consent tracking and audit-ready reports, your customers stay compliant without building anything.",
+        "SCRIPE's Compliance Module gives every tenant on your platform enterprise-grade data protection compliance out of the box. From automated DSR handling to real-time consent tracking and audit-ready reports, your customers stay compliant without building anything.",
       valueTitle: "Why Compliance Matters",
       valueIntro:
-        "Data protection regulations carry significant penalties: GDPR fines can reach €20M or 4% of global annual turnover (whichever is higher). NEXORA's Compliance module helps your customers avoid these risks while building trust with their end users.",
+        "Data protection regulations carry significant penalties: GDPR fines can reach €20M or 4% of global annual turnover (whichever is higher). SCRIPE's Compliance module helps your customers avoid these risks while building trust with their end users.",
       capabilitiesTitle: "Module Capabilities",
       cap1: "DSR Management — Automated workflow for data export, erasure, rectification, and restriction requests with SLA tracking.",
       cap2: "Consent Audit Trail — Immutable record of every consent grant and withdrawal with timestamp, IP, and consent version.",
@@ -134,9 +134,9 @@ export const en = {
     complianceGdpr: {
       title: "GDPR Compliance",
       description:
-        "How NEXORA helps your platform and tenants meet GDPR obligations across all six compliance domains.",
+        "How SCRIPE helps your platform and tenants meet GDPR obligations across all six compliance domains.",
       intro:
-        "The General Data Protection Regulation (GDPR) applies to any organization that processes personal data of EU/EEA residents. NEXORA's Compliance module addresses all key GDPR obligations through built-in tooling, reducing compliance overhead for you and your tenants.",
+        "The General Data Protection Regulation (GDPR) applies to any organization that processes personal data of EU/EEA residents. SCRIPE's Compliance module addresses all key GDPR obligations through built-in tooling, reducing compliance overhead for you and your tenants.",
       articlesTitle: "Key GDPR Articles Addressed",
       art12:
         "Article 12-14 — Transparency. Consent records document exactly what was shown to users and when.",
@@ -152,9 +152,9 @@ export const en = {
     complianceDsr: {
       title: "Data Subject Requests",
       description:
-        "How NEXORA handles DSR requests end-to-end, keeping your customers compliant with GDPR Article 15-22 and CCPA rights.",
+        "How SCRIPE handles DSR requests end-to-end, keeping your customers compliant with GDPR Article 15-22 and CCPA rights.",
       intro:
-        "Data Subject Requests (DSRs) are formal rights requests from individuals. Under GDPR, controllers must respond within 30 days. NEXORA automates the entire DSR workflow — from submission to assignment to fulfillment — with SLA tracking built in.",
+        "Data Subject Requests (DSRs) are formal rights requests from individuals. Under GDPR, controllers must respond within 30 days. SCRIPE automates the entire DSR workflow — from submission to assignment to fulfillment — with SLA tracking built in.",
       workflowTitle: "DSR Workflow",
       step1: "User submits a DSR (export, erasure, rectification, or restriction).",
       step2:
@@ -163,14 +163,14 @@ export const en = {
       step4: "Request is fulfilled and status is set to 'Completed' or 'Rejected' with a reason.",
       slaTitle: "SLA Compliance",
       slaIntro:
-        "NEXORA tracks the submission date for every DSR. Your compliance team can filter by age to identify requests approaching the 30-day GDPR deadline.",
+        "SCRIPE tracks the submission date for every DSR. Your compliance team can filter by age to identify requests approaching the 30-day GDPR deadline.",
     },
     complianceRoi: {
       title: "Compliance ROI",
       description:
         "The business case for built-in compliance — cost savings, risk reduction, and competitive advantage.",
       intro:
-        "Regulatory compliance is no longer optional — and building it from scratch is expensive. NEXORA's built-in Compliance module turns a regulatory requirement into a competitive advantage.",
+        "Regulatory compliance is no longer optional — and building it from scratch is expensive. SCRIPE's built-in Compliance module turns a regulatory requirement into a competitive advantage.",
       savingsTitle: "Cost Savings",
       savings1: "Avoid €20M+ in GDPR fines through automated compliance enforcement.",
       savings2:
@@ -187,10 +187,10 @@ export const en = {
     pluginsOverview: {
       title: "Plugin System",
       description: "Enterprise-grade extensibility — install certified internal plugins or sandboxed marketplace plugins with full lifecycle management.",
-      intro: "NEXORA's Plugin System gives your platform infinite extensibility without compromising security. Platform teams can publish certified Tier 1 plugins that run in-process with full infrastructure access. Third-party vendors can publish Tier 2 plugins that run in a secure sandbox — isolated from your core data, rate-limited, and audited.",
+      intro: "SCRIPE's Plugin System gives your platform infinite extensibility without compromising security. Platform teams can publish certified Tier 1 plugins that run in-process with full infrastructure access. Third-party vendors can publish Tier 2 plugins that run in a secure sandbox — isolated from your core data, rate-limited, and audited.",
       valueTitle: "Business Value",
       featureExtTitle: "Infinite Extensibility",
-      featureExtDesc: "Extend NEXORA with any capability — CRM integrations, AI assistants, analytics dashboards — without forking the core codebase.",
+      featureExtDesc: "Extend SCRIPE with any capability — CRM integrations, AI assistants, analytics dashboards — without forking the core codebase.",
       featureSandboxTitle: "Secure Sandbox",
       featureSandboxDesc: "Tier 2 plugins are isolated in a REST gateway. They cannot access your database, internal services, or other tenants.",
       featureMarketTitle: "Marketplace Ready",
@@ -214,7 +214,7 @@ export const en = {
       tier2Point3: "iframe frontend with postMessage SDK",
       tier2Point4: "Isolated key-value data store per installation",
       audienceTitle: "Who Benefits",
-      audienceIntro: "The Plugin System creates value for every stakeholder in the NEXORA ecosystem.",
+      audienceIntro: "The Plugin System creates value for every stakeholder in the SCRIPE ecosystem.",
       audRole: "Role",
       audBenefit: "Benefit",
       audPlatform: "Platform Operator",

@@ -9,7 +9,7 @@ const PaymentHubView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Payment Hub | NEXORA",
+  title: "Payment Hub | SCRIPE",
   description: "Centralized hub for all payment and billing configuration.",
 };
 

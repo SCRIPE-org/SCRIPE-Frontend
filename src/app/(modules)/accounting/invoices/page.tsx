@@ -7,7 +7,7 @@ const AccountingInvoicesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Accounting – Invoices | NEXORA",
+  title: "Accounting – Invoices | SCRIPE",
   description: "Invoice management",
 };
 

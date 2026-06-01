@@ -7,7 +7,7 @@ const OAuthAppDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "OAuth Application Details | NEXORA",
+  title: "OAuth Application Details | SCRIPE",
   description: "View and configure OAuth application settings",
 };
 

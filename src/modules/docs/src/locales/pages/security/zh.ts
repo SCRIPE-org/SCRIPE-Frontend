@@ -8,7 +8,7 @@ export const zh = {
       title: "安全概述",
       description: "五层纵深防御策略、安全特性、CORS 配置、限流与密码策略。",
       intro:
-        "NEXORA 采用纵深防御 (Defense-in-depth) 策略，分为：网络保护、身份验证、授权、数据隔离和审计日志。",
+        "SCRIPE 采用纵深防御 (Defense-in-depth) 策略，分为：网络保护、身份验证、授权、数据隔离和审计日志。",
       layersTitle: "安全防御层",
       featuresTitle: "安全特性",
       featureJwt: "JWT 认证",
@@ -33,7 +33,7 @@ export const zh = {
       title: "深入身份验证",
       description:
         "JWT 生命周期、BCrypt 哈希、账户锁定、2FA、OAuth、OTP 系统及模拟登录 (Impersonation)。",
-      intro: "本页深入探讨 NEXORA 的验证机制细节，从令牌颁发到会话状态管理。",
+      intro: "本页深入探讨 SCRIPE 的验证机制细节，从令牌颁发到会话状态管理。",
       jwtLifecycleTitle: "JWT 令牌生命周期",
       jwtLifecycleIntro: "短期 Access Token，长期且使用后即轮换作废的 Refresh Token。",
       tokenStructureTitle: "JWT 结构",
@@ -60,7 +60,7 @@ export const zh = {
       title: "单点登录 (SSO)",
       description: "OIDC 身份验证，外部身份绑定及 OAuth 应用集成。",
       intro:
-        "NEXORA 系统支持基于 OIDC 协议的外部提供商进行身份验证，并通过 OAuth 应用安全下发凭证。系统完美融合了租户隔离机制与严格的 PKCE 安全保护。",
+        "SCRIPE 系统支持基于 OIDC 协议的外部提供商进行身份验证，并通过 OAuth 应用安全下发凭证。系统完美融合了租户隔离机制与严格的 PKCE 安全保护。",
       architectureTitle: "OIDC / OAuth 验证架构",
       endpointsTitle: "端点与流程 (Flows)",
       flowIntro: "SSO 登录环节包含一个提供最高安全保障的多步握手流程：",
@@ -72,12 +72,12 @@ export const zh = {
         "在用户成功验证后接收其返回，并在服务端静默使用授权码对换 Token，全程无需浏览器干预。",
       linkingTitle: "身份绑定处理机制",
       linkingIntro:
-        "在成功登录后，系统会自动侦测数据库比对邮箱。如果是该用户的首次登录，其 OIDC 身份记录将瞬间融合并绑定到内部 NEXORA 账户，从而杜绝数据重复割裂。",
+        "在成功登录后，系统会自动侦测数据库比对邮箱。如果是该用户的首次登录，其 OIDC 身份记录将瞬间融合并绑定到内部 SCRIPE 账户，从而杜绝数据重复割裂。",
       pkceWarning:
         "隐式 (Implicit) OAuth 流已被废弃剔除。PKCE 协议现在已强制应用在任何形式的授权机制中。",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -100,13 +100,13 @@ export const zh = {
       entityModelContent:
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
@@ -117,7 +117,7 @@ export const zh = {
     dataProtection: {
       title: "数据保护",
       description: "租户隔离、静态与传输加密、字段级控制、ID 加密及 GDPR 合规。",
-      intro: "NEXORA 在每一层保护数据——从传输层加密到 ORM 级别的行数据隔离。",
+      intro: "SCRIPE 在每一层保护数据——从传输层加密到 ORM 级别的行数据隔离。",
       tenantIsolationTitle: "租户数据隔离",
       tenantIsolationIntro: "通过 EF Core 全局查询过滤器，所有的数据库读取均自动挂载租户限定条件。",
       tenantScopingTitle: "查询过滤器作用域",
@@ -135,7 +135,7 @@ export const zh = {
       idEncryptionTitle: "ID 加密",
       idEncryptionIntro: "可选将数据库的 Guid ID 进行 AES-256 加密后再返回给客户端，防止枚举攻击。",
       gdprTitle: "GDPR 合规性",
-      gdprIntro: "NEXORA 提供 GDPR 合规机制，包含数据可移植性、被遗忘权、同意跟踪等。",
+      gdprIntro: "SCRIPE 提供 GDPR 合规机制，包含数据可移植性、被遗忘权、同意跟踪等。",
       rightToDeleteTitle: "被遗忘权 (Right to Delete)",
       dataPortabilityTitle: "数据可移植性",
       consentTitle: "同意管理",
@@ -147,13 +147,13 @@ export const zh = {
     apiSecurity: {
       title: "API 安全",
       description: "限流、CORS、输入验证、CSRF 保护、安全响应头及防重放攻击。",
-      intro: "NEXORA 的 API 面向互联网，其防御了多种常见的 Web 攻击向量。",
+      intro: "SCRIPE 的 API 面向互联网，其防御了多种常见的 Web 攻击向量。",
       rateLimitTitle: "限流 (Rate Limiting)",
       rateLimitIntro: "使用 ASP.NET Core 内置限流中间件提供 4 层网络防护策略。",
       corsTitle: "跨域配置",
       corsIntro: "严格控制 Allowed Origins 和 HTTP 谓词限制。",
       inputValidationTitle: "输入验证 (Input Validation)",
-      inputValidationIntro: "集成 FluentValidation 在 NEXORA mediator 管道层进行数据清洗拦截。",
+      inputValidationIntro: "集成 FluentValidation 在 SCRIPE mediator 管道层进行数据清洗拦截。",
       csrfTitle: "CSRF 防护",
       csrfIntro: "得益于 Bearer 令牌及 SameSite=Strict 的机制，API 天然具备抗 CSRF 的特性。",
       headersTitle: "安全响应头",
@@ -165,7 +165,7 @@ export const zh = {
     middlewarePipeline: {
       title: "中间件管道 (Middleware Pipeline)",
       description: "按特定顺序执行的 11 个中间件组件——从异常拦截到字段投影过滤。",
-      intro: "NEXORA 的 HTTP 请求管道以严谨的次序进行排列。每一步都可以短路失败以阻断攻击。",
+      intro: "SCRIPE 的 HTTP 请求管道以严谨的次序进行排列。每一步都可以短路失败以阻断攻击。",
       overviewTitle: "管道概述",
       overviewIntro: "请求自顶向下流动。顺序不容有错——例如租户上下文必须在身份验证之后建立。",
       globalExceptionTitle: "1. 全局异常处理 (Global Exception Handler)",
@@ -195,7 +195,7 @@ export const zh = {
       description: "由拦截器、实体跟踪驱动的完整审计管道，支持 SignalR 流式推送和导出。",
       intro: "审计系统自动化记录了每个数据库操作并生成无法篡改的历史证据。",
       architectureTitle: "审计架构",
-      architectureIntro: "涉及 EF Core 拦截器机制、NEXORA mediator 行为拦截以及请求日志跟踪。",
+      architectureIntro: "涉及 EF Core 拦截器机制、SCRIPE mediator 行为拦截以及请求日志跟踪。",
       interceptorTitle: "实体变更拦截器",
       interceptorIntro:
         "在 SaveChanges 之前，AuditableEntityInterceptor 计算新旧快照数据并转换为 JSON。",

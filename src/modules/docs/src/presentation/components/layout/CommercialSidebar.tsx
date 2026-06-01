@@ -7,7 +7,7 @@ import { useState, useCallback, useMemo } from "react";
 
 // ─── Category color palette ──────────────────────────────────────
 const categoryColors: Record<string, string> = {
-  "commercial-why-nexora": "var(--commercial-accent-blue)",
+  "commercial-why-scripe": "var(--commercial-accent-blue)",
   "commercial-platform": "var(--commercial-accent-purple)",
   "commercial-enterprise": "var(--commercial-accent-teal)",
   "commercial-security": "var(--commercial-accent-red)",
@@ -423,7 +423,7 @@ export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarP
 
       {/* CTA */}
       <div className="commercial-sidebar-cta">
-        <a href="mailto:sales@nexora.io" className="commercial-sidebar-cta-btn">
+        <a href="mailto:sales@scripe.com" className="commercial-sidebar-cta-btn">
           <svg
             width="16"
             height="16"

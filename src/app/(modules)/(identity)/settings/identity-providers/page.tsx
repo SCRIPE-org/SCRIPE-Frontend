@@ -9,7 +9,7 @@ const IdentityProvidersView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Identity Providers | NEXORA",
+  title: "Identity Providers | SCRIPE",
   description: "Configure external SSO identity providers (OIDC, OAuth2, SAML)",
 };
 

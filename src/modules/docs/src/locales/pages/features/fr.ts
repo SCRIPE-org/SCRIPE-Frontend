@@ -9,14 +9,14 @@ export const fr = {
       description:
         "Authentification double (Admin + Utilisateur), jetons JWT, 2FA avec codes de secours et politique de mot de passe par locataire.",
       intro:
-        "NEXORA fournit un système d'authentification sécurisé avec des jetons (tokens) d'accès JWT, une rotation des jetons d'actualisation (refresh tokens) et une 2FA.",
+        "SCRIPE fournit un système d'authentification sécurisé avec des jetons (tokens) d'accès JWT, une rotation des jetons d'actualisation (refresh tokens) et une 2FA.",
       flowTitle: "Flux d'Authentification",
       jwtTitle: "Configuration des Jetons JWT",
       jwtIntro:
         "Le système utilise des jetons d'accès de courte durée (15 minutes) avec des jetons d'actualisation de longue durée (7 jours) pivotés à chaque utilisation.",
       dualAuthTitle: "Double Authentification (Admin et Utilisateur)",
       dualAuthIntro:
-        "NEXORA dispose de deux pipelines d'authentification distincts : AdminAuthController et UserAuthController, émettant des revendications (claims) différentes.",
+        "SCRIPE dispose de deux pipelines d'authentification distincts : AdminAuthController et UserAuthController, émettant des revendications (claims) différentes.",
       adminEntityTitle: "Entité Admin (Sécurité)",
       adminEntityIntro:
         "L'entité Admin possède plusieurs champs de sécurité critiques contrôlant le verrouillage et la protection du compte.",
@@ -40,7 +40,7 @@ export const fr = {
       description:
         "Isolation des données au niveau des lignes, locataires hiérarchiques, paramètres par locataire et image de marque personnalisée.",
       intro:
-        "NEXORA prend en charge une architecture multi-locataire complète avec isolation des données à l'aide des filtres de requêtes globaux d'EF Core.",
+        "SCRIPE prend en charge une architecture multi-locataire complète avec isolation des données à l'aide des filtres de requêtes globaux d'EF Core.",
       architectureTitle: "Architecture",
       featuresTitle: "Fonctionnalités du Locataire (Tenant)",
       featureIsolation: "Isolation des Données",
@@ -92,7 +92,7 @@ export const fr = {
       domainTypesTitle: "Types de Domaines",
       domainArchTitle: "Architecture de Résolution de Domaines",
       domainArchIntro:
-        "Lorsqu'une requête arrive, le système résout le locataire en recherchant le nom d'hôte dans la table TenantDomain. Les domaines générés automatiquement (ex. sofa.nexora.com) sont toujours vérifiés et résolus immédiatement. Les domaines personnalisés doivent d'abord passer la vérification DNS. Un mécanisme de repli utilisant le paramètre de requête ?code= est disponible pour les environnements de développement où le DNS n'est pas configuré.",
+        "Lorsqu'une requête arrive, le système résout le locataire en recherchant le nom d'hôte dans la table TenantDomain. Les domaines générés automatiquement (ex. sofa.scripe.com) sont toujours vérifiés et résolus immédiatement. Les domaines personnalisés doivent d'abord passer la vérification DNS. Un mécanisme de repli utilisant le paramètre de requête ?code= est disponible pour les environnements de développement où le DNS n'est pas configuré.",
       domainDnsTitle: "Flux de Vérification DNS",
       domainDnsIntro:
         "Les domaines personnalisés nécessitent une vérification DNS pour prouver la propriété. Lorsqu'un administrateur ajoute un domaine personnalisé, le système génère un jeton de vérification unique. L'administrateur configure ensuite deux enregistrements DNS : un enregistrement CNAME pointant le domaine vers le CnameTarget de la plateforme, et un enregistrement TXT à {VerificationPrefix}.{domain} contenant le jeton de vérification. Une fois configuré, cliquer sur 'Vérifier' déclenche une requête DNS pour confirmer la présence des deux enregistrements.",
@@ -102,7 +102,7 @@ export const fr = {
       domainConfigIntro:
         "Chaque valeur liée aux domaines est configurable via la section Tenancy dans appsettings.json. Cela signifie que vous pouvez renommer entièrement la plateforme — en changeant le domaine de base, la cible CNAME, le préfixe de vérification et le préfixe de jeton — en éditant un seul bloc de configuration. Aucun changement de code requis. Le backend injecte TenancySettings via IOptions<T>, et le frontend reçoit la cible CNAME et le préfixe de vérification de la réponse API GET /domains.",
       domainConfigTip:
-        "Pour déployer sur un domaine complètement différent (ex. myplatform.io au lieu de nexora.com), mettez simplement à jour les 4 valeurs dans appsettings.json. Tous les sous-domaines générés automatiquement, les instructions DNS et les jetons de vérification utiliseront automatiquement les nouvelles valeurs.",
+        "Pour déployer sur un domaine complètement différent (ex. myplatform.io au lieu de scripe.com), mettez simplement à jour les 4 valeurs dans appsettings.json. Tous les sous-domaines générés automatiquement, les instructions DNS et les jetons de vérification utiliseront automatiquement les nouvelles valeurs.",
       domainEndpointsTitle: "Points d'Accès API de Domaines",
     },
     rolePermissions: {
@@ -110,7 +110,7 @@ export const fr = {
       description:
         "Système RBAC avec remplacement de portée (scope override), restrictions au niveau des champs et rôles cloisonnés par locataire.",
       intro:
-        "NEXORA met en œuvre un système complet de contrôle d'accès basé sur les rôles (RBAC) mis en cache côté serveur pour des performances optimales.",
+        "SCRIPE met en œuvre un système complet de contrôle d'accès basé sur les rôles (RBAC) mis en cache côté serveur pour des performances optimales.",
       hierarchyTitle: "Hiérarchie des Permissions",
       systemTitle: "Système de Permissions",
       systemIntro:
@@ -147,7 +147,7 @@ export const fr = {
       description:
         "Pipeline à 4 sources, plus de 35 types d'événements, 7 événements Guardian, SignalR en temps réel et export CSV/PDF.",
       intro:
-        "NEXORA capture chaque action significative dans le journal d'audit via NEXORA mediator, EF Core, les middlewares et les appels de services.",
+        "SCRIPE capture chaque action significative dans le journal d'audit via SCRIPE mediator, EF Core, les middlewares et les appels de services.",
       architectureTitle: "Architecture d'Audit",
       eventTypesTitle: "Types d'Événements (Plus de 35 Catégories)",
       authEventsTitle: "Événements d'Authentification",
@@ -283,7 +283,7 @@ export const fr = {
         "Cycle de vie complet des administrateurs/utilisateurs, opérations en lot, usurpation d'identité et règles de protection.",
       adminVsUserTitle: "Modèle Admin vs Utilisateur",
       adminVsUserIntro:
-        "NEXORA sépare les administrateurs du panneau système des utilisateurs finaux de l'application.",
+        "SCRIPE sépare les administrateurs du panneau système des utilisateurs finaux de l'application.",
       crudTitle: "Endpoints CRUD des Administrateurs",
       accountOpsTitle: "Opérations sur les Comptes",
       roleMgmtTitle: "Gestion des Rôles",
@@ -393,14 +393,14 @@ export const fr = {
       description:
         "Serveur d'authentification de niveau entreprise capable de remplacer Keycloak, Okta et Auth0. Fournisseurs d'identité OIDC natifs, enregistrement d'applications OAuth, application de PKCE et fédérations de locataires isolées.",
       intro:
-        "NEXORA n'est pas seulement une application ; c'est un serveur de gestion des identités et des accès (IAM) d'entreprise basé sur OpenIddict. Il fonctionne de manière équivalente à Keycloak, agissant à la fois comme client OIDC et comme serveur d'autorisation actif OAuth2/OIDC. Les locataires peuvent s'authentifier vers l'extérieur avec Azure AD/Google, ou vers l'intérieur en enregistrant des systèmes tiers qui s'authentifient auprès de NEXORA.",
+        "SCRIPE n'est pas seulement une application ; c'est un serveur de gestion des identités et des accès (IAM) d'entreprise basé sur OpenIddict. Il fonctionne de manière équivalente à Keycloak, agissant à la fois comme client OIDC et comme serveur d'autorisation actif OAuth2/OIDC. Les locataires peuvent s'authentifier vers l'extérieur avec Azure AD/Google, ou vers l'intérieur en enregistrant des systèmes tiers qui s'authentifient auprès de SCRIPE.",
       overviewTitle: "Fonctionnalités IAM d'Entreprise",
       feat1Title: "Fournisseurs d'Identité Fédérés (IdP)",
       feat1Desc:
         "Associez instantanément des fournisseurs d'identité OIDC/OAuth2 externes à des locataires spécifiques. Intégration sans code pour Azure AD, Google, Okta, Auth0, AWS Cognito ou tout système compatible OIDC.",
-      feat2Title: "NEXORA en tant que Serveur (Apps OAuth)",
+      feat2Title: "SCRIPE en tant que Serveur (Apps OAuth)",
       feat2Desc:
-        "Remplacez Keycloak. Enregistrez des systèmes métiers tiers directement dans NEXORA. Générez des identifiants et des secrets clients, contrôlez les scopes et émettez des JWT d'entreprise adossés au stockage d'identité de NEXORA.",
+        "Remplacez Keycloak. Enregistrez des systèmes métiers tiers directement dans SCRIPE. Générez des identifiants et des secrets clients, contrôlez les scopes et émettez des JWT d'entreprise adossés au stockage d'identité de SCRIPE.",
       feat3Title: "PKCE et Sécurité Stricts",
       feat3Desc:
         "Le Flux Implicite est éradiqué. Toute l'authentification (interne et externe) est strictement appliquée via Proof Key for Code Exchange (PKCE) sur des flux de code d'autorisation. Les secrets ne fuient jamais vers le navigateur.",
@@ -408,40 +408,40 @@ export const fr = {
       feat4Desc:
         "Chaque locataire est son propre royaume IAM isolé. Les locataires gèrent leurs propres fournisseurs SSO externes et émettent des informations d'identification pour leurs propres applications OAuth sans toucher à l'infrastructure racine mondiale.",
       configTitle: "Guide de Configuration IAM",
-      configContent: "Configuration de NEXORA comme passerelle d'authentification principale :",
+      configContent: "Configuration de SCRIPE comme passerelle d'authentification principale :",
       config1Title: "1. Associer un Fournisseur d'Identité Externe",
       config1Content:
-        "Accédez à /settings/identity-providers. Entrez l'URL d'autorité, le Client ID et le Secret Azure AD ou Google. NEXORA négocie automatiquement la configuration OIDC.",
+        "Accédez à /settings/identity-providers. Entrez l'URL d'autorité, le Client ID et le Secret Azure AD ou Google. SCRIPE négocie automatiquement la configuration OIDC.",
       config2Title: "2. Mappage Automatique des Claims",
       config2Content:
-        "Configurez les scopes demandés (openid, profile, email). NEXORA mappe automatiquement les claims JWT externes vers les profils internes sans saisie manuelle.",
+        "Configurez les scopes demandés (openid, profile, email). SCRIPE mappe automatiquement les claims JWT externes vers les profils internes sans saisie manuelle.",
       config3Title: "3. Appliquer les Politiques IAM",
       config3Content:
         "Décidez si le fournisseur est pour les Administrateurs (back-office) ou Les Utilisateurs (front-office). Les liaisons d'identité empêchent une élévation de privilèges externe.",
       config4Title: "4. Enregistrer des Applications Tiers",
       config4Content:
-        "Accédez à /settings/oauth-apps pour faire de NEXORA le fournisseur SSO de logiciels externes. Définissez des profils Public (SPA) ou Confidentiel (Backend).",
+        "Accédez à /settings/oauth-apps pour faire de SCRIPE le fournisseur SSO de logiciels externes. Définissez des profils Public (SPA) ou Confidentiel (Backend).",
       config5Title: "5. Découverte et Uri Jwks",
       config5Content:
-        "Les applications externes pointent simplement leur Autorité sur `https://votre-instance-nexora.com`. NEXORA expose automatiquement les terminaux `/.well-known/openid-configuration` et `/.well-known/jwks`.",
+        "Les applications externes pointent simplement leur Autorité sur `https://votre-instance-scripe.com`. SCRIPE expose automatiquement les terminaux `/.well-known/openid-configuration` et `/.well-known/jwks`.",
       managementTitle: "Centre de Contrôle IAM",
       managementContent:
-        "NEXORA propose un Centre de Contrôle IAM dédié au sein des Paramètres Système pour l'agrégation OIDC et la configuration de l'émission des serveurs.",
+        "SCRIPE propose un Centre de Contrôle IAM dédié au sein des Paramètres Système pour l'agrégation OIDC et la configuration de l'émission des serveurs.",
       loginFlowTitle: "Architecture OIDC",
       loginFlowContent:
-        "Lors de la connexion via Azure AD: NEXORA agit en tant que Client. Il redirige l'utilisateur vers Azure, accepte le retour, valide le JWT externe puis émet SON PROPRE JWT interne, déconnectant l'autorisation interne du fournisseur externe.",
+        "Lors de la connexion via Azure AD: SCRIPE agit en tant que Client. Il redirige l'utilisateur vers Azure, accepte le retour, valide le JWT externe puis émet SON PROPRE JWT interne, déconnectant l'autorisation interne du fournisseur externe.",
       scopingTitle: "Partitionnement du Royaume (Locataires)",
       scopingContent:
-        "NEXORA reproduit le concept de Realm de Keycloak via les Partitions de Locataires. Les fournisseurs d'identité et applications OAuth sont formellement liés à leur TenantId. Les SuperAdmins gèrent tous les royaumes via 'Entrer dans le monde du Locataire'.",
+        "SCRIPE reproduit le concept de Realm de Keycloak via les Partitions de Locataires. Les fournisseurs d'identité et applications OAuth sont formellement liés à leur TenantId. Les SuperAdmins gèrent tous les royaumes via 'Entrer dans le monde du Locataire'.",
       scopingTip:
-        "Contrairement aux produits SaaS classiques, NEXORA ne mélange pas les configurations. Si le Locataire A se connecte à son Azure AD corporatif, le Locataire B n'a aucune visibilité sur cette infrastructure.",
+        "Contrairement aux produits SaaS classiques, SCRIPE ne mélange pas les configurations. Si le Locataire A se connecte à son Azure AD corporatif, le Locataire B n'a aucune visibilité sur cette infrastructure.",
     },
     loginCustomizer: {
       title: "Studio de Personnalisation du Login",
       description:
         "Personnalisation visuelle de la page de connexion avec 22 mises en page, jetons de design, contrôles de superposition/flou, thèmes clair/sombre, suite d'accessibilité WCAG AA et aperçu en direct isolé — sans aucun code.",
       intro:
-        "Le Studio de Personnalisation du Login de NEXORA est un puissant éditeur visuel qui permet aux administrateurs de locataires de personnaliser entièrement l'expérience de la page de connexion sans écrire de code. Le studio fournit une interface à panneaux divisés avec des panneaux de configuration à gauche et un aperçu iframe isolé à droite, offrant un retour visuel en temps réel. Le studio comprend 8 onglets de configuration : Apparence, Couleurs, Typographie, Arrière-plan, Superposition, Panneau de Marque, Accessibilité et Avancé. Toutes les modifications sont basées sur des brouillons, nécessitant une publication explicite avant mise en production.",
+        "Le Studio de Personnalisation du Login de SCRIPE est un puissant éditeur visuel qui permet aux administrateurs de locataires de personnaliser entièrement l'expérience de la page de connexion sans écrire de code. Le studio fournit une interface à panneaux divisés avec des panneaux de configuration à gauche et un aperçu iframe isolé à droite, offrant un retour visuel en temps réel. Le studio comprend 8 onglets de configuration : Apparence, Couleurs, Typographie, Arrière-plan, Superposition, Panneau de Marque, Accessibilité et Avancé. Toutes les modifications sont basées sur des brouillons, nécessitant une publication explicite avant mise en production.",
       studioTitle: "Vue d'Ensemble du Studio",
       studioIntro:
         "Le Studio utilise une architecture à panneaux divisés : le panneau gauche contient 8 sections de configuration par onglets (Apparence, Couleurs, Typographie, Arrière-plan, Superposition, Panneau de Marque, Accessibilité, Avancé) tandis que le panneau droit fournit un iframe isolé qui rend la page de connexion avec injection de variables CSS en temps réel via postMessage. Les bascules d'appareils permettent de prévisualiser sur les breakpoints bureau, tablette et mobile.",
@@ -449,7 +449,7 @@ export const fr = {
         "Toutes les modifications du studio fonctionnent en mode brouillon. La page de connexion en production n'est jamais affectée jusqu'à ce que vous cliquiez explicitement sur Publier. Vous pouvez expérimenter en toute sécurité avec n'importe quelle combinaison de paramètres.",
       layoutsTitle: "22 Mises en Page de Connexion",
       layoutsIntro:
-        "NEXORA est livré avec 22 mises en page de connexion prêtes pour la production, organisées en quatre niveaux : les mises en page T1 divisées (6) comportent un panneau de marque dédié à côté du formulaire, les mises en page T2 pleine page (8) utilisent tout le viewport pour des expériences immersives, les mises en page T3 centrées (4) offrent des designs compacts en cartes, et les mises en page T4 spéciales (4) proposent des traitements cinématographiques et artistiques. Chaque mise en page prend en charge des contrôles indépendants d'arrière-plan, de superposition et d'accessibilité.",
+        "SCRIPE est livré avec 22 mises en page de connexion prêtes pour la production, organisées en quatre niveaux : les mises en page T1 divisées (6) comportent un panneau de marque dédié à côté du formulaire, les mises en page T2 pleine page (8) utilisent tout le viewport pour des expériences immersives, les mises en page T3 centrées (4) offrent des designs compacts en cartes, et les mises en page T4 spéciales (4) proposent des traitements cinématographiques et artistiques. Chaque mise en page prend en charge des contrôles indépendants d'arrière-plan, de superposition et d'accessibilité.",
       layoutsNote:
         "Les mises en page divisées affichent le composant LoginBranding avec des contrôles indépendants de superposition/flou sur le panneau de marque. Les mises en page pleine page appliquent l'arrière-plan et la superposition à l'ensemble du conteneur. Les mises en page centrées et spéciales ont chacune leurs propres stratégies de rendu. Le changement de mise en page préserve toute la configuration — seule la structure de rendu change.",
       tokensTitle: "Pipeline de Jetons de Design",
@@ -473,10 +473,10 @@ export const fr = {
         "La concurrence optimiste empêche la perte de données lors de l'édition simultanée. Si un autre administrateur publie pendant votre édition, votre publication sera rejetée (409), et vous devrez rafraîchir et fusionner vos modifications.",
       safeModeTitle: "Mode Sécurisé",
       safeModeIntro:
-        "Le Mode Sécurisé est un mécanisme de secours d'urgence qui contourne toute la personnalisation de marque du locataire et restaure les paramètres par défaut de la plateforme pour la page de connexion. Lorsque IsSafeMode est défini sur true dans TenantSettings, la page de connexion s'affiche avec le thème NEXORA par défaut quelle que soit la personnalisation. Cela garantit une expérience de connexion fonctionnelle même si la configuration de marque est corrompue.",
+        "Le Mode Sécurisé est un mécanisme de secours d'urgence qui contourne toute la personnalisation de marque du locataire et restaure les paramètres par défaut de la plateforme pour la page de connexion. Lorsque IsSafeMode est défini sur true dans TenantSettings, la page de connexion s'affiche avec le thème SCRIPE par défaut quelle que soit la personnalisation. Cela garantit une expérience de connexion fonctionnelle même si la configuration de marque est corrompue.",
       accessTitle: "Contrôle d'Accès",
       accessIntro:
-        "La personnalisation du login suit le modèle de contrôle d'accès basé sur les rôles de NEXORA. L'ouverture du Studio de Personnalisation nécessite la permission branding.manage. Les Administrateurs Système et les Administrateurs de Locataires avec la permission appropriée peuvent éditer et publier. Les administrateurs réguliers ne peuvent basculer que les préférences personnelles comme le mode clair/sombre. L'activation du mode sécurisé est réservée aux Administrateurs Système uniquement.",
+        "La personnalisation du login suit le modèle de contrôle d'accès basé sur les rôles de SCRIPE. L'ouverture du Studio de Personnalisation nécessite la permission branding.manage. Les Administrateurs Système et les Administrateurs de Locataires avec la permission appropriée peuvent éditer et publier. Les administrateurs réguliers ne peuvent basculer que les préférences personnelles comme le mode clair/sombre. L'activation du mode sécurisé est réservée aux Administrateurs Système uniquement.",
       a11yTitle: "Suite d'Accessibilité (WCAG AA)",
       a11yIntro:
         "L'onglet Accessibilité fournit une suite complète de 32 paramètres répartis en 8 catégories, conçue pour rendre la page de connexion entièrement conforme WCAG AA. Tous les paramètres sont stockés dans l'entité StudioDraft et injectés dans la page en direct via le pipeline de jetons CSS. La suite comprend une validation en temps réel, des profils en un clic et un moteur d'audit WCAG automatisé.",
@@ -526,7 +526,7 @@ export const fr = {
         "Le LoginPreviewShell affiche les fonctionnalités d'accessibilité en temps réel : les superpositions de guide de lecture/masque se rendent visuellement dans l'iframe de prévisualisation, et un badge d'accessibilité affiche le nombre de fonctionnalités actives. L'aperçu est totalement isolé du système d'authentification.",
       archTitle: "Architecture du Module",
       archIntro:
-        "Le Personnalisateur de Login suit l'architecture modulaire propre standard de NEXORA avec les couches domaine, données et présentation. La couche présentation contient le composant StylePanel (UI de configuration), LoginPreviewShell (gestion de l'iframe), le AccessibilityPanel (paramètres et profils WCAG) et le hook useLoginBrandingTokens (pipeline token-vers-CSS). Les composants sont extraits au niveau du module pour prévenir les problèmes de perte de focus lors des re-rendus React.",
+        "Le Personnalisateur de Login suit l'architecture modulaire propre standard de SCRIPE avec les couches domaine, données et présentation. La couche présentation contient le composant StylePanel (UI de configuration), LoginPreviewShell (gestion de l'iframe), le AccessibilityPanel (paramètres et profils WCAG) et le hook useLoginBrandingTokens (pipeline token-vers-CSS). Les composants sont extraits au niveau du module pour prévenir les problèmes de perte de focus lors des re-rendus React.",
       archTip:
         "Les composants BgControls et PresetDots sont intentionnellement définis au niveau du module (pas en ligne) pour empêcher React de démonter/remonter les champs de saisie lors des re-rendus, ce qui causerait une perte de focus à chaque frappe.",
       relatedTitle: "Related Features",
@@ -544,7 +544,7 @@ export const fr = {
       description:
         "Préférences admin synchronisées avec le serveur via un moteur de fusion 4 couches, 61 paramètres configurables, prévention FOUC, résolution de conflits 409 et contrôle de fonctionnalités basé sur les éditions.",
       intro:
-        "Le Constructeur de Tableau de Bord est le système de préférences d'administration de niveau entreprise de NEXORA. Il synchronise 61 paramètres de tableau de bord configurables entre le navigateur et le serveur, utilisant un moteur de fusion à 4 couches (Plateforme → Locataire → Admin → Exécution) pour la résolution des paramètres avec contrôle de remplacement basé sur le locataire, persistance inter-appareils via AdminSettingsJson et 5 protections contre les cas limites.",
+        "Le Constructeur de Tableau de Bord est le système de préférences d'administration de niveau entreprise de SCRIPE. Il synchronise 61 paramètres de tableau de bord configurables entre le navigateur et le serveur, utilisant un moteur de fusion à 4 couches (Plateforme → Locataire → Admin → Exécution) pour la résolution des paramètres avec contrôle de remplacement basé sur le locataire, persistance inter-appareils via AdminSettingsJson et 5 protections contre les cas limites.",
       overviewTitle: "Vue d'Ensemble du Système",
       overviewIntro:
         "Le Constructeur de Tableau de Bord fournit un cycle de vie complet pour les préférences d'administration — du rendu immédiat depuis le cache à la réconciliation en arrière-plan avec le serveur.",
@@ -574,7 +574,7 @@ export const fr = {
         "Le Constructeur de Tableau de Bord implémente une sécurité de défense en profondeur pour prévenir les fuites de données entre administrateurs et les dépassements de charge utile.",
       archTitle: "Architecture et Cartographie des Fichiers",
       archIntro:
-        "Le Constructeur de Tableau de Bord est implémenté en 7 fichiers dans la couche Core, suivant le modèle d'architecture basé sur les fournisseurs de NEXORA.",
+        "Le Constructeur de Tableau de Bord est implémenté en 7 fichiers dans la couche Core, suivant le modèle d'architecture basé sur les fournisseurs de SCRIPE.",
       archTip:
         "Pour ajouter un nouveau paramètre, étendez l'interface Settings et defaultSettings dans settings-provider.tsx.",
     },
@@ -583,7 +583,7 @@ export const fr = {
       description:
         "40 premium branding packages, 7 categories, 5 pricing tiers, per-page overrides, copy-on-apply snapshot semantics, and a full clean-architecture data layer — all seeded and ready to browse.",
       intro:
-        "The Theme Marketplace is NEXORA's curated catalog of 40 production-ready branding packages. Each theme is a comprehensive visual identity — not just a color swap — containing 50+ design tokens spanning colors, typography, spacing, overlay, dark mode, branding panel, and per-page overrides for Login, Forgot Password, and Reset Password pages. Themes are stored as structured JSON in the LoginTheme entity, browsable via a full-page gallery with rich filtering, and applied to tenant settings with copy-on-apply snapshot semantics that permanently isolate applied configurations from future marketplace updates.",
+        "The Theme Marketplace is SCRIPE's curated catalog of 40 production-ready branding packages. Each theme is a comprehensive visual identity — not just a color swap — containing 50+ design tokens spanning colors, typography, spacing, overlay, dark mode, branding panel, and per-page overrides for Login, Forgot Password, and Reset Password pages. Themes are stored as structured JSON in the LoginTheme entity, browsable via a full-page gallery with rich filtering, and applied to tenant settings with copy-on-apply snapshot semantics that permanently isolate applied configurations from future marketplace updates.",
       archTitle: "Marketplace Architecture",
       archIntro:
         "The Theme Marketplace follows a pipeline architecture: backend seeder populates the LoginTheme table with 40 records → API exposes paginated list, detail, and apply endpoints → frontend gallery renders themes with advanced filtering → apply action snapshots the ThemeDataJson into tenant's DraftBrandingJson → publish propagates to LiveBrandingJson. Each layer is fully decoupled.",
@@ -592,7 +592,7 @@ export const fr = {
         "1. LoginThemeSeeder.cs seeds 40 themes at application startup (upsert-safe). 2. ThemesController exposes GET /themes (list), GET /themes/{id} (detail), POST /themes/{id}/apply (apply). 3. Frontend ThemeMarketplaceService calls the API via IApiService. 4. ThemeMarketplaceMapper converts DTOs to domain entities. 5. ThemeMarketplaceRepository orchestrates services + mappers. 6. useThemeMarketplace hook provides ViewModel state. 7. ThemeGalleryView renders the marketplace UI.",
       archLayersTitle: "Clean Architecture Layers",
       archLayersIntro:
-        "The marketplace follows NEXORA's standard 3-layer module structure: Domain layer (ThemeDetail entity, IThemeMarketplaceRepository, IThemeMarketplaceService interfaces), Data layer (ThemeMarketplaceService, ThemeMarketplaceRepository, ThemeMarketplaceMapper, ThemeMarketplaceTypes models), and Presentation layer (ThemeGalleryView, ThemeManagementView, ThemeDetailModal, ThemeCard, useThemeMarketplace hook).",
+        "The marketplace follows SCRIPE's standard 3-layer module structure: Domain layer (ThemeDetail entity, IThemeMarketplaceRepository, IThemeMarketplaceService interfaces), Data layer (ThemeMarketplaceService, ThemeMarketplaceRepository, ThemeMarketplaceMapper, ThemeMarketplaceTypes models), and Presentation layer (ThemeGalleryView, ThemeManagementView, ThemeDetailModal, ThemeCard, useThemeMarketplace hook).",
       entityTitle: "LoginTheme Entity",
       entityIntro:
         "Each marketplace theme is stored as a LoginTheme entity in the Identity module's database. The entity extends AuditableEntity, providing soft-delete, audit trail, and optimistic concurrency. The core data is stored in ThemeDataJson — a JSON column containing the full design specification.",
@@ -618,7 +618,7 @@ export const fr = {
         "Tags — Optional comma-separated tags for search (e.g., 'gradient, glass, modern, dark').",
       entityFieldVersion:
         "Version — Semantic version string (e.g., '1.0.0'). Incremented when the theme design is updated.",
-      entityFieldAuthor: "Author — Creator identifier (e.g., 'NEXORA Design Team').",
+      entityFieldAuthor: "Author — Creator identifier (e.g., 'SCRIPE Design Team').",
       entityFieldLikes:
         "LikesCount — Engagement counter. Tracks how many tenants have favorited this theme.",
       entityFieldApplied:
@@ -664,13 +664,13 @@ export const fr = {
         "Each auth page can have its own layout, headline, subtitle, and overlay without affecting the other pages. The Login page might use a full-image corporate layout while Forgot Password uses a clean centered card — all within the same theme.",
       catalogTitle: "40-Theme Catalog Overview",
       catalogIntro:
-        "NEXORA ships with 40 meticulously designed branding packages. Each theme is a unique visual identity crafted for a specific market segment or brand aesthetic. Themes span 7 categories, use 30+ different Google Fonts, cover all 22 layouts, and include per-page branding overrides for Login, Forgot Password, and Reset Password.",
+        "SCRIPE ships with 40 meticulously designed branding packages. Each theme is a unique visual identity crafted for a specific market segment or brand aesthetic. Themes span 7 categories, use 30+ different Google Fonts, cover all 22 layouts, and include per-page branding overrides for Login, Forgot Password, and Reset Password.",
       catalogDiversityTitle: "Design Diversity Matrix",
       catalogDiversityIntro:
         "The 40-theme catalog achieves maximum diversity across multiple axes: each theme uses a unique Google Font pairing, no two themes share the same color palette, all 7 categories are represented, and the layout distribution covers T1 Split (16), T2 Full-Page (12), T3 Centered (6), and T4 Special (6). This ensures every tenant can find a theme that matches their brand identity.",
       tierTitle: "5-Tier Pricing Model",
       tierIntro:
-        "Themes are organized into 5 pricing tiers that align with NEXORA's edition system. Each tier provides increasing design sophistication and customization depth. Tier enforcement is handled by the theme marketplace frontend — themes from higher tiers display an 'Upgrade Required' badge and disable the Apply button for tenants on lower editions.",
+        "Themes are organized into 5 pricing tiers that align with SCRIPE's edition system. Each tier provides increasing design sophistication and customization depth. Tier enforcement is handled by the theme marketplace frontend — themes from higher tiers display an 'Upgrade Required' badge and disable the Apply button for tenants on lower editions.",
       tierFreeTitle: "Free Tier (8 Themes)",
       tierFreeIntro:
         "Essential branding packages available to all tenants regardless of edition. Clean, professional designs suitable for quick deployment. Includes Starter themes across corporate, minimal, and creative categories.",
@@ -705,7 +705,7 @@ export const fr = {
         "Nature — Organic, earth-inspired identity. Forest greens, terracotta, ocean blues, botanical accents, rounded shapes, warm serif typography. Designed for sustainability, wellness, organic brands.",
       componentsTitle: "Frontend Component Inventory",
       componentsIntro:
-        "The Theme Marketplace frontend consists of 8 purpose-built components spanning 3 pages and 1 modal. Each component follows NEXORA's presentation-layer patterns using domain entities (never DTOs) and consuming data exclusively through the DI container.",
+        "The Theme Marketplace frontend consists of 8 purpose-built components spanning 3 pages and 1 modal. Each component follows SCRIPE's presentation-layer patterns using domain entities (never DTOs) and consuming data exclusively through the DI container.",
       compGalleryView:
         "ThemeGalleryView (26KB) — Full-page marketplace with animated hero section, category filter chips, search bar, grid/list view toggle, tier filter tabs, sort controls (popular/newest/name), infinite scroll pagination, and a responsive 3-column grid of ThemeCard components.",
       compManagementView:
@@ -738,7 +738,7 @@ export const fr = {
         "The seeder queries all existing theme names before processing. For each of the 40 themes, it checks the existing set — if the name exists, the theme is skipped. New themes are added to the DbContext in a single batch and saved with one SaveChangesAsync call. This makes the seeder safe to run repeatedly without duplicating themes or losing manual edits.",
       governanceTitle: "Marketplace Governance",
       governanceIntro:
-        "Theme access is controlled by a combination of edition-based tier enforcement and permission-based administrative access. The marketplace respects NEXORA's multi-tenancy model — themes are globally visible but apply operations are scoped to the current tenant.",
+        "Theme access is controlled by a combination of edition-based tier enforcement and permission-based administrative access. The marketplace respects SCRIPE's multi-tenancy model — themes are globally visible but apply operations are scoped to the current tenant.",
       governanceEditionTitle: "Edition-Based Tier Enforcement",
       governanceEditionIntro:
         "Each theme's Tier field maps to an edition level. The frontend gallery marks themes above the tenant's edition with an 'Upgrade Required' badge and disables the Apply button. The backend apply endpoint verifies the tenant's active subscription against the theme's tier before allowing application.",
@@ -778,10 +778,10 @@ export const fr = {
       description:
         "Independent visual customization for Login, Forgot Password, and Reset Password pages — shared design tokens with per-page overrides, isolated preview, and theme integration.",
       intro:
-        "Multi-Page Branding extends NEXORA's Login Customizer Studio to support independent visual configurations for all three authentication pages: Login, Forgot Password, and Reset Password. Instead of forcing a single visual identity across all auth flows, Multi-Page Branding allows tenants to present context-appropriate messaging, layouts, and visual treatments for each page. A shared global design provides consistency, while per-page overrides enable targeted differentiation — all managed through the same zero-code studio interface.",
+        "Multi-Page Branding extends SCRIPE's Login Customizer Studio to support independent visual configurations for all three authentication pages: Login, Forgot Password, and Reset Password. Instead of forcing a single visual identity across all auth flows, Multi-Page Branding allows tenants to present context-appropriate messaging, layouts, and visual treatments for each page. A shared global design provides consistency, while per-page overrides enable targeted differentiation — all managed through the same zero-code studio interface.",
       pagesTitle: "Supported Authentication Pages",
       pagesIntro:
-        "NEXORA's authentication system exposes three distinct pages, each serving a different user intent. Multi-Page Branding allows independent customization of all three while maintaining visual consistency through shared design tokens.",
+        "SCRIPE's authentication system exposes three distinct pages, each serving a different user intent. Multi-Page Branding allows independent customization of all three while maintaining visual consistency through shared design tokens.",
       pageLogin:
         "Login Page — The primary authentication entry point. Users enter their credentials (email + password) to access the platform. This page receives the most visual attention as it creates the first impression of the tenant's brand.",
       pageForgot:
@@ -859,7 +859,7 @@ export const fr = {
       description:
         "No-code drag-and-drop visual canvas with 3 design modes (Freeform, Grid, Builder), 14 component types, a 12-column responsive grid system, real-time preview sync, and JSON serialization.",
       intro:
-        "The Login Page Builder is NEXORA's most advanced customization tool — a fully visual, drag-and-drop canvas that allows tenant administrators to build custom login page layouts without writing any code. The builder provides 3 design modes (Freeform, Grid, and Builder), a palette of 14 pre-built component types (from logos and headings to social login buttons and footer links), a responsive 12-column CSS grid system, real-time two-way sync with the preview iframe, and full JSON serialization for persistence. The builder integrates seamlessly with the Login Customizer Studio's design token pipeline, ensuring that builder-created layouts inherit all theme colors, typography, and accessibility settings.",
+        "The Login Page Builder is SCRIPE's most advanced customization tool — a fully visual, drag-and-drop canvas that allows tenant administrators to build custom login page layouts without writing any code. The builder provides 3 design modes (Freeform, Grid, and Builder), a palette of 14 pre-built component types (from logos and headings to social login buttons and footer links), a responsive 12-column CSS grid system, real-time two-way sync with the preview iframe, and full JSON serialization for persistence. The builder integrates seamlessly with the Login Customizer Studio's design token pipeline, ensuring that builder-created layouts inherit all theme colors, typography, and accessibility settings.",
       modesTitle: "3 Canvas Modes",
       modesIntro:
         "The builder offers three distinct canvas modes, each providing a different level of control over layout positioning. Users can switch between modes at any time — components are preserved during mode switches.",
@@ -997,7 +997,7 @@ export const fr = {
         "Login Bundle — Contains only login branding (theme tokens + builder layout). Dashboard Bundle — Contains only dashboard settings. Complete Bundle — Contains everything: login branding, builder layout, per-page overrides, dashboard settings, and accessibility configuration. Complete bundles provide one-click full-workspace setup.",
       archTitle: "Module Architecture",
       archIntro:
-        "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
+        "The Login Page Builder follows SCRIPE's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip:
         "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties.",
     },
@@ -1006,7 +1006,7 @@ export const fr = {
       description:
         "Tableau de bord modulaire à onglets avec sous-modules séparés par domaine (Audit, Sécurité, Analytique), architecture propre en 6 couches par module, interfaces conformes au ISP, chargement différé et visibilité des onglets contrôlée par les permissions.",
       intro:
-        "Le Hub du Tableau de Bord est le centre de commande opérationnel principal de NEXORA — une interface à onglets qui agrège quatre vues spécifiques au domaine (Vue d'ensemble, Audit, Sécurité, Analytique) dans un hub unifié. Chaque module de domaine suit une architecture propre stricte en 6 couches (Modèles → Entités → Interfaces → Services → Dépôts → Mappeurs) avec un enregistrement DI dédié. Les sous-vues sont chargées de manière différée via React.lazy et protégées par les permissions.",
+        "Le Hub du Tableau de Bord est le centre de commande opérationnel principal de SCRIPE — une interface à onglets qui agrège quatre vues spécifiques au domaine (Vue d'ensemble, Audit, Sécurité, Analytique) dans un hub unifié. Chaque module de domaine suit une architecture propre stricte en 6 couches (Modèles → Entités → Interfaces → Services → Dépôts → Mappeurs) avec un enregistrement DI dédié. Les sous-vues sont chargées de manière différée via React.lazy et protégées par les permissions.",
       archTitle: "Architecture Hub-and-Spoke",
       archIntro:
         "Le Hub du Tableau de Bord utilise un modèle Hub-and-Spoke où la DashboardView principale sert de hub central affichant une barre d'onglets, et chaque onglet charge de manière différée une vue indépendante spécifique au domaine (spoke). L'onglet Vue d'ensemble est intégré pour un rendu instantané. Les onglets Audit, Sécurité et Analytique sont chargés à la demande via React.lazy avec des fallbacks Suspense.",
@@ -1019,7 +1019,7 @@ export const fr = {
         "Des alias de type rétrocompatibles sont maintenus dans DashboardEntities.ts pour les composants hérités. Ces alias sont marqués @deprecated pour guider le nettoyage futur.",
       layersTitle: "Architecture Propre en 6 Couches",
       layersIntro:
-        "Chaque module extrait (Audit, Sécurité, Analytique) implémente la pile complète d'architecture propre du frontend NEXORA. Les 6 couches assurent une séparation stricte des responsabilités : les Modèles contiennent les formes de réponse API brutes, les Entités sont des objets de domaine riches avec des propriétés calculées, les Interfaces définissent les contrats, les Services gèrent les appels HTTP via IApiService, les Dépôts orchestrent les services et les mappeurs pour retourner des entités de domaine, et les Mappeurs effectuent la conversion DTO-vers-entité avec coalescence de null.",
+        "Chaque module extrait (Audit, Sécurité, Analytique) implémente la pile complète d'architecture propre du frontend SCRIPE. Les 6 couches assurent une séparation stricte des responsabilités : les Modèles contiennent les formes de réponse API brutes, les Entités sont des objets de domaine riches avec des propriétés calculées, les Interfaces définissent les contrats, les Services gèrent les appels HTTP via IApiService, les Dépôts orchestrent les services et les mappeurs pour retourner des entités de domaine, et les Mappeurs effectuent la conversion DTO-vers-entité avec coalescence de null.",
       diTitle: "Câblage du Conteneur DI",
       diIntro:
         "Les trois nouveaux modules sont enregistrés dans le SystemContainer (modules/system/di.ts). Chaque module suit le modèle : Service (reçoit IApiService) → Dépôt (reçoit Service) → Déclaration d'interface SystemContainer → Export de getter lazy. Les ViewModels consomment les dépôts exclusivement à travers le conteneur DI.",

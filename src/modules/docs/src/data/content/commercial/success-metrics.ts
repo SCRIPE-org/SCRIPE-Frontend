@@ -267,9 +267,9 @@ registerPage({
   slug: "commercial/success-metrics",
   titleKey: "commercial.successMetrics.title",
   descriptionKey: "commercial.successMetrics.description",
-  category: "commercial-why-nexora",
+  category: "commercial-why-scripe",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/why-nexora-overview", "commercial/performance-benchmarks"],
+  relatedSlugs: ["commercial/why-scripe-overview", "commercial/performance-benchmarks"],
   lastUpdated: "2026-02-20",
 });

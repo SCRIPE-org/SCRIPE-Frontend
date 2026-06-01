@@ -9,7 +9,7 @@ export const de = {
       description:
         "Editionsbasiertes Feature-Gating mit Funktionen, Editionen, Abonnements und mandantenspezifischen Überschreibungen.",
       intro:
-        "Das Berechtigungsmodul (Entitlements) ist NEXORAs Engine zur Verwaltung von Plänen und Funktionen. Es definiert, welche Fähigkeiten jeder Mandant (Tenant) erhält, wie Pläne (Editionen) diese Fähigkeiten bündeln und wie Abonnements Mandanten mit Plänen verknüpfen.",
+        "Das Berechtigungsmodul (Entitlements) ist SCRIPEs Engine zur Verwaltung von Plänen und Funktionen. Es definiert, welche Fähigkeiten jeder Mandant (Tenant) erhält, wie Pläne (Editionen) diese Fähigkeiten bündeln und wie Abonnements Mandanten mit Plänen verknüpfen.",
       whatIsTitle: "Was sind Berechtigungen (Entitlements)?",
       whatIsIntro:
         "Berechtigungen ist das Modul, das steuert, auf welche Funktionen ein Mandant basierend auf seiner abonnierten Edition (Plan) zugreifen kann. Es bietet eine dreistufige Auflösungskette: Funktionsstandards → Editions-Werte → Mandantenspezifische Überschreibungen, um maximale Flexibilität für Plattformbetreiber und Reseller-Mandanten zu gewährleisten.",
@@ -23,12 +23,12 @@ export const de = {
         "Wenn das System einen Funktionswert für einen Mandanten ermitteln muss, folgt es einer strikten Prioritätskette. Die Quelle mit der höchsten Priorität, die einen Wert liefert, gewinnt.",
       pipelineTitle: "Pipeline-Integration",
       pipelineIntro:
-        "NEXORA integriert Berechtigungen über das FeatureCheckBehavior direkt in die NEXORA mediator-CQRS-Pipeline. Befehle und Abfragen, die IRequireFeature implementieren, werden automatisch überwacht — ist der ermittelte Funktionswert des Mandanten deaktiviert, wird die Anfrage abgelehnt, bevor sie den Handler erreicht.",
+        "SCRIPE integriert Berechtigungen über das FeatureCheckBehavior direkt in die SCRIPE mediator-CQRS-Pipeline. Befehle und Abfragen, die IRequireFeature implementieren, werden automatisch überwacht — ist der ermittelte Funktionswert des Mandanten deaktiviert, wird die Anfrage abgelehnt, bevor sie den Handler erreicht.",
       pipelineTip:
         "Um einen Befehl hinter einer Funktion zu verbergen, implementieren Sie einfach IRequireFeature und setzen Sie RequiredFeatureName auf den stabilen Systemschlüssel der Funktion (z. B. 'Chat.Enabled'). Es ist kein zusätzlicher Code erforderlich.",
       backendTitle: "Backend-Struktur",
       backendIntro:
-        "Das Berechtigungs-Backend folgt NEXORAs standardmäßigem Clean-Architecture-Modullayout mit Domain-, Application- und Infrastructure-Schichten.",
+        "Das Berechtigungs-Backend folgt SCRIPEs standardmäßigem Clean-Architecture-Modullayout mit Domain-, Application- und Infrastructure-Schichten.",
       frontendTitle: "Frontend-Struktur",
       frontendIntro:
         "Das Frontend spiegelt das Backend mit vier Untermodulen (Editionen, Funktionen, Abonnements, Überschreibungen) wider, die alle dem SOLID View/ViewModel-Muster folgen.",
@@ -37,7 +37,7 @@ export const de = {
         "Das Berechtigungsmodul stellt 31 API-Endpunkte über 4 Controller bereit, die alle mit JWT authentifiziert und durch berechtigungsbasierte Autorisierung geschützt sind.",
       noOpTitle: "NoOp-Fallback",
       noOpIntro:
-        "Wenn das Berechtigungsmodul nicht geladen ist (z. B. in einem Microservice, der keine Entitlements enthält), registriert NEXORA einen NoOpFeatureCache. Dadurch können IRequireFeature-Befehle fehlerfrei passieren — alle Funktionen werden standardmäßig als aktiviert behandelt.",
+        "Wenn das Berechtigungsmodul nicht geladen ist (z. B. in einem Microservice, der keine Entitlements enthält), registriert SCRIPE einen NoOpFeatureCache. Dadurch können IRequireFeature-Befehle fehlerfrei passieren — alle Funktionen werden standardmäßig als aktiviert behandelt.",
       noOpNote:
         "Das NoOp-Fallback stellt sicher, dass Module IRequireFeature ohne eine feste Abhängigkeit vom Berechtigungsmodul verwenden können. Im produktiven Monolith-Modus ist der echte FeatureCache immer verfügbar.",
       contextAwareTitle: "Kontextbezogene Bereichseinstellung",
@@ -47,10 +47,10 @@ export const de = {
         "Die Auflösungskette wird Lazy evaluiert — Werte werden nach der ersten Auflösung zwischengespeichert und invalidiert, wenn sich Abonnements, Editionen oder Überschreibungen ändern.",
       cqrsMapTitle: "CQRS Command & Query Map",
       cqrsMapIntro:
-        "Das Berechtigungsmodul registriert 31 NEXORA mediator-Handler, die sich über die vier Domänen erstrecken. Jeder Befehl hat einen entsprechenden FluentValidation-Validator zur Eingabeüberprüfung.",
+        "Das Berechtigungsmodul registriert 31 SCRIPE mediator-Handler, die sich über die vier Domänen erstrecken. Jeder Befehl hat einen entsprechenden FluentValidation-Validator zur Eingabeüberprüfung.",
       diTitle: "Dependency Injection Registrierung",
       diIntro:
-        "Alle Berechtigungsdienste werden über die Erweiterungsmethode AddEntitlementsModule in DependencyInjection.cs registriert. Das Modul folgt NEXORAs Standard-Registrierungsmuster.",
+        "Alle Berechtigungsdienste werden über die Erweiterungsmethode AddEntitlementsModule in DependencyInjection.cs registriert. Das Modul folgt SCRIPEs Standard-Registrierungsmuster.",
       comparisonTitle: "Mit vs. Ohne Berechtigungen",
       comparisonIntro:
         "Die folgende Tabelle zeigt die unterschiedlichen Fähigkeiten, wenn das Berechtigungsmodul aktiviert ist, im Vergleich zum Betrieb ohne dieses Modul:",
@@ -81,7 +81,7 @@ export const de = {
         "Beim Veröffentlichen einer Editionsversion wählen Administratoren aus, wie die Änderungen für abonnierte Mandanten bereitgestellt werden:",
       workflowTitle: "Jetzt anwenden vs. Als Version speichern",
       workflowIntro:
-        "NEXORA bietet zwei Möglichkeiten, Editionsfunktionen zu aktualisieren, die jeweils für unterschiedliche Szenarien geeignet sind:",
+        "SCRIPE bietet zwei Möglichkeiten, Editionsfunktionen zu aktualisieren, die jeweils für unterschiedliche Szenarien geeignet sind:",
       workflowTip:
         "Verwenden Sie 'Jetzt anwenden' für dringende Fehlerbehebungen und kleine Änderungen. Verwenden Sie 'Als Version speichern' für größere Planaktualisierungen, die einen gestaffelten Rollout und einen Audit-Trail benötigen.",
       endpointsTitle: "API-Endpunkte",
@@ -92,7 +92,7 @@ export const de = {
         "Wenn ein Systemadministrator in einen Mandanten absteigt (Drill-Down), wird die Editionsliste automatisch auf die für diesen Mandanten sichtbaren Editionen beschränkt. Das Backend verwendet den X-Tenant-Context-Header zur Filterung: Systemeditionen + Retail-Editionen, die vom ausgewählten Mandanten erstellt wurden. Das Frontend blendet CRUD-Aktionen im Drill-Down-Modus aus.",
       scopingTitle: "System- vs. Retail-Editionen",
       scopingIntro:
-        "NEXORA unterstützt zwei Arten von Editionen: Systemeditionen, die von Plattformadministratoren erstellt werden und für alle Mandanten sichtbar sind, und Retail-Editionen, die von Reseller-Mandanten nur für deren Unter-Mandanten erstellt werden.",
+        "SCRIPE unterstützt zwei Arten von Editionen: Systemeditionen, die von Plattformadministratoren erstellt werden und für alle Mandanten sichtbar sind, und Retail-Editionen, die von Reseller-Mandanten nur für deren Unter-Mandanten erstellt werden.",
       scopingNote:
         "Mandanten-Administratoren sehen nur Systemeditionen sowie ihre eigenen Retail-Editionen. Dies stellt die Editions-Isolation zwischen Reseller-Mandanten sicher.",
       featuresTip:
@@ -232,7 +232,7 @@ export const de = {
         "Verwenden Sie für numerische Funktionen -1, um 'unbegrenzt' darzustellen. Das FeatureCheckBehavior erkennt -1 als Spezialwert und blockiert niemals Anfragen für Funktionen mit einem unbegrenzten Kontingent.",
       systemVsCustomTitle: "System- vs. Benutzerdefinierte Funktionen",
       systemVsCustomIntro:
-        "NEXORA unterscheidet zwischen Systemfunktionen (beim Start geseeded, schreibgeschützt) und benutzerdefinierten Funktionen (von Administratoren via API erstellt):",
+        "SCRIPE unterscheidet zwischen Systemfunktionen (beim Start geseeded, schreibgeschützt) und benutzerdefinierten Funktionen (von Administratoren via API erstellt):",
       cacheTitle: "Feature-Cache",
       cacheIntro:
         "Aufgelöste Funktionswerte werden im IFeatureCache zwischengespeichert, um Datenbankabfragen bei jeder Anfrage zu vermeiden. Der Cache wird invalidiert, wenn sich die Funktionen einer Edition ändern, ein Abonnement geändert wird oder eine Überschreibung festgelegt/entfernt wird. In Microservice-Deployments ohne das Berechtigungsmodul behandelt ein NoOpFeatureCache alle Funktionen als aktiviert.",
@@ -332,7 +332,7 @@ export const de = {
         description:
           "GDPR, CCPA und PDPA Compliance-Automatisierung — Richtlinien, DSR-Verarbeitung, Einwilligungsmanagement, Datenaufbewahrung, Inventar und Berichtserstellung.",
         intro:
-          "Das Compliance-Modul ist die integrierte Regulierungs-Engine von NEXORA. Es hilft Betreibern und deren Mandanten, Datenschutzgesetze (GDPR, CCPA, PDPA) durch automatisierte Werkzeuge einzuhalten.",
+          "Das Compliance-Modul ist die integrierte Regulierungs-Engine von SCRIPE. Es hilft Betreibern und deren Mandanten, Datenschutzgesetze (GDPR, CCPA, PDPA) durch automatisierte Werkzeuge einzuhalten.",
         infoTitle: "Compliance-Hinweis",
         infoContent:
           "Das Modul ist entscheidend für die Einhaltung gesetzlicher Vorschriften und die Vermeidung von Strafen. Stellen Sie sicher, dass alle Funktionen korrekt den Datenverarbeitungsrichtlinien zugeordnet sind.",
@@ -372,7 +372,7 @@ export const de = {
         sub6: "Compliance-Berichte — Generiert asynchrone, revisionssichere Berichte (GDPR-Übersicht, DSR-Zusammenfassung usw.).",
         backendTitle: "Backend-Architektur",
         backendIntro:
-          "Folgt dem NEXORA-Standardlayout für 3-Projekt-Module (Domain / Application / Infrastructure) mit ComplianceDbContext.",
+          "Folgt dem SCRIPE-Standardlayout für 3-Projekt-Module (Domain / Application / Infrastructure) mit ComplianceDbContext.",
         frontendTitle: "Frontend-Architektur",
         frontendIntro:
           "Organisiert in sechs unabhängigen Submodulen unter src/modules/compliance/, die dem View/ViewModel-Muster folgen.",
@@ -403,7 +403,7 @@ export const de = {
           "Abgelehnt (Rejected) — Die Anfrage wurde abgelehnt (z. B. unzureichende Identitätsprüfung).",
         slasTitle: "GDPR SLA-Anforderungen",
         slasIntro:
-          "Gemäß Artikel 12 DSGVO müssen Verantwortliche innerhalb von 30 Tagen auf DSRs reagieren (auf 3 Monate verlängerbar). NEXORA verfolgt dies.",
+          "Gemäß Artikel 12 DSGVO müssen Verantwortliche innerhalb von 30 Tagen auf DSRs reagieren (auf 3 Monate verlängerbar). SCRIPE verfolgt dies.",
         lifecycleFlowTitle: "DSR-Lebenszyklus-Flow",
         nodeSubmit: "Anfrage einreichen",
         descSubmit: "Betroffener beantragt Export, Löschung oder Berichtigung",
@@ -446,7 +446,7 @@ export const de = {
         description:
           "Einwilligungen aufzeichnen, verfolgen und prüfen für GDPR-Artikel 6 und CCPA.",
         intro:
-          "Das Einwilligungsmanagement protokolliert jedes Mal, wenn ein Benutzer eine Einwilligung erteilt oder widerruft. NEXORA speichert den vollständigen Audit-Trail.",
+          "Das Einwilligungsmanagement protokolliert jedes Mal, wenn ein Benutzer eine Einwilligung erteilt oder widerruft. SCRIPE speichert den vollständigen Audit-Trail.",
         purposesTitle: "Zwecke der Einwilligung",
         purposesIntro: "Jeder Einwilligungsdatensatz ist an einen bestimmten Zweck gebunden:",
         purpose1: "Marketing — E-Mail-Marketing und werbliche Kommunikation.",
@@ -455,7 +455,7 @@ export const de = {
         purpose4: "Personalisierung — Personalisierte Inhalte und Empfehlungen.",
         gdprTitle: "GDPR Rechtsgrundlage",
         gdprIntro:
-          "Gemäß Artikel 6 DSGVO muss die Einwilligung freiwillig, spezifisch, informiert und unmissverständlich sein. NEXORA speichert den exakten Text.",
+          "Gemäß Artikel 6 DSGVO muss die Einwilligung freiwillig, spezifisch, informiert und unmissverständlich sein. SCRIPE speichert den exakten Text.",
         withdrawalTitle: "Widerruf der Einwilligung",
         withdrawalIntro:
           "Benutzer können ihre Einwilligung jederzeit widerrufen. ConsentRecord wird mit WithdrawnAt aktualisiert.",
@@ -486,7 +486,7 @@ export const de = {
         description:
           "Definieren Sie Aufbewahrungsfristen und automatische Ablaufaktionen (Löschen oder Anonymisieren) für DSGVO-Artikel 5(1)(e).",
         intro:
-          "Aufbewahrungsrichtlinien definieren, wie lange Daten aufbewahrt werden müssen. NEXORA setzt diese automatisch durch.",
+          "Aufbewahrungsrichtlinien definieren, wie lange Daten aufbewahrt werden müssen. SCRIPE setzt diese automatisch durch.",
         policiesTitle: "Richtlinienkonfiguration",
         policiesIntro: "Jede Richtlinie legt Folgendes fest:",
         field1: "DataCategory — Datentyp (z. B. 'Benutzerprofile').",
@@ -495,7 +495,7 @@ export const de = {
           "ExpiryAction — Was bei Ablauf geschieht: Delete (Löschen) oder Anonymize (Anonymisieren).",
         field4: "RegulationCode — Welche Verordnung dies erfordert (GDPR, CCPA usw.).",
         actionsTitle: "Ablaufaktionen",
-        actionsIntro: "Bei Ablauf wendet NEXORA eine von zwei Aktionen an:",
+        actionsIntro: "Bei Ablauf wendet SCRIPE eine von zwei Aktionen an:",
         action1: "Delete — Löscht dauerhaft alle passenden Datensätze.",
         action2: "Anonymize — Ersetzt personenbezogene Daten durch pseudonyme Token.",
         automationTitle: "Automatisierte Durchsetzung",
@@ -537,7 +537,7 @@ export const de = {
         field7: "ThirdPartySharing — Ob Daten mit Dritten geteilt werden.",
         ropaTitle: "Artikel 30 Compliance",
         ropaIntro:
-          "Organisationen mit 250+ Mitarbeitern müssen ein RoPA führen. Das Inventar von NEXORA dient als abfragbares RoPA für Inspektionen.",
+          "Organisationen mit 250+ Mitarbeitern müssen ein RoPA führen. Das Inventar von SCRIPE dient als abfragbares RoPA für Inspektionen.",
         endpointsTitle: "API Endpoints",
         ep: {
           list: "Alle Dateninventarelemente auflisten (paginiert)",

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Workspace Hub | NEXORA",
+  title: "Workspace Hub | SCRIPE",
   description: "Select your workspace to continue",
 };
 

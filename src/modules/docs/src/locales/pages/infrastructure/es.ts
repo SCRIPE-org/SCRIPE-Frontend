@@ -9,7 +9,7 @@ export const es = {
       description:
         "Trabajos recurrentes autodescubiertos, independientes del proveedor (Native, Hangfire, Quartz.NET) — 24 trabajos en 4 módulos sin cableado manual.",
       intro:
-        "El sistema de trabajos en segundo plano de NEXORA se basa en un principio: escribir una vez, ejecutar en cualquier proveedor. Cada trabajo implementa IAutoRegisteredJob y se descubre automáticamente al inicio. Cambiar entre Native, Hangfire o Quartz es solo un cambio de configuración en appsettings.json — cero cambios de código.",
+        "El sistema de trabajos en segundo plano de SCRIPE se basa en un principio: escribir una vez, ejecutar en cualquier proveedor. Cada trabajo implementa IAutoRegisteredJob y se descubre automáticamente al inicio. Cambiar entre Native, Hangfire o Quartz es solo un cambio de configuración en appsettings.json — cero cambios de código.",
 
       // Architecture
       architectureTitle: "Visión General de la Arquitectura",
@@ -35,7 +35,7 @@ export const es = {
       conn4: "[ES] on cron tick",
       contractTitle: "El Contrato IAutoRegisteredJob",
       contractIntro:
-        "Cada trabajo recurrente en segundo plano en NEXORA implementa una única interfaz: IAutoRegisteredJob. Ese es todo el contrato — tres propiedades y un método. La interfaz excluye intencionalmente cualquier concepto específico del proveedor (sin atributos de Hangfire, sin anotaciones de Quartz). El trabajo no sabe qué proveedor lo está ejecutando.",
+        "Cada trabajo recurrente en segundo plano en SCRIPE implementa una única interfaz: IAutoRegisteredJob. Ese es todo el contrato — tres propiedades y un método. La interfaz excluye intencionalmente cualquier concepto específico del proveedor (sin atributos de Hangfire, sin anotaciones de Quartz). El trabajo no sabe qué proveedor lo está ejecutando.",
 
       // DI Registration
       diTitle: "Registro DI — El Patrón Crítico de Dos Líneas",
@@ -140,14 +140,14 @@ export const es = {
         "Para horarios específicos del entorno o para deshabilitar el trabajo, agregue una anulación en BackgroundJobs.Jobs utilizando el JobId como clave.",
       newJobStep4Title: "Paso 4 — Compilar y Verificar",
       newJobStep4Desc:
-        "Ejecute nexora build backend. Cero errores significa que el trabajo está listo. El autodescubrimiento maneja todo lo demás — no es necesario ningún registro manual en ningún lugar.",
+        "Ejecute scripe build backend. Cero errores significa que el trabajo está listo. El autodescubrimiento maneja todo lo demás — no es necesario ningún registro manual en ningún lugar.",
 
       // SoftDelete
       softDeleteTitle: "SoftDeleteCleanupJob — Eliminación Automática Ordenada por FK",
       softDeleteIntro:
         "La clase base SoftDeleteCleanupJob<TContext> es la opción más avanzada. Descubre automáticamente todos los tipos de entidades ISoftDeletable en el DbContext, los clasifica topológicamente y los elimina en lotes.",
       softDeleteTip:
-        "El comando CLI 'nexora add-bg-service {Module}' genera el archivo de trabajo y agrega los dos registros DI en un solo paso. Esta es la forma recomendada de agregar un SoftDeleteCleanupJob.",
+        "El comando CLI 'scripe add-bg-service {Module}' genera el archivo de trabajo y agrega los dos registros DI en un solo paso. Esta es la forma recomendada de agregar un SoftDeleteCleanupJob.",
       softDeleteFlowTitle: "Flujo de ejecución de eliminación suave",
       flowCronLabel: "Tick Cron (3:00 AM)",
       flowCronDesc: "Cron predeterminado para tareas de eliminación suave",
@@ -179,7 +179,7 @@ export const es = {
       ruleMust2: "Registre DOS líneas en DI (tipo concreto + delegado de fábrica)",
       ruleMust3: "Use CRON de 5 campos (NO use el formato Quartz de 6 campos)",
       ruleMust4: "Haga ExecuteAsync idempotente",
-      ruleMust5: "Compile después de cada cambio — nexora build backend",
+      ruleMust5: "Compile después de cada cambio — scripe build backend",
       ruleNever1: "Nunca importe namespaces de Hangfire o Quartz en trabajos",
       ruleNever2: "Nunca use [AutomaticRetry] — los reintentos globales se configuran centralmente",
       ruleNever3: "Nunca llame a RecurringJob.AddOrUpdate<T>() en el código del módulo",
@@ -206,7 +206,7 @@ export const es = {
       description:
         "Estrategias de supervivencia de Polly contra fallas transitivas de la red y APIs de terceros caídas.",
       intro:
-        "Garantiza que NEXORA no sufra fallas en cascada y asfixie los servidores esperando llamadas que van a morir.",
+        "Garantiza que SCRIPE no sufra fallas en cascada y asfixie los servidores esperando llamadas que van a morir.",
       architectureTitle: "Arquitectura de Resiliencia",
       retryTitle: "Política de Reintentos",
       circuitBreakerTitle: "Interruptor de Circuito (Circuit Breaker)",
@@ -250,14 +250,14 @@ export const es = {
       description:
         "Generación múltiple para proveer esquemas en PostgreSQL, Oracle, o SQL Server de manera independiente.",
       intro:
-        "Resolución del clásico problema de choques de esquemas y tipos de datos en la sintaxis SQL. La arquitectura NEXORA resuelve esto compilando un ModelSnapshot por motor de manera exclusiva.",
+        "Resolución del clásico problema de choques de esquemas y tipos de datos en la sintaxis SQL. La arquitectura SCRIPE resuelve esto compilando un ModelSnapshot por motor de manera exclusiva.",
       architectureTitle: "Topología Derived DbContext",
       architectureContent:
         "La clase Base no posee el generador principal, heredamos a implementaciones puras aisladas por motor.",
       diTitle: "Inyección de Proveedor a Nivel Binario",
       diContent:
         "Las capas de datos consumen DbContext base, al arrancar el contenedor DI inyecta la versión de PostgreSQL, Oracle, o SQL Server mágicamente en el constructor de la interfaz.",
-      cliTitle: "Generación de Migraciones con NEXORA-CLI",
+      cliTitle: "Generación de Migraciones con SCRIPE-CLI",
       cliContent:
         "Un comando corre scripts hijos en paralelo y compila las 3 versiones de migraciones exactas del ORM con sintaxis del dialecto original.",
       cliWarning:
@@ -275,8 +275,8 @@ export const es = {
       newProviderStep3: "Inyección al InfrastructureDI de la arquitectura principal.",
       newProviderStep4: "Correr la CLI y generar el ModelSnapshot cero.",
     },
-    nexoraCli: {
-      title: "Herramientas NEXORA CLI",
+    scripeCli: {
+      title: "Herramientas SCRIPE CLI",
       description:
         "Productividad inmensa con andamiaje de 66 archivos generados de golpe y conexiones automatizadas al ecosistema.",
       intro:
@@ -288,7 +288,7 @@ export const es = {
         "Crea la partición de microservicio base y las carpetas de negocio en React y .NET en un solo pulso.",
       newFeatureTitle: "Andamiaje de Operaciones (new-feature)",
       newFeatureIntro:
-        "Dispara la lógica CRUD generando las llamadas de Red, la UI, los Controladores, NEXORA mediator, y EF Core Configurations.",
+        "Dispara la lógica CRUD generando las llamadas de Red, la UI, los Controladores, SCRIPE mediator, y EF Core Configurations.",
       destructionTitle: "Herramientas de Reversión",
       destructionIntro:
         "Desandamiaje perfecto. Destruye los archivos y retira los links sin romper las compilaciones.",
@@ -320,19 +320,19 @@ export const es = {
         "Copia una respuesta remota de OpenAPI y la transfiere a modelos completos de Typescript listos para consumirse.",
       configTitle: "Fichero de Configuración CLI",
       configIntro:
-        "Lógica para detectar y encontrar la carpeta raíz del Monorepo basándose en nexora.config.json.",
+        "Lógica para detectar y encontrar la carpeta raíz del Monorepo basándose en scripe.config.json.",
       namingTitle: "Inteligencia de Pluralización de Nombres",
       namingIntro:
         "No importa si pasas el nombre en minúscula, guion o Pascal: lo transforma correctamente.",
       utilityTitle: "Aceleradores de Flujo",
       utilityIntro: "Comandos de arranque npm y dotnet unificados.",
     },
-    nexoraStudio: {
-      title: "NEXORA Studio",
+    scripeStudio: {
+      title: "SCRIPE Studio",
       description:
         "Panel de control visual para desarrolladores con gestión de módulos en tiempo real, generadores de código, controles de servidor de desarrollo y terminal integrado.",
       intro:
-        "NEXORA Studio es un panel visual completo para desarrolladores que proporciona una interfaz web en tiempo real para gestionar módulos, ejecutar generadores de código, controlar servidores de desarrollo, realizar operaciones de base de datos, gestionar contenedores Docker y más — todo desde una sola pestaña del navegador.",
+        "SCRIPE Studio es un panel visual completo para desarrolladores que proporciona una interfaz web en tiempo real para gestionar módulos, ejecutar generadores de código, controlar servidores de desarrollo, realizar operaciones de base de datos, gestionar contenedores Docker y más — todo desde una sola pestaña del navegador.",
       architectureTitle: "Arquitectura del Studio",
       architectureIntro:
         "El Studio consta de dos componentes: el Motor (Express + Socket.io + SQLite en el puerto 4201) maneja solicitudes API, ejecución de comandos y streaming en tiempo real. La UI (Next.js en el puerto 4200) ofrece 19 páginas que cubren todos los aspectos del flujo de trabajo de desarrollo.",
@@ -355,21 +355,21 @@ export const es = {
       featureTerminal:
         "Terminal — Terminal integrado con historial de comandos, renderizado de salida ANSI y streaming via WebSocket.",
       featureConfig:
-        "Editor de Configuración — Ver y editar variables de entorno en .env, appsettings.json y nexora.config.json.",
+        "Editor de Configuración — Ver y editar variables de entorno en .env, appsettings.json y scripe.config.json.",
       featurePackages:
         "Gestor de Paquetes — Agregar, eliminar y actualizar paquetes npm y NuGet para frontend y backend.",
       featureSecurity:
         "Herramientas de Seguridad — Generar secretos JWT/AES, ejecutar auditorías de vulnerabilidades y validar completitud del entorno.",
       cliCommandsTitle: "Comandos CLI del Studio",
       cliCommandsIntro:
-        "El Studio se lanza y gestiona completamente a través de la CLI de NEXORA. El comando nexora studio soporta modo desarrollo (--dev), modo producción, modo solo compilación (studio build), puertos personalizados (--port, --engine-port) y modo headless (--no-browser).",
+        "El Studio se lanza y gestiona completamente a través de la CLI de SCRIPE. El comando scripe studio soporta modo desarrollo (--dev), modo producción, modo solo compilación (studio build), puertos personalizados (--port, --engine-port) y modo headless (--no-browser).",
     },
     healthChecks: {
       title: "Comprobaciones de Salud y Probes K8s",
       description:
         "Endpoints de salud empresariales para probes de liveness, readiness y startup de Kubernetes con 5 comprobaciones individuales.",
       intro:
-        "NEXORA proporciona 5 endpoints de salud empresariales diseñados para la orquestación de Kubernetes, integración con balanceadores de carga y monitoreo operacional. Cada endpoint valida dependencias de infraestructura específicas y devuelve respuestas JSON estructuradas.",
+        "SCRIPE proporciona 5 endpoints de salud empresariales diseñados para la orquestación de Kubernetes, integración con balanceadores de carga y monitoreo operacional. Cada endpoint valida dependencias de infraestructura específicas y devuelve respuestas JSON estructuradas.",
       architectureTitle: "Arquitectura de Endpoints de Salud",
       endpointsTitle: "Endpoints de Salud",
       checksTitle: "Comprobaciones Individuales",
@@ -380,13 +380,13 @@ export const es = {
         "Las verificaciones de salud se registran centralmente en HealthCheckExtensions.cs con etiquetas explícitas y estados de fallo. Las etiquetas determinan qué endpoint incluye cada verificación.",
       k8sTitle: "Configuración de Sondas de Kubernetes",
       k8sIntro:
-        "Los endpoints de salud de NEXORA se corresponden directamente con los tipos de sondas de Kubernetes. La sonda de inicio permite hasta 5 minutos (30 fallos × 10s intervalo) para la migración de base de datos en el primer despliegue.",
+        "Los endpoints de salud de SCRIPE se corresponden directamente con los tipos de sondas de Kubernetes. La sonda de inicio permite hasta 5 minutos (30 fallos × 10s intervalo) para la migración de base de datos en el primer despliegue.",
       dockerTitle: "Verificación de Salud Docker Compose",
       dockerIntro:
         "Para despliegues Docker Compose, configure verificaciones de salud en la definición del servicio. Use /health/live para liveness básico y /health/ready para readiness. Establezca start_period para permitir tiempo para migraciones de base de datos.",
       responseTitle: "Formato de Respuesta",
       responseIntro:
-        "NEXORA soporta dos formatos de respuesta según el endpoint. Los endpoints de sonda públicos devuelven JSON mínimo. Los endpoints autenticados devuelven respuesta detallada con duraciones, etiquetas, datos de carga y detalles de excepciones.",
+        "SCRIPE soporta dos formatos de respuesta según el endpoint. Los endpoints de sonda públicos devuelven JSON mínimo. Los endpoints autenticados devuelven respuesta detallada con duraciones, etiquetas, datos de carga y detalles de excepciones.",
       environmentsTitle: "Guía Específica por Entorno",
       dockerTip:
         "Para despliegues IIS: configure la sonda de salud Application Request Routing (ARR) con /health/ready como URL de verificación. Para Azure App Service: configure la ruta de verificación de salud = /health/ready.",
@@ -396,7 +396,7 @@ export const es = {
       description:
         "Trazado distribuido con OpenTelemetry, métricas Prometheus, logging centralizado con Grafana Loki y reglas de alerta preconfiguradas.",
       intro:
-        "NEXORA implementa un stack de observabilidad completo construido sobre estándares abiertos: OpenTelemetry para trazado distribuido, Prometheus para recolección de métricas, Grafana Loki para logging centralizado y Jaeger para visualización de trazas.",
+        "SCRIPE implementa un stack de observabilidad completo construido sobre estándares abiertos: OpenTelemetry para trazado distribuido, Prometheus para recolección de métricas, Grafana Loki para logging centralizado y Jaeger para visualización de trazas.",
       stackTitle: "Arquitectura del Stack de Observabilidad",
       tracingTitle: "Trazado Distribuido (OpenTelemetry)",
       tracingIntro:
@@ -422,7 +422,7 @@ export const es = {
       description:
         "Registro de auditoría completo con autodetección de módulo, seguimiento de correlación, transmisión en tiempo real por SignalR y más de 45 tipos de eventos.",
       intro:
-        "El registro de auditoría empresarial de NEXORA captura cada acción significativa en la plataforma — desde eventos de autenticación y mutaciones de entidades hasta cambios de permisos e incidentes de seguridad.",
+        "El registro de auditoría empresarial de SCRIPE captura cada acción significativa en la plataforma — desde eventos de autenticación y mutaciones de entidades hasta cambios de permisos e incidentes de seguridad.",
       architectureTitle: "Arquitectura del Registro de Auditoría",
       entityTitle: "Esquema de Entidad AuditLog",
       entityIntro:
@@ -445,21 +445,21 @@ export const es = {
       description:
         "Suites de pruebas de rendimiento k6 con umbrales SLA, integración CI/CD y estrategia de respaldo multi-proveedor.",
       intro:
-        "NEXORA incluye scripts de prueba de carga k6 para validar SLAs de rendimiento junto con una estrategia integral de respaldo y recuperación ante desastres.",
+        "SCRIPE incluye scripts de prueba de carga k6 para validar SLAs de rendimiento junto con una estrategia integral de respaldo y recuperación ante desastres.",
       overviewTitle: "Suites de Prueba k6",
       overviewIntro:
         "Dos suites de prueba k6 preconstruidas cubren los recorridos críticos del usuario: flujos de autenticación y operaciones CRUD.",
       thresholdsTitle: "Umbrales SLA",
       authFlowTitle: "Script de Prueba de Flujo de Autenticación",
       authFlowIntro:
-        "La prueba auth-flow.js simula patrones de autenticación de usuario realistas: inicio de sesión, acceso a endpoints protegidos con token JWT y verificación de health check. Métricas personalizadas (nexora_login_duration, nexora_login_fail_rate) rastrean SLAs de autenticación.",
+        "La prueba auth-flow.js simula patrones de autenticación de usuario realistas: inicio de sesión, acceso a endpoints protegidos con token JWT y verificación de health check. Métricas personalizadas (scr_login_duration, scr_login_fail_rate) rastrean SLAs de autenticación.",
       runningTitle: "Ejecutar Pruebas de Carga",
       cicdTitle: "Integración CI/CD",
       cicdIntro:
         "k6 se integra con GitHub Actions, GitLab CI y Azure Pipelines. Las pruebas se ejecutan contra una instancia backend contenedorizada con espera de readiness de salud. El pipeline falla automáticamente si se supera cualquier umbral SLA.",
       backupTitle: "Respaldo y Recuperación ante Desastres",
       backupIntro:
-        "NEXORA soporta estrategias de respaldo multi-proveedor con herramientas y frecuencias específicas para cada motor de base de datos.",
+        "SCRIPE soporta estrategias de respaldo multi-proveedor con herramientas y frecuencias específicas para cada motor de base de datos.",
       drWarning:
         "Crítico: Pruebe sus procedimientos de recuperación ante desastres trimestralmente. Un respaldo que nunca se ha restaurado no es un respaldo — es una esperanza.",
     },

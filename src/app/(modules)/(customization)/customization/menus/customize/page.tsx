@@ -9,7 +9,7 @@ const MenuCustomizeView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Customize Menus | NEXORA",
+  title: "Customize Menus | SCRIPE",
   description: "Drag-and-drop menu customization with role-based visibility",
 };
 

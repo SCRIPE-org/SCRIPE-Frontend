@@ -57,7 +57,7 @@ const sections: DocSection[] = [
         "Tier 1",
         "Tenants",
         "Platform Editions (Free, Pro, Enterprise)",
-        "NEXORA Platform Operator",
+        "SCRIPE Platform Operator",
       ],
       ["Tier 2", "End Users", "Tenant Plans (created by the tenant)", "Tenant Administrators"],
     ],

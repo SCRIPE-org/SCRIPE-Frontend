@@ -9,7 +9,7 @@ export const zh = {
       description:
         "自动发现、与提供商无关的 (Native, Hangfire, Quartz.NET) 循环任务 — 在 4 个模块中包含 24 个任务，无需手动配置。",
       intro:
-        "NEXORA 的后台任务系统建立在一个原则之上：一次编写，在任何提供商上运行。每个任务实现 IAutoRegisteredJob 并在启动时被自动发现。在 Native、Hangfire 或 Quartz 之间切换只需在 appsettings.json 中更改配置 — 无需修改任何代码。",
+        "SCRIPE 的后台任务系统建立在一个原则之上：一次编写，在任何提供商上运行。每个任务实现 IAutoRegisteredJob 并在启动时被自动发现。在 Native、Hangfire 或 Quartz 之间切换只需在 appsettings.json 中更改配置 — 无需修改任何代码。",
 
       // Architecture
       architectureTitle: "架构概览",
@@ -35,7 +35,7 @@ export const zh = {
       conn4: "[ZH] on cron tick",
       contractTitle: "IAutoRegisteredJob 契约",
       contractIntro:
-        "NEXORA 中的每个循环后台任务都实现一个接口：IAutoRegisteredJob。这就是整个契约 — 三个属性和一个方法。该接口故意排除了任何特定于提供商的概念（没有 Hangfire 属性，没有 Quartz 注解）。任务不知道是哪个提供商在运行它。",
+        "SCRIPE 中的每个循环后台任务都实现一个接口：IAutoRegisteredJob。这就是整个契约 — 三个属性和一个方法。该接口故意排除了任何特定于提供商的概念（没有 Hangfire 属性，没有 Quartz 注解）。任务不知道是哪个提供商在运行它。",
 
       // DI Registration
       diTitle: "DI 注册 — 关键的两行模式",
@@ -144,7 +144,7 @@ export const zh = {
       softDeleteIntro:
         "SoftDeleteCleanupJob<TContext> 基类是最高级的选项。它自动发现 DbContext 中所有的 ISoftDeletable 实体类型，对其进行拓扑排序，并进行批处理删除。",
       softDeleteTip:
-        "CLI 命令 'nexora add-bg-service {Module}' 可一步生成作业文件并添加两个 DI 注册。这是添加 SoftDeleteCleanupJob 的推荐方法。",
+        "CLI 命令 'scripe add-bg-service {Module}' 可一步生成作业文件并添加两个 DI 注册。这是添加 SoftDeleteCleanupJob 的推荐方法。",
       softDeleteFlowTitle: "软删除执行流程",
       flowCronLabel: "Cron 滴答 (凌晨 3:00)",
       flowCronDesc: "软删除作业的默认 Cron",
@@ -170,7 +170,7 @@ export const zh = {
       ruleMust2: "注册两行 DI（具体类型 + 工厂委托）",
       ruleMust3: "使用 5 字段 CRON（不要使用 Quartz 6 字段格式）",
       ruleMust4: "使 ExecuteAsync 幂等",
-      ruleMust5: "每次更改后构建 — nexora build backend",
+      ruleMust5: "每次更改后构建 — scripe build backend",
       ruleNever1: "永远不要在任务中导入 Hangfire 或 Quartz 命名空间",
       ruleNever2: "永远不要使用 [AutomaticRetry] — 全局重试在 BackgroundJobsConfiguration 中配置",
       ruleNever3: "永远不要在模块代码中调用 RecurringJob.AddOrUpdate<T>()",
@@ -193,7 +193,7 @@ export const zh = {
     resilience: {
       title: "弹性与熔断 (Resilience)",
       description: "Polly 策略体系对内外部 HTTP 请求的保护机制。",
-      intro: "在遭遇外部服务掉线或网络抖动时，防止 NEXORA 服务器堆积过多死请求导致全面雪崩。",
+      intro: "在遭遇外部服务掉线或网络抖动时，防止 SCRIPE 服务器堆积过多死请求导致全面雪崩。",
       architectureTitle: "弹性架构",
       retryTitle: "指数退避重试 (Retry Policy)",
       circuitBreakerTitle: "熔断器策略 (Circuit Breaker)",
@@ -205,7 +205,7 @@ export const zh = {
     gatewayDeployment: {
       title: "网关与部署 (Gateway & Deployment)",
       description: "YARP 反向代理、模块分离技术、IIS 部署以及 Linux Kestrel 启动指南。",
-      intro: "NEXORA 面向生产环境的灵活部署之道。",
+      intro: "SCRIPE 面向生产环境的灵活部署之道。",
       yarpTitle: "YARP API 网关",
       yarpIntro: "路由中心：负责流量分发、SSL 卸载以及针对微服务端口的代理与负载均衡。",
       moduleTitle: "模块控制系统",
@@ -229,14 +229,14 @@ export const zh = {
       title: "企业级数据库迁移 (Migrations)",
       description: "完全适配于 SQL Server、Oracle 以及 PostgreSQL 的多引擎切换架构。",
       intro:
-        "不同数据库拥有独立的方言，NEXORA 使用“派生 DbContext (Derived DbContext)”结构完美隔离了各自的快照 (ModelSnapshot)。",
+        "不同数据库拥有独立的方言，SCRIPE 使用“派生 DbContext (Derived DbContext)”结构完美隔离了各自的快照 (ModelSnapshot)。",
       architectureTitle: "派生上下文体系",
       architectureContent:
         "业务逻辑书写在基类，各个 SQL 提供者基于此派生出针对自身方言的上下文用于建表。",
       diTitle: "运行期动态连接",
       diContent: "核心基础设施通过读取 appsettings.json 来自动向服务容器中注入当前所选的数据库类。",
       cliTitle: "使用 CLI 同步生成多引擎脚本",
-      cliContent: "CLI 工具 nexora-cli 一键并行派发指令，同时生成 3 个独立数据库引擎的迁移记录。",
+      cliContent: "CLI 工具 scripe-cli 一键并行派发指令，同时生成 3 个独立数据库引擎的迁移记录。",
       cliWarning: "极其重要：永远不要手动编辑由 ORM 生成的 ModelSnapshot 文件。",
       cliUpdateTitle: "数据库 Update 智能识别",
       cliUpdateContent: "命令无需人为指定 Provider，它会自己探测配置文件并更新对应的真实数据库。",
@@ -249,11 +249,11 @@ export const zh = {
       newProviderStep3: "3. 加入注册数组中心。",
       newProviderStep4: "4. 执行 add-migration Initial 导出。 ",
     },
-    nexoraCli: {
-      title: "NEXORA CLI 命令行工具",
+    scripeCli: {
+      title: "SCRIPE CLI 命令行工具",
       description: "内置 66 套开发模板、支持多库同步及文件自动化编织的脚手架引擎。",
       intro:
-        "为 NEXORA 模块化单体量身定制的 Node.js 命令行。它不但生成前后端源码，还会执行手术刀般的自动化注册 (Auto-Wiring)。",
+        "为 SCRIPE 模块化单体量身定制的 Node.js 命令行。它不但生成前后端源码，还会执行手术刀般的自动化注册 (Auto-Wiring)。",
       commandsTitle: "核心工程构建命令",
       commandsIntro: "构建模块与业务的核心。 ",
       newModuleTitle: "新建模块结构: new-module",
@@ -289,17 +289,17 @@ export const zh = {
       dbCliCmd: "自动执行 SqlServer, Oracle 和 PostgreSQL 的交叉运算。",
       syncApiCmd: "捕获远端 OpenAPI/Swagger 文件以更新强类型 Zod 验证和模型。",
       configTitle: "系统配置文件",
-      configIntro: "解析根目录下的 nexora.config.json 以探寻项目实际文件目录。",
+      configIntro: "解析根目录下的 scripe.config.json 以探寻项目实际文件目录。",
       namingTitle: "自动命名变异引擎",
       namingIntro: "输入单数大写驼峰单词，它将在全局产生无数正确大小写、复数与宏常量名称。",
       utilityTitle: "工程环境支持",
       utilityIntro: "包含针对 .NET 与 NPM 构建与运行的统合快捷操作。",
     },
-    nexoraStudio: {
-      title: "NEXORA Studio",
+    scripeStudio: {
+      title: "SCRIPE Studio",
       description: "可视化开发者仪表板，提供实时模块管理、代码生成器、开发服务器控制和嵌入式终端。",
       intro:
-        "NEXORA Studio 是一个功能完整的可视化开发者仪表板，提供实时 Web 界面用于管理模块、运行代码生成器、控制开发服务器、执行数据库操作、管理 Docker 容器等 —— 全部在一个浏览器标签页中完成。",
+        "SCRIPE Studio 是一个功能完整的可视化开发者仪表板，提供实时 Web 界面用于管理模块、运行代码生成器、控制开发服务器、执行数据库操作、管理 Docker 容器等 —— 全部在一个浏览器标签页中完成。",
       architectureTitle: "Studio 架构",
       architectureIntro:
         "Studio 由两个组件组成：引擎（Express + Socket.io + SQLite，端口 4201）处理 API 请求、命令执行和实时流。UI（Next.js，端口 4200）提供 19 个页面，涵盖开发工作流的所有方面。",
@@ -316,18 +316,18 @@ export const zh = {
       featureDocker: "Docker — 管理 Docker Compose 服务、查看日志、检查容器健康状态。",
       featureTerminal: "终端 — 嵌入式终端，支持命令历史、ANSI 输出渲染和 WebSocket 流式传输。",
       featureConfig:
-        "配置编辑器 — 查看和编辑 .env、appsettings.json 和 nexora.config.json 中的环境变量。",
+        "配置编辑器 — 查看和编辑 .env、appsettings.json 和 scripe.config.json 中的环境变量。",
       featurePackages: "包管理器 — 为前端和后端添加、删除和更新 npm 和 NuGet 包。",
       featureSecurity: "安全工具 — 生成 JWT/AES 密钥、运行漏洞审计和验证环境完整性。",
       cliCommandsTitle: "Studio CLI 命令",
       cliCommandsIntro:
-        "Studio 完全通过 NEXORA CLI 启动和管理。nexora studio 命令支持开发模式 (--dev)、生产模式、仅构建模式 (studio build)、自定义端口 (--port, --engine-port) 和无头模式 (--no-browser)。",
+        "Studio 完全通过 SCRIPE CLI 启动和管理。scripe studio 命令支持开发模式 (--dev)、生产模式、仅构建模式 (studio build)、自定义端口 (--port, --engine-port) 和无头模式 (--no-browser)。",
     },
     healthChecks: {
       title: "健康检查与 K8s 探针",
       description: "企业级健康端点，用于 Kubernetes 存活、就绪和启动探针，包含5项独立检查。",
       intro:
-        "NEXORA 提供5个企业级健康端点，专为 Kubernetes 编排、负载均衡器集成和运维监控而设计。每个端点验证特定的基础设施依赖关系，并返回结构化的 JSON 响应。",
+        "SCRIPE 提供5个企业级健康端点，专为 Kubernetes 编排、负载均衡器集成和运维监控而设计。每个端点验证特定的基础设施依赖关系，并返回结构化的 JSON 响应。",
       architectureTitle: "健康端点架构",
       endpointsTitle: "健康端点",
       checksTitle: "独立健康检查",
@@ -338,13 +338,13 @@ export const zh = {
         "健康检查在 HealthCheckExtensions.cs 中集中注册，并带有明确的标签和故障状态。标签决定哪个端点包含每个检查。",
       k8sTitle: "Kubernetes 探针配置",
       k8sIntro:
-        "NEXORA 的健康端点直接映射到 Kubernetes 探针类型。启动探针在首次部署时允许最多5分钟（30次失败 × 10秒间隔）用于数据库迁移。",
+        "SCRIPE 的健康端点直接映射到 Kubernetes 探针类型。启动探针在首次部署时允许最多5分钟（30次失败 × 10秒间隔）用于数据库迁移。",
       dockerTitle: "Docker Compose 健康检查",
       dockerIntro:
         "对于 Docker Compose 部署，在服务定义中配置健康检查。使用 /health/live 进行基本存活检查，/health/ready 进行就绪检查。设置 start_period 以让数据库迁移有时间完成。",
       responseTitle: "响应格式",
       responseIntro:
-        "NEXORA 根据端点支持两种响应格式。公共探针端点返回最小化 JSON。认证端点返回详细响应，包括每项检查的持续时间、标签、负载数据和异常详情。",
+        "SCRIPE 根据端点支持两种响应格式。公共探针端点返回最小化 JSON。认证端点返回详细响应，包括每项检查的持续时间、标签、负载数据和异常详情。",
       environmentsTitle: "环境专属指南",
       dockerTip:
         "对于 IIS 部署：配置 Application Request Routing (ARR) 健康探针使用 /health/ready 作为检查 URL。对于 Azure App Service：配置健康检查路径 = /health/ready。",
@@ -354,7 +354,7 @@ export const zh = {
       description:
         "OpenTelemetry 分布式追踪、Prometheus 指标、Grafana Loki 集中日志和预配置的告警规则。",
       intro:
-        "NEXORA 实现了基于开放标准的完整可观测性栈：OpenTelemetry 用于分布式追踪，Prometheus 用于指标收集，Grafana Loki 用于集中日志记录，Jaeger 用于追踪可视化。",
+        "SCRIPE 实现了基于开放标准的完整可观测性栈：OpenTelemetry 用于分布式追踪，Prometheus 用于指标收集，Grafana Loki 用于集中日志记录，Jaeger 用于追踪可视化。",
       stackTitle: "可观测性栈架构",
       tracingTitle: "分布式追踪 (OpenTelemetry)",
       tracingIntro:
@@ -379,7 +379,7 @@ export const zh = {
       title: "企业审计追踪",
       description: "完整的审计日志，具有自动模块检测、关联追踪、SignalR 实时广播和45+事件类型。",
       intro:
-        "NEXORA 的企业审计追踪捕获平台上每个重要操作——从身份验证事件和实体变更到权限修改和安全事件。",
+        "SCRIPE 的企业审计追踪捕获平台上每个重要操作——从身份验证事件和实体变更到权限修改和安全事件。",
       architectureTitle: "审计追踪架构",
       entityTitle: "AuditLog 实体模式",
       entityIntro: "AuditLog 实体为每个可审计事件捕获全面的上下文。旧值和新值存储为 JSON 快照。",
@@ -398,19 +398,19 @@ export const zh = {
     loadTesting: {
       title: "负载测试与备份",
       description: "k6 性能测试套件，包含 SLA 阈值、CI/CD 集成和多提供商备份策略。",
-      intro: "NEXORA 包含 k6 负载测试脚本以验证性能 SLA，配合全面的备份和灾难恢复策略。",
+      intro: "SCRIPE 包含 k6 负载测试脚本以验证性能 SLA，配合全面的备份和灾难恢复策略。",
       overviewTitle: "k6 测试套件",
       overviewIntro: "两个预构建的 k6 测试套件覆盖关键用户旅程：身份验证流程和 CRUD 操作。",
       thresholdsTitle: "SLA 阈值",
       authFlowTitle: "身份验证流程测试脚本",
       authFlowIntro:
-        "auth-flow.js 测试模拟真实的用户身份验证模式：使用凭据登录、使用 JWT 令牌访问受保护端点和验证健康检查端点。自定义指标（nexora_login_duration、nexora_login_fail_rate）独立跟踪身份验证 SLA。",
+        "auth-flow.js 测试模拟真实的用户身份验证模式：使用凭据登录、使用 JWT 令牌访问受保护端点和验证健康检查端点。自定义指标（scr_login_duration、scr_login_fail_rate）独立跟踪身份验证 SLA。",
       runningTitle: "运行负载测试",
       cicdTitle: "CI/CD 集成",
       cicdIntro:
         "k6 与 GitHub Actions、GitLab CI 和 Azure Pipelines 集成。测试在容器化的后端实例上运行，并等待健康就绪后执行。当任何 SLA 阈值被突破时，管道自动失败。",
       backupTitle: "备份与灾难恢复",
-      backupIntro: "NEXORA 支持多提供商备份策略，为每个数据库引擎提供特定的工具和频率。",
+      backupIntro: "SCRIPE 支持多提供商备份策略，为每个数据库引擎提供特定的工具和频率。",
       drWarning: "重要提醒：每季度测试一次灾难恢复程序。从未恢复过的备份不是备份——而是一种希望。",
     },
   },

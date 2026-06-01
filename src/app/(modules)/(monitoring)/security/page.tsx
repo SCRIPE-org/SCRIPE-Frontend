@@ -7,7 +7,7 @@ const SecurityDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Security Monitor | NEXORA",
+  title: "Security Monitor | SCRIPE",
   description: "Real-time security monitoring and threat detection",
 };
 

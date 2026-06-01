@@ -9,7 +9,7 @@ const CommissionInvoicesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Commission Invoices | NEXORA",
+  title: "Commission Invoices | SCRIPE",
   description: "View your commission invoices charged by the platform.",
 };
 

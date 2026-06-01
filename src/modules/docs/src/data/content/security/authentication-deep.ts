@@ -184,8 +184,8 @@ const sections: DocSection[] = [
   "impersonator_id": null,
   "iat": 1708444800,
   "exp": 1708445700,
-  "iss": "nexora-api",
-  "aud": "nexora-client"
+  "iss": "scripe-api",
+  "aud": "scripe-client"
 }`,
   },
   {
@@ -232,7 +232,7 @@ var isValid = BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);
     rows: [
       ["10", "1,024", "~65ms", "Development/testing"],
       ["11", "2,048", "~130ms", "Low-security applications"],
-      ["12 (default)", "4,096", "~250ms", "Production (NEXORA default)"],
+      ["12 (default)", "4,096", "~250ms", "Production (SCRIPE default)"],
       ["13", "8,192", "~500ms", "High-security environments"],
       ["14", "16,384", "~1s", "Maximum security (very slow)"],
     ],
@@ -357,7 +357,7 @@ var isValid = BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);
         var secret = Base32Encoding.ToString(secretBytes);
 
         // 2. Generate QR code URI (otpauth:// format)
-        var uri = $"otpauth://totp/NEXORA:{userId}?secret={secret}&issuer=NEXORA";
+        var uri = $"otpauth://totp/SCRIPE:{userId}?secret={secret}&issuer=SCRIPE";
 
         // 3. Generate backup codes
         var backupCodes = Enumerable.Range(0, BackupCodeCount)

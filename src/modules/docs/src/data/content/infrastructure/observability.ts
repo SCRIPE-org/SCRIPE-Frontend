@@ -13,10 +13,10 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "NEXORA Observability Stack",
+    title: "SCRIPE Observability Stack",
     direction: "vertical",
     nodes: [
-      { id: "app", label: "NEXORA Backend", type: "primary", description: "OpenTelemetry SDK" },
+      { id: "app", label: "SCRIPE Backend", type: "primary", description: "OpenTelemetry SDK" },
       { id: "metrics", label: "Prometheus", type: "success", description: "Scrapes /metrics" },
       { id: "traces", label: "Jaeger", type: "info", description: "OTLP gRPC :4317" },
       { id: "logs", label: "Loki", type: "warning", description: "Serilog push API" },
@@ -45,7 +45,7 @@ const sections: DocSection[] = [
     language: "csharp",
     filename: "TracingBehavior.cs — AstraFlow mediator Pipeline Tracing",
     code: `/// <summary>
-/// Creates an OpenTelemetry span for every NEXORA request handler.
+/// Creates an OpenTelemetry span for every SCRIPE request handler.
 /// Auto-detects the module from the handler's namespace.
 /// Pipeline order: Exception → Validation → Auth → FeatureCheck →
 ///                 Cache → TRACING → Audit → Handler
@@ -53,7 +53,7 @@ const sections: DocSection[] = [
 public class TracingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
 {
-    private static readonly ActivitySource Source = new("NEXORA.Mediator");
+    private static readonly ActivitySource Source = new("SCRIPE.Mediator");
 
     public async Task<TResponse> Handle(
         TRequest request, RequestHandlerDelegate<TResponse> next,
@@ -121,7 +121,7 @@ rule_files:
 
 scrape_configs:
   # ── Monolith Mode (single target) ──
-  - job_name: 'nexora-backend'
+  - job_name: 'scripe-backend'
     static_configs:
       - targets: ['host.docker.internal:5001']
     metrics_path: '/metrics'
@@ -129,13 +129,13 @@ scrape_configs:
 
   # ── Microservice Mode (one target per module) ──
   # Uncomment and configure per deployed module:
-  # - job_name: 'nexora-identity'
+  # - job_name: 'scripe-identity'
   #   static_configs:
   #     - targets: ['identity-service:5001']
-  # - job_name: 'nexora-entitlements'
+  # - job_name: 'scripe-entitlements'
   #   static_configs:
   #     - targets: ['entitlements-service:5004']
-  # - job_name: 'nexora-gateway'
+  # - job_name: 'scripe-gateway'
   #   static_configs:
   #     - targets: ['gateway-service:5010']`,
   },
@@ -174,7 +174,7 @@ scrape_configs:
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
         .Enrich.WithEnvironmentName()
-        .Enrich.WithProperty("Application", "NEXORA");
+        .Enrich.WithProperty("Application", "SCRIPE");
 
     // Loki sink — opt-in via configuration
     // Leave Loki:Url empty in dev to disable (logs go to console only)
@@ -184,7 +184,7 @@ scrape_configs:
     {
         loggerConfig.WriteTo.GrafanaLoki(lokiUrl,
             labels: [
-                new LokiLabel { Key = "app", Value = "nexora" },
+                new LokiLabel { Key = "app", Value = "scripe" },
                 new LokiLabel { Key = "environment",
                     Value = context.HostingEnvironment.EnvironmentName },
             ],
@@ -223,7 +223,7 @@ scrape_configs:
       [
         "Application",
         "Static enrichment",
-        "Fixed label 'NEXORA' — distinguish from other apps in shared Loki",
+        "Fixed label 'SCRIPE' — distinguish from other apps in shared Loki",
       ],
     ],
   },
@@ -309,13 +309,13 @@ scrape_configs:
     type: "code",
     language: "bash",
     filename: "Start Monitoring Stack",
-    code: `# Start the full monitoring stack (from NEXORA root directory)
+    code: `# Start the full monitoring stack (from SCRIPE root directory)
 docker compose -f infrastructure/monitoring/docker-compose.monitoring.yml up -d
 
 # ═══════════════════════════════════════════════════════════
 # Access Points:
 # ═══════════════════════════════════════════════════════════
-# Grafana:    http://localhost:3001  (admin / nexora-admin)
+# Grafana:    http://localhost:3001  (admin / scripe-admin)
 # Prometheus: http://localhost:9090  (metrics store + alerts)
 # Jaeger:     http://localhost:16686 (distributed tracing UI)
 # Loki:       http://localhost:3100  (log aggregation API only)
@@ -327,7 +327,7 @@ docker compose -f infrastructure/monitoring/docker-compose.monitoring.yml up -d
 # ═══════════════════════════════════════════════════════════
 
 # Verify everything is running
-docker ps --filter name=nexora- --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
+docker ps --filter name=scripe- --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
 
 # View Prometheus targets (should show "UP")
 curl http://localhost:9090/api/v1/targets | jq '.data.activeTargets[].health'
@@ -350,7 +350,7 @@ docker compose -f infrastructure/monitoring/docker-compose.monitoring.yml down`,
     code: `{
   "Observability": {
     "ExporterType": "Console",
-    "ServiceName": "NEXORA-Dev",
+    "ServiceName": "SCRIPE-Dev",
     "OtlpEndpoint": "http://localhost:4317",
     "TraceSampleRatio": 1.0,
     "EnablePrometheus": true,
@@ -368,7 +368,7 @@ docker compose -f infrastructure/monitoring/docker-compose.monitoring.yml down`,
     code: `{
   "Observability": {
     "ExporterType": "Otlp",
-    "ServiceName": "NEXORA-Production",
+    "ServiceName": "SCRIPE-Production",
     "OtlpEndpoint": "http://jaeger:4317",
     "TraceSampleRatio": 0.1,
     "EnablePrometheus": true,

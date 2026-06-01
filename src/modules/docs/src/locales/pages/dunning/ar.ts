@@ -5,13 +5,13 @@ export const ar = {
       description:
         "4-stage failed payment recovery pipeline: warning emails, grace periods, suspension, cancellation, and auto-fallback to free edition.",
       intro:
-        "The dunning system is NEXORA's automated failed-payment recovery pipeline. When a payment fails, the system does not immediately suspend the tenant — instead, it moves through 4 graduated stages over 10-14 days, giving tenants ample opportunity to update their payment method before access is restricted. Each stage sends a targeted email and escalates the urgency.",
+        "The dunning system is SCRIPE's automated failed-payment recovery pipeline. When a payment fails, the system does not immediately suspend the tenant — instead, it moves through 4 graduated stages over 10-14 days, giving tenants ample opportunity to update their payment method before access is restricted. Each stage sends a targeted email and escalates the urgency.",
       stagesTitle: "4-Stage Dunning Pipeline",
       stagesIntro:
         "Dunning stages are managed by two background jobs: SubscriptionReconciliationJob (daily at 3:00 AM UTC) and DunningNotificationJob (daily at 4:00 AM UTC).",
       stage1Title: "Stage 1: Payment Failed (Day 0)",
       stage1Intro:
-        "Triggered immediately when the invoice.payment_failed webhook arrives. Stripe's Smart Retry system attempts the payment again over days 1-3. NEXORA sends the PaymentFailed email with a link to update the payment method via the Customer Portal.",
+        "Triggered immediately when the invoice.payment_failed webhook arrives. Stripe's Smart Retry system attempts the payment again over days 1-3. SCRIPE sends the PaymentFailed email with a link to update the payment method via the Customer Portal.",
       stage2Title: "Stage 2: Grace Warning (Mid-Grace)",
       stage2Intro:
         "If the payment is still failing at mid-grace period, DunningNotificationJob sends the GraceWarning email. The subscription enters PastDue status. The tenant retains access but sees a colored GracePeriodBanner in the admin panel (yellow warning).",
@@ -45,7 +45,7 @@ export const ar = {
         "When a promotion has DurationDays > 0, the system calculates a PromotionExpiresAt timestamp. On each renewal (New Row Pattern), the handler checks if the promotion has expired. Expired promotions are NOT carried forward to the new subscription row — the tenant pays full price from the next billing cycle.",
       emailsTitle: "Dunning Email Templates",
       emailsIntro:
-        "NEXORA includes 4 HTML email templates for the dunning pipeline, all with subdomain-aware CTA links and bilingual support (EN + AR).",
+        "SCRIPE includes 4 HTML email templates for the dunning pipeline, all with subdomain-aware CTA links and bilingual support (EN + AR).",
       email1:
         "payment-failed — Sent immediately on invoice.payment_failed. Links to Stripe Customer Portal.",
       email2:

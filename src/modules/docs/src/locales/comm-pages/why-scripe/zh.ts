@@ -4,9 +4,9 @@
  */
 export const zh = {
   commercial: {
-    whyNexoraOverview: {
+    whyScripeOverview: {
       description:
-        "一份决定性的、高管级别的摘要，准确地说明了选择 NEXORA 框架为何从根本上消除了您整个企业软件开发之旅的风险。",
+        "一份决定性的、高管级别的摘要，准确地说明了选择 SCRIPE 框架为何从根本上消除了您整个企业软件开发之旅的风险。",
       glanceTitle: "架构概览",
       idealEnterprise: "成熟的企业基础架构",
       idealEnterpriseDesc: "将混乱的遗留大型机迁移到严格有序、高度可扩展的现代应用程序架构。",
@@ -19,17 +19,17 @@ export const zh = {
       idealStartup: "精益、高速发展的初创公司",
       idealStartupDesc: "仅凭 3 名全栈开发人员即可实现 20 人团队的工程吞吐量。",
       intro:
-        "NEXORA 赋予有远见的组织一个经过实战考验、可无限扩展的架构基础，从而保证了巨大的性能、完美的多租户安全性以及无与伦比的工程开发速度。",
+        "SCRIPE 赋予有远见的组织一个经过实战考验、可无限扩展的架构基础，从而保证了巨大的性能、完美的多租户安全性以及无与伦比的工程开发速度。",
       problemContent:
-        "传统的软件实现会耗费大量资金在架构上的犹豫不决、脆弱的安全态势和脱节的扩展模型上进行斗争。NEXORA 完全绕过了这些瓶颈。",
+        "传统的软件实现会耗费大量资金在架构上的犹豫不决、脆弱的安全态势和脱节的扩展模型上进行斗争。SCRIPE 完全绕过了这些瓶颈。",
       problemTitle: "定制实施带来的摩擦",
       savingsTitle: "可证明的工程指标",
       solutionContent:
-        "通过利用纯净、生产就绪的企业基础，超越传统的开发瓶颈。NEXORA 为您的工程团队开箱即用地配备了纯正的整洁架构后端、极其快速的 Next.js 前端以及分布式可观测性工具。",
+        "通过利用纯净、生产就绪的企业基础，超越传统的开发瓶颈。SCRIPE 为您的工程团队开箱即用地配备了纯正的整洁架构后端、极其快速的 Next.js 前端以及分布式可观测性工具。",
       solutionTitle: "权威的解决方案提供商",
       startTip:
         "架构行动：不要只是猜测。立即克隆代码库，在 15 分钟内初始化系统，体验绝对的架构清晰度。",
-      title: "为何选择 NEXORA？",
+      title: "为何选择 SCRIPE？",
       visionContent:
         "我们不仅提供代码；我们积极参与您的规模扩展。我们的愿景是通过提供一个具有内在结构且逻辑完美的框架来优雅地吸收数十年的激进功能开发，从而彻底消除“技术债务”的概念。",
       visionTitle: "无限扩展的地平线",
@@ -77,9 +77,9 @@ export const zh = {
       tblMetricsR10C1: "后台处理",
       tblMetricsR10C2: "基于 Channel 的内存队列 + Hangfire",
       tblMetricsR11C1: "CLI 工具",
-      tblMetricsR11C2: "用于模块/实体脚手架生成的 nexora-cli",
-      tblSavingsHeader1: "未使用 NEXORA 时",
-      tblSavingsHeader2: "使用 NEXORA 时",
+      tblMetricsR11C2: "用于模块/实体脚手架生成的 scripe-cli",
+      tblSavingsHeader1: "未使用 SCRIPE 时",
+      tblSavingsHeader2: "使用 SCRIPE 时",
       tblSavingsHeader3: "节省的成果",
       tblSavingsR1C1: "花费 6 个月构建身份验证 + RBAC",
       tblSavingsR1C2: "第 1 天即拥有：完整的身份验证、角色、权限",
@@ -102,27 +102,27 @@ export const zh = {
     },
     competitiveAdvantages: {
       architectureContent:
-        "我们拒绝妥协。NEXORA 严格遵循领域驱动设计 (DDD) 和整洁架构 (Clean Architecture) 原则。与在企业规模下容易崩溃的扁平 MVC 模板不同，我们的架构保证了表现层和基础设施层永远不会泄漏到您的核心业务逻辑中。",
+        "我们拒绝妥协。SCRIPE 严格遵循领域驱动设计 (DDD) 和整洁架构 (Clean Architecture) 原则。与在企业规模下容易崩溃的扁平 MVC 模板不同，我们的架构保证了表现层和基础设施层永远不会泄漏到您的核心业务逻辑中。",
       architectureTitle: "毫不妥协的架构",
-      comparisonTitle: "NEXORA 范式",
+      comparisonTitle: "SCRIPE 范式",
       databaseContent:
-        "锁定在单一供应商是一个巨大的隐患。使用 NEXORA，您只需一个配置标志即可在 SQL Server、Oracle 和 PostgreSQL 之间无缝迁移。此外，Database.Mode 切换开关允许您将所有模块合并到一个共享数据库中（Single 模式）或将每个模块隔离到其自己的数据库中（Multi 模式）——而无需重写任何一行数据访问代码。",
+        "锁定在单一供应商是一个巨大的隐患。使用 SCRIPE，您只需一个配置标志即可在 SQL Server、Oracle 和 PostgreSQL 之间无缝迁移。此外，Database.Mode 切换开关允许您将所有模块合并到一个共享数据库中（Single 模式）或将每个模块隔离到其自己的数据库中（Multi 模式）——而无需重写任何一行数据访问代码。",
       databaseTitle: "零数据库锁定",
       description:
         "专为有远见的企业设计，通过毫不妥协的设计、军用级的安全性和无摩擦的扩展性来主导其市场。",
       evaluationTip:
-        "重要提示：进行概念验证 (PoC)。NEXORA 的 30 天试用版允许您的首席工程师直接针对您最困难的技术挑战验证我们的架构声明。",
+        "重要提示：进行概念验证 (PoC)。SCRIPE 的 30 天试用版允许您的首席工程师直接针对您最困难的技术挑战验证我们的架构声明。",
       intro:
-        "NEXORA 旨在彻底摧毁企业软件开发的传统限制：供应商依赖、架构熵和缓慢的发布周期。以下是有远见的组织如何倍增其工程资本的方式。",
-      nexoraApproach: "NEXORA 优势",
+        "SCRIPE 旨在彻底摧毁企业软件开发的传统限制：供应商依赖、架构熵和缓慢的发布周期。以下是有远见的组织如何倍增其工程资本的方式。",
+      scripeApproach: "SCRIPE 优势",
       productivityContent:
-        "初创公司和大型企业都使用 NEXORA 来绕过 6-12 个月的基础开发工作。通过在第一天就提供生产就绪的身份验证、多租户和审计日志，团队能够立即开始交付独特的商业价值。",
+        "初创公司和大型企业都使用 SCRIPE 来绕过 6-12 个月的基础开发工作。通过在第一天就提供生产就绪的身份验证、多租户和审计日志，团队能够立即开始交付独特的商业价值。",
       productivityTitle: "史无前例的生产力",
       securityContent:
         "开箱即用的 8 层纵深防御安全模型。我们提供行级租户隔离、速率限制、JWT 撤销、细粒度 RBAC 和不可变的审计日志——这些通常需要数百万研发资金的功能。",
       securityTitle: "军用级安全",
       tenancyContent:
-        "大多数 SaaS 启动模板使用“软”隔离，其中一个错误就会暴露另一个租户的数据。NEXORA 具有与 EF Core 查询管道深度绑定的基于鉴别器 (discriminator) 的严格行级租户隔离，使得跨租户数据泄漏在数学上成为不可能。",
+        "大多数 SaaS 启动模板使用“软”隔离，其中一个错误就会暴露另一个租户的数据。SCRIPE 具有与 EF Core 查询管道深度绑定的基于鉴别器 (discriminator) 的严格行级租户隔离，使得跨租户数据泄漏在数学上成为不可能。",
       tenancyTitle: "加密级的租户隔离",
       tenantBranding: "白标 (White-Label) 就绪",
       tenantBrandingDesc:
@@ -134,11 +134,11 @@ export const zh = {
         "保证全球合规性。用户的身份 JWT 以密码学方式绑定到其租户，防止横向越权移动。",
       title: "竞争优势",
       traditionalApproach: "传统困境",
-      compNexoraI1: "模块化单体 → API 网关 → 微服务演进式架构",
-      compNexoraI2: "单一代码库，三种动态部署模式",
-      compNexoraI3: "在编译时以数学方式强制执行模块功能",
-      compNexoraI4: "将任何模块提取到独立服务中，无需任何重写",
-      compNexoraI5: "纯净的共享核心基础架构在所有模块间产生复利效应",
+      compScripeI1: "模块化单体 → API 网关 → 微服务演进式架构",
+      compScripeI2: "单一代码库，三种动态部署模式",
+      compScripeI3: "在编译时以数学方式强制执行模块功能",
+      compScripeI4: "将任何模块提取到独立服务中，无需任何重写",
+      compScripeI5: "纯净的共享核心基础架构在所有模块间产生复利效应",
       compTradI1: "被迫预先选择单体架构或微服务架构",
       compTradI2: "需要完全重写才能更改部署拓扑",
       compTradI3: "高度耦合的服务之间存在意大利面条式的依赖关系",
@@ -170,7 +170,7 @@ export const zh = {
       flowSecN8: "第 8 层：全面审计跟踪",
       tblProdHeader1: "能力",
       tblProdHeader2: "企业影响",
-      tblProdR1C1: "NEXORA CLI 脚手架",
+      tblProdR1C1: "SCRIPE CLI 脚手架",
       tblProdR1C2: "在不到一秒的时间内生成完整的垂直切片 (Domain → API → React UI)",
       tblProdR2C1: "SOLID View/ViewModel 模式",
       tblProdR2C2: "在数百个页面上保持数学上一致的 UI 架构",
@@ -183,7 +183,7 @@ export const zh = {
       tblProdR6C1: "热重载 (Hot reload) 协同",
       tblProdR6C2: "在编译期间即时观察复杂的全栈更改",
       tblCompHeader1: "能力",
-      tblCompHeader2: "NEXORA",
+      tblCompHeader2: "SCRIPE",
       tblCompHeader3: "传统框架",
       tblCompHeader4: "从零定制",
       tblCompR1C1: "部署模式",
@@ -225,7 +225,7 @@ export const zh = {
     },
     targetIndustries: {
       description:
-        "深入了解特定高合规性要求的行业如何利用 NEXORA 构建安全、可扩展且彻底隔离的应用程序。",
+        "深入了解特定高合规性要求的行业如何利用 SCRIPE 构建安全、可扩展且彻底隔离的应用程序。",
       educationContent:
         "管理庞大的大学目录，并严格地在不同校区和相关区域部门之间分层隔离学生的个人身份信息 (PII) 数据。",
       educationTitle: "高等教育与教育科技 (EdTech)",
@@ -242,15 +242,15 @@ export const zh = {
       healthSecurityDesc:
         "原生支持静态数据的 AES-256 数据库加密，并强制实行传输中的 TLS 1.3 协议。",
       healthcareContent:
-        "当数据泄露意味着灾难性的法律责任时，医疗保健提供商求助于 NEXORA 的 EF Core 全局查询过滤器，以在数学层面保证患者数据永远不会在不同的隔离医疗机构之间被意外混合。",
+        "当数据泄露意味着灾难性的法律责任时，医疗保健提供商求助于 SCRIPE 的 EF Core 全局查询过滤器，以在数学层面保证患者数据永远不会在不同的隔离医疗机构之间被意外混合。",
       healthcareTitle: "医疗保健与远程医疗",
       intro:
-        "NEXORA 不仅仅是一个通用的应用程序框架。其严格执行的架构边界、加密多租户技术以及法证级审计功能，使其成为受到严格监管、高风险运营环境的绝对首选。",
+        "SCRIPE 不仅仅是一个通用的应用程序框架。其严格执行的架构边界、加密多租户技术以及法证级审计功能，使其成为受到严格监管、高风险运营环境的绝对首选。",
       matrixTitle: "行业适用性矩阵",
       menaBuiltIn: "原生本地化支持",
       menaCompetitor: "残缺的替代方案",
       menaContent:
-        "NEXORA 开箱即用地提供完美无瑕、格式美观的从右向左 (RTL) 阿拉伯语支持，确保无需复杂的 CSS hacking 即可立即获得区域用户的采用。",
+        "SCRIPE 开箱即用地提供完美无瑕、格式美观的从右向左 (RTL) 阿拉伯语支持，确保无需复杂的 CSS hacking 即可立即获得区域用户的采用。",
       menaTitle: "中东和北非地区 (MENA) 总部",
       retailContent:
         "使用由 RabbitMQ 提供支持的弹性电子邮件系统和高并发的分布式缓存算法，优雅地应对“黑色星期五”爆炸性的交易高峰。",
@@ -271,7 +271,7 @@ export const zh = {
         "允许您的庞大企业客户在全球范围内动态注入他们自己的徽标、排版系统和电子邮件域名。",
       title: "垂直行业应用场景",
       tblGovHeader1: "需求",
-      tblGovHeader2: "NEXORA 的能力",
+      tblGovHeader2: "SCRIPE 的能力",
       tblGovR1C1: "数据主权 (Data sovereignty)",
       tblGovR1C2: "本地部署 (On-premise)，无需依赖任何云服务",
       tblGovR2C1: "审计合规性",
@@ -301,7 +301,7 @@ export const zh = {
       compMenaI4Neg: "默认系统字体导致阿拉伯语渲染出现破损",
       compMenaI5Neg: "硬编码了西方的日期和数字格式",
       tblMatrixHeader1: "所属行业",
-      tblMatrixHeader2: "使用的核心 NEXORA 功能",
+      tblMatrixHeader2: "使用的核心 SCRIPE 功能",
       tblMatrixHeader3: "契合度评分",
       tblMatrixR1C1: "企业级 SaaS",
       tblMatrixR1C2: "多租户架构、白标定制 (White-labeling)、可扩展的部署",
@@ -327,25 +327,25 @@ export const zh = {
     },
     roiAnalysis: {
       caseStudyContent:
-        "最近，一家企业客户在经历了长达 18 个月与灾难性的定制基础设施的斗争后，迁移到了 NEXORA。在短短 30 天内，他们完全消除了认证服务的开销，将基础设施运营支出 (OpEx) 永久削减了 60%，并让 4 名高级工程师重新专注于激进的业务功能开发。得益于新架构基础那可证明的无限可扩展性，他们成功获得了随后的 B 轮融资。",
+        "最近，一家企业客户在经历了长达 18 个月与灾难性的定制基础设施的斗争后，迁移到了 SCRIPE。在短短 30 天内，他们完全消除了认证服务的开销，将基础设施运营支出 (OpEx) 永久削减了 60%，并让 4 名高级工程师重新专注于激进的业务功能开发。得益于新架构基础那可证明的无限可扩展性，他们成功获得了随后的 B 轮融资。",
       caseStudyTitle: "经验证的财务影响",
       costIntro:
         "通过购买永久许可证，您能够避免 PaaS/SaaS 订阅模式随着您的业务成功而带来的不断复利累积的惩罚性成本。",
       costTitle: "可预测的资本支出 (CapEx)",
       description:
-        "深入的财务细分，比较采用 NEXORA 的总拥有成本 (TCO) 与从零开始构建同等企业架构的成本。",
+        "深入的财务细分，比较采用 SCRIPE 的总拥有成本 (TCO) 与从零开始构建同等企业架构的成本。",
       intro:
-        "企业架构可能是技术创始人承担的最昂贵风险。NEXORA 完全消除了这一风险，在您编写第一行代码之前，就保证了巨大的、数学上可证明的投资回报率 (ROI)。",
+        "企业架构可能是技术创始人承担的最昂贵风险。SCRIPE 完全消除了这一风险，在您编写第一行代码之前，就保证了巨大的、数学上可证明的投资回报率 (ROI)。",
       ongoingTitle: "大幅降低的维护成本",
       teamContent:
-        "NEXORA 让一个只有 3 名工程师的精干团队，能够交付传统 15 人企业部门的吞吐量、稳定性和规模，从而最大化了员工效率。",
+        "SCRIPE 让一个只有 3 名工程师的精干团队，能够交付传统 15 人企业部门的吞吐量、稳定性和规模，从而最大化了员工效率。",
       teamTitle: "工程师人效倍增器",
       timeTitle: "加速上市时间 (Time-To-Market)",
       tip: "ROI 提示：将数千小时从基础基础设施建设转移到独有功能开发和市场差异化上。",
       title: "管理层 ROI 与 TCO 分析",
       tblCostHeader1: "组件",
       tblCostHeader2: "从零构建成本",
-      tblCostHeader3: "使用 NEXORA",
+      tblCostHeader3: "使用 SCRIPE",
       tblCostHeader4: "节省资金",
       tblCostR1C1: "身份认证 + RBAC",
       tblCostR1C2: "$50,000 - $80,000",
@@ -384,8 +384,8 @@ export const zh = {
       tblCostR9C3: "**许可费用**",
       tblCostR9C4: "**省 $200K+**",
       tblTimeHeader1: "阶段",
-      tblTimeHeader2: "未使用 NEXORA",
-      tblTimeHeader3: "使用 NEXORA",
+      tblTimeHeader2: "未使用 SCRIPE",
+      tblTimeHeader3: "使用 SCRIPE",
       tblTimeR1C1: "基础设施 (身份认证, 租户, 审计)",
       tblTimeR1C2: "3-6 个月",
       tblTimeR1C3: "0 (第一天即有)",
@@ -402,8 +402,8 @@ export const zh = {
       tblTimeR5C2: "**12-18 个月**",
       tblTimeR5C3: "**3-6 个月**",
       tblTeamHeader1: "角色",
-      tblTeamHeader2: "未使用 NEXORA",
-      tblTeamHeader3: "使用 NEXORA",
+      tblTeamHeader2: "未使用 SCRIPE",
+      tblTeamHeader3: "使用 SCRIPE",
       tblTeamR1C1: "高级后端开发工程师",
       tblTeamR1C2: "3-4",
       tblTeamR1C3: "1-2",
@@ -453,7 +453,7 @@ export const zh = {
       description: "对采用后即可立即获得的工程吞吐量、安全增强和横向扩展能力的量化细分。",
       ecosystemTitle: "集成生态系统优势",
       intro:
-        "NEXORA 的真正价值不仅在于代码，而在于研发速度 (Velocity)。我们提供了在向技术利益相关者证明采纳该架构是否合理所需的量化工程指标。",
+        "SCRIPE 的真正价值不仅在于代码，而在于研发速度 (Velocity)。我们提供了在向技术利益相关者证明采纳该架构是否合理所需的量化工程指标。",
       patterns: "久经考验的 CQRS 模式",
       patternsDesc: "读写操作的隔离防止了灾难性的数据库死锁。",
       performanceContent:
@@ -522,8 +522,8 @@ export const zh = {
       tblPerfR8C2: "< 15 秒",
       tblPerfR8C3: "Next.js turbopack",
       tblVelHeader1: "任务",
-      tblVelHeader2: "不使用 NEXORA",
-      tblVelHeader3: "使用 NEXORA",
+      tblVelHeader2: "不使用 SCRIPE",
+      tblVelHeader3: "使用 SCRIPE",
       tblVelR1C1: "新建模块 (全栈)",
       tblVelR1C2: "2-4 周",
       tblVelR1C3: "1 条 CLI 命令 (< 1 分钟)",

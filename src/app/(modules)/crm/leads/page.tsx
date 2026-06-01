@@ -7,7 +7,7 @@ const CrmLeadsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "CRM – Leads | NEXORA",
+  title: "CRM – Leads | SCRIPE",
   description: "Manage your sales pipeline",
 };
 

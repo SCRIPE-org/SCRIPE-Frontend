@@ -9,9 +9,9 @@ const ThemeGalleryView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Theme Gallery | NEXORA",
+  title: "Theme Gallery | SCRIPE",
   description:
-    "Browse, preview, and apply stunning login page themes from the NEXORA theme marketplace",
+    "Browse, preview, and apply stunning login page themes from the SCRIPE theme marketplace",
 };
 
 export default function ThemeGalleryPage() {

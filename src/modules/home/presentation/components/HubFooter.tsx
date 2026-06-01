@@ -2,7 +2,7 @@
 
 /**
  * HubFooter — Subtle footer for the Hub page.
- * Left: NEXORA · v4.2.1 · Tenant: name
+ * Left: SCRIPE · v4.2.1 · Tenant: name
  * Right: What's new | Docs | Status
  */
 
@@ -12,7 +12,7 @@ import { useAppStore } from "@core/store/useAppStore";
 
 export function HubFooter() {
   const { t } = useI18n();
-  const tenantName = useAppStore((s) => (s.user as any)?.tenantName ?? "NEXORA");
+  const tenantName = useAppStore((s) => (s.user as any)?.tenantName ?? "SCRIPE");
 
   return (
     <div
@@ -28,7 +28,7 @@ export function HubFooter() {
         fontFamily: "'Inter', system-ui, sans-serif",
       }}
     >
-      <span>NEXORA · v4.2.1 · Tenant: {tenantName}</span>
+      <span>SCRIPE · v4.2.1 · Tenant: {tenantName}</span>
       <span style={{ display: "inline-flex", alignItems: "center", gap: 14 }}>
         <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
           {t("workspaceHub.footer.whatsNew")}

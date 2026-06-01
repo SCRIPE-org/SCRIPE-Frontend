@@ -7,7 +7,7 @@ const FeaturesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Features | NEXORA",
+  title: "Features | SCRIPE",
   description: "Manage the feature catalog for edition-based feature gating",
 };
 

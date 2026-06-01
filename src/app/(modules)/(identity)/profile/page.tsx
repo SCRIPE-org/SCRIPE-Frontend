@@ -9,7 +9,7 @@ const ProfileGeneralView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Profile | NEXORA",
+  title: "Profile | SCRIPE",
   description: "Manage your profile information, avatar, and account preferences",
 };
 

@@ -32,7 +32,7 @@ export const ar = {
       globalDefault: "الإعدادات العامة",
       globalDefaultDesc: "استخدام العلامة التجارية الافتراضية للمنصة",
       factoryDefault: "إعادة ضبط المصنع",
-      factoryDefaultDesc: "إعادة التعيين إلى سمة NEXORA الافتراضية",
+      factoryDefaultDesc: "إعادة التعيين إلى سمة SCRIPE الافتراضية",
     },
     resetSuccess: "تمت إعادة تعيين العلامة التجارية بنجاح",
     resetFailed: "فشل في إعادة تعيين العلامة التجارية",
@@ -757,7 +757,7 @@ export const ar = {
         xl: "كبير جداً",
       },
       logoText: "نص الشعار",
-      logoTextPlaceholder: "NEXORA",
+      logoTextPlaceholder: "SCRIPE",
       showLogo: "إظهار الشعار",
       navigationStyle: "نمط التنقل",
       navStyles: {

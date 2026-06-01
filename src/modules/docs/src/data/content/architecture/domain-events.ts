@@ -110,12 +110,12 @@ public interface IDomainEventPublisher
       {
         label: "AstraFlow mediator Implementation",
         language: "csharp",
-        filename: "NexoraDomainEventPublisher.cs",
-        code: `public class NexoraDomainEventPublisher : IDomainEventPublisher
+        filename: "ScripeDomainEventPublisher.cs",
+        code: `public class ScripeDomainEventPublisher : IDomainEventPublisher
 {
     private readonly IPublisher _publisher;
 
-    public NexoraDomainEventPublisher(IPublisher publisher)
+    public ScripeDomainEventPublisher(IPublisher publisher)
         => _publisher = publisher;
 
     public async Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken ct)
@@ -382,8 +382,8 @@ public class OutboxCleanupJob : RecurringJobBase
         "Abstraction for publishing domain events",
       ],
       [
-        "NexoraDomainEventPublisher",
-        "Events/NexoraDomainEventPublisher.cs",
+        "ScripeDomainEventPublisher",
+        "Events/ScripeDomainEventPublisher.cs",
         "In-process pub/sub via AstraFlow mediator",
       ],
       [

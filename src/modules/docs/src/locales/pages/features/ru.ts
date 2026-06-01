@@ -9,7 +9,7 @@ export const ru = {
       description:
         "Двойная аутентификация (Админ + Пользователь), JWT-токены, 2FA с резервными кодами и политики паролей для тенантов.",
       intro:
-        "NEXORA предоставляет безопасную систему аутентификации с короткими JWT access-токенами, ротацией refresh-токенов, 2FA и ограничением скорости запросов (rate limiting).",
+        "SCRIPE предоставляет безопасную систему аутентификации с короткими JWT access-токенами, ротацией refresh-токенов, 2FA и ограничением скорости запросов (rate limiting).",
       flowTitle: "Процесс аутентификации",
       jwtTitle: "Конфигурация JWT",
       jwtIntro:
@@ -40,7 +40,7 @@ export const ru = {
       description:
         "Изоляция данных на уровне строк, иерархия тенантов, настройки каждого тенанта и брендирование.",
       intro:
-        "NEXORA поддерживает полную мультитенантность с изоляцией данных на уровне строк с использованием глобальных фильтров запросов EF Core.",
+        "SCRIPE поддерживает полную мультитенантность с изоляцией данных на уровне строк с использованием глобальных фильтров запросов EF Core.",
       architectureTitle: "Архитектура",
       featuresTitle: "Возможности тенанта",
       featureIsolation: "Изоляция данных",
@@ -93,7 +93,7 @@ export const ru = {
       domainTypesTitle: "Типы доменов",
       domainArchTitle: "Архитектура разрешения доменов",
       domainArchIntro:
-        "При поступлении запроса система определяет арендатора, выполняя поиск имени хоста в таблице TenantDomain. Автоматически сгенерированные домены (например sofa.nexora.com) всегда верифицированы и разрешаются мгновенно. Пользовательские домены должны сначала пройти DNS-верификацию. Резервный механизм с параметром запроса ?code= доступен для сред разработки, где DNS не настроен.",
+        "При поступлении запроса система определяет арендатора, выполняя поиск имени хоста в таблице TenantDomain. Автоматически сгенерированные домены (например sofa.scripe.com) всегда верифицированы и разрешаются мгновенно. Пользовательские домены должны сначала пройти DNS-верификацию. Резервный механизм с параметром запроса ?code= доступен для сред разработки, где DNS не настроен.",
       domainDnsTitle: "Процесс DNS-верификации",
       domainDnsIntro:
         "Пользовательские домены требуют DNS-верификации для подтверждения владения. Когда администратор добавляет пользовательский домен, система генерирует уникальный токен верификации. Затем администратор настраивает две DNS-записи: запись CNAME, указывающую домен на CnameTarget платформы, и запись TXT на {VerificationPrefix}.{domain}, содержащую токен верификации. После настройки нажатие кнопки 'Проверить' запускает DNS-запрос для подтверждения наличия обеих записей.",
@@ -103,7 +103,7 @@ export const ru = {
       domainConfigIntro:
         "Каждое значение, связанное с доменами, настраивается через секцию Tenancy в appsettings.json. Это означает, что вы можете полностью провести ребрендинг платформы — изменить базовый домен, цель CNAME, префикс верификации и префикс токена — отредактировав один блок конфигурации. Изменений кода не требуется. Бэкенд инжектирует TenancySettings через IOptions<T>, а фронтенд получает цель CNAME и префикс верификации из ответа API GET /domains.",
       domainConfigTip:
-        "Для развёртывания на совершенно другом домене (например myplatform.io вместо nexora.com) просто обновите 4 значения в appsettings.json. Все автоматически сгенерированные поддомены, DNS-инструкции и токены верификации автоматически будут использовать новые значения.",
+        "Для развёртывания на совершенно другом домене (например myplatform.io вместо scripe.com) просто обновите 4 значения в appsettings.json. Все автоматически сгенерированные поддомены, DNS-инструкции и токены верификации автоматически будут использовать новые значения.",
       domainEndpointsTitle: "API-эндпоинты доменов",
     },
     rolePermissions: {
@@ -111,7 +111,7 @@ export const ru = {
       description:
         "Система RBAC с переопределением области видимости, ограничениями на уровне полей, защитой от эскалации привилегий и тенантными ролями.",
       intro:
-        "В NEXORA реализована комплексная система управления доступом на основе ролей (RBAC) с кэшированием на сервере для мгновенного применения политик.",
+        "В SCRIPE реализована комплексная система управления доступом на основе ролей (RBAC) с кэшированием на сервере для мгновенного применения политик.",
       hierarchyTitle: "Иерархия прав",
       systemTitle: "Система прав (Permissions)",
       systemIntro: "Права сгруппированы по категориям по шаблону: {ресурс}.{действие}.",
@@ -146,7 +146,7 @@ export const ru = {
       description:
         "Пайплайн из 4 источников, 35+ типов событий, события-защитники (Guardian), SignalR в реальном времени и экспорт в CSV/PDF.",
       intro:
-        "NEXORA фиксирует все значимые действия в журнале аудита через NEXORA mediator, перехватчики EF Core, middleware и прямые вызовы сервисов.",
+        "SCRIPE фиксирует все значимые действия в журнале аудита через SCRIPE mediator, перехватчики EF Core, middleware и прямые вызовы сервисов.",
       architectureTitle: "Архитектура аудита",
       eventTypesTitle: "Типы событий (35+ категорий)",
       authEventsTitle: "События аутентификации",
@@ -277,7 +277,7 @@ export const ru = {
         "Полный жизненный цикл админов/пользователей, массовые операции, Impersonation (узурпация) и правила защищенных админов.",
       adminVsUserTitle: "Модель Админ vs Пользователь",
       adminVsUserIntro:
-        "NEXORA разделяет администраторов (управляют платформой) и обычных конечных пользователей.",
+        "SCRIPE разделяет администраторов (управляют платформой) и обычных конечных пользователей.",
       crudTitle: "CRUD эндпоинты администраторов",
       accountOpsTitle: "Операции с учетной записью",
       roleMgmtTitle: "Управление ролями",
@@ -386,14 +386,14 @@ export const ru = {
       description:
         "Сервер аутентификации корпоративного уровня, способный заменить Keycloak, Okta и Auth0. Встроенные OIDC Провайдеры, регистрация OAuth-приложений, принудительный PKCE и изолированные федерации тенантов.",
       intro:
-        "NEXORA — это не просто приложение; это сервер IAM (Идентификации и управления доступом) корпоративного уровня на базе OpenIddict. Он работает эквивалентно Keycloak — выступая одновременно как OIDC клиент (Relying Party) и активный OAuth2/OIDC сервер авторизации. Тенанты могут аутентифицироваться наружу через Azure AD/Google или внутрь путем регистрации сторонних систем.",
+        "SCRIPE — это не просто приложение; это сервер IAM (Идентификации и управления доступом) корпоративного уровня на базе OpenIddict. Он работает эквивалентно Keycloak — выступая одновременно как OIDC клиент (Relying Party) и активный OAuth2/OIDC сервер авторизации. Тенанты могут аутентифицироваться наружу через Azure AD/Google или внутрь путем регистрации сторонних систем.",
       overviewTitle: "Возможности IAM",
       feat1Title: "Объединенные провайдеры (IdP)",
       feat1Desc:
         "Мгновенно подключайте внешних OIDC/OAuth2 провайдеров к конкретным тенантам. Интеграция без кода для Azure AD, Google, Okta, Auth0, AWS Cognito или любого OIDC-провайдера.",
-      feat2Title: "NEXORA как Сервер (OAuth Приложения)",
+      feat2Title: "SCRIPE как Сервер (OAuth Приложения)",
       feat2Desc:
-        "Замените Keycloak. Регистрируйте сторонние системы напрямую в NEXORA. Генерируйте Client ID и Secrets, управляйте Scope и выпускайте корпоративные JWT, подкрепленные хранилищем идентификационных данных NEXORA.",
+        "Замените Keycloak. Регистрируйте сторонние системы напрямую в SCRIPE. Генерируйте Client ID и Secrets, управляйте Scope и выпускайте корпоративные JWT, подкрепленные хранилищем идентификационных данных SCRIPE.",
       feat3Title: "Строгий PKCE и Безопасность",
       feat3Desc:
         "Устаревший Implicit Flow удален. Вся аутентификация — как внутренняя, так и внешняя — строго осуществляется через Proof Key for Code Exchange (PKCE) в Authorization Code Flow. Секреты никогда не попадают в браузер.",
@@ -401,40 +401,40 @@ export const ru = {
       feat4Desc:
         "Каждый тенант — это свой изолированный IAM Realm. Тенанты управляют своими внешними SSO-провайдерами и выпускают учетные данные для своих собственных OAuth-приложений автономно.",
       configTitle: "Руководство по настройке IAM",
-      configContent: "Настройка NEXORA в качестве вашего основного шлюза аутентификации:",
+      configContent: "Настройка SCRIPE в качестве вашего основного шлюза аутентификации:",
       config1Title: "1. Привязать внешнего провайдера",
       config1Content:
-        "Перейдите в /settings/identity-providers. Введите Discovery/Authority URL, Client ID и Secret от Azure AD или Google. NEXORA автоматически настраивает метаданные OIDC.",
+        "Перейдите в /settings/identity-providers. Введите Discovery/Authority URL, Client ID и Secret от Azure AD или Google. SCRIPE автоматически настраивает метаданные OIDC.",
       config2Title: "2. Автоматический маппинг Claims",
       config2Content:
-        "Настройте нужные scopes (openid, profile, email). NEXORA автоматически преобразует внешние JWT claims (такие как preferred_username, picture, given_name) во внутренние профили Администратора/Пользователя.",
+        "Настройте нужные scopes (openid, profile, email). SCRIPE автоматически преобразует внешние JWT claims (такие как preferred_username, picture, given_name) во внутренние профили Администратора/Пользователя.",
       config3Title: "3. Политики IAM",
       config3Content:
         "Укажите, предназначен ли провайдер для Администраторов (back-office) или Пользователей (front-office). Привязки строго типизированы, что предотвращает эскалацию пользователя в сеанс администратора.",
       config4Title: "4. Регистрация сторонних приложений",
       config4Content:
-        "Перейдите в /settings/oauth-apps, чтобы NEXORA выступала как SSO для стороннего софта (например, вашей CRM или мобильного приложения). Выберите тип: Public (SPA) или Confidential (Backend).",
+        "Перейдите в /settings/oauth-apps, чтобы SCRIPE выступала как SSO для стороннего софта (например, вашей CRM или мобильного приложения). Выберите тип: Public (SPA) или Confidential (Backend).",
       config5Title: "5. Jwks Uri & Discovery",
       config5Content:
-        "Внешние приложения просто указывают Authority на `https://ваш-домен-nexora.com`. NEXORA автоматически обрабатывает эндпоинты `/.well-known/openid-configuration` и `/.well-known/jwks`.",
+        "Внешние приложения просто указывают Authority на `https://ваш-домен-scripe.com`. SCRIPE автоматически обрабатывает эндпоинты `/.well-known/openid-configuration` и `/.well-known/jwks`.",
       managementTitle: "Центр управления IAM",
       managementContent:
-        "NEXORA предлагает Центр Управления IAM в настройках системы как для агрегации OIDC-клиентов, так и для конфигурации выдачи на стороне сервера.",
+        "SCRIPE предлагает Центр Управления IAM в настройках системы как для агрегации OIDC-клиентов, так и для конфигурации выдачи на стороне сервера.",
       loginFlowTitle: "Архитектура OIDC",
       loginFlowContent:
-        "При логине через Azure AD: NEXORA выступает как Клиент. Перенаправляет пользователя в Azure, принимает ответ, валидирует внешний JWT, и затем выпускает СВОЙ внутренний JWT, полностью отвязывая авторизацию от внешнего провайдера.",
+        "При логине через Azure AD: SCRIPE выступает как Клиент. Перенаправляет пользователя в Azure, принимает ответ, валидирует внешний JWT, и затем выпускает СВОЙ внутренний JWT, полностью отвязывая авторизацию от внешнего провайдера.",
       scopingTitle: "Партиционирование Realm (Тенанты)",
       scopingContent:
         "Концепция Realm из Keycloak реализована через партиционирование тенантов. Identity Провайдеры и OAuth Приложения строго связаны с TenantId. СуперАдмины управляют всеми Realms через функцию «Вход в мир тенанта».",
       scopingTip:
-        "В отличие от базовых SaaS, NEXORA не смешивает настройки Идентификации. Если Тенант А использует свой Azure AD, Тенант Б не имеет никакого доступа к этой инфраструктуре.",
+        "В отличие от базовых SaaS, SCRIPE не смешивает настройки Идентификации. Если Тенант А использует свой Azure AD, Тенант Б не имеет никакого доступа к этой инфраструктуре.",
     },
     loginCustomizer: {
       title: "Студия Кастомизации Логина",
       description:
         "Визуальная настройка страницы входа с 22 макетами, дизайн-токенами, управлением наложением/размытием, светлой/тёмной темами, комплектом доступности WCAG AA и изолированным предпросмотром в реальном времени — без единой строки кода.",
       intro:
-        "Студия Кастомизации Логина NEXORA — это мощный визуальный редактор, позволяющий администраторам тенантов полностью настраивать страницу входа без написания кода. Студия предоставляет разделённый интерфейс с панелями конфигурации слева и изолированным iframe-предпросмотром справа для визуальной обратной связи в реальном времени. Студия включает 8 вкладок конфигурации: Внешний вид, Цвета, Типографика, Фон, Наложение, Панель бренда, Доступность и Расширенные. Все изменения основаны на черновиках, требующих явной публикации перед выходом в продакшен.",
+        "Студия Кастомизации Логина SCRIPE — это мощный визуальный редактор, позволяющий администраторам тенантов полностью настраивать страницу входа без написания кода. Студия предоставляет разделённый интерфейс с панелями конфигурации слева и изолированным iframe-предпросмотром справа для визуальной обратной связи в реальном времени. Студия включает 8 вкладок конфигурации: Внешний вид, Цвета, Типографика, Фон, Наложение, Панель бренда, Доступность и Расширенные. Все изменения основаны на черновиках, требующих явной публикации перед выходом в продакшен.",
       studioTitle: "Обзор Студии",
       studioIntro:
         "Студия использует архитектуру с разделёнными панелями: левая панель содержит 8 вкладок конфигурации (Внешний вид, Цвета, Типографика, Фон, Наложение, Панель бренда, Доступность, Расширенные), а правая панель предоставляет изолированный iframe, отображающий страницу входа с живой инъекцией CSS-переменных через postMessage. Переключатели устройств позволяют предпросмотр на брейкпоинтах десктопа, планшета и мобильного.",
@@ -442,7 +442,7 @@ export const ru = {
         "Все изменения в студии работают в режиме черновика. Рабочая страница входа никогда не затрагивается, пока вы явно не нажмёте Опубликовать. Вы можете безопасно экспериментировать с любой комбинацией настроек.",
       layoutsTitle: "22 Макета Входа",
       layoutsIntro:
-        "NEXORA поставляется с 22 готовыми к продакшену макетами входа в четырёх уровнях: T1 разделённые макеты (6) имеют выделенную панель бренда рядом с формой входа, T2 полностраничные макеты (8) используют весь viewport для иммерсивного входа, T3 центрированные макеты (4) предлагают компактные дизайны на основе карточек, T4 специальные макеты (4) предоставляют кинематографические и художественные обработки. Каждый макет поддерживает независимые настройки фона, наложения и доступности.",
+        "SCRIPE поставляется с 22 готовыми к продакшену макетами входа в четырёх уровнях: T1 разделённые макеты (6) имеют выделенную панель бренда рядом с формой входа, T2 полностраничные макеты (8) используют весь viewport для иммерсивного входа, T3 центрированные макеты (4) предлагают компактные дизайны на основе карточек, T4 специальные макеты (4) предоставляют кинематографические и художественные обработки. Каждый макет поддерживает независимые настройки фона, наложения и доступности.",
       layoutsNote:
         "Разделённые макеты отображают компонент LoginBranding с независимым управлением наложением/размытием на панели бренда. Полностраничные макеты применяют фон и наложение ко всему контейнеру. Центрированные и специальные макеты имеют собственные стратегии рендеринга. Переключение макетов сохраняет всю конфигурацию — меняется только структура рендеринга.",
       tokensTitle: "Пайплайн Дизайн-Токенов",
@@ -466,10 +466,10 @@ export const ru = {
         "Оптимистичный контроль конкурентности предотвращает потерю данных при одновременном редактировании. Если другой администратор опубликует во время вашего редактирования, ваша публикация будет отклонена (409), и вам нужно будет обновить и объединить ваши изменения.",
       safeModeTitle: "Безопасный Режим",
       safeModeIntro:
-        "Безопасный Режим — это аварийный механизм отката, который обходит все настройки бренда тенанта и восстанавливает значения по умолчанию платформы для страницы входа. Когда IsSafeMode установлен в true в TenantSettings, страница входа отображается с темой NEXORA по умолчанию независимо от любой кастомизации. Это гарантирует рабочий вход даже при повреждении конфигурации бренда.",
+        "Безопасный Режим — это аварийный механизм отката, который обходит все настройки бренда тенанта и восстанавливает значения по умолчанию платформы для страницы входа. Когда IsSafeMode установлен в true в TenantSettings, страница входа отображается с темой SCRIPE по умолчанию независимо от любой кастомизации. Это гарантирует рабочий вход даже при повреждении конфигурации бренда.",
       accessTitle: "Контроль Доступа",
       accessIntro:
-        "Кастомизация логина следует модели контроля доступа на основе ролей NEXORA. Открытие Студии Кастомизации требует разрешения branding.manage. Системные администраторы и администраторы тенантов с соответствующим разрешением могут редактировать и публиковать. Обычные администраторы могут только переключать личные предпочтения (светлый/тёмный режим). Активация безопасного режима ограничена только системными администраторами.",
+        "Кастомизация логина следует модели контроля доступа на основе ролей SCRIPE. Открытие Студии Кастомизации требует разрешения branding.manage. Системные администраторы и администраторы тенантов с соответствующим разрешением могут редактировать и публиковать. Обычные администраторы могут только переключать личные предпочтения (светлый/тёмный режим). Активация безопасного режима ограничена только системными администраторами.",
       a11yTitle: "Комплект Доступности (WCAG AA)",
       a11yIntro:
         "Вкладка Доступность предоставляет комплексную сюиту из 32 настроек в 8 категориях, предназначенную для обеспечения полного соответствия страницы входа WCAG AA. Все настройки хранятся в сущности StudioDraft и инъецируются в живую страницу через пайплайн CSS-токенов. Сюита включает валидацию в реальном времени, профили в один клик и автоматизированный движок аудита WCAG.",
@@ -519,7 +519,7 @@ export const ru = {
         "LoginPreviewShell отображает функции доступности в реальном времени: наложения направляющей чтения/маски визуально рендерятся в iframe предпросмотра, а бейдж доступности показывает количество активных функций. Предпросмотр полностью изолирован от системы аутентификации.",
       archTitle: "Архитектура Модуля",
       archIntro:
-        "Кастомизатор Логина следует стандартной модульной чистой архитектуре NEXORA с уровнями домена, данных и представления. Уровень представления содержит компонент StylePanel (UI конфигурации), LoginPreviewShell (управление iframe), AccessibilityPanel (настройки и профили WCAG) и хук useLoginBrandingTokens (пайплайн токен-в-CSS). Компоненты извлечены на уровень модуля для предотвращения проблем потери фокуса при ре-рендерах React.",
+        "Кастомизатор Логина следует стандартной модульной чистой архитектуре SCRIPE с уровнями домена, данных и представления. Уровень представления содержит компонент StylePanel (UI конфигурации), LoginPreviewShell (управление iframe), AccessibilityPanel (настройки и профили WCAG) и хук useLoginBrandingTokens (пайплайн токен-в-CSS). Компоненты извлечены на уровень модуля для предотвращения проблем потери фокуса при ре-рендерах React.",
       archTip:
         "Компоненты BgControls и PresetDots намеренно определены на уровне модуля (не inline), чтобы предотвратить размонтирование/ремонтирование полей ввода React при ре-рендерах, что вызвало бы потерю фокуса при каждом нажатии клавиши.",
       relatedTitle: "Related Features",
@@ -537,7 +537,7 @@ export const ru = {
       description:
         "Серверно-синхронизированные Admin-настройки с 4-слойным движком слияния, 61 настраиваемым параметром, предотвращением FOUC, разрешением конфликтов 409 и контролем функций на основе редакций.",
       intro:
-        "Конструктор Дашборда — это корпоративная система предпочтений администратора NEXORA, которая синхронизирует 61 настраиваемый параметр панели управления между браузером и сервером. Система использует 4-слойный движок слияния (Платформа → Тенант → Админ → Рантайм) для разрешения настроек с контролем переопределений на уровне тенанта, кросс-девайсной персистенцией через AdminSettingsJson и 5 защитами от граничных случаев.",
+        "Конструктор Дашборда — это корпоративная система предпочтений администратора SCRIPE, которая синхронизирует 61 настраиваемый параметр панели управления между браузером и сервером. Система использует 4-слойный движок слияния (Платформа → Тенант → Админ → Рантайм) для разрешения настроек с контролем переопределений на уровне тенанта, кросс-девайсной персистенцией через AdminSettingsJson и 5 защитами от граничных случаев.",
       overviewTitle: "Обзор системы",
       overviewIntro:
         "Конструктор Дашборда обеспечивает полный жизненный цикл предпочтений — от мгновенного рендеринга из кэша до фоновой сверки с сервером.",
@@ -567,7 +567,7 @@ export const ru = {
         "Конструктор Дашборда реализует многоуровневую защиту для предотвращения утечек данных между админами и переполнения payload.",
       archTitle: "Архитектура и карта файлов",
       archIntro:
-        "Конструктор Дашборда реализован в 7 файлах в Core-слое, следуя провайдерной архитектуре NEXORA.",
+        "Конструктор Дашборда реализован в 7 файлах в Core-слое, следуя провайдерной архитектуре SCRIPE.",
       archTip:
         "Для добавления новой настройки расширьте интерфейс Settings и defaultSettings в settings-provider.tsx.",
     },
@@ -576,7 +576,7 @@ export const ru = {
       description:
         "40 premium branding packages, 7 categories, 5 pricing tiers, per-page overrides, copy-on-apply snapshot semantics, and a full clean-architecture data layer — all seeded and ready to browse.",
       intro:
-        "The Theme Marketplace is NEXORA's curated catalog of 40 production-ready branding packages. Each theme is a comprehensive visual identity — not just a color swap — containing 50+ design tokens spanning colors, typography, spacing, overlay, dark mode, branding panel, and per-page overrides for Login, Forgot Password, and Reset Password pages. Themes are stored as structured JSON in the LoginTheme entity, browsable via a full-page gallery with rich filtering, and applied to tenant settings with copy-on-apply snapshot semantics that permanently isolate applied configurations from future marketplace updates.",
+        "The Theme Marketplace is SCRIPE's curated catalog of 40 production-ready branding packages. Each theme is a comprehensive visual identity — not just a color swap — containing 50+ design tokens spanning colors, typography, spacing, overlay, dark mode, branding panel, and per-page overrides for Login, Forgot Password, and Reset Password pages. Themes are stored as structured JSON in the LoginTheme entity, browsable via a full-page gallery with rich filtering, and applied to tenant settings with copy-on-apply snapshot semantics that permanently isolate applied configurations from future marketplace updates.",
       archTitle: "Marketplace Architecture",
       archIntro:
         "The Theme Marketplace follows a pipeline architecture: backend seeder populates the LoginTheme table with 40 records → API exposes paginated list, detail, and apply endpoints → frontend gallery renders themes with advanced filtering → apply action snapshots the ThemeDataJson into tenant's DraftBrandingJson → publish propagates to LiveBrandingJson. Each layer is fully decoupled.",
@@ -585,7 +585,7 @@ export const ru = {
         "1. LoginThemeSeeder.cs seeds 40 themes at application startup (upsert-safe). 2. ThemesController exposes GET /themes (list), GET /themes/{id} (detail), POST /themes/{id}/apply (apply). 3. Frontend ThemeMarketplaceService calls the API via IApiService. 4. ThemeMarketplaceMapper converts DTOs to domain entities. 5. ThemeMarketplaceRepository orchestrates services + mappers. 6. useThemeMarketplace hook provides ViewModel state. 7. ThemeGalleryView renders the marketplace UI.",
       archLayersTitle: "Clean Architecture Layers",
       archLayersIntro:
-        "The marketplace follows NEXORA's standard 3-layer module structure: Domain layer (ThemeDetail entity, IThemeMarketplaceRepository, IThemeMarketplaceService interfaces), Data layer (ThemeMarketplaceService, ThemeMarketplaceRepository, ThemeMarketplaceMapper, ThemeMarketplaceTypes models), and Presentation layer (ThemeGalleryView, ThemeManagementView, ThemeDetailModal, ThemeCard, useThemeMarketplace hook).",
+        "The marketplace follows SCRIPE's standard 3-layer module structure: Domain layer (ThemeDetail entity, IThemeMarketplaceRepository, IThemeMarketplaceService interfaces), Data layer (ThemeMarketplaceService, ThemeMarketplaceRepository, ThemeMarketplaceMapper, ThemeMarketplaceTypes models), and Presentation layer (ThemeGalleryView, ThemeManagementView, ThemeDetailModal, ThemeCard, useThemeMarketplace hook).",
       entityTitle: "LoginTheme Entity",
       entityIntro:
         "Each marketplace theme is stored as a LoginTheme entity in the Identity module's database. The entity extends AuditableEntity, providing soft-delete, audit trail, and optimistic concurrency. The core data is stored in ThemeDataJson — a JSON column containing the full design specification.",
@@ -611,7 +611,7 @@ export const ru = {
         "Tags — Optional comma-separated tags for search (e.g., 'gradient, glass, modern, dark').",
       entityFieldVersion:
         "Version — Semantic version string (e.g., '1.0.0'). Incremented when the theme design is updated.",
-      entityFieldAuthor: "Author — Creator identifier (e.g., 'NEXORA Design Team').",
+      entityFieldAuthor: "Author — Creator identifier (e.g., 'SCRIPE Design Team').",
       entityFieldLikes:
         "LikesCount — Engagement counter. Tracks how many tenants have favorited this theme.",
       entityFieldApplied:
@@ -657,13 +657,13 @@ export const ru = {
         "Each auth page can have its own layout, headline, subtitle, and overlay without affecting the other pages. The Login page might use a full-image corporate layout while Forgot Password uses a clean centered card — all within the same theme.",
       catalogTitle: "40-Theme Catalog Overview",
       catalogIntro:
-        "NEXORA ships with 40 meticulously designed branding packages. Each theme is a unique visual identity crafted for a specific market segment or brand aesthetic. Themes span 7 categories, use 30+ different Google Fonts, cover all 22 layouts, and include per-page branding overrides for Login, Forgot Password, and Reset Password.",
+        "SCRIPE ships with 40 meticulously designed branding packages. Each theme is a unique visual identity crafted for a specific market segment or brand aesthetic. Themes span 7 categories, use 30+ different Google Fonts, cover all 22 layouts, and include per-page branding overrides for Login, Forgot Password, and Reset Password.",
       catalogDiversityTitle: "Design Diversity Matrix",
       catalogDiversityIntro:
         "The 40-theme catalog achieves maximum diversity across multiple axes: each theme uses a unique Google Font pairing, no two themes share the same color palette, all 7 categories are represented, and the layout distribution covers T1 Split (16), T2 Full-Page (12), T3 Centered (6), and T4 Special (6). This ensures every tenant can find a theme that matches their brand identity.",
       tierTitle: "5-Tier Pricing Model",
       tierIntro:
-        "Themes are organized into 5 pricing tiers that align with NEXORA's edition system. Each tier provides increasing design sophistication and customization depth. Tier enforcement is handled by the theme marketplace frontend — themes from higher tiers display an 'Upgrade Required' badge and disable the Apply button for tenants on lower editions.",
+        "Themes are organized into 5 pricing tiers that align with SCRIPE's edition system. Each tier provides increasing design sophistication and customization depth. Tier enforcement is handled by the theme marketplace frontend — themes from higher tiers display an 'Upgrade Required' badge and disable the Apply button for tenants on lower editions.",
       tierFreeTitle: "Free Tier (8 Themes)",
       tierFreeIntro:
         "Essential branding packages available to all tenants regardless of edition. Clean, professional designs suitable for quick deployment. Includes Starter themes across corporate, minimal, and creative categories.",
@@ -698,7 +698,7 @@ export const ru = {
         "Nature — Organic, earth-inspired identity. Forest greens, terracotta, ocean blues, botanical accents, rounded shapes, warm serif typography. Designed for sustainability, wellness, organic brands.",
       componentsTitle: "Frontend Component Inventory",
       componentsIntro:
-        "The Theme Marketplace frontend consists of 8 purpose-built components spanning 3 pages and 1 modal. Each component follows NEXORA's presentation-layer patterns using domain entities (never DTOs) and consuming data exclusively through the DI container.",
+        "The Theme Marketplace frontend consists of 8 purpose-built components spanning 3 pages and 1 modal. Each component follows SCRIPE's presentation-layer patterns using domain entities (never DTOs) and consuming data exclusively through the DI container.",
       compGalleryView:
         "ThemeGalleryView (26KB) — Full-page marketplace with animated hero section, category filter chips, search bar, grid/list view toggle, tier filter tabs, sort controls (popular/newest/name), infinite scroll pagination, and a responsive 3-column grid of ThemeCard components.",
       compManagementView:
@@ -731,7 +731,7 @@ export const ru = {
         "The seeder queries all existing theme names before processing. For each of the 40 themes, it checks the existing set — if the name exists, the theme is skipped. New themes are added to the DbContext in a single batch and saved with one SaveChangesAsync call. This makes the seeder safe to run repeatedly without duplicating themes or losing manual edits.",
       governanceTitle: "Marketplace Governance",
       governanceIntro:
-        "Theme access is controlled by a combination of edition-based tier enforcement and permission-based administrative access. The marketplace respects NEXORA's multi-tenancy model — themes are globally visible but apply operations are scoped to the current tenant.",
+        "Theme access is controlled by a combination of edition-based tier enforcement and permission-based administrative access. The marketplace respects SCRIPE's multi-tenancy model — themes are globally visible but apply operations are scoped to the current tenant.",
       governanceEditionTitle: "Edition-Based Tier Enforcement",
       governanceEditionIntro:
         "Each theme's Tier field maps to an edition level. The frontend gallery marks themes above the tenant's edition with an 'Upgrade Required' badge and disables the Apply button. The backend apply endpoint verifies the tenant's active subscription against the theme's tier before allowing application.",
@@ -771,10 +771,10 @@ export const ru = {
       description:
         "Independent visual customization for Login, Forgot Password, and Reset Password pages — shared design tokens with per-page overrides, isolated preview, and theme integration.",
       intro:
-        "Multi-Page Branding extends NEXORA's Login Customizer Studio to support independent visual configurations for all three authentication pages: Login, Forgot Password, and Reset Password. Instead of forcing a single visual identity across all auth flows, Multi-Page Branding allows tenants to present context-appropriate messaging, layouts, and visual treatments for each page. A shared global design provides consistency, while per-page overrides enable targeted differentiation — all managed through the same zero-code studio interface.",
+        "Multi-Page Branding extends SCRIPE's Login Customizer Studio to support independent visual configurations for all three authentication pages: Login, Forgot Password, and Reset Password. Instead of forcing a single visual identity across all auth flows, Multi-Page Branding allows tenants to present context-appropriate messaging, layouts, and visual treatments for each page. A shared global design provides consistency, while per-page overrides enable targeted differentiation — all managed through the same zero-code studio interface.",
       pagesTitle: "Supported Authentication Pages",
       pagesIntro:
-        "NEXORA's authentication system exposes three distinct pages, each serving a different user intent. Multi-Page Branding allows independent customization of all three while maintaining visual consistency through shared design tokens.",
+        "SCRIPE's authentication system exposes three distinct pages, each serving a different user intent. Multi-Page Branding allows independent customization of all three while maintaining visual consistency through shared design tokens.",
       pageLogin:
         "Login Page — The primary authentication entry point. Users enter their credentials (email + password) to access the platform. This page receives the most visual attention as it creates the first impression of the tenant's brand.",
       pageForgot:
@@ -852,7 +852,7 @@ export const ru = {
       description:
         "No-code drag-and-drop visual canvas with 3 design modes (Freeform, Grid, Builder), 14 component types, a 12-column responsive grid system, real-time preview sync, and JSON serialization.",
       intro:
-        "The Login Page Builder is NEXORA's most advanced customization tool — a fully visual, drag-and-drop canvas that allows tenant administrators to build custom login page layouts without writing any code. The builder provides 3 design modes (Freeform, Grid, and Builder), a palette of 14 pre-built component types (from logos and headings to social login buttons and footer links), a responsive 12-column CSS grid system, real-time two-way sync with the preview iframe, and full JSON serialization for persistence. The builder integrates seamlessly with the Login Customizer Studio's design token pipeline, ensuring that builder-created layouts inherit all theme colors, typography, and accessibility settings.",
+        "The Login Page Builder is SCRIPE's most advanced customization tool — a fully visual, drag-and-drop canvas that allows tenant administrators to build custom login page layouts without writing any code. The builder provides 3 design modes (Freeform, Grid, and Builder), a palette of 14 pre-built component types (from logos and headings to social login buttons and footer links), a responsive 12-column CSS grid system, real-time two-way sync with the preview iframe, and full JSON serialization for persistence. The builder integrates seamlessly with the Login Customizer Studio's design token pipeline, ensuring that builder-created layouts inherit all theme colors, typography, and accessibility settings.",
       modesTitle: "3 Canvas Modes",
       modesIntro:
         "The builder offers three distinct canvas modes, each providing a different level of control over layout positioning. Users can switch between modes at any time — components are preserved during mode switches.",
@@ -990,7 +990,7 @@ export const ru = {
         "Login Bundle — Contains only login branding (theme tokens + builder layout). Dashboard Bundle — Contains only dashboard settings. Complete Bundle — Contains everything: login branding, builder layout, per-page overrides, dashboard settings, and accessibility configuration. Complete bundles provide one-click full-workspace setup.",
       archTitle: "Module Architecture",
       archIntro:
-        "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
+        "The Login Page Builder follows SCRIPE's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip:
         "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties.",
     },
@@ -999,7 +999,7 @@ export const ru = {
       description:
         "Модульная панель с вкладками и доменно-сегрегированными субмодулями (Аудит, Безопасность, Аналитика), 6-слойная чистая архитектура для каждого модуля, ISP-совместимые интерфейсы, ленивая загрузка и управление видимостью вкладок через разрешения.",
       intro:
-        "Хаб Панели Управления — это главный операционный центр NEXORA — интерфейс с вкладками, объединяющий четыре доменно-специфичных представления (Обзор, Аудит, Безопасность, Аналитика) в единый хаб. Каждый доменный модуль следует строгой 6-слойной чистой архитектуре (Модели → Сущности → Интерфейсы → Сервисы → Репозитории → Маперы) с отдельной регистрацией в DI. Подпредставления загружаются лениво через React.lazy и защищены разрешениями.",
+        "Хаб Панели Управления — это главный операционный центр SCRIPE — интерфейс с вкладками, объединяющий четыре доменно-специфичных представления (Обзор, Аудит, Безопасность, Аналитика) в единый хаб. Каждый доменный модуль следует строгой 6-слойной чистой архитектуре (Модели → Сущности → Интерфейсы → Сервисы → Репозитории → Маперы) с отдельной регистрацией в DI. Подпредставления загружаются лениво через React.lazy и защищены разрешениями.",
       archTitle: "Архитектура Hub-and-Spoke",
       archIntro:
         "Хаб Панели Управления использует паттерн Hub-and-Spoke, где основной DashboardView служит центральным хабом, отображающим полосу вкладок, а каждая вкладка лениво загружает независимое доменно-специфичное представление (spoke). Вкладка Обзор встроена для мгновенного рендеринга. Вкладки Аудит, Безопасность и Аналитика загружаются по требованию через React.lazy с fallback-компонентами Suspense.",
@@ -1012,7 +1012,7 @@ export const ru = {
         "Обратно совместимые псевдонимы типов сохраняются в DashboardEntities.ts для устаревших компонентов. Эти псевдонимы помечены как @deprecated для направления будущей очистки.",
       layersTitle: "6-Слойная Чистая Архитектура",
       layersIntro:
-        "Каждый извлечённый модуль (Аудит, Безопасность, Аналитика) реализует полный стек чистой архитектуры фронтенда NEXORA. 6 слоёв обеспечивают строгое разделение ответственностей: Модели содержат формы ответов API, Сущности — это богатые доменные объекты с вычисляемыми свойствами, Интерфейсы определяют контракты, Сервисы обрабатывают HTTP-вызовы через IApiService, Репозитории оркестрируют сервисы и маперы для возврата доменных сущностей, а Маперы выполняют преобразование DTO-в-сущность с коалесценцией null.",
+        "Каждый извлечённый модуль (Аудит, Безопасность, Аналитика) реализует полный стек чистой архитектуры фронтенда SCRIPE. 6 слоёв обеспечивают строгое разделение ответственностей: Модели содержат формы ответов API, Сущности — это богатые доменные объекты с вычисляемыми свойствами, Интерфейсы определяют контракты, Сервисы обрабатывают HTTP-вызовы через IApiService, Репозитории оркестрируют сервисы и маперы для возврата доменных сущностей, а Маперы выполняют преобразование DTO-в-сущность с коалесценцией null.",
       diTitle: "Подключение DI-Контейнера",
       diIntro:
         "Все три новых модуля зарегистрированы в SystemContainer (modules/system/di.ts). Каждый модуль следует паттерну: Сервис (принимает IApiService) → Репозиторий (принимает Сервис) → Объявление интерфейса SystemContainer → Экспорт ленивого геттера. ViewModel-ы потребляют репозитории исключительно через DI-контейнер.",

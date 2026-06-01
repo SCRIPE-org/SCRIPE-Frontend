@@ -10,11 +10,11 @@ export const de = {
       tblCoreR7C3:
         "Funktionen, Editionen, Abonnements, Überschreibungen, Kontingentdurchsetzung, versionierte Rollouts, Reseller-Eingrenzung",
       businessContent:
-        "NEXORA ist keine leere Hülle; es ist vom ersten Tag an ein funktionierendes Enterprise-Ökosystem. Nutzen Sie unsere bestehenden Geschäftsmodule – wie Benutzerverwaltung, Audit-Logging und Benachrichtigungen – als sofortige Startpunkte oder klonen Sie diese, um proprietäre Funktionen schnell aufzubauen.",
+        "SCRIPE ist keine leere Hülle; es ist vom ersten Tag an ein funktionierendes Enterprise-Ökosystem. Nutzen Sie unsere bestehenden Geschäftsmodule – wie Benutzerverwaltung, Audit-Logging und Benachrichtigungen – als sofortige Startpunkte oder klonen Sie diese, um proprietäre Funktionen schnell aufzubauen.",
       businessTitle: "Beschleunigte Geschäftslogik",
       commTitle: "Kommunikation & Webhooks",
       coreContent:
-        "Die Foundation-Schicht bietet das absolut Nicht-Verhandelbare: den Identity Provider, Multi-Tenant-Auflösungsstrategien, EF Core-Context-Abstraktionen und den zentralisierten NEXORA mediator-Dispatcher. Sie ist das felsenfeste Fundament, auf dem Ihre gesamte Anwendung skaliert.",
+        "Die Foundation-Schicht bietet das absolut Nicht-Verhandelbare: den Identity Provider, Multi-Tenant-Auflösungsstrategien, EF Core-Context-Abstraktionen und den zentralisierten SCRIPE mediator-Dispatcher. Sie ist das felsenfeste Fundament, auf dem Ihre gesamte Anwendung skaliert.",
       coreTitle: "Das Kern-Fundament (Core Foundation)",
       crmModule: "Headless CRM Modul",
       crmModuleDesc:
@@ -24,7 +24,7 @@ export const de = {
         "Eine makellose Sandbox, die exakt dieselben Clean Architecture-Grenzen nutzt, um Ihre einzigartige Branchenlogik aufzunehmen.",
       dataTitle: "Daten & Auditing",
       description:
-        "Ein umfassendes Verzeichnis der vorgefertigten, produktionsreifen Enterprise-Bounded-Contexts, die in der NEXORA-Plattform enthalten sind.",
+        "Ein umfassendes Verzeichnis der vorgefertigten, produktionsreifen Enterprise-Bounded-Contexts, die in der SCRIPE-Plattform enthalten sind.",
       financeModule: "Invoicing & Billing Engine",
       financeModuleDesc:
         "Generieren Sie PDF-Rechnungen, verwalten Sie Steuerlokalitäten und integrieren Sie Stripe oder benutzerdefinierte Zahlungs-Gateways.",
@@ -35,7 +35,7 @@ export const de = {
         "Jedes Modul im Katalog ist streng isoliert. Das Notification-Modul teilt null Status mit dem User Management-Modul. Sie kommunizieren rein über asynchrone Events, was garantiert, dass ein katastrophaler Ausfall in einer Domain niemals auf eine andere übergreift.",
       independenceTitle: "Kryptographische Modulisolierung",
       intro:
-        "NEXORA wird mit einer massiven Bibliothek an Enterprise-tauglichen, vorgetesteten Bounded Contexts ausgeliefert. Vom ersten Tag an besitzen Sie die operative Reife einer 5 Jahre alten SaaS-Anwendung.",
+        "SCRIPE wird mit einer massiven Bibliothek an Enterprise-tauglichen, vorgetesteten Bounded Contexts ausgeliefert. Vom ersten Tag an besitzen Sie die operative Reife einer 5 Jahre alten SaaS-Anwendung.",
       inventoryModule: "Asset Tracking Modul",
       inventoryModuleDesc:
         "Bilden Sie komplexe hierarchische Bestände ab und verfolgen Sie Statusänderungen durch strikt angewendete Domain-Events.",

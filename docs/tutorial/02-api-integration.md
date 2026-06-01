@@ -21,7 +21,7 @@ graph TB
         SANITIZE[Input Sanitizer<br/>HTML entity encoding]
     end
 
-    INT --> BACKEND[Backend API<br/>https://api.nexora.com]
+    INT --> BACKEND[Backend API<br/>https://api.scripe.com]
 ```
 
 **Location**: `src/core/services/implementation/api.service.ts`

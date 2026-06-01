@@ -7,7 +7,7 @@ const HrmsDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "HRMS | NEXORA",
+  title: "HRMS | SCRIPE",
   description: "Human Resource Management System",
 };
 

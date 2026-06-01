@@ -9,7 +9,7 @@ const ProfileSessionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Sessions | NEXORA",
+  title: "Sessions | SCRIPE",
   description: "View and manage your active login sessions across all devices",
 };
 

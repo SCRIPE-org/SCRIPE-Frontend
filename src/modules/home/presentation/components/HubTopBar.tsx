@@ -3,7 +3,7 @@
 /**
  * HubTopBar — Minimal topbar for the Hub page.
  *
- * Design: NEXORA logo | spacer | "Jump to anything · /" | ⊞ | 🔔 | divider | Avatar pill
+ * Design: SCRIPE logo | spacer | "Jump to anything · /" | ⊞ | 🔔 | divider | Avatar pill
  * Background: rgba(10,14,26,0.55) with backdrop-blur.
  *
  * ALL buttons are now wired:
@@ -70,7 +70,7 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
         fontFamily: "'Inter', system-ui, sans-serif",
       }}
     >
-      {/* NEXORA wordmark */}
+      {/* SCRIPE wordmark */}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
         <svg width={22} height={22} viewBox="0 0 24 24" fill="none">
           <defs>
@@ -96,7 +96,7 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
             color: "#e6e9f5",
           }}
         >
-          NEXORA
+          SCRIPE
         </span>
       </div>
 

@@ -59,7 +59,7 @@ export const ar = {
     security: "الأمان",
     apiReference: "مرجع واجهة برمجة التطبيقات (API)",
     infrastructure: "البنية التحتية",
-    commercialWhyNexora: "لماذا NEXORA",
+    commercialWhyScripe: "لماذا SCRIPE",
     commercialPlatform: "نظرة عامة على المنصة",
     commercialEnterprise: "ميزات الشركات",
     commercialSecurity: "الأمان والامتثال",

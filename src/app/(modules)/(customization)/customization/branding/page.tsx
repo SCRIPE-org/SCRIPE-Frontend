@@ -7,7 +7,7 @@ const TenantSettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Branding Settings | NEXORA",
+  title: "Branding Settings | SCRIPE",
   description: "Configure tenant branding, logos, colors, and display settings",
 };
 

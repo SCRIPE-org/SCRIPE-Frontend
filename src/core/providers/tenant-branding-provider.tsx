@@ -183,7 +183,7 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
   //
   // Priority (4-layer merge per analysis Section 9):
   //   Layer 1: Platform defaults (hardcoded defaultSettings)
-  //   Layer 3: Tenant defaults (DashboardThemeJson → nexora_pref_dashboard_settings)
+  //   Layer 3: Tenant defaults (DashboardThemeJson → scr_pref_dashboard_settings)
   //   Layer 4: Admin overrides (localStorage dashboard-settings)
   // ══════════════════════════════════════════════════════════
   useEffect(() => {

@@ -161,7 +161,7 @@ export const ar = {
     domainsRetry: "إعادة المحاولة",
     domainsDnsStep1: "الخطوة 1: أضف سجل CNAME لتوجيه حركة المرور",
     domainsDnsStep2: "الخطوة 2: أضف سجل TXT للتحقق من الملكية",
-    domainsCnameTarget: "app.nexora.com",
+    domainsCnameTarget: "app.scripe.com",
     created: "تم إنشاء المستأجر",
     createdDescription: "تم إنشاء المستأجر والاشتراك بنجاح.",
     updated: "تم تحديث المستأجر",

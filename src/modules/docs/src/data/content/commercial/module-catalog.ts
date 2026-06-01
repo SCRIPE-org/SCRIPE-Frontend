@@ -182,8 +182,8 @@ const sections: DocSection[] = [
     type: "code",
     language: "bash",
     filename: "Add a New Module in Seconds",
-    code: `# Scaffold a complete module with NEXORA CLI
-nexora new-module --name "ProjectManagement"
+    code: `# Scaffold a complete module with SCRIPE CLI
+scripe new-module --name "ProjectManagement"
 
 # This generates:
 # ├── Backend

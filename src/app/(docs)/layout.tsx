@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { DocsLayout } from "@modules/docs/src/presentation/components/layout/DocsLayout";
 
 export const metadata: Metadata = {
-  title: "Documentation | NEXORA Platform",
+  title: "Documentation | SCRIPE Platform",
   description:
     "Comprehensive documentation for the Verified ERP Platform - Backend (.NET 10) & Frontend (Next.js)",
   keywords: ["verified", "documentation", "erp", "cqrs", ".net", "next.js", "modular monolith"],

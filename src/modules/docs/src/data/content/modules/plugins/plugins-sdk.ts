@@ -260,7 +260,7 @@ window.parent.postMessage({ type: "AUTH_TOKEN_REQUEST" }, "*");
 
 // 3. Listen for host messages (ALWAYS validate origin)
 window.addEventListener("message", (event) => {
-  if (event.origin !== "https://your-nexora-host.com") return;
+  if (event.origin !== "https://your-scripe-host.com") return;
 
   const msg = event.data;
   if (msg.type === "AUTH_TOKEN") {

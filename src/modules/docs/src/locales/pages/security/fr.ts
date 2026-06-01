@@ -9,7 +9,7 @@ export const fr = {
       description:
         "Stratégie de défense à 5 couches, configuration CORS, limitation de débit et politiques de mots de passe.",
       intro:
-        "NEXORA met en œuvre une stratégie de sécurité de défense en profondeur (defense-in-depth).",
+        "SCRIPE met en œuvre une stratégie de sécurité de défense en profondeur (defense-in-depth).",
       layersTitle: "Couches de Défense de Sécurité",
       featuresTitle: "Fonctionnalités de Sécurité",
       featureJwt: "Authentification JWT",
@@ -71,7 +71,7 @@ export const fr = {
       title: "Authentification Unique (SSO)",
       description: "Authentification OIDC, liaison d'identité externe et applications OAuth.",
       intro:
-        "Le système NEXORA prend en charge l'authentification via des fournisseurs externes sur la base du protocole OIDC et la provision d'identifiants via des applications OAuth. Le système tient compte des locataires, avec une sécurité PKCE stricte.",
+        "Le système SCRIPE prend en charge l'authentification via des fournisseurs externes sur la base du protocole OIDC et la provision d'identifiants via des applications OAuth. Le système tient compte des locataires, avec une sécurité PKCE stricte.",
       architectureTitle: "Architecture d'Authentification OIDC / OAuth",
       endpointsTitle: "Points de Terminaux (Endpoints) et Flux",
       flowIntro:
@@ -84,12 +84,12 @@ export const fr = {
         "Réceptionne l'utilisateur après une authentification réussie et échange le code d'autorisation contre des jetons (tokens) côté serveur – sans aucune implication du navigateur.",
       linkingTitle: "Liaison et Traitement des Identités",
       linkingIntro:
-        "À l'issue de la connexion, l'e-mail est vérifié par rapport à la base de données. S'il s'agit d'une première connexion, l'enregistrement OIDC est lié au compte NEXORA interne afin d'éviter les doublons.",
+        "À l'issue de la connexion, l'e-mail est vérifié par rapport à la base de données. S'il s'agit d'une première connexion, l'enregistrement OIDC est lié au compte SCRIPE interne afin d'éviter les doublons.",
       pkceWarning:
         "La prise en charge des flux OAuth implicites obsolètes est supprimée. Le protocole PKCE est exigé dans toutes les variantes.",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -112,13 +112,13 @@ export const fr = {
       entityModelContent:
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
@@ -130,7 +130,7 @@ export const fr = {
       title: "Protection des Données",
       description:
         "Isolation des locataires, cryptage des données au repos et en transit, champs restreints et conformité RGPD.",
-      intro: "NEXORA protège les données à chaque couche de la base de données au réseau.",
+      intro: "SCRIPE protège les données à chaque couche de la base de données au réseau.",
       tenantIsolationTitle: "Isolation des Données des Locataires",
       tenantIsolationIntro:
         "Les données sont isolées via le filtre global d'EF Core appliqué dynamiquement à chaque requête LINQ.",
@@ -152,7 +152,7 @@ export const fr = {
         "Possibilité de chiffrer les ID (Guid) des entités en AES-256 dans les réponses API pour prévenir les attaques d'énumération.",
       gdprTitle: "Conformité RGPD",
       gdprIntro:
-        "NEXORA gère la portabilité, le consentement et le droit à l'oubli des utilisateurs (right to delete).",
+        "SCRIPE gère la portabilité, le consentement et le droit à l'oubli des utilisateurs (right to delete).",
       rightToDeleteTitle: "Droit à l'Effacement",
       dataPortabilityTitle: "Portabilité des Données",
       consentTitle: "Gestion du Consentement",
@@ -166,7 +166,7 @@ export const fr = {
       description:
         "Limitation de débit, configuration CORS, validation des entrées, protection CSRF et prévention des attaques par rejeu.",
       intro:
-        "NEXORA applique plusieurs couches de sécurité directement sur les terminaux (endpoints) HTTP de l'API REST.",
+        "SCRIPE applique plusieurs couches de sécurité directement sur les terminaux (endpoints) HTTP de l'API REST.",
       rateLimitTitle: "Limitation de Débit (Rate Limiting)",
       rateLimitIntro:
         "Implémentée via le limiteur intégré d'ASP.NET Core (IP, endpoint, et DDoS général).",
@@ -178,7 +178,7 @@ export const fr = {
         "Interception à 100% des mauvaises données via FluentValidation avant même de lancer le traitement du gestionnaire.",
       csrfTitle: "Protection CSRF",
       csrfIntro:
-        "NEXORA s'appuie sur la nature des jetons Bearer et la configuration SameSite des cookies pour rendre les requêtes insensibles aux CSRF.",
+        "SCRIPE s'appuie sur la nature des jetons Bearer et la configuration SameSite des cookies pour rendre les requêtes insensibles aux CSRF.",
       headersTitle: "En-têtes de Sécurité (Security Headers)",
       headersIntro:
         "Inclut Content-Security-Policy, X-Content-Type-Options et X-Frame-Options par défaut.",
@@ -193,7 +193,7 @@ export const fr = {
       description:
         "11 composants middleware exécutés dans un ordre strict allant de la gestion des exceptions au contexte du locataire.",
       intro:
-        "Le pipeline de requêtes HTTP de NEXORA garantit que chaque flux subit le bon traitement contextuel avant d'atteindre votre code métier.",
+        "Le pipeline de requêtes HTTP de SCRIPE garantit que chaque flux subit le bon traitement contextuel avant d'atteindre votre code métier.",
       overviewTitle: "Aperçu du Pipeline",
       overviewIntro:
         "L'ordre d'exécution (de haut en bas) est primordial et un court-circuit empêche les couches suivantes d'être exécutées.",
@@ -233,10 +233,10 @@ export const fr = {
       title: "Audit et Conformité",
       description:
         "Pipeline de journalisation immuable interceptant les changements de la base de données et exportant vers Excel/PDF.",
-      intro: "NEXORA est dotée d'une suite permettant une piste d'audit juridique inaltérable.",
+      intro: "SCRIPE est dotée d'une suite permettant une piste d'audit juridique inaltérable.",
       architectureTitle: "Architecture d'Audit",
       architectureIntro:
-        "Combine l'AuditableEntityInterceptor d'EF Core, l'AuditBehavior de NEXORA mediator et le RequestLoggingMiddleware.",
+        "Combine l'AuditableEntityInterceptor d'EF Core, l'AuditBehavior de SCRIPE mediator et le RequestLoggingMiddleware.",
       interceptorTitle: "Intercepteur de Changement d'Entité",
       interceptorIntro:
         "S'exécute à l'intérieur de l'ORM, calculant l'ancienne et la nouvelle valeur, l'auteur de l'action, puis sérialise le tout en JSON.",

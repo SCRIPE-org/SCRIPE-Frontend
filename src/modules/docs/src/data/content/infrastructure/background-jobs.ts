@@ -562,7 +562,7 @@ services.AddScoped<IAutoRegisteredJob>(sp =>
       {
         titleKey: "infrastructure.backgroundJobs.newJobStep4Title",
         contentKey: "infrastructure.backgroundJobs.newJobStep4Desc",
-        code: `nexora build backend
+        code: `scripe build backend
 # Must output: Build succeeded. 0 Error(s)
 # Auto-discovery handles the rest — no other wiring needed`,
         codeLanguage: "bash",
@@ -634,7 +634,7 @@ services.AddScoped<IAutoRegisteredJob>(sp =>
     language: "bash",
     filename: "CLI — One Command to Add SoftDeleteCleanupJob",
     code: `# Add soft-delete cleanup job to a module
-nexora add-bg-service Products
+scripe add-bg-service Products
 
 # This generates:
 # 1. Products.Infrastructure/BackgroundJobs/ProductsSoftDeleteCleanupJob.cs

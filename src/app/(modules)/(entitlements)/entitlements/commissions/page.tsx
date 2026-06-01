@@ -9,7 +9,7 @@ const CommissionDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Commission Dashboard | NEXORA",
+  title: "Commission Dashboard | SCRIPE",
   description: "Platform-wide commission revenue analytics and per-tenant breakdown",
 };
 

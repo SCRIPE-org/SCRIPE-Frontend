@@ -7,7 +7,7 @@ const DsrDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "DSR Details | NEXORA",
+  title: "DSR Details | SCRIPE",
   description: "View and process Data Subject Request details",
 };
 

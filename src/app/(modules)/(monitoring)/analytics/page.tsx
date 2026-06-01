@@ -7,7 +7,7 @@ const TenantAnalyticsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Tenant Analytics | NEXORA",
+  title: "Tenant Analytics | SCRIPE",
   description: "Performance metrics and comparison across tenants",
 };
 

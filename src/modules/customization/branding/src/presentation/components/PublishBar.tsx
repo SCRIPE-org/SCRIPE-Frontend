@@ -261,7 +261,7 @@ export function PublishBar({
                       {t("studio.reset.factoryDefault") || "Factory Reset"}
                     </span>
                     <span className="text-[10px] text-muted-foreground">
-                      {t("studio.reset.factoryDefaultDesc") || "Reset to NEXORA default theme"}
+                      {t("studio.reset.factoryDefaultDesc") || "Reset to SCRIPE default theme"}
                     </span>
                   </div>
                 </button>

@@ -59,7 +59,7 @@ export const es = {
     security: "Seguridad",
     apiReference: "Referencia de API",
     infrastructure: "Infraestructura",
-    commercialWhyNexora: "Por qué NEXORA",
+    commercialWhyScripe: "Por qué SCRIPE",
     commercialPlatform: "Visión general de la Plataforma",
     commercialEnterprise: "Características Enterprise",
     commercialSecurity: "Seguridad y Cumplimiento",

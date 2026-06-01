@@ -15,7 +15,7 @@ const InstalledPluginDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Detail | NEXORA",
+  title: "Plugin Detail | SCRIPE",
   description: "View details and embedded UI for an installed plugin",
 };
 

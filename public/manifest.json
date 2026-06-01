@@ -1,7 +1,7 @@
 {
-  "name": "NEXORA",
-  "short_name": "NEXORA",
-  "description": "NEXORA — Enterprise Resource Platform",
+  "name": "SCRIPE",
+  "short_name": "SCRIPE",
+  "description": "SCRIPE — Enterprise Resource Platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#09090b",

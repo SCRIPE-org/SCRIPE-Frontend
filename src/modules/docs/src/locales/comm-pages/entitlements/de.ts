@@ -9,10 +9,10 @@ export const de = {
       description:
         "Eine vollständige, unternehmenstaugliche Berechtigungs-Engine, die Ihre Plattform in ein differenziertes SaaS-Produkt mit Editionen, Abonnements und mandantenspezifischer Funktionssteuerung verwandelt.",
       intro:
-        "Hören Sie auf, Planprüfungen in Ihrer Codebasis fest zu verdrahten. Das Berechtigungsmodul von NEXORA bietet eine Full-Stack-Feature-Gating-Engine auf API-Ebene, die automatisch durchsetzt, was jeder Mandant tun darf und was nicht — basierend auf seiner abonnierten Edition, aktiven Überschreibungen und Echtzeit-Kontingentzählern.",
+        "Hören Sie auf, Planprüfungen in Ihrer Codebasis fest zu verdrahten. Das Berechtigungsmodul von SCRIPE bietet eine Full-Stack-Feature-Gating-Engine auf API-Ebene, die automatisch durchsetzt, was jeder Mandant tun darf und was nicht — basierend auf seiner abonnierten Edition, aktiven Überschreibungen und Echtzeit-Kontingentzählern.",
       whyTitle: "Warum integrierte Berechtigungen?",
       whyContent:
-        "Die meisten SaaS-Plattformen flanschen Feature-Flags als nachträglichen Gedanken an. NEXORA integriert Berechtigungen über die IRequireFeature-Schnittstelle direkt in die CQRS-Pipeline, was bedeutet, dass jeder Befehl automatisch überwacht werden kann, ohne eine einzige Zeile benutzerdefinierter Middleware.",
+        "Die meisten SaaS-Plattformen flanschen Feature-Flags als nachträglichen Gedanken an. SCRIPE integriert Berechtigungen über die IRequireFeature-Schnittstelle direkt in die CQRS-Pipeline, was bedeutet, dass jeder Befehl automatisch überwacht werden kann, ohne eine einzige Zeile benutzerdefinierter Middleware.",
       fgEditions: "Editionen (Pläne)",
       fgEditionsDesc:
         "Benannte Funktionsbündel wie Basic, Pro, Enterprise, die definieren, was jeder Plan beinhaltet.",
@@ -54,8 +54,8 @@ export const de = {
       tblResR4C3: "Fallback, wenn keine andere Quelle zutrifft",
       valueTitle: "Geschäftswert",
       tblValH1: "Herausforderung",
-      tblValH2: "Ohne NEXORA",
-      tblValH3: "Mit NEXORA-Berechtigungen",
+      tblValH2: "Ohne SCRIPE",
+      tblValH3: "Mit SCRIPE-Berechtigungen",
       tblValR1C1: "Plan-Differenzierung",
       tblValR1C2: "Fest verdrahtete if/else-Prüfungen überall verstreut",
       tblValR1C3: "Automatisches Pipeline-Gating pro Edition",
@@ -71,12 +71,12 @@ export const de = {
       tblValR5C1: "Funktions-Rollouts",
       tblValR5C2: "Big-Bang-Deployments, die alle Mandanten gefährden",
       tblValR5C3: "Canary- und geplante Rollout-Strategien",
-      tip: "Das Berechtigungsmodul ist vollständig in die NEXORA mediator-Pipeline integriert. Befehle, die IRequireFeature implementieren, werden automatisch überwacht — Ihre Geschäftslogik bleibt sauber und fokussiert.",
+      tip: "Das Berechtigungsmodul ist vollständig in die SCRIPE mediator-Pipeline integriert. Befehle, die IRequireFeature implementieren, werden automatisch überwacht — Ihre Geschäftslogik bleibt sauber und fokussiert.",
     },
     entEditions: {
       title: "Editionen & Pläne",
       description:
-        "Definieren, verwalten und versionieren Sie Ihre SaaS-Produktpläne mit der leistungsstarken Editions-Engine von NEXORA.",
+        "Definieren, verwalten und versionieren Sie Ihre SaaS-Produktpläne mit der leistungsstarken Editions-Engine von SCRIPE.",
       intro:
         "Editionen sind die Bausteine Ihrer SaaS-Preisstrategie. Jede Edition bündelt eine spezifische Gruppe von Funktionswerten (boolesche Schalter, numerische Limits, String-Konfigurationen) in einen benannten Plan, der Mandanten über Abonnements zugewiesen werden kann.",
       whatTitle: "Was sind Editionen?",
@@ -125,7 +125,7 @@ export const de = {
       description:
         "Vollständige Lebenszyklusverwaltung für Mandantenabonnements mit Mehrwährungspreisen, Aktionsrabatten, Analyse der Upgrade-/Downgrade-Auswirkungen, Testversionen, Ablaufbehandlung und umfassendem Analytik-Export.",
       intro:
-        "Abonnements sind die Brücke zwischen Mandanten und Editionen. Sie definieren, in welchem Plan sich ein Mandant befindet, wann er beginnt und abläuft, und wie sich das System verhält, wenn sich der Abonnement-Lebenszyklus ändert. Mit integrierter Mehrwährungspreisgestaltung und Aktionsrabatt-Tracking bietet NEXORA alles, was Sie für die Monetarisierung benötigen.",
+        "Abonnements sind die Brücke zwischen Mandanten und Editionen. Sie definieren, in welchem Plan sich ein Mandant befindet, wann er beginnt und abläuft, und wie sich das System verhält, wenn sich der Abonnement-Lebenszyklus ändert. Mit integrierter Mehrwährungspreisgestaltung und Aktionsrabatt-Tracking bietet SCRIPE alles, was Sie für die Monetarisierung benötigen.",
       lifecycleTitle: "Abonnement-Lebenszyklus",
       lifecycleContent:
         "Jedes Abonnement folgt einem klar definierten Zustandsautomaten. Das System erzwingt automatisch gültige Übergänge und gibt in jeder Phase Domänenereignisse für Audit- und Integrationszwecke aus.",

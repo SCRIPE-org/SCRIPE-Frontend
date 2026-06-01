@@ -114,8 +114,8 @@ const sections: DocSection[] = [
     code: `{
   "EmailSettings": {
     "Provider": "smtp",
-    "FromEmail": "no-reply@nexora.io",
-    "FromName": "NEXORA Platform",
+    "FromEmail": "no-reply@scripe.com",
+    "FromName": "SCRIPE Platform",
     "Smtp": {
       "Host": "smtp.office365.com",
       "Port": 587,

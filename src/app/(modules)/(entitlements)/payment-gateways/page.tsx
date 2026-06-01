@@ -9,7 +9,7 @@ const PaymentGatewaySettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Payment Gateways | NEXORA",
+  title: "Payment Gateways | SCRIPE",
   description: "Configure platform-level payment gateway integrations for all tenants",
 };
 

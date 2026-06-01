@@ -64,7 +64,7 @@ export const de = {
       step3Desc: "Variablen mit {{variable}} übergeben.",
       noLocaleRoutes: "Wir nutzen KEINE dateibasierte Lokalisierung wie [locale]/page.tsx.",
       moduleLocaleNote:
-        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
+        "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "Formularvalidierung",

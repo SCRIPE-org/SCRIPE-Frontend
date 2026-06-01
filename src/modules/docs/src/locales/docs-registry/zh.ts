@@ -13,7 +13,7 @@ import { zh as infrastructure } from "../pages/infrastructure/zh";
 import { zh as tutorials } from "../pages/tutorials/zh";
 import { zh as apiReference } from "../pages/api-reference/zh";
 
-import { zh as commWhyNexora } from "../comm-pages/why-nexora/zh";
+import { zh as commWhyScripe } from "../comm-pages/why-scripe/zh";
 import { zh as commPlatform } from "../comm-pages/platform/zh";
 import { zh as commEnterprise } from "../comm-pages/enterprise/zh";
 import { zh as commSecurity } from "../comm-pages/security/zh";
@@ -46,7 +46,7 @@ export const allDocsZh: Record<string, any> = mergeAll(
   infrastructure,
   tutorials,
   apiReference,
-  commWhyNexora,
+  commWhyScripe,
   commPlatform,
   commEnterprise,
   commSecurity,

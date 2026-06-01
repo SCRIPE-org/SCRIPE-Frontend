@@ -238,7 +238,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
           />
           <p className="text-xs text-muted-foreground">
             {t("identityProviders.redirectUriHelp") ||
-              "Leave empty to use the default NEXORA callback URL"}
+              "Leave empty to use the default SCRIPE callback URL"}
           </p>
         </div>
       </CardContent>
@@ -341,7 +341,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
           />
           <p className="text-xs text-muted-foreground">
             {t("identityProviders.redirectUriHelp") ||
-              "Leave empty to use the default NEXORA callback URL"}
+              "Leave empty to use the default SCRIPE callback URL"}
           </p>
         </div>
       </CardContent>
@@ -669,7 +669,7 @@ export function ClaimMappingsSection({ form, updateField }: FormSectionProps) {
         </CardTitle>
         <CardDescription>
           {t("identityProviders.claimMappingsSectionDesc") ||
-            "Map external claims to NEXORA user attributes (JSON key → value pairs)"}
+            "Map external claims to SCRIPE user attributes (JSON key → value pairs)"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -688,7 +688,7 @@ export function ClaimMappingsSection({ form, updateField }: FormSectionProps) {
         )}
         <p className="text-xs text-muted-foreground">
           {t("identityProviders.claimMappingsHelp") ||
-            "Maps external IdP claims to internal NEXORA attributes. Keys are NEXORA fields, values are the IdP claim URIs."}
+            "Maps external IdP claims to internal SCRIPE attributes. Keys are SCRIPE fields, values are the IdP claim URIs."}
         </p>
       </CardContent>
     </Card>

@@ -9,7 +9,7 @@ const UsersView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Users | NEXORA",
+  title: "Users | SCRIPE",
   description: "Manage client user accounts and their access within tenants",
 };
 

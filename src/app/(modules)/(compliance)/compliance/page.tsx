@@ -7,7 +7,7 @@ const ComplianceDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compliance | NEXORA",
+  title: "Compliance | SCRIPE",
   description: "Compliance dashboard — GDPR, CCPA, and data protection overview",
 };
 

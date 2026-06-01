@@ -7,7 +7,7 @@ const TenantPlanDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plan Details | NEXORA",
+  title: "Plan Details | SCRIPE",
   description: "Manage plan features, pricing, versions, and promotions",
 };
 

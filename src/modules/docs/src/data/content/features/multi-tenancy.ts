@@ -562,9 +562,9 @@ public string? CompanyName { get; set; }       // Display name`,
 // Change these when rebranding or deploying to a different domain.
 {
   "Tenancy": {
-    "PlatformDomain": "nexora.com",       // Auto-subdomains: {code}.nexora.com
-    "CnameTarget": "app.nexora.com",      // DNS instruction: CNAME → this
-    "VerificationPrefix": "_nexora-verify",// TXT record: _nexora-verify.{domain}
+    "PlatformDomain": "scripe.com",       // Auto-subdomains: {code}.scripe.com
+    "CnameTarget": "app.scripe.com",      // DNS instruction: CNAME → this
+    "VerificationPrefix": "_scr-verify",// TXT record: _scr-verify.{domain}
     "TokenPrefix": "nxr_"                 // Token format: nxr_base64...
   }
 }`,
@@ -578,9 +578,9 @@ public string? CompanyName { get; set; }       // Display name`,
 {
     public const string SectionName = "Tenancy";
 
-    public string PlatformDomain { get; init; } = "nexora.com";
-    public string CnameTarget { get; init; } = "app.nexora.com";
-    public string VerificationPrefix { get; init; } = "_nexora-verify";
+    public string PlatformDomain { get; init; } = "scripe.com";
+    public string CnameTarget { get; init; } = "app.scripe.com";
+    public string VerificationPrefix { get; init; } = "_scr-verify";
     public string TokenPrefix { get; init; } = "nxr_";
 }`,
     highlightLines: [5, 6, 7, 8],
@@ -592,14 +592,14 @@ public string? CompanyName { get; set; }       // Display name`,
       [
         "PlatformDomain",
         "Base domain for auto-generated tenant subdomains",
-        "nexora.com",
+        "scripe.com",
         "myapp.io",
       ],
-      ["CnameTarget", "Target shown in DNS CNAME instructions", "app.nexora.com", "app.myapp.io"],
+      ["CnameTarget", "Target shown in DNS CNAME instructions", "app.scripe.com", "app.myapp.io"],
       [
         "VerificationPrefix",
         "TXT record hostname prefix for domain ownership verification",
-        "_nexora-verify",
+        "_scr-verify",
         "_myapp-verify",
       ],
       ["TokenPrefix", "Prefix for verification token strings", "nxr_", "ma_"],

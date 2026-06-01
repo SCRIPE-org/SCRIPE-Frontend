@@ -40,7 +40,7 @@ export const en = {
         "Platform Health Score — Composite score based on MRR trend, churn, and trial conversion",
       currencyTitle: "Multi-Currency Support",
       currencyIntro:
-        "NEXORA supports 28 Stripe-supported currencies. Each Invoice stores the Currency (ISO code), SubTotal, DiscountAmount, TaxAmount, and Total in the original currency. ExchangeRateToUsd and TotalAmountUsd fields normalize amounts for consistent USD-based reporting across all currencies.",
+        "SCRIPE supports 28 Stripe-supported currencies. Each Invoice stores the Currency (ISO code), SubTotal, DiscountAmount, TaxAmount, and Total in the original currency. ExchangeRateToUsd and TotalAmountUsd fields normalize amounts for consistent USD-based reporting across all currencies.",
       exportTitle: "Export Formats",
       exportIntro:
         "The subscription export system (GET /api/v1/subscriptions/export) generates comprehensive reports in three formats.",

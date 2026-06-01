@@ -9,7 +9,7 @@ const FeatureDefinitionFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Feature Definition Details | NEXORA",
+  title: "Feature Definition Details | SCRIPE",
   description: "View feature definition configuration, limits, and value types",
 };
 

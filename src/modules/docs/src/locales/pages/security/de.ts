@@ -9,7 +9,7 @@ export const de = {
       description:
         "5-Schichten-Verteidigungsstrategie, CORS-Konfiguration, Rate Limiting und Passwortrichtlinien.",
       intro:
-        "NEXORA implementiert eine Defense-in-Depth-Strategie mit mehreren Sicherheitsprüfungen.",
+        "SCRIPE implementiert eine Defense-in-Depth-Strategie mit mehreren Sicherheitsprüfungen.",
       layersTitle: "Verteidigungsschichten",
       featuresTitle: "Sicherheitsfunktionen",
       featureJwt: "JWT-Authentifizierung",
@@ -35,7 +35,7 @@ export const de = {
     authDeep: {
       title: "Authentifizierung im Detail",
       description: "JWT-Lebenszyklus, BCrypt, Account-Lockout, OAuth, OTP und Impersonation.",
-      intro: "Tiefer Einblick in alle Authentifizierungsmechanismen von NEXORA.",
+      intro: "Tiefer Einblick in alle Authentifizierungsmechanismen von SCRIPE.",
       jwtLifecycleTitle: "JWT Token-Lebenszyklus",
       jwtLifecycleIntro: "Rotierende Refresh-Tokens nach jeder Benutzung.",
       tokenStructureTitle: "JWT Token-Struktur",
@@ -60,7 +60,7 @@ export const de = {
       title: "Single Sign-On (SSO)",
       description: "OIDC-Authentifizierung, externe Identitätsverknüpfung und OAuth-Apps.",
       intro:
-        "Das NEXORA-System unterstützt die Authentifizierung über externe Anbieter basierend auf dem OIDC-Protokoll und die Bereitstellung von Anmeldeinformationen über OAuth-Anwendungen. Das System ist auf Mandantenfähigkeit ausgelegt, mit starkem Fokus auf PKCE-Sicherheit.",
+        "Das SCRIPE-System unterstützt die Authentifizierung über externe Anbieter basierend auf dem OIDC-Protokoll und die Bereitstellung von Anmeldeinformationen über OAuth-Anwendungen. Das System ist auf Mandantenfähigkeit ausgelegt, mit starkem Fokus auf PKCE-Sicherheit.",
       architectureTitle: "OIDC/OAuth Auth-Architektur",
       endpointsTitle: "Endpunkte & Flow",
       flowIntro:
@@ -73,12 +73,12 @@ export const de = {
         "Empfängt den Benutzer nach erfolgreicher Authentifizierung und tauscht den Autorisierungscode gegen Sicherheitstokens auf der Serverseite aus – ohne Eingriff des Browsers.",
       linkingTitle: "Verknüpfung und Identitätsverarbeitung",
       linkingIntro:
-        "Wenn ein Benutzer den Login abschließt, wird die E-Mail-Adresse mit der vorhandenen Benutzer-Datenbank abgeglichen. Wenn es sich um den ersten Login handelt, wird das externe OIDC-Konto mit dem internen NEXORA-Konto verknüpft, um Duplikate zu vermeiden.",
+        "Wenn ein Benutzer den Login abschließt, wird die E-Mail-Adresse mit der vorhandenen Benutzer-Datenbank abgeglichen. Wenn es sich um den ersten Login handelt, wird das externe OIDC-Konto mit dem internen SCRIPE-Konto verknüpft, um Duplikate zu vermeiden.",
       pkceWarning:
         "Die Unterstützung für veraltete implizite OAuth-Flows (Implicit Flow) entfällt. Stattdessen ist PKCE in allen Varianten zwingend erforderlich.",
       howItWorksTitle: "How SSO Works",
       howItWorksContent:
-        "NEXORA uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
       step1Title: "1. Provider Discovery",
       step1Content:
         "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
@@ -101,13 +101,13 @@ export const de = {
       entityModelContent:
         "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
       linkingContent:
-        "Before SSO login works, a NEXORA admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the NEXORA account.",
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
       oauthAppsTitle: "OAuth Applications",
       oauthAppsContent:
-        "OAuth Applications are third-party apps that authenticate against NEXORA as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
       claimMappingTitle: "Claim Mapping",
       claimMappingContent:
-        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to NEXORA's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
       tenantScopingTitle: "Tenant Scoping",
       tenantScopingContent:
         "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
@@ -119,7 +119,7 @@ export const de = {
       title: "Datenschutz (Data Protection)",
       description:
         "Mandantenisolierung, Verschlüsselung, Field-Level-Security und DSGVO-Compliance.",
-      intro: "NEXORA schützt Daten auf jeder Ebene, vom Netzwerk bis zur Zeile in der Datenbank.",
+      intro: "SCRIPE schützt Daten auf jeder Ebene, vom Netzwerk bis zur Zeile in der Datenbank.",
       tenantIsolationTitle: "Datenisolierung für Mandanten",
       tenantIsolationIntro: "Alle Abfragen werden über globale Query Filter beschränkt.",
       tenantScopingTitle: "Query Filter Scoping",
@@ -198,7 +198,7 @@ export const de = {
       description: "Interceptors, Entity-Tracking, SignalR-Streaming und Export.",
       intro: "Ein lückenloses Protokoll jeder Datenänderung und API-Anfrage.",
       architectureTitle: "Audit-Architektur",
-      architectureIntro: "Drei Schichten: Interceptors, NEXORA mediator-Behavior, Middleware.",
+      architectureIntro: "Drei Schichten: Interceptors, SCRIPE mediator-Behavior, Middleware.",
       interceptorTitle: "Entity Change Interceptor",
       interceptorIntro: "Fängt Added, Modified, Deleted ab und serialisiert sie als JSON.",
       auditLogEntityTitle: "AuditLog Entitäts-Struktur",

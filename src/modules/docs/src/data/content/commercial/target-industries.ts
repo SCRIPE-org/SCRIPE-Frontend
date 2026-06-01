@@ -201,9 +201,9 @@ registerPage({
   slug: "commercial/target-industries",
   titleKey: "commercial.targetIndustries.title",
   descriptionKey: "commercial.targetIndustries.description",
-  category: "commercial-why-nexora",
+  category: "commercial-why-scripe",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/why-nexora-overview", "commercial/competitive-advantages"],
+  relatedSlugs: ["commercial/why-scripe-overview", "commercial/competitive-advantages"],
   lastUpdated: "2026-02-20",
 });

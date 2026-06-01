@@ -71,7 +71,7 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.auditCompliance.complianceContent" },
   {
     type: "table",
-    headers: ["Framework", "Requirement", "NEXORA Coverage"],
+    headers: ["Framework", "Requirement", "SCRIPE Coverage"],
     rows: [
       ["SOX", "Financial audit trail", "Complete entity change tracking with before/after values"],
       ["GDPR", "Data access logging", "All data access logged with user context"],

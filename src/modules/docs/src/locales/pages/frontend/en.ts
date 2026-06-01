@@ -42,7 +42,7 @@ export const en = {
       description:
         "TanStack Query for server state, Zustand for global UI state, and local useState  when to use each.",
       intro:
-        "NEXORA uses three state management tools, each for a specific category: TanStack Query v5 for server/API data, Zustand for global UI state (auth, sidebar, theme), and React's useState for local component state.",
+        "SCRIPE uses three state management tools, each for a specific category: TanStack Query v5 for server/API data, Zustand for global UI state (auth, sidebar, theme), and React's useState for local component state.",
       categoriesTitle: "State Categories",
       tanstackTitle: "TanStack Query (Server State)",
       tanstackIntro:
@@ -61,7 +61,7 @@ export const en = {
       description:
         "LanguageProvider, module-scoped locales, useModuleLocales hook, t() function, RTL support, and adding new translation keys.",
       intro:
-        "NEXORA uses a module-scoped localization system. Shared keys (~1,156) live in core/locales/. Each module owns its translations in a co-located locales/ directory, loaded lazily via the useModuleLocales() hook. Supports Arabic (RTL) and English (LTR) with automatic direction switching, font changes, and localStorage persistence.",
+        "SCRIPE uses a module-scoped localization system. Shared keys (~1,156) live in core/locales/. Each module owns its translations in a co-located locales/ directory, loaded lazily via the useModuleLocales() hook. Supports Arabic (RTL) and English (LTR) with automatic direction switching, font changes, and localStorage persistence.",
       architectureTitle: "Architecture",
       dictionaryTitle: "Dictionary Structure",
       tFunctionTitle: "Using the t() Function",
@@ -79,16 +79,16 @@ export const en = {
       step3Desc:
         "Call t('moduleName.keyPath') using the namespace from your locale file. For interpolation, use {{variable}} syntax and pass variables as the second argument.",
       noLocaleRoutes:
-        "NEXORA does NOT use locale-based routing ([locale]/page.tsx). All localization is handled via the LanguageProvider context and localStorage, not file-based routing.",
+        "SCRIPE does NOT use locale-based routing ([locale]/page.tsx). All localization is handled via the LanguageProvider context and localStorage, not file-based routing.",
       moduleLocaleNote:
-        "The nexora CLI automatically scaffolds locales/ when creating new modules via nexora new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
+        "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "Form Validation",
       description:
         "Zod schemas, React Hook Form integration, FluentValidation server-side, and error handling patterns.",
       intro:
-        "Form validation in NEXORA follows a dual-layer approach: client-side validation with Zod schemas and React Hook Form provides instant feedback, while server-side FluentValidation in the NEXORA mediator pipeline ensures data integrity.",
+        "Form validation in SCRIPE follows a dual-layer approach: client-side validation with Zod schemas and React Hook Form provides instant feedback, while server-side FluentValidation in the SCRIPE mediator pipeline ensures data integrity.",
       architectureTitle: "Validation Architecture",
       zodTitle: "Zod Schemas (Client-Side)",
       rhfTitle: "React Hook Form Integration",
@@ -102,7 +102,7 @@ export const en = {
       description:
         "shadcn/ui foundation, cn() utility, GenericSelect, theme system, and component placement rules.",
       intro:
-        "NEXORA's UI is built on shadcn/ui  a collection of accessible, customizable components. All shared components live in @core/ui/ and are extended with the cn() utility for conditional class merging.",
+        "SCRIPE's UI is built on shadcn/ui  a collection of accessible, customizable components. All shared components live in @core/ui/ and are extended with the cn() utility for conditional class merging.",
       shadcnTitle: "shadcn/ui Foundation",
       shadcnIntro:
         "shadcn/ui provides unstyled, accessible component primitives (Button, Input, Select, Dialog, etc.) that are installed directly into the project. This gives full control over styling and behavior.",
@@ -127,7 +127,7 @@ export const en = {
       description:
         "SignalR hubs (AuditHub, NotificationHub), React hooks, connection management, and tenant group scoping.",
       intro:
-        "NEXORA uses SignalR for real-time bi-directional communication between the backend and frontend. Two hubs are available: AuditHub for live audit log streaming and NotificationHub for instant notification delivery.",
+        "SCRIPE uses SignalR for real-time bi-directional communication between the backend and frontend. Two hubs are available: AuditHub for live audit log streaming and NotificationHub for instant notification delivery.",
       architectureTitle: "Real-Time Architecture",
       hubsTitle: "SignalR Hubs",
       hooksTitle: "React Hooks",

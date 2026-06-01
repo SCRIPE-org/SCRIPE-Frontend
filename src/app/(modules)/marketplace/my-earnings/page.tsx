@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Earnings | NEXORA Marketplace",
+  title: "My Earnings | SCRIPE Marketplace",
   description: "View your sales, payouts, and financial reports.",
 };
 

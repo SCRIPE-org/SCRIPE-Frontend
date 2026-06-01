@@ -107,9 +107,9 @@ export const ar = {
     },
   },
   app: {
-    title: "NEXORA",
+    title: "SCRIPE",
     subtitle: "الإدارية",
-    tagline: "NEXORA",
+    tagline: "SCRIPE",
     modern: "العصرية",
     classic: "الكلاسيكية",
     elegant: "الأنيقة",

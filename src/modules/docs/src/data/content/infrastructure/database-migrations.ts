@@ -83,12 +83,12 @@ services.AddMultiProviderDatabase<
   {
     type: "code",
     language: "bash",
-    filename: "nexora db add-migration",
+    filename: "scripe db add-migration",
     code: `# All 3 providers at once (default)
-$ nexora db add-migration Initial -m Identity
+$ scripe db add-migration Initial -m Identity
 
 # Target a specific provider with -p
-$ nexora db add-migration Initial -m Identity -p SqlServer
+$ scripe db add-migration Initial -m Identity -p SqlServer
 
 # Behind the scenes (all providers), the CLI executes:
 # dotnet ef migrations add Initial -c SqlServerIdentityDbContext -o Migrations/SqlServer
@@ -108,12 +108,12 @@ $ nexora db add-migration Initial -m Identity -p SqlServer
   {
     type: "code",
     language: "bash",
-    filename: "nexora db update",
+    filename: "scripe db update",
     code: `# Auto-detect provider from appsettings.json
-$ nexora db update -m Identity
+$ scripe db update -m Identity
 
 # Override with a specific provider
-$ nexora db update -m Identity -p Oracle
+$ scripe db update -m Identity -p Oracle
 
 # Output:
 # [INFO] Auto-detected database provider: SqlServer from appsettings.json
@@ -131,12 +131,12 @@ $ nexora db update -m Identity -p Oracle
   {
     type: "code",
     language: "bash",
-    filename: "nexora db remove-migration",
+    filename: "scripe db remove-migration",
     code: `# Remove from all 3 providers (active first, then force for others)
-$ nexora db remove-migration -m Identity
+$ scripe db remove-migration -m Identity
 
 # Remove from a specific provider only (auto-applies --force if non-active)
-$ nexora db remove-migration -m Identity -p SqlServer
+$ scripe db remove-migration -m Identity -p SqlServer
 
 # Output (all providers):
 # [INFO] Auto-detected active provider: Oracle

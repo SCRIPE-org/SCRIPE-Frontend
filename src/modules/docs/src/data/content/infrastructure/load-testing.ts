@@ -67,13 +67,13 @@ const sections: DocSection[] = [
         "Pipeline FAILS if breached",
       ],
       [
-        "nexora_login_duration (P95)",
+        "scr_login_duration (P95)",
         "< 3000ms",
         "95% of login requests complete in 3 seconds",
         "Auth-specific SLA",
       ],
       [
-        "nexora_login_fail_rate",
+        "scr_login_fail_rate",
         "< 5%",
         "Less than 5% of login attempts may fail",
         "Auth reliability SLA",
@@ -98,13 +98,13 @@ import { check, sleep, group } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
 
 // ── Custom Metrics (visible in k6 output + Grafana) ──
-const loginDuration = new Trend('nexora_login_duration', true);
-const loginFailRate = new Rate('nexora_login_fail_rate');
-const tokenRefreshDuration = new Trend('nexora_token_refresh_duration', true);
+const loginDuration = new Trend('scr_login_duration', true);
+const loginFailRate = new Rate('scr_login_fail_rate');
+const tokenRefreshDuration = new Trend('scr_token_refresh_duration', true);
 
 // ── Environment Configuration ──
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';
-const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@nexora.com';
+const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@scripe.com';
 const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'P@ssw0rd';
 
 export const options = {
@@ -115,8 +115,8 @@ export const options = {
   ],
   thresholds: {
     'http_req_duration': ['p(95)<2000', 'p(99)<5000'],
-    'nexora_login_duration': ['p(95)<3000'],
-    'nexora_login_fail_rate': ['rate<0.05'],
+    'scr_login_duration': ['p(95)<3000'],
+    'scr_login_fail_rate': ['rate<0.05'],
     'http_req_failed': ['rate<0.01'],
   },
 };
@@ -152,7 +152,7 @@ export default function () {
 # ═══════════════════════════════════════════════════════════
 # DEVELOPMENT (local backend)
 # ═══════════════════════════════════════════════════════════
-# Start your backend first: dotnet run (or nexora dev backend)
+# Start your backend first: dotnet run (or scripe dev backend)
 k6 run tests/load/auth-flow.js
 k6 run tests/load/crud-operations.js
 
@@ -166,8 +166,8 @@ k6 run tests/load/auth-flow.js \\
 # STAGING / PRODUCTION (remote server)
 # ═══════════════════════════════════════════════════════════
 k6 run tests/load/auth-flow.js \\
-  --env BASE_URL=https://api.staging.nexora.io \\
-  --env ADMIN_EMAIL=staging-admin@nexora.io \\
+  --env BASE_URL=https://api.staging.scripe.com \\
+  --env ADMIN_EMAIL=staging-admin@scripe.com \\
   --env ADMIN_PASSWORD=StrongP@ss123
 
 # ═══════════════════════════════════════════════════════════
@@ -211,7 +211,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       api:
-        image: nexora-api:latest
+        image: scripe-api:latest
         ports: ['5001:5001']
         env:
           ASPNETCORE_ENVIRONMENT: Staging
@@ -319,21 +319,21 @@ jobs:
 # ═══════════════════════════════════════════════════════════
 # Full backup
 sqlcmd -S localhost -U sa -P 'YourPassword' -Q \\
-  "BACKUP DATABASE Nexora TO DISK='/backups/nexora_full.bak'"
+  "BACKUP DATABASE Scripe TO DISK='/backups/scr_full.bak'"
 
 # Point-in-time restore
 sqlcmd -S localhost -U sa -P 'YourPassword' -Q \\
-  "RESTORE DATABASE Nexora FROM DISK='/backups/nexora_full.bak' \\
+  "RESTORE DATABASE Scripe FROM DISK='/backups/scr_full.bak' \\
    WITH STOPAT='2026-04-06T20:00:00'"
 
 # ═══════════════════════════════════════════════════════════
 # POSTGRESQL BACKUP (Linux / Docker)
 # ═══════════════════════════════════════════════════════════
 # Full dump
-pg_dump -h localhost -U nexora -d nexora_db -F c > nexora_backup.dump
+pg_dump -h localhost -U scripe -d scr_db -F c > scr_backup.dump
 
 # Restore
-pg_restore -h localhost -U nexora -d nexora_db nexora_backup.dump
+pg_restore -h localhost -U scripe -d scr_db scr_backup.dump
 
 # ═══════════════════════════════════════════════════════════
 # REDIS BACKUP

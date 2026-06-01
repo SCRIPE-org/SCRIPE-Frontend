@@ -9,7 +9,7 @@ const TenantStripeConnectView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "My Payment Account | NEXORA",
+  title: "My Payment Account | SCRIPE",
   description:
     "Manage your payment gateway account — set up payouts, view status, and access your dashboard.",
 };

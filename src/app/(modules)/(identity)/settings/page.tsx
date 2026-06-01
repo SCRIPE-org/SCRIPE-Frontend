@@ -9,7 +9,7 @@ const SettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Settings | NEXORA",
+  title: "Settings | SCRIPE",
   description: "Manage your account and platform settings",
 };
 
