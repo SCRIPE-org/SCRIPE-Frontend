@@ -86,8 +86,8 @@ export function PermissionTreeCard({
           <div className="space-y-3">
             {moduleGroups.map((moduleGroup) => {
               const moduleKey = `module:${moduleGroup.module}`;
-              // Key in expandedKeys = expanded; not present = collapsed (default: all modules open).
-              // expandAll() populates all module:X and cat:X:Y keys. collapseAll() empties the Set.
+              // Module is expanded if its key is in expandedKeys.
+              // All modules are auto-expanded on first data load (see useRoleDetailViewModel).
               const isModuleExpanded = expandedKeys.has(moduleKey);
               const totalInModule = moduleGroup.categories.reduce(
                 (sum, cat) => sum + cat.permissions.length,
