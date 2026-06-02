@@ -1,4 +1,4 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
@@ -68,9 +68,9 @@ public class TracingBehavior<TRequest, TResponse>
             $"AstraFlow mediator {kind}: {requestName}",
             ActivityKind.Internal);
 
-        activity?.SetTag("mediatr.request_type", requestName);
-        activity?.SetTag("mediatr.kind", kind);
-        activity?.SetTag("mediatr.module", module);
+        activity?.SetTag("astraflow.request_type", requestName);
+        activity?.SetTag("astraflow.kind", kind);
+        activity?.SetTag("astraflow.module", module);
 
         try
         {
@@ -91,10 +91,10 @@ public class TracingBehavior<TRequest, TResponse>
     type: "table",
     headers: ["Span Tag", "Example Value", "Purpose"],
     rows: [
-      ["mediatr.request_type", "GetAdminsQuery", "Identify the handler being executed"],
-      ["mediatr.kind", "Query / Command", "Distinguish read vs write operations"],
-      ["mediatr.module", "Identity / Entitlements", "Filter traces by module in Jaeger UI"],
-      ["mediatr.duration_ms", "45", "Performance profiling and SLA monitoring"],
+      ["astraflow.request_type", "GetAdminsQuery", "Identify the handler being executed"],
+      ["astraflow.kind", "Query / Command", "Distinguish read vs write operations"],
+      ["astraflow.module", "Identity / Entitlements", "Filter traces by module in Jaeger UI"],
+      ["astraflow.duration_ms", "45", "Performance profiling and SLA monitoring"],
       ["otel.status_code", "OK / ERROR", "Error attribution and alert triggering"],
     ],
   },
