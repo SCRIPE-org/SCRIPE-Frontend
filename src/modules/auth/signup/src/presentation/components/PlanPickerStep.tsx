@@ -1,15 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
-import { Check, Infinity, BarChart2 } from "lucide-react";
-import { usePlanPickerViewModel } from "../viewmodels/usePlanPickerViewModel";
-import { FeatureComparisonModal } from "./FeatureComparisonModal";
-import type { PublicFeature } from "../../domain/entities";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { usePlanPickerViewModel, type PlanEdition } from "../viewmodels/usePlanPickerViewModel";
+import { PlanCard } from "./PlanCard";
+import { ComparisonTable } from "./ComparisonTable";
 
 interface PlanPickerStepProps {
   onSelectPlan: (
@@ -18,351 +14,261 @@ interface PlanPickerStepProps {
   ) => void;
 }
 
-function FeatureRow({ feature }: { feature: PublicFeature }) {
-  const { language } = useI18n();
-  const { value, valueType, name } = feature;
+/**
+ * Groups editions by their category for the "All" view.
+ * Returns an ordered array of { category, editions } objects.
+ */
+function groupEditionsByCategory(editions: PlanEdition[]) {
+  const CATEGORY_DISPLAY_ORDER = ["General", "ERP", "Healthcare", "Education", "Finance"];
+  const groups = new Map<string, PlanEdition[]>();
 
-  // If a rich display label is set, show it directly (no value parsing needed)
-  const displayLabel =
-    language === "ar" && feature.displayLabelAr
-      ? feature.displayLabelAr
-      : feature.displayLabelEn ?? null;
-
-  if (displayLabel) {
-    return (
-      <li className="flex items-start gap-2 text-xs">
-        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: "#A855F7" }} />
-        <span style={{ color: "rgba(245,242,255,0.7)" }}>{displayLabel}</span>
-      </li>
-    );
+  for (const ed of editions) {
+    const cat = ed.category || "General";
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat)!.push(ed);
   }
 
-  let valueNode: React.ReactNode;
-
-  if (valueType === "Boolean") {
-    const isTrue = value === "true" || value === "1";
-    if (!isTrue) return null; // Don't show false features on the plan card
-    valueNode = (
-      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: "#A855F7" }} />
-    );
-  } else if (valueType === "Numeric") {
-    const num = parseInt(value, 10);
-    const displayValue = num === -1
-      ? <Infinity className="h-3 w-3 inline" style={{ color: "#22D3EE" }} />
-      : <span className="font-semibold" style={{ color: "rgba(245,242,255,0.95)" }}>{num.toLocaleString()}</span>;
-    return (
-      <li className="flex items-center gap-2 text-xs">
-        <BarChart2 className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: "#A855F7" }} />
-        <span style={{ color: "rgba(245,242,255,0.65)" }}>
-          {name}:&nbsp;{displayValue}
-        </span>
-      </li>
-    );
-  } else {
-    // Text
-    return (
-      <li className="flex items-start gap-2 text-xs">
-        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: "#A855F7" }} />
-        <span style={{ color: "rgba(245,242,255,0.7)" }}>{value}</span>
-      </li>
-    );
+  // Sort each group internally by tier level
+  for (const editions of groups.values()) {
+    editions.sort((a, b) => a.tierLevel - b.tierLevel);
   }
 
-  return (
-    <li className="flex items-start gap-2 text-xs">
-      {valueNode}
-      <span style={{ color: "rgba(245,242,255,0.7)" }}>{name}</span>
-    </li>
-  );
+  // Sort categories by display order
+  return Array.from(groups.entries())
+    .sort(([a], [b]) => {
+      const ai = CATEGORY_DISPLAY_ORDER.indexOf(a);
+      const bi = CATEGORY_DISPLAY_ORDER.indexOf(b);
+      if (ai !== -1 && bi !== -1) return ai - bi;
+      if (ai !== -1) return -1;
+      if (bi !== -1) return 1;
+      return a.localeCompare(b);
+    })
+    .map(([category, editions]) => ({ category, editions }));
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-/**
- * PlanPickerStep — Step 1 of the Signup Wizard (pure render).
- *
- * Features:
- * - Edition category tabs (when editions span multiple categories)
- * - Monthly/Annual billing toggle with savings badge
- * - Plan cards with rich feature values (boolean ✓, numeric limits, text)
- * - "Compare all features" button opens FeatureComparisonModal
- * - All business logic in usePlanPickerViewModel
- */
 export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
   const { t } = useI18n();
   const vm = usePlanPickerViewModel(onSelectPlan);
 
-  // ── Loading skeleton ──
+  // Group editions by category for the "All" view
+  const groupedEditions = useMemo(
+    () => groupEditionsByCategory(vm.filteredEditions),
+    [vm.filteredEditions]
+  );
+
+  const showCategoryHeaders = !vm.activeCategory && groupedEditions.length > 1;
+
+  // ── Loading ──
   if (vm.isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-10">
         <div className="text-center">
-          <Skeleton className="mx-auto h-7 w-48" />
-          <Skeleton className="mx-auto mt-2 h-4 w-64" />
+          <Skeleton className="mx-auto h-10 w-64" />
+          <Skeleton className="mx-auto mt-3 h-5 w-80" />
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-80 rounded-xl" />
-          ))}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-[420px] rounded-2xl" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="space-y-6" dir={vm.direction}>
-        {/* Header */}
-        <div className="text-center">
-          <h2
-            className="text-xl font-bold tracking-tight sm:text-2xl"
-            style={{ color: "rgba(245,242,255,0.95)" }}
-          >
-            {t("signup.plan.title") || "Choose your plan"}
-          </h2>
-          <p className="mt-1 text-sm" style={{ color: "rgba(245,242,255,0.55)" }}>
-            {t("signup.plan.subtitle") || "Select the plan that fits your needs"}
-          </p>
-        </div>
+    <div className="space-y-16" dir={vm.direction}>
+      {/* ═══ Header ═══ */}
+      <div className="text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          {t("signup.plan.title") || "Choose your plan"}
+        </h1>
+        <p className="mx-auto mt-3 max-w-xl text-base text-white/45 sm:text-lg">
+          {t("signup.plan.subtitle") || "From startups to enterprises, we've got you covered."}
+        </p>
+      </div>
 
-        {/* ── Category tabs — only shown when there are multiple categories ── */}
-        {vm.categories.length > 1 && (
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => vm.setActiveCategory(null)}
-              className="rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200"
-              style={{
-                background: vm.activeCategory === null
-                  ? "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(124,58,237,0.2))"
-                  : "rgba(255,255,255,0.04)",
-                color: vm.activeCategory === null
-                  ? "rgba(245,242,255,0.95)"
-                  : "rgba(245,242,255,0.45)",
-                border: vm.activeCategory === null
-                  ? "1px solid rgba(168,85,247,0.5)"
-                  : "1px solid rgba(255,255,255,0.07)",
-              }}
-            >
-              {t("signup.plan.allCategories") || "All"}
-            </button>
-            {vm.categories.map((cat) => (
+      {/* ═══ Category tabs ═══ */}
+      {vm.categories.length > 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {[null, ...vm.categories].map((cat) => {
+            const isActive = vm.activeCategory === cat;
+            return (
               <button
-                key={cat}
+                key={cat ?? "__all"}
                 type="button"
                 onClick={() => vm.setActiveCategory(cat)}
-                className="rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200"
+                className="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
                 style={{
-                  background: vm.activeCategory === cat
-                    ? "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(124,58,237,0.2))"
+                  background: isActive
+                    ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.18))"
                     : "rgba(255,255,255,0.04)",
-                  color: vm.activeCategory === cat
-                    ? "rgba(245,242,255,0.95)"
-                    : "rgba(245,242,255,0.45)",
-                  border: vm.activeCategory === cat
+                  color: isActive ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.45)",
+                  border: isActive
                     ? "1px solid rgba(168,85,247,0.5)"
                     : "1px solid rgba(255,255,255,0.07)",
                 }}
               >
-                {cat}
+                {cat ?? (t("signup.plan.allCategories") || "All")}
               </button>
-            ))}
-          </div>
-        )}
-
-        {/* ── Billing toggle ── */}
-        {vm.filteredEditions.some((e) => e.monthlyPrice > 0) && (
-          <div className="flex items-center justify-center gap-3">
-            {(["monthly", "annual"] as const).map((cycle) => (
-              <Button
-                key={cycle}
-                type="button"
-                variant="ghost"
-                onClick={() => vm.setBillingCycle(cycle)}
-                className="flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200"
-                style={{
-                  background: vm.billingCycle === cycle
-                    ? "linear-gradient(180deg, rgba(168,85,247,0.2) 0%, rgba(124,58,237,0.15) 100%)"
-                    : "transparent",
-                  color: vm.billingCycle === cycle
-                    ? "rgba(245,242,255,0.95)"
-                    : "rgba(245,242,255,0.45)",
-                  border: vm.billingCycle === cycle
-                    ? "1px solid rgba(168,85,247,0.4)"
-                    : "1px solid transparent",
-                }}
-              >
-                {cycle === "monthly"
-                  ? (t("signup.plan.monthly") || "Monthly")
-                  : (t("signup.plan.annual") || "Annual")}
-                {cycle === "annual" && vm.annualSavingsPercent > 0 && (
-                  <span
-                    className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                    style={{ background: "rgba(34,211,238,0.15)", color: "#22D3EE" }}
-                  >
-                    {t("signup.plan.savePercent", { percent: vm.annualSavingsPercent }) ||
-                      `Save ${vm.annualSavingsPercent}%`}
-                  </span>
-                )}
-              </Button>
-            ))}
-          </div>
-        )}
-
-        {/* Error */}
-        {vm.error && (
-          <div
-            className="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3"
-            role="alert"
-            aria-live="assertive"
-          >
-            <p className="text-[13px] font-medium text-destructive">{vm.error}</p>
-          </div>
-        )}
-
-        {/* ── Plan cards grid ── */}
-        <div
-          className="grid grid-cols-1 gap-4"
-          style={{
-            gridTemplateColumns: `repeat(${Math.min(vm.filteredEditions.length, 3)}, minmax(0, 1fr))`,
-          }}
-        >
-          {vm.filteredEditions.map((edition, index) => {
-            const price =
-              vm.billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
-            const monthlyEquiv =
-              vm.billingCycle === "annual" && price ? Math.round(price / 12) : price;
-            const isFree = edition.monthlyPrice === 0 && edition.tierLevel === 0;
-            const isContactSales = edition.checkoutMode === "contact-sales";
-
-            return (
-              <div
-                key={edition.id || index}
-                className="relative flex flex-col rounded-xl p-5 transition-all duration-300 hover:-translate-y-0.5"
-                style={{
-                  background: "linear-gradient(180deg, rgba(20,12,46,0.6), rgba(10,8,28,0.7))",
-                  border: edition.badge
-                    ? "1px solid rgba(168,85,247,0.4)"
-                    : "1px solid rgba(255,255,255,0.08)",
-                  animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 60}ms both`,
-                }}
-              >
-                {/* Badge */}
-                {edition.badge && (
-                  <div className="absolute -top-2.5 start-4">
-                    <Badge
-                      variant="default"
-                      className="rounded-full px-3 py-0.5 text-[10px] font-bold uppercase"
-                      style={{
-                        background: "linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)",
-                        color: "#fff",
-                        border: "none",
-                      }}
-                    >
-                      {edition.badge}
-                    </Badge>
-                  </div>
-                )}
-
-                {/* Name + tagline */}
-                <h3 className="text-base font-bold" style={{ color: "rgba(245,242,255,0.95)" }}>
-                  {edition.name}
-                </h3>
-                <p className="mt-0.5 text-xs" style={{ color: "rgba(245,242,255,0.5)" }}>
-                  {edition.tagline}
-                </p>
-
-                {/* Price */}
-                <div className="mt-4 flex items-baseline gap-1">
-                  {isFree ? (
-                    <span className="text-2xl font-bold" style={{ color: "rgba(245,242,255,0.95)" }}>
-                      {t("signup.plan.free") || "Free"}
-                    </span>
-                  ) : isContactSales ? (
-                    <span className="text-lg font-bold" style={{ color: "rgba(245,242,255,0.95)" }}>
-                      {t("signup.plan.custom") || "Custom pricing"}
-                    </span>
-                  ) : (
-                    <>
-                      <span className="text-2xl font-bold" style={{ color: "rgba(245,242,255,0.95)" }}>
-                        ${monthlyEquiv}
-                      </span>
-                      <span className="text-xs" style={{ color: "rgba(245,242,255,0.45)" }}>
-                        /{t("signup.plan.mo") || "mo"}
-                      </span>
-                      {vm.billingCycle === "annual" && price && (
-                        <span className="ms-1 text-[10px]" style={{ color: "rgba(245,242,255,0.35)" }}>
-                          ({t("signup.plan.billedAnnually") || `$${price}/yr`})
-                        </span>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                {/* Trial info */}
-                {edition.trialDays && !isFree && !isContactSales && (
-                  <p className="mt-1 text-[11px] font-medium" style={{ color: "#22D3EE" }}>
-                    {t("signup.plan.trialDays", { days: edition.trialDays }) ||
-                      `${edition.trialDays}-day free trial`}
-                  </p>
-                )}
-
-                {/* ── Rich features list ── */}
-                <ul className="mt-4 flex-1 space-y-2">
-                  {edition.topFeatures.map((feature, fi) => (
-                    <FeatureRow key={`${edition.id}-feat-${fi}`} feature={feature} />
-                  ))}
-                </ul>
-
-                {/* CTA */}
-                <Button
-                  type="button"
-                  className="mt-5 w-full rounded-lg py-2.5 text-sm font-semibold transition-all duration-200"
-                  onClick={() => vm.selectPlan(edition)}
-                  style={{
-                    background: edition.badge
-                      ? "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)"
-                      : "rgba(255,255,255,0.06)",
-                    color: edition.badge ? "#fff" : "rgba(245,242,255,0.8)",
-                    border: edition.badge ? "none" : "1px solid rgba(255,255,255,0.1)",
-                  }}
-                >
-                  {isContactSales
-                    ? (t("signup.plan.contactSales") || "Talk to Sales")
-                    : isFree
-                      ? (t("signup.plan.startFree") || "Start Free")
-                      : (t("signup.plan.choosePlan", { plan: edition.name }) ||
-                          `Choose ${edition.name}`)}
-                </Button>
-              </div>
             );
           })}
         </div>
+      )}
 
-        {/* ── Compare all features button ── */}
-        <div className="text-center">
-          <Button
-            variant="link"
-            type="button"
-            onClick={vm.openCompare}
-            className="group inline-flex items-center gap-1.5 text-xs font-medium underline underline-offset-2 transition-colors duration-150"
-            style={{ color: "rgba(245,242,255,0.45)" }}
+      {/* ═══ Billing toggle ═══ */}
+      {vm.filteredEditions.some((e) => e.monthlyPrice > 0) && (
+        <div className="flex items-center justify-center">
+          <div
+            className="inline-flex items-center rounded-full p-1"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <BarChart2 className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-px" />
+            {(["monthly", "annual"] as const).map((cycle) => (
+              <button
+                key={cycle}
+                type="button"
+                onClick={() => vm.setBillingCycle(cycle)}
+                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300"
+                style={{
+                  background: vm.billingCycle === cycle
+                    ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.2))"
+                    : "transparent",
+                  color: vm.billingCycle === cycle ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.4)",
+                }}
+              >
+                {cycle === "monthly" ? (t("signup.plan.monthly") || "Monthly") : (t("signup.plan.annual") || "Annual")}
+                {cycle === "annual" && vm.annualSavingsPercent > 0 && (
+                  <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-bold text-cyan-400">
+                    {t("signup.plan.savePercent", { percent: vm.annualSavingsPercent }) || `Save ${vm.annualSavingsPercent}%`}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Error ═══ */}
+      {vm.error && (
+        <div className="mx-auto max-w-lg rounded-xl border border-destructive/20 bg-destructive/10 px-5 py-3.5" role="alert">
+          <p className="text-sm font-medium text-destructive">{vm.error}</p>
+        </div>
+      )}
+
+      {/* ═══ Plan cards — Category-grouped with pro section headers ═══ */}
+      {showCategoryHeaders ? (
+        // "All" view: group editions by category with beautiful section headers
+        <div className="space-y-16">
+          {groupedEditions.map(({ category, editions }) => (
+            <div key={category}>
+              {/* Category section header */}
+              <div className="mb-8 flex items-center gap-4">
+                <div
+                  className="h-px flex-1"
+                  style={{ background: "linear-gradient(90deg, rgba(168,85,247,0.3), transparent)" }}
+                />
+                <h2
+                  className="shrink-0 text-sm font-bold uppercase tracking-[0.2em]"
+                  style={{ color: "rgba(168,85,247,0.7)" }}
+                >
+                  {category}
+                </h2>
+                <div
+                  className="h-px flex-1"
+                  style={{ background: "linear-gradient(270deg, rgba(168,85,247,0.3), transparent)" }}
+                />
+              </div>
+
+              {/* Edition cards within category */}
+              <div
+                className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+                style={{
+                  gridTemplateColumns: editions.length <= 3
+                    ? `repeat(${editions.length}, minmax(0, 1fr))`
+                    : undefined,
+                }}
+              >
+                {editions.map((edition, idx) => (
+                  <PlanCard
+                    key={edition.id || idx}
+                    edition={edition}
+                    index={idx}
+                    prevEditionName={idx > 0 ? editions[idx - 1]?.name : null}
+                    billingCycle={vm.billingCycle}
+                    onSelect={vm.selectPlan}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        // Single category or filtered view: flat grid with gap
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {vm.filteredEditions.map((edition, idx) => (
+            <PlanCard
+              key={edition.id || idx}
+              edition={edition}
+              index={idx}
+              prevEditionName={idx > 0 ? vm.filteredEditions[idx - 1]?.name : null}
+              billingCycle={vm.billingCycle}
+              onSelect={vm.selectPlan}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ═══ Full comparison table — always visible like Vercel ═══ */}
+      <div>
+        <div className="mb-8 text-center">
+          <h2 className="text-2xl font-bold text-white/90 sm:text-3xl">
             {t("signup.plan.compareAll") || "Compare all features"}
-          </Button>
+          </h2>
+          <p className="mt-2 text-sm text-white/40 sm:text-base">
+            {t("signup.plan.compareSubtitle") || "A detailed breakdown of what's included in every plan."}
+          </p>
+        </div>
+
+        {/* Category picker for comparison — only when multiple categories exist */}
+        {vm.categories.length > 1 && (
+          <div className="mx-auto mb-6 flex max-w-[1400px] flex-wrap items-center justify-center gap-2">
+            {vm.categories.map((cat) => {
+              const isActive = vm.comparisonActiveCategory === cat;
+              return (
+                <button
+                  key={`cmp-${cat}`}
+                  type="button"
+                  onClick={() => vm.setComparisonActiveCategory(cat)}
+                  className="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
+                  style={{
+                    background: isActive
+                      ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.18))"
+                      : "rgba(255,255,255,0.03)",
+                    color: isActive ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.35)",
+                    border: isActive
+                      ? "1px solid rgba(168,85,247,0.45)"
+                      : "1px solid rgba(255,255,255,0.06)",
+                  }}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div
+          className="mx-auto max-w-[1400px] overflow-hidden rounded-2xl"
+          style={{
+            background: "rgba(8,5,22,0.5)",
+            border: "1px solid rgba(255,255,255,0.04)",
+          }}
+        >
+          <ComparisonTable
+            editions={vm.comparisonEditions}
+            categories={vm.comparisonCategories}
+            billingCycle={vm.billingCycle}
+            onSelectPlan={vm.selectPlan}
+          />
         </div>
       </div>
-
-      {/* ── Feature comparison modal (portal) ── */}
-      <FeatureComparisonModal
-        isOpen={vm.isCompareOpen}
-        onClose={vm.closeCompare}
-        editions={vm.filteredEditions}
-        categories={vm.comparisonCategories}
-        billingCycle={vm.billingCycle}
-        onSelectPlan={vm.selectPlan}
-      />
-    </>
+    </div>
   );
 }

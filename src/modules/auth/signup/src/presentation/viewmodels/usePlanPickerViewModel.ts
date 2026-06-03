@@ -7,7 +7,6 @@ import type { PublicEdition, PublicFeature } from "../../domain/entities";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-/** Internal enriched edition type for card rendering */
 export interface PlanEdition {
   id: string;
   name: string;
@@ -24,39 +23,118 @@ export interface PlanEdition {
   checkoutMode: "self-service" | "contact-sales";
 }
 
-/** Feature category section for the comparison table */
-export interface FeatureCategory {
-  name: string;
-  features: PublicFeature[];
+/** Shape consumed by ComparisonTable */
+export interface ComparisonCategory {
+  key: string;
+  label: string;
+  features: {
+    featureName: string;
+    label: string;
+    values: Record<string, ComparisonCellData>;
+  }[];
 }
 
-export interface UsePlanPickerViewModelReturn {
-  // State
-  editions: PlanEdition[];
-  isLoading: boolean;
-  error: string;
-  billingCycle: "monthly" | "annual";
-  annualSavingsPercent: number;
-  direction: string;
-
-  // Category tab filtering
-  activeCategory: string | null;
-  categories: string[];
-  filteredEditions: PlanEdition[];
-  setActiveCategory: (cat: string | null) => void;
-
-  // Comparison modal
-  isCompareOpen: boolean;
-  openCompare: () => void;
-  closeCompare: () => void;
-  comparisonCategories: FeatureCategory[];
-
-  // Actions
-  setBillingCycle: (cycle: "monthly" | "annual") => void;
-  selectPlan: (edition: PlanEdition) => void;
+export interface ComparisonCellData {
+  value: string;
+  valueType: string;
+  displayLabelEn: string | null;
+  displayLabelAr: string | null;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const CATEGORY_ORDER = ["General", "ERP", "Healthcare", "Education", "Finance"];
+
+const FEATURE_CATEGORY_ORDER = [
+  "Users & Access", "Modules", "Quotas", "Billing",
+  "Security", "Performance", "Configuration", "Support", "General",
+];
+
+/** Convert raw feature names like "Identity.Admins.MaxPerTenant" to "Max Admins Per Tenant" */
+export function formatFeatureName(raw: string): string {
+  if (!raw) return raw;
+  // Already readable (has spaces, starts with uppercase)
+  if (raw.includes(" ") && raw[0] === raw[0].toUpperCase()) return raw;
+  // MIME types
+  if (raw.includes("/") && raw.includes("*")) return raw;
+
+  // Dotted names like "Identity.Admins.MaxPerTenant" → take last meaningful segment
+  if (raw.includes(".")) {
+    const segments = raw.split(".");
+    // If more than 2, take last 1–2 segments
+    const lastTwo = segments.slice(-2);
+    raw = lastTwo
+      .filter((s) => !["Enabled", "Max", "Modules", "Marketing", "Identity"].includes(s))
+      .join(" ");
+    if (!raw) raw = segments[segments.length - 1];
+  }
+
+  // camelCase/PascalCase → spaces
+  raw = raw.replace(/([a-z])([A-Z])/g, "$1 $2");
+  // snake_case or kebab-case → spaces
+  raw = raw.replace(/[_-]/g, " ");
+  // Capitalize each word
+  return raw.replace(/\b\w/g, (c) => c.toUpperCase()).trim();
+}
+
+/** Group a feature into a display category */
+function getFeatureDisplayCategory(name: string): string {
+  // Identity / Users
+  if (name.startsWith("Identity.")) return "Users & Access";
+
+  // Module quotas (CRM, HRMS, Inventory, Accounting, etc.)
+  if (name.startsWith("Modules.")) return "Modules";
+
+  // Security features
+  if (
+    name.startsWith("Marketing.SSO") ||
+    name.startsWith("Identity.2FA") || name.startsWith("Identity.Require2FA") ||
+    name.startsWith("Identity.SecurityPage") ||
+    name.startsWith("Compliance") ||
+    name.includes("AuditLog") || name.includes("Encryption")
+  ) return "Security";
+
+  // Support & onboarding
+  if (
+    name.startsWith("Marketing.Support") || name.startsWith("Marketing.Onboarding") ||
+    name.startsWith("Marketing.Training") || name.startsWith("Marketing.AccountManager") ||
+    name.includes("SupportTickets") || name.includes("SlackChannel")
+  ) return "Support";
+
+  // Performance & reliability
+  if (
+    name.startsWith("Marketing.SLA") || name.startsWith("Marketing.Backup") ||
+    name.startsWith("Marketing.DataRetention") ||
+    name.includes("CDN") || name.includes("Uptime") || name.includes("Caching")
+  ) return "Performance";
+
+  // Billing & payments
+  if (
+    name.includes("Billing") || name.includes("Invoice") ||
+    name.includes("Payment") || name.includes("Subscription")
+  ) return "Billing";
+
+  // Quotas / limits
+  if (
+    name.includes("Storage") || name.includes("ApiCalls") ||
+    name.includes("Bandwidth") || name.includes("FileSize") ||
+    name.includes("Max") || name.includes("Limit")
+  ) return "Quotas";
+
+  // Anything else under Marketing namespace
+  if (name.startsWith("Marketing.")) return "General";
+
+  return "General";
+}
+
+function sortByPriority(a: string, b: string, order: string[]): number {
+  const ai = order.indexOf(a);
+  const bi = order.indexOf(b);
+  if (ai !== -1 && bi !== -1) return ai - bi;
+  if (ai !== -1) return -1;
+  if (bi !== -1) return 1;
+  return a.localeCompare(b);
+}
 
 function mapEdition(e: PublicEdition): PlanEdition {
   return {
@@ -77,63 +155,78 @@ function mapEdition(e: PublicEdition): PlanEdition {
 }
 
 /**
- * Groups all features across all editions into categories for the comparison table.
- * De-duplicates features by name, preserves sort order.
+ * Build comparison categories from editions — produces a matrix of features × editions.
+ * Each feature row contains values for every edition (checkmark, number, text, or missing).
  */
-function buildComparisonCategories(editions: PlanEdition[]): FeatureCategory[] {
-  const seen = new Map<string, PublicFeature>();
+function buildComparisonCategories(
+  editions: PlanEdition[],
+  language: string
+): ComparisonCategory[] {
+  // 1. Collect all unique features across editions
+  const featureMap = new Map<string, {
+    name: string;
+    category: string;
+    sortOrder: number;
+    displayCategory: string;
+    values: Record<string, ComparisonCellData>;
+  }>();
 
   for (const edition of editions) {
     for (const feat of edition.allFeatures) {
-      if (!seen.has(feat.name)) {
-        seen.set(feat.name, feat);
+      if (!featureMap.has(feat.name)) {
+        featureMap.set(feat.name, {
+          name: feat.name,
+          category: feat.category || "General",
+          sortOrder: feat.sortOrder ?? 999,
+          displayCategory: getFeatureDisplayCategory(feat.name),
+          values: {},
+        });
       }
+      featureMap.get(feat.name)!.values[edition.id] = {
+        value: feat.value,
+        valueType: feat.valueType,
+        displayLabelEn: feat.displayLabelEn ?? null,
+        displayLabelAr: feat.displayLabelAr ?? null,
+      };
     }
   }
 
-  // Group by category
-  const grouped = new Map<string, PublicFeature[]>();
-  for (const feat of seen.values()) {
-    const cat = feat.category || "General";
+  // 2. Group by display category
+  const grouped = new Map<string, typeof featureMap extends Map<string, infer V> ? V[] : never>();
+
+  for (const feat of featureMap.values()) {
+    const cat = feat.displayCategory;
     if (!grouped.has(cat)) grouped.set(cat, []);
     grouped.get(cat)!.push(feat);
   }
 
-  // Sort each category by sortOrder
-  const result: FeatureCategory[] = [];
-  for (const [name, features] of grouped) {
+  // 3. Build result sorted by category order
+  const result: ComparisonCategory[] = [];
+  for (const [catName, features] of grouped) {
+    features.sort((a, b) => a.sortOrder - b.sortOrder);
     result.push({
-      name,
-      features: features.sort((a, b) => a.sortOrder - b.sortOrder),
+      key: catName,
+      label: catName,
+      features: features.map((f) => ({
+        featureName: f.name,
+        label: formatFeatureName(f.name),
+        values: f.values,
+      })),
     });
   }
 
-  // Sort categories alphabetically (General first)
-  return result.sort((a, b) => {
-    if (a.name === "General") return -1;
-    if (b.name === "General") return 1;
-    return a.name.localeCompare(b.name);
-  });
+  return result.sort((a, b) => sortByPriority(a.key, b.key, FEATURE_CATEGORY_ORDER));
 }
 
 // ─── ViewModel ────────────────────────────────────────────────────────────────
 
-/**
- * usePlanPickerViewModel — Business logic for the Plan Picker signup step.
- *
- * Handles:
- * - Edition fetching with rich feature data
- * - Billing cycle toggle + annual savings
- * - Edition category tab filtering (General / ERP / Healthcare / etc.)
- * - Comparison modal state + categorized feature grouping
- */
 export function usePlanPickerViewModel(
   onSelectPlan: (
     edition: { id: string; name: string; trialDays: number | null; checkoutMode: string },
     billingCycle: "monthly" | "annual"
   ) => void
-): UsePlanPickerViewModelReturn {
-  const { t, direction } = useI18n();
+) {
+  const { t, direction, language } = useI18n();
   const { signupRepository } = authContainer;
 
   const [editions, setEditions] = useState<PlanEdition[]>([]);
@@ -141,75 +234,75 @@ export function usePlanPickerViewModel(
   const [error, setError] = useState("");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [isCompareOpen, setIsCompareOpen] = useState(false);
+
 
   // ── Fetch editions ──
   useEffect(() => {
     let cancelled = false;
-    const fetchEditions = async () => {
+    (async () => {
       setIsLoading(true);
       try {
         const result = await signupRepository.getEditions();
-        if (!cancelled) {
-          setEditions(result.map(mapEdition));
-        }
+        if (!cancelled) setEditions(result.map(mapEdition));
       } catch {
         if (!cancelled) {
-          // Fallback: show a minimal free plan so user can proceed
-          setEditions([
-            {
-              id: "",
-              name: "Free",
-              tagline: t("signup.plan.freeTagline") || "Get started for free",
-              tierLevel: 0,
-              category: null,
-              monthlyPrice: 0,
-              annualPrice: 0,
-              currency: "USD",
-              trialDays: null,
-              badge: null,
-              topFeatures: [],
-              allFeatures: [],
-              checkoutMode: "self-service",
-            },
-          ]);
+          setEditions([{
+            id: "", name: "Free", tagline: t("signup.plan.freeTagline") || "Get started for free",
+            tierLevel: 0, category: null, monthlyPrice: 0, annualPrice: 0, currency: "USD",
+            trialDays: null, badge: null, topFeatures: [], allFeatures: [], checkoutMode: "self-service",
+          }]);
         }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
-    };
-    fetchEditions();
+    })();
     return () => { cancelled = true; };
   }, [signupRepository, t]);
 
   // ── Category tabs ──
   const categories = useMemo(() => {
     const cats = new Set<string>();
-    for (const e of editions) {
-      if (e.category) cats.add(e.category);
-    }
-    return Array.from(cats).sort();
+    for (const e of editions) { if (e.category) cats.add(e.category); }
+    return Array.from(cats).sort((a, b) => sortByPriority(a, b, CATEGORY_ORDER));
   }, [editions]);
 
   const filteredEditions = useMemo(() => {
-    if (!activeCategory) return editions;
-    return editions.filter((e) => e.category === activeCategory);
+    const list = !activeCategory ? editions : editions.filter((e) => e.category === activeCategory);
+    return [...list].sort((a, b) => a.tierLevel - b.tierLevel);
   }, [editions, activeCategory]);
 
   // ── Annual savings ──
   const annualSavingsPercent = useMemo(() => {
     const first = editions.find((e) => e.monthlyPrice > 0);
-    if (!first) return 0;
-    const monthlyTotal = first.monthlyPrice * 12;
-    const annualTotal = first.annualPrice;
-    if (monthlyTotal <= 0) return 0;
-    return Math.round(((monthlyTotal - annualTotal) / monthlyTotal) * 100);
+    if (!first || first.monthlyPrice * 12 <= 0) return 0;
+    return Math.round(((first.monthlyPrice * 12 - first.annualPrice) / (first.monthlyPrice * 12)) * 100);
   }, [editions]);
 
-  // ── Comparison table data ──
+  // ── Comparison: per-category edition picker ──
+  // The comparison table shows editions from ONE category at a time.
+  // Defaults to the user's active card category, or the first available.
+  const [comparisonActiveCategory, setComparisonActiveCategory] = useState<string | null>(null);
+
+  // Resolve the effective comparison category
+  const effectiveComparisonCategory = useMemo(() => {
+    if (activeCategory) return activeCategory;  // User picked a category tab
+    if (comparisonActiveCategory && categories.includes(comparisonActiveCategory))
+      return comparisonActiveCategory;
+    return categories[0] ?? null;  // Default to first category
+  }, [activeCategory, comparisonActiveCategory, categories]);
+
+  // Editions visible in the comparison table (single category only)
+  const comparisonEditions = useMemo(() => {
+    if (!effectiveComparisonCategory) return filteredEditions;
+    return editions
+      .filter((e) => (e.category || "General") === effectiveComparisonCategory)
+      .sort((a, b) => a.tierLevel - b.tierLevel);
+  }, [editions, filteredEditions, effectiveComparisonCategory]);
+
+  // ── Comparison data (matrix format for ComparisonTable) ──
   const comparisonCategories = useMemo(
-    () => buildComparisonCategories(filteredEditions),
-    [filteredEditions]
+    () => buildComparisonCategories(comparisonEditions, language),
+    [comparisonEditions, language]
   );
 
   // ── Actions ──
@@ -218,25 +311,13 @@ export function usePlanPickerViewModel(
     [billingCycle, onSelectPlan]
   );
 
-  const openCompare  = useCallback(() => setIsCompareOpen(true), []);
-  const closeCompare = useCallback(() => setIsCompareOpen(false), []);
+
 
   return {
-    editions,
-    isLoading,
-    error,
-    billingCycle,
-    annualSavingsPercent,
-    direction,
-    activeCategory,
-    categories,
-    filteredEditions,
-    setActiveCategory,
-    isCompareOpen,
-    openCompare,
-    closeCompare,
-    comparisonCategories,
-    setBillingCycle,
-    selectPlan,
+    editions, isLoading, error, billingCycle, annualSavingsPercent, direction,
+    activeCategory, categories, filteredEditions, setActiveCategory,
+    comparisonCategories, comparisonEditions, comparisonActiveCategory:
+      effectiveComparisonCategory,
+    setComparisonActiveCategory, setBillingCycle, selectPlan,
   };
 }
