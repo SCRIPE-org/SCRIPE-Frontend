@@ -208,7 +208,8 @@ export function CredentialsForm({
             aria-describedby={error ? "login-error" : undefined}
             className="h-[48px] w-full rounded-xl border px-4 text-[15px] shadow-none transition-all duration-150 focus-visible:ring-0 [&::-ms-reveal]:hidden"
             style={{
-              paddingInlineEnd: "4rem",
+              paddingRight: "4rem",
+              textAlign: "left",
               background: "var(--sx-field-bg, transparent)",
               borderColor: "var(--sx-field-border, hsl(var(--border)))",
               boxShadow: "var(--sx-field-inner-hi, none)",
@@ -223,7 +224,8 @@ export function CredentialsForm({
             variant="ghost"
             className="absolute top-0 flex items-center justify-center px-2.5 transition-colors hover:bg-transparent"
             style={{
-              insetInlineEnd: "4px",
+              right: "4px",
+              left: "auto",
               height: "48px",
               fontSize: 11,
               fontFamily: "var(--font-mono, ui-monospace, monospace)",

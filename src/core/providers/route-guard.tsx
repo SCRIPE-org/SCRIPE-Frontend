@@ -57,6 +57,7 @@ const PUBLIC_PAGES = [
   "/dashboard-preview",
   "/setup-account",
   "/change-password",
+  "/signup"
 ];
 
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
