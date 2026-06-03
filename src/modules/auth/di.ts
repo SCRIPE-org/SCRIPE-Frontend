@@ -14,12 +14,16 @@ import { TenantResolutionService } from "./core/data/services/TenantResolutionSe
 import { SsoService } from "./core/data/services/SsoService";
 import { PasswordResetService } from "./core/data/services/PasswordResetService";
 import { AccountSetupService } from "./account-setup/src/data/services/AccountSetupService";
+import { SignupService } from "./signup/src/data/services/SignupService";
+import { PasskeyService } from "./core/src/data/services/PasskeyService";
 
 import { AuthRepository } from "./core/data/repositories/AuthRepository";
 import { TenantResolutionRepository } from "./core/data/repositories/TenantResolutionRepository";
 import { SsoRepository } from "./core/data/repositories/SsoRepository";
 import { PasswordResetRepository } from "./core/data/repositories/PasswordResetRepository";
 import { AccountSetupRepository } from "./account-setup/src/data/repositories/AccountSetupRepository";
+import { SignupRepository } from "./signup/src/data/repositories/SignupRepository";
+import { PasskeyRepository } from "./core/src/data/repositories/PasskeyRepository";
 
 import type { IAuthRepository } from "./core/domain/interfaces/IAuthRepository";
 import type { IAuthService } from "./core/domain/interfaces/IAuthService";
@@ -27,6 +31,8 @@ import type { ITenantResolutionRepository } from "./core/domain/interfaces/ITena
 import type { ISsoRepository } from "./core/domain/interfaces/ISsoRepository";
 import type { IPasswordResetRepository } from "./core/domain/interfaces/IPasswordResetRepository";
 import type { IAccountSetupRepository } from "./core/domain/interfaces/IAccountSetupRepository";
+import type { ISignupRepository } from "./signup/src/domain/interfaces/ISignupRepository";
+import type { IPasskeyRepository } from "./core/src/domain/interfaces/IPasskeyRepository";
 
 export interface AuthContainer {
   authService: IAuthService;
@@ -35,6 +41,8 @@ export interface AuthContainer {
   ssoRepository: ISsoRepository;
   passwordResetRepository: IPasswordResetRepository;
   accountSetupRepository: IAccountSetupRepository;
+  signupRepository: ISignupRepository;
+  passkeyRepository: IPasskeyRepository;
 }
 
 let _instance: AuthContainer | null = null;
@@ -54,6 +62,12 @@ function createContainer(): AuthContainer {
   );
   const accountSetupRepository = new AccountSetupRepository(
     new AccountSetupService(publicApiService)
+  );
+  const signupRepository = new SignupRepository(
+    new SignupService(publicApiService)
+  );
+  const passkeyRepository = new PasskeyRepository(
+    new PasskeyService(apiService)
   );
 
   const baseApi = getBaseApiService();
@@ -81,6 +95,8 @@ function createContainer(): AuthContainer {
     ssoRepository,
     passwordResetRepository,
     accountSetupRepository,
+    signupRepository,
+    passkeyRepository,
   };
 }
 

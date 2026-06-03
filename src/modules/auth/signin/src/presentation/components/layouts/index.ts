@@ -2,6 +2,7 @@ import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandi
 import type { ComponentType } from "react";
 import type { LoginLayoutProps } from "./layout-types";
 
+import { VaultLayout } from "./VaultLayout";
 import { SplitRightLayout } from "./SplitRightLayout";
 import { SplitLeftLayout } from "./SplitLeftLayout";
 import { CenteredLayout } from "./CenteredLayout";
@@ -29,6 +30,7 @@ export type { LoginLayoutProps };
 export { SplitRightLayout };
 
 export const LAYOUT_REGISTRY: Record<LoginLayout, ComponentType<LoginLayoutProps>> = {
+  vault: VaultLayout,
   "split-right": SplitRightLayout,
   "split-left": SplitLeftLayout,
   centered: CenteredLayout,

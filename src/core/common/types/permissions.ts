@@ -3,7 +3,39 @@
  *
  * Permissions are loaded dynamically from the backend.
  * Format: "resource.action" (e.g., "admins.create", "roles.view")
+ *
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  MODULAR ARCHITECTURE: Each parent module defines its own   ║
+ * ║  permissions in `src/modules/{module}/permissions.ts`.      ║
+ * ║  This central file wires them all together.                 ║
+ * ╚══════════════════════════════════════════════════════════════╝
  */
+
+// ── Module permission imports ─────────────────────────────────────────────────
+import { IDENTITY_PERMISSIONS } from "@modules/identity/permission-constants";
+import { ENTITLEMENTS_PERMISSIONS } from "@modules/entitlements/permission-constants";
+import { MESSAGING_PERMISSIONS } from "@modules/messaging/permission-constants";
+import { CUSTOMIZATION_PERMISSIONS } from "@modules/customization/permission-constants";
+import { MONITORING_PERMISSIONS } from "@modules/monitoring/permission-constants";
+import { ECOSYSTEM_PERMISSIONS } from "@modules/ecosystem/permission-constants";
+import { COMPLIANCE_PERMISSIONS } from "@modules/compliance/permission-constants";
+import { PLUGINS_PERMISSIONS } from "@modules/plugins/permission-constants";
+import { MARKETPLACE_PERMISSIONS } from "@modules/marketplace/permission-constants";
+
+// ── Re-export individual module permissions for direct access ─────────────────
+export {
+  IDENTITY_PERMISSIONS,
+  ENTITLEMENTS_PERMISSIONS,
+  MESSAGING_PERMISSIONS,
+  CUSTOMIZATION_PERMISSIONS,
+  MONITORING_PERMISSIONS,
+  ECOSYSTEM_PERMISSIONS,
+  COMPLIANCE_PERMISSIONS,
+  PLUGINS_PERMISSIONS,
+  MARKETPLACE_PERMISSIONS,
+};
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 /**
  * Permission code format: "resource.action"
@@ -64,6 +96,8 @@ export interface AdminRole {
   inheritedPermissions: PermissionCode[];
 }
 
+// ── Permission helpers ────────────────────────────────────────────────────────
+
 /**
  * Check if a permission code matches a pattern
  * Supports wildcards: "admins.*" matches "admins.view", "admins.create", etc.
@@ -117,310 +151,26 @@ export function hasAllPermissions(
   return requiredPermissions.every((required) => hasPermission(userPermissions, required));
 }
 
+// ── Aggregated permission constants ───────────────────────────────────────────
+
 /**
- * Permission constants for the System module
+ * Aggregated permission constants from ALL modules.
+ * Use this for backward compatibility. For new code, prefer
+ * importing directly from the module (e.g., IDENTITY_PERMISSIONS).
  */
 export const SYSTEM_PERMISSIONS = {
-  // Admins
-  ADMINS_VIEW: "admins.view",
-  ADMINS_VIEW_DETAILS: "admins.view_details",
-  ADMINS_CREATE: "admins.create",
-  ADMINS_UPDATE: "admins.update",
-  ADMINS_DELETE: "admins.delete",
-  ADMINS_ASSIGN_ROLES: "admins.assign_roles",
-  ADMINS_RESET_PASSWORD: "admins.reset_password",
-  ADMINS_BULK_ACTIVATE: "admins.bulk_activate",
-  ADMINS_BULK_DEACTIVATE: "admins.bulk_deactivate",
-  ADMINS_BULK_DELETE: "admins.bulk_delete",
-  ADMINS_IMPERSONATE: "admins.impersonate",
-  ADMINS_TRANSFER: "admins.transfer",
-
-  // Roles
-  ROLES_VIEW: "roles.view",
-  ROLES_CREATE: "roles.create",
-  ROLES_UPDATE: "roles.update",
-  ROLES_DELETE: "roles.delete",
-  ROLES_MANAGE_PERMISSIONS: "roles.manage_permissions",
-  ROLES_CLONE: "roles.clone",
-
-  // User Groups
-  USER_GROUPS_VIEW: "user_groups.view",
-  USER_GROUPS_CREATE: "user_groups.create",
-  USER_GROUPS_UPDATE: "user_groups.update",
-  USER_GROUPS_DELETE: "user_groups.delete",
-
-  // Users (Client Users)
-  USERS_VIEW: "users.view",
-  USERS_UPDATE: "users.update",
-  USERS_DELETE: "users.delete",
-  USERS_UNLOCK: "users.unlock",
-
-  // Permissions
-  PERMISSIONS_VIEW: "permissions.view",
-
-  // Tenants
-  TENANTS_VIEW: "tenants.view",
-  TENANTS_VIEW_DETAILS: "tenants.view_details",
-  TENANTS_VIEW_SUBTENANTS: "tenants.view_subTenants",
-  TENANTS_DRILL_DOWN: "tenants.drill_down",
-  TENANTS_VIEW_ADMINS: "tenants.view_admins",
-  TENANTS_VIEW_ROLES: "tenants.view_roles",
-  TENANTS_CREATE: "tenants.create",
-  TENANTS_UPDATE: "tenants.update",
-  TENANTS_DELETE: "tenants.delete",
-  TENANTS_CASCADE_DELETE: "tenants.cascade_delete",
-  TENANTS_MANAGE_QUOTAS: "tenants.manage_quotas",
-  TENANTS_MANAGE_SETTINGS: "tenants.manage_settings",
-
-  // Menus
-  MENUS_VIEW: "menus.view",
-  MENUS_CREATE: "menus.create",
-  MENUS_UPDATE: "menus.update",
-  MENUS_DELETE: "menus.delete",
-  MENUS_MANAGE_LINKS: "menus.manage_links",
-  MENUS_CUSTOMIZE: "menus.customize",
-  MENUS_CUSTOMIZE_TENANT: "menus.customize_tenant",
-
-  // Audit
-  AUDIT_VIEW: "audit.view",
-  AUDIT_EXPORT: "audit.export",
-  AUDIT_VIEW_CHILDREN: "audit.view_children",
-  AUDIT_EXPORT_PDF: "audit.export_pdf",
-
-  // Dashboard
-  DASHBOARD_VIEW: "dashboard.view",
-  DASHBOARD_VIEW_SYSTEM: "dashboard.view_system",
-
-  // Security Monitoring
-  SECURITY_VIEW: "security.view",
-  SECURITY_MANAGE_SETTINGS: "security.manage_settings",
-
-  // Analytics
-  ANALYTICS_VIEW: "analytics.view",
-  ANALYTICS_VIEW_CHILDREN: "analytics.view_children",
-  ANALYTICS_EXPORT: "analytics.export",
-
-  // System
-  SYSTEM_IMPERSONATE: "system.impersonate",
-  SYSTEM_MANAGE_SETTINGS: "system.manage_settings",
-
-  // Tenant Settings (for My Tenant page)
-  TENANT_SETTINGS_VIEW: "tenant_settings.view",
-  TENANT_SETTINGS_UPDATE: "tenant_settings.update",
-
-  // Recycle Bin
-  RECYCLE_BIN_VIEW: "recycle_bin.view",
-  RECYCLE_BIN_RESTORE: "recycle_bin.restore",
-
-  // Editions
-  EDITIONS_VIEW: "editions.view",
-  EDITIONS_CREATE: "editions.create",
-  EDITIONS_UPDATE: "editions.update",
-  EDITIONS_DELETE: "editions.delete",
-  EDITIONS_ASSIGN: "editions.assign",
-
-  // Features
-  FEATURES_VIEW: "features.view",
-  FEATURES_CREATE: "features.create",
-  FEATURES_UPDATE: "features.update",
-  FEATURES_DELETE: "features.delete",
-  FEATURES_OVERRIDE: "features.override",
-  FEATURES_RESOLVE: "features.resolve",
-
-  // Subscriptions
-  SUBSCRIPTIONS_VIEW: "subscriptions.view",
-  SUBSCRIPTIONS_ASSIGN: "subscriptions.assign",
-
-  // Notifications
-  NOTIFICATIONS_VIEW: "notifications.view",
-  NOTIFICATIONS_CREATE: "notifications.create",
-  NOTIFICATIONS_UPDATE: "notifications.update",
-  NOTIFICATIONS_DELETE: "notifications.delete",
-
-  // Message Templates
-  MESSAGE_TEMPLATES_VIEW: "message-templates.view",
-  MESSAGE_TEMPLATES_CREATE: "message-templates.create",
-  MESSAGE_TEMPLATES_UPDATE: "message-templates.update",
-  MESSAGE_TEMPLATES_DELETE: "message-templates.delete",
-
-  // Emails
-  EMAILS_VIEW: "emails.view",
-  EMAILS_CREATE: "emails.create",
-
-  // Webhooks
-  WEBHOOKS_VIEW: "webhooks.view",
-  WEBHOOKS_CREATE: "webhooks.create",
-  WEBHOOKS_UPDATE: "webhooks.update",
-  WEBHOOKS_DELETE: "webhooks.delete",
-
-  // Identity Providers
-  IDENTITY_PROVIDERS_VIEW: "identity_providers.view",
-  IDENTITY_PROVIDERS_CREATE: "identity_providers.create",
-  IDENTITY_PROVIDERS_UPDATE: "identity_providers.update",
-  IDENTITY_PROVIDERS_DELETE: "identity_providers.delete",
-
-  // OAuth Applications
-  OAUTH_APPS_VIEW: "oauth_apps.view",
-  OAUTH_APPS_CREATE: "oauth_apps.create",
-  OAUTH_APPS_UPDATE: "oauth_apps.update",
-  OAUTH_APPS_DELETE: "oauth_apps.delete",
-
-  // Bundles
-  BUNDLES_VIEW: "bundles.view",
-  BUNDLES_VIEW_DETAILS: "bundles.view_details",
-  BUNDLES_CREATE: "bundles.create",
-  BUNDLES_UPDATE: "bundles.update",
-  BUNDLES_DELETE: "bundles.delete",
-
-  // Themes (Marketplace Management)
-  THEMES_VIEW: "themes.view",
-  THEMES_CREATE: "themes.create",
-  THEMES_UPDATE: "themes.update",
-  THEMES_DELETE: "themes.delete",
-
-  // Dashboard Builder
-  DASHBOARD_BUILDER_VIEW: "settings.dashboard_builder.view",
-  DASHBOARD_BUILDER_UPDATE: "settings.dashboard_builder.update",
-  DASHBOARD_BUILDER_PUBLISH: "settings.dashboard_builder.publish",
-  DASHBOARD_BUILDER_ADMIN_OVERRIDE: "settings.dashboard_builder.admin_override",
-  DASHBOARD_BUILDER_PRESETS: "settings.dashboard_builder.presets",
-  DASHBOARD_BUILDER_SAVE_PRESETS: "settings.dashboard_builder.save_presets",
-  DASHBOARD_BUILDER_EXPORT: "settings.dashboard_builder.export",
-
-  // Billing
-  INVOICES_VIEW: "invoices.view",
-  INVOICES_EXPORT: "invoices.export",
-  TRANSACTIONS_VIEW: "transactions.view",
-  BILLING_MANAGE: "billing.manage",
-  BILLING_DASHBOARD_VIEW: "billing.manage",
-  PAYMENT_GATEWAYS_MANAGE: "payment_gateways.manage",
-
-  // Tenant Plans (Tier 2)
-  TENANT_PLANS_VIEW: "tenant_plans.view",
-  TENANT_PLANS_CREATE: "tenant_plans.create",
-  TENANT_PLANS_UPDATE: "tenant_plans.update",
-  TENANT_PLANS_DELETE: "tenant_plans.delete",
-
-  // Tenant Feature Definitions (Tier 2)
-  TENANT_FEATURE_DEFINITIONS_VIEW: "tenant_feature_definitions.view",
-  TENANT_FEATURE_DEFINITIONS_CREATE: "tenant_feature_definitions.create",
-  TENANT_FEATURE_DEFINITIONS_UPDATE: "tenant_feature_definitions.update",
-  TENANT_FEATURE_DEFINITIONS_DELETE: "tenant_feature_definitions.delete",
-
-  // User Subscriptions (Tier 2)
-  USER_SUBSCRIPTIONS_VIEW: "user_subscriptions.view",
-  USER_SUBSCRIPTIONS_CREATE: "user_subscriptions.create",
-  USER_SUBSCRIPTIONS_UPDATE: "user_subscriptions.update",
-  USER_SUBSCRIPTIONS_DELETE: "user_subscriptions.delete",
-
-  // Tenant Plan Promotions (Tier 2)
-  TENANT_PLAN_PROMOTIONS_VIEW: "tenant_plan_promotions.view",
-  TENANT_PLAN_PROMOTIONS_CREATE: "tenant_plan_promotions.create",
-  TENANT_PLAN_PROMOTIONS_UPDATE: "tenant_plan_promotions.update",
-  TENANT_PLAN_PROMOTIONS_DELETE: "tenant_plan_promotions.delete",
-
-  // Stripe Connect
-  STRIPE_CONNECT_VIEW: "stripe_connect.view",
-  STRIPE_CONNECT_CREATE: "stripe_connect.create",
-  STRIPE_CONNECT_UPDATE: "stripe_connect.update",
-  STRIPE_CONNECT_DELETE: "stripe_connect.delete",
-
-  // Commissions
-  COMMISSIONS_VIEW: "commissions.view",
-  COMMISSIONS_EXPORT: "commissions.export",
-  COMMISSIONS_MANAGE: "commissions.manage",
-  COMMISSIONS_WAIVE: "commissions.waive",
-
-  // Tenant Stripe Connect (self-service)
-  TENANT_STRIPE_CONNECT_VIEW: "tenant_stripe_connect.view",
-  TENANT_STRIPE_CONNECT_MANAGE: "tenant_stripe_connect.manage",
-
-  // Platform Stripe Dashboard (system admins)
-  PLATFORM_STRIPE_VIEW: "platform_stripe.view",
-
-  // Revenue Analytics
-  ANALYTICS_REVENUE_VIEW: "revenue_analytics.view",
-  ANALYTICS_HEALTH_VIEW: "revenue_analytics.view_health",
-  ANALYTICS_REPORTS_MANAGE: "revenue_analytics.manage_reports",
-
-  // Tenant Payment Gateways (Tier 2 self-service)
-  TENANT_PAYMENT_GATEWAYS_VIEW: "tenant_payment_gateways.view",
-  TENANT_PAYMENT_GATEWAYS_CONFIGURE: "tenant_payment_gateways.configure",
-  TENANT_PAYMENT_GATEWAYS_VERIFY: "tenant_payment_gateways.verify",
-  TENANT_PAYMENT_GATEWAYS_REMOVE: "tenant_payment_gateways.remove",
-
-  // Compliance Management
-  // Dashboard
-  COMPLIANCE_DASHBOARD_VIEW: "compliance_dashboard.view",
-  COMPLIANCE_DASHBOARD_EXPORT: "compliance_dashboard.export",
-  // Regulation Profiles
-  COMPLIANCE_REGULATIONS_VIEW: "compliance_regulations.view",
-  COMPLIANCE_REGULATIONS_MANAGE: "compliance_regulations.manage",
-  // Consent Management
-  COMPLIANCE_CONSENT_VIEW: "compliance_consent.view",
-  COMPLIANCE_CONSENT_MANAGE: "compliance_consent.manage",
-  COMPLIANCE_CONSENT_VIEW_ANALYTICS: "compliance_consent.view_analytics",
-  // Data Subject Requests (DSR)
-  COMPLIANCE_DSR_VIEW: "compliance_dsr.view",
-  COMPLIANCE_DSR_CREATE: "compliance_dsr.create",
-  COMPLIANCE_DSR_REVIEW: "compliance_dsr.review",
-  COMPLIANCE_DSR_EXECUTE: "compliance_dsr.execute",
-  COMPLIANCE_DSR_CANCEL: "compliance_dsr.cancel",
-  // Retention Policies
-  COMPLIANCE_RETENTION_VIEW: "compliance_retention.view",
-  COMPLIANCE_RETENTION_MANAGE: "compliance_retention.manage",
-  // Data Inventory
-  COMPLIANCE_DATA_INVENTORY_VIEW: "compliance_data_inventory.view",
-  COMPLIANCE_DATA_INVENTORY_MANAGE: "compliance_data_inventory.manage",
-  // Reports
-  COMPLIANCE_REPORTS_VIEW: "compliance_reports.view",
-  COMPLIANCE_REPORTS_GENERATE: "compliance_reports.generate",
-
-  // ── Plugins Module ──────────────────────────────────────────
-  // Catalog
-  PLUGINS_CATALOG_VIEW: "plugins_catalog.view",
-  PLUGINS_CATALOG_INSTALL: "plugins_catalog.install",
-  PLUGINS_CATALOG_UNINSTALL: "plugins_catalog.uninstall",
-  // Installed
-  PLUGINS_INSTALLED_VIEW: "plugins_installed.view",
-  PLUGINS_INSTALLED_MANAGE: "plugins_installed.manage",
-  PLUGINS_INSTALLED_CONFIGURE: "plugins_installed.configure",
-  // Definitions (Developer)
-  PLUGINS_DEFINITION_VIEW: "plugins_definition.view",
-  PLUGINS_DEFINITION_CREATE: "plugins_definition.create",
-  PLUGINS_DEFINITION_UPDATE: "plugins_definition.update",
-  PLUGINS_DEFINITION_DELETE: "plugins_definition.delete",
-  // Data Store
-  PLUGINS_DATA_STORE_VIEW: "plugins_data_store.view",
-  PLUGINS_DATA_STORE_MANAGE: "plugins_data_store.manage",
-  // Execution Logs
-  PLUGINS_EXECUTION_LOGS_VIEW: "plugins_execution_logs.view",
-
-  // ── Marketplace Module ─────────────────────────────────────
-  // App Listings
-  APP_LISTINGS_VIEW: "applistings.view",
-  APP_LISTINGS_CREATE: "applistings.create",
-  APP_LISTINGS_UPDATE: "applistings.update",
-  APP_LISTINGS_DELETE: "applistings.delete",
-  // App Submissions
-  APP_SUBMISSIONS_VIEW: "appsubmissions.view",
-  APP_SUBMISSIONS_CREATE: "appsubmissions.create",
-  APP_SUBMISSIONS_UPDATE: "appsubmissions.update",
-  // Developer Profiles
-  DEVELOPER_PROFILES_VIEW: "developerprofiles.view",
-  DEVELOPER_PROFILES_CREATE: "developerprofiles.create",
-  DEVELOPER_PROFILES_UPDATE: "developerprofiles.update",
-  DEVELOPER_PROFILES_VERIFY: "developerprofiles.verify",
-  // App Reviews
-  APP_REVIEWS_VIEW: "appreviews.view",
-  APP_REVIEWS_CREATE: "appreviews.create",
-  APP_REVIEWS_DELETE: "appreviews.delete",
-  // Financials
-  APP_PURCHASES_VIEW: "apppurchases.view",
-  APP_PURCHASES_CREATE: "apppurchases.create",
-  DEVELOPER_PAYOUTS_VIEW: "developerpayouts.view",
-  DEVELOPER_PAYOUTS_PROCESS: "developerpayouts.process",
+  ...IDENTITY_PERMISSIONS,
+  ...ENTITLEMENTS_PERMISSIONS,
+  ...MESSAGING_PERMISSIONS,
+  ...CUSTOMIZATION_PERMISSIONS,
+  ...MONITORING_PERMISSIONS,
+  ...ECOSYSTEM_PERMISSIONS,
+  ...COMPLIANCE_PERMISSIONS,
+  ...PLUGINS_PERMISSIONS,
+  ...MARKETPLACE_PERMISSIONS,
 } as const;
+
+// ── Page permission mapping ───────────────────────────────────────────────────
 
 /**
  * Page permission mapping (for RouteGuard)
@@ -440,6 +190,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/roles": [SYSTEM_PERMISSIONS.ROLES_VIEW],
   "/roles/[id]": [SYSTEM_PERMISSIONS.ROLES_VIEW],
   "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
+  "/settings/passkeys": [SYSTEM_PERMISSIONS.PASSKEYS_VIEW],
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/tenants/create": [SYSTEM_PERMISSIONS.TENANTS_CREATE],
   "/tenants/[id]": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
@@ -547,7 +298,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/plugins/installed/[installationId]/settings": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_CONFIGURE],
   "/plugins/definitions": [SYSTEM_PERMISSIONS.PLUGINS_DEFINITION_VIEW],
   "/plugins/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
-
 
   // Marketplace Module
   "/marketplace": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],

@@ -19,6 +19,11 @@ export const AUTH_ENDPOINTS = {
       VERIFY: `${V1}/auth/admin/2fa/verify`,
       DISABLE: `${V1}/auth/admin/2fa/disable`,
     },
+    // ── Passwordless magic-link login ─────────────────────────────
+    MAGIC_LINK: {
+      REQUEST: `${V1}/auth/magic-link/request`,
+      VERIFY: `${V1}/auth/magic-link/verify`,
+    },
     OIDC: {
       ADMIN_PROVIDERS: `${V1}/auth/oidc/providers/admin`,
       CHALLENGE: `${V1}/auth/oidc/challenge`,
@@ -27,6 +32,35 @@ export const AUTH_ENDPOINTS = {
     },
     SAML: {
       LOGIN: `${V1}/auth/saml/login`,
+    },
+    // ── Self-service signup ────────────────────────────────────
+    SIGNUP: {
+      GET_EDITIONS: `${V1}/auth/signup/editions`,
+      SEND_OTP: `${V1}/auth/signup/send-otp`,
+      VERIFY_OTP: `${V1}/auth/signup/verify-otp`,
+      CHECK_SUBDOMAIN: `${V1}/auth/signup/check-subdomain`,
+      REGISTER: `${V1}/auth/signup/register`,
+    },
+    // ── Passkey / WebAuthn ────────────────────────────────────
+    PASSKEY: {
+      REGISTER_BEGIN: `${V1}/auth/passkeys/registration/begin`,
+      REGISTER_VERIFY: `${V1}/auth/passkeys/registration/verify`,
+      AUTH_BEGIN: `${V1}/auth/passkeys/authentication/begin`,
+      AUTH_VERIFY: `${V1}/auth/passkeys/authentication/verify`,
+      LIST: `${V1}/auth/passkeys`,
+      DELETE: (id: string) => `${V1}/auth/passkeys/${id}`,
+    },
+    // ── Phone OTP login ──────────────────────────────────────
+    PHONE_OTP: {
+      REQUEST: `${V1}/auth/phone-otp/request`,
+      VERIFY: `${V1}/auth/phone-otp/verify`,
+    },
+    // ── QR cross-device login ────────────────────────────────
+    QR_LOGIN: {
+      CREATE_SESSION: `${V1}/auth/qr-login/session`,
+      SESSION_STATUS: (id: string) => `${V1}/auth/qr-login/session/${id}/status`,
+      APPROVE: `${V1}/auth/qr-login/approve`,
+      REJECT: `${V1}/auth/qr-login/reject`,
     },
   },
 

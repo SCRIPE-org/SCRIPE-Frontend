@@ -43,6 +43,7 @@ import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const COLOR_THEMES = [
+  { value: "scripe", color: "#7c3aed" },
   { value: "purple", color: "#8b5cf6" },
   { value: "blue", color: "#3b82f6" },
   { value: "green", color: "#22c55e" },

@@ -1,8 +1,12 @@
 /**
- * ResetPasswordView — Public page for setting a new password
+ * ResetPasswordView — New-password entry page (from email link).
  *
- * Now themed: consumes the same tenant branding tokens as the login page.
- * Uses per-page layout/headline/subtitle from LoginBrandingJson.pages["reset-password"].
+ * Uses the Vault surface token layer so it visually matches the login page.
+ * Supports ?otp= (preferred) and legacy ?token= param. Also passes ?email= to
+ * provide the correct email to the reset command.
+ *
+ * Security: The OTP is validated server-side. The UI shows the same generic error
+ * regardless of whether the OTP is wrong vs. expired (enumeration-safe).
  */
 "use client";
 
@@ -20,6 +24,7 @@ import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useTenantResolution } from "@modules/auth/core/src/presentation/viewmodels/useTenantResolution";
+import { VaultBackground } from "@modules/auth/signin/src/presentation/components/layouts/VaultBackground";
 import { useResetPasswordViewModel } from "../viewmodels/useResetPasswordViewModel";
 
 export function ResetPasswordView() {
@@ -27,39 +32,20 @@ export function ResetPasswordView() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get("token") || "";
-  const otp = searchParams?.get("otp") || token; // Support both ?otp= and legacy ?token=
+  const otp = searchParams?.get("otp") || token;
   const email = searchParams?.get("email") || "";
 
-  // Resolve tenant branding
   const { branding } = useTenantResolution("reset-password");
 
-  // Parse branding + inject CSS tokens
-  const { layout: rawLayout } = useLoginBrandingTokens({
+  useLoginBrandingTokens({
     loginBrandingJson: branding?.loginBrandingJson ?? null,
     slotConfigJson: branding?.slotConfigJson ?? null,
     isSafeMode: branding?.isSafeMode ?? false,
   });
 
-  // Get per-page override
-  const pageOverride = (() => {
-    try {
-      if (!branding?.loginBrandingJson) return null;
-      const parsed = JSON.parse(branding.loginBrandingJson);
-      return parsed.pages?.["reset-password"] ?? null;
-    } catch {
-      return null;
-    }
-  })();
-
-  const layout = pageOverride?.layout || "centered";
-
-  // Branding values
-  const logoSrc = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
-  const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
-  const headline = pageOverride?.headline || t("auth.resetPassword") || "Reset Password";
-  const subtitle =
-    pageOverride?.subtitle || t("auth.resetPasswordDesc") || "Enter your new password below.";
+  const headline = t("auth.resetPassword");
+
   const {
     password,
     setPassword,
@@ -73,88 +59,83 @@ export function ResetPasswordView() {
   } = useResetPasswordViewModel({
     email,
     otp,
-    invalidLinkMessage:
-      t("auth.resetNotAvailable") ||
-      "Invalid reset link. Please request a new one from the forgot password page.",
-    fallbackErrorMessage:
-      t("auth.resetFailed") || "Failed to reset password. The link may have expired.",
+    invalidLinkMessage: t("auth.resetNotAvailable"),
+    fallbackErrorMessage: t("auth.resetFailed"),
   });
 
-  // Dynamic document title
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.title = `${headline} — ${companyName}`;
     }
   }, [headline, companyName]);
 
-  const wrapperStyle: React.CSSProperties = {
-    background:
-      "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
-    lineHeight: "var(--login-line-height, 1.5)",
-    letterSpacing: "var(--login-letter-spacing, 0px)",
+  const wrapperClass =
+    "vault-stage relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden";
+
+  const cardStyle: React.CSSProperties = {
+    background: "var(--sx-card-bg)",
+    border: "1px solid var(--sx-card-border)",
+    boxShadow: "var(--sx-card-shadow)",
+    backdropFilter: "blur(24px)",
+    WebkitBackdropFilter: "blur(24px)",
   };
 
-  // Top actions bar
   const topActions = (
-    <div className="absolute left-8 right-8 top-8 z-20 flex items-center justify-end gap-1">
+    <div
+      className="absolute right-6 top-6 z-20 flex items-center gap-1"
+      style={direction === "rtl" ? { right: "auto", left: "1.5rem" } : {}}
+    >
       <LanguageSwitcher />
       <ThemeSwitcher />
     </div>
   );
 
-  // No token — show invalid link view
+  // ── No token — invalid link ─────────────────────────────
   if (!token) {
     return (
       <div
-        className="login-page flex min-h-screen w-full flex-col items-center justify-center selection:bg-primary/20"
+        className={wrapperClass}
         dir={direction}
-        style={wrapperStyle}
+        style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
       >
+        <VaultBackground />
         {topActions}
-        <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
-          <div className="w-full" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
+        <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+          <div className="mb-5 w-full">
             <Link
               href="/login"
-              className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] transition-colors hover:text-[var(--login-text,hsl(var(--foreground)))]"
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-80"
+              style={{ color: "var(--sx-text-mute)" }}
             >
-              <ArrowLeft className="h-4 w-4" />
-              {t("auth.backToLogin") || "Back to login"}
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              {t("auth.backToLogin")}
             </Link>
-            <div
-              className="space-y-6 border border-[var(--login-border,hsl(var(--border)))] text-center"
-              style={{
-                borderRadius: "var(--login-radius-card, 16px)",
-                padding: "var(--login-card-padding, 32px)",
-                backgroundColor: "var(--login-surface, hsl(var(--card)))",
-                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.1))",
-              }}
-            >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
-                <AlertTriangle className="h-6 w-6 text-amber-500" />
+          </div>
+          <div
+            className="sx-screen w-full rounded-[20px] p-8 sm:p-9 text-center"
+            style={cardStyle}
+          >
+            <div className="flex flex-col items-center gap-6">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
+                <AlertTriangle className="h-7 w-7 text-amber-500" aria-hidden="true" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <h2
-                  className="login-heading"
-                  style={{
-                    color: "var(--login-text, hsl(var(--foreground)))",
-                    fontSize: "var(--login-size-headline, 1.25rem)",
-                  }}
+                  className="text-xl font-semibold tracking-tight"
+                  style={{ color: "var(--sx-text)" }}
                 >
-                  {t("auth.invalidResetLink") || "Invalid Reset Link"}
+                  {t("auth.invalidResetLink")}
                 </h2>
                 <p
-                  style={{
-                    color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
-                    fontSize: "var(--login-size-subtitle, 0.875rem)",
-                  }}
+                  className="text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
                 >
-                  {t("auth.invalidResetLinkDesc") ||
-                    "This password reset link is invalid or has expired. Please request a new one."}
+                  {t("auth.invalidResetLinkDesc")}
                 </p>
               </div>
-              <Link href="/forgot-password">
-                <Button className="login-button w-full">
-                  {t("auth.requestNewLink") || "Request New Link"}
+              <Link href="/forgot-password" className="block w-full">
+                <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]">
+                  {t("auth.requestNewLink")}
                 </Button>
               </Link>
             </div>
@@ -166,162 +147,169 @@ export function ResetPasswordView() {
 
   return (
     <div
-      className="login-page flex min-h-screen w-full flex-col items-center justify-center selection:bg-primary/20"
+      className={wrapperClass}
       dir={direction}
-      style={wrapperStyle}
+      style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
     >
+      <VaultBackground />
       {topActions}
-      <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
-        <div className="w-full" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
+
+      <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+        {/* Back link */}
+        <div className="mb-5 w-full">
           <Link
             href="/login"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] transition-colors hover:text-[var(--login-text,hsl(var(--foreground)))]"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-80"
+            style={{ color: "var(--sx-text-mute)" }}
           >
-            <ArrowLeft className="h-4 w-4" />
-            {t("auth.backToLogin") || "Back to login"}
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            {t("auth.backToLogin")}
           </Link>
+        </div>
 
+        {/* Glass card */}
+        <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
           {!isSuccess ? (
-            <div
-              className="space-y-6 border border-[var(--login-border,hsl(var(--border)))]"
-              style={{
-                borderRadius: "var(--login-radius-card, 16px)",
-                padding: "var(--login-card-padding, 32px)",
-                backgroundColor: "var(--login-surface, hsl(var(--card)))",
-                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.1))",
-              }}
-            >
-              <div className="space-y-2 text-center">
+            <div className="flex flex-col gap-6">
+              {/* Icon + heading */}
+              <div className="text-center">
                 <div
-                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
+                  className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
                   style={{
-                    backgroundColor:
-                      "color-mix(in srgb, var(--login-primary, hsl(var(--primary))) 10%, transparent)",
+                    background: "var(--sx-accent-soft)",
+                    border: "1px solid var(--sx-accent-soft-border)",
                   }}
                 >
                   <Lock
                     className="h-6 w-6"
-                    style={{ color: "var(--login-primary, hsl(var(--primary)))" }}
+                    style={{ color: "var(--sx-accent-text)" }}
+                    aria-hidden="true"
                   />
                 </div>
                 <h1
-                  className="login-heading tracking-tight"
-                  style={{
-                    color: "var(--login-text, hsl(var(--foreground)))",
-                    fontSize: "var(--login-size-headline, 1.5rem)",
-                  }}
+                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                  style={{ color: "var(--sx-text)" }}
                 >
                   {headline}
                 </h1>
                 <p
-                  style={{
-                    color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
-                    fontSize: "var(--login-size-subtitle, 0.875rem)",
-                  }}
+                  className="mt-1.5 text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
                 >
-                  {subtitle}
+                  {t("auth.resetPasswordDesc")}
                 </p>
               </div>
 
-              <form onSubmit={submit} className="space-y-4">
+              {/* Form */}
+              <form onSubmit={submit} className="flex flex-col gap-4">
+                {/* New password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="login-label">
-                    {t("auth.newPassword") || "New Password"}
+                  <Label
+                    htmlFor="password"
+                    className="block text-[11px] font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--sx-text-mute)" }}
+                  >
+                    {t("auth.newPassword")}
                   </Label>
                   <PasswordInput
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder={t("auth.newPasswordPlaceholder") || "Enter new password"}
+                    placeholder={t("auth.newPasswordPlaceholder")}
                     required
                     autoFocus
                     minLength={8}
-                    className="login-input"
+                    className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
                   />
                   <p
-                    className="text-xs"
-                    style={{ color: "var(--login-text-muted, hsl(var(--muted-foreground)))" }}
+                    className="text-[12px]"
+                    style={{ color: "var(--sx-text-faint)" }}
                   >
-                    {t("auth.passwordMinLength") || "Must be at least 8 characters"}
+                    {t("auth.passwordMinLength")}
                   </p>
                 </div>
 
+                {/* Confirm password */}
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="login-label">
-                    {t("auth.confirmPassword") || "Confirm Password"}
+                  <Label
+                    htmlFor="confirmPassword"
+                    className="block text-[11px] font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--sx-text-mute)" }}
+                  >
+                    {t("auth.confirmPassword")}
                   </Label>
                   <PasswordInput
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder={t("auth.confirmPasswordPlaceholder") || "Confirm new password"}
+                    placeholder={t("auth.confirmPasswordPlaceholder")}
                     required
                     minLength={8}
-                    className="login-input"
+                    className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
                   />
                   {confirmPassword && password !== confirmPassword && (
-                    <p className="text-xs text-destructive">
-                      {t("auth.passwordMismatch") || "Passwords do not match"}
+                    <p className="text-[12px] text-destructive">
+                      {t("auth.passwordMismatch")}
                     </p>
                   )}
                 </div>
 
+                {/* API error */}
                 {error && (
-                  <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-                    {error}
+                  <div
+                    className="sx-shake rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3"
+                    role="alert"
+                    aria-live="assertive"
+                  >
+                    <p className="text-[13px] font-medium text-destructive">{error}</p>
                   </div>
                 )}
 
                 <Button
                   type="submit"
-                  className="login-button w-full"
                   disabled={!isValid}
                   loading={isSubmitting}
+                  className="mt-1 flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
                 >
-                  {t("auth.resetPasswordAction") || "Reset Password"}
+                  {t("auth.resetPasswordAction")}
                 </Button>
               </form>
             </div>
           ) : (
-            <div
-              className="space-y-6 border border-[var(--login-border,hsl(var(--border)))] text-center"
-              style={{
-                borderRadius: "var(--login-radius-card, 16px)",
-                padding: "var(--login-card-padding, 32px)",
-                backgroundColor: "var(--login-surface, hsl(var(--card)))",
-                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.1))",
-              }}
-            >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10">
-                <CheckCircle className="h-6 w-6 text-emerald-500" />
+            /* ── Success ─────────────────────────────── */
+            <div className="sx-pop flex flex-col items-center gap-6 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
+                <CheckCircle
+                  className="h-7 w-7 text-emerald-500"
+                  aria-hidden="true"
+                />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <h2
-                  className="login-heading"
-                  style={{
-                    color: "var(--login-text, hsl(var(--foreground)))",
-                    fontSize: "var(--login-size-headline, 1.25rem)",
-                  }}
+                  className="text-xl font-semibold tracking-tight"
+                  style={{ color: "var(--sx-text)" }}
                 >
-                  {t("auth.passwordResetSuccess") || "Password Reset"}
+                  {t("auth.passwordResetSuccess")}
                 </h2>
                 <p
-                  style={{
-                    color: "var(--login-text-muted, hsl(var(--muted-foreground)))",
-                    fontSize: "var(--login-size-subtitle, 0.875rem)",
-                  }}
+                  className="text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
                 >
-                  {t("auth.passwordResetSuccessDesc") ||
-                    "Your password has been reset successfully. You can now log in with your new password."}
+                  {t("auth.passwordResetSuccessDesc")}
                 </p>
               </div>
-              <Button className="login-button w-full" onClick={() => router.push("/login")}>
-                {t("auth.goToLogin") || "Go to Login"}
+              <Button
+                className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]"
+                onClick={() => router.push("/login")}
+              >
+                {t("auth.goToLogin")}
               </Button>
             </div>
           )}
         </div>
-        <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]/50 mt-12 text-[11px] font-medium">
+
+        {/* Footer */}
+        <p className="mt-8 text-[11px]" style={{ color: "var(--sx-text-faint)" }}>
           © {new Date().getFullYear()} {companyName}
         </p>
       </div>

@@ -3,6 +3,7 @@
 import { Building2, ShieldCheck, ArrowRight, Loader2, Clock, Ban } from "lucide-react";
 import { resolveFileUrl } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Button } from "@core/ui/button";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
 interface WorkspaceCardProps {
@@ -28,7 +29,8 @@ export function WorkspaceCard({
   const { t } = useI18n();
 
   return (
-    <button
+    <Button
+      variant="ghost"
       type="button"
       onClick={() => onSelect(ws)}
       disabled={isDisabled || !ws.isActivated || !!ws.isDisabled}
@@ -41,7 +43,7 @@ export function WorkspaceCard({
       }`}
       aria-busy={isThisLoading}
       className={[
-        "group flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left",
+        "group flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left h-auto",
         "transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
         ws.isActivated && !ws.isDisabled && !isDisabled
           ? "cursor-pointer border-border bg-card hover:border-primary/40 hover:bg-muted/40 hover:shadow-sm active:scale-[0.99]"
@@ -117,6 +119,6 @@ export function WorkspaceCard({
           />
         ) : null}
       </div>
-    </button>
+    </Button>
   );
 }

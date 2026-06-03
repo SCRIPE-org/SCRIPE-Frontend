@@ -129,4 +129,115 @@ export class AuthService implements IAuthService {
   }): Promise<void> {
     await this.api.post(API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN, data);
   }
+
+  /**
+   * Request a passwordless magic-link sign-in email.
+   * Always resolves (enumeration-safe) — never reveals account existence.
+   */
+  async requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }> {
+    return this.api.postPublic<{ sent: boolean }>(
+      API_ENDPOINTS.AUTH.MAGIC_LINK.REQUEST,
+      { email: email.trim(), tenantId: tenantId ?? null }
+    );
+  }
+
+  /**
+   * Verify a magic-link token from the email URL and issue a full JWT session.
+   * Throws on invalid/expired token.
+   */
+  async verifyMagicLink(
+    token: string,
+    tenantId?: string,
+    deviceInfo?: string
+  ): Promise<LoginResponseModel> {
+    const json = await this.api.postPublic<LoginResponseJson>(
+      API_ENDPOINTS.AUTH.MAGIC_LINK.VERIFY,
+      { token, tenantId: tenantId ?? null, deviceInfo: deviceInfo ?? null }
+    );
+    return LoginResponseModel.fromJson(json);
+  }
+
+  /**
+   * Begin WebAuthn/Passkey authentication — get challenge from backend.
+   * Returns the challengeId and PublicKeyCredentialRequestOptions.
+   */
+  async beginPasskeyAuth(): Promise<{
+    challengeId: string;
+    options: PublicKeyCredentialRequestOptions;
+  }> {
+    return this.api.postPublic<{
+      challengeId: string;
+      options: PublicKeyCredentialRequestOptions;
+    }>(API_ENDPOINTS.AUTH.PASSKEY.AUTH_BEGIN, {});
+  }
+
+  /**
+   * Verify WebAuthn/Passkey assertion — send attestation to backend, get tokens.
+   */
+  async verifyPasskeyAuth(data: {
+    challengeId: string;
+    credentialId: string;
+    rawId: string;
+    clientDataJSON: string;
+    authenticatorData: string;
+    signature: string;
+    userHandle: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string }> {
+    return this.api.postPublic<{ accessToken: string; refreshToken: string }>(
+      API_ENDPOINTS.AUTH.PASSKEY.AUTH_VERIFY,
+      data
+    );
+  }
+
+  // ── Phone OTP ───────────────────────────────────────────────────────────────
+
+  async requestPhoneOtp(
+    phoneNumber: string
+  ): Promise<{ sent: boolean; retryAfterSeconds: number }> {
+    return this.api.postPublic<{ sent: boolean; retryAfterSeconds: number }>(
+      API_ENDPOINTS.AUTH.PHONE_OTP.REQUEST,
+      { phoneNumber }
+    );
+  }
+
+  async verifyPhoneOtp(
+    phoneNumber: string,
+    code: string
+  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }> {
+    return this.api.postPublic<{
+      accessToken: string;
+      refreshToken: string;
+      expiresAt: string;
+    }>(API_ENDPOINTS.AUTH.PHONE_OTP.VERIFY, { phoneNumber, code });
+  }
+
+  // ── QR Cross-Device Sign-In ─────────────────────────────────────────────────
+
+  async beginQrSignIn(): Promise<{
+    sessionId: string;
+    qrData: string;
+    expiresAt: string;
+  }> {
+    return this.api.postPublic<{
+      sessionId: string;
+      qrData: string;
+      expiresAt: string;
+    }>(API_ENDPOINTS.AUTH.QR_LOGIN.CREATE_SESSION, {});
+  }
+
+  async checkQrSignIn(sessionId: string): Promise<{
+    status: "pending" | "scanned" | "approved" | "expired";
+    accessToken?: string;
+    refreshToken?: string;
+  }> {
+    return this.api.getPublic<{
+      status: "pending" | "scanned" | "approved" | "expired";
+      accessToken?: string;
+      refreshToken?: string;
+    }>(API_ENDPOINTS.AUTH.QR_LOGIN.SESSION_STATUS(sessionId));
+  }
+
+  async approveQrSignIn(sessionId: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.AUTH.QR_LOGIN.APPROVE, { sessionId });
+  }
 }

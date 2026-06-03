@@ -257,4 +257,80 @@ export class AuthRepository implements IAuthRepository {
   }): Promise<void> {
     return this.impersonation.linkExternalLogin(data);
   }
+
+  // ── Passkey / WebAuthn authentication (delegated) ─────────────────────────
+  async beginPasskeyAuth(): Promise<{
+    challengeId: string;
+    options: PublicKeyCredentialRequestOptions;
+  }> {
+    return this.service.beginPasskeyAuth();
+  }
+
+  async verifyPasskeyAuth(data: {
+    challengeId: string;
+    credentialId: string;
+    rawId: string;
+    clientDataJSON: string;
+    authenticatorData: string;
+    signature: string;
+    userHandle: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string }> {
+    return this.service.verifyPasskeyAuth(data);
+  }
+
+  // ── Phone OTP (delegated) ─────────────────────────────────────────────────
+  async requestPhoneOtp(
+    phoneNumber: string
+  ): Promise<{ sent: boolean; retryAfterSeconds: number }> {
+    return this.service.requestPhoneOtp(phoneNumber);
+  }
+
+  async verifyPhoneOtp(
+    phoneNumber: string,
+    code: string
+  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }> {
+    return this.service.verifyPhoneOtp(phoneNumber, code);
+  }
+
+  // ── QR Cross-Device Sign-In (delegated) ───────────────────────────────────
+  async beginQrSignIn(): Promise<{
+    sessionId: string;
+    qrData: string;
+    expiresAt: string;
+  }> {
+    return this.service.beginQrSignIn();
+  }
+
+  async checkQrSignIn(sessionId: string): Promise<{
+    status: "pending" | "scanned" | "approved" | "expired";
+    accessToken?: string;
+    refreshToken?: string;
+  }> {
+    return this.service.checkQrSignIn(sessionId);
+  }
+
+  async approveQrSignIn(sessionId: string): Promise<void> {
+    return this.service.approveQrSignIn(sessionId);
+  }
+
+  // ── Magic Link (delegated) ────────────────────────────────────────────────
+  async verifyMagicLink(
+    token: string,
+    tenantId?: string
+  ): Promise<{
+    accessToken: string;
+    mustChangePassword?: boolean;
+    defaultRedirectPath?: string;
+  }> {
+    const response = await this.service.verifyMagicLink(token, tenantId);
+    if (response.accessToken) {
+      secureTokenService.setAccessToken(response.accessToken);
+    }
+    return {
+      accessToken: response.accessToken,
+      mustChangePassword: response.mustChangePassword ?? false,
+      defaultRedirectPath: response.defaultRedirectPath ?? "/",
+    };
+  }
 }
+

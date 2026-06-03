@@ -13,11 +13,8 @@ export const metadata: Metadata = {
   creator: "SCRIPE",
   publisher: "SCRIPE",
   icons: {
-    icon: [
-      { url: "/app-logo.png", sizes: "32x32", type: "image/png" },
-      { url: "/app-logo.png", sizes: "16x16", type: "image/png" },
-    ],
-    shortcut: "/app-logo.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
     apple: "/app-logo.png",
   },
   manifest: "/manifest.json",

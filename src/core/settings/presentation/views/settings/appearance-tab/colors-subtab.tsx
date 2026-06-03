@@ -13,6 +13,7 @@ import type { ColorTheme, SecondaryColorTheme } from "@core/providers/settings-p
  */
 
 const COLOR_LIST: ColorSwatchOption<ColorTheme>[] = [
+  { value: "scripe", color: "bg-violet-600", accent: "bg-violet-100" },
   { value: "purple", color: "bg-purple-500", accent: "bg-purple-100" },
   { value: "blue", color: "bg-blue-500", accent: "bg-blue-100" },
   { value: "green", color: "bg-green-500", accent: "bg-green-100" },

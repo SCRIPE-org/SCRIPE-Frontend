@@ -141,6 +141,10 @@ export function LoginView() {
 
   const safeModeActive = branding?.isSafeMode === true;
 
+  // Platform mode = no tenant resolved (we're on the root platform surface).
+  // Tenant mode = a specific workspace is resolved (scoped login, no create-workspace).
+  const isPlatformMode = !tenantId;
+
   const formContent = (
     <LoginFormRouter
       vm={vm}
@@ -150,6 +154,7 @@ export function LoginView() {
       a11y={a11y}
       isRTL={isRTL}
       safeModeActive={safeModeActive}
+      isPlatformMode={isPlatformMode}
     />
   );
 

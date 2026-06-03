@@ -34,4 +34,50 @@ export interface IAuthService {
     email: string;
     displayName?: string;
   }): Promise<void>;
+
+  /** Request a passwordless magic-link sign-in email (enumeration-safe, always resolves). */
+  requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }>;
+
+  /** Verify a magic-link token from the email URL and issue a session. */
+  verifyMagicLink(
+    token: string,
+    tenantId?: string,
+    deviceInfo?: string
+  ): Promise<LoginResponseModel>;
+
+  /** Begin WebAuthn/Passkey authentication — get challenge from backend. */
+  beginPasskeyAuth(): Promise<{
+    challengeId: string;
+    options: PublicKeyCredentialRequestOptions;
+  }>;
+
+  /** Verify WebAuthn/Passkey assertion — send attestation to backend, get tokens. */
+  verifyPasskeyAuth(data: {
+    challengeId: string;
+    credentialId: string;
+    rawId: string;
+    clientDataJSON: string;
+    authenticatorData: string;
+    signature: string;
+    userHandle: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string }>;
+
+  /** Request a phone OTP for sign-in (enumeration-safe, always resolves). */
+  requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
+
+  /** Verify a phone OTP code for sign-in. */
+  verifyPhoneOtp(phoneNumber: string, code: string): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
+
+  /** Begin QR sign-in — generate a session token + QR code data. */
+  beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
+
+  /** Check QR sign-in session status (polling). */
+  checkQrSignIn(sessionId: string): Promise<{
+    status: "pending" | "scanned" | "approved" | "expired";
+    accessToken?: string;
+    refreshToken?: string;
+  }>;
+
+  /** Approve a QR sign-in session from the mobile device. */
+  approveQrSignIn(sessionId: string): Promise<void>;
 }

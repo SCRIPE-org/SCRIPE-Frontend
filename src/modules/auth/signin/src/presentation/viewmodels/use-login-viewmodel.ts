@@ -13,6 +13,7 @@ import {
 } from "@modules/auth/core/domain/errors/AuthErrors";
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
+import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { clearSessionOnLoginMount } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
 export interface LoginFormData {
@@ -20,12 +21,25 @@ export interface LoginFormData {
   password: string;
 }
 
-export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
+export type LoginStep =
+  | "credentials"
+  | "two-factor"
+  | "workspace-selection"
+  | "magic-link-sent"
+  | "phone-otp"
+  | "passkey"
+  | "qr-login";
 
 export function useLoginViewModel() {
   const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [shakeKey, setShakeKey] = useState(0);
+  // Atomically sets error + bumps shake animation key
+  const setErrorWithShake = useCallback((msg: string) => {
+    setError(msg);
+    if (msg) setShakeKey((k) => k + 1);
+  }, []);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [loginStep, setLoginStep] = useState<LoginStep>("credentials");
   const [tenantId, setTenantIdState] = useState<string | undefined>(undefined);
@@ -99,6 +113,12 @@ export function useLoginViewModel() {
     },
   });
 
+  // ── Magic link handler ─────────────────────────────────────────────────
+  const magicLink = useMagicLinkHandler({
+    setLoginStep,
+    setError,
+  });
+
   // ── Auth redirect check ────────────────────────────────────────────────
   const checkAndRedirect = useCallback(() => {
     if (!hasHydrated) return false;
@@ -120,7 +140,7 @@ export function useLoginViewModel() {
       const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
       if (!isFormValid(validationResults)) {
         const firstError = Object.values(validationResults).find((r) => !r.isValid);
-        setError(firstError?.message || t("auth.validationError"));
+        setErrorWithShake(firstError?.message || t("auth.validationError"));
         return;
       }
 
@@ -158,10 +178,10 @@ export function useLoginViewModel() {
           workspaceSelector.showWorkspaces(err.availableWorkspaces);
           return;
         }
-        setError(err instanceof Error ? err.message : "Login failed");
+        setErrorWithShake(err instanceof Error ? err.message : "Login failed");
       }
     },
-    [formData, loginMutation, handleRedirect, redirectPath, t, tenantId, twoFA, workspaceSelector]
+    [formData, loginMutation, handleRedirect, redirectPath, t, tenantId, twoFA, workspaceSelector, setErrorWithShake]
   );
 
   // ── Form helpers ───────────────────────────────────────────────────────
@@ -204,6 +224,7 @@ export function useLoginViewModel() {
     showPassword,
     isLoading,
     error,
+    shakeKey,
     isAuthenticated: isTrulyAuthenticated,
     hasHydrated,
     isRedirecting,
@@ -224,5 +245,13 @@ export function useLoginViewModel() {
     selectWorkspace: workspaceSelector.selectWorkspace,
     setTenantId,
     isFormValid: isFormValid(validateForm(formData, VALIDATION_SETS.LOGIN_FORM)),
+    // Magic link
+    requestMagicLink: magicLink.requestMagicLink,
+    resendMagicLink: magicLink.resendMagicLink,
+    magicLinkEmail: magicLink.magicLinkEmail,
+    resetMagicLink: magicLink.resetMagicLink,
+    isMagicLinkSending: magicLink.isSending,
+    // Auth method switching
+    setLoginStep,
   };
 }

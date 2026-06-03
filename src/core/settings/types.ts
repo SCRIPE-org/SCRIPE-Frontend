@@ -8,6 +8,7 @@
 // ── Color Themes ──────────────────────────────────────────
 
 export type ColorTheme =
+  | "scripe"
   | "purple"
   | "blue"
   | "green"
@@ -36,6 +37,7 @@ export type SecondaryColorTheme = ColorTheme;
 // ── Background Themes ─────────────────────────────────────
 
 export type LightBackgroundTheme =
+  | "scripe"
   | "default"
   | "warm"
   | "cool"
@@ -54,6 +56,7 @@ export type LightBackgroundTheme =
   | "snow";
 
 export type DarkBackgroundTheme =
+  | "scripe"
   | "default"
   | "darker"
   | "pitch"

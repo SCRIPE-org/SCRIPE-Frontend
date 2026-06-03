@@ -1679,6 +1679,118 @@ export function LoginPreviewShell() {
         </div>
       );
 
+    // VAULT — Scripe's cinematic dark-surface split layout
+    case "vault":
+      return (
+        <div
+          className="login-page relative flex min-h-screen w-full overflow-hidden"
+          dir={direction}
+          style={{
+            background: "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
+            color: "var(--sx-text, #f5f2ff)",
+            fontFamily: "inherit",
+          }}
+        >
+          {/* Hero column (left, hidden on mobile) */}
+          <div className="relative hidden flex-col justify-center gap-6 px-10 py-12 lg:flex lg:w-[55%]">
+            {/* Aurora glow behind the mark */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background: "radial-gradient(60% 60% at 30% 50%, rgba(168,85,247,.15) 0%, transparent 70%)",
+              }}
+              aria-hidden="true"
+            />
+            {/* Wordmark */}
+            <div className="flex items-center gap-2.5 relative z-[1]">
+              <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
+                <img src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
+              </div>
+              <span className="text-base font-semibold" style={{ color: "var(--sx-text, #f5f2ff)" }}>
+                {companyName}
+              </span>
+            </div>
+            {/* Giant mark (simplified for preview) */}
+            <div className="relative z-[1] self-center">
+              <div
+                className="relative flex h-40 w-40 items-center justify-center rounded-full"
+                style={{
+                  background: "radial-gradient(circle, rgba(168,85,247,.2) 0%, transparent 70%)",
+                  boxShadow: "0 0 80px rgba(168,85,247,.2)",
+                }}
+              >
+                <img
+                  src="/scripe-icon-3d.png"
+                  alt="Scripe"
+                  className="h-36 w-36 object-contain"
+                  style={{ filter: "drop-shadow(0 0 30px rgba(168,85,247,.5))" }}
+                />
+              </div>
+            </div>
+            {/* Secure badge */}
+            <div className="relative z-[1] space-y-3">
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] uppercase tracking-wider font-semibold"
+                style={{
+                  background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
+                  border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
+                  color: "var(--sx-accent-text, #c4b5fd)",
+                }}
+              >
+                <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--sx-accent, #a855f7)", boxShadow: "0 0 6px var(--sx-accent, #a855f7)" }} />
+                Secure sign-in
+              </span>
+              <h1
+                className="font-semibold leading-none"
+                style={{
+                  fontSize: "clamp(32px, 3.5vw, 44px)",
+                  letterSpacing: "-0.025em",
+                  background: "var(--sx-text-heading, linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%))",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                {brandingForPanel?.loginHeadline || companyName}
+              </h1>
+              <p className="text-sm" style={{ color: "var(--sx-text-mute, rgba(245,242,255,.62))" }}>
+                {brandingForPanel?.loginSubtitle || t("auth.branding.subtitle")}
+              </p>
+            </div>
+            {/* Compliance footer */}
+            <div
+              className="relative z-[1] flex gap-3 text-[10px] uppercase tracking-widest"
+              style={{ color: "var(--sx-text-faint, rgba(245,242,255,.4))" }}
+            >
+              {["SOC 2 II", "HIPAA", "ISO 27001", "GDPR"].map((c, i) => (
+                <span key={c} className="flex items-center gap-3">
+                  {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Form column (right) */}
+          <div className="flex flex-1 items-center justify-center px-5 py-12 lg:pe-10 lg:ps-0">
+            <div
+              className="w-full max-w-[420px] rounded-[20px] p-8"
+              style={{
+                background: "var(--sx-card-bg, linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85)))",
+                border: "1px solid var(--sx-card-border, rgba(168,85,247,.22))",
+                boxShadow: "var(--sx-card-shadow, 0 30px 80px rgba(0,0,0,.6))",
+                backdropFilter: "blur(24px)",
+              }}
+            >
+              {topActions}
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        </div>
+      );
+
     // SPLIT-RIGHT (default)
     case "split-right":
     default:

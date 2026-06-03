@@ -49,4 +49,42 @@ export interface IAuthRepository {
     email: string;
     displayName?: string;
   }): Promise<void>;
+  /** Begin WebAuthn authentication — get challenge from backend */
+  beginPasskeyAuth(): Promise<{
+    challengeId: string;
+    options: PublicKeyCredentialRequestOptions;
+  }>;
+  /** Verify WebAuthn assertion — send attestation to backend, get tokens */
+  verifyPasskeyAuth(data: {
+    challengeId: string;
+    credentialId: string;
+    rawId: string;
+    clientDataJSON: string;
+    authenticatorData: string;
+    signature: string;
+    userHandle: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string }>;
+  /** Request phone OTP for sign-in */
+  requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
+  /** Verify phone OTP code */
+  verifyPhoneOtp(phoneNumber: string, code: string): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
+  /** Begin QR sign-in session */
+  beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
+  /** Check QR sign-in session status */
+  checkQrSignIn(sessionId: string): Promise<{
+    status: "pending" | "scanned" | "approved" | "expired";
+    accessToken?: string;
+    refreshToken?: string;
+  }>;
+  /** Approve QR sign-in from mobile */
+  approveQrSignIn(sessionId: string): Promise<void>;
+  /** Verify a magic-link token from the email URL and issue a session. */
+  verifyMagicLink(
+    token: string,
+    tenantId?: string
+  ): Promise<{
+    accessToken: string;
+    mustChangePassword?: boolean;
+    defaultRedirectPath?: string;
+  }>;
 }

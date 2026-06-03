@@ -35,6 +35,18 @@ interface LayoutPanelProps {
 
 // Mini visual previews for each layout
 const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
+  vault: (
+    <div className="relative flex h-full w-full gap-0.5 overflow-hidden">
+      <div className="relative flex-1 rounded-sm bg-gradient-to-br from-primary/40 via-primary/20 to-primary/40">
+        <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/60 blur-[1px]" />
+      </div>
+      <div className="flex w-[45%] flex-col items-center justify-center gap-1 rounded-sm border border-primary/20 bg-background/70 backdrop-blur-sm">
+        <div className="h-1 w-4 rounded-full bg-muted-foreground/40" />
+        <div className="h-1 w-6 rounded-full bg-muted-foreground/30" />
+        <div className="h-1.5 w-5 rounded-sm bg-primary/60" />
+      </div>
+    </div>
+  ),
   "split-right": (
     <div className="flex h-full w-full gap-0.5">
       <div className="flex-1 rounded-sm bg-primary/30" />

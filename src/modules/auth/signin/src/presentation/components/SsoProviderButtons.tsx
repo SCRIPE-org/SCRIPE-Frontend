@@ -1,15 +1,14 @@
-﻿/**
- * SsoProviderButtons — Enterprise SSO Login Buttons
+/**
+ * SsoProviderButtons — Dynamic SSO provider chips below the credentials form.
+ * Reads provider list from the backend (GET /auth/oidc/providers/admin or /user).
+ * Uses Vault surface tokens for glass chip styling — no hardcoded colors.
  *
- * Renders available SSO identity provider buttons below the credentials form.
- * Shows a premium divider ("or continue with") and provider buttons with
- * configurable colors and labels from the backend.
- *
- * @module auth/signin/components
+ * Design spec: 3 equal-width buttons in a horizontal row with "OR CONTINUE WITH"
+ * divider above. Each button has flex:1 for equal sizing.
  */
 "use client";
-import { useI18n } from "@core/providers/i18n-provider";
 
+import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import type { SsoProvider } from "@modules/auth/core/domain/entities/SsoProvider";
 import { resolveFileUrl } from "@core/common/utils";
@@ -21,11 +20,11 @@ interface SsoProviderButtonsProps {
   onProviderClick: (providerId: string, protocol?: string) => void;
 }
 
-/** Protocol → default icon map */
+/** Protocol → fallback emoji icon */
 const PROTOCOL_ICONS: Record<string, string> = {
-  oidc: "🔐",
+  oidc:   "🔐",
   oauth2: "🔑",
-  saml: "🛡️",
+  saml:   "🛡️",
 };
 
 export function SsoProviderButtons({
@@ -35,61 +34,83 @@ export function SsoProviderButtons({
   onProviderClick,
 }: SsoProviderButtonsProps) {
   const { t } = useI18n();
-  // Don't render anything if no providers and not loading
+
   if (!isLoading && providers.length === 0) return null;
 
   return (
-    <div className="mt-6">
-      {/* ── Divider ── */}
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-3 font-medium tracking-widest text-muted-foreground">
-            {t("auth.sso.orContinueWith")}
-          </span>
-        </div>
+    <div className="mt-1">
+      {/* ── Divider — "OR CONTINUE WITH" ─────────────── */}
+      <div className="my-1 flex items-center gap-3" style={{ margin: "4px 0" }}>
+        <div
+          className="h-px flex-1"
+          style={{ background: "var(--sx-divider, hsl(var(--border)))" }}
+        />
+        <span
+          className="shrink-0 text-[11px] font-medium uppercase tracking-[0.15em]"
+          style={{
+            color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))",
+            fontFamily: "var(--font-mono, ui-monospace, monospace)",
+          }}
+        >
+          {t("auth.sso.orContinueWith")}
+        </span>
+        <div
+          className="h-px flex-1"
+          style={{ background: "var(--sx-divider, hsl(var(--border)))" }}
+        />
       </div>
 
-      {/* ── Error ── */}
+      {/* ── SSO error ───────────────────────────────────── */}
       {error && (
-        <div className="mb-4 rounded-xl border border-destructive/20 bg-destructive/10 p-3">
-          <p className="text-sm font-medium text-destructive">{error}</p>
+        <div
+          className="mb-3 rounded-xl px-4 py-3"
+          style={{
+            background: "rgba(248,113,113,.10)",
+            border: "1px solid rgba(248,113,113,.30)",
+          }}
+        >
+          <p className="text-center text-[13px] font-medium" style={{ color: "#FCA5A5" }}>
+            {error}
+          </p>
         </div>
       )}
 
-      {/* ── Loading skeleton ── */}
+      {/* ── Loading skeletons ───────────────────────────── */}
       {isLoading && (
-        <div className="space-y-3">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-12 w-full animate-pulse rounded-xl bg-muted/60" />
+        <div className="flex gap-2 mt-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-[44px] flex-1 animate-pulse rounded-[10px]"
+              style={{ background: "var(--sx-chip-bg, hsl(var(--muted)/0.5))" }}
+            />
           ))}
         </div>
       )}
 
-      {/* ── Provider Buttons ── */}
+      {/* ── Provider buttons — horizontal equal-width row ─ */}
       {!isLoading && providers.length > 0 && (
-        <div className="space-y-3">
+        <div className="flex gap-2 mt-3">
           {providers.map((provider) => {
-            const hasCustomColor = !!provider.buttonColor;
-            const label = provider.buttonLabel || `${t("auth.sso.signInWith")} ${provider.name}`;
-            const icon = provider.iconUrl ? null : PROTOCOL_ICONS[provider.protocol] || "🔐";
+            const label =
+              provider.buttonLabel || provider.name;
+            const fallbackIcon = provider.iconUrl
+              ? null
+              : PROTOCOL_ICONS[provider.protocol] ?? "🔐";
 
             return (
               <Button
                 key={provider.id}
                 type="button"
                 variant="outline"
-                className="group relative flex h-12 w-full items-center justify-center gap-3 rounded-xl border-border bg-background text-[15px] font-medium text-foreground shadow-sm transition-all hover:bg-muted/50 hover:shadow-md active:scale-[0.98]"
-                style={
-                  hasCustomColor
-                    ? {
-                        borderColor: provider.buttonColor!,
-                        color: provider.buttonColor!,
-                      }
-                    : undefined
-                }
+                className="group flex flex-1 items-center justify-center gap-2 rounded-[10px] border text-[13px] font-medium shadow-none transition-all duration-150 active:scale-[0.98]"
+                style={{
+                  height: 44,
+                  padding: "11px 14px",
+                  background: "var(--sx-chip-bg, rgba(255,255,255,.03))",
+                  borderColor: "var(--sx-chip-border, rgba(255,255,255,.08))",
+                  color: "var(--sx-text, hsl(var(--foreground)))",
+                }}
                 onClick={() => onProviderClick(provider.id, provider.protocol)}
               >
                 {/* Icon */}
@@ -97,25 +118,17 @@ export function SsoProviderButtons({
                   <img
                     src={resolveFileUrl(provider.iconUrl)}
                     alt=""
-                    className="h-5 w-5 object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
+                    className="h-[18px] w-[18px] object-contain"
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
                   />
                 ) : (
-                  <span className="text-lg">{icon}</span>
+                  <span className="text-lg leading-none" aria-hidden="true">
+                    {fallbackIcon}
+                  </span>
                 )}
 
                 {/* Label */}
                 <span>{label}</span>
-
-                {/* Hover glow */}
-                {hasCustomColor && (
-                  <div
-                    className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-10"
-                    style={{ backgroundColor: provider.buttonColor! }}
-                  />
-                )}
               </Button>
             );
           })}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { AccordionBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import { Button } from "@core/ui/button";
 import { safeItems } from "./block-style-utils";
 
 export function AccordionBlockView({ block }: { block: AccordionBlock }) {
@@ -32,14 +33,15 @@ export function AccordionBlockView({ block }: { block: AccordionBlock }) {
                   : "rounded-lg border"
             }
           >
-            <button
+            <Button
+              variant="ghost"
               type="button"
-              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm font-medium"
+              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm font-medium h-auto"
               onClick={() => toggle(index)}
             >
               <span>{item.title}</span>
               <span>{isOpen ? "-" : "+"}</span>
-            </button>
+            </Button>
             {isOpen && (
               <div className="px-3 pb-3 text-sm text-muted-foreground">{item.content}</div>
             )}

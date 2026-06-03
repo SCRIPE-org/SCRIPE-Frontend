@@ -241,14 +241,15 @@ function PasswordField({
         className="pe-10"
         autoFocus={autoFocus}
       />
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={onToggle}
-        className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+        className="absolute end-3 top-1/2 -translate-y-1/2 h-auto p-0 text-muted-foreground transition-colors hover:text-foreground"
         tabIndex={-1}
       >
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </button>
+      </Button>
     </div>
   );
 }

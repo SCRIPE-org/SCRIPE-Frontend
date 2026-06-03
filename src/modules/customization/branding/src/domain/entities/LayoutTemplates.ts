@@ -1458,6 +1458,9 @@ function mosaic(): GridComponentDef[] {
 
 // ── Layout → Template Map (ALL unique — NO fallbacks) ────
 const TEMPLATE_GENERATORS: Record<LoginLayout, () => GridComponentDef[]> = {
+  // Vault is a split-style cinematic layout; reuse the split-right canvas template
+  // as its builder starting point.
+  vault: splitRight,
   "split-right": splitRight,
   "split-left": splitLeft,
   centered,

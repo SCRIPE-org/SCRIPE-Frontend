@@ -15,6 +15,7 @@
 // ─── Auth ──────────────────────────────────────────────
 import { en as authEn, ar as authAr } from "@modules/auth/locales";
 import { en as signinEn, ar as signinAr } from "@modules/auth/signin/locales";
+import { en as signupEn, ar as signupAr } from "@modules/auth/signup/locales";
 
 // ─── Monitoring ────────────────────────────────────────
 import { en as analyticsEn, ar as analyticsAr } from "@modules/monitoring/analytics/locales";
@@ -159,6 +160,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
   authEn,
   signinEn,
+  signupEn,
   // Monitoring
   analyticsEn,
   auditEn,
@@ -226,6 +228,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   {},
   authAr,
   signinAr,
+  signupAr,
   // Monitoring
   analyticsAr,
   auditAr,

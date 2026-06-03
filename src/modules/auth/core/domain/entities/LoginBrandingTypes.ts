@@ -7,8 +7,9 @@
  * Based on: customization_system_analysis.md §10, §11, §12
  */
 
-// ─── Login Layout (22 unique layouts) ──────────────────
+// ─── Login Layout (23 unique layouts) ──────────────────
 export type LoginLayout =
+  | "vault" // Cinematic split: ambient hero left, glass card right (Scripe default)
   | "split-right" // Branding left, form right (default)
   | "split-left" // Branding right, form left
   | "centered" // Animated gradient ring card, centered
@@ -521,7 +522,7 @@ export function isValidVideoUrl(url: string): boolean {
 export function parseLoginBrandingJson(json: string | null | undefined): LoginBrandingConfig {
   const DEFAULT: LoginBrandingConfig = {
     _schemaVersion: 1,
-    layout: "split-right",
+    layout: "vault",
     tokens: {},
   };
   if (!json) return DEFAULT;
@@ -530,7 +531,7 @@ export function parseLoginBrandingJson(json: string | null | undefined): LoginBr
     if (!parsed || typeof parsed !== "object") return DEFAULT;
     return {
       _schemaVersion: parsed._schemaVersion ?? 1,
-      layout: isValidLayout(parsed.layout) ? parsed.layout : "split-right",
+      layout: isValidLayout(parsed.layout) ? parsed.layout : "vault",
       tokens: parsed.tokens && typeof parsed.tokens === "object" ? parsed.tokens : {},
     };
   } catch {
@@ -557,6 +558,7 @@ function isValidLayout(layout: unknown): layout is LoginLayout {
   return (
     typeof layout === "string" &&
     [
+      "vault",
       "split-right",
       "split-left",
       "centered",

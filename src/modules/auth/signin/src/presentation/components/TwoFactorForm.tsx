@@ -1,11 +1,10 @@
-﻿"use client";
-import { useI18n } from "@core/providers/i18n-provider";
+"use client";
 
+import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { ShieldCheck, KeyRound, ArrowLeft, ArrowRight } from "lucide-react";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
 
 interface TwoFactorFormProps {
@@ -32,32 +31,59 @@ export function TwoFactorForm({
   goBackToCredentials,
 }: TwoFactorFormProps) {
   const { t } = useI18n();
+
   return (
-    <div className="space-y-7">
-      {/* Icon & Title */}
+    <div className="flex flex-col gap-6">
+      {/* ── Icon & heading ──────────────────────────────── */}
       <div className="text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-          <ShieldCheck className="h-7 w-7" />
+        <div
+          className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
+          style={{
+            background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
+            border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
+          }}
+        >
+          <ShieldCheck
+            className="h-7 w-7"
+            style={{ color: "var(--sx-accent-text, hsl(var(--primary)))" }}
+          />
         </div>
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h2
+          className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+          style={{ color: "var(--sx-text, hsl(var(--foreground)))" }}
+        >
           {t("auth.twoFactor.title")}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {useBackupCode ? t("auth.twoFactor.enterBackupCode") : t("auth.twoFactor.enterAuthCode")}
+        <p
+          className="mt-1.5 text-[13px] leading-relaxed"
+          style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
+        >
+          {useBackupCode
+            ? t("auth.twoFactor.enterBackupCode")
+            : t("auth.twoFactor.enterAuthCode")}
         </p>
       </div>
 
-      {/* Error */}
+      {/* ── Error ───────────────────────────────────────── */}
       {error && (
-        <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-4">
-          <p className="text-center text-sm font-medium text-destructive">{error}</p>
+        <div
+          className="sx-shake rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <p className="text-center text-[13px] font-medium text-destructive">{error}</p>
         </div>
       )}
 
-      {/* Input */}
+      {/* ── OTP input or backup code ─────────────────────── */}
       {useBackupCode ? (
-        <div className="space-y-2.5">
-          <Label htmlFor="backup-code" className="text-sm font-medium text-foreground">
+        <div className="space-y-2">
+          <Label
+            htmlFor="backup-code"
+            className="block text-[11px] font-semibold uppercase tracking-wider"
+            style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
+          >
             {t("auth.twoFactor.backupCode")}
           </Label>
           <Input
@@ -66,7 +92,7 @@ export function TwoFactorForm({
             value={twoFactorCode}
             onChange={(e) => setTwoFactorCode(e.target.value)}
             placeholder="XXXX-XXXX"
-            className="h-14 rounded-xl border-border bg-background text-center font-mono text-lg tracking-[0.25em] text-foreground shadow-sm transition-all focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+            className="h-14 rounded-xl border text-center font-mono text-lg tracking-[0.25em] shadow-none transition-all"
             style={{ direction: "ltr" }}
             disabled={isVerifying2FA}
             autoFocus
@@ -76,7 +102,7 @@ export function TwoFactorForm({
           />
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-2" dir="ltr">
+        <div className="flex flex-col items-center gap-3" dir="ltr">
           <InputOTP
             maxLength={6}
             value={twoFactorCode}
@@ -84,39 +110,63 @@ export function TwoFactorForm({
             disabled={isVerifying2FA}
             onComplete={handleVerify2FA}
           >
-            <InputOTPGroup className="gap-2.5">
+            <InputOTPGroup className="gap-2">
               {[0, 1, 2].map((i) => (
                 <InputOTPSlot
                   key={i}
                   index={i}
-                  className="h-14 w-12 rounded-xl border-border bg-background text-xl font-semibold text-foreground shadow-sm transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary"
+                  className="h-14 w-11 rounded-xl border text-xl font-semibold shadow-none transition-all"
+                  style={{
+                    background: "var(--sx-chip-bg, rgba(255,255,255,.03))",
+                    borderColor: "var(--sx-chip-border, rgba(255,255,255,.08))",
+                    color: "var(--sx-text, hsl(var(--foreground)))",
+                  }}
                 />
               ))}
             </InputOTPGroup>
-            <span className="mx-2 text-xl font-light text-muted-foreground/50">–</span>
-            <InputOTPGroup className="gap-2.5">
+            <span
+              className="mx-2 text-xl font-light"
+              style={{ color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.4))" }}
+            >
+              –
+            </span>
+            <InputOTPGroup className="gap-2">
               {[3, 4, 5].map((i) => (
                 <InputOTPSlot
                   key={i}
                   index={i}
-                  className="h-14 w-12 rounded-xl border-border bg-background text-xl font-semibold text-foreground shadow-sm transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary"
+                  className="h-14 w-11 rounded-xl border text-xl font-semibold shadow-none transition-all"
+                  style={{
+                    background: "var(--sx-chip-bg, rgba(255,255,255,.03))",
+                    borderColor: "var(--sx-chip-border, rgba(255,255,255,.08))",
+                    color: "var(--sx-text, hsl(var(--foreground)))",
+                  }}
                 />
               ))}
             </InputOTPGroup>
           </InputOTP>
+          <p
+            className="text-[12px]"
+            style={{ color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))" }}
+          >
+            {t("auth.twoFactor.autoSubmitHint")}
+          </p>
         </div>
       )}
 
-      {/* Verify Button */}
+      {/* ── Verify button ────────────────────────────────── */}
       <Button
         type="button"
         disabled={isVerifying2FA || !twoFactorCode.trim()}
         onClick={handleVerify2FA}
-        className="flex h-12 w-full items-center justify-center rounded-xl bg-primary text-[15px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+        className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl text-[15px] font-semibold text-white shadow-none transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
       >
         {isVerifying2FA ? (
           <>
-            <LoadingSpinner size="sm" showText={false} className="ltr:mr-2 rtl:ml-2" />
+            <span
+              className="sx-spin1 inline-block h-[18px] w-[18px] rounded-full border-2 border-white/30 border-t-white"
+              aria-hidden="true"
+            />
             {t("auth.twoFactor.verifying")}
           </>
         ) : (
@@ -124,30 +174,40 @@ export function TwoFactorForm({
         )}
       </Button>
 
-      {/* Actions */}
-      <div className="flex flex-col items-center gap-2 border-t border-border pt-4">
+      {/* ── Secondary actions ─────────────────────────────── */}
+      <div
+        className="flex flex-col items-center gap-2 border-t pt-4"
+        style={{ borderColor: "var(--sx-chip-border, hsl(var(--border)))" }}
+      >
         <Button
-          type="button"
           variant="ghost"
-          size="sm"
-          className="text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
+          type="button"
+          className="flex items-center gap-2 text-[13px] font-medium transition-colors"
+          style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
           onClick={toggleBackupCode}
         >
-          <KeyRound className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
-          {useBackupCode ? t("auth.twoFactor.useAuthenticator") : t("auth.twoFactor.useBackupCode")}
+          <KeyRound
+            className="h-3.5 w-3.5"
+            style={{ color: "var(--sx-accent-text, hsl(var(--primary)))" }}
+            aria-hidden="true"
+          />
+          {useBackupCode
+            ? t("auth.twoFactor.useAuthenticator")
+            : t("auth.twoFactor.useBackupCode")}
         </Button>
+
         <Button
-          type="button"
           variant="ghost"
-          size="sm"
-          className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+          type="button"
+          className="flex items-center gap-1.5 text-[12px] transition-colors disabled:pointer-events-none disabled:opacity-50"
+          style={{ color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.6))" }}
           onClick={goBackToCredentials}
           disabled={isVerifying2FA}
         >
           {isRTL ? (
-            <ArrowRight className="ml-1.5 h-3 w-3" />
+            <ArrowRight className="h-3 w-3" aria-hidden="true" />
           ) : (
-            <ArrowLeft className="mr-1.5 h-3 w-3" />
+            <ArrowLeft className="h-3 w-3" aria-hidden="true" />
           )}
           {t("auth.twoFactor.backToLogin")}
         </Button>

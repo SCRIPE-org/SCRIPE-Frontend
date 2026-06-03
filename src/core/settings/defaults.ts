@@ -7,10 +7,10 @@
 import type { Settings } from "./types";
 
 export const defaultSettings: Settings = {
-  colorTheme: "blue",
-  secondaryColorTheme: "purple",
-  lightBackgroundTheme: "default",
-  darkBackgroundTheme: "slate",
+  colorTheme: "scripe",
+  secondaryColorTheme: "indigo",
+  lightBackgroundTheme: "scripe",
+  darkBackgroundTheme: "scripe",
   shadowIntensity: "moderate",
   gradientDirection: "to-br",
   lightGradientTheme: "none",

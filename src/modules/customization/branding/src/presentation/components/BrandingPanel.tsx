@@ -21,6 +21,7 @@ interface BrandingPanelProps {
 }
 
 const SPLIT_LAYOUTS = [
+  "vault",
   "split-right",
   "split-left",
   "asymmetric",
