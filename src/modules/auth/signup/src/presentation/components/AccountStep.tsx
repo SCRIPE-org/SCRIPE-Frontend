@@ -4,7 +4,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
-import { Checkbox } from "@core/ui/checkbox";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
@@ -163,15 +162,38 @@ export function AccountStep({ vm }: AccountStepProps) {
         </div>
 
         {/* Terms */}
-        <div className="flex items-start gap-2 pt-1">
-          <Checkbox
-            id="signup-terms"
-            checked={vm.wizardData.acceptTerms}
-            onCheckedChange={(checked) => vm.updateField("acceptTerms", checked === true)}
-          />
-          <Label
-            htmlFor="signup-terms"
-            className="cursor-pointer text-xs leading-5"
+        <label className="flex items-start gap-2 pt-1 select-none cursor-pointer">
+          <div
+            role="checkbox"
+            aria-checked={vm.wizardData.acceptTerms}
+            tabIndex={0}
+            onClick={() => !vm.isLoading && vm.updateField("acceptTerms", !vm.wizardData.acceptTerms)}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault();
+                if (!vm.isLoading) vm.updateField("acceptTerms", !vm.wizardData.acceptTerms);
+              }
+            }}
+            className="flex h-4 w-4 mt-0.5 shrink-0 items-center justify-center rounded transition-all"
+            style={{
+              background: vm.wizardData.acceptTerms
+                ? "linear-gradient(135deg, #A855F7, #3B82F6)"
+                : "transparent",
+              border: vm.wizardData.acceptTerms
+                ? "1px solid transparent"
+                : "1px solid rgba(255, 255, 255, 0.15)",
+              cursor: vm.isLoading ? "default" : "pointer",
+              opacity: vm.isLoading ? 0.5 : 1,
+            }}
+          >
+            {vm.wizardData.acceptTerms && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <path d="M2 5l2 2 4-4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            )}
+          </div>
+          <span
+            className="text-xs leading-5"
             style={{ color: "rgba(245,242,255,0.55)" }}
           >
             I agree to the{" "}
@@ -179,8 +201,9 @@ export function AccountStep({ vm }: AccountStepProps) {
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline"
+              className="underline hover:no-underline font-medium transition-colors"
               style={{ color: "#C4B5FD" }}
+              onClick={(e) => e.stopPropagation()}
             >
               Terms of Service
             </a>{" "}
@@ -189,13 +212,14 @@ export function AccountStep({ vm }: AccountStepProps) {
               href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline"
+              className="underline hover:no-underline font-medium transition-colors"
               style={{ color: "#C4B5FD" }}
+              onClick={(e) => e.stopPropagation()}
             >
               Privacy Policy
             </a>
-          </Label>
-        </div>
+          </span>
+        </label>
 
         {/* Error */}
         {vm.error && (
