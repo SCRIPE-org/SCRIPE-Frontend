@@ -83,10 +83,12 @@ function MatrixCell({
   value,
   valueType,
   isHighlighted,
+  displayLabel,
 }: {
   value: string | undefined;
   valueType: string;
   isHighlighted: boolean;
+  displayLabel?: string;
 }) {
   const cls = `text-center py-3.5 px-3 ${isHighlighted ? "bg-primary/5" : ""}`;
 
@@ -101,8 +103,13 @@ function MatrixCell({
   if (valueType === "Boolean") {
     return (
       <TableCell className={cls}>
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-1">
           <BooleanIndicator value={value === "true"} />
+          {displayLabel && value === "true" && (
+            <span className="max-w-[120px] text-center text-[10px] leading-tight text-primary/70">
+              {displayLabel}
+            </span>
+          )}
         </div>
       </TableCell>
     );
@@ -112,22 +119,36 @@ function MatrixCell({
     const num = parseInt(value, 10);
     return (
       <TableCell className={cls}>
-        <span className="text-sm font-semibold tabular-nums">
-          {num === -1 ? (
-            <span className="font-bold text-primary">∞</span>
-          ) : num === 0 ? (
-            <span className="text-muted-foreground/50">—</span>
-          ) : (
-            num.toLocaleString()
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-sm font-semibold tabular-nums">
+            {num === -1 ? (
+              <span className="font-bold text-primary">∞</span>
+            ) : num === 0 ? (
+              <span className="text-muted-foreground/50">—</span>
+            ) : (
+              num.toLocaleString()
+            )}
+          </span>
+          {displayLabel && num !== 0 && (
+            <span className="max-w-[120px] text-center text-[10px] leading-tight text-muted-foreground">
+              {displayLabel}
+            </span>
           )}
-        </span>
+        </div>
       </TableCell>
     );
   }
 
   return (
     <TableCell className={cls}>
-      <span className="text-sm">{value || "—"}</span>
+      {displayLabel ? (
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-sm font-medium text-primary">{displayLabel}</span>
+          <span className="text-[10px] text-muted-foreground/60">{value}</span>
+        </div>
+      ) : (
+        <span className="text-sm">{value || "—"}</span>
+      )}
     </TableCell>
   );
 }
@@ -188,14 +209,22 @@ function FeatureCategoryBlock({
             <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium transition-colors group-hover:bg-muted/30">
               {featureLabel}
             </TableCell>
-            {editions.map((ed: Edition) => (
-              <MatrixCell
-                key={ed.id}
-                value={row.values[ed.id]}
-                valueType={row.valueType}
-                isHighlighted={ed.id === recommendedEditionId}
-              />
-            ))}
+            {editions.map((ed: Edition) => {
+              // Resolve per-edition display label for current language
+              const labelOverride = row.displayLabels[ed.id];
+              const resolvedLabel = labelOverride
+                ? (language === "ar" ? (labelOverride.ar || labelOverride.en) : (labelOverride.en || labelOverride.ar))
+                : undefined;
+              return (
+                <MatrixCell
+                  key={ed.id}
+                  value={row.values[ed.id]}
+                  valueType={row.valueType}
+                  isHighlighted={ed.id === recommendedEditionId}
+                  displayLabel={resolvedLabel}
+                />
+              );
+            })}
           </TableRow>
         );
       })}

@@ -17,6 +17,7 @@
 
 import { useMemo, useState } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
+import { useI18n } from "@core/providers/i18n-provider";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition, EditionFeatureDto } from "../../domain/entities/Edition";
 
@@ -30,6 +31,8 @@ export interface FeatureRow {
   sortOrder: number;
   values: Record<string, string>; // editionId → value
   valueType: string;
+  /** Per-edition marketing display label overrides: editionId → {en, ar} */
+  displayLabels: Record<string, { en?: string; ar?: string }>;
 }
 
 export interface PricingHighlight {
@@ -48,9 +51,20 @@ function formatFeatureValue(value: string, valueType: string): string {
 }
 
 /** Build a human-readable highlight label with value for numeric features */
-function buildHighlightLabel(feature: EditionFeatureDto): PricingHighlight {
-  const displayName = feature.displayNameEn || feature.featureName;
+function buildHighlightLabel(feature: EditionFeatureDto, language: string = "en"): PricingHighlight {
+  // Prefer the per-edition display label (marketing copy) over the generic name
+  // Language-aware: use Arabic labels when in Arabic mode
+  const isAr = language === "ar";
+  const displayLabel = isAr
+    ? (feature.displayLabelAr || feature.displayLabelEn)
+    : feature.displayLabelEn;
+  const displayName = displayLabel || (isAr ? (feature.displayNameAr || feature.displayNameEn) : feature.displayNameEn) || feature.featureName;
   const isUnlimited = feature.value === "-1" || feature.value === "unlimited";
+
+  // If there's a display label, use it as-is (it's already human-readable marketing text)
+  if (displayLabel) {
+    return { label: displayName, isUnlimited };
+  }
 
   if (isUnlimited) {
     return { label: displayName, isUnlimited: true, value: "Unlimited" };
@@ -81,6 +95,7 @@ function resolveAvailableCycles(editions: Edition[]): BillingCycle[] {
 
 export function useEditionComparisonViewModel() {
   const { editionRepository } = entitlementsContainer;
+  const { language } = useI18n();
 
   // ── Billing cycle toggle state (default: Yearly — industry standard) ──
   const [selectedCycle, setSelectedCycle] = useState<BillingCycle>("Yearly");
@@ -143,11 +158,16 @@ export function useEditionComparisonViewModel() {
             sortOrder: f.sortOrder ?? 999,
             values: {},
             valueType: f.valueType,
+            displayLabels: {},
           });
         }
 
         const row = featureMap.get(key)!;
         row.values[ed.id] = f.value;
+        // Capture per-edition marketing label override if present
+        if (f.displayLabelEn || f.displayLabelAr) {
+          row.displayLabels[ed.id] = { en: f.displayLabelEn, ar: f.displayLabelAr };
+        }
       });
     });
 
@@ -202,7 +222,7 @@ export function useEditionComparisonViewModel() {
             return true;
           })
           .slice(0, 8)
-          .forEach((f) => highlights.push(buildHighlightLabel(f)));
+          .forEach((f) => highlights.push(buildHighlightLabel(f, language)));
       } else {
         // Higher tiers: show features with BETTER values than previous tier
         ed.features.forEach((f) => {
@@ -220,7 +240,7 @@ export function useEditionComparisonViewModel() {
             if (curr !== -1 && !isNaN(curr) && !isNaN(prev_) && curr <= prev_) return;
           }
 
-          highlights.push(buildHighlightLabel(f));
+          highlights.push(buildHighlightLabel(f, language));
         });
 
         // Fallback: if no diffs, show top features of this tier
@@ -228,13 +248,13 @@ export function useEditionComparisonViewModel() {
           ed.features
             .filter((f) => f.value !== "false" && f.value !== "0" && f.value.trim() !== "")
             .slice(0, 5)
-            .forEach((f) => highlights.push(buildHighlightLabel(f)));
+            .forEach((f) => highlights.push(buildHighlightLabel(f, language)));
         }
       }
 
       return highlights;
     });
-  }, [editions]);
+  }, [editions, language]);
 
   /**
    * For the selected billing cycle, compute the price each edition shows.

@@ -17,6 +17,7 @@ export interface FeatureData extends BaseEntity {
   module: string;
   description?: string;
   isSystem: boolean;
+  isMarketingOnly: boolean;
 }
 
 export class Feature {
@@ -57,6 +58,9 @@ export class Feature {
   }
   get isSystem(): boolean {
     return this.data.isSystem;
+  }
+  get isMarketingOnly(): boolean {
+    return this.data.isMarketingOnly;
   }
   get createdAt(): string {
     return this.data.createdAt;

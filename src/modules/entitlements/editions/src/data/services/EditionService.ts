@@ -49,9 +49,17 @@ export class EditionService implements IEditionService {
     await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DELETE(id));
   }
 
-  async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
+  async setFeatureValue(
+    editionId: string,
+    featureId: string,
+    value: string,
+    displayLabelEn?: string,
+    displayLabelAr?: string
+  ): Promise<void> {
     await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_FEATURE(editionId, featureId), {
       value,
+      displayLabelEn: displayLabelEn || null,
+      displayLabelAr: displayLabelAr || null,
     });
   }
 
@@ -66,11 +74,12 @@ export class EditionService implements IEditionService {
     editionId: string,
     changeNotes?: string,
     featureValues?: Record<string, string>,
-    pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>
+    pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
+    pendingLabels?: Record<string, { en?: string; ar?: string }>
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
       API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_VERSION(editionId),
-      { changeNotes, featureValues, pricingSnapshot }
+      { changeNotes, featureValues, pricingSnapshot, displayLabelOverrides: pendingLabels ?? {} }
     );
   }
 
@@ -94,10 +103,12 @@ export class EditionService implements IEditionService {
 
   async directApplyFeatures(
     editionId: string,
-    featureValues: Record<string, string>
+    featureValues: Record<string, string>,
+    changedLabels?: Record<string, { en?: string; ar?: string }>
   ): Promise<void> {
     await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DIRECT_APPLY_FEATURES(editionId), {
       featureValues,
+      displayLabelOverrides: changedLabels ?? {},
     });
   }
 

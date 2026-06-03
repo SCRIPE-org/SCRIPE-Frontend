@@ -266,6 +266,18 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               value={edition.tagline || "—"}
             />
             <InfoRow
+              label={t("entitlements.editions.wizard.category") || "Category"}
+              value={
+                edition.category ? (
+                  <Badge variant="secondary">{edition.category}</Badge>
+                ) : (
+                  <span className="italic text-muted-foreground">
+                    {t("entitlements.editions.wizard.uncategorized") || "Uncategorized"}
+                  </span>
+                )
+              }
+            />
+            <InfoRow
               label={t("entitlements.editions.wizard.overflowPolicy") || "Overflow Policy"}
               value={<Badge variant="outline">{edition.overflowPolicy}</Badge>}
             />

@@ -96,6 +96,26 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
             </p>
           </div>
         </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="category">
+              {t("entitlements.editions.wizard.category") || "Category"}
+            </Label>
+            <Input
+              id="category"
+              value={form.category ?? ""}
+              onChange={(e) => onChange({ category: e.target.value })}
+              placeholder={
+                t("entitlements.editions.wizard.categoryPlaceholder") ||
+                "e.g. General, ERP, Healthcare"
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              {t("entitlements.editions.wizard.categoryDesc") ||
+                "Group editions into tabs on the pricing page. Leave empty for no category."}
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* ── Section 2: Display ── */}

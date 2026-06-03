@@ -10,6 +10,7 @@ export interface CreateEditionRequest {
   recommendationLabels?: string;
   fallbackEditionId?: string;
   tierLevel?: number;
+  category?: string;
   // ── Billing Controls ──
   allowMonthly?: boolean;
   allowYearly?: boolean;
@@ -35,6 +36,7 @@ export interface UpdateEditionRequest {
   fallbackEditionId?: string;
   overflowPolicy?: string;
   tierLevel?: number;
+  category?: string;
   // ── Billing Controls ──
   allowMonthly?: boolean;
   allowYearly?: boolean;

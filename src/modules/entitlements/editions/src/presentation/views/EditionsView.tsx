@@ -58,6 +58,16 @@ export function EditionsView() {
           ),
         },
         {
+          key: "category",
+          label: t("entitlements.features.category") || "Category",
+          render: (_val: unknown, edition: Edition) =>
+            edition.category ? (
+              <Badge variant="secondary">{edition.category}</Badge>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            ),
+        },
+        {
           key: "baseMonthlyPriceUsd",
           label: t("entitlements.pricing.price") || "Price",
           render: (_val: unknown, edition: Edition) => {

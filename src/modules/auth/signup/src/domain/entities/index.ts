@@ -27,17 +27,60 @@ export interface SignupWizardData {
   timezone: string;
 }
 
+// ─── Rich feature value for a specific edition ─────────────────────────────
+
+export interface PublicFeature {
+  /** Display name in English */
+  name: string;
+  /** Display name in Arabic (null if not set) */
+  nameAr: string | null;
+  /** Description / tooltip */
+  description: string | null;
+  /**
+   * UI grouping: "Modules", "Quotas", "Security", "Support", etc.
+   * Used to build category sections in the comparison table.
+   */
+  category: string;
+  /** How to interpret the value */
+  valueType: "Boolean" | "Numeric" | "Text";
+  /**
+   * The value for this edition:
+   *   Boolean → "true" | "false"
+   *   Numeric → "10" | "-1" (unlimited) | "100"
+   *   Text    → "24/7 Support" | "1 GB" | "Community only"
+   */
+  value: string;
+  sortOrder: number;
+  /**
+   * Per-edition display label override (English).
+   * When set, plan cards show this text instead of the feature name + raw value.
+   * E.g., "Up to 25 Admins" instead of "Max Admins: 25".
+   */
+  displayLabelEn?: string | null;
+  /** Per-edition display label override (Arabic). */
+  displayLabelAr?: string | null;
+  /** If true, this is a marketing feature (e.g. "24/7 Support") — not enforced at runtime. */
+  isMarketingOnly?: boolean;
+}
+
+// ─── Public edition from the API ───────────────────────────────────────────
+
 export interface PublicEdition {
   id: string;
   name: string;
   tagline: string | null;
   tier: number;
+  /** Edition category for tab grouping: "General", "ERP", "Healthcare" */
+  category: string | null;
   monthlyPrice: number | null;
   annualPrice: number | null;
   currency: string;
   trialDays: number;
   badge: string | null;
-  topFeatures: string[];
+  /** Top 5 features shown on the plan card */
+  topFeatures: PublicFeature[];
+  /** All features for the comparison table */
+  allFeatures: PublicFeature[];
   checkoutMode: "free" | "trial" | "checkout" | "contact-sales";
   isRecommended: boolean;
 }

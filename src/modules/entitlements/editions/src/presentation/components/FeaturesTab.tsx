@@ -11,13 +11,15 @@
  */
 "use client";
 
+import { useState } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { ChevronDown, ChevronRight, Zap, ChevronsUpDown, Shield } from "lucide-react";
+import { ChevronDown, ChevronRight, Zap, ChevronsUpDown, Shield, Tag, Languages } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Feature, FeatureModuleGroup } from "@modules/entitlements/features/src/domain/entities/Feature";
 import type { Edition } from "../../domain/entities/Edition";
@@ -30,7 +32,9 @@ interface FeaturesTabProps {
   /** Backend-pre-grouped: Module → Category → Feature[]. Zero client-side groupBy. */
   moduleGroups: FeatureModuleGroup[];
   getEffectiveValue: (feature: Feature) => string;
+  getEffectiveLabel: (featureName: string) => { en: string; ar: string };
   setLocalValue: (featureName: string, value: string) => void;
+  setLocalLabel: (featureName: string, field: "en" | "ar", value: string) => void;
   overflowPolicy: string;
   setOverflowPolicy: (policy: string) => void;
   overflowPolicyChanged: boolean;
@@ -44,7 +48,9 @@ export function FeaturesTab({
   edition,
   moduleGroups,
   getEffectiveValue,
+  getEffectiveLabel,
   setLocalValue,
+  setLocalLabel,
   overflowPolicy,
   setOverflowPolicy,
   overflowPolicyChanged,
@@ -54,6 +60,10 @@ export function FeaturesTab({
   collapseAll,
 }: FeaturesTabProps) {
   const { t, language } = useI18n();
+  // Track which features have their label section expanded
+  const [expandedLabels, setExpandedLabels] = useState<Record<string, boolean>>({});
+  const toggleLabelExpanded = (featureName: string) =>
+    setExpandedLabels((prev) => ({ ...prev, [featureName]: !prev[featureName] }));
 
   // ── Total counts from backend groups (no client-side computation) ──
   const allFeatures = moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.features));
@@ -181,36 +191,137 @@ export function FeaturesTab({
                           ? serverFeature.value !== value
                           : value !== getFeatureDisabledDefault(feature.valueType);
 
+                        // Label state
+                        const effectiveLabel = getEffectiveLabel(feature.name);
+                        const serverEn = serverFeature?.displayLabelEn ?? "";
+                        const serverAr = serverFeature?.displayLabelAr ?? "";
+                        const isLabelModified =
+                          effectiveLabel.en !== serverEn || effectiveLabel.ar !== serverAr;
+                        const isLabelExpanded = expandedLabels[feature.name] ?? false;
+                        const isEnabled =
+                          value === "true" ||
+                          (feature.valueType === "Numeric" && parseInt(value) > 0) ||
+                          (feature.valueType === "String" && value.trim() !== "");
+
                         return (
-                          <div
-                            key={feature.id}
-                            className="flex items-center justify-between gap-4 py-3"
-                          >
-                            <div className="min-w-0 flex-1 space-y-0.5">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium">
-                                  {feature.getDisplayName(language)}
-                                </span>
-                                {isModified && (
-                                  <span
-                                    className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"
-                                    title={t("common.modified") || "Modified"}
-                                  />
-                                )}
+                          <div key={feature.id} className="border-b last:border-0">
+                            {/* Feature row */}
+                            <div className="flex items-center justify-between gap-4 py-3">
+                              <div className="min-w-0 flex-1 space-y-0.5">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium">
+                                    {feature.getDisplayName(language)}
+                                  </span>
+                                  {isModified && (
+                                    <span
+                                      className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"
+                                      title={t("common.modified") || "Modified"}
+                                    />
+                                  )}
+                                  {isLabelModified && (
+                                    <span
+                                      className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500"
+                                      title="Marketing label modified"
+                                    />
+                                  )}
+                                </div>
+                                <p className="font-mono text-xs text-muted-foreground">
+                                  {feature.name}
+                                </p>
                               </div>
-                              <p className="font-mono text-xs text-muted-foreground">
-                                {feature.name}
-                              </p>
+
+                              <div className="flex items-center gap-2">
+                                {/* Label toggle button — only shown when feature is enabled */}
+                                {isEnabled && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className={`h-7 gap-1 px-2 text-xs ${
+                                      isLabelExpanded
+                                        ? "text-primary"
+                                        : "text-muted-foreground hover:text-foreground"
+                                    }`}
+                                    onClick={() => toggleLabelExpanded(feature.name)}
+                                    title="Edit marketing display label"
+                                  >
+                                    <Tag className="h-3 w-3" />
+                                    <Languages className="h-3 w-3" />
+                                  </Button>
+                                )}
+                                <div className="flex-shrink-0">
+                                  <FeatureControl
+                                    valueType={feature.valueType}
+                                    value={value}
+                                    onChange={(v) => setLocalValue(feature.name, v)}
+                                    featureName={feature.name}
+                                  />
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="flex-shrink-0">
-                              <FeatureControl
-                                valueType={feature.valueType}
-                                value={value}
-                                onChange={(v) => setLocalValue(feature.name, v)}
-                                featureName={feature.name}
-                              />
-                            </div>
+                            {/* Expandable label editor */}
+                            {isLabelExpanded && isEnabled && (
+                              <div className="mb-3 rounded-lg border border-blue-200/50 bg-blue-50/30 px-4 py-3 dark:border-blue-800/30 dark:bg-blue-950/20">
+                                <div className="mb-2 flex items-center gap-1.5">
+                                  <Tag className="h-3.5 w-3.5 text-blue-500" />
+                                  <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                                    Marketing Display Label
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    — overrides how this feature appears on plan cards
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div className="space-y-1">
+                                    <Label className="text-xs text-muted-foreground">🇺🇸 English label</Label>
+                                    <Input
+                                      type="text"
+                                      value={effectiveLabel.en}
+                                      onChange={(e) => setLocalLabel(feature.name, "en", e.target.value)}
+                                      placeholder={`e.g. Up to 25 Admins`}
+                                      className="h-8 text-sm"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label className="text-xs text-muted-foreground">🇸🇦 Arabic label</Label>
+                                    <Input
+                                      type="text"
+                                      dir="rtl"
+                                      value={effectiveLabel.ar}
+                                      onChange={(e) => setLocalLabel(feature.name, "ar", e.target.value)}
+                                      placeholder={`مثال: حتى 25 مشرف`}
+                                      className="h-8 text-sm"
+                                    />
+                                  </div>
+                                </div>
+                                {(effectiveLabel.en || effectiveLabel.ar) && (
+                                  <div className="mt-2 flex items-center gap-1">
+                                    <span className="text-[10px] text-muted-foreground">Preview:</span>
+                                    {effectiveLabel.en && (
+                                      <Badge variant="secondary" className="text-[10px]">
+                                        {effectiveLabel.en}
+                                      </Badge>
+                                    )}
+                                    {effectiveLabel.ar && (
+                                      <Badge variant="outline" className="text-[10px]" dir="rtl">
+                                        {effectiveLabel.ar}
+                                      </Badge>
+                                    )}
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="ms-auto h-5 px-1 text-[10px] text-muted-foreground hover:text-destructive"
+                                      onClick={() => {
+                                        setLocalLabel(feature.name, "en", "");
+                                        setLocalLabel(feature.name, "ar", "");
+                                      }}
+                                    >
+                                      Clear
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         );
                       })}

@@ -72,6 +72,16 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
           label: t("entitlements.features.defaultValue"),
         },
         {
+          key: "isMarketingOnly",
+          label: t("entitlements.features.marketingOnly"),
+          render: (_val: unknown, feature: Feature) =>
+            feature.isMarketingOnly ? (
+              <Badge variant="outline" className="border-amber-500 text-amber-600">Marketing</Badge>
+            ) : (
+              <Badge variant="secondary">Enforced</Badge>
+            ),
+        },
+        {
           key: "createdAt",
           label: t("common.createdAt"),
           render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),

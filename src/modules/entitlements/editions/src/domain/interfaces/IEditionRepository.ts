@@ -19,7 +19,13 @@ export interface IEditionRepository {
   create(request: CreateEditionRequest): Promise<string>;
   update(id: string, request: UpdateEditionRequest): Promise<void>;
   delete(id: string): Promise<void>;
-  setFeatureValue(editionId: string, featureId: string, value: string): Promise<void>;
+  setFeatureValue(
+    editionId: string,
+    featureId: string,
+    value: string,
+    displayLabelEn?: string,
+    displayLabelAr?: string
+  ): Promise<void>;
 
   // ── Versioning ──
   getVersions(editionId: string): Promise<EditionVersion[]>;
@@ -27,7 +33,8 @@ export interface IEditionRepository {
     editionId: string,
     changeNotes?: string,
     featureValues?: Record<string, string>,
-    pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>
+    pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
+    pendingLabels?: Record<string, { en?: string; ar?: string }>
   ): Promise<string>;
   publishVersion(
     editionId: string,
@@ -37,7 +44,11 @@ export interface IEditionRepository {
   cancelVersion(editionId: string, versionId: string): Promise<void>;
 
   // ── Direct Apply ──
-  directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void>;
+  directApplyFeatures(
+    editionId: string,
+    featureValues: Record<string, string>,
+    changedLabels?: Record<string, { en?: string; ar?: string }>
+  ): Promise<void>;
 
   // ── Pricing ──
   getEditionPrices(editionId: string): Promise<EditionPriceListResponse>;

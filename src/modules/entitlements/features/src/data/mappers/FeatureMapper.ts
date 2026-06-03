@@ -31,6 +31,7 @@ const FeatureModelSchema = z.object({
   module: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   isSystem: z.boolean().optional().default(false),
+  isMarketingOnly: z.boolean().optional().default(false),
   createdAt: optionalIsoDate(),
   modifiedAt: optionalIsoDate(),
 });
@@ -66,6 +67,7 @@ export class FeatureMapper {
       module: validated.module ?? "",
       description: validated.description ?? "",
       isSystem: validated.isSystem,
+      isMarketingOnly: validated.isMarketingOnly ?? false,
       createdAt: validated.createdAt ?? new Date().toISOString(),
       modifiedAt: validated.modifiedAt ?? new Date().toISOString(),
     };
@@ -103,6 +105,7 @@ export class FeatureMapper {
       category: request.category,
       sortOrder: request.sortOrder ?? 0,
       isVisibleInUI: request.isVisibleInUI ?? true,
+      isMarketingOnly: request.isMarketingOnly ?? false,
     };
   }
 
@@ -116,6 +119,7 @@ export class FeatureMapper {
       category: request.category,
       sortOrder: request.sortOrder,
       isVisibleInUI: request.isVisibleInUI,
+      isMarketingOnly: request.isMarketingOnly,
     };
   }
 }

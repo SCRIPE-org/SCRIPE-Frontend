@@ -54,8 +54,14 @@ export class EditionRepository implements IEditionRepository {
     await this.service.delete(id);
   }
 
-  async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
-    await this.service.setFeatureValue(editionId, featureId, value);
+  async setFeatureValue(
+    editionId: string,
+    featureId: string,
+    value: string,
+    displayLabelEn?: string,
+    displayLabelAr?: string
+  ): Promise<void> {
+    await this.service.setFeatureValue(editionId, featureId, value, displayLabelEn, displayLabelAr);
   }
 
   // ── Versioning ──
@@ -68,13 +74,15 @@ export class EditionRepository implements IEditionRepository {
     editionId: string,
     changeNotes?: string,
     featureValues?: Record<string, string>,
-    pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>
+    pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
+    pendingLabels?: Record<string, { en?: string; ar?: string }>
   ): Promise<string> {
     const response = await this.service.createVersion(
       editionId,
       changeNotes,
       featureValues,
-      pricingSnapshot
+      pricingSnapshot,
+      pendingLabels
     );
     return response.id;
   }
@@ -93,9 +101,10 @@ export class EditionRepository implements IEditionRepository {
 
   async directApplyFeatures(
     editionId: string,
-    featureValues: Record<string, string>
+    featureValues: Record<string, string>,
+    changedLabels?: Record<string, { en?: string; ar?: string }>
   ): Promise<void> {
-    await this.service.directApplyFeatures(editionId, featureValues);
+    await this.service.directApplyFeatures(editionId, featureValues, changedLabels);
   }
 
   // ── Pricing ──

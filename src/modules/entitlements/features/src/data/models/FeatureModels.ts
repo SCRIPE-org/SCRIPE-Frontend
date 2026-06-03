@@ -16,6 +16,7 @@ export interface FeatureModel {
   module: string;
   description?: string;
   isSystem: boolean;
+  isMarketingOnly: boolean;
   createdAt: string;
   modifiedAt?: string;
 }

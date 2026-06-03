@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
-import type { PublicEdition } from "../../domain/entities";
+import type { PublicEdition, PublicFeature } from "../../domain/entities";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -13,13 +13,21 @@ export interface PlanEdition {
   name: string;
   tagline: string;
   tierLevel: number;
+  category: string | null;
   monthlyPrice: number;
   annualPrice: number;
   currency: string;
   trialDays: number | null;
   badge: string | null;
-  features: string[];
+  topFeatures: PublicFeature[];
+  allFeatures: PublicFeature[];
   checkoutMode: "self-service" | "contact-sales";
+}
+
+/** Feature category section for the comparison table */
+export interface FeatureCategory {
+  name: string;
+  features: PublicFeature[];
 }
 
 export interface UsePlanPickerViewModelReturn {
@@ -31,28 +39,81 @@ export interface UsePlanPickerViewModelReturn {
   annualSavingsPercent: number;
   direction: string;
 
+  // Category tab filtering
+  activeCategory: string | null;
+  categories: string[];
+  filteredEditions: PlanEdition[];
+  setActiveCategory: (cat: string | null) => void;
+
+  // Comparison modal
+  isCompareOpen: boolean;
+  openCompare: () => void;
+  closeCompare: () => void;
+  comparisonCategories: FeatureCategory[];
+
   // Actions
   setBillingCycle: (cycle: "monthly" | "annual") => void;
   selectPlan: (edition: PlanEdition) => void;
 }
 
-// ─── Mapper ───────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Maps API PublicEdition → internal PlanEdition for card rendering */
 function mapEdition(e: PublicEdition): PlanEdition {
   return {
     id: e.id,
     name: e.name,
     tagline: e.tagline ?? "",
     tierLevel: e.tier,
+    category: e.category ?? null,
     monthlyPrice: e.monthlyPrice ?? 0,
     annualPrice: e.annualPrice ?? 0,
     currency: e.currency,
     trialDays: e.trialDays > 0 ? e.trialDays : null,
     badge: e.badge ?? (e.isRecommended ? "Recommended" : null),
-    features: e.topFeatures ?? [],
+    topFeatures: e.topFeatures ?? [],
+    allFeatures: e.allFeatures ?? [],
     checkoutMode: e.checkoutMode === "contact-sales" ? "contact-sales" : "self-service",
   };
+}
+
+/**
+ * Groups all features across all editions into categories for the comparison table.
+ * De-duplicates features by name, preserves sort order.
+ */
+function buildComparisonCategories(editions: PlanEdition[]): FeatureCategory[] {
+  const seen = new Map<string, PublicFeature>();
+
+  for (const edition of editions) {
+    for (const feat of edition.allFeatures) {
+      if (!seen.has(feat.name)) {
+        seen.set(feat.name, feat);
+      }
+    }
+  }
+
+  // Group by category
+  const grouped = new Map<string, PublicFeature[]>();
+  for (const feat of seen.values()) {
+    const cat = feat.category || "General";
+    if (!grouped.has(cat)) grouped.set(cat, []);
+    grouped.get(cat)!.push(feat);
+  }
+
+  // Sort each category by sortOrder
+  const result: FeatureCategory[] = [];
+  for (const [name, features] of grouped) {
+    result.push({
+      name,
+      features: features.sort((a, b) => a.sortOrder - b.sortOrder),
+    });
+  }
+
+  // Sort categories alphabetically (General first)
+  return result.sort((a, b) => {
+    if (a.name === "General") return -1;
+    if (b.name === "General") return 1;
+    return a.name.localeCompare(b.name);
+  });
 }
 
 // ─── ViewModel ────────────────────────────────────────────────────────────────
@@ -60,15 +121,11 @@ function mapEdition(e: PublicEdition): PlanEdition {
 /**
  * usePlanPickerViewModel — Business logic for the Plan Picker signup step.
  *
- * Extracted from PlanPickerStep.tsx to enforce SCRIPE MVVM architecture:
- * View → ViewModel → Repository → Service → HTTP
- *
- * Per tenant-signup.md §2 Step 1:
- * - Fetches editions from signupRepository
- * - Manages billing cycle toggle
- * - Calculates annual savings percentage
- * - Maps editions for card rendering
- * - Falls back to a free plan if the API call fails
+ * Handles:
+ * - Edition fetching with rich feature data
+ * - Billing cycle toggle + annual savings
+ * - Edition category tab filtering (General / ERP / Healthcare / etc.)
+ * - Comparison modal state + categorized feature grouping
  */
 export function usePlanPickerViewModel(
   onSelectPlan: (
@@ -83,8 +140,10 @@ export function usePlanPickerViewModel(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
 
-  // ── Fetch editions on mount ──
+  // ── Fetch editions ──
   useEffect(() => {
     let cancelled = false;
     const fetchEditions = async () => {
@@ -103,16 +162,14 @@ export function usePlanPickerViewModel(
               name: "Free",
               tagline: t("signup.plan.freeTagline") || "Get started for free",
               tierLevel: 0,
+              category: null,
               monthlyPrice: 0,
               annualPrice: 0,
               currency: "USD",
               trialDays: null,
               badge: null,
-              features: [
-                t("signup.plan.features.basic") || "Basic features",
-                t("signup.plan.features.singleAdmin") || "1 admin user",
-                t("signup.plan.features.communitySupport") || "Community support",
-              ],
+              topFeatures: [],
+              allFeatures: [],
               checkoutMode: "self-service",
             },
           ]);
@@ -125,7 +182,21 @@ export function usePlanPickerViewModel(
     return () => { cancelled = true; };
   }, [signupRepository, t]);
 
-  // ── Computed: annual savings ──
+  // ── Category tabs ──
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    for (const e of editions) {
+      if (e.category) cats.add(e.category);
+    }
+    return Array.from(cats).sort();
+  }, [editions]);
+
+  const filteredEditions = useMemo(() => {
+    if (!activeCategory) return editions;
+    return editions.filter((e) => e.category === activeCategory);
+  }, [editions, activeCategory]);
+
+  // ── Annual savings ──
   const annualSavingsPercent = useMemo(() => {
     const first = editions.find((e) => e.monthlyPrice > 0);
     if (!first) return 0;
@@ -135,13 +206,20 @@ export function usePlanPickerViewModel(
     return Math.round(((monthlyTotal - annualTotal) / monthlyTotal) * 100);
   }, [editions]);
 
-  // ── Select plan ──
+  // ── Comparison table data ──
+  const comparisonCategories = useMemo(
+    () => buildComparisonCategories(filteredEditions),
+    [filteredEditions]
+  );
+
+  // ── Actions ──
   const selectPlan = useCallback(
-    (edition: PlanEdition) => {
-      onSelectPlan(edition, billingCycle);
-    },
+    (edition: PlanEdition) => { onSelectPlan(edition, billingCycle); },
     [billingCycle, onSelectPlan]
   );
+
+  const openCompare  = useCallback(() => setIsCompareOpen(true), []);
+  const closeCompare = useCallback(() => setIsCompareOpen(false), []);
 
   return {
     editions,
@@ -150,6 +228,14 @@ export function usePlanPickerViewModel(
     billingCycle,
     annualSavingsPercent,
     direction,
+    activeCategory,
+    categories,
+    filteredEditions,
+    setActiveCategory,
+    isCompareOpen,
+    openCompare,
+    closeCompare,
+    comparisonCategories,
     setBillingCycle,
     selectPlan,
   };

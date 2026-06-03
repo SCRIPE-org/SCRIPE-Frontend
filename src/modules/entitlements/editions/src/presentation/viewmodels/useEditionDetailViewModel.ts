@@ -33,8 +33,11 @@ export interface EditionDetailViewModelResult {
 
   // ── Feature state (local pending changes) ──
   pendingValues: Record<string, string>;
+  pendingLabels: Record<string, { en?: string; ar?: string }>;
   getEffectiveValue: (feature: Feature) => string;
+  getEffectiveLabel: (featureName: string) => { en: string; ar: string };
   setLocalValue: (featureName: string, value: string) => void;
+  setLocalLabel: (featureName: string, field: "en" | "ar", value: string) => void;
   hasUnsavedChanges: boolean;
 
   // ── Version-based apply ──
@@ -146,6 +149,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
           defaultValue: ef.effectiveValue,
           module: mod,
           isSystem: false,
+          isMarketingOnly: false,
           createdAt: "",
         })
       );
@@ -181,14 +185,24 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
   // ── Local pending feature values (keyed by featureName) ──
   const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
+  // ── Local pending display labels (keyed by featureName) ──
+  const [pendingLabels, setPendingLabels] = useState<Record<string, { en?: string; ar?: string }>>({});
 
   // ── Overflow Policy (local state — not auto-saved) ──
   const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");
 
-  // Sync pending values when edition data changes
+  // Sync pending values and labels when edition data changes
   const [lastEditionId, setLastEditionId] = useState<string | undefined>();
   if (edition && edition.id !== lastEditionId) {
+    // Build server label map
+    const serverLabels: Record<string, { en?: string; ar?: string }> = {};
+    edition.features.forEach((ef) => {
+      if (ef.displayLabelEn || ef.displayLabelAr) {
+        serverLabels[ef.featureName] = { en: ef.displayLabelEn ?? "", ar: ef.displayLabelAr ?? "" };
+      }
+    });
     setPendingValues(serverValueMap);
+    setPendingLabels(serverLabels);
     setLastEditionId(edition.id);
   }
 
@@ -196,29 +210,77 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   const getEffectiveValue = useCallback(
     (feature: Feature): string => {
       const name = feature.name;
-      if (pendingValues[name] !== undefined) return pendingValues[name];
+      if (pendingValues && pendingValues[name] !== undefined) return pendingValues[name];
       if (serverValueMap[name] !== undefined) return serverValueMap[name];
       return getDisabledDefault(feature.valueType);
     },
     [pendingValues, serverValueMap]
   );
 
+  // Get effective display label: pending → server → empty
+  const serverLabelMap = useMemo(() => {
+    const map: Record<string, { en: string; ar: string }> = {};
+    if (edition) {
+      edition.features.forEach((ef) => {
+        map[ef.featureName] = {
+          en: ef.displayLabelEn ?? "",
+          ar: ef.displayLabelAr ?? "",
+        };
+      });
+    }
+    return map;
+  }, [edition]);
+
+  const getEffectiveLabel = useCallback(
+    (featureName: string): { en: string; ar: string } => {
+      const pending = pendingLabels[featureName];
+      const server = serverLabelMap[featureName];
+      return {
+        en: pending?.en !== undefined ? pending.en : (server?.en ?? ""),
+        ar: pending?.ar !== undefined ? pending.ar : (server?.ar ?? ""),
+      };
+    },
+    [pendingLabels, serverLabelMap]
+  );
+
   // Set a local value (no API call)
   const setLocalValue = useCallback((featureName: string, value: string) => {
-    setPendingValues((prev) => ({ ...prev, [featureName]: value }));
+    setPendingValues((prev) => ({ ...(prev ?? {}), [featureName]: value }));
   }, []);
 
-  // Check for unsaved changes (features + overflow policy)
+  // Set a local display label (no API call)
+  const setLocalLabel = useCallback((featureName: string, field: "en" | "ar", value: string) => {
+    setPendingLabels((prev) => ({
+      ...prev,
+      [featureName]: { ...(prev[featureName] ?? {}), [field]: value },
+    }));
+  }, []);
+
+  // Check for unsaved changes (features + labels + overflow policy)
   const hasUnsavedChanges = useMemo(() => {
     if (!edition) return false;
-    for (const [name, val] of Object.entries(pendingValues)) {
+    for (const [name, val] of Object.entries(pendingValues ?? {})) {
       if (serverValueMap[name] !== val) return true;
     }
+    // Check label changes
+    for (const [name, labels] of Object.entries(pendingLabels)) {
+      const server = serverLabelMap[name];
+      if ((labels.en ?? "") !== (server?.en ?? "")) return true;
+      if ((labels.ar ?? "") !== (server?.ar ?? "")) return true;
+    }
     return false;
-  }, [edition, pendingValues, serverValueMap]);
+  }, [edition, pendingValues, serverValueMap, pendingLabels, serverLabelMap]);
 
   const discardChanges = useCallback(() => {
     setPendingValues(serverValueMap);
+    // Restore labels from server
+    const serverLabels: Record<string, { en?: string; ar?: string }> = {};
+    edition?.features.forEach((ef) => {
+      if (ef.displayLabelEn || ef.displayLabelAr) {
+        serverLabels[ef.featureName] = { en: ef.displayLabelEn ?? "", ar: ef.displayLabelAr ?? "" };
+      }
+    });
+    setPendingLabels(serverLabels);
     if (edition) {
       setLocalOverflowPolicy(edition.overflowPolicy ?? "Block");
     }
@@ -227,7 +289,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // ── Build the changed feature map (featureName → newValue) ──
   const getChangedFeatures = useCallback((): Record<string, string> => {
     const changes: Record<string, string> = {};
-    for (const [name, val] of Object.entries(pendingValues)) {
+    for (const [name, val] of Object.entries(pendingValues ?? {})) {
       if (serverValueMap[name] !== val) {
         changes[name] = val;
       }
@@ -259,7 +321,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         editionId,
         changeNotes,
         pendingValues,
-        pricingSnapshot
+        pricingSnapshot,
+        pendingLabels
       );
     },
     onSuccess: () => {
@@ -301,8 +364,16 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         });
       }
       const changes = getChangedFeatures();
-      if (Object.keys(changes).length === 0) return;
-      await editionRepository.directApplyFeatures(editionId, changes);
+      // Build label changes map: featureName → {en, ar} for changed labels only
+      const changedLabels: Record<string, { en?: string; ar?: string }> = {};
+      for (const [name, labels] of Object.entries(pendingLabels)) {
+        const server = serverLabelMap[name];
+        if ((labels.en ?? "") !== (server?.en ?? "") || (labels.ar ?? "") !== (server?.ar ?? "")) {
+          changedLabels[name] = labels;
+        }
+      }
+      if (Object.keys(changes).length === 0 && Object.keys(changedLabels).length === 0) return;
+      await editionRepository.directApplyFeatures(editionId, changes, changedLabels);
     },
     onSuccess: () => {
       success({
@@ -392,9 +463,12 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     isLoading: isEditionLoading || isFeaturesLoading,
     error: (editionError as Error) || (featuresError as Error) || null,
 
-    pendingValues,
+    pendingValues: pendingValues ?? {},
+    pendingLabels,
     getEffectiveValue,
+    getEffectiveLabel,
     setLocalValue,
+    setLocalLabel,
     hasUnsavedChanges: combinedHasUnsavedChanges,
 
     createVersionWithChanges,

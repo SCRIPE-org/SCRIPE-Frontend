@@ -14,6 +14,12 @@ export interface EditionFeatureDto {
   sortOrder?: number;
   displayNameEn?: string;
   displayNameAr?: string;
+  /** Per-edition display label override (English). Shown instead of feature name + value on plan cards. */
+  displayLabelEn?: string;
+  /** Per-edition display label override (Arabic). */
+  displayLabelAr?: string;
+  /** If true, this feature is for marketing display only (not enforced at runtime). */
+  isMarketingOnly?: boolean;
 }
 
 /** Pricing data for a specific currency + billing cycle combination. */
@@ -39,6 +45,8 @@ export interface EditionData extends BaseEntity {
   isSystem: boolean;
   isRetired: boolean;
   tierLevel: number;
+  /** Edition category for tab grouping (e.g. "General", "ERP"). Null/undefined = uncategorized. */
+  category?: string;
   createdByTenantId?: string;
   featureCount?: number;
   features?: EditionFeatureDto[];
@@ -109,6 +117,9 @@ export class Edition {
   }
   get tierLevel(): number {
     return this.data.tierLevel;
+  }
+  get category(): string | undefined {
+    return this.data.category;
   }
   get createdAt(): string {
     return this.data.createdAt;
@@ -223,6 +234,18 @@ export class Edition {
   getFeatureDisplayName(feature: EditionFeatureDto, lang: string): string {
     if (lang === "ar" && feature.displayNameAr) return feature.displayNameAr;
     return feature.displayNameEn || feature.featureName;
+  }
+
+  /**
+   * Get the display label for a feature in the current language.
+   * Prefers per-edition display label override (e.g. "Up to 25 Admins")
+   * over the generic feature name + value.
+   */
+  getFeatureDisplayLabel(feature: EditionFeatureDto, lang: string): string {
+    if (lang === "ar" && feature.displayLabelAr) return feature.displayLabelAr;
+    if (feature.displayLabelEn) return feature.displayLabelEn;
+    // Fallback to feature display name
+    return this.getFeatureDisplayName(feature, lang);
   }
 
   copyWith(updates: Partial<EditionData>): Edition {

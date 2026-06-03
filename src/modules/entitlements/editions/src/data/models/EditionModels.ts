@@ -23,6 +23,7 @@ export interface EditionModel {
   isRetired: boolean;
   tierLevel: number;
   createdByTenantId?: string;
+  category?: string;
   featureCount?: number;
   features?: {
     featureId: string;
@@ -33,6 +34,9 @@ export interface EditionModel {
     sortOrder?: number;
     displayNameEn?: string;
     displayNameAr?: string;
+    displayLabelEn?: string;
+    displayLabelAr?: string;
+    isMarketingOnly?: boolean;
   }[];
   /** Full prices array (multi-currency × billing cycle). Available in detail response. */
   prices?: EditionPriceModel[];

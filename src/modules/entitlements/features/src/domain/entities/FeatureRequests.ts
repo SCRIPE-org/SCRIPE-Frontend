@@ -14,6 +14,7 @@ export interface CreateFeatureRequest {
   category?: string;
   sortOrder?: number;
   isVisibleInUI?: boolean;
+  isMarketingOnly?: boolean;
 }
 
 export interface UpdateFeatureRequest {
@@ -25,4 +26,5 @@ export interface UpdateFeatureRequest {
   category?: string;
   sortOrder?: number;
   isVisibleInUI?: boolean;
+  isMarketingOnly?: boolean;
 }

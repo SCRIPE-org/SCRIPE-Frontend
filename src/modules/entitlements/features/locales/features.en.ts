@@ -15,6 +15,7 @@ export const en = {
       module: "Module",
       modulePlaceholder: "e.g. Identity, Communication",
       isSystem: "System Feature",
+      marketingOnly: "Type",
       boolean: "Boolean",
       numeric: "Numeric",
       string: "String",

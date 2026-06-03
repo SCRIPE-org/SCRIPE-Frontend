@@ -27,6 +27,7 @@ const EditionModelSchema = z.object({
   isRetired: z.boolean().optional().default(false),
   tierLevel: z.number().int().optional().default(0),
   createdByTenantId: optionalString(),
+  category: optionalString(),
   featureCount: z.number().int().optional().default(0),
   features: z.array(z.unknown()).optional().default([]),
   prices: z.array(z.unknown()).optional().default([]),
@@ -69,6 +70,7 @@ export class EditionMapper {
       isRetired: validated.isRetired,
       tierLevel: validated.tierLevel,
       createdByTenantId: validated.createdByTenantId ?? undefined,
+      category: validated.category ?? undefined,
       featureCount: validated.featureCount,
       features: (validated.features as EditionData["features"]) ?? [],
       prices: (validated.prices as EditionData["prices"]) ?? [],
@@ -109,6 +111,7 @@ export class EditionMapper {
       recommendationLabels: request.recommendationLabels,
       fallbackEditionId: request.fallbackEditionId || undefined,
       tierLevel: request.tierLevel ?? 0,
+      category: request.category,
       // ── Billing Controls ──
       allowMonthly: request.allowMonthly ?? true,
       allowYearly: request.allowYearly ?? true,
@@ -135,6 +138,7 @@ export class EditionMapper {
       fallbackEditionId: request.fallbackEditionId || undefined,
       overflowPolicy: request.overflowPolicy || "Block",
       tierLevel: request.tierLevel,
+      category: request.category,
     };
     // ── Billing Controls (only send if defined) ──
     if (request.allowMonthly !== undefined) json.allowMonthly = request.allowMonthly;
