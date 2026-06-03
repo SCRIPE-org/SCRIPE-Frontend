@@ -15,6 +15,7 @@ import { TwoFactorForm } from "./TwoFactorForm";
 import { PhoneOtpForm } from "./PhoneOtpForm";
 import { PasskeyPrompt } from "./PasskeyPrompt";
 import { QrSignInView } from "./QrSignInView";
+import { useTokenLogin } from "../viewmodels/useTokenLogin";
 
 type LoginViewModel = ReturnType<typeof useLoginViewModel>;
 type SsoProvidersViewModel = ReturnType<typeof useSsoProviders>;
@@ -42,6 +43,7 @@ export function LoginFormRouter({
   isPlatformMode = false,
 }: LoginFormRouterProps) {
   const { t } = useI18n();
+  const { completeTokenLogin } = useTokenLogin();
 
   return (
     <div
@@ -114,9 +116,7 @@ export function LoginFormRouter({
       ) : vm.loginStep === "phone-otp" ? (
         <PhoneOtpForm
           onSuccess={(result) => {
-            // Token handling will be wired through the auth flow
-            void result;
-            vm.goBackToCredentials();
+            completeTokenLogin(result);
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
@@ -124,8 +124,7 @@ export function LoginFormRouter({
       ) : vm.loginStep === "passkey" ? (
         <PasskeyPrompt
           onSuccess={(result) => {
-            void result;
-            vm.goBackToCredentials();
+            completeTokenLogin(result);
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
@@ -133,8 +132,7 @@ export function LoginFormRouter({
       ) : vm.loginStep === "qr-login" ? (
         <QrSignInView
           onSuccess={(result) => {
-            void result;
-            vm.goBackToCredentials();
+            completeTokenLogin(result);
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
