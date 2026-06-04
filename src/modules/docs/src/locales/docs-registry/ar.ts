@@ -66,6 +66,8 @@ export const allDocsAr: Record<string, any> = mergeAll(
   pageUserSubscriptions,
   pageTenantContextGate,
   pageRevenueAnalytics,
-  marketplace,
-  stripeConnect
+  { modules: { marketplace: marketplace.marketplace } },
+  { commercial: marketplace.commercial },
+  { modules: { stripeConnect: stripeConnect.stripeConnect } },
+  { commercial: stripeConnect.commercial }
 );
