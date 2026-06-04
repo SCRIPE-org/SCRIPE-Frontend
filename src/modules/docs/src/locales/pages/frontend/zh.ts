@@ -1,7 +1,4 @@
-/**
- * Docs frontend — ZH
- * Auto-filled 1 keys from EN.
- */
+
 export const zh = {
   frontend: {
     crudSystem: {
@@ -48,23 +45,21 @@ export const zh = {
     localization: {
       title: "本地化 (i18n)",
       description: "LanguageProvider, t() 函数, RTL 自动化与翻译词典架构。",
-      intro: "SCRIPE 实现了一套基于 React Context 的极速本地化方案，无需路由干预。",
+      intro: "SCRIPE 使用模块范围的本地化系统。共享键（约 1,156 个）存放在 core/locales/ 中。每个模块在其同级的 locales/ 目录中拥有自己的翻译，并在构建时通过 module-registry.ts 预先导入，以实现无闪烁的页面加载。支持阿拉伯语 (RTL) 和英语 (LTR)，具有自动方向切换、字体更改和 localStorage 持久化。",
       architectureTitle: "系统架构",
       dictionaryTitle: "词典文件结构",
       tFunctionTitle: "使用 t() 函数进行多语言读取",
       rtlTitle: "RTL / LTR 自动化",
       rtlIntro: "引擎会自动接管 HTML 属性，将页面流、间距和排版全面翻转以适配阿拉伯语系。",
       addingKeysTitle: "增加新的多语言词条",
-      step1Title: "1. 增加至字典",
-      step1Desc: "在 en.ts 和 zh.ts 等文件下挂载。",
-      step2Title: "2. 组件内调用",
-      step2Desc: "使用点操作符 (dot-notation) 获取。",
-      step3Title: "3. 处理插值变量",
-      step3Desc: "使用双大括号 {{variable}} 动态传入数值。",
-      noLocaleRoutes:
-        "为了极致的 SSR (服务端渲染) 性能，我们没有采用基于文件夹的区域路由 ([locale]) 方案。",
-      moduleLocaleNote:
-        "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
+      step1Title: "1. 创建或更新模块语言环境",
+      step1Desc: "将新键添加到模块的 locales/{module}.en.ts 和 {module}.ar.ts 文件中。仅在键确实是共享的时（验证、导航、公共 UI）才添加到 core/locales/ 中。",
+      step2Title: "2. 在模块注册表中注册",
+      step2Desc: "在 core/locales/module-registry.ts 中注册模块的区域设置。由 CLI 使用 scripe new-module 创建的新模块将自动注册。",
+      step3Title: "3. 使用模块命名空间的 t()",
+      step3Desc: "使用语言环境文件中的命名空间调用 t('moduleName.keyPath')。对于插值，使用 {{variable}} 语法并将变量作为第二个参数传入。",
+      noLocaleRoutes: "为了极致的 SSR (服务端渲染) 性能，我们没有采用基于文件夹的区域路由 ([locale]) 方案。",
+      moduleLocaleNote: "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",
     },
     formValidation: {
       title: "表单验证",

@@ -1,7 +1,3 @@
-/**
- * Docs page locale — EN
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const en = {
   frontend: {
     crudSystem: {
@@ -61,7 +57,7 @@ export const en = {
       description:
         "LanguageProvider, module-scoped locales, useModuleLocales hook, t() function, RTL support, and adding new translation keys.",
       intro:
-        "SCRIPE uses a module-scoped localization system. Shared keys (~1,156) live in core/locales/. Each module owns its translations in a co-located locales/ directory, loaded lazily via the useModuleLocales() hook. Supports Arabic (RTL) and English (LTR) with automatic direction switching, font changes, and localStorage persistence.",
+        "SCRIPE uses a module-scoped localization system. Shared keys (~1,156) live in core/locales/. Each module owns its translations in a co-located locales/ directory, eagerly imported at build time via the module-registry.ts for zero-flash page loads. Supports Arabic (RTL) and English (LTR) with automatic direction switching, font changes, and localStorage persistence.",
       architectureTitle: "Architecture",
       dictionaryTitle: "Dictionary Structure",
       tFunctionTitle: "Using the t() Function",
@@ -72,9 +68,9 @@ export const en = {
       step1Title: "1. Create or Update Module Locale",
       step1Desc:
         "Add new keys to your module's locales/{module}.en.ts and {module}.ar.ts files. Only add to core/locales/ if the key is truly shared (validation, navigation, common UI).",
-      step2Title: "2. Register with useModuleLocales",
+      step2Title: "2. Register in Module Registry",
       step2Desc:
-        "In your view component, call useModuleLocales(() => import('../../../locales'), 'module-name') before useI18n() to lazy-load the module's translations.",
+        "Register your module locales in core/locales/module-registry.ts. New modules created via scripe new-module are automatically registered by the CLI.",
       step3Title: "3. Use t() with Module Namespace",
       step3Desc:
         "Call t('moduleName.keyPath') using the namespace from your locale file. For interpolation, use {{variable}} syntax and pass variables as the second argument.",

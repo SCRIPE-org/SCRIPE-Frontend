@@ -1,7 +1,4 @@
-/**
- * Docs frontend — ES
- * Auto-filled 1 keys from EN.
- */
+
 export const es = {
   frontend: {
     crudSystem: {
@@ -60,7 +57,7 @@ export const es = {
       description:
         "La función t(), el manejador RTL, los diccionarios y cómo internacionalizar un módulo.",
       intro:
-        "Solución de alto rendimiento de React Context que previene el parpadeo en la pantalla durante las recargas de Next.js.",
+        "SCRIPE utiliza un sistema de localización con alcance de módulo. Las claves compartidas (~1,156) residen en core/locales/. Cada módulo posee sus traducciones en un directorio locales/ co-localizado, importado ansiosamente en tiempo de compilación a través de module-registry.ts para cargas de página sin parpadeos. Admite árabe (RTL) e inglés (LTR) con cambio de dirección automático, cambios de fuente y persistencia en localStorage.",
       architectureTitle: "Arquitectura",
       dictionaryTitle: "Estructura de Diccionarios",
       tFunctionTitle: "Uso de la Función t()",
@@ -68,13 +65,15 @@ export const es = {
       rtlIntro:
         "Interviene la etiqueta principal de HTML autoconfigurando CSS flexbox para funcionar de derecha a izquierda si se elige Árabe.",
       addingKeysTitle: "Añadir Nuevas Claves de Traducción",
-      step1Title: "1. Añadir al Diccionario",
-      step1Desc: "Ampliación de los archivos es.ts, en.ts, ar.ts.",
-      step2Title: "2. Uso en el Componente",
-      step2Desc: "Paso de la clave mapeada de punto.",
-      step3Title: "3. Manejo de Variables (Interpolación)",
+      step1Title: "1. Crear o Actualizar el Local del Módulo",
+      step1Desc:
+        "Añada nuevas claves a los archivos locales/{module}.en.ts y {module}.ar.ts de su módulo. Solo añádalas a core/locales/ si la clave es realmente compartida (validación, navegación, interfaz de usuario común).",
+      step2Title: "2. Registrar en el Registro de Módulos",
+      step2Desc:
+        "Registra los locales de tu módulo en core/locales/module-registry.ts. Los nuevos módulos creados a través de scripe new-module se registran automáticamente mediante la CLI.",
+      step3Title: "3. Usar t() con el Espacio de Nombres del Módulo",
       step3Desc:
-        "Variables rodeadas de dobles llaves y resueltas dinámicamente en tiempo de ejecución.",
+        "Llame a t('nombreModulo.rutaClave') usando el espacio de nombres de su archivo de localización. Para la interpolación, use la sintaxis {{variable}} y pase las variables como segundo argumento.",
       noLocaleRoutes:
         "No utilizamos sistema de enrutamiento basado en archivos ([locale]) por temas drásticos de desempeño Server-Side.",
       moduleLocaleNote:

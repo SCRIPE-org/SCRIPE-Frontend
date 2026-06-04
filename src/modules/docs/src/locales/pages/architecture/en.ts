@@ -1,7 +1,3 @@
-/**
- * Docs page locale — EN
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const en = {
   architecture: {
     overview: {
@@ -31,7 +27,7 @@ export const en = {
       description:
         "Program.cs anatomy, middleware pipeline, DI service map, module registration pattern, and controller catalog.",
       intro:
-        "The SCRIPE backend is a .NET 10 Modular Monolith with 288 lines in Program.cs that wire together 16 service registrations, 10 middleware components, and 18 REST controllers. This page dissects every layer of the backend architecture.",
+        "The SCRIPE backend is a .NET 10 Modular Monolith with 30 lines in Program.cs that delegate startup configuration to dedicated extensions. This page dissects every layer of the backend architecture.",
       programCsTitle: "Program.cs Anatomy",
       programCsIntro:
         "Program.cs is the application's entry point and wiring center. It detects the deployment mode, registers services in a specific order, and builds the middleware pipeline. The file follows a clear 5-section structure.",
@@ -164,7 +160,7 @@ export const en = {
       dontTitle: " DON'T",
       localizationTitle: "Localization (LanguageProvider + Module Locales)",
       localizationIntro:
-        "Localization uses a custom LanguageProvider with localStorage persistence plus a module-scoped locale system. Shared keys (~1,156) live in core/locales/. Module-specific keys are co-located in each module's locales/ directory and loaded lazily via useModuleLocales().",
+        "Localization uses a custom LanguageProvider with localStorage persistence plus a module-scoped locale system. Shared keys (~1,156) live in core/locales/. Module-specific keys are co-located in each module's locales/ directory and eagerly imported at build time via module-registry.ts for zero-flash page loads.",
       noLocaleFoldersWarning:
         "Do NOT use [locale] folders in src/app/! Localization is handled via LanguageProvider context, not file-based routing. No next-intl, no next-i18next, no URL-based language (/en/, /ar/).",
     },

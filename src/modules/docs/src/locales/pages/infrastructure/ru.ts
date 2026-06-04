@@ -1,7 +1,4 @@
-/**
- * Docs page locale — RU
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const ru = {
   infrastructure: {
     backgroundJobs: {
@@ -276,7 +273,7 @@ export const ru = {
     scripeCli: {
       title: "Инструментарий SCRIPE CLI",
       description:
-        "Генерация кода (scaffolding), 66 шаблонов, работа с БД и автоматическая связка (Auto-Wiring).",
+        "Генерация кода (scaffolding), 79 шаблонов, работа с БД и автоматическая связка (Auto-Wiring).",
       intro:
         "Собственный CLI на Node.js, который генерирует full-stack модули и выполняет «хирургическое» внедрение кода в сотни файлов проекта.",
       commandsTitle: "Основные команды скаффолдинга",
@@ -293,9 +290,9 @@ export const ru = {
       dslTitle: "Синтаксис Property DSL",
       dslIntro: "Определение свойств моделей прямо в командной строке.",
       dslSyntaxInfo: "Синтаксис: ИмяСвойства:Тип[:Модификатор1][:Модификатор2]",
-      templatesTitle: "66 неизменяемых шаблонов",
+      templatesTitle: "79 неизменяемых шаблонов",
       templatesIntro:
-        "Шаблоны Handlebars обеспечивают абсолютное соответствие стандартам чистой архитектуры.",
+        "Вместо ручного написания стандартных архитектур CLI обеспечивает соблюдение чистой архитектуры (Clean Architecture) с помощью 79 точных шаблонов Handlebars, охватывающих 54 файла бэкенда и 25 конфигураций фронтенда, гарантируя высокое качество.",
       securityTitle: "Автоматизированная защита (Security)",
       securityIntro: "Сгенерированные REST API автоматически снабжаются строгими атрибутами RBAC.",
       autoWiringTitle: "Автоматическое связывание (Auto-Wiring)",

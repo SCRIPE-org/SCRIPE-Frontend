@@ -1,7 +1,4 @@
-/**
- * Docs page locale — DE
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const de = {
   infrastructure: {
     backgroundJobs: {
@@ -269,7 +266,7 @@ export const de = {
     },
     scripeCli: {
       title: "SCRIPE CLI Tooling",
-      description: "Produktivitäts-CLI mit 66 Scaffolding-Templates und automatischem Wiring.",
+      description: "Produktivitäts-CLI mit 79 Scaffolding-Templates und automatischem Wiring.",
       intro:
         "Eine node-basierte CLI für das fehlerfreie Scaffolding und Verdrahten (Wiring) von Modulen und Features.",
       commandsTitle: "Kern-Befehle",
@@ -285,9 +282,9 @@ export const de = {
       dslTitle: "Property DSL-Syntax",
       dslIntro: "Verwendet die --properties (-p) Flag für schnelle Modell-Definition.",
       dslSyntaxInfo: "Syntax: PropertyName:Typ[:Modifier1][:Modifier2]",
-      templatesTitle: "66 Immutable Templates",
+      templatesTitle: "79 unveränderliche Vorlagen",
       templatesIntro:
-        "Ersetzt das manuelle Schreiben durch Handlebars-Templates nach Clean Architecture.",
+        "Anstatt Standardarchitekturen manuell zu schreiben, erzwingt die CLI eine reine Clean Architecture durch 79 präzise Handlebars-Templates, die sich über 54 Backend-Dateien und 25 Frontend-Konfigurationen erstrecken und so die Qualität sichern.",
       securityTitle: "Automatisierte Security",
       securityIntro: "Die generierten Controller werden sofort mit RBAC-Attributen geschützt.",
       autoWiringTitle: "Auto-Wiring (Verdrahtung)",

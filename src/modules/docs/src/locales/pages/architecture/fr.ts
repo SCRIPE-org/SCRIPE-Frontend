@@ -1,7 +1,3 @@
-/**
- * Docs page locale — FR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const fr = {
   architecture: {
     overview: {
@@ -31,7 +27,7 @@ export const fr = {
       description:
         "Anatomie de Program.cs, pipeline des middlewares, carte de l'injection de dépendances (DI), modèle d'enregistrement des modules et catalogue des contrôleurs.",
       intro:
-        "Le backend de SCRIPE est un Monolithe Modulaire .NET 10 avec 288 lignes dans Program.cs qui relient 16 enregistrements de services, 10 composants middleware et 18 contrôleurs REST. Cette page décortique chaque couche de l'architecture du backend.",
+        "Le backend de SCRIPE est un Monolithe Modulaire .NET 10 avec 30 lignes dans Program.cs qui délèguent la configuration de démarrage à des extensions dédiées. Cette page décortique chaque couche de l'architecture du backend.",
       programCsTitle: "Anatomie de Program.cs",
       programCsIntro:
         "Program.cs est le point d'entrée de l'application et le centre de cblage. Il détecte le mode de déploiement, enregistre les services dans un ordre spécifique et construit le pipeline des middlewares. Le fichier suit une structure claire en 5 sections.",
@@ -165,7 +161,7 @@ export const fr = {
       dontTitle: " NE PAS FAIRE",
       localizationTitle: "Localisation (LanguageProvider)",
       localizationIntro:
-        "La localisation utilise un LanguageProvider personnalisé avec persistance dans le localStorage. Il prend en charge 7 langues, la détection automatique RTL/LTR et les clés de traduction à notation pointée avec interpolation.",
+        "La localisation utilise un LanguageProvider personnalisé avec persistance dans le localStorage plus un système de localisation étendu au module. Les clés partagées (~1 156) résident dans core/locales/. Les clés spécifiques au module sont co-localisées dans le répertoire locales/ de chaque module et importées de manière anticipée au moment de la construction via module-registry.ts pour des chargements de page sans flash.",
       noLocaleFoldersWarning:
         "N'utilisez PAS de dossiers [locale] dans src/app/ ! La localisation est gérée via le contexte LanguageProvider, et non par le routage basé sur des fichiers. Pas de next-intl, pas de next-i18next, pas de langues basées sur l'URL (/en/, /fr/).",
     },

@@ -49,21 +49,26 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "Generated Frontend Module Structure",
     code: `src/modules/{kebab-name}/
-├── di.ts                           # DI container (uses getModuleApiService)
-├── index.ts                        # Public API barrel file
-└── src/
-    ├── domain/
-    │   ├── entities/{Entity}.ts    # Zod schema entity
-    │   └── interfaces/
-    │       ├── I{Entity}Repository.ts
-    │       └── I{Entity}Service.ts
-    ├── data/
-    │   ├── models/{Entity}Model.ts
-    │   ├── mappers/{Entity}Mapper.ts
-    │   └── repositories/{Entity}Repository.ts
-    └── presentation/
-        ├── viewmodels/use{Entity}ViewModel.ts
-        └── views/{Entity}ListView.tsx`,
+├── di.ts                           # DI container (wires all sub-modules)
+├── index.ts                        # Public barrel exports
+└── {sub-module-name}/
+    ├── index.ts                    # Sub-module barrel
+    ├── locales/                    # Sub-module-owned translations
+    │   ├── {sub-module-name}.en.ts
+    │   ├── {sub-module-name}.ar.ts
+    │   └── index.ts
+    └── src/
+        ├── domain/
+        │   ├── entities/{Entity}.ts
+        │   └── interfaces/
+        │       └── I{Entity}Repository.ts
+        ├── data/
+        │   ├── models/{Entity}Model.ts
+        │   ├── mappers/{Entity}Mapper.ts
+        │   └── repositories/{Entity}Repository.ts
+        └── presentation/
+            ├── viewmodels/use{Entity}ViewModel.ts
+            └── views/{Entity}ListView.tsx`,
   },
 
   // new-feature
@@ -195,7 +200,7 @@ $ scripe remove-bg-service Products`,
   },
   {
     type: "table",
-    headers: ["Backend Templates (46 Files)", "Purpose"],
+    headers: ["Backend Templates (54 Files)", "Purpose"],
     rows: [
       ["Entity.cs.hbs", "Domain Object Base Class"],
       ["EntityCommands.cs.hbs", "AstraFlow mediator Create/Update/Delete Records"],
@@ -210,7 +215,7 @@ $ scripe remove-bg-service Products`,
   },
   {
     type: "table",
-    headers: ["Frontend Templates (20 Files)", "Purpose"],
+    headers: ["Frontend Templates (25 Files)", "Purpose"],
     rows: [
       ["di.ts.hbs", "Frontend Module DI Container"],
       ["page.tsx.hbs", "Next.js App Router Page wrapper"],
@@ -446,5 +451,5 @@ registerPage({
   order: 2,
   sections,
   relatedSlugs: ["infrastructure/database-migrations", "commercial/cli-tooling"],
-  lastUpdated: "2026-03-03",
+  lastUpdated: "2026-06-04",
 });

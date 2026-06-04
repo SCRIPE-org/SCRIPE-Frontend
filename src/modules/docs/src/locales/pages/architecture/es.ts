@@ -1,7 +1,3 @@
-/**
- * Docs page locale — ES
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const es = {
   architecture: {
     overview: {
@@ -31,7 +27,7 @@ export const es = {
       description:
         "Anatomía de Program.cs, pipeline de middlewares, mapa de inyección de dependencias (DI), patrón de registro de módulos y catálogo de controladores.",
       intro:
-        "El backend de SCRIPE es un Monolito Modular en .NET 10 con 288 líneas en Program.cs que conectan 16 registros de servicios, 10 componentes de middleware y 18 controladores REST. Esta página desglosa cada capa de la arquitectura del backend.",
+        "El backend de SCRIPE es un Monolito Modular en .NET 10 con 30 líneas en Program.cs que delegan la configuración de inicio a extensiones dedicadas. Esta página desglosa cada capa de la arquitectura del backend.",
       programCsTitle: "Anatomía de Program.cs",
       programCsIntro:
         "Program.cs es el punto de entrada de la aplicación y el centro de cableado. Detecta el modo de despliegue, registra servicios en un orden específico y construye el pipeline de middleware. El archivo sigue una clara estructura de 5 secciones.",
@@ -165,7 +161,7 @@ export const es = {
       dontTitle: " NO HACER",
       localizationTitle: "Localización (LanguageProvider)",
       localizationIntro:
-        "La localización usa un LanguageProvider personalizado con persistencia en localStorage. Soporta 7 idiomas, detección automática de RTL/LTR y claves de traducción con notación de puntos (dot-notation) e interpolación.",
+        "La localización usa un LanguageProvider personalizado con persistencia en localStorage más un sistema de configuración regional con alcance de módulo. Las claves compartidas (~1,156) viven en core/locales/. Las claves específicas del módulo se ubican en el directorio locales/ de cada módulo y se importan con entusiasmo en el momento de la compilación a través de module-registry.ts para cargas de página sin parpadeos.",
       noLocaleFoldersWarning:
         "¡NO uses carpetas [locale] en src/app/! La localización se maneja mediante el contexto de LanguageProvider, no a través de enrutamiento basado en archivos. Ni next-intl, ni next-i18next, ni URLs basadas en idioma (/en/, /es/).",
     },

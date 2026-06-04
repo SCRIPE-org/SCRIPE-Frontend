@@ -1,7 +1,4 @@
-/**
- * Docs frontend — FR
- * Auto-filled 1 keys from EN.
- */
+
 export const fr = {
   frontend: {
     crudSystem: {
@@ -63,7 +60,7 @@ export const fr = {
       title: "Localisation (i18n)",
       description: "LanguageProvider, fonction t(), support RTL et structure du dictionnaire.",
       intro:
-        "SCRIPE embarque un système de localisation propriétaire extrêmement léger et natif à React.",
+        "SCRIPE utilise un système de localisation à l'échelle du module. Les clés partagées (~1 156) résident dans core/locales/. Chaque module possède ses traductions dans un répertoire locales/ co-localisé, importé de manière anticipée au moment de la construction via le module-registry.ts pour des chargements de page sans flash. Prend en charge l'arabe (RTL) et l'anglais (LTR) avec commutation de direction automatique, changements de police et persistance dans localStorage.",
       architectureTitle: "Architecture",
       dictionaryTitle: "Structure du Dictionnaire",
       tFunctionTitle: "Utilisation de la Fonction t()",
@@ -71,12 +68,15 @@ export const fr = {
       rtlIntro:
         "La détection bascule dynamiquement les styles, classes CSS et polices entre les modes LTR et RTL.",
       addingKeysTitle: "Ajout de Nouvelles Clés de Traduction",
-      step1Title: "1. Ajouter au Dictionnaire",
-      step1Desc: "Ouvrir et éditer simultanément les fichiers en.ts et fr.ts.",
-      step2Title: "2. Utiliser dans le Composant",
-      step2Desc: "Utiliser la notation pointée (dot-notation).",
-      step3Title: "3. Gérer l'Interpolation",
-      step3Desc: "Injecter des valeurs dynamiques avec la syntaxe {{variable}}.",
+      step1Title: "1. Créer ou Mettre à Jour les Locales du Module",
+      step1Desc:
+        "Ajoutez de nouvelles clés aux fichiers locales/{module}.en.ts et {module}.ar.ts de votre module. N'ajoutez à core/locales/ que si la clé est réellement partagée (validation, navigation, interface utilisateur commune).",
+      step2Title: "2. Enregistrer dans le Registre de Modules",
+      step2Desc:
+        "Enregistrez les locales de votre module dans core/locales/module-registry.ts. Les nouveaux modules créés via scripe new-module sont automatiquement enregistrés par le CLI.",
+      step3Title: "3. Utiliser t() avec l'Espace de Noms du Module",
+      step3Desc:
+        "Appelez t('nomModule.cheminCle') en utilisant l'espace de noms de votre fichier de langue. Pour l'interpolation, utilisez la syntaxe {{variable}} et transmettez les variables en deuxième argument.",
       noLocaleRoutes:
         "L'application évite volontairement l'enrutement basé sur la langue (type /fr/page) afin de réduire massivement les temps de rendu serveur (SSR).",
       moduleLocaleNote:

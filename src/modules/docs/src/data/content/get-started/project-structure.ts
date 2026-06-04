@@ -39,7 +39,7 @@ const sections: DocSection[] = [
 ├── src/
 │   ├── Host/
 │   │   └── API/
-│   │       ├── Program.cs              # 288 lines — All wiring
+│   │       ├── Program.cs              # 30 lines — Entry point & extension wiring
 │   │       ├── Controllers/            # 18 REST controllers
 │   │       ├── Extensions/             # Middleware, CORS, YARP
 │   │       └── Middleware/             # Request logging, audit
@@ -173,5 +173,5 @@ registerPage({
   order: 4,
   sections,
   relatedSlugs: ["get-started/overview", "architecture/modules"],
-  lastUpdated: "2026-02-19",
+  lastUpdated: "2026-06-04",
 });

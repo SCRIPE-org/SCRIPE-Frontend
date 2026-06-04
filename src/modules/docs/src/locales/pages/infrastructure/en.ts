@@ -1,7 +1,4 @@
-/**
- * Docs page locale — EN
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const en = {
   infrastructure: {
     backgroundJobs: {
@@ -290,7 +287,7 @@ export const en = {
     scripeCli: {
       title: "SCRIPE CLI Tooling",
       description:
-        "Massive productivity with 66 scaffolding templates, multi-database commands, and deep auto-wiring.",
+        "Massive productivity with 79 scaffolding templates, multi-database commands, and deep auto-wiring.",
       intro:
         "The SCRIPE CLI is a production-quality node-based scaffolding tool strictly engineered for the SCRIPE modular monolith. It generates full-stack modules and CRUD features across the .NET backend and Next.js frontend, executing autonomous, surgical wiring connecting Solutions, Configurations, DI containers, Docker services, and permission constants.",
       commandsTitle: "Core Scaffolding Commands",
@@ -312,9 +309,9 @@ export const en = {
       dslIntro:
         "The `--properties` (`-p`) parameter allows highly flexible Domain-Specific definitions mapped universally backwards and forwards across C# to TypeScript Types, culminating in SQL structures and validated Zod schemas.",
       dslSyntaxInfo: "Syntax Rules: PropertyName:Type[:modifier1][:modifier2]",
-      templatesTitle: "66 Immutable Templates",
+      templatesTitle: "79 Immutable Templates",
       templatesIntro:
-        "Instead of writing standard architectures by hand, the CLI enforces pure Clean Architecture through 66 precise Handlebars templates spanning 46 backend files and 20 frontend configurations, locking down quality.",
+        "Instead of writing standard architectures by hand, the CLI enforces pure Clean Architecture through 79 precise Handlebars templates spanning 54 backend files and 25 frontend configurations, locking down quality.",
       securityTitle: "Automated Defense in Depth",
       securityIntro:
         "When generating REST API Controllers from the CLI, highly constrained security attributes are immediately bound directly onto the generated endpoints by default.",

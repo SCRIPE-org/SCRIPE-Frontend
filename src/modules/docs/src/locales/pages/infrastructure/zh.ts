@@ -1,7 +1,4 @@
-/**
- * Docs page locale — ZH
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const zh = {
   infrastructure: {
     backgroundJobs: {
@@ -262,7 +259,7 @@ export const zh = {
     },
     scripeCli: {
       title: "SCRIPE CLI 命令行工具",
-      description: "内置 66 套开发模板、支持多库同步及文件自动化编织的脚手架引擎。",
+      description: "内置 79 套开发模板、支持多库同步及文件自动化编织的脚手架引擎。",
       intro:
         "为 SCRIPE 模块化单体量身定制的 Node.js 命令行。它不但生成前后端源码，还会执行手术刀般的自动化注册 (Auto-Wiring)。",
       commandsTitle: "核心工程构建命令",
@@ -280,8 +277,8 @@ export const zh = {
       dslIntro:
         "通过 `--properties` (-p) 传递，跨 C# 到 TypeScript 进行双重推导并打通 SQL 及 Zod。",
       dslSyntaxInfo: "格式规范: 属性名称:类型[:约束1][:约束2]",
-      templatesTitle: "66 套铁律模板",
-      templatesIntro: "剥离手工操作的冗余，采用 Handlebars 模板锁死整洁架构。",
+      templatesTitle: "79 套铁律模板",
+      templatesIntro: "CLI 无需手动编写标准架构，而是通过 79 个精准的 Handlebars 模板（涵盖 54 个后端文件和 25 个前端配置）来强制执行纯粹的整洁架构 (Clean Architecture)，从而确保代码质量。",
       securityTitle: "默认防御加固",
       securityIntro: "在生成 REST API 的瞬间自动追加拦截策略，防止暴露任何不受保护的接口。",
       autoWiringTitle: "超凡的自动编织技术 (Auto-Wiring)",

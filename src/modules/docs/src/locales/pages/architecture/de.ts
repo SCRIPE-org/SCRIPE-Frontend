@@ -1,7 +1,3 @@
-/**
- * Docs page locale — DE
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const de = {
   architecture: {
     overview: {
@@ -31,7 +27,7 @@ export const de = {
       description:
         "Anatomie der Program.cs, Middleware-Pipeline, DI-Service-Map, Modulregistrierungsmuster und Controller-Katalog.",
       intro:
-        "Das SCRIPE-Backend ist ein .NET 10 Modular Monolith mit 288 Zeilen in der Program.cs, die 16 Service-Registrierungen, 10 Middleware-Komponenten und 18 REST-Controller miteinander verbinden. Diese Seite zerlegt jede Schicht der Backend-Architektur.",
+        "Das SCRIPE-Backend ist ein .NET 10 Modular Monolith mit 30 Zeilen in der Program.cs, die die Startup-Konfiguration an dedizierte Erweiterungen delegieren. Diese Seite zerlegt jede Schicht der Backend-Architektur.",
       programCsTitle: "Anatomie der Program.cs",
       programCsIntro:
         "Die Program.cs ist der Einstiegspunkt und das Verdrahtungszentrum der Anwendung. Sie erkennt den Deployment-Modus, registriert Services in einer bestimmten Reihenfolge und baut die Middleware-Pipeline auf. Die Datei folgt einer klaren 5-Abschnitts-Struktur.",
@@ -165,7 +161,7 @@ export const de = {
       dontTitle: " DON'T",
       localizationTitle: "Lokalisierung (LanguageProvider)",
       localizationIntro:
-        "Die Lokalisierung nutzt einen benutzerdefinierten LanguageProvider mit localStorage-Persistenz. Er unterstützt 7 Sprachen, automatische RTL/LTR-Erkennung und Dot-Notation-Übersetzungsschlüssel mit Interpolation.",
+        "Die Lokalisierung nutzt einen benutzerdefinierten LanguageProvider mit localStorage-Persistenz sowie ein modulbezogenes Gebietsschemasystem. Gemeinsame Schlüssel (~1.156) befinden sich in core/locales/. Modulspezifische Schlüssel befinden sich im Verzeichnis locales/ jedes Moduls und werden zur Erstellungzeit über module-registry.ts eifrig importiert, um seitenweise Laden ohne Flackern zu ermöglichen.",
       noLocaleFoldersWarning:
         "Verwenden Sie KEINE [locale]-Ordner in src/app/! Die Lokalisierung wird über den LanguageProvider-Context und nicht über dateibasiertes Routing abgewickelt. Kein next-intl, kein next-i18next, keine URL-basierte Sprache (/en/, /de/).",
     },

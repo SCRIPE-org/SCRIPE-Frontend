@@ -1,7 +1,4 @@
-/**
- * Docs page locale — AR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const ar = {
   infrastructure: {
     backgroundJobs: {
@@ -245,7 +242,7 @@ export const ar = {
     },
     scripeCli: {
       title: "أداة سطر الأوامر (SCRIPE CLI)",
-      description: "66 قالب لزيادة الإنتاجية ودعم قواعد البيانات المتعددة وعمليات الربط العميق.",
+      description: "79 قالباً لزيادة الإنتاجية ودعم قواعد البيانات المتعددة وعمليات الربط العميق.",
       intro: "توفر الأداة بناء كود نموذجي وهيكل لـ Backend و Frontend بسرعة قياسية.",
       commandsTitle: "أوامر الإنشاء الأساسية",
       commandsIntro: "تضم أمرين أساسيين لعمل هيكل النظام.",
@@ -260,8 +257,8 @@ export const ar = {
       dslTitle: "صياغة خصائص الـ DSL",
       dslIntro: "تتيح التوصيف السريع لمواصفات الكيانات.",
       dslSyntaxInfo: "قواعد بناء الجملة: اسم_الخاصية:النوع[:مُعَدِّل1][:مُعَدِّل2]",
-      templatesTitle: "66 قالباً ثابتاً",
-      templatesIntro: "يتم استخدام قوالب Handlebars لحفظ الجودة.",
+      templatesTitle: "79 قالباً ثابتاً",
+      templatesIntro: "بدلاً من كتابة البنى القياسية يدوياً، تفرض واجهة خط الأوامر بنية نظيفة نقية من خلال 79 قالباً دقيقاً من Handlebars تغطي 54 ملفاً للواجهة الخلفية و25 تكويناً للواجهة الأمامية، مما يضمن الجودة.",
       securityTitle: "الأمان والدفاع العميق",
       securityIntro: "توليد الأدوار وضبط الامتيازات على العمليات بشكل تلقائي.",
       autoWiringTitle: "عملية الربط التلقائي",

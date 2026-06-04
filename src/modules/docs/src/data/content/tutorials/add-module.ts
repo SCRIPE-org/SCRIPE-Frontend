@@ -444,5 +444,5 @@ registerPage({
   order: 1,
   sections,
   relatedSlugs: ["architecture/frontend", "frontend/crud-system", "tutorials/add-backend-module"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-04",
 });

@@ -1,7 +1,3 @@
-/**
- * Docs page locale — AR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const ar = {
   frontend: {
     crudSystem: {
@@ -51,7 +47,7 @@ export const ar = {
       description:
         "LanguageProvider، ترجمات الوحدات، خطاف useModuleLocales، وظيفة t()، دعم RTL، وإضافة مفاتيح ترجمة جديدة.",
       intro:
-        "يستخدم SCRIPE نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. كل وحدة تملك ترجماتها في مجلد locales/ خاص بها، يتم تحميلها كسولاً عبر خطاف useModuleLocales(). يدعم العربية (RTL) والإنجليزية (LTR) مع تبديل تلقائي للاتجاه والخطوط وحفظ التفضيلات في localStorage.",
+        "يستخدم SCRIPE نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. كل وحدة تملك ترجماتها في مجلد locales/ خاص بها، يتم تحميلها مسبقاً في ملف module-registry.ts لضمان عدم حدوث أي وميض للترجمة عند تحميل الصفحة لأول مرة. يدعم العربية (RTL) والإنجليزية (LTR) مع تبديل تلقائي للاتجاه والخطوط وحفظ التفضيلات في localStorage.",
       architectureTitle: "البنية",
       dictionaryTitle: "هيكل القواميس",
       tFunctionTitle: "استخدام وظيفة t()",
@@ -61,9 +57,9 @@ export const ar = {
       step1Title: "1. إنشاء أو تحديث ترجمة الوحدة",
       step1Desc:
         "أضف المفاتيح الجديدة في ملفات locales/{module}.en.ts و {module}.ar.ts الخاصة بالوحدة. أضف إلى core/locales/ فقط إذا كان المفتاح مشتركاً حقاً (تحقق، تنقل، واجهة مشتركة).",
-      step2Title: "2. التسجيل عبر useModuleLocales",
+      step2Title: "2. التسجيل في سجل الوحدات",
       step2Desc:
-        "في مكون العرض، استدعِ useModuleLocales(() => import('../../../locales'), 'module-name') قبل useI18n() لتحميل ترجمات الوحدة كسولاً.",
+        "سجّل ترجمة الوحدة الجديدة في ملف core/locales/module-registry.ts. يتم تسجيل الوحدات الجديدة المنشأة بواسطة أداة scripe CLI تلقائياً.",
       step3Title: "3. استخدام t() مع مساحة اسم الوحدة",
       step3Desc:
         "استدعِ t('moduleName.keyPath') باستخدام مساحة الاسم من ملف الترجمة. للمتغيرات، استخدم صيغة {{variable}} ومرر المتغيرات كمعامل ثانٍ.",

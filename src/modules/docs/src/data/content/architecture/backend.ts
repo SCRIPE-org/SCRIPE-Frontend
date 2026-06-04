@@ -13,7 +13,7 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "Program.cs — Simplified Architecture (288 lines)",
+    filename: "Program.cs — Simplified Architecture (30 lines)",
     code: `var builder = WebApplication.CreateBuilder(args);
 
 // ─── 1. Environment Detection ───────────────────────────
@@ -206,5 +206,5 @@ registerPage({
   order: 2,
   sections,
   relatedSlugs: ["architecture/overview", "architecture/cqrs", "architecture/data-flow"],
-  lastUpdated: "2026-02-19",
+  lastUpdated: "2026-06-04",
 });

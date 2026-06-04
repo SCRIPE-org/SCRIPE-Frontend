@@ -1,7 +1,3 @@
-/**
- * Docs page locale — ZH
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const zh = {
   architecture: {
     overview: {
@@ -29,7 +25,7 @@ export const zh = {
       title: "后端架构",
       description: "Program.cs 解剖、中间件管道、DI 服务映射、模块注册模式和控制器目录。",
       intro:
-        "SCRIPE 后端是一个 .NET 10 模块化单体，在 Program.cs 中仅用 288 行代码就串联了 16 个服务注册、10 个中间件组件和 18 个 REST 控制器。本页将解剖后端架构的每一层。",
+        "SCRIPE 后端是一个 .NET 10 模块化单体，在 Program.cs 中仅有 30 行代码，将启动配置委托给专用扩展。本页将解剖后端架构的每一层。",
       programCsTitle: "Program.cs 解剖",
       programCsIntro:
         "Program.cs 是应用程序的入口点和组装中心。它检测部署模式，以特定顺序注册服务，并构建中间件管道。该文件遵循清晰的 5 节结构。",
@@ -155,7 +151,7 @@ export const zh = {
       dontTitle: " 错误做法",
       localizationTitle: "本地化 (LanguageProvider)",
       localizationIntro:
-        "本地化使用自定义的 LanguageProvider 并带有 localStorage 持久化。它支持 7 种语言、RTL/LTR 自动检测以及带有插值的点表示法 (dot-notation) 翻译键。",
+        "本地化使用带有 localStorage 持久性的自定义 LanguageProvider 以及模块范围的区域设置系统。共享键（~1,156）位于 core/locales/ 中。模块特定的键位于每个模块的 locales/ 目录中，并在构建时通过 module-registry.ts 预先导入，以实现无闪烁的页面加载。",
       noLocaleFoldersWarning:
         "请勿在 src/app/ 中使用 [locale] 文件夹！本地化是通过 LanguageProvider 上下文处理的，而不是基于文件的路由。没有 next-intl，没有 next-i18next，也没有基于 URL 的语言（例如 /en/, /zh/）。",
     },

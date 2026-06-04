@@ -1,7 +1,3 @@
-/**
- * Docs frontend — DE
- * Auto-filled 1 keys from EN.
- */
 export const de = {
   frontend: {
     crudSystem: {
@@ -49,19 +45,22 @@ export const de = {
     localization: {
       title: "Lokalisierung (i18n)",
       description: "LanguageProvider, t()-Funktion, Wörterbücher und RTL-Unterstützung.",
-      intro: "Eine vollständig angepasste React Context i18n-Lösung ohne URL-Routing-Overhead.",
+      intro: "SCRIPE verwendet ein modulbezogenes Lokalisierungssystem. Gemeinsame Schlüssel (~1.156) befinden sich in core/locales/. Jedes Modul besitzt seine Übersetzungen in einem co-lokalisierten locales/-Verzeichnis, die zur Erstellungszeit über module-registry.ts eifrig importiert werden, um seitenweise Laden ohne Flackern zu ermöglichen. Unterstützt Arabisch (RTL) und Englisch (LTR) mit automatischer Ausrichtungsanpassung, Schriftartänderungen und localStorage-Persistenz.",
       architectureTitle: "Architektur",
       dictionaryTitle: "Wörterbuchstruktur",
       tFunctionTitle: "Verwendung der t()-Funktion",
       rtlTitle: "RTL/LTR-Unterstützung",
       rtlIntro: "Automatisches Umschalten von document.dir und CSS-Klassen.",
       addingKeysTitle: "Hinzufügen neuer Übersetzungsschlüssel",
-      step1Title: "1. Zum Wörterbuch hinzufügen",
-      step1Desc: "Fügen Sie Schlüssel zu en.ts und de.ts hinzu.",
-      step2Title: "2. In der Komponente verwenden",
-      step2Desc: "Nutzen Sie t('pfad.zum.schluessel').",
-      step3Title: "3. Interpolation",
-      step3Desc: "Variablen mit {{variable}} übergeben.",
+      step1Title: "1. Modul-Lokalisierung erstellen oder aktualisieren",
+      step1Desc:
+        "Fügen Sie neue Schlüssel zu den locales/{module}.en.ts und {module}.ar.ts Dateien Ihres Moduls hinzu. Fügen Sie diese nur zu core/locales/ hinzu, wenn der Schlüssel wirklich geteilt wird (Validierung, Navigation, gemeinsame UI).",
+      step2Title: "2. Registrierung im Modulregister",
+      step2Desc:
+        "Registrieren Sie die Modul-Lokalisierungsdateien in core/locales/module-registry.ts. Neue Module, die über scripe new-module erstellt wurden, werden automatisch durch das CLI registriert.",
+      step3Title: "3. Verwendung von t() mit Modul-Namensraum",
+      step3Desc:
+        "Rufen Sie t('moduleName.keyPath') mit dem Namensraum aus Ihrer Lokalisierungsdatei auf. Verwenden Sie für die Interpolation die Syntax {{variable}} und übergeben Sie die Variablen als zweites Argument.",
       noLocaleRoutes: "Wir nutzen KEINE dateibasierte Lokalisierung wie [locale]/page.tsx.",
       moduleLocaleNote:
         "The scripe CLI automatically scaffolds locales/ when creating new modules via scripe new-module. Each locale file contains both EN and AR translations, bundled in a single chunk for instant language switching.",

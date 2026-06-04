@@ -1,7 +1,4 @@
-/**
- * Docs page locale — ES
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const es = {
   infrastructure: {
     backgroundJobs: {
@@ -289,7 +286,7 @@ export const es = {
     scripeCli: {
       title: "Herramientas SCRIPE CLI",
       description:
-        "Productividad inmensa con andamiaje de 66 archivos generados de golpe y conexiones automatizadas al ecosistema.",
+        "Productividad inmensa con andamiaje de 79 plantillas generadas de golpe y conexiones automatizadas al ecosistema.",
       intro:
         "La CLI basada en Node que elimina por completo la repetición del código en arquitecturas limpias y enlaza Frontend y Backend.",
       commandsTitle: "Comandos Base de Andamiaje",
@@ -308,8 +305,9 @@ export const es = {
       dslTitle: "Sintaxis DSL para Propiedades",
       dslIntro: "Mediante -p se declara un objeto a lo largo del stack de la aplicación.",
       dslSyntaxInfo: "Sintaxis: NombreCampo:TipoC#[:modificador1][:modificador]",
-      templatesTitle: "Motor de Plantillas con Handlebars",
-      templatesIntro: "66 archivos perfectos asegurados por plantillas de arquitectura invariable.",
+      templatesTitle: "79 Plantillas Inmutables",
+      templatesIntro:
+        "En lugar de escribir arquitecturas estándar a mano, la CLI aplica una Arquitectura Limpia pura a través de 79 plantillas precisas de Handlebars que abarcan 54 archivos de backend y 25 configuraciones de frontend, garantizando la calidad.",
       securityTitle: "Automapeo de Seguridad",
       securityIntro:
         "La CLI protege los controladores autogenerados para requerir perfiles de autenticación automáticamente.",

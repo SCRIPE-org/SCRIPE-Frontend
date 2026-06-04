@@ -1,7 +1,3 @@
-/**
- * Docs page locale — AR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
 export const ar = {
   architecture: {
     overview: {
@@ -31,7 +27,7 @@ export const ar = {
       description:
         "تشريح Program.cs، مسار البرمجيات الوسيطة، خريطة خدمات حقن التبعيات (DI)، نمط تسجيل الوحدات، وقائمة وحدات التحكم.",
       intro:
-        "واجهة SCRIPE الخلفية هي نظام متجانس معياري مبني بـ .NET 10، ويحتوي ملف Program.cs الخاص به على 288 سطراً تربط بين 16 تسجيلاً للخدمات، و10 برمجيات وسيطة، و18 وحدة تحكم REST. تفكك هذه الصفحة كل طبقة من طبقات بنية الواجهة الخلفية.",
+        "واجهة SCRIPE الخلفية هي نظام متجانس معياري مبني بـ .NET 10، ويحتوي ملف Program.cs الخاص به على 30 سطراً تفوض إعدادات بدء التشغيل لفئات توسيع مخصصة. تفكك هذه الصفحة كل طبقة من طبقات بنية الواجهة الخلفية.",
       programCsTitle: "تشريح Program.cs",
       programCsIntro:
         "ملف Program.cs هو نقطة الدخول للتطبيق ومركز الربط. يكتشف وضع النشر، يسجل الخدمات بترتيب معين، ويبني مسار البرمجيات الوسيطة. يتبع الملف هيكلاً واضحاً مكوناً من 5 أقسام.",
@@ -164,7 +160,7 @@ export const ar = {
       dontTitle: "لا تفعل",
       localizationTitle: "الترجمة (LanguageProvider + ترجمات الوحدات)",
       localizationIntro:
-        "تستخدم الترجمة LanguageProvider مخصصاً مع حفظ التفضيلات في localStorage بالإضافة إلى نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. المفاتيح الخاصة بكل وحدة تُحمّل كسولاً عبر useModuleLocales().",
+        "تستخدم الترجمة LanguageProvider مخصصاً مع حفظ التفضيلات في localStorage بالإضافة إلى نظام ترجمة على مستوى الوحدات. المفاتيح المشتركة (~1,156) موجودة في core/locales/. المفاتيح الخاصة بكل وحدة تُسجل مسبقاً في ملف module-registry.ts لضمان تحميل الصفحات دون أي وميض للترجمة.",
       noLocaleFoldersWarning:
         "لا تستخدم مجلدات [locale] في src/app/! يتم التعامل مع الترجمة عبر سياق LanguageProvider، وليس توجيه الملفات.",
     },

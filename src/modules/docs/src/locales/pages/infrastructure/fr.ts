@@ -1,7 +1,4 @@
-/**
- * Docs page locale — FR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
- */
+
 export const fr = {
   infrastructure: {
     backgroundJobs: {
@@ -289,7 +286,7 @@ export const fr = {
     scripeCli: {
       title: "L'Outil SCRIPE CLI",
       description:
-        "Générateur productif via 66 modèles de scaffolding, commandes de multi-base de données et inter-cblage automatique.",
+        "Générateur productif via 79 modèles de scaffolding, commandes de multi-base de données et inter-câblage automatique.",
       intro:
         "La CLI Node.js propriétaire de SCRIPE résout le problème de répétition inhérent aux architectures propres. Elle conçoit des modules full-stack complets qui traversent de React à SQL.",
       commandsTitle: "Commandes de Scaffolding de Base",
@@ -309,9 +306,9 @@ export const fr = {
       dslIntro:
         "Via le paramètre -p, un simple format texte compile les classes C# en même temps que les validateurs React côté client.",
       dslSyntaxInfo: "Règles de Syntaxe : NomPropriété:Type[:Modificateur1][:Modificateur2]",
-      templatesTitle: "66 Modèles Immuables (Templates)",
+      templatesTitle: "79 Modèles Immuables (Templates)",
       templatesIntro:
-        "Alimenté par des modèles Handlebars pour garantir que chaque développeur produit un code 100% conforme aux conventions internes.",
+        "Plutôt que d'écrire des architectures standards à la main, la CLI impose une architecture propre (Clean Architecture) pure grâce à 79 modèles Handlebars précis répartis sur 54 fichiers backend et 25 configurations frontend, garantissant ainsi la qualité.",
       securityTitle: "Défense Automatisée en Profondeur",
       securityIntro:
         "Les contrôleurs générés par CLI naissent sécurisés, incluant automatiquement les balises de permissions RBAC.",
