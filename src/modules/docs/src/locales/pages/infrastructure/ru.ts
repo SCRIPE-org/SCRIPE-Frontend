@@ -87,20 +87,22 @@ export const ru = {
       providerQuartzBest: "Продакшн с Oracle или PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Полный реестр задач — 31 задача",
+      inventoryTitle: "Полный реестр задач — 33 задачи",
       inventoryIntro:
-        "Все 31 повторяющаяся фоновая задача в шести модулях. Каждая задача реализует IAutoRegisteredJob. Cron по умолчанию можно переопределить для каждого окружения в appsettings.json.",
+        "Все 33 повторяющаяся фоновая задача в шести модулях. Каждая задача реализует IAutoRegisteredJob. Cron по умолчанию можно переопределить для каждого окружения в appsettings.json.",
       inventoryColPurpose: "Назначение",
-      inventoryCoreTitle: "Модуль Core (4 задачи)",
-      inventoryIdentityTitle: "Модуль Identity (1 задача)",
+      inventoryCoreTitle: "Модуль Core (5 задач)",
+      inventoryIdentityTitle: "Модуль Identity (2 задачи)",
       inventoryEntitlementsTitle: "Модуль Entitlements (12 задач)",
       inventoryComplianceTitle: "Модуль Compliance (7 задач)",
       inventoryPluginsTitle: "Модуль Plugins (3 задачи)",
       inventoryMarketplaceTitle: "Модуль Marketplace (4 задачи)",
 
       // Job purpose descriptions
+      jobOutboxProcessor: "Обрабатывает входящую очередь (outbox) сообщений и отправляет их в AstraFlow",
       jobOutboxCleanup: "Удаляет обработанные сообщения outbox старше 7 дней",
       jobIdentitySoftDelete: "Навсегда удаляет мягко удаленные сущности Identity",
+      jobAuthSessionCleanup: "Очищает просроченные сессии аутентификации и токены обновления",
       jobEmailProcessing: "Опрашивает и отправляет отложенные email через EmailJobProcessor",
       jobWebhookRetry: "Обрабатывает постоянную очередь повторных попыток вебхуков порциями по 50",
       jobWebhookLogCleanup: "Удаляет журналы доставки вебхуков старше 90 дней",
@@ -318,6 +320,8 @@ export const ru = {
         "Автоматическое склонение и преобразование в PascalCase, kebab-case, SNAKE_CASE.",
       utilityTitle: "Утилиты экосистемы",
       utilityIntro: "Управление пайплайнами сборок (npm, dotnet) из одной консоли.",
+      commandsReferenceTitle: "Полный справочник команд (v4.0)",
+      commandsReferenceIntro: "Интерфейс командной строки (CLI) SCRIPE предлагает 123 команды в 10 различных категориях, охватывающих все аспекты жизненного цикла разработки и эксплуатации. Ниже представлена полная справочная таблица.",
     },
     scripeStudio: {
       title: "SCRIPE Studio",

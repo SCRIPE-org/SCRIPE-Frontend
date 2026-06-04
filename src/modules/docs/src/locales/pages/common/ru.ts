@@ -77,5 +77,6 @@ export const ru = {
     marketplace: "Магазин приложений",
     commercialMarketplace: "Магазин приложений",
     stripeConnect: "Stripe Connect и комиссии",
+    scripeStudio: "SCRIPE Studio",
   },
 };

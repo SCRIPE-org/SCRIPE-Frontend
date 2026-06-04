@@ -77,5 +77,6 @@ export const es = {
     marketplace: "Mercado",
     commercialMarketplace: "Mercado de Aplicaciones",
     stripeConnect: "Stripe Connect y Comisiones",
+    scripeStudio: "SCRIPE Studio",
   },
 };

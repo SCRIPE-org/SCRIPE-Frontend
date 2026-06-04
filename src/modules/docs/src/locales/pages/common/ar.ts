@@ -77,5 +77,6 @@ export const ar = {
     marketplace: "متجر التطبيقات",
     commercialMarketplace: "متجر التطبيقات",
     stripeConnect: "ربط Stripe والعمولات",
+    scripeStudio: "ستوديو SCRIPE",
   },
 };

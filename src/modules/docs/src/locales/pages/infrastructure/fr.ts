@@ -87,20 +87,22 @@ export const fr = {
       providerQuartzBest: "Production avec Oracle ou PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Inventaire Complet des Tâches — 31 Tâches",
+      inventoryTitle: "Inventaire Complet des Tâches — 33 Tâches",
       inventoryIntro:
-        "Les 31 tâches en arrière-plan récurrentes à travers les six modules. Chaque tâche implémente IAutoRegisteredJob. Le Cron par défaut peut être remplacé par environnement dans appsettings.json.",
+        "Les 33 tâches en arrière-plan récurrentes à travers les six modules. Chaque tâche implémente IAutoRegisteredJob. Le Cron par défaut peut être remplacé par environnement dans appsettings.json.",
       inventoryColPurpose: "Objectif",
-      inventoryCoreTitle: "Module Core (4 tâches)",
-      inventoryIdentityTitle: "Module Identity (1 tâche)",
+      inventoryCoreTitle: "Module Core (5 tâches)",
+      inventoryIdentityTitle: "Module Identity (2 tâches)",
       inventoryEntitlementsTitle: "Module Entitlements (12 tâches)",
       inventoryComplianceTitle: "Module Compliance (7 tâches)",
       inventoryPluginsTitle: "Module Plugins (3 tâches)",
       inventoryMarketplaceTitle: "Module Marketplace (4 tâches)",
 
       // Job purpose descriptions
+      jobOutboxProcessor: "Traite les messages outbox en attente et les transmet à AstraFlow",
       jobOutboxCleanup: "Supprime les messages outbox traités de plus de 7 jours",
       jobIdentitySoftDelete: "Supprime définitivement les entités Identity supprimées logiquement",
+      jobAuthSessionCleanup: "Nettoie les sessions d'authentification expirées et les jetons de rafraîchissement",
       jobEmailProcessing: "Interroge et envoie les emails différés via EmailJobProcessor",
       jobWebhookRetry: "Traite la file d'attente de relance de webhook persistant par lots de 50",
       jobWebhookLogCleanup: "Supprime les journaux de livraison webhook de plus de 90 jours",
@@ -341,6 +343,8 @@ export const fr = {
       utilityTitle: "Outils Utilitaires d'Écosystème",
       utilityIntro:
         "Démarre les environnements Node.js et les projets .NET en simultané depuis une invite de commande unique.",
+      commandsReferenceTitle: "Référence Complète des Commandes (v4.0)",
+      commandsReferenceIntro: "L'interface CLI SCRIPE propose 123 commandes réparties dans 10 catégories distinctes, couvrant tous les aspects du cycle de vie du développement et des opérations. Ci-dessous se trouve le tableau de référence complet.",
     },
     scripeStudio: {
       title: "SCRIPE Studio",

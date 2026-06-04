@@ -277,6 +277,12 @@ services.AddScoped<IAutoRegisteredJob>(sp =>
     ],
     rows: [
       [
+        "OutboxProcessorJob",
+        "core-outbox-processor",
+        "* * * * *",
+        "infrastructure.backgroundJobs.jobOutboxProcessor",
+      ],
+      [
         "OutboxCleanupJob",
         "core-outbox-cleanup",
         "0 5 * * *",
@@ -324,6 +330,12 @@ services.AddScoped<IAutoRegisteredJob>(sp =>
         "identity-soft-delete-cleanup",
         "0 3 * * *",
         "infrastructure.backgroundJobs.jobIdentitySoftDelete",
+      ],
+      [
+        "AuthSessionCleanupJob",
+        "identity-auth-session-cleanup",
+        "0 4 * * *",
+        "infrastructure.backgroundJobs.jobAuthSessionCleanup",
       ],
     ],
   },

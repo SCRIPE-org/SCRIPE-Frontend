@@ -85,20 +85,22 @@ export const zh = {
       providerQuartzBest: "带有 Oracle 或 PostgreSQL 的生产环境",
 
       // Jobs Inventory
-      inventoryTitle: "完整任务清单 — 31 个任务",
+      inventoryTitle: "完整任务清单 — 33 个任务",
       inventoryIntro:
-        "跨六个模块的全部 31 个循环后台任务。每个任务都实现了 IAutoRegisteredJob。可以在 appsettings.json 中按环境覆盖默认 Cron。",
+        "跨六个模块的全部 33 个循环后台任务。每个任务都实现了 IAutoRegisteredJob。可以在 appsettings.json 中按环境覆盖默认 Cron。",
       inventoryColPurpose: "目的",
-      inventoryCoreTitle: "Core 模块 (4 个任务)",
-      inventoryIdentityTitle: "Identity 模块 (1 个任务)",
+      inventoryCoreTitle: "Core 模块 (5 个任务)",
+      inventoryIdentityTitle: "Identity 模块 (2 个任务)",
       inventoryEntitlementsTitle: "Entitlements 模块 (12 个任务)",
       inventoryComplianceTitle: "Compliance 模块 (7 个任务)",
       inventoryPluginsTitle: "Plugins 模块 (3 个任务)",
       inventoryMarketplaceTitle: "Marketplace 模块 (4 个任务)",
 
       // Job purpose descriptions
+      jobOutboxProcessor: "处理待处理的 outbox 消息并分发给 AstraFlow",
       jobOutboxCleanup: "删除 7 天前已处理的 outbox 消息",
       jobIdentitySoftDelete: "永久删除软删除的 Identity 实体",
+      jobAuthSessionCleanup: "清理过期的身份验证会话和刷新令牌",
       jobEmailProcessing: "通过 EmailJobProcessor 轮询并发送延迟电子邮件",
       jobWebhookRetry: "以 50 批次处理持久化的 Webhook 重试队列",
       jobWebhookLogCleanup: "删除 90 天前的 webhook 交付日志",
@@ -303,6 +305,8 @@ export const zh = {
       namingIntro: "输入单数大写驼峰单词，它将在全局产生无数正确大小写、复数与宏常量名称。",
       utilityTitle: "工程环境支持",
       utilityIntro: "包含针对 .NET 与 NPM 构建与运行的统合快捷操作。",
+      commandsReferenceTitle: "完整命令参考 (v4.0)",
+      commandsReferenceIntro: "SCRIPE CLI 拥有 10 个不同类别的 123 个命令，涵盖开发和运维生命周期的每个方面。以下是完整的参考表。",
     },
     scripeStudio: {
       title: "SCRIPE Studio",

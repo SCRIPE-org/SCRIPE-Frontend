@@ -408,6 +408,34 @@ $ scripe build backend      # dotnet build
 $ scripe dev frontend       # Next.js Server
 $ scripe dev backend        # Kestrel .NET Engine`,
   },
+
+  // ─── Complete Command Reference (v4.0) ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.scripeCli.commandsReferenceTitle",
+    id: "commands-reference",
+  },
+  {
+    type: "paragraph",
+    contentKey: "infrastructure.scripeCli.commandsReferenceIntro",
+  },
+  {
+    type: "table",
+    headers: ["Category", "Key Commands", "Scope & Actions"],
+    rows: [
+      ["Scaffolding", "new-module, new-feature, new-event, new-spec, new-validator, new-enum, new-middleware, new-hook, new-component, new-page, new-dto, new-mapper, new-repository, new-service, new-seeder, new-test, new-controller, new-job, new-integration-test, scaffold", "Generate full-stack domain layers, controllers, viewmodels, database migrations, and clean architecture contracts."],
+      ["Database", "db add-migration, db update, db remove-migration, db seed, db reset, db status, db backup", "Run migrations across SqlServer/Oracle/PostgreSql, seed development/production data, reset tables, or schedule backups."],
+      ["Development", "dev frontend, dev backend, dev all", "Start hot-reloaded development hosts for Kestrel and Next.js concurrently."],
+      ["Building", "build backend, build frontend, build all, build cli", "Compile specific parts of the modular monolith and build the CLI from source."],
+      ["Testing", "test, test backend, test frontend, e2e", "Execute unit and integration tests, run coverage, or trigger Playwright E2E browser tests."],
+      ["Code Quality", "lint, format, validate-locales, arch-check", "Enforce linting/formatting rules, sync translations parity, or execute deep architecture audits."],
+      ["Docker", "docker up, docker down, docker build, docker logs, docker status", "Orchestrate local containerized services (Redis, RabbitMQ, Gateway)."],
+      ["Security", "env init, env validate, secrets generate, audit", "Scaffold environment variables, check appsettings, generate cryptography keys, and audit package vulnerabilities."],
+      ["Diagnostics", "info, doctor, list, clean", "Analyze system prerequisites, inspect registered modules/routes/permissions, and prune bin/obj/cache folders."],
+      ["Ecosystem", "trace, benchmark, changelog, publish, config", "Inspect OpenTelemetry logs, execute k6 load tests, generate release changelogs, and manage config options."]
+    ]
+  },
 ];
 
 registerPage({

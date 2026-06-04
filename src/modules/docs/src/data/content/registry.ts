@@ -125,6 +125,7 @@ import "./infrastructure/health-checks";
 import "./infrastructure/observability";
 import "./infrastructure/audit-trail";
 import "./infrastructure/load-testing";
+import "./infrastructure/scripe-studio";
 
 // Tutorials
 import "./tutorials/add-module";

@@ -85,20 +85,22 @@ export const de = {
       providerQuartzBest: "Produktion mit Oracle oder PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Vollständiges Job-Inventar — Alle 31",
+      inventoryTitle: "Vollständiges Job-Inventar — Alle 33",
       inventoryIntro:
-        "Alle 31 wiederkehrenden Hintergrundjobs über die sechs Module hinweg. Jeder Job implementiert IAutoRegisteredJob. Standard-Crons können pro Umgebung in appsettings.json überschrieben werden.",
+        "Alle 33 wiederkehrenden Hintergrundjobs über die sechs Module hinweg. Jeder Job implementiert IAutoRegisteredJob. Standard-Crons können pro Umgebung in appsettings.json überschrieben werden.",
       inventoryColPurpose: "Zweck",
-      inventoryCoreTitle: "Core-Modul (4 Jobs)",
-      inventoryIdentityTitle: "Identity-Modul (1 Job)",
+      inventoryCoreTitle: "Core-Modul (5 Jobs)",
+      inventoryIdentityTitle: "Identity-Modul (2 Jobs)",
       inventoryEntitlementsTitle: "Entitlements-Modul (12 Jobs)",
       inventoryComplianceTitle: "Compliance-Modul (7 Jobs)",
       inventoryPluginsTitle: "Plugins-Modul (3 Jobs)",
       inventoryMarketplaceTitle: "Marketplace-Modul (4 Jobs)",
 
       // Job purpose descriptions
+      jobOutboxProcessor: "Verarbeitet ausstehende Outbox-Nachrichten und leitet sie an AstraFlow weiter",
       jobOutboxCleanup: "Löscht verarbeitete Outbox-Nachrichten älter als 7 Tage",
       jobIdentitySoftDelete: "Löscht permanent soft-deleted Identity-Entitäten",
+      jobAuthSessionCleanup: "Bereinigt abgelaufene Authentifizierungssitzungen und Refresh-Token",
       jobEmailProcessing: "Pusht verzögerte E-Mails über den EmailJobProcessor",
       jobWebhookRetry: "Verarbeitet persistierte Webhook-Retry-Warteschlange in 50er-Batches",
       jobWebhookLogCleanup: "Löscht Webhook-Lieferprotokolle älter als 90 Tage",
@@ -309,6 +311,8 @@ export const de = {
       namingIntro: "Behandelt PascalCase, kebab-case und Pluralisierung automatisch.",
       utilityTitle: "Ecosystem-Werkzeuge",
       utilityIntro: "Steuerung von Build-Pipelines und Entwicklungsservern aus einem Prompt.",
+      commandsReferenceTitle: "Vollständige Befehlsreferenz (v4.0)",
+      commandsReferenceIntro: "Die SCRIPE-CLI bietet 123 Befehle in 10 verschiedenen Kategorien, die alle Phasen des Entwicklungs- und Betriebslebenszyklus abdecken. Unten finden Sie die vollständige Referenztabelle.",
     },
     scripeStudio: {
       title: "SCRIPE Studio",

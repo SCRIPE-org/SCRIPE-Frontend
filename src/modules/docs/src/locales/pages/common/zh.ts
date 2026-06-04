@@ -77,5 +77,6 @@ export const zh = {
     marketplace: "应用市场",
     commercialMarketplace: "应用市场",
     stripeConnect: "Stripe Connect 与平台佣金",
+    scripeStudio: "SCRIPE Studio",
   },
 };

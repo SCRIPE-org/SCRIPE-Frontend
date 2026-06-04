@@ -495,6 +495,12 @@ export const navigationData: DocCategoryData[] = [
         slug: "infrastructure/load-testing",
         order: 10,
       },
+      {
+        id: "infra-scripe-studio",
+        titleKey: "infrastructure.scripeStudio.title",
+        slug: "infrastructure/scripe-studio",
+        order: 11,
+      },
     ],
   },
 

@@ -85,20 +85,22 @@ export const es = {
       providerQuartzBest: "Producción con Oracle o PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Inventario Completo de Trabajos — Todos los 31",
+      inventoryTitle: "Inventario Completo de Trabajos — Todos los 33",
       inventoryIntro:
-        "Los 31 trabajos recurrentes en segundo plano en los seis módulos. Cada trabajo implementa IAutoRegisteredJob. Los Cron predeterminados se pueden anular por entorno en appsettings.json.",
+        "Los 33 trabajos recurrentes en segundo plano en los seis módulos. Cada trabajo implementa IAutoRegisteredJob. Los Cron predeterminados se pueden anular por entorno en appsettings.json.",
       inventoryColPurpose: "Propósito",
-      inventoryCoreTitle: "Módulo Core (4 Trabajos)",
-      inventoryIdentityTitle: "Módulo Identity (1 Trabajo)",
+      inventoryCoreTitle: "Módulo Core (5 Trabajos)",
+      inventoryIdentityTitle: "Módulo Identity (2 Trabajos)",
       inventoryEntitlementsTitle: "Módulo Entitlements (12 Trabajos)",
       inventoryComplianceTitle: "Módulo Compliance (7 Trabajos)",
       inventoryPluginsTitle: "Módulo Plugins (3 Trabajos)",
       inventoryMarketplaceTitle: "Módulo Marketplace (4 Trabajos)",
 
       // Job purpose descriptions
+      jobOutboxProcessor: "Procesa mensajes outbox pendientes y los envía a AstraFlow",
       jobOutboxCleanup: "Elimina mensajes outbox procesados de más de 7 días",
       jobIdentitySoftDelete: "Elimina permanentemente entidades Identity eliminadas lógicamente",
+      jobAuthSessionCleanup: "Limpia sesiones de autenticación caducadas y tokens de actualización",
       jobEmailProcessing:
         "Consulta y envía correos electrónicos retrasados a través de EmailJobProcessor",
       jobWebhookRetry: "Procesa la cola de reintentos de webhooks guardados en lotes de 50",
@@ -335,6 +337,8 @@ export const es = {
         "No importa si pasas el nombre en minúscula, guion o Pascal: lo transforma correctamente.",
       utilityTitle: "Aceleradores de Flujo",
       utilityIntro: "Comandos de arranque npm y dotnet unificados.",
+      commandsReferenceTitle: "Referencia Completa de Comandos (v4.0)",
+      commandsReferenceIntro: "La CLI de SCRIPE cuenta con 123 comandos en 10 categorías distintas, que cubren todos los aspectos del ciclo de vida del desarrollo y las operaciones. A continuación se muestra la tabla de referencia completa.",
     },
     scripeStudio: {
       title: "SCRIPE Studio",

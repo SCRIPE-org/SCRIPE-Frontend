@@ -84,21 +84,23 @@ export const en = {
       providerQuartzBest: "Production with Oracle or PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Complete Jobs Inventory — 31 Jobs",
+      inventoryTitle: "Complete Jobs Inventory — 33 Jobs",
       inventoryIntro:
-        "All 31 recurring background jobs across the six modules. Every job implements IAutoRegisteredJob. The Default Cron can be overridden per-environment in appsettings.json under BackgroundJobs.Jobs.",
+        "All 33 recurring background jobs across the six modules. Every job implements IAutoRegisteredJob. The Default Cron can be overridden per-environment in appsettings.json under BackgroundJobs.Jobs.",
       inventoryColPurpose: "Purpose",
-      inventoryCoreTitle: "Core Module (4 jobs)",
-      inventoryIdentityTitle: "Identity Module (1 job)",
+      inventoryCoreTitle: "Core Module (5 jobs)",
+      inventoryIdentityTitle: "Identity Module (2 jobs)",
       inventoryEntitlementsTitle: "Entitlements Module (12 jobs)",
       inventoryComplianceTitle: "Compliance Module (7 jobs)",
       inventoryPluginsTitle: "Plugins Module (3 jobs)",
       inventoryMarketplaceTitle: "Marketplace Module (4 jobs)",
 
       // Job purpose descriptions
+      jobOutboxProcessor: "Processes pending outbox messages and dispatches them to AstraFlow",
       jobOutboxCleanup: "Deletes processed outbox messages older than 7 days",
       jobIdentitySoftDelete:
         "Permanently deletes soft-deleted Identity entities after retention period",
+      jobAuthSessionCleanup: "Cleans up expired auth sessions, refresh tokens, and temporary login codes",
       jobEmailProcessing: "Polls and dispatches deferred emails via EmailJobProcessor",
       jobWebhookRetry: "Processes persistent webhook retry queue in batches of 50",
       jobWebhookLogCleanup: "Deletes webhook delivery logs older than 90 days",
@@ -344,6 +346,9 @@ export const en = {
       utilityTitle: "Ecosystem Utility Tools",
       utilityIntro:
         "Control build pipelines, package installations, and live development servers spanning across Node.js and .NET instantly from a unified prompt.",
+      commandsReferenceTitle: "Complete Command Reference (v4.0)",
+      commandsReferenceIntro:
+        "SCRIPE CLI features 123 commands across 10 distinct categories, covering every aspect of the development and operations lifecycle. Below is the complete reference table.",
     },
     scripeStudio: {
       title: "SCRIPE Studio",

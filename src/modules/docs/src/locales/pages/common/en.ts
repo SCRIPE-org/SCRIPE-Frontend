@@ -77,5 +77,6 @@ export const en = {
     marketplace: "Marketplace",
     commercialMarketplace: "App Marketplace",
     stripeConnect: "Stripe Connect & Commissions",
+    scripeStudio: "SCRIPE Studio",
   },
 };
