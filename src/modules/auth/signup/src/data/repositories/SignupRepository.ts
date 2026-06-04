@@ -39,6 +39,7 @@ export class SignupRepository implements ISignupRepository {
     emailVerificationToken: string;
     workspaceName: string;
     subdomain: string;
+    username?: string;
     region?: string | null;
     defaultLocale?: string | null;
     timezone?: string | null;

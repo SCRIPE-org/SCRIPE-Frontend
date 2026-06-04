@@ -190,6 +190,46 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           )}
         </div>
 
+        {/* Admin Username */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="signup-username"
+              className="text-xs font-medium"
+              style={{ color: "rgba(245,242,255,0.62)" }}
+            >
+              Admin username
+            </Label>
+            <span className="text-[10px]" style={{ color: "rgba(245,242,255,0.4)" }}>
+              Optional
+            </span>
+          </div>
+          <Input
+            id="signup-username"
+            type="text"
+            placeholder="admin"
+            value={vm.wizardData.username}
+            onChange={(e) => {
+              const val = e.target.value.replace(/[^a-zA-Z0-9_]/g, "");
+              vm.updateField("username", val);
+            }}
+            className="h-11"
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              borderColor: "rgba(255,255,255,0.08)",
+              color: "#F5F2FF",
+            }}
+          />
+          <p className="text-[11px] font-medium leading-relaxed animate-sxRise" style={{ color: "rgba(245,242,255,0.45)" }}>
+            Your final login username will be:{" "}
+            <span className="font-mono" style={{ color: "#D8B4FE" }}>
+              {vm.wizardData.subdomain ? vm.wizardData.subdomain.toUpperCase() : "[subdomain]"}
+              _
+              {vm.wizardData.username ? vm.wizardData.username.toLowerCase() : "admin"}
+            </span>
+          </p>
+        </div>
+
         {/* Error */}
         {vm.error && (
           <div

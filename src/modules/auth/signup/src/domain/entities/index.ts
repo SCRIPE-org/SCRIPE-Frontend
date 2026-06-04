@@ -22,6 +22,7 @@ export interface SignupWizardData {
   // Step 4 — Workspace
   workspaceName: string;
   subdomain: string;
+  username: string;
   region: string | null;
   defaultLocale: "en" | "ar";
   timezone: string;
