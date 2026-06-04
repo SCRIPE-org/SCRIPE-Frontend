@@ -70,5 +70,12 @@ export const ru = {
     commercialSupport: "Поддержка и ресурсы",
     commercialModules: "Модули",
     commercialEntitlements: "Права доступа",
+    compliance: "Комплаенс",
+    commercialCompliance: "Комплаенс",
+    plugins: "Система плагинов",
+    commercialPlugins: "Система плагинов",
+    marketplace: "Магазин приложений",
+    commercialMarketplace: "Магазин приложений",
+    stripeConnect: "Stripe Connect и комиссии",
   },
 };

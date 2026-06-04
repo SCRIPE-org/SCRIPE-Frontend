@@ -70,6 +70,15 @@ export const es = {
         "Modelo sin estado (Stateless), donde el acceso vive en la memoria y el token de refresco en la Base de Datos o Cookie Segura.",
       cookieAuthTip:
         "Para el máximo nivel de seguridad, los JWT de actualización (refresh) deben enviarse a través de cookies HttpOnly y SameSite=Strict en el frontend.",
+      ssoSuspensionTitle: "Puerta de Suspensión de Inquilino SSO",
+      ssoSuspensionIntro: "El ExternalLoginCommandHandler ahora incluye una puerta de seguridad para la suspensión del inquilino. Antes de emitir un JWT después de la autenticación SSO/OIDC, el controlador verifica el estado del inquilino del administrador. Si el inquilino está Suspendido o Cancelado, el inicio de sesión se rechaza con un error localizado, lo que evita que los usuarios desactivados eviten los controles de inicio de sesión estándar a través de SSO.",
+      ssoSuspensionWarning: "Sin esta puerta, los usuarios de SSO podrían autenticarse a través de un IdP externo (por ejemplo, Google, Azure AD) y recibir un JWT de SCRIPE válido incluso si su inquilino ha sido suspendido o cancelado. Esta era una brecha de seguridad crítica que ha sido remediada.",
+      passkeysTitle: "Llaves de paso (Passkeys / WebAuthn)",
+      passkeysIntro: "Las llaves de paso proporcionan un mecanismo de autenticación sin contraseña mediante criptografía de clave pública. Durante el registro, el navegador genera un par de claves pública y privada, envía la clave pública y el ID de credencial al servidor, y mantiene la clave privada segura en el autenticador del dispositivo. Durante el inicio de sesión, el servidor emite un desafío que el autenticador firma con la clave privada.",
+      samlTitle: "Federación Empresarial SAML 2.0",
+      samlIntro: "SAML 2.0 permite el inicio de sesión único (SSO) empresarial al federar la autenticación entre SCRIPE (que actúa como proveedor de servicios) y los proveedores de identidad corporativos (IdP) como Okta o Active Directory. El intercambio utiliza aserciones basadas en XML firmadas con certificados X.509 para verificar la identidad y mapear roles.",
+      qrTitle: "Handshake de Inicio de Sesión con Código QR",
+      qrIntro: "El inicio de sesión con código QR permite a los usuarios autenticarse instantáneamente en un cliente web escaneando un código QR con su aplicación móvil ya autenticada. El cliente web sondea el estado de la sesión hasta que la aplicación móvil confirma la sesión firmando el token de sesión y enviándolo junto con las credenciales de sesión activas del usuario.",
     },
     sso: {
       title: "Single Sign-On (SSO)",

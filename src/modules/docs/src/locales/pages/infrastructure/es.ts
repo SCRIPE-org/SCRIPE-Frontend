@@ -7,7 +7,7 @@ export const es = {
     backgroundJobs: {
       title: "Trabajos en Segundo Plano (Background Jobs)",
       description:
-        "Trabajos recurrentes autodescubiertos, independientes del proveedor (Native, Hangfire, Quartz.NET) — 24 trabajos en 4 módulos sin cableado manual.",
+        "Trabajos recurrentes autodescubiertos, independientes del proveedor (Native, Hangfire, Quartz.NET) — 31 trabajos en 6 módulos sin cableado manual.",
       intro:
         "El sistema de trabajos en segundo plano de SCRIPE se basa en un principio: escribir una vez, ejecutar en cualquier proveedor. Cada trabajo implementa IAutoRegisteredJob y se descubre automáticamente al inicio. Cambiar entre Native, Hangfire o Quartz es solo un cambio de configuración en appsettings.json — cero cambios de código.",
 
@@ -85,14 +85,16 @@ export const es = {
       providerQuartzBest: "Producción con Oracle o PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Inventario Completo de Trabajos — Todos los 24",
+      inventoryTitle: "Inventario Completo de Trabajos — Todos los 31",
       inventoryIntro:
-        "Los 24 trabajos recurrentes en segundo plano en los cuatro módulos. Cada trabajo implementa IAutoRegisteredJob. Los Cron predeterminados se pueden anular por entorno en appsettings.json.",
+        "Los 31 trabajos recurrentes en segundo plano en los seis módulos. Cada trabajo implementa IAutoRegisteredJob. Los Cron predeterminados se pueden anular por entorno en appsettings.json.",
       inventoryColPurpose: "Propósito",
-      inventoryCoreTitle: "Módulo Core (1 Trabajo)",
-      inventoryIdentityTitle: "Módulo Identity (4 Trabajos)",
+      inventoryCoreTitle: "Módulo Core (4 Trabajos)",
+      inventoryIdentityTitle: "Módulo Identity (1 Trabajo)",
       inventoryEntitlementsTitle: "Módulo Entitlements (12 Trabajos)",
       inventoryComplianceTitle: "Módulo Compliance (7 Trabajos)",
+      inventoryPluginsTitle: "Módulo Plugins (3 Trabajos)",
+      inventoryMarketplaceTitle: "Módulo Marketplace (4 Trabajos)",
 
       // Job purpose descriptions
       jobOutboxCleanup: "Elimina mensajes outbox procesados de más de 7 días",
@@ -124,6 +126,13 @@ export const es = {
       jobRetentionEnforcement: "Aplica políticas de retención de datos",
       jobConsentExpiry: "Invalida el consentimiento de usuario expirado",
       jobReportGeneration: "Consulta y genera informes de cumplimiento pendientes cada 2 minutos",
+      jobPluginsSoftDelete: "Elimina permanentemente plugins, definiciones y registros de ejecución eliminados lógicamente después del período de retención",
+      jobPluginHealthCheck: "Sondea entornos sandbox de plugins activos e informa su estado de salud",
+      jobPluginDataCleanup: "Limpia las claves de almacenamiento temporal de bases de datos caducadas creadas por los plugins",
+      jobMarketplaceSoftDelete: "Elimina permanentemente listados, envíos, perfiles y reseñas eliminados lógicamente después del período de retención",
+      jobPayoutBatch: "Reúne ganancias pendientes en transferencias por lotes y ejecuta pagos a través de Stripe Connect",
+      jobStaleSubmissionReminder: "Busca envíos de aplicaciones pendientes de revisión por más de 7 días y alerta a los administradores",
+      jobInstallCountAggregation: "Agrega recuentos de instalación transitorios en contadores estáticos de listados de aplicaciones",
 
       // Creating a New Job
       newJobTitle: "Creación de un Nuevo Trabajo",

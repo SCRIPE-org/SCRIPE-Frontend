@@ -7,7 +7,7 @@ export const ar = {
     backgroundJobs: {
       title: "وظائف الخلفية (Background Jobs)",
       description:
-        "وظائف متكررة مستقلة عن المزود (Native, Hangfire, Quartz.NET) — 24 وظيفة عبر 4 وحدات، بدون تسجيل يدوي.",
+        "وظائف متكررة مستقلة عن المزود (Native, Hangfire, Quartz.NET) — 31 وظيفة عبر 6 وحدات، بدون تسجيل يدوي.",
       intro:
         "نظام وظائف الخلفية في SCRIPE مبني على مبدأ واحد: اكتب مرة واحدة، شغّل على أي مزود. كل وظيفة تطبّق IAutoRegisteredJob وتُكتشف تلقائياً عند التشغيل. التبديل بين Native أو Hangfire أو Quartz تغيير إعداد واحد في appsettings.json — بدون أي تعديل في الكود.",
       architectureTitle: "نظرة عامة على البنية",
@@ -73,14 +73,16 @@ export const ar = {
       providerNativeBest: "التطوير المحلي، اختبار الوحدات",
       providerHangfireBest: "الإنتاج مع SQL Server",
       providerQuartzBest: "الإنتاج مع Oracle أو PostgreSQL",
-      inventoryTitle: "قائمة الوظائف الكاملة — 24 وظيفة",
+      inventoryTitle: "قائمة الوظائف الكاملة — 31 وظيفة",
       inventoryIntro:
-        "جميع الوظائف الـ 24 المتكررة عبر الوحدات الأربع. كل وظيفة تطبّق IAutoRegisteredJob. يمكن تجاوز CRON الافتراضي لكل بيئة في appsettings.json.",
+        "جميع الوظائف الـ 31 المتكررة عبر الوحدات الست. كل وظيفة تطبّق IAutoRegisteredJob. يمكن تجاوز CRON الافتراضي لكل بيئة في appsettings.json.",
       inventoryColPurpose: "الغرض",
-      inventoryCoreTitle: "وحدة Core (وظيفة واحدة)",
-      inventoryIdentityTitle: "وحدة Identity (4 وظائف)",
+      inventoryCoreTitle: "وحدة Core (4 وظائف)",
+      inventoryIdentityTitle: "وحدة Identity (وظيفة واحدة)",
       inventoryEntitlementsTitle: "وحدة Entitlements (12 وظيفة)",
       inventoryComplianceTitle: "وحدة Compliance (7 وظائف)",
+      inventoryPluginsTitle: "وحدة Plugins (3 وظائف)",
+      inventoryMarketplaceTitle: "وحدة Marketplace (4 وظائف)",
       jobOutboxCleanup: "يحذف رسائل Outbox المعالجة الأقدم من 7 أيام",
       jobIdentitySoftDelete: "يحذف نهائياً كيانات Identity المحذوفة ناعماً بعد فترة الاحتفاظ",
       jobEmailProcessing: "يستطلع ويرسل الرسائل الإلكترونية المؤجلة عبر EmailJobProcessor",
@@ -109,6 +111,13 @@ export const ar = {
       jobRetentionEnforcement: "يطبق سياسات الاحتفاظ بالبيانات (يعمل كل أحد الساعة 1:00 صباحاً)",
       jobConsentExpiry: "تنتهي صلاحية موافقات المستخدمين المنتهية (يعمل عند منتصف الليل يومياً)",
       jobReportGeneration: "يستطلع وينشئ تقارير الامتثال المعلقة كل دقيقتين",
+      jobPluginsSoftDelete: "يحذف نهائياً كيانات Plugins والتوجيهات وسجلات التنفيذ المحذوفة ناعماً بعد فترة الاحتفاظ",
+      jobPluginHealthCheck: "يستطلع بيئات صناديق الرمل للبرمجيات المساعدة النشطة ويبلغ عن حالة الصحة",
+      jobPluginDataCleanup: "يُقلّم مفاتيح تخزين قاعدة البيانات المؤقتة منتهية الصلاحية والمنشأة بواسطة البرمجيات المساعدة",
+      jobMarketplaceSoftDelete: "يحذف نهائياً كيانات Marketplace والمراجعات وملفات تعريف المطورين المحذوفة ناعماً بعد فترة الاحتفاظ",
+      jobPayoutBatch: "يجمع الأرباح المعلقة في تحويلات دفعية وينفذ المدفوعات عبر Stripe Connect",
+      jobStaleSubmissionReminder: "يبحث عن طلبات مراجعة التطبيقات المعلقة لأكثر من 7 أيام وينبه المشرفين",
+      jobInstallCountAggregation: "يجمع أعداد التثبيت المؤقتة في عدادات عرض التطبيقات الثابتة",
       newJobTitle: "إنشاء وظيفة خلفية جديدة",
       newJobIntro:
         "اتبع هذه الخطوات الأربع بالضبط. الملفات الإلزامية الوحيدة هي فئة الوظيفة وسطرا تسجيل DI. كل شيء آخر يربطه محرك الاكتشاف تلقائياً.",

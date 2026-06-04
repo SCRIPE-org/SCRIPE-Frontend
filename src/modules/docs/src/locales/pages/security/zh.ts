@@ -55,6 +55,15 @@ export const zh = {
       sessionIntro: "采用无状态 JWT 机制，不在服务器内存中保留用户会话，提高了并发性能。",
       cookieAuthTip:
         "为获得最佳安全性，请配置通过 HttpOnly 且 SameSite=Strict 的 Cookie 来传输 Refresh Token。",
+      ssoSuspensionTitle: "SSO 租户停用安全关卡",
+      ssoSuspensionIntro: "ExternalLoginCommandHandler 现在包含租户停用安全关卡。在 SSO/OIDC 身份验证后签发 JWT 之前，处理程序会检查管理员的租户状态。如果租户被停用或取消，登录将被拒绝并返回本地化错误，从而防止被停用的用户通过 SSO 绕过标准的登录检查。",
+      ssoSuspensionWarning: "如果没有这个关卡，SSO 用户可以通过外部身份提供商（例如 Google、Azure AD）进行身份验证并获得有效的 SCRIPE JWT，即使他们的租户已被停用或取消。这是一个已修复的关键安全漏洞。",
+      passkeysTitle: "通行密钥 (Passkeys / WebAuthn)",
+      passkeysIntro: "通行密钥使用公钥加密技术提供无密码身份验证机制。在注册期间，浏览器生成公钥-私钥对，将公钥和凭据ID发送给服务器，并将私钥安全地保存在设备的认证器中。在登录期间，服务器发布一个挑战，认证器使用私钥对其进行签名。",
+      samlTitle: "SAML 2.0 企业联合认证",
+      samlIntro: "SAML 2.0 通过在 SCRIPE（作为服务提供商）与企业身份提供商（IdP，如 Okta 或 Active Directory）之间联合身份验证，实现企业单点登录 (SSO)。握手利用使用 X.509 证书签名的基于 XML 的断言来验证身份并映射角色。",
+      qrTitle: "QR 码登录握手",
+      qrIntro: "QR 码登录允许用户通过使用已通过身份验证的移动应用程序扫描 QR 码，在 Web 客户端上立即进行身份验证。Web 客户端轮询会话状态，直到移动应用程序通过对会话令牌进行签名并将其与用户活动的会话凭据一起提交来确认会话。",
     },
     sso: {
       title: "单点登录 (SSO)",

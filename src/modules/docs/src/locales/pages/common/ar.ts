@@ -72,5 +72,10 @@ export const ar = {
     commercialEntitlements: "الصلاحيات",
     compliance: "الامتثال",
     commercialCompliance: "الامتثال",
+    plugins: "نظام الملحقات",
+    commercialPlugins: "نظام الملحقات",
+    marketplace: "متجر التطبيقات",
+    commercialMarketplace: "متجر التطبيقات",
+    stripeConnect: "ربط Stripe والعمولات",
   },
 };

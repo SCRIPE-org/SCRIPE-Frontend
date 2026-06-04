@@ -32,6 +32,8 @@ import { ar as pageTenantPlans } from "../pages/tenant-plans/ar";
 import { ar as pageUserSubscriptions } from "../pages/user-subscriptions/ar";
 import { ar as pageTenantContextGate } from "../pages/tenant-context-gate/ar";
 import { ar as pageRevenueAnalytics } from "../pages/revenue-analytics/ar";
+import { ar as marketplace } from "../pages/marketplace/ar";
+import { ar as stripeConnect } from "../pages/stripe-connect/ar";
 
 import { mergeAll } from "./utils";
 
@@ -63,5 +65,7 @@ export const allDocsAr: Record<string, any> = mergeAll(
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics
+  pageRevenueAnalytics,
+  marketplace,
+  stripeConnect
 );

@@ -66,6 +66,13 @@ import "./modules/entitlements/user-subscriptions";
 
 // Modules (Revenue Analytics — Phase 11)
 import "./modules/entitlements/revenue-analytics";
+import "./modules/entitlements/stripe-connect";
+
+// Modules (Marketplace)
+import "./modules/marketplace/marketplace-overview";
+import "./modules/marketplace/marketplace-catalog";
+import "./modules/marketplace/marketplace-submissions";
+import "./modules/marketplace/marketplace-financials";
 
 // Modules (Plugins — Phase 15)
 import "./modules/plugins/plugins-overview";
@@ -203,6 +210,7 @@ import "./commercial/entitlements-overrides";
 import "./commercial/billing-payments";
 import "./commercial/entitlements-tenant-plans";
 import "./commercial/entitlements-user-subscriptions";
+import "./commercial/stripe-connect";
 
 // Modules (Commercial Plugins — Phase 15)
 import "./commercial/plugins-overview";
@@ -212,3 +220,7 @@ import "./commercial/compliance-overview";
 import "./commercial/compliance-gdpr";
 import "./commercial/compliance-dsr";
 import "./commercial/compliance-roi";
+
+// Modules (Commercial Marketplace)
+import "./commercial/marketplace-overview";
+import "./commercial/marketplace-financials";

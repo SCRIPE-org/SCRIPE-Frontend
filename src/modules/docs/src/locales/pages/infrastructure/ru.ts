@@ -7,7 +7,7 @@ export const ru = {
     backgroundJobs: {
       title: "Фоновые задачи (Background Jobs)",
       description:
-        "Автоматически обнаруживаемые, независимые от провайдера (Native, Hangfire, Quartz.NET) повторяющиеся задачи — 24 задачи в 4 модулях, без ручного связывания.",
+        "Автоматически обнаруживаемые, независимые от провайдера (Native, Hangfire, Quartz.NET) повторяющиеся задачи — 31 задача в 6 модулях, без ручного связывания.",
       intro:
         "Система фоновых задач SCRIPE построена на принципе: написать один раз, запустить на любом провайдере. Каждая задача реализует интерфейс IAutoRegisteredJob и автоматически обнаруживается при запуске. Переключение между Native, Hangfire или Quartz — это просто изменение конфигурации в appsettings.json, без необходимости изменения кода.",
 
@@ -87,14 +87,16 @@ export const ru = {
       providerQuartzBest: "Продакшн с Oracle или PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Полный реестр задач — 24 задачи",
+      inventoryTitle: "Полный реестр задач — 31 задача",
       inventoryIntro:
-        "Все 24 повторяющиеся фоновые задачи в четырех модулях. Каждая задача реализует IAutoRegisteredJob. Cron по умолчанию можно переопределить для каждого окружения в appsettings.json.",
+        "Все 31 повторяющаяся фоновая задача в шести модулях. Каждая задача реализует IAutoRegisteredJob. Cron по умолчанию можно переопределить для каждого окружения в appsettings.json.",
       inventoryColPurpose: "Назначение",
-      inventoryCoreTitle: "Модуль Core (1 задача)",
-      inventoryIdentityTitle: "Модуль Identity (4 задачи)",
+      inventoryCoreTitle: "Модуль Core (4 задачи)",
+      inventoryIdentityTitle: "Модуль Identity (1 задача)",
       inventoryEntitlementsTitle: "Модуль Entitlements (12 задач)",
       inventoryComplianceTitle: "Модуль Compliance (7 задач)",
+      inventoryPluginsTitle: "Модуль Plugins (3 задачи)",
+      inventoryMarketplaceTitle: "Модуль Marketplace (4 задачи)",
 
       // Job purpose descriptions
       jobOutboxCleanup: "Удаляет обработанные сообщения outbox старше 7 дней",
@@ -126,6 +128,13 @@ export const ru = {
       jobRetentionEnforcement: "Обеспечивает соблюдение политик хранения данных",
       jobConsentExpiry: "Завершает срок действия просроченных согласий пользователей",
       jobReportGeneration: "Опрашивает и генерирует ожидающие отчеты соответствия каждые 2 минуты",
+      jobPluginsSoftDelete: "Навсегда удаляет мягко удаленные плагины, определения и журналы выполнения после периода хранения",
+      jobPluginHealthCheck: "Опрашивает активные среды песочниц плагинов и сообщает об их состоянии",
+      jobPluginDataCleanup: "Очищает просроченные временные ключи хранения базы данных, созданные плагинами",
+      jobMarketplaceSoftDelete: "Навсегда удаляет мягко удаленные объявления, заявки, профили и отзывы после периода хранения",
+      jobPayoutBatch: "Собирает ожидающие доходы в пакетные переводы и выполняет выплаты через Stripe Connect",
+      jobStaleSubmissionReminder: "Сканирует заявки на приложения, ожидающие проверки более 7 дней, и предупреждает администраторов",
+      jobInstallCountAggregation: "Агрегирует временные показатели установок в статические счетчики объявлений приложений",
 
       // Creating a New Job
       newJobTitle: "Создание новой фоновой задачи",

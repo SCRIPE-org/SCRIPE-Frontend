@@ -485,6 +485,86 @@ services.AddScoped<IAutoRegisteredJob>(sp =>
     ],
   },
 
+  // Plugins Module
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "infrastructure.backgroundJobs.inventoryPluginsTitle",
+    id: "jobs-plugins",
+  },
+  {
+    type: "table",
+    headers: [
+      "Job Class",
+      "JobId",
+      "Default Cron",
+      "infrastructure.backgroundJobs.inventoryColPurpose",
+    ],
+    rows: [
+      [
+        "PluginsSoftDeleteCleanupJob",
+        "plugins-soft-delete-cleanup",
+        "0 3 * * *",
+        "infrastructure.backgroundJobs.jobPluginsSoftDelete",
+      ],
+      [
+        "PluginHealthCheckJob",
+        "plugins-health-check",
+        "*/15 * * * *",
+        "infrastructure.backgroundJobs.jobPluginHealthCheck",
+      ],
+      [
+        "PluginDataCleanupJob",
+        "plugins-data-cleanup",
+        "0 2 * * *",
+        "infrastructure.backgroundJobs.jobPluginDataCleanup",
+      ],
+    ],
+  },
+
+  // Marketplace Module
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "infrastructure.backgroundJobs.inventoryMarketplaceTitle",
+    id: "jobs-marketplace",
+  },
+  {
+    type: "table",
+    headers: [
+      "Job Class",
+      "JobId",
+      "Default Cron",
+      "infrastructure.backgroundJobs.inventoryColPurpose",
+    ],
+    rows: [
+      [
+        "MarketplaceSoftDeleteCleanupJob",
+        "marketplace-soft-delete-cleanup",
+        "0 3 * * *",
+        "infrastructure.backgroundJobs.jobMarketplaceSoftDelete",
+      ],
+      [
+        "PayoutBatchJob",
+        "marketplace-payout-batch",
+        "0 4 * * 1",
+        "infrastructure.backgroundJobs.jobPayoutBatch",
+      ],
+      [
+        "StaleSubmissionReminderJob",
+        "marketplace-stale-submission-reminder",
+        "0 8 * * *",
+        "infrastructure.backgroundJobs.jobStaleSubmissionReminder",
+      ],
+      [
+        "InstallCountAggregationJob",
+        "marketplace-install-aggregation",
+        "*/30 * * * *",
+        "infrastructure.backgroundJobs.jobInstallCountAggregation",
+      ],
+    ],
+  },
+
   // ─── Creating a New Job ───────────────────────────────────
   {
     type: "heading",

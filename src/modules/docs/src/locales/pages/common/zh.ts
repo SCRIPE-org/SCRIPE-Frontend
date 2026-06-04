@@ -70,5 +70,12 @@ export const zh = {
     commercialSupport: "支持与资源",
     commercialModules: "模块",
     commercialEntitlements: "权益",
+    compliance: "合规管理",
+    commercialCompliance: "合规管理",
+    plugins: "插件系统",
+    commercialPlugins: "插件系统",
+    marketplace: "应用市场",
+    commercialMarketplace: "应用市场",
+    stripeConnect: "Stripe Connect 与平台佣金",
   },
 };

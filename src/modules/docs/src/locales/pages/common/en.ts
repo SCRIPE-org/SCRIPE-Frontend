@@ -74,5 +74,8 @@ export const en = {
     commercialCompliance: "Compliance",
     plugins: "Plugin System",
     commercialPlugins: "Plugin System",
+    marketplace: "Marketplace",
+    commercialMarketplace: "App Marketplace",
+    stripeConnect: "Stripe Connect & Commissions",
   },
 };

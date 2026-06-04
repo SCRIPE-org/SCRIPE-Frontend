@@ -599,6 +599,12 @@ export const navigationData: DocCategoryData[] = [
             slug: "modules/revenue-analytics",
             order: 11,
           },
+          {
+            id: "mod-ent-stripe-connect",
+            titleKey: "modules.stripeConnect.title",
+            slug: "modules/stripe-connect",
+            order: 12,
+          },
         ],
       },
       // ── Compliance Module ──────────────────────────────────────
@@ -664,6 +670,39 @@ export const navigationData: DocCategoryData[] = [
             titleKey: "modules.plugins.sdk.title",
             slug: "modules/plugins-sdk",
             order: 2,
+          },
+        ],
+      },
+      // ── Marketplace Module ─────────────────────────────────────
+      {
+        id: "mod-marketplace",
+        titleKey: "nav.marketplace",
+        icon: "shopping-bag",
+        order: 4,
+        children: [
+          {
+            id: "mod-market-overview",
+            titleKey: "modules.marketplace.overview.title",
+            slug: "modules/marketplace-overview",
+            order: 1,
+          },
+          {
+            id: "mod-market-catalog",
+            titleKey: "modules.marketplace.catalog.title",
+            slug: "modules/marketplace-catalog",
+            order: 2,
+          },
+          {
+            id: "mod-market-submissions",
+            titleKey: "modules.marketplace.submissions.title",
+            slug: "modules/marketplace-submissions",
+            order: 3,
+          },
+          {
+            id: "mod-market-financials",
+            titleKey: "modules.marketplace.financials.title",
+            slug: "modules/marketplace-financials",
+            order: 4,
           },
         ],
       },
@@ -1104,6 +1143,12 @@ export const navigationData: DocCategoryData[] = [
             slug: "commercial/entitlements-user-subscriptions",
             order: 8,
           },
+          {
+            id: "comm-mod-stripe-connect",
+            titleKey: "modules.stripeConnect.title",
+            slug: "commercial/stripe-connect",
+            order: 9,
+          },
         ],
       },
       // ── Plugin System (Commercial — Phase 15) ─────────────────
@@ -1151,6 +1196,27 @@ export const navigationData: DocCategoryData[] = [
             titleKey: "commercial.complianceRoi.title",
             slug: "commercial/compliance-roi",
             order: 4,
+          },
+        ],
+      },
+      // ── Marketplace Module (Commercial) ─────────────────────────
+      {
+        id: "comm-mod-marketplace",
+        titleKey: "nav.commercialMarketplace",
+        icon: "shopping-bag",
+        order: 5,
+        children: [
+          {
+            id: "comm-mod-market-overview",
+            titleKey: "commercial.marketplace.overview.title",
+            slug: "commercial/marketplace-overview",
+            order: 1,
+          },
+          {
+            id: "comm-mod-market-financials",
+            titleKey: "commercial.marketplace.financials.title",
+            slug: "commercial/marketplace-financials",
+            order: 2,
           },
         ],
       },

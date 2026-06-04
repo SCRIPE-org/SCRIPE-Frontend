@@ -618,6 +618,82 @@ public record ExternalUserInfo(
     variant: "danger",
     contentKey: "security.authDeep.ssoSuspensionWarning",
   },
+
+  // ─── Passkeys (WebAuthn / FIDO2) ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.passkeysTitle",
+    id: "passkeys-webauthn",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.passkeysIntro" },
+  {
+    type: "code",
+    language: "json",
+    filename: "Passkey Registration Response Schema",
+    code: `{
+  "id": "AR9...xCQ",
+  "rawId": "AR9...xCQ",
+  "type": "public-key",
+  "response": {
+    "clientDataJSON": "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoi...",
+    "attestationObject": "o2NmbXRkbm9uZWdhdHRTdG10XGhhdXRoRGF0YVj...",
+    "transports": ["internal", "hybrid"]
+  }
+}`,
+  },
+
+  // ─── SAML 2.0 Enterprise Federation ───────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.samlTitle",
+    id: "saml-federation",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.samlIntro" },
+  {
+    type: "code",
+    language: "xml",
+    filename: "SAML AuthnRequest Payload Example",
+    code: `<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    ID="_a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    Version="2.0"
+                    IssueInstant="2026-06-04T12:00:00Z"
+                    Destination="https://idp.example.com/sso"
+                    AssertionConsumerServiceURL="https://scripe.example.com/api/v1/auth/saml/acs/123">
+  <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://scripe.example.com/sp</saml:Issuer>
+  <samlp:NameIDPolicy Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" AllowCreate="true"/>
+</samlp:AuthnRequest>`,
+  },
+
+  // ─── QR Code Login Handshake ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.qrTitle",
+    id: "qr-login-handshake",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.qrIntro" },
+  {
+    type: "flowchart",
+    title: "QR Login Handshake Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "req", label: "Web Client: POST /qr-login/session", type: "primary" },
+      { id: "qr", label: "Render QR Code", type: "info", description: "Contains SessionId & TenantId" },
+      { id: "poll", label: "Web Client: Poll /qr-login/poll/{sessionId}", type: "warning" },
+      { id: "scan", label: "Mobile App: Scan QR Code", type: "primary" },
+      { id: "confirm", label: "Mobile App: POST /qr-login/confirm", type: "warning", description: "Submits session signature + user JWT" },
+      { id: "ok", label: "Poll Returns 200 Success", type: "success", description: "Issues new JWT to Web Client" }
+    ],
+    connections: [
+      { from: "req", to: "qr" },
+      { from: "qr", to: "poll" },
+      { from: "qr", to: "scan", style: "dashed" },
+      { from: "scan", to: "confirm" },
+      { from: "confirm", to: "ok" }
+    ]
+  }
 ];
 
 registerPage({

@@ -7,7 +7,7 @@ export const de = {
     backgroundJobs: {
       title: "Hintergrundjobs (Background Jobs)",
       description:
-        "Automatisch erkannte, anbieterunabhängige (Native, Hangfire, Quartz.NET) wiederkehrende Jobs — 24 Jobs in 4 Modulen ohne manuelle Verkabelung.",
+        "Automatisch erkannte, anbieterunabhängige (Native, Hangfire, Quartz.NET) wiederkehrende Jobs — 31 Jobs in 6 Modulen ohne manuelle Verkabelung.",
       intro:
         "Das SCRIPE-Hintergrundjob-System basiert auf einem Prinzip: Einmal schreiben, auf jedem Anbieter ausführen. Jeder Job implementiert IAutoRegisteredJob und wird beim Start automatisch erkannt. Der Wechsel zwischen Native, Hangfire oder Quartz ist nur eine Konfigurationsänderung in appsettings.json — keine Codeänderungen.",
 
@@ -85,14 +85,16 @@ export const de = {
       providerQuartzBest: "Produktion mit Oracle oder PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Vollständiges Job-Inventar — Alle 24",
+      inventoryTitle: "Vollständiges Job-Inventar — Alle 31",
       inventoryIntro:
-        "Alle 24 wiederkehrenden Hintergrundjobs über die vier Module hinweg. Jeder Job implementiert IAutoRegisteredJob. Standard-Crons können pro Umgebung in appsettings.json überschrieben werden.",
+        "Alle 31 wiederkehrenden Hintergrundjobs über die sechs Module hinweg. Jeder Job implementiert IAutoRegisteredJob. Standard-Crons können pro Umgebung in appsettings.json überschrieben werden.",
       inventoryColPurpose: "Zweck",
-      inventoryCoreTitle: "Core-Modul (1 Job)",
-      inventoryIdentityTitle: "Identity-Modul (4 Jobs)",
+      inventoryCoreTitle: "Core-Modul (4 Jobs)",
+      inventoryIdentityTitle: "Identity-Modul (1 Job)",
       inventoryEntitlementsTitle: "Entitlements-Modul (12 Jobs)",
       inventoryComplianceTitle: "Compliance-Modul (7 Jobs)",
+      inventoryPluginsTitle: "Plugins-Modul (3 Jobs)",
+      inventoryMarketplaceTitle: "Marketplace-Modul (4 Jobs)",
 
       // Job purpose descriptions
       jobOutboxCleanup: "Löscht verarbeitete Outbox-Nachrichten älter als 7 Tage",
@@ -122,6 +124,13 @@ export const de = {
       jobRetentionEnforcement: "Setzt Datenaufbewahrungsrichtlinien durch",
       jobConsentExpiry: "Erklärt abgelaufene Benutzerzustimmungen für ungültig",
       jobReportGeneration: "Pusht und generiert ausstehende Compliance-Berichte alle 2 Minuten",
+      jobPluginsSoftDelete: "Löscht permanent soft-deleted Plugins, Definitionen und Ausführungsprotokolle nach Ablauf der Aufbewahrungsfrist",
+      jobPluginHealthCheck: "Fragt aktive Plugin-Sandbox-Umgebungen ab und meldet den Zustand",
+      jobPluginDataCleanup: "Bereinigt abgelaufene temporäre Datenbankschlüssel, die von Plugins erstellt wurden",
+      jobMarketplaceSoftDelete: "Löscht permanent soft-deleted Listings, Einreichungen, Profile und Bewertungen nach Ablauf der Aufbewahrungsfrist",
+      jobPayoutBatch: "Sammelt ausstehende Einnahmen in Batch-Überweisungen und führt Auszahlungen über Stripe Connect aus",
+      jobStaleSubmissionReminder: "Sucht nach App-Einreichungen, deren Überprüfung seit >7 Tagen aussteht, und warnt Admins",
+      jobInstallCountAggregation: "Aggregiert flüchtige Installationszahlen in statische App-Listing-Zähler",
 
       // Creating a New Job
       newJobTitle: "Erstellen eines neuen Jobs",

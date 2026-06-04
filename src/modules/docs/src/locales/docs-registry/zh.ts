@@ -32,6 +32,8 @@ import { zh as pageTenantPlans } from "../pages/tenant-plans/zh";
 import { zh as pageUserSubscriptions } from "../pages/user-subscriptions/zh";
 import { zh as pageTenantContextGate } from "../pages/tenant-context-gate/zh";
 import { zh as pageRevenueAnalytics } from "../pages/revenue-analytics/zh";
+import { zh as marketplace } from "../pages/marketplace/zh";
+import { zh as stripeConnect } from "../pages/stripe-connect/zh";
 
 import { mergeAll } from "./utils";
 
@@ -63,5 +65,7 @@ export const allDocsZh: Record<string, any> = mergeAll(
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics
+  pageRevenueAnalytics,
+  marketplace,
+  stripeConnect
 );

@@ -32,6 +32,8 @@ import { fr as pageTenantPlans } from "../pages/tenant-plans/fr";
 import { fr as pageUserSubscriptions } from "../pages/user-subscriptions/fr";
 import { fr as pageTenantContextGate } from "../pages/tenant-context-gate/fr";
 import { fr as pageRevenueAnalytics } from "../pages/revenue-analytics/fr";
+import { fr as marketplace } from "../pages/marketplace/fr";
+import { fr as stripeConnect } from "../pages/stripe-connect/fr";
 
 import { mergeAll } from "./utils";
 
@@ -63,5 +65,7 @@ export const allDocsFr: Record<string, any> = mergeAll(
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics
+  pageRevenueAnalytics,
+  marketplace,
+  stripeConnect
 );

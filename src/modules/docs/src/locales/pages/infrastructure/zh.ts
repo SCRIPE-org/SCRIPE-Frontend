@@ -7,7 +7,7 @@ export const zh = {
     backgroundJobs: {
       title: "后台任务 (Background Jobs)",
       description:
-        "自动发现、与提供商无关的 (Native, Hangfire, Quartz.NET) 循环任务 — 在 4 个模块中包含 24 个任务，无需手动配置。",
+        "自动发现、与提供商无关的 (Native, Hangfire, Quartz.NET) 循环任务 — 在 6 个模块中包含 31 个任务，无需手动配置。",
       intro:
         "SCRIPE 的后台任务系统建立在一个原则之上：一次编写，在任何提供商上运行。每个任务实现 IAutoRegisteredJob 并在启动时被自动发现。在 Native、Hangfire 或 Quartz 之间切换只需在 appsettings.json 中更改配置 — 无需修改任何代码。",
 
@@ -85,14 +85,16 @@ export const zh = {
       providerQuartzBest: "带有 Oracle 或 PostgreSQL 的生产环境",
 
       // Jobs Inventory
-      inventoryTitle: "完整任务清单 — 24 个任务",
+      inventoryTitle: "完整任务清单 — 31 个任务",
       inventoryIntro:
-        "跨四个模块的全部 24 个循环后台任务。每个任务都实现了 IAutoRegisteredJob。可以在 appsettings.json 中按环境覆盖默认 Cron。",
+        "跨六个模块的全部 31 个循环后台任务。每个任务都实现了 IAutoRegisteredJob。可以在 appsettings.json 中按环境覆盖默认 Cron。",
       inventoryColPurpose: "目的",
-      inventoryCoreTitle: "Core 模块 (1 个任务)",
-      inventoryIdentityTitle: "Identity 模块 (4 个任务)",
+      inventoryCoreTitle: "Core 模块 (4 个任务)",
+      inventoryIdentityTitle: "Identity 模块 (1 个任务)",
       inventoryEntitlementsTitle: "Entitlements 模块 (12 个任务)",
       inventoryComplianceTitle: "Compliance 模块 (7 个任务)",
+      inventoryPluginsTitle: "Plugins 模块 (3 个任务)",
+      inventoryMarketplaceTitle: "Marketplace 模块 (4 个任务)",
 
       // Job purpose descriptions
       jobOutboxCleanup: "删除 7 天前已处理的 outbox 消息",
@@ -121,6 +123,13 @@ export const zh = {
       jobRetentionEnforcement: "执行数据保留策略",
       jobConsentExpiry: "使过期的用户同意失效",
       jobReportGeneration: "每 2 分钟轮询并生成未决的合规性报告",
+      jobPluginsSoftDelete: "在保留期过后永久删除软删除的插件、定义和执行日志",
+      jobPluginHealthCheck: "轮询活跃的插件沙箱环境并报告健康状态",
+      jobPluginDataCleanup: "清理插件创建的过期临时数据库存储键",
+      jobMarketplaceSoftDelete: "在保留期过后永久删除软删除的商品、提交、个人资料和评论",
+      jobPayoutBatch: "将未结收益组装成批次转账，并通过 Stripe Connect 执行付款",
+      jobStaleSubmissionReminder: "扫描待审核时间超过 7 天的应用提交并向管理员发出提醒",
+      jobInstallCountAggregation: "将临时安装计数聚合到静态应用商品计数器中",
 
       // Creating a New Job
       newJobTitle: "创建新的后台任务",

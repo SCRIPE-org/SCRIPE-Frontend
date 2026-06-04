@@ -7,7 +7,7 @@ export const fr = {
     backgroundJobs: {
       title: "Tâches en Arrière-plan (Background Jobs)",
       description:
-        "Tâches récurrentes auto-découvertes et agnostiques du fournisseur (Native, Hangfire, Quartz.NET) — 24 tâches à travers 4 modules, aucun câblage manuel.",
+        "Tâches récurrentes auto-découvertes et agnostiques du fournisseur (Native, Hangfire, Quartz.NET) — 31 tâches à travers 6 modules, aucun câblage manuel.",
       intro:
         "Le système de tâches en arrière-plan de SCRIPE repose sur un principe : écrire une fois, exécuter sur n'importe quel fournisseur. Chaque tâche implémente IAutoRegisteredJob et est découverte automatiquement au démarrage. Basculer entre Native, Hangfire ou Quartz est un simple changement de configuration dans appsettings.json — aucune modification de code n'est requise.",
 
@@ -87,14 +87,16 @@ export const fr = {
       providerQuartzBest: "Production avec Oracle ou PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Inventaire Complet des Tâches — 24 Tâches",
+      inventoryTitle: "Inventaire Complet des Tâches — 31 Tâches",
       inventoryIntro:
-        "Les 24 tâches en arrière-plan récurrentes à travers les quatre modules. Chaque tâche implémente IAutoRegisteredJob. Le Cron par défaut peut être remplacé par environnement dans appsettings.json.",
+        "Les 31 tâches en arrière-plan récurrentes à travers les six modules. Chaque tâche implémente IAutoRegisteredJob. Le Cron par défaut peut être remplacé par environnement dans appsettings.json.",
       inventoryColPurpose: "Objectif",
-      inventoryCoreTitle: "Module Core (1 tâche)",
-      inventoryIdentityTitle: "Module Identity (4 tâches)",
+      inventoryCoreTitle: "Module Core (4 tâches)",
+      inventoryIdentityTitle: "Module Identity (1 tâche)",
       inventoryEntitlementsTitle: "Module Entitlements (12 tâches)",
       inventoryComplianceTitle: "Module Compliance (7 tâches)",
+      inventoryPluginsTitle: "Module Plugins (3 tâches)",
+      inventoryMarketplaceTitle: "Module Marketplace (4 tâches)",
 
       // Job purpose descriptions
       jobOutboxCleanup: "Supprime les messages outbox traités de plus de 7 jours",
@@ -127,6 +129,13 @@ export const fr = {
       jobConsentExpiry: "Expire les consentements utilisateurs périmés",
       jobReportGeneration:
         "Interroge et génère les rapports de conformité en attente toutes les 2 min",
+      jobPluginsSoftDelete: "Supprime définitivement les plugins, définitions et journaux d'exécution supprimés logiquement après le délai de rétention",
+      jobPluginHealthCheck: "Sonde les environnements de bac à sable de plugins actifs et signale leur état de santé",
+      jobPluginDataCleanup: "Purge les clés de stockage de base de données temporaires expirées créées par les plugins",
+      jobMarketplaceSoftDelete: "Supprime définitivement les annonces, soumissions, profils et avis supprimés logiquement après le délai de rétention",
+      jobPayoutBatch: "Assemble les gains en attente dans des transferts groupés et exécute les paiements via Stripe Connect",
+      jobStaleSubmissionReminder: "Recherche les soumissions d'applications en attente de révision depuis plus de 7 jours et alerte les administrateurs",
+      jobInstallCountAggregation: "Agrège les nombres d'installations transitoires dans les compteurs d'annonces d'applications statiques",
 
       // Creating a New Job
       newJobTitle: "Créer une Nouvelle Tâche en Arrière-plan",

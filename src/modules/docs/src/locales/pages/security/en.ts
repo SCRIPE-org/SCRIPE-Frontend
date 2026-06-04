@@ -88,6 +88,12 @@ export const en = {
         "The ExternalLoginCommandHandler now includes a tenant suspension security gate. Before issuing a JWT after SSO/OIDC authentication, the handler checks the admin's tenant status. If the tenant is Suspended or Cancelled, the login is rejected with a localized error — preventing deactivated users from bypassing the standard login checks via SSO. This gate runs after token validation and account linking but before JWT issuance.",
       ssoSuspensionWarning:
         "Without this gate, SSO users could authenticate via an external IdP (e.g., Google, Azure AD) and receive a valid SCRIPE JWT even if their tenant has been suspended or cancelled. This was a critical security gap that has been remediated.",
+      passkeysTitle: "Passkeys (WebAuthn / FIDO2)",
+      passkeysIntro: "Passkeys provide a passwordless authentication mechanism using public-key cryptography. During registration, the browser generates a public-private key pair, sends the public key and credential ID to the server, and keeps the private key secure in the device's authenticator. During login, the server issues a challenge that the authenticator signs using the private key.",
+      samlTitle: "SAML 2.0 Enterprise Federation",
+      samlIntro: "SAML 2.0 enables enterprise single sign-on (SSO) by federating authentication between SCRIPE (acting as the Service Provider) and corporate Identity Providers (IdP) like Okta, Ping Identity, or Active Directory. The handshake utilizes XML-based assertions signed with X.509 certificates to verify identity and map roles.",
+      qrTitle: "QR Code Login Handshake",
+      qrIntro: "QR Code Login allows users to instantly authenticate on a web client by scanning a QR code with their already-authenticated mobile application. The web client polls the session state until the mobile app confirms the session by signing the session token and submitting it along with the user's active session credentials.",
     },
     dataProtection: {
       title: "Data Protection",

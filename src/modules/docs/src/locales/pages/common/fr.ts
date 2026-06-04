@@ -70,5 +70,12 @@ export const fr = {
     commercialSupport: "Support & Ressources",
     commercialModules: "Modules",
     commercialEntitlements: "Droits",
+    compliance: "Conformité",
+    commercialCompliance: "Conformité",
+    plugins: "Système de Plugins",
+    commercialPlugins: "Système de Plugins",
+    marketplace: "Place de marché",
+    commercialMarketplace: "Marché d'Applications",
+    stripeConnect: "Stripe Connect & Commissions",
   },
 };

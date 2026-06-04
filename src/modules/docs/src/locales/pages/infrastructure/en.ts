@@ -7,7 +7,7 @@ export const en = {
     backgroundJobs: {
       title: "Background Jobs",
       description:
-        "Provider-agnostic auto-discovered recurring jobs (Native, Hangfire, Quartz.NET) — 24 jobs across 4 modules, zero manual wiring.",
+        "Provider-agnostic auto-discovered recurring jobs (Native, Hangfire, Quartz.NET) — 31 jobs across 6 modules, zero manual wiring.",
       intro:
         "SCRIPE's background job system is built on one principle: write once, run on any provider. Every job implements IAutoRegisteredJob and is discovered automatically at startup. Switching between Native, Hangfire, or Quartz is a single config change in appsettings.json — no code modifications required.",
 
@@ -84,14 +84,16 @@ export const en = {
       providerQuartzBest: "Production with Oracle or PostgreSQL",
 
       // Jobs Inventory
-      inventoryTitle: "Complete Jobs Inventory — 24 Jobs",
+      inventoryTitle: "Complete Jobs Inventory — 31 Jobs",
       inventoryIntro:
-        "All 24 recurring background jobs across the four modules. Every job implements IAutoRegisteredJob. The Default Cron can be overridden per-environment in appsettings.json under BackgroundJobs.Jobs.",
+        "All 31 recurring background jobs across the six modules. Every job implements IAutoRegisteredJob. The Default Cron can be overridden per-environment in appsettings.json under BackgroundJobs.Jobs.",
       inventoryColPurpose: "Purpose",
-      inventoryCoreTitle: "Core Module (1 job)",
-      inventoryIdentityTitle: "Identity Module (4 jobs)",
+      inventoryCoreTitle: "Core Module (4 jobs)",
+      inventoryIdentityTitle: "Identity Module (1 job)",
       inventoryEntitlementsTitle: "Entitlements Module (12 jobs)",
       inventoryComplianceTitle: "Compliance Module (7 jobs)",
+      inventoryPluginsTitle: "Plugins Module (3 jobs)",
+      inventoryMarketplaceTitle: "Marketplace Module (4 jobs)",
 
       // Job purpose descriptions
       jobOutboxCleanup: "Deletes processed outbox messages older than 7 days",
@@ -124,6 +126,13 @@ export const en = {
       jobRetentionEnforcement: "Enforces data retention policies (runs every Sunday at 1:00 AM)",
       jobConsentExpiry: "Expires lapsed user consents (runs at midnight daily)",
       jobReportGeneration: "Polls and generates pending compliance reports every 2 minutes",
+      jobPluginsSoftDelete: "Permanently deletes soft-deleted Plugins, Definitions, and Execution Logs after retention period",
+      jobPluginHealthCheck: "Polls active plugin sandbox environments and reports health status",
+      jobPluginDataCleanup: "Prunes expired temporary database storage keys created by plugins",
+      jobMarketplaceSoftDelete: "Permanently deletes soft-deleted Listings, Submissions, Profiles, and Reviews after retention period",
+      jobPayoutBatch: "Assembles pending earnings into batch transfers and executes payouts via Stripe Connect",
+      jobStaleSubmissionReminder: "Scans for app submissions pending review for >7 days and alerts admins",
+      jobInstallCountAggregation: "Aggregates transient installation counts into static app listings counters",
 
       // Creating a New Job
       newJobTitle: "Creating a New Background Job",

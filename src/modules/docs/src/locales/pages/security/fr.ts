@@ -66,6 +66,15 @@ export const fr = {
         "Modèle sans état (stateless). Les jetons JWT gèrent l'autorisation client sans saturer le serveur.",
       cookieAuthTip:
         "Pour une sécurité maximale, configurez les jetons d'actualisation pour qu'ils soient envoyés en tant que cookies HttpOnly, Secure et SameSite=Strict.",
+      ssoSuspensionTitle: "Porte de Suspension de Locataire SSO",
+      ssoSuspensionIntro: "Le ExternalLoginCommandHandler inclut désormais une porte de sécurité pour la suspension du locataire. Avant de délivrer un JWT après une authentification SSO/OIDC, le gestionnaire vérifie le statut du locataire de l'administrateur. Si le locataire est suspendu ou annulé, la connexion est rejetée avec une erreur localisée, empêchant les utilisateurs désactivés de contourner les contrôles de connexion standard via SSO.",
+      ssoSuspensionWarning: "Sans cette porte, les utilisateurs SSO pourraient s'authentifier via un IdP externe (par exemple, Google, Azure AD) et recevoir un JWT SCRIPE valide même si leur locataire a été suspendu ou annulé. Il s'agissait d'une faille de sécurité critique qui a été corrigée.",
+      passkeysTitle: "Passkeys (WebAuthn / FIDO2)",
+      passkeysIntro: "Les clés d'accès (Passkeys) fournissent un mécanisme d'authentification sans mot de passe utilisant la cryptographie sur clé publique. Lors de l'enregistrement, le navigateur génère une paire de clés publique-privée, envoie la clé publique et l'identifiant d'identification au serveur et conserve la clé privée en toute sécurité dans l'authentificateur de l'appareil. Lors de la connexion, le serveur émet un défi que l'authentificateur signe à l'aide de la clé privée.",
+      samlTitle: "Fédération d'Entreprise SAML 2.0",
+      samlIntro: "SAML 2.0 permet l'authentification unique (SSO) d'entreprise en fédérant l'authentification entre SCRIPE (agissant en tant que fournisseur de services) et les fournisseurs d'identité d'entreprise (IdP) comme Okta ou Active Directory. Le handshake utilise des assertions XML signées avec des certificats X.509 pour vérifier l'identité et mapper les rôles.",
+      qrTitle: "Handshake de Connexion par Code QR",
+      qrIntro: "La connexion par code QR permet aux utilisateurs de s'authentifier instantanément sur un client Web en scannant un code QR avec leur application mobile déjà authentifiée. Le client Web interroge l'état de la session jusqu'à ce que l'application mobile confirme la session en signant le jeton de session et en le soumettant avec les informations d'identification de session actives de l'utilisateur.",
     },
     sso: {
       title: "Authentification Unique (SSO)",
