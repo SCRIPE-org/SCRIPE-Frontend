@@ -90,7 +90,7 @@ export const en = {
       intro:
         "SCRIPE's API surface is designed for scale and predictability. From consistent naming conventions to standardized pagination and RFC 7807 problem details for error handling, our stateless RESTful architecture ensures friction-free integration for downstream consumers.",
       pipelineContent:
-        "The API pipeline utilizes a highly optimized SCRIPE mediator request lifecycle. Every endpoint automatically inherits validation, performance tracking, caching, and audit logging before a single line of business logic executes.",
+        "The API pipeline utilizes a highly optimized AstraFlow mediator request lifecycle. Every endpoint automatically inherits validation, performance tracking, caching, and audit logging before a single line of business logic executes.",
       pipelineTitle: "Robust Request Pipeline",
       resultContent:
         "SCRIPE eliminates try-catch hell through a unified Result pattern. Every API response is strictly typed and mathematically predictable, ensuring consumers receive standard HTTP status codes wrapping an identical JSON response structure regardless of the module being accessed.",

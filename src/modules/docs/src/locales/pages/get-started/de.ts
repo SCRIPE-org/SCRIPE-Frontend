@@ -13,9 +13,9 @@ export const de = {
       featureModular: "Modularer Monolith",
       featureModularDesc:
         "Isolierte Module mit klaren Grenzen – unabhängig entwickeln, testen und bereitstellen. Gleiche Binärdatei, flexibles Deployment.",
-      featureCQRS: "CQRS + SCRIPE mediator",
+      featureCQRS: "CQRS + AstraFlow mediator",
       featureCQRSDesc:
-        "Trennung von Befehlen und Abfragen mit einer 4-stufigen Pipeline: Validierung, Feature-Gating, Caching und Leistungsüberwachung.",
+        "Trennung von Befehlen und Abfragen mit einer 6-stufigen Pipeline: Logging, Stream-Logging, Validierung, Feature-Gating, Webhook-Dispatching und Caching.",
       featureSecurity: "Enterprise-Sicherheit",
       featureSecurityDesc:
         "Einheitliche richtlinienbasierte Zugriffskontrolle (PBAC), die RBAC, GBAC und ABAC vereint. Inklusive 2FA, Einschränkungen auf Feldebene, Rate Limiting, Sitzungsmanagement und unveränderlichen Audit-Trails.",
@@ -40,9 +40,9 @@ export const de = {
       techStackTitle: "Technologie-Stack",
       serviceRegistrationTitle: "Reihenfolge der Service-Registrierung",
       serviceRegistrationIntro:
-        "Die Reihenfolge der Service-Registrierung in der Program.cs ist architektonisch von Bedeutung. Eine Änderung der Reihenfolge kann zu Laufzeitfehlern führen. Die Kerninfrastruktur muss vor den Modulen registriert werden, und SCRIPE mediator benötigt zuerst die Assembly-Marker der Module.",
+        "Die Reihenfolge der Service-Registrierung in der Program.cs ist architektonisch von Bedeutung. Eine Änderung der Reihenfolge kann zu Laufzeitfehlern führen. Die Kerninfrastruktur muss vor den Modulen registriert werden, und AstraFlow mediator benötigt zuerst die Assembly-Marker der Module.",
       registrationOrderWarning:
-        "Ändern Sie NICHT die Reihenfolge der Service-Registrierungen in der Program.cs. AddCoreInfrastructure muss vor den Modulen stehen (sie hängen von ICurrentUser ab) und AddCoreApplication muss nach den Modulen stehen (SCRIPE mediator benötigt deren Assemblies).",
+        "Ändern Sie NICHT die Reihenfolge der Service-Registrierungen in der Program.cs. AddCoreInfrastructure muss vor den Modulen stehen (sie hängen von ICurrentUser ab) und AddCoreApplication muss nach den Modulen stehen (AstraFlow mediator benötigt deren Assemblies).",
       environmentProfilesTitle: "Umgebungsprofile",
       envVarPrefixTip:
         "Es werden nur Umgebungsvariablen geladen, die mit SCRIPE_ beginnen. Beispielsweise überschreibt SCRIPE_ConnectionStrings__DefaultConnection den Connection String. Doppelte Unterstriche (__) repräsentieren Verschachtelungen in der JSON-Konfiguration.",
@@ -159,7 +159,7 @@ export const de = {
       frontendTitle: "Frontend-Struktur",
       toolsTitle: "Entwicklerwerkzeuge",
       toolsIntro:
-        "Das Verzeichnis tools/ enthält die SCRIPE CLI und das Studio. Die CLI bietet 62 Befehle für Scaffolding, Builds, Migrationen und Deployment. Studio ist ein visuelles Entwickler-Dashboard, gebaut mit Express (Engine) und Next.js (UI).",
+        "Das Verzeichnis tools/ enthält die SCRIPE CLI und das Studio. Die CLI bietet 123 Befehle für Scaffolding, Builds, Migrationen und Deployment. Studio ist ein visuelles Entwickler-Dashboard, gebaut mit Express (Engine) und Next.js (UI).",
       moduleAnatomyTitle: "Anatomie eines Moduls",
       moduleAnatomyIntro:
         "Jedes Frontend-Modul folgt einer identischen Struktur. Diese Konsistenz macht es einfach, in jedem Modul zu navigieren, sobald man eines verstanden hat. Jede Ebene hat strenge Zuständigkeiten und Importregeln.",

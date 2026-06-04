@@ -7,7 +7,7 @@ export const es = {
     platformArchitecture: {
       title: "Arquitectura de la Plataforma",
       description:
-        "Explore la perfección estructural de la Arquitectura Limpia de SCRIPE, las canalizaciones SCRIPE mediator y los límites de módulos impenetrables diseñados para la escala empresarial masiva.",
+        "Explore la perfección estructural de la Arquitectura Limpia de SCRIPE, las canalizaciones AstraFlow mediator y los límites de módulos impenetrables diseñados para la escala empresarial masiva.",
       intro:
         "Experimente la convergencia entre una escalabilidad horizontal masiva y una organización de código prístina. La arquitectura de SCRIPE es una base de ingeniería meticulosa construida para soportar décadas de evolución empresarial.",
       modularTitle: "El Monolito Modular Evolutivo",
@@ -21,7 +21,7 @@ export const es = {
         "La contaminación del espacio de nombres entre módulos es físicamente imposible. SCRIPE impone una segregación de módulos definitiva mediante herramientas estrictas y validación de CI automatizada, garantizando que los equipos de desarrollo masivos operen con total autonomía y sin colisiones de fusión.",
       cqrsTitle: "Canalizaciones de Eventos CQRS Probadas en Batalla",
       cqrsContent:
-        "Demuela los cuellos de botella de la base de datos dividiendo definitivamente las responsabilidades operativas de lectura y escritura. La canalización de peticiones SCRIPE mediator actúa como un sistema nervioso central de alta velocidad, interceptando, validando, autenticando y registrando criptográficamente de manera agresiva cada acción atómica antes de su ejecución.",
+        "Demuela los cuellos de botella de la base de datos dividiendo definitivamente las responsabilidades operativas de lectura y escritura. La canalización de peticiones AstraFlow mediator actúa como un sistema nervioso central de alta velocidad, interceptando, validando, autenticando y registrando criptográficamente de manera agresiva cada acción atómica antes de su ejecución.",
       deploymentTitle: "Topologías de Despliegue Sin Fricciones",
       monolith: "Dominancia Monolítica",
       gateway: "Agilidad de Puerta de Enlace (Gateway)",
@@ -84,7 +84,7 @@ export const es = {
       layersTitle: "Estratificación Arquitectónica Estricta",
       cqrsTitle: "Operaciones CQRS de Alto Rendimiento",
       cqrsContent:
-        "Demuela los cuellos de botella transaccionales. Al segregar las responsabilidades de Comando (Escritura) y Consulta (Lectura) a través de la canalización de SCRIPE mediator, SCRIPE le permite escalar, almacenar en caché y optimizar de forma independiente los flujos agresivos de ingestión de datos sin afectar la latencia de lectura por debajo de un segundo.",
+        "Demuela los cuellos de botella transaccionales. Al segregar las responsabilidades de Comando (Escritura) y Consulta (Lectura) a través de la canalización de AstraFlow mediator, SCRIPE le permite escalar, almacenar en caché y optimizar de forma independiente los flujos agresivos de ingestión de datos sin afectar la latencia de lectura por debajo de un segundo.",
       solidTitle: "Diseño SOLID Matemáticamente Demostrable",
       singleResp: "Responsabilidad Única (Single Responsibility)",
       singleRespDesc:
@@ -274,7 +274,7 @@ export const es = {
       tblBackR3C2: "10",
       tblBackR3C3: "ORM y acceso a datos",
       tblBackR3C4: "Soporte multiproveedor, migraciones, consultas LINQ",
-      tblBackR4C1: "SCRIPE mediator",
+      tblBackR4C1: "AstraFlow mediator",
       tblBackR4C2: "12+",
       tblBackR4C3: "Mediador CQRS",
       tblBackR4C4: "Separación limpia de manejadores, comportamientos de pipeline",

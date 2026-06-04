@@ -91,7 +91,7 @@ export const fr = {
       intro:
         "La surface de l'API de SCRIPE est conçue pour l'évolutivité et la prévisibilité. Des conventions de nommage cohérentes à la pagination standardisée et aux détails de problèmes RFC 7807 pour la gestion des erreurs, notre architecture RESTful sans état (stateless) garantit une intégration sans friction pour les consommateurs en aval.",
       pipelineContent:
-        "Le pipeline de l'API utilise un cycle de vie de requête SCRIPE mediator hautement optimisé. Chaque point de terminaison (endpoint) hérite automatiquement de la validation, du suivi des performances, de la mise en cache et de la journalisation d'audit avant même qu'une seule ligne de logique métier ne s'exécute.",
+        "Le pipeline de l'API utilise un cycle de vie de requête AstraFlow mediator hautement optimisé. Chaque point de terminaison (endpoint) hérite automatiquement de la validation, du suivi des performances, de la mise en cache et de la journalisation d'audit avant même qu'une seule ligne de logique métier ne s'exécute.",
       pipelineTitle: "Pipeline de Requêtes Robuste",
       resultContent:
         "SCRIPE élimine l'enfer des try-catch grce à un modèle de Résultat (Result pattern) unifié. Chaque réponse de l'API est strictement typée et mathématiquement prévisible, garantissant que les consommateurs reçoivent des codes d'état HTTP standards enveloppant une structure de réponse JSON identique, quel que soit le module accédé.",

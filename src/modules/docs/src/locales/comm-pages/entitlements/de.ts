@@ -71,7 +71,7 @@ export const de = {
       tblValR5C1: "Funktions-Rollouts",
       tblValR5C2: "Big-Bang-Deployments, die alle Mandanten gefährden",
       tblValR5C3: "Canary- und geplante Rollout-Strategien",
-      tip: "Das Berechtigungsmodul ist vollständig in die SCRIPE mediator-Pipeline integriert. Befehle, die IRequireFeature implementieren, werden automatisch überwacht — Ihre Geschäftslogik bleibt sauber und fokussiert.",
+      tip: "Das Berechtigungsmodul ist vollständig in die AstraFlow mediator-Pipeline integriert. Befehle, die IRequireFeature implementieren, werden automatisch überwacht — Ihre Geschäftslogik bleibt sauber und fokussiert.",
     },
     entEditions: {
       title: "Editionen & Pläne",

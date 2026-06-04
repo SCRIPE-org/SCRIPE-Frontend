@@ -13,7 +13,7 @@ export const es = {
       layersTitle: "Capas de Arquitectura Limpia",
       backendArchTitle: "Arquitectura del Backend",
       backendArchIntro:
-        "El backend sigue una arquitectura de pipeline de solicitudes donde cada solicitud HTTP fluye a través de middlewares, controladores, comportamientos (behaviors) de SCRIPE mediator y, finalmente, el manejador CQRS. Esto garantiza validación, auditoría y manejo de errores consistentes.",
+        "El backend sigue una arquitectura de pipeline de solicitudes donde cada solicitud HTTP fluye a través de middlewares, controladores, comportamientos (behaviors) de AstraFlow mediator y, finalmente, el manejador CQRS. Esto garantiza validación, auditoría y manejo de errores consistentes.",
       frontendArchTitle: "Arquitectura del Frontend",
       frontendArchIntro:
         "El frontend utiliza un patrón SOLID View/ViewModel donde las Vistas son UI pura (sin estado ni lógica) y los ViewModels contienen toda la lógica de negocio. El patrón conector separa el enrutamiento de Next.js (Server Components) de la lógica de la aplicación (Client Components).",
@@ -46,7 +46,7 @@ export const es = {
         "Cada nuevo módulo sigue el mismo patrón de registro de Inyección de Dependencias. El método de extensión AddXxxModule() registra el DbContext del módulo, repositorios, servicios y el marcador de registro del módulo.",
       controllersTitle: "Controladores",
       controllerTip:
-        "Todos los controladores heredan de un ApiController base que proporciona un mapeo de respuesta estandarizado Result<T>. Los controladores deben ser ligeros: solo validan el modelo de solicitud y delegan el trabajo a SCRIPE mediator.",
+        "Todos los controladores heredan de un ApiController base que proporciona un mapeo de respuesta estandarizado Result<T>. Los controladores deben ser ligeros: solo validan el modelo de solicitud y delegan el trabajo a AstraFlow mediator.",
     },
     frontend: {
       title: "Arquitectura del Frontend",
@@ -74,15 +74,15 @@ export const es = {
     cqrs: {
       title: "Patrón CQRS",
       description:
-        "Separación de Responsabilidad de Comandos y Consultas con pipeline de SCRIPE mediator, comportamientos (behaviors), validación y caché.",
+        "Separación de Responsabilidad de Comandos y Consultas con pipeline de AstraFlow mediator, comportamientos (behaviors), validación y caché.",
       intro:
-        "SCRIPE usa el patrón CQRS (Command Query Responsibility Segregation) para separar las operaciones de lectura y escritura. Los comandos mutan el estado y pasan por comportamientos de validación y auditoría. Las consultas leen el estado y pueden aprovechar la caché. SCRIPE mediator actúa como el mediador entre los controladores y los manejadores.",
+        "SCRIPE usa el patrón CQRS (Command Query Responsibility Segregation) para separar las operaciones de lectura y escritura. Los comandos mutan el estado y pasan por comportamientos de validación y auditoría. Las consultas leen el estado y pueden aprovechar la caché. AstraFlow mediator actúa como el mediador entre los controladores y los manejadores.",
       whatIsCqrsTitle: "¿Qué es CQRS?",
       whatIsCqrsIntro:
         "CQRS separa tu aplicación en dos lados: Comandos (escrituras) y Consultas (lecturas). Cada lado puede optimizarse de forma independiente: los comandos se centran en la integridad y validación de los datos, mientras que las consultas se centran en el rendimiento y la caché.",
       commandSide: "Lado de Comandos (Escritura)",
       querySide: "Lado de Consultas (Lectura)",
-      pipelineTitle: "Pipeline de SCRIPE mediator",
+      pipelineTitle: "Pipeline de AstraFlow mediator",
       validationBehaviorTitle: "Comportamiento de Validación",
       commandExampleTitle: "Ejemplo de Comando",
       queryExampleTitle: "Ejemplo de Consulta",
@@ -181,7 +181,7 @@ export const es = {
       mutationFlowTitle: "Flujo de Mutación (Escritura)",
       backendPipelineTitle: "Pipeline de Solicitudes Backend",
       backendPipelineIntro:
-        "Cada solicitud al backend pasa por 10 componentes de middleware y 3 comportamientos (behaviors) del pipeline de SCRIPE mediator antes de llegar al manejador. Esto asegura una auditoría, autenticación, autorización y validación consistentes.",
+        "Cada solicitud al backend pasa por 10 componentes de middleware y 3 comportamientos (behaviors) del pipeline de AstraFlow mediator antes de llegar al manejador. Esto asegura una auditoría, autenticación, autorización y validación consistentes.",
       errorFlowTitle: "Manejo de Errores",
       errorFlowIntro:
         "Los errores se manejan en múltiples niveles. Cada origen de error tiene un manejador específico, código de respuesta y estrategia de manejo en el frontend.",
@@ -238,7 +238,7 @@ export const es = {
         "Los eventos de dominio representan sucesos significativos en el dominio del negocio. SCRIPE utiliza el Patrón Outbox para garantizar la entrega confiable de los eventos: estos se persisten en la misma transacción de la base de datos que los cambios de la entidad y son procesados de manera asíncrona.",
       interfaceTitle: "Interfaz IDomainEvent",
       interfaceIntro:
-        "Todos los eventos de dominio implementan la interfaz IDomainEvent, que hereda de INotification de SCRIPE mediator. Esto permite publicador/suscriptor en proceso donde múltiples manejadores pueden suscribirse al mismo evento.",
+        "Todos los eventos de dominio implementan la interfaz IDomainEvent, que hereda de INotification de AstraFlow mediator. Esto permite publicador/suscriptor en proceso donde múltiples manejadores pueden suscribirse al mismo evento.",
       publishingTitle: "Flujo de Publicación y Manejo",
       publishingIntro:
         "Los eventos de dominio siguen un ciclo de vida de 6 pasos: se emite el evento, OutboxInterceptor lo captura, se persiste como OutboxMessage, OutboxProcessor lo sondea y finalmente se publica.",
@@ -297,7 +297,7 @@ export const es = {
       validatorExampleTitle: "Ejemplos de Validadores",
       loggingTitle: "Comportamiento de Registro (LoggingBehavior)",
       loggingIntro:
-        "Registra cada solicitud de SCRIPE mediator con el ID del usuario, ID del inquilino, tipo de solicitud y tiempo de ejecución.",
+        "Registra cada solicitud de AstraFlow mediator con el ID del usuario, ID del inquilino, tipo de solicitud y tiempo de ejecución.",
       cachingTitle: "Comportamiento de Caché (CachingBehavior)",
       cachingIntro:
         "Intercepta las consultas que implementan la interfaz ICacheable. Verifica la caché antes de ejecutar el manejador.",

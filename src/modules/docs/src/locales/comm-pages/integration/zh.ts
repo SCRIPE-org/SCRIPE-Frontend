@@ -89,7 +89,7 @@ export const zh = {
       intro:
         "SCRIPE 的 API 接口专为规模化和可预测性而设计。从一致的命名约定到标准化的分页，再到用于错误处理的 RFC 7807 问题详细信息，我们的无状态 RESTful 架构确保了下游消费者的无缝集成。",
       pipelineContent:
-        "API 管道利用了高度优化的 SCRIPE mediator 请求生命周期。每个端点在执行任何业务逻辑之前，都会自动继承验证、性能跟踪、缓存和审计日志记录功能。",
+        "API 管道利用了高度优化的 AstraFlow mediator 请求生命周期。每个端点在执行任何业务逻辑之前，都会自动继承验证、性能跟踪、缓存和审计日志记录功能。",
       pipelineTitle: "强大的请求管道",
       resultContent:
         "SCRIPE 通过统一的 Result 模式消除了 try-catch 嵌套地狱。每个 API 响应都有严格的类型约束并在数学上可预测，确保无论访问哪个模块，消费者都能收到包装了相同 JSON 响应结构的标准 HTTP 状态码。",

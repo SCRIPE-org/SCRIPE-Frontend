@@ -13,9 +13,9 @@ export const en = {
       featureModular: "Modular Monolith",
       featureModularDesc:
         "Isolated modules with clean boundaries  develop, test, and deploy independently. Same binary, flexible deployment.",
-      featureCQRS: "CQRS + SCRIPE mediator",
+      featureCQRS: "CQRS + AstraFlow mediator",
       featureCQRSDesc:
-        "Command/Query separation with a 4-behavior pipeline: validation, feature gating, caching, and performance monitoring.",
+        "Command/Query separation with a 6-behavior pipeline: logging, stream logging, validation, feature gating, webhook dispatching, and caching.",
       featureSecurity: "Enterprise Security",
       featureSecurityDesc:
         "Unified Policy-Based Access Control (PBAC) engine uniting Role-Based (RBAC), Group-Based (GBAC), and Attribute-Based (ABAC) Access Control. Includes 2FA, Field-Level Restrictions, Rate Limiting, Session Management, and immutable Audit Trails.",
@@ -40,9 +40,9 @@ export const en = {
       techStackTitle: "Technology Stack",
       serviceRegistrationTitle: "Service Registration Order",
       serviceRegistrationIntro:
-        "The order of service registration in Program.cs is architecturally significant. Changing the order can cause runtime failures. Core infrastructure must register before modules, and SCRIPE mediator needs module assembly markers collected first.",
+        "The order of service registration in Program.cs is architecturally significant. Changing the order can cause runtime failures. Core infrastructure must register before modules, and AstraFlow mediator needs module assembly markers collected first.",
       registrationOrderWarning:
-        "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (SCRIPE mediator needs their assemblies).",
+        "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (AstraFlow mediator needs their assemblies).",
       environmentProfilesTitle: "Environment Profiles",
       envVarPrefixTip:
         "Only environment variables starting with SCRIPE_ are loaded. For example, SCRIPE_ConnectionStrings__DefaultConnection overrides the connection string. Double underscores (__) represent nesting in JSON config.",
@@ -157,7 +157,7 @@ export const en = {
       frontendTitle: "Frontend Structure",
       toolsTitle: "Developer Tools",
       toolsIntro:
-        "The tools/ directory contains the SCRIPE CLI and Studio. The CLI provides 62 commands for scaffolding, builds, migrations, and deployment. Studio is a visual developer dashboard built with Express (engine) and Next.js (UI).",
+        "The tools/ directory contains the SCRIPE CLI and Studio. The CLI provides 123 commands for scaffolding, builds, migrations, and deployment. Studio is a visual developer dashboard built with Express (engine) and Next.js (UI).",
       moduleAnatomyTitle: "Module Anatomy",
       moduleAnatomyIntro:
         "Every frontend module follows an identical structure. This consistency makes it easy to navigate any module once you understand one. Each layer has strict responsibilities and import rules.",

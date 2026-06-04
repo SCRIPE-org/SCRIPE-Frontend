@@ -170,7 +170,7 @@ export const ru = {
       corsIntro: "Ограничивает возможность выполнения кросс-доменных запросов в браузере.",
       inputValidationTitle: "Валидация входных данных",
       inputValidationIntro:
-        "FluentValidation в пайплайне SCRIPE mediator отклоняет вредоносные или некорректные payload-ы до выполнения логики.",
+        "FluentValidation в пайплайне AstraFlow mediator отклоняет вредоносные или некорректные payload-ы до выполнения логики.",
       csrfTitle: "Защита от CSRF",
       csrfIntro:
         "Bear-токены в сочетании с директивой SameSite делают API невосприимчивым к подделке межсайтовых запросов (CSRF).",

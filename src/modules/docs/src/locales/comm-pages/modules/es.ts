@@ -14,7 +14,7 @@ export const es = {
       businessTitle: "Lógica de Negocio Acelerada",
       commTitle: "Comunicación y Webhooks",
       coreContent:
-        "La capa Fundacional proporciona lo absoluto no negociable: el Proveedor de Identidad, estrategias de resolución de múltiples inquilinos, abstracciones de contexto de EF Core y el despachador SCRIPE mediator centralizado. Es el lecho de roca sólido sobre el cual escala toda su aplicación.",
+        "La capa Fundacional proporciona lo absoluto no negociable: el Proveedor de Identidad, estrategias de resolución de múltiples inquilinos, abstracciones de contexto de EF Core y el despachador AstraFlow mediator centralizado. Es el lecho de roca sólido sobre el cual escala toda su aplicación.",
       coreTitle: "La Fundación Central (Core)",
       crmModule: "Módulo CRM Headless",
       crmModuleDesc:

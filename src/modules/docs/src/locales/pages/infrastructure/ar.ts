@@ -341,7 +341,7 @@ export const ar = {
       description:
         "تتبع موزع عبر OpenTelemetry ومقاييس Prometheus وتسجيل مركزي عبر Grafana Loki وتصور التتبع عبر Jaeger مع قواعد تنبيه جاهزة.",
       intro:
-        "تُنفذ SCRIPE مكدس مراقبة كامل مبني على معايير مفتوحة: OpenTelemetry للتتبع الموزع وPrometheus لجمع المقاييس وGrafana Loki للتسجيل المركزي وJaeger لتصور التتبع. يتم تتبع كل معالج SCRIPE mediator تلقائيًا. المكدس بالكامل اختياري — في بيئة التطوير يمكنك التشغيل مع إخراج وحدة التحكم فقط وبدون تبعيات خارجية.",
+        "تُنفذ SCRIPE مكدس مراقبة كامل مبني على معايير مفتوحة: OpenTelemetry للتتبع الموزع وPrometheus لجمع المقاييس وGrafana Loki للتسجيل المركزي وJaeger لتصور التتبع. يتم تتبع كل معالج AstraFlow mediator تلقائيًا. المكدس بالكامل اختياري — في بيئة التطوير يمكنك التشغيل مع إخراج وحدة التحكم فقط وبدون تبعيات خارجية.",
       stackTitle: "بنية مكدس المراقبة",
       tracingTitle: "التتبع الموزع (OpenTelemetry)",
       tracingIntro:

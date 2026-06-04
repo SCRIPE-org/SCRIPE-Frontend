@@ -13,7 +13,7 @@ export const fr = {
       layersTitle: "Couches de la Clean Architecture",
       backendArchTitle: "Architecture du Backend",
       backendArchIntro:
-        "Le backend suit une architecture de pipeline de requêtes où chaque requête HTTP passe par des middlewares, des contrôleurs, des comportements (behaviors) SCRIPE mediator, puis le gestionnaire CQRS. Cela garantit une validation, un audit et une gestion des erreurs cohérents.",
+        "Le backend suit une architecture de pipeline de requêtes où chaque requête HTTP passe par des middlewares, des contrôleurs, des comportements (behaviors) AstraFlow mediator, puis le gestionnaire CQRS. Cela garantit une validation, un audit et une gestion des erreurs cohérents.",
       frontendArchTitle: "Architecture du Frontend",
       frontendArchIntro:
         "Le frontend utilise un modèle Vue/ViewModel SOLID où les Vues sont de la pure UI (sans état, sans logique) et les ViewModels contiennent toute la logique métier. Le modèle connecteur sépare le routage Next.js (Server Components) de la logique applicative (Client Components).",
@@ -46,7 +46,7 @@ export const fr = {
         "Chaque nouveau module suit le même modèle d'enregistrement DI. La méthode d'extension AddXxxModule() enregistre le DbContext du module, les dépôts (repositories), les services et le marqueur d'enregistrement du module.",
       controllersTitle: "Contrôleurs (Controllers)",
       controllerTip:
-        "Tous les contrôleurs héritent d'un ApiController de base qui fournit un formatage de réponse standardisé Result<T>. Les contrôleurs doivent rester fins : ils ne font que valider le modèle de la requête et délèguent à SCRIPE mediator.",
+        "Tous les contrôleurs héritent d'un ApiController de base qui fournit un formatage de réponse standardisé Result<T>. Les contrôleurs doivent rester fins : ils ne font que valider le modèle de la requête et délèguent à AstraFlow mediator.",
     },
     frontend: {
       title: "Architecture du Frontend",
@@ -74,15 +74,15 @@ export const fr = {
     cqrs: {
       title: "Modèle CQRS",
       description:
-        "Séparation des Responsabilités de Commande et de Requête avec pipeline SCRIPE mediator, comportements, validation et mise en cache.",
+        "Séparation des Responsabilités de Commande et de Requête avec pipeline AstraFlow mediator, comportements, validation et mise en cache.",
       intro:
-        "SCRIPE utilise le modèle CQRS (Command Query Responsibility Segregation) pour séparer les opérations de lecture et d'écriture. Les commandes mutent l'état et passent par des comportements de validation et d'audit. Les requêtes (Queries) lisent l'état et peuvent tirer parti de la mise en cache. SCRIPE mediator agit comme médiateur entre les contrôleurs et les gestionnaires.",
+        "SCRIPE utilise le modèle CQRS (Command Query Responsibility Segregation) pour séparer les opérations de lecture et d'écriture. Les commandes mutent l'état et passent par des comportements de validation et d'audit. Les requêtes (Queries) lisent l'état et peuvent tirer parti de la mise en cache. AstraFlow mediator agit comme médiateur entre les contrôleurs et les gestionnaires.",
       whatIsCqrsTitle: "Qu'est-ce que CQRS ?",
       whatIsCqrsIntro:
         "CQRS sépare votre application en deux côtés : Commandes (écritures) et Requêtes (lectures). Chaque côté peut être optimisé indépendamment : les commandes se concentrent sur l'intégrité des données et la validation, tandis que les requêtes se concentrent sur les performances et la mise en cache.",
       commandSide: "Côté Commande (Écriture)",
       querySide: "Côté Requête (Lecture)",
-      pipelineTitle: "Pipeline SCRIPE mediator",
+      pipelineTitle: "Pipeline AstraFlow mediator",
       validationBehaviorTitle: "Comportement de Validation",
       commandExampleTitle: "Exemple de Commande",
       queryExampleTitle: "Exemple de Requête",
@@ -238,10 +238,10 @@ export const fr = {
         "Les événements de domaine représentent des occurrences significatives dans le domaine métier. SCRIPE utilise le modèle Outbox pour garantir une livraison fiable des événements.",
       interfaceTitle: "Interface IDomainEvent",
       interfaceIntro:
-        "Tous les événements de domaine implémentent l'interface IDomainEvent, qui hérite de INotification de SCRIPE mediator. Cela permet le modèle Pub/Sub en cours de processus.",
+        "Tous les événements de domaine implémentent l'interface IDomainEvent, qui hérite de INotification de AstraFlow mediator. Cela permet le modèle Pub/Sub en cours de processus.",
       publishingTitle: "Flux de Publication et Traitement",
       publishingIntro:
-        "Les événements suivent un cycle de 6 étapes : déclenchement, capture par l'OutboxInterceptor, persistance dans la même transaction, sondage par l'OutboxProcessor, puis publication via SCRIPE mediator.",
+        "Les événements suivent un cycle de 6 étapes : déclenchement, capture par l'OutboxInterceptor, persistance dans la même transaction, sondage par l'OutboxProcessor, puis publication via AstraFlow mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Modèle Outbox (Outbox Pattern)",
       outboxIntro:
@@ -294,7 +294,7 @@ export const fr = {
       validatorExampleTitle: "Exemples de Validateurs",
       loggingTitle: "LoggingBehavior",
       loggingIntro:
-        "Journalise chaque requête SCRIPE mediator avec l'ID utilisateur, l'ID locataire et le temps d'exécution.",
+        "Journalise chaque requête AstraFlow mediator avec l'ID utilisateur, l'ID locataire et le temps d'exécution.",
       cachingTitle: "CachingBehavior",
       cachingIntro:
         "Intercepte les requêtes implémentant ICacheable et vérifie le cache avant d'exécuter la base de données.",
@@ -321,7 +321,7 @@ export const fr = {
         "SCRIPE utilise le conteneur DI natif de .NET avec un modèle d'enregistrement structuré ordonné.",
       architectureTitle: "Architecture d'Enregistrement DI",
       architectureIntro:
-        "Program.cs suit un ordre en 4 phases : (1) Infrastructure, (2) CORS, (3) Modules, (4) Couche Application (SCRIPE mediator).",
+        "Program.cs suit un ordre en 4 phases : (1) Infrastructure, (2) CORS, (3) Modules, (4) Couche Application (AstraFlow mediator).",
       moduleRegTitle: "Modèle d'Enregistrement de Module",
       moduleRegIntro:
         "Chaque module expose une méthode d'extension AddXxxModule() qui enregistre ses propres services en fonction de la variable MODULE_NAME.",

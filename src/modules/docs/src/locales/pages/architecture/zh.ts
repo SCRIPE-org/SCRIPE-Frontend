@@ -12,7 +12,7 @@ export const zh = {
       layersTitle: "整洁架构分层",
       backendArchTitle: "后端架构",
       backendArchIntro:
-        "后端遵循请求管道 (Request Pipeline) 架构，每个 HTTP 请求流经中间件、控制器、SCRIPE mediator 行为管道，最后到达 CQRS 处理程序。这确保了验证、审计和错误处理的一致性。",
+        "后端遵循请求管道 (Request Pipeline) 架构，每个 HTTP 请求流经中间件、控制器、AstraFlow mediator 行为管道，最后到达 CQRS 处理程序。这确保了验证、审计和错误处理的一致性。",
       frontendArchTitle: "前端架构",
       frontendArchIntro:
         "前端使用 SOLID View/ViewModel 模式，其中视图 (View) 是纯 UI（无状态、无逻辑），而视图模型 (ViewModel) 包含所有业务逻辑。连接器模式将 Next.js 路由（服务端组件）与应用逻辑（客户端组件）分离。",
@@ -44,7 +44,7 @@ export const zh = {
         "每个新模块都遵循相同的 DI 注册模式。AddXxxModule() 扩展方法注册该模块的 DbContext、仓储、服务和模块注册标记。",
       controllersTitle: "控制器 (Controllers)",
       controllerTip:
-        "所有控制器都继承自一个基础 ApiController，该控制器提供标准化的 Result<T> 响应映射。控制器应保持轻量 —— 它们仅验证请求模型并委派给 SCRIPE mediator 处理。",
+        "所有控制器都继承自一个基础 ApiController，该控制器提供标准化的 Result<T> 响应映射。控制器应保持轻量 —— 它们仅验证请求模型并委派给 AstraFlow mediator 处理。",
     },
     frontend: {
       title: "前端架构",
@@ -70,15 +70,15 @@ export const zh = {
     },
     cqrs: {
       title: "CQRS 模式",
-      description: "通过 SCRIPE mediator 管道、行为 (Behaviors)、验证和缓存实现命令查询职责分离。",
+      description: "通过 AstraFlow mediator 管道、行为 (Behaviors)、验证和缓存实现命令查询职责分离。",
       intro:
-        "SCRIPE 使用 CQRS (命令查询职责分离) 模式将读写操作分开。命令 (Commands) 改变状态并经过验证和审计行为。查询 (Queries) 读取状态并可以利用缓存。SCRIPE mediator 充当控制器和处理程序之间的中介。",
+        "SCRIPE 使用 CQRS (命令查询职责分离) 模式将读写操作分开。命令 (Commands) 改变状态并经过验证和审计行为。查询 (Queries) 读取状态并可以利用缓存。AstraFlow mediator 充当控制器和处理程序之间的中介。",
       whatIsCqrsTitle: "什么是 CQRS？",
       whatIsCqrsIntro:
         "CQRS 将您的应用程序分为两端：命令（写入）和查询（读取）。每一端都可以独立优化 —— 命令侧重于数据完整性和验证，而查询侧重于性能和缓存。",
       commandSide: "命令端 (写入)",
       querySide: "查询端 (读取)",
-      pipelineTitle: "SCRIPE mediator 管道",
+      pipelineTitle: "AstraFlow mediator 管道",
       validationBehaviorTitle: "验证行为 (Validation Behavior)",
       commandExampleTitle: "命令示例",
       queryExampleTitle: "查询示例",
@@ -170,7 +170,7 @@ export const zh = {
       mutationFlowTitle: "变更流 (写入)",
       backendPipelineTitle: "后端请求管道",
       backendPipelineIntro:
-        "每个后端请求在到达处理程序之前，都会经过 10 个中间件组件和 3 个 SCRIPE mediator 管道行为。这确保了一致的日志记录、身份验证、授权、验证和审计。",
+        "每个后端请求在到达处理程序之前，都会经过 10 个中间件组件和 3 个 AstraFlow mediator 管道行为。这确保了一致的日志记录、身份验证、授权、验证和审计。",
       errorFlowTitle: "错误处理",
       errorFlowIntro:
         "错误在多个层面进行处理。每个错误源都有特定的处理程序、响应代码和前端处理策略。",
@@ -227,10 +227,10 @@ export const zh = {
         "领域事件代表业务领域中发生的重大事件。SCRIPE 使用发件箱模式 (Outbox Pattern) 来保证事件的可靠投递 —— 事件与实体变更在同一个数据库事务中持久化，并由后台处理器异步发布。",
       interfaceTitle: "IDomainEvent 接口",
       interfaceIntro:
-        "所有领域事件都实现 IDomainEvent 接口，该接口继承自 SCRIPE mediator 的 INotification。这使得进程内能够实现发布/订阅 (Pub/Sub) 模型。",
+        "所有领域事件都实现 IDomainEvent 接口，该接口继承自 AstraFlow mediator 的 INotification。这使得进程内能够实现发布/订阅 (Pub/Sub) 模型。",
       publishingTitle: "发布与处理流程",
       publishingIntro:
-        "领域事件遵循 6 步生命周期：触发事件 -> 拦截器捕获 -> 作为 OutboxMessage 持久化 -> 后台轮询 -> 反序列化 -> 通过 SCRIPE mediator 发布。",
+        "领域事件遵循 6 步生命周期：触发事件 -> 拦截器捕获 -> 作为 OutboxMessage 持久化 -> 后台轮询 -> 反序列化 -> 通过 AstraFlow mediator 发布。",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "发件箱模式 (Outbox Pattern)",
       outboxIntro:
@@ -243,7 +243,7 @@ export const zh = {
         "它是一个 EF Core SaveChanges 拦截器，在事务提交前运行。它收集被追踪实体的所有领域事件，并将其序列化为 OutboxMessage 记录加入上下文中。",
       outboxProcessorTitle: "OutboxProcessor (发件箱处理器)",
       outboxProcessorIntro:
-        "这是一个后台服务 (BackgroundService)，每 5 秒轮询一次 OutboxMessage 表。它批量处理事件并通过 SCRIPE mediator 发布。失败的事件将进行重试。",
+        "这是一个后台服务 (BackgroundService)，每 5 秒轮询一次 OutboxMessage 表。它批量处理事件并通过 AstraFlow mediator 发布。失败的事件将进行重试。",
       outboxCleanupTitle: "发件箱清理任务",
       outboxCleanupIntro:
         "一个 Hangfire 周期性任务，每天凌晨 2:00 UTC 运行，删除 7 天前已处理的发件箱消息，防止表无限增长。",
@@ -284,7 +284,7 @@ export const zh = {
       validatorExampleTitle: "验证器示例",
       loggingTitle: "日志行为 (LoggingBehavior)",
       loggingIntro:
-        "记录每个 SCRIPE mediator 请求的用户 ID、租户 ID、请求类型和执行时间。超过 500ms 的请求将作为警告记录，以进行性能监控。",
+        "记录每个 AstraFlow mediator 请求的用户 ID、租户 ID、请求类型和执行时间。超过 500ms 的请求将作为警告记录，以进行性能监控。",
       cachingTitle: "缓存行为 (CachingBehavior)",
       cachingIntro:
         "拦截实现 ICacheable 接口的查询。在执行处理程序之前检查缓存是否存在现有结果，如果未命中则执行处理并存储结果。",
@@ -306,7 +306,7 @@ export const zh = {
       description:
         "Program.cs 注册流程、模块 DI 模式、服务发现、核心与身份服务映射、生命周期规则和 YARP 网关。",
       intro:
-        "SCRIPE 使用 .NET 内置的依赖注入容器，并采用结构化的注册模式。Program.cs 协调所有注册：核心基础设施 -> 根据 MODULE_NAME 的模块 -> SCRIPE mediator 应用层。",
+        "SCRIPE 使用 .NET 内置的依赖注入容器，并采用结构化的注册模式。Program.cs 协调所有注册：核心基础设施 -> 根据 MODULE_NAME 的模块 -> AstraFlow mediator 应用层。",
       architectureTitle: "DI 注册架构",
       architectureIntro:
         "Program.cs 遵循严格的 4 阶段注册顺序：(1) 核心基础设施 (缓存, 存储等) (2) CORS 和 限流 (3) 模块 (4) 应用层。",

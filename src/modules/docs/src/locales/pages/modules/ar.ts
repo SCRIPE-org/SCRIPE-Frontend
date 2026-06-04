@@ -23,7 +23,7 @@ export const ar = {
         "عندما يحتاج النظام لتحديد قيمة ميزة لمستأجر، يتبع سلسلة أولوية صارمة. المصدر الأعلى أولوية هو الذي يسود.",
       pipelineTitle: "التكامل مع المسار",
       pipelineIntro:
-        "تدمج SCRIPE الاستحقاقات مباشرة في مسار SCRIPE mediator عبر FeatureCheckBehavior. الأوامر والاستعلامات التي تنفذ IRequireFeature يتم بوابتها تلقائياً.",
+        "تدمج SCRIPE الاستحقاقات مباشرة في مسار AstraFlow mediator عبر FeatureCheckBehavior. الأوامر والاستعلامات التي تنفذ IRequireFeature يتم بوابتها تلقائياً.",
       pipelineTip:
         "لبوابة أمر خلف ميزة، قم ببساطة بتنفيذ IRequireFeature وعيّن RequiredFeatureName لمفتاح الميزة الثابت. لا حاجة لكود إضافي.",
       backendTitle: "هيكل الواجهة الخلفية",

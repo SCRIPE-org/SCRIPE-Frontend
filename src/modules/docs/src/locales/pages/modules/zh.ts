@@ -22,7 +22,7 @@ export const zh = {
         "当系统需要确定某个租户的功能值时，它会遵循严格的优先级链。提供值的最高优先级来源将胜出。",
       pipelineTitle: "管道集成 (Pipeline Integration)",
       pipelineIntro:
-        "SCRIPE 通过 FeatureCheckBehavior 将权益直接集成到 SCRIPE mediator CQRS 管道中。实现 IRequireFeature 的命令和查询会自动受到门控保护 —— 如果解析出的租户功能值为禁用状态，请求将在到达处理程序之前被拒绝。",
+        "SCRIPE 通过 FeatureCheckBehavior 将权益直接集成到 AstraFlow mediator CQRS 管道中。实现 IRequireFeature 的命令和查询会自动受到门控保护 —— 如果解析出的租户功能值为禁用状态，请求将在到达处理程序之前被拒绝。",
       pipelineTip:
         "要将命令隐藏在功能门控之后，只需实现 IRequireFeature 并将 RequiredFeatureName 设置为该功能的稳定系统键（例如 'Chat.Enabled'）。无需编写额外代码。",
       backendTitle: "后端结构",
@@ -46,7 +46,7 @@ export const zh = {
         "解析链采用延迟评估 (lazy evaluation) —— 值在首次解析后会被缓存，并在订阅、版本或覆盖发生变化时失效。",
       cqrsMapTitle: "CQRS 命令与查询映射",
       cqrsMapIntro:
-        "权益模块注册了跨越四个领域的 31 个 SCRIPE mediator 处理程序。每个命令都有一个对应的 FluentValidation 验证器用于输入验证。",
+        "权益模块注册了跨越四个领域的 31 个 AstraFlow mediator 处理程序。每个命令都有一个对应的 FluentValidation 验证器用于输入验证。",
       diTitle: "依赖注入 (DI) 注册",
       diIntro:
         "所有权益服务均通过 DependencyInjection.cs 中的 AddEntitlementsModule 扩展方法进行注册。该模块遵循 SCRIPE 的标准注册模式。",

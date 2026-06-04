@@ -136,7 +136,7 @@ $ scripe remove-module --last --confirm`,
     type: "code",
     language: "bash",
     filename: "Background Job Tooling",
-    code: `# Automatically generate and wire a Hangfire Soft-Delete Cleanup Job
+    code: `# Automatically generate and wire a Soft-Delete Cleanup Job (provider-agnostic)
 $ scripe add-bg-service Products
 
 $ scripe remove-bg-service Products`,

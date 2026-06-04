@@ -12,9 +12,9 @@ export const zh = {
       featureModular: "模块化单体",
       featureModularDesc:
         "边界清晰的隔离模块：独立开发、测试和部署。相同的二进制文件，灵活的部署方式。",
-      featureCQRS: "CQRS + SCRIPE mediator",
+      featureCQRS: "CQRS + AstraFlow mediator",
       featureCQRSDesc:
-        "具有 4 个行为管道的命令/查询分离：验证、功能控制 (feature gating)、缓存和性能监控。",
+        "具有 6 个行为管道的命令/查询分离：日志记录 (logging)、流日志记录 (stream logging)、验证、功能控制 (feature gating)、网络钩子分发 (webhook dispatching) 和缓存。",
       featureSecurity: "企业级安全",
       featureSecurityDesc:
         "统一的基于策略的访问控制 (PBAC) 引擎，结合了 RBAC、GBAC 和 ABAC。包含 2FA、字段级限制、限流、会话管理和不可变的审计追踪。",
@@ -38,9 +38,9 @@ export const zh = {
       techStackTitle: "技术栈",
       serviceRegistrationTitle: "服务注册顺序",
       serviceRegistrationIntro:
-        "Program.cs 中的服务注册顺序在架构上具有重要意义。改变顺序会导致运行时失败。核心基础设施必须在模块之前注册，并且 SCRIPE mediator 需要首先收集模块程序集标记。",
+        "Program.cs 中的服务注册顺序在架构上具有重要意义。改变顺序会导致运行时失败。核心基础设施必须在模块之前注册，并且 AstraFlow mediator 需要首先收集模块程序集标记。",
       registrationOrderWarning:
-        "请勿重新排列 Program.cs 中的服务注册顺序。AddCoreInfrastructure 必须在模块之前（模块依赖 ICurrentUser），AddCoreApplication 必须在模块之后（SCRIPE mediator 需要其程序集）。",
+        "请勿重新排列 Program.cs 中的服务注册顺序。AddCoreInfrastructure 必须在模块之前（模块依赖 ICurrentUser），AddCoreApplication 必须在模块之后（AstraFlow mediator 需要其程序集）。",
       environmentProfilesTitle: "环境变量配置",
       envVarPrefixTip:
         "仅加载以 SCRIPE_ 开头的环境变量。例如，SCRIPE_ConnectionStrings__DefaultConnection 会覆盖连接字符串。双下划线 (__) 代表 JSON 配置中的嵌套层级。",
@@ -142,7 +142,7 @@ export const zh = {
       frontendTitle: "前端结构",
       toolsTitle: "开发者工具",
       toolsIntro:
-        "tools/ 目录包含 SCRIPE CLI 和 Studio。CLI 提供 62 个命令用于脚手架、构建、迁移和部署。Studio 是基于 Express（引擎）和 Next.js（UI）构建的可视化开发者仪表板。",
+        "tools/ 目录包含 SCRIPE CLI 和 Studio。CLI 提供 123 个命令用于脚手架、构建、迁移和部署。Studio 是基于 Express（引擎）和 Next.js（UI）构建的可视化开发者仪表板。",
       moduleAnatomyTitle: "模块解剖",
       moduleAnatomyIntro:
         "每个前端模块都遵循相同的结构。这种一致性使得只要您理解了一个模块，就很容易浏览任何其他模块。每层都有严格的职责和导入规则。",

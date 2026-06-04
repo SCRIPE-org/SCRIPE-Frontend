@@ -145,7 +145,7 @@ export const ar = {
       title: "نظام التدقيق (Audit System)",
       description: "مسار بـ 4 مصادر، 35+ نوع حدث، بث لحظي عبر SignalR، وتصدير CSV/PDF.",
       intro:
-        "تلتقط SCRIPE كل إجراء مهم في سجل التدقيق من خلال مسار بـ 4 مصادر (SCRIPE mediator، Interceptors، Middleware، وخدمات مباشرة). يتم بث الأحداث لحظياً عبر SignalR.",
+        "تلتقط SCRIPE كل إجراء مهم في سجل التدقيق من خلال مسار بـ 4 مصادر (AstraFlow mediator، Interceptors، Middleware، وخدمات مباشرة). يتم بث الأحداث لحظياً عبر SignalR.",
       architectureTitle: "بنية التدقيق",
       eventTypesTitle: "أنواع الأحداث (35+ فئة)",
       authEventsTitle: "أحداث المصادقة",

@@ -288,7 +288,7 @@ export const es = {
         "Crea la partición de microservicio base y las carpetas de negocio en React y .NET en un solo pulso.",
       newFeatureTitle: "Andamiaje de Operaciones (new-feature)",
       newFeatureIntro:
-        "Dispara la lógica CRUD generando las llamadas de Red, la UI, los Controladores, SCRIPE mediator, y EF Core Configurations.",
+        "Dispara la lógica CRUD generando las llamadas de Red, la UI, los Controladores, AstraFlow mediator, y EF Core Configurations.",
       destructionTitle: "Herramientas de Reversión",
       destructionIntro:
         "Desandamiaje perfecto. Destruye los archivos y retira los links sin romper las compilaciones.",

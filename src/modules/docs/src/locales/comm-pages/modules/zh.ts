@@ -13,7 +13,7 @@ export const zh = {
       businessTitle: "加速的业务逻辑",
       commTitle: "通信与 Webhooks",
       coreContent:
-        "基础架构 (Foundation) 层提供绝对不可协商的基础设施：身份提供商、多租户解析策略、EF Core 上下文抽象以及集中式的 SCRIPE mediator 调度器。它是您的整个应用程序得以扩展的坚如磐石的基石。",
+        "基础架构 (Foundation) 层提供绝对不可协商的基础设施：身份提供商、多租户解析策略、EF Core 上下文抽象以及集中式的 AstraFlow mediator 调度器。它是您的整个应用程序得以扩展的坚如磐石的基石。",
       coreTitle: "核心基石",
       crmModule: "Headless CRM 模块",
       crmModuleDesc: "通过完全由 API 驱动的 CRM 架构管理组织层级、客户关系和自定义属性。",

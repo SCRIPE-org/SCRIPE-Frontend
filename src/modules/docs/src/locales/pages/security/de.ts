@@ -198,7 +198,7 @@ export const de = {
       description: "Interceptors, Entity-Tracking, SignalR-Streaming und Export.",
       intro: "Ein lückenloses Protokoll jeder Datenänderung und API-Anfrage.",
       architectureTitle: "Audit-Architektur",
-      architectureIntro: "Drei Schichten: Interceptors, SCRIPE mediator-Behavior, Middleware.",
+      architectureIntro: "Drei Schichten: Interceptors, AstraFlow mediator-Behavior, Middleware.",
       interceptorTitle: "Entity Change Interceptor",
       interceptorIntro: "Fängt Added, Modified, Deleted ab und serialisiert sie als JSON.",
       auditLogEntityTitle: "AuditLog Entitäts-Struktur",

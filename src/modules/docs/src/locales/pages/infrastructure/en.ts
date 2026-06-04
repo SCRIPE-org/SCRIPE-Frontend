@@ -290,7 +290,7 @@ export const en = {
         "Creates a complete, strongly-typed architecture pattern. It generates a 3-project DDD backend structure (Domain, Application, Infrastructure) and a unified frontend module directory.",
       newFeatureTitle: "Feature Scaffolding: new-feature",
       newFeatureIntro:
-        "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS SCRIPE mediator, Solid Rect Components, TanStack Query models, and EF Core configurations.",
+        "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS AstraFlow mediator, Solid Rect Components, TanStack Query models, and EF Core configurations.",
       destructionTitle: "Destructive Tools",
       destructionIntro:
         "Because the CLI wires deeply into the core fabric of SCRIPE, it provides powerful destruction operations to execute perfect code rollback when testing layouts rapidly.",
@@ -409,7 +409,7 @@ export const en = {
       stackTitle: "Observability Stack Architecture",
       tracingTitle: "Distributed Tracing (OpenTelemetry)",
       tracingIntro:
-        "The TracingBehavior SCRIPE mediator pipeline creates an OpenTelemetry span for every command and query handler. Spans include auto-detected module names, request types, and duration measurements. Errors are automatically recorded with exception details. Traces flow to Jaeger via OTLP gRPC protocol (:4317) for visualization and analysis.",
+        "The TracingBehavior AstraFlow mediator pipeline creates an OpenTelemetry span for every command and query handler. Spans include auto-detected module names, request types, and duration measurements. Errors are automatically recorded with exception details. Traces flow to Jaeger via OTLP gRPC protocol (:4317) for visualization and analysis.",
       prometheusTitle: "Prometheus Metrics",
       prometheusIntro:
         "The /metrics endpoint exposes OpenTelemetry metrics in Prometheus text format. Prometheus scrapes this endpoint at 15-second intervals, collecting HTTP request durations (histogram), active requests (gauge), GC collections, CPU time, and working set memory. In monolith mode, a single scrape target is needed. In microservice mode, configure one scrape job per module service.",

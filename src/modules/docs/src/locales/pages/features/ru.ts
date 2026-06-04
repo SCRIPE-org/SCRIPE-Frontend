@@ -146,7 +146,7 @@ export const ru = {
       description:
         "Пайплайн из 4 источников, 35+ типов событий, события-защитники (Guardian), SignalR в реальном времени и экспорт в CSV/PDF.",
       intro:
-        "SCRIPE фиксирует все значимые действия в журнале аудита через SCRIPE mediator, перехватчики EF Core, middleware и прямые вызовы сервисов.",
+        "SCRIPE фиксирует все значимые действия в журнале аудита через AstraFlow mediator, перехватчики EF Core, middleware и прямые вызовы сервисов.",
       architectureTitle: "Архитектура аудита",
       eventTypesTitle: "Типы событий (35+ категорий)",
       authEventsTitle: "События аутентификации",

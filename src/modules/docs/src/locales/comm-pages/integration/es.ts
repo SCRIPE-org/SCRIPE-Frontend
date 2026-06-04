@@ -91,7 +91,7 @@ export const es = {
       intro:
         "La superficie de la API de SCRIPE está diseñada para la escala y la previsibilidad. Desde convenciones de nomenclatura consistentes hasta paginación estandarizada y detalles de problemas RFC 7807 para el manejo de errores, nuestra arquitectura RESTful sin estado (stateless) garantiza una integración sin fricciones para los consumidores finales.",
       pipelineContent:
-        "La canalización (pipeline) de la API utiliza un ciclo de vida de peticiones SCRIPE mediator altamente optimizado. Cada endpoint hereda automáticamente la validación, el seguimiento del rendimiento, el almacenamiento en caché y el registro de auditoría antes de que se ejecute una sola línea de lógica de negocio.",
+        "La canalización (pipeline) de la API utiliza un ciclo de vida de peticiones AstraFlow mediator altamente optimizado. Cada endpoint hereda automáticamente la validación, el seguimiento del rendimiento, el almacenamiento en caché y el registro de auditoría antes de que se ejecute una sola línea de lógica de negocio.",
       pipelineTitle: "Canalización de Peticiones Robusta",
       resultContent:
         "SCRIPE elimina el infierno de los try-catch a través de un patrón Result unificado. Cada respuesta de la API está estrictamente tipada y es matemáticamente predecible, asegurando que los consumidores reciban códigos de estado HTTP estándar que envuelven una estructura de respuesta JSON idéntica sin importar el módulo al que se acceda.",

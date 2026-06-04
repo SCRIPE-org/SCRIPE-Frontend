@@ -236,7 +236,7 @@ export const fr = {
       intro: "SCRIPE est dotée d'une suite permettant une piste d'audit juridique inaltérable.",
       architectureTitle: "Architecture d'Audit",
       architectureIntro:
-        "Combine l'AuditableEntityInterceptor d'EF Core, l'AuditBehavior de SCRIPE mediator et le RequestLoggingMiddleware.",
+        "Combine l'AuditableEntityInterceptor d'EF Core et le RequestLoggingMiddleware (qui capture également les mutations de modification d'état pour le journal d'audit).",
       interceptorTitle: "Intercepteur de Changement d'Entité",
       interceptorIntro:
         "S'exécute à l'intérieur de l'ORM, calculant l'ancienne et la nouvelle valeur, l'auteur de l'action, puis sérialise le tout en JSON.",

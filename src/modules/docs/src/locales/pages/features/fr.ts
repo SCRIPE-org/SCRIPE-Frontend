@@ -147,7 +147,7 @@ export const fr = {
       description:
         "Pipeline à 4 sources, plus de 35 types d'événements, 7 événements Guardian, SignalR en temps réel et export CSV/PDF.",
       intro:
-        "SCRIPE capture chaque action significative dans le journal d'audit via SCRIPE mediator, EF Core, les middlewares et les appels de services.",
+        "SCRIPE capture chaque action significative dans le journal d'audit via AstraFlow mediator, EF Core, les middlewares et les appels de services.",
       architectureTitle: "Architecture d'Audit",
       eventTypesTitle: "Types d'Événements (Plus de 35 Catégories)",
       authEventsTitle: "Événements d'Authentification",

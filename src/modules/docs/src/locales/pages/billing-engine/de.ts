@@ -3,69 +3,69 @@ export const de = {
     billingEngine: {
       title: "Billing Engine",
       description:
-        "Multi-gateway payment processing supporting Stripe, PayPal, and Paymob with self-service checkout, payment links, customer portal, and webhook-driven state synchronization.",
+        "Multi-Gateway-Zahlungsabwicklung mit Unterstützung für Stripe, PayPal und Paymob, inklusive Self-Service-Checkout, Zahlungslinks, Kundenportal und webhook-gesteuerter Statussynchronisierung.",
       intro:
-        "The Billing Engine powers SCRIPE's subscription lifecycle with a provider-agnostic payment architecture. It supports three payment gateways (Stripe, PayPal, Paymob) and three subscription modes: Self-Service (tenant picks a plan and pays via the configured gateway), Contact Sales (admin generates a payment link for enterprise deals), and Manual Assignment (admin assigns a plan without payment). All payment events are synchronized via gateway-specific webhooks.",
-      abstractionTitle: "IPaymentGateway Abstraction",
+        "Die Billing Engine steuert den Abonnement-Lebenszyklus von SCRIPE mit einer anbieterunabhängigen Zahlungsarchitektur. Sie unterstützt drei Zahlungsgateways (Stripe, PayPal, Paymob) und drei Abonnementmodelle: Self-Service (der Mandant wählt einen Plan und bezahlt über das konfigurierte Gateway), Vertrieb kontaktieren (Admin generiert einen Zahlungslink für Enterprise-Deals) und Manuelle Zuweisung (Admin weist einen Plan ohne Zahlung zu). Alle Zahlungsereignisse werden über gateway-spezifische Webhooks synchronisiert.",
+      abstractionTitle: "IPaymentGateway-Abstraktion",
       abstractionIntro:
-        "The payment system is built on an IPaymentGateway interface in Core.Application with an IPaymentGatewayResolver that dynamically selects the correct provider per tenant. Three implementations are active: StripePaymentGateway (global, recurring, billing portal), PayPalPaymentGateway (international, OAuth2-based), and PaymobPaymentGateway (MENA region, card tokenization). Gateways are registered as Keyed DI services and resolved at runtime.",
-      modesTitle: "Three Subscription Modes",
+        "Das Zahlungssystem basiert auf einer IPaymentGateway-Schnittstelle in Core.Application mit einem IPaymentGatewayResolver, der dynamisch den richtigen Anbieter pro Mandant auswählt. Drei Implementierungen sind aktiv: StripePaymentGateway (global, wiederkehrend, Abrechnungsportal), PayPalPaymentGateway (international, OAuth2-basiert) und PaymobPaymentGateway (MENA-Region, Karten-Tokenisierung). Gateways werden als Keyed DI-Dienste registriert und zur Laufzeit aufgelöst.",
+      modesTitle: "Drei Abonnementmodelle",
       modesIntro:
-        "Every tenant onboarding follows one of three paths. The mode is chosen by whether the edition has IsSelfServiceEnabled or IsContactSalesOnly set.",
-      mode1Title: "Self-Service (Automated)",
+        "Jedes Mandanten-Onboarding folgt einem von drei Wegen. Das Modell wird danach ausgewählt, ob in der Edition IsSelfServiceEnabled oder IsContactSalesOnly gesetzt ist.",
+      mode1Title: "Self-Service (Automatisiert)",
       mode1Intro:
-        "The tenant selects an edition and billing cycle in the admin panel. SCRIPE resolves the correct payment gateway (via tenant override or global default), creates a checkout session, sets TenantSubscription to PendingPayment, and redirects the tenant to the gateway's hosted checkout page. On successful payment, the gateway webhook fires and SCRIPE activates the subscription automatically.",
-      mode2Title: "Contact Sales (Admin-Assisted)",
+        "Der Mandant wählt im Admin-Panel eine Edition und einen Abrechnungszyklus aus. SCRIPE ermittelt das korrekte Zahlungsgateway (über eine mandantenspezifische Überschreibung oder den globalen Standard), erstellt eine Checkout-Sitzung, setzt die TenantSubscription auf PendingPayment und leitet den Mandanten auf die gehostete Checkout-Seite des Gateways weiter. Bei erfolgreicher Zahlung wird der Gateway-Webhook ausgelöst und SCRIPE aktiviert das Abonnement automatisch.",
+      mode2Title: "Vertrieb kontaktieren (Admin-unterstützt)",
       mode2Intro:
-        "For enterprise or custom-priced deals, the admin creates a subscription with a payment link via the resolved gateway. SCRIPE generates a reusable payment link URL, which the admin sends to the client. The same webhook flow activates the subscription once the client pays.",
-      mode3Title: "Manual Assignment (Skip Payment)",
+        "Für Enterprise- oder individuell bepreiste Deals erstellt der Admin ein Abonnement mit einem Zahlungslink über das ermittelte Gateway. SCRIPE generiert eine wiederverwendbare Zahlungslink-URL, die der Admin an den Kunden sendet. Derselbe Webhook-Ablauf aktiviert das Abonnement, sobald der Kunde bezahlt hat.",
+      mode3Title: "Manuelle Zuweisung (Zahlung überspringen)",
       mode3Intro:
-        "For partners, internal accounts, or free trials, the admin assigns an edition directly. No gateway interaction occurs — the subscription is set to Active immediately. Use this for Free editions, internal tenants, or manually negotiated deals.",
-      gatewayTitle: "Multi-Gateway Architecture",
+        "Für Partner, interne Konten oder kostenlose Testversionen weist der Admin direkt eine Edition zu. Es findet keine Gateway-Interaktion statt — das Abonnement wird sofort auf Active gesetzt. Verwenden Sie dies für kostenlose Editionen, interne Mandanten oder manuell ausgehandelte Deals.",
+      gatewayTitle: "Multi-Gateway-Architektur",
       gatewayIntro:
-        "SCRIPE supports three payment gateways simultaneously. The IPaymentGatewayResolver resolves the correct gateway per tenant using a priority chain: explicit admin override, tenant-level configuration, then global default. Each subscription records which gateway processed its payment in the PaymentGateway field.",
+        "SCRIPE unterstützt drei Zahlungsgateways gleichzeitig. Der IPaymentGatewayResolver ermittelt das korrekte Gateway pro Mandant anhand einer Prioritätskette: explizite Admin-Überschreibung, Konfiguration auf Mandantenebene, dann globaler Standard. Jedes Abonnement erfasst im Feld PaymentGateway, welches Gateway die Zahlung verarbeitet hat.",
       gatewayStripe:
-        "Stripe — Full-featured: checkout, recurring billing, billing portal, payment links, refunds, 3D Secure, multi-currency. Ideal as the global default.",
+        "Stripe — Vollwertig: Checkout, wiederkehrende Abrechnung, Abrechnungsportal, Zahlungslinks, Rückerstattungen, 3D Secure, mehrere Währungen. Ideal als globaler Standard.",
       gatewayPaypal:
-        "PayPal — International reach: checkout, recurring billing, refunds, multi-currency. OAuth2-based with sandbox support. No billing portal (managed via paypal.com).",
+        "PayPal — Internationale Reichweite: Checkout, wiederkehrende Abrechnung, Rückerstattungen, mehrere Währungen. OAuth2-basiert mit Sandbox-Unterstützung. Kein Abrechnungsportal (Verwaltung über paypal.com).",
       gatewayPaymob:
-        "Paymob Accept — MENA specialist: checkout, tokenized recurring (via saved card tokens), mobile wallets. Supports EGP, SAR, AED, PKR currencies. HMAC-SHA512 webhook verification.",
-      webhookTitle: "Webhook Handlers",
+        "Paymob Accept — MENA-Spezialist: Checkout, tokenisierte wiederkehrende Zahlungen (über gespeicherte Karten-Token), mobile Geldbörsen. Unterstützt die Währungen EGP, SAR, AED, PKR. HMAC-SHA512-Webhook-Verifizierung.",
+      webhookTitle: "Webhook-Handler",
       webhookIntro:
-        "Each gateway has its own webhook endpoint with provider-specific signature verification. Stripe uses HMAC-SHA256 at POST /api/stripe-webhooks, PayPal uses transmission signature verification at POST /api/paypal-webhooks, and Paymob uses HMAC-SHA512 at POST /api/paymob-webhooks. All handlers dispatch to SCRIPE mediator commands for processing.",
+        "Jedes Gateway hat seinen eigenen Webhook-Endpunkt mit anbieterspezifischer Signaturverifizierung. Stripe verwendet HMAC-SHA256 bei POST /api/stripe-webhooks, PayPal verwendet die Transmission-Signaturverifizierung bei POST /api/paypal-webhooks und Paymob verwendet HMAC-SHA512 bei POST /api/paymob-webhooks. Alle Handler leiten zur Verarbeitung an AstraFlow-Mediatorbefehle weiter.",
       webhookEvents:
         "Stripe: checkout.session.completed, invoice.paid, invoice.payment_failed, customer.subscription.updated, customer.subscription.deleted, charge.refunded. PayPal: BILLING.SUBSCRIPTION.ACTIVATED, PAYMENT.SALE.COMPLETED, BILLING.SUBSCRIPTION.CANCELLED. Paymob: transaction.success, transaction.failed, transaction.refunded.",
-      idempotencyTitle: "Idempotency",
+      idempotencyTitle: "Idempotenz",
       idempotencyIntro:
-        "All webhook handlers are idempotent — processing the same event twice has no side effects. Gateway transaction IDs are checked before creating new records. This protects against at-least-once delivery guarantees from all providers.",
-      configTitle: "Configuration",
+        "Alle Webhook-Handler sind idempotent — die zweimalige Verarbeitung desselben Ereignisses hat keine Nebenwirkungen. Gateway-Transaktions-IDs werden überprüft, bevor neue Datensätze erstellt werden. Dies schützt vor den 'At-least-once'-Liefergarantien (mindestens einmal) aller Anbieter.",
+      configTitle: "Konfiguration",
       configIntro:
-        "Each gateway is configured in appsettings.json under its own section (Stripe, PayPal, Paymob). The PaymentGateways section controls which gateways are enabled, which is the global default, and whether tenants can override the gateway selection. Use sandbox/test keys for development.",
-      portalTitle: "Billing Portal (Stripe Only)",
+        "Jedes Gateway wird in der appsettings.json unter seinem eigenen Abschnitt (Stripe, PayPal, Paymob) konfiguriert. Der Abschnitt PaymentGateways steuert, welche Gateways aktiviert sind, welches der globale Standard ist und ob Mandanten die Gateway-Auswahl überschreiben können. Verwenden Sie Sandbox-/Testschlüssel für die Entwicklung.",
+      portalTitle: "Abrechnungsportal (nur Stripe)",
       portalIntro:
-        "Once a tenant has an active Stripe subscription, they can manage billing via Stripe's hosted Customer Portal. This feature is Stripe-exclusive — PayPal and Paymob subscriptions show gateway-specific management guidance instead. The UI automatically hides the portal button for non-Stripe gateways.",
-      endpointsTitle: "API Endpoints",
+        "Sobald ein Mandant ein aktives Stripe-Abonnement hat, kann er die Abrechnung über das gehostete Kundenportal von Stripe verwalten. Diese Funktion ist exklusiv für Stripe — bei PayPal- und Paymob-Abonnements werden stattdessen gateway-spezifische Verwaltungsanweisungen angezeigt. Die Benutzeroberfläche blendet die Portal-Schaltfläche für Nicht-Stripe-Gateways automatisch aus.",
+      endpointsTitle: "API-Endpunkte",
       endpointsIntro:
-        "The BillingController exposes 5 endpoints under /api/v1/billing, plus gateway management at /api/v1/payment-gateways:",
+        "Der BillingController stellt 5 Endpunkte unter /api/v1/billing bereit, plus Gateway-Management unter /api/v1/payment-gateways:",
       ep: {
         checkout:
-          "Create checkout session via the resolved payment gateway (supports GatewayOverride parameter)",
-        paymentLink: "Generate payment link via the resolved gateway (Contact Sales flow)",
+          "Checkout-Sitzung über das ermittelte Zahlungsgateway erstellen (unterstützt den Parameter GatewayOverride)",
+        paymentLink: "Zahlungslink über das ermittelte Gateway generieren (Ablauf 'Vertrieb kontaktieren')",
         portal:
-          "Create Stripe Customer Portal session (Stripe-only, returns error for other gateways)",
+          "Sitzung für das Stripe-Kundenportal erstellen (nur Stripe, gibt bei anderen Gateways einen Fehler zurück)",
         cancel:
-          "Cancel gateway subscription (resolves the correct gateway from the subscription's PaymentGateway field)",
+          "Gateway-Abonnement kündigen (ermittelt das richtige Gateway aus dem Feld PaymentGateway des Abonnements)",
         dashboard:
-          "Get revenue dashboard (MRR, ARR, churn, trends — aggregated across all gateways)",
+          "Umsatz-Dashboard abrufen (MRR, ARR, Churn, Trends — aggregiert über alle Gateways)",
         gateways:
-          "GET /api/v1/payment-gateways — Query enabled gateways and their feature support matrix",
+          "GET /api/v1/payment-gateways — Aktivierte Gateways und ihre Funktionsunterstützungsmatrix abfragen",
       },
-      selfServiceTitle: "Edition Self-Service Fields",
+      selfServiceTitle: "Edition Self-Service-Felder",
       selfServiceIntro:
-        "Two fields on the Edition entity control which payment mode is available: IsSelfServiceEnabled (tenant can check out without contacting sales) and IsContactSalesOnly (the Checkout button shows 'Contact Sales' and triggers the payment link flow instead).",
-      currencyTitle: "Zero-Decimal Currency Handling",
+        "Zwei Felder der Entität Edition steuern, welcher Zahlungsmodus verfügbar ist: IsSelfServiceEnabled (Mandant kann zur Kasse gehen, ohne den Vertrieb zu kontaktieren) und IsContactSalesOnly (die Checkout-Schaltfläche zeigt 'Vertrieb kontaktieren' und löst stattdessen den Zahlungslink-Ablauf aus).",
+      currencyTitle: "Handhabung von nullstelligen Währungen",
       currencyIntro:
-        "SCRIPE includes a CurrencyHelper that correctly converts amounts for zero-decimal currencies (JPY, KWD, BHD, etc.). Regular currencies (USD, EUR, SAR, etc.) are multiplied by 100 to convert to smallest units. Zero-decimal currencies are passed as-is. This applies across all gateways.",
+        "SCRIPE enthält einen CurrencyHelper, der Beträge für nullstellige Währungen (JPY, KWD, BHD usw.) korrekt umrechnet. Reguläre Währungen (USD, EUR, SAR usw.) werden mit 100 multipliziert, um in die kleinsten Einheiten umgerechnet zu werden. Nullstellige Währungen werden unverändert übergeben. Dies gilt für alle Gateways.",
     },
   },
 };

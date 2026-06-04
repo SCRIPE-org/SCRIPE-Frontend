@@ -18,7 +18,7 @@ export const en = {
       tblRuntimeR2C2: "Explicit mapping rules plus EncryptedIdMapper",
       tblRuntimeR2C3: "Auditable response shapes and preserved encrypted IDs",
       tblRuntimeR3C1: "CLI scaffolding",
-      tblRuntimeR3C2: "Templates emit SCRIPE mediator namespaces and mapping rules",
+      tblRuntimeR3C2: "Templates emit AstraFlow mediator namespaces and mapping rules",
       tblRuntimeR3C3: "New modules do not reintroduce removed packages",
       tblRuntimeR4C1: "Operations",
       tblRuntimeR4C2: "No phone-home checks on these core paths",
@@ -153,7 +153,7 @@ export const en = {
       entVersioningDesc:
         "Create edition versions with feature snapshots and deploy via immediate, canary, or scheduled rollout strategies without interrupting existing tenants.",
       entitlementsTip:
-        "The Entitlements module integrates directly into the SCRIPE mediator pipeline — commands implementing IRequireFeature are automatically gated by the tenant's resolved feature values. No custom middleware needed.",
+        "The Entitlements module integrates directly into the AstraFlow mediator pipeline — commands implementing IRequireFeature are automatically gated by the tenant's resolved feature values. No custom middleware needed.",
     },
     supportPlans: {
       communityAccess: "Global Discord & GitHub Access",
@@ -325,7 +325,7 @@ export const en = {
       aHowLongSetup:
         "You can have SCRIPE running locally in under 15 minutes. Clone the repository, configure your database connection (SQL Server, Oracle, PostgreSQL, or SQLite), run the migrations, and start the development server. The scripe-cli tool further accelerates development by scaffolding new modules, entities, and boilerplate code in seconds. Most teams are productive within the first day.",
       q4: "What technology stack does SCRIPE use?",
-      a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, SCRIPE mediator (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
+      a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, AstraFlow mediator (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
       q5: "Can SCRIPE scale from monolith to microservices?",
       a5: "Yes — this is a core design principle. SCRIPE uses strict module boundaries with no cross-module imports. Each module follows Clean Architecture with its own domain, data, and presentation layers. You can start as a monolith for simplicity, move to a gateway topology to separate frontend/backend, and eventually extract individual modules into independent microservices — all without refactoring your code.",
       q6: "What databases are supported?",

@@ -39,7 +39,7 @@ export const zh = {
       entVersioningDesc:
         "创建带有功能快照的发布版本，并通过立即、灰度 (canary) 或计划发布策略进行部署，而不会中断现有租户的服务。",
       entitlementsTip:
-        "权益模块直接集成到 SCRIPE mediator 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
+        "权益模块直接集成到 AstraFlow mediator 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
       comparisonTitle: "许可证层级对比",
       description: "为技术创始人以及庞大的企业实体量身设计的透明、可预测和可扩展的许可结构。",
       intro:
@@ -310,7 +310,7 @@ export const zh = {
       aHowLongSetup:
         "您可以在不到 15 分钟内在本地运行 SCRIPE。克隆代码库，配置您的数据库连接（SQL Server、Oracle、PostgreSQL 或 SQLite），运行迁移，然后启动开发服务器。scripe-cli 工具通过在几秒钟内生成新模块、实体和样板代码来进一步加速开发。大多数团队在第一天就能投入生产开发。",
       q4: "SCRIPE 使用什么技术栈？",
-      a4: "后端构建在 ASP.NET Core (.NET 9) 之上，搭配 Entity Framework Core、SCRIPE mediator (用于 CQRS) 和 FluentValidation。前端使用 Next.js 15，结合 TypeScript、TanStack Query、Zustand 以及基于 Radix UI 构建的定制设计系统。实时功能由 SignalR WebSockets 提供支持，平台支持使用 Docker 容器化进行部署。",
+      a4: "后端构建在 ASP.NET Core (.NET 9) 之上，搭配 Entity Framework Core、AstraFlow mediator (用于 CQRS) 和 FluentValidation。前端使用 Next.js 15，结合 TypeScript、TanStack Query、Zustand 以及基于 Radix UI 构建的定制设计系统。实时功能由 SignalR WebSockets 提供支持，平台支持使用 Docker 容器化进行部署。",
       q5: "SCRIPE 能从单体架构扩展到微服务吗？",
       a5: "是的——这是核心设计原则。SCRIPE 使用严格的模块边界，没有跨模块的直接导入。每个模块都遵循整洁架构，拥有自己的领域层、数据层和表现层。为了简单起见，您可以从单体架构开始，随时转移到网关拓扑以分离前端/后端，并最终将各个模块提取到独立的微服务中——这一切都无需重构您的代码。",
       q6: "支持哪些数据库？",

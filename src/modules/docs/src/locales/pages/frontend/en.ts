@@ -88,7 +88,7 @@ export const en = {
       description:
         "Zod schemas, React Hook Form integration, FluentValidation server-side, and error handling patterns.",
       intro:
-        "Form validation in SCRIPE follows a dual-layer approach: client-side validation with Zod schemas and React Hook Form provides instant feedback, while server-side FluentValidation in the SCRIPE mediator pipeline ensures data integrity.",
+        "Form validation in SCRIPE follows a dual-layer approach: client-side validation with Zod schemas and React Hook Form provides instant feedback, while server-side FluentValidation in the AstraFlow mediator pipeline ensures data integrity.",
       architectureTitle: "Validation Architecture",
       zodTitle: "Zod Schemas (Client-Side)",
       rhfTitle: "React Hook Form Integration",

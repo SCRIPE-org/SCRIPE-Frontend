@@ -178,7 +178,7 @@ export const es = {
       corsIntro: "Solo dominios conocidos y encabezados controlados.",
       inputValidationTitle: "Validación de Entradas (Input Validation)",
       inputValidationIntro:
-        "Se realiza a través del marco de validación FluentValidation en un paso que intercepta (Behavior) SCRIPE mediator.",
+        "Se realiza a través del marco de validación FluentValidation en un paso que intercepta (Behavior) AstraFlow mediator.",
       csrfTitle: "Protección CSRF",
       csrfIntro: "Manejo inteligente del Token Bearer y las directivas SameSite Strict.",
       headersTitle: "Encabezados de Seguridad (Security Headers)",

@@ -74,33 +74,38 @@ const sections: DocSection[] = [
     language: "text",
     filename: "Module Directory Structure",
     code: `src/modules/inventory/
-├── di.ts                        # Module DI container
-├── index.ts                     # Public exports
-└── src/
-    ├── domain/
-    │   ├── entities/
-    │   │   └── Product.ts       # Zod schema
-    │   └── interfaces/
-    │       └── IProductRepository.ts
-    │
-    ├── data/
-    │   ├── models/
-    │   │   └── ProductModel.ts  # API DTO
-    │   ├── mappers/
-    │   │   └── ProductMapper.ts # DTO ↔ Entity
-    │   └── repositories/
-    │       └── ProductRepository.ts
-    │
-    └── presentation/
-        ├── viewmodels/
-        │   ├── useProductListViewModel.ts    # Orchestrator
-        │   ├── useProductStatsViewModel.ts   # Stats section
-        │   └── useProductFilterViewModel.ts  # Filter section
-        ├── views/
-        │   └── ProductListView.tsx           # Pure UI
-        └── components/
-            ├── ProductStats.tsx
-            └── ProductFilters.tsx`,
+├── di.ts                        # Module DI container (wires sub-modules)
+├── index.ts                     # Public exports (barrel file)
+└── products/                    # Products sub-module folder
+    ├── index.ts                 # Sub-module barrel
+    ├── locales/                 # Translations owned by sub-module
+    │   ├── products.en.ts
+    │   ├── products.ar.ts
+    │   └── index.ts
+    └── src/
+        ├── domain/
+        │   ├── entities/
+        │   │   └── Product.ts   # Rich domain entity class
+        │   └── interfaces/
+        │       ├── IProductService.ts
+        │       └── IProductRepository.ts
+        ├── data/
+        │   ├── models/
+        │   │   └── ProductModel.ts  # API DTO (ProductModel)
+        │   ├── services/
+        │   │   └── ProductService.ts # Service layer
+        │   ├── mappers/
+        │   │   └── ProductMapper.ts # DTO ↔ Domain Entity Mapper
+        │   └── repositories/
+        │       └── ProductRepository.ts # Repository implementation
+        └── presentation/
+            ├── viewmodels/
+            │   └── useProductListViewModel.ts # UI-Logic ViewModel
+            ├── views/
+            │   └── ProductListView.tsx        # Pure presentation view
+            └── components/
+                ├── ProductStats.tsx
+                └── ProductFilters.tsx`,
   },
 
   // ─── Step 2: Domain Entity ────────────────────────────────
@@ -113,36 +118,45 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "typescript",
-    filename: "domain/entities/Product.ts",
-    code: `import { z } from 'zod';
+    filename: "products/src/domain/entities/Product.ts",
+    code: `export interface ProductData {
+  id: string;
+  name: string;
+  sku: string;
+  price: number;
+  quantity: number;
+  category: string;
+  isActive: boolean;
+  tenantId: string;
+  createdAt: string;
+  updatedAt?: string;
+}
 
-export const ProductSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  sku: z.string(),
-  price: z.number().positive(),
-  quantity: z.number().int().min(0),
-  category: z.string(),
-  isActive: z.boolean(),
-  tenantId: z.string().uuid(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().optional(),
-});
+export class Product {
+  constructor(private readonly data: ProductData) {}
 
-export type Product = z.infer<typeof ProductSchema>;
+  get id() { return this.data.id; }
+  get name() { return this.data.name; }
+  get sku() { return this.data.sku; }
+  get price() { return this.data.price; }
+  get quantity() { return this.data.quantity; }
+  get category() { return this.data.category; }
+  get isActive() { return this.data.isActive; }
+  get tenantId() { return this.data.tenantId; }
+  get createdAt() { return this.data.createdAt; }
+  get updatedAt() { return this.data.updatedAt; }
 
-export const CreateProductSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  sku: z.string().min(1, "SKU is required"),
-  price: z.number().positive("Price must be positive"),
-  quantity: z.number().int().min(0),
-  category: z.string(),
-});
+  // Computed properties
+  get displayName() { return this.data.name || "Unnamed"; }
 
-export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
+  // Immutable update helper
+  copyWith(updates: Partial<ProductData>): Product {
+    return new Product({ ...this.data, ...updates });
+  }
+}`,
   },
 
-  // ─── Step 3: Repository ───────────────────────────────────
+  // ─── Step 3: Service, Mapper, and Repository ──────────────
   {
     type: "heading",
     level: 2,
@@ -153,46 +167,115 @@ export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
     type: "tabs",
     tabs: [
       {
-        label: "Interface",
+        label: "Domain Repository Interface",
         language: "typescript",
-        filename: "domain/interfaces/IProductRepository.ts",
-        code: `import { Result } from '@core/common/Result';
+        filename: "products/src/domain/interfaces/IProductRepository.ts",
+        code: `import { PagedResult, ListParams } from '@core/common/types';
+import { Product } from '../entities/Product';
 
 export interface IProductRepository {
-  getAll(params: PaginationParams): Promise<Result<PaginatedResult<Product>>>;
-  getById(id: string): Promise<Result<Product>>;
-  create(data: CreateProductInput): Promise<Result<Product>>;
-  update(id: string, data: UpdateProductInput): Promise<Result<Product>>;
-  delete(id: string): Promise<Result<void>>;
+  getAll(params: ListParams): Promise<PagedResult<Product>>;
+  getById(id: string): Promise<Product>;
+  create(data: CreateProductRequest): Promise<Product>;
+  update(id: string, data: Partial<CreateProductRequest>): Promise<Product>;
+  delete(id: string): Promise<void>;
 }`,
       },
       {
-        label: "Implementation",
+        label: "Data Service",
         language: "typescript",
-        filename: "data/repositories/ProductRepository.ts",
-        code: `import { IApiService } from '@core/network';
+        filename: "products/src/data/services/ProductService.ts",
+        code: `import type { IApiService } from '@core/interfaces/api.interface';
+import { API_ENDPOINTS, buildUrl } from '@core/config/api-endpoints';
+import type { ProductModel } from '../models/ProductModel';
+
+export class ProductService {
+  constructor(private readonly api: IApiService) {}
+
+  async getAll(params: ListParams): Promise<PagedResult<ProductModel>> {
+    const url = buildUrl(API_ENDPOINTS.INVENTORY.LIST, params);
+    return this.api.get<PagedResult<ProductModel>>(url);
+  }
+
+  async getById(id: string): Promise<ProductModel> {
+    return this.api.get<ProductModel>(\`\${API_ENDPOINTS.INVENTORY.BASE}/\${id}\`);
+  }
+
+  async create(data: CreateProductRequest): Promise<ProductModel> {
+    return this.api.post<ProductModel>(API_ENDPOINTS.INVENTORY.BASE, data);
+  }
+
+  async update(id: string, data: Partial<CreateProductRequest>): Promise<ProductModel> {
+    return this.api.put<ProductModel>(\`\${API_ENDPOINTS.INVENTORY.BASE}/\${id}\`, data);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.api.delete<void>(\`\${API_ENDPOINTS.INVENTORY.BASE}/\${id}\`);
+  }
+}`,
+      },
+      {
+        label: "Data Mapper",
+        language: "typescript",
+        filename: "products/src/data/mappers/ProductMapper.ts",
+        code: `import { Product } from '../../domain/entities/Product';
+import type { ProductModel } from '../models/ProductModel';
+
+export class ProductMapper {
+  static toEntity(dto: ProductModel): Product {
+    // ALWAYS null-coalesce DTO fields in mappers to ensure type safety
+    return new Product({
+      id: dto.id ?? '',
+      name: dto.name ?? '',
+      sku: dto.sku ?? '',
+      price: dto.price ?? 0,
+      quantity: dto.quantity ?? 0,
+      category: dto.category ?? '',
+      isActive: dto.isActive ?? false,
+      tenantId: dto.tenantId ?? '',
+      createdAt: dto.createdAt ?? '',
+      updatedAt: dto.updatedAt,
+    });
+  }
+}`,
+      },
+      {
+        label: "Data Repository",
+        language: "typescript",
+        filename: "products/src/data/repositories/ProductRepository.ts",
+        code: `import type { IProductRepository } from '../../domain/interfaces/IProductRepository';
+import type { ProductService } from '../services/ProductService';
+import { Product } from '../../domain/entities/Product';
 import { ProductMapper } from '../mappers/ProductMapper';
 
 export class ProductRepository implements IProductRepository {
-  constructor(private api: IApiService) {}
+  constructor(private readonly service: ProductService) {}
 
-  async getAll(params: PaginationParams) {
-    const response = await this.api.get<PaginatedDto<ProductModel>>(
-      '/api/v1/products', { params }
-    );
-    return Result.ok({
-      items: response.data.items.map(ProductMapper.toDomain),
-      totalCount: response.data.totalCount,
-      page: response.data.page,
-      pageSize: response.data.pageSize,
-    });
+  async getAll(params: ListParams): Promise<PagedResult<Product>> {
+    const result = await this.service.getAll(params);
+    return {
+      items: result.items.map(ProductMapper.toEntity),
+      totalCount: result.totalCount,
+    };
   }
 
-  async create(data: CreateProductInput) {
-    const response = await this.api.post<ProductModel>(
-      '/api/v1/products', data
-    );
-    return Result.ok(ProductMapper.toDomain(response.data));
+  async getById(id: string): Promise<Product> {
+    const model = await this.service.getById(id);
+    return ProductMapper.toEntity(model);
+  }
+
+  async create(data: CreateProductRequest): Promise<Product> {
+    const model = await this.service.create(data);
+    return ProductMapper.toEntity(model);
+  }
+
+  async update(id: string, data: Partial<CreateProductRequest>): Promise<Product> {
+    const model = await this.service.update(id, data);
+    return ProductMapper.toEntity(model);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.service.delete(id);
   }
 }`,
       },
@@ -210,11 +293,32 @@ export class ProductRepository implements IProductRepository {
     type: "code",
     language: "typescript",
     filename: "di.ts — Module DI Container",
-    code: `import { coreContainer } from '@core/di';
-import { ProductRepository } from './src/data/repositories/ProductRepository';
+    code: `import { getModuleApiService } from '@core/services/api-factory';
+import { ProductService } from './products/src/data/services/ProductService';
+import { ProductRepository } from './products/src/data/repositories/ProductRepository';
+import type { IProductRepository } from './products/src/domain/interfaces/IProductRepository';
 
-export const container = {
-  productRepository: new ProductRepository(coreContainer.apiService),
+export interface InventoryContainer {
+  productRepository: IProductRepository;
+}
+
+let _container: InventoryContainer | null = null;
+
+function getInventoryContainer(): InventoryContainer {
+  if (!_container) {
+    const apiService = getModuleApiService('INVENTORY');
+    const productService = new ProductService(apiService);
+    _container = {
+      productRepository: new ProductRepository(productService),
+    };
+  }
+  return _container;
+}
+
+export const inventoryContainer = {
+  get productRepository() {
+    return getInventoryContainer().productRepository;
+  },
 };`,
   },
 
@@ -231,18 +335,29 @@ export const container = {
     filename: "useProductListViewModel.ts — Orchestrator",
     code: `'use client';
 import { useCrudViewModel } from '@core/crud';
-import { container } from '../../../di';
+import { inventoryContainer } from '../../../di';
+import { Product } from '../../domain/entities/Product';
+import { column } from '@core/crud/helpers/column-helper';
+import { useI18n } from '@core/providers/LanguageProvider';
 
 export function useProductListViewModel() {
-  const repo = container.productRepository;
+  const repo = inventoryContainer.productRepository;
+  const { t } = useI18n();
 
-  const table = useCrudViewModel({
-    queryKey: 'products',
-    fetchFn: (params) => repo.getAll(params),
-    createFn: (data) => repo.create(data),
-    updateFn: (id, data) => repo.update(id, data),
-    deleteFn: (id) => repo.delete(id),
-    enableSelection: true,
+  const table = useCrudViewModel<Product, CreateProductRequest, Partial<CreateProductRequest>>(['products'], {
+    getAll: async (params) => {
+      const res = await repo.getAll(params);
+      return { items: res.items, pagination: { totalCount: res.totalCount } };
+    },
+    create: async (data) => {
+      await repo.create(data);
+    },
+    update: async (id, data) => {
+      await repo.update(id, data);
+    },
+    delete: async (id) => {
+      await repo.delete(id);
+    },
   });
 
   const columns = [
@@ -250,7 +365,10 @@ export function useProductListViewModel() {
     column.text('name', t('products.name')),
     column.text('sku', t('products.sku')),
     column.text('price', t('products.price')),
-    column.status('isActive', t('status'), statusMap),
+    column.status('isActive', t('status'), {
+      true: { label: t('active'), variant: 'success' },
+      false: { label: t('inactive'), variant: 'danger' }
+    }),
   ];
 
   return { table, columns };
@@ -267,13 +385,15 @@ export function useProductListViewModel() {
   {
     type: "code",
     language: "tsx",
-    filename: "views/ProductListView.tsx — Pure UI (~20 lines)",
+    filename: "views/ProductListView.tsx — Pure UI (~60 lines max)",
     code: `'use client';
 import { GenericCrudView } from '@core/crud';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
+import { useI18n } from '@core/providers/LanguageProvider';
 
 export function ProductListView() {
   const { table, columns } = useProductListViewModel();
+  const { t } = useI18n();
 
   return (
     <GenericCrudView

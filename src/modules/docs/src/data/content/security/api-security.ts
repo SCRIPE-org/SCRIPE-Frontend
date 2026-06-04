@@ -17,61 +17,70 @@ const sections: DocSection[] = [
     language: "csharp",
     filename: "RateLimitingConfiguration.cs",
     code: `public static IServiceCollection AddRateLimitingConfiguration(
-    this IServiceCollection services)
+    this IServiceCollection services, IConfiguration configuration)
 {
+    var settings = configuration.GetSection("RateLimiting").Get<RateLimitingSettings>();
+    
     services.AddRateLimiter(options =>
     {
-        // 1. Global fixed window — 100 requests per minute per IP
-        options.AddFixedWindowLimiter("global", opt =>
-        {
-            opt.PermitLimit = 100;
+        // 1. Global DDoS ceiling (1000 requests / minute)
+        options.AddFixedWindowLimiter("Global", opt => {
+            opt.PermitLimit = settings.GlobalLimit;
             opt.Window = TimeSpan.FromMinutes(1);
-            opt.QueueLimit = 0; // Reject immediately
         });
 
-        // 2. Auth endpoints — strict: 10 attempts per 5 minutes
-        options.AddSlidingWindowLimiter("auth", opt =>
-        {
-            opt.PermitLimit = 10;
-            opt.Window = TimeSpan.FromMinutes(5);
-            opt.SegmentsPerWindow = 5;
-            opt.QueueLimit = 0;
+        // 2. Per-IP general abuse protection (200 requests / minute)
+        options.AddPolicy("PerIp", context => {
+            var clientIp = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter(clientIp, _ => new() {
+                PermitLimit = settings.PerIpLimit,
+                Window = TimeSpan.FromMinutes(1)
+            });
         });
 
-        // 3. OTP/Verification — very strict: 5 per hour
-        options.AddTokenBucketLimiter("otp", opt =>
-        {
-            opt.TokenLimit = 5;
-            opt.ReplenishmentPeriod = TimeSpan.FromHours(1);
-            opt.TokensPerPeriod = 5;
-            opt.QueueLimit = 0;
+        // 3. Login brute-force protection (10 attempts / 5 minutes)
+        options.AddPolicy("Login", context => {
+            var clientIp = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter($"login:{clientIp}", _ => new() {
+                PermitLimit = settings.LoginLimit,
+                Window = TimeSpan.FromMinutes(5)
+            });
         });
 
-        // Custom response for rate-limited requests
-        options.OnRejected = async (context, ct) =>
-        {
-            context.HttpContext.Response.StatusCode = 429;
-            await context.HttpContext.Response.WriteAsJsonAsync(new
-            {
-                error = "Too many requests. Please try again later.",
-                retryAfter = context.Lease.TryGetMetadata(
-                    MetadataName.RetryAfter, out var retry) ? retry.TotalSeconds : 60
-            }, ct);
-        };
+        // 4. General per-user ceiling (300 requests / minute, sliding window)
+        options.AddPolicy("per-user", context => {
+            var userId = GetPartitionKey(context);
+            return RateLimitPartition.GetSlidingWindowLimiter($"user:{userId}", _ => new() {
+                PermitLimit = settings.PerUserLimit,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6
+            });
+        });
+        
+        // Additional policies: read-api (200/min), mutation-api (30/min),
+        // export-heavy (5/min), webhook (500/min), signup (3/hr),
+        // phone-otp-send (3/15m), passkey-auth (5/15m), qr-poll (60/min)
     });
     return services;
 }`,
-    highlightLines: [7, 8, 9, 10, 15, 16, 17, 18, 24, 25, 26, 27],
+    highlightLines: [8, 9, 14, 15, 23, 24, 32, 33],
   },
   {
     type: "table",
-    headers: ["Policy", "Type", "Limit", "Window", "Applied To"],
+    headers: ["Policy Name", "Window Type", "Default Limit", "Time Window", "Partition Key"],
     rows: [
-      ["global", "Fixed Window", "100 req", "1 minute", "All endpoints"],
-      ["auth", "Sliding Window", "10 req", "5 minutes", "Login, Register, Refresh"],
-      ["otp", "Token Bucket", "5 req", "1 hour", "Send Verification, Password Reset"],
-      ["upload", "Concurrency", "3 concurrent", "—", "File/Image upload"],
-      ["export", "Fixed Window", "5 req", "10 minutes", "Dashboard export, CSV/PDF"],
+      ["Global", "Fixed Window", "1,000 req", "1 minute", "Per server"],
+      ["PerIp", "Fixed Window", "200 req", "1 minute", "Client IP"],
+      ["Login", "Fixed Window", "10 req", "5 minutes", "Client IP"],
+      ["read-api", "Sliding Window", "200 req", "1 minute", "User ID / IP"],
+      ["mutation-api", "Sliding Window", "30 req", "1 minute", "User ID / IP"],
+      ["per-user", "Sliding Window", "300 req", "1 minute", "User ID / IP"],
+      ["export-heavy", "Fixed Window", "5 req", "1 minute", "User ID / IP"],
+      ["webhook", "Sliding Window", "500 req", "1 minute", "Client IP"],
+      ["signup", "Fixed Window", "3 req", "1 hour", "Client IP"],
+      ["phone-otp-send", "Fixed Window", "3 req", "15 minutes", "Client IP"],
+      ["passkey-auth", "Fixed Window", "5 req", "15 minutes", "Client IP"],
+      ["qr-poll", "Sliding Window", "60 req", "1 minute", "QR Session ID"]
     ],
   },
 

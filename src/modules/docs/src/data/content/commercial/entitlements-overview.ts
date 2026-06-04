@@ -58,7 +58,7 @@ const sections: DocSection[] = [
     title: "Entitlements Resolution Flow",
     nodes: [
       { id: "req", label: "API Request", type: "default" },
-      { id: "pipe", label: "SCRIPE Mediator Pipeline", type: "info" },
+      { id: "pipe", label: "AstraFlow Mediator Pipeline", type: "info" },
       { id: "check", label: "IRequireFeature Check", type: "primary" },
       { id: "resolve", label: "Resolve Tenant Features", type: "warning" },
       { id: "allow", label: "Execute ✓", type: "success" },

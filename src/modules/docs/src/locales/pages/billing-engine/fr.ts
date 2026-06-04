@@ -32,7 +32,7 @@ export const fr = {
         "Paymob Accept — MENA specialist: checkout, tokenized recurring (via saved card tokens), mobile wallets. Supports EGP, SAR, AED, PKR currencies. HMAC-SHA512 webhook verification.",
       webhookTitle: "Webhook Handlers",
       webhookIntro:
-        "Each gateway has its own webhook endpoint with provider-specific signature verification. Stripe uses HMAC-SHA256 at POST /api/stripe-webhooks, PayPal uses transmission signature verification at POST /api/paypal-webhooks, and Paymob uses HMAC-SHA512 at POST /api/paymob-webhooks. All handlers dispatch to SCRIPE mediator commands for processing.",
+        "Each gateway has its own webhook endpoint with provider-specific signature verification. Stripe uses HMAC-SHA256 at POST /api/stripe-webhooks, PayPal uses transmission signature verification at POST /api/paypal-webhooks, and Paymob uses HMAC-SHA512 at POST /api/paymob-webhooks. All handlers dispatch to AstraFlow mediator commands for processing.",
       webhookEvents:
         "Stripe: checkout.session.completed, invoice.paid, invoice.payment_failed, customer.subscription.updated, customer.subscription.deleted, charge.refunded. PayPal: BILLING.SUBSCRIPTION.ACTIVATED, PAYMENT.SALE.COMPLETED, BILLING.SUBSCRIPTION.CANCELLED. Paymob: transaction.success, transaction.failed, transaction.refunded.",
       idempotencyTitle: "Idempotency",

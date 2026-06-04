@@ -135,7 +135,7 @@ export const de = {
       description:
         "4-Quellen-Pipeline, 35+ Ereignistypen, 7 Guardian-Ereignisse, Echtzeit-SignalR und CSV/PDF-Export.",
       intro:
-        "SCRIPE erfasst jede wichtige Aktion im Audit-Log durch SCRIPE mediator, EF Core, Middleware und Services.",
+        "SCRIPE erfasst jede wichtige Aktion im Audit-Log durch AstraFlow mediator, EF Core, Middleware und Services.",
       architectureTitle: "Audit-Architektur",
       eventTypesTitle: "Ereignistypen (35+ Kategorien)",
       authEventsTitle: "Authentifizierungsereignisse",

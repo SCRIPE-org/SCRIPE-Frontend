@@ -71,7 +71,7 @@ export const es = {
       tblValR5C1: "Lanzamiento de funciones",
       tblValR5C2: "Implementaciones masivas que ponen en riesgo a todos los inquilinos",
       tblValR5C3: "Estrategias de implementación canary y programadas",
-      tip: "El módulo de Derechos está completamente integrado en la pipeline de SCRIPE mediator. Los comandos que implementan IRequireFeature se controlan automáticamente: su lógica de negocio se mantiene limpia y enfocada.",
+      tip: "El módulo de Derechos está completamente integrado en la pipeline de AstraFlow mediator. Los comandos que implementan IRequireFeature se controlan automáticamente: su lógica de negocio se mantiene limpia y enfocada.",
     },
     entEditions: {
       title: "Ediciones y Planes",

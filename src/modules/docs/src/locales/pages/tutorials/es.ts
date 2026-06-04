@@ -53,7 +53,7 @@ export const es = {
       step2Desc: "Configurar modelo y validar requerimientos heredados desde AuditableEntity.",
       step3Title: "3. Comandos de Escritura",
       step3Desc:
-        "Manejadores SCRIPE mediator enfocados únicamente a crear, mutar o destruir registros.",
+        "Manejadores AstraFlow mediator enfocados únicamente a crear, mutar o destruir registros.",
       step4Title: "4. Consultas (Queries)",
       step4Desc: "Lecturas ultrarrápidas con uso intensivo de mapeo y proyecciones No-Tracking.",
       step5Title: "5. Capa Repositorio",

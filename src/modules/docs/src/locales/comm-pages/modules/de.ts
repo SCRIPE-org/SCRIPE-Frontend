@@ -14,7 +14,7 @@ export const de = {
       businessTitle: "Beschleunigte Geschäftslogik",
       commTitle: "Kommunikation & Webhooks",
       coreContent:
-        "Die Foundation-Schicht bietet das absolut Nicht-Verhandelbare: den Identity Provider, Multi-Tenant-Auflösungsstrategien, EF Core-Context-Abstraktionen und den zentralisierten SCRIPE mediator-Dispatcher. Sie ist das felsenfeste Fundament, auf dem Ihre gesamte Anwendung skaliert.",
+        "Die Foundation-Schicht bietet das absolut Nicht-Verhandelbare: den Identity Provider, Multi-Tenant-Auflösungsstrategien, EF Core-Context-Abstraktionen und den zentralisierten AstraFlow mediator-Dispatcher. Sie ist das felsenfeste Fundament, auf dem Ihre gesamte Anwendung skaliert.",
       coreTitle: "Das Kern-Fundament (Core Foundation)",
       crmModule: "Headless CRM Modul",
       crmModuleDesc:

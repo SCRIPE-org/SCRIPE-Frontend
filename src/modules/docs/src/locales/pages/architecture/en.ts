@@ -13,7 +13,7 @@ export const en = {
       layersTitle: "Clean Architecture Layers",
       backendArchTitle: "Backend Architecture",
       backendArchIntro:
-        "The backend follows a request pipeline architecture where every HTTP request flows through middleware, controllers, SCRIPE mediator behaviors, and finally the CQRS handler. This ensures consistent validation, auditing, and error handling.",
+        "The backend follows a request pipeline architecture where every HTTP request flows through middleware, controllers, AstraFlow mediator behaviors, and finally the CQRS handler. This ensures consistent validation, auditing, and error handling.",
       frontendArchTitle: "Frontend Architecture",
       frontendArchIntro:
         "The frontend uses a SOLID View/ViewModel pattern where Views are pure UI (no state, no logic) and ViewModels contain all business logic. The connector pattern separates Next.js routing (Server Components) from application logic (Client Components).",
@@ -46,7 +46,7 @@ export const en = {
         "Every new module follows the same DI registration pattern. The AddXxxModule() extension method registers the module's DbContext, repositories, services, and module registration marker.",
       controllersTitle: "Controllers",
       controllerTip:
-        "All controllers inherit from a base ApiController that provides standardized Result<T> response mapping. Controllers should be thin  they only validate the request model and delegate to SCRIPE mediator.",
+        "All controllers inherit from a base ApiController that provides standardized Result<T> response mapping. Controllers should be thin  they only validate the request model and delegate to AstraFlow mediator.",
     },
     frontend: {
       title: "Frontend Architecture",
@@ -74,15 +74,15 @@ export const en = {
     cqrs: {
       title: "CQRS Pattern",
       description:
-        "Command/Query Responsibility Segregation with SCRIPE mediator pipeline, behaviors, validation, and caching.",
+        "Command/Query Responsibility Segregation with AstraFlow mediator pipeline, behaviors, validation, and caching.",
       intro:
-        "SCRIPE uses the CQRS (Command Query Responsibility Segregation) pattern to separate read and write operations. Commands mutate state and go through validation + audit behaviors. Queries read state and can leverage caching. SCRIPE mediator acts as the mediator between controllers and handlers.",
+        "SCRIPE uses the CQRS (Command Query Responsibility Segregation) pattern to separate read and write operations. Commands mutate state and go through validation + audit behaviors. Queries read state and can leverage caching. AstraFlow mediator acts as the mediator between controllers and handlers.",
       whatIsCqrsTitle: "What is CQRS?",
       whatIsCqrsIntro:
         "CQRS separates your application into two sides: Commands (writes) and Queries (reads). Each side can be optimized independently  commands focus on data integrity and validation, while queries focus on performance and caching.",
       commandSide: "Command Side (Write)",
       querySide: "Query Side (Read)",
-      pipelineTitle: "SCRIPE Mediator Pipeline",
+      pipelineTitle: "AstraFlow Mediator Pipeline",
       validationBehaviorTitle: "Validation Behavior",
       commandExampleTitle: "Command Example",
       queryExampleTitle: "Query Example",
@@ -180,7 +180,7 @@ export const en = {
       mutationFlowTitle: "Mutation Flow (Write)",
       backendPipelineTitle: "Backend Request Pipeline",
       backendPipelineIntro:
-        "Every backend request passes through 10 middleware components and 4 SCRIPE mediator pipeline behaviors before reaching the handler. This ensures consistent logging, authentication, authorization, validation, feature gating, and auditing.",
+        "Every backend request passes through 10 middleware components and 4 AstraFlow mediator pipeline behaviors before reaching the handler. This ensures consistent logging, authentication, authorization, validation, feature gating, and auditing.",
       errorFlowTitle: "Error Handling",
       errorFlowIntro:
         "Errors are handled at multiple levels. Each error source has a specific handler, response code, and frontend handling strategy.",
@@ -237,10 +237,10 @@ export const en = {
         "Domain events represent significant occurrences in the business domain. SCRIPE uses the Outbox Pattern to guarantee reliable event delivery — events are persisted in the same database transaction as entity changes and published asynchronously by a background processor.",
       interfaceTitle: "IDomainEvent Interface",
       interfaceIntro:
-        "All domain events implement the IDomainEvent interface, which inherits from SCRIPE mediator's INotification. This enables in-process pub/sub where multiple handlers can subscribe to the same event type. Each event carries a unique EventId and OccurredAt timestamp.",
+        "All domain events implement the IDomainEvent interface, which inherits from AstraFlow mediator's INotification. This enables in-process pub/sub where multiple handlers can subscribe to the same event type. Each event carries a unique EventId and OccurredAt timestamp.",
       publishingTitle: "Publishing & Handling Flow",
       publishingIntro:
-        "Domain events follow a 6-step lifecycle: the entity raises an event via RaiseDomainEvent(), the OutboxInterceptor captures it during SaveChanges, the event is persisted as an OutboxMessage in the same transaction, the OutboxProcessor polls for unprocessed messages, deserializes the event, and publishes it via SCRIPE mediator.",
+        "Domain events follow a 6-step lifecycle: the entity raises an event via RaiseDomainEvent(), the OutboxInterceptor captures it during SaveChanges, the event is persisted as an OutboxMessage in the same transaction, the OutboxProcessor polls for unprocessed messages, deserializes the event, and publishes it via AstraFlow mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Outbox Pattern",
       outboxIntro:
@@ -253,7 +253,7 @@ export const en = {
         "The OutboxInterceptor is an EF Core SaveChanges interceptor that runs BEFORE the transaction is committed. It collects all domain events from tracked entities, serializes them as OutboxMessage records, and adds them to the same database context — ensuring atomicity.",
       outboxProcessorTitle: "OutboxProcessor",
       outboxProcessorIntro:
-        "The OutboxProcessor is a BackgroundService that polls the OutboxMessage table every 5 seconds for unprocessed messages. It processes them in batches of 20, deserializing each event and publishing it via SCRIPE mediator. Failed events are retried with an incrementing RetryCount.",
+        "The OutboxProcessor is a BackgroundService that polls the OutboxMessage table every 5 seconds for unprocessed messages. It processes them in batches of 20, deserializing each event and publishing it via AstraFlow mediator. Failed events are retried with an incrementing RetryCount.",
       outboxCleanupTitle: "Outbox Cleanup Job",
       outboxCleanupIntro:
         "A background recurring job (e.g., via Hangfire) runs daily at 2:00 AM UTC to delete processed outbox messages older than 7 days. This prevents unbounded table growth while keeping recent messages for debugging.",
@@ -277,12 +277,12 @@ export const en = {
     cqrsPipeline: {
       title: "CQRS Pipeline",
       description:
-        "SCRIPE mediator pipeline behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, Result pattern, and full command/query map.",
+        "AstraFlow mediator pipeline behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, Result pattern, and full command/query map.",
       intro:
-        "Every command and query in SCRIPE flows through a configurable SCRIPE mediator pipeline with 5 built-in behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, and CachingBehavior. The order is managed from appsettings or environment variables and validated at startup.",
+        "Every command and query in SCRIPE flows through a configurable AstraFlow mediator pipeline with 5 built-in behaviors: LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, and CachingBehavior. The order is managed from appsettings or environment variables and validated at startup.",
       overviewTitle: "Pipeline Overview",
       overviewIntro:
-        "The default SCRIPE mediator order is Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. Validation and feature checks intentionally run before cache lookup, while cache invalidation unwinds before webhook dispatch after successful mutations.",
+        "The default AstraFlow mediator order is Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. Validation and feature checks intentionally run before cache lookup, while cache invalidation unwinds before webhook dispatch after successful mutations.",
       separationTitle: "Command vs Query Separation",
       separationIntro:
         "CQRS separates the application into two distinct paths: Commands (writes) mutate state and go through full validation + audit, while Queries (reads) are optimized for performance with caching and AsNoTracking.",
@@ -297,7 +297,7 @@ export const en = {
       validatorExampleTitle: "Validator Examples",
       loggingTitle: "LoggingBehavior",
       loggingIntro:
-        "The LoggingBehavior logs every SCRIPE mediator request with the user ID, tenant ID, request type, and execution time. Requests exceeding 500ms are logged as warnings for performance monitoring.",
+        "The LoggingBehavior logs every AstraFlow mediator request with the user ID, tenant ID, request type, and execution time. Requests exceeding 500ms are logged as warnings for performance monitoring.",
       cachingTitle: "CachingBehavior",
       cachingIntro:
         "The CachingBehavior intercepts queries that implement the ICacheable interface. It checks the cache for existing results before executing the handler. On cache miss, it executes the handler and stores the result with a configurable duration (default: 5 minutes).",
@@ -321,10 +321,10 @@ export const en = {
       description:
         "Program.cs registration flow, module DI pattern, service discovery, core + identity service maps, lifetime rules, and YARP gateway.",
       intro:
-        "SCRIPE uses .NET's built-in Dependency Injection container with a structured registration pattern. Program.cs orchestrates all registrations: core infrastructure first, then modules conditionally based on MODULE_NAME, and finally the application layer with SCRIPE mediator. This page documents every service registration, lifetime decision, and the module DI pattern.",
+        "SCRIPE uses .NET's built-in Dependency Injection container with a structured registration pattern. Program.cs orchestrates all registrations: core infrastructure first, then modules conditionally based on MODULE_NAME, and finally the application layer with AstraFlow mediator. This page documents every service registration, lifetime decision, and the module DI pattern.",
       architectureTitle: "DI Registration Architecture",
       architectureIntro:
-        "Program.cs follows a strict 4-phase registration order: (1) Core Infrastructure — cache, blob storage, audit, etc. (2) CORS & Rate Limiting. (3) Modules — each module registers its own DbContext, repositories, and services. (4) Application Layer — SCRIPE mediator, behaviors, validators.",
+        "Program.cs follows a strict 4-phase registration order: (1) Core Infrastructure — cache, blob storage, audit, etc. (2) CORS & Rate Limiting. (3) Modules — each module registers its own DbContext, repositories, and services. (4) Application Layer — AstraFlow mediator, behaviors, validators.",
       moduleRegTitle: "Module Registration Pattern",
       moduleRegIntro:
         "Each module exposes an AddXxxModule() extension method that registers all its services. The MODULE_NAME environment variable controls which modules are loaded: empty = monolith (all modules), 'Identity' = only Identity module, 'Gateway' = API gateway mode.",

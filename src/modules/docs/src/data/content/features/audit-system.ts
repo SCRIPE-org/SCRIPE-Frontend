@@ -13,10 +13,9 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "4-Source Audit Pipeline",
+    title: "3-Source Audit Pipeline",
     direction: "vertical",
     nodes: [
-      { id: "source1", label: "AstraFlow mediator AuditBehavior (CQRS commands)", type: "info" },
       { id: "source2", label: "EF Core AuditableEntityInterceptor", type: "warning" },
       { id: "source3", label: "RequestLoggingMiddleware (HTTP)", type: "primary" },
       { id: "source4", label: "Explicit IAuditService calls (security events)", type: "danger" },
@@ -25,7 +24,6 @@ const sections: DocSection[] = [
       { id: "hub", label: "SignalR AuditHub (real-time)", type: "info" },
     ],
     connections: [
-      { from: "source1", to: "service" },
       { from: "source2", to: "service" },
       { from: "source3", to: "service" },
       { from: "source4", to: "service" },

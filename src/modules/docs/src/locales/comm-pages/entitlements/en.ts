@@ -71,7 +71,7 @@ export const en = {
       tblValR5C1: "Feature rollouts",
       tblValR5C2: "Big-bang deployments risking all tenants",
       tblValR5C3: "Canary and scheduled rollout strategies",
-      tip: "The Entitlements module is fully integrated into the SCRIPE mediator pipeline. Commands implementing IRequireFeature are automatically gated — your business logic stays clean and focused.",
+      tip: "The Entitlements module is fully integrated into the AstraFlow mediator pipeline. Commands implementing IRequireFeature are automatically gated — your business logic stays clean and focused.",
     },
     entEditions: {
       title: "Editions & Plans",

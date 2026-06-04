@@ -13,7 +13,7 @@ export const de = {
       layersTitle: "Clean Architecture Schichten",
       backendArchTitle: "Backend-Architektur",
       backendArchIntro:
-        "Das Backend folgt einer Request-Pipeline-Architektur, bei der jede HTTP-Anfrage durch Middleware, Controller, SCRIPE mediator-Verhaltensweisen (Behaviors) und schließlich den CQRS-Handler fließt. Dies gewährleistet konsistente Validierung, Auditierung und Fehlerbehandlung.",
+        "Das Backend folgt einer Request-Pipeline-Architektur, bei der jede HTTP-Anfrage durch Middleware, Controller, AstraFlow mediator-Verhaltensweisen (Behaviors) und schließlich den CQRS-Handler fließt. Dies gewährleistet konsistente Validierung, Auditierung und Fehlerbehandlung.",
       frontendArchTitle: "Frontend-Architektur",
       frontendArchIntro:
         "Das Frontend verwendet ein SOLID View/ViewModel-Muster, bei dem Views reine Benutzeroberflächen sind (kein State, keine Logik) und ViewModels die gesamte Geschäftslogik enthalten. Das Connector-Muster trennt das Next.js-Routing (Server Components) von der Anwendungslogik (Client Components).",
@@ -46,7 +46,7 @@ export const de = {
         "Jedes neue Modul folgt dem gleichen DI-Registrierungsmuster. Die Erweiterungsmethode AddXxxModule() registriert den DbContext des Moduls, Repositories, Services und den Modul-Registrierungsmarker.",
       controllersTitle: "Controller",
       controllerTip:
-        "Alle Controller erben von einem Basis-ApiController, der eine standardisierte Result<T>-Antwortzuordnung bietet. Controller sollten schlank sein – sie validieren nur das Request-Modell und delegieren an SCRIPE mediator.",
+        "Alle Controller erben von einem Basis-ApiController, der eine standardisierte Result<T>-Antwortzuordnung bietet. Controller sollten schlank sein – sie validieren nur das Request-Modell und delegieren an AstraFlow mediator.",
     },
     frontend: {
       title: "Frontend-Architektur",
@@ -74,15 +74,15 @@ export const de = {
     cqrs: {
       title: "CQRS-Muster",
       description:
-        "Trennung von Befehlen und Abfragen (CQRS) mit SCRIPE mediator-Pipeline, Behaviors, Validierung und Caching.",
+        "Trennung von Befehlen und Abfragen (CQRS) mit AstraFlow mediator-Pipeline, Behaviors, Validierung und Caching.",
       intro:
-        "SCRIPE verwendet das CQRS-Muster (Command Query Responsibility Segregation), um Lese- und Schreibvorgänge zu trennen. Befehle (Commands) ändern den Zustand und durchlaufen Validierungs- und Audit-Behaviors. Abfragen (Queries) lesen den Zustand und können Caching nutzen. SCRIPE mediator fungiert als Vermittler zwischen Controllern und Handlern.",
+        "SCRIPE verwendet das CQRS-Muster (Command Query Responsibility Segregation), um Lese- und Schreibvorgänge zu trennen. Befehle (Commands) ändern den Zustand und durchlaufen Validierungs- und Audit-Behaviors. Abfragen (Queries) lesen den Zustand und können Caching nutzen. AstraFlow mediator fungiert als Vermittler zwischen Controllern und Handlern.",
       whatIsCqrsTitle: "Was ist CQRS?",
       whatIsCqrsIntro:
         "CQRS trennt Ihre Anwendung in zwei Seiten: Befehle (Schreibvorgänge) und Abfragen (Lesevorgänge). Jede Seite kann unabhängig optimiert werden – Befehle konzentrieren sich auf Datenintegrität und Validierung, während Abfragen auf Leistung und Caching fokussiert sind.",
       commandSide: "Befehlsseite (Schreiben)",
       querySide: "Abfrageseite (Lesen)",
-      pipelineTitle: "SCRIPE mediator-Pipeline",
+      pipelineTitle: "AstraFlow mediator-Pipeline",
       validationBehaviorTitle: "Validierungs-Behavior",
       commandExampleTitle: "Befehls-Beispiel (Command)",
       queryExampleTitle: "Abfrage-Beispiel (Query)",
@@ -181,7 +181,7 @@ export const de = {
       mutationFlowTitle: "Mutations-Fluss (Schreiben)",
       backendPipelineTitle: "Backend-Request-Pipeline",
       backendPipelineIntro:
-        "Jede Backend-Anfrage durchläuft 10 Middleware-Komponenten und 3 SCRIPE mediator-Pipeline-Behaviors, bevor sie den Handler erreicht. Dies gewährleistet konsistente Protokollierung, Authentifizierung, Autorisierung, Validierung und Auditierung.",
+        "Jede Backend-Anfrage durchläuft 10 Middleware-Komponenten und 3 AstraFlow mediator-Pipeline-Behaviors, bevor sie den Handler erreicht. Dies gewährleistet konsistente Protokollierung, Authentifizierung, Autorisierung, Validierung und Auditierung.",
       errorFlowTitle: "Fehlerbehandlung",
       errorFlowIntro:
         "Fehler werden auf mehreren Ebenen behandelt. Jede Fehlerquelle hat einen spezifischen Handler, Antwortcode und eine Frontend-Behandlungsstrategie.",
@@ -238,10 +238,10 @@ export const de = {
         "Domain-Events repräsentieren signifikante Vorkommnisse in der Geschäftsdomäne. SCRIPE verwendet das Outbox-Pattern, um eine zuverlässige Übermittlung zu garantieren.",
       interfaceTitle: "IDomainEvent-Schnittstelle",
       interfaceIntro:
-        "Alle Domain-Events implementieren die IDomainEvent-Schnittstelle, die von SCRIPE mediators INotification erbt. Dies ermöglicht In-Process-Pub/Sub.",
+        "Alle Domain-Events implementieren die IDomainEvent-Schnittstelle, die von AstraFlow mediators INotification erbt. Dies ermöglicht In-Process-Pub/Sub.",
       publishingTitle: "Veröffentlichungs- & Behandlungsfluss",
       publishingIntro:
-        "Domain-Events folgen einem 6-stufigen Lebenszyklus: Entität löst Event aus, OutboxInterceptor fängt es ab, wird als OutboxMessage persistiert, OutboxProcessor ruft es ab und veröffentlicht es via SCRIPE mediator.",
+        "Domain-Events folgen einem 6-stufigen Lebenszyklus: Entität löst Event aus, OutboxInterceptor fängt es ab, wird als OutboxMessage persistiert, OutboxProcessor ruft es ab und veröffentlicht es via AstraFlow mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Outbox-Pattern",
       outboxIntro:
@@ -293,7 +293,7 @@ export const de = {
       validatorExampleTitle: "Beispiele für Validatoren",
       loggingTitle: "LoggingBehavior",
       loggingIntro:
-        "Protokolliert jede SCRIPE mediator-Anfrage mit Benutzer-ID, Mandanten-ID, Request-Typ und Ausführungszeit.",
+        "Protokolliert jede AstraFlow mediator-Anfrage mit Benutzer-ID, Mandanten-ID, Request-Typ und Ausführungszeit.",
       cachingTitle: "CachingBehavior",
       cachingIntro:
         "Überprüft den Cache auf vorhandene Ergebnisse für ICacheable-Abfragen, bevor der Handler ausgeführt wird.",
@@ -319,7 +319,7 @@ export const de = {
         "SCRIPE verwendet den in .NET integrierten Dependency-Injection-Container mit einem strukturierten Registrierungsmuster.",
       architectureTitle: "DI-Registrierungsarchitektur",
       architectureIntro:
-        "Die Program.cs folgt einer strengen 4-Phasen-Registrierungsreihenfolge: (1) Kerninfrastruktur, (2) CORS & Rate Limiting, (3) Module, (4) Application Layer (SCRIPE mediator).",
+        "Die Program.cs folgt einer strengen 4-Phasen-Registrierungsreihenfolge: (1) Kerninfrastruktur, (2) CORS & Rate Limiting, (3) Module, (4) Application Layer (AstraFlow mediator).",
       moduleRegTitle: "Modul-Registrierungsmuster",
       moduleRegIntro:
         "Jedes Modul stellt eine Erweiterungsmethode AddXxxModule() bereit, die all seine Services registriert.",

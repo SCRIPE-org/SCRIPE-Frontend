@@ -30,12 +30,6 @@ const sections: DocSection[] = [
         type: "warning",
         description: "Captures entity changes (before/after)",
       },
-      {
-        id: "behavior",
-        label: "AuditBehavior (AstraFlow mediator)",
-        type: "success",
-        description: "Business-level audit events",
-      },
       { id: "service", label: "IAuditService", type: "primary" },
       { id: "db", label: "AuditLog Table", type: "info" },
       {
@@ -49,7 +43,6 @@ const sections: DocSection[] = [
       { from: "req", to: "logging" },
       { from: "logging", to: "service" },
       { from: "interceptor", to: "service" },
-      { from: "behavior", to: "service" },
       { from: "service", to: "db", label: "persist" },
       { from: "service", to: "hub", label: "broadcast" },
     ],
