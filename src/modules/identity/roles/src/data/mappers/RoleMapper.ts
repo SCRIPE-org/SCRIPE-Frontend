@@ -14,7 +14,12 @@ import type {
   AssignPermissionsRequest,
 } from "../../domain/entities/RoleRequests";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+} from "@core/common/zod-utils";
 
 // ─── Role Response Schema ────────────────────────────────────────────────────
 

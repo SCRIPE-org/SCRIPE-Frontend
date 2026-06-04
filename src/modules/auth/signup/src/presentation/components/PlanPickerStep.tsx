@@ -67,7 +67,9 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
           <Skeleton className="mx-auto mt-3 h-5 w-80" />
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-[420px] rounded-2xl" />)}
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-[420px] rounded-2xl" />
+          ))}
         </div>
       </div>
     );
@@ -118,7 +120,10 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
         <div className="flex items-center justify-center">
           <div
             className="inline-flex items-center rounded-full p-1"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}
           >
             {(["monthly", "annual"] as const).map((cycle) => (
               <button
@@ -127,16 +132,21 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
                 onClick={() => vm.setBillingCycle(cycle)}
                 className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300"
                 style={{
-                  background: vm.billingCycle === cycle
-                    ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.2))"
-                    : "transparent",
-                  color: vm.billingCycle === cycle ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.4)",
+                  background:
+                    vm.billingCycle === cycle
+                      ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.2))"
+                      : "transparent",
+                  color:
+                    vm.billingCycle === cycle ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.4)",
                 }}
               >
-                {cycle === "monthly" ? (t("signup.plan.monthly") || "Monthly") : (t("signup.plan.annual") || "Annual")}
+                {cycle === "monthly"
+                  ? t("signup.plan.monthly") || "Monthly"
+                  : t("signup.plan.annual") || "Annual"}
                 {cycle === "annual" && vm.annualSavingsPercent > 0 && (
                   <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-bold text-cyan-400">
-                    {t("signup.plan.savePercent", { percent: vm.annualSavingsPercent }) || `Save ${vm.annualSavingsPercent}%`}
+                    {t("signup.plan.savePercent", { percent: vm.annualSavingsPercent }) ||
+                      `Save ${vm.annualSavingsPercent}%`}
                   </span>
                 )}
               </button>
@@ -147,7 +157,10 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
 
       {/* ═══ Error ═══ */}
       {vm.error && (
-        <div className="mx-auto max-w-lg rounded-xl border border-destructive/20 bg-destructive/10 px-5 py-3.5" role="alert">
+        <div
+          className="mx-auto max-w-lg rounded-xl border border-destructive/20 bg-destructive/10 px-5 py-3.5"
+          role="alert"
+        >
           <p className="text-sm font-medium text-destructive">{vm.error}</p>
         </div>
       )}
@@ -162,7 +175,9 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
               <div className="mb-8 flex items-center gap-4">
                 <div
                   className="h-px flex-1"
-                  style={{ background: "linear-gradient(90deg, rgba(168,85,247,0.3), transparent)" }}
+                  style={{
+                    background: "linear-gradient(90deg, rgba(168,85,247,0.3), transparent)",
+                  }}
                 />
                 <h2
                   className="shrink-0 text-sm font-bold uppercase tracking-[0.2em]"
@@ -172,7 +187,9 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
                 </h2>
                 <div
                   className="h-px flex-1"
-                  style={{ background: "linear-gradient(270deg, rgba(168,85,247,0.3), transparent)" }}
+                  style={{
+                    background: "linear-gradient(270deg, rgba(168,85,247,0.3), transparent)",
+                  }}
                 />
               </div>
 
@@ -180,9 +197,8 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
               <div
                 className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
                 style={{
-                  gridTemplateColumns: editions.length <= 3
-                    ? `repeat(${editions.length}, minmax(0, 1fr))`
-                    : undefined,
+                  gridTemplateColumns:
+                    editions.length <= 3 ? `repeat(${editions.length}, minmax(0, 1fr))` : undefined,
                 }}
               >
                 {editions.map((edition, idx) => (
@@ -222,7 +238,8 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
             {t("signup.plan.compareAll") || "Compare all features"}
           </h2>
           <p className="mt-2 text-sm text-white/40 sm:text-base">
-            {t("signup.plan.compareSubtitle") || "A detailed breakdown of what's included in every plan."}
+            {t("signup.plan.compareSubtitle") ||
+              "A detailed breakdown of what's included in every plan."}
           </p>
         </div>
 

@@ -40,8 +40,7 @@ export function useAppDetailViewModel(id: string) {
   });
 
   // ── Helpers ─────────────────────────────────────────────────────────────
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ["marketplace", "listings"] });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "listings"] });
 
   // ── Mutations ───────────────────────────────────────────────────────────
   const publishMutation = useMutation({
@@ -101,7 +100,9 @@ export function useAppDetailViewModel(id: string) {
     screenshotIndex,
     setScreenshotIndex,
     nextScreenshot: () =>
-      setScreenshotIndex((i) => Math.min(i + 1, (listingQuery.data?.screenshotUrls.length ?? 1) - 1)),
+      setScreenshotIndex((i) =>
+        Math.min(i + 1, (listingQuery.data?.screenshotUrls.length ?? 1) - 1)
+      ),
     prevScreenshot: () => setScreenshotIndex((i) => Math.max(i - 1, 0)),
 
     // Actions

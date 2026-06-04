@@ -69,7 +69,7 @@ export function RevenueChart({
           <h3 className="text-base font-semibold">{title}</h3>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+          <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
             No revenue data available.
           </div>
         </CardContent>
@@ -92,7 +92,7 @@ export function RevenueChart({
                 })}
               </p>
               {trend !== 0 && (
-                <p className={`flex items-center gap-0.5 text-xs justify-end ${trendColor}`}>
+                <p className={`flex items-center justify-end gap-0.5 text-xs ${trendColor}`}>
                   <TrendingUp className="size-3" />
                   {trend > 0 ? "+" : ""}
                   {currencySymbol}

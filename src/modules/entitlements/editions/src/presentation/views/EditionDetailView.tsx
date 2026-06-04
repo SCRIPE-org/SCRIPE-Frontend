@@ -43,7 +43,9 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   // ── Count modified features (needed by ChangeActionBar) ──
   const modifiedCount = useMemo(() => {
     if (!vm.edition || !vm.moduleGroups.length) return 0;
-    const allFeatures = vm.moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.features));
+    const allFeatures = vm.moduleGroups.flatMap((mg) =>
+      mg.categories.flatMap((cat) => cat.features)
+    );
     let count = 0;
     for (const feature of allFeatures) {
       const effectiveVal = vm.getEffectiveValue(feature);

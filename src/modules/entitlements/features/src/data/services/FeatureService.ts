@@ -6,7 +6,11 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
-import type { FeatureModel, TenantEffectiveFeatureModel, FeatureModuleGroupModel } from "../models/FeatureModels";
+import type {
+  FeatureModel,
+  TenantEffectiveFeatureModel,
+  FeatureModuleGroupModel,
+} from "../models/FeatureModels";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {

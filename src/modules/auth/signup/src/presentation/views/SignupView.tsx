@@ -54,11 +54,23 @@ export function SignupView() {
         {/* Ambient glow */}
         <div
           className="pointer-events-none fixed left-1/4 top-1/4 -translate-x-1/2 -translate-y-1/2"
-          style={{ width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)", filter: "blur(100px)" }}
+          style={{
+            width: 700,
+            height: 700,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
         />
         <div
-          className="pointer-events-none fixed right-1/4 bottom-1/3 translate-x-1/2"
-          style={{ width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(34,211,238,0.04) 0%, transparent 70%)", filter: "blur(80px)" }}
+          className="pointer-events-none fixed bottom-1/3 right-1/4 translate-x-1/2"
+          style={{
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(34,211,238,0.04) 0%, transparent 70%)",
+            filter: "blur(80px)",
+          }}
         />
 
         {/* Top bar: Logo + Stepper */}
@@ -103,11 +115,23 @@ export function SignupView() {
       {/* Ambient glow orbs */}
       <div
         className="pointer-events-none fixed left-1/4 top-1/4 -translate-x-1/2 -translate-y-1/2"
-        style={{ width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)", filter: "blur(80px)" }}
+        style={{
+          width: 600,
+          height: 600,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)",
+          filter: "blur(80px)",
+        }}
       />
       <div
-        className="pointer-events-none fixed right-1/4 bottom-1/4 translate-x-1/2 translate-y-1/2"
-        style={{ width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%)", filter: "blur(60px)" }}
+        className="pointer-events-none fixed bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2"
+        style={{
+          width: 400,
+          height: 400,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
       />
 
       {/* Logo */}
@@ -131,7 +155,11 @@ export function SignupView() {
           boxShadow: "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)",
         }}
       >
-        <div key={vm.step} className="p-6 sm:p-8 sx-screen" style={{ animation: "sxScreenIn 0.4s ease-out" }}>
+        <div
+          key={vm.step}
+          className="sx-screen p-6 sm:p-8"
+          style={{ animation: "sxScreenIn 0.4s ease-out" }}
+        >
           {vm.step === "account" && <AccountStep vm={vm} />}
           {vm.step === "verification" && <VerificationStep vm={vm} />}
           {vm.step === "workspace" && <WorkspaceStep vm={vm} />}
@@ -160,7 +188,10 @@ export function SignupView() {
       </div>
 
       {/* Footer */}
-      <p className="mt-8 text-center text-[11px] font-medium" style={{ color: "rgba(245,242,255,0.35)" }}>
+      <p
+        className="mt-8 text-center text-[11px] font-medium"
+        style={{ color: "rgba(245,242,255,0.35)" }}
+      >
         © {new Date().getFullYear()} {BRAND.name} — All rights reserved
       </p>
     </div>

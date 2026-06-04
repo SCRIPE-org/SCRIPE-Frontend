@@ -78,7 +78,12 @@ export function WorkspaceHubView() {
     // Sort pinned by pinSortOrder
     pinned.sort((a, b) => (a.pinSortOrder ?? 999) - (b.pinSortOrder ?? 999));
 
-    return { pinnedWorkspaces: pinned, moduleWorkspaces: modules, adminWorkspaces: admin, lockedWorkspaces: locked };
+    return {
+      pinnedWorkspaces: pinned,
+      moduleWorkspaces: modules,
+      adminWorkspaces: admin,
+      lockedWorkspaces: locked,
+    };
   }, [workspaceGroups]);
 
   // ── Search filtering ────────────────────────────────────────────────────────
@@ -96,10 +101,22 @@ export function WorkspaceHubView() {
     [searchQuery]
   );
 
-  const filteredModules = useMemo(() => moduleWorkspaces.filter(filterBySearch), [moduleWorkspaces, filterBySearch]);
-  const filteredAdmin = useMemo(() => adminWorkspaces.filter(filterBySearch), [adminWorkspaces, filterBySearch]);
-  const filteredPinned = useMemo(() => pinnedWorkspaces.filter(filterBySearch), [pinnedWorkspaces, filterBySearch]);
-  const filteredLocked = useMemo(() => lockedWorkspaces.filter(filterBySearch), [lockedWorkspaces, filterBySearch]);
+  const filteredModules = useMemo(
+    () => moduleWorkspaces.filter(filterBySearch),
+    [moduleWorkspaces, filterBySearch]
+  );
+  const filteredAdmin = useMemo(
+    () => adminWorkspaces.filter(filterBySearch),
+    [adminWorkspaces, filterBySearch]
+  );
+  const filteredPinned = useMemo(
+    () => pinnedWorkspaces.filter(filterBySearch),
+    [pinnedWorkspaces, filterBySearch]
+  );
+  const filteredLocked = useMemo(
+    () => lockedWorkspaces.filter(filterBySearch),
+    [lockedWorkspaces, filterBySearch]
+  );
 
   const allUnlocked = useMemo(
     () => workspaceGroups.filter((ws) => !ws.isLocked),
@@ -143,10 +160,7 @@ export function WorkspaceHubView() {
   );
 
   // ── Helper: get localized name ─────────────────────────────────────────────
-  const getName = useCallback(
-    (ws: WorkspaceGroup) => ws.getLocalizedName(language),
-    [language]
-  );
+  const getName = useCallback((ws: WorkspaceGroup) => ws.getLocalizedName(language), [language]);
 
   // ── Helper: item label ─────────────────────────────────────────────────────
   const getItemLabel = useCallback(
@@ -163,8 +177,13 @@ export function WorkspaceHubView() {
 
   if (isLoading) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-        <Loader2 size={32} style={{ animation: "spin 1s linear infinite", color: "rgba(230,233,245,0.5)" }} />
+      <div
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}
+      >
+        <Loader2
+          size={32}
+          style={{ animation: "spin 1s linear infinite", color: "rgba(230,233,245,0.5)" }}
+        />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
@@ -173,18 +192,28 @@ export function WorkspaceHubView() {
   // Auto-redirect in progress
   if (allUnlocked.length === 1 && lockedWorkspaces.length === 0 && !hasAutoRedirected.current) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-        <Loader2 size={32} style={{ animation: "spin 1s linear infinite", color: "rgba(230,233,245,0.5)" }} />
+      <div
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}
+      >
+        <Loader2
+          size={32}
+          style={{ animation: "spin 1s linear infinite", color: "rgba(230,233,245,0.5)" }}
+        />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   // ── Total module count for "X of Y licensed" label ─────────────────────────
-  const totalModules = moduleWorkspaces.length + lockedWorkspaces.filter((ws) => ws.workspaceType === "Module").length;
+  const totalModules =
+    moduleWorkspaces.length + lockedWorkspaces.filter((ws) => ws.workspaceType === "Module").length;
   const licensedCount = moduleWorkspaces.length;
 
-  const hasAnyResults = filteredModules.length > 0 || filteredAdmin.length > 0 || filteredPinned.length > 0 || filteredLocked.length > 0;
+  const hasAnyResults =
+    filteredModules.length > 0 ||
+    filteredAdmin.length > 0 ||
+    filteredPinned.length > 0 ||
+    filteredLocked.length > 0;
 
   return (
     <main
@@ -272,7 +301,10 @@ export function WorkspaceHubView() {
                 subtitle={
                   searchQuery
                     ? `${filteredModules.length} results`
-                    : t("workspaceHub.modules.licensed", { count: licensedCount, total: totalModules })
+                    : t("workspaceHub.modules.licensed", {
+                        count: licensedCount,
+                        total: totalModules,
+                      })
                 }
                 action={
                   !searchQuery ? (

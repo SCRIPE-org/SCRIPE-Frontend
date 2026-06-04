@@ -57,9 +57,7 @@ export interface IRoleService {
     search?: string
   ): Promise<PermissionModuleGroupJson[]>;
   /** GET /roles/my-tenant/available-permissions/grouped — grouped for current tenant role assignment */
-  getMyTenantAvailablePermissionsGrouped(
-    search?: string
-  ): Promise<PermissionModuleGroupJson[]>;
+  getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroupJson[]>;
 
   getAdminCount(roleId: string): Promise<number>;
   clone(

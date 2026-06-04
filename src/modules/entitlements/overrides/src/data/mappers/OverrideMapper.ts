@@ -7,7 +7,12 @@ import { FeatureOverride, ResolvedFeature } from "../../domain/entities/Override
 import type { FeatureOverrideData, ResolvedFeatureData } from "../../domain/entities/Override";
 import type { FeatureOverrideModel, ResolvedFeatureModel } from "../models/OverrideModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

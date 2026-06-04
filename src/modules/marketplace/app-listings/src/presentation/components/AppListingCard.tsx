@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader } from "@core/ui/card";
 import type { AppListing } from "../../domain/entities/AppListing";
 import { Star, Globe, EyeOff, Trash2, Zap, ExternalLink } from "lucide-react";
 
-
 interface AppListingCardProps {
   listing: AppListing;
   onPublish: () => void;
@@ -34,10 +33,10 @@ export function AppListingCard({
   isDeleting,
 }: AppListingCardProps) {
   return (
-    <Card className="flex flex-col gap-0 overflow-hidden hover:shadow-md transition-shadow">
+    <Card className="flex flex-col gap-0 overflow-hidden transition-shadow hover:shadow-md">
       <CardHeader className="flex flex-row items-start gap-3 pb-3">
         {/* Icon */}
-        <div className="size-10 rounded-lg bg-muted flex items-center justify-center shrink-0 overflow-hidden">
+        <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
           {listing.iconUrl ? (
             <img src={listing.iconUrl} alt={listing.name} className="size-full object-cover" />
           ) : (
@@ -48,16 +47,16 @@ export function AppListingCard({
         </div>
 
         {/* Title block */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-sm truncate">{listing.name}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="truncate text-sm font-semibold">{listing.name}</span>
             {listing.isFeatured && (
-              <Badge variant="secondary" className="text-xs gap-1">
+              <Badge variant="secondary" className="gap-1 text-xs">
                 <Zap className="size-3" /> Featured
               </Badge>
             )}
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+          <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
             {listing.developerName} · v{listing.version}
           </p>
         </div>
@@ -70,7 +69,7 @@ export function AppListingCard({
 
       <CardContent className="flex flex-col gap-3 pt-0">
         {/* Description */}
-        <p className="text-xs text-muted-foreground line-clamp-2">{listing.description}</p>
+        <p className="line-clamp-2 text-xs text-muted-foreground">{listing.description}</p>
 
         {/* Meta row */}
         <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -86,7 +85,7 @@ export function AppListingCard({
         {listing.tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {listing.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs px-1.5 py-0">
+              <Badge key={tag} variant="outline" className="px-1.5 py-0 text-xs">
                 {tag}
               </Badge>
             ))}
@@ -97,7 +96,7 @@ export function AppListingCard({
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-1 border-t">
+        <div className="flex items-center gap-2 border-t pt-1">
           {/* View details link (Phase 5.1) */}
           <Button size="sm" variant="ghost" className="gap-1" asChild>
             <Link href={`/marketplace/${listing.id}`}>

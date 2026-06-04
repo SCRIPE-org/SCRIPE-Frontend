@@ -1,14 +1,12 @@
 /**
  * Docs page locale — DE
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const de = {
   commercial: {
     moduleCatalog: {
-      tblCoreR7C1: "Berechtigungen",
-      tblCoreR7C2: "Editionsbasiertes Feature-Gating & Planverwaltung",
-      tblCoreR7C3:
-        "Funktionen, Editionen, Abonnements, Überschreibungen, Kontingentdurchsetzung, versionierte Rollouts, Reseller-Eingrenzung",
+      analyticsContent:
+        "Die Revenue-Analytics-Engine transformiert rohe Abonnementdaten in umsetzbare Business-Intelligence. Mit 7 spezialisierten Dashboard-Tabs, automatisierten nächtlichen Snapshots und prädiktiver Prognose erhalten Plattformbetreiber CFO-Level-Sichtbarkeit ohne externe BI-Tools. Das Tenant-Gesundheitsscoring identifiziert Abwanderungsrisiken proaktiv, bevor sie sich materialisieren.",
+      analyticsTitle: "Umsatzintelligenz",
       businessContent:
         "SCRIPE ist keine leere Hülle; es ist vom ersten Tag an ein funktionierendes Enterprise-Ökosystem. Nutzen Sie unsere bestehenden Geschäftsmodule – wie Benutzerverwaltung, Audit-Logging und Benachrichtigungen – als sofortige Startpunkte oder klonen Sie diese, um proprietäre Funktionen schnell aufzubauen.",
       businessTitle: "Beschleunigte Geschäftslogik",
@@ -42,7 +40,32 @@ export const de = {
       projectModule: "Workflow & Project Modul",
       projectModuleDesc:
         "Verwalten Sie komplexe Zustandsautomaten (State Machines) und mehrstufige organisatorische Genehmigungs-Workflows.",
-      title: "Katalog der Enterprise-Module",
+      tblAnalyticsHeader1: "Modul",
+      tblAnalyticsHeader2: "Beschreibung",
+      tblAnalyticsHeader3: "Kernfähigkeiten",
+      tblAnalyticsR1C1: "Revenue Analytics",
+      tblAnalyticsR1C2: "BI-Grade Umsatzintelligenz-Dashboard",
+      tblAnalyticsR1C3:
+        "MRR/ARR-Tracking, Kohortenanalyse, LTV-Modellierung, Umsatzprognose, Gesundheitsbewertung, PDF-Berichte",
+      tblCommHeader1: "Modul",
+      tblCommHeader2: "Beschreibung",
+      tblCommHeader3: "Kernfunktionen",
+      tblCommR1C1: "Benachrichtigungen",
+      tblCommR1C2: "Echtzeit-Push-Benachrichtigungen",
+      tblCommR1C3:
+        "SignalR WebSockets, Auto-Join nach Mandant, als gelesen/ungelesen markieren, Glocken-UI",
+      tblCommR2C1: "E-Mail-System",
+      tblCommR2C2: "Transaktionale E-Mail-Pipeline",
+      tblCommR2C3:
+        "Warteschlangenbasierter Versand, Scriban-Templates, Retry mit Backoff, SMTP/SendGrid",
+      tblCommR3C1: "Webhooks",
+      tblCommR3C2: "Ereignisgesteuerte Integrationen",
+      tblCommR3C3:
+        "HMAC-SHA256 signiert, exponentieller Retry, Abonnementverwaltung, Event-Katalog",
+      tblCommR4C1: "Nachrichtenvorlagen",
+      tblCommR4C2: "Zweisprachiges Nachrichten-Rendering",
+      tblCommR4C3:
+        "Scriban-Syntax, Variablenvorschau, 6 integrierte Vorlagen, zweisprachige Entität",
       tblCoreHeader1: "Modul",
       tblCoreHeader2: "Beschreibung",
       tblCoreHeader3: "Kernfunktionen",
@@ -67,25 +90,10 @@ export const de = {
       tblCoreR6C2: "Batch-Zuweisung von Rollen & Einschränkungen",
       tblCoreR6C3:
         "Gruppenbasierte RBAC, Feldeinschränkungen, Mitgliederverwaltung, mandantenbezogene Gruppen",
-      tblCommHeader1: "Modul",
-      tblCommHeader2: "Beschreibung",
-      tblCommHeader3: "Kernfunktionen",
-      tblCommR1C1: "Benachrichtigungen",
-      tblCommR1C2: "Echtzeit-Push-Benachrichtigungen",
-      tblCommR1C3:
-        "SignalR WebSockets, Auto-Join nach Mandant, als gelesen/ungelesen markieren, Glocken-UI",
-      tblCommR2C1: "E-Mail-System",
-      tblCommR2C2: "Transaktionale E-Mail-Pipeline",
-      tblCommR2C3:
-        "Warteschlangenbasierter Versand, Scriban-Templates, Retry mit Backoff, SMTP/SendGrid",
-      tblCommR3C1: "Webhooks",
-      tblCommR3C2: "Ereignisgesteuerte Integrationen",
-      tblCommR3C3:
-        "HMAC-SHA256 signiert, exponentieller Retry, Abonnementverwaltung, Event-Katalog",
-      tblCommR4C1: "Nachrichtenvorlagen",
-      tblCommR4C2: "Zweisprachiges Nachrichten-Rendering",
-      tblCommR4C3:
-        "Scriban-Syntax, Variablenvorschau, 6 integrierte Vorlagen, zweisprachige Entität",
+      tblCoreR7C1: "Berechtigungen",
+      tblCoreR7C2: "Editionsbasiertes Feature-Gating & Planverwaltung",
+      tblCoreR7C3:
+        "Funktionen, Editionen, Abonnements, Überschreibungen, Kontingentdurchsetzung, versionierte Rollouts, Reseller-Eingrenzung",
       tblDataHeader1: "Modul",
       tblDataHeader2: "Beschreibung",
       tblDataHeader3: "Kernfunktionen",
@@ -105,16 +113,7 @@ export const de = {
       tblDataR4C2: "Administrative Benutzeroperationen",
       tblDataR4C3:
         "27 Endpunkte, Bulk-Operationen, Enterprise-Operationen, geschützte Admin-Regeln",
-      tblAnalyticsHeader1: "Modul",
-      tblAnalyticsHeader2: "Beschreibung",
-      tblAnalyticsHeader3: "Kernfähigkeiten",
-      tblAnalyticsR1C1: "Revenue Analytics",
-      tblAnalyticsR1C2: "BI-Grade Umsatzintelligenz-Dashboard",
-      tblAnalyticsR1C3:
-        "MRR/ARR-Tracking, Kohortenanalyse, LTV-Modellierung, Umsatzprognose, Gesundheitsbewertung, PDF-Berichte",
-      analyticsTitle: "Umsatzintelligenz",
-      analyticsContent:
-        "Die Revenue-Analytics-Engine transformiert rohe Abonnementdaten in umsetzbare Business-Intelligence. Mit 7 spezialisierten Dashboard-Tabs, automatisierten nächtlichen Snapshots und prädiktiver Prognose erhalten Plattformbetreiber CFO-Level-Sichtbarkeit ohne externe BI-Tools. Das Tenant-Gesundheitsscoring identifiziert Abwanderungsrisiken proaktiv, bevor sie sich materialisieren.",
+      title: "Katalog der Enterprise-Module",
     },
   },
 };

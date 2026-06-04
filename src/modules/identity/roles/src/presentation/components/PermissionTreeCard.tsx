@@ -100,10 +100,7 @@ export function PermissionTreeCard({
               );
 
               return (
-                <div
-                  key={moduleGroup.module}
-                  className="overflow-hidden rounded-lg border bg-card"
-                >
+                <div key={moduleGroup.module} className="overflow-hidden rounded-lg border bg-card">
                   {/* ── Module Header ── */}
                   <button
                     type="button"
@@ -116,7 +113,9 @@ export function PermissionTreeCard({
                       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rtl:rotate-180" />
                     )}
                     <Layers className="h-4 w-4 shrink-0 text-primary" />
-                    <span className="text-sm font-semibold tracking-wide">{moduleGroup.module}</span>
+                    <span className="text-sm font-semibold tracking-wide">
+                      {moduleGroup.module}
+                    </span>
                     <div className="ms-auto flex items-center gap-2">
                       {selectedInModule > 0 && (
                         <Badge className="text-xs">{selectedInModule} selected</Badge>

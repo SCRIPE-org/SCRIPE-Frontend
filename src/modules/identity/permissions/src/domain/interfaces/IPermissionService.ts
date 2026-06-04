@@ -23,4 +23,3 @@ export interface IPermissionService {
   update(id: string, json: UpdatePermissionJson): Promise<void>;
   delete(id: string): Promise<void>;
 }
-

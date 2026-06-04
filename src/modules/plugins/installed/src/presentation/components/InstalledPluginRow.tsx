@@ -25,7 +25,9 @@ export function InstalledPluginRow({
 }: InstalledPluginRowProps) {
   const { t, language } = useI18n();
   const displayName =
-    language === "ar" ? (installation.pluginNameAr || installation.pluginName) : installation.pluginName;
+    language === "ar"
+      ? installation.pluginNameAr || installation.pluginName
+      : installation.pluginName;
 
   return (
     <div className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">

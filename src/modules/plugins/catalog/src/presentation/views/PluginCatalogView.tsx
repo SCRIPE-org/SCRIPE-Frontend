@@ -37,7 +37,7 @@ export function PluginCatalogView() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+      <div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className="h-48 rounded-xl" />
         ))}
@@ -47,11 +47,11 @@ export function PluginCatalogView() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
+      <div className="flex flex-col items-center justify-center gap-4 py-20">
         <AlertTriangle className="h-10 w-10 text-destructive" />
         <p className="text-sm text-muted-foreground">{t("plugins.catalogError")}</p>
         <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 me-2" />
+          <RefreshCw className="me-2 h-4 w-4" />
           {t("plugins.retry")}
         </Button>
       </div>
@@ -60,7 +60,7 @@ export function PluginCatalogView() {
 
   if (plugins.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-3">
+      <div className="flex flex-col items-center justify-center gap-3 py-20">
         <Store className="h-10 w-10 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">{t("plugins.catalogEmpty")}</p>
       </div>
@@ -69,7 +69,7 @@ export function PluginCatalogView() {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+      <div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
         {plugins.map((plugin) => (
           <PluginCard
             key={plugin.id}

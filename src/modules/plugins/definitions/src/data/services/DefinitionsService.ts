@@ -2,7 +2,10 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IDefinitionsService } from "../../domain/interfaces/IDefinitionsService";
 import type { PluginDefinitionModel } from "@modules/plugins/catalog";
-import type { CreateDefinitionRequest, UpdateDefinitionRequest } from "../../domain/interfaces/IDefinitionsRepository";
+import type {
+  CreateDefinitionRequest,
+  UpdateDefinitionRequest,
+} from "../../domain/interfaces/IDefinitionsRepository";
 
 export class DefinitionsService implements IDefinitionsService {
   constructor(private readonly api: IApiService) {}

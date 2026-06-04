@@ -88,10 +88,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
   }, [activeFeatureGroups]);
 
   // Flat list of ALL active features (for badge counts, etc.)
-  const featureCatalog = useMemo(
-    () => Array.from(featureCatalogMap.values()),
-    [featureCatalogMap]
-  );
+  const featureCatalog = useMemo(() => Array.from(featureCatalogMap.values()), [featureCatalogMap]);
 
   // ── Fetch Exchange Rates (for currency overrides — mirrors Edition) ──
   const { data: exchangeRates, isLoading: ratesLoading } = useQuery<Record<string, number>>({

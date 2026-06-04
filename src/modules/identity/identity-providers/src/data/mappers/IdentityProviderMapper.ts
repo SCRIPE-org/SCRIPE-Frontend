@@ -111,7 +111,11 @@ export class IdentityProviderMapper {
   }
 
   static toListItemEntity(model: IdentityProviderListItemModel): IdentityProviderListItem {
-    const validated = safeParseApiResponse(IdentityProviderListItemModelSchema, model, "IdentityProviderListItem");
+    const validated = safeParseApiResponse(
+      IdentityProviderListItemModelSchema,
+      model,
+      "IdentityProviderListItem"
+    );
 
     const data: IdentityProviderListItemData = {
       id: validated.id,

@@ -151,7 +151,6 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
           </div>
         </div>
 
-
         {/* Content - Scrollable Area */}
         <div className="min-h-0 flex-1 overflow-hidden">
           <ScrollArea className="h-full">
@@ -256,7 +255,7 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
       {/* Module Header — manual toggle (no Radix AccordionTrigger) */}
       <button
         type="button"
-        className="flex w-full items-center gap-3 border-b bg-muted/40 px-4 py-2.5 text-left hover:bg-muted/60 transition-colors"
+        className="flex w-full items-center gap-3 border-b bg-muted/40 px-4 py-2.5 text-left transition-colors hover:bg-muted/60"
         onClick={() => vm.toggleModule(moduleGroup.module)}
       >
         <div
@@ -343,11 +342,13 @@ function PermissionCategory({ moduleKey, catGroup, vm }: PermissionCategoryProps
               <Check className="h-2.5 w-2.5 text-primary-foreground" />
             )}
           </div>
-          <Badge variant={stats.count > 0 ? "default" : "secondary"} className="capitalize text-xs">
+          <Badge variant={stats.count > 0 ? "default" : "secondary"} className="text-xs capitalize">
             {catGroup.category}
           </Badge>
           <div className="me-2 ms-auto text-sm">
-            <span className={stats.count > 0 ? "font-medium text-primary" : "text-muted-foreground"}>
+            <span
+              className={stats.count > 0 ? "font-medium text-primary" : "text-muted-foreground"}
+            >
               {stats.count}
             </span>
             <span className="text-muted-foreground"> / {stats.total}</span>

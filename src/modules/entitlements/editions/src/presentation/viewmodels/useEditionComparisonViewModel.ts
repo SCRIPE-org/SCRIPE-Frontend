@@ -51,14 +51,20 @@ function formatFeatureValue(value: string, valueType: string): string {
 }
 
 /** Build a human-readable highlight label with value for numeric features */
-function buildHighlightLabel(feature: EditionFeatureDto, language: string = "en"): PricingHighlight {
+function buildHighlightLabel(
+  feature: EditionFeatureDto,
+  language: string = "en"
+): PricingHighlight {
   // Prefer the per-edition display label (marketing copy) over the generic name
   // Language-aware: use Arabic labels when in Arabic mode
   const isAr = language === "ar";
   const displayLabel = isAr
-    ? (feature.displayLabelAr || feature.displayLabelEn)
+    ? feature.displayLabelAr || feature.displayLabelEn
     : feature.displayLabelEn;
-  const displayName = displayLabel || (isAr ? (feature.displayNameAr || feature.displayNameEn) : feature.displayNameEn) || feature.featureName;
+  const displayName =
+    displayLabel ||
+    (isAr ? feature.displayNameAr || feature.displayNameEn : feature.displayNameEn) ||
+    feature.featureName;
   const isUnlimited = feature.value === "-1" || feature.value === "unlimited";
 
   // If there's a display label, use it as-is (it's already human-readable marketing text)

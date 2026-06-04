@@ -23,8 +23,15 @@ export function PermissionsView() {
   useModuleLocales(() => import("../../../locales"), "permissions");
 
   const { t } = useI18n();
-  const { groupedPermissions, categories, totalCount, isLoading, isGroupedLoading, refetch, filter } =
-    usePermissionsViewModel();
+  const {
+    groupedPermissions,
+    categories,
+    totalCount,
+    isLoading,
+    isGroupedLoading,
+    refetch,
+    filter,
+  } = usePermissionsViewModel();
 
   const hasFilters = !!filter.searchValue || !!filter.categoryFilter;
 

@@ -181,7 +181,17 @@ export function useLoginViewModel() {
         setErrorWithShake(err instanceof Error ? err.message : "Login failed");
       }
     },
-    [formData, loginMutation, handleRedirect, redirectPath, t, tenantId, twoFA, workspaceSelector, setErrorWithShake]
+    [
+      formData,
+      loginMutation,
+      handleRedirect,
+      redirectPath,
+      t,
+      tenantId,
+      twoFA,
+      workspaceSelector,
+      setErrorWithShake,
+    ]
   );
 
   // ── Form helpers ───────────────────────────────────────────────────────

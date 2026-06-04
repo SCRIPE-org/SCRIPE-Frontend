@@ -13,13 +13,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CreateDefinitionRequest } from "../../domain/interfaces/IDefinitionsRepository";
 import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/catalog";
@@ -91,7 +85,7 @@ export function DefinitionFormDialog({
   // ── Field update ────────────────────────────────────────────────────────────
   const updateField = <K extends keyof CreateDefinitionRequest>(
     field: K,
-    value: CreateDefinitionRequest[K],
+    value: CreateDefinitionRequest[K]
   ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => {
@@ -108,7 +102,8 @@ export function DefinitionFormDialog({
     if (!form.name.trim()) errs.name = t("common.required") || "Required";
     // Validate key format: lowercase letters, numbers, hyphens, dots
     if (form.key.trim() && !/^[a-z0-9][a-z0-9\-\.]*$/.test(form.key.trim())) {
-      errs.key = t("plugins.defErrKeyFormat") || "Key must be lowercase alphanumeric (a-z, 0-9, -, .)";
+      errs.key =
+        t("plugins.defErrKeyFormat") || "Key must be lowercase alphanumeric (a-z, 0-9, -, .)";
     }
     // Validate manifestJson is valid JSON
     if (form.manifestJson.trim()) {
@@ -130,7 +125,7 @@ export function DefinitionFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEditMode
@@ -148,9 +143,7 @@ export function DefinitionFormDialog({
           {/* Row: Key + Name */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="def-key">
-                {t("plugins.defColKey") || "Plugin Key"} *
-              </Label>
+              <Label htmlFor="def-key">{t("plugins.defColKey") || "Plugin Key"} *</Label>
               <Input
                 id="def-key"
                 dir="ltr"
@@ -160,14 +153,10 @@ export function DefinitionFormDialog({
                 disabled={isEditMode}
                 className={errors.key ? "border-destructive" : ""}
               />
-              {errors.key && (
-                <p className="text-xs text-destructive">{errors.key}</p>
-              )}
+              {errors.key && <p className="text-xs text-destructive">{errors.key}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="def-name">
-                {t("plugins.defColName") || "Name"} *
-              </Label>
+              <Label htmlFor="def-name">{t("plugins.defColName") || "Name"} *</Label>
               <Input
                 id="def-name"
                 placeholder={t("plugins.defPlaceholderName") || "My Plugin"}
@@ -175,9 +164,7 @@ export function DefinitionFormDialog({
                 onChange={(e) => updateField("name", e.target.value)}
                 className={errors.name ? "border-destructive" : ""}
               />
-              {errors.name && (
-                <p className="text-xs text-destructive">{errors.name}</p>
-              )}
+              {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
             </div>
           </div>
 
@@ -199,7 +186,9 @@ export function DefinitionFormDialog({
             <Textarea
               id="def-desc"
               rows={2}
-              placeholder={t("plugins.defPlaceholderDesc") || "A brief description of the plugin..."}
+              placeholder={
+                t("plugins.defPlaceholderDesc") || "A brief description of the plugin..."
+              }
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
             />
@@ -207,7 +196,9 @@ export function DefinitionFormDialog({
 
           {/* Description AR */}
           <div className="space-y-2">
-            <Label htmlFor="def-desc-ar">{t("common.descriptionAr") || "Description (Arabic)"}</Label>
+            <Label htmlFor="def-desc-ar">
+              {t("common.descriptionAr") || "Description (Arabic)"}
+            </Label>
             <Textarea
               id="def-desc-ar"
               dir="rtl"
@@ -230,8 +221,12 @@ export function DefinitionFormDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Tier1">{t("plugins.tier1") || "Tier 1 (Certified)"}</SelectItem>
-                  <SelectItem value="Tier2">{t("plugins.tier2") || "Tier 2 (Sandboxed)"}</SelectItem>
+                  <SelectItem value="Tier1">
+                    {t("plugins.tier1") || "Tier 1 (Certified)"}
+                  </SelectItem>
+                  <SelectItem value="Tier2">
+                    {t("plugins.tier2") || "Tier 2 (Sandboxed)"}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -266,7 +261,9 @@ export function DefinitionFormDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="def-frontend-url">{t("plugins.defColFrontendUrl") || "Frontend URL"}</Label>
+              <Label htmlFor="def-frontend-url">
+                {t("plugins.defColFrontendUrl") || "Frontend URL"}
+              </Label>
               <Input
                 id="def-frontend-url"
                 dir="ltr"
@@ -298,7 +295,7 @@ export function DefinitionFormDialog({
               id="def-manifest"
               dir="ltr"
               rows={4}
-              className={`font-mono text-xs text-left ${errors.manifestJson ? "border-destructive" : ""}`}
+              className={`text-left font-mono text-xs ${errors.manifestJson ? "border-destructive" : ""}`}
               placeholder='{"entryPoints": [], "permissions": []}'
               value={form.manifestJson}
               onChange={(e) => updateField("manifestJson", e.target.value)}
@@ -310,23 +307,15 @@ export function DefinitionFormDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button
-            id="def-form-submit"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
+          <Button id="def-form-submit" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting
-              ? (t("common.saving") || "Saving...")
+              ? t("common.saving") || "Saving..."
               : isEditMode
-                ? (t("common.save") || "Save")
-                : (t("common.create") || "Create")}
+                ? t("common.save") || "Save"
+                : t("common.create") || "Create"}
           </Button>
         </DialogFooter>
       </DialogContent>

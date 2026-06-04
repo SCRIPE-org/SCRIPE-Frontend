@@ -8,11 +8,7 @@ import type { AppReview } from "../entities/AppReview";
  */
 export interface IReviewsRepository {
   /** Paginated list of app reviews with optional appListingId filter. */
-  getAll(params: {
-    page: number;
-    pageSize: number;
-    appListingId?: string;
-  }): Promise<{
+  getAll(params: { page: number; pageSize: number; appListingId?: string }): Promise<{
     items: AppReview[];
     totalCount: number;
     pageNumber: number;

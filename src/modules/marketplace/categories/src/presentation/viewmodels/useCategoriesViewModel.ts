@@ -46,8 +46,7 @@ export function useCategoriesViewModel() {
 
   // ── Create Mutation ─────────────────────────────────────────────────────────
   const createMutation = useMutation({
-    mutationFn: (data: CategoryFormData) =>
-      categoriesRepository.create(data),
+    mutationFn: (data: CategoryFormData) => categoriesRepository.create(data),
     onSuccess: () => {
       invalidate();
       success({ title: t("marketplace.categoryCreated") || "Category created" });

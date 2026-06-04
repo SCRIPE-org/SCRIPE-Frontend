@@ -1,4 +1,3 @@
-
 export type PayoutStatus = "Pending" | "Processing" | "Paid" | "Failed";
 
 export interface AppPurchaseData {
@@ -15,15 +14,33 @@ export interface AppPurchaseData {
 
 export class AppPurchase {
   constructor(private readonly data: AppPurchaseData) {}
-  get id() { return this.data.id; }
-  get appListingId() { return this.data.appListingId; }
-  get appName() { return this.data.appName; }
-  get tenantId() { return this.data.tenantId; }
-  get tenantName() { return this.data.tenantName; }
-  get amount() { return this.data.amount; }
-  get currency() { return this.data.currency; }
-  get pricingModel() { return this.data.pricingModel; }
-  get purchasedAt() { return this.data.purchasedAt; }
+  get id() {
+    return this.data.id;
+  }
+  get appListingId() {
+    return this.data.appListingId;
+  }
+  get appName() {
+    return this.data.appName;
+  }
+  get tenantId() {
+    return this.data.tenantId;
+  }
+  get tenantName() {
+    return this.data.tenantName;
+  }
+  get amount() {
+    return this.data.amount;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+  get pricingModel() {
+    return this.data.pricingModel;
+  }
+  get purchasedAt() {
+    return this.data.purchasedAt;
+  }
 
   get amountLabel(): string {
     return new Intl.NumberFormat("en", {
@@ -48,19 +65,43 @@ export interface DeveloperPayoutData {
 
 export class DeveloperPayout {
   constructor(private readonly data: DeveloperPayoutData) {}
-  get id() { return this.data.id; }
-  get developerProfileId() { return this.data.developerProfileId; }
-  get developerName() { return this.data.developerName; }
-  get amount() { return this.data.amount; }
-  get currency() { return this.data.currency; }
-  get periodStart() { return this.data.periodStart; }
-  get periodEnd() { return this.data.periodEnd; }
-  get status() { return this.data.status; }
-  get stripeTransferId() { return this.data.stripeTransferId; }
-  get createdAt() { return this.data.createdAt; }
+  get id() {
+    return this.data.id;
+  }
+  get developerProfileId() {
+    return this.data.developerProfileId;
+  }
+  get developerName() {
+    return this.data.developerName;
+  }
+  get amount() {
+    return this.data.amount;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+  get periodStart() {
+    return this.data.periodStart;
+  }
+  get periodEnd() {
+    return this.data.periodEnd;
+  }
+  get status() {
+    return this.data.status;
+  }
+  get stripeTransferId() {
+    return this.data.stripeTransferId;
+  }
+  get createdAt() {
+    return this.data.createdAt;
+  }
 
-  get isPending() { return this.data.status === "Pending"; }
-  get canProcess() { return this.data.status === "Pending"; }
+  get isPending() {
+    return this.data.status === "Pending";
+  }
+  get canProcess() {
+    return this.data.status === "Pending";
+  }
 
   get amountLabel(): string {
     return new Intl.NumberFormat("en", {

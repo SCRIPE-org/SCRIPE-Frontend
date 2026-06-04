@@ -63,12 +63,8 @@ function createContainer(): AuthContainer {
   const accountSetupRepository = new AccountSetupRepository(
     new AccountSetupService(publicApiService)
   );
-  const signupRepository = new SignupRepository(
-    new SignupService(publicApiService)
-  );
-  const passkeyRepository = new PasskeyRepository(
-    new PasskeyService(apiService)
-  );
+  const signupRepository = new SignupRepository(new SignupService(publicApiService));
+  const passkeyRepository = new PasskeyRepository(new PasskeyService(apiService));
 
   const baseApi = getBaseApiService();
   baseApi.setRefreshHandler(async () => {

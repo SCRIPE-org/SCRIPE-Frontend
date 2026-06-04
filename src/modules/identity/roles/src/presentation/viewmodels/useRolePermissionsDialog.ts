@@ -136,9 +136,7 @@ export function useRolePermissionsDialog({
 
   // Flat permission list derived from groups (for toggle/lookup logic only)
   const allPermissions = useMemo((): Permission[] => {
-    return tenantPermissionGroups.flatMap((m) =>
-      m.categories.flatMap((c) => c.permissions)
-    );
+    return tenantPermissionGroups.flatMap((m) => m.categories.flatMap((c) => c.permissions));
   }, [tenantPermissionGroups]);
 
   // ── Fetch role's current permissions ──

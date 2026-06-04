@@ -43,7 +43,9 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
 
   const subdomainStatusIcon = {
     idle: null,
-    checking: <Loader2 className="h-4 w-4 animate-spin" style={{ color: "rgba(245,242,255,0.4)" }} />,
+    checking: (
+      <Loader2 className="h-4 w-4 animate-spin" style={{ color: "rgba(245,242,255,0.4)" }} />
+    ),
     available: <Check className="h-4 w-4" style={{ color: "#10B981" }} />,
     unavailable: <X className="h-4 w-4" style={{ color: "#ef4444" }} />,
   }[subdomainStatus];
@@ -55,7 +57,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
         <div
           className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
           style={{
-            background: "linear-gradient(180deg, rgba(168,85,247,0.15) 0%, rgba(99,102,241,0.1) 100%)",
+            background:
+              "linear-gradient(180deg, rgba(168,85,247,0.15) 0%, rgba(99,102,241,0.1) 100%)",
             border: "1px solid rgba(168,85,247,0.2)",
             animation: "sxPop 0.5s ease-out 0.15s both",
           }}
@@ -130,19 +133,18 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
                 className="h-11 rounded-r-none pr-9"
                 style={{
                   background: "rgba(255,255,255,0.03)",
-                  borderColor: subdomainStatus === "available"
-                    ? "rgba(16,185,129,0.4)"
-                    : subdomainStatus === "unavailable"
-                      ? "rgba(239,68,68,0.4)"
-                      : "rgba(255,255,255,0.08)",
+                  borderColor:
+                    subdomainStatus === "available"
+                      ? "rgba(16,185,129,0.4)"
+                      : subdomainStatus === "unavailable"
+                        ? "rgba(239,68,68,0.4)"
+                        : "rgba(255,255,255,0.08)",
                   color: "#F5F2FF",
                   transition: "border-color 0.2s",
                 }}
               />
               {/* Status icon */}
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {subdomainStatusIcon}
-              </div>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">{subdomainStatusIcon}</div>
             </div>
             <div
               className="flex h-11 items-center rounded-r-lg border border-l-0 px-3 text-xs font-medium"
@@ -220,11 +222,13 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
               color: "#F5F2FF",
             }}
           />
-          <p className="text-[11px] font-medium leading-relaxed animate-sxRise" style={{ color: "rgba(245,242,255,0.45)" }}>
+          <p
+            className="animate-sxRise text-[11px] font-medium leading-relaxed"
+            style={{ color: "rgba(245,242,255,0.45)" }}
+          >
             Your final login username will be:{" "}
             <span className="font-mono" style={{ color: "#D8B4FE" }}>
-              {vm.wizardData.subdomain ? vm.wizardData.subdomain.toUpperCase() : "[subdomain]"}
-              _
+              {vm.wizardData.subdomain ? vm.wizardData.subdomain.toUpperCase() : "[subdomain]"}_
               {vm.wizardData.username ? vm.wizardData.username.toLowerCase() : "admin"}
             </span>
           </p>
@@ -256,7 +260,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           }
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
-            background: "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
+            background:
+              "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
             boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
           }}
         >

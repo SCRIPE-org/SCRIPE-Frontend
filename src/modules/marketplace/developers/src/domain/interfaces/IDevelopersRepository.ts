@@ -9,11 +9,7 @@ import type { DeveloperProfile } from "../entities/DeveloperProfile";
  */
 export interface IDevelopersRepository {
   /** Paginated list of developer profiles with optional search filter. */
-  getAll(params: {
-    page: number;
-    pageSize: number;
-    search?: string;
-  }): Promise<{
+  getAll(params: { page: number; pageSize: number; search?: string }): Promise<{
     items: DeveloperProfile[];
     totalCount: number;
     pageNumber: number;
@@ -45,12 +41,15 @@ export interface IDevelopersRepository {
    * Update an existing developer profile.
    * Payload matches backend UpdateDeveloperProfileRequest(DeveloperName, Website, SupportEmail, Bio).
    */
-  update(id: string, data: {
-    developerName: string;
-    website: string;
-    supportEmail: string;
-    bio: string;
-  }): Promise<void>;
+  update(
+    id: string,
+    data: {
+      developerName: string;
+      website: string;
+      supportEmail: string;
+      bio: string;
+    }
+  ): Promise<void>;
 
   /** Verify a developer profile (admin action). */
   verify(id: string): Promise<void>;

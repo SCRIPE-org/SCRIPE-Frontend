@@ -11,7 +11,8 @@ export default function VendorProfilePage() {
       <div className="flex flex-col space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">Vendor Profile</h1>
         <p className="text-muted-foreground">
-          Manage your organization details, API keys, and vendor identity. This feature is coming soon.
+          Manage your organization details, API keys, and vendor identity. This feature is coming
+          soon.
         </p>
       </div>
     </main>

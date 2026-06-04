@@ -1,14 +1,12 @@
 /**
  * Docs page locale — ES
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const es = {
   commercial: {
     moduleCatalog: {
-      tblCoreR7C1: "Derechos",
-      tblCoreR7C2: "Control de acceso a funciones basado en ediciones y gestión de planes",
-      tblCoreR7C3:
-        "Funciones, ediciones, suscripciones, sobreescrituras, aplicación de cuotas, implementaciones versionadas, alcance de revendedores",
+      analyticsContent:
+        "El motor de analítica de ingresos transforma datos brutos de suscripción en inteligencia empresarial accionable. Con 7 pestañas especializadas, capturas nocturnas automatizadas y pronósticos predictivos, los operadores obtienen visibilidad de nivel CFO sin herramientas BI externas. La puntuación de salud del inquilino identifica proactivamente los riesgos de abandono antes de que se materialicen.",
+      analyticsTitle: "Inteligencia de Ingresos",
       businessContent:
         "SCRIPE no es un cascarón vacío; es un ecosistema empresarial en funcionamiento desde el primer día. Utilice nuestros módulos de negocio existentes —como Gestión de Usuarios, Registro de Auditoría y Notificaciones— como puntos de partida inmediatos, o clónelos para construir características propietarias rápidamente.",
       businessTitle: "Lógica de Negocio Acelerada",
@@ -42,7 +40,32 @@ export const es = {
       projectModule: "Módulo de Proyectos y Flujo de Trabajo",
       projectModuleDesc:
         "Gestione máquinas de estado complejas y flujos de trabajo de aprobación organizativa de múltiples pasos.",
-      title: "Catálogo de Módulos Empresariales",
+      tblAnalyticsHeader1: "Módulo",
+      tblAnalyticsHeader2: "Descripción",
+      tblAnalyticsHeader3: "Capacidades Clave",
+      tblAnalyticsR1C1: "Analítica de Ingresos",
+      tblAnalyticsR1C2: "Panel de inteligencia de ingresos de nivel BI",
+      tblAnalyticsR1C3:
+        "Seguimiento MRR/ARR, análisis de cohortes, modelado LTV, pronóstico de ingresos, puntuación de salud, informes PDF",
+      tblCommHeader1: "Módulo",
+      tblCommHeader2: "Descripción",
+      tblCommHeader3: "Capacidades Clave",
+      tblCommR1C1: "Notificaciones",
+      tblCommR1C2: "Notificaciones push en tiempo real",
+      tblCommR1C3:
+        "SignalR WebSockets, unión automática por inquilino, marcar leído/no leído, interfaz de campana",
+      tblCommR2C1: "Sistema de Correo Electrónico",
+      tblCommR2C2: "Canalización de correo transaccional",
+      tblCommR2C3:
+        "Envío basado en colas, plantillas Scriban, reintento con retroceso, SMTP/SendGrid",
+      tblCommR3C1: "Webhooks",
+      tblCommR3C2: "Integraciones impulsadas por eventos",
+      tblCommR3C3:
+        "Firmado HMAC-SHA256, reintento exponencial, gestión de suscripciones, catálogo de eventos",
+      tblCommR4C1: "Plantillas de Mensajes",
+      tblCommR4C2: "Renderizado de mensajes bilingües",
+      tblCommR4C3:
+        "Sintaxis Scriban, vista previa de variables, 6 plantillas integradas, entidad bilingüe",
       tblCoreHeader1: "Módulo",
       tblCoreHeader2: "Descripción",
       tblCoreHeader3: "Capacidades Clave",
@@ -69,25 +92,10 @@ export const es = {
       tblCoreR6C2: "Asignación masiva (batch) de roles y restricciones",
       tblCoreR6C3:
         "RBAC basado en grupos, restricciones a nivel de campo, gestión de miembros, grupos con ámbito de inquilino",
-      tblCommHeader1: "Módulo",
-      tblCommHeader2: "Descripción",
-      tblCommHeader3: "Capacidades Clave",
-      tblCommR1C1: "Notificaciones",
-      tblCommR1C2: "Notificaciones push en tiempo real",
-      tblCommR1C3:
-        "SignalR WebSockets, unión automática por inquilino, marcar leído/no leído, interfaz de campana",
-      tblCommR2C1: "Sistema de Correo Electrónico",
-      tblCommR2C2: "Canalización de correo transaccional",
-      tblCommR2C3:
-        "Envío basado en colas, plantillas Scriban, reintento con retroceso, SMTP/SendGrid",
-      tblCommR3C1: "Webhooks",
-      tblCommR3C2: "Integraciones impulsadas por eventos",
-      tblCommR3C3:
-        "Firmado HMAC-SHA256, reintento exponencial, gestión de suscripciones, catálogo de eventos",
-      tblCommR4C1: "Plantillas de Mensajes",
-      tblCommR4C2: "Renderizado de mensajes bilingües",
-      tblCommR4C3:
-        "Sintaxis Scriban, vista previa de variables, 6 plantillas integradas, entidad bilingüe",
+      tblCoreR7C1: "Derechos",
+      tblCoreR7C2: "Control de acceso a funciones basado en ediciones y gestión de planes",
+      tblCoreR7C3:
+        "Funciones, ediciones, suscripciones, sobreescrituras, aplicación de cuotas, implementaciones versionadas, alcance de revendedores",
       tblDataHeader1: "Módulo",
       tblDataHeader2: "Descripción",
       tblDataHeader3: "Capacidades Clave",
@@ -107,16 +115,7 @@ export const es = {
       tblDataR4C2: "Operaciones administrativas de usuarios",
       tblDataR4C3:
         "27 endpoints, operaciones masivas (bulk), operaciones empresariales, reglas de administración protegidas",
-      tblAnalyticsHeader1: "Módulo",
-      tblAnalyticsHeader2: "Descripción",
-      tblAnalyticsHeader3: "Capacidades Clave",
-      tblAnalyticsR1C1: "Analítica de Ingresos",
-      tblAnalyticsR1C2: "Panel de inteligencia de ingresos de nivel BI",
-      tblAnalyticsR1C3:
-        "Seguimiento MRR/ARR, análisis de cohortes, modelado LTV, pronóstico de ingresos, puntuación de salud, informes PDF",
-      analyticsTitle: "Inteligencia de Ingresos",
-      analyticsContent:
-        "El motor de analítica de ingresos transforma datos brutos de suscripción en inteligencia empresarial accionable. Con 7 pestañas especializadas, capturas nocturnas automatizadas y pronósticos predictivos, los operadores obtienen visibilidad de nivel CFO sin herramientas BI externas. La puntuación de salud del inquilino identifica proactivamente los riesgos de abandono antes de que se materialicen.",
+      title: "Catálogo de Módulos Empresariales",
     },
   },
 };

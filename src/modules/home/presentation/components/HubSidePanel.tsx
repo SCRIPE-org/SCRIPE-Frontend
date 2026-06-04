@@ -60,7 +60,8 @@ export function HubSidePanel({
         style={{
           padding: 20,
           borderRadius: 18,
-          background: "linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.015) 100%)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.015) 100%)",
           border: "1px solid rgba(255,255,255,0.06)",
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
         }}
@@ -172,7 +173,8 @@ export function HubSidePanel({
         style={{
           padding: 20,
           borderRadius: 18,
-          background: "linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.015) 100%)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.015) 100%)",
           border: "1px solid rgba(255,255,255,0.06)",
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
           flex: 1,
@@ -192,7 +194,14 @@ export function HubSidePanel({
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {recentItems.length === 0 && !isLoading && (
-            <div style={{ fontSize: 12, color: "rgba(230,233,245,0.35)", padding: "12px 0", textAlign: "center" }}>
+            <div
+              style={{
+                fontSize: 12,
+                color: "rgba(230,233,245,0.35)",
+                padding: "12px 0",
+                textAlign: "center",
+              }}
+            >
               {t("workspaceHub.recent.empty")}
             </div>
           )}

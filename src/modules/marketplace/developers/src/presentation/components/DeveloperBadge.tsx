@@ -1,12 +1,7 @@
 "use client";
 
 import { Badge } from "@core/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@core/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 
 interface DeveloperBadgeProps {
@@ -40,7 +35,7 @@ export function DeveloperBadge({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {/* Developer name */}
-      <span className="text-sm font-medium truncate">{displayName}</span>
+      <span className="truncate text-sm font-medium">{displayName}</span>
 
       {/* Verified badge */}
       {isVerified && (
@@ -48,7 +43,7 @@ export function DeveloperBadge({
           <Tooltip>
             <TooltipTrigger asChild>
               <span
-                className="inline-flex items-center gap-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 cursor-default"
+                className="inline-flex cursor-default items-center gap-0.5 text-xs font-medium text-blue-600 dark:text-blue-400"
                 aria-label="Verified developer"
               >
                 <ShieldCheck className="size-3.5" />
@@ -66,7 +61,7 @@ export function DeveloperBadge({
 
       {/* App count */}
       {appCount !== undefined && appCount > 0 && (
-        <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4">
+        <Badge variant="secondary" className="h-4 px-1.5 py-0 text-xs">
           {appCount} {appCount === 1 ? "app" : "apps"}
         </Badge>
       )}

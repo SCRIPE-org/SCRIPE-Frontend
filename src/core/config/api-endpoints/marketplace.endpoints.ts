@@ -19,8 +19,7 @@ export const MARKETPLACE_ENDPOINTS = {
     /** Publish an app listing (make visible in storefront) */
     CATALOG_PUBLISH: (id: string) => `${V1}/marketplace/catalog/${id}/publish`,
     /** Unpublish an app listing (hide from storefront) */
-    CATALOG_UNPUBLISH: (id: string) =>
-      `${V1}/marketplace/catalog/${id}/unpublish`,
+    CATALOG_UNPUBLISH: (id: string) => `${V1}/marketplace/catalog/${id}/unpublish`,
     /** Toggle featured status for an app listing */
     CATALOG_FEATURE: (id: string) => `${V1}/marketplace/catalog/${id}/feature`,
     /** Set or update pricing for an app listing */
@@ -38,11 +37,9 @@ export const MARKETPLACE_ENDPOINTS = {
     /** Get a single submission by ID */
     SUBMISSION_BY_ID: (id: string) => `${V1}/marketplace/submissions/${id}`,
     /** Approve a pending submission */
-    SUBMISSION_APPROVE: (id: string) =>
-      `${V1}/marketplace/submissions/${id}/approve`,
+    SUBMISSION_APPROVE: (id: string) => `${V1}/marketplace/submissions/${id}/approve`,
     /** Reject a pending submission with feedback */
-    SUBMISSION_REJECT: (id: string) =>
-      `${V1}/marketplace/submissions/${id}/reject`,
+    SUBMISSION_REJECT: (id: string) => `${V1}/marketplace/submissions/${id}/reject`,
     /** Request revisions on a submission */
     SUBMISSION_REQUEST_REVISIONS: (id: string) =>
       `${V1}/marketplace/submissions/${id}/request-revisions`,
@@ -67,10 +64,8 @@ export const MARKETPLACE_ENDPOINTS = {
     /** Get a developer profile by ID */
     DEVELOPER_BY_ID: (id: string) => `${V1}/marketplace/developers/${id}`,
     /** Get a developer profile by tenant ID */
-    DEVELOPER_BY_TENANT: (tenantId: string) =>
-      `${V1}/marketplace/developers/by-tenant/${tenantId}`,
+    DEVELOPER_BY_TENANT: (tenantId: string) => `${V1}/marketplace/developers/by-tenant/${tenantId}`,
     /** Verify a developer profile (admin action) */
-    DEVELOPER_VERIFY: (id: string) =>
-      `${V1}/marketplace/developers/${id}/verify`,
+    DEVELOPER_VERIFY: (id: string) => `${V1}/marketplace/developers/${id}/verify`,
   },
 };

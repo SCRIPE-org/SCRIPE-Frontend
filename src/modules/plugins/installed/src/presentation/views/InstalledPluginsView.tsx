@@ -13,8 +13,16 @@ export function InstalledPluginsView() {
   const { t } = useI18n();
   const tenantId = user?.tenantId ?? "";
 
-  const { installations, isLoading, isError, refetch, activate, deactivate, uninstall, isMutating } =
-    useInstalledViewModel(tenantId);
+  const {
+    installations,
+    isLoading,
+    isError,
+    refetch,
+    activate,
+    deactivate,
+    uninstall,
+    isMutating,
+  } = useInstalledViewModel(tenantId);
 
   if (isLoading) {
     return (
@@ -28,11 +36,11 @@ export function InstalledPluginsView() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
+      <div className="flex flex-col items-center justify-center gap-4 py-20">
         <AlertTriangle className="h-10 w-10 text-destructive" />
         <p className="text-sm text-muted-foreground">{t("plugins.installedError")}</p>
         <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 me-2" />
+          <RefreshCw className="me-2 h-4 w-4" />
           {t("plugins.retry")}
         </Button>
       </div>
@@ -41,7 +49,7 @@ export function InstalledPluginsView() {
 
   if (installations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-3">
+      <div className="flex flex-col items-center justify-center gap-3 py-20">
         <PackageCheck className="h-10 w-10 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">{t("plugins.installedEmpty")}</p>
       </div>

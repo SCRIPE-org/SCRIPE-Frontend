@@ -245,7 +245,7 @@ function PasswordField({
         variant="ghost"
         type="button"
         onClick={onToggle}
-        className="absolute end-3 top-1/2 -translate-y-1/2 h-auto p-0 text-muted-foreground transition-colors hover:text-foreground"
+        className="absolute end-3 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground transition-colors hover:text-foreground"
         tabIndex={-1}
       >
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

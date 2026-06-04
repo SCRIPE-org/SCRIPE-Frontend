@@ -28,17 +28,17 @@ export function AppListingsStats({ stats, isLoading }: AppListingsStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {cards.map(({ label, value, icon: Icon, color }) => (
         <Card key={label}>
           <CardContent className="flex items-center gap-3 p-4">
-            <div className={`p-2 rounded-lg bg-muted ${color}`}>
+            <div className={`rounded-lg bg-muted p-2 ${color}`}>
               <Icon className="size-4" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{label}</p>
               {isLoading ? (
-                <div className="h-5 w-8 bg-muted animate-pulse rounded mt-0.5" />
+                <div className="mt-0.5 h-5 w-8 animate-pulse rounded bg-muted" />
               ) : (
                 <p className="text-lg font-semibold leading-none">{value}</p>
               )}

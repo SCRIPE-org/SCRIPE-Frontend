@@ -91,7 +91,9 @@ export function usePasskeyLoginViewModel(
 
       // Convert challenge from base64url to ArrayBuffer
       if (typeof publicKeyOptions.challenge === "string") {
-        publicKeyOptions.challenge = base64urlToBuffer(publicKeyOptions.challenge as unknown as string);
+        publicKeyOptions.challenge = base64urlToBuffer(
+          publicKeyOptions.challenge as unknown as string
+        );
       }
 
       // Convert allowCredentials ids from base64url to ArrayBuffer
@@ -103,9 +105,9 @@ export function usePasskeyLoginViewModel(
         }
       }
 
-      const credential = await navigator.credentials.get({
+      const credential = (await navigator.credentials.get({
         publicKey: publicKeyOptions,
-      }) as PublicKeyCredential | null;
+      })) as PublicKeyCredential | null;
 
       if (!credential) {
         setError(t("auth.passkey.cancelled") || "Authentication was cancelled.");
@@ -122,9 +124,7 @@ export function usePasskeyLoginViewModel(
         clientDataJSON: bufferToBase64url(response.clientDataJSON),
         authenticatorData: bufferToBase64url(response.authenticatorData),
         signature: bufferToBase64url(response.signature),
-        userHandle: response.userHandle
-          ? bufferToBase64url(response.userHandle)
-          : null,
+        userHandle: response.userHandle ? bufferToBase64url(response.userHandle) : null,
       });
 
       onSuccess(verifyResult);
@@ -147,9 +147,7 @@ export function usePasskeyLoginViewModel(
           setError(err.message);
         }
       } else {
-        setError(
-          t("auth.passkey.failed") || "Passkey authentication failed. Please try again."
-        );
+        setError(t("auth.passkey.failed") || "Passkey authentication failed. Please try again.");
       }
     } finally {
       setIsLoading(false);

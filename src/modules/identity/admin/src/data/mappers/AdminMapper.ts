@@ -16,7 +16,13 @@ import {
 } from "../models/AdminModel";
 import type { CreateAdminRequest, UpdateAdminRequest } from "../../domain/entities/AdminRequests";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Admin Response Schema ────────────────────────────────────────────────────
 
@@ -70,7 +76,7 @@ export class AdminMapper {
       lastLoginAt: validated.lastLoginAt ?? undefined,
       notes: validated.notes ?? undefined,
       roles: validated.roles
-        ? AdminMapper.toRoleDataList((validated.roles as unknown) as AdminRoleJson[])
+        ? AdminMapper.toRoleDataList(validated.roles as unknown as AdminRoleJson[])
         : undefined,
       roleNamesEn: validated.roleNamesEn,
       roleNamesAr: validated.roleNamesAr,

@@ -105,14 +105,16 @@ export function NexusPrimaryRail({
       if (isLocked) {
         // Show contextual toast — the workspace is locked
         const ws = workspaceGroups.find((g) => g.workspaceKey === wsKey);
-        const name = language === "ar"
-          ? (ws?.workspaceNameAr || ws?.workspaceNameEn || wsKey)
-          : (ws?.workspaceNameEn || wsKey);
+        const name =
+          language === "ar"
+            ? ws?.workspaceNameAr || ws?.workspaceNameEn || wsKey
+            : ws?.workspaceNameEn || wsKey;
         toast({
           title: language === "ar" ? `${name} مقفول` : `${name} is locked`,
-          description: language === "ar"
-            ? "افتح تطبيق المشغّل لمعرفة كيفية إلغاء القفل."
-            : "Open the App Launcher to learn how to unlock this workspace.",
+          description:
+            language === "ar"
+              ? "افتح تطبيق المشغّل لمعرفة كيفية إلغاء القفل."
+              : "Open the App Launcher to learn how to unlock this workspace.",
           variant: "default",
           duration: 3000,
         });
@@ -141,9 +143,7 @@ export function NexusPrimaryRail({
     const activeKey = activeWorkspace?.workspaceKey;
 
     // Sort all workspaces by sortOrder to reliably find the first one
-    const sorted = [...workspaceGroups].sort(
-      (a, b) => a.workspaceSortOrder - b.workspaceSortOrder
-    );
+    const sorted = [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder);
     const primaryWorkspace = sorted[0];
 
     const pinned = sorted.filter(
@@ -173,8 +173,7 @@ export function NexusPrimaryRail({
     () =>
       workspaceGroups
         .filter((ws) => ws.isAdminWorkspace && !ws.isLocked)
-        .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0]
-        ?.workspaceKey ?? null,
+        .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0]?.workspaceKey ?? null,
     [workspaceGroups]
   );
   const isOnPrimaryAdmin = activeWorkspace?.workspaceKey === primaryAdminKey;
@@ -256,7 +255,7 @@ export function NexusPrimaryRail({
           padding: "4px 0 16px",
           overflowY: "auto",
           overflowX: "hidden",
-          scrollbarWidth: "none",  /* Firefox: completely hidden by default */
+          scrollbarWidth: "none" /* Firefox: completely hidden by default */,
         }}
         onMouseEnter={(e) => e.currentTarget.classList.add("is-hovered")}
         onMouseLeave={(e) => e.currentTarget.classList.remove("is-hovered")}
@@ -291,9 +290,10 @@ export function NexusPrimaryRail({
             {pinnedWorkspaces.map((ws) => {
               const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
               const wsAccent = ws.accentColor || (isDark ? "#9B8FE0" : "#6258c4");
-              const wsLabel = language === "ar"
-                ? ws.workspaceNameAr || ws.workspaceNameEn
-                : ws.workspaceNameEn || ws.workspaceNameAr;
+              const wsLabel =
+                language === "ar"
+                  ? ws.workspaceNameAr || ws.workspaceNameEn
+                  : ws.workspaceNameEn || ws.workspaceNameAr;
 
               return (
                 <ModuleWorkspaceButton
@@ -450,10 +450,14 @@ function ModuleWorkspaceButton({
               cursor: isLocked ? "not-allowed" : "pointer",
               border: `1.5px solid ${isLocked ? (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)") : borderColor}`,
               background: isLocked
-                ? (isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)")
+                ? isDark
+                  ? "rgba(255,255,255,0.03)"
+                  : "rgba(0,0,0,0.02)"
                 : bgColor,
               color: isLocked
-                ? (isDark ? "rgba(255,255,255,0.25)" : "rgba(100,115,145,0.35)")
+                ? isDark
+                  ? "rgba(255,255,255,0.25)"
+                  : "rgba(100,115,145,0.35)"
                 : iconColor,
               margin: "4px 0",
               boxShadow: isActive ? `0 4px 16px ${accentColor}25` : "none",

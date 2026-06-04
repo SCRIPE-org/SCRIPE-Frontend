@@ -45,9 +45,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const tenantId = searchParams?.get("tenantId") ?? undefined;
 
   // Derive initial state from token presence — no need for a synchronous setState in the effect
-  const [state, setState] = useState<MagicLinkVerifyState>(
-    token ? "verifying" : "error"
-  );
+  const [state, setState] = useState<MagicLinkVerifyState>(token ? "verifying" : "error");
 
   useEffect(() => {
     // If no token, initial state is already "error" — nothing to do
@@ -76,9 +74,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           setTimeout(() => {
             if (cancelled) return;
             router.replace(
-              response.mustChangePassword
-                ? "/change-password"
-                : (response.defaultRedirectPath || "/")
+              response.mustChangePassword ? "/change-password" : response.defaultRedirectPath || "/"
             );
           }, 1200);
         } else {
@@ -89,7 +85,9 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [token, tenantId, router]);
 
   return {

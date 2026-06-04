@@ -103,9 +103,7 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
         >
           {vm.isLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <span
-                className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white"
-              />
+              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
               {t("common.loading") || "Sending…"}
             </span>
           ) : (
@@ -174,7 +172,7 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
           value={vm.code}
           onChange={(e) => vm.setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
           autoComplete="one-time-code"
-          className="h-12 rounded-lg text-center text-xl font-mono tracking-[0.4em]"
+          className="h-12 rounded-lg text-center font-mono text-xl tracking-[0.4em]"
           style={{
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.1)",
@@ -217,8 +215,9 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
           }}
         >
           {vm.cooldown > 0
-            ? (t("signup.verification.resendIn", { seconds: vm.cooldown }) || `Resend in ${vm.cooldown}s`)
-            : (t("signup.verification.resendCode") || "Resend code")}
+            ? t("signup.verification.resendIn", { seconds: vm.cooldown }) ||
+              `Resend in ${vm.cooldown}s`
+            : t("signup.verification.resendCode") || "Resend code"}
         </Button>
       </div>
 

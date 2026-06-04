@@ -217,7 +217,8 @@ export const ar = {
       deviceNameLabel: "اسم الجهاز",
       deviceNamePlaceholder: "مثل: MacBook Pro، iPhone 15",
       emptyTitle: "لا توجد مفاتيح مرور مسجلة",
-      emptyDesc: "أضف مفتاح مرور لتفعيل تسجيل الدخول السريع بدون كلمة مرور باستخدام البصمة أو مفتاح الأمان.",
+      emptyDesc:
+        "أضف مفتاح مرور لتفعيل تسجيل الدخول السريع بدون كلمة مرور باستخدام البصمة أو مفتاح الأمان.",
       createdAt: "تم الإنشاء",
       lastUsed: "آخر استخدام",
       neverUsed: "لم يُستخدم أبدًا",

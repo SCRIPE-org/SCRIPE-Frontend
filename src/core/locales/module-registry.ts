@@ -146,10 +146,7 @@ import {
   en as mktDevelopersEn,
   ar as mktDevelopersAr,
 } from "@modules/marketplace/developers/locales";
-import {
-  en as mktReviewsEn,
-  ar as mktReviewsAr,
-} from "@modules/marketplace/reviews/locales";
+import { en as mktReviewsEn, ar as mktReviewsAr } from "@modules/marketplace/reviews/locales";
 import {
   en as mktFinancialsEn,
   ar as mktFinancialsAr,
@@ -221,7 +218,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktSubmissionsEn,
   mktDevelopersEn,
   mktReviewsEn,
-  mktFinancialsEn,
+  mktFinancialsEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -289,5 +286,5 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktSubmissionsAr,
   mktDevelopersAr,
   mktReviewsAr,
-  mktFinancialsAr,
+  mktFinancialsAr
 );

@@ -93,14 +93,11 @@ export function DynamicSettingsForm({
   const [isDirty, setIsDirty] = useState(false);
 
   /** Update a single field value. */
-  const handleChange = useCallback(
-    (key: string, value: string | number | boolean) => {
-      setValues((prev) => ({ ...prev, [key]: value }));
-      setErrors((prev) => ({ ...prev, [key]: "" })); // Clear field error on change
-      setIsDirty(true);
-    },
-    []
-  );
+  const handleChange = useCallback((key: string, value: string | number | boolean) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({ ...prev, [key]: "" })); // Clear field error on change
+    setIsDirty(true);
+  }, []);
 
   /** Run client-side validation. Returns true if valid. */
   const validate = (): boolean => {
@@ -138,14 +135,14 @@ export function DynamicSettingsForm({
         <div>
           {schema.title && <h3 className="text-base font-semibold">{schema.title}</h3>}
           {schema.description && (
-            <p className="text-sm text-muted-foreground mt-0.5">{schema.description}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{schema.description}</p>
           )}
         </div>
       )}
 
       {/* Settings fields */}
       <Card>
-        <CardContent className="pt-4 flex flex-col gap-5">
+        <CardContent className="flex flex-col gap-5 pt-4">
           {schema.fields.map((field) => (
             <SettingsField
               key={field.key}
@@ -161,7 +158,7 @@ export function DynamicSettingsForm({
       {/* Form footer */}
       <div className="flex items-center justify-between">
         {isDirty ? (
-          <Badge variant="outline" className="text-xs text-amber-500 border-amber-400">
+          <Badge variant="outline" className="border-amber-400 text-xs text-amber-500">
             Unsaved changes
           </Badge>
         ) : (
@@ -200,7 +197,7 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
       {field.type !== "boolean" && (
         <Label htmlFor={id} className="text-sm font-medium">
           {field.label}
-          {field.required && <span className="text-destructive ms-0.5">*</span>}
+          {field.required && <span className="ms-0.5 text-destructive">*</span>}
         </Label>
       )}
 
@@ -242,7 +239,7 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
       {field.type === "boolean" && (
         <div className="flex items-center justify-between rounded-lg border p-3">
           <div>
-            <Label htmlFor={id} className="text-sm font-medium cursor-pointer">
+            <Label htmlFor={id} className="cursor-pointer text-sm font-medium">
               {field.label}
             </Label>
             {field.description && (
@@ -258,10 +255,7 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
       )}
 
       {field.type === "select" && (
-        <Select
-          value={String(value)}
-          onValueChange={(v) => onChange(field.key, v)}
-        >
+        <Select value={String(value)} onValueChange={(v) => onChange(field.key, v)}>
           <SelectTrigger id={id} aria-invalid={!!error}>
             <SelectValue placeholder={`Select ${field.label}`} />
           </SelectTrigger>
@@ -295,8 +289,11 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
 
 function getEmptyDefault(type: JsonSchemaField["type"]): string | number | boolean {
   switch (type) {
-    case "boolean": return false;
-    case "number": return 0;
-    default: return "";
+    case "boolean":
+      return false;
+    case "number":
+      return 0;
+    default:
+      return "";
   }
 }

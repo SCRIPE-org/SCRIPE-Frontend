@@ -34,7 +34,12 @@ export function useReviewsViewModel() {
   const data = reviewsQuery.data;
   return {
     reviews: data?.items ?? [],
-    pagination: { page, pageSize: 20, totalCount: data?.totalCount ?? 0, totalPages: data?.totalPages ?? 1 },
+    pagination: {
+      page,
+      pageSize: 20,
+      totalCount: data?.totalCount ?? 0,
+      totalPages: data?.totalPages ?? 1,
+    },
     isLoading: reviewsQuery.isLoading,
     error: reviewsQuery.error,
     setPage,

@@ -109,7 +109,7 @@ export const ar = {
       subdomainReserved: "هذا النطاق الفرعي محجوز.",
       subdomainInvalid: "صيغة غير صالحة. استخدم أحرفاً صغيرة وأرقاماً وشرطات.",
       subdomainAvailable: "{{subdomain}}.scripe.app متاح!",
-      trySuggestion: "جرّب \"{{suggestion}}\"؟",
+      trySuggestion: 'جرّب "{{suggestion}}"؟',
       back: "رجوع",
     },
 

@@ -22,24 +22,15 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@core/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import type { PluginDefinition } from "@modules/plugins/catalog";
 
 // ── Status Badge ──────────────────────────────────────────────────────────────
 
 function StatusBadge({ def }: { def: PluginDefinition }) {
   const { t } = useI18n();
-  if (def.isPublished)
-    return <Badge variant="default">{t("plugins.defStatusPublished")}</Badge>;
-  if (def.isInReview)
-    return <Badge variant="outline">{t("plugins.defStatusPending")}</Badge>;
+  if (def.isPublished) return <Badge variant="default">{t("plugins.defStatusPublished")}</Badge>;
+  if (def.isInReview) return <Badge variant="outline">{t("plugins.defStatusPending")}</Badge>;
   if (def.isSuspended)
     return <Badge variant="destructive">{t("plugins.defStatusSuspended") ?? "Suspended"}</Badge>;
   if (def.isDeprecated)
@@ -146,12 +137,7 @@ export function DefinitionsView() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            id="definitions-refresh"
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-          >
+          <Button id="definitions-refresh" variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="me-2 h-4 w-4" />
             {t("common.refresh")}
           </Button>
@@ -219,8 +205,7 @@ export function DefinitionsView() {
               </TableHeader>
               <TableBody>
                 {definitions.map((def) => {
-                  const displayName =
-                    language === "ar" ? def.nameAr || def.name : def.name;
+                  const displayName = language === "ar" ? def.nameAr || def.name : def.name;
                   return (
                     <TableRow key={def.id}>
                       <TableCell className="font-mono text-xs text-muted-foreground">
@@ -321,7 +306,9 @@ export function DefinitionsView() {
       {/* Form Dialog */}
       <DefinitionFormDialog
         open={isFormOpen}
-        onOpenChange={(open) => { if (!open) closeForm(); }}
+        onOpenChange={(open) => {
+          if (!open) closeForm();
+        }}
         onSubmit={handleFormSubmit}
         isSubmitting={isSubmitting}
         editingDefinition={editingDefinition}

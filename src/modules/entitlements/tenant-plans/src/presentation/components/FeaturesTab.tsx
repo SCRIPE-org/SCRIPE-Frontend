@@ -25,7 +25,11 @@ import {
   Save,
   CheckCircle2,
 } from "lucide-react";
-import type { TenantPlan, TenantFeatureDefinition, TenantFeatureDefinitionCategoryGroup } from "../../domain/entities/TenantPlan";
+import type {
+  TenantPlan,
+  TenantFeatureDefinition,
+  TenantFeatureDefinitionCategoryGroup,
+} from "../../domain/entities/TenantPlan";
 import { FeatureCatalogPicker } from "./features-tab/FeatureCatalogPicker";
 import { FeatureRow } from "./features-tab/FeatureRow";
 import Link from "next/link";

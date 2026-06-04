@@ -109,7 +109,7 @@ export const en = {
       subdomainReserved: "This subdomain is reserved.",
       subdomainInvalid: "Invalid format. Use lowercase letters, numbers, and hyphens.",
       subdomainAvailable: "{{subdomain}}.scripe.app is available!",
-      trySuggestion: "Try \"{{suggestion}}\"?",
+      trySuggestion: 'Try "{{suggestion}}"?',
       back: "Back",
     },
 

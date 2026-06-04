@@ -67,7 +67,6 @@ const roles = {
   active: (tenantId: string) => ["roles", "active", tenantId] as const,
 };
 
-
 /** Identity — Tenants */
 const tenants = {
   ...domain("tenants"),
@@ -185,7 +184,8 @@ const commissions = {
 /** Entitlements — Analytics */
 const entitlementsAnalytics = {
   all: ["entitlements-analytics"] as const,
-  reports: (params?: Record<string, unknown>) => ["entitlements-analytics", "reports", params ?? {}] as const,
+  reports: (params?: Record<string, unknown>) =>
+    ["entitlements-analytics", "reports", params ?? {}] as const,
   preview: (reportId: string) => ["entitlements-analytics", "preview", reportId] as const,
 };
 
@@ -255,8 +255,10 @@ const marketplaceSubmissions = { ...domain("marketplace-submissions") };
 /** Marketplace — Financials */
 const marketplaceFinancials = {
   all: ["marketplace-financials"] as const,
-  payouts: (params?: Record<string, unknown>) => ["marketplace-financials", "payouts", params ?? {}] as const,
-  revenue: (params?: Record<string, unknown>) => ["marketplace-financials", "revenue", params ?? {}] as const,
+  payouts: (params?: Record<string, unknown>) =>
+    ["marketplace-financials", "payouts", params ?? {}] as const,
+  revenue: (params?: Record<string, unknown>) =>
+    ["marketplace-financials", "revenue", params ?? {}] as const,
 };
 
 /** Monitoring — Audit */
@@ -269,7 +271,8 @@ const auditLogs = {
 const securityDashboard = {
   all: ["security-dashboard"] as const,
   overview: (tenantId?: string) => ["security-dashboard", "overview", tenantId ?? ""] as const,
-  threats: (params?: Record<string, unknown>) => ["security-dashboard", "threats", params ?? {}] as const,
+  threats: (params?: Record<string, unknown>) =>
+    ["security-dashboard", "threats", params ?? {}] as const,
 };
 
 /** Monitoring — Analytics */
@@ -289,7 +292,8 @@ const monitoringDashboard = {
 /** Compliance — Consent */
 const complianceConsent = {
   all: ["compliance-consent"] as const,
-  records: (params?: Record<string, unknown>) => ["compliance-consent", "records", params ?? {}] as const,
+  records: (params?: Record<string, unknown>) =>
+    ["compliance-consent", "records", params ?? {}] as const,
   dashboard: () => ["compliance-consent", "dashboard"] as const,
 };
 
@@ -353,7 +357,8 @@ const profile = {
   sessions: () => ["profile", "sessions"] as const,
   avatar: () => ["profile", "avatar"] as const,
   externalLogins: () => ["profile", "external-logins"] as const,
-  activityLog: (params?: Record<string, unknown>) => ["profile", "activity-log", params ?? {}] as const,
+  activityLog: (params?: Record<string, unknown>) =>
+    ["profile", "activity-log", params ?? {}] as const,
 };
 
 /** Navigation */

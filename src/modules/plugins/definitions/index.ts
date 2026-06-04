@@ -3,4 +3,8 @@
 
 export { DefinitionsView } from "./src/presentation/views/DefinitionsView";
 export { useDefinitionsViewModel } from "./src/presentation/viewmodels/useDefinitionsViewModel";
-export type { IDefinitionsRepository, CreateDefinitionRequest, UpdateDefinitionRequest } from "./src/domain/interfaces/IDefinitionsRepository";
+export type {
+  IDefinitionsRepository,
+  CreateDefinitionRequest,
+  UpdateDefinitionRequest,
+} from "./src/domain/interfaces/IDefinitionsRepository";

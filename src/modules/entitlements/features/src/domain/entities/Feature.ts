@@ -94,4 +94,3 @@ export interface FeatureModuleGroup {
   module: string;
   categories: FeatureCategoryGroup[];
 }
-

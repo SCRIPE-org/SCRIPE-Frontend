@@ -24,7 +24,11 @@ export function HubSearch({ value, onChange }: HubSearchProps) {
   // "/" keyboard shortcut to focus
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+      if (
+        e.key === "/" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
         e.preventDefault();
         inputRef.current?.focus();
       }
@@ -62,7 +66,11 @@ export function HubSearch({ value, onChange }: HubSearchProps) {
           transition: "border-color 200ms ease, box-shadow 200ms ease",
         }}
       >
-        <Search size={18} strokeWidth={1.75} style={{ color: "rgba(230,233,245,0.6)", flexShrink: 0 }} />
+        <Search
+          size={18}
+          strokeWidth={1.75}
+          style={{ color: "rgba(230,233,245,0.6)", flexShrink: 0 }}
+        />
         <input
           ref={inputRef}
           type="text"

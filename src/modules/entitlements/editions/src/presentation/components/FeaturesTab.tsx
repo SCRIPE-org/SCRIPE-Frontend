@@ -19,9 +19,20 @@ import { Label } from "@core/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { ChevronDown, ChevronRight, Zap, ChevronsUpDown, Shield, Tag, Languages } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Zap,
+  ChevronsUpDown,
+  Shield,
+  Tag,
+  Languages,
+} from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { Feature, FeatureModuleGroup } from "@modules/entitlements/features/src/domain/entities/Feature";
+import type {
+  Feature,
+  FeatureModuleGroup,
+} from "@modules/entitlements/features/src/domain/entities/Feature";
 import type { Edition } from "../../domain/entities/Edition";
 
 // ── Types ──
@@ -273,22 +284,30 @@ export function FeaturesTab({
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                   <div className="space-y-1">
-                                    <Label className="text-xs text-muted-foreground">🇺🇸 English label</Label>
+                                    <Label className="text-xs text-muted-foreground">
+                                      🇺🇸 English label
+                                    </Label>
                                     <Input
                                       type="text"
                                       value={effectiveLabel.en}
-                                      onChange={(e) => setLocalLabel(feature.name, "en", e.target.value)}
+                                      onChange={(e) =>
+                                        setLocalLabel(feature.name, "en", e.target.value)
+                                      }
                                       placeholder={`e.g. Up to 25 Admins`}
                                       className="h-8 text-sm"
                                     />
                                   </div>
                                   <div className="space-y-1">
-                                    <Label className="text-xs text-muted-foreground">🇸🇦 Arabic label</Label>
+                                    <Label className="text-xs text-muted-foreground">
+                                      🇸🇦 Arabic label
+                                    </Label>
                                     <Input
                                       type="text"
                                       dir="rtl"
                                       value={effectiveLabel.ar}
-                                      onChange={(e) => setLocalLabel(feature.name, "ar", e.target.value)}
+                                      onChange={(e) =>
+                                        setLocalLabel(feature.name, "ar", e.target.value)
+                                      }
                                       placeholder={`مثال: حتى 25 مشرف`}
                                       className="h-8 text-sm"
                                     />
@@ -296,7 +315,9 @@ export function FeaturesTab({
                                 </div>
                                 {(effectiveLabel.en || effectiveLabel.ar) && (
                                   <div className="mt-2 flex items-center gap-1">
-                                    <span className="text-[10px] text-muted-foreground">Preview:</span>
+                                    <span className="text-[10px] text-muted-foreground">
+                                      Preview:
+                                    </span>
                                     {effectiveLabel.en && (
                                       <Badge variant="secondary" className="text-[10px]">
                                         {effectiveLabel.en}

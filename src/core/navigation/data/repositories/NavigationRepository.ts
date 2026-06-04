@@ -139,7 +139,9 @@ export class NavigationRepository implements INavigationRepository {
    * Toggles the pin state for a workspace.
    * Returns { isPinned, pinSortOrder } from the backend — never compute sort order client-side.
    */
-  async toggleWorkspacePin(workspaceKey: string): Promise<{ isPinned: boolean; pinSortOrder: number | null }> {
+  async toggleWorkspacePin(
+    workspaceKey: string
+  ): Promise<{ isPinned: boolean; pinSortOrder: number | null }> {
     appLogger.debug(`[NavigationRepository] Toggling pin for workspace "${workspaceKey}"…`);
 
     const raw = await this.apiService.post<unknown>(

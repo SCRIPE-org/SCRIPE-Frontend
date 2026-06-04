@@ -23,7 +23,12 @@ import type {
   PaymentLinkResponseModel,
 } from "../models/BillingModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
@@ -174,7 +179,9 @@ export class BillingMapper {
   }
 
   /** Called from Zod-validated intermediary (no null descriptions) */
-  private static toLineItemFromValidated(dto: z.infer<typeof InvoiceLineItemSchema>): InvoiceLineItem {
+  private static toLineItemFromValidated(
+    dto: z.infer<typeof InvoiceLineItemSchema>
+  ): InvoiceLineItem {
     return {
       id: dto.id,
       description: dto.description ?? "",
@@ -204,7 +211,9 @@ export class BillingMapper {
   }
 
   /** Called from Zod-validated intermediary */
-  private static toTransactionFromValidated(dto: z.infer<typeof PaymentTransactionSchema>): PaymentTransaction {
+  private static toTransactionFromValidated(
+    dto: z.infer<typeof PaymentTransactionSchema>
+  ): PaymentTransaction {
     return {
       id: dto.id,
       invoiceId: dto.invoiceId,

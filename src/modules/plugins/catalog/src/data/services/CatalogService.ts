@@ -7,7 +7,9 @@ export class CatalogService implements ICatalogService {
   constructor(private readonly api: IApiService) {}
 
   getCatalog(tenantId: string): Promise<PluginCatalogItemModel[]> {
-    return this.api.get<PluginCatalogItemModel[]>(`${API_ENDPOINTS.PLUGINS.CATALOG}?tenantId=${tenantId}`);
+    return this.api.get<PluginCatalogItemModel[]>(
+      `${API_ENDPOINTS.PLUGINS.CATALOG}?tenantId=${tenantId}`
+    );
   }
 
   install(request: InstallPluginRequest): Promise<string> {

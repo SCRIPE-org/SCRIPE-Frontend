@@ -80,7 +80,7 @@ const sections: DocSection[] = [
       ["signup", "Fixed Window", "3 req", "1 hour", "Client IP"],
       ["phone-otp-send", "Fixed Window", "3 req", "15 minutes", "Client IP"],
       ["passkey-auth", "Fixed Window", "5 req", "15 minutes", "Client IP"],
-      ["qr-poll", "Sliding Window", "60 req", "1 minute", "QR Session ID"]
+      ["qr-poll", "Sliding Window", "60 req", "1 minute", "QR Session ID"],
     ],
   },
 

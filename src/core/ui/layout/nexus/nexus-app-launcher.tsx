@@ -21,7 +21,17 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/ui/use-toast";
 
-import { Search, X, Lock, Check, LayoutGrid, Clock, ArrowUpCircle, Pin, PinOff } from "lucide-react";
+import {
+  Search,
+  X,
+  Lock,
+  Check,
+  LayoutGrid,
+  Clock,
+  ArrowUpCircle,
+  Pin,
+  PinOff,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
 import { DynamicIcon } from "./_parts/primary-rail-parts";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
@@ -44,15 +54,15 @@ function withOpacity(color: string, alpha: number): string {
   // hsl(X Y Z) → hsl(X Y Z / XX%)
   if (color.startsWith("hsl(")) return color.slice(0, -1) + ` / ${pct}%)`;
   // hex fallback: append two-digit alpha
-  return `${color}${Math.round(alpha * 255).toString(16).padStart(2, "0")}`;
+  return `${color}${Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0")}`;
 }
 
 // ── Status derivation ─ backend-authoritative ───────────────────────────────
 // Active workspace is filtered before reaching this function, so we only
 // need to distinguish locked vs available (coming-soon is future extension).
-function deriveWorkspaceStatus(
-  ws: { workspaceKey: string; isLocked: boolean }
-): WorkspaceStatus {
+function deriveWorkspaceStatus(ws: { workspaceKey: string; isLocked: boolean }): WorkspaceStatus {
   if (ws.isLocked) return "locked";
   return "available";
 }
@@ -74,9 +84,15 @@ function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active:
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
       } else {
-        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
 
@@ -162,19 +178,21 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
   );
 
   const adminItems = useMemo(
-    () => sortByPinThenCatalog(
-      filteredWorkspaces.filter(
-        (ws) => ws.isAdminWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
-      )
-    ),
+    () =>
+      sortByPinThenCatalog(
+        filteredWorkspaces.filter(
+          (ws) => ws.isAdminWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
+        )
+      ),
     [filteredWorkspaces, sortByPinThenCatalog, activeWorkspace?.workspaceKey]
   );
   const moduleItems = useMemo(
-    () => sortByPinThenCatalog(
-      filteredWorkspaces.filter(
-        (ws) => ws.isModuleWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
-      )
-    ),
+    () =>
+      sortByPinThenCatalog(
+        filteredWorkspaces.filter(
+          (ws) => ws.isModuleWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
+        )
+      ),
     [filteredWorkspaces, sortByPinThenCatalog, activeWorkspace?.workspaceKey]
   );
 
@@ -243,7 +261,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
         aria-modal="true"
         aria-label={language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
         className={cn(
-          "fixed z-[90] flex flex-col animate-in fade-in zoom-in-95 duration-200",
+          "fixed z-[90] flex flex-col duration-200 animate-in fade-in zoom-in-95",
           isRTL ? "rtl" : "ltr"
         )}
         style={{
@@ -269,7 +287,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             flexShrink: 0,
           }}
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-[10px]"
@@ -282,16 +300,10 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                 <LayoutGrid size={18} className="text-primary" />
               </div>
               <div>
-                <h2
-                  className="text-foreground font-semibold"
-                  style={{ fontSize: 15, margin: 0 }}
-                >
+                <h2 className="font-semibold text-foreground" style={{ fontSize: 15, margin: 0 }}>
                   {language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
                 </h2>
-                <p
-                  className="text-muted-foreground"
-                  style={{ fontSize: 12, margin: 0 }}
-                >
+                <p className="text-muted-foreground" style={{ fontSize: 12, margin: 0 }}>
                   {language === "ar"
                     ? "تنقل بين مساحات العمل والوحدات"
                     : "Switch between workspaces and modules"}
@@ -301,8 +313,14 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-150"
-              style={{ width: 32, height: 32, border: "none", cursor: "pointer", background: "transparent" }}
+              className="flex items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
+              style={{
+                width: 32,
+                height: 32,
+                border: "none",
+                cursor: "pointer",
+                background: "transparent",
+              }}
               aria-label="Close"
             >
               <X size={16} />
@@ -314,21 +332,21 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             className="flex items-center gap-2 rounded-[10px] border border-border bg-muted/50 px-3"
             style={{ height: 40 }}
           >
-            <Search size={15} className="text-muted-foreground shrink-0" />
+            <Search size={15} className="shrink-0 text-muted-foreground" />
             <input
               ref={searchRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={language === "ar" ? "ابحث عن وحدة..." : "Search workspaces..."}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground"
+              className="flex-1 border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
               style={{ direction: isRTL ? "rtl" : "ltr" }}
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="text-muted-foreground hover:text-foreground cursor-pointer"
+                className="cursor-pointer text-muted-foreground hover:text-foreground"
                 style={{ background: "none", border: "none", padding: 0, display: "flex" }}
               >
                 <X size={13} />
@@ -353,7 +371,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                   gap: 10,
                 }}
               >
-                              {adminItems.map((ws) => {
+                {adminItems.map((ws) => {
                   const status = deriveWorkspaceStatus(ws);
                   return (
                     <WorkspaceCard
@@ -366,11 +384,12 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                       isPinLoading={pinningKey === ws.workspaceKey}
                       status={status}
                       onClick={() => handleSelect(ws.workspaceKey, status)}
-                      onTogglePin={!ws.isLocked ? (e) => handleTogglePin(ws.workspaceKey, e) : undefined}
+                      onTogglePin={
+                        !ws.isLocked ? (e) => handleTogglePin(ws.workspaceKey, e) : undefined
+                      }
                     />
                   );
                 })}
-
               </div>
             </section>
           )}
@@ -386,7 +405,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                   gap: 10,
                 }}
               >
-                                {moduleItems.map((ws) => {
+                {moduleItems.map((ws) => {
                   const status = deriveWorkspaceStatus(ws);
                   return (
                     <WorkspaceCard
@@ -399,7 +418,9 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                       isPinLoading={pinningKey === ws.workspaceKey}
                       status={status}
                       onClick={() => handleSelect(ws.workspaceKey, status)}
-                      onTogglePin={!ws.isLocked ? (e) => handleTogglePin(ws.workspaceKey, e) : undefined}
+                      onTogglePin={
+                        !ws.isLocked ? (e) => handleTogglePin(ws.workspaceKey, e) : undefined
+                      }
                     />
                   );
                 })}
@@ -423,7 +444,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 
         {/* ── Legend footer ─────────────────────────────────────────────── */}
         <div
-          className="flex gap-4 flex-wrap items-center"
+          className="flex flex-wrap items-center gap-4"
           style={{
             padding: "10px 24px 14px",
             borderTop: "1px solid hsl(var(--border))",
@@ -457,8 +478,9 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
       {upgradeTarget && (
         <UpgradeDialog
           workspaceName={
-            workspaceGroups.find((ws) => ws.workspaceKey === upgradeTarget)?.getLocalizedName(language) ??
-            upgradeTarget
+            workspaceGroups
+              .find((ws) => ws.workspaceKey === upgradeTarget)
+              ?.getLocalizedName(language) ?? upgradeTarget
           }
           language={language}
           isDark={isDark}
@@ -484,7 +506,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 function SectionLabel({ label }: { label: string }) {
   return (
     <p
-      className="text-muted-foreground font-semibold uppercase tracking-widest"
+      className="font-semibold uppercase tracking-widest text-muted-foreground"
       style={{ fontSize: 10, letterSpacing: "0.1em", margin: "0 0 10px" }}
     >
       {label}
@@ -547,7 +569,7 @@ function WorkspaceCard({
       aria-pressed={isActive}
       aria-disabled={isDisabled}
       className={cn(
-        "group relative flex flex-col items-center gap-2 transition-all duration-200 rounded-[14px]",
+        "group relative flex flex-col items-center gap-2 rounded-[14px] transition-all duration-200",
         isComingSoon ? "cursor-default" : "cursor-pointer"
       )}
       style={{
@@ -559,14 +581,11 @@ function WorkspaceCard({
         background: isActive
           ? withOpacity(color, 0.08)
           : hovered && !isDisabled
-          ? "hsl(var(--accent))"
-          : "transparent",
+            ? "hsl(var(--accent))"
+            : "transparent",
         opacity: isComingSoon ? 0.55 : 1,
         transform: hovered && !isDisabled ? "translateY(-2px)" : "none",
-        boxShadow:
-          hovered && !isDisabled
-            ? "0 8px 24px rgba(0,0,0,0.1)"
-            : "none",
+        boxShadow: hovered && !isDisabled ? "0 8px 24px rgba(0,0,0,0.1)" : "none",
       }}
     >
       {/* Pin toggle button — appears on hover (top-left corner) */}
@@ -610,13 +629,13 @@ function WorkspaceCard({
             background: isLocked
               ? "hsl(38 92% 50% / 0.12)"
               : isComingSoon
-              ? "hsl(var(--muted))"
-              : "hsl(142 76% 36% / 0.12)",
+                ? "hsl(var(--muted))"
+                : "hsl(142 76% 36% / 0.12)",
             color: isLocked
               ? "hsl(38 92% 40%)"
               : isComingSoon
-              ? "hsl(var(--muted-foreground))"
-              : "hsl(142 76% 36%)",
+                ? "hsl(var(--muted-foreground))"
+                : "hsl(142 76% 36%)",
           }}
         >
           {isLocked ? <Lock size={8} /> : isComingSoon ? <Clock size={8} /> : <Check size={8} />}
@@ -640,15 +659,15 @@ function WorkspaceCard({
 
       {/* Name */}
       <span
-        className="text-center leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+        className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center leading-tight"
         style={{
           fontSize: 11,
           fontWeight: 500,
           color: isActive
             ? color
             : isDisabled
-            ? "hsl(var(--muted-foreground))"
-            : "hsl(var(--foreground) / 0.8)",
+              ? "hsl(var(--muted-foreground))"
+              : "hsl(var(--foreground) / 0.8)",
         }}
       >
         {name}
@@ -691,7 +710,7 @@ function UpgradeDialog({
         role="alertdialog"
         aria-modal="true"
         aria-label={language === "ar" ? "ترقية مطلوبة" : "Upgrade Required"}
-        className="fixed z-[110] animate-in fade-in zoom-in-95 duration-150"
+        className="fixed z-[110] duration-150 animate-in fade-in zoom-in-95"
         style={{
           top: "50%",
           left: "50%",
@@ -707,7 +726,7 @@ function UpgradeDialog({
       >
         {/* Icon */}
         <div
-          className="flex items-center justify-center rounded-2xl mx-auto mb-4"
+          className="mx-auto mb-4 flex items-center justify-center rounded-2xl"
           style={{
             width: 56,
             height: 56,
@@ -717,27 +736,34 @@ function UpgradeDialog({
           <ArrowUpCircle size={28} className="text-amber-500" />
         </div>
 
-        <h3 className="text-foreground font-bold mb-2" style={{ fontSize: 17, margin: "0 0 8px" }}>
+        <h3 className="mb-2 font-bold text-foreground" style={{ fontSize: 17, margin: "0 0 8px" }}>
           {isNeedsTenant
-            ? (language === "ar" ? "اختر مستأجراً" : "Select a Tenant")
-            : (language === "ar" ? "ترقية مطلوبة" : "Upgrade Required")}
+            ? language === "ar"
+              ? "اختر مستأجراً"
+              : "Select a Tenant"
+            : language === "ar"
+              ? "ترقية مطلوبة"
+              : "Upgrade Required"}
         </h3>
 
-        <p className="text-muted-foreground" style={{ fontSize: 13, lineHeight: 1.55, margin: "0 0 24px" }}>
+        <p
+          className="text-muted-foreground"
+          style={{ fontSize: 13, lineHeight: 1.55, margin: "0 0 24px" }}
+        >
           {isNeedsTenant
-            ? (language === "ar"
-                ? `وحدة "${workspaceName}" تتطلب سياق مستأجر. انتقل إلى قائمة المستأجرين وادخل إلى مستأجر أولاً.`
-                : `"${workspaceName}" requires a tenant context. Go to the Tenants list and drill into a tenant first.`)
-            : (language === "ar"
-                ? `وحدة "${workspaceName}" غير مضمّنة في خطتك الحالية. قم بالترقية لفتح هذه الوحدة.`
-                : `"${workspaceName}" is not included in your current plan. Upgrade your plan to unlock this module.`)}
+            ? language === "ar"
+              ? `وحدة "${workspaceName}" تتطلب سياق مستأجر. انتقل إلى قائمة المستأجرين وادخل إلى مستأجر أولاً.`
+              : `"${workspaceName}" requires a tenant context. Go to the Tenants list and drill into a tenant first.`
+            : language === "ar"
+              ? `وحدة "${workspaceName}" غير مضمّنة في خطتك الحالية. قم بالترقية لفتح هذه الوحدة.`
+              : `"${workspaceName}" is not included in your current plan. Upgrade your plan to unlock this module.`}
         </p>
 
         <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-[10px] text-sm font-medium text-muted-foreground border border-border bg-transparent hover:bg-accent transition-colors duration-150"
+            className="flex-1 rounded-[10px] border border-border bg-transparent text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent"
             style={{ padding: "10px 0", cursor: "pointer" }}
           >
             {language === "ar" ? "إلغاء" : "Cancel"}
@@ -745,7 +771,7 @@ function UpgradeDialog({
           <button
             type="button"
             onClick={onUpgrade}
-            className="flex-1 rounded-[10px] text-sm font-semibold text-white border-none"
+            className="flex-1 rounded-[10px] border-none text-sm font-semibold text-white"
             style={{
               padding: "10px 0",
               cursor: "pointer",
@@ -758,8 +784,12 @@ function UpgradeDialog({
             }}
           >
             {isNeedsTenant
-              ? (language === "ar" ? "انتقل إلى المستأجرين" : "Go to Tenants")
-              : (language === "ar" ? "ترقية الآن" : "Upgrade Plan")}
+              ? language === "ar"
+                ? "انتقل إلى المستأجرين"
+                : "Go to Tenants"
+              : language === "ar"
+                ? "ترقية الآن"
+                : "Upgrade Plan"}
           </button>
         </div>
       </div>

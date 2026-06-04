@@ -1,29 +1,39 @@
 /**
  * Docs page locale — EN
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const en = {
   commercial: {
-    securityOverview: {
-      complianceTitle: "Foundation for Compliance",
+    auditCompliance: {
+      alerting: "Real-Time Alerting",
+      alertingDesc:
+        "Automate security alerts via webhooks or Slack when specific high-privilege audit thresholds are breached.",
+      complianceContent:
+        "SCRIPE provides a turnkey path to ISO 27001, SOC 2, HIPAA, and GDPR compliance. With immutable event capture, guaranteed attribution, and strict isolation, auditors can instantly verify the integrity of your tenant's data.",
+      complianceTitle: "Built for Compliance",
+      dashboard: "Visual Dashboard",
+      dashboardDesc:
+        "Instantly drill down into gigabytes of audit data using our high-performance Vue/Next.js reporting dashboards.",
       description:
-        "A comprehensive breakdown of SCRIPE’s multi-layered, defense-in-depth security perimeter, protecting everything from the routing layer to the persistence layer.",
-      gdpr: "GDPR Let-To-Forget",
-      gdprDesc: "Out-of-the-box support for strict PII anonymization and hard-deletion protocols.",
-      headersTitle: "Defensive HTTP Headers",
+        "A forensic-grade audit pipeline capturing HTTP requests, entity snapshots, and security operations with zero data loss.",
+      exportContent:
+        "Export massive audit datasets directly to encrypted CSV or Excel formats, or stream them securely into your existing SIEM solutions like Splunk or Datadog.",
+      exportTitle: "Forensic Export & SIEM",
       intro:
-        "We don't trust the network, we don't trust the client, and we don't trust the payload. SCRIPE is built on a Zero-Trust architectural methodology, enforcing aggressive security protocols at every single boundary of the application matrix.",
-      modelContent:
-        "Every single API request is immediately evaluated against the FluentValidation engine. If a payload violates domain constraints (e.g., invalid email formats, out-of-bounds numbers), the pipeline instantly rejects the payload with a 400 Bad Request before a controller is ever instantiated.",
-      modelTitle: "Strict Pipeline Validation",
-      soc2: "SOC 2 Type II Readiness",
-      soc2Desc:
-        "Built-in forensic audit trailing and strict data isolation accelerates successful SOC 2 audits.",
-      sox: "SOX Compliance Triggers",
-      soxDesc:
-        "Mathematical immutability in financial audit logs to support highly regulated environments.",
-      summaryTitle: "Defense-In-Depth Matrix",
-      title: "Zero-Trust Security Posture",
+        "Data governance is non-negotiable. SCRIPE features a background-threaded, military-grade audit log system that captures every mutation, authentication attempt, and critical read across the entire monolith without degrading API performance.",
+      liveStream: "Live SignalR Stream",
+      liveStreamDesc:
+        "Watch administrative and security events flow in real-time across the platform via protected WebSockets.",
+      pipelineContent:
+        "Built on Entity Framework Core's interceptors constraint model, the audit pipeline takes a temporal snapshot of your entites before and after mutation. Changes are serialized to JSON and stored immutably.",
+      pipelineTitle: "Asynchronous Capture Pipeline",
+      realTimeContent:
+        "Watch your system operate with transparent observability. Webhook integration and SignalR streams deliver forensic insights instantly, empowering your DevSecOps teams to respond proactively rather than reactively.",
+      realTimeTitle: "Real-Time Observability",
+      retention: "Adaptive Retention",
+      retentionDesc:
+        "Configure cold-storage policies that automatically archive or purge audit logs based on your specific compliance temporal limits.",
+      sourcesTitle: "Four Pillars of Capture",
+      title: "Audit & Compliance Engine",
     },
     authSecurity: {
       apiTitle: "API Key Management",
@@ -54,6 +64,36 @@ export const en = {
       twoFaContent:
         "Passwords alone are insufficient. SCRIPE natively requires dynamic secondary verification barriers, protecting your users even in the event of credential stuffing or phishing.",
       twoFaTitle: "Multi-Factor Authentication",
+    },
+    complianceReadiness: {
+      auditReadyContent:
+        "Auditors don't want promises; they want evidence. SCRIPE provides exportable, tamper-evident logs of every API invocation, privilege escalation, and data mutation, transforming a 6-month SOC 2 preparation into a 2-week formality.",
+      auditReadyTitle: "Instant Evidentiary Artifacts",
+      checklistTitle: "The Compliance Fast-Track",
+      consentMgmt: "Advanced Consent Management",
+      consentMgmtDesc:
+        "Programmatically track, version, and enforce user consent across multiple privacy policies and terms of service iterations.",
+      dataMinimization: "Intelligent Data Minimization",
+      dataMinimizationDesc:
+        "Automatically expire or redact PII (Personally Identifiable Information) from your databases when retention policies are met.",
+      dataPortability: "Instant Data Portability",
+      dataPortabilityDesc:
+        "Allow users to securely download a cryptographic archive of their complete data footprint in machine-readable JSON formats.",
+      description:
+        "Pre-configured technical controls enabling extremely rapid certification for ISO 27001, SOC 2, and GDPR.",
+      disclaimer:
+        "Disclaimer: SCRIPE provides the technical foundation; consult legal counsel for procedural compliance.",
+      frameworkIntro:
+        "Achieving compliance usually derails engineering roadmaps for months. SCRIPE dramatically shortens this curve by baking the most difficult technical controls directly into the foundational framework.",
+      frameworkTitle: "Accelerated Framework Support",
+      gdprTitle: "GDPR & CCPA Native",
+      intro:
+        "Regulatory frameworks demand rigorous data governance. SCRIPE accelerates your path to certification by embedding military-grade audit, encryption, and privacy controls deep within the application architecture.",
+      rightToErasure: "Orchestrated Right To Erasure",
+      rightToErasureDesc:
+        "Execute platform-wide soft or hard deletes that automatically cascade across all relational tables.",
+      securityControlsTitle: "Mapped Security Controls",
+      title: "Compliance Readiness",
     },
     dataProtection: {
       csrfContent:
@@ -109,67 +149,26 @@ export const en = {
       warningNote:
         "Warning: Disabling these default defensive mechanisms without consulting your CISO dramatically increases your organizational attack surface.",
     },
-    complianceReadiness: {
-      auditReadyContent:
-        "Auditors don't want promises; they want evidence. SCRIPE provides exportable, tamper-evident logs of every API invocation, privilege escalation, and data mutation, transforming a 6-month SOC 2 preparation into a 2-week formality.",
-      auditReadyTitle: "Instant Evidentiary Artifacts",
-      checklistTitle: "The Compliance Fast-Track",
-      consentMgmt: "Advanced Consent Management",
-      consentMgmtDesc:
-        "Programmatically track, version, and enforce user consent across multiple privacy policies and terms of service iterations.",
-      dataMinimization: "Intelligent Data Minimization",
-      dataMinimizationDesc:
-        "Automatically expire or redact PII (Personally Identifiable Information) from your databases when retention policies are met.",
-      dataPortability: "Instant Data Portability",
-      dataPortabilityDesc:
-        "Allow users to securely download a cryptographic archive of their complete data footprint in machine-readable JSON formats.",
+    securityOverview: {
+      complianceTitle: "Foundation for Compliance",
       description:
-        "Pre-configured technical controls enabling extremely rapid certification for ISO 27001, SOC 2, and GDPR.",
-      disclaimer:
-        "Disclaimer: SCRIPE provides the technical foundation; consult legal counsel for procedural compliance.",
-      frameworkIntro:
-        "Achieving compliance usually derails engineering roadmaps for months. SCRIPE dramatically shortens this curve by baking the most difficult technical controls directly into the foundational framework.",
-      frameworkTitle: "Accelerated Framework Support",
-      gdprTitle: "GDPR & CCPA Native",
+        "A comprehensive breakdown of SCRIPE’s multi-layered, defense-in-depth security perimeter, protecting everything from the routing layer to the persistence layer.",
+      gdpr: "GDPR Let-To-Forget",
+      gdprDesc: "Out-of-the-box support for strict PII anonymization and hard-deletion protocols.",
+      headersTitle: "Defensive HTTP Headers",
       intro:
-        "Regulatory frameworks demand rigorous data governance. SCRIPE accelerates your path to certification by embedding military-grade audit, encryption, and privacy controls deep within the application architecture.",
-      rightToErasure: "Orchestrated Right To Erasure",
-      rightToErasureDesc:
-        "Execute platform-wide soft or hard deletes that automatically cascade across all relational tables.",
-      securityControlsTitle: "Mapped Security Controls",
-      title: "Compliance Readiness",
-    },
-    auditCompliance: {
-      alerting: "Real-Time Alerting",
-      alertingDesc:
-        "Automate security alerts via webhooks or Slack when specific high-privilege audit thresholds are breached.",
-      complianceContent:
-        "SCRIPE provides a turnkey path to ISO 27001, SOC 2, HIPAA, and GDPR compliance. With immutable event capture, guaranteed attribution, and strict isolation, auditors can instantly verify the integrity of your tenant's data.",
-      complianceTitle: "Built for Compliance",
-      dashboard: "Visual Dashboard",
-      dashboardDesc:
-        "Instantly drill down into gigabytes of audit data using our high-performance Vue/Next.js reporting dashboards.",
-      description:
-        "A forensic-grade audit pipeline capturing HTTP requests, entity snapshots, and security operations with zero data loss.",
-      exportContent:
-        "Export massive audit datasets directly to encrypted CSV or Excel formats, or stream them securely into your existing SIEM solutions like Splunk or Datadog.",
-      exportTitle: "Forensic Export & SIEM",
-      intro:
-        "Data governance is non-negotiable. SCRIPE features a background-threaded, military-grade audit log system that captures every mutation, authentication attempt, and critical read across the entire monolith without degrading API performance.",
-      liveStream: "Live SignalR Stream",
-      liveStreamDesc:
-        "Watch administrative and security events flow in real-time across the platform via protected WebSockets.",
-      pipelineContent:
-        "Built on Entity Framework Core's interceptors constraint model, the audit pipeline takes a temporal snapshot of your entites before and after mutation. Changes are serialized to JSON and stored immutably.",
-      pipelineTitle: "Asynchronous Capture Pipeline",
-      realTimeContent:
-        "Watch your system operate with transparent observability. Webhook integration and SignalR streams deliver forensic insights instantly, empowering your DevSecOps teams to respond proactively rather than reactively.",
-      realTimeTitle: "Real-Time Observability",
-      retention: "Adaptive Retention",
-      retentionDesc:
-        "Configure cold-storage policies that automatically archive or purge audit logs based on your specific compliance temporal limits.",
-      sourcesTitle: "Four Pillars of Capture",
-      title: "Audit & Compliance Engine",
+        "We don't trust the network, we don't trust the client, and we don't trust the payload. SCRIPE is built on a Zero-Trust architectural methodology, enforcing aggressive security protocols at every single boundary of the application matrix.",
+      modelContent:
+        "Every single API request is immediately evaluated against the FluentValidation engine. If a payload violates domain constraints (e.g., invalid email formats, out-of-bounds numbers), the pipeline instantly rejects the payload with a 400 Bad Request before a controller is ever instantiated.",
+      modelTitle: "Strict Pipeline Validation",
+      soc2: "SOC 2 Type II Readiness",
+      soc2Desc:
+        "Built-in forensic audit trailing and strict data isolation accelerates successful SOC 2 audits.",
+      sox: "SOX Compliance Triggers",
+      soxDesc:
+        "Mathematical immutability in financial audit logs to support highly regulated environments.",
+      summaryTitle: "Defense-In-Depth Matrix",
+      title: "Zero-Trust Security Posture",
     },
   },
 };

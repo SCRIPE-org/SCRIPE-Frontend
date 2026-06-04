@@ -25,7 +25,6 @@ import Link from "next/link";
 import { useAppDetailViewModel } from "../viewmodels/useAppDetailViewModel";
 import type { AppReview } from "@modules/marketplace";
 
-
 interface AppDetailViewProps {
   /** The AppListing ID from route [id] */
   id: string;
@@ -50,11 +49,11 @@ export function AppDetailView({ id }: AppDetailViewProps) {
   // ── Loading skeleton ──────────────────────────────────────────────────────
   if (vm.isLoading) {
     return (
-      <div className="flex flex-col gap-6 p-6 max-w-5xl mx-auto">
+      <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
         <Skeleton className="h-8 w-40 rounded-md" />
         <Skeleton className="h-64 rounded-xl" />
         <div className="grid grid-cols-3 gap-4">
-          <Skeleton className="h-32 rounded-xl col-span-2" />
+          <Skeleton className="col-span-2 h-32 rounded-xl" />
           <Skeleton className="h-32 rounded-xl" />
         </div>
       </div>
@@ -64,7 +63,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
   // ── Error state ────────────────────────────────────────────────────────────
   if (vm.isError || !vm.listing) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-3">
+      <div className="flex flex-col items-center justify-center gap-3 py-24">
         <AlertTriangle className="h-10 w-10 text-destructive" />
         <p className="text-sm text-muted-foreground">Failed to load app listing.</p>
         <Button variant="outline" size="sm" asChild>
@@ -77,11 +76,11 @@ export function AppDetailView({ id }: AppDetailViewProps) {
   const { listing } = vm;
 
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-5xl mx-auto">
+    <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
       {/* ── Back navigation ── */}
       <Link
         href="/marketplace"
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground w-fit transition-colors"
+        className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to App Listings
@@ -90,7 +89,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex items-start gap-4">
         {/* App icon */}
-        <div className="size-16 rounded-2xl bg-muted flex items-center justify-center shrink-0 overflow-hidden border">
+        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border bg-muted">
           {listing.iconUrl ? (
             <img src={listing.iconUrl} alt={listing.name} className="size-full object-cover" />
           ) : (
@@ -100,9 +99,9 @@ export function AppDetailView({ id }: AppDetailViewProps) {
           )}
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-2xl font-bold truncate">{listing.name}</h1>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="truncate text-2xl font-bold">{listing.name}</h1>
             {listing.isFeatured && (
               <Badge variant="secondary" className="gap-1">
                 <Zap className="size-3" /> Featured
@@ -112,25 +111,26 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               {listing.statusLabel}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             by <span className="font-medium text-foreground">{listing.developerName}</span>
-            {" · "}{listing.categoryName}
+            {" · "}
+            {listing.categoryName}
             {" · "}v{listing.version}
           </p>
-          <div className="flex items-center gap-1 mt-1">
+          <div className="mt-1 flex items-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
                 className={`size-4 ${i < Math.round(listing.averageRating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
               />
             ))}
-            <span className="text-sm font-medium ml-1">{listing.ratingLabel}</span>
+            <span className="ml-1 text-sm font-medium">{listing.ratingLabel}</span>
             <span className="text-sm text-muted-foreground">({listing.reviewCount} reviews)</span>
           </div>
         </div>
 
         {/* Admin action bar */}
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {listing.isPublished ? (
             <Button
               size="sm"
@@ -167,18 +167,18 @@ export function AppDetailView({ id }: AppDetailViewProps) {
 
       {/* ── Screenshot carousel (Phase 5.1) ─────────────────────────────────── */}
       {listing.screenshotUrls.length > 0 && (
-        <div className="relative rounded-xl overflow-hidden bg-muted border">
+        <div className="relative overflow-hidden rounded-xl border bg-muted">
           <img
             src={listing.screenshotUrls[vm.screenshotIndex]}
             alt={`Screenshot ${vm.screenshotIndex + 1}`}
-            className="w-full h-72 object-cover"
+            className="h-72 w-full object-cover"
           />
           {listing.screenshotUrls.length > 1 && (
             <>
               <button
                 onClick={vm.prevScreenshot}
                 disabled={vm.screenshotIndex === 0}
-                className="absolute left-3 top-1/2 -translate-y-1/2 size-8 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition disabled:opacity-40"
+                className="absolute left-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background disabled:opacity-40"
                 aria-label="Previous screenshot"
               >
                 <ChevronLeft className="size-4" />
@@ -186,21 +186,19 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               <button
                 onClick={vm.nextScreenshot}
                 disabled={vm.screenshotIndex === listing.screenshotUrls.length - 1}
-                className="absolute right-3 top-1/2 -translate-y-1/2 size-8 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition disabled:opacity-40"
+                className="absolute right-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background disabled:opacity-40"
                 aria-label="Next screenshot"
               >
                 <ChevronRight className="size-4" />
               </button>
               {/* Dot indicators */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
                 {listing.screenshotUrls.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => vm.setScreenshotIndex(i)}
                     className={`size-2 rounded-full transition-all ${
-                      i === vm.screenshotIndex
-                        ? "bg-white w-4"
-                        : "bg-white/50 hover:bg-white/80"
+                      i === vm.screenshotIndex ? "w-4 bg-white" : "bg-white/50 hover:bg-white/80"
                     }`}
                     aria-label={`Screenshot ${i + 1}`}
                   />
@@ -212,19 +210,19 @@ export function AppDetailView({ id }: AppDetailViewProps) {
       )}
 
       {/* ── Info grid (description + pricing) ─────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Description */}
         <Card className="lg:col-span-2">
           <CardHeader className="pb-3">
             <h2 className="text-base font-semibold">About this app</h2>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground leading-relaxed">{listing.description}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{listing.description}</p>
             {listing.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-4">
-                <Tag className="size-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                <Tag className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
                 {listing.tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs px-2 py-0">
+                  <Badge key={tag} variant="outline" className="px-2 py-0 text-xs">
                     {tag}
                   </Badge>
                 ))}
@@ -236,7 +234,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         {/* Pricing card (Phase 5.1) */}
         <Card>
           <CardHeader className="pb-3">
-            <h2 className="text-base font-semibold flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-base font-semibold">
               <ShoppingBag className="size-4" /> Pricing
             </h2>
           </CardHeader>
@@ -248,7 +246,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               </p>
             )}
             {listing.pricingModel === "Free" && (
-              <div className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-green-600">
                 <CheckCircle2 className="size-3.5" /> No cost to install
               </div>
             )}
@@ -301,7 +299,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               ))}
             </div>
           ) : vm.reviews.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 gap-2 text-muted-foreground">
+            <div className="flex flex-col items-center justify-center gap-2 py-12 text-muted-foreground">
               <MessageSquare className="size-8" />
               <p className="text-sm">No reviews yet.</p>
             </div>
@@ -323,29 +321,29 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         <TabsContent value="details" className="mt-4">
           <Card>
             <CardContent className="pt-4">
-              <dl className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+              <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                 <div>
-                  <dt className="text-xs text-muted-foreground mb-1">Version</dt>
+                  <dt className="mb-1 text-xs text-muted-foreground">Version</dt>
                   <dd className="font-medium">{listing.version}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-muted-foreground mb-1">Category</dt>
+                  <dt className="mb-1 text-xs text-muted-foreground">Category</dt>
                   <dd className="font-medium">{listing.categoryName}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-muted-foreground mb-1">Developer</dt>
+                  <dt className="mb-1 text-xs text-muted-foreground">Developer</dt>
                   <dd className="font-medium">{listing.developerName}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-muted-foreground mb-1">Rating</dt>
+                  <dt className="mb-1 text-xs text-muted-foreground">Rating</dt>
                   <dd className="font-medium">{listing.ratingLabel} ⭐</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-muted-foreground mb-1">Review Count</dt>
+                  <dt className="mb-1 text-xs text-muted-foreground">Review Count</dt>
                   <dd className="font-medium">{listing.reviewCount}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-muted-foreground mb-1">Created</dt>
+                  <dt className="mb-1 text-xs text-muted-foreground">Created</dt>
                   <dd className="font-medium">
                     {new Date(listing.createdAt).toLocaleDateString()}
                   </dd>
@@ -377,7 +375,7 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
   return (
     <Card className="flex flex-row items-start gap-4 p-4">
       {/* Star rating */}
-      <div className="flex gap-0.5 shrink-0 pt-0.5">
+      <div className="flex shrink-0 gap-0.5 pt-0.5">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
@@ -386,12 +384,12 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
         ))}
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         {review.title && <p className="text-sm font-medium">{review.title}</p>}
         {review.body && (
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-3">{review.body}</p>
+          <p className="mt-0.5 line-clamp-3 text-xs text-muted-foreground">{review.body}</p>
         )}
-        <p className="text-xs text-muted-foreground/60 mt-1">
+        <p className="mt-1 text-xs text-muted-foreground/60">
           {review.tenantName} · {new Date(review.createdAt).toLocaleDateString()}
         </p>
       </div>
@@ -399,7 +397,7 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
       <Button
         size="sm"
         variant="ghost"
-        className="text-destructive hover:text-destructive shrink-0"
+        className="shrink-0 text-destructive hover:text-destructive"
         onClick={onDelete}
         disabled={isDeleting}
         title="Moderate (delete) this review"

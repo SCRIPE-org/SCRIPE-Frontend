@@ -16,7 +16,11 @@ export class ReviewsService implements IReviewsService {
   constructor(private readonly api: IApiService) {}
 
   /** Fetch paginated list of app reviews. */
-  async getAll(params: { page: number; pageSize: number; appListingId?: string }): Promise<PaginatedReviewsResponse> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    appListingId?: string;
+  }): Promise<PaginatedReviewsResponse> {
     const q = new URLSearchParams({
       page: String(params.page),
       pageSize: String(params.pageSize),

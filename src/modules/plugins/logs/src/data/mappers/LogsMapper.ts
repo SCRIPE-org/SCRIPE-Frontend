@@ -19,7 +19,11 @@ const PluginExecutionLogModelSchema = z.object({
 
 export class LogsMapper {
   static toEntity(model: PluginExecutionLogModel): PluginExecutionLog {
-    const validated = safeParseApiResponse(PluginExecutionLogModelSchema, model, "PluginExecutionLog");
+    const validated = safeParseApiResponse(
+      PluginExecutionLogModelSchema,
+      model,
+      "PluginExecutionLog"
+    );
     return new PluginExecutionLog({
       id: validated.id,
       installationId: validated.installationId,

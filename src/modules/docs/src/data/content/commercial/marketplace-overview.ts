@@ -45,9 +45,6 @@ registerPage({
   category: "commercial-modules",
   order: 5,
   sections,
-  relatedSlugs: [
-    "commercial/marketplace-financials",
-    "commercial/module-catalog",
-  ],
+  relatedSlugs: ["commercial/marketplace-financials", "commercial/module-catalog"],
   lastUpdated: "2026-06-04",
 });

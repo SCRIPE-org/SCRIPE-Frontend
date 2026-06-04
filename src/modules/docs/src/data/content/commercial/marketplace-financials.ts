@@ -49,9 +49,6 @@ registerPage({
   category: "commercial-modules",
   order: 5,
   sections,
-  relatedSlugs: [
-    "commercial/marketplace-overview",
-    "commercial/stripe-connect",
-  ],
+  relatedSlugs: ["commercial/marketplace-overview", "commercial/stripe-connect"],
   lastUpdated: "2026-06-04",
 });

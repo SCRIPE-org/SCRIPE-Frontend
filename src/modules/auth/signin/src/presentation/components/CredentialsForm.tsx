@@ -140,9 +140,7 @@ export function CredentialsForm({
             border: "1px solid rgba(248,113,113,.30)",
             color: "#FCA5A5",
           }}
-          {...(errorAnnounce
-            ? { "aria-live": "assertive" as const, "aria-atomic": "true" }
-            : {})}
+          {...(errorAnnounce ? { "aria-live": "assertive" as const, "aria-atomic": "true" } : {})}
         >
           <span className="mt-0.5 shrink-0">⚠</span>
           <p className="text-[13px] font-medium leading-snug">{error}</p>
@@ -238,7 +236,7 @@ export function CredentialsForm({
             tabIndex={-1}
             aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
           >
-            {showPassword ? (t("auth.hide") || "HIDE") : (t("auth.show") || "SHOW")}
+            {showPassword ? t("auth.hide") || "HIDE" : t("auth.show") || "SHOW"}
           </Button>
         </div>
       </div>
@@ -248,7 +246,7 @@ export function CredentialsForm({
         className="flex items-center justify-between text-[12px]"
         style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
       >
-        <label className="flex cursor-pointer items-center gap-2 select-none">
+        <label className="flex cursor-pointer select-none items-center gap-2">
           <div
             role="checkbox"
             aria-checked={staySignedIn}

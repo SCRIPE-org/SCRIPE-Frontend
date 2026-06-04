@@ -680,20 +680,35 @@ public record ExternalUserInfo(
     direction: "vertical",
     nodes: [
       { id: "req", label: "Web Client: POST /qr-login/session", type: "primary" },
-      { id: "qr", label: "Render QR Code", type: "info", description: "Contains SessionId & TenantId" },
+      {
+        id: "qr",
+        label: "Render QR Code",
+        type: "info",
+        description: "Contains SessionId & TenantId",
+      },
       { id: "poll", label: "Web Client: Poll /qr-login/poll/{sessionId}", type: "warning" },
       { id: "scan", label: "Mobile App: Scan QR Code", type: "primary" },
-      { id: "confirm", label: "Mobile App: POST /qr-login/confirm", type: "warning", description: "Submits session signature + user JWT" },
-      { id: "ok", label: "Poll Returns 200 Success", type: "success", description: "Issues new JWT to Web Client" }
+      {
+        id: "confirm",
+        label: "Mobile App: POST /qr-login/confirm",
+        type: "warning",
+        description: "Submits session signature + user JWT",
+      },
+      {
+        id: "ok",
+        label: "Poll Returns 200 Success",
+        type: "success",
+        description: "Issues new JWT to Web Client",
+      },
     ],
     connections: [
       { from: "req", to: "qr" },
       { from: "qr", to: "poll" },
       { from: "qr", to: "scan", style: "dashed" },
       { from: "scan", to: "confirm" },
-      { from: "confirm", to: "ok" }
-    ]
-  }
+      { from: "confirm", to: "ok" },
+    ],
+  },
 ];
 
 registerPage({

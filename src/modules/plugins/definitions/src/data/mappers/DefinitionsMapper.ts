@@ -1,5 +1,10 @@
 import { PluginDefinition } from "@modules/plugins/catalog";
-import type { PluginDefinitionModel, PluginTierValue, PluginStatusValue, PluginScopeValue } from "@modules/plugins/catalog";
+import type {
+  PluginDefinitionModel,
+  PluginTierValue,
+  PluginStatusValue,
+  PluginScopeValue,
+} from "@modules/plugins/catalog";
 import { z } from "zod";
 import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 

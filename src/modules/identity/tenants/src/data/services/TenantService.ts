@@ -157,7 +157,6 @@ export class TenantService implements ITenantService {
     await this.api.put(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), { permissionIds });
   }
 
-
   async toggleStatus(id: string, isActive: boolean): Promise<void> {
     // Backend requires Name/Description/Address for any update
     // So we must Fetch -> Update

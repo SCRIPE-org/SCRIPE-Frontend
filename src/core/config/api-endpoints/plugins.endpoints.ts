@@ -13,7 +13,8 @@ export const PLUGINS_ENDPOINTS = {
     LOGS: (installationId: string) => `${V1}/plugins/installed/${installationId}/logs`,
     SETTINGS: (installationId: string) => `${V1}/plugins/installed/${installationId}/settings`,
     DEFINITIONS: `${V1}/plugins/definitions`,
-    DATA_STORE: (installationId: string, ns: string) => `${V1}/plugin-api/v1/data/${installationId}/${ns}`,
+    DATA_STORE: (installationId: string, ns: string) =>
+      `${V1}/plugin-api/v1/data/${installationId}/${ns}`,
     DATA_STORE_KEY: (installationId: string, ns: string, key: string) =>
       `${V1}/plugin-api/v1/data/${installationId}/${ns}/${key}`,
   },

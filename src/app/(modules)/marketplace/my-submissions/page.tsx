@@ -11,7 +11,8 @@ export default function VendorSubmissionsPage() {
       <div className="flex flex-col space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">My Submissions</h1>
         <p className="text-muted-foreground">
-          Track your app submission statuses, upload new versions, and view reviewer feedback. This feature is coming soon.
+          Track your app submission statuses, upload new versions, and view reviewer feedback. This
+          feature is coming soon.
         </p>
       </div>
     </main>

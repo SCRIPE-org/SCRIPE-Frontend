@@ -45,44 +45,100 @@ export class PluginDefinition {
   constructor(private readonly data: PluginDefinitionModel) {}
 
   // ── Raw fields ─────────────────────────────────────────────────────────────
-  get id() { return this.data.id; }
-  get key() { return this.data.key; }
-  get name() { return this.data.name; }
-  get nameAr() { return this.data.nameAr; }
-  get description() { return this.data.description; }
-  get descriptionAr() { return this.data.descriptionAr; }
-  get tier() { return this.data.tier; }
-  get status() { return this.data.status; }
-  get scope() { return this.data.scope; }
-  get iconUrl() { return this.data.iconUrl ?? null; }
-  get colorHue() { return this.data.colorHue ?? null; }
-  get colorChroma() { return this.data.colorChroma ?? null; }
-  get workspaceKey() { return this.data.workspaceKey ?? null; }
-  get manifestJson() { return this.data.manifestJson; }
-  get baseUrl() { return this.data.baseUrl ?? null; }
-  get frontendUrl() { return this.data.frontendUrl ?? null; }
+  get id() {
+    return this.data.id;
+  }
+  get key() {
+    return this.data.key;
+  }
+  get name() {
+    return this.data.name;
+  }
+  get nameAr() {
+    return this.data.nameAr;
+  }
+  get description() {
+    return this.data.description;
+  }
+  get descriptionAr() {
+    return this.data.descriptionAr;
+  }
+  get tier() {
+    return this.data.tier;
+  }
+  get status() {
+    return this.data.status;
+  }
+  get scope() {
+    return this.data.scope;
+  }
+  get iconUrl() {
+    return this.data.iconUrl ?? null;
+  }
+  get colorHue() {
+    return this.data.colorHue ?? null;
+  }
+  get colorChroma() {
+    return this.data.colorChroma ?? null;
+  }
+  get workspaceKey() {
+    return this.data.workspaceKey ?? null;
+  }
+  get manifestJson() {
+    return this.data.manifestJson;
+  }
+  get baseUrl() {
+    return this.data.baseUrl ?? null;
+  }
+  get frontendUrl() {
+    return this.data.frontendUrl ?? null;
+  }
 
   // ── Tier helpers ───────────────────────────────────────────────────────────
-  get isTier1() { return this.data.tier === "Tier1"; }
-  get isTier2() { return this.data.tier === "Tier2"; }
+  get isTier1() {
+    return this.data.tier === "Tier1";
+  }
+  get isTier2() {
+    return this.data.tier === "Tier2";
+  }
 
   // ── Status helpers ─────────────────────────────────────────────────────────
-  get isDraft() { return this.data.status === "Draft"; }
-  get isInReview() { return this.data.status === "InReview"; }
-  get isApproved() { return this.data.status === "Approved"; }
-  get isPublished() { return this.data.status === "Published"; }
-  get isSuspended() { return this.data.status === "Suspended"; }
-  get isDeprecated() { return this.data.status === "Deprecated"; }
+  get isDraft() {
+    return this.data.status === "Draft";
+  }
+  get isInReview() {
+    return this.data.status === "InReview";
+  }
+  get isApproved() {
+    return this.data.status === "Approved";
+  }
+  get isPublished() {
+    return this.data.status === "Published";
+  }
+  get isSuspended() {
+    return this.data.status === "Suspended";
+  }
+  get isDeprecated() {
+    return this.data.status === "Deprecated";
+  }
 
   /** True when the plugin can be installed by tenants (Published and not suspended). */
-  get isAvailable() { return this.isPublished; }
+  get isAvailable() {
+    return this.isPublished;
+  }
 
   // ── Scope helpers ──────────────────────────────────────────────────────────
-  get isTenantScoped() { return this.data.scope === "Tenant"; }
-  get isGlobalScoped() { return this.data.scope === "Global"; }
+  get isTenantScoped() {
+    return this.data.scope === "Tenant";
+  }
+  get isGlobalScoped() {
+    return this.data.scope === "Global";
+  }
 
   // ── Date helpers ───────────────────────────────────────────────────────────
-  get createdAt() { return new Date(this.data.createdAt); }
+  get createdAt() {
+    return new Date(this.data.createdAt);
+  }
   get createdAtDisplay() {
     return this.createdAt.toLocaleDateString(undefined, {
       year: "numeric",
@@ -96,5 +152,7 @@ export class PluginDefinition {
     return new PluginDefinition({ ...this.data, ...updates });
   }
 
-  toModel() { return this.data; }
+  toModel() {
+    return this.data;
+  }
 }

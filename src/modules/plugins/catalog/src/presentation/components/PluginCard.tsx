@@ -14,14 +14,15 @@ interface PluginCardProps {
 
 export function PluginCard({ plugin, onInstall, isInstalling }: PluginCardProps) {
   const { t, language } = useI18n();
-  const displayName = language === "ar" ? (plugin.nameAr || plugin.name) : plugin.name;
-  const displayDesc = language === "ar" ? (plugin.descriptionAr || plugin.description) : plugin.description;
+  const displayName = language === "ar" ? plugin.nameAr || plugin.name : plugin.name;
+  const displayDesc =
+    language === "ar" ? plugin.descriptionAr || plugin.description : plugin.description;
 
   return (
-    <div className="flex flex-col rounded-xl border bg-card p-5 shadow-sm gap-3">
+    <div className="flex flex-col gap-3 rounded-xl border bg-card p-5 shadow-sm">
       <div className="flex items-start gap-3">
         <div
-          className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted shrink-0"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted"
           style={
             plugin.colorHue != null
               ? { background: `oklch(0.7 ${plugin.colorChroma ?? 0.2} ${plugin.colorHue})` }
@@ -30,15 +31,15 @@ export function PluginCard({ plugin, onInstall, isInstalling }: PluginCardProps)
         >
           <Puzzle className="h-6 w-6 text-white" />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold truncate">{displayName}</p>
-          <p className="text-xs text-muted-foreground truncate">{plugin.key}</p>
-          <div className="flex gap-1 mt-1">
-            <Badge variant="outline" className="text-xs px-1 py-0">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold">{displayName}</p>
+          <p className="truncate text-xs text-muted-foreground">{plugin.key}</p>
+          <div className="mt-1 flex gap-1">
+            <Badge variant="outline" className="px-1 py-0 text-xs">
               {plugin.isTier2 ? t("plugins.tier2") : t("plugins.tier1")}
             </Badge>
             {plugin.isInstalled && (
-              <Badge variant="secondary" className="text-xs px-1 py-0 flex items-center gap-1">
+              <Badge variant="secondary" className="flex items-center gap-1 px-1 py-0 text-xs">
                 <CheckCircle className="h-3 w-3" />
                 {t("plugins.cardInstalled")}
               </Badge>
@@ -46,10 +47,10 @@ export function PluginCard({ plugin, onInstall, isInstalling }: PluginCardProps)
           </div>
         </div>
       </div>
-      <p className="text-xs text-muted-foreground line-clamp-2">{displayDesc}</p>
+      <p className="line-clamp-2 text-xs text-muted-foreground">{displayDesc}</p>
       <Button
         size="sm"
-        className="w-full mt-auto"
+        className="mt-auto w-full"
         disabled={plugin.isInstalled || isInstalling}
         onClick={onInstall}
       >

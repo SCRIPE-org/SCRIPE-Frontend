@@ -61,7 +61,11 @@ const sections: DocSection[] = [
       { id: "sub", label: "Subscriptions", description: "Tenant ↔ Edition binding" },
       { id: "ovr", label: "Overrides", description: "Per-tenant custom values" },
       { id: "cache", label: "FeatureCache", description: "In-memory resolved values" },
-      { id: "pipe", label: "FeatureCheckBehavior", description: "AstraFlow mediator pipeline gate" },
+      {
+        id: "pipe",
+        label: "FeatureCheckBehavior",
+        description: "AstraFlow mediator pipeline gate",
+      },
     ],
     connections: [
       { from: "feat", to: "ed", label: "bundled into" },

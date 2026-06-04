@@ -24,7 +24,12 @@ import type {
   TenantPlanPromotionListModel,
 } from "../models/TenantPlanModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

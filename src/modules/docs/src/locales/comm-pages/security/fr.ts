@@ -1,30 +1,39 @@
 /**
  * Docs page locale — FR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const fr = {
   commercial: {
-    securityOverview: {
-      complianceTitle: "Fondation pour la Conformité",
+    auditCompliance: {
+      alerting: "Alertes en Temps Réel",
+      alertingDesc:
+        "Automatisez les alertes de sécurité via des webhooks ou Slack lorsque des seuils d'audit spécifiques à hauts privilèges sont franchis.",
+      complianceContent:
+        "SCRIPE offre une voie clé en main vers la conformité ISO 27001, SOC 2, HIPAA et RGPD. Avec une capture d'événements immuable, une attribution garantie et une isolation stricte, les auditeurs peuvent vérifier instantanément l'intégrité des données de votre locataire (tenant).",
+      complianceTitle: "Conçu pour la Conformité",
+      dashboard: "Tableau de Bord Visuel",
+      dashboardDesc:
+        "Explorez instantanément des gigaoctets de données d'audit à l'aide de nos tableaux de bord de reporting Vue/Next.js hautes performances.",
       description:
-        "Une répartition complète du périmètre de sécurité multi-couches de défense en profondeur de SCRIPE, protégeant tout, de la couche de routage à la couche de persistance.",
-      gdpr: "Droit à l'Oubli RGPD (Let-To-Forget)",
-      gdprDesc:
-        "Prise en charge native de l'anonymisation stricte des IPI et des protocoles de suppression définitive (hard-deletion).",
-      headersTitle: "En-têtes HTTP Défensifs",
+        "Un pipeline d'audit de qualité légale capturant les requêtes HTTP, les instantanés d'entités et les opérations de sécurité sans aucune perte de données.",
+      exportContent:
+        "Exportez des ensembles de données d'audit massifs directement vers des formats CSV ou Excel chiffrés, ou diffusez-les de manière sécurisée vers vos solutions SIEM existantes comme Splunk ou Datadog.",
+      exportTitle: "Exportation Légal & SIEM",
       intro:
-        "Nous ne faisons pas confiance au réseau, nous ne faisons pas confiance au client, et nous ne faisons pas confiance à la charge utile. SCRIPE est construit sur une méthodologie architecturale Zero-Trust, imposant des protocoles de sécurité agressifs à chaque frontière de la matrice de l'application.",
-      modelContent:
-        "Chaque requête API est immédiatement évaluée par le moteur FluentValidation. Si une charge utile viole les contraintes du domaine (par exemple, formats d'e-mails invalides, nombres hors limites), le pipeline rejette instantanément la charge utile avec un 400 Bad Request avant même qu'un contrôleur ne soit instancié.",
-      modelTitle: "Validation Stricte du Pipeline",
-      soc2: "Préparation SOC 2 Type II",
-      soc2Desc:
-        "Les pistes d'audit médico-légales intégrées et l'isolation stricte des données accélèrent le succès des audits SOC 2.",
-      sox: "Déclencheurs de Conformité SOX",
-      soxDesc:
-        "Immuabilité mathématique dans les journaux d'audit financier pour prendre en charge les environnements hautement réglementés.",
-      summaryTitle: "Matrice de Défense en Profondeur",
-      title: "Posture de Sécurité Zero-Trust",
+        "La gouvernance des données n'est pas négociable. SCRIPE dispose d'un système de journalisation d'audit de niveau militaire exécuté en arrière-plan, qui capture chaque mutation, tentative d'authentification et lecture critique à travers tout le monolithe sans dégrader les performances de l'API.",
+      liveStream: "Flux SignalR en Direct",
+      liveStreamDesc:
+        "Observez les événements administratifs et de sécurité circuler en temps réel à travers la plateforme via des WebSockets protégés.",
+      pipelineContent:
+        "Construit sur le modèle de contrainte des intercepteurs d'Entity Framework Core, le pipeline d'audit prend un instantané temporel de vos entités avant et après mutation. Les changements sont sérialisés en JSON et stockés de manière immuable.",
+      pipelineTitle: "Pipeline de Capture Asynchrone",
+      realTimeContent:
+        "Regardez votre système fonctionner avec une observabilité transparente. L'intégration de Webhooks et les flux SignalR fournissent des informations judiciaires instantanées, permettant à vos équipes DevSecOps de réagir de manière proactive plutôt que réactive.",
+      realTimeTitle: "Observabilité en Temps Réel",
+      retention: "Rétention Adaptative",
+      retentionDesc:
+        "Configurez des politiques de stockage à froid (cold-storage) qui archivent ou purgent automatiquement les journaux d'audit en fonction de vos limites temporelles de conformité spécifiques.",
+      sourcesTitle: "Les Quatre Piliers de la Capture",
+      title: "Moteur d'Audit & Conformité",
     },
     authSecurity: {
       apiTitle: "Gestion des Clés API",
@@ -55,6 +64,36 @@ export const fr = {
       twoFaContent:
         "Les mots de passe seuls sont insuffisants. SCRIPE exige nativement des barrières de vérification secondaire dynamiques, protégeant vos utilisateurs même en cas de bourrage d'identifiants (credential stuffing) ou de phishing.",
       twoFaTitle: "Authentification Multi-Facteurs (MFA)",
+    },
+    complianceReadiness: {
+      auditReadyContent:
+        "Les auditeurs ne veulent pas de promesses ; ils veulent des preuves. SCRIPE fournit des journaux exportables et inviolables de chaque invocation d'API, escalade de privilèges et mutation de données, transformant une préparation SOC 2 de 6 mois en une formalité de 2 semaines.",
+      auditReadyTitle: "Artefacts de Preuve Instantanés",
+      checklistTitle: "La Voie Rapide vers la Conformité",
+      consentMgmt: "Gestion Avancée du Consentement",
+      consentMgmtDesc:
+        "Suivez, versionnez et appliquez par programme le consentement de l'utilisateur à travers plusieurs politiques de confidentialité et itérations des conditions d'utilisation.",
+      dataMinimization: "Minimisation Intelligente des Données",
+      dataMinimizationDesc:
+        "Expirez ou masquez automatiquement les IPI (Informations Personnelles Identifiables) de vos bases de données lorsque les politiques de rétention sont atteintes.",
+      dataPortability: "Portabilité Instantanée des Données",
+      dataPortabilityDesc:
+        "Permettez aux utilisateurs de télécharger en toute sécurité une archive cryptographique de l'intégralité de leur empreinte de données dans des formats JSON lisibles par machine.",
+      description:
+        "Des contrôles techniques préconfigurés permettant une certification extrêmement rapide pour les normes ISO 27001, SOC 2 et RGPD.",
+      disclaimer:
+        "Avertissement : SCRIPE fournit la base technique ; consultez un conseiller juridique pour la conformité procédurale.",
+      frameworkIntro:
+        "Atteindre la conformité fait généralement dérailler les feuilles de route d'ingénierie pendant des mois. SCRIPE raccourcit considérablement cette courbe en intégrant les contrôles techniques les plus difficiles directement dans le framework de base.",
+      frameworkTitle: "Support Accéléré du Framework",
+      gdprTitle: "Natif RGPD & CCPA",
+      intro:
+        "Les cadres réglementaires exigent une gouvernance rigoureuse des données. SCRIPE accélère votre chemin vers la certification en intégrant des contrôles d'audit, de chiffrement et de confidentialité de niveau militaire au cœur même de l'architecture de l'application.",
+      rightToErasure: "Droit à l'Oubli Orchestré",
+      rightToErasureDesc:
+        "Exécutez des suppressions douces (soft) ou définitives (hard) à l'échelle de la plateforme qui se propagent automatiquement sur toutes les tables relationnelles.",
+      securityControlsTitle: "Contrôles de Sécurité Mappés",
+      title: "Préparation à la Conformité",
     },
     dataProtection: {
       csrfContent:
@@ -110,67 +149,27 @@ export const fr = {
       warningNote:
         "Avertissement : Désactiver ces mécanismes de défense par défaut sans consulter votre RSSI (CISO) augmente considérablement la surface d'attaque de votre organisation.",
     },
-    complianceReadiness: {
-      auditReadyContent:
-        "Les auditeurs ne veulent pas de promesses ; ils veulent des preuves. SCRIPE fournit des journaux exportables et inviolables de chaque invocation d'API, escalade de privilèges et mutation de données, transformant une préparation SOC 2 de 6 mois en une formalité de 2 semaines.",
-      auditReadyTitle: "Artefacts de Preuve Instantanés",
-      checklistTitle: "La Voie Rapide vers la Conformité",
-      consentMgmt: "Gestion Avancée du Consentement",
-      consentMgmtDesc:
-        "Suivez, versionnez et appliquez par programme le consentement de l'utilisateur à travers plusieurs politiques de confidentialité et itérations des conditions d'utilisation.",
-      dataMinimization: "Minimisation Intelligente des Données",
-      dataMinimizationDesc:
-        "Expirez ou masquez automatiquement les IPI (Informations Personnelles Identifiables) de vos bases de données lorsque les politiques de rétention sont atteintes.",
-      dataPortability: "Portabilité Instantanée des Données",
-      dataPortabilityDesc:
-        "Permettez aux utilisateurs de télécharger en toute sécurité une archive cryptographique de l'intégralité de leur empreinte de données dans des formats JSON lisibles par machine.",
+    securityOverview: {
+      complianceTitle: "Fondation pour la Conformité",
       description:
-        "Des contrôles techniques préconfigurés permettant une certification extrêmement rapide pour les normes ISO 27001, SOC 2 et RGPD.",
-      disclaimer:
-        "Avertissement : SCRIPE fournit la base technique ; consultez un conseiller juridique pour la conformité procédurale.",
-      frameworkIntro:
-        "Atteindre la conformité fait généralement dérailler les feuilles de route d'ingénierie pendant des mois. SCRIPE raccourcit considérablement cette courbe en intégrant les contrôles techniques les plus difficiles directement dans le framework de base.",
-      frameworkTitle: "Support Accéléré du Framework",
-      gdprTitle: "Natif RGPD & CCPA",
+        "Une répartition complète du périmètre de sécurité multi-couches de défense en profondeur de SCRIPE, protégeant tout, de la couche de routage à la couche de persistance.",
+      gdpr: "Droit à l'Oubli RGPD (Let-To-Forget)",
+      gdprDesc:
+        "Prise en charge native de l'anonymisation stricte des IPI et des protocoles de suppression définitive (hard-deletion).",
+      headersTitle: "En-têtes HTTP Défensifs",
       intro:
-        "Les cadres réglementaires exigent une gouvernance rigoureuse des données. SCRIPE accélère votre chemin vers la certification en intégrant des contrôles d'audit, de chiffrement et de confidentialité de niveau militaire au cœur même de l'architecture de l'application.",
-      rightToErasure: "Droit à l'Oubli Orchestré",
-      rightToErasureDesc:
-        "Exécutez des suppressions douces (soft) ou définitives (hard) à l'échelle de la plateforme qui se propagent automatiquement sur toutes les tables relationnelles.",
-      securityControlsTitle: "Contrôles de Sécurité Mappés",
-      title: "Préparation à la Conformité",
-    },
-    auditCompliance: {
-      alerting: "Alertes en Temps Réel",
-      alertingDesc:
-        "Automatisez les alertes de sécurité via des webhooks ou Slack lorsque des seuils d'audit spécifiques à hauts privilèges sont franchis.",
-      complianceContent:
-        "SCRIPE offre une voie clé en main vers la conformité ISO 27001, SOC 2, HIPAA et RGPD. Avec une capture d'événements immuable, une attribution garantie et une isolation stricte, les auditeurs peuvent vérifier instantanément l'intégrité des données de votre locataire (tenant).",
-      complianceTitle: "Conçu pour la Conformité",
-      dashboard: "Tableau de Bord Visuel",
-      dashboardDesc:
-        "Explorez instantanément des gigaoctets de données d'audit à l'aide de nos tableaux de bord de reporting Vue/Next.js hautes performances.",
-      description:
-        "Un pipeline d'audit de qualité légale capturant les requêtes HTTP, les instantanés d'entités et les opérations de sécurité sans aucune perte de données.",
-      exportContent:
-        "Exportez des ensembles de données d'audit massifs directement vers des formats CSV ou Excel chiffrés, ou diffusez-les de manière sécurisée vers vos solutions SIEM existantes comme Splunk ou Datadog.",
-      exportTitle: "Exportation Légal & SIEM",
-      intro:
-        "La gouvernance des données n'est pas négociable. SCRIPE dispose d'un système de journalisation d'audit de niveau militaire exécuté en arrière-plan, qui capture chaque mutation, tentative d'authentification et lecture critique à travers tout le monolithe sans dégrader les performances de l'API.",
-      liveStream: "Flux SignalR en Direct",
-      liveStreamDesc:
-        "Observez les événements administratifs et de sécurité circuler en temps réel à travers la plateforme via des WebSockets protégés.",
-      pipelineContent:
-        "Construit sur le modèle de contrainte des intercepteurs d'Entity Framework Core, le pipeline d'audit prend un instantané temporel de vos entités avant et après mutation. Les changements sont sérialisés en JSON et stockés de manière immuable.",
-      pipelineTitle: "Pipeline de Capture Asynchrone",
-      realTimeContent:
-        "Regardez votre système fonctionner avec une observabilité transparente. L'intégration de Webhooks et les flux SignalR fournissent des informations judiciaires instantanées, permettant à vos équipes DevSecOps de réagir de manière proactive plutôt que réactive.",
-      realTimeTitle: "Observabilité en Temps Réel",
-      retention: "Rétention Adaptative",
-      retentionDesc:
-        "Configurez des politiques de stockage à froid (cold-storage) qui archivent ou purgent automatiquement les journaux d'audit en fonction de vos limites temporelles de conformité spécifiques.",
-      sourcesTitle: "Les Quatre Piliers de la Capture",
-      title: "Moteur d'Audit & Conformité",
+        "Nous ne faisons pas confiance au réseau, nous ne faisons pas confiance au client, et nous ne faisons pas confiance à la charge utile. SCRIPE est construit sur une méthodologie architecturale Zero-Trust, imposant des protocoles de sécurité agressifs à chaque frontière de la matrice de l'application.",
+      modelContent:
+        "Chaque requête API est immédiatement évaluée par le moteur FluentValidation. Si une charge utile viole les contraintes du domaine (par exemple, formats d'e-mails invalides, nombres hors limites), le pipeline rejette instantanément la charge utile avec un 400 Bad Request avant même qu'un contrôleur ne soit instancié.",
+      modelTitle: "Validation Stricte du Pipeline",
+      soc2: "Préparation SOC 2 Type II",
+      soc2Desc:
+        "Les pistes d'audit médico-légales intégrées et l'isolation stricte des données accélèrent le succès des audits SOC 2.",
+      sox: "Déclencheurs de Conformité SOX",
+      soxDesc:
+        "Immuabilité mathématique dans les journaux d'audit financier pour prendre en charge les environnements hautement réglementés.",
+      summaryTitle: "Matrice de Défense en Profondeur",
+      title: "Posture de Sécurité Zero-Trust",
     },
   },
 };

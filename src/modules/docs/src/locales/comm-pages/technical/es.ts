@@ -1,9 +1,43 @@
 /**
  * Docs page locale — ES
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const es = {
   commercial: {
+    observabilityMonitoring: {
+      alertingContent:
+        "Los paneles visuales no significan nada si nadie está mirando. Configure umbrales de referencia estrictos (por ejemplo, si los errores 500 aumentan, o si la CPU de la base de datos supera el 80%) y active automáticamente protocolos de respuesta a incidentes en Slack o PagerDuty.",
+      alertingTitle: "Alertas Basadas en Umbrales",
+      cacheMetrics: "Eficacia de Caché de Redis",
+      cacheMetricsDesc:
+        "Supervise de forma continua la fragmentación de la memoria, las proporciones de aciertos/errores (hit/miss) y las métricas de expulsión para ajustar el rendimiento.",
+      dbMetrics: "Agotamiento del Grupo (Pool) de la Base de Datos",
+      dbMetricsDesc:
+        "Haga un seguimiento de las conexiones activas, las ejecuciones lentas de consultas y los tiempos de compilación de comandos directamente desde EF Core.",
+      description:
+        "Registro estructurado forense, sondas de salud con cero tiempo de inactividad, métricas de Prometheus y rastreo distribuido de OpenTelemetry.",
+      healthContent:
+        "Sondas de vitalidad (liveness) y disponibilidad (readiness) nativas de Kubernetes listas para usar. La API autoinforma de manera continua el estado operativo de la base de datos SQL, la memoria caché de Redis y las dependencias externas. Si un nodo falla, el orquestador lo retira instantáneamente de la rotación del equilibrador de carga.",
+      healthTitle: "Sondas Nativas de Kubernetes",
+      intro:
+        "No se puede administrar lo que no se puede medir. SCRIPE integra un stack de observabilidad de élite, proporcionando a los equipos de SRE y DevSecOps información forense y en tiempo real sobre el comportamiento distribuido de la plataforma.",
+      loggingContent:
+        "Los registros de texto tradicionales son inútiles a gran escala. SCRIPE utiliza Serilog para generar registros de eventos JSON profundamente estructurados, enriqueciéndolos automáticamente con ID de correlación, Contextos de Inquilino y Nombres de Máquina para consultas inmediatas en Datadog o ELK.",
+      loggingTitle: "Registro Forense Estructurado",
+      metricsIntro:
+        "Al integrar protocolos estándar de OpenTelemetry, SCRIPE expone miles de métricas internas de la plataforma directamente a sus paneles de control existentes de Prometheus y Grafana.",
+      metricsTitle: "Integración con OpenTelemetry",
+      requestMetrics: "Rendimiento de Peticiones a la API",
+      requestMetricsDesc:
+        "Supervise los percentiles de latencia (p95, p99), los tamaños de carga útil y las duraciones precisas de ejecución por endpoint.",
+      tip: "Consejo Ejecutivo: Implemente el rastreo distribuido para rastrear el recorrido de una sola solicitud de usuario a la perfección en todos los microservicios implementados.",
+      title: "Observabilidad y Telemetría",
+      tracingContent:
+        "En un despliegue de microservicios, un solo clic podría atravesar cinco servicios aislados. El rastreo distribuido inyecta y propaga las ID de correlación a través de los encabezados HTTP, lo que le permite mapear visualmente recorridos de solicitudes complejos e identificar instantáneamente el servicio con cuello de botella.",
+      tracingTitle: "Rastreo Distribuido entre Servicios",
+      userMetrics: "Velocidad de Autenticación",
+      userMetricsDesc:
+        "Realice un seguimiento de los inicios de sesión exitosos, los intentos de fuerza bruta y la actividad específica de los inquilinos en tiempo real.",
+    },
     performanceBenchmarks: {
       apiIntro:
         "Nuestra arquitectura prioriza la velocidad sin sacrificar la abstracción. Cada capa de la API se somete a evaluaciones comparativas rigurosas para garantizar una asignación (allocation) mínima y un rendimiento máximo.",
@@ -69,123 +103,6 @@ export const es = {
       tip: "Consejo Arquitectónico: Nunca escriba bloques try/catch estándar para llamadas de red. Utilice siempre los interceptores HTTP centralizados de Polly inyectados en toda la plataforma.",
       title: "Arquitectura de Resiliencia Defensiva",
     },
-    observabilityMonitoring: {
-      alertingContent:
-        "Los paneles visuales no significan nada si nadie está mirando. Configure umbrales de referencia estrictos (por ejemplo, si los errores 500 aumentan, o si la CPU de la base de datos supera el 80%) y active automáticamente protocolos de respuesta a incidentes en Slack o PagerDuty.",
-      alertingTitle: "Alertas Basadas en Umbrales",
-      cacheMetrics: "Eficacia de Caché de Redis",
-      cacheMetricsDesc:
-        "Supervise de forma continua la fragmentación de la memoria, las proporciones de aciertos/errores (hit/miss) y las métricas de expulsión para ajustar el rendimiento.",
-      dbMetrics: "Agotamiento del Grupo (Pool) de la Base de Datos",
-      dbMetricsDesc:
-        "Haga un seguimiento de las conexiones activas, las ejecuciones lentas de consultas y los tiempos de compilación de comandos directamente desde EF Core.",
-      description:
-        "Registro estructurado forense, sondas de salud con cero tiempo de inactividad, métricas de Prometheus y rastreo distribuido de OpenTelemetry.",
-      healthContent:
-        "Sondas de vitalidad (liveness) y disponibilidad (readiness) nativas de Kubernetes listas para usar. La API autoinforma de manera continua el estado operativo de la base de datos SQL, la memoria caché de Redis y las dependencias externas. Si un nodo falla, el orquestador lo retira instantáneamente de la rotación del equilibrador de carga.",
-      healthTitle: "Sondas Nativas de Kubernetes",
-      intro:
-        "No se puede administrar lo que no se puede medir. SCRIPE integra un stack de observabilidad de élite, proporcionando a los equipos de SRE y DevSecOps información forense y en tiempo real sobre el comportamiento distribuido de la plataforma.",
-      loggingContent:
-        "Los registros de texto tradicionales son inútiles a gran escala. SCRIPE utiliza Serilog para generar registros de eventos JSON profundamente estructurados, enriqueciéndolos automáticamente con ID de correlación, Contextos de Inquilino y Nombres de Máquina para consultas inmediatas en Datadog o ELK.",
-      loggingTitle: "Registro Forense Estructurado",
-      metricsIntro:
-        "Al integrar protocolos estándar de OpenTelemetry, SCRIPE expone miles de métricas internas de la plataforma directamente a sus paneles de control existentes de Prometheus y Grafana.",
-      metricsTitle: "Integración con OpenTelemetry",
-      requestMetrics: "Rendimiento de Peticiones a la API",
-      requestMetricsDesc:
-        "Supervise los percentiles de latencia (p95, p99), los tamaños de carga útil y las duraciones precisas de ejecución por endpoint.",
-      tip: "Consejo Ejecutivo: Implemente el rastreo distribuido para rastrear el recorrido de una sola solicitud de usuario a la perfección en todos los microservicios implementados.",
-      title: "Observabilidad y Telemetría",
-      tracingContent:
-        "En un despliegue de microservicios, un solo clic podría atravesar cinco servicios aislados. El rastreo distribuido inyecta y propaga las ID de correlación a través de los encabezados HTTP, lo que le permite mapear visualmente recorridos de solicitudes complejos e identificar instantáneamente el servicio con cuello de botella.",
-      tracingTitle: "Rastreo Distribuido entre Servicios",
-      userMetrics: "Velocidad de Autenticación",
-      userMetricsDesc:
-        "Realice un seguimiento de los inicios de sesión exitosos, los intentos de fuerza bruta y la actividad específica de los inquilinos en tiempo real.",
-    },
-    testingStrategy: {
-      ci1Content:
-        "Aislamiento absoluto del entorno de ejecución. Con cada Pull Request, la canalización de CI (Integración Continua) restaura de forma determinista las cadenas de herramientas de los compiladores dentro de un contenedor Linux herméticamente sellado y estéril, asegurando que las excusas de 'funciona en mi máquina' se erradiquen matemáticamente.",
-      ci1Title: "1. Inicialización de Entorno Estéril",
-      ci2Content:
-        "Ejecute el conjunto xUnit increíblemente rápido utilizando repositorios simulados (mocked) de forma inteligente. Esto garantiza que la lógica empresarial CQRS pura de la capa de Aplicación sea analizada y certificada en milisegundos sin establecer una conexión física a la base de datos.",
-      ci2Title: "2. Validación Lógica Pura",
-      ci3Content:
-        "Inyecte bases de datos Docker efímeras utilizando Testcontainers. Esto garantiza que las proyecciones LINQ de EF Core, los filtros de consulta globales y las migraciones físicas de bases de datos se ejecuten sin problemas contra motores SQL reales antes de que se autodestruyan.",
-      ci3Title: "3. Telemetría de Integración Efímera",
-      ci4Content:
-        "Active clústeres masivos de navegadores Playwright. Los trabajadores de Chromium (headless - sin interfaz gráfica) abusan implacablemente de la interfaz compilada de Next.js, interactuando agresivamente con cada componente de React para certificar de forma definitiva el viaje (journey) del usuario de extremo a extremo.",
-      ci4Title: "4. Automatización Cruzada entre Navegadores",
-      ciContent:
-        "Probar sin una automatización absoluta es una responsabilidad (liability). El repositorio incluido viene de forma nativa con una canalización masivamente paralelizada de GitHub Actions / GitLab CI. Esta levanta activamente una barricada en la rama `main`, rechazando físicamente cualquier código que viole los límites del dominio, falle las aserciones matemáticas o desencadene una regresión.",
-      ciTitle: "Canalizaciones Continuas de Seguridad e Integridad",
-      description:
-        "Un análisis profundo de la pirámide de pruebas de SCRIPE: Aserciones unitarias CQRS ultrarrápidas, integraciones efímeras de bases de datos Docker y automatización de interfaz de usuario (UI) implacable con Playwright.",
-      e2eContent:
-        "Las Pruebas de Aceptación del Usuario (UAT) no deben depender del error humano. Integramos Playwright para poner en marcha clústeres de ejecución Chromium 'headless'. Estos clústeres simulan interacciones de usuario masivas y altamente complejas: ejecutan flujos completos de inducción de múltiples inquilinos, validan el estado de los componentes de React y garantizan que la interfaz de usuario se mantenga perfectamente resistente en condiciones agresivas y caóticas antes de que el equipo de control de calidad (QA) manual la toque.",
-      e2eTitle: "Automatización de Navegador (E2E) Implacable",
-      integrationContent:
-        "Simular (Mocking) extensamente la base de datos conduce a falsos positivos peligrosos. SCRIPE implementa Testcontainers para aprovisionar, ejecutar y destruir dinámicamente instancias físicas reales de PostgreSQL y Redis específicamente para cada conjunto de pruebas. Esto garantiza que sus esquemas de EF Core se prueben en un entorno de infraestructura verdadera en lugar de simulaciones en memoria frágiles.",
-      integrationTitle: "Pruebas de Infraestructura Efímera",
-      intro:
-        "Un error empresarial en cascada cuesta cientos de miles de dólares en tiempo de inactividad sistémico. SCRIPE impone una estrategia de pruebas despiadada y matemáticamente hermética. Desde pruebas lógicas de Arquitectura Limpia aisladas hasta automatización de navegadores destructiva, cada byte de código se analiza y certifica agresivamente antes de fusionarse (merge).",
-      pyramidTitle: "La Pirámide Estratificada de Certificación de Código",
-      pyramidLvl: "Estrato de Certificación",
-      pyramidTech: "Motor de Ejecución",
-      pyramidScope: "Alcance de Validación",
-      pyrE2E: "Simulación de Extremo a Extremo (E2E)",
-      pyrE2ETech: "Playwright / Trabajadores de Chromium",
-      pyrE2EScope: "Validación Viaje Completo (Desde UI hasta DB)",
-      pyrInt: "Integración Efímera",
-      pyrIntTech: "WebApplicationFactory + Testcontainers",
-      pyrIntScope: "Endpoints API y SQL Físico",
-      pyrUnit: "Lógica de Negocio Pura",
-      pyrUnitTech: "xUnit + Moq + FluentAssertions",
-      pyrUnitScope: "Dominio + Capas de Aplicación",
-      pyrStatic: "Análisis de Código Estático",
-      pyrStaticTech: "TypeScript + ESLint + Roslyn",
-      pyrStaticScope: "Sintaxis, Reglas y Tipos",
-      summaryTitle: "Certeza Matemática en las Pruebas",
-      tip: "Directiva Arquitectónica: No apunte a métricas de vanidad. Aplique una línea base absoluta de cobertura del 100% para las Entidades de Dominio principales y los Manejadores CQRS, utilizando clústeres de UI Playwright para cubrir la superficie de Presentación.",
-      title: "Resiliencia y Pruebas Automatizadas",
-      unitContent:
-        "Al adherirse rigurosamente a los principios de Arquitectura Limpia, la lógica comercial de SCRIPE permanece físicamente aislada de los contextos HTTP y esquemas SQL. Su equipo de ingeniería puede ejecutar instantáneamente miles de conjuntos de pruebas xUnit contra Manejadores (Handlers) principales y Entidades de Dominio en solo milisegundos, maximizando la velocidad del desarrollador y la confianza en la implementación.",
-      unitTitle: "Ejecución Unitaria Aislada Ultrarrápida",
-      lstIntI1: "WebApplicationFactory para pruebas de canalización HTTP realistas",
-      lstIntI2: "TestContainers para instancias de bases de datos desechables",
-      lstIntI3: "Siembra (seeding) de datos de prueba y limpieza automáticas",
-      lstIntI4: "Ejecución de pruebas en paralelo con bases de datos aisladas",
-      lstIntI5: "Simulación de autenticación con tokens JWT de prueba",
-      tblSumHeader1: "Tipo de Prueba",
-      tblSumHeader2: "Framework",
-      tblSumHeader3: "Objetivo de Cobertura",
-      tblSumHeader4: "Frecuencia de Ejecución",
-      tblSumR1C1: "Unitaria (Backend)",
-      tblSumR1C2: "xUnit + FluentAssertions",
-      tblSumR1C3: "Capas Dominio + Aplicación",
-      tblSumR1C4: "Cada commit",
-      tblSumR2C1: "Unitaria (Frontend)",
-      tblSumR2C2: "Vitest + Testing Library",
-      tblSumR2C3: "ViewModels + utilidades",
-      tblSumR2C4: "Cada commit",
-      tblSumR3C1: "Integración",
-      tblSumR3C2: "WebApplicationFactory",
-      tblSumR3C3: "Endpoints API + base de datos",
-      tblSumR3C4: "Fusiones de PRs (Merges)",
-      tblSumR4C1: "E2E",
-      tblSumR4C2: "Playwright",
-      tblSumR4C3: "Flujos de usuario críticos",
-      tblSumR4C4: "Nocturno / pre-release",
-      tblSumR5C1: "Análisis Estático",
-      tblSumR5C2: "ESLint + TypeScript + Roslyn",
-      tblSumR5C3: "100% de la base de código",
-      tblSumR5C4: "Cada vez que se guarda",
-      tblSumR6C1: "Rendimiento",
-      tblSumR6C2: "k6 / Artillery",
-      tblSumR6C3: "Pruebas de carga a endpoints",
-      tblSumR6C4: "Pre-release",
-    },
     storageBackends: {
       configTitle: "Configuración Dinámica de Proveedores",
       description:
@@ -221,6 +138,88 @@ export const es = {
       tenantIsolationDesc:
         "Los archivos se agrupan (bucketed) físicamente mediante el identificador `[TenantId]`, lo que garantiza una seguridad de datos masiva.",
       title: "Infraestructura de Almacenamiento Abstraída",
+    },
+    testingStrategy: {
+      ci1Content:
+        "Aislamiento absoluto del entorno de ejecución. Con cada Pull Request, la canalización de CI (Integración Continua) restaura de forma determinista las cadenas de herramientas de los compiladores dentro de un contenedor Linux herméticamente sellado y estéril, asegurando que las excusas de 'funciona en mi máquina' se erradiquen matemáticamente.",
+      ci1Title: "1. Inicialización de Entorno Estéril",
+      ci2Content:
+        "Ejecute el conjunto xUnit increíblemente rápido utilizando repositorios simulados (mocked) de forma inteligente. Esto garantiza que la lógica empresarial CQRS pura de la capa de Aplicación sea analizada y certificada en milisegundos sin establecer una conexión física a la base de datos.",
+      ci2Title: "2. Validación Lógica Pura",
+      ci3Content:
+        "Inyecte bases de datos Docker efímeras utilizando Testcontainers. Esto garantiza que las proyecciones LINQ de EF Core, los filtros de consulta globales y las migraciones físicas de bases de datos se ejecuten sin problemas contra motores SQL reales antes de que se autodestruyan.",
+      ci3Title: "3. Telemetría de Integración Efímera",
+      ci4Content:
+        "Active clústeres masivos de navegadores Playwright. Los trabajadores de Chromium (headless - sin interfaz gráfica) abusan implacablemente de la interfaz compilada de Next.js, interactuando agresivamente con cada componente de React para certificar de forma definitiva el viaje (journey) del usuario de extremo a extremo.",
+      ci4Title: "4. Automatización Cruzada entre Navegadores",
+      ciContent:
+        "Probar sin una automatización absoluta es una responsabilidad (liability). El repositorio incluido viene de forma nativa con una canalización masivamente paralelizada de GitHub Actions / GitLab CI. Esta levanta activamente una barricada en la rama `main`, rechazando físicamente cualquier código que viole los límites del dominio, falle las aserciones matemáticas o desencadene una regresión.",
+      ciTitle: "Canalizaciones Continuas de Seguridad e Integridad",
+      description:
+        "Un análisis profundo de la pirámide de pruebas de SCRIPE: Aserciones unitarias CQRS ultrarrápidas, integraciones efímeras de bases de datos Docker y automatización de interfaz de usuario (UI) implacable con Playwright.",
+      e2eContent:
+        "Las Pruebas de Aceptación del Usuario (UAT) no deben depender del error humano. Integramos Playwright para poner en marcha clústeres de ejecución Chromium 'headless'. Estos clústeres simulan interacciones de usuario masivas y altamente complejas: ejecutan flujos completos de inducción de múltiples inquilinos, validan el estado de los componentes de React y garantizan que la interfaz de usuario se mantenga perfectamente resistente en condiciones agresivas y caóticas antes de que el equipo de control de calidad (QA) manual la toque.",
+      e2eTitle: "Automatización de Navegador (E2E) Implacable",
+      integrationContent:
+        "Simular (Mocking) extensamente la base de datos conduce a falsos positivos peligrosos. SCRIPE implementa Testcontainers para aprovisionar, ejecutar y destruir dinámicamente instancias físicas reales de PostgreSQL y Redis específicamente para cada conjunto de pruebas. Esto garantiza que sus esquemas de EF Core se prueben en un entorno de infraestructura verdadera en lugar de simulaciones en memoria frágiles.",
+      integrationTitle: "Pruebas de Infraestructura Efímera",
+      intro:
+        "Un error empresarial en cascada cuesta cientos de miles de dólares en tiempo de inactividad sistémico. SCRIPE impone una estrategia de pruebas despiadada y matemáticamente hermética. Desde pruebas lógicas de Arquitectura Limpia aisladas hasta automatización de navegadores destructiva, cada byte de código se analiza y certifica agresivamente antes de fusionarse (merge).",
+      lstIntI1: "WebApplicationFactory para pruebas de canalización HTTP realistas",
+      lstIntI2: "TestContainers para instancias de bases de datos desechables",
+      lstIntI3: "Siembra (seeding) de datos de prueba y limpieza automáticas",
+      lstIntI4: "Ejecución de pruebas en paralelo con bases de datos aisladas",
+      lstIntI5: "Simulación de autenticación con tokens JWT de prueba",
+      pyramidLvl: "Estrato de Certificación",
+      pyramidScope: "Alcance de Validación",
+      pyramidTech: "Motor de Ejecución",
+      pyramidTitle: "La Pirámide Estratificada de Certificación de Código",
+      pyrE2E: "Simulación de Extremo a Extremo (E2E)",
+      pyrE2EScope: "Validación Viaje Completo (Desde UI hasta DB)",
+      pyrE2ETech: "Playwright / Trabajadores de Chromium",
+      pyrInt: "Integración Efímera",
+      pyrIntScope: "Endpoints API y SQL Físico",
+      pyrIntTech: "WebApplicationFactory + Testcontainers",
+      pyrStatic: "Análisis de Código Estático",
+      pyrStaticScope: "Sintaxis, Reglas y Tipos",
+      pyrStaticTech: "TypeScript + ESLint + Roslyn",
+      pyrUnit: "Lógica de Negocio Pura",
+      pyrUnitScope: "Dominio + Capas de Aplicación",
+      pyrUnitTech: "xUnit + Moq + FluentAssertions",
+      summaryTitle: "Certeza Matemática en las Pruebas",
+      tblSumHeader1: "Tipo de Prueba",
+      tblSumHeader2: "Framework",
+      tblSumHeader3: "Objetivo de Cobertura",
+      tblSumHeader4: "Frecuencia de Ejecución",
+      tblSumR1C1: "Unitaria (Backend)",
+      tblSumR1C2: "xUnit + FluentAssertions",
+      tblSumR1C3: "Capas Dominio + Aplicación",
+      tblSumR1C4: "Cada commit",
+      tblSumR2C1: "Unitaria (Frontend)",
+      tblSumR2C2: "Vitest + Testing Library",
+      tblSumR2C3: "ViewModels + utilidades",
+      tblSumR2C4: "Cada commit",
+      tblSumR3C1: "Integración",
+      tblSumR3C2: "WebApplicationFactory",
+      tblSumR3C3: "Endpoints API + base de datos",
+      tblSumR3C4: "Fusiones de PRs (Merges)",
+      tblSumR4C1: "E2E",
+      tblSumR4C2: "Playwright",
+      tblSumR4C3: "Flujos de usuario críticos",
+      tblSumR4C4: "Nocturno / pre-release",
+      tblSumR5C1: "Análisis Estático",
+      tblSumR5C2: "ESLint + TypeScript + Roslyn",
+      tblSumR5C3: "100% de la base de código",
+      tblSumR5C4: "Cada vez que se guarda",
+      tblSumR6C1: "Rendimiento",
+      tblSumR6C2: "k6 / Artillery",
+      tblSumR6C3: "Pruebas de carga a endpoints",
+      tblSumR6C4: "Pre-release",
+      tip: "Directiva Arquitectónica: No apunte a métricas de vanidad. Aplique una línea base absoluta de cobertura del 100% para las Entidades de Dominio principales y los Manejadores CQRS, utilizando clústeres de UI Playwright para cubrir la superficie de Presentación.",
+      title: "Resiliencia y Pruebas Automatizadas",
+      unitContent:
+        "Al adherirse rigurosamente a los principios de Arquitectura Limpia, la lógica comercial de SCRIPE permanece físicamente aislada de los contextos HTTP y esquemas SQL. Su equipo de ingeniería puede ejecutar instantáneamente miles de conjuntos de pruebas xUnit contra Manejadores (Handlers) principales y Entidades de Dominio en solo milisegundos, maximizando la velocidad del desarrollador y la confianza en la implementación.",
+      unitTitle: "Ejecución Unitaria Aislada Ultrarrápida",
     },
   },
 };

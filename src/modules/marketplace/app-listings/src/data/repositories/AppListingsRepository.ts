@@ -10,7 +10,10 @@
  *   ViewModel → AppListingsRepository (this) → IAppListingsService → IApiService → HTTP
  */
 import type { IAppListingsService } from "../../domain/interfaces/IAppListingsService";
-import type { IAppListingsRepository, PagedResult } from "../../domain/interfaces/IAppListingsRepository";
+import type {
+  IAppListingsRepository,
+  PagedResult,
+} from "../../domain/interfaces/IAppListingsRepository";
 import type { AppListing } from "../../domain/entities/AppListing";
 import { AppListingMapper } from "../mappers/AppListingMapper";
 
@@ -54,7 +57,10 @@ export class AppListingsRepository implements IAppListingsRepository {
     return result.id;
   }
 
-  async update(id: string, payload: Parameters<IAppListingsRepository["update"]>[1]): Promise<void> {
+  async update(
+    id: string,
+    payload: Parameters<IAppListingsRepository["update"]>[1]
+  ): Promise<void> {
     await this.service.update(id, payload);
   }
 
@@ -74,7 +80,10 @@ export class AppListingsRepository implements IAppListingsRepository {
     await this.service.toggleFeatured(id);
   }
 
-  async setPricing(id: string, payload: Parameters<IAppListingsRepository["setPricing"]>[1]): Promise<void> {
+  async setPricing(
+    id: string,
+    payload: Parameters<IAppListingsRepository["setPricing"]>[1]
+  ): Promise<void> {
     await this.service.setPricing(id, payload);
   }
 }

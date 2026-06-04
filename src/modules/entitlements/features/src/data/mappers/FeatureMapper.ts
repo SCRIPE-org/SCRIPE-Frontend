@@ -14,7 +14,12 @@ import type {
   UpdateFeatureRequest,
 } from "../../domain/entities/FeatureRequests";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
@@ -75,7 +80,11 @@ export class FeatureMapper {
   }
 
   static toEffectiveEntity(model: TenantEffectiveFeatureModel): TenantEffectiveFeature {
-    const validated = safeParseApiResponse(TenantEffectiveFeatureModelSchema, model, "TenantEffectiveFeature");
+    const validated = safeParseApiResponse(
+      TenantEffectiveFeatureModelSchema,
+      model,
+      "TenantEffectiveFeature"
+    );
 
     const data: TenantEffectiveFeatureData = {
       featureId: validated.featureId,

@@ -49,9 +49,7 @@ export function ProfileNotificationsView() {
     <div className="max-w-2xl space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold">
-          {t("profile.notifications.title")}
-        </h2>
+        <h2 className="text-xl font-semibold">{t("profile.notifications.title")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           {t("profile.notifications.description")}
         </p>
@@ -61,7 +59,7 @@ export function ProfileNotificationsView() {
 
       {/* Notification Channels */}
       <div className="space-y-6">
-        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+        <h3 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
           {t("profile.notifications.channels.heading")}
         </h3>
         <div className="space-y-4">
@@ -77,13 +75,11 @@ export function ProfileNotificationsView() {
                 <div className="space-y-0.5">
                   <Label
                     htmlFor={`notif-${channel.id}`}
-                    className="text-sm font-medium cursor-pointer"
+                    className="cursor-pointer text-sm font-medium"
                   >
                     {t(channel.labelKey)}
                   </Label>
-                  <p className="text-xs text-muted-foreground">
-                    {t(channel.descriptionKey)}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{t(channel.descriptionKey)}</p>
                 </div>
               </div>
               <Switch

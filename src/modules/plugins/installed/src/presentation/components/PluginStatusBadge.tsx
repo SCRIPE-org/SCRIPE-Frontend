@@ -11,6 +11,7 @@ interface PluginStatusBadgeProps {
 export function PluginStatusBadge({ installation }: PluginStatusBadgeProps) {
   const { t } = useI18n();
   if (installation.isActive) return <Badge variant="default">{t("plugins.statusActive")}</Badge>;
-  if (installation.isDisabled) return <Badge variant="secondary">{t("plugins.statusDisabled")}</Badge>;
+  if (installation.isDisabled)
+    return <Badge variant="secondary">{t("plugins.statusDisabled")}</Badge>;
   return <Badge variant="outline">{t("plugins.statusUnknown")}</Badge>;
 }

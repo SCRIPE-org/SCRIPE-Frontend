@@ -134,7 +134,8 @@ export function NexusTopbar({
   const workspaceHomeRoute = isPlatformContext
     ? (activeWorkspace?.platformHomeRoute ?? activeWorkspace?.homeRoute ?? "/")
     : (activeWorkspace?.homeRoute ?? "/");
-  const isOnHome = pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
+  const isOnHome =
+    pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
 
   if (!mounted) return <header data-nexus-topbar="" style={{ height: 56, flexShrink: 0 }} />;
 

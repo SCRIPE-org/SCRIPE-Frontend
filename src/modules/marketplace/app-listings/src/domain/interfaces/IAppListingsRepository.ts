@@ -30,7 +30,6 @@ export interface IAppListingsRepository {
     pricingModel?: "Free" | "OneTime" | "Subscription";
   }): Promise<PagedResult<AppListing>>;
 
-
   /** Single listing by encrypted ID */
   getById(id: string): Promise<AppListing>;
 
@@ -55,19 +54,21 @@ export interface IAppListingsRepository {
     screenshotUrls?: string[];
   }): Promise<string>;
 
-
   /** Update an existing listing */
-  update(id: string, data: Partial<{
-    name: string;
-    nameAr: string;
-    description: string;
-    descriptionAr: string;
-    categoryId: string;
-    version: string;
-    iconUrl: string;
-    screenshotUrls: string[];
-    tags: string[];
-  }>): Promise<void>;
+  update(
+    id: string,
+    data: Partial<{
+      name: string;
+      nameAr: string;
+      description: string;
+      descriptionAr: string;
+      categoryId: string;
+      version: string;
+      iconUrl: string;
+      screenshotUrls: string[];
+      tags: string[];
+    }>
+  ): Promise<void>;
 
   /** Delete a listing */
   delete(id: string): Promise<void>;
@@ -82,10 +83,13 @@ export interface IAppListingsRepository {
   toggleFeatured(id: string): Promise<void>;
 
   /** Set or update pricing */
-  setPricing(id: string, data: {
-    pricingModel: "Free" | "OneTime" | "Subscription";
-    price?: number;
-    currency?: string;
-    billingInterval?: "Monthly" | "Annual";
-  }): Promise<void>;
+  setPricing(
+    id: string,
+    data: {
+      pricingModel: "Free" | "OneTime" | "Subscription";
+      price?: number;
+      currency?: string;
+      billingInterval?: "Monthly" | "Annual";
+    }
+  ): Promise<void>;
 }

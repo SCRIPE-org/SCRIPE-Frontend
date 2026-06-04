@@ -59,9 +59,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   // the first workspace's items even when the admin hadn't selected one yet.
   const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
     if (!activeWorkspaceKey) return null;
-    return (
-      sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? null
-    );
+    return sortedGroups.find((ws) => ws.workspaceKey === activeWorkspaceKey) ?? null;
   }, [activeWorkspaceKey, sortedGroups]);
 
   // ── Root menu items for active workspace ──
@@ -111,17 +109,14 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     useNavigationStore.getState().setPreviousWorkspace(null);
   }, [previousWorkspaceKey, adminWorkspaces, setActiveWorkspace]);
 
-  const togglePin = useCallback(
-    async (workspaceKey: string): Promise<boolean> => {
-      const { navigationRepository } = getCoreContainer();
-      // Backend returns both isPinned AND the authoritative pinSortOrder —
-      // never compute sort order on the client (diverges from backend gap-10 scheme).
-      const { isPinned, pinSortOrder } = await navigationRepository.toggleWorkspacePin(workspaceKey);
-      useNavigationStore.getState().toggleWorkspacePinLocal(workspaceKey, isPinned, pinSortOrder);
-      return isPinned;
-    },
-    []
-  );
+  const togglePin = useCallback(async (workspaceKey: string): Promise<boolean> => {
+    const { navigationRepository } = getCoreContainer();
+    // Backend returns both isPinned AND the authoritative pinSortOrder —
+    // never compute sort order on the client (diverges from backend gap-10 scheme).
+    const { isPinned, pinSortOrder } = await navigationRepository.toggleWorkspacePin(workspaceKey);
+    useNavigationStore.getState().toggleWorkspacePinLocal(workspaceKey, isPinned, pinSortOrder);
+    return isPinned;
+  }, []);
 
   const switchToModuleWorkspaceByKey = useCallback(
     (key: string) => {

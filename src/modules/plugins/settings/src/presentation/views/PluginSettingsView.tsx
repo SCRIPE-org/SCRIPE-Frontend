@@ -24,7 +24,7 @@ export function PluginSettingsView({ installationId }: PluginSettingsViewProps) 
 
   if (isError || !installation) {
     return (
-      <div className="flex items-center gap-2 text-destructive p-6">
+      <div className="flex items-center gap-2 p-6 text-destructive">
         <AlertTriangle className="h-5 w-5" />
         <span className="text-sm">{t("plugins.settingsError")}</span>
       </div>
@@ -33,7 +33,7 @@ export function PluginSettingsView({ installationId }: PluginSettingsViewProps) 
 
   if (!installation.frontendUrl) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
         <Settings className="h-10 w-10" />
         <p className="text-sm">{t("plugins.settingsNoUi")}</p>
       </div>

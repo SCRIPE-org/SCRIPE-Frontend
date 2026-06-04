@@ -34,9 +34,7 @@ export class AppListingsService implements IAppListingsService {
       ...(params.sortBy && { sortBy: params.sortBy }),
       ...(params.pricingModel && { pricingModel: params.pricingModel }),
     });
-    return this.api.get<AppListingListDto>(
-      `${MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG}?${query}`
-    );
+    return this.api.get<AppListingListDto>(`${MARKETPLACE_ENDPOINTS.MARKETPLACE.CATALOG}?${query}`);
   }
 
   /** Fetch a single app listing by ID. */

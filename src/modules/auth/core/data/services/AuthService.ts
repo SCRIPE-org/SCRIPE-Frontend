@@ -135,10 +135,10 @@ export class AuthService implements IAuthService {
    * Always resolves (enumeration-safe) — never reveals account existence.
    */
   async requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }> {
-    return this.api.postPublic<{ sent: boolean }>(
-      API_ENDPOINTS.AUTH.MAGIC_LINK.REQUEST,
-      { email: email.trim(), tenantId: tenantId ?? null }
-    );
+    return this.api.postPublic<{ sent: boolean }>(API_ENDPOINTS.AUTH.MAGIC_LINK.REQUEST, {
+      email: email.trim(),
+      tenantId: tenantId ?? null,
+    });
   }
 
   /**

@@ -125,7 +125,7 @@ export function AccountStep({ vm }: AccountStepProps) {
               variant="ghost"
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-0 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+              className="absolute right-3 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -162,19 +162,21 @@ export function AccountStep({ vm }: AccountStepProps) {
         </div>
 
         {/* Terms */}
-        <label className="flex items-start gap-2 pt-1 select-none cursor-pointer">
+        <label className="flex cursor-pointer select-none items-start gap-2 pt-1">
           <div
             role="checkbox"
             aria-checked={vm.wizardData.acceptTerms}
             tabIndex={0}
-            onClick={() => !vm.isLoading && vm.updateField("acceptTerms", !vm.wizardData.acceptTerms)}
+            onClick={() =>
+              !vm.isLoading && vm.updateField("acceptTerms", !vm.wizardData.acceptTerms)
+            }
             onKeyDown={(e) => {
               if (e.key === " " || e.key === "Enter") {
                 e.preventDefault();
                 if (!vm.isLoading) vm.updateField("acceptTerms", !vm.wizardData.acceptTerms);
               }
             }}
-            className="flex h-4 w-4 mt-0.5 shrink-0 items-center justify-center rounded transition-all"
+            className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded transition-all"
             style={{
               background: vm.wizardData.acceptTerms
                 ? "linear-gradient(135deg, #A855F7, #3B82F6)"
@@ -192,16 +194,13 @@ export function AccountStep({ vm }: AccountStepProps) {
               </svg>
             )}
           </div>
-          <span
-            className="text-xs leading-5"
-            style={{ color: "rgba(245,242,255,0.55)" }}
-          >
+          <span className="text-xs leading-5" style={{ color: "rgba(245,242,255,0.55)" }}>
             I agree to the{" "}
             <a
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline font-medium transition-colors"
+              className="font-medium underline transition-colors hover:no-underline"
               style={{ color: "#C4B5FD" }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -212,7 +211,7 @@ export function AccountStep({ vm }: AccountStepProps) {
               href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline font-medium transition-colors"
+              className="font-medium underline transition-colors hover:no-underline"
               style={{ color: "#C4B5FD" }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -242,7 +241,8 @@ export function AccountStep({ vm }: AccountStepProps) {
           disabled={vm.isLoading}
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
-            background: "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
+            background:
+              "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
             boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
           }}
         >
@@ -257,16 +257,13 @@ export function AccountStep({ vm }: AccountStepProps) {
         </Button>
 
         {/* Login link */}
-        <p
-          className="text-center text-xs"
-          style={{ color: "rgba(245,242,255,0.55)" }}
-        >
+        <p className="text-center text-xs" style={{ color: "rgba(245,242,255,0.55)" }}>
           Already have an account?{" "}
           <Button
             variant="link"
             type="button"
             onClick={vm.goToLogin}
-            className="h-auto p-0 font-medium underline hover:no-underline transition-colors"
+            className="h-auto p-0 font-medium underline transition-colors hover:no-underline"
             style={{ color: "#C4B5FD" }}
           >
             Sign in

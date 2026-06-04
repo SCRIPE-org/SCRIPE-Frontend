@@ -14,13 +14,13 @@ import type {
 // Signup Wizard Steps (plan-first flow per tenant-signup.md)
 // ═══════════════════════════════════════════════════════════════════════════
 export type SignupStep =
-  | "plan"          // Step 1: Choose edition/plan
-  | "account"       // Step 2: Name, email, password
-  | "verification"  // Step 3: Email OTP verification
-  | "workspace"     // Step 4: Org name, subdomain, region
-  | "payment"       // Step 5: Payment / trial confirmation
-  | "provisioning"  // Step 6: Creating tenant (progress)
-  | "complete";     // Step 7: Done — redirect
+  | "plan" // Step 1: Choose edition/plan
+  | "account" // Step 2: Name, email, password
+  | "verification" // Step 3: Email OTP verification
+  | "workspace" // Step 4: Org name, subdomain, region
+  | "payment" // Step 5: Payment / trial confirmation
+  | "provisioning" // Step 6: Creating tenant (progress)
+  | "complete"; // Step 7: Done — redirect
 
 const INITIAL_WIZARD_DATA: SignupWizardData = {
   editionId: null,
@@ -110,12 +110,17 @@ export function useSignupWizardViewModel() {
   // Step 1 → 2: Select Plan
   // ════════════════════════════════════════════════════════════════════════
   const selectPlan = useCallback(
-    (edition: { id: string; name: string; trialDays: number | null; checkoutMode: string }, billingCycle: "monthly" | "annual") => {
+    (
+      edition: { id: string; name: string; trialDays: number | null; checkoutMode: string },
+      billingCycle: "monthly" | "annual"
+    ) => {
       // Contact-sales editions cannot proceed through self-service signup
       if (edition.checkoutMode === "contact-sales") {
         // Open mailto or contact page — do NOT advance to account step
         const subject = encodeURIComponent(`Interest in ${edition.name} plan`);
-        const body = encodeURIComponent(`Hi, I'm interested in the ${edition.name} plan. Please reach out to discuss pricing and onboarding.`);
+        const body = encodeURIComponent(
+          `Hi, I'm interested in the ${edition.name} plan. Please reach out to discuss pricing and onboarding.`
+        );
         window.open(`mailto:sales@scripe.io?subject=${subject}&body=${body}`, "_blank");
         return;
       }

@@ -39,8 +39,7 @@ export const optEmailField = () =>
   z.string().email("Please enter a valid email address").optional().or(z.literal(""));
 
 /** URL field */
-export const urlField = () =>
-  z.string().url("Please enter a valid URL (must start with https://)");
+export const urlField = () => z.string().url("Please enter a valid URL (must start with https://)");
 
 /** Optional URL */
 export const optUrlField = () =>
@@ -48,7 +47,11 @@ export const optUrlField = () =>
 
 /** Phone number — basic format */
 export const phoneField = () =>
-  z.string().regex(/^\+?[\d\s\-().]{7,20}$/, "Please enter a valid phone number").optional().or(z.literal(""));
+  z
+    .string()
+    .regex(/^\+?[\d\s\-().]{7,20}$/, "Please enter a valid phone number")
+    .optional()
+    .or(z.literal(""));
 
 /** Strong password — min 8 chars, requires uppercase, lowercase, number */
 export const strongPassword = () =>
@@ -60,7 +63,8 @@ export const strongPassword = () =>
     .regex(/\d/, "Password must contain at least one number");
 
 /** Password confirmation — use with `.superRefine` to check match */
-export const passwordMatch = (passwordField: string, confirmField: string) =>
+export const passwordMatch =
+  (passwordField: string, confirmField: string) =>
   (data: Record<string, string>, ctx: z.RefinementCtx) => {
     if (data[passwordField] && data[confirmField] && data[passwordField] !== data[confirmField]) {
       ctx.addIssue({
@@ -73,19 +77,22 @@ export const passwordMatch = (passwordField: string, confirmField: string) =>
 
 /** Cron expression field */
 export const cronField = () =>
-  z.string().regex(
-    /^(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)$/,
-    "Please enter a valid cron expression (e.g. 0 9 * * 1)"
-  );
+  z
+    .string()
+    .regex(
+      /^(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)\s(\*|[0-9,\-*/]+)$/,
+      "Please enter a valid cron expression (e.g. 0 9 * * 1)"
+    );
 
 /** Positive number */
-export const positiveNumber = () =>
-  z.number().positive("Must be a positive number");
+export const positiveNumber = () => z.number().positive("Must be a positive number");
 
 /** Non-negative integer */
-export const nonNegativeInt = () =>
-  z.number().int().min(0, "Must be 0 or greater");
+export const nonNegativeInt = () => z.number().int().min(0, "Must be 0 or greater");
 
 /** Color hex code */
 export const colorField = () =>
-  z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Must be a valid hex color (e.g. #FF5733)").optional();
+  z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Must be a valid hex color (e.g. #FF5733)")
+    .optional();

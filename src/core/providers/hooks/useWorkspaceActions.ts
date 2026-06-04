@@ -70,9 +70,7 @@ export function useWorkspaceActions() {
         const firstHref = wsData ? firstPageOf(wsData) : null;
 
         if (firstHref) {
-          appLogger.debug(
-            `[WorkspaceActions] Navigating to first menu page: ${firstHref}`
-          );
+          appLogger.debug(`[WorkspaceActions] Navigating to first menu page: ${firstHref}`);
           router.replace(firstHref);
           return;
         }
@@ -80,9 +78,7 @@ export function useWorkspaceActions() {
         // Last-resort fallback via workspace group menu items
         const groupFirstHref = wsGroup ? firstPageOf(wsGroup) : null;
         if (groupFirstHref) {
-          appLogger.debug(
-            `[WorkspaceActions] Navigating to group first page: ${groupFirstHref}`
-          );
+          appLogger.debug(`[WorkspaceActions] Navigating to group first page: ${groupFirstHref}`);
           router.replace(groupFirstHref);
         }
       }

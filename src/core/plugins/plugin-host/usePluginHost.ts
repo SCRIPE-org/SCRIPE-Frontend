@@ -15,15 +15,21 @@ interface ActivePlugin {
 export function usePluginHost() {
   const [activePlugins, setActivePlugins] = useState<Map<string, ActivePlugin>>(new Map());
 
-  const broadcast = useCallback((message: HostToPluginMessage) => {
-    for (const plugin of activePlugins.values()) {
-      plugin.bridge.send(message);
-    }
-  }, [activePlugins]);
+  const broadcast = useCallback(
+    (message: HostToPluginMessage) => {
+      for (const plugin of activePlugins.values()) {
+        plugin.bridge.send(message);
+      }
+    },
+    [activePlugins]
+  );
 
-  const sendTo = useCallback((installationId: string, message: HostToPluginMessage) => {
-    activePlugins.get(installationId)?.bridge.send(message);
-  }, [activePlugins]);
+  const sendTo = useCallback(
+    (installationId: string, message: HostToPluginMessage) => {
+      activePlugins.get(installationId)?.bridge.send(message);
+    },
+    [activePlugins]
+  );
 
   return {
     activePlugins,

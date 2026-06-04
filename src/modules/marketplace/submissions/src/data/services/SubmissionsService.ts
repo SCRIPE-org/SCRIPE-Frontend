@@ -18,7 +18,11 @@ export class SubmissionsService implements ISubmissionsService {
   constructor(private readonly api: IApiService) {}
 
   /** Fetch paginated list of submissions. */
-  async getAll(params: { page: number; pageSize: number; status?: string }): Promise<PaginatedSubmissionsResponse> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+  }): Promise<PaginatedSubmissionsResponse> {
     const q = new URLSearchParams({
       page: String(params.page),
       pageSize: String(params.pageSize),
@@ -51,6 +55,8 @@ export class SubmissionsService implements ISubmissionsService {
 
   /** Request revisions on a submission. */
   async requestRevisions(id: string, feedback: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSION_REQUEST_REVISIONS(id), { feedback });
+    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.SUBMISSION_REQUEST_REVISIONS(id), {
+      feedback,
+    });
   }
 }

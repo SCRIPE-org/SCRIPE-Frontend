@@ -62,7 +62,7 @@ export function QrApprovalView({
       setError(
         err instanceof Error
           ? err.message
-          : (t("auth.qr.approveFailed") || "Failed to approve. Please try again.")
+          : t("auth.qr.approveFailed") || "Failed to approve. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -89,13 +89,23 @@ export function QrApprovalView({
   if (result === "approved") {
     return (
       <div className="sx-screen space-y-5 p-6 text-center" dir={direction}>
-        <div className="sx-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+        <div
+          className="sx-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full"
           style={{
             background: "var(--sx-success-bg, rgba(16,185,129,0.15))",
             border: "1px solid var(--sx-success-border, rgba(16,185,129,0.3))",
           }}
         >
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--sx-success-dot, #10B981)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--sx-success-dot, #10B981)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M20 6L9 17l-5-5" className="sx-check" />
           </svg>
         </div>
@@ -113,13 +123,21 @@ export function QrApprovalView({
   if (result === "rejected") {
     return (
       <div className="sx-screen space-y-5 p-6 text-center" dir={direction}>
-        <div className="sx-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+        <div
+          className="sx-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full"
           style={{
             background: "var(--sx-error-bg, rgba(239,68,68,0.15))",
             border: "1px solid var(--sx-error-border, rgba(239,68,68,0.3))",
           }}
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--destructive))" strokeWidth="2.5">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="hsl(var(--destructive))"
+            strokeWidth="2.5"
+          >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -142,11 +160,19 @@ export function QrApprovalView({
         <div
           className="sx-rise mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
           style={{
-            background: "var(--sx-accent-bg, linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%))",
+            background:
+              "var(--sx-accent-bg, linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%))",
             border: "1px solid var(--sx-accent-border, rgba(168,85,247,0.3))",
           }}
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--sx-accent, hsl(var(--primary)))" strokeWidth="1.5">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--sx-accent, hsl(var(--primary)))"
+            strokeWidth="1.5"
+          >
             <rect x="2" y="3" width="20" height="14" rx="2" />
             <line x1="8" y1="21" x2="16" y2="21" />
             <line x1="12" y1="17" x2="12" y2="21" />
@@ -162,7 +188,7 @@ export function QrApprovalView({
 
       {/* Device info card */}
       <div
-        className="rounded-lg p-4 space-y-2"
+        className="space-y-2 rounded-lg p-4"
         style={{
           background: "var(--sx-chip-bg, rgba(255,255,255,0.04))",
           border: "1px solid var(--sx-chip-border, rgba(255,255,255,0.08))",
@@ -170,7 +196,14 @@ export function QrApprovalView({
       >
         {deviceInfo && (
           <div className="flex items-center gap-3">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sx-text-mute)" strokeWidth="1.5">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--sx-text-mute)"
+              strokeWidth="1.5"
+            >
               <rect x="2" y="3" width="20" height="14" rx="2" />
               <line x1="8" y1="21" x2="16" y2="21" />
               <line x1="12" y1="17" x2="12" y2="21" />
@@ -182,7 +215,14 @@ export function QrApprovalView({
         )}
         {location && (
           <div className="flex items-center gap-3">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sx-text-mute)" strokeWidth="1.5">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--sx-text-mute)"
+              strokeWidth="1.5"
+            >
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
@@ -192,7 +232,14 @@ export function QrApprovalView({
           </div>
         )}
         <div className="flex items-center gap-3">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sx-text-mute)" strokeWidth="1.5">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--sx-text-mute)"
+            strokeWidth="1.5"
+          >
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
           </svg>

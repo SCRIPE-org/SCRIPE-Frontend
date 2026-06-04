@@ -51,11 +51,19 @@ export interface CreatePurchasePayload {
 
 export interface IFinancialsService {
   /** Fetch paginated purchase transactions. */
-  getPurchases(params: { page: number; pageSize: number; tenantId?: string }): Promise<PaginatedFinancialsResponse<PurchaseDto>>;
+  getPurchases(params: {
+    page: number;
+    pageSize: number;
+    tenantId?: string;
+  }): Promise<PaginatedFinancialsResponse<PurchaseDto>>;
   /** Create (initiate) an app purchase. Returns new purchase ID. */
   createPurchase(payload: CreatePurchasePayload): Promise<{ id: string }>;
   /** Fetch paginated developer payouts. */
-  getPayouts(params: { developerProfileId: string; page: number; pageSize: number }): Promise<PaginatedFinancialsResponse<PayoutDto>>;
+  getPayouts(params: {
+    developerProfileId: string;
+    page: number;
+    pageSize: number;
+  }): Promise<PaginatedFinancialsResponse<PayoutDto>>;
   /** Process (disburse) a pending payout. */
   processPayout(id: string, externalReference?: string): Promise<void>;
 }

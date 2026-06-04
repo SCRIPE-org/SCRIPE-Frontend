@@ -25,4 +25,3 @@ export interface IFeatureRepository {
    */
   getGrouped(search?: string): Promise<FeatureModuleGroup[]>;
 }
-

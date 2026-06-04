@@ -74,7 +74,14 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
       <div style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
         <svg width={22} height={22} viewBox="0 0 24 24" fill="none">
           <defs>
-            <linearGradient id="nx-hub-g" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="nx-hub-g"
+              x1="0"
+              y1="0"
+              x2="24"
+              y2="24"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop stopColor="#7C8BFF" />
               <stop offset="1" stopColor="#5A60E0" />
             </linearGradient>
@@ -239,7 +246,14 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
         >
           {initials}
         </div>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", lineHeight: 1.1 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            lineHeight: 1.1,
+          }}
+        >
           <span style={{ fontSize: 12, fontWeight: 600, color: "#e6e9f5" }}>{shortName}</span>
           {tenantName && (
             <span style={{ fontSize: 10.5, color: "rgba(230,233,245,0.5)" }}>

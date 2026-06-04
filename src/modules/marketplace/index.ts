@@ -20,7 +20,6 @@ export { DeveloperBadge } from "./developers/src/presentation/components/Develop
 export { RevenueChart } from "./financials/src/presentation/components/RevenueChart";
 export type { RevenueDataPoint } from "./financials/src/presentation/components/RevenueChart";
 
-
 // ── Domain Entities (shared) ─────────────────────────────────────────────────
 export { AppListing } from "./app-listings/src/domain/entities/AppListing";
 export type { AppListingData } from "./app-listings/src/domain/entities/AppListing";
@@ -33,7 +32,11 @@ export type { DeveloperProfileData } from "./developers/src/domain/entities/Deve
 export { AppReview } from "./reviews/src/domain/entities/AppReview";
 export type { AppReviewData } from "./reviews/src/domain/entities/AppReview";
 export { AppPurchase, DeveloperPayout } from "./financials/src/domain/entities/FinancialEntities";
-export type { AppPurchaseData, DeveloperPayoutData, PayoutStatus } from "./financials/src/domain/entities/FinancialEntities";
+export type {
+  AppPurchaseData,
+  DeveloperPayoutData,
+  PayoutStatus,
+} from "./financials/src/domain/entities/FinancialEntities";
 
 // ── DI Container ─────────────────────────────────────────────────────────────
 export { marketplaceContainer } from "./di";

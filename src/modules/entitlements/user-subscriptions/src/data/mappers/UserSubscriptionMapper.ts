@@ -8,7 +8,12 @@ import type {
   UserSubscriptionListModel,
 } from "../models/UserSubscriptionModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
@@ -105,7 +110,11 @@ export class UserSubscriptionMapper {
   }
 
   static toEntityFromList(model: UserSubscriptionListModel): UserSubscription {
-    const validated = safeParseApiResponse(UserSubscriptionListModelSchema, model, "UserSubscriptionListItem");
+    const validated = safeParseApiResponse(
+      UserSubscriptionListModelSchema,
+      model,
+      "UserSubscriptionListItem"
+    );
     const status = validated.status ?? "Active";
 
     const data: UserSubscriptionData = {

@@ -46,7 +46,14 @@ export function useAuthLogin() {
       return authRepository.login(request);
     },
     onSuccess: async (result, variables) => {
-      const { user, subscriptionStatus, gracePhase, editionName, mustChangePassword, defaultRedirectPath } = result;
+      const {
+        user,
+        subscriptionStatus,
+        gracePhase,
+        editionName,
+        mustChangePassword,
+        defaultRedirectPath,
+      } = result;
 
       // 1. Set user in store with permissions and roles
       setAuth(user, user.permissions || [], []);

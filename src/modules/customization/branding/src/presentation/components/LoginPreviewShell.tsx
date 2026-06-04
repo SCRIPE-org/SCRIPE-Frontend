@@ -1686,7 +1686,8 @@ export function LoginPreviewShell() {
           className="login-page relative flex min-h-screen w-full overflow-hidden"
           dir={direction}
           style={{
-            background: "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
+            background:
+              "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
             color: "var(--sx-text, #f5f2ff)",
             fontFamily: "inherit",
           }}
@@ -1697,16 +1698,20 @@ export function LoginPreviewShell() {
             <div
               className="pointer-events-none absolute inset-0"
               style={{
-                background: "radial-gradient(60% 60% at 30% 50%, rgba(168,85,247,.15) 0%, transparent 70%)",
+                background:
+                  "radial-gradient(60% 60% at 30% 50%, rgba(168,85,247,.15) 0%, transparent 70%)",
               }}
               aria-hidden="true"
             />
             {/* Wordmark */}
-            <div className="flex items-center gap-2.5 relative z-[1]">
+            <div className="relative z-[1] flex items-center gap-2.5">
               <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
                 <img src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
               </div>
-              <span className="text-base font-semibold" style={{ color: "var(--sx-text, #f5f2ff)" }}>
+              <span
+                className="text-base font-semibold"
+                style={{ color: "var(--sx-text, #f5f2ff)" }}
+              >
                 {companyName}
               </span>
             </div>
@@ -1730,14 +1735,20 @@ export function LoginPreviewShell() {
             {/* Secure badge */}
             <div className="relative z-[1] space-y-3">
               <span
-                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] uppercase tracking-wider font-semibold"
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
                 style={{
                   background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
                   border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
                   color: "var(--sx-accent-text, #c4b5fd)",
                 }}
               >
-                <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--sx-accent, #a855f7)", boxShadow: "0 0 6px var(--sx-accent, #a855f7)" }} />
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{
+                    background: "var(--sx-accent, #a855f7)",
+                    boxShadow: "0 0 6px var(--sx-accent, #a855f7)",
+                  }}
+                />
                 Secure sign-in
               </span>
               <h1
@@ -1745,7 +1756,8 @@ export function LoginPreviewShell() {
                 style={{
                   fontSize: "clamp(32px, 3.5vw, 44px)",
                   letterSpacing: "-0.025em",
-                  background: "var(--sx-text-heading, linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%))",
+                  background:
+                    "var(--sx-text-heading, linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%))",
                   WebkitBackgroundClip: "text",
                   backgroundClip: "text",
                   color: "transparent",
@@ -1753,7 +1765,10 @@ export function LoginPreviewShell() {
               >
                 {brandingForPanel?.loginHeadline || companyName}
               </h1>
-              <p className="text-sm" style={{ color: "var(--sx-text-mute, rgba(245,242,255,.62))" }}>
+              <p
+                className="text-sm"
+                style={{ color: "var(--sx-text-mute, rgba(245,242,255,.62))" }}
+              >
                 {brandingForPanel?.loginSubtitle || t("auth.branding.subtitle")}
               </p>
             </div>
@@ -1776,7 +1791,8 @@ export function LoginPreviewShell() {
             <div
               className="w-full max-w-[420px] rounded-[20px] p-8"
               style={{
-                background: "var(--sx-card-bg, linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85)))",
+                background:
+                  "var(--sx-card-bg, linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85)))",
                 border: "1px solid var(--sx-card-border, rgba(168,85,247,.22))",
                 boxShadow: "var(--sx-card-shadow, 0 30px 80px rgba(0,0,0,.6))",
                 backdropFilter: "blur(24px)",

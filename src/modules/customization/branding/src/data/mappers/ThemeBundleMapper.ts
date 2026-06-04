@@ -24,13 +24,16 @@ const VALID_BUNDLE_TYPES: BundleType[] = [
   "full-bundle",
 ];
 
-const ThemeBundleContentsSchema = z.object({
-  loginThemeJson: z.string().optional().nullable(),
-  authPageOverrides: z.string().optional().nullable(),
-  dashboardThemeJson: z.string().optional().nullable(),
-  loginCanvasJson: z.string().optional().nullable(),
-  dashboardCanvasJson: z.string().optional().nullable(),
-}).optional().nullable();
+const ThemeBundleContentsSchema = z
+  .object({
+    loginThemeJson: z.string().optional().nullable(),
+    authPageOverrides: z.string().optional().nullable(),
+    dashboardThemeJson: z.string().optional().nullable(),
+    loginCanvasJson: z.string().optional().nullable(),
+    dashboardCanvasJson: z.string().optional().nullable(),
+  })
+  .optional()
+  .nullable();
 
 const ThemeBundleDtoSchema = z.object({
   id: uuidField(),

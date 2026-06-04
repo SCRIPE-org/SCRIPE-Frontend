@@ -25,7 +25,12 @@ import {
 } from "../models/OAuthAppModel";
 import { resolveFileUrl, unresolveFileUrl } from "@core/common/utils";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
@@ -38,8 +43,14 @@ const OAuthAppModelSchema = z.object({
   clientType: optionalString(),
   redirectUrisJson: z.string().optional().nullable(),
   postLogoutRedirectUrisJson: z.string().optional().nullable(),
-  allowedScopes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
-  allowedGrantTypes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
+  allowedScopes: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .nullable(),
+  allowedGrantTypes: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .nullable(),
   tenantId: z.string().optional().nullable(),
   requireConsent: z.boolean().optional().default(false),
   requirePkce: z.boolean().optional().default(false),
@@ -61,8 +72,14 @@ const OAuthAppListItemModelSchema = z.object({
   protocol: optionalString(),
   clientId: optionalString(),
   clientType: optionalString(),
-  allowedScopes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
-  allowedGrantTypes: z.union([z.string(), z.array(z.string())]).optional().nullable(),
+  allowedScopes: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .nullable(),
+  allowedGrantTypes: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .nullable(),
   isActive: z.boolean().optional().default(true),
   requirePkce: z.boolean().optional().default(false),
   logoUri: z.string().optional().nullable(),

@@ -46,8 +46,15 @@ export interface ComparisonCellData {
 const CATEGORY_ORDER = ["General", "ERP", "Healthcare", "Education", "Finance"];
 
 const FEATURE_CATEGORY_ORDER = [
-  "Users & Access", "Modules", "Quotas", "Billing",
-  "Security", "Performance", "Configuration", "Support", "General",
+  "Users & Access",
+  "Modules",
+  "Quotas",
+  "Billing",
+  "Security",
+  "Performance",
+  "Configuration",
+  "Support",
+  "General",
 ];
 
 /** Convert raw feature names like "Identity.Admins.MaxPerTenant" to "Max Admins Per Tenant" */
@@ -88,38 +95,56 @@ function getFeatureDisplayCategory(name: string): string {
   // Security features
   if (
     name.startsWith("Marketing.SSO") ||
-    name.startsWith("Identity.2FA") || name.startsWith("Identity.Require2FA") ||
+    name.startsWith("Identity.2FA") ||
+    name.startsWith("Identity.Require2FA") ||
     name.startsWith("Identity.SecurityPage") ||
     name.startsWith("Compliance") ||
-    name.includes("AuditLog") || name.includes("Encryption")
-  ) return "Security";
+    name.includes("AuditLog") ||
+    name.includes("Encryption")
+  )
+    return "Security";
 
   // Support & onboarding
   if (
-    name.startsWith("Marketing.Support") || name.startsWith("Marketing.Onboarding") ||
-    name.startsWith("Marketing.Training") || name.startsWith("Marketing.AccountManager") ||
-    name.includes("SupportTickets") || name.includes("SlackChannel")
-  ) return "Support";
+    name.startsWith("Marketing.Support") ||
+    name.startsWith("Marketing.Onboarding") ||
+    name.startsWith("Marketing.Training") ||
+    name.startsWith("Marketing.AccountManager") ||
+    name.includes("SupportTickets") ||
+    name.includes("SlackChannel")
+  )
+    return "Support";
 
   // Performance & reliability
   if (
-    name.startsWith("Marketing.SLA") || name.startsWith("Marketing.Backup") ||
+    name.startsWith("Marketing.SLA") ||
+    name.startsWith("Marketing.Backup") ||
     name.startsWith("Marketing.DataRetention") ||
-    name.includes("CDN") || name.includes("Uptime") || name.includes("Caching")
-  ) return "Performance";
+    name.includes("CDN") ||
+    name.includes("Uptime") ||
+    name.includes("Caching")
+  )
+    return "Performance";
 
   // Billing & payments
   if (
-    name.includes("Billing") || name.includes("Invoice") ||
-    name.includes("Payment") || name.includes("Subscription")
-  ) return "Billing";
+    name.includes("Billing") ||
+    name.includes("Invoice") ||
+    name.includes("Payment") ||
+    name.includes("Subscription")
+  )
+    return "Billing";
 
   // Quotas / limits
   if (
-    name.includes("Storage") || name.includes("ApiCalls") ||
-    name.includes("Bandwidth") || name.includes("FileSize") ||
-    name.includes("Max") || name.includes("Limit")
-  ) return "Quotas";
+    name.includes("Storage") ||
+    name.includes("ApiCalls") ||
+    name.includes("Bandwidth") ||
+    name.includes("FileSize") ||
+    name.includes("Max") ||
+    name.includes("Limit")
+  )
+    return "Quotas";
 
   // Anything else under Marketing namespace
   if (name.startsWith("Marketing.")) return "General";
@@ -163,13 +188,16 @@ function buildComparisonCategories(
   language: string
 ): ComparisonCategory[] {
   // 1. Collect all unique features across editions
-  const featureMap = new Map<string, {
-    name: string;
-    category: string;
-    sortOrder: number;
-    displayCategory: string;
-    values: Record<string, ComparisonCellData>;
-  }>();
+  const featureMap = new Map<
+    string,
+    {
+      name: string;
+      category: string;
+      sortOrder: number;
+      displayCategory: string;
+      values: Record<string, ComparisonCellData>;
+    }
+  >();
 
   for (const edition of editions) {
     for (const feat of edition.allFeatures) {
@@ -235,7 +263,6 @@ export function usePlanPickerViewModel(
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-
   // ── Fetch editions ──
   useEffect(() => {
     let cancelled = false;
@@ -246,23 +273,39 @@ export function usePlanPickerViewModel(
         if (!cancelled) setEditions(result.map(mapEdition));
       } catch {
         if (!cancelled) {
-          setEditions([{
-            id: "", name: "Free", tagline: t("signup.plan.freeTagline") || "Get started for free",
-            tierLevel: 0, category: null, monthlyPrice: 0, annualPrice: 0, currency: "USD",
-            trialDays: null, badge: null, topFeatures: [], allFeatures: [], checkoutMode: "self-service",
-          }]);
+          setEditions([
+            {
+              id: "",
+              name: "Free",
+              tagline: t("signup.plan.freeTagline") || "Get started for free",
+              tierLevel: 0,
+              category: null,
+              monthlyPrice: 0,
+              annualPrice: 0,
+              currency: "USD",
+              trialDays: null,
+              badge: null,
+              topFeatures: [],
+              allFeatures: [],
+              checkoutMode: "self-service",
+            },
+          ]);
         }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [signupRepository, t]);
 
   // ── Category tabs ──
   const categories = useMemo(() => {
     const cats = new Set<string>();
-    for (const e of editions) { if (e.category) cats.add(e.category); }
+    for (const e of editions) {
+      if (e.category) cats.add(e.category);
+    }
     return Array.from(cats).sort((a, b) => sortByPriority(a, b, CATEGORY_ORDER));
   }, [editions]);
 
@@ -275,7 +318,9 @@ export function usePlanPickerViewModel(
   const annualSavingsPercent = useMemo(() => {
     const first = editions.find((e) => e.monthlyPrice > 0);
     if (!first || first.monthlyPrice * 12 <= 0) return 0;
-    return Math.round(((first.monthlyPrice * 12 - first.annualPrice) / (first.monthlyPrice * 12)) * 100);
+    return Math.round(
+      ((first.monthlyPrice * 12 - first.annualPrice) / (first.monthlyPrice * 12)) * 100
+    );
   }, [editions]);
 
   // ── Comparison: per-category edition picker ──
@@ -285,10 +330,10 @@ export function usePlanPickerViewModel(
 
   // Resolve the effective comparison category
   const effectiveComparisonCategory = useMemo(() => {
-    if (activeCategory) return activeCategory;  // User picked a category tab
+    if (activeCategory) return activeCategory; // User picked a category tab
     if (comparisonActiveCategory && categories.includes(comparisonActiveCategory))
       return comparisonActiveCategory;
-    return categories[0] ?? null;  // Default to first category
+    return categories[0] ?? null; // Default to first category
   }, [activeCategory, comparisonActiveCategory, categories]);
 
   // Editions visible in the comparison table (single category only)
@@ -307,17 +352,28 @@ export function usePlanPickerViewModel(
 
   // ── Actions ──
   const selectPlan = useCallback(
-    (edition: PlanEdition) => { onSelectPlan(edition, billingCycle); },
+    (edition: PlanEdition) => {
+      onSelectPlan(edition, billingCycle);
+    },
     [billingCycle, onSelectPlan]
   );
 
-
-
   return {
-    editions, isLoading, error, billingCycle, annualSavingsPercent, direction,
-    activeCategory, categories, filteredEditions, setActiveCategory,
-    comparisonCategories, comparisonEditions, comparisonActiveCategory:
-      effectiveComparisonCategory,
-    setComparisonActiveCategory, setBillingCycle, selectPlan,
+    editions,
+    isLoading,
+    error,
+    billingCycle,
+    annualSavingsPercent,
+    direction,
+    activeCategory,
+    categories,
+    filteredEditions,
+    setActiveCategory,
+    comparisonCategories,
+    comparisonEditions,
+    comparisonActiveCategory: effectiveComparisonCategory,
+    setComparisonActiveCategory,
+    setBillingCycle,
+    selectPlan,
   };
 }

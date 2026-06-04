@@ -6,15 +6,18 @@
  * @module permissions/data
  */
 
-import { Permission, type PermissionProps, type PermissionCategoryGroup, type PermissionModuleGroup } from "../../domain/entities/Permission";
+import {
+  Permission,
+  type PermissionProps,
+  type PermissionCategoryGroup,
+  type PermissionModuleGroup,
+} from "../../domain/entities/Permission";
 import {
   PermissionModel,
   CreatePermissionModel,
   UpdatePermissionModel,
 } from "../models/PermissionModel";
-import type {
-  PermissionModuleGroupJson,
-} from "../models/PermissionModel";
+import type { PermissionModuleGroupJson } from "../models/PermissionModel";
 import type {
   CreatePermissionRequest,
   UpdatePermissionRequest,

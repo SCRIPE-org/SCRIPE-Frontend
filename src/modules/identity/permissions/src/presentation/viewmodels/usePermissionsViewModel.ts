@@ -87,7 +87,6 @@ export function usePermissionsViewModel() {
     ? (groupedQuery.data ?? [])
     : []; // Tenant mode: flat list still used in the view
 
-
   // Create permission mutation
   const createMutation = useMutation({
     mutationFn: (request: CreatePermissionRequest) => permissionRepository.create(request),

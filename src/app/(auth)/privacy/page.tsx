@@ -29,7 +29,7 @@ export default function PrivacyPage() {
         }}
       />
       <div
-        className="pointer-events-none fixed right-1/4 bottom-1/4 translate-x-1/2 translate-y-1/2"
+        className="pointer-events-none fixed bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2"
         style={{
           width: 400,
           height: 400,
@@ -41,8 +41,8 @@ export default function PrivacyPage() {
 
       {/* Logo */}
       <div className="mb-6 flex flex-col items-center">
-        <img src="/app-logo.png" alt={BRAND.name} className="h-10 w-auto mb-2" />
-        <span className="text-xs uppercase tracking-[0.2em] text-purple-300/60 font-semibold">
+        <img src="/app-logo.png" alt={BRAND.name} className="mb-2 h-10 w-auto" />
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300/60">
           Legal Agreement
         </span>
       </div>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
           boxShadow: "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)",
         }}
       >
-        <div className="p-6 sm:p-10 max-h-[70vh] overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-purple-900/50 scrollbar-track-transparent">
+        <div className="scrollbar-thin scrollbar-thumb-purple-900/50 scrollbar-track-transparent max-h-[70vh] space-y-6 overflow-y-auto p-6 sm:p-10">
           <div className="border-b border-white/10 pb-4">
             <h1
               className="text-3xl font-extrabold"
@@ -68,58 +68,77 @@ export default function PrivacyPage() {
             >
               Privacy Policy
             </h1>
-            <p className="text-xs mt-2" style={{ color: "rgba(245,242,255,0.4)" }}>
+            <p className="mt-2 text-xs" style={{ color: "rgba(245,242,255,0.4)" }}>
               Last updated: June 4, 2026
             </p>
           </div>
 
-          <div className="space-y-4 text-sm leading-relaxed" style={{ color: "rgba(245,242,255,0.75)" }}>
+          <div
+            className="space-y-4 text-sm leading-relaxed"
+            style={{ color: "rgba(245,242,255,0.75)" }}
+          >
             <p>
-              At <strong>{BRAND.name}</strong>, we take your privacy and data isolation seriously. This Privacy Policy describes how we collect, protect, and use data when you interact with our modular monolith business platform.
+              At <strong>{BRAND.name}</strong>, we take your privacy and data isolation seriously.
+              This Privacy Policy describes how we collect, protect, and use data when you interact
+              with our modular monolith business platform.
             </p>
 
-            <h2 className="text-lg font-bold text-white/90 pt-2">1. Data We Collect</h2>
+            <h2 className="pt-2 text-lg font-bold text-white/90">1. Data We Collect</h2>
             <p>
-              We collect information you provide directly, including name, email, payment processing details (encrypted and processed by certified third parties), and workspace settings. We also log diagnostic metadata (such as IP addresses and device details) for security purposes.
+              We collect information you provide directly, including name, email, payment processing
+              details (encrypted and processed by certified third parties), and workspace settings.
+              We also log diagnostic metadata (such as IP addresses and device details) for security
+              purposes.
             </p>
 
-            <h2 className="text-lg font-bold text-white/90 pt-2">2. Data Security & Isolation</h2>
+            <h2 className="pt-2 text-lg font-bold text-white/90">2. Data Security & Isolation</h2>
             <p>
-              We enforce strict tenant separation rules. Your workspace data is completely isolated using our Clean Architecture multi-tenancy rules (Single or Multi-database modes). All IDs are fully AES-encrypted in transit. We implement double-submit CSRF cookies and request nonces to prevent replay attacks.
+              We enforce strict tenant separation rules. Your workspace data is completely isolated
+              using our Clean Architecture multi-tenancy rules (Single or Multi-database modes). All
+              IDs are fully AES-encrypted in transit. We implement double-submit CSRF cookies and
+              request nonces to prevent replay attacks.
             </p>
 
-            <h2 className="text-lg font-bold text-white/90 pt-2">3. How We Use Information</h2>
+            <h2 className="pt-2 text-lg font-bold text-white/90">3. How We Use Information</h2>
             <p>
-              We use the collected information to provision your workspace, verify your account, process billing, optimize platform performance, and send transaction/system notifications. We do not sell your personal data to advertisers.
+              We use the collected information to provision your workspace, verify your account,
+              process billing, optimize platform performance, and send transaction/system
+              notifications. We do not sell your personal data to advertisers.
             </p>
 
-            <h2 className="text-lg font-bold text-white/90 pt-2">4. Sharing and Disclosure</h2>
+            <h2 className="pt-2 text-lg font-bold text-white/90">4. Sharing and Disclosure</h2>
             <p>
-              We only share your information with trusted third-party services that are required to operate the platform (e.g. payment processors, email deliverability networks). All partners comply with strictly regulated privacy covenants.
+              We only share your information with trusted third-party services that are required to
+              operate the platform (e.g. payment processors, email deliverability networks). All
+              partners comply with strictly regulated privacy covenants.
             </p>
 
-            <h2 className="text-lg font-bold text-white/90 pt-2">5. Cookies and Session State</h2>
+            <h2 className="pt-2 text-lg font-bold text-white/90">5. Cookies and Session State</h2>
             <p>
-              We use secure, httpOnly session cookies to manage authenticated sessions. You can configure your browser to reject cookies, but doing so may limit your ability to access secure dashboard and studio sections.
+              We use secure, httpOnly session cookies to manage authenticated sessions. You can
+              configure your browser to reject cookies, but doing so may limit your ability to
+              access secure dashboard and studio sections.
             </p>
 
-            <h2 className="text-lg font-bold text-white/90 pt-2">6. Your Rights</h2>
+            <h2 className="pt-2 text-lg font-bold text-white/90">6. Your Rights</h2>
             <p>
-              You have the right to request access to the personal data we hold about you, request corrections, or request deletion of your account. Note that backup and transactional logs may retain traces under compliance constraints.
+              You have the right to request access to the personal data we hold about you, request
+              corrections, or request deletion of your account. Note that backup and transactional
+              logs may retain traces under compliance constraints.
             </p>
           </div>
         </div>
 
         {/* Action bar */}
         <div
-          className="flex justify-end gap-3 px-6 py-4 bg-black/20 border-t border-white/5"
+          className="flex justify-end gap-3 border-t border-white/5 bg-black/20 px-6 py-4"
           style={{
             backdropFilter: "blur(10px)",
           }}
         >
           <Link
             href="/signup"
-            className="inline-flex items-center justify-center rounded-xl text-xs font-semibold px-4 py-2 text-white/80 hover:text-white transition-all bg-white/5 hover:bg-white/10 border border-white/10"
+            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 transition-all hover:bg-white/10 hover:text-white"
           >
             Back to Signup
           </Link>
@@ -127,7 +146,10 @@ export default function PrivacyPage() {
       </div>
 
       {/* Footer */}
-      <p className="mt-8 text-center text-[11px] font-medium" style={{ color: "rgba(245,242,255,0.35)" }}>
+      <p
+        className="mt-8 text-center text-[11px] font-medium"
+        style={{ color: "rgba(245,242,255,0.35)" }}
+      >
         © {new Date().getFullYear()} {BRAND.name} — All rights reserved
       </p>
     </div>

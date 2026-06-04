@@ -21,8 +21,8 @@ export function CategoriesView() {
         <div>
           <h2 className="text-xl font-semibold">{t("marketplace.categoriesTitle")}</h2>
           <p className="text-sm text-muted-foreground">
-            {vm.stats.total} {t("marketplace.categoriesCount")} &middot;{" "}
-            {vm.stats.active} {t("marketplace.categoriesActiveCount")}
+            {vm.stats.total} {t("marketplace.categoriesCount")} &middot; {vm.stats.active}{" "}
+            {t("marketplace.categoriesActiveCount")}
           </p>
         </div>
         <Button id="categories-new" size="sm" onClick={vm.openCreateForm}>
@@ -33,29 +33,31 @@ export function CategoriesView() {
 
       {/* Grid */}
       {vm.isLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-24 rounded-xl bg-muted animate-pulse" />
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : vm.categories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-          <Tag className="h-10 w-10 mb-3 text-muted-foreground/40" />
+          <Tag className="mb-3 h-10 w-10 text-muted-foreground/40" />
           <p className="text-lg font-medium">{t("marketplace.categoriesEmpty")}</p>
-          <p className="text-sm mt-1">{t("marketplace.categoriesEmptyHint") || "Create your first category to get started."}</p>
+          <p className="mt-1 text-sm">
+            {t("marketplace.categoriesEmptyHint") || "Create your first category to get started."}
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {vm.categories.map((cat) => {
-            const displayName = language === "ar" ? (cat.nameAr || cat.name) : cat.name;
+            const displayName = language === "ar" ? cat.nameAr || cat.name : cat.name;
             return (
-              <Card key={cat.id} className="flex flex-col gap-0 hover:shadow-sm transition-shadow">
+              <Card key={cat.id} className="flex flex-col gap-0 transition-shadow hover:shadow-sm">
                 <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                  <div className="p-2 rounded-lg bg-muted">
+                  <div className="rounded-lg bg-muted p-2">
                     <Tag className="size-4 text-muted-foreground" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{displayName}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{displayName}</p>
                     <p className="text-xs text-muted-foreground">
                       {cat.appCount} {t("marketplace.categoriesAppsCount")}
                     </p>
@@ -69,7 +71,7 @@ export function CategoriesView() {
                       : t("marketplace.categoryInactive")}
                   </Badge>
                 </CardHeader>
-                <CardContent className="pt-0 flex justify-end gap-1">
+                <CardContent className="flex justify-end gap-1 pt-0">
                   <Button
                     size="sm"
                     variant="ghost"
@@ -97,7 +99,9 @@ export function CategoriesView() {
       {/* Form Dialog */}
       <CategoryFormDialog
         open={vm.isFormOpen}
-        onOpenChange={(open) => { if (!open) vm.closeForm(); }}
+        onOpenChange={(open) => {
+          if (!open) vm.closeForm();
+        }}
         onSubmit={vm.handleFormSubmit}
         isSubmitting={vm.isSubmitting}
         editingCategory={vm.editingCategory}

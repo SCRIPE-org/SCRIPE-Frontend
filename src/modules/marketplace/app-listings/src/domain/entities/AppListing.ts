@@ -1,4 +1,3 @@
-
 /**
  * AppListing Domain Entity
  *
@@ -36,30 +35,78 @@ export interface AppListingData {
 export class AppListing {
   constructor(private readonly data: AppListingData) {}
 
-  get id() { return this.data.id; }
-  get developerProfileId() { return this.data.developerProfileId; }
-  get developerName() { return this.data.developerName; }
-  get name() { return this.data.name; }
-  get nameAr() { return this.data.nameAr; }
-  get description() { return this.data.description; }
-  get descriptionAr() { return this.data.descriptionAr; }
-  get categoryId() { return this.data.categoryId; }
-  get categoryName() { return this.data.categoryName; }
-  get iconUrl() { return this.data.iconUrl; }
-  get screenshotUrls() { return this.data.screenshotUrls; }
-  get version() { return this.data.version; }
-  get pricingModel() { return this.data.pricingModel; }
-  get price() { return this.data.price; }
-  get currency() { return this.data.currency; }
-  get billingInterval() { return this.data.billingInterval; }
-  get isPublished() { return this.data.isPublished; }
-  get isFeatured() { return this.data.isFeatured; }
-  get averageRating() { return this.data.averageRating; }
-  get reviewCount() { return this.data.reviewCount; }
-  get tags() { return this.data.tags; }
-  get publishedAt() { return this.data.publishedAt; }
-  get createdAt() { return this.data.createdAt; }
-  get updatedAt() { return this.data.updatedAt; }
+  get id() {
+    return this.data.id;
+  }
+  get developerProfileId() {
+    return this.data.developerProfileId;
+  }
+  get developerName() {
+    return this.data.developerName;
+  }
+  get name() {
+    return this.data.name;
+  }
+  get nameAr() {
+    return this.data.nameAr;
+  }
+  get description() {
+    return this.data.description;
+  }
+  get descriptionAr() {
+    return this.data.descriptionAr;
+  }
+  get categoryId() {
+    return this.data.categoryId;
+  }
+  get categoryName() {
+    return this.data.categoryName;
+  }
+  get iconUrl() {
+    return this.data.iconUrl;
+  }
+  get screenshotUrls() {
+    return this.data.screenshotUrls;
+  }
+  get version() {
+    return this.data.version;
+  }
+  get pricingModel() {
+    return this.data.pricingModel;
+  }
+  get price() {
+    return this.data.price;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+  get billingInterval() {
+    return this.data.billingInterval;
+  }
+  get isPublished() {
+    return this.data.isPublished;
+  }
+  get isFeatured() {
+    return this.data.isFeatured;
+  }
+  get averageRating() {
+    return this.data.averageRating;
+  }
+  get reviewCount() {
+    return this.data.reviewCount;
+  }
+  get tags() {
+    return this.data.tags;
+  }
+  get publishedAt() {
+    return this.data.publishedAt;
+  }
+  get createdAt() {
+    return this.data.createdAt;
+  }
+  get updatedAt() {
+    return this.data.updatedAt;
+  }
 
   /** Display label for pricing (e.g. "Free", "$9.99/mo") */
   get pricingLabel(): string {

@@ -4,84 +4,6 @@
  */
 export const zh = {
   commercial: {
-    restApiOverview: {
-      tblCtrlR14C1: "EditionsController",
-      tblCtrlR14C2: "11",
-      tblCtrlR14C3: "版本 CRUD、功能、版本控制、发布",
-      tblCtrlR15C1: "FeaturesController",
-      tblCtrlR15C2: "5",
-      tblCtrlR15C3: "功能 CRUD、值类型、系统功能",
-      tblCtrlR16C1: "SubscriptionsController",
-      tblCtrlR16C2: "12",
-      tblCtrlR16C3: "分配、升级、降级、生命周期、影响分析",
-      tblCtrlR17C1: "TenantFeaturesController",
-      tblCtrlR17C2: "4",
-      tblCtrlR17C3: "基于租户的覆盖、已解析功能",
-      authContent:
-        "每一个控制器在默认情况下都是被锁定的。SCRIPE 采用强健的 JWT 令牌验证，在返回哪怕一个字节的 JSON 数据之前，都需要精确的细粒度权限和经过验证的租户声明 (claims)。",
-      authTitle: "严格的加密授权",
-      controllersTitle: "严谨的控制器拓扑",
-      description:
-        "一个完美无瑕、有完整文档支持的 RESTful API 表面，支持动态过滤、基于游标的分页，以及丰富的 HATEOAS 响应。",
-      intro:
-        "后端不仅仅是数据库的包装器；它是一个精心设计的 HTTP 交互面。SCRIPE 暴露了一个纯净的 RESTful API，严格遵守标准的 HTTP 谓词、状态码和超媒体约定。",
-      paginationTitle: "游标 (Cursor) 与偏移量 (Offset) 分页",
-      responseContent:
-        "无需再解析随机错误字符串了。每一个 API 响应——无论是成功还是灾难性失败——都被封装在我们标准化的 `Result<T>` Problem Details 结构中，确保前端和第三方消费者拥有绝对的可预测性。",
-      responseTitle: "标准化且可预测的有效载荷",
-      swaggerContent:
-        "我们在运行时直接从 C# 源代码生成全面、带有深度注释的 Swagger (OpenAPI 3.0) 文档。在系统启动的瞬间，开发人员就可以在浏览器中交互式地测试经过身份验证的负载请求。",
-      swaggerTitle: "交互式 OpenAPI 门户",
-      title: "RESTful API 表面",
-      tblCtrlHeader1: "控制器",
-      tblCtrlHeader2: "端点数",
-      tblCtrlHeader3: "描述",
-      tblCtrlR1C1: "AuthController",
-      tblCtrlR1C2: "8",
-      tblCtrlR1C3: "登录、注册、2FA、密码重置、会话管理",
-      tblCtrlR2C1: "UserController",
-      tblCtrlR2C2: "27",
-      tblCtrlR2C3: "CRUD、批量操作、企业级管理",
-      tblCtrlR3C1: "RoleController",
-      tblCtrlR3C2: "12",
-      tblCtrlR3C3: "角色管理、权限分配",
-      tblCtrlR4C1: "TenantController",
-      tblCtrlR4C2: "10",
-      tblCtrlR4C3: "租户生命周期、配置、激活",
-      tblCtrlR5C1: "AuditController",
-      tblCtrlR5C2: "6",
-      tblCtrlR5C3: "审计日志查询、导出、数据流传输",
-      tblCtrlR6C1: "NotificationController",
-      tblCtrlR6C2: "5",
-      tblCtrlR6C3: "推送通知、标记已读、偏好设置",
-      tblCtrlR7C1: "FileController",
-      tblCtrlR7C2: "4",
-      tblCtrlR7C3: "文件上传、下载、删除、元数据获取",
-      tblCtrlR8C1: "TemplateController",
-      tblCtrlR8C2: "5",
-      tblCtrlR8C3: "邮件/消息模板的 CRUD 操作及预览",
-      tblCtrlR9C1: "MenuController",
-      tblCtrlR9C2: "6",
-      tblCtrlR9C3: "动态菜单管理及覆盖设置",
-      tblCtrlR10C1: "SettingsController",
-      tblCtrlR10C2: "4",
-      tblCtrlR10C3: "系统全局设置与租户专用设置",
-      tblCtrlR11C1: "DashboardController",
-      tblCtrlR11C2: "3",
-      tblCtrlR11C3: "KPI 数据、图表数据及数据汇总",
-      tblCtrlR12C1: "WebhookController",
-      tblCtrlR12C2: "5",
-      tblCtrlR12C3: "订阅管理与事件目录",
-      tblCtrlR13C1: "RecycleBinController",
-      tblCtrlR13C2: "4",
-      tblCtrlR13C3: "软删除项的管理、恢复与彻底清除 (Purge)",
-      lstSwagI1: "自动从控制器特性 (Attributes) 和 XML 文档生成",
-      lstSwagI2: "“Try-it-out” 模式，用于直接测试端点",
-      lstSwagI3: "在 Swagger UI 中支持 JWT 身份验证",
-      lstSwagI4: "带有示例的请求/响应模式文档",
-      lstSwagI5: "按控制器分组，方便快速导航",
-      lstSwagI6: "在开发模式下通过 /swagger 访问",
-    },
     apiDesign: {
       conventionsTitle: "企业级约定",
       description: "探索驱动 SCRIPE 的严格 RESTful API 设计原则、强制版本控制和可预测的命名约定。",
@@ -99,22 +21,6 @@ export const zh = {
         "探索实时 Swagger/OpenAPI 3.0 文档，即刻与 400 个以上的预配置端点进行交互。我们生成严格的 OpenAPI 规范，从而为前端和移动平台实现无缝的 SDK 生成。",
       swaggerTitle: "交互式 Swagger UI",
       title: "API 设计与架构",
-    },
-    webhookIntegration: {
-      description:
-        "一个具有超高弹性的、异步的、事件驱动的 Webhook 调度程序，可实现与庞大外部 API 的安全、即时的数据同步。",
-      eventsTitle: "全局广播的受支持事件",
-      intro:
-        "现代企业系统必须能够相互通信。SCRIPE 包含一个原生、极其高效的传出 Webhook 调度程序，而不是强迫客户端积极地轮询 (polling) 您的 REST API。通过 HTTPS 将关键领域事件安全、即时地推送到任何外部系统。",
-      logsTitle: "法证级调度审计",
-      managementTitle: "动态订阅管理",
-      retryContent:
-        "如果订阅者的服务器离线，SCRIPE 不会丢弃有效载荷。它利用智能的、带指数退避的持久性发件箱 (outbox) 模式，在数学层面自动重试请求（例如，5 秒，1 分钟，1 小时，1 天），直到通过 HTTP 2xx 状态确认收到为止。",
-      retryTitle: "持久的指数退避",
-      securityContent:
-        "每个发出的有效载荷都使用从租户密钥生成的 HMAC-SHA256 签名进行安全签名。第三方集成平台可以确切验证 Webhook 确实源自您的 SCRIPE 服务器，并且有效载荷在全局范围内未被拦截或更改。",
-      securityTitle: "HMAC 加密签名",
-      title: "高容量 Webhook 调度",
     },
     emailIntegration: {
       bilingual: "双语模板路由",
@@ -163,68 +69,162 @@ export const zh = {
       previewVariablesDesc: "只有明确允许的 ViewModels 才能被模板访问，保证了数据安全。",
       title: "动态消息模板",
     },
+    restApiOverview: {
+      authContent:
+        "每一个控制器在默认情况下都是被锁定的。SCRIPE 采用强健的 JWT 令牌验证，在返回哪怕一个字节的 JSON 数据之前，都需要精确的细粒度权限和经过验证的租户声明 (claims)。",
+      authTitle: "严格的加密授权",
+      controllersTitle: "严谨的控制器拓扑",
+      description:
+        "一个完美无瑕、有完整文档支持的 RESTful API 表面，支持动态过滤、基于游标的分页，以及丰富的 HATEOAS 响应。",
+      intro:
+        "后端不仅仅是数据库的包装器；它是一个精心设计的 HTTP 交互面。SCRIPE 暴露了一个纯净的 RESTful API，严格遵守标准的 HTTP 谓词、状态码和超媒体约定。",
+      lstSwagI1: "自动从控制器特性 (Attributes) 和 XML 文档生成",
+      lstSwagI2: "“Try-it-out” 模式，用于直接测试端点",
+      lstSwagI3: "在 Swagger UI 中支持 JWT 身份验证",
+      lstSwagI4: "带有示例的请求/响应模式文档",
+      lstSwagI5: "按控制器分组，方便快速导航",
+      lstSwagI6: "在开发模式下通过 /swagger 访问",
+      paginationTitle: "游标 (Cursor) 与偏移量 (Offset) 分页",
+      responseContent:
+        "无需再解析随机错误字符串了。每一个 API 响应——无论是成功还是灾难性失败——都被封装在我们标准化的 `Result<T>` Problem Details 结构中，确保前端和第三方消费者拥有绝对的可预测性。",
+      responseTitle: "标准化且可预测的有效载荷",
+      swaggerContent:
+        "我们在运行时直接从 C# 源代码生成全面、带有深度注释的 Swagger (OpenAPI 3.0) 文档。在系统启动的瞬间，开发人员就可以在浏览器中交互式地测试经过身份验证的负载请求。",
+      swaggerTitle: "交互式 OpenAPI 门户",
+      tblCtrlHeader1: "控制器",
+      tblCtrlHeader2: "端点数",
+      tblCtrlHeader3: "描述",
+      tblCtrlR10C1: "SettingsController",
+      tblCtrlR10C2: "4",
+      tblCtrlR10C3: "系统全局设置与租户专用设置",
+      tblCtrlR11C1: "DashboardController",
+      tblCtrlR11C2: "3",
+      tblCtrlR11C3: "KPI 数据、图表数据及数据汇总",
+      tblCtrlR12C1: "WebhookController",
+      tblCtrlR12C2: "5",
+      tblCtrlR12C3: "订阅管理与事件目录",
+      tblCtrlR13C1: "RecycleBinController",
+      tblCtrlR13C2: "4",
+      tblCtrlR13C3: "软删除项的管理、恢复与彻底清除 (Purge)",
+      tblCtrlR14C1: "EditionsController",
+      tblCtrlR14C2: "11",
+      tblCtrlR14C3: "版本 CRUD、功能、版本控制、发布",
+      tblCtrlR15C1: "FeaturesController",
+      tblCtrlR15C2: "5",
+      tblCtrlR15C3: "功能 CRUD、值类型、系统功能",
+      tblCtrlR16C1: "SubscriptionsController",
+      tblCtrlR16C2: "12",
+      tblCtrlR16C3: "分配、升级、降级、生命周期、影响分析",
+      tblCtrlR17C1: "TenantFeaturesController",
+      tblCtrlR17C2: "4",
+      tblCtrlR17C3: "基于租户的覆盖、已解析功能",
+      tblCtrlR1C1: "AuthController",
+      tblCtrlR1C2: "8",
+      tblCtrlR1C3: "登录、注册、2FA、密码重置、会话管理",
+      tblCtrlR2C1: "UserController",
+      tblCtrlR2C2: "27",
+      tblCtrlR2C3: "CRUD、批量操作、企业级管理",
+      tblCtrlR3C1: "RoleController",
+      tblCtrlR3C2: "12",
+      tblCtrlR3C3: "角色管理、权限分配",
+      tblCtrlR4C1: "TenantController",
+      tblCtrlR4C2: "10",
+      tblCtrlR4C3: "租户生命周期、配置、激活",
+      tblCtrlR5C1: "AuditController",
+      tblCtrlR5C2: "6",
+      tblCtrlR5C3: "审计日志查询、导出、数据流传输",
+      tblCtrlR6C1: "NotificationController",
+      tblCtrlR6C2: "5",
+      tblCtrlR6C3: "推送通知、标记已读、偏好设置",
+      tblCtrlR7C1: "FileController",
+      tblCtrlR7C2: "4",
+      tblCtrlR7C3: "文件上传、下载、删除、元数据获取",
+      tblCtrlR8C1: "TemplateController",
+      tblCtrlR8C2: "5",
+      tblCtrlR8C3: "邮件/消息模板的 CRUD 操作及预览",
+      tblCtrlR9C1: "MenuController",
+      tblCtrlR9C2: "6",
+      tblCtrlR9C3: "动态菜单管理及覆盖设置",
+      title: "RESTful API 表面",
+    },
     ssoEnterprise: {
-      title: "企业单点登录 (Enterprise SSO)",
+      brandingContent:
+        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
+      brandingTitle: "Architected for Corporate Branding",
+      comparisonTitle: "How SCRIPE Compares",
       description:
         "集中账户访问权限。将企业目录原生对接至 SCRIPE 的多租户认证体系，实现零门槛接驳。",
       intro:
         "企业级安全需要集中化的信任。SCRIPE 的 SSO 服务让您的租户可以放心地将身份验证工作交由他们原有的身份提供商 (IdP) 完成，与此同时依然维系绝对的租户隔离和完备的权限控制。",
-      oidcTitle: "全生态 OIDC 兼容",
-      oidcContent:
-        "即插即用 Azure Active Directory (Entra ID)、Okta、Auth0、Google Workspace 乃至任何兼容 OpenID Connect 的平台。复杂的密码学交换我们包办，留给用户的仅仅是“一键登录”。",
-      oauthAppsTitle: "第三方 OAuth 应用网关",
-      oauthAppsContent:
-        "释放生态潜能。允许企业合作伙伴通过注册无限量的 OAuth 应用 (Web/Desktop/SPA) 接入您的平台，程序化授予接口权限并精准掌控令牌注销机制。",
-      tenantIsolationTitle: "专有租户身份引擎",
-      tenantIsolationContent:
-        "每一个 SSO 的配置都被严格锁定在其拥有者的租户内部。在同一个平台上，A 公司可以通过它专属的 Entra ID 登录，而 B 公司则走它的 Okta——彼此数据永远不可见、不可跨越。",
-      pkceSecurityTitle: "PKCE 防御机制",
-      pkceSecurityContent:
-        "坚决摒弃脆弱过时的协议流。不管是网页应用还是原生移动端，SCRIPE 强制每笔 OAuth 交互必须携带 PKCE (Proof Key for Code Exchange) 防护，100% 免疫授权码拦截攻击。",
-      linkingTitle: "无痕身份同步",
       linkingContent:
         "告别繁琐的邮件邀请函。一旦员工通过企业 SSO 完成初次验证，系统会在后台悄无声息地进行邮箱印证，并将其与既有的 SCRIPE 管理权与本地 RBAC（基于角色的权限控制）合二为一。",
-      valueTitle: "Strategic IAM Value",
-      val1Title: "Zero-Trust Identity Protocol",
-      val1Desc:
-        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
-      val2Title: "Zero-Code Federation (IdP)",
-      val2Desc:
-        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
-      val3Title: "SCRIPE as the Identity Server",
-      val3Desc:
-        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
-      val4Title: "Absolute Tenant IAM Isolation",
-      val4Desc:
-        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
-      val5Title: "White-Labeled Login Experience",
-      val5Desc:
-        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
-      val6Title: "Future-Proof Standardization",
-      val6Desc:
-        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
-      protocolsTitle: "Supported Authentication Protocols",
-      protocolsContent:
-        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
-      comparisonTitle: "How SCRIPE Compares",
-      multiIdpTitle: "Infinite Multi-IdP Per Tenant",
+      linkingTitle: "无痕身份同步",
       multiIdpContent:
         "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. SCRIPE natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
-      brandingTitle: "Architected for Corporate Branding",
-      brandingContent:
-        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
-      securityModelTitle: "PKCE Security Architecture",
-      securityModelContent:
-        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
-      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
-      oauthContent:
-        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
-      oauth1Title: "Confidential Clients (Backend)",
+      multiIdpTitle: "Infinite Multi-IdP Per Tenant",
       oauth1Desc:
         "Server-side applications with secure backend storage for client secrets. Perfect for B2B API integrations enforcing the full Authorization Code flow with PKCE.",
-      oauth2Title: "Public Clients (SPA & Mobile)",
+      oauth1Title: "Confidential Clients (Backend)",
       oauth2Desc:
         "React, Vue, iOS, and Android applications that cannot securely store static secrets. Strictly leverages the PKCE-only flow, ensuring access tokens are generated flawlessly without risking a compromised client secret.",
+      oauth2Title: "Public Clients (SPA & Mobile)",
+      oauthAppsContent:
+        "释放生态潜能。允许企业合作伙伴通过注册无限量的 OAuth 应用 (Web/Desktop/SPA) 接入您的平台，程序化授予接口权限并精准掌控令牌注销机制。",
+      oauthAppsTitle: "第三方 OAuth 应用网关",
+      oauthContent:
+        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
+      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
+      oidcContent:
+        "即插即用 Azure Active Directory (Entra ID)、Okta、Auth0、Google Workspace 乃至任何兼容 OpenID Connect 的平台。复杂的密码学交换我们包办，留给用户的仅仅是“一键登录”。",
+      oidcTitle: "全生态 OIDC 兼容",
+      pkceSecurityContent:
+        "坚决摒弃脆弱过时的协议流。不管是网页应用还是原生移动端，SCRIPE 强制每笔 OAuth 交互必须携带 PKCE (Proof Key for Code Exchange) 防护，100% 免疫授权码拦截攻击。",
+      pkceSecurityTitle: "PKCE 防御机制",
+      protocolsContent:
+        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
+      protocolsTitle: "Supported Authentication Protocols",
+      securityModelContent:
+        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
+      securityModelTitle: "PKCE Security Architecture",
+      tenantIsolationContent:
+        "每一个 SSO 的配置都被严格锁定在其拥有者的租户内部。在同一个平台上，A 公司可以通过它专属的 Entra ID 登录，而 B 公司则走它的 Okta——彼此数据永远不可见、不可跨越。",
+      tenantIsolationTitle: "专有租户身份引擎",
+      title: "企业单点登录 (Enterprise SSO)",
+      val1Desc:
+        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
+      val1Title: "Zero-Trust Identity Protocol",
+      val2Desc:
+        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
+      val2Title: "Zero-Code Federation (IdP)",
+      val3Desc:
+        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
+      val3Title: "SCRIPE as the Identity Server",
+      val4Desc:
+        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
+      val4Title: "Absolute Tenant IAM Isolation",
+      val5Desc:
+        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
+      val5Title: "White-Labeled Login Experience",
+      val6Desc:
+        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
+      val6Title: "Future-Proof Standardization",
+      valueTitle: "Strategic IAM Value",
+    },
+    webhookIntegration: {
+      description:
+        "一个具有超高弹性的、异步的、事件驱动的 Webhook 调度程序，可实现与庞大外部 API 的安全、即时的数据同步。",
+      eventsTitle: "全局广播的受支持事件",
+      intro:
+        "现代企业系统必须能够相互通信。SCRIPE 包含一个原生、极其高效的传出 Webhook 调度程序，而不是强迫客户端积极地轮询 (polling) 您的 REST API。通过 HTTPS 将关键领域事件安全、即时地推送到任何外部系统。",
+      logsTitle: "法证级调度审计",
+      managementTitle: "动态订阅管理",
+      retryContent:
+        "如果订阅者的服务器离线，SCRIPE 不会丢弃有效载荷。它利用智能的、带指数退避的持久性发件箱 (outbox) 模式，在数学层面自动重试请求（例如，5 秒，1 分钟，1 小时，1 天），直到通过 HTTP 2xx 状态确认收到为止。",
+      retryTitle: "持久的指数退避",
+      securityContent:
+        "每个发出的有效载荷都使用从租户密钥生成的 HMAC-SHA256 签名进行安全签名。第三方集成平台可以确切验证 Webhook 确实源自您的 SCRIPE 服务器，并且有效载荷在全局范围内未被拦截或更改。",
+      securityTitle: "HMAC 加密签名",
+      title: "高容量 Webhook 调度",
     },
   },
 };

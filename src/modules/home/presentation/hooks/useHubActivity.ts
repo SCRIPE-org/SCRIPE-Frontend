@@ -37,16 +37,25 @@ export interface HubActivitySummary {
 /** Map event types to display-friendly icon names. */
 function getEventIcon(eventType: string): string {
   switch (eventType) {
-    case "Create": return "Plus";
-    case "Update": return "Pencil";
-    case "Delete": return "Trash2";
-    case "Login": return "LogIn";
-    case "Logout": return "LogOut";
+    case "Create":
+      return "Plus";
+    case "Update":
+      return "Pencil";
+    case "Delete":
+      return "Trash2";
+    case "Login":
+      return "LogIn";
+    case "Logout":
+      return "LogOut";
     case "PasswordChange":
-    case "PasswordChanged": return "KeyRound";
-    case "RoleAssigned": return "UserCog";
-    case "PermissionGranted": return "Shield";
-    default: return "Activity";
+    case "PasswordChanged":
+      return "KeyRound";
+    case "RoleAssigned":
+      return "UserCog";
+    case "PermissionGranted":
+      return "Shield";
+    default:
+      return "Activity";
   }
 }
 
@@ -54,16 +63,31 @@ function getEventIcon(eventType: string): string {
 function getEventGradient(eventType: string): { grad: string; glow: string } {
   switch (eventType) {
     case "Create":
-      return { grad: "linear-gradient(135deg, #4DE2D0, #1AB7B0 55%, #0E6F7E)", glow: "26, 183, 176" };
+      return {
+        grad: "linear-gradient(135deg, #4DE2D0, #1AB7B0 55%, #0E6F7E)",
+        glow: "26, 183, 176",
+      };
     case "Update":
-      return { grad: "linear-gradient(135deg, #5E91FF, #3461E8 55%, #1E3CAE)", glow: "52, 97, 232" };
+      return {
+        grad: "linear-gradient(135deg, #5E91FF, #3461E8 55%, #1E3CAE)",
+        glow: "52, 97, 232",
+      };
     case "Delete":
-      return { grad: "linear-gradient(135deg, #FF7A6B, #F04E5A 55%, #B43048)", glow: "240, 78, 90" };
+      return {
+        grad: "linear-gradient(135deg, #FF7A6B, #F04E5A 55%, #B43048)",
+        glow: "240, 78, 90",
+      };
     case "Login":
     case "Logout":
-      return { grad: "linear-gradient(135deg, #FFC25E, #F18A1A 55%, #B95F0C)", glow: "241, 138, 26" };
+      return {
+        grad: "linear-gradient(135deg, #FFC25E, #F18A1A 55%, #B95F0C)",
+        glow: "241, 138, 26",
+      };
     default:
-      return { grad: "linear-gradient(135deg, #9DA9FF, #7C8BFF 55%, #5A60E0)", glow: "124, 139, 255" };
+      return {
+        grad: "linear-gradient(135deg, #9DA9FF, #7C8BFF 55%, #5A60E0)",
+        glow: "124, 139, 255",
+      };
   }
 }
 
@@ -85,12 +109,18 @@ function getRelativeTime(isoTimestamp: string): string {
 function getEventLabel(item: HubRecentItem): string {
   const entity = item.entityType || "Item";
   switch (item.eventType) {
-    case "Create": return `Created ${entity}`;
-    case "Update": return `Updated ${entity}`;
-    case "Delete": return `Deleted ${entity}`;
-    case "Login": return "Logged in";
-    case "Logout": return "Logged out";
-    default: return `${item.eventType} ${entity}`;
+    case "Create":
+      return `Created ${entity}`;
+    case "Update":
+      return `Updated ${entity}`;
+    case "Delete":
+      return `Deleted ${entity}`;
+    case "Login":
+      return "Logged in";
+    case "Logout":
+      return "Logged out";
+    default:
+      return `${item.eventType} ${entity}`;
   }
 }
 

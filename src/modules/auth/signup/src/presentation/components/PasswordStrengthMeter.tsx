@@ -10,16 +10,16 @@ interface PasswordStrengthMeterProps {
 
 const STRENGTH_COLORS = [
   "rgba(255,255,255,0.08)", // 0: empty
-  "#EF4444",                // 1: very weak (red)
-  "#F97316",                // 2: weak (orange)
-  "#EAB308",                // 3: fair (yellow)
-  "#22C55E",                // 4: strong (green)
-  "#10B981",                // 5: very strong (emerald)
+  "#EF4444", // 1: very weak (red)
+  "#F97316", // 2: weak (orange)
+  "#EAB308", // 3: fair (yellow)
+  "#22C55E", // 4: strong (green)
+  "#10B981", // 5: very strong (emerald)
 ];
 
 /**
  * PasswordStrengthMeter — Visual strength indicator
- * 
+ *
  * Per security-policy.md:
  * - Min 12 chars (hard floor 8)
  * - Length-first policy (no forced composition)
@@ -63,10 +63,7 @@ export function PasswordStrengthMeter({ password, strength }: PasswordStrengthMe
       </div>
 
       {/* Label */}
-      <p
-        className="text-[11px] font-medium transition-colors duration-200"
-        style={{ color }}
-      >
+      <p className="text-[11px] font-medium transition-colors duration-200" style={{ color }}>
         {strengthLabel}
       </p>
     </div>

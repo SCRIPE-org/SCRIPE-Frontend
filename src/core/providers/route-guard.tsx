@@ -59,7 +59,7 @@ const PUBLIC_PAGES = [
   "/change-password",
   "/signup",
   "/terms",
-  "/privacy"
+  "/privacy",
 ];
 
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
@@ -70,7 +70,7 @@ const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
  * admin regardless of their menu permissions.
  */
 const SYSTEM_PAGES = [
-  "/hub",            // Workspace picker — for tenant-only module admins
+  "/hub", // Workspace picker — for tenant-only module admins
   "/change-password",
   "/profile",
   "/profile/security",

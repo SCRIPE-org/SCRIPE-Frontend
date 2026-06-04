@@ -14,7 +14,8 @@ export function useSubmissionsViewModel() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "submissions"] });
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["marketplace", "submissions"] });
 
   const submissionsQuery = useQuery({
     queryKey: ["marketplace", "submissions", page, statusFilter],
@@ -33,7 +34,8 @@ export function useSubmissionsViewModel() {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: ({ id, notes }: { id: string; notes: string }) => submissionsRepository.reject(id, notes),
+    mutationFn: ({ id, notes }: { id: string; notes: string }) =>
+      submissionsRepository.reject(id, notes),
     onSuccess: () => {
       invalidate();
       success({ title: t("marketplace.submissions.rejected") || "Submission rejected" });
@@ -44,7 +46,8 @@ export function useSubmissionsViewModel() {
   });
 
   const revisionsMutation = useMutation({
-    mutationFn: ({ id, notes }: { id: string; notes: string }) => submissionsRepository.requestRevisions(id, notes),
+    mutationFn: ({ id, notes }: { id: string; notes: string }) =>
+      submissionsRepository.requestRevisions(id, notes),
     onSuccess: () => {
       invalidate();
       success({ title: t("marketplace.submissions.revisionsRequested") || "Revisions requested" });
@@ -57,7 +60,12 @@ export function useSubmissionsViewModel() {
   const data = submissionsQuery.data;
   return {
     submissions: data?.items ?? [],
-    pagination: { page, pageSize: 20, totalCount: data?.totalCount ?? 0, totalPages: data?.totalPages ?? 1 },
+    pagination: {
+      page,
+      pageSize: 20,
+      totalCount: data?.totalCount ?? 0,
+      totalPages: data?.totalPages ?? 1,
+    },
     isLoading: submissionsQuery.isLoading,
     error: submissionsQuery.error,
     setPage,

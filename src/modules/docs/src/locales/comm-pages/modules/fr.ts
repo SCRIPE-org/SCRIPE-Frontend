@@ -1,15 +1,12 @@
 /**
  * Docs page locale — FR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const fr = {
   commercial: {
     moduleCatalog: {
-      tblCoreR7C1: "Droits",
-      tblCoreR7C2:
-        "Contrôle d'accès aux fonctionnalités basé sur les éditions et gestion des plans",
-      tblCoreR7C3:
-        "Fonctionnalités, éditions, abonnements, surcharges, application des quotas, déploiements versionnés, portée revendeur",
+      analyticsContent:
+        "Le moteur d'analytique des revenus transforme les données brutes d'abonnement en intelligence décisionnelle actionnable. Avec 7 onglets spécialisés, des captures nocturnes automatisées et des prévisions prédictives, les opérateurs obtiennent une visibilité de niveau CFO sans outils BI externes. Le scoring de santé des locataires identifie proactivement les risques d'attrition avant qu'ils ne se matérialisent.",
+      analyticsTitle: "Intelligence des Revenus",
       businessContent:
         "SCRIPE n'est pas une coquille vide ; c'est un écosystème d'entreprise fonctionnel dès le premier jour. Utilisez nos modules métier existants — tels que la gestion des utilisateurs, les journaux d'audit et les notifications — comme points de départ immédiats, ou clonez-les pour construire rapidement des fonctionnalités propriétaires.",
       businessTitle: "Logique Métier Accélérée",
@@ -43,7 +40,31 @@ export const fr = {
       projectModule: "Module de Projets & Workflows",
       projectModuleDesc:
         "Gérez des machines à états complexes et des flux de travail d'approbation organisationnelle à plusieurs étapes.",
-      title: "Catalogue de Modules d'Entreprise",
+      tblAnalyticsHeader1: "Module",
+      tblAnalyticsHeader2: "Description",
+      tblAnalyticsHeader3: "Capacités Clés",
+      tblAnalyticsR1C1: "Analytique des Revenus",
+      tblAnalyticsR1C2: "Tableau de bord d'intelligence des revenus de niveau BI",
+      tblAnalyticsR1C3:
+        "Suivi MRR/ARR, analyse de cohortes, modélisation LTV, prévision des revenus, scoring de santé, rapports PDF",
+      tblCommHeader1: "Module",
+      tblCommHeader2: "Description",
+      tblCommHeader3: "Capacités Clés",
+      tblCommR1C1: "Notifications",
+      tblCommR1C2: "Notifications push en temps réel",
+      tblCommR1C3:
+        "SignalR WebSockets, adhésion automatique par locataire, marquer lu/non lu, UI de cloche",
+      tblCommR2C1: "Système d'E-mail",
+      tblCommR2C2: "Pipeline d'e-mails transactionnels",
+      tblCommR2C3:
+        "Envoi basé sur file d'attente, modèles Scriban, réessai avec délai, SMTP/SendGrid",
+      tblCommR3C1: "Webhooks",
+      tblCommR3C2: "Intégrations pilotées par les événements",
+      tblCommR3C3:
+        "Signé HMAC-SHA256, réessai exponentiel, gestion des abonnements, catalogue d'événements",
+      tblCommR4C1: "Modèles de Messages",
+      tblCommR4C2: "Rendu de messages bilingues",
+      tblCommR4C3: "Syntaxe Scriban, aperçu des variables, 6 modèles intégrés, entité bilingue",
       tblCoreHeader1: "Module",
       tblCoreHeader2: "Description",
       tblCoreHeader3: "Capacités Clés",
@@ -69,24 +90,11 @@ export const fr = {
       tblCoreR6C2: "Attribution par lots de rôles et de restrictions",
       tblCoreR6C3:
         "RBAC basé sur les groupes, restrictions de champs, gestion des membres, groupes limités au locataire",
-      tblCommHeader1: "Module",
-      tblCommHeader2: "Description",
-      tblCommHeader3: "Capacités Clés",
-      tblCommR1C1: "Notifications",
-      tblCommR1C2: "Notifications push en temps réel",
-      tblCommR1C3:
-        "SignalR WebSockets, adhésion automatique par locataire, marquer lu/non lu, UI de cloche",
-      tblCommR2C1: "Système d'E-mail",
-      tblCommR2C2: "Pipeline d'e-mails transactionnels",
-      tblCommR2C3:
-        "Envoi basé sur file d'attente, modèles Scriban, réessai avec délai, SMTP/SendGrid",
-      tblCommR3C1: "Webhooks",
-      tblCommR3C2: "Intégrations pilotées par les événements",
-      tblCommR3C3:
-        "Signé HMAC-SHA256, réessai exponentiel, gestion des abonnements, catalogue d'événements",
-      tblCommR4C1: "Modèles de Messages",
-      tblCommR4C2: "Rendu de messages bilingues",
-      tblCommR4C3: "Syntaxe Scriban, aperçu des variables, 6 modèles intégrés, entité bilingue",
+      tblCoreR7C1: "Droits",
+      tblCoreR7C2:
+        "Contrôle d'accès aux fonctionnalités basé sur les éditions et gestion des plans",
+      tblCoreR7C3:
+        "Fonctionnalités, éditions, abonnements, surcharges, application des quotas, déploiements versionnés, portée revendeur",
       tblDataHeader1: "Module",
       tblDataHeader2: "Description",
       tblDataHeader3: "Capacités Clés",
@@ -106,16 +114,7 @@ export const fr = {
       tblDataR4C2: "Opérations administratives sur les utilisateurs",
       tblDataR4C3:
         "27 points de terminaison, opérations en masse (bulk), opérations d'entreprise, règles d'admin protégées",
-      tblAnalyticsHeader1: "Module",
-      tblAnalyticsHeader2: "Description",
-      tblAnalyticsHeader3: "Capacités Clés",
-      tblAnalyticsR1C1: "Analytique des Revenus",
-      tblAnalyticsR1C2: "Tableau de bord d'intelligence des revenus de niveau BI",
-      tblAnalyticsR1C3:
-        "Suivi MRR/ARR, analyse de cohortes, modélisation LTV, prévision des revenus, scoring de santé, rapports PDF",
-      analyticsTitle: "Intelligence des Revenus",
-      analyticsContent:
-        "Le moteur d'analytique des revenus transforme les données brutes d'abonnement en intelligence décisionnelle actionnable. Avec 7 onglets spécialisés, des captures nocturnes automatisées et des prévisions prédictives, les opérateurs obtiennent une visibilité de niveau CFO sans outils BI externes. Le scoring de santé des locataires identifie proactivement les risques d'attrition avant qu'ils ne se matérialisent.",
+      title: "Catalogue de Modules d'Entreprise",
     },
   },
 };

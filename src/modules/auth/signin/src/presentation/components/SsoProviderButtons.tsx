@@ -22,9 +22,9 @@ interface SsoProviderButtonsProps {
 
 /** Protocol → fallback emoji icon */
 const PROTOCOL_ICONS: Record<string, string> = {
-  oidc:   "🔐",
+  oidc: "🔐",
   oauth2: "🔑",
-  saml:   "🛡️",
+  saml: "🛡️",
 };
 
 export function SsoProviderButtons({
@@ -77,7 +77,7 @@ export function SsoProviderButtons({
 
       {/* ── Loading skeletons ───────────────────────────── */}
       {isLoading && (
-        <div className="flex gap-2 mt-3">
+        <div className="mt-3 flex gap-2">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
@@ -90,13 +90,12 @@ export function SsoProviderButtons({
 
       {/* ── Provider buttons — horizontal equal-width row ─ */}
       {!isLoading && providers.length > 0 && (
-        <div className="flex gap-2 mt-3">
+        <div className="mt-3 flex gap-2">
           {providers.map((provider) => {
-            const label =
-              provider.buttonLabel || provider.name;
+            const label = provider.buttonLabel || provider.name;
             const fallbackIcon = provider.iconUrl
               ? null
-              : PROTOCOL_ICONS[provider.protocol] ?? "🔐";
+              : (PROTOCOL_ICONS[provider.protocol] ?? "🔐");
 
             return (
               <Button
@@ -119,7 +118,9 @@ export function SsoProviderButtons({
                     src={resolveFileUrl(provider.iconUrl)}
                     alt=""
                     className="h-[18px] w-[18px] object-contain"
-                    onError={(e) => { e.currentTarget.style.display = "none"; }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
                   />
                 ) : (
                   <span className="text-lg leading-none" aria-hidden="true">

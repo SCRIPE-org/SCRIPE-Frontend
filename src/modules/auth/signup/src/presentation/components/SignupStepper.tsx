@@ -9,7 +9,7 @@ interface SignupStepperProps {
 
 /**
  * SignupStepper — Progress indicator for the signup wizard
- * 
+ *
  * Per motion.md: active step fills with brand gradient.
  * Per responsive.md: labels collapse to numbers on xs.
  * Per design.md: brand violet gradient, token colors only.
@@ -37,15 +37,12 @@ export function SignupStepper({ currentStep, steps }: SignupStepperProps) {
               <div
                 className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300"
                 style={{
-                  background: isCompleted || isActive
-                    ? "linear-gradient(180deg, #A855F7 0%, #7C3AED 100%)"
-                    : "rgba(255,255,255,0.06)",
-                  color: isCompleted || isActive
-                    ? "#fff"
-                    : "rgba(245,242,255,0.4)",
-                  boxShadow: isActive
-                    ? "0 0 12px rgba(168,85,247,0.4)"
-                    : "none",
+                  background:
+                    isCompleted || isActive
+                      ? "linear-gradient(180deg, #A855F7 0%, #7C3AED 100%)"
+                      : "rgba(255,255,255,0.06)",
+                  color: isCompleted || isActive ? "#fff" : "rgba(245,242,255,0.4)",
+                  boxShadow: isActive ? "0 0 12px rgba(168,85,247,0.4)" : "none",
                 }}
                 aria-current={isActive ? "step" : undefined}
               >
@@ -81,11 +78,9 @@ export function SignupStepper({ currentStep, steps }: SignupStepperProps) {
             {/* Connector line */}
             {i < steps.length - 1 && (
               <div
-                className="h-px w-5 sm:w-8 transition-all duration-300"
+                className="h-px w-5 transition-all duration-300 sm:w-8"
                 style={{
-                  background: isCompleted
-                    ? "rgba(168,85,247,0.5)"
-                    : "rgba(255,255,255,0.08)",
+                  background: isCompleted ? "rgba(168,85,247,0.5)" : "rgba(255,255,255,0.08)",
                 }}
               />
             )}

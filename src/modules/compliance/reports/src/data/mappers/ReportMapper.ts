@@ -6,7 +6,12 @@ import { ComplianceReport } from "../../domain/entities/ComplianceReport";
 import type { ComplianceReportData } from "../../domain/entities/ComplianceReport";
 import type { ReportModel } from "../models/ReportModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

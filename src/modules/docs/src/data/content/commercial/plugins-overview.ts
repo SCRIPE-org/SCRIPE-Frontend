@@ -92,15 +92,12 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.pluginsOverview.audienceIntro" },
   {
     type: "table",
-    headers: [
-      "commercial.pluginsOverview.audRole",
-      "commercial.pluginsOverview.audBenefit",
-    ],
+    headers: ["commercial.pluginsOverview.audRole", "commercial.pluginsOverview.audBenefit"],
     rows: [
-      ["commercial.pluginsOverview.audPlatform",     "commercial.pluginsOverview.audPlatformBenefit"],
-      ["commercial.pluginsOverview.audTenant",       "commercial.pluginsOverview.audTenantBenefit"],
-      ["commercial.pluginsOverview.audPartner",      "commercial.pluginsOverview.audPartnerBenefit"],
-      ["commercial.pluginsOverview.audDeveloper",    "commercial.pluginsOverview.audDeveloperBenefit"],
+      ["commercial.pluginsOverview.audPlatform", "commercial.pluginsOverview.audPlatformBenefit"],
+      ["commercial.pluginsOverview.audTenant", "commercial.pluginsOverview.audTenantBenefit"],
+      ["commercial.pluginsOverview.audPartner", "commercial.pluginsOverview.audPartnerBenefit"],
+      ["commercial.pluginsOverview.audDeveloper", "commercial.pluginsOverview.audDeveloperBenefit"],
     ],
   },
 

@@ -28,9 +28,7 @@ export function safeParseApiResponse<T>(
   const result = schema.safeParse(data);
 
   if (!result.success) {
-    const issues = result.error.issues.map(
-      (i) => `  [${i.path.join(".")}] ${i.message}`
-    );
+    const issues = result.error.issues.map((i) => `  [${i.path.join(".")}] ${i.message}`);
     appLogger.warn(
       `[Zod] API response validation failed for "${entityName}":\n${issues.join("\n")}`,
       { entityName, issues: result.error.issues }
@@ -64,19 +62,20 @@ export const isoDateString = () =>
 
 /** Optional ISO date string */
 export const optionalIsoDate = () =>
-  z.string().regex(/^\d{4}-\d{2}-\d{2}/, "Expected ISO date string").optional().nullable();
+  z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}/, "Expected ISO date string")
+    .optional()
+    .nullable();
 
 /** UUID v4 format */
-export const uuidField = () =>
-  z.string().uuid("Expected valid UUID");
+export const uuidField = () => z.string().uuid("Expected valid UUID");
 
 /** Optional UUID */
-export const optionalUuid = () =>
-  z.string().uuid("Expected valid UUID").optional().nullable();
+export const optionalUuid = () => z.string().uuid("Expected valid UUID").optional().nullable();
 
 /** URL field */
-export const urlField = () =>
-  z.string().url("Expected valid URL").optional().nullable();
+export const urlField = () => z.string().url("Expected valid URL").optional().nullable();
 
 /** Paginated list wrapper */
 export const pagedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>

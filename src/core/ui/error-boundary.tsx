@@ -159,11 +159,7 @@ export function withErrorBoundary<P extends object>(
 export function QueryAwareErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <QueryErrorResetBoundary>
-      {({ reset }) => (
-        <ErrorBoundary onReset={reset}>
-          {children}
-        </ErrorBoundary>
-      )}
+      {({ reset }) => <ErrorBoundary onReset={reset}>{children}</ErrorBoundary>}
     </QueryErrorResetBoundary>
   );
 }

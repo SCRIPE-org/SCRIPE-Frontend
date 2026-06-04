@@ -1,7 +1,12 @@
 import { TenantGateway } from "../../domain/entities/TenantGateway";
 import type { TenantGatewayModel } from "../models/TenantGatewayModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

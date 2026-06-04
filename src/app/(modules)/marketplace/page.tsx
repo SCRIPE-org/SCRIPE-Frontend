@@ -8,7 +8,8 @@ const AppListingsView = dynamic(() =>
 
 export const metadata: Metadata = {
   title: "App Listings | Marketplace | SCRIPE",
-  description: "Browse and manage all marketplace app listings — publish, feature, and set pricing.",
+  description:
+    "Browse and manage all marketplace app listings — publish, feature, and set pricing.",
 };
 
 export default function MarketplacePage() {

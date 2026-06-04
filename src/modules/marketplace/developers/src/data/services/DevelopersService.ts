@@ -19,7 +19,11 @@ export class DevelopersService implements IDevelopersService {
   constructor(private readonly api: IApiService) {}
 
   /** Fetch paginated list of developer profiles. */
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<PaginatedDevelopersResponse> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PaginatedDevelopersResponse> {
     const q = new URLSearchParams({
       page: String(params.page),
       pageSize: String(params.pageSize),
@@ -37,7 +41,9 @@ export class DevelopersService implements IDevelopersService {
 
   /** Fetch a developer profile by tenant ID. */
   async getByTenant(tenantId: string): Promise<DeveloperDto> {
-    return this.api.get<DeveloperDto>(MARKETPLACE_ENDPOINTS.MARKETPLACE.DEVELOPER_BY_TENANT(tenantId));
+    return this.api.get<DeveloperDto>(
+      MARKETPLACE_ENDPOINTS.MARKETPLACE.DEVELOPER_BY_TENANT(tenantId)
+    );
   }
 
   /** Create a new developer profile. */

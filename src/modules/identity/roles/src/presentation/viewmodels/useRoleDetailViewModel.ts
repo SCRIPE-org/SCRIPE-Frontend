@@ -17,7 +17,11 @@ import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/identity/di";
-import type { Permission, PermissionModuleGroup, PermissionCategoryGroup } from "@modules/identity/permissions";
+import type {
+  Permission,
+  PermissionModuleGroup,
+  PermissionCategoryGroup,
+} from "@modules/identity/permissions";
 import type { Role } from "../../domain/entities/Role";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
@@ -91,7 +95,9 @@ export function useRoleDetailViewModel() {
 
   // ── Backend-driven grouped permissions (Module → Category → Permissions) ──
   // ZERO client-side grouping: backend sends the tree, frontend renders it.
-  const { data: moduleGroups = [], isLoading: permissionsLoading } = useQuery<PermissionModuleGroup[]>({
+  const { data: moduleGroups = [], isLoading: permissionsLoading } = useQuery<
+    PermissionModuleGroup[]
+  >({
     queryKey: ["myTenantAvailablePermissionsGrouped", searchQuery],
     queryFn: () => roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined),
   });
@@ -205,7 +211,9 @@ export function useRoleDetailViewModel() {
           next.delete(permissionCode);
         } else {
           // Find permission ID from module groups
-          const allPerms = moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.permissions));
+          const allPerms = moduleGroups.flatMap((mg) =>
+            mg.categories.flatMap((cat) => cat.permissions)
+          );
           const permission = allPerms.find((p) => p.code === permissionCode);
           next.set(permissionCode, {
             permissionId: permission?.id || "",

@@ -1,4 +1,8 @@
-import type { IDefinitionsRepository, CreateDefinitionRequest, UpdateDefinitionRequest } from "../../domain/interfaces/IDefinitionsRepository";
+import type {
+  IDefinitionsRepository,
+  CreateDefinitionRequest,
+  UpdateDefinitionRequest,
+} from "../../domain/interfaces/IDefinitionsRepository";
 import type { IDefinitionsService } from "../../domain/interfaces/IDefinitionsService";
 import { DefinitionsMapper } from "../mappers/DefinitionsMapper";
 import type { PluginDefinition } from "@modules/plugins/catalog";

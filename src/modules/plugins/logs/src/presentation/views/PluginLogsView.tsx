@@ -29,11 +29,11 @@ export function PluginLogsView({ installationId }: PluginLogsViewProps) {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-4">
+      <div className="flex flex-col items-center justify-center gap-4 py-16">
         <AlertTriangle className="h-8 w-8 text-destructive" />
         <p className="text-sm text-muted-foreground">{t("plugins.logsError")}</p>
         <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 me-2" />
+          <RefreshCw className="me-2 h-4 w-4" />
           {t("plugins.retry")}
         </Button>
       </div>
@@ -42,7 +42,7 @@ export function PluginLogsView({ installationId }: PluginLogsViewProps) {
 
   if (logs.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
         <Activity className="h-10 w-10" />
         <p className="text-sm">{t("plugins.logsEmpty")}</p>
       </div>
@@ -51,7 +51,7 @@ export function PluginLogsView({ installationId }: PluginLogsViewProps) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/30">
+      <div className="flex items-center justify-between border-b bg-muted/30 px-4 py-2">
         <span className="text-xs text-muted-foreground">
           {t("plugins.logsTotalExecutions", { count: String(totalCount) })}
         </span>

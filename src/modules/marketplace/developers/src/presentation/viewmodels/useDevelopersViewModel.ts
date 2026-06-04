@@ -14,7 +14,8 @@ export function useDevelopersViewModel() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "developers"] });
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["marketplace", "developers"] });
 
   const developersQuery = useQuery({
     queryKey: ["marketplace", "developers", page, search],
@@ -35,7 +36,12 @@ export function useDevelopersViewModel() {
   const data = developersQuery.data;
   return {
     developers: data?.items ?? [],
-    pagination: { page, pageSize: 20, totalCount: data?.totalCount ?? 0, totalPages: data?.totalPages ?? 1 },
+    pagination: {
+      page,
+      pageSize: 20,
+      totalCount: data?.totalCount ?? 0,
+      totalPages: data?.totalPages ?? 1,
+    },
     isLoading: developersQuery.isLoading,
     error: developersQuery.error,
     setPage,

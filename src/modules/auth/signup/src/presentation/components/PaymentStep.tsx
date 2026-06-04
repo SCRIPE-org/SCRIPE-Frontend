@@ -81,12 +81,8 @@ export function PaymentStep({
           >
             {t("signup.payment.freeTitle") || "You're all set!"}
           </h2>
-          <p
-            className="mt-2 text-sm"
-            style={{ color: "rgba(245,242,255,0.55)" }}
-          >
-            {t("signup.payment.freeSubtitle") ||
-              "No payment required for the Free plan."}
+          <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.55)" }}>
+            {t("signup.payment.freeSubtitle") || "No payment required for the Free plan."}
           </p>
         </div>
 
@@ -97,10 +93,7 @@ export function PaymentStep({
             border: "1px solid rgba(34,211,238,0.15)",
           }}
         >
-          <p
-            className="text-sm font-medium"
-            style={{ color: "#22D3EE" }}
-          >
+          <p className="text-sm font-medium" style={{ color: "#22D3EE" }}>
             {t("signup.payment.cardNotRequired") || "No credit card required"}
           </p>
         </div>
@@ -111,14 +104,13 @@ export function PaymentStep({
           disabled={vm.isLoading}
           className="w-full rounded-lg py-3 text-sm font-semibold"
           style={{
-            background:
-              "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
+            background: "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
             color: "#fff",
           }}
         >
           {vm.isLoading
-            ? (t("signup.payment.processing") || "Processing…")
-            : (t("signup.payment.continueFree") || "Continue →")}
+            ? t("signup.payment.processing") || "Processing…"
+            : t("signup.payment.continueFree") || "Continue →"}
         </Button>
 
         <Button
@@ -144,14 +136,11 @@ export function PaymentStep({
           style={{ color: "rgba(245,242,255,0.95)" }}
         >
           {trialDays
-            ? (t("signup.payment.trialTitle", { days: trialDays }) ||
-                `Start your ${trialDays}-day trial`)
-            : (t("signup.payment.paidTitle") || "Complete your purchase")}
+            ? t("signup.payment.trialTitle", { days: trialDays }) ||
+              `Start your ${trialDays}-day trial`
+            : t("signup.payment.paidTitle") || "Complete your purchase"}
         </h2>
-        <p
-          className="mt-1 text-sm"
-          style={{ color: "rgba(245,242,255,0.55)" }}
-        >
+        <p className="mt-1 text-sm" style={{ color: "rgba(245,242,255,0.55)" }}>
           {editionName} {t("signup.payment.plan") || "plan"}
         </p>
       </div>
@@ -165,16 +154,10 @@ export function PaymentStep({
             border: "1px solid rgba(34,211,238,0.15)",
           }}
         >
-          <p
-            className="text-sm font-medium"
-            style={{ color: "#22D3EE" }}
-          >
+          <p className="text-sm font-medium" style={{ color: "#22D3EE" }}>
             {t("signup.payment.cardNotRequired") || "No credit card required"}
           </p>
-          <p
-            className="mt-1 text-xs"
-            style={{ color: "rgba(245,242,255,0.45)" }}
-          >
+          <p className="mt-1 text-xs" style={{ color: "rgba(245,242,255,0.45)" }}>
             {t("signup.payment.trialNote") ||
               "No charge today. You'll be billed after your trial ends."}
           </p>
@@ -207,11 +190,12 @@ export function PaymentStep({
             className="flex-1 rounded-lg"
             style={{
               background: "rgba(255,255,255,0.03)",
-              border: promoValid === true
-                ? "1px solid rgba(34,197,94,0.4)"
-                : promoValid === false
-                  ? "1px solid rgba(239,68,68,0.4)"
-                  : "1px solid rgba(255,255,255,0.08)",
+              border:
+                promoValid === true
+                  ? "1px solid rgba(34,197,94,0.4)"
+                  : promoValid === false
+                    ? "1px solid rgba(239,68,68,0.4)"
+                    : "1px solid rgba(255,255,255,0.08)",
               color: "rgba(245,242,255,0.9)",
             }}
             aria-describedby={promoError ? "promo-error" : undefined}
@@ -227,9 +211,7 @@ export function PaymentStep({
               color: "rgba(245,242,255,0.8)",
             }}
           >
-            {isApplyingPromo
-              ? "…"
-              : (t("signup.payment.promoApply") || "Apply")}
+            {isApplyingPromo ? "…" : t("signup.payment.promoApply") || "Apply"}
           </Button>
         </div>
         {promoError && (
@@ -262,16 +244,15 @@ export function PaymentStep({
         disabled={vm.isLoading}
         className="w-full rounded-lg py-3 text-sm font-semibold"
         style={{
-          background:
-            "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
+          background: "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
           color: "#fff",
         }}
       >
         {vm.isLoading
-          ? (t("signup.payment.processing") || "Processing…")
+          ? t("signup.payment.processing") || "Processing…"
           : trialDays
-            ? (t("signup.payment.trialCta") || "Start free trial →")
-            : (t("signup.payment.payCta") || "Complete purchase →")}
+            ? t("signup.payment.trialCta") || "Start free trial →"
+            : t("signup.payment.payCta") || "Complete purchase →"}
       </Button>
 
       {/* Back */}

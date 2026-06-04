@@ -55,11 +55,10 @@ export function VerificationStep({ vm }: VerificationStepProps) {
     }
   };
 
-  const maskedEmail =
-    vm.wizardData.email.replace(
-      /^(.{2})(.*)(@.*)$/,
-      (_, start, mid, end) => start + "•".repeat(Math.min(mid.length, 5)) + end
-    );
+  const maskedEmail = vm.wizardData.email.replace(
+    /^(.{2})(.*)(@.*)$/,
+    (_, start, mid, end) => start + "•".repeat(Math.min(mid.length, 5)) + end
+  );
 
   return (
     <div style={{ animation: "sxScreenIn 0.4s ease-out" }}>
@@ -69,7 +68,8 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         <div
           className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
           style={{
-            background: "linear-gradient(180deg, rgba(168,85,247,0.15) 0%, rgba(99,102,241,0.1) 100%)",
+            background:
+              "linear-gradient(180deg, rgba(168,85,247,0.15) 0%, rgba(99,102,241,0.1) 100%)",
             border: "1px solid rgba(168,85,247,0.2)",
             animation: "sxPop 0.5s ease-out 0.15s both",
           }}
@@ -111,18 +111,12 @@ export function VerificationStep({ vm }: VerificationStepProps) {
             onKeyDown={(e) => handleKeyDown(i, e)}
             className="h-12 w-11 rounded-lg text-center text-lg font-semibold outline-none transition-all duration-200"
             style={{
-              background: vm.otpCode[i]
-                ? "rgba(168,85,247,0.08)"
-                : "rgba(255,255,255,0.03)",
+              background: vm.otpCode[i] ? "rgba(168,85,247,0.08)" : "rgba(255,255,255,0.03)",
               border: `1.5px solid ${
-                vm.otpCode[i]
-                  ? "rgba(168,85,247,0.4)"
-                  : "rgba(255,255,255,0.08)"
+                vm.otpCode[i] ? "rgba(168,85,247,0.4)" : "rgba(255,255,255,0.08)"
               }`,
               color: "#F5F2FF",
-              boxShadow: vm.otpCode[i]
-                ? "0 0 8px rgba(168,85,247,0.12)"
-                : "none",
+              boxShadow: vm.otpCode[i] ? "0 0 8px rgba(168,85,247,0.12)" : "none",
               caretColor: "#A855F7",
             }}
             // UI-EXCEPTION: compact OTP grid requires custom-styled input cells
@@ -155,11 +149,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
         }}
       >
-        {vm.isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          "Verify & Continue"
-        )}
+        {vm.isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Verify & Continue"}
       </Button>
 
       {/* Resend + Back */}

@@ -39,14 +39,16 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
         <div
           className="flex h-20 w-20 items-center justify-center rounded-3xl"
           style={{
-            background: "linear-gradient(180deg, rgba(168,85,247,0.12) 0%, rgba(99,102,241,0.08) 100%)",
+            background:
+              "linear-gradient(180deg, rgba(168,85,247,0.12) 0%, rgba(99,102,241,0.08) 100%)",
             border: "1px solid rgba(168,85,247,0.2)",
           }}
         >
           <div
             className="absolute inset-0 rounded-3xl"
             style={{
-              background: "conic-gradient(from 0deg, transparent 0%, rgba(168,85,247,0.3) 50%, transparent 100%)",
+              background:
+                "conic-gradient(from 0deg, transparent 0%, rgba(168,85,247,0.3) 50%, transparent 100%)",
               animation: "spin 2s linear infinite",
             }}
           />
@@ -65,7 +67,8 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
           WebkitTextFillColor: "transparent",
         }}
       >
-        {PROVISIONING_STEPS[currentStep].label}{dots}
+        {PROVISIONING_STEPS[currentStep].label}
+        {dots}
       </h2>
 
       {/* Progress steps */}
@@ -110,10 +113,7 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
                   />
                 </svg>
               ) : i === currentStep ? (
-                <Loader2
-                  className="h-3 w-3 animate-spin"
-                  style={{ color: "#C4B5FD" }}
-                />
+                <Loader2 className="h-3 w-3 animate-spin" style={{ color: "#C4B5FD" }} />
               ) : null}
             </div>
             <span
@@ -148,10 +148,7 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
         />
       </div>
 
-      <p
-        className="mt-4 text-[11px]"
-        style={{ color: "rgba(245,242,255,0.35)" }}
-      >
+      <p className="mt-4 text-[11px]" style={{ color: "rgba(245,242,255,0.35)" }}>
         This usually takes a few seconds
       </p>
     </div>

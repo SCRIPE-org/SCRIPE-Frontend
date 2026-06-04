@@ -4,84 +4,6 @@
  */
 export const ar = {
   commercial: {
-    restApiOverview: {
-      tblCtrlR14C1: "EditionsController",
-      tblCtrlR14C2: "11",
-      tblCtrlR14C3: "عمليات CRUD للإصدارات، الميزات، إدارة الإصدارات، النشر",
-      tblCtrlR15C1: "FeaturesController",
-      tblCtrlR15C2: "5",
-      tblCtrlR15C3: "عمليات CRUD للميزات، أنواع القيم، ميزات النظام",
-      tblCtrlR16C1: "SubscriptionsController",
-      tblCtrlR16C2: "12",
-      tblCtrlR16C3: "تعيين، ترقية، تخفيض، دورة الحياة، تحليل التأثير",
-      tblCtrlR17C1: "TenantFeaturesController",
-      tblCtrlR17C2: "4",
-      tblCtrlR17C3: "تجاوزات لكل مستأجر، الميزات المحللة",
-      authContent:
-        "كل متحكم (Controller) مقفل افتراضياً. تستخدم SCRIPE التحقق القوي من رموز JWT المميزة، مما يتطلب أذونات دقيقة محددة ومطالبات مستأجر (Tenant claims) تم التحقق منها قبل إرجاع بايت واحد من JSON.",
-      authTitle: "تفويض تشفيري صارم",
-      controllersTitle: "طوبولوجيا متحكمات (Controllers) صارمة",
-      description:
-        "واجهة برمجة تطبيقات RESTful نظيفة وموثقة بالكامل تتميز بتصفية ديناميكية (Dynamic filtering)، وتقسيم استناداً إلى المؤشر (Cursor-based pagination)، واستجابات HATEOAS الغنية.",
-      intro:
-        "الواجهة الخلفية ليست مجرد غلاف لقاعدة البيانات (Database wrapper)؛ إنها سطح HTTP مصنوع بدقة. تعرض SCRIPE واجهة برمجة تطبيقات RESTful أصلية تلتزم بصرامة بأفعال (Verbs) HTTP القياسية، ورموز الحالة، واصطلاحات الوسائط التشعبية (Hypermedia).",
-      paginationTitle: "التقسيم باستخدام المؤشر والإزاحة (Cursor & Offset Pagination)",
-      responseContent:
-        "لا مزيد من تحليل سلاسل الأخطاء العشوائية. كل استجابة لواجهة برمجة التطبيقات — سواء كانت ناجحة أو فشل كارثي — مغلفة بهيكل تفاصيل المشكلة الموحد الخاص بنا `Result<T>`، مما يضمن القدرة على التنبؤ المطلق للواجهة الأمامية ومستهلكي الطرف الثالث.",
-      responseTitle: "حمولات بيانات موحدة ومتوقعة (Predictable Payloads)",
-      swaggerContent:
-        "نقوم بإنشاء وثائق Swagger (OpenAPI 3.0) شاملة ومشروحة بعمق مباشرة من الكود المصدري لـ C# في وقت التشغيل. يمكن للمطورين اختبار الحمولات (Payloads) المصادق عليها تفاعلياً مباشرة من متصفحهم لحظة إقلاع النظام.",
-      swaggerTitle: "بوابات OpenAPI التفاعلية",
-      title: "سطح واجهة برمجة التطبيقات (RESTful Surface)",
-      tblCtrlHeader1: "المتحكم (Controller)",
-      tblCtrlHeader2: "نقاط النهاية (Endpoints)",
-      tblCtrlHeader3: "الوصف",
-      tblCtrlR1C1: "AuthController",
-      tblCtrlR1C2: "8",
-      tblCtrlR1C3: "تسجيل الدخول، التسجيل، 2FA، إعادة تعيين كلمة المرور، الجلسات",
-      tblCtrlR2C1: "UserController",
-      tblCtrlR2C2: "27",
-      tblCtrlR2C3: "CRUD، العمليات المجمعة، عمليات المؤسسات",
-      tblCtrlR3C1: "RoleController",
-      tblCtrlR3C2: "12",
-      tblCtrlR3C3: "إدارة الأدوار، تعيين الأذونات",
-      tblCtrlR4C1: "TenantController",
-      tblCtrlR4C2: "10",
-      tblCtrlR4C3: "دورة حياة المستأجر، الإعدادات، التنشيط",
-      tblCtrlR5C1: "AuditController",
-      tblCtrlR5C2: "6",
-      tblCtrlR5C3: "الاستعلام عن سجل التدقيق، التصدير، البث",
-      tblCtrlR6C1: "NotificationController",
-      tblCtrlR6C2: "5",
-      tblCtrlR6C3: "إشعارات الدفع (Push)، وضع علامة مقروء، التفضيلات",
-      tblCtrlR7C1: "FileController",
-      tblCtrlR7C2: "4",
-      tblCtrlR7C3: "الرفع، التنزيل، الحذف، البيانات الوصفية",
-      tblCtrlR8C1: "TemplateController",
-      tblCtrlR8C2: "5",
-      tblCtrlR8C3: "عمليات CRUD لقوالب البريد الإلكتروني/الرسائل، المعاينة",
-      tblCtrlR9C1: "MenuController",
-      tblCtrlR9C2: "6",
-      tblCtrlR9C3: "إدارة القوائم الديناميكية، التجاوزات",
-      tblCtrlR10C1: "SettingsController",
-      tblCtrlR10C2: "4",
-      tblCtrlR10C3: "إعدادات النظام، إعدادات المستأجر",
-      tblCtrlR11C1: "DashboardController",
-      tblCtrlR11C2: "3",
-      tblCtrlR11C3: "بيانات KPI (مؤشرات الأداء)، بيانات المخططات، الملخصات",
-      tblCtrlR12C1: "WebhookController",
-      tblCtrlR12C2: "5",
-      tblCtrlR12C3: "إدارة الاشتراكات، كتالوج الأحداث",
-      tblCtrlR13C1: "RecycleBinController",
-      tblCtrlR13C2: "4",
-      tblCtrlR13C3: "العناصر المحذوفة بشكل ناعم، الاستعادة، الإفراغ التام",
-      lstSwagI1: "يتم إنشاؤه تلقائياً من سمات المتحكم (Attributes) ووثائق XML",
-      lstSwagI2: "وضع (Try-it-out) لاختبار نقاط النهاية مباشرة",
-      lstSwagI3: "دعم المصادقة عبر JWT في واجهة Swagger UI",
-      lstSwagI4: "توثيق مخطط (Schema) الطلب/الاستجابة مع أمثلة",
-      lstSwagI5: "مجمعة حسب المتحكم لتسهيل التنقل",
-      lstSwagI6: "متاح على المسار /swagger في وضع التطوير (Development mode)",
-    },
     apiDesign: {
       conventionsTitle: "الاصطلاحات المؤسسية",
       description:
@@ -100,22 +22,6 @@ export const ar = {
         "استكشف وثائق Swagger/OpenAPI 3.0 الحية للتفاعل الفوري مع أكثر من 400 نقطة نهاية مُعدة مسبقاً. نقوم بإنشاء مواصفات OpenAPI دقيقة، مما يتيح إنشاء حزم SDK بسلاسة لمنصات الويب والأجهزة المحمولة.",
       swaggerTitle: "واجهة Swagger التفاعلية",
       title: "تصميم وبنية واجهة برمجة التطبيقات",
-    },
-    webhookIntegration: {
-      description:
-        "مُرسل Webhook هائل المرونة، وغير متزامن، ومدفوع بالأحداث، يتيح مزامنة بيانات آمنة وفورية مع واجهات برمجة التطبيقات (APIs) الخارجية الضخمة.",
-      eventsTitle: "الأحداث المدعومة بالبث العالمي",
-      intro:
-        "يجب أن تتواصل أنظمة المؤسسات الحديثة. بدلاً من إجبار العملاء على إجراء استعلامات (Polling) متكررة وعنيفة على واجهة REST الخاصة بك، تتضمن SCRIPE مرسل Webhook خارجياً أصلياً وعالي الكفاءة. ادفع أحداث المجال الهامة على الفور إلى أي نظام خارجي بأمان عبر HTTPS.",
-      logsTitle: "تدقيق جنائي للإرسال (Dispatch Auditing)",
-      managementTitle: "إدارة الاشتراكات الديناميكية",
-      retryContent:
-        "إذا توقف خادم المشترك عن الاتصال، فلن تتجاهل SCRIPE الحمولة (Payload). باستخدام نمط الصندوق الصادر (Outbox) المستمر والذكي ذي التراجع الأسي، يتم إعادة المحاولة رياضياً (على سبيل المثال، 5 ثوانٍ، 1 دقيقة، 1 ساعة، 1 يوم) حتى يتم تأكيد الاستلام عبر حالة HTTP 2xx.",
-      retryTitle: "تراجع أسي مستمر (Exponential Persistent Backoff)",
-      securityContent:
-        "يتم توقيع كل حمولة صادرة (Outbound) بأمان باستخدام توقيع (HMAC-SHA256) تم إنشاؤه من المفتاح السري للمستأجر. يمكن لتكاملات الجهات الخارجية أن تتحقق بشكل قاطع من أن الـ webhook قد نشأ من خوادم SCRIPE الخاصة بك وأن الحمولة لم يتم اعتراضها أو تعديلها عالمياً.",
-      securityTitle: "توقيعات تشفيرية (HMAC)",
-      title: "إرسال Webhook بحجم ضخم",
     },
     emailIntegration: {
       bilingual: "توجيه القوالب ثنائي اللغة",
@@ -167,68 +73,162 @@ export const ar = {
         "لا يمكن الوصول إلا إلى نماذج العرض (ViewModels) المسموح بها صراحةً بواسطة القالب، مما يضمن أمان البيانات.",
       title: "قوالب الرسائل الديناميكية",
     },
+    restApiOverview: {
+      authContent:
+        "كل متحكم (Controller) مقفل افتراضياً. تستخدم SCRIPE التحقق القوي من رموز JWT المميزة، مما يتطلب أذونات دقيقة محددة ومطالبات مستأجر (Tenant claims) تم التحقق منها قبل إرجاع بايت واحد من JSON.",
+      authTitle: "تفويض تشفيري صارم",
+      controllersTitle: "طوبولوجيا متحكمات (Controllers) صارمة",
+      description:
+        "واجهة برمجة تطبيقات RESTful نظيفة وموثقة بالكامل تتميز بتصفية ديناميكية (Dynamic filtering)، وتقسيم استناداً إلى المؤشر (Cursor-based pagination)، واستجابات HATEOAS الغنية.",
+      intro:
+        "الواجهة الخلفية ليست مجرد غلاف لقاعدة البيانات (Database wrapper)؛ إنها سطح HTTP مصنوع بدقة. تعرض SCRIPE واجهة برمجة تطبيقات RESTful أصلية تلتزم بصرامة بأفعال (Verbs) HTTP القياسية، ورموز الحالة، واصطلاحات الوسائط التشعبية (Hypermedia).",
+      lstSwagI1: "يتم إنشاؤه تلقائياً من سمات المتحكم (Attributes) ووثائق XML",
+      lstSwagI2: "وضع (Try-it-out) لاختبار نقاط النهاية مباشرة",
+      lstSwagI3: "دعم المصادقة عبر JWT في واجهة Swagger UI",
+      lstSwagI4: "توثيق مخطط (Schema) الطلب/الاستجابة مع أمثلة",
+      lstSwagI5: "مجمعة حسب المتحكم لتسهيل التنقل",
+      lstSwagI6: "متاح على المسار /swagger في وضع التطوير (Development mode)",
+      paginationTitle: "التقسيم باستخدام المؤشر والإزاحة (Cursor & Offset Pagination)",
+      responseContent:
+        "لا مزيد من تحليل سلاسل الأخطاء العشوائية. كل استجابة لواجهة برمجة التطبيقات — سواء كانت ناجحة أو فشل كارثي — مغلفة بهيكل تفاصيل المشكلة الموحد الخاص بنا `Result<T>`، مما يضمن القدرة على التنبؤ المطلق للواجهة الأمامية ومستهلكي الطرف الثالث.",
+      responseTitle: "حمولات بيانات موحدة ومتوقعة (Predictable Payloads)",
+      swaggerContent:
+        "نقوم بإنشاء وثائق Swagger (OpenAPI 3.0) شاملة ومشروحة بعمق مباشرة من الكود المصدري لـ C# في وقت التشغيل. يمكن للمطورين اختبار الحمولات (Payloads) المصادق عليها تفاعلياً مباشرة من متصفحهم لحظة إقلاع النظام.",
+      swaggerTitle: "بوابات OpenAPI التفاعلية",
+      tblCtrlHeader1: "المتحكم (Controller)",
+      tblCtrlHeader2: "نقاط النهاية (Endpoints)",
+      tblCtrlHeader3: "الوصف",
+      tblCtrlR10C1: "SettingsController",
+      tblCtrlR10C2: "4",
+      tblCtrlR10C3: "إعدادات النظام، إعدادات المستأجر",
+      tblCtrlR11C1: "DashboardController",
+      tblCtrlR11C2: "3",
+      tblCtrlR11C3: "بيانات KPI (مؤشرات الأداء)، بيانات المخططات، الملخصات",
+      tblCtrlR12C1: "WebhookController",
+      tblCtrlR12C2: "5",
+      tblCtrlR12C3: "إدارة الاشتراكات، كتالوج الأحداث",
+      tblCtrlR13C1: "RecycleBinController",
+      tblCtrlR13C2: "4",
+      tblCtrlR13C3: "العناصر المحذوفة بشكل ناعم، الاستعادة، الإفراغ التام",
+      tblCtrlR14C1: "EditionsController",
+      tblCtrlR14C2: "11",
+      tblCtrlR14C3: "عمليات CRUD للإصدارات، الميزات، إدارة الإصدارات، النشر",
+      tblCtrlR15C1: "FeaturesController",
+      tblCtrlR15C2: "5",
+      tblCtrlR15C3: "عمليات CRUD للميزات، أنواع القيم، ميزات النظام",
+      tblCtrlR16C1: "SubscriptionsController",
+      tblCtrlR16C2: "12",
+      tblCtrlR16C3: "تعيين، ترقية، تخفيض، دورة الحياة، تحليل التأثير",
+      tblCtrlR17C1: "TenantFeaturesController",
+      tblCtrlR17C2: "4",
+      tblCtrlR17C3: "تجاوزات لكل مستأجر، الميزات المحللة",
+      tblCtrlR1C1: "AuthController",
+      tblCtrlR1C2: "8",
+      tblCtrlR1C3: "تسجيل الدخول، التسجيل، 2FA، إعادة تعيين كلمة المرور، الجلسات",
+      tblCtrlR2C1: "UserController",
+      tblCtrlR2C2: "27",
+      tblCtrlR2C3: "CRUD، العمليات المجمعة، عمليات المؤسسات",
+      tblCtrlR3C1: "RoleController",
+      tblCtrlR3C2: "12",
+      tblCtrlR3C3: "إدارة الأدوار، تعيين الأذونات",
+      tblCtrlR4C1: "TenantController",
+      tblCtrlR4C2: "10",
+      tblCtrlR4C3: "دورة حياة المستأجر، الإعدادات، التنشيط",
+      tblCtrlR5C1: "AuditController",
+      tblCtrlR5C2: "6",
+      tblCtrlR5C3: "الاستعلام عن سجل التدقيق، التصدير، البث",
+      tblCtrlR6C1: "NotificationController",
+      tblCtrlR6C2: "5",
+      tblCtrlR6C3: "إشعارات الدفع (Push)، وضع علامة مقروء، التفضيلات",
+      tblCtrlR7C1: "FileController",
+      tblCtrlR7C2: "4",
+      tblCtrlR7C3: "الرفع، التنزيل، الحذف، البيانات الوصفية",
+      tblCtrlR8C1: "TemplateController",
+      tblCtrlR8C2: "5",
+      tblCtrlR8C3: "عمليات CRUD لقوالب البريد الإلكتروني/الرسائل، المعاينة",
+      tblCtrlR9C1: "MenuController",
+      tblCtrlR9C2: "6",
+      tblCtrlR9C3: "إدارة القوائم الديناميكية، التجاوزات",
+      title: "سطح واجهة برمجة التطبيقات (RESTful Surface)",
+    },
     ssoEnterprise: {
-      title: "الدخول الموحد للمؤسسات وموفر الهوية (Enterprise SSO)",
+      brandingContent:
+        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
+      brandingTitle: "Architected for Corporate Branding",
+      comparisonTitle: "How SCRIPE Compares",
       description:
         "SCRIPE هو خادم مصادقة OIDC/OAuth2 متكامل بالكامل. استبدل Keycloak و Auth0 باتحاد B2B أصلي، وفرض صارم لـ PKCE، ودعم لموفري الهوية المتعددين، وسجل تطبيقات OAuth يمكن إدارته بالكامل عبر لوحة الإدارة.",
       intro:
         "لا يمكن أن توجد برمجيات المؤسسات بدون هوية مؤسسية قوية. تتجاوز SCRIPE عمليات تسجيل الدخول البسيطة لـ SSO - إنها تعمل كمحرك كامل لإدارة الهوية والوصول (IAM). يعمل بشكل أصلي على OpenIddict، ويعمل كموفر هوية يتعامل مع الاتحاد الوارد (الاتصال بـ Azure AD للشركات) وكخادم تفويض يُصدر الرموز إلى تطبيقات خارجية.",
-      oidcTitle: "اتحاد فوري وبدون كود (IdP)",
-      oidcContent:
-        "قم بتوصيل الدلائل الخارجية والوثوق بها فوراً دون كتابة تعليمة برمجية واحدة. من خلال واجهة المشرف (Admin UI)، يمكن للمشرف العام ومشرفي المستأجر ربط Azure Active Directory (Entra) أو Google Workspace أو Okta أو Cognito ببساطة عن طريق عنوان رابط الاكتشاف ومعرفات العميل. تعمل SCRIPE كجهة اعتماد تلقائية وتدمج المطالبات الواردة.",
-      oauthAppsTitle: "سجل بوابة تطبيقات OAuth كامل",
-      oauthAppsContent:
-        "أنشئ بيئتك المتكاملة بنفسك. اسمح لشركائك في B2B باستخدام حسابات SCRIPE كبوابة رئيسية الخاصة بهم لبرمجياتهم الثالثة. ينشئ المسؤول كل تطبيقات OAuth بشكل سلس، مع تخصيص الرموز السرية Client IDs وإصدار الأذونات.",
-      tenantIsolationTitle: "عزل هوية المستأجر بصورة مطلقة",
-      tenantIsolationContent:
-        'يتم قفل كل إعداد وكل تفويض بالمستأجر المالك بشكل مشفر (Cryptographically). الشركة "أ" لن ترى أبداً إعدادات الشركة "ب". تقوم فلاتر کیانات (Entity Framework) بعزل كل عمليات واجهة برمجة تطبيقات مصادقة OAuth لتأمين شامل لمقاييس SaaS.',
-      pkceSecurityTitle: "هندسة أمان PKCE المشفرة",
-      pkceSecurityContent:
-        'لا نسمح بنمط "Implicit Flow" مطلقاً. يفرض نظام SCRIPE بصرامة استخدام (PKCE) لجميع حركات المصادقة، سواء الموبايل أو لوحات التحكم أو طرف ثالث خارجي. نمنع أي اختراق عبر شبكات CSRF في متصفحات المستخدم.',
-      linkingTitle: "تسجيل دخول يحافظ على الهوية المؤسسية (White-Labeled)",
       linkingContent:
         "بدلاً من طرد المستخدمين لشاشات خارجية قبيحة، يتعامل SCRIPE كأنه هو جهاز التوجيه الأصلي لحزمة البروتوكولات. تظل الألوان وشعاراتك ظاهرة حتى لحظة نقر المستخدم على زر 'تسجيل الدخول عبر Google' للمؤسسات، في بيئة مخصصة ومصقولة بالكامل.",
-      valueTitle: "Strategic IAM Value",
-      val1Title: "Zero-Trust Identity Protocol",
-      val1Desc:
-        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
-      val2Title: "Zero-Code Federation (IdP)",
-      val2Desc:
-        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
-      val3Title: "SCRIPE as the Identity Server",
-      val3Desc:
-        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
-      val4Title: "Absolute Tenant IAM Isolation",
-      val4Desc:
-        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
-      val5Title: "White-Labeled Login Experience",
-      val5Desc:
-        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
-      val6Title: "Future-Proof Standardization",
-      val6Desc:
-        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
-      protocolsTitle: "Supported Authentication Protocols",
-      protocolsContent:
-        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
-      comparisonTitle: "How SCRIPE Compares",
-      multiIdpTitle: "Infinite Multi-IdP Per Tenant",
+      linkingTitle: "تسجيل دخول يحافظ على الهوية المؤسسية (White-Labeled)",
       multiIdpContent:
         "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. SCRIPE natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
-      brandingTitle: "Architected for Corporate Branding",
-      brandingContent:
-        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
-      securityModelTitle: "PKCE Security Architecture",
-      securityModelContent:
-        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
-      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
-      oauthContent:
-        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
-      oauth1Title: "Confidential Clients (Backend)",
+      multiIdpTitle: "Infinite Multi-IdP Per Tenant",
       oauth1Desc:
         "Server-side applications with secure backend storage for client secrets. Perfect for B2B API integrations enforcing the full Authorization Code flow with PKCE.",
-      oauth2Title: "Public Clients (SPA & Mobile)",
+      oauth1Title: "Confidential Clients (Backend)",
       oauth2Desc:
         "React, Vue, iOS, and Android applications that cannot securely store static secrets. Strictly leverages the PKCE-only flow, ensuring access tokens are generated flawlessly without risking a compromised client secret.",
+      oauth2Title: "Public Clients (SPA & Mobile)",
+      oauthAppsContent:
+        "أنشئ بيئتك المتكاملة بنفسك. اسمح لشركائك في B2B باستخدام حسابات SCRIPE كبوابة رئيسية الخاصة بهم لبرمجياتهم الثالثة. ينشئ المسؤول كل تطبيقات OAuth بشكل سلس، مع تخصيص الرموز السرية Client IDs وإصدار الأذونات.",
+      oauthAppsTitle: "سجل بوابة تطبيقات OAuth كامل",
+      oauthContent:
+        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
+      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
+      oidcContent:
+        "قم بتوصيل الدلائل الخارجية والوثوق بها فوراً دون كتابة تعليمة برمجية واحدة. من خلال واجهة المشرف (Admin UI)، يمكن للمشرف العام ومشرفي المستأجر ربط Azure Active Directory (Entra) أو Google Workspace أو Okta أو Cognito ببساطة عن طريق عنوان رابط الاكتشاف ومعرفات العميل. تعمل SCRIPE كجهة اعتماد تلقائية وتدمج المطالبات الواردة.",
+      oidcTitle: "اتحاد فوري وبدون كود (IdP)",
+      pkceSecurityContent:
+        'لا نسمح بنمط "Implicit Flow" مطلقاً. يفرض نظام SCRIPE بصرامة استخدام (PKCE) لجميع حركات المصادقة، سواء الموبايل أو لوحات التحكم أو طرف ثالث خارجي. نمنع أي اختراق عبر شبكات CSRF في متصفحات المستخدم.',
+      pkceSecurityTitle: "هندسة أمان PKCE المشفرة",
+      protocolsContent:
+        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
+      protocolsTitle: "Supported Authentication Protocols",
+      securityModelContent:
+        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
+      securityModelTitle: "PKCE Security Architecture",
+      tenantIsolationContent:
+        'يتم قفل كل إعداد وكل تفويض بالمستأجر المالك بشكل مشفر (Cryptographically). الشركة "أ" لن ترى أبداً إعدادات الشركة "ب". تقوم فلاتر کیانات (Entity Framework) بعزل كل عمليات واجهة برمجة تطبيقات مصادقة OAuth لتأمين شامل لمقاييس SaaS.',
+      tenantIsolationTitle: "عزل هوية المستأجر بصورة مطلقة",
+      title: "الدخول الموحد للمؤسسات وموفر الهوية (Enterprise SSO)",
+      val1Desc:
+        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
+      val1Title: "Zero-Trust Identity Protocol",
+      val2Desc:
+        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
+      val2Title: "Zero-Code Federation (IdP)",
+      val3Desc:
+        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
+      val3Title: "SCRIPE as the Identity Server",
+      val4Desc:
+        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
+      val4Title: "Absolute Tenant IAM Isolation",
+      val5Desc:
+        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
+      val5Title: "White-Labeled Login Experience",
+      val6Desc:
+        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
+      val6Title: "Future-Proof Standardization",
+      valueTitle: "Strategic IAM Value",
+    },
+    webhookIntegration: {
+      description:
+        "مُرسل Webhook هائل المرونة، وغير متزامن، ومدفوع بالأحداث، يتيح مزامنة بيانات آمنة وفورية مع واجهات برمجة التطبيقات (APIs) الخارجية الضخمة.",
+      eventsTitle: "الأحداث المدعومة بالبث العالمي",
+      intro:
+        "يجب أن تتواصل أنظمة المؤسسات الحديثة. بدلاً من إجبار العملاء على إجراء استعلامات (Polling) متكررة وعنيفة على واجهة REST الخاصة بك، تتضمن SCRIPE مرسل Webhook خارجياً أصلياً وعالي الكفاءة. ادفع أحداث المجال الهامة على الفور إلى أي نظام خارجي بأمان عبر HTTPS.",
+      logsTitle: "تدقيق جنائي للإرسال (Dispatch Auditing)",
+      managementTitle: "إدارة الاشتراكات الديناميكية",
+      retryContent:
+        "إذا توقف خادم المشترك عن الاتصال، فلن تتجاهل SCRIPE الحمولة (Payload). باستخدام نمط الصندوق الصادر (Outbox) المستمر والذكي ذي التراجع الأسي، يتم إعادة المحاولة رياضياً (على سبيل المثال، 5 ثوانٍ، 1 دقيقة، 1 ساعة، 1 يوم) حتى يتم تأكيد الاستلام عبر حالة HTTP 2xx.",
+      retryTitle: "تراجع أسي مستمر (Exponential Persistent Backoff)",
+      securityContent:
+        "يتم توقيع كل حمولة صادرة (Outbound) بأمان باستخدام توقيع (HMAC-SHA256) تم إنشاؤه من المفتاح السري للمستأجر. يمكن لتكاملات الجهات الخارجية أن تتحقق بشكل قاطع من أن الـ webhook قد نشأ من خوادم SCRIPE الخاصة بك وأن الحمولة لم يتم اعتراضها أو تعديلها عالمياً.",
+      securityTitle: "توقيعات تشفيرية (HMAC)",
+      title: "إرسال Webhook بحجم ضخم",
     },
   },
 };

@@ -37,7 +37,11 @@ export interface CreateSubmissionPayload {
 
 export interface ISubmissionsService {
   /** Fetch paginated list of submissions. */
-  getAll(params: { page: number; pageSize: number; status?: string }): Promise<PaginatedSubmissionsResponse>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+  }): Promise<PaginatedSubmissionsResponse>;
   /** Fetch a single submission by ID. */
   getById(id: string): Promise<SubmissionDto>;
   /** Create a new submission. Returns new submission ID. */

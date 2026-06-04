@@ -35,8 +35,9 @@ export function PluginInstallDialog({
 
   if (!plugin) return null;
 
-  const displayName = language === "ar" ? (plugin.nameAr || plugin.name) : plugin.name;
-  const displayDesc = language === "ar" ? (plugin.descriptionAr || plugin.description) : plugin.description;
+  const displayName = language === "ar" ? plugin.nameAr || plugin.name : plugin.name;
+  const displayDesc =
+    language === "ar" ? plugin.descriptionAr || plugin.description : plugin.description;
 
   const tier2Permissions = [
     t("plugins.perm1"),
@@ -54,9 +55,9 @@ export function PluginInstallDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
+          <div className="mb-2 flex items-center gap-3">
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted shrink-0"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted"
               style={
                 plugin.colorHue != null
                   ? { background: `oklch(0.7 ${plugin.colorChroma ?? 0.2} ${plugin.colorHue})` }
@@ -67,7 +68,7 @@ export function PluginInstallDialog({
             </div>
             <div>
               <DialogTitle>{displayName}</DialogTitle>
-              <Badge variant="outline" className="text-xs mt-1">
+              <Badge variant="outline" className="mt-1 text-xs">
                 {plugin.isTier2 ? t("plugins.tier2Label") : t("plugins.tier1Label")}
               </Badge>
             </div>
@@ -76,14 +77,12 @@ export function PluginInstallDialog({
         </DialogHeader>
 
         {plugin.isTier2 && (
-          <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+          <div className="space-y-3 rounded-lg border bg-muted/50 p-4">
             <div className="flex items-center gap-2 text-sm font-medium">
               <ShieldCheck className="h-4 w-4 text-primary" />
               {t("plugins.dialogTier2ConsentTitle")}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("plugins.dialogTier2ConsentDesc")}
-            </p>
+            <p className="text-xs text-muted-foreground">{t("plugins.dialogTier2ConsentDesc")}</p>
             <ul className="space-y-1.5">
               {tier2Permissions.map((perm) => (
                 <li key={perm} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -92,7 +91,7 @@ export function PluginInstallDialog({
                 </li>
               ))}
             </ul>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 className="rounded"
@@ -105,11 +104,9 @@ export function PluginInstallDialog({
         )}
 
         {!plugin.isTier2 && (
-          <div className="rounded-lg border bg-muted/50 p-3 flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
-            <p className="text-xs text-muted-foreground">
-              {t("plugins.dialogTier1Warning")}
-            </p>
+          <div className="flex items-start gap-2 rounded-lg border bg-muted/50 p-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            <p className="text-xs text-muted-foreground">{t("plugins.dialogTier1Warning")}</p>
           </div>
         )}
 

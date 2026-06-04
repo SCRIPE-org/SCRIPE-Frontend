@@ -66,7 +66,10 @@ export interface IAuthService {
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
 
   /** Verify a phone OTP code for sign-in. */
-  verifyPhoneOtp(phoneNumber: string, code: string): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
+  verifyPhoneOtp(
+    phoneNumber: string,
+    code: string
+  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
 
   /** Begin QR sign-in — generate a session token + QR code data. */
   beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;

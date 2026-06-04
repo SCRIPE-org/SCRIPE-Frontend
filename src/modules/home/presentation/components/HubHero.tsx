@@ -49,7 +49,8 @@ export function HubHero() {
             left: "-10%",
             width: 440,
             height: 440,
-            background: "radial-gradient(closest-side, rgba(94,145,255,0.55), rgba(94,145,255,0) 70%)",
+            background:
+              "radial-gradient(closest-side, rgba(94,145,255,0.55), rgba(94,145,255,0) 70%)",
             filter: "blur(40px)",
           }}
         />
@@ -61,7 +62,8 @@ export function HubHero() {
             left: "40%",
             width: 380,
             height: 380,
-            background: "radial-gradient(closest-side, rgba(154,77,219,0.5), rgba(154,77,219,0) 70%)",
+            background:
+              "radial-gradient(closest-side, rgba(154,77,219,0.5), rgba(154,77,219,0) 70%)",
             filter: "blur(48px)",
           }}
         />
@@ -73,7 +75,8 @@ export function HubHero() {
             right: "-5%",
             width: 320,
             height: 320,
-            background: "radial-gradient(closest-side, rgba(26,183,176,0.42), rgba(26,183,176,0) 70%)",
+            background:
+              "radial-gradient(closest-side, rgba(26,183,176,0.42), rgba(26,183,176,0) 70%)",
             filter: "blur(44px)",
           }}
         />
@@ -121,7 +124,8 @@ export function HubHero() {
             fontFamily: "'Inter', system-ui, sans-serif",
           }}
         >
-          {greeting}{adminFirstName ? `, ${adminFirstName}.` : "."}
+          {greeting}
+          {adminFirstName ? `, ${adminFirstName}.` : "."}
         </h1>
 
         {/* Subtitle */}

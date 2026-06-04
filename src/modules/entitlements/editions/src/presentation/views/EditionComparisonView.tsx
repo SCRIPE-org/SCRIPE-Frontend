@@ -213,7 +213,9 @@ function FeatureCategoryBlock({
               // Resolve per-edition display label for current language
               const labelOverride = row.displayLabels[ed.id];
               const resolvedLabel = labelOverride
-                ? (language === "ar" ? (labelOverride.ar || labelOverride.en) : (labelOverride.en || labelOverride.ar))
+                ? language === "ar"
+                  ? labelOverride.ar || labelOverride.en
+                  : labelOverride.en || labelOverride.ar
                 : undefined;
               return (
                 <MatrixCell

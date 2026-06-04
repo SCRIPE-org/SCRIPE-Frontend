@@ -32,7 +32,7 @@ export function MagicLinkCallbackView() {
 
       <div className="relative z-[1] flex w-full max-w-[440px] flex-col items-center px-5 py-12">
         <div
-          className="sx-screen w-full rounded-[20px] p-8 sm:p-9 text-center"
+          className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9"
           style={{
             background: "var(--sx-card-bg)",
             border: "1px solid var(--sx-card-border)",
@@ -59,10 +59,7 @@ export function MagicLinkCallbackView() {
                 <CheckCircle className="h-7 w-7 text-emerald-500" aria-hidden="true" />
               </div>
               <div className="space-y-1">
-                <h1
-                  className="text-xl font-semibold"
-                  style={{ color: "var(--sx-text)" }}
-                >
+                <h1 className="text-xl font-semibold" style={{ color: "var(--sx-text)" }}>
                   {t("auth.magicLink.successTitle")}
                 </h1>
                 <p className="text-[13px]" style={{ color: "var(--sx-text-mute)" }}>
@@ -78,10 +75,7 @@ export function MagicLinkCallbackView() {
                 <AlertTriangle className="h-7 w-7 text-amber-500" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
-                <h1
-                  className="text-xl font-semibold"
-                  style={{ color: "var(--sx-text)" }}
-                >
+                <h1 className="text-xl font-semibold" style={{ color: "var(--sx-text)" }}>
                   {t("auth.magicLink.expiredTitle")}
                 </h1>
                 <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>

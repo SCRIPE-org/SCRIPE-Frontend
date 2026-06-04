@@ -131,7 +131,11 @@ export function VaultLayout({
           {/* Top lockup */}
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg">
-              <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} className="h-full w-full object-contain" />
+              <LogoImg
+                logoSrc={logoSrc}
+                logoAlt={logoAlt}
+                className="h-full w-full object-contain"
+              />
             </div>
             <span
               className="text-lg font-semibold tracking-tight"

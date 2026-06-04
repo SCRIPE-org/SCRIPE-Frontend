@@ -61,7 +61,12 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
         const charIndex = (row * 27 + col) % data.length;
         const charCode = data.charCodeAt(charIndex);
         if ((charCode + row + col) % 3 !== 0) {
-          ctx.fillRect(offset + col * cellSize, offset + row * cellSize, cellSize - 1, cellSize - 1);
+          ctx.fillRect(
+            offset + col * cellSize,
+            offset + row * cellSize,
+            cellSize - 1,
+            cellSize - 1
+          );
         }
       }
     }
@@ -79,7 +84,6 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
     drawCorner(offset, offset);
     drawCorner(offset + 120, offset);
     drawCorner(offset, offset + 120);
-
   }, [vm.qrData, vm.sessionId]);
 
   return (
@@ -107,11 +111,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
             transition: "opacity 0.3s ease",
           }}
         >
-          <canvas
-            ref={canvasRef}
-            className="mx-auto"
-            style={{ width: 200, height: 200 }}
-          />
+          <canvas ref={canvasRef} className="mx-auto" style={{ width: 200, height: 200 }} />
           {/* Scanned overlay */}
           {vm.status === "scanned" && (
             <div
@@ -135,7 +135,14 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
               color: vm.timeLeft < 60 ? "#F59E0B" : "var(--sx-text-mute)",
             }}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
@@ -196,10 +203,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
           <p className="font-semibold" style={{ color: "var(--sx-text, rgba(245,242,255,0.9))" }}>
             {t("auth.qr.howTo") || "How to scan:"}
           </p>
-          <ol
-            className="list-decimal space-y-1 ps-4"
-            style={{ color: "var(--sx-text-mute)" }}
-          >
+          <ol className="list-decimal space-y-1 ps-4" style={{ color: "var(--sx-text-mute)" }}>
             <li>{t("auth.qr.step1") || "Open the Scripe app on your phone"}</li>
             <li>{t("auth.qr.step2") || "Tap the QR scan icon on the login screen"}</li>
             <li>{t("auth.qr.step3") || "Point your camera at this QR code"}</li>

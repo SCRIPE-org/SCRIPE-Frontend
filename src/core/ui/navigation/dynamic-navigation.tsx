@@ -113,4 +113,3 @@ export function useDynamicNavigation(): NavigationItem[] {
     return getNavigationItems(t, backendNavigation);
   }, [isLoading, activeMenuItems, t]);
 }
-

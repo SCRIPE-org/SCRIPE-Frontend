@@ -27,7 +27,9 @@ export function ModuleFederationLoader({
   scope,
   module: exposedModule = "./Plugin",
 }: ModuleFederationLoaderProps) {
-  const [PluginComponent, setPluginComponent] = useState<ComponentType<{ installationId: string }> | null>(null);
+  const [PluginComponent, setPluginComponent] = useState<ComponentType<{
+    installationId: string;
+  }> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function ModuleFederationLoader({
 
   if (error) {
     return (
-      <div className="flex items-center gap-2 text-destructive p-6">
+      <div className="flex items-center gap-2 p-6 text-destructive">
         <AlertTriangle className="h-5 w-5" />
         <span className="text-sm">{error}</span>
       </div>
@@ -71,7 +73,9 @@ async function loadFederatedModule(
   await loadScript(remoteEntryUrl);
 
   // Access the module federation container on window
-  const container = (window as unknown as Record<string, unknown>)[scope] as FederationContainer | undefined;
+  const container = (window as unknown as Record<string, unknown>)[scope] as
+    | FederationContainer
+    | undefined;
   if (!container) throw new Error(`Remote container "${scope}" not found on window`);
 
   // G12 Fix: __webpack_share_scopes__ is a webpack-only global.
@@ -79,20 +83,21 @@ async function loadFederatedModule(
   // We use an empty shared scope as a safe fallback — the plugin's own
   // internal dependencies will still resolve via its own bundled scope.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const shareScope = typeof __webpack_share_scopes__ !== "undefined"
-    ? __webpack_share_scopes__.default
-    : {};
+  const shareScope =
+    typeof __webpack_share_scopes__ !== "undefined" ? __webpack_share_scopes__.default : {};
   await container.init(shareScope);
   const factory = await container.get(module);
   const mod = factory() as { default: ComponentType<{ installationId: string }> };
   return mod.default;
-
 }
 
 function loadScript(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${url}"]`);
-    if (existing) { resolve(); return; }
+    if (existing) {
+      resolve();
+      return;
+    }
     const script = document.createElement("script");
     script.src = url;
     script.type = "text/javascript";

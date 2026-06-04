@@ -83,10 +83,22 @@ export function getMarketplaceContainer(): MarketplaceContainer {
  * Never call getModuleApiService() or instantiate services from a ViewModel or View.
  */
 export const marketplaceContainer = {
-  get appListingsRepository() { return getMarketplaceContainer().appListingsRepository; },
-  get categoriesRepository() { return getMarketplaceContainer().categoriesRepository; },
-  get submissionsRepository() { return getMarketplaceContainer().submissionsRepository; },
-  get developersRepository() { return getMarketplaceContainer().developersRepository; },
-  get reviewsRepository() { return getMarketplaceContainer().reviewsRepository; },
-  get financialsRepository() { return getMarketplaceContainer().financialsRepository; },
+  get appListingsRepository() {
+    return getMarketplaceContainer().appListingsRepository;
+  },
+  get categoriesRepository() {
+    return getMarketplaceContainer().categoriesRepository;
+  },
+  get submissionsRepository() {
+    return getMarketplaceContainer().submissionsRepository;
+  },
+  get developersRepository() {
+    return getMarketplaceContainer().developersRepository;
+  },
+  get reviewsRepository() {
+    return getMarketplaceContainer().reviewsRepository;
+  },
+  get financialsRepository() {
+    return getMarketplaceContainer().financialsRepository;
+  },
 };

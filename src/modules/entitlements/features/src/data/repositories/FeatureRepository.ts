@@ -6,7 +6,11 @@
  */
 import type { IFeatureRepository } from "../../domain/interfaces/IFeatureRepository";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
-import type { Feature, FeatureModuleGroup, FeatureCategoryGroup } from "../../domain/entities/Feature";
+import type {
+  Feature,
+  FeatureModuleGroup,
+  FeatureCategoryGroup,
+} from "../../domain/entities/Feature";
 import type { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
 import { FeatureMapper } from "../mappers/FeatureMapper";
 import type {

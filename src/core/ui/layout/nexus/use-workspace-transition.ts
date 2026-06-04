@@ -34,12 +34,8 @@ export interface WorkspaceLoaderState {
 
 export function useWorkspaceTransition() {
   const pathname = usePathname();
-  const {
-    switchToModuleWorkspaceByKey,
-    workspaceGroups,
-    isWorkspaceLoading,
-    activeWorkspace,
-  } = useWorkspace();
+  const { switchToModuleWorkspaceByKey, workspaceGroups, isWorkspaceLoading, activeWorkspace } =
+    useWorkspace();
 
   const { setActiveWorkspace } = useWorkspaceActions();
 

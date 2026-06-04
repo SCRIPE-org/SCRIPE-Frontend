@@ -76,7 +76,9 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
           label: t("entitlements.features.marketingOnly"),
           render: (_val: unknown, feature: Feature) =>
             feature.isMarketingOnly ? (
-              <Badge variant="outline" className="border-amber-500 text-amber-600">Marketing</Badge>
+              <Badge variant="outline" className="border-amber-500 text-amber-600">
+                Marketing
+              </Badge>
             ) : (
               <Badge variant="secondary">Enforced</Badge>
             ),

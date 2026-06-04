@@ -145,7 +145,6 @@ export interface ITenantRepository {
    */
   getTenantPermissionsGrouped(tenantId: string, search?: string): Promise<PermissionModuleGroup[]>;
 
-
   /**
    * Set the current tenant context for multi-tenant API calls.
    * This sets the X-Tenant-Id header for subsequent requests.

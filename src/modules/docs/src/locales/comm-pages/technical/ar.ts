@@ -1,9 +1,43 @@
 /**
  * Docs page locale — AR
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const ar = {
   commercial: {
+    observabilityMonitoring: {
+      alertingContent:
+        "لوحات المعلومات المرئية لا تعني شيئاً إذا لم يكن أحد ينظر إليها. قم بتكوين حدود أساسية صارمة — على سبيل المثال، إذا ارتفعت أخطاء 500، أو تجاوز استهلاك وحدة المعالجة المركزية لقاعدة البيانات 80% — وقم بتشغيل بروتوكولات الاستجابة للحوادث تلقائياً عبر Slack أو PagerDuty.",
+      alertingTitle: "التنبيهات المستندة إلى العتبات (Thresholds)",
+      cacheMetrics: "فعالية التخزين المؤقت لـ Redis",
+      cacheMetricsDesc:
+        "المراقبة المستمرة لتجزئة الذاكرة، ونسب الإصابة/التفويت، ومقاييس الإخلاء (Eviction) لضبط الأداء.",
+      dbMetrics: "استنفاد تجمع قاعدة البيانات (Database Pool)",
+      dbMetricsDesc:
+        "تتبع الاتصالات النشطة، وتنفيذ الاستعلامات البطيئة، وأوقات تجميع الأوامر مباشرة من EF Core.",
+      description:
+        "تسجيل مهيكل جنائي، وفحوصات صحة (Health probes) بدون وقت توقف، ومقاييس Prometheus، وتتبع موزع من OpenTelemetry.",
+      healthContent:
+        "فحوصات جاهزية (Readiness) وحيوية (Liveness) أصلية لـ Kubernetes جاهزة للاستخدام. تستمر واجهة برمجة التطبيقات في الإبلاغ الذاتي عن الحالة التشغيلية لقاعدة بيانات SQL، وذاكرة التخزين المؤقت Redis، والتبعيات الخارجية. في حالة فشل أي عقدة (Node)، يسقطها المنسق (Orchestrator) فوراً من دورة موازن الحمل (Load balancer).",
+      healthTitle: "فحوصات Kubernetes الأصلية",
+      intro:
+        "لا يمكنك إدارة ما لا يمكنك قياسه. تدمج SCRIPE حزمة مراقبة (Observability) عالية المستوى، مما يوفر لفرق SRE و DevSecOps رؤى جنائية في الوقت الفعلي حول السلوك الموزع للمنصة.",
+      loggingContent:
+        "السجلات النصية التقليدية عديمة الفائدة على نطاق واسع. تستخدم SCRIPE أداة Serilog لإنشاء سجلات أحداث JSON مهيكلة بعمق، وتُثريها تلقائياً بمعرّفات الارتباط (Correlation IDs)، وسياقات المستأجرين، وأسماء الأجهزة للاستعلام الفوري في Datadog أو ELK.",
+      loggingTitle: "التسجيل الجنائي المهيكل (Structured Logging)",
+      metricsIntro:
+        "من خلال دمج بروتوكولات OpenTelemetry القياسية، تكشف SCRIPE آلاف المقاييس الداخلية للمنصة مباشرة إلى لوحات معلومات Prometheus و Grafana الحالية لديك.",
+      metricsTitle: "تكامل OpenTelemetry",
+      requestMetrics: "إنتاجية طلبات API",
+      requestMetricsDesc:
+        "مراقبة النسب المئوية لوقت الاستجابة (p95، p99)، وأحجام الحمولة (Payload sizes)، وفترات التنفيذ الدقيقة لكل نقطة نهاية.",
+      tip: "نصيحة للمديرين التنفيذيين: قم بتنفيذ التتبع الموزع (Distributed tracing) لتتبع طلب مستخدم واحد بسلاسة عبر جميع الخدمات المصغرة المنشورة.",
+      title: "قابلية المراقبة والقياس عن بعد (Observability & Telemetry)",
+      tracingContent:
+        "في بيئة النشر للخدمات المصغرة، قد تعبر نقرة واحدة خمس خدمات معزولة. يحقن التتبع الموزع معرّفات الارتباط (Correlation IDs) وينشرها من خلال ترويسات HTTP، مما يتيح لك رسم خرائط لرحلات الطلبات المعقدة بصرياً وتحديد الخدمة المعرقلة فوراً.",
+      tracingTitle: "التتبع الموزع عبر الخدمات",
+      userMetrics: "سرعة المصادقة",
+      userMetricsDesc:
+        "تتبع نجاحات تسجيل الدخول، ومحاولات القوة الغاشمة، والنشاط المحدد للمستأجر في الوقت الفعلي.",
+    },
     performanceBenchmarks: {
       apiIntro:
         "تعطي البنية المعمارية لدينا الأولوية للسرعة دون التضحية بالتجريد. يتم قياس أداء كل طبقة من طبقات واجهة برمجة التطبيقات بدقة لضمان الحد الأدنى من التخصيص (Allocation) والحد الأقصى للإنتاجية.",
@@ -69,123 +103,6 @@ export const ar = {
       tip: "نصيحة معمارية: لا تكتب أبداً كتل try/catch قياسية لمكالمات الشبكة. استخدم دائماً معترضات Polly HTTP المركزية المحقونة في جميع أنحاء المنصة.",
       title: "بنية المرونة الدفاعية (Resilience Architecture)",
     },
-    observabilityMonitoring: {
-      alertingContent:
-        "لوحات المعلومات المرئية لا تعني شيئاً إذا لم يكن أحد ينظر إليها. قم بتكوين حدود أساسية صارمة — على سبيل المثال، إذا ارتفعت أخطاء 500، أو تجاوز استهلاك وحدة المعالجة المركزية لقاعدة البيانات 80% — وقم بتشغيل بروتوكولات الاستجابة للحوادث تلقائياً عبر Slack أو PagerDuty.",
-      alertingTitle: "التنبيهات المستندة إلى العتبات (Thresholds)",
-      cacheMetrics: "فعالية التخزين المؤقت لـ Redis",
-      cacheMetricsDesc:
-        "المراقبة المستمرة لتجزئة الذاكرة، ونسب الإصابة/التفويت، ومقاييس الإخلاء (Eviction) لضبط الأداء.",
-      dbMetrics: "استنفاد تجمع قاعدة البيانات (Database Pool)",
-      dbMetricsDesc:
-        "تتبع الاتصالات النشطة، وتنفيذ الاستعلامات البطيئة، وأوقات تجميع الأوامر مباشرة من EF Core.",
-      description:
-        "تسجيل مهيكل جنائي، وفحوصات صحة (Health probes) بدون وقت توقف، ومقاييس Prometheus، وتتبع موزع من OpenTelemetry.",
-      healthContent:
-        "فحوصات جاهزية (Readiness) وحيوية (Liveness) أصلية لـ Kubernetes جاهزة للاستخدام. تستمر واجهة برمجة التطبيقات في الإبلاغ الذاتي عن الحالة التشغيلية لقاعدة بيانات SQL، وذاكرة التخزين المؤقت Redis، والتبعيات الخارجية. في حالة فشل أي عقدة (Node)، يسقطها المنسق (Orchestrator) فوراً من دورة موازن الحمل (Load balancer).",
-      healthTitle: "فحوصات Kubernetes الأصلية",
-      intro:
-        "لا يمكنك إدارة ما لا يمكنك قياسه. تدمج SCRIPE حزمة مراقبة (Observability) عالية المستوى، مما يوفر لفرق SRE و DevSecOps رؤى جنائية في الوقت الفعلي حول السلوك الموزع للمنصة.",
-      loggingContent:
-        "السجلات النصية التقليدية عديمة الفائدة على نطاق واسع. تستخدم SCRIPE أداة Serilog لإنشاء سجلات أحداث JSON مهيكلة بعمق، وتُثريها تلقائياً بمعرّفات الارتباط (Correlation IDs)، وسياقات المستأجرين، وأسماء الأجهزة للاستعلام الفوري في Datadog أو ELK.",
-      loggingTitle: "التسجيل الجنائي المهيكل (Structured Logging)",
-      metricsIntro:
-        "من خلال دمج بروتوكولات OpenTelemetry القياسية، تكشف SCRIPE آلاف المقاييس الداخلية للمنصة مباشرة إلى لوحات معلومات Prometheus و Grafana الحالية لديك.",
-      metricsTitle: "تكامل OpenTelemetry",
-      requestMetrics: "إنتاجية طلبات API",
-      requestMetricsDesc:
-        "مراقبة النسب المئوية لوقت الاستجابة (p95، p99)، وأحجام الحمولة (Payload sizes)، وفترات التنفيذ الدقيقة لكل نقطة نهاية.",
-      tip: "نصيحة للمديرين التنفيذيين: قم بتنفيذ التتبع الموزع (Distributed tracing) لتتبع طلب مستخدم واحد بسلاسة عبر جميع الخدمات المصغرة المنشورة.",
-      title: "قابلية المراقبة والقياس عن بعد (Observability & Telemetry)",
-      tracingContent:
-        "في بيئة النشر للخدمات المصغرة، قد تعبر نقرة واحدة خمس خدمات معزولة. يحقن التتبع الموزع معرّفات الارتباط (Correlation IDs) وينشرها من خلال ترويسات HTTP، مما يتيح لك رسم خرائط لرحلات الطلبات المعقدة بصرياً وتحديد الخدمة المعرقلة فوراً.",
-      tracingTitle: "التتبع الموزع عبر الخدمات",
-      userMetrics: "سرعة المصادقة",
-      userMetricsDesc:
-        "تتبع نجاحات تسجيل الدخول، ومحاولات القوة الغاشمة، والنشاط المحدد للمستأجر في الوقت الفعلي.",
-    },
-    testingStrategy: {
-      ci1Content:
-        "عزل بيئة التنفيذ بشكل مطلق. عند كل طلب سحب (Pull Request)، يحدد مسار CI بشكل حتمي سلاسل أدوات المترجم داخل حاوية Linux عقيمة ومغلقة بإحكام — مما يضمن التخلص التام من أعذار 'إنه يعمل على جهازي'.",
-      ci1Title: "1. تهيئة بيئة عقيمة (Sterile Environment)",
-      ci2Content:
-        "تنفيذ حزمة xUnit فائقة السرعة باستخدام مستودعات (Repositories) مقلدة (Mocked) بذكاء. يضمن هذا أن منطق الأعمال في طبقة التطبيق (CQRS) يتم فحصه واعتماده في أجزاء من الثانية دون إنشاء اتصال فعلي بقاعدة بيانات.",
-      ci2Title: "2. التحقق من المنطق النقي",
-      ci3Content:
-        "حقن قواعد بيانات Docker عابرة (Ephemeral) باستخدام Testcontainers. يضمن هذا أن استعلامات (LINQ) الخاصة بـ EF Core، وعوامل التصفية العامة، وترحيلات قاعدة البيانات الفعلية (Migrations) تُنفذ بشكل لا تشوبه شائبة ضد محركات SQL حقيقية قبل أن تدمر نفسها ذاتياً.",
-      ci3Title: "3. قياس التكامل العابر (Ephemeral Integration)",
-      ci4Content:
-        "تشغيل مجموعات (Clusters) متصفح Playwright الضخمة. يعبث عمال Chromium (بدون واجهة - Headless) بواجهة Next.js المجمعة بلا هوادة، ويتفاعلون بقوة مع كل مكون من مكونات React للمصادقة بشكل قاطع على رحلة المستخدم من البداية إلى النهاية.",
-      ci4Title: "4. أتمتة عبر المتصفحات (Cross-Browser Automation)",
-      ciContent:
-        "الاختبار بدون أتمتة مطلقة هو التزام محفوف بالمخاطر. يأتي المستودع المضمن مزوداً بشكل أصلي بمسار (CI) متوازٍ بشكل هائل عبر GitHub Actions / GitLab CI. فهو يحمي الفرع الرئيسي `main` بقوة، ويرفض فعلياً أي كود ينتهك حدود المجال، أو يفشل في التأكيدات (Assertions) الرياضية، أو يتسبب في تراجع (Regression).",
-      ciTitle: "مسارات أمان وسلامة مستمرة",
-      description:
-        "تحليل عميق لهرم اختبار SCRIPE: تأكيدات وحدة CQRS فائقة السرعة، تكامل قواعد بيانات Docker العابرة، وأتمتة واجهة المستخدم التي لا ترحم عبر Playwright.",
-      e2eContent:
-        "يجب ألا تعتمد اختبارات قبول المستخدم (UAT) على الخطأ البشري. نقوم بدمج Playwright لتشغيل مجموعات تنفيذ Chromium (Headless). تحاكي هذه المجموعات تفاعلات مستخدم ضخمة ومعقدة للغاية — وتنفيذ تدفقات إعداد متعددة المستأجرين بالكامل، والتحقق من صحة حالة مكونات React، والتأكد من بقاء واجهة المستخدم مرنة تماماً في ظل ظروف فوضوية وعنيفة قبل أن يلمسها فريق ضمان الجودة (QA) اليدوي.",
-      e2eTitle: "أتمتة متصفح (E2E) قاسية من النهاية للنهاية",
-      integrationContent:
-        "يؤدي تقليد (Mocking) قاعدة البيانات بشكل مفرط إلى إيجابيات كاذبة وخطيرة. تنشر SCRIPE حاويات Testcontainers لتوفير وتنفيذ وتدمير مثيلات (Instances) مادية حقيقية لـ PostgreSQL و Redis ديناميكياً خصيصاً لكل مجموعة اختبار. يضمن ذلك اختبار مخططات EF Core الخاصة بك ضد بنية تحتية حقيقية بدلاً من كائنات تقليدية هشة (Mocks) في الذاكرة.",
-      integrationTitle: "اختبار البنية التحتية العابرة (Ephemeral)",
-      intro:
-        "يكلف الخطأ المؤسسي المتتالي مئات الآلاف من الدولارات في شكل تعطل واسع النطاق. تفرض SCRIPE استراتيجية اختبار رياضية قاسية ومحكمة تماماً. بدءاً من اختبارات المنطق المعزولة للبنية النظيفة إلى الأتمتة التدميرية للمتصفح (Headless)، يتم فحص واعتماد كل بايت من الكود البرمجي بقوة قبل دمجه.",
-      pyramidTitle: "هرم اعتماد الكود المطبق (Stratified Pyramid)",
-      pyramidLvl: "مستوى الاعتماد",
-      pyramidTech: "محرك التنفيذ",
-      pyramidScope: "نطاق التحقق",
-      pyrE2E: "محاكاة من النهاية إلى النهاية (E2E)",
-      pyrE2ETech: "Playwright / عمال Chromium",
-      pyrE2EScope: "التحقق من الرحلة الكاملة (من واجهة المستخدم إلى قاعدة البيانات)",
-      pyrInt: "تكامل عابر (Ephemeral Integration)",
-      pyrIntTech: "WebApplicationFactory + Testcontainers",
-      pyrIntScope: "نقاط نهاية واجهة برمجة التطبيقات و SQL المادي",
-      pyrUnit: "منطق أعمال نقي",
-      pyrUnitTech: "xUnit + Moq + FluentAssertions",
-      pyrUnitScope: "النطاق + طبقات التطبيق (Domain + Application)",
-      pyrStatic: "تحليل الكود الثابت (Static Analysis)",
-      pyrStaticTech: "TypeScript + ESLint + Roslyn",
-      pyrStaticScope: "التركيب النحوي، القواعد، والأنواع",
-      summaryTitle: "يقين الاختبار الرياضي",
-      tip: "توجيه معماري: لا تستهدف المقاييس التفاخرية. افرض خط أساس لتغطية الكود بنسبة 100% مطلقاً لكيانات المجال الأساسية (Domain Entities) ومعالجات (CQRS Handlers)، واستخدم مجموعات Playwright لتغطية سطح واجهة العرض (Presentation).",
-      title: "أتمتة المرونة والاختبار",
-      unitContent:
-        "من خلال الالتزام الصارم بمبادئ البنية النظيفة، يظل منطق الأعمال الخاص بـ SCRIPE معزولاً فيزيائياً عن سياقات HTTP ومخططات SQL. يمكن لفريقك الهندسي تنفيذ آلاف من مجموعات اختبار xUnit ضد المعالجات الأساسية وكيانات المجال على الفور في أجزاء من الألف من الثانية، مما يزيد من سرعة المطورين وثقة النشر.",
-      unitTitle: "تنفيذ وحدة (Unit) معزول وفائق السرعة",
-      lstIntI1: "أداة WebApplicationFactory لاختبار مسار HTTP بشكل واقعي",
-      lstIntI2: "حاويات TestContainers لمثيلات (Instances) قواعد البيانات المؤقتة",
-      lstIntI3: "بذر (Seeding) بيانات الاختبار وتنظيفها تلقائياً",
-      lstIntI4: "تنفيذ اختبارات متوازية بقواعد بيانات معزولة",
-      lstIntI5: "محاكاة المصادقة باستخدام رموز JWT للاختبار",
-      tblSumHeader1: "نوع الاختبار",
-      tblSumHeader2: "إطار العمل",
-      tblSumHeader3: "هدف التغطية",
-      tblSumHeader4: "تردد التشغيل (Run Frequency)",
-      tblSumR1C1: "الوحدة (الواجهة الخلفية)",
-      tblSumR1C2: "xUnit + FluentAssertions",
-      tblSumR1C3: "النطاق + طبقات التطبيق",
-      tblSumR1C4: "كل (Commit)",
-      tblSumR2C1: "الوحدة (الواجهة الأمامية)",
-      tblSumR2C2: "Vitest + Testing Library",
-      tblSumR2C3: "نماذج العرض (ViewModels) + الأدوات (Utilities)",
-      tblSumR2C4: "كل (Commit)",
-      tblSumR3C1: "التكامل (Integration)",
-      tblSumR3C2: "WebApplicationFactory",
-      tblSumR3C3: "نقاط نهاية API + قاعدة البيانات",
-      tblSumR3C4: "عند دمج (PRs)",
-      tblSumR4C1: "E2E (من النهاية للنهاية)",
-      tblSumR4C2: "Playwright",
-      tblSumR4C3: "تدفقات المستخدم (User flows) الحرجة",
-      tblSumR4C4: "ليلياً / قبل الإصدار",
-      tblSumR5C1: "تحليل ثابت (Static)",
-      tblSumR5C2: "ESLint + TypeScript + Roslyn",
-      tblSumR5C3: "100% من قاعدة الكود",
-      tblSumR5C4: "كل عملية حفظ (Save)",
-      tblSumR6C1: "الأداء",
-      tblSumR6C2: "k6 / Artillery",
-      tblSumR6C3: "اختبار الحمل (Load) لنقاط النهاية",
-      tblSumR6C4: "قبل الإصدار",
-    },
     storageBackends: {
       configTitle: "تكوين ديناميكي للمزودين",
       description:
@@ -219,6 +136,88 @@ export const ar = {
       tenantIsolationDesc:
         "تُجمع الملفات (Bucketed) مادياً بواسطة `[TenantId]`، مما يضمن أماناً هائلاً للبيانات.",
       title: "بنية تحتية مجردة للتخزين (Abstracted Storage)",
+    },
+    testingStrategy: {
+      ci1Content:
+        "عزل بيئة التنفيذ بشكل مطلق. عند كل طلب سحب (Pull Request)، يحدد مسار CI بشكل حتمي سلاسل أدوات المترجم داخل حاوية Linux عقيمة ومغلقة بإحكام — مما يضمن التخلص التام من أعذار 'إنه يعمل على جهازي'.",
+      ci1Title: "1. تهيئة بيئة عقيمة (Sterile Environment)",
+      ci2Content:
+        "تنفيذ حزمة xUnit فائقة السرعة باستخدام مستودعات (Repositories) مقلدة (Mocked) بذكاء. يضمن هذا أن منطق الأعمال في طبقة التطبيق (CQRS) يتم فحصه واعتماده في أجزاء من الثانية دون إنشاء اتصال فعلي بقاعدة بيانات.",
+      ci2Title: "2. التحقق من المنطق النقي",
+      ci3Content:
+        "حقن قواعد بيانات Docker عابرة (Ephemeral) باستخدام Testcontainers. يضمن هذا أن استعلامات (LINQ) الخاصة بـ EF Core، وعوامل التصفية العامة، وترحيلات قاعدة البيانات الفعلية (Migrations) تُنفذ بشكل لا تشوبه شائبة ضد محركات SQL حقيقية قبل أن تدمر نفسها ذاتياً.",
+      ci3Title: "3. قياس التكامل العابر (Ephemeral Integration)",
+      ci4Content:
+        "تشغيل مجموعات (Clusters) متصفح Playwright الضخمة. يعبث عمال Chromium (بدون واجهة - Headless) بواجهة Next.js المجمعة بلا هوادة، ويتفاعلون بقوة مع كل مكون من مكونات React للمصادقة بشكل قاطع على رحلة المستخدم من البداية إلى النهاية.",
+      ci4Title: "4. أتمتة عبر المتصفحات (Cross-Browser Automation)",
+      ciContent:
+        "الاختبار بدون أتمتة مطلقة هو التزام محفوف بالمخاطر. يأتي المستودع المضمن مزوداً بشكل أصلي بمسار (CI) متوازٍ بشكل هائل عبر GitHub Actions / GitLab CI. فهو يحمي الفرع الرئيسي `main` بقوة، ويرفض فعلياً أي كود ينتهك حدود المجال، أو يفشل في التأكيدات (Assertions) الرياضية، أو يتسبب في تراجع (Regression).",
+      ciTitle: "مسارات أمان وسلامة مستمرة",
+      description:
+        "تحليل عميق لهرم اختبار SCRIPE: تأكيدات وحدة CQRS فائقة السرعة، تكامل قواعد بيانات Docker العابرة، وأتمتة واجهة المستخدم التي لا ترحم عبر Playwright.",
+      e2eContent:
+        "يجب ألا تعتمد اختبارات قبول المستخدم (UAT) على الخطأ البشري. نقوم بدمج Playwright لتشغيل مجموعات تنفيذ Chromium (Headless). تحاكي هذه المجموعات تفاعلات مستخدم ضخمة ومعقدة للغاية — وتنفيذ تدفقات إعداد متعددة المستأجرين بالكامل، والتحقق من صحة حالة مكونات React، والتأكد من بقاء واجهة المستخدم مرنة تماماً في ظل ظروف فوضوية وعنيفة قبل أن يلمسها فريق ضمان الجودة (QA) اليدوي.",
+      e2eTitle: "أتمتة متصفح (E2E) قاسية من النهاية للنهاية",
+      integrationContent:
+        "يؤدي تقليد (Mocking) قاعدة البيانات بشكل مفرط إلى إيجابيات كاذبة وخطيرة. تنشر SCRIPE حاويات Testcontainers لتوفير وتنفيذ وتدمير مثيلات (Instances) مادية حقيقية لـ PostgreSQL و Redis ديناميكياً خصيصاً لكل مجموعة اختبار. يضمن ذلك اختبار مخططات EF Core الخاصة بك ضد بنية تحتية حقيقية بدلاً من كائنات تقليدية هشة (Mocks) في الذاكرة.",
+      integrationTitle: "اختبار البنية التحتية العابرة (Ephemeral)",
+      intro:
+        "يكلف الخطأ المؤسسي المتتالي مئات الآلاف من الدولارات في شكل تعطل واسع النطاق. تفرض SCRIPE استراتيجية اختبار رياضية قاسية ومحكمة تماماً. بدءاً من اختبارات المنطق المعزولة للبنية النظيفة إلى الأتمتة التدميرية للمتصفح (Headless)، يتم فحص واعتماد كل بايت من الكود البرمجي بقوة قبل دمجه.",
+      lstIntI1: "أداة WebApplicationFactory لاختبار مسار HTTP بشكل واقعي",
+      lstIntI2: "حاويات TestContainers لمثيلات (Instances) قواعد البيانات المؤقتة",
+      lstIntI3: "بذر (Seeding) بيانات الاختبار وتنظيفها تلقائياً",
+      lstIntI4: "تنفيذ اختبارات متوازية بقواعد بيانات معزولة",
+      lstIntI5: "محاكاة المصادقة باستخدام رموز JWT للاختبار",
+      pyramidLvl: "مستوى الاعتماد",
+      pyramidScope: "نطاق التحقق",
+      pyramidTech: "محرك التنفيذ",
+      pyramidTitle: "هرم اعتماد الكود المطبق (Stratified Pyramid)",
+      pyrE2E: "محاكاة من النهاية إلى النهاية (E2E)",
+      pyrE2EScope: "التحقق من الرحلة الكاملة (من واجهة المستخدم إلى قاعدة البيانات)",
+      pyrE2ETech: "Playwright / عمال Chromium",
+      pyrInt: "تكامل عابر (Ephemeral Integration)",
+      pyrIntScope: "نقاط نهاية واجهة برمجة التطبيقات و SQL المادي",
+      pyrIntTech: "WebApplicationFactory + Testcontainers",
+      pyrStatic: "تحليل الكود الثابت (Static Analysis)",
+      pyrStaticScope: "التركيب النحوي، القواعد، والأنواع",
+      pyrStaticTech: "TypeScript + ESLint + Roslyn",
+      pyrUnit: "منطق أعمال نقي",
+      pyrUnitScope: "النطاق + طبقات التطبيق (Domain + Application)",
+      pyrUnitTech: "xUnit + Moq + FluentAssertions",
+      summaryTitle: "يقين الاختبار الرياضي",
+      tblSumHeader1: "نوع الاختبار",
+      tblSumHeader2: "إطار العمل",
+      tblSumHeader3: "هدف التغطية",
+      tblSumHeader4: "تردد التشغيل (Run Frequency)",
+      tblSumR1C1: "الوحدة (الواجهة الخلفية)",
+      tblSumR1C2: "xUnit + FluentAssertions",
+      tblSumR1C3: "النطاق + طبقات التطبيق",
+      tblSumR1C4: "كل (Commit)",
+      tblSumR2C1: "الوحدة (الواجهة الأمامية)",
+      tblSumR2C2: "Vitest + Testing Library",
+      tblSumR2C3: "نماذج العرض (ViewModels) + الأدوات (Utilities)",
+      tblSumR2C4: "كل (Commit)",
+      tblSumR3C1: "التكامل (Integration)",
+      tblSumR3C2: "WebApplicationFactory",
+      tblSumR3C3: "نقاط نهاية API + قاعدة البيانات",
+      tblSumR3C4: "عند دمج (PRs)",
+      tblSumR4C1: "E2E (من النهاية للنهاية)",
+      tblSumR4C2: "Playwright",
+      tblSumR4C3: "تدفقات المستخدم (User flows) الحرجة",
+      tblSumR4C4: "ليلياً / قبل الإصدار",
+      tblSumR5C1: "تحليل ثابت (Static)",
+      tblSumR5C2: "ESLint + TypeScript + Roslyn",
+      tblSumR5C3: "100% من قاعدة الكود",
+      tblSumR5C4: "كل عملية حفظ (Save)",
+      tblSumR6C1: "الأداء",
+      tblSumR6C2: "k6 / Artillery",
+      tblSumR6C3: "اختبار الحمل (Load) لنقاط النهاية",
+      tblSumR6C4: "قبل الإصدار",
+      tip: "توجيه معماري: لا تستهدف المقاييس التفاخرية. افرض خط أساس لتغطية الكود بنسبة 100% مطلقاً لكيانات المجال الأساسية (Domain Entities) ومعالجات (CQRS Handlers)، واستخدم مجموعات Playwright لتغطية سطح واجهة العرض (Presentation).",
+      title: "أتمتة المرونة والاختبار",
+      unitContent:
+        "من خلال الالتزام الصارم بمبادئ البنية النظيفة، يظل منطق الأعمال الخاص بـ SCRIPE معزولاً فيزيائياً عن سياقات HTTP ومخططات SQL. يمكن لفريقك الهندسي تنفيذ آلاف من مجموعات اختبار xUnit ضد المعالجات الأساسية وكيانات المجال على الفور في أجزاء من الألف من الثانية، مما يزيد من سرعة المطورين وثقة النشر.",
+      unitTitle: "تنفيذ وحدة (Unit) معزول وفائق السرعة",
     },
   },
 };

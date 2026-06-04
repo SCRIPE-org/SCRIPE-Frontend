@@ -11,7 +11,12 @@ import type {
   UpdateEditionRequest,
 } from "../../domain/entities/EditionRequests";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+} from "@core/common/zod-utils";
 
 // ─── Edition Response Schema ────────────────────────────────────────────────────
 
@@ -62,10 +67,9 @@ export class EditionMapper {
       description: validated.description ?? undefined,
       tagline: validated.tagline ?? undefined,
       // recommendationLabels is stored as JSON string in entity, API may send array or string
-      recommendationLabels:
-        Array.isArray(validated.recommendationLabels)
-          ? JSON.stringify(validated.recommendationLabels)
-          : (validated.recommendationLabels as string | null | undefined) ?? undefined,
+      recommendationLabels: Array.isArray(validated.recommendationLabels)
+        ? JSON.stringify(validated.recommendationLabels)
+        : ((validated.recommendationLabels as string | null | undefined) ?? undefined),
       isSystem: validated.isSystem,
       isRetired: validated.isRetired,
       tierLevel: validated.tierLevel,

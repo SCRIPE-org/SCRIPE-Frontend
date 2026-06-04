@@ -5,7 +5,12 @@ import {
 } from "../../domain/entities/CommissionLedgerEntry";
 import { CommissionInvoice, CommissionInvoiceData } from "../../domain/entities/CommissionInvoice";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
@@ -32,7 +37,11 @@ const CommissionLedgerEntrySchema = z.object({
 
 export class CommissionMapper {
   static toLedgerEntity(model: CommissionLedgerEntryModel): CommissionLedgerEntry {
-    const validated = safeParseApiResponse(CommissionLedgerEntrySchema, model, "CommissionLedgerEntry");
+    const validated = safeParseApiResponse(
+      CommissionLedgerEntrySchema,
+      model,
+      "CommissionLedgerEntry"
+    );
 
     const data: CommissionLedgerEntryData = {
       id: validated.id,

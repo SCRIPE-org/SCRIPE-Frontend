@@ -69,8 +69,26 @@ export interface HubModuleTileProps {
 // ── Tile dimensions per size ──────────────────────────────────────────────────
 
 const DIMS = {
-  lg: { w: 158, h: 158, iconSize: 30, nameSize: 14, countSize: 11.5, pad: 18, iconChip: 42, chipRadius: 12 },
-  md: { w: 124, h: 124, iconSize: 24, nameSize: 12.5, countSize: 10.5, pad: 14, iconChip: 36, chipRadius: 10 },
+  lg: {
+    w: 158,
+    h: 158,
+    iconSize: 30,
+    nameSize: 14,
+    countSize: 11.5,
+    pad: 18,
+    iconChip: 42,
+    chipRadius: 12,
+  },
+  md: {
+    w: 124,
+    h: 124,
+    iconSize: 24,
+    nameSize: 12.5,
+    countSize: 10.5,
+    pad: 14,
+    iconChip: 36,
+    chipRadius: 10,
+  },
 } as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -312,8 +330,7 @@ export function HubModuleTile({
             position: "absolute",
             inset: 0,
             borderRadius: 20,
-            background:
-              "linear-gradient(160deg, rgba(10,14,26,0.55), rgba(10,14,26,0.78))",
+            background: "linear-gradient(160deg, rgba(10,14,26,0.55), rgba(10,14,26,0.78))",
             backdropFilter: "blur(6px) saturate(120%)",
             display: "flex",
             flexDirection: "column",

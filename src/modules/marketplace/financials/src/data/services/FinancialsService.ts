@@ -19,9 +19,11 @@ export class FinancialsService implements IFinancialsService {
   constructor(private readonly api: IApiService) {}
 
   /** Fetch paginated purchase transactions. */
-  async getPurchases(
-    params: { page: number; pageSize: number; tenantId?: string }
-  ): Promise<PaginatedFinancialsResponse<PurchaseDto>> {
+  async getPurchases(params: {
+    page: number;
+    pageSize: number;
+    tenantId?: string;
+  }): Promise<PaginatedFinancialsResponse<PurchaseDto>> {
     const q = new URLSearchParams({
       page: String(params.page),
       pageSize: String(params.pageSize),
@@ -38,9 +40,11 @@ export class FinancialsService implements IFinancialsService {
   }
 
   /** Fetch paginated developer payouts. */
-  async getPayouts(
-    params: { developerProfileId: string; page: number; pageSize: number }
-  ): Promise<PaginatedFinancialsResponse<PayoutDto>> {
+  async getPayouts(params: {
+    developerProfileId: string;
+    page: number;
+    pageSize: number;
+  }): Promise<PaginatedFinancialsResponse<PayoutDto>> {
     const q = new URLSearchParams({
       developerProfileId: params.developerProfileId,
       page: String(params.page),

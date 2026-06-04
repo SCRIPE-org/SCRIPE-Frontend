@@ -24,7 +24,13 @@ import type {
   UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString, optionalIsoDate } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+  optionalIsoDate,
+} from "@core/common/zod-utils";
 
 // ─── Tenant Response Schema ────────────────────────────────────────────────────
 
@@ -119,7 +125,9 @@ export class TenantMapper {
       editionEndDate: validated.editionEndDate ?? undefined,
       subscriptionStatus:
         validated.subscriptionStatus != null ? String(validated.subscriptionStatus) : undefined,
-      children: (model.children ?? []).map((c) => TenantMapper.toTreeNode(c as TenantTreeNodeModel)),
+      children: (model.children ?? []).map((c) =>
+        TenantMapper.toTreeNode(c as TenantTreeNodeModel)
+      ),
     };
     return props as TenantTreeNode;
   }

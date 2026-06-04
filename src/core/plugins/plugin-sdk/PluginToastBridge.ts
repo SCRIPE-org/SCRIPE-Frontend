@@ -26,10 +26,17 @@ export class PluginToastBridge {
       const { variant, title, message } = msg.payload;
       const opts = { title, description: message };
       switch (variant) {
-        case "success": this.toast.success(opts); break;
-        case "error": this.toast.error(opts); break;
-        case "warning": this.toast.warning(opts); break;
-        default: this.toast.info(opts);
+        case "success":
+          this.toast.success(opts);
+          break;
+        case "error":
+          this.toast.error(opts);
+          break;
+        case "warning":
+          this.toast.warning(opts);
+          break;
+        default:
+          this.toast.info(opts);
       }
     });
   }

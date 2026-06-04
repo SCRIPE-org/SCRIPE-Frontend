@@ -15,7 +15,7 @@ export function LogsPagination({ page, totalPages, onPageChange }: LogsPaginatio
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-center gap-3 p-4 border-t">
+    <div className="flex items-center justify-center gap-3 border-t p-4">
       <Button
         variant="outline"
         size="sm"

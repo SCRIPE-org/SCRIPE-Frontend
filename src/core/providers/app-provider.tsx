@@ -86,36 +86,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         <ThemeProvider attribute="class" disableTransitionOnChange={false}>
           <TooltipProvider>
             <ServiceProvider>
-            <SettingsProvider>
-              <I18nProvider>
-                <QueryAwareErrorBoundary>
-                  <PermissionProvider>
-                    <TenantContextProvider>
-                      <SignalRProvider>
-                        <NotificationSignalRProvider>
-                          <NavigationProvider>
-                            <WorkspaceProvider>
-                              <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
-                                <RouteGuard>{children}</RouteGuard>
-                              </AuthRefreshProvider>
-                            </WorkspaceProvider>
-                          </NavigationProvider>
-                        </NotificationSignalRProvider>
-                      </SignalRProvider>
-                    </TenantContextProvider>
-                  </PermissionProvider>
-                </QueryAwareErrorBoundary>
-                <EnhancedToaster />
-              </I18nProvider>
-            </SettingsProvider>
-          </ServiceProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+              <SettingsProvider>
+                <I18nProvider>
+                  <QueryAwareErrorBoundary>
+                    <PermissionProvider>
+                      <TenantContextProvider>
+                        <SignalRProvider>
+                          <NotificationSignalRProvider>
+                            <NavigationProvider>
+                              <WorkspaceProvider>
+                                <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
+                                  <RouteGuard>{children}</RouteGuard>
+                                </AuthRefreshProvider>
+                              </WorkspaceProvider>
+                            </NavigationProvider>
+                          </NotificationSignalRProvider>
+                        </SignalRProvider>
+                      </TenantContextProvider>
+                    </PermissionProvider>
+                  </QueryAwareErrorBoundary>
+                  <EnhancedToaster />
+                </I18nProvider>
+              </SettingsProvider>
+            </ServiceProvider>
+          </TooltipProvider>
+        </ThemeProvider>
       </QueryClientProvider>
       {/* React Query DevTools — only rendered in development */}
       {process.env.NODE_ENV === "development" && ReactQueryDevtools && (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        <ReactQueryDevtools {...({ initialIsOpen: false, buttonPosition: "bottom-right" } as any)} />
+        <ReactQueryDevtools
+          {...({ initialIsOpen: false, buttonPosition: "bottom-right" } as any)}
+        />
       )}
     </>
   );

@@ -29,7 +29,11 @@ import { useWorkspaceTransition } from "./use-workspace-transition";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { usePathname } from "next/navigation";
-import { NEXUS_PANEL_W, NEXUS_PRIMARY_RAIL_W, NEXUS_TOPBAR_H } from "./_parts/nexus-layout-constants";
+import {
+  NEXUS_PANEL_W,
+  NEXUS_PRIMARY_RAIL_W,
+  NEXUS_TOPBAR_H,
+} from "./_parts/nexus-layout-constants";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { HubTopBar } from "@modules/home/presentation/components/HubTopBar";
 
@@ -120,7 +124,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               left: "20%",
               width: 700,
               height: 600,
-              background: "radial-gradient(closest-side, rgba(94,145,255,0.10), rgba(94,145,255,0) 70%)",
+              background:
+                "radial-gradient(closest-side, rgba(94,145,255,0.10), rgba(94,145,255,0) 70%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -133,7 +138,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               right: -100,
               width: 480,
               height: 480,
-              background: "radial-gradient(closest-side, rgba(154,77,219,0.08), rgba(154,77,219,0) 70%)",
+              background:
+                "radial-gradient(closest-side, rgba(154,77,219,0.08), rgba(154,77,219,0) 70%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -244,4 +250,3 @@ export function NexusLayout({ children }: NexusLayoutProps) {
     </WorkspaceTransitionContext.Provider>
   );
 }
-

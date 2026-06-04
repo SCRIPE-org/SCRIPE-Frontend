@@ -132,10 +132,6 @@ registerPage({
   category: "modules",
   order: 1,
   sections,
-  relatedSlugs: [
-    "modules/entitlements-overview",
-    "modules/billing-engine",
-    "modules/invoices",
-  ],
+  relatedSlugs: ["modules/entitlements-overview", "modules/billing-engine", "modules/invoices"],
   lastUpdated: "2026-06-04",
 });

@@ -50,9 +50,7 @@ export function LoginFormRouter({
       id="login-main-content"
       className="w-full"
       style={{ maxWidth: "var(--login-form-width, 380px)" }}
-      {...(a11y.ariaLandmarks
-        ? { role: "main", "aria-label": t("auth.loginFormAriaLabel") }
-        : {})}
+      {...(a11y.ariaLandmarks ? { role: "main", "aria-label": t("auth.loginFormAriaLabel") } : {})}
     >
       {/* Safe-mode notice */}
       {safeModeActive && (

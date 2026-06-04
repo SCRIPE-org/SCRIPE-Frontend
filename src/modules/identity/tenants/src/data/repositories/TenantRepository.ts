@@ -159,7 +159,10 @@ export class TenantRepository implements ITenantRepository {
     await this.service.updateTenantPermissions(tenantId, permissionIds);
   }
 
-  async getTenantPermissionsGrouped(tenantId: string, search?: string): Promise<PermissionModuleGroup[]> {
+  async getTenantPermissionsGrouped(
+    tenantId: string,
+    search?: string
+  ): Promise<PermissionModuleGroup[]> {
     const json = await this.service.getTenantPermissionsGrouped(tenantId, search);
     return PermissionMapper.toEntityGrouped(json);
   }

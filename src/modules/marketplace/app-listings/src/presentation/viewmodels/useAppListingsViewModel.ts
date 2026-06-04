@@ -36,7 +36,17 @@ export function useAppListingsViewModel() {
 
   // ── Queries ──────────────────────────────────────────────────────────────
   const listingsQuery = useQuery({
-    queryKey: ["marketplace", "listings", page, pageSize, search, categoryFilter, publishedFilter, sortBy, pricingModel],
+    queryKey: [
+      "marketplace",
+      "listings",
+      page,
+      pageSize,
+      search,
+      categoryFilter,
+      publishedFilter,
+      sortBy,
+      pricingModel,
+    ],
     queryFn: () =>
       appListingsRepository.getAll({
         page,
@@ -122,12 +132,15 @@ export function useAppListingsViewModel() {
   const totalPages = listingsQuery.data?.totalPages ?? 1;
   const featuredListings = featuredQuery.data ?? [];
 
-  const stats = useMemo(() => ({
-    total: totalCount,
-    published: listings.filter((l: AppListing) => l.isPublished).length,
-    featured: featuredListings.length,
-    drafts: listings.filter((l: AppListing) => !l.isPublished).length,
-  }), [listings, totalCount, featuredListings]);
+  const stats = useMemo(
+    () => ({
+      total: totalCount,
+      published: listings.filter((l: AppListing) => l.isPublished).length,
+      featured: featuredListings.length,
+      drafts: listings.filter((l: AppListing) => !l.isPublished).length,
+    }),
+    [listings, totalCount, featuredListings]
+  );
 
   return {
     // Data

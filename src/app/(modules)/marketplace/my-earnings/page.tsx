@@ -11,7 +11,8 @@ export default function VendorEarningsPage() {
       <div className="flex flex-col space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">My Earnings</h1>
         <p className="text-muted-foreground">
-          View your sales reports, pending payouts, and download tax documents. This feature is coming soon.
+          View your sales reports, pending payouts, and download tax documents. This feature is
+          coming soon.
         </p>
       </div>
     </main>

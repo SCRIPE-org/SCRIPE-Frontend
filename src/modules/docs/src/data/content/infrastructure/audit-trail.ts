@@ -29,7 +29,12 @@ const sections: DocSection[] = [
         type: "info",
         description: "Entity change tracking",
       },
-      { id: "service", label: "AuditService", type: "warning", description: "Common audit handler" },
+      {
+        id: "service",
+        label: "AuditService",
+        type: "warning",
+        description: "Common audit handler",
+      },
       { id: "db", label: "AuditLogs Table", type: "success", description: "Persistent storage" },
       { id: "signalr", label: "SignalR Hub", type: "danger", description: "Real-time broadcast" },
     ],

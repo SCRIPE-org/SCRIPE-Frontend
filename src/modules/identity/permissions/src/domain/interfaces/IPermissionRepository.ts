@@ -67,4 +67,3 @@ export interface IPermissionRepository {
    */
   delete(id: string): Promise<void>;
 }
-

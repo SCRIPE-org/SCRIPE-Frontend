@@ -72,10 +72,16 @@ export function PasskeyManagementView() {
             <AlertTriangle className="h-5 w-5 text-red-500" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold" style={{ color: "var(--sx-text, var(--foreground))" }}>
+            <h3
+              className="text-sm font-semibold"
+              style={{ color: "var(--sx-text, var(--foreground))" }}
+            >
               {t("auth.passkey.notSupportedTitle") || "Passkeys Not Supported"}
             </h3>
-            <p className="text-xs" style={{ color: "var(--sx-text-mute, var(--muted-foreground))" }}>
+            <p
+              className="text-xs"
+              style={{ color: "var(--sx-text-mute, var(--muted-foreground))" }}
+            >
               {t("auth.passkey.notSupportedDesc") ||
                 "Your browser doesn't support WebAuthn/Passkeys. Please use a modern browser."}
             </p>
@@ -93,7 +99,8 @@ export function PasskeyManagementView() {
           <div
             className="flex h-10 w-10 items-center justify-center rounded-xl"
             style={{
-              background: "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%)",
+              background:
+                "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%)",
               border: "1px solid rgba(168,85,247,0.3)",
             }}
           >
@@ -147,7 +154,9 @@ export function PasskeyManagementView() {
                 </Label>
                 <Input
                   id="passkey-device-name"
-                  placeholder={t("auth.passkey.deviceNamePlaceholder") || "e.g. MacBook Pro, iPhone 15"}
+                  placeholder={
+                    t("auth.passkey.deviceNamePlaceholder") || "e.g. MacBook Pro, iPhone 15"
+                  }
                   value={newDeviceName}
                   onChange={(e) => setNewDeviceName(e.target.value)}
                   maxLength={64}
@@ -203,7 +212,10 @@ export function PasskeyManagementView() {
       {/* ── Loading state ──────────────────────────────────── */}
       {vm.isLoading && (
         <div className="flex items-center justify-center py-8">
-          <span className="sx-spin1 inline-block h-6 w-6 rounded-full border-2 border-transparent border-t-current" style={{ color: "var(--sx-accent, #A855F7)" }} />
+          <span
+            className="sx-spin1 inline-block h-6 w-6 rounded-full border-2 border-transparent border-t-current"
+            style={{ color: "var(--sx-accent, #A855F7)" }}
+          />
         </div>
       )}
 
@@ -243,7 +255,10 @@ export function PasskeyManagementView() {
           <p className="text-sm font-medium" style={{ color: "var(--sx-text, var(--foreground))" }}>
             {t("auth.passkey.emptyTitle") || "No passkeys registered"}
           </p>
-          <p className="max-w-xs text-center text-xs" style={{ color: "var(--sx-text-mute, var(--muted-foreground))" }}>
+          <p
+            className="max-w-xs text-center text-xs"
+            style={{ color: "var(--sx-text-mute, var(--muted-foreground))" }}
+          >
             {t("auth.passkey.emptyDesc") ||
               "Add a passkey to enable fast, passwordless sign-in using your device's biometric or security key."}
           </p>
@@ -325,13 +340,11 @@ export function PasskeyManagementView() {
                       className="text-xs"
                       style={{ color: "var(--sx-text-mute, var(--muted-foreground))" }}
                     >
-                      {t("auth.passkey.createdAt") || "Created"}{" "}
-                      {passkey.displayCreatedDate}
+                      {t("auth.passkey.createdAt") || "Created"} {passkey.displayCreatedDate}
                       {passkey.displayLastUsedDate && (
                         <>
                           {" · "}
-                          {t("auth.passkey.lastUsed") || "Last used"}{" "}
-                          {passkey.displayLastUsedDate}
+                          {t("auth.passkey.lastUsed") || "Last used"} {passkey.displayLastUsedDate}
                         </>
                       )}
                       {passkey.isNeverUsed && (
@@ -403,8 +416,8 @@ export function PasskeyManagementView() {
               disabled={vm.isDeletingPasskey}
             >
               {vm.isDeletingPasskey
-                ? (t("common.deleting") || "Deleting…")
-                : (t("auth.passkey.deleteConfirm") || "Delete Passkey")}
+                ? t("common.deleting") || "Deleting…"
+                : t("auth.passkey.deleteConfirm") || "Delete Passkey"}
             </Button>
           </DialogFooter>
         </DialogContent>

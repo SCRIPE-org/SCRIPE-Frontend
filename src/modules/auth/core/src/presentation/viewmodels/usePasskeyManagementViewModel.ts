@@ -76,22 +76,15 @@ export function usePasskeyManagementViewModel() {
           throw new Error("Passkey creation was cancelled or failed.");
         }
 
-        const attestationResponse =
-          credential.response as AuthenticatorAttestationResponse;
+        const attestationResponse = credential.response as AuthenticatorAttestationResponse;
 
         // 3. Encode binary buffers to base64 for transport
-        const rawIdBase64 = btoa(
-          String.fromCharCode(...new Uint8Array(credential.rawId))
-        );
+        const rawIdBase64 = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
         const attestationObjectBase64 = btoa(
-          String.fromCharCode(
-            ...new Uint8Array(attestationResponse.attestationObject)
-          )
+          String.fromCharCode(...new Uint8Array(attestationResponse.attestationObject))
         );
         const clientDataJSONBase64 = btoa(
-          String.fromCharCode(
-            ...new Uint8Array(attestationResponse.clientDataJSON)
-          )
+          String.fromCharCode(...new Uint8Array(attestationResponse.clientDataJSON))
         );
 
         // 4. Complete registration on backend
@@ -108,19 +101,14 @@ export function usePasskeyManagementViewModel() {
         // 5. Refresh passkey list
         queryClient.invalidateQueries({ queryKey: ["passkeys"] });
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Passkey registration failed.";
+        const message = err instanceof Error ? err.message : "Passkey registration failed.";
 
         // Handle specific WebAuthn errors
         if (err instanceof DOMException) {
           if (err.name === "NotAllowedError") {
-            setRegistrationError(
-              "Passkey creation was cancelled or not allowed."
-            );
+            setRegistrationError("Passkey creation was cancelled or not allowed.");
           } else if (err.name === "InvalidStateError") {
-            setRegistrationError(
-              "A passkey already exists on this device."
-            );
+            setRegistrationError("A passkey already exists on this device.");
           } else {
             setRegistrationError(message);
           }
@@ -135,13 +123,10 @@ export function usePasskeyManagementViewModel() {
   );
 
   // ── Start rename flow ────────────────────────────────────
-  const startRename = useCallback(
-    (passkey: PasskeyEntity) => {
-      setRenamingId(passkey.id);
-      setRenameValue(passkey.deviceName);
-    },
-    []
-  );
+  const startRename = useCallback((passkey: PasskeyEntity) => {
+    setRenamingId(passkey.id);
+    setRenameValue(passkey.deviceName);
+  }, []);
 
   const cancelRename = useCallback(() => {
     setRenamingId(null);
@@ -183,8 +168,6 @@ export function usePasskeyManagementViewModel() {
     refetch,
 
     // WebAuthn support detection
-    isWebAuthnSupported:
-      typeof window !== "undefined" &&
-      !!window.PublicKeyCredential,
+    isWebAuthnSupported: typeof window !== "undefined" && !!window.PublicKeyCredential,
   };
 }

@@ -9,7 +9,12 @@
 import { DeletedItem, type DeletedItemData } from "../../domain/entities/DeletedItem";
 import { DeletedItemModel } from "../models/DeletedItemModel";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+} from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

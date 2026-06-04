@@ -16,24 +16,45 @@ export function ReviewsView() {
       </div>
 
       {vm.isLoading ? (
-        <div className="flex flex-col gap-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-24 rounded-xl bg-muted animate-pulse" />)}</div>
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-muted" />
+          ))}
+        </div>
       ) : vm.reviews.length === 0 ? (
-        <div className="flex items-center justify-center py-24 text-muted-foreground">No reviews yet</div>
+        <div className="flex items-center justify-center py-24 text-muted-foreground">
+          No reviews yet
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {vm.reviews.map((review) => (
             <Card key={review.id} className={review.isModerated ? "opacity-60" : ""}>
               <CardHeader className="flex flex-row items-start gap-3 pb-2">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-sm">{review.appName}</span>
-                    <div className="flex">{review.stars.map((s, i) => <Star key={i} className={`size-3 ${s === "full" ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`} />)}</div>
-                    <Badge variant="outline" className="text-xs">{review.tenantName}</Badge>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium">{review.appName}</span>
+                    <div className="flex">
+                      {review.stars.map((s, i) => (
+                        <Star
+                          key={i}
+                          className={`size-3 ${s === "full" ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
+                        />
+                      ))}
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {review.tenantName}
+                    </Badge>
                   </div>
-                  <p className="text-sm font-medium mt-1">{review.title}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{review.body}</p>
+                  <p className="mt-1 text-sm font-medium">{review.title}</p>
+                  <p className="line-clamp-2 text-xs text-muted-foreground">{review.body}</p>
                 </div>
-                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive shrink-0" onClick={() => vm.moderate(review.id)} disabled={vm.isModerating}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="shrink-0 text-destructive hover:text-destructive"
+                  onClick={() => vm.moderate(review.id)}
+                  disabled={vm.isModerating}
+                >
                   <Trash2 className="size-3.5" />
                 </Button>
               </CardHeader>

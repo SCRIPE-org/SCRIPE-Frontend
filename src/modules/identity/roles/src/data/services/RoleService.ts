@@ -139,7 +139,9 @@ export class RoleService implements IRoleService {
     return response.map((p) => PermissionModel.fromJson(p));
   }
 
-  async getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroupJson[]> {
+  async getMyTenantAvailablePermissionsGrouped(
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]> {
     const url = buildUrl(API_ENDPOINTS.ROLES.MY_TENANT_AVAILABLE_PERMISSIONS_GROUPED, { search });
     return this.api.get(url);
   }

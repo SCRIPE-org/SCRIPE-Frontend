@@ -6,7 +6,11 @@
  * Returns raw DTOs (models) — never domain entities.
  */
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
-import type { FeatureModel, TenantEffectiveFeatureModel, FeatureModuleGroupModel } from "../../data/models/FeatureModels";
+import type {
+  FeatureModel,
+  TenantEffectiveFeatureModel,
+  FeatureModuleGroupModel,
+} from "../../data/models/FeatureModels";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 
 export interface IFeatureService {
@@ -20,4 +24,3 @@ export interface IFeatureService {
   /** Get all features grouped by Module → Category from backend */
   getGrouped(search?: string): Promise<FeatureModuleGroupModel[]>;
 }
-

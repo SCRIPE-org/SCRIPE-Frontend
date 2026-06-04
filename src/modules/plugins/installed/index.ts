@@ -11,4 +11,3 @@ export type { IInstalledService } from "./src/domain/interfaces/IInstalledServic
 export type { PluginInstallationModel } from "./src/data/models/InstalledModels";
 export { InstalledService } from "./src/data/services/InstalledService";
 export { InstalledRepository } from "./src/data/repositories/InstalledRepository";
-

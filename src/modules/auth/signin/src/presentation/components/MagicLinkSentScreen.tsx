@@ -14,12 +14,7 @@ interface MagicLinkSentScreenProps {
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
-export function MagicLinkSentScreen({
-  email,
-  onBack,
-  onResend,
-  isRTL,
-}: MagicLinkSentScreenProps) {
+export function MagicLinkSentScreen({ email, onBack, onResend, isRTL }: MagicLinkSentScreenProps) {
   const { t } = useI18n();
   const [countdown, setCountdown] = useState(RESEND_COOLDOWN_SECONDS);
   const [isResending, setIsResending] = useState(false);
@@ -65,11 +60,12 @@ export function MagicLinkSentScreen({
     }
   }, [countdown, isResending, onResend, email, t]);
 
-  const resendLabel = countdown > 0
-    ? t("auth.magicLink.resendCooldown").replace("{{seconds}}", String(countdown))
-    : isResending
-      ? t("auth.magicLink.resending")
-      : t("auth.magicLink.resend");
+  const resendLabel =
+    countdown > 0
+      ? t("auth.magicLink.resendCooldown").replace("{{seconds}}", String(countdown))
+      : isResending
+        ? t("auth.magicLink.resending")
+        : t("auth.magicLink.resend");
 
   return (
     <div className="sx-rise flex flex-col gap-6 text-center">

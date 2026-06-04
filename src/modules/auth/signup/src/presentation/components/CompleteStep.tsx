@@ -36,7 +36,8 @@ export function CompleteStep({ vm }: CompleteStepProps) {
         <div
           className="relative flex h-16 w-16 items-center justify-center rounded-full"
           style={{
-            background: "linear-gradient(180deg, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.1) 100%)",
+            background:
+              "linear-gradient(180deg, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.1) 100%)",
             border: "2px solid rgba(16,185,129,0.4)",
             animation: "sxPop 0.5s ease-out",
           }}
@@ -46,10 +47,7 @@ export function CompleteStep({ vm }: CompleteStepProps) {
       </div>
 
       {showContent && (
-        <div
-          className="text-center"
-          style={{ animation: "sxRise 0.5s ease-out" }}
-        >
+        <div className="text-center" style={{ animation: "sxRise 0.5s ease-out" }}>
           <h1
             className="text-2xl font-bold"
             style={{
@@ -60,25 +58,16 @@ export function CompleteStep({ vm }: CompleteStepProps) {
           >
             Welcome to Scripe! 🎉
           </h1>
-          <p
-            className="mt-3 text-sm"
-            style={{ color: "rgba(245,242,255,0.62)" }}
-          >
+          <p className="mt-3 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
             Your workspace{" "}
-            <span
-              className="font-semibold"
-              style={{ color: "#C4B5FD" }}
-            >
+            <span className="font-semibold" style={{ color: "#C4B5FD" }}>
               {vm.wizardData.workspaceName || "your workspace"}
             </span>{" "}
             is ready. Redirecting you to your dashboard…
           </p>
 
           {/* Feature highlights */}
-          <div
-            className="mt-6 space-y-2"
-            style={{ animation: "sxRise 0.5s ease-out 0.3s both" }}
-          >
+          <div className="mt-6 space-y-2" style={{ animation: "sxRise 0.5s ease-out 0.3s both" }}>
             {[
               "Invite your team members",
               "Customize your branding",
@@ -86,7 +75,7 @@ export function CompleteStep({ vm }: CompleteStepProps) {
             ].map((item, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 justify-center text-xs"
+                className="flex items-center justify-center gap-2 text-xs"
                 style={{
                   color: "rgba(245,242,255,0.55)",
                   animation: `sxRise 0.3s ease-out ${0.4 + i * 0.1}s both`,
@@ -104,7 +93,7 @@ export function CompleteStep({ vm }: CompleteStepProps) {
               {[0, 200, 400].map((delay) => (
                 <div
                   key={delay}
-                  className="h-1.5 w-1.5 rounded-full animate-pulse"
+                  className="h-1.5 w-1.5 animate-pulse rounded-full"
                   style={{
                     background: "#A855F7",
                     animationDelay: `${delay}ms`,
@@ -112,10 +101,7 @@ export function CompleteStep({ vm }: CompleteStepProps) {
                 />
               ))}
             </div>
-            <p
-              className="text-[11px] font-medium"
-              style={{ color: "rgba(245,242,255,0.4)" }}
-            >
+            <p className="text-[11px] font-medium" style={{ color: "rgba(245,242,255,0.4)" }}>
               Redirecting…
             </p>
           </div>

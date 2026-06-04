@@ -11,7 +11,8 @@ export function useFinancialsViewModel() {
   const [payoutsPage, setPayoutsPage] = useState(1);
   const [developerProfileId, setDeveloperProfileId] = useState<string>("");
 
-  const invalidatePayouts = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "payouts"] });
+  const invalidatePayouts = () =>
+    queryClient.invalidateQueries({ queryKey: ["marketplace", "payouts"] });
 
   const purchasesQuery = useQuery({
     queryKey: ["marketplace", "purchases", purchasesPage],
@@ -20,7 +21,8 @@ export function useFinancialsViewModel() {
 
   const payoutsQuery = useQuery({
     queryKey: ["marketplace", "payouts", developerProfileId, payoutsPage],
-    queryFn: () => financialsRepository.getPayouts({ developerProfileId, page: payoutsPage, pageSize: 20 }),
+    queryFn: () =>
+      financialsRepository.getPayouts({ developerProfileId, page: payoutsPage, pageSize: 20 }),
     enabled: !!developerProfileId,
   });
 
@@ -32,9 +34,17 @@ export function useFinancialsViewModel() {
 
   return {
     purchases: purchasesQuery.data?.items ?? [],
-    purchasesPagination: { page: purchasesPage, totalPages: purchasesQuery.data?.totalPages ?? 1, totalCount: purchasesQuery.data?.totalCount ?? 0 },
+    purchasesPagination: {
+      page: purchasesPage,
+      totalPages: purchasesQuery.data?.totalPages ?? 1,
+      totalCount: purchasesQuery.data?.totalCount ?? 0,
+    },
     payouts: payoutsQuery.data?.items ?? [],
-    payoutsPagination: { page: payoutsPage, totalPages: payoutsQuery.data?.totalPages ?? 1, totalCount: payoutsQuery.data?.totalCount ?? 0 },
+    payoutsPagination: {
+      page: payoutsPage,
+      totalPages: payoutsQuery.data?.totalPages ?? 1,
+      totalCount: payoutsQuery.data?.totalCount ?? 0,
+    },
     isLoadingPurchases: purchasesQuery.isLoading,
     isLoadingPayouts: payoutsQuery.isLoading,
     setPurchasesPage,

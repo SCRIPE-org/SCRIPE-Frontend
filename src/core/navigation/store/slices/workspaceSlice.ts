@@ -39,9 +39,9 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       //  - has a value (user navigated)           → preserve as-is
       activeWorkspaceKey:
         state.activeWorkspaceKey !== null
-          ? state.activeWorkspaceKey  // Already chosen — preserve it
-          : (typeof window !== "undefined" && window.location.pathname === "/hub")
-            ? null      // Explicitly on /hub — keep null (hub manages its own state)
+          ? state.activeWorkspaceKey // Already chosen — preserve it
+          : typeof window !== "undefined" && window.location.pathname === "/hub"
+            ? null // Explicitly on /hub — keep null (hub manages its own state)
             : defaultKey, // First load on dashboard or any module page — auto-activate
       isInitialLoading: false,
     }));

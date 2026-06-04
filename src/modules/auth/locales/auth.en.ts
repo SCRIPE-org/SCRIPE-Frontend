@@ -121,7 +121,8 @@ export const en = {
       chip: "Magic link",
       signInWithLink: "Email me a sign-in link",
       sentTitle: "Check your email",
-      sentDesc: "If an account exists for that address, we sent a sign-in link. It expires in 10 minutes.",
+      sentDesc:
+        "If an account exists for that address, we sent a sign-in link. It expires in 10 minutes.",
       resend: "Resend link",
       resending: "Resending…",
       resendCooldown: "Resend in {{seconds}}s",
@@ -206,26 +207,30 @@ export const en = {
       securityError: "Security error. Please ensure you're on a secure connection.",
       failed: "Passkey authentication failed. Please try again.",
       notSupportedTitle: "Passkeys not supported",
-      notSupportedDesc: "Your browser doesn't support passkeys. Please use a different sign-in method.",
+      notSupportedDesc:
+        "Your browser doesn't support passkeys. Please use a different sign-in method.",
       // ── Management (Settings page) ──────────────────────────
       managementTitle: "Passkeys",
       managementDesc: "Manage your registered passkeys for passwordless sign-in.",
       register: "Add Passkey",
       registerTitle: "Register New Passkey",
-      registerDesc: "Give your passkey a name to identify this device, then follow the browser prompt.",
+      registerDesc:
+        "Give your passkey a name to identify this device, then follow the browser prompt.",
       registerCta: "Register Passkey",
       registering: "Registering…",
       deviceNameLabel: "Device Name",
       deviceNamePlaceholder: "e.g. MacBook Pro, iPhone 15",
       emptyTitle: "No passkeys registered",
-      emptyDesc: "Add a passkey to enable fast, passwordless sign-in using your device's biometric or security key.",
+      emptyDesc:
+        "Add a passkey to enable fast, passwordless sign-in using your device's biometric or security key.",
       createdAt: "Created",
       lastUsed: "Last used",
       neverUsed: "Never used",
       rename: "Rename",
       delete: "Delete",
       deleteTitle: "Delete Passkey?",
-      deleteDesc: "This passkey will be permanently removed. You won't be able to use it for sign-in anymore.",
+      deleteDesc:
+        "This passkey will be permanently removed. You won't be able to use it for sign-in anymore.",
       deleteConfirm: "Delete Passkey",
     },
     // ── Phone / SMS OTP ──────────────────────────────────────

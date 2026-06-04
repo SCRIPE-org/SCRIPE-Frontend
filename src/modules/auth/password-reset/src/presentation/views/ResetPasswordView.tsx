@@ -111,10 +111,7 @@ export function ResetPasswordView() {
               {t("auth.backToLogin")}
             </Link>
           </div>
-          <div
-            className="sx-screen w-full rounded-[20px] p-8 sm:p-9 text-center"
-            style={cardStyle}
-          >
+          <div className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9" style={cardStyle}>
             <div className="flex flex-col items-center gap-6">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
                 <AlertTriangle className="h-7 w-7 text-amber-500" aria-hidden="true" />
@@ -126,10 +123,7 @@ export function ResetPasswordView() {
                 >
                   {t("auth.invalidResetLink")}
                 </h2>
-                <p
-                  className="text-[13px] leading-relaxed"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
+                <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
                   {t("auth.invalidResetLinkDesc")}
                 </p>
               </div>
@@ -221,10 +215,7 @@ export function ResetPasswordView() {
                     minLength={8}
                     className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
                   />
-                  <p
-                    className="text-[12px]"
-                    style={{ color: "var(--sx-text-faint)" }}
-                  >
+                  <p className="text-[12px]" style={{ color: "var(--sx-text-faint)" }}>
                     {t("auth.passwordMinLength")}
                   </p>
                 </div>
@@ -248,9 +239,7 @@ export function ResetPasswordView() {
                     className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
                   />
                   {confirmPassword && password !== confirmPassword && (
-                    <p className="text-[12px] text-destructive">
-                      {t("auth.passwordMismatch")}
-                    </p>
+                    <p className="text-[12px] text-destructive">{t("auth.passwordMismatch")}</p>
                   )}
                 </div>
 
@@ -279,10 +268,7 @@ export function ResetPasswordView() {
             /* ── Success ─────────────────────────────── */
             <div className="sx-pop flex flex-col items-center gap-6 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
-                <CheckCircle
-                  className="h-7 w-7 text-emerald-500"
-                  aria-hidden="true"
-                />
+                <CheckCircle className="h-7 w-7 text-emerald-500" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h2
@@ -291,10 +277,7 @@ export function ResetPasswordView() {
                 >
                   {t("auth.passwordResetSuccess")}
                 </h2>
-                <p
-                  className="text-[13px] leading-relaxed"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
+                <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
                   {t("auth.passwordResetSuccessDesc")}
                 </p>
               </div>

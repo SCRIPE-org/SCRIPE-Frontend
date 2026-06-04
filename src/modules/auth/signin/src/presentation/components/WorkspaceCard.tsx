@@ -43,7 +43,7 @@ export function WorkspaceCard({
       }`}
       aria-busy={isThisLoading}
       className={[
-        "group flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left h-auto",
+        "group flex h-auto w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left",
         "transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
         ws.isActivated && !ws.isDisabled && !isDisabled
           ? "cursor-pointer border-border bg-card hover:border-primary/40 hover:bg-muted/40 hover:shadow-sm active:scale-[0.99]"

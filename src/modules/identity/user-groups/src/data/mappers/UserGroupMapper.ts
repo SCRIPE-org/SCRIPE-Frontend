@@ -8,7 +8,12 @@
 import { UserGroup, type UserGroupProps } from "../../domain/entities/UserGroup";
 import { UserGroupModel } from "../models/UserGroupModel";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+} from "@core/common/zod-utils";
 
 // ─── UserGroup Response Schema ─────────────────────────────────────────────────
 

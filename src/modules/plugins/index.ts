@@ -22,7 +22,6 @@ export { LogRow, LogsPagination } from "./logs";
 export { DynamicSettingsForm } from "./settings";
 export type { PluginSettingsSchema, JsonSchemaField, SettingsValues } from "./settings";
 
-
 // ── Sub-module ViewModels (for advanced composition) ────────────────────────
 export { useCatalogViewModel } from "./catalog";
 export { useInstalledViewModel } from "./installed";

@@ -4,85 +4,6 @@
  */
 export const fr = {
   commercial: {
-    restApiOverview: {
-      tblCtrlR14C1: "EditionsController",
-      tblCtrlR14C2: "11",
-      tblCtrlR14C3: "CRUD des éditions, fonctionnalités, versionnage, déploiement",
-      tblCtrlR15C1: "FeaturesController",
-      tblCtrlR15C2: "5",
-      tblCtrlR15C3: "CRUD des fonctionnalités, types de valeurs, fonctionnalités système",
-      tblCtrlR16C1: "SubscriptionsController",
-      tblCtrlR16C2: "12",
-      tblCtrlR16C3: "Attribuer, mettre à niveau, rétrograder, cycle de vie, analyse d'impact",
-      tblCtrlR17C1: "TenantFeaturesController",
-      tblCtrlR17C2: "4",
-      tblCtrlR17C3: "Surcharges par locataire, fonctionnalités résolues",
-      authContent:
-        "Absolument chaque contrôleur est verrouillé par défaut. SCRIPE utilise une validation robuste des jetons JWT, exigeant des autorisations précises et granulaires ainsi que des revendications (claims) de locataire validées avant qu'un seul octet de JSON ne soit retourné.",
-      authTitle: "Autorisation Cryptographique Stricte",
-      controllersTitle: "Topologie Stricte des Contrôleurs",
-      description:
-        "Une surface d'API RESTful immaculée et entièrement documentée, offrant un filtrage dynamique, une pagination basée sur des curseurs et des réponses HATEOAS riches.",
-      intro:
-        "Le backend n'est pas seulement une surcouche de base de données ; c'est une surface HTTP méticuleusement conçue. SCRIPE expose une API RESTful vierge qui adhère strictement aux verbes HTTP standards, aux codes d'état et aux conventions hypermédia.",
-      paginationTitle: "Pagination par Curseur et Décalage (Offset)",
-      responseContent:
-        "Fini l'analyse de chaînes d'erreurs aléatoires. Chaque réponse de l'API — qu'il s'agisse d'un succès ou d'un échec catastrophique — est encapsulée dans notre structure standardisée de détails du problème `Result<T>`, garantissant une prévisibilité absolue pour les frontends et les consommateurs tiers.",
-      responseTitle: "Charges Utiles (Payloads) Prévisibles Standardisées",
-      swaggerContent:
-        "Nous générons une documentation Swagger (OpenAPI 3.0) complète et profondément annotée directement à partir du code source C# au moment de l'exécution. Les développeurs peuvent tester de manière interactive les charges utiles authentifiées directement depuis leur navigateur dès le démarrage du système.",
-      swaggerTitle: "Portails OpenAPI Interactifs",
-      title: "La Surface RESTful",
-      tblCtrlHeader1: "Contrôleur",
-      tblCtrlHeader2: "Points de terminaison",
-      tblCtrlHeader3: "Description",
-      tblCtrlR1C1: "AuthController",
-      tblCtrlR1C2: "8",
-      tblCtrlR1C3: "Connexion, inscription, 2FA, réinitialisation de mot de passe, sessions",
-      tblCtrlR2C1: "UserController",
-      tblCtrlR2C2: "27",
-      tblCtrlR2C3: "CRUD, opérations de masse, opérations d'entreprise",
-      tblCtrlR3C1: "RoleController",
-      tblCtrlR3C2: "12",
-      tblCtrlR3C3: "Gestion des rôles, attribution des autorisations",
-      tblCtrlR4C1: "TenantController",
-      tblCtrlR4C2: "10",
-      tblCtrlR4C3: "Cycle de vie du locataire, paramètres, activation",
-      tblCtrlR5C1: "AuditController",
-      tblCtrlR5C2: "6",
-      tblCtrlR5C3: "Interrogation des journaux d'audit, exportation, streaming",
-      tblCtrlR6C1: "NotificationController",
-      tblCtrlR6C2: "5",
-      tblCtrlR6C3: "Notifications push, marquer lu, préférences",
-      tblCtrlR7C1: "FileController",
-      tblCtrlR7C2: "4",
-      tblCtrlR7C3: "Téléchargement (Upload/Download), suppression, métadonnées",
-      tblCtrlR8C1: "TemplateController",
-      tblCtrlR8C2: "5",
-      tblCtrlR8C3: "CRUD des modèles d'e-mail/messages, aperçu",
-      tblCtrlR9C1: "MenuController",
-      tblCtrlR9C2: "6",
-      tblCtrlR9C3: "Gestion dynamique des menus, surcharges",
-      tblCtrlR10C1: "SettingsController",
-      tblCtrlR10C2: "4",
-      tblCtrlR10C3: "Paramètres du système, paramètres du locataire",
-      tblCtrlR11C1: "DashboardController",
-      tblCtrlR11C2: "3",
-      tblCtrlR11C3: "Données KPI, données de graphiques, résumés",
-      tblCtrlR12C1: "WebhookController",
-      tblCtrlR12C2: "5",
-      tblCtrlR12C3: "Gestion des abonnements, catalogue d'événements",
-      tblCtrlR13C1: "RecycleBinController",
-      tblCtrlR13C2: "4",
-      tblCtrlR13C3: "Éléments supprimés de façon douce, restauration, purge",
-      lstSwagI1:
-        "Généré automatiquement à partir des attributs du contrôleur et de la documentation XML",
-      lstSwagI2: "Mode 'Try-it-out' pour tester directement les points de terminaison",
-      lstSwagI3: "Prise en charge de l'authentification JWT dans l'interface Swagger",
-      lstSwagI4: "Documentation du schéma de requête/réponse avec des exemples",
-      lstSwagI5: "Regroupés par contrôleur pour une navigation facile",
-      lstSwagI6: "Disponible sur /swagger en mode développement",
-    },
     apiDesign: {
       conventionsTitle: "Conventions d'Entreprise",
       description:
@@ -101,22 +22,6 @@ export const fr = {
         "Explorez la documentation Swagger/OpenAPI 3.0 en direct pour interagir instantanément avec plus de 400 points de terminaison préconfigurés. Nous générons des spécifications OpenAPI strictes, permettant une génération de SDK fluide pour les plateformes frontend et mobiles.",
       swaggerTitle: "Interface Swagger Interactive",
       title: "Conception & Architecture de l'API",
-    },
-    webhookIntegration: {
-      description:
-        "Un répartiteur de Webhooks massivement résilient, asynchrone et piloté par les événements, permettant une synchronisation des données sécurisée et instantanée avec d'immenses API externes.",
-      eventsTitle: "Événements Diffusés Pris en Charge Globalement",
-      intro:
-        "Les systèmes d'entreprise modernes doivent communiquer. Au lieu de forcer les clients à interroger (poller) agressivement votre API REST, SCRIPE inclut un répartiteur de Webhooks sortants natif et massivement efficace. Poussez instantanément les événements de domaine critiques vers tout système externe, et ce, de manière sécurisée via HTTPS.",
-      logsTitle: "Audit d'Expédition Forensique",
-      managementTitle: "Gestion Dynamique des Abonnements",
-      retryContent:
-        "Si le serveur d'un abonné se déconnecte, SCRIPE ne supprime pas la charge utile (payload). À l'aide d'un modèle de boîte d'envoi (outbox) persistant intelligent et basé sur un retrait exponentiel (exponential backoff), il réessaie mathématiquement la requête (par exemple, 5 secondes, 1 minute, 1 heure, 1 jour) jusqu'à ce que la réception soit confirmée via un statut HTTP 2xx.",
-      retryTitle: "Retrait Exponentiel Persistant",
-      securityContent:
-        "Chaque charge utile sortante est signée de manière sécurisée à l'aide d'une signature HMAC-SHA256 générée à partir de la clé secrète du locataire. Les intégrations tierces peuvent vérifier de manière définitive que le webhook provient de vos serveurs SCRIPE et que la charge utile n'a pas été interceptée ou mutée globalement.",
-      securityTitle: "Signatures Cryptographiques HMAC",
-      title: "Expédition de Webhooks à Haut Volume",
     },
     emailIntegration: {
       bilingual: "Routage Bilingue des Modèles",
@@ -168,68 +73,163 @@ export const fr = {
         "Seuls les ViewModels explicitement autorisés peuvent être consultés par le modèle, garantissant ainsi la sécurité des données.",
       title: "Modèles de Messages Dynamiques",
     },
+    restApiOverview: {
+      authContent:
+        "Absolument chaque contrôleur est verrouillé par défaut. SCRIPE utilise une validation robuste des jetons JWT, exigeant des autorisations précises et granulaires ainsi que des revendications (claims) de locataire validées avant qu'un seul octet de JSON ne soit retourné.",
+      authTitle: "Autorisation Cryptographique Stricte",
+      controllersTitle: "Topologie Stricte des Contrôleurs",
+      description:
+        "Une surface d'API RESTful immaculée et entièrement documentée, offrant un filtrage dynamique, une pagination basée sur des curseurs et des réponses HATEOAS riches.",
+      intro:
+        "Le backend n'est pas seulement une surcouche de base de données ; c'est une surface HTTP méticuleusement conçue. SCRIPE expose une API RESTful vierge qui adhère strictement aux verbes HTTP standards, aux codes d'état et aux conventions hypermédia.",
+      lstSwagI1:
+        "Généré automatiquement à partir des attributs du contrôleur et de la documentation XML",
+      lstSwagI2: "Mode 'Try-it-out' pour tester directement les points de terminaison",
+      lstSwagI3: "Prise en charge de l'authentification JWT dans l'interface Swagger",
+      lstSwagI4: "Documentation du schéma de requête/réponse avec des exemples",
+      lstSwagI5: "Regroupés par contrôleur pour une navigation facile",
+      lstSwagI6: "Disponible sur /swagger en mode développement",
+      paginationTitle: "Pagination par Curseur et Décalage (Offset)",
+      responseContent:
+        "Fini l'analyse de chaînes d'erreurs aléatoires. Chaque réponse de l'API — qu'il s'agisse d'un succès ou d'un échec catastrophique — est encapsulée dans notre structure standardisée de détails du problème `Result<T>`, garantissant une prévisibilité absolue pour les frontends et les consommateurs tiers.",
+      responseTitle: "Charges Utiles (Payloads) Prévisibles Standardisées",
+      swaggerContent:
+        "Nous générons une documentation Swagger (OpenAPI 3.0) complète et profondément annotée directement à partir du code source C# au moment de l'exécution. Les développeurs peuvent tester de manière interactive les charges utiles authentifiées directement depuis leur navigateur dès le démarrage du système.",
+      swaggerTitle: "Portails OpenAPI Interactifs",
+      tblCtrlHeader1: "Contrôleur",
+      tblCtrlHeader2: "Points de terminaison",
+      tblCtrlHeader3: "Description",
+      tblCtrlR10C1: "SettingsController",
+      tblCtrlR10C2: "4",
+      tblCtrlR10C3: "Paramètres du système, paramètres du locataire",
+      tblCtrlR11C1: "DashboardController",
+      tblCtrlR11C2: "3",
+      tblCtrlR11C3: "Données KPI, données de graphiques, résumés",
+      tblCtrlR12C1: "WebhookController",
+      tblCtrlR12C2: "5",
+      tblCtrlR12C3: "Gestion des abonnements, catalogue d'événements",
+      tblCtrlR13C1: "RecycleBinController",
+      tblCtrlR13C2: "4",
+      tblCtrlR13C3: "Éléments supprimés de façon douce, restauration, purge",
+      tblCtrlR14C1: "EditionsController",
+      tblCtrlR14C2: "11",
+      tblCtrlR14C3: "CRUD des éditions, fonctionnalités, versionnage, déploiement",
+      tblCtrlR15C1: "FeaturesController",
+      tblCtrlR15C2: "5",
+      tblCtrlR15C3: "CRUD des fonctionnalités, types de valeurs, fonctionnalités système",
+      tblCtrlR16C1: "SubscriptionsController",
+      tblCtrlR16C2: "12",
+      tblCtrlR16C3: "Attribuer, mettre à niveau, rétrograder, cycle de vie, analyse d'impact",
+      tblCtrlR17C1: "TenantFeaturesController",
+      tblCtrlR17C2: "4",
+      tblCtrlR17C3: "Surcharges par locataire, fonctionnalités résolues",
+      tblCtrlR1C1: "AuthController",
+      tblCtrlR1C2: "8",
+      tblCtrlR1C3: "Connexion, inscription, 2FA, réinitialisation de mot de passe, sessions",
+      tblCtrlR2C1: "UserController",
+      tblCtrlR2C2: "27",
+      tblCtrlR2C3: "CRUD, opérations de masse, opérations d'entreprise",
+      tblCtrlR3C1: "RoleController",
+      tblCtrlR3C2: "12",
+      tblCtrlR3C3: "Gestion des rôles, attribution des autorisations",
+      tblCtrlR4C1: "TenantController",
+      tblCtrlR4C2: "10",
+      tblCtrlR4C3: "Cycle de vie du locataire, paramètres, activation",
+      tblCtrlR5C1: "AuditController",
+      tblCtrlR5C2: "6",
+      tblCtrlR5C3: "Interrogation des journaux d'audit, exportation, streaming",
+      tblCtrlR6C1: "NotificationController",
+      tblCtrlR6C2: "5",
+      tblCtrlR6C3: "Notifications push, marquer lu, préférences",
+      tblCtrlR7C1: "FileController",
+      tblCtrlR7C2: "4",
+      tblCtrlR7C3: "Téléchargement (Upload/Download), suppression, métadonnées",
+      tblCtrlR8C1: "TemplateController",
+      tblCtrlR8C2: "5",
+      tblCtrlR8C3: "CRUD des modèles d'e-mail/messages, aperçu",
+      tblCtrlR9C1: "MenuController",
+      tblCtrlR9C2: "6",
+      tblCtrlR9C3: "Gestion dynamique des menus, surcharges",
+      title: "La Surface RESTful",
+    },
     ssoEnterprise: {
-      title: "Authentification Unique d'Entreprise (SSO)",
+      brandingContent:
+        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
+      brandingTitle: "Architected for Corporate Branding",
+      comparisonTitle: "How SCRIPE Compares",
       description:
         "Centralisez l'accès des identités. Connectez vos annuaires d'entreprise directement avec l'authentification multi-locataire de SCRIPE, sans la moindre friction.",
       intro:
         "La sécurité à l'échelle de l'entreprise exige une confiance centralisée. L'authentification SSO de SCRIPE permet à vos clients de déléguer les flux d'authentification à leurs Fournisseurs d'Identité (IdPs) existants, tout en conservant secrètement notre isolation stricte multi-locataires et nos attributions de rôles.",
-      oidcTitle: "Intégration OIDC Universelle",
-      oidcContent:
-        "Connectez-vous harmonieusement à Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace ou à tout autre fournisseur supportant OpenID Connect (OIDC). Nous gérons les échanges cryptographiques ; vos utilisateurs bénéficient de l'accès en 1-clic qu'ils espèrent.",
-      oauthAppsTitle: "Passerelle pour Applications OAuth Tierces",
-      oauthAppsContent:
-        "Donnez à l'écosystème logiciel de vos clients le pouvoir de s'intégrer en toute sécurité avec SCRIPE. Enregistrez un nombre illimité d'applications OAuth Web, Bureau (Desktop) ou SPA (Single Page Application), et gérez de façon programmatique les portées (scopes) de droits ainsi que le cycle de vie des jetons d'accès.",
-      tenantIsolationTitle: "Services d'Identité Spécifiques aux Locataires",
-      tenantIsolationContent:
-        "SCRIPE lie strictement chaque configuration SSO à sa frontière de locataire dédiée. Le Locataire A peut s'authentifier par Entra ID tandis que le Locataire B passe par Okta — sur un seul et unique système, avec zéro risque de contamination croisée des identités.",
-      pkceSecurityTitle: "Proof Key for Code Exchange (PKCE)",
-      pkceSecurityContent:
-        "Nous jetons et récusons entièrement les flux d'authentification obsolètes et vulnérables. La totalité des transactions OAuth de SCRIPE imposent le protocole de vérification PKCE, assurant une immunité absolue contre les interceptions de codes d'autorisation, même pour les clients natifs mobiles ou les frameworks JavaScript en SPA.",
-      linkingTitle: "Liaisons et Couplages d'Identités Automatisés",
       linkingContent:
         "Fini les invitations envoyées manuellement et laborieusement par e-mail. Lorsque vos collaborateurs se connectent via leur SSO d'entreprise, SCRIPE audite instantanément les adresses e-mail de retour pour les coupler délicatement aux profils et rôles RBAC d'administration locale, de façon totalement fuyante et sans friction.",
-      valueTitle: "Strategic IAM Value",
-      val1Title: "Zero-Trust Identity Protocol",
-      val1Desc:
-        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
-      val2Title: "Zero-Code Federation (IdP)",
-      val2Desc:
-        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
-      val3Title: "SCRIPE as the Identity Server",
-      val3Desc:
-        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
-      val4Title: "Absolute Tenant IAM Isolation",
-      val4Desc:
-        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
-      val5Title: "White-Labeled Login Experience",
-      val5Desc:
-        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
-      val6Title: "Future-Proof Standardization",
-      val6Desc:
-        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
-      protocolsTitle: "Supported Authentication Protocols",
-      protocolsContent:
-        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
-      comparisonTitle: "How SCRIPE Compares",
-      multiIdpTitle: "Infinite Multi-IdP Per Tenant",
+      linkingTitle: "Liaisons et Couplages d'Identités Automatisés",
       multiIdpContent:
         "Legacy platforms often bind identity to the root infrastructure, forcing all tenants to share an IdP, or requiring massively complex infrastructure scaling. SCRIPE natively supports infinite, uniquely mapped Identity Providers per tenant—all governed through the integrated Admin UI without touching the deployment pipeline.",
-      brandingTitle: "Architected for Corporate Branding",
-      brandingContent:
-        "Deliver a seamless, uncompromising login aesthetic. Tenant administrators simply configure their external SSO within the UI, and the login interface autonomously generates flawlessly styled, tenant-bound SSO buttons ensuring user trust.",
-      securityModelTitle: "PKCE Security Architecture",
-      securityModelContent:
-        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
-      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
-      oauthContent:
-        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
-      oauth1Title: "Confidential Clients (Backend)",
+      multiIdpTitle: "Infinite Multi-IdP Per Tenant",
       oauth1Desc:
         "Server-side applications with secure backend storage for client secrets. Perfect for B2B API integrations enforcing the full Authorization Code flow with PKCE.",
-      oauth2Title: "Public Clients (SPA & Mobile)",
+      oauth1Title: "Confidential Clients (Backend)",
       oauth2Desc:
         "React, Vue, iOS, and Android applications that cannot securely store static secrets. Strictly leverages the PKCE-only flow, ensuring access tokens are generated flawlessly without risking a compromised client secret.",
+      oauth2Title: "Public Clients (SPA & Mobile)",
+      oauthAppsContent:
+        "Donnez à l'écosystème logiciel de vos clients le pouvoir de s'intégrer en toute sécurité avec SCRIPE. Enregistrez un nombre illimité d'applications OAuth Web, Bureau (Desktop) ou SPA (Single Page Application), et gérez de façon programmatique les portées (scopes) de droits ainsi que le cycle de vie des jetons d'accès.",
+      oauthAppsTitle: "Passerelle pour Applications OAuth Tierces",
+      oauthContent:
+        "Invert the identity paradigm. By registering third-party software as OAuth Applications within SCRIPE, you instantly transform your application into a centralized enterprise Identity Provider. Mobile applications, partner portals, and decoupled internal microservices can all aggressively rely on SCRIPE for unified identity resolution.",
+      oauthTitle: "OAuth Application Registry (SCRIPE as Server)",
+      oidcContent:
+        "Connectez-vous harmonieusement à Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace ou à tout autre fournisseur supportant OpenID Connect (OIDC). Nous gérons les échanges cryptographiques ; vos utilisateurs bénéficient de l'accès en 1-clic qu'ils espèrent.",
+      oidcTitle: "Intégration OIDC Universelle",
+      pkceSecurityContent:
+        "Nous jetons et récusons entièrement les flux d'authentification obsolètes et vulnérables. La totalité des transactions OAuth de SCRIPE imposent le protocole de vérification PKCE, assurant une immunité absolue contre les interceptions de codes d'autorisation, même pour les clients natifs mobiles ou les frameworks JavaScript en SPA.",
+      pkceSecurityTitle: "Proof Key for Code Exchange (PKCE)",
+      protocolsContent:
+        "SCRIPE mandates adherence to immutable industry standards, ensuring frictionless topological compatibility with every major identity provider globally.",
+      protocolsTitle: "Supported Authentication Protocols",
+      securityModelContent:
+        "The deprecated Implicit Flow is eradicated. Every SSO login flows exclusively through PKCE (Proof Key for Code Exchange), the definitive standard dictated by OAuth 2.1. Authorization codes are strictly one-time-use, instantly exchanged server-side, with full discovery document caching.",
+      securityModelTitle: "PKCE Security Architecture",
+      tenantIsolationContent:
+        "SCRIPE lie strictement chaque configuration SSO à sa frontière de locataire dédiée. Le Locataire A peut s'authentifier par Entra ID tandis que le Locataire B passe par Okta — sur un seul et unique système, avec zéro risque de contamination croisée des identités.",
+      tenantIsolationTitle: "Services d'Identité Spécifiques aux Locataires",
+      title: "Authentification Unique d'Entreprise (SSO)",
+      val1Desc:
+        "Every authentication flow is fortified with stringent PKCE (Proof Key for Code Exchange) validation. We enforce strict state-checking to thwart CSRF attacks and encrypt all latent client secrets at rest. Secret keys never touch the browser.",
+      val1Title: "Zero-Trust Identity Protocol",
+      val2Desc:
+        "Employees and B2B clients sign in instantly with their existing corporate credentials. Connect Azure AD, Google Workspace, Okta, or AWS Cognito directly from the Admin Panel in exactly 30 seconds—no custom backend middleware required.",
+      val2Title: "Zero-Code Federation (IdP)",
+      val3Desc:
+        "Why pay for Auth0 or deploy Keycloak? Turn SCRIPE into your primary authentication broker. Register distinct OAuth applications (SPAs, Mobile Apps, external dashboards) to securely consume SCRIPE's JWTs.",
+      val3Title: "SCRIPE as the Identity Server",
+      val4Desc:
+        "B2B SaaS superpower: Every single tenant can configure their own isolated SSO providers. Tenant A's Azure AD is mathematically invisible to Tenant B's Google Workspace. SuperAdmins can also provide Global SSO fallbacks.",
+      val4Title: "Absolute Tenant IAM Isolation",
+      val5Desc:
+        "Every configured Identity Provider dynamically renders on the login screen with custom hex colors, branded labels, and distinct vectorized SVGs perfectly matching the tenant's brand identity.",
+      val5Title: "White-Labeled Login Experience",
+      val6Desc:
+        "SCRIPE relies entirely on the battle-tested OpenIddict framework for robust OIDC and OAuth 2.0 compliance, with planned architecture expansions into SAML 2.0 for legacy government system compliance.",
+      val6Title: "Future-Proof Standardization",
+      valueTitle: "Strategic IAM Value",
+    },
+    webhookIntegration: {
+      description:
+        "Un répartiteur de Webhooks massivement résilient, asynchrone et piloté par les événements, permettant une synchronisation des données sécurisée et instantanée avec d'immenses API externes.",
+      eventsTitle: "Événements Diffusés Pris en Charge Globalement",
+      intro:
+        "Les systèmes d'entreprise modernes doivent communiquer. Au lieu de forcer les clients à interroger (poller) agressivement votre API REST, SCRIPE inclut un répartiteur de Webhooks sortants natif et massivement efficace. Poussez instantanément les événements de domaine critiques vers tout système externe, et ce, de manière sécurisée via HTTPS.",
+      logsTitle: "Audit d'Expédition Forensique",
+      managementTitle: "Gestion Dynamique des Abonnements",
+      retryContent:
+        "Si le serveur d'un abonné se déconnecte, SCRIPE ne supprime pas la charge utile (payload). À l'aide d'un modèle de boîte d'envoi (outbox) persistant intelligent et basé sur un retrait exponentiel (exponential backoff), il réessaie mathématiquement la requête (par exemple, 5 secondes, 1 minute, 1 heure, 1 jour) jusqu'à ce que la réception soit confirmée via un statut HTTP 2xx.",
+      retryTitle: "Retrait Exponentiel Persistant",
+      securityContent:
+        "Chaque charge utile sortante est signée de manière sécurisée à l'aide d'une signature HMAC-SHA256 générée à partir de la clé secrète du locataire. Les intégrations tierces peuvent vérifier de manière définitive que le webhook provient de vos serveurs SCRIPE et que la charge utile n'a pas été interceptée ou mutée globalement.",
+      securityTitle: "Signatures Cryptographiques HMAC",
+      title: "Expédition de Webhooks à Haut Volume",
     },
   },
 };

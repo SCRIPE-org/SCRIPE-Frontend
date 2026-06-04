@@ -47,9 +47,7 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
     //
     // We detect this case AFTER the route-map strategies run (below), but we handle
     // the root "/" case here first for clarity.
-    const isRootOrSystemPage =
-      !normalizedPath ||
-      normalizedPath === "/";
+    const isRootOrSystemPage = !normalizedPath || normalizedPath === "/";
 
     if (isRootOrSystemPage) {
       if (!activeWorkspaceKey && workspaceGroups.length > 0) {
@@ -68,7 +66,6 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
       }
       return;
     }
-
 
     // ── Strategy 1: Use workspaceRouteMap (authoritative, persisted) ──────────
     // workspaceRouteMap: Record<workspaceKey, string[]> — populated by Query 1
@@ -144,7 +141,7 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
     } else {
       jitFetchingRef.current = null;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, routesLoadedAt]);
 
   // ── Standard activeRootItem sync from URL ───────────────────────────────────
@@ -173,6 +170,6 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
       // completely empty until the user manually clicks a primary rail item.
       useNavigationStore.getState().setActiveRootItem(rootMenuItems[0].id);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, rootMenuItems]);
 }

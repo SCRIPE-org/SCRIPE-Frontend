@@ -112,7 +112,7 @@ export function usePhoneOtpViewModel(
       setErrorWithShake(
         err instanceof Error
           ? err.message
-          : (t("auth.phoneOtp.requestFailed") || "Failed to send code. Please try again.")
+          : t("auth.phoneOtp.requestFailed") || "Failed to send code. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -136,7 +136,7 @@ export function usePhoneOtpViewModel(
       setErrorWithShake(
         err instanceof Error
           ? err.message
-          : (t("auth.phoneOtp.verifyFailed") || "Invalid or expired code.")
+          : t("auth.phoneOtp.verifyFailed") || "Invalid or expired code."
       );
     } finally {
       setIsLoading(false);

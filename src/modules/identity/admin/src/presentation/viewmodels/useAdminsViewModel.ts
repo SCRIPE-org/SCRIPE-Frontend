@@ -153,9 +153,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         if (!data.items) return old;
         return {
           ...data,
-          items: data.items.map((item) =>
-            item.id === id ? { ...item, isActive } : item
-          ),
+          items: data.items.map((item) => (item.id === id ? { ...item, isActive } : item)),
         };
       });
       return { previous };

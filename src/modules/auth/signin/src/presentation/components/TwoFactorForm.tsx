@@ -58,9 +58,7 @@ export function TwoFactorForm({
           className="mt-1.5 text-[13px] leading-relaxed"
           style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
         >
-          {useBackupCode
-            ? t("auth.twoFactor.enterBackupCode")
-            : t("auth.twoFactor.enterAuthCode")}
+          {useBackupCode ? t("auth.twoFactor.enterBackupCode") : t("auth.twoFactor.enterAuthCode")}
         </p>
       </div>
 
@@ -191,9 +189,7 @@ export function TwoFactorForm({
             style={{ color: "var(--sx-accent-text, hsl(var(--primary)))" }}
             aria-hidden="true"
           />
-          {useBackupCode
-            ? t("auth.twoFactor.useAuthenticator")
-            : t("auth.twoFactor.useBackupCode")}
+          {useBackupCode ? t("auth.twoFactor.useAuthenticator") : t("auth.twoFactor.useBackupCode")}
         </Button>
 
         <Button

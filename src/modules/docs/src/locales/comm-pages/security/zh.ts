@@ -1,26 +1,34 @@
 /**
  * Docs page locale — ZH
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const zh = {
   commercial: {
-    securityOverview: {
-      complianceTitle: "合规的基础",
-      description: "SCRIPE 的多层级、纵深防御安全边界的全面解析，可从路由层一直保护到持久化层。",
-      gdpr: "GDPR 被遗忘权",
-      gdprDesc: "开箱即用地支持严格的 PII（个人身份信息）匿名化和硬删除协议。",
-      headersTitle: "防御性 HTTP 标头",
+    auditCompliance: {
+      alerting: "实时警报",
+      alertingDesc: "当特定的高权限审计阈值被突破时，通过 Webhooks 或 Slack 自动触发安全警报。",
+      complianceContent:
+        "SCRIPE 提供了实现 ISO 27001、SOC 2、HIPAA 和 GDPR 合规性的统包方案。凭借不可变的事件捕获、有保证的归因和严格的隔离，审计人员可以立即验证您租户数据的完整性。",
+      complianceTitle: "为合规而生",
+      dashboard: "可视化仪表板",
+      dashboardDesc: "使用我们基于 Vue/Next.js 的高性能报告仪表板，立即深入分析数 GB 的审计数据。",
+      description: "法证级审计管道，零数据丢失地捕获 HTTP 请求、实体快照和安全操作。",
+      exportContent:
+        "将海量审计数据集直接导出为加密的 CSV 或 Excel 格式，或者安全地将其流式传输到您现有的 SIEM 解决方案（如 Splunk 或 Datadog）。",
+      exportTitle: "法证导出与 SIEM",
       intro:
-        "我们不信任网络，不信任客户端，也不信任有效载荷 (payload)。SCRIPE 建立在零信任架构方法论之上，在应用矩阵的每一个边界强制执行积极的安全协议。",
-      modelContent:
-        "每一个 API 请求都会被 FluentValidation 引擎立即评估。如果有效载荷违反了领域约束（例如，无效的电子邮件格式，数字超出范围），管道将在控制器被实例化之前立即以 400 错误请求 (Bad Request) 拒绝该有效载荷。",
-      modelTitle: "严格的管道验证",
-      soc2: "SOC 2 Type II 就绪",
-      soc2Desc: "内置的法证级审计跟踪和严格的数据隔离机制可加速您成功通过 SOC 2 审计。",
-      sox: "SOX 合规触发器",
-      soxDesc: "在财务审计日志中提供数学意义上的不可变性 (Immutability)，以支持高度受监管的环境。",
-      summaryTitle: "纵深防御矩阵",
-      title: "零信任安全态势",
+        "数据治理是不容妥协的。SCRIPE 具有在后台线程运行的军用级审计日志系统，该系统可以在不降低 API 性能的情况下捕获整个单体应用中的每一次变更、身份验证尝试和关键读取。",
+      liveStream: "实时 SignalR 流",
+      liveStreamDesc: "通过受保护的 WebSockets 实时监控整个平台上的管理和安全事件流。",
+      pipelineContent:
+        "审计管道构建在 Entity Framework Core 的拦截器约束模型之上，在数据变更前后拍摄实体的时态快照。变更会被序列化为 JSON 并不可变地存储。",
+      pipelineTitle: "异步捕获管道",
+      realTimeContent:
+        "以透明的可观测性监控您的系统运行。Webhook 集成和 SignalR 流能即时传递法证级洞察，使您的 DevSecOps 团队能够主动而非被动地做出响应。",
+      realTimeTitle: "实时可观测性",
+      retention: "自适应保留策略",
+      retentionDesc: "配置冷存储策略，根据您特定的合规时间限制自动归档或清除审计日志。",
+      sourcesTitle: "捕获的四大支柱",
+      title: "审计与合规引擎",
     },
     authSecurity: {
       apiTitle: "API 密钥管理",
@@ -47,6 +55,32 @@ export const zh = {
       twoFaContent:
         "仅靠密码是不够的。SCRIPE 原生要求动态的二次验证屏障，即使在发生凭据撞库或网络钓鱼的情况下也能保护您的用户。",
       twoFaTitle: "多因素身份验证 (MFA)",
+    },
+    complianceReadiness: {
+      auditReadyContent:
+        "审计员不想要承诺；他们想要证据。SCRIPE 提供了关于每一次 API 调用、权限提升和数据突变的防篡改、可导出的日志，将需要 6 个月的 SOC 2 准备工作转化为只需 2 周的例行公事。",
+      auditReadyTitle: "即时证据工件",
+      checklistTitle: "合规性捷径",
+      consentMgmt: "高级同意管理",
+      consentMgmtDesc:
+        "跨越多个隐私政策和服务条款迭代，以编程方式跟踪、进行版本控制并强制执行用户同意。",
+      dataMinimization: "智能数据最小化",
+      dataMinimizationDesc:
+        "当达到保留策略时，自动使数据库中的 PII (个人身份信息) 过期或对其进行脱敏。",
+      dataPortability: "即时数据可移植性",
+      dataPortabilityDesc: "允许用户安全地以机器可读的 JSON 格式下载其完整数据足迹的加密存档。",
+      description: "预配置的技控措施，实现 ISO 27001、SOC 2 和 GDPR 的极速认证。",
+      disclaimer: "免责声明：SCRIPE 提供技术基础；对于程序上的合规性，请咨询法律顾问。",
+      frameworkIntro:
+        "实现合规性通常会使工程路线图脱轨数月。SCRIPE 通过将最困难的技术控制措施直接内置到基础框架中，极大地缩短了这条曲线。",
+      frameworkTitle: "加速框架支持",
+      gdprTitle: "原生支持 GDPR 和 CCPA",
+      intro:
+        "监管框架要求严格的数据治理。SCRIPE 通过在应用程序架构深处嵌入军用级审计、加密和隐私控制措施，加速了您的认证之路。",
+      rightToErasure: "编排的被遗忘权",
+      rightToErasureDesc: "执行全平台范围的软删除或硬删除，这些删除会自动级联到所有关系表中。",
+      securityControlsTitle: "映射的安全控制",
+      title: "合规准备就绪",
     },
     dataProtection: {
       csrfContent:
@@ -99,58 +133,23 @@ export const zh = {
       warningNote:
         "警告：在未咨询您的 CISO（首席信息安全官）的情况下禁用这些默认防御机制将大幅增加您组织的攻击面。",
     },
-    complianceReadiness: {
-      auditReadyContent:
-        "审计员不想要承诺；他们想要证据。SCRIPE 提供了关于每一次 API 调用、权限提升和数据突变的防篡改、可导出的日志，将需要 6 个月的 SOC 2 准备工作转化为只需 2 周的例行公事。",
-      auditReadyTitle: "即时证据工件",
-      checklistTitle: "合规性捷径",
-      consentMgmt: "高级同意管理",
-      consentMgmtDesc:
-        "跨越多个隐私政策和服务条款迭代，以编程方式跟踪、进行版本控制并强制执行用户同意。",
-      dataMinimization: "智能数据最小化",
-      dataMinimizationDesc:
-        "当达到保留策略时，自动使数据库中的 PII (个人身份信息) 过期或对其进行脱敏。",
-      dataPortability: "即时数据可移植性",
-      dataPortabilityDesc: "允许用户安全地以机器可读的 JSON 格式下载其完整数据足迹的加密存档。",
-      description: "预配置的技控措施，实现 ISO 27001、SOC 2 和 GDPR 的极速认证。",
-      disclaimer: "免责声明：SCRIPE 提供技术基础；对于程序上的合规性，请咨询法律顾问。",
-      frameworkIntro:
-        "实现合规性通常会使工程路线图脱轨数月。SCRIPE 通过将最困难的技术控制措施直接内置到基础框架中，极大地缩短了这条曲线。",
-      frameworkTitle: "加速框架支持",
-      gdprTitle: "原生支持 GDPR 和 CCPA",
+    securityOverview: {
+      complianceTitle: "合规的基础",
+      description: "SCRIPE 的多层级、纵深防御安全边界的全面解析，可从路由层一直保护到持久化层。",
+      gdpr: "GDPR 被遗忘权",
+      gdprDesc: "开箱即用地支持严格的 PII（个人身份信息）匿名化和硬删除协议。",
+      headersTitle: "防御性 HTTP 标头",
       intro:
-        "监管框架要求严格的数据治理。SCRIPE 通过在应用程序架构深处嵌入军用级审计、加密和隐私控制措施，加速了您的认证之路。",
-      rightToErasure: "编排的被遗忘权",
-      rightToErasureDesc: "执行全平台范围的软删除或硬删除，这些删除会自动级联到所有关系表中。",
-      securityControlsTitle: "映射的安全控制",
-      title: "合规准备就绪",
-    },
-    auditCompliance: {
-      alerting: "实时警报",
-      alertingDesc: "当特定的高权限审计阈值被突破时，通过 Webhooks 或 Slack 自动触发安全警报。",
-      complianceContent:
-        "SCRIPE 提供了实现 ISO 27001、SOC 2、HIPAA 和 GDPR 合规性的统包方案。凭借不可变的事件捕获、有保证的归因和严格的隔离，审计人员可以立即验证您租户数据的完整性。",
-      complianceTitle: "为合规而生",
-      dashboard: "可视化仪表板",
-      dashboardDesc: "使用我们基于 Vue/Next.js 的高性能报告仪表板，立即深入分析数 GB 的审计数据。",
-      description: "法证级审计管道，零数据丢失地捕获 HTTP 请求、实体快照和安全操作。",
-      exportContent:
-        "将海量审计数据集直接导出为加密的 CSV 或 Excel 格式，或者安全地将其流式传输到您现有的 SIEM 解决方案（如 Splunk 或 Datadog）。",
-      exportTitle: "法证导出与 SIEM",
-      intro:
-        "数据治理是不容妥协的。SCRIPE 具有在后台线程运行的军用级审计日志系统，该系统可以在不降低 API 性能的情况下捕获整个单体应用中的每一次变更、身份验证尝试和关键读取。",
-      liveStream: "实时 SignalR 流",
-      liveStreamDesc: "通过受保护的 WebSockets 实时监控整个平台上的管理和安全事件流。",
-      pipelineContent:
-        "审计管道构建在 Entity Framework Core 的拦截器约束模型之上，在数据变更前后拍摄实体的时态快照。变更会被序列化为 JSON 并不可变地存储。",
-      pipelineTitle: "异步捕获管道",
-      realTimeContent:
-        "以透明的可观测性监控您的系统运行。Webhook 集成和 SignalR 流能即时传递法证级洞察，使您的 DevSecOps 团队能够主动而非被动地做出响应。",
-      realTimeTitle: "实时可观测性",
-      retention: "自适应保留策略",
-      retentionDesc: "配置冷存储策略，根据您特定的合规时间限制自动归档或清除审计日志。",
-      sourcesTitle: "捕获的四大支柱",
-      title: "审计与合规引擎",
+        "我们不信任网络，不信任客户端，也不信任有效载荷 (payload)。SCRIPE 建立在零信任架构方法论之上，在应用矩阵的每一个边界强制执行积极的安全协议。",
+      modelContent:
+        "每一个 API 请求都会被 FluentValidation 引擎立即评估。如果有效载荷违反了领域约束（例如，无效的电子邮件格式，数字超出范围），管道将在控制器被实例化之前立即以 400 错误请求 (Bad Request) 拒绝该有效载荷。",
+      modelTitle: "严格的管道验证",
+      soc2: "SOC 2 Type II 就绪",
+      soc2Desc: "内置的法证级审计跟踪和严格的数据隔离机制可加速您成功通过 SOC 2 审计。",
+      sox: "SOX 合规触发器",
+      soxDesc: "在财务审计日志中提供数学意义上的不可变性 (Immutability)，以支持高度受监管的环境。",
+      summaryTitle: "纵深防御矩阵",
+      title: "零信任安全态势",
     },
   },
 };

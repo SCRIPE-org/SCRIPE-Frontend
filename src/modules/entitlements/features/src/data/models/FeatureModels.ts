@@ -46,4 +46,3 @@ export interface FeatureModuleGroupModel {
   module: string;
   categories: FeatureCategoryGroupModel[];
 }
-

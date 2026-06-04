@@ -22,7 +22,11 @@ const PluginCatalogItemModelSchema = z.object({
 
 export class CatalogMapper {
   static toEntity(model: PluginCatalogItemModel): PluginCatalogItem {
-    const validated = safeParseApiResponse(PluginCatalogItemModelSchema, model, "PluginCatalogItem");
+    const validated = safeParseApiResponse(
+      PluginCatalogItemModelSchema,
+      model,
+      "PluginCatalogItem"
+    );
     return new PluginCatalogItem({
       id: validated.id,
       key: validated.key,

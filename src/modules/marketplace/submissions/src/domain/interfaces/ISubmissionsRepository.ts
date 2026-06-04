@@ -9,11 +9,7 @@ import type { AppSubmission } from "../entities/AppSubmission";
  */
 export interface ISubmissionsRepository {
   /** Paginated list of submissions with optional status filter. */
-  getAll(params: {
-    page: number;
-    pageSize: number;
-    status?: string;
-  }): Promise<{
+  getAll(params: { page: number; pageSize: number; status?: string }): Promise<{
     items: AppSubmission[];
     totalCount: number;
     pageNumber: number;

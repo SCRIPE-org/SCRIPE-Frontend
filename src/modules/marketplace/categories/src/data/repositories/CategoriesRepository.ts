@@ -50,7 +50,6 @@ export class CategoriesRepository implements ICategoriesRepository {
     });
   }
 
-
   async delete(id: string): Promise<void> {
     await this.service.delete(id);
   }

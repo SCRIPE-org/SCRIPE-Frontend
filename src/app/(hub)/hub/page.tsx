@@ -7,12 +7,10 @@ export const metadata: Metadata = {
   description: "Select your workspace to get started",
 };
 
-const HubTopBar = dynamic(
-  () => import("@modules/home").then((m) => ({ default: m.HubTopBar }))
-);
+const HubTopBar = dynamic(() => import("@modules/home").then((m) => ({ default: m.HubTopBar })));
 
-const WorkspaceHubView = dynamic(
-  () => import("@modules/home").then((m) => ({ default: m.WorkspaceHubView }))
+const WorkspaceHubView = dynamic(() =>
+  import("@modules/home").then((m) => ({ default: m.WorkspaceHubView }))
 );
 
 /**

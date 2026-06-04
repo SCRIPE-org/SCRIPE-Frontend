@@ -84,7 +84,7 @@ export function useQrSignInViewModel(
       setError(
         err instanceof Error
           ? err.message
-          : (t("auth.qr.createFailed") || "Failed to create QR session.")
+          : t("auth.qr.createFailed") || "Failed to create QR session."
       );
     } finally {
       setIsCreating(false);
@@ -98,7 +98,7 @@ export function useQrSignInViewModel(
       if (pollRef.current) clearInterval(pollRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Poll session status ──

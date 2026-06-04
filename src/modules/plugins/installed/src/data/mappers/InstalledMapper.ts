@@ -1,7 +1,14 @@
 import { PluginInstallation } from "../../domain/entities/PluginInstallation";
 import type { PluginInstallationModel } from "../models/InstalledModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString, optionalIsoDate, urlField } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+  optionalIsoDate,
+  urlField,
+} from "@core/common/zod-utils";
 
 // ─── Plugin Installation Response Schema ──────────────────────────────────────
 
@@ -27,4 +34,3 @@ export class InstalledMapper {
     return new PluginInstallation(model);
   }
 }
-

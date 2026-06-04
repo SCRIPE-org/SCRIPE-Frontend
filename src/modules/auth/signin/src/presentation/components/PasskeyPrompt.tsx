@@ -37,7 +37,14 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL }: PasskeyPromptProps) 
             border: "1px solid rgba(239,68,68,0.2)",
           }}
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#EF4444"
+            strokeWidth="2"
+          >
             <circle cx="12" cy="12" r="10" />
             <line x1="15" y1="9" x2="9" y2="15" />
             <line x1="9" y1="9" x2="15" y2="15" />
@@ -89,11 +96,21 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL }: PasskeyPromptProps) 
         <div
           className="flex h-16 w-16 items-center justify-center rounded-2xl"
           style={{
-            background: "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%)",
+            background:
+              "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%)",
             border: "1px solid rgba(168,85,247,0.3)",
           }}
         >
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--sx-accent, #A855F7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--sx-accent, #A855F7)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M12 10a2 2 0 0 0-2 2c0 1.02.1 2.51.412 4.312M12 10a2 2 0 0 1 2 2c0 1.22-.112 2.7-.48 4.52M12 10V6.5" />
             <path d="M4.789 17.048a17.063 17.063 0 0 1-.263-2.548 7.5 7.5 0 0 1 15 0c0 1.674-.248 3.778-.848 6" />
             <path d="M8.145 17.486a29.12 29.12 0 0 1-.145-2.986 4 4 0 0 1 8 0c0 .74-.03 1.645-.112 2.7" />
@@ -109,9 +126,9 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL }: PasskeyPromptProps) 
         </h2>
         <p className="mt-1 text-sm" style={{ color: "var(--sx-text-mute)" }}>
           {vm.isLoading
-            ? (t("auth.passkey.waiting") || "Waiting for your device…")
-            : (t("auth.passkey.subtitle") ||
-                "Use your fingerprint, face, or security key to sign in")}
+            ? t("auth.passkey.waiting") || "Waiting for your device…"
+            : t("auth.passkey.subtitle") ||
+              "Use your fingerprint, face, or security key to sign in"}
         </p>
       </div>
 

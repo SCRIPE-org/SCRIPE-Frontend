@@ -3,16 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import {
-  Shield,
-  Users,
-  BarChart3,
-  Zap,
-  Globe,
-  Headphones,
-  Settings,
-  Package,
-} from "lucide-react";
+import { Shield, Users, BarChart3, Zap, Globe, Headphones, Settings, Package } from "lucide-react";
 import type { PublicFeature } from "../../domain/entities";
 import type { PlanEdition } from "../viewmodels/usePlanPickerViewModel";
 import { formatFeatureName } from "../viewmodels/usePlanPickerViewModel";
@@ -32,8 +23,18 @@ const FEATURE_ICONS: Record<string, typeof Shield> = {
 
 function getFeatureIcon(featureName: string) {
   if (featureName.startsWith("Identity.")) return Users;
-  if (featureName.startsWith("Marketing.SSO") || featureName.includes("2FA") || featureName.includes("Security")) return Shield;
-  if (featureName.startsWith("Marketing.Support") || featureName.includes("Onboarding") || featureName.includes("Training")) return Headphones;
+  if (
+    featureName.startsWith("Marketing.SSO") ||
+    featureName.includes("2FA") ||
+    featureName.includes("Security")
+  )
+    return Shield;
+  if (
+    featureName.startsWith("Marketing.Support") ||
+    featureName.includes("Onboarding") ||
+    featureName.includes("Training")
+  )
+    return Headphones;
   if (featureName.startsWith("Modules.")) return Package;
   if (featureName.startsWith("Marketing.SLA") || featureName.includes("Backup")) return Zap;
   return Globe;
@@ -48,7 +49,7 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
   const displayLabel =
     language === "ar" && feature.displayLabelAr
       ? feature.displayLabelAr
-      : feature.displayLabelEn ?? null;
+      : (feature.displayLabelEn ?? null);
 
   const label = displayLabel || formatFeatureName(feature.name);
   const Icon = getFeatureIcon(feature.name);
@@ -83,9 +84,13 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
         <Icon className="h-4 w-4 shrink-0 text-white/30" />
         <span className="text-[13px] leading-relaxed text-white/55">
           {label}:&nbsp;
-          {num === -1
-            ? <span className="font-semibold text-cyan-400">{language === "ar" ? "غير محدود" : "Unlimited"}</span>
-            : <span className="font-semibold text-white/85">{num.toLocaleString()}</span>}
+          {num === -1 ? (
+            <span className="font-semibold text-cyan-400">
+              {language === "ar" ? "غير محدود" : "Unlimited"}
+            </span>
+          ) : (
+            <span className="font-semibold text-white/85">{num.toLocaleString()}</span>
+          )}
         </span>
       </li>
     );
@@ -112,7 +117,13 @@ interface PlanCardProps {
   onSelect: (edition: PlanEdition) => void;
 }
 
-export function PlanCard({ edition, index, prevEditionName, billingCycle, onSelect }: PlanCardProps) {
+export function PlanCard({
+  edition,
+  index,
+  prevEditionName,
+  billingCycle,
+  onSelect,
+}: PlanCardProps) {
   const { t, language } = useI18n();
   const price = billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
   const monthlyEquiv = billingCycle === "annual" && price ? Math.round(price / 12) : price;
@@ -122,9 +133,9 @@ export function PlanCard({ edition, index, prevEditionName, billingCycle, onSele
 
   // Compute "Everything in X, plus:" text (Vercel pattern)
   const inheritanceText = prevEditionName
-    ? (language === "ar"
+    ? language === "ar"
       ? `كل مميزات ${prevEditionName}، بالإضافة إلى:`
-      : `All ${prevEditionName} features, plus:`)
+      : `All ${prevEditionName} features, plus:`
     : null;
 
   return (
@@ -137,9 +148,7 @@ export function PlanCard({ edition, index, prevEditionName, billingCycle, onSele
         border: isHighlighted
           ? "1.5px solid rgba(168,85,247,0.35)"
           : "1px solid rgba(255,255,255,0.06)",
-        boxShadow: isHighlighted
-          ? "0 0 40px rgba(168,85,247,0.08)"
-          : "none",
+        boxShadow: isHighlighted ? "0 0 40px rgba(168,85,247,0.08)" : "none",
         animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 80}ms both`,
       }}
     >
@@ -161,7 +170,9 @@ export function PlanCard({ edition, index, prevEditionName, billingCycle, onSele
         <h3 className="text-lg font-bold text-white/95 sm:text-xl">{edition.name}</h3>
 
         {edition.tagline && (
-          <p className="mt-1.5 text-sm leading-relaxed text-white/40 line-clamp-2">{edition.tagline}</p>
+          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/40">
+            {edition.tagline}
+          </p>
         )}
 
         {/* Price */}
@@ -206,9 +217,7 @@ export function PlanCard({ edition, index, prevEditionName, billingCycle, onSele
 
       {/* "Everything in X, plus:" — Vercel inheritance pattern */}
       {inheritanceText && (
-        <p className="px-6 pb-3 text-[13px] font-medium text-white/45 sm:px-7">
-          {inheritanceText}
-        </p>
+        <p className="px-6 pb-3 text-[13px] font-medium text-white/45 sm:px-7">{inheritanceText}</p>
       )}
 
       {/* Features — scrolls naturally with the page */}
@@ -233,10 +242,10 @@ export function PlanCard({ edition, index, prevEditionName, billingCycle, onSele
           }}
         >
           {isContactSales
-            ? (t("signup.plan.contactSales") || "Get a demo")
+            ? t("signup.plan.contactSales") || "Get a demo"
             : isFree
-              ? (t("signup.plan.startFree") || "Start Deploying")
-              : (t("signup.plan.choosePlan", { plan: edition.name }) || `Start a free trial`)}
+              ? t("signup.plan.startFree") || "Start Deploying"
+              : t("signup.plan.choosePlan", { plan: edition.name }) || `Start a free trial`}
           <span className="ms-1.5">→</span>
         </Button>
       </div>

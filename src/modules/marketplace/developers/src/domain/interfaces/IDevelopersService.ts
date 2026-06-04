@@ -51,7 +51,11 @@ export interface UpdateDeveloperPayload {
 
 export interface IDevelopersService {
   /** Fetch paginated list of developer profiles. */
-  getAll(params: { page: number; pageSize: number; search?: string }): Promise<PaginatedDevelopersResponse>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PaginatedDevelopersResponse>;
   /** Fetch a developer profile by ID. */
   getById(id: string): Promise<DeveloperDto>;
   /** Fetch a developer profile by tenant ID. */

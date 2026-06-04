@@ -8,11 +8,7 @@ import type { AppPurchase, DeveloperPayout } from "../entities/FinancialEntities
  */
 export interface IFinancialsRepository {
   /** Paginated list of app purchases with optional tenant filter. */
-  getPurchases(params: {
-    page: number;
-    pageSize: number;
-    tenantId?: string;
-  }): Promise<{
+  getPurchases(params: { page: number; pageSize: number; tenantId?: string }): Promise<{
     items: AppPurchase[];
     totalCount: number;
     pageNumber: number;
@@ -29,11 +25,7 @@ export interface IFinancialsRepository {
   createPurchase(data: { appListingId: string; tenantId: string }): Promise<string>;
 
   /** Paginated list of developer payouts for a specific developer profile. */
-  getPayouts(params: {
-    developerProfileId: string;
-    page: number;
-    pageSize: number;
-  }): Promise<{
+  getPayouts(params: { developerProfileId: string; page: number; pageSize: number }): Promise<{
     items: DeveloperPayout[];
     totalCount: number;
     pageNumber: number;

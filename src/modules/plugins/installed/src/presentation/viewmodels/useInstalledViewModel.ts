@@ -24,19 +24,29 @@ export function useInstalledViewModel(tenantId: string) {
 
   const uninstall = useMutation({
     mutationFn: (installationId: string) => installedRepository.uninstall(installationId, tenantId),
-    onSuccess: () => { invalidate(); success({ title: t("plugins.uninstallSuccess") }); },
+    onSuccess: () => {
+      invalidate();
+      success({ title: t("plugins.uninstallSuccess") });
+    },
     onError: () => error({ title: t("plugins.uninstallError") }),
   });
 
   const activate = useMutation({
     mutationFn: (installationId: string) => installedRepository.activate(installationId, tenantId),
-    onSuccess: () => { invalidate(); success({ title: t("plugins.activateSuccess") }); },
+    onSuccess: () => {
+      invalidate();
+      success({ title: t("plugins.activateSuccess") });
+    },
     onError: () => error({ title: t("plugins.activateError") }),
   });
 
   const deactivate = useMutation({
-    mutationFn: (installationId: string) => installedRepository.deactivate(installationId, tenantId),
-    onSuccess: () => { invalidate(); success({ title: t("plugins.deactivateSuccess") }); },
+    mutationFn: (installationId: string) =>
+      installedRepository.deactivate(installationId, tenantId),
+    onSuccess: () => {
+      invalidate();
+      success({ title: t("plugins.deactivateSuccess") });
+    },
     onError: () => error({ title: t("plugins.deactivateError") }),
   });
 

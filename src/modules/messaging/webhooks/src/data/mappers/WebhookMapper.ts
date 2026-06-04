@@ -39,7 +39,12 @@ import type {
   UpdateWebhookRequest,
 } from "../../domain/entities/WebhookRequests";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString, isoDateString } from "@core/common/zod-utils";
+import {
+  safeParseApiResponse,
+  uuidField,
+  optionalString,
+  isoDateString,
+} from "@core/common/zod-utils";
 
 // ─── Webhook Subscription Schema ──────────────────────────────────────────────────
 
@@ -90,7 +95,11 @@ export class WebhookMapper {
    */
   static toEntity(model: WebhookSubscriptionModel): WebhookSubscription {
     // Validate API response shape — logs warnings on contract drift
-    const validated = safeParseApiResponse(WebhookSubscriptionModelSchema, model, "WebhookSubscription");
+    const validated = safeParseApiResponse(
+      WebhookSubscriptionModelSchema,
+      model,
+      "WebhookSubscription"
+    );
     const data: WebhookSubscriptionData = {
       id: validated.id,
       scope: validated.scope ?? "",

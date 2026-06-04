@@ -42,9 +42,9 @@ export function AppListingsView() {
 
       {/* Listings grid */}
       {vm.isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-48 rounded-xl bg-muted animate-pulse" />
+            <div key={i} className="h-48 animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : vm.listings.length === 0 ? (
@@ -53,7 +53,7 @@ export function AppListingsView() {
           <p className="text-sm">Try adjusting your filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {vm.listings.map((listing) => (
             <AppListingCard
               key={listing.id}

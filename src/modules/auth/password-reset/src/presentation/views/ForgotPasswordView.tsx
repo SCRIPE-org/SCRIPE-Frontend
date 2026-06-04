@@ -168,10 +168,7 @@ export function ForgotPasswordView() {
                   className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
                   aria-hidden="true"
                 />
-                <p
-                  className="text-[12px] leading-relaxed"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
+                <p className="text-[12px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
                   {t("auth.adminResetNotice")}
                 </p>
               </div>
@@ -180,10 +177,7 @@ export function ForgotPasswordView() {
             /* ── Success state ─────────────────────────────── */
             <div className="sx-pop flex flex-col items-center gap-6 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
-                <CheckCircle
-                  className="h-7 w-7 text-emerald-500"
-                  aria-hidden="true"
-                />
+                <CheckCircle className="h-7 w-7 text-emerald-500" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h2
@@ -192,10 +186,7 @@ export function ForgotPasswordView() {
                 >
                   {t("auth.checkYourEmail")}
                 </h2>
-                <p
-                  className="text-[13px] leading-relaxed"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
+                <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
                   {t("auth.resetLinkSent")}
                 </p>
               </div>
@@ -227,10 +218,7 @@ export function ForgotPasswordView() {
         </div>
 
         {/* Footer */}
-        <p
-          className="mt-8 text-[11px]"
-          style={{ color: "var(--sx-text-faint)" }}
-        >
+        <p className="mt-8 text-[11px]" style={{ color: "var(--sx-text-faint)" }}>
           © {new Date().getFullYear()} {companyName}
         </p>
       </div>

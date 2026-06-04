@@ -1,4 +1,3 @@
-
 /**
  * AppListing Data Models (DTOs)
  *

@@ -32,7 +32,11 @@ export interface PaginatedReviewsResponse {
 
 export interface IReviewsService {
   /** Fetch paginated list of reviews. */
-  getAll(params: { page: number; pageSize: number; appListingId?: string }): Promise<PaginatedReviewsResponse>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    appListingId?: string;
+  }): Promise<PaginatedReviewsResponse>;
   /** Delete (moderate) a review. */
   delete(id: string): Promise<void>;
 }

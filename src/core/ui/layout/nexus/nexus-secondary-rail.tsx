@@ -70,7 +70,6 @@ export function NexusSecondaryRail({
   // page navigation where the workspace key momentarily resets.
   const effectiveCollapsed = !!isCollapsed;
 
-
   const railStyle: React.CSSProperties = {
     width: effectiveCollapsed ? 0 : NEXUS_PANEL_W,
     opacity: effectiveCollapsed ? 0 : 1,

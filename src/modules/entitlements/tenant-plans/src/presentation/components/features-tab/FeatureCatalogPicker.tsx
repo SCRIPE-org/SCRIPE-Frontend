@@ -18,7 +18,10 @@ import {
   DialogDescription,
 } from "@core/ui/dialog";
 import { Zap, Search, Plus } from "lucide-react";
-import type { TenantFeatureDefinition, TenantFeatureDefinitionCategoryGroup } from "../../../domain/entities/TenantPlan";
+import type {
+  TenantFeatureDefinition,
+  TenantFeatureDefinitionCategoryGroup,
+} from "../../../domain/entities/TenantPlan";
 
 interface FeatureCatalogPickerProps {
   /** Backend-pre-grouped available (unassigned) active feature definitions */

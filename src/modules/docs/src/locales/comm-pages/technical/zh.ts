@@ -1,9 +1,39 @@
 /**
  * Docs page locale — ZH
- * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const zh = {
   commercial: {
+    observabilityMonitoring: {
+      alertingContent:
+        "如果没有人查看，可视化的仪表板便毫无意义。配置严格的基准阈值——例如，如果 500 错误激增，或者数据库 CPU 使用率超过 80%——系统将自动触发通过 Slack 或 PagerDuty 的事件响应协议。",
+      alertingTitle: "基于阈值的警报",
+      cacheMetrics: "Redis 缓存效能",
+      cacheMetricsDesc: "持续监控内存碎片、命中/未命中率以及逐出 (eviction) 指标以调整性能。",
+      dbMetrics: "数据库连接池耗尽",
+      dbMetricsDesc: "直接从 EF Core 跟踪活动连接、慢查询执行和命令编译时间。",
+      description:
+        "法证级结构化日志记录、零停机健康探测、Prometheus 指标以及 OpenTelemetry 分布式追踪。",
+      healthContent:
+        "开箱即用的 Kubernetes 原生存活 (liveness) 和就绪 (readiness) 探针。API 不断自我报告 SQL 数据库、Redis 缓存和外部依赖项的运行状态。如果某个节点发生故障，编排器会立即将其从负载均衡器的轮询中移除。",
+      healthTitle: "Kubernetes 原生探针",
+      intro:
+        "无法衡量的东西就无法管理。SCRIPE 集成了精锐的可观测性技术栈，为 SRE 和 DevSecOps 团队提供有关平台分布式行为的实时法证级洞察。",
+      loggingContent:
+        "传统的文本日志在大规模系统下毫无用处。SCRIPE 利用 Serilog 生成深度结构化的 JSON 事件日志，自动使用相关性 ID (Correlation IDs)、租户上下文和机器名称对其进行丰富，以便立即在 Datadog 或 ELK 中进行查询。",
+      loggingTitle: "结构化的法证级日志",
+      metricsIntro:
+        "通过集成标准 OpenTelemetry 协议，SCRIPE 将数千个内部平台指标直接暴露给您现有的 Prometheus 和 Grafana 仪表板。",
+      metricsTitle: "OpenTelemetry 集成",
+      requestMetrics: "API 请求吞吐量",
+      requestMetricsDesc: "监控延迟百分位数（p95、p99）、有效载荷大小以及每个端点的精确执行时间。",
+      tip: "高管提示：实施分布式追踪，以跨越所有部署的微服务无缝跟踪单个用户的请求轨迹。",
+      title: "可观测性与遥测",
+      tracingContent:
+        "在微服务部署中，一次单击可能会穿过五个孤立的服务。分布式追踪通过 HTTP 标头注入并传播关联 ID (Correlation IDs)，让您直观地绘制出复杂的请求旅程图，并立即识别出瓶颈服务。",
+      tracingTitle: "跨服务的分布式追踪",
+      userMetrics: "认证速率",
+      userMetricsDesc: "实时追踪登录成功率、暴力破解尝试以及特定租户的活动。",
+    },
     performanceBenchmarks: {
       apiIntro:
         "我们的架构将速度放在首位，同时不牺牲抽象性。API 的每一层都经过严格的基准测试，以确保内存分配最小化并提供最大的吞吐量。",
@@ -64,119 +94,6 @@ export const zh = {
       tip: "架构提示：永远不要为网络调用编写标准的 try/catch 块。始终使用注入到整个平台中的集中式 Polly HTTP 拦截器。",
       title: "防御性弹性架构",
     },
-    observabilityMonitoring: {
-      alertingContent:
-        "如果没有人查看，可视化的仪表板便毫无意义。配置严格的基准阈值——例如，如果 500 错误激增，或者数据库 CPU 使用率超过 80%——系统将自动触发通过 Slack 或 PagerDuty 的事件响应协议。",
-      alertingTitle: "基于阈值的警报",
-      cacheMetrics: "Redis 缓存效能",
-      cacheMetricsDesc: "持续监控内存碎片、命中/未命中率以及逐出 (eviction) 指标以调整性能。",
-      dbMetrics: "数据库连接池耗尽",
-      dbMetricsDesc: "直接从 EF Core 跟踪活动连接、慢查询执行和命令编译时间。",
-      description:
-        "法证级结构化日志记录、零停机健康探测、Prometheus 指标以及 OpenTelemetry 分布式追踪。",
-      healthContent:
-        "开箱即用的 Kubernetes 原生存活 (liveness) 和就绪 (readiness) 探针。API 不断自我报告 SQL 数据库、Redis 缓存和外部依赖项的运行状态。如果某个节点发生故障，编排器会立即将其从负载均衡器的轮询中移除。",
-      healthTitle: "Kubernetes 原生探针",
-      intro:
-        "无法衡量的东西就无法管理。SCRIPE 集成了精锐的可观测性技术栈，为 SRE 和 DevSecOps 团队提供有关平台分布式行为的实时法证级洞察。",
-      loggingContent:
-        "传统的文本日志在大规模系统下毫无用处。SCRIPE 利用 Serilog 生成深度结构化的 JSON 事件日志，自动使用相关性 ID (Correlation IDs)、租户上下文和机器名称对其进行丰富，以便立即在 Datadog 或 ELK 中进行查询。",
-      loggingTitle: "结构化的法证级日志",
-      metricsIntro:
-        "通过集成标准 OpenTelemetry 协议，SCRIPE 将数千个内部平台指标直接暴露给您现有的 Prometheus 和 Grafana 仪表板。",
-      metricsTitle: "OpenTelemetry 集成",
-      requestMetrics: "API 请求吞吐量",
-      requestMetricsDesc: "监控延迟百分位数（p95、p99）、有效载荷大小以及每个端点的精确执行时间。",
-      tip: "高管提示：实施分布式追踪，以跨越所有部署的微服务无缝跟踪单个用户的请求轨迹。",
-      title: "可观测性与遥测",
-      tracingContent:
-        "在微服务部署中，一次单击可能会穿过五个孤立的服务。分布式追踪通过 HTTP 标头注入并传播关联 ID (Correlation IDs)，让您直观地绘制出复杂的请求旅程图，并立即识别出瓶颈服务。",
-      tracingTitle: "跨服务的分布式追踪",
-      userMetrics: "认证速率",
-      userMetricsDesc: "实时追踪登录成功率、暴力破解尝试以及特定租户的活动。",
-    },
-    testingStrategy: {
-      ci1Content:
-        "绝对的执行环境隔离。在每次发起 Pull Request 时，CI 管道都会在一个密封的、无菌的 Linux 容器内确定性地恢复编译器工具链——从而从数学上根除了“在我的机器上能运行”的借口。",
-      ci1Title: "1. 纯净环境初始化",
-      ci2Content:
-        "使用智能模拟 (mocked) 的仓储来执行速度极快的 xUnit 套件。这保证了应用层纯粹的 CQRS 业务逻辑在毫秒内得到审查和认证，而无需建立任何物理数据库连接。",
-      ci2Title: "2. 纯逻辑验证",
-      ci3Content:
-        "使用 Testcontainers 注入临时的 Docker 数据库。这保证了 EF Core 的 LINQ 投影、全局查询过滤器和物理数据库迁移在自我销毁之前，都能在真实的 SQL 引擎上完美执行。",
-      ci3Title: "3. 临时集成遥测",
-      ci4Content:
-        "触发海量的 Playwright 浏览器集群。无头 (Headless) Chromium 工作进程无情地蹂躏编译好的 Next.js UI，积极地与每个 React 组件进行交互，以最终验证端到端的用户旅程。",
-      ci4Title: "4. 自动化的跨浏览器测试",
-      ciContent:
-        "没有绝对自动化的测试就是一种债务。附带的代码库原生附带了一个大规模并行的 GitHub Actions / GitLab CI 管道。它会在 `main` 分支上积极设卡，在物理上拒绝任何违反领域边界、数学断言失败或触发功能回退 (regression) 的代码。",
-      ciTitle: "持续安全与完整性管道",
-      description:
-        "深入分析 SCRIPE 测试金字塔：极速的 CQRS 单元断言、临时的 Docker 数据库集成，以及无情的 Playwright UI 自动化测试。",
-      e2eContent:
-        "用户验收测试 (UAT) 绝不能依赖人为错误。我们集成了 Playwright 来启动无头 Chromium 执行集群。这些集群模拟大规模、高度复杂的用户交互——执行完整的多租户入职流程、验证 React 组件状态，并确保 UI 在人工 QA 接触它之前，在激进的混乱条件下仍能保持完美的弹性。",
-      e2eTitle: "无情的端到端浏览器自动化",
-      integrationContent:
-        "广泛模拟数据库会导致危险的假阳性。SCRIPE 部署了 Testcontainers，专门为每个测试套件动态配置、执行并销毁 PostgreSQL 和 Redis 的真实物理实例。这确保您的 EF Core 架构是在真正的基础设施上进行测试的，而不是在脆弱的内存模拟对象上。",
-      integrationTitle: "临时基础设施测试",
-      intro:
-        "一个级联的企业级错误会导致数十万美元的系统停机损失。SCRIPE 强制执行一种无情的、数学上严密的测试策略。从孤立的整洁架构逻辑测试到破坏性的无头浏览器自动化，每一个字节的代码在合并前都受到积极的审查和认证。",
-      pyramidTitle: "分层代码认证金字塔",
-      pyramidLvl: "认证层级",
-      pyramidTech: "执行引擎",
-      pyramidScope: "验证范围",
-      pyrE2E: "端到端 (E2E) 模拟",
-      pyrE2ETech: "Playwright / Chromium 工作进程",
-      pyrE2EScope: "完整的流程验证 (从 UI 到数据库)",
-      pyrInt: "临时集成测试",
-      pyrIntTech: "WebApplicationFactory + Testcontainers",
-      pyrIntScope: "API 端点 & 物理 SQL 数据库",
-      pyrUnit: "纯业务逻辑",
-      pyrUnitTech: "xUnit + Moq + FluentAssertions",
-      pyrUnitScope: "领域层 (Domain) + 应用层 (Application)",
-      pyrStatic: "静态代码分析",
-      pyrStaticTech: "TypeScript + ESLint + Roslyn",
-      pyrStaticScope: "语法、规则与类型",
-      summaryTitle: "基于数学的测试确定性",
-      tip: "架构指令：不要追求虚荣的指标。对核心领域实体和 CQRS 处理程序强制执行绝对 100% 的覆盖率基准，并利用 Playwright UI 集群来覆盖表现层。",
-      title: "自动化弹性与测试",
-      unitContent:
-        "通过严格遵守整洁架构原则，SCRIPE 的业务逻辑在物理层面上隔绝于 HTTP 上下文和 SQL 架构。您的工程团队可以在短短几毫秒内，针对核心处理程序和领域实体即时执行数千个 xUnit 测试套件，从而最大化开发人员的效率和部署信心。",
-      unitTitle: "极速隔离单元测试执行",
-      lstIntI1: "用于现实 HTTP 管道测试的 WebApplicationFactory",
-      lstIntI2: "用于一次性数据库实例的 TestContainers",
-      lstIntI3: "自动化的测试数据播种 (Seeding) 和清理",
-      lstIntI4: "使用隔离数据库进行并行测试执行",
-      lstIntI5: "使用测试 JWT 令牌进行身份验证模拟",
-      tblSumHeader1: "测试类型",
-      tblSumHeader2: "框架",
-      tblSumHeader3: "覆盖目标",
-      tblSumHeader4: "运行频率",
-      tblSumR1C1: "单元测试 (后端)",
-      tblSumR1C2: "xUnit + FluentAssertions",
-      tblSumR1C3: "领域层 + 应用层",
-      tblSumR1C4: "每次 commit",
-      tblSumR2C1: "单元测试 (前端)",
-      tblSumR2C2: "Vitest + Testing Library",
-      tblSumR2C3: "ViewModels + 实用工具 (Utilities)",
-      tblSumR2C4: "每次 commit",
-      tblSumR3C1: "集成测试",
-      tblSumR3C2: "WebApplicationFactory",
-      tblSumR3C3: "API 端点 + 数据库",
-      tblSumR3C4: "PR 合并时",
-      tblSumR4C1: "端到端测试 (E2E)",
-      tblSumR4C2: "Playwright",
-      tblSumR4C3: "关键用户流程",
-      tblSumR4C4: "每晚 (Nightly) / 发布前",
-      tblSumR5C1: "静态分析",
-      tblSumR5C2: "ESLint + TypeScript + Roslyn",
-      tblSumR5C3: "100% 的代码库",
-      tblSumR5C4: "每次保存时",
-      tblSumR6C1: "性能测试",
-      tblSumR6C2: "k6 / Artillery",
-      tblSumR6C3: "对端点进行负载测试",
-      tblSumR6C4: "发布前",
-    },
     storageBackends: {
       configTitle: "动态提供商配置",
       description:
@@ -205,6 +122,88 @@ export const zh = {
       tenantIsolation: "加密级的路径隔离",
       tenantIsolationDesc: "文件根据 `[TenantId]` 进行物理隔离存储，确保大规模的数据安全性。",
       title: "抽象的存储基础架构",
+    },
+    testingStrategy: {
+      ci1Content:
+        "绝对的执行环境隔离。在每次发起 Pull Request 时，CI 管道都会在一个密封的、无菌的 Linux 容器内确定性地恢复编译器工具链——从而从数学上根除了“在我的机器上能运行”的借口。",
+      ci1Title: "1. 纯净环境初始化",
+      ci2Content:
+        "使用智能模拟 (mocked) 的仓储来执行速度极快的 xUnit 套件。这保证了应用层纯粹的 CQRS 业务逻辑在毫秒内得到审查和认证，而无需建立任何物理数据库连接。",
+      ci2Title: "2. 纯逻辑验证",
+      ci3Content:
+        "使用 Testcontainers 注入临时的 Docker 数据库。这保证了 EF Core 的 LINQ 投影、全局查询过滤器和物理数据库迁移在自我销毁之前，都能在真实的 SQL 引擎上完美执行。",
+      ci3Title: "3. 临时集成遥测",
+      ci4Content:
+        "触发海量的 Playwright 浏览器集群。无头 (Headless) Chromium 工作进程无情地蹂躏编译好的 Next.js UI，积极地与每个 React 组件进行交互，以最终验证端到端的用户旅程。",
+      ci4Title: "4. 自动化的跨浏览器测试",
+      ciContent:
+        "没有绝对自动化的测试就是一种债务。附带的代码库原生附带了一个大规模并行的 GitHub Actions / GitLab CI 管道。它会在 `main` 分支上积极设卡，在物理上拒绝任何违反领域边界、数学断言失败或触发功能回退 (regression) 的代码。",
+      ciTitle: "持续安全与完整性管道",
+      description:
+        "深入分析 SCRIPE 测试金字塔：极速的 CQRS 单元断言、临时的 Docker 数据库集成，以及无情的 Playwright UI 自动化测试。",
+      e2eContent:
+        "用户验收测试 (UAT) 绝不能依赖人为错误。我们集成了 Playwright 来启动无头 Chromium 执行集群。这些集群模拟大规模、高度复杂的用户交互——执行完整的多租户入职流程、验证 React 组件状态，并确保 UI 在人工 QA 接触它之前，在激进的混乱条件下仍能保持完美的弹性。",
+      e2eTitle: "无情的端到端浏览器自动化",
+      integrationContent:
+        "广泛模拟数据库会导致危险的假阳性。SCRIPE 部署了 Testcontainers，专门为每个测试套件动态配置、执行并销毁 PostgreSQL 和 Redis 的真实物理实例。这确保您的 EF Core 架构是在真正的基础设施上进行测试的，而不是在脆弱的内存模拟对象上。",
+      integrationTitle: "临时基础设施测试",
+      intro:
+        "一个级联的企业级错误会导致数十万美元的系统停机损失。SCRIPE 强制执行一种无情的、数学上严密的测试策略。从孤立的整洁架构逻辑测试到破坏性的无头浏览器自动化，每一个字节的代码在合并前都受到积极的审查和认证。",
+      lstIntI1: "用于现实 HTTP 管道测试的 WebApplicationFactory",
+      lstIntI2: "用于一次性数据库实例的 TestContainers",
+      lstIntI3: "自动化的测试数据播种 (Seeding) 和清理",
+      lstIntI4: "使用隔离数据库进行并行测试执行",
+      lstIntI5: "使用测试 JWT 令牌进行身份验证模拟",
+      pyramidLvl: "认证层级",
+      pyramidScope: "验证范围",
+      pyramidTech: "执行引擎",
+      pyramidTitle: "分层代码认证金字塔",
+      pyrE2E: "端到端 (E2E) 模拟",
+      pyrE2EScope: "完整的流程验证 (从 UI 到数据库)",
+      pyrE2ETech: "Playwright / Chromium 工作进程",
+      pyrInt: "临时集成测试",
+      pyrIntScope: "API 端点 & 物理 SQL 数据库",
+      pyrIntTech: "WebApplicationFactory + Testcontainers",
+      pyrStatic: "静态代码分析",
+      pyrStaticScope: "语法、规则与类型",
+      pyrStaticTech: "TypeScript + ESLint + Roslyn",
+      pyrUnit: "纯业务逻辑",
+      pyrUnitScope: "领域层 (Domain) + 应用层 (Application)",
+      pyrUnitTech: "xUnit + Moq + FluentAssertions",
+      summaryTitle: "基于数学的测试确定性",
+      tblSumHeader1: "测试类型",
+      tblSumHeader2: "框架",
+      tblSumHeader3: "覆盖目标",
+      tblSumHeader4: "运行频率",
+      tblSumR1C1: "单元测试 (后端)",
+      tblSumR1C2: "xUnit + FluentAssertions",
+      tblSumR1C3: "领域层 + 应用层",
+      tblSumR1C4: "每次 commit",
+      tblSumR2C1: "单元测试 (前端)",
+      tblSumR2C2: "Vitest + Testing Library",
+      tblSumR2C3: "ViewModels + 实用工具 (Utilities)",
+      tblSumR2C4: "每次 commit",
+      tblSumR3C1: "集成测试",
+      tblSumR3C2: "WebApplicationFactory",
+      tblSumR3C3: "API 端点 + 数据库",
+      tblSumR3C4: "PR 合并时",
+      tblSumR4C1: "端到端测试 (E2E)",
+      tblSumR4C2: "Playwright",
+      tblSumR4C3: "关键用户流程",
+      tblSumR4C4: "每晚 (Nightly) / 发布前",
+      tblSumR5C1: "静态分析",
+      tblSumR5C2: "ESLint + TypeScript + Roslyn",
+      tblSumR5C3: "100% 的代码库",
+      tblSumR5C4: "每次保存时",
+      tblSumR6C1: "性能测试",
+      tblSumR6C2: "k6 / Artillery",
+      tblSumR6C3: "对端点进行负载测试",
+      tblSumR6C4: "发布前",
+      tip: "架构指令：不要追求虚荣的指标。对核心领域实体和 CQRS 处理程序强制执行绝对 100% 的覆盖率基准，并利用 Playwright UI 集群来覆盖表现层。",
+      title: "自动化弹性与测试",
+      unitContent:
+        "通过严格遵守整洁架构原则，SCRIPE 的业务逻辑在物理层面上隔绝于 HTTP 上下文和 SQL 架构。您的工程团队可以在短短几毫秒内，针对核心处理程序和领域实体即时执行数千个 xUnit 测试套件，从而最大化开发人员的效率和部署信心。",
+      unitTitle: "极速隔离单元测试执行",
     },
   },
 };

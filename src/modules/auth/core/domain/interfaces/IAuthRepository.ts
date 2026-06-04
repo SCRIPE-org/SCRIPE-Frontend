@@ -67,7 +67,10 @@ export interface IAuthRepository {
   /** Request phone OTP for sign-in */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
   /** Verify phone OTP code */
-  verifyPhoneOtp(phoneNumber: string, code: string): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
+  verifyPhoneOtp(
+    phoneNumber: string,
+    code: string
+  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
   /** Begin QR sign-in session */
   beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
   /** Check QR sign-in session status */

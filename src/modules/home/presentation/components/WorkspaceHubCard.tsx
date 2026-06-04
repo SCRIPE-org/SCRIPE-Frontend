@@ -43,7 +43,7 @@ export function WorkspaceHubCard({
   onClick,
 }: WorkspaceHubCardProps) {
   const { t } = useI18n();
-  const name = language === "ar" ? (nameAr || nameEn) : (nameEn || nameAr);
+  const name = language === "ar" ? nameAr || nameEn : nameEn || nameAr;
   const chroma = colorChroma ?? 0.18;
   const hue = colorHue ?? 270;
   const accentColor = `oklch(0.65 ${chroma} ${hue})`;
@@ -61,7 +61,7 @@ export function WorkspaceHubCard({
         "text-start",
         isLocked
           ? "cursor-not-allowed opacity-70 grayscale-[30%]"
-          : "cursor-pointer hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99]",
+          : "cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg active:scale-[0.99]"
       )}
       style={{
         background: isLocked ? "hsl(var(--muted) / 0.5)" : accentColorBg,
@@ -95,9 +95,7 @@ export function WorkspaceHubCard({
           <DynamicIcon name={icon || "Layers"} size={22} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-semibold text-foreground">
-            {name}
-          </span>
+          <span className="truncate text-sm font-semibold text-foreground">{name}</span>
           {accessibleItemCount > 0 && !isLocked && (
             <span className="text-xs text-muted-foreground">
               {formatItemCount(accessibleItemCount, language, t)}
@@ -120,10 +118,7 @@ export function WorkspaceHubCard({
       {/* Last accessed timestamp */}
       {lastAccessed && !isLocked && (
         <div className="flex w-full items-center gap-1.5 text-xs text-muted-foreground/70">
-          <div
-            className="h-1.5 w-1.5 rounded-full"
-            style={{ background: accentColor }}
-          />
+          <div className="h-1.5 w-1.5 rounded-full" style={{ background: accentColor }} />
           {lastAccessed}
         </div>
       )}

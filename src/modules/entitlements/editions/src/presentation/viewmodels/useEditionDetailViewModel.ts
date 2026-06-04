@@ -7,7 +7,10 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import type { Edition } from "../../domain/entities/Edition";
-import { Feature, type FeatureModuleGroup } from "@modules/entitlements/features/src/domain/entities/Feature";
+import {
+  Feature,
+  type FeatureModuleGroup,
+} from "@modules/entitlements/features/src/domain/entities/Feature";
 
 // ── Disabled defaults ──
 function getDisabledDefault(valueType: string): string {
@@ -186,7 +189,9 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // ── Local pending feature values (keyed by featureName) ──
   const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
   // ── Local pending display labels (keyed by featureName) ──
-  const [pendingLabels, setPendingLabels] = useState<Record<string, { en?: string; ar?: string }>>({});
+  const [pendingLabels, setPendingLabels] = useState<Record<string, { en?: string; ar?: string }>>(
+    {}
+  );
 
   // ── Overflow Policy (local state — not auto-saved) ──
   const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");

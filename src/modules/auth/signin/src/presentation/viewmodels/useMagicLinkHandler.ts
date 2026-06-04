@@ -15,10 +15,7 @@ interface UseMagicLinkHandlerProps {
  * - resendMagicLink: resends with the stored email (for the sent screen).
  * - reset: goes back to credentials.
  */
-export function useMagicLinkHandler({
-  setLoginStep,
-  setError,
-}: UseMagicLinkHandlerProps) {
+export function useMagicLinkHandler({ setLoginStep, setError }: UseMagicLinkHandlerProps) {
   const [magicLinkEmail, setMagicLinkEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -44,13 +41,10 @@ export function useMagicLinkHandler({
     [isSending, setError, setLoginStep]
   );
 
-  const resendMagicLink = useCallback(
-    async (email: string, tenantId?: string) => {
-      const authService = authContainer.authService;
-      await authService.requestMagicLink(email, tenantId);
-    },
-    []
-  );
+  const resendMagicLink = useCallback(async (email: string, tenantId?: string) => {
+    const authService = authContainer.authService;
+    await authService.requestMagicLink(email, tenantId);
+  }, []);
 
   const resetMagicLink = useCallback(() => {
     setMagicLinkEmail("");
