@@ -33,13 +33,36 @@ function generateUUID(): string {
 }
 
 /**
- * S0.15: Read a cookie value by name.
- * Used by CSRF double-submit cookie pattern to read XSRF-TOKEN.
+ * S0.15: Enterprise-grade CSRF token store.
+ *
+ * OWASP Signed Double-Submit Cookie pattern with cross-origin SPA delivery.
+ *
+ * The backend issues a fresh HMAC-signed CSRF token on EVERY response via
+ * the X-CSRF-Token response header (exposed via CORS). We capture it here
+ * and echo it back on state-changing requests (POST/PUT/PATCH/DELETE).
+ *
+ * Why NOT read document.cookie:
+ *   The __Host- cookie is set on the BACKEND domain (onrender.com), but the
+ *   frontend is on app.scripe.org. Same-Origin Policy prevents JS on one domain
+ *   from reading cookies set by another domain via document.cookie.
+ *
+ * Why this is still CSRF-safe:
+ *   This token is HMAC-signed server-side with a secret + JWT jti.
+ *   An attacker on evil.com:
+ *     a) Cannot read the X-CSRF-Token response header (CORS blocks it)
+ *     b) Cannot forge a valid HMAC without the server secret
+ *     c) Cannot replay a token (it's session-bound via jti)
+ *
+ * Reference: OWASP CSRF Cheat Sheet — Signed Double-Submit Cookie
  */
-function getCookieValue(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
+let _csrfToken: string | null = null;
+
+function getCsrfToken(): string | null {
+  return _csrfToken;
+}
+
+function setCsrfToken(token: string | null): void {
+  if (token) _csrfToken = token;
 }
 
 // P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
@@ -167,9 +190,11 @@ export class ApiService implements IApiService {
           config.headers["X-Request-Timestamp"] = Date.now().toString();
           config.headers["X-Request-Nonce"] = generateUUID();
 
-          // S0.15: CSRF protection — double-submit cookie pattern
-          // Read XSRF-TOKEN cookie and send as X-CSRF-Token header
-          const csrfToken = getCookieValue("XSRF-TOKEN");
+          // S0.15: CSRF protection — OWASP Signed Double-Submit Cookie pattern.
+          // Token was captured from X-CSRF-Token response header on last response.
+          // The token is HMAC-SHA256 signed server-side (secret + JWT jti),
+          // so it cannot be forged by an attacker on another origin.
+          const csrfToken = getCsrfToken();
           if (csrfToken) {
             config.headers["X-CSRF-Token"] = csrfToken;
           }
@@ -187,9 +212,14 @@ export class ApiService implements IApiService {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor - handle 401 and unwrap data
+    // Response interceptor - capture CSRF token and handle 401
     this.axiosInstance.interceptors.response.use(
       (response) => {
+        // S0.15: Capture fresh HMAC-signed CSRF token from every response.
+        // Backend rotates it on every response; we always use the latest.
+        const freshCsrfToken = response.headers["x-csrf-token"];
+        if (freshCsrfToken) setCsrfToken(freshCsrfToken);
+
         appLogger.api(`Success: ${response.status}`);
         return response;
       },
@@ -310,6 +340,11 @@ export class ApiService implements IApiService {
 
     this.axiosPublic.interceptors.response.use(
       (response) => {
+        // S0.15: Also capture CSRF token from public responses (e.g., login).
+        // This seeds the token before any authenticated mutations.
+        const freshCsrfToken = response.headers["x-csrf-token"];
+        if (freshCsrfToken) setCsrfToken(freshCsrfToken);
+
         appLogger.api(`Success: ${response.status}`);
         return response;
       },
