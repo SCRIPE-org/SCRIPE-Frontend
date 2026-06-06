@@ -7,6 +7,7 @@ import type { AccessibilityConfig } from "@modules/auth/core/src/presentation/vi
 import type { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import type { useSsoProviders } from "../viewmodels/useSsoProviders";
 import { CredentialsForm } from "./CredentialsForm";
+import { MagicLinkRequestForm } from "./MagicLinkRequestForm";
 import { MagicLinkSentScreen } from "./MagicLinkSentScreen";
 import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelector";
 import { SlotRenderer } from "./SlotRenderer";
@@ -76,6 +77,14 @@ export function LoginFormRouter({
           isLoading={vm.isLoading}
           error={vm.error}
         />
+      ) : vm.loginStep === "magic-link-request" ? (
+        <MagicLinkRequestForm
+          isLoading={vm.isLoading}
+          error={vm.error}
+          onBack={vm.goBackToCredentials}
+          onSubmit={(email) => vm.requestMagicLink(email, tenantId ?? undefined)}
+          isRTL={isRTL}
+        />
       ) : vm.loginStep === "magic-link-sent" ? (
         <MagicLinkSentScreen
           email={vm.magicLinkEmail}
@@ -98,9 +107,7 @@ export function LoginFormRouter({
             togglePasswordVisibility={vm.togglePasswordVisibility}
             handleLogin={() => vm.handleLogin(tenantId ?? undefined)}
             errorAnnounce={a11y.errorAnnounce}
-            onMagicLinkRequest={(identifier) =>
-              vm.requestMagicLink(identifier, tenantId ?? undefined)
-            }
+            onMagicLinkRequest={() => vm.setLoginStep("magic-link-request")}
             onSwitchToPasskey={() => vm.setLoginStep("passkey")}
             onSwitchToPhoneOtp={() => vm.setLoginStep("phone-otp")}
             onSwitchToQrLogin={() => vm.setLoginStep("qr-login")}

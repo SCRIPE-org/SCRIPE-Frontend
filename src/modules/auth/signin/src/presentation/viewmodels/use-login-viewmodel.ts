@@ -26,6 +26,7 @@ export type LoginStep =
   | "credentials"
   | "two-factor"
   | "workspace-selection"
+  | "magic-link-request"
   | "magic-link-sent"
   | "phone-otp"
   | "passkey"

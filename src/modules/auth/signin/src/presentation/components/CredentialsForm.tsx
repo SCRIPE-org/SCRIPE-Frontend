@@ -327,7 +327,7 @@ export function CredentialsForm({
       {methodChips.length > 0 && (
         <div>
           <div
-            className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.15em]"
+            className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.15em] text-center"
             style={{
               color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))",
               fontFamily: "var(--font-mono, ui-monospace, monospace)",
@@ -335,7 +335,7 @@ export function CredentialsForm({
           >
             {t("auth.otherMethods") || "or use a different method"}
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {methodChips.map((chip) => (
               <Button
                 key={chip.key}

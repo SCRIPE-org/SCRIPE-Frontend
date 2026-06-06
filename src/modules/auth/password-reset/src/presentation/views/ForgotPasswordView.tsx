@@ -113,7 +113,7 @@ function WorkspacePickCard({
     <button
       type="button"
       onClick={() => onSelect(workspace)}
-      className="group flex w-full items-center gap-3.5 rounded-2xl border p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.99]"
+      className="group flex w-full items-center gap-3.5 rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] active:scale-[0.99]"
       style={{
         background: "var(--sx-chip-bg)",
         borderColor: "var(--sx-chip-border)",
@@ -422,7 +422,7 @@ export function ForgotPasswordView() {
                   type="button"
                   onClick={() => vm.chooseMethod("otp")}
                   disabled={vm.isLoading}
-                  className="group flex items-center gap-4 rounded-2xl border p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.99] disabled:opacity-50"
+                  className="group flex items-center gap-4 rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] active:scale-[0.99] disabled:opacity-50"
                   style={{
                     background: "var(--sx-chip-bg)",
                     borderColor: "var(--sx-chip-border)",
@@ -461,7 +461,7 @@ export function ForgotPasswordView() {
                   type="button"
                   onClick={() => vm.chooseMethod("magic-link")}
                   disabled={vm.isLoading}
-                  className="group flex items-center gap-4 rounded-2xl border p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.99] disabled:opacity-50"
+                  className="group flex items-center gap-4 rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] active:scale-[0.99] disabled:opacity-50"
                   style={{
                     background: "var(--sx-chip-bg)",
                     borderColor: "var(--sx-chip-border)",

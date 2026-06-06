@@ -124,7 +124,7 @@ export function WorkspacePicker({
                     <Button
                       type="button"
                       variant={ws.isActivated ? "outline" : "ghost"}
-                      className="h-auto w-full justify-start gap-3 px-3 py-2.5 text-left"
+                      className="h-auto w-full justify-start gap-3 px-3 py-2.5 text-start"
                       onClick={() => ws.isActivated && handleSelect(ws)}
                       disabled={!ws.isActivated}
                       aria-disabled={!ws.isActivated}

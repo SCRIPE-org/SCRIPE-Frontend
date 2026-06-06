@@ -56,6 +56,9 @@ export const en = {
     },
     items: {
       one: "1 item",
+      two: "{{count}} items",
+      few: "{{count}} items",
+      many: "{{count}} items",
       other: "{{count}} items",
     },
     noResults: "No apps match your search",

@@ -333,7 +333,7 @@ export function WorkspaceCard({
           : ""
       }`}
       className={[
-        "group w-full rounded-xl border p-4 text-left transition-all duration-150",
+        "group w-full rounded-xl border p-4 text-start transition-all duration-150",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
         stateColors[state],
         isInteractive && !isGloballyDisabled ? "cursor-pointer active:scale-[0.99]" : "cursor-not-allowed",

@@ -234,11 +234,17 @@ export class AuthService implements IAuthService {
     qrData: string;
     expiresAt: string;
   }> {
-    return this.api.postPublic<{
+    const res = await this.api.postPublic<{
       sessionId: string;
-      qrData: string;
+      qrUrl: string;
       expiresAt: string;
     }>(API_ENDPOINTS.AUTH.QR_LOGIN.CREATE_SESSION, {});
+
+    return {
+      sessionId: res.sessionId,
+      qrData: res.qrUrl,
+      expiresAt: res.expiresAt,
+    };
   }
 
   async checkQrSignIn(sessionId: string): Promise<{
