@@ -63,7 +63,27 @@ export class AuthRepository implements IAuthRepository {
       credentials.deviceInfo,
       credentials.isPlatformAdmin
     );
+
+    // ──── DEBUG: trace exact request being sent ────
+    console.log("[AUTH-DEBUG] Login request:", {
+      identifier: credentials.identifier,
+      tenantId: credentials.tenantId,
+      isPlatformAdmin: credentials.isPlatformAdmin,
+      tenantIdType: typeof credentials.tenantId,
+      tenantIdLength: credentials.tenantId?.length,
+    });
+
     const responseModel = await this.service.login(requestModel);
+
+    // ──── DEBUG: trace exact response received ────
+    console.log("[AUTH-DEBUG] Login response:", {
+      requires2FA: responseModel.requires2FA,
+      requiresWorkspaceSelection: responseModel.requiresWorkspaceSelection,
+      availableWorkspaces: responseModel.availableWorkspaces,
+      workspaceCount: responseModel.availableWorkspaces?.length ?? 0,
+      hasAccessToken: !!responseModel.accessToken,
+      accessTokenLength: responseModel.accessToken?.length ?? 0,
+    });
 
     appLogger.auth("Login response received");
 
@@ -73,6 +93,7 @@ export class AuthRepository implements IAuthRepository {
     }
 
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
+      console.log("[AUTH-DEBUG] ✅ WORKSPACE SELECTION TRIGGERED! Throwing WorkspaceSelectionRequiredError with", responseModel.availableWorkspaces.length, "workspaces");
       appLogger.auth(
         `Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`
       );
@@ -87,6 +108,12 @@ export class AuthRepository implements IAuthRepository {
           isDisabled: w.isDisabled ?? false,
           disabledReason: w.disabledReason ?? null,
         }))
+      );
+    } else {
+      console.log("[AUTH-DEBUG] ❌ Workspace selection NOT triggered. requiresWorkspaceSelection =",
+        responseModel.requiresWorkspaceSelection,
+        "availableWorkspaces =",
+        responseModel.availableWorkspaces
       );
     }
 

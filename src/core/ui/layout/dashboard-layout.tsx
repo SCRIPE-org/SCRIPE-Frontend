@@ -265,7 +265,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // M11: Server-first admin preferences lifecycle — syncs settings to/from AdminSettingsJson
   // Returns isSettingsReady=true immediately if localStorage has cache (optimistic render),
   // shows shimmer ONLY on first-ever device login (when localStorage is completely empty).
-  const { isSettingsReady } = useAdminSettingsSync();
+  // isTransitioning=true briefly when server reconciles a different layoutTemplate (Option B).
+  const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
   const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
   const { direction } = useI18n();
   const { layoutTemplate, collapsibleSidebar } = settings;
@@ -303,8 +304,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, [collapsibleSidebar]);
 
-  // M11: FOUC Prevention — shimmer only on first-ever device login (AFTER all hooks)
-  if (!isSettingsReady) {
+  // M11: FOUC Prevention — shimmer on first-ever device login, AND
+  // Option B: brief shimmer when server reconciles a different layoutTemplate
+  // to prevent visible layout flash (old cached layout → new server layout).
+  if (!isSettingsReady || isTransitioning) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex animate-pulse flex-col items-center gap-3">

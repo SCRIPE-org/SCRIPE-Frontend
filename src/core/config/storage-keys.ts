@@ -76,6 +76,12 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
  * All auth-related keys to clear on logout (v2).
  * Note: NAV_STORE is included so navigation state resets on every logout.
  * PENDING_SETTINGS_FLUSH is intentionally excluded.
+ *
+ * ⚠️ DASHBOARD_SETTINGS, PREF_* keys are NOT cleared on logout.
+ * They are layout/theme preferences — not auth state. Clearing them
+ * causes a visible layout flash on re-login (defaults → server settings).
+ * The server reconciliation in useAdminSettingsSync will update them
+ * when a different user logs in (silent swap, no flash).
  */
 export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.ACCESS_TOKEN,
@@ -84,11 +90,6 @@ export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.scr_refresh_token,
   STORAGE_KEYS.tenant_context,
   STORAGE_KEYS.NAV_STORE,
-  STORAGE_KEYS.DASHBOARD_SETTINGS,
-  STORAGE_KEYS.PREF_DASHBOARD_SETTINGS,
-  STORAGE_KEYS.PREF_THEME,
-  STORAGE_KEYS.PREF_LANG,
-  STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED,
 ] as const;
 
 /**

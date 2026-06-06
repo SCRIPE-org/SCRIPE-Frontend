@@ -15,6 +15,9 @@ export class TwoFactorRequiredError extends Error {
   constructor() {
     super("Two-factor authentication required");
     this.name = "TwoFactorRequiredError";
+    // Required for `instanceof` to work correctly when TypeScript targets ES2015+
+    // and the bundler does not preserve the prototype chain for Error subclasses.
+    Object.setPrototypeOf(this, TwoFactorRequiredError.prototype);
   }
 }
 
@@ -62,5 +65,8 @@ export class WorkspaceSelectionRequiredError extends Error {
     super("Multiple workspaces found — please select a workspace to continue");
     this.name = "WorkspaceSelectionRequiredError";
     this.availableWorkspaces = workspaces;
+    // Required for `instanceof` to work correctly when TypeScript targets ES2015+
+    // and the bundler does not preserve the prototype chain for Error subclasses.
+    Object.setPrototypeOf(this, WorkspaceSelectionRequiredError.prototype);
   }
 }

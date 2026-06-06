@@ -11,6 +11,7 @@ import {
   TwoFactorRequiredError,
   WorkspaceSelectionRequiredError,
 } from "@modules/auth/core/domain/errors/AuthErrors";
+import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
@@ -147,6 +148,15 @@ export function useLoginViewModel() {
       setError("");
       const resolvedTenantId = tenantIdOverride ?? tenantIdRef.current ?? tenantId;
 
+      // ──── DEBUG ────
+      console.log("[AUTH-DEBUG] handleLogin called:", {
+        tenantIdOverride,
+        tenantIdRefCurrent: tenantIdRef.current,
+        tenantIdState: tenantId,
+        resolvedTenantId,
+        identifier: formData.identifier,
+      });
+
       try {
         const rawDevCode =
           typeof window !== "undefined"
@@ -161,6 +171,7 @@ export function useLoginViewModel() {
           tenantCode: devTenantCode,
         });
 
+        console.log("[AUTH-DEBUG] ⚡ Login mutation succeeded (no error thrown) — redirecting");
         setIsRedirecting(true);
         if (!hasTriggeredRedirect.current) {
           hasTriggeredRedirect.current = true;
@@ -170,16 +181,38 @@ export function useLoginViewModel() {
           }, 100);
         }
       } catch (err: unknown) {
-        if (err instanceof TwoFactorRequiredError) {
+        console.log("[AUTH-DEBUG] 🔴 Caught error in handleLogin:", {
+          errorType: err?.constructor?.name,
+          errorName: err instanceof Error ? err.name : "N/A",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          isInstanceOfWSR: err instanceof WorkspaceSelectionRequiredError,
+          isInstanceOf2FA: err instanceof TwoFactorRequiredError,
+          hasAvailableWorkspaces: !!(err as any)?.availableWorkspaces,
+          workspaceCount: (err as any)?.availableWorkspaces?.length ?? 0,
+        });
+
+        // instanceof + name fallback: some bundlers break Error prototype chains
+        if (
+          err instanceof TwoFactorRequiredError ||
+          (err instanceof Error && err.name === "TwoFactorRequiredError")
+        ) {
           twoFA.enterTwoFactor();
           return;
         }
-        if (err instanceof WorkspaceSelectionRequiredError) {
-          workspaceSelector.showWorkspaces(err.availableWorkspaces);
+        if (
+          err instanceof WorkspaceSelectionRequiredError ||
+          (err instanceof Error && err.name === "WorkspaceSelectionRequiredError") ||
+          // Ultimate duck-typing fallback: if it has availableWorkspaces array, it IS a workspace selection error
+          (err instanceof Error && "availableWorkspaces" in err && Array.isArray((err as any).availableWorkspaces))
+        ) {
+          const workspaces = (err as any).availableWorkspaces as WorkspaceChoice[];
+          console.log("[AUTH-DEBUG] ✅ Workspace selection detected! Showing picker with", workspaces?.length, "workspaces");
+          workspaceSelector.showWorkspaces(workspaces);
           return;
         }
         setErrorWithShake(err instanceof Error ? err.message : "Login failed");
       }
+
     },
     [
       formData,
