@@ -32,6 +32,12 @@ export interface LoginResponseJson {
     isActivated: boolean;
     isDisabled?: boolean;
     disabledReason?: string | null;
+    /** TRUE = password matched this workspace; FALSE = wrong password (show inline form) */
+    isPasswordVerified?: boolean;
+    /** TRUE = account locked out (too many failed attempts) */
+    isLocked?: boolean;
+    /** UTC ISO string — when lockout expires */
+    lockedUntil?: string | null;
   }> | null;
   mustChangePassword?: boolean;
   subscriptionStatus?: string | null;
@@ -57,6 +63,12 @@ export interface LoginResponseModel extends LoginResponseJson {
     isActivated: boolean;
     isDisabled?: boolean;
     disabledReason?: string | null;
+    /** TRUE = password matched this workspace; FALSE = wrong password (show inline form) */
+    isPasswordVerified?: boolean;
+    /** TRUE = account locked out (too many failed attempts) */
+    isLocked?: boolean;
+    /** UTC ISO string — when lockout expires */
+    lockedUntil?: string | null;
   }> | null;
   mustChangePassword: boolean;
   subscriptionStatus: string | null;

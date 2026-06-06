@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
 
@@ -9,7 +10,8 @@ import { authContainer } from "@modules/auth/di";
 export type QrSessionStatus = "pending" | "scanned" | "approved" | "rejected" | "expired";
 
 export interface QrStatusInfo {
-  icon: string;
+  /** SVG icon element — no emojis */
+  svgIcon: ReactNode;
   label: string;
   color: string;
 }
@@ -166,36 +168,61 @@ export function useQrSignInViewModel(
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  // ── Status indicators ──
+  // ── Status indicators (SVG icons — no emojis) ──
   const getStatusInfo = (): QrStatusInfo => {
     switch (status) {
       case "scanned":
         return {
-          icon: "📱",
+          svgIcon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" />
+              <circle cx="12" cy="17" r="1" fill="#22D3EE" stroke="none" />
+            </svg>
+          ),
           label: t("auth.qr.scanned") || "QR code scanned! Waiting for approval…",
           color: "#22D3EE",
         };
       case "approved":
         return {
-          icon: "✅",
+          svgIcon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          ),
           label: t("auth.qr.approved") || "Approved! Signing you in…",
           color: "#10B981",
         };
       case "rejected":
         return {
-          icon: "❌",
+          svgIcon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          ),
           label: t("auth.qr.rejected") || "Request rejected.",
           color: "#EF4444",
         };
       case "expired":
         return {
-          icon: "⏰",
+          svgIcon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          ),
           label: t("auth.qr.expired") || "QR code expired.",
           color: "#F59E0B",
         };
       default:
         return {
-          icon: "📷",
+          svgIcon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sx-text-mute)" strokeWidth="1.5" strokeLinecap="round">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+              <path d="M14 14h.01M14 17h.01M17 14h.01M17 17h.01M20 14h.01M20 17h.01" />
+            </svg>
+          ),
           label: t("auth.qr.pending") || "Scan the QR code with your mobile device",
           color: "var(--sx-text-mute)",
         };

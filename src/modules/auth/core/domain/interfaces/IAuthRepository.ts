@@ -2,6 +2,7 @@ import { LoginRequest, LoginResponse } from "../entities/Auth";
 import { User } from "../entities/User";
 import type { WorkspaceInfo } from "../entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
+import type { LoginResponseModel } from "../types/AuthTypes";
 
 /** Result of a successful login, carrying subscription metadata alongside the User */
 export interface LoginResult {
@@ -66,11 +67,11 @@ export interface IAuthRepository {
   }): Promise<{ accessToken: string; refreshToken: string }>;
   /** Request phone OTP for sign-in */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
-  /** Verify phone OTP code */
+  /** Verify phone OTP code — returns full login response (supports multi-workspace) */
   verifyPhoneOtp(
     phoneNumber: string,
     code: string
-  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
+  ): Promise<LoginResponseModel>;
   /** Begin QR sign-in session */
   beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
   /** Check QR sign-in session status */
@@ -81,12 +82,16 @@ export interface IAuthRepository {
   }>;
   /** Approve QR sign-in from mobile */
   approveQrSignIn(sessionId: string): Promise<void>;
+  /** Reject QR sign-in from mobile */
+  rejectQrSignIn(sessionId: string): Promise<void>;
   /** Verify a magic-link token from the email URL and issue a session. */
   verifyMagicLink(
     token: string,
     tenantId?: string
   ): Promise<{
     accessToken: string;
+    requiresWorkspaceSelection?: boolean;
+    availableWorkspaces?: LoginResponseModel["availableWorkspaces"];
     mustChangePassword?: boolean;
     defaultRedirectPath?: string;
   }>;

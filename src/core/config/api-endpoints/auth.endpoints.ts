@@ -10,6 +10,7 @@ export const AUTH_ENDPOINTS = {
     STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
     // ── Admin Password Reset (targets Admins table, not Users) ──
     ADMIN_REQUEST_PASSWORD_RESET: `${V1}/auth/admin/request-password-reset`,
+    ADMIN_VERIFY_RESET_OTP: `${V1}/auth/admin/verify-reset-otp`,
     ADMIN_RESET_PASSWORD: `${V1}/auth/admin/reset-password`,
     // ── Workspace Discovery — returns all tenants for an email ──
     DISCOVER_WORKSPACES: `${V1}/auth/admin/discover-workspaces`,

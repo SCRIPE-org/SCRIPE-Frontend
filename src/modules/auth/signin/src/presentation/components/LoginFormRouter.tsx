@@ -71,6 +71,7 @@ export function LoginFormRouter({
           email={vm.formData.identifier}
           workspaces={vm.availableWorkspaces}
           onSelect={vm.selectWorkspace}
+          onUnlock={vm.unlockWorkspace}
           onBack={vm.goBackToCredentials}
           isLoading={vm.isLoading}
           error={vm.error}

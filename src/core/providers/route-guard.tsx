@@ -41,13 +41,7 @@ const PUBLIC_PAGES = [
   "/error",
   "/404",
   "/500",
-  "/settings",
-  "/profile",
-  "/profile/security",
-  "/profile/activity",
-  "/profile/sessions",
-  "/profile/notifications",
-  "/profile/settings",
+  // Profile + settings pages are system pages (auth required) — not public
   "/docs",
   "/commercial",
   "/oauth/callback",
@@ -56,10 +50,13 @@ const PUBLIC_PAGES = [
   "/studio-preview",
   "/dashboard-preview",
   "/setup-account",
-  "/change-password",
+  // /change-password requires auth — listed as SYSTEM_PAGE below
   "/signup",
   "/terms",
   "/privacy",
+  // ── Passwordless / cross-device flows — public (no auth required) ────────
+  "/magic-link",  // Magic link email callback — token-authenticated, no session needed
+  "/qr-approve",  // QR code approval page — scanned from mobile, no auth session
 ];
 
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
@@ -142,6 +139,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
         pathname === "/login" ||
         pathname === "/forgot-password" ||
         pathname === "/reset-password" ||
+        pathname === "/magic-link" ||
+        pathname === "/qr-approve" ||
         pathname.startsWith("/sso");
 
       const hasToken = secureTokenService.hasToken();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import QRCode from "qrcode";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { useQrSignInViewModel } from "../viewmodels/useQrSignInViewModel";
@@ -21,70 +22,45 @@ interface QrSignInViewProps {
  * All business logic (session creation, polling, countdown) lives in useQrSignInViewModel.
  * This component is a pure render — no DI imports, no HTTP calls.
  *
- * Design: Vault aesthetic, QR rendered via canvas, status indicators
+ * Uses the `qrcode` npm library to render a real, scannable QR code matrix on a canvas.
+ * The QR data encodes the /qr-approve?session={sessionId} URL that the mobile device opens.
+ *
+ * Design: Vault aesthetic, real QR rendered via canvas, status indicators.
  */
 export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
   const { t } = useI18n();
   const vm = useQrSignInViewModel(onSuccess);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // ── Render QR code as simple text-based display ──
+  // ── Render real QR code via qrcode library ──
   useEffect(() => {
     if (!vm.qrData || !canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Simple QR display: render the session URL as a centered text
-    // In production, use a QR library (qrcode, qr.js) to render actual QR matrix
-    canvas.width = 200;
-    canvas.height = 200;
-
-    // Background
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, 200, 200);
-
-    // Border
-    ctx.strokeStyle = "#E5E7EB";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(1, 1, 198, 198);
-
-    // QR placeholder pattern (a real implementation would use a QR encoder)
-    ctx.fillStyle = "#1a1a2e";
-    const cellSize = 6;
-    const offset = 20;
-    const data = vm.qrData || vm.sessionId;
-    // Generate deterministic pattern from session data
-    for (let row = 0; row < 27; row++) {
-      for (let col = 0; col < 27; col++) {
-        const charIndex = (row * 27 + col) % data.length;
-        const charCode = data.charCodeAt(charIndex);
-        if ((charCode + row + col) % 3 !== 0) {
-          ctx.fillRect(
-            offset + col * cellSize,
-            offset + row * cellSize,
-            cellSize - 1,
-            cellSize - 1
-          );
-        }
-      }
-    }
-
-    // Corner markers (standard QR positioning squares)
-    const drawCorner = (x: number, y: number) => {
-      ctx.fillStyle = "#1a1a2e";
-      ctx.fillRect(x, y, 42, 42);
+    // qrData from backend is the raw session URL/payload to encode as QR
+    QRCode.toCanvas(canvasRef.current, vm.qrData, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: "#1a1a2e",
+        light: "#ffffff",
+      },
+      errorCorrectionLevel: "M",
+    }).catch(() => {
+      // Fallback: if library fails, render basic pattern so we don't break
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      canvas.width = 200;
+      canvas.height = 200;
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x + 6, y + 6, 30, 30);
+      ctx.fillRect(0, 0, 200, 200);
       ctx.fillStyle = "#1a1a2e";
-      ctx.fillRect(x + 12, y + 12, 18, 18);
-    };
-
-    drawCorner(offset, offset);
-    drawCorner(offset + 120, offset);
-    drawCorner(offset, offset + 120);
-  }, [vm.qrData, vm.sessionId]);
+      ctx.font = "11px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("QR Error", 100, 100);
+    });
+  }, [vm.qrData]);
 
   return (
     <div className="sx-screen space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
@@ -98,7 +74,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
         </p>
       </div>
 
-      {/* QR Code */}
+      {/* QR Code container */}
       <div className="relative mx-auto">
         <div
           className="relative mx-auto overflow-hidden rounded-xl p-3"
@@ -111,16 +87,47 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
             transition: "opacity 0.3s ease",
           }}
         >
-          <canvas ref={canvasRef} className="mx-auto" style={{ width: 200, height: 200 }} />
+          {/* Real QR canvas */}
+          {vm.isCreating ? (
+            // Loading skeleton while session is being created
+            <div
+              className="mx-auto animate-pulse rounded-lg"
+              style={{ width: 200, height: 200, background: "#f3f4f6" }}
+            />
+          ) : (
+            <canvas
+              ref={canvasRef}
+              className="mx-auto"
+              style={{ width: 200, height: 200 }}
+            />
+          )}
+
           {/* Scanned overlay */}
           {vm.status === "scanned" && (
             <div
               className="absolute inset-0 flex items-center justify-center rounded-xl"
-              style={{ background: "rgba(255,255,255,0.9)" }}
+              style={{ background: "rgba(255,255,255,0.92)" }}
             >
-              <span className="text-4xl" style={{ animation: "sxPop 350ms ease-out both" }}>
-                📱
-              </span>
+              <div className="flex flex-col items-center gap-2">
+                {/* Phone icon SVG */}
+                <svg
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#7C3AED"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ animation: "sxPop 350ms ease-out both" }}
+                >
+                  <rect x="5" y="2" width="14" height="20" rx="2" />
+                  <circle cx="12" cy="17" r="1" fill="#7C3AED" stroke="none" />
+                </svg>
+                <span className="text-[13px] font-semibold" style={{ color: "#7C3AED" }}>
+                  {t("auth.qr.scannedLabel") || "Waiting for approval…"}
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -152,9 +159,12 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
       </div>
 
       {/* Status message */}
-      <p className="text-sm font-medium" style={{ color: vm.statusInfo.color }}>
-        {vm.statusInfo.icon} {vm.statusInfo.label}
-      </p>
+      <div className="flex items-center justify-center gap-2">
+        {vm.statusInfo.svgIcon}
+        <p className="text-sm font-medium" style={{ color: vm.statusInfo.color }}>
+          {vm.statusInfo.label}
+        </p>
+      </div>
 
       {/* Error */}
       {vm.error && (

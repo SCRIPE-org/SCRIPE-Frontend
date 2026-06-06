@@ -50,6 +50,22 @@ export interface WorkspaceChoice {
    * E.g. "Suspended", "Cancelled", "Account deactivated"
    */
   disabledReason?: string | null;
+  /**
+   * TRUE — the password entered on the main screen matched this workspace.
+   *        Card is unlocked/clickable — select to log in.
+   * FALSE — the password didn't match. Card shows an inline 'Enter password' form.
+   * Undefined/null — method did not use password (e.g., magic link, SSO).
+   */
+  isPasswordVerified?: boolean;
+  /**
+   * TRUE — this account is currently locked out (too many failed attempts).
+   *        Card shows lockout badge + countdown until lockedUntil.
+   */
+  isLocked?: boolean;
+  /**
+   * ISO date string when the lockout expires (only populated when isLocked is true).
+   */
+  lockedUntil?: string | null;
 }
 
 /**

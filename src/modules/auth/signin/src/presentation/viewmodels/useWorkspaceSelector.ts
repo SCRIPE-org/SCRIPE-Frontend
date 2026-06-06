@@ -134,5 +134,54 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
     setAvailableWorkspaces([]);
   }, []);
 
-  return { availableWorkspaces, showWorkspaces, selectWorkspace, clearWorkspaces };
+  /**
+   * unlockWorkspace — called when user submits the inline password form on a locked workspace.
+   */
+  const unlockWorkspace = useCallback(
+    async (workspace: WorkspaceChoice, password: string): Promise<void> => {
+      const chosenTenantId = workspace.isPlatformAdmin ? undefined : workspace.tenantId;
+      const tenantCode = workspace.isPlatformAdmin ? undefined : workspace.tenantCode;
+
+      try {
+        await loginMutateAsync({
+          identifier: formIdentifier,
+          password,
+          tenantId: chosenTenantId,
+          tenantCode,
+          isPlatformAdmin: workspace.isPlatformAdmin,
+        });
+
+        // Login succeeded — redirect
+        setIsRedirecting(true);
+        if (!hasTriggeredRedirect.current) {
+          hasTriggeredRedirect.current = true;
+          const { useAppStore } = await import("@core/store/useAppStore");
+          const mustChange = useAppStore.getState().mustChangePassword;
+          setTimeout(() => handleRedirect(mustChange ? "/change-password" : redirectPath), 100);
+        }
+      } catch (err: unknown) {
+        if (err instanceof TwoFactorRequiredError) {
+          onTenantResolved(chosenTenantId);
+          setTenantId(chosenTenantId);
+          enterTwoFactor();
+          return;
+        }
+        // Rethrow so WorkspaceCard can display inline error
+        throw err;
+      }
+    },
+    [
+      formIdentifier,
+      loginMutateAsync,
+      redirectPath,
+      setIsRedirecting,
+      setTenantId,
+      hasTriggeredRedirect,
+      handleRedirect,
+      enterTwoFactor,
+      onTenantResolved,
+    ]
+  );
+
+  return { availableWorkspaces, showWorkspaces, selectWorkspace, clearWorkspaces, unlockWorkspace };
 }

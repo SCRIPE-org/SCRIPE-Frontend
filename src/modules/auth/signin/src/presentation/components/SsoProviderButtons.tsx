@@ -20,11 +20,29 @@ interface SsoProviderButtonsProps {
   onProviderClick: (providerId: string, protocol?: string) => void;
 }
 
-/** Protocol → fallback emoji icon */
-const PROTOCOL_ICONS: Record<string, string> = {
-  oidc: "🔐",
-  oauth2: "🔑",
-  saml: "🛡️",
+/** Protocol → fallback SVG icon component (no emojis) */
+const ProtocolIcon = ({ protocol }: { protocol: string }) => {
+  if (protocol === "saml") {
+    return (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+      </svg>
+    );
+  }
+  if (protocol === "oauth2") {
+    return (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+      </svg>
+    );
+  }
+  // oidc default — globe/lock
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0110 0v4" />
+    </svg>
+  );
 };
 
 export function SsoProviderButtons({
@@ -93,9 +111,6 @@ export function SsoProviderButtons({
         <div className="mt-3 flex gap-2">
           {providers.map((provider) => {
             const label = provider.buttonLabel || provider.name;
-            const fallbackIcon = provider.iconUrl
-              ? null
-              : (PROTOCOL_ICONS[provider.protocol] ?? "🔐");
 
             return (
               <Button
@@ -123,9 +138,7 @@ export function SsoProviderButtons({
                     }}
                   />
                 ) : (
-                  <span className="text-lg leading-none" aria-hidden="true">
-                    {fallbackIcon}
-                  </span>
+                  <ProtocolIcon protocol={provider.protocol} />
                 )}
 
                 {/* Label */}

@@ -1,4 +1,18 @@
+import type { ResetWorkspaceOption } from "./IPasswordResetRepository";
+
 export interface IPasswordResetService {
-  requestReset(email: string): Promise<void>;
-  resetPassword(params: { email: string; otp: string; newPassword: string }): Promise<void>;
+  /** POST to request reset instructions via OTP or magic-link. */
+  requestReset(email: string, method?: "otp" | "magic-link"): Promise<void>;
+  /** POST to verify OTP. Returns workspace list if multi-tenant. */
+  verifyOtp(
+    email: string,
+    code: string
+  ): Promise<{ workspaces?: ResetWorkspaceOption[] }>;
+  /** POST to submit new password. */
+  resetPassword(params: {
+    email: string;
+    otp: string;
+    newPassword: string;
+    tenantId?: string;
+  }): Promise<void>;
 }

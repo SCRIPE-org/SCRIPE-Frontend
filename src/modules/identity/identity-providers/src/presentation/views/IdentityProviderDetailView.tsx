@@ -17,6 +17,7 @@ import {
   AccessControlSection,
   ClaimMappingsSection,
 } from "../components/IdentityProviderFormSections";
+import { WellKnownProviderGallery } from "../components/WellKnownProviderGallery";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -139,6 +140,18 @@ export function IdentityProviderDetailView({ providerId }: Props) {
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
           {t("common.unsavedChanges") || "You have unsaved changes"}
         </div>
+      )}
+
+      {/* ─── Well-Known Provider Gallery (create mode only) ─────────────── */}
+      {vm.isCreateMode && (
+        <WellKnownProviderGallery
+          selectedId={vm.selectedTemplateId}
+          onSelect={(preset) => {
+            // Figure out which template was selected by matching the slug
+            const id = (preset as Record<string, unknown>)["slug"] as string | undefined;
+            vm.applyTemplate(id ?? "custom", preset);
+          }}
+        />
       )}
 
       {/* ─── Form Sections ─────────────────────────── */}
