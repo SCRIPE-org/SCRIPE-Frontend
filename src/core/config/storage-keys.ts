@@ -81,10 +81,10 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
  * Note: NAV_STORE is included so navigation state resets on every logout.
  * PENDING_SETTINGS_FLUSH is intentionally excluded.
  *
- * ⚠️ PREF_* keys are NOT cleared on logout.
- * They are preferences.
- * DASHBOARD_SETTINGS is cleared so that stale layout settings from a
- * previous user do not cause a FOUC/flash for the next user.
+ * ⚠️ PREF_* keys (except PREF_DASHBOARD_SETTINGS) are NOT cleared on logout.
+ * They are user preferences.
+ * DASHBOARD_SETTINGS and PREF_DASHBOARD_SETTINGS are cleared so that stale layout
+ * settings from a previous user/tenant context do not cause a FOUC/flash for the next user.
  */
 export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.ACCESS_TOKEN,
@@ -94,6 +94,7 @@ export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.tenant_context,
   STORAGE_KEYS.NAV_STORE,
   STORAGE_KEYS.DASHBOARD_SETTINGS,
+  STORAGE_KEYS.PREF_DASHBOARD_SETTINGS,
 ] as const;
 
 /**
