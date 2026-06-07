@@ -14,6 +14,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 
 
 // Default layout — statically imported (always needed, no lazy-load delay)
@@ -414,6 +415,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // shows shimmer ONLY on fresh login (no cache) until server data arrives.
   // isTransitioning=true briefly when server reconciles a different layoutTemplate.
   const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
+  const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
+  const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
 
   // Detect "fresh login" vs "page refresh": sessionStorage flag is set by
   // useAppStore.setAuth() and survives the redirect to /dashboard, but
@@ -423,10 +426,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     try { return sessionStorage.getItem(STORAGE_KEYS.JUST_LOGGED_IN) === "1"; } catch { return false; }
   });
 
-  // Gate 1: Wait for admin settings to be ready (cache hit or server fetch)
-  // and wait for any layout transition to complete.
-  // This runs OUTSIDE TenantBrandingProvider — cannot check branding here.
-  if (!isSettingsReady || isTransitioning) {
+  const isNavReady = !isInitialLoading && routesLoadedAt !== null;
+  const isSettingsCompleted = isSettingsReady && !isTransitioning;
+
+  // Gate 1: Wait for admin settings to be ready (cache hit or server fetch),
+  // layout transition to complete, and navigation/routes to be loaded.
+  // On fresh login, we wait for both settings and navigation queries.
+  // On page refresh/regular load, we check isSettingsReady and isTransitioning.
+  const shouldBlock = isFreshLogin 
+    ? (!isSettingsCompleted || !isNavReady) 
+    : (!isSettingsReady || isTransitioning);
+
+  if (shouldBlock) {
     // Fresh login → premium welcome card with user avatar + name
     // Page refresh → lightweight shimmer (user is already authenticated)
     return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
@@ -484,6 +495,9 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
     };
   }, [collapsibleSidebar]);
 
+  const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
+  const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
+
   // ── Gate 2 + 3: Wait for branding AND one extra frame for settings re-merge ──
   // 
   // ARCHITECTURE NOTE — why two gates?
@@ -509,13 +523,20 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
     }
   }, [isBrandingLoading, isSettingsMergeSettled]);
 
-  if (isBrandingLoading || !isSettingsMergeSettled) {
+  const isNavReady = !isInitialLoading && routesLoadedAt !== null;
+
+  // Fresh login blocks on branding loading, settings merge, AND navigation routes/menus.
+  const shouldBlockContent = isFreshLogin
+    ? (isBrandingLoading || !isSettingsMergeSettled || !isNavReady)
+    : (isBrandingLoading || !isSettingsMergeSettled);
+
+  if (shouldBlockContent) {
     // Fresh login → premium welcome card; Page refresh → lightweight shimmer
     return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
   }
 
   // ── Both gates passed — clear the "just logged in" flag ──
-  // This MUST happen after BOTH Gate 1 (settings) and Gate 2 (branding) resolve.
+  // This MUST happen after BOTH Gate 1 (settings), Gate 2 (branding) and routes/menus resolve.
   // The flag is checked once on mount (via useState initializer in DashboardLayout)
   // and cleared here so subsequent page refreshes never show the welcome loader.
   if (isFreshLogin && typeof window !== "undefined") {

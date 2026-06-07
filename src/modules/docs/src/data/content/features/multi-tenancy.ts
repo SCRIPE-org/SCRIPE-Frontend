@@ -565,7 +565,7 @@ public string? CompanyName { get; set; }       // Display name`,
     "PlatformDomain": "scripe.com",       // Auto-subdomains: {code}.scripe.com
     "CnameTarget": "app.scripe.com",      // DNS instruction: CNAME → this
     "VerificationPrefix": "_scr-verify",// TXT record: _scr-verify.{domain}
-    "TokenPrefix": "nxr_"                 // Token format: nxr_base64...
+    "TokenPrefix": "scr_"                 // Token format: scr_base64...
   }
 }`,
     highlightLines: [4, 5, 6, 7],
@@ -581,7 +581,7 @@ public string? CompanyName { get; set; }       // Display name`,
     public string PlatformDomain { get; init; } = "scripe.com";
     public string CnameTarget { get; init; } = "app.scripe.com";
     public string VerificationPrefix { get; init; } = "_scr-verify";
-    public string TokenPrefix { get; init; } = "nxr_";
+    public string TokenPrefix { get; init; } = "scr_";
 }`,
     highlightLines: [5, 6, 7, 8],
   },
@@ -602,7 +602,7 @@ public string? CompanyName { get; set; }       // Display name`,
         "_scr-verify",
         "_myapp-verify",
       ],
-      ["TokenPrefix", "Prefix for verification token strings", "nxr_", "ma_"],
+      ["TokenPrefix", "Prefix for verification token strings", "scr_", "ma_"],
     ],
   },
   {
