@@ -65,6 +65,10 @@ export const STORAGE_KEYS = {
    * Cleared ONLY after successful flush in loadAdminSettings().
    */
   PENDING_SETTINGS_FLUSH: "nxr_pending_settings",
+
+  // ── Session-scoped flags (sessionStorage) ──────────────────────────────────
+  /** Set on login, cleared after first dashboard render. Used to show welcome loader only on fresh login. */
+  JUST_LOGGED_IN: "nxr_just_logged_in",
 } as const;
 
 /**

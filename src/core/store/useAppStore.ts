@@ -74,6 +74,12 @@ export const useAppStore = create<AppState>()(
         if (typeof document !== "undefined") {
           document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
         }
+        // Mark this as a fresh login session — DashboardLayout uses this to
+        // show the welcome loader instead of a plain shimmer. sessionStorage
+        // survives the redirect to /dashboard but resets on browser close.
+        if (typeof window !== "undefined") {
+          try { sessionStorage.setItem(STORAGE_KEYS.JUST_LOGGED_IN, "1"); } catch { /* ignore */ }
+        }
         set({
           user,
           isAuthenticated: true,

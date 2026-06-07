@@ -244,6 +244,8 @@ export const en = {
     }
   },
   common: {
+    welcomeBack: 'Welcome back, {{name}}',
+    gettingReady: 'We are getting everything ready for you...',
     free: 'Free',
     step: 'Step',
     descriptionAr: 'Description (Ar)',

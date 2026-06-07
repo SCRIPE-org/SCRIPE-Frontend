@@ -1204,6 +1204,8 @@ export const ar = {
     english: 'الإنجليزية'
   },
   common: {
+    welcomeBack: 'مرحباً بعودتك، {{name}}',
+    gettingReady: 'نحن نقوم بتجهيز كل شيء من أجلك...',
     free: 'مجانا',
     clear: 'مسح',
     descriptionAr: 'الوصف باللغة العربية',

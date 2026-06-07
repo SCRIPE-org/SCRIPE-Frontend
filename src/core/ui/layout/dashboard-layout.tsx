@@ -9,6 +9,12 @@ import { TenantBrandingProvider, useTenantBranding } from "@core/providers/tenan
 import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
 import { GracePeriodBanner } from "@core/components/GracePeriodBanner";
 import { PaymentWallDialog } from "@core/components/PaymentWallDialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
+import { useAppStore } from "@core/store/useAppStore";
+import { useTheme } from "next-themes";
+import { useWorkspace } from "@core/providers/workspace-provider";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
+
 
 // Default layout — statically imported (always needed, no lazy-load delay)
 // Nexus is the default layoutTemplate (defaults.ts), so it must be statically
@@ -29,6 +35,123 @@ function LayoutLoadingShimmer() {
     </div>
   );
 }
+
+const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
+
+function getAvatarUrl(profileImageUrl: string | null | undefined): string | undefined {
+  if (!profileImageUrl) return undefined;
+  const base = `${API_URL}${profileImageUrl}`;
+  return `${base}?v=${Date.now()}`;
+}
+
+function LoginWelcomeLoader() {
+  const user = useAppStore((state) => state.user);
+  const { t } = useI18n();
+  const { resolvedTheme } = useTheme();
+  const { accentColor } = useWorkspace();
+  const isDark = resolvedTheme === "dark";
+  const accent = accentColor ?? (isDark ? "#7C6FD4" : "#6258c4");
+
+  const avatarUrl = user ? getAvatarUrl(user.profileImageUrl) : undefined;
+  const avatarGradient = `linear-gradient(135deg, ${accent}CC 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
+
+  const getInitials = () => {
+    if (!user) return "U";
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    const firstInitial = firstName.charAt(0)?.toUpperCase() || "";
+    const lastInitial = lastName.charAt(0)?.toUpperCase() || "";
+    return `${firstInitial}${lastInitial}` || "U";
+  };
+
+  const getDisplayName = () => {
+    if (!user) return t("common.user");
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    return `${firstName} ${lastName}`.trim() || user.username || "User";
+  };
+
+  const nameForWelcome = user?.firstName || user?.username || t("common.user");
+
+  return (
+    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-background overflow-hidden select-none">
+      <style>{`
+        @keyframes indeterminate-progress {
+          0% { left: -33%; width: 33%; }
+          50% { left: 33%; width: 50%; }
+          100% { left: 100%; width: 33%; }
+        }
+        .animate-indeterminate {
+          animation: indeterminate-progress 1.6s infinite ease-in-out;
+        }
+      `}</style>
+      
+      {/* Background ambient glow */}
+      <div 
+        className="absolute h-96 w-96 rounded-full opacity-[0.08] blur-[100px] transition-all duration-1000"
+        style={{
+          background: accent,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+      
+      {/* Glassmorphic Welcome Card */}
+      <div className="relative z-10 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 p-8 shadow-2xl backdrop-blur-md max-w-sm w-full mx-4 animate-in fade-in duration-500">
+        
+        {/* Avatar Ring with pulsing glow */}
+        <div className="relative flex items-center justify-center">
+          <div 
+            className="absolute -inset-2 rounded-full opacity-35 blur-sm animate-pulse"
+            style={{
+              background: `radial-gradient(circle, ${accent} 0%, transparent 80%)`
+            }}
+          />
+          <div 
+            className="absolute -inset-1.5 rounded-full opacity-55"
+            style={{
+              border: `2px solid ${accent}`
+            }}
+          />
+          <Avatar className="relative h-24 w-24 border-4 border-background shadow-xl">
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
+            <AvatarFallback
+              style={{ background: avatarGradient }}
+              className="text-3xl font-bold text-white animate-in fade-in duration-300"
+            >
+              {getInitials()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+
+        {/* Text Details */}
+        <h2 className="mt-6 text-2xl font-extrabold text-foreground tracking-tight text-center">
+          {getDisplayName()}
+        </h2>
+        
+        <p className="mt-3 text-base font-semibold text-muted-foreground text-center">
+          {t("common.welcomeBack", { name: nameForWelcome })}
+        </p>
+
+        <p className="mt-1 text-xs text-muted-foreground/75 text-center">
+          {t("common.gettingReady")}
+        </p>
+
+        {/* Premium Loading Progress Bar */}
+        <div className="mt-8 relative w-48 h-1 bg-muted rounded-full overflow-hidden">
+          <div 
+            className="absolute top-0 bottom-0 left-0 rounded-full animate-indeterminate"
+            style={{
+              background: accent,
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 // ── Shared loading fallback for lazy layouts ────────────────────────────────
 // NOTE: Next.js dynamic() requires the second argument to be an OBJECT LITERAL
@@ -292,25 +415,28 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // isTransitioning=true briefly when server reconciles a different layoutTemplate.
   const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
 
+  // Detect "fresh login" vs "page refresh": sessionStorage flag is set by
+  // useAppStore.setAuth() and survives the redirect to /dashboard, but
+  // does NOT survive a new browser tab or manual URL entry.
+  const [isFreshLogin] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try { return sessionStorage.getItem(STORAGE_KEYS.JUST_LOGGED_IN) === "1"; } catch { return false; }
+  });
+
   // Gate 1: Wait for admin settings to be ready (cache hit or server fetch)
   // and wait for any layout transition to complete.
   // This runs OUTSIDE TenantBrandingProvider — cannot check branding here.
   if (!isSettingsReady || isTransitioning) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="flex animate-pulse flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full bg-muted" />
-          <div className="h-4 w-32 rounded bg-muted" />
-        </div>
-      </div>
-    );
+    // Fresh login → premium welcome card with user avatar + name
+    // Page refresh → lightweight shimmer (user is already authenticated)
+    return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
   }
 
   // Wrap with TenantBrandingProvider, then delegate to inner component
   // that can use useTenantBranding() since it's now INSIDE the provider.
   return (
     <TenantBrandingProvider>
-      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      <DashboardLayoutContent isFreshLogin={isFreshLogin}>{children}</DashboardLayoutContent>
     </TenantBrandingProvider>
   );
 }
@@ -318,7 +444,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 // ── Inner component: gates on branding + renders the actual layout ──
 // Must be a separate component so useTenantBranding() is called INSIDE
 // TenantBrandingProvider's React context.
-function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
+function DashboardLayoutContent({ children, isFreshLogin }: { children: React.ReactNode; isFreshLogin: boolean }) {
   const settings = useSettings();
   const { isLoading: isBrandingLoading } = useTenantBranding();
   const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
@@ -358,19 +484,42 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     };
   }, [collapsibleSidebar]);
 
-  // Gate 2: Wait for tenant branding to finish loading.
-  // This prevents the flash of platform defaults -> tenant-branded theme.
-  // Combined with Gate 1 (settings ready), the dashboard never renders
-  // until ALL prerequisite data is available.
-  if (isBrandingLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="flex animate-pulse flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full bg-muted" />
-          <div className="h-4 w-32 rounded bg-muted" />
-        </div>
-      </div>
-    );
+  // ── Gate 2 + 3: Wait for branding AND one extra frame for settings re-merge ──
+  // 
+  // ARCHITECTURE NOTE — why two gates?
+  // Gate 2: Branding itself is still loading (API in flight).
+  // Gate 3: Branding just resolved this frame. TenantBrandingProvider dispatches
+  //         "tenant-branding-loaded" which causes SettingsProvider to re-merge
+  //         with dashboardThemeJson (may change layoutTemplate). Without this
+  //         extra-frame gate, React renders with STALE settings for 1 frame
+  //         (the old layoutTemplate) then re-renders with the correct one → flash.
+  //         By holding the gate for one rAF, the re-merge commits and the
+  //         layout renders with the FINAL merged settings on first paint.
+  const [isSettingsMergeSettled, setIsSettingsMergeSettled] = useState(!isFreshLogin);
+
+  useEffect(() => {
+    if (!isBrandingLoading && !isSettingsMergeSettled) {
+      // Branding just finished loading — wait one animation frame for
+      // SettingsProvider to process the "tenant-branding-loaded" event
+      // and re-merge settings (including dashboardThemeJson overrides).
+      const raf = requestAnimationFrame(() => {
+        setIsSettingsMergeSettled(true);
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isBrandingLoading, isSettingsMergeSettled]);
+
+  if (isBrandingLoading || !isSettingsMergeSettled) {
+    // Fresh login → premium welcome card; Page refresh → lightweight shimmer
+    return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
+  }
+
+  // ── Both gates passed — clear the "just logged in" flag ──
+  // This MUST happen after BOTH Gate 1 (settings) and Gate 2 (branding) resolve.
+  // The flag is checked once on mount (via useState initializer in DashboardLayout)
+  // and cleared here so subsequent page refreshes never show the welcome loader.
+  if (isFreshLogin && typeof window !== "undefined") {
+    try { sessionStorage.removeItem(STORAGE_KEYS.JUST_LOGGED_IN); } catch { /* ignore */ }
   }
 
   // ── Compute layout content (rendered below the tenant banner) ──
