@@ -2,198 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "infrastructure.resilience.intro" },
-
-  // ─── Architecture ─────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.resilience.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "Resilience Policy Pipeline",
-    direction: "horizontal",
-    nodes: [
-      { id: "req", label: "HTTP Request", type: "primary" },
-      { id: "timeout", label: "Timeout Policy", type: "danger", description: "30s default" },
-      { id: "retry", label: "Retry Policy", type: "warning", description: "Exponential backoff" },
-      {
-        id: "circuit",
-        label: "Circuit Breaker",
-        type: "info",
-        description: "Fail-fast on degraded service",
-      },
-      { id: "service", label: "External Service", type: "success" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "req", to: "timeout" },
-      { from: "timeout", to: "retry" },
-      { from: "retry", to: "circuit" },
-      { from: "circuit", to: "service" },
-    ],
-  },
-
-  // ─── Retry Policy ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.resilience.retryTitle",
-    id: "retry-policy",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Retry Policy Configuration",
-    code: `/// <summary>
-/// Configures retry with exponential or linear backoff + jitter.
-/// Only retries on transient HTTP errors (5xx, 408, network errors).
-/// </summary>
-services.AddResilientHttpClient("InventoryService", configuration);
-
-// Under the hood:
-builder.AddRetry(new HttpRetryStrategyOptions
-{
-    MaxRetryAttempts = options.Retry.MaxRetryAttempts,        // Default: 3
-    BackoffType = options.Retry.BackoffType == "Exponential"
-        ? DelayBackoffType.Exponential
-        : DelayBackoffType.Linear,
-    Delay = TimeSpan.FromMilliseconds(options.Retry.BaseDelayMs), // Default: 500ms
-    MaxDelay = TimeSpan.FromMilliseconds(options.Retry.MaxDelayMs), // Default: 30s
-    UseJitter = options.Retry.UseJitter,                      // Default: true
-    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
-        .HandleResult(r => (int)r.StatusCode >= 500)
-        .HandleResult(r => r.StatusCode == HttpStatusCode.RequestTimeout)
-        .Handle<HttpRequestException>(),
-});`,
-    highlightLines: [10, 11, 12, 13, 14, 15, 16, 17],
-  },
-  {
-    type: "table",
-    headers: ["Attempt", "Exponential Delay", "Linear Delay", "With Jitter"],
-    rows: [
-      ["1st retry", "500ms", "500ms", "500ms ± 250ms"],
-      ["2nd retry", "1,000ms", "1,000ms", "1,000ms ± 500ms"],
-      ["3rd retry", "2,000ms", "1,500ms", "2,000ms ± 1,000ms"],
-      ["4th retry", "4,000ms", "2,000ms", "4,000ms ± 2,000ms"],
-    ],
-  },
-
-  // ─── Circuit Breaker ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.resilience.circuitBreakerTitle",
-    id: "circuit-breaker",
-  },
-  { type: "paragraph", contentKey: "infrastructure.resilience.circuitBreakerIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Circuit Breaker Configuration",
-    code: `builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions<HttpResponseMessage>
-{
-    FailureRatio = options.CircuitBreaker.FailureRatio,      // Default: 0.5 (50%)
-    MinimumThroughput = options.CircuitBreaker.MinThroughput, // Default: 10
-    SamplingDuration = TimeSpan.FromSeconds(
-        options.CircuitBreaker.SamplingDurationSeconds),       // Default: 30s
-    BreakDuration = TimeSpan.FromSeconds(
-        options.CircuitBreaker.BreakDurationSeconds),          // Default: 30s
-    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
-        .HandleResult(r => (int)r.StatusCode >= 500)
-        .Handle<HttpRequestException>(),
-});`,
-  },
-  {
-    type: "table",
-    headers: ["State", "Behavior", "Transitions To"],
-    rows: [
+    "rows": [
       [
-        "Closed (Normal)",
-        "Requests pass through normally",
-        "Open (when failure ratio > threshold)",
+        "Page route",
+        "/docs/infrastructure/resilience",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Open (Tripped)",
-        "Requests fail-fast immediately (no call)",
-        "Half-Open (after break duration)",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/infrastructure/resilience.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Half-Open (Testing)",
-        "One test request allowed through",
-        "Closed (on success) / Open (on failure)",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Timeout ──────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.resilience.timeoutTitle",
-    id: "timeout",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Timeout Policy",
-    code: `builder.AddTimeout(TimeSpan.FromSeconds(
-    options.Timeout.TimeoutSeconds       // Default: 30
-));
-
-// When timeout triggers:
-// - CancellationToken is cancelled
-// - TimeoutRejectedException is thrown
-// - Retry policy may retry the request`,
-  },
-
-  // ─── Configuration ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.resilience.configTitle",
-    id: "configuration",
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "appsettings.json — Resilience Configuration",
-    code: `{
-  "Resilience": {
-    "Retry": {
-      "MaxRetryAttempts": 3,
-      "BackoffType": "Exponential",
-      "BaseDelayMs": 500,
-      "MaxDelayMs": 30000,
-      "UseJitter": true
-    },
-    "CircuitBreaker": {
-      "FailureRatio": 0.5,
-      "MinThroughput": 10,
-      "SamplingDurationSeconds": 30,
-      "BreakDurationSeconds": 30
-    },
-    "Timeout": {
-      "TimeoutSeconds": 30
-    }
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "infrastructure.resilience.usageTip",
-  },
 ];
 
 registerPage({
   slug: "infrastructure/resilience",
   titleKey: "infrastructure.resilience.title",
-  descriptionKey: "infrastructure.resilience.description",
   category: "infrastructure",
   order: 4,
   sections,
-  relatedSlugs: ["architecture/backend", "infrastructure/background-jobs", "security/api-security"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["architecture/backend","infrastructure/background-jobs","security/api-security"],
+  lastUpdated: "2026-06-07",
 });

@@ -3,379 +3,121 @@ import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   {
-    type: "paragraph",
-    contentKey: "modules.overrides.intro",
-  },
-
-  // ─── Override Entity ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.entityTitle",
-    id: "override-entity",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "paragraph",
-    contentKey: "modules.overrides.entityIntro",
-  },
-  {
-    type: "table",
-    headers: ["Property", "Type", "Description"],
-    rows: [
-      ["Id", "Guid", "Primary key"],
-      ["TenantId", "Guid", "The tenant this override applies to"],
-      ["FeatureId", "Guid", "The feature being overridden"],
-      ["Value", "string", "Custom value (must match Feature.ValueType)"],
-      ["Reason", "string?", "Why this override was applied (audit trail)"],
-      ["ExpiresAt", "DateTime?", "Optional expiration (null = permanent)"],
-      ["IsActive", "bool", "Whether the override is currently active"],
-      ["AppliedBy", "Guid", "Admin who set this override"],
-      ["CreatedAt", "DateTime", "When the override was created"],
-      ["UpdatedAt", "DateTime?", "Last modification timestamp"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "TenantFeatureOverride Entity",
-    code: `public class TenantFeatureOverride : AuditableEntity
-{
-    public Guid TenantId { get; set; }
-    
-    public Guid FeatureId { get; set; }
-    public Feature Feature { get; set; } = null!;
-    
-    public string Value { get; set; } = string.Empty;
-    // Must match Feature.ValueType:
-    //   Boolean → "true" / "false"
-    //   Numeric → integer string (e.g. "500")
-    //   String  → arbitrary string
-    
-    public string? Reason { get; set; }                // Audit trail
-    public DateTime? ExpiresAt { get; set; }           // null = permanent
-    public bool IsActive { get; set; } = true;
-    public Guid AppliedBy { get; set; }                // Who set it
-}`,
-  },
-
-  // ─── Resolution Priority ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.priorityTitle",
-    id: "resolution-priority",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.priorityIntro",
-  },
-  {
-    type: "flowchart",
-    direction: "vertical",
-    nodes: [
-      { id: "check", label: "Feature Check", description: "FeatureCheckBehavior triggered" },
-      {
-        id: "ovr",
-        label: "1. Check Override",
-        description: "TenantFeatureOverride exists + active + not expired?",
-      },
-      {
-        id: "ed",
-        label: "2. Check Edition",
-        description: "EditionFeature value for tenant's subscribed edition?",
-      },
-      { id: "def", label: "3. Use Default", description: "Feature.DefaultValue (global fallback)" },
-      { id: "result", label: "Resolved Value", description: "Applied to the request" },
-    ],
-    connections: [
-      { from: "check", to: "ovr", label: "highest priority" },
-      { from: "ovr", to: "ed", label: "not found" },
-      { from: "ed", to: "def", label: "not found" },
-      { from: "ovr", to: "result", label: "found ✓" },
-      { from: "ed", to: "result", label: "found ✓" },
-      { from: "def", to: "result", label: "always exists" },
-    ],
-  },
-
-  // ─── Use Case Scenarios ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.scenariosTitle",
-    id: "scenarios",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.scenariosIntro",
-  },
-  {
-    type: "table",
-    headers: ["Scenario", "Feature", "Edition Default", "Override Value", "Result"],
-    rows: [
-      ["Enterprise deal with extra admins", "MaxAdmins", "50 (Pro plan)", "500", "500 admins"],
+    "rows": [
       [
-        "Temporary feature trial",
-        "AdvancedReporting.Enabled",
-        "false (Basic plan)",
-        "true (expires in 30 days)",
-        "true until expiry, then false",
+        "Page route",
+        "/docs/modules/overrides",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Custom branding for VIP",
-        "WhiteLabel.LogoUrl",
-        "null (Pro plan)",
-        '"acme-logo.png"',
-        "Custom logo used",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/entitlements/overrides.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Unlimited quota for partner",
-        "MaxApiCalls",
-        "10000 (Pro plan)",
-        '"-1" (unlimited)',
-        "Unlimited API calls",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Feature disabled for compliance",
-        "Chat.Enabled",
-        "true (Enterprise plan)",
-        "false",
-        "Chat disabled for this tenant",
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
       ],
-    ],
-  },
-
-  // ─── Setting an Override ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.settingTitle",
-    id: "setting-override",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.settingIntro",
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "POST /api/v1/tenants/{tenantId}/features/overrides",
-    code: `{
-  "featureId": "550e8400-e29b-41d4-a716-446655440000",
-  "value": "500",
-  "reason": "Enterprise deal — 500 admins for annual contract",
-  "expiresAt": null
-}
-
-// Response 200:
-{
-  "id": "770e8400-e29b-41d4-a716-446655440099",
-  "tenantId": "660e8400-e29b-41d4-a716-446655440001",
-  "featureId": "550e8400-e29b-41d4-a716-446655440000",
-  "featureName": "MaxAdmins",
-  "value": "500",
-  "previousValue": "50",
-  "source": "Override",
-  "reason": "Enterprise deal — 500 admins for annual contract",
-  "expiresAt": null,
-  "isActive": true,
-  "appliedBy": "admin-user-id",
-  "createdAt": "2026-03-02T10:00:00Z"
-}`,
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "modules.overrides.settingTip",
-  },
-
-  // ─── Resolved Features ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.resolvedTitle",
-    id: "resolved-features",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.resolvedIntro",
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "GET /api/v1/tenants/{tenantId}/features/resolved",
-    code: `{
-  "tenantId": "660e8400-e29b-41d4-a716-446655440001",
-  "editionName": "Pro",
-  "resolvedFeatures": [
-    {
-      "featureId": "...",
-      "name": "Chat.Enabled",
-      "displayName": "Chat",
-      "valueType": "Boolean",
-      "value": "true",
-      "source": "Edition",
-      "editionDefault": "true",
-      "overrideValue": null,
-      "featureDefault": "false"
-    },
-    {
-      "featureId": "...",
-      "name": "MaxAdmins",
-      "displayName": "Maximum Administrators",
-      "valueType": "Numeric",
-      "value": "500",
-      "source": "Override",
-      "editionDefault": "50",
-      "overrideValue": "500",
-      "featureDefault": "5",
-      "currentUsage": 12,
-      "overrideReason": "Enterprise deal",
-      "overrideExpiresAt": null
-    },
-    {
-      "featureId": "...",
-      "name": "SSO.Enabled",
-      "displayName": "Single Sign-On",
-      "valueType": "Boolean",
-      "value": "false",
-      "source": "Default",
-      "editionDefault": null,
-      "overrideValue": null,
-      "featureDefault": "false"
-    }
-  ]
-}`,
-  },
-
-  // ─── Expiring Overrides ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.expiryTitle",
-    id: "expiring-overrides",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.expiryIntro",
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "Temporary Override (30-day trial)",
-    code: `{
-  "featureId": "...")
-  "value": "true",
-  "reason": "30-day trial of Advanced Reporting feature",
-  "expiresAt": "2026-04-02T00:00:00Z"
-}
-
-// After expiry:
-// - Override is automatically marked isActive = false
-// - Feature falls back to edition value (or default)
-// - No manual intervention needed`,
-  },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "modules.overrides.expiryNote",
-  },
-
-  // ─── Audit Trail ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.auditTitle",
-    id: "audit-trail",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.auditIntro",
-  },
-  {
-    type: "table",
-    headers: ["Event", "Tracked Data", "Purpose"],
-    rows: [
       [
-        "Override Created",
-        "Who, When, Feature, Value, Reason",
-        "Know who gave custom access and why",
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
       ],
-      ["Override Updated", "Previous value, New value, Changed by", "Track all modifications"],
-      ["Override Removed", "Removed by, Removal reason", "Know when custom deals end"],
-      ["Override Expired", "Expiry date, Feature reverted to", "Automatic lifecycle events"],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── API Endpoints ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.endpointsTitle",
-    id: "api-endpoints",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.endpointsIntro",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{tenantId}/features/overrides",
-        descriptionKey: "modules.overrides.ep.list",
-        auth: "JWT",
-        permission: "features.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/tenants/{tenantId}/features/overrides",
-        descriptionKey: "modules.overrides.ep.set",
-        auth: "JWT",
-        permission: "features.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/tenants/{tenantId}/features/overrides/{id}",
-        descriptionKey: "modules.overrides.ep.remove",
-        auth: "JWT",
-        permission: "features.delete",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{tenantId}/features/resolved",
-        descriptionKey: "modules.overrides.ep.resolved",
-        auth: "JWT",
-        permission: "features.view",
-      },
-    ],
-  },
-
-  // ─── Best Practices ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.overrides.bestPracticesTitle",
-    id: "best-practices",
-  },
-  {
-    type: "paragraph",
-    contentKey: "modules.overrides.bestPracticesIntro",
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "modules.overrides.bestPracticesWarning",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/overrides",
   titleKey: "modules.overrides.title",
-  descriptionKey: "modules.overrides.description",
   category: "modules",
   order: 5,
   sections,
-  relatedSlugs: ["modules/entitlements-overview", "modules/features", "modules/subscriptions"],
-  lastUpdated: "2026-03-02",
+  relatedSlugs: ["modules/entitlements-overview","modules/features","modules/subscriptions"],
+  lastUpdated: "2026-06-07",
 });

@@ -74,6 +74,12 @@ export interface WorkspaceChoiceJson {
   isActivated: boolean;
   isDisabled?: boolean;
   disabledReason?: string | null;
+  /** True = password matched this workspace; false = wrong password */
+  isPasswordVerified?: boolean;
+  /** True = account locked out */
+  isLocked?: boolean;
+  /** UTC ISO string — when lockout expires */
+  lockedUntil?: string | null;
 }
 
 export interface LoginResponseJson {

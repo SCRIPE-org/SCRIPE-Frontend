@@ -90,6 +90,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
 
   const [form, setForm] = useState<IdentityProviderFormState>(DEFAULT_STATE);
   const [isDirty, setIsDirty] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>(undefined);
 
   // ─── Fetch existing provider ──────────────────
   const {
@@ -137,6 +138,16 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
   const updateField = useCallback(
     <K extends keyof IdentityProviderFormState>(field: K, value: IdentityProviderFormState[K]) => {
       setForm((prev) => ({ ...prev, [field]: value }));
+      setIsDirty(true);
+    },
+    []
+  );
+
+  // ─── Apply template (gallery preset) ──────────
+  const applyTemplate = useCallback(
+    (templateId: string, preset: Partial<IdentityProviderFormState>) => {
+      setSelectedTemplateId((prev) => (prev === templateId ? undefined : templateId));
+      setForm((prev) => ({ ...prev, ...preset }));
       setIsDirty(true);
     },
     []
@@ -281,9 +292,11 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     // Form
     form,
     updateField,
+    applyTemplate,
+    selectedTemplateId,
     isDirty,
     protocolOptions,
-    autoGenerateSlug,
+    autoGenerateSlug,
 
     // Actions
     save: () => saveMutation.mutate(),

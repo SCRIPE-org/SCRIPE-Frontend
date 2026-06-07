@@ -2,160 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.documentationTraining.intro" },
-
-  // ─── Documentation Coverage ─────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.documentationTraining.docsTitle",
-    id: "documentation",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.documentationTraining.docsContent" },
   {
-    type: "table",
-    headers: ["Documentation Type", "Coverage", "Format"],
-    rows: [
-      ["Technical docs", "100+ pages, full architecture guide", "Interactive web portal"],
-      ["API reference", "All 400+ endpoints documented", "Swagger/OpenAPI + web portal"],
-      ["Commercial docs", "40+ pages, platform overview", "Interactive web portal"],
-      ["Inline code docs", "JSDoc + XML comments on all public APIs", "IDE tooltips"],
-      ["Architecture diagrams", "Module dependencies, data flow, deployment", "Mermaid + ASCII"],
-      ["Changelog", "Every release documented with migration guides", "Markdown"],
-      ["Video tutorials", "Key workflows and setup guides", "MP4 / YouTube"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Training Programs ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.documentationTraining.trainingTitle",
-    id: "training",
-  },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "book",
-        titleKey: "commercial.documentationTraining.selfPaced",
-        descriptionKey: "commercial.documentationTraining.selfPacedDesc",
-      },
-      {
-        icon: "users",
-        titleKey: "commercial.documentationTraining.live",
-        descriptionKey: "commercial.documentationTraining.liveDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.documentationTraining.onSite",
-        descriptionKey: "commercial.documentationTraining.onSiteDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.documentationTraining.custom",
-        descriptionKey: "commercial.documentationTraining.customDesc",
-      },
-    ],
-  },
-
-  // ─── Training Tracks ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.documentationTraining.tracksTitle",
-    id: "tracks",
-  },
-  {
-    type: "table",
-    headers: ["Track", "Audience", "Duration", "Topics"],
-    rows: [
+    "rows": [
       [
-        "Developer Essentials",
-        "Backend / Frontend devs",
-        "2 days",
-        "Architecture, module creation, CQRS, testing",
+        "Page route",
+        "/commercial/documentation-training",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Admin Operations",
-        "System administrators",
-        "1 day",
-        "Deployment, configuration, monitoring, backups",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/documentation-training.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Security Deep Dive",
-        "Security engineers",
-        "1 day",
-        "Auth pipeline, RBAC, audit, compliance",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-      ["Business User", "End users / managers", "Half day", "Navigation, reports, workflows"],
       [
-        "Architecture Workshop",
-        "Tech leads / architects",
-        "1 day",
-        "Design patterns, scalability, microservice readiness",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Onboarding Journey ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.documentationTraining.onboardingTitle",
-    id: "onboarding",
-  },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.documentationTraining.onb1Title",
-        contentKey: "commercial.documentationTraining.onb1Content",
-      },
-      {
-        titleKey: "commercial.documentationTraining.onb2Title",
-        contentKey: "commercial.documentationTraining.onb2Content",
-      },
-      {
-        titleKey: "commercial.documentationTraining.onb3Title",
-        contentKey: "commercial.documentationTraining.onb3Content",
-      },
-      {
-        titleKey: "commercial.documentationTraining.onb4Title",
-        contentKey: "commercial.documentationTraining.onb4Content",
-      },
-    ],
-  },
-
-  // ─── Knowledge Base ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.documentationTraining.kbTitle",
-    id: "knowledge-base",
-  },
-  { type: "paragraph", contentKey: "commercial.documentationTraining.kbContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "Searchable FAQ database with 100+ common questions",
-      "Troubleshooting guides for common deployment issues",
-      "Best practices library for performance and security",
-      "Community forum with expert moderation",
-      "Monthly newsletter with tips and new features",
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/documentation-training",
   titleKey: "commercial.documentationTraining.title",
-  descriptionKey: "commercial.documentationTraining.description",
   category: "commercial-support",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/getting-started-guide", "commercial/support-plans"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/getting-started-guide","commercial/support-plans"],
+  lastUpdated: "2026-06-07",
 });

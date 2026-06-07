@@ -2,248 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.intro" },
-
-  // ─── Business Value ───────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.valueTitle",
-    id: "business-value",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.valueIntro" },
   {
-    type: "table",
-    headers: ["Capability", "Business Impact", "User Benefit"],
-    rows: [
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
+    ],
+    "rows": [
       [
-        "61+ Customizable Settings",
-        "White-label ready for any industry",
-        "Users personalize their workspace to their exact preferences",
+        "Page route",
+        "/commercial/dashboard-builder",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Cross-Device Persistence",
-        "Roaming profiles — settings follow the user everywhere",
-        "No reconfiguration when switching devices or browsers",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/dashboard-builder.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Tenant-Level Branding",
-        "Enforce corporate brand standards across all users",
-        "Consistent, professional experience for every team member",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Admin Override Control",
-        "IT teams control what users can customize",
-        "Security-compliant customization with guardrails",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "Preset Marketplace",
-        "Pre-built themes reduce setup time from hours to seconds",
-        "One-click professional themes that just work",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "Edition-Based Gating",
-        "Monetize advanced customization features by tier",
-        "Clear upgrade path drives subscription revenue",
-      ],
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── How It Works ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.howItWorksTitle",
-    id: "how-it-works",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.howItWorksIntro" },
-  {
-    type: "flowchart",
-    title: "Settings Resolution Chain",
-    direction: "horizontal",
-    nodes: [
-      { id: "platform", label: "Platform Defaults", type: "default" },
-      { id: "tenant", label: "Tenant Branding", type: "info" },
-      { id: "admin", label: "Admin Preferences", type: "warning" },
-      { id: "render", label: "Rendered Dashboard", type: "success" },
-    ],
-    connections: [
-      { from: "platform", to: "tenant", label: "Overridden by" },
-      { from: "tenant", to: "admin", label: "Overridden by" },
-      { from: "admin", to: "render", label: "Applied" },
-    ],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "commercial.dashboardBuilder.howItWorksTip",
-  },
-
-  // ─── Customization Categories ─────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.categoriesTitle",
-    id: "categories",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.categoriesIntro" },
-  {
-    type: "table",
-    headers: ["Category", "Settings Count", "Examples"],
-    rows: [
-      ["Layout & Structure", "7", "50+ layout templates, sidebar position, header style"],
-      ["Colors & Theme", "16", "Color themes, gradient backgrounds, custom hex colors"],
-      ["Typography & Spacing", "5", "Font size, border radius, spacing density"],
-      ["Component Styles", "16", "Buttons, inputs, tables, badges, avatars (10+ variants each)"],
-      ["Logo & Branding", "5", "Logo type (sparkle/shield/image), animation, size"],
-      ["Navigation & UX", "9", "Navigation style, breadcrumbs, sticky header"],
-      ["Toast & Effects", "5", "Toast style, hover effects, animation intensity"],
-      ["Accessibility", "3", "High contrast, reduced motion, compact mode"],
-    ],
-  },
-
-  // ─── Enterprise Features ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.enterpriseTitle",
-    id: "enterprise",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.enterpriseIntro" },
-  {
-    type: "table",
-    headers: ["Feature", "Free", "Standard", "Enterprise"],
-    rows: [
-      ["Basic Layout & Colors", "✅", "✅", "✅"],
-      ["50+ Layout Templates", "✅", "✅", "✅"],
-      ["Gradient Backgrounds", "❌", "✅", "✅"],
-      ["Component Styles (Button, Input, Table, etc.)", "❌", "✅", "✅"],
-      ["Hover Effects", "❌", "✅", "✅"],
-      ["Custom Hex Colors", "❌", "❌", "✅"],
-      ["Logo Customization (Type, Animation, Text)", "❌", "❌", "✅"],
-      ["Admin Override Control (Lock/Unlock Settings)", "❌", "❌", "✅"],
-      ["Per-Setting Whitelist (Path-Level Control)", "❌", "❌", "✅"],
-      ["Custom Theme Presets", "❌", "❌", "✅"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "commercial.dashboardBuilder.enterpriseNote",
-  },
-
-  // ─── Cross-Device Sync ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.syncTitle",
-    id: "cross-device-sync",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.syncIntro" },
-  {
-    type: "table",
-    headers: ["Scenario", "Behavior"],
-    rows: [
-      ["Admin opens laptop at office", "Settings loaded from server → applied instantly"],
-      ["Admin changes theme on phone", "Saved to server → syncs to laptop in background"],
-      ["Admin closes tab mid-change", "Unsaved changes preserved via keepalive fetch"],
+    "rows": [
       [
-        "Two sessions edit simultaneously",
-        "Conflict resolved with field-level merge (no data loss)",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
-      ["Network goes down temporarily", "Changes cached locally → synced when connection restores"],
-    ],
-  },
-
-  // ─── Admin Override Control ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.overrideTitle",
-    id: "override-control",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.overrideIntro" },
-  {
-    type: "flowchart",
-    title: "Override Control Flow",
-    direction: "vertical",
-    nodes: [
-      { id: "tenant-admin", label: "Tenant Admin (IT)", type: "default" },
-      { id: "toggle", label: "Enable/Disable Overrides", type: "info" },
-      { id: "whitelist", label: "Select Allowed Settings", type: "warning" },
-      { id: "user", label: "Regular Admin Experience", type: "success" },
-    ],
-    connections: [
-      { from: "tenant-admin", to: "toggle" },
-      { from: "toggle", to: "whitelist", label: "If enabled" },
-      { from: "whitelist", to: "user", label: "Path-filtered" },
-    ],
-  },
-
-  // ─── Security ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.securityTitle",
-    id: "security",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.securityIntro" },
-  {
-    type: "table",
-    headers: ["Security Feature", "Protection"],
-    rows: [
-      ["Data Isolation", "All settings wiped on logout — no cross-admin leakage"],
-      ["Payload Validation", "8KB client-side limit prevents database overflow"],
       [
-        "Server-Side Enforcement",
-        "AdminSettingsJson validated against AllowedAdminSettingsJson whitelist",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
-      ["Concurrency Safety", "409 conflict resolution with field-level merge"],
-      ["Tab-Close Protection", "Keepalive fetch + deferred flush prevent data loss"],
-      ["CSRF Protection", "All mutations require X-CSRF-Token header"],
-    ],
-  },
-
-  // ─── Integration ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.dashboardBuilder.integrationTitle",
-    id: "integration",
-  },
-  { type: "paragraph", contentKey: "commercial.dashboardBuilder.integrationIntro" },
-  {
-    type: "table",
-    headers: ["Integration Point", "Description"],
-    rows: [
       [
-        "Login Customizer",
-        "Dashboard builder coexists with login page customizer in the same Studio",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
-      ["Theme Marketplace", "Pre-built themes can include both login page and dashboard settings"],
-      ["Entitlements Module", "Feature flags control which edition gets which customization tier"],
-      ["Multi-Tenancy", "Each tenant can set default dashboard appearance for all their admins"],
-      ["Audit System", "All settings changes logged in the audit trail"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "commercial.dashboardBuilder.integrationTip",
-  },
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/dashboard-builder",
   titleKey: "commercial.dashboardBuilder.title",
-  descriptionKey: "commercial.dashboardBuilder.description",
   category: "commercial",
   order: 10,
   sections,
-  relatedSlugs: [
-    "commercial/login-customizer",
-    "commercial/theme-marketplace",
-    "commercial/page-builder",
-  ],
-  lastUpdated: "2026-04-05",
+  relatedSlugs: ["commercial/login-customizer","commercial/theme-marketplace","commercial/page-builder"],
+  lastUpdated: "2026-06-07",
 });

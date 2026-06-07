@@ -2,204 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Intro ────────────────────────────────────────────────
-  { type: "paragraph", contentKey: "modules.compliance.retention.intro" },
   {
-    type: "info",
-    variant: "warning",
-    titleKey: "modules.compliance.retention.warningTitle",
-    contentKey: "modules.compliance.retention.warningContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Retention Flow ───────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.retention.flowTitle",
-    id: "retention-flow",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.retention.flowIntro" },
-  {
-    type: "flowchart",
-    titleKey: "modules.compliance.retention.flowTitle",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "policy",
-        labelKey: "modules.compliance.retention.nodePolicy",
-        type: "primary",
-        descriptionKey: "modules.compliance.retention.descPolicy",
-      },
-      {
-        id: "enforcement",
-        labelKey: "modules.compliance.retention.nodeEnforcement",
-        type: "info",
-        descriptionKey: "modules.compliance.retention.descEnforcement",
-      },
-      {
-        id: "execution",
-        labelKey: "modules.compliance.retention.nodeExecution",
-        type: "warning",
-        descriptionKey: "modules.compliance.retention.descExecution",
-      },
-      {
-        id: "action",
-        labelKey: "modules.compliance.retention.nodeAction",
-        type: "success",
-        descriptionKey: "modules.compliance.retention.descAction",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "policy", to: "enforcement", labelKey: "modules.compliance.retention.conn1" },
-      { from: "enforcement", to: "action", labelKey: "modules.compliance.retention.conn2" },
-      { from: "action", to: "execution", labelKey: "modules.compliance.retention.conn3" },
-    ],
-  },
-
-  // ─── Expiry Actions ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.retention.actionsTitle",
-    id: "expiry-actions",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.retention.actionsIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.retention.actionType",
-      "modules.compliance.retention.actionDesc",
-      "modules.compliance.retention.actionUseCases",
-    ],
-    rows: [
+    "rows": [
       [
-        "Hard Delete",
-        "modules.compliance.retention.actionDeleteDesc",
-        "modules.compliance.retention.actionDeleteUses",
+        "Page route",
+        "/docs/modules/compliance-retention",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Soft Delete",
-        "modules.compliance.retention.actionSoftDesc",
-        "modules.compliance.retention.actionSoftUses",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/compliance/compliance-retention.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Anonymize",
-        "modules.compliance.retention.actionAnonDesc",
-        "modules.compliance.retention.actionAnonUses",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
+      [
+        "Compliance module",
+        "SCRIPE-Backend/src/Modules/Compliance",
+        "Compliance owns data subject requests, consents, data inventory, regulations, retention policies, reports, and compliance jobs."
+      ],
+      [
+        "Compliance controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Compliance",
+        "Controller endpoints expose DSR, consent, inventory, regulation, retention, and reporting workflows."
+      ],
+      [
+        "Frontend compliance routes",
+        "SCRIPE-Frontend/src/app/(modules)/(compliance)",
+        "UI routes cover compliance overview, consent, DSR list/detail, data inventory, regulations, retention, and reports."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Enforcement Code ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.retention.codeTitle",
-    id: "enforcement-job",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.retention.codeIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "RetentionEnforcementJob.cs",
-    code: `public class RetentionEnforcementJob : IAutoRegisteredJob
-{
-    public string JobId => "compliance-retention-enforcement";
-    public string CronExpression => "0 2 * * *"; // Run daily at 2 AM
-
-    public async Task ExecuteAsync(CancellationToken ct)
-    {
-        var policies = await _dbContext.RetentionPolicies
-            .Where(p => p.IsActive)
-            .ToListAsync(ct);
-            
-        foreach (var policy in policies)
-        {
-            var execution = new RetentionExecution { PolicyId = policy.Id };
-            try
-            {
-                var affectedCount = await _retentionExecutor.ExecutePolicyAsync(policy, ct);
-                execution.Status = ExecutionStatus.Completed;
-                execution.RecordsAffected = affectedCount;
-            }
-            catch (Exception ex)
-            {
-                execution.Status = ExecutionStatus.Failed;
-                execution.ErrorMessage = ex.Message;
-            }
-            await _dbContext.RetentionExecutions.AddAsync(execution, ct);
-        }
-        await _dbContext.SaveChangesAsync(ct);
-    }
-}`,
-  },
-
-  // ─── Entity Reference ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.retention.entitiesTitle",
-    id: "entities",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.retention.entitiesIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.retention.field",
-      "modules.compliance.retention.type",
-      "modules.compliance.retention.description",
-    ],
-    rows: [
-      ["EntityName", "String", "modules.compliance.retention.fEntityName"],
-      ["RetentionDays", "Int32", "modules.compliance.retention.fRetentionDays"],
-      ["ActionType", "Enum", "modules.compliance.retention.fActionType"],
-      ["IsActive", "Boolean", "modules.compliance.retention.fIsActive"],
-      ["LastExecutedAt", "DateTime?", "modules.compliance.retention.fLastExecutedAt"],
-    ],
-  },
-
-  // ─── API Endpoints ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.retention.endpointsTitle",
-    id: "endpoints",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/compliance/retention",
-        descriptionKey: "modules.compliance.retention.epList",
-        auth: "AdminOnly",
-        permission: "compliance_retention.view",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/compliance/retention/{id}",
-        descriptionKey: "modules.compliance.retention.epUpdate",
-        auth: "AdminOnly",
-        permission: "compliance_retention.manage",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/retention/executions",
-        descriptionKey: "modules.compliance.retention.epExecutions",
-        auth: "AdminOnly",
-        permission: "compliance_retention.view",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/compliance-retention",
   titleKey: "modules.compliance.retention.title",
-  descriptionKey: "modules.compliance.retention.description",
   category: "modules",
   order: 4,
   sections,
-  relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
-  lastUpdated: "2026-05-03",
+  relatedSlugs: ["modules/compliance-overview","infrastructure/background-jobs"],
+  lastUpdated: "2026-06-07",
 });

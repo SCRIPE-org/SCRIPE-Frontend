@@ -2,328 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "features.dashboardBuilder.intro" },
-
-  // ─── Overview ─────────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.overviewTitle",
-    id: "overview",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.overviewIntro" },
   {
-    type: "table",
-    headers: ["Component", "Description", "Technology"],
-    rows: [
-      [
-        "4-Layer Merge Engine",
-        "Platform → Tenant → Admin → Runtime settings resolution",
-        "React Context + localStorage",
-      ],
-      [
-        "Server Sync Hook",
-        "Bidirectional sync of admin preferences to AdminSettingsJson",
-        "Custom React Hook + REST API",
-      ],
-      [
-        "FOUC Prevention",
-        "Optimistic render from cache, silent server reconcile",
-        "localStorage + CustomEvent",
-      ],
-      [
-        "Override Control",
-        "Tenant admins control which settings admins can customize",
-        "Path-level whitelist",
-      ],
-      [
-        "Preset System",
-        "Pre-built and custom theme presets with marketplace",
-        "Database + JSON blobs",
-      ],
-      [
-        "Edition Gating",
-        "Feature visibility controlled by subscription tier",
-        "FeatureChecker pipeline",
-      ],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/features/dashboard-builder",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/dashboard-builder.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
   {
-    type: "info",
-    variant: "tip",
-    contentKey: "features.dashboardBuilder.overviewTip",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── 4-Layer Merge Engine ─────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.mergeEngineTitle",
-    id: "merge-engine",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.mergeEngineIntro" },
   {
-    type: "flowchart",
-    title: "Settings Merge Pipeline",
-    direction: "horizontal",
-    nodes: [
-      { id: "l1", label: "Layer 1: Platform Defaults", type: "default" },
-      { id: "l3", label: "Layer 3: Tenant Defaults", type: "info" },
-      { id: "l4", label: "Layer 4: Admin Overrides", type: "warning" },
-      { id: "final", label: "Final Applied Settings", type: "success" },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    connections: [
-      { from: "l1", to: "l3", label: "Spread merge" },
-      { from: "l3", to: "l4", label: "Path-filtered" },
-      { from: "l4", to: "final", label: "Applied to DOM" },
-    ],
-  },
-  {
-    type: "table",
-    headers: ["Layer", "Source", "Persistence", "Scope"],
-    rows: [
+    "rows": [
       [
-        "1. Platform Defaults",
-        "defaultSettings in settings-provider.tsx",
-        "Hardcoded",
-        "All users",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "3. Tenant Defaults",
-        "DashboardThemeJson on TenantSettings",
-        "Database (tenant)",
-        "All admins in tenant",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "4. Admin Overrides",
-        "AdminSettingsJson on Admin",
-        "Database (per-admin)",
-        "Individual admin",
-      ],
-    ],
-  },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "features.dashboardBuilder.mergeEngineNote",
-  },
-
-  // ─── Server Sync Hook ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.syncHookTitle",
-    id: "server-sync",
-  },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.syncHookIntro" },
-  {
-    type: "flowchart",
-    title: "Admin Settings Lifecycle",
-    direction: "vertical",
-    nodes: [
-      { id: "login", label: "Admin Logs In", type: "default" },
-      { id: "cache", label: "Check localStorage Cache", type: "info" },
-      { id: "flush", label: "Check PENDING_SETTINGS_FLUSH", type: "warning" },
-      { id: "fetch", label: "GET AdminSettingsJson", type: "info" },
-      { id: "reconcile", label: "Silent Reconcile", type: "success" },
-      { id: "change", label: "User Changes Setting", type: "default" },
-      { id: "debounce", label: "2s Debounce", type: "warning" },
-      { id: "save", label: "PUT to Server", type: "success" },
-    ],
-    connections: [
-      { from: "login", to: "cache" },
-      { from: "cache", to: "flush" },
-      { from: "flush", to: "fetch" },
-      { from: "fetch", to: "reconcile" },
-      { from: "change", to: "debounce" },
-      { from: "debounce", to: "save" },
-    ],
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "useAdminSettingsSync.ts — Usage",
-    code: `// In DashboardLayout (authenticated layout root):
-const { isSettingsReady } = useAdminSettingsSync();
-
-// Shimmer only on first-ever device login (no cache)
-if (!isSettingsReady) {
-  return <LoadingShimmer />;
-}`,
-  },
-
-  // ─── Edge Case Protections ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.edgeCasesTitle",
-    id: "edge-cases",
-  },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.edgeCasesIntro" },
-  {
-    type: "table",
-    headers: ["Edge Case", "Problem", "Solution"],
-    rows: [
-      [
-        "FOUC (Flash of Unstyled Content)",
-        "Blocking render for server fetch causes visible flash",
-        "Optimistic render from localStorage cache; shimmer only on first-ever device",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "Tab Close Data Loss",
-        "2s debounce means last change may be lost",
-        "fetch({ keepalive: true }) with JWT in beforeunload handler",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
       [
-        "409 Concurrency Conflict",
-        "Two sessions editing same admin's settings",
-        "Field-level last-write-wins merge using changedFieldsSinceLastSync tracker",
-      ],
-      [
-        "Payload Size Bomb",
-        "Large base64 in logoText could overflow 10KB column",
-        "8KB client-side guard with admin-settings-size-error event",
-      ],
-      [
-        "JWT Expired at Tab Close",
-        "beforeunload fetch fails with 401",
-        "Deferred flush via PENDING_SETTINGS_FLUSH localStorage key, flushed on next login",
-      ],
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "features.dashboardBuilder.edgeCasesWarning",
-  },
-
-  // ─── Settings Reference ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.settingsRefTitle",
-    id: "settings-reference",
-  },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.settingsRefIntro" },
-  {
-    type: "table",
-    headers: ["Section", "Count", "Examples", "Edition Gate"],
-    rows: [
-      ["Layout & Structure", "7", "layoutTemplate, sidebarPosition, headerStyle", "Always"],
-      [
-        "Colors & Theme",
-        "16",
-        "colorTheme, gradientDirection, customPrimaryColor",
-        "Gradients / CustomColors",
-      ],
-      ["Typography & Spacing", "5", "fontSize, borderRadius, spacingSize", "Always"],
-      ["Component Styles", "16", "buttonStyle, inputStyle, tableStyle", "ComponentStyles.Enabled"],
-      ["Logo & Branding", "5", "logoType, logoAnimation, logoSize", "LogoCustomization.Enabled"],
-      ["Navigation & UX", "9", "navigationStyle, highContrast, showDetailPanel", "Always"],
-      [
-        "Toast Configuration",
-        "3",
-        "toastStyle, showToastIcons, toastDuration",
-        "ComponentStyles.Enabled",
-      ],
-      ["Hover Effects", "2", "hoverEffectType, hoverEffectIntensity", "HoverEffects.Enabled"],
-    ],
-  },
-
-  // ─── Admin Override Control ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.overrideControlTitle",
-    id: "override-control",
-  },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.overrideControlIntro" },
-  {
-    type: "table",
-    headers: ["Scenario", "Settings Page Behavior"],
-    rows: [
-      ["AllowAdminThemeOverride = true, no path filter", "Full edit mode (current behavior)"],
-      [
-        "AllowAdminThemeOverride = true, with path filter",
-        "Mixed mode — editable settings show controls, locked settings show 🔒 badge",
-      ],
-      [
-        "AllowAdminThemeOverride = false",
-        "Full read-only mode — all controls disabled with banner",
-      ],
-    ],
-  },
-
-  // ─── Security Model ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.securityTitle",
-    id: "security",
-  },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.securityIntro" },
-  {
-    type: "table",
-    headers: ["Threat", "Mitigation"],
-    rows: [
-      ["Cross-admin settings leak", "AUTH_STORAGE_KEYS_TO_CLEAR wipes all settings on logout"],
-      [
-        "Raw theme key leak",
-        "clearAllLocalStorage() removes theme and scr_admin_prefs_version explicitly",
-      ],
-      ["Oversized payload", "8KB client guard + 10KB server column limit"],
-      ["Admin modifies locked setting", "Server validates keys against AllowedAdminSettingsJson"],
-      ["Concurrent 409 conflict", "Field-level last-write-wins merge with toast notification"],
-      ["Tab-close data loss", "fetch({ keepalive: true }) with JWT Authorization header"],
-      ["JWT expired at tab close", "Deferred flush via PENDING_SETTINGS_FLUSH (survives logout)"],
-    ],
-  },
-
-  // ─── Architecture ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.dashboardBuilder.archTitle",
-    id: "architecture",
-  },
-  { type: "paragraph", contentKey: "features.dashboardBuilder.archIntro" },
-  {
-    type: "code",
-    language: "text",
-    filename: "Key Files",
-    code: `src/core/providers/
-├── useAdminSettingsSync.ts    # Server sync hook (5 edge case protections)
-├── settings-provider.tsx      # 4-layer merge engine + field tracking
-├── tenant-branding-provider.tsx # Layer 3 sync + override metadata
-
-src/core/config/
-├── storage-keys.ts            # Centralized localStorage key definitions
-├── api-endpoints.ts           # Dashboard builder API endpoint constants
-
-src/core/ui/layout/
-├── dashboard-layout.tsx       # FOUC shimmer gate (layout entry point)
-
-src/modules/auth/core/data/
-├── repositories/AuthRepository.ts  # Logout cleanup (raw key removal)`,
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "features.dashboardBuilder.archTip",
-  },
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "features/dashboard-builder",
   titleKey: "features.dashboardBuilder.title",
-  descriptionKey: "features.dashboardBuilder.description",
   category: "features",
   order: 19,
   sections,
-  relatedSlugs: [
-    "features/login-customizer",
-    "features/theme-marketplace",
-    "features/login-page-builder",
-  ],
-  lastUpdated: "2026-04-05",
+  relatedSlugs: ["features/login-customizer","features/theme-marketplace","features/login-page-builder"],
+  lastUpdated: "2026-06-07",
 });

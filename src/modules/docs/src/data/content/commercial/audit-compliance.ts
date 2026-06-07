@@ -2,131 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.auditCompliance.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.auditCompliance.pipelineTitle",
-    id: "pipeline",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.auditCompliance.pipelineContent" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    title: "4-Source Audit Pipeline",
-    nodes: [
-      { id: "s1", label: "Source 1: API Request Logging", type: "info" },
-      { id: "s2", label: "Source 2: Entity Change Tracking", type: "primary" },
-      { id: "s3", label: "Source 3: Security Event Capture", type: "warning" },
-      { id: "s4", label: "Source 4: Business Operation Audit", type: "success" },
-      { id: "agg", label: "Audit Aggregation Service", type: "default" },
-      { id: "store", label: "Persistent Storage", type: "danger" },
-      { id: "rt", label: "Real-Time SignalR Stream", type: "info" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "s1", to: "agg" },
-      { from: "s2", to: "agg" },
-      { from: "s3", to: "agg" },
-      { from: "s4", to: "agg" },
-      { from: "agg", to: "store" },
-      { from: "agg", to: "rt" },
-    ],
-  },
-
-  { type: "heading", level: 2, titleKey: "commercial.auditCompliance.sourcesTitle", id: "sources" },
-  {
-    type: "table",
-    headers: ["Source", "What's Captured", "Example"],
-    rows: [
+    "rows": [
       [
-        "API Requests",
-        "Method, URL, status code, IP, user agent, duration",
-        "POST /api/users → 201 (45ms)",
+        "Page route",
+        "/commercial/audit-compliance",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Entity Changes",
-        "Before/after values for every field change",
-        "Employee.Salary: 5000 → 6000",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/audit-compliance.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Security Events",
-        "Login, logout, failed auth, password changes, 2FA",
-        "Login success from 192.168.1.1",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Business Ops",
-        "Custom audit entries from domain operations",
-        "Invoice #1234 approved by Manager",
+        "Compliance module",
+        "SCRIPE-Backend/src/Modules/Compliance",
+        "Compliance owns data subject requests, consents, data inventory, regulations, retention policies, reports, and compliance jobs."
       ],
+      [
+        "Compliance controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Compliance",
+        "Controller endpoints expose DSR, consent, inventory, regulation, retention, and reporting workflows."
+      ],
+      [
+        "Frontend compliance routes",
+        "SCRIPE-Frontend/src/app/(modules)/(compliance)",
+        "UI routes cover compliance overview, consent, DSR list/detail, data inventory, regulations, retention, and reports."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.auditCompliance.complianceTitle",
-    id: "compliance",
-  },
-  { type: "paragraph", contentKey: "commercial.auditCompliance.complianceContent" },
-  {
-    type: "table",
-    headers: ["Framework", "Requirement", "SCRIPE Coverage"],
-    rows: [
-      ["SOX", "Financial audit trail", "Complete entity change tracking with before/after values"],
-      ["GDPR", "Data access logging", "All data access logged with user context"],
-      ["SOC 2", "Security monitoring", "Security events captured and streamed in real-time"],
-      ["ISO 27001", "Access control audit", "Full RBAC audit with permission changes tracked"],
-      ["HIPAA", "PHI access tracking", "Field-level audit with role-based restrictions"],
-      ["PCI-DSS", "Transaction logging", "All financial operations logged with timestamps"],
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.auditCompliance.realTimeTitle",
-    id: "real-time",
-  },
-  { type: "paragraph", contentKey: "commercial.auditCompliance.realTimeContent" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "zap",
-        titleKey: "commercial.auditCompliance.liveStream",
-        descriptionKey: "commercial.auditCompliance.liveStreamDesc",
-      },
-      {
-        icon: "bar-chart",
-        titleKey: "commercial.auditCompliance.dashboard",
-        descriptionKey: "commercial.auditCompliance.dashboardDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.auditCompliance.alerting",
-        descriptionKey: "commercial.auditCompliance.alertingDesc",
-      },
-      {
-        icon: "database",
-        titleKey: "commercial.auditCompliance.retention",
-        descriptionKey: "commercial.auditCompliance.retentionDesc",
-      },
-    ],
-  },
-
-  { type: "heading", level: 2, titleKey: "commercial.auditCompliance.exportTitle", id: "export" },
-  { type: "paragraph", contentKey: "commercial.auditCompliance.exportContent" },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/audit-compliance",
   titleKey: "commercial.auditCompliance.title",
-  descriptionKey: "commercial.auditCompliance.description",
   category: "commercial-enterprise",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/security-overview", "commercial/multi-tenancy"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/security-overview","commercial/multi-tenancy"],
+  lastUpdated: "2026-06-07",
 });

@@ -3,64 +3,50 @@
  */
 export const en = {
   compliance: {
-    reportsTitle: "Compliance Reports",
-    reportType: "Report Type",
-    period: "Period",
-    periodStart: "Period Start",
-    periodEnd: "Period End",
-    generateReport: "Generate Report",
-    reportReady: "Ready",
-    reportPending: "Generating...",
-    downloadReport: "Download",
-    reportDetail: "Report Detail",
+    reportsTitle: 'Compliance Reports',
+    reportType: 'Report Type',
+    period: 'Period',
+    periodStart: 'Period Start',
+    periodEnd: 'Period End',
+    generateReport: 'Generate Report',
+    reportReady: 'Ready',
+    reportPending: 'Generating...',
+    downloadReport: 'Download',
+    reportDetail: 'Report Detail',
     reportTypes: {
-      gdprOverview: "GDPR Overview Report",
-      dsrSummary: "DSR Activity Summary",
-      consentAudit: "Consent Audit Report",
-      retentionAnalysis: "Retention Analysis Report",
-      dataInventory: "Data Inventory Export",
+      gdprOverview: 'GDPR Overview Report',
+      dsrSummary: 'DSR Activity Summary',
+      consentAudit: 'Consent Audit Report',
+      retentionAnalysis: 'Retention Analysis Report',
+      dataInventory: 'Data Inventory Export'
     },
     status: {
-      ready: "Ready",
-      generating: "Generating...",
-      pending: "Pending",
-      failed: "Failed",
+      ready: 'Ready',
+      generating: 'Generating...',
+      pending: 'Pending',
+      failed: 'Failed'
     },
-
-    // Auto-refresh indicator
-    autoRefreshing: "Auto-refreshing\u2026",
-
-    // Format dropdown descriptions
+    autoRefreshing: 'Auto-refreshing…',
     format: {
-      csvDesc: "Comma-separated values",
-      xlsxDesc: "Microsoft Excel format",
-      jsonDesc: "Structured JSON data",
-      pdfDesc: "Portable Document Format",
+      csvDesc: 'Comma-separated values',
+      xlsxDesc: 'Microsoft Excel format',
+      jsonDesc: 'Structured JSON data',
+      pdfDesc: 'Portable Document Format'
     },
-
-    // Messages
-    reportQueued: "Report generation queued",
-    reportQueuedDesc: "Refresh in a few minutes to see your report.",
-
-    // Dialog
-    generateReportDesc:
-      "Select a report type and optional date range to generate a compliance report.",
-    reportQueuedInfo:
-      "Reports are generated asynchronously. Refresh the list after a few minutes to see your report.",
-
-    // Empty states
-    noReports: "No reports generated",
-    noReportsDesc: "Generate your first compliance report to get started.",
-
-    // Report detail actions
-    mvpExportTitle: "MVP Export",
-    mvpExportDesc:
-      "Full OpenXML/PDF exports with charts are planned. For now, download as CSV or TSV.",
-
-    // Download format labels
-    downloadCsv: "Download CSV",
-    downloadTsv: "Download Spreadsheet (TSV)",
-    downloadJson: "Download JSON",
-    downloadTxt: "Download Text Summary",
-  },
+    reportQueued: 'Report generation queued',
+    reportQueuedDesc: 'Refresh in a few minutes to see your report.',
+    generateReportDesc: 'Select a report type and optional date range to generate a compliance report.',
+    reportQueuedInfo: 'Reports are generated asynchronously. Refresh the list after a few minutes to see your report.',
+    noReports: 'No reports generated',
+    noReportsDesc: 'Generate your first compliance report to get started.',
+    mvpExportTitle: 'MVP Export',
+    mvpExportDesc: 'Full OpenXML/PDF exports with charts are planned. For now, download as CSV or TSV.',
+    downloadCsv: 'Download CSV',
+    downloadTsv: 'Download Spreadsheet (TSV)',
+    downloadJson: 'Download JSON',
+    downloadTxt: 'Download Text Summary',
+    reports: {
+      generating: 'Generating compliance report...'
+    }
+  }
 };

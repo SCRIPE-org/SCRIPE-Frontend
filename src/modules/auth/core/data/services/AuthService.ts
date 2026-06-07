@@ -203,12 +203,28 @@ export class AuthService implements IAuthService {
   async verifyPhoneOtp(
     phoneNumber: string,
     code: string
-  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }> {
-    return this.api.postPublic<{
-      accessToken: string;
-      refreshToken: string;
-      expiresAt: string;
-    }>(API_ENDPOINTS.AUTH.PHONE_OTP.VERIFY, { phoneNumber, code });
+  ): Promise<{
+    accessToken: string;
+    refreshToken?: string;
+    expiresAt?: string;
+    requiresWorkspaceSelection?: boolean;
+    availableWorkspaces?: Array<{
+      tenantId: string;
+      tenantCode: string;
+      tenantName: string;
+      logoUrl: string | null;
+      isPlatformAdmin: boolean;
+      isActivated: boolean;
+      isDisabled?: boolean;
+      disabledReason?: string | null;
+      isPasswordVerified?: boolean;
+      isLocked?: boolean;
+      lockedUntil?: string | null;
+    }> | null;
+    mustChangePassword?: boolean;
+    defaultRedirectPath?: string;
+  }> {
+    return this.api.postPublic(API_ENDPOINTS.AUTH.PHONE_OTP.VERIFY, { phoneNumber, code });
   }
 
   // ── QR Cross-Device Sign-In ─────────────────────────────────────────────────
@@ -218,11 +234,17 @@ export class AuthService implements IAuthService {
     qrData: string;
     expiresAt: string;
   }> {
-    return this.api.postPublic<{
+    const res = await this.api.postPublic<{
       sessionId: string;
-      qrData: string;
+      qrUrl: string;
       expiresAt: string;
     }>(API_ENDPOINTS.AUTH.QR_LOGIN.CREATE_SESSION, {});
+
+    return {
+      sessionId: res.sessionId,
+      qrData: res.qrUrl,
+      expiresAt: res.expiresAt,
+    };
   }
 
   async checkQrSignIn(sessionId: string): Promise<{
@@ -239,5 +261,9 @@ export class AuthService implements IAuthService {
 
   async approveQrSignIn(sessionId: string): Promise<void> {
     await this.api.post(API_ENDPOINTS.AUTH.QR_LOGIN.APPROVE, { sessionId });
+  }
+
+  async rejectQrSignIn(sessionId: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.AUTH.QR_LOGIN.REJECT, { sessionId });
   }
 }

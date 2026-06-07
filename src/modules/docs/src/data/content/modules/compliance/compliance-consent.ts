@@ -2,223 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Intro ────────────────────────────────────────────────
-  { type: "paragraph", contentKey: "modules.compliance.consent.intro" },
   {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.compliance.consent.infoTitle",
-    contentKey: "modules.compliance.consent.infoContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Consent Flow ─────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.consent.flowTitle",
-    id: "consent-flow",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.consent.flowIntro" },
-  {
-    type: "flowchart",
-    titleKey: "modules.compliance.consent.flowTitle",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "purpose",
-        labelKey: "modules.compliance.consent.nodePurpose",
-        type: "primary",
-        descriptionKey: "modules.compliance.consent.descPurpose",
-      },
-      {
-        id: "record",
-        labelKey: "modules.compliance.consent.nodeRecord",
-        type: "info",
-        descriptionKey: "modules.compliance.consent.descRecord",
-      },
-      {
-        id: "snapshot",
-        labelKey: "modules.compliance.consent.nodeSnapshot",
-        type: "warning",
-        descriptionKey: "modules.compliance.consent.descSnapshot",
-      },
-      {
-        id: "job",
-        labelKey: "modules.compliance.consent.nodeJob",
-        type: "default",
-        descriptionKey: "modules.compliance.consent.descJob",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "purpose", to: "record", labelKey: "modules.compliance.consent.conn1" },
-      { from: "record", to: "snapshot", labelKey: "modules.compliance.consent.conn2" },
-      { from: "job", to: "record", labelKey: "modules.compliance.consent.conn3" },
-    ],
-  },
-
-  // ─── Consent Purposes ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.consent.purposesTitle",
-    id: "consent-purposes",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.consent.purposesIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.consent.purposesCode",
-      "modules.compliance.consent.purposesDesc",
-      "modules.compliance.consent.purposesBasis",
-    ],
-    rows: [
+    "rows": [
       [
-        "Marketing",
-        "modules.compliance.consent.purposesMarketingDesc",
-        "modules.compliance.consent.basisConsent",
+        "Page route",
+        "/docs/modules/compliance-consent",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Analytics",
-        "modules.compliance.consent.purposesAnalyticsDesc",
-        "modules.compliance.consent.basisConsent",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/compliance/compliance-consent.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "ThirdParty",
-        "modules.compliance.consent.purposesThirdPartyDesc",
-        "modules.compliance.consent.basisConsent",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Essential",
-        "modules.compliance.consent.purposesEssentialDesc",
-        "modules.compliance.consent.basisLegitimate",
+        "Compliance module",
+        "SCRIPE-Backend/src/Modules/Compliance",
+        "Compliance owns data subject requests, consents, data inventory, regulations, retention policies, reports, and compliance jobs."
       ],
+      [
+        "Compliance controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Compliance",
+        "Controller endpoints expose DSR, consent, inventory, regulation, retention, and reporting workflows."
+      ],
+      [
+        "Frontend compliance routes",
+        "SCRIPE-Frontend/src/app/(modules)/(compliance)",
+        "UI routes cover compliance overview, consent, DSR list/detail, data inventory, regulations, retention, and reports."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Snapshot Immutability ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.consent.immutabilityTitle",
-    id: "immutability",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.consent.immutabilityIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "ConsentSnapshot.cs",
-    code: `public class ConsentSnapshot : BaseEntity<Guid>
-{
-    public Guid ConsentRecordId { get; set; }
-    public ConsentState State { get; set; } // Granted/Revoked
-    public DateTime Timestamp { get; set; }
-    
-    // Hash of (RecordId + State + Timestamp + PreviousHash) for tampering detection
-    [MaxLength(256)]
-    public string IntegrityHash { get; set; } = null!;
-}`,
-  },
-
-  // ─── Entity Reference ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.consent.entitiesTitle",
-    id: "entities",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.consent.entitiesIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.consent.field",
-      "modules.compliance.consent.type",
-      "modules.compliance.consent.description",
-    ],
-    rows: [
-      ["Id", "Guid", "modules.compliance.consent.fId"],
-      ["TenantId", "Guid", "modules.compliance.consent.fTenantId"],
-      ["SubjectId", "String", "modules.compliance.consent.fSubjectId"],
-      ["PurposeCode", "String", "modules.compliance.consent.fPurposeCode"],
-      ["State", "Enum", "modules.compliance.consent.fState"],
-      ["IpAddress", "String", "modules.compliance.consent.fIpAddress"],
-      ["UserAgent", "String", "modules.compliance.consent.fUserAgent"],
-      ["PolicyVersion", "String", "modules.compliance.consent.fPolicyVersion"],
-    ],
-  },
-
-  // ─── Best Practices ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.consent.bestPracticesTitle",
-    id: "best-practices",
-  },
-  {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "modules.compliance.consent.doTitle",
-        variant: "positive",
-        items: [
-          "modules.compliance.consent.do1",
-          "modules.compliance.consent.do2",
-          "modules.compliance.consent.do3",
-        ],
-      },
-      {
-        titleKey: "modules.compliance.consent.dontTitle",
-        variant: "negative",
-        items: [
-          "modules.compliance.consent.dont1",
-          "modules.compliance.consent.dont2",
-          "modules.compliance.consent.dont3",
-        ],
-      },
-    ],
-  },
-
-  // ─── API Endpoints ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.consent.endpointsTitle",
-    id: "endpoints",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/compliance/consent",
-        descriptionKey: "modules.compliance.consent.epRecord",
-        auth: "AdminOnly",
-        permission: "compliance_consent.manage",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/consent",
-        descriptionKey: "modules.compliance.consent.epList",
-        auth: "AdminOnly",
-        permission: "compliance_consent.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/consent/analytics",
-        descriptionKey: "modules.compliance.consent.epAnalytics",
-        auth: "AdminOnly",
-        permission: "compliance_consent.view_analytics",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/compliance-consent",
   titleKey: "modules.compliance.consent.title",
-  descriptionKey: "modules.compliance.consent.description",
   category: "modules",
   order: 3,
   sections,
-  relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
-  lastUpdated: "2026-05-03",
+  relatedSlugs: ["modules/compliance-overview","infrastructure/background-jobs"],
+  lastUpdated: "2026-06-07",
 });

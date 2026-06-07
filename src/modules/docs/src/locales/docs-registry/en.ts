@@ -3,6 +3,7 @@
  * Eagerly merges all English docs translations (tech + commercial).
  */
 import { en as common } from "../pages/common/en";
+import { en as generatedTitles } from "../pages/generated-titles/en";
 import { en as getStarted } from "../pages/get-started/en";
 import { en as architecture } from "../pages/architecture/en";
 import { en as features } from "../pages/features/en";
@@ -69,5 +70,6 @@ export const allDocsEn: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  { commercial: stripeConnect.commercial },
+  generatedTitles
 );

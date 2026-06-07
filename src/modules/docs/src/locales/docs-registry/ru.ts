@@ -3,6 +3,7 @@
  * Eagerly merges all Russian docs translations (tech + commercial).
  */
 import { ru as common } from "../pages/common/ru";
+import { ru as generatedTitles } from "../pages/generated-titles/ru";
 import { ru as getStarted } from "../pages/get-started/ru";
 import { ru as architecture } from "../pages/architecture/ru";
 import { ru as features } from "../pages/features/ru";
@@ -69,5 +70,6 @@ export const allDocsRu: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  { commercial: stripeConnect.commercial },
+  generatedTitles
 );

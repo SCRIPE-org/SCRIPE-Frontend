@@ -2,243 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "architecture.cqrs.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.cqrs.whatIsCqrsTitle",
-    id: "what-is-cqrs",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "architecture.cqrs.whatIsCqrsIntro" },
   {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "architecture.cqrs.commandSide",
-        variant: "neutral",
-        items: [
-          "Commands CHANGE state (Create, Update, Delete)",
-          "Always return Result<T> or Result<Unit>",
-          "Go through validation + audit behaviors",
-          "Invalidate related caches on success",
-          "Named: CreateXxxCommand, UpdateXxxCommand",
-        ],
-      },
-      {
-        titleKey: "architecture.cqrs.querySide",
-        variant: "neutral",
-        items: [
-          "Queries READ state (Get, List, Search)",
-          "Return domain entities or DTOs",
-          "Skip audit behavior (read-only)",
-          "Can leverage caching",
-          "Named: GetXxxQuery, ListXxxQuery",
-        ],
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/architecture/cqrs",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/architecture/cqrs.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Auth controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "Implemented flows include admin/user password auth, refresh, logout, sessions, 2FA, passkeys, magic link, phone OTP, QR login, OIDC client/server, SAML client/server, account setup, and self-service signup."
+      ],
+      [
+        "Identity handlers",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Application/Commands/Auth",
+        "Auth work is dispatched through AstraFlow command/query handlers instead of controller business logic."
+      ],
+      [
+        "Identity persistence",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Domain/Entities",
+        "Admins, users, tokens, sessions, identity providers, OAuth apps, passkeys, external logins, tenants, roles, and user groups are modeled in the Identity domain."
+      ],
+      [
+        "Frontend auth routes",
+        "SCRIPE-Frontend/src/app/(auth)",
+        "Frontend routes exist for login, signup, password reset, magic link, QR approval, SSO callbacks, authorization, setup account, and policy pages."
+      ]
+    ]
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.cqrs.pipelineTitle",
-    id: "pipeline",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "flowchart",
-    title: "AstraFlow mediator Pipeline (5 Behaviors)",
-    direction: "vertical",
-    nodes: [
-      { id: "send", label: "ISender.Send(command)", type: "primary" },
-      { id: "logging", label: "1. LoggingBehavior", type: "info" },
-      { id: "validation", label: "2. ValidationBehavior", type: "warning" },
-      { id: "feature", label: "3. FeatureCheckBehavior", type: "warning" },
-      { id: "webhook", label: "4. WebhookDispatchBehavior", type: "info" },
-      { id: "cache", label: "5. CachingBehavior", type: "success" },
-      { id: "handler", label: "CommandHandler.Handle()", type: "success" },
-      { id: "result", label: "Result<T>", type: "primary" },
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    connections: [
-      { from: "send", to: "logging" },
-      { from: "logging", to: "validation" },
-      { from: "validation", to: "feature", label: "Valid" },
-      { from: "feature", to: "webhook", label: "Allowed" },
-      { from: "webhook", to: "cache" },
-      { from: "cache", to: "handler", label: "Cache miss / mutation" },
-      { from: "handler", to: "result" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.cqrs.validationBehaviorTitle",
-    id: "validation-behavior",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "ValidationBehavior.cs",
-    code: `public class ValidationBehavior<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : AstraFlow.Mediator.IRequest<TResponse>
-{
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public async Task<TResponse> Handle(TRequest request,
-        RequestHandlerDelegate<TResponse> next, CancellationToken ct)
-    {
-        if (!_validators.Any()) return await next();
-
-        var context = new ValidationContext<TRequest>(request);
-        var results = await Task.WhenAll(
-            _validators.Select(v => v.ValidateAsync(context, ct)));
-
-        var failures = results
-            .SelectMany(r => r.Errors)
-            .Where(f => f != null)
-            .ToList();
-
-        if (failures.Count != 0)
-            throw new ValidationException(failures);
-
-        return await next();
-    }
-}`,
-    highlightLines: [11, 22, 23],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.cqrs.commandExampleTitle",
-    id: "command-example",
-  },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Command",
-        language: "csharp",
-        code: `public record CreateAdminCommand(
-    string Name,
-    string Email,
-    string Password,
-    Guid? TenantId
-) : ICommand<AdminResponse>;`,
-      },
-      {
-        label: "Validator",
-        language: "csharp",
-        code: `public class CreateAdminCommandValidator
-    : AbstractValidator<CreateAdminCommand>
-{
-    public CreateAdminCommandValidator()
-    {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(100);
-
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress()
-            .WithMessage("Valid email is required");
-
-        RuleFor(x => x.Password)
-            .MinimumLength(8)
-            .Matches("[A-Z]").WithMessage("Must contain uppercase")
-            .Matches("[0-9]").WithMessage("Must contain digit")
-            .Matches("[^a-zA-Z0-9]").WithMessage("Must contain special char");
-    }
-}`,
-      },
-      {
-        label: "Handler",
-        language: "csharp",
-        code: `public class CreateAdminCommandHandler
-    : ICommandHandler<CreateAdminCommand, AdminResponse>
-{
-    private readonly IAdminRepository _repo;
-    private readonly IPasswordHasher _hasher;
-    private readonly AstraFlow.Mapper.IMapper _mapper;
-
-    public async Task<Result<AdminResponse>> Handle(
-        CreateAdminCommand request, CancellationToken ct)
-    {
-        // 1. Check for duplicates
-        var existing = await _repo.GetByEmailAsync(request.Email);
-        if (existing != null)
-            return Result<AdminResponse>.Failure("Email already exists");
-
-        // 2. Create domain entity
-        var admin = Admin.Create(
-            request.Name,
-            request.Email,
-            _hasher.Hash(request.Password),
-            request.TenantId);
-
-        // 3. Persist
-        await _repo.AddAsync(admin, ct);
-
-        // 4. Map & return
-        return Result<AdminResponse>.Success(
-            _mapper.Map<AdminResponse>(admin));
-    }
-}`,
-      },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.cqrs.queryExampleTitle",
-    id: "query-example",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "GetAdminByIdQuery + Handler",
-    code: `// Query
-public record GetAdminByIdQuery(Guid Id) : IQuery<AdminDetailResponse>;
-
-// Handler
-public class GetAdminByIdQueryHandler
-    : IQueryHandler<GetAdminByIdQuery, AdminDetailResponse>
-{
-    private readonly IAdminRepository _repo;
-    private readonly AstraFlow.Mapper.IMapper _mapper;
-    private readonly ICacheService _cache;
-
-    public async Task<Result<AdminDetailResponse>> Handle(
-        GetAdminByIdQuery request, CancellationToken ct)
-    {
-        var cacheKey = $"admin:{request.Id}";
-        var cached = await _cache.GetAsync<AdminDetailResponse>(cacheKey);
-        if (cached != null) return Result.Success(cached);
-
-        var admin = await _repo.GetByIdWithDetailsAsync(request.Id, ct);
-        if (admin == null)
-            return Result<AdminDetailResponse>.Failure("Admin not found");
-
-        var response = _mapper.Map<AdminDetailResponse>(admin);
-        await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(5));
-
-        return Result<AdminDetailResponse>.Success(response);
-    }
-}`,
-    highlightLines: [15, 16, 17, 24],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "architecture.cqrs.cachingTip",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "architecture/cqrs",
   titleKey: "architecture.cqrs.title",
-  descriptionKey: "architecture.cqrs.description",
   category: "architecture",
   order: 4,
   sections,
-  relatedSlugs: ["architecture/backend", "architecture/data-flow"],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["architecture/backend","architecture/data-flow"],
+  lastUpdated: "2026-06-07",
 });

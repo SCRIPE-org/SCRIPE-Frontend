@@ -45,12 +45,41 @@ import { SettingsContext, createCompatSetters } from "./context";
  * - Override control (admin lock system)
  */
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
-  const [isHydrated, setIsHydrated] = useState(false);
+  // Compute initial settings SYNCHRONOUSLY to avoid a hydration flash.
+  // mergeSettings reads localStorage (synchronous), so we can do this in the
+  // useState initializer and skip the blocking isHydrated=false render entirely.
+  // We compute once and extract both settings + overrideControl in one pass.
+  const [settings, setSettings] = useState<Settings>(() => {
+    if (typeof window === "undefined") return defaultSettings;
+    try {
+      const result = mergeSettings({
+        tenantRaw: readTenantDefaults(),
+        adminRaw: readAdminOverrides(),
+      });
+      if (result.isStale) clearStaleAdminOverrides();
+      return result.settings;
+    } catch {
+      return defaultSettings;
+    }
+  });
+  // Start as already hydrated — initial settings are computed synchronously above.
+  // This eliminates the 1-frame (or 1-second on first login) pulse animation shimmer.
+  const [isHydrated, setIsHydrated] = useState(true);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
-  // M11: Override control state — uses useState (not ref) so context re-computes (Gap #8)
-  const [overrideControl, setOverrideControl] = useState<OverrideControl>(DEFAULT_OVERRIDE_CONTROL);
+  // M11: Override control state — initialized synchronously (matches settings init above)
+  const [overrideControl, setOverrideControl] = useState<OverrideControl>(() => {
+    if (typeof window === "undefined") return DEFAULT_OVERRIDE_CONTROL;
+    try {
+      const result = mergeSettings({
+        tenantRaw: readTenantDefaults(),
+        adminRaw: readAdminOverrides(),
+      });
+      return result.overrideControl;
+    } catch {
+      return DEFAULT_OVERRIDE_CONTROL;
+    }
+  });
 
   // Gap #2/#7: Track whether we're inside a merge operation.
   // When true, auto-save is suppressed to prevent feedback loops.
@@ -208,9 +237,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting]
   );
 
-  // Don't render until hydrated to prevent hydration mismatches
+  // isHydrated is always true (synchronous init above) — block kept as safety guard
+  // only for SSR contexts where window is undefined (server renders defaultSettings).
   if (!isHydrated) {
-    return <div className="min-h-screen animate-pulse bg-background" suppressHydrationWarning />;
+    return <div className="min-h-screen bg-background" suppressHydrationWarning />;
   }
 
   return <SettingsContext.Provider value={contextValue}>{children}</SettingsContext.Provider>;

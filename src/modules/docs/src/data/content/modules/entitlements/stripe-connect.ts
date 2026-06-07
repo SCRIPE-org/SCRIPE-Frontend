@@ -2,136 +2,122 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "modules.stripeConnect.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.stripeConnect.flowTitle",
-    id: "stripe-connect-onboarding",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "modules.stripeConnect.flowIntro" },
   {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "modules.stripeConnect.step1Title",
-        contentKey: "modules.stripeConnect.step1Content",
-      },
-      {
-        titleKey: "modules.stripeConnect.step2Title",
-        contentKey: "modules.stripeConnect.step2Content",
-      },
-      {
-        titleKey: "modules.stripeConnect.step3Title",
-        contentKey: "modules.stripeConnect.step3Content",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/modules/stripe-connect",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/entitlements/stripe-connect.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.stripeConnect.commissionTitle",
-    id: "platform-commissions",
-  },
-  { type: "paragraph", contentKey: "modules.stripeConnect.commissionIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "CommissionEntities.cs",
-    code: `public class PlatformCommission : AuditableEntity
-{
-    public Guid TenantId { get; set; }
-    public decimal Percentage { get; set; }
-    public decimal FixedFee { get; set; }
-    public string Currency { get; set; } = "USD";
-    public bool IsActive { get; set; } = true;
-}
-
-public class CommissionLedgerEntry : AuditableEntity
-{
-    public Guid TenantId { get; set; }
-    public decimal TransactionAmount { get; set; }
-    public decimal CommissionAmount { get; set; }
-    public string Currency { get; set; } = "USD";
-    public string ReferenceType { get; set; } = string.Empty;
-    public string ReferenceId { get; set; } = string.Empty;
-    public LedgerStatus Status { get; set; } = LedgerStatus.Pending;
-}
-
-public class CommissionInvoice : AuditableEntity
-{
-    public Guid TenantId { get; set; }
-    public decimal TotalAmount { get; set; }
-    public string Currency { get; set; } = "USD";
-    public DateTime BillingPeriodStart { get; set; }
-    public DateTime BillingPeriodEnd { get; set; }
-    public CommissionInvoiceStatus Status { get; set; } = CommissionInvoiceStatus.Unpaid;
-}`,
-    highlightLines: [3, 11, 23],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.stripeConnect.controllerTitle",
-    id: "commission-controllers",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-  { type: "paragraph", contentKey: "modules.stripeConnect.controllerIntro" },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/stripe-connect/onboard",
-        descriptionKey: "modules.stripeConnect.apiOnboard",
-        auth: "AdminOnly",
-        permission: "stripe_connect.onboard",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/stripe-connect/account-status",
-        descriptionKey: "modules.stripeConnect.apiAccountStatus",
-        auth: "AdminOnly",
-        permission: "stripe_connect.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/commissions/dashboard",
-        descriptionKey: "modules.stripeConnect.apiCommissionsDashboard",
-        auth: "AdminOnly",
-        permission: "commissions.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/commissions/invoices",
-        descriptionKey: "modules.stripeConnect.apiCommissionsInvoices",
-        auth: "AdminOnly",
-        permission: "commissions.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/commissions/invoices/{id}/waive",
-        descriptionKey: "modules.stripeConnect.apiWaiveInvoice",
-        auth: "AdminOnly",
-        permission: "commissions.waive",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/commissions/invoices/{id}/retry",
-        descriptionKey: "modules.stripeConnect.apiRetryCharge",
-        auth: "AdminOnly",
-        permission: "commissions.retry_charge",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/stripe-connect",
   titleKey: "modules.stripeConnect.title",
-  descriptionKey: "modules.stripeConnect.description",
   category: "modules",
   order: 1,
   sections,
-  relatedSlugs: ["modules/entitlements-overview", "modules/billing-engine", "modules/invoices"],
-  lastUpdated: "2026-06-04",
+  relatedSlugs: ["modules/entitlements-overview","modules/billing-engine","modules/invoices"],
+  lastUpdated: "2026-06-07",
 });

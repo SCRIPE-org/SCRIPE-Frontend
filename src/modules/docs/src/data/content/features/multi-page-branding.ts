@@ -2,265 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "features.multiPageBranding.intro" },
-
-  // ─── Supported Pages ──────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.pagesTitle",
-    id: "supported-pages",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "features.multiPageBranding.pagesIntro" },
   {
-    type: "table",
-    headers: ["Page", "Purpose", "Key Messages"],
-    rows: [
-      ["Login", "Primary authentication entry", "First impression, strong brand statement"],
-      ["Forgot Password", "Password recovery", "Reassuring messaging, trust-building visuals"],
-      ["Reset Password", "New password creation", "Action-oriented, minimal distractions"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/features/multi-page-branding",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/multi-page-branding.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
-  { type: "paragraph", contentKey: "features.multiPageBranding.pageLogin" },
-  { type: "paragraph", contentKey: "features.multiPageBranding.pageForgot" },
-  { type: "paragraph", contentKey: "features.multiPageBranding.pageReset" },
   {
-    type: "info",
-    variant: "note",
-    contentKey: "features.multiPageBranding.pagesNote",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── State Isolation Model ────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.stateTitle",
-    id: "state-isolation",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-  { type: "paragraph", contentKey: "features.multiPageBranding.stateIntro" },
   {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.stateGlobalTitle",
-    id: "global-layer",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  { type: "paragraph", contentKey: "features.multiPageBranding.stateGlobalIntro" },
   {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.stateOverrideTitle",
-    id: "override-layer",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.stateOverrideIntro" },
-  {
-    type: "flowchart",
-    title: "Settings Resolution Chain",
-    direction: "vertical",
-    nodes: [
-      { id: "global", label: "Global Settings (50+ tokens)", type: "default" },
-      { id: "override", label: "Per-Page Overrides (pages.forgotPassword.*)", type: "info" },
-      { id: "merged", label: "Merged Result (global + override)", type: "success" },
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    connections: [
-      { from: "global", to: "merged", label: "Base" },
-      { from: "override", to: "merged", label: "Override" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.stateMergeTitle",
-    id: "merge-strategy",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.stateMergeIntro" },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "features.multiPageBranding.stateMergeNote",
-  },
-
-  // ─── Studio Integration ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.studioTitle",
-    id: "studio-integration",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.studioIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.studioTabsTitle",
-    id: "page-tabs",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.studioTabsIntro" },
-  {
-    type: "table",
-    headers: ["Tab", "Key", "Default Active"],
-    rows: [
-      ["Login", "login", "✅ Yes (default)"],
-      ["Forgot Password", "forgotPassword", "No"],
-      ["Reset Password", "resetPassword", "No"],
-    ],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.studioSwitchTitle",
-    id: "switch-flow",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.studioSwitchIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.studioEditTitle",
-    id: "edit-flow",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.studioEditIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.studioResetTitle",
-    id: "reset-flow",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.studioResetIntro" },
-
-  // ─── Theme Import ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.themeTitle",
-    id: "theme-import",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.themeIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.themeImportTitle",
-    id: "import-flow",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.themeImportIntro" },
-  {
-    type: "flowchart",
-    title: "Theme Import with Per-Page Merge",
-    direction: "vertical",
-    nodes: [
-      { id: "apply", label: "Apply Theme (from marketplace)", type: "default" },
-      { id: "global2", label: "Merge 50+ global tokens to draft", type: "info" },
-      { id: "pages", label: "Check theme.pages for overrides", type: "warning" },
-      { id: "merge", label: "Merge each page's overrides to draft", type: "success" },
-    ],
-    connections: [
-      { from: "apply", to: "global2" },
-      { from: "global2", to: "pages" },
-      { from: "pages", to: "merge" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.themeCompatTitle",
-    id: "backward-compat",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.themeCompatIntro" },
-
-  // ─── Serialization ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.serializationTitle",
-    id: "serialization",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.serializationIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.serializationSchemaTitle",
-    id: "schema",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.serializationSchemaIntro" },
-  {
-    type: "code",
-    language: "json",
-    filename: "Per-Page Override Structure",
-    code: `{
-  "version": "2.0",
-  "selectedLayout": "split-right",
-  "primaryColor": "#1e40af",
-  "fontFamily": "Inter",
-  "pageOverrides": {
-    "login": {
-      "panelHeadline": "Welcome Back",
-      "panelSubtitle": "Sign in to continue"
-    },
-    "forgotPassword": {
-      "selectedLayout": "centered",
-      "panelHeadline": "Password Recovery",
-      "panelSubtitle": "We'll help you get back in",
-      "overlayColor": "rgba(30, 64, 175, 0.3)"
-    },
-    "resetPassword": {
-      "panelHeadline": "Create New Password",
-      "panelSubtitle": "Choose a strong password"
-    }
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
-
-  // ─── Preview Architecture ─────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.previewTitle",
-    id: "preview",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.previewIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.multiPageBranding.previewIsolationTitle",
-    id: "preview-isolation",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.previewIsolationIntro" },
-
-  // ─── Conflict Prevention ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.conflictTitle",
-    id: "conflict-prevention",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.conflictIntro" },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "features.multiPageBranding.conflictWarning",
-  },
-
-  // ─── Source Files ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.multiPageBranding.sourceTitle",
-    id: "source-files",
-  },
-  { type: "paragraph", contentKey: "features.multiPageBranding.sourceStudio" },
-  { type: "paragraph", contentKey: "features.multiPageBranding.sourceComponents" },
-  { type: "paragraph", contentKey: "features.multiPageBranding.sourceTypes" },
-  { type: "paragraph", contentKey: "features.multiPageBranding.sourceSeeder" },
 ];
 
 registerPage({
   slug: "features/multi-page-branding",
   titleKey: "features.multiPageBranding.title",
-  descriptionKey: "features.multiPageBranding.description",
   category: "features",
   order: 17,
   sections,
-  relatedSlugs: [
-    "features/theme-marketplace",
-    "features/login-customizer",
-    "features/login-page-builder",
-  ],
-  lastUpdated: "2026-04-02",
+  relatedSlugs: ["features/theme-marketplace","features/login-customizer","features/login-page-builder"],
+  lastUpdated: "2026-06-07",
 });

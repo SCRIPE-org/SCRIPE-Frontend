@@ -41,13 +41,7 @@ const PUBLIC_PAGES = [
   "/error",
   "/404",
   "/500",
-  "/settings",
-  "/profile",
-  "/profile/security",
-  "/profile/activity",
-  "/profile/sessions",
-  "/profile/notifications",
-  "/profile/settings",
+  // Profile + settings pages are system pages (auth required) — not public
   "/docs",
   "/commercial",
   "/oauth/callback",
@@ -56,10 +50,13 @@ const PUBLIC_PAGES = [
   "/studio-preview",
   "/dashboard-preview",
   "/setup-account",
-  "/change-password",
+  // /change-password requires auth — listed as SYSTEM_PAGE below
   "/signup",
   "/terms",
   "/privacy",
+  // ── Passwordless / cross-device flows — public (no auth required) ────────
+  "/magic-link",  // Magic link email callback — token-authenticated, no session needed
+  "/qr-approve",  // QR code approval page — scanned from mobile, no auth session
 ];
 
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
@@ -123,6 +120,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);
+  const [isRestoringSession, setIsRestoringSession] = useState(false);
   const { t } = useI18n();
   const [isMounted] = useState(() => typeof window !== "undefined");
 
@@ -142,6 +140,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
         pathname === "/login" ||
         pathname === "/forgot-password" ||
         pathname === "/reset-password" ||
+        pathname === "/magic-link" ||
+        pathname === "/qr-approve" ||
         pathname.startsWith("/sso");
 
       const hasToken = secureTokenService.hasToken();
@@ -216,6 +216,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       if (!hasToken && isAuthenticated) {
         if (isRefreshing.current) return;
         isRefreshing.current = true;
+        setIsRestoringSession(true);
 
         appLogger.debug("[RouteGuard] No token, store=authenticated → silent refresh");
 
@@ -236,6 +237,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
             if (user) {
               setAuth(user, user.permissions || [], []);
               isRefreshing.current = false;
+              setIsRestoringSession(false);
               return;
             }
           }
@@ -244,6 +246,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         isRefreshing.current = false;
+        setIsRestoringSession(false);
         appLogger.debug("[RouteGuard] Session expired → /login");
 
         if (!isAuthPage && !hasRedirected.current) {
@@ -312,7 +315,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
   if (!isMounted) return <>{children}</>;
 
-  if (authLoading || (isChecking && !isPublicPage(pathname))) {
+  if (authLoading || (isChecking && !isPublicPage(pathname) && !isRestoringSession)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">

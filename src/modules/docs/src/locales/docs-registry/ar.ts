@@ -3,6 +3,7 @@
  * Eagerly merges all Arabic docs translations (tech + commercial).
  */
 import { ar as common } from "../pages/common/ar";
+import { ar as generatedTitles } from "../pages/generated-titles/ar";
 import { ar as getStarted } from "../pages/get-started/ar";
 import { ar as architecture } from "../pages/architecture/ar";
 import { ar as features } from "../pages/features/ar";
@@ -69,5 +70,6 @@ export const allDocsAr: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  { commercial: stripeConnect.commercial },
+  generatedTitles
 );

@@ -2,190 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.platformArchitecture.intro" },
-
-  // ─── Modular Monolith ───────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.platformArchitecture.modularTitle",
-    id: "modular-monolith",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.platformArchitecture.modularContent" },
   {
-    type: "code",
-    language: "text",
-    filename: "SCRIPE Architecture Layers",
-    code: `┌─────────────────────────────────────────────────────────────┐
-│                     Presentation Layer                       │
-│  Next.js 16 App Router · React · TanStack Query · Zustand  │
-├─────────────────────────────────────────────────────────────┤
-│                     API Gateway Layer                        │
-│  18 REST Controllers · 400+ Endpoints · Swagger/OpenAPI    │
-├─────────────────────────────────────────────────────────────┤
-│                     Application Layer                        │
-│  AstraFlow mediator commands/queries · FluentValidation · explicit DTO mapping  │
-├─────────────────────────────────────────────────────────────┤
-│                       Domain Layer                          │
-│  Entities · Value Objects · Domain Events · Specifications  │
-├─────────────────────────────────────────────────────────────┤
-│                    Infrastructure Layer                      │
-│  EF Core · Redis · SignalR · Hangfire · Blob Storage       │
-├─────────────────────────────────────────────────────────────┤
-│                      Database Layer                         │
-│  SQL Server │ PostgreSQL │ Oracle │ SQLite                  │
-└─────────────────────────────────────────────────────────────┘`,
-  },
-
-  // ─── Clean Architecture ─────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.platformArchitecture.cleanTitle",
-    id: "clean-architecture",
-  },
-  { type: "paragraph", contentKey: "commercial.platformArchitecture.cleanContent" },
-  {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "commercial.platformArchitecture.flowchartTitle",
-    nodes: [
-      { id: "pres", label: "commercial.platformArchitecture.fnPres", type: "info" },
-      { id: "app", label: "commercial.platformArchitecture.fnApp", type: "primary" },
-      { id: "domain", label: "commercial.platformArchitecture.fnDomain", type: "success" },
-      { id: "infra", label: "commercial.platformArchitecture.fnInfra", type: "warning" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "pres", to: "app", label: "commercial.platformArchitecture.fcDepends" },
-      { from: "app", to: "domain", label: "commercial.platformArchitecture.fcDepends" },
-      { from: "infra", to: "domain", label: "commercial.platformArchitecture.fcImplements" },
-    ],
-  },
-
-  // ─── Module Boundaries ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.platformArchitecture.boundariesTitle",
-    id: "boundaries",
-  },
-  { type: "paragraph", contentKey: "commercial.platformArchitecture.boundariesContent" },
-  {
-    type: "table",
-    headers: [
-      "commercial.platformArchitecture.tblBoundHeader1",
-      "commercial.platformArchitecture.tblBoundHeader2",
-      "commercial.platformArchitecture.tblBoundHeader3",
-    ],
-    rows: [
+    "rows": [
       [
-        "commercial.platformArchitecture.tblBoundR1C1",
-        "commercial.platformArchitecture.tblBoundR1C2",
-        "commercial.platformArchitecture.tblBoundR1C3",
+        "Page route",
+        "/commercial/platform-architecture",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.platformArchitecture.tblBoundR2C1",
-        "commercial.platformArchitecture.tblBoundR2C2",
-        "commercial.platformArchitecture.tblBoundR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/platform-architecture.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.platformArchitecture.tblBoundR3C1",
-        "commercial.platformArchitecture.tblBoundR3C2",
-        "commercial.platformArchitecture.tblBoundR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.platformArchitecture.tblBoundR4C1",
-        "commercial.platformArchitecture.tblBoundR4C2",
-        "commercial.platformArchitecture.tblBoundR4C3",
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
       ],
       [
-        "commercial.platformArchitecture.tblBoundR5C1",
-        "commercial.platformArchitecture.tblBoundR5C2",
-        "commercial.platformArchitecture.tblBoundR5C3",
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
       ],
-    ],
-  },
-
-  // ─── CQRS + AstraFlow mediator Pipeline ────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.platformArchitecture.cqrsTitle", id: "cqrs" },
-  { type: "paragraph", contentKey: "commercial.platformArchitecture.cqrsContent" },
-  {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "commercial.platformArchitecture.cqrsFlowTitle",
-    nodes: [
-      { id: "req", label: "commercial.platformArchitecture.cqrsReq", type: "default" },
-      { id: "val", label: "commercial.platformArchitecture.cqrsVal", type: "info" },
-      { id: "cache", label: "commercial.platformArchitecture.cqrsCache", type: "primary" },
-      { id: "audit", label: "commercial.platformArchitecture.cqrsAudit", type: "warning" },
-      { id: "auth", label: "commercial.platformArchitecture.cqrsAuth", type: "danger" },
-      { id: "handler", label: "commercial.platformArchitecture.cqrsHandler", type: "success" },
-      { id: "resp", label: "commercial.platformArchitecture.cqrsResp", type: "default" },
-    ],
-    connections: [
-      { from: "req", to: "val" },
-      { from: "val", to: "cache" },
-      { from: "cache", to: "audit" },
-      { from: "audit", to: "auth" },
-      { from: "auth", to: "handler" },
-      { from: "handler", to: "resp" },
-    ],
-  },
-
-  // ─── Deployment Flexibility ─────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.platformArchitecture.deploymentTitle",
-    id: "deployment",
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
   },
   {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "commercial.platformArchitecture.monolith",
-        variant: "positive",
-        items: [
-          "commercial.platformArchitecture.deplMonoI1",
-          "commercial.platformArchitecture.deplMonoI2",
-          "commercial.platformArchitecture.deplMonoI3",
-          "commercial.platformArchitecture.deplMonoI4",
-          "commercial.platformArchitecture.deplMonoI5",
-        ],
-      },
-      {
-        titleKey: "commercial.platformArchitecture.gateway",
-        variant: "neutral",
-        items: [
-          "commercial.platformArchitecture.deplGateI1",
-          "commercial.platformArchitecture.deplGateI2",
-          "commercial.platformArchitecture.deplGateI3",
-          "commercial.platformArchitecture.deplGateI4",
-          "commercial.platformArchitecture.deplGateI5",
-        ],
-      },
-      {
-        titleKey: "commercial.platformArchitecture.microservices",
-        variant: "positive",
-        items: [
-          "commercial.platformArchitecture.deplMicroI1",
-          "commercial.platformArchitecture.deplMicroI2",
-          "commercial.platformArchitecture.deplMicroI3",
-          "commercial.platformArchitecture.deplMicroI4",
-          "commercial.platformArchitecture.deplMicroI5",
-        ],
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/platform-architecture",
   titleKey: "commercial.platformArchitecture.title",
-  descriptionKey: "commercial.platformArchitecture.description",
   category: "commercial-platform",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/technology-stack", "commercial/deployment-modes"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/technology-stack","commercial/deployment-modes"],
+  lastUpdated: "2026-06-07",
 });

@@ -2,205 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.roadmap.intro" },
-
-  // ─── Currently Available ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.roadmap.currentTitle", id: "current" },
   {
-    type: "table",
-    headers: [
-      "commercial.roadmap.tblCurHeader1",
-      "commercial.roadmap.tblCurHeader2",
-      "commercial.roadmap.tblCurHeader3",
-    ],
-    rows: [
-      [
-        "commercial.roadmap.tblCurR1C1",
-        "commercial.roadmap.tblCurR1C2",
-        "commercial.roadmap.tblCurR1C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR2C1",
-        "commercial.roadmap.tblCurR2C2",
-        "commercial.roadmap.tblCurR2C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR3C1",
-        "commercial.roadmap.tblCurR3C2",
-        "commercial.roadmap.tblCurR3C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR4C1",
-        "commercial.roadmap.tblCurR4C2",
-        "commercial.roadmap.tblCurR4C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR5C1",
-        "commercial.roadmap.tblCurR5C2",
-        "commercial.roadmap.tblCurR5C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR6C1",
-        "commercial.roadmap.tblCurR6C2",
-        "commercial.roadmap.tblCurR6C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR7C1",
-        "commercial.roadmap.tblCurR7C2",
-        "commercial.roadmap.tblCurR7C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR8C1",
-        "commercial.roadmap.tblCurR8C2",
-        "commercial.roadmap.tblCurR8C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR9C1",
-        "commercial.roadmap.tblCurR9C2",
-        "commercial.roadmap.tblCurR9C3",
-      ],
-      [
-        "commercial.roadmap.tblCurR10C1",
-        "commercial.roadmap.tblCurR10C2",
-        "commercial.roadmap.tblCurR10C3",
-      ],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── In Progress ───────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.roadmap.inProgressTitle", id: "in-progress" },
   {
-    type: "table",
-    headers: [
-      "commercial.roadmap.tblProgHeader1",
-      "commercial.roadmap.tblProgHeader2",
-      "commercial.roadmap.tblProgHeader3",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.roadmap.tblProgR1C1",
-        "commercial.roadmap.tblProgR1C2",
-        "commercial.roadmap.tblProgR1C3",
+        "Page route",
+        "/commercial/roadmap",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.roadmap.tblProgR2C1",
-        "commercial.roadmap.tblProgR2C2",
-        "commercial.roadmap.tblProgR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/roadmap.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.roadmap.tblProgR3C1",
-        "commercial.roadmap.tblProgR3C2",
-        "commercial.roadmap.tblProgR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-    ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
-
-  // ─── Upcoming ──────────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.roadmap.nextTitle", id: "upcoming" },
   {
-    type: "table",
-    headers: [
-      "commercial.roadmap.tblNextHeader1",
-      "commercial.roadmap.tblNextHeader2",
-      "commercial.roadmap.tblNextHeader3",
-    ],
-    rows: [
-      [
-        "commercial.roadmap.tblNextR1C1",
-        "commercial.roadmap.tblNextR1C2",
-        "commercial.roadmap.tblNextR1C3",
-      ],
-      [
-        "commercial.roadmap.tblNextR2C1",
-        "commercial.roadmap.tblNextR2C2",
-        "commercial.roadmap.tblNextR2C3",
-      ],
-      [
-        "commercial.roadmap.tblNextR3C1",
-        "commercial.roadmap.tblNextR3C2",
-        "commercial.roadmap.tblNextR3C3",
-      ],
-      [
-        "commercial.roadmap.tblNextR4C1",
-        "commercial.roadmap.tblNextR4C2",
-        "commercial.roadmap.tblNextR4C3",
-      ],
-      [
-        "commercial.roadmap.tblNextR5C1",
-        "commercial.roadmap.tblNextR5C2",
-        "commercial.roadmap.tblNextR5C3",
-      ],
-      [
-        "commercial.roadmap.tblNextR6C1",
-        "commercial.roadmap.tblNextR6C2",
-        "commercial.roadmap.tblNextR6C3",
-      ],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── Release Cadence ────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.roadmap.cadenceTitle", id: "cadence" },
   {
-    type: "table",
-    headers: [
-      "commercial.roadmap.tblCadHeader1",
-      "commercial.roadmap.tblCadHeader2",
-      "commercial.roadmap.tblCadHeader3",
-    ],
-    rows: [
-      [
-        "commercial.roadmap.tblCadR1C1",
-        "commercial.roadmap.tblCadR1C2",
-        "commercial.roadmap.tblCadR1C3",
-      ],
-      [
-        "commercial.roadmap.tblCadR2C1",
-        "commercial.roadmap.tblCadR2C2",
-        "commercial.roadmap.tblCadR2C3",
-      ],
-      [
-        "commercial.roadmap.tblCadR3C1",
-        "commercial.roadmap.tblCadR3C2",
-        "commercial.roadmap.tblCadR3C3",
-      ],
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
-  // ─── Long-term Vision ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.roadmap.visionTitle", id: "vision" },
-  { type: "paragraph", contentKey: "commercial.roadmap.visionContent" },
   {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "zap",
-        titleKey: "commercial.roadmap.aiPowered",
-        descriptionKey: "commercial.roadmap.aiPoweredDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "commercial.roadmap.multiRegion",
-        descriptionKey: "commercial.roadmap.multiRegionDesc",
-      },
-      {
-        icon: "layers",
-        titleKey: "commercial.roadmap.pluginEco",
-        descriptionKey: "commercial.roadmap.pluginEcoDesc",
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-
-  { type: "info", variant: "tip", contentKey: "commercial.roadmap.feedbackTip" },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/roadmap",
   titleKey: "commercial.roadmap.title",
-  descriptionKey: "commercial.roadmap.description",
   category: "commercial-support",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/faq", "commercial/why-scripe-overview"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/faq","commercial/why-scripe-overview"],
+  lastUpdated: "2026-06-07",
 });

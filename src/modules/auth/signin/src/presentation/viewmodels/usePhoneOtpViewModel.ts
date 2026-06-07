@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
+import type { LoginResponseModel } from "@modules/auth/core/domain/types/AuthTypes";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,6 +38,9 @@ export interface UsePhoneOtpViewModelReturn {
  *
  * Only the ViewModel touches `authContainer` — the component is a pure render.
  *
+ * Multi-workspace: If the OTP verify returns `requiresWorkspaceSelection`,
+ * `onWorkspaceSelection` is called so the parent can show the workspace picker.
+ *
  * Security:
  * - Rate limited (per-user policy)
  * - OTP expires after 5 minutes
@@ -44,7 +48,8 @@ export interface UsePhoneOtpViewModelReturn {
  * - Cooldown prevents rapid resend (30s)
  */
 export function usePhoneOtpViewModel(
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void
+  onSuccess: (result: { accessToken: string; refreshToken: string }) => void,
+  onWorkspaceSelection?: (response: LoginResponseModel) => void
 ): UsePhoneOtpViewModelReturn {
   const { t } = useI18n();
   const { authRepository } = authContainer;
@@ -60,7 +65,6 @@ export function usePhoneOtpViewModel(
 
   // Error shake — keyed counter, incremented at every setError() call
   const [shakeKey, setShakeKey] = useState(0);
-  // Helper: set error and bump the shake animation key in one call
   const setErrorWithShake = useCallback((msg: string) => {
     setError(msg);
     if (msg) setShakeKey((k) => k + 1);
@@ -86,7 +90,6 @@ export function usePhoneOtpViewModel(
   // Auto-focus code input
   useEffect(() => {
     if (step === "code") {
-      // Small delay for the step transition to complete before focusing
       const timer = setTimeout(() => {
         document.getElementById("phone-otp-code")?.focus();
       }, 200);
@@ -131,7 +134,17 @@ export function usePhoneOtpViewModel(
 
     try {
       const result = await authRepository.verifyPhoneOtp(phone.trim(), code);
-      onSuccess(result);
+
+      // ── Multi-workspace: show workspace picker ───────────────────────
+      if (result.requiresWorkspaceSelection && result.availableWorkspaces?.length) {
+        if (onWorkspaceSelection) {
+          onWorkspaceSelection(result);
+        }
+        return;
+      }
+
+      // ── Single workspace: direct login ───────────────────────────────
+      onSuccess({ accessToken: result.accessToken, refreshToken: result.refreshToken ?? "" });
     } catch (err) {
       setErrorWithShake(
         err instanceof Error
@@ -141,7 +154,7 @@ export function usePhoneOtpViewModel(
     } finally {
       setIsLoading(false);
     }
-  }, [phone, code, authRepository, onSuccess, t, setErrorWithShake]);
+  }, [phone, code, authRepository, onSuccess, onWorkspaceSelection, t, setErrorWithShake]);
 
   // ── Resend ──
   const resendOtp = useCallback(async () => {

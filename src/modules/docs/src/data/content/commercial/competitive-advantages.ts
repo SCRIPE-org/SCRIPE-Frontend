@@ -2,271 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.competitiveAdvantages.intro" },
-
-  // ─── Architecture Advantage ─────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.competitiveAdvantages.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.competitiveAdvantages.architectureContent" },
   {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "commercial.competitiveAdvantages.scripeApproach",
-        variant: "positive",
-        items: [
-          "commercial.competitiveAdvantages.compScripeI1",
-          "commercial.competitiveAdvantages.compScripeI2",
-          "commercial.competitiveAdvantages.compScripeI3",
-          "commercial.competitiveAdvantages.compScripeI4",
-          "commercial.competitiveAdvantages.compScripeI5",
-        ],
-      },
-      {
-        titleKey: "commercial.competitiveAdvantages.traditionalApproach",
-        variant: "negative",
-        items: [
-          "commercial.competitiveAdvantages.compTradI1",
-          "commercial.competitiveAdvantages.compTradI2",
-          "commercial.competitiveAdvantages.compTradI3",
-          "commercial.competitiveAdvantages.compTradI4",
-          "commercial.competitiveAdvantages.compTradI5",
-        ],
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/competitive-advantages",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/competitive-advantages.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
-
-  // ─── Database Freedom ───────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.competitiveAdvantages.databaseTitle",
-    id: "database-freedom",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-  { type: "paragraph", contentKey: "commercial.competitiveAdvantages.databaseContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.competitiveAdvantages.tblDbHeader1",
-      "commercial.competitiveAdvantages.tblDbHeader2",
-      "commercial.competitiveAdvantages.tblDbHeader3",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.competitiveAdvantages.tblDbR1C1",
-        "commercial.competitiveAdvantages.tblDbR1C2",
-        "commercial.competitiveAdvantages.tblDbR1C3",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "commercial.competitiveAdvantages.tblDbR2C1",
-        "commercial.competitiveAdvantages.tblDbR2C2",
-        "commercial.competitiveAdvantages.tblDbR2C3",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "commercial.competitiveAdvantages.tblDbR3C1",
-        "commercial.competitiveAdvantages.tblDbR3C2",
-        "commercial.competitiveAdvantages.tblDbR3C3",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "commercial.competitiveAdvantages.tblDbR4C1",
-        "commercial.competitiveAdvantages.tblDbR4C2",
-        "commercial.competitiveAdvantages.tblDbR4C3",
-      ],
-    ],
-  },
-
-  // ─── 8-Layer Security ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.competitiveAdvantages.securityTitle",
-    id: "security",
-  },
-  { type: "paragraph", contentKey: "commercial.competitiveAdvantages.securityContent" },
-  {
-    type: "flowchart",
-    direction: "vertical",
-    title: "commercial.competitiveAdvantages.flowSecTitle",
-    nodes: [
-      { id: "l1", label: "commercial.competitiveAdvantages.flowSecN1", type: "default" },
-      { id: "l2", label: "commercial.competitiveAdvantages.flowSecN2", type: "info" },
-      { id: "l3", label: "commercial.competitiveAdvantages.flowSecN3", type: "primary" },
-      { id: "l4", label: "commercial.competitiveAdvantages.flowSecN4", type: "primary" },
-      { id: "l5", label: "commercial.competitiveAdvantages.flowSecN5", type: "warning" },
-      { id: "l6", label: "commercial.competitiveAdvantages.flowSecN6", type: "warning" },
-      { id: "l7", label: "commercial.competitiveAdvantages.flowSecN7", type: "success" },
-      { id: "l8", label: "commercial.competitiveAdvantages.flowSecN8", type: "danger" },
-    ],
-    connections: [
-      { from: "l1", to: "l2" },
-      { from: "l2", to: "l3" },
-      { from: "l3", to: "l4" },
-      { from: "l4", to: "l5" },
-      { from: "l5", to: "l6" },
-      { from: "l6", to: "l7" },
-      { from: "l7", to: "l8" },
-    ],
-  },
-
-  // ─── Multi-Tenancy ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.competitiveAdvantages.tenancyTitle",
-    id: "multi-tenancy",
-  },
-  { type: "paragraph", contentKey: "commercial.competitiveAdvantages.tenancyContent" },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "shield",
-        titleKey: "commercial.competitiveAdvantages.tenantIsolation",
-        descriptionKey: "commercial.competitiveAdvantages.tenantIsolationDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.competitiveAdvantages.tenantHierarchy",
-        descriptionKey: "commercial.competitiveAdvantages.tenantHierarchyDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "commercial.competitiveAdvantages.tenantBranding",
-        descriptionKey: "commercial.competitiveAdvantages.tenantBrandingDesc",
-      },
-    ],
-  },
-
-  // ─── Developer Productivity ─────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.competitiveAdvantages.productivityTitle",
-    id: "productivity",
-  },
-  { type: "paragraph", contentKey: "commercial.competitiveAdvantages.productivityContent" },
-  {
-    type: "table",
-    headers: [
-      "commercial.competitiveAdvantages.tblProdHeader1",
-      "commercial.competitiveAdvantages.tblProdHeader2",
-    ],
-    rows: [
-      [
-        "commercial.competitiveAdvantages.tblProdR1C1",
-        "commercial.competitiveAdvantages.tblProdR1C2",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
       [
-        "commercial.competitiveAdvantages.tblProdR2C1",
-        "commercial.competitiveAdvantages.tblProdR2C2",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblProdR3C1",
-        "commercial.competitiveAdvantages.tblProdR3C2",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblProdR4C1",
-        "commercial.competitiveAdvantages.tblProdR4C2",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblProdR5C1",
-        "commercial.competitiveAdvantages.tblProdR5C2",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblProdR6C1",
-        "commercial.competitiveAdvantages.tblProdR6C2",
-      ],
-    ],
-  },
-
-  // ─── Competitive Comparison ─────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.competitiveAdvantages.comparisonTitle",
-    id: "comparison",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.competitiveAdvantages.tblCompHeader1",
-      "commercial.competitiveAdvantages.tblCompHeader2",
-      "commercial.competitiveAdvantages.tblCompHeader3",
-      "commercial.competitiveAdvantages.tblCompHeader4",
-    ],
-    rows: [
-      [
-        "commercial.competitiveAdvantages.tblCompR1C1",
-        "commercial.competitiveAdvantages.tblCompR1C2",
-        "commercial.competitiveAdvantages.tblCompR1C3",
-        "commercial.competitiveAdvantages.tblCompR1C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR2C1",
-        "commercial.competitiveAdvantages.tblCompR2C2",
-        "commercial.competitiveAdvantages.tblCompR2C3",
-        "commercial.competitiveAdvantages.tblCompR2C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR3C1",
-        "commercial.competitiveAdvantages.tblCompR3C2",
-        "commercial.competitiveAdvantages.tblCompR3C3",
-        "commercial.competitiveAdvantages.tblCompR3C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR4C1",
-        "commercial.competitiveAdvantages.tblCompR4C2",
-        "commercial.competitiveAdvantages.tblCompR4C3",
-        "commercial.competitiveAdvantages.tblCompR4C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR5C1",
-        "commercial.competitiveAdvantages.tblCompR5C2",
-        "commercial.competitiveAdvantages.tblCompR5C3",
-        "commercial.competitiveAdvantages.tblCompR5C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR6C1",
-        "commercial.competitiveAdvantages.tblCompR6C2",
-        "commercial.competitiveAdvantages.tblCompR6C3",
-        "commercial.competitiveAdvantages.tblCompR6C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR7C1",
-        "commercial.competitiveAdvantages.tblCompR7C2",
-        "commercial.competitiveAdvantages.tblCompR7C3",
-        "commercial.competitiveAdvantages.tblCompR7C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR8C1",
-        "commercial.competitiveAdvantages.tblCompR8C2",
-        "commercial.competitiveAdvantages.tblCompR8C3",
-        "commercial.competitiveAdvantages.tblCompR8C4",
-      ],
-      [
-        "commercial.competitiveAdvantages.tblCompR9C1",
-        "commercial.competitiveAdvantages.tblCompR9C2",
-        "commercial.competitiveAdvantages.tblCompR9C3",
-        "commercial.competitiveAdvantages.tblCompR9C4",
-      ],
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.competitiveAdvantages.evaluationTip" },
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/competitive-advantages",
   titleKey: "commercial.competitiveAdvantages.title",
-  descriptionKey: "commercial.competitiveAdvantages.description",
   category: "commercial-why-scripe",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/why-scripe-overview", "commercial/target-industries"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/why-scripe-overview","commercial/target-industries"],
+  lastUpdated: "2026-06-07",
 });

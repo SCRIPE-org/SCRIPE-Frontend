@@ -2,177 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.cleanArchitecture.intro" },
-
-  // ─── Architecture Layers ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.layersTitle", id: "layers" },
   {
-    type: "table",
-    headers: [
-      "commercial.cleanArchitecture.tblLayersHeader1",
-      "commercial.cleanArchitecture.tblLayersHeader2",
-      "commercial.cleanArchitecture.tblLayersHeader3",
-    ],
-    rows: [
-      [
-        "commercial.cleanArchitecture.tblLayersR1C1",
-        "commercial.cleanArchitecture.tblLayersR1C2",
-        "commercial.cleanArchitecture.tblLayersR1C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblLayersR2C1",
-        "commercial.cleanArchitecture.tblLayersR2C2",
-        "commercial.cleanArchitecture.tblLayersR2C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblLayersR3C1",
-        "commercial.cleanArchitecture.tblLayersR3C2",
-        "commercial.cleanArchitecture.tblLayersR3C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblLayersR4C1",
-        "commercial.cleanArchitecture.tblLayersR4C2",
-        "commercial.cleanArchitecture.tblLayersR4C3",
-      ],
-    ],
-  },
-
-  // ─── CQRS Pattern ──────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.cqrsTitle", id: "cqrs" },
-  { type: "paragraph", contentKey: "commercial.cleanArchitecture.cqrsContent" },
-  {
-    type: "table",
-    headers: [
-      "commercial.cleanArchitecture.tblCqrsHeader1",
-      "commercial.cleanArchitecture.tblCqrsHeader2",
-      "commercial.cleanArchitecture.tblCqrsHeader3",
-    ],
-    rows: [
-      [
-        "commercial.cleanArchitecture.tblCqrsR1C1",
-        "commercial.cleanArchitecture.tblCqrsR1C2",
-        "commercial.cleanArchitecture.tblCqrsR1C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblCqrsR2C1",
-        "commercial.cleanArchitecture.tblCqrsR2C2",
-        "commercial.cleanArchitecture.tblCqrsR2C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblCqrsR3C1",
-        "commercial.cleanArchitecture.tblCqrsR3C2",
-        "commercial.cleanArchitecture.tblCqrsR3C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblCqrsR4C1",
-        "commercial.cleanArchitecture.tblCqrsR4C2",
-        "commercial.cleanArchitecture.tblCqrsR4C3",
-      ],
-      [
-        "commercial.cleanArchitecture.tblCqrsR5C1",
-        "commercial.cleanArchitecture.tblCqrsR5C2",
-        "commercial.cleanArchitecture.tblCqrsR5C3",
-      ],
-    ],
-  },
-
-  // ─── SOLID Principles ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.solidTitle", id: "solid" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "layers",
-        titleKey: "commercial.cleanArchitecture.singleResp",
-        descriptionKey: "commercial.cleanArchitecture.singleRespDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.cleanArchitecture.openClosed",
-        descriptionKey: "commercial.cleanArchitecture.openClosedDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.cleanArchitecture.depInversion",
-        descriptionKey: "commercial.cleanArchitecture.depInversionDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.cleanArchitecture.interfaceSeg",
-        descriptionKey: "commercial.cleanArchitecture.interfaceSegDesc",
-      },
-    ],
-  },
-
-  // ─── Domain-Driven Design ───────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.dddTitle", id: "ddd" },
-  { type: "paragraph", contentKey: "commercial.cleanArchitecture.dddContent" },
-
-  // ─── Frontend SOLID ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.cleanArchitecture.frontendTitle",
-    id: "frontend-solid",
-  },
-  { type: "paragraph", contentKey: "commercial.cleanArchitecture.frontendContent" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "SOLID View/ViewModel Pattern",
-    code: `// View — Pure UI (~60 lines, zero logic)
-export function EmployeeListView() {
-  const vm = useEmployeeListViewModel();
-  return (
-    <div>
-      <FilterSection {...vm.filters} />
-      <StatisticsSection {...vm.statistics} />
-      <GenericCrudView crud={vm.table} columns={vm.columns} />
-    </div>
-  );
-}
-
-// ViewModel — All Logic (composing section ViewModels)
-export function useEmployeeListViewModel() {
-  const filters = useFilterViewModel();
-  const statistics = useStatisticsViewModel();
-  const table = useCrudViewModel(config);
-  const columns = [...]; // Defined here, not in View
-  return { filters, statistics, table, columns };
-}`,
-  },
-
-  // ─── Benefits ───────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.cleanArchitecture.benefitsTitle",
-    id: "benefits",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: [
-      "commercial.cleanArchitecture.tblBenHeader1",
-      "commercial.cleanArchitecture.tblBenHeader2",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
-      ["commercial.cleanArchitecture.tblBenR1C1", "commercial.cleanArchitecture.tblBenR1C2"],
-      ["commercial.cleanArchitecture.tblBenR2C1", "commercial.cleanArchitecture.tblBenR2C2"],
-      ["commercial.cleanArchitecture.tblBenR3C1", "commercial.cleanArchitecture.tblBenR3C2"],
-      ["commercial.cleanArchitecture.tblBenR4C1", "commercial.cleanArchitecture.tblBenR4C2"],
-      ["commercial.cleanArchitecture.tblBenR5C1", "commercial.cleanArchitecture.tblBenR5C2"],
-    ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/clean-architecture",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/clean-architecture.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/clean-architecture",
   titleKey: "commercial.cleanArchitecture.title",
-  descriptionKey: "commercial.cleanArchitecture.description",
   category: "commercial-developer",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/cli-tooling", "commercial/api-design"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/cli-tooling","commercial/api-design"],
+  lastUpdated: "2026-06-07",
 });

@@ -29,7 +29,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL }: PasskeyPromptProps) 
   // ── Not supported state ──
   if (!vm.isSupported) {
     return (
-      <div className="sx-screen space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="sx-screen-anim w-full space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
         <div
           className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl"
           style={{
@@ -71,7 +71,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL }: PasskeyPromptProps) 
 
   // ── Main UI ──
   return (
-    <div className="sx-screen space-y-6 text-center" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="sx-screen-anim w-full space-y-6 text-center" dir={isRTL ? "rtl" : "ltr"}>
       {/* Fingerprint icon with pulse */}
       <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
         {/* Pulse rings */}

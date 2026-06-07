@@ -2,220 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "architecture.solidPattern.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.solidPattern.principlesTitle",
-    id: "solid-principles",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Principle", "Meaning", "Application"],
-    rows: [
-      [
-        "S — Single Responsibility",
-        "One reason to change",
-        "Each ViewModel handles ONE concern (stats, filters, table)",
-      ],
-      [
-        "O — Open/Closed",
-        "Open for extension, closed for modification",
-        "Base hooks extended via composition, never modified",
-      ],
-      [
-        "L — Liskov Substitution",
-        "Subtypes must be substitutable",
-        "All ViewModels return consistent typed interfaces",
-      ],
-      [
-        "I — Interface Segregation",
-        "No client forced to depend on unused interfaces",
-        "Components receive only the props they need",
-      ],
-      [
-        "D — Dependency Inversion",
-        "Depend on abstractions",
-        "Views depend on ViewModel hook interfaces, not implementations",
-      ],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/architecture/solid-pattern",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/architecture/solid-pattern.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Application entry point",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Program.cs is intentionally thin and delegates registration and middleware to extension files."
+      ],
+      [
+        "Module registration",
+        "SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Conditional loading supports monolith, Gateway mode, and single-module service mode for the five implemented backend modules."
+      ],
+      [
+        "AstraFlow pipeline",
+        "SCRIPE-Backend/src/Core/Core.Application/DependencyInjection.cs",
+        "Open behaviors are registered in source order: Logging, Validation, FeatureCheck, WebhookDispatch, and Caching, with preprocessors, postprocessors, exception action/handler, and stream logging."
+      ],
+      [
+        "HTTP middleware",
+        "SCRIPE-Backend/src/Host/API/Extensions/MiddlewarePipeline.cs",
+        "The runtime HTTP pipeline is configured in one extension and includes forwarded headers, exception handling, security, CORS, jobs, rate limiting, auth, CSRF, replay protection, ETag, controllers, metrics, SignalR, and YARP."
+      ]
+    ]
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.solidPattern.scenariosTitle",
-    id: "scenarios",
-  },
-  { type: "paragraph", contentKey: "architecture.solidPattern.scenariosIntro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.solidPattern.scenario1Title",
-    id: "crud-list",
-  },
-  { type: "paragraph", contentKey: "architecture.solidPattern.scenario1Intro" },
-  {
-    type: "code",
-    language: "text",
-    filename: "CRUD List Page Structure",
-    code: `user-management/src/presentation/
-├── views/
-│   └── UserManagementView.tsx      # ~60 lines, pure composition
-├── viewmodels/
-│   ├── useUserManagementViewModel.ts    # Orchestrator
-│   ├── useStatisticsViewModel.ts        # Stats logic
-│   ├── useFilterViewModel.ts            # Filter state
-│   └── useBlockUserAction.ts            # Row action
-└── components/
-    ├── StatisticsSection.tsx       # Stats UI
-    └── FilterSection.tsx           # Filter UI`,
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.solidPattern.scenario2Title",
-    id: "dashboard",
-  },
-  { type: "paragraph", contentKey: "architecture.solidPattern.scenario2Intro" },
-  {
-    type: "code",
-    language: "text",
-    filename: "Dashboard Page Structure",
-    code: `dashboard/src/presentation/
-├── views/
-│   └── DashboardView.tsx           # ~60 lines
-├── viewmodels/
-│   ├── useDashboardViewModel.ts    # Orchestrator
-│   ├── useKPIViewModel.ts          # KPI cards
-│   ├── useChartViewModel.ts        # Chart data + period
-│   └── useRecentActivityViewModel.ts
-└── components/
-    ├── KPICards.tsx
-    ├── SalesChart.tsx
-    └── RecentActivityTable.tsx`,
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
   {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.solidPattern.scenario3Title",
-    id: "detail-profile",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  { type: "paragraph", contentKey: "architecture.solidPattern.scenario3Intro" },
   {
-    type: "code",
-    language: "typescript",
-    filename: "Profile Orchestrator ViewModel",
-    code: `export function useUserProfileViewModel(userId: string) {
-  const [activeTab, setActiveTab] = useState("activity");
-
-  const { data: user, isLoading, error } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => userRepository.getById(userId),
-  });
-
-  const header = useProfileHeaderViewModel(user);
-  const activity = useActivityTabViewModel(userId);
-  const settings = useSettingsTabViewModel(userId);
-
-  return {
-    user, isLoading, error,
-    activeTab, setActiveTab,
-    tabs: [
-      { id: "activity", label: t("profile.tabs.activity") },
-      { id: "settings", label: t("profile.tabs.settings") },
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    header, activity, settings,
-  };
-}`,
-    highlightLines: [9, 10, 11],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.solidPattern.scenario4Title",
-    id: "settings",
-  },
-  { type: "paragraph", contentKey: "architecture.solidPattern.scenario4Intro" },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.solidPattern.scenario5Title",
-    id: "wizard",
-  },
-  { type: "paragraph", contentKey: "architecture.solidPattern.scenario5Intro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Wizard ViewModel Pattern",
-    code: `export function useOnboardingViewModel() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 3;
-
-  const step1 = useStep1ViewModel();
-  const step2 = useStep2ViewModel();
-  const step3 = useStep3ViewModel();
-
-  const canGoNext = useMemo(() => {
-    if (currentStep === 1) return step1.form.formState.isValid;
-    if (currentStep === 2) return step2.form.formState.isValid;
-    return true;
-  }, [currentStep, step1, step2]);
-
-  const { mutate: submitAll, isPending: isSubmitting } = useMutation({
-    mutationFn: async () => {
-      const combined = {
-        ...step1.form.getValues(),
-        ...step2.form.getValues(),
-        ...step3.form.getValues(),
-      };
-      return onboardingRepository.complete(combined);
-    },
-  });
-
-  return {
-    currentStep, totalSteps,
-    canGoNext, canGoPrev: currentStep > 1,
-    goNext: () => setCurrentStep(s => Math.min(s + 1, totalSteps)),
-    goPrev: () => setCurrentStep(s => Math.max(s - 1, 1)),
-    step1, step2, step3,
-    isSubmitting, submitAll,
-  };
-}`,
-    highlightLines: [5, 6, 7, 9],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.solidPattern.rulesTitle",
-    id: "golden-rules",
-  },
-  {
-    type: "list",
-    variant: "ordered",
-    items: [
-      "Views are pure UI — No state, no logic, no mutations",
-      "ViewModels handle ALL logic — State, mutations, computed values",
-      "One ViewModel per concern — Statistics, Filters, Table = separate hooks",
-      "Orchestrator composes — Main ViewModel composes section ViewModels",
-      "Columns defined in ViewModel — Not in View or Component",
-      "Max ~60 lines per View — If longer, extract section components",
-      "No JSX in ViewModels — ViewModels return data, not UI",
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "architecture.solidPattern.antiPatternWarning",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "architecture/solid-pattern",
   titleKey: "architecture.solidPattern.title",
-  descriptionKey: "architecture.solidPattern.description",
   category: "architecture",
   order: 6,
   sections,
-  relatedSlugs: ["architecture/frontend", "architecture/state-management"],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["architecture/frontend","architecture/state-management"],
+  lastUpdated: "2026-06-07",
 });

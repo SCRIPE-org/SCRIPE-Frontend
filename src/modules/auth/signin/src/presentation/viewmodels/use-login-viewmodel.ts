@@ -11,6 +11,7 @@ import {
   TwoFactorRequiredError,
   WorkspaceSelectionRequiredError,
 } from "@modules/auth/core/domain/errors/AuthErrors";
+import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
@@ -25,6 +26,7 @@ export type LoginStep =
   | "credentials"
   | "two-factor"
   | "workspace-selection"
+  | "magic-link-request"
   | "magic-link-sent"
   | "phone-otp"
   | "passkey"
@@ -170,16 +172,28 @@ export function useLoginViewModel() {
           }, 100);
         }
       } catch (err: unknown) {
-        if (err instanceof TwoFactorRequiredError) {
+
+        // instanceof + name fallback: some bundlers break Error prototype chains
+        if (
+          err instanceof TwoFactorRequiredError ||
+          (err instanceof Error && err.name === "TwoFactorRequiredError")
+        ) {
           twoFA.enterTwoFactor();
           return;
         }
-        if (err instanceof WorkspaceSelectionRequiredError) {
-          workspaceSelector.showWorkspaces(err.availableWorkspaces);
+        if (
+          err instanceof WorkspaceSelectionRequiredError ||
+          (err instanceof Error && err.name === "WorkspaceSelectionRequiredError") ||
+          // Ultimate duck-typing fallback: if it has availableWorkspaces array, it IS a workspace selection error
+          (err instanceof Error && "availableWorkspaces" in err && Array.isArray((err as any).availableWorkspaces))
+        ) {
+          const workspaces = (err as WorkspaceSelectionRequiredError).availableWorkspaces ?? (err as any).availableWorkspaces as WorkspaceChoice[];
+          workspaceSelector.showWorkspaces(workspaces);
           return;
         }
         setErrorWithShake(err instanceof Error ? err.message : "Login failed");
       }
+
     },
     [
       formData,
@@ -253,6 +267,7 @@ export function useLoginViewModel() {
     checkAndRedirect,
     resetForm,
     selectWorkspace: workspaceSelector.selectWorkspace,
+    unlockWorkspace: workspaceSelector.unlockWorkspace,
     setTenantId,
     isFormValid: isFormValid(validateForm(formData, VALIDATION_SETS.LOGIN_FORM)),
     // Magic link

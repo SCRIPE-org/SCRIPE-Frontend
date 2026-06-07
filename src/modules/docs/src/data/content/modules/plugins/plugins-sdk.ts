@@ -2,330 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Introduction ────────────────────────────────────────────
-  { type: "paragraph", contentKey: "modules.plugins.sdk.intro" },
   {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.plugins.sdk.infoTitle",
-    contentKey: "modules.plugins.sdk.infoContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Message Protocol ────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.protocolTitle",
-    id: "message-protocol",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.protocolIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "types.ts",
-    code: `// Messages the HOST sends TO the plugin iframe
-type HostToPluginMessage =
-  | { type: "THEME_UPDATE";     payload: { mode: "dark"|"light"; accent: string; direction: "ltr"|"rtl" } }
-  | { type: "AUTH_TOKEN";       payload: { accessToken: string; expiresAt: number } }
-  | { type: "LANGUAGE_CHANGE";  payload: { language: "en"|"ar"; direction: "ltr"|"rtl" } }
-  | { type: "TENANT_CONTEXT";   payload: { tenantId: string; tenantName: string; features: string[] } }
-  | { type: "NAVIGATE_CONFIRMED"; payload: { path: string } }
-  | { type: "PLUGIN_EVENT";     payload: { eventType: string; data: unknown } };
-
-// Messages the PLUGIN sends TO the host
-type PluginToHostMessage =
-  | { type: "READY" }
-  | { type: "NAVIGATE_REQUEST"; payload: { path: string } }
-  | { type: "TOAST";            payload: { variant: "success"|"error"|"warning"|"info"; title: string; message?: string } }
-  | { type: "RESIZE";           payload: { height: number } }
-  | { type: "AUTH_TOKEN_REQUEST" }
-  | { type: "OPEN_DIALOG";      payload: { title: string; content: string } }
-  | { type: "CLOSE";            payload?: { reason?: string } };`,
-    highlightLines: [2, 9],
-  },
-
-  // ─── PluginBridge ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.bridgeTitle",
-    id: "plugin-bridge",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.bridgeIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "PluginBridge usage",
-    code: `const iframeRef = useRef<HTMLIFrameElement>(null);
-const bridge = new PluginBridge("https://plugin.example.com", iframeRef);
-
-bridge.mount(); // starts listening to window messages
-
-const unsub = bridge.onMessage((msg) => {
-  if (msg.type === "READY") console.log("Plugin loaded!");
-  if (msg.type === "TOAST") showToast(msg.payload);
-});
-
-bridge.send({ type: "THEME_UPDATE", payload: { mode: "dark", accent: "#6366f1", direction: "ltr" } });
-
-// Cleanup
-bridge.unmount();
-unsub();`,
-  },
-
-  // ─── PluginFrame ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.frameTitle",
-    id: "plugin-frame",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.frameIntro" },
-  {
-    type: "code",
-    language: "tsx",
-    filename: "PluginFrame usage",
-    code: `import { PluginFrame } from "@core/plugins/plugin-sdk/PluginFrame";
-
-<PluginFrame
-  pluginKey="my-tier2-plugin"
-  frontendUrl="https://plugin.example.com/ui"
-  installationId={installationId}
-  className="min-h-[500px]"
-/>`,
-  },
-
-  // ─── Bridge Classes ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.bridgesTitle",
-    id: "bridge-classes",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.bridgesIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.plugins.sdk.bridgeClass",
-      "modules.plugins.sdk.bridgeRole",
-      "modules.plugins.sdk.bridgeMsg",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
-      ["PluginThemeSync", "modules.plugins.sdk.roleTheme", "THEME_UPDATE"],
-      ["PluginAuthRelay", "modules.plugins.sdk.roleAuth", "AUTH_TOKEN_REQUEST → AUTH_TOKEN"],
+    "rows": [
       [
-        "PluginNavigationBridge",
-        "modules.plugins.sdk.roleNav",
-        "NAVIGATE_REQUEST → NAVIGATE_CONFIRMED",
+        "Page route",
+        "/docs/modules/plugins-sdk",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["PluginToastBridge", "modules.plugins.sdk.roleToast", "TOAST"],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/plugins/plugins-sdk.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Plugins module",
+        "SCRIPE-Backend/src/Modules/Plugins",
+        "Plugins owns plugin definitions, installations, gateway/auth/context/data-store operations, health checks, and cleanup jobs."
+      ],
+      [
+        "Plugins controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Plugins",
+        "Controller endpoints cover catalog, definitions, install/activate/deactivate/upgrade, settings, logs, auth exchange, context, and plugin data store."
+      ],
+      [
+        "Frontend plugin routes",
+        "SCRIPE-Frontend/src/app/(modules)/(plugins)",
+        "UI routes cover catalog, installed plugins, definitions, logs, installation details, and settings."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Mounting all relays",
-    code: `const navBridge   = new PluginNavigationBridge(bridge, (path) => router.push(path));
-const toastBridge = new PluginToastBridge(bridge, { success, error, info, warning });
-const authRelay   = new PluginAuthRelay(bridge, () => fetchScopedToken(installationId));
-
-navBridge.mount();
-toastBridge.mount();
-authRelay.mount();
-
-// On unmount:
-return () => { navBridge.unmount(); toastBridge.unmount(); authRelay.unmount(); };`,
-  },
-
-  // ─── PluginHostProvider ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.providerTitle",
-    id: "host-provider",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.providerIntro" },
-  {
-    type: "code",
-    language: "tsx",
-    filename: "PluginHostProvider setup",
-    code: `import { PluginHostProvider } from "@core/plugins/plugin-host/PluginHostProvider";
-
-// In your root layout or plugin page:
-<PluginHostProvider getPluginToken={(installationId) => fetchPluginToken(installationId)}>
-  <PluginFrame ... />
-</PluginHostProvider>
-
-// Inside a child component:
-const { createBridgeFor, syncTheme, mountRelays } = usePluginHostContext();`,
-  },
-
-  // ─── PluginEventBus ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.eventBusTitle",
-    id: "event-bus",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.eventBusIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "PluginEventBus",
-    code: `import { pluginEventBus } from "@core/plugins/plugin-sdk/PluginEventBus";
-
-// Subscribe anywhere
-const unsub = pluginEventBus.on<{ installationId: string }>("plugin.activated", (data) => {
-  console.log("Plugin activated:", data.installationId);
-});
-
-// Emit from lifecycle handlers
-pluginEventBus.emit("plugin.activated", { installationId: "abc-123" });
-
-// Cleanup
-unsub();`,
-  },
-
-  // ─── Tier 1 Plugin Development ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.tier1Title",
-    id: "tier1-development",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.tier1Intro" },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "modules.plugins.sdk.tab1Backend",
-        code: `// Implement IPluginStartup in your plugin project
-public class MyPluginStartup : IPluginStartup
-{
-    public void ConfigureServices(IServiceCollection services, IConfiguration config)
-    {
-        services.AddScoped<IMyService, MyService>();
-    }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        // optional middleware
-    }
-}`,
-        language: "csharp",
-      },
-      {
-        label: "modules.plugins.sdk.tab1Frontend",
-        code: `// Expose your component via Module Federation
-export default function MyPlugin({ installationId }: { installationId: string }) {
-  return <div>Tier 1 Plugin — {installationId}</div>;
-}
-
-// webpack.config.js
-new ModuleFederationPlugin({
-  name: "my_plugin",           // workspaceKey with underscores
-  filename: "remoteEntry.js",
-  exposes: { "./Plugin": "./src/Plugin" },
-  shared: { react: { singleton: true, requiredVersion: "^19.0.0" } },
-})`,
-        language: "tsx",
-      },
-      {
-        label: "modules.plugins.sdk.tab1Host",
-        code: `import { ModuleFederationLoader } from "@core/plugins/tier1/ModuleFederationLoader";
-
-<ModuleFederationLoader
-  pluginKey="my-plugin"
-  baseUrl="https://my-plugin.internal"
-  installationId={installationId}
-/>`,
-        language: "tsx",
-      },
-    ],
-  },
-
-  // ─── Tier 2 Plugin Development ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.tier2Title",
-    id: "tier2-development",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.tier2Intro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Tier 2 iframe contract",
-    code: `// 1. Announce readiness (required — host shows skeleton until received)
-window.parent.postMessage({ type: "READY" }, "*");
-
-// 2. Request a scoped auth token
-window.parent.postMessage({ type: "AUTH_TOKEN_REQUEST" }, "*");
-
-// 3. Listen for host messages (ALWAYS validate origin)
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://your-scripe-host.com") return;
-
-  const msg = event.data;
-  if (msg.type === "AUTH_TOKEN") {
-    myApiClient.setToken(msg.payload.accessToken);
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-  if (msg.type === "THEME_UPDATE") {
-    document.documentElement.dataset.theme = msg.payload.mode;
-    document.dir = msg.payload.direction;
-  }
-});
-
-// 4. Trigger host notifications
-window.parent.postMessage({ type: "TOAST", payload: { variant: "success", title: "Saved!" } }, "*");
-
-// 5. Request internal navigation (only "/" prefix allowed)
-window.parent.postMessage({ type: "NAVIGATE_REQUEST", payload: { path: "/plugins/installed" } }, "*");
-
-// 6. Resize the container
-window.parent.postMessage({ type: "RESIZE", payload: { height: 800 } }, "*");`,
-    highlightLines: [1, 4, 7, 20, 23, 26],
-  },
-
-  // ─── Data Store API ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.plugins.sdk.dataStoreTitle",
-    id: "data-store",
-  },
-  { type: "paragraph", contentKey: "modules.plugins.sdk.dataStoreIntro" },
-  {
-    type: "info",
-    variant: "warning",
-    titleKey: "modules.plugins.sdk.dataStoreWarningTitle",
-    contentKey: "modules.plugins.sdk.dataStoreWarningContent",
-  },
-  {
-    type: "code",
-    language: "http",
-    filename: "Data Store API",
-    code: `# Upsert a key (max 64KB value)
-PUT /api/v1/plugin-api/v1/data/{installationId}/{namespace}/{key}
-X-Plugin-Api-Key: {your-api-key}
-Content-Type: application/json
-Body: { "value": "{\\"language\\":\\"en\\"}" }
-
-# Read all keys in namespace
-GET /api/v1/plugin-api/v1/data/{installationId}/{namespace}
-
-# Delete a key
-DELETE /api/v1/plugin-api/v1/data/{installationId}/{namespace}/{key}`,
-  },
 ];
 
 registerPage({
   slug: "modules/plugins-sdk",
   titleKey: "modules.plugins.sdk.title",
-  descriptionKey: "modules.plugins.sdk.description",
   category: "modules",
   order: 2,
   sections,
-  relatedSlugs: ["modules/plugins-overview", "architecture/frontend"],
-  lastUpdated: "2026-05-10",
+  relatedSlugs: ["modules/plugins-overview","architecture/frontend"],
+  lastUpdated: "2026-06-07",
 });

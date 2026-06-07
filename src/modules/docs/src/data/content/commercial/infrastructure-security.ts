@@ -2,122 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.infraSecurity.intro" },
-
-  // ─── CORS Configuration ─────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.infraSecurity.corsTitle", id: "cors" },
-  { type: "paragraph", contentKey: "commercial.infraSecurity.corsContent" },
   {
-    type: "table",
-    headers: ["Setting", "Configuration"],
-    rows: [
-      ["Allowed Origins", "Configurable per environment (no wildcards in production)"],
-      ["Allowed Methods", "GET, POST, PUT, DELETE, PATCH (configurable)"],
-      ["Allowed Headers", "Authorization, Content-Type, X-CSRF-Token, X-Request-Id"],
-      ["Credentials", "Enabled (for cookie-based authentication)"],
-      ["Max Age", "86400 seconds (24 hours preflight cache)"],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Rate Limiting ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.infraSecurity.rateLimitTitle",
-    id: "rate-limiting",
-  },
-  { type: "paragraph", contentKey: "commercial.infraSecurity.rateLimitContent" },
-  {
-    type: "table",
-    headers: ["Endpoint Category", "Limit", "Window", "Strategy"],
-    rows: [
-      ["Authentication", "5 requests", "Per minute", "Sliding window per IP"],
-      ["Password Reset", "3 requests", "Per hour", "Sliding window per email"],
-      ["General API", "100 requests", "Per minute", "Sliding window per user"],
-      ["File Upload", "10 requests", "Per minute", "Fixed window per user"],
-      ["Export/Download", "5 requests", "Per minute", "Token bucket per user"],
-      ["Webhook outbound", "50 requests", "Per minute", "Per destination URL"],
-    ],
-  },
-
-  // ─── Content Security Policy ────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.infraSecurity.cspTitle", id: "csp" },
-  { type: "paragraph", contentKey: "commercial.infraSecurity.cspContent" },
-  {
-    type: "table",
-    headers: ["Header", "Value", "Purpose"],
-    rows: [
+    "rows": [
       [
-        "Content-Security-Policy",
-        "default-src 'self'; script-src 'self'",
-        "Prevent XSS and code injection",
+        "Page route",
+        "/commercial/infrastructure-security",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["X-Content-Type-Options", "nosniff", "Prevent MIME type sniffing"],
-      ["X-Frame-Options", "DENY", "Prevent clickjacking"],
-      ["Strict-Transport-Security", "max-age=31536000; includeSubDomains", "Enforce HTTPS"],
-      ["Referrer-Policy", "strict-origin-when-cross-origin", "Control referrer information"],
       [
-        "Permissions-Policy",
-        "camera=(), microphone=(), geolocation=()",
-        "Restrict browser features",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/infrastructure-security.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
-    ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
   },
-
-  // ─── Network Security ───────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.infraSecurity.networkTitle", id: "network" },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "shield",
-        titleKey: "commercial.infraSecurity.tlsInspection",
-        descriptionKey: "commercial.infraSecurity.tlsInspectionDesc",
-      },
-      {
-        icon: "server",
-        titleKey: "commercial.infraSecurity.reverseProxy",
-        descriptionKey: "commercial.infraSecurity.reverseProxyDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.infraSecurity.ipFiltering",
-        descriptionKey: "commercial.infraSecurity.ipFilteringDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.infraSecurity.networkSegment",
-        descriptionKey: "commercial.infraSecurity.networkSegmentDesc",
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── Secrets Management ─────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.infraSecurity.secretsTitle", id: "secrets" },
-  { type: "paragraph", contentKey: "commercial.infraSecurity.secretsContent" },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "Azure Key Vault integration for production secrets",
-      "Environment variable injection via Docker/Kubernetes",
-      "User Secrets for local development (dotnet user-secrets)",
-      "Automatic secret rotation with zero-downtime key rollover",
-      "No secrets in source code — all externalized configuration",
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
-  { type: "info", variant: "warning", contentKey: "commercial.infraSecurity.warningNote" },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/infrastructure-security",
   titleKey: "commercial.infraSecurity.title",
-  descriptionKey: "commercial.infraSecurity.description",
   category: "commercial-security",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/data-protection", "commercial/compliance-readiness"],
-  lastUpdated: "2026-03-13",
+  relatedSlugs: ["commercial/data-protection","commercial/compliance-readiness"],
+  lastUpdated: "2026-06-07",
 });

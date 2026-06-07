@@ -2,173 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.testingStrategy.intro" },
-
-  // ─── Testing Pyramid ────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.testingStrategy.pyramidTitle", id: "pyramid" },
   {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.testingStrategy.pyrE2E",
-        contentKey: "commercial.testingStrategy.pyrE2EScope",
-      },
-      {
-        titleKey: "commercial.testingStrategy.pyrInt",
-        contentKey: "commercial.testingStrategy.pyrIntScope",
-      },
-      {
-        titleKey: "commercial.testingStrategy.pyrUnit",
-        contentKey: "commercial.testingStrategy.pyrUnitScope",
-      },
-      {
-        titleKey: "commercial.testingStrategy.pyrStatic",
-        contentKey: "commercial.testingStrategy.pyrStaticScope",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/testing-strategy",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/testing-strategy.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
-
-  // ─── Unit Testing ───────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.testingStrategy.unitTitle", id: "unit" },
-  { type: "paragraph", contentKey: "commercial.testingStrategy.unitContent" },
   {
-    type: "code",
-    language: "csharp",
-    filename: "Example Unit Test",
-    code: `[Fact]
-public async Task Authenticate_WithValidCredentials_ReturnsCryptographicTokenAndTriggersAudit()
-{
-    // Arrange
-    var command = new AuthenticateTenantCommand("admin@enterprise.com", "S3cureP@ssword!");
-    var handler = new AuthenticateTenantCommandHandler(
-        _mockTenantRepository.Object, 
-        _mockTokenGenerator.Object,
-        _mockAuditLogger.Object
-    );
-
-    // Act
-    var result = await handler.Handle(command, CancellationToken.None);
-
-    // Assert
-    result.IsSuccess.Should().BeTrue();
-    result.Value.AccessToken.Should().NotBeNullOrWhiteSpace();
-    
-    // Mathematically certify that the Audit Trail was instantly invoked
-    _mockAuditLogger.Verify(a => a.LogSecurityEventAsync(
-        It.Is<SecurityEvent>(e => e.Type == SecurityEventType.TenantLoginSuccess)
-    ), Times.Once);
-}`,
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── Integration Testing ────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.testingStrategy.integrationTitle",
-    id: "integration",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-  { type: "paragraph", contentKey: "commercial.testingStrategy.integrationContent" },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.testingStrategy.lstIntI1",
-      "commercial.testingStrategy.lstIntI2",
-      "commercial.testingStrategy.lstIntI3",
-      "commercial.testingStrategy.lstIntI4",
-      "commercial.testingStrategy.lstIntI5",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── E2E Testing ───────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.testingStrategy.e2eTitle", id: "e2e" },
-  { type: "paragraph", contentKey: "commercial.testingStrategy.e2eContent" },
-
-  // ─── Summary Table ──────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.testingStrategy.summaryTitle", id: "summary" },
-  {
-    type: "table",
-    headers: [
-      "commercial.testingStrategy.tblSumHeader1",
-      "commercial.testingStrategy.tblSumHeader2",
-      "commercial.testingStrategy.tblSumHeader3",
-      "commercial.testingStrategy.tblSumHeader4",
-    ],
-    rows: [
+    "rows": [
       [
-        "commercial.testingStrategy.tblSumR1C1",
-        "commercial.testingStrategy.tblSumR1C2",
-        "commercial.testingStrategy.tblSumR1C3",
-        "commercial.testingStrategy.tblSumR1C4",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "commercial.testingStrategy.tblSumR2C1",
-        "commercial.testingStrategy.tblSumR2C2",
-        "commercial.testingStrategy.tblSumR2C3",
-        "commercial.testingStrategy.tblSumR2C4",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "commercial.testingStrategy.tblSumR3C1",
-        "commercial.testingStrategy.tblSumR3C2",
-        "commercial.testingStrategy.tblSumR3C3",
-        "commercial.testingStrategy.tblSumR3C4",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "commercial.testingStrategy.tblSumR4C1",
-        "commercial.testingStrategy.tblSumR4C2",
-        "commercial.testingStrategy.tblSumR4C3",
-        "commercial.testingStrategy.tblSumR4C4",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
       [
-        "commercial.testingStrategy.tblSumR5C1",
-        "commercial.testingStrategy.tblSumR5C2",
-        "commercial.testingStrategy.tblSumR5C3",
-        "commercial.testingStrategy.tblSumR5C4",
-      ],
-      [
-        "commercial.testingStrategy.tblSumR6C1",
-        "commercial.testingStrategy.tblSumR6C2",
-        "commercial.testingStrategy.tblSumR6C3",
-        "commercial.testingStrategy.tblSumR6C4",
-      ],
-    ],
-  },
-
-  // ─── CI Pipeline Integration ────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.testingStrategy.ciTitle", id: "ci" },
-  { type: "paragraph", contentKey: "commercial.testingStrategy.ciContent" },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.testingStrategy.ci1Title",
-        contentKey: "commercial.testingStrategy.ci1Content",
-      },
-      {
-        titleKey: "commercial.testingStrategy.ci2Title",
-        contentKey: "commercial.testingStrategy.ci2Content",
-      },
-      {
-        titleKey: "commercial.testingStrategy.ci3Title",
-        contentKey: "commercial.testingStrategy.ci3Content",
-      },
-      {
-        titleKey: "commercial.testingStrategy.ci4Title",
-        contentKey: "commercial.testingStrategy.ci4Content",
-      },
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.testingStrategy.tip" },
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/testing-strategy",
   titleKey: "commercial.testingStrategy.title",
-  descriptionKey: "commercial.testingStrategy.description",
   category: "commercial-developer",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/clean-architecture", "commercial/ci-cd-pipeline"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/clean-architecture","commercial/ci-cd-pipeline"],
+  lastUpdated: "2026-06-07",
 });

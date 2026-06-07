@@ -15,6 +15,9 @@ export class TwoFactorRequiredError extends Error {
   constructor() {
     super("Two-factor authentication required");
     this.name = "TwoFactorRequiredError";
+    // Required for `instanceof` to work correctly when TypeScript targets ES2015+
+    // and the bundler does not preserve the prototype chain for Error subclasses.
+    Object.setPrototypeOf(this, TwoFactorRequiredError.prototype);
   }
 }
 
@@ -47,6 +50,22 @@ export interface WorkspaceChoice {
    * E.g. "Suspended", "Cancelled", "Account deactivated"
    */
   disabledReason?: string | null;
+  /**
+   * TRUE — the password entered on the main screen matched this workspace.
+   *        Card is unlocked/clickable — select to log in.
+   * FALSE — the password didn't match. Card shows an inline 'Enter password' form.
+   * Undefined/null — method did not use password (e.g., magic link, SSO).
+   */
+  isPasswordVerified?: boolean;
+  /**
+   * TRUE — this account is currently locked out (too many failed attempts).
+   *        Card shows lockout badge + countdown until lockedUntil.
+   */
+  isLocked?: boolean;
+  /**
+   * ISO date string when the lockout expires (only populated when isLocked is true).
+   */
+  lockedUntil?: string | null;
 }
 
 /**
@@ -62,5 +81,8 @@ export class WorkspaceSelectionRequiredError extends Error {
     super("Multiple workspaces found — please select a workspace to continue");
     this.name = "WorkspaceSelectionRequiredError";
     this.availableWorkspaces = workspaces;
+    // Required for `instanceof` to work correctly when TypeScript targets ES2015+
+    // and the bundler does not preserve the prototype chain for Error subclasses.
+    Object.setPrototypeOf(this, WorkspaceSelectionRequiredError.prototype);
   }
 }

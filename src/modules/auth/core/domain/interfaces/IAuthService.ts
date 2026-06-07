@@ -65,11 +65,31 @@ export interface IAuthService {
   /** Request a phone OTP for sign-in (enumeration-safe, always resolves). */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
 
-  /** Verify a phone OTP code for sign-in. */
+  /** Verify a phone OTP code for sign-in. Returns full login response (may include workspace selection). */
   verifyPhoneOtp(
     phoneNumber: string,
     code: string
-  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }>;
+  ): Promise<{
+    accessToken: string;
+    refreshToken?: string;
+    expiresAt?: string;
+    requiresWorkspaceSelection?: boolean;
+    availableWorkspaces?: Array<{
+      tenantId: string;
+      tenantCode: string;
+      tenantName: string;
+      logoUrl: string | null;
+      isPlatformAdmin: boolean;
+      isActivated: boolean;
+      isDisabled?: boolean;
+      disabledReason?: string | null;
+      isPasswordVerified?: boolean;
+      isLocked?: boolean;
+      lockedUntil?: string | null;
+    }> | null;
+    mustChangePassword?: boolean;
+    defaultRedirectPath?: string;
+  }>;
 
   /** Begin QR sign-in — generate a session token + QR code data. */
   beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
@@ -83,4 +103,6 @@ export interface IAuthService {
 
   /** Approve a QR sign-in session from the mobile device. */
   approveQrSignIn(sessionId: string): Promise<void>;
+  /** Reject a QR sign-in session from the mobile device. */
+  rejectQrSignIn(sessionId: string): Promise<void>;
 }

@@ -13,6 +13,7 @@
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
+import { useAppStore } from "@core/store/useAppStore";
 
 /**
  * Purge the navigation store and its localStorage cache.
@@ -70,17 +71,37 @@ export function clearAllLocalStorage(): void {
  * Covers the case where a user navigates directly to /login without going through
  * the normal logout flow (e.g. expired session, direct URL entry, browser back-button
  * after a hard close).
+ *
+ * v2.2: Uses synchronous `useAppStore.getState().logout()` instead of async dynamic
+ * import. The previous `.then()` callback was a race condition — the RouteGuard would
+ * read stale `isAuthenticated = true` before the `.then()` fired, triggering a silent
+ * refresh that auto-redirected to the dashboard before the workspace picker could show.
  */
 export function clearSessionOnLoginMount(): void {
   if (typeof window === "undefined") return;
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
   sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
 
+  // Clear in-memory tokens immediately — prevents RouteGuard Case 1 redirect
+  // (hasToken && isAuthenticated → redirect to dashboard)
+  secureTokenService.clearTokens();
+
+  // Clear stale isAuthenticated from Zustand SYNCHRONOUSLY — prevents RouteGuard
+  // Case 2 silent refresh from running and auto-redirecting to dashboard, which
+  // would swallow the workspace picker before the user can see it.
+  const state = useAppStore.getState();
+  if (state.isAuthenticated) {
+    appLogger.auth(
+      "[auth-storage-cleanup] Stale isAuthenticated detected on login mount — clearing auth state"
+    );
+    state.logout();
+  }
+
   // Purge navigation store cache — prevents stale menus from a previous
   // (possibly impersonated) session bleeding into the next login.
   clearNavigationCaches();
 
   appLogger.auth(
-    "[auth-storage-cleanup] Login page mounted: stale flags and navigation cache cleared"
+    "[auth-storage-cleanup] Login page mounted: stale flags, tokens, auth state, and navigation cache cleared"
   );
 }

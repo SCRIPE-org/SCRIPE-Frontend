@@ -2,141 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.storageBackends.intro" },
-
-  // ─── Storage Providers ──────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.storageBackends.providersTitle",
-    id: "providers",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.storageBackends.providersIntro" },
   {
-    type: "table",
-    headers: ["Backend", "Best For", "Scalability", "Cost"],
-    rows: [
-      ["Local Disk", "Development, small deployments", "Limited to server disk", "Free"],
-      ["Azure Blob Storage", "Azure cloud deployments", "Virtually unlimited", "Pay per GB"],
-      ["AWS S3", "AWS cloud deployments", "Virtually unlimited", "Pay per GB"],
-      ["MinIO", "On-premise, S3-compatible", "Cluster scalable", "Free (open-source)"],
-      ["Google Cloud Storage", "GCP deployments", "Virtually unlimited", "Pay per GB"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/storage-backends",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/storage-backends.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
   },
-
-  // ─── Features ───────────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.storageBackends.featuresTitle",
-    id: "features",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "shield",
-        titleKey: "commercial.storageBackends.tenantIsolation",
-        descriptionKey: "commercial.storageBackends.tenantIsolationDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.storageBackends.imageProcessing",
-        descriptionKey: "commercial.storageBackends.imageProcessingDesc",
-      },
-      {
-        icon: "server",
-        titleKey: "commercial.storageBackends.resumableDownload",
-        descriptionKey: "commercial.storageBackends.resumableDownloadDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.storageBackends.pluggable",
-        descriptionKey: "commercial.storageBackends.pluggableDesc",
-      },
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── File Handling ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.storageBackends.handlingTitle",
-    id: "file-handling",
-  },
-  {
-    type: "table",
-    headers: ["Feature", "Capability", "Notes"],
-    rows: [
-      ["Max file size", "Configurable (default 50 MB)", "Chunked upload for large files"],
-      ["Allowed types", "Whitelist-based", "Configurable per tenant"],
-      ["Virus scanning", "ClamAV integration", "Optional, scans on upload"],
-      ["Image processing", "Auto-resize, thumbnails, WebP", "On-the-fly transformation"],
-      ["CDN support", "Integration ready", "Cache headers, signed URLs"],
-      ["Retention policy", "Auto-cleanup via background job", "Configurable per file type"],
-    ],
-  },
-
-  // ─── Configuration ──────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.storageBackends.configTitle", id: "config" },
-  {
-    type: "code",
-    language: "json",
-    filename: "Storage Backend Configuration",
-    code: `{
-  "StorageSettings": {
-    "Provider": "azure",
-    "MaxFileSizeMB": 50,
-    "AllowedExtensions": [".pdf", ".docx", ".png", ".jpg", ".xlsx"],
-    "Azure": {
-      "ConnectionString": "DefaultEndpointsProtocol=https;...",
-      "ContainerName": "scripe-files"
-    },
-    "S3": {
-      "AccessKey": "...",
-      "SecretKey": "...",
-      "BucketName": "scripe-files",
-      "Region": "us-east-1"
-    }
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
-
-  // ─── Migration Between Providers ────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.storageBackends.migrationTitle",
-    id: "migration",
-  },
-  { type: "paragraph", contentKey: "commercial.storageBackends.migrationContent" },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.storageBackends.mig1Title",
-        contentKey: "commercial.storageBackends.mig1Content",
-      },
-      {
-        titleKey: "commercial.storageBackends.mig2Title",
-        contentKey: "commercial.storageBackends.mig2Content",
-      },
-      {
-        titleKey: "commercial.storageBackends.mig3Title",
-        contentKey: "commercial.storageBackends.mig3Content",
-      },
-    ],
-  },
 ];
 
 registerPage({
   slug: "commercial/storage-backends",
   titleKey: "commercial.storageBackends.title",
-  descriptionKey: "commercial.storageBackends.description",
   category: "commercial-technical",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/database-support", "commercial/resilience-patterns"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/database-support","commercial/resilience-patterns"],
+  lastUpdated: "2026-06-07",
 });

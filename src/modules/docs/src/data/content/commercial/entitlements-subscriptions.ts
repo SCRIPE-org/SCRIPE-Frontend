@@ -2,242 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.entSubscriptions.intro" },
-
-  // ─── Subscription Lifecycle ─────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.entSubscriptions.lifecycleTitle",
-    id: "lifecycle",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.entSubscriptions.lifecycleContent" },
   {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "Subscription Status Lifecycle",
-    nodes: [
-      { id: "pending", label: "Pending", type: "default" },
-      { id: "active", label: "Active", type: "success" },
-      { id: "trial", label: "Trial", type: "info" },
-      { id: "suspended", label: "Suspended", type: "warning" },
-      { id: "expired", label: "Expired", type: "danger" },
-      { id: "cancelled", label: "Cancelled", type: "danger" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "pending", to: "active", label: "Activate" },
-      { from: "pending", to: "trial", label: "Start trial" },
-      { from: "trial", to: "active", label: "Convert" },
-      { from: "trial", to: "expired", label: "Trial ends" },
-      { from: "active", to: "suspended", label: "Suspend" },
-      { from: "suspended", to: "active", label: "Reactivate" },
-      { from: "active", to: "expired", label: "Expiry date" },
-      { from: "active", to: "cancelled", label: "Cancel" },
-    ],
-  },
-
-  // ─── Subscription Types ─────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entSubscriptions.typesTitle", id: "types" },
-  {
-    type: "table",
-    headers: [
-      "commercial.entSubscriptions.tblTypeH1",
-      "commercial.entSubscriptions.tblTypeH2",
-      "commercial.entSubscriptions.tblTypeH3",
-    ],
-    rows: [
+    "rows": [
       [
-        "commercial.entSubscriptions.tblTypeR1C1",
-        "commercial.entSubscriptions.tblTypeR1C2",
-        "commercial.entSubscriptions.tblTypeR1C3",
+        "Page route",
+        "/commercial/entitlements-subscriptions",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.entSubscriptions.tblTypeR2C1",
-        "commercial.entSubscriptions.tblTypeR2C2",
-        "commercial.entSubscriptions.tblTypeR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/entitlements-subscriptions.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.entSubscriptions.tblTypeR3C1",
-        "commercial.entSubscriptions.tblTypeR3C2",
-        "commercial.entSubscriptions.tblTypeR3C3",
-      ],
-    ],
-  },
-
-  // ─── Operations ─────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entSubscriptions.opsTitle", id: "operations" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "plus-circle",
-        titleKey: "commercial.entSubscriptions.opsAssign",
-        descriptionKey: "commercial.entSubscriptions.opsAssignDesc",
-      },
-      {
-        icon: "arrow-up",
-        titleKey: "commercial.entSubscriptions.opsUpgrade",
-        descriptionKey: "commercial.entSubscriptions.opsUpgradeDesc",
-      },
-      {
-        icon: "arrow-down",
-        titleKey: "commercial.entSubscriptions.opsDowngrade",
-        descriptionKey: "commercial.entSubscriptions.opsDowngradeDesc",
-      },
-      {
-        icon: "alert-triangle",
-        titleKey: "commercial.entSubscriptions.opsImpact",
-        descriptionKey: "commercial.entSubscriptions.opsImpactDesc",
-      },
-    ],
-  },
-
-  // ─── Expiry Behavior ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entSubscriptions.expiryTitle", id: "expiry" },
-  {
-    type: "table",
-    headers: [
-      "commercial.entSubscriptions.tblExpH1",
-      "commercial.entSubscriptions.tblExpH2",
-      "commercial.entSubscriptions.tblExpH3",
-    ],
-    rows: [
-      [
-        "commercial.entSubscriptions.tblExpR1C1",
-        "commercial.entSubscriptions.tblExpR1C2",
-        "commercial.entSubscriptions.tblExpR1C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.entSubscriptions.tblExpR2C1",
-        "commercial.entSubscriptions.tblExpR2C2",
-        "commercial.entSubscriptions.tblExpR2C3",
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
       ],
       [
-        "commercial.entSubscriptions.tblExpR3C1",
-        "commercial.entSubscriptions.tblExpR3C2",
-        "commercial.entSubscriptions.tblExpR3C3",
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
       ],
-    ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
-
-  // ─── Enterprise Subscription Management ──────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.entSubscriptions.enterpriseTitle",
-    id: "enterprise-management",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "file-text",
-        titleKey: "commercial.entSubscriptions.renewalTitle",
-        descriptionKey: "commercial.entSubscriptions.renewalDesc",
-      },
-      {
-        icon: "clock",
-        titleKey: "commercial.entSubscriptions.promoExpiryTitle",
-        descriptionKey: "commercial.entSubscriptions.promoExpiryDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.entSubscriptions.concurrencyTitle",
-        descriptionKey: "commercial.entSubscriptions.concurrencyDesc",
-      },
-      {
-        icon: "check-circle",
-        titleKey: "commercial.entSubscriptions.validationTitle",
-        descriptionKey: "commercial.entSubscriptions.validationDesc",
-      },
-      {
-        icon: "link",
-        titleKey: "commercial.entSubscriptions.crossModuleTitle",
-        descriptionKey: "commercial.entSubscriptions.crossModuleDesc",
-      },
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
-  // ─── API Endpoints ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entSubscriptions.apiTitle", id: "api" },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/subscriptions",
-        descriptionKey: "List all subscriptions",
-        auth: "Required",
-        permission: "Subscriptions.View",
-      },
-      {
-        method: "POST",
-        path: "/api/subscriptions/assign",
-        descriptionKey: "Assign subscription to tenant",
-        auth: "Required",
-        permission: "Subscriptions.Create",
-      },
-      {
-        method: "PUT",
-        path: "/api/subscriptions/{id}/upgrade",
-        descriptionKey: "Upgrade subscription edition",
-        auth: "Required",
-        permission: "Subscriptions.Update",
-      },
-      {
-        method: "PUT",
-        path: "/api/subscriptions/{id}/downgrade",
-        descriptionKey: "Downgrade subscription edition",
-        auth: "Required",
-        permission: "Subscriptions.Update",
-      },
-      {
-        method: "GET",
-        path: "/api/subscriptions/{id}/downgrade-impact",
-        descriptionKey: "Analyze downgrade impact",
-        auth: "Required",
-        permission: "Subscriptions.View",
-      },
-      {
-        method: "PUT",
-        path: "/api/subscriptions/{id}/suspend",
-        descriptionKey: "Suspend subscription",
-        auth: "Required",
-        permission: "Subscriptions.Update",
-      },
-      {
-        method: "PUT",
-        path: "/api/subscriptions/{id}/reactivate",
-        descriptionKey: "Reactivate subscription",
-        auth: "Required",
-        permission: "Subscriptions.Update",
-      },
-      {
-        method: "PUT",
-        path: "/api/subscriptions/{id}/cancel",
-        descriptionKey: "Cancel subscription",
-        auth: "Required",
-        permission: "Subscriptions.Update",
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-
-  { type: "info", variant: "tip", contentKey: "commercial.entSubscriptions.tip" },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/entitlements-subscriptions",
   titleKey: "commercial.entSubscriptions.title",
-  descriptionKey: "commercial.entSubscriptions.description",
   category: "commercial-modules",
   order: 3,
   sections,
-  relatedSlugs: [
-    "commercial/entitlements-editions",
-    "commercial/entitlements-overview",
-    "commercial/multi-tenancy",
-  ],
-  lastUpdated: "2026-03-02",
+  relatedSlugs: ["commercial/entitlements-editions","commercial/entitlements-overview","commercial/multi-tenancy"],
+  lastUpdated: "2026-06-07",
 });

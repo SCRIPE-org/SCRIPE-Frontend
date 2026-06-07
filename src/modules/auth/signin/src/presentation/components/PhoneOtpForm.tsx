@@ -36,7 +36,7 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
   // ── Phone input step ──
   if (vm.step === "phone") {
     return (
-      <div className="sx-screen space-y-5" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="sx-screen-anim w-full space-y-5" dir={isRTL ? "rtl" : "ltr"}>
         <div className="text-center">
           <h2
             className="text-lg font-bold"
@@ -126,7 +126,7 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
 
   // ── Code verification step ──
   return (
-    <div className="sx-screen space-y-5" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="sx-screen-anim w-full space-y-5" dir={isRTL ? "rtl" : "ltr"}>
       <div className="text-center">
         <h2
           className="text-lg font-bold"

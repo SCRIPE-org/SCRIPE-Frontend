@@ -2,261 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "frontend.stateManagement.intro" },
-
-  // ─── State Categories ─────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.stateManagement.categoriesTitle",
-    id: "categories",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "State Management Architecture",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "server",
-        label: "Server State (TanStack Query v5)",
-        type: "primary",
-        description: "API data: admins, users, tenants, roles, etc.",
-      },
-      {
-        id: "global",
-        label: "Global UI State (Zustand)",
-        type: "warning",
-        description: "Auth, sidebar, theme, toasts",
-      },
-      {
-        id: "local",
-        label: "Local Component State (useState)",
-        type: "success",
-        description: "Form inputs, modals, toggles",
-      },
-      {
-        id: "lang",
-        label: "Language State (LanguageProvider)",
-        type: "info",
-        description: "Arabic/English, RTL/LTR, translations",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [],
-  },
-  {
-    type: "table",
-    headers: ["State Type", "Tool", "Location", "Persistence"],
-    rows: [
+    "rows": [
       [
-        "Server Data",
-        "TanStack Query v5",
-        "ViewModels",
-        "In-memory cache (configurable staleTime)",
+        "Page route",
+        "/docs/frontend/state-management",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["Auth/Session", "Zustand + persist", "@core/store", "localStorage"],
-      ["Theme/Sidebar", "Zustand", "@core/store", "Optional"],
-      ["Toasts", "Zustand", "@core/store", "None"],
-      ["Language", "LanguageProvider", "@core/providers", "localStorage"],
-      ["Form Inputs", "useState / React Hook Form", "Components", "None"],
-      ["Modal/Toggle", "useState", "Components", "None"],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/frontend/state-management.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── TanStack Query ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.stateManagement.tanstackTitle",
-    id: "tanstack-query",
-  },
-  { type: "paragraph", contentKey: "frontend.stateManagement.tanstackIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Query Key Factory Pattern",
-    code: `// Consistent query key structure for cache management
-export const adminKeys = {
-  all:     ["admins"] as const,
-  lists:   ()           => [...adminKeys.all, "list"] as const,
-  list:    (filters: F)  => [...adminKeys.lists(), filters] as const,
-  details: ()           => [...adminKeys.all, "detail"] as const,
-  detail:  (id: string) => [...adminKeys.details(), id] as const,
-};
-
-// Usage in ViewModel
-const { data, isLoading } = useQuery({
-  queryKey: adminKeys.list({ page, search, sortBy, sortDir }),
-  queryFn: () => adminRepo.getAll({ page, search, sortBy, sortDir }),
-  staleTime: 5 * 60 * 1000,  // 5 min
-});
-
-// Invalidation after mutation
-const queryClient = useQueryClient();
-queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
-  },
-
-  // ─── Mutations ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.stateManagement.mutationsTitle",
-    id: "mutations",
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Mutation Pattern with Cache Invalidation",
-    code: `export function useCreateAdmin() {
-  const queryClient = useQueryClient();
-  const repo = container.adminRepository;
-  const { t } = Language();
-
-  return useMutation({
-    mutationFn: async (data: CreateAdminInput) => {
-      const result = await repo.create(data);
-      if (result.isErr()) throw result.error;
-      return result.value;
-    },
-    onSuccess: () => {
-      // Invalidate all admin queries to refetch
-      queryClient.invalidateQueries({ queryKey: adminKeys.all });
-      toast.success(t("admins.createSuccess"));
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}`,
-  },
-
-  // ─── Zustand Stores ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.stateManagement.zustandTitle",
-    id: "zustand",
-  },
-  { type: "paragraph", contentKey: "frontend.stateManagement.zustandIntro" },
-  {
-    type: "table",
-    headers: ["Store", "Purpose", "Persisted?"],
-    rows: [
-      ["useAuthStore", "User session, tokens, permissions, impersonation", "Yes (localStorage)"],
-      ["useUIStore", "Sidebar open/collapsed, theme, mobile state", "Optional"],
-      ["useToastStore", "Toast notification queue (auto-dismiss)", "No"],
-    ],
-  },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Auth Store",
-        language: "typescript",
-        filename: "useAuthStore.ts — Key Interface",
-        code: `interface AuthState {
-  user: User | null;
-  token: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  isImpersonating: boolean;
-  originalUser: User | null;
-  
-  // Actions
-  login: (user: User, token: string, refreshToken: string) => void;
-  logout: () => void;
-  setUser: (user: User) => void;
-  setTokens: (access: string, refresh: string) => void;
-  startImpersonation: (targetUser: User, token: string) => void;
-  stopImpersonation: () => void;
-}`,
-      },
-      {
-        label: "UI Store",
-        language: "typescript",
-        filename: "useUIStore.ts — Sidebar & Theme",
-        code: `interface UIState {
-  sidebarOpen: boolean;
-  sidebarCollapsed: boolean;
-  theme: 'light' | 'dark' | 'system';
-  isMobile: boolean;
-  
-  toggleSidebar: () => void;
-  setSidebarCollapsed: (collapsed: boolean) => void;
-  setTheme: (theme: 'light' | 'dark' | 'system') => void;
-  setIsMobile: (isMobile: boolean) => void;
-}`,
-      },
-    ],
-  },
-
-  // ─── LanguageProvider ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.stateManagement.languageTitle",
-    id: "language",
-  },
-  { type: "paragraph", contentKey: "frontend.stateManagement.languageIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Language() Hook — API",
-    code: `const {
-  language,      // 'en' | 'ar'
-  direction,     // 'ltr' | 'rtl'
-  setLanguage,   // (lang: 'en' | 'ar') => void
-  t,             // (key: string, vars?: Record<string, string>) => string
-} = Language();
-
-// Usage:
-t('common.save');                           // "Save"
-t('errors.minLength', { min: '8' });        // "Must be at least 8 characters"
-
-// RTL-aware styling:
-<div className={direction === 'rtl' ? 'text-right' : 'text-left'}>`,
-  },
-
-  // ─── Anti-Patterns ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.stateManagement.antiPatternsTitle",
-    id: "anti-patterns",
-  },
-  {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "frontend.stateManagement.antiPatternsDont",
-        variant: "negative",
-        items: [
-          "Store API data in Zustand (useEffect + fetch → Zustand setState)",
-          "Prop-drill sidebar/theme state through 5+ components",
-          "Use [locale] file-based routing for i18n",
-          "Create new Zustand stores per module",
-        ],
-      },
-      {
-        titleKey: "frontend.stateManagement.antiPatternsDo",
-        variant: "positive",
-        items: [
-          "Use TanStack Query for all server-state (useQuery + useQueryClient)",
-          "Access Zustand directly where needed (useUIStore())",
-          "Use LanguageProvider + t() function with localStorage persistence",
-          "Use hooks + TanStack Query per module; Zustand only for global UI",
-        ],
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "frontend/state-management",
   titleKey: "frontend.stateManagement.title",
-  descriptionKey: "frontend.stateManagement.description",
   category: "frontend",
   order: 3,
   sections,
-  relatedSlugs: ["frontend/crud-system", "architecture/frontend", "frontend/localization"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["frontend/crud-system","architecture/frontend","frontend/localization"],
+  lastUpdated: "2026-06-07",
 });

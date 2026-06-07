@@ -2,180 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  //  How Soft-Delete Works
-  { type: "heading", level: 2, titleKey: "features.recycleBin.softDeleteTitle", id: "soft-delete" },
-  { type: "paragraph", contentKey: "features.recycleBin.softDeleteIntro" },
   {
-    type: "code",
-    language: "csharp",
-    filename: "AuditableEntity.cs",
-    code: `public abstract class AuditableEntity<TId>
-{
-    public bool IsDeleted { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public string? DeletedBy { get; set; }  // Admin who deleted
-}`,
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "Soft-Delete Lifecycle",
-    nodes: [
-      { id: "delete", label: "Soft Delete", type: "danger" },
-      { id: "hidden", label: "Hidden from normal queries", type: "warning" },
-      { id: "rb", label: "Recycle Bin (IgnoreQueryFilters)", type: "info" },
-      { id: "restore", label: "IsDeleted = false (Visible again)", type: "success" },
-      { id: "purge", label: "Hard delete from DB", type: "danger" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "delete", to: "hidden", label: "IsDeleted = true" },
-      { from: "hidden", to: "rb" },
-      { from: "rb", to: "restore", label: "Restore" },
-      { from: "rb", to: "purge", label: "Purge" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/features/recycle-bin",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/recycle-bin.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  //  IgnoreQueryFilters Pattern 
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.recycleBin.ignoreFiltersTitle",
-    id: "ignore-filters",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "RecycleBinRepository.cs",
-    code: `public async Task<List<Tenant>> GetDeletedTenantsAsync(CancellationToken ct)
-{
-    return await _context.Tenants
-        .IgnoreQueryFilters()           // Bypass soft-delete AND tenant filters
-        .Where(t => t.IsDeleted)        // Only deleted ones
-        .OrderByDescending(t => t.DeletedAt)
-        .ToListAsync(ct);
-}`,
-  },
-  { type: "info", variant: "warning", contentKey: "features.recycleBin.ignoreFiltersWarning" },
-
-  //  Cascade Restore
-  { type: "heading", level: 2, titleKey: "features.recycleBin.cascadeTitle", id: "cascade" },
-  { type: "paragraph", contentKey: "features.recycleBin.cascadeIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "RecycleBinRepository.cs",
-    code: `public async Task CascadeRestoreTenantChildrenAsync(Guid tenantId, CancellationToken ct)
-{
-    // Bulk restore admins  single SQL UPDATE, no entity loading
-    await _context.Admins
-        .IgnoreQueryFilters()
-        .Where(a => a.TenantId == tenantId && a.IsDeleted)
-        .ExecuteUpdateAsync(s => s
-            .SetProperty(a => a.IsDeleted, false)
-            .SetProperty(a => a.DeletedAt, (DateTime?)null)
-            .SetProperty(a => a.DeletedBy, (string?)null), ct);
-
-    // Bulk restore users
-    await _context.Users
-        .IgnoreQueryFilters()
-        .Where(u => u.TenantId == tenantId && u.IsDeleted)
-        .ExecuteUpdateAsync(s => s
-            .SetProperty(u => u.IsDeleted, false)
-            .SetProperty(u => u.DeletedAt, (DateTime?)null)
-            .SetProperty(u => u.DeletedBy, (string?)null), ct);
-
-    // Same for Roles, RolePermissions, AdminRoles...
-}`,
-  },
-
-  //  ExecuteUpdateAsync Comparison
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.recycleBin.executeUpdateTitle",
-    id: "execute-update",
-  },
-  {
-    type: "table",
-    headers: ["Feature", "ExecuteUpdateAsync", "Traditional EF"],
-    rows: [
-      ["SQL generated", "Single UPDATE ... SET ... WHERE", "One UPDATE per entity"],
-      ["Memory usage", "Zero entity loading", "All entities loaded to memory"],
-      ["Change tracker", "Bypassed", "Active (overhead)"],
-      ["Interceptors", "Bypassed", "Triggers audit interceptor"],
-      ["Speed", "O(1) SQL roundtrip", "O(n) SQL roundtrips"],
-    ],
-  },
-  { type: "info", variant: "note", contentKey: "features.recycleBin.interceptorNote" },
-
-  //  Controller Endpoints 
-  { type: "heading", level: 2, titleKey: "features.recycleBin.endpointsTitle", id: "endpoints" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/recycle-bin/tenants",
-        descriptionKey: "List deleted tenants",
-        auth: "JWT",
-        permission: "recycle-bin.view",
-      },
-      {
-        method: "POST",
-        path: "/api/recycle-bin/tenants/{id}/restore",
-        descriptionKey: "Restore tenant + cascade children",
-        auth: "JWT",
-        permission: "recycle-bin.restore",
-      },
-      {
-        method: "DELETE",
-        path: "/api/recycle-bin/tenants/{id}/purge",
-        descriptionKey: "Permanent hard delete",
-        auth: "JWT",
-        permission: "recycle-bin.purge",
-      },
-      {
-        method: "GET",
-        path: "/api/recycle-bin/admins",
-        descriptionKey: "List deleted admins",
-        auth: "JWT",
-        permission: "recycle-bin.view",
-      },
-      {
-        method: "POST",
-        path: "/api/recycle-bin/admins/{id}/restore",
-        descriptionKey: "Restore admin",
-        auth: "JWT",
-        permission: "recycle-bin.restore",
-      },
-    ],
-  },
-
-  //  Purge vs Restore 
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.recycleBin.purgeVsRestoreTitle",
-    id: "purge-vs-restore",
-  },
-  {
-    type: "table",
-    headers: ["Action", "Reversible?", "What Happens"],
-    rows: [
-      ["Restore", "Yes (delete again)", "Sets IsDeleted = false, entity reappears"],
-      ["Purge", " No", "Hard DELETE FROM  data gone forever"],
-    ],
-  },
-  { type: "info", variant: "danger", contentKey: "features.recycleBin.purgeWarning" },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "features/recycle-bin",
   titleKey: "features.recycleBin.title",
-  descriptionKey: "features.recycleBin.description",
   category: "features",
   order: 9,
   sections,
   relatedSlugs: ["features/user-management"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-07",
 });

@@ -63,7 +63,27 @@ export class AuthRepository implements IAuthRepository {
       credentials.deviceInfo,
       credentials.isPlatformAdmin
     );
+
+    // ──── DEBUG: trace exact request being sent ────
+    console.log("[AUTH-DEBUG] Login request:", {
+      identifier: credentials.identifier,
+      tenantId: credentials.tenantId,
+      isPlatformAdmin: credentials.isPlatformAdmin,
+      tenantIdType: typeof credentials.tenantId,
+      tenantIdLength: credentials.tenantId?.length,
+    });
+
     const responseModel = await this.service.login(requestModel);
+
+    // ──── DEBUG: trace exact response received ────
+    console.log("[AUTH-DEBUG] Login response:", {
+      requires2FA: responseModel.requires2FA,
+      requiresWorkspaceSelection: responseModel.requiresWorkspaceSelection,
+      availableWorkspaces: responseModel.availableWorkspaces,
+      workspaceCount: responseModel.availableWorkspaces?.length ?? 0,
+      hasAccessToken: !!responseModel.accessToken,
+      accessTokenLength: responseModel.accessToken?.length ?? 0,
+    });
 
     appLogger.auth("Login response received");
 
@@ -73,6 +93,7 @@ export class AuthRepository implements IAuthRepository {
     }
 
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
+      console.log("[AUTH-DEBUG] ✅ WORKSPACE SELECTION TRIGGERED! Throwing WorkspaceSelectionRequiredError with", responseModel.availableWorkspaces.length, "workspaces");
       appLogger.auth(
         `Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`
       );
@@ -86,7 +107,16 @@ export class AuthRepository implements IAuthRepository {
           isActivated: w.isActivated,
           isDisabled: w.isDisabled ?? false,
           disabledReason: w.disabledReason ?? null,
+          isPasswordVerified: w.isPasswordVerified,
+          isLocked: w.isLocked ?? false,
+          lockedUntil: w.lockedUntil ?? null,
         }))
+      );
+    } else {
+      console.log("[AUTH-DEBUG] ❌ Workspace selection NOT triggered. requiresWorkspaceSelection =",
+        responseModel.requiresWorkspaceSelection,
+        "availableWorkspaces =",
+        responseModel.availableWorkspaces
       );
     }
 
@@ -288,8 +318,27 @@ export class AuthRepository implements IAuthRepository {
   async verifyPhoneOtp(
     phoneNumber: string,
     code: string
-  ): Promise<{ accessToken: string; refreshToken: string; expiresAt: string }> {
-    return this.service.verifyPhoneOtp(phoneNumber, code);
+  ): Promise<import("../../domain/types/AuthTypes").LoginResponseModel> {
+    const raw = await this.service.verifyPhoneOtp(phoneNumber, code);
+    // Map the service response (superset) to the full LoginResponseModel shape.
+    // Fields not returned by the backend (e.g. userProfile) default to safe values.
+    return {
+      accessToken: raw.accessToken,
+      refreshToken: raw.refreshToken ?? "",
+      expiresAt: raw.expiresAt ?? "",
+      success: !raw.requiresWorkspaceSelection,
+      requires2FA: false,
+      requiresWorkspaceSelection: raw.requiresWorkspaceSelection ?? false,
+      availableWorkspaces: (raw.availableWorkspaces as import("../../domain/types/AuthTypes").LoginResponseModel["availableWorkspaces"]) ?? null,
+      mustChangePassword: raw.mustChangePassword ?? false,
+      subscriptionStatus: null,
+      gracePhase: null,
+      editionName: null,
+      userProfile: null,
+      isSuccessful: !raw.requiresWorkspaceSelection,
+      defaultRedirectPath: raw.defaultRedirectPath ?? "/",
+      toJson: () => raw as import("../../domain/types/AuthTypes").LoginResponseJson,
+    };
   }
 
   // ── QR Cross-Device Sign-In (delegated) ───────────────────────────────────
@@ -311,6 +360,10 @@ export class AuthRepository implements IAuthRepository {
 
   async approveQrSignIn(sessionId: string): Promise<void> {
     return this.service.approveQrSignIn(sessionId);
+  }
+
+  async rejectQrSignIn(sessionId: string): Promise<void> {
+    return this.service.rejectQrSignIn(sessionId);
   }
 
   // ── Magic Link (delegated) ────────────────────────────────────────────────

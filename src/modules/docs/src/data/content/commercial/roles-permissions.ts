@@ -2,118 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.rolesPermissions.intro" },
-
-  { type: "heading", level: 2, titleKey: "commercial.rolesPermissions.rbacTitle", id: "rbac" },
-  { type: "paragraph", contentKey: "commercial.rolesPermissions.rbacContent" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    title: "RBAC Authorization Flow",
-    nodes: [
-      { id: "req", label: "API Request with JWT", type: "default" },
-      { id: "extract", label: "Extract User Permissions from Token", type: "info" },
-      { id: "check", label: "Check Required Permission", type: "primary" },
-      { id: "field", label: "Apply Field-Level Restrictions", type: "warning" },
-      { id: "allow", label: "Request Authorized ✓", type: "success" },
-      { id: "deny", label: "403 Forbidden ✗", type: "danger" },
-    ],
-    connections: [
-      { from: "req", to: "extract" },
-      { from: "extract", to: "check" },
-      { from: "check", to: "field", label: "Has permission" },
-      { from: "check", to: "deny", label: "No permission" },
-      { from: "field", to: "allow" },
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.rolesPermissions.categoriesTitle",
-    id: "categories",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Category", "Permissions", "Description"],
-    rows: [
-      ["Users", "View, Create, Update, Delete, Export", "User account management"],
-      ["Roles", "View, Create, Update, Delete", "Role definition and assignment"],
-      ["Tenants", "View, Create, Update, Deactivate", "Tenant lifecycle management"],
-      ["Audit", "View, Export, Delete", "Audit trail access"],
-      ["Settings", "View, Update", "System configuration"],
-      ["HR", "View, Create, Update, Delete, Export", "Human resources module"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
+    ],
+    "rows": [
       [
-        "User Groups",
-        "View, Create, Update, Delete",
-        "Group-based role and restriction batch assignment",
+        "Page route",
+        "/commercial/roles-permissions",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["Custom", "Dynamically registered per module", "Module-specific permissions"],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/roles-permissions.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Identity module",
+        "SCRIPE-Backend/src/Modules/Identity",
+        "Identity owns admins, users, tenants, roles, permissions, user groups, sessions, identity providers, OAuth apps, and auth-related commands."
+      ],
+      [
+        "Identity controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Identity",
+        "Controller endpoints expose admin, tenant, role, permission, identity-provider, OAuth-application, and user-group workflows."
+      ],
+      [
+        "Frontend identity routes",
+        "SCRIPE-Frontend/src/app/(modules)/(identity)",
+        "Admin UI routes exist for users, admins, tenants, roles, user groups, settings, identity providers, OAuth apps, profile, sessions, notifications, and security."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.rolesPermissions.fieldTitle",
-    id: "field-level",
-  },
-  { type: "paragraph", contentKey: "commercial.rolesPermissions.fieldContent" },
-  {
-    type: "code",
-    language: "json",
-    filename: "Field-Level Restriction Example",
-    code: `{
-  "role": "HR Manager",
-  "restrictedFields": {
-    "Employee": ["salary", "ssn", "bankAccount"],
-    "User": ["passwordHash", "securityStamp"]
-  },
-  "effect": "Fields are automatically removed from API responses"
-}`,
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.rolesPermissions.featuresTitle",
-    id: "features",
-  },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "shield",
-        titleKey: "commercial.rolesPermissions.roleHierarchy",
-        descriptionKey: "commercial.rolesPermissions.roleHierarchyDesc",
-      },
-      {
-        icon: "users",
-        titleKey: "commercial.rolesPermissions.roleCloning",
-        descriptionKey: "commercial.rolesPermissions.roleCloningDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.rolesPermissions.tenantScoped",
-        descriptionKey: "commercial.rolesPermissions.tenantScopedDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.rolesPermissions.dynamicReg",
-        descriptionKey: "commercial.rolesPermissions.dynamicRegDesc",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/roles-permissions",
   titleKey: "commercial.rolesPermissions.title",
-  descriptionKey: "commercial.rolesPermissions.description",
   category: "commercial-enterprise",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/multi-tenancy", "commercial/authentication-security"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/multi-tenancy","commercial/authentication-security"],
+  lastUpdated: "2026-06-07",
 });

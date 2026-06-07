@@ -22,7 +22,7 @@ interface AppState {
   roles: AdminRole[];
   restrictedFields: Record<string, string[]>;
   setUser: (user: User | null) => void;
-  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
+  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[], isFreshLogin?: boolean) => void;
   logout: () => void;
 
   // Subscription State (populated from login response)
@@ -70,9 +70,15 @@ export const useAppStore = create<AppState>()(
       restrictedFields: {},
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       // ... existing code in setAuth ...
-      setAuth: (user, permissions, roles) => {
+      setAuth: (user, permissions, roles, isFreshLogin = false) => {
         if (typeof document !== "undefined") {
           document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
+        }
+        // Mark this as a fresh login session — DashboardLayout uses this to
+        // show the welcome loader instead of a plain shimmer. sessionStorage
+        // survives the redirect to /dashboard but resets on browser close.
+        if (isFreshLogin && typeof window !== "undefined") {
+          try { sessionStorage.setItem(STORAGE_KEYS.JUST_LOGGED_IN, "1"); } catch { /* ignore */ }
         }
         set({
           user,

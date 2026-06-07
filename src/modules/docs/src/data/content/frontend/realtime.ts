@@ -2,215 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "frontend.realtime.intro" },
-
-  // ─── Architecture ─────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.realtime.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "Real-Time Communication Architecture",
-    direction: "horizontal",
-    nodes: [
-      { id: "backend", label: "ASP.NET Core", type: "primary" },
-      { id: "signalr", label: "SignalR Hubs", type: "info", description: "WebSocket + fallback" },
-      { id: "provider", label: "SignalRProvider", type: "success", description: "React Context" },
-      { id: "hooks", label: "Custom Hooks", type: "warning" },
-      { id: "audit", label: "AuditHub", type: "info" },
-      { id: "notif", label: "NotificationHub", type: "info" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "backend", to: "signalr" },
-      { from: "signalr", to: "audit" },
-      { from: "signalr", to: "notif" },
-      { from: "provider", to: "signalr", label: "connects" },
-      { from: "hooks", to: "provider", label: "uses context" },
-    ],
-  },
-
-  // ─── SignalR Hubs ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.realtime.hubsTitle",
-    id: "hubs",
-  },
-  {
-    type: "table",
-    headers: ["Hub", "Path", "Purpose", "Events"],
-    rows: [
-      ["AuditHub", "/hubs/audit", "Real-time audit log streaming", "AuditLogCreated"],
+    "rows": [
       [
-        "NotificationHub",
-        "/hubs/notification",
-        "Push notifications",
-        "NotificationReceived, UnreadCountChanged",
+        "Page route",
+        "/docs/frontend/realtime",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/frontend/realtime.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── SignalRProvider ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.realtime.providerTitle",
-    id: "provider",
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "SignalRProvider — Connection Management",
-    code: `// Manages SignalR connections with automatic reconnection
-export function SignalRProvider({ children }: { children: ReactNode }) {
-  const { token } = useAuthStore();
-  const [auditConnection, setAuditConnection] = useState<HubConnection | null>(null);
-  const [notifConnection, setNotifConnection] = useState<HubConnection | null>(null);
-
-  useEffect(() => {
-    if (!token) return;
-
-    // Create connection with auto-reconnect
-    const audit = new HubConnectionBuilder()
-      .withUrl(\`\${API_URL}/hubs/audit\`, {
-        accessTokenFactory: () => token,
-      })
-      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
-      .configureLogging(LogLevel.Warning)
-      .build();
-
-    const notif = new HubConnectionBuilder()
-      .withUrl(\`\${API_URL}/hubs/notification\`, {
-        accessTokenFactory: () => token,
-      })
-      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
-      .build();
-
-    audit.start().catch(console.error);
-    notif.start().catch(console.error);
-
-    setAuditConnection(audit);
-    setNotifConnection(notif);
-
-    return () => {
-      audit.stop();
-      notif.stop();
-    };
-  }, [token]);
-
-  return (
-    <SignalRContext.Provider value={{ auditConnection, notifConnection }}>
-      {children}
-    </SignalRContext.Provider>
-  );
-}`,
-    highlightLines: [14, 15, 16, 26, 27],
-  },
-
-  // ─── Custom Hooks ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.realtime.hooksTitle",
-    id: "hooks",
-  },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Audit Stream",
-        language: "typescript",
-        filename: "useAuditStream.ts",
-        code: `export function useAuditStream(maxItems = 100) {
-  const [logs, setLogs] = useState<AuditLogDto[]>([]);
-  const { auditConnection } = useSignalR();
-
-  useEffect(() => {
-    if (!auditConnection) return;
-
-    const handler = (log: AuditLogDto) => {
-      setLogs(prev => [log, ...prev].slice(0, maxItems));
-    };
-
-    auditConnection.on("AuditLogCreated", handler);
-    return () => auditConnection.off("AuditLogCreated", handler);
-  }, [auditConnection, maxItems]);
-
-  return { logs, clearLogs: () => setLogs([]) };
-}`,
-      },
-      {
-        label: "Notifications",
-        language: "typescript",
-        filename: "useNotifications.ts",
-        code: `export function useNotifications() {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const { notifConnection } = useSignalR();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (!notifConnection) return;
-
-    notifConnection.on("NotificationReceived", (notif) => {
-      // Invalidate notifications query to show new ones
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      toast.info(notif.title);
-    });
-
-    notifConnection.on("UnreadCountChanged", (count: number) => {
-      setUnreadCount(count);
-    });
-
-    return () => {
-      notifConnection.off("NotificationReceived");
-      notifConnection.off("UnreadCountChanged");
-    };
-  }, [notifConnection, queryClient]);
-
-  return { unreadCount };
-}`,
-      },
-    ],
-  },
-
-  // ─── Connection States ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.realtime.connectionStatesTitle",
-    id: "connection-states",
-  },
-  {
-    type: "table",
-    headers: ["State", "Description", "Retry Timing"],
-    rows: [
-      ["Connected", "Active WebSocket connection", "—"],
-      ["Reconnecting", "Lost connection, attempting reconnect", "0s → 2s → 5s → 10s → 30s"],
-      ["Disconnected", "All retry attempts exhausted", "Manual reconnect required"],
-      ["Connecting", "Initial connection in progress", "—"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "frontend.realtime.tenantGroupNote",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "frontend/realtime",
   titleKey: "frontend.realtime.title",
-  descriptionKey: "frontend.realtime.description",
   category: "frontend",
   order: 7,
   sections,
-  relatedSlugs: [
-    "security/audit-compliance",
-    "frontend/state-management",
-    "api-reference/webhook-email-api",
-  ],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["security/audit-compliance","frontend/state-management","api-reference/webhook-email-api"],
+  lastUpdated: "2026-06-07",
 });

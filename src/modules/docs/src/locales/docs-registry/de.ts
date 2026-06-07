@@ -3,6 +3,7 @@
  * Eagerly merges all German docs translations (tech + commercial).
  */
 import { de as common } from "../pages/common/de";
+import { de as generatedTitles } from "../pages/generated-titles/de";
 import { de as getStarted } from "../pages/get-started/de";
 import { de as architecture } from "../pages/architecture/de";
 import { de as features } from "../pages/features/de";
@@ -69,5 +70,6 @@ export const allDocsDe: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  { commercial: stripeConnect.commercial },
+  generatedTitles
 );

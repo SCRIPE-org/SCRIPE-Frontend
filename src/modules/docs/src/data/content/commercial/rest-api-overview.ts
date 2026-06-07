@@ -2,202 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.restApiOverview.intro" },
-
-  // ─── API Controllers ────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.restApiOverview.controllersTitle",
-    id: "controllers",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: [
-      "commercial.restApiOverview.tblCtrlHeader1",
-      "commercial.restApiOverview.tblCtrlHeader2",
-      "commercial.restApiOverview.tblCtrlHeader3",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.restApiOverview.tblCtrlR1C1",
-        "commercial.restApiOverview.tblCtrlR1C2",
-        "commercial.restApiOverview.tblCtrlR1C3",
+        "Page route",
+        "/commercial/rest-api-overview",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.restApiOverview.tblCtrlR2C1",
-        "commercial.restApiOverview.tblCtrlR2C2",
-        "commercial.restApiOverview.tblCtrlR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/rest-api-overview.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.restApiOverview.tblCtrlR3C1",
-        "commercial.restApiOverview.tblCtrlR3C2",
-        "commercial.restApiOverview.tblCtrlR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.restApiOverview.tblCtrlR4C1",
-        "commercial.restApiOverview.tblCtrlR4C2",
-        "commercial.restApiOverview.tblCtrlR4C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.restApiOverview.tblCtrlR5C1",
-        "commercial.restApiOverview.tblCtrlR5C2",
-        "commercial.restApiOverview.tblCtrlR5C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.restApiOverview.tblCtrlR6C1",
-        "commercial.restApiOverview.tblCtrlR6C2",
-        "commercial.restApiOverview.tblCtrlR6C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR7C1",
-        "commercial.restApiOverview.tblCtrlR7C2",
-        "commercial.restApiOverview.tblCtrlR7C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR8C1",
-        "commercial.restApiOverview.tblCtrlR8C2",
-        "commercial.restApiOverview.tblCtrlR8C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR9C1",
-        "commercial.restApiOverview.tblCtrlR9C2",
-        "commercial.restApiOverview.tblCtrlR9C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR10C1",
-        "commercial.restApiOverview.tblCtrlR10C2",
-        "commercial.restApiOverview.tblCtrlR10C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR11C1",
-        "commercial.restApiOverview.tblCtrlR11C2",
-        "commercial.restApiOverview.tblCtrlR11C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR12C1",
-        "commercial.restApiOverview.tblCtrlR12C2",
-        "commercial.restApiOverview.tblCtrlR12C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR13C1",
-        "commercial.restApiOverview.tblCtrlR13C2",
-        "commercial.restApiOverview.tblCtrlR13C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR14C1",
-        "commercial.restApiOverview.tblCtrlR14C2",
-        "commercial.restApiOverview.tblCtrlR14C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR15C1",
-        "commercial.restApiOverview.tblCtrlR15C2",
-        "commercial.restApiOverview.tblCtrlR15C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR16C1",
-        "commercial.restApiOverview.tblCtrlR16C2",
-        "commercial.restApiOverview.tblCtrlR16C3",
-      ],
-      [
-        "commercial.restApiOverview.tblCtrlR17C1",
-        "commercial.restApiOverview.tblCtrlR17C2",
-        "commercial.restApiOverview.tblCtrlR17C3",
-      ],
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Response Format ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.restApiOverview.responseTitle",
-    id: "response",
-  },
-  { type: "paragraph", contentKey: "commercial.restApiOverview.responseContent" },
-  {
-    type: "code",
-    language: "json",
-    filename: "Standard API Response",
-    code: `// Success response
-{
-  "succeeded": true,
-  "data": { ... },
-  "message": "Operation completed successfully"
-}
-
-// Error response
-{
-  "succeeded": false,
-  "errors": ["Validation failed: Email is required"],
-  "errorCode": "VALIDATION_ERROR"
-}`,
-  },
-
-  // ─── Pagination ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.restApiOverview.paginationTitle",
-    id: "pagination",
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "Paginated Response Format",
-    code: `{
-  "data": [...],
-  "pagination": {
-    "currentPage": 1,
-    "pageSize": 20,
-    "totalPages": 5,
-    "totalCount": 95,
-    "hasNextPage": true,
-    "hasPreviousPage": false
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
-
-  // ─── Authentication ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.restApiOverview.authTitle",
-    id: "authentication",
-  },
-  { type: "paragraph", contentKey: "commercial.restApiOverview.authContent" },
-  {
-    type: "code",
-    language: "text",
-    filename: "Authentication Header",
-    code: `Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
-X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000`,
-  },
-
-  // ─── Swagger / OpenAPI ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.restApiOverview.swaggerTitle", id: "swagger" },
-  { type: "paragraph", contentKey: "commercial.restApiOverview.swaggerContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.restApiOverview.lstSwagI1",
-      "commercial.restApiOverview.lstSwagI2",
-      "commercial.restApiOverview.lstSwagI3",
-      "commercial.restApiOverview.lstSwagI4",
-      "commercial.restApiOverview.lstSwagI5",
-      "commercial.restApiOverview.lstSwagI6",
-    ],
-  },
 ];
 
 registerPage({
   slug: "commercial/rest-api-overview",
   titleKey: "commercial.restApiOverview.title",
-  descriptionKey: "commercial.restApiOverview.description",
   category: "commercial-integration",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/webhook-integration", "commercial/api-design"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/webhook-integration","commercial/api-design"],
+  lastUpdated: "2026-06-07",
 });

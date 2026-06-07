@@ -2,205 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "architecture.stateManagement.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.stateManagement.decisionTitle",
-    id: "decision-matrix",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Question", "Answer: YES → Use", "Example"],
-    rows: [
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
+    ],
+    "rows": [
       [
-        "Does it come from an API?",
-        "TanStack Query v5",
-        "Employee list, audit logs, dashboard stats",
-      ],
-      ["Does the whole app need it?", "Zustand", "Auth state, sidebar, theme, toasts"],
-      ["Is it for this component only?", "useState", "Form inputs, modal open/close, toggles"],
-      [
-        "Does it need persistence?",
-        "Zustand with persist middleware",
-        "Auth token, language preference",
+        "Page route",
+        "/docs/architecture/state-management",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Does it need caching/refetch?",
-        "TanStack Query",
-        "Any server data with stale-while-revalidate",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/architecture/state-management.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.stateManagement.tanstackTitle",
-    id: "tanstack-query",
-  },
-  { type: "paragraph", contentKey: "architecture.stateManagement.tanstackIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "TanStack Query — ViewModel Pattern",
-    code: `// Key factory for consistent cache keys
-export const employeeKeys = {
-  all: ["employees"] as const,
-  list: (filters: { page: number; search: string }) =>
-    [...employeeKeys.all, "list", filters] as const,
-  detail: (id: string) =>
-    [...employeeKeys.all, "detail", id] as const,
-};
-
-// Query hook
-export function useEmployees(filters: { page: number; search: string }) {
-  const repo = container.employeeRepository;
-
-  return useQuery({
-    queryKey: employeeKeys.list(filters),
-    queryFn: async () => {
-      const result = await repo.getAll(filters);
-      if (result.isErr()) throw result.error;
-      return result.value;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
-
-// Mutation hook (auto-invalidates cache)
-export function useCreateEmployee() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: CreateEmployeeInput) => {
-      const result = await container.employeeRepository.create(data);
-      if (result.isErr()) throw result.error;
-      return result.value;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: employeeKeys.all });
-    },
-  });
-}`,
-    highlightLines: [2, 15, 36],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.stateManagement.zustandTitle",
-    id: "zustand",
-  },
-  { type: "paragraph", contentKey: "architecture.stateManagement.zustandIntro" },
-  {
-    type: "table",
-    headers: ["Store", "Purpose", "Persistence", "Location"],
-    rows: [
       [
-        "useAuthStore",
-        "User session, tokens, permissions",
-        "localStorage (persist)",
-        "@core/store/useAuthStore",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-      ["useUIStore", "Sidebar, theme, mobile menu", "None", "@core/store/useUIStore"],
-      ["useToastStore", "Toast notification queue", "None", "@core/store/useToastStore"],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Auth Store — Zustand with persist",
-    code: `export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-
-      login: (user, token) => set({
-        user, token, isAuthenticated: true,
-      }),
-
-      logout: () => set({
-        user: null, token: null, isAuthenticated: false,
-      }),
-    }),
-    {
-      name: "auth-storage",
-      partialize: (state) => ({
-        token: state.token,
-        user: state.user,
-      }),
-    }
-  )
-);`,
-    highlightLines: [2, 17, 18, 19, 20],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.stateManagement.antiPatternsTitle",
-    id: "anti-patterns",
-  },
-  {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "architecture.stateManagement.doTitle",
-        variant: "positive",
-        items: [
-          "Use TanStack Query for ALL server data",
-          "Access Zustand stores directly where needed",
-          "Use useState for component-local state",
-          "Let TanStack Query handle caching & refetching",
-          "Use key factories for consistent cache keys",
-        ],
-      },
-      {
-        titleKey: "architecture.stateManagement.dontTitle",
-        variant: "negative",
-        items: [
-          "DON'T put server data in Zustand",
-          "DON'T prop-drill global state through 5+ components",
-          "DON'T use useEffect+fetch for API calls",
-          "DON'T create manual cache invalidation",
-          "DON'T mix concerns in a single hook",
-        ],
-      },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.stateManagement.localizationTitle",
-    id: "localization",
-  },
-  { type: "paragraph", contentKey: "architecture.stateManagement.localizationIntro" },
-  {
-    type: "table",
-    headers: ["Feature", "Implementation", "Details"],
-    rows: [
-      ["Language Switching", "LanguageProvider context", "Cookie/localStorage, NOT URL-based"],
-      ["RTL/LTR Support", "Auto-set dir + lang on <html>", "Arabic: RTL, all others: LTR"],
-      ["Font Classes", "font-arabic / font-english on <body>", "Auto-applied on switch"],
-      ["Dot-Notation Keys", "t('common.save')", "Nested dictionary access"],
-      ["Interpolation", "t('errors.minLength', { min: 5 })", "{{min}} placeholder replacement"],
-      ["SSR Fallback", "Returns key itself during SSR", "Graceful degradation"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "architecture.stateManagement.noLocaleFoldersWarning",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "architecture/state-management",
   titleKey: "architecture.stateManagement.title",
-  descriptionKey: "architecture.stateManagement.description",
   category: "architecture",
   order: 7,
   sections,
-  relatedSlugs: ["architecture/frontend", "architecture/solid-pattern"],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["architecture/frontend","architecture/solid-pattern"],
+  lastUpdated: "2026-06-07",
 });

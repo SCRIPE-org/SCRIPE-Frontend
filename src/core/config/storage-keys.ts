@@ -18,21 +18,21 @@ import { BRAND } from "./branding";
 export const STORAGE_KEYS = {
   // ── Auth Tokens ────────────────────────────────────────────────────────────
   /** Access token (managed by SecureTokenService) */
-  ACCESS_TOKEN: "nxr_access_token",
+  ACCESS_TOKEN: "scr_access_token",
 
   // ── Auth State ─────────────────────────────────────────────────────────────
   /** Tenant context (tenantId + tenantName for drilldown) */
-  tenant_context: "nxr_tenant_ctx",
+  tenant_context: "scr_tenant_ctx",
   /** Auth state cookie — derived from BRAND config */
   scr_auth_state: BRAND.cookies.authState,
   /** Refresh token cookie — httpOnly, managed by backend */
   scr_refresh_token: BRAND.cookies.refreshToken,
   /** Timestamp of last auth token refresh */
-  lastAuthRefresh: "nxr_last_auth_refresh",
+  lastAuthRefresh: "scr_last_auth_refresh",
 
   // ── User Data ──────────────────────────────────────────────────────────────
-  USER_DATA: "nxr_user",
-  PERMISSIONS: "nxr_permissions",
+  USER_DATA: "scr_user",
+  PERMISSIONS: "scr_permissions",
 
   // ── Navigation (v2 — Zustand persist, managed by useNavigationStore) ────────
   /**
@@ -41,22 +41,22 @@ export const STORAGE_KEYS = {
    * Versioned internally by the store — bumping NAV_STORE_VERSION will
    * automatically discard old cached data on next load.
    */
-  NAV_STORE: "nxr_nav_v2",
+  NAV_STORE: "scr_nav_v2",
 
   // ── Preferences ────────────────────────────────────────────────────────────
-  LANGUAGE: "nxr_lang",
-  DASHBOARD_SETTINGS: "nxr_dash_settings",
-  PREF_THEME: "nxr_pref_theme",
-  PREF_LANG: "nxr_pref_lang",
-  PREF_SIDEBAR_COLLAPSED: "nxr_pref_sidebar",
-  PREF_DASHBOARD_SETTINGS: "nxr_pref_dash",
+  LANGUAGE: "scr_lang",
+  DASHBOARD_SETTINGS: "scr_dash_settings",
+  PREF_THEME: "scr_pref_theme",
+  PREF_LANG: "scr_pref_lang",
+  PREF_SIDEBAR_COLLAPSED: "scr_pref_sidebar",
+  PREF_DASHBOARD_SETTINGS: "scr_pref_dash",
 
   // ── Builder ────────────────────────────────────────────────────────────────
-  BUILDER_TEMPLATES: "nxr_builder_tpl",
+  BUILDER_TEMPLATES: "scr_builder_tpl",
 
   // ── Impersonation (sessionStorage — survives reload, not new tabs) ──────────
   IMPERSONATING: BRAND.impersonatingKey,
-  admin_backup_token: "nxr_admin_bkp_token",
+  admin_backup_token: "scr_admin_bkp_token",
 
   // ── Deferred Flush ─────────────────────────────────────────────────────────
   /**
@@ -64,7 +64,11 @@ export const STORAGE_KEYS = {
    * ⚠️ Intentionally NOT in AUTH_STORAGE_KEYS_TO_CLEAR — must survive logout.
    * Cleared ONLY after successful flush in loadAdminSettings().
    */
-  PENDING_SETTINGS_FLUSH: "nxr_pending_settings",
+  PENDING_SETTINGS_FLUSH: "scr_pending_settings",
+
+  // ── Session-scoped flags (sessionStorage) ──────────────────────────────────
+  /** Set on login, cleared after first dashboard render. Used to show welcome loader only on fresh login. */
+  JUST_LOGGED_IN: "scr_just_logged_in",
 } as const;
 
 /**
@@ -76,6 +80,11 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
  * All auth-related keys to clear on logout (v2).
  * Note: NAV_STORE is included so navigation state resets on every logout.
  * PENDING_SETTINGS_FLUSH is intentionally excluded.
+ *
+ * ⚠️ PREF_* keys (except PREF_DASHBOARD_SETTINGS) are NOT cleared on logout.
+ * They are user preferences.
+ * DASHBOARD_SETTINGS and PREF_DASHBOARD_SETTINGS are cleared so that stale layout
+ * settings from a previous user/tenant context do not cause a FOUC/flash for the next user.
  */
 export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.ACCESS_TOKEN,
@@ -86,9 +95,6 @@ export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.NAV_STORE,
   STORAGE_KEYS.DASHBOARD_SETTINGS,
   STORAGE_KEYS.PREF_DASHBOARD_SETTINGS,
-  STORAGE_KEYS.PREF_THEME,
-  STORAGE_KEYS.PREF_LANG,
-  STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED,
 ] as const;
 
 /**

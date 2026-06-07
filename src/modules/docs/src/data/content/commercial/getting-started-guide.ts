@@ -2,195 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.gettingStartedGuide.intro" },
-
-  // ─── Prerequisites ──────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.gettingStartedGuide.prereqTitle",
-    id: "prerequisites",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: [
-      "commercial.gettingStartedGuide.tblPrereqHeader1",
-      "commercial.gettingStartedGuide.tblPrereqHeader2",
-      "commercial.gettingStartedGuide.tblPrereqHeader3",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.gettingStartedGuide.tblPrereqR1C1",
-        "commercial.gettingStartedGuide.tblPrereqR1C2",
-        "commercial.gettingStartedGuide.tblPrereqR1C3",
+        "Page route",
+        "/commercial/getting-started-guide",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.gettingStartedGuide.tblPrereqR2C1",
-        "commercial.gettingStartedGuide.tblPrereqR2C2",
-        "commercial.gettingStartedGuide.tblPrereqR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/getting-started-guide.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.gettingStartedGuide.tblPrereqR3C1",
-        "commercial.gettingStartedGuide.tblPrereqR3C2",
-        "commercial.gettingStartedGuide.tblPrereqR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.gettingStartedGuide.tblPrereqR4C1",
-        "commercial.gettingStartedGuide.tblPrereqR4C2",
-        "commercial.gettingStartedGuide.tblPrereqR4C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.gettingStartedGuide.tblPrereqR5C1",
-        "commercial.gettingStartedGuide.tblPrereqR5C2",
-        "commercial.gettingStartedGuide.tblPrereqR5C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.gettingStartedGuide.tblPrereqR6C1",
-        "commercial.gettingStartedGuide.tblPrereqR6C2",
-        "commercial.gettingStartedGuide.tblPrereqR6C3",
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
-    ],
-  },
-
-  // ─── Quick Start ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.gettingStartedGuide.quickStartTitle",
-    id: "quick-start",
-  },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.gettingStartedGuide.step1Title",
-        contentKey: "commercial.gettingStartedGuide.step1Content",
-      },
-      {
-        titleKey: "commercial.gettingStartedGuide.step2Title",
-        contentKey: "commercial.gettingStartedGuide.step2Content",
-      },
-      {
-        titleKey: "commercial.gettingStartedGuide.step3Title",
-        contentKey: "commercial.gettingStartedGuide.step3Content",
-      },
-      {
-        titleKey: "commercial.gettingStartedGuide.step4Title",
-        contentKey: "commercial.gettingStartedGuide.step4Content",
-      },
-      {
-        titleKey: "commercial.gettingStartedGuide.step5Title",
-        contentKey: "commercial.gettingStartedGuide.step5Content",
-      },
-    ],
-  },
-
-  // ─── First Module ───────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.gettingStartedGuide.firstModuleTitle",
-    id: "first-module",
-  },
-  {
-    type: "code",
-    language: "bash",
-    filename: "Create Your First Module",
-    code: `# 1. Use SCRIPE CLI to scaffold
-scripe new-module --name "MyFirstModule"
-
-# 2. Run both backend and frontend
-scripe dev
-
-# 3. Navigate to http://localhost:3000/my-first-module
-# Your new module is ready with full CRUD!`,
-  },
-
-  // ─── Project Structure ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.gettingStartedGuide.structureTitle",
-    id: "project-structure",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "Repository Structure",
-    code: `SCRIPE/
-├── SCRIPE-Backend/          # .NET 10 backend
-│   ├── src/
-│   │   ├── Core/            # Domain + Application layers
-│   │   ├── Infrastructure/  # EF Core, external services
-│   │   └── Presentation/    # Controllers, middleware
-│   └── appsettings.json     # Configuration
-│
-├── SCRIPE-Frontend/         # Next.js 16 frontend
-│   ├── src/
-│   │   ├── core/            # Shared UI, providers, stores
-│   │   ├── modules/         # Feature modules
-│   │   └── app/             # Next.js routing
-│   └── package.json
-│
-└── tools/scripe-cli/        # CLI scaffolding tool`,
-  },
-
-  // ─── Default Credentials ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.gettingStartedGuide.credentialsTitle",
-    id: "credentials",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.gettingStartedGuide.tblCredHeader1",
-      "commercial.gettingStartedGuide.tblCredHeader2",
-    ],
-    rows: [
-      ["commercial.gettingStartedGuide.tblCredR1C1", "commercial.gettingStartedGuide.tblCredR1C2"],
-      ["commercial.gettingStartedGuide.tblCredR2C1", "commercial.gettingStartedGuide.tblCredR2C2"],
-      ["commercial.gettingStartedGuide.tblCredR3C1", "commercial.gettingStartedGuide.tblCredR3C2"],
-      ["commercial.gettingStartedGuide.tblCredR4C1", "commercial.gettingStartedGuide.tblCredR4C2"],
-      ["commercial.gettingStartedGuide.tblCredR5C1", "commercial.gettingStartedGuide.tblCredR5C2"],
-      ["commercial.gettingStartedGuide.tblCredR6C1", "commercial.gettingStartedGuide.tblCredR6C2"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "commercial.gettingStartedGuide.credentialsWarning",
-  },
-
-  // ─── Next Steps ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.gettingStartedGuide.nextStepsTitle",
-    id: "next-steps",
-  },
-  {
-    type: "list",
-    variant: "ordered",
-    items: [
-      "commercial.gettingStartedGuide.lstNextI1",
-      "commercial.gettingStartedGuide.lstNextI2",
-      "commercial.gettingStartedGuide.lstNextI3",
-      "commercial.gettingStartedGuide.lstNextI4",
-      "commercial.gettingStartedGuide.lstNextI5",
-      "commercial.gettingStartedGuide.lstNextI6",
-    ],
-  },
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/getting-started-guide",
   titleKey: "commercial.gettingStartedGuide.title",
-  descriptionKey: "commercial.gettingStartedGuide.description",
   category: "commercial-support",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/documentation-training", "commercial/faq"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/documentation-training","commercial/faq"],
+  lastUpdated: "2026-06-07",
 });

@@ -2,120 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.performanceBenchmarks.intro" },
-
-  // ─── API Performance ────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.performanceBenchmarks.apiTitle",
-    id: "api-performance",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.performanceBenchmarks.apiIntro" },
   {
-    type: "table",
-    headers: ["Metric", "Target", "Achieved", "Optimization"],
-    rows: [
-      ["p50 latency", "< 50ms", "~35ms", "Redis caching, compiled queries"],
-      ["p99 latency", "< 200ms", "~150ms", "Connection pooling, async I/O"],
-      ["Throughput", "> 1,000 req/s", "~1,500 req/s", "Kestrel thread pool optimization"],
-      ["Cold start", "< 3s", "~2.5s", "AOT compilation, minimal DI graph"],
-      ["Memory per request", "< 5 MB", "~3 MB", "Span<T>, pooled buffers, ArrayPool"],
-      ["Concurrent connections", "> 10,000", "~15,000", "Async all the way, no thread blocking"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Caching Strategy ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.performanceBenchmarks.cachingTitle",
-    id: "caching",
-  },
-  { type: "paragraph", contentKey: "commercial.performanceBenchmarks.cachingContent" },
-  {
-    type: "table",
-    headers: ["Cache Layer", "Technology", "TTL", "Invalidation"],
-    rows: [
-      ["L1: In-Memory", "IMemoryCache", "5 min", "On entity change event"],
-      ["L2: Distributed", "Redis", "30 min", "Pub/Sub event-based invalidation"],
+    "rows": [
       [
-        "L3: Response",
-        "ETag + If-None-Match",
-        "Browser controlled",
-        "304 Not Modified on revalidation",
+        "Page route",
+        "/commercial/performance-benchmarks",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["L4: Query", "EF Core compiled queries", "Application lifetime", "Restart on schema change"],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/performance-benchmarks.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Database Performance ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.performanceBenchmarks.dbTitle",
-    id: "database",
-  },
-  {
-    type: "table",
-    headers: ["Operation", "Rows", "Latency", "Technique"],
-    rows: [
-      ["Simple SELECT", "1 row by PK", "< 2ms", "Compiled query + index"],
-      ["Paginated list", "50 rows of 100K", "< 15ms", "Cursor-based pagination"],
-      ["Complex join", "5-table join", "< 30ms", "Query optimization, projections"],
-      ["Bulk insert", "10,000 rows", "< 500ms", "EF Core BulkExtensions"],
-      ["Full-text search", "100K rows", "< 50ms", "Database full-text index"],
-    ],
-  },
-
-  // ─── Frontend Performance ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.performanceBenchmarks.frontendTitle",
-    id: "frontend",
-  },
-  {
-    type: "table",
-    headers: ["Metric", "Target", "Strategy"],
-    rows: [
-      ["LCP", "< 2.5s", "Server Components, streaming SSR"],
-      ["FID", "< 100ms", "Code splitting, lazy module loading"],
-      ["CLS", "< 0.1", "Fixed dimensions, font preloading"],
-      ["Bundle size (initial)", "< 100 KB", "Tree shaking, dynamic imports"],
-      ["Build time", "< 15s", "Turbopack, incremental builds"],
-      ["Route navigation", "< 200ms", "Prefetching, client-side caching"],
-    ],
-  },
-
-  // ─── Scalability ───────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.performanceBenchmarks.scaleTitle",
-    id: "scalability",
-  },
-  {
-    type: "table",
-    headers: ["Scenario", "Capacity", "Configuration"],
-    rows: [
-      ["Single server", "500 concurrent users", "8 core, 16 GB RAM"],
-      ["Horizontal (2 nodes)", "1,500 concurrent users", "Load balanced, shared Redis"],
-      ["Horizontal (4 nodes)", "5,000 concurrent users", "Kubernetes orchestration"],
-      ["Enterprise cluster", "10,000+ concurrent users", "Auto-scaling, read replicas"],
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.performanceBenchmarks.tip" },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/performance-benchmarks",
   titleKey: "commercial.performanceBenchmarks.title",
-  descriptionKey: "commercial.performanceBenchmarks.description",
   category: "commercial-technical",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/database-support", "commercial/resilience-patterns"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/database-support","commercial/resilience-patterns"],
+  lastUpdated: "2026-06-07",
 });

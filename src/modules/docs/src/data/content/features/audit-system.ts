@@ -2,380 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "features.auditSystem.intro" },
-
-  //  Architecture 
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "3-Source Audit Pipeline",
-    direction: "vertical",
-    nodes: [
-      { id: "source2", label: "EF Core AuditableEntityInterceptor", type: "warning" },
-      { id: "source3", label: "RequestLoggingMiddleware (HTTP)", type: "primary" },
-      { id: "source4", label: "Explicit IAuditService calls (security events)", type: "danger" },
-      { id: "service", label: "AuditService", type: "default" },
-      { id: "db", label: "AuditLogs Table", type: "success" },
-      { id: "hub", label: "SignalR AuditHub (real-time)", type: "info" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "source2", to: "service" },
-      { from: "source3", to: "service" },
-      { from: "source4", to: "service" },
-      { from: "service", to: "db" },
-      { from: "service", to: "hub", label: "Broadcast" },
-    ],
-  },
-
-  //  Event Types
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.eventTypesTitle",
-    id: "event-types",
-  },
-
-  // Auth Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.authEventsTitle",
-    id: "auth-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["LoginSuccess", "Successful login", "IP, UserAgent, AdminId"],
-      ["LoginFailed", "Wrong credentials", "IP, UserAgent, Username"],
-      ["Logout", "Token revocation", "AdminId, SessionId"],
-      ["TokenRefreshed", "Refresh token rotation", "AdminId, TokenId"],
-      ["PasswordChanged", "Admin changes password", "AdminId, ChangedBy"],
-      ["PasswordReset", "Admin/OTP password reset", "AdminId, Method"],
-      ["AccountLocked", "Exceeded failed login attempts", "AdminId, Duration"],
-    ],
-  },
-
-  // RBAC Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.rbacEventsTitle",
-    id: "rbac-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["RoleAssigned", "Role assigned to admin", "AdminId, RoleId, AssignedBy"],
-      ["RoleUnassigned", "Role removed from admin", "AdminId, RoleId, RemovedBy"],
-      ["PermissionGranted", "Permission added to role", "RoleId, PermissionId, Scope"],
-      ["PermissionRevoked", "Permission removed from role", "RoleId, PermissionId"],
-      ["ScopeChanged", "Scope override modified", "RolePermissionId, OldScope, NewScope"],
+    "rows": [
       [
-        "PrivilegeEscalationAttempt",
-        "Admin tried to exceed permissions",
-        "AdminId, AttemptedAction, TargetPermission",
-      ],
-    ],
-  },
-
-  // 2FA Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.twoFactorEventsTitle",
-    id: "2fa-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["TwoFactorEnabled", "Admin enables 2FA", "AdminId"],
-      ["TwoFactorDisabled", "Admin disables 2FA", "AdminId, DisabledBy"],
-      ["TwoFactorVerified", "Successful 2FA code entry", "AdminId"],
-      ["BackupCodeUsed", "Backup code consumed", "AdminId, CodesRemaining"],
-      ["BackupCodesRegenerated", "New backup codes generated", "AdminId"],
-    ],
-  },
-
-  // Session Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.sessionEventsTitle",
-    id: "session-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["SessionRevoked", "Single session termination", "AdminId, SessionId, RevokedBy"],
-      ["AllSessionsRevoked", "All sessions terminated", "AdminId, SessionCount"],
-    ],
-  },
-
-  // Admin Management Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.adminEventsTitle",
-    id: "admin-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["AdminCreated", "New admin account", "AdminId, CreatedBy, TenantId"],
-      ["AdminUpdated", "Profile modification", "AdminId, ChangedFields"],
-      ["AdminDeleted", "Soft-deleted", "AdminId, DeletedBy"],
-      ["AdminImpersonation", "Admin impersonated another", "ImpersonatorId, TargetAdminId"],
-      ["AdminStatusChanged", "Activated/Deactivated", "AdminId, NewStatus, ChangedBy"],
-      ["ProfileUpdated", "Self-profile update", "AdminId, ChangedFields"],
-      [
-        "AdminTransferred",
-        "Admin transferred between tenants",
-        "AdminId, OldTenantId, NewTenantId",
-      ],
-    ],
-  },
-
-  // Bulk Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.bulkEventsTitle",
-    id: "bulk-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["BulkAdminDelete", "POST /admins/bulk/delete-all", "TenantId, Count, ExecutedBy"],
-      [
-        "BulkAdminStatusUpdate",
-        "POST /admins/bulk/activate-all or deactivate-all",
-        "TenantId, Count, NewStatus",
+        "Page route",
+        "/docs/features/audit-system",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "BulkTenantCascadeDelete",
-        "DELETE /tenants/{id} with children",
-        "TenantId, DescendantCount",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/audit-system.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // Tenant Events
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "features.auditSystem.tenantEventsTitle",
-    id: "tenant-events",
-  },
-  {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Metadata"],
-    rows: [
-      ["TenantCreated", "New tenant + auto-roles", "TenantId, ParentTenantId, Code"],
-      ["TenantUpdated", "Settings/details changed", "TenantId, ChangedFields"],
-      ["TenantDeleted", "Soft-deleted", "TenantId, DeletedBy, WasCascade"],
-      ["TenantPermissionsUpdated", "Permission pool modified", "TenantId, Added[], Removed[]"],
-    ],
-  },
-
-  //  Guardian Events
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.guardianTitle",
-    id: "guardian",
-  },
-  { type: "paragraph", contentKey: "features.auditSystem.guardianIntro" },
-  {
-    type: "table",
-    headers: ["Guardian Event", "Blocked Action", "Why It's Blocked"],
-    rows: [
+    "rows": [
       [
-        "GuardianAdminDeleteBlocked",
-        "Deleting last super admin",
-        "Tenant would be orphaned with no admin access",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "GuardianTransferBlocked",
-        "Transferring last super admin out",
-        "Same as above  no admin left in source tenant",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "GuardianDemoteBlocked",
-        "Removing super admin role from last holder",
-        "Tenant needs at least one super admin",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "GuardianDeactivateBlocked",
-        "Deactivating last super admin",
-        "All remaining admins need active super admin",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
       [
-        "GuardianRoleDeleteBlocked",
-        "Deleting a system/super-admin role",
-        "System roles are protected from deletion",
-      ],
-      [
-        "GuardianRolePermissionBlocked",
-        "Modifying locked role's permissions",
-        "IsPermissionLocked roles cannot be changed",
-      ],
-      ["GuardianTenantCreated", "N/A (informational)", "Logged when tenant auto-roles are created"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "features.auditSystem.guardianIntro",
-  },
-
-  //  Service Methods
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.serviceMethodsTitle",
-    id: "service-methods",
-  },
-  { type: "paragraph", contentKey: "features.auditSystem.serviceMethodsIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "IAuditService Interface",
-    code: `public interface IAuditService
-{
-    // 1. HTTP request logging (called from middleware)
-    Task LogRequestAsync(HttpContext context, int statusCode, long durationMs);
-
-    // 2. Authentication events
-    Task LogLoginAttemptAsync(string username, bool success, string? ip, string? userAgent);
-
-    // 3. Entity change tracking (called from EF interceptor)
-    Task LogEntityChangeAsync(string entityType, string entityId,
-        string action, object? oldValues, object? newValues);
-
-    // 4. Security events (Guardian, escalation, 2FA)
-    Task LogSecurityEventAsync(string eventType, string description,
-        Guid? adminId = null, Dictionary<string, object>? metadata = null);
-
-    // 5. Error logging
-    Task LogErrorAsync(Exception ex, string context, Guid? adminId = null);
-}`,
-    highlightLines: [4, 7, 10, 14, 18],
-  },
-
-  //  Real-Time Broadcasting 
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.realTimeTitle",
-    id: "real-time",
-  },
-  { type: "paragraph", contentKey: "features.auditSystem.realTimeIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "AuditHub  SignalR Broadcasting",
-    code: `// In AuditService.BroadcastAuditEventAsync:
-await _hubContext.Clients
-    .Group($"tenant-{tenantId}")     // Tenant-scoped group
-    .SendAsync("ReceiveAuditEvent", new {
-        Id = auditLog.Id,
-        EventType = auditLog.EventType,
-        Description = auditLog.Description,
-        Timestamp = auditLog.CreatedAt,
-        AdminName = auditLog.AdminName,
-        Metadata = auditLog.Metadata
-    });
-
-// Also broadcast to super admin global group
-await _hubContext.Clients
-    .Group("global-audit")
-    .SendAsync("ReceiveAuditEvent", auditEvent);`,
-    highlightLines: [3, 15],
-  },
-
-  //  Export 
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.exportTitle",
-    id: "export",
-  },
-  { type: "paragraph", contentKey: "features.auditSystem.exportIntro" },
-
-  //  API Endpoints
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.auditSystem.endpointsTitle",
-    id: "endpoints",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/audit-logs",
-        descriptionKey: "Paginated list with filters (event type, date, admin, tenant)",
-        auth: "audit.read",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/audit-logs/{id}",
-        descriptionKey: "Single log detail with full metadata",
-        auth: "audit.read",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/audit-logs/stats",
-        descriptionKey: "Aggregate statistics by event type",
-        auth: "audit.read",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/audit-logs/export",
-        descriptionKey: "CSV/PDF export of filtered logs",
-        auth: "audit.export",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/audit-logs/event-types",
-        descriptionKey: "List all available event types",
-        auth: "audit.read",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/audit-logs/purge",
-        descriptionKey: "Purge logs older than retention period",
-        auth: "audit.purge",
-      },
-    ],
-  },
-
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "features.auditSystem.retentionTip",
-  },
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "features/audit-system",
   titleKey: "features.auditSystem.title",
-  descriptionKey: "features.auditSystem.description",
   category: "features",
   order: 5,
   sections,
-  relatedSlugs: ["features/authentication", "features/role-permissions"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["features/authentication","features/role-permissions"],
+  lastUpdated: "2026-06-07",
 });

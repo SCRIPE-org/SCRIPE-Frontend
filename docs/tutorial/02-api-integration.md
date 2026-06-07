@@ -21,7 +21,7 @@ graph TB
         SANITIZE[Input Sanitizer<br/>HTML entity encoding]
     end
 
-    INT --> BACKEND[Backend API<br/>https://api.scripe.com]
+    INT --> BACKEND[Backend API<br/>https://api.scripe.org]
 ```
 
 **Location**: `src/core/services/implementation/api.service.ts`

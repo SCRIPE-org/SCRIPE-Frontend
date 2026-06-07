@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, Lock, Unlock } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
@@ -12,8 +12,10 @@ interface PostCredentialWorkspaceSelectorProps {
   email: string;
   /** List of workspaces returned by the backend after credential verification */
   workspaces: WorkspaceChoice[];
-  /** Called when the user clicks a workspace card */
+  /** Called when the user clicks an unlocked workspace card */
   onSelect: (workspace: WorkspaceChoice) => Promise<void> | void;
+  /** Called when the user submits an inline password to unlock a workspace */
+  onUnlock: (workspace: WorkspaceChoice, password: string) => Promise<void>;
   /** Called when the user wants to go back and use a different account */
   onBack: () => void;
   /** Whether a workspace selection is being processed */
@@ -25,13 +27,22 @@ interface PostCredentialWorkspaceSelectorProps {
 /**
  * PostCredentialWorkspaceSelector
  *
- * Shown AFTER credentials are validated when the email belongs to multiple tenants.
- * Credentials have been verified ✓ — no tokens issued yet.
+ * Shown when the email belongs to multiple tenants. Implements the
+ * "hybrid picker" UX:
+ *
+ *   ✅ unlocked cards  → direct click to log in (password already verified)
+ *   🔒 locked cards    → expandable inline password form to unlock that workspace
+ *   🚫 disabled cards  → non-interactive (suspended tenant / deactivated account)
+ *   ⏳ setup cards     → non-interactive (first-time setup pending)
+ *
+ * Credentials for AT LEAST ONE workspace have been verified — no tokens
+ * are issued until the user selects a workspace.
  */
 export function PostCredentialWorkspaceSelector({
   email,
   workspaces,
   onSelect,
+  onUnlock,
   onBack,
   isLoading = false,
   error,
@@ -39,12 +50,13 @@ export function PostCredentialWorkspaceSelector({
   const { t } = useI18n();
   const [selectingId, setSelectingId] = useState<string | null>(null);
 
-  const getWorkspaceKey = (ws: WorkspaceChoice) =>
+  const getWorkspaceKey = (ws: WorkspaceChoice): string =>
     ws.isPlatformAdmin ? "__platform__" : ws.tenantId;
 
   const handleSelect = async (workspace: WorkspaceChoice) => {
-    if (!workspace.isActivated || workspace.isDisabled || isLoading) return;
-    setSelectingId(getWorkspaceKey(workspace));
+    if (isLoading || selectingId !== null) return;
+    const key = getWorkspaceKey(workspace);
+    setSelectingId(key);
     try {
       await onSelect(workspace);
     } finally {
@@ -52,25 +64,53 @@ export function PostCredentialWorkspaceSelector({
     }
   };
 
+  // Counts for the header hint
+  const unlockedCount = workspaces.filter(
+    (w) => w.isActivated && !w.isDisabled && !w.isLocked && w.isPasswordVerified !== false
+  ).length;
+  const lockedCount = workspaces.filter(
+    (w) => w.isActivated && !w.isDisabled && !w.isLocked && w.isPasswordVerified === false
+  ).length;
+
   return (
     <div className="w-full" role="main" aria-labelledby="workspace-selector-heading">
       {/* Header */}
       <div className="mb-6">
-        <div className="mb-1 flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" aria-hidden />
-          <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-            {t("auth.workspaceSelection.credentialsVerified") || "Credentials verified"}
-          </p>
+        <div className="mb-2 flex items-center gap-2">
+          {unlockedCount > 0 ? (
+            <>
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" aria-hidden />
+              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                {t("auth.workspaceSelection.credentialsVerified") || "Credentials verified"}
+              </p>
+            </>
+          ) : (
+            <>
+              <Lock className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
+              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                {t("auth.workspaceSelection.enterPasswordForWorkspace") ||
+                  "Enter the password for a workspace to sign in"}
+              </p>
+            </>
+          )}
         </div>
+
         <h2
           id="workspace-selector-heading"
           className="text-xl font-semibold tracking-tight text-foreground"
         >
           {t("auth.workspaceSelection.heading") || "Choose a workspace"}
         </h2>
+
         <p className="mt-1 text-sm text-muted-foreground">
-          {t("auth.workspaceSelection.subtitle") ||
-            `Your account (${email}) belongs to multiple workspaces.`}
+          {lockedCount > 0 && unlockedCount > 0
+            ? t("auth.workspaceSelection.subtitleMixed") ||
+              `Your account (${email}) has ${unlockedCount} unlocked and ${lockedCount} password-protected workspace(s).`
+            : lockedCount > 0
+            ? t("auth.workspaceSelection.subtitleAllLocked") ||
+              `Your account (${email}) belongs to ${workspaces.length} workspace(s). Enter a password to access.`
+            : t("auth.workspaceSelection.subtitle") ||
+              `Your account (${email}) belongs to multiple workspaces.`}
         </p>
       </div>
 
@@ -92,19 +132,29 @@ export function PostCredentialWorkspaceSelector({
           const wsKey = getWorkspaceKey(ws);
           const isThisLoading = selectingId === wsKey;
           const isAnyLoading = isLoading || selectingId !== null;
-          const isDisabled = !ws.isActivated || (isAnyLoading && !isThisLoading);
+
           return (
             <li key={wsKey}>
               <WorkspaceCard
                 workspace={ws}
                 isThisLoading={isThisLoading}
-                isDisabled={isDisabled}
+                isAnyLoading={isAnyLoading}
                 onSelect={handleSelect}
+                onUnlock={onUnlock}
               />
             </li>
           );
         })}
       </ul>
+
+      {/* Unlock hint when there are locked workspaces */}
+      {lockedCount > 0 && (
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Unlock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          {t("auth.workspaceSelection.unlockHint") ||
+            "Click a locked workspace to enter its password and gain access."}
+        </p>
+      )}
 
       {/* Back button */}
       <div className="mt-5 flex items-center justify-center">

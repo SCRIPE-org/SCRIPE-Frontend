@@ -11,7 +11,6 @@ import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { appLogger } from "@/core/common/logger";
 import { LoginRequest } from "../../../domain/entities/Auth";
 import {
   TwoFactorRequiredError,
@@ -56,7 +55,7 @@ export function useAuthLogin() {
       } = result;
 
       // 1. Set user in store with permissions and roles
-      setAuth(user, user.permissions || [], []);
+      setAuth(user, user.permissions || [], [], true);
 
       // 2. Store subscription status for payment wall / grace banner
       setSubscriptionInfo(subscriptionStatus, gracePhase, editionName);
@@ -86,9 +85,15 @@ export function useAuthLogin() {
     },
     onError: (error: Error) => {
       // Don't show toast for 2FA required — it's not an error, it's a flow step
-      if (error instanceof TwoFactorRequiredError) return;
+      if (
+        error instanceof TwoFactorRequiredError ||
+        error.name === "TwoFactorRequiredError"
+      ) return;
       // Don't show toast for workspace selection — it's a UX step, not an error
-      if (error instanceof WorkspaceSelectionRequiredError) return;
+      if (
+        error instanceof WorkspaceSelectionRequiredError ||
+        error.name === "WorkspaceSelectionRequiredError"
+      ) return;
       operationError(error.message || t("auth.loginFailed"));
     },
   });

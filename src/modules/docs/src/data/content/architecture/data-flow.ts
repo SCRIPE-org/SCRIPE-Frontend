@@ -2,188 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "architecture.dataFlow.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.dataFlow.queryFlowTitle",
-    id: "query-flow",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "architecture.dataFlow.queryFlowIntro" },
   {
-    type: "flowchart",
-    title: "Full Query Flow — Frontend to Database",
-    direction: "horizontal",
-    nodes: [
-      { id: "view", label: "View (UI)", type: "primary" },
-      { id: "vm", label: "ViewModel", type: "success" },
-      { id: "tq", label: "TanStack Query", type: "info" },
-      { id: "repo", label: "Repository", type: "warning" },
-      { id: "api", label: "API Service", type: "danger" },
-      { id: "backend", label: "Backend API", type: "default" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "view", to: "vm", label: "uses hook" },
-      { from: "vm", to: "tq", label: "useQuery" },
-      { from: "tq", to: "repo", label: "queryFn" },
-      { from: "repo", to: "api", label: "GET" },
-      { from: "api", to: "backend", label: "HTTP" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.dataFlow.mutationFlowTitle",
-    id: "mutation-flow",
-  },
-  {
-    type: "flowchart",
-    title: "Full Mutation Flow — User Action to Cache Invalidation",
-    direction: "horizontal",
-    nodes: [
-      { id: "action", label: "User Action", type: "default" },
-      { id: "vm2", label: "ViewModel", type: "success" },
-      { id: "mutation", label: "useMutation", type: "info" },
-      { id: "repo2", label: "Repository", type: "warning" },
-      { id: "api2", label: "POST/PUT/DELETE", type: "danger" },
-      { id: "invalidate", label: "Invalidate Queries", type: "primary" },
-    ],
-    connections: [
-      { from: "action", to: "vm2", label: "onClick" },
-      { from: "vm2", to: "mutation", label: "mutate()" },
-      { from: "mutation", to: "repo2", label: "mutationFn" },
-      { from: "repo2", to: "api2", label: "HTTP" },
-      { from: "api2", to: "invalidate", label: "onSuccess" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.dataFlow.backendPipelineTitle",
-    id: "backend-pipeline",
-  },
-  { type: "paragraph", contentKey: "architecture.dataFlow.backendPipelineIntro" },
-  {
-    type: "flowchart",
-    title: "Backend Request Lifecycle",
-    direction: "vertical",
-    nodes: [
-      { id: "http", label: "HTTP Request", type: "default" },
-      { id: "cors2", label: "CORS Middleware", type: "info" },
-      { id: "rate", label: "Rate Limiter", type: "warning" },
-      { id: "auth2", label: "JWT Authentication", type: "primary" },
-      { id: "authz2", label: "Authorization", type: "primary" },
-      { id: "reqlog", label: "Request Logger", type: "info" },
-      { id: "ctrl", label: "Controller → AstraFlow mediator.Send()", type: "success" },
-      { id: "val", label: "ValidationBehavior", type: "warning" },
-      { id: "featcheck", label: "FeatureCheckBehavior", type: "danger" },
-      { id: "cache", label: "CachingBehavior", type: "success" },
-      { id: "handler2", label: "Handler → Repository → DbContext", type: "success" },
-      { id: "resp", label: "Result<T> → JSON Response", type: "primary" },
-    ],
-    connections: [
-      { from: "http", to: "cors2" },
-      { from: "cors2", to: "rate" },
-      { from: "rate", to: "auth2" },
-      { from: "auth2", to: "authz2" },
-      { from: "authz2", to: "reqlog" },
-      { from: "reqlog", to: "ctrl" },
-      { from: "ctrl", to: "val" },
-      { from: "val", to: "featcheck" },
-      { from: "featcheck", to: "cache" },
-      { from: "cache", to: "handler2" },
-      { from: "handler2", to: "resp" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.dataFlow.errorFlowTitle",
-    id: "error-flow",
-  },
-  { type: "paragraph", contentKey: "architecture.dataFlow.errorFlowIntro" },
-  {
-    type: "table",
-    headers: ["Error Source", "Handler", "Response Code", "Frontend Handling"],
-    rows: [
+    "rows": [
       [
-        "Validation failure",
-        "ValidationBehavior throws ValidationException",
-        "400 Bad Request",
-        "Form field errors via Result.errors[]",
+        "Page route",
+        "/docs/architecture/data-flow",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Auth failure (no token)",
-        "JWT Middleware rejects",
-        "401 Unauthorized",
-        "Redirect to /login",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/architecture/data-flow.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Auth failure (forbidden)",
-        "Authorization policy rejects",
-        "403 Forbidden",
-        "Show permission error",
-      ],
-      ["Entity not found", "Handler returns Result.Failure()", "404 Not Found", "Show 404 page"],
-      [
-        "Rate limit exceeded",
-        "Rate Limiter middleware",
-        "429 Too Many Requests",
-        "Show retry message",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Unhandled exception",
-        "Global exception handler",
-        "500 Internal Server Error",
-        "Show generic error",
+        "Application entry point",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Program.cs is intentionally thin and delegates registration and middleware to extension files."
       ],
       [
-        "Concurrency conflict",
-        "EF Core throws DbUpdateConcurrencyException",
-        "409 Conflict",
-        "Retry with refresh",
+        "Module registration",
+        "SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Conditional loading supports monolith, Gateway mode, and single-module service mode for the five implemented backend modules."
       ],
-    ],
+      [
+        "AstraFlow pipeline",
+        "SCRIPE-Backend/src/Core/Core.Application/DependencyInjection.cs",
+        "Open behaviors are registered in source order: Logging, Validation, FeatureCheck, WebhookDispatch, and Caching, with preprocessors, postprocessors, exception action/handler, and stream logging."
+      ],
+      [
+        "HTTP middleware",
+        "SCRIPE-Backend/src/Host/API/Extensions/MiddlewarePipeline.cs",
+        "The runtime HTTP pipeline is configured in one extension and includes forwarded headers, exception handling, security, CORS, jobs, rate limiting, auth, CSRF, replay protection, ETag, controllers, metrics, SignalR, and YARP."
+      ]
+    ]
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.dataFlow.cachingFlowTitle",
-    id: "caching-flow",
-  },
-  { type: "paragraph", contentKey: "architecture.dataFlow.cachingFlowIntro" },
-  {
-    type: "flowchart",
-    title: "Two-Level Caching Strategy",
-    direction: "vertical",
-    nodes: [
-      { id: "req2", label: "Query Request", type: "default" },
-      { id: "l1", label: "L1: IMemoryCache (in-process)", type: "success" },
-      { id: "l2", label: "L2: Redis (distributed)", type: "info" },
-      { id: "db", label: "Database Query", type: "danger" },
-      { id: "store", label: "Store in L1 + L2", type: "primary" },
-    ],
-    connections: [
-      { from: "req2", to: "l1", label: "Check L1" },
-      { from: "l1", to: "l2", label: "Miss → Check L2" },
-      { from: "l2", to: "db", label: "Miss → Query DB" },
-      { from: "db", to: "store", label: "Cache result" },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "info",
-    variant: "tip",
-    contentKey: "architecture.dataFlow.cacheTip",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "architecture/data-flow",
   titleKey: "architecture.dataFlow.title",
-  descriptionKey: "architecture.dataFlow.description",
   category: "architecture",
   order: 8,
   sections,
-  relatedSlugs: ["architecture/cqrs", "architecture/backend"],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["architecture/cqrs","architecture/backend"],
+  lastUpdated: "2026-06-07",
 });

@@ -2,241 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.systemRequirements.intro" },
-
-  // ─── Development Environment ────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.systemRequirements.devTitle",
-    id: "development",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: [
-      "commercial.systemRequirements.tblDevHeader1",
-      "commercial.systemRequirements.tblDevHeader2",
-      "commercial.systemRequirements.tblDevHeader3",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.systemRequirements.tblDevR1C1",
-        "commercial.systemRequirements.tblDevR1C2",
-        "commercial.systemRequirements.tblDevR1C3",
+        "Page route",
+        "/commercial/system-requirements",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.systemRequirements.tblDevR2C1",
-        "commercial.systemRequirements.tblDevR2C2",
-        "commercial.systemRequirements.tblDevR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/system-requirements.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.systemRequirements.tblDevR3C1",
-        "commercial.systemRequirements.tblDevR3C2",
-        "commercial.systemRequirements.tblDevR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.systemRequirements.tblDevR4C1",
-        "commercial.systemRequirements.tblDevR4C2",
-        "commercial.systemRequirements.tblDevR4C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.systemRequirements.tblDevR5C1",
-        "commercial.systemRequirements.tblDevR5C2",
-        "commercial.systemRequirements.tblDevR5C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.systemRequirements.tblDevR6C1",
-        "commercial.systemRequirements.tblDevR6C2",
-        "commercial.systemRequirements.tblDevR6C3",
-      ],
-      [
-        "commercial.systemRequirements.tblDevR7C1",
-        "commercial.systemRequirements.tblDevR7C2",
-        "commercial.systemRequirements.tblDevR7C3",
-      ],
-      [
-        "commercial.systemRequirements.tblDevR8C1",
-        "commercial.systemRequirements.tblDevR8C2",
-        "commercial.systemRequirements.tblDevR8C3",
-      ],
-    ],
-  },
-
-  // ─── Production — Monolith ──────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.systemRequirements.prodMonoTitle",
-    id: "production-monolith",
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
   {
-    type: "table",
-    headers: [
-      "commercial.systemRequirements.tblProdMonoHeader1",
-      "commercial.systemRequirements.tblProdMonoHeader2",
-      "commercial.systemRequirements.tblProdMonoHeader3",
-    ],
-    rows: [
-      [
-        "commercial.systemRequirements.tblProdMonoR1C1",
-        "commercial.systemRequirements.tblProdMonoR1C2",
-        "commercial.systemRequirements.tblProdMonoR1C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMonoR2C1",
-        "commercial.systemRequirements.tblProdMonoR2C2",
-        "commercial.systemRequirements.tblProdMonoR2C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMonoR3C1",
-        "commercial.systemRequirements.tblProdMonoR3C2",
-        "commercial.systemRequirements.tblProdMonoR3C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMonoR4C1",
-        "commercial.systemRequirements.tblProdMonoR4C2",
-        "commercial.systemRequirements.tblProdMonoR4C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMonoR5C1",
-        "commercial.systemRequirements.tblProdMonoR5C2",
-        "commercial.systemRequirements.tblProdMonoR5C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMonoR6C1",
-        "commercial.systemRequirements.tblProdMonoR6C2",
-        "commercial.systemRequirements.tblProdMonoR6C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMonoR7C1",
-        "commercial.systemRequirements.tblProdMonoR7C2",
-        "commercial.systemRequirements.tblProdMonoR7C3",
-      ],
-    ],
-  },
-
-  // ─── Production — Microservices ─────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.systemRequirements.prodMicroTitle",
-    id: "production-micro",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "table",
-    headers: [
-      "commercial.systemRequirements.tblProdMicroHeader1",
-      "commercial.systemRequirements.tblProdMicroHeader2",
-      "commercial.systemRequirements.tblProdMicroHeader3",
-    ],
-    rows: [
-      [
-        "commercial.systemRequirements.tblProdMicroR1C1",
-        "commercial.systemRequirements.tblProdMicroR1C2",
-        "commercial.systemRequirements.tblProdMicroR1C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMicroR2C1",
-        "commercial.systemRequirements.tblProdMicroR2C2",
-        "commercial.systemRequirements.tblProdMicroR2C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMicroR3C1",
-        "commercial.systemRequirements.tblProdMicroR3C2",
-        "commercial.systemRequirements.tblProdMicroR3C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMicroR4C1",
-        "commercial.systemRequirements.tblProdMicroR4C2",
-        "commercial.systemRequirements.tblProdMicroR4C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMicroR5C1",
-        "commercial.systemRequirements.tblProdMicroR5C2",
-        "commercial.systemRequirements.tblProdMicroR5C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMicroR6C1",
-        "commercial.systemRequirements.tblProdMicroR6C2",
-        "commercial.systemRequirements.tblProdMicroR6C3",
-      ],
-      [
-        "commercial.systemRequirements.tblProdMicroR7C1",
-        "commercial.systemRequirements.tblProdMicroR7C2",
-        "commercial.systemRequirements.tblProdMicroR7C3",
-      ],
-    ],
-  },
-
-  // ─── Database Server ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.systemRequirements.dbTitle", id: "database" },
-  {
-    type: "table",
-    headers: [
-      "commercial.systemRequirements.tblDbHeader1",
-      "commercial.systemRequirements.tblDbHeader2",
-      "commercial.systemRequirements.tblDbHeader3",
-      "commercial.systemRequirements.tblDbHeader4",
-    ],
-    rows: [
-      [
-        "commercial.systemRequirements.tblDbR1C1",
-        "commercial.systemRequirements.tblDbR1C2",
-        "commercial.systemRequirements.tblDbR1C3",
-        "commercial.systemRequirements.tblDbR1C4",
-      ],
-      [
-        "commercial.systemRequirements.tblDbR2C1",
-        "commercial.systemRequirements.tblDbR2C2",
-        "commercial.systemRequirements.tblDbR2C3",
-        "commercial.systemRequirements.tblDbR2C4",
-      ],
-      [
-        "commercial.systemRequirements.tblDbR3C1",
-        "commercial.systemRequirements.tblDbR3C2",
-        "commercial.systemRequirements.tblDbR3C3",
-        "commercial.systemRequirements.tblDbR3C4",
-      ],
-      [
-        "commercial.systemRequirements.tblDbR4C1",
-        "commercial.systemRequirements.tblDbR4C2",
-        "commercial.systemRequirements.tblDbR4C3",
-        "commercial.systemRequirements.tblDbR4C4",
-      ],
-    ],
-  },
-
-  // ─── Network Requirements ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.systemRequirements.networkTitle",
-    id: "network",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.systemRequirements.lstNetI1",
-      "commercial.systemRequirements.lstNetI2",
-      "commercial.systemRequirements.lstNetI3",
-      "commercial.systemRequirements.lstNetI4",
-      "commercial.systemRequirements.lstNetI5",
-      "commercial.systemRequirements.lstNetI6",
-      "commercial.systemRequirements.lstNetI7",
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-
-  { type: "info", variant: "tip", contentKey: "commercial.systemRequirements.cloudTip" },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/system-requirements",
   titleKey: "commercial.systemRequirements.title",
-  descriptionKey: "commercial.systemRequirements.description",
   category: "commercial-platform",
   order: 5,
   sections,
-  relatedSlugs: ["commercial/deployment-modes", "commercial/technology-stack"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/deployment-modes","commercial/technology-stack"],
+  lastUpdated: "2026-06-07",
 });

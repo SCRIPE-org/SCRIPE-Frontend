@@ -2,175 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Intro ────────────────────────────────────────────────
-  { type: "paragraph", contentKey: "modules.compliance.reports.intro" },
   {
-    type: "info",
-    variant: "tip",
-    titleKey: "modules.compliance.reports.infoTitle",
-    contentKey: "modules.compliance.reports.infoContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Report Types ─────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.reports.generationTitle",
-    id: "report-types",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.reports.generationIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.reports.reportType",
-      "modules.compliance.reports.reportDesc",
-      "modules.compliance.reports.reportAudience",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "GDPR Overview",
-        "modules.compliance.reports.gdprDesc",
-        "modules.compliance.reports.gdprAudience",
+        "Page route",
+        "/docs/modules/compliance-reports",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "DSR Summary",
-        "modules.compliance.reports.dsrDesc",
-        "modules.compliance.reports.dsrAudience",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/compliance/compliance-reports.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Consent Audit",
-        "modules.compliance.reports.consentAuditDesc",
-        "modules.compliance.reports.consentAudience",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Retention Log",
-        "modules.compliance.reports.retentionLogDesc",
-        "modules.compliance.reports.retentionAudience",
+        "Compliance module",
+        "SCRIPE-Backend/src/Modules/Compliance",
+        "Compliance owns data subject requests, consents, data inventory, regulations, retention policies, reports, and compliance jobs."
       ],
       [
-        "Data Inventory",
-        "modules.compliance.reports.inventoryDesc",
-        "modules.compliance.reports.inventoryAudience",
+        "Compliance controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Compliance",
+        "Controller endpoints expose DSR, consent, inventory, regulation, retention, and reporting workflows."
       ],
+      [
+        "Frontend compliance routes",
+        "SCRIPE-Frontend/src/app/(modules)/(compliance)",
+        "UI routes cover compliance overview, consent, DSR list/detail, data inventory, regulations, retention, and reports."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Async Flow ───────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.reports.asyncTitle",
-    id: "async-flow",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.reports.asyncIntro" },
-  {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.compliance.reports.formatsTitle",
-    contentKey: "modules.compliance.reports.formatsContent",
-  },
-  {
-    type: "flowchart",
-    titleKey: "modules.compliance.reports.asyncFlowTitle",
-    direction: "horizontal",
-    nodes: [
-      { id: "queue", labelKey: "modules.compliance.reports.nodeQueue", type: "info" },
-      { id: "job", labelKey: "modules.compliance.reports.nodeJob", type: "warning" },
-      { id: "ready", labelKey: "modules.compliance.reports.nodeReady", type: "success" },
-      { id: "download", labelKey: "modules.compliance.reports.nodeDownload", type: "primary" },
-    ],
-    connections: [
-      { from: "queue", to: "job" },
-      { from: "job", to: "ready" },
-      { from: "ready", to: "download" },
-    ],
-  },
-
-  // ─── Code Example ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.reports.codeTitle",
-    id: "generation-code",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.reports.codeIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "GenerateReportCommand.cs",
-    code: `public class GenerateReportCommandHandler : ICommandHandler<GenerateReportCommand, Guid>
-{
-    public async Task<Result<Guid>> Handle(GenerateReportCommand request, CancellationToken ct)
-    {
-        // 1. Create pending report record
-        var report = new ComplianceReport
-        {
-            TenantId = _tenantContext.TenantId,
-            ReportType = request.ReportType,
-            Title = $"Compliance Report - {request.ReportType}",
-            Status = ReportStatus.Pending
-        };
-        
-        await _repository.AddAsync(report, ct);
-        await _unitOfWork.SaveChangesAsync(ct);
-        
-        // 2. Queue background job
-        BackgroundJob.Enqueue<IReportGeneratorJob>(x => x.GenerateAsync(report.Id, ct));
-        
-        return Result<Guid>.Success(report.Id);
-    }
-}`,
-  },
-
-  // ─── API Endpoints ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.reports.endpointsTitle",
-    id: "endpoints",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/compliance/reports/generate",
-        descriptionKey: "modules.compliance.reports.epGenerate",
-        auth: "AdminOnly",
-        permission: "compliance_reports.generate",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/reports",
-        descriptionKey: "modules.compliance.reports.epList",
-        auth: "AdminOnly",
-        permission: "compliance_reports.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/reports/{id}",
-        descriptionKey: "modules.compliance.reports.epGet",
-        auth: "AdminOnly",
-        permission: "compliance_reports.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/reports/{id}/download",
-        descriptionKey: "modules.compliance.reports.epDownload",
-        auth: "AdminOnly",
-        permission: "compliance_reports.view",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/compliance-reports",
   titleKey: "modules.compliance.reports.title",
-  descriptionKey: "modules.compliance.reports.description",
   category: "modules",
   order: 6,
   sections,
   relatedSlugs: ["modules/compliance-overview"],
-  lastUpdated: "2026-05-03",
+  lastUpdated: "2026-06-07",
 });
