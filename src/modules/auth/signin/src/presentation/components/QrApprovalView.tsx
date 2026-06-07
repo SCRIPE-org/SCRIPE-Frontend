@@ -88,7 +88,7 @@ export function QrApprovalView({
   // ── Success screen ──
   if (result === "approved") {
     return (
-      <div className="sx-screen space-y-5 p-6 text-center" dir={direction}>
+      <div className="sx-screen-anim w-full space-y-5 p-6 text-center" dir={direction}>
         <div
           className="sx-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full"
           style={{
@@ -122,7 +122,7 @@ export function QrApprovalView({
   // ── Rejected screen ──
   if (result === "rejected") {
     return (
-      <div className="sx-screen space-y-5 p-6 text-center" dir={direction}>
+      <div className="sx-screen-anim w-full space-y-5 p-6 text-center" dir={direction}>
         <div
           className="sx-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full"
           style={{
@@ -154,7 +154,7 @@ export function QrApprovalView({
 
   // ── Approval prompt ──
   return (
-    <div className="sx-screen space-y-6 p-6" dir={direction}>
+    <div className="sx-screen-anim w-full space-y-6 p-6" dir={direction}>
       {/* Header */}
       <div className="text-center">
         <div

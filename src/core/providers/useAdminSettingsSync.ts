@@ -50,16 +50,24 @@ interface AdminSettingsPayload {
  */
 export function useAdminSettingsSync() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  // Always start ready — render with cached settings (if any) or defaults immediately.
-  // On first-ever login (empty cache) we render with defaults and silently reconcile
-  // from the server. This eliminates the 1-second loading shimmer on fresh logins.
-  // The server reconcile will update localStorage and trigger re-renders via
-  // the "admin-settings-loaded" CustomEvent → SettingsProvider picks it up.
-  const [isSettingsReady, setIsSettingsReady] = useState(true);
-  // isTransitioning=true briefly when server reconciles a DIFFERENT layout template.
-  // Prevents the visible flash of old-layout → new-layout after a stale cache hit.
-  // Returning users with a matching cache see zero shimmer.
-  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // ── Smart initial state: CACHE-AWARE ──
+  // If localStorage has cached settings from a previous session → render immediately
+  // with those cached values (optimistic render, zero shimmer for returning users).
+  // If localStorage is empty (fresh login, first device, or post-logout) → gate
+  // rendering with isSettingsReady=false + isTransitioning=true so DashboardLayout
+  // shows a loading shimmer UNTIL the server data (settings + branding + routes) arrives.
+  // This eliminates the visible flash: defaults-layout → actual-layout.
+  const [hasInitialCache] = useState(() => {
+    if (typeof window === "undefined") return true; // SSR: assume ready
+    return !!localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+  });
+  const [isSettingsReady, setIsSettingsReady] = useState(hasInitialCache);
+  // isTransitioning=true blocks DashboardLayout from rendering content.
+  // For fresh login: start true so the shimmer shows from the very first frame.
+  // For returning users with cache: start false (no shimmer unless server reconciles
+  // a different layoutTemplate later).
+  const [isTransitioning, setIsTransitioning] = useState(!hasInitialCache);
 
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -140,10 +148,12 @@ export function useAdminSettingsSync() {
           appLogger.info("Admin settings reconciled from server (silent update)");
 
           if (layoutChanged) {
-            // Allow one render cycle for React to commit the new layout
-            // component before removing the shimmer (~300ms is enough for
-            // the dynamic import to resolve on a typical connection).
-            setTimeout(() => setIsTransitioning(false), 300);
+            // Allow time for React to commit the new layout chunk before
+            // removing the shimmer. 800ms covers slow-ish connections while
+            // keeping the perceived load time acceptable. The dynamic import
+            // has a loading fallback, so even if 800ms isn't enough the user
+            // sees a shimmer (not a blank frame).
+            setTimeout(() => setIsTransitioning(false), 800);
           }
         }
       }
@@ -158,7 +168,7 @@ export function useAdminSettingsSync() {
       // 3. API error → clear immediately so the UI unblocks
       if (!hasCache) {
         // Give React time to commit the new layout before removing shimmer
-        setTimeout(() => setIsTransitioning(false), 300);
+        setTimeout(() => setIsTransitioning(false), 800);
       }
     }
   }, [isAuthenticated]);

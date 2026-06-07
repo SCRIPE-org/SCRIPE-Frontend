@@ -49,7 +49,7 @@ export function LoginFormRouter({
   return (
     <div
       id="login-main-content"
-      className="w-full"
+      className="w-full mx-auto"
       style={{ maxWidth: "var(--login-form-width, 380px)" }}
       {...(a11y.ariaLandmarks ? { role: "main", "aria-label": t("auth.loginFormAriaLabel") } : {})}
     >

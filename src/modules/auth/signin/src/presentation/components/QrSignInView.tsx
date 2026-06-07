@@ -63,7 +63,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
   }, [vm.qrData]);
 
   return (
-    <div className="sx-screen space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="sx-screen-anim w-full space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header */}
       <div>
         <h2 className="text-lg font-bold" style={{ color: "var(--sx-text)" }}>
