@@ -2,127 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.apiDesign.intro" },
-
-  // ─── RESTful Conventions ────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.apiDesign.conventionsTitle",
-    id: "conventions",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Convention", "Pattern", "Example"],
-    rows: [
-      ["Resource naming", "Plural nouns", "/api/employees, /api/tenants"],
-      ["HTTP methods", "Standard CRUD mapping", "GET=Read, POST=Create, PUT=Update, DELETE=Remove"],
-      ["Pagination", "page + pageSize query params", "/api/employees?page=1&pageSize=20"],
-      ["Filtering", "Query parameters", "/api/employees?department=eng&status=active"],
-      ["Sorting", "orderBy query param", "/api/employees?orderBy=name:asc"],
-      ["Search", "search query param", "/api/employees?search=john"],
-      ["Versioning", "URL prefix (future)", "/api/v1/employees"],
-      ["Nesting", "Sub-resources", "/api/tenants/{id}/users"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Result Pattern ─────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.apiDesign.resultTitle", id: "result-pattern" },
-  { type: "paragraph", contentKey: "commercial.apiDesign.resultContent" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Result Pattern — No Exceptions for Business Errors",
-    code: `// Every handler returns Result<T>
-public async Task<Result<EmployeeDto>> Handle(CreateEmployeeCommand cmd)
-{
-    // Validation happens in pipeline behavior (FluentValidation)
-    
-    var employee = Employee.Create(cmd.Name, cmd.Email);
-    await _repository.AddAsync(employee);
-    await _unitOfWork.SaveChangesAsync();
-    
-    return Result<EmployeeDto>.Success(_mapper.Map(employee));
-}
-
-// Controller auto-maps Result to HTTP response
-// Result.Success → 200 OK
-// Result.Failure → 400 Bad Request  
-// Result.NotFound → 404 Not Found
-// Result.Forbidden → 403 Forbidden`,
-  },
-
-  // ─── HTTP Status Codes ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.apiDesign.statusCodesTitle",
-    id: "status-codes",
+    "rows": [
+      [
+        "Page route",
+        "/commercial/api-design",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/api-design.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
   {
-    type: "table",
-    headers: ["Status Code", "Meaning", "When Used"],
-    rows: [
-      ["200 OK", "Success", "GET, PUT, PATCH operations"],
-      ["201 Created", "Resource created", "POST operations"],
-      ["204 No Content", "Success, no body", "DELETE operations"],
-      ["400 Bad Request", "Validation error", "Invalid input data"],
-      ["401 Unauthorized", "Not authenticated", "Missing or invalid JWT"],
-      ["403 Forbidden", "Not authorized", "Insufficient permissions"],
-      ["404 Not Found", "Resource missing", "Non-existent entity"],
-      ["409 Conflict", "Duplicate resource", "Unique constraint violation"],
-      ["429 Too Many Requests", "Rate limited", "Exceeds rate limit"],
-      ["500 Internal Error", "Server error", "Unhandled exceptions"],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Error Response ─────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.apiDesign.errorTitle", id: "error-handling" },
-  {
-    type: "code",
-    language: "json",
-    filename: "Consistent Error Response Format",
-    code: `{
-  "isSuccess": false,
-  "statusCode": 400,
-  "message": "Validation failed",
-  "errors": [
-    { "field": "email", "message": "Email is already in use" },
-    { "field": "name", "message": "Name must be at least 2 characters" }
-  ],
-  "traceId": "abc-123-def"
-}`,
-  },
-
-  // ─── AstraFlow mediator Pipeline ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.apiDesign.pipelineTitle", id: "pipeline" },
-  { type: "paragraph", contentKey: "commercial.apiDesign.pipelineContent" },
-  {
-    type: "list",
-    variant: "ordered",
-    items: [
-      "Request received → Controller forwards to AstraFlow mediator via .Send()",
-      "LoggingBehavior → In-process request logging & timing start",
-      "ValidationBehavior → FluentValidation runs before handler",
-      "FeatureCheckBehavior → Tenant edition feature/quota checks",
-      "CachingBehavior → Redis query caching lookup",
-      "Handler execution → Business logic runs",
-      "Response mapped → Result<T> → HTTP status code",
-    ],
-  },
-
-  // ─── Swagger ────────────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.apiDesign.swaggerTitle", id: "swagger" },
-  { type: "paragraph", contentKey: "commercial.apiDesign.swaggerContent" },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/api-design",
   titleKey: "commercial.apiDesign.title",
-  descriptionKey: "commercial.apiDesign.description",
   category: "commercial-developer",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/clean-architecture", "commercial/rest-api-overview"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/clean-architecture","commercial/rest-api-overview"],
+  lastUpdated: "2026-06-07",
 });

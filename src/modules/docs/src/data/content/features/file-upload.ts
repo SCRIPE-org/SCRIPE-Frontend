@@ -2,162 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Upload Architecture ────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.fileUpload.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "features.fileUpload.architectureIntro" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    title: "Upload Architecture",
-    nodes: [
-      { id: "img", label: "ImageUploadController (Profile photos, logos)", type: "default" },
-      { id: "file", label: "UploadsController (General files)", type: "default" },
-      { id: "is", label: "ImageService (Resize, crop, format)", type: "primary" },
-      { id: "fs", label: "FileService (Validation, storage)", type: "primary" },
-      { id: "blob", label: "IBlobStorage (Local / Azure / S3 / MinIO)", type: "success" },
-      { id: "static", label: "StaticFileMiddleware (Serves from storage)", type: "info" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "img", to: "is" },
-      { from: "file", to: "fs" },
-      { from: "is", to: "fs" },
-      { from: "fs", to: "blob" },
-      { from: "blob", to: "static" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/features/file-upload",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/file-upload.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Image Upload Pipeline ──────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.fileUpload.imagePipelineTitle",
-    id: "image-pipeline",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "ImageService.cs",
-    code: `public class ImageService : IImageService
-{
-    public async Task<string> UploadAsync(IFormFile file, ImageUploadOptions options)
-    {
-        // 1. Validate file type (JPEG, PNG, WebP)
-        ValidateImageType(file);
-        
-        // 2. Validate file size (max configurable, default 5MB)
-        ValidateFileSize(file, options.MaxSize);
-        
-        // 3. Read and process image
-        using var image = await Image.LoadAsync(file.OpenReadStream());
-        
-        // 4. Resize if needed (maintains aspect ratio)
-        if (image.Width > options.MaxWidth || image.Height > options.MaxHeight)
-        {
-            image.Mutate(x => x.Resize(new ResizeOptions
-            {
-                Size = new Size(options.MaxWidth, options.MaxHeight),
-                Mode = ResizeMode.Max
-            }));
-        }
-        
-        // 5. Save to storage via IBlobStorage
-        var path = $"{options.Folder}/{Guid.NewGuid()}.webp";
-        await _blobStorage.UploadAsync(path, imageStream, "image/webp");
-        
-        return path;
-    }
-}`,
-  },
-
-  // ─── File Validation Rules ──────────────────────────
-  { type: "heading", level: 2, titleKey: "features.fileUpload.validationTitle", id: "validation" },
-  {
-    type: "table",
-    headers: ["Rule", "Default", "Configurable"],
-    rows: [
-      ["Image max size", "5 MB", "FileSettings.MaxImageSize"],
-      ["Document max size", "25 MB", "FileSettings.MaxDocumentSize"],
-      ["Allowed image types", "JPEG, PNG, WebP, GIF", "FileSettings.AllowedImageTypes"],
-      ["Allowed document types", "PDF, DOCX, XLSX, CSV", "FileSettings.AllowedDocumentTypes"],
-      ["Image max dimensions", "2048 × 2048", "ImageUploadOptions"],
-    ],
-  },
-
-  // ─── General File Upload ────────────────────────────
-  { type: "heading", level: 2, titleKey: "features.fileUpload.generalTitle", id: "general" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "FileService.cs",
-    code: `public class FileService : IFileService
-{
-    public async Task<string> UploadAsync(IFormFile file, string folder)
-    {
-        // 1. Validate extension against whitelist
-        var ext = Path.GetExtension(file.FileName).ToLower();
-        if (!_settings.AllowedExtensions.Contains(ext))
-            throw new ValidationException($"File type {ext} not allowed");
-
-        // 2. Generate safe filename (GUID prevents collisions / path traversal)
-        var safeFileName = $"{Guid.NewGuid()}{ext}";
-        var path = Path.Combine(folder, safeFileName);
-
-        // 3. Delegate to blob storage
-        await _blobStorage.UploadAsync(path, file.OpenReadStream(), file.ContentType);
-        
-        return path;
-    }
-}`,
-  },
-
-  // ─── Static File Serving ────────────────────────────
-  { type: "heading", level: 2, titleKey: "features.fileUpload.servingTitle", id: "serving" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Program.cs",
-    code: `// Static file middleware for uploaded files
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(settings.StoragePath),
-    RequestPath = "/uploads",
-    ServeUnknownFileTypes = false,
-    DefaultContentType = "application/octet-stream"
-});`,
-  },
-  { type: "paragraph", contentKey: "features.fileUpload.servingNote" },
-
-  // ─── Tenant-Scoped Storage ──────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "features.fileUpload.tenantScopedTitle",
-    id: "tenant-scoped",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "Storage Directory Structure",
-    code: `uploads/
-└── {tenant-id}/
-    ├── admins/{admin-id}/profile.webp
-    ├── logos/tenant-logo.png
-    └── documents/{file-id}.pdf`,
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "features/file-upload",
   titleKey: "features.fileUpload.title",
-  descriptionKey: "features.fileUpload.description",
   category: "features",
   order: 11,
   sections,
   relatedSlugs: ["features/download-export"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-07",
 });

@@ -3,6 +3,7 @@
  * Eagerly merges all Chinese docs translations (tech + commercial).
  */
 import { zh as common } from "../pages/common/zh";
+import { zh as generatedTitles } from "../pages/generated-titles/zh";
 import { zh as getStarted } from "../pages/get-started/zh";
 import { zh as architecture } from "../pages/architecture/zh";
 import { zh as features } from "../pages/features/zh";
@@ -69,5 +70,6 @@ export const allDocsZh: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  { commercial: stripeConnect.commercial },
+  generatedTitles
 );

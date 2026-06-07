@@ -2,253 +2,122 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "modules.userSubscriptions.intro" },
-
-  // ─── UserSubscription Entity ──────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.entityTitle",
-    id: "user-subscription-entity",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.entityIntro" },
   {
-    type: "table",
-    headers: ["Field", "Type", "Description"],
-    rows: [
-      ["UserId", "Guid", "The subscribing user"],
-      ["PlanId", "Guid", "The TenantPlan being subscribed to"],
-      ["TenantId", "Guid", "Tenant owning this subscription"],
-      ["Status", "UserSubscriptionStatus", "Free | Trial | Active | PastDue | Cancelled | Expired"],
-      ["StartDate", "DateTime", "When the subscription period starts"],
-      ["EndDate", "DateTime?", "When the subscription period ends (null = lifetime)"],
-      ["TrialEndsAt", "DateTime?", "When the trial period expires"],
-      ["AutoRenew", "bool", "Whether to auto-renew when the period ends"],
-      ["CancelledAt", "DateTime?", "When the subscription was cancelled"],
-      ["CancellationReason", "string?", "Optional reason for cancellation"],
-      ["StripeSubscriptionId", "string?", "Stripe subscription ID (if using Stripe Connect)"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Status Lifecycle ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.statusTitle",
-    id: "status-lifecycle",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.statusIntro" },
-  {
-    type: "flowchart",
-    direction: "horizontal",
-    nodes: [
-      { id: "free", label: "Free", type: "default" },
-      { id: "trial", label: "Trial", type: "info" },
-      { id: "active", label: "Active", type: "success" },
-      { id: "pastdue", label: "PastDue", type: "warning" },
-      { id: "cancelled", label: "Cancelled", type: "danger" },
-      { id: "expired", label: "Expired", type: "danger" },
-    ],
-    connections: [
-      { from: "free", to: "trial", label: "assign trial plan" },
-      { from: "free", to: "active", label: "assign paid plan" },
-      { from: "trial", to: "active", label: "trial ends + auto-renew" },
-      { from: "trial", to: "expired", label: "trial ends, no renew" },
-      { from: "active", to: "pastdue", label: "payment fails" },
-      { from: "active", to: "cancelled", label: "manual cancel" },
-      { from: "active", to: "expired", label: "period ends, no renew" },
-      { from: "pastdue", to: "active", label: "payment recovered", style: "dashed" },
-      { from: "pastdue", to: "expired", label: "grace expires" },
-    ],
-  },
-  {
-    type: "table",
-    headers: ["Status", "Description", "Terminal?"],
-    rows: [
-      ["Free", "User is on a free plan with no billing", "No"],
-      ["Trial", "User is in a trial period (expires at TrialEndsAt)", "No"],
-      ["Active", "User has a paid, active subscription", "No"],
-      ["PastDue", "Payment has failed, grace period in progress", "No"],
-      ["Cancelled", "Subscription was manually cancelled", "Yes"],
-      ["Expired", "Subscription period ended without renewal", "Yes"],
-    ],
-  },
-
-  // ─── UserFeatureCheckerService ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.featureCheckerTitle",
-    id: "feature-checker",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.featureCheckerIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "UserFeatureCheckerService.cs",
-    code: `// Resolve features for a user
-var features = await _userFeatureChecker.GetFeaturesAsync(userId);
-// Returns key/value dict from the user's active TenantPlanFeature records
-
-// Check a specific feature
-bool hasApiAccess = features.ContainsKey("apiAccess") && features["apiAccess"] == "true";
-int maxProjects = int.Parse(features.GetValueOrDefault("maxProjects", "-1"));`,
-  },
-
-  // ─── Reconciliation Job ───────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.reconciliationTitle",
-    id: "reconciliation-job",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.reconciliationIntro" },
-  {
-    type: "table",
-    headers: ["Transition", "Condition", "Action"],
-    rows: [
+    "rows": [
       [
-        "Trial → Active",
-        "TrialEndsAt ≤ now, AutoRenew = true",
-        "Create new Active row for next period",
+        "Page route",
+        "/docs/modules/user-subscriptions",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["Trial → Expired", "TrialEndsAt ≤ now, AutoRenew = false", "Mark current row as Expired"],
-      ["Active → Expired", "EndDate ≤ now, AutoRenew = false", "Mark current row as Expired"],
-      ["Auto-Renew", "EndDate ≤ now, AutoRenew = true", "Create new Active row for next period"],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/entitlements/user-subscriptions.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Immutable Design ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.immutableTitle",
-    id: "immutable-design",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.immutableIntro" },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "modules.userSubscriptions.immutableIntro",
-  },
-
-  // ─── Self-Service /me ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.selfServiceTitle",
-    id: "self-service-me",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.selfServiceIntro" },
-  {
-    type: "code",
-    language: "http",
-    code: `GET /api/v1/user-subscriptions/me
-Authorization: Bearer <user-jwt>
-
-// Response
-{
-  "id": "encrypted-id",
-  "planId": "encrypted-id",
-  "planName": "Pro",
-  "status": "Active",
-  "startDate": "2026-04-01T00:00:00Z",
-  "endDate": "2026-05-01T00:00:00Z",
-  "autoRenew": true
-}`,
-  },
-
-  // ─── Domain Events ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.eventsTitle",
-    id: "domain-events",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.eventsIntro" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "modules.userSubscriptions.event1",
-      "modules.userSubscriptions.event2",
-      "modules.userSubscriptions.event3",
-    ],
-  },
-
-  // ─── Tenant Context Required ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.contextTitle",
-    id: "tenant-context",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.contextIntro" },
-
-  // ─── API Endpoints ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.userSubscriptions.endpointsTitle",
-    id: "api-endpoints",
-  },
-  { type: "paragraph", contentKey: "modules.userSubscriptions.endpointsIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/user-subscriptions",
-        descriptionKey: "modules.userSubscriptions.ep.list",
-        auth: "JWT",
-        permission: "user_subscriptions.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/user-subscriptions/{id}",
-        descriptionKey: "modules.userSubscriptions.ep.get",
-        auth: "JWT",
-        permission: "user_subscriptions.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-subscriptions",
-        descriptionKey: "modules.userSubscriptions.ep.create",
-        auth: "JWT",
-        permission: "user_subscriptions.create",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-subscriptions/{id}/cancel",
-        descriptionKey: "modules.userSubscriptions.ep.cancel",
-        auth: "JWT",
-        permission: "user_subscriptions.update",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-subscriptions/{id}/renew",
-        descriptionKey: "modules.userSubscriptions.ep.renew",
-        auth: "JWT",
-        permission: "user_subscriptions.update",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/user-subscriptions/me",
-        descriptionKey: "modules.userSubscriptions.ep.me",
-        auth: "JWT (User)",
-        permission: "",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/user-subscriptions",
   titleKey: "modules.userSubscriptions.title",
-  descriptionKey: "modules.userSubscriptions.description",
   category: "modules",
   order: 10,
   sections,
-  relatedSlugs: ["modules/tenant-plans", "modules/subscriptions", "features/tenant-context-gate"],
-  lastUpdated: "2026-04-18",
+  relatedSlugs: ["modules/tenant-plans","modules/subscriptions","features/tenant-context-gate"],
+  lastUpdated: "2026-06-07",
 });

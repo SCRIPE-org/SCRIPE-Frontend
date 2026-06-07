@@ -2,131 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.intro" },
-
-  // ─── Brand Identity ──────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.brandTitle",
-    id: "brand-identity",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.brandContent" },
   {
-    type: "table",
-    headers: ["Capability", "Description"],
-    rows: [
-      [
-        "Custom Logo & Favicon",
-        "Upload your corporate identity assets with automatic optimization",
-      ],
-      ["Color System", "Configure primary, secondary, accent colors with live preview"],
-      ["Typography", "Choose from Google Fonts library with instant rendering"],
-      ["Background Media", "Solid colors, gradients, uploaded images, or video backgrounds"],
-      ["Overlay Effects", "Blur, color overlay, and opacity controls for premium aesthetics"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Visual Studio ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.studioTitle",
-    id: "visual-studio",
-  },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.studioContent" },
-
-  // ─── 14 Layouts ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.layoutsTitle",
-    id: "layouts",
-  },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.layoutsContent" },
-  {
-    type: "table",
-    headers: ["Layout Category", "Layouts Included", "Best For"],
-    rows: [
+    "rows": [
       [
-        "Split Layouts (6)",
-        "split-right, split-left, magazine, compact-sidebar, vertical-split, diagonal-split",
-        "Corporate & enterprise branding with dedicated branding panel",
+        "Page route",
+        "/commercial/login-customizer",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Full-Page Layouts (8)",
-        "centered, branded-full, overlay, simple, floating-card, immersive, glass-morphism, corner-card",
-        "Modern, immersive login experiences with full-screen backgrounds",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/login-customizer.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Dark/Light Theme ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.themeTitle",
-    id: "theme",
-  },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.themeContent" },
-
-  // ─── Enterprise Safety ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.safetyTitle",
-    id: "safety",
-  },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.safetyContent" },
-  {
-    type: "table",
-    headers: ["Safety Feature", "Description"],
-    rows: [
-      ["Draft → Preview → Publish", "No changes go live without explicit admin approval"],
-      ["Version History", "Every publish creates a snapshot for instant rollback"],
-      ["Optimistic Concurrency", "Prevents conflicting edits between multiple admins"],
-      ["Safe Mode", "One-click emergency bypass restores platform defaults"],
-      ["Sandboxed Preview", "Login preview runs in isolated iframe — zero production risk"],
-      ["Audit Trail", "Every change is logged with who, when, and before/after snapshots"],
-    ],
-  },
-
-  // ─── Multi-Tenant ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.tenantTitle",
-    id: "multi-tenant",
-  },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.tenantContent" },
-
-  // ─── Zero Code ───────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.loginCustomizer.zeroCodeTitle",
-    id: "zero-code",
-  },
-  { type: "paragraph", contentKey: "commercial.loginCustomizer.zeroCodeContent" },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "commercial.loginCustomizer.zeroCodeTip",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/login-customizer",
   titleKey: "commercial.loginCustomizer.title",
-  descriptionKey: "commercial.loginCustomizer.description",
   category: "commercial-enterprise",
   order: 7,
   sections,
-  relatedSlugs: [
-    "commercial/multi-tenancy",
-    "commercial/authentication-security",
-    "commercial/theme-marketplace",
-    "commercial/page-builder",
-  ],
-  lastUpdated: "2026-04-02",
+  relatedSlugs: ["commercial/multi-tenancy","commercial/authentication-security","commercial/theme-marketplace","commercial/page-builder"],
+  lastUpdated: "2026-06-07",
 });

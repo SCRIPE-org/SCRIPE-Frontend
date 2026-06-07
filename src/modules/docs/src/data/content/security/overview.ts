@@ -2,156 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "security.overview.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "security.overview.layersTitle",
-    id: "security-layers",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "Security Defense Layers",
-    direction: "vertical",
-    nodes: [
-      { id: "l1", label: "Layer 1: Network (CORS + HSTS + Rate Limiting)", type: "danger" },
-      { id: "l2", label: "Layer 2: Authentication (JWT + 2FA + Lockout)", type: "warning" },
-      { id: "l3", label: "Layer 3: Authorization (RBAC + Permissions)", type: "info" },
-      { id: "l4", label: "Layer 4: Data (Tenant Isolation + Encryption)", type: "primary" },
-      { id: "l5", label: "Layer 5: Audit (Full Event Logging + Real-time)", type: "success" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "l1", to: "l2" },
-      { from: "l2", to: "l3" },
-      { from: "l3", to: "l4" },
-      { from: "l4", to: "l5" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/security/overview",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/security/overview.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Backend host",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Startup delegates to host defaults, core services, conditional module registration, additional services, post-build initialization, and the middleware pipeline."
+      ],
+      [
+        "Backend modules",
+        "SCRIPE-Backend/src/Modules + SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Current backend modules are Compliance, Entitlements, Identity, Marketplace, and Plugins; module loading is controlled by MODULE_NAME."
+      ],
+      [
+        "Frontend app",
+        "SCRIPE-Frontend/src/app + SCRIPE-Frontend/package.json",
+        "Next.js 16.1.7 with React 19.2.4, App Router route groups, and module connectors under src/modules."
+      ],
+      [
+        "Documentation portal",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts",
+        "Canonical documentation pages are TypeScript registrations; Markdown exports are generated/reference output."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "security.overview.featuresTitle",
-    id: "security-features",
-  },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "lock",
-        titleKey: "security.overview.featureJwt",
-        descriptionKey: "security.overview.featureJwtDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "security.overview.feature2fa",
-        descriptionKey: "security.overview.feature2faDesc",
-      },
-      {
-        icon: "key",
-        titleKey: "security.overview.featureRbac",
-        descriptionKey: "security.overview.featureRbacDesc",
-      },
-      {
-        icon: "clock",
-        titleKey: "security.overview.featureRateLimit",
-        descriptionKey: "security.overview.featureRateLimitDesc",
-      },
-      {
-        icon: "eye",
-        titleKey: "security.overview.featureAudit",
-        descriptionKey: "security.overview.featureAuditDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "security.overview.featureCors",
-        descriptionKey: "security.overview.featureCorsDesc",
-      },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "security.overview.corsTitle",
-    id: "cors-config",
-  },
-  { type: "paragraph", contentKey: "security.overview.corsIntro" },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Development",
-        language: "csharp",
-        code: `// Development: Open CORS for local testing
-policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
-      .AllowAnyMethod()
-      .AllowAnyHeader()
-      .AllowCredentials();`,
-      },
-      {
-        label: "Production",
-        language: "csharp",
-        code: `// Production: Strict CORS with specific origins
-var allowedOrigins = configuration
-    .GetSection("CorsSettings:AllowedOrigins")
-    .Get<string[]>();
-
-policy.WithOrigins(allowedOrigins)
-      .WithMethods("GET", "POST", "PUT", "DELETE")
-      .WithHeaders("Content-Type", "Authorization")
-      .AllowCredentials();`,
-      },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "security.overview.rateLimitTitle",
-    id: "rate-limiting",
-  },
-  {
-    type: "table",
-    headers: ["Policy", "Limit", "Window", "Response", "Applied To"],
-    rows: [
-      ["DDoS Protection", "1000 req/min", "1 minute", "429 Too Many", "Global"],
-      ["Per-IP Throttle", "100 req/min", "1 minute", "429 Too Many", "Per client IP"],
-      ["Login Brute Force", "5 attempts", "15 minutes", "429 + Lockout", "/auth/login"],
-      ["Password Reset", "3 requests", "1 hour", "429 Too Many", "/auth/forgot-password"],
-      ["API Write Operations", "30 req/min", "1 minute", "429 Too Many", "POST/PUT/DELETE"],
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "security.overview.passwordTitle",
-    id: "password-policy",
-  },
-  {
-    type: "table",
-    headers: ["Requirement", "Minimum", "Details"],
-    rows: [
-      ["Length", "8 characters", "Configurable via settings"],
-      ["Uppercase", "1 character", "A-Z required"],
-      ["Lowercase", "1 character", "a-z required"],
-      ["Digit", "1 digit", "0-9 required"],
-      ["Special Character", "1 character", "!@#$%^&* required"],
-      ["Hashing", "BCrypt", "Cost factor 12 (default)"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "security.overview.securityWarning",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "security/overview",
   titleKey: "security.overview.title",
-  descriptionKey: "security.overview.description",
   category: "security",
   order: 1,
   sections,
-  relatedSlugs: ["features/authentication", "features/role-permissions"],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["features/authentication","features/role-permissions"],
+  lastUpdated: "2026-06-07",
 });

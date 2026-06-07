@@ -2,208 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.targetIndustries.intro" },
-
-  // ─── Enterprise SaaS ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.targetIndustries.saasTitle", id: "saas" },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.saasContent" },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "users",
-        titleKey: "commercial.targetIndustries.saasMultiTenant",
-        descriptionKey: "commercial.targetIndustries.saasMultiTenantDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.targetIndustries.saasScaling",
-        descriptionKey: "commercial.targetIndustries.saasScalingDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "commercial.targetIndustries.saasWhiteLabel",
-        descriptionKey: "commercial.targetIndustries.saasWhiteLabelDesc",
-      },
-      {
-        icon: "bar-chart",
-        titleKey: "commercial.targetIndustries.saasAnalytics",
-        descriptionKey: "commercial.targetIndustries.saasAnalyticsDesc",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ─── Government & Public Sector ─────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.targetIndustries.govTitle", id: "government" },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.govContent" },
-  {
-    type: "table",
-    headers: [
-      "commercial.targetIndustries.tblGovHeader1",
-      "commercial.targetIndustries.tblGovHeader2",
-    ],
-    rows: [
-      ["commercial.targetIndustries.tblGovR1C1", "commercial.targetIndustries.tblGovR1C2"],
-      ["commercial.targetIndustries.tblGovR2C1", "commercial.targetIndustries.tblGovR2C2"],
-      ["commercial.targetIndustries.tblGovR3C1", "commercial.targetIndustries.tblGovR3C2"],
-      ["commercial.targetIndustries.tblGovR4C1", "commercial.targetIndustries.tblGovR4C2"],
-      ["commercial.targetIndustries.tblGovR5C1", "commercial.targetIndustries.tblGovR5C2"],
-      ["commercial.targetIndustries.tblGovR6C1", "commercial.targetIndustries.tblGovR6C2"],
-    ],
-  },
-
-  // ─── Financial Services ─────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.targetIndustries.financeTitle",
-    id: "finance",
-  },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.financeContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.targetIndustries.lstFinI1",
-      "commercial.targetIndustries.lstFinI2",
-      "commercial.targetIndustries.lstFinI3",
-      "commercial.targetIndustries.lstFinI4",
-      "commercial.targetIndustries.lstFinI5",
-      "commercial.targetIndustries.lstFinI6",
-    ],
-  },
-
-  // ─── Healthcare ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.targetIndustries.healthcareTitle",
-    id: "healthcare",
-  },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.healthcareContent" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "shield",
-        titleKey: "commercial.targetIndustries.healthSecurity",
-        descriptionKey: "commercial.targetIndustries.healthSecurityDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.targetIndustries.healthMultiSite",
-        descriptionKey: "commercial.targetIndustries.healthMultiSiteDesc",
-      },
-    ],
-  },
-
-  // ─── MENA Region ────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.targetIndustries.menaTitle", id: "mena" },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.menaContent" },
-  {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "commercial.targetIndustries.menaBuiltIn",
-        variant: "positive",
-        items: [
-          "commercial.targetIndustries.compMenaI1Pos",
-          "commercial.targetIndustries.compMenaI2Pos",
-          "commercial.targetIndustries.compMenaI3Pos",
-          "commercial.targetIndustries.compMenaI4Pos",
-          "commercial.targetIndustries.compMenaI5Pos",
-        ],
-      },
-      {
-        titleKey: "commercial.targetIndustries.menaCompetitor",
-        variant: "negative",
-        items: [
-          "commercial.targetIndustries.compMenaI1Neg",
-          "commercial.targetIndustries.compMenaI2Neg",
-          "commercial.targetIndustries.compMenaI3Neg",
-          "commercial.targetIndustries.compMenaI4Neg",
-          "commercial.targetIndustries.compMenaI5Neg",
-        ],
-      },
-    ],
-  },
-
-  // ─── Education ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.targetIndustries.educationTitle",
-    id: "education",
-  },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.educationContent" },
-
-  // ─── Retail & E-Commerce ────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.targetIndustries.retailTitle", id: "retail" },
-  { type: "paragraph", contentKey: "commercial.targetIndustries.retailContent" },
-
-  // ─── Industry Fit Matrix ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.targetIndustries.matrixTitle",
-    id: "fit-matrix",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.targetIndustries.tblMatrixHeader1",
-      "commercial.targetIndustries.tblMatrixHeader2",
-      "commercial.targetIndustries.tblMatrixHeader3",
-    ],
-    rows: [
+    "rows": [
       [
-        "commercial.targetIndustries.tblMatrixR1C1",
-        "commercial.targetIndustries.tblMatrixR1C2",
-        "commercial.targetIndustries.tblMatrixR1C3",
+        "Page route",
+        "/commercial/target-industries",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.targetIndustries.tblMatrixR2C1",
-        "commercial.targetIndustries.tblMatrixR2C2",
-        "commercial.targetIndustries.tblMatrixR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/target-industries.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.targetIndustries.tblMatrixR3C1",
-        "commercial.targetIndustries.tblMatrixR3C2",
-        "commercial.targetIndustries.tblMatrixR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.targetIndustries.tblMatrixR4C1",
-        "commercial.targetIndustries.tblMatrixR4C2",
-        "commercial.targetIndustries.tblMatrixR4C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.targetIndustries.tblMatrixR5C1",
-        "commercial.targetIndustries.tblMatrixR5C2",
-        "commercial.targetIndustries.tblMatrixR5C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.targetIndustries.tblMatrixR6C1",
-        "commercial.targetIndustries.tblMatrixR6C2",
-        "commercial.targetIndustries.tblMatrixR6C3",
-      ],
-      [
-        "commercial.targetIndustries.tblMatrixR7C1",
-        "commercial.targetIndustries.tblMatrixR7C2",
-        "commercial.targetIndustries.tblMatrixR7C3",
-      ],
-    ],
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/target-industries",
   titleKey: "commercial.targetIndustries.title",
-  descriptionKey: "commercial.targetIndustries.description",
   category: "commercial-why-scripe",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/why-scripe-overview", "commercial/competitive-advantages"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/why-scripe-overview","commercial/competitive-advantages"],
+  lastUpdated: "2026-06-07",
 });

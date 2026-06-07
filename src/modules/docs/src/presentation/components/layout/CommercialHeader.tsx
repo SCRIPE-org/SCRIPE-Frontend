@@ -97,7 +97,7 @@ export function CommercialHeader({
           </Link>
 
           {/* CTA */}
-          <a href="mailto:sales@scripe.com" className="commercial-header-cta">
+          <a href="mailto:sales@scripe.org" className="commercial-header-cta">
             {t("common.contactSales") || "Contact Sales"}
           </a>
         </div>

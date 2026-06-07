@@ -2,248 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.whyScripeOverview.intro" },
-
-  // ─── Vision ─────────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.whyScripeOverview.visionTitle", id: "vision" },
-  { type: "paragraph", contentKey: "commercial.whyScripeOverview.visionContent" },
-
-  // ─── The Problem ────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.whyScripeOverview.problemTitle",
-    id: "the-problem",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.whyScripeOverview.problemContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.whyScripeOverview.tblCostHeader1",
-      "commercial.whyScripeOverview.tblCostHeader2",
-      "commercial.whyScripeOverview.tblCostHeader3",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.whyScripeOverview.tblCostR1C1",
-        "commercial.whyScripeOverview.tblCostR1C2",
-        "commercial.whyScripeOverview.tblCostR1C3",
+        "Page route",
+        "/commercial/why-scripe-overview",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.whyScripeOverview.tblCostR2C1",
-        "commercial.whyScripeOverview.tblCostR2C2",
-        "commercial.whyScripeOverview.tblCostR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/why-scripe-overview.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.whyScripeOverview.tblCostR3C1",
-        "commercial.whyScripeOverview.tblCostR3C2",
-        "commercial.whyScripeOverview.tblCostR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.whyScripeOverview.tblCostR4C1",
-        "commercial.whyScripeOverview.tblCostR4C2",
-        "commercial.whyScripeOverview.tblCostR4C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.whyScripeOverview.tblCostR5C1",
-        "commercial.whyScripeOverview.tblCostR5C2",
-        "commercial.whyScripeOverview.tblCostR5C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.whyScripeOverview.tblCostR6C1",
-        "commercial.whyScripeOverview.tblCostR6C2",
-        "commercial.whyScripeOverview.tblCostR6C3",
-      ],
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── The SCRIPE Solution ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.whyScripeOverview.solutionTitle",
-    id: "solution",
-  },
-  { type: "paragraph", contentKey: "commercial.whyScripeOverview.solutionContent" },
-  {
-    type: "code",
-    language: "text",
-    filename: "SCRIPE — One Codebase, Three Deployment Modes",
-    code: `┌──────────────────────────────────────────────────────────────┐
-│                    SCRIPE Platform                            │
-│                                                              │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
-│  │ Identity │  │    HR    │  │ Inventory│  │  Finance │    │
-│  │  Module  │  │  Module  │  │  Module  │  │  Module  │    │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
-│       └──────────────┴──────────────┴──────────────┘         │
-│                           │                                   │
-│            ┌──────────────┴──────────────┐                   │
-│            │      Shared Core Layer      │                   │
-│            │  Security · Audit · Events  │                   │
-│            │  Caching · Saga · Storage   │                   │
-│            └──────────────┬──────────────┘                   │
-│                           │                                   │
-│        ┌──────────────────┼──────────────────┐               │
-│        ▼                  ▼                  ▼               │
-│    Monolith           Gateway          Microservice          │
-│   (mvp/startup)    (growing team)    (enterprise scale)      │
-└──────────────────────────────────────────────────────────────┘`,
-  },
-
-  // ─── Platform at a Glance ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.whyScripeOverview.glanceTitle",
-    id: "at-a-glance",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.whyScripeOverview.tblMetricsHeader1",
-      "commercial.whyScripeOverview.tblMetricsHeader2",
-    ],
-    rows: [
+    "rows": [
       [
-        "commercial.whyScripeOverview.tblMetricsR1C1",
-        "commercial.whyScripeOverview.tblMetricsR1C2",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "commercial.whyScripeOverview.tblMetricsR2C1",
-        "commercial.whyScripeOverview.tblMetricsR2C2",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "commercial.whyScripeOverview.tblMetricsR3C1",
-        "commercial.whyScripeOverview.tblMetricsR3C2",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "commercial.whyScripeOverview.tblMetricsR4C1",
-        "commercial.whyScripeOverview.tblMetricsR4C2",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
       [
-        "commercial.whyScripeOverview.tblMetricsR5C1",
-        "commercial.whyScripeOverview.tblMetricsR5C2",
-      ],
-      [
-        "commercial.whyScripeOverview.tblMetricsR6C1",
-        "commercial.whyScripeOverview.tblMetricsR6C2",
-      ],
-      [
-        "commercial.whyScripeOverview.tblMetricsR7C1",
-        "commercial.whyScripeOverview.tblMetricsR7C2",
-      ],
-      [
-        "commercial.whyScripeOverview.tblMetricsR8C1",
-        "commercial.whyScripeOverview.tblMetricsR8C2",
-      ],
-      [
-        "commercial.whyScripeOverview.tblMetricsR9C1",
-        "commercial.whyScripeOverview.tblMetricsR9C2",
-      ],
-      [
-        "commercial.whyScripeOverview.tblMetricsR10C1",
-        "commercial.whyScripeOverview.tblMetricsR10C2",
-      ],
-      [
-        "commercial.whyScripeOverview.tblMetricsR11C1",
-        "commercial.whyScripeOverview.tblMetricsR11C2",
-      ],
-    ],
-  },
-
-  // ─── Who Is SCRIPE For? ─────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.whyScripeOverview.idealForTitle",
-    id: "ideal-for",
-  },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "building",
-        titleKey: "commercial.whyScripeOverview.idealEnterprise",
-        descriptionKey: "commercial.whyScripeOverview.idealEnterpriseDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.whyScripeOverview.idealGov",
-        descriptionKey: "commercial.whyScripeOverview.idealGovDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "commercial.whyScripeOverview.idealSaaS",
-        descriptionKey: "commercial.whyScripeOverview.idealSaaSDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.whyScripeOverview.idealStartup",
-        descriptionKey: "commercial.whyScripeOverview.idealStartupDesc",
-      },
-    ],
-  },
-
-  // ─── How SCRIPE Saves You ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.whyScripeOverview.savingsTitle",
-    id: "savings",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.whyScripeOverview.tblSavingsHeader1",
-      "commercial.whyScripeOverview.tblSavingsHeader2",
-      "commercial.whyScripeOverview.tblSavingsHeader3",
-    ],
-    rows: [
-      [
-        "commercial.whyScripeOverview.tblSavingsR1C1",
-        "commercial.whyScripeOverview.tblSavingsR1C2",
-        "commercial.whyScripeOverview.tblSavingsR1C3",
-      ],
-      [
-        "commercial.whyScripeOverview.tblSavingsR2C1",
-        "commercial.whyScripeOverview.tblSavingsR2C2",
-        "commercial.whyScripeOverview.tblSavingsR2C3",
-      ],
-      [
-        "commercial.whyScripeOverview.tblSavingsR3C1",
-        "commercial.whyScripeOverview.tblSavingsR3C2",
-        "commercial.whyScripeOverview.tblSavingsR3C3",
-      ],
-      [
-        "commercial.whyScripeOverview.tblSavingsR4C1",
-        "commercial.whyScripeOverview.tblSavingsR4C2",
-        "commercial.whyScripeOverview.tblSavingsR4C3",
-      ],
-      [
-        "commercial.whyScripeOverview.tblSavingsR5C1",
-        "commercial.whyScripeOverview.tblSavingsR5C2",
-        "commercial.whyScripeOverview.tblSavingsR5C3",
-      ],
-      [
-        "commercial.whyScripeOverview.tblSavingsR6C1",
-        "commercial.whyScripeOverview.tblSavingsR6C2",
-        "commercial.whyScripeOverview.tblSavingsR6C3",
-      ],
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.whyScripeOverview.startTip" },
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/why-scripe-overview",
   titleKey: "commercial.whyScripeOverview.title",
-  descriptionKey: "commercial.whyScripeOverview.description",
   category: "commercial-why-scripe",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/competitive-advantages", "commercial/success-metrics"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/competitive-advantages","commercial/success-metrics"],
+  lastUpdated: "2026-06-07",
 });

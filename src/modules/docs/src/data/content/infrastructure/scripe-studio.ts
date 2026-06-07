@@ -3,97 +3,128 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   {
-    type: "paragraph",
-    contentKey: "infrastructure.scripeStudio.intro",
-  },
-
-  // ─── Architecture ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.scripeStudio.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "paragraph",
-    contentKey: "infrastructure.scripeStudio.architectureIntro",
-  },
-
-  // ─── Security Model ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.scripeStudio.securityTitle",
-    id: "security",
-  },
-  {
-    type: "paragraph",
-    contentKey: "infrastructure.scripeStudio.securityIntro",
-  },
-
-  // ─── Features ───────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.scripeStudio.featuresTitle",
-    id: "features",
-  },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "infrastructure.scripeStudio.featureDashboard",
-      "infrastructure.scripeStudio.featureModules",
-      "infrastructure.scripeStudio.featureGenerators",
-      "infrastructure.scripeStudio.featureDevServers",
-      "infrastructure.scripeStudio.featureDatabase",
-      "infrastructure.scripeStudio.featureDocker",
-      "infrastructure.scripeStudio.featureTerminal",
-      "infrastructure.scripeStudio.featureConfig",
-      "infrastructure.scripeStudio.featurePackages",
-      "infrastructure.scripeStudio.featureSecurity",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/infrastructure/scripe-studio",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/infrastructure/scripe-studio.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Studio engine",
+        "tools/scripe-studio/engine/src/server.ts",
+        "Studio uses Express 5.1.0 with Socket.IO 4.8.1, token-protected /api routes, WebSocket command execution, request logging, basic rate limiting, and controller-based routing."
+      ],
+      [
+        "Studio UI",
+        "tools/scripe-studio/ui/package.json + tools/scripe-studio/ui/src/app",
+        "Studio UI is a Next.js 16.2.2 app with pages for modules, generators, database, documentation, architecture, localization, packages, terminal, quality, and monitoring."
+      ],
+      [
+        "Studio controllers",
+        "tools/scripe-studio/engine/src/controllers",
+        "Engine controllers cover health, config, commands, modules, database, generators, actions, packages, environment, diagnostics, docs, security, enterprise, and locale operations."
+      ]
+    ]
   },
-
-  // ─── CLI Commands ───────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.scripeStudio.cliCommandsTitle",
-    id: "cli-commands",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "paragraph",
-    contentKey: "infrastructure.scripeStudio.cliCommandsIntro",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
   {
-    type: "code",
-    language: "bash",
-    filename: "Studio Control Commands",
-    code: `# Launch Studio in production mode (auto-opens browser)
-$ scripe studio
-
-# Launch Studio in developer mode with hot-reloading enabled
-$ scripe studio --dev
-
-# Run build engine for Studio (without starting the service)
-$ scripe studio build
-
-# Start Studio with custom ports
-$ scripe studio --port 4300 --engine-port 4301
-
-# Start Studio without auto-opening the browser (headless mode)
-$ scripe studio --no-browser`,
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Verified Commands",
+    "id": "verified-commands"
   },
+  {
+    "type": "code",
+    "language": "bash",
+    "filename": "Studio commands verified from tools/scripe-cli/src/commands/studio.ts",
+    "code": "scripe studio\nscripe studio --dev\nscripe studio build"
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "infrastructure/scripe-studio",
   titleKey: "infrastructure.scripeStudio.title",
-  descriptionKey: "infrastructure.scripeStudio.description",
   category: "infrastructure",
   order: 11,
   sections,
-  relatedSlugs: ["infrastructure/scripe-cli", "get-started/overview"],
-  lastUpdated: "2026-06-04",
+  relatedSlugs: ["infrastructure/scripe-cli","get-started/overview"],
+  lastUpdated: "2026-06-07",
 });

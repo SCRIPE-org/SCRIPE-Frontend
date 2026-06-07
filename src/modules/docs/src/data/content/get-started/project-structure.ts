@@ -3,175 +3,121 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   {
-    type: "paragraph",
-    contentKey: "getStarted.projectStructure.intro",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.projectStructure.rootTitle",
-    id: "root-structure",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "SCRIPE/ (Root Monorepo)",
-    code: `SCRIPE/
-├── SCRIPE-Backend/          # .NET 10 Backend (Git Submodule)
-├── SCRIPE-Frontend/         # Next.js 16 Frontend (Git Submodule)
-├── tools/scripe-cli/        # CLI scaffolding tool
-├── docs/                    # Technical documentation (67 files)
-├── docs-commercial/         # Commercial documentation (25 files)
-├── .gitmodules              # Submodule configuration
-└── README.md                # Root README`,
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.projectStructure.backendTitle",
-    id: "backend-structure",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "SCRIPE-Backend/ Structure",
-    code: `SCRIPE-Backend/
-├── src/
-│   ├── Host/
-│   │   └── API/
-│   │       ├── Program.cs              # 30 lines — Entry point & extension wiring
-│   │       ├── Controllers/            # 18 REST controllers
-│   │       ├── Extensions/             # Middleware, CORS, YARP
-│   │       └── Middleware/             # Request logging, audit
-│   │
-│   ├── Core/
-│   │   ├── Core.Application/           # AstraFlow mediator, Behaviors, CQRS
-│   │   ├── Core.Domain/                # Base entities, Result<T>
-│   │   └── Core.Infrastructure/        # DI, Caching, Events, Blob
-│   │
-│   └── Modules/
-│       └── Identity/
-│           ├── Identity.Domain/         # 15 entities, Zod-like specs
-│           ├── Identity.Application/    # Commands, Queries, DTOs
-│           └── Identity.Infrastructure/ # EF DbContext, Repos
-│
-├── tests/
-│   ├── Unit/                           # xUnit unit tests
-│   ├── Integration/                    # API integration tests
-│   └── Architecture/                   # ArchTest conventions
-│
-└── docs/                               # Backend-specific docs`,
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.projectStructure.frontendTitle",
-    id: "frontend-structure",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "SCRIPE-Frontend/ Structure",
-    code: `SCRIPE-Frontend/
-├── src/
-│   ├── app/                            # Next.js App Router (connectors only)
-│   │   ├── (auth)/                     # Auth pages (login, register)
-│   │   ├── (modules)/                  # Module pages (admin, docs, etc.)
-│   │   └── layout.tsx                  # Root layout with providers
-│   │
-│   ├── core/                           # Shared infrastructure
-│   │   ├── ui/                         # Shadcn components (Button, Input, etc.)
-│   │   ├── providers/                  # LanguageProvider, MainProvider
-│   │   ├── store/                      # Zustand stores (Auth, UI, Toast)
-│   │   ├── network/                    # API client, interceptors
-│   │   ├── locales/                    # i18n dictionaries (7 languages)
-│   │   └── common/                     # Result<T>, errors, constants
-│   │
-│   └── modules/                        # Feature modules (isolated)
-│       ├── auth/                       # Authentication module
-│       ├── admin/                      # Admin panel + sub-modules
-│       │   ├── dashboard/              # Dashboard stats
-│       │   ├── user-management/        # User CRUD
-│       │   ├── role-management/        # Role + permissions
-│       │   └── tenant-management/      # Multi-tenant admin
-│       ├── home/                       # Home/landing page
-│       └── docs/                       # Documentation portal (this)
-│
-└── public/                             # Static assets`,
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.projectStructure.moduleAnatomyTitle",
-    id: "module-anatomy",
-  },
-  {
-    type: "paragraph",
-    contentKey: "getStarted.projectStructure.moduleAnatomyIntro",
-  },
-  {
-    type: "table",
-    headers: ["Directory", "Layer", "Contents", "Imports Allowed"],
-    rows: [
-      ["domain/entities/", "Domain", "Zod schemas, business rules", "External packages only"],
-      ["domain/interfaces/", "Domain", "Repository contracts", "Domain entities"],
-      ["data/models/", "Data", "API DTOs (raw API shapes)", "@core/network"],
-      ["data/mappers/", "Data", "DTO ↔ Entity mapping", "Domain + Data models"],
-      ["data/repositories/", "Data", "Interface implementations", "@core/network, mappers"],
-      [
-        "presentation/viewmodels/",
-        "Presentation",
-        "React hooks with logic",
-        "Domain interfaces, TanStack Query",
-      ],
-      ["presentation/views/", "Presentation", "Pure UI (<60 lines)", "ViewModels, components"],
-      [
-        "presentation/components/",
-        "Presentation",
-        "Reusable section UI",
-        "@core/ui, own module only",
-      ],
-      ["di.ts", "Root", "DI container for module", "Repositories, services"],
-      ["index.ts", "Root", "Public API exports", "Views, entities"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/get-started/project-structure",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/get-started/project-structure.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Backend host",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Startup delegates to host defaults, core services, conditional module registration, additional services, post-build initialization, and the middleware pipeline."
+      ],
+      [
+        "Backend modules",
+        "SCRIPE-Backend/src/Modules + SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Current backend modules are Compliance, Entitlements, Identity, Marketplace, and Plugins; module loading is controlled by MODULE_NAME."
+      ],
+      [
+        "Frontend app",
+        "SCRIPE-Frontend/src/app + SCRIPE-Frontend/package.json",
+        "Next.js 16.1.7 with React 19.2.4, App Router route groups, and module connectors under src/modules."
+      ],
+      [
+        "Documentation portal",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts",
+        "Canonical documentation pages are TypeScript registrations; Markdown exports are generated/reference output."
+      ]
+    ]
   },
   {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "getStarted.projectStructure.allowedImports",
-        variant: "positive",
-        items: [
-          "@core/* — Shared infrastructure",
-          "@modules/{self}/* — Own module files",
-          "External npm packages",
-        ],
-      },
-      {
-        titleKey: "getStarted.projectStructure.forbiddenImports",
-        variant: "negative",
-        items: [
-          "@modules/{other}/* — NEVER import from other modules",
-          "../../modules/{other}/ — Relative paths to other modules",
-          "Embedding other module entities directly",
-        ],
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "getStarted.projectStructure.boundaryWarning",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "get-started/project-structure",
   titleKey: "getStarted.projectStructure.title",
-  descriptionKey: "getStarted.projectStructure.description",
   category: "get-started",
   order: 4,
   sections,
-  relatedSlugs: ["get-started/overview", "architecture/modules"],
-  lastUpdated: "2026-06-04",
+  relatedSlugs: ["get-started/overview","architecture/modules"],
+  lastUpdated: "2026-06-07",
 });

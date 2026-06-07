@@ -2,148 +2,134 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.cliTooling.intro" },
-
-  // ─── Available Commands ─────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cliTooling.commandsTitle", id: "commands" },
   {
-    type: "table",
-    headers: [
-      "commercial.cliTooling.tblCmdHeader1",
-      "commercial.cliTooling.tblCmdHeader2",
-      "commercial.cliTooling.tblCmdHeader3",
-    ],
-    rows: [
-      ["Module", "commercial.cliTooling.descMod", "pnpm run cli module new HR"],
-      ["Entity", "commercial.cliTooling.descEnt", "pnpm run cli entity new HR Employee"],
-      ["Command", "commercial.cliTooling.descCmd", "pnpm run cli command new HR CreateEmployee"],
-      ["Query", "commercial.cliTooling.descQry", "pnpm run cli query new HR GetEmployees"],
-      ["Migration", "commercial.cliTooling.descMig", "pnpm run cli db migrations add HR Initial"],
-      ["Dev", "commercial.cliTooling.descDev", "pnpm run dev"],
-    ],
-  },
-
-  // ─── Scaffold Output ────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cliTooling.scaffoldTitle", id: "scaffolding" },
-  { type: "paragraph", contentKey: "commercial.cliTooling.scaffoldContent" },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.cliTooling.step1Title",
-        contentKey: "commercial.cliTooling.step1Content",
-      },
-      {
-        titleKey: "commercial.cliTooling.step2Title",
-        contentKey: "commercial.cliTooling.step2Content",
-      },
-      {
-        titleKey: "commercial.cliTooling.step3Title",
-        contentKey: "commercial.cliTooling.step3Content",
-      },
-      {
-        titleKey: "commercial.cliTooling.step4Title",
-        contentKey: "commercial.cliTooling.step4Content",
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "code",
-    language: "bash",
-    filename: "Continuous Deterministic Delivery (CDD)",
-    code: `$ pnpm run cli module new EnterpriseBilling
-
-[SYS] Booting Deterministic Scaffolding Engine...
-[SYS] Compiling 66 Handlebars Execution Matrices...
-
-✓ Created Domain Layer [EnterpriseBilling.Domain]
-  → Aggregates/BillingAccount.cs
-  → ValueObjects/Currency.cs
-  → Events/InvoiceGeneratedDomainEvent.cs
-  
-✓ Created Application Layer [EnterpriseBilling.Application]
-  → Commands/GenerateInvoice/GenerateInvoiceCommand.cs
-  → Commands/GenerateInvoice/GenerateInvoiceValidator.cs (FluentValidation)
-  → Queries/GetAccountLedger/GetAccountLedgerQuery.cs
-  
-✓ Created Infrastructure Layer [EnterpriseBilling.Infrastructure]
-  → Persistence/BillingAccountConfiguration.cs (EF Core)
-  → Persistence/BillingAccountRepository.cs
-  → Security/BillingPermissionSeeder.cs (RBAC Injection)
-
-✓ Created Presentation Layer [EnterpriseBilling.Presentation]
-  → Controllers/BillingController.cs (JWT Secured)
-  
-✓ Created Next.js Frontend [EnterpriseBilling.UI]
-  → domain/entities/BillingAccount.ts (Zod Schema)
-  → presentation/viewmodels/useBillingViewModel.ts (TanStack Query)
-  → presentation/views/BillingDashboardView.tsx (Tailwind UI)
-  
-[VERIFY] Mathematical Clean Architecture Conformance: PASSED
-[READY] Successfully generated 18 immutable artifacts in 0.8s.`,
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
+    ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/cli-tooling",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/cli-tooling.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "CLI entry point",
+        "tools/scripe-cli/bin/scripe.ts",
+        "The scripe binary is registered from the CLI package and delegates command registration to docs, studio, diagnostics, list, and domain registrar groups."
+      ],
+      [
+        "CLI package",
+        "tools/scripe-cli/package.json",
+        "scripe-cli is version 4.0.0 and requires Node >=20.0.0."
+      ],
+      [
+        "Command registrars",
+        "tools/scripe-cli/src/registrars",
+        "Scaffolding, database, codegen, build/dev, quality, infrastructure, and enterprise commands are registered through dedicated registrar files."
+      ],
+      [
+        "Docs commands",
+        "tools/scripe-cli/src/commands/docs-sync.ts",
+        "Implemented docs subcommands include sync, validate, coverage, health, ci, new, diff, list, stats, search, open, export, and clean."
+      ]
+    ]
   },
-
-  // ─── What Gets Generated ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cliTooling.generatedTitle", id: "generated" },
   {
-    type: "table",
-    headers: [
-      "commercial.cliTooling.hdrLayer",
-      "commercial.cliTooling.hdrFiles",
-      "commercial.cliTooling.hdrIncs",
-    ],
-    rows: [
-      [
-        "commercial.cliTooling.layerDomain",
-        "commercial.cliTooling.layerDomainFiles",
-        "commercial.cliTooling.layerDomainIncs",
-      ],
-      [
-        "commercial.cliTooling.layerApp",
-        "commercial.cliTooling.layerAppFiles",
-        "commercial.cliTooling.layerAppIncs",
-      ],
-      [
-        "commercial.cliTooling.layerInfra",
-        "commercial.cliTooling.layerInfraFiles",
-        "commercial.cliTooling.layerInfraIncs",
-      ],
-      [
-        "commercial.cliTooling.layerFront",
-        "commercial.cliTooling.layerFrontFiles",
-        "commercial.cliTooling.layerFrontIncs",
-      ],
-      [
-        "commercial.cliTooling.layerRoute",
-        "commercial.cliTooling.layerRouteFiles",
-        "commercial.cliTooling.layerRouteIncs",
-      ],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── Customization ─────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.cliTooling.customizeTitle", id: "customize" },
-  { type: "paragraph", contentKey: "commercial.cliTooling.customizeContent" },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.cliTooling.itemHbs",
-      "commercial.cliTooling.itemArch",
-      "commercial.cliTooling.itemBoil",
-      "commercial.cliTooling.itemSec",
-      "commercial.cliTooling.itemConfig",
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Verified Commands",
+    "id": "verified-commands"
+  },
+  {
+    "type": "code",
+    "language": "bash",
+    "filename": "CLI command groups verified from tools/scripe-cli/src",
+    "code": "scripe docs sync\nscripe docs validate\nscripe docs health\nscripe validate-locales --docs\nscripe arch-check\nscripe studio --dev"
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/cli-tooling",
   titleKey: "commercial.cliTooling.title",
-  descriptionKey: "commercial.cliTooling.description",
   category: "commercial-developer",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/clean-architecture", "commercial/api-design"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/clean-architecture","commercial/api-design"],
+  lastUpdated: "2026-06-07",
 });

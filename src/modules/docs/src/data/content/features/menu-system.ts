@@ -2,210 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  //  Architecture 
   {
-    type: "heading",
-    level: 2,
-    titleKey: "features.menuSystem.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "features.menuSystem.architectureIntro" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    title: "Menu Architecture",
-    nodes: [
-      { id: "mi", label: "MenuItem Entity", type: "primary" },
-      { id: "tree", label: "Tree Structure (Self-ref)", type: "info" },
-      { id: "perm", label: "Permission Filtering", type: "success" },
-      { id: "tenant", label: "Tenant Visibility", type: "warning" },
-      { id: "rmi", label: "RoleMenuItem", type: "default" },
-      { id: "tmo", label: "TenantMenuOverride", type: "default" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "mi", to: "tree", label: "ParentMenuItemId" },
-      { from: "mi", to: "perm", label: "Resource field" },
-      { from: "mi", to: "tenant", label: "TenantScopeJson" },
-      { from: "rmi", to: "mi" },
-      { from: "tmo", to: "mi" },
-    ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/features/menu-system",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/menu-system.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
-
-  //  MenuItem Entity
-  { type: "heading", level: 2, titleKey: "features.menuSystem.entityTitle", id: "entity" },
   {
-    type: "code",
-    language: "csharp",
-    filename: "MenuItem.cs",
-    code: `public class MenuItem : AuditableEntity<Guid>
-{
-    [Required] [MaxLength(100)]
-    public string Slug { get; set; }           // URL-safe identifier e.g. "user-management"
-    
-    [Required] [MaxLength(200)]
-    public string NameEn { get; set; }         // English display name
-    
-    [Required] [MaxLength(200)]
-    public string NameAr { get; set; }         // Arabic display name (RTL)
-    
-    [MaxLength(500)]
-    public string? Href { get; set; }          // Navigation URL e.g. "/admin/users"
-    
-    [MaxLength(100)]
-    public string? Icon { get; set; }          // Icon identifier e.g. "Users"
-    
-    public int Order { get; set; }             // Sort position within parent
-    
-    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK  tree
-    
-    [MaxLength(100)]
-    public string? Resource { get; set; }      // Permission resource e.g. "admins"  checks "admins.view"
-    
-    [MaxLength(2000)]
-    public string? TenantScopeJson { get; set; } // null = all tenants, ["id1","id2"] = specific
-    
-    [MaxLength(100)]
-    public string? FeatureFlag { get; set; }   // Optional feature flag dependency
-    
-    // Navigation
-    public virtual MenuItem? ParentMenuItem { get; set; }
-    public virtual ICollection<MenuItem> Children { get; set; } = [];
-    public virtual ICollection<RoleMenuItem> RoleMenuItems { get; set; } = [];
-}`,
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  //  Controller Endpoints 
-  { type: "heading", level: 2, titleKey: "features.menuSystem.endpointsTitle", id: "endpoints" },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/menus",
-        descriptionKey: "Get ALL menu items as admin tree (includes inactive)",
-        auth: "JWT",
-        permission: "menus.view",
-      },
-      {
-        method: "GET",
-        path: "/menus/my",
-        descriptionKey: "Get filtered menu for current admin (based on permissions & tenant)",
-        auth: "JWT",
-      },
-      {
-        method: "GET",
-        path: "/menus/my/overrides",
-        descriptionKey: "Get current admin's menu overrides",
-        auth: "JWT",
-      },
-      {
-        method: "POST",
-        path: "/menus",
-        descriptionKey: "Create new menu item",
-        auth: "JWT",
-        permission: "menus.create",
-      },
-      {
-        method: "PUT",
-        path: "/menus/{id}",
-        descriptionKey: "Update menu item",
-        auth: "JWT",
-        permission: "menus.edit",
-      },
-      {
-        method: "DELETE",
-        path: "/menus/{id}",
-        descriptionKey: "Soft-delete menu item",
-        auth: "JWT",
-        permission: "menus.delete",
-      },
-      {
-        method: "PUT",
-        path: "/menus/reorder",
-        descriptionKey: "Drag-drop reorder (bulk update Order + ParentMenuItemId)",
-        auth: "JWT",
-        permission: "menus.edit",
-      },
-      {
-        method: "PUT",
-        path: "/menus/{id}/role-visibility",
-        descriptionKey: "Set which roles can see this item",
-        auth: "JWT",
-        permission: "menus.edit",
-      },
-      {
-        method: "POST",
-        path: "/menus/overrides",
-        descriptionKey: "Save personal/tenant override",
-        auth: "JWT",
-      },
-      {
-        method: "DELETE",
-        path: "/menus/overrides/{id}",
-        descriptionKey: "Delete override",
-        auth: "JWT",
-      },
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
-  //  Filtering Pipeline 
-  { type: "heading", level: 2, titleKey: "features.menuSystem.filteringTitle", id: "filtering" },
-  { type: "paragraph", contentKey: "features.menuSystem.filteringIntro" },
   {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "Menu Filtering Pipeline",
-    nodes: [
-      { id: "all", label: "All MenuItems", type: "default" },
-      { id: "active", label: "Filter: IsDeleted = false", type: "info" },
-      { id: "tenant", label: "Filter: TenantScopeJson matches admin's tenant", type: "info" },
-      { id: "perm", label: "Filter: Resource  admin has {resource}.view", type: "success" },
-      { id: "role", label: "Filter: RoleMenuItem IsVisible for admin's roles", type: "success" },
-      { id: "override", label: "Apply: TenantMenuOverride", type: "warning" },
-      { id: "tree", label: "Build: Tree structure", type: "primary" },
-    ],
-    connections: [
-      { from: "all", to: "active" },
-      { from: "active", to: "tenant" },
-      { from: "tenant", to: "perm" },
-      { from: "perm", to: "role" },
-      { from: "role", to: "override" },
-      { from: "override", to: "tree" },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-
-  //  Override System
-  { type: "heading", level: 2, titleKey: "features.menuSystem.overrideTitle", id: "overrides" },
   {
-    type: "table",
-    headers: ["Scope", "Who Sets It", "Effect"],
-    rows: [
-      ["MenuOverrideScope.User", "Individual admin", "Personal menu customization"],
-      ["MenuOverrideScope.Tenant", "Tenant super admin", "All admins in tenant see override"],
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  { type: "paragraph", contentKey: "features.menuSystem.overrideNote" },
-
-  //  Drag-Drop Reorder
-  { type: "heading", level: 2, titleKey: "features.menuSystem.reorderTitle", id: "reorder" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "MenusController.cs",
-    code: `// PUT /menus/reorder  batch update
-// Request body: [{ menuItemId, newOrder, newParentId }, ...]
-// Updates both Order AND ParentMenuItemId in a single transaction
-// Enables full tree restructuring via drag-drop UI`,
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "features/menu-system",
   titleKey: "features.menuSystem.title",
-  descriptionKey: "features.menuSystem.description",
   category: "features",
   order: 8,
   sections,
-  relatedSlugs: ["features/role-permissions", "features/user-management"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["features/role-permissions","features/user-management"],
+  lastUpdated: "2026-06-07",
 });

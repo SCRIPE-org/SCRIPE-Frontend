@@ -3,157 +3,121 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "💳",
-        titleKey: "Self-Service Checkout",
-        descriptionKey:
-          "Tenants subscribe and pay instantly via Stripe-hosted checkout — no manual invoice steps.",
-      },
-      {
-        icon: "📄",
-        titleKey: "Automated Invoicing",
-        descriptionKey:
-          "Every payment generates a numbered, downloadable invoice with line items and tax detail.",
-      },
-      {
-        icon: "🔁",
-        titleKey: "Smart Dunning",
-        descriptionKey:
-          "4-stage failed payment recovery with graduated emails, grace periods, and auto-fallback.",
-      },
-      {
-        icon: "📊",
-        titleKey: "Revenue Dashboard",
-        descriptionKey:
-          "Real-time MRR, ARR, churn rate, and platform health score from your billing data.",
-      },
-      {
-        icon: "🌍",
-        titleKey: "Multi-Currency",
-        descriptionKey:
-          "28 Stripe-supported currencies with zero-decimal and 3-decimal handling built in.",
-      },
-      {
-        icon: "🔗",
-        titleKey: "Payment Links",
-        descriptionKey:
-          "Enterprise sales? Generate Stripe Payment Links for custom deals without a checkout session.",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "Three Checkout Modes",
-    id: "checkout-modes",
-  },
-  {
-    type: "table",
-    headers: ["Mode", "Best For", "How It Works"],
-    rows: [
+    "rows": [
       [
-        "Self-Service",
-        "Standard SaaS subscriptions",
-        "Tenant clicks 'Subscribe', pays via Stripe Checkout, subscription activates automatically.",
+        "Page route",
+        "/commercial/billing-payments",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Contact Sales",
-        "Enterprise/custom pricing",
-        "Admin generates a Stripe Payment Link and sends it to the client. Same automatic activation on payment.",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/billing-payments.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Manual Assignment",
-        "Free tiers, partnerships, trials",
-        "Admin assigns the plan directly — no payment required. Instant activation.",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "Automated Invoice Management",
-    id: "invoicing",
-  },
-  {
-    type: "table",
-    headers: ["Invoice Status", "Meaning"],
-    rows: [
-      ["Draft", "Generated, not yet sent"],
-      ["Pending", "Awaiting payment"],
-      ["Paid", "Payment confirmed by Stripe"],
-      ["Void", "Cancelled before payment"],
-      ["Refunded", "Charge reversed"],
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "4-Stage Dunning Recovery",
-    id: "dunning",
-  },
-  {
-    type: "table",
-    headers: ["Stage", "Timing", "Action"],
-    rows: [
-      ["Stage 1: Payment Failed", "Day 0", "Immediate email with link to update payment method"],
       [
-        "Stage 2: Grace Warning",
-        "Mid grace period",
-        "Follow-up email, yellow warning banner in portal",
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
       ],
-      ["Stage 3: Final Warning", "≤2 days before suspension", "Urgent email with red banner"],
       [
-        "Stage 4: Suspend",
-        "Grace period expires",
-        "Access restricted, admins deactivated, auto-fallback to free tier",
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
       ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "Revenue Analytics",
-    id: "analytics",
-  },
-  {
-    type: "table",
-    headers: ["Metric", "Description"],
-    rows: [
-      ["MRR", "Monthly Recurring Revenue — sum of all active monthly subscriptions"],
-      ["ARR", "Annual Recurring Revenue — MRR × 12"],
-      ["Total Revenue", "All-time cumulative paid invoices"],
-      ["Churn Rate", "% subscriptions cancelled in the last 30 days"],
-      ["Platform Health Score", "Composite score: MRR trend + churn + trial conversion"],
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "Export Options",
-    id: "export",
-  },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "CSV — importable into any spreadsheet or BI tool",
-      "Excel (XLSX) — styled workbook with conditional formatting and multiple sheets",
-      "PDF — branded print-ready report with cover page and data tables",
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/billing-payments",
   titleKey: "Billing & Payments",
-  descriptionKey:
-    "Stripe-powered billing with self-service checkout, automated invoicing, 4-stage dunning, multi-currency support, and revenue analytics.",
   category: "commercial-modules",
   order: 20,
   sections,
-  relatedSlugs: ["commercial/entitlements-overview", "commercial/entitlements-subscriptions"],
-  lastUpdated: "2026-04-18",
+  relatedSlugs: ["commercial/entitlements-overview","commercial/entitlements-subscriptions"],
+  lastUpdated: "2026-06-07",
 });

@@ -2,130 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.resiliencePatterns.intro" },
-
-  // ─── Circuit Breaker ────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.resiliencePatterns.circuitTitle",
-    id: "circuit-breaker",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.resiliencePatterns.circuitContent" },
   {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "Circuit Breaker States",
-    nodes: [
-      { id: "closed", label: "Closed (Normal)", type: "success" },
-      { id: "open", label: "Open (Failing)", type: "danger" },
-      { id: "half", label: "Half-Open (Testing)", type: "warning" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "closed", to: "open", label: "N failures" },
-      { from: "open", to: "half", label: "Timeout expires" },
-      { from: "half", to: "closed", label: "Success" },
-      { from: "half", to: "open", label: "Failure" },
+    "rows": [
+      [
+        "Page route",
+        "/commercial/resilience-patterns",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/resilience-patterns.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Retry & Resilience Patterns ────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.resiliencePatterns.retryTitle", id: "retry" },
-  {
-    type: "table",
-    headers: ["Pattern", "Implementation", "Use Case"],
-    rows: [
-      ["Exponential backoff", "1s, 2s, 4s, 8s...", "External API calls"],
-      ["Retry with jitter", "Random ± 20% of delay", "Prevent thundering herd"],
-      ["Circuit breaker + retry", "Polly combined policies", "Database connections"],
-      ["Bulkhead isolation", "Semaphore-based limits", "Prevent cascade failures"],
-      ["Timeout", "Configurable per operation", "Long-running queries"],
-      ["Fallback", "Default response on failure", "Degraded functionality"],
-    ],
-  },
-
-  // ─── Polly Configuration ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.resiliencePatterns.configTitle",
-    id: "config",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Resilience Pipeline Configuration",
-    code: `// Program.cs — Configure resilience for HTTP clients
-builder.Services
-    .AddHttpClient("ExternalApi")
-    .AddResilienceHandler("standard", builder =>
-    {
-        builder.AddRetry(new RetryStrategyOptions<HttpResponseMessage>
-        {
-            MaxRetryAttempts = 3,
-            BackoffType = DelayBackoffType.Exponential,
-            UseJitter = true
-        });
-        builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions<HttpResponseMessage>
-        {
-            FailureRatio = 0.5,
-            SamplingDuration = TimeSpan.FromSeconds(30),
-            BreakDuration = TimeSpan.FromSeconds(15)
-        });
-        builder.AddTimeout(TimeSpan.FromSeconds(10));
-    });`,
-  },
-
-  // ─── Health Checks ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.resiliencePatterns.healthTitle",
-    id: "health-checks",
-  },
-  { type: "paragraph", contentKey: "commercial.resiliencePatterns.healthContent" },
-  {
-    type: "table",
-    headers: ["Health Check", "Endpoint", "Monitors"],
-    rows: [
-      ["Liveness", "/health/live", "App is running"],
-      ["Readiness", "/health/ready", "App can serve requests"],
-      ["Database", "/health/db", "Database connectivity"],
-      ["Redis", "/health/cache", "Cache availability"],
-      ["Storage", "/health/storage", "File storage access"],
-    ],
-  },
-
-  // ─── Graceful Degradation ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.resiliencePatterns.degradationTitle",
-    id: "degradation",
-  },
-  { type: "paragraph", contentKey: "commercial.resiliencePatterns.degradationContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "Cache serves stale data when database is temporarily unavailable",
-      "Email queue stores messages for delivery when SMTP is down",
-      "Background jobs retry with exponential backoff on transient failures",
-      "Read-only mode when write replicas are unreachable",
-      "Static fallback pages when application server is under maintenance",
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.resiliencePatterns.tip" },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/resilience-patterns",
   titleKey: "commercial.resiliencePatterns.title",
-  descriptionKey: "commercial.resiliencePatterns.description",
   category: "commercial-technical",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/performance-benchmarks", "commercial/observability-monitoring"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/performance-benchmarks","commercial/observability-monitoring"],
+  lastUpdated: "2026-06-07",
 });

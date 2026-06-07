@@ -2,209 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "architecture.backend.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.backend.programCsTitle",
-    id: "program-cs",
-  },
-  { type: "paragraph", contentKey: "architecture.backend.programCsIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Program.cs — Simplified Architecture (30 lines)",
-    code: `var builder = WebApplication.CreateBuilder(args);
-
-// ─── 1. Environment Detection ───────────────────────────
-var moduleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "";
-var isMonolith = string.IsNullOrEmpty(moduleName);
-var isGateway = moduleName.Equals("Gateway", StringComparison.OrdinalIgnoreCase);
-
-// ─── 2. Core Infrastructure (must come first) ───────────
-builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddCorsConfiguration(builder.Configuration);
-builder.Services.AddRateLimitingConfiguration();
-builder.Services.AddCoreInfrastructure(builder.Configuration);
-
-// ─── 3. Module Registration (guarded by mode) ───────────
-var handlerAssemblies = new List<Assembly>();
-if (isMonolith || moduleName == "Identity")
-{
-    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));
-    builder.Services.AddIdentityModule(builder.Configuration);
-}
-
-// ─── 4. Application Layer (needs module assemblies) ─────
-builder.Services.AddCoreApplication(handlerAssemblies);
-
-// ─── 5. Build & Configure Pipeline ─────────────────────
-var app = builder.Build();
-app.UseMiddleware<RequestLoggingMiddleware>();
-app.UseMiddleware<AuditableMiddleware>();
-app.UseRateLimiter();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.Run();`,
-    highlightLines: [4, 5, 6, 17, 18, 19, 20],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.backend.middlewarePipelineTitle",
-    id: "middleware-pipeline",
-  },
-  { type: "paragraph", contentKey: "architecture.backend.middlewarePipelineIntro" },
-  {
-    type: "flowchart",
-    title: "Middleware Pipeline (Order Matters)",
-    direction: "vertical",
-    nodes: [
-      { id: "cors", label: "1. CORS", type: "default" },
-      { id: "hsts", label: "2. HSTS (Production)", type: "default" },
-      { id: "exception", label: "3. Exception Handler", type: "danger" },
-      { id: "ratelimit", label: "4. Rate Limiter", type: "warning" },
-      { id: "reqlog", label: "5. Request Logging", type: "info" },
-      { id: "static", label: "6. Static Files", type: "default" },
-      { id: "auth", label: "7. Authentication", type: "primary" },
-      { id: "authz", label: "8. Authorization", type: "primary" },
-      { id: "caching", label: "9. Response Caching", type: "success" },
-      { id: "compress", label: "10. Compression (Brotli+Gzip)", type: "success" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "cors", to: "hsts" },
-      { from: "hsts", to: "exception" },
-      { from: "exception", to: "ratelimit" },
-      { from: "ratelimit", to: "reqlog" },
-      { from: "reqlog", to: "static" },
-      { from: "static", to: "auth" },
-      { from: "auth", to: "authz" },
-      { from: "authz", to: "caching" },
-      { from: "caching", to: "compress" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.backend.diMapTitle",
-    id: "di-map",
-  },
-  { type: "paragraph", contentKey: "architecture.backend.diMapIntro" },
-  {
-    type: "table",
-    headers: ["Service Interface", "Implementation", "Lifetime", "Registered In"],
-    rows: [
-      ["ICurrentUser", "CurrentUser", "Scoped", "CoreInfrastructure"],
-      ["IApiService", "ApiService", "Scoped", "CoreInfrastructure"],
-      ["IAuditService", "AuditService", "Scoped", "CoreInfrastructure"],
+    "rows": [
       [
-        "ICacheService",
-        "MemoryCacheService / RedisCacheService",
-        "Singleton",
-        "CoreInfrastructure",
+        "Page route",
+        "/docs/architecture/backend",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-      ["IEmailService", "SmtpEmailService", "Scoped", "CoreInfrastructure"],
-      ["IBlobStorageService", "LocalBlobStorage / AzureBlobStorage", "Singleton", "BlobStorage"],
-      ["IAdminRepository", "AdminRepository", "Scoped", "IdentityModule"],
-      ["IUserRepository", "UserRepository", "Scoped", "IdentityModule"],
-      ["IRoleRepository", "RoleRepository", "Scoped", "IdentityModule"],
-      ["ITenantRepository", "TenantRepository", "Scoped", "IdentityModule"],
-      ["IMenuRepository", "MenuRepository", "Scoped", "IdentityModule"],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/architecture/backend.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Application entry point",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Program.cs is intentionally thin and delegates registration and middleware to extension files."
+      ],
+      [
+        "Module registration",
+        "SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Conditional loading supports monolith, Gateway mode, and single-module service mode for the five implemented backend modules."
+      ],
+      [
+        "AstraFlow pipeline",
+        "SCRIPE-Backend/src/Core/Core.Application/DependencyInjection.cs",
+        "Open behaviors are registered in source order: Logging, Validation, FeatureCheck, WebhookDispatch, and Caching, with preprocessors, postprocessors, exception action/handler, and stream logging."
+      ],
+      [
+        "HTTP middleware",
+        "SCRIPE-Backend/src/Host/API/Extensions/MiddlewarePipeline.cs",
+        "The runtime HTTP pipeline is configured in one extension and includes forwarded headers, exception handling, security, CORS, jobs, rate limiting, auth, CSRF, replay protection, ETag, controllers, metrics, SignalR, and YARP."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.backend.modulePatternTitle",
-    id: "module-pattern",
-  },
-  { type: "paragraph", contentKey: "architecture.backend.modulePatternIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Identity Module — DependencyInjection.cs Pattern",
-    code: `public static class DependencyInjection
-{
-    public static IServiceCollection AddIdentityModule(
-        this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        // 1. DbContext registration (multi-provider)
-        services.AddDbContext<IdentityDbContext>(options =>
-        {
-            var provider = configuration["DatabaseProvider"];
-            switch (provider)
-            {
-                case "SqlServer":
-                    options.UseSqlServer(connectionString);
-                    break;
-                case "PostgreSQL":
-                    options.UseNpgsql(connectionString);
-                    break;
-                case "Oracle":
-                    options.UseOracle(connectionString);
-                    break;
-            }
-        });
-
-        // 2. Repository registrations
-        services.AddScoped<IAdminRepository, AdminRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
-
-        // 3. Module-specific services
-        services.AddScoped<IPermissionService, PermissionService>();
-        services.AddScoped<IJwtService, JwtService>();
-
-        // 4. Module registration (for runtime introspection)
-        services.AddSingleton<IModuleRegistration, IdentityModuleRegistration>();
-
-        return services;
-    }
-}`,
-    highlightLines: [8, 27, 28, 29, 37],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.backend.controllersTitle",
-    id: "controllers",
-  },
-  {
-    type: "table",
-    headers: ["Controller", "Base Route", "Endpoints", "Auth Required"],
-    rows: [
-      ["AuthController", "/api/v1/auth", "Login, Refresh, Logout, Verify2FA", "Partial"],
-      ["AdminController", "/api/v1/admin", "CRUD + Block + Impersonate", "Yes"],
-      ["UserController", "/api/v1/users", "CRUD + Profile + Avatar", "Yes"],
-      ["RoleController", "/api/v1/roles", "CRUD + Assign Permissions", "Yes"],
-      ["TenantController", "/api/v1/tenants", "CRUD + Settings + Logo", "Yes"],
-      ["PermissionController", "/api/v1/permissions", "List + Categories + Assign", "Yes"],
-      ["MenuController", "/api/v1/menus", "CRUD + Reorder + Tree", "Yes"],
-      ["AuditController", "/api/v1/audit", "Search + Export + Stream", "Yes"],
-      ["DashboardController", "/api/v1/dashboard", "Stats + Charts + Feed", "Yes"],
-      ["FileController", "/api/v1/files", "Upload + Download + Delete", "Yes"],
-      ["RecycleBinController", "/api/v1/recycle-bin", "List + Restore + Purge", "Yes"],
-      ["NotificationController", "/api/v1/notifications", "List + Read + Settings", "Yes"],
-      ["SettingsController", "/api/v1/settings", "Get + Update + Reset", "Yes"],
-      ["HealthController", "/health", "Liveness + Readiness", "No"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "architecture.backend.controllerTip",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "architecture/backend",
   titleKey: "architecture.backend.title",
-  descriptionKey: "architecture.backend.description",
   category: "architecture",
   order: 2,
   sections,
-  relatedSlugs: ["architecture/overview", "architecture/cqrs", "architecture/data-flow"],
-  lastUpdated: "2026-06-04",
+  relatedSlugs: ["architecture/overview","architecture/cqrs","architecture/data-flow"],
+  lastUpdated: "2026-06-07",
 });

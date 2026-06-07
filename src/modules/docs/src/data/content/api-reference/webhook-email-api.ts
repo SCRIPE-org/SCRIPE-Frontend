@@ -2,356 +2,143 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "apiReference.webhookEmailApi.intro" },
-
-  // ─── Webhooks ─────────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.webhookEmailApi.webhooksTitle",
-    id: "webhooks",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "apiReference.webhookEmailApi.webhooksIntro" },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/webhooks",
-        descriptionKey: "apiReference.webhookEmailApi.listWebhooksDesc",
-        auth: "webhooks.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/webhooks",
-        descriptionKey: "apiReference.webhookEmailApi.createWebhookDesc",
-        auth: "webhooks.create",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/webhooks/{id}",
-        descriptionKey: "apiReference.webhookEmailApi.updateWebhookDesc",
-        auth: "webhooks.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/webhooks/{id}",
-        descriptionKey: "apiReference.webhookEmailApi.deleteWebhookDesc",
-        auth: "webhooks.delete",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/webhooks/{id}/test",
-        descriptionKey: "apiReference.webhookEmailApi.testWebhookDesc",
-        auth: "webhooks.update",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/api-reference/webhook-email-api",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/api-reference/webhook-email-api.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Backend host",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Startup delegates to host defaults, core services, conditional module registration, additional services, post-build initialization, and the middleware pipeline."
+      ],
+      [
+        "Backend modules",
+        "SCRIPE-Backend/src/Modules + SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Current backend modules are Compliance, Entitlements, Identity, Marketplace, and Plugins; module loading is controlled by MODULE_NAME."
+      ],
+      [
+        "Frontend app",
+        "SCRIPE-Frontend/src/app + SCRIPE-Frontend/package.json",
+        "Next.js 16.1.7 with React 19.2.4, App Router route groups, and module connectors under src/modules."
+      ],
+      [
+        "Documentation portal",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts",
+        "Canonical documentation pages are TypeScript registrations; Markdown exports are generated/reference output."
+      ]
+    ]
   },
   {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Create Webhook",
-        language: "json",
-        filename: "POST /webhooks — Request",
-        code: `{
-  "url": "https://api.example.com/webhooks/scripe",
-  "secret": "whsec_a1b2c3d4e5f6...",
-  "events": [
-    "admin.created",
-    "admin.updated",
-    "admin.deleted",
-    "user.registered",
-    "tenant.settings_changed"
-  ],
-  "isActive": true,
-  "description": "Sync admin changes to external system"
-}`,
-      },
-      {
-        label: "Webhook Payload",
-        language: "json",
-        filename: "Webhook Delivery Payload",
-        code: `// POST to subscriber URL
-{
-  "id": "event-uuid",
-  "type": "admin.created",
-  "timestamp": "2026-02-20T15:30:00Z",
-  "tenantId": "tenant-uuid",
-  "data": {
-    "adminId": "admin-uuid",
-    "email": "new-admin@acme.com",
-    "firstName": "John",
-    "role": "Manager"
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-  "signature": "sha256=abc123..."
-}
-
-// Headers:
-// X-Webhook-Signature: sha256=HMAC(secret, body)
-// X-Webhook-Id: event-uuid
-// X-Webhook-Retry: 0`,
-      },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Representative Implemented API Evidence",
+    "id": "api-evidence"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Controller group",
+      "Verified source",
+      "Implemented surface"
     ],
+    "rows": [
+      [
+        "Messaging/System controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers",
+        "Webhook, notification, message-template, email, and dashboard/audit operations are implemented through host controllers and core/module services."
+      ]
+    ]
   },
   {
-    type: "table",
-    headers: ["Event Type", "Trigger", "Data Fields"],
-    rows: [
-      ["admin.created", "New admin registered", "adminId, email, role, tenantId"],
-      ["admin.updated", "Admin profile changed", "adminId, changedFields"],
-      ["admin.deleted", "Admin soft-deleted", "adminId, deletedBy"],
-      ["admin.blocked", "Admin account blocked", "adminId, blockedBy, reason"],
-      ["user.registered", "New user registration", "userId, email, tenantId"],
-      ["user.verified", "Email/phone verified", "userId, verificationType"],
-      ["tenant.created", "New tenant created", "tenantId, name, parentId"],
-      ["tenant.settings_changed", "Tenant settings updated", "tenantId, changedSettings"],
-      ["role.permissions_changed", "Role permissions modified", "roleId, addedPerms, removedPerms"],
-      ["security.login_failed", "Failed login attempt", "email, ip, attempts"],
-      ["security.account_locked", "Account locked out", "userId, lockoutEnd"],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Email System ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.webhookEmailApi.emailTitle",
-    id: "email-system",
-  },
-  { type: "paragraph", contentKey: "apiReference.webhookEmailApi.emailIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/emails",
-        descriptionKey: "apiReference.webhookEmailApi.listEmailsDesc",
-        auth: "emails.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/emails/send",
-        descriptionKey: "apiReference.webhookEmailApi.sendEmailDesc",
-        auth: "emails.send",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/emails/send-bulk",
-        descriptionKey: "apiReference.webhookEmailApi.sendBulkDesc",
-        auth: "emails.send",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/emails/{id}/cancel",
-        descriptionKey: "apiReference.webhookEmailApi.cancelEmailDesc",
-        auth: "emails.send",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/emails/{id}/resend",
-        descriptionKey: "apiReference.webhookEmailApi.resendEmailDesc",
-        auth: "emails.send",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/emails/stats",
-        descriptionKey: "apiReference.webhookEmailApi.emailStatsDesc",
-        auth: "emails.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/emails/search-recipients",
-        descriptionKey: "apiReference.webhookEmailApi.searchRecipientsDesc",
-        auth: "emails.send",
-      },
-    ],
-  },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Send Email",
-        language: "json",
-        filename: "POST /emails/send — Request",
-        code: `{
-  "to": "user@example.com",
-  "subject": "Welcome to SCRIPE",
-  "templateId": "template-uuid",
-  "variables": {
-    "name": "Alice Johnson",
-    "companyName": "Acme Corp",
-    "activationUrl": "https://app.scripe.dev/activate?token=..."
-  },
-  "priority": "high",
-  "scheduledAt": null
-}`,
-      },
-      {
-        label: "Send Bulk",
-        language: "json",
-        filename: "POST /emails/send-bulk — Request",
-        code: `{
-  "templateId": "template-uuid",
-  "recipients": [
-    {
-      "email": "user1@example.com",
-      "variables": { "name": "User 1" }
-    },
-    {
-      "email": "user2@example.com",
-      "variables": { "name": "User 2" }
-    }
-  ],
-  "filter": {
-    "roleId": "role-uuid",
-    "isActive": true
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-      },
-    ],
-  },
-
-  // ─── Message Templates ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.webhookEmailApi.templatesTitle",
-    id: "message-templates",
-  },
-  { type: "paragraph", contentKey: "apiReference.webhookEmailApi.templatesIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/message-templates",
-        descriptionKey: "apiReference.webhookEmailApi.listTemplatesDesc",
-        auth: "templates.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/message-templates/{id}",
-        descriptionKey: "apiReference.webhookEmailApi.getTemplateDesc",
-        auth: "templates.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/message-templates",
-        descriptionKey: "apiReference.webhookEmailApi.createTemplateDesc",
-        auth: "templates.create",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/message-templates/{id}",
-        descriptionKey: "apiReference.webhookEmailApi.updateTemplateDesc",
-        auth: "templates.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/message-templates/{id}",
-        descriptionKey: "apiReference.webhookEmailApi.deleteTemplateDesc",
-        auth: "templates.delete",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/message-templates/{id}/preview",
-        descriptionKey: "apiReference.webhookEmailApi.previewTemplateDesc",
-        auth: "templates.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/message-templates/{id}/render",
-        descriptionKey: "apiReference.webhookEmailApi.renderTemplateDesc",
-        auth: "templates.view",
-      },
-    ],
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "Message Template Example",
-    code: `{
-  "id": "template-uuid",
-  "name": "welcome-admin",
-  "subject": "Welcome to {{companyName}}!",
-  "bodyHtml": "<h1>Hello {{name}}</h1><p>Welcome to {{companyName}}...</p>",
-  "bodyText": "Hello {{name}}, Welcome to {{companyName}}...",
-  "engine": "scriban",
-  "variables": ["name", "companyName", "activationUrl"],
-  "category": "onboarding",
-  "isActive": true
-}
-// Template engine: Scriban (Liquid-compatible)
-// Variables use {{variableName}} syntax`,
-  },
-
-  // ─── Notifications ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.webhookEmailApi.notificationsTitle",
-    id: "notifications",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/notifications",
-        descriptionKey: "apiReference.webhookEmailApi.listNotificationsDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/notifications/unread-count",
-        descriptionKey: "apiReference.webhookEmailApi.unreadCountDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/notifications/{id}/read",
-        descriptionKey: "apiReference.webhookEmailApi.markReadDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/notifications/read-all",
-        descriptionKey: "apiReference.webhookEmailApi.markAllReadDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/notifications/{id}",
-        descriptionKey: "apiReference.webhookEmailApi.deleteNotifDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/notifications/search-targets",
-        descriptionKey: "apiReference.webhookEmailApi.searchTargetsDesc",
-        auth: "notifications.send",
-      },
-    ],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "apiReference.webhookEmailApi.signalrTip",
-  },
 ];
 
 registerPage({
   slug: "api-reference/webhook-email-api",
   titleKey: "apiReference.webhookEmailApi.title",
-  descriptionKey: "apiReference.webhookEmailApi.description",
   category: "api-reference",
   order: 7,
   sections,
-  relatedSlugs: [
-    "api-reference/system-api",
-    "security/audit-compliance",
-    "api-reference/admin-api",
-  ],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["api-reference/system-api","security/audit-compliance","api-reference/admin-api"],
+  lastUpdated: "2026-06-07",
 });

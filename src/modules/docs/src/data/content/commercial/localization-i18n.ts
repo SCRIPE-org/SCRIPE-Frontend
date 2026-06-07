@@ -2,139 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.localizationI18n.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.localizationI18n.languagesTitle",
-    id: "languages",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Language", "Code", "Direction", "Font", "Status"],
-    rows: [
-      ["English", "en", "LTR", "Inter / System", "Production"],
-      ["Arabic", "ar", "RTL", "Noto Sans Arabic", "Production"],
-      ["French", "fr", "LTR", "Inter / System", "Supported"],
-      ["German", "de", "LTR", "Inter / System", "Supported"],
-      ["Spanish", "es", "LTR", "Inter / System", "Supported"],
-      ["Chinese", "zh", "LTR", "Noto Sans SC", "Supported"],
-      ["Japanese", "ja", "LTR", "Noto Sans JP", "Supported"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/localization-i18n",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/localization-i18n.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
   },
-
-  { type: "heading", level: 2, titleKey: "commercial.localizationI18n.rtlTitle", id: "rtl" },
-  { type: "paragraph", contentKey: "commercial.localizationI18n.rtlContent" },
   {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "commercial.localizationI18n.scripeRTL",
-        variant: "positive",
-        items: [
-          "Full RTL layout system built from day 1",
-          "CSS logical properties (margin-inline-start)",
-          "Auto-flipping icons and navigation",
-          "RTL-aware form layouts and validation",
-          "Bilingual data tables with proper alignment",
-          "Dynamic font loading per language",
-        ],
-      },
-      {
-        titleKey: "commercial.localizationI18n.competitorRTL",
-        variant: "negative",
-        items: [
-          "RTL added as CSS overrides after launch",
-          "Physical properties (margin-left) cause bugs",
-          "Icons and navigation break in RTL",
-          "Form layouts misaligned in RTL mode",
-          "Tables render incorrectly for Arabic text",
-          "Single font for all languages",
-        ],
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.localizationI18n.bilingualTitle",
-    id: "bilingual-entities",
-  },
-  { type: "paragraph", contentKey: "commercial.localizationI18n.bilingualContent" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Bilingual Entity Pattern",
-    code: `public class Department : AuditableEntity
-{
-    public string NameEn { get; set; }   // "Human Resources"
-    public string NameAr { get; set; }   // "الموارد البشرية"
-    
-    // Auto-resolve based on current language context
-    public string GetLocalizedName(string lang) =>
-        lang == "ar" ? NameAr : NameEn;
-}`,
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.localizationI18n.templatesTitle",
-    id: "templates",
-  },
-  { type: "paragraph", contentKey: "commercial.localizationI18n.templatesContent" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "globe",
-        titleKey: "commercial.localizationI18n.templateBilingual",
-        descriptionKey: "commercial.localizationI18n.templateBilingualDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.localizationI18n.templatePreview",
-        descriptionKey: "commercial.localizationI18n.templatePreviewDesc",
-      },
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.localizationI18n.frontendTitle",
-    id: "frontend",
-  },
-  { type: "paragraph", contentKey: "commercial.localizationI18n.frontendContent" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Frontend Language Context Usage",
-    code: `// Any component can access localization
-const { t, language, direction, setLanguage } = Language();
-
-return (
-  <div dir={direction}>
-    <h1>{t('dashboard.title')}</h1>
-    <p>{t('dashboard.welcome', { name: user.name })}</p>
-    <button onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}>
-      {language === 'ar' ? 'English' : 'العربية'}
-    </button>
-  </div>
-);`,
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/localization-i18n",
   titleKey: "commercial.localizationI18n.title",
-  descriptionKey: "commercial.localizationI18n.description",
   category: "commercial-enterprise",
   order: 5,
   sections,
-  relatedSlugs: ["commercial/real-time-capabilities", "commercial/message-templates"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/real-time-capabilities","commercial/message-templates"],
+  lastUpdated: "2026-06-07",
 });

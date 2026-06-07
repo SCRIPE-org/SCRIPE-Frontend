@@ -2,127 +2,134 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.databaseSupport.intro" },
-
-  // ─── Supported Providers ────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.databaseSupport.providersTitle",
-    id: "providers",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.databaseSupport.providersIntro" },
   {
-    type: "table",
-    headers: ["Database", "Use Case", "License", "Switch Effort"],
-    rows: [
-      ["SQL Server 2022", "Enterprise Windows, Azure", "Commercial", "Config only"],
-      ["PostgreSQL 16", "Open-source, Linux, cost-sensitive", "Free (MIT)", "Config only"],
-      ["Oracle 21c", "Banking, government, legacy", "Commercial", "Config only"],
-      ["SQLite", "Dev/test, edge, embedded", "Public domain", "Config only"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/database-support",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/database-support.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
   },
-
-  // ─── How to Switch ──────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.databaseSupport.switchTitle", id: "switch" },
-  { type: "paragraph", contentKey: "commercial.databaseSupport.switchContent" },
   {
-    type: "code",
-    language: "json",
-    filename: "Switch Database — Single Config Change",
-    code: `// appsettings.json — just change these two values
-{
-  "DatabaseSettings": {
-    "DBProvider": "postgresql",        // or "mssql", "oracle", "sqlite"
-    "ConnectionString": "Host=localhost;Database=scripe;Username=admin;Password=..."
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Verified Commands",
+    "id": "verified-commands"
+  },
+  {
+    "type": "code",
+    "language": "bash",
+    "filename": "Database commands verified from tools/scripe-cli/src/registrars/database.ts",
+    "code": "scripe db add-migration <Name> -m <Module>\nscripe db update -m <Module>\nscripe db status --all\nscripe db remove-migration -m <Module>"
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}
-
-// That's it. No code changes. No migration rewrites. No data layer rebuild.`,
-  },
-
-  // ─── Feature Parity Matrix ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.databaseSupport.featuresTitle",
-    id: "features",
-  },
-  {
-    type: "table",
-    headers: ["Feature", "SQL Server", "PostgreSQL", "Oracle", "SQLite"],
-    rows: [
-      ["Global query filters", "✓", "✓", "✓", "✓"],
-      ["Soft delete filtering", "✓", "✓", "✓", "✓"],
-      ["Multi-tenant isolation", "✓", "✓", "✓", "✓"],
-      ["JSON columns", "✓", "✓", "✓", "✗"],
-      ["Full-text search", "✓", "✓", "✓", "✗"],
-      ["Bulk operations", "✓", "✓", "✓", "✓"],
-      ["Migrations", "✓", "✓", "✓", "✓"],
-      ["Connection pooling", "✓", "✓", "✓", "N/A"],
-      ["Distributed transactions", "✓", "✓", "✓", "✗"],
-      ["Compiled queries", "✓", "✓", "✓", "✓"],
-    ],
-  },
-
-  // ─── Migration Strategy ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.databaseSupport.migrationTitle",
-    id: "migration-strategy",
-  },
-  { type: "paragraph", contentKey: "commercial.databaseSupport.migrationContent" },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.databaseSupport.mig1Title",
-        contentKey: "commercial.databaseSupport.mig1Content",
-      },
-      {
-        titleKey: "commercial.databaseSupport.mig2Title",
-        contentKey: "commercial.databaseSupport.mig2Content",
-      },
-      {
-        titleKey: "commercial.databaseSupport.mig3Title",
-        contentKey: "commercial.databaseSupport.mig3Content",
-      },
-      {
-        titleKey: "commercial.databaseSupport.mig4Title",
-        contentKey: "commercial.databaseSupport.mig4Content",
-      },
-    ],
-  },
-
-  // ─── Performance Considerations ─────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.databaseSupport.perfTitle",
-    id: "performance",
-  },
-  {
-    type: "table",
-    headers: ["Database", "Latency (p50)", "Throughput", "Best Scenario"],
-    rows: [
-      ["SQL Server", "~30ms", "~1,800 req/s", "Windows, Azure SQL"],
-      ["PostgreSQL", "~35ms", "~1,500 req/s", "Linux, containers"],
-      ["Oracle", "~40ms", "~1,200 req/s", "Enterprise, high-concurrency"],
-      ["SQLite", "~5ms", "~500 req/s", "Single-user, testing"],
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.databaseSupport.tip" },
 ];
 
 registerPage({
   slug: "commercial/database-support",
   titleKey: "commercial.databaseSupport.title",
-  descriptionKey: "commercial.databaseSupport.description",
   category: "commercial-technical",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/performance-benchmarks", "commercial/storage-backends"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/performance-benchmarks","commercial/storage-backends"],
+  lastUpdated: "2026-06-07",
 });

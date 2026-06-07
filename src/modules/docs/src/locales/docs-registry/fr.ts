@@ -3,6 +3,7 @@
  * Eagerly merges all French docs translations (tech + commercial).
  */
 import { fr as common } from "../pages/common/fr";
+import { fr as generatedTitles } from "../pages/generated-titles/fr";
 import { fr as getStarted } from "../pages/get-started/fr";
 import { fr as architecture } from "../pages/architecture/fr";
 import { fr as features } from "../pages/features/fr";
@@ -69,5 +70,6 @@ export const allDocsFr: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  { commercial: stripeConnect.commercial },
+  generatedTitles
 );

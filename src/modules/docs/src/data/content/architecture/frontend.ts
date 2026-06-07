@@ -2,208 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "architecture.frontend.intro" },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.frontend.solidPatternTitle",
-    id: "solid-pattern",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "architecture.frontend.solidPatternIntro" },
   {
-    type: "table",
-    headers: ["Principle", "Application in SCRIPE"],
-    rows: [
-      ["S — Single Responsibility", "Each ViewModel handles ONE concern (filter, stats, table)"],
-      ["O — Open/Closed", "Base hooks extended via composition, not modification"],
-      ["L — Liskov Substitution", "All ViewModels return consistent typed interfaces"],
-      ["I — Interface Segregation", "Components receive only the props they need"],
-      ["D — Dependency Inversion", "Views depend on ViewModel interfaces, not implementations"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/architecture/frontend",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/architecture/frontend.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.frontend.viewRulesTitle",
-    id: "view-rules",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "architecture.frontend.viewDo",
-        variant: "positive",
-        items: [
-          "Max ~60 lines of JSX",
-          "Zero useState, zero useEffect",
-          "Only destructures props from ViewModel",
-          "Returns JSX with component composition",
-          "Imports section components for layout",
-        ],
-      },
-      {
-        titleKey: "architecture.frontend.viewDont",
-        variant: "negative",
-        items: [
-          "No business logic in views",
-          "No API calls or data transformations",
-          "No direct state management",
-          "No inline styles with logic",
-          "No conditional data fetching",
-        ],
-      },
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "architecture.frontend.viewExampleTitle",
-    id: "view-example",
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "UserManagementView.tsx — Pure UI View",
-    code: `'use client';
-
-export function UserManagementView() {
-  const vm = useUserManagementViewModel();
-
-  return (
-    <div>
-      <h1>{vm.title}</h1>
-      <FilterSection {...vm.filters} />
-      <StatisticsSection {...vm.statistics} />
-      <GenericCrudView {...vm.table} columns={vm.columns} />
-    </div>
-  );
-}
-// ~15 lines. Views are this short. Always.`,
-    highlightLines: [4, 8, 9, 10],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.frontend.viewModelRulesTitle",
-    id: "viewmodel-rules",
-  },
-  { type: "paragraph", contentKey: "architecture.frontend.viewModelRulesIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "useUserManagementViewModel.ts — Orchestrator",
-    code: `export function useUserManagementViewModel() {
-  // Compose section ViewModels (Single Responsibility)
-  const statistics = useStatisticsViewModel();
-  const filters = useFilterViewModel();
-  const table = useCrudViewModel(crudConfig);
-  const blockAction = useBlockUserAction();
-
-  // Columns defined HERE, not in View or Component
-  const columns = useMemo(() => [
-    column.index("No"),
-    column.text("name", "Name"),
-    column.text("email", "Email"),
-    column.status("status", "Status", statusMap),
-    column.switch("block", "Block", blockAction),
-    column.date("createdAt", "Created", { locale: "en-GB" }),
-  ], [blockAction]);
-
-  return {
-    title: t("userManagement.title"),
-    statistics,
-    filters,
-    table,
-    columns,
-  };
-}`,
-    highlightLines: [3, 4, 5, 6, 9],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.frontend.moduleStructureTitle",
-    id: "module-structure",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "Standard Frontend Module Structure",
-    code: `module/
-├── di.ts                     # Module DI Container
-├── index.ts                  # Public API exports
-└── src/
-    ├── domain/               # Business Logic (Pure TypeScript)
-    │   ├── entities/         # Zod schemas + business rules
-    │   └── interfaces/       # Repository contracts
-    │
-    ├── data/                 # Data Access Layer
-    │   ├── models/           # API DTOs (raw response shapes)
-    │   ├── mappers/          # DTO ↔ Entity transformations
-    │   └── repositories/     # Interface implementations
-    │
-    └── presentation/         # UI Layer (SOLID Pattern)
-        ├── viewmodels/       # Section ViewModels + Orchestrator
-        ├── views/            # Pure UI Pages (~60 lines max)
-        └── components/       # Section Components`,
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "architecture.frontend.connectorPatternTitle",
-    id: "connector-pattern",
-  },
-  { type: "paragraph", contentKey: "architecture.frontend.connectorPatternIntro" },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "page.tsx (Server Connector)",
-        language: "typescript",
-        code: `// src/app/(modules)/admin/user-management/page.tsx
-import { Metadata } from 'next';
-import { UserManagementView } from '@modules/admin/user-management';
-
-export const metadata: Metadata = {
-  title: 'User Management | SCRIPE',
-};
-
-export default function Page() {
-  return <UserManagementView />;
-}
-// That's it. Server component. No logic. Just connects.`,
-      },
-      {
-        label: "View.tsx (Client Component)",
-        language: "typescript",
-        code: `// src/modules/admin/user-management/src/presentation/views/UserManagementView.tsx
-'use client';
-
-export function UserManagementView() {
-  const vm = useUserManagementViewModel();
-  // ... pure JSX composition
-}`,
-      },
-    ],
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "architecture.frontend.connectorWarning",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "architecture/frontend",
   titleKey: "architecture.frontend.title",
-  descriptionKey: "architecture.frontend.description",
   category: "architecture",
   order: 3,
   sections,
-  relatedSlugs: [
-    "architecture/overview",
-    "architecture/solid-pattern",
-    "architecture/state-management",
-  ],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["architecture/overview","architecture/solid-pattern","architecture/state-management"],
+  lastUpdated: "2026-06-07",
 });

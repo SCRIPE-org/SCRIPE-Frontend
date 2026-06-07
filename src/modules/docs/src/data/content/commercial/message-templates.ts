@@ -2,148 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.messageTemplates.intro" },
-
-  { type: "heading", level: 2, titleKey: "commercial.messageTemplates.engineTitle", id: "engine" },
-  { type: "paragraph", contentKey: "commercial.messageTemplates.engineContent" },
   {
-    type: "code",
-    language: "html",
-    filename: "Scriban Template Syntax",
-    code: `<!-- Welcome Email Template -->
-<h1>Welcome {{ user.display_name }}!</h1>
-<p>Your account has been activated for <strong>{{ tenant.name }}</strong>.</p>
-
-{{ if user.role == "admin" }}
-  <p>As an administrator, you have full access to the dashboard.</p>
-{{ else }}
-  <p>Your role: {{ user.role | string.capitalize }}</p>
-{{ end }}
-
-<p>Login at: <a href="{{ login_url }}">{{ login_url }}</a></p>`,
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.messageTemplates.builtInTitle",
-    id: "built-in",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Template", "Trigger", "Variables Available"],
-    rows: [
-      ["Welcome Email", "User registration", "user.*, tenant.*, login_url"],
-      ["Password Reset", "Reset request", "user.*, reset_url, expiry_hours"],
-      ["Email Verification", "Email confirmation", "user.*, verification_url"],
-      ["Role Assignment", "Role change", "user.*, role.*, assigned_by"],
-      ["Account Locked", "Failed login threshold", "user.*, unlock_time, reason"],
-      ["Tenant Invitation", "New tenant member", "user.*, tenant.*, invite_url"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/message-templates",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/message-templates.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.messageTemplates.bilingualTitle",
-    id: "bilingual",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-  { type: "paragraph", contentKey: "commercial.messageTemplates.bilingualContent" },
   {
-    type: "code",
-    language: "csharp",
-    filename: "Bilingual Template Entity",
-    code: `public class MessageTemplate : AuditableEntity
-{
-    public string Key { get; set; }          // "welcome-email"
-    public string SubjectEn { get; set; }    // "Welcome to {tenant}"
-    public string SubjectAr { get; set; }    // "مرحبا بك في {tenant}"
-    public string BodyEn { get; set; }       // English Scriban template
-    public string BodyAr { get; set; }       // Arabic Scriban template
-    public string Category { get; set; }     // "Authentication"
-    public bool IsActive { get; set; }       // Enable/disable
-}`,
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.messageTemplates.previewTitle",
-    id: "preview",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  { type: "paragraph", contentKey: "commercial.messageTemplates.previewContent" },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "globe",
-        titleKey: "commercial.messageTemplates.previewLive",
-        descriptionKey: "commercial.messageTemplates.previewLiveDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.messageTemplates.previewVariables",
-        descriptionKey: "commercial.messageTemplates.previewVariablesDesc",
-      },
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.messageTemplates.managementTitle",
-    id: "management",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/templates",
-        descriptionKey: "List all templates",
-        auth: "Required",
-        permission: "Templates.View",
-      },
-      {
-        method: "GET",
-        path: "/api/templates/{key}",
-        descriptionKey: "Get template by key",
-        auth: "Required",
-        permission: "Templates.View",
-      },
-      {
-        method: "PUT",
-        path: "/api/templates/{id}",
-        descriptionKey: "Update template content",
-        auth: "Required",
-        permission: "Templates.Update",
-      },
-      {
-        method: "POST",
-        path: "/api/templates/preview",
-        descriptionKey: "Preview rendered output",
-        auth: "Required",
-        permission: "Templates.View",
-      },
-      {
-        method: "POST",
-        path: "/api/templates/reset/{key}",
-        descriptionKey: "Reset to default",
-        auth: "Required",
-        permission: "Templates.Update",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/message-templates",
   titleKey: "commercial.messageTemplates.title",
-  descriptionKey: "commercial.messageTemplates.description",
   category: "commercial-enterprise",
   order: 6,
   sections,
-  relatedSlugs: ["commercial/localization-i18n", "commercial/email-integration"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/localization-i18n","commercial/email-integration"],
+  lastUpdated: "2026-06-07",
 });

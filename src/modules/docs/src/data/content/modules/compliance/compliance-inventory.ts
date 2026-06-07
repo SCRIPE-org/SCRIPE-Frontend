@@ -2,152 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Intro ────────────────────────────────────────────────
-  { type: "paragraph", contentKey: "modules.compliance.inventory.intro" },
   {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.compliance.inventory.infoTitle",
-    contentKey: "modules.compliance.inventory.infoContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Sensitivity Levels ───────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.inventory.sensitivityTitle",
-    id: "sensitivity",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.inventory.sensitivityIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.inventory.sensLevel",
-      "modules.compliance.inventory.sensDesc",
-      "modules.compliance.inventory.sensExamples",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "Public",
-        "modules.compliance.inventory.sensPublicDesc",
-        "modules.compliance.inventory.sensPublicEx",
+        "Page route",
+        "/docs/modules/compliance-inventory",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Internal",
-        "modules.compliance.inventory.sensInternalDesc",
-        "modules.compliance.inventory.sensInternalEx",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/compliance/compliance-inventory.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Confidential",
-        "modules.compliance.inventory.sensConfDesc",
-        "modules.compliance.inventory.sensConfEx",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "Restricted",
-        "modules.compliance.inventory.sensRestDesc",
-        "modules.compliance.inventory.sensRestEx",
+        "Compliance module",
+        "SCRIPE-Backend/src/Modules/Compliance",
+        "Compliance owns data subject requests, consents, data inventory, regulations, retention policies, reports, and compliance jobs."
       ],
+      [
+        "Compliance controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Compliance",
+        "Controller endpoints expose DSR, consent, inventory, regulation, retention, and reporting workflows."
+      ],
+      [
+        "Frontend compliance routes",
+        "SCRIPE-Frontend/src/app/(modules)/(compliance)",
+        "UI routes cover compliance overview, consent, DSR list/detail, data inventory, regulations, retention, and reports."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Entity Structure ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.inventory.structureTitle",
-    id: "inventory-structure",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.inventory.structureIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "DataInventoryItem.cs",
-    code: `public class DataInventoryItem : AuditableEntity<Guid>
-{
-    public Guid TenantId { get; set; }
-    
-    // E.g., "Users", "Invoices", "AuditLogs"
-    [MaxLength(200)]
-    public string EntityName { get; set; } = null!;
-    
-    // E.g., "Email", "IP Address"
-    [MaxLength(200)]
-    public string FieldName { get; set; } = null!;
-    
-    public SensitivityLevel Sensitivity { get; set; }
-    
-    // Identifies the system or module that owns this data
-    [MaxLength(200)]
-    public string StorageSystem { get; set; } = null!;
-}`,
-  },
-
-  // ─── Entity Reference ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.inventory.entitiesTitle",
-    id: "entities",
-  },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.inventory.field",
-      "modules.compliance.inventory.type",
-      "modules.compliance.inventory.description",
-    ],
-    rows: [
-      ["EntityName", "String", "modules.compliance.inventory.fEntityName"],
-      ["FieldName", "String", "modules.compliance.inventory.fFieldName"],
-      ["Sensitivity", "Enum", "modules.compliance.inventory.fSensitivity"],
-      ["StorageSystem", "String", "modules.compliance.inventory.fStorageSystem"],
-      ["LegalBasis", "String", "modules.compliance.inventory.fLegalBasis"],
-      ["RetentionPolicyId", "Guid?", "modules.compliance.inventory.fRetentionId"],
-    ],
-  },
-
-  // ─── API Endpoints ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.inventory.endpointsTitle",
-    id: "endpoints",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/compliance/data-inventory",
-        descriptionKey: "modules.compliance.inventory.epList",
-        auth: "AdminOnly",
-        permission: "compliance_data_inventory.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/compliance/data-inventory",
-        descriptionKey: "modules.compliance.inventory.epCreate",
-        auth: "AdminOnly",
-        permission: "compliance_data_inventory.manage",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/compliance/data-inventory/{id}",
-        descriptionKey: "modules.compliance.inventory.epUpdate",
-        auth: "AdminOnly",
-        permission: "compliance_data_inventory.manage",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/compliance-inventory",
   titleKey: "modules.compliance.inventory.title",
-  descriptionKey: "modules.compliance.inventory.description",
   category: "modules",
   order: 5,
   sections,
   relatedSlugs: ["modules/compliance-overview"],
-  lastUpdated: "2026-05-03",
+  lastUpdated: "2026-06-07",
 });

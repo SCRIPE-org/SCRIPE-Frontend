@@ -2,209 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.moduleCatalog.intro" },
-
-  // ─── Core Modules ───────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.moduleCatalog.coreTitle", id: "core-modules" },
-  { type: "paragraph", contentKey: "commercial.moduleCatalog.coreContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.moduleCatalog.tblCoreHeader1",
-      "commercial.moduleCatalog.tblCoreHeader2",
-      "commercial.moduleCatalog.tblCoreHeader3",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.moduleCatalog.tblCoreR1C1",
-        "commercial.moduleCatalog.tblCoreR1C2",
-        "commercial.moduleCatalog.tblCoreR1C3",
+        "Page route",
+        "/commercial/module-catalog",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.moduleCatalog.tblCoreR2C1",
-        "commercial.moduleCatalog.tblCoreR2C2",
-        "commercial.moduleCatalog.tblCoreR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/module-catalog.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.moduleCatalog.tblCoreR3C1",
-        "commercial.moduleCatalog.tblCoreR3C2",
-        "commercial.moduleCatalog.tblCoreR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.moduleCatalog.tblCoreR4C1",
-        "commercial.moduleCatalog.tblCoreR4C2",
-        "commercial.moduleCatalog.tblCoreR4C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.moduleCatalog.tblCoreR5C1",
-        "commercial.moduleCatalog.tblCoreR5C2",
-        "commercial.moduleCatalog.tblCoreR5C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.moduleCatalog.tblCoreR6C1",
-        "commercial.moduleCatalog.tblCoreR6C2",
-        "commercial.moduleCatalog.tblCoreR6C3",
-      ],
-      [
-        "commercial.moduleCatalog.tblCoreR7C1",
-        "commercial.moduleCatalog.tblCoreR7C2",
-        "commercial.moduleCatalog.tblCoreR7C3",
-      ],
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Communication Modules ──────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.moduleCatalog.commTitle",
-    id: "communication",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.moduleCatalog.tblCommHeader1",
-      "commercial.moduleCatalog.tblCommHeader2",
-      "commercial.moduleCatalog.tblCommHeader3",
-    ],
-    rows: [
+    "rows": [
       [
-        "commercial.moduleCatalog.tblCommR1C1",
-        "commercial.moduleCatalog.tblCommR1C2",
-        "commercial.moduleCatalog.tblCommR1C3",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "commercial.moduleCatalog.tblCommR2C1",
-        "commercial.moduleCatalog.tblCommR2C2",
-        "commercial.moduleCatalog.tblCommR2C3",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "commercial.moduleCatalog.tblCommR3C1",
-        "commercial.moduleCatalog.tblCommR3C2",
-        "commercial.moduleCatalog.tblCommR3C3",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "commercial.moduleCatalog.tblCommR4C1",
-        "commercial.moduleCatalog.tblCommR4C2",
-        "commercial.moduleCatalog.tblCommR4C3",
-      ],
-    ],
-  },
-
-  // ─── Data Management Modules ────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.moduleCatalog.dataTitle",
-    id: "data-management",
-  },
-  {
-    type: "table",
-    headers: [
-      "commercial.moduleCatalog.tblDataHeader1",
-      "commercial.moduleCatalog.tblDataHeader2",
-      "commercial.moduleCatalog.tblDataHeader3",
-    ],
-    rows: [
-      [
-        "commercial.moduleCatalog.tblDataR1C1",
-        "commercial.moduleCatalog.tblDataR1C2",
-        "commercial.moduleCatalog.tblDataR1C3",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
       [
-        "commercial.moduleCatalog.tblDataR2C1",
-        "commercial.moduleCatalog.tblDataR2C2",
-        "commercial.moduleCatalog.tblDataR2C3",
-      ],
-      [
-        "commercial.moduleCatalog.tblDataR3C1",
-        "commercial.moduleCatalog.tblDataR3C2",
-        "commercial.moduleCatalog.tblDataR3C3",
-      ],
-      [
-        "commercial.moduleCatalog.tblDataR4C1",
-        "commercial.moduleCatalog.tblDataR4C2",
-        "commercial.moduleCatalog.tblDataR4C3",
-      ],
-    ],
-  },
-
-  // ─── Business Modules ───────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.moduleCatalog.businessTitle", id: "business" },
-  { type: "paragraph", contentKey: "commercial.moduleCatalog.businessContent" },
-  { type: "info", variant: "tip", contentKey: "commercial.moduleCatalog.dbAgnosticTip" },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "users",
-        titleKey: "commercial.moduleCatalog.hrModule",
-        descriptionKey: "commercial.moduleCatalog.hrModuleDesc",
-      },
-      {
-        icon: "boxes",
-        titleKey: "commercial.moduleCatalog.inventoryModule",
-        descriptionKey: "commercial.moduleCatalog.inventoryModuleDesc",
-      },
-      {
-        icon: "bar-chart",
-        titleKey: "commercial.moduleCatalog.financeModule",
-        descriptionKey: "commercial.moduleCatalog.financeModuleDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.moduleCatalog.crmModule",
-        descriptionKey: "commercial.moduleCatalog.crmModuleDesc",
-      },
-      {
-        icon: "briefcase",
-        titleKey: "commercial.moduleCatalog.projectModule",
-        descriptionKey: "commercial.moduleCatalog.projectModuleDesc",
-      },
-      {
-        icon: "book",
-        titleKey: "commercial.moduleCatalog.customModule",
-        descriptionKey: "commercial.moduleCatalog.customModuleDesc",
-      },
-    ],
-  },
-
-  // ─── Module Independence ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.moduleCatalog.independenceTitle",
-    id: "independence",
-  },
-  { type: "paragraph", contentKey: "commercial.moduleCatalog.independenceContent" },
-  {
-    type: "code",
-    language: "bash",
-    filename: "Add a New Module in Seconds",
-    code: `# Scaffold a complete module with SCRIPE CLI
-scripe new-module --name "ProjectManagement"
-
-# This generates:
-# ├── Backend
-# │   ├── Domain/       → Entities, interfaces, domain events
-# │   ├── Application/  → Commands, queries, validators
-# │   └── Infrastructure/ → Repos, EF config, DI
-# ├── Frontend
-# │   ├── domain/       → Zod schemas, repository interfaces
-# │   ├── data/         → API repos, mappers, DTOs
-# │   └── presentation/ → Views, ViewModels, components
-# └── Auto-registered in DI and module registry`,
-  },
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/module-catalog",
   titleKey: "commercial.moduleCatalog.title",
-  descriptionKey: "commercial.moduleCatalog.description",
   category: "commercial-platform",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/platform-architecture", "commercial/technology-stack"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/platform-architecture","commercial/technology-stack"],
+  lastUpdated: "2026-06-07",
 });

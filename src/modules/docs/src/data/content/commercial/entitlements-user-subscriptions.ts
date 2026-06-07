@@ -3,95 +3,121 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "🔄",
-        titleKey: "Full Lifecycle",
-        descriptionKey:
-          "Free → Trial → Active → PastDue → Cancelled → Expired with automatic transitions.",
-      },
-      {
-        icon: "🤖",
-        titleKey: "Auto-Reconciliation",
-        descriptionKey:
-          "Daily background job handles trial expiry, auto-renewal, and expiration automatically.",
-      },
-      {
-        icon: "🎛️",
-        titleKey: "Feature Gating",
-        descriptionKey:
-          "UserFeatureCheckerService resolves which features each user can access based on their plan.",
-      },
-      {
-        icon: "👤",
-        titleKey: "Self-Service",
-        descriptionKey: "Users can view their own subscription status via the /me endpoint.",
-      },
-      {
-        icon: "📋",
-        titleKey: "Audit Trail",
-        descriptionKey:
-          "Immutable Cancel+Replace pattern keeps a complete history per billing cycle.",
-      },
-      {
-        icon: "🔔",
-        titleKey: "Domain Events",
-        descriptionKey:
-          "Created, Cancelled, and Renewed events feed into webhook and notification systems.",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "Subscription Lifecycle",
-    id: "lifecycle",
-  },
-  {
-    type: "table",
-    headers: ["Status", "Description", "Can Transition To"],
-    rows: [
-      ["Free", "No billing, on free plan", "Trial, Active"],
-      ["Trial", "Trial period active", "Active (auto-renew), Expired (no renew)"],
-      ["Active", "Paid and current", "PastDue, Cancelled, Expired"],
-      ["PastDue", "Payment failed, grace period active", "Active (recovered), Expired"],
-      ["Cancelled", "Manually cancelled (terminal)", "—"],
-      ["Expired", "Period ended (terminal)", "—"],
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "Automatic Reconciliation",
-    id: "reconciliation",
-  },
-  {
-    type: "table",
-    headers: ["Job", "Schedule", "What it does"],
-    rows: [
+    "rows": [
       [
-        "UserSubscriptionReconciliationJob",
-        "Daily 5:00 AM UTC",
-        "Trial expiry, period expiry, auto-renewal",
+        "Page route",
+        "/commercial/entitlements-user-subscriptions",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
-    ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/entitlements-user-subscriptions.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/entitlements-user-subscriptions",
   titleKey: "User Subscriptions",
-  descriptionKey:
-    "Tier 2 user-to-plan subscription management with full lifecycle, auto-reconciliation, feature gating, and self-service capabilities.",
   category: "commercial-modules",
   order: 22,
   sections,
-  relatedSlugs: [
-    "commercial/entitlements-tenant-plans",
-    "commercial/entitlements-overview",
-    "commercial/billing-payments",
-  ],
-  lastUpdated: "2026-04-18",
+  relatedSlugs: ["commercial/entitlements-tenant-plans","commercial/entitlements-overview","commercial/billing-payments"],
+  lastUpdated: "2026-06-07",
 });

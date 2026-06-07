@@ -2,163 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.observabilityMonitoring.intro" },
-
-  // ─── Structured Logging ─────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.observabilityMonitoring.loggingTitle",
-    id: "logging",
-  },
-  { type: "paragraph", contentKey: "commercial.observabilityMonitoring.loggingContent" },
-  {
-    type: "table",
-    headers: ["Sink", "Purpose", "Configuration"],
-    rows: [
-      ["Console", "Development debugging", "Always enabled in dev"],
-      ["File", "Persistent log storage", "Rolling file, configurable size/retention"],
-      ["Seq", "Structured log search", "HTTP sink, real-time dashboard"],
-      ["Application Insights", "Azure cloud monitoring", "Connection string in appsettings"],
-      ["Elasticsearch", "Log aggregation & search", "Bulk indexing, Kibana dashboards"],
-      ["Grafana Loki", "Lightweight log aggregation", "Push-based, label filtering"],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "code",
-    language: "json",
-    code: `{
-  "Serilog": {
-    "MinimumLevel": { "Default": "Information" },
-    "WriteTo": [
-      { "Name": "Console" },
-      { "Name": "File", "Args": { "path": "logs/scripe-.log", "rollingInterval": "Day" } },
-      { "Name": "Seq", "Args": { "serverUrl": "http://localhost:5341" } }
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    "Enrich": ["FromLogContext", "WithMachineName", "WithThreadId"]
+    "rows": [
+      [
+        "Page route",
+        "/commercial/observability-monitoring",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/observability-monitoring.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
-
-  // ─── Application Metrics ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.observabilityMonitoring.metricsTitle",
-    id: "metrics",
-  },
-  { type: "paragraph", contentKey: "commercial.observabilityMonitoring.metricsIntro" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "bar-chart",
-        titleKey: "commercial.observabilityMonitoring.requestMetrics",
-        descriptionKey: "commercial.observabilityMonitoring.requestMetricsDesc",
-      },
-      {
-        icon: "database",
-        titleKey: "commercial.observabilityMonitoring.dbMetrics",
-        descriptionKey: "commercial.observabilityMonitoring.dbMetricsDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.observabilityMonitoring.cacheMetrics",
-        descriptionKey: "commercial.observabilityMonitoring.cacheMetricsDesc",
-      },
-      {
-        icon: "users",
-        titleKey: "commercial.observabilityMonitoring.userMetrics",
-        descriptionKey: "commercial.observabilityMonitoring.userMetricsDesc",
-      },
-    ],
-  },
-  {
-    type: "table",
-    headers: ["Metric", "Type", "Description"],
-    rows: [
-      ["scr_http_requests_total", "Counter", "Total HTTP requests by method, path, status"],
-      ["scr_http_request_duration_ms", "Histogram", "Request latency distribution"],
-      ["scr_db_query_duration_ms", "Histogram", "Database query execution time"],
-      ["scr_cache_hits_total", "Counter", "Cache hit/miss ratio tracking"],
-      ["scr_active_sessions", "Gauge", "Currently active user sessions"],
-      ["scr_background_jobs_total", "Counter", "Background job executions by type"],
-    ],
-  },
-
-  // ─── Distributed Tracing ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.observabilityMonitoring.tracingTitle",
-    id: "tracing",
-  },
-  { type: "paragraph", contentKey: "commercial.observabilityMonitoring.tracingContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "OpenTelemetry SDK integration for automatic instrumentation",
-      "W3C Trace Context propagation across service boundaries",
-      "Correlation IDs in all log entries for request tracing",
-      "Database query spans with parameter capture",
-      "HTTP client spans for external API calls",
-      "Custom activity sources for business-critical operations",
-    ],
-  },
-
-  // ─── Health Checks ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.observabilityMonitoring.healthTitle",
-    id: "health",
-  },
-  { type: "paragraph", contentKey: "commercial.observabilityMonitoring.healthContent" },
-  {
-    type: "table",
-    headers: ["Endpoint", "Check", "Response"],
-    rows: [
-      ["/health", "Overall system health", "Healthy / Unhealthy / Degraded"],
-      ["/health/ready", "Readiness for traffic", "Dependencies available"],
-      ["/health/live", "Liveness probe", "Process is running"],
-      ["/health/db", "Database connectivity", "Connection pool status"],
-      ["/health/cache", "Cache connectivity", "Redis/memory status"],
-    ],
-  },
-
-  // ─── Alerting ───────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.observabilityMonitoring.alertingTitle",
-    id: "alerting",
-  },
-  { type: "paragraph", contentKey: "commercial.observabilityMonitoring.alertingContent" },
-  {
-    type: "table",
-    headers: ["Alert", "Condition", "Severity"],
-    rows: [
-      ["High error rate", "> 5% of requests return 5xx", "Critical"],
-      ["Slow response time", "P95 latency > 2 seconds", "Warning"],
-      ["Database connection pool", "> 80% connections in use", "Warning"],
-      ["Disk space", "< 10% free space", "Critical"],
-      ["Failed background jobs", "> 3 consecutive failures", "Warning"],
-      ["Certificate expiry", "< 30 days until expiry", "Warning"],
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.observabilityMonitoring.tip" },
 ];
 
 registerPage({
   slug: "commercial/observability-monitoring",
   titleKey: "commercial.observabilityMonitoring.title",
-  descriptionKey: "commercial.observabilityMonitoring.description",
   category: "commercial-technical",
   order: 5,
   sections,
-  relatedSlugs: ["commercial/resilience-patterns", "commercial/performance-benchmarks"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/resilience-patterns","commercial/performance-benchmarks"],
+  lastUpdated: "2026-06-07",
 });

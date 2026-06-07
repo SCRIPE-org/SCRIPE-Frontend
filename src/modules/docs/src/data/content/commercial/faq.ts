@@ -2,90 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.faq.intro" },
-
-  // ─── General Questions ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.faq.generalTitle", id: "general" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q1", id: "q1" },
-  { type: "paragraph", contentKey: "commercial.faq.a1" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q2", id: "q2" },
-  { type: "paragraph", contentKey: "commercial.faq.a2" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q3", id: "q3" },
-  { type: "paragraph", contentKey: "commercial.faq.a3" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qWhatIndustries", id: "q-industries" },
-  { type: "paragraph", contentKey: "commercial.faq.aWhatIndustries" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qHowLongSetup", id: "q-setup-time" },
-  { type: "paragraph", contentKey: "commercial.faq.aHowLongSetup" },
-
-  // ─── Technical Questions ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.faq.technicalTitle", id: "technical" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q4", id: "q4" },
-  { type: "paragraph", contentKey: "commercial.faq.a4" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q5", id: "q5" },
-  { type: "paragraph", contentKey: "commercial.faq.a5" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q6", id: "q6" },
-  { type: "paragraph", contentKey: "commercial.faq.a6" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qCanWeCustomize", id: "q-customize" },
-  { type: "paragraph", contentKey: "commercial.faq.aCanWeCustomize" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qDatabaseSupport", id: "q-db" },
-  { type: "paragraph", contentKey: "commercial.faq.aDatabaseSupport" },
   {
-    type: "table",
-    headers: [
-      "commercial.faq.tblDbHeader1",
-      "commercial.faq.tblDbHeader2",
-      "commercial.faq.tblDbHeader3",
-    ],
-    rows: [
-      ["commercial.faq.tblDbR1C1", "commercial.faq.tblDbR1C2", "commercial.faq.tblDbR1C3"],
-      ["commercial.faq.tblDbR2C1", "commercial.faq.tblDbR2C2", "commercial.faq.tblDbR2C3"],
-      ["commercial.faq.tblDbR3C1", "commercial.faq.tblDbR3C2", "commercial.faq.tblDbR3C3"],
-      ["commercial.faq.tblDbR4C1", "commercial.faq.tblDbR4C2", "commercial.faq.tblDbR4C3"],
-      ["commercial.faq.tblDbR5C1", "commercial.faq.tblDbR5C2", "commercial.faq.tblDbR5C3"],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Licensing & Pricing ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.faq.licensingTitle", id: "licensing" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q7", id: "q7" },
-  { type: "paragraph", contentKey: "commercial.faq.a7" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q8", id: "q8" },
-  { type: "paragraph", contentKey: "commercial.faq.a8" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.q9", id: "q9" },
-  { type: "paragraph", contentKey: "commercial.faq.a9" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qTrialPeriod", id: "q-trial" },
-  { type: "paragraph", contentKey: "commercial.faq.aTrialPeriod" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qUpgradePath", id: "q-upgrade" },
-  { type: "paragraph", contentKey: "commercial.faq.aUpgradePath" },
-
-  // ─── Security & Compliance ──────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.faq.securityTitle", id: "security" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qDataResidency", id: "q-data-residency" },
-  { type: "paragraph", contentKey: "commercial.faq.aDataResidency" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qAuditLogs", id: "q-audit" },
-  { type: "paragraph", contentKey: "commercial.faq.aAuditLogs" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qSSOIntegration", id: "q-sso" },
-  { type: "paragraph", contentKey: "commercial.faq.aSSOIntegration" },
-
-  // ─── Support & Updates ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.faq.supportTitle", id: "support" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qUpdateFrequency", id: "q-updates" },
-  { type: "paragraph", contentKey: "commercial.faq.aUpdateFrequency" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qBreakingChanges", id: "q-breaking" },
-  { type: "paragraph", contentKey: "commercial.faq.aBreakingChanges" },
-  { type: "heading", level: 3, titleKey: "commercial.faq.qMigrationHelp", id: "q-migration" },
-  { type: "paragraph", contentKey: "commercial.faq.aMigrationHelp" },
-
-  { type: "info", variant: "tip", contentKey: "commercial.faq.contactNote" },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
+    ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/faq",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/faq.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/faq",
   titleKey: "commercial.faq.title",
-  descriptionKey: "commercial.faq.description",
   category: "commercial-support",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/getting-started-guide", "commercial/roadmap"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/getting-started-guide","commercial/roadmap"],
+  lastUpdated: "2026-06-07",
 });

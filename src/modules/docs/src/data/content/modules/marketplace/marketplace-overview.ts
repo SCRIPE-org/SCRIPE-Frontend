@@ -2,163 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "modules.marketplace.overview.intro" },
   {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.marketplace.overview.infoTitle",
-    contentKey: "modules.marketplace.overview.infoContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.marketplace.overview.whatIsTitle",
-    id: "what-is-marketplace",
-  },
-  { type: "paragraph", contentKey: "modules.marketplace.overview.whatIsIntro" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "ShoppingBag",
-        titleKey: "modules.marketplace.overview.featureCatalog",
-        descriptionKey: "modules.marketplace.overview.featureCatalogDesc",
-      },
-      {
-        icon: "Send",
-        titleKey: "modules.marketplace.overview.featureSubmissions",
-        descriptionKey: "modules.marketplace.overview.featureSubmissionsDesc",
-      },
-      {
-        icon: "CreditCard",
-        titleKey: "modules.marketplace.overview.featureFinancials",
-        descriptionKey: "modules.marketplace.overview.featureFinancialsDesc",
-      },
-      {
-        icon: "Star",
-        titleKey: "modules.marketplace.overview.featureReviews",
-        descriptionKey: "modules.marketplace.overview.featureReviewsDesc",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/modules/marketplace-overview",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/marketplace/marketplace-overview.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Marketplace module",
+        "SCRIPE-Backend/src/Modules/Marketplace",
+        "Marketplace owns catalog listings, submissions, reviews, developer profiles, categories, earnings, payouts, and financial reporting."
+      ],
+      [
+        "Marketplace controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Marketplace",
+        "Controller endpoints expose listing/catalog, submissions, reviews, developer, category, earnings, payout, and financial workflows."
+      ],
+      [
+        "Frontend marketplace routes",
+        "SCRIPE-Frontend/src/app/(modules)/marketplace",
+        "UI routes cover catalog, item detail, submissions, my submissions, reviews, developers, categories, financials, earnings, and profile."
+      ]
+    ]
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.marketplace.overview.subModulesTitle",
-    id: "sub-modules",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-  { type: "paragraph", contentKey: "modules.marketplace.overview.subModulesIntro" },
   {
-    type: "flowchart",
-    titleKey: "modules.marketplace.overview.subModulesTitle",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "catalog",
-        labelKey: "modules.marketplace.overview.sub1",
-        descriptionKey: "modules.marketplace.overview.descCatalog",
-        icon: "ShoppingBag",
-      },
-      {
-        id: "submissions",
-        labelKey: "modules.marketplace.overview.sub2",
-        descriptionKey: "modules.marketplace.overview.descSubmissions",
-        icon: "Send",
-      },
-      {
-        id: "financials",
-        labelKey: "modules.marketplace.overview.sub3",
-        descriptionKey: "modules.marketplace.overview.descFinancials",
-        icon: "CreditCard",
-      },
-      {
-        id: "reviews",
-        labelKey: "modules.marketplace.overview.sub4",
-        descriptionKey: "modules.marketplace.overview.descReviews",
-        icon: "Star",
-      },
-      {
-        id: "entitlements",
-        labelKey: "modules.marketplace.overview.descEnt",
-        descriptionKey: "modules.marketplace.overview.descEntDesc",
-        icon: "Lock",
-      },
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    connections: [
-      { from: "submissions", to: "catalog", labelKey: "modules.marketplace.overview.conn1" },
-      { from: "catalog", to: "financials", labelKey: "modules.marketplace.overview.conn2" },
-      { from: "catalog", to: "reviews", labelKey: "modules.marketplace.overview.conn3" },
-      { from: "entitlements", to: "catalog", labelKey: "modules.marketplace.overview.conn4" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.marketplace.overview.backendTitle",
-    id: "backend-architecture",
-  },
-  { type: "paragraph", contentKey: "modules.marketplace.overview.backendIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "MarketplaceDbContext.cs",
-    code: `public class MarketplaceDbContext : DbContext
-{
-    public DbSet<AppListing> AppListings { get; set; }
-    public DbSet<AppCategory> AppCategories { get; set; }
-    public DbSet<AppCategoryMapping> AppCategoryMappings { get; set; }
-    public DbSet<AppPricing> AppPricings { get; set; }
-    public DbSet<AppPurchase> AppPurchases { get; set; }
-    public DbSet<AppScreenshot> AppScreenshots { get; set; }
-    public DbSet<AppSubmission> AppSubmissions { get; set; }
-    public DbSet<AppReview> AppReviews { get; set; }
-    public DbSet<AppReviewReply> AppReviewReplies { get; set; }
-    public DbSet<AppReviewTask> AppReviewTasks { get; set; }
-    public DbSet<AppInstallCount> AppInstallCounts { get; set; }
-    public DbSet<DeveloperProfile> DeveloperProfiles { get; set; }
-    public DbSet<DeveloperPayout> DeveloperPayouts { get; set; }
-}`,
-    highlightLines: [3, 9, 10, 14, 15],
-  },
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "modules.marketplace.overview.cqrsTitle",
-    id: "cqrs-pattern",
-  },
-  { type: "paragraph", contentKey: "modules.marketplace.overview.cqrsIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.marketplace.overview.cqrsType",
-      "modules.marketplace.overview.cqrsExample",
-      "modules.marketplace.overview.cqrsDesc",
-    ],
-    rows: [
-      ["Command", "CreateDeveloperProfileCommand", "modules.marketplace.overview.cqrsDevProfile"],
-      ["Command", "SubmitAppListingCommand", "modules.marketplace.overview.cqrsSubmitListing"],
-      ["Command", "PurchaseAppCommand", "modules.marketplace.overview.cqrsPurchase"],
-      ["Command", "SubmitAppReviewCommand", "modules.marketplace.overview.cqrsReview"],
-      ["Query", "GetAppCatalogQuery", "modules.marketplace.overview.cqrsCatalogQuery"],
-      ["Query", "GetAppDetailsQuery", "modules.marketplace.overview.cqrsDetailsQuery"],
-      ["Query", "GetDeveloperEarningsQuery", "modules.marketplace.overview.cqrsEarningsQuery"],
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/marketplace-overview",
   titleKey: "modules.marketplace.overview.title",
-  descriptionKey: "modules.marketplace.overview.description",
   category: "modules",
   order: 4,
   sections,
-  relatedSlugs: [
-    "modules/marketplace-catalog",
-    "modules/marketplace-submissions",
-    "modules/marketplace-financials",
-    "infrastructure/background-jobs",
-  ],
-  lastUpdated: "2026-06-04",
+  relatedSlugs: ["modules/marketplace-catalog","modules/marketplace-submissions","modules/marketplace-financials","infrastructure/background-jobs"],
+  lastUpdated: "2026-06-07",
 });

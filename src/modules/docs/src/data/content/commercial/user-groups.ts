@@ -2,159 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.userGroups.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.userGroups.batchAssignTitle",
-    id: "batch-assign",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.userGroups.batchAssignContent" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    title: "User Group Assignment Flow",
-    nodes: [
-      { id: "group", label: "User Group (e.g. Finance Team)", type: "info" },
-      { id: "roles", label: "Assigned Roles (Auditor, Accountant)", type: "primary" },
-      { id: "restrictions", label: "Restrictions (Hide Salary, SSN)", type: "warning" },
-      { id: "admin1", label: "Admin A", type: "default" },
-      { id: "admin2", label: "Admin B", type: "default" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "roles", to: "group" },
-      { from: "restrictions", to: "group" },
-      { from: "group", to: "admin1", label: "Gains all roles & restrictions instantly" },
-      { from: "group", to: "admin2", label: "Gains all roles & restrictions instantly" },
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.userGroups.additiveRestrictionsTitle",
-    id: "additive-restrictions",
-  },
-  { type: "paragraph", contentKey: "commercial.userGroups.additiveRestrictionsContent" },
-  {
-    type: "table",
-    headers: ["Scenario", "Restriction A", "Restriction B", "Result"],
-    rows: [
-      ["Single Group", "Hide [Salary]", "None", "Salary hidden"],
-      ["Multiple Groups", "Group 1: Hide [Salary]", "Group 2: Hide [SSN]", "Salary AND SSN hidden"],
+    "rows": [
       [
-        "Direct Role + Group",
-        "Role: Hide [Email]",
-        "Group: Hide [Phone]",
-        "Email AND Phone hidden",
+        "Page route",
+        "/commercial/user-groups",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/user-groups.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Identity module",
+        "SCRIPE-Backend/src/Modules/Identity",
+        "Identity owns admins, users, tenants, roles, permissions, user groups, sessions, identity providers, OAuth apps, and auth-related commands."
+      ],
+      [
+        "Identity controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Identity",
+        "Controller endpoints expose admin, tenant, role, permission, identity-provider, OAuth-application, and user-group workflows."
+      ],
+      [
+        "Frontend identity routes",
+        "SCRIPE-Frontend/src/app/(modules)/(identity)",
+        "Admin UI routes exist for users, admins, tenants, roles, user groups, settings, identity providers, OAuth apps, profile, sessions, notifications, and security."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.userGroups.cascadeTitle",
-    id: "cascade-operations",
-  },
-  { type: "paragraph", contentKey: "commercial.userGroups.cascadeContent" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "trash",
-        titleKey: "commercial.userGroups.cascadeDelete",
-        descriptionKey: "commercial.userGroups.cascadeDeleteDesc",
-      },
-      {
-        icon: "power",
-        titleKey: "commercial.userGroups.cascadeStatus",
-        descriptionKey: "commercial.userGroups.cascadeStatusDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.userGroups.rootProtection",
-        descriptionKey: "commercial.userGroups.rootProtectionDesc",
-      },
-      {
-        icon: "users",
-        titleKey: "commercial.userGroups.fallbackSafety",
-        descriptionKey: "commercial.userGroups.fallbackSafetyDesc",
-      },
-    ],
-  },
-
-  { type: "heading", level: 2, titleKey: "commercial.userGroups.roiTitle", id: "roi-scale" },
-  { type: "paragraph", contentKey: "commercial.userGroups.roiContent" },
-  {
-    type: "comparison",
-    columns: [
-      {
-        titleKey: "Legacy 1:1 Provisioning",
-        variant: "negative",
-        items: [
-          "1:1 Role assignments (O(N) complexity)",
-          "Manual audits of 500+ individual staff profiles",
-          "No atomic way to instantly suspend a compromised department",
-          "Custom scripts needed to determine effective overlapping permissions",
-        ],
-      },
-      {
-        titleKey: "SCRIPE Group Provisioning",
-        variant: "positive",
-        items: [
-          "O(1) Role assignments via Group inheritance",
-          "Audit a single group to secure 500+ staff members instantly",
-          "One-click cascading suspension of entire organizational units",
-          "Native zero-latency Additive Union calculation at login",
-        ],
-      },
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.userGroups.complianceGridTitle",
-    id: "compliance-governance",
-  },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "activity",
-        titleKey: "commercial.userGroups.auditTrackingTitle",
-        descriptionKey: "commercial.userGroups.auditTrackingDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.userGroups.zeroLatencyTitle",
-        descriptionKey: "commercial.userGroups.zeroLatencyDesc",
-      },
-      {
-        icon: "lock",
-        titleKey: "commercial.userGroups.tenantIsolationTitle",
-        descriptionKey: "commercial.userGroups.tenantIsolationDesc",
-      },
-      {
-        icon: "refresh-cw",
-        titleKey: "commercial.userGroups.nukePaveTitle",
-        descriptionKey: "commercial.userGroups.nukePaveDesc",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/user-groups",
   titleKey: "commercial.userGroups.title",
-  descriptionKey: "commercial.userGroups.description",
   category: "commercial-enterprise",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/roles-permissions", "commercial/multi-tenancy"],
-  lastUpdated: "2026-02-22",
+  relatedSlugs: ["commercial/roles-permissions","commercial/multi-tenancy"],
+  lastUpdated: "2026-06-07",
 });

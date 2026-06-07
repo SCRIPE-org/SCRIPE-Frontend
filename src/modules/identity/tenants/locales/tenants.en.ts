@@ -139,7 +139,7 @@ export const en = {
     domainsRetry: "Retry",
     domainsDnsStep1: "Step 1: Add a CNAME record to route traffic",
     domainsDnsStep2: "Step 2: Add a TXT record to verify ownership",
-    domainsCnameTarget: "app.scripe.com",
+    domainsCnameTarget: "app.scripe.org",
     created: "Tenant Created",
     createdDescription: "The tenant and subscription have been created successfully.",
     updated: "Tenant Updated",

@@ -2,201 +2,158 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.ssoEnterprise.intro" },
-
-  // ── Value Proposition ──
-  { type: "heading", level: 2, titleKey: "commercial.ssoEnterprise.valueTitle", id: "value" },
   {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "ShieldCheck",
-        titleKey: "commercial.ssoEnterprise.val1Title",
-        descriptionKey: "commercial.ssoEnterprise.val1Desc",
-      },
-      {
-        icon: "Users",
-        titleKey: "commercial.ssoEnterprise.val2Title",
-        descriptionKey: "commercial.ssoEnterprise.val2Desc",
-      },
-      {
-        icon: "Zap",
-        titleKey: "commercial.ssoEnterprise.val3Title",
-        descriptionKey: "commercial.ssoEnterprise.val3Desc",
-      },
-      {
-        icon: "Building2",
-        titleKey: "commercial.ssoEnterprise.val4Title",
-        descriptionKey: "commercial.ssoEnterprise.val4Desc",
-      },
-      {
-        icon: "Palette",
-        titleKey: "commercial.ssoEnterprise.val5Title",
-        descriptionKey: "commercial.ssoEnterprise.val5Desc",
-      },
-      {
-        icon: "Globe",
-        titleKey: "commercial.ssoEnterprise.val6Title",
-        descriptionKey: "commercial.ssoEnterprise.val6Desc",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ── Supported Protocols ──
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.ssoEnterprise.protocolsTitle",
-    id: "protocols",
-  },
-  { type: "paragraph", contentKey: "commercial.ssoEnterprise.protocolsContent" },
-  {
-    type: "table",
-    headers: ["Protocol", "Status", "Use Case"],
-    rows: [
+    "rows": [
       [
-        "OpenID Connect (OIDC)",
-        "✅ Full Support",
-        "Azure AD, Google, Okta, Auth0, AWS Cognito — industry standard",
-      ],
-      ["OAuth 2.0", "✅ Full Support", "Third-party app authorization, social logins"],
-      ["SAML 2.0", "🔜 Planned", "Legacy enterprise IdPs, government systems"],
-    ],
-  },
-
-  // ── Comparison ──
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.ssoEnterprise.comparisonTitle",
-    id: "comparison",
-  },
-  {
-    type: "table",
-    headers: ["Capability", "SCRIPE", "Azure AD B2C", "Keycloak"],
-    rows: [
-      [
-        "Multi-tenant SSO",
-        "✅ Native per-tenant",
-        "⚠️ Requires separate B2C tenants",
-        "⚠️ Realm-per-tenant",
-      ],
-      ["PKCE Flow", "✅ Built-in", "✅ Supported", "✅ Supported"],
-      [
-        "Tenant-scoped providers",
-        "✅ Isolation by default",
-        "❌ Manual config",
-        "⚠️ Realm-level only",
+        "Page route",
+        "/commercial/sso-enterprise",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Branded login buttons",
-        "✅ Per-provider colors/labels",
-        "⚠️ Custom policies needed",
-        "⚠️ Theme customization",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/sso-enterprise.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "Admin + User isolation",
-        "✅ Separate enable flags",
-        "❌ Single user pool",
-        "⚠️ Roles-based split",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-      ["Claim mapping", "✅ JSON-configurable", "⚠️ Policy-based", "✅ Mapper-based"],
-      ["UI management", "✅ Full CRUD UI", "⚠️ Azure Portal only", "✅ Admin console"],
-      ["Self-hosted", "✅ Full control", "❌ Cloud-only", "✅ Self-hosted"],
       [
-        "Deployment complexity",
-        "✅ Zero extra infra",
-        "⚠️ Azure subscription",
-        "⚠️ Separate server needed",
+        "Auth controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "Implemented flows include admin/user password auth, refresh, logout, sessions, 2FA, passkeys, magic link, phone OTP, QR login, OIDC client/server, SAML client/server, account setup, and self-service signup."
       ],
+      [
+        "Identity handlers",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Application/Commands/Auth",
+        "Auth work is dispatched through AstraFlow command/query handlers instead of controller business logic."
+      ],
+      [
+        "Identity persistence",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Domain/Entities",
+        "Admins, users, tokens, sessions, identity providers, OAuth apps, passkeys, external logins, tenants, roles, and user groups are modeled in the Identity domain."
+      ],
+      [
+        "Frontend auth routes",
+        "SCRIPE-Frontend/src/app/(auth)",
+        "Frontend routes exist for login, signup, password reset, magic link, QR approval, SSO callbacks, authorization, setup account, and policy pages."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Representative Implemented API Evidence",
+    "id": "api-evidence"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Controller group",
+      "Verified source",
+      "Implemented surface"
     ],
+    "rows": [
+      [
+        "AdminAuthController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth/AdminAuthController.cs",
+        "Route prefix api/v{version:apiVersion}/auth/admin; includes login, refresh, workspace discovery, profile, logout, sessions, 2FA, impersonation, external links, and admin password reset."
+      ],
+      [
+        "UserAuthController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth/UserAuthController.cs",
+        "Route prefix api/v{version:apiVersion}/auth/user; includes login, registration, verification, password reset, refresh, me, logout, 2FA, and external links."
+      ],
+      [
+        "Passkey/Magic/OTP/QR controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "PasskeyController, MagicLinkController, PhoneOtpLoginController, and QrLoginController implement alternate authentication flows."
+      ],
+      [
+        "OIDC/SAML controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "OidcClientController, OidcServerController, OidcLoginController, SamlClientController, and SamlServerController implement external and identity-provider flows."
+      ]
+    ]
   },
-
-  // ── Multi-IdP Per Tenant ──
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.ssoEnterprise.multiIdpTitle",
-    id: "multi-idp",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  { type: "paragraph", contentKey: "commercial.ssoEnterprise.multiIdpContent" },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "Each tenant can configure unlimited identity providers independently",
-      "System-wide providers (TenantId = null) are available to all tenants",
-      "Tenant-specific providers are fully isolated — invisible to other tenants",
-      "Host admins can manage any tenant's providers via 'Enter Tenant World'",
-      "Multiple providers can be active simultaneously per tenant",
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ── Branded Login Experience ──
-  { type: "heading", level: 2, titleKey: "commercial.ssoEnterprise.brandingTitle", id: "branding" },
-  { type: "paragraph", contentKey: "commercial.ssoEnterprise.brandingContent" },
-  {
-    type: "table",
-    headers: ["Customization", "Description"],
-    rows: [
-      ["Button Color", "Per-provider CSS color (e.g., #0078D4 for Microsoft blue)"],
-      ["Button Label", "Custom text (e.g., 'Sign in with Corporate SSO')"],
-      ["Provider Icon", "Custom icon URL or automatic protocol-based icon"],
-      ["Display Order", "Sort order on the login page"],
-      ["Divider Text", "Localized 'or continue with' separator"],
-    ],
-  },
-
-  // ── PKCE Security ──
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.ssoEnterprise.securityModelTitle",
-    id: "security",
-  },
-  { type: "paragraph", contentKey: "commercial.ssoEnterprise.securityModelContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "PKCE (Proof Key for Code Exchange) — prevents authorization code interception attacks",
-      "State parameter validation — prevents CSRF attacks during the redirect flow",
-      "Client secrets are AES-encrypted at rest — never returned to the frontend",
-      "Authorization codes are one-time use — exchanged server-side within seconds",
-      "Discovery document caching — automatic OIDC configuration validation",
-      "Session-scoped PKCE storage — code_verifier lives only during the login flow",
-    ],
-  },
-
-  // ── OAuth Applications ──
-  { type: "heading", level: 2, titleKey: "commercial.ssoEnterprise.oauthTitle", id: "oauth" },
-  { type: "paragraph", contentKey: "commercial.ssoEnterprise.oauthContent" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "Server",
-        titleKey: "commercial.ssoEnterprise.oauth1Title",
-        descriptionKey: "commercial.ssoEnterprise.oauth1Desc",
-      },
-      {
-        icon: "Smartphone",
-        titleKey: "commercial.ssoEnterprise.oauth2Title",
-        descriptionKey: "commercial.ssoEnterprise.oauth2Desc",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/sso-enterprise",
   titleKey: "commercial.ssoEnterprise.title",
-  descriptionKey: "commercial.ssoEnterprise.description",
   category: "commercial-security",
   order: 6,
   sections,
-  relatedSlugs: ["commercial/authentication-security", "commercial/security-overview"],
-  lastUpdated: "2026-03-07",
+  relatedSlugs: ["commercial/authentication-security","commercial/security-overview"],
+  lastUpdated: "2026-06-07",
 });

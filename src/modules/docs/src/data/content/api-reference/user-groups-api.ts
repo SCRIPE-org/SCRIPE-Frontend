@@ -2,231 +2,138 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "apiReference.userGroupsApi.intro" },
-
-  // ─── User Groups CRUD ─────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.userGroupsApi.crudTitle",
-    id: "user-groups-crud",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/usergroups",
-        descriptionKey: "apiReference.userGroupsApi.listGroupsDesc",
-        auth: "user_groups.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/usergroups/myTenantGroups",
-        descriptionKey: "apiReference.userGroupsApi.myTenantGroupsDesc",
-        auth: "user_groups.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/usergroups/{id}",
-        descriptionKey: "apiReference.userGroupsApi.getGroupDesc",
-        auth: "user_groups.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/usergroups/byTenant/{tenantId}",
-        descriptionKey: "apiReference.userGroupsApi.groupsByTenantDesc",
-        auth: "user_groups.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/usergroups",
-        descriptionKey: "apiReference.userGroupsApi.createGroupDesc",
-        auth: "user_groups.create",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/usergroups/createForMyTenant",
-        descriptionKey: "apiReference.userGroupsApi.createGroupMyTenantDesc",
-        auth: "user_groups.create",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/usergroups/{id}",
-        descriptionKey: "apiReference.userGroupsApi.updateGroupDesc",
-        auth: "user_groups.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/usergroups/{id}",
-        descriptionKey: "apiReference.userGroupsApi.deleteGroupDesc",
-        auth: "user_groups.delete",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/api-reference/user-groups-api",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/api-reference/user-groups-api.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Identity module",
+        "SCRIPE-Backend/src/Modules/Identity",
+        "Identity owns admins, users, tenants, roles, permissions, user groups, sessions, identity providers, OAuth apps, and auth-related commands."
+      ],
+      [
+        "Identity controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Identity",
+        "Controller endpoints expose admin, tenant, role, permission, identity-provider, OAuth-application, and user-group workflows."
+      ],
+      [
+        "Frontend identity routes",
+        "SCRIPE-Frontend/src/app/(modules)/(identity)",
+        "Admin UI routes exist for users, admins, tenants, roles, user groups, settings, identity providers, OAuth apps, profile, sessions, notifications, and security."
+      ]
+    ]
   },
   {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Group Detail",
-        language: "json",
-        filename: "GET /usergroups/{id} — Response",
-        code: `{
-  "id": "group-uuid",
-  "nameEn": "Finance Team",
-  "nameAr": "فريق المالية",
-  "code": "FINANCE_TEAM",
-  "tenantId": "tenant-uuid",
-  "isActive": true,
-  "members": [
-    { "adminId": "admin-uuid", "name": "John Doe", "email": "john@example.com" }
-  ],
-  "roles": [
-    { "roleId": "role-uuid", "roleName": "Accountant" }
-  ],
-  "restrictions": [
-    { "permissionCode": "admins.view", "restrictedFields": ["salary", "ssn"] }
-  ]
-}`,
-      },
-      {
-        label: "Create Group",
-        language: "json",
-        filename: "POST /usergroups — Request",
-        code: `{
-  "nameEn": "Finance Team",
-  "nameAr": "فريق المالية",
-  "code": "FINANCE_TEAM",
-  "tenantId": "tenant-uuid",
-  "description": "All finance department admins"
-}`,
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Representative Implemented API Evidence",
+    "id": "api-evidence"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Controller group",
+      "Verified source",
+      "Implemented surface"
     ],
+    "rows": [
+      [
+        "UserGroupsController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Identity/UserGroupsController.cs",
+        "User group CRUD, role assignment, restrictions, and membership operations."
+      ]
+    ]
   },
-
-  // ─── User Group Members ────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.userGroupsApi.groupMembersTitle",
-    id: "group-members",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  { type: "paragraph", contentKey: "apiReference.userGroupsApi.groupMembersIntro" },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/usergroups/{id}/members",
-        descriptionKey: "apiReference.userGroupsApi.addMembersDesc",
-        auth: "user_groups.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/usergroups/{id}/members/{adminId}",
-        descriptionKey: "apiReference.userGroupsApi.removeMemberDesc",
-        auth: "user_groups.update",
-      },
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── User Group Roles & Restrictions ───────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.userGroupsApi.groupRolesRestrictionsTitle",
-    id: "group-roles-restrictions",
-  },
-  { type: "paragraph", contentKey: "apiReference.userGroupsApi.groupRolesRestrictionsIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "PUT",
-        path: "/api/v1/usergroups/{id}/roles",
-        descriptionKey: "apiReference.userGroupsApi.setGroupRolesDesc",
-        auth: "user_groups.update",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/usergroups/{id}/restrictions",
-        descriptionKey: "apiReference.userGroupsApi.setGroupRestrictionsDesc",
-        auth: "user_groups.update",
-      },
-    ],
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "PUT /usergroups/{id}/restrictions — Request",
-    code: `{
-  "restrictions": [
-    {
-      "permissionCode": "admins.view",
-      "restrictedFields": ["salary", "bankAccount", "ssn"]
-    },
-    {
-      "permissionCode": "users.view",
-      "restrictedFields": ["email", "phoneNumber"]
-    }
-  ]
-}`,
-  },
-
-  // ─── Bulk & Cascade Operations ─────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.userGroupsApi.bulkCascadeTitle",
-    id: "bulk-cascade-operations",
-  },
-  { type: "paragraph", contentKey: "apiReference.userGroupsApi.bulkCascadeIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/usergroups/bulk/activate",
-        descriptionKey: "apiReference.userGroupsApi.bulkActivateDesc",
-        auth: "user_groups.update",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/usergroups/bulk/deactivate",
-        descriptionKey: "apiReference.userGroupsApi.bulkDeactivateDesc",
-        auth: "user_groups.update",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/usergroups/bulk/delete",
-        descriptionKey: "apiReference.userGroupsApi.bulkDeleteDesc",
-        auth: "user_groups.delete",
-      },
-    ],
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "POST /usergroups/bulk/delete — Request",
-    code: `{
-  "ids": ["group-uuid-1", "group-uuid-2"],
-  "cascadeAdmins": true
-}`,
-  },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "apiReference.userGroupsApi.cascadeWarningNode",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "api-reference/user-groups-api",
   titleKey: "apiReference.userGroupsApi.title",
-  descriptionKey: "apiReference.userGroupsApi.description",
   category: "api-reference",
   order: 7,
   sections,
-  relatedSlugs: ["api-reference/role-permission-api", "api-reference/admin-api"],
-  lastUpdated: "2026-02-22",
+  relatedSlugs: ["api-reference/role-permission-api","api-reference/admin-api"],
+  lastUpdated: "2026-06-07",
 });

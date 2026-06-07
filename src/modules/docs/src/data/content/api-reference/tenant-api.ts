@@ -2,264 +2,138 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "apiReference.tenantApi.intro" },
-
-  // ─── Base Config ──────────────────────────────────────────
   {
-    type: "table",
-    headers: ["Setting", "Value"],
-    rows: [
-      ["Base URL", "/api/v1/tenants"],
-      ["Auth Required", "Yes — Bearer Token"],
-      ["Permission Prefix", "tenants.*"],
-      ["Tenant-Scoped", "Parent tenant sees children"],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/api-reference/tenant-api",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/api-reference/tenant-api.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Identity module",
+        "SCRIPE-Backend/src/Modules/Identity",
+        "Identity owns admins, users, tenants, roles, permissions, user groups, sessions, identity providers, OAuth apps, and auth-related commands."
+      ],
+      [
+        "Identity controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Identity",
+        "Controller endpoints expose admin, tenant, role, permission, identity-provider, OAuth-application, and user-group workflows."
+      ],
+      [
+        "Frontend identity routes",
+        "SCRIPE-Frontend/src/app/(modules)/(identity)",
+        "Admin UI routes exist for users, admins, tenants, roles, user groups, settings, identity providers, OAuth apps, profile, sessions, notifications, and security."
+      ]
+    ]
   },
-
-  // ─── CRUD Endpoints ───────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.tenantApi.crudTitle",
-    id: "crud",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/tenants",
-        descriptionKey: "apiReference.tenantApi.listDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}",
-        descriptionKey: "apiReference.tenantApi.getByIdDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/tenants",
-        descriptionKey: "apiReference.tenantApi.createDesc",
-        auth: "tenants.create",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/tenants/{id}",
-        descriptionKey: "apiReference.tenantApi.updateDesc",
-        auth: "tenants.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/tenants/{id}",
-        descriptionKey: "apiReference.tenantApi.deleteDesc",
-        auth: "tenants.delete",
-      },
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Representative Implemented API Evidence",
+    "id": "api-evidence"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Controller group",
+      "Verified source",
+      "Implemented surface"
     ],
+    "rows": [
+      [
+        "TenantsController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Tenancy/TenantsController.cs",
+        "Tenant CRUD, hierarchy, settings, domains, permissions, stats, children, admins, roles, and logo operations."
+      ]
+    ]
   },
   {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Get Tenant",
-        language: "json",
-        filename: "GET /tenants/{id} — Response",
-        code: `{
-  "id": "tenant-uuid",
-  "name": "Acme Corporation",
-  "slug": "acme-corp",
-  "logoUrl": "/uploads/tenants/acme-logo.png",
-  "parentTenantId": null,
-  "isActive": true,
-  "settings": {
-    "allowUserRegistration": true,
-    "defaultLanguage": "en",
-    "maxAdmins": 50,
-    "maxUsers": 1000,
-    "maxStorageMB": 5120,
-    "passwordPolicy": {
-      "minLength": 8,
-      "requireUppercase": true,
-      "requireDigit": true,
-      "requireSpecialChar": true,
-      "historyCount": 5
-    }
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  "statistics": {
-    "adminCount": 12,
-    "userCount": 342,
-    "roleCount": 8,
-    "storageUsedMB": 1240
-  },
-  "createdAt": "2025-06-15T00:00:00Z"
-}`,
-      },
-      {
-        label: "Create Tenant",
-        language: "json",
-        filename: "POST /tenants — Request",
-        code: `{
-  "name": "New Branch Office",
-  "slug": "branch-office",
-  "parentTenantId": "parent-tenant-uuid",
-  "settings": {
-    "allowUserRegistration": false,
-    "defaultLanguage": "ar",
-    "maxAdmins": 10,
-    "maxUsers": 100
-  }
-}`,
-      },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Hierarchy ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.tenantApi.hierarchyTitle",
-    id: "hierarchy",
-  },
-  { type: "paragraph", contentKey: "apiReference.tenantApi.hierarchyIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/tenants/hierarchy",
-        descriptionKey: "apiReference.tenantApi.hierarchyDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/children",
-        descriptionKey: "apiReference.tenantApi.childrenDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/my-children",
-        descriptionKey: "apiReference.tenantApi.myChildrenDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/statistics",
-        descriptionKey: "apiReference.tenantApi.statsDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/admins",
-        descriptionKey: "apiReference.tenantApi.adminsDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/roles",
-        descriptionKey: "apiReference.tenantApi.rolesDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/permissions",
-        descriptionKey: "apiReference.tenantApi.permissionsDesc",
-        auth: "tenants.view",
-      },
-    ],
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "GET /tenants/hierarchy — Tree Response",
-    code: `[
-  {
-    "id": "root-uuid",
-    "name": "Headquarters",
-    "slug": "hq",
-    "level": 0,
-    "children": [
-      {
-        "id": "branch-1-uuid",
-        "name": "East Branch",
-        "slug": "east-branch",
-        "level": 1,
-        "children": [
-          {
-            "id": "sub-branch-uuid",
-            "name": "East Sub-Office",
-            "level": 2,
-            "children": []
-          }
-        ]
-      },
-      {
-        "id": "branch-2-uuid",
-        "name": "West Branch",
-        "slug": "west-branch",
-        "level": 1,
-        "children": []
-      }
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
     ]
   }
-]`,
-  },
-
-  // ─── Settings ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.tenantApi.settingsTitle",
-    id: "settings",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/settings",
-        descriptionKey: "apiReference.tenantApi.getSettingsDesc",
-        auth: "tenants.view",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/tenants/{id}/settings",
-        descriptionKey: "apiReference.tenantApi.updateSettingsDesc",
-        auth: "tenants.update",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/tenants/my-settings",
-        descriptionKey: "apiReference.tenantApi.mySettingsDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/tenants/{id}/logo",
-        descriptionKey: "apiReference.tenantApi.uploadLogoDesc",
-        auth: "tenants.update",
-      },
-    ],
-  },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "apiReference.tenantApi.settingsNote",
-  },
 ];
 
 registerPage({
   slug: "api-reference/tenant-api",
   titleKey: "apiReference.tenantApi.title",
-  descriptionKey: "apiReference.tenantApi.description",
   category: "api-reference",
   order: 5,
   sections,
-  relatedSlugs: [
-    "api-reference/admin-api",
-    "api-reference/role-permission-api",
-    "security/data-protection",
-  ],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["api-reference/admin-api","api-reference/role-permission-api","security/data-protection"],
+  lastUpdated: "2026-06-07",
 });

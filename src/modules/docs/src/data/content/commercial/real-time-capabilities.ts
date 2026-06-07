@@ -2,121 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.realTimeCapabilities.signalrTitle",
-    id: "signalr",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.signalrContent" },
   {
-    type: "code",
-    language: "text",
-    filename: "SignalR Real-Time Architecture",
-    code: `┌──────────────────────────────────────────────────────┐
-│                  SignalR Hub Layer                    │
-│                                                      │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐      │
-│  │Notification│ │   Audit    │ │  Dashboard │      │
-│  │    Hub     │ │    Hub     │ │    Hub     │      │
-│  └─────┬──────┘ └─────┬──────┘ └─────┬──────┘      │
-│        │              │              │               │
-│        └──────────────┼──────────────┘               │
-│                       │                              │
-│  ┌────────────────────▼──────────────────────┐      │
-│  │       Tenant-Scoped Group Management      │      │
-│  │  Users auto-join tenant group on connect  │      │
-│  └───────────────────────────────────────────┘      │
-└──────────────────────────────────────────────────────┘
-           │              │              │
-     ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
-     │  Browser  │ │  Mobile   │ │  Desktop  │
-     │  Client   │ │  Client   │ │  Client   │
-     └───────────┘ └───────────┘ └───────────┘`,
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.realTimeCapabilities.notificationsTitle",
-    id: "notifications",
-  },
-  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.notificationsContent" },
-  {
-    type: "table",
-    headers: ["Feature", "Description"],
-    rows: [
-      ["Push notifications", "Instant delivery via WebSocket — no polling required"],
-      ["Tenant isolation", "Users only receive notifications for their tenant"],
-      ["Mark read/unread", "Individual or bulk mark operations"],
-      ["Notification bell UI", "Real-time count badge with dropdown"],
-      ["Offline queue", "Missed notifications delivered on reconnect"],
-      ["Type-based channels", "Subscribe to specific notification categories"],
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/real-time-capabilities",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/real-time-capabilities.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.realTimeCapabilities.dashboardsTitle",
-    id: "dashboards",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.dashboardsContent" },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "bar-chart",
-        titleKey: "commercial.realTimeCapabilities.liveCharts",
-        descriptionKey: "commercial.realTimeCapabilities.liveChartsDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.realTimeCapabilities.liveAudit",
-        descriptionKey: "commercial.realTimeCapabilities.liveAuditDesc",
-      },
-      {
-        icon: "users",
-        titleKey: "commercial.realTimeCapabilities.presenceTrack",
-        descriptionKey: "commercial.realTimeCapabilities.presenceTrackDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.realTimeCapabilities.securityAlert",
-        descriptionKey: "commercial.realTimeCapabilities.securityAlertDesc",
-      },
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.realTimeCapabilities.scaleTitle",
-    id: "scaling",
-  },
-  {
-    type: "table",
-    headers: ["Feature", "Single Server", "Redis Backplane", "Azure SignalR"],
-    rows: [
-      ["Concurrent connections", "~5,000", "~50,000+", "~100,000+"],
-      ["Multi-server support", "No", "Yes", "Yes"],
-      ["Sticky sessions needed", "No", "No", "No"],
-      ["Infrastructure cost", "Included", "Redis server", "Pay-per-unit"],
-      ["Best for", "Small teams", "Growing orgs", "Enterprise scale"],
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/real-time-capabilities",
   titleKey: "commercial.realTimeCapabilities.title",
-  descriptionKey: "commercial.realTimeCapabilities.description",
   category: "commercial-enterprise",
   order: 4,
   sections,
-  relatedSlugs: ["commercial/audit-compliance", "commercial/localization-i18n"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/audit-compliance","commercial/localization-i18n"],
+  lastUpdated: "2026-06-07",
 });

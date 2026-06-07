@@ -2,139 +2,158 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.authSecurity.intro" },
-
-  { type: "heading", level: 2, titleKey: "commercial.authSecurity.jwtTitle", id: "jwt" },
-  { type: "paragraph", contentKey: "commercial.authSecurity.jwtContent" },
   {
-    type: "table",
-    headers: ["Feature", "Implementation"],
-    rows: [
-      ["Token Algorithm", "RS256 (asymmetric) for production, HS256 for development"],
-      ["Access Token Lifetime", "Configurable (default: 30 minutes)"],
-      ["Refresh Token Lifetime", "Configurable (default: 7 days)"],
-      ["Token Storage", "HTTP-only secure cookies + session storage"],
-      ["Claims", "UserId, TenantId, Roles, Permissions (fine-grained)"],
-      ["Key Rotation", "Automatic key rotation on schedule"],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  { type: "heading", level: 2, titleKey: "commercial.authSecurity.twoFaTitle", id: "2fa" },
-  { type: "paragraph", contentKey: "commercial.authSecurity.twoFaContent" },
   {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.authSecurity.twoFa1Title",
-        contentKey: "commercial.authSecurity.twoFa1Content",
-      },
-      {
-        titleKey: "commercial.authSecurity.twoFa2Title",
-        contentKey: "commercial.authSecurity.twoFa2Content",
-      },
-      {
-        titleKey: "commercial.authSecurity.twoFa3Title",
-        contentKey: "commercial.authSecurity.twoFa3Content",
-      },
-      {
-        titleKey: "commercial.authSecurity.twoFa4Title",
-        contentKey: "commercial.authSecurity.twoFa4Content",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/authentication-security",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/authentication-security.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Auth controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "Implemented flows include admin/user password auth, refresh, logout, sessions, 2FA, passkeys, magic link, phone OTP, QR login, OIDC client/server, SAML client/server, account setup, and self-service signup."
+      ],
+      [
+        "Identity handlers",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Application/Commands/Auth",
+        "Auth work is dispatched through AstraFlow command/query handlers instead of controller business logic."
+      ],
+      [
+        "Identity persistence",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Domain/Entities",
+        "Admins, users, tokens, sessions, identity providers, OAuth apps, passkeys, external logins, tenants, roles, and user groups are modeled in the Identity domain."
+      ],
+      [
+        "Frontend auth routes",
+        "SCRIPE-Frontend/src/app/(auth)",
+        "Frontend routes exist for login, signup, password reset, magic link, QR approval, SSO callbacks, authorization, setup account, and policy pages."
+      ]
+    ]
   },
-
-  { type: "heading", level: 2, titleKey: "commercial.authSecurity.sessionTitle", id: "session" },
   {
-    type: "table",
-    headers: ["Feature", "Description"],
-    rows: [
-      ["Device tracking", "Each login session identified by device fingerprint"],
-      ["Active sessions list", "Users can view all active login sessions"],
-      ["Force logout", "Admins can terminate any session remotely"],
-      ["Concurrent session limit", "Configurable max sessions per user"],
-      ["Session expiry", "Automatic cleanup of expired sessions"],
-      ["Geo-location tracking", "IP-based location tracking for sessions"],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  { type: "heading", level: 2, titleKey: "commercial.authSecurity.passwordTitle", id: "password" },
-  { type: "paragraph", contentKey: "commercial.authSecurity.passwordContent" },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "Minimum length and complexity requirements (configurable)",
-      "Password history prevention (last N passwords blocked)",
-      "Account lockout after N failed attempts",
-      "Automatic unlock after configurable timeout",
-      "Password expiration policies (optional)",
-      "Bcrypt hashing with configurable work factor",
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
-  { type: "heading", level: 2, titleKey: "commercial.authSecurity.apiTitle", id: "api" },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/auth/login",
-        descriptionKey: "Authenticate user",
-        auth: "Public",
-      },
-      {
-        method: "POST",
-        path: "/api/auth/refresh",
-        descriptionKey: "Refresh access token",
-        auth: "Required",
-      },
-      {
-        method: "POST",
-        path: "/api/auth/logout",
-        descriptionKey: "Invalidate session",
-        auth: "Required",
-      },
-      {
-        method: "POST",
-        path: "/api/auth/2fa/enable",
-        descriptionKey: "Enable 2FA",
-        auth: "Required",
-      },
-      {
-        method: "POST",
-        path: "/api/auth/2fa/verify",
-        descriptionKey: "Verify 2FA code",
-        auth: "Required",
-      },
-      {
-        method: "POST",
-        path: "/api/auth/forgot-password",
-        descriptionKey: "Request password reset",
-        auth: "Public",
-      },
-      {
-        method: "POST",
-        path: "/api/auth/reset-password",
-        descriptionKey: "Complete password reset",
-        auth: "Public",
-      },
-      {
-        method: "GET",
-        path: "/api/auth/sessions",
-        descriptionKey: "List active sessions",
-        auth: "Required",
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Representative Implemented API Evidence",
+    "id": "api-evidence"
   },
+  {
+    "type": "table",
+    "headers": [
+      "Controller group",
+      "Verified source",
+      "Implemented surface"
+    ],
+    "rows": [
+      [
+        "AdminAuthController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth/AdminAuthController.cs",
+        "Route prefix api/v{version:apiVersion}/auth/admin; includes login, refresh, workspace discovery, profile, logout, sessions, 2FA, impersonation, external links, and admin password reset."
+      ],
+      [
+        "UserAuthController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth/UserAuthController.cs",
+        "Route prefix api/v{version:apiVersion}/auth/user; includes login, registration, verification, password reset, refresh, me, logout, 2FA, and external links."
+      ],
+      [
+        "Passkey/Magic/OTP/QR controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "PasskeyController, MagicLinkController, PhoneOtpLoginController, and QrLoginController implement alternate authentication flows."
+      ],
+      [
+        "OIDC/SAML controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "OidcClientController, OidcServerController, OidcLoginController, SamlClientController, and SamlServerController implement external and identity-provider flows."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/authentication-security",
   titleKey: "commercial.authSecurity.title",
-  descriptionKey: "commercial.authSecurity.description",
   category: "commercial-security",
   order: 2,
   sections,
-  relatedSlugs: ["commercial/security-overview", "commercial/data-protection"],
-  lastUpdated: "2026-03-13",
+  relatedSlugs: ["commercial/security-overview","commercial/data-protection"],
+  lastUpdated: "2026-06-07",
 });

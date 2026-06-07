@@ -2,290 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.licensingModel.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.licensingModel.runtimeOwnershipTitle",
-    id: "runtime-ownership",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.licensingModel.runtimeOwnershipIntro" },
   {
-    type: "table",
-    headers: [
-      "commercial.licensingModel.tblRuntimeHeader1",
-      "commercial.licensingModel.tblRuntimeHeader2",
-      "commercial.licensingModel.tblRuntimeHeader3",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.licensingModel.tblRuntimeR1C1",
-        "commercial.licensingModel.tblRuntimeR1C2",
-        "commercial.licensingModel.tblRuntimeR1C3",
+        "Page route",
+        "/commercial/licensing-model",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.licensingModel.tblRuntimeR2C1",
-        "commercial.licensingModel.tblRuntimeR2C2",
-        "commercial.licensingModel.tblRuntimeR2C3",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/licensing-model.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.licensingModel.tblRuntimeR3C1",
-        "commercial.licensingModel.tblRuntimeR3C2",
-        "commercial.licensingModel.tblRuntimeR3C3",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
       [
-        "commercial.licensingModel.tblRuntimeR4C1",
-        "commercial.licensingModel.tblRuntimeR4C2",
-        "commercial.licensingModel.tblRuntimeR4C3",
-      ],
-    ],
-  },
-
-  // ─── License Types ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.licensingModel.typesTitle",
-    id: "license-types",
-  },
-  { type: "paragraph", contentKey: "commercial.licensingModel.typesIntro" },
-  {
-    type: "table",
-    headers: [
-      "commercial.licensingModel.tblTypesHeader1",
-      "commercial.licensingModel.tblTypesHeader2",
-      "commercial.licensingModel.tblTypesHeader3",
-    ],
-    rows: [
-      [
-        "commercial.licensingModel.tblTypesR1C1",
-        "commercial.licensingModel.tblTypesR1C2",
-        "commercial.licensingModel.tblTypesR1C3",
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
       ],
       [
-        "commercial.licensingModel.tblTypesR2C1",
-        "commercial.licensingModel.tblTypesR2C2",
-        "commercial.licensingModel.tblTypesR2C3",
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
       ],
       [
-        "commercial.licensingModel.tblTypesR3C1",
-        "commercial.licensingModel.tblTypesR3C2",
-        "commercial.licensingModel.tblTypesR3C3",
-      ],
-      [
-        "commercial.licensingModel.tblTypesR4C1",
-        "commercial.licensingModel.tblTypesR4C2",
-        "commercial.licensingModel.tblTypesR4C3",
-      ],
-    ],
-  },
-
-  // ─── Feature Comparison ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.licensingModel.comparisonTitle",
-    id: "comparison",
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
   },
   {
-    type: "table",
-    headers: [
-      "commercial.licensingModel.tblCompHeader1",
-      "commercial.licensingModel.tblCompHeader2",
-      "commercial.licensingModel.tblCompHeader3",
-      "commercial.licensingModel.tblCompHeader4",
-      "commercial.licensingModel.tblCompHeader5",
-    ],
-    rows: [
-      [
-        "commercial.licensingModel.tblCompR1C1",
-        "commercial.licensingModel.tblCompR1C2",
-        "commercial.licensingModel.tblCompR1C3",
-        "commercial.licensingModel.tblCompR1C4",
-        "commercial.licensingModel.tblCompR1C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR2C1",
-        "commercial.licensingModel.tblCompR2C2",
-        "commercial.licensingModel.tblCompR2C3",
-        "commercial.licensingModel.tblCompR2C4",
-        "commercial.licensingModel.tblCompR2C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR3C1",
-        "commercial.licensingModel.tblCompR3C2",
-        "commercial.licensingModel.tblCompR3C3",
-        "commercial.licensingModel.tblCompR3C4",
-        "commercial.licensingModel.tblCompR3C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR4C1",
-        "commercial.licensingModel.tblCompR4C2",
-        "commercial.licensingModel.tblCompR4C3",
-        "commercial.licensingModel.tblCompR4C4",
-        "commercial.licensingModel.tblCompR4C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR5C1",
-        "commercial.licensingModel.tblCompR5C2",
-        "commercial.licensingModel.tblCompR5C3",
-        "commercial.licensingModel.tblCompR5C4",
-        "commercial.licensingModel.tblCompR5C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR6C1",
-        "commercial.licensingModel.tblCompR6C2",
-        "commercial.licensingModel.tblCompR6C3",
-        "commercial.licensingModel.tblCompR6C4",
-        "commercial.licensingModel.tblCompR6C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR7C1",
-        "commercial.licensingModel.tblCompR7C2",
-        "commercial.licensingModel.tblCompR7C3",
-        "commercial.licensingModel.tblCompR7C4",
-        "commercial.licensingModel.tblCompR7C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR8C1",
-        "commercial.licensingModel.tblCompR8C2",
-        "commercial.licensingModel.tblCompR8C3",
-        "commercial.licensingModel.tblCompR8C4",
-        "commercial.licensingModel.tblCompR8C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR9C1",
-        "commercial.licensingModel.tblCompR9C2",
-        "commercial.licensingModel.tblCompR9C3",
-        "commercial.licensingModel.tblCompR9C4",
-        "commercial.licensingModel.tblCompR9C5",
-      ],
-      [
-        "commercial.licensingModel.tblCompR10C1",
-        "commercial.licensingModel.tblCompR10C2",
-        "commercial.licensingModel.tblCompR10C3",
-        "commercial.licensingModel.tblCompR10C4",
-        "commercial.licensingModel.tblCompR10C5",
-      ],
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ─── Source Code Access ─────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.licensingModel.sourcCodeTitle",
-    id: "source-code",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-  { type: "paragraph", contentKey: "commercial.licensingModel.sourceCodeContent" },
   {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.licensingModel.lstSourceI1",
-      "commercial.licensingModel.lstSourceI2",
-      "commercial.licensingModel.lstSourceI3",
-      "commercial.licensingModel.lstSourceI4",
-      "commercial.licensingModel.lstSourceI5",
-      "commercial.licensingModel.lstSourceI6",
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-
-  // ─── Renewal & Upgrades ─────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.licensingModel.renewalTitle", id: "renewal" },
-  { type: "paragraph", contentKey: "commercial.licensingModel.renewalContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.licensingModel.tblRenewHeader1",
-      "commercial.licensingModel.tblRenewHeader2",
-      "commercial.licensingModel.tblRenewHeader3",
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.licensingModel.tblRenewR1C1",
-        "commercial.licensingModel.tblRenewR1C2",
-        "commercial.licensingModel.tblRenewR1C3",
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
       ],
       [
-        "commercial.licensingModel.tblRenewR2C1",
-        "commercial.licensingModel.tblRenewR2C2",
-        "commercial.licensingModel.tblRenewR2C3",
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
       ],
       [
-        "commercial.licensingModel.tblRenewR3C1",
-        "commercial.licensingModel.tblRenewR3C2",
-        "commercial.licensingModel.tblRenewR3C3",
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
       ],
       [
-        "commercial.licensingModel.tblRenewR4C1",
-        "commercial.licensingModel.tblRenewR4C2",
-        "commercial.licensingModel.tblRenewR4C3",
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
       ],
-    ],
-  },
-
-  // ─── Commercial Terms ───────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.licensingModel.termsTitle", id: "terms" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.licensingModel.lstTermsI1",
-      "commercial.licensingModel.lstTermsI2",
-      "commercial.licensingModel.lstTermsI3",
-      "commercial.licensingModel.lstTermsI4",
-      "commercial.licensingModel.lstTermsI5",
-    ],
-  },
-
-  // ─── Entitlements-Powered Plan Differentiation ──────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.licensingModel.entitlementsTitle",
-    id: "entitlements-integration",
-  },
-  { type: "paragraph", contentKey: "commercial.licensingModel.entitlementsIntro" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "layers",
-        titleKey: "commercial.licensingModel.entEditions",
-        descriptionKey: "commercial.licensingModel.entEditionsDesc",
-      },
-      {
-        icon: "refresh-cw",
-        titleKey: "commercial.licensingModel.entSubscriptions",
-        descriptionKey: "commercial.licensingModel.entSubscriptionsDesc",
-      },
-      {
-        icon: "sliders",
-        titleKey: "commercial.licensingModel.entOverrides",
-        descriptionKey: "commercial.licensingModel.entOverridesDesc",
-      },
-      {
-        icon: "git-branch",
-        titleKey: "commercial.licensingModel.entVersioning",
-        descriptionKey: "commercial.licensingModel.entVersioningDesc",
-      },
-    ],
-  },
-  { type: "info", variant: "tip", contentKey: "commercial.licensingModel.entitlementsTip" },
-
-  { type: "info", variant: "tip", contentKey: "commercial.licensingModel.trialTip" },
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/licensing-model",
   titleKey: "commercial.licensingModel.title",
-  descriptionKey: "commercial.licensingModel.description",
   category: "commercial-pricing",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/roi-analysis", "commercial/support-plans"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/roi-analysis","commercial/support-plans"],
+  lastUpdated: "2026-06-07",
 });

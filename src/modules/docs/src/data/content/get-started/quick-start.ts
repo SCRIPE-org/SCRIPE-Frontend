@@ -3,177 +3,133 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   {
-    type: "paragraph",
-    contentKey: "getStarted.quickStart.intro",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.quickStart.backendTitle",
-    id: "backend-quickstart",
-  },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "getStarted.quickStart.backendStep1Title",
-        contentKey: "getStarted.quickStart.backendStep1Content",
-        code: "cd SCRIPE-Backend\ndotnet restore",
-        codeLanguage: "bash",
-      },
-      {
-        titleKey: "getStarted.quickStart.backendStep2Title",
-        contentKey: "getStarted.quickStart.backendStep2Content",
-        code: `dotnet ef database update \\
-  -p src/Modules/Identity/Identity.Infrastructure \\
-  -s src/Host/API`,
-        codeLanguage: "bash",
-        codeFilename: "Apply migrations",
-      },
-      {
-        titleKey: "getStarted.quickStart.backendStep3Title",
-        contentKey: "getStarted.quickStart.backendStep3Content",
-        code: "dotnet run --project src/Host/API",
-        codeLanguage: "bash",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/docs/get-started/quick-start",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/get-started/quick-start.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Backend host",
+        "SCRIPE-Backend/src/Host/API/Program.cs",
+        "Startup delegates to host defaults, core services, conditional module registration, additional services, post-build initialization, and the middleware pipeline."
+      ],
+      [
+        "Backend modules",
+        "SCRIPE-Backend/src/Modules + SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
+        "Current backend modules are Compliance, Entitlements, Identity, Marketplace, and Plugins; module loading is controlled by MODULE_NAME."
+      ],
+      [
+        "Frontend app",
+        "SCRIPE-Frontend/src/app + SCRIPE-Frontend/package.json",
+        "Next.js 16.1.7 with React 19.2.4, App Router route groups, and module connectors under src/modules."
+      ],
+      [
+        "Documentation portal",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts",
+        "Canonical documentation pages are TypeScript registrations; Markdown exports are generated/reference output."
+      ]
+    ]
   },
   {
-    type: "info",
-    variant: "tip",
-    contentKey: "getStarted.quickStart.backendRunningTip",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.quickStart.frontendTitle",
-    id: "frontend-quickstart",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
   {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "getStarted.quickStart.frontendStep1Title",
-        contentKey: "getStarted.quickStart.frontendStep1Content",
-        code: "cd SCRIPE-Frontend\npnpm install",
-        codeLanguage: "bash",
-      },
-      {
-        titleKey: "getStarted.quickStart.frontendStep2Title",
-        contentKey: "getStarted.quickStart.frontendStep2Content",
-        code: `# .env.local
-NEXT_PUBLIC_API_URL=https://localhost:5001
-NEXT_PUBLIC_APP_NAME=SCRIPE`,
-        codeLanguage: "bash",
-        codeFilename: ".env.local",
-      },
-      {
-        titleKey: "getStarted.quickStart.frontendStep3Title",
-        contentKey: "getStarted.quickStart.frontendStep3Content",
-        code: "pnpm dev",
-        codeLanguage: "bash",
-      },
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Verified Commands",
+    "id": "verified-commands"
+  },
+  {
+    "type": "code",
+    "language": "bash",
+    "filename": "Verified project entry commands",
+    "code": "scripe build backend\nscripe build frontend\nscripe validate-locales --docs\nscripe docs sync"
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.quickStart.defaultCredentialsTitle",
-    id: "default-credentials",
-  },
-  {
-    type: "table",
-    headers: ["Role", "Email", "Password", "Permissions"],
-    rows: [
-      ["Super Admin", "admin@scripe.com", "P@ssw0rd", "Full system access, all modules"],
-      ["Tenant Admin", "tenant@scripe.com", "Tenant@123", "Scoped to tenant, manage users"],
-      ["Regular User", "user@scripe.com", "User@123", "Read-only, limited actions"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "danger",
-    contentKey: "getStarted.quickStart.credentialsWarning",
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.quickStart.verifyInstallTitle",
-    id: "verify-installation",
-  },
-  {
-    type: "paragraph",
-    contentKey: "getStarted.quickStart.verifyInstallIntro",
-  },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Health Check",
-        language: "bash",
-        code: `curl https://localhost:5001/health
-# Expected: {"status":"Healthy","results":{...}}`,
-      },
-      {
-        label: "Swagger",
-        language: "bash",
-        code: `# Open in browser:
-# https://localhost:5001/swagger
-
-# All 18 controllers should appear with documented endpoints`,
-      },
-      {
-        label: "Login Test",
-        language: "bash",
-        code: `curl -X POST https://localhost:5001/api/v1/auth/login \\
-  -H "Content-Type: application/json" \\
-  -d '{"email":"admin@scripe.com","password":"P@ssw0rd"}'
-
-# Expected: { "accessToken": "...", "refreshToken": "..." }`,
-      },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "getStarted.quickStart.scripeCliTitle",
-    id: "scripe-cli",
-  },
-  {
-    type: "paragraph",
-    contentKey: "getStarted.quickStart.scripeCliIntro",
-  },
-  {
-    type: "code",
-    language: "bash",
-    filename: "SCRIPE CLI Commands",
-    code: `# Automatically create a 3-project backend module and frontend route
-scripe new-module Inventory
-
-# Scaffold 26 full-stack files (Controllers, Handlers, ViewModels, Zod schemas, Views)
-scripe new-feature Inventory Product -p "Name:string:required:max(100),Price:decimal:required,CategoryId:FK:Category:required"
-
-# Generate EF migrations across 3 Databases (SqlServer, Oracle, PostgreSql) simultaneously
-scripe db add-migration Initial -m Inventory
-
-# Auto-detect your configured Database provider and update it
-scripe db update -m Inventory
-
-# Auto-generate TypeScript models and API clients from Swagger
-scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m inventory
-
-# Build the entire platform
-scripe build all`,
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "get-started/quick-start",
   titleKey: "getStarted.quickStart.title",
-  descriptionKey: "getStarted.quickStart.description",
   category: "get-started",
   order: 3,
   sections,
-  relatedSlugs: ["get-started/prerequisites", "get-started/project-structure"],
-  lastUpdated: "2026-02-19",
+  relatedSlugs: ["get-started/prerequisites","get-started/project-structure"],
+  lastUpdated: "2026-06-07",
 });

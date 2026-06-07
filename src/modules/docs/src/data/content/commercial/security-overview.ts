@@ -2,131 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.securityOverview.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.securityOverview.modelTitle",
-    id: "security-model",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "commercial.securityOverview.modelContent" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    title: "9-Layer Security Architecture",
-    nodes: [
-      { id: "l1", label: "L1: TLS 1.3 Transport Encryption", type: "default" },
-      { id: "l2", label: "L2: Rate Limiting & IP Filtering (7-tier)", type: "info" },
-      { id: "l3", label: "L3: JWT Authentication + 2FA", type: "primary" },
-      { id: "l4", label: "L4: CSRF Token Validation (timing-safe)", type: "warning" },
-      { id: "l5", label: "L5: Input Sanitization (HTML stripping)", type: "warning" },
-      { id: "l6", label: "L6: RBAC + Field-Level Authorization", type: "primary" },
-      { id: "l7", label: "L7: Anti-Replay (Mandatory Nonce + Timestamp)", type: "warning" },
-      { id: "l8", label: "L8: Response Field Projection", type: "success" },
-      { id: "l9", label: "L9: Comprehensive Audit Trail", type: "danger" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "l1", to: "l2" },
-      { from: "l2", to: "l3" },
-      { from: "l3", to: "l4" },
-      { from: "l4", to: "l5" },
-      { from: "l5", to: "l6" },
-      { from: "l6", to: "l7" },
-      { from: "l7", to: "l8" },
-      { from: "l8", to: "l9" },
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.securityOverview.summaryTitle",
-    id: "summary",
-  },
-  {
-    type: "table",
-    headers: ["Layer", "Purpose", "Technology"],
-    rows: [
-      ["Transport", "Encrypt all data in transit", "TLS 1.3, HSTS forced in production"],
-      ["Rate Limiting", "Prevent brute force & DDoS", "7-tier ASP.NET Core Rate Limiting"],
-      ["Authentication", "Verify user identity", "JWT + refresh cookies, BCrypt-12, 2FA TOTP"],
+    "rows": [
       [
-        "CSRF Protection",
-        "Prevent cross-site request forgery",
-        "Double-submit cookie (timing-safe comparison)",
+        "Page route",
+        "/commercial/security-overview",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Input Sanitization",
-        "Prevent XSS at backend level",
-        "HTML tag stripping on all JSON inputs",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/security-overview.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
-      ["Authorization", "Control resource access", "Policy-based RBAC, field projections"],
-      ["Anti-Replay", "Prevent request replay attacks", "Mandatory nonce + timestamp validation"],
       [
-        "Field Projection",
-        "Hide sensitive fields per role",
-        "Custom middleware, per-entity config",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-      ["Audit Trail", "Record all security events", "4-source pipeline, SignalR streaming"],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.securityOverview.headersTitle",
-    id: "headers",
-  },
-  {
-    type: "code",
-    language: "text",
-    filename: "Security Headers Applied to Every Response",
-    code: `X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-Referrer-Policy: strict-origin-when-cross-origin
-Content-Security-Policy: default-src 'self'; script-src 'self'
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-Permissions-Policy: camera=(), microphone=(), geolocation=()`,
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.securityOverview.complianceTitle",
-    id: "compliance",
-  },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "shield",
-        titleKey: "commercial.securityOverview.sox",
-        descriptionKey: "commercial.securityOverview.soxDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "commercial.securityOverview.gdpr",
-        descriptionKey: "commercial.securityOverview.gdprDesc",
-      },
-      {
-        icon: "building",
-        titleKey: "commercial.securityOverview.soc2",
-        descriptionKey: "commercial.securityOverview.soc2Desc",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/security-overview",
   titleKey: "commercial.securityOverview.title",
-  descriptionKey: "commercial.securityOverview.description",
   category: "commercial-security",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/authentication-security", "commercial/data-protection"],
-  lastUpdated: "2026-03-13",
+  relatedSlugs: ["commercial/authentication-security","commercial/data-protection"],
+  lastUpdated: "2026-06-07",
 });

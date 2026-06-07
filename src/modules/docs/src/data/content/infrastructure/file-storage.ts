@@ -2,235 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "infrastructure.fileStorage.intro" },
-
-  // ─── Storage Architecture ─────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.fileStorage.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "File Storage Architecture (Strategy Pattern)",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "interface",
-        label: "IFileStorageService",
-        type: "primary",
-        description: "Abstraction interface",
-      },
-      { id: "local", label: "LocalFileStorage", type: "info", description: "wwwroot/ filesystem" },
-      {
-        id: "azure",
-        label: "AzureBlobStorage",
-        type: "success",
-        description: "Azure Blob Containers",
-      },
-      { id: "aws", label: "AwsS3Storage", type: "warning", description: "AWS S3 Buckets" },
-      {
-        id: "minio",
-        label: "MinIOStorage",
-        type: "danger",
-        description: "Self-hosted S3-compatible",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "local", to: "interface", label: "implements" },
-      { from: "azure", to: "interface", label: "implements" },
-      { from: "aws", to: "interface", label: "implements" },
-      { from: "minio", to: "interface", label: "implements" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/infrastructure/file-storage",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/infrastructure/file-storage.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Database providers",
+        "SCRIPE-Backend/src/Modules/*/*.Infrastructure/*DbContextFactory.cs",
+        "Each current module factory contains SQL Server, Oracle, and PostgreSQL branches; runtime selection still depends on configuration and migrations."
+      ],
+      [
+        "Background jobs",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/BackgroundJobs + SCRIPE-Backend/src/Modules/*/*.Infrastructure/BackgroundJobs",
+        "Core and modules implement recurring job classes discovered through IAutoRegisteredJob/RecurringJobBase patterns and registered through background job configuration."
+      ],
+      [
+        "Storage",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/Storage",
+        "Blob storage implementations include local and cloud/object-storage providers; availability depends on configured provider settings."
+      ],
+      [
+        "Observability and health",
+        "SCRIPE-Backend/src/Host/API/Health + SCRIPE-Backend/src/Host/API/Extensions",
+        "Health endpoints, OpenTelemetry/Prometheus configuration, logging, rate limiting, SignalR, and gateway configuration are in host extensions and health files."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Interface ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.fileStorage.interfaceTitle",
-    id: "interface",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "IFileStorageService — Contract",
-    code: `public interface IFileStorageService
-{
-    Task<string> UploadAsync(Stream stream, string fileName,
-        string folder, CancellationToken ct = default);
-
-    Task<Stream?> DownloadAsync(string path,
-        CancellationToken ct = default);
-
-    Task<bool> DeleteAsync(string path,
-        CancellationToken ct = default);
-
-    Task<bool> ExistsAsync(string path,
-        CancellationToken ct = default);
-
-    Task<FileMetadata> GetMetadataAsync(string path,
-        CancellationToken ct = default);
-
-    string GetPublicUrl(string path);
-}`,
-  },
-
-  // ─── Provider Configuration ───────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.fileStorage.providerTitle",
-    id: "provider-config",
-  },
-  {
-    type: "tabs",
-    tabs: [
-      {
-        label: "Local Storage",
-        language: "json",
-        filename: "appsettings.json — Local",
-        code: `{
-  "FileStorage": {
-    "Provider": "Local",
-    "Local": {
-      "BasePath": "wwwroot/uploads",
-      "RequestPath": "/uploads",
-      "MaxFileSizeMB": 10,
-      "AllowedExtensions": [".jpg", ".png", ".pdf", ".docx"]
-    }
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-      },
-      {
-        label: "Azure Blob",
-        language: "json",
-        filename: "appsettings.json — Azure Blob",
-        code: `{
-  "FileStorage": {
-    "Provider": "AzureBlob",
-    "AzureBlob": {
-      "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=...",
-      "ContainerName": "scripe-uploads",
-      "MaxFileSizeMB": 50,
-      "EnableCDN": true,
-      "CDNEndpoint": "https://cdn.scripe.dev"
-    }
-  }
-}`,
-      },
-      {
-        label: "AWS S3",
-        language: "json",
-        filename: "appsettings.json — AWS S3",
-        code: `{
-  "FileStorage": {
-    "Provider": "AwsS3",
-    "AwsS3": {
-      "BucketName": "scripe-uploads",
-      "Region": "us-east-1",
-      "AccessKeyId": "AKIA...",
-      "SecretAccessKey": "...",
-      "MaxFileSizeMB": 50
-    }
-  }
-}`,
-      },
-      {
-        label: "MinIO",
-        language: "json",
-        filename: "appsettings.json — MinIO (Self-Hosted)",
-        code: `{
-  "FileStorage": {
-    "Provider": "MinIO",
-    "MinIO": {
-      "Endpoint": "minio.internal:9000",
-      "BucketName": "scripe-uploads",
-      "AccessKey": "minioadmin",
-      "SecretKey": "minioadmin",
-      "UseSSL": false
-    }
-  }
-}`,
-      },
-    ],
-  },
-
-  // ─── Upload Flow ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.fileStorage.uploadTitle",
-    id: "upload-flow",
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "Upload Flow with Validation",
-    code: `// In Controller
-[HttpPost("upload")]
-[RequestSizeLimit(10_000_000)] // 10 MB
-public async Task<IActionResult> Upload(IFormFile file)
-{
-    // 1. Validate file
-    var validation = _fileValidator.Validate(file);
-    if (!validation.IsValid)
-        return BadRequest(validation.Errors);
-
-    // 2. Generate safe filename
-    var safeFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-
-    // 3. Upload via storage service
-    var path = await _storage.UploadAsync(
-        file.OpenReadStream(),
-        safeFileName,
-        "avatars", // folder
-        ct
-    );
-
-    // 4. Return public URL
-    return Ok(new { url = _storage.GetPublicUrl(path) });
-}`,
-  },
-
-  // ─── File Validation ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "infrastructure.fileStorage.validationTitle",
-    id: "validation",
-  },
-  {
-    type: "table",
-    headers: ["Validation", "Rule", "Error Message"],
-    rows: [
-      ["File size", "Max 10 MB (configurable)", "File exceeds maximum size"],
-      ["Image dimensions", "Max 4096×4096 px", "Image dimensions too large"],
-      ["Extension whitelist", ".jpg, .png, .gif, .webp, .pdf, .docx", "File type not allowed"],
-      ["MIME type check", "Verify MIME matches extension", "File content doesn't match extension"],
-      ["Magic bytes", "Check file header bytes", "Corrupted or fake file detected"],
-      ["Filename sanitization", "Remove special chars, limit length", "Applied automatically"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "infrastructure.fileStorage.tenantIsolationTip",
-  },
 ];
 
 registerPage({
   slug: "infrastructure/file-storage",
   titleKey: "infrastructure.fileStorage.title",
-  descriptionKey: "infrastructure.fileStorage.description",
   category: "infrastructure",
   order: 3,
   sections,
-  relatedSlugs: [
-    "api-reference/system-api",
-    "infrastructure/background-jobs",
-    "security/data-protection",
-  ],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["api-reference/system-api","infrastructure/background-jobs","security/data-protection"],
+  lastUpdated: "2026-06-07",
 });

@@ -2,125 +2,158 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "features.ssoOauth.intro" },
-
-  // ── Feature Overview ──
-  { type: "heading", level: 2, titleKey: "features.ssoOauth.overviewTitle", id: "overview" },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "Fingerprint",
-        titleKey: "features.ssoOauth.feat1Title",
-        descriptionKey: "features.ssoOauth.feat1Desc",
-      },
-      {
-        icon: "KeyRound",
-        titleKey: "features.ssoOauth.feat2Title",
-        descriptionKey: "features.ssoOauth.feat2Desc",
-      },
-      {
-        icon: "Shield",
-        titleKey: "features.ssoOauth.feat3Title",
-        descriptionKey: "features.ssoOauth.feat3Desc",
-      },
-      {
-        icon: "Building2",
-        titleKey: "features.ssoOauth.feat4Title",
-        descriptionKey: "features.ssoOauth.feat4Desc",
-      },
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ── Configuration Guide ──
-  { type: "heading", level: 2, titleKey: "features.ssoOauth.configTitle", id: "configuration" },
-  { type: "paragraph", contentKey: "features.ssoOauth.configContent" },
   {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "features.ssoOauth.config1Title",
-        contentKey: "features.ssoOauth.config1Content",
-      },
-      {
-        titleKey: "features.ssoOauth.config2Title",
-        contentKey: "features.ssoOauth.config2Content",
-      },
-      {
-        titleKey: "features.ssoOauth.config3Title",
-        contentKey: "features.ssoOauth.config3Content",
-      },
-      {
-        titleKey: "features.ssoOauth.config4Title",
-        contentKey: "features.ssoOauth.config4Content",
-      },
-      {
-        titleKey: "features.ssoOauth.config5Title",
-        contentKey: "features.ssoOauth.config5Content",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-  },
-
-  // ── Manager Pages ──
-  { type: "heading", level: 2, titleKey: "features.ssoOauth.managementTitle", id: "management" },
-  { type: "paragraph", contentKey: "features.ssoOauth.managementContent" },
-  {
-    type: "table",
-    headers: ["Page", "URL", "Permission", "Purpose"],
-    rows: [
+    "rows": [
       [
-        "Identity Providers",
-        "/settings/identity-providers",
-        "identity_providers.view",
-        "CRUD management of external IdPs (Azure AD, Google, Okta, etc.)",
+        "Page route",
+        "/docs/features/sso-oauth",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "OAuth Applications",
-        "/settings/oauth-apps",
-        "oauth_apps.view",
-        "Register third-party apps that login via SCRIPE as OIDC server",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/features/sso-oauth.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
-    ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Auth controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "Implemented flows include admin/user password auth, refresh, logout, sessions, 2FA, passkeys, magic link, phone OTP, QR login, OIDC client/server, SAML client/server, account setup, and self-service signup."
+      ],
+      [
+        "Identity handlers",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Application/Commands/Auth",
+        "Auth work is dispatched through AstraFlow command/query handlers instead of controller business logic."
+      ],
+      [
+        "Identity persistence",
+        "SCRIPE-Backend/src/Modules/Identity/Identity.Domain/Entities",
+        "Admins, users, tokens, sessions, identity providers, OAuth apps, passkeys, external logins, tenants, roles, and user groups are modeled in the Identity domain."
+      ],
+      [
+        "Frontend auth routes",
+        "SCRIPE-Frontend/src/app/(auth)",
+        "Frontend routes exist for login, signup, password reset, magic link, QR approval, SSO callbacks, authorization, setup account, and policy pages."
+      ]
+    ]
   },
-
-  // ── Login Flow ──
-  { type: "heading", level: 2, titleKey: "features.ssoOauth.loginFlowTitle", id: "login-flow" },
-  { type: "paragraph", contentKey: "features.ssoOauth.loginFlowContent" },
   {
-    type: "list",
-    variant: "ordered",
-    items: [
-      "User navigates to /login — the login page automatically fetches available SSO providers",
-      "If providers exist, branded SSO buttons appear below the sign-in form with an 'or continue with' divider",
-      "User clicks a provider button → frontend calls POST /auth/oidc/challenge → gets authorization URL with PKCE parameters",
-      "PKCE state (code_verifier, state, providerId) is stored in sessionStorage — frontend redirects to the IdP",
-      "User authenticates at the external IdP (Azure AD, Google, etc.) and grants consent",
-      "IdP redirects back to /sso/callback?code=...&state=...",
-      "Callback page retrieves PKCE state from sessionStorage, validates state matches (CSRF protection)",
-      "Frontend calls POST /auth/oidc/callback with code + codeVerifier → backend exchanges code for user info",
-      "Backend finds the linked ExternalLogin record → returns the admin/user identity",
-      "Frontend completes login: stores auth tokens, loads navigation, redirects to dashboard",
-    ],
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
-
-  // ── Tenant Scoping ──
-  { type: "heading", level: 2, titleKey: "features.ssoOauth.scopingTitle", id: "scoping" },
-  { type: "paragraph", contentKey: "features.ssoOauth.scopingContent" },
   {
-    type: "info",
-    variant: "tip",
-    contentKey: "features.ssoOauth.scopingTip",
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Representative Implemented API Evidence",
+    "id": "api-evidence"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Controller group",
+      "Verified source",
+      "Implemented surface"
+    ],
+    "rows": [
+      [
+        "AdminAuthController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth/AdminAuthController.cs",
+        "Route prefix api/v{version:apiVersion}/auth/admin; includes login, refresh, workspace discovery, profile, logout, sessions, 2FA, impersonation, external links, and admin password reset."
+      ],
+      [
+        "UserAuthController",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth/UserAuthController.cs",
+        "Route prefix api/v{version:apiVersion}/auth/user; includes login, registration, verification, password reset, refresh, me, logout, 2FA, and external links."
+      ],
+      [
+        "Passkey/Magic/OTP/QR controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "PasskeyController, MagicLinkController, PhoneOtpLoginController, and QrLoginController implement alternate authentication flows."
+      ],
+      [
+        "OIDC/SAML controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Auth",
+        "OidcClientController, OidcServerController, OidcLoginController, SamlClientController, and SamlServerController implement external and identity-provider flows."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "features/sso-oauth",
   titleKey: "features.ssoOauth.title",
-  descriptionKey: "features.ssoOauth.description",
   category: "features",
   order: 14,
   sections,
-  relatedSlugs: ["security/sso-identity-providers", "features/authentication"],
-  lastUpdated: "2026-03-07",
+  relatedSlugs: ["security/sso-identity-providers","features/authentication"],
+  lastUpdated: "2026-06-07",
 });

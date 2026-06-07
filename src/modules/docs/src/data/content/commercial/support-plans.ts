@@ -2,223 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.supportPlans.intro" },
-
-  // ─── Support Tiers Comparison ───────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.supportPlans.tiersTitle", id: "tiers" },
-  { type: "paragraph", contentKey: "commercial.supportPlans.tiersIntro" },
   {
-    type: "table",
-    headers: [
-      "commercial.supportPlans.tblTiersHeader1",
-      "commercial.supportPlans.tblTiersHeader2",
-      "commercial.supportPlans.tblTiersHeader3",
-      "commercial.supportPlans.tblTiersHeader4",
-      "commercial.supportPlans.tblTiersHeader5",
-    ],
-    rows: [
-      [
-        "commercial.supportPlans.tblTiersR1C1",
-        "commercial.supportPlans.tblTiersR1C2",
-        "commercial.supportPlans.tblTiersR1C3",
-        "commercial.supportPlans.tblTiersR1C4",
-        "commercial.supportPlans.tblTiersR1C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR2C1",
-        "commercial.supportPlans.tblTiersR2C2",
-        "commercial.supportPlans.tblTiersR2C3",
-        "commercial.supportPlans.tblTiersR2C4",
-        "commercial.supportPlans.tblTiersR2C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR3C1",
-        "commercial.supportPlans.tblTiersR3C2",
-        "commercial.supportPlans.tblTiersR3C3",
-        "commercial.supportPlans.tblTiersR3C4",
-        "commercial.supportPlans.tblTiersR3C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR4C1",
-        "commercial.supportPlans.tblTiersR4C2",
-        "commercial.supportPlans.tblTiersR4C3",
-        "commercial.supportPlans.tblTiersR4C4",
-        "commercial.supportPlans.tblTiersR4C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR5C1",
-        "commercial.supportPlans.tblTiersR5C2",
-        "commercial.supportPlans.tblTiersR5C3",
-        "commercial.supportPlans.tblTiersR5C4",
-        "commercial.supportPlans.tblTiersR5C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR6C1",
-        "commercial.supportPlans.tblTiersR6C2",
-        "commercial.supportPlans.tblTiersR6C3",
-        "commercial.supportPlans.tblTiersR6C4",
-        "commercial.supportPlans.tblTiersR6C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR7C1",
-        "commercial.supportPlans.tblTiersR7C2",
-        "commercial.supportPlans.tblTiersR7C3",
-        "commercial.supportPlans.tblTiersR7C4",
-        "commercial.supportPlans.tblTiersR7C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR8C1",
-        "commercial.supportPlans.tblTiersR8C2",
-        "commercial.supportPlans.tblTiersR8C3",
-        "commercial.supportPlans.tblTiersR8C4",
-        "commercial.supportPlans.tblTiersR8C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR9C1",
-        "commercial.supportPlans.tblTiersR9C2",
-        "commercial.supportPlans.tblTiersR9C3",
-        "commercial.supportPlans.tblTiersR9C4",
-        "commercial.supportPlans.tblTiersR9C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR10C1",
-        "commercial.supportPlans.tblTiersR10C2",
-        "commercial.supportPlans.tblTiersR10C3",
-        "commercial.supportPlans.tblTiersR10C4",
-        "commercial.supportPlans.tblTiersR10C5",
-      ],
-      [
-        "commercial.supportPlans.tblTiersR11C1",
-        "commercial.supportPlans.tblTiersR11C2",
-        "commercial.supportPlans.tblTiersR11C3",
-        "commercial.supportPlans.tblTiersR11C4",
-        "commercial.supportPlans.tblTiersR11C5",
-      ],
-    ],
-  },
-
-  // ─── SLA Details ────────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.supportPlans.slaTitle", id: "sla" },
-  { type: "paragraph", contentKey: "commercial.supportPlans.slaIntro" },
-  {
-    type: "table",
-    headers: [
-      "commercial.supportPlans.tblSlaHeader1",
-      "commercial.supportPlans.tblSlaHeader2",
-      "commercial.supportPlans.tblSlaHeader3",
-      "commercial.supportPlans.tblSlaHeader4",
-      "commercial.supportPlans.tblSlaHeader5",
-    ],
-    rows: [
-      [
-        "commercial.supportPlans.tblSlaR1C1",
-        "commercial.supportPlans.tblSlaR1C2",
-        "commercial.supportPlans.tblSlaR1C3",
-        "commercial.supportPlans.tblSlaR1C4",
-        "commercial.supportPlans.tblSlaR1C5",
-      ],
-      [
-        "commercial.supportPlans.tblSlaR2C1",
-        "commercial.supportPlans.tblSlaR2C2",
-        "commercial.supportPlans.tblSlaR2C3",
-        "commercial.supportPlans.tblSlaR2C4",
-        "commercial.supportPlans.tblSlaR2C5",
-      ],
-      [
-        "commercial.supportPlans.tblSlaR3C1",
-        "commercial.supportPlans.tblSlaR3C2",
-        "commercial.supportPlans.tblSlaR3C3",
-        "commercial.supportPlans.tblSlaR3C4",
-        "commercial.supportPlans.tblSlaR3C5",
-      ],
-      [
-        "commercial.supportPlans.tblSlaR4C1",
-        "commercial.supportPlans.tblSlaR4C2",
-        "commercial.supportPlans.tblSlaR4C3",
-        "commercial.supportPlans.tblSlaR4C4",
-        "commercial.supportPlans.tblSlaR4C5",
-      ],
-      [
-        "commercial.supportPlans.tblSlaR5C1",
-        "commercial.supportPlans.tblSlaR5C2",
-        "commercial.supportPlans.tblSlaR5C3",
-        "commercial.supportPlans.tblSlaR5C4",
-        "commercial.supportPlans.tblSlaR5C5",
-      ],
-    ],
-  },
-
-  // ─── What's Included ────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.supportPlans.includedTitle", id: "included" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "zap",
-        titleKey: "commercial.supportPlans.hotfixes",
-        descriptionKey: "commercial.supportPlans.hotfixesDesc",
-      },
-      {
-        icon: "terminal",
-        titleKey: "commercial.supportPlans.remoteDebug",
-        descriptionKey: "commercial.supportPlans.remoteDebugDesc",
-      },
-      {
-        icon: "book",
-        titleKey: "commercial.supportPlans.knowledgeBase",
-        descriptionKey: "commercial.supportPlans.knowledgeBaseDesc",
-      },
-      {
-        icon: "users",
-        titleKey: "commercial.supportPlans.communityAccess",
-        descriptionKey: "commercial.supportPlans.communityAccessDesc",
-      },
-    ],
-  },
-
-  // ─── Onboarding Process ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.supportPlans.onboardingTitle",
-    id: "onboarding",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "commercial.supportPlans.step1Title",
-        contentKey: "commercial.supportPlans.step1Content",
-      },
-      {
-        titleKey: "commercial.supportPlans.step2Title",
-        contentKey: "commercial.supportPlans.step2Content",
-      },
-      {
-        titleKey: "commercial.supportPlans.step3Title",
-        contentKey: "commercial.supportPlans.step3Content",
-      },
-      {
-        titleKey: "commercial.supportPlans.step4Title",
-        contentKey: "commercial.supportPlans.step4Content",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
+    "rows": [
+      [
+        "Page route",
+        "/commercial/support-plans",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/support-plans.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
-
-  // ─── Upgrade Path ──────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.supportPlans.upgradeTitle", id: "upgrade" },
-  { type: "paragraph", contentKey: "commercial.supportPlans.upgradeContent" },
-  { type: "info", variant: "tip", contentKey: "commercial.supportPlans.upgradeTip" },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
+    ],
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/support-plans",
   titleKey: "commercial.supportPlans.title",
-  descriptionKey: "commercial.supportPlans.description",
   category: "commercial-pricing",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/licensing-model", "commercial/documentation-training"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/licensing-model","commercial/documentation-training"],
+  lastUpdated: "2026-06-07",
 });

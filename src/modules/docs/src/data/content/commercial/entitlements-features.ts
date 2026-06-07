@@ -2,169 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.entFeatures.intro" },
-
-  // ─── Feature Value Types ────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entFeatures.typesTitle", id: "value-types" },
-  { type: "paragraph", contentKey: "commercial.entFeatures.typesContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.entFeatures.tblTypeH1",
-      "commercial.entFeatures.tblTypeH2",
-      "commercial.entFeatures.tblTypeH3",
-      "commercial.entFeatures.tblTypeH4",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
+    "rows": [
       [
-        "commercial.entFeatures.tblTypeR1C1",
-        "commercial.entFeatures.tblTypeR1C2",
-        "commercial.entFeatures.tblTypeR1C3",
-        "commercial.entFeatures.tblTypeR1C4",
+        "Page route",
+        "/commercial/entitlements-features",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "commercial.entFeatures.tblTypeR2C1",
-        "commercial.entFeatures.tblTypeR2C2",
-        "commercial.entFeatures.tblTypeR2C3",
-        "commercial.entFeatures.tblTypeR2C4",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/entitlements-features.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
       [
-        "commercial.entFeatures.tblTypeR3C1",
-        "commercial.entFeatures.tblTypeR3C2",
-        "commercial.entFeatures.tblTypeR3C3",
-        "commercial.entFeatures.tblTypeR3C4",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
-    ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
   },
-
-  // ─── System vs Custom Features ──────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.entFeatures.systemTitle",
-    id: "system-vs-custom",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
   },
   {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "lock",
-        titleKey: "commercial.entFeatures.fgSystem",
-        descriptionKey: "commercial.entFeatures.fgSystemDesc",
-      },
-      {
-        icon: "edit",
-        titleKey: "commercial.entFeatures.fgCustom",
-        descriptionKey: "commercial.entFeatures.fgCustomDesc",
-      },
-    ],
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
   },
-
-  // ─── Quota Enforcement ──────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.entFeatures.quotaTitle",
-    id: "quota-enforcement",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
   },
-  { type: "paragraph", contentKey: "commercial.entFeatures.quotaContent" },
   {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "Quota Enforcement Flow",
-    nodes: [
-      { id: "cmd", label: "Create Entity Command", type: "default" },
-      { id: "pipe", label: "FeatureCheckBehavior", type: "info" },
-      { id: "quota", label: "Check QuotaCounter", type: "primary" },
-      { id: "pass", label: "Execute ✓", type: "success" },
-      { id: "fail", label: "Quota Exceeded ✗", type: "danger" },
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-    connections: [
-      { from: "cmd", to: "pipe" },
-      { from: "pipe", to: "quota" },
-      { from: "quota", to: "pass", label: "Under limit" },
-      { from: "quota", to: "fail", label: "At limit" },
-    ],
-  },
-
-  // ─── Feature Caching ────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entFeatures.cacheTitle", id: "caching" },
-  { type: "paragraph", contentKey: "commercial.entFeatures.cacheContent" },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "zap",
-        titleKey: "commercial.entFeatures.cachePerf",
-        descriptionKey: "commercial.entFeatures.cachePerfDesc",
-      },
-      {
-        icon: "refresh-cw",
-        titleKey: "commercial.entFeatures.cacheInv",
-        descriptionKey: "commercial.entFeatures.cacheInvDesc",
-      },
-    ],
-  },
-
-  // ─── API Endpoints ──────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.entFeatures.apiTitle", id: "api" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/features",
-        descriptionKey: "List all features",
-        auth: "Required",
-        permission: "Features.View",
-      },
-      {
-        method: "POST",
-        path: "/api/features",
-        descriptionKey: "Create custom feature",
-        auth: "Required",
-        permission: "Features.Create",
-      },
-      {
-        method: "PUT",
-        path: "/api/features/{id}",
-        descriptionKey: "Update feature",
-        auth: "Required",
-        permission: "Features.Update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/features/{id}",
-        descriptionKey: "Delete custom feature",
-        auth: "Required",
-        permission: "Features.Delete",
-      },
-      {
-        method: "GET",
-        path: "/api/features/resolved",
-        descriptionKey: "Get resolved features for current tenant",
-        auth: "Required",
-        permission: "Features.View",
-      },
-    ],
-  },
-
-  { type: "info", variant: "tip", contentKey: "commercial.entFeatures.tip" },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/entitlements-features",
   titleKey: "commercial.entFeatures.title",
-  descriptionKey: "commercial.entFeatures.description",
   category: "commercial-modules",
   order: 4,
   sections,
-  relatedSlugs: [
-    "commercial/entitlements-editions",
-    "commercial/entitlements-overrides",
-    "commercial/entitlements-overview",
-  ],
-  lastUpdated: "2026-03-02",
+  relatedSlugs: ["commercial/entitlements-editions","commercial/entitlements-overrides","commercial/entitlements-overview"],
+  lastUpdated: "2026-06-07",
 });

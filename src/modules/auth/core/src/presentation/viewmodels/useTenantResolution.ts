@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { getAuthContainer } from "@modules/auth/di";
+import { BRAND } from "@core/config/branding";
+import { env } from "@core/config/env";
 import type { TenantBranding } from "../../../domain/entities/TenantBranding";
 
 export type { TenantBranding };
@@ -16,6 +18,22 @@ export interface TenantResolutionResult {
 }
 
 const SKIP_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
+
+function isPlatformDomain(hostname: string): boolean {
+  if (SKIP_DOMAINS.includes(hostname)) return true;
+  if (hostname.endsWith(".localhost")) return true;
+  
+  try {
+    const platformHost = new URL(env.NEXT_PUBLIC_APP_URL).hostname;
+    if (hostname === platformHost) return true;
+  } catch {
+    // Ignore invalid URL
+  }
+
+  if (hostname === BRAND.domain || hostname === `app.${BRAND.domain}`) return true;
+  
+  return false;
+}
 
 function getDevTenantCode(): string | null {
   if (typeof window === "undefined") return null;
@@ -57,6 +75,11 @@ export function useTenantResolution(page?: string): TenantResolutionResult {
 
       const hostname = window.location.hostname;
       const devCode = getDevTenantCode();
+
+      if (!devCode && isPlatformDomain(hostname)) {
+        setIsLoading(false);
+        return;
+      }
 
       try {
         const data = await getAuthContainer().tenantResolutionRepository.resolveTenant({

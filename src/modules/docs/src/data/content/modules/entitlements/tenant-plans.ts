@@ -2,181 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "modules.tenantPlans.intro" },
-
-  // ─── B2B2C Concept ────────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.conceptTitle",
-    id: "b2b2c-model",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "modules.tenantPlans.conceptIntro" },
   {
-    type: "flowchart",
-    direction: "vertical",
-    nodes: [
-      { id: "A", label: "SCRIPE Platform (Operator)", type: "primary" },
-      { id: "B", label: "Tier 1: Editions → Tenants", type: "info" },
-      { id: "C", label: "Tenant Admin", type: "default" },
-      { id: "D", label: "Tier 2: TenantPlans → Users", type: "info" },
-      { id: "E", label: "End Users (UserSubscription)", type: "success" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "A", to: "B" },
-      { from: "B", to: "C" },
-      { from: "C", to: "D" },
-      { from: "D", to: "E" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/modules/tenant-plans",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/entitlements/tenant-plans.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Identity module",
+        "SCRIPE-Backend/src/Modules/Identity",
+        "Identity owns admins, users, tenants, roles, permissions, user groups, sessions, identity providers, OAuth apps, and auth-related commands."
+      ],
+      [
+        "Identity controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Identity",
+        "Controller endpoints expose admin, tenant, role, permission, identity-provider, OAuth-application, and user-group workflows."
+      ],
+      [
+        "Frontend identity routes",
+        "SCRIPE-Frontend/src/app/(modules)/(identity)",
+        "Admin UI routes exist for users, admins, tenants, roles, user groups, settings, identity providers, OAuth apps, profile, sessions, notifications, and security."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── TenantPlan Entity ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.entityTitle",
-    id: "tenantplan-entity",
-  },
-  { type: "paragraph", contentKey: "modules.tenantPlans.entityIntro" },
-  {
-    type: "table",
-    headers: ["Field", "Type", "Description"],
-    rows: [
-      ["Name", "string(200)", "Plan display name (e.g. 'Basic', 'Pro', 'Enterprise')"],
-      ["Description", "string?", "Human-readable plan description"],
-      ["Price", "decimal(18,2)", "Monthly or annual price"],
-      ["Currency", "Currency", "ISO currency code"],
-      ["BillingCycle", "BillingCycle", "Monthly | Yearly | Lifetime | Free"],
-      ["MaxUsers", "int?", "Max subscribers (-1 = unlimited)"],
-      ["TrialDays", "int", "Trial period length in days (0 = no trial)"],
-      ["IsActive", "bool", "Whether new subscribers can join this plan"],
-      ["TenantId", "Guid", "Owning tenant — rows are isolated per tenant"],
-    ],
-  },
-
-  // ─── TenantPlanFeature ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.featureEntityTitle",
-    id: "plan-features",
-  },
-  { type: "paragraph", contentKey: "modules.tenantPlans.featureEntityIntro" },
-  {
-    type: "code",
-    language: "json",
-    code: `// Example TenantPlanFeature records for a "Pro" plan
-[
-  { "Key": "maxProjects", "Value": "50" },
-  { "Key": "apiAccess", "Value": "true" },
-  { "Key": "supportLevel", "Value": "priority" },
-  { "Key": "storageGb", "Value": "100" }
-]`,
-  },
-
-  // ─── Plan Lifecycle ───────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.lifecycleTitle",
-    id: "plan-lifecycle",
-  },
-  { type: "paragraph", contentKey: "modules.tenantPlans.lifecycleIntro" },
-
-  // ─── Tenant Context Required ──────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.contextTitle",
-    id: "tenant-context",
-  },
-  { type: "paragraph", contentKey: "modules.tenantPlans.contextIntro" },
-  {
-    type: "info",
-    variant: "warning",
-    contentKey: "modules.tenantPlans.contextIntro",
-  },
-
-  // ─── API Endpoints ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.endpointsTitle",
-    id: "api-endpoints",
-  },
-  { type: "paragraph", contentKey: "modules.tenantPlans.endpointsIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/tenant-plans",
-        descriptionKey: "modules.tenantPlans.ep.list",
-        auth: "JWT",
-        permission: "tenant_plans.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/tenant-plans/{id}",
-        descriptionKey: "modules.tenantPlans.ep.get",
-        auth: "JWT",
-        permission: "tenant_plans.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/tenant-plans",
-        descriptionKey: "modules.tenantPlans.ep.create",
-        auth: "JWT",
-        permission: "tenant_plans.create",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/tenant-plans/{id}",
-        descriptionKey: "modules.tenantPlans.ep.update",
-        auth: "JWT",
-        permission: "tenant_plans.update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/tenant-plans/{id}",
-        descriptionKey: "modules.tenantPlans.ep.delete",
-        auth: "JWT",
-        permission: "tenant_plans.delete",
-      },
-    ],
-  },
-
-  // ─── Permissions ──────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.tenantPlans.permissionsTitle",
-    id: "permissions",
-  },
-  { type: "paragraph", contentKey: "modules.tenantPlans.permissionsIntro" },
-  {
-    type: "table",
-    headers: ["Permission", "Action"],
-    rows: [
-      ["tenant_plans.view", "View plan list and details"],
-      ["tenant_plans.create", "Create new plans"],
-      ["tenant_plans.update", "Edit plan name, price, features"],
-      ["tenant_plans.delete", "Soft-delete a plan"],
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/tenant-plans",
   titleKey: "modules.tenantPlans.title",
-  descriptionKey: "modules.tenantPlans.description",
   category: "modules",
   order: 9,
   sections,
-  relatedSlugs: [
-    "modules/user-subscriptions",
-    "modules/entitlements-overview",
-    "features/tenant-context-gate",
-  ],
-  lastUpdated: "2026-04-18",
+  relatedSlugs: ["modules/user-subscriptions","modules/entitlements-overview","features/tenant-context-gate"],
+  lastUpdated: "2026-06-07",
 });

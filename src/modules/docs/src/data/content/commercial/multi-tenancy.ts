@@ -2,298 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.multiTenancy.intro" },
-
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.multiTenancy.architectureTitle",
-    id: "architecture",
-  },
-  { type: "paragraph", contentKey: "commercial.multiTenancy.architectureContent" },
-  {
-    type: "code",
-    language: "text",
-    filename: "Hierarchical Multi-Tenancy Model",
-    code: `┌──────────────────────────────────────────────────┐
-│               Root Tenant (Platform)             │
-│                                                  │
-│  ┌────────────────┐    ┌────────────────┐       │
-│  │  Enterprise A  │    │  Enterprise B  │       │
-│  │   (Parent)     │    │   (Parent)     │       │
-│  │                │    │                │       │
-│  │ ┌──────┐ ┌────┐│    │ ┌──────┐       │       │
-│  │ │Dept 1│ │D. 2││    │ │Branch│       │       │
-│  │ │(child)│ │    ││    │ │  1   │       │       │
-│  │ └──────┘ └────┘│    │ └──────┘       │       │
-│  └────────────────┘    └────────────────┘       │
-└──────────────────────────────────────────────────┘`,
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.multiTenancy.isolationTitle",
-    id: "isolation",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "table",
-    headers: ["Isolation Aspect", "Implementation", "Guarantee"],
-    rows: [
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
+    ],
+    "rows": [
       [
-        "Data isolation",
-        "Row-level tenant filtering via global query filters",
-        "Zero cross-tenant data leakage",
+        "Page route",
+        "/commercial/multi-tenancy",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
       ],
       [
-        "Storage isolation",
-        "Tenant-scoped file paths and blob containers",
-        "Files inaccessible across tenants",
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/multi-tenancy.ts",
+        "This TypeScript file is the portal source of truth for the page body."
       ],
-      ["Cache isolation", "Tenant-prefixed cache keys", "Cache entries never cross tenants"],
-      ["Session isolation", "JWT claims include TenantId", "API requests scoped to tenant"],
-      ["Audit isolation", "All audit entries tagged with TenantId", "Tenant-specific audit trails"],
       [
-        "Menu isolation",
-        "Per-tenant menu overrides via MenuOverrideResolver",
-        "Unique navigation per tenant",
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
       ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.multiTenancy.settingsTitle",
-    id: "per-tenant-settings",
-  },
-  { type: "paragraph", contentKey: "commercial.multiTenancy.settingsContent" },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "globe",
-        titleKey: "commercial.multiTenancy.settBranding",
-        descriptionKey: "commercial.multiTenancy.settBrandingDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.multiTenancy.settSecurity",
-        descriptionKey: "commercial.multiTenancy.settSecurityDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.multiTenancy.settFeatures",
-        descriptionKey: "commercial.multiTenancy.settFeaturesDesc",
-      },
-      {
-        icon: "key",
-        titleKey: "commercial.multiTenancy.settEntitlements",
-        descriptionKey: "commercial.multiTenancy.settEntitlementsDesc",
-      },
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.multiTenancy.whiteLabelTitle",
-    id: "white-labeling",
-  },
-  { type: "paragraph", contentKey: "commercial.multiTenancy.whiteLabelContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "Custom logo and branding per tenant",
-      "Custom color schemes and themes",
-      "Custom domain mapping (tenant-specific URLs)",
-      "Tenant-specific email templates and branding",
-      "Custom login page branding",
-      "Tenant-specific notification templates",
-    ],
-  },
-
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.multiTenancy.managementTitle",
-    id: "management",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/tenants",
-        descriptionKey: "List all tenants",
-        auth: "Required",
-        permission: "Tenants.View",
-      },
-      {
-        method: "POST",
-        path: "/api/tenants",
-        descriptionKey: "Create new tenant",
-        auth: "Required",
-        permission: "Tenants.Create",
-      },
-      {
-        method: "PUT",
-        path: "/api/tenants/{id}",
-        descriptionKey: "Update tenant settings",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-      {
-        method: "POST",
-        path: "/api/tenants/{id}/activate",
-        descriptionKey: "Activate tenant",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-      {
-        method: "POST",
-        path: "/api/tenants/{id}/deactivate",
-        descriptionKey: "Deactivate tenant",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-    ],
-  },
-
-  // ═ Custom Domain Management ═
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.multiTenancy.domainTitle",
-    id: "custom-domains",
-  },
-  { type: "paragraph", contentKey: "commercial.multiTenancy.domainIntro" },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "globe",
-        titleKey: "commercial.multiTenancy.domainAutoSub",
-        descriptionKey: "commercial.multiTenancy.domainAutoSubDesc",
-      },
-      {
-        icon: "link",
-        titleKey: "commercial.multiTenancy.domainCustom",
-        descriptionKey: "commercial.multiTenancy.domainCustomDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.multiTenancy.domainDns",
-        descriptionKey: "commercial.multiTenancy.domainDnsDesc",
-      },
-      {
-        icon: "settings",
-        titleKey: "commercial.multiTenancy.domainConfig",
-        descriptionKey: "commercial.multiTenancy.domainConfigDesc",
-      },
-      {
-        icon: "zap",
-        titleKey: "commercial.multiTenancy.domainPrimary",
-        descriptionKey: "commercial.multiTenancy.domainPrimaryDesc",
-      },
-      {
-        icon: "key",
-        titleKey: "commercial.multiTenancy.domainRebrand",
-        descriptionKey: "commercial.multiTenancy.domainRebrandDesc",
-      },
-    ],
-  },
-
-  // White-Label Domain Architecture
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "commercial.multiTenancy.domainWhiteLabelTitle",
-    id: "white-label-domains",
-  },
-  { type: "paragraph", contentKey: "commercial.multiTenancy.domainWhiteLabelContent" },
-  {
-    type: "flowchart",
-    title: "Custom Domain Setup",
-    direction: "vertical",
-    nodes: [
-      { id: "add", label: "Tenant Admin adds custom domain", type: "default" },
-      { id: "verify", label: "DNS Verification (CNAME + TXT)", type: "primary" },
-      { id: "active", label: "Domain Active & Verified ✓", type: "success" },
-      { id: "primary", label: "Set as Primary Domain", type: "info" },
-    ],
-    connections: [
-      { from: "add", to: "verify" },
-      { from: "verify", to: "active" },
-      { from: "active", to: "primary" },
-    ],
-  },
-
-  // Domain API Endpoints
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "commercial.multiTenancy.domainApiTitle",
-    id: "domain-api",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/tenants/{id}/domains",
-        descriptionKey: "List all tenant domains with DNS config metadata",
-        auth: "Required",
-        permission: "Tenants.View",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/tenants/{id}/domains",
-        descriptionKey: "Add custom domain with auto verification token",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/tenants/{id}/domains/{domainId}/verify",
-        descriptionKey: "Trigger DNS verification check",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-      {
-        method: "PUT",
-        path: "/api/v1/tenants/{id}/domains/{domainId}/set-primary",
-        descriptionKey: "Set domain as primary for the tenant",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-      {
-        method: "DELETE",
-        path: "/api/v1/tenants/{id}/domains/{domainId}",
-        descriptionKey: "Remove custom domain (auto domains protected)",
-        auth: "Required",
-        permission: "Tenants.Update",
-      },
-    ],
-  },
-
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "commercial.multiTenancy.domainTip",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "commercial/multi-tenancy",
   titleKey: "commercial.multiTenancy.title",
-  descriptionKey: "commercial.multiTenancy.description",
   category: "commercial-enterprise",
   order: 1,
   sections,
-  relatedSlugs: ["commercial/roles-permissions", "commercial/audit-compliance"],
-  lastUpdated: "2026-03-16",
+  relatedSlugs: ["commercial/roles-permissions","commercial/audit-compliance"],
+  lastUpdated: "2026-06-07",
 });

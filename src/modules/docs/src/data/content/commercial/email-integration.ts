@@ -2,141 +2,117 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.emailIntegration.intro" },
-
-  // ─── Email Delivery Pipeline ────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.emailIntegration.pipelineTitle",
-    id: "pipeline",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    direction: "horizontal",
-    title: "Email Delivery Pipeline",
-    nodes: [
-      { id: "trigger", label: "Business Event", type: "default" },
-      { id: "resolve", label: "Resolve Template", type: "info" },
-      { id: "render", label: "Scriban Render", type: "primary" },
-      { id: "queue", label: "Channel Queue", type: "warning" },
-      { id: "send", label: "SMTP / SendGrid", type: "success" },
-      { id: "retry", label: "Retry on Failure", type: "danger" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "trigger", to: "resolve" },
-      { from: "resolve", to: "render" },
-      { from: "render", to: "queue" },
-      { from: "queue", to: "send" },
-      { from: "send", to: "retry", label: "Failed" },
+    "rows": [
+      [
+        "Page route",
+        "/commercial/email-integration",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial/email-integration.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Commercial route",
+        "SCRIPE-Frontend/src/app/(com-docs)/commercial/[...slug]/page.tsx",
+        "Commercial pages use the same docs runtime with a /commercial route prefix and commercial navigation categories."
+      ],
+      [
+        "Truth boundary",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/commercial",
+        "Commercial content must describe implemented capability conservatively and avoid unsupported absolutes, exact counts, or roadmap-as-current claims."
+      ],
+      [
+        "Implementation evidence",
+        "SCRIPE-Backend, SCRIPE-Frontend, tools/scripe-cli, tools/scripe-studio",
+        "Any commercial capability claim should trace back to source files, package manifests, routes, controllers, or configuration."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── Email Providers ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.emailIntegration.providersTitle",
-    id: "providers",
-  },
-  {
-    type: "table",
-    headers: ["Provider", "Configuration", "Use Case"],
-    rows: [
-      ["SMTP", "Host, port, credentials", "Self-hosted, on-premise"],
-      ["SendGrid", "API key", "Cloud, high-volume delivery"],
-      ["Mailgun", "API key + domain", "Developer-friendly API"],
-      ["Amazon SES", "Access key + region", "AWS infrastructure"],
-      ["Custom", "Implement IEmailSender", "Any provider via adapter"],
-    ],
-  },
-
-  // ─── Template System ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.emailIntegration.templatesTitle",
-    id: "templates",
-  },
-  { type: "paragraph", contentKey: "commercial.emailIntegration.templatesContent" },
-  {
-    type: "table",
-    headers: ["Feature", "Description"],
-    rows: [
-      ["Scriban engine", "Full Liquid-compatible templating with loops, conditions, filters"],
-      ["Bilingual", "Arabic and English templates with automatic language detection"],
-      ["Placeholder validation", "Schema-validated variables prevent runtime template errors"],
-      ["Live preview", "WYSIWYG editor with real-time rendering in the admin panel"],
-      ["Version history", "Track template changes with rollback capability"],
-    ],
-  },
-
-  // ─── Features ───────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.emailIntegration.featuresTitle",
-    id: "features",
-  },
-  {
-    type: "feature-grid",
-    columns: 2,
-    items: [
-      {
-        icon: "zap",
-        titleKey: "commercial.emailIntegration.queueBased",
-        descriptionKey: "commercial.emailIntegration.queueBasedDesc",
-      },
-      {
-        icon: "globe",
-        titleKey: "commercial.emailIntegration.bilingual",
-        descriptionKey: "commercial.emailIntegration.bilingualDesc",
-      },
-      {
-        icon: "shield",
-        titleKey: "commercial.emailIntegration.retryLogic",
-        descriptionKey: "commercial.emailIntegration.retryLogicDesc",
-      },
-      {
-        icon: "bar-chart",
-        titleKey: "commercial.emailIntegration.tracking",
-        descriptionKey: "commercial.emailIntegration.trackingDesc",
-      },
-    ],
-  },
-
-  // ─── Configuration ──────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.emailIntegration.configTitle", id: "config" },
-  {
-    type: "code",
-    language: "json",
-    filename: "Email Configuration",
-    code: `{
-  "EmailSettings": {
-    "Provider": "smtp",
-    "FromEmail": "no-reply@scripe.com",
-    "FromName": "SCRIPE Platform",
-    "Smtp": {
-      "Host": "smtp.office365.com",
-      "Port": 587,
-      "EnableSsl": true
-    },
-    "RetryPolicy": {
-      "MaxRetries": 3,
-      "BackoffSeconds": [30, 120, 600]
-    }
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
 ];
 
 registerPage({
   slug: "commercial/email-integration",
   titleKey: "commercial.emailIntegration.title",
-  descriptionKey: "commercial.emailIntegration.description",
   category: "commercial-integration",
   order: 3,
   sections,
-  relatedSlugs: ["commercial/webhook-integration", "commercial/message-templates"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["commercial/webhook-integration","commercial/message-templates"],
+  lastUpdated: "2026-06-07",
 });

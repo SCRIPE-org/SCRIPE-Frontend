@@ -2,288 +2,117 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // ─── Intro ────────────────────────────────────────────────
-  { type: "paragraph", contentKey: "modules.compliance.dsr.intro" },
   {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.compliance.dsr.infoTitle",
-    contentKey: "modules.compliance.dsr.infoContent",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-
-  // ─── Request Types ────────────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.typesTitle",
-    id: "request-types",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.typesIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.dsr.typesType",
-      "modules.compliance.dsr.typesDesc",
-      "modules.compliance.dsr.typesGdpr",
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    rows: [
-      ["Access", "modules.compliance.dsr.typesAccessDesc", "Article 15"],
-      ["Export", "modules.compliance.dsr.typesExportDesc", "Article 20"],
-      ["Erasure", "modules.compliance.dsr.typesErasureDesc", "Article 17"],
-      ["Rectification", "modules.compliance.dsr.typesRectificationDesc", "Article 16"],
-      ["Restriction", "modules.compliance.dsr.typesRestrictionDesc", "Article 18"],
+    "rows": [
+      [
+        "Page route",
+        "/docs/modules/compliance-dsr",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/compliance/compliance-dsr.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Compliance module",
+        "SCRIPE-Backend/src/Modules/Compliance",
+        "Compliance owns data subject requests, consents, data inventory, regulations, retention policies, reports, and compliance jobs."
+      ],
+      [
+        "Compliance controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Compliance",
+        "Controller endpoints expose DSR, consent, inventory, regulation, retention, and reporting workflows."
+      ],
+      [
+        "Frontend compliance routes",
+        "SCRIPE-Frontend/src/app/(modules)/(compliance)",
+        "UI routes cover compliance overview, consent, DSR list/detail, data inventory, regulations, retention, and reports."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── DSR Lifecycle ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.lifecycleTitle",
-    id: "dsr-lifecycle",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.lifecycleIntro" },
-  {
-    type: "flowchart",
-    titleKey: "modules.compliance.dsr.lifecycleFlowTitle",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "create",
-        labelKey: "modules.compliance.dsr.nodeSubmit",
-        type: "info",
-        descriptionKey: "modules.compliance.dsr.descSubmit",
-      },
-      {
-        id: "pending",
-        labelKey: "modules.compliance.dsr.nodePending",
-        type: "primary",
-        descriptionKey: "modules.compliance.dsr.descPending",
-      },
-      {
-        id: "processing",
-        labelKey: "modules.compliance.dsr.nodeProcessing",
-        type: "warning",
-        descriptionKey: "modules.compliance.dsr.descProcessing",
-      },
-      {
-        id: "approval",
-        labelKey: "modules.compliance.dsr.nodeApproval",
-        type: "default",
-        descriptionKey: "modules.compliance.dsr.descApproval",
-      },
-      {
-        id: "completed",
-        labelKey: "modules.compliance.dsr.nodeCompleted",
-        type: "success",
-        descriptionKey: "modules.compliance.dsr.descCompleted",
-      },
-      {
-        id: "rejected",
-        labelKey: "modules.compliance.dsr.nodeRejected",
-        type: "danger",
-        descriptionKey: "modules.compliance.dsr.descRejected",
-      },
-    ],
-    connections: [
-      { from: "create", to: "pending", labelKey: "modules.compliance.dsr.conn1" },
-      { from: "pending", to: "processing", labelKey: "modules.compliance.dsr.conn2" },
-      { from: "processing", to: "completed", labelKey: "modules.compliance.dsr.conn3" },
-      { from: "processing", to: "approval", labelKey: "modules.compliance.dsr.conn4" },
-      { from: "approval", to: "completed", labelKey: "modules.compliance.dsr.conn5" },
-      { from: "approval", to: "rejected", labelKey: "modules.compliance.dsr.conn6" },
-    ],
-  },
-
-  // ─── SLA Tracking ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.slaTitle",
-    id: "sla-tracking",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.slaIntro" },
-  {
-    type: "info",
-    variant: "warning",
-    titleKey: "modules.compliance.dsr.slaWarningTitle",
-    contentKey: "modules.compliance.dsr.slaWarningContent",
-  },
-
-  // ─── Entities Reference ───────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.entitiesTitle",
-    id: "entities",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.entitiesIntro" },
-  {
-    type: "table",
-    headers: [
-      "modules.compliance.dsr.field",
-      "modules.compliance.dsr.type",
-      "modules.compliance.dsr.description",
-    ],
-    rows: [
-      ["Id", "Guid", "modules.compliance.dsr.fId"],
-      ["TenantId", "Guid", "modules.compliance.dsr.fTenantId"],
-      ["SubjectEmail", "String", "modules.compliance.dsr.fSubjectEmail"],
-      ["RequestType", "Enum", "modules.compliance.dsr.fRequestType"],
-      ["Status", "Enum", "modules.compliance.dsr.fStatus"],
-      ["Deadline", "DateTime", "modules.compliance.dsr.fDeadline"],
-      ["ErasureConfirmed", "Boolean", "modules.compliance.dsr.fErasureConfirmed"],
-      ["ExportFileUrl", "String", "modules.compliance.dsr.fExportFileUrl"],
-      ["AssignedTo", "Guid?", "modules.compliance.dsr.fAssignedTo"],
-    ],
-  },
-
-  // ─── Command Handlers ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.handlersTitle",
-    id: "command-handlers",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.handlersIntro" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "SubmitDsrCommandHandler.cs",
-    highlightLines: [9, 13, 20],
-    code: `public class SubmitDsrCommandHandler : ICommandHandler<SubmitDsrCommand, Guid>
-{
-    public async Task<Result<Guid>> Handle(SubmitDsrCommand request, CancellationToken ct)
-    {
-        // 1. Calculate SLA deadline based on regulation profile
-        var regulation = await _regulationRepo.GetByCodeAsync(request.RegulationCode, ct);
-        var deadline = DateTime.UtcNow.AddDays(regulation.ResponseSlaDays);
-        
-        // 2. Create the entity
-        var dsr = new DataSubjectRequest
-        {
-            TenantId = _tenantContext.TenantId,
-            SubjectEmail = request.SubjectEmail,
-            RequestType = request.RequestType,
-            RegulationCode = request.RegulationCode,
-            Status = DsrStatus.Pending,
-            Deadline = deadline
-        };
-        
-        await _repository.AddAsync(dsr, ct);
-        await _unitOfWork.SaveChangesAsync(ct);
-        
-        // 3. Domain event triggers webhook
-        dsr.AddDomainEvent(new DsrSubmittedEvent(dsr.Id));
-        
-        return Result<Guid>.Success(dsr.Id);
-    }
-}`,
-  },
-
-  // ─── Webhooks ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.webhooksTitle",
-    id: "webhooks",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.webhooksIntro" },
-  {
-    type: "info",
-    variant: "tip",
-    titleKey: "modules.compliance.dsr.webhooksSuccessTitle",
-    contentKey: "modules.compliance.dsr.webhooksSuccessContent",
-  },
-
-  // ─── API Endpoints ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.endpointsTitle",
-    id: "endpoints",
-  },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/compliance/dsr",
-        descriptionKey: "modules.compliance.dsr.epSubmit",
-        auth: "AdminOnly",
-        permission: "compliance_dsr.create",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/dsr",
-        descriptionKey: "modules.compliance.dsr.epList",
-        auth: "AdminOnly",
-        permission: "compliance_dsr.view",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/compliance/dsr/{id}",
-        descriptionKey: "modules.compliance.dsr.epGet",
-        auth: "AdminOnly",
-        permission: "compliance_dsr.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/compliance/dsr/{id}/review",
-        descriptionKey: "modules.compliance.dsr.epReview",
-        auth: "AdminOnly",
-        permission: "compliance_dsr.review",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/compliance/dsr/{id}/assign",
-        descriptionKey: "modules.compliance.dsr.epAssign",
-        auth: "AdminOnly",
-        permission: "compliance_dsr.manage",
-      },
-    ],
-  },
-
-  // ─── Quick Start ──────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.quickStartTitle",
-    id: "quick-start",
-  },
-  {
-    type: "step-guide",
-    steps: [
-      {
-        titleKey: "modules.compliance.dsr.step1Title",
-        contentKey: "modules.compliance.dsr.step1Content",
-      },
-      {
-        titleKey: "modules.compliance.dsr.step2Title",
-        contentKey: "modules.compliance.dsr.step2Content",
-        code: `POST /api/v1/compliance/dsr
-{
-  "requestType": "Export",
-  "regulationCode": "GDPR",
-  "subjectEmail": "user@example.com"
-}`,
-        codeLanguage: "json",
-      },
-      {
-        titleKey: "modules.compliance.dsr.step3Title",
-        contentKey: "modules.compliance.dsr.step3Content",
-      },
-    ],
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "modules/compliance-dsr",
   titleKey: "modules.compliance.dsr.title",
-  descriptionKey: "modules.compliance.dsr.description",
   category: "modules",
   order: 2,
   sections,
-  relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
-  lastUpdated: "2026-05-03",
+  relatedSlugs: ["modules/compliance-overview","infrastructure/background-jobs"],
+  lastUpdated: "2026-06-07",
 });

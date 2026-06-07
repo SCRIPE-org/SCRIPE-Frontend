@@ -2,356 +2,122 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "frontend.crudSystem.intro" },
-
-  // ─── Architecture Overview ────────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.crudSystem.architectureTitle",
-    id: "architecture",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
   {
-    type: "flowchart",
-    title: "CRUD System Architecture",
-    direction: "vertical",
-    nodes: [
-      {
-        id: "view",
-        label: "GenericCrudView",
-        type: "primary",
-        description: "Orchestrates table, dialogs, pagination",
-      },
-      {
-        id: "datatable",
-        label: "DataTable",
-        type: "info",
-        description: "Flexible table with sorting, search, selection",
-      },
-      {
-        id: "formDialog",
-        label: "FormDialog",
-        type: "success",
-        description: "Create/Edit form in a dialog",
-      },
-      {
-        id: "confirm",
-        label: "ConfirmDialog",
-        type: "danger",
-        description: "Delete/bulk action confirmation",
-      },
-      {
-        id: "viewModel",
-        label: "useCrudViewModel",
-        type: "warning",
-        description: "Hook: all CRUD state & mutations",
-      },
-      {
-        id: "repo",
-        label: "ICrudRepository",
-        type: "default",
-        description: "Data access abstraction",
-      },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "view", to: "datatable" },
-      { from: "view", to: "formDialog" },
-      { from: "view", to: "confirm" },
-      { from: "view", to: "viewModel", label: "uses" },
-      { from: "viewModel", to: "repo", label: "calls" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/frontend/crud-system",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/frontend/crud-system.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Route groups",
+        "SCRIPE-Frontend/src/app",
+        "Next.js App Router route groups include auth, modules, docs, commercial docs, studio/customizer, and hub areas."
+      ],
+      [
+        "Core frontend",
+        "SCRIPE-Frontend/src/core",
+        "Core owns UI components, providers, config, network, navigation, stores, permissions, locale registry, and layout systems."
+      ],
+      [
+        "Frontend modules",
+        "SCRIPE-Frontend/src/modules",
+        "Feature modules include auth, identity, entitlements, compliance, marketplace, messaging, plugins, monitoring, customization, ecosystem, docs, profile, and mock business modules."
+      ],
+      [
+        "State/data dependencies",
+        "SCRIPE-Frontend/package.json",
+        "Current dependencies include TanStack Query v5, Zustand v5, Axios, SignalR, Radix UI, and Shadcn-style core UI components."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // ─── useCrudViewModel ─────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.crudSystem.viewModelTitle",
-    id: "use-crud-viewmodel",
-  },
-  { type: "paragraph", contentKey: "frontend.crudSystem.viewModelIntro" },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "useCrudViewModel — Configuration",
-    code: `interface CrudViewModelConfig<T, TCreate, TUpdate> {
-  // Data fetching
-  queryKey: string;
-  fetchFn: (params: PaginationParams) => Promise<PaginatedResult<T>>;
-  
-  // Mutations (optional)
-  createFn?: (data: TCreate) => Promise<T>;
-  updateFn?: (id: string, data: TUpdate) => Promise<T>;
-  deleteFn?: (id: string) => Promise<void>;
-  
-  // Bulk operations (optional)
-  bulkDeleteFn?: (ids: string[]) => Promise<void>;
-  bulkDeleteAllFn?: (filter: FilterParams, excludeIds: string[]) => Promise<void>;
-  bulkActionFn?: (ids: string[], action: string) => Promise<void>;
-  
-  // Configuration
-  defaultPageSize?: number;           // Default: 10
-  searchDebounceMs?: number;          // Default: 300
-  enableSelection?: boolean;          // Default: false
-  enableBulkActions?: boolean;        // Default: false
-  enableGlobalFilter?: boolean;       // Default: true
-  staleTime?: number;                 // Default: 5 min
-  
-  // Form configuration
-  formSchema?: ZodSchema;             // For validation
-  defaultFormValues?: Partial<TCreate>;
-  
-  // Callbacks
-  onCreateSuccess?: (item: T) => void;
-  onUpdateSuccess?: (item: T) => void;
-  onDeleteSuccess?: () => void;
-  onError?: (error: Error) => void;
-}`,
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "useCrudViewModel — Returned Interface",
-    code: `interface CrudViewModelReturn<T> {
-  // Data
-  items: T[];
-  totalCount: number;
-  isLoading: boolean;
-  error: Error | null;
-  
-  // Pagination
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  setPage: (page: number) => void;
-  setPageSize: (size: number) => void;
-  
-  // Search
-  search: string;
-  setSearch: (search: string) => void;
-  debouncedSearch: string;
-  
-  // Sorting
-  sortBy: string;
-  sortDirection: 'asc' | 'desc';
-  setSorting: (field: string, direction: 'asc' | 'desc') => void;
-  
-  // Selection
-  selectedIds: Set<string>;
-  selectAll: boolean;
-  toggleSelect: (id: string) => void;
-  toggleSelectAll: () => void;
-  clearSelection: () => void;
-  
-  // CRUD operations
-  create: UseMutationResult<T, Error, TCreate>;
-  update: UseMutationResult<T, Error, { id: string; data: TUpdate }>;
-  remove: UseMutationResult<void, Error, string>;
-  
-  // Dialog state
-  isCreateDialogOpen: boolean;
-  isEditDialogOpen: boolean;
-  isDeleteDialogOpen: boolean;
-  editingItem: T | null;
-  deletingItem: T | null;
-  openCreateDialog: () => void;
-  openEditDialog: (item: T) => void;
-  openDeleteDialog: (item: T) => void;
-  closeDialogs: () => void;
-  
-  // Bulk
-  bulkDelete: () => void;
-  bulkAction: (action: string) => void;
-}`,
-  },
-
-  // ─── GenericCrudView ──────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.crudSystem.genericCrudViewTitle",
-    id: "generic-crud-view",
-  },
-  { type: "paragraph", contentKey: "frontend.crudSystem.genericCrudViewIntro" },
-  {
-    type: "code",
-    language: "tsx",
-    filename: "GenericCrudView — Usage Example",
-    code: `<GenericCrudView
-  crud={vm.table}
-  columns={vm.columns}
-  title={t("admins.title")}
-  
-  // Optional customization
-  createButtonLabel={t("admins.create")}
-  searchPlaceholder={t("admins.searchPlaceholder")}
-  emptyMessage={t("admins.noData")}
-  
-  // Form configuration
-  createForm={<AdminForm mode="create" />}
-  editForm={<AdminForm mode="edit" item={vm.table.editingItem} />}
-  
-  // Slot components
-  headerSlot={<FilterSection {...vm.filters} />}
-  beforeTableSlot={<StatisticsSection {...vm.statistics} />}
-/>`,
-  },
-
-  // ─── Column System ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.crudSystem.columnsTitle",
-    id: "column-system",
-  },
-  {
-    type: "code",
-    language: "typescript",
-    filename: "Column Helper API — All Builder Methods",
-    code: `const column = createColumnHelper<Admin>();
-
-// Built-in column types:
-column.index("No");                        // Auto-incrementing row number
-column.text("firstName", t("name"));       // Simple text rendering
-column.date("createdAt", t("date"));       // Formatted date (locale-aware)
-column.date("createdAt", t("date"), {      // With custom format
-  locale: "en-GB",
-  format: "dd/MM/yyyy HH:mm"
-});
-
-column.status("isActive", t("status"), {   // Status badge with colors
-  true:  { label: t("active"),   color: "success" },
-  false: { label: t("inactive"), color: "danger" },
-});
-
-column.switch("isBlocked", t("block"), {    // Toggle switch
-  getChecked: (row) => row.isBlocked,
-  onChange: (row, checked) => vm.toggleBlock(row.id, checked),
-  isLoading: vm.isBlockLoading,
-});
-
-column.link("email", t("email"), {          // Clickable link
-  type: "email",                            // "email" | "phone" | "url"
-});
-
-column.image("avatarUrl", t("avatar"), {    // Image thumbnail
-  width: 40, height: 40,
-  fallback: "/default-avatar.png",
-});
-
-column.custom("actions", t("actions"), (row) => (  // Fully custom
-  <ActionButtons
-    onEdit={() => vm.table.openEditDialog(row)}
-    onDelete={() => vm.table.openDeleteDialog(row)}
-  />
-));`,
-  },
-
-  // ─── DataTable ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.crudSystem.dataTableTitle",
-    id: "data-table",
-  },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "🔍",
-        titleKey: "frontend.crudSystem.searchTitle",
-        descriptionKey: "frontend.crudSystem.searchDesc",
-      },
-      {
-        icon: "🔄",
-        titleKey: "frontend.crudSystem.sortingTitle",
-        descriptionKey: "frontend.crudSystem.sortingDesc",
-      },
-      {
-        icon: "📄",
-        titleKey: "frontend.crudSystem.paginationTitle",
-        descriptionKey: "frontend.crudSystem.paginationDesc",
-      },
-      {
-        icon: "☑️",
-        titleKey: "frontend.crudSystem.selectionTitle",
-        descriptionKey: "frontend.crudSystem.selectionDesc",
-      },
-      {
-        icon: "📱",
-        titleKey: "frontend.crudSystem.responsiveTitle",
-        descriptionKey: "frontend.crudSystem.responsiveDesc",
-      },
-      {
-        icon: "🌐",
-        titleKey: "frontend.crudSystem.rtlTitle",
-        descriptionKey: "frontend.crudSystem.rtlDesc",
-      },
-    ],
-  },
-
-  // ─── Form System ─────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "frontend.crudSystem.formTitle",
-    id: "form-system",
-  },
-  { type: "paragraph", contentKey: "frontend.crudSystem.formIntro" },
-  {
-    type: "code",
-    language: "tsx",
-    filename: "GenericForm + FormDialog — Usage",
-    code: `// GenericForm provides schema-driven form rendering
-<GenericForm
-  schema={adminSchema}
-  defaultValues={editingAdmin}
-  onSubmit={(data) => crud.update.mutate({ id: admin.id, data })}
-  isLoading={crud.update.isPending}
-  fields={[
-    { name: "firstName", label: t("firstName"), type: "text" },
-    { name: "email", label: t("email"), type: "email" },
-    { name: "roleId", label: t("role"), type: "select",
-      options: roles.map(r => ({ value: r.id, label: r.name })) },
-    { name: "isActive", label: t("active"), type: "switch" },
-  ]}
-/>
-
-// FormDialog wraps GenericForm in a dialog
-<FormDialog
-  open={crud.isEditDialogOpen}
-  onClose={crud.closeDialogs}
-  title={t("admins.editTitle")}
->
-  <GenericForm ... />
-</FormDialog>
-
-// ConfirmDialog for destructive actions
-<ConfirmDialog
-  open={crud.isDeleteDialogOpen}
-  onConfirm={() => crud.remove.mutate(crud.deletingItem?.id)}
-  onCancel={crud.closeDialogs}
-  title={t("admins.deleteTitle")}
-  message={t("admins.deleteMessage", { name: crud.deletingItem?.firstName })}
-  variant="danger"
-  isLoading={crud.remove.isPending}
-/>`,
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "frontend.crudSystem.extensionTip",
-  },
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
+  }
 ];
 
 registerPage({
   slug: "frontend/crud-system",
   titleKey: "frontend.crudSystem.title",
-  descriptionKey: "frontend.crudSystem.description",
   category: "frontend",
   order: 2,
   sections,
-  relatedSlugs: ["frontend/state-management", "architecture/frontend", "frontend/localization"],
-  lastUpdated: "2026-02-20",
+  relatedSlugs: ["frontend/state-management","architecture/frontend","frontend/localization"],
+  lastUpdated: "2026-06-07",
 });

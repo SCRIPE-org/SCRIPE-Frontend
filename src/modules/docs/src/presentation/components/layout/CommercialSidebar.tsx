@@ -423,7 +423,7 @@ export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarP
 
       {/* CTA */}
       <div className="commercial-sidebar-cta">
-        <a href="mailto:sales@scripe.com" className="commercial-sidebar-cta-btn">
+        <a href="mailto:sales@scripe.org" className="commercial-sidebar-cta-btn">
           <svg
             width="16"
             height="16"

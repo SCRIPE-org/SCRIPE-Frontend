@@ -2,292 +2,122 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "modules.billingEngine.intro" },
-
-  // ─── IPaymentGateway Abstraction ──────────────────────────────
   {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.abstractionTitle",
-    id: "payment-gateway-abstraction",
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Current Implementation",
+    "id": "current-implementation"
   },
-  { type: "paragraph", contentKey: "modules.billingEngine.abstractionIntro" },
   {
-    type: "code",
-    language: "csharp",
-    filename: "Core.Application/Abstractions/Payment/IPaymentGateway.cs",
-    code: `public interface IPaymentGateway
-{
-    Task<CreateCheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request);
-    Task<CreatePaymentLinkResult> CreatePaymentLinkAsync(CreatePaymentLinkRequest request);
-    Task<CreatePortalSessionResult> CreatePortalSessionAsync(string customerId, string returnUrl);
-    Task<CancelSubscriptionResult> CancelSubscriptionAsync(string subscriptionId, bool cancelAtPeriodEnd);
-}`,
-  },
-
-  // ─── Three Subscription Modes ─────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.modesTitle",
-    id: "subscription-modes",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.modesIntro" },
-
-  // Mode 1
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "modules.billingEngine.mode1Title",
-    id: "mode-self-service",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.mode1Intro" },
-  {
-    type: "flowchart",
-    direction: "vertical",
-    nodes: [
-      { id: "A", label: "Tenant selects edition + billing cycle", type: "default" },
-      { id: "B", label: "POST /billing/checkout-session", type: "primary" },
-      { id: "C", label: "Stripe Checkout Session created", type: "info" },
-      { id: "D", label: "TenantSubscription → PendingPayment", type: "warning" },
-      { id: "E", label: "Tenant redirected to Stripe Checkout", type: "default" },
-      { id: "F", label: "checkout.session.completed webhook", type: "info" },
-      { id: "G", label: "HMAC signature verified", type: "default" },
-      { id: "H", label: "TenantSubscription → Active ✅", type: "success" },
+    "type": "table",
+    "headers": [
+      "Area",
+      "Verified source",
+      "Current status"
     ],
-    connections: [
-      { from: "A", to: "B" },
-      { from: "B", to: "C" },
-      { from: "C", to: "D" },
-      { from: "D", to: "E" },
-      { from: "E", to: "F" },
-      { from: "F", to: "G" },
-      { from: "G", to: "H" },
+    "rows": [
+      [
+        "Page route",
+        "/docs/modules/billing-engine",
+        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims."
+      ],
+      [
+        "Canonical content file",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/modules/entitlements/billing-engine.ts",
+        "This TypeScript file is the portal source of truth for the page body."
+      ],
+      [
+        "Registry and navigation",
+        "SCRIPE-Frontend/src/modules/docs/src/data/content/registry.ts; SCRIPE-Frontend/src/modules/docs/src/data/navigation.ts",
+        "The page is registered and navigated through the docs portal runtime."
+      ],
+      [
+        "Entitlements module",
+        "SCRIPE-Backend/src/Modules/Entitlements",
+        "Entitlements owns editions, tenant feature definitions, tenant plans, subscriptions, invoices, payment gateways, dunning, analytics, commissions, and Stripe Connect flows."
+      ],
+      [
+        "Entitlements controllers",
+        "SCRIPE-Backend/src/Host/API/Controllers/Entitlements",
+        "API controllers implement tenant plans, subscriptions, invoices, promotions, payment gateways, Stripe/PayPal/Paymob webhooks, platform Stripe, tenant Stripe Connect, analytics, and user subscription operations."
+      ],
+      [
+        "Frontend entitlements routes",
+        "SCRIPE-Frontend/src/app/(modules)/(entitlements)",
+        "Admin and self-service routes cover editions, tenant plans, features, subscriptions, invoices, payment hub, payment gateways, Stripe Connect, analytics, payouts, and commission pages."
+      ],
+      [
+        "Payment implementations",
+        "SCRIPE-Backend/src/Modules/Entitlements/Entitlements.Infrastructure/Services",
+        "Gateway services and export/reporting services are implemented in infrastructure; exact provider behavior depends on configuration and credentials."
+      ]
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Evidence Boundaries",
+    "id": "evidence-boundaries"
+  },
+  {
+    "type": "list",
+    "variant": "unordered",
+    "items": [
+      "The executable source tree is authoritative for behavior; this page avoids exact counts unless they are generated from source during the audit.",
+      "Configuration-dependent features are described as configuration-dependent. Database provider, Redis, background job, payment, identity-provider, and observability behavior still depends on runtime settings and credentials.",
+      "Legacy Markdown under docs/ and docs-export/ is treated as generated or reference material. Canonical documentation lives in SCRIPE-Frontend/src/modules/docs/src/data/content.",
+      "Commercial language is constrained to implemented source evidence and should not be read as a guarantee for roadmap, compliance certification, deployment timing, or ROI."
+    ]
+  },
+  {
+    "type": "heading",
+    "level": 2,
+    "titleKey": "Technology Snapshot",
+    "id": "technology-snapshot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Component",
+      "Current evidence",
+      "Source"
     ],
-  },
-
-  // Mode 2
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "modules.billingEngine.mode2Title",
-    id: "mode-contact-sales",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.mode2Intro" },
-  {
-    type: "flowchart",
-    direction: "vertical",
-    nodes: [
-      { id: "A", label: "Admin negotiates deal with client", type: "default" },
-      { id: "B", label: "POST /billing/payment-link", type: "primary" },
-      { id: "C", label: "Stripe Payment Link created", type: "info" },
-      { id: "D", label: "Admin sends URL to client", type: "default" },
-      { id: "E", label: "Client pays via Stripe", type: "default" },
-      { id: "F", label: "Same webhook flow as self-service", type: "success" },
-    ],
-    connections: [
-      { from: "A", to: "B" },
-      { from: "B", to: "C" },
-      { from: "C", to: "D" },
-      { from: "D", to: "E" },
-      { from: "E", to: "F" },
-    ],
-  },
-
-  // Mode 3
-  {
-    type: "heading",
-    level: 3,
-    titleKey: "modules.billingEngine.mode3Title",
-    id: "mode-manual",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.mode3Intro" },
-  {
-    type: "code",
-    language: "http",
-    code: `POST /api/v1/subscriptions/assign
-Authorization: Bearer <admin-jwt>
-
-{
-  "tenantId": "encrypted-id",
-  "editionId": "encrypted-id",
-  "subscriptionType": "Monthly",
-  "currency": "USD"
-  // No Stripe interaction — instant activation
-}`,
-  },
-
-  // ─── Stripe Webhook Handler ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.webhookTitle",
-    id: "stripe-webhook-handler",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.webhookIntro" },
-  {
-    type: "table",
-    headers: ["Event Type", "Handler Action"],
-    rows: [
-      ["checkout.session.completed", "Activate subscription, create Invoice + PaymentTransaction"],
-      ["invoice.paid", "Record renewal payment, create new subscription row"],
-      ["invoice.payment_failed", "Move to PastDue, start dunning, send warning email"],
-      ["customer.subscription.updated", "Sync status (active/past_due/canceled/unpaid)"],
-      ["customer.subscription.deleted", "Cancel subscription, trigger fallback edition"],
-      ["charge.refunded", "Create refund record, void invoice"],
-      ["payment_intent.succeeded", "Record successful payment intent"],
-    ],
-  },
-  {
-    type: "info",
-    variant: "tip",
-    contentKey: "modules.billingEngine.idempotencyIntro",
-  },
-
-  // ─── Idempotency ──────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.idempotencyTitle",
-    id: "idempotency",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.idempotencyIntro" },
-
-  // ─── Configuration ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.configTitle",
-    id: "configuration",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.configIntro" },
-  {
-    type: "code",
-    language: "json",
-    filename: "appsettings.json",
-    code: `{
-  "Stripe": {
-    "SecretKey": "sk_test_...",
-    "PublishableKey": "pk_test_...",
-    "WebhookSecret": "whsec_...",
-    "SuccessUrl": "https://app.scripe.com/billing/success",
-    "CancelUrl": "https://app.scripe.com/billing/cancel"
+    "rows": [
+      [
+        "Backend target framework",
+        "net10.0",
+        "SCRIPE-Backend/**/*.csproj"
+      ],
+      [
+        "Frontend framework",
+        "Next.js 16.1.7 with React 19.2.4",
+        "SCRIPE-Frontend/package.json"
+      ],
+      [
+        "CLI package",
+        "scripe-cli 4.0.0, Node >=20.0.0",
+        "tools/scripe-cli/package.json"
+      ],
+      [
+        "Studio",
+        "Engine/UI package version 4.0.0; Express + Socket.IO engine and Next.js UI",
+        "tools/scripe-studio/package.json; tools/scripe-studio/engine/package.json; tools/scripe-studio/ui/package.json"
+      ],
+      [
+        "Docs locale runtime",
+        "Eager docs registry for en, ar, fr, ru, zh, es, and de",
+        "SCRIPE-Frontend/src/modules/docs/src/presentation/providers/DocsI18nProvider.tsx"
+      ]
+    ]
   }
-}`,
-  },
-
-  // ─── Stripe Customer Portal ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.portalTitle",
-    id: "customer-portal",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.portalIntro" },
-
-  // ─── Edition Self-Service Fields ──────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.selfServiceTitle",
-    id: "self-service-fields",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.selfServiceIntro" },
-  {
-    type: "table",
-    headers: ["Field", "Type", "Effect"],
-    rows: [
-      [
-        "IsSelfServiceEnabled",
-        "bool",
-        "true = tenant can self-checkout. false = must contact sales.",
-      ],
-      [
-        "IsContactSalesOnly",
-        "bool",
-        "true = checkout button triggers payment link flow, not checkout session.",
-      ],
-    ],
-  },
-
-  // ─── Zero-Decimal Currency ────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.currencyTitle",
-    id: "zero-decimal-currency",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.currencyIntro" },
-
-  // ─── API Endpoints ────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.billingEngine.endpointsTitle",
-    id: "api-endpoints",
-  },
-  { type: "paragraph", contentKey: "modules.billingEngine.endpointsIntro" },
-  {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "POST",
-        path: "/api/v1/billing/tenants/{id}/checkout-session",
-        descriptionKey: "modules.billingEngine.ep.checkout",
-        auth: "JWT",
-        permission: "billing.manage",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/billing/tenants/{id}/payment-link",
-        descriptionKey: "modules.billingEngine.ep.paymentLink",
-        auth: "JWT",
-        permission: "billing.manage",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/billing/tenants/{id}/portal-session",
-        descriptionKey: "modules.billingEngine.ep.portal",
-        auth: "JWT",
-        permission: "billing.manage",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/billing/tenants/{id}/cancel-stripe",
-        descriptionKey: "modules.billingEngine.ep.cancel",
-        auth: "JWT",
-        permission: "billing.manage",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/billing/dashboard",
-        descriptionKey: "modules.billingEngine.ep.dashboard",
-        auth: "JWT",
-        permission: "billing.view",
-      },
-      {
-        method: "POST",
-        path: "/api/stripe-webhooks",
-        descriptionKey: "Stripe webhook receiver — no auth, HMAC-verified",
-        auth: "HMAC",
-        permission: "",
-      },
-    ],
-  },
 ];
 
 registerPage({
   slug: "modules/billing-engine",
   titleKey: "modules.billingEngine.title",
-  descriptionKey: "modules.billingEngine.description",
   category: "modules",
   order: 6,
   sections,
-  relatedSlugs: [
-    "modules/invoices",
-    "modules/dunning",
-    "modules/subscriptions",
-    "features/webhook-system",
-  ],
-  lastUpdated: "2026-04-18",
+  relatedSlugs: ["modules/invoices","modules/dunning","modules/subscriptions","features/webhook-system"],
+  lastUpdated: "2026-06-07",
 });
