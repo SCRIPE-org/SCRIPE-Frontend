@@ -410,14 +410,6 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  // M11: Server-first admin preferences lifecycle — syncs settings to/from AdminSettingsJson
-  // Returns isSettingsReady=true immediately if localStorage has cache (optimistic render),
-  // shows shimmer ONLY on fresh login (no cache) until server data arrives.
-  // isTransitioning=true briefly when server reconciles a different layoutTemplate.
-  const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
-  const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
-  const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
-
   // Detect "fresh login" vs "page refresh": sessionStorage flag is set by
   // useAppStore.setAuth() and survives the redirect to /dashboard, but
   // does NOT survive a new browser tab or manual URL entry.
@@ -426,25 +418,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     try { return sessionStorage.getItem(STORAGE_KEYS.JUST_LOGGED_IN) === "1"; } catch { return false; }
   });
 
-  const isNavReady = !isInitialLoading && routesLoadedAt !== null;
-  const isSettingsCompleted = isSettingsReady && !isTransitioning;
-
-  // Gate 1: Wait for admin settings to be ready (cache hit or server fetch),
-  // layout transition to complete, and navigation/routes to be loaded.
-  // On fresh login, we wait for both settings and navigation queries.
-  // On page refresh/regular load, we check isSettingsReady and isTransitioning.
-  const shouldBlock = isFreshLogin 
-    ? (!isSettingsCompleted || !isNavReady) 
-    : (!isSettingsReady || isTransitioning);
-
-  if (shouldBlock) {
-    // Fresh login → premium welcome card with user avatar + name
-    // Page refresh → lightweight shimmer (user is already authenticated)
-    return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
-  }
-
-  // Wrap with TenantBrandingProvider, then delegate to inner component
-  // that can use useTenantBranding() since it's now INSIDE the provider.
+  // Wrap with TenantBrandingProvider immediately, then delegate to inner component
+  // so the loader mounts under the same context tree and does not remount.
   return (
     <TenantBrandingProvider>
       <DashboardLayoutContent isFreshLogin={isFreshLogin}>{children}</DashboardLayoutContent>
@@ -452,10 +427,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   );
 }
 
-// ── Inner component: gates on branding + renders the actual layout ──
+// ── Inner component: gates on branding + settings + routes + renders the actual layout ──
 // Must be a separate component so useTenantBranding() is called INSIDE
 // TenantBrandingProvider's React context.
 function DashboardLayoutContent({ children, isFreshLogin }: { children: React.ReactNode; isFreshLogin: boolean }) {
+  const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
   const settings = useSettings();
   const { isLoading: isBrandingLoading } = useTenantBranding();
   const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
@@ -524,11 +500,12 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
   }, [isBrandingLoading, isSettingsMergeSettled]);
 
   const isNavReady = !isInitialLoading && routesLoadedAt !== null;
+  const isSettingsCompleted = isSettingsReady && !isTransitioning;
 
-  // Fresh login blocks on branding loading, settings merge, AND navigation routes/menus.
+  // Unify all loading gates under a single layout wrapper
   const shouldBlockContent = isFreshLogin
-    ? (isBrandingLoading || !isSettingsMergeSettled || !isNavReady)
-    : (isBrandingLoading || !isSettingsMergeSettled);
+    ? (!isSettingsCompleted || isBrandingLoading || !isSettingsMergeSettled || !isNavReady)
+    : (!isSettingsReady || isTransitioning || isBrandingLoading || !isSettingsMergeSettled);
 
   if (shouldBlockContent) {
     // Fresh login → premium welcome card; Page refresh → lightweight shimmer

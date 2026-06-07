@@ -20,7 +20,7 @@ import type { SsoCallbackError, SsoCallbackState } from "./useSsoCallbackHandler
 export interface SsoCallbackDeps {
   authRepository: IAuthRepository;
   ssoRepository: ISsoRepository;
-  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
+  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[], isFreshLogin?: boolean) => void;
   setSubscriptionInfo: (
     status: string | null,
     grace: string | null,
@@ -68,7 +68,7 @@ async function completeAdminLogin(
 ) {
   secureTokenService.setAccessToken(accessToken);
   const user = await deps.authRepository.getMe();
-  deps.setAuth(user, (user.permissions || []) as PermissionCode[], []);
+  deps.setAuth(user, (user.permissions || []) as PermissionCode[], [], true);
   deps.setSubscriptionInfo(
     subscription.status ?? null,
     subscription.gracePhase ?? null,

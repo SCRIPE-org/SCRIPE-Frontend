@@ -1,16 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useNavigation as _useNavigation } from "@core/providers/navigation-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
-import { secureTokenService } from "@core/common/secure-token-service";
-import { appLogger } from "@/core/common/logger";
-import { TwoFactorRequiredError } from "@modules/auth/core/domain/errors/AuthErrors";
 
 export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
 
@@ -71,7 +67,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
       );
       const { user } = result;
 
-      setAuth(user, user.permissions || [], []);
+      setAuth(user, user.permissions || [], [], true);
       useAppStore
         .getState()
         .setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);

@@ -38,7 +38,7 @@ export function useTokenLogin() {
         const user = await authRepository.getMe();
 
         // 3. Set the user in the Zustand auth store
-        setAuth(user, user.permissions || [], []);
+        setAuth(user, user.permissions || [], [], true);
 
         // 4. Invalidate any stale queries so protected pages reload fresh
         queryClient.invalidateQueries();
