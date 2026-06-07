@@ -30,7 +30,7 @@ function isPlatformDomain(hostname: string): boolean {
     // Ignore invalid URL
   }
 
-  if (hostname === BRAND.domain || hostname === `app.${BRAND.domain}`) return true;
+  if (hostname === BRAND.domain) return true;
   
   return false;
 }

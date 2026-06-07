@@ -14,8 +14,6 @@ import { useEffect, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
-import { Button } from "@core/ui/button";
-import Link from "next/link";
 
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { useSsoProviders } from "../viewmodels/useSsoProviders";
@@ -77,11 +75,11 @@ export function LoginView() {
     if (hasCheckedAuth.current || !vm.hasHydrated || isPreviewMode) return;
     hasCheckedAuth.current = true;
     vm.checkAndRedirect();
-  }, [vm.hasHydrated, vm.checkAndRedirect, isPreviewMode]);
+  }, [vm.hasHydrated, vm.checkAndRedirect, isPreviewMode, vm]);
 
   useEffect(() => {
     vm.setTenantId(tenantId ?? undefined);
-  }, [tenantId, vm.setTenantId]);
+  }, [tenantId, vm, vm.setTenantId]);
 
   // Dynamic title + favicon
   useEffect(() => {
