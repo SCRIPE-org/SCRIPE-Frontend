@@ -120,6 +120,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);
+  const [isRestoringSession, setIsRestoringSession] = useState(false);
   const { t } = useI18n();
   const [isMounted] = useState(() => typeof window !== "undefined");
 
@@ -215,6 +216,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       if (!hasToken && isAuthenticated) {
         if (isRefreshing.current) return;
         isRefreshing.current = true;
+        setIsRestoringSession(true);
 
         appLogger.debug("[RouteGuard] No token, store=authenticated → silent refresh");
 
@@ -235,6 +237,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
             if (user) {
               setAuth(user, user.permissions || [], []);
               isRefreshing.current = false;
+              setIsRestoringSession(false);
               return;
             }
           }
@@ -243,6 +246,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         isRefreshing.current = false;
+        setIsRestoringSession(false);
         appLogger.debug("[RouteGuard] Session expired → /login");
 
         if (!isAuthPage && !hasRedirected.current) {
@@ -311,7 +315,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
   if (!isMounted) return <>{children}</>;
 
-  if (authLoading || (isChecking && !isPublicPage(pathname))) {
+  if (authLoading || (isChecking && !isPublicPage(pathname) && !isRestoringSession)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">

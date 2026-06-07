@@ -15,6 +15,7 @@ import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { useIsFetching } from "@tanstack/react-query";
 
 
 // Default layout — statically imported (always needed, no lazy-load delay)
@@ -75,7 +76,7 @@ function LoginWelcomeLoader() {
   const nameForWelcome = user?.firstName || user?.username || t("common.user");
 
   return (
-    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-background overflow-hidden select-none">
+    <div className="fixed inset-0 z-[9999] flex h-screen w-screen flex-col items-center justify-center bg-background overflow-hidden select-none">
       <style>{`
         @keyframes indeterminate-progress {
           0% { left: -33%; width: 33%; }
@@ -503,21 +504,58 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
   const isSettingsCompleted = isSettingsReady && !isTransitioning;
 
   // Unify all loading gates under a single layout wrapper
+  // On page refresh (isFreshLogin = false), we do NOT block rendering the layout or children.
+  // This allows the layout and its skeletonized components to show immediately.
   const shouldBlockContent = isFreshLogin
     ? (!isSettingsCompleted || isBrandingLoading || !isSettingsMergeSettled || !isNavReady)
-    : (!isSettingsReady || isTransitioning || isBrandingLoading || !isSettingsMergeSettled);
+    : false;
+
+  const isFetching = useIsFetching();
+  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(isFreshLogin);
+  const [hasMinTimePassed, setHasMinTimePassed] = useState(false);
+
+  // Start timer for minimum welcome loader display duration
+  useEffect(() => {
+    if (isFreshLogin) {
+      const timer = setTimeout(() => {
+        setHasMinTimePassed(true);
+      }, 2200); // 2.2 seconds minimum welcome loader display
+      return () => clearTimeout(timer);
+    }
+  }, [isFreshLogin]);
+
+  // Turn off welcome overlay when gates are ready, minimum time has passed, and active fetches have finished
+  useEffect(() => {
+    if (isFreshLogin && showWelcomeOverlay && !shouldBlockContent && hasMinTimePassed) {
+      // If we are still fetching dashboard data, wait until fetching drops to 0 (or up to a 3-second max timeout)
+      if (isFetching > 0) {
+        const timeout = setTimeout(() => {
+          setShowWelcomeOverlay(false);
+        }, 3000); // wait at most 3 additional seconds for queries to settle
+        return () => clearTimeout(timeout);
+      } else {
+        // Defer state update to next microtask/frame to avoid synchronous cascading renders warning
+        const timer = setTimeout(() => {
+          setShowWelcomeOverlay(false);
+        }, 0);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isFreshLogin, showWelcomeOverlay, shouldBlockContent, hasMinTimePassed, isFetching]);
+
+  // ── Both gates passed — clear the "just logged in" flag ──
+  // This MUST happen after the welcome loader overlay has finished and is hidden.
+  useEffect(() => {
+    if (isFreshLogin && !showWelcomeOverlay && typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem(STORAGE_KEYS.JUST_LOGGED_IN);
+      } catch { /* ignore */ }
+    }
+  }, [isFreshLogin, showWelcomeOverlay]);
 
   if (shouldBlockContent) {
     // Fresh login → premium welcome card; Page refresh → lightweight shimmer
     return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
-  }
-
-  // ── Both gates passed — clear the "just logged in" flag ──
-  // This MUST happen after BOTH Gate 1 (settings), Gate 2 (branding) and routes/menus resolve.
-  // The flag is checked once on mount (via useState initializer in DashboardLayout)
-  // and cleared here so subsequent page refreshes never show the welcome loader.
-  if (isFreshLogin && typeof window !== "undefined") {
-    try { sessionStorage.removeItem(STORAGE_KEYS.JUST_LOGGED_IN); } catch { /* ignore */ }
   }
 
   // ── Compute layout content (rendered below the tenant banner) ──
@@ -732,6 +770,7 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
   if (layoutTemplate === "nexus") {
     return (
       <>
+        {showWelcomeOverlay && <LoginWelcomeLoader />}
         <PaymentWallDialog />
         <div
           style={{
@@ -751,6 +790,7 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
 
   return (
     <>
+      {showWelcomeOverlay && <LoginWelcomeLoader />}
       <TenantContextBanner />
       <GracePeriodBanner />
       <PaymentWallDialog />
