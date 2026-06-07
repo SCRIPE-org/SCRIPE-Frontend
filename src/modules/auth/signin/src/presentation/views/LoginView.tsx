@@ -17,7 +17,7 @@ import { resolveFileUrl } from "@core/common/utils";
 
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { useSsoProviders } from "../viewmodels/useSsoProviders";
-import { useTenantResolution } from "../viewmodels/useTenantResolution";
+import { useTenantResolution, isPlatformDomain } from "../viewmodels/useTenantResolution";
 import { useLoginBrandingTokens } from "../viewmodels/useLoginBrandingTokens";
 import { usePreviewMode } from "../viewmodels/usePreviewMode";
 
@@ -132,8 +132,7 @@ export function LoginView() {
   ) {
     const hostname = window.location.hostname;
     const devCode = new URLSearchParams(window.location.search).get("_tenant");
-    const isTenantExpected =
-      devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));
+    const isTenantExpected = devCode !== null || !isPlatformDomain(hostname);
     if (isTenantExpected) return <TenantNotFoundView />;
   }
 

@@ -1,498 +1,498 @@
 export const es = {
-  "getStarted": {
-    "overview": {
-      "title": "Overview"
+  getStarted: {
+    overview: {
+      title: "Overview",
     },
-    "prerequisites": {
-      "title": "Prerequisites"
+    prerequisites: {
+      title: "Prerequisites",
     },
-    "quickStart": {
-      "title": "Quick Start"
+    quickStart: {
+      title: "Quick Start",
     },
-    "projectStructure": {
-      "title": "Project Structure"
-    }
+    projectStructure: {
+      title: "Project Structure",
+    },
   },
-  "architecture": {
-    "overview": {
-      "title": "Overview"
+  architecture: {
+    overview: {
+      title: "Overview",
     },
-    "backend": {
-      "title": "Backend"
+    backend: {
+      title: "Backend",
     },
-    "frontend": {
-      "title": "Frontend"
+    frontend: {
+      title: "Frontend",
     },
-    "cqrs": {
-      "title": "CQRS"
+    cqrs: {
+      title: "CQRS",
     },
-    "modules": {
-      "title": "Modules"
+    modules: {
+      title: "Modules",
     },
-    "solidPattern": {
-      "title": "Solid Pattern"
+    solidPattern: {
+      title: "Solid Pattern",
     },
-    "stateManagement": {
-      "title": "State Management"
+    stateManagement: {
+      title: "State Management",
     },
-    "dataFlow": {
-      "title": "Data Flow"
+    dataFlow: {
+      title: "Data Flow",
     },
-    "domainModel": {
-      "title": "Domain Model"
+    domainModel: {
+      title: "Domain Model",
     },
-    "domainEvents": {
-      "title": "Domain Events"
+    domainEvents: {
+      title: "Domain Events",
     },
-    "cqrsPipeline": {
-      "title": "CQRS Pipeline"
+    cqrsPipeline: {
+      title: "CQRS Pipeline",
     },
-    "dependencyInjection": {
-      "title": "Dependency Injection"
-    }
+    dependencyInjection: {
+      title: "Dependency Injection",
+    },
   },
-  "features": {
-    "authentication": {
-      "title": "Authentication"
+  features: {
+    authentication: {
+      title: "Authentication",
     },
-    "multiTenancy": {
-      "title": "Multi Tenancy"
+    multiTenancy: {
+      title: "Multi Tenancy",
     },
-    "rolePermissions": {
-      "title": "Role Permissions"
+    rolePermissions: {
+      title: "Role Permissions",
     },
-    "userGroups": {
-      "title": "User Groups"
+    userGroups: {
+      title: "User Groups",
     },
-    "auditSystem": {
-      "title": "Audit System"
+    auditSystem: {
+      title: "Audit System",
     },
-    "notificationSystem": {
-      "title": "Notification System"
+    notificationSystem: {
+      title: "Notification System",
     },
-    "emailSystem": {
-      "title": "Email System"
+    emailSystem: {
+      title: "Email System",
     },
-    "webhookSystem": {
-      "title": "Webhook System"
+    webhookSystem: {
+      title: "Webhook System",
     },
-    "menuSystem": {
-      "title": "Menu System"
+    menuSystem: {
+      title: "Menu System",
     },
-    "recycleBin": {
-      "title": "Recycle Bin"
+    recycleBin: {
+      title: "Recycle Bin",
     },
-    "userManagement": {
-      "title": "User Management"
+    userManagement: {
+      title: "User Management",
     },
-    "fileUpload": {
-      "title": "File Upload"
+    fileUpload: {
+      title: "File Upload",
     },
-    "downloadExport": {
-      "title": "Download Export"
+    downloadExport: {
+      title: "Download Export",
     },
-    "messageTemplates": {
-      "title": "Message Templates"
+    messageTemplates: {
+      title: "Message Templates",
     },
-    "ssoOauth": {
-      "title": "SSO OAuth"
+    ssoOauth: {
+      title: "SSO OAuth",
     },
-    "loginCustomizer": {
-      "title": "Login Customizer"
+    loginCustomizer: {
+      title: "Login Customizer",
     },
-    "themeMarketplace": {
-      "title": "Theme Marketplace"
+    themeMarketplace: {
+      title: "Theme Marketplace",
     },
-    "multiPageBranding": {
-      "title": "Multi Page Branding"
+    multiPageBranding: {
+      title: "Multi Page Branding",
     },
-    "loginPageBuilder": {
-      "title": "Login Page Builder"
+    loginPageBuilder: {
+      title: "Login Page Builder",
     },
-    "dashboardBuilder": {
-      "title": "Dashboard Builder"
+    dashboardBuilder: {
+      title: "Dashboard Builder",
     },
-    "dashboardHub": {
-      "title": "Dashboard Hub"
+    dashboardHub: {
+      title: "Dashboard Hub",
     },
-    "tenantContextGate": {
-      "title": "Tenant Context Gate"
-    }
+    tenantContextGate: {
+      title: "Tenant Context Gate",
+    },
   },
-  "security": {
-    "overview": {
-      "title": "Overview"
+  security: {
+    overview: {
+      title: "Overview",
     },
-    "authDeep": {
-      "title": "Authentication Deep"
+    authDeep: {
+      title: "Authentication Deep",
     },
-    "dataProtection": {
-      "title": "Data Protection"
+    dataProtection: {
+      title: "Data Protection",
     },
-    "apiSecurity": {
-      "title": "API Security"
+    apiSecurity: {
+      title: "API Security",
     },
-    "middlewarePipeline": {
-      "title": "Middleware Pipeline"
+    middlewarePipeline: {
+      title: "Middleware Pipeline",
     },
-    "auditCompliance": {
-      "title": "Audit Compliance"
+    auditCompliance: {
+      title: "Audit Compliance",
     },
-    "sso": {
-      "title": "SSO Identity Providers"
-    }
+    sso: {
+      title: "SSO Identity Providers",
+    },
   },
-  "apiReference": {
-    "overview": {
-      "title": "Overview"
+  apiReference: {
+    overview: {
+      title: "Overview",
     },
-    "authApi": {
-      "title": "Authentication API"
+    authApi: {
+      title: "Authentication API",
     },
-    "userAuthApi": {
-      "title": "User Auth API"
+    userAuthApi: {
+      title: "User Auth API",
     },
-    "adminApi": {
-      "title": "Admin API"
+    adminApi: {
+      title: "Admin API",
     },
-    "tenantApi": {
-      "title": "Tenant API"
+    tenantApi: {
+      title: "Tenant API",
     },
-    "rolePermissionApi": {
-      "title": "Role Permission API"
+    rolePermissionApi: {
+      title: "Role Permission API",
     },
-    "userGroupsApi": {
-      "title": "User Groups API"
+    userGroupsApi: {
+      title: "User Groups API",
     },
-    "webhookEmailApi": {
-      "title": "Webhook Email API"
+    webhookEmailApi: {
+      title: "Webhook Email API",
     },
-    "systemApi": {
-      "title": "System API"
-    }
+    systemApi: {
+      title: "System API",
+    },
   },
-  "frontend": {
-    "crudSystem": {
-      "title": "CRUD System"
+  frontend: {
+    crudSystem: {
+      title: "CRUD System",
     },
-    "stateManagement": {
-      "title": "State Management"
+    stateManagement: {
+      title: "State Management",
     },
-    "localization": {
-      "title": "Localization"
+    localization: {
+      title: "Localization",
     },
-    "formValidation": {
-      "title": "Form Validation"
+    formValidation: {
+      title: "Form Validation",
     },
-    "componentLibrary": {
-      "title": "Component Library"
+    componentLibrary: {
+      title: "Component Library",
     },
-    "realtime": {
-      "title": "Realtime"
-    }
+    realtime: {
+      title: "Realtime",
+    },
   },
-  "infrastructure": {
-    "backgroundJobs": {
-      "title": "Background Jobs"
+  infrastructure: {
+    backgroundJobs: {
+      title: "Background Jobs",
     },
-    "fileStorage": {
-      "title": "File Storage"
+    fileStorage: {
+      title: "File Storage",
     },
-    "resilience": {
-      "title": "Resilience"
+    resilience: {
+      title: "Resilience",
     },
-    "gatewayDeployment": {
-      "title": "Gateway Deployment"
+    gatewayDeployment: {
+      title: "Gateway Deployment",
     },
-    "databaseMigrations": {
-      "title": "Database Migrations"
+    databaseMigrations: {
+      title: "Database Migrations",
     },
-    "scripeCli": {
-      "title": "SCRIPE Cli"
+    scripeCli: {
+      title: "SCRIPE Cli",
     },
-    "healthChecks": {
-      "title": "Health Checks"
+    healthChecks: {
+      title: "Health Checks",
     },
-    "observability": {
-      "title": "Observability"
+    observability: {
+      title: "Observability",
     },
-    "auditTrail": {
-      "title": "Audit Trail"
+    auditTrail: {
+      title: "Audit Trail",
     },
-    "loadTesting": {
-      "title": "Load Testing"
+    loadTesting: {
+      title: "Load Testing",
     },
-    "scripeStudio": {
-      "title": "SCRIPE Studio"
-    }
+    scripeStudio: {
+      title: "SCRIPE Studio",
+    },
   },
-  "tutorials": {
-    "addModule": {
-      "title": "Add Module"
+  tutorials: {
+    addModule: {
+      title: "Add Module",
     },
-    "addBackendModule": {
-      "title": "Add Backend Module"
-    }
+    addBackendModule: {
+      title: "Add Backend Module",
+    },
   },
-  "modules": {
-    "entitlementsOverview": {
-      "title": "Entitlements Overview"
+  modules: {
+    entitlementsOverview: {
+      title: "Entitlements Overview",
     },
-    "editions": {
-      "title": "Editions"
+    editions: {
+      title: "Editions",
     },
-    "subscriptions": {
-      "title": "Subscriptions"
+    subscriptions: {
+      title: "Subscriptions",
     },
-    "features": {
-      "title": "Features"
+    features: {
+      title: "Features",
     },
-    "overrides": {
-      "title": "Overrides"
+    overrides: {
+      title: "Overrides",
     },
-    "billingEngine": {
-      "title": "Billing Engine"
+    billingEngine: {
+      title: "Billing Engine",
     },
-    "invoices": {
-      "title": "Invoices"
+    invoices: {
+      title: "Invoices",
     },
-    "dunning": {
-      "title": "Dunning"
+    dunning: {
+      title: "Dunning",
     },
-    "tenantPlans": {
-      "title": "Tenant Plans"
+    tenantPlans: {
+      title: "Tenant Plans",
     },
-    "userSubscriptions": {
-      "title": "User Subscriptions"
+    userSubscriptions: {
+      title: "User Subscriptions",
     },
-    "revenueAnalytics": {
-      "title": "Revenue Analytics"
+    revenueAnalytics: {
+      title: "Revenue Analytics",
     },
-    "stripeConnect": {
-      "title": "Stripe Connect"
+    stripeConnect: {
+      title: "Stripe Connect",
     },
-    "compliance": {
-      "overview": {
-        "title": "Compliance Overview"
+    compliance: {
+      overview: {
+        title: "Compliance Overview",
       },
-      "dsr": {
-        "title": "Compliance DSR"
+      dsr: {
+        title: "Compliance DSR",
       },
-      "consent": {
-        "title": "Compliance Consent"
+      consent: {
+        title: "Compliance Consent",
       },
-      "retention": {
-        "title": "Compliance Retention"
+      retention: {
+        title: "Compliance Retention",
       },
-      "inventory": {
-        "title": "Compliance Inventory"
+      inventory: {
+        title: "Compliance Inventory",
       },
-      "reports": {
-        "title": "Compliance Reports"
-      }
+      reports: {
+        title: "Compliance Reports",
+      },
     },
-    "plugins": {
-      "overview": {
-        "title": "Plugins Overview"
+    plugins: {
+      overview: {
+        title: "Plugins Overview",
       },
-      "sdk": {
-        "title": "Plugins SDK"
-      }
+      sdk: {
+        title: "Plugins SDK",
+      },
     },
-    "marketplace": {
-      "overview": {
-        "title": "Marketplace Overview"
+    marketplace: {
+      overview: {
+        title: "Marketplace Overview",
       },
-      "catalog": {
-        "title": "Marketplace Catalog"
+      catalog: {
+        title: "Marketplace Catalog",
       },
-      "submissions": {
-        "title": "Marketplace Submissions"
+      submissions: {
+        title: "Marketplace Submissions",
       },
-      "financials": {
-        "title": "Marketplace Financials"
-      }
-    }
+      financials: {
+        title: "Marketplace Financials",
+      },
+    },
   },
-  "commercial": {
-    "whyScripeOverview": {
-      "title": "Why SCRIPE Overview"
+  commercial: {
+    whyScripeOverview: {
+      title: "Why SCRIPE Overview",
     },
-    "competitiveAdvantages": {
-      "title": "Competitive Advantages"
+    competitiveAdvantages: {
+      title: "Competitive Advantages",
     },
-    "targetIndustries": {
-      "title": "Target Industries"
+    targetIndustries: {
+      title: "Target Industries",
     },
-    "successMetrics": {
-      "title": "Success Metrics"
+    successMetrics: {
+      title: "Success Metrics",
     },
-    "platformArchitecture": {
-      "title": "Platform Architecture"
+    platformArchitecture: {
+      title: "Platform Architecture",
     },
-    "moduleCatalog": {
-      "title": "Module Catalog"
+    moduleCatalog: {
+      title: "Module Catalog",
     },
-    "technologyStack": {
-      "title": "Technology Stack"
+    technologyStack: {
+      title: "Technology Stack",
     },
-    "deploymentModes": {
-      "title": "Deployment Modes"
+    deploymentModes: {
+      title: "Deployment Modes",
     },
-    "systemRequirements": {
-      "title": "System Requirements"
+    systemRequirements: {
+      title: "System Requirements",
     },
-    "multiTenancy": {
-      "title": "Multi Tenancy"
+    multiTenancy: {
+      title: "Multi Tenancy",
     },
-    "rolesPermissions": {
-      "title": "Roles Permissions"
+    rolesPermissions: {
+      title: "Roles Permissions",
     },
-    "userGroups": {
-      "title": "User Groups"
+    userGroups: {
+      title: "User Groups",
     },
-    "auditCompliance": {
-      "title": "Audit Compliance"
+    auditCompliance: {
+      title: "Audit Compliance",
     },
-    "realTimeCapabilities": {
-      "title": "Real Time Capabilities"
+    realTimeCapabilities: {
+      title: "Real Time Capabilities",
     },
-    "localizationI18n": {
-      "title": "Localization I18n"
+    localizationI18n: {
+      title: "Localization I18n",
     },
-    "messageTemplates": {
-      "title": "Message Templates"
+    messageTemplates: {
+      title: "Message Templates",
     },
-    "loginCustomizer": {
-      "title": "Login Customizer"
+    loginCustomizer: {
+      title: "Login Customizer",
     },
-    "themeMarketplace": {
-      "title": "Theme Marketplace"
+    themeMarketplace: {
+      title: "Theme Marketplace",
     },
-    "pageBuilder": {
-      "title": "Page Builder"
+    pageBuilder: {
+      title: "Page Builder",
     },
-    "dashboardBuilder": {
-      "title": "Dashboard Builder"
+    dashboardBuilder: {
+      title: "Dashboard Builder",
     },
-    "securityOverview": {
-      "title": "Security Overview"
+    securityOverview: {
+      title: "Security Overview",
     },
-    "authSecurity": {
-      "title": "Authentication Security"
+    authSecurity: {
+      title: "Authentication Security",
     },
-    "dataProtection": {
-      "title": "Data Protection"
+    dataProtection: {
+      title: "Data Protection",
     },
-    "infraSecurity": {
-      "title": "Infrastructure Security"
+    infraSecurity: {
+      title: "Infrastructure Security",
     },
-    "complianceReadiness": {
-      "title": "Compliance Readiness"
+    complianceReadiness: {
+      title: "Compliance Readiness",
     },
-    "ssoEnterprise": {
-      "title": "SSO Enterprise"
+    ssoEnterprise: {
+      title: "SSO Enterprise",
     },
-    "performanceBenchmarks": {
-      "title": "Performance Benchmarks"
+    performanceBenchmarks: {
+      title: "Performance Benchmarks",
     },
-    "databaseSupport": {
-      "title": "Database Support"
+    databaseSupport: {
+      title: "Database Support",
     },
-    "storageBackends": {
-      "title": "Storage Backends"
+    storageBackends: {
+      title: "Storage Backends",
     },
-    "resiliencePatterns": {
-      "title": "Resilience Patterns"
+    resiliencePatterns: {
+      title: "Resilience Patterns",
     },
-    "observabilityMonitoring": {
-      "title": "Observability Monitoring"
+    observabilityMonitoring: {
+      title: "Observability Monitoring",
     },
-    "cliTooling": {
-      "title": "Cli Tooling"
+    cliTooling: {
+      title: "Cli Tooling",
     },
-    "cleanArchitecture": {
-      "title": "Clean Architecture"
+    cleanArchitecture: {
+      title: "Clean Architecture",
     },
-    "apiDesign": {
-      "title": "API Design"
+    apiDesign: {
+      title: "API Design",
     },
-    "testingStrategy": {
-      "title": "Testing Strategy"
+    testingStrategy: {
+      title: "Testing Strategy",
     },
-    "restApiOverview": {
-      "title": "Rest API Overview"
+    restApiOverview: {
+      title: "Rest API Overview",
     },
-    "webhookIntegration": {
-      "title": "Webhook Integration"
+    webhookIntegration: {
+      title: "Webhook Integration",
     },
-    "emailIntegration": {
-      "title": "Email Integration"
+    emailIntegration: {
+      title: "Email Integration",
     },
-    "ciCdPipeline": {
-      "title": "CI CD Pipeline"
+    ciCdPipeline: {
+      title: "CI CD Pipeline",
     },
-    "licensingModel": {
-      "title": "Licensing Model"
+    licensingModel: {
+      title: "Licensing Model",
     },
-    "roiAnalysis": {
-      "title": "ROI Analysis"
+    roiAnalysis: {
+      title: "ROI Analysis",
     },
-    "supportPlans": {
-      "title": "Support Plans"
+    supportPlans: {
+      title: "Support Plans",
     },
-    "enterpriseAddons": {
-      "title": "Enterprise Addons"
+    enterpriseAddons: {
+      title: "Enterprise Addons",
     },
-    "documentationTraining": {
-      "title": "Documentation Training"
+    documentationTraining: {
+      title: "Documentation Training",
     },
-    "gettingStartedGuide": {
-      "title": "Getting Started Guide"
+    gettingStartedGuide: {
+      title: "Getting Started Guide",
     },
-    "faq": {
-      "title": "FAQ"
+    faq: {
+      title: "FAQ",
     },
-    "roadmap": {
-      "title": "Roadmap"
+    roadmap: {
+      title: "Roadmap",
     },
-    "entOverview": {
-      "title": "Entitlements Overview"
+    entOverview: {
+      title: "Entitlements Overview",
     },
-    "entEditions": {
-      "title": "Entitlements Editions"
+    entEditions: {
+      title: "Entitlements Editions",
     },
-    "entSubscriptions": {
-      "title": "Entitlements Subscriptions"
+    entSubscriptions: {
+      title: "Entitlements Subscriptions",
     },
-    "entFeatures": {
-      "title": "Entitlements Features"
+    entFeatures: {
+      title: "Entitlements Features",
     },
-    "entOverrides": {
-      "title": "Entitlements Overrides"
+    entOverrides: {
+      title: "Entitlements Overrides",
     },
-    "pluginsOverview": {
-      "title": "Plugins Overview"
+    pluginsOverview: {
+      title: "Plugins Overview",
     },
-    "complianceOverview": {
-      "title": "Compliance Overview"
+    complianceOverview: {
+      title: "Compliance Overview",
     },
-    "complianceGdpr": {
-      "title": "Compliance GDPR"
+    complianceGdpr: {
+      title: "Compliance GDPR",
     },
-    "complianceDsr": {
-      "title": "Compliance DSR"
+    complianceDsr: {
+      title: "Compliance DSR",
     },
-    "complianceRoi": {
-      "title": "Compliance ROI"
+    complianceRoi: {
+      title: "Compliance ROI",
     },
-    "marketplace": {
-      "overview": {
-        "title": "Marketplace Overview"
+    marketplace: {
+      overview: {
+        title: "Marketplace Overview",
       },
-      "financials": {
-        "title": "Marketplace Financials"
-      }
-    }
-  }
+      financials: {
+        title: "Marketplace Financials",
+      },
+    },
+  },
 };

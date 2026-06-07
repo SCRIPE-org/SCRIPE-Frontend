@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { getAuthContainer } from "@modules/auth/di";
-import { BRAND } from "@core/config/branding";
-import { env } from "@core/config/env";
 import type { TenantBranding } from "../../../domain/entities/TenantBranding";
 
 export type { TenantBranding };
@@ -17,21 +15,38 @@ export interface TenantResolutionResult {
   isApiError: boolean;
 }
 
-const SKIP_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
+const DEV_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
 
-function isPlatformDomain(hostname: string): boolean {
-  if (SKIP_DOMAINS.includes(hostname)) return true;
+/**
+ * Detect whether the current hostname is the platform domain.
+ *
+ * Platform domain → skip tenant resolution API call.
+ * Tenant subdomain (e.g. seif.app.scripe.org) → must resolve.
+ *
+ * Detection sources (in order):
+ *  1. Dev domains (localhost, 127.0.0.1, etc.)
+ *  2. NEXT_PUBLIC_APP_URL environment variable (e.g. https://app.scripe.org)
+ *
+ * Uses `process.env.NEXT_PUBLIC_APP_URL` directly — Next.js inlines
+ * NEXT_PUBLIC_* values at build time, which is more reliable than
+ * importing the `env` module in client components.
+ */
+export function isPlatformDomain(hostname: string): boolean {
+  // 1. Dev domains — always platform
+  if (DEV_DOMAINS.includes(hostname)) return true;
   if (hostname.endsWith(".localhost")) return true;
-  
-  try {
-    const platformHost = new URL(env.NEXT_PUBLIC_APP_URL).hostname;
-    if (hostname === platformHost) return true;
-  } catch {
-    // Ignore invalid URL
+
+  // 2. Production: compare against NEXT_PUBLIC_APP_URL
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
+  if (appUrl) {
+    try {
+      const platformHost = new URL(appUrl).hostname;
+      if (hostname === platformHost) return true;
+    } catch {
+      // Invalid URL — fall through
+    }
   }
 
-  if (hostname === BRAND.domain) return true;
-  
   return false;
 }
 
@@ -97,7 +112,7 @@ export function useTenantResolution(page?: string): TenantResolutionResult {
         if (!cancelled) {
           setTenantId(null);
           setBranding(null);
-          setIsApiError(!SKIP_DOMAINS.includes(hostname) && !hostname.endsWith(".localhost"));
+          setIsApiError(!isPlatformDomain(hostname));
         }
       } finally {
         if (!cancelled) setIsLoading(false);
