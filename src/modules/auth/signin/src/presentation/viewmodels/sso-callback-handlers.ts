@@ -20,7 +20,12 @@ import type { SsoCallbackError, SsoCallbackState } from "./useSsoCallbackHandler
 export interface SsoCallbackDeps {
   authRepository: IAuthRepository;
   ssoRepository: ISsoRepository;
-  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[], isFreshLogin?: boolean) => void;
+  setAuth: (
+    user: User,
+    permissions: PermissionCode[],
+    roles: AdminRole[],
+    isFreshLogin?: boolean
+  ) => void;
   setSubscriptionInfo: (
     status: string | null,
     grace: string | null,

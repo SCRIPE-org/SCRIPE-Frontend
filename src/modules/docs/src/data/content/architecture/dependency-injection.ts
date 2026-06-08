@@ -15,7 +15,7 @@ const sections: DocSection[] = [
       [
         "Page route",
         "/docs/architecture/dependency-injection",
-        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims.",
+        "Registered route preserved; this page now uses source-backed implementation evidence.",
       ],
       [
         "Canonical content file",
@@ -28,24 +28,24 @@ const sections: DocSection[] = [
         "The page is registered and navigated through the docs portal runtime.",
       ],
       [
-        "Application entry point",
-        "SCRIPE-Backend/src/Host/API/Program.cs",
-        "Program.cs is intentionally thin and delegates registration and middleware to extension files.",
-      ],
-      [
-        "Module registration",
-        "SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs",
-        "Conditional loading supports monolith, Gateway mode, and single-module service mode for the five implemented backend modules.",
-      ],
-      [
-        "AstraFlow pipeline",
+        "Application registrations",
         "SCRIPE-Backend/src/Core/Core.Application/DependencyInjection.cs",
-        "Open behaviors are registered in source order: Logging, Validation, FeatureCheck, WebhookDispatch, and Caching, with preprocessors, postprocessors, exception action/handler, and stream logging.",
+        "Application services register AstraFlow, validators, behaviors, event publisher abstractions, and application-layer helpers in one composition entry point.",
       ],
       [
-        "HTTP middleware",
-        "SCRIPE-Backend/src/Host/API/Extensions/MiddlewarePipeline.cs",
-        "The runtime HTTP pipeline is configured in one extension and includes forwarded headers, exception handling, security, CORS, jobs, rate limiting, auth, CSRF, replay protection, ETag, controllers, metrics, SignalR, and YARP.",
+        "Infrastructure registrations",
+        "SCRIPE-Backend/src/Core/Core.Infrastructure/DependencyInjection.cs",
+        "Infrastructure services register persistence, background jobs, caching, audit, messaging, integrations, observability, and supporting runtime services.",
+      ],
+      [
+        "Module composition",
+        "SCRIPE-Backend/src/Host/API/Extensions/ModuleRegistration.cs; SCRIPE-Backend/src/Core/Core.Infrastructure/Architecture/IModuleRegistration.cs",
+        "The host selects monolith, gateway, or single-module mode and invokes module application/infrastructure registration consistently.",
+      ],
+      [
+        "Module DI files",
+        "SCRIPE-Backend/src/Modules/*/*.Application/DependencyInjection.cs; SCRIPE-Backend/src/Modules/*/*.Infrastructure/DependencyInjection.cs; SCRIPE-Frontend/src/modules/*/di.ts",
+        "Backend modules and frontend modules each keep their own DI wiring instead of instantiating repositories, services, or infrastructure dependencies in presentation code.",
       ],
     ],
   },

@@ -175,8 +175,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     </svg>`,
     preset: {
       protocol: "oidc",
-      authority:
-        "https://{tenant}.b2clogin.com/{tenant}.onmicrosoft.com/{policy}/v2.0",
+      authority: "https://{tenant}.b2clogin.com/{tenant}.onmicrosoft.com/{policy}/v2.0",
       clientId: "",
       clientSecret: "",
       scopes: "openid offline_access",
@@ -281,10 +280,7 @@ interface WellKnownProviderGalleryProps {
   selectedId?: string;
 }
 
-export function WellKnownProviderGallery({
-  onSelect,
-  selectedId,
-}: WellKnownProviderGalleryProps) {
+export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProviderGalleryProps) {
   const { t } = useI18n();
 
   const protocolBadgeVariant = (p: string) => {
@@ -317,9 +313,7 @@ export function WellKnownProviderGallery({
               onClick={() => onSelect({ ...tpl.preset, name: tpl.name, slug: tpl.id })}
               className="group relative flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-150 hover:border-primary/40 hover:bg-primary/5 active:scale-[0.97]"
               style={{
-                borderColor: isSelected
-                  ? `${tpl.color}60`
-                  : "hsl(var(--border))",
+                borderColor: isSelected ? `${tpl.color}60` : "hsl(var(--border))",
                 background: isSelected ? `${tpl.color}10` : undefined,
                 outline: isSelected ? `2px solid ${tpl.color}40` : undefined,
                 outlineOffset: "1px",
@@ -338,7 +332,10 @@ export function WellKnownProviderGallery({
               />
 
               {/* Name */}
-              <span className="line-clamp-2 text-[11px] font-medium leading-tight" style={{ color: "hsl(var(--foreground))" }}>
+              <span
+                className="line-clamp-2 text-[11px] font-medium leading-tight"
+                style={{ color: "hsl(var(--foreground))" }}
+              >
                 {tpl.name}
               </span>
 

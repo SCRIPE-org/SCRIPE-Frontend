@@ -113,8 +113,8 @@ export function WorkspaceCard({
         ws.isPlatformAdmin
           ? "border-primary/20 bg-primary/10 text-primary"
           : state === "unlocked"
-          ? "border-border bg-muted text-muted-foreground"
-          : "border-border/50 bg-muted/50 text-muted-foreground/60",
+            ? "border-border bg-muted text-muted-foreground"
+            : "border-border/50 bg-muted/50 text-muted-foreground/60",
       ].join(" ")}
       aria-hidden
     >
@@ -192,9 +192,7 @@ export function WorkspaceCard({
       setIsExpanded(false);
     } catch (err: unknown) {
       setUnlockError(
-        err instanceof Error
-          ? err.message
-          : t("auth.invalidCredentials") || "Incorrect password"
+        err instanceof Error ? err.message : t("auth.invalidCredentials") || "Incorrect password"
       );
     } finally {
       setIsUnlocking(false);
@@ -205,6 +203,7 @@ export function WorkspaceCard({
     <form
       onSubmit={handleUnlockSubmit}
       onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
       className="mt-3 flex flex-col gap-2"
     >
       {unlockError && (
@@ -325,18 +324,20 @@ export function WorkspaceCard({
         state === "locked"
           ? ` — Locked${ws.lockedUntil ? ` until ${new Date(ws.lockedUntil).toLocaleTimeString()}` : ""}`
           : state === "passwordRequired"
-          ? " — Password required"
-          : state === "disabled"
-          ? ` — ${ws.disabledReason || "Unavailable"}`
-          : state === "setupPending"
-          ? " — Setup pending"
-          : ""
+            ? " — Password required"
+            : state === "disabled"
+              ? ` — ${ws.disabledReason || "Unavailable"}`
+              : state === "setupPending"
+                ? " — Setup pending"
+                : ""
       }`}
       className={[
         "group w-full rounded-xl border p-4 text-start transition-all duration-150",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
         stateColors[state],
-        isInteractive && !isGloballyDisabled ? "cursor-pointer active:scale-[0.99]" : "cursor-not-allowed",
+        isInteractive && !isGloballyDisabled
+          ? "cursor-pointer active:scale-[0.99]"
+          : "cursor-not-allowed",
       ].join(" ")}
     >
       {/* Main row */}

@@ -25,12 +25,12 @@ import { getAuthContainer } from "@modules/auth/di";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ForgotPasswordStep =
-  | "request"    // Step 1: enter email
-  | "method"     // Step 2: pick OTP or Magic Link
-  | "otp"        // Step 3: enter 6-digit code
+  | "request" // Step 1: enter email
+  | "method" // Step 2: pick OTP or Magic Link
+  | "otp" // Step 3: enter 6-digit code
   | "workspaces" // Step 4: pick workspace (multi-tenant)
-  | "newPassword"// Step 5: enter new password
-  | "success";   // Step 6: done!
+  | "newPassword" // Step 5: enter new password
+  | "success"; // Step 6: done!
 
 export type ResetMethod = "otp" | "magic-link";
 
@@ -192,9 +192,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
         // otherwise fall back to a safe generic message.
         // The view renders vm.error directly — for a better UX the error string
         // comes from the API response body when present.
-        setError(
-          err instanceof Error && err.message ? err.message : "auth.otpInvalidOrExpired"
-        );
+        setError(err instanceof Error && err.message ? err.message : "auth.otpInvalidOrExpired");
       } finally {
         setIsLoading(false);
       }
@@ -292,8 +290,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
   const canSubmitEmail = email.trim().length > 3 && email.includes("@");
   const canSubmitOtp = otp.length === 6;
   const passwordsMatch = newPassword === confirmPassword && confirmPassword.length > 0;
-  const canSubmitNewPassword =
-    newPassword.length >= 8 && passwordsMatch && !isLoading;
+  const canSubmitNewPassword = newPassword.length >= 8 && passwordsMatch && !isLoading;
 
   return {
     step,

@@ -4,10 +4,7 @@ export interface IPasswordResetService {
   /** POST to request reset instructions via OTP or magic-link. */
   requestReset(email: string, method?: "otp" | "magic-link"): Promise<void>;
   /** POST to verify OTP. Returns workspace list if multi-tenant. */
-  verifyOtp(
-    email: string,
-    code: string
-  ): Promise<{ workspaces?: ResetWorkspaceOption[] }>;
+  verifyOtp(email: string, code: string): Promise<{ workspaces?: ResetWorkspaceOption[] }>;
   /** POST to submit new password. */
   resetPassword(params: {
     email: string;

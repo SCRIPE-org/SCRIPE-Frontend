@@ -159,8 +159,12 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
           moduleGroups={vm.moduleGroups}
           getEffectiveValue={vm.getEffectiveValue}
           getEffectiveLabel={vm.getEffectiveLabel}
+          getEffectiveHighlight={vm.getEffectiveHighlight}
           setLocalValue={vm.setLocalValue}
           setLocalLabel={vm.setLocalLabel}
+          setLocalHighlight={vm.setLocalHighlight}
+          removeFeature={vm.removeFeature}
+          isRemovingFeature={vm.isRemovingFeature}
           overflowPolicy={vm.overflowPolicy}
           setOverflowPolicy={vm.setOverflowPolicy}
           overflowPolicyChanged={vm.overflowPolicyChanged}

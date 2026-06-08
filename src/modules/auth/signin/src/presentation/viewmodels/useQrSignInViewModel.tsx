@@ -174,7 +174,16 @@ export function useQrSignInViewModel(
       case "scanned":
         return {
           svgIcon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#22D3EE"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="5" y="2" width="14" height="20" rx="2" />
               <circle cx="12" cy="17" r="1" fill="#22D3EE" stroke="none" />
             </svg>
@@ -185,7 +194,16 @@ export function useQrSignInViewModel(
       case "approved":
         return {
           svgIcon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#10B981"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M20 6L9 17l-5-5" />
             </svg>
           ),
@@ -195,7 +213,15 @@ export function useQrSignInViewModel(
       case "rejected":
         return {
           svgIcon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#EF4444"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -206,7 +232,15 @@ export function useQrSignInViewModel(
       case "expired":
         return {
           svgIcon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#F59E0B"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
@@ -217,8 +251,17 @@ export function useQrSignInViewModel(
       default:
         return {
           svgIcon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sx-text-mute)" strokeWidth="1.5" strokeLinecap="round">
-              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--sx-text-mute)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            >
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
               <rect x="3" y="14" width="7" height="7" />
               <path d="M14 14h.01M14 17h.01M17 14h.01M17 17h.01M20 14h.01M20 17h.01" />
             </svg>

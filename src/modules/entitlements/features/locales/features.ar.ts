@@ -5,6 +5,8 @@ export const ar = {
       title: "الميزات",
       featureName: "مفتاح الميزة",
       displayName: "الاسم المعروض",
+      displayNameEn: "الاسم المعروض (إنجليزي)",
+      displayNameAr: "الاسم المعروض (عربي)",
       category: "الفئة",
       description: "إدارة كتالوج ميزات المنصة — تعريف القدرات التي يمكن للإصدارات تهيئتها.",
       name: "اسم الميزة",

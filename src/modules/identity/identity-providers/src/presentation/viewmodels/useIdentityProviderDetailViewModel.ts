@@ -90,7 +90,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
 
   const [form, setForm] = useState<IdentityProviderFormState>(DEFAULT_STATE);
   const [isDirty, setIsDirty] = useState(false);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>(undefined);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>(undefined);
 
   // ─── Fetch existing provider ──────────────────
   const {
@@ -296,7 +296,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     selectedTemplateId,
     isDirty,
     protocolOptions,
-    autoGenerateSlug,
+    autoGenerateSlug,
 
     // Actions
     save: () => saveMutation.mutate(),

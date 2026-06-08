@@ -9,6 +9,7 @@ import type {
   Subscription,
   SubscriptionListItem,
   GlobalSubscriptionItem,
+  DowngradeImpactReport,
 } from "../../domain/entities/Subscription";
 import type { ExportParams, ExportFileResult } from "../../domain/entities/SubscriptionExport";
 import type { ISubscriptionService } from "../../domain/interfaces/ISubscriptionService";
@@ -119,5 +120,13 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
   async revoke(id: string): Promise<void> {
     await this.service.revoke(id);
+  }
+
+  async getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport> {
+    return this.service.getDowngradeImpact(tenantId, targetEditionId);
+  }
+
+  async changeCurrency(tenantId: string, currency: string): Promise<void> {
+    await this.service.changeCurrency(tenantId, currency);
   }
 }

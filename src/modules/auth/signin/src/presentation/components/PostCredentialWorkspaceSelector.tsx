@@ -107,10 +107,10 @@ export function PostCredentialWorkspaceSelector({
             ? t("auth.workspaceSelection.subtitleMixed") ||
               `Your account (${email}) has ${unlockedCount} unlocked and ${lockedCount} password-protected workspace(s).`
             : lockedCount > 0
-            ? t("auth.workspaceSelection.subtitleAllLocked") ||
-              `Your account (${email}) belongs to ${workspaces.length} workspace(s). Enter a password to access.`
-            : t("auth.workspaceSelection.subtitle") ||
-              `Your account (${email}) belongs to multiple workspaces.`}
+              ? t("auth.workspaceSelection.subtitleAllLocked") ||
+                `Your account (${email}) belongs to ${workspaces.length} workspace(s). Enter a password to access.`
+              : t("auth.workspaceSelection.subtitle") ||
+                `Your account (${email}) belongs to multiple workspaces.`}
         </p>
       </div>
 

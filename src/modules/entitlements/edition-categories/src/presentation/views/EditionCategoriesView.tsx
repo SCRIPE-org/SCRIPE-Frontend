@@ -1,0 +1,113 @@
+"use client";
+
+import { useMemo } from "react";
+import { useEditionCategoriesViewModel } from "../viewmodels/useEditionCategoriesViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { EditionCategory } from "../../domain/entities/EditionCategory";
+
+export function EditionCategoriesView() {
+  const { t, language } = useI18n();
+  const vm = useEditionCategoriesViewModel();
+
+  const config: CrudConfig<EditionCategory> = useMemo(
+    () => ({
+      titleKey: "entitlements.editions.categories.title",
+      subtitleKey: "entitlements.editions.categories.description",
+
+      columns: [
+        {
+          key: "name",
+          label: t("common.name") || "Name",
+          render: (_val: unknown, cat: EditionCategory) =>
+            cat.getDisplayName(language),
+          sortable: true,
+        },
+        {
+          key: "description",
+          label: t("common.description") || "Description",
+          render: (_val: unknown, cat: EditionCategory) =>
+            cat.description || "—",
+        },
+        {
+          key: "sortOrder",
+          label: t("entitlements.editions.categories.sortOrder") || "Sort Order",
+          render: (_val: unknown, cat: EditionCategory) =>
+            String(cat.sortOrder),
+        },
+      ],
+
+      createFields: [
+        {
+          name: "name",
+          label: t("common.name") || "Name",
+          type: "text" as const,
+          required: true,
+          placeholder: "e.g. ERP, Healthcare, General",
+        },
+        {
+          name: "displayNameEn",
+          label: t("common.displayNameEn") || "Display Name (English)",
+          type: "text" as const,
+          placeholder: "General Purpose",
+        },
+        {
+          name: "displayNameAr",
+          label: t("common.displayNameAr") || "Display Name (Arabic)",
+          type: "text" as const,
+          placeholder: "عام",
+        },
+        {
+          name: "description",
+          label: t("common.description") || "Description",
+          type: "textarea" as const,
+          placeholder: "Optional description for this category",
+        },
+        {
+          name: "sortOrder",
+          label: t("entitlements.editions.categories.sortOrder") || "Sort Order",
+          type: "number" as const,
+          defaultValue: 0,
+        },
+      ],
+
+      editFields: (item: EditionCategory) => [
+        {
+          name: "name",
+          label: t("common.name") || "Name",
+          type: "text" as const,
+          defaultValue: item.name,
+          required: true,
+        },
+        {
+          name: "displayNameEn",
+          label: t("common.displayNameEn") || "Display Name (English)",
+          type: "text" as const,
+          defaultValue: item.displayNameEn ?? "",
+        },
+        {
+          name: "displayNameAr",
+          label: t("common.displayNameAr") || "Display Name (Arabic)",
+          type: "text" as const,
+          defaultValue: item.displayNameAr ?? "",
+        },
+        {
+          name: "description",
+          label: t("common.description") || "Description",
+          type: "textarea" as const,
+          defaultValue: item.description ?? "",
+        },
+        {
+          name: "sortOrder",
+          label: t("entitlements.editions.categories.sortOrder") || "Sort Order",
+          type: "number" as const,
+          defaultValue: item.sortOrder,
+        },
+      ],
+    }),
+    [t, language]
+  );
+
+  return <GenericCrudView<EditionCategory> viewModel={vm} config={config} />;
+}

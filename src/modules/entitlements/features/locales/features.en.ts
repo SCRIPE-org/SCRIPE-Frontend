@@ -8,6 +8,8 @@ export const en = {
       name: "Feature Name",
       featureName: "Feature Key",
       displayName: "Display Name",
+      displayNameEn: "Display Name (English)",
+      displayNameAr: "Display Name (Arabic)",
       category: "Category",
       namePlaceholder: "e.g. Identity.MaxAdminsPerTenant",
       valueType: "Value Type",

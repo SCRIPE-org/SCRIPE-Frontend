@@ -20,6 +20,7 @@ import { systemContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 
 // ─────────────────────────────────────────
 // Types
@@ -30,6 +31,7 @@ export interface StepperFormState {
   name: string;
   code: string;
   description: string;
+  address: string;
   parentId: string;
   // Step 2: Administrator
   adminEmail: string;
@@ -41,12 +43,14 @@ export interface StepperFormState {
   skipPayment: boolean;
   promotionId: string;
   promoCode: string;
+  availablePermissionIds: string[];
 }
 
 export const INITIAL_STEPPER_FORM: StepperFormState = {
   name: "",
   code: "",
   description: "",
+  address: "",
   parentId: "",
   adminEmail: "",
   adminUsername: "",
@@ -56,6 +60,7 @@ export const INITIAL_STEPPER_FORM: StepperFormState = {
   skipPayment: false,
   promotionId: "",
   promoCode: "",
+  availablePermissionIds: [],
 };
 
 export const STEPS = [
@@ -126,6 +131,14 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     queryKey: ["entitlements", "editions", form.editionId, "promotions"],
     queryFn: () => tenantRepository.getEditionPromotions(form.editionId),
     enabled: !!form.editionId && currentStep === 3,
+  });
+
+  // ── Creation permissions query (for availablePermissionIds picker) ──
+  const { data: creationPermissions = [], isLoading: isLoadingPermissions } = useQuery<Permission[]>({
+    queryKey: ["tenants", "creation-permissions", form.parentId || "root"],
+    queryFn: () => tenantRepository.getCreationPermissions(form.parentId || undefined),
+    enabled: currentStep === 3,
+    staleTime: 60_000,
   });
 
   const availablePromotions = useMemo(() => {
@@ -310,6 +323,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         name: form.name.trim(),
         code: form.code.trim(),
         description: form.description.trim() || undefined,
+        address: form.address.trim() || undefined,
         parentId: form.parentId || undefined,
         adminEmail: form.adminEmail.trim(),
         adminUsername: form.adminUsername.trim() || undefined,
@@ -319,6 +333,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         skipPayment: form.skipPayment || undefined,
         promotionId: form.promotionId || undefined,
         promoCode: form.promoCode || undefined,
+        availablePermissionIds:
+          form.availablePermissionIds.length > 0 ? form.availablePermissionIds : undefined,
       });
 
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
@@ -369,6 +385,10 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     availablePromotions,
     isLoadingPromotions,
     enabledSubscriptionTypes,
+
+    // Creation permissions (for availablePermissionIds picker)
+    creationPermissions,
+    isLoadingPermissions,
 
     // Submit
     isSubmitting,

@@ -37,10 +37,17 @@ export interface EditionDetailViewModelResult {
   // ── Feature state (local pending changes) ──
   pendingValues: Record<string, string>;
   pendingLabels: Record<string, { en?: string; ar?: string }>;
+  pendingHighlights: Record<string, { isHighlight?: boolean; highlightOrder?: number }>;
   getEffectiveValue: (feature: Feature) => string;
   getEffectiveLabel: (featureName: string) => { en: string; ar: string };
+  getEffectiveHighlight: (featureName: string) => { isHighlight: boolean; highlightOrder: number };
   setLocalValue: (featureName: string, value: string) => void;
   setLocalLabel: (featureName: string, field: "en" | "ar", value: string) => void;
+  setLocalHighlight: (
+    featureName: string,
+    field: "isHighlight" | "highlightOrder",
+    value: boolean | number
+  ) => void;
   hasUnsavedChanges: boolean;
 
   // ── Version-based apply ──
@@ -53,6 +60,10 @@ export interface EditionDetailViewModelResult {
 
   // ── Discard ──
   discardChanges: () => void;
+
+  // ── Remove Feature ──
+  removeFeature: (featureId: string) => void;
+  isRemovingFeature: boolean;
 
   // ── Module/Category collapse state ──
   collapsedModules: Record<string, boolean>;
@@ -192,22 +203,36 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   const [pendingLabels, setPendingLabels] = useState<Record<string, { en?: string; ar?: string }>>(
     {}
   );
+  // ── Local pending highlight state (keyed by featureName) ──
+  const [pendingHighlights, setPendingHighlights] = useState<
+    Record<string, { isHighlight?: boolean; highlightOrder?: number }>
+  >({});
 
   // ── Overflow Policy (local state — not auto-saved) ──
   const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");
 
-  // Sync pending values and labels when edition data changes
+  // Sync pending values, labels, and highlights when edition data changes
   const [lastEditionId, setLastEditionId] = useState<string | undefined>();
   if (edition && edition.id !== lastEditionId) {
-    // Build server label map
     const serverLabels: Record<string, { en?: string; ar?: string }> = {};
+    const serverHighlightSnapshot: Record<
+      string,
+      { isHighlight?: boolean; highlightOrder?: number }
+    > = {};
     edition.features.forEach((ef) => {
       if (ef.displayLabelEn || ef.displayLabelAr) {
         serverLabels[ef.featureName] = { en: ef.displayLabelEn ?? "", ar: ef.displayLabelAr ?? "" };
       }
+      if (ef.isHighlight !== undefined || ef.highlightOrder !== undefined) {
+        serverHighlightSnapshot[ef.featureName] = {
+          isHighlight: ef.isHighlight ?? false,
+          highlightOrder: ef.highlightOrder ?? 0,
+        };
+      }
     });
     setPendingValues(serverValueMap);
     setPendingLabels(serverLabels);
+    setPendingHighlights(serverHighlightSnapshot);
     setLastEditionId(edition.id);
   }
 
@@ -261,31 +286,93 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     }));
   }, []);
 
-  // Check for unsaved changes (features + labels + overflow policy)
+  // ── Highlight state ──
+  const serverHighlightMap = useMemo(() => {
+    const map: Record<string, { isHighlight: boolean; highlightOrder: number }> = {};
+    if (edition) {
+      edition.features.forEach((ef) => {
+        map[ef.featureName] = {
+          isHighlight: ef.isHighlight ?? false,
+          highlightOrder: ef.highlightOrder ?? 0,
+        };
+      });
+    }
+    return map;
+  }, [edition]);
+
+  const getEffectiveHighlight = useCallback(
+    (featureName: string): { isHighlight: boolean; highlightOrder: number } => {
+      const pending = pendingHighlights[featureName];
+      const server = serverHighlightMap[featureName];
+      return {
+        isHighlight:
+          pending?.isHighlight !== undefined ? pending.isHighlight : (server?.isHighlight ?? false),
+        highlightOrder:
+          pending?.highlightOrder !== undefined
+            ? pending.highlightOrder
+            : (server?.highlightOrder ?? 0),
+      };
+    },
+    [pendingHighlights, serverHighlightMap]
+  );
+
+  const setLocalHighlight = useCallback(
+    (featureName: string, field: "isHighlight" | "highlightOrder", value: boolean | number) => {
+      setPendingHighlights((prev) => ({
+        ...prev,
+        [featureName]: { ...(prev[featureName] ?? {}), [field]: value },
+      }));
+    },
+    []
+  );
+
+  // Check for unsaved changes (features + labels + highlights + overflow policy)
   const hasUnsavedChanges = useMemo(() => {
     if (!edition) return false;
     for (const [name, val] of Object.entries(pendingValues ?? {})) {
       if (serverValueMap[name] !== val) return true;
     }
-    // Check label changes
     for (const [name, labels] of Object.entries(pendingLabels)) {
       const server = serverLabelMap[name];
       if ((labels.en ?? "") !== (server?.en ?? "")) return true;
       if ((labels.ar ?? "") !== (server?.ar ?? "")) return true;
     }
+    for (const [name, h] of Object.entries(pendingHighlights)) {
+      const server = serverHighlightMap[name];
+      if ((h.isHighlight ?? false) !== (server?.isHighlight ?? false)) return true;
+      if ((h.highlightOrder ?? 0) !== (server?.highlightOrder ?? 0)) return true;
+    }
     return false;
-  }, [edition, pendingValues, serverValueMap, pendingLabels, serverLabelMap]);
+  }, [
+    edition,
+    pendingValues,
+    serverValueMap,
+    pendingLabels,
+    serverLabelMap,
+    pendingHighlights,
+    serverHighlightMap,
+  ]);
 
   const discardChanges = useCallback(() => {
     setPendingValues(serverValueMap);
-    // Restore labels from server
     const serverLabels: Record<string, { en?: string; ar?: string }> = {};
+    const serverHighlightSnapshot: Record<
+      string,
+      { isHighlight?: boolean; highlightOrder?: number }
+    > = {};
     edition?.features.forEach((ef) => {
       if (ef.displayLabelEn || ef.displayLabelAr) {
         serverLabels[ef.featureName] = { en: ef.displayLabelEn ?? "", ar: ef.displayLabelAr ?? "" };
       }
+      if (ef.isHighlight !== undefined || ef.highlightOrder !== undefined) {
+        serverHighlightSnapshot[ef.featureName] = {
+          isHighlight: ef.isHighlight ?? false,
+          highlightOrder: ef.highlightOrder ?? 0,
+        };
+      }
     });
     setPendingLabels(serverLabels);
+    setPendingHighlights(serverHighlightSnapshot);
     if (edition) {
       setLocalOverflowPolicy(edition.overflowPolicy ?? "Block");
     }
@@ -369,7 +456,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         });
       }
       const changes = getChangedFeatures();
-      // Build label changes map: featureName → {en, ar} for changed labels only
       const changedLabels: Record<string, { en?: string; ar?: string }> = {};
       for (const [name, labels] of Object.entries(pendingLabels)) {
         const server = serverLabelMap[name];
@@ -377,8 +463,55 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
           changedLabels[name] = labels;
         }
       }
-      if (Object.keys(changes).length === 0 && Object.keys(changedLabels).length === 0) return;
-      await editionRepository.directApplyFeatures(editionId, changes, changedLabels);
+      // Detect changed highlights
+      const changedHighlights: Record<string, { isHighlight: boolean; highlightOrder: number }> =
+        {};
+      for (const [name, h] of Object.entries(pendingHighlights)) {
+        const server = serverHighlightMap[name];
+        if (
+          (h.isHighlight ?? false) !== (server?.isHighlight ?? false) ||
+          (h.highlightOrder ?? 0) !== (server?.highlightOrder ?? 0)
+        ) {
+          changedHighlights[name] = {
+            isHighlight: h.isHighlight ?? false,
+            highlightOrder: h.highlightOrder ?? 0,
+          };
+        }
+      }
+      const hasFeatureChanges =
+        Object.keys(changes).length > 0 || Object.keys(changedLabels).length > 0;
+      const hasHighlightChanges = Object.keys(changedHighlights).length > 0;
+      if (!hasFeatureChanges && !hasHighlightChanges) return;
+      // Apply feature value + label changes via batch endpoint
+      if (hasFeatureChanges) {
+        await editionRepository.directApplyFeatures(editionId, changes, changedLabels);
+      }
+      // Apply highlight changes individually (no batch endpoint for highlights)
+      if (hasHighlightChanges && edition) {
+        const featureIdMap: Record<string, string> = {};
+        edition.features.forEach((ef) => {
+          featureIdMap[ef.featureName] = ef.featureId;
+        });
+        await Promise.all(
+          Object.entries(changedHighlights).map(
+            ([featureName, { isHighlight, highlightOrder }]) => {
+              const featureId = featureIdMap[featureName];
+              if (!featureId) return Promise.resolve();
+              const currentValue = pendingValues[featureName] ?? serverValueMap[featureName] ?? "";
+              const currentLabel = getEffectiveLabel(featureName);
+              return editionRepository.setFeatureValue(
+                editionId,
+                featureId,
+                currentValue,
+                currentLabel.en || undefined,
+                currentLabel.ar || undefined,
+                isHighlight,
+                highlightOrder
+              );
+            }
+          )
+        );
+      }
     },
     onSuccess: () => {
       success({
@@ -403,6 +536,35 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   const directApplyChanges = useCallback(() => {
     directApplyMutation.mutate();
   }, [directApplyMutation]);
+
+  // ── Remove Feature Mutation ──
+  const removeFeatureMutation = useMutation({
+    mutationFn: async (featureId: string) => {
+      await editionRepository.removeFeature(editionId, featureId);
+    },
+    onSuccess: () => {
+      success({
+        title: t("entitlements.editions.featureRemoved") || "Feature Removed",
+        description:
+          t("entitlements.editions.featureRemovedDesc") ||
+          "The feature has been detached from this edition.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
+    },
+    onError: (err) => {
+      toastError({
+        title: t("common.error"),
+        description: err instanceof Error ? err.message : t("common.error"),
+      });
+    },
+  });
+
+  const removeFeature = useCallback(
+    (featureId: string) => {
+      removeFeatureMutation.mutate(featureId);
+    },
+    [removeFeatureMutation]
+  );
 
   // ── Module/Category collapse state ──
   const [collapsedModules, setCollapsedModules] = useState<Record<string, boolean>>({});
@@ -470,10 +632,13 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
     pendingValues: pendingValues ?? {},
     pendingLabels,
+    pendingHighlights,
     getEffectiveValue,
     getEffectiveLabel,
+    getEffectiveHighlight,
     setLocalValue,
     setLocalLabel,
+    setLocalHighlight,
     hasUnsavedChanges: combinedHasUnsavedChanges,
 
     createVersionWithChanges,
@@ -483,6 +648,9 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     isDirectApplying: directApplyMutation.isPending,
 
     discardChanges,
+
+    removeFeature,
+    isRemovingFeature: removeFeatureMutation.isPending,
 
     collapsedModules,
     toggleModule,

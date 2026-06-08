@@ -25,6 +25,7 @@ import { TenantGatewayService } from "./tenant-gateways/src/data/services/Tenant
 import { TenantGatewayRepository } from "./tenant-gateways/src/data/repositories/TenantGatewayRepository";
 import { AnalyticsService } from "./analytics/src/data/services/AnalyticsService";
 import { CommissionLedgerService } from "./commission-ledger/src/data/services/CommissionLedgerService";
+import { EditionCategoryService } from "./edition-categories/src/data/services/EditionCategoryService";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -37,6 +38,7 @@ import { UserSubscriptionRepository } from "./user-subscriptions/src/data/reposi
 import { ConnectRepository } from "./stripe-connect/src/data/repositories/ConnectRepository";
 import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
 import { CommissionLedgerRepository } from "./commission-ledger/src/data/repositories/CommissionLedgerRepository";
+import { EditionCategoryRepository } from "./edition-categories/src/data/repositories/EditionCategoryRepository";
 
 // Tenant Gateways — no separate repository import needed (already imported above)
 
@@ -53,6 +55,7 @@ import type { IPlatformStripeRepository } from "./platform-stripe/src/domain/int
 import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
 import type { ITenantGatewayRepository } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayRepository";
 import type { ICommissionLedgerRepository } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerRepository";
+import type { IEditionCategoryRepository } from "./edition-categories/src/domain/interfaces/IEditionCategoryRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -67,6 +70,7 @@ import type { IPlatformStripeService } from "./platform-stripe/src/domain/interf
 import type { IAnalyticsService } from "./analytics/src/domain/interfaces/IAnalyticsService";
 import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayService";
 import type { ICommissionLedgerService } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerService";
+import type { IEditionCategoryService } from "./edition-categories/src/domain/interfaces/IEditionCategoryService";
 
 export interface EntitlementsContainer {
   featureRepository: IFeatureRepository;
@@ -81,6 +85,7 @@ export interface EntitlementsContainer {
   analyticsRepository: IAnalyticsRepository;
   tenantGatewayRepository: ITenantGatewayRepository;
   commissionLedgerRepository: ICommissionLedgerRepository;
+  editionCategoryRepository: IEditionCategoryRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -109,6 +114,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
     const commissionLedgerService: ICommissionLedgerService = new CommissionLedgerService(
       apiService
     );
+    const editionCategoryService: IEditionCategoryService = new EditionCategoryService(apiService);
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {
@@ -124,6 +130,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       analyticsRepository: new AnalyticsRepository(analyticsService),
       tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
       commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
+      editionCategoryRepository: new EditionCategoryRepository(editionCategoryService),
     };
   }
 
@@ -169,5 +176,8 @@ export const entitlementsContainer = {
   },
   get commissionLedgerRepository() {
     return getEntitlementsContainer().commissionLedgerRepository;
+  },
+  get editionCategoryRepository() {
+    return getEntitlementsContainer().editionCategoryRepository;
   },
 };

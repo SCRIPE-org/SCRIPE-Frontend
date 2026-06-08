@@ -85,15 +85,14 @@ export function useAuthLogin() {
     },
     onError: (error: Error) => {
       // Don't show toast for 2FA required — it's not an error, it's a flow step
-      if (
-        error instanceof TwoFactorRequiredError ||
-        error.name === "TwoFactorRequiredError"
-      ) return;
+      if (error instanceof TwoFactorRequiredError || error.name === "TwoFactorRequiredError")
+        return;
       // Don't show toast for workspace selection — it's a UX step, not an error
       if (
         error instanceof WorkspaceSelectionRequiredError ||
         error.name === "WorkspaceSelectionRequiredError"
-      ) return;
+      )
+        return;
       operationError(error.message || t("auth.loginFailed"));
     },
   });

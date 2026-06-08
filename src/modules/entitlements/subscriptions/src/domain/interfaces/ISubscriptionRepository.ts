@@ -5,6 +5,7 @@ import type {
   Subscription,
   SubscriptionListItem,
   GlobalSubscriptionItem,
+  DowngradeImpactReport,
 } from "../entities/Subscription";
 import type { ExportParams, ExportFileResult } from "../entities/SubscriptionExport";
 
@@ -64,4 +65,10 @@ export interface ISubscriptionRepository {
   ): Promise<void>;
   resync(tenantId: string): Promise<void>;
   revoke(id: string): Promise<void>;
+
+  // ── Downgrade Impact ──
+  getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport>;
+
+  // ── Currency ──
+  changeCurrency(tenantId: string, currency: string): Promise<void>;
 }

@@ -19,6 +19,8 @@ export const ENTITLEMENTS_ENDPOINTS = {
       DELETE: (id: string) => `${V1}/editions/${id}`,
       SET_FEATURE: (editionId: string, featureId: string) =>
         `${V1}/editions/${editionId}/features/${featureId}`,
+      REMOVE_FEATURE: (editionId: string, featureId: string) =>
+        `${V1}/editions/${editionId}/features/${featureId}`,
       VERSIONS: (editionId: string) => `${V1}/editions/${editionId}/versions`,
       CREATE_VERSION: (editionId: string) => `${V1}/editions/${editionId}/versions`,
       PUBLISH_VERSION: (editionId: string, versionId: string) =>
@@ -214,6 +216,14 @@ export const ENTITLEMENTS_ENDPOINTS = {
       REPORT_PREFERENCES: `${V1}/analytics/report-preference`,
       EXPORT: `${V1}/analytics/export`,
       GENERATE_REPORT: `${V1}/analytics/generate-report`,
+    },
+    // ===== EDITION CATEGORIES =====
+    EDITION_CATEGORIES: {
+      LIST: `${V1}/editioncategories`,
+      BY_ID: (id: string) => `${V1}/editioncategories/${id}`,
+      CREATE: `${V1}/editioncategories`,
+      UPDATE: (id: string) => `${V1}/editioncategories/${id}`,
+      DELETE: (id: string) => `${V1}/editioncategories/${id}`,
     },
     // ===== SELF-SERVICE: My Tenant Subscription =====
     MY_SUBSCRIPTION: {

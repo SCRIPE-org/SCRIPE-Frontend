@@ -15,7 +15,7 @@ const sections: DocSection[] = [
       [
         "Page route",
         "/docs/security/api-security",
-        "Registered route preserved; this page body now points to current source evidence rather than stale narrative claims.",
+        "Registered route preserved; this page now uses source-backed implementation evidence.",
       ],
       [
         "Canonical content file",

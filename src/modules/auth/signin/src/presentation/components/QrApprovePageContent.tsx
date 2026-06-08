@@ -69,7 +69,8 @@ export function QrApprovePageContent() {
     return (
       <div className="space-y-3 text-center">
         <p className="text-sm" style={{ color: "var(--sx-text-mute)" }}>
-          {t("auth.qr.invalidSession") || "Invalid or missing session. Please scan the QR code again."}
+          {t("auth.qr.invalidSession") ||
+            "Invalid or missing session. Please scan the QR code again."}
         </p>
       </div>
     );

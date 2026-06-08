@@ -327,7 +327,7 @@ export function CredentialsForm({
       {methodChips.length > 0 && (
         <div>
           <div
-            className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.15em] text-center"
+            className="mb-2.5 text-center text-[11px] font-medium uppercase tracking-[0.15em]"
             style={{
               color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))",
               fontFamily: "var(--font-mono, ui-monospace, monospace)",

@@ -172,7 +172,6 @@ export function useLoginViewModel() {
           }, 100);
         }
       } catch (err: unknown) {
-
         // instanceof + name fallback: some bundlers break Error prototype chains
         if (
           err instanceof TwoFactorRequiredError ||
@@ -185,15 +184,18 @@ export function useLoginViewModel() {
           err instanceof WorkspaceSelectionRequiredError ||
           (err instanceof Error && err.name === "WorkspaceSelectionRequiredError") ||
           // Ultimate duck-typing fallback: if it has availableWorkspaces array, it IS a workspace selection error
-          (err instanceof Error && "availableWorkspaces" in err && Array.isArray((err as any).availableWorkspaces))
+          (err instanceof Error &&
+            "availableWorkspaces" in err &&
+            Array.isArray((err as any).availableWorkspaces))
         ) {
-          const workspaces = (err as WorkspaceSelectionRequiredError).availableWorkspaces ?? (err as any).availableWorkspaces as WorkspaceChoice[];
+          const workspaces =
+            (err as WorkspaceSelectionRequiredError).availableWorkspaces ??
+            ((err as any).availableWorkspaces as WorkspaceChoice[]);
           workspaceSelector.showWorkspaces(workspaces);
           return;
         }
         setErrorWithShake(err instanceof Error ? err.message : "Login failed");
       }
-
     },
     [
       formData,

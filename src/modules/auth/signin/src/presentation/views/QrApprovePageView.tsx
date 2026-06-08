@@ -26,8 +26,7 @@ export function QrApprovePageView() {
         style={{
           background: "var(--sx-card-bg, hsl(var(--card)))",
           border: "1px solid var(--sx-card-border, hsl(var(--border)))",
-          boxShadow:
-            "0 0 0 1px rgba(255,255,255,0.03), 0 32px 64px rgba(0,0,0,0.4)",
+          boxShadow: "0 0 0 1px rgba(255,255,255,0.03), 0 32px 64px rgba(0,0,0,0.4)",
         }}
       >
         {/* Brand header */}
@@ -76,8 +75,14 @@ function QrApproveLoadingState() {
         style={{ background: "rgba(255,255,255,0.04)" }}
       />
       <div className="flex gap-3">
-        <div className="h-12 flex-1 animate-pulse rounded-xl" style={{ background: "rgba(239,68,68,0.1)" }} />
-        <div className="h-12 flex-1 animate-pulse rounded-xl" style={{ background: "rgba(124,58,237,0.15)" }} />
+        <div
+          className="h-12 flex-1 animate-pulse rounded-xl"
+          style={{ background: "rgba(239,68,68,0.1)" }}
+        />
+        <div
+          className="h-12 flex-1 animate-pulse rounded-xl"
+          style={{ background: "rgba(124,58,237,0.15)" }}
+        />
       </div>
     </div>
   );

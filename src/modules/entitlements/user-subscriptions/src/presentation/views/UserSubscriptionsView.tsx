@@ -17,7 +17,7 @@ import { useUserSubscriptionsViewModel } from "../viewmodels/useUserSubscription
 import { useI18n } from "@core/providers/i18n-provider";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import { Badge } from "@core/ui/badge";
-import { Eye, XCircle, RefreshCw, User, Mail } from "lucide-react";
+import { Eye, XCircle, RefreshCw, User, Mail, ArrowLeftRight } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { SubscriptionDetailModal } from "../components/SubscriptionDetailModal";
@@ -200,6 +200,46 @@ export function UserSubscriptionsView() {
             t("entitlements.userSubscriptions.notesPlaceholder") || "Optional admin notes…",
         },
       ],
+      editFields: (sub: UserSubscription) => [
+        {
+          name: "newTenantPlanId",
+          label: t("entitlements.userSubscriptions.plan") || "New Plan",
+          type: "select" as const,
+          required: true,
+          defaultValue: sub.tenantPlanId,
+          placeholder: t("entitlements.userSubscriptions.planPlaceholder") || "Select a plan…",
+          options: vm.availablePlans,
+        },
+        {
+          name: "billingCycle",
+          label: t("entitlements.userSubscriptions.billingCycle") || "Billing Cycle",
+          type: "select" as const,
+          required: true,
+          defaultValue: sub.billingCycle ?? "Monthly",
+          options: [
+            {
+              value: "Monthly",
+              label: t("entitlements.userSubscriptions.billingCycleMonthly") || "Monthly",
+            },
+            {
+              value: "Yearly",
+              label: t("entitlements.userSubscriptions.billingCycleYearly") || "Yearly",
+            },
+            {
+              value: "Lifetime",
+              label: t("entitlements.userSubscriptions.billingCycleLifetime") || "Lifetime",
+            },
+          ],
+        },
+        {
+          name: "reason",
+          label: t("entitlements.userSubscriptions.changePlanReason") || "Reason for Change",
+          type: "textarea" as const,
+          placeholder:
+            t("entitlements.userSubscriptions.changePlanReasonPlaceholder") ||
+            "Optional: reason for changing this user's plan…",
+        },
+      ],
       getItemDisplayName: (sub: UserSubscription) =>
         sub.userName ? `${sub.planName} — ${sub.userName}` : `${sub.planName} (${sub.userId})`,
       getActions: (
@@ -211,6 +251,14 @@ export function UserSubscriptionsView() {
           onClick: (item: UserSubscription) => openDetail(item),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
+        },
+        {
+          label: tFn("entitlements.userSubscriptions.changePlan") || "Change Plan",
+          onClick: (item: UserSubscription) => vm.openEditModal?.(item),
+          variant: "ghost" as const,
+          className: "text-blue-600 hover:text-blue-700",
+          icon: <ArrowLeftRight className="h-4 w-4" />,
+          show: (item: UserSubscription) => item.isActive || item.isTrialing,
         },
         {
           label: tFn("entitlements.userSubscriptions.cancel") || "Cancel",

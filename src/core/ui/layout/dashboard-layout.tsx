@@ -5,7 +5,10 @@ import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useAdminSettingsSync } from "@core/providers/useAdminSettingsSync";
-import { TenantBrandingProvider, useTenantBranding } from "@core/providers/tenant-branding-provider";
+import {
+  TenantBrandingProvider,
+  useTenantBranding,
+} from "@core/providers/tenant-branding-provider";
 import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
 import { GracePeriodBanner } from "@core/components/GracePeriodBanner";
 import { PaymentWallDialog } from "@core/components/PaymentWallDialog";
@@ -16,7 +19,6 @@ import { useWorkspace } from "@core/providers/workspace-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useIsFetching } from "@tanstack/react-query";
-
 
 // Default layout — statically imported (always needed, no lazy-load delay)
 // Nexus is the default layoutTemplate (defaults.ts), so it must be statically
@@ -76,7 +78,7 @@ function LoginWelcomeLoader() {
   const nameForWelcome = user?.firstName || user?.username || t("common.user");
 
   return (
-    <div className="fixed inset-0 z-[9999] flex h-screen w-screen flex-col items-center justify-center bg-background overflow-hidden select-none">
+    <div className="fixed inset-0 z-[9999] flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden bg-background">
       <style>{`
         @keyframes indeterminate-progress {
           0% { left: -33%; width: 33%; }
@@ -87,9 +89,9 @@ function LoginWelcomeLoader() {
           animation: indeterminate-progress 1.6s infinite ease-in-out;
         }
       `}</style>
-      
+
       {/* Background ambient glow */}
-      <div 
+      <div
         className="absolute h-96 w-96 rounded-full opacity-[0.08] blur-[100px] transition-all duration-1000"
         style={{
           background: accent,
@@ -98,29 +100,28 @@ function LoginWelcomeLoader() {
           transform: "translate(-50%, -50%)",
         }}
       />
-      
+
       {/* Glassmorphic Welcome Card */}
-      <div className="relative z-10 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 p-8 shadow-2xl backdrop-blur-md max-w-sm w-full mx-4 animate-in fade-in duration-500">
-        
+      <div className="relative z-10 mx-4 flex w-full max-w-sm flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 p-8 shadow-2xl backdrop-blur-md duration-500 animate-in fade-in">
         {/* Avatar Ring with pulsing glow */}
         <div className="relative flex items-center justify-center">
-          <div 
-            className="absolute -inset-2 rounded-full opacity-35 blur-sm animate-pulse"
+          <div
+            className="absolute -inset-2 animate-pulse rounded-full opacity-35 blur-sm"
             style={{
-              background: `radial-gradient(circle, ${accent} 0%, transparent 80%)`
+              background: `radial-gradient(circle, ${accent} 0%, transparent 80%)`,
             }}
           />
-          <div 
+          <div
             className="absolute -inset-1.5 rounded-full opacity-55"
             style={{
-              border: `2px solid ${accent}`
+              border: `2px solid ${accent}`,
             }}
           />
           <Avatar className="relative h-24 w-24 border-4 border-background shadow-xl">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
               style={{ background: avatarGradient }}
-              className="text-3xl font-bold text-white animate-in fade-in duration-300"
+              className="text-3xl font-bold text-white duration-300 animate-in fade-in"
             >
               {getInitials()}
             </AvatarFallback>
@@ -128,22 +129,22 @@ function LoginWelcomeLoader() {
         </div>
 
         {/* Text Details */}
-        <h2 className="mt-6 text-2xl font-extrabold text-foreground tracking-tight text-center">
+        <h2 className="mt-6 text-center text-2xl font-extrabold tracking-tight text-foreground">
           {getDisplayName()}
         </h2>
-        
-        <p className="mt-3 text-base font-semibold text-muted-foreground text-center">
+
+        <p className="mt-3 text-center text-base font-semibold text-muted-foreground">
           {t("common.welcomeBack", { name: nameForWelcome })}
         </p>
 
-        <p className="mt-1 text-xs text-muted-foreground/75 text-center">
+        <p className="mt-1 text-center text-xs text-muted-foreground/75">
           {t("common.gettingReady")}
         </p>
 
         {/* Premium Loading Progress Bar */}
-        <div className="mt-8 relative w-48 h-1 bg-muted rounded-full overflow-hidden">
-          <div 
-            className="absolute top-0 bottom-0 left-0 rounded-full animate-indeterminate"
+        <div className="relative mt-8 h-1 w-48 overflow-hidden rounded-full bg-muted">
+          <div
+            className="animate-indeterminate absolute bottom-0 left-0 top-0 rounded-full"
             style={{
               background: accent,
             }}
@@ -154,7 +155,6 @@ function LoginWelcomeLoader() {
   );
 }
 
-
 // ── Shared loading fallback for lazy layouts ────────────────────────────────
 // NOTE: Next.js dynamic() requires the second argument to be an OBJECT LITERAL
 // (Turbopack/SWC statically analyzes it). We cannot use a shared variable.
@@ -163,7 +163,9 @@ function LoginWelcomeLoader() {
 // Navigation layout — lazy-loaded (only used when explicitly selected)
 const NavigationLayout = dynamic(
   () =>
-    import("@core/ui/layout/navigation/navigation-layout").then((m) => ({ default: m.NavigationLayout })),
+    import("@core/ui/layout/navigation/navigation-layout").then((m) => ({
+      default: m.NavigationLayout,
+    })),
   { ssr: false, loading: () => <LayoutLoadingShimmer /> }
 );
 
@@ -416,7 +418,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // does NOT survive a new browser tab or manual URL entry.
   const [isFreshLogin] = useState(() => {
     if (typeof window === "undefined") return false;
-    try { return sessionStorage.getItem(STORAGE_KEYS.JUST_LOGGED_IN) === "1"; } catch { return false; }
+    try {
+      return sessionStorage.getItem(STORAGE_KEYS.JUST_LOGGED_IN) === "1";
+    } catch {
+      return false;
+    }
   });
 
   // Wrap with TenantBrandingProvider immediately, then delegate to inner component
@@ -431,7 +437,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 // ── Inner component: gates on branding + settings + routes + renders the actual layout ──
 // Must be a separate component so useTenantBranding() is called INSIDE
 // TenantBrandingProvider's React context.
-function DashboardLayoutContent({ children, isFreshLogin }: { children: React.ReactNode; isFreshLogin: boolean }) {
+function DashboardLayoutContent({
+  children,
+  isFreshLogin,
+}: {
+  children: React.ReactNode;
+  isFreshLogin: boolean;
+}) {
   const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
   const settings = useSettings();
   const { isLoading: isBrandingLoading } = useTenantBranding();
@@ -476,7 +488,7 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
   const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
 
   // ── Gate 2 + 3: Wait for branding AND one extra frame for settings re-merge ──
-  // 
+  //
   // ARCHITECTURE NOTE — why two gates?
   // Gate 2: Branding itself is still loading (API in flight).
   // Gate 3: Branding just resolved this frame. TenantBrandingProvider dispatches
@@ -507,7 +519,7 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
   // On page refresh (isFreshLogin = false), we do NOT block rendering the layout or children.
   // This allows the layout and its skeletonized components to show immediately.
   const shouldBlockContent = isFreshLogin
-    ? (!isSettingsCompleted || isBrandingLoading || !isSettingsMergeSettled || !isNavReady)
+    ? !isSettingsCompleted || isBrandingLoading || !isSettingsMergeSettled || !isNavReady
     : false;
 
   const isFetching = useIsFetching();
@@ -549,7 +561,9 @@ function DashboardLayoutContent({ children, isFreshLogin }: { children: React.Re
     if (isFreshLogin && !showWelcomeOverlay && typeof window !== "undefined") {
       try {
         sessionStorage.removeItem(STORAGE_KEYS.JUST_LOGGED_IN);
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
   }, [isFreshLogin, showWelcomeOverlay]);
 

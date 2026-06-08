@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { CreateEditionRequest } from "../../domain/entities/EditionRequests";
 
@@ -21,6 +21,7 @@ export const DEFAULT_CREATE_FORM: CreateEditionRequest = {
   trialDiscountPercent: 100,
   gracePeriodDays: 0,
   maxActiveSubscriptions: -1,
+  overflowPolicy: "Block",
   isSelfServiceEnabled: true,
   isContactSalesOnly: false,
 };
@@ -35,6 +36,18 @@ export function useEditionCreateViewModel() {
   const [prices, setPrices] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch all editions for the fallback picker
+  const { data: editionsPage } = useQuery({
+    queryKey: ["entitlements", "editions", "all-for-fallback"],
+    queryFn: () => editionRepository.getAll({ page: 1, pageSize: 100 }),
+    staleTime: 60_000,
+  });
+  const availableEditions = (editionsPage?.items ?? []).map((e) => ({
+    id: e.id,
+    name: e.name,
+    displayNameEn: e.displayNameEn,
+  }));
 
   const onChange = (updates: Partial<CreateEditionRequest>) =>
     setForm((prev) => ({ ...prev, ...updates }));
@@ -61,7 +74,17 @@ export function useEditionCreateViewModel() {
     setError(null);
     try {
       const createdId = await editionRepository.create(form);
-      // TODO: After create, set prices via SetEditionPrice endpoints
+
+      // Save pricing after create — wizard collects prices keyed as "CURRENCY_Cycle" (e.g. "USD_Monthly")
+      const priceEntries = Object.entries(prices).filter(([, v]) => v !== "" && !isNaN(Number(v)));
+      if (priceEntries.length > 0) {
+        const priceItems = priceEntries.map(([key, amount]) => {
+          const [currency, billingCycle] = key.split("_");
+          return { currency, billingCycle, amount: parseFloat(amount) };
+        });
+        await editionRepository.setEditionPrices(createdId, { prices: priceItems });
+      }
+
       queryClient.invalidateQueries({ queryKey: ["entitlements", "editions"] });
       router.push(`/entitlements/editions/${createdId}`);
     } catch (e: unknown) {
@@ -77,6 +100,7 @@ export function useEditionCreateViewModel() {
     prices,
     isSubmitting,
     error,
+    availableEditions,
     onChange,
     onPriceChange,
     canProceed,

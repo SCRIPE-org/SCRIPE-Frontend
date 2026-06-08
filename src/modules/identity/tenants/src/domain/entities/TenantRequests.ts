@@ -27,6 +27,7 @@ export interface CreateTenantRequest {
   skipPayment?: boolean;
   promotionId?: string;
   promoCode?: string;
+  availablePermissionIds?: string[];
 }
 
 /**

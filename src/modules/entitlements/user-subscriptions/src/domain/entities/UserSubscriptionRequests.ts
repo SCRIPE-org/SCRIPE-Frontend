@@ -13,3 +13,9 @@ export interface CreateUserSubscriptionRequest {
 export interface CancelUserSubscriptionRequest {
   reason?: string;
 }
+
+export interface ChangePlanRequest {
+  newTenantPlanId: string;
+  billingCycle: string;
+  reason?: string;
+}

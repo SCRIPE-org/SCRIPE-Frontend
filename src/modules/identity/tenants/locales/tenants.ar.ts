@@ -46,6 +46,7 @@ export const ar = {
     addTenant: "إضافة مستأجر",
     createTenant: "إنشاء مستأجر",
     createChild: "إنشاء مستأجر فرعي",
+    creatingAsChild: "يتم الإنشاء كمستأجر فرعي",
     editTenant: "تعديل المستأجر",
     deleteTenant: "حذف المستأجر",
     searchPlaceholder: "البحث عن مستأجرين...",

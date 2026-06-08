@@ -29,6 +29,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
   const [showSuspendDialog, setShowSuspendDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showConvertDialog, setShowConvertDialog] = useState(false);
+  const [showCurrencyDialog, setShowCurrencyDialog] = useState(false);
+  const [newCurrency, setNewCurrency] = useState("USD");
   // ── Billing dialog state ──
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [showCancelGatewayDialog, setShowCancelGatewayDialog] = useState(false);
@@ -152,6 +154,14 @@ export function useSubscriptionsViewModel(tenantId: string) {
       },
       onError: (err: Error) => showError({ title: t("common.error"), description: err.message }),
     });
+
+  // ── Downgrade impact: fetch when Change dialog is open with a target edition ──
+  const downgradeImpactQuery = useQuery({
+    queryKey: ["entitlements", "subscriptions", tenantId, "downgrade-impact", selectedEditionId],
+    queryFn: () => subscriptionRepository.getDowngradeImpact(tenantId, selectedEditionId),
+    enabled: showChangeDialog && !!selectedEditionId && !!tenantId,
+    staleTime: 30_000,
+  });
 
   // ── Fetch promotions for selected edition ───────────────────
   const promotionsQuery = useQuery({
@@ -293,6 +303,13 @@ export function useSubscriptionsViewModel(tenantId: string) {
     (id: string) => subscriptionRepository.revoke(id),
     "entSubscriptions.revoked",
     "entSubscriptions.revokedDesc"
+  );
+
+  const changeCurrencyMutation = useActionMutation(
+    (cur: string) => subscriptionRepository.changeCurrency(tenantId, cur),
+    "entSubscriptions.currencyChanged",
+    "entSubscriptions.currencyChangedDesc",
+    () => setShowCurrencyDialog(false)
   );
 
   // ─── Submit helpers ─────────────────────────────────
@@ -450,6 +467,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
     setShowChangeDialog,
     submitChange,
     isChanging: changeMutation.isPending,
+    downgradeImpact: downgradeImpactQuery.data ?? null,
+    isLoadingDowngradeImpact: downgradeImpactQuery.isLoading,
 
     // Suspend dialog
     showSuspendDialog,
@@ -496,6 +515,14 @@ export function useSubscriptionsViewModel(tenantId: string) {
     // Revoke
     revokeSubscription: revokeMutation.mutate,
     isRevoking: revokeMutation.isPending,
+
+    // Change Currency
+    showCurrencyDialog,
+    setShowCurrencyDialog,
+    newCurrency,
+    setNewCurrency,
+    submitChangeCurrency: () => changeCurrencyMutation.mutate(newCurrency),
+    isChangingCurrency: changeCurrencyMutation.isPending,
 
     // Shared form state
     selectedEditionId,

@@ -69,7 +69,6 @@ export function useAdminSettingsSync() {
   // a different layoutTemplate later).
   const [isTransitioning, setIsTransitioning] = useState(!hasInitialCache);
 
-
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasPendingChanges = useRef(false);
   const latestPayload = useRef<string | null>(null);
@@ -86,7 +85,6 @@ export function useAdminSettingsSync() {
     if (!hasCache) {
       setIsTransitioning(true);
     }
-
 
     try {
       const api = getModuleApiService("IDENTITY");

@@ -54,13 +54,21 @@ export class EditionService implements IEditionService {
     featureId: string,
     value: string,
     displayLabelEn?: string,
-    displayLabelAr?: string
+    displayLabelAr?: string,
+    isHighlight?: boolean,
+    highlightOrder?: number
   ): Promise<void> {
     await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_FEATURE(editionId, featureId), {
       value,
       displayLabelEn: displayLabelEn || null,
       displayLabelAr: displayLabelAr || null,
+      isHighlight: isHighlight ?? null,
+      highlightOrder: highlightOrder ?? null,
     });
+  }
+
+  async removeFeature(editionId: string, featureId: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.REMOVE_FEATURE(editionId, featureId));
   }
 
   // ── Versioning ──

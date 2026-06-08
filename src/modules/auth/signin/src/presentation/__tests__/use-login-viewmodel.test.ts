@@ -3,13 +3,46 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 
 // Mocks
-const mockLoginMutateAsync = vi.fn();
-const mockRouterReplace = vi.fn();
-const mockSetAuth = vi.fn();
-const mockOperationSuccess = vi.fn();
-const mockOperationError = vi.fn();
-const mockRefreshNavigation = vi.fn();
-const mockVerify2FA = vi.fn();
+const {
+  mockLoginMutateAsync,
+  mockRouterReplace,
+  mockOperationSuccess,
+  mockOperationError,
+  mockRefreshNavigation,
+  mockVerify2FA,
+  mockUseAppStore,
+} = vi.hoisted(() => {
+  const mockLoginMutateAsync = vi.fn();
+  const mockRouterReplace = vi.fn();
+  const mockSetAuth = vi.fn();
+  const mockOperationSuccess = vi.fn();
+  const mockOperationError = vi.fn();
+  const mockRefreshNavigation = vi.fn();
+  const mockVerify2FA = vi.fn();
+  const mockAppState = {
+    isAuthenticated: false,
+    _hasHydrated: true,
+    defaultRedirectPath: "/",
+    mustChangePassword: false,
+    setAuth: mockSetAuth,
+  };
+  const mockUseAppStore = Object.assign(
+    (selector: (state: typeof mockAppState) => unknown) => selector(mockAppState),
+    {
+      getState: () => mockAppState,
+    }
+  );
+
+  return {
+    mockLoginMutateAsync,
+    mockRouterReplace,
+    mockOperationSuccess,
+    mockOperationError,
+    mockRefreshNavigation,
+    mockVerify2FA,
+    mockUseAppStore,
+  };
+});
 
 // Mock dependencies
 vi.mock("next/navigation", () => ({
@@ -17,9 +50,12 @@ vi.mock("next/navigation", () => ({
     replace: mockRouterReplace,
     push: vi.fn(),
   }),
+  useSearchParams: () => ({
+    get: vi.fn(() => null),
+  }),
 }));
 
-vi.mock("../../../../hooks/useAuthLogin", () => ({
+vi.mock("@modules/auth/core/src/presentation/viewmodels/useAuthLogin", () => ({
   useAuthLogin: () => ({
     mutateAsync: mockLoginMutateAsync,
     isPending: false,
@@ -27,21 +63,7 @@ vi.mock("../../../../hooks/useAuthLogin", () => ({
 }));
 
 vi.mock("@core/store/useAppStore", () => ({
-  useAppStore: (
-    selector: (state: {
-      isAuthenticated: boolean;
-      _hasHydrated: boolean;
-      setAuth: typeof mockSetAuth;
-    }) => unknown
-  ) => {
-    // Mock state
-    const state = {
-      isAuthenticated: false,
-      _hasHydrated: true,
-      setAuth: mockSetAuth,
-    };
-    return selector(state);
-  },
+  useAppStore: mockUseAppStore,
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -80,11 +102,14 @@ vi.mock("@tanstack/react-query", () => ({
 vi.mock("@core/common/secure-token-service", () => ({
   secureTokenService: {
     hasToken: () => false,
+    getAccessToken: () => null,
+    clearTokens: vi.fn(),
   },
 }));
 
 vi.mock("@/core/common/logger", () => ({
   appLogger: {
+    auth: vi.fn(),
     error: vi.fn(),
     debug: vi.fn(),
     info: vi.fn(),
@@ -100,7 +125,7 @@ describe("useLoginViewModel", () => {
   it("should initialize with default state", () => {
     const { result } = renderHook(() => useLoginViewModel());
 
-    expect(result.current.formData).toEqual({ username: "", password: "" });
+    expect(result.current.formData).toEqual({ identifier: "", password: "" });
     expect(result.current.error).toBe("");
     expect(result.current.isLoading).toBe(false);
     expect(result.current.loginStep).toBe("credentials");
@@ -110,11 +135,11 @@ describe("useLoginViewModel", () => {
     const { result } = renderHook(() => useLoginViewModel());
 
     act(() => {
-      result.current.updateField("username", "testuser");
+      result.current.updateField("identifier", "testuser");
       result.current.updateField("password", "password123");
     });
 
-    expect(result.current.formData.username).toBe("testuser");
+    expect(result.current.formData.identifier).toBe("testuser");
     expect(result.current.formData.password).toBe("password123");
   });
 
@@ -135,7 +160,7 @@ describe("useLoginViewModel", () => {
 
     // Fill form
     act(() => {
-      result.current.updateField("username", "testuser");
+      result.current.updateField("identifier", "testuser");
       result.current.updateField("password", "password123");
     });
 
@@ -147,8 +172,10 @@ describe("useLoginViewModel", () => {
     });
 
     expect(mockLoginMutateAsync).toHaveBeenCalledWith({
-      username: "testuser",
+      identifier: "testuser",
       password: "password123",
+      tenantCode: undefined,
+      tenantId: undefined,
     });
 
     // Should trigger redirect behavior
@@ -165,7 +192,7 @@ describe("useLoginViewModel", () => {
     const { result } = renderHook(() => useLoginViewModel());
 
     act(() => {
-      result.current.updateField("username", "testuser");
+      result.current.updateField("identifier", "testuser");
       result.current.updateField("password", "password123");
     });
 

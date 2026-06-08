@@ -128,6 +128,22 @@ export class SubscriptionService implements ISubscriptionService {
     await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.REVOKE(id));
   }
 
+  async changeCurrency(tenantId: string, currency: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId),
+      { currency }
+    );
+  }
+
+  async getDowngradeImpact(
+    tenantId: string,
+    targetEditionId: string
+  ): Promise<{ hasOverflow: boolean; overflows: { resourceType: string; featureName: string; currentCount: number; newLimit: number; overflowCount: number }[] }> {
+    return this.api.get(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
+    );
+  }
+
   // ── Export (blob download — IApiService only handles JSON) ──
 
   async exportSubscriptions(params: {

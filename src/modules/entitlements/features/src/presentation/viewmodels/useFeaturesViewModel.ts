@@ -17,6 +17,10 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import type { Feature } from "../../domain/entities/Feature";
 import type { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
+import type {
+  CreateFeatureRequest,
+  UpdateFeatureRequest,
+} from "../../domain/entities/FeatureRequests";
 
 export function useFeaturesViewModel() {
   const { featureRepository } = entitlementsContainer;
@@ -33,9 +37,9 @@ export function useFeaturesViewModel() {
   // - isInTenantWorld: set when super admin drills into a tenant
   const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
 
-  // ── CATALOG MODE: Global feature catalog (existing CRUD) ──
+  // ── CATALOG MODE: Global feature catalog with full CRUD ──
   // Only enabled for system admins — tenant admins never fire this API call
-  const catalogVm = useCrudViewModel<Feature, never, never>(
+  const catalogVm = useCrudViewModel<Feature, CreateFeatureRequest, UpdateFeatureRequest>(
     ["entitlements", "features"],
     {
       getAll: async (params) => {
@@ -54,7 +58,17 @@ export function useFeaturesViewModel() {
           },
         };
       },
-      // Features are system-seeded — no create, update, or delete
+      create: async (data) => {
+        const id = await featureRepository.create(data);
+        return featureRepository.getById(id);
+      },
+      update: async (id, data) => {
+        await featureRepository.update(id, data);
+        return featureRepository.getById(id);
+      },
+      delete: async (id) => {
+        await featureRepository.delete(id);
+      },
     },
     { enabled: isSystemCatalogMode }
   );

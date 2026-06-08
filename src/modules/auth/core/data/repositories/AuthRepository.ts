@@ -93,7 +93,11 @@ export class AuthRepository implements IAuthRepository {
     }
 
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
-      console.log("[AUTH-DEBUG] ✅ WORKSPACE SELECTION TRIGGERED! Throwing WorkspaceSelectionRequiredError with", responseModel.availableWorkspaces.length, "workspaces");
+      console.log(
+        "[AUTH-DEBUG] ✅ WORKSPACE SELECTION TRIGGERED! Throwing WorkspaceSelectionRequiredError with",
+        responseModel.availableWorkspaces.length,
+        "workspaces"
+      );
       appLogger.auth(
         `Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`
       );
@@ -113,7 +117,8 @@ export class AuthRepository implements IAuthRepository {
         }))
       );
     } else {
-      console.log("[AUTH-DEBUG] ❌ Workspace selection NOT triggered. requiresWorkspaceSelection =",
+      console.log(
+        "[AUTH-DEBUG] ❌ Workspace selection NOT triggered. requiresWorkspaceSelection =",
         responseModel.requiresWorkspaceSelection,
         "availableWorkspaces =",
         responseModel.availableWorkspaces
@@ -329,7 +334,9 @@ export class AuthRepository implements IAuthRepository {
       success: !raw.requiresWorkspaceSelection,
       requires2FA: false,
       requiresWorkspaceSelection: raw.requiresWorkspaceSelection ?? false,
-      availableWorkspaces: (raw.availableWorkspaces as import("../../domain/types/AuthTypes").LoginResponseModel["availableWorkspaces"]) ?? null,
+      availableWorkspaces:
+        (raw.availableWorkspaces as import("../../domain/types/AuthTypes").LoginResponseModel["availableWorkspaces"]) ??
+        null,
       mustChangePassword: raw.mustChangePassword ?? false,
       subscriptionStatus: null,
       gracePhase: null,

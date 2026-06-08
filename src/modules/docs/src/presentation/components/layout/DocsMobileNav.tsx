@@ -573,7 +573,6 @@ export function DocsMobileNav({
     );
   };
 
-
   return (
     <>
       <div className="docs-mobile-overlay" onClick={onClose} />

@@ -27,6 +27,8 @@ import {
   Shield,
   Tag,
   Languages,
+  Star,
+  Trash2,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type {
@@ -44,8 +46,16 @@ interface FeaturesTabProps {
   moduleGroups: FeatureModuleGroup[];
   getEffectiveValue: (feature: Feature) => string;
   getEffectiveLabel: (featureName: string) => { en: string; ar: string };
+  getEffectiveHighlight: (featureName: string) => { isHighlight: boolean; highlightOrder: number };
   setLocalValue: (featureName: string, value: string) => void;
   setLocalLabel: (featureName: string, field: "en" | "ar", value: string) => void;
+  setLocalHighlight: (
+    featureName: string,
+    field: "isHighlight" | "highlightOrder",
+    value: boolean | number
+  ) => void;
+  removeFeature: (featureId: string) => void;
+  isRemovingFeature: boolean;
   overflowPolicy: string;
   setOverflowPolicy: (policy: string) => void;
   overflowPolicyChanged: boolean;
@@ -60,8 +70,12 @@ export function FeaturesTab({
   moduleGroups,
   getEffectiveValue,
   getEffectiveLabel,
+  getEffectiveHighlight,
   setLocalValue,
   setLocalLabel,
+  setLocalHighlight,
+  removeFeature,
+  isRemovingFeature,
   overflowPolicy,
   setOverflowPolicy,
   overflowPolicyChanged,
@@ -259,6 +273,22 @@ export function FeaturesTab({
                                     <Languages className="h-3 w-3" />
                                   </Button>
                                 )}
+                                {/* Remove Feature button — only shown for features explicitly set on this edition */}
+                                {serverFeature && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 px-2 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
+                                    onClick={() => removeFeature(serverFeature.featureId)}
+                                    disabled={isRemovingFeature}
+                                    title={
+                                      t("entitlements.editions.removeFeature") ||
+                                      "Remove feature from this edition"
+                                    }
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                )}
                                 <div className="flex-shrink-0">
                                   <FeatureControl
                                     valueType={feature.valueType}
@@ -270,79 +300,154 @@ export function FeaturesTab({
                               </div>
                             </div>
 
-                            {/* Expandable label editor */}
-                            {isLabelExpanded && isEnabled && (
-                              <div className="mb-3 rounded-lg border border-blue-200/50 bg-blue-50/30 px-4 py-3 dark:border-blue-800/30 dark:bg-blue-950/20">
-                                <div className="mb-2 flex items-center gap-1.5">
-                                  <Tag className="h-3.5 w-3.5 text-blue-500" />
-                                  <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                                    Marketing Display Label
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    — overrides how this feature appears on plan cards
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div className="space-y-1">
-                                    <Label className="text-xs text-muted-foreground">
-                                      🇺🇸 English label
-                                    </Label>
-                                    <Input
-                                      type="text"
-                                      value={effectiveLabel.en}
-                                      onChange={(e) =>
-                                        setLocalLabel(feature.name, "en", e.target.value)
-                                      }
-                                      placeholder={`e.g. Up to 25 Admins`}
-                                      className="h-8 text-sm"
-                                    />
-                                  </div>
-                                  <div className="space-y-1">
-                                    <Label className="text-xs text-muted-foreground">
-                                      🇸🇦 Arabic label
-                                    </Label>
-                                    <Input
-                                      type="text"
-                                      dir="rtl"
-                                      value={effectiveLabel.ar}
-                                      onChange={(e) =>
-                                        setLocalLabel(feature.name, "ar", e.target.value)
-                                      }
-                                      placeholder={`مثال: حتى 25 مشرف`}
-                                      className="h-8 text-sm"
-                                    />
-                                  </div>
-                                </div>
-                                {(effectiveLabel.en || effectiveLabel.ar) && (
-                                  <div className="mt-2 flex items-center gap-1">
-                                    <span className="text-[10px] text-muted-foreground">
-                                      Preview:
-                                    </span>
-                                    {effectiveLabel.en && (
-                                      <Badge variant="secondary" className="text-[10px]">
-                                        {effectiveLabel.en}
-                                      </Badge>
+                            {/* Expandable label + highlight editor */}
+                            {isLabelExpanded &&
+                              isEnabled &&
+                              (() => {
+                                const highlight = getEffectiveHighlight(feature.name);
+                                const serverHighlight = edition.features.find(
+                                  (ef) => ef.featureName === feature.name
+                                );
+                                const isHighlightModified =
+                                  highlight.isHighlight !==
+                                    (serverHighlight?.isHighlight ?? false) ||
+                                  highlight.highlightOrder !==
+                                    (serverHighlight?.highlightOrder ?? 0);
+                                return (
+                                  <div className="mb-3 rounded-lg border border-blue-200/50 bg-blue-50/30 px-4 py-3 dark:border-blue-800/30 dark:bg-blue-950/20">
+                                    {/* ── Marketing Label ── */}
+                                    <div className="mb-2 flex items-center gap-1.5">
+                                      <Tag className="h-3.5 w-3.5 text-blue-500" />
+                                      <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                                        Marketing Display Label
+                                      </span>
+                                      <span className="text-xs text-muted-foreground">
+                                        — overrides how this feature appears on plan cards
+                                      </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <div className="space-y-1">
+                                        <Label className="text-xs text-muted-foreground">
+                                          🇺🇸 English label
+                                        </Label>
+                                        <Input
+                                          type="text"
+                                          value={effectiveLabel.en}
+                                          onChange={(e) =>
+                                            setLocalLabel(feature.name, "en", e.target.value)
+                                          }
+                                          placeholder="e.g. Up to 25 Admins"
+                                          className="h-8 text-sm"
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <Label className="text-xs text-muted-foreground">
+                                          🇸🇦 Arabic label
+                                        </Label>
+                                        <Input
+                                          type="text"
+                                          dir="rtl"
+                                          value={effectiveLabel.ar}
+                                          onChange={(e) =>
+                                            setLocalLabel(feature.name, "ar", e.target.value)
+                                          }
+                                          placeholder="مثال: حتى 25 مشرف"
+                                          className="h-8 text-sm"
+                                        />
+                                      </div>
+                                    </div>
+                                    {(effectiveLabel.en || effectiveLabel.ar) && (
+                                      <div className="mt-2 flex items-center gap-1">
+                                        <span className="text-[10px] text-muted-foreground">
+                                          Preview:
+                                        </span>
+                                        {effectiveLabel.en && (
+                                          <Badge variant="secondary" className="text-[10px]">
+                                            {effectiveLabel.en}
+                                          </Badge>
+                                        )}
+                                        {effectiveLabel.ar && (
+                                          <Badge
+                                            variant="outline"
+                                            className="text-[10px]"
+                                            dir="rtl"
+                                          >
+                                            {effectiveLabel.ar}
+                                          </Badge>
+                                        )}
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="ms-auto h-5 px-1 text-[10px] text-muted-foreground hover:text-destructive"
+                                          onClick={() => {
+                                            setLocalLabel(feature.name, "en", "");
+                                            setLocalLabel(feature.name, "ar", "");
+                                          }}
+                                        >
+                                          Clear
+                                        </Button>
+                                      </div>
                                     )}
-                                    {effectiveLabel.ar && (
-                                      <Badge variant="outline" className="text-[10px]" dir="rtl">
-                                        {effectiveLabel.ar}
-                                      </Badge>
-                                    )}
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="ms-auto h-5 px-1 text-[10px] text-muted-foreground hover:text-destructive"
-                                      onClick={() => {
-                                        setLocalLabel(feature.name, "en", "");
-                                        setLocalLabel(feature.name, "ar", "");
-                                      }}
-                                    >
-                                      Clear
-                                    </Button>
+
+                                    {/* ── Highlight ── */}
+                                    <div className="mt-3 border-t border-blue-200/50 pt-3 dark:border-blue-800/30">
+                                      <div className="mb-2 flex items-center gap-1.5">
+                                        <Star className="h-3.5 w-3.5 text-amber-500" />
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                                          Plan Card Highlight
+                                        </span>
+                                        {isHighlightModified && (
+                                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                        )}
+                                      </div>
+                                      <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2">
+                                          <Switch
+                                            checked={highlight.isHighlight}
+                                            onCheckedChange={(checked) =>
+                                              setLocalHighlight(
+                                                feature.name,
+                                                "isHighlight",
+                                                checked
+                                              )
+                                            }
+                                            id={`highlight-${feature.id}`}
+                                          />
+                                          <Label
+                                            htmlFor={`highlight-${feature.id}`}
+                                            className="cursor-pointer text-xs"
+                                          >
+                                            Show in plan card highlights
+                                          </Label>
+                                        </div>
+                                        {highlight.isHighlight && (
+                                          <div className="flex items-center gap-2">
+                                            <Label className="text-xs text-muted-foreground">
+                                              Order
+                                            </Label>
+                                            <Input
+                                              type="number"
+                                              min={0}
+                                              value={highlight.highlightOrder}
+                                              onChange={(e) =>
+                                                setLocalHighlight(
+                                                  feature.name,
+                                                  "highlightOrder",
+                                                  parseInt(e.target.value) || 0
+                                                )
+                                              }
+                                              className="h-7 w-16 text-center text-xs"
+                                            />
+                                            <span className="text-[10px] text-muted-foreground">
+                                              lower = higher priority
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
-                                )}
-                              </div>
-                            )}
+                                );
+                              })()}
                           </div>
                         );
                       })}

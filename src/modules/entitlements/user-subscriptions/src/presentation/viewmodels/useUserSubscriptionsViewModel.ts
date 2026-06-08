@@ -11,7 +11,10 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
-import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
+import type {
+  CreateUserSubscriptionRequest,
+  ChangePlanRequest,
+} from "../../domain/entities/UserSubscriptionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { FieldOption } from "@core/ui/forms/generic-form";
@@ -23,32 +26,49 @@ export function useUserSubscriptionsViewModel() {
   const queryClient = useQueryClient();
   const queryKey = ["entitlements", "user-subscriptions"];
 
-  const vm = useCrudViewModel<UserSubscription, CreateUserSubscriptionRequest, never>(queryKey, {
-    getAll: async (params) => {
-      const res = await userSubscriptionRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel<UserSubscription, CreateUserSubscriptionRequest, ChangePlanRequest>(
+    queryKey,
+    {
+      getAll: async (params) => {
+        const res = await userSubscriptionRepository.getAll({
           page: params.page,
-          pagesCount: res.totalPages,
-        },
-      };
-    },
-    create: async (data) => {
-      const id = await userSubscriptionRepository.create(data);
-      success({
-        title: t("entitlements.userSubscriptions.assigned"),
-        description: t("entitlements.userSubscriptions.assignedDesc"),
-      });
-      return { id } as unknown as UserSubscription;
-    },
-  });
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await userSubscriptionRepository.create(data);
+        success({
+          title: t("entitlements.userSubscriptions.assigned"),
+          description: t("entitlements.userSubscriptions.assignedDesc"),
+        });
+        return { id } as unknown as UserSubscription;
+      },
+      update: async (id, data) => {
+        await userSubscriptionRepository.changePlan(id, {
+          newTenantPlanId: data.newTenantPlanId,
+          billingCycle: data.billingCycle,
+          reason: data.reason,
+        });
+        success({
+          title: t("entitlements.userSubscriptions.planChanged") || "Plan Changed",
+          description:
+            t("entitlements.userSubscriptions.planChangedDesc") ||
+            "User subscription plan updated successfully.",
+        });
+        return userSubscriptionRepository.getById(id);
+      },
+    }
+  );
 
   // ── Available Plans (static list for the Create form plan selector) ──────────
   // Plans are a relatively small set (rarely > 20 per tenant) — fetch all upfront.

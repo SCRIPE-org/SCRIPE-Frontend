@@ -68,10 +68,7 @@ export interface IAuthRepository {
   /** Request phone OTP for sign-in */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
   /** Verify phone OTP code — returns full login response (supports multi-workspace) */
-  verifyPhoneOtp(
-    phoneNumber: string,
-    code: string
-  ): Promise<LoginResponseModel>;
+  verifyPhoneOtp(phoneNumber: string, code: string): Promise<LoginResponseModel>;
   /** Begin QR sign-in session */
   beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
   /** Check QR sign-in session status */

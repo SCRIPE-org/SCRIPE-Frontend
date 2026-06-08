@@ -21,6 +21,10 @@ export interface CreateEditionRequest {
   trialDiscountPercent?: number;
   gracePeriodDays?: number;
   maxActiveSubscriptions?: number;
+  // ── Downgrade Policy ──
+  overflowPolicy?: string;
+  // ── Stripe Connect commission override ──
+  connectCommissionRate?: number;
   // ── Self-Service Controls ──
   isSelfServiceEnabled?: boolean;
   isContactSalesOnly?: boolean;

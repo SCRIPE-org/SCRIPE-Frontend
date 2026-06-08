@@ -11,10 +11,17 @@ import type {
   UpdateEditionRequest,
 } from "../../../domain/entities/EditionRequests";
 
+export interface EditionOption {
+  id: string;
+  name: string;
+  displayNameEn?: string;
+}
+
 interface WizardStepBasicsProps {
   form: CreateEditionRequest | UpdateEditionRequest;
   onChange: (updates: Partial<UpdateEditionRequest | CreateEditionRequest>) => void;
   isEditMode?: boolean;
+  availableEditions?: EditionOption[];
 }
 
 function SectionHeader({
@@ -39,7 +46,12 @@ function SectionHeader({
   );
 }
 
-export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardStepBasicsProps) {
+export function WizardStepBasics({
+  form,
+  onChange,
+  isEditMode = false,
+  availableEditions = [],
+}: WizardStepBasicsProps) {
   const { t } = useI18n();
 
   return (
@@ -223,23 +235,23 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
         </div>
       </section>
 
-      {/* ── Section 4: Overflow Policy (edit mode only) ── */}
-      {isEditMode && (
-        <section>
-          <SectionHeader
-            icon={ShieldAlert}
-            title={t("entitlements.editions.wizard.overflowSection") || "Downgrade Policy"}
-            desc={
-              t("entitlements.editions.wizard.overflowSectionDesc") ||
-              "What happens when tenant resources exceed limits after downgrading."
-            }
-          />
+      {/* ── Section 4: Downgrade / Fallback Policy ── */}
+      <section>
+        <SectionHeader
+          icon={ShieldAlert}
+          title={t("entitlements.editions.wizard.overflowSection") || "Downgrade & Fallback Policy"}
+          desc={
+            t("entitlements.editions.wizard.overflowSectionDesc") ||
+            "What happens when tenant resources exceed limits or subscriptions expire."
+          }
+        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="overflowPolicy">
               {t("entitlements.editions.wizard.overflowPolicy") || "Overflow Policy"}
             </Label>
             <Select
-              value={(form as UpdateEditionRequest).overflowPolicy ?? "Block"}
+              value={form.overflowPolicy ?? "Block"}
               onValueChange={(v) => onChange({ overflowPolicy: v })}
             >
               <SelectTrigger id="overflowPolicy">
@@ -259,9 +271,46 @@ export function WizardStepBasics({ form, onChange, isEditMode = false }: WizardS
                 </SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground">
+              {t("entitlements.editions.wizard.overflowPolicyDesc") ||
+                "Action taken when a tenant's resources exceed this edition's limits after downgrading."}
+            </p>
           </div>
-        </section>
-      )}
+          <div className="space-y-2">
+            <Label htmlFor="fallbackEditionId">
+              {t("entitlements.editions.wizard.fallbackEdition") || "Fallback Edition"}
+            </Label>
+            <Select
+              value={form.fallbackEditionId ?? "__none__"}
+              onValueChange={(v) =>
+                onChange({ fallbackEditionId: v === "__none__" ? undefined : v })
+              }
+            >
+              <SelectTrigger id="fallbackEditionId">
+                <SelectValue
+                  placeholder={
+                    t("entitlements.editions.wizard.noFallback") || "None — suspend on expiry"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">
+                  {t("entitlements.editions.wizard.noFallback") || "None — suspend on expiry"}
+                </SelectItem>
+                {availableEditions.map((ed) => (
+                  <SelectItem key={ed.id} value={ed.id}>
+                    {ed.displayNameEn || ed.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              {t("entitlements.editions.wizard.fallbackEditionDesc") ||
+                "Auto-downgrade to this edition when subscription expires. Leave empty to suspend instead."}
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

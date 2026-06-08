@@ -12,15 +12,16 @@
  */
 "use client";
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Switch } from "@core/ui/switch";
+import { Checkbox } from "@core/ui/checkbox";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
-import { CreditCard, AlertTriangle } from "lucide-react";
+import { CreditCard, AlertTriangle, ShieldCheck } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 // ── Static options ──────────────────────────────────────────
@@ -40,6 +41,7 @@ interface CreateTenantStep3Props {
 
 export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   const isFreeEdition = vm.selectedEdition && (vm.selectedEdition as any).isFree;
+  const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
 
   // Server-side search handler for edition GenericSelect
   const handleEditionSearch = useCallback(
@@ -214,8 +216,137 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         </div>
       )}
 
+      {/* Advanced: Restrict Permissions */}
+      <div className="rounded-xl border border-border/50 duration-300 animate-in fade-in-0">
+        <button
+          type="button"
+          className="flex w-full items-center justify-between p-4 text-left"
+          onClick={() => setIsPermissionsOpen((v) => !v)}
+        >
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-medium">
+                {t("tenant.restrictPermissions") || "Restrict Admin Permissions"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("tenant.restrictPermissionsDesc") ||
+                  "Limit which permissions this tenant's admins can be assigned. Leave empty to allow all."}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {vm.form.availablePermissionIds.length > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {vm.form.availablePermissionIds.length}
+              </Badge>
+            )}
+            <span className="text-xs text-muted-foreground">{isPermissionsOpen ? "▲" : "▼"}</span>
+          </div>
+        </button>
+
+        {isPermissionsOpen && (
+          <div className="border-t border-border/50 p-4">
+            {vm.isLoadingPermissions ? (
+              <p className="text-sm text-muted-foreground">
+                {t("common.loading") || "Loading permissions..."}
+              </p>
+            ) : vm.creationPermissions.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                {t("tenant.noPermissionsAvailable") || "No permissions available."}
+              </p>
+            ) : (
+              <PermissionPicker vm={vm} t={t} />
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Summary */}
       {vm.form.editionId && <CreateTenantSummary vm={vm} t={t} />}
+    </div>
+  );
+}
+
+// ── Permission Picker (grouped by module/category) ──────────
+
+function PermissionPicker({ vm, t }: { vm: CreateTenantVM; t: (key: string) => string }) {
+  const selected = new Set(vm.form.availablePermissionIds);
+
+  const grouped = useMemo(() => {
+    const map = new Map<string, typeof vm.creationPermissions>();
+    for (const p of vm.creationPermissions) {
+      const key = p.module || p.category || "Other";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(p);
+    }
+    return Array.from(map.entries());
+  }, [vm.creationPermissions]);
+
+  const toggle = useCallback(
+    (permId: string) => {
+      const next = new Set(selected);
+      if (next.has(permId)) next.delete(permId);
+      else next.add(permId);
+      vm.updateField("availablePermissionIds", Array.from(next));
+    },
+    [selected, vm]
+  );
+
+  const toggleAll = useCallback(() => {
+    if (selected.size === vm.creationPermissions.length) {
+      vm.updateField("availablePermissionIds", []);
+    } else {
+      vm.updateField(
+        "availablePermissionIds",
+        vm.creationPermissions.map((p) => p.id)
+      );
+    }
+  }, [selected, vm]);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">
+          {selected.size > 0
+            ? `${selected.size} / ${vm.creationPermissions.length} ${t("tenant.permissionsSelected") || "selected"}`
+            : t("tenant.allPermissionsAllowed") || "All permissions allowed (no restriction)"}
+        </p>
+        <button
+          type="button"
+          className="text-xs text-primary underline-offset-2 hover:underline"
+          onClick={toggleAll}
+        >
+          {selected.size === vm.creationPermissions.length
+            ? t("common.deselectAll") || "Deselect all"
+            : t("common.selectAll") || "Select all"}
+        </button>
+      </div>
+      <div className="max-h-64 overflow-y-auto rounded-lg border border-border/40 bg-muted/20 p-2">
+        {grouped.map(([group, perms]) => (
+          <div key={group} className="mb-3 last:mb-0">
+            <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {group}
+            </p>
+            <div className="space-y-1">
+              {perms.map((p) => (
+                <label
+                  key={p.id}
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted/50"
+                >
+                  <Checkbox
+                    checked={selected.has(p.id)}
+                    onCheckedChange={() => toggle(p.id)}
+                    id={`perm-${p.id}`}
+                  />
+                  <span className="flex-1">{p.getLocalizedName()}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground">{p.code}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Checkbox } from "@core/ui/checkbox";
 import { useI18n } from "@core/providers/i18n-provider";
-import { CalendarRange, Beaker, ShoppingCart } from "lucide-react";
+import { CalendarRange, Beaker, ShoppingCart, Settings2 } from "lucide-react";
 import type {
   CreateEditionRequest,
   UpdateEditionRequest,
@@ -224,6 +224,54 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
             checked={form.isContactSalesOnly ?? false}
             onChange={(v) => onChange({ isContactSalesOnly: v })}
           />
+        </div>
+      </section>
+
+      {/* ── Advanced Controls ── */}
+      <section>
+        <SectionHeader
+          icon={Settings2}
+          title={t("entitlements.editions.wizard.advancedSection") || "Advanced Controls"}
+          desc={
+            t("entitlements.editions.wizard.advancedSectionDesc") ||
+            "Quota limits and grace period for this edition."
+          }
+        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="gracePeriodDays">
+              {t("entitlements.editions.wizard.gracePeriodDays") || "Grace Period (days)"}
+            </Label>
+            <Input
+              id="gracePeriodDays"
+              type="number"
+              min={0}
+              max={365}
+              value={form.gracePeriodDays ?? 0}
+              onChange={(e) => onChange({ gracePeriodDays: parseInt(e.target.value) || 0 })}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t("entitlements.editions.wizard.gracePeriodDaysDesc") ||
+                "Days of access after subscription expires before suspension. 0 = immediate."}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="maxActiveSubscriptions">
+              {t("entitlements.editions.wizard.maxActiveSubscriptions") ||
+                "Max Active Subscriptions"}
+            </Label>
+            <Input
+              id="maxActiveSubscriptions"
+              type="number"
+              min={-1}
+              value={form.maxActiveSubscriptions ?? -1}
+              onChange={(e) => onChange({ maxActiveSubscriptions: parseInt(e.target.value) || -1 })}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t("entitlements.editions.wizard.maxActiveSubscriptionsDesc") ||
+                "Maximum tenants that can hold this edition simultaneously. -1 = unlimited."}
+            </p>
+          </div>
         </div>
       </section>
     </div>

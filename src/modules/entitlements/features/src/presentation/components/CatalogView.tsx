@@ -33,7 +33,6 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
       titleKey: "entitlements.features.title",
       subtitleKey: "entitlements.features.description",
       resource: "features",
-      hideAddButton: true,
 
       columns: [
         {
@@ -89,8 +88,119 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
           render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
         },
       ],
+
+      createFields: [
+        {
+          name: "name",
+          label: t("entitlements.features.featureName") || "Feature Key",
+          type: "text" as const,
+          required: true,
+          placeholder: "e.g. Identity.MaxAdmins",
+          description: "Unique dot-namespaced key used in code to check feature access.",
+        },
+        {
+          name: "module",
+          label: t("entitlements.features.module") || "Module",
+          type: "text" as const,
+          required: true,
+          placeholder: "e.g. Identity",
+        },
+        {
+          name: "valueType",
+          label: t("entitlements.features.valueType") || "Value Type",
+          type: "select" as const,
+          required: true,
+          options: [
+            { value: "Boolean", label: "Boolean (true/false)" },
+            { value: "Numeric", label: "Numeric (integer limit)" },
+            { value: "String", label: "String (text value)" },
+          ],
+        },
+        {
+          name: "defaultValue",
+          label: t("entitlements.features.defaultValue") || "Default Value",
+          type: "text" as const,
+          required: true,
+          placeholder: "false / 0 / empty",
+          description: "Value used when no edition or override is set for a tenant.",
+        },
+        {
+          name: "displayNameEn",
+          label: t("entitlements.features.displayNameEn") || "Display Name (English)",
+          type: "text" as const,
+          placeholder: "e.g. Maximum Administrators",
+        },
+        {
+          name: "displayNameAr",
+          label: t("entitlements.features.displayNameAr") || "Display Name (Arabic)",
+          type: "text" as const,
+          placeholder: "e.g. الحد الأقصى للمديرين",
+        },
+        {
+          name: "category",
+          label: t("entitlements.features.category") || "Category",
+          type: "text" as const,
+          placeholder: "e.g. Limits, Integrations",
+        },
+        {
+          name: "description",
+          label: t("common.description") || "Description",
+          type: "textarea" as const,
+          placeholder: "Internal description for admin reference.",
+        },
+        {
+          name: "isMarketingOnly",
+          label: t("entitlements.features.marketingOnly") || "Marketing Only",
+          type: "switch" as const,
+          defaultValue: false,
+          description:
+            "When enabled, this feature is display-only and never enforced by the system.",
+        },
+      ],
+
+      editFields: (item: Feature) => [
+        {
+          name: "displayNameEn",
+          label: t("entitlements.features.displayNameEn") || "Display Name (English)",
+          type: "text" as const,
+          defaultValue: item.displayNameEn,
+        },
+        {
+          name: "displayNameAr",
+          label: t("entitlements.features.displayNameAr") || "Display Name (Arabic)",
+          type: "text" as const,
+          defaultValue: item.displayNameAr,
+        },
+        {
+          name: "defaultValue",
+          label: t("entitlements.features.defaultValue") || "Default Value",
+          type: "text" as const,
+          defaultValue: item.defaultValue,
+          required: true,
+        },
+        {
+          name: "category",
+          label: t("entitlements.features.category") || "Category",
+          type: "text" as const,
+          defaultValue: item.category,
+        },
+        {
+          name: "description",
+          label: t("common.description") || "Description",
+          type: "textarea" as const,
+          defaultValue: item.description,
+        },
+        {
+          name: "isMarketingOnly",
+          label: t("entitlements.features.marketingOnly") || "Marketing Only",
+          type: "switch" as const,
+          defaultValue: item.isMarketingOnly,
+          description:
+            "When enabled, this feature is display-only and never enforced by the system.",
+        },
+      ],
+
       getItemDisplayName: (feature: Feature) => feature.getDisplayName(language),
-      hideActionsColumn: true,
     }),
     [t, language]
   );

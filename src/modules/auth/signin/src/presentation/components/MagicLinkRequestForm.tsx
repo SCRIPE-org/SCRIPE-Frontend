@@ -41,7 +41,8 @@ export function MagicLinkRequestForm({
           {t("auth.magicLink.title") || "Sign in with magic link"}
         </h2>
         <p className="mt-1 text-sm" style={{ color: "var(--sx-text-mute)" }}>
-          {t("auth.magicLink.description") || "Enter your email address and we will send you a sign-in link."}
+          {t("auth.magicLink.description") ||
+            "Enter your email address and we will send you a sign-in link."}
         </p>
       </div>
 

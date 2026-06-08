@@ -24,8 +24,11 @@ export interface IEditionRepository {
     featureId: string,
     value: string,
     displayLabelEn?: string,
-    displayLabelAr?: string
+    displayLabelAr?: string,
+    isHighlight?: boolean,
+    highlightOrder?: number
   ): Promise<void>;
+  removeFeature(editionId: string, featureId: string): Promise<void>;
 
   // ── Versioning ──
   getVersions(editionId: string): Promise<EditionVersion[]>;

@@ -17,10 +17,7 @@ export class PasswordResetService implements IPasswordResetService {
     await this.api.post(API_ENDPOINTS.AUTH.ADMIN_REQUEST_PASSWORD_RESET, request);
   }
 
-  async verifyOtp(
-    email: string,
-    code: string
-  ): Promise<{ workspaces?: ResetWorkspaceOption[] }> {
+  async verifyOtp(email: string, code: string): Promise<{ workspaces?: ResetWorkspaceOption[] }> {
     const request: VerifyResetOtpDto = { email, code };
     const response = await this.api.post<VerifyResetOtpResponseDto>(
       API_ENDPOINTS.AUTH.ADMIN_VERIFY_RESET_OTP,

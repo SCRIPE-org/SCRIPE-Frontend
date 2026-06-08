@@ -134,7 +134,8 @@ export const ar = {
     resendCode: "إعادة إرسال الرمز",
     resendCooldown: "إعادة الإرسال خلال {{seconds}}ث",
     forgotPickWorkspaceTitle: "أي مساحة عمل؟",
-    forgotPickWorkspaceSubtitle: "بريدك الإلكتروني مرتبط بمساحات عمل متعددة. اختر التي تريد إعادة تعيين كلمة مرورها.",
+    forgotPickWorkspaceSubtitle:
+      "بريدك الإلكتروني مرتبط بمساحات عمل متعددة. اختر التي تريد إعادة تعيين كلمة مرورها.",
     resetPasswordFor: "لـ {{workspace}}",
     magicLinkSentTitle: "تحقق من بريدك الوارد",
     magicLinkSentSubtitle: "أرسلنا رابط الاستعادة إلى {{email}}. انقر عليه لتعيين كلمة مرور جديدة.",
@@ -193,7 +194,7 @@ export const ar = {
       setupPending: "في انتظار الإعداد",
       back: "استخدام حساب مختلف",
       backLabel: "العودة إلى نموذج تسجيل الدخول",
-      enterPasswordForWorkspace: "أدخل كلمة المرور لمساحة العمل {{workspace}}",
+      enterPasswordForWorkspace: "أدخل كلمة مرور مساحة العمل لتسجيل الدخول",
       subtitleMixed: "بعض مساحات العمل مقفلة. أدخل كلمة المرور لإلغاء القفل.",
       subtitleAllLocked: "تتطلب جميع مساحات العمل الخاصة بك المصادقة.",
       unlockHint: "أدخل كلمة مرور مساحة العمل لإلغاء القفل",

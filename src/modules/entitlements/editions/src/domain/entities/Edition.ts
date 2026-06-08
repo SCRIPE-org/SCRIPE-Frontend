@@ -20,6 +20,10 @@ export interface EditionFeatureDto {
   displayLabelAr?: string;
   /** If true, this feature is for marketing display only (not enforced at runtime). */
   isMarketingOnly?: boolean;
+  /** If true, this feature is highlighted on public plan cards. */
+  isHighlight?: boolean;
+  /** Display order for highlighted features (lower = higher priority). */
+  highlightOrder?: number;
 }
 
 /** Pricing data for a specific currency + billing cycle combination. */

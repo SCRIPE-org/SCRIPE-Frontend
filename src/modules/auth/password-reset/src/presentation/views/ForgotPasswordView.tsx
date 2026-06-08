@@ -72,12 +72,7 @@ function StepDots({ current, total }: { current: number; total: number }) {
 
 /** Password strength bar */
 function StrengthBar({ strength, labels }: { strength: number; labels: string[] }) {
-  const colors = [
-    "rgb(239,68,68)",
-    "rgb(249,115,22)",
-    "rgb(234,179,8)",
-    "rgb(34,197,94)",
-  ];
+  const colors = ["rgb(239,68,68)", "rgb(249,115,22)", "rgb(234,179,8)", "rgb(34,197,94)"];
   return (
     <div className="space-y-1">
       <div className="flex gap-1">
@@ -130,7 +125,10 @@ function WorkspacePickCard({
       {/* Logo / Icon */}
       <div
         className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl"
-        style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+        style={{
+          background: "var(--sx-accent-soft)",
+          border: "1px solid var(--sx-accent-soft-border)",
+        }}
       >
         {workspace.logoUrl ? (
           <img
@@ -187,11 +185,11 @@ function OtpInput({ value, onChange }: { value: string; onChange: (v: string) =>
         autoFocus
       />
       {/* Visual digit boxes */}
-      <div className="flex gap-2.5 justify-center" onClick={() => inputRef.current?.focus()}>
+      <div className="flex justify-center gap-2.5" onClick={() => inputRef.current?.focus()}>
         {chars.map((ch, i) => (
           <div
             key={i}
-            className="flex h-13 w-11 items-center justify-center rounded-xl border text-[22px] font-bold transition-all"
+            className="h-13 flex w-11 items-center justify-center rounded-xl border text-[22px] font-bold transition-all"
             style={{
               height: "3.25rem",
               background: ch ? "var(--sx-accent-soft)" : "var(--sx-chip-bg)",
@@ -202,10 +200,21 @@ function OtpInput({ value, onChange }: { value: string; onChange: (v: string) =>
                     ? "var(--sx-accent-soft-border)"
                     : "var(--sx-chip-border)",
               color: "var(--sx-text)",
-              boxShadow: i === value.length ? "0 0 0 3px var(--sx-accent-ring, rgba(139,92,246,.18))" : undefined,
+              boxShadow:
+                i === value.length
+                  ? "0 0 0 3px var(--sx-accent-ring, rgba(139,92,246,.18))"
+                  : undefined,
             }}
           >
-            {ch || (i === value.length ? <span className="sx-caret h-5 w-0.5 rounded-full" style={{ background: "var(--sx-accent-text)" }} /> : "")}
+            {ch ||
+              (i === value.length ? (
+                <span
+                  className="sx-caret h-5 w-0.5 rounded-full"
+                  style={{ background: "var(--sx-accent-text)" }}
+                />
+              ) : (
+                ""
+              ))}
           </div>
         ))}
       </div>
@@ -249,7 +258,6 @@ export function ForgotPasswordView() {
     return err;
   };
 
-
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.title = `${t("auth.resetPassword")} — ${companyName}`;
@@ -265,19 +273,17 @@ export function ForgotPasswordView() {
 
   // ── Step helpers ──
   const totalSteps = 5;
-  const stepIndex = {
-    request: 1,
-    method: 2,
-    otp: 3,
-    workspaces: 4,
-    newPassword: 5,
-    success: 5,
-  }[vm.step] ?? 1;
+  const stepIndex =
+    {
+      request: 1,
+      method: 2,
+      otp: 3,
+      workspaces: 4,
+      newPassword: 5,
+      success: 5,
+    }[vm.step] ?? 1;
 
-  const showBack =
-    vm.step !== "request" &&
-    vm.step !== "success" &&
-    !(vm.step === "method"); // let user go back on method step
+  const showBack = vm.step !== "request" && vm.step !== "success" && !(vm.step === "method"); // let user go back on method step
 
   return (
     <div
@@ -347,14 +353,27 @@ export function ForgotPasswordView() {
               <div className="text-center">
                 <div
                   className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                  style={{
+                    background: "var(--sx-accent-soft)",
+                    border: "1px solid var(--sx-accent-soft-border)",
+                  }}
                 >
-                  <KeyRound className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
+                  <KeyRound
+                    className="h-6 w-6"
+                    style={{ color: "var(--sx-accent-text)" }}
+                    aria-hidden="true"
+                  />
                 </div>
-                <h1 className="text-[22px] font-semibold leading-tight tracking-[-0.025em]" style={{ color: "var(--sx-text)" }}>
+                <h1
+                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                  style={{ color: "var(--sx-text)" }}
+                >
                   {t("auth.forgotPasswordTitle")}
                 </h1>
-                <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
+                <p
+                  className="mt-1.5 text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
+                >
                   {t("auth.forgotPasswordSubtitle")}
                 </p>
               </div>
@@ -401,14 +420,27 @@ export function ForgotPasswordView() {
               <div className="text-center">
                 <div
                   className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                  style={{
+                    background: "var(--sx-accent-soft)",
+                    border: "1px solid var(--sx-accent-soft-border)",
+                  }}
                 >
-                  <ShieldCheck className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
+                  <ShieldCheck
+                    className="h-6 w-6"
+                    style={{ color: "var(--sx-accent-text)" }}
+                    aria-hidden="true"
+                  />
                 </div>
-                <h1 className="text-[22px] font-semibold leading-tight tracking-[-0.025em]" style={{ color: "var(--sx-text)" }}>
+                <h1
+                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                  style={{ color: "var(--sx-text)" }}
+                >
                   {t("auth.chooseMethodTitle")}
                 </h1>
-                <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
+                <p
+                  className="mt-1.5 text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
+                >
                   {t("auth.chooseMethodSubtitle").replace("{{email}}", "")}{" "}
                   <strong style={{ color: "var(--sx-text)" }}>{vm.email}</strong>
                 </p>
@@ -428,17 +460,23 @@ export function ForgotPasswordView() {
                     borderColor: "var(--sx-chip-border)",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-accent-text)";
-                    (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-accent-soft)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor =
+                      "var(--sx-accent-text)";
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "var(--sx-accent-soft)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-chip-border)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor =
+                      "var(--sx-chip-border)";
                     (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-chip-bg)";
                   }}
                 >
                   <div
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                    style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                    style={{
+                      background: "var(--sx-accent-soft)",
+                      border: "1px solid var(--sx-accent-soft-border)",
+                    }}
                   >
                     <Smartphone className="h-5 w-5" style={{ color: "var(--sx-accent-text)" }} />
                   </div>
@@ -467,17 +505,23 @@ export function ForgotPasswordView() {
                     borderColor: "var(--sx-chip-border)",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-accent-text)";
-                    (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-accent-soft)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor =
+                      "var(--sx-accent-text)";
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "var(--sx-accent-soft)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-chip-border)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor =
+                      "var(--sx-chip-border)";
                     (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-chip-bg)";
                   }}
                 >
                   <div
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                    style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                    style={{
+                      background: "var(--sx-accent-soft)",
+                      border: "1px solid var(--sx-accent-soft-border)",
+                    }}
                   >
                     <Inbox className="h-5 w-5" style={{ color: "var(--sx-accent-text)" }} />
                   </div>
@@ -498,7 +542,10 @@ export function ForgotPasswordView() {
 
               {vm.isLoading && (
                 <div className="flex justify-center">
-                  <span className="sx-spin1 inline-block h-5 w-5 rounded-full border-2 border-t-transparent" style={{ borderColor: "var(--sx-accent-text)", borderTopColor: "transparent" }} />
+                  <span
+                    className="sx-spin1 inline-block h-5 w-5 rounded-full border-2 border-t-transparent"
+                    style={{ borderColor: "var(--sx-accent-text)", borderTopColor: "transparent" }}
+                  />
                 </div>
               )}
             </div>
@@ -510,14 +557,27 @@ export function ForgotPasswordView() {
               <div className="text-center">
                 <div
                   className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                  style={{
+                    background: "var(--sx-accent-soft)",
+                    border: "1px solid var(--sx-accent-soft-border)",
+                  }}
                 >
-                  <Mail className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
+                  <Mail
+                    className="h-6 w-6"
+                    style={{ color: "var(--sx-accent-text)" }}
+                    aria-hidden="true"
+                  />
                 </div>
-                <h1 className="text-[22px] font-semibold leading-tight tracking-[-0.025em]" style={{ color: "var(--sx-text)" }}>
+                <h1
+                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                  style={{ color: "var(--sx-text)" }}
+                >
                   {t("auth.enterOtpTitle")}
                 </h1>
-                <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
+                <p
+                  className="mt-1.5 text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
+                >
                   {t("auth.enterOtpSubtitle").replace("{{email}}", "")}{" "}
                   <strong style={{ color: "var(--sx-text)" }}>{vm.email}</strong>
                 </p>
@@ -534,7 +594,9 @@ export function ForgotPasswordView() {
                     role="alert"
                     aria-live="assertive"
                   >
-                    <p className="text-[13px] font-medium text-destructive">{resolveError(vm.error)}</p>
+                    <p className="text-[13px] font-medium text-destructive">
+                      {resolveError(vm.error)}
+                    </p>
                   </div>
                 )}
 
@@ -572,21 +634,34 @@ export function ForgotPasswordView() {
               <div className="text-center">
                 <div
                   className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                  style={{
+                    background: "var(--sx-accent-soft)",
+                    border: "1px solid var(--sx-accent-soft-border)",
+                  }}
                 >
-                  <Building2 className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
+                  <Building2
+                    className="h-6 w-6"
+                    style={{ color: "var(--sx-accent-text)" }}
+                    aria-hidden="true"
+                  />
                 </div>
-                <h1 className="text-[22px] font-semibold leading-tight tracking-[-0.025em]" style={{ color: "var(--sx-text)" }}>
+                <h1
+                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                  style={{ color: "var(--sx-text)" }}
+                >
                   {t("auth.forgotPickWorkspaceTitle")}
                 </h1>
-                <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
+                <p
+                  className="mt-1.5 text-[13px] leading-relaxed"
+                  style={{ color: "var(--sx-text-mute)" }}
+                >
                   {t("auth.forgotPickWorkspaceSubtitle")}
                 </p>
               </div>
 
               <StepDots current={4} total={totalSteps} />
 
-              <div className="flex flex-col gap-2.5 max-h-72 overflow-y-auto">
+              <div className="flex max-h-72 flex-col gap-2.5 overflow-y-auto">
                 {vm.workspaces.map((w) => (
                   <WorkspacePickCard key={w.tenantId} workspace={w} onSelect={vm.selectWorkspace} />
                 ))}
@@ -600,16 +675,32 @@ export function ForgotPasswordView() {
               <div className="text-center">
                 <div
                   className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ background: "var(--sx-accent-soft)", border: "1px solid var(--sx-accent-soft-border)" }}
+                  style={{
+                    background: "var(--sx-accent-soft)",
+                    border: "1px solid var(--sx-accent-soft-border)",
+                  }}
                 >
-                  <Lock className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
+                  <Lock
+                    className="h-6 w-6"
+                    style={{ color: "var(--sx-accent-text)" }}
+                    aria-hidden="true"
+                  />
                 </div>
-                <h1 className="text-[22px] font-semibold leading-tight tracking-[-0.025em]" style={{ color: "var(--sx-text)" }}>
+                <h1
+                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                  style={{ color: "var(--sx-text)" }}
+                >
                   {t("auth.resetPassword")}
                 </h1>
                 {vm.selectedWorkspace && (
-                  <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
-                    {t("auth.resetPasswordFor").replace("{{workspace}}", vm.selectedWorkspace.tenantName)}
+                  <p
+                    className="mt-1.5 text-[13px] leading-relaxed"
+                    style={{ color: "var(--sx-text-mute)" }}
+                  >
+                    {t("auth.resetPasswordFor").replace(
+                      "{{workspace}}",
+                      vm.selectedWorkspace.tenantName
+                    )}
                   </p>
                 )}
               </div>
@@ -660,9 +751,13 @@ export function ForgotPasswordView() {
                   {vm.confirmPassword.length > 0 && (
                     <p
                       className="text-[12px]"
-                      style={{ color: vm.passwordsMatch ? "rgb(34,197,94)" : "hsl(var(--destructive))" }}
+                      style={{
+                        color: vm.passwordsMatch ? "rgb(34,197,94)" : "hsl(var(--destructive))",
+                      }}
                     >
-                      {vm.passwordsMatch ? `✓ ${t("auth.accountSetup.passwordsMatch")}` : t("auth.passwordMismatch")}
+                      {vm.passwordsMatch
+                        ? `✓ ${t("auth.accountSetup.passwordsMatch")}`
+                        : t("auth.passwordMismatch")}
                     </p>
                   )}
                 </div>
@@ -673,7 +768,9 @@ export function ForgotPasswordView() {
                     role="alert"
                     aria-live="assertive"
                   >
-                    <p className="text-[13px] font-medium text-destructive">{resolveError(vm.error)}</p>
+                    <p className="text-[13px] font-medium text-destructive">
+                      {resolveError(vm.error)}
+                    </p>
                   </div>
                 )}
 
@@ -694,7 +791,10 @@ export function ForgotPasswordView() {
             <div className="sx-pop flex flex-col items-center gap-6 text-center">
               <div
                 className="flex h-16 w-16 items-center justify-center rounded-2xl"
-                style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.25)" }}
+                style={{
+                  background: "rgba(16,185,129,0.12)",
+                  border: "1px solid rgba(16,185,129,0.25)",
+                }}
               >
                 {vm.method === "magic-link" ? (
                   <Mail className="h-7 w-7 text-emerald-500" aria-hidden="true" />
@@ -703,8 +803,13 @@ export function ForgotPasswordView() {
                 )}
               </div>
               <div className="space-y-1.5">
-                <h2 className="text-xl font-semibold tracking-tight" style={{ color: "var(--sx-text)" }}>
-                  {vm.method === "magic-link" ? t("auth.magicLinkSentTitle") : t("auth.resetSuccessTitle")}
+                <h2
+                  className="text-xl font-semibold tracking-tight"
+                  style={{ color: "var(--sx-text)" }}
+                >
+                  {vm.method === "magic-link"
+                    ? t("auth.magicLinkSentTitle")
+                    : t("auth.resetSuccessTitle")}
                 </h2>
                 <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
                   {vm.method === "magic-link"

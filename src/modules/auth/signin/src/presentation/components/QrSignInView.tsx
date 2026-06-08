@@ -95,11 +95,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
               style={{ width: 200, height: 200, background: "#f3f4f6" }}
             />
           ) : (
-            <canvas
-              ref={canvasRef}
-              className="mx-auto"
-              style={{ width: 200, height: 200 }}
-            />
+            <canvas ref={canvasRef} className="mx-auto" style={{ width: 200, height: 200 }} />
           )}
 
           {/* Scanned overlay */}

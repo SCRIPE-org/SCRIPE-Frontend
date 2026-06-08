@@ -22,6 +22,7 @@ export const en = {
     addTenant: "Add Tenant",
     createTenant: "Create Tenant",
     createChild: "Create Child Tenant",
+    creatingAsChild: "Creating as child tenant",
     editTenant: "Edit Tenant",
     deleteTenant: "Delete Tenant",
     searchPlaceholder: "Search tenants...",

@@ -13,7 +13,7 @@ import { cn } from "@core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import { Building2 } from "lucide-react";
+import { Building2, GitBranch } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 interface CreateTenantStep1Props {
@@ -102,6 +102,32 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
           maxLength={500}
         />
       </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="tenant-address" className="text-sm font-medium">
+          {t("tenant.address") || "Address"}
+        </Label>
+        <Textarea
+          id="tenant-address"
+          value={vm.form.address}
+          onChange={(e) => vm.updateField("address", e.target.value)}
+          placeholder={t("tenant.addressPlaceholder") || "Street address, city, country..."}
+          className="min-h-[70px] resize-none"
+          maxLength={500}
+        />
+      </div>
+
+      {vm.form.parentId && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 dark:border-amber-800/40 dark:bg-amber-950/20">
+          <GitBranch className="h-4 w-4 shrink-0 text-amber-600" />
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+              {t("tenant.creatingAsChild") || "Creating as child tenant"}
+            </p>
+            <p className="truncate font-mono text-xs text-muted-foreground">{vm.form.parentId}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,21 @@
  * Rich domain entities with getters, computed properties, and copyWith() support.
  */
 
+// ── Downgrade Impact ──
+
+export interface ResourceOverflow {
+  resourceType: string;
+  featureName: string;
+  currentCount: number;
+  newLimit: number;
+  overflowCount: number;
+}
+
+export interface DowngradeImpactReport {
+  hasOverflow: boolean;
+  overflows: ResourceOverflow[];
+}
+
 // ── Subscription (Full Detail) ──
 
 export interface SubscriptionData {

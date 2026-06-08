@@ -75,7 +75,12 @@ export function EditionWizardView() {
       {/* ── Step content ── */}
       <div className="min-h-[400px] border border-border bg-card p-6 md:p-8">
         {vm.step === 0 && (
-          <WizardStepBasics form={vm.form} onChange={vm.onChange} isEditMode={false} />
+          <WizardStepBasics
+            form={vm.form}
+            onChange={vm.onChange}
+            isEditMode={false}
+            availableEditions={vm.availableEditions}
+          />
         )}
         {vm.step === 1 && <WizardStepBilling form={vm.form} onChange={vm.onChange} />}
         {vm.step === 2 && (

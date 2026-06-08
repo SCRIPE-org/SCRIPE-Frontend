@@ -24,6 +24,7 @@ import {
   ArrowRightLeft,
   Ban,
   CreditCard,
+  DollarSign,
   ExternalLink,
   MoreVertical,
   PauseCircle,
@@ -168,6 +169,13 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
             >
               <RotateCcw className="me-2 h-4 w-4" />
               {t("entSubscriptions.resync")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => vm.setShowCurrencyDialog(true)}
+            >
+              <DollarSign className="me-2 h-4 w-4" />
+              {t("entSubscriptions.changeCurrency") || "Change Currency"}
             </DropdownMenuItem>
 
             {hasGatewayCustomer && !isFree && isStripe && (

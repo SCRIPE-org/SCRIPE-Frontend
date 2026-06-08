@@ -59,9 +59,23 @@ export class EditionRepository implements IEditionRepository {
     featureId: string,
     value: string,
     displayLabelEn?: string,
-    displayLabelAr?: string
+    displayLabelAr?: string,
+    isHighlight?: boolean,
+    highlightOrder?: number
   ): Promise<void> {
-    await this.service.setFeatureValue(editionId, featureId, value, displayLabelEn, displayLabelAr);
+    await this.service.setFeatureValue(
+      editionId,
+      featureId,
+      value,
+      displayLabelEn,
+      displayLabelAr,
+      isHighlight,
+      highlightOrder
+    );
+  }
+
+  async removeFeature(editionId: string, featureId: string): Promise<void> {
+    await this.service.removeFeature(editionId, featureId);
   }
 
   // ── Versioning ──

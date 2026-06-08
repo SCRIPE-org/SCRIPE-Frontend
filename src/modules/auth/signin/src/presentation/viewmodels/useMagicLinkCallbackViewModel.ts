@@ -27,11 +27,7 @@ import { authContainer } from "@modules/auth/di";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type MagicLinkVerifyState =
-  | "verifying"
-  | "success"
-  | "workspace-selection"
-  | "error";
+export type MagicLinkVerifyState = "verifying" | "success" | "workspace-selection" | "error";
 
 export interface UseMagicLinkCallbackViewModelReturn {
   state: MagicLinkVerifyState;
@@ -67,9 +63,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           // Encode workspace data as query param for the hub page
           // The /hub page reads this and shows the workspace picker
           setState("workspace-selection");
-          const workspacesParam = encodeURIComponent(
-            JSON.stringify(response.availableWorkspaces)
-          );
+          const workspacesParam = encodeURIComponent(JSON.stringify(response.availableWorkspaces));
           // Store the access token temporarily so the hub can use it to select a workspace
           // In practice, if the backend returned `requiresWorkspaceSelection` it means
           // it didn't issue a full token yet — the hub will call the workspace-specific login
