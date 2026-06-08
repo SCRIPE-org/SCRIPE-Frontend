@@ -25,7 +25,7 @@ export const BRAND = {
   prefix: "scripe",
 
   /** Platform domain */
-  domain: "app.scripe.org",
+  domain: "admin.scripe.org",
 
   /** Default company name (shown on login page fallback) */
   companyName: "SCRIPE",

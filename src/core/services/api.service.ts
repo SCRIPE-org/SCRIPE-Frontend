@@ -43,7 +43,7 @@ function generateUUID(): string {
  *
  * Why NOT read document.cookie:
  *   The __Host- cookie is set on the BACKEND domain (onrender.com), but the
- *   frontend is on app.scripe.org. Same-Origin Policy prevents JS on one domain
+ *   frontend is on admin.scripe.org. Same-Origin Policy prevents JS on one domain
  *   from reading cookies set by another domain via document.cookie.
  *
  * Why this is still CSRF-safe:

@@ -21,11 +21,11 @@ const DEV_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
  * Detect whether the current hostname is the platform domain.
  *
  * Platform domain → skip tenant resolution API call.
- * Tenant subdomain (e.g. seif.app.scripe.org) → must resolve.
+ * Tenant subdomain (e.g. seif.admin.scripe.org) → must resolve.
  *
  * Detection sources (in order):
  *  1. Dev domains (localhost, 127.0.0.1, etc.)
- *  2. NEXT_PUBLIC_APP_URL environment variable (e.g. https://app.scripe.org)
+ *  2. NEXT_PUBLIC_APP_URL environment variable (e.g. https://admin.scripe.org)
  *
  * Uses `process.env.NEXT_PUBLIC_APP_URL` directly — Next.js inlines
  * NEXT_PUBLIC_* values at build time, which is more reliable than
