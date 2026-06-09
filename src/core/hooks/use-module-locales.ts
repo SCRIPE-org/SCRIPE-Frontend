@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { appLogger } from "../common/logger";
 
 /**
  * Lazily loads module locale files (BOTH en + ar) when a route is accessed.
@@ -54,7 +55,7 @@ export function useModuleLocales(
       })
       .catch((err) => {
         if (!cancelled) {
-          console.error(`[I18n] Failed to load locales for "${moduleKey}":`, err);
+          appLogger.error(`[I18n] Failed to load locales for "${moduleKey}":`, err);
         }
       });
 

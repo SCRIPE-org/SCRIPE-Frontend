@@ -3,7 +3,7 @@ export const en = {
     overview: {
       overviewTitle: "Overview",
       overview:
-        "The Overview is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "SCRIPE is an enterprise-grade modular monolith platform utilizing .NET 10 Clean Architecture on the backend and Next.js 16 with MVVM on the frontend. The project supports both unified Monolith and distributed Microservices deployment modes orchestrating multiple domain modules.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",

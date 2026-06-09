@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { BillingDashboard } from "../../domain/entities/Invoice";
+import { appLogger } from "@/core/common/logger";
 
 /**
  * Dashboard ViewModel — fetches server-computed KPIs from the billing dashboard API.
@@ -31,7 +32,7 @@ export function useBillingDashboardViewModel() {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download invoice PDF:", error);
+      appLogger.error("Failed to download invoice PDF:", error);
     }
   };
 

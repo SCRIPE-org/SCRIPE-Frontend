@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, ComponentType } from "react";
 import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { buildRemoteEntryUrl } from "./federation-config";
+import { appLogger } from "@/core/common/logger";
 
 interface ModuleFederationLoaderProps {
   pluginKey: string;
@@ -39,7 +40,7 @@ export function ModuleFederationLoader({
     loadFederatedModule(remoteEntryUrl, remoteScope, exposedModule)
       .then((Component) => setPluginComponent(() => Component))
       .catch((err) => {
-        console.error(`[PluginLoader] Failed to load Tier 1 plugin "${pluginKey}"`, err);
+        appLogger.error(`[PluginLoader] Failed to load Tier 1 plugin "${pluginKey}"`, err);
         setError(`Failed to load plugin "${pluginKey}"`);
       });
   }, [pluginKey, baseUrl, scope, exposedModule]);

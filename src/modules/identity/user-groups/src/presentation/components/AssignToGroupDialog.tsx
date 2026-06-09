@@ -25,6 +25,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { userGroupKeys } from "../viewmodels/useUserGroupsViewModel";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/providers/permission-provider";
+import { appLogger } from "@/core/common/logger";
 
 interface AssignToGroupDialogProps {
   open: boolean;
@@ -111,7 +112,7 @@ export function AssignToGroupDialog({
       setSearchOptions(options);
       return options;
     } catch (err) {
-      console.error("Failed to search groups", err);
+      appLogger.error("Failed to search groups", err);
       return [];
     } finally {
       setIsSearching(false);
