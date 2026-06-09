@@ -146,8 +146,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
       const hasToken = secureTokenService.hasToken();
 
-      // ── Redirect authenticated users away from auth pages ──────────────
-      if (isAuthPage && hasToken && isAuthenticated) {
+      // Only redirect pre-authenticated users away from standard auth pages.
+      // Magic-link, qr-approve, and sso pages handle their own token exchange
+      // and must NOT be preempted by the route guard — that would cut the success
+      // animation short and could race with the in-flight token exchange.
+      const isStandardAuthPage =
+        pathname === "/login" ||
+        pathname === "/forgot-password" ||
+        pathname === "/reset-password";
+
+      if (isStandardAuthPage && hasToken && isAuthenticated) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
@@ -157,7 +165,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
       }
 
       if (isPublicPage(pathname)) {
-        const needsSilentRefreshOnAuthPage = isAuthPage && !hasToken && isAuthenticated;
+        // Only attempt silent refresh on credential-based auth pages.
+        // Token-exchange pages handle their own auth — starting a concurrent
+        // refresh would race and call logout() AFTER a fresh token was stored.
+        const needsSilentRefreshOnAuthPage = isStandardAuthPage && !hasToken && isAuthenticated;
         if (!needsSilentRefreshOnAuthPage) {
           setIsChecking(false);
           return;

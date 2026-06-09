@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Button } from "@core/ui/button";
 import { ArrowLeft, Loader2, ShieldCheck, RotateCcw } from "lucide-react";
+import { OtpInputField } from "@core/ui/otp-input-field";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface VerificationStepProps {
@@ -10,50 +12,14 @@ interface VerificationStepProps {
 }
 
 export function VerificationStep({ vm }: VerificationStepProps) {
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  // Focus first input on mount
-  useEffect(() => {
-    inputRefs.current[0]?.focus();
-  }, []);
+  const { t } = useI18n();
 
   // Auto-submit when 6 digits are entered
   useEffect(() => {
     if (vm.otpCode.length === 6) {
       vm.verifyOtp();
     }
-  }, [vm.otpCode]);
-
-  const handleDigitInput = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-
-    const newCode = vm.otpCode.split("");
-    if (value.length > 1) {
-      // Handle paste
-      const pasted = value.slice(0, 6);
-      vm.setOtpCode(pasted);
-      const focusIdx = Math.min(pasted.length, 5);
-      inputRefs.current[focusIdx]?.focus();
-      return;
-    }
-
-    newCode[index] = value;
-    const joined = newCode.join("").slice(0, 6);
-    vm.setOtpCode(joined);
-
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !vm.otpCode[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-      const newCode = vm.otpCode.split("");
-      newCode[index - 1] = "";
-      vm.setOtpCode(newCode.join(""));
-    }
-  };
+  }, [vm.otpCode, vm]);
 
   const maskedEmail = vm.wizardData.email.replace(
     /^(.{2})(.*)(@.*)$/,
@@ -85,43 +51,24 @@ export function VerificationStep({ vm }: VerificationStepProps) {
             WebkitTextFillColor: "transparent",
           }}
         >
-          Verify your email
+          {t("signup.verification.title") || "Verify your email"}
         </h1>
         <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
-          We sent a 6-digit code to{" "}
+          {t("signup.verification.sentCode") || "We sent a 6-digit code to"}{" "}
           <span className="font-medium" style={{ color: "#C4B5FD" }}>
             {maskedEmail}
           </span>
         </p>
       </div>
 
-      {/* OTP Input Grid */}
-      <div className="mb-6 flex justify-center gap-2.5">
-        {Array.from({ length: 6 }, (_, i) => (
-          <input
-            key={i}
-            ref={(el) => {
-              inputRefs.current[i] = el;
-            }}
-            type="text"
-            inputMode="numeric"
-            maxLength={i === 0 ? 6 : 1}
-            value={vm.otpCode[i] || ""}
-            onChange={(e) => handleDigitInput(i, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(i, e)}
-            className="h-12 w-11 rounded-lg text-center text-lg font-semibold outline-none transition-all duration-200"
-            style={{
-              background: vm.otpCode[i] ? "rgba(168,85,247,0.08)" : "rgba(255,255,255,0.03)",
-              border: `1.5px solid ${
-                vm.otpCode[i] ? "rgba(168,85,247,0.4)" : "rgba(255,255,255,0.08)"
-              }`,
-              color: "#F5F2FF",
-              boxShadow: vm.otpCode[i] ? "0 0 8px rgba(168,85,247,0.12)" : "none",
-              caretColor: "#A855F7",
-            }}
-            // UI-EXCEPTION: compact OTP grid requires custom-styled input cells
-          />
-        ))}
+      {/* Unified OTP Input Component */}
+      <div className="mb-6">
+        <OtpInputField
+          value={vm.otpCode}
+          onChange={vm.setOtpCode}
+          variant="glass"
+          id="signup-otp"
+        />
       </div>
 
       {/* Error */}
@@ -149,7 +96,11 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
         }}
       >
-        {vm.isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Verify & Continue"}
+        {vm.isLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          t("signup.verification.verifyAndContinue") || "Verify & Continue"
+        )}
       </Button>
 
       {/* Resend + Back */}
@@ -162,7 +113,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           style={{ color: "rgba(245,242,255,0.55)" }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          Back
+          {t("signup.verification.back") || "Back"}
         </Button>
 
         <Button
@@ -174,7 +125,10 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           style={{ color: "#C4B5FD" }}
         >
           <RotateCcw className="h-3 w-3" />
-          {vm.otpResendCooldown > 0 ? `Resend in ${vm.otpResendCooldown}s` : "Resend code"}
+          {vm.otpResendCooldown > 0
+            ? t("signup.verification.resendIn", { seconds: String(vm.otpResendCooldown) }) ||
+              `Resend in ${vm.otpResendCooldown}s`
+            : t("signup.verification.resendCode") || "Resend code"}
         </Button>
       </div>
     </div>

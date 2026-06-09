@@ -1,328 +1,333 @@
 export const fr = {
-  commercial: {
-    billingPayments: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Billing Payments est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Billing Payments",
+  "commercial": {
+    "billingPayments": {
+      "section_0_title": "💳 [Self-Service Checkout]",
+      "section_1_content": "[Tenants subscribe and pay instantly via Stripe-hosted checkout — no manual invoice steps.]",
+      "section_2_title": "📄 [Automated Invoicing]",
+      "section_3_content": "[Every payment generates a numbered, downloadable invoice with line items and tax detail.]",
+      "section_4_title": "🔁 [Smart Dunning]",
+      "section_5_content": "[4-stage failed payment recovery with graduated emails, grace periods, and auto-fallback.]",
+      "section_6_title": "📊 [Revenue Dashboard]",
+      "section_7_content": "[Real-time MRR, ARR, churn rate, and platform health score from your billing data.]",
+      "section_8_title": "🌍 [Multi-Currency]",
+      "section_9_content": "[28 Stripe-supported currencies with zero-decimal and 3-decimal handling built in.]",
+      "section_10_title": "🔗 [Payment Links]",
+      "section_11_content": "[Enterprise sales? Generate Stripe Payment Links for custom deals without a checkout session.]",
+      "section_12_title": "[Three Checkout Modes]",
+      "section_13_hdr_0": "Mode",
+      "section_13_hdr_1": "Best For",
+      "section_13_hdr_2": "How It Works",
+      "section_13_cell_0_0": "Self-Service",
+      "section_13_cell_0_1": "Standard SaaS subscriptions",
+      "section_13_cell_0_2": "Tenant clicks 'Subscribe', pays via Stripe Checkout, subscription activates automatically.",
+      "section_13_cell_1_0": "Contact Sales",
+      "section_13_cell_1_1": "Enterprise/custom pricing",
+      "section_13_cell_1_2": "Admin generates a Stripe Payment Link and sends it to the client. Same automatic activation on payment.",
+      "section_13_cell_2_0": "Manual Assignment",
+      "section_13_cell_2_1": "Free tiers, partnerships, trials",
+      "section_13_cell_2_2": "Admin assigns the plan directly — no payment required. Instant activation.",
+      "section_14_title": "[Automated Invoice Management]",
+      "section_15_hdr_0": "Invoice Status",
+      "section_15_hdr_1": "Meaning",
+      "section_15_cell_0_0": "Draft",
+      "section_15_cell_0_1": "Generated, not yet sent",
+      "section_15_cell_1_0": "Pending",
+      "section_15_cell_1_1": "Awaiting payment",
+      "section_15_cell_2_0": "Paid",
+      "section_15_cell_2_1": "Payment confirmed by Stripe",
+      "section_15_cell_3_0": "Void",
+      "section_15_cell_3_1": "Cancelled before payment",
+      "section_15_cell_4_0": "Refunded",
+      "section_15_cell_4_1": "Charge reversed",
+      "section_16_title": "[4-Stage Dunning Recovery]",
+      "section_17_hdr_0": "Stage",
+      "section_17_hdr_1": "Timing",
+      "section_17_hdr_2": "Action",
+      "section_17_cell_0_0": "Stage 1: Payment Failed",
+      "section_17_cell_0_1": "Day 0",
+      "section_17_cell_0_2": "Immediate email with link to update payment method",
+      "section_17_cell_1_0": "Stage 2: Grace Warning",
+      "section_17_cell_1_1": "Mid grace period",
+      "section_17_cell_1_2": "Follow-up email, yellow warning banner in portal",
+      "section_17_cell_2_0": "Stage 3: Final Warning",
+      "section_17_cell_2_1": "≤2 days before suspension",
+      "section_17_cell_2_2": "Urgent email with red banner",
+      "section_17_cell_3_0": "Stage 4: Suspend",
+      "section_17_cell_3_1": "Grace period expires",
+      "section_17_cell_3_2": "Access restricted, admins deactivated, auto-fallback to free tier",
+      "section_18_title": "[Revenue Analytics]",
+      "section_19_hdr_0": "Metric",
+      "section_19_hdr_1": "Description",
+      "section_19_cell_0_0": "MRR",
+      "section_19_cell_0_1": "Monthly Recurring Revenue — sum of all active monthly subscriptions",
+      "section_19_cell_1_0": "ARR",
+      "section_19_cell_1_1": "Annual Recurring Revenue — MRR × 12",
+      "section_19_cell_2_0": "Total Revenue",
+      "section_19_cell_2_1": "All-time cumulative paid invoices",
+      "section_19_cell_3_0": "Churn Rate",
+      "section_19_cell_3_1": "% subscriptions cancelled in the last 30 days",
+      "section_19_cell_4_0": "Platform Health Score",
+      "section_19_cell_4_1": "Composite score: MRR trend + churn + trial conversion",
+      "section_20_title": "[Export Options]",
+      "section_21_item_0": "CSV — importable into any spreadsheet or BI tool",
+      "section_21_item_1": "Excel (XLSX) — styled workbook with conditional formatting and multiple sheets",
+      "section_21_item_2": "PDF — branded print-ready report with cover page and data tables",
+      "section_22_title": "See Also",
+      "section_23_item_0": "[Entitlements Overview](../../commercial-docs/19-modules/entitlements)",
+      "section_23_item_1": "[Subscription Management](../../commercial-docs/19-modules/entitlements)",
+      "title": "[Billing & Payments]"
     },
-    complianceDsr: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Compliance Dsr est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Compliance Dsr",
+    "complianceDsr": {
+      "section_0_content": "How SCRIPE handles DSR requests end-to-end, keeping your customers compliant with GDPR Article 15-22 and CCPA rights.",
+      "section_1_content": "Data Subject Requests (DSRs) are formal rights requests from individuals. Under GDPR, controllers must respond within 30 days. SCRIPE automates the entire DSR workflow — from submission to assignment to fulfillment — with SLA tracking built in.",
+      "section_2_title": "",
+      "title": "Data Subject Requests"
     },
-    complianceGdpr: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Compliance Gdpr est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Compliance Gdpr",
+    "complianceGdpr": {
+      "section_0_content": "How SCRIPE helps your platform and tenants meet GDPR obligations across all six compliance domains.",
+      "section_1_content": "The General Data Protection Regulation (GDPR) applies to any organization that processes personal data of EU/EEA residents. SCRIPE's Compliance module addresses all key GDPR obligations through built-in tooling, reducing compliance overhead for you and your tenants.",
+      "section_2_title": "",
+      "section_3_cell_0_0": "Article 15: Right of Access",
+      "section_3_cell_0_1": "",
+      "section_3_cell_1_0": "Article 17: Right to Erasure",
+      "section_3_cell_1_1": "",
+      "section_3_cell_2_0": "Article 30: Records of Processing",
+      "section_3_cell_2_1": "",
+      "title": "GDPR Compliance"
     },
-    complianceOverview: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Compliance Overview est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Compliance Overview",
+    "complianceOverview": {
+      "section_0_content": "Built-in GDPR, CCPA, and PDPA compliance automation — protect your customers' data rights without hiring a team of legal engineers.",
+      "section_1_content": "SCRIPE's Compliance Module gives every tenant on your platform enterprise-grade data protection compliance out of the box. From automated DSR handling to real-time consent tracking and audit-ready reports, your customers stay compliant without building anything.",
+      "section_2_title": "",
+      "section_3_title": "zap",
+      "section_4_title": "shield-check",
+      "section_5_title": "trash-2",
+      "title": "Compliance Module"
     },
-    complianceRoi: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Compliance Roi est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Compliance Roi",
+    "complianceRoi": {
+      "section_0_content": "The business case for built-in compliance — cost savings, risk reduction, and competitive advantage.",
+      "section_1_content": "Regulatory compliance is no longer optional — and building it from scratch is expensive. SCRIPE's built-in Compliance module turns a regulatory requirement into a competitive advantage.",
+      "section_2_title": "Cost Savings",
+      "section_3_cell_0_0": "",
+      "section_3_cell_0_1": "",
+      "section_3_cell_1_0": "",
+      "section_3_cell_1_1": "",
+      "title": "Compliance ROI"
     },
-    documentationTraining: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Documentation Training est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Documentation Training",
+    "documentationTraining": {
+      "overviewTitle": "Aperçu",
+      "overview": "Le module Documentation Training est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
+      "architectureTitle": "Architecture & Intégration",
+      "architectureDesc": "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
+      "dataTitle": "Données & Modèle de schéma",
+      "dataDesc": "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
+      "governanceTitle": "Gouvernance & Sécurité",
+      "governanceDesc": "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
+      "verificationTitle": "Vérification & Validation",
+      "verificationDesc": "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
+      "sourceMapTitle": "Carte du code source",
+      "sourceMapIntro": "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
+      "operatingModelTitle": "Modèle opérationnel",
+      "operatingModel": "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
+      "localizationNoteTitle": "Localisation & Internationalisation",
+      "localizationNote": "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
+      "title": "Documentation Training"
     },
-    entitlementsTenantPlans: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Entitlements Tenant Plans est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Entitlements Tenant Plans",
+    "entitlementsTenantPlans": {
+      "section_0_title": "🏗️ [Visual Plan Builder]",
+      "section_1_content": "[Tenant admins build subscription plans through a clean UI — no code required.]",
+      "section_2_title": "🔑 [Feature Bundling]",
+      "section_3_content": "[Attach unlimited key/value feature flags to each plan to control user capabilities.]",
+      "section_4_title": "💰 [Flexible Pricing]",
+      "section_5_content": "[Monthly, Yearly, Lifetime, and Free billing cycles with per-plan currency control.]",
+      "section_6_title": "👥 [User Limits]",
+      "section_7_content": "[Set maximum subscribers per plan or allow unlimited growth with -1 configuration.]",
+      "section_8_title": "⏳ [Free Trials]",
+      "section_9_content": "[Configure trial periods per plan — users get a trial before committing to a paid plan.]",
+      "section_10_title": "🔒 [Tenant-Scoped]",
+      "section_11_content": "[Plans are fully isolated per tenant — no visibility across tenants.]",
+      "section_12_title": "[What are Tenant Plans?]",
+      "section_13_hdr_0": "Tier",
+      "section_13_hdr_1": "Who Subscribes",
+      "section_13_hdr_2": "What They Subscribe To",
+      "section_13_hdr_3": "Managed By",
+      "section_13_cell_0_0": "Tier 1",
+      "section_13_cell_0_1": "Tenants",
+      "section_13_cell_0_2": "Platform Editions (Free, Pro, Enterprise)",
+      "section_13_cell_0_3": "SCRIPE Platform Operator",
+      "section_13_cell_1_0": "Tier 2",
+      "section_13_cell_1_1": "End Users",
+      "section_13_cell_1_2": "Tenant Plans (created by the tenant)",
+      "section_13_cell_1_3": "Tenant Administrators",
+      "section_14_title": "[Plan Configuration]",
+      "section_15_hdr_0": "Setting",
+      "section_15_hdr_1": "Options",
+      "section_15_cell_0_0": "Billing Cycle",
+      "section_15_cell_0_1": "Monthly, Yearly, Lifetime, Free",
+      "section_15_cell_1_0": "Price",
+      "section_15_cell_1_1": "Any decimal amount in the tenant's configured currency",
+      "section_15_cell_2_0": "Max Users",
+      "section_15_cell_2_1": "-1 (unlimited) or a specific number",
+      "section_15_cell_3_0": "Trial Days",
+      "section_15_cell_3_1": "0 (no trial) or any number of days",
+      "section_15_cell_4_0": "Feature Flags",
+      "section_15_cell_4_1": "Unlimited key/value pairs (e.g. maxProjects=50, apiAccess=true)",
+      "section_16_title": "See Also",
+      "section_17_item_0": "[Entitlements Overview](../../commercial-docs/19-modules/entitlements)",
+      "section_17_item_1": "[[Billing & Payments]](../../commercial-docs/19-modules/entitlements)",
+      "section_17_item_2": "[[User Subscriptions]](../../commercial-docs/19-modules/entitlements)",
+      "title": "[Tenant Plans]"
     },
-    entitlementsUserSubscriptions: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Entitlements User Subscriptions est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Entitlements User Subscriptions",
+    "entitlementsUserSubscriptions": {
+      "section_0_title": "🔄 [Full Lifecycle]",
+      "section_1_content": "[Free → Trial → Active → PastDue → Cancelled → Expired with automatic transitions.]",
+      "section_2_title": "🤖 [Auto-Reconciliation]",
+      "section_3_content": "[Daily background job handles trial expiry, auto-renewal, and expiration automatically.]",
+      "section_4_title": "🎛️ [Feature Gating]",
+      "section_5_content": "[UserFeatureCheckerService resolves which features each user can access based on their plan.]",
+      "section_6_title": "👤 [Self-Service]",
+      "section_7_content": "[Users can view their own subscription status via the /me endpoint.]",
+      "section_8_title": "📋 [Audit Trail]",
+      "section_9_content": "[Immutable Cancel+Replace pattern keeps a complete history per billing cycle.]",
+      "section_10_title": "🔔 [Domain Events]",
+      "section_11_content": "[Created, Cancelled, and Renewed events feed into webhook and notification systems.]",
+      "section_12_title": "[Subscription Lifecycle]",
+      "section_13_hdr_0": "Status",
+      "section_13_hdr_1": "Description",
+      "section_13_hdr_2": "Can Transition To",
+      "section_13_cell_0_0": "Free",
+      "section_13_cell_0_1": "No billing, on free plan",
+      "section_13_cell_0_2": "Trial, Active",
+      "section_13_cell_1_0": "Trial",
+      "section_13_cell_1_1": "Trial period active",
+      "section_13_cell_1_2": "Active (auto-renew), Expired (no renew)",
+      "section_13_cell_2_0": "Active",
+      "section_13_cell_2_1": "Paid and current",
+      "section_13_cell_2_2": "PastDue, Cancelled, Expired",
+      "section_13_cell_3_0": "PastDue",
+      "section_13_cell_3_1": "Payment failed, grace period active",
+      "section_13_cell_3_2": "Active (recovered), Expired",
+      "section_13_cell_4_0": "Cancelled",
+      "section_13_cell_4_1": "Manually cancelled (terminal)",
+      "section_13_cell_4_2": "—",
+      "section_13_cell_5_0": "Expired",
+      "section_13_cell_5_1": "Period ended (terminal)",
+      "section_13_cell_5_2": "—",
+      "section_14_title": "[Automatic Reconciliation]",
+      "section_15_hdr_0": "Job",
+      "section_15_hdr_1": "Schedule",
+      "section_15_hdr_2": "What it does",
+      "section_15_cell_0_0": "UserSubscriptionReconciliationJob",
+      "section_15_cell_0_1": "Daily 5:00 AM UTC",
+      "section_15_cell_0_2": "Trial expiry, period expiry, auto-renewal",
+      "section_16_title": "See Also",
+      "section_17_item_0": "[[Tenant Plans]](../../commercial-docs/19-modules/entitlements)",
+      "section_17_item_1": "[Entitlements Overview](../../commercial-docs/19-modules/entitlements)",
+      "section_17_item_2": "[[Billing & Payments]](../../commercial-docs/19-modules/entitlements)",
+      "title": "[User Subscriptions]"
     },
-    faq: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Faq est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Faq",
+    "faq": {
+      "overviewTitle": "Aperçu",
+      "overview": "Le module Faq est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
+      "architectureTitle": "Architecture & Intégration",
+      "architectureDesc": "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
+      "dataTitle": "Données & Modèle de schéma",
+      "dataDesc": "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
+      "governanceTitle": "Gouvernance & Sécurité",
+      "governanceDesc": "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
+      "verificationTitle": "Vérification & Validation",
+      "verificationDesc": "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
+      "sourceMapTitle": "Carte du code source",
+      "sourceMapIntro": "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
+      "operatingModelTitle": "Modèle opérationnel",
+      "operatingModel": "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
+      "localizationNoteTitle": "Localisation & Internationalisation",
+      "localizationNote": "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
+      "title": "Faq"
     },
-    gettingStartedGuide: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Getting Started Guide est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Getting Started Guide",
+    "gettingStartedGuide": {
+      "overviewTitle": "Aperçu",
+      "overview": "Le module Getting Started Guide est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
+      "architectureTitle": "Architecture & Intégration",
+      "architectureDesc": "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
+      "dataTitle": "Données & Modèle de schéma",
+      "dataDesc": "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
+      "governanceTitle": "Gouvernance & Sécurité",
+      "governanceDesc": "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
+      "verificationTitle": "Vérification & Validation",
+      "verificationDesc": "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
+      "sourceMapTitle": "Carte du code source",
+      "sourceMapIntro": "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
+      "operatingModelTitle": "Modèle opérationnel",
+      "operatingModel": "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
+      "localizationNoteTitle": "Localisation & Internationalisation",
+      "localizationNote": "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
+      "title": "Getting Started Guide"
     },
-    pluginsOverview: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Plugins Overview est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Plugins Overview",
+    "pluginsOverview": {
+      "section_0_content": "Enterprise-grade extensibility — install certified internal plugins or sandboxed marketplace plugins with full lifecycle management.",
+      "section_1_content": "SCRIPE's Plugin System gives your platform infinite extensibility without compromising security. Platform teams can publish certified Tier 1 plugins that run in-process with full infrastructure access. Third-party vendors can publish Tier 2 plugins that run in a secure sandbox — isolated from your core data, rate-limited, and audited.",
+      "section_2_title": "Business Value",
+      "section_3_title": "puzzle Infinite Extensibility",
+      "section_4_content": "Extend SCRIPE with any capability — CRM integrations, AI assistants, analytics dashboards — without forking the core codebase.",
+      "section_5_title": "shield-check Secure Sandbox",
+      "section_6_content": "Tier 2 plugins are isolated in a REST gateway. They cannot access your database, internal services, or other tenants.",
+      "section_7_title": "store Marketplace Ready",
+      "section_8_content": "Built-in plugin catalog, install/uninstall lifecycle, and consent flow ready for a commercial marketplace.",
+      "section_9_title": "zap Fast Integration",
+      "section_10_content": "Plugins can inject navigation items, settings UIs, and backend services with zero changes to the host application.",
+      "section_11_title": "bar-chart Full Auditability",
+      "section_12_content": "Every API call made by a Tier 2 plugin is logged with endpoint, duration, status code, and timestamp.",
+      "section_13_title": "globe RTL & i18n Ready",
+      "section_14_content": "The plugin SDK automatically pushes the host's language direction (LTR/RTL) and accent color to all plugin iframes.",
+      "section_15_title": "Tier 1 vs Tier 2",
+      "section_16_content": "Choose the right tier for each use case. Tier 1 for your own certified plugins; Tier 2 for third-party marketplace integrations.",
+      "section_17_hdr_0": "Tier 1 — Certified",
+      "section_17_hdr_1": "Tier 2 — Marketplace",
+      "section_17_cell_0_0": "✅ In-process — zero network overhead",
+      "section_17_cell_0_1": "✅ Sandboxed — cannot access host internals",
+      "section_17_cell_1_0": "✅ Full access to DI, database, and events",
+      "section_17_cell_1_1": "✅ Rate limited (60 req/min per installation)",
+      "section_17_cell_2_0": "✅ Module Federation frontend (shared React bundle)",
+      "section_17_cell_2_1": "✅ iframe frontend with postMessage SDK",
+      "section_17_cell_3_0": "✅ IPluginStartup contract for clean registration",
+      "section_17_cell_3_1": "✅ Isolated key-value data store per installation",
+      "section_18_title": "Who Benefits",
+      "section_19_content": "The Plugin System creates value for every stakeholder in the SCRIPE ecosystem.",
+      "section_20_hdr_0": "Role",
+      "section_20_hdr_1": "Benefit",
+      "section_20_cell_0_0": "Platform Operator",
+      "section_20_cell_0_1": "Extend the platform without modifying the core. Publish certified Tier 1 plugins for your team.",
+      "section_20_cell_1_0": "Tenant Admin",
+      "section_20_cell_1_1": "Install and configure marketplace plugins in minutes. Control which plugins are active for your team.",
+      "section_20_cell_2_0": "Third-Party Vendor",
+      "section_20_cell_2_1": "Publish your product as a Tier 2 plugin. Get distribution, lifecycle management, and webhook events for free.",
+      "section_20_cell_3_0": "Platform Developer",
+      "section_20_cell_3_1": "Build plugins with clear contracts — IPluginStartup for Tier 1, postMessage SDK for Tier 2. No undocumented hooks.",
+      "section_21_title": "Security Architecture",
+      "section_22_content": "The Plugin System enforces strict security boundaries at every layer — origin validation, API key hashing, tenant isolation, and rate limiting.",
+      "section_23_title": "NOTE",
+      "section_23_content": "**Security by default**\n\nTier 2 plugins never touch your database. All API keys are stored as SHA-256 hashes. The iframe sandbox attribute prevents script injection. Origin validation on every postMessage prevents spoofing.",
+      "title": "Plugin System"
     },
-    roadmap: {
-      overviewTitle: "Aperçu",
-      overview:
-        "Le module Roadmap est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
-      architectureTitle: "Architecture & Intégration",
-      architectureDesc:
-        "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
-      dataTitle: "Données & Modèle de schéma",
-      dataDesc:
-        "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Gouvernance & Sécurité",
-      governanceDesc:
-        "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
-      verificationTitle: "Vérification & Validation",
-      verificationDesc:
-        "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
-      sourceMapTitle: "Carte du code source",
-      sourceMapIntro:
-        "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
-      operatingModelTitle: "Modèle opérationnel",
-      operatingModel:
-        "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
-      localizationNoteTitle: "Localisation & Internationalisation",
-      localizationNote:
-        "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
-      title: "Roadmap",
-    },
-  },
+    "roadmap": {
+      "overviewTitle": "Aperçu",
+      "overview": "Le module Roadmap est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
+      "architectureTitle": "Architecture & Intégration",
+      "architectureDesc": "Conçu selon les principes du DDD et de la Clean Architecture, garantissant des limites claires, une haute scalabilité et un couplage lâche.",
+      "dataTitle": "Données & Modèle de schéma",
+      "dataDesc": "Comprend les configurations d'entités EF Core, les champs de suivi AuditableEntity et le support automatique multi-bases de données (SQL Server, PostgreSQL, Oracle).",
+      "governanceTitle": "Gouvernance & Sécurité",
+      "governanceDesc": "Respecte les exigences d'isolation multi-locataires, les contrôles de sécurité au niveau des champs et la journalisation d'audit pour chaque opération.",
+      "verificationTitle": "Vérification & Validation",
+      "verificationDesc": "Validé par des tests unitaires/d'intégration et des barrières de contrôle automatisées. Exécutez 'scripe check' pour une vérification complète.",
+      "sourceMapTitle": "Carte du code source",
+      "sourceMapIntro": "Les fichiers sources suivants contiennent les détails d'implémentation principaux de cette fonctionnalité dans le projet :",
+      "operatingModelTitle": "Modèle opérationnel",
+      "operatingModel": "S'exécute via les gestionnaires AstraFlow CQRS et les comportements de middleware. Utilise le verrouillage distribué pour une concurrence élevée.",
+      "localizationNoteTitle": "Localisation & Internationalisation",
+      "localizationNote": "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
+      "title": "Roadmap"
+    }
+  }
 };

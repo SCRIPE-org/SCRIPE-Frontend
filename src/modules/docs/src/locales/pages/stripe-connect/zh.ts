@@ -1,54 +1,82 @@
 export const zh = {
-  commercial: {
-    stripeConnect: {
-      overviewTitle: "概述",
-      overview:
-        "Stripe Connect 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
-      architectureTitle: "架构与集成",
-      architectureDesc:
-        "遵循 DDD 和 Clean Architecture 原则设计，确保后端 and 前端层之间边界清晰、高可扩展性与松散耦合。",
-      dataTitle: "数据与模式模型",
-      dataDesc:
-        "包括 EF Core 实体配置、AuditableEntity 跟踪字段以及自动多数据库提供程序支持（SQL Server、PostgreSQL、Oracle）。",
-      governanceTitle: "治理与安全",
-      governanceDesc: "遵守多租户隔离要求、字段级安全检查和严格的变更审计日志记录。",
-      verificationTitle: "验证与确认",
-      verificationDesc:
-        "通过单元/集成测试和自动化前端检查门验证。运行 'scripe check' 进行全面验证。",
-      sourceMapTitle: "源代码图",
-      sourceMapIntro: "以下源文件包含该功能在项目中的主要实现细节：",
-      operatingModelTitle: "运行模型",
-      operatingModel: "通过 AstraFlow CQRS 处理程序和中间件行为执行。利用分布式锁实现高并发控制。",
-      localizationNoteTitle: "本地化与国际化",
-      localizationNote:
-        "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
-      title: "Stripe Connect",
-    },
+  "commercial": {
+    "stripeConnect": {
+      "section_0_content": "Detailed documentation for tenant onboarding, custom accounts, split payments, and platform commission management.",
+      "section_1_content": "Monetize your platform transactions instantly with a built-in split-payment and commission collection gateway powered by Stripe Connect.",
+      "section_2_title": "Why Split Payments?",
+      "section_3_content": "Enabling split payments via Stripe Connect provides huge business value.",
+      "section_4_title": "Globally Frictionless Billing",
+      "section_5_content": "Let your tenants accept client payments globally while you take a cut automatically.",
+      "section_6_title": "Shield Reduced Financial Risk",
+      "section_7_content": "Funds flow directly through Stripe, avoiding complex regulatory compliance or escrow requirements.",
+      "section_8_title": "TrendingUp Automatic Commissions",
+      "section_9_content": "Charge percentage or flat fees per transaction, creating a strong revenue engine.",
+      "section_10_title": "Platform Fee Splits",
+      "section_11_content": "Every transaction processed by your tenants can be split at the gateway level. For example, if a tenant sells a service for $100 with a 5% commission, Stripe Connect distributes $95 to the tenant and $5 directly to your corporate account.",
+      "section_12_title": "See Also",
+      "section_13_item_0": "[Entitlements Overview](../../commercial-docs/19-modules/entitlements)",
+      "section_13_item_1": "[[Billing & Payments]](../../commercial-docs/19-modules/entitlements)",
+      "section_13_item_2": "[Financials & Monetization](../../commercial-docs/19-modules/marketplace)",
+      "title": "Stripe Connect & Commissions"
+    }
   },
-  stripeConnect: {
-    stripeConnect: {
-      overviewTitle: "概述",
-      overview:
-        "Stripe Connect 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
-      architectureTitle: "架构与集成",
-      architectureDesc:
-        "遵循 DDD 和 Clean Architecture 原则设计，确保后端 and 前端层之间边界清晰、高可扩展性与松散耦合。",
-      dataTitle: "数据与模式模型",
-      dataDesc:
-        "包括 EF Core 实体配置、AuditableEntity 跟踪字段以及自动多数据库提供程序支持（SQL Server、PostgreSQL、Oracle）。",
-      governanceTitle: "治理与安全",
-      governanceDesc: "遵守多租户隔离要求、字段级安全检查和严格的变更审计日志记录。",
-      verificationTitle: "验证与确认",
-      verificationDesc:
-        "通过单元/集成测试和自动化前端检查门验证。运行 'scripe check' 进行全面验证。",
-      sourceMapTitle: "源代码图",
-      sourceMapIntro: "以下源文件包含该功能在项目中的主要实现细节：",
-      operatingModelTitle: "运行模型",
-      operatingModel: "通过 AstraFlow CQRS 处理程序和中间件行为执行。利用分布式锁实现高并发控制。",
-      localizationNoteTitle: "本地化与国际化",
-      localizationNote:
-        "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
-      title: "Stripe Connect",
-    },
-  },
+  "stripeConnect": {
+    "stripeConnect": {
+      "section_0_content": "Detailed documentation for tenant onboarding, custom accounts, split payments, and platform commission management.",
+      "section_1_content": "The Stripe Connect module provides multi-tenant billing capability. It enables platform tenants to connect their own Stripe accounts to receive payments from their customers. It also supports an automated platform commission engine to collect fees on tenant transactions.",
+      "section_2_title": "Tenant Onboarding Workflow",
+      "section_3_content": "Tenants onboard to the payment hub using a self-service OAuth or Custom onboarding flow.",
+      "section_4_title": "Step 1: Onboarding Trigger",
+      "section_5_content": "The tenant admin clicks 'Connect Stripe' in the payments dashboard, which dispatches a command to retrieve a single-use onboarding URL.",
+      "section_6_title": "Step 2: Stripe Verification",
+      "section_7_content": "The tenant is redirected to Stripe's onboarding portal to verify their business details, bank accounts, and compliance status.",
+      "section_8_title": "Step 3: Account Activation",
+      "section_9_content": "Upon completion, Stripe redirects back to SCRIPE. The webhook handler captures account updates and activates the tenant's payment gateway status.",
+      "section_10_title": "Platform Commission Engine",
+      "section_11_content": "Collect transaction fees on tenant sales dynamically through a ledger-based accounting system.",
+      "section_12_content": "<!-- CommissionEntities.cs --> <!-- highlight lines: 3, 11, 23 -->",
+      "section_14_title": "Payment Hub Endpoints",
+      "section_15_content": "Endpoints for Stripe Connect and platform commissions are managed by StripeConnectController, TenantStripeConnectController, and CommissionsController.",
+      "section_16_hdr_0": "Method",
+      "section_16_hdr_1": "Endpoint",
+      "section_16_hdr_2": "Description",
+      "section_16_hdr_3": "Auth",
+      "section_16_hdr_4": "Permission",
+      "section_16_cell_0_0": "`POST`",
+      "section_16_cell_0_1": "`/api/v1/stripe-connect/onboard`",
+      "section_16_cell_0_2": "Initiate tenant Stripe Connect onboarding session",
+      "section_16_cell_0_3": "AdminOnly",
+      "section_16_cell_0_4": "`stripe_connect.onboard`",
+      "section_16_cell_1_0": "`GET`",
+      "section_16_cell_1_1": "`/api/v1/stripe-connect/account-status`",
+      "section_16_cell_1_2": "Retrieve current tenant Connected Account status and payouts state",
+      "section_16_cell_1_3": "AdminOnly",
+      "section_16_cell_1_4": "`stripe_connect.view`",
+      "section_16_cell_2_0": "`GET`",
+      "section_16_cell_2_1": "`/api/v1/commissions/dashboard`",
+      "section_16_cell_2_2": "Get global statistics, trends, and totals for platform commissions",
+      "section_16_cell_2_3": "AdminOnly",
+      "section_16_cell_2_4": "`commissions.view`",
+      "section_16_cell_3_0": "`GET`",
+      "section_16_cell_3_1": "`/api/v1/commissions/invoices`",
+      "section_16_cell_3_2": "List system commission invoices with status filters",
+      "section_16_cell_3_3": "AdminOnly",
+      "section_16_cell_3_4": "`commissions.view`",
+      "section_16_cell_4_0": "`POST`",
+      "section_16_cell_4_1": "`/api/v1/commissions/invoices/{id}/waive`",
+      "section_16_cell_4_2": "Waive a specific tenant commission invoice (marked as Paid)",
+      "section_16_cell_4_3": "AdminOnly",
+      "section_16_cell_4_4": "`commissions.waive`",
+      "section_16_cell_5_0": "`POST`",
+      "section_16_cell_5_1": "`/api/v1/commissions/invoices/{id}/retry`",
+      "section_16_cell_5_2": "Trigger immediate manual retry charge for a tenant commission invoice",
+      "section_16_cell_5_3": "AdminOnly",
+      "section_16_cell_5_4": "`commissions.retry_charge`",
+      "section_17_title": "See Also",
+      "section_18_item_0": "[Entitlements Overview](../../technical-docs/09-modules/entitlements)",
+      "section_18_item_1": "[Billing Engine](../../technical-docs/09-modules/entitlements)",
+      "section_18_item_2": "[Invoices & Revenue](../../technical-docs/09-modules/entitlements)",
+      "title": "Stripe Connect & Commissions"
+    }
+  }
 };

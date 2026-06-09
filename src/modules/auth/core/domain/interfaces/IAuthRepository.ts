@@ -86,10 +86,13 @@ export interface IAuthRepository {
     token: string,
     tenantId?: string
   ): Promise<{
-    accessToken: string;
-    requiresWorkspaceSelection?: boolean;
-    availableWorkspaces?: LoginResponseModel["availableWorkspaces"];
-    mustChangePassword?: boolean;
-    defaultRedirectPath?: string;
+    user?: User;
+    requiresWorkspaceSelection: boolean;
+    availableWorkspaces: LoginResponseModel["availableWorkspaces"];
+    mustChangePassword: boolean;
+    subscriptionStatus: string | null;
+    gracePhase: string | null;
+    editionName: string | null;
+    defaultRedirectPath: string;
   }>;
 }

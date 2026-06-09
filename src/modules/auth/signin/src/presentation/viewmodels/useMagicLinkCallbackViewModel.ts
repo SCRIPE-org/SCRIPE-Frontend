@@ -40,6 +40,8 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const { direction } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const setAuth = useAppStore((state) => state.setAuth);
+  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
 
   const token = searchParams?.get("token") ?? "";
   const tenantId = searchParams?.get("tenantId") ?? undefined;
@@ -84,16 +86,20 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
         }
 
         // ── Single workspace: direct login ───────────────────────────────
-        if (response.accessToken) {
-          useAppStore.setState({
-            isAuthenticated: true,
-            mustChangePassword: response.mustChangePassword ?? false,
-            defaultRedirectPath: response.defaultRedirectPath ?? "/",
-          });
+        if (response.user) {
+          // Show success animation. Auth state is set right before navigation
+          // (inside the timeout) so the route guard doesn't preempt the animation.
           setState("success");
 
           setTimeout(() => {
             if (cancelled) return;
+            setAuth(response.user!, response.user!.permissions ?? [], [], true);
+            setSubscriptionInfo(
+              response.subscriptionStatus ?? null,
+              response.gracePhase ?? null,
+              response.editionName ?? null
+            );
+            useAppStore.getState().setMustChangePassword(response.mustChangePassword ?? false);
             router.replace(
               response.mustChangePassword ? "/change-password" : response.defaultRedirectPath || "/"
             );
@@ -109,7 +115,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     return () => {
       cancelled = true;
     };
-  }, [token, tenantId, router]);
+  }, [token, tenantId, router, setAuth, setSubscriptionInfo]);
 
   return {
     state,

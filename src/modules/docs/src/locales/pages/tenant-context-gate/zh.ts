@@ -1,28 +1,51 @@
 export const zh = {
-  features: {
-    tenantContextGate: {
-      overviewTitle: "概述",
-      overview:
-        "租户上下文网关 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
-      architectureTitle: "架构与集成",
-      architectureDesc:
-        "遵循 DDD 和 Clean Architecture 原则设计，确保后端 and 前端层之间边界清晰、高可扩展性与松散耦合。",
-      dataTitle: "数据与模式模型",
-      dataDesc:
-        "包括 EF Core 实体配置、AuditableEntity 跟踪字段以及自动多数据库提供程序支持（SQL Server、PostgreSQL、Oracle）。",
-      governanceTitle: "治理与安全",
-      governanceDesc: "遵守多租户隔离要求、字段级安全检查和严格的变更审计日志记录。",
-      verificationTitle: "验证与确认",
-      verificationDesc:
-        "通过单元/集成测试和自动化前端检查门验证。运行 'scripe check' 进行全面验证。",
-      sourceMapTitle: "源代码图",
-      sourceMapIntro: "以下源文件包含该功能在项目中的主要实现细节：",
-      operatingModelTitle: "运行模型",
-      operatingModel: "通过 AstraFlow CQRS 处理程序和中间件行为执行。利用分布式锁实现高并发控制。",
-      localizationNoteTitle: "本地化与国际化",
-      localizationNote:
-        "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
-      title: "租户上下文网关",
-    },
-  },
+  "features": {
+    "tenantContextGate": {
+      "section_0_content": "RequiresTenantContext flag, multi-layer menu visibility defense, drill-down behavior, and impersonation scoping for tenant-only pages.",
+      "section_1_content": "The Tenant Context Gate is a security mechanism that prevents system admins from accidentally (or intentionally) accessing tenant-scoped pages when they have no active tenant context. Pages like Tenant Plans, User Subscriptions, and the Customizer Studio only make sense within a specific tenant's context – showing them to a system admin with no tenant would either show incorrect data or expose cross-tenant information.",
+      "section_2_title": "The Problem",
+      "section_3_content": "System super-admins have a bypass flag (IsSystemProtectedAdmin) that normally grants them access to all pages. Without a gate, a super-admin with no tenant context could navigate to /tenant-plans and see data from all tenants, or crash the page because no TenantId is available.",
+      "section_4_title": "The Solution: RequiresTenantContext",
+      "section_5_content": "We introduced the RequiresTenantContext boolean flag in the DocNavigationItem schema. When this flag is set to true, the frontend actively checks if the current user has a valid tenantId. If they do not, the item is completely stripped from the navigation menu and the route redirects to the overview page.",
+      "section_6_title": "Defense In Depth",
+      "section_7_content": "The gate operates at three levels:",
+      "section_8_title": "",
+      "section_9_content": "<!-- GetMyMenuQueryHandler.cs -->",
+      "section_11_title": "",
+      "section_12_title": "",
+      "section_13_content": "<!-- TenantPlansController.cs -->",
+      "section_15_title": "Drill-Down and Impersonation",
+      "section_16_content": "System admins can still access these pages, but only through explicit context-switching mechanisms:",
+      "section_18_title": "NOTE",
+      "section_18_content": "",
+      "section_19_title": "",
+      "section_20_hdr_0": "Mode",
+      "section_20_hdr_1": "Who is the user?",
+      "section_20_hdr_2": "Permissions",
+      "section_20_hdr_3": "TenantId source",
+      "section_20_cell_0_0": "Normal (no context)",
+      "section_20_cell_0_1": "System Admin themselves",
+      "section_20_cell_0_2": "System admin bypass (all)",
+      "section_20_cell_0_3": "null — RequiresTenantContext blocked",
+      "section_20_cell_1_0": "Drill-Down",
+      "section_20_cell_1_1": "System Admin themselves",
+      "section_20_cell_1_2": "System admin bypass (all)",
+      "section_20_cell_1_3": "DrillDownTenantId from session",
+      "section_20_cell_2_0": "Impersonation",
+      "section_20_cell_2_1": "The impersonated admin",
+      "section_20_cell_2_2": "That admin's roles/permissions only",
+      "section_20_cell_2_3": "Impersonated admin's TenantId",
+      "section_21_title": "",
+      "section_28_title": "",
+      "section_29_content": "<!-- MenuItemSeeder.cs -->",
+      "section_31_title": "TIP",
+      "section_31_content": "",
+      "section_32_title": "",
+      "section_33_title": "See Also",
+      "section_34_item_0": "[Tenant Plans](../../technical-docs/09-modules/entitlements)",
+      "section_34_item_1": "[User Subscriptions](../../technical-docs/09-modules/entitlements)",
+      "section_34_item_2": "[Menu System](../../technical-docs/03-features)",
+      "title": "Tenant Context Gate"
+    }
+  }
 };

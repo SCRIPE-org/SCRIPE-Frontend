@@ -373,23 +373,46 @@ export class AuthRepository implements IAuthRepository {
     return this.service.rejectQrSignIn(sessionId);
   }
 
-  // ── Magic Link (delegated) ────────────────────────────────────────────────
-  async verifyMagicLink(
-    token: string,
-    tenantId?: string
-  ): Promise<{
-    accessToken: string;
-    mustChangePassword?: boolean;
-    defaultRedirectPath?: string;
-  }> {
-    const response = await this.service.verifyMagicLink(token, tenantId);
-    if (response.accessToken) {
-      secureTokenService.setAccessToken(response.accessToken);
+  // ── Magic Link ───────────────────────────────────────────────────────────
+  async verifyMagicLink(token: string, tenantId?: string) {
+    const responseModel = await this.service.verifyMagicLink(token, tenantId);
+
+    // Multi-workspace: no token issued yet — return workspace list for picker
+    if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
+      return {
+        requiresWorkspaceSelection: true,
+        availableWorkspaces: responseModel.availableWorkspaces as any,
+        mustChangePassword: false,
+        subscriptionStatus: null as string | null,
+        gracePhase: null as string | null,
+        editionName: null as string | null,
+        defaultRedirectPath: "/hub",
+      };
     }
-    return {
-      accessToken: response.accessToken,
-      mustChangePassword: response.mustChangePassword ?? false,
-      defaultRedirectPath: response.defaultRedirectPath ?? "/",
-    };
+
+    if (responseModel.accessToken) {
+      secureTokenService.setAccessToken(responseModel.accessToken);
+
+      let user: User;
+      const mappedUser = AuthMapper.userFromUnknown(responseModel.userProfile);
+      if (mappedUser) {
+        user = mappedUser;
+      } else {
+        user = await this.getMe();
+      }
+
+      return {
+        user,
+        requiresWorkspaceSelection: false,
+        availableWorkspaces: null,
+        mustChangePassword: responseModel.mustChangePassword ?? false,
+        subscriptionStatus: responseModel.subscriptionStatus ?? null,
+        gracePhase: responseModel.gracePhase ?? null,
+        editionName: responseModel.editionName ?? null,
+        defaultRedirectPath: responseModel.defaultRedirectPath ?? "/",
+      };
+    }
+
+    throw new Error("Magic link verification failed: no access token in response.");
   }
 }

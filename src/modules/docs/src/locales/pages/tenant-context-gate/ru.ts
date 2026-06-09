@@ -1,31 +1,51 @@
 export const ru = {
-  features: {
-    tenantContextGate: {
-      overviewTitle: "Обзор",
-      overview:
-        "Модуль Шлюз контекста арендатора является основным компонентом платформы SCRIPE, обеспечивающим логику управления и оркестрации для этой функциональной области в корпоративной системе.",
-      architectureTitle: "Архитектура и интеграция",
-      architectureDesc:
-        "Разработано в соответствии с принципами DDD и Clean Architecture, обеспечивая четкие границы, высокую масштабируемость и слабое зацепление.",
-      dataTitle: "Модель данных и схемы",
-      dataDesc:
-        "Включает конфигурации сущностей EF Core, поля отслеживания AuditableEntity и автоматическую поддержку нескольких провайдеров баз данных (SQL Server, PostgreSQL, Oracle).",
-      governanceTitle: "Управление и безопасность",
-      governanceDesc:
-        "Соответствует требованиям изоляции клиентов в мультиарендной среде, проверкам безопасности на уровне полей и строгому аудиту изменений.",
-      verificationTitle: "Проверка и валидация",
-      verificationDesc:
-        "Проверено с помощью юнит/интеграционных тестов и автоматизированных проверок. Запустите 'scripe check' для полной проверки.",
-      sourceMapTitle: "Карта исходного кода",
-      sourceMapIntro:
-        "Следующие исходные файлы содержат основные сведения о реализации этой функции в проекте:",
-      operatingModelTitle: "Операционная модель",
-      operatingModel:
-        "Выполняется с помощью обработчиков AstraFlow CQRS и промежуточного ПО. Использует распределенную блокировку для высокой производительности.",
-      localizationNoteTitle: "Локализация и интернационализация",
-      localizationNote:
-        "Локализовано на 7 языках (EN, AR, FR, RU, ZH, ES, DE) с мгновенным рендерингом и полной поддержкой RTL-разметки.",
-      title: "Шлюз контекста арендатора",
-    },
-  },
+  "features": {
+    "tenantContextGate": {
+      "section_0_content": "RequiresTenantContext flag, multi-layer menu visibility defense, drill-down behavior, and impersonation scoping for tenant-only pages.",
+      "section_1_content": "The Tenant Context Gate is a security mechanism that prevents system admins from accidentally (or intentionally) accessing tenant-scoped pages when they have no active tenant context. Pages like Tenant Plans, User Subscriptions, and the Customizer Studio only make sense within a specific tenant's context – showing them to a system admin with no tenant would either show incorrect data or expose cross-tenant information.",
+      "section_2_title": "The Problem",
+      "section_3_content": "System super-admins have a bypass flag (IsSystemProtectedAdmin) that normally grants them access to all pages. Without a gate, a super-admin with no tenant context could navigate to /tenant-plans and see data from all tenants, or crash the page because no TenantId is available.",
+      "section_4_title": "The Solution: RequiresTenantContext",
+      "section_5_content": "We introduced the RequiresTenantContext boolean flag in the DocNavigationItem schema. When this flag is set to true, the frontend actively checks if the current user has a valid tenantId. If they do not, the item is completely stripped from the navigation menu and the route redirects to the overview page.",
+      "section_6_title": "Defense In Depth",
+      "section_7_content": "The gate operates at three levels:",
+      "section_8_title": "",
+      "section_9_content": "<!-- GetMyMenuQueryHandler.cs -->",
+      "section_11_title": "",
+      "section_12_title": "",
+      "section_13_content": "<!-- TenantPlansController.cs -->",
+      "section_15_title": "Drill-Down and Impersonation",
+      "section_16_content": "System admins can still access these pages, but only through explicit context-switching mechanisms:",
+      "section_18_title": "NOTE",
+      "section_18_content": "",
+      "section_19_title": "",
+      "section_20_hdr_0": "Mode",
+      "section_20_hdr_1": "Who is the user?",
+      "section_20_hdr_2": "Permissions",
+      "section_20_hdr_3": "TenantId source",
+      "section_20_cell_0_0": "Normal (no context)",
+      "section_20_cell_0_1": "System Admin themselves",
+      "section_20_cell_0_2": "System admin bypass (all)",
+      "section_20_cell_0_3": "null — RequiresTenantContext blocked",
+      "section_20_cell_1_0": "Drill-Down",
+      "section_20_cell_1_1": "System Admin themselves",
+      "section_20_cell_1_2": "System admin bypass (all)",
+      "section_20_cell_1_3": "DrillDownTenantId from session",
+      "section_20_cell_2_0": "Impersonation",
+      "section_20_cell_2_1": "The impersonated admin",
+      "section_20_cell_2_2": "That admin's roles/permissions only",
+      "section_20_cell_2_3": "Impersonated admin's TenantId",
+      "section_21_title": "",
+      "section_28_title": "",
+      "section_29_content": "<!-- MenuItemSeeder.cs -->",
+      "section_31_title": "TIP",
+      "section_31_content": "",
+      "section_32_title": "",
+      "section_33_title": "See Also",
+      "section_34_item_0": "[Tenant Plans](../../technical-docs/09-modules/entitlements)",
+      "section_34_item_1": "[User Subscriptions](../../technical-docs/09-modules/entitlements)",
+      "section_34_item_2": "[Menu System](../../technical-docs/03-features)",
+      "title": "Tenant Context Gate"
+    }
+  }
 };
