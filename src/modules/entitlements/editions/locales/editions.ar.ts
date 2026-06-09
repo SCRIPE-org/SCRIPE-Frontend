@@ -1,6 +1,11 @@
 export const ar = {
   entitlements: {
     editions: {
+      categories: {
+        title: "فئات الإصدارات",
+        description: "إدارة الفئات لتنظيم إصدارات الاشتراك.",
+        sortOrder: "ترتيب الفرز",
+      },
       displayName: "الاسم المعروض",
       title: "الإصدارات",
       editionName: "اسم الإصدار",

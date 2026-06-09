@@ -452,6 +452,9 @@ export const en = {
     days: "Days",
     neverExpires: "Never Expires",
     passwordExpiryHelp: "Password Expiry Help",
+    restrictPermissions: "Restrict Admin Permissions",
+    restrictPermissionsDesc: "Limit the permissions that administrators of this tenant can assign to roles.",
+    allPermissionsAllowed: "All Permissions Allowed",
   },
   validation: {
     invalidEmail: "Invalid email",

@@ -5,7 +5,7 @@ import { CategoryFormDialog } from "../components/CategoryFormDialog";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
-import { Trash2, Tag, Plus, Pencil, RefreshCw } from "lucide-react";
+import { Trash2, Tag, Plus, Pencil } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 

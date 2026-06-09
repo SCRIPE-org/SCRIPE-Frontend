@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@core/ui/button";
+import { Check, Sparkles } from "lucide-react";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface CompleteStepProps {

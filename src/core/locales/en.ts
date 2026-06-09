@@ -258,6 +258,8 @@ export const en = {
     clear: "Clear",
     nameAr: "Name (Ar)",
     nameEn: "Name (En)",
+    displayNameEn: "Display Name (English)",
+    displayNameAr: "Display Name (Arabic)",
     none: "None",
     updatedAt: "Updated at",
     logout: "Logout",

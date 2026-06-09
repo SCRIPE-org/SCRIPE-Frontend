@@ -126,6 +126,12 @@ export const ar = {
     subscription: "الاشتراك",
     notCreated: "لم يتم إنشاؤه",
     notLinked: "غير مرتبط",
+    changeCurrency: "تغيير العملة",
+    changeCurrencyDesc: "تغيير عملة الفوترة لهذا الاشتراك. سيتم إعادة حساب التسعير باستخدام أسعار الصرف الحالية.",
+    checkingDowngradeImpact: "جاري التحقق من تأثير تخفيض الباقة...",
+    downgradeWarning: "تخفيض الباقة سيتجاوز الموارد المخصصة في الخطة الجديدة.",
+    downgradeWarningDesc: "يرجى إزالة الموارد الزائدة قبل تخفيض الباقة.",
+    downgradeOverflowDetail: "تفاصيل تجاوز التخفيض",
   },
   entitlements: {
     promotions: {

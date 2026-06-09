@@ -6,7 +6,7 @@ import { ConsentStatus } from "../../domain/entities/ConsentStatus";
 import type { ConsentStatusData } from "../../domain/entities/ConsentStatus";
 import type { ConsentStatusModel } from "../models/ConsentModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+import { safeParseApiResponse, optionalString } from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

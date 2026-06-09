@@ -189,7 +189,7 @@ export function NexusPrimaryRail({
   const activeIndex = adminRootItems.findIndex((i) => i.id === activeRootItem?.id);
 
   let indicatorTop = -100; // Hidden offscreen by default
-  let indicatorColor = accent;
+  const indicatorColor = accent;
   let indicatorVisible = false;
 
   if (activeIndex >= 0) {

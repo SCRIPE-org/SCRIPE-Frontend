@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Target, TrendingUp, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTheme } from "next-themes";
 import { MockComingSoonBanner } from "../mock-shared/MockComingSoonBanner";

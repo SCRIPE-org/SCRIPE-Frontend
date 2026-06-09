@@ -1,4 +1,3 @@
-import type { PasskeyEntity } from "../../domain/entities/PasskeyEntity";
 
 /**
  * IPasskeyService — HTTP service interface for passkey API calls.

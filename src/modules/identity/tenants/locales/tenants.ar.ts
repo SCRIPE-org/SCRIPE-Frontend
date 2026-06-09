@@ -445,6 +445,9 @@ export const ar = {
     days: "[مفقود] Days",
     neverExpires: "[مفقود] Never Expires",
     passwordExpiryHelp: "[مفقود] Password Expiry Help",
+    restrictPermissions: "تقييد صلاحيات المشرف",
+    restrictPermissionsDesc: "تقييد الصلاحيات التي يمكن لمشرفي هذا المستأجر تعيينها للأدوار.",
+    allPermissionsAllowed: "السماح بجميع الصلاحيات",
   },
   validation: {
     invalidEmail: "البريد الإلكتروني غير صالح",

@@ -9,7 +9,6 @@
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { appLogger } from "@core/common/logger";
 import { clearNavigationCaches } from "../utils/auth-storage-cleanup";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 

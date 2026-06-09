@@ -19,7 +19,6 @@ import { Label } from "@core/ui/label";
 import { PasswordInput } from "@core/ui/password-input";
 import { ArrowLeft, Lock, CheckCircle, AlertTriangle } from "lucide-react";
 import { useLoginBrandingTokens } from "@modules/auth/core/src/presentation/viewmodels/useLoginBrandingTokens";
-import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";

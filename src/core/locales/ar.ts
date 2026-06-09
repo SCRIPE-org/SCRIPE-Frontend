@@ -1230,6 +1230,8 @@ export const ar = {
     description: "الوصف",
     nameAr: "الاسم بالعربية",
     nameEn: "الاسم بالانجليزية",
+    displayNameEn: "الاسم المعروض (إنجليزي)",
+    displayNameAr: "الاسم المعروض (عربي)",
     none: "لا يوجد",
     deleteConfirm: "تأكيد الحذف",
     results: "النتائج",

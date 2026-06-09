@@ -170,6 +170,6 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
       // completely empty until the user manually clicks a primary rail item.
       useNavigationStore.getState().setActiveRootItem(rootMenuItems[0].id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [pathname, rootMenuItems]);
 }

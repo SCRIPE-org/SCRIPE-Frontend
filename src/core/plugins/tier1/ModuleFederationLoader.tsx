@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, lazy, useState, useEffect, ComponentType } from "react";
+import { Suspense, useState, useEffect, ComponentType } from "react";
 import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { buildRemoteEntryUrl } from "./federation-config";
@@ -82,7 +82,7 @@ async function loadFederatedModule(
   // Under Turbopack (Next.js --turbo), this global does not exist.
   // We use an empty shared scope as a safe fallback — the plugin's own
   // internal dependencies will still resolve via its own bundled scope.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const shareScope =
     typeof __webpack_share_scopes__ !== "undefined" ? __webpack_share_scopes__.default : {};
   await container.init(shareScope);

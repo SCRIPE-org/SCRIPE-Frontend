@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { Download, FileSpreadsheet, FileText, File, CheckCircle2 } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, File } from "lucide-react";
 
 interface ExportButtonProps {
   onExport: (format: string) => Promise<void>;

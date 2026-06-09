@@ -13,7 +13,6 @@ import {
   MessageSquare,
   Plus,
   ArrowUpRight,
-  Star,
   Clock,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";

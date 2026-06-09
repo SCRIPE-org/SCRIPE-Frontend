@@ -2,7 +2,6 @@
 
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@core/store/useAppStore";
-import { useServices } from "@core/providers/service-provider";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";

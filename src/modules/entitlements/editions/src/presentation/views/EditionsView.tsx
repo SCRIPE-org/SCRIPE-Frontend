@@ -13,7 +13,7 @@ import { useEditionsViewModel } from "../viewmodels/useEditionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Edition } from "../../domain/entities/Edition";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye, Settings2, Columns, Plus } from "lucide-react";
+import { Pencil, Trash2, Eye, Settings2, Columns } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 

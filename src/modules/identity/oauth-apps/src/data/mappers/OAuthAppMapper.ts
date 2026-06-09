@@ -29,7 +29,6 @@ import {
   safeParseApiResponse,
   uuidField,
   optionalString,
-  optionalIsoDate,
 } from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────

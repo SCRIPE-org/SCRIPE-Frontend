@@ -126,6 +126,12 @@ export const en = {
     subscription: "Subscription",
     notCreated: "Not created",
     notLinked: "Not linked",
+    changeCurrency: "Change Currency",
+    changeCurrencyDesc: "Change the billing currency for this subscription.",
+    checkingDowngradeImpact: "Checking downgrade impact...",
+    downgradeWarning: "Downgrading will exceed the resources allocated by the new plan.",
+    downgradeWarningDesc: "Downgrade Warning Description",
+    downgradeOverflowDetail: "Downgrade Overflow Detail",
   },
   entitlements: {
     promotions: {

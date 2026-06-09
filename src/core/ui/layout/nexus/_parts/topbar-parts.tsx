@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Search, Home } from "lucide-react";
-import { cn } from "@core/common/utils";
-import { ThemeSwitcher, LanguageSwitcher } from "@core/ui/layout/common";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import {

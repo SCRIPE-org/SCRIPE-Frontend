@@ -16,7 +16,6 @@ import {
   Zap,
   Loader2,
   Tag,
-  CreditCard,
   DollarSign,
   ShieldCheck,
   Clock,

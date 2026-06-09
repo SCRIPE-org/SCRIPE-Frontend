@@ -25,7 +25,6 @@ import {
   Zap,
   Wallet,
   Activity,
-  Power,
 } from "lucide-react";
 import {
   usePaymentGatewaysViewModel,

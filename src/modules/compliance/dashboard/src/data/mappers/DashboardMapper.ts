@@ -4,7 +4,7 @@
  */
 import { ComplianceDashboard } from "../../domain/entities/DashboardData";
 import type { DashboardData, RegulationCoverageData } from "../../domain/entities/DashboardData";
-import type { DashboardModel, RegulationCoverageModel } from "../models/DashboardModels";
+import type { DashboardModel } from "../models/DashboardModels";
 import { z } from "zod";
 import { safeParseApiResponse, optionalString } from "@core/common/zod-utils";
 

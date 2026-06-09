@@ -2,6 +2,11 @@ export const en = {
   entitlements: {
     editions: {
       title: "Editions",
+      categories: {
+        title: "Edition Categories",
+        description: "Manage categories to organize subscription editions.",
+        sortOrder: "Sort Order",
+      },
       displayName: "Display Name",
       description:
         "Manage subscription plans - bundle features into editions like Basic, Pro, Enterprise.",

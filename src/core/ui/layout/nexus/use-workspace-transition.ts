@@ -18,7 +18,6 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceActions } from "@core/providers/hooks/useWorkspaceActions";
-import type { WorkspaceGroup } from "@core/navigation";
 
 /** How long to wait AFTER the JIT fetch + pathname settle before hiding the loader */
 const SETTLE_MS = 350;

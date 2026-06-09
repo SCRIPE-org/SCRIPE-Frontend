@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useCallback, useRef } from "react";
+import { createContext, useContext, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { PluginBridge } from "../plugin-sdk/PluginBridge";

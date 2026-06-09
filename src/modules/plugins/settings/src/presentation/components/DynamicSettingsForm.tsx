@@ -8,7 +8,7 @@ import { Switch } from "@core/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Textarea } from "@core/ui/textarea";
 import { Badge } from "@core/ui/badge";
-import { Card, CardContent, CardHeader } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { AlertTriangle, Save } from "lucide-react";
 
 // ── JSON Schema Types ────────────────────────────────────────────────────────

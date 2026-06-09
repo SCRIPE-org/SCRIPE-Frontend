@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, LayoutList } from "lucide-react";
 
 interface FloatingCompareButtonProps {

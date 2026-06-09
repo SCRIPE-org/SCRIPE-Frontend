@@ -1,7 +1,7 @@
 import { PluginExecutionLog } from "../../domain/entities/PluginExecutionLog";
 import type { PluginExecutionLogModel } from "../models/LogsModels";
 import { z } from "zod";
-import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
+import { safeParseApiResponse, uuidField } from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

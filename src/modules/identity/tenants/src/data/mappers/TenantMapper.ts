@@ -26,7 +26,6 @@ import type {
 import { z } from "zod";
 import {
   safeParseApiResponse,
-  uuidField,
   optionalString,
   isoDateString,
   optionalIsoDate,

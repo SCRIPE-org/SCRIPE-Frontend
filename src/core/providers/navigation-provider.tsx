@@ -202,7 +202,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       await queryClient.invalidateQueries({ queryKey: ["navigation"] });
     });
     // authBroadcast is a singleton — no cleanup needed (matches pattern in useImpersonation.ts)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [queryClient]);
 
   // When tenant context changes, reset and refetch

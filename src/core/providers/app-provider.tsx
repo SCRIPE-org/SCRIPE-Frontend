@@ -114,7 +114,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       </QueryClientProvider>
       {/* React Query DevTools — only rendered in development */}
       {process.env.NODE_ENV === "development" && ReactQueryDevtools && (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         <ReactQueryDevtools
           {...({ initialIsOpen: false, buttonPosition: "bottom-right" } as any)}
         />

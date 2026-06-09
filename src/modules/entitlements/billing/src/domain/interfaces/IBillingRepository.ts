@@ -8,7 +8,7 @@ import type {
   PaymentLink,
 } from "../entities/Invoice";
 import type { BillingDashboard } from "../entities/Invoice";
-import type { GatewayStatusModel, GatewayListResponseModel } from "./IBillingService";
+import type { GatewayListResponseModel } from "./IBillingService";
 
 export interface IBillingRepository {
   // Queries

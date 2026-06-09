@@ -24,7 +24,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/ui/use-toast";
 import {
@@ -32,7 +32,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
 import { complianceContainer } from "@modules/compliance/di";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";

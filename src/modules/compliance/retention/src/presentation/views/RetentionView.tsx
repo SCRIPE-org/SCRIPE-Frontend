@@ -9,7 +9,6 @@ import type { RetentionPolicy } from "../../domain/entities/RetentionPolicy";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { GenericModal } from "@core/crud/components/generic-modal";

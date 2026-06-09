@@ -3,7 +3,7 @@
 import { useReviewsViewModel } from "../viewmodels/useReviewsViewModel";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Card, CardContent, CardHeader } from "@core/ui/card";
+import { Card, CardHeader } from "@core/ui/card";
 import { Star, Trash2 } from "lucide-react";
 
 export function ReviewsView() {

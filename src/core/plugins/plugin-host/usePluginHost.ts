@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { PluginBridge } from "../plugin-sdk/PluginBridge";
 import type { HostToPluginMessage } from "../plugin-sdk/types";
 
