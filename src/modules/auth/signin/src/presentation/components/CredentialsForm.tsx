@@ -144,7 +144,9 @@ export function CredentialsForm({
           {...(errorAnnounce ? { "aria-live": "assertive" as const, "aria-atomic": "true" } : {})}
         >
           <span className="mt-0.5 shrink-0">⚠</span>
-          <p className="text-[13px] font-medium leading-snug">{error}</p>
+          <p className="text-[13px] font-medium leading-snug">
+            {error.startsWith("auth.") ? t(error as any) : error}
+          </p>
         </div>
       )}
 

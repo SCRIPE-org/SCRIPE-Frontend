@@ -270,7 +270,9 @@ export function QrApprovalView({
           role="alert"
           aria-live="assertive"
         >
-          <p className="text-[13px] font-medium text-destructive">{error}</p>
+          <p className="text-[13px] font-medium text-destructive">
+            {error.startsWith("auth.") ? t(error as any) : error}
+          </p>
         </div>
       )}
 

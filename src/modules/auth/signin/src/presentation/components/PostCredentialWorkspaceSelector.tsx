@@ -122,7 +122,7 @@ export function PostCredentialWorkspaceSelector({
           aria-live="assertive"
         >
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-          <span>{error}</span>
+          <span>{error.startsWith("auth.") ? t(error as any) : error}</span>
         </div>
       )}
 

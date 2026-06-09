@@ -70,7 +70,9 @@ export function TwoFactorForm({
           aria-live="assertive"
           aria-atomic="true"
         >
-          <p className="text-center text-[13px] font-medium text-destructive">{error}</p>
+          <p className="text-center text-[13px] font-medium text-destructive">
+            {error.startsWith("auth.") ? t(error as any) : error}
+          </p>
         </div>
       )}
 

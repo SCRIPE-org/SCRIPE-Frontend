@@ -47,14 +47,15 @@ export function MagicLinkRequestForm({
         </p>
       </div>
 
-      {/* Error */}
       {error && (
         <div
           className="sx-shake rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm"
           role="alert"
           aria-live="assertive"
         >
-          <p className="text-[13px] font-medium text-destructive">{error}</p>
+          <p className="text-[13px] font-medium text-destructive">
+            {error.startsWith("auth.") ? t(error as any) : error}
+          </p>
         </div>
       )}
 
