@@ -5,6 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 interface MagicLinkRequestFormProps {
   isLoading: boolean;
@@ -98,7 +99,7 @@ export function MagicLinkRequestForm({
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+              <LoadingSpinner size="inline" showText={false} />
               {t("common.loading") || "Sending…"}
             </span>
           ) : (

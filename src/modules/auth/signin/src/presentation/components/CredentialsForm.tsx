@@ -5,6 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Mail, Fingerprint, Smartphone, QrCode } from "lucide-react";
 import Link from "next/link";
 import type { LoginFormData } from "../viewmodels/use-login-viewmodel";
@@ -308,10 +309,7 @@ export function CredentialsForm({
         <span className="relative z-[1] inline-flex items-center justify-center gap-2">
           {isLoading ? (
             <>
-              <span
-                className="sx-spin1 inline-block h-[14px] w-[14px] rounded-full border-2 border-white/40 border-t-white"
-                aria-hidden="true"
-              />
+              <LoadingSpinner size="inline" showText={false} />
               {t("auth.signingIn")}
             </>
           ) : (
