@@ -79,7 +79,7 @@ export function LoginFormRouter({
         />
       ) : vm.loginStep === "magic-link-request" ? (
         <MagicLinkRequestForm
-          isLoading={vm.isLoading}
+          isLoading={vm.isMagicLinkSending}
           error={vm.error}
           onBack={vm.goBackToCredentials}
           onSubmit={(email) => vm.requestMagicLink(email, tenantId ?? undefined)}

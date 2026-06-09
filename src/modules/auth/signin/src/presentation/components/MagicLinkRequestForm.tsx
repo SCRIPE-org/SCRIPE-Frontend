@@ -75,6 +75,7 @@ export function MagicLinkRequestForm({
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             required
+            disabled={isLoading}
             className="h-11 rounded-lg"
             style={{
               background: "rgba(255,255,255,0.04)",
@@ -110,6 +111,7 @@ export function MagicLinkRequestForm({
       <Button
         variant="link"
         onClick={onBack}
+        disabled={isLoading}
         className="mx-auto block text-sm font-medium underline underline-offset-2"
         style={{ color: "var(--sx-accent-text)" }}
       >
