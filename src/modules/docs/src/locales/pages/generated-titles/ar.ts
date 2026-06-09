@@ -1,497 +1,497 @@
 export const ar = {
   getStarted: {
     overview: {
-      title: "Overview",
+      title: "نظرة عامة",
     },
     prerequisites: {
-      title: "Prerequisites",
+      title: "المتطلبات الأساسية",
     },
     quickStart: {
-      title: "Quick Start",
+      title: "بدء سريع",
     },
     projectStructure: {
-      title: "Project Structure",
+      title: "هيكل المشروع",
     },
   },
   architecture: {
     overview: {
-      title: "Overview",
+      title: "نظرة عامة",
     },
     backend: {
-      title: "Backend",
+      title: "الخلفية",
     },
     frontend: {
-      title: "Frontend",
+      title: "الواجهة الأمامية",
     },
     cqrs: {
-      title: "CQRS",
+      title: "CQRS والاستعلامات",
     },
     modules: {
-      title: "Modules",
+      title: "الوحدات",
     },
     solidPattern: {
-      title: "Solid Pattern",
+      title: "نمط Solid",
     },
     stateManagement: {
-      title: "State Management",
+      title: "إدارة الحالة",
     },
     dataFlow: {
-      title: "Data Flow",
+      title: "تدفق البيانات",
     },
     domainModel: {
-      title: "Domain Model",
+      title: "نموذج النطاق",
     },
     domainEvents: {
-      title: "Domain Events",
+      title: "أحداث النطاق",
     },
     cqrsPipeline: {
-      title: "CQRS Pipeline",
+      title: "مسار CQRS",
     },
     dependencyInjection: {
-      title: "Dependency Injection",
+      title: "حقن التبعية",
     },
   },
   features: {
     authentication: {
-      title: "Authentication",
+      title: "المصادقة والأمان",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "تعدد المستأجرين",
     },
     rolePermissions: {
-      title: "Role Permissions",
+      title: "أذونات الأدوار",
     },
     userGroups: {
-      title: "User Groups",
+      title: "مجموعات المستخدمين",
     },
     auditSystem: {
-      title: "Audit System",
+      title: "نظام التدقيق",
     },
     notificationSystem: {
-      title: "Notification System",
+      title: "نظام التنبيهات",
     },
     emailSystem: {
-      title: "Email System",
+      title: "نظام البريد الإلكتروني",
     },
     webhookSystem: {
-      title: "Webhook System",
+      title: "نظام الويب هوك",
     },
     menuSystem: {
-      title: "Menu System",
+      title: "نظام القوائم",
     },
     recycleBin: {
-      title: "Recycle Bin",
+      title: "سلة المحذوفات",
     },
     userManagement: {
-      title: "User Management",
+      title: "إدارة المستخدمين",
     },
     fileUpload: {
-      title: "File Upload",
+      title: "تحميل الملفات",
     },
     downloadExport: {
-      title: "Download Export",
+      title: "التنزيل والتصدير",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "قوالب الرسائل",
     },
     ssoOauth: {
-      title: "SSO OAuth",
+      title: "تسجيل الدخول الموحد",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "مخصص تسجيل الدخول",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "سوق السمات",
     },
     multiPageBranding: {
-      title: "Multi Page Branding",
+      title: "العلامة التجارية متعددة الصفحات",
     },
     loginPageBuilder: {
-      title: "Login Page Builder",
+      title: "منشئ صفحة الدخول",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "منشئ لوحة التحكم",
     },
     dashboardHub: {
-      title: "Dashboard Hub",
+      title: "مركز لوحات التحكم",
     },
     tenantContextGate: {
-      title: "Tenant Context Gate",
+      title: "بوابة سياق المستأجر",
     },
   },
   security: {
     overview: {
-      title: "Overview",
+      title: "نظرة عامة",
     },
     authDeep: {
-      title: "Authentication Deep",
+      title: "المصادقة التفصيلية",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "حماية البيانات",
     },
     apiSecurity: {
-      title: "API Security",
+      title: "أمن واجهة البرمجة",
     },
     middlewarePipeline: {
-      title: "Middleware Pipeline",
+      title: "مسار البرمجيات الوسيطة",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "التدقيق والامتثال",
     },
     sso: {
-      title: "SSO Identity Providers",
+      title: "مزودي هوية SSO",
     },
   },
   apiReference: {
     overview: {
-      title: "Overview",
+      title: "نظرة عامة",
     },
     authApi: {
-      title: "Authentication API",
+      title: "واجهة برمجة المصادقة",
     },
     userAuthApi: {
-      title: "User Auth API",
+      title: "واجهة برمجة مصادقة المستخدم",
     },
     adminApi: {
-      title: "Admin API",
+      title: "واجهة برمجة المسؤول",
     },
     tenantApi: {
-      title: "Tenant API",
+      title: "واجهة برمجة المستأجر",
     },
     rolePermissionApi: {
-      title: "Role Permission API",
+      title: "واجهة برمجة أذونات الأدوار",
     },
     userGroupsApi: {
-      title: "User Groups API",
+      title: "واجهة برمجة مجموعات المستخدمين",
     },
     webhookEmailApi: {
-      title: "Webhook Email API",
+      title: "واجهة برمجة الويب هوك والبريد",
     },
     systemApi: {
-      title: "System API",
+      title: "واجهة برمجة النظام",
     },
   },
   frontend: {
     crudSystem: {
-      title: "CRUD System",
+      title: "نظام CRUD",
     },
     stateManagement: {
-      title: "State Management",
+      title: "إدارة الحالة",
     },
     localization: {
-      title: "Localization",
+      title: "التوطين والترجمة",
     },
     formValidation: {
-      title: "Form Validation",
+      title: "التحقق من صحة النماذج",
     },
     componentLibrary: {
-      title: "Component Library",
+      title: "مكتبة المكونات",
     },
     realtime: {
-      title: "Realtime",
+      title: "الوقت الحقيقي",
     },
   },
   infrastructure: {
     backgroundJobs: {
-      title: "Background Jobs",
+      title: "المهام الخلفية",
     },
     fileStorage: {
-      title: "File Storage",
+      title: "تخزين الملفات",
     },
     resilience: {
-      title: "Resilience",
+      title: "المرونة والاسترداد",
     },
     gatewayDeployment: {
-      title: "Gateway Deployment",
+      title: "نشر البوابة",
     },
     databaseMigrations: {
-      title: "Database Migrations",
+      title: "هجرات قواعد البيانات",
     },
     scripeCli: {
-      title: "SCRIPE Cli",
+      title: "أداة CLI لـ SCRIPE",
     },
     healthChecks: {
-      title: "Health Checks",
+      title: "فحوصات السلامة",
     },
     observability: {
-      title: "Observability",
+      title: "المراقبة والتحليل",
     },
     auditTrail: {
-      title: "Audit Trail",
+      title: "سجل التغييرات",
     },
     loadTesting: {
-      title: "Load Testing",
+      title: "اختبار الأحمال",
     },
     scripeStudio: {
-      title: "SCRIPE Studio",
+      title: "ستوديو SCRIPE",
     },
   },
   tutorials: {
     addModule: {
-      title: "Add Module",
+      title: "إضافة وحدة",
     },
     addBackendModule: {
-      title: "Add Backend Module",
+      title: "إضافة وحدة خلفية",
     },
   },
   modules: {
     entitlementsOverview: {
-      title: "Entitlements Overview",
+      title: "نظرة عامة على الاستحقاقات",
     },
     editions: {
-      title: "Editions",
+      title: "الإصدارات",
     },
     subscriptions: {
-      title: "Subscriptions",
+      title: "الاشتراكات",
     },
     features: {
-      title: "Features",
+      title: "الميزات",
     },
     overrides: {
-      title: "Overrides",
+      title: "التجاوزات",
     },
     billingEngine: {
-      title: "Billing Engine",
+      title: "محرك الفواتير",
     },
     invoices: {
-      title: "Invoices",
+      title: "الفواتير",
     },
     dunning: {
-      title: "Dunning",
+      title: "المطالبات والمعالجة",
     },
     tenantPlans: {
-      title: "Tenant Plans",
+      title: "خطط المستأجرين",
     },
     userSubscriptions: {
-      title: "User Subscriptions",
+      title: "اشتراكات المستخدمين",
     },
     revenueAnalytics: {
-      title: "Revenue Analytics",
+      title: "تحليلات الإيرادات",
     },
     stripeConnect: {
-      title: "Stripe Connect",
+      title: "سترايب كونكت",
     },
     compliance: {
       overview: {
-        title: "Compliance Overview",
+        title: "نظرة عامة على الامتثال",
       },
       dsr: {
-        title: "Compliance DSR",
+        title: "طلبات حقوق البيانات DSR",
       },
       consent: {
-        title: "Compliance Consent",
+        title: "إدارة الموافقات",
       },
       retention: {
-        title: "Compliance Retention",
+        title: "الاحتفاظ بالبيانات",
       },
       inventory: {
-        title: "Compliance Inventory",
+        title: "جرد البيانات",
       },
       reports: {
-        title: "Compliance Reports",
+        title: "تقارير الامتثال",
       },
     },
     plugins: {
       overview: {
-        title: "Plugins Overview",
+        title: "نظرة عامة على الإضافات",
       },
       sdk: {
-        title: "Plugins SDK",
+        title: "أدوات تطوير الإضافات",
       },
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "نظرة عامة على السوق",
       },
       catalog: {
-        title: "Marketplace Catalog",
+        title: "كتالوج السوق",
       },
       submissions: {
-        title: "Marketplace Submissions",
+        title: "تقديم الطلبات للسوق",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "ماليات السوق",
       },
     },
   },
   commercial: {
     whyScripeOverview: {
-      title: "Why SCRIPE Overview",
+      title: "لماذا SCRIPE",
     },
     competitiveAdvantages: {
-      title: "Competitive Advantages",
+      title: "المزايا التنافسية",
     },
     targetIndustries: {
-      title: "Target Industries",
+      title: "الصناعات المستهدفة",
     },
     successMetrics: {
-      title: "Success Metrics",
+      title: "مقاييس النجاح",
     },
     platformArchitecture: {
-      title: "Platform Architecture",
+      title: "بنية المنصة",
     },
     moduleCatalog: {
-      title: "Module Catalog",
+      title: "كتالوج الوحدات",
     },
     technologyStack: {
-      title: "Technology Stack",
+      title: "المكونات التقنية",
     },
     deploymentModes: {
-      title: "Deployment Modes",
+      title: "أنماط النشر",
     },
     systemRequirements: {
-      title: "System Requirements",
+      title: "متطلبات النظام",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "تعدد المستأجرين",
     },
     rolesPermissions: {
-      title: "Roles Permissions",
+      title: "الأدوار والأذونات",
     },
     userGroups: {
-      title: "User Groups",
+      title: "مجموعات المستخدمين",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "التدقيق والامتثال",
     },
     realTimeCapabilities: {
-      title: "Real Time Capabilities",
+      title: "قدرات الوقت الحقيقي",
     },
     localizationI18n: {
-      title: "Localization I18n",
+      title: "التوطين والتدويل",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "قوالب الرسائل",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "مخصص تسجيل الدخول",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "سوق السمات",
     },
     pageBuilder: {
-      title: "Page Builder",
+      title: "منشئ الصفحات",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "منشئ لوحة التحكم",
     },
     securityOverview: {
-      title: "Security Overview",
+      title: "نظرة عامة على الأمن",
     },
     authSecurity: {
-      title: "Authentication Security",
+      title: "أمن المصادقة",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "حماية البيانات",
     },
     infraSecurity: {
-      title: "Infrastructure Security",
+      title: "أمن البنية التحتية",
     },
     complianceReadiness: {
-      title: "Compliance Readiness",
+      title: "جاهزية الامتثال",
     },
     ssoEnterprise: {
-      title: "SSO Enterprise",
+      title: "تسجيل دخول المؤسسات",
     },
     performanceBenchmarks: {
-      title: "Performance Benchmarks",
+      title: "اختبارات الأداء",
     },
     databaseSupport: {
-      title: "Database Support",
+      title: "دعم قواعد البيانات",
     },
     storageBackends: {
-      title: "Storage Backends",
+      title: "مستودعات التخزين",
     },
     resiliencePatterns: {
-      title: "Resilience Patterns",
+      title: "أنماط المرونة",
     },
     observabilityMonitoring: {
-      title: "Observability Monitoring",
+      title: "المراقبة والتحليل التجاري",
     },
     cliTooling: {
-      title: "Cli Tooling",
+      title: "أدوات سطر الأوامر",
     },
     cleanArchitecture: {
-      title: "Clean Architecture",
+      title: "البنية النظيفة للمؤسسات",
     },
     apiDesign: {
-      title: "API Design",
+      title: "تصميم واجهات البرمجة",
     },
     testingStrategy: {
-      title: "Testing Strategy",
+      title: "استراتيجية الاختبار",
     },
     restApiOverview: {
-      title: "Rest API Overview",
+      title: "واجهات Rest API",
     },
     webhookIntegration: {
-      title: "Webhook Integration",
+      title: "تكامل الويب هوك التجاري",
     },
     emailIntegration: {
-      title: "Email Integration",
+      title: "تكامل البريد التجاري",
     },
     ciCdPipeline: {
-      title: "CI CD Pipeline",
+      title: "أتمتة النشر والتكامل",
     },
     licensingModel: {
-      title: "Licensing Model",
+      title: "نموذج الترخيص",
     },
     roiAnalysis: {
-      title: "ROI Analysis",
+      title: "تحليل عائد الاستثمار",
     },
     supportPlans: {
-      title: "Support Plans",
+      title: "خطط الدعم الفني",
     },
     enterpriseAddons: {
-      title: "Enterprise Addons",
+      title: "إضافات المؤسسات",
     },
     documentationTraining: {
-      title: "Documentation Training",
+      title: "التوثيق والتدريب",
     },
     gettingStartedGuide: {
-      title: "Getting Started Guide",
+      title: "دليل البدء التجاري",
     },
     faq: {
-      title: "FAQ",
+      title: "الأسئلة الشائعة",
     },
     roadmap: {
-      title: "Roadmap",
+      title: "خريطة الطريق",
     },
     entOverview: {
-      title: "Entitlements Overview",
+      title: "نظرة عامة على الاستحقاقات",
     },
     entEditions: {
-      title: "Entitlements Editions",
+      title: "إصدارات الاستحقاق",
     },
     entSubscriptions: {
-      title: "Entitlements Subscriptions",
+      title: "اشتراكات الاستحقاق",
     },
     entFeatures: {
-      title: "Entitlements Features",
+      title: "ميزات الاستحقاق",
     },
     entOverrides: {
-      title: "Entitlements Overrides",
+      title: "تجاوزات الاستحقاق",
     },
     pluginsOverview: {
-      title: "Plugins Overview",
+      title: "نظرة عامة على الإضافات",
     },
     complianceOverview: {
-      title: "Compliance Overview",
+      title: "نظرة عامة على الامتثال",
     },
     complianceGdpr: {
-      title: "Compliance GDPR",
+      title: "الامتثال لـ GDPR",
     },
     complianceDsr: {
-      title: "Compliance DSR",
+      title: "طلبات حقوق البيانات DSR",
     },
     complianceRoi: {
-      title: "Compliance ROI",
+      title: "عائد الامتثال",
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "نظرة عامة على السوق",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "ماليات السوق",
       },
     },
   },

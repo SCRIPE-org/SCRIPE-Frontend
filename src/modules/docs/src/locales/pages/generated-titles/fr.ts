@@ -1,21 +1,21 @@
 export const fr = {
   getStarted: {
     overview: {
-      title: "Overview",
+      title: "Aperçu",
     },
     prerequisites: {
-      title: "Prerequisites",
+      title: "Prérequis",
     },
     quickStart: {
-      title: "Quick Start",
+      title: "Démarrage rapide",
     },
     projectStructure: {
-      title: "Project Structure",
+      title: "Structure du projet",
     },
   },
   architecture: {
     overview: {
-      title: "Overview",
+      title: "Aperçu",
     },
     backend: {
       title: "Backend",
@@ -24,203 +24,203 @@ export const fr = {
       title: "Frontend",
     },
     cqrs: {
-      title: "CQRS",
+      title: "CQRS & Requêtes",
     },
     modules: {
       title: "Modules",
     },
     solidPattern: {
-      title: "Solid Pattern",
+      title: "Modèle SOLID",
     },
     stateManagement: {
-      title: "State Management",
+      title: "Gestion de l'état",
     },
     dataFlow: {
-      title: "Data Flow",
+      title: "Flux de données",
     },
     domainModel: {
-      title: "Domain Model",
+      title: "Modèle de domaine",
     },
     domainEvents: {
-      title: "Domain Events",
+      title: "Événements de domaine",
     },
     cqrsPipeline: {
-      title: "CQRS Pipeline",
+      title: "Pipeline CQRS",
     },
     dependencyInjection: {
-      title: "Dependency Injection",
+      title: "Injection de dépendances",
     },
   },
   features: {
     authentication: {
-      title: "Authentication",
+      title: "Authentification",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "Multi-locataire",
     },
     rolePermissions: {
-      title: "Role Permissions",
+      title: "Rôles et autorisations",
     },
     userGroups: {
-      title: "User Groups",
+      title: "Groupes d'utilisateurs",
     },
     auditSystem: {
-      title: "Audit System",
+      title: "Système d'audit",
     },
     notificationSystem: {
-      title: "Notification System",
+      title: "Système de notifications",
     },
     emailSystem: {
-      title: "Email System",
+      title: "Système d'e-mails",
     },
     webhookSystem: {
-      title: "Webhook System",
+      title: "Système de Webhooks",
     },
     menuSystem: {
-      title: "Menu System",
+      title: "Système de menus",
     },
     recycleBin: {
-      title: "Recycle Bin",
+      title: "Corbeille",
     },
     userManagement: {
-      title: "User Management",
+      title: "Gestion des utilisateurs",
     },
     fileUpload: {
-      title: "File Upload",
+      title: "Téléchargement de fichiers",
     },
     downloadExport: {
-      title: "Download Export",
+      title: "Téléchargement et exportation",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "Modèles de messages",
     },
     ssoOauth: {
       title: "SSO OAuth",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "Personnalisateur de connexion",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "Boutique de thèmes",
     },
     multiPageBranding: {
-      title: "Multi Page Branding",
+      title: "Marquage multi-pages",
     },
     loginPageBuilder: {
-      title: "Login Page Builder",
+      title: "Générateur de page de connexion",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "Générateur de tableaux de bord",
     },
     dashboardHub: {
-      title: "Dashboard Hub",
+      title: "Hub de tableaux de bord",
     },
     tenantContextGate: {
-      title: "Tenant Context Gate",
+      title: "Porte de contexte de locataire",
     },
   },
   security: {
     overview: {
-      title: "Overview",
+      title: "Aperçu",
     },
     authDeep: {
-      title: "Authentication Deep",
+      title: "Sécurité de l'authentification approfondie",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "Protection des données",
     },
     apiSecurity: {
-      title: "API Security",
+      title: "Sécurité de l'API",
     },
     middlewarePipeline: {
-      title: "Middleware Pipeline",
+      title: "Pipeline de middleware",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "Audit et conformité",
     },
     sso: {
-      title: "SSO Identity Providers",
+      title: "Fournisseurs d'identité SSO",
     },
   },
   apiReference: {
     overview: {
-      title: "Overview",
+      title: "Aperçu",
     },
     authApi: {
-      title: "Authentication API",
+      title: "API d'authentification",
     },
     userAuthApi: {
-      title: "User Auth API",
+      title: "API d'authentification utilisateur",
     },
     adminApi: {
-      title: "Admin API",
+      title: "API d'administration",
     },
     tenantApi: {
-      title: "Tenant API",
+      title: "API de locataire",
     },
     rolePermissionApi: {
-      title: "Role Permission API",
+      title: "API de rôles et d'autorisations",
     },
     userGroupsApi: {
-      title: "User Groups API",
+      title: "API de groupes d'utilisateurs",
     },
     webhookEmailApi: {
-      title: "Webhook Email API",
+      title: "API de Webhooks et d'e-mails",
     },
     systemApi: {
-      title: "System API",
+      title: "API système",
     },
   },
   frontend: {
     crudSystem: {
-      title: "CRUD System",
+      title: "Système CRUD",
     },
     stateManagement: {
-      title: "State Management",
+      title: "Gestion de l'état",
     },
     localization: {
-      title: "Localization",
+      title: "Localisation",
     },
     formValidation: {
-      title: "Form Validation",
+      title: "Validation de formulaire",
     },
     componentLibrary: {
-      title: "Component Library",
+      title: "Bibliothèque de composants",
     },
     realtime: {
-      title: "Realtime",
+      title: "Temps réel",
     },
   },
   infrastructure: {
     backgroundJobs: {
-      title: "Background Jobs",
+      title: "Tâches de fond",
     },
     fileStorage: {
-      title: "File Storage",
+      title: "Stockage de fichiers",
     },
     resilience: {
-      title: "Resilience",
+      title: "Résilience",
     },
     gatewayDeployment: {
-      title: "Gateway Deployment",
+      title: "Déploiement de passerelle",
     },
     databaseMigrations: {
-      title: "Database Migrations",
+      title: "Migrations de base de données",
     },
     scripeCli: {
       title: "SCRIPE Cli",
     },
     healthChecks: {
-      title: "Health Checks",
+      title: "Bilans de santé",
     },
     observability: {
-      title: "Observability",
+      title: "Observabilité",
     },
     auditTrail: {
-      title: "Audit Trail",
+      title: "Piste d'audit",
     },
     loadTesting: {
-      title: "Load Testing",
+      title: "Test de charge",
     },
     scripeStudio: {
       title: "SCRIPE Studio",
@@ -228,270 +228,270 @@ export const fr = {
   },
   tutorials: {
     addModule: {
-      title: "Add Module",
+      title: "Ajouter un module",
     },
     addBackendModule: {
-      title: "Add Backend Module",
+      title: "Ajouter un module backend",
     },
   },
   modules: {
     entitlementsOverview: {
-      title: "Entitlements Overview",
+      title: "Aperçu des droits",
     },
     editions: {
-      title: "Editions",
+      title: "Éditions",
     },
     subscriptions: {
-      title: "Subscriptions",
+      title: "Abonnements",
     },
     features: {
-      title: "Features",
+      title: "Fonctionnalités",
     },
     overrides: {
-      title: "Overrides",
+      title: "Substitutions",
     },
     billingEngine: {
-      title: "Billing Engine",
+      title: "Moteur de facturation",
     },
     invoices: {
-      title: "Invoices",
+      title: "Factures",
     },
     dunning: {
-      title: "Dunning",
+      title: "Relance",
     },
     tenantPlans: {
-      title: "Tenant Plans",
+      title: "Plans de locataires",
     },
     userSubscriptions: {
-      title: "User Subscriptions",
+      title: "Abonnements utilisateurs",
     },
     revenueAnalytics: {
-      title: "Revenue Analytics",
+      title: "Analyses de revenus",
     },
     stripeConnect: {
       title: "Stripe Connect",
     },
     compliance: {
       overview: {
-        title: "Compliance Overview",
+        title: "Aperçu de la conformité",
       },
       dsr: {
-        title: "Compliance DSR",
+        title: "Conformité DSR",
       },
       consent: {
-        title: "Compliance Consent",
+        title: "Consentement de conformité",
       },
       retention: {
-        title: "Compliance Retention",
+        title: "Rétention de conformité",
       },
       inventory: {
-        title: "Compliance Inventory",
+        title: "Inventaire de conformité",
       },
       reports: {
-        title: "Compliance Reports",
+        title: "Rapports de conformité",
       },
     },
     plugins: {
       overview: {
-        title: "Plugins Overview",
+        title: "Aperçu des extensions",
       },
       sdk: {
-        title: "Plugins SDK",
+        title: "SDK d'extensions",
       },
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "Aperçu du marché",
       },
       catalog: {
-        title: "Marketplace Catalog",
+        title: "Catalogue du marché",
       },
       submissions: {
-        title: "Marketplace Submissions",
+        title: "Soumissions au marché",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "Finances du marché",
       },
     },
   },
   commercial: {
     whyScripeOverview: {
-      title: "Why SCRIPE Overview",
+      title: "Pourquoi SCRIPE Aperçu",
     },
     competitiveAdvantages: {
-      title: "Competitive Advantages",
+      title: "Avantages concurrentiels",
     },
     targetIndustries: {
-      title: "Target Industries",
+      title: "Industries cibles",
     },
     successMetrics: {
-      title: "Success Metrics",
+      title: "Métriques de succès",
     },
     platformArchitecture: {
-      title: "Platform Architecture",
+      title: "Architecture de plateforme",
     },
     moduleCatalog: {
-      title: "Module Catalog",
+      title: "Catalogue de modules",
     },
     technologyStack: {
-      title: "Technology Stack",
+      title: "Pile technologique",
     },
     deploymentModes: {
-      title: "Deployment Modes",
+      title: "Modes de déploiement",
     },
     systemRequirements: {
-      title: "System Requirements",
+      title: "Configuration requise",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "Multi-locataire",
     },
     rolesPermissions: {
-      title: "Roles Permissions",
+      title: "Rôles et autorisations",
     },
     userGroups: {
-      title: "User Groups",
+      title: "Groupes d'utilisateurs",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "Audit et conformité",
     },
     realTimeCapabilities: {
-      title: "Real Time Capabilities",
+      title: "Capacités en temps réel",
     },
     localizationI18n: {
-      title: "Localization I18n",
+      title: "Localisation et i18n",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "Modèles de messages",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "Personnalisateur de connexion",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "Boutique de thèmes",
     },
     pageBuilder: {
-      title: "Page Builder",
+      title: "Générateur de pages",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "Générateur de tableaux de bord",
     },
     securityOverview: {
-      title: "Security Overview",
+      title: "Aperçu de la sécurité",
     },
     authSecurity: {
-      title: "Authentication Security",
+      title: "Sécurité de l'authentification",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "Protection des données",
     },
     infraSecurity: {
-      title: "Infrastructure Security",
+      title: "Sécurité de l'infrastructure",
     },
     complianceReadiness: {
-      title: "Compliance Readiness",
+      title: "Préparation à la conformité",
     },
     ssoEnterprise: {
-      title: "SSO Enterprise",
+      title: "SSO Entreprise",
     },
     performanceBenchmarks: {
-      title: "Performance Benchmarks",
+      title: "Benchmarks de performance",
     },
     databaseSupport: {
-      title: "Database Support",
+      title: "Support de base de données",
     },
     storageBackends: {
-      title: "Storage Backends",
+      title: "Backends de stockage",
     },
     resiliencePatterns: {
-      title: "Resilience Patterns",
+      title: "Modèles de résilience",
     },
     observabilityMonitoring: {
-      title: "Observability Monitoring",
+      title: "Surveillance de l'observabilité",
     },
     cliTooling: {
-      title: "Cli Tooling",
+      title: "Outils CLI",
     },
     cleanArchitecture: {
       title: "Clean Architecture",
     },
     apiDesign: {
-      title: "API Design",
+      title: "Conception d'API",
     },
     testingStrategy: {
-      title: "Testing Strategy",
+      title: "Stratégie de test",
     },
     restApiOverview: {
-      title: "Rest API Overview",
+      title: "Aperçu de l'API Rest",
     },
     webhookIntegration: {
-      title: "Webhook Integration",
+      title: "Intégration de Webhook",
     },
     emailIntegration: {
-      title: "Email Integration",
+      title: "Intégration d'e-mails",
     },
     ciCdPipeline: {
-      title: "CI CD Pipeline",
+      title: "Pipeline CI/CD",
     },
     licensingModel: {
-      title: "Licensing Model",
+      title: "Modèle de licence",
     },
     roiAnalysis: {
-      title: "ROI Analysis",
+      title: "Analyse du ROI",
     },
     supportPlans: {
-      title: "Support Plans",
+      title: "Plans de support",
     },
     enterpriseAddons: {
-      title: "Enterprise Addons",
+      title: "Addons d'entreprise",
     },
     documentationTraining: {
-      title: "Documentation Training",
+      title: "Documentation & Formation",
     },
     gettingStartedGuide: {
-      title: "Getting Started Guide",
+      title: "Guide de démarrage",
     },
     faq: {
       title: "FAQ",
     },
     roadmap: {
-      title: "Roadmap",
+      title: "Feuille de route",
     },
     entOverview: {
-      title: "Entitlements Overview",
+      title: "Aperçu des droits",
     },
     entEditions: {
-      title: "Entitlements Editions",
+      title: "Éditions de droits",
     },
     entSubscriptions: {
-      title: "Entitlements Subscriptions",
+      title: "Abonnements de droits",
     },
     entFeatures: {
-      title: "Entitlements Features",
+      title: "Fonctionnalités de droits",
     },
     entOverrides: {
-      title: "Entitlements Overrides",
+      title: "Substitutions de droits",
     },
     pluginsOverview: {
-      title: "Plugins Overview",
+      title: "Aperçu des extensions",
     },
     complianceOverview: {
-      title: "Compliance Overview",
+      title: "Aperçu de la conformité",
     },
     complianceGdpr: {
-      title: "Compliance GDPR",
+      title: "Conformité RGPD",
     },
     complianceDsr: {
-      title: "Compliance DSR",
+      title: "Conformité DSR",
     },
     complianceRoi: {
-      title: "Compliance ROI",
+      title: "ROI de conformité",
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "Aperçu du marché",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "Finances du marché",
       },
     },
   },

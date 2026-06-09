@@ -1,226 +1,226 @@
 export const ru = {
   getStarted: {
     overview: {
-      title: "Overview",
+      title: "Обзор",
     },
     prerequisites: {
-      title: "Prerequisites",
+      title: "Предпосылки",
     },
     quickStart: {
-      title: "Quick Start",
+      title: "Быстрый старт",
     },
     projectStructure: {
-      title: "Project Structure",
+      title: "Структура проекта",
     },
   },
   architecture: {
     overview: {
-      title: "Overview",
+      title: "Обзор",
     },
     backend: {
-      title: "Backend",
+      title: "Бэкенд",
     },
     frontend: {
-      title: "Frontend",
+      title: "Фронтенд",
     },
     cqrs: {
-      title: "CQRS",
+      title: "CQRS и Запросы",
     },
     modules: {
-      title: "Modules",
+      title: "Модули",
     },
     solidPattern: {
-      title: "Solid Pattern",
+      title: "Шаблон SOLID",
     },
     stateManagement: {
-      title: "State Management",
+      title: "Управление состоянием",
     },
     dataFlow: {
-      title: "Data Flow",
+      title: "Поток данных",
     },
     domainModel: {
-      title: "Domain Model",
+      title: "Доменная модель",
     },
     domainEvents: {
-      title: "Domain Events",
+      title: "Доменные события",
     },
     cqrsPipeline: {
-      title: "CQRS Pipeline",
+      title: "Конвейер CQRS",
     },
     dependencyInjection: {
-      title: "Dependency Injection",
+      title: "Внедрение зависимостей",
     },
   },
   features: {
     authentication: {
-      title: "Authentication",
+      title: "Аутентификация",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "Мультиарендность",
     },
     rolePermissions: {
-      title: "Role Permissions",
+      title: "Роли и права доступа",
     },
     userGroups: {
-      title: "User Groups",
+      title: "Группы пользователей",
     },
     auditSystem: {
-      title: "Audit System",
+      title: "Система аудита",
     },
     notificationSystem: {
-      title: "Notification System",
+      title: "Система уведомлений",
     },
     emailSystem: {
-      title: "Email System",
+      title: "Система эл. почты",
     },
     webhookSystem: {
-      title: "Webhook System",
+      title: "Система Webhook",
     },
     menuSystem: {
-      title: "Menu System",
+      title: "Система меню",
     },
     recycleBin: {
-      title: "Recycle Bin",
+      title: "Корзина",
     },
     userManagement: {
-      title: "User Management",
+      title: "Управление пользователями",
     },
     fileUpload: {
-      title: "File Upload",
+      title: "Загрузка файлов",
     },
     downloadExport: {
-      title: "Download Export",
+      title: "Скачивание и экспорт",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "Шаблоны сообщений",
     },
     ssoOauth: {
       title: "SSO OAuth",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "Настройка входа",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "Магазин тем",
     },
     multiPageBranding: {
-      title: "Multi Page Branding",
+      title: "Брендинг нескольких страниц",
     },
     loginPageBuilder: {
-      title: "Login Page Builder",
+      title: "Конструктор страниц входа",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "Конструктор панелей управления",
     },
     dashboardHub: {
-      title: "Dashboard Hub",
+      title: "Центр панелей управления",
     },
     tenantContextGate: {
-      title: "Tenant Context Gate",
+      title: "Шлюз контекста арендатора",
     },
   },
   security: {
     overview: {
-      title: "Overview",
+      title: "Обзор",
     },
     authDeep: {
-      title: "Authentication Deep",
+      title: "Глубокая аутентификация",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "Запись и защита данных",
     },
     apiSecurity: {
-      title: "API Security",
+      title: "Безопасность API",
     },
     middlewarePipeline: {
-      title: "Middleware Pipeline",
+      title: "Конвейер промежуточного ПО",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "Аудит и соответствие требованиям",
     },
     sso: {
-      title: "SSO Identity Providers",
+      title: "Провайдеры удостоверений SSO",
     },
   },
   apiReference: {
     overview: {
-      title: "Overview",
+      title: "Обзор",
     },
     authApi: {
-      title: "Authentication API",
+      title: "API аутентификации",
     },
     userAuthApi: {
-      title: "User Auth API",
+      title: "API аутентификации пользователей",
     },
     adminApi: {
-      title: "Admin API",
+      title: "API администрирования",
     },
     tenantApi: {
-      title: "Tenant API",
+      title: "API арендатора",
     },
     rolePermissionApi: {
-      title: "Role Permission API",
+      title: "API ролей и прав доступа",
     },
     userGroupsApi: {
-      title: "User Groups API",
+      title: "API групп пользователей",
     },
     webhookEmailApi: {
-      title: "Webhook Email API",
+      title: "API Webhook и эл. почты",
     },
     systemApi: {
-      title: "System API",
+      title: "Системный API",
     },
   },
   frontend: {
     crudSystem: {
-      title: "CRUD System",
+      title: "Система CRUD",
     },
     stateManagement: {
-      title: "State Management",
+      title: "Управление состоянием",
     },
     localization: {
-      title: "Localization",
+      title: "Локализация",
     },
     formValidation: {
-      title: "Form Validation",
+      title: "Валидация форм",
     },
     componentLibrary: {
-      title: "Component Library",
+      title: "Библиотека компонентов",
     },
     realtime: {
-      title: "Realtime",
+      title: "В реальном времени",
     },
   },
   infrastructure: {
     backgroundJobs: {
-      title: "Background Jobs",
+      title: "Фоновые задачи",
     },
     fileStorage: {
-      title: "File Storage",
+      title: "Файловое хранилище",
     },
     resilience: {
-      title: "Resilience",
+      title: "Отказоустойчивость",
     },
     gatewayDeployment: {
-      title: "Gateway Deployment",
+      title: "Развертывание шлюза",
     },
     databaseMigrations: {
-      title: "Database Migrations",
+      title: "Миграции баз данных",
     },
     scripeCli: {
       title: "SCRIPE Cli",
     },
     healthChecks: {
-      title: "Health Checks",
+      title: "Проверки работоспособности",
     },
     observability: {
-      title: "Observability",
+      title: "Наблюдаемость",
     },
     auditTrail: {
-      title: "Audit Trail",
+      title: "Журнал аудита",
     },
     loadTesting: {
-      title: "Load Testing",
+      title: "Нагрузочное тестирование",
     },
     scripeStudio: {
       title: "SCRIPE Studio",
@@ -228,270 +228,270 @@ export const ru = {
   },
   tutorials: {
     addModule: {
-      title: "Add Module",
+      title: "Добавить модуль",
     },
     addBackendModule: {
-      title: "Add Backend Module",
+      title: "Добавить бэкенд-модуль",
     },
   },
   modules: {
     entitlementsOverview: {
-      title: "Entitlements Overview",
+      title: "Обзор прав доступа",
     },
     editions: {
-      title: "Editions",
+      title: "Редакции",
     },
     subscriptions: {
-      title: "Subscriptions",
+      title: "Подписки",
     },
     features: {
-      title: "Features",
+      title: "Функции",
     },
     overrides: {
-      title: "Overrides",
+      title: "Переопределения",
     },
     billingEngine: {
-      title: "Billing Engine",
+      title: "Биллинговый движок",
     },
     invoices: {
-      title: "Invoices",
+      title: "Счета",
     },
     dunning: {
-      title: "Dunning",
+      title: "Напоминание об оплате",
     },
     tenantPlans: {
-      title: "Tenant Plans",
+      title: "Тарифные планы арендаторов",
     },
     userSubscriptions: {
-      title: "User Subscriptions",
+      title: "Подписки пользователей",
     },
     revenueAnalytics: {
-      title: "Revenue Analytics",
+      title: "Аналитика доходов",
     },
     stripeConnect: {
       title: "Stripe Connect",
     },
     compliance: {
       overview: {
-        title: "Compliance Overview",
+        title: "Обзор комплаенса",
       },
       dsr: {
-        title: "Compliance DSR",
+        title: "Комплаенс DSR",
       },
       consent: {
-        title: "Compliance Consent",
+        title: "Согласие на обработку данных",
       },
       retention: {
-        title: "Compliance Retention",
+        title: "Удержание данных",
       },
       inventory: {
-        title: "Compliance Inventory",
+        title: "Инвентаризация данных",
       },
       reports: {
-        title: "Compliance Reports",
+        title: "Отчеты о комплаенсе",
       },
     },
     plugins: {
       overview: {
-        title: "Plugins Overview",
+        title: "Обзор плагинов",
       },
       sdk: {
-        title: "Plugins SDK",
+        title: "SDK плагинов",
       },
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "Обзор маркетплейса",
       },
       catalog: {
-        title: "Marketplace Catalog",
+        title: "Каталог маркетплейса",
       },
       submissions: {
-        title: "Marketplace Submissions",
+        title: "Заявки на маркетплейс",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "Финансы маркетплейса",
       },
     },
   },
   commercial: {
     whyScripeOverview: {
-      title: "Why SCRIPE Overview",
+      title: "Почему SCRIPE Обзор",
     },
     competitiveAdvantages: {
-      title: "Competitive Advantages",
+      title: "Конкурентные преимущества",
     },
     targetIndustries: {
-      title: "Target Industries",
+      title: "Целевые отрасли",
     },
     successMetrics: {
-      title: "Success Metrics",
+      title: "Показатели успеха",
     },
     platformArchitecture: {
-      title: "Platform Architecture",
+      title: "Архитектура платформы",
     },
     moduleCatalog: {
-      title: "Module Catalog",
+      title: "Каталог модулей",
     },
     technologyStack: {
-      title: "Technology Stack",
+      title: "Технологический стек",
     },
     deploymentModes: {
-      title: "Deployment Modes",
+      title: "Режимы развертывания",
     },
     systemRequirements: {
-      title: "System Requirements",
+      title: "Системные требования",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "Мультиарендность",
     },
     rolesPermissions: {
-      title: "Roles Permissions",
+      title: "Роли и права доступа",
     },
     userGroups: {
-      title: "User Groups",
+      title: "Группы пользователей",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "Аудит и соответствие требованиям",
     },
     realTimeCapabilities: {
-      title: "Real Time Capabilities",
+      title: "Возможности реального времени",
     },
     localizationI18n: {
-      title: "Localization I18n",
+      title: "Локализация и i18n",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "Шаблоны сообщений",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "Настройка входа",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "Магазин тем",
     },
     pageBuilder: {
-      title: "Page Builder",
+      title: "Конструктор страниц",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "Конструктор панелей управления",
     },
     securityOverview: {
-      title: "Security Overview",
+      title: "Обзор безопасности",
     },
     authSecurity: {
-      title: "Authentication Security",
+      title: "Безопасность аутентификации",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "Запись и защита данных",
     },
     infraSecurity: {
-      title: "Infrastructure Security",
+      title: "Безопасность инфраструктуры",
     },
     complianceReadiness: {
-      title: "Compliance Readiness",
+      title: "Готовность к комплаенсу",
     },
     ssoEnterprise: {
       title: "SSO Enterprise",
     },
     performanceBenchmarks: {
-      title: "Performance Benchmarks",
+      title: "Тесты производительности",
     },
     databaseSupport: {
-      title: "Database Support",
+      title: "Поддержка баз данных",
     },
     storageBackends: {
-      title: "Storage Backends",
+      title: "Хранилища данных",
     },
     resiliencePatterns: {
-      title: "Resilience Patterns",
+      title: "Шаблоны отказоустойчивости",
     },
     observabilityMonitoring: {
-      title: "Observability Monitoring",
+      title: "Мониторинг наблюдаемости",
     },
     cliTooling: {
-      title: "Cli Tooling",
+      title: "Инструменты CLI",
     },
     cleanArchitecture: {
-      title: "Clean Architecture",
+      title: "Чистая архитектура",
     },
     apiDesign: {
-      title: "API Design",
+      title: "Проектирование API",
     },
     testingStrategy: {
-      title: "Testing Strategy",
+      title: "Стратегия тестирования",
     },
     restApiOverview: {
-      title: "Rest API Overview",
+      title: "Обзор Rest API",
     },
     webhookIntegration: {
-      title: "Webhook Integration",
+      title: "Интеграция Webhook",
     },
     emailIntegration: {
-      title: "Email Integration",
+      title: "Интеграция эл. почты",
     },
     ciCdPipeline: {
-      title: "CI CD Pipeline",
+      title: "Конвейер CI/CD",
     },
     licensingModel: {
-      title: "Licensing Model",
+      title: "Модель лицензирования",
     },
     roiAnalysis: {
-      title: "ROI Analysis",
+      title: "Анализ окупаемости",
     },
     supportPlans: {
-      title: "Support Plans",
+      title: "Планы поддержки",
     },
     enterpriseAddons: {
-      title: "Enterprise Addons",
+      title: "Корпоративные дополнения",
     },
     documentationTraining: {
-      title: "Documentation Training",
+      title: "Документация и обучение",
     },
     gettingStartedGuide: {
-      title: "Getting Started Guide",
+      title: "Руководство по началу работы",
     },
     faq: {
       title: "FAQ",
     },
     roadmap: {
-      title: "Roadmap",
+      title: "Дорожная карта",
     },
     entOverview: {
-      title: "Entitlements Overview",
+      title: "Обзор прав доступа",
     },
     entEditions: {
-      title: "Entitlements Editions",
+      title: "Редакции прав доступа",
     },
     entSubscriptions: {
-      title: "Entitlements Subscriptions",
+      title: "Подписки на права доступа",
     },
     entFeatures: {
-      title: "Entitlements Features",
+      title: "Функции прав доступа",
     },
     entOverrides: {
-      title: "Entitlements Overrides",
+      title: "Переопределение прав доступа",
     },
     pluginsOverview: {
-      title: "Plugins Overview",
+      title: "Обзор плагинов",
     },
     complianceOverview: {
-      title: "Compliance Overview",
+      title: "Обзор комплаенса",
     },
     complianceGdpr: {
-      title: "Compliance GDPR",
+      title: "Соответствие GDPR",
     },
     complianceDsr: {
-      title: "Compliance DSR",
+      title: "Комплаенс DSR",
     },
     complianceRoi: {
-      title: "Compliance ROI",
+      title: "Окупаемость комплаенса",
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "Обзор маркетплейса",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "Финансы маркетплейса",
       },
     },
   },

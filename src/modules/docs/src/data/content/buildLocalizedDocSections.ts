@@ -12,7 +12,9 @@ function sourceMapFor(slug: string): string {
   ];
 
   if (section === "commercial") {
-    lines.push("Commercial source scope: SCRIPE-Frontend/src/modules/docs/src/data/content/commercial");
+    lines.push(
+      "Commercial source scope: SCRIPE-Frontend/src/modules/docs/src/data/content/commercial"
+    );
   }
 
   if (section === "api-reference") {

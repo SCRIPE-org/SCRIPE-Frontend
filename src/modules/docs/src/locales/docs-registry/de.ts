@@ -40,6 +40,7 @@ import { mergeAll } from "./utils";
 
 export const allDocsDe: Record<string, any> = mergeAll(
   common,
+  generatedTitles,
   getStarted,
   architecture,
   features,
@@ -70,6 +71,5 @@ export const allDocsDe: Record<string, any> = mergeAll(
   { modules: { marketplace: marketplace.marketplace } },
   { commercial: marketplace.commercial },
   { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial },
-  generatedTitles
+  { commercial: stripeConnect.commercial }
 );

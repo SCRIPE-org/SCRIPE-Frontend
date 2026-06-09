@@ -1,226 +1,226 @@
 export const zh = {
   getStarted: {
     overview: {
-      title: "Overview",
+      title: "概述",
     },
     prerequisites: {
-      title: "Prerequisites",
+      title: "先决条件",
     },
     quickStart: {
-      title: "Quick Start",
+      title: "快速入门",
     },
     projectStructure: {
-      title: "Project Structure",
+      title: "项目结构",
     },
   },
   architecture: {
     overview: {
-      title: "Overview",
+      title: "概述",
     },
     backend: {
-      title: "Backend",
+      title: "后端",
     },
     frontend: {
-      title: "Frontend",
+      title: "前端",
     },
     cqrs: {
-      title: "CQRS",
+      title: "CQRS与查询",
     },
     modules: {
-      title: "Modules",
+      title: "模块",
     },
     solidPattern: {
-      title: "Solid Pattern",
+      title: "SOLID模式",
     },
     stateManagement: {
-      title: "State Management",
+      title: "状态管理",
     },
     dataFlow: {
-      title: "Data Flow",
+      title: "数据流",
     },
     domainModel: {
-      title: "Domain Model",
+      title: "领域模型",
     },
     domainEvents: {
-      title: "Domain Events",
+      title: "领域事件",
     },
     cqrsPipeline: {
-      title: "CQRS Pipeline",
+      title: "CQRS管道",
     },
     dependencyInjection: {
-      title: "Dependency Injection",
+      title: "依赖注入",
     },
   },
   features: {
     authentication: {
-      title: "Authentication",
+      title: "身份验证",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "多租户",
     },
     rolePermissions: {
-      title: "Role Permissions",
+      title: "角色与权限",
     },
     userGroups: {
-      title: "User Groups",
+      title: "用户组",
     },
     auditSystem: {
-      title: "Audit System",
+      title: "审计系统",
     },
     notificationSystem: {
-      title: "Notification System",
+      title: "通知系统",
     },
     emailSystem: {
-      title: "Email System",
+      title: "电子邮件系统",
     },
     webhookSystem: {
-      title: "Webhook System",
+      title: "Webhook系统",
     },
     menuSystem: {
-      title: "Menu System",
+      title: "菜单系统",
     },
     recycleBin: {
-      title: "Recycle Bin",
+      title: "回收站",
     },
     userManagement: {
-      title: "User Management",
+      title: "用户管理",
     },
     fileUpload: {
-      title: "File Upload",
+      title: "文件上传",
     },
     downloadExport: {
-      title: "Download Export",
+      title: "下载与导出",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "消息模板",
     },
     ssoOauth: {
-      title: "SSO OAuth",
+      title: "单点登录 OAuth",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "登录自定义",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "主题市场",
     },
     multiPageBranding: {
-      title: "Multi Page Branding",
+      title: "多页面品牌塑造",
     },
     loginPageBuilder: {
-      title: "Login Page Builder",
+      title: "登录页面生成器",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "仪表板生成器",
     },
     dashboardHub: {
-      title: "Dashboard Hub",
+      title: "仪表板中心",
     },
     tenantContextGate: {
-      title: "Tenant Context Gate",
+      title: "租户上下文网关",
     },
   },
   security: {
     overview: {
-      title: "Overview",
+      title: "概述",
     },
     authDeep: {
-      title: "Authentication Deep",
+      title: "深入身份验证",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "数据保护",
     },
     apiSecurity: {
-      title: "API Security",
+      title: "API 安全",
     },
     middlewarePipeline: {
-      title: "Middleware Pipeline",
+      title: "中间件管道",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "审计与合规",
     },
     sso: {
-      title: "SSO Identity Providers",
+      title: "SSO 身份提供商",
     },
   },
   apiReference: {
     overview: {
-      title: "Overview",
+      title: "概述",
     },
     authApi: {
-      title: "Authentication API",
+      title: "身份验证 API",
     },
     userAuthApi: {
-      title: "User Auth API",
+      title: "用户验证 API",
     },
     adminApi: {
-      title: "Admin API",
+      title: "管理 API",
     },
     tenantApi: {
-      title: "Tenant API",
+      title: "租户 API",
     },
     rolePermissionApi: {
-      title: "Role Permission API",
+      title: "角色权限 API",
     },
     userGroupsApi: {
-      title: "User Groups API",
+      title: "用户组 API",
     },
     webhookEmailApi: {
-      title: "Webhook Email API",
+      title: "Webhook 与邮件 API",
     },
     systemApi: {
-      title: "System API",
+      title: "系统 API",
     },
   },
   frontend: {
     crudSystem: {
-      title: "CRUD System",
+      title: "CRUD 系统",
     },
     stateManagement: {
-      title: "State Management",
+      title: "状态管理",
     },
     localization: {
-      title: "Localization",
+      title: "本地化",
     },
     formValidation: {
-      title: "Form Validation",
+      title: "表单验证",
     },
     componentLibrary: {
-      title: "Component Library",
+      title: "组件库",
     },
     realtime: {
-      title: "Realtime",
+      title: "实时",
     },
   },
   infrastructure: {
     backgroundJobs: {
-      title: "Background Jobs",
+      title: "后台任务",
     },
     fileStorage: {
-      title: "File Storage",
+      title: "文件存储",
     },
     resilience: {
-      title: "Resilience",
+      title: "弹性",
     },
     gatewayDeployment: {
-      title: "Gateway Deployment",
+      title: "网关部署",
     },
     databaseMigrations: {
-      title: "Database Migrations",
+      title: "数据库迁移",
     },
     scripeCli: {
       title: "SCRIPE Cli",
     },
     healthChecks: {
-      title: "Health Checks",
+      title: "健康检查",
     },
     observability: {
-      title: "Observability",
+      title: "可观测性",
     },
     auditTrail: {
-      title: "Audit Trail",
+      title: "审计追踪",
     },
     loadTesting: {
-      title: "Load Testing",
+      title: "负载测试",
     },
     scripeStudio: {
       title: "SCRIPE Studio",
@@ -228,270 +228,270 @@ export const zh = {
   },
   tutorials: {
     addModule: {
-      title: "Add Module",
+      title: "添加模块",
     },
     addBackendModule: {
-      title: "Add Backend Module",
+      title: "添加后端模块",
     },
   },
   modules: {
     entitlementsOverview: {
-      title: "Entitlements Overview",
+      title: "授权概述",
     },
     editions: {
-      title: "Editions",
+      title: "版本",
     },
     subscriptions: {
-      title: "Subscriptions",
+      title: "订阅",
     },
     features: {
-      title: "Features",
+      title: "功能",
     },
     overrides: {
-      title: "Overrides",
+      title: "重写",
     },
     billingEngine: {
-      title: "Billing Engine",
+      title: "计费引擎",
     },
     invoices: {
-      title: "Invoices",
+      title: "发票",
     },
     dunning: {
-      title: "Dunning",
+      title: "催收",
     },
     tenantPlans: {
-      title: "Tenant Plans",
+      title: "租户计划",
     },
     userSubscriptions: {
-      title: "User Subscriptions",
+      title: "用户订阅",
     },
     revenueAnalytics: {
-      title: "Revenue Analytics",
+      title: "收入分析",
     },
     stripeConnect: {
       title: "Stripe Connect",
     },
     compliance: {
       overview: {
-        title: "Compliance Overview",
+        title: "合规概述",
       },
       dsr: {
-        title: "Compliance DSR",
+        title: "合规 DSR",
       },
       consent: {
-        title: "Compliance Consent",
+        title: "合规同意",
       },
       retention: {
-        title: "Compliance Retention",
+        title: "合规保留",
       },
       inventory: {
-        title: "Compliance Inventory",
+        title: "合规库存",
       },
       reports: {
-        title: "Compliance Reports",
+        title: "合规报告",
       },
     },
     plugins: {
       overview: {
-        title: "Plugins Overview",
+        title: "插件概述",
       },
       sdk: {
-        title: "Plugins SDK",
+        title: "插件 SDK",
       },
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "市场概述",
       },
       catalog: {
-        title: "Marketplace Catalog",
+        title: "市场目录",
       },
       submissions: {
-        title: "Marketplace Submissions",
+        title: "市场提交",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "市场财务",
       },
     },
   },
   commercial: {
     whyScripeOverview: {
-      title: "Why SCRIPE Overview",
+      title: "为什么选择 SCRIPE 概述",
     },
     competitiveAdvantages: {
-      title: "Competitive Advantages",
+      title: "竞争优势",
     },
     targetIndustries: {
-      title: "Target Industries",
+      title: "目标行业",
     },
     successMetrics: {
-      title: "Success Metrics",
+      title: "成功指标",
     },
     platformArchitecture: {
-      title: "Platform Architecture",
+      title: "平台架构",
     },
     moduleCatalog: {
-      title: "Module Catalog",
+      title: "模块目录",
     },
     technologyStack: {
-      title: "Technology Stack",
+      title: "技术栈",
     },
     deploymentModes: {
-      title: "Deployment Modes",
+      title: "部署模式",
     },
     systemRequirements: {
-      title: "System Requirements",
+      title: "系统要求",
     },
     multiTenancy: {
-      title: "Multi Tenancy",
+      title: "多租户",
     },
     rolesPermissions: {
-      title: "Roles Permissions",
+      title: "角色与权限",
     },
     userGroups: {
-      title: "User Groups",
+      title: "用户组",
     },
     auditCompliance: {
-      title: "Audit Compliance",
+      title: "审计与合规",
     },
     realTimeCapabilities: {
-      title: "Real Time Capabilities",
+      title: "实时功能",
     },
     localizationI18n: {
-      title: "Localization I18n",
+      title: "本地化与 i18n",
     },
     messageTemplates: {
-      title: "Message Templates",
+      title: "消息模板",
     },
     loginCustomizer: {
-      title: "Login Customizer",
+      title: "登录自定义",
     },
     themeMarketplace: {
-      title: "Theme Marketplace",
+      title: "主题市场",
     },
     pageBuilder: {
-      title: "Page Builder",
+      title: "页面生成器",
     },
     dashboardBuilder: {
-      title: "Dashboard Builder",
+      title: "仪表板生成器",
     },
     securityOverview: {
-      title: "Security Overview",
+      title: "安全概述",
     },
     authSecurity: {
-      title: "Authentication Security",
+      title: "身份验证安全",
     },
     dataProtection: {
-      title: "Data Protection",
+      title: "数据保护",
     },
     infraSecurity: {
-      title: "Infrastructure Security",
+      title: "基础设施安全",
     },
     complianceReadiness: {
-      title: "Compliance Readiness",
+      title: "合规准备",
     },
     ssoEnterprise: {
-      title: "SSO Enterprise",
+      title: "企业单点登录",
     },
     performanceBenchmarks: {
-      title: "Performance Benchmarks",
+      title: "性能基准",
     },
     databaseSupport: {
-      title: "Database Support",
+      title: "数据库支持",
     },
     storageBackends: {
-      title: "Storage Backends",
+      title: "存储后端",
     },
     resiliencePatterns: {
-      title: "Resilience Patterns",
+      title: "弹性模式",
     },
     observabilityMonitoring: {
-      title: "Observability Monitoring",
+      title: "可观测性监控",
     },
     cliTooling: {
-      title: "Cli Tooling",
+      title: "CLI 工具",
     },
     cleanArchitecture: {
-      title: "Clean Architecture",
+      title: "整洁架构",
     },
     apiDesign: {
-      title: "API Design",
+      title: "API 设计",
     },
     testingStrategy: {
-      title: "Testing Strategy",
+      title: "测试策略",
     },
     restApiOverview: {
-      title: "Rest API Overview",
+      title: "Rest API 概述",
     },
     webhookIntegration: {
-      title: "Webhook Integration",
+      title: "Webhook 集成",
     },
     emailIntegration: {
-      title: "Email Integration",
+      title: "电子邮件集成",
     },
     ciCdPipeline: {
-      title: "CI CD Pipeline",
+      title: "CI/CD 管道",
     },
     licensingModel: {
-      title: "Licensing Model",
+      title: "许可模型",
     },
     roiAnalysis: {
-      title: "ROI Analysis",
+      title: "投资回报率分析",
     },
     supportPlans: {
-      title: "Support Plans",
+      title: "支持计划",
     },
     enterpriseAddons: {
-      title: "Enterprise Addons",
+      title: "企业 Addon",
     },
     documentationTraining: {
-      title: "Documentation Training",
+      title: "文档与培训",
     },
     gettingStartedGuide: {
-      title: "Getting Started Guide",
+      title: "入门指南",
     },
     faq: {
-      title: "FAQ",
+      title: "常见问题",
     },
     roadmap: {
-      title: "Roadmap",
+      title: "路线图",
     },
     entOverview: {
-      title: "Entitlements Overview",
+      title: "授权概述",
     },
     entEditions: {
-      title: "Entitlements Editions",
+      title: "授权版本",
     },
     entSubscriptions: {
-      title: "Entitlements Subscriptions",
+      title: "授权订阅",
     },
     entFeatures: {
-      title: "Entitlements Features",
+      title: "授权功能",
     },
     entOverrides: {
-      title: "Entitlements Overrides",
+      title: "授权重写",
     },
     pluginsOverview: {
-      title: "Plugins Overview",
+      title: "插件概述",
     },
     complianceOverview: {
-      title: "Compliance Overview",
+      title: "合规概述",
     },
     complianceGdpr: {
-      title: "Compliance GDPR",
+      title: "GDPR 合规",
     },
     complianceDsr: {
-      title: "Compliance DSR",
+      title: "合规 DSR",
     },
     complianceRoi: {
-      title: "Compliance ROI",
+      title: "合规投资回报率",
     },
     marketplace: {
       overview: {
-        title: "Marketplace Overview",
+        title: "市场概述",
       },
       financials: {
-        title: "Marketplace Financials",
+        title: "市场财务",
       },
     },
   },
