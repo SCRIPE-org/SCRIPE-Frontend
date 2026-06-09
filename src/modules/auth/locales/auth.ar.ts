@@ -137,6 +137,12 @@ export const ar = {
     forgotPickWorkspaceSubtitle:
       "بريدك الإلكتروني مرتبط بمساحات عمل متعددة. اختر التي تريد إعادة تعيين كلمة مرورها.",
     resetPasswordFor: "لـ {{workspace}}",
+    workspacesSelected: "مساحات عمل محددة",
+    selectAll: "تحديد الكل",
+    deselectAll: "إلغاء تحديد الكل",
+    resetAllWorkspaces: "إعادة تعيين جميع مساحات العمل",
+    resetSelectedWorkspaces: "إعادة تعيين {{count}} من مساحات العمل",
+    resetPasswordForCount: "إعادة تعيين كلمة المرور لـ {{count}} من مساحات العمل",
     magicLinkSentTitle: "تحقق من بريدك الوارد",
     magicLinkSentSubtitle: "أرسلنا رابط الاستعادة إلى {{email}}. انقر عليه لتعيين كلمة مرور جديدة.",
     resetSuccessTitle: "تم تحديث كلمة المرور!",

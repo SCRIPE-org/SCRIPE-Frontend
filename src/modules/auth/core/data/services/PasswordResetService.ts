@@ -32,7 +32,7 @@ export class PasswordResetService implements IPasswordResetService {
     email: string;
     otp: string;
     newPassword: string;
-    tenantId?: string;
+    tenantIds?: string[];
   }): Promise<void> {
     const request: ResetPasswordDto = params;
     await this.api.post(API_ENDPOINTS.AUTH.ADMIN_RESET_PASSWORD, request);

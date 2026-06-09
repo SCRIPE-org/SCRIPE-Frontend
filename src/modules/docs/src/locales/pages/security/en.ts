@@ -3,7 +3,7 @@ export const en = {
     apiSecurity: {
       overviewTitle: "Overview",
       overview:
-        "The Api Security is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "API endpoints support API key authentication (via header or query key) alongside cookie and bearer token JWT validation. Mutating requests enforce double-submit CSRF checks and cryptographic replay protection nonces tracked on every request.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",
@@ -57,7 +57,7 @@ export const en = {
     authDeep: {
       overviewTitle: "Overview",
       overview:
-        "The Auth Deep is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "Administrative authentication enforces multi-factor login policies via 2FA OTP codes, passwordless WebAuthn Passkeys, and secure mobile QR code session validation. Failed logins trigger lockouts after 5 attempts, rate-limited to 10 requests per 5 minutes.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",
@@ -84,7 +84,7 @@ export const en = {
     dataProtection: {
       overviewTitle: "Overview",
       overview:
-        "The Data Protection is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "Local blob storage systems validate absolute paths using SafeResolvePath checking, enforcing strict folder boundaries and throwing an InvalidOperationException if paths traverse outside base storage directories.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",
@@ -111,7 +111,7 @@ export const en = {
     middlewarePipeline: {
       overviewTitle: "Overview",
       overview:
-        "The Middleware Pipeline is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "Requests flow through a rigid AstraFlow MediatR pipeline: LoggingBehavior -> UnhandledExceptionBehavior -> ValidationBehavior -> AuthorizationBehavior -> FeatureCheckBehavior -> WebhookDispatchBehavior -> CachingBehavior. Caching short-circuits execution on hits.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",

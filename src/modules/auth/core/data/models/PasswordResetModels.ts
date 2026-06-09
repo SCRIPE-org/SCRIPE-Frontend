@@ -22,5 +22,6 @@ export interface ResetPasswordDto {
   email: string;
   otp: string;
   newPassword: string;
-  tenantId?: string;
+  /** Encrypted tenant IDs to reset. Omit or send empty to reset all workspaces. */
+  tenantIds?: string[];
 }

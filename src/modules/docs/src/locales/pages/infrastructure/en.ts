@@ -30,7 +30,7 @@ export const en = {
     backgroundJobs: {
       overviewTitle: "Overview",
       overview:
-        "The Background Jobs is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "Background jobs execute recurring tasks asynchronously via Native, Hangfire, or Quartz.NET schedulers. Jobs must implement IAutoRegisteredJob and be registered via double-dependency injection (both concrete type and factory delegate interface mapping) to enable auto-discovery.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",
@@ -111,7 +111,7 @@ export const en = {
     gatewayDeployment: {
       overviewTitle: "Overview",
       overview:
-        "The Gateway Deployment is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "Monorepo deployments support Monolith mode (single container loading all modules on port 8080) and Microservice mode (isolated containers per module routing traffic through a YARP Reverse Proxy gateway on port 5000 and individual microservice ports 5001-5007).",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",
@@ -246,7 +246,7 @@ export const en = {
     scripeCli: {
       overviewTitle: "Overview",
       overview:
-        "The Scripe Cli is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "The developer CLI provides scaffolding, database migration management, granular template generation, and pre-push quality gates. It includes command registrars supporting custom DSL property parsing mapping constraints to C# fields and Zod schemas.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",
@@ -273,7 +273,7 @@ export const en = {
     scripeStudio: {
       overviewTitle: "Overview",
       overview:
-        "The Scripe Studio is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
+        "Customizer Studio runs a real-time compilation and activity engine on Express/Socket.io (port 4201) backed by an embedded SQLite database. Next.js 16 dashboard UI (port 4200) visualizes diagnostics, logs tailing, and static compliance checking.",
       architectureTitle: "Architecture & Integration",
       architectureDesc:
         "Designed following domain-driven design (DDD) and Clean Architecture principles, ensuring clear boundaries, high scalability, and loose coupling across backend and frontend layers.",

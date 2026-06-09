@@ -23,7 +23,7 @@ export class PasswordResetRepository implements IPasswordResetRepository {
     email: string;
     otp: string;
     newPassword: string;
-    tenantId?: string;
+    tenantIds?: string[];
   }): Promise<void> {
     return this.service.resetPassword(params);
   }

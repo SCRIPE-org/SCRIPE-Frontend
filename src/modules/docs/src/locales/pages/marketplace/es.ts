@@ -1,6 +1,7 @@
 export const es = {
   commercial: {
-    "marketplace.financials": {
+    marketplace: {
+      financials: {
       overviewTitle: "Descripción general",
       overview:
         "El módulo Financials es un componente central de la plataforma SCRIPE, proporcionando la lógica esencial de gestión y orquestación para esta área funcional en el sistema corporativo.",
@@ -27,7 +28,7 @@ export const es = {
         "Localizado en 7 idiomas (EN, AR, FR, RU, ZH, ES, DE) con renderizado instantáneo y soporte completo para diseños RTL.",
       title: "Financials",
     },
-    "marketplace.overview": {
+    overview: {
       overviewTitle: "Descripción general",
       overview:
         "El módulo Descripción general es un componente central de la plataforma SCRIPE, proporcionando la lógica esencial de gestión y orquestación para esta área funcional en el sistema corporativo.",
@@ -53,10 +54,12 @@ export const es = {
       localizationNote:
         "Localizado en 7 idiomas (EN, AR, FR, RU, ZH, ES, DE) con renderizado instantáneo y soporte completo para diseños RTL.",
       title: "Descripción general",
+      },
     },
   },
   marketplace: {
-    "marketplace..catalog": {
+    "": {
+    catalog: {
       overviewTitle: "Descripción general",
       overview:
         "El módulo Catalog es un componente central de la plataforma SCRIPE, proporcionando la lógica esencial de gestión y orquestación para esta área funcional en el sistema corporativo.",
@@ -83,7 +86,7 @@ export const es = {
         "Localizado en 7 idiomas (EN, AR, FR, RU, ZH, ES, DE) con renderizado instantáneo y soporte completo para diseños RTL.",
       title: "Catalog",
     },
-    "marketplace..financials": {
+    financials: {
       overviewTitle: "Descripción general",
       overview:
         "El módulo Financials es un componente central de la plataforma SCRIPE, proporcionando la lógica esencial de gestión y orquestación para esta área funcional en el sistema corporativo.",
@@ -110,7 +113,7 @@ export const es = {
         "Localizado en 7 idiomas (EN, AR, FR, RU, ZH, ES, DE) con renderizado instantáneo y soporte completo para diseños RTL.",
       title: "Financials",
     },
-    "marketplace..overview": {
+    overview: {
       overviewTitle: "Descripción general",
       overview:
         "El módulo Descripción general es un componente central de la plataforma SCRIPE, proporcionando la lógica esencial de gestión y orquestación para esta área funcional en el sistema corporativo.",
@@ -137,7 +140,7 @@ export const es = {
         "Localizado en 7 idiomas (EN, AR, FR, RU, ZH, ES, DE) con renderizado instantáneo y soporte completo para diseños RTL.",
       title: "Descripción general",
     },
-    "marketplace..submissions": {
+    submissions: {
       overviewTitle: "Descripción general",
       overview:
         "El módulo Submissions es un componente central de la plataforma SCRIPE, proporcionando la lógica esencial de gestión y orquestación para esta área funcional en el sistema corporativo.",
@@ -163,6 +166,7 @@ export const es = {
       localizationNote:
         "Localizado en 7 idiomas (EN, AR, FR, RU, ZH, ES, DE) con renderizado instantáneo y soporte completo para diseños RTL.",
       title: "Submissions",
+      },
     },
   },
 };

@@ -1,6 +1,7 @@
 export const en = {
   commercial: {
-    "marketplace.financials": {
+    marketplace: {
+      financials: {
       overviewTitle: "Overview",
       overview:
         "The Financials is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
@@ -27,7 +28,7 @@ export const en = {
         "Localized eagerly in 7 languages (EN, AR, FR, RU, ZH, ES, DE) with zero-flash rendering and full RTL layout support.",
       title: "Financials",
     },
-    "marketplace.overview": {
+    overview: {
       overviewTitle: "Overview",
       overview:
         "The Overview is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
@@ -53,10 +54,12 @@ export const en = {
       localizationNote:
         "Localized eagerly in 7 languages (EN, AR, FR, RU, ZH, ES, DE) with zero-flash rendering and full RTL layout support.",
       title: "Overview",
+      },
     },
   },
   marketplace: {
-    "marketplace..catalog": {
+    "": {
+    catalog: {
       overviewTitle: "Overview",
       overview:
         "The Catalog is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
@@ -83,7 +86,7 @@ export const en = {
         "Localized eagerly in 7 languages (EN, AR, FR, RU, ZH, ES, DE) with zero-flash rendering and full RTL layout support.",
       title: "Catalog",
     },
-    "marketplace..financials": {
+    financials: {
       overviewTitle: "Overview",
       overview:
         "The Financials is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
@@ -110,7 +113,7 @@ export const en = {
         "Localized eagerly in 7 languages (EN, AR, FR, RU, ZH, ES, DE) with zero-flash rendering and full RTL layout support.",
       title: "Financials",
     },
-    "marketplace..overview": {
+    overview: {
       overviewTitle: "Overview",
       overview:
         "The Overview is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
@@ -137,7 +140,7 @@ export const en = {
         "Localized eagerly in 7 languages (EN, AR, FR, RU, ZH, ES, DE) with zero-flash rendering and full RTL layout support.",
       title: "Overview",
     },
-    "marketplace..submissions": {
+    submissions: {
       overviewTitle: "Overview",
       overview:
         "The Submissions is a core component of the SCRIPE platform, providing essential management, business rules, and orchestration logic for this feature area.",
@@ -163,6 +166,7 @@ export const en = {
       localizationNote:
         "Localized eagerly in 7 languages (EN, AR, FR, RU, ZH, ES, DE) with zero-flash rendering and full RTL layout support.",
       title: "Submissions",
+      },
     },
   },
 };

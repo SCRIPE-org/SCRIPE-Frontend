@@ -49,7 +49,11 @@ export interface UseForgotPasswordViewModelReturn {
   error: string;
   cooldown: number;
   workspaces: WorkspaceOption[];
+  /** All currently checked workspaces (multi-select). */
+  selectedWorkspaces: WorkspaceOption[];
+  /** First selected workspace — used for display in the password step subtitle. */
   selectedWorkspace: WorkspaceOption | null;
+  allSelected: boolean;
 
   // Actions
   setEmail: (v: string) => void;
@@ -59,7 +63,14 @@ export interface UseForgotPasswordViewModelReturn {
   submitEmail: (e: FormEvent) => void;
   chooseMethod: (m: ResetMethod) => void;
   submitOtp: (e: FormEvent) => void;
-  selectWorkspace: (w: WorkspaceOption) => void;
+  /** Toggle a single workspace in/out of the selection. */
+  toggleWorkspace: (w: WorkspaceOption) => void;
+  /** Select all available workspaces. */
+  selectAllWorkspaces: () => void;
+  /** Deselect all available workspaces. */
+  deselectAllWorkspaces: () => void;
+  /** Advance to the newPassword step (requires ≥1 workspace selected). */
+  confirmWorkspaceSelection: () => void;
   submitNewPassword: (e: FormEvent) => void;
   resendCode: () => void;
   goBack: () => void;
@@ -69,6 +80,7 @@ export interface UseForgotPasswordViewModelReturn {
   canSubmitEmail: boolean;
   canSubmitOtp: boolean;
   canSubmitNewPassword: boolean;
+  canConfirmWorkspaces: boolean;
   passwordStrength: number; // 0-4
   passwordsMatch: boolean;
 }
@@ -98,7 +110,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
   const [error, setError] = useState("");
   const [cooldown, setCooldown] = useState(0);
   const [workspaces, setWorkspaces] = useState<WorkspaceOption[]>([]);
-  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceOption | null>(null);
+  const [selectedWorkspaces, setSelectedWorkspaces] = useState<WorkspaceOption[]>([]);
 
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -176,15 +188,18 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
         const result = await passwordResetRepository.verifyOtp(email.trim(), otp);
 
         if (result.workspaces && result.workspaces.length > 1) {
-          // Multi-workspace: show picker
+          // Multi-workspace: show picker (pre-select all)
           setWorkspaces(result.workspaces);
+          setSelectedWorkspaces(result.workspaces);
           setStep("workspaces");
         } else if (result.workspaces && result.workspaces.length === 1) {
-          // Single workspace: auto-select, go to new password
-          setSelectedWorkspace(result.workspaces[0]);
+          // Single workspace: auto-select and skip picker
+          setWorkspaces(result.workspaces);
+          setSelectedWorkspaces(result.workspaces);
           setStep("newPassword");
         } else {
           // No workspaces (platform admin or simple flow)
+          setSelectedWorkspaces([]);
           setStep("newPassword");
         }
       } catch (err) {
@@ -200,11 +215,27 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
     [email, otp]
   );
 
-  // ── Step 4: Select workspace ──
-  const selectWorkspace = useCallback((w: WorkspaceOption) => {
-    setSelectedWorkspace(w);
-    setStep("newPassword");
+  // ── Step 4: Multi-select workspace actions ──
+  const toggleWorkspace = useCallback((w: WorkspaceOption) => {
+    setSelectedWorkspaces((prev) =>
+      prev.some((s) => s.tenantId === w.tenantId)
+        ? prev.filter((s) => s.tenantId !== w.tenantId)
+        : [...prev, w]
+    );
   }, []);
+
+  const selectAllWorkspaces = useCallback(() => {
+    setSelectedWorkspaces((prev) => (prev.length === workspaces.length ? [] : workspaces));
+  }, [workspaces]);
+
+  const deselectAllWorkspaces = useCallback(() => {
+    setSelectedWorkspaces([]);
+  }, []);
+
+  const confirmWorkspaceSelection = useCallback(() => {
+    if (selectedWorkspaces.length === 0) return;
+    setStep("newPassword");
+  }, [selectedWorkspaces]);
 
   // ── Step 5: Submit new password ──
   const submitNewPassword = useCallback(
@@ -221,7 +252,9 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
           email: email.trim(),
           otp,
           newPassword,
-          tenantId: selectedWorkspace?.tenantId,
+          tenantIds: selectedWorkspaces.length > 0
+            ? selectedWorkspaces.map((w) => w.tenantId)
+            : undefined,
         });
         setStep("success");
       } catch (err) {
@@ -234,7 +267,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
         setIsLoading(false);
       }
     },
-    [email, otp, newPassword, confirmPassword, selectedWorkspace]
+    [email, otp, newPassword, confirmPassword, selectedWorkspaces]
   );
 
   // ── Resend OTP ──
@@ -269,6 +302,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
         if (workspaces.length > 1) setStep("workspaces");
         else setStep("otp");
         break;
+
       default:
         setStep("request");
     }
@@ -283,7 +317,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
     setError("");
     setCooldown(0);
     setWorkspaces([]);
-    setSelectedWorkspace(null);
+    setSelectedWorkspaces([]);
   }, []);
 
   // ── Computed ──
@@ -291,6 +325,8 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
   const canSubmitOtp = otp.length === 6;
   const passwordsMatch = newPassword === confirmPassword && confirmPassword.length > 0;
   const canSubmitNewPassword = newPassword.length >= 8 && passwordsMatch && !isLoading;
+  const canConfirmWorkspaces = selectedWorkspaces.length > 0;
+  const allSelected = workspaces.length > 0 && selectedWorkspaces.length === workspaces.length;
 
   return {
     step,
@@ -303,7 +339,9 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
     error,
     cooldown,
     workspaces,
-    selectedWorkspace,
+    selectedWorkspaces,
+    selectedWorkspace: selectedWorkspaces[0] ?? null,
+    allSelected,
 
     setEmail,
     setOtp,
@@ -312,7 +350,10 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
     submitEmail,
     chooseMethod,
     submitOtp,
-    selectWorkspace,
+    toggleWorkspace,
+    selectAllWorkspaces,
+    deselectAllWorkspaces,
+    confirmWorkspaceSelection,
     submitNewPassword,
     resendCode,
     goBack,
@@ -321,6 +362,7 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
     canSubmitEmail,
     canSubmitOtp,
     canSubmitNewPassword,
+    canConfirmWorkspaces,
     passwordStrength: calcStrength(newPassword),
     passwordsMatch,
   };

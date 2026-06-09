@@ -19,7 +19,7 @@
  */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
@@ -46,8 +46,17 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
 
   const [state, setState] = useState<MagicLinkVerifyState>(token ? "verifying" : "error");
 
+  // Guard: track which token has already been sent to the backend.
+  // React StrictMode (Next.js dev) double-invokes effects (mount → cleanup → remount).
+  // The magic-link token is single-use — the first POST consumes it, the second gets
+  // "expired/invalid". Storing the token in a ref (which persists across StrictMode
+  // remounts) ensures we only call verifyMagicLink once per unique token.
+  const verifiedTokenRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!token) return;
+    if (verifiedTokenRef.current === token) return; // already in-flight or completed
+    verifiedTokenRef.current = token;
 
     let cancelled = false;
 

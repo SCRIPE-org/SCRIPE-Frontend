@@ -1,6 +1,7 @@
 export const ar = {
   commercial: {
-    "marketplace.financials": {
+    marketplace: {
+      financials: {
       overviewTitle: "نظرة عامة",
       overview:
         "تعد Financials مكوناً أساسياً في منصة SCRIPE، حيث توفر منطق الإدارة والتنسيق اللازم لهذه الميزة في نظام المؤسسة.",
@@ -27,7 +28,7 @@ export const ar = {
         "مترجمة مسبقاً بـ 7 لغات (EN، AR، FR، RU، ZH، ES، DE) مع تقديم خالي من الوميض ودعم كامل لتخطيط RTL.",
       title: "Financials",
     },
-    "marketplace.overview": {
+    overview: {
       overviewTitle: "نظرة عامة",
       overview:
         "تعد نظرة عامة مكوناً أساسياً في منصة SCRIPE، حيث توفر منطق الإدارة والتنسيق اللازم لهذه الميزة في نظام المؤسسة.",
@@ -53,10 +54,12 @@ export const ar = {
       localizationNote:
         "مترجمة مسبقاً بـ 7 لغات (EN، AR، FR، RU، ZH، ES، DE) مع تقديم خالي من الوميض ودعم كامل لتخطيط RTL.",
       title: "نظرة عامة",
+      },
     },
   },
   marketplace: {
-    "marketplace..catalog": {
+    "": {
+    catalog: {
       overviewTitle: "نظرة عامة",
       overview:
         "تعد Catalog مكوناً أساسياً في منصة SCRIPE، حيث توفر منطق الإدارة والتنسيق اللازم لهذه الميزة في نظام المؤسسة.",
@@ -83,7 +86,7 @@ export const ar = {
         "مترجمة مسبقاً بـ 7 لغات (EN، AR، FR، RU، ZH، ES، DE) مع تقديم خالي من الوميض ودعم كامل لتخطيط RTL.",
       title: "Catalog",
     },
-    "marketplace..financials": {
+    financials: {
       overviewTitle: "نظرة عامة",
       overview:
         "تعد Financials مكوناً أساسياً في منصة SCRIPE، حيث توفر منطق الإدارة والتنسيق اللازم لهذه الميزة في نظام المؤسسة.",
@@ -110,7 +113,7 @@ export const ar = {
         "مترجمة مسبقاً بـ 7 لغات (EN، AR، FR، RU، ZH، ES، DE) مع تقديم خالي من الوميض ودعم كامل لتخطيط RTL.",
       title: "Financials",
     },
-    "marketplace..overview": {
+    overview: {
       overviewTitle: "نظرة عامة",
       overview:
         "تعد نظرة عامة مكوناً أساسياً في منصة SCRIPE، حيث توفر منطق الإدارة والتنسيق اللازم لهذه الميزة في نظام المؤسسة.",
@@ -137,7 +140,7 @@ export const ar = {
         "مترجمة مسبقاً بـ 7 لغات (EN، AR، FR، RU، ZH، ES، DE) مع تقديم خالي من الوميض ودعم كامل لتخطيط RTL.",
       title: "نظرة عامة",
     },
-    "marketplace..submissions": {
+    submissions: {
       overviewTitle: "نظرة عامة",
       overview:
         "تعد Submissions مكوناً أساسياً في منصة SCRIPE، حيث توفر منطق الإدارة والتنسيق اللازم لهذه الميزة في نظام المؤسسة.",
@@ -163,6 +166,7 @@ export const ar = {
       localizationNote:
         "مترجمة مسبقاً بـ 7 لغات (EN، AR، FR، RU، ZH، ES، DE) مع تقديم خالي من الوميض ودعم كامل لتخطيط RTL.",
       title: "Submissions",
+      },
     },
   },
 };

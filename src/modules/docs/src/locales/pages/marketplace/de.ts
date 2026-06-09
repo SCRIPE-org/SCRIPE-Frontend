@@ -1,6 +1,7 @@
 export const de = {
   commercial: {
-    "marketplace.financials": {
+    marketplace: {
+      financials: {
       overviewTitle: "Übersicht",
       overview:
         "Das Modul Financials ist eine Kernkomponente der SCRIPE-Plattform und bietet die wesentliche Verwaltungs- und Orchestrierungslogik für diesen Funktionsbereich im Enterprise-System.",
@@ -27,7 +28,7 @@ export const de = {
         "Lokalisiert in 7 Sprachen (EN, AR, FR, RU, ZH, ES, DE) mit blitzschnellem Rendering und vollständiger RTL-Layout-Unterstützung.",
       title: "Financials",
     },
-    "marketplace.overview": {
+    overview: {
       overviewTitle: "Übersicht",
       overview:
         "Das Modul Übersicht ist eine Kernkomponente der SCRIPE-Plattform und bietet die wesentliche Verwaltungs- und Orchestrierungslogik für diesen Funktionsbereich im Enterprise-System.",
@@ -53,10 +54,12 @@ export const de = {
       localizationNote:
         "Lokalisiert in 7 Sprachen (EN, AR, FR, RU, ZH, ES, DE) mit blitzschnellem Rendering und vollständiger RTL-Layout-Unterstützung.",
       title: "Übersicht",
+      },
     },
   },
   marketplace: {
-    "marketplace..catalog": {
+    "": {
+    catalog: {
       overviewTitle: "Übersicht",
       overview:
         "Das Modul Catalog ist eine Kernkomponente der SCRIPE-Plattform und bietet die wesentliche Verwaltungs- und Orchestrierungslogik für diesen Funktionsbereich im Enterprise-System.",
@@ -83,7 +86,7 @@ export const de = {
         "Lokalisiert in 7 Sprachen (EN, AR, FR, RU, ZH, ES, DE) mit blitzschnellem Rendering und vollständiger RTL-Layout-Unterstützung.",
       title: "Catalog",
     },
-    "marketplace..financials": {
+    financials: {
       overviewTitle: "Übersicht",
       overview:
         "Das Modul Financials ist eine Kernkomponente der SCRIPE-Plattform und bietet die wesentliche Verwaltungs- und Orchestrierungslogik für diesen Funktionsbereich im Enterprise-System.",
@@ -110,7 +113,7 @@ export const de = {
         "Lokalisiert in 7 Sprachen (EN, AR, FR, RU, ZH, ES, DE) mit blitzschnellem Rendering und vollständiger RTL-Layout-Unterstützung.",
       title: "Financials",
     },
-    "marketplace..overview": {
+    overview: {
       overviewTitle: "Übersicht",
       overview:
         "Das Modul Übersicht ist eine Kernkomponente der SCRIPE-Plattform und bietet die wesentliche Verwaltungs- und Orchestrierungslogik für diesen Funktionsbereich im Enterprise-System.",
@@ -137,7 +140,7 @@ export const de = {
         "Lokalisiert in 7 Sprachen (EN, AR, FR, RU, ZH, ES, DE) mit blitzschnellem Rendering und vollständiger RTL-Layout-Unterstützung.",
       title: "Übersicht",
     },
-    "marketplace..submissions": {
+    submissions: {
       overviewTitle: "Übersicht",
       overview:
         "Das Modul Submissions ist eine Kernkomponente der SCRIPE-Plattform und bietet die wesentliche Verwaltungs- und Orchestrierungslogik für diesen Funktionsbereich im Enterprise-System.",
@@ -163,6 +166,7 @@ export const de = {
       localizationNote:
         "Lokalisiert in 7 Sprachen (EN, AR, FR, RU, ZH, ES, DE) mit blitzschnellem Rendering und vollständiger RTL-Layout-Unterstützung.",
       title: "Submissions",
+      },
     },
   },
 };

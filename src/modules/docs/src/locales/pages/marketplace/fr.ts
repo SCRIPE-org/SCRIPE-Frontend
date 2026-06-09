@@ -1,6 +1,7 @@
 export const fr = {
   commercial: {
-    "marketplace.financials": {
+    marketplace: {
+      financials: {
       overviewTitle: "Aperçu",
       overview:
         "Le module Financials est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
@@ -27,7 +28,7 @@ export const fr = {
         "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
       title: "Financials",
     },
-    "marketplace.overview": {
+    overview: {
       overviewTitle: "Aperçu",
       overview:
         "Le module Aperçu est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
@@ -53,10 +54,12 @@ export const fr = {
       localizationNote:
         "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
       title: "Aperçu",
+      },
     },
   },
   marketplace: {
-    "marketplace..catalog": {
+    "": {
+    catalog: {
       overviewTitle: "Aperçu",
       overview:
         "Le module Catalog est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
@@ -83,7 +86,7 @@ export const fr = {
         "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
       title: "Catalog",
     },
-    "marketplace..financials": {
+    financials: {
       overviewTitle: "Aperçu",
       overview:
         "Le module Financials est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
@@ -110,7 +113,7 @@ export const fr = {
         "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
       title: "Financials",
     },
-    "marketplace..overview": {
+    overview: {
       overviewTitle: "Aperçu",
       overview:
         "Le module Aperçu est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
@@ -137,7 +140,7 @@ export const fr = {
         "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
       title: "Aperçu",
     },
-    "marketplace..submissions": {
+    submissions: {
       overviewTitle: "Aperçu",
       overview:
         "Le module Submissions est un composant central de la plateforme SCRIPE, fournissant la logique essentielle de gestion et d'orchestration pour cette fonctionnalité dans le système d'entreprise.",
@@ -163,6 +166,7 @@ export const fr = {
       localizationNote:
         "Localisé dans 7 langues (EN, AR, FR, RU, ZH, ES, DE) avec un rendu ultra-rapide et un support complet des dispositions RTL.",
       title: "Submissions",
+      },
     },
   },
 };

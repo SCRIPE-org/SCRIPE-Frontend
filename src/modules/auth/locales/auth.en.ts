@@ -137,6 +137,12 @@ export const en = {
     forgotPickWorkspaceSubtitle:
       "Your email is linked to multiple workspaces. Choose which one to reset.",
     resetPasswordFor: "For {{workspace}}",
+    workspacesSelected: "workspaces selected",
+    selectAll: "Select All",
+    deselectAll: "Deselect All",
+    resetAllWorkspaces: "Reset All Workspaces",
+    resetSelectedWorkspaces: "Reset {{count}} Workspaces",
+    resetPasswordForCount: "Resetting password for {{count}} workspaces",
     magicLinkSentTitle: "Check your inbox",
     magicLinkSentSubtitle: "We sent a reset link to {{email}}. Click it to set your new password.",
     resetSuccessTitle: "Password updated!",

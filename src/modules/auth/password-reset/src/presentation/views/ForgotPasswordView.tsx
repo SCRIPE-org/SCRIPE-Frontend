@@ -33,6 +33,7 @@ import {
   ChevronRight,
   RefreshCw,
   Building2,
+  Check,
 } from "lucide-react";
 import { useLoginBrandingTokens } from "@modules/auth/core/src/presentation/viewmodels/useLoginBrandingTokens";
 import { resolveFileUrl } from "@core/common/utils";
@@ -95,36 +96,42 @@ function StrengthBar({ strength, labels }: { strength: number; labels: string[] 
   );
 }
 
-/** Workspace card for picker step */
-function WorkspacePickCard({
+/** Checkbox workspace card for multi-select reset picker */
+function WorkspaceCheckCard({
   workspace,
-  onSelect,
+  isSelected,
+  onToggle,
 }: {
   workspace: WorkspaceOption;
-  onSelect: (w: WorkspaceOption) => void;
+  isSelected: boolean;
+  onToggle: (w: WorkspaceOption) => void;
 }) {
   const { t } = useI18n();
   return (
     <button
       type="button"
-      onClick={() => onSelect(workspace)}
-      className="group flex w-full items-center gap-3.5 rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] active:scale-[0.99]"
+      onClick={() => onToggle(workspace)}
+      className="flex w-full items-center gap-3.5 rounded-2xl border p-4 text-start transition-all hover:scale-[1.01] active:scale-[0.99]"
       style={{
-        background: "var(--sx-chip-bg)",
-        borderColor: "var(--sx-chip-border)",
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-accent-text)";
-        (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-accent-soft)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-chip-border)";
-        (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-chip-bg)";
+        background: isSelected ? "var(--sx-accent-soft)" : "var(--sx-chip-bg)",
+        borderColor: isSelected ? "var(--sx-accent-text)" : "var(--sx-chip-border)",
+        boxShadow: isSelected ? "0 0 0 2px var(--sx-accent-ring, rgba(139,92,246,.15))" : "none",
       }}
     >
+      {/* Checkbox */}
+      <div
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all"
+        style={{
+          background: isSelected ? "var(--sx-accent-text)" : "transparent",
+          borderColor: isSelected ? "var(--sx-accent-text)" : "var(--sx-chip-border)",
+        }}
+      >
+        {isSelected && <Check className="h-3 w-3 text-white" aria-hidden="true" />}
+      </div>
+
       {/* Logo / Icon */}
       <div
-        className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl"
+        className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl"
         style={{
           background: "var(--sx-accent-soft)",
           border: "1px solid var(--sx-accent-soft-border)",
@@ -137,7 +144,7 @@ function WorkspacePickCard({
             className="h-full w-full object-cover"
           />
         ) : (
-          <Building2 className="h-5 w-5" style={{ color: "var(--sx-accent-text)" }} />
+          <Building2 className="h-4 w-4" style={{ color: "var(--sx-accent-text)" }} />
         )}
       </div>
 
@@ -152,11 +159,6 @@ function WorkspacePickCard({
           </p>
         )}
       </div>
-
-      <ChevronRight
-        className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-        style={{ color: "var(--sx-text-mute)" }}
-      />
     </button>
   );
 }
@@ -628,9 +630,9 @@ export function ForgotPasswordView() {
             </div>
           )}
 
-          {/* ─────────────── STEP 4: Workspace Picker ─────────────── */}
+          {/* ─────────────── STEP 4: Workspace Multi-Select Picker ─────────────── */}
           {vm.step === "workspaces" && (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               <div className="text-center">
                 <div
                   className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
@@ -661,11 +663,49 @@ export function ForgotPasswordView() {
 
               <StepDots current={4} total={totalSteps} />
 
-              <div className="flex max-h-72 flex-col gap-2.5 overflow-y-auto">
+              {/* Select All toggle */}
+              <div className="flex items-center justify-between">
+                <span className="text-[12px]" style={{ color: "var(--sx-text-mute)" }}>
+                  {vm.selectedWorkspaces.length} / {vm.workspaces.length}{" "}
+                  {t("auth.workspacesSelected")}
+                </span>
+                <button
+                  type="button"
+                  onClick={vm.allSelected ? vm.deselectAllWorkspaces : vm.selectAllWorkspaces}
+                  className="text-[12px] font-semibold transition-opacity hover:opacity-70"
+                  style={{ color: "var(--sx-accent-text)" }}
+                >
+                  {vm.allSelected ? t("auth.deselectAll") : t("auth.selectAll")}
+                </button>
+              </div>
+
+              {/* Workspace checklist */}
+              <div className="flex max-h-64 flex-col gap-2 overflow-y-auto">
                 {vm.workspaces.map((w) => (
-                  <WorkspacePickCard key={w.tenantId} workspace={w} onSelect={vm.selectWorkspace} />
+                  <WorkspaceCheckCard
+                    key={w.tenantId}
+                    workspace={w}
+                    isSelected={vm.selectedWorkspaces.some((s) => s.tenantId === w.tenantId)}
+                    onToggle={vm.toggleWorkspace}
+                  />
                 ))}
               </div>
+
+              {/* Continue button */}
+              <Button
+                type="button"
+                onClick={vm.confirmWorkspaceSelection}
+                disabled={!vm.canConfirmWorkspaces || vm.isLoading}
+                loading={vm.isLoading}
+                className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
+              >
+                {vm.selectedWorkspaces.length === vm.workspaces.length
+                  ? t("auth.resetAllWorkspaces")
+                  : t("auth.resetSelectedWorkspaces").replace(
+                      "{{count}}",
+                      String(vm.selectedWorkspaces.length)
+                    )}
+              </Button>
             </div>
           )}
 
@@ -692,15 +732,20 @@ export function ForgotPasswordView() {
                 >
                   {t("auth.resetPassword")}
                 </h1>
-                {vm.selectedWorkspace && (
+                {vm.selectedWorkspaces.length > 0 && (
                   <p
                     className="mt-1.5 text-[13px] leading-relaxed"
                     style={{ color: "var(--sx-text-mute)" }}
                   >
-                    {t("auth.resetPasswordFor").replace(
-                      "{{workspace}}",
-                      vm.selectedWorkspace.tenantName
-                    )}
+                    {vm.selectedWorkspaces.length === 1
+                      ? t("auth.resetPasswordFor").replace(
+                          "{{workspace}}",
+                          vm.selectedWorkspaces[0].tenantName
+                        )
+                      : t("auth.resetPasswordForCount").replace(
+                          "{{count}}",
+                          String(vm.selectedWorkspaces.length)
+                        )}
                   </p>
                 )}
               </div>

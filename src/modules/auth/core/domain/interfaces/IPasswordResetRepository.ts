@@ -16,11 +16,14 @@ export interface IPasswordResetRepository {
   requestReset(email: string, method?: "otp" | "magic-link"): Promise<void>;
   /** Verify the 6-digit OTP code and get workspace list (if multi-tenant). */
   verifyOtp(email: string, code: string): Promise<VerifyOtpResult>;
-  /** Submit new password with optional tenantId to scope to one workspace. */
+  /**
+   * Submit new password.
+   * tenantIds: encrypted tenant IDs to reset. Empty/omitted resets ALL workspaces.
+   */
   resetPassword(params: {
     email: string;
     otp: string;
     newPassword: string;
-    tenantId?: string;
+    tenantIds?: string[];
   }): Promise<void>;
 }

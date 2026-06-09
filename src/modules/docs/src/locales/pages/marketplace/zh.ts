@@ -1,6 +1,7 @@
 export const zh = {
   commercial: {
-    "marketplace.financials": {
+    marketplace: {
+      financials: {
       overviewTitle: "概述",
       overview:
         "Financials 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
@@ -24,7 +25,7 @@ export const zh = {
         "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
       title: "Financials",
     },
-    "marketplace.overview": {
+    overview: {
       overviewTitle: "概述",
       overview:
         "概述 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
@@ -47,10 +48,12 @@ export const zh = {
       localizationNote:
         "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
       title: "概述",
+      },
     },
   },
   marketplace: {
-    "marketplace..catalog": {
+    "": {
+    catalog: {
       overviewTitle: "概述",
       overview:
         "Catalog 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
@@ -74,7 +77,7 @@ export const zh = {
         "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
       title: "Catalog",
     },
-    "marketplace..financials": {
+    financials: {
       overviewTitle: "概述",
       overview:
         "Financials 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
@@ -98,7 +101,7 @@ export const zh = {
         "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
       title: "Financials",
     },
-    "marketplace..overview": {
+    overview: {
       overviewTitle: "概述",
       overview:
         "概述 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
@@ -122,7 +125,7 @@ export const zh = {
         "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
       title: "概述",
     },
-    "marketplace..submissions": {
+    submissions: {
       overviewTitle: "概述",
       overview:
         "Submissions 模块是 SCRIPE 平台的核心组件，为此功能区域在企业系统中提供关键的管理和编排逻辑。",
@@ -145,6 +148,7 @@ export const zh = {
       localizationNote:
         "支持 7 种语言（EN、AR、FR、RU、ZH、ES、DE）的预加载本地化，提供零闪烁渲染及完全的 RTL 布局支持。",
       title: "Submissions",
+      },
     },
   },
 };
