@@ -81,7 +81,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             onChange={(e) => vm.updateField("code", e.target.value.toUpperCase())}
             placeholder={t("tenant.codePlaceholder") || "Auto-generated from name"}
             className={cn("h-11 font-mono uppercase", codeError && "border-destructive")}
-            maxLength={50}
+            maxLength={100}
           />
           {codeError ? (
             <p className="text-xs text-destructive">
