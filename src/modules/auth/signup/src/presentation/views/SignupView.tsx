@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
+import { Button } from "@core/ui/button";
 import { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 import { PlanPickerStep } from "../components/PlanPickerStep";
 import { AccountStep } from "../components/AccountStep";
@@ -75,15 +76,26 @@ export function SignupView() {
 
         {/* Top bar: Logo + Stepper */}
         <header
-          className="sticky top-0 z-40 flex items-center justify-center gap-6 px-6 py-4"
+          className="sticky top-0 z-40 flex items-center justify-between gap-6 px-6 py-4"
           style={{
             background: "rgba(6,6,14,0.85)",
             backdropFilter: "blur(20px)",
             borderBottom: "1px solid rgba(255,255,255,0.04)",
           }}
         >
-          <img src="/app-logo.png" alt={BRAND.name} className="h-8 w-auto" />
-          {showStepper && <SignupStepper currentStep={vm.step} steps={stepperSteps} />}
+          <div className="flex items-center gap-6">
+            <img src="/app-logo.png" alt={BRAND.name} className="h-8 w-auto" />
+            {showStepper && <SignupStepper currentStep={vm.step} steps={stepperSteps} />}
+          </div>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={vm.goToLogin}
+            className="text-xs font-medium transition-colors hover:text-white"
+            style={{ color: "rgba(245,242,255,0.6)" }}
+          >
+            {t("auth.backToLogin") || "Back to login"}
+          </Button>
         </header>
 
         {/* Full-page plan content */}
@@ -133,6 +145,19 @@ export function SignupView() {
           filter: "blur(60px)",
         }}
       />
+
+      {/* Top action: Back to login */}
+      <div className="absolute end-4 top-4 sm:end-8 sm:top-6" style={{ animation: "sxRise 0.5s ease-out" }}>
+        <Button
+          variant="ghost"
+          type="button"
+          onClick={vm.goToLogin}
+          className="text-xs font-medium transition-colors hover:text-white"
+          style={{ color: "rgba(245,242,255,0.6)" }}
+        >
+          {t("auth.backToLogin") || "Back to login"}
+        </Button>
+      </div>
 
       {/* Logo */}
       <div className="mb-8" style={{ animation: "sxRise 0.5s ease-out" }}>

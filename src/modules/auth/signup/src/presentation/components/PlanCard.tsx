@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -43,7 +44,7 @@ function getFeatureIcon(featureName: string) {
 // ─── Feature Row ──────────────────────────────────────────────────────────────
 
 function FeatureRow({ feature }: { feature: PublicFeature }) {
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const { value, valueType } = feature;
 
   const displayLabel =
@@ -52,14 +53,14 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
       : (feature.displayLabelEn ?? null);
 
   const label = displayLabel || formatFeatureName(feature.name);
-  const Icon = getFeatureIcon(feature.name);
+  const iconComponent = getFeatureIcon(feature.name);
 
   // Boolean → show only if true
   if (valueType === "Boolean") {
     if (value !== "true" && value !== "1") return null;
     return (
       <li className="flex items-start gap-3 py-1.5">
-        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-white/30" />
+        {React.createElement(iconComponent, { className: "mt-0.5 h-4 w-4 shrink-0 text-white/30" })}
         <span className="text-[13px] leading-relaxed text-white/65">{label}</span>
       </li>
     );
@@ -73,7 +74,7 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
     if (displayLabel) {
       return (
         <li className="flex items-start gap-3 py-1.5">
-          <Icon className="mt-0.5 h-4 w-4 shrink-0 text-white/30" />
+          {React.createElement(iconComponent, { className: "mt-0.5 h-4 w-4 shrink-0 text-white/30" })}
           <span className="text-[13px] leading-relaxed text-white/65">{displayLabel}</span>
         </li>
       );
@@ -81,12 +82,12 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
 
     return (
       <li className="flex items-center gap-3 py-1.5">
-        <Icon className="h-4 w-4 shrink-0 text-white/30" />
+        {React.createElement(iconComponent, { className: "h-4 w-4 shrink-0 text-white/30" })}
         <span className="text-[13px] leading-relaxed text-white/55">
           {label}:&nbsp;
           {num === -1 ? (
             <span className="font-semibold text-cyan-400">
-              {language === "ar" ? "غير محدود" : "Unlimited"}
+              {t("signup.plan.unlimited") || "Unlimited"}
             </span>
           ) : (
             <span className="font-semibold text-white/85">{num.toLocaleString()}</span>
@@ -101,7 +102,7 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
 
   return (
     <li className="flex items-start gap-3 py-1.5">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-white/30" />
+      {React.createElement(iconComponent, { className: "mt-0.5 h-4 w-4 shrink-0 text-white/30" })}
       <span className="text-[13px] leading-relaxed text-white/65">{displayLabel || value}</span>
     </li>
   );
@@ -133,9 +134,7 @@ export function PlanCard({
 
   // Compute "Everything in X, plus:" text (Vercel pattern)
   const inheritanceText = prevEditionName
-    ? language === "ar"
-      ? `كل مميزات ${prevEditionName}، بالإضافة إلى:`
-      : `All ${prevEditionName} features, plus:`
+    ? t("signup.plan.inheritanceText", { prevEditionName }) || `All ${prevEditionName} features, plus:`
     : null;
 
   return (
@@ -183,7 +182,7 @@ export function PlanCard({
                 {t("signup.plan.free") || "Free"}
               </span>
               <span className="text-sm text-white/30">
-                {language === "ar" ? "للأبد" : "forever"}
+                {t("signup.plan.forever") || "forever"}
               </span>
             </>
           ) : isContactSales ? (

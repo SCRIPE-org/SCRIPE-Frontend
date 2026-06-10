@@ -12,7 +12,7 @@ interface VerificationStepProps {
 }
 
 export function VerificationStep({ vm }: VerificationStepProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
 
   // Auto-submit when 6 digits are entered
   useEffect(() => {
@@ -27,7 +27,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
   );
 
   return (
-    <div style={{ animation: "sxScreenIn 0.4s ease-out" }}>
+    <div style={{ animation: "sxScreenIn 0.4s ease-out" }} dir={direction}>
       {/* Header */}
       <div className="mb-8 text-center">
         {/* Shield icon */}
@@ -62,7 +62,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
       </div>
 
       {/* Unified OTP Input Component */}
-      <div className="mb-6">
+      <div className="mb-6" dir="ltr">
         <OtpInputField
           value={vm.otpCode}
           onChange={vm.setOtpCode}

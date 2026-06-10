@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check, Sparkles } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface CompleteStepProps {
@@ -9,6 +10,7 @@ interface CompleteStepProps {
 }
 
 export function CompleteStep({ vm }: CompleteStepProps) {
+  const { t, direction } = useI18n();
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -20,6 +22,7 @@ export function CompleteStep({ vm }: CompleteStepProps) {
     <div
       className="flex flex-col items-center py-6"
       style={{ animation: "sxScreenIn 0.4s ease-out" }}
+      dir={direction}
     >
       {/* Success checkmark with celebration effect */}
       <div className="relative mb-6">
@@ -55,22 +58,21 @@ export function CompleteStep({ vm }: CompleteStepProps) {
               WebkitTextFillColor: "transparent",
             }}
           >
-            Welcome to Scripe! 🎉
+            {t("signup.complete.welcomeTitle") || "Welcome to Scripe! 🎉"}
           </h1>
           <p className="mt-3 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
-            Your workspace{" "}
-            <span className="font-semibold" style={{ color: "#C4B5FD" }}>
-              {vm.wizardData.workspaceName || "your workspace"}
-            </span>{" "}
-            is ready. Redirecting you to your dashboard…
+            {t("signup.complete.workspaceReady", {
+              name: vm.wizardData.workspaceName || "your workspace",
+            }) ||
+              `Your workspace ${vm.wizardData.workspaceName || "your workspace"} is ready. Redirecting you to your dashboard…`}
           </p>
 
           {/* Feature highlights */}
           <div className="mt-6 space-y-2" style={{ animation: "sxRise 0.5s ease-out 0.3s both" }}>
             {[
-              "Invite your team members",
-              "Customize your branding",
-              "Explore modules & features",
+              t("signup.complete.inviteTeam") || "Invite your team members",
+              t("signup.complete.customizeBranding") || "Customize your branding",
+              t("signup.complete.exploreModules") || "Explore modules & features",
             ].map((item, i) => (
               <div
                 key={i}
@@ -94,14 +96,14 @@ export function CompleteStep({ vm }: CompleteStepProps) {
                   key={delay}
                   className="h-1.5 w-1.5 animate-pulse rounded-full"
                   style={{
-                    background: "#A855F7",
-                    animationDelay: `${delay}ms`,
+                     background: "#A855F7",
+                     animationDelay: `${delay}ms`,
                   }}
                 />
               ))}
             </div>
             <p className="text-[11px] font-medium" style={{ color: "rgba(245,242,255,0.4)" }}>
-              Redirecting…
+              {t("signup.complete.redirecting") || "Redirecting…"}
             </p>
           </div>
         </div>

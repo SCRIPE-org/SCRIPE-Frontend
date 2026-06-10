@@ -1,22 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface ProvisioningStepProps {
   vm: ReturnType<typeof useSignupWizardViewModel>;
 }
 
-const PROVISIONING_STEPS = [
-  { label: "Creating workspace", icon: "🏗️" },
-  { label: "Setting up defaults", icon: "⚙️" },
-  { label: "Registering your account", icon: "🔐" },
-  { label: "Configuring permissions", icon: "🛡️" },
-  { label: "Almost ready…", icon: "✨" },
-];
-
 export function ProvisioningStep({ vm }: ProvisioningStepProps) {
+  const { t, direction } = useI18n();
   const [dots, setDots] = useState("");
 
   // Animated dots
@@ -27,12 +21,39 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const currentStep = Math.min(vm.provisioningStep, PROVISIONING_STEPS.length - 1);
+  const provisioningSteps = useMemo(
+    () => [
+      {
+        label: t("signup.provisioning.creatingWorkspace") || "Creating workspace",
+        icon: "🏗️",
+      },
+      {
+        label: t("signup.provisioning.settingDefaults") || "Setting up defaults",
+        icon: "⚙️",
+      },
+      {
+        label: t("signup.provisioning.registeringAccount") || "Registering your account",
+        icon: "🔐",
+      },
+      {
+        label: t("signup.provisioning.configuringPermissions") || "Configuring permissions",
+        icon: "🛡️",
+      },
+      {
+        label: t("signup.provisioning.almostReady") || "Almost ready…",
+        icon: "✨",
+      },
+    ],
+    [t]
+  );
+
+  const currentStep = Math.min(vm.provisioningStep, provisioningSteps.length - 1);
 
   return (
     <div
       className="flex flex-col items-center py-6"
       style={{ animation: "sxScreenIn 0.4s ease-out" }}
+      dir={direction}
     >
       {/* Spinning logo / loader */}
       <div className="relative mb-8">
@@ -53,7 +74,7 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
             }}
           />
           <span className="relative text-3xl" style={{ animation: "sxPop 0.5s ease-out" }}>
-            {PROVISIONING_STEPS[currentStep].icon}
+            {provisioningSteps[currentStep].icon}
           </span>
         </div>
       </div>
@@ -67,13 +88,13 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
           WebkitTextFillColor: "transparent",
         }}
       >
-        {PROVISIONING_STEPS[currentStep].label}
+        {provisioningSteps[currentStep].label}
         {dots}
       </h2>
 
       {/* Progress steps */}
       <div className="mt-4 w-full max-w-xs space-y-3">
-        {PROVISIONING_STEPS.map((step, i) => (
+        {provisioningSteps.map((step, i) => (
           <div
             key={i}
             className="flex items-center gap-3 transition-all duration-300"
@@ -141,7 +162,7 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{
-            width: `${((currentStep + 1) / PROVISIONING_STEPS.length) * 100}%`,
+            width: `${((currentStep + 1) / provisioningSteps.length) * 100}%`,
             background: "linear-gradient(90deg, #A855F7 0%, #3B82F6 100%)",
             boxShadow: "0 0 10px rgba(168,85,247,0.3)",
           }}
@@ -149,7 +170,7 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
       </div>
 
       <p className="mt-4 text-[11px]" style={{ color: "rgba(245,242,255,0.35)" }}>
-        This usually takes a few seconds
+        {t("signup.provisioning.usuallyTakes") || "This usually takes a few seconds"}
       </p>
     </div>
   );

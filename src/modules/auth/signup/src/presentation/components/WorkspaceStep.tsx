@@ -5,13 +5,16 @@ import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { ArrowLeft, ArrowRight, Globe, Loader2, Check, X } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
+import { BRAND } from "@/core/config/branding";
 
 interface WorkspaceStepProps {
   vm: ReturnType<typeof useSignupWizardViewModel>;
 }
 
 export function WorkspaceStep({ vm }: WorkspaceStepProps) {
+  const { t, direction } = useI18n();
   const { subdomainResult, isCheckingSubdomain } = vm;
 
   // Auto-generate subdomain from workspace name
@@ -51,7 +54,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
   }[subdomainStatus];
 
   return (
-    <div style={{ animation: "sxScreenIn 0.4s ease-out" }}>
+    <div style={{ animation: "sxScreenIn 0.4s ease-out" }} dir={direction}>
       {/* Header */}
       <div className="mb-6 text-center">
         <div
@@ -74,10 +77,10 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             WebkitTextFillColor: "transparent",
           }}
         >
-          Set up your workspace
+          {t("signup.workspace.title") || "Set up your workspace"}
         </h1>
         <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
-          Your team&apos;s home on Scripe
+          {t("signup.workspace.subtitle") || "Your team's home on Scripe"}
         </p>
       </div>
 
@@ -95,12 +98,12 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             className="text-xs font-medium"
             style={{ color: "rgba(245,242,255,0.62)" }}
           >
-            Organization name
+            {t("signup.workspace.orgName") || "Organization name"}
           </Label>
           <Input
             id="signup-workspace"
             type="text"
-            placeholder="Acme Inc."
+            placeholder={t("signup.workspace.orgNamePlaceholder") || "Acme Inc."}
             value={vm.wizardData.workspaceName}
             onChange={(e) => handleNameChange(e.target.value)}
             autoFocus
@@ -120,14 +123,14 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             className="text-xs font-medium"
             style={{ color: "rgba(245,242,255,0.62)" }}
           >
-            Workspace URL
+            {t("signup.workspace.workspaceUrl") || "Workspace URL"}
           </Label>
-          <div className="flex items-center gap-0">
+          <div className="flex items-center gap-0" dir="ltr">
             <div className="relative flex-1">
               <Input
                 id="signup-subdomain"
                 type="text"
-                placeholder="acme"
+                placeholder={t("signup.workspace.subdomainPlaceholder") || "acme"}
                 value={vm.wizardData.subdomain}
                 onChange={(e) => vm.checkSubdomain(e.target.value.toLowerCase())}
                 className="h-11 rounded-r-none pr-9"
@@ -154,7 +157,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
                 color: "rgba(245,242,255,0.4)",
               }}
             >
-              .scripe.app
+              {BRAND.domain}
             </div>
           </div>
 
@@ -165,19 +168,21 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
               style={{ color: "#fca5a5", animation: "sxRise 0.2s ease-out" }}
             >
               {subdomainResult.reason === "taken"
-                ? "This subdomain is already taken."
+                ? t("signup.workspace.subdomainTaken") || "This subdomain is already taken."
                 : subdomainResult.reason === "reserved"
-                  ? "This subdomain is reserved."
-                  : "Invalid format. Use lowercase letters, numbers, and hyphens."}
+                  ? t("signup.workspace.subdomainReserved") || "This subdomain is reserved."
+                  : t("signup.workspace.subdomainInvalid") ||
+                    "Invalid format. Use lowercase letters, numbers, and hyphens."}
               {subdomainResult.suggestion && (
                 <Button
                   variant="link"
                   type="button"
                   onClick={() => vm.checkSubdomain(subdomainResult.suggestion!)}
-                  className="ml-1 h-auto p-0 underline hover:no-underline"
+                  className="mx-1 h-auto p-0 underline hover:no-underline"
                   style={{ color: "#C4B5FD" }}
                 >
-                  Try &quot;{subdomainResult.suggestion}&quot;?
+                  {t("signup.workspace.trySuggestion", { suggestion: subdomainResult.suggestion }) ||
+                    `Try "${subdomainResult.suggestion}"?`}
                 </Button>
               )}
             </p>
@@ -187,7 +192,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
               className="text-[11px] font-medium"
               style={{ color: "#10B981", animation: "sxRise 0.2s ease-out" }}
             >
-              ✓ {vm.wizardData.subdomain}.scripe.app is available!
+              ✓ {t("signup.workspace.subdomainAvailable", { subdomain: vm.wizardData.subdomain }) ||
+                `✓ ${vm.wizardData.subdomain}.${BRAND.domain} is available!`}
             </p>
           )}
         </div>
@@ -200,16 +206,16 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
               className="text-xs font-medium"
               style={{ color: "rgba(245,242,255,0.62)" }}
             >
-              Admin username
+              {t("signup.workspace.adminUsername") || "Admin username"}
             </Label>
             <span className="text-[10px]" style={{ color: "rgba(245,242,255,0.4)" }}>
-              Optional
+              {t("signup.common.optional") || "Optional"}
             </span>
           </div>
           <Input
             id="signup-username"
             type="text"
-            placeholder="admin"
+            placeholder={t("signup.workspace.adminUsernamePlaceholder") || "admin"}
             value={vm.wizardData.username}
             onChange={(e) => {
               const val = e.target.value.replace(/[^a-zA-Z0-9_]/g, "");
@@ -226,7 +232,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             className="animate-sxRise text-[11px] font-medium leading-relaxed"
             style={{ color: "rgba(245,242,255,0.45)" }}
           >
-            Your final login username will be:{" "}
+            {t("signup.workspace.usernameHint") || "Your final login username will be: "}{" "}
             <span className="font-mono" style={{ color: "#D8B4FE" }}>
               {vm.wizardData.subdomain ? vm.wizardData.subdomain.toUpperCase() : "[subdomain]"}_
               {vm.wizardData.username ? vm.wizardData.username.toLowerCase() : "admin"}
@@ -269,7 +275,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             <>
-              Create workspace
+              {t("signup.workspace.createWorkspace") || "Create workspace"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
@@ -284,7 +290,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             style={{ color: "rgba(245,242,255,0.55)" }}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back
+            {t("signup.workspace.back") || "Back"}
           </Button>
         </div>
       </form>

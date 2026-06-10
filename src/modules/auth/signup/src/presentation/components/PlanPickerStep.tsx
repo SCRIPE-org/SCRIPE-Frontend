@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Skeleton } from "@core/ui/skeleton";
+import { ChevronDown } from "lucide-react";
 import { usePlanPickerViewModel, type PlanEdition } from "../viewmodels/usePlanPickerViewModel";
 import { PlanCard } from "./PlanCard";
 import { ComparisonTable } from "./ComparisonTable";
+import { Button } from "@core/ui/button";
 
 interface PlanPickerStepProps {
   onSelectPlan: (
@@ -49,6 +51,7 @@ function groupEditionsByCategory(editions: PlanEdition[]) {
 export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
   const { t } = useI18n();
   const vm = usePlanPickerViewModel(onSelectPlan);
+  const [showComparison, setShowComparison] = useState(false);
 
   // Group editions by category for the "All" view
   const groupedEditions = useMemo(
@@ -231,61 +234,81 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
         </div>
       )}
 
-      {/* ═══ Full comparison table — always visible like Vercel ═══ */}
-      <div>
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-white/90 sm:text-3xl">
-            {t("signup.plan.compareAll") || "Compare all features"}
-          </h2>
-          <p className="mt-2 text-sm text-white/40 sm:text-base">
-            {t("signup.plan.compareSubtitle") ||
-              "A detailed breakdown of what's included in every plan."}
-          </p>
-        </div>
-
-        {/* Category picker for comparison — only when multiple categories exist */}
-        {vm.categories.length > 1 && (
-          <div className="mx-auto mb-6 flex max-w-[1400px] flex-wrap items-center justify-center gap-2">
-            {vm.categories.map((cat) => {
-              const isActive = vm.comparisonActiveCategory === cat;
-              return (
-                <button
-                  key={`cmp-${cat}`}
-                  type="button"
-                  onClick={() => vm.setComparisonActiveCategory(cat)}
-                  className="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
-                  style={{
-                    background: isActive
-                      ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.18))"
-                      : "rgba(255,255,255,0.03)",
-                    color: isActive ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.35)",
-                    border: isActive
-                      ? "1px solid rgba(168,85,247,0.45)"
-                      : "1px solid rgba(255,255,255,0.06)",
-                  }}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        <div
-          className="mx-auto max-w-[1400px] overflow-hidden rounded-2xl"
-          style={{
-            background: "rgba(8,5,22,0.5)",
-            border: "1px solid rgba(255,255,255,0.04)",
-          }}
+      {/* ═══ Full comparison table Collapsible Toggle ═══ */}
+      <div className="flex flex-col items-center justify-center pt-4">
+        <Button
+          type="button"
+          onClick={() => setShowComparison((prev) => !prev)}
+          variant="ghost"
+          className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.02] px-6 py-5 text-sm font-semibold text-white/70 hover:bg-white/[0.05] hover:text-white"
         >
-          <ComparisonTable
-            editions={vm.comparisonEditions}
-            categories={vm.comparisonCategories}
-            billingCycle={vm.billingCycle}
-            onSelectPlan={vm.selectPlan}
+          {showComparison
+            ? t("signup.plan.hideComparison") || "Hide full feature comparison"
+            : t("signup.plan.showComparison") || "Compare all plans & features"}
+          <ChevronDown
+            className={`h-4 w-4 text-white/45 transition-transform duration-300 ${
+              showComparison ? "rotate-180" : "rotate-0"
+            }`}
           />
-        </div>
+        </Button>
       </div>
+
+      {showComparison && (
+        <div className="space-y-8" style={{ animation: "sxSlideIn 300ms ease-out both" }}>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white/90 sm:text-3xl">
+              {t("signup.plan.compareAll") || "Compare all features"}
+            </h2>
+            <p className="mt-2 text-sm text-white/40 sm:text-base">
+              {t("signup.plan.compareSubtitle") ||
+                "A detailed breakdown of what's included in every plan."}
+            </p>
+          </div>
+
+          {/* Category picker for comparison — only when multiple categories exist */}
+          {vm.categories.length > 1 && (
+            <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-center gap-2">
+              {vm.categories.map((cat) => {
+                const isActive = vm.comparisonActiveCategory === cat;
+                return (
+                  <button
+                    key={`cmp-${cat}`}
+                    type="button"
+                    onClick={() => vm.setComparisonActiveCategory(cat)}
+                    className="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
+                    style={{
+                      background: isActive
+                        ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.18))"
+                        : "rgba(255,255,255,0.03)",
+                      color: isActive ? "rgba(245,242,255,0.95)" : "rgba(245,242,255,0.35)",
+                      border: isActive
+                        ? "1px solid rgba(168,85,247,0.45)"
+                        : "1px solid rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div
+            className="mx-auto max-w-[1400px] overflow-hidden rounded-2xl"
+            style={{
+              background: "rgba(8,5,22,0.5)",
+              border: "1px solid rgba(255,255,255,0.04)",
+            }}
+          >
+            <ComparisonTable
+              editions={vm.comparisonEditions}
+              categories={vm.comparisonCategories}
+              billingCycle={vm.billingCycle}
+              onSelectPlan={vm.selectPlan}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

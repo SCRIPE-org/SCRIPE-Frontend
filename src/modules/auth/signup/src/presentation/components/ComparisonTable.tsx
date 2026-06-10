@@ -65,6 +65,7 @@ function getCategoryMeta(key: string) {
 // ─── Value Cell Renderer (Vercel-style: ✓ / — / value) ───────────────────────
 
 function ValueCell({ data, language }: { data: ComparisonCellData | undefined; language: string }) {
+  const { t } = useI18n();
   if (!data) {
     return (
       <td className="px-4 py-4 text-center">
@@ -115,7 +116,7 @@ function ValueCell({ data, language }: { data: ComparisonCellData | undefined; l
       return (
         <td className="px-4 py-4 text-center">
           <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-400">
-            {language === "ar" ? "غير محدود" : "Unlimited"}
+            {t("signup.plan.unlimited") || "Unlimited"}
           </span>
         </td>
       );
@@ -161,7 +162,8 @@ function CategorySection({
   onToggle: () => void;
   colCount: number;
 }) {
-  const { icon: Icon, gradient } = getCategoryMeta(category.key);
+  const { t } = useI18n();
+  const { icon: iconComponent, gradient } = getCategoryMeta(category.key);
   const featureCount = category.features.length;
 
   return (
@@ -181,7 +183,7 @@ function CategorySection({
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
               style={{ background: "rgba(255,255,255,0.05)" }}
             >
-              <Icon className="h-3.5 w-3.5 text-white/50" />
+              {React.createElement(iconComponent, { className: "h-3.5 w-3.5 text-white/50" })}
             </div>
 
             {/* Label */}
@@ -189,7 +191,10 @@ function CategorySection({
 
             {/* Feature count pill */}
             <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[11px] font-medium text-white/35">
-              {featureCount} {featureCount === 1 ? "feature" : "features"}
+              {featureCount}{" "}
+              {featureCount === 1
+                ? t("signup.plan.featureSingle") || "feature"
+                : t("signup.plan.featurePlural") || "features"}
             </span>
 
             {/* Spacer */}
@@ -243,10 +248,8 @@ export function ComparisonTable({
   const { t, language } = useI18n();
   const colCount = editions.length + 1;
 
-  // All categories open by default
-  const [openCats, setOpenCats] = useState<Set<string>>(
-    () => new Set(categories.map((c) => c.key))
-  );
+  // All categories closed by default
+  const [openCats, setOpenCats] = useState<Set<string>>(() => new Set());
 
   const toggleCategory = useCallback((key: string) => {
     setOpenCats((prev) => {
@@ -291,7 +294,10 @@ export function ComparisonTable({
         style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
       >
         <span className="me-1 text-xs font-medium text-white/25">
-          {totalFeatures} features in {categories.length} categories
+          {t("signup.plan.featuresCount", {
+            count: totalFeatures,
+            categoriesCount: categories.length,
+          }) || `${totalFeatures} features in ${categories.length} categories`}
         </span>
         <span className="text-white/10">•</span>
         <button
@@ -299,12 +305,14 @@ export function ComparisonTable({
           onClick={allExpanded ? collapseAll : expandAll}
           className="text-xs font-medium text-white/35 transition-colors hover:text-white/60"
         >
-          {allExpanded ? "Collapse all" : "Expand all"}
+          {allExpanded
+            ? t("signup.plan.collapseAll") || "Collapse all"
+            : t("signup.plan.expandAll") || "Expand all"}
         </button>
         <span className="hidden text-white/10 sm:inline">•</span>
         <div className="hidden flex-wrap gap-1.5 sm:flex">
           {categories.map((cat) => {
-            const { icon: Icon } = getCategoryMeta(cat.key);
+            const { icon: iconComponent } = getCategoryMeta(cat.key);
             const isOpen = openCats.has(cat.key);
             return (
               <button
@@ -317,7 +325,7 @@ export function ComparisonTable({
                     : "bg-white/[0.02] text-white/25 hover:bg-white/[0.05] hover:text-white/40"
                 } `}
               >
-                <Icon className="h-3 w-3" />
+                {React.createElement(iconComponent, { className: "h-3.5 w-3.5" })}
                 {cat.label}
               </button>
             );

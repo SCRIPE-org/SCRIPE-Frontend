@@ -12,15 +12,22 @@ interface AccountStepProps {
   vm: ReturnType<typeof useSignupWizardViewModel>;
 }
 
-const STRENGTH_LABELS = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
 const STRENGTH_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#10b981"];
 
 export function AccountStep({ vm }: AccountStepProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
 
+  const strengthLabels = [
+    t("signup.account.passwordStrength.veryWeak") || "Very Weak",
+    t("signup.account.passwordStrength.weak") || "Weak",
+    t("signup.account.passwordStrength.fair") || "Fair",
+    t("signup.account.passwordStrength.good") || "Good",
+    t("signup.account.passwordStrength.strong") || "Strong",
+  ];
+
   return (
-    <div style={{ animation: "sxScreenIn 0.4s ease-out" }}>
+    <div style={{ animation: "sxScreenIn 0.4s ease-out" }} dir={direction}>
       {/* Header */}
       <div className="mb-6 text-center">
         <h1
@@ -31,10 +38,10 @@ export function AccountStep({ vm }: AccountStepProps) {
             WebkitTextFillColor: "transparent",
           }}
         >
-          Create your workspace
+          {t("signup.createWorkspace") || "Create your workspace"}
         </h1>
         <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
-          Get started with Scripe in under 2 minutes
+          {t("signup.getStarted") || "Get started with Scripe in under 2 minutes"}
         </p>
       </div>
 
@@ -53,12 +60,12 @@ export function AccountStep({ vm }: AccountStepProps) {
             className="text-xs font-medium"
             style={{ color: "rgba(245,242,255,0.62)" }}
           >
-            Full name
+            {t("signup.account.fullName") || "Full name"}
           </Label>
           <Input
             id="signup-fullname"
             type="text"
-            placeholder="John Doe"
+            placeholder={t("signup.account.fullNamePlaceholder") || "John Doe"}
             value={vm.wizardData.fullName}
             onChange={(e) => vm.updateField("fullName", e.target.value)}
             autoComplete="name"
@@ -79,12 +86,12 @@ export function AccountStep({ vm }: AccountStepProps) {
             className="text-xs font-medium"
             style={{ color: "rgba(245,242,255,0.62)" }}
           >
-            Work email
+            {t("signup.account.workEmail") || "Work email"}
           </Label>
           <Input
             id="signup-email"
             type="email"
-            placeholder="you@company.com"
+            placeholder={t("signup.account.emailPlaceholder") || "you@company.com"}
             value={vm.wizardData.email}
             onChange={(e) => vm.updateField("email", e.target.value)}
             autoComplete="email"
@@ -104,13 +111,13 @@ export function AccountStep({ vm }: AccountStepProps) {
             className="text-xs font-medium"
             style={{ color: "rgba(245,242,255,0.62)" }}
           >
-            Password
+            {t("signup.account.password") || "Password"}
           </Label>
           <div className="relative">
             <Input
               id="signup-password"
               type={showPassword ? "text" : "password"}
-              placeholder="Min. 12 characters"
+              placeholder={t("signup.account.passwordPlaceholder") || "Min. 12 characters"}
               value={vm.wizardData.password}
               onChange={(e) => vm.updatePassword(e.target.value)}
               autoComplete="new-password"
@@ -155,7 +162,7 @@ export function AccountStep({ vm }: AccountStepProps) {
                   color: STRENGTH_COLORS[vm.passwordStrength - 1] || "rgba(245,242,255,0.4)",
                 }}
               >
-                {vm.passwordStrength > 0 ? STRENGTH_LABELS[vm.passwordStrength - 1] : ""}
+                {vm.passwordStrength > 0 ? strengthLabels[vm.passwordStrength - 1] : ""}
               </p>
             </div>
           )}
@@ -195,7 +202,7 @@ export function AccountStep({ vm }: AccountStepProps) {
             )}
           </div>
           <span className="text-xs leading-5" style={{ color: "rgba(245,242,255,0.55)" }}>
-            I agree to the{" "}
+            {t("signup.account.acceptTerms") || "I agree to the"}{" "}
             <a
               href="/terms"
               target="_blank"
@@ -204,9 +211,9 @@ export function AccountStep({ vm }: AccountStepProps) {
               style={{ color: "#C4B5FD" }}
               onClick={(e) => e.stopPropagation()}
             >
-              Terms of Service
+              {t("signup.account.termsOfService") || "Terms of Service"}
             </a>{" "}
-            and{" "}
+            {t("signup.account.and") || "and"}{" "}
             <a
               href="/privacy"
               target="_blank"
@@ -215,7 +222,7 @@ export function AccountStep({ vm }: AccountStepProps) {
               style={{ color: "#C4B5FD" }}
               onClick={(e) => e.stopPropagation()}
             >
-              Privacy Policy
+              {t("signup.account.privacyPolicy") || "Privacy Policy"}
             </a>
           </span>
         </label>
@@ -250,7 +257,7 @@ export function AccountStep({ vm }: AccountStepProps) {
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             <>
-              Continue
+              {t("signup.account.continue") || "Continue"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
@@ -258,7 +265,7 @@ export function AccountStep({ vm }: AccountStepProps) {
 
         {/* Login link */}
         <p className="text-center text-xs" style={{ color: "rgba(245,242,255,0.55)" }}>
-          Already have an account?{" "}
+          {t("signup.account.alreadyHaveAccount") || "Already have an account?"}{" "}
           <Button
             variant="link"
             type="button"
@@ -266,7 +273,7 @@ export function AccountStep({ vm }: AccountStepProps) {
             className="h-auto p-0 font-medium underline transition-colors hover:no-underline"
             style={{ color: "#C4B5FD" }}
           >
-            Sign in
+            {t("signup.account.signIn") || "Sign in"}
           </Button>
         </p>
       </form>
