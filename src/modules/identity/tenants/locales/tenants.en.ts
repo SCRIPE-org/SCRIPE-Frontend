@@ -15,7 +15,7 @@ export const en = {
     deactivateConfirmation: "Are you sure you want to deactivate this tenant?",
     activateConfirmation: "Are you sure you want to activate this tenant?",
     title: "Tenants",
-    description: "Manage organizational hierarchy and tenants.",
+    description: "Description",
     hierarchy: "Tenant Hierarchy",
     allTenants: "All Tenants",
     totalTenants: "Total Tenants",

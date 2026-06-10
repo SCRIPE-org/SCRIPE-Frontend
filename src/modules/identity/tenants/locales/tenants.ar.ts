@@ -39,7 +39,7 @@ export const ar = {
     limitedByParent: "محدود بواسطة المستأجر الرئيسي",
     managePermissionsFor: "إدارة الصلاحيات لـ",
     title: "المستأجرون",
-    description: "إدارة التسلسل الهرمي والمستأجرين.",
+    description: "الوصف",
     hierarchy: "هرمية المستأجرين",
     allTenants: "جميع المستأجرين",
     totalTenants: "إجمالي المستأجرين",
