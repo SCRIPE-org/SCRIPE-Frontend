@@ -17,6 +17,9 @@ export const en = {
     redirecting: "Redirecting...",
     welcomeBack: "Welcome back!",
     validationError: "Please fill in all required fields",
+    passwordsDoNotMatch: "Passwords do not match.",
+    passwordsMatch: "Passwords match.",
+    changePassword:"Change Password",
     twoFactor: {
       title: "Two-Factor Authentication",
       enterAuthCode: "Enter the 6-digit code from your authenticator app",
