@@ -107,13 +107,17 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   const enabledSubscriptionTypes = useMemo(() => {
     const edition = cachedEditions.find((e) => e.id === form.editionId);
     if (!edition) {
-      // No edition selected → show all types
+      // No edition selected -> show all types
       return [
         { value: "Lifetime", enabled: true },
         { value: "Monthly", enabled: true },
         { value: "Yearly", enabled: true },
         { value: "Trial", enabled: true },
       ];
+    }
+    // Free editions need no billing selection - subscription is auto-created as Lifetime/$0
+    if (edition.isFree === true) {
+      return [];
     }
     const types: { value: string; enabled: boolean }[] = [];
     if (edition.allowLifetime !== false) types.push({ value: "Lifetime", enabled: true });

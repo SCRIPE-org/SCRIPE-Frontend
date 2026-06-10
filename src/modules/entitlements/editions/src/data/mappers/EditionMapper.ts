@@ -51,6 +51,8 @@ const EditionModelSchema = z.object({
   maxActiveSubscriptions: z.number().int().optional().nullable(),
   isSelfServiceEnabled: z.boolean().optional().nullable(),
   isContactSalesOnly: z.boolean().optional().nullable(),
+  /** Sourced from backend — true when no billing cycles are enabled. */
+  isFree: z.boolean().optional().nullable(),
   createdAt: isoDateString().optional(),
   modifiedAt: isoDateString().optional().nullable(),
 });
@@ -95,6 +97,8 @@ export class EditionMapper {
       // ── Self-Service Controls ──
       isSelfServiceEnabled: validated.isSelfServiceEnabled ?? true,
       isContactSalesOnly: validated.isContactSalesOnly ?? false,
+      // ── Free flag (authoritative from backend) ──
+      isFree: validated.isFree ?? false,
       createdAt: validated.createdAt ?? "",
       modifiedAt: validated.modifiedAt ?? undefined,
     };

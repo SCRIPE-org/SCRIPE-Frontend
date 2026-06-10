@@ -34,6 +34,8 @@ export interface EditionThinModel {
   allowYearly?: boolean;
   allowLifetime?: boolean;
   allowTrial?: boolean;
+  /** True when no billing cycles are enabled \u2014 edition is permanently free. */
+  isFree?: boolean;
 }
 
 // ── Subscription ─────────────────────────────────────────

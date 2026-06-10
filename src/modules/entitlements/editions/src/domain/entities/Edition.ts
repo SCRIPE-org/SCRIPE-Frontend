@@ -74,6 +74,11 @@ export interface EditionData extends BaseEntity {
   // ── Self-Service Controls ──
   isSelfServiceEnabled: boolean;
   isContactSalesOnly: boolean;
+  /**
+   * True when no billing cycles are enabled (AllowMonthly/Yearly/Lifetime/Trial all false).
+   * Sourced directly from the backend API — do NOT compute this on the frontend.
+   */
+  isFree: boolean;
 }
 
 export class Edition {
@@ -184,13 +189,20 @@ export class Edition {
   get isContactSalesOnly(): boolean {
     return this.data.isContactSalesOnly ?? false;
   }
+  /**
+   * True when this edition is permanently free (no billing cycles).
+   * Authoritative value from backend. Use this instead of price-absence heuristics.
+   */
+  get isFree(): boolean {
+    return this.data.isFree ?? false;
+  }
 
   /**
+   * @deprecated Use `isFree` instead. Kept for backward compatibility.
    * Returns true if this edition has no pricing records at all (genuinely free).
-   * Free editions have no price entries (absence = free per backend design).
    */
   get isFreeEdition(): boolean {
-    return this.prices.length === 0 && !this.baseMonthlyPriceUsd;
+    return this.isFree;
   }
 
   /**

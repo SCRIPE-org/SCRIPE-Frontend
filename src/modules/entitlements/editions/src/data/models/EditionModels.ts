@@ -58,6 +58,8 @@ export interface EditionModel {
   // ── Self-Service Controls ──
   isSelfServiceEnabled?: boolean;
   isContactSalesOnly?: boolean;
+  /** True when no billing cycles are enabled — edition is permanently free. */
+  isFree?: boolean;
   createdAt: string;
   modifiedAt?: string;
 }

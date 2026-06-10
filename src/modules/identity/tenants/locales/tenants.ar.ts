@@ -448,6 +448,10 @@ export const ar = {
     restrictPermissions: "تقييد صلاحيات المشرف",
     restrictPermissionsDesc: "تقييد الصلاحيات التي يمكن لمشرفي هذا المستأجر تعيينها للأدوار.",
     allPermissionsAllowed: "السماح بجميع الصلاحيات",
+    freeEditionSelected: "إصدار مجاني — لا حاجة لمعلومات الفوترة",
+    freeEditionDesc:
+      "هذا الإصدار مجاني بشكل دائم. سيتم إنشاء اشتراك مدى الحياة تلقائياً بدون تكلفة. لا يلزم إعداد الدفع.",
+    freeEditionLifetime: "مجاني (مدى الحياة)",
   },
   validation: {
     invalidEmail: "البريد الإلكتروني غير صالح",

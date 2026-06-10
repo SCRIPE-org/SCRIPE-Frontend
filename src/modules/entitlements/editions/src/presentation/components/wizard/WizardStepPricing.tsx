@@ -56,7 +56,9 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
     },
   ].filter((c) => c.enabled);
 
-  const isFreeEdition = (form.tierLevel ?? 0) === 0;
+  // An edition is "free" when no billing cycles are enabled — matches backend IsFree exactly
+  const isFreeEdition =
+    !form.allowMonthly && !form.allowYearly && !form.allowLifetime && !form.allowTrial;
 
   if (isFreeEdition) {
     return (

@@ -40,7 +40,7 @@ interface CreateTenantStep3Props {
 }
 
 export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
-  const isFreeEdition = vm.selectedEdition && (vm.selectedEdition as any).isFree;
+  const isFreeEdition = vm.selectedEdition?.isFree === true;
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
 
   // Server-side search handler for edition GenericSelect
@@ -103,6 +103,24 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
           noResultsText={t("common.noResults") || "No editions found"}
         />
       </div>
+
+      {/* Free Edition Banner — shown when selected edition has no billing cycles */}
+      {vm.form.editionId && isFreeEdition && (
+        <div className="flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10">
+            <ShieldCheck className="h-5 w-5 text-emerald-500" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+              {t("tenant.freeEditionSelected") || "Free Edition — No Billing Required"}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {t("tenant.freeEditionDesc") ||
+                "This edition is permanently free. A lifetime subscription will be created automatically at no cost. No payment configuration is needed."}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Subscription Type & Currency — only shown after edition is selected and has enabled subscription types */}
       {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
@@ -354,7 +372,10 @@ function PermissionPicker({ vm, t }: { vm: CreateTenantVM; t: (key: string) => s
 // ── Inline Summary (co-located, only used here) ─────────────
 
 function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) => string }) {
+  const isFree = vm.selectedEdition?.isFree === true;
+
   const subscriptionLabel = useMemo(() => {
+    if (isFree) return t("tenant.freeEditionLifetime") || "Free (Lifetime)";
     const map: Record<string, string> = {
       Monthly: t("tenant.subscriptionTypes.monthly") || "Monthly",
       Yearly: t("tenant.subscriptionTypes.yearly") || "Yearly",
@@ -362,7 +383,7 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
       Trial: t("tenant.subscriptionTypes.trial") || "Trial",
     };
     return map[vm.form.subscriptionType] || vm.form.subscriptionType || "-";
-  }, [vm.form.subscriptionType, t]);
+  }, [vm.form.subscriptionType, isFree, t]);
 
   const currencyInfo = SUPPORTED_CURRENCIES.find((c) => c.code === vm.form.currency);
   const currencyLabel = currencyInfo
@@ -377,7 +398,9 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
         value={vm.selectedEdition?.name || "-"}
       />
       <SummaryRow label={t("tenant.subscriptionType") || "Billing"} value={subscriptionLabel} />
-      <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />
+      {!isFree && (
+        <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />
+      )}
       {vm.form.promotionId && (
         <SummaryRow
           label={t("tenant.promotion") || "Promotion"}

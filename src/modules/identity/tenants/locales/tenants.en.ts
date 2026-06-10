@@ -435,6 +435,10 @@ export const en = {
     usernameHint: "Leave blank to auto-generate from tenant code.",
     edition: "Edition",
     searchEditions: "Search editions...",
+    freeEditionSelected: "Free Edition — No Billing Required",
+    freeEditionDesc:
+      "This edition is permanently free. A lifetime subscription will be created automatically at no cost. No payment configuration is needed.",
+    freeEditionLifetime: "Free (Lifetime)",
     currency: "Currency",
     skipPayment: "Skip Payment",
     skipPaymentDesc:
