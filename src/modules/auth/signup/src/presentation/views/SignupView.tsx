@@ -76,26 +76,36 @@ export function SignupView() {
 
         {/* Top bar: Logo + Stepper */}
         <header
-          className="sticky top-0 z-40 flex items-center justify-between gap-6 px-6 py-4"
+          className="sticky top-0 z-40 flex items-center justify-between gap-4 px-6 py-4"
           style={{
             background: "rgba(6,6,14,0.85)",
             backdropFilter: "blur(20px)",
             borderBottom: "1px solid rgba(255,255,255,0.04)",
           }}
         >
-          <div className="flex items-center gap-6">
-            <img src="/app-logo.png" alt={BRAND.name} className="h-8 w-auto" />
-            {showStepper && <SignupStepper currentStep={vm.step} steps={stepperSteps} />}
+          <div className="flex-1 flex items-center justify-start">
+            <img src="/app-logo.png" alt={BRAND.name} className="h-11 w-auto" />
           </div>
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={vm.goToLogin}
-            className="text-xs font-medium transition-colors hover:text-white"
-            style={{ color: "rgba(245,242,255,0.6)" }}
-          >
-            {t("auth.backToLogin") || "Back to login"}
-          </Button>
+          {showStepper && (
+            <div className="flex items-center justify-center">
+              <SignupStepper
+                currentStep={vm.step}
+                steps={stepperSteps}
+                className="flex items-center justify-center gap-1 sm:gap-2"
+              />
+            </div>
+          )}
+          <div className="flex-1 flex items-center justify-end">
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={vm.goToLogin}
+              className="text-xs font-medium transition-colors hover:text-white"
+              style={{ color: "rgba(245,242,255,0.6)" }}
+            >
+              {t("auth.backToLogin") || "Back to login"}
+            </Button>
+          </div>
         </header>
 
         {/* Full-page plan content */}

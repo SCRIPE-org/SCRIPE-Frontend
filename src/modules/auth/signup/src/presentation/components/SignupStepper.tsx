@@ -5,6 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 interface SignupStepperProps {
   currentStep: string;
   steps: { key: string; label: string }[];
+  className?: string;
 }
 
 /**
@@ -14,13 +15,13 @@ interface SignupStepperProps {
  * Per responsive.md: labels collapse to numbers on xs.
  * Per design.md: brand violet gradient, token colors only.
  */
-export function SignupStepper({ currentStep, steps }: SignupStepperProps) {
+export function SignupStepper({ currentStep, steps, className }: SignupStepperProps) {
   const { t, direction } = useI18n();
   const currentIndex = steps.findIndex((s) => s.key === currentStep);
 
   return (
     <div
-      className="mb-6 flex items-center justify-center gap-1 sm:gap-2"
+      className={className ?? "mb-6 flex items-center justify-center gap-1 sm:gap-2"}
       dir={direction}
       role="navigation"
       aria-label={t("signup.stepper.label") || "Signup progress"}
