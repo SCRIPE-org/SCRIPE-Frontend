@@ -1,438 +1,232 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+// ─── Get Started: Overview ──────────────────────────────────────
+const sections: DocSection[] = [
+  {
+    type: "paragraph",
+    contentKey: "getStarted.overview.intro",
+  },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
+      {
+        icon: "layers",
+        titleKey: "getStarted.overview.featureModular",
+        descriptionKey: "getStarted.overview.featureModularDesc",
+      },
+      {
+        icon: "zap",
+        titleKey: "getStarted.overview.featureCQRS",
+        descriptionKey: "getStarted.overview.featureCQRSDesc",
+      },
+      {
+        icon: "shield",
+        titleKey: "getStarted.overview.featureSecurity",
+        descriptionKey: "getStarted.overview.featureSecurityDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "getStarted.overview.featureMultiTenant",
+        descriptionKey: "getStarted.overview.featureMultiTenantDesc",
+      },
+      {
+        icon: "database",
+        titleKey: "getStarted.overview.featureMultiDB",
+        descriptionKey: "getStarted.overview.featureMultiDBDesc",
+      },
+      {
+        icon: "rocket",
+        titleKey: "getStarted.overview.featureDeployment",
+        descriptionKey: "getStarted.overview.featureDeploymentDesc",
+      },
+      {
+        icon: "key",
+        titleKey: "getStarted.overview.featureSSO",
+        descriptionKey: "getStarted.overview.featureSSODesc",
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.overview.architectureTitle",
+    id: "architecture-topology",
+  },
+  {
+    type: "paragraph",
+    contentKey: "getStarted.overview.architectureIntro",
+  },
+  {
+    type: "flowchart",
+    title: "System Architecture",
+    direction: "vertical",
+    nodes: [
+      { id: "client", label: "Client (Next.js 16)", type: "primary" },
+      { id: "gateway", label: "API Gateway (YARP)", type: "info" },
+      { id: "host", label: "Host Layer — Program.cs", type: "default" },
+      { id: "middleware", label: "10 Middleware Pipeline", type: "warning" },
+      { id: "controllers", label: "18 REST Controllers", type: "default" },
+      { id: "cqrs", label: "AstraFlow mediator CQRS + 3 Behaviors", type: "success" },
+      { id: "domain", label: "Domain Layer — 15 Entities", type: "primary" },
+      { id: "infra", label: "Infrastructure — Multi-DB + Cache", type: "danger" },
+    ],
+    connections: [
+      { from: "client", to: "gateway" },
+      { from: "gateway", to: "host" },
+      { from: "host", to: "middleware" },
+      { from: "middleware", to: "controllers" },
+      { from: "controllers", to: "cqrs" },
+      { from: "cqrs", to: "domain" },
+      { from: "domain", to: "infra" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.overview.deploymentModesTitle",
+    id: "deployment-modes",
+  },
+  {
+    type: "paragraph",
+    contentKey: "getStarted.overview.deploymentModesIntro",
+  },
+  {
+    type: "table",
+    headers: ["Environment Variable", "Mode", "What Loads", "Use Case"],
+    rows: [
+      ["(empty / unset)", "Monolith", "All modules register", "Development, small deployments"],
+      ["MODULE_NAME=Gateway", "Gateway", "YARP proxy only, no modules", "Microservice router"],
+      ["MODULE_NAME=Identity", "Microservice", "Identity module only", "Independent scaling"],
+      ["MODULE_NAME=Inventory", "Microservice", "Inventory module only", "Independent scaling"],
+      ["MODULE_NAME=Orders", "Microservice", "Orders module only", "Independent scaling"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Program.cs — Deployment Detection",
+    code: `var moduleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "";
+var isMonolith = string.IsNullOrEmpty(moduleName);
+var isGateway = moduleName.Equals("Gateway", StringComparison.OrdinalIgnoreCase);
+
+// Gate each module behind a simple check:
+if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCase))
+{
+    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));
+    builder.Services.AddIdentityModule(builder.Configuration);
+}`,
+    highlightLines: [1, 2, 3],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.overview.techStackTitle",
+    id: "tech-stack",
+  },
+  {
+    type: "table",
+    headers: ["Layer", "Technology", "Version", "Purpose"],
+    rows: [
+      ["Backend Framework", ".NET", "10", "Core runtime and SDK"],
+      ["API Style", "ASP.NET Core Web API", "10", "REST controllers with Swagger"],
+      ["CQRS", "AstraFlow mediator", "12+", "Command/Query separation"],
+      ["Validation", "FluentValidation", "11+", "Request validation pipeline"],
+      ["ORM", "Entity Framework Core", "10", "Multi-database O/R mapping"],
+      ["Caching", "IMemoryCache + Redis", "—", "L1/L2 cache layers"],
+      ["Real-time", "SignalR", "10", "WebSocket hubs for live data"],
+      ["Background Jobs", "Hangfire", "1.8+", "Recurring and fire-and-forget jobs"],
+      ["Frontend Framework", "Next.js", "16 (App Router)", "Server/Client hybrid rendering"],
+      ["UI Library", "Shadcn/ui + Radix", "—", "Accessible component primitives"],
+      ["State Management", "TanStack Query + Zustand", "v5 / v5", "Server state + client state"],
+      ["Styling", "Tailwind CSS + CSS Modules", "4", "Utility-first with scoped styles"],
+      ["Localization", "Custom LanguageProvider", "—", "7-language RTL/LTR support"],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.overview.serviceRegistrationTitle",
+    id: "service-registration",
+  },
+  {
+    type: "paragraph",
+    contentKey: "getStarted.overview.serviceRegistrationIntro",
+  },
+  {
+    type: "table",
+    headers: ["Order", "Registration", "Size", "Purpose"],
+    rows: [
+      [
+        "1",
+        "AddInfrastructureServices",
+        "11KB",
+        "Serilog, API versioning, controllers, JSON options",
+      ],
+      ["2", "AddCorsConfiguration", "5KB", "Dev vs Production CORS policies"],
+      ["3", "AddRateLimitingConfiguration", "13KB", "DDoS prevention, per-IP, login rate limits"],
+      ["4", "AddSwaggerConfiguration", "8KB", "OpenAPI documentation"],
+      ["5", "AddUISObservability", "8KB", "OpenTelemetry tracing + metrics"],
+      ["6", "AddCoreInfrastructure", "11KB", "ICurrentUser, Audit, Cache, DI container"],
+      ["7", "AddBlobStorage", "2KB", "Local / Azure / S3 / MinIO storage"],
+      ["8", "AddIdentityModule", "Module", "Identity-specific services"],
+      ["9", "AddCoreApplication", "2KB", "AstraFlow mediator + Behaviors + Domain Events"],
+      ["10", "AddHealthCheckConfiguration", "2KB", "Health endpoints"],
+      ["11", "AddBackgroundJobsConfiguration", "9KB", "Hangfire + recurring jobs"],
+      ["12", "AddSignalRConfiguration", "2KB", "Real-time WebSocket hubs"],
+      ["13", "AddGatewayConfiguration", "4KB", "YARP reverse proxy (Gateway mode only)"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "getStarted.overview.registrationOrderWarning",
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "getStarted.overview.environmentProfilesTitle",
+    id: "environment-profiles",
+  },
+  {
+    type: "table",
+    headers: ["Environment", "Config File", "Features"],
+    rows: [
+      [
+        "Development",
+        "appsettings.Development.json",
+        "Swagger enabled, verbose logging, UserSecrets",
+      ],
+      ["Production", "appsettings.json", "HSTS, minimal logging, no Swagger"],
+      ["Oracle", "appsettings.Oracle.example.json", "Oracle provider configuration"],
+      ["PostgreSQL", "appsettings.PostgreSQL.example.json", "PostgreSQL provider configuration"],
+    ],
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Secrets Provider Chain (highest wins)",
+    code: `Priority (highest wins):
+  1. UserSecrets          (Development only)
+  2. Environment Variables (prefix: UIS_)
+  3. appsettings.Secrets.json (optional)
+  4. appsettings.json         (base)`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "getStarted.overview.envVarPrefixTip",
+  },
+];
 
 registerPage({
   slug: "get-started/overview",
   titleKey: "getStarted.overview.title",
+  descriptionKey: "getStarted.overview.description",
   category: "get-started",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_3_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "getStarted.overview.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "getStarted.overview.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_17_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    client([\"Client (Next.js 16)\"])\n    gateway([\"API Gateway (YARP)\"])\n    host[\"Host Layer — Program.cs\"]\n    middleware{{\"29 Middleware Pipeline\"}}\n    controllers[\"18 REST Controllers\"]\n    cqrs([\"AstraFlow mediator CQRS + 6 Behaviors\"])\n    domain([\"Domain Layer — 15 Entities\"])\n    infra[\"Infrastructure — Multi-DB + Cache\"]\n    client --> gateway\n    gateway --> host\n    host --> middleware\n    middleware --> controllers\n    controllers --> cqrs\n    cqrs --> domain\n    domain --> infra",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "getStarted.overview.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_20_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "getStarted.overview.section_21_hdr_0",
-      "getStarted.overview.section_21_hdr_1",
-      "getStarted.overview.section_21_hdr_2",
-      "getStarted.overview.section_21_hdr_3"
-    ],
-    "rows": [
-      [
-        "getStarted.overview.section_21_cell_0_0",
-        "getStarted.overview.section_21_cell_0_1",
-        "getStarted.overview.section_21_cell_0_2",
-        "getStarted.overview.section_21_cell_0_3"
-      ],
-      [
-        "getStarted.overview.section_21_cell_1_0",
-        "getStarted.overview.section_21_cell_1_1",
-        "getStarted.overview.section_21_cell_1_2",
-        "getStarted.overview.section_21_cell_1_3"
-      ],
-      [
-        "getStarted.overview.section_21_cell_2_0",
-        "getStarted.overview.section_21_cell_2_1",
-        "getStarted.overview.section_21_cell_2_2",
-        "getStarted.overview.section_21_cell_2_3"
-      ],
-      [
-        "getStarted.overview.section_21_cell_3_0",
-        "getStarted.overview.section_21_cell_3_1",
-        "getStarted.overview.section_21_cell_3_2",
-        "getStarted.overview.section_21_cell_3_3"
-      ],
-      [
-        "getStarted.overview.section_21_cell_4_0",
-        "getStarted.overview.section_21_cell_4_1",
-        "getStarted.overview.section_21_cell_4_2",
-        "getStarted.overview.section_21_cell_4_3"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_22_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "var moduleName = Environment.GetEnvironmentVariable(\"MODULE_NAME\") ?? \"\";\nvar isMonolith = string.IsNullOrEmpty(moduleName);\nvar isGateway = moduleName.Equals(\"Gateway\", StringComparison.OrdinalIgnoreCase);\n\n// Gate each module behind a simple check:\nif (isMonolith || moduleName.Equals(\"Identity\", StringComparison.OrdinalIgnoreCase))\n{\n    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));\n    builder.Services.AddIdentityModule(builder.Configuration);\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "getStarted.overview.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "getStarted.overview.section_25_hdr_0",
-      "getStarted.overview.section_25_hdr_1",
-      "getStarted.overview.section_25_hdr_2",
-      "getStarted.overview.section_25_hdr_3"
-    ],
-    "rows": [
-      [
-        "getStarted.overview.section_25_cell_0_0",
-        "getStarted.overview.section_25_cell_0_1",
-        "getStarted.overview.section_25_cell_0_2",
-        "getStarted.overview.section_25_cell_0_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_1_0",
-        "getStarted.overview.section_25_cell_1_1",
-        "getStarted.overview.section_25_cell_1_2",
-        "getStarted.overview.section_25_cell_1_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_2_0",
-        "getStarted.overview.section_25_cell_2_1",
-        "getStarted.overview.section_25_cell_2_2",
-        "getStarted.overview.section_25_cell_2_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_3_0",
-        "getStarted.overview.section_25_cell_3_1",
-        "getStarted.overview.section_25_cell_3_2",
-        "getStarted.overview.section_25_cell_3_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_4_0",
-        "getStarted.overview.section_25_cell_4_1",
-        "getStarted.overview.section_25_cell_4_2",
-        "getStarted.overview.section_25_cell_4_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_5_0",
-        "getStarted.overview.section_25_cell_5_1",
-        "getStarted.overview.section_25_cell_5_2",
-        "getStarted.overview.section_25_cell_5_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_6_0",
-        "getStarted.overview.section_25_cell_6_1",
-        "getStarted.overview.section_25_cell_6_2",
-        "getStarted.overview.section_25_cell_6_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_7_0",
-        "getStarted.overview.section_25_cell_7_1",
-        "getStarted.overview.section_25_cell_7_2",
-        "getStarted.overview.section_25_cell_7_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_8_0",
-        "getStarted.overview.section_25_cell_8_1",
-        "getStarted.overview.section_25_cell_8_2",
-        "getStarted.overview.section_25_cell_8_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_9_0",
-        "getStarted.overview.section_25_cell_9_1",
-        "getStarted.overview.section_25_cell_9_2",
-        "getStarted.overview.section_25_cell_9_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_10_0",
-        "getStarted.overview.section_25_cell_10_1",
-        "getStarted.overview.section_25_cell_10_2",
-        "getStarted.overview.section_25_cell_10_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_11_0",
-        "getStarted.overview.section_25_cell_11_1",
-        "getStarted.overview.section_25_cell_11_2",
-        "getStarted.overview.section_25_cell_11_3"
-      ],
-      [
-        "getStarted.overview.section_25_cell_12_0",
-        "getStarted.overview.section_25_cell_12_1",
-        "getStarted.overview.section_25_cell_12_2",
-        "getStarted.overview.section_25_cell_12_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "getStarted.overview.section_26_title",
-    "id": "sec_26"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_27_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "getStarted.overview.section_28_hdr_0",
-      "getStarted.overview.section_28_hdr_1",
-      "getStarted.overview.section_28_hdr_2",
-      "getStarted.overview.section_28_hdr_3"
-    ],
-    "rows": [
-      [
-        "getStarted.overview.section_28_cell_0_0",
-        "getStarted.overview.section_28_cell_0_1",
-        "getStarted.overview.section_28_cell_0_2",
-        "getStarted.overview.section_28_cell_0_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_1_0",
-        "getStarted.overview.section_28_cell_1_1",
-        "getStarted.overview.section_28_cell_1_2",
-        "getStarted.overview.section_28_cell_1_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_2_0",
-        "getStarted.overview.section_28_cell_2_1",
-        "getStarted.overview.section_28_cell_2_2",
-        "getStarted.overview.section_28_cell_2_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_3_0",
-        "getStarted.overview.section_28_cell_3_1",
-        "getStarted.overview.section_28_cell_3_2",
-        "getStarted.overview.section_28_cell_3_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_4_0",
-        "getStarted.overview.section_28_cell_4_1",
-        "getStarted.overview.section_28_cell_4_2",
-        "getStarted.overview.section_28_cell_4_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_5_0",
-        "getStarted.overview.section_28_cell_5_1",
-        "getStarted.overview.section_28_cell_5_2",
-        "getStarted.overview.section_28_cell_5_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_6_0",
-        "getStarted.overview.section_28_cell_6_1",
-        "getStarted.overview.section_28_cell_6_2",
-        "getStarted.overview.section_28_cell_6_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_7_0",
-        "getStarted.overview.section_28_cell_7_1",
-        "getStarted.overview.section_28_cell_7_2",
-        "getStarted.overview.section_28_cell_7_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_8_0",
-        "getStarted.overview.section_28_cell_8_1",
-        "getStarted.overview.section_28_cell_8_2",
-        "getStarted.overview.section_28_cell_8_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_9_0",
-        "getStarted.overview.section_28_cell_9_1",
-        "getStarted.overview.section_28_cell_9_2",
-        "getStarted.overview.section_28_cell_9_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_10_0",
-        "getStarted.overview.section_28_cell_10_1",
-        "getStarted.overview.section_28_cell_10_2",
-        "getStarted.overview.section_28_cell_10_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_11_0",
-        "getStarted.overview.section_28_cell_11_1",
-        "getStarted.overview.section_28_cell_11_2",
-        "getStarted.overview.section_28_cell_11_3"
-      ],
-      [
-        "getStarted.overview.section_28_cell_12_0",
-        "getStarted.overview.section_28_cell_12_1",
-        "getStarted.overview.section_28_cell_12_2",
-        "getStarted.overview.section_28_cell_12_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "getStarted.overview.section_29_title",
-    "contentKey": "getStarted.overview.section_29_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "getStarted.overview.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "getStarted.overview.section_31_hdr_0",
-      "getStarted.overview.section_31_hdr_1",
-      "getStarted.overview.section_31_hdr_2"
-    ],
-    "rows": [
-      [
-        "getStarted.overview.section_31_cell_0_0",
-        "getStarted.overview.section_31_cell_0_1",
-        "getStarted.overview.section_31_cell_0_2"
-      ],
-      [
-        "getStarted.overview.section_31_cell_1_0",
-        "getStarted.overview.section_31_cell_1_1",
-        "getStarted.overview.section_31_cell_1_2"
-      ],
-      [
-        "getStarted.overview.section_31_cell_2_0",
-        "getStarted.overview.section_31_cell_2_1",
-        "getStarted.overview.section_31_cell_2_2"
-      ],
-      [
-        "getStarted.overview.section_31_cell_3_0",
-        "getStarted.overview.section_31_cell_3_1",
-        "getStarted.overview.section_31_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "getStarted.overview.section_32_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "Priority (highest wins):\n  1. UserSecrets          (Development only)\n  2. Environment Variables (prefix: SCRIPE_)\n  3. appsettings.Secrets.json (optional)\n  4. appsettings.json         (base)",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "getStarted.overview.section_34_title",
-    "contentKey": "getStarted.overview.section_34_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "getStarted.overview.section_35_title",
-    "id": "sec_35"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "getStarted.overview.section_36_item_0",
-      "getStarted.overview.section_36_item_1",
-      "getStarted.overview.section_36_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "get-started/prerequisites",
-  "get-started/quick-start",
-  "architecture/overview"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["get-started/prerequisites", "get-started/quick-start", "architecture/overview"],
+  lastUpdated: "2026-02-19",
 });

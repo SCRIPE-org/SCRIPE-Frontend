@@ -1,282 +1,289 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  // ─── Intro ────────────────────────────────────────────────
+  { type: "paragraph", contentKey: "modules.compliance.dsr.intro" },
+  {
+    type: "info",
+    variant: "note",
+    titleKey: "modules.compliance.dsr.infoTitle",
+    contentKey: "modules.compliance.dsr.infoContent",
+  },
+
+  // ─── Request Types ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.typesTitle",
+    id: "request-types",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.typesIntro" },
+  {
+    type: "table",
+    headers: [
+      "modules.compliance.dsr.typesType",
+      "modules.compliance.dsr.typesDesc",
+      "modules.compliance.dsr.typesGdpr",
+    ],
+    rows: [
+      ["Access", "modules.compliance.dsr.typesAccessDesc", "Article 15"],
+      ["Export", "modules.compliance.dsr.typesExportDesc", "Article 20"],
+      ["Erasure", "modules.compliance.dsr.typesErasureDesc", "Article 17"],
+      ["Rectification", "modules.compliance.dsr.typesRectificationDesc", "Article 16"],
+      ["Restriction", "modules.compliance.dsr.typesRestrictionDesc", "Article 18"],
+    ],
+  },
+
+  // ─── DSR Lifecycle ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.lifecycleTitle",
+    id: "dsr-lifecycle",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.lifecycleIntro" },
+  {
+    type: "flowchart",
+    titleKey: "modules.compliance.dsr.lifecycleFlowTitle",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "create",
+        labelKey: "modules.compliance.dsr.nodeSubmit",
+        type: "info",
+        descriptionKey: "modules.compliance.dsr.descSubmit",
+      },
+      {
+        id: "pending",
+        labelKey: "modules.compliance.dsr.nodePending",
+        type: "primary",
+        descriptionKey: "modules.compliance.dsr.descPending",
+      },
+      {
+        id: "processing",
+        labelKey: "modules.compliance.dsr.nodeProcessing",
+        type: "warning",
+        descriptionKey: "modules.compliance.dsr.descProcessing",
+      },
+      {
+        id: "approval",
+        labelKey: "modules.compliance.dsr.nodeApproval",
+        type: "default",
+        descriptionKey: "modules.compliance.dsr.descApproval",
+      },
+      {
+        id: "completed",
+        labelKey: "modules.compliance.dsr.nodeCompleted",
+        type: "success",
+        descriptionKey: "modules.compliance.dsr.descCompleted",
+      },
+      {
+        id: "rejected",
+        labelKey: "modules.compliance.dsr.nodeRejected",
+        type: "danger",
+        descriptionKey: "modules.compliance.dsr.descRejected",
+      },
+    ],
+    connections: [
+      { from: "create", to: "pending", labelKey: "modules.compliance.dsr.conn1" },
+      { from: "pending", to: "processing", labelKey: "modules.compliance.dsr.conn2" },
+      { from: "processing", to: "completed", labelKey: "modules.compliance.dsr.conn3" },
+      { from: "processing", to: "approval", labelKey: "modules.compliance.dsr.conn4" },
+      { from: "approval", to: "completed", labelKey: "modules.compliance.dsr.conn5" },
+      { from: "approval", to: "rejected", labelKey: "modules.compliance.dsr.conn6" },
+    ],
+  },
+
+  // ─── SLA Tracking ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.slaTitle",
+    id: "sla-tracking",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.slaIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    titleKey: "modules.compliance.dsr.slaWarningTitle",
+    contentKey: "modules.compliance.dsr.slaWarningContent",
+  },
+
+  // ─── Entities Reference ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.entitiesTitle",
+    id: "entities",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.entitiesIntro" },
+  {
+    type: "table",
+    headers: [
+      "modules.compliance.dsr.field",
+      "modules.compliance.dsr.type",
+      "modules.compliance.dsr.description",
+    ],
+    rows: [
+      ["Id", "Guid", "modules.compliance.dsr.fId"],
+      ["TenantId", "Guid", "modules.compliance.dsr.fTenantId"],
+      ["SubjectEmail", "String", "modules.compliance.dsr.fSubjectEmail"],
+      ["RequestType", "Enum", "modules.compliance.dsr.fRequestType"],
+      ["Status", "Enum", "modules.compliance.dsr.fStatus"],
+      ["Deadline", "DateTime", "modules.compliance.dsr.fDeadline"],
+      ["ErasureConfirmed", "Boolean", "modules.compliance.dsr.fErasureConfirmed"],
+      ["ExportFileUrl", "String", "modules.compliance.dsr.fExportFileUrl"],
+      ["AssignedTo", "Guid?", "modules.compliance.dsr.fAssignedTo"],
+    ],
+  },
+
+  // ─── Command Handlers ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.handlersTitle",
+    id: "command-handlers",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.handlersIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SubmitDsrCommandHandler.cs",
+    highlightLines: [9, 13, 20],
+    code: `public class SubmitDsrCommandHandler : ICommandHandler<SubmitDsrCommand, Guid>
+{
+    public async Task<Result<Guid>> Handle(SubmitDsrCommand request, CancellationToken ct)
+    {
+        // 1. Calculate SLA deadline based on regulation profile
+        var regulation = await _regulationRepo.GetByCodeAsync(request.RegulationCode, ct);
+        var deadline = DateTime.UtcNow.AddDays(regulation.ResponseSlaDays);
+        
+        // 2. Create the entity
+        var dsr = new DataSubjectRequest
+        {
+            TenantId = _tenantContext.TenantId,
+            SubjectEmail = request.SubjectEmail,
+            RequestType = request.RequestType,
+            RegulationCode = request.RegulationCode,
+            Status = DsrStatus.Pending,
+            Deadline = deadline
+        };
+        
+        await _repository.AddAsync(dsr, ct);
+        await _unitOfWork.SaveChangesAsync(ct);
+        
+        // 3. Domain event triggers webhook
+        dsr.AddDomainEvent(new DsrSubmittedEvent(dsr.Id));
+        
+        return Result<Guid>.Success(dsr.Id);
+    }
+}`,
+  },
+
+  // ─── Webhooks ─────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.webhooksTitle",
+    id: "webhooks",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.webhooksIntro" },
+  {
+    type: "info",
+    variant: "tip",
+    titleKey: "modules.compliance.dsr.webhooksSuccessTitle",
+    contentKey: "modules.compliance.dsr.webhooksSuccessContent",
+  },
+
+  // ─── API Endpoints ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.endpointsTitle",
+    id: "endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr",
+        descriptionKey: "modules.compliance.dsr.epSubmit",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.create",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/dsr",
+        descriptionKey: "modules.compliance.dsr.epList",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/dsr/{id}",
+        descriptionKey: "modules.compliance.dsr.epGet",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr/{id}/review",
+        descriptionKey: "modules.compliance.dsr.epReview",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.review",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr/{id}/assign",
+        descriptionKey: "modules.compliance.dsr.epAssign",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.manage",
+      },
+    ],
+  },
+
+  // ─── Quick Start ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.quickStartTitle",
+    id: "quick-start",
+  },
+  {
+    type: "step-guide",
+    steps: [
+      {
+        titleKey: "modules.compliance.dsr.step1Title",
+        contentKey: "modules.compliance.dsr.step1Content",
+      },
+      {
+        titleKey: "modules.compliance.dsr.step2Title",
+        contentKey: "modules.compliance.dsr.step2Content",
+        code: `POST /api/v1/compliance/dsr
+{
+  "requestType": "Export",
+  "regulationCode": "GDPR",
+  "subjectEmail": "user@example.com"
+}`,
+        codeLanguage: "json",
+      },
+      {
+        titleKey: "modules.compliance.dsr.step3Title",
+        contentKey: "modules.compliance.dsr.step3Content",
+      },
+    ],
+  },
+];
 
 registerPage({
   slug: "modules/compliance-dsr",
-  titleKey: "modules.compliance..dsr.title",
+  titleKey: "modules.compliance.dsr.title",
+  descriptionKey: "modules.compliance.dsr.description",
   category: "modules",
   order: 2,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.compliance..dsr.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.compliance..dsr.section_1_content"
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "modules.compliance..dsr.section_2_title",
-    "contentKey": "modules.compliance..dsr.section_2_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_3_title",
-    "id": "sec_3"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.compliance..dsr.section_4_content"
-  },
-  {
-    "type": "table",
-    "headers": [],
-    "rows": [
-      [
-        "modules.compliance..dsr.section_5_cell_0_0",
-        "modules.compliance..dsr.section_5_cell_0_1",
-        "modules.compliance..dsr.section_5_cell_0_2"
-      ],
-      [
-        "modules.compliance..dsr.section_5_cell_1_0",
-        "modules.compliance..dsr.section_5_cell_1_1",
-        "modules.compliance..dsr.section_5_cell_1_2"
-      ],
-      [
-        "modules.compliance..dsr.section_5_cell_2_0",
-        "modules.compliance..dsr.section_5_cell_2_1",
-        "modules.compliance..dsr.section_5_cell_2_2"
-      ],
-      [
-        "modules.compliance..dsr.section_5_cell_3_0",
-        "modules.compliance..dsr.section_5_cell_3_1",
-        "modules.compliance..dsr.section_5_cell_3_2"
-      ],
-      [
-        "modules.compliance..dsr.section_5_cell_4_0",
-        "modules.compliance..dsr.section_5_cell_4_1",
-        "modules.compliance..dsr.section_5_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.compliance..dsr.section_7_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    create([\"Submit Request\"])\n    %% create: Subject requests Export, Erasure, or Rectification\n    pending([\"Status: Pending\"])\n    %% pending: Request is logged, SLA deadline calculated\n    processing{{\"Status: Processing\"}}\n    %% processing: DsrExecutionJob begins processing modules via ISuspendableModule\n    approval[\"Wait For Admin\"]\n    %% approval: Nuclear actions (Erasure) require manual admin confirmation\n    completed([\"Status: Completed\"])\n    %% completed: Export generated or data erased; SLA fulfilled\n    rejected[\"Status: Rejected\"]\n    %% rejected: Request denied by admin with resolution notes\n    create -->|\"initiates\"| pending\n    pending -->|\"background job picks up\"| processing\n    processing -->|\"if auto-processed (Export)\"| completed\n    processing -->|\"if nuclear (Erasure)\"| approval\n    approval -->|\"admin confirms\"| completed\n    approval -->|\"admin rejects\"| rejected",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "modules.compliance..dsr.section_10_title",
-    "contentKey": "modules.compliance..dsr.section_10_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.compliance..dsr.section_12_hdr_0"
-    ],
-    "rows": [
-      [
-        "modules.compliance..dsr.section_12_cell_0_0",
-        "modules.compliance..dsr.section_12_cell_0_1",
-        "modules.compliance..dsr.section_12_cell_0_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_1_0",
-        "modules.compliance..dsr.section_12_cell_1_1",
-        "modules.compliance..dsr.section_12_cell_1_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_2_0",
-        "modules.compliance..dsr.section_12_cell_2_1",
-        "modules.compliance..dsr.section_12_cell_2_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_3_0",
-        "modules.compliance..dsr.section_12_cell_3_1",
-        "modules.compliance..dsr.section_12_cell_3_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_4_0",
-        "modules.compliance..dsr.section_12_cell_4_1",
-        "modules.compliance..dsr.section_12_cell_4_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_5_0",
-        "modules.compliance..dsr.section_12_cell_5_1",
-        "modules.compliance..dsr.section_12_cell_5_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_6_0",
-        "modules.compliance..dsr.section_12_cell_6_1",
-        "modules.compliance..dsr.section_12_cell_6_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_7_0",
-        "modules.compliance..dsr.section_12_cell_7_1",
-        "modules.compliance..dsr.section_12_cell_7_2"
-      ],
-      [
-        "modules.compliance..dsr.section_12_cell_8_0",
-        "modules.compliance..dsr.section_12_cell_8_1",
-        "modules.compliance..dsr.section_12_cell_8_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.compliance..dsr.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class SubmitDsrCommandHandler : ICommandHandler<SubmitDsrCommand, Guid>\n{\n    public async Task<Result<Guid>> Handle(SubmitDsrCommand request, CancellationToken ct)\n    {\n        // 1. Calculate SLA deadline based on regulation profile\n        var regulation = await _regulationRepo.GetByCodeAsync(request.RegulationCode, ct);\n        var deadline = DateTime.UtcNow.AddDays(regulation.ResponseSlaDays);\n        \n        // 2. Create the entity\n        var dsr = new DataSubjectRequest\n        {\n            TenantId = _tenantContext.TenantId,\n            SubjectEmail = request.SubjectEmail,\n            RequestType = request.RequestType,\n            RegulationCode = request.RegulationCode,\n            Status = DsrStatus.Pending,\n            Deadline = deadline\n        };\n        \n        await _repository.AddAsync(dsr, ct);\n        await _unitOfWork.SaveChangesAsync(ct);\n        \n        // 3. Domain event triggers webhook\n        dsr.AddDomainEvent(new DsrSubmittedEvent(dsr.Id));\n        \n        return Result<Guid>.Success(dsr.Id);\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "modules.compliance..dsr.section_17_title",
-    "contentKey": "modules.compliance..dsr.section_17_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.compliance..dsr.section_19_hdr_0",
-      "modules.compliance..dsr.section_19_hdr_1",
-      "modules.compliance..dsr.section_19_hdr_2",
-      "modules.compliance..dsr.section_19_hdr_3",
-      "modules.compliance..dsr.section_19_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.compliance..dsr.section_19_cell_0_0",
-        "modules.compliance..dsr.section_19_cell_0_1",
-        "modules.compliance..dsr.section_19_cell_0_2",
-        "modules.compliance..dsr.section_19_cell_0_3",
-        "modules.compliance..dsr.section_19_cell_0_4"
-      ],
-      [
-        "modules.compliance..dsr.section_19_cell_1_0",
-        "modules.compliance..dsr.section_19_cell_1_1",
-        "modules.compliance..dsr.section_19_cell_1_2",
-        "modules.compliance..dsr.section_19_cell_1_3",
-        "modules.compliance..dsr.section_19_cell_1_4"
-      ],
-      [
-        "modules.compliance..dsr.section_19_cell_2_0",
-        "modules.compliance..dsr.section_19_cell_2_1",
-        "modules.compliance..dsr.section_19_cell_2_2",
-        "modules.compliance..dsr.section_19_cell_2_3",
-        "modules.compliance..dsr.section_19_cell_2_4"
-      ],
-      [
-        "modules.compliance..dsr.section_19_cell_3_0",
-        "modules.compliance..dsr.section_19_cell_3_1",
-        "modules.compliance..dsr.section_19_cell_3_2",
-        "modules.compliance..dsr.section_19_cell_3_3",
-        "modules.compliance..dsr.section_19_cell_3_4"
-      ],
-      [
-        "modules.compliance..dsr.section_19_cell_4_0",
-        "modules.compliance..dsr.section_19_cell_4_1",
-        "modules.compliance..dsr.section_19_cell_4_2",
-        "modules.compliance..dsr.section_19_cell_4_3",
-        "modules.compliance..dsr.section_19_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.compliance..dsr.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.compliance..dsr.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "POST /api/v1/compliance/dsr\n{\n  \"requestType\": \"Export\",\n  \"regulationCode\": \"GDPR\",\n  \"subjectEmail\": \"user@example.com\"\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.compliance..dsr.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.compliance..dsr.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.compliance..dsr.section_26_item_0",
-      "modules.compliance..dsr.section_26_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "modules/compliance-overview",
-  "infrastructure/background-jobs"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
+  lastUpdated: "2026-05-03",
 });

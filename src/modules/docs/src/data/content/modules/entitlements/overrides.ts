@@ -1,370 +1,381 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.intro",
+  },
+
+  // ─── Override Entity ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.entityTitle",
+    id: "override-entity",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.entityIntro",
+  },
+  {
+    type: "table",
+    headers: ["Property", "Type", "Description"],
+    rows: [
+      ["Id", "Guid", "Primary key"],
+      ["TenantId", "Guid", "The tenant this override applies to"],
+      ["FeatureId", "Guid", "The feature being overridden"],
+      ["Value", "string", "Custom value (must match Feature.ValueType)"],
+      ["Reason", "string?", "Why this override was applied (audit trail)"],
+      ["ExpiresAt", "DateTime?", "Optional expiration (null = permanent)"],
+      ["IsActive", "bool", "Whether the override is currently active"],
+      ["AppliedBy", "Guid", "Admin who set this override"],
+      ["CreatedAt", "DateTime", "When the override was created"],
+      ["UpdatedAt", "DateTime?", "Last modification timestamp"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TenantFeatureOverride Entity",
+    code: `public class TenantFeatureOverride : AuditableEntity
+{
+    public Guid TenantId { get; set; }
+    
+    public Guid FeatureId { get; set; }
+    public Feature Feature { get; set; } = null!;
+    
+    public string Value { get; set; } = string.Empty;
+    // Must match Feature.ValueType:
+    //   Boolean → "true" / "false"
+    //   Numeric → integer string (e.g. "500")
+    //   String  → arbitrary string
+    
+    public string? Reason { get; set; }                // Audit trail
+    public DateTime? ExpiresAt { get; set; }           // null = permanent
+    public bool IsActive { get; set; } = true;
+    public Guid AppliedBy { get; set; }                // Who set it
+}`,
+  },
+
+  // ─── Resolution Priority ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.priorityTitle",
+    id: "resolution-priority",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.priorityIntro",
+  },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "check", label: "Feature Check", description: "FeatureCheckBehavior triggered" },
+      {
+        id: "ovr",
+        label: "1. Check Override",
+        description: "TenantFeatureOverride exists + active + not expired?",
+      },
+      {
+        id: "ed",
+        label: "2. Check Edition",
+        description: "EditionFeature value for tenant's subscribed edition?",
+      },
+      { id: "def", label: "3. Use Default", description: "Feature.DefaultValue (global fallback)" },
+      { id: "result", label: "Resolved Value", description: "Applied to the request" },
+    ],
+    connections: [
+      { from: "check", to: "ovr", label: "highest priority" },
+      { from: "ovr", to: "ed", label: "not found" },
+      { from: "ed", to: "def", label: "not found" },
+      { from: "ovr", to: "result", label: "found ✓" },
+      { from: "ed", to: "result", label: "found ✓" },
+      { from: "def", to: "result", label: "always exists" },
+    ],
+  },
+
+  // ─── Use Case Scenarios ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.scenariosTitle",
+    id: "scenarios",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.scenariosIntro",
+  },
+  {
+    type: "table",
+    headers: ["Scenario", "Feature", "Edition Default", "Override Value", "Result"],
+    rows: [
+      ["Enterprise deal with extra admins", "MaxAdmins", "50 (Pro plan)", "500", "500 admins"],
+      [
+        "Temporary feature trial",
+        "AdvancedReporting.Enabled",
+        "false (Basic plan)",
+        "true (expires in 30 days)",
+        "true until expiry, then false",
+      ],
+      [
+        "Custom branding for VIP",
+        "WhiteLabel.LogoUrl",
+        "null (Pro plan)",
+        '"acme-logo.png"',
+        "Custom logo used",
+      ],
+      [
+        "Unlimited quota for partner",
+        "MaxApiCalls",
+        "10000 (Pro plan)",
+        '"-1" (unlimited)',
+        "Unlimited API calls",
+      ],
+      [
+        "Feature disabled for compliance",
+        "Chat.Enabled",
+        "true (Enterprise plan)",
+        "false",
+        "Chat disabled for this tenant",
+      ],
+    ],
+  },
+
+  // ─── Setting an Override ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.settingTitle",
+    id: "setting-override",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.settingIntro",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "POST /api/v1/tenants/{tenantId}/features/overrides",
+    code: `{
+  "featureId": "550e8400-e29b-41d4-a716-446655440000",
+  "value": "500",
+  "reason": "Enterprise deal — 500 admins for annual contract",
+  "expiresAt": null
+}
+
+// Response 200:
+{
+  "id": "770e8400-e29b-41d4-a716-446655440099",
+  "tenantId": "660e8400-e29b-41d4-a716-446655440001",
+  "featureId": "550e8400-e29b-41d4-a716-446655440000",
+  "featureName": "MaxAdmins",
+  "value": "500",
+  "previousValue": "50",
+  "source": "Override",
+  "reason": "Enterprise deal — 500 admins for annual contract",
+  "expiresAt": null,
+  "isActive": true,
+  "appliedBy": "admin-user-id",
+  "createdAt": "2026-03-02T10:00:00Z"
+}`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.overrides.settingTip",
+  },
+
+  // ─── Resolved Features ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.resolvedTitle",
+    id: "resolved-features",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.resolvedIntro",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "GET /api/v1/tenants/{tenantId}/features/resolved",
+    code: `{
+  "tenantId": "660e8400-e29b-41d4-a716-446655440001",
+  "editionName": "Pro",
+  "resolvedFeatures": [
+    {
+      "featureId": "...",
+      "name": "Chat.Enabled",
+      "displayName": "Chat",
+      "valueType": "Boolean",
+      "value": "true",
+      "source": "Edition",
+      "editionDefault": "true",
+      "overrideValue": null,
+      "featureDefault": "false"
+    },
+    {
+      "featureId": "...",
+      "name": "MaxAdmins",
+      "displayName": "Maximum Administrators",
+      "valueType": "Numeric",
+      "value": "500",
+      "source": "Override",
+      "editionDefault": "50",
+      "overrideValue": "500",
+      "featureDefault": "5",
+      "currentUsage": 12,
+      "overrideReason": "Enterprise deal",
+      "overrideExpiresAt": null
+    },
+    {
+      "featureId": "...",
+      "name": "SSO.Enabled",
+      "displayName": "Single Sign-On",
+      "valueType": "Boolean",
+      "value": "false",
+      "source": "Default",
+      "editionDefault": null,
+      "overrideValue": null,
+      "featureDefault": "false"
+    }
+  ]
+}`,
+  },
+
+  // ─── Expiring Overrides ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.expiryTitle",
+    id: "expiring-overrides",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.expiryIntro",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "Temporary Override (30-day trial)",
+    code: `{
+  "featureId": "...")
+  "value": "true",
+  "reason": "30-day trial of Advanced Reporting feature",
+  "expiresAt": "2026-04-02T00:00:00Z"
+}
+
+// After expiry:
+// - Override is automatically marked isActive = false
+// - Feature falls back to edition value (or default)
+// - No manual intervention needed`,
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "modules.overrides.expiryNote",
+  },
+
+  // ─── Audit Trail ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.auditTitle",
+    id: "audit-trail",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.auditIntro",
+  },
+  {
+    type: "table",
+    headers: ["Event", "Tracked Data", "Purpose"],
+    rows: [
+      [
+        "Override Created",
+        "Who, When, Feature, Value, Reason",
+        "Know who gave custom access and why",
+      ],
+      ["Override Updated", "Previous value, New value, Changed by", "Track all modifications"],
+      ["Override Removed", "Removed by, Removal reason", "Know when custom deals end"],
+      ["Override Expired", "Expiry date, Feature reverted to", "Automatic lifecycle events"],
+    ],
+  },
+
+  // ─── API Endpoints ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.endpointsTitle",
+    id: "api-endpoints",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.endpointsIntro",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{tenantId}/features/overrides",
+        descriptionKey: "modules.overrides.ep.list",
+        auth: "JWT",
+        permission: "features.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/tenants/{tenantId}/features/overrides",
+        descriptionKey: "modules.overrides.ep.set",
+        auth: "JWT",
+        permission: "features.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/tenants/{tenantId}/features/overrides/{id}",
+        descriptionKey: "modules.overrides.ep.remove",
+        auth: "JWT",
+        permission: "features.delete",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{tenantId}/features/resolved",
+        descriptionKey: "modules.overrides.ep.resolved",
+        auth: "JWT",
+        permission: "features.view",
+      },
+    ],
+  },
+
+  // ─── Best Practices ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.bestPracticesTitle",
+    id: "best-practices",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.bestPracticesIntro",
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "modules.overrides.bestPracticesWarning",
+  },
+];
 
 registerPage({
   slug: "modules/overrides",
   titleKey: "modules.overrides.title",
+  descriptionKey: "modules.overrides.description",
   category: "modules",
   order: 5,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.overrides.section_4_hdr_0",
-      "modules.overrides.section_4_hdr_1",
-      "modules.overrides.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.overrides.section_4_cell_0_0",
-        "modules.overrides.section_4_cell_0_1",
-        "modules.overrides.section_4_cell_0_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_1_0",
-        "modules.overrides.section_4_cell_1_1",
-        "modules.overrides.section_4_cell_1_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_2_0",
-        "modules.overrides.section_4_cell_2_1",
-        "modules.overrides.section_4_cell_2_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_3_0",
-        "modules.overrides.section_4_cell_3_1",
-        "modules.overrides.section_4_cell_3_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_4_0",
-        "modules.overrides.section_4_cell_4_1",
-        "modules.overrides.section_4_cell_4_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_5_0",
-        "modules.overrides.section_4_cell_5_1",
-        "modules.overrides.section_4_cell_5_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_6_0",
-        "modules.overrides.section_4_cell_6_1",
-        "modules.overrides.section_4_cell_6_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_7_0",
-        "modules.overrides.section_4_cell_7_1",
-        "modules.overrides.section_4_cell_7_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_8_0",
-        "modules.overrides.section_4_cell_8_1",
-        "modules.overrides.section_4_cell_8_2"
-      ],
-      [
-        "modules.overrides.section_4_cell_9_0",
-        "modules.overrides.section_4_cell_9_1",
-        "modules.overrides.section_4_cell_9_2"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class TenantFeatureOverride : AuditableEntity\n{\n    public Guid TenantId { get; set; }\n    \n    public Guid FeatureId { get; set; }\n    public Feature Feature { get; set; } = null!;\n    \n    public string Value { get; set; } = string.Empty;\n    // Must match Feature.ValueType:\n    //   Boolean → \"true\" / \"false\"\n    //   Numeric → integer string (e.g. \"500\")\n    //   String  → arbitrary string\n    \n    public string? Reason { get; set; }                // Audit trail\n    public DateTime? ExpiresAt { get; set; }           // null = permanent\n    public bool IsActive { get; set; } = true;\n    public Guid AppliedBy { get; set; }                // Who set it\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    check[\"Feature Check\"]\n    %% check: FeatureCheckBehavior triggered\n    ovr[\"1. Check Override\"]\n    %% ovr: TenantFeatureOverride exists + active + not expired?\n    ed[\"2. Check Edition\"]\n    %% ed: EditionFeature value for tenant's subscribed edition?\n    def[\"3. Use Default\"]\n    %% def: Feature.DefaultValue (global fallback)\n    result[\"Resolved Value\"]\n    %% result: Applied to the request\n    check -->|\"highest priority\"| ovr\n    ovr -->|\"not found\"| ed\n    ed -->|\"not found\"| def\n    ovr -->|\"found ✓\"| result\n    ed -->|\"found ✓\"| result\n    def -->|\"always exists\"| result",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_11_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.overrides.section_12_hdr_0",
-      "modules.overrides.section_12_hdr_1",
-      "modules.overrides.section_12_hdr_2",
-      "modules.overrides.section_12_hdr_3",
-      "modules.overrides.section_12_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.overrides.section_12_cell_0_0",
-        "modules.overrides.section_12_cell_0_1",
-        "modules.overrides.section_12_cell_0_2",
-        "modules.overrides.section_12_cell_0_3",
-        "modules.overrides.section_12_cell_0_4"
-      ],
-      [
-        "modules.overrides.section_12_cell_1_0",
-        "modules.overrides.section_12_cell_1_1",
-        "modules.overrides.section_12_cell_1_2",
-        "modules.overrides.section_12_cell_1_3",
-        "modules.overrides.section_12_cell_1_4"
-      ],
-      [
-        "modules.overrides.section_12_cell_2_0",
-        "modules.overrides.section_12_cell_2_1",
-        "modules.overrides.section_12_cell_2_2",
-        "modules.overrides.section_12_cell_2_3",
-        "modules.overrides.section_12_cell_2_4"
-      ],
-      [
-        "modules.overrides.section_12_cell_3_0",
-        "modules.overrides.section_12_cell_3_1",
-        "modules.overrides.section_12_cell_3_2",
-        "modules.overrides.section_12_cell_3_3",
-        "modules.overrides.section_12_cell_3_4"
-      ],
-      [
-        "modules.overrides.section_12_cell_4_0",
-        "modules.overrides.section_12_cell_4_1",
-        "modules.overrides.section_12_cell_4_2",
-        "modules.overrides.section_12_cell_4_3",
-        "modules.overrides.section_12_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_14_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_15_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"featureId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"value\": \"500\",\n  \"reason\": \"Enterprise deal — 500 admins for annual contract\",\n  \"expiresAt\": null\n}\n\n// Response 200:\n{\n  \"id\": \"770e8400-e29b-41d4-a716-446655440099\",\n  \"tenantId\": \"660e8400-e29b-41d4-a716-446655440001\",\n  \"featureId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"featureName\": \"MaxAdmins\",\n  \"value\": \"500\",\n  \"previousValue\": \"50\",\n  \"source\": \"Override\",\n  \"reason\": \"Enterprise deal — 500 admins for annual contract\",\n  \"expiresAt\": null,\n  \"isActive\": true,\n  \"appliedBy\": \"admin-user-id\",\n  \"createdAt\": \"2026-03-02T10:00:00Z\"\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "modules.overrides.section_17_title",
-    "contentKey": "modules.overrides.section_17_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_19_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"tenantId\": \"660e8400-e29b-41d4-a716-446655440001\",\n  \"editionName\": \"Pro\",\n  \"resolvedFeatures\": [\n    {\n      \"featureId\": \"...\",\n      \"name\": \"Chat.Enabled\",\n      \"displayName\": \"Chat\",\n      \"valueType\": \"Boolean\",\n      \"value\": \"true\",\n      \"source\": \"Edition\",\n      \"editionDefault\": \"true\",\n      \"overrideValue\": null,\n      \"featureDefault\": \"false\"\n    },\n    {\n      \"featureId\": \"...\",\n      \"name\": \"MaxAdmins\",\n      \"displayName\": \"Maximum Administrators\",\n      \"valueType\": \"Numeric\",\n      \"value\": \"500\",\n      \"source\": \"Override\",\n      \"editionDefault\": \"50\",\n      \"overrideValue\": \"500\",\n      \"featureDefault\": \"5\",\n      \"currentUsage\": 12,\n      \"overrideReason\": \"Enterprise deal\",\n      \"overrideExpiresAt\": null\n    },\n    {\n      \"featureId\": \"...\",\n      \"name\": \"SSO.Enabled\",\n      \"displayName\": \"Single Sign-On\",\n      \"valueType\": \"Boolean\",\n      \"value\": \"false\",\n      \"source\": \"Default\",\n      \"editionDefault\": null,\n      \"overrideValue\": null,\n      \"featureDefault\": \"false\"\n    }\n  ]\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_23_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_24_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"featureId\": \"...\")\n  \"value\": \"true\",\n  \"reason\": \"30-day trial of Advanced Reporting feature\",\n  \"expiresAt\": \"2026-04-02T00:00:00Z\"\n}\n\n// After expiry:\n// - Override is automatically marked isActive = false\n// - Feature falls back to edition value (or default)\n// - No manual intervention needed",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "modules.overrides.section_26_title",
-    "contentKey": "modules.overrides.section_26_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_28_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.overrides.section_29_hdr_0",
-      "modules.overrides.section_29_hdr_1",
-      "modules.overrides.section_29_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.overrides.section_29_cell_0_0",
-        "modules.overrides.section_29_cell_0_1",
-        "modules.overrides.section_29_cell_0_2"
-      ],
-      [
-        "modules.overrides.section_29_cell_1_0",
-        "modules.overrides.section_29_cell_1_1",
-        "modules.overrides.section_29_cell_1_2"
-      ],
-      [
-        "modules.overrides.section_29_cell_2_0",
-        "modules.overrides.section_29_cell_2_1",
-        "modules.overrides.section_29_cell_2_2"
-      ],
-      [
-        "modules.overrides.section_29_cell_3_0",
-        "modules.overrides.section_29_cell_3_1",
-        "modules.overrides.section_29_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_31_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.overrides.section_32_hdr_0",
-      "modules.overrides.section_32_hdr_1",
-      "modules.overrides.section_32_hdr_2",
-      "modules.overrides.section_32_hdr_3",
-      "modules.overrides.section_32_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.overrides.section_32_cell_0_0",
-        "modules.overrides.section_32_cell_0_1",
-        "modules.overrides.section_32_cell_0_2",
-        "modules.overrides.section_32_cell_0_3",
-        "modules.overrides.section_32_cell_0_4"
-      ],
-      [
-        "modules.overrides.section_32_cell_1_0",
-        "modules.overrides.section_32_cell_1_1",
-        "modules.overrides.section_32_cell_1_2",
-        "modules.overrides.section_32_cell_1_3",
-        "modules.overrides.section_32_cell_1_4"
-      ],
-      [
-        "modules.overrides.section_32_cell_2_0",
-        "modules.overrides.section_32_cell_2_1",
-        "modules.overrides.section_32_cell_2_2",
-        "modules.overrides.section_32_cell_2_3",
-        "modules.overrides.section_32_cell_2_4"
-      ],
-      [
-        "modules.overrides.section_32_cell_3_0",
-        "modules.overrides.section_32_cell_3_1",
-        "modules.overrides.section_32_cell_3_2",
-        "modules.overrides.section_32_cell_3_3",
-        "modules.overrides.section_32_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_33_title",
-    "id": "sec_33"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.overrides.section_34_content"
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "modules.overrides.section_35_title",
-    "contentKey": "modules.overrides.section_35_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.overrides.section_36_title",
-    "id": "sec_36"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.overrides.section_37_item_0",
-      "modules.overrides.section_37_item_1",
-      "modules.overrides.section_37_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "modules/entitlements-overview",
-  "modules/features",
-  "modules/subscriptions"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["modules/entitlements-overview", "modules/features", "modules/subscriptions"],
+  lastUpdated: "2026-03-02",
 });

@@ -1,289 +1,267 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "apiReference.rolePermissionApi.intro" },
+
+  // ─── Roles CRUD ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.rolePermissionApi.rolesCrudTitle",
+    id: "roles-crud",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/roles",
+        descriptionKey: "apiReference.rolePermissionApi.listRolesDesc",
+        auth: "roles.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/roles/{id}",
+        descriptionKey: "apiReference.rolePermissionApi.getRoleDesc",
+        auth: "roles.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/roles",
+        descriptionKey: "apiReference.rolePermissionApi.createRoleDesc",
+        auth: "roles.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/roles/{id}",
+        descriptionKey: "apiReference.rolePermissionApi.updateRoleDesc",
+        auth: "roles.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/roles/{id}",
+        descriptionKey: "apiReference.rolePermissionApi.deleteRoleDesc",
+        auth: "roles.delete",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/roles/{id}/clone",
+        descriptionKey: "apiReference.rolePermissionApi.cloneRoleDesc",
+        auth: "roles.create",
+      },
+    ],
+  },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Role Detail",
+        language: "json",
+        filename: "GET /roles/{id} — Response",
+        code: `{
+  "id": "role-uuid",
+  "name": "Branch Manager",
+  "description": "Manager for branch offices",
+  "isDefault": false,
+  "isSystem": false,
+  "adminCount": 5,
+  "permissions": [
+    {
+      "id": "perm-uuid",
+      "name": "admins.view",
+      "category": "Admin Management",
+      "restrictedFields": ["email", "phoneNumber"]
+    }
+  ],
+  "menuItems": [
+    { "id": "menu-uuid", "title": "Dashboard", "isVisible": true }
+  ],
+  "createdAt": "2026-01-01T00:00:00Z"
+}`,
+      },
+      {
+        label: "Create Role",
+        language: "json",
+        filename: "POST /roles — Request",
+        code: `{
+  "name": "Content Editor",
+  "description": "Can manage content but not users",
+  "permissionIds": ["perm-uuid-1", "perm-uuid-2"],
+  "menuItemIds": ["menu-uuid-1", "menu-uuid-2"],
+  "restrictedFields": {
+    "admins.view": ["phoneNumber", "lastLoginAt"],
+    "users.view": ["email", "phoneNumber"]
+  }
+}`,
+      },
+    ],
+  },
+
+  // ─── Permission Assignment ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.rolePermissionApi.assignTitle",
+    id: "permission-assignment",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "PUT",
+        path: "/api/v1/roles/{id}/permissions",
+        descriptionKey: "apiReference.rolePermissionApi.assignPermDesc",
+        auth: "roles.update",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/roles/{id}/permissions",
+        descriptionKey: "apiReference.rolePermissionApi.getPermDesc",
+        auth: "roles.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/roles/{id}/sync-scopes",
+        descriptionKey: "apiReference.rolePermissionApi.syncScopesDesc",
+        auth: "roles.update",
+      },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "PUT /roles/{id}/permissions — Assign Permissions",
+    code: `// Request: Replace all permissions for this role
+{
+  "permissionIds": [
+    "perm-admins-view",
+    "perm-admins-create",
+    "perm-users-view",
+    "perm-dashboard-view"
+  ],
+  "restrictedFields": {
+    "perm-admins-view": ["email", "phoneNumber", "lastLoginIp"],
+    "perm-users-view": ["email"]
+  }
+}
+
+// Response (200)
+{
+  "message": "Permissions updated",
+  "totalPermissions": 4,
+  "restrictedFieldsCount": 2
+}`,
+  },
+
+  // ─── Tenant-Scoped Roles ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.rolePermissionApi.tenantScopedTitle",
+    id: "tenant-scoped",
+  },
+  { type: "paragraph", contentKey: "apiReference.rolePermissionApi.tenantScopedIntro" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/roles/my-tenant-roles",
+        descriptionKey: "apiReference.rolePermissionApi.myTenantRolesDesc",
+        auth: "Bearer Token",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/roles/my-tenant-available-permissions",
+        descriptionKey: "apiReference.rolePermissionApi.availablePermDesc",
+        auth: "Bearer Token",
+      },
+    ],
+  },
+
+  // ─── Permissions (Read-Only) ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.rolePermissionApi.permissionsTitle",
+    id: "permissions",
+  },
+  { type: "paragraph", contentKey: "apiReference.rolePermissionApi.permissionsIntro" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/permissions",
+        descriptionKey: "apiReference.rolePermissionApi.listPermissionsDesc",
+        auth: "permissions.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/permissions/my",
+        descriptionKey: "apiReference.rolePermissionApi.myPermissionsDesc",
+        auth: "Bearer Token",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/permissions/{id}",
+        descriptionKey: "apiReference.rolePermissionApi.getPermByIdDesc",
+        auth: "permissions.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/permissions/categories",
+        descriptionKey: "apiReference.rolePermissionApi.categoriesDesc",
+        auth: "permissions.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/permissions/available-for-tenant",
+        descriptionKey: "apiReference.rolePermissionApi.availableForTenantDesc",
+        auth: "tenants.create",
+      },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "GET /permissions/categories — Response",
+    code: `[
+  {
+    "name": "Admin Management",
+    "slug": "admins",
+    "permissions": [
+      { "id": "p1", "name": "admins.view", "description": "View admin list" },
+      { "id": "p2", "name": "admins.create", "description": "Create new admins" },
+      { "id": "p3", "name": "admins.update", "description": "Update admin details" },
+      { "id": "p4", "name": "admins.delete", "description": "Delete admins" }
+    ]
+  },
+  {
+    "name": "User Management",
+    "slug": "users",
+    "permissions": [
+      { "id": "p5", "name": "users.view", "description": "View user list" },
+      { "id": "p6", "name": "users.create", "description": "Register users" }
+    ]
+  }
+]`,
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "apiReference.rolePermissionApi.seededNote",
+  },
+];
 
 registerPage({
   slug: "api-reference/role-permission-api",
   titleKey: "apiReference.rolePermissionApi.title",
+  descriptionKey: "apiReference.rolePermissionApi.description",
   category: "api-reference",
   order: 6,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.rolePermissionApi.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.rolePermissionApi.section_3_hdr_0",
-      "apiReference.rolePermissionApi.section_3_hdr_1",
-      "apiReference.rolePermissionApi.section_3_hdr_2",
-      "apiReference.rolePermissionApi.section_3_hdr_3",
-      "apiReference.rolePermissionApi.section_3_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.rolePermissionApi.section_3_cell_0_0",
-        "apiReference.rolePermissionApi.section_3_cell_0_1",
-        "apiReference.rolePermissionApi.section_3_cell_0_2",
-        "apiReference.rolePermissionApi.section_3_cell_0_3",
-        "apiReference.rolePermissionApi.section_3_cell_0_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_3_cell_1_0",
-        "apiReference.rolePermissionApi.section_3_cell_1_1",
-        "apiReference.rolePermissionApi.section_3_cell_1_2",
-        "apiReference.rolePermissionApi.section_3_cell_1_3",
-        "apiReference.rolePermissionApi.section_3_cell_1_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_3_cell_2_0",
-        "apiReference.rolePermissionApi.section_3_cell_2_1",
-        "apiReference.rolePermissionApi.section_3_cell_2_2",
-        "apiReference.rolePermissionApi.section_3_cell_2_3",
-        "apiReference.rolePermissionApi.section_3_cell_2_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_3_cell_3_0",
-        "apiReference.rolePermissionApi.section_3_cell_3_1",
-        "apiReference.rolePermissionApi.section_3_cell_3_2",
-        "apiReference.rolePermissionApi.section_3_cell_3_3",
-        "apiReference.rolePermissionApi.section_3_cell_3_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_3_cell_4_0",
-        "apiReference.rolePermissionApi.section_3_cell_4_1",
-        "apiReference.rolePermissionApi.section_3_cell_4_2",
-        "apiReference.rolePermissionApi.section_3_cell_4_3",
-        "apiReference.rolePermissionApi.section_3_cell_4_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_3_cell_5_0",
-        "apiReference.rolePermissionApi.section_3_cell_5_1",
-        "apiReference.rolePermissionApi.section_3_cell_5_2",
-        "apiReference.rolePermissionApi.section_3_cell_5_3",
-        "apiReference.rolePermissionApi.section_3_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.rolePermissionApi.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"id\": \"role-uuid\",\n  \"name\": \"Branch Manager\",\n  \"description\": \"Manager for branch offices\",\n  \"isDefault\": false,\n  \"isSystem\": false,\n  \"adminCount\": 5,\n  \"permissions\": [\n    {\n      \"id\": \"perm-uuid\",\n      \"name\": \"admins.view\",\n      \"category\": \"Admin Management\",\n      \"restrictedFields\": [\"email\", \"phoneNumber\"]\n    }\n  ],\n  \"menuItems\": [\n    { \"id\": \"menu-uuid\", \"title\": \"Dashboard\", \"isVisible\": true }\n  ],\n  \"createdAt\": \"2026-01-01T00:00:00Z\"\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.rolePermissionApi.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"name\": \"Content Editor\",\n  \"description\": \"Can manage content but not users\",\n  \"permissionIds\": [\"perm-uuid-1\", \"perm-uuid-2\"],\n  \"menuItemIds\": [\"menu-uuid-1\", \"menu-uuid-2\"],\n  \"restrictedFields\": {\n    \"admins.view\": [\"phoneNumber\", \"lastLoginAt\"],\n    \"users.view\": [\"email\", \"phoneNumber\"]\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.rolePermissionApi.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.rolePermissionApi.section_11_hdr_0",
-      "apiReference.rolePermissionApi.section_11_hdr_1",
-      "apiReference.rolePermissionApi.section_11_hdr_2",
-      "apiReference.rolePermissionApi.section_11_hdr_3",
-      "apiReference.rolePermissionApi.section_11_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.rolePermissionApi.section_11_cell_0_0",
-        "apiReference.rolePermissionApi.section_11_cell_0_1",
-        "apiReference.rolePermissionApi.section_11_cell_0_2",
-        "apiReference.rolePermissionApi.section_11_cell_0_3",
-        "apiReference.rolePermissionApi.section_11_cell_0_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_11_cell_1_0",
-        "apiReference.rolePermissionApi.section_11_cell_1_1",
-        "apiReference.rolePermissionApi.section_11_cell_1_2",
-        "apiReference.rolePermissionApi.section_11_cell_1_3",
-        "apiReference.rolePermissionApi.section_11_cell_1_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_11_cell_2_0",
-        "apiReference.rolePermissionApi.section_11_cell_2_1",
-        "apiReference.rolePermissionApi.section_11_cell_2_2",
-        "apiReference.rolePermissionApi.section_11_cell_2_3",
-        "apiReference.rolePermissionApi.section_11_cell_2_4"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "// Request: Replace all permissions for this role\n{\n  \"permissionIds\": [\n    \"perm-admins-view\",\n    \"perm-admins-create\",\n    \"perm-users-view\",\n    \"perm-dashboard-view\"\n  ],\n  \"restrictedFields\": {\n    \"perm-admins-view\": [\"email\", \"phoneNumber\", \"lastLoginIp\"],\n    \"perm-users-view\": [\"email\"]\n  }\n}\n\n// Response (200)\n{\n  \"message\": \"Permissions updated\",\n  \"totalPermissions\": 4,\n  \"restrictedFieldsCount\": 2\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.rolePermissionApi.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_15_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.rolePermissionApi.section_16_hdr_0",
-      "apiReference.rolePermissionApi.section_16_hdr_1",
-      "apiReference.rolePermissionApi.section_16_hdr_2",
-      "apiReference.rolePermissionApi.section_16_hdr_3",
-      "apiReference.rolePermissionApi.section_16_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.rolePermissionApi.section_16_cell_0_0",
-        "apiReference.rolePermissionApi.section_16_cell_0_1",
-        "apiReference.rolePermissionApi.section_16_cell_0_2",
-        "apiReference.rolePermissionApi.section_16_cell_0_3",
-        "apiReference.rolePermissionApi.section_16_cell_0_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_16_cell_1_0",
-        "apiReference.rolePermissionApi.section_16_cell_1_1",
-        "apiReference.rolePermissionApi.section_16_cell_1_2",
-        "apiReference.rolePermissionApi.section_16_cell_1_3",
-        "apiReference.rolePermissionApi.section_16_cell_1_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.rolePermissionApi.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_18_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.rolePermissionApi.section_19_hdr_0",
-      "apiReference.rolePermissionApi.section_19_hdr_1",
-      "apiReference.rolePermissionApi.section_19_hdr_2",
-      "apiReference.rolePermissionApi.section_19_hdr_3",
-      "apiReference.rolePermissionApi.section_19_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.rolePermissionApi.section_19_cell_0_0",
-        "apiReference.rolePermissionApi.section_19_cell_0_1",
-        "apiReference.rolePermissionApi.section_19_cell_0_2",
-        "apiReference.rolePermissionApi.section_19_cell_0_3",
-        "apiReference.rolePermissionApi.section_19_cell_0_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_19_cell_1_0",
-        "apiReference.rolePermissionApi.section_19_cell_1_1",
-        "apiReference.rolePermissionApi.section_19_cell_1_2",
-        "apiReference.rolePermissionApi.section_19_cell_1_3",
-        "apiReference.rolePermissionApi.section_19_cell_1_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_19_cell_2_0",
-        "apiReference.rolePermissionApi.section_19_cell_2_1",
-        "apiReference.rolePermissionApi.section_19_cell_2_2",
-        "apiReference.rolePermissionApi.section_19_cell_2_3",
-        "apiReference.rolePermissionApi.section_19_cell_2_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_19_cell_3_0",
-        "apiReference.rolePermissionApi.section_19_cell_3_1",
-        "apiReference.rolePermissionApi.section_19_cell_3_2",
-        "apiReference.rolePermissionApi.section_19_cell_3_3",
-        "apiReference.rolePermissionApi.section_19_cell_3_4"
-      ],
-      [
-        "apiReference.rolePermissionApi.section_19_cell_4_0",
-        "apiReference.rolePermissionApi.section_19_cell_4_1",
-        "apiReference.rolePermissionApi.section_19_cell_4_2",
-        "apiReference.rolePermissionApi.section_19_cell_4_3",
-        "apiReference.rolePermissionApi.section_19_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.rolePermissionApi.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "[\n  {\n    \"name\": \"Admin Management\",\n    \"slug\": \"admins\",\n    \"permissions\": [\n      { \"id\": \"p1\", \"name\": \"admins.view\", \"description\": \"View admin list\" },\n      { \"id\": \"p2\", \"name\": \"admins.create\", \"description\": \"Create new admins\" },\n      { \"id\": \"p3\", \"name\": \"admins.update\", \"description\": \"Update admin details\" },\n      { \"id\": \"p4\", \"name\": \"admins.delete\", \"description\": \"Delete admins\" }\n    ]\n  },\n  {\n    \"name\": \"User Management\",\n    \"slug\": \"users\",\n    \"permissions\": [\n      { \"id\": \"p5\", \"name\": \"users.view\", \"description\": \"View user list\" },\n      { \"id\": \"p6\", \"name\": \"users.create\", \"description\": \"Register users\" }\n    ]\n  }\n]",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "apiReference.rolePermissionApi.section_22_title",
-    "contentKey": "apiReference.rolePermissionApi.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.rolePermissionApi.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "apiReference.rolePermissionApi.section_24_item_0",
-      "apiReference.rolePermissionApi.section_24_item_1",
-      "apiReference.rolePermissionApi.section_24_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "api-reference/admin-api",
-  "api-reference/tenant-api",
-  "security/data-protection"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["api-reference/admin-api", "api-reference/tenant-api", "security/data-protection"],
+  lastUpdated: "2026-02-20",
 });

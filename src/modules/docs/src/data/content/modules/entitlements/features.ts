@@ -1,416 +1,404 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  {
+    type: "paragraph",
+    contentKey: "modules.features.intro",
+  },
+
+  // ─── Feature Entity ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.entityTitle",
+    id: "feature-entity",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.entityIntro",
+  },
+  {
+    type: "table",
+    headers: ["Property", "Type", "Description"],
+    rows: [
+      ["Id", "Guid", "Primary key"],
+      ["Name", "string", "Unique system key (e.g. 'Chat.Enabled', 'MaxAdmins')"],
+      ["DisplayName", "string", "Human-readable name for UI display"],
+      ["Description", "string?", "Detailed description of what this feature controls"],
+      ["Category", "string?", "Grouping category (e.g. 'Communication', 'Security', 'Limits')"],
+      ["ValueType", "enum", "Boolean, Numeric, String"],
+      ["DefaultValue", "string", "Fallback value when no edition or override specifies one"],
+      ["IsSystem", "bool", "System features are read-only (seeded, cannot be deleted)"],
+      ["IsVisible", "bool", "Whether to show this feature in the admin UI"],
+      ["MinValue", "string?", "Minimum allowed value (for Numeric type)"],
+      ["MaxValue", "string?", "Maximum allowed value (for Numeric type, -1 = unlimited)"],
+      ["AllowedValues", "string?", "Comma-separated valid values (for String type)"],
+      ["SortOrder", "int", "Display order in feature list"],
+      ["CreatedAt", "DateTime", "When the feature was created"],
+      ["UpdatedAt", "DateTime?", "Last modification timestamp"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Feature Entity",
+    code: `public class Feature : AuditableEntity, ISoftDeletable
+{
+    public string Name { get; set; } = string.Empty;        // Unique system key
+    public string DisplayName { get; set; } = string.Empty;  // UI label
+    public string? Description { get; set; }
+    public string? Category { get; set; }                    // Grouping
+    
+    public FeatureValueType ValueType { get; set; } = FeatureValueType.Boolean;
+    public string DefaultValue { get; set; } = "false";     // Global fallback
+    
+    public bool IsSystem { get; set; }                      // Read-only if true
+    public bool IsVisible { get; set; } = true;
+    
+    // Validation constraints (Numeric features)
+    public string? MinValue { get; set; }                   // e.g. "0"
+    public string? MaxValue { get; set; }                   // e.g. "1000", "-1" = unlimited
+    public string? AllowedValues { get; set; }              // e.g. "light,dark,custom"
+    
+    public int SortOrder { get; set; }
+}`,
+  },
+
+  // ─── Value Types ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.valueTypesTitle",
+    id: "value-types",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.valueTypesIntro",
+  },
+  {
+    type: "table",
+    headers: ["Type", "Stored As", "Example Values", "Quota Tracking", "Use Case"],
+    rows: [
+      [
+        "Boolean",
+        '"true" / "false"',
+        '"true"',
+        "No",
+        "Toggle capabilities on/off (Chat.Enabled, SSO.Enabled)",
+      ],
+      [
+        "Numeric",
+        "Integer string",
+        '"50", "1000", "-1" (unlimited)',
+        "Yes (QuotaCounter)",
+        "Resource limits (MaxAdmins, MaxStorage, MaxApiCalls)",
+      ],
+      [
+        "String",
+        "Arbitrary string",
+        '"dark", "premium", "custom-logo.png"',
+        "No",
+        "Configuration values (Theme, LogoUrl, SupportTier)",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "FeatureValueType Enum",
+    code: `public enum FeatureValueType
+{
+    /// <summary>On/Off toggle, stored as "true" or "false"</summary>
+    Boolean = 0,
+    
+    /// <summary>Numeric limit, stored as integer string. -1 = unlimited</summary>
+    Numeric = 1,
+    
+    /// <summary>Arbitrary string configuration value</summary>
+    String = 2,
+}`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.features.valueTypesTip",
+  },
+
+  // ─── System vs Custom Features ────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.systemVsCustomTitle",
+    id: "system-vs-custom",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.systemVsCustomIntro",
+  },
+  {
+    type: "table",
+    headers: ["", "System Features", "Custom Features"],
+    rows: [
+      ["Created By", "Startup seeder (EntitlementsStartupSeeder)", "Platform admin via API"],
+      ["Deletable", "No (ISoftDeletable guarded)", "Yes"],
+      ["Editable", "Only DefaultValue and Description", "Fully editable"],
+      ["Purpose", "Core platform capabilities", "Tenant-specific extensions"],
+      [
+        "Examples",
+        "Chat.Enabled, MaxAdmins, SSO.Enabled",
+        "CustomReports, MaxProjects, WhiteLabel",
+      ],
+    ],
+  },
+
+  // ─── Feature Seeding ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.seedingTitle",
+    id: "seeding",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.seedingIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "EntitlementsStartupSeeder.cs",
+    code: `public class EntitlementsStartupSeeder : IStartupSeeder
+{
+    private readonly IFeatureRepository _features;
+
+    public async Task SeedAsync(CancellationToken ct)
+    {
+        var systemFeatures = new[]
+        {
+            new Feature 
+            { 
+                Name = "Chat.Enabled", 
+                DisplayName = "Chat", 
+                ValueType = FeatureValueType.Boolean,
+                DefaultValue = "false",
+                IsSystem = true,
+                Category = "Communication"
+            },
+            new Feature 
+            { 
+                Name = "MaxAdmins", 
+                DisplayName = "Maximum Administrators",
+                ValueType = FeatureValueType.Numeric,
+                DefaultValue = "5",
+                MinValue = "1",
+                MaxValue = "-1",
+                IsSystem = true,
+                Category = "Limits"
+            },
+            new Feature 
+            { 
+                Name = "SSO.Enabled", 
+                DisplayName = "Single Sign-On",
+                ValueType = FeatureValueType.Boolean,
+                DefaultValue = "false",
+                IsSystem = true,
+                Category = "Security"
+            },
+        };
+
+        foreach (var feature in systemFeatures)
+        {
+            if (!await _features.ExistsByNameAsync(feature.Name, ct))
+                await _features.AddAsync(feature, ct);
+        }
+    }
+}`,
+  },
+
+  // ─── Quota Tracking ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.quotaTitle",
+    id: "quota-tracking",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.quotaIntro",
+  },
+  {
+    type: "table",
+    headers: ["Property", "Type", "Description"],
+    rows: [
+      ["TenantId", "Guid", "The tenant owning this counter"],
+      ["FeatureName", "string", "The numeric feature being tracked"],
+      ["CurrentUsage", "int", "Current resource count"],
+      ["LastUpdated", "DateTime", "When usage was last updated"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Quota Enforcement Flow",
+    code: `// Inside FeatureCheckBehavior for Numeric features:
+if (resolved.ValueType == FeatureValueType.Numeric)
+{
+    var limit = int.Parse(resolved.Value);
+    
+    if (limit == -1) 
+        return await next(); // -1 = unlimited, skip check
+    
+    var counter = await _quotaCounterProvider.GetCounter(tenantId, featureName);
+    
+    if (counter.CurrentUsage >= limit)
+    {
+        return Result.Forbidden(
+            $"Quota exceeded: {featureName} " +
+            $"(usage: {counter.CurrentUsage}, limit: {limit})");
+    }
+    
+    // Increment counter after successful operation
+    await _quotaCounterProvider.Increment(tenantId, featureName);
+    
+    return await next();
+}`,
+  },
+
+  // ─── Feature Cache ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.cacheTitle",
+    id: "feature-cache",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.cacheIntro",
+  },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "req", label: "Feature Request", description: "IRequireFeature command" },
+      { id: "cache", label: "FeatureCache", description: "In-memory cache" },
+      { id: "miss", label: "Cache Miss", description: "First access" },
+      { id: "resolve", label: "Resolution Chain", description: "Override → Edition → Default" },
+      { id: "hit", label: "Cache Hit", description: "Instant return" },
+    ],
+    connections: [
+      { from: "req", to: "cache", label: "GetResolvedValue()" },
+      { from: "cache", to: "hit", label: "exists?" },
+      { from: "cache", to: "miss", label: "not found" },
+      { from: "miss", to: "resolve", label: "query DB" },
+      { from: "resolve", to: "cache", label: "store result" },
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "modules.features.cacheNote",
+  },
+
+  // ─── IRequireFeature Pattern ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.patternTitle",
+    id: "irequirefeature",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.patternIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Using IRequireFeature",
+    code: `// Step 1: Mark your command
+public class SendBulkEmailCommand : ICommand, IRequireFeature
+{
+    public string RequiredFeatureName => "BulkEmail.Enabled";
+    
+    public List<string> Recipients { get; set; } = [];
+    public string Subject { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+}
+
+// Step 2: That's it! FeatureCheckBehavior handles the rest.
+// If "BulkEmail.Enabled" is false for the tenant → 403 Forbidden
+// If "BulkEmail.Enabled" is true → command proceeds normally
+
+// For numeric features with quotas:
+public class CreateProjectCommand : ICommand<Guid>, IRequireFeature
+{
+    public string RequiredFeatureName => "MaxProjects";
+    
+    // FeatureCheckBehavior checks: current_projects < MaxProjects limit
+    // If over limit → 403 "Quota exceeded"
+    // If under limit → auto-increment QuotaCounter + proceed
+}`,
+  },
+
+  // ─── API Endpoints ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.features.endpointsTitle",
+    id: "api-endpoints",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.features.endpointsIntro",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/features",
+        descriptionKey: "modules.features.ep.list",
+        auth: "JWT",
+        permission: "features.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/features/{id}",
+        descriptionKey: "modules.features.ep.get",
+        auth: "JWT",
+        permission: "features.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/features",
+        descriptionKey: "modules.features.ep.create",
+        auth: "JWT",
+        permission: "features.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/features/{id}",
+        descriptionKey: "modules.features.ep.update",
+        auth: "JWT",
+        permission: "features.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/features/{id}",
+        descriptionKey: "modules.features.ep.delete",
+        auth: "JWT",
+        permission: "features.delete",
+      },
+    ],
+  },
+];
 
 registerPage({
   slug: "modules/features",
   titleKey: "modules.features.title",
+  descriptionKey: "modules.features.description",
   category: "modules",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.features.section_4_hdr_0",
-      "modules.features.section_4_hdr_1",
-      "modules.features.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.features.section_4_cell_0_0",
-        "modules.features.section_4_cell_0_1",
-        "modules.features.section_4_cell_0_2"
-      ],
-      [
-        "modules.features.section_4_cell_1_0",
-        "modules.features.section_4_cell_1_1",
-        "modules.features.section_4_cell_1_2"
-      ],
-      [
-        "modules.features.section_4_cell_2_0",
-        "modules.features.section_4_cell_2_1",
-        "modules.features.section_4_cell_2_2"
-      ],
-      [
-        "modules.features.section_4_cell_3_0",
-        "modules.features.section_4_cell_3_1",
-        "modules.features.section_4_cell_3_2"
-      ],
-      [
-        "modules.features.section_4_cell_4_0",
-        "modules.features.section_4_cell_4_1",
-        "modules.features.section_4_cell_4_2"
-      ],
-      [
-        "modules.features.section_4_cell_5_0",
-        "modules.features.section_4_cell_5_1",
-        "modules.features.section_4_cell_5_2"
-      ],
-      [
-        "modules.features.section_4_cell_6_0",
-        "modules.features.section_4_cell_6_1",
-        "modules.features.section_4_cell_6_2"
-      ],
-      [
-        "modules.features.section_4_cell_7_0",
-        "modules.features.section_4_cell_7_1",
-        "modules.features.section_4_cell_7_2"
-      ],
-      [
-        "modules.features.section_4_cell_8_0",
-        "modules.features.section_4_cell_8_1",
-        "modules.features.section_4_cell_8_2"
-      ],
-      [
-        "modules.features.section_4_cell_9_0",
-        "modules.features.section_4_cell_9_1",
-        "modules.features.section_4_cell_9_2"
-      ],
-      [
-        "modules.features.section_4_cell_10_0",
-        "modules.features.section_4_cell_10_1",
-        "modules.features.section_4_cell_10_2"
-      ],
-      [
-        "modules.features.section_4_cell_11_0",
-        "modules.features.section_4_cell_11_1",
-        "modules.features.section_4_cell_11_2"
-      ],
-      [
-        "modules.features.section_4_cell_12_0",
-        "modules.features.section_4_cell_12_1",
-        "modules.features.section_4_cell_12_2"
-      ],
-      [
-        "modules.features.section_4_cell_13_0",
-        "modules.features.section_4_cell_13_1",
-        "modules.features.section_4_cell_13_2"
-      ],
-      [
-        "modules.features.section_4_cell_14_0",
-        "modules.features.section_4_cell_14_1",
-        "modules.features.section_4_cell_14_2"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class Feature : AuditableEntity, ISoftDeletable\n{\n    public string Name { get; set; } = string.Empty;        // Unique system key\n    public string DisplayName { get; set; } = string.Empty;  // UI label\n    public string? Description { get; set; }\n    public string? Category { get; set; }                    // Grouping\n    \n    public FeatureValueType ValueType { get; set; } = FeatureValueType.Boolean;\n    public string DefaultValue { get; set; } = \"false\";     // Global fallback\n    \n    public bool IsSystem { get; set; }                      // Read-only if true\n    public bool IsVisible { get; set; } = true;\n    \n    // Validation constraints (Numeric features)\n    public string? MinValue { get; set; }                   // e.g. \"0\"\n    public string? MaxValue { get; set; }                   // e.g. \"1000\", \"-1\" = unlimited\n    public string? AllowedValues { get; set; }              // e.g. \"light,dark,custom\"\n    \n    public int SortOrder { get; set; }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_8_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.features.section_9_hdr_0",
-      "modules.features.section_9_hdr_1",
-      "modules.features.section_9_hdr_2",
-      "modules.features.section_9_hdr_3",
-      "modules.features.section_9_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.features.section_9_cell_0_0",
-        "modules.features.section_9_cell_0_1",
-        "modules.features.section_9_cell_0_2",
-        "modules.features.section_9_cell_0_3",
-        "modules.features.section_9_cell_0_4"
-      ],
-      [
-        "modules.features.section_9_cell_1_0",
-        "modules.features.section_9_cell_1_1",
-        "modules.features.section_9_cell_1_2",
-        "modules.features.section_9_cell_1_3",
-        "modules.features.section_9_cell_1_4"
-      ],
-      [
-        "modules.features.section_9_cell_2_0",
-        "modules.features.section_9_cell_2_1",
-        "modules.features.section_9_cell_2_2",
-        "modules.features.section_9_cell_2_3",
-        "modules.features.section_9_cell_2_4"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_10_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public enum FeatureValueType\n{\n    /// <summary>On/Off toggle, stored as \"true\" or \"false\"</summary>\n    Boolean = 0,\n    \n    /// <summary>Numeric limit, stored as integer string. -1 = unlimited</summary>\n    Numeric = 1,\n    \n    /// <summary>Arbitrary string configuration value</summary>\n    String = 2,\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "modules.features.section_12_title",
-    "contentKey": "modules.features.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_14_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.features.section_15_hdr_0",
-      "modules.features.section_15_hdr_1"
-    ],
-    "rows": [
-      [
-        "modules.features.section_15_cell_0_0",
-        "modules.features.section_15_cell_0_1",
-        "modules.features.section_15_cell_0_2"
-      ],
-      [
-        "modules.features.section_15_cell_1_0",
-        "modules.features.section_15_cell_1_1",
-        "modules.features.section_15_cell_1_2"
-      ],
-      [
-        "modules.features.section_15_cell_2_0",
-        "modules.features.section_15_cell_2_1",
-        "modules.features.section_15_cell_2_2"
-      ],
-      [
-        "modules.features.section_15_cell_3_0",
-        "modules.features.section_15_cell_3_1",
-        "modules.features.section_15_cell_3_2"
-      ],
-      [
-        "modules.features.section_15_cell_4_0",
-        "modules.features.section_15_cell_4_1",
-        "modules.features.section_15_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_17_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_18_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class EntitlementsStartupSeeder : IStartupSeeder\n{\n    private readonly IFeatureRepository _features;\n\n    public async Task SeedAsync(CancellationToken ct)\n    {\n        var systemFeatures = new[]\n        {\n            new Feature \n            { \n                Name = \"Chat.Enabled\", \n                DisplayName = \"Chat\", \n                ValueType = FeatureValueType.Boolean,\n                DefaultValue = \"false\",\n                IsSystem = true,\n                Category = \"Communication\"\n            },\n            new Feature \n            { \n                Name = \"MaxAdmins\", \n                DisplayName = \"Maximum Administrators\",\n                ValueType = FeatureValueType.Numeric,\n                DefaultValue = \"5\",\n                MinValue = \"1\",\n                MaxValue = \"-1\",\n                IsSystem = true,\n                Category = \"Limits\"\n            },\n            new Feature \n            { \n                Name = \"SSO.Enabled\", \n                DisplayName = \"Single Sign-On\",\n                ValueType = FeatureValueType.Boolean,\n                DefaultValue = \"false\",\n                IsSystem = true,\n                Category = \"Security\"\n            },\n        };\n\n        foreach (var feature in systemFeatures)\n        {\n            if (!await _features.ExistsByNameAsync(feature.Name, ct))\n                await _features.AddAsync(feature, ct);\n        }\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_21_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.features.section_22_hdr_0",
-      "modules.features.section_22_hdr_1",
-      "modules.features.section_22_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.features.section_22_cell_0_0",
-        "modules.features.section_22_cell_0_1",
-        "modules.features.section_22_cell_0_2"
-      ],
-      [
-        "modules.features.section_22_cell_1_0",
-        "modules.features.section_22_cell_1_1",
-        "modules.features.section_22_cell_1_2"
-      ],
-      [
-        "modules.features.section_22_cell_2_0",
-        "modules.features.section_22_cell_2_1",
-        "modules.features.section_22_cell_2_2"
-      ],
-      [
-        "modules.features.section_22_cell_3_0",
-        "modules.features.section_22_cell_3_1",
-        "modules.features.section_22_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_23_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Inside FeatureCheckBehavior for Numeric features:\nif (resolved.ValueType == FeatureValueType.Numeric)\n{\n    var limit = int.Parse(resolved.Value);\n    \n    if (limit == -1) \n        return await next(); // -1 = unlimited, skip check\n    \n    var counter = await _quotaCounterProvider.GetCounter(tenantId, featureName);\n    \n    if (counter.CurrentUsage >= limit)\n    {\n        return Result.Forbidden(\n            $\"Quota exceeded: {featureName} \" +\n            $\"(usage: {counter.CurrentUsage}, limit: {limit})\");\n    }\n    \n    // Increment counter after successful operation\n    await _quotaCounterProvider.Increment(tenantId, featureName);\n    \n    return await next();\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_26_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    req[\"Feature Request\"]\n    %% req: IRequireFeature command\n    cache[\"FeatureCache\"]\n    %% cache: In-memory cache\n    miss[\"Cache Miss\"]\n    %% miss: First access\n    resolve[\"Resolution Chain\"]\n    %% resolve: Override → Edition → Default\n    hit[\"Cache Hit\"]\n    %% hit: Instant return\n    req -->|\"GetResolvedValue()\"| cache\n    cache -->|\"exists?\"| hit\n    cache -->|\"not found\"| miss\n    miss -->|\"query DB\"| resolve\n    resolve -->|\"store result\"| cache",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "modules.features.section_28_title",
-    "contentKey": "modules.features.section_28_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_30_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_31_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Step 1: Mark your command\npublic class SendBulkEmailCommand : ICommand, IRequireFeature\n{\n    public string RequiredFeatureName => \"BulkEmail.Enabled\";\n    \n    public List<string> Recipients { get; set; } = [];\n    public string Subject { get; set; } = string.Empty;\n    public string Body { get; set; } = string.Empty;\n}\n\n// Step 2: That's it! FeatureCheckBehavior handles the rest.\n// If \"BulkEmail.Enabled\" is false for the tenant → 403 Forbidden\n// If \"BulkEmail.Enabled\" is true → command proceeds normally\n\n// For numeric features with quotas:\npublic class CreateProjectCommand : ICommand<Guid>, IRequireFeature\n{\n    public string RequiredFeatureName => \"MaxProjects\";\n    \n    // FeatureCheckBehavior checks: current_projects < MaxProjects limit\n    // If over limit → 403 \"Quota exceeded\"\n    // If under limit → auto-increment QuotaCounter + proceed\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_33_title",
-    "id": "sec_33"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.features.section_34_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.features.section_35_hdr_0",
-      "modules.features.section_35_hdr_1",
-      "modules.features.section_35_hdr_2",
-      "modules.features.section_35_hdr_3",
-      "modules.features.section_35_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.features.section_35_cell_0_0",
-        "modules.features.section_35_cell_0_1",
-        "modules.features.section_35_cell_0_2",
-        "modules.features.section_35_cell_0_3",
-        "modules.features.section_35_cell_0_4"
-      ],
-      [
-        "modules.features.section_35_cell_1_0",
-        "modules.features.section_35_cell_1_1",
-        "modules.features.section_35_cell_1_2",
-        "modules.features.section_35_cell_1_3",
-        "modules.features.section_35_cell_1_4"
-      ],
-      [
-        "modules.features.section_35_cell_2_0",
-        "modules.features.section_35_cell_2_1",
-        "modules.features.section_35_cell_2_2",
-        "modules.features.section_35_cell_2_3",
-        "modules.features.section_35_cell_2_4"
-      ],
-      [
-        "modules.features.section_35_cell_3_0",
-        "modules.features.section_35_cell_3_1",
-        "modules.features.section_35_cell_3_2",
-        "modules.features.section_35_cell_3_3",
-        "modules.features.section_35_cell_3_4"
-      ],
-      [
-        "modules.features.section_35_cell_4_0",
-        "modules.features.section_35_cell_4_1",
-        "modules.features.section_35_cell_4_2",
-        "modules.features.section_35_cell_4_3",
-        "modules.features.section_35_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.features.section_36_title",
-    "id": "sec_36"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.features.section_37_item_0",
-      "modules.features.section_37_item_1",
-      "modules.features.section_37_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "modules/entitlements-overview",
-  "modules/editions",
-  "modules/overrides"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["modules/entitlements-overview", "modules/editions", "modules/overrides"],
+  lastUpdated: "2026-03-02",
 });

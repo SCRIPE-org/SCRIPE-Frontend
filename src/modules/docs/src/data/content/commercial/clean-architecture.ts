@@ -1,229 +1,178 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.cleanArchitecture.intro" },
+
+  // ─── Architecture Layers ────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.layersTitle", id: "layers" },
+  {
+    type: "table",
+    headers: [
+      "commercial.cleanArchitecture.tblLayersHeader1",
+      "commercial.cleanArchitecture.tblLayersHeader2",
+      "commercial.cleanArchitecture.tblLayersHeader3",
+    ],
+    rows: [
+      [
+        "commercial.cleanArchitecture.tblLayersR1C1",
+        "commercial.cleanArchitecture.tblLayersR1C2",
+        "commercial.cleanArchitecture.tblLayersR1C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblLayersR2C1",
+        "commercial.cleanArchitecture.tblLayersR2C2",
+        "commercial.cleanArchitecture.tblLayersR2C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblLayersR3C1",
+        "commercial.cleanArchitecture.tblLayersR3C2",
+        "commercial.cleanArchitecture.tblLayersR3C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblLayersR4C1",
+        "commercial.cleanArchitecture.tblLayersR4C2",
+        "commercial.cleanArchitecture.tblLayersR4C3",
+      ],
+    ],
+  },
+
+  // ─── CQRS Pattern ──────────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.cqrsTitle", id: "cqrs" },
+  { type: "paragraph", contentKey: "commercial.cleanArchitecture.cqrsContent" },
+  {
+    type: "table",
+    headers: [
+      "commercial.cleanArchitecture.tblCqrsHeader1",
+      "commercial.cleanArchitecture.tblCqrsHeader2",
+      "commercial.cleanArchitecture.tblCqrsHeader3",
+    ],
+    rows: [
+      [
+        "commercial.cleanArchitecture.tblCqrsR1C1",
+        "commercial.cleanArchitecture.tblCqrsR1C2",
+        "commercial.cleanArchitecture.tblCqrsR1C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblCqrsR2C1",
+        "commercial.cleanArchitecture.tblCqrsR2C2",
+        "commercial.cleanArchitecture.tblCqrsR2C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblCqrsR3C1",
+        "commercial.cleanArchitecture.tblCqrsR3C2",
+        "commercial.cleanArchitecture.tblCqrsR3C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblCqrsR4C1",
+        "commercial.cleanArchitecture.tblCqrsR4C2",
+        "commercial.cleanArchitecture.tblCqrsR4C3",
+      ],
+      [
+        "commercial.cleanArchitecture.tblCqrsR5C1",
+        "commercial.cleanArchitecture.tblCqrsR5C2",
+        "commercial.cleanArchitecture.tblCqrsR5C3",
+      ],
+    ],
+  },
+
+  // ─── SOLID Principles ──────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.solidTitle", id: "solid" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "layers",
+        titleKey: "commercial.cleanArchitecture.singleResp",
+        descriptionKey: "commercial.cleanArchitecture.singleRespDesc",
+      },
+      {
+        icon: "zap",
+        titleKey: "commercial.cleanArchitecture.openClosed",
+        descriptionKey: "commercial.cleanArchitecture.openClosedDesc",
+      },
+      {
+        icon: "shield",
+        titleKey: "commercial.cleanArchitecture.depInversion",
+        descriptionKey: "commercial.cleanArchitecture.depInversionDesc",
+      },
+      {
+        icon: "building",
+        titleKey: "commercial.cleanArchitecture.interfaceSeg",
+        descriptionKey: "commercial.cleanArchitecture.interfaceSegDesc",
+      },
+    ],
+  },
+
+  // ─── Domain-Driven Design ───────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.dddTitle", id: "ddd" },
+  { type: "paragraph", contentKey: "commercial.cleanArchitecture.dddContent" },
+
+  // ─── Frontend SOLID ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.cleanArchitecture.frontendTitle",
+    id: "frontend-solid",
+  },
+  { type: "paragraph", contentKey: "commercial.cleanArchitecture.frontendContent" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "SOLID View/ViewModel Pattern",
+    code: `// View — Pure UI (~60 lines, zero logic)
+export function EmployeeListView() {
+  const vm = useEmployeeListViewModel();
+  return (
+    <div>
+      <FilterSection {...vm.filters} />
+      <StatisticsSection {...vm.statistics} />
+      <GenericCrudView crud={vm.table} columns={vm.columns} />
+    </div>
+  );
+}
+
+// ViewModel — All Logic (composing section ViewModels)
+export function useEmployeeListViewModel() {
+  const filters = useFilterViewModel();
+  const statistics = useStatisticsViewModel();
+  const table = useCrudViewModel(config);
+  const columns = [...]; // Defined here, not in View
+  return { filters, statistics, table, columns };
+}`,
+  },
+
+  // ─── Benefits ───────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.cleanArchitecture.benefitsTitle",
+    id: "benefits",
+  },
+  {
+    type: "table",
+    headers: [
+      "commercial.cleanArchitecture.tblBenHeader1",
+      "commercial.cleanArchitecture.tblBenHeader2",
+    ],
+    rows: [
+      ["commercial.cleanArchitecture.tblBenR1C1", "commercial.cleanArchitecture.tblBenR1C2"],
+      ["commercial.cleanArchitecture.tblBenR2C1", "commercial.cleanArchitecture.tblBenR2C2"],
+      ["commercial.cleanArchitecture.tblBenR3C1", "commercial.cleanArchitecture.tblBenR3C2"],
+      ["commercial.cleanArchitecture.tblBenR4C1", "commercial.cleanArchitecture.tblBenR4C2"],
+      ["commercial.cleanArchitecture.tblBenR5C1", "commercial.cleanArchitecture.tblBenR5C2"],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/clean-architecture",
   titleKey: "commercial.cleanArchitecture.title",
+  descriptionKey: "commercial.cleanArchitecture.description",
   category: "commercial-developer",
   order: 2,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.cleanArchitecture.section_3_hdr_0",
-      "commercial.cleanArchitecture.section_3_hdr_1",
-      "commercial.cleanArchitecture.section_3_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.cleanArchitecture.section_3_cell_0_0",
-        "commercial.cleanArchitecture.section_3_cell_0_1",
-        "commercial.cleanArchitecture.section_3_cell_0_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_3_cell_1_0",
-        "commercial.cleanArchitecture.section_3_cell_1_1",
-        "commercial.cleanArchitecture.section_3_cell_1_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_3_cell_2_0",
-        "commercial.cleanArchitecture.section_3_cell_2_1",
-        "commercial.cleanArchitecture.section_3_cell_2_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_3_cell_3_0",
-        "commercial.cleanArchitecture.section_3_cell_3_1",
-        "commercial.cleanArchitecture.section_3_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_5_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.cleanArchitecture.section_6_hdr_0",
-      "commercial.cleanArchitecture.section_6_hdr_1",
-      "commercial.cleanArchitecture.section_6_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.cleanArchitecture.section_6_cell_0_0",
-        "commercial.cleanArchitecture.section_6_cell_0_1",
-        "commercial.cleanArchitecture.section_6_cell_0_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_6_cell_1_0",
-        "commercial.cleanArchitecture.section_6_cell_1_1",
-        "commercial.cleanArchitecture.section_6_cell_1_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_6_cell_2_0",
-        "commercial.cleanArchitecture.section_6_cell_2_1",
-        "commercial.cleanArchitecture.section_6_cell_2_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_6_cell_3_0",
-        "commercial.cleanArchitecture.section_6_cell_3_1",
-        "commercial.cleanArchitecture.section_6_cell_3_2"
-      ],
-      [
-        "commercial.cleanArchitecture.section_6_cell_4_0",
-        "commercial.cleanArchitecture.section_6_cell_4_1",
-        "commercial.cleanArchitecture.section_6_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.cleanArchitecture.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.cleanArchitecture.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.cleanArchitecture.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.cleanArchitecture.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_17_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_19_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.cleanArchitecture.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// View — Pure UI (~60 lines, zero logic)\nexport function EmployeeListView() {\n  const vm = useEmployeeListViewModel();\n  return (\n    <div>\n      <FilterSection {...vm.filters} />\n      <StatisticsSection {...vm.statistics} />\n      <GenericCrudView crud={vm.table} columns={vm.columns} />\n    </div>\n  );\n}\n\n// ViewModel — All Logic (composing section ViewModels)\nexport function useEmployeeListViewModel() {\n  const filters = useFilterViewModel();\n  const statistics = useStatisticsViewModel();\n  const table = useCrudViewModel(config);\n  const columns = [...]; // Defined here, not in View\n  return { filters, statistics, table, columns };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.cleanArchitecture.section_23_hdr_0",
-      "commercial.cleanArchitecture.section_23_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.cleanArchitecture.section_23_cell_0_0",
-        "commercial.cleanArchitecture.section_23_cell_0_1"
-      ],
-      [
-        "commercial.cleanArchitecture.section_23_cell_1_0",
-        "commercial.cleanArchitecture.section_23_cell_1_1"
-      ],
-      [
-        "commercial.cleanArchitecture.section_23_cell_2_0",
-        "commercial.cleanArchitecture.section_23_cell_2_1"
-      ],
-      [
-        "commercial.cleanArchitecture.section_23_cell_3_0",
-        "commercial.cleanArchitecture.section_23_cell_3_1"
-      ],
-      [
-        "commercial.cleanArchitecture.section_23_cell_4_0",
-        "commercial.cleanArchitecture.section_23_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.cleanArchitecture.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.cleanArchitecture.section_25_item_0",
-      "commercial.cleanArchitecture.section_25_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/cli-tooling",
-  "commercial/api-design"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/cli-tooling", "commercial/api-design"],
+  lastUpdated: "2026-02-20",
 });

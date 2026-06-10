@@ -1,273 +1,172 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.complianceReadiness.intro" },
+
+  // ─── Compliance Frameworks ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.complianceReadiness.frameworkTitle",
+    id: "frameworks",
+  },
+  { type: "paragraph", contentKey: "commercial.complianceReadiness.frameworkIntro" },
+  {
+    type: "table",
+    headers: ["Framework", "Focus Area", "SCRIPE Coverage", "Ready"],
+    rows: [
+      [
+        "SOX",
+        "Financial controls & audit trail",
+        "Full audit pipeline, entity change tracking",
+        "✓",
+      ],
+      [
+        "GDPR",
+        "Data privacy & right to be forgotten",
+        "Soft delete, data export, consent tracking",
+        "✓",
+      ],
+      [
+        "SOC 2 Type II",
+        "Security, availability, integrity",
+        "8-layer security, health checks, audit",
+        "✓",
+      ],
+      [
+        "ISO 27001",
+        "Information security management",
+        "Access control, encryption, monitoring",
+        "✓",
+      ],
+      [
+        "HIPAA",
+        "Protected health information",
+        "Field-level security, audit trail, encryption",
+        "✓",
+      ],
+      [
+        "PCI-DSS",
+        "Payment card data security",
+        "Encryption, access control, anti-replay",
+        "Partial",
+      ],
+      ["CCPA", "California consumer privacy", "Data export, deletion, consent management", "✓"],
+    ],
+  },
+
+  // ─── Audit-Ready Features ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.complianceReadiness.auditReadyTitle",
+    id: "audit-ready",
+  },
+  { type: "paragraph", contentKey: "commercial.complianceReadiness.auditReadyContent" },
+  {
+    type: "list",
+    variant: "ordered",
+    items: [
+      "Every API request logged with user context, IP, timestamp, and response code",
+      "Every entity change tracked with before/after values and the user who made the change",
+      "Every security event (login, logout, failed auth, permission changes) recorded",
+      "Every business operation tagged with custom audit entries",
+      "All audit data tenant-scoped — no cross-tenant data leakage in audit trails",
+      "Real-time audit streaming via SignalR for immediate visibility",
+      "Configurable retention policies per tenant",
+      "Full audit export in PDF, CSV, and Excel formats",
+    ],
+  },
+
+  // ─── Security Controls ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.complianceReadiness.securityControlsTitle",
+    id: "controls",
+  },
+  {
+    type: "table",
+    headers: ["Control Category", "Controls Implemented", "Evidence Available"],
+    rows: [
+      [
+        "Access Control",
+        "RBAC, field-level restrictions, MFA",
+        "User access logs, permission audit",
+      ],
+      [
+        "Data Protection",
+        "Encryption (transit + rest), field masking",
+        "Configuration, audit trail",
+      ],
+      ["Incident Response", "Security event streaming, alerting", "Real-time dashboard, export"],
+      ["Change Management", "Entity versioning, soft delete", "Before/after tracking, timestamps"],
+      ["Network Security", "TLS, CORS, CSP, rate limiting", "Security headers, config"],
+      ["Availability", "Health checks, circuit breakers", "Uptime logs, health endpoints"],
+    ],
+  },
+
+  // ─── Data Privacy (GDPR) ────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.complianceReadiness.gdprTitle", id: "gdpr" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "shield",
+        titleKey: "commercial.complianceReadiness.rightToErasure",
+        descriptionKey: "commercial.complianceReadiness.rightToErasureDesc",
+      },
+      {
+        icon: "database",
+        titleKey: "commercial.complianceReadiness.dataPortability",
+        descriptionKey: "commercial.complianceReadiness.dataPortabilityDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "commercial.complianceReadiness.consentMgmt",
+        descriptionKey: "commercial.complianceReadiness.consentMgmtDesc",
+      },
+      {
+        icon: "bar-chart",
+        titleKey: "commercial.complianceReadiness.dataMinimization",
+        descriptionKey: "commercial.complianceReadiness.dataMinimizationDesc",
+      },
+    ],
+  },
+
+  // ─── Compliance Checklist ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.complianceReadiness.checklistTitle",
+    id: "checklist",
+  },
+  {
+    type: "table",
+    headers: ["Requirement", "SCRIPE Feature", "Status"],
+    rows: [
+      ["Encryption at rest", "AES-256 database encryption", "✓ Built-in"],
+      ["Encryption in transit", "TLS 1.3 enforced", "✓ Built-in"],
+      ["Access logging", "4-source audit pipeline", "✓ Built-in"],
+      ["Password policy", "Configurable complexity, history, expiry", "✓ Built-in"],
+      ["Session management", "JWT + refresh tokens, revocation", "✓ Built-in"],
+      ["Data backup", "Automated backup configuration", "✓ Configurable"],
+      ["Incident alerting", "SignalR real-time + webhook", "✓ Built-in"],
+    ],
+  },
+
+  { type: "info", variant: "warning", contentKey: "commercial.complianceReadiness.disclaimer" },
+];
 
 registerPage({
   slug: "commercial/compliance-readiness",
   titleKey: "commercial.complianceReadiness.title",
+  descriptionKey: "commercial.complianceReadiness.description",
   category: "commercial-security",
   order: 5,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceReadiness.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.complianceReadiness.section_4_hdr_0",
-      "commercial.complianceReadiness.section_4_hdr_1",
-      "commercial.complianceReadiness.section_4_hdr_2",
-      "commercial.complianceReadiness.section_4_hdr_3"
-    ],
-    "rows": [
-      [
-        "commercial.complianceReadiness.section_4_cell_0_0",
-        "commercial.complianceReadiness.section_4_cell_0_1",
-        "commercial.complianceReadiness.section_4_cell_0_2",
-        "commercial.complianceReadiness.section_4_cell_0_3"
-      ],
-      [
-        "commercial.complianceReadiness.section_4_cell_1_0",
-        "commercial.complianceReadiness.section_4_cell_1_1",
-        "commercial.complianceReadiness.section_4_cell_1_2",
-        "commercial.complianceReadiness.section_4_cell_1_3"
-      ],
-      [
-        "commercial.complianceReadiness.section_4_cell_2_0",
-        "commercial.complianceReadiness.section_4_cell_2_1",
-        "commercial.complianceReadiness.section_4_cell_2_2",
-        "commercial.complianceReadiness.section_4_cell_2_3"
-      ],
-      [
-        "commercial.complianceReadiness.section_4_cell_3_0",
-        "commercial.complianceReadiness.section_4_cell_3_1",
-        "commercial.complianceReadiness.section_4_cell_3_2",
-        "commercial.complianceReadiness.section_4_cell_3_3"
-      ],
-      [
-        "commercial.complianceReadiness.section_4_cell_4_0",
-        "commercial.complianceReadiness.section_4_cell_4_1",
-        "commercial.complianceReadiness.section_4_cell_4_2",
-        "commercial.complianceReadiness.section_4_cell_4_3"
-      ],
-      [
-        "commercial.complianceReadiness.section_4_cell_5_0",
-        "commercial.complianceReadiness.section_4_cell_5_1",
-        "commercial.complianceReadiness.section_4_cell_5_2",
-        "commercial.complianceReadiness.section_4_cell_5_3"
-      ],
-      [
-        "commercial.complianceReadiness.section_4_cell_6_0",
-        "commercial.complianceReadiness.section_4_cell_6_1",
-        "commercial.complianceReadiness.section_4_cell_6_2",
-        "commercial.complianceReadiness.section_4_cell_6_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceReadiness.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_6_content"
-  },
-  {
-    "type": "list",
-    "variant": "ordered",
-    "items": [
-      "commercial.complianceReadiness.section_7_item_0",
-      "commercial.complianceReadiness.section_7_item_1",
-      "commercial.complianceReadiness.section_7_item_2",
-      "commercial.complianceReadiness.section_7_item_3",
-      "commercial.complianceReadiness.section_7_item_4",
-      "commercial.complianceReadiness.section_7_item_5",
-      "commercial.complianceReadiness.section_7_item_6",
-      "commercial.complianceReadiness.section_7_item_7"
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceReadiness.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.complianceReadiness.section_9_hdr_0",
-      "commercial.complianceReadiness.section_9_hdr_1",
-      "commercial.complianceReadiness.section_9_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.complianceReadiness.section_9_cell_0_0",
-        "commercial.complianceReadiness.section_9_cell_0_1",
-        "commercial.complianceReadiness.section_9_cell_0_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_9_cell_1_0",
-        "commercial.complianceReadiness.section_9_cell_1_1",
-        "commercial.complianceReadiness.section_9_cell_1_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_9_cell_2_0",
-        "commercial.complianceReadiness.section_9_cell_2_1",
-        "commercial.complianceReadiness.section_9_cell_2_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_9_cell_3_0",
-        "commercial.complianceReadiness.section_9_cell_3_1",
-        "commercial.complianceReadiness.section_9_cell_3_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_9_cell_4_0",
-        "commercial.complianceReadiness.section_9_cell_4_1",
-        "commercial.complianceReadiness.section_9_cell_4_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_9_cell_5_0",
-        "commercial.complianceReadiness.section_9_cell_5_1",
-        "commercial.complianceReadiness.section_9_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceReadiness.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.complianceReadiness.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.complianceReadiness.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_14_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.complianceReadiness.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.complianceReadiness.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceReadiness.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceReadiness.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.complianceReadiness.section_20_hdr_0",
-      "commercial.complianceReadiness.section_20_hdr_1",
-      "commercial.complianceReadiness.section_20_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.complianceReadiness.section_20_cell_0_0",
-        "commercial.complianceReadiness.section_20_cell_0_1",
-        "commercial.complianceReadiness.section_20_cell_0_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_20_cell_1_0",
-        "commercial.complianceReadiness.section_20_cell_1_1",
-        "commercial.complianceReadiness.section_20_cell_1_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_20_cell_2_0",
-        "commercial.complianceReadiness.section_20_cell_2_1",
-        "commercial.complianceReadiness.section_20_cell_2_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_20_cell_3_0",
-        "commercial.complianceReadiness.section_20_cell_3_1",
-        "commercial.complianceReadiness.section_20_cell_3_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_20_cell_4_0",
-        "commercial.complianceReadiness.section_20_cell_4_1",
-        "commercial.complianceReadiness.section_20_cell_4_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_20_cell_5_0",
-        "commercial.complianceReadiness.section_20_cell_5_1",
-        "commercial.complianceReadiness.section_20_cell_5_2"
-      ],
-      [
-        "commercial.complianceReadiness.section_20_cell_6_0",
-        "commercial.complianceReadiness.section_20_cell_6_1",
-        "commercial.complianceReadiness.section_20_cell_6_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "commercial.complianceReadiness.section_21_title",
-    "contentKey": "commercial.complianceReadiness.section_21_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceReadiness.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.complianceReadiness.section_23_item_0",
-      "commercial.complianceReadiness.section_23_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/security-overview",
-  "commercial/audit-compliance"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/security-overview", "commercial/audit-compliance"],
+  lastUpdated: "2026-02-20",
 });

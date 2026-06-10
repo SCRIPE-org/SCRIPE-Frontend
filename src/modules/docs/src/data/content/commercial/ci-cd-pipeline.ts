@@ -1,156 +1,82 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.ciCdPipeline.intro" },
+  { type: "heading", level: 2, titleKey: "commercial.ciCdPipeline.workflowTitle", id: "workflow" },
+  {
+    type: "flowchart",
+    direction: "horizontal",
+    title: "CI/CD Pipeline",
+    nodes: [
+      { id: "push", label: "Git Push", type: "default" },
+      { id: "lint", label: "Lint + Type Check", type: "info" },
+      { id: "test", label: "Unit Tests", type: "primary" },
+      { id: "build", label: "Build", type: "warning" },
+      { id: "int", label: "Integration Tests", type: "success" },
+      { id: "deploy", label: "Deploy", type: "danger" },
+    ],
+    connections: [
+      { from: "push", to: "lint" },
+      { from: "lint", to: "test" },
+      { from: "test", to: "build" },
+      { from: "build", to: "int" },
+      { from: "int", to: "deploy" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.ciCdPipeline.environmentsTitle",
+    id: "environments",
+  },
+  {
+    type: "table",
+    headers: ["Environment", "Trigger", "Purpose", "Database"],
+    rows: [
+      ["Development", "Every commit", "Developer testing", "SQLite / Local SQL"],
+      ["Staging", "PR merge to develop", "QA testing", "Staging SQL Server"],
+      ["UAT", "Manual trigger", "User acceptance", "UAT database"],
+      ["Production", "Tag release", "Live deployment", "Production cluster"],
+    ],
+  },
+  { type: "heading", level: 2, titleKey: "commercial.ciCdPipeline.dockerTitle", id: "docker" },
+  { type: "paragraph", contentKey: "commercial.ciCdPipeline.dockerContent" },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Docker Deployment Commands",
+    code: `# Build and run with Docker Compose
+docker-compose up -d
+
+# Scale specific services
+docker-compose up -d --scale hr-service=3
+
+# Health check
+curl http://localhost:5000/health/ready`,
+  },
+  { type: "heading", level: 2, titleKey: "commercial.ciCdPipeline.hostingTitle", id: "hosting" },
+  {
+    type: "table",
+    headers: ["Platform", "Support Level", "Notes"],
+    rows: [
+      ["Azure App Service", "Full", "Recommended for Azure shops"],
+      ["AWS ECS / Fargate", "Full", "Container-based deployment"],
+      ["IIS (Windows)", "Full", "Traditional Windows hosting"],
+      ["Linux (systemd)", "Full", "Direct Kestrel hosting"],
+      ["Docker / Kubernetes", "Full", "Container orchestration"],
+      ["On-Premise", "Full", "Air-gapped environments"],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/ci-cd-pipeline",
   titleKey: "commercial.ciCdPipeline.title",
+  descriptionKey: "commercial.ciCdPipeline.description",
   category: "commercial-integration",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.ciCdPipeline.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.ciCdPipeline.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.ciCdPipeline.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    push[\"Git Push\"]\n    lint([\"Lint + Type Check\"])\n    test([\"Unit Tests\"])\n    build{{\"Build\"}}\n    int([\"Integration Tests\"])\n    deploy[\"Deploy\"]\n    push --> lint\n    lint --> test\n    test --> build\n    build --> int\n    int --> deploy",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.ciCdPipeline.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.ciCdPipeline.section_5_hdr_0",
-      "commercial.ciCdPipeline.section_5_hdr_1",
-      "commercial.ciCdPipeline.section_5_hdr_2",
-      "commercial.ciCdPipeline.section_5_hdr_3"
-    ],
-    "rows": [
-      [
-        "commercial.ciCdPipeline.section_5_cell_0_0",
-        "commercial.ciCdPipeline.section_5_cell_0_1",
-        "commercial.ciCdPipeline.section_5_cell_0_2",
-        "commercial.ciCdPipeline.section_5_cell_0_3"
-      ],
-      [
-        "commercial.ciCdPipeline.section_5_cell_1_0",
-        "commercial.ciCdPipeline.section_5_cell_1_1",
-        "commercial.ciCdPipeline.section_5_cell_1_2",
-        "commercial.ciCdPipeline.section_5_cell_1_3"
-      ],
-      [
-        "commercial.ciCdPipeline.section_5_cell_2_0",
-        "commercial.ciCdPipeline.section_5_cell_2_1",
-        "commercial.ciCdPipeline.section_5_cell_2_2",
-        "commercial.ciCdPipeline.section_5_cell_2_3"
-      ],
-      [
-        "commercial.ciCdPipeline.section_5_cell_3_0",
-        "commercial.ciCdPipeline.section_5_cell_3_1",
-        "commercial.ciCdPipeline.section_5_cell_3_2",
-        "commercial.ciCdPipeline.section_5_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.ciCdPipeline.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.ciCdPipeline.section_7_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.ciCdPipeline.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# Build and run with Docker Compose\ndocker-compose up -d\n\n# Scale specific services\ndocker-compose up -d --scale hr-service=3\n\n# Health check\ncurl http://localhost:5000/health/ready",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.ciCdPipeline.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.ciCdPipeline.section_11_hdr_0",
-      "commercial.ciCdPipeline.section_11_hdr_1",
-      "commercial.ciCdPipeline.section_11_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.ciCdPipeline.section_11_cell_0_0",
-        "commercial.ciCdPipeline.section_11_cell_0_1",
-        "commercial.ciCdPipeline.section_11_cell_0_2"
-      ],
-      [
-        "commercial.ciCdPipeline.section_11_cell_1_0",
-        "commercial.ciCdPipeline.section_11_cell_1_1",
-        "commercial.ciCdPipeline.section_11_cell_1_2"
-      ],
-      [
-        "commercial.ciCdPipeline.section_11_cell_2_0",
-        "commercial.ciCdPipeline.section_11_cell_2_1",
-        "commercial.ciCdPipeline.section_11_cell_2_2"
-      ],
-      [
-        "commercial.ciCdPipeline.section_11_cell_3_0",
-        "commercial.ciCdPipeline.section_11_cell_3_1",
-        "commercial.ciCdPipeline.section_11_cell_3_2"
-      ],
-      [
-        "commercial.ciCdPipeline.section_11_cell_4_0",
-        "commercial.ciCdPipeline.section_11_cell_4_1",
-        "commercial.ciCdPipeline.section_11_cell_4_2"
-      ],
-      [
-        "commercial.ciCdPipeline.section_11_cell_5_0",
-        "commercial.ciCdPipeline.section_11_cell_5_1",
-        "commercial.ciCdPipeline.section_11_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.ciCdPipeline.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.ciCdPipeline.section_13_item_0",
-      "commercial.ciCdPipeline.section_13_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/deployment-modes",
-  "commercial/testing-strategy"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/deployment-modes", "commercial/testing-strategy"],
+  lastUpdated: "2026-02-20",
 });

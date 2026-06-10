@@ -1,158 +1,97 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
+      {
+        icon: "🔄",
+        titleKey: "Full Lifecycle",
+        descriptionKey:
+          "Free → Trial → Active → PastDue → Cancelled → Expired with automatic transitions.",
+      },
+      {
+        icon: "🤖",
+        titleKey: "Auto-Reconciliation",
+        descriptionKey:
+          "Daily background job handles trial expiry, auto-renewal, and expiration automatically.",
+      },
+      {
+        icon: "🎛️",
+        titleKey: "Feature Gating",
+        descriptionKey:
+          "UserFeatureCheckerService resolves which features each user can access based on their plan.",
+      },
+      {
+        icon: "👤",
+        titleKey: "Self-Service",
+        descriptionKey: "Users can view their own subscription status via the /me endpoint.",
+      },
+      {
+        icon: "📋",
+        titleKey: "Audit Trail",
+        descriptionKey:
+          "Immutable Cancel+Replace pattern keeps a complete history per billing cycle.",
+      },
+      {
+        icon: "🔔",
+        titleKey: "Domain Events",
+        descriptionKey:
+          "Created, Cancelled, and Renewed events feed into webhook and notification systems.",
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "Subscription Lifecycle",
+    id: "lifecycle",
+  },
+  {
+    type: "table",
+    headers: ["Status", "Description", "Can Transition To"],
+    rows: [
+      ["Free", "No billing, on free plan", "Trial, Active"],
+      ["Trial", "Trial period active", "Active (auto-renew), Expired (no renew)"],
+      ["Active", "Paid and current", "PastDue, Cancelled, Expired"],
+      ["PastDue", "Payment failed, grace period active", "Active (recovered), Expired"],
+      ["Cancelled", "Manually cancelled (terminal)", "—"],
+      ["Expired", "Period ended (terminal)", "—"],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "Automatic Reconciliation",
+    id: "reconciliation",
+  },
+  {
+    type: "table",
+    headers: ["Job", "Schedule", "What it does"],
+    rows: [
+      [
+        "UserSubscriptionReconciliationJob",
+        "Daily 5:00 AM UTC",
+        "Trial expiry, period expiry, auto-renewal",
+      ],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/entitlements-user-subscriptions",
-  titleKey: "commercial.entitlementsUserSubscriptions.title",
+  titleKey: "User Subscriptions",
+  descriptionKey:
+    "Tier 2 user-to-plan subscription management with full lifecycle, auto-reconciliation, feature gating, and self-service capabilities.",
   category: "commercial-modules",
   order: 22,
-  sections: [
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_0_title",
-    "id": "sec_0"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entitlementsUserSubscriptions.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entitlementsUserSubscriptions.section_3_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entitlementsUserSubscriptions.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entitlementsUserSubscriptions.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entitlementsUserSubscriptions.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entitlementsUserSubscriptions.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.entitlementsUserSubscriptions.section_13_hdr_0",
-      "commercial.entitlementsUserSubscriptions.section_13_hdr_1",
-      "commercial.entitlementsUserSubscriptions.section_13_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.entitlementsUserSubscriptions.section_13_cell_0_0",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_0_1",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_0_2"
-      ],
-      [
-        "commercial.entitlementsUserSubscriptions.section_13_cell_1_0",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_1_1",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_1_2"
-      ],
-      [
-        "commercial.entitlementsUserSubscriptions.section_13_cell_2_0",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_2_1",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_2_2"
-      ],
-      [
-        "commercial.entitlementsUserSubscriptions.section_13_cell_3_0",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_3_1",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_3_2"
-      ],
-      [
-        "commercial.entitlementsUserSubscriptions.section_13_cell_4_0",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_4_1",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_4_2"
-      ],
-      [
-        "commercial.entitlementsUserSubscriptions.section_13_cell_5_0",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_5_1",
-        "commercial.entitlementsUserSubscriptions.section_13_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.entitlementsUserSubscriptions.section_15_hdr_0",
-      "commercial.entitlementsUserSubscriptions.section_15_hdr_1",
-      "commercial.entitlementsUserSubscriptions.section_15_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.entitlementsUserSubscriptions.section_15_cell_0_0",
-        "commercial.entitlementsUserSubscriptions.section_15_cell_0_1",
-        "commercial.entitlementsUserSubscriptions.section_15_cell_0_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entitlementsUserSubscriptions.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.entitlementsUserSubscriptions.section_17_item_0",
-      "commercial.entitlementsUserSubscriptions.section_17_item_1",
-      "commercial.entitlementsUserSubscriptions.section_17_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "commercial/entitlements-tenant-plans",
-  "commercial/entitlements-overview",
-  "commercial/billing-payments"
-],
-  lastUpdated: "2026-06-09",
+    "commercial/entitlements-tenant-plans",
+    "commercial/entitlements-overview",
+    "commercial/billing-payments",
+  ],
+  lastUpdated: "2026-04-18",
 });

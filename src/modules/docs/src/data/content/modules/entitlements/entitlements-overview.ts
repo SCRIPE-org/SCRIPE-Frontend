@@ -1,462 +1,590 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.intro",
+  },
+
+  // ─── What is Entitlements ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.whatIsTitle",
+    id: "what-is-entitlements",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.whatIsIntro",
+  },
+  {
+    type: "table",
+    headers: ["Concept", "Analogy", "Example"],
+    rows: [
+      ["Feature", "A switch or dial on your platform", "Chat.Enabled, MaxAdmins, Theme"],
+      [
+        "Edition",
+        "A product SKU / pricing plan",
+        "Basic ($29/mo), Pro ($99/mo), Enterprise (custom)",
+      ],
+      [
+        "Subscription",
+        "A customer's contract",
+        "Acme Corp → Pro plan, monthly, active since Jan 2026",
+      ],
+      [
+        "Override",
+        "A one-off exception",
+        "Give Acme Corp 500 admins instead of the Pro default of 50",
+      ],
+    ],
+  },
+
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.architectureIntro",
+  },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "feat", label: "Features", description: "Boolean / Numeric / String capabilities" },
+      { id: "ed", label: "Editions", description: "Named plans (Basic, Pro, Enterprise)" },
+      { id: "sub", label: "Subscriptions", description: "Tenant ↔ Edition binding" },
+      { id: "ovr", label: "Overrides", description: "Per-tenant custom values" },
+      { id: "cache", label: "FeatureCache", description: "In-memory resolved values" },
+      { id: "pipe", label: "FeatureCheckBehavior", description: "AstraFlow mediator pipeline gate" },
+    ],
+    connections: [
+      { from: "feat", to: "ed", label: "bundled into" },
+      { from: "ed", to: "sub", label: "linked via" },
+      { from: "sub", to: "cache", label: "resolved into" },
+      { from: "ovr", to: "cache", label: "overrides" },
+      { from: "cache", to: "pipe", label: "checked by" },
+    ],
+  },
+
+  // ─── Four Domains ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.domainsTitle",
+    id: "four-domains",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.domainsIntro",
+  },
+  {
+    type: "table",
+    headers: ["Domain", "Entity", "Responsibility", "Key Operations"],
+    rows: [
+      [
+        "Features",
+        "Feature",
+        "Define controllable capabilities (boolean toggle, numeric quota, string config)",
+        "CRUD, Seed system features, ValueType validation",
+      ],
+      [
+        "Editions",
+        "Edition, EditionVersion, EditionFeature",
+        "Named plans that bundle feature values with versioning",
+        "CRUD, Version management, Rollout strategies, Direct-apply",
+      ],
+      [
+        "Subscriptions",
+        "TenantSubscription",
+        "Bind tenants to editions with full lifecycle",
+        "Assign, Upgrade, Downgrade, Suspend, Resume, Cancel, Renew",
+      ],
+      [
+        "Overrides",
+        "TenantFeatureOverride",
+        "Per-tenant custom values bypassing edition defaults",
+        "Set, Remove, List, Resolve all features",
+      ],
+    ],
+  },
+
+  // ─── Resolution Chain ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.resolutionTitle",
+    id: "resolution-chain",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.resolutionIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Feature Value Resolution Chain",
+    code: `Priority (highest → lowest):
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  1. TenantFeatureOverride  →  Custom value set for THIS specific tenant │
+│     Example: "MaxAdmins" = 500 (override for Acme Corp)                 │
+├─────────────────────────────────────────────────────────────────────────┤
+│  2. EditionFeature         →  Value set in the tenant's active edition  │
+│     Example: "MaxAdmins" = 50 (Pro plan default)                        │
+├─────────────────────────────────────────────────────────────────────────┤
+│  3. Feature.DefaultValue   →  Global fallback for the feature           │
+│     Example: "MaxAdmins" = 5 (platform default)                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Resolution Order:
+  Check Override → exists? use it : Check Edition → exists? use it : use Default`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.entitlementsOverview.resolutionTip",
+  },
+
+  // ─── Pipeline Integration ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.pipelineTitle",
+    id: "pipeline-integration",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.pipelineIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "IRequireFeature Interface",
+    code: `// Mark a command to require a feature
+public class CreateChatRoomCommand : ICommand<Guid>, IRequireFeature
+{
+    public string RequiredFeatureName => "Chat.Enabled";
+    
+    // ... command properties
+    public string Name { get; set; }
+    public string Description { get; set; }
+}`,
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "FeatureCheckBehavior Pipeline",
+    code: `public class FeatureCheckBehavior<TRequest, TResponse> 
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequireFeature
+{
+    private readonly IFeatureCache _cache;
+    private readonly ICurrentTenantAccessor _tenant;
+
+    public async Task<TResponse> Handle(
+        TRequest request, 
+        RequestHandlerDelegate<TResponse> next, 
+        CancellationToken ct)
+    {
+        var tenantId = _tenant.TenantId;
+        var featureName = request.RequiredFeatureName;
+        
+        // Resolve: Override → Edition → Default
+        var resolved = await _cache.GetResolvedValue(tenantId, featureName);
+        
+        if (resolved.ValueType == FeatureValueType.Boolean && resolved.Value == "false")
+            return Result.Forbidden("Feature is disabled for your plan");
+            
+        if (resolved.ValueType == FeatureValueType.Numeric)
+        {
+            var limit = int.Parse(resolved.Value);
+            if (limit != -1) // -1 = unlimited
+            {
+                var usage = await _cache.GetCurrentUsage(tenantId, featureName);
+                if (usage >= limit)
+                    return Result.Forbidden("Quota exceeded for your plan");
+            }
+        }
+        
+        return await next(); // Feature check passed
+    }
+}`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.entitlementsOverview.pipelineTip",
+  },
+
+  // ─── CQRS Command/Query Map ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.cqrsMapTitle",
+    id: "cqrs-map",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.cqrsMapIntro",
+  },
+  {
+    type: "table",
+    headers: ["Domain", "Commands", "Queries"],
+    rows: [
+      [
+        "Features",
+        "CreateFeature, UpdateFeature, DeleteFeature",
+        "GetFeatures (paginated), GetFeatureById",
+      ],
+      [
+        "Editions",
+        "CreateEdition, UpdateEdition, DeleteEdition, SetEditionFeatures, DirectApplyFeatures, CreateEditionVersion, PublishEditionVersion, RollbackEditionVersion",
+        "GetEditions, GetEditionById, GetEditionFeatures, GetEditionVersions",
+      ],
+      [
+        "Subscriptions",
+        "AssignSubscription, UpgradeSubscription, DowngradeSubscription, SuspendSubscription, ResumeSubscription, CancelSubscription, RenewSubscription",
+        "GetSubscriptions, GetSubscriptionById, GetDowngradeImpact, GetTenantActiveSubscription",
+      ],
+      [
+        "Overrides",
+        "SetFeatureOverride, RemoveFeatureOverride",
+        "GetTenantOverrides, GetResolvedFeatures",
+      ],
+    ],
+  },
+
+  // ─── DI Registration ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.diTitle",
+    id: "di-registration",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.diIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "DependencyInjection.cs",
+    code: `public static class DependencyInjection
+{
+    public static IServiceCollection AddEntitlementsModule(
+        this IServiceCollection services, IConfiguration config)
+    {
+        // Domain repositories
+        services.AddScoped<IFeatureRepository, FeatureRepository>();
+        services.AddScoped<IEditionRepository, EditionRepository>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<IFeatureOverrideRepository, FeatureOverrideRepository>();
+        
+        // Application services
+        services.AddScoped<IFeatureCache, FeatureCache>();
+        services.AddScoped<IEditionConstraintValidator, EditionConstraintValidator>();
+        services.AddScoped<IDowngradeImpactValidator, DowngradeImpactValidator>();
+        services.AddScoped<IOverflowPolicyExecutor, OverflowPolicyExecutor>();
+        services.AddScoped<IQuotaCounterProvisioner, QuotaCounterProvisioner>();
+        
+        // AstraFlow mediator pipeline behavior
+        services.AddTransient(typeof(IPipelineBehavior<,>), 
+            typeof(FeatureCheckBehavior<,>));
+        
+        // Startup seeder (seeds system features)
+        services.AddTransient<IStartupSeeder, EntitlementsStartupSeeder>();
+        
+        return services;
+    }
+}`,
+  },
+
+  // ─── Backend Structure ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.backendTitle",
+    id: "backend-structure",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.backendIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Backend Module Structure",
+    code: `Entitlements/
+├── Entitlements.Domain/
+│   ├── Entities/
+│   │   ├── Feature.cs                  # Controllable capability
+│   │   ├── Edition.cs                  # Named plan (Basic, Pro, Enterprise)
+│   │   ├── EditionFeature.cs           # Feature value within an edition
+│   │   ├── EditionVersion.cs           # Versioned snapshot of edition features
+│   │   ├── TenantSubscription.cs       # Tenant ↔ Edition binding
+│   │   ├── TenantFeatureOverride.cs    # Per-tenant custom value
+│   │   └── QuotaCounter.cs            # Usage tracking for numeric features
+│   ├── Interfaces/
+│   │   ├── IFeatureRepository.cs
+│   │   ├── IEditionRepository.cs
+│   │   ├── ISubscriptionRepository.cs
+│   │   └── IFeatureOverrideRepository.cs
+│   ├── Enums/
+│   │   ├── FeatureValueType.cs         # Boolean, Numeric, String
+│   │   ├── OverflowPolicy.cs           # Block, Warn, Allow
+│   │   ├── SubscriptionType.cs         # Monthly, Annual, Lifetime, Trial
+│   │   ├── SubscriptionStatus.cs       # Active, Suspended, Cancelled, Expired
+│   │   ├── RolloutStrategy.cs          # Immediate, Gradual, Manual
+│   │   └── ExpiryBehavior.cs           # Downgrade, Suspend, Grace
+│   └── Specifications/
+│       └── FeatureSearchSpec.cs
+├── Entitlements.Application/
+│   ├── Commands/
+│   │   ├── Features/     # CreateFeature, UpdateFeature, DeleteFeature
+│   │   ├── Editions/     # CRUD + SetFeatures + DirectApply + Versions
+│   │   ├── Subscriptions/ # Assign, Upgrade, Downgrade, Suspend, Resume, Cancel
+│   │   └── Overrides/    # SetOverride, RemoveOverride
+│   ├── Queries/
+│   │   ├── Features/     # GetFeatures, GetFeatureById
+│   │   ├── Editions/     # GetEditions, GetById, GetFeatures, GetVersions
+│   │   ├── Subscriptions/ # GetSubscriptions, GetById, GetDowngradeImpact
+│   │   └── Overrides/    # GetOverrides, GetResolvedFeatures
+│   ├── DTOs/             # Request/Response DTOs
+│   ├── Mapping/          # explicit DTO mapping rules
+│   ├── Services/
+│   │   └── EditionConstraintValidator.cs
+│   └── Abstractions/
+│       ├── IFeatureCache.cs
+│       ├── IDowngradeImpactValidator.cs
+│       ├── IOverflowPolicyExecutor.cs
+│       └── IQuotaCounterProvisioner.cs
+└── Entitlements.Infrastructure/
+    ├── EntitlementsDbContextFactory.cs
+    ├── EntitlementsStartupSeeder.cs
+    ├── Persistence/
+    │   ├── FeatureRepository.cs
+    │   ├── EditionRepository.cs
+    │   ├── SubscriptionRepository.cs
+    │   └── FeatureOverrideRepository.cs
+    ├── Caching/
+    │   ├── FeatureCache.cs
+    │   └── NoOpFeatureCache.cs
+    └── DependencyInjection.cs`,
+  },
+
+  // ─── Frontend Structure ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.frontendTitle",
+    id: "frontend-structure",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.frontendIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Frontend Module Structure",
+    code: `src/modules/entitlements/
+├── editions/                    # Edition management
+│   └── src/
+│       ├── domain/
+│       │   ├── entities/        # Edition.ts, EditionFeature.ts, EditionVersion.ts
+│       │   └── interfaces/      # IEditionRepository.ts
+│       ├── data/
+│       │   ├── models/          # EditionDto.ts, EditionFeatureDto.ts
+│       │   ├── mappers/         # EditionMapper.ts
+│       │   └── repositories/    # EditionRepository.ts
+│       └── presentation/
+│           ├── viewmodels/      # useEditionsViewModel.ts, useEditionDetailViewModel.ts
+│           ├── views/           # EditionsView.tsx, EditionDetailView.tsx
+│           └── components/      # EditionFeaturesTable.tsx, VersionHistory.tsx
+├── features/                    # Feature registry
+│   └── src/ { domain, data, presentation }
+├── subscriptions/               # Subscription lifecycle
+│   └── src/ { domain, data, presentation }
+└── overrides/                   # Per-tenant overrides
+    └── src/ { domain, data, presentation }`,
+  },
+
+  // ─── API Controllers ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.controllersTitle",
+    id: "api-controllers",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.controllersIntro",
+  },
+  {
+    type: "table",
+    headers: ["Controller", "Route Prefix", "Endpoints", "Permission Prefix", "Key Operations"],
+    rows: [
+      [
+        "EditionsController",
+        "/api/v1/editions",
+        "11",
+        "editions.*",
+        "CRUD, SetFeatures, DirectApply, Versions, Publish, Rollback",
+      ],
+      [
+        "FeaturesController",
+        "/api/v1/features",
+        "5",
+        "features.*",
+        "CRUD (system features are read-only)",
+      ],
+      [
+        "SubscriptionsController",
+        "/api/v1/subscriptions",
+        "12",
+        "subscriptions.*",
+        "Assign, Upgrade, Downgrade, Suspend, Resume, Cancel, Renew, DowngradeImpact",
+      ],
+      [
+        "TenantFeaturesController",
+        "/api/v1/tenants/{id}/features",
+        "4",
+        "features.*",
+        "SetOverride, RemoveOverride, GetOverrides, GetResolved",
+      ],
+    ],
+  },
+
+  // ─── Feature Comparison Table ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.comparisonTitle",
+    id: "comparison",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.comparisonIntro",
+  },
+  {
+    type: "table",
+    headers: ["Capability", "Without Entitlements", "With Entitlements"],
+    rows: [
+      [
+        "Feature Gating",
+        "Manual if/else checks scattered in code",
+        "Automatic pipeline-level gating via IRequireFeature",
+      ],
+      ["Plan Management", "Hard-coded tier logic", "Dynamic editions with feature bundles"],
+      ["Quota Enforcement", "No enforcement", "Automatic quota tracking with QuotaCounter"],
+      ["Plan Changes", "Manual DB updates", "Safe upgrade/downgrade with impact analysis"],
+      ["Custom Deals", "Code changes required", "Override via API without touching code"],
+      ["Version Control", "No versioning", "Edition versions with rollout strategies"],
+      ["Audit Trail", "No tracking", "Every change audited automatically"],
+      ["Reseller Support", "Not possible", "Tenant-scoped retail editions"],
+    ],
+  },
+
+  // ─── NoOp Fallback ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.noOpTitle",
+    id: "noop-fallback",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.noOpIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "NoOpFeatureCache.cs",
+    code: `/// <summary>
+/// Registered when the Entitlements module is not loaded.
+/// All features are treated as enabled with unlimited quotas.
+/// </summary>
+public class NoOpFeatureCache : IFeatureCache
+{
+    public Task<ResolvedFeature> GetResolvedValue(
+        Guid tenantId, string featureName)
+    {
+        return Task.FromResult(new ResolvedFeature
+        {
+            Name = featureName,
+            Value = "true",          // Always enabled
+            ValueType = FeatureValueType.Boolean,
+            Source = ResolutionSource.Default,
+        });
+    }
+
+    public Task<int> GetCurrentUsage(Guid tenantId, string featureName)
+        => Task.FromResult(0); // No usage tracked
+}`,
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "modules.entitlementsOverview.noOpNote",
+  },
+
+  // ─── Getting Started ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.gettingStartedTitle",
+    id: "getting-started",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.gettingStartedIntro",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Quick Start Steps",
+    code: `Step 1: Define Features
+  → POST /api/v1/features
+  → Create features like "Chat.Enabled" (Boolean), "MaxAdmins" (Numeric)
+
+Step 2: Create Editions
+  → POST /api/v1/editions
+  → Create plans like "Basic", "Pro", "Enterprise"
+  → Set feature values per edition
+
+Step 3: Assign Subscriptions
+  → POST /api/v1/subscriptions
+  → Link each tenant to an edition
+
+Step 4: Gate Commands (Optional)
+  → Implement IRequireFeature on commands
+  → FeatureCheckBehavior automatically enforces
+
+Step 5: Apply Overrides (Optional)
+  → POST /api/v1/tenants/{id}/features/overrides
+  → Give specific tenants custom values`,
+  },
+];
 
 registerPage({
   slug: "modules/entitlements-overview",
   titleKey: "modules.entitlementsOverview.title",
+  descriptionKey: "modules.entitlementsOverview.description",
   category: "modules",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.entitlementsOverview.section_4_hdr_0",
-      "modules.entitlementsOverview.section_4_hdr_1",
-      "modules.entitlementsOverview.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.entitlementsOverview.section_4_cell_0_0",
-        "modules.entitlementsOverview.section_4_cell_0_1",
-        "modules.entitlementsOverview.section_4_cell_0_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_4_cell_1_0",
-        "modules.entitlementsOverview.section_4_cell_1_1",
-        "modules.entitlementsOverview.section_4_cell_1_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_4_cell_2_0",
-        "modules.entitlementsOverview.section_4_cell_2_1",
-        "modules.entitlementsOverview.section_4_cell_2_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_4_cell_3_0",
-        "modules.entitlementsOverview.section_4_cell_3_1",
-        "modules.entitlementsOverview.section_4_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    feat[\"Features\"]\n    %% feat: Boolean / Numeric / String capabilities\n    ed[\"Editions\"]\n    %% ed: Named plans (Basic, Pro, Enterprise)\n    sub[\"Subscriptions\"]\n    %% sub: Tenant ↔ Edition binding\n    ovr[\"Overrides\"]\n    %% ovr: Per-tenant custom values\n    cache[\"FeatureCache\"]\n    %% cache: In-memory resolved values\n    pipe[\"FeatureCheckBehavior\"]\n    %% pipe: AstraFlow mediator pipeline gate\n    feat -->|\"bundled into\"| ed\n    ed -->|\"linked via\"| sub\n    sub -->|\"resolved into\"| cache\n    ovr -->|\"overrides\"| cache\n    cache -->|\"checked by\"| pipe",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_9_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.entitlementsOverview.section_10_hdr_0",
-      "modules.entitlementsOverview.section_10_hdr_1",
-      "modules.entitlementsOverview.section_10_hdr_2",
-      "modules.entitlementsOverview.section_10_hdr_3"
-    ],
-    "rows": [
-      [
-        "modules.entitlementsOverview.section_10_cell_0_0",
-        "modules.entitlementsOverview.section_10_cell_0_1",
-        "modules.entitlementsOverview.section_10_cell_0_2",
-        "modules.entitlementsOverview.section_10_cell_0_3"
-      ],
-      [
-        "modules.entitlementsOverview.section_10_cell_1_0",
-        "modules.entitlementsOverview.section_10_cell_1_1",
-        "modules.entitlementsOverview.section_10_cell_1_2",
-        "modules.entitlementsOverview.section_10_cell_1_3"
-      ],
-      [
-        "modules.entitlementsOverview.section_10_cell_2_0",
-        "modules.entitlementsOverview.section_10_cell_2_1",
-        "modules.entitlementsOverview.section_10_cell_2_2",
-        "modules.entitlementsOverview.section_10_cell_2_3"
-      ],
-      [
-        "modules.entitlementsOverview.section_10_cell_3_0",
-        "modules.entitlementsOverview.section_10_cell_3_1",
-        "modules.entitlementsOverview.section_10_cell_3_2",
-        "modules.entitlementsOverview.section_10_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_12_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_13_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "Priority (highest → lowest):\n\n┌─────────────────────────────────────────────────────────────────────────┐\n│  1. TenantFeatureOverride  →  Custom value set for THIS specific tenant │\n│     Example: \"MaxAdmins\" = 500 (override for Acme Corp)                 │\n├─────────────────────────────────────────────────────────────────────────┤\n│  2. EditionFeature         →  Value set in the tenant's active edition  │\n│     Example: \"MaxAdmins\" = 50 (Pro plan default)                        │\n├─────────────────────────────────────────────────────────────────────────┤\n│  3. Feature.DefaultValue   →  Global fallback for the feature           │\n│     Example: \"MaxAdmins\" = 5 (platform default)                         │\n└─────────────────────────────────────────────────────────────────────────┘\n\nResolution Order:\n  Check Override → exists? use it : Check Edition → exists? use it : use Default",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "modules.entitlementsOverview.section_15_title",
-    "contentKey": "modules.entitlementsOverview.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_17_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_18_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Mark a command to require a feature\npublic class CreateChatRoomCommand : ICommand<Guid>, IRequireFeature\n{\n    public string RequiredFeatureName => \"Chat.Enabled\";\n    \n    // ... command properties\n    public string Name { get; set; }\n    public string Description { get; set; }\n}",
-    "filename": ""
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class FeatureCheckBehavior<TRequest, TResponse> \n    : IPipelineBehavior<TRequest, TResponse>\n    where TRequest : IRequireFeature\n{\n    private readonly IFeatureCache _cache;\n    private readonly ICurrentTenantAccessor _tenant;\n\n    public async Task<TResponse> Handle(\n        TRequest request, \n        RequestHandlerDelegate<TResponse> next, \n        CancellationToken ct)\n    {\n        var tenantId = _tenant.TenantId;\n        var featureName = request.RequiredFeatureName;\n        \n        // Resolve: Override → Edition → Default\n        var resolved = await _cache.GetResolvedValue(tenantId, featureName);\n        \n        if (resolved.ValueType == FeatureValueType.Boolean && resolved.Value == \"false\")\n            return Result.Forbidden(\"Feature is disabled for your plan\");\n            \n        if (resolved.ValueType == FeatureValueType.Numeric)\n        {\n            var limit = int.Parse(resolved.Value);\n            if (limit != -1) // -1 = unlimited\n            {\n                var usage = await _cache.GetCurrentUsage(tenantId, featureName);\n                if (usage >= limit)\n                    return Result.Forbidden(\"Quota exceeded for your plan\");\n            }\n        }\n        \n        return await next(); // Feature check passed\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "modules.entitlementsOverview.section_22_title",
-    "contentKey": "modules.entitlementsOverview.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_24_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.entitlementsOverview.section_25_hdr_0",
-      "modules.entitlementsOverview.section_25_hdr_1",
-      "modules.entitlementsOverview.section_25_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.entitlementsOverview.section_25_cell_0_0",
-        "modules.entitlementsOverview.section_25_cell_0_1",
-        "modules.entitlementsOverview.section_25_cell_0_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_25_cell_1_0",
-        "modules.entitlementsOverview.section_25_cell_1_1",
-        "modules.entitlementsOverview.section_25_cell_1_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_25_cell_2_0",
-        "modules.entitlementsOverview.section_25_cell_2_1",
-        "modules.entitlementsOverview.section_25_cell_2_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_25_cell_3_0",
-        "modules.entitlementsOverview.section_25_cell_3_1",
-        "modules.entitlementsOverview.section_25_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_26_title",
-    "id": "sec_26"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_27_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_28_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public static class DependencyInjection\n{\n    public static IServiceCollection AddEntitlementsModule(\n        this IServiceCollection services, IConfiguration config)\n    {\n        // Domain repositories\n        services.AddScoped<IFeatureRepository, FeatureRepository>();\n        services.AddScoped<IEditionRepository, EditionRepository>();\n        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();\n        services.AddScoped<IFeatureOverrideRepository, FeatureOverrideRepository>();\n        \n        // Application services\n        services.AddScoped<IFeatureCache, FeatureCache>();\n        services.AddScoped<IEditionConstraintValidator, EditionConstraintValidator>();\n        services.AddScoped<IDowngradeImpactValidator, DowngradeImpactValidator>();\n        services.AddScoped<IOverflowPolicyExecutor, OverflowPolicyExecutor>();\n        services.AddScoped<IQuotaCounterProvisioner, QuotaCounterProvisioner>();\n        \n        // AstraFlow mediator pipeline behavior\n        services.AddTransient(typeof(IPipelineBehavior<,>), \n            typeof(FeatureCheckBehavior<,>));\n        \n        // Startup seeder (seeds system features)\n        services.AddTransient<IStartupSeeder, EntitlementsStartupSeeder>();\n        \n        return services;\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_31_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_32_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "Entitlements/\n├── Entitlements.Domain/\n│   ├── Entities/\n│   │   ├── Feature.cs                  # Controllable capability\n│   │   ├── Edition.cs                  # Named plan (Basic, Pro, Enterprise)\n│   │   ├── EditionFeature.cs           # Feature value within an edition\n│   │   ├── EditionVersion.cs           # Versioned snapshot of edition features\n│   │   ├── TenantSubscription.cs       # Tenant ↔ Edition binding\n│   │   ├── TenantFeatureOverride.cs    # Per-tenant custom value\n│   │   └── QuotaCounter.cs            # Usage tracking for numeric features\n│   ├── Interfaces/\n│   │   ├── IFeatureRepository.cs\n│   │   ├── IEditionRepository.cs\n│   │   ├── ISubscriptionRepository.cs\n│   │   └── IFeatureOverrideRepository.cs\n│   ├── Enums/\n│   │   ├── FeatureValueType.cs         # Boolean, Numeric, String\n│   │   ├── OverflowPolicy.cs           # Block, Warn, Allow\n│   │   ├── SubscriptionType.cs         # Monthly, Annual, Lifetime, Trial\n│   │   ├── SubscriptionStatus.cs       # Active, Suspended, Cancelled, Expired\n│   │   ├── RolloutStrategy.cs          # Immediate, Gradual, Manual\n│   │   └── ExpiryBehavior.cs           # Downgrade, Suspend, Grace\n│   └── Specifications/\n│       └── FeatureSearchSpec.cs\n├── Entitlements.Application/\n│   ├── Commands/\n│   │   ├── Features/     # CreateFeature, UpdateFeature, DeleteFeature\n│   │   ├── Editions/     # CRUD + SetFeatures + DirectApply + Versions\n│   │   ├── Subscriptions/ # Assign, Upgrade, Downgrade, Suspend, Resume, Cancel\n│   │   └── Overrides/    # SetOverride, RemoveOverride\n│   ├── Queries/\n│   │   ├── Features/     # GetFeatures, GetFeatureById\n│   │   ├── Editions/     # GetEditions, GetById, GetFeatures, GetVersions\n│   │   ├── Subscriptions/ # GetSubscriptions, GetById, GetDowngradeImpact\n│   │   └── Overrides/    # GetOverrides, GetResolvedFeatures\n│   ├── DTOs/             # Request/Response DTOs\n│   ├── Mapping/          # explicit DTO mapping rules\n│   ├── Services/\n│   │   └── EditionConstraintValidator.cs\n│   └── Abstractions/\n│       ├── IFeatureCache.cs\n│       ├── IDowngradeImpactValidator.cs\n│       ├── IOverflowPolicyExecutor.cs\n│       └── IQuotaCounterProvisioner.cs\n└── Entitlements.Infrastructure/\n    ├── EntitlementsDbContextFactory.cs\n    ├── EntitlementsStartupSeeder.cs\n    ├── Persistence/\n    │   ├── FeatureRepository.cs\n    │   ├── EditionRepository.cs\n    │   ├── SubscriptionRepository.cs\n    │   └── FeatureOverrideRepository.cs\n    ├── Caching/\n    │   ├── FeatureCache.cs\n    │   └── NoOpFeatureCache.cs\n    └── DependencyInjection.cs",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_34_title",
-    "id": "sec_34"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_35_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_36_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "src/modules/entitlements/\n├── editions/                    # Edition management\n│   └── src/\n│       ├── domain/\n│       │   ├── entities/        # Edition.ts, EditionFeature.ts, EditionVersion.ts\n│       │   └── interfaces/      # IEditionRepository.ts\n│       ├── data/\n│       │   ├── models/          # EditionDto.ts, EditionFeatureDto.ts\n│       │   ├── mappers/         # EditionMapper.ts\n│       │   └── repositories/    # EditionRepository.ts\n│       └── presentation/\n│           ├── viewmodels/      # useEditionsViewModel.ts, useEditionDetailViewModel.ts\n│           ├── views/           # EditionsView.tsx, EditionDetailView.tsx\n│           └── components/      # EditionFeaturesTable.tsx, VersionHistory.tsx\n├── features/                    # Feature registry\n│   └── src/ { domain, data, presentation }\n├── subscriptions/               # Subscription lifecycle\n│   └── src/ { domain, data, presentation }\n└── overrides/                   # Per-tenant overrides\n    └── src/ { domain, data, presentation }",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_38_title",
-    "id": "sec_38"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_39_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.entitlementsOverview.section_40_hdr_0",
-      "modules.entitlementsOverview.section_40_hdr_1",
-      "modules.entitlementsOverview.section_40_hdr_2",
-      "modules.entitlementsOverview.section_40_hdr_3",
-      "modules.entitlementsOverview.section_40_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.entitlementsOverview.section_40_cell_0_0",
-        "modules.entitlementsOverview.section_40_cell_0_1",
-        "modules.entitlementsOverview.section_40_cell_0_2",
-        "modules.entitlementsOverview.section_40_cell_0_3",
-        "modules.entitlementsOverview.section_40_cell_0_4"
-      ],
-      [
-        "modules.entitlementsOverview.section_40_cell_1_0",
-        "modules.entitlementsOverview.section_40_cell_1_1",
-        "modules.entitlementsOverview.section_40_cell_1_2",
-        "modules.entitlementsOverview.section_40_cell_1_3",
-        "modules.entitlementsOverview.section_40_cell_1_4"
-      ],
-      [
-        "modules.entitlementsOverview.section_40_cell_2_0",
-        "modules.entitlementsOverview.section_40_cell_2_1",
-        "modules.entitlementsOverview.section_40_cell_2_2",
-        "modules.entitlementsOverview.section_40_cell_2_3",
-        "modules.entitlementsOverview.section_40_cell_2_4"
-      ],
-      [
-        "modules.entitlementsOverview.section_40_cell_3_0",
-        "modules.entitlementsOverview.section_40_cell_3_1",
-        "modules.entitlementsOverview.section_40_cell_3_2",
-        "modules.entitlementsOverview.section_40_cell_3_3",
-        "modules.entitlementsOverview.section_40_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_41_title",
-    "id": "sec_41"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_42_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.entitlementsOverview.section_43_hdr_0",
-      "modules.entitlementsOverview.section_43_hdr_1",
-      "modules.entitlementsOverview.section_43_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.entitlementsOverview.section_43_cell_0_0",
-        "modules.entitlementsOverview.section_43_cell_0_1",
-        "modules.entitlementsOverview.section_43_cell_0_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_1_0",
-        "modules.entitlementsOverview.section_43_cell_1_1",
-        "modules.entitlementsOverview.section_43_cell_1_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_2_0",
-        "modules.entitlementsOverview.section_43_cell_2_1",
-        "modules.entitlementsOverview.section_43_cell_2_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_3_0",
-        "modules.entitlementsOverview.section_43_cell_3_1",
-        "modules.entitlementsOverview.section_43_cell_3_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_4_0",
-        "modules.entitlementsOverview.section_43_cell_4_1",
-        "modules.entitlementsOverview.section_43_cell_4_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_5_0",
-        "modules.entitlementsOverview.section_43_cell_5_1",
-        "modules.entitlementsOverview.section_43_cell_5_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_6_0",
-        "modules.entitlementsOverview.section_43_cell_6_1",
-        "modules.entitlementsOverview.section_43_cell_6_2"
-      ],
-      [
-        "modules.entitlementsOverview.section_43_cell_7_0",
-        "modules.entitlementsOverview.section_43_cell_7_1",
-        "modules.entitlementsOverview.section_43_cell_7_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_44_title",
-    "id": "sec_44"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_45_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_46_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "/// <summary>\n/// Registered when the Entitlements module is not loaded.\n/// All features are treated as enabled with unlimited quotas.\n/// </summary>\npublic class NoOpFeatureCache : IFeatureCache\n{\n    public Task<ResolvedFeature> GetResolvedValue(\n        Guid tenantId, string featureName)\n    {\n        return Task.FromResult(new ResolvedFeature\n        {\n            Name = featureName,\n            Value = \"true\",          // Always enabled\n            ValueType = FeatureValueType.Boolean,\n            Source = ResolutionSource.Default,\n        });\n    }\n\n    public Task<int> GetCurrentUsage(Guid tenantId, string featureName)\n        => Task.FromResult(0); // No usage tracked\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "modules.entitlementsOverview.section_48_title",
-    "contentKey": "modules.entitlementsOverview.section_48_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_49_title",
-    "id": "sec_49"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_50_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.entitlementsOverview.section_51_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "Step 1: Define Features\n  → POST /api/v1/features\n  → Create features like \"Chat.Enabled\" (Boolean), \"MaxAdmins\" (Numeric)\n\nStep 2: Create Editions\n  → POST /api/v1/editions\n  → Create plans like \"Basic\", \"Pro\", \"Enterprise\"\n  → Set feature values per edition\n\nStep 3: Assign Subscriptions\n  → POST /api/v1/subscriptions\n  → Link each tenant to an edition\n\nStep 4: Gate Commands (Optional)\n  → Implement IRequireFeature on commands\n  → FeatureCheckBehavior automatically enforces\n\nStep 5: Apply Overrides (Optional)\n  → POST /api/v1/tenants/{id}/features/overrides\n  → Give specific tenants custom values",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.entitlementsOverview.section_53_title",
-    "id": "sec_53"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.entitlementsOverview.section_54_item_0",
-      "modules.entitlementsOverview.section_54_item_1",
-      "modules.entitlementsOverview.section_54_item_2",
-      "modules.entitlementsOverview.section_54_item_3",
-      "modules.entitlementsOverview.section_54_item_4"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "modules/editions",
-  "modules/subscriptions",
-  "modules/features",
-  "modules/overrides",
-  "architecture/cqrs-pipeline"
-],
-  lastUpdated: "2026-06-09",
+    "modules/editions",
+    "modules/subscriptions",
+    "modules/features",
+    "modules/overrides",
+    "architecture/cqrs-pipeline",
+  ],
+  lastUpdated: "2026-03-02",
 });

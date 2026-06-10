@@ -1,223 +1,223 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  //  Template Architecture
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.messageTemplates.architectureTitle",
+    id: "architecture",
+  },
+  { type: "paragraph", contentKey: "features.messageTemplates.architectureIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "Template Architecture",
+    nodes: [
+      { id: "ctrl", label: "MessageTemplatesController", type: "default" },
+      { id: "crud", label: "CRUD Operations", type: "info" },
+      { id: "preview", label: "Preview Rendering", type: "info" },
+      { id: "itr", label: "ITemplateRenderer", type: "primary" },
+      { id: "scriban", label: "Scriban Engine (Liquid-like)", type: "success" },
+      { id: "email", label: "EmailService", type: "warning" },
+      { id: "notif", label: "NotificationService", type: "warning" },
+      { id: "webhook", label: "WebhookService", type: "warning" },
+    ],
+    connections: [
+      { from: "ctrl", to: "crud" },
+      { from: "ctrl", to: "preview" },
+      { from: "preview", to: "itr" },
+      { from: "itr", to: "scriban" },
+      { from: "email", to: "itr" },
+      { from: "notif", to: "itr" },
+      { from: "webhook", to: "itr" },
+    ],
+  },
+
+  //  Scriban Syntax 
+  { type: "heading", level: 2, titleKey: "features.messageTemplates.syntaxTitle", id: "syntax" },
+  {
+    type: "code",
+    language: "html",
+    filename: "Scriban Template Syntax",
+    code: `<!-- Variable substitution -->
+Hello {{ admin.name }},
+
+<!-- Conditional content -->
+{{ if admin.is_protected }}
+ ï¸ You are the super admin for {{ tenant.name }}.
+{{ end }}
+
+<!-- Loops -->
+{{ for role in admin.roles }}
+  - {{ role.name }}
+{{ end }}
+
+<!-- Filters (pipes) -->
+Created: {{ created_at | date.to_string "%B %d, %Y" }}
+Amount: {{ amount | math.format "0.00" }}`,
+  },
+
+  //  Built-in Templates 
+  { type: "heading", level: 2, titleKey: "features.messageTemplates.builtInTitle", id: "built-in" },
+  {
+    type: "table",
+    headers: ["Template Key", "Trigger", "Variables"],
+    rows: [
+      ["welcome_admin", "Admin creation", "admin.name, admin.email, tenant.name, login_url"],
+      ["password_reset", "Forgot password", "admin.name, reset_url, expiry_minutes"],
+      ["otp_code", "Two-factor auth", "admin.name, otp_code, expiry_minutes"],
+      ["admin_blocked", "Account blocked", "admin.name, reason, support_email"],
+      ["admin_unblocked", "Account unblocked", "admin.name, login_url"],
+      ["email_verification", "Email verification", "admin.name, verification_url, expiry_hours"],
+    ],
+  },
+
+  //  Template Entity
+  { type: "heading", level: 2, titleKey: "features.messageTemplates.entityTitle", id: "entity" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "MessageTemplate.cs",
+    code: `public class MessageTemplate : AuditableEntity<Guid>
+{
+    [Required] [MaxLength(200)]
+    public string Key { get; set; }           // Unique identifier e.g. "welcome_admin"
+    
+    [Required] [MaxLength(200)]
+    public string SubjectEn { get; set; }     // English subject line
+    
+    [Required] [MaxLength(200)]
+    public string SubjectAr { get; set; }     // Arabic subject line
+    
+    [Required]
+    public string BodyEn { get; set; }        // English HTML body (Scriban)
+    
+    [Required]
+    public string BodyAr { get; set; }        // Arabic HTML body (Scriban)
+    
+    public bool IsSystem { get; set; }        // System templates can't be deleted
+    
+    [MaxLength(2000)]
+    public string? PlaceholderSchema { get; set; } // JSON schema of available variables
+}`,
+  },
+
+  //  Template Renderer
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.messageTemplates.rendererTitle",
+    id: "renderer",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TemplateRenderer.cs",
+    code: `public class TemplateRenderer : ITemplateRenderer
+{
+    public async Task<string> RenderAsync(string template, object data)
+    {
+        // Parse Scriban template
+        var parsed = Template.Parse(template);
+        if (parsed.HasErrors)
+            throw new TemplateException(string.Join(", ", parsed.Messages));
+
+        // Create script object from data
+        var scriptObject = new ScriptObject();
+        scriptObject.Import(data);
+
+        var context = new TemplateContext();
+        context.PushGlobal(scriptObject);
+
+        return await parsed.RenderAsync(context);
+    }
+}`,
+  },
+
+  //  Controller Endpoints 
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.messageTemplates.endpointsTitle",
+    id: "endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/message-templates",
+        descriptionKey: "List all templates",
+        auth: "JWT",
+        permission: "templates.view",
+      },
+      {
+        method: "GET",
+        path: "/message-templates/{id}",
+        descriptionKey: "Get template detail",
+        auth: "JWT",
+        permission: "templates.view",
+      },
+      {
+        method: "POST",
+        path: "/message-templates",
+        descriptionKey: "Create custom template",
+        auth: "JWT",
+        permission: "templates.create",
+      },
+      {
+        method: "PUT",
+        path: "/message-templates/{id}",
+        descriptionKey: "Update template",
+        auth: "JWT",
+        permission: "templates.edit",
+      },
+      {
+        method: "DELETE",
+        path: "/message-templates/{id}",
+        descriptionKey: "Delete (non-system only)",
+        auth: "JWT",
+        permission: "templates.delete",
+      },
+      {
+        method: "POST",
+        path: "/message-templates/{id}/preview",
+        descriptionKey: "Render with sample data",
+        auth: "JWT",
+        permission: "templates.view",
+      },
+    ],
+  },
+
+  //  Preview Feature
+  { type: "heading", level: 2, titleKey: "features.messageTemplates.previewTitle", id: "preview" },
+  { type: "paragraph", contentKey: "features.messageTemplates.previewIntro" },
+  {
+    type: "code",
+    language: "json",
+    filename: "Preview Request",
+    code: `// POST /message-templates/{id}/preview
+{
+  "data": {
+    "admin": { "name": "John Doe", "email": "john@example.com" },
+    "tenant": { "name": "ACME Corp" },
+    "otp_code": "123456"
+  }
+}
+
+// Response: rendered HTML body`,
+  },
+];
 
 registerPage({
   slug: "features/message-templates",
   titleKey: "features.messageTemplates.title",
+  descriptionKey: "features.messageTemplates.description",
   category: "features",
   order: 13,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_0_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_1_title",
-    "id": "sec_1"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_2_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    ctrl[\"MessageTemplatesController\"]\n    crud([\"CRUD Operations\"])\n    preview([\"Preview Rendering\"])\n    itr([\"ITemplateRenderer\"])\n    scriban([\"Scriban Engine (Liquid-like)\"])\n    email{{\"EmailService\"}}\n    notif{{\"NotificationService\"}}\n    webhook{{\"WebhookService\"}}\n    ctrl --> crud\n    ctrl --> preview\n    preview --> itr\n    itr --> scriban\n    email --> itr\n    notif --> itr\n    webhook --> itr",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "html",
-    "code": "<!-- Variable substitution -->\nHello {{ admin.name }},\n\n<!-- Conditional content -->\n{{ if admin.is_protected }}\n ï¸ You are the super admin for {{ tenant.name }}.\n{{ end }}\n\n<!-- Loops -->\n{{ for role in admin.roles }}\n  - {{ role.name }}\n{{ end }}\n\n<!-- Filters (pipes) -->\nCreated: {{ created_at | date.to_string \"%B %d, %Y\" }}\nAmount: {{ amount | math.format \"0.00\" }}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.messageTemplates.section_8_hdr_0",
-      "features.messageTemplates.section_8_hdr_1",
-      "features.messageTemplates.section_8_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.messageTemplates.section_8_cell_0_0",
-        "features.messageTemplates.section_8_cell_0_1",
-        "features.messageTemplates.section_8_cell_0_2"
-      ],
-      [
-        "features.messageTemplates.section_8_cell_1_0",
-        "features.messageTemplates.section_8_cell_1_1",
-        "features.messageTemplates.section_8_cell_1_2"
-      ],
-      [
-        "features.messageTemplates.section_8_cell_2_0",
-        "features.messageTemplates.section_8_cell_2_1",
-        "features.messageTemplates.section_8_cell_2_2"
-      ],
-      [
-        "features.messageTemplates.section_8_cell_3_0",
-        "features.messageTemplates.section_8_cell_3_1",
-        "features.messageTemplates.section_8_cell_3_2"
-      ],
-      [
-        "features.messageTemplates.section_8_cell_4_0",
-        "features.messageTemplates.section_8_cell_4_1",
-        "features.messageTemplates.section_8_cell_4_2"
-      ],
-      [
-        "features.messageTemplates.section_8_cell_5_0",
-        "features.messageTemplates.section_8_cell_5_1",
-        "features.messageTemplates.section_8_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_10_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class MessageTemplate : AuditableEntity<Guid>\n{\n    [Required] [MaxLength(200)]\n    public string Key { get; set; }           // Unique identifier e.g. \"welcome_admin\"\n    \n    [Required] [MaxLength(200)]\n    public string SubjectEn { get; set; }     // English subject line\n    \n    [Required] [MaxLength(200)]\n    public string SubjectAr { get; set; }     // Arabic subject line\n    \n    [Required]\n    public string BodyEn { get; set; }        // English HTML body (Scriban)\n    \n    [Required]\n    public string BodyAr { get; set; }        // Arabic HTML body (Scriban)\n    \n    public bool IsSystem { get; set; }        // System templates can't be deleted\n    \n    [MaxLength(2000)]\n    public string? PlaceholderSchema { get; set; } // JSON schema of available variables\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_13_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class TemplateRenderer : ITemplateRenderer\n{\n    public async Task<string> RenderAsync(string template, object data)\n    {\n        // Parse Scriban template\n        var parsed = Template.Parse(template);\n        if (parsed.HasErrors)\n            throw new TemplateException(string.Join(\", \", parsed.Messages));\n\n        // Create script object from data\n        var scriptObject = new ScriptObject();\n        scriptObject.Import(data);\n\n        var context = new TemplateContext();\n        context.PushGlobal(scriptObject);\n\n        return await parsed.RenderAsync(context);\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.messageTemplates.section_16_hdr_0",
-      "features.messageTemplates.section_16_hdr_1",
-      "features.messageTemplates.section_16_hdr_2",
-      "features.messageTemplates.section_16_hdr_3",
-      "features.messageTemplates.section_16_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.messageTemplates.section_16_cell_0_0",
-        "features.messageTemplates.section_16_cell_0_1",
-        "features.messageTemplates.section_16_cell_0_2",
-        "features.messageTemplates.section_16_cell_0_3",
-        "features.messageTemplates.section_16_cell_0_4"
-      ],
-      [
-        "features.messageTemplates.section_16_cell_1_0",
-        "features.messageTemplates.section_16_cell_1_1",
-        "features.messageTemplates.section_16_cell_1_2",
-        "features.messageTemplates.section_16_cell_1_3",
-        "features.messageTemplates.section_16_cell_1_4"
-      ],
-      [
-        "features.messageTemplates.section_16_cell_2_0",
-        "features.messageTemplates.section_16_cell_2_1",
-        "features.messageTemplates.section_16_cell_2_2",
-        "features.messageTemplates.section_16_cell_2_3",
-        "features.messageTemplates.section_16_cell_2_4"
-      ],
-      [
-        "features.messageTemplates.section_16_cell_3_0",
-        "features.messageTemplates.section_16_cell_3_1",
-        "features.messageTemplates.section_16_cell_3_2",
-        "features.messageTemplates.section_16_cell_3_3",
-        "features.messageTemplates.section_16_cell_3_4"
-      ],
-      [
-        "features.messageTemplates.section_16_cell_4_0",
-        "features.messageTemplates.section_16_cell_4_1",
-        "features.messageTemplates.section_16_cell_4_2",
-        "features.messageTemplates.section_16_cell_4_3",
-        "features.messageTemplates.section_16_cell_4_4"
-      ],
-      [
-        "features.messageTemplates.section_16_cell_5_0",
-        "features.messageTemplates.section_16_cell_5_1",
-        "features.messageTemplates.section_16_cell_5_2",
-        "features.messageTemplates.section_16_cell_5_3",
-        "features.messageTemplates.section_16_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_18_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.messageTemplates.section_19_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "// POST /message-templates/{id}/preview\n{\n  \"data\": {\n    \"admin\": { \"name\": \"John Doe\", \"email\": \"john@example.com\" },\n    \"tenant\": { \"name\": \"ACME Corp\" },\n    \"otp_code\": \"123456\"\n  }\n}\n\n// Response: rendered HTML body",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.messageTemplates.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.messageTemplates.section_22_item_0",
-      "features.messageTemplates.section_22_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "features/email-system",
-  "features/notification-system"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["features/email-system", "features/notification-system"],
+  lastUpdated: "2026-02-20",
 });

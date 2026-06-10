@@ -1,199 +1,208 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.overview.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.overview.layersTitle",
+    id: "layers",
+  },
+  {
+    type: "flowchart",
+    title: "Clean Architecture Layers",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "presentation",
+        label: "Presentation Layer — Next.js Views + ViewModels",
+        type: "primary",
+      },
+      {
+        id: "application",
+        label: "Application Layer — CQRS Commands/Queries + Behaviors",
+        type: "success",
+      },
+      {
+        id: "domain",
+        label: "Domain Layer — Entities + Interfaces + Specifications",
+        type: "warning",
+      },
+      {
+        id: "infrastructure",
+        label: "Infrastructure Layer — EF Core + Repos + External Services",
+        type: "danger",
+      },
+    ],
+    connections: [
+      { from: "presentation", to: "application", label: "Depends on" },
+      { from: "application", to: "domain", label: "Depends on" },
+      { from: "infrastructure", to: "domain", label: "Implements" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Layer", "Responsibility", "Key Technologies", "Dependency Rule"],
+    rows: [
+      [
+        "Presentation",
+        "UI rendering, user interaction, routing",
+        "Next.js 16, React, Shadcn/ui",
+        "→ Application only",
+      ],
+      [
+        "Application",
+        "Use cases, orchestration, validation",
+        "AstraFlow mediator, FluentValidation, explicit DTO mapping",
+        "→ Domain only",
+      ],
+      [
+        "Domain",
+        "Business rules, entities, interfaces",
+        "Pure C# / TypeScript, no dependencies",
+        "→ Nothing (innermost)",
+      ],
+      [
+        "Infrastructure",
+        "Data access, external APIs, caching",
+        "EF Core, Redis, SignalR, Hangfire",
+        "→ Domain (implements interfaces)",
+      ],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.overview.backendArchTitle",
+    id: "backend-arch",
+  },
+  { type: "paragraph", contentKey: "architecture.overview.backendArchIntro" },
+  {
+    type: "flowchart",
+    title: "Backend Request Pipeline",
+    direction: "horizontal",
+    nodes: [
+      { id: "request", label: "HTTP Request", type: "default" },
+      { id: "middleware", label: "Middleware Stack", type: "info" },
+      { id: "controller", label: "Controller", type: "primary" },
+      { id: "mediatr", label: "AstraFlow mediator Send", type: "success" },
+      { id: "validation", label: "Validation", type: "warning" },
+      { id: "audit", label: "Audit Behavior", type: "info" },
+      { id: "handler", label: "CQRS Handler", type: "success" },
+      { id: "response", label: "Result<T>", type: "primary" },
+    ],
+    connections: [
+      { from: "request", to: "middleware" },
+      { from: "middleware", to: "controller" },
+      { from: "controller", to: "mediatr" },
+      { from: "mediatr", to: "validation" },
+      { from: "validation", to: "audit" },
+      { from: "audit", to: "handler" },
+      { from: "handler", to: "response" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.overview.frontendArchTitle",
+    id: "frontend-arch",
+  },
+  { type: "paragraph", contentKey: "architecture.overview.frontendArchIntro" },
+  {
+    type: "flowchart",
+    title: "Frontend SOLID Architecture",
+    direction: "horizontal",
+    nodes: [
+      { id: "page", label: "page.tsx (Connector)", type: "default" },
+      { id: "view", label: "View (Pure UI)", type: "primary" },
+      { id: "vm", label: "ViewModel (Logic)", type: "success" },
+      { id: "repo", label: "Repository", type: "warning" },
+      { id: "api", label: "API Service", type: "danger" },
+    ],
+    connections: [
+      { from: "page", to: "view", label: "renders" },
+      { from: "view", to: "vm", label: "uses hook" },
+      { from: "vm", to: "repo", label: "calls" },
+      { from: "repo", to: "api", label: "fetches" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.overview.moduleBoundariesTitle",
+    id: "module-boundaries",
+  },
+  { type: "paragraph", contentKey: "architecture.overview.moduleBoundariesIntro" },
+  {
+    type: "comparison",
+    columns: [
+      {
+        titleKey: "architecture.overview.withBoundaries",
+        variant: "positive",
+        items: [
+          "Clear dependency graph",
+          "Isolated failures — one module crash doesn't affect others",
+          "Easy extraction to separate repository or microservice",
+          "Team autonomy — parallel development",
+          "Incremental builds and tests",
+        ],
+      },
+      {
+        titleKey: "architecture.overview.withoutBoundaries",
+        variant: "negative",
+        items: [
+          "Spaghetti imports across modules",
+          "Breaking one module breaks all",
+          "Cannot extract to separate repo",
+          "Merge conflicts everywhere",
+          "Full rebuild on any change",
+        ],
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.overview.communicationPatternsTitle",
+    id: "cross-module",
+  },
+  {
+    type: "table",
+    headers: ["Pattern", "When to Use", "Example"],
+    rows: [
+      ["URL Navigation", "Module A links to Module B's page", "Link href={`/vendor/${vendorId}`}"],
+      [
+        "Shared IDs Only",
+        "Store reference ID without embedding entity",
+        "assignedVendorId: z.string().uuid()",
+      ],
+      [
+        "Core Event Bus",
+        "React to events across modules (future)",
+        "eventBus.emit('employee:created', data)",
+      ],
+      [
+        "Core Shared Kernel",
+        "Reusable utilities needed by many modules",
+        "Move to @core/ namespace",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "architecture.overview.crossModuleNote",
+  },
+];
 
 registerPage({
   slug: "architecture/overview",
   titleKey: "architecture.overview.title",
+  descriptionKey: "architecture.overview.description",
   category: "architecture",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.overview.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.overview.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.overview.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    presentation([\"Presentation Layer — Next.js Views + ViewModels\"])\n    application([\"Application Layer — CQRS Commands/Queries + Behaviors\"])\n    domain{{\"Domain Layer — Entities + Interfaces + Specifications\"}}\n    infrastructure[\"Infrastructure Layer — EF Core + Repos + External Services\"]\n    presentation -->|\"Depends on\"| application\n    application -->|\"Depends on\"| domain\n    infrastructure -->|\"Implements\"| domain",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.overview.section_4_hdr_0",
-      "architecture.overview.section_4_hdr_1",
-      "architecture.overview.section_4_hdr_2",
-      "architecture.overview.section_4_hdr_3"
-    ],
-    "rows": [
-      [
-        "architecture.overview.section_4_cell_0_0",
-        "architecture.overview.section_4_cell_0_1",
-        "architecture.overview.section_4_cell_0_2",
-        "architecture.overview.section_4_cell_0_3"
-      ],
-      [
-        "architecture.overview.section_4_cell_1_0",
-        "architecture.overview.section_4_cell_1_1",
-        "architecture.overview.section_4_cell_1_2",
-        "architecture.overview.section_4_cell_1_3"
-      ],
-      [
-        "architecture.overview.section_4_cell_2_0",
-        "architecture.overview.section_4_cell_2_1",
-        "architecture.overview.section_4_cell_2_2",
-        "architecture.overview.section_4_cell_2_3"
-      ],
-      [
-        "architecture.overview.section_4_cell_3_0",
-        "architecture.overview.section_4_cell_3_1",
-        "architecture.overview.section_4_cell_3_2",
-        "architecture.overview.section_4_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.overview.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.overview.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    request[\"HTTP Request\"]\n    middleware([\"Middleware Stack\"])\n    controller([\"Controller\"])\n    astraflow([\"AstraFlow mediator Send\"])\n    validation{{\"Validation\"}}\n    audit([\"Audit Behavior\"])\n    handler([\"CQRS Handler\"])\n    response([\"Result<T>\"])\n    request --> middleware\n    middleware --> controller\n    controller --> astraflow\n    astraflow --> validation\n    validation --> audit\n    audit --> handler\n    handler --> response",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.overview.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.overview.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    page[\"page.tsx (Connector)\"]\n    view([\"View (Pure UI)\"])\n    vm([\"ViewModel (Logic)\"])\n    repo{{\"Repository\"}}\n    api[\"API Service\"]\n    page -->|\"renders\"| view\n    view -->|\"uses hook\"| vm\n    vm -->|\"calls\"| repo\n    repo -->|\"fetches\"| api",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.overview.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.overview.section_12_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.overview.section_13_hdr_0",
-      "architecture.overview.section_13_hdr_1"
-    ],
-    "rows": [
-      [
-        "architecture.overview.section_13_cell_0_0",
-        "architecture.overview.section_13_cell_0_1"
-      ],
-      [
-        "architecture.overview.section_13_cell_1_0",
-        "architecture.overview.section_13_cell_1_1"
-      ],
-      [
-        "architecture.overview.section_13_cell_2_0",
-        "architecture.overview.section_13_cell_2_1"
-      ],
-      [
-        "architecture.overview.section_13_cell_3_0",
-        "architecture.overview.section_13_cell_3_1"
-      ],
-      [
-        "architecture.overview.section_13_cell_4_0",
-        "architecture.overview.section_13_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.overview.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.overview.section_15_hdr_0",
-      "architecture.overview.section_15_hdr_1",
-      "architecture.overview.section_15_hdr_2"
-    ],
-    "rows": [
-      [
-        "architecture.overview.section_15_cell_0_0",
-        "architecture.overview.section_15_cell_0_1",
-        "architecture.overview.section_15_cell_0_2"
-      ],
-      [
-        "architecture.overview.section_15_cell_1_0",
-        "architecture.overview.section_15_cell_1_1",
-        "architecture.overview.section_15_cell_1_2"
-      ],
-      [
-        "architecture.overview.section_15_cell_2_0",
-        "architecture.overview.section_15_cell_2_1",
-        "architecture.overview.section_15_cell_2_2"
-      ],
-      [
-        "architecture.overview.section_15_cell_3_0",
-        "architecture.overview.section_15_cell_3_1",
-        "architecture.overview.section_15_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "architecture.overview.section_16_title",
-    "contentKey": "architecture.overview.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.overview.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.overview.section_18_item_0",
-      "architecture.overview.section_18_item_1",
-      "architecture.overview.section_18_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/backend",
-  "architecture/frontend",
-  "architecture/modules"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/backend", "architecture/frontend", "architecture/modules"],
+  lastUpdated: "2026-02-19",
 });

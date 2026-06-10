@@ -1,705 +1,471 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "features.authentication.intro" },
+
+  // € Auth Flow
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.flowTitle",
+    id: "auth-flow",
+  },
+  {
+    type: "flowchart",
+    title: "Authentication Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "login", label: "POST /auth/login", type: "default" },
+      {
+        id: "route",
+        label: "Route Decision",
+        type: "info",
+        description: "Check tenantId & isPlatformAdmin flags",
+      },
+      {
+        id: "caseA",
+        label: "Case A: Tenant-Scoped",
+        type: "primary",
+        description: "tenantId provided → strict domain isolation",
+      },
+      {
+        id: "caseAp",
+        label: "Case A': Platform Admin",
+        type: "primary",
+        description: "isPlatformAdmin = true → direct platform auth",
+      },
+      {
+        id: "caseB",
+        label: "Case B: Discovery",
+        type: "warning",
+        description: "No tenantId → workspace discovery",
+      },
+      { id: "validate", label: "Validate Credentials + BCrypt", type: "warning" },
+      { id: "lockout", label: "Check Lockout (5 attempts / 15 min)", type: "danger" },
+      {
+        id: "pwExpiry",
+        label: "Password Expiry Check",
+        type: "warning",
+        description: "ITenantPasswordValidator → MustChangePassword",
+      },
+      { id: "2fa", label: "2FA Required?", type: "info" },
+      { id: "no2fa", label: "Issue JWT + Refresh Token", type: "success" },
+      { id: "yes2fa", label: "Issue Temporary 2FA Token", type: "info" },
+      { id: "verify2fa", label: "POST /auth/verify-2fa", type: "default" },
+      { id: "jwt", label: "Issue Full JWT + Refresh Token", type: "success" },
+      {
+        id: "workspace",
+        label: "Workspace Picker",
+        type: "info",
+        description: "Frontend shows workspace list",
+      },
+    ],
+    connections: [
+      { from: "login", to: "route" },
+      { from: "route", to: "caseA", label: "has tenantId" },
+      { from: "route", to: "caseAp", label: "isPlatformAdmin" },
+      { from: "route", to: "caseB", label: "neither" },
+      { from: "caseA", to: "validate" },
+      { from: "caseAp", to: "validate" },
+      { from: "caseB", to: "validate", label: "1 match" },
+      { from: "caseB", to: "workspace", label: "N matches" },
+      { from: "workspace", to: "login", label: "re-login with tenantId", style: "dashed" },
+      { from: "validate", to: "lockout" },
+      { from: "lockout", to: "pwExpiry" },
+      { from: "pwExpiry", to: "2fa" },
+      { from: "2fa", to: "no2fa", label: "No" },
+      { from: "2fa", to: "yes2fa", label: "Yes" },
+      { from: "yes2fa", to: "verify2fa" },
+      { from: "verify2fa", to: "jwt" },
+    ],
+  },
+
+  // — Multi-Workspace Login Discovery
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.workspaceTitle",
+    id: "workspace-discovery",
+  },
+  { type: "paragraph", contentKey: "features.authentication.workspaceIntro" },
+  {
+    type: "table",
+    headers: ["Case", "Condition", "Behavior"],
+    rows: [
+      [
+        "A — Tenant-Scoped",
+        "tenantId is provided",
+        "Strict domain isolation. Only the admin within that exact tenant is matched.",
+      ],
+      [
+        "A' — Platform Admin",
+        "isPlatformAdmin = true",
+        "Bypasses workspace discovery. Looks up admin with TenantId = null (platform-level). Prevents workspace picker infinite loop.",
+      ],
+      [
+        "B — Discovery",
+        "No tenantId, not isPlatformAdmin",
+        "Step 1: Check for platform admin (TenantId = null). Step 2: Search all tenants by email. 0 → invalid, 1 → direct login, N → return workspace list.",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.authentication.workspaceNote",
+  },
+
+  // — Password Expiry Enforcement
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.passwordExpiryTitle",
+    id: "password-expiry",
+  },
+  { type: "paragraph", contentKey: "features.authentication.passwordExpiryIntro" },
+
+  // — SSO Tenant Suspension Gate
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.ssoSuspensionTitle",
+    id: "sso-suspension-gate",
+  },
+  { type: "paragraph", contentKey: "features.authentication.ssoSuspensionIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.authentication.ssoSuspensionWarning",
+  },
+
+  // € JWT Config €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.jwtTitle",
+    id: "jwt-config",
+  },
+  { type: "paragraph", contentKey: "features.authentication.jwtIntro" },
+  {
+    type: "table",
+    headers: ["Token Type", "Lifetime", "Storage", "Rotation"],
+    rows: [
+      ["Access Token (JWT)", "15 minutes", "Memory / Cookie", "Refreshed automatically"],
+      ["Refresh Token", "7 days", "HttpOnly Cookie", "Rotated on each use (one-time)"],
+      ["2FA Temporary Token", "5 minutes", "Memory", "Discarded after 2FA verification"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "JWT Generation",
+    code: `var claims = new[]
+{
+    new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+    new Claim("TenantId", admin.TenantId.ToString()),
+    new Claim("IsSuperAdmin", admin.IsSuperAdmin.ToString()),
+    new Claim(ClaimTypes.Role, string.Join(",", roleNames)),
+};
+
+var token = new JwtSecurityToken(
+    issuer: _config["Jwt:Issuer"],
+    audience: _config["Jwt:Audience"],
+    claims: claims,
+    expires: DateTime.UtcNow.AddMinutes(15),
+    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+);`,
+    highlightLines: [3, 4, 5],
+  },
+
+  // € Dual Auth
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.dualAuthTitle",
+    id: "dual-auth",
+  },
+  { type: "paragraph", contentKey: "features.authentication.dualAuthIntro" },
+  {
+    type: "table",
+    headers: ["Feature", "Admin Auth", "User Auth"],
+    rows: [
+      ["Controller", "AdminAuthController", "UserAuthController"],
+      ["JWT Claims", "TenantId, IsSuperAdmin, Roles", "NationalId, Gender, Country"],
+      ["2FA Support", "Yes (TOTP + backup codes)", "No"],
+      ["Register", "Created by another admin", "Self-registration (POST /user-auth/register)"],
+      ["Refresh Token", "7-day rotation", "7-day rotation"],
+      ["Rate Limiting", "5 attempts / 15 min lockout", "5 attempts / 15 min lockout"],
+      ["Session Management", "Revoke individual/all sessions", "Basic logout"],
+    ],
+  },
+
+  // € Admin Entity €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.adminEntityTitle",
+    id: "admin-entity",
+  },
+  { type: "paragraph", contentKey: "features.authentication.adminEntityIntro" },
+  {
+    type: "table",
+    headers: ["Field", "Type", "Purpose"],
+    rows: [
+      ["IsSuperAdmin", "bool", "System-level access, bypasses tenant scoping"],
+      ["IsProtected", "bool", "Cannot be deleted, deactivated, or demoted (Guardian enforced)"],
+      [
+        "IsLastSuperAdminInTenant",
+        "bool (cached)",
+        "Safety flag  blocks deletion/deactivation if true",
+      ],
+      [
+        "PasswordLastChanged",
+        "DateTime?",
+        "Checked against TenantSettings.PasswordExpiryDays for rotation enforcement",
+      ],
+      ["UsernameLastChanged", "DateTime?", "30-day cooldown on username changes"],
+      ["TwoFactorEnabled", "bool", "Whether 2FA is active for this admin"],
+      ["TwoFactorSecret", "string?", "Secret key for TOTP generation"],
+      ["BackupCodesJson", "string?", "JSON array of hashed backup codes"],
+      ["LastTwoFactorCodeUsed", "string?", "Anti-replay: last OTP code used"],
+      ["LastTwoFactorCodeUsedAt", "DateTime?", "Anti-replay: timestamp of last OTP use"],
+      ["FailedLoginAttempts", "int", "Counter for lockout threshold"],
+      ["LockoutEnd", "DateTime?", "When lockout expires"],
+    ],
+  },
+
+  // € 2FA Deep €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.twoFactorTitle",
+    id: "two-factor",
+  },
+  { type: "paragraph", contentKey: "features.authentication.twoFactorIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "2FA Anti-Replay Protection",
+    code: `// In Verify2FA handler:
+if (admin.LastTwoFactorCodeUsed == code &&
+    admin.LastTwoFactorCodeUsedAt?.AddMinutes(1) > DateTime.UtcNow)
+{
+    // Same code used within 1 minute  replay attack!
+    return Result.Failure("2FA code already used");
+}
+
+// Verify TOTP
+var totp = new Totp(Base32Encoding.ToBytes(admin.TwoFactorSecret));
+bool isValid = totp.VerifyTotp(code, out _);
+
+// If backup code
+if (!isValid && admin.BackupCodesJson != null)
+{
+    var backupCodes = JsonSerializer.Deserialize<List<string>>(admin.BackupCodesJson);
+    var hashedCode = HashHelper.Sha256(code);
+    if (backupCodes.Remove(hashedCode))  // One-time use
+    {
+        admin.BackupCodesJson = JsonSerializer.Serialize(backupCodes);
+        isValid = true;
+    }
+}
+
+// Record for anti-replay
+admin.LastTwoFactorCodeUsed = code;
+admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
+    highlightLines: [2, 3, 17, 25, 26],
+  },
+
+  // € Password Policy
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.passwordPolicyTitle",
+    id: "password-policy",
+  },
+  { type: "paragraph", contentKey: "features.authentication.passwordPolicyIntro" },
+  {
+    type: "table",
+    headers: ["Setting", "Default", "Description"],
+    rows: [
+      ["MinPasswordLength", "8", "Minimum characters"],
+      ["RequireUppercase", "true", "Must contain A-Z"],
+      ["RequireNumber", "true", "Must contain 0-9"],
+      ["RequireSpecialCharacter", "true", "Must contain !@#$%..."],
+      ["PasswordExpiryDays", "90", "0 = never expire"],
+      ["LockoutThreshold", "5", "Failed attempts before lockout"],
+      ["LockoutDurationMinutes", "30", "Lockout duration"],
+      ["Require2FA", "false", "Force 2FA for all admins in tenant"],
+    ],
+  },
+
+  // € Admin Auth Endpoints €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.endpointsAdminTitle",
+    id: "admin-auth-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/login",
+        descriptionKey: "Username + password login",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/refresh",
+        descriptionKey: "Rotate refresh token",
+        auth: "Refresh Token",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/verify-2fa",
+        descriptionKey: "Verify TOTP code or backup code",
+        auth: "2FA Token",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/logout",
+        descriptionKey: "Revoke current refresh token",
+        auth: "JWT",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/admin-auth/me",
+        descriptionKey: "Current admin profile + roles",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/enable-2fa",
+        descriptionKey: "Generate TOTP secret + QR code",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/disable-2fa",
+        descriptionKey: "Disable 2FA (requires current code)",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admin-auth/regenerate-backup-codes",
+        descriptionKey: "Generate new set of backup codes",
+        auth: "JWT",
+      },
+    ],
+  },
+
+  // € User Auth Endpoints
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.endpointsUserTitle",
+    id: "user-auth-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/register",
+        descriptionKey: "Self-registration",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/login",
+        descriptionKey: "Email/phone + password login",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/refresh",
+        descriptionKey: "Rotate refresh token",
+        auth: "Refresh Token",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/logout",
+        descriptionKey: "Revoke current session",
+        auth: "JWT",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/user-auth/me",
+        descriptionKey: "Current user profile",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/verify-email",
+        descriptionKey: "Verify email via OTP",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/verify-phone",
+        descriptionKey: "Verify phone via OTP",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/forgot-password",
+        descriptionKey: "Send password reset OTP",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/user-auth/reset-password",
+        descriptionKey: "Reset password with OTP",
+        auth: "Public",
+      },
+    ],
+  },
+
+  // € Rate Limiting
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.rateLimitingTitle",
+    id: "rate-limiting",
+  },
+  { type: "paragraph", contentKey: "features.authentication.rateLimitingIntro" },
+  {
+    type: "table",
+    headers: ["Endpoint", "Policy", "Limit", "Window"],
+    rows: [
+      ["/admin-auth/login", "Login", "5 requests", "15 minutes"],
+      ["/admin-auth/refresh", "Refresh", "10 requests", "1 minute"],
+      ["/admin-auth/verify-2fa", "2FA", "5 requests", "5 minutes"],
+      ["/user-auth/login", "Login", "5 requests", "15 minutes"],
+      ["/user-auth/register", "Register", "3 requests", "1 hour"],
+      ["/user-auth/forgot-password", "ForgotPwd", "3 requests", "1 hour"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.authentication.lockoutWarning",
+  },
+];
 
 registerPage({
   slug: "features/authentication",
   titleKey: "features.authentication.title",
+  descriptionKey: "features.authentication.description",
   category: "features",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    login[\"POST /auth/login\"]\n    route([\"Route Decision\"])\n    %% route: Check tenantId & isPlatformAdmin flags\n    caseA([\"Case A: Tenant-Scoped\"])\n    %% caseA: tenantId provided → strict domain isolation\n    caseAp([\"Case A': Platform Admin\"])\n    %% caseAp: isPlatformAdmin = true → direct platform auth\n    caseB{{\"Case B: Discovery\"}}\n    %% caseB: No tenantId → workspace discovery\n    validate{{\"Validate Credentials + BCrypt\"}}\n    lockout[\"Check Lockout (5 attempts / 15 min)\"]\n    pwExpiry{{\"Password Expiry Check\"}}\n    %% pwExpiry: ITenantPasswordValidator → MustChangePassword\n    2fa([\"2FA Required?\"])\n    no2fa([\"Issue JWT + Refresh Token\"])\n    yes2fa([\"Issue Temporary 2FA Token\"])\n    verify2fa[\"POST /auth/verify-2fa\"]\n    jwt([\"Issue Full JWT + Refresh Token\"])\n    workspace([\"Workspace Picker\"])\n    %% workspace: Frontend shows workspace list\n    login --> route\n    route -->|\"has tenantId\"| caseA\n    route -->|\"isPlatformAdmin\"| caseAp\n    route -->|\"neither\"| caseB\n    caseA --> validate\n    caseAp --> validate\n    caseB -->|\"1 match\"| validate\n    caseB -->|\"N matches\"| workspace\n    workspace -.->|\"re-login with tenantId\"| login\n    validate --> lockout\n    lockout --> pwExpiry\n    pwExpiry --> 2fa\n    2fa -->|\"No\"| no2fa\n    2fa -->|\"Yes\"| yes2fa\n    yes2fa --> verify2fa\n    verify2fa --> jwt",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_5_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_6_hdr_0",
-      "features.authentication.section_6_hdr_1",
-      "features.authentication.section_6_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_6_cell_0_0",
-        "features.authentication.section_6_cell_0_1",
-        "features.authentication.section_6_cell_0_2"
-      ],
-      [
-        "features.authentication.section_6_cell_1_0",
-        "features.authentication.section_6_cell_1_1",
-        "features.authentication.section_6_cell_1_2"
-      ],
-      [
-        "features.authentication.section_6_cell_2_0",
-        "features.authentication.section_6_cell_2_1",
-        "features.authentication.section_6_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.authentication.section_7_title",
-    "contentKey": "features.authentication.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_11_content"
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "features.authentication.section_12_title",
-    "contentKey": "features.authentication.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_14_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_15_hdr_0",
-      "features.authentication.section_15_hdr_1",
-      "features.authentication.section_15_hdr_2",
-      "features.authentication.section_15_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_15_cell_0_0",
-        "features.authentication.section_15_cell_0_1",
-        "features.authentication.section_15_cell_0_2",
-        "features.authentication.section_15_cell_0_3"
-      ],
-      [
-        "features.authentication.section_15_cell_1_0",
-        "features.authentication.section_15_cell_1_1",
-        "features.authentication.section_15_cell_1_2",
-        "features.authentication.section_15_cell_1_3"
-      ],
-      [
-        "features.authentication.section_15_cell_2_0",
-        "features.authentication.section_15_cell_2_1",
-        "features.authentication.section_15_cell_2_2",
-        "features.authentication.section_15_cell_2_3"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "var claims = new[]\n{\n    new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),\n    new Claim(\"TenantId\", admin.TenantId.ToString()),\n    new Claim(\"IsSuperAdmin\", admin.IsSuperAdmin.ToString()),\n    new Claim(ClaimTypes.Role, string.Join(\",\", roleNames)),\n};\n\nvar token = new JwtSecurityToken(\n    issuer: _config[\"Jwt:Issuer\"],\n    audience: _config[\"Jwt:Audience\"],\n    claims: claims,\n    expires: DateTime.UtcNow.AddMinutes(15),\n    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)\n);",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_19_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_20_hdr_0",
-      "features.authentication.section_20_hdr_1",
-      "features.authentication.section_20_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_20_cell_0_0",
-        "features.authentication.section_20_cell_0_1",
-        "features.authentication.section_20_cell_0_2"
-      ],
-      [
-        "features.authentication.section_20_cell_1_0",
-        "features.authentication.section_20_cell_1_1",
-        "features.authentication.section_20_cell_1_2"
-      ],
-      [
-        "features.authentication.section_20_cell_2_0",
-        "features.authentication.section_20_cell_2_1",
-        "features.authentication.section_20_cell_2_2"
-      ],
-      [
-        "features.authentication.section_20_cell_3_0",
-        "features.authentication.section_20_cell_3_1",
-        "features.authentication.section_20_cell_3_2"
-      ],
-      [
-        "features.authentication.section_20_cell_4_0",
-        "features.authentication.section_20_cell_4_1",
-        "features.authentication.section_20_cell_4_2"
-      ],
-      [
-        "features.authentication.section_20_cell_5_0",
-        "features.authentication.section_20_cell_5_1",
-        "features.authentication.section_20_cell_5_2"
-      ],
-      [
-        "features.authentication.section_20_cell_6_0",
-        "features.authentication.section_20_cell_6_1",
-        "features.authentication.section_20_cell_6_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_22_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_23_hdr_0",
-      "features.authentication.section_23_hdr_1",
-      "features.authentication.section_23_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_23_cell_0_0",
-        "features.authentication.section_23_cell_0_1",
-        "features.authentication.section_23_cell_0_2"
-      ],
-      [
-        "features.authentication.section_23_cell_1_0",
-        "features.authentication.section_23_cell_1_1",
-        "features.authentication.section_23_cell_1_2"
-      ],
-      [
-        "features.authentication.section_23_cell_2_0",
-        "features.authentication.section_23_cell_2_1",
-        "features.authentication.section_23_cell_2_2"
-      ],
-      [
-        "features.authentication.section_23_cell_3_0",
-        "features.authentication.section_23_cell_3_1",
-        "features.authentication.section_23_cell_3_2"
-      ],
-      [
-        "features.authentication.section_23_cell_4_0",
-        "features.authentication.section_23_cell_4_1",
-        "features.authentication.section_23_cell_4_2"
-      ],
-      [
-        "features.authentication.section_23_cell_5_0",
-        "features.authentication.section_23_cell_5_1",
-        "features.authentication.section_23_cell_5_2"
-      ],
-      [
-        "features.authentication.section_23_cell_6_0",
-        "features.authentication.section_23_cell_6_1",
-        "features.authentication.section_23_cell_6_2"
-      ],
-      [
-        "features.authentication.section_23_cell_7_0",
-        "features.authentication.section_23_cell_7_1",
-        "features.authentication.section_23_cell_7_2"
-      ],
-      [
-        "features.authentication.section_23_cell_8_0",
-        "features.authentication.section_23_cell_8_1",
-        "features.authentication.section_23_cell_8_2"
-      ],
-      [
-        "features.authentication.section_23_cell_9_0",
-        "features.authentication.section_23_cell_9_1",
-        "features.authentication.section_23_cell_9_2"
-      ],
-      [
-        "features.authentication.section_23_cell_10_0",
-        "features.authentication.section_23_cell_10_1",
-        "features.authentication.section_23_cell_10_2"
-      ],
-      [
-        "features.authentication.section_23_cell_11_0",
-        "features.authentication.section_23_cell_11_1",
-        "features.authentication.section_23_cell_11_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_25_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_26_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// In Verify2FA handler:\nif (admin.LastTwoFactorCodeUsed == code &&\n    admin.LastTwoFactorCodeUsedAt?.AddMinutes(1) > DateTime.UtcNow)\n{\n    // Same code used within 1 minute  replay attack!\n    return Result.Failure(\"2FA code already used\");\n}\n\n// Verify TOTP\nvar totp = new Totp(Base32Encoding.ToBytes(admin.TwoFactorSecret));\nbool isValid = totp.VerifyTotp(code, out _);\n\n// If backup code\nif (!isValid && admin.BackupCodesJson != null)\n{\n    var backupCodes = JsonSerializer.Deserialize<List<string>>(admin.BackupCodesJson);\n    var hashedCode = HashHelper.Sha256(code);\n    if (backupCodes.Remove(hashedCode))  // One-time use\n    {\n        admin.BackupCodesJson = JsonSerializer.Serialize(backupCodes);\n        isValid = true;\n    }\n}\n\n// Record for anti-replay\nadmin.LastTwoFactorCodeUsed = code;\nadmin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_29_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_30_hdr_0",
-      "features.authentication.section_30_hdr_1",
-      "features.authentication.section_30_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_30_cell_0_0",
-        "features.authentication.section_30_cell_0_1",
-        "features.authentication.section_30_cell_0_2"
-      ],
-      [
-        "features.authentication.section_30_cell_1_0",
-        "features.authentication.section_30_cell_1_1",
-        "features.authentication.section_30_cell_1_2"
-      ],
-      [
-        "features.authentication.section_30_cell_2_0",
-        "features.authentication.section_30_cell_2_1",
-        "features.authentication.section_30_cell_2_2"
-      ],
-      [
-        "features.authentication.section_30_cell_3_0",
-        "features.authentication.section_30_cell_3_1",
-        "features.authentication.section_30_cell_3_2"
-      ],
-      [
-        "features.authentication.section_30_cell_4_0",
-        "features.authentication.section_30_cell_4_1",
-        "features.authentication.section_30_cell_4_2"
-      ],
-      [
-        "features.authentication.section_30_cell_5_0",
-        "features.authentication.section_30_cell_5_1",
-        "features.authentication.section_30_cell_5_2"
-      ],
-      [
-        "features.authentication.section_30_cell_6_0",
-        "features.authentication.section_30_cell_6_1",
-        "features.authentication.section_30_cell_6_2"
-      ],
-      [
-        "features.authentication.section_30_cell_7_0",
-        "features.authentication.section_30_cell_7_1",
-        "features.authentication.section_30_cell_7_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_31_title",
-    "id": "sec_31"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_32_hdr_0",
-      "features.authentication.section_32_hdr_1",
-      "features.authentication.section_32_hdr_2",
-      "features.authentication.section_32_hdr_3",
-      "features.authentication.section_32_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_32_cell_0_0",
-        "features.authentication.section_32_cell_0_1",
-        "features.authentication.section_32_cell_0_2",
-        "features.authentication.section_32_cell_0_3",
-        "features.authentication.section_32_cell_0_4"
-      ],
-      [
-        "features.authentication.section_32_cell_1_0",
-        "features.authentication.section_32_cell_1_1",
-        "features.authentication.section_32_cell_1_2",
-        "features.authentication.section_32_cell_1_3",
-        "features.authentication.section_32_cell_1_4"
-      ],
-      [
-        "features.authentication.section_32_cell_2_0",
-        "features.authentication.section_32_cell_2_1",
-        "features.authentication.section_32_cell_2_2",
-        "features.authentication.section_32_cell_2_3",
-        "features.authentication.section_32_cell_2_4"
-      ],
-      [
-        "features.authentication.section_32_cell_3_0",
-        "features.authentication.section_32_cell_3_1",
-        "features.authentication.section_32_cell_3_2",
-        "features.authentication.section_32_cell_3_3",
-        "features.authentication.section_32_cell_3_4"
-      ],
-      [
-        "features.authentication.section_32_cell_4_0",
-        "features.authentication.section_32_cell_4_1",
-        "features.authentication.section_32_cell_4_2",
-        "features.authentication.section_32_cell_4_3",
-        "features.authentication.section_32_cell_4_4"
-      ],
-      [
-        "features.authentication.section_32_cell_5_0",
-        "features.authentication.section_32_cell_5_1",
-        "features.authentication.section_32_cell_5_2",
-        "features.authentication.section_32_cell_5_3",
-        "features.authentication.section_32_cell_5_4"
-      ],
-      [
-        "features.authentication.section_32_cell_6_0",
-        "features.authentication.section_32_cell_6_1",
-        "features.authentication.section_32_cell_6_2",
-        "features.authentication.section_32_cell_6_3",
-        "features.authentication.section_32_cell_6_4"
-      ],
-      [
-        "features.authentication.section_32_cell_7_0",
-        "features.authentication.section_32_cell_7_1",
-        "features.authentication.section_32_cell_7_2",
-        "features.authentication.section_32_cell_7_3",
-        "features.authentication.section_32_cell_7_4"
-      ],
-      [
-        "features.authentication.section_32_cell_8_0",
-        "features.authentication.section_32_cell_8_1",
-        "features.authentication.section_32_cell_8_2",
-        "features.authentication.section_32_cell_8_3",
-        "features.authentication.section_32_cell_8_4"
-      ],
-      [
-        "features.authentication.section_32_cell_9_0",
-        "features.authentication.section_32_cell_9_1",
-        "features.authentication.section_32_cell_9_2",
-        "features.authentication.section_32_cell_9_3",
-        "features.authentication.section_32_cell_9_4"
-      ],
-      [
-        "features.authentication.section_32_cell_10_0",
-        "features.authentication.section_32_cell_10_1",
-        "features.authentication.section_32_cell_10_2",
-        "features.authentication.section_32_cell_10_3",
-        "features.authentication.section_32_cell_10_4"
-      ],
-      [
-        "features.authentication.section_32_cell_11_0",
-        "features.authentication.section_32_cell_11_1",
-        "features.authentication.section_32_cell_11_2",
-        "features.authentication.section_32_cell_11_3",
-        "features.authentication.section_32_cell_11_4"
-      ],
-      [
-        "features.authentication.section_32_cell_12_0",
-        "features.authentication.section_32_cell_12_1",
-        "features.authentication.section_32_cell_12_2",
-        "features.authentication.section_32_cell_12_3",
-        "features.authentication.section_32_cell_12_4"
-      ],
-      [
-        "features.authentication.section_32_cell_13_0",
-        "features.authentication.section_32_cell_13_1",
-        "features.authentication.section_32_cell_13_2",
-        "features.authentication.section_32_cell_13_3",
-        "features.authentication.section_32_cell_13_4"
-      ],
-      [
-        "features.authentication.section_32_cell_14_0",
-        "features.authentication.section_32_cell_14_1",
-        "features.authentication.section_32_cell_14_2",
-        "features.authentication.section_32_cell_14_3",
-        "features.authentication.section_32_cell_14_4"
-      ],
-      [
-        "features.authentication.section_32_cell_15_0",
-        "features.authentication.section_32_cell_15_1",
-        "features.authentication.section_32_cell_15_2",
-        "features.authentication.section_32_cell_15_3",
-        "features.authentication.section_32_cell_15_4"
-      ],
-      [
-        "features.authentication.section_32_cell_16_0",
-        "features.authentication.section_32_cell_16_1",
-        "features.authentication.section_32_cell_16_2",
-        "features.authentication.section_32_cell_16_3",
-        "features.authentication.section_32_cell_16_4"
-      ],
-      [
-        "features.authentication.section_32_cell_17_0",
-        "features.authentication.section_32_cell_17_1",
-        "features.authentication.section_32_cell_17_2",
-        "features.authentication.section_32_cell_17_3",
-        "features.authentication.section_32_cell_17_4"
-      ],
-      [
-        "features.authentication.section_32_cell_18_0",
-        "features.authentication.section_32_cell_18_1",
-        "features.authentication.section_32_cell_18_2",
-        "features.authentication.section_32_cell_18_3",
-        "features.authentication.section_32_cell_18_4"
-      ],
-      [
-        "features.authentication.section_32_cell_19_0",
-        "features.authentication.section_32_cell_19_1",
-        "features.authentication.section_32_cell_19_2",
-        "features.authentication.section_32_cell_19_3",
-        "features.authentication.section_32_cell_19_4"
-      ],
-      [
-        "features.authentication.section_32_cell_20_0",
-        "features.authentication.section_32_cell_20_1",
-        "features.authentication.section_32_cell_20_2",
-        "features.authentication.section_32_cell_20_3",
-        "features.authentication.section_32_cell_20_4"
-      ],
-      [
-        "features.authentication.section_32_cell_21_0",
-        "features.authentication.section_32_cell_21_1",
-        "features.authentication.section_32_cell_21_2",
-        "features.authentication.section_32_cell_21_3",
-        "features.authentication.section_32_cell_21_4"
-      ],
-      [
-        "features.authentication.section_32_cell_22_0",
-        "features.authentication.section_32_cell_22_1",
-        "features.authentication.section_32_cell_22_2",
-        "features.authentication.section_32_cell_22_3",
-        "features.authentication.section_32_cell_22_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_33_title",
-    "id": "sec_33"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_34_hdr_0",
-      "features.authentication.section_34_hdr_1",
-      "features.authentication.section_34_hdr_2",
-      "features.authentication.section_34_hdr_3",
-      "features.authentication.section_34_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_34_cell_0_0",
-        "features.authentication.section_34_cell_0_1",
-        "features.authentication.section_34_cell_0_2",
-        "features.authentication.section_34_cell_0_3",
-        "features.authentication.section_34_cell_0_4"
-      ],
-      [
-        "features.authentication.section_34_cell_1_0",
-        "features.authentication.section_34_cell_1_1",
-        "features.authentication.section_34_cell_1_2",
-        "features.authentication.section_34_cell_1_3",
-        "features.authentication.section_34_cell_1_4"
-      ],
-      [
-        "features.authentication.section_34_cell_2_0",
-        "features.authentication.section_34_cell_2_1",
-        "features.authentication.section_34_cell_2_2",
-        "features.authentication.section_34_cell_2_3",
-        "features.authentication.section_34_cell_2_4"
-      ],
-      [
-        "features.authentication.section_34_cell_3_0",
-        "features.authentication.section_34_cell_3_1",
-        "features.authentication.section_34_cell_3_2",
-        "features.authentication.section_34_cell_3_3",
-        "features.authentication.section_34_cell_3_4"
-      ],
-      [
-        "features.authentication.section_34_cell_4_0",
-        "features.authentication.section_34_cell_4_1",
-        "features.authentication.section_34_cell_4_2",
-        "features.authentication.section_34_cell_4_3",
-        "features.authentication.section_34_cell_4_4"
-      ],
-      [
-        "features.authentication.section_34_cell_5_0",
-        "features.authentication.section_34_cell_5_1",
-        "features.authentication.section_34_cell_5_2",
-        "features.authentication.section_34_cell_5_3",
-        "features.authentication.section_34_cell_5_4"
-      ],
-      [
-        "features.authentication.section_34_cell_6_0",
-        "features.authentication.section_34_cell_6_1",
-        "features.authentication.section_34_cell_6_2",
-        "features.authentication.section_34_cell_6_3",
-        "features.authentication.section_34_cell_6_4"
-      ],
-      [
-        "features.authentication.section_34_cell_7_0",
-        "features.authentication.section_34_cell_7_1",
-        "features.authentication.section_34_cell_7_2",
-        "features.authentication.section_34_cell_7_3",
-        "features.authentication.section_34_cell_7_4"
-      ],
-      [
-        "features.authentication.section_34_cell_8_0",
-        "features.authentication.section_34_cell_8_1",
-        "features.authentication.section_34_cell_8_2",
-        "features.authentication.section_34_cell_8_3",
-        "features.authentication.section_34_cell_8_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_35_title",
-    "id": "sec_35"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.authentication.section_36_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.authentication.section_37_hdr_0",
-      "features.authentication.section_37_hdr_1",
-      "features.authentication.section_37_hdr_2",
-      "features.authentication.section_37_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.authentication.section_37_cell_0_0",
-        "features.authentication.section_37_cell_0_1",
-        "features.authentication.section_37_cell_0_2",
-        "features.authentication.section_37_cell_0_3"
-      ],
-      [
-        "features.authentication.section_37_cell_1_0",
-        "features.authentication.section_37_cell_1_1",
-        "features.authentication.section_37_cell_1_2",
-        "features.authentication.section_37_cell_1_3"
-      ],
-      [
-        "features.authentication.section_37_cell_2_0",
-        "features.authentication.section_37_cell_2_1",
-        "features.authentication.section_37_cell_2_2",
-        "features.authentication.section_37_cell_2_3"
-      ],
-      [
-        "features.authentication.section_37_cell_3_0",
-        "features.authentication.section_37_cell_3_1",
-        "features.authentication.section_37_cell_3_2",
-        "features.authentication.section_37_cell_3_3"
-      ],
-      [
-        "features.authentication.section_37_cell_4_0",
-        "features.authentication.section_37_cell_4_1",
-        "features.authentication.section_37_cell_4_2",
-        "features.authentication.section_37_cell_4_3"
-      ],
-      [
-        "features.authentication.section_37_cell_5_0",
-        "features.authentication.section_37_cell_5_1",
-        "features.authentication.section_37_cell_5_2",
-        "features.authentication.section_37_cell_5_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "features.authentication.section_38_title",
-    "contentKey": "features.authentication.section_38_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.authentication.section_39_title",
-    "id": "sec_39"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.authentication.section_40_item_0",
-      "features.authentication.section_40_item_1",
-      "features.authentication.section_40_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "features/role-permissions",
-  "features/audit-system",
-  "security/authentication-deep"
-],
-  lastUpdated: "2026-06-09",
+    "features/role-permissions",
+    "features/audit-system",
+    "security/authentication-deep",
+  ],
+  lastUpdated: "2026-05-02",
 });

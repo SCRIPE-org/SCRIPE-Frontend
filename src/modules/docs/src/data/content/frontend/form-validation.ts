@@ -1,196 +1,258 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "frontend.formValidation.intro" },
+
+  // ─── Validation Architecture ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Validation Architecture (Frontend + Backend)",
+    direction: "vertical",
+    nodes: [
+      { id: "frontend", label: "Frontend Validation", type: "primary" },
+      {
+        id: "zod",
+        label: "Zod Schemas",
+        type: "info",
+        description: "Type-safe schema definitions",
+      },
+      {
+        id: "rhf",
+        label: "React Hook Form",
+        type: "success",
+        description: "Form state + zodResolver",
+      },
+      { id: "backend", label: "Backend Validation", type: "warning" },
+      {
+        id: "fluent",
+        label: "FluentValidation",
+        type: "danger",
+        description: "Server-side validators",
+      },
+      { id: "pipeline", label: "ValidationBehavior (AstraFlow mediator)", type: "danger" },
+    ],
+    connections: [
+      { from: "frontend", to: "zod" },
+      { from: "zod", to: "rhf", label: "zodResolver" },
+      { from: "rhf", to: "backend", label: "API call" },
+      { from: "backend", to: "fluent" },
+      { from: "fluent", to: "pipeline" },
+    ],
+  },
+
+  // ─── Zod Schemas ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.zodTitle",
+    id: "zod-schemas",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Domain Entity Schema — Admin",
+    code: `import { z } from 'zod';
+
+// Domain entity schema (in domain/entities/)
+export const AdminSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  firstName: z.string().min(2).max(50),
+  lastName: z.string().min(2).max(50),
+  phoneNumber: z.string().optional(),
+  role: z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+  }),
+  isActive: z.boolean(),
+  isBlocked: z.boolean(),
+  createdAt: z.string().datetime(),
+  lastLoginAt: z.string().datetime().optional(),
+});
+
+export type Admin = z.infer<typeof AdminSchema>;
+
+// Form-specific schemas (in presentation/viewmodels/)
+export const CreateAdminSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  firstName: z.string().min(2, "Must be at least 2 characters"),
+  lastName: z.string().min(2, "Must be at least 2 characters"),
+  password: z.string()
+    .min(8, "Must be at least 8 characters")
+    .regex(/[A-Z]/, "Must contain an uppercase letter")
+    .regex(/[0-9]/, "Must contain a number")
+    .regex(/[^A-Za-z0-9]/, "Must contain a special character"),
+  confirmPassword: z.string(),
+  roleId: z.string().uuid("Please select a role"),
+  phoneNumber: z.string().optional(),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
+  },
+
+  // ─── React Hook Form Integration ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.rhfTitle",
+    id: "react-hook-form",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Form ViewModel with zodResolver",
+    code: `import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+export function useCreateAdminViewModel() {
+  const form = useForm<CreateAdminInput>({
+    resolver: zodResolver(CreateAdminSchema),
+    defaultValues: {
+      email: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+      confirmPassword: '',
+      roleId: '',
+    },
+    mode: 'onBlur',  // Validate on blur for better UX
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: CreateAdminInput) => adminRepo.create(data),
+    onSuccess: () => {
+      form.reset();
+      toast.success(t('admins.createSuccess'));
+    },
+    onError: (error: ApiError) => {
+      // Map server validation errors to form fields
+      if (error.type === 'ValidationError') {
+        error.errors.forEach(e => {
+          form.setError(e.propertyName as any, {
+            type: 'server',
+            message: e.errorMessage,
+          });
+        });
+      }
+    },
+  });
+
+  return {
+    form,
+    onSubmit: form.handleSubmit(data => createMutation.mutate(data)),
+    isSubmitting: createMutation.isPending,
+  };
+}`,
+    highlightLines: [5, 6, 27, 28, 29, 30, 31, 32],
+  },
+
+  // ─── Server Error Mapping ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.serverErrorTitle",
+    id: "server-errors",
+  },
+  { type: "paragraph", contentKey: "frontend.formValidation.serverErrorIntro" },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Backend Validator",
+        language: "csharp",
+        filename: "CreateAdminValidator.cs — FluentValidation",
+        code: `public class CreateAdminCommandValidator
+    : AbstractValidator<CreateAdminCommand>
+{
+    public CreateAdminCommandValidator(IAdminRepository repo)
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Email is required")
+            .EmailAddress().WithMessage("Invalid email format")
+            .MustAsync(async (email, ct) =>
+                !await repo.ExistsAsync(e => e.Email == email))
+            .WithMessage("Email already registered");
+
+        RuleFor(x => x.Password)
+            .NotEmpty().MinimumLength(8)
+            .Matches("[A-Z]").WithMessage("Uppercase required")
+            .Matches("[0-9]").WithMessage("Digit required")
+            .Matches("[^a-zA-Z0-9]").WithMessage("Special char required");
+
+        RuleFor(x => x.FirstName)
+            .NotEmpty().Length(2, 50);
+    }
+}`,
+      },
+      {
+        label: "Frontend Error Mapping",
+        language: "typescript",
+        filename: "Error Response → form.setError()",
+        code: `// Backend returns:
+{
+  "type": "ValidationError",
+  "errors": [
+    { "propertyName": "Email", "errorMessage": "Email already registered" },
+    { "propertyName": "Password", "errorMessage": "Digit required" }
+  ]
+}
+
+// Frontend maps to form:
+error.errors.forEach(e => {
+  const field = e.propertyName.charAt(0).toLowerCase()
+              + e.propertyName.slice(1); // PascalCase → camelCase
+  form.setError(field, {
+    type: 'server',
+    message: e.errorMessage,
+  });
+});`,
+      },
+    ],
+  },
+
+  // ─── Validation Rules Reference ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.formValidation.rulesTitle",
+    id: "rules-reference",
+  },
+  {
+    type: "table",
+    headers: ["Rule", "Zod (Frontend)", "FluentValidation (Backend)"],
+    rows: [
+      ["Required", "z.string().min(1)", ".NotEmpty()"],
+      ["Email", "z.string().email()", ".EmailAddress()"],
+      ["Min length", "z.string().min(n)", ".MinimumLength(n)"],
+      ["Max length", "z.string().max(n)", ".MaximumLength(n)"],
+      ["Regex", "z.string().regex(r)", ".Matches(r)"],
+      ["UUID", "z.string().uuid()", "Custom validator"],
+      ["Number range", "z.number().min(n).max(m)", ".InclusiveBetween(n, m)"],
+      ["Enum", "z.enum([...])", ".IsInEnum()"],
+      ["Custom", "z.refine(fn)", ".Must(fn) / .MustAsync(fn)"],
+      ["Cross-field", "z.refine() on parent", ".Must() with context"],
+      ["Unique (async)", "Custom hook", ".MustAsync() with repo query"],
+    ],
+  },
+];
 
 registerPage({
   slug: "frontend/form-validation",
   titleKey: "frontend.formValidation.title",
+  descriptionKey: "frontend.formValidation.description",
   category: "frontend",
   order: 5,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.formValidation.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    frontend([\"Frontend Validation\"])\n    zod([\"Zod Schemas\"])\n    %% zod: Type-safe schema definitions\n    rhf([\"React Hook Form\"])\n    %% rhf: Form state + zodResolver\n    backend{{\"Backend Validation\"}}\n    fluent[\"FluentValidation\"]\n    %% fluent: Server-side validators\n    pipeline[\"ValidationBehavior (AstraFlow mediator)\"]\n    frontend --> zod\n    zod -->|\"zodResolver\"| rhf\n    rhf -->|\"API call\"| backend\n    backend --> fluent\n    fluent --> pipeline",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.formValidation.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "import { z } from 'zod';\n\n// Domain entity schema (in domain/entities/)\nexport const AdminSchema = z.object({\n  id: z.string().uuid(),\n  email: z.string().email(),\n  firstName: z.string().min(2).max(50),\n  lastName: z.string().min(2).max(50),\n  phoneNumber: z.string().optional(),\n  role: z.object({\n    id: z.string().uuid(),\n    name: z.string(),\n  }),\n  isActive: z.boolean(),\n  isBlocked: z.boolean(),\n  createdAt: z.string().datetime(),\n  lastLoginAt: z.string().datetime().optional(),\n});\n\nexport type Admin = z.infer<typeof AdminSchema>;\n\n// Form-specific schemas (in presentation/viewmodels/)\nexport const CreateAdminSchema = z.object({\n  email: z.string().email(\"Invalid email address\"),\n  firstName: z.string().min(2, \"Must be at least 2 characters\"),\n  lastName: z.string().min(2, \"Must be at least 2 characters\"),\n  password: z.string()\n    .min(8, \"Must be at least 8 characters\")\n    .regex(/[A-Z]/, \"Must contain an uppercase letter\")\n    .regex(/[0-9]/, \"Must contain a number\")\n    .regex(/[^A-Za-z0-9]/, \"Must contain a special character\"),\n  confirmPassword: z.string(),\n  roleId: z.string().uuid(\"Please select a role\"),\n  phoneNumber: z.string().optional(),\n}).refine(data => data.password === data.confirmPassword, {\n  message: \"Passwords don't match\",\n  path: [\"confirmPassword\"],\n});\n\nexport type CreateAdminInput = z.infer<typeof CreateAdminSchema>;",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.formValidation.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "import { useForm } from 'react-hook-form';\nimport { zodResolver } from '@hookform/resolvers/zod';\n\nexport function useCreateAdminViewModel() {\n  const form = useForm<CreateAdminInput>({\n    resolver: zodResolver(CreateAdminSchema),\n    defaultValues: {\n      email: '',\n      firstName: '',\n      lastName: '',\n      password: '',\n      confirmPassword: '',\n      roleId: '',\n    },\n    mode: 'onBlur',  // Validate on blur for better UX\n  });\n\n  const createMutation = useMutation({\n    mutationFn: (data: CreateAdminInput) => adminRepo.create(data),\n    onSuccess: () => {\n      form.reset();\n      toast.success(t('admins.createSuccess'));\n    },\n    onError: (error: ApiError) => {\n      // Map server validation errors to form fields\n      if (error.type === 'ValidationError') {\n        error.errors.forEach(e => {\n          form.setError(e.propertyName as any, {\n            type: 'server',\n            message: e.errorMessage,\n          });\n        });\n      }\n    },\n  });\n\n  return {\n    form,\n    onSubmit: form.handleSubmit(data => createMutation.mutate(data)),\n    isSubmitting: createMutation.isPending,\n  };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.formValidation.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "frontend.formValidation.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_13_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class CreateAdminCommandValidator\n    : AbstractValidator<CreateAdminCommand>\n{\n    public CreateAdminCommandValidator(IAdminRepository repo)\n    {\n        RuleFor(x => x.Email)\n            .NotEmpty().WithMessage(\"Email is required\")\n            .EmailAddress().WithMessage(\"Invalid email format\")\n            .MustAsync(async (email, ct) =>\n                !await repo.ExistsAsync(e => e.Email == email))\n            .WithMessage(\"Email already registered\");\n\n        RuleFor(x => x.Password)\n            .NotEmpty().MinimumLength(8)\n            .Matches(\"[A-Z]\").WithMessage(\"Uppercase required\")\n            .Matches(\"[0-9]\").WithMessage(\"Digit required\")\n            .Matches(\"[^a-zA-Z0-9]\").WithMessage(\"Special char required\");\n\n        RuleFor(x => x.FirstName)\n            .NotEmpty().Length(2, 50);\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "frontend.formValidation.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.formValidation.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// Backend returns:\n{\n  \"type\": \"ValidationError\",\n  \"errors\": [\n    { \"propertyName\": \"Email\", \"errorMessage\": \"Email already registered\" },\n    { \"propertyName\": \"Password\", \"errorMessage\": \"Digit required\" }\n  ]\n}\n\n// Frontend maps to form:\nerror.errors.forEach(e => {\n  const field = e.propertyName.charAt(0).toLowerCase()\n              + e.propertyName.slice(1); // PascalCase → camelCase\n  form.setError(field, {\n    type: 'server',\n    message: e.errorMessage,\n  });\n});",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.formValidation.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "frontend.formValidation.section_19_hdr_0",
-      "frontend.formValidation.section_19_hdr_1",
-      "frontend.formValidation.section_19_hdr_2"
-    ],
-    "rows": [
-      [
-        "frontend.formValidation.section_19_cell_0_0",
-        "frontend.formValidation.section_19_cell_0_1",
-        "frontend.formValidation.section_19_cell_0_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_1_0",
-        "frontend.formValidation.section_19_cell_1_1",
-        "frontend.formValidation.section_19_cell_1_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_2_0",
-        "frontend.formValidation.section_19_cell_2_1",
-        "frontend.formValidation.section_19_cell_2_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_3_0",
-        "frontend.formValidation.section_19_cell_3_1",
-        "frontend.formValidation.section_19_cell_3_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_4_0",
-        "frontend.formValidation.section_19_cell_4_1",
-        "frontend.formValidation.section_19_cell_4_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_5_0",
-        "frontend.formValidation.section_19_cell_5_1",
-        "frontend.formValidation.section_19_cell_5_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_6_0",
-        "frontend.formValidation.section_19_cell_6_1",
-        "frontend.formValidation.section_19_cell_6_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_7_0",
-        "frontend.formValidation.section_19_cell_7_1",
-        "frontend.formValidation.section_19_cell_7_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_8_0",
-        "frontend.formValidation.section_19_cell_8_1",
-        "frontend.formValidation.section_19_cell_8_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_9_0",
-        "frontend.formValidation.section_19_cell_9_1",
-        "frontend.formValidation.section_19_cell_9_2"
-      ],
-      [
-        "frontend.formValidation.section_19_cell_10_0",
-        "frontend.formValidation.section_19_cell_10_1",
-        "frontend.formValidation.section_19_cell_10_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.formValidation.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "frontend.formValidation.section_21_item_0",
-      "frontend.formValidation.section_21_item_1",
-      "frontend.formValidation.section_21_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "frontend/crud-system",
-  "architecture/cqrs-pipeline",
-  "frontend/state-management"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["frontend/crud-system", "architecture/cqrs-pipeline", "frontend/state-management"],
+  lastUpdated: "2026-02-20",
 });

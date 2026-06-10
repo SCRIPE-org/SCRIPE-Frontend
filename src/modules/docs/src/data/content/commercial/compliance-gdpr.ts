@@ -1,44 +1,31 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.complianceGdpr.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.complianceGdpr.mappingTitle",
+    id: "gdpr-mapping",
+  },
+  {
+    type: "table",
+    headers: ["commercial.complianceGdpr.articleCol", "commercial.complianceGdpr.uisFeatureCol"],
+    rows: [
+      ["Article 15: Right of Access", "commercial.complianceGdpr.featureAccess"],
+      ["Article 17: Right to Erasure", "commercial.complianceGdpr.featureErasure"],
+      ["Article 30: Records of Processing", "commercial.complianceGdpr.featureRopa"],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/compliance-gdpr",
   titleKey: "commercial.complianceGdpr.title",
+  descriptionKey: "commercial.complianceGdpr.description",
   category: "commercial-modules",
   order: 2,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceGdpr.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceGdpr.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceGdpr.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [],
-    "rows": [
-      [
-        "commercial.complianceGdpr.section_3_cell_0_0",
-        "commercial.complianceGdpr.section_3_cell_0_1"
-      ],
-      [
-        "commercial.complianceGdpr.section_3_cell_1_0",
-        "commercial.complianceGdpr.section_3_cell_1_1"
-      ],
-      [
-        "commercial.complianceGdpr.section_3_cell_2_0",
-        "commercial.complianceGdpr.section_3_cell_2_1"
-      ]
-    ]
-  }
-],
-  relatedSlugs: [],
-  lastUpdated: "2026-06-09",
+  sections,
+  lastUpdated: "2026-05-03",
 });

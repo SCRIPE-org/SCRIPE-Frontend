@@ -1,203 +1,221 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.solidPattern.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.solidPattern.principlesTitle",
+    id: "solid-principles",
+  },
+  {
+    type: "table",
+    headers: ["Principle", "Meaning", "Application"],
+    rows: [
+      [
+        "S — Single Responsibility",
+        "One reason to change",
+        "Each ViewModel handles ONE concern (stats, filters, table)",
+      ],
+      [
+        "O — Open/Closed",
+        "Open for extension, closed for modification",
+        "Base hooks extended via composition, never modified",
+      ],
+      [
+        "L — Liskov Substitution",
+        "Subtypes must be substitutable",
+        "All ViewModels return consistent typed interfaces",
+      ],
+      [
+        "I — Interface Segregation",
+        "No client forced to depend on unused interfaces",
+        "Components receive only the props they need",
+      ],
+      [
+        "D — Dependency Inversion",
+        "Depend on abstractions",
+        "Views depend on ViewModel hook interfaces, not implementations",
+      ],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.solidPattern.scenariosTitle",
+    id: "scenarios",
+  },
+  { type: "paragraph", contentKey: "architecture.solidPattern.scenariosIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.solidPattern.scenario1Title",
+    id: "crud-list",
+  },
+  { type: "paragraph", contentKey: "architecture.solidPattern.scenario1Intro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "CRUD List Page Structure",
+    code: `user-management/src/presentation/
+├── views/
+│   └── UserManagementView.tsx      # ~60 lines, pure composition
+├── viewmodels/
+│   ├── useUserManagementViewModel.ts    # Orchestrator
+│   ├── useStatisticsViewModel.ts        # Stats logic
+│   ├── useFilterViewModel.ts            # Filter state
+│   └── useBlockUserAction.ts            # Row action
+└── components/
+    ├── StatisticsSection.tsx       # Stats UI
+    └── FilterSection.tsx           # Filter UI`,
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.solidPattern.scenario2Title",
+    id: "dashboard",
+  },
+  { type: "paragraph", contentKey: "architecture.solidPattern.scenario2Intro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Dashboard Page Structure",
+    code: `dashboard/src/presentation/
+├── views/
+│   └── DashboardView.tsx           # ~60 lines
+├── viewmodels/
+│   ├── useDashboardViewModel.ts    # Orchestrator
+│   ├── useKPIViewModel.ts          # KPI cards
+│   ├── useChartViewModel.ts        # Chart data + period
+│   └── useRecentActivityViewModel.ts
+└── components/
+    ├── KPICards.tsx
+    ├── SalesChart.tsx
+    └── RecentActivityTable.tsx`,
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.solidPattern.scenario3Title",
+    id: "detail-profile",
+  },
+  { type: "paragraph", contentKey: "architecture.solidPattern.scenario3Intro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Profile Orchestrator ViewModel",
+    code: `export function useUserProfileViewModel(userId: string) {
+  const [activeTab, setActiveTab] = useState("activity");
+
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => userRepository.getById(userId),
+  });
+
+  const header = useProfileHeaderViewModel(user);
+  const activity = useActivityTabViewModel(userId);
+  const settings = useSettingsTabViewModel(userId);
+
+  return {
+    user, isLoading, error,
+    activeTab, setActiveTab,
+    tabs: [
+      { id: "activity", label: t("profile.tabs.activity") },
+      { id: "settings", label: t("profile.tabs.settings") },
+    ],
+    header, activity, settings,
+  };
+}`,
+    highlightLines: [9, 10, 11],
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.solidPattern.scenario4Title",
+    id: "settings",
+  },
+  { type: "paragraph", contentKey: "architecture.solidPattern.scenario4Intro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.solidPattern.scenario5Title",
+    id: "wizard",
+  },
+  { type: "paragraph", contentKey: "architecture.solidPattern.scenario5Intro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Wizard ViewModel Pattern",
+    code: `export function useOnboardingViewModel() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 3;
+
+  const step1 = useStep1ViewModel();
+  const step2 = useStep2ViewModel();
+  const step3 = useStep3ViewModel();
+
+  const canGoNext = useMemo(() => {
+    if (currentStep === 1) return step1.form.formState.isValid;
+    if (currentStep === 2) return step2.form.formState.isValid;
+    return true;
+  }, [currentStep, step1, step2]);
+
+  const { mutate: submitAll, isPending: isSubmitting } = useMutation({
+    mutationFn: async () => {
+      const combined = {
+        ...step1.form.getValues(),
+        ...step2.form.getValues(),
+        ...step3.form.getValues(),
+      };
+      return onboardingRepository.complete(combined);
+    },
+  });
+
+  return {
+    currentStep, totalSteps,
+    canGoNext, canGoPrev: currentStep > 1,
+    goNext: () => setCurrentStep(s => Math.min(s + 1, totalSteps)),
+    goPrev: () => setCurrentStep(s => Math.max(s - 1, 1)),
+    step1, step2, step3,
+    isSubmitting, submitAll,
+  };
+}`,
+    highlightLines: [5, 6, 7, 9],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.solidPattern.rulesTitle",
+    id: "golden-rules",
+  },
+  {
+    type: "list",
+    variant: "ordered",
+    items: [
+      "Views are pure UI — No state, no logic, no mutations",
+      "ViewModels handle ALL logic — State, mutations, computed values",
+      "One ViewModel per concern — Statistics, Filters, Table = separate hooks",
+      "Orchestrator composes — Main ViewModel composes section ViewModels",
+      "Columns defined in ViewModel — Not in View or Component",
+      "Max ~60 lines per View — If longer, extract section components",
+      "No JSX in ViewModels — ViewModels return data, not UI",
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "architecture.solidPattern.antiPatternWarning",
+  },
+];
 
 registerPage({
   slug: "architecture/solid-pattern",
   titleKey: "architecture.solidPattern.title",
+  descriptionKey: "architecture.solidPattern.description",
   category: "architecture",
   order: 6,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.solidPattern.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.solidPattern.section_3_hdr_0",
-      "architecture.solidPattern.section_3_hdr_1",
-      "architecture.solidPattern.section_3_hdr_2"
-    ],
-    "rows": [
-      [
-        "architecture.solidPattern.section_3_cell_0_0",
-        "architecture.solidPattern.section_3_cell_0_1",
-        "architecture.solidPattern.section_3_cell_0_2"
-      ],
-      [
-        "architecture.solidPattern.section_3_cell_1_0",
-        "architecture.solidPattern.section_3_cell_1_1",
-        "architecture.solidPattern.section_3_cell_1_2"
-      ],
-      [
-        "architecture.solidPattern.section_3_cell_2_0",
-        "architecture.solidPattern.section_3_cell_2_1",
-        "architecture.solidPattern.section_3_cell_2_2"
-      ],
-      [
-        "architecture.solidPattern.section_3_cell_3_0",
-        "architecture.solidPattern.section_3_cell_3_1",
-        "architecture.solidPattern.section_3_cell_3_2"
-      ],
-      [
-        "architecture.solidPattern.section_3_cell_4_0",
-        "architecture.solidPattern.section_3_cell_4_1",
-        "architecture.solidPattern.section_3_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.solidPattern.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.solidPattern.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_7_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "user-management/src/presentation/\n├── views/\n│   └── UserManagementView.tsx      # ~60 lines, pure composition\n├── viewmodels/\n│   ├── useUserManagementViewModel.ts    # Orchestrator\n│   ├── useStatisticsViewModel.ts        # Stats logic\n│   ├── useFilterViewModel.ts            # Filter state\n│   └── useBlockUserAction.ts            # Row action\n└── components/\n    ├── StatisticsSection.tsx       # Stats UI\n    └── FilterSection.tsx           # Filter UI",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.solidPattern.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_11_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "dashboard/src/presentation/\n├── views/\n│   └── DashboardView.tsx           # ~60 lines\n├── viewmodels/\n│   ├── useDashboardViewModel.ts    # Orchestrator\n│   ├── useKPIViewModel.ts          # KPI cards\n│   ├── useChartViewModel.ts        # Chart data + period\n│   └── useRecentActivityViewModel.ts\n└── components/\n    ├── KPICards.tsx\n    ├── SalesChart.tsx\n    └── RecentActivityTable.tsx",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.solidPattern.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "export function useUserProfileViewModel(userId: string) {\n  const [activeTab, setActiveTab] = useState(\"activity\");\n\n  const { data: user, isLoading, error } = useQuery({\n    queryKey: [\"user\", userId],\n    queryFn: () => userRepository.getById(userId),\n  });\n\n  const header = useProfileHeaderViewModel(user);\n  const activity = useActivityTabViewModel(userId);\n  const settings = useSettingsTabViewModel(userId);\n\n  return {\n    user, isLoading, error,\n    activeTab, setActiveTab,\n    tabs: [\n      { id: \"activity\", label: t(\"profile.tabs.activity\") },\n      { id: \"settings\", label: t(\"profile.tabs.settings\") },\n    ],\n    header, activity, settings,\n  };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.solidPattern.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.solidPattern.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_21_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.solidPattern.section_22_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "export function useOnboardingViewModel() {\n  const [currentStep, setCurrentStep] = useState(1);\n  const totalSteps = 3;\n\n  const step1 = useStep1ViewModel();\n  const step2 = useStep2ViewModel();\n  const step3 = useStep3ViewModel();\n\n  const canGoNext = useMemo(() => {\n    if (currentStep === 1) return step1.form.formState.isValid;\n    if (currentStep === 2) return step2.form.formState.isValid;\n    return true;\n  }, [currentStep, step1, step2]);\n\n  const { mutate: submitAll, isPending: isSubmitting } = useMutation({\n    mutationFn: async () => {\n      const combined = {\n        ...step1.form.getValues(),\n        ...step2.form.getValues(),\n        ...step3.form.getValues(),\n      };\n      return onboardingRepository.complete(combined);\n    },\n  });\n\n  return {\n    currentStep, totalSteps,\n    canGoNext, canGoPrev: currentStep > 1,\n    goNext: () => setCurrentStep(s => Math.min(s + 1, totalSteps)),\n    goPrev: () => setCurrentStep(s => Math.max(s - 1, 1)),\n    step1, step2, step3,\n    isSubmitting, submitAll,\n  };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.solidPattern.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "list",
-    "variant": "ordered",
-    "items": [
-      "architecture.solidPattern.section_25_item_0",
-      "architecture.solidPattern.section_25_item_1",
-      "architecture.solidPattern.section_25_item_2",
-      "architecture.solidPattern.section_25_item_3",
-      "architecture.solidPattern.section_25_item_4",
-      "architecture.solidPattern.section_25_item_5",
-      "architecture.solidPattern.section_25_item_6"
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "architecture.solidPattern.section_26_title",
-    "contentKey": "architecture.solidPattern.section_26_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.solidPattern.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.solidPattern.section_28_item_0",
-      "architecture.solidPattern.section_28_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/frontend",
-  "architecture/state-management"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/frontend", "architecture/state-management"],
+  lastUpdated: "2026-02-19",
 });

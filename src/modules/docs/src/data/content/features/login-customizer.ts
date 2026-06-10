@@ -1,557 +1,303 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "features.loginCustomizer.intro" },
+
+  // ─── Studio Overview ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.studioTitle",
+    id: "studio-overview",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.studioIntro" },
+  {
+    type: "table",
+    headers: ["Component", "Description", "Technology"],
+    rows: [
+      [
+        "Configuration Panels",
+        "Tabbed sidebar with Appearance, Colors, Typography, Overlay controls",
+        "React + Zustand",
+      ],
+      [
+        "Live Preview",
+        "Sandboxed iframe with real-time CSS variable injection",
+        "iframe + postMessage",
+      ],
+      ["Device Toggles", "Desktop / Tablet / Mobile responsive preview", "CSS resize"],
+      [
+        "Draft System",
+        "All changes are draft until explicit publish",
+        "API + optimistic concurrency",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.loginCustomizer.studioTip",
+  },
+
+  // ─── Login Layouts ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.layoutsTitle",
+    id: "login-layouts",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.layoutsIntro" },
+  {
+    type: "table",
+    headers: ["#", "Layout", "Type", "Overlay", "Branding Panel"],
+    rows: [
+      ["1", "split-right", "Split", "❌", "✅"],
+      ["2", "split-left", "Split", "❌", "✅"],
+      ["3", "centered", "Full-page", "❌", "❌"],
+      ["4", "branded-full", "Full-page", "✅", "❌"],
+      ["5", "overlay", "Full-page", "✅", "❌"],
+      ["6", "simple", "Full-page", "❌", "❌"],
+      ["7", "magazine", "Split", "❌", "✅"],
+      ["8", "compact-sidebar", "Split", "❌", "✅"],
+      ["9", "floating-card", "Full-page", "❌", "❌"],
+      ["10", "immersive", "Full-page", "✅", "❌"],
+      ["11", "glass-morphism", "Full-page", "✅", "❌"],
+      ["12", "corner-card", "Full-page", "✅", "❌"],
+      ["13", "vertical-split", "Split", "❌", "✅"],
+      ["14", "diagonal-split", "Split", "❌", "✅"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.loginCustomizer.layoutsNote",
+  },
+
+  // ─── Design Tokens ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.tokensTitle",
+    id: "design-tokens",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.tokensIntro" },
+  {
+    type: "flowchart",
+    title: "Token Pipeline",
+    direction: "horizontal",
+    nodes: [
+      { id: "store", label: "Tenant Settings (JSON)", type: "default" },
+      { id: "tokens", label: "Design Tokens (24)", type: "info" },
+      { id: "css", label: "CSS Variables", type: "warning" },
+      { id: "dom", label: "Live DOM", type: "success" },
+    ],
+    connections: [
+      { from: "store", to: "tokens" },
+      { from: "tokens", to: "css" },
+      { from: "css", to: "dom" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Token", "CSS Variable", "Default", "Controlled By"],
+    rows: [
+      ["color.primary", "--login-primary", "hsl(var(--primary))", "Color picker"],
+      ["color.background", "--login-bg", "hsl(var(--background))", "Background tab"],
+      ["color.surface", "--login-surface", "hsl(var(--card))", "Appearance tab"],
+      ["overlay.opacity", "--login-overlay-opacity", "0.5", "Overlay slider"],
+      ["overlay.color", "--login-overlay-color", "#000000", "Overlay color picker"],
+      ["overlay.blur", "--login-overlay-blur", "0px", "Overlay blur slider"],
+      ["spacing.formWidth", "--login-form-width", "420px", "Spacing controls"],
+      ["spacing.cardPadding", "--login-card-padding", "32px", "Spacing controls"],
+      ["radius.card", "--login-radius-card", "16px", "Radius slider"],
+      ["bg.gradient", "--login-bg-gradient", "none", "Background tab"],
+      ["bg.image", "--login-bg-image", "none", "Background upload"],
+    ],
+  },
+
+  // ─── Background & Overlay ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.bgOverlayTitle",
+    id: "background-overlay",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.bgOverlayIntro" },
+  {
+    type: "table",
+    headers: ["Layout Type", "Background Image", "Overlay Support", "Branding Panel"],
+    rows: [
+      [
+        "Full-page (centered, branded-full, overlay, etc.)",
+        "On wrapper div",
+        "✅ Where applicable",
+        "❌",
+      ],
+      [
+        "Split (split-right, magazine, etc.)",
+        "On branding panel only",
+        "✅ On form + branding sections",
+        "✅ Independent controls",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.loginCustomizer.bgOverlayWarning",
+  },
+
+  // ─── Light/Dark Theme ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.themeTitle",
+    id: "light-dark-theme",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.themeIntro" },
+  {
+    type: "table",
+    headers: ["Feature", "Light Mode", "Dark Mode"],
+    rows: [
+      ["Color scheme", "Default palette", "Dark panel overrides"],
+      ["Form background", "Light surface", "Dark surface (--login-dark-form-bg)"],
+      ["Text color", "Dark text", "Light text (--login-dark-text)"],
+      ["Input styling", "Standard borders", "Dark input backgrounds"],
+      ["Overlay vars", "Standard panel overlay", "Separate dark panel overlay vars"],
+    ],
+  },
+
+  // ─── Branding Panel ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.brandingTitle",
+    id: "branding-panel",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.brandingIntro" },
+  {
+    type: "table",
+    headers: ["Setting", "CSS Variable", "Description"],
+    rows: [
+      ["Logo URL", "--login-branding-logo", "Tenant logo displayed in branding panel"],
+      ["Company Name", "--login-branding-name", "Company name text"],
+      ["Headline", "--login-branding-headline", "Login page headline text"],
+      ["Subtitle", "--login-branding-subtitle", "Login page subtitle text"],
+      ["Background", "Inherited from bg tokens", "Background image/gradient/color"],
+      ["Overlay", "--login-panel-overlay-*", "Independent overlay on branding panel"],
+    ],
+  },
+
+  // ─── Draft / Publish / Rollback ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.draftTitle",
+    id: "draft-publish",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.draftIntro" },
+  {
+    type: "flowchart",
+    title: "Publish Workflow",
+    direction: "vertical",
+    nodes: [
+      { id: "edit", label: "Edit in Studio (Draft)", type: "default" },
+      { id: "preview", label: "Live Preview (iframe)", type: "info" },
+      { id: "save", label: "Save Draft (API)", type: "warning" },
+      { id: "publish", label: "Publish (version++)", type: "success" },
+      { id: "rollback", label: "Rollback (any snapshot)", type: "danger" },
+    ],
+    connections: [
+      { from: "edit", to: "preview" },
+      { from: "preview", to: "save" },
+      { from: "save", to: "publish" },
+      { from: "publish", to: "rollback", label: "If needed" },
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.loginCustomizer.draftNote",
+  },
+
+  // ─── Safe Mode ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.safeModeTitle",
+    id: "safe-mode",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.safeModeIntro" },
+
+  // ─── Access Control ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.accessTitle",
+    id: "access-control",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.accessIntro" },
+  {
+    type: "table",
+    headers: ["Action", "System Admin", "Tenant Admin (perm)", "Regular Admin"],
+    rows: [
+      ["Open Customizer Studio", "✅", "✅", "❌"],
+      ["Edit login branding", "✅", "✅", "❌"],
+      ["Publish changes", "✅", "✅", "❌"],
+      ["Rollback settings", "✅", "✅", "❌"],
+      ["Activate safe mode", "✅", "❌", "❌"],
+      ["Toggle dark/light", "✅", "✅", "✅"],
+    ],
+  },
+
+  // ─── Architecture ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.archTitle",
+    id: "architecture",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.archIntro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Module Structure",
+    code: `src/modules/system/customization/
+├── src/
+│   ├── data/              # API services, repositories
+│   ├── domain/            # Entities, types, interfaces
+│   └── presentation/
+│       ├── components/
+│       │   ├── StylePanel.tsx        # Main config panels
+│       │   ├── LoginPreviewShell.tsx  # Live preview iframe
+│       │   └── ...
+│       ├── hooks/
+│       │   ├── useLoginBrandingTokens.ts  # Token → CSS pipeline
+│       │   └── ...
+│       └── views/
+│           └── CustomizerView.tsx    # Studio layout`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.loginCustomizer.archTip",
+  },
+];
 
 registerPage({
   slug: "features/login-customizer",
   titleKey: "features.loginCustomizer.title",
+  descriptionKey: "features.loginCustomizer.description",
   category: "features",
   order: 15,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_4_hdr_0",
-      "features.loginCustomizer.section_4_hdr_1",
-      "features.loginCustomizer.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_4_cell_0_0",
-        "features.loginCustomizer.section_4_cell_0_1",
-        "features.loginCustomizer.section_4_cell_0_2"
-      ],
-      [
-        "features.loginCustomizer.section_4_cell_1_0",
-        "features.loginCustomizer.section_4_cell_1_1",
-        "features.loginCustomizer.section_4_cell_1_2"
-      ],
-      [
-        "features.loginCustomizer.section_4_cell_2_0",
-        "features.loginCustomizer.section_4_cell_2_1",
-        "features.loginCustomizer.section_4_cell_2_2"
-      ],
-      [
-        "features.loginCustomizer.section_4_cell_3_0",
-        "features.loginCustomizer.section_4_cell_3_1",
-        "features.loginCustomizer.section_4_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.loginCustomizer.section_5_title",
-    "contentKey": "features.loginCustomizer.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_7_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_8_hdr_0",
-      "features.loginCustomizer.section_8_hdr_1",
-      "features.loginCustomizer.section_8_hdr_2",
-      "features.loginCustomizer.section_8_hdr_3",
-      "features.loginCustomizer.section_8_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_8_cell_0_0",
-        "features.loginCustomizer.section_8_cell_0_1",
-        "features.loginCustomizer.section_8_cell_0_2",
-        "features.loginCustomizer.section_8_cell_0_3",
-        "features.loginCustomizer.section_8_cell_0_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_1_0",
-        "features.loginCustomizer.section_8_cell_1_1",
-        "features.loginCustomizer.section_8_cell_1_2",
-        "features.loginCustomizer.section_8_cell_1_3",
-        "features.loginCustomizer.section_8_cell_1_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_2_0",
-        "features.loginCustomizer.section_8_cell_2_1",
-        "features.loginCustomizer.section_8_cell_2_2",
-        "features.loginCustomizer.section_8_cell_2_3",
-        "features.loginCustomizer.section_8_cell_2_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_3_0",
-        "features.loginCustomizer.section_8_cell_3_1",
-        "features.loginCustomizer.section_8_cell_3_2",
-        "features.loginCustomizer.section_8_cell_3_3",
-        "features.loginCustomizer.section_8_cell_3_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_4_0",
-        "features.loginCustomizer.section_8_cell_4_1",
-        "features.loginCustomizer.section_8_cell_4_2",
-        "features.loginCustomizer.section_8_cell_4_3",
-        "features.loginCustomizer.section_8_cell_4_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_5_0",
-        "features.loginCustomizer.section_8_cell_5_1",
-        "features.loginCustomizer.section_8_cell_5_2",
-        "features.loginCustomizer.section_8_cell_5_3",
-        "features.loginCustomizer.section_8_cell_5_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_6_0",
-        "features.loginCustomizer.section_8_cell_6_1",
-        "features.loginCustomizer.section_8_cell_6_2",
-        "features.loginCustomizer.section_8_cell_6_3",
-        "features.loginCustomizer.section_8_cell_6_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_7_0",
-        "features.loginCustomizer.section_8_cell_7_1",
-        "features.loginCustomizer.section_8_cell_7_2",
-        "features.loginCustomizer.section_8_cell_7_3",
-        "features.loginCustomizer.section_8_cell_7_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_8_0",
-        "features.loginCustomizer.section_8_cell_8_1",
-        "features.loginCustomizer.section_8_cell_8_2",
-        "features.loginCustomizer.section_8_cell_8_3",
-        "features.loginCustomizer.section_8_cell_8_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_9_0",
-        "features.loginCustomizer.section_8_cell_9_1",
-        "features.loginCustomizer.section_8_cell_9_2",
-        "features.loginCustomizer.section_8_cell_9_3",
-        "features.loginCustomizer.section_8_cell_9_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_10_0",
-        "features.loginCustomizer.section_8_cell_10_1",
-        "features.loginCustomizer.section_8_cell_10_2",
-        "features.loginCustomizer.section_8_cell_10_3",
-        "features.loginCustomizer.section_8_cell_10_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_11_0",
-        "features.loginCustomizer.section_8_cell_11_1",
-        "features.loginCustomizer.section_8_cell_11_2",
-        "features.loginCustomizer.section_8_cell_11_3",
-        "features.loginCustomizer.section_8_cell_11_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_12_0",
-        "features.loginCustomizer.section_8_cell_12_1",
-        "features.loginCustomizer.section_8_cell_12_2",
-        "features.loginCustomizer.section_8_cell_12_3",
-        "features.loginCustomizer.section_8_cell_12_4"
-      ],
-      [
-        "features.loginCustomizer.section_8_cell_13_0",
-        "features.loginCustomizer.section_8_cell_13_1",
-        "features.loginCustomizer.section_8_cell_13_2",
-        "features.loginCustomizer.section_8_cell_13_3",
-        "features.loginCustomizer.section_8_cell_13_4"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.loginCustomizer.section_9_title",
-    "contentKey": "features.loginCustomizer.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_11_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    store[\"Tenant Settings (JSON)\"]\n    tokens([\"Design Tokens (24)\"])\n    css{{\"CSS Variables\"}}\n    dom([\"Live DOM\"])\n    store --> tokens\n    tokens --> css\n    css --> dom",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_13_hdr_0",
-      "features.loginCustomizer.section_13_hdr_1",
-      "features.loginCustomizer.section_13_hdr_2",
-      "features.loginCustomizer.section_13_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_13_cell_0_0",
-        "features.loginCustomizer.section_13_cell_0_1",
-        "features.loginCustomizer.section_13_cell_0_2",
-        "features.loginCustomizer.section_13_cell_0_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_1_0",
-        "features.loginCustomizer.section_13_cell_1_1",
-        "features.loginCustomizer.section_13_cell_1_2",
-        "features.loginCustomizer.section_13_cell_1_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_2_0",
-        "features.loginCustomizer.section_13_cell_2_1",
-        "features.loginCustomizer.section_13_cell_2_2",
-        "features.loginCustomizer.section_13_cell_2_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_3_0",
-        "features.loginCustomizer.section_13_cell_3_1",
-        "features.loginCustomizer.section_13_cell_3_2",
-        "features.loginCustomizer.section_13_cell_3_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_4_0",
-        "features.loginCustomizer.section_13_cell_4_1",
-        "features.loginCustomizer.section_13_cell_4_2",
-        "features.loginCustomizer.section_13_cell_4_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_5_0",
-        "features.loginCustomizer.section_13_cell_5_1",
-        "features.loginCustomizer.section_13_cell_5_2",
-        "features.loginCustomizer.section_13_cell_5_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_6_0",
-        "features.loginCustomizer.section_13_cell_6_1",
-        "features.loginCustomizer.section_13_cell_6_2",
-        "features.loginCustomizer.section_13_cell_6_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_7_0",
-        "features.loginCustomizer.section_13_cell_7_1",
-        "features.loginCustomizer.section_13_cell_7_2",
-        "features.loginCustomizer.section_13_cell_7_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_8_0",
-        "features.loginCustomizer.section_13_cell_8_1",
-        "features.loginCustomizer.section_13_cell_8_2",
-        "features.loginCustomizer.section_13_cell_8_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_9_0",
-        "features.loginCustomizer.section_13_cell_9_1",
-        "features.loginCustomizer.section_13_cell_9_2",
-        "features.loginCustomizer.section_13_cell_9_3"
-      ],
-      [
-        "features.loginCustomizer.section_13_cell_10_0",
-        "features.loginCustomizer.section_13_cell_10_1",
-        "features.loginCustomizer.section_13_cell_10_2",
-        "features.loginCustomizer.section_13_cell_10_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_15_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_16_hdr_0",
-      "features.loginCustomizer.section_16_hdr_1",
-      "features.loginCustomizer.section_16_hdr_2",
-      "features.loginCustomizer.section_16_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_16_cell_0_0",
-        "features.loginCustomizer.section_16_cell_0_1",
-        "features.loginCustomizer.section_16_cell_0_2",
-        "features.loginCustomizer.section_16_cell_0_3"
-      ],
-      [
-        "features.loginCustomizer.section_16_cell_1_0",
-        "features.loginCustomizer.section_16_cell_1_1",
-        "features.loginCustomizer.section_16_cell_1_2",
-        "features.loginCustomizer.section_16_cell_1_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "features.loginCustomizer.section_17_title",
-    "contentKey": "features.loginCustomizer.section_17_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_19_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_20_hdr_0",
-      "features.loginCustomizer.section_20_hdr_1",
-      "features.loginCustomizer.section_20_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_20_cell_0_0",
-        "features.loginCustomizer.section_20_cell_0_1",
-        "features.loginCustomizer.section_20_cell_0_2"
-      ],
-      [
-        "features.loginCustomizer.section_20_cell_1_0",
-        "features.loginCustomizer.section_20_cell_1_1",
-        "features.loginCustomizer.section_20_cell_1_2"
-      ],
-      [
-        "features.loginCustomizer.section_20_cell_2_0",
-        "features.loginCustomizer.section_20_cell_2_1",
-        "features.loginCustomizer.section_20_cell_2_2"
-      ],
-      [
-        "features.loginCustomizer.section_20_cell_3_0",
-        "features.loginCustomizer.section_20_cell_3_1",
-        "features.loginCustomizer.section_20_cell_3_2"
-      ],
-      [
-        "features.loginCustomizer.section_20_cell_4_0",
-        "features.loginCustomizer.section_20_cell_4_1",
-        "features.loginCustomizer.section_20_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_22_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_23_hdr_0",
-      "features.loginCustomizer.section_23_hdr_1",
-      "features.loginCustomizer.section_23_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_23_cell_0_0",
-        "features.loginCustomizer.section_23_cell_0_1",
-        "features.loginCustomizer.section_23_cell_0_2"
-      ],
-      [
-        "features.loginCustomizer.section_23_cell_1_0",
-        "features.loginCustomizer.section_23_cell_1_1",
-        "features.loginCustomizer.section_23_cell_1_2"
-      ],
-      [
-        "features.loginCustomizer.section_23_cell_2_0",
-        "features.loginCustomizer.section_23_cell_2_1",
-        "features.loginCustomizer.section_23_cell_2_2"
-      ],
-      [
-        "features.loginCustomizer.section_23_cell_3_0",
-        "features.loginCustomizer.section_23_cell_3_1",
-        "features.loginCustomizer.section_23_cell_3_2"
-      ],
-      [
-        "features.loginCustomizer.section_23_cell_4_0",
-        "features.loginCustomizer.section_23_cell_4_1",
-        "features.loginCustomizer.section_23_cell_4_2"
-      ],
-      [
-        "features.loginCustomizer.section_23_cell_5_0",
-        "features.loginCustomizer.section_23_cell_5_1",
-        "features.loginCustomizer.section_23_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_25_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    edit[\"Edit in Studio (Draft)\"]\n    preview([\"Live Preview (iframe)\"])\n    save{{\"Save Draft (API)\"}}\n    publish([\"Publish (version++)\"])\n    rollback[\"Rollback (any snapshot)\"]\n    edit --> preview\n    preview --> save\n    save --> publish\n    publish -->|\"If needed\"| rollback",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.loginCustomizer.section_27_title",
-    "contentKey": "features.loginCustomizer.section_27_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_29_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_31_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginCustomizer.section_32_hdr_0",
-      "features.loginCustomizer.section_32_hdr_1",
-      "features.loginCustomizer.section_32_hdr_2",
-      "features.loginCustomizer.section_32_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.loginCustomizer.section_32_cell_0_0",
-        "features.loginCustomizer.section_32_cell_0_1",
-        "features.loginCustomizer.section_32_cell_0_2",
-        "features.loginCustomizer.section_32_cell_0_3"
-      ],
-      [
-        "features.loginCustomizer.section_32_cell_1_0",
-        "features.loginCustomizer.section_32_cell_1_1",
-        "features.loginCustomizer.section_32_cell_1_2",
-        "features.loginCustomizer.section_32_cell_1_3"
-      ],
-      [
-        "features.loginCustomizer.section_32_cell_2_0",
-        "features.loginCustomizer.section_32_cell_2_1",
-        "features.loginCustomizer.section_32_cell_2_2",
-        "features.loginCustomizer.section_32_cell_2_3"
-      ],
-      [
-        "features.loginCustomizer.section_32_cell_3_0",
-        "features.loginCustomizer.section_32_cell_3_1",
-        "features.loginCustomizer.section_32_cell_3_2",
-        "features.loginCustomizer.section_32_cell_3_3"
-      ],
-      [
-        "features.loginCustomizer.section_32_cell_4_0",
-        "features.loginCustomizer.section_32_cell_4_1",
-        "features.loginCustomizer.section_32_cell_4_2",
-        "features.loginCustomizer.section_32_cell_4_3"
-      ],
-      [
-        "features.loginCustomizer.section_32_cell_5_0",
-        "features.loginCustomizer.section_32_cell_5_1",
-        "features.loginCustomizer.section_32_cell_5_2",
-        "features.loginCustomizer.section_32_cell_5_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_33_title",
-    "id": "sec_33"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_34_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginCustomizer.section_35_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "src/modules/system/customization/\n├── src/\n│   ├── data/              # API services, repositories\n│   ├── domain/            # Entities, types, interfaces\n│   └── presentation/\n│       ├── components/\n│       │   ├── StylePanel.tsx        # Main config panels\n│       │   ├── LoginPreviewShell.tsx  # Live preview iframe\n│       │   └── ...\n│       ├── hooks/\n│       │   ├── useLoginBrandingTokens.ts  # Token → CSS pipeline\n│       │   └── ...\n│       └── views/\n│           └── CustomizerView.tsx    # Studio layout",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.loginCustomizer.section_37_title",
-    "contentKey": "features.loginCustomizer.section_37_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginCustomizer.section_38_title",
-    "id": "sec_38"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.loginCustomizer.section_39_item_0",
-      "features.loginCustomizer.section_39_item_1",
-      "features.loginCustomizer.section_39_item_2",
-      "features.loginCustomizer.section_39_item_3",
-      "features.loginCustomizer.section_39_item_4"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "features/multi-tenancy",
-  "features/authentication",
-  "features/theme-marketplace",
-  "features/multi-page-branding",
-  "features/login-page-builder"
-],
-  lastUpdated: "2026-06-09",
+    "features/multi-tenancy",
+    "features/authentication",
+    "features/theme-marketplace",
+    "features/multi-page-branding",
+    "features/login-page-builder",
+  ],
+  lastUpdated: "2026-04-02",
 });

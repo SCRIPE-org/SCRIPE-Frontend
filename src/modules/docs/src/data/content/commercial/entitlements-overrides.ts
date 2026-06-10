@@ -1,208 +1,163 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.entOverrides.intro" },
+
+  // ─── Resolution Priority Chain ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.entOverrides.priorityTitle",
+    id: "priority-chain",
+  },
+  { type: "paragraph", contentKey: "commercial.entOverrides.priorityContent" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "Feature Resolution Priority",
+    nodes: [
+      { id: "override", label: "1. Tenant Override (Highest)", type: "danger" },
+      { id: "sub", label: "2. Active Subscription → Edition Features", type: "warning" },
+      { id: "addon", label: "3. Add-on Subscriptions", type: "info" },
+      { id: "default", label: "4. Feature Default Value (Lowest)", type: "default" },
+    ],
+    connections: [
+      { from: "override", to: "sub", label: "Not set? →" },
+      { from: "sub", to: "addon", label: "Not set? →" },
+      { from: "addon", to: "default", label: "Not set? →" },
+    ],
+  },
+
+  // ─── Use Cases ──────────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.entOverrides.useCasesTitle", id: "use-cases" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "briefcase",
+        titleKey: "commercial.entOverrides.ucEnterprise",
+        descriptionKey: "commercial.entOverrides.ucEnterpriseDesc",
+      },
+      {
+        icon: "gift",
+        titleKey: "commercial.entOverrides.ucPromo",
+        descriptionKey: "commercial.entOverrides.ucPromoDesc",
+      },
+      {
+        icon: "code",
+        titleKey: "commercial.entOverrides.ucBeta",
+        descriptionKey: "commercial.entOverrides.ucBetaDesc",
+      },
+      {
+        icon: "clock",
+        titleKey: "commercial.entOverrides.ucExpiring",
+        descriptionKey: "commercial.entOverrides.ucExpiringDesc",
+      },
+    ],
+  },
+
+  // ─── Setting an Override ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.entOverrides.settingTitle",
+    id: "setting-overrides",
+  },
+  { type: "paragraph", contentKey: "commercial.entOverrides.settingContent" },
+  {
+    type: "code",
+    language: "json",
+    filename: "Override Request Example",
+    code: `POST /api/tenant-features/{tenantId}/override
+{
+  "featureId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "value": "500",
+  "expiresAt": "2026-12-31T23:59:59Z",
+  "reason": "Enterprise deal: Extended storage"
+}`,
+  },
+
+  // ─── Audit Trail ────────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.entOverrides.auditTitle", id: "audit-trail" },
+  { type: "paragraph", contentKey: "commercial.entOverrides.auditContent" },
+  {
+    type: "table",
+    headers: [
+      "commercial.entOverrides.tblAuditH1",
+      "commercial.entOverrides.tblAuditH2",
+      "commercial.entOverrides.tblAuditH3",
+    ],
+    rows: [
+      [
+        "commercial.entOverrides.tblAuditR1C1",
+        "commercial.entOverrides.tblAuditR1C2",
+        "commercial.entOverrides.tblAuditR1C3",
+      ],
+      [
+        "commercial.entOverrides.tblAuditR2C1",
+        "commercial.entOverrides.tblAuditR2C2",
+        "commercial.entOverrides.tblAuditR2C3",
+      ],
+      [
+        "commercial.entOverrides.tblAuditR3C1",
+        "commercial.entOverrides.tblAuditR3C2",
+        "commercial.entOverrides.tblAuditR3C3",
+      ],
+    ],
+  },
+
+  // ─── API Endpoints ──────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.entOverrides.apiTitle", id: "api" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/tenant-features/{tenantId}/resolved",
+        descriptionKey: "Get resolved features for tenant",
+        auth: "Required",
+        permission: "Features.View",
+      },
+      {
+        method: "POST",
+        path: "/api/tenant-features/{tenantId}/override",
+        descriptionKey: "Set feature override",
+        auth: "Required",
+        permission: "Features.Update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/tenant-features/{tenantId}/override/{featureId}",
+        descriptionKey: "Remove override",
+        auth: "Required",
+        permission: "Features.Update",
+      },
+      {
+        method: "GET",
+        path: "/api/tenant-features/{tenantId}/overrides",
+        descriptionKey: "List all overrides for tenant",
+        auth: "Required",
+        permission: "Features.View",
+      },
+    ],
+  },
+
+  { type: "info", variant: "tip", contentKey: "commercial.entOverrides.tip" },
+];
 
 registerPage({
   slug: "commercial/entitlements-overrides",
   titleKey: "commercial.entOverrides.title",
+  descriptionKey: "commercial.entOverrides.description",
   category: "commercial-modules",
   order: 5,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverrides.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    override[\"1. Tenant Override (Highest)\"]\n    sub{{\"2. Active Subscription → Edition Features\"}}\n    addon([\"3. Add-on Subscriptions\"])\n    default[\"4. Feature Default Value (Lowest)\"]\n    override -->|\"Not set? →\"| sub\n    sub -->|\"Not set? →\"| addon\n    addon -->|\"Not set? →\"| default",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverrides.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverrides.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverrides.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverrides.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverrides.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverrides.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "POST /api/tenant-features/{tenantId}/override\n{\n  \"featureId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"value\": \"500\",\n  \"expiresAt\": \"2026-12-31T23:59:59Z\",\n  \"reason\": \"Enterprise deal: Extended storage\"\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverrides.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverrides.section_19_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.entOverrides.section_20_hdr_0",
-      "commercial.entOverrides.section_20_hdr_1",
-      "commercial.entOverrides.section_20_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.entOverrides.section_20_cell_0_0",
-        "commercial.entOverrides.section_20_cell_0_1",
-        "commercial.entOverrides.section_20_cell_0_2"
-      ],
-      [
-        "commercial.entOverrides.section_20_cell_1_0",
-        "commercial.entOverrides.section_20_cell_1_1",
-        "commercial.entOverrides.section_20_cell_1_2"
-      ],
-      [
-        "commercial.entOverrides.section_20_cell_2_0",
-        "commercial.entOverrides.section_20_cell_2_1",
-        "commercial.entOverrides.section_20_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverrides.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.entOverrides.section_22_hdr_0",
-      "commercial.entOverrides.section_22_hdr_1",
-      "commercial.entOverrides.section_22_hdr_2",
-      "commercial.entOverrides.section_22_hdr_3",
-      "commercial.entOverrides.section_22_hdr_4"
-    ],
-    "rows": [
-      [
-        "commercial.entOverrides.section_22_cell_0_0",
-        "commercial.entOverrides.section_22_cell_0_1",
-        "commercial.entOverrides.section_22_cell_0_2",
-        "commercial.entOverrides.section_22_cell_0_3",
-        "commercial.entOverrides.section_22_cell_0_4"
-      ],
-      [
-        "commercial.entOverrides.section_22_cell_1_0",
-        "commercial.entOverrides.section_22_cell_1_1",
-        "commercial.entOverrides.section_22_cell_1_2",
-        "commercial.entOverrides.section_22_cell_1_3",
-        "commercial.entOverrides.section_22_cell_1_4"
-      ],
-      [
-        "commercial.entOverrides.section_22_cell_2_0",
-        "commercial.entOverrides.section_22_cell_2_1",
-        "commercial.entOverrides.section_22_cell_2_2",
-        "commercial.entOverrides.section_22_cell_2_3",
-        "commercial.entOverrides.section_22_cell_2_4"
-      ],
-      [
-        "commercial.entOverrides.section_22_cell_3_0",
-        "commercial.entOverrides.section_22_cell_3_1",
-        "commercial.entOverrides.section_22_cell_3_2",
-        "commercial.entOverrides.section_22_cell_3_3",
-        "commercial.entOverrides.section_22_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.entOverrides.section_23_title",
-    "contentKey": "commercial.entOverrides.section_23_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverrides.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.entOverrides.section_25_item_0",
-      "commercial.entOverrides.section_25_item_1",
-      "commercial.entOverrides.section_25_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "commercial/entitlements-features",
-  "commercial/entitlements-subscriptions",
-  "commercial/entitlements-overview"
-],
-  lastUpdated: "2026-06-09",
+    "commercial/entitlements-features",
+    "commercial/entitlements-subscriptions",
+    "commercial/entitlements-overview",
+  ],
+  lastUpdated: "2026-03-02",
 });

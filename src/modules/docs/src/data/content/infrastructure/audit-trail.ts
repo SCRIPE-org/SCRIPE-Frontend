@@ -1,504 +1,337 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "infrastructure.auditTrail.intro" },
+
+  // ─── Audit Log Architecture ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.auditTrail.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Audit Trail Data Flow",
+    direction: "horizontal",
+    nodes: [
+      { id: "action", label: "User Action", type: "primary" },
+      {
+        id: "middleware",
+        label: "AuditMiddleware",
+        type: "info",
+        description: "HTTP request capture",
+      },
+      {
+        id: "behavior",
+        label: "AuditBehavior",
+        type: "info",
+        description: "AstraFlow mediator pipeline",
+      },
+      { id: "service", label: "AuditService", type: "warning", description: "Module auto-detect" },
+      { id: "db", label: "AuditLogs Table", type: "success", description: "Persistent storage" },
+      { id: "signalr", label: "SignalR Hub", type: "danger", description: "Real-time broadcast" },
+    ],
+    connections: [
+      { from: "action", to: "middleware" },
+      { from: "middleware", to: "behavior" },
+      { from: "behavior", to: "service" },
+      { from: "service", to: "db" },
+      { from: "service", to: "signalr" },
+    ],
+  },
+
+  // ─── AuditLog Entity ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.auditTrail.entityTitle",
+    id: "entity",
+  },
+  { type: "paragraph", contentKey: "infrastructure.auditTrail.entityIntro" },
+  {
+    type: "table",
+    headers: ["Column", "Type", "Nullable", "Purpose"],
+    rows: [
+      ["Id", "Guid", "No", "Unique audit entry identifier (auto-generated)"],
+      ["EventType", "string(50)", "No", "Event classification — see Event Types table below"],
+      ["HttpMethod", "string(10)", "Yes", "HTTP verb (GET, POST, PUT, DELETE)"],
+      ["Endpoint", "string(500)", "Yes", "API path that was called (e.g., /api/admins/123)"],
+      ["EntityType", "string(100)", "Yes", "Entity affected (Admin, Role, Tenant, Edition, etc.)"],
+      ["EntityId", "string(100)", "Yes", "Encrypted entity ID (AES-256 encrypted)"],
+      [
+        "OldValues",
+        "JSON (nvarchar max)",
+        "Yes",
+        "Previous state snapshot — stored for update/delete operations",
+      ],
+      [
+        "NewValues",
+        "JSON (nvarchar max)",
+        "Yes",
+        "New state snapshot — stored for create/update operations",
+      ],
+      ["ChangedProperties", "string(1000)", "Yes", "Comma-separated list of changed field names"],
+      ["UserId", "Guid", "Yes", "Who performed the action (null for anonymous/system)"],
+      ["TenantId", "Guid", "Yes", "Tenant context — used for scoping in tenant dashboards"],
+      ["Username", "string(100)", "Yes", "Display name of the user who performed the action"],
+      ["IsAdmin", "bool", "No", "Whether the user is an admin (for client-user distinction)"],
+      ["IpAddress", "string(50)", "Yes", "Client IP address (IPv4 or IPv6)"],
+      ["UserAgent", "string(500)", "Yes", "Browser/device user agent string"],
+      ["CorrelationId", "string(50)", "Yes", "Links all audit entries from the same HTTP request"],
+      [
+        "ModuleTag",
+        "string(50)",
+        "Yes",
+        "Auto-detected module (Identity, Entitlements, System, etc.)",
+      ],
+      ["StatusCode", "int", "Yes", "HTTP response status code (200, 400, 401, 403, 500, etc.)"],
+      ["DurationMs", "long", "Yes", "Request processing time in milliseconds"],
+      ["IsSuccess", "bool", "No", "Whether the operation succeeded (default: true)"],
+      ["ErrorMessage", "string(max)", "Yes", "Error details if operation failed"],
+      [
+        "Metadata",
+        "JSON (nvarchar max)",
+        "Yes",
+        "Additional context data as JSON (e.g., batch counts, custom data)",
+      ],
+      ["Timestamp", "DateTime", "No", "UTC timestamp of the event (default: DateTime.UtcNow)"],
+    ],
+  },
+
+  // ─── Module Auto-Detection ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.auditTrail.moduleDetectionTitle",
+    id: "module-detection",
+  },
+  { type: "paragraph", contentKey: "infrastructure.auditTrail.moduleDetectionIntro" },
+  {
+    type: "table",
+    headers: ["Detection Source", "Example Input", "Detected Module", "Priority"],
+    rows: [
+      [
+        "Event Type (hardcoded)",
+        "Login, LoginFailed, Logout",
+        "Identity",
+        "Highest — event-based override",
+      ],
+      ["Endpoint path", "/api/admins/123", "Identity", "Primary — URL-based detection"],
+      ["Endpoint path", "/api/roles", "Identity", "Primary"],
+      ["Endpoint path", "/api/tenants", "Identity", "Primary"],
+      ["Endpoint path", "/api/editions", "Entitlements", "Primary"],
+      ["Endpoint path", "/api/features", "Entitlements", "Primary"],
+      ["Endpoint path", "/api/subscriptions", "Entitlements", "Primary"],
+      ["Endpoint path", "/api/audit-logs", "System", "Primary"],
+      [
+        "Endpoint path",
+        "/api/products",
+        "Products (auto-capitalized)",
+        "Fallback — unknown modules auto-mapped",
+      ],
+      ["Entity Type name", "Admin, Role, Tenant", "Identity", "Secondary — entity-based detection"],
+      ["Entity Type name", "Edition, Feature", "Entitlements", "Secondary"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "AuditService.cs — Module Detection Logic",
+    code: `private string DetectModule(AuditLog log)
+{
+    // Priority 1: Event-type hardcoded mapping
+    if (log.EventType is AuditEventTypes.Login
+        or AuditEventTypes.LoginFailed
+        or AuditEventTypes.Logout
+        or AuditEventTypes.TokenRefresh)
+        return "Identity";
+
+    // Priority 2: Endpoint path-based mapping
+    if (!string.IsNullOrEmpty(log.Endpoint))
+    {
+        var segment = ExtractFirstSegment(log.Endpoint);
+        return _endpointModuleMap.GetValueOrDefault(
+            segment, Capitalize(segment));
+    }
+
+    // Priority 3: Entity type-based mapping
+    if (!string.IsNullOrEmpty(log.EntityType))
+        return _entityModuleMap.GetValueOrDefault(
+            log.EntityType, "System");
+
+    return "System"; // Fallback
+}`,
+  },
+
+  // ─── Event Types ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.auditTrail.eventTypesTitle",
+    id: "event-types",
+  },
+  {
+    type: "table",
+    headers: ["Category", "Event Types", "Description"],
+    rows: [
+      [
+        "Authentication",
+        "Login, LoginFailed, Logout, TokenRefresh",
+        "User session lifecycle events",
+      ],
+      [
+        "CRUD Operations",
+        "Create, Update, Delete",
+        "Entity data mutations with old/new value snapshots",
+      ],
+      [
+        "Security",
+        "AccessDenied, PrivilegeEscalationAttempt, AdminImpersonation",
+        "Security-sensitive or blocked actions",
+      ],
+      [
+        "Password",
+        "PasswordChange, PasswordReset, PasswordChanged",
+        "Credential management events",
+      ],
+      ["Account", "AccountLocked, AccountUnlocked, AdminStatusChanged", "Account state changes"],
+      [
+        "2FA",
+        "TwoFactorEnabled, TwoFactorDisabled, TwoFactorVerified, BackupCodeUsed, BackupCodesRegenerated",
+        "Multi-factor authentication lifecycle",
+      ],
+      ["Session", "SessionRevoked, AllSessionsRevoked", "Session management and forced logout"],
+      [
+        "RBAC",
+        "RoleAssigned, RoleUnassigned, PermissionGranted, PermissionRevoked, ScopeChanged",
+        "Access control changes",
+      ],
+      [
+        "Tenant",
+        "TenantAccess, HierarchyAccess, TenantPermissionsUpdated, BulkTenantCascadeDelete",
+        "Tenant hierarchy and cross-tenant operations",
+      ],
+      [
+        "Bulk Operations",
+        "BulkAdminDelete, BulkAdminStatusUpdate",
+        "Batch mutations affecting multiple entities",
+      ],
+      ["Profile", "ProfileUpdated", "User self-service profile changes"],
+      [
+        "Guardian",
+        "GuardianAdminDeleteBlocked, GuardianAdminTransferBlocked, GuardianAdminDemoteBlocked, GuardianAdminDeactivateBlocked, GuardianRoleDeleteBlocked, GuardianRolePermissionBlocked, GuardianTenantCreated",
+        "Protection system enforcement — prevents destruction of critical resources",
+      ],
+      ["System", "Request, Error", "HTTP request logging and unhandled error tracking"],
+    ],
+  },
+
+  // ─── Real-Time Broadcasting ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.auditTrail.realtimeTitle",
+    id: "realtime",
+  },
+  { type: "paragraph", contentKey: "infrastructure.auditTrail.realtimeIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SignalR Audit Broadcasting",
+    code: `// Audit events are broadcast to connected dashboards in real-time.
+// Routine HTTP request logs (EventType == "Request") are excluded
+// to avoid flooding the WebSocket channel.
+
+if (log.EventType != AuditEventTypes.Request)
+{
+    var dto = MapToSignalRDto(log);
+
+    // 1. Tenant-specific group (tenant admins see their own events)
+    if (log.TenantId.HasValue)
+    {
+        await _hubContext.Clients
+            .Group(HubGroupNames.ForTenant(log.TenantId.Value))
+            .AuditEvent(dto);
+    }
+
+    // 2. Global group (super admins see everything)
+    await _hubContext.Clients
+        .Group(HubGroupNames.Global)
+        .AuditEvent(dto);
+}`,
+  },
+
+  // ─── Query API ──────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.auditTrail.queryTitle",
+    id: "query-api",
+  },
+  { type: "paragraph", contentKey: "infrastructure.auditTrail.queryIntro" },
+  {
+    type: "code",
+    language: "bash",
+    filename: "AuditLog Query Examples",
+    code: `# Get all audit logs (paginated)
+GET /api/audit-logs?page=1&pageSize=20
+
+# Filter by event type
+GET /api/audit-logs?eventType=Login&page=1&pageSize=50
+
+# Filter by module
+GET /api/audit-logs?moduleTag=Identity
+
+# Filter by date range
+GET /api/audit-logs?dateFrom=2026-04-01&dateTo=2026-04-06
+
+# Filter by user
+GET /api/audit-logs?userId=<encrypted-id>
+
+# Trace a request (find all logs from one HTTP request)
+GET /api/audit-logs?correlationId=abc-123-def
+
+# Combined filters
+GET /api/audit-logs?eventType=Create&entityType=Admin&moduleTag=Identity&dateFrom=2026-04-01`,
+  },
+  {
+    type: "table",
+    headers: ["Filter Parameter", "Type", "Description"],
+    rows: [
+      ["eventType", "string", "Filter by AuditEventType (Login, Create, Update, Delete, etc.)"],
+      ["entityType", "string", "Filter by entity name (Admin, Role, Tenant, Edition)"],
+      ["userId", "string (encrypted)", "Filter by the user who performed the action"],
+      ["tenantId", "string (encrypted)", "Filter by tenant context"],
+      ["moduleTag", "string", "Filter by module (Identity, Entitlements, System)"],
+      ["dateFrom", "datetime", "Start of date range (ISO 8601 format)"],
+      ["dateTo", "datetime", "End of date range (ISO 8601 format)"],
+      ["correlationId", "string", "Trace all entries from a single HTTP request"],
+      ["isSuccess", "bool", "Filter by success/failure status"],
+      ["search", "string", "Full-text search across Endpoint, EntityType, Username"],
+      ["page", "int", "Page number (default: 1)"],
+      ["pageSize", "int", "Items per page (default: 20, max: 100)"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "infrastructure.auditTrail.queryTip",
+  },
+];
 
 registerPage({
   slug: "infrastructure/audit-trail",
   titleKey: "infrastructure.auditTrail.title",
+  descriptionKey: "infrastructure.auditTrail.description",
   category: "infrastructure",
   order: 9,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    action([\"User Action\"])\n    middleware([\"RequestLoggingMiddleware\"])\n    %% middleware: HTTP request capture\n    interceptor([\"AuditableEntityInterceptor\"])\n    %% interceptor: Entity change tracking\n    service{{\"AuditService\"}}\n    %% service: Common audit handler\n    db([\"AuditLogs Table\"])\n    %% db: Persistent storage\n    signalr[\"SignalR Hub\"]\n    %% signalr: Real-time broadcast\n    action --> middleware\n    middleware --> service\n    interceptor --> service\n    service --> db\n    service --> signalr",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_5_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.auditTrail.section_6_hdr_0",
-      "infrastructure.auditTrail.section_6_hdr_1",
-      "infrastructure.auditTrail.section_6_hdr_2",
-      "infrastructure.auditTrail.section_6_hdr_3"
-    ],
-    "rows": [
-      [
-        "infrastructure.auditTrail.section_6_cell_0_0",
-        "infrastructure.auditTrail.section_6_cell_0_1",
-        "infrastructure.auditTrail.section_6_cell_0_2",
-        "infrastructure.auditTrail.section_6_cell_0_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_1_0",
-        "infrastructure.auditTrail.section_6_cell_1_1",
-        "infrastructure.auditTrail.section_6_cell_1_2",
-        "infrastructure.auditTrail.section_6_cell_1_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_2_0",
-        "infrastructure.auditTrail.section_6_cell_2_1",
-        "infrastructure.auditTrail.section_6_cell_2_2",
-        "infrastructure.auditTrail.section_6_cell_2_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_3_0",
-        "infrastructure.auditTrail.section_6_cell_3_1",
-        "infrastructure.auditTrail.section_6_cell_3_2",
-        "infrastructure.auditTrail.section_6_cell_3_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_4_0",
-        "infrastructure.auditTrail.section_6_cell_4_1",
-        "infrastructure.auditTrail.section_6_cell_4_2",
-        "infrastructure.auditTrail.section_6_cell_4_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_5_0",
-        "infrastructure.auditTrail.section_6_cell_5_1",
-        "infrastructure.auditTrail.section_6_cell_5_2",
-        "infrastructure.auditTrail.section_6_cell_5_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_6_0",
-        "infrastructure.auditTrail.section_6_cell_6_1",
-        "infrastructure.auditTrail.section_6_cell_6_2",
-        "infrastructure.auditTrail.section_6_cell_6_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_7_0",
-        "infrastructure.auditTrail.section_6_cell_7_1",
-        "infrastructure.auditTrail.section_6_cell_7_2",
-        "infrastructure.auditTrail.section_6_cell_7_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_8_0",
-        "infrastructure.auditTrail.section_6_cell_8_1",
-        "infrastructure.auditTrail.section_6_cell_8_2",
-        "infrastructure.auditTrail.section_6_cell_8_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_9_0",
-        "infrastructure.auditTrail.section_6_cell_9_1",
-        "infrastructure.auditTrail.section_6_cell_9_2",
-        "infrastructure.auditTrail.section_6_cell_9_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_10_0",
-        "infrastructure.auditTrail.section_6_cell_10_1",
-        "infrastructure.auditTrail.section_6_cell_10_2",
-        "infrastructure.auditTrail.section_6_cell_10_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_11_0",
-        "infrastructure.auditTrail.section_6_cell_11_1",
-        "infrastructure.auditTrail.section_6_cell_11_2",
-        "infrastructure.auditTrail.section_6_cell_11_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_12_0",
-        "infrastructure.auditTrail.section_6_cell_12_1",
-        "infrastructure.auditTrail.section_6_cell_12_2",
-        "infrastructure.auditTrail.section_6_cell_12_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_13_0",
-        "infrastructure.auditTrail.section_6_cell_13_1",
-        "infrastructure.auditTrail.section_6_cell_13_2",
-        "infrastructure.auditTrail.section_6_cell_13_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_14_0",
-        "infrastructure.auditTrail.section_6_cell_14_1",
-        "infrastructure.auditTrail.section_6_cell_14_2",
-        "infrastructure.auditTrail.section_6_cell_14_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_15_0",
-        "infrastructure.auditTrail.section_6_cell_15_1",
-        "infrastructure.auditTrail.section_6_cell_15_2",
-        "infrastructure.auditTrail.section_6_cell_15_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_16_0",
-        "infrastructure.auditTrail.section_6_cell_16_1",
-        "infrastructure.auditTrail.section_6_cell_16_2",
-        "infrastructure.auditTrail.section_6_cell_16_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_17_0",
-        "infrastructure.auditTrail.section_6_cell_17_1",
-        "infrastructure.auditTrail.section_6_cell_17_2",
-        "infrastructure.auditTrail.section_6_cell_17_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_18_0",
-        "infrastructure.auditTrail.section_6_cell_18_1",
-        "infrastructure.auditTrail.section_6_cell_18_2",
-        "infrastructure.auditTrail.section_6_cell_18_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_19_0",
-        "infrastructure.auditTrail.section_6_cell_19_1",
-        "infrastructure.auditTrail.section_6_cell_19_2",
-        "infrastructure.auditTrail.section_6_cell_19_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_20_0",
-        "infrastructure.auditTrail.section_6_cell_20_1",
-        "infrastructure.auditTrail.section_6_cell_20_2",
-        "infrastructure.auditTrail.section_6_cell_20_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_21_0",
-        "infrastructure.auditTrail.section_6_cell_21_1",
-        "infrastructure.auditTrail.section_6_cell_21_2",
-        "infrastructure.auditTrail.section_6_cell_21_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_6_cell_22_0",
-        "infrastructure.auditTrail.section_6_cell_22_1",
-        "infrastructure.auditTrail.section_6_cell_22_2",
-        "infrastructure.auditTrail.section_6_cell_22_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_8_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.auditTrail.section_9_hdr_0",
-      "infrastructure.auditTrail.section_9_hdr_1",
-      "infrastructure.auditTrail.section_9_hdr_2",
-      "infrastructure.auditTrail.section_9_hdr_3"
-    ],
-    "rows": [
-      [
-        "infrastructure.auditTrail.section_9_cell_0_0",
-        "infrastructure.auditTrail.section_9_cell_0_1",
-        "infrastructure.auditTrail.section_9_cell_0_2",
-        "infrastructure.auditTrail.section_9_cell_0_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_1_0",
-        "infrastructure.auditTrail.section_9_cell_1_1",
-        "infrastructure.auditTrail.section_9_cell_1_2",
-        "infrastructure.auditTrail.section_9_cell_1_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_2_0",
-        "infrastructure.auditTrail.section_9_cell_2_1",
-        "infrastructure.auditTrail.section_9_cell_2_2",
-        "infrastructure.auditTrail.section_9_cell_2_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_3_0",
-        "infrastructure.auditTrail.section_9_cell_3_1",
-        "infrastructure.auditTrail.section_9_cell_3_2",
-        "infrastructure.auditTrail.section_9_cell_3_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_4_0",
-        "infrastructure.auditTrail.section_9_cell_4_1",
-        "infrastructure.auditTrail.section_9_cell_4_2",
-        "infrastructure.auditTrail.section_9_cell_4_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_5_0",
-        "infrastructure.auditTrail.section_9_cell_5_1",
-        "infrastructure.auditTrail.section_9_cell_5_2",
-        "infrastructure.auditTrail.section_9_cell_5_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_6_0",
-        "infrastructure.auditTrail.section_9_cell_6_1",
-        "infrastructure.auditTrail.section_9_cell_6_2",
-        "infrastructure.auditTrail.section_9_cell_6_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_7_0",
-        "infrastructure.auditTrail.section_9_cell_7_1",
-        "infrastructure.auditTrail.section_9_cell_7_2",
-        "infrastructure.auditTrail.section_9_cell_7_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_8_0",
-        "infrastructure.auditTrail.section_9_cell_8_1",
-        "infrastructure.auditTrail.section_9_cell_8_2",
-        "infrastructure.auditTrail.section_9_cell_8_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_9_0",
-        "infrastructure.auditTrail.section_9_cell_9_1",
-        "infrastructure.auditTrail.section_9_cell_9_2",
-        "infrastructure.auditTrail.section_9_cell_9_3"
-      ],
-      [
-        "infrastructure.auditTrail.section_9_cell_10_0",
-        "infrastructure.auditTrail.section_9_cell_10_1",
-        "infrastructure.auditTrail.section_9_cell_10_2",
-        "infrastructure.auditTrail.section_9_cell_10_3"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_10_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "private string DetectModule(AuditLog log)\n{\n    // Priority 1: Event-type hardcoded mapping\n    if (log.EventType is AuditEventTypes.Login\n        or AuditEventTypes.LoginFailed\n        or AuditEventTypes.Logout\n        or AuditEventTypes.TokenRefresh)\n        return \"Identity\";\n\n    // Priority 2: Endpoint path-based mapping\n    if (!string.IsNullOrEmpty(log.Endpoint))\n    {\n        var segment = ExtractFirstSegment(log.Endpoint);\n        return _endpointModuleMap.GetValueOrDefault(\n            segment, Capitalize(segment));\n    }\n\n    // Priority 3: Entity type-based mapping\n    if (!string.IsNullOrEmpty(log.EntityType))\n        return _entityModuleMap.GetValueOrDefault(\n            log.EntityType, \"System\");\n\n    return \"System\"; // Fallback\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.auditTrail.section_13_hdr_0",
-      "infrastructure.auditTrail.section_13_hdr_1",
-      "infrastructure.auditTrail.section_13_hdr_2"
-    ],
-    "rows": [
-      [
-        "infrastructure.auditTrail.section_13_cell_0_0",
-        "infrastructure.auditTrail.section_13_cell_0_1",
-        "infrastructure.auditTrail.section_13_cell_0_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_1_0",
-        "infrastructure.auditTrail.section_13_cell_1_1",
-        "infrastructure.auditTrail.section_13_cell_1_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_2_0",
-        "infrastructure.auditTrail.section_13_cell_2_1",
-        "infrastructure.auditTrail.section_13_cell_2_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_3_0",
-        "infrastructure.auditTrail.section_13_cell_3_1",
-        "infrastructure.auditTrail.section_13_cell_3_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_4_0",
-        "infrastructure.auditTrail.section_13_cell_4_1",
-        "infrastructure.auditTrail.section_13_cell_4_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_5_0",
-        "infrastructure.auditTrail.section_13_cell_5_1",
-        "infrastructure.auditTrail.section_13_cell_5_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_6_0",
-        "infrastructure.auditTrail.section_13_cell_6_1",
-        "infrastructure.auditTrail.section_13_cell_6_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_7_0",
-        "infrastructure.auditTrail.section_13_cell_7_1",
-        "infrastructure.auditTrail.section_13_cell_7_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_8_0",
-        "infrastructure.auditTrail.section_13_cell_8_1",
-        "infrastructure.auditTrail.section_13_cell_8_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_9_0",
-        "infrastructure.auditTrail.section_13_cell_9_1",
-        "infrastructure.auditTrail.section_13_cell_9_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_10_0",
-        "infrastructure.auditTrail.section_13_cell_10_1",
-        "infrastructure.auditTrail.section_13_cell_10_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_11_0",
-        "infrastructure.auditTrail.section_13_cell_11_1",
-        "infrastructure.auditTrail.section_13_cell_11_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_13_cell_12_0",
-        "infrastructure.auditTrail.section_13_cell_12_1",
-        "infrastructure.auditTrail.section_13_cell_12_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Audit events are broadcast to connected dashboards in real-time.\n// Routine HTTP request logs (EventType == \"Request\") are excluded\n// to avoid flooding the WebSocket channel.\n\nif (log.EventType != AuditEventTypes.Request)\n{\n    var dto = MapToSignalRDto(log);\n\n    // 1. Tenant-specific group (tenant admins see their own events)\n    if (log.TenantId.HasValue)\n    {\n        await _hubContext.Clients\n            .Group(HubGroupNames.ForTenant(log.TenantId.Value))\n            .AuditEvent(dto);\n    }\n\n    // 2. Global group (super admins see everything)\n    await _hubContext.Clients\n        .Group(HubGroupNames.Global)\n        .AuditEvent(dto);\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_19_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.auditTrail.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# Get all audit logs (paginated)\nGET /api/audit-logs?page=1&pageSize=20\n\n# Filter by event type\nGET /api/audit-logs?eventType=Login&page=1&pageSize=50\n\n# Filter by module\nGET /api/audit-logs?moduleTag=Identity\n\n# Filter by date range\nGET /api/audit-logs?dateFrom=2026-04-01&dateTo=2026-04-06\n\n# Filter by user\nGET /api/audit-logs?userId=<encrypted-id>\n\n# Trace a request (find all logs from one HTTP request)\nGET /api/audit-logs?correlationId=abc-123-def\n\n# Combined filters\nGET /api/audit-logs?eventType=Create&entityType=Admin&moduleTag=Identity&dateFrom=2026-04-01",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.auditTrail.section_22_hdr_0",
-      "infrastructure.auditTrail.section_22_hdr_1",
-      "infrastructure.auditTrail.section_22_hdr_2"
-    ],
-    "rows": [
-      [
-        "infrastructure.auditTrail.section_22_cell_0_0",
-        "infrastructure.auditTrail.section_22_cell_0_1",
-        "infrastructure.auditTrail.section_22_cell_0_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_1_0",
-        "infrastructure.auditTrail.section_22_cell_1_1",
-        "infrastructure.auditTrail.section_22_cell_1_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_2_0",
-        "infrastructure.auditTrail.section_22_cell_2_1",
-        "infrastructure.auditTrail.section_22_cell_2_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_3_0",
-        "infrastructure.auditTrail.section_22_cell_3_1",
-        "infrastructure.auditTrail.section_22_cell_3_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_4_0",
-        "infrastructure.auditTrail.section_22_cell_4_1",
-        "infrastructure.auditTrail.section_22_cell_4_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_5_0",
-        "infrastructure.auditTrail.section_22_cell_5_1",
-        "infrastructure.auditTrail.section_22_cell_5_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_6_0",
-        "infrastructure.auditTrail.section_22_cell_6_1",
-        "infrastructure.auditTrail.section_22_cell_6_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_7_0",
-        "infrastructure.auditTrail.section_22_cell_7_1",
-        "infrastructure.auditTrail.section_22_cell_7_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_8_0",
-        "infrastructure.auditTrail.section_22_cell_8_1",
-        "infrastructure.auditTrail.section_22_cell_8_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_9_0",
-        "infrastructure.auditTrail.section_22_cell_9_1",
-        "infrastructure.auditTrail.section_22_cell_9_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_10_0",
-        "infrastructure.auditTrail.section_22_cell_10_1",
-        "infrastructure.auditTrail.section_22_cell_10_2"
-      ],
-      [
-        "infrastructure.auditTrail.section_22_cell_11_0",
-        "infrastructure.auditTrail.section_22_cell_11_1",
-        "infrastructure.auditTrail.section_22_cell_11_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "infrastructure.auditTrail.section_23_title",
-    "contentKey": "infrastructure.auditTrail.section_23_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.auditTrail.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "infrastructure.auditTrail.section_25_item_0",
-      "infrastructure.auditTrail.section_25_item_1",
-      "infrastructure.auditTrail.section_25_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "features/audit-system",
-  "security/audit-compliance",
-  "infrastructure/observability"
-],
-  lastUpdated: "2026-06-09",
+    "features/audit-system",
+    "security/audit-compliance",
+    "infrastructure/observability",
+  ],
+  lastUpdated: "2026-04-06",
 });

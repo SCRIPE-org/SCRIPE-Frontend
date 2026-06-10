@@ -1,199 +1,132 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.intro" },
+
+  // ─── Brand Identity ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.brandTitle",
+    id: "brand-identity",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.brandContent" },
+  {
+    type: "table",
+    headers: ["Capability", "Description"],
+    rows: [
+      [
+        "Custom Logo & Favicon",
+        "Upload your corporate identity assets with automatic optimization",
+      ],
+      ["Color System", "Configure primary, secondary, accent colors with live preview"],
+      ["Typography", "Choose from Google Fonts library with instant rendering"],
+      ["Background Media", "Solid colors, gradients, uploaded images, or video backgrounds"],
+      ["Overlay Effects", "Blur, color overlay, and opacity controls for premium aesthetics"],
+    ],
+  },
+
+  // ─── Visual Studio ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.studioTitle",
+    id: "visual-studio",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.studioContent" },
+
+  // ─── 14 Layouts ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.layoutsTitle",
+    id: "layouts",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.layoutsContent" },
+  {
+    type: "table",
+    headers: ["Layout Category", "Layouts Included", "Best For"],
+    rows: [
+      [
+        "Split Layouts (6)",
+        "split-right, split-left, magazine, compact-sidebar, vertical-split, diagonal-split",
+        "Corporate & enterprise branding with dedicated branding panel",
+      ],
+      [
+        "Full-Page Layouts (8)",
+        "centered, branded-full, overlay, simple, floating-card, immersive, glass-morphism, corner-card",
+        "Modern, immersive login experiences with full-screen backgrounds",
+      ],
+    ],
+  },
+
+  // ─── Dark/Light Theme ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.themeTitle",
+    id: "theme",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.themeContent" },
+
+  // ─── Enterprise Safety ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.safetyTitle",
+    id: "safety",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.safetyContent" },
+  {
+    type: "table",
+    headers: ["Safety Feature", "Description"],
+    rows: [
+      ["Draft → Preview → Publish", "No changes go live without explicit admin approval"],
+      ["Version History", "Every publish creates a snapshot for instant rollback"],
+      ["Optimistic Concurrency", "Prevents conflicting edits between multiple admins"],
+      ["Safe Mode", "One-click emergency bypass restores platform defaults"],
+      ["Sandboxed Preview", "Login preview runs in isolated iframe — zero production risk"],
+      ["Audit Trail", "Every change is logged with who, when, and before/after snapshots"],
+    ],
+  },
+
+  // ─── Multi-Tenant ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.tenantTitle",
+    id: "multi-tenant",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.tenantContent" },
+
+  // ─── Zero Code ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.loginCustomizer.zeroCodeTitle",
+    id: "zero-code",
+  },
+  { type: "paragraph", contentKey: "commercial.loginCustomizer.zeroCodeContent" },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "commercial.loginCustomizer.zeroCodeTip",
+  },
+];
 
 registerPage({
   slug: "commercial/login-customizer",
   titleKey: "commercial.loginCustomizer.title",
+  descriptionKey: "commercial.loginCustomizer.description",
   category: "commercial-enterprise",
   order: 7,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.loginCustomizer.section_4_hdr_0",
-      "commercial.loginCustomizer.section_4_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.loginCustomizer.section_4_cell_0_0",
-        "commercial.loginCustomizer.section_4_cell_0_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_4_cell_1_0",
-        "commercial.loginCustomizer.section_4_cell_1_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_4_cell_2_0",
-        "commercial.loginCustomizer.section_4_cell_2_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_4_cell_3_0",
-        "commercial.loginCustomizer.section_4_cell_3_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_4_cell_4_0",
-        "commercial.loginCustomizer.section_4_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_6_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_8_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.loginCustomizer.section_9_hdr_0",
-      "commercial.loginCustomizer.section_9_hdr_1",
-      "commercial.loginCustomizer.section_9_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.loginCustomizer.section_9_cell_0_0",
-        "commercial.loginCustomizer.section_9_cell_0_1",
-        "commercial.loginCustomizer.section_9_cell_0_2"
-      ],
-      [
-        "commercial.loginCustomizer.section_9_cell_1_0",
-        "commercial.loginCustomizer.section_9_cell_1_1",
-        "commercial.loginCustomizer.section_9_cell_1_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_13_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.loginCustomizer.section_14_hdr_0",
-      "commercial.loginCustomizer.section_14_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.loginCustomizer.section_14_cell_0_0",
-        "commercial.loginCustomizer.section_14_cell_0_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_14_cell_1_0",
-        "commercial.loginCustomizer.section_14_cell_1_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_14_cell_2_0",
-        "commercial.loginCustomizer.section_14_cell_2_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_14_cell_3_0",
-        "commercial.loginCustomizer.section_14_cell_3_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_14_cell_4_0",
-        "commercial.loginCustomizer.section_14_cell_4_1"
-      ],
-      [
-        "commercial.loginCustomizer.section_14_cell_5_0",
-        "commercial.loginCustomizer.section_14_cell_5_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.loginCustomizer.section_18_content"
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.loginCustomizer.section_19_title",
-    "contentKey": "commercial.loginCustomizer.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.loginCustomizer.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.loginCustomizer.section_21_item_0",
-      "commercial.loginCustomizer.section_21_item_1",
-      "commercial.loginCustomizer.section_21_item_2",
-      "commercial.loginCustomizer.section_21_item_3"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "commercial/multi-tenancy",
-  "commercial/authentication-security",
-  "commercial/theme-marketplace",
-  "commercial/page-builder"
-],
-  lastUpdated: "2026-06-09",
+    "commercial/multi-tenancy",
+    "commercial/authentication-security",
+    "commercial/theme-marketplace",
+    "commercial/page-builder",
+  ],
+  lastUpdated: "2026-04-02",
 });

@@ -1,213 +1,186 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "modules.dunning.intro" },
+
+  // ─── 4-Stage Pipeline ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.stagesTitle",
+    id: "dunning-stages",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.stagesIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "A", label: "Payment fails", type: "danger" },
+      { id: "B", label: "Stage 1: PaymentFailed email (Day 0)", type: "warning" },
+      { id: "C", label: "Stripe Smart Retry (Days 1-3)", type: "info" },
+      { id: "D", label: "Still failing? → Stage 2: GraceWarning email", type: "warning" },
+      { id: "E", label: "PastDue status, yellow banner shown", type: "warning" },
+      { id: "F", label: "≤2 days left → Stage 3: GraceFinalWarning email", type: "danger" },
+      { id: "G", label: "Grace expires → Stage 4: Suspend subscription", type: "danger" },
+      { id: "H", label: "All tenant admins deactivated", type: "danger" },
+      { id: "I", label: "Extended grace expires → Cancel + Fallback edition", type: "danger" },
+      { id: "J", label: "Payment recovered? → Reactivate", type: "success" },
+    ],
+    connections: [
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
+      { from: "F", to: "G" },
+      { from: "G", to: "H" },
+      { from: "H", to: "I" },
+      { from: "G", to: "J", label: "if payment recovered", style: "dashed" },
+    ],
+  },
+
+  // Stage 1
+  { type: "heading", level: 3, titleKey: "modules.dunning.stage1Title", id: "stage-1" },
+  { type: "paragraph", contentKey: "modules.dunning.stage1Intro" },
+
+  // Stage 2
+  { type: "heading", level: 3, titleKey: "modules.dunning.stage2Title", id: "stage-2" },
+  { type: "paragraph", contentKey: "modules.dunning.stage2Intro" },
+
+  // Stage 3
+  { type: "heading", level: 3, titleKey: "modules.dunning.stage3Title", id: "stage-3" },
+  { type: "paragraph", contentKey: "modules.dunning.stage3Intro" },
+
+  // Stage 4
+  { type: "heading", level: 3, titleKey: "modules.dunning.stage4Title", id: "stage-4" },
+  { type: "paragraph", contentKey: "modules.dunning.stage4Intro" },
+
+  // ─── Background Jobs ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.jobsTitle",
+    id: "background-jobs",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.jobsIntro" },
+  {
+    type: "table",
+    headers: ["Job", "Schedule", "Responsibility"],
+    rows: [
+      [
+        "SubscriptionReconciliationJob",
+        "Daily 3:00 AM UTC",
+        "Expiry detection, suspension, fallback edition assignment",
+      ],
+      [
+        "DunningNotificationJob",
+        "Daily 4:00 AM UTC",
+        "Grace warning and final warning emails for PastDue subscriptions",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json",
+    code: `{
+  "BackgroundJobs": {
+    "Jobs": {
+      "entitlements-subscription-reconciliation": {
+        "Enabled": true,
+        "CronExpression": "0 3 * * *"
+      },
+      "entitlements-dunning-notification": {
+        "Enabled": true,
+        "CronExpression": "0 4 * * *"
+      }
+    }
+  }
+}`,
+  },
+
+  // ─── Email Deduplication ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.deduplicationTitle",
+    id: "email-deduplication",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.deduplicationIntro" },
+
+  // ─── Cross-Module Integration ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.crossModuleTitle",
+    id: "cross-module-integration",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.crossModuleIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "modules.dunning.crossModuleIntro",
+    titleKey: "modules.dunning.crossModuleTitle",
+  },
+
+  // ─── Auto-Fallback Edition ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.fallbackTitle",
+    id: "fallback-edition",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.fallbackIntro" },
+
+  // ─── Promo Codes & Proration ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.promotionsTitle",
+    id: "promo-proration",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.promotionsIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.dunning.promoExpiryTitle",
+    id: "promo-expiry",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.promoExpiryIntro" },
+
+  // ─── Email Templates ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.dunning.emailsTitle",
+    id: "email-templates",
+  },
+  { type: "paragraph", contentKey: "modules.dunning.emailsIntro" },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      "modules.dunning.email1",
+      "modules.dunning.email2",
+      "modules.dunning.email3",
+      "modules.dunning.email4",
+    ],
+  },
+];
 
 registerPage({
   slug: "modules/dunning",
   titleKey: "modules.dunning.title",
+  descriptionKey: "modules.dunning.description",
   category: "modules",
   order: 8,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    A[\"Payment fails\"]\n    B{{\"Stage 1: PaymentFailed email (Day 0)\"}}\n    C([\"Stripe Smart Retry (Days 1-3)\"])\n    D{{\"Still failing? → Stage 2: GraceWarning email\"}}\n    E{{\"PastDue status, yellow banner shown\"}}\n    F[\"≤2 days left → Stage 3: GraceFinalWarning email\"]\n    G[\"Grace expires → Stage 4: Suspend subscription\"]\n    H[\"All tenant admins deactivated\"]\n    I[\"Extended grace expires → Cancel + Fallback edition\"]\n    J([\"Payment recovered? → Reactivate\"])\n    A --> B\n    B --> C\n    C --> D\n    D --> E\n    E --> F\n    F --> G\n    G --> H\n    H --> I\n    G -.->|\"if payment recovered\"| J",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.dunning.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_6_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.dunning.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_8_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.dunning.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_10_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.dunning.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_14_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.dunning.section_15_hdr_0",
-      "modules.dunning.section_15_hdr_1",
-      "modules.dunning.section_15_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.dunning.section_15_cell_0_0",
-        "modules.dunning.section_15_cell_0_1",
-        "modules.dunning.section_15_cell_0_2"
-      ],
-      [
-        "modules.dunning.section_15_cell_1_0",
-        "modules.dunning.section_15_cell_1_1",
-        "modules.dunning.section_15_cell_1_2"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"BackgroundJobs\": {\n    \"Jobs\": {\n      \"entitlements-subscription-reconciliation\": {\n        \"Enabled\": true,\n        \"CronExpression\": \"0 3 * * *\"\n      },\n      \"entitlements-dunning-notification\": {\n        \"Enabled\": true,\n        \"CronExpression\": \"0 4 * * *\"\n      }\n    }\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_21_content"
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "modules.dunning.section_22_title",
-    "contentKey": "modules.dunning.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_24_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_26_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.dunning.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_28_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.dunning.section_30_content"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.dunning.section_31_item_0",
-      "modules.dunning.section_31_item_1",
-      "modules.dunning.section_31_item_2",
-      "modules.dunning.section_31_item_3"
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.dunning.section_32_title",
-    "id": "sec_32"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.dunning.section_33_item_0",
-      "modules.dunning.section_33_item_1",
-      "modules.dunning.section_33_item_2",
-      "modules.dunning.section_33_item_3"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "modules/billing-engine",
-  "modules/invoices",
-  "modules/subscriptions",
-  "features/notification-system"
-],
-  lastUpdated: "2026-06-09",
+    "modules/billing-engine",
+    "modules/invoices",
+    "modules/subscriptions",
+    "features/notification-system",
+  ],
+  lastUpdated: "2026-04-18",
 });

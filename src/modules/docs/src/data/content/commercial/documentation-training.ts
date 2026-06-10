@@ -1,252 +1,161 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.documentationTraining.intro" },
+
+  // ─── Documentation Coverage ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.documentationTraining.docsTitle",
+    id: "documentation",
+  },
+  { type: "paragraph", contentKey: "commercial.documentationTraining.docsContent" },
+  {
+    type: "table",
+    headers: ["Documentation Type", "Coverage", "Format"],
+    rows: [
+      ["Technical docs", "100+ pages, full architecture guide", "Interactive web portal"],
+      ["API reference", "All 400+ endpoints documented", "Swagger/OpenAPI + web portal"],
+      ["Commercial docs", "40+ pages, platform overview", "Interactive web portal"],
+      ["Inline code docs", "JSDoc + XML comments on all public APIs", "IDE tooltips"],
+      ["Architecture diagrams", "Module dependencies, data flow, deployment", "Mermaid + ASCII"],
+      ["Changelog", "Every release documented with migration guides", "Markdown"],
+      ["Video tutorials", "Key workflows and setup guides", "MP4 / YouTube"],
+    ],
+  },
+
+  // ─── Training Programs ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.documentationTraining.trainingTitle",
+    id: "training",
+  },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "book",
+        titleKey: "commercial.documentationTraining.selfPaced",
+        descriptionKey: "commercial.documentationTraining.selfPacedDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "commercial.documentationTraining.live",
+        descriptionKey: "commercial.documentationTraining.liveDesc",
+      },
+      {
+        icon: "building",
+        titleKey: "commercial.documentationTraining.onSite",
+        descriptionKey: "commercial.documentationTraining.onSiteDesc",
+      },
+      {
+        icon: "zap",
+        titleKey: "commercial.documentationTraining.custom",
+        descriptionKey: "commercial.documentationTraining.customDesc",
+      },
+    ],
+  },
+
+  // ─── Training Tracks ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.documentationTraining.tracksTitle",
+    id: "tracks",
+  },
+  {
+    type: "table",
+    headers: ["Track", "Audience", "Duration", "Topics"],
+    rows: [
+      [
+        "Developer Essentials",
+        "Backend / Frontend devs",
+        "2 days",
+        "Architecture, module creation, CQRS, testing",
+      ],
+      [
+        "Admin Operations",
+        "System administrators",
+        "1 day",
+        "Deployment, configuration, monitoring, backups",
+      ],
+      [
+        "Security Deep Dive",
+        "Security engineers",
+        "1 day",
+        "Auth pipeline, RBAC, audit, compliance",
+      ],
+      ["Business User", "End users / managers", "Half day", "Navigation, reports, workflows"],
+      [
+        "Architecture Workshop",
+        "Tech leads / architects",
+        "1 day",
+        "Design patterns, scalability, microservice readiness",
+      ],
+    ],
+  },
+
+  // ─── Onboarding Journey ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.documentationTraining.onboardingTitle",
+    id: "onboarding",
+  },
+  {
+    type: "step-guide",
+    steps: [
+      {
+        titleKey: "commercial.documentationTraining.onb1Title",
+        contentKey: "commercial.documentationTraining.onb1Content",
+      },
+      {
+        titleKey: "commercial.documentationTraining.onb2Title",
+        contentKey: "commercial.documentationTraining.onb2Content",
+      },
+      {
+        titleKey: "commercial.documentationTraining.onb3Title",
+        contentKey: "commercial.documentationTraining.onb3Content",
+      },
+      {
+        titleKey: "commercial.documentationTraining.onb4Title",
+        contentKey: "commercial.documentationTraining.onb4Content",
+      },
+    ],
+  },
+
+  // ─── Knowledge Base ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.documentationTraining.kbTitle",
+    id: "knowledge-base",
+  },
+  { type: "paragraph", contentKey: "commercial.documentationTraining.kbContent" },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      "Searchable FAQ database with 100+ common questions",
+      "Troubleshooting guides for common deployment issues",
+      "Best practices library for performance and security",
+      "Community forum with expert moderation",
+      "Monthly newsletter with tips and new features",
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/documentation-training",
   titleKey: "commercial.documentationTraining.title",
+  descriptionKey: "commercial.documentationTraining.description",
   category: "commercial-support",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.documentationTraining.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.documentationTraining.section_4_hdr_0",
-      "commercial.documentationTraining.section_4_hdr_1",
-      "commercial.documentationTraining.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.documentationTraining.section_4_cell_0_0",
-        "commercial.documentationTraining.section_4_cell_0_1",
-        "commercial.documentationTraining.section_4_cell_0_2"
-      ],
-      [
-        "commercial.documentationTraining.section_4_cell_1_0",
-        "commercial.documentationTraining.section_4_cell_1_1",
-        "commercial.documentationTraining.section_4_cell_1_2"
-      ],
-      [
-        "commercial.documentationTraining.section_4_cell_2_0",
-        "commercial.documentationTraining.section_4_cell_2_1",
-        "commercial.documentationTraining.section_4_cell_2_2"
-      ],
-      [
-        "commercial.documentationTraining.section_4_cell_3_0",
-        "commercial.documentationTraining.section_4_cell_3_1",
-        "commercial.documentationTraining.section_4_cell_3_2"
-      ],
-      [
-        "commercial.documentationTraining.section_4_cell_4_0",
-        "commercial.documentationTraining.section_4_cell_4_1",
-        "commercial.documentationTraining.section_4_cell_4_2"
-      ],
-      [
-        "commercial.documentationTraining.section_4_cell_5_0",
-        "commercial.documentationTraining.section_4_cell_5_1",
-        "commercial.documentationTraining.section_4_cell_5_2"
-      ],
-      [
-        "commercial.documentationTraining.section_4_cell_6_0",
-        "commercial.documentationTraining.section_4_cell_6_1",
-        "commercial.documentationTraining.section_4_cell_6_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.documentationTraining.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.documentationTraining.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.documentationTraining.section_15_hdr_0",
-      "commercial.documentationTraining.section_15_hdr_1",
-      "commercial.documentationTraining.section_15_hdr_2",
-      "commercial.documentationTraining.section_15_hdr_3"
-    ],
-    "rows": [
-      [
-        "commercial.documentationTraining.section_15_cell_0_0",
-        "commercial.documentationTraining.section_15_cell_0_1",
-        "commercial.documentationTraining.section_15_cell_0_2",
-        "commercial.documentationTraining.section_15_cell_0_3"
-      ],
-      [
-        "commercial.documentationTraining.section_15_cell_1_0",
-        "commercial.documentationTraining.section_15_cell_1_1",
-        "commercial.documentationTraining.section_15_cell_1_2",
-        "commercial.documentationTraining.section_15_cell_1_3"
-      ],
-      [
-        "commercial.documentationTraining.section_15_cell_2_0",
-        "commercial.documentationTraining.section_15_cell_2_1",
-        "commercial.documentationTraining.section_15_cell_2_2",
-        "commercial.documentationTraining.section_15_cell_2_3"
-      ],
-      [
-        "commercial.documentationTraining.section_15_cell_3_0",
-        "commercial.documentationTraining.section_15_cell_3_1",
-        "commercial.documentationTraining.section_15_cell_3_2",
-        "commercial.documentationTraining.section_15_cell_3_3"
-      ],
-      [
-        "commercial.documentationTraining.section_15_cell_4_0",
-        "commercial.documentationTraining.section_15_cell_4_1",
-        "commercial.documentationTraining.section_15_cell_4_2",
-        "commercial.documentationTraining.section_15_cell_4_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.documentationTraining.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_20_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.documentationTraining.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_24_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.documentationTraining.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.documentationTraining.section_26_content"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.documentationTraining.section_27_item_0",
-      "commercial.documentationTraining.section_27_item_1",
-      "commercial.documentationTraining.section_27_item_2",
-      "commercial.documentationTraining.section_27_item_3",
-      "commercial.documentationTraining.section_27_item_4"
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.documentationTraining.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.documentationTraining.section_29_item_0",
-      "commercial.documentationTraining.section_29_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/getting-started-guide",
-  "commercial/support-plans"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/getting-started-guide", "commercial/support-plans"],
+  lastUpdated: "2026-02-20",
 });

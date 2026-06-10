@@ -1,401 +1,249 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.intro" },
+
+  // ─── Business Value ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.valueTitle",
+    id: "business-value",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.valueIntro" },
+  {
+    type: "table",
+    headers: ["Capability", "Business Impact", "User Benefit"],
+    rows: [
+      [
+        "61+ Customizable Settings",
+        "White-label ready for any industry",
+        "Users personalize their workspace to their exact preferences",
+      ],
+      [
+        "Cross-Device Persistence",
+        "Roaming profiles — settings follow the user everywhere",
+        "No reconfiguration when switching devices or browsers",
+      ],
+      [
+        "Tenant-Level Branding",
+        "Enforce corporate brand standards across all users",
+        "Consistent, professional experience for every team member",
+      ],
+      [
+        "Admin Override Control",
+        "IT teams control what users can customize",
+        "Security-compliant customization with guardrails",
+      ],
+      [
+        "Preset Marketplace",
+        "Pre-built themes reduce setup time from hours to seconds",
+        "One-click professional themes that just work",
+      ],
+      [
+        "Edition-Based Gating",
+        "Monetize advanced customization features by tier",
+        "Clear upgrade path drives subscription revenue",
+      ],
+    ],
+  },
+
+  // ─── How It Works ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.howItWorksTitle",
+    id: "how-it-works",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.howItWorksIntro" },
+  {
+    type: "flowchart",
+    title: "Settings Resolution Chain",
+    direction: "horizontal",
+    nodes: [
+      { id: "platform", label: "Platform Defaults", type: "default" },
+      { id: "tenant", label: "Tenant Branding", type: "info" },
+      { id: "admin", label: "Admin Preferences", type: "warning" },
+      { id: "render", label: "Rendered Dashboard", type: "success" },
+    ],
+    connections: [
+      { from: "platform", to: "tenant", label: "Overridden by" },
+      { from: "tenant", to: "admin", label: "Overridden by" },
+      { from: "admin", to: "render", label: "Applied" },
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "commercial.dashboardBuilder.howItWorksTip",
+  },
+
+  // ─── Customization Categories ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.categoriesTitle",
+    id: "categories",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.categoriesIntro" },
+  {
+    type: "table",
+    headers: ["Category", "Settings Count", "Examples"],
+    rows: [
+      ["Layout & Structure", "7", "50+ layout templates, sidebar position, header style"],
+      ["Colors & Theme", "16", "Color themes, gradient backgrounds, custom hex colors"],
+      ["Typography & Spacing", "5", "Font size, border radius, spacing density"],
+      ["Component Styles", "16", "Buttons, inputs, tables, badges, avatars (10+ variants each)"],
+      ["Logo & Branding", "5", "Logo type (sparkle/shield/image), animation, size"],
+      ["Navigation & UX", "9", "Navigation style, breadcrumbs, sticky header"],
+      ["Toast & Effects", "5", "Toast style, hover effects, animation intensity"],
+      ["Accessibility", "3", "High contrast, reduced motion, compact mode"],
+    ],
+  },
+
+  // ─── Enterprise Features ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.enterpriseTitle",
+    id: "enterprise",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.enterpriseIntro" },
+  {
+    type: "table",
+    headers: ["Feature", "Free", "Standard", "Enterprise"],
+    rows: [
+      ["Basic Layout & Colors", "✅", "✅", "✅"],
+      ["50+ Layout Templates", "✅", "✅", "✅"],
+      ["Gradient Backgrounds", "❌", "✅", "✅"],
+      ["Component Styles (Button, Input, Table, etc.)", "❌", "✅", "✅"],
+      ["Hover Effects", "❌", "✅", "✅"],
+      ["Custom Hex Colors", "❌", "❌", "✅"],
+      ["Logo Customization (Type, Animation, Text)", "❌", "❌", "✅"],
+      ["Admin Override Control (Lock/Unlock Settings)", "❌", "❌", "✅"],
+      ["Per-Setting Whitelist (Path-Level Control)", "❌", "❌", "✅"],
+      ["Custom Theme Presets", "❌", "❌", "✅"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "commercial.dashboardBuilder.enterpriseNote",
+  },
+
+  // ─── Cross-Device Sync ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.syncTitle",
+    id: "cross-device-sync",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.syncIntro" },
+  {
+    type: "table",
+    headers: ["Scenario", "Behavior"],
+    rows: [
+      ["Admin opens laptop at office", "Settings loaded from server → applied instantly"],
+      ["Admin changes theme on phone", "Saved to server → syncs to laptop in background"],
+      ["Admin closes tab mid-change", "Unsaved changes preserved via keepalive fetch"],
+      [
+        "Two sessions edit simultaneously",
+        "Conflict resolved with field-level merge (no data loss)",
+      ],
+      ["Network goes down temporarily", "Changes cached locally → synced when connection restores"],
+    ],
+  },
+
+  // ─── Admin Override Control ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.overrideTitle",
+    id: "override-control",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.overrideIntro" },
+  {
+    type: "flowchart",
+    title: "Override Control Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "tenant-admin", label: "Tenant Admin (IT)", type: "default" },
+      { id: "toggle", label: "Enable/Disable Overrides", type: "info" },
+      { id: "whitelist", label: "Select Allowed Settings", type: "warning" },
+      { id: "user", label: "Regular Admin Experience", type: "success" },
+    ],
+    connections: [
+      { from: "tenant-admin", to: "toggle" },
+      { from: "toggle", to: "whitelist", label: "If enabled" },
+      { from: "whitelist", to: "user", label: "Path-filtered" },
+    ],
+  },
+
+  // ─── Security ─────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.securityTitle",
+    id: "security",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.securityIntro" },
+  {
+    type: "table",
+    headers: ["Security Feature", "Protection"],
+    rows: [
+      ["Data Isolation", "All settings wiped on logout — no cross-admin leakage"],
+      ["Payload Validation", "8KB client-side limit prevents database overflow"],
+      [
+        "Server-Side Enforcement",
+        "AdminSettingsJson validated against AllowedAdminSettingsJson whitelist",
+      ],
+      ["Concurrency Safety", "409 conflict resolution with field-level merge"],
+      ["Tab-Close Protection", "Keepalive fetch + deferred flush prevent data loss"],
+      ["CSRF Protection", "All mutations require X-CSRF-Token header"],
+    ],
+  },
+
+  // ─── Integration ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dashboardBuilder.integrationTitle",
+    id: "integration",
+  },
+  { type: "paragraph", contentKey: "commercial.dashboardBuilder.integrationIntro" },
+  {
+    type: "table",
+    headers: ["Integration Point", "Description"],
+    rows: [
+      [
+        "Login Customizer",
+        "Dashboard builder coexists with login page customizer in the same Studio",
+      ],
+      ["Theme Marketplace", "Pre-built themes can include both login page and dashboard settings"],
+      ["Entitlements Module", "Feature flags control which edition gets which customization tier"],
+      ["Multi-Tenancy", "Each tenant can set default dashboard appearance for all their admins"],
+      ["Audit System", "All settings changes logged in the audit trail"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "commercial.dashboardBuilder.integrationTip",
+  },
+];
 
 registerPage({
   slug: "commercial/dashboard-builder",
   titleKey: "commercial.dashboardBuilder.title",
+  descriptionKey: "commercial.dashboardBuilder.description",
   category: "commercial",
   order: 10,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dashboardBuilder.section_4_hdr_0",
-      "commercial.dashboardBuilder.section_4_hdr_1",
-      "commercial.dashboardBuilder.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.dashboardBuilder.section_4_cell_0_0",
-        "commercial.dashboardBuilder.section_4_cell_0_1",
-        "commercial.dashboardBuilder.section_4_cell_0_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_4_cell_1_0",
-        "commercial.dashboardBuilder.section_4_cell_1_1",
-        "commercial.dashboardBuilder.section_4_cell_1_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_4_cell_2_0",
-        "commercial.dashboardBuilder.section_4_cell_2_1",
-        "commercial.dashboardBuilder.section_4_cell_2_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_4_cell_3_0",
-        "commercial.dashboardBuilder.section_4_cell_3_1",
-        "commercial.dashboardBuilder.section_4_cell_3_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_4_cell_4_0",
-        "commercial.dashboardBuilder.section_4_cell_4_1",
-        "commercial.dashboardBuilder.section_4_cell_4_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_4_cell_5_0",
-        "commercial.dashboardBuilder.section_4_cell_5_1",
-        "commercial.dashboardBuilder.section_4_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    platform[\"Platform Defaults\"]\n    tenant([\"Tenant Branding\"])\n    admin{{\"Admin Preferences\"}}\n    render([\"Rendered Dashboard\"])\n    platform -->|\"Overridden by\"| tenant\n    tenant -->|\"Overridden by\"| admin\n    admin -->|\"Applied\"| render",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.dashboardBuilder.section_8_title",
-    "contentKey": "commercial.dashboardBuilder.section_8_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_10_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dashboardBuilder.section_11_hdr_0",
-      "commercial.dashboardBuilder.section_11_hdr_1",
-      "commercial.dashboardBuilder.section_11_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.dashboardBuilder.section_11_cell_0_0",
-        "commercial.dashboardBuilder.section_11_cell_0_1",
-        "commercial.dashboardBuilder.section_11_cell_0_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_1_0",
-        "commercial.dashboardBuilder.section_11_cell_1_1",
-        "commercial.dashboardBuilder.section_11_cell_1_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_2_0",
-        "commercial.dashboardBuilder.section_11_cell_2_1",
-        "commercial.dashboardBuilder.section_11_cell_2_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_3_0",
-        "commercial.dashboardBuilder.section_11_cell_3_1",
-        "commercial.dashboardBuilder.section_11_cell_3_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_4_0",
-        "commercial.dashboardBuilder.section_11_cell_4_1",
-        "commercial.dashboardBuilder.section_11_cell_4_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_5_0",
-        "commercial.dashboardBuilder.section_11_cell_5_1",
-        "commercial.dashboardBuilder.section_11_cell_5_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_6_0",
-        "commercial.dashboardBuilder.section_11_cell_6_1",
-        "commercial.dashboardBuilder.section_11_cell_6_2"
-      ],
-      [
-        "commercial.dashboardBuilder.section_11_cell_7_0",
-        "commercial.dashboardBuilder.section_11_cell_7_1",
-        "commercial.dashboardBuilder.section_11_cell_7_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_13_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dashboardBuilder.section_14_hdr_0",
-      "commercial.dashboardBuilder.section_14_hdr_1",
-      "commercial.dashboardBuilder.section_14_hdr_2",
-      "commercial.dashboardBuilder.section_14_hdr_3"
-    ],
-    "rows": [
-      [
-        "commercial.dashboardBuilder.section_14_cell_0_0",
-        "commercial.dashboardBuilder.section_14_cell_0_1",
-        "commercial.dashboardBuilder.section_14_cell_0_2",
-        "commercial.dashboardBuilder.section_14_cell_0_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_1_0",
-        "commercial.dashboardBuilder.section_14_cell_1_1",
-        "commercial.dashboardBuilder.section_14_cell_1_2",
-        "commercial.dashboardBuilder.section_14_cell_1_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_2_0",
-        "commercial.dashboardBuilder.section_14_cell_2_1",
-        "commercial.dashboardBuilder.section_14_cell_2_2",
-        "commercial.dashboardBuilder.section_14_cell_2_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_3_0",
-        "commercial.dashboardBuilder.section_14_cell_3_1",
-        "commercial.dashboardBuilder.section_14_cell_3_2",
-        "commercial.dashboardBuilder.section_14_cell_3_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_4_0",
-        "commercial.dashboardBuilder.section_14_cell_4_1",
-        "commercial.dashboardBuilder.section_14_cell_4_2",
-        "commercial.dashboardBuilder.section_14_cell_4_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_5_0",
-        "commercial.dashboardBuilder.section_14_cell_5_1",
-        "commercial.dashboardBuilder.section_14_cell_5_2",
-        "commercial.dashboardBuilder.section_14_cell_5_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_6_0",
-        "commercial.dashboardBuilder.section_14_cell_6_1",
-        "commercial.dashboardBuilder.section_14_cell_6_2",
-        "commercial.dashboardBuilder.section_14_cell_6_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_7_0",
-        "commercial.dashboardBuilder.section_14_cell_7_1",
-        "commercial.dashboardBuilder.section_14_cell_7_2",
-        "commercial.dashboardBuilder.section_14_cell_7_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_8_0",
-        "commercial.dashboardBuilder.section_14_cell_8_1",
-        "commercial.dashboardBuilder.section_14_cell_8_2",
-        "commercial.dashboardBuilder.section_14_cell_8_3"
-      ],
-      [
-        "commercial.dashboardBuilder.section_14_cell_9_0",
-        "commercial.dashboardBuilder.section_14_cell_9_1",
-        "commercial.dashboardBuilder.section_14_cell_9_2",
-        "commercial.dashboardBuilder.section_14_cell_9_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "commercial.dashboardBuilder.section_15_title",
-    "contentKey": "commercial.dashboardBuilder.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_17_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dashboardBuilder.section_18_hdr_0",
-      "commercial.dashboardBuilder.section_18_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.dashboardBuilder.section_18_cell_0_0",
-        "commercial.dashboardBuilder.section_18_cell_0_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_18_cell_1_0",
-        "commercial.dashboardBuilder.section_18_cell_1_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_18_cell_2_0",
-        "commercial.dashboardBuilder.section_18_cell_2_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_18_cell_3_0",
-        "commercial.dashboardBuilder.section_18_cell_3_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_18_cell_4_0",
-        "commercial.dashboardBuilder.section_18_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    tenant-admin[\"Tenant Admin (IT)\"]\n    toggle([\"Enable/Disable Overrides\"])\n    whitelist{{\"Select Allowed Settings\"}}\n    user([\"Regular Admin Experience\"])\n    tenant-admin --> toggle\n    toggle -->|\"If enabled\"| whitelist\n    whitelist -->|\"Path-filtered\"| user",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_23_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dashboardBuilder.section_24_hdr_0",
-      "commercial.dashboardBuilder.section_24_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.dashboardBuilder.section_24_cell_0_0",
-        "commercial.dashboardBuilder.section_24_cell_0_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_24_cell_1_0",
-        "commercial.dashboardBuilder.section_24_cell_1_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_24_cell_2_0",
-        "commercial.dashboardBuilder.section_24_cell_2_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_24_cell_3_0",
-        "commercial.dashboardBuilder.section_24_cell_3_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_24_cell_4_0",
-        "commercial.dashboardBuilder.section_24_cell_4_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_24_cell_5_0",
-        "commercial.dashboardBuilder.section_24_cell_5_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dashboardBuilder.section_26_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dashboardBuilder.section_27_hdr_0",
-      "commercial.dashboardBuilder.section_27_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.dashboardBuilder.section_27_cell_0_0",
-        "commercial.dashboardBuilder.section_27_cell_0_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_27_cell_1_0",
-        "commercial.dashboardBuilder.section_27_cell_1_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_27_cell_2_0",
-        "commercial.dashboardBuilder.section_27_cell_2_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_27_cell_3_0",
-        "commercial.dashboardBuilder.section_27_cell_3_1"
-      ],
-      [
-        "commercial.dashboardBuilder.section_27_cell_4_0",
-        "commercial.dashboardBuilder.section_27_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.dashboardBuilder.section_28_title",
-    "contentKey": "commercial.dashboardBuilder.section_28_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dashboardBuilder.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.dashboardBuilder.section_30_item_0",
-      "commercial.dashboardBuilder.section_30_item_1",
-      "commercial.dashboardBuilder.section_30_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "commercial/login-customizer",
-  "commercial/theme-marketplace",
-  "commercial/page-builder"
-],
-  lastUpdated: "2026-06-09",
+    "commercial/login-customizer",
+    "commercial/theme-marketplace",
+    "commercial/page-builder",
+  ],
+  lastUpdated: "2026-04-05",
 });

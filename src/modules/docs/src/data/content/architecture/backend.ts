@@ -1,289 +1,210 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.backend.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.backend.programCsTitle",
+    id: "program-cs",
+  },
+  { type: "paragraph", contentKey: "architecture.backend.programCsIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Program.cs — Simplified Architecture (288 lines)",
+    code: `var builder = WebApplication.CreateBuilder(args);
+
+// ─── 1. Environment Detection ───────────────────────────
+var moduleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "";
+var isMonolith = string.IsNullOrEmpty(moduleName);
+var isGateway = moduleName.Equals("Gateway", StringComparison.OrdinalIgnoreCase);
+
+// ─── 2. Core Infrastructure (must come first) ───────────
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddCorsConfiguration(builder.Configuration);
+builder.Services.AddRateLimitingConfiguration();
+builder.Services.AddCoreInfrastructure(builder.Configuration);
+
+// ─── 3. Module Registration (guarded by mode) ───────────
+var handlerAssemblies = new List<Assembly>();
+if (isMonolith || moduleName == "Identity")
+{
+    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));
+    builder.Services.AddIdentityModule(builder.Configuration);
+}
+
+// ─── 4. Application Layer (needs module assemblies) ─────
+builder.Services.AddCoreApplication(handlerAssemblies);
+
+// ─── 5. Build & Configure Pipeline ─────────────────────
+var app = builder.Build();
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<AuditableMiddleware>();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();`,
+    highlightLines: [4, 5, 6, 17, 18, 19, 20],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.backend.middlewarePipelineTitle",
+    id: "middleware-pipeline",
+  },
+  { type: "paragraph", contentKey: "architecture.backend.middlewarePipelineIntro" },
+  {
+    type: "flowchart",
+    title: "Middleware Pipeline (Order Matters)",
+    direction: "vertical",
+    nodes: [
+      { id: "cors", label: "1. CORS", type: "default" },
+      { id: "hsts", label: "2. HSTS (Production)", type: "default" },
+      { id: "exception", label: "3. Exception Handler", type: "danger" },
+      { id: "ratelimit", label: "4. Rate Limiter", type: "warning" },
+      { id: "reqlog", label: "5. Request Logging", type: "info" },
+      { id: "static", label: "6. Static Files", type: "default" },
+      { id: "auth", label: "7. Authentication", type: "primary" },
+      { id: "authz", label: "8. Authorization", type: "primary" },
+      { id: "caching", label: "9. Response Caching", type: "success" },
+      { id: "compress", label: "10. Compression (Brotli+Gzip)", type: "success" },
+    ],
+    connections: [
+      { from: "cors", to: "hsts" },
+      { from: "hsts", to: "exception" },
+      { from: "exception", to: "ratelimit" },
+      { from: "ratelimit", to: "reqlog" },
+      { from: "reqlog", to: "static" },
+      { from: "static", to: "auth" },
+      { from: "auth", to: "authz" },
+      { from: "authz", to: "caching" },
+      { from: "caching", to: "compress" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.backend.diMapTitle",
+    id: "di-map",
+  },
+  { type: "paragraph", contentKey: "architecture.backend.diMapIntro" },
+  {
+    type: "table",
+    headers: ["Service Interface", "Implementation", "Lifetime", "Registered In"],
+    rows: [
+      ["ICurrentUser", "CurrentUser", "Scoped", "CoreInfrastructure"],
+      ["IApiService", "ApiService", "Scoped", "CoreInfrastructure"],
+      ["IAuditService", "AuditService", "Scoped", "CoreInfrastructure"],
+      [
+        "ICacheService",
+        "MemoryCacheService / RedisCacheService",
+        "Singleton",
+        "CoreInfrastructure",
+      ],
+      ["IEmailService", "SmtpEmailService", "Scoped", "CoreInfrastructure"],
+      ["IBlobStorageService", "LocalBlobStorage / AzureBlobStorage", "Singleton", "BlobStorage"],
+      ["IAdminRepository", "AdminRepository", "Scoped", "IdentityModule"],
+      ["IUserRepository", "UserRepository", "Scoped", "IdentityModule"],
+      ["IRoleRepository", "RoleRepository", "Scoped", "IdentityModule"],
+      ["ITenantRepository", "TenantRepository", "Scoped", "IdentityModule"],
+      ["IMenuRepository", "MenuRepository", "Scoped", "IdentityModule"],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.backend.modulePatternTitle",
+    id: "module-pattern",
+  },
+  { type: "paragraph", contentKey: "architecture.backend.modulePatternIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Identity Module — DependencyInjection.cs Pattern",
+    code: `public static class DependencyInjection
+{
+    public static IServiceCollection AddIdentityModule(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // 1. DbContext registration (multi-provider)
+        services.AddDbContext<IdentityDbContext>(options =>
+        {
+            var provider = configuration["DatabaseProvider"];
+            switch (provider)
+            {
+                case "SqlServer":
+                    options.UseSqlServer(connectionString);
+                    break;
+                case "PostgreSQL":
+                    options.UseNpgsql(connectionString);
+                    break;
+                case "Oracle":
+                    options.UseOracle(connectionString);
+                    break;
+            }
+        });
+
+        // 2. Repository registrations
+        services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+
+        // 3. Module-specific services
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IJwtService, JwtService>();
+
+        // 4. Module registration (for runtime introspection)
+        services.AddSingleton<IModuleRegistration, IdentityModuleRegistration>();
+
+        return services;
+    }
+}`,
+    highlightLines: [8, 27, 28, 29, 37],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.backend.controllersTitle",
+    id: "controllers",
+  },
+  {
+    type: "table",
+    headers: ["Controller", "Base Route", "Endpoints", "Auth Required"],
+    rows: [
+      ["AuthController", "/api/v1/auth", "Login, Refresh, Logout, Verify2FA", "Partial"],
+      ["AdminController", "/api/v1/admin", "CRUD + Block + Impersonate", "Yes"],
+      ["UserController", "/api/v1/users", "CRUD + Profile + Avatar", "Yes"],
+      ["RoleController", "/api/v1/roles", "CRUD + Assign Permissions", "Yes"],
+      ["TenantController", "/api/v1/tenants", "CRUD + Settings + Logo", "Yes"],
+      ["PermissionController", "/api/v1/permissions", "List + Categories + Assign", "Yes"],
+      ["MenuController", "/api/v1/menus", "CRUD + Reorder + Tree", "Yes"],
+      ["AuditController", "/api/v1/audit", "Search + Export + Stream", "Yes"],
+      ["DashboardController", "/api/v1/dashboard", "Stats + Charts + Feed", "Yes"],
+      ["FileController", "/api/v1/files", "Upload + Download + Delete", "Yes"],
+      ["RecycleBinController", "/api/v1/recycle-bin", "List + Restore + Purge", "Yes"],
+      ["NotificationController", "/api/v1/notifications", "List + Read + Settings", "Yes"],
+      ["SettingsController", "/api/v1/settings", "Get + Update + Reset", "Yes"],
+      ["HealthController", "/health", "Liveness + Readiness", "No"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "architecture.backend.controllerTip",
+  },
+];
 
 registerPage({
   slug: "architecture/backend",
   titleKey: "architecture.backend.title",
+  descriptionKey: "architecture.backend.description",
   category: "architecture",
   order: 2,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.backend.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_3_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_4_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "var builder = WebApplication.CreateBuilder(args);\n\n// ─── 1. Environment Detection ───────────────────────────\nvar moduleName = Environment.GetEnvironmentVariable(\"MODULE_NAME\") ?? \"\";\nvar isMonolith = string.IsNullOrEmpty(moduleName);\nvar isGateway = moduleName.Equals(\"Gateway\", StringComparison.OrdinalIgnoreCase);\n\n// ─── 2. Core Infrastructure (must come first) ───────────\nbuilder.Services.AddInfrastructureServices(builder.Configuration);\nbuilder.Services.AddCorsConfiguration(builder.Configuration);\nbuilder.Services.AddRateLimitingConfiguration();\nbuilder.Services.AddCoreInfrastructure(builder.Configuration);\n\n// ─── 3. Module Registration (guarded by mode) ───────────\nvar handlerAssemblies = new List<Assembly>();\nif (isMonolith || moduleName == \"Identity\")\n{\n    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));\n    builder.Services.AddIdentityModule(builder.Configuration);\n}\n\n// ─── 4. Application Layer (needs module assemblies) ─────\nbuilder.Services.AddCoreApplication(handlerAssemblies);\n\n// ─── 5. Build & Configure Pipeline ─────────────────────\nvar app = builder.Build();\napp.UseMiddleware<RequestLoggingMiddleware>();\napp.UseMiddleware<AuditableMiddleware>();\napp.UseRateLimiter();\napp.UseAuthentication();\napp.UseAuthorization();\napp.MapControllers();\napp.Run();",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.backend.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_7_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    cors[\"1. CORS\"]\n    hsts[\"2. HSTS (Production)\"]\n    exception[\"3. Exception Handler\"]\n    ratelimit{{\"4. Rate Limiter\"}}\n    reqlog([\"5. Request Logging\"])\n    static[\"6. Static Files\"]\n    auth([\"7. Authentication\"])\n    authz([\"8. Authorization\"])\n    caching([\"9. Response Caching\"])\n    compress([\"10. Compression (Brotli+Gzip)\"])\n    cors --> hsts\n    hsts --> exception\n    exception --> ratelimit\n    ratelimit --> reqlog\n    reqlog --> static\n    static --> auth\n    auth --> authz\n    authz --> caching\n    caching --> compress",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.backend.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_10_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.backend.section_11_hdr_0",
-      "architecture.backend.section_11_hdr_1",
-      "architecture.backend.section_11_hdr_2",
-      "architecture.backend.section_11_hdr_3"
-    ],
-    "rows": [
-      [
-        "architecture.backend.section_11_cell_0_0",
-        "architecture.backend.section_11_cell_0_1",
-        "architecture.backend.section_11_cell_0_2",
-        "architecture.backend.section_11_cell_0_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_1_0",
-        "architecture.backend.section_11_cell_1_1",
-        "architecture.backend.section_11_cell_1_2",
-        "architecture.backend.section_11_cell_1_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_2_0",
-        "architecture.backend.section_11_cell_2_1",
-        "architecture.backend.section_11_cell_2_2",
-        "architecture.backend.section_11_cell_2_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_3_0",
-        "architecture.backend.section_11_cell_3_1",
-        "architecture.backend.section_11_cell_3_2",
-        "architecture.backend.section_11_cell_3_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_4_0",
-        "architecture.backend.section_11_cell_4_1",
-        "architecture.backend.section_11_cell_4_2",
-        "architecture.backend.section_11_cell_4_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_5_0",
-        "architecture.backend.section_11_cell_5_1",
-        "architecture.backend.section_11_cell_5_2",
-        "architecture.backend.section_11_cell_5_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_6_0",
-        "architecture.backend.section_11_cell_6_1",
-        "architecture.backend.section_11_cell_6_2",
-        "architecture.backend.section_11_cell_6_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_7_0",
-        "architecture.backend.section_11_cell_7_1",
-        "architecture.backend.section_11_cell_7_2",
-        "architecture.backend.section_11_cell_7_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_8_0",
-        "architecture.backend.section_11_cell_8_1",
-        "architecture.backend.section_11_cell_8_2",
-        "architecture.backend.section_11_cell_8_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_9_0",
-        "architecture.backend.section_11_cell_9_1",
-        "architecture.backend.section_11_cell_9_2",
-        "architecture.backend.section_11_cell_9_3"
-      ],
-      [
-        "architecture.backend.section_11_cell_10_0",
-        "architecture.backend.section_11_cell_10_1",
-        "architecture.backend.section_11_cell_10_2",
-        "architecture.backend.section_11_cell_10_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.backend.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_13_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.backend.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public static class DependencyInjection\n{\n    public static IServiceCollection AddIdentityModule(\n        this IServiceCollection services,\n        IConfiguration configuration)\n    {\n        // 1. DbContext registration (multi-provider)\n        services.AddDbContext<IdentityDbContext>(options =>\n        {\n            var provider = configuration[\"DatabaseProvider\"];\n            switch (provider)\n            {\n                case \"SqlServer\":\n                    options.UseSqlServer(connectionString);\n                    break;\n                case \"PostgreSQL\":\n                    options.UseNpgsql(connectionString);\n                    break;\n                case \"Oracle\":\n                    options.UseOracle(connectionString);\n                    break;\n            }\n        });\n\n        // 2. Repository registrations\n        services.AddScoped<IAdminRepository, AdminRepository>();\n        services.AddScoped<IUserRepository, UserRepository>();\n        services.AddScoped<IRoleRepository, RoleRepository>();\n\n        // 3. Module-specific services\n        services.AddScoped<IPermissionService, PermissionService>();\n        services.AddScoped<IJwtService, JwtService>();\n\n        // 4. Module registration (for runtime introspection)\n        services.AddSingleton<IModuleRegistration, IdentityModuleRegistration>();\n\n        return services;\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.backend.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.backend.section_17_hdr_0",
-      "architecture.backend.section_17_hdr_1",
-      "architecture.backend.section_17_hdr_2",
-      "architecture.backend.section_17_hdr_3"
-    ],
-    "rows": [
-      [
-        "architecture.backend.section_17_cell_0_0",
-        "architecture.backend.section_17_cell_0_1",
-        "architecture.backend.section_17_cell_0_2",
-        "architecture.backend.section_17_cell_0_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_1_0",
-        "architecture.backend.section_17_cell_1_1",
-        "architecture.backend.section_17_cell_1_2",
-        "architecture.backend.section_17_cell_1_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_2_0",
-        "architecture.backend.section_17_cell_2_1",
-        "architecture.backend.section_17_cell_2_2",
-        "architecture.backend.section_17_cell_2_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_3_0",
-        "architecture.backend.section_17_cell_3_1",
-        "architecture.backend.section_17_cell_3_2",
-        "architecture.backend.section_17_cell_3_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_4_0",
-        "architecture.backend.section_17_cell_4_1",
-        "architecture.backend.section_17_cell_4_2",
-        "architecture.backend.section_17_cell_4_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_5_0",
-        "architecture.backend.section_17_cell_5_1",
-        "architecture.backend.section_17_cell_5_2",
-        "architecture.backend.section_17_cell_5_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_6_0",
-        "architecture.backend.section_17_cell_6_1",
-        "architecture.backend.section_17_cell_6_2",
-        "architecture.backend.section_17_cell_6_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_7_0",
-        "architecture.backend.section_17_cell_7_1",
-        "architecture.backend.section_17_cell_7_2",
-        "architecture.backend.section_17_cell_7_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_8_0",
-        "architecture.backend.section_17_cell_8_1",
-        "architecture.backend.section_17_cell_8_2",
-        "architecture.backend.section_17_cell_8_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_9_0",
-        "architecture.backend.section_17_cell_9_1",
-        "architecture.backend.section_17_cell_9_2",
-        "architecture.backend.section_17_cell_9_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_10_0",
-        "architecture.backend.section_17_cell_10_1",
-        "architecture.backend.section_17_cell_10_2",
-        "architecture.backend.section_17_cell_10_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_11_0",
-        "architecture.backend.section_17_cell_11_1",
-        "architecture.backend.section_17_cell_11_2",
-        "architecture.backend.section_17_cell_11_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_12_0",
-        "architecture.backend.section_17_cell_12_1",
-        "architecture.backend.section_17_cell_12_2",
-        "architecture.backend.section_17_cell_12_3"
-      ],
-      [
-        "architecture.backend.section_17_cell_13_0",
-        "architecture.backend.section_17_cell_13_1",
-        "architecture.backend.section_17_cell_13_2",
-        "architecture.backend.section_17_cell_13_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "architecture.backend.section_18_title",
-    "contentKey": "architecture.backend.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.backend.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.backend.section_20_item_0",
-      "architecture.backend.section_20_item_1",
-      "architecture.backend.section_20_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/overview",
-  "architecture/cqrs",
-  "architecture/data-flow"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/overview", "architecture/cqrs", "architecture/data-flow"],
+  lastUpdated: "2026-02-19",
 });

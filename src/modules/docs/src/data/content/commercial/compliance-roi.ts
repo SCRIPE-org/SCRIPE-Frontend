@@ -1,40 +1,30 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.complianceRoi.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.complianceRoi.savingsTitle",
+    id: "roi-savings",
+  },
+  {
+    type: "table",
+    headers: ["commercial.complianceRoi.metricCol", "commercial.complianceRoi.impactCol"],
+    rows: [
+      ["commercial.complianceRoi.metricManualDsr", "commercial.complianceRoi.impactManualDsr"],
+      ["commercial.complianceRoi.metricFines", "commercial.complianceRoi.impactFines"],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/compliance-roi",
   titleKey: "commercial.complianceRoi.title",
+  descriptionKey: "commercial.complianceRoi.description",
   category: "commercial-modules",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceRoi.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.complianceRoi.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.complianceRoi.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [],
-    "rows": [
-      [
-        "commercial.complianceRoi.section_3_cell_0_0",
-        "commercial.complianceRoi.section_3_cell_0_1"
-      ],
-      [
-        "commercial.complianceRoi.section_3_cell_1_0",
-        "commercial.complianceRoi.section_3_cell_1_1"
-      ]
-    ]
-  }
-],
-  relatedSlugs: [],
-  lastUpdated: "2026-06-09",
+  sections,
+  lastUpdated: "2026-05-03",
 });

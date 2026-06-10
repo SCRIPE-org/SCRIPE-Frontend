@@ -1,604 +1,637 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "security.authDeep.intro" },
+
+  // ─── Multi-Workspace Login Routing ────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.workspaceRoutingTitle",
+    id: "workspace-routing",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.workspaceRoutingIntro" },
+  {
+    type: "flowchart",
+    title: "Multi-Workspace Login Routing",
+    direction: "vertical",
+    nodes: [
+      { id: "login", label: "POST /auth/login", type: "primary" },
+      {
+        id: "route",
+        label: "Route Decision",
+        type: "info",
+        description: "Inspect tenantId & isPlatformAdmin",
+      },
+      {
+        id: "caseA",
+        label: "Case A: Tenant-Scoped",
+        type: "primary",
+        description: "tenantId present → strict isolation",
+      },
+      {
+        id: "caseAp",
+        label: "Case A': Platform Admin",
+        type: "success",
+        description: "isPlatformAdmin=true → TenantId=null lookup",
+      },
+      {
+        id: "caseB",
+        label: "Case B: Discovery",
+        type: "warning",
+        description: "No tenantId → search all tenants",
+      },
+      { id: "found0", label: "0 Matches", type: "danger", description: "Invalid credentials" },
+      {
+        id: "found1",
+        label: "1 Match",
+        type: "success",
+        description: "Direct auth for that tenant",
+      },
+      { id: "foundN", label: "N Matches", type: "info", description: "Return workspace list" },
+      { id: "picker", label: "Workspace Picker (Frontend)", type: "info" },
+      { id: "relogin", label: "Re-login with tenantId", type: "primary" },
+      { id: "auth", label: "Authenticate", type: "success" },
+    ],
+    connections: [
+      { from: "login", to: "route" },
+      { from: "route", to: "caseA", label: "has tenantId" },
+      { from: "route", to: "caseAp", label: "isPlatformAdmin" },
+      { from: "route", to: "caseB", label: "neither" },
+      { from: "caseA", to: "auth" },
+      { from: "caseAp", to: "auth" },
+      { from: "caseB", to: "found0", label: "no results" },
+      { from: "caseB", to: "found1", label: "exact one" },
+      { from: "caseB", to: "foundN", label: "multiple" },
+      { from: "found1", to: "auth" },
+      { from: "foundN", to: "picker" },
+      { from: "picker", to: "relogin" },
+      { from: "relogin", to: "caseA", style: "dashed" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Flag", "Type", "Purpose"],
+    rows: [
+      [
+        "tenantId",
+        "string?",
+        "Encrypted tenant ID from workspace selection or domain resolution. Triggers Case A.",
+      ],
+      [
+        "isPlatformAdmin",
+        "boolean",
+        "Set to true when user selects 'Platform Administration' workspace. Triggers Case A' to prevent infinite discovery loop.",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "security.authDeep.workspaceRoutingTip",
+  },
+
+  // ─── JWT Lifecycle ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.jwtLifecycleTitle",
+    id: "jwt-lifecycle",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.jwtLifecycleIntro" },
+  {
+    type: "flowchart",
+    title: "JWT Token Lifecycle",
+    direction: "horizontal",
+    nodes: [
+      { id: "login", label: "POST /auth/login", type: "primary" },
+      {
+        id: "validate",
+        label: "Validate Credentials",
+        type: "warning",
+        description: "BCrypt verify + account checks",
+      },
+      {
+        id: "pwExpiry",
+        label: "Password Expiry Check",
+        type: "warning",
+        description: "ITenantPasswordValidator → MustChangePassword",
+      },
+      {
+        id: "issue",
+        label: "Issue Token Pair",
+        type: "success",
+        description: "Access (15min) + Refresh (7d)",
+      },
+      {
+        id: "use",
+        label: "API Requests",
+        type: "info",
+        description: "Bearer token in Authorization header",
+      },
+      { id: "expire", label: "Access Token Expires", type: "danger" },
+      { id: "refresh", label: "POST /auth/refresh", type: "primary" },
+      {
+        id: "reissue",
+        label: "New Token Pair",
+        type: "success",
+        description: "Old refresh token revoked",
+      },
+      {
+        id: "logout",
+        label: "POST /auth/logout",
+        type: "danger",
+        description: "Revoke all tokens",
+      },
+    ],
+    connections: [
+      { from: "login", to: "validate" },
+      { from: "validate", to: "pwExpiry" },
+      { from: "pwExpiry", to: "issue", label: "not expired" },
+      { from: "issue", to: "use" },
+      { from: "use", to: "expire", label: "after 15min" },
+      { from: "expire", to: "refresh" },
+      { from: "refresh", to: "reissue" },
+      { from: "reissue", to: "use", label: "continue", style: "dashed" },
+      { from: "use", to: "logout" },
+    ],
+  },
+
+  // ─── JWT Token Structure ──────────────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "security.authDeep.tokenStructureTitle",
+    id: "token-structure",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "Access Token Payload (decoded)",
+    code: `{
+  "sub": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "email": "admin@company.com",
+  "given_name": "John",
+  "family_name": "Doe",
+  "role": "SuperAdmin",
+  "permissions": [
+    "admins.view", "admins.create", "admins.update",
+    "users.view", "users.create", "roles.manage"
+  ],
+  "tenant_id": "f8e7d6c5-b4a3-2190-fedc-ba0987654321",
+  "is_admin": "true",
+  "impersonator_id": null,
+  "iat": 1708444800,
+  "exp": 1708445700,
+  "iss": "scripe-api",
+  "aud": "scripe-client"
+}`,
+  },
+  {
+    type: "table",
+    headers: ["Claim", "Purpose", "Set By"],
+    rows: [
+      ["sub", "User/Admin unique ID (Guid)", "JwtService"],
+      ["email", "Email address", "JwtService"],
+      ["role", "Primary role name", "JwtService"],
+      ["permissions", "Array of permission slugs", "JwtService (from role)"],
+      ["tenant_id", "Owning tenant ID", "JwtService"],
+      ["is_admin", "Admin vs User discriminator", "JwtService"],
+      ["impersonator_id", "Original admin ID during impersonation", "ImpersonateCommand"],
+      ["exp", "Expiration (15 min default)", "JwtService"],
+    ],
+  },
+
+  // ─── BCrypt Password Hashing ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.bcryptTitle",
+    id: "bcrypt",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.bcryptIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Password Hashing Implementation",
+    code: `// Hash password with BCrypt (work factor = 12)
+// ~250ms per hash — intentionally slow to resist brute force
+var hashedPassword = BCrypt.Net.BCrypt.HashPassword(
+    plainPassword,
+    workFactor: 12  // 2^12 = 4,096 iterations
+);
+
+// Verify password during login
+var isValid = BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);
+// Returns true/false — constant-time comparison prevents timing attacks`,
+  },
+  {
+    type: "table",
+    headers: ["Work Factor", "Iterations", "Time per Hash", "Use Case"],
+    rows: [
+      ["10", "1,024", "~65ms", "Development/testing"],
+      ["11", "2,048", "~130ms", "Low-security applications"],
+      ["12 (default)", "4,096", "~250ms", "Production (SCRIPE default)"],
+      ["13", "8,192", "~500ms", "High-security environments"],
+      ["14", "16,384", "~1s", "Maximum security (very slow)"],
+    ],
+  },
+
+  // ─── Account Lockout ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.lockoutTitle",
+    id: "account-lockout",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.lockoutIntro" },
+  {
+    type: "flowchart",
+    title: "Account Lockout Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "attempt", label: "Login Attempt", type: "primary" },
+      { id: "check", label: "Check Lockout Status", type: "info" },
+      { id: "locked", label: "Account Locked", type: "danger", description: "Return 423 Locked" },
+      { id: "verify", label: "Verify Password", type: "warning" },
+      { id: "fail", label: "Wrong Password", type: "danger", description: "Increment FailedCount" },
+      { id: "threshold", label: "FailedCount >= 5?", type: "warning" },
+      { id: "lock", label: "Lock Account (5 min)", type: "danger" },
+      { id: "success", label: "Login Success", type: "success", description: "Reset FailedCount" },
+    ],
+    connections: [
+      { from: "attempt", to: "check" },
+      { from: "check", to: "locked", label: "is locked" },
+      { from: "check", to: "verify", label: "not locked" },
+      { from: "verify", to: "fail", label: "wrong" },
+      { from: "verify", to: "success", label: "correct" },
+      { from: "fail", to: "threshold" },
+      { from: "threshold", to: "lock", label: "yes" },
+      { from: "threshold", to: "attempt", label: "no", style: "dashed" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Setting", "Default Value", "Configurable"],
+    rows: [
+      ["Max Failed Attempts", "5", "Yes (appsettings)"],
+      ["Lockout Duration", "5 minutes", "Yes (appsettings)"],
+      ["Lockout on First Failure", "No", "—"],
+      ["Reset Counter on Success", "Yes (automatic)", "—"],
+      ["Admin Can Unlock", "Yes (POST /admins/{id}/unlock)", "—"],
+    ],
+  },
+
+  // ─── Two-Factor Authentication ────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.tfaTitle",
+    id: "two-factor-auth",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.tfaIntro" },
+  {
+    type: "flowchart",
+    title: "2FA Setup & Verification Flow",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "enable",
+        label: "POST /auth/2fa/enable",
+        type: "primary",
+        description: "Generate TOTP secret + QR code",
+      },
+      {
+        id: "qr",
+        label: "Display QR Code",
+        type: "info",
+        description: "User scans with authenticator app",
+      },
+      {
+        id: "confirm",
+        label: "POST /auth/2fa/confirm",
+        type: "warning",
+        description: "User enters 6-digit code to verify setup",
+      },
+      {
+        id: "backup",
+        label: "Generate Backup Codes",
+        type: "success",
+        description: "10 one-time-use recovery codes",
+      },
+      { id: "active", label: "2FA Active", type: "success" },
+      { id: "login", label: "Login Attempt", type: "primary" },
+      {
+        id: "verify",
+        label: "POST /auth/2fa/verify",
+        type: "warning",
+        description: "Enter TOTP code or backup code",
+      },
+      { id: "granted", label: "Access Granted", type: "success" },
+    ],
+    connections: [
+      { from: "enable", to: "qr" },
+      { from: "qr", to: "confirm" },
+      { from: "confirm", to: "backup" },
+      { from: "backup", to: "active" },
+      { from: "login", to: "verify", label: "if 2FA enabled" },
+      { from: "verify", to: "granted", label: "valid code" },
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TfaService — TOTP Implementation",
+    code: `public class TfaService : ITfaService
+{
+    private const int SecretLength = 20;     // 160-bit secret
+    private const int CodeLength = 6;        // 6-digit TOTP
+    private const int TimeStep = 30;         // 30-second window
+    private const int BackupCodeCount = 10;  // 10 backup codes
+
+    public TfaSetupResult EnableTfa(string userId)
+    {
+        // 1. Generate random secret
+        var secretBytes = RandomNumberGenerator.GetBytes(SecretLength);
+        var secret = Base32Encoding.ToString(secretBytes);
+
+        // 2. Generate QR code URI (otpauth:// format)
+        var uri = $"otpauth://totp/SCRIPE:{userId}?secret={secret}&issuer=SCRIPE";
+
+        // 3. Generate backup codes
+        var backupCodes = Enumerable.Range(0, BackupCodeCount)
+            .Select(_ => GenerateBackupCode())
+            .ToList();
+
+        return new TfaSetupResult(secret, uri, backupCodes);
+    }
+
+    public bool VerifyCode(string secret, string code)
+    {
+        // Validate TOTP with ±1 time step tolerance
+        var totp = new Totp(Base32Encoding.ToBytes(secret),
+            step: TimeStep, totpSize: CodeLength);
+
+        return totp.VerifyTotp(code, out _, new VerificationWindow(1, 1));
+    }
+
+    private static string GenerateBackupCode()
+        => $"{Random.Shared.Next(10000000, 99999999)}"; // 8-digit
+}`,
+    highlightLines: [3, 4, 5, 6, 27, 28, 29, 30],
+  },
+
+  // ─── Password Expiry Enforcement ─────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.passwordExpiryTitle",
+    id: "password-expiry",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.passwordExpiryIntro" },
+  {
+    type: "table",
+    headers: ["Check", "Source", "Outcome"],
+    rows: [
+      ["PasswordExpiryDays > 0", "TenantSettings", "Feature enabled for tenant"],
+      ["PasswordLastChanged + ExpiryDays < Now", "Admin entity", "Password is expired"],
+      ["MustChangePassword = true", "TokenResponse", "Frontend forces redirect to change-password"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "security.authDeep.passwordExpiryNote",
+  },
+
+  // ─── External Authentication ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.externalAuthTitle",
+    id: "external-auth",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.externalAuthIntro" },
+  {
+    type: "table",
+    headers: ["Provider", "Auth Type", "Token Validation", "Config Key"],
+    rows: [
+      [
+        "Google",
+        "OAuth 2.0 / OpenID Connect",
+        "Google TokenInfo API",
+        "ExternalAuth:Google:ClientId",
+      ],
+      ["Facebook", "OAuth 2.0", "Facebook Graph API /me", "ExternalAuth:Facebook:AppId"],
+      ["Apple", "Sign in with Apple", "Apple public keys + JWT", "ExternalAuth:Apple:ServiceId"],
+      ["Microsoft", "OAuth 2.0 / MSAL", "Microsoft Graph API", "ExternalAuth:Microsoft:ClientId"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ExternalAuthService — Provider Validation",
+    code: `public class ExternalAuthService : IExternalAuthService
+{
+    public async Task<ExternalUserInfo?> ValidateTokenAsync(
+        string provider, string token)
+    {
+        return provider.ToLower() switch
+        {
+            "google" => await ValidateGoogleTokenAsync(token),
+            "facebook" => await ValidateFacebookTokenAsync(token),
+            "apple" => await ValidateAppleTokenAsync(token),
+            "microsoft" => await ValidateMicrosoftTokenAsync(token),
+            _ => throw new ArgumentException($"Unknown provider: {provider}")
+        };
+    }
+}
+
+// Returned user info for account linking/creation
+public record ExternalUserInfo(
+    string ProviderId,     // Provider's unique user ID
+    string Email,
+    string? FirstName,
+    string? LastName,
+    string? AvatarUrl,
+    string Provider        // "google", "facebook", etc.
+);`,
+  },
+
+  // ─── OTP System ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.otpTitle",
+    id: "otp-system",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.otpIntro" },
+  {
+    type: "table",
+    headers: ["OTP Purpose", "Delivery", "Length", "Expiry", "Max Attempts"],
+    rows: [
+      ["Email Verification", "Email", "6 digits", "15 minutes", "3"],
+      ["Phone Verification", "SMS", "6 digits", "10 minutes", "3"],
+      ["Password Reset", "Email", "6 digits", "15 minutes", "3"],
+      ["Rate Limit", "Per IP", "—", "60 seconds cooldown", "5 per hour"],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "OtpService — Code Generation & Verification",
+    code: `public class OtpService : IOtpService
+{
+    public async Task<string> GenerateAsync(
+        string userId, OtpPurpose purpose, CancellationToken ct)
+    {
+        // 1. Invalidate any existing OTP for this user+purpose
+        await _repository.InvalidateExistingAsync(userId, purpose, ct);
+
+        // 2. Generate cryptographically random 6-digit code
+        var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+
+        // 3. Store hashed code (never store plaintext)
+        var otpCode = new OtpCode
+        {
+            UserId = userId,
+            Purpose = purpose,
+            CodeHash = BCrypt.Net.BCrypt.HashPassword(code),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+            RemainingAttempts = 3
+        };
+
+        await _repository.AddAsync(otpCode, ct);
+        return code; // Return plaintext to send via email/SMS
+    }
+
+    public async Task<bool> VerifyAsync(
+        string userId, string code, OtpPurpose purpose, CancellationToken ct)
+    {
+        var otp = await _repository.GetLatestAsync(userId, purpose, ct);
+        if (otp is null || otp.ExpiresAt < DateTime.UtcNow) return false;
+        if (otp.RemainingAttempts <= 0) return false;
+
+        var isValid = BCrypt.Net.BCrypt.Verify(code, otp.CodeHash);
+        if (!isValid)
+        {
+            otp.RemainingAttempts--;
+            await _repository.SaveChangesAsync(ct);
+            return false;
+        }
+
+        // Mark as used
+        otp.UsedAt = DateTime.UtcNow;
+        await _repository.SaveChangesAsync(ct);
+        return true;
+    }
+}`,
+    highlightLines: [10, 15, 16, 17, 30, 31],
+  },
+
+  // ─── Impersonation ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.impersonationTitle",
+    id: "impersonation",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.impersonationIntro" },
+  {
+    type: "flowchart",
+    title: "Admin Impersonation Flow",
+    direction: "horizontal",
+    nodes: [
+      { id: "super", label: "SuperAdmin", type: "primary" },
+      { id: "impersonate", label: "POST /admins/{id}/impersonate", type: "warning" },
+      {
+        id: "check",
+        label: "Security Checks",
+        type: "danger",
+        description: "Can't impersonate protected/superior admins",
+      },
+      {
+        id: "token",
+        label: "Issue Impersonation Token",
+        type: "success",
+        description: "Claims of target + impersonator_id claim",
+      },
+      { id: "act", label: "Act as Target Admin", type: "info" },
+      { id: "stop", label: "POST /admins/stop-impersonation", type: "primary" },
+      { id: "restore", label: "Restore Original Token", type: "success" },
+    ],
+    connections: [
+      { from: "super", to: "impersonate" },
+      { from: "impersonate", to: "check" },
+      { from: "check", to: "token", label: "allowed" },
+      { from: "token", to: "act" },
+      { from: "act", to: "stop" },
+      { from: "stop", to: "restore" },
+    ],
+  },
+  {
+    type: "info",
+    variant: "danger",
+    contentKey: "security.authDeep.impersonationWarning",
+  },
+
+  // ─── Session Management ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.sessionTitle",
+    id: "session-management",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.sessionIntro" },
+  {
+    type: "table",
+    headers: ["Token", "Storage", "Lifetime", "Rotation"],
+    rows: [
+      ["Access Token", "Client memory (not localStorage)", "15 minutes", "On refresh"],
+      ["Refresh Token", "HttpOnly secure cookie or DB", "7 days", "Single-use (rotate on use)"],
+      ["2FA Session Token", "Temporary in-memory", "5 minutes", "One-time use"],
+      [
+        "Impersonation Token",
+        "Client (replaces access)",
+        "Same as access",
+        "On stop-impersonation",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "security.authDeep.cookieAuthTip",
+  },
+
+  // ─── SSO Tenant Suspension Gate ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.authDeep.ssoSuspensionTitle",
+    id: "sso-suspension-gate",
+  },
+  { type: "paragraph", contentKey: "security.authDeep.ssoSuspensionIntro" },
+  {
+    type: "info",
+    variant: "danger",
+    contentKey: "security.authDeep.ssoSuspensionWarning",
+  },
+];
 
 registerPage({
   slug: "security/authentication-deep",
   titleKey: "security.authDeep.title",
+  descriptionKey: "security.authDeep.description",
   category: "security",
   order: 2,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    login([\"POST /auth/login\"])\n    route([\"Route Decision\"])\n    %% route: Inspect tenantId & isPlatformAdmin\n    caseA([\"Case A: Tenant-Scoped\"])\n    %% caseA: tenantId present → strict isolation\n    caseAp([\"Case A': Platform Admin\"])\n    %% caseAp: isPlatformAdmin=true → TenantId=null lookup\n    caseB{{\"Case B: Discovery\"}}\n    %% caseB: No tenantId → search all tenants\n    found0[\"0 Matches\"]\n    %% found0: Invalid credentials\n    found1([\"1 Match\"])\n    %% found1: Direct auth for that tenant\n    foundN([\"N Matches\"])\n    %% foundN: Return workspace list\n    picker([\"Workspace Picker (Frontend)\"])\n    relogin([\"Re-login with tenantId\"])\n    auth([\"Authenticate\"])\n    login --> route\n    route -->|\"has tenantId\"| caseA\n    route -->|\"isPlatformAdmin\"| caseAp\n    route -->|\"neither\"| caseB\n    caseA --> auth\n    caseAp --> auth\n    caseB -->|\"no results\"| found0\n    caseB -->|\"exact one\"| found1\n    caseB -->|\"multiple\"| foundN\n    found1 --> auth\n    foundN --> picker\n    picker --> relogin\n    relogin -.-> caseA",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_5_hdr_0",
-      "security.authDeep.section_5_hdr_1",
-      "security.authDeep.section_5_hdr_2"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_5_cell_0_0",
-        "security.authDeep.section_5_cell_0_1",
-        "security.authDeep.section_5_cell_0_2"
-      ],
-      [
-        "security.authDeep.section_5_cell_1_0",
-        "security.authDeep.section_5_cell_1_1",
-        "security.authDeep.section_5_cell_1_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "security.authDeep.section_6_title",
-    "contentKey": "security.authDeep.section_6_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    login([\"POST /auth/login\"])\n    validate{{\"Validate Credentials\"}}\n    %% validate: BCrypt verify + account checks\n    pwExpiry{{\"Password Expiry Check\"}}\n    %% pwExpiry: ITenantPasswordValidator → MustChangePassword\n    issue([\"Issue Token Pair\"])\n    %% issue: Access (15min) + Refresh (7d)\n    use([\"API Requests\"])\n    %% use: Bearer token in Authorization header\n    expire[\"Access Token Expires\"]\n    refresh([\"POST /auth/refresh\"])\n    reissue([\"New Token Pair\"])\n    %% reissue: Old refresh token revoked\n    logout[\"POST /auth/logout\"]\n    %% logout: Revoke all tokens\n    login --> validate\n    validate --> pwExpiry\n    pwExpiry -->|\"not expired\"| issue\n    issue --> use\n    use -->|\"after 15min\"| expire\n    expire --> refresh\n    refresh --> reissue\n    reissue -.->|\"continue\"| use\n    use --> logout",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "security.authDeep.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_11_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"sub\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"email\": \"admin@company.com\",\n  \"given_name\": \"John\",\n  \"family_name\": \"Doe\",\n  \"role\": \"SuperAdmin\",\n  \"permissions\": [\n    \"admins.view\", \"admins.create\", \"admins.update\",\n    \"users.view\", \"users.create\", \"roles.manage\"\n  ],\n  \"tenant_id\": \"f8e7d6c5-b4a3-2190-fedc-ba0987654321\",\n  \"is_admin\": \"true\",\n  \"impersonator_id\": null,\n  \"iat\": 1708444800,\n  \"exp\": 1708445700,\n  \"iss\": \"scripe-api\",\n  \"aud\": \"scripe-client\"\n}",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_13_hdr_0",
-      "security.authDeep.section_13_hdr_1",
-      "security.authDeep.section_13_hdr_2"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_13_cell_0_0",
-        "security.authDeep.section_13_cell_0_1",
-        "security.authDeep.section_13_cell_0_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_1_0",
-        "security.authDeep.section_13_cell_1_1",
-        "security.authDeep.section_13_cell_1_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_2_0",
-        "security.authDeep.section_13_cell_2_1",
-        "security.authDeep.section_13_cell_2_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_3_0",
-        "security.authDeep.section_13_cell_3_1",
-        "security.authDeep.section_13_cell_3_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_4_0",
-        "security.authDeep.section_13_cell_4_1",
-        "security.authDeep.section_13_cell_4_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_5_0",
-        "security.authDeep.section_13_cell_5_1",
-        "security.authDeep.section_13_cell_5_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_6_0",
-        "security.authDeep.section_13_cell_6_1",
-        "security.authDeep.section_13_cell_6_2"
-      ],
-      [
-        "security.authDeep.section_13_cell_7_0",
-        "security.authDeep.section_13_cell_7_1",
-        "security.authDeep.section_13_cell_7_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Hash password with BCrypt (work factor = 12)\n// ~250ms per hash — intentionally slow to resist brute force\nvar hashedPassword = BCrypt.Net.BCrypt.HashPassword(\n    plainPassword,\n    workFactor: 12  // 2^12 = 4,096 iterations\n);\n\n// Verify password during login\nvar isValid = BCrypt.Net.BCrypt.Verify(plainPassword, storedHash);\n// Returns true/false — constant-time comparison prevents timing attacks",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_18_hdr_0",
-      "security.authDeep.section_18_hdr_1",
-      "security.authDeep.section_18_hdr_2",
-      "security.authDeep.section_18_hdr_3"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_18_cell_0_0",
-        "security.authDeep.section_18_cell_0_1",
-        "security.authDeep.section_18_cell_0_2",
-        "security.authDeep.section_18_cell_0_3"
-      ],
-      [
-        "security.authDeep.section_18_cell_1_0",
-        "security.authDeep.section_18_cell_1_1",
-        "security.authDeep.section_18_cell_1_2",
-        "security.authDeep.section_18_cell_1_3"
-      ],
-      [
-        "security.authDeep.section_18_cell_2_0",
-        "security.authDeep.section_18_cell_2_1",
-        "security.authDeep.section_18_cell_2_2",
-        "security.authDeep.section_18_cell_2_3"
-      ],
-      [
-        "security.authDeep.section_18_cell_3_0",
-        "security.authDeep.section_18_cell_3_1",
-        "security.authDeep.section_18_cell_3_2",
-        "security.authDeep.section_18_cell_3_3"
-      ],
-      [
-        "security.authDeep.section_18_cell_4_0",
-        "security.authDeep.section_18_cell_4_1",
-        "security.authDeep.section_18_cell_4_2",
-        "security.authDeep.section_18_cell_4_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    attempt([\"Login Attempt\"])\n    check([\"Check Lockout Status\"])\n    locked[\"Account Locked\"]\n    %% locked: Return 423 Locked\n    verify{{\"Verify Password\"}}\n    fail[\"Wrong Password\"]\n    %% fail: Increment FailedCount\n    threshold{{\"FailedCount >= 5?\"}}\n    lock[\"Lock Account (5 min)\"]\n    success([\"Login Success\"])\n    %% success: Reset FailedCount\n    attempt --> check\n    check -->|\"is locked\"| locked\n    check -->|\"not locked\"| verify\n    verify -->|\"wrong\"| fail\n    verify -->|\"correct\"| success\n    fail --> threshold\n    threshold -->|\"yes\"| lock\n    threshold -.->|\"no\"| attempt",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_22_hdr_0",
-      "security.authDeep.section_22_hdr_1",
-      "security.authDeep.section_22_hdr_2"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_22_cell_0_0",
-        "security.authDeep.section_22_cell_0_1",
-        "security.authDeep.section_22_cell_0_2"
-      ],
-      [
-        "security.authDeep.section_22_cell_1_0",
-        "security.authDeep.section_22_cell_1_1",
-        "security.authDeep.section_22_cell_1_2"
-      ],
-      [
-        "security.authDeep.section_22_cell_2_0",
-        "security.authDeep.section_22_cell_2_1",
-        "security.authDeep.section_22_cell_2_2"
-      ],
-      [
-        "security.authDeep.section_22_cell_3_0",
-        "security.authDeep.section_22_cell_3_1",
-        "security.authDeep.section_22_cell_3_2"
-      ],
-      [
-        "security.authDeep.section_22_cell_4_0",
-        "security.authDeep.section_22_cell_4_1",
-        "security.authDeep.section_22_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_24_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    enable([\"POST /auth/2fa/enable\"])\n    %% enable: Generate TOTP secret + QR code\n    qr([\"Display QR Code\"])\n    %% qr: User scans with authenticator app\n    confirm{{\"POST /auth/2fa/confirm\"}}\n    %% confirm: User enters 6-digit code to verify setup\n    backup([\"Generate Backup Codes\"])\n    %% backup: 10 one-time-use recovery codes\n    active([\"2FA Active\"])\n    login([\"Login Attempt\"])\n    verify{{\"POST /auth/2fa/verify\"}}\n    %% verify: Enter TOTP code or backup code\n    granted([\"Access Granted\"])\n    enable --> qr\n    qr --> confirm\n    confirm --> backup\n    backup --> active\n    login -->|\"if 2FA enabled\"| verify\n    verify -->|\"valid code\"| granted",
-    "filename": ""
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_26_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class TfaService : ITfaService\n{\n    private const int SecretLength = 20;     // 160-bit secret\n    private const int CodeLength = 6;        // 6-digit TOTP\n    private const int TimeStep = 30;         // 30-second window\n    private const int BackupCodeCount = 10;  // 10 backup codes\n\n    public TfaSetupResult EnableTfa(string userId)\n    {\n        // 1. Generate random secret\n        var secretBytes = RandomNumberGenerator.GetBytes(SecretLength);\n        var secret = Base32Encoding.ToString(secretBytes);\n\n        // 2. Generate QR code URI (otpauth:// format)\n        var uri = $\"otpauth://totp/SCRIPE:{userId}?secret={secret}&issuer=SCRIPE\";\n\n        // 3. Generate backup codes\n        var backupCodes = Enumerable.Range(0, BackupCodeCount)\n            .Select(_ => GenerateBackupCode())\n            .ToList();\n\n        return new TfaSetupResult(secret, uri, backupCodes);\n    }\n\n    public bool VerifyCode(string secret, string code)\n    {\n        // Validate TOTP with ±1 time step tolerance\n        var totp = new Totp(Base32Encoding.ToBytes(secret),\n            step: TimeStep, totpSize: CodeLength);\n\n        return totp.VerifyTotp(code, out _, new VerificationWindow(1, 1));\n    }\n\n    private static string GenerateBackupCode()\n        => $\"{Random.Shared.Next(10000000, 99999999)}\"; // 8-digit\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_29_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_30_hdr_0",
-      "security.authDeep.section_30_hdr_1",
-      "security.authDeep.section_30_hdr_2"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_30_cell_0_0",
-        "security.authDeep.section_30_cell_0_1",
-        "security.authDeep.section_30_cell_0_2"
-      ],
-      [
-        "security.authDeep.section_30_cell_1_0",
-        "security.authDeep.section_30_cell_1_1",
-        "security.authDeep.section_30_cell_1_2"
-      ],
-      [
-        "security.authDeep.section_30_cell_2_0",
-        "security.authDeep.section_30_cell_2_1",
-        "security.authDeep.section_30_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "security.authDeep.section_31_title",
-    "contentKey": "security.authDeep.section_31_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_32_title",
-    "id": "sec_32"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_33_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_34_hdr_0",
-      "security.authDeep.section_34_hdr_1",
-      "security.authDeep.section_34_hdr_2",
-      "security.authDeep.section_34_hdr_3"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_34_cell_0_0",
-        "security.authDeep.section_34_cell_0_1",
-        "security.authDeep.section_34_cell_0_2",
-        "security.authDeep.section_34_cell_0_3"
-      ],
-      [
-        "security.authDeep.section_34_cell_1_0",
-        "security.authDeep.section_34_cell_1_1",
-        "security.authDeep.section_34_cell_1_2",
-        "security.authDeep.section_34_cell_1_3"
-      ],
-      [
-        "security.authDeep.section_34_cell_2_0",
-        "security.authDeep.section_34_cell_2_1",
-        "security.authDeep.section_34_cell_2_2",
-        "security.authDeep.section_34_cell_2_3"
-      ],
-      [
-        "security.authDeep.section_34_cell_3_0",
-        "security.authDeep.section_34_cell_3_1",
-        "security.authDeep.section_34_cell_3_2",
-        "security.authDeep.section_34_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_35_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class ExternalAuthService : IExternalAuthService\n{\n    public async Task<ExternalUserInfo?> ValidateTokenAsync(\n        string provider, string token)\n    {\n        return provider.ToLower() switch\n        {\n            \"google\" => await ValidateGoogleTokenAsync(token),\n            \"facebook\" => await ValidateFacebookTokenAsync(token),\n            \"apple\" => await ValidateAppleTokenAsync(token),\n            \"microsoft\" => await ValidateMicrosoftTokenAsync(token),\n            _ => throw new ArgumentException($\"Unknown provider: {provider}\")\n        };\n    }\n}\n\n// Returned user info for account linking/creation\npublic record ExternalUserInfo(\n    string ProviderId,     // Provider's unique user ID\n    string Email,\n    string? FirstName,\n    string? LastName,\n    string? AvatarUrl,\n    string Provider        // \"google\", \"facebook\", etc.\n);",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_37_title",
-    "id": "sec_37"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_38_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_39_hdr_0",
-      "security.authDeep.section_39_hdr_1",
-      "security.authDeep.section_39_hdr_2",
-      "security.authDeep.section_39_hdr_3",
-      "security.authDeep.section_39_hdr_4"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_39_cell_0_0",
-        "security.authDeep.section_39_cell_0_1",
-        "security.authDeep.section_39_cell_0_2",
-        "security.authDeep.section_39_cell_0_3",
-        "security.authDeep.section_39_cell_0_4"
-      ],
-      [
-        "security.authDeep.section_39_cell_1_0",
-        "security.authDeep.section_39_cell_1_1",
-        "security.authDeep.section_39_cell_1_2",
-        "security.authDeep.section_39_cell_1_3",
-        "security.authDeep.section_39_cell_1_4"
-      ],
-      [
-        "security.authDeep.section_39_cell_2_0",
-        "security.authDeep.section_39_cell_2_1",
-        "security.authDeep.section_39_cell_2_2",
-        "security.authDeep.section_39_cell_2_3",
-        "security.authDeep.section_39_cell_2_4"
-      ],
-      [
-        "security.authDeep.section_39_cell_3_0",
-        "security.authDeep.section_39_cell_3_1",
-        "security.authDeep.section_39_cell_3_2",
-        "security.authDeep.section_39_cell_3_3",
-        "security.authDeep.section_39_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_40_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class OtpService : IOtpService\n{\n    public async Task<string> GenerateAsync(\n        string userId, OtpPurpose purpose, CancellationToken ct)\n    {\n        // 1. Invalidate any existing OTP for this user+purpose\n        await _repository.InvalidateExistingAsync(userId, purpose, ct);\n\n        // 2. Generate cryptographically random 6-digit code\n        var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();\n\n        // 3. Store hashed code (never store plaintext)\n        var otpCode = new OtpCode\n        {\n            UserId = userId,\n            Purpose = purpose,\n            CodeHash = BCrypt.Net.BCrypt.HashPassword(code),\n            ExpiresAt = DateTime.UtcNow.AddMinutes(15),\n            RemainingAttempts = 3\n        };\n\n        await _repository.AddAsync(otpCode, ct);\n        return code; // Return plaintext to send via email/SMS\n    }\n\n    public async Task<bool> VerifyAsync(\n        string userId, string code, OtpPurpose purpose, CancellationToken ct)\n    {\n        var otp = await _repository.GetLatestAsync(userId, purpose, ct);\n        if (otp is null || otp.ExpiresAt < DateTime.UtcNow) return false;\n        if (otp.RemainingAttempts <= 0) return false;\n\n        var isValid = BCrypt.Net.BCrypt.Verify(code, otp.CodeHash);\n        if (!isValid)\n        {\n            otp.RemainingAttempts--;\n            await _repository.SaveChangesAsync(ct);\n            return false;\n        }\n\n        // Mark as used\n        otp.UsedAt = DateTime.UtcNow;\n        await _repository.SaveChangesAsync(ct);\n        return true;\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_42_title",
-    "id": "sec_42"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_43_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    super([\"SuperAdmin\"])\n    impersonate{{\"POST /admins/{id}/impersonate\"}}\n    check[\"Security Checks\"]\n    %% check: Can't impersonate protected/superior admins\n    token([\"Issue Impersonation Token\"])\n    %% token: Claims of target + impersonator_id claim\n    act([\"Act as Target Admin\"])\n    stop([\"POST /admins/stop-impersonation\"])\n    restore([\"Restore Original Token\"])\n    super --> impersonate\n    impersonate --> check\n    check -->|\"allowed\"| token\n    token --> act\n    act --> stop\n    stop --> restore",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "danger",
-    "titleKey": "security.authDeep.section_45_title",
-    "contentKey": "security.authDeep.section_45_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_46_title",
-    "id": "sec_46"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_47_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "security.authDeep.section_48_hdr_0",
-      "security.authDeep.section_48_hdr_1",
-      "security.authDeep.section_48_hdr_2",
-      "security.authDeep.section_48_hdr_3"
-    ],
-    "rows": [
-      [
-        "security.authDeep.section_48_cell_0_0",
-        "security.authDeep.section_48_cell_0_1",
-        "security.authDeep.section_48_cell_0_2",
-        "security.authDeep.section_48_cell_0_3"
-      ],
-      [
-        "security.authDeep.section_48_cell_1_0",
-        "security.authDeep.section_48_cell_1_1",
-        "security.authDeep.section_48_cell_1_2",
-        "security.authDeep.section_48_cell_1_3"
-      ],
-      [
-        "security.authDeep.section_48_cell_2_0",
-        "security.authDeep.section_48_cell_2_1",
-        "security.authDeep.section_48_cell_2_2",
-        "security.authDeep.section_48_cell_2_3"
-      ],
-      [
-        "security.authDeep.section_48_cell_3_0",
-        "security.authDeep.section_48_cell_3_1",
-        "security.authDeep.section_48_cell_3_2",
-        "security.authDeep.section_48_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "security.authDeep.section_49_title",
-    "contentKey": "security.authDeep.section_49_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_50_title",
-    "id": "sec_50"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_51_content"
-  },
-  {
-    "type": "info",
-    "variant": "danger",
-    "titleKey": "security.authDeep.section_52_title",
-    "contentKey": "security.authDeep.section_52_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_53_title",
-    "id": "sec_53"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_54_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_55_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"id\": \"AR9...xCQ\",\n  \"rawId\": \"AR9...xCQ\",\n  \"type\": \"public-key\",\n  \"response\": {\n    \"clientDataJSON\": \"eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoi...\",\n    \"attestationObject\": \"o2NmbXRkbm9uZWdhdHRTdG10XGhhdXRoRGF0YVj...\",\n    \"transports\": [\"internal\", \"hybrid\"]\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_57_title",
-    "id": "sec_57"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_58_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_59_content"
-  },
-  {
-    "type": "code",
-    "language": "xml",
-    "code": "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"\n                    ID=\"_a1b2c3d4-e5f6-7890-abcd-ef1234567890\"\n                    Version=\"2.0\"\n                    IssueInstant=\"2026-06-04T12:00:00Z\"\n                    Destination=\"https://idp.example.com/sso\"\n                    AssertionConsumerServiceURL=\"https://scripe.example.com/api/v1/auth/saml/acs/123\">\n  <saml:Issuer xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">https://scripe.example.com/sp</saml:Issuer>\n  <samlp:NameIDPolicy Format=\"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress\" AllowCreate=\"true\"/>\n</samlp:AuthnRequest>",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_61_title",
-    "id": "sec_61"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "security.authDeep.section_62_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    req([\"Web Client: POST /qr-login/session\"])\n    qr([\"Render QR Code\"])\n    %% qr: Contains SessionId & TenantId\n    poll{{\"Web Client: Poll /qr-login/poll/{sessionId}\"}}\n    scan([\"Mobile App: Scan QR Code\"])\n    confirm{{\"Mobile App: POST /qr-login/confirm\"}}\n    %% confirm: Submits session signature + user JWT\n    ok([\"Poll Returns 200 Success\"])\n    %% ok: Issues new JWT to Web Client\n    req --> qr\n    qr --> poll\n    qr -.-> scan\n    scan --> confirm\n    confirm --> ok",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "security.authDeep.section_64_title",
-    "id": "sec_64"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "security.authDeep.section_65_item_0",
-      "security.authDeep.section_65_item_1",
-      "security.authDeep.section_65_item_2",
-      "security.authDeep.section_65_item_3"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "security/overview",
-  "security/data-protection",
-  "security/api-security",
-  "features/authentication"
-],
-  lastUpdated: "2026-06-09",
+    "security/overview",
+    "security/data-protection",
+    "security/api-security",
+    "features/authentication",
+  ],
+  lastUpdated: "2026-05-02",
 });

@@ -1,733 +1,667 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "features.multiTenancy.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Multi-Tenant Data Isolation",
+    direction: "vertical",
+    nodes: [
+      { id: "req", label: "Incoming Request", type: "default" },
+      { id: "jwt", label: "Extract TenantId from JWT", type: "primary" },
+      { id: "filter", label: "EF Core Global Query Filter", type: "warning" },
+      { id: "db", label: "SELECT * WHERE TenantId = @tid", type: "success" },
+    ],
+    connections: [
+      { from: "req", to: "jwt" },
+      { from: "jwt", to: "filter" },
+      { from: "filter", to: "db" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Isolation Level", "Implementation", "Use Case"],
+    rows: [
+      [
+        "Row-Level (Current)",
+        "EF Core Global Query Filters on TenantId",
+        "Single database, all tenants share tables",
+      ],
+      ["Schema-Level (Planned)", "Separate schema per tenant", "Higher isolation, same database"],
+      [
+        "Database-Level (Planned)",
+        "Separate database per tenant",
+        "Maximum isolation, regulatory compliance",
+      ],
+    ],
+  },
+
+  // € Hierarchy €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.hierarchyTitle",
+    id: "hierarchy",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.hierarchyIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Tenant.cs  Hierarchy Fields",
+    code: `public class Tenant : AuditableEntity<Guid>
+{
+    [Required] [MaxLength(200)]
+    public string Name { get; set; } = null!;
+
+    [Required] [MaxLength(50)]
+    public string Code { get; set; } = null!;
+
+    public Guid? ParentTenantId { get; set; }     // Self-ref FK †’ tree
+
+    public int HierarchyLevel { get; set; }        // 0 = root, 1 = child, 2 = grandchild...
+
+    [MaxLength(500)]
+    public string HierarchyPath { get; set; } = "/"; // Materialized path: "/root-id/child-id/"
+
+    // Navigation
+    public virtual Tenant? ParentTenant { get; set; }
+    public virtual ICollection<Tenant> ChildTenants { get; set; } = [];
+    public virtual TenantSettings? Settings { get; set; }
+}`,
+    highlightLines: [9, 11, 14],
+  },
+  {
+    type: "flowchart",
+    title: "Tenant Hierarchy Example",
+    direction: "vertical",
+    nodes: [
+      { id: "root", label: "ACME Corp (Level 0)", type: "danger" },
+      { id: "branch1", label: "Cairo Branch (Level 1)", type: "warning" },
+      { id: "branch2", label: "Dubai Branch (Level 1)", type: "warning" },
+      { id: "dept1", label: "HR Department (Level 2)", type: "info" },
+      { id: "dept2", label: "Finance Dept (Level 2)", type: "info" },
+    ],
+    connections: [
+      { from: "root", to: "branch1", label: "ParentTenantId" },
+      { from: "root", to: "branch2", label: "ParentTenantId" },
+      { from: "branch1", to: "dept1" },
+      { from: "branch1", to: "dept2" },
+    ],
+  },
+
+  // € Tenant Features Grid €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.featuresTitle",
+    id: "features",
+  },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
+      {
+        icon: "shield",
+        titleKey: "features.multiTenancy.featureIsolation",
+        descriptionKey: "features.multiTenancy.featureIsolationDesc",
+      },
+      {
+        icon: "settings",
+        titleKey: "features.multiTenancy.featureSettings",
+        descriptionKey: "features.multiTenancy.featureSettingsDesc",
+      },
+      {
+        icon: "image",
+        titleKey: "features.multiTenancy.featureBranding",
+        descriptionKey: "features.multiTenancy.featureBrandingDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "features.multiTenancy.featureUserScoping",
+        descriptionKey: "features.multiTenancy.featureUserScopingDesc",
+      },
+      {
+        icon: "key",
+        titleKey: "features.multiTenancy.featureRoleScoping",
+        descriptionKey: "features.multiTenancy.featureRoleScopingDesc",
+      },
+      {
+        icon: "database",
+        titleKey: "features.multiTenancy.featureDataScoping",
+        descriptionKey: "features.multiTenancy.featureDataScopingDesc",
+      },
+    ],
+  },
+
+  // € Tenant Settings
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.settingsTitle",
+    id: "tenant-settings",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.settingsIntro" },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Quota Settings",
+        language: "csharp",
+        code: `// TenantSettings.cs  Quota Group
+public int MaxAdmins { get; set; } = -1;       // -1 = unlimited
+public int MaxRoles { get; set; } = -1;
+public int MaxSubTenants { get; set; } = -1;`,
+      },
+      {
+        label: "Security Policy",
+        language: "csharp",
+        code: `// TenantSettings.cs  Per-Tenant Password Policy
+public int MinPasswordLength { get; set; } = 8;
+public bool RequireUppercase { get; set; } = true;
+public bool RequireNumber { get; set; } = true;
+public bool RequireSpecialCharacter { get; set; } = true;
+public int PasswordExpiryDays { get; set; } = 90;  // 0 = never
+
+// Lockout Policy
+public int LockoutThreshold { get; set; } = 5;     // Failed attempts
+public int LockoutDurationMinutes { get; set; } = 30;
+
+// Two-Factor Auth
+public bool Require2FA { get; set; } = false;`,
+      },
+      {
+        label: "Audit Config",
+        language: "csharp",
+        code: `// TenantSettings.cs  Audit Configuration
+public int AuditRetentionDays { get; set; } = 365;  // 0 = forever
+public bool AuditEnabled { get; set; } = true;`,
+      },
+      {
+        label: "Branding",
+        language: "csharp",
+        code: `// TenantSettings.cs  Custom Branding
+public string? LogoUrl { get; set; }           // Tenant logo path
+public string? PrimaryColor { get; set; }      // Hex color code
+public string? CompanyName { get; set; }       // Display name`,
+      },
+    ],
+  },
+
+  // € Auto-Role Creation €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.autoRoleTitle",
+    id: "auto-role",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.autoRoleIntro" },
+  {
+    type: "table",
+    headers: ["Auto-Created Role", "Properties", "Permissions"],
+    rows: [
+      [
+        "{CODE}_SUPER_ADMIN",
+        "IsTenantSuperAdmin=true, IsPermissionLocked=true, IsDeletable=false, Priority=0",
+        "All permissions granted to the tenant",
+      ],
+      [
+        "{CODE}_DEFAULT",
+        "IsDefaultRole=true, IsDeletable=true, Priority=100",
+        "Basic read-only permissions",
+      ],
+    ],
+  },
+
+  // € Cascade Delete €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.cascadeDeleteTitle",
+    id: "cascade-delete",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.cascadeDeleteIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.multiTenancy.cascadeDeleteIntro",
+  },
+
+  // € Permission Inheritance €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.permissionInheritanceTitle",
+    id: "permission-inheritance",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.permissionInheritanceIntro" },
+  {
+    type: "flowchart",
+    title: "Permission Inheritance Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "parent", label: "Parent Tenant (100 permissions)", type: "primary" },
+      { id: "grant", label: "Admin grants 60 permissions to child", type: "warning" },
+      { id: "child", label: "Child Tenant (max 60 permissions)", type: "info" },
+      { id: "grant2", label: "Child grants 30 to grandchild", type: "warning" },
+      { id: "grandchild", label: "Grandchild (max 30 permissions)", type: "success" },
+    ],
+    connections: [
+      { from: "parent", to: "grant" },
+      { from: "grant", to: "child" },
+      { from: "child", to: "grant2" },
+      { from: "grant2", to: "grandchild" },
+    ],
+  },
+
+  // € CRUD Endpoints €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.endpointsCrudTitle",
+    id: "crud-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants",
+        descriptionKey: "Paginated list with search, sorting",
+        auth: "tenants.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}",
+        descriptionKey: "Full tenant detail with settings",
+        auth: "tenants.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/tenants",
+        descriptionKey: "Create tenant (auto-creates 2 roles)",
+        auth: "tenants.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenants/{id}",
+        descriptionKey: "Update name, code, description",
+        auth: "tenants.edit",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/tenants/{id}",
+        descriptionKey: "Soft-delete (cascade requires tenants.cascade_delete)",
+        auth: "tenants.delete",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenants/{id}/logo",
+        descriptionKey: "Upload tenant branding logo",
+        auth: "tenants.edit",
+      },
+    ],
+  },
+
+  // € Hierarchy Endpoints
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.endpointsHierarchyTitle",
+    id: "hierarchy-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants/hierarchy",
+        descriptionKey: "Full tree structure with levels",
+        auth: "tenants.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/my-children",
+        descriptionKey: "Direct children of current user's tenant",
+        auth: "tenants.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/my-tenant-and-children",
+        descriptionKey: "Current tenant + children (for admin transfer dialog)",
+        auth: "JWT",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/children",
+        descriptionKey: "Sub-tenants tab drill-down",
+        auth: "tenants.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/descendant-count",
+        descriptionKey: "Cascade delete warning count",
+        auth: "tenants.delete",
+      },
+    ],
+  },
+
+  // € Settings Endpoints €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.endpointsSettingsTitle",
+    id: "settings-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants/my-settings",
+        descriptionKey: "Get current user's tenant settings",
+        auth: "JWT",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenants/my-settings",
+        descriptionKey: "Update own tenant settings",
+        auth: "tenants.settings",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/settings",
+        descriptionKey: "Admin view of any tenant's settings",
+        auth: "tenants.view",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenants/{id}/settings",
+        descriptionKey: "Admin update of any tenant's settings",
+        auth: "tenants.settings",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/stats",
+        descriptionKey: "Dashboard KPI statistics per tenant",
+        auth: "tenants.view",
+      },
+    ],
+  },
+
+  // € Permission Endpoints €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.endpointsPermissionsTitle",
+    id: "permission-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants/creation-permissions",
+        descriptionKey: "Available permissions for new tenant (filtered by parent)",
+        auth: "tenants.create",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/permissions",
+        descriptionKey: "Permission pool for role assignment",
+        auth: "tenants.view",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenants/{id}/permissions",
+        descriptionKey: "Update tenant's permission pool",
+        auth: "tenants.settings",
+      },
+    ],
+  },
+
+  // € Drill-Down Endpoints €
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.endpointsDrilldownTitle",
+    id: "drilldown-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/admins",
+        descriptionKey: "List admins in this tenant",
+        auth: "tenants.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/roles",
+        descriptionKey: "List roles in this tenant",
+        auth: "tenants.view",
+      },
+    ],
+  },
+
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.multiTenancy.logoTip",
+  },
+
+  // ═ Domain Management ═
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiTenancy.domainTitle",
+    id: "domain-management",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.domainIntro" },
+
+  // Domain Types
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.multiTenancy.domainTypesTitle",
+    id: "domain-types",
+  },
+  {
+    type: "table",
+    headers: ["Type", "Created By", "Example", "Deletable", "Auto-Verified"],
+    rows: [
+      ["auto", "System (on tenant creation)", "{code}.{PlatformDomain}", "No", "Yes"],
+      ["custom", "Admin (via API/UI)", "app.acme.com", "Yes", "No — requires DNS verification"],
+    ],
+  },
+
+  // Architecture Flow
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.multiTenancy.domainArchTitle",
+    id: "domain-architecture",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.domainArchIntro" },
+  {
+    type: "flowchart",
+    title: "Domain Resolution Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "req", label: "Incoming Request", type: "default" },
+      { id: "host", label: "Extract Host Header / ?domain=", type: "primary" },
+      { id: "lookup", label: "Lookup TenantDomain by FQDN", type: "warning" },
+      { id: "found", label: "Domain Found & Verified?", type: "info" },
+      { id: "resolve", label: "Resolve Tenant → Set TenantId", type: "success" },
+      { id: "fallback", label: "Fallback: ?code=CODE", type: "danger" },
+    ],
+    connections: [
+      { from: "req", to: "host" },
+      { from: "host", to: "lookup" },
+      { from: "lookup", to: "found" },
+      { from: "found", to: "resolve", label: "Yes" },
+      { from: "found", to: "fallback", label: "No" },
+    ],
+  },
+
+  // DNS Verification
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.multiTenancy.domainDnsTitle",
+    id: "dns-verification",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.domainDnsIntro" },
+  {
+    type: "flowchart",
+    title: "Custom Domain Verification Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "add", label: "Admin adds custom domain", type: "default" },
+      { id: "token", label: "System generates verification token", type: "primary" },
+      { id: "dns", label: "Admin configures DNS records", type: "warning" },
+      { id: "cname", label: "CNAME: domain → {CnameTarget}", type: "info" },
+      { id: "txt", label: "TXT: {VerificationPrefix}.{domain}", type: "info" },
+      { id: "verify", label: "Click 'Verify' → DNS lookup", type: "success" },
+    ],
+    connections: [
+      { from: "add", to: "token" },
+      { from: "token", to: "dns" },
+      { from: "dns", to: "cname" },
+      { from: "dns", to: "txt" },
+      { from: "cname", to: "verify" },
+      { from: "txt", to: "verify" },
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.multiTenancy.domainDnsNote",
+  },
+
+  // Configurable Platform Domain
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.multiTenancy.domainConfigTitle",
+    id: "configurable-domain",
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.domainConfigIntro" },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json — Tenancy Section",
+    code: `// All domain-related values are configurable — zero hardcoded strings.
+// Change these when rebranding or deploying to a different domain.
+{
+  "Tenancy": {
+    "PlatformDomain": "scripe.com",       // Auto-subdomains: {code}.scripe.com
+    "CnameTarget": "app.scripe.com",      // DNS instruction: CNAME → this
+    "VerificationPrefix": "_uis-verify",// TXT record: _uis-verify.{domain}
+    "TokenPrefix": "nxr_"                 // Token format: nxr_base64...
+  }
+}`,
+    highlightLines: [4, 5, 6, 7],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TenancySettings.cs — Configuration POCO",
+    code: `public sealed class TenancySettings
+{
+    public const string SectionName = "Tenancy";
+
+    public string PlatformDomain { get; init; } = "scripe.com";
+    public string CnameTarget { get; init; } = "app.scripe.com";
+    public string VerificationPrefix { get; init; } = "_uis-verify";
+    public string TokenPrefix { get; init; } = "nxr_";
+}`,
+    highlightLines: [5, 6, 7, 8],
+  },
+  {
+    type: "table",
+    headers: ["Setting", "Purpose", "Default", "Example Override"],
+    rows: [
+      [
+        "PlatformDomain",
+        "Base domain for auto-generated tenant subdomains",
+        "scripe.com",
+        "myapp.io",
+      ],
+      ["CnameTarget", "Target shown in DNS CNAME instructions", "app.scripe.com", "app.myapp.io"],
+      [
+        "VerificationPrefix",
+        "TXT record hostname prefix for domain ownership verification",
+        "_uis-verify",
+        "_myapp-verify",
+      ],
+      ["TokenPrefix", "Prefix for verification token strings", "nxr_", "ma_"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.multiTenancy.domainConfigTip",
+  },
+
+  // Domain API Endpoints
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.multiTenancy.domainEndpointsTitle",
+    id: "domain-endpoints",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenants/{id}/domains",
+        descriptionKey: "List all domains + cnameTarget + verificationPrefix",
+        auth: "tenants.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/tenants/{id}/domains",
+        descriptionKey: "Add custom domain (requires feature: Tenancy.CustomDomain.Enabled)",
+        auth: "tenants.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/tenants/{id}/domains/{domainId}",
+        descriptionKey: "Remove custom domain (auto domains cannot be removed)",
+        auth: "tenants.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/tenants/{id}/domains/{domainId}/verify",
+        descriptionKey: "Trigger DNS verification for a custom domain",
+        auth: "tenants.update",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenants/{id}/domains/{domainId}/set-primary",
+        descriptionKey: "Set a domain as the tenant's primary domain",
+        auth: "tenants.update",
+      },
+    ],
+  },
+];
 
 registerPage({
   slug: "features/multi-tenancy",
   titleKey: "features.multiTenancy.title",
+  descriptionKey: "features.multiTenancy.description",
   category: "features",
   order: 2,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    req[\"Incoming Request\"]\n    jwt([\"Extract TenantId from JWT\"])\n    filter{{\"EF Core Global Query Filter\"}}\n    db([\"SELECT * WHERE TenantId = @tid\"])\n    req --> jwt\n    jwt --> filter\n    filter --> db",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_4_hdr_0",
-      "features.multiTenancy.section_4_hdr_1",
-      "features.multiTenancy.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_4_cell_0_0",
-        "features.multiTenancy.section_4_cell_0_1",
-        "features.multiTenancy.section_4_cell_0_2"
-      ],
-      [
-        "features.multiTenancy.section_4_cell_1_0",
-        "features.multiTenancy.section_4_cell_1_1",
-        "features.multiTenancy.section_4_cell_1_2"
-      ],
-      [
-        "features.multiTenancy.section_4_cell_2_0",
-        "features.multiTenancy.section_4_cell_2_1",
-        "features.multiTenancy.section_4_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_6_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_7_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class Tenant : AuditableEntity<Guid>\n{\n    [Required] [MaxLength(200)]\n    public string Name { get; set; } = null!;\n\n    [Required] [MaxLength(50)]\n    public string Code { get; set; } = null!;\n\n    public Guid? ParentTenantId { get; set; }     // Self-ref FK †’ tree\n\n    public int HierarchyLevel { get; set; }        // 0 = root, 1 = child, 2 = grandchild...\n\n    [MaxLength(500)]\n    public string HierarchyPath { get; set; } = \"/\"; // Materialized path: \"/root-id/child-id/\"\n\n    // Navigation\n    public virtual Tenant? ParentTenant { get; set; }\n    public virtual ICollection<Tenant> ChildTenants { get; set; } = [];\n    public virtual TenantSettings? Settings { get; set; }\n}",
-    "filename": ""
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    root[\"ACME Corp (Level 0)\"]\n    branch1{{\"Cairo Branch (Level 1)\"}}\n    branch2{{\"Dubai Branch (Level 1)\"}}\n    dept1([\"HR Department (Level 2)\"])\n    dept2([\"Finance Dept (Level 2)\"])\n    root -->|\"ParentTenantId\"| branch1\n    root -->|\"ParentTenantId\"| branch2\n    branch1 --> dept1\n    branch1 --> dept2",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_14_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_20_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_24_content"
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "features.multiTenancy.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// TenantSettings.cs  Quota Group\npublic int MaxAdmins { get; set; } = -1;       // -1 = unlimited\npublic int MaxRoles { get; set; } = -1;\npublic int MaxSubTenants { get; set; } = -1;",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "features.multiTenancy.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// TenantSettings.cs  Per-Tenant Password Policy\npublic int MinPasswordLength { get; set; } = 8;\npublic bool RequireUppercase { get; set; } = true;\npublic bool RequireNumber { get; set; } = true;\npublic bool RequireSpecialCharacter { get; set; } = true;\npublic int PasswordExpiryDays { get; set; } = 90;  // 0 = never\n\n// Lockout Policy\npublic int LockoutThreshold { get; set; } = 5;     // Failed attempts\npublic int LockoutDurationMinutes { get; set; } = 30;\n\n// Two-Factor Auth\npublic bool Require2FA { get; set; } = false;",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "features.multiTenancy.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// TenantSettings.cs  Audit Configuration\npublic int AuditRetentionDays { get; set; } = 365;  // 0 = forever\npublic bool AuditEnabled { get; set; } = true;",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "features.multiTenancy.section_31_title",
-    "id": "sec_31"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// TenantSettings.cs  Custom Branding\npublic string? LogoUrl { get; set; }           // Tenant logo path\npublic string? PrimaryColor { get; set; }      // Hex color code\npublic string? CompanyName { get; set; }       // Display name",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_33_title",
-    "id": "sec_33"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_34_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_35_hdr_0",
-      "features.multiTenancy.section_35_hdr_1",
-      "features.multiTenancy.section_35_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_35_cell_0_0",
-        "features.multiTenancy.section_35_cell_0_1",
-        "features.multiTenancy.section_35_cell_0_2"
-      ],
-      [
-        "features.multiTenancy.section_35_cell_1_0",
-        "features.multiTenancy.section_35_cell_1_1",
-        "features.multiTenancy.section_35_cell_1_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_36_title",
-    "id": "sec_36"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_37_content"
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "features.multiTenancy.section_38_title",
-    "contentKey": "features.multiTenancy.section_38_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_39_title",
-    "id": "sec_39"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_40_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    parent([\"Parent Tenant (100 permissions)\"])\n    grant{{\"Admin grants 60 permissions to child\"}}\n    child([\"Child Tenant (max 60 permissions)\"])\n    grant2{{\"Child grants 30 to grandchild\"}}\n    grandchild([\"Grandchild (max 30 permissions)\"])\n    parent --> grant\n    grant --> child\n    child --> grant2\n    grant2 --> grandchild",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_42_title",
-    "id": "sec_42"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_43_hdr_0",
-      "features.multiTenancy.section_43_hdr_1",
-      "features.multiTenancy.section_43_hdr_2",
-      "features.multiTenancy.section_43_hdr_3",
-      "features.multiTenancy.section_43_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_43_cell_0_0",
-        "features.multiTenancy.section_43_cell_0_1",
-        "features.multiTenancy.section_43_cell_0_2",
-        "features.multiTenancy.section_43_cell_0_3",
-        "features.multiTenancy.section_43_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_43_cell_1_0",
-        "features.multiTenancy.section_43_cell_1_1",
-        "features.multiTenancy.section_43_cell_1_2",
-        "features.multiTenancy.section_43_cell_1_3",
-        "features.multiTenancy.section_43_cell_1_4"
-      ],
-      [
-        "features.multiTenancy.section_43_cell_2_0",
-        "features.multiTenancy.section_43_cell_2_1",
-        "features.multiTenancy.section_43_cell_2_2",
-        "features.multiTenancy.section_43_cell_2_3",
-        "features.multiTenancy.section_43_cell_2_4"
-      ],
-      [
-        "features.multiTenancy.section_43_cell_3_0",
-        "features.multiTenancy.section_43_cell_3_1",
-        "features.multiTenancy.section_43_cell_3_2",
-        "features.multiTenancy.section_43_cell_3_3",
-        "features.multiTenancy.section_43_cell_3_4"
-      ],
-      [
-        "features.multiTenancy.section_43_cell_4_0",
-        "features.multiTenancy.section_43_cell_4_1",
-        "features.multiTenancy.section_43_cell_4_2",
-        "features.multiTenancy.section_43_cell_4_3",
-        "features.multiTenancy.section_43_cell_4_4"
-      ],
-      [
-        "features.multiTenancy.section_43_cell_5_0",
-        "features.multiTenancy.section_43_cell_5_1",
-        "features.multiTenancy.section_43_cell_5_2",
-        "features.multiTenancy.section_43_cell_5_3",
-        "features.multiTenancy.section_43_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_44_title",
-    "id": "sec_44"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_45_hdr_0",
-      "features.multiTenancy.section_45_hdr_1",
-      "features.multiTenancy.section_45_hdr_2",
-      "features.multiTenancy.section_45_hdr_3",
-      "features.multiTenancy.section_45_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_45_cell_0_0",
-        "features.multiTenancy.section_45_cell_0_1",
-        "features.multiTenancy.section_45_cell_0_2",
-        "features.multiTenancy.section_45_cell_0_3",
-        "features.multiTenancy.section_45_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_45_cell_1_0",
-        "features.multiTenancy.section_45_cell_1_1",
-        "features.multiTenancy.section_45_cell_1_2",
-        "features.multiTenancy.section_45_cell_1_3",
-        "features.multiTenancy.section_45_cell_1_4"
-      ],
-      [
-        "features.multiTenancy.section_45_cell_2_0",
-        "features.multiTenancy.section_45_cell_2_1",
-        "features.multiTenancy.section_45_cell_2_2",
-        "features.multiTenancy.section_45_cell_2_3",
-        "features.multiTenancy.section_45_cell_2_4"
-      ],
-      [
-        "features.multiTenancy.section_45_cell_3_0",
-        "features.multiTenancy.section_45_cell_3_1",
-        "features.multiTenancy.section_45_cell_3_2",
-        "features.multiTenancy.section_45_cell_3_3",
-        "features.multiTenancy.section_45_cell_3_4"
-      ],
-      [
-        "features.multiTenancy.section_45_cell_4_0",
-        "features.multiTenancy.section_45_cell_4_1",
-        "features.multiTenancy.section_45_cell_4_2",
-        "features.multiTenancy.section_45_cell_4_3",
-        "features.multiTenancy.section_45_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_46_title",
-    "id": "sec_46"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_47_hdr_0",
-      "features.multiTenancy.section_47_hdr_1",
-      "features.multiTenancy.section_47_hdr_2",
-      "features.multiTenancy.section_47_hdr_3",
-      "features.multiTenancy.section_47_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_47_cell_0_0",
-        "features.multiTenancy.section_47_cell_0_1",
-        "features.multiTenancy.section_47_cell_0_2",
-        "features.multiTenancy.section_47_cell_0_3",
-        "features.multiTenancy.section_47_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_47_cell_1_0",
-        "features.multiTenancy.section_47_cell_1_1",
-        "features.multiTenancy.section_47_cell_1_2",
-        "features.multiTenancy.section_47_cell_1_3",
-        "features.multiTenancy.section_47_cell_1_4"
-      ],
-      [
-        "features.multiTenancy.section_47_cell_2_0",
-        "features.multiTenancy.section_47_cell_2_1",
-        "features.multiTenancy.section_47_cell_2_2",
-        "features.multiTenancy.section_47_cell_2_3",
-        "features.multiTenancy.section_47_cell_2_4"
-      ],
-      [
-        "features.multiTenancy.section_47_cell_3_0",
-        "features.multiTenancy.section_47_cell_3_1",
-        "features.multiTenancy.section_47_cell_3_2",
-        "features.multiTenancy.section_47_cell_3_3",
-        "features.multiTenancy.section_47_cell_3_4"
-      ],
-      [
-        "features.multiTenancy.section_47_cell_4_0",
-        "features.multiTenancy.section_47_cell_4_1",
-        "features.multiTenancy.section_47_cell_4_2",
-        "features.multiTenancy.section_47_cell_4_3",
-        "features.multiTenancy.section_47_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_48_title",
-    "id": "sec_48"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_49_hdr_0",
-      "features.multiTenancy.section_49_hdr_1",
-      "features.multiTenancy.section_49_hdr_2",
-      "features.multiTenancy.section_49_hdr_3",
-      "features.multiTenancy.section_49_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_49_cell_0_0",
-        "features.multiTenancy.section_49_cell_0_1",
-        "features.multiTenancy.section_49_cell_0_2",
-        "features.multiTenancy.section_49_cell_0_3",
-        "features.multiTenancy.section_49_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_49_cell_1_0",
-        "features.multiTenancy.section_49_cell_1_1",
-        "features.multiTenancy.section_49_cell_1_2",
-        "features.multiTenancy.section_49_cell_1_3",
-        "features.multiTenancy.section_49_cell_1_4"
-      ],
-      [
-        "features.multiTenancy.section_49_cell_2_0",
-        "features.multiTenancy.section_49_cell_2_1",
-        "features.multiTenancy.section_49_cell_2_2",
-        "features.multiTenancy.section_49_cell_2_3",
-        "features.multiTenancy.section_49_cell_2_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_50_title",
-    "id": "sec_50"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_51_hdr_0",
-      "features.multiTenancy.section_51_hdr_1",
-      "features.multiTenancy.section_51_hdr_2",
-      "features.multiTenancy.section_51_hdr_3",
-      "features.multiTenancy.section_51_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_51_cell_0_0",
-        "features.multiTenancy.section_51_cell_0_1",
-        "features.multiTenancy.section_51_cell_0_2",
-        "features.multiTenancy.section_51_cell_0_3",
-        "features.multiTenancy.section_51_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_51_cell_1_0",
-        "features.multiTenancy.section_51_cell_1_1",
-        "features.multiTenancy.section_51_cell_1_2",
-        "features.multiTenancy.section_51_cell_1_3",
-        "features.multiTenancy.section_51_cell_1_4"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.multiTenancy.section_52_title",
-    "contentKey": "features.multiTenancy.section_52_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_53_title",
-    "id": "sec_53"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_54_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_55_title",
-    "id": "sec_55"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_56_hdr_0",
-      "features.multiTenancy.section_56_hdr_1",
-      "features.multiTenancy.section_56_hdr_2",
-      "features.multiTenancy.section_56_hdr_3",
-      "features.multiTenancy.section_56_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_56_cell_0_0",
-        "features.multiTenancy.section_56_cell_0_1",
-        "features.multiTenancy.section_56_cell_0_2",
-        "features.multiTenancy.section_56_cell_0_3",
-        "features.multiTenancy.section_56_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_56_cell_1_0",
-        "features.multiTenancy.section_56_cell_1_1",
-        "features.multiTenancy.section_56_cell_1_2",
-        "features.multiTenancy.section_56_cell_1_3",
-        "features.multiTenancy.section_56_cell_1_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_57_title",
-    "id": "sec_57"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_58_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    req[\"Incoming Request\"]\n    host([\"Extract Host Header / ?domain=\"])\n    lookup{{\"Lookup TenantDomain by FQDN\"}}\n    found([\"Domain Found & Verified?\"])\n    resolve([\"Resolve Tenant → Set TenantId\"])\n    fallback[\"Fallback: ?code=CODE\"]\n    req --> host\n    host --> lookup\n    lookup --> found\n    found -->|\"Yes\"| resolve\n    found -->|\"No\"| fallback",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_60_title",
-    "id": "sec_60"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_61_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    add[\"Admin adds custom domain\"]\n    token([\"System generates verification token\"])\n    dns{{\"Admin configures DNS records\"}}\n    cname([\"CNAME: domain → {CnameTarget}\"])\n    txt([\"TXT: {VerificationPrefix}.{domain}\"])\n    verify([\"Click 'Verify' → DNS lookup\"])\n    add --> token\n    token --> dns\n    dns --> cname\n    dns --> txt\n    cname --> verify\n    txt --> verify",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.multiTenancy.section_63_title",
-    "contentKey": "features.multiTenancy.section_63_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_64_title",
-    "id": "sec_64"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_65_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_66_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "// All domain-related values are configurable — zero hardcoded strings.\n// Change these when rebranding or deploying to a different domain.\n{\n  \"Tenancy\": {\n    \"PlatformDomain\": \"scripe.com\",       // Auto-subdomains: {code}.scripe.com\n    \"CnameTarget\": \"app.scripe.com\",      // DNS instruction: CNAME → this\n    \"VerificationPrefix\": \"_scr-verify\",// TXT record: _scr-verify.{domain}\n    \"TokenPrefix\": \"nxr_\"                 // Token format: nxr_base64...\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.multiTenancy.section_68_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public sealed class TenancySettings\n{\n    public const string SectionName = \"Tenancy\";\n\n    public string PlatformDomain { get; init; } = \"scripe.com\";\n    public string CnameTarget { get; init; } = \"app.scripe.com\";\n    public string VerificationPrefix { get; init; } = \"_scr-verify\";\n    public string TokenPrefix { get; init; } = \"nxr_\";\n}",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_70_hdr_0",
-      "features.multiTenancy.section_70_hdr_1",
-      "features.multiTenancy.section_70_hdr_2",
-      "features.multiTenancy.section_70_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_70_cell_0_0",
-        "features.multiTenancy.section_70_cell_0_1",
-        "features.multiTenancy.section_70_cell_0_2",
-        "features.multiTenancy.section_70_cell_0_3"
-      ],
-      [
-        "features.multiTenancy.section_70_cell_1_0",
-        "features.multiTenancy.section_70_cell_1_1",
-        "features.multiTenancy.section_70_cell_1_2",
-        "features.multiTenancy.section_70_cell_1_3"
-      ],
-      [
-        "features.multiTenancy.section_70_cell_2_0",
-        "features.multiTenancy.section_70_cell_2_1",
-        "features.multiTenancy.section_70_cell_2_2",
-        "features.multiTenancy.section_70_cell_2_3"
-      ],
-      [
-        "features.multiTenancy.section_70_cell_3_0",
-        "features.multiTenancy.section_70_cell_3_1",
-        "features.multiTenancy.section_70_cell_3_2",
-        "features.multiTenancy.section_70_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.multiTenancy.section_71_title",
-    "contentKey": "features.multiTenancy.section_71_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.multiTenancy.section_72_title",
-    "id": "sec_72"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.multiTenancy.section_73_hdr_0",
-      "features.multiTenancy.section_73_hdr_1",
-      "features.multiTenancy.section_73_hdr_2",
-      "features.multiTenancy.section_73_hdr_3",
-      "features.multiTenancy.section_73_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.multiTenancy.section_73_cell_0_0",
-        "features.multiTenancy.section_73_cell_0_1",
-        "features.multiTenancy.section_73_cell_0_2",
-        "features.multiTenancy.section_73_cell_0_3",
-        "features.multiTenancy.section_73_cell_0_4"
-      ],
-      [
-        "features.multiTenancy.section_73_cell_1_0",
-        "features.multiTenancy.section_73_cell_1_1",
-        "features.multiTenancy.section_73_cell_1_2",
-        "features.multiTenancy.section_73_cell_1_3",
-        "features.multiTenancy.section_73_cell_1_4"
-      ],
-      [
-        "features.multiTenancy.section_73_cell_2_0",
-        "features.multiTenancy.section_73_cell_2_1",
-        "features.multiTenancy.section_73_cell_2_2",
-        "features.multiTenancy.section_73_cell_2_3",
-        "features.multiTenancy.section_73_cell_2_4"
-      ],
-      [
-        "features.multiTenancy.section_73_cell_3_0",
-        "features.multiTenancy.section_73_cell_3_1",
-        "features.multiTenancy.section_73_cell_3_2",
-        "features.multiTenancy.section_73_cell_3_3",
-        "features.multiTenancy.section_73_cell_3_4"
-      ],
-      [
-        "features.multiTenancy.section_73_cell_4_0",
-        "features.multiTenancy.section_73_cell_4_1",
-        "features.multiTenancy.section_73_cell_4_2",
-        "features.multiTenancy.section_73_cell_4_3",
-        "features.multiTenancy.section_73_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.multiTenancy.section_74_title",
-    "id": "sec_74"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.multiTenancy.section_75_item_0",
-      "features.multiTenancy.section_75_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "features/authentication",
-  "features/role-permissions"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["features/authentication", "features/role-permissions"],
+  lastUpdated: "2026-03-16",
 });

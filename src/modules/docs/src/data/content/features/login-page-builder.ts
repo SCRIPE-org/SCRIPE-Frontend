@@ -1,763 +1,503 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "features.loginPageBuilder.intro" },
+
+  // ─── 3 Canvas Modes ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.modesTitle",
+    id: "canvas-modes",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.modesIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.modeFreeformTitle",
+    id: "freeform",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.modeFreeformIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.modeGridTitle",
+    id: "grid-mode",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.modeGridIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.modeBuilderTitle",
+    id: "builder-mode",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.modeBuilderIntro" },
+  {
+    type: "table",
+    headers: ["Mode", "Positioning", "Grid", "Best For"],
+    rows: [
+      ["Freeform", "Absolute (x, y)", "None", "Pixel-perfect creative layouts"],
+      ["Grid", "Row / Column based", "12-column CSS grid", "Responsive enterprise layouts"],
+      ["Builder", "Section-based", "Auto-spaced blocks", "Quick structured assembly"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.loginPageBuilder.modesNote",
+  },
+
+  // ─── 14 Component Types ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.paletteTitle",
+    id: "palette",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.paletteIntro" },
+  {
+    type: "table",
+    headers: ["Component", "Type", "Grid Span", "Key Properties"],
+    rows: [
+      ["Logo", "logo", "2-4", "src, width, height, alignment"],
+      ["Heading", "heading", "4-12", "text, level (h1-h6), color, weight"],
+      ["Body Text", "text", "4-12", "content, fontSize, lineHeight"],
+      ["Login Form", "form", "4-8", "fields, submitLabel, forgotLink"],
+      ["Social Login", "social", "4-8", "providers[], layout, separator"],
+      ["Image", "image", "2-12", "src, alt, objectFit, borderRadius"],
+      ["Button", "button", "2-6", "label, variant, icon, href"],
+      ["Card", "card", "4-12", "children[], padding, shadow"],
+      ["Divider", "divider", "4-12", "style (line/dotted/gradient)"],
+      ["Spacer", "spacer", "12", "height (px)"],
+      ["Badge", "badge", "2-4", "text, variant, icon"],
+      ["Icon", "icon", "1-2", "name, size, color"],
+      ["Footer", "footer", "12", "links[], copyright, alignment"],
+      ["Terms Link", "terms", "4-8", "tosUrl, privacyUrl, text"],
+    ],
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.compLogo" },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.compHeading" },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.compForm" },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.compSocialLogin" },
+
+  // ─── 12-Column Grid System ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.gridTitle",
+    id: "grid-system",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.gridIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.gridPropsTitle",
+    id: "grid-props",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.gridPropsIntro" },
+  {
+    type: "code",
+    language: "css",
+    filename: "Grid System Implementation",
+    code: `.builder-canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--builder-gap, 16px);
+  padding: var(--builder-padding, 24px);
+}
+
+.grid-item[data-span="4"]  { grid-column: span 4; }
+.grid-item[data-span="6"]  { grid-column: span 6; }
+.grid-item[data-span="12"] { grid-column: span 12; }
+
+@media (max-width: 768px) {
+  .builder-canvas-grid { grid-template-columns: repeat(4, 1fr); }
+  .grid-item { grid-column: span 4 !important; }
+}
+
+@media (max-width: 480px) {
+  .builder-canvas-grid { grid-template-columns: 1fr; }
+}`,
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.gridResponsiveTitle",
+    id: "breakpoints",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.gridResponsiveIntro" },
+  {
+    type: "table",
+    headers: ["Breakpoint", "Screen", "Columns", "Behavior"],
+    rows: [
+      ["Desktop (lg)", "≥ 1024px", "12", "Full grid — all spans honored"],
+      ["Tablet (md)", "768-1023px", "4", "Components collapse to 4-column spans"],
+      ["Mobile (sm)", "< 480px", "1", "Single column — all components full-width"],
+    ],
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.gridGapTitle",
+    id: "gaps",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.gridGapIntro" },
+
+  // ─── Drag & Drop Architecture ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.dndTitle",
+    id: "drag-drop",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dndIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.dndPaletteTitle",
+    id: "palette-flow",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dndPaletteIntro" },
+  {
+    type: "flowchart",
+    title: "Drag & Drop Component Lifecycle",
+    direction: "vertical",
+    nodes: [
+      { id: "palette2", label: "Component Palette (14 types)", type: "default" },
+      { id: "drag", label: "Drag Start (@dnd-kit/core)", type: "info" },
+      { id: "canvas", label: "Canvas Drop Zone (collision detection)", type: "warning" },
+      { id: "create", label: "Create Component (defaults + auto-ID)", type: "success" },
+      { id: "select", label: "Select Component (Properties Panel)", type: "danger" },
+    ],
+    connections: [
+      { from: "palette2", to: "drag" },
+      { from: "drag", to: "canvas" },
+      { from: "canvas", to: "create" },
+      { from: "create", to: "select" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.dndReorderTitle",
+    id: "reorder",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dndReorderIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.dndSelectTitle",
+    id: "selection",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dndSelectIntro" },
+
+  // ─── Properties Panel ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.propsTitle",
+    id: "properties",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.propsIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.propsContentTitle",
+    id: "content-props",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.propsContentIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.propsStyleTitle",
+    id: "style-props",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.propsStyleIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.propsGridTitle",
+    id: "grid-props-detail",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.propsGridIntro" },
+  {
+    type: "table",
+    headers: ["Property Type", "UI Control", "Example"],
+    rows: [
+      ["text", "Input field", "Heading text, button label"],
+      ["number", "Slider / number input", "Width, height, padding"],
+      ["color", "Color picker", "Text color, background"],
+      ["select", "Dropdown", "Text alignment, font weight"],
+      ["boolean", "Toggle switch", "Show shadow, center align"],
+      ["image", "File picker / URL", "Logo src, background image"],
+      ["array", "List editor", "Social providers, footer links"],
+    ],
+  },
+
+  // ─── State Management ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.stateTitle",
+    id: "state",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.stateIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.stateComponentTitle",
+    id: "component-schema",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.stateComponentIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Builder Component State",
+    code: `interface BuilderComponent {
+  id: string;          // UUID v4
+  type: ComponentType; // 'logo' | 'heading' | 'form' | ...
+  props: Record<string, unknown>;
+  position: { x: number; y: number };
+  gridPosition: { colSpan: number; rowSpan: number; colStart: number; rowStart: number };
+  section: 'header' | 'body' | 'footer';
+  order: number;
+  responsive: { sm: GridOverride; md: GridOverride };
+}`,
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.stateUndoTitle",
+    id: "undo-redo",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.stateUndoIntro" },
+
+  // ─── Serialization ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.serializationTitle",
+    id: "serialization",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.serializationIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.serializationSchemaTitle",
+    id: "json-schema",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.serializationSchemaIntro" },
+  {
+    type: "code",
+    language: "json",
+    filename: "Builder Canvas JSON",
+    code: `{
+  "canvasMode": "grid",
+  "gridConfig": { "columns": 12, "columnGap": 16, "rowGap": 16 },
+  "components": [
+    {
+      "id": "comp-1",
+      "type": "logo",
+      "props": { "width": 120, "alignment": "center" },
+      "gridPosition": { "colSpan": 4, "colStart": 4, "rowStart": 0 }
+    },
+    {
+      "id": "comp-2",
+      "type": "heading",
+      "props": { "text": "Welcome", "level": "h1" },
+      "gridPosition": { "colSpan": 8, "colStart": 2, "rowStart": 1 }
+    }
+  ]
+}`,
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.serializationSizeTitle",
+    id: "size-optimization",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.serializationSizeIntro" },
+
+  // ─── Preview Sync ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.previewTitle",
+    id: "preview-sync",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.previewIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.previewSyncTitle",
+    id: "two-way-sync",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.previewSyncIntro" },
+
+  // ─── Security ─────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.securityTitle",
+    id: "security",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.securityIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.securitySanitizeTitle",
+    id: "sanitization",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.securitySanitizeIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.securityIframeTitle",
+    id: "iframe-sandbox",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.securityIframeIntro" },
+  {
+    type: "table",
+    headers: ["Threat", "Mitigation"],
+    rows: [
+      ["XSS via text props", "DOMPurify sanitization — all HTML stripped, plain text only"],
+      [
+        "Script injection in URLs",
+        "Protocol whitelist: https://, http://, / only. Block javascript:, data:",
+      ],
+      ["Oversized canvas", "Max 50 components per canvas. Max 10KB serialized JSON"],
+      ["Cross-tenant access", "Canvas state in TenantSettings.DraftBrandingJson — tenant-scoped"],
+      ["Concurrent edits", "Optimistic concurrency (SettingsVersion). 409 Conflict on stale write"],
+    ],
+  },
+
+  // ─── Dashboard Theming ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.dashboardTitle",
+    id: "dashboard-theming",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dashboardIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.dashboardLayoutsTitle",
+    id: "layouts",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dashboardLayoutsIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.dashboardColorsTitle",
+    id: "colors",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dashboardColorsIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.dashboardStorageTitle",
+    id: "dashboard-storage",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.dashboardStorageIntro" },
+  {
+    type: "table",
+    headers: ["Setting", "Options", "Storage"],
+    rows: [
+      ["Layout Template", "8 templates", "dashboardThemeJson.layoutTemplate"],
+      ["Color Theme", "12 palettes", "dashboardThemeJson.colorTheme"],
+      ["Theme Mode", "Light / Dark / System", "dashboardThemeJson.theme"],
+      ["Language", "EN / AR (RTL auto)", "dashboardThemeJson.language"],
+      ["Sidebar", "Expanded / Collapsed", "dashboardThemeJson.sidebarCollapsed"],
+    ],
+  },
+
+  // ─── Bundle Marketplace ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.bundleTitle",
+    id: "bundles",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.bundleIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.bundleComponentsTitle",
+    id: "bundle-components",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.bundleComponentsIntro" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.loginPageBuilder.bundleTypesTitle",
+    id: "bundle-types",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.bundleTypesIntro" },
+  {
+    type: "table",
+    headers: ["Bundle Type", "Includes", "Use Case"],
+    rows: [
+      ["Login", "Login theme + builder canvas + per-page overrides", "Auth-only branding"],
+      ["Dashboard", "Dashboard layout + color theme + mode", "Admin panel theming"],
+      [
+        "Complete",
+        "Everything: login + builder + dashboard + accessibility",
+        "Full platform rebrand",
+      ],
+    ],
+  },
+
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginPageBuilder.archTitle",
+    id: "module-structure",
+  },
+  { type: "paragraph", contentKey: "features.loginPageBuilder.archIntro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Login Page Builder Components",
+    code: `src/modules/system/customization/src/presentation/
+├── components/
+│   ├── Builder/
+│   │   ├── BuilderCanvas.tsx          # Main canvas — mode switching
+│   │   ├── ComponentPalette.tsx        # 14-type palette strip
+│   │   ├── PropertiesPanel.tsx         # Selected component config
+│   │   ├── GridCanvas.tsx             # 12-column grid renderer
+│   │   ├── FreeformCanvas.tsx         # Absolute-position renderer
+│   │   ├── BuilderModeCanvas.tsx      # Section-based renderer
+│   │   ├── GridOverlay.tsx            # Grid visualization
+│   │   └── BuilderToolbar.tsx         # Mode switcher, undo/redo, zoom
+│   ├── DashboardBuilderTab.tsx         # Dashboard theming controls (61 settings)
+│   ├── BundleGalleryTab.tsx           # Bundle marketplace
+│   └── ThemeMarketplacePanel.tsx      # Theme quick-apply
+├── hooks/
+│   └── useBuilderState.ts             # Builder state management
+└── viewmodels/
+    └── useStudioViewModel.ts          # Master studio state`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.loginPageBuilder.archTip",
+  },
+];
 
 registerPage({
   slug: "features/login-page-builder",
   titleKey: "features.loginPageBuilder.title",
+  descriptionKey: "features.loginPageBuilder.description",
   category: "features",
   order: 18,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_3_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_9_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_10_hdr_0",
-      "features.loginPageBuilder.section_10_hdr_1",
-      "features.loginPageBuilder.section_10_hdr_2",
-      "features.loginPageBuilder.section_10_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_10_cell_0_0",
-        "features.loginPageBuilder.section_10_cell_0_1",
-        "features.loginPageBuilder.section_10_cell_0_2",
-        "features.loginPageBuilder.section_10_cell_0_3"
-      ],
-      [
-        "features.loginPageBuilder.section_10_cell_1_0",
-        "features.loginPageBuilder.section_10_cell_1_1",
-        "features.loginPageBuilder.section_10_cell_1_2",
-        "features.loginPageBuilder.section_10_cell_1_3"
-      ],
-      [
-        "features.loginPageBuilder.section_10_cell_2_0",
-        "features.loginPageBuilder.section_10_cell_2_1",
-        "features.loginPageBuilder.section_10_cell_2_2",
-        "features.loginPageBuilder.section_10_cell_2_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.loginPageBuilder.section_11_title",
-    "contentKey": "features.loginPageBuilder.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_13_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_14_hdr_0",
-      "features.loginPageBuilder.section_14_hdr_1",
-      "features.loginPageBuilder.section_14_hdr_2",
-      "features.loginPageBuilder.section_14_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_14_cell_0_0",
-        "features.loginPageBuilder.section_14_cell_0_1",
-        "features.loginPageBuilder.section_14_cell_0_2",
-        "features.loginPageBuilder.section_14_cell_0_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_1_0",
-        "features.loginPageBuilder.section_14_cell_1_1",
-        "features.loginPageBuilder.section_14_cell_1_2",
-        "features.loginPageBuilder.section_14_cell_1_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_2_0",
-        "features.loginPageBuilder.section_14_cell_2_1",
-        "features.loginPageBuilder.section_14_cell_2_2",
-        "features.loginPageBuilder.section_14_cell_2_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_3_0",
-        "features.loginPageBuilder.section_14_cell_3_1",
-        "features.loginPageBuilder.section_14_cell_3_2",
-        "features.loginPageBuilder.section_14_cell_3_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_4_0",
-        "features.loginPageBuilder.section_14_cell_4_1",
-        "features.loginPageBuilder.section_14_cell_4_2",
-        "features.loginPageBuilder.section_14_cell_4_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_5_0",
-        "features.loginPageBuilder.section_14_cell_5_1",
-        "features.loginPageBuilder.section_14_cell_5_2",
-        "features.loginPageBuilder.section_14_cell_5_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_6_0",
-        "features.loginPageBuilder.section_14_cell_6_1",
-        "features.loginPageBuilder.section_14_cell_6_2",
-        "features.loginPageBuilder.section_14_cell_6_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_7_0",
-        "features.loginPageBuilder.section_14_cell_7_1",
-        "features.loginPageBuilder.section_14_cell_7_2",
-        "features.loginPageBuilder.section_14_cell_7_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_8_0",
-        "features.loginPageBuilder.section_14_cell_8_1",
-        "features.loginPageBuilder.section_14_cell_8_2",
-        "features.loginPageBuilder.section_14_cell_8_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_9_0",
-        "features.loginPageBuilder.section_14_cell_9_1",
-        "features.loginPageBuilder.section_14_cell_9_2",
-        "features.loginPageBuilder.section_14_cell_9_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_10_0",
-        "features.loginPageBuilder.section_14_cell_10_1",
-        "features.loginPageBuilder.section_14_cell_10_2",
-        "features.loginPageBuilder.section_14_cell_10_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_11_0",
-        "features.loginPageBuilder.section_14_cell_11_1",
-        "features.loginPageBuilder.section_14_cell_11_2",
-        "features.loginPageBuilder.section_14_cell_11_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_12_0",
-        "features.loginPageBuilder.section_14_cell_12_1",
-        "features.loginPageBuilder.section_14_cell_12_2",
-        "features.loginPageBuilder.section_14_cell_12_3"
-      ],
-      [
-        "features.loginPageBuilder.section_14_cell_13_0",
-        "features.loginPageBuilder.section_14_cell_13_1",
-        "features.loginPageBuilder.section_14_cell_13_2",
-        "features.loginPageBuilder.section_14_cell_13_3"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_16_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_17_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_20_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_22_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_23_content"
-  },
-  {
-    "type": "code",
-    "language": "css",
-    "code": ".builder-canvas-grid {\n  display: grid;\n  grid-template-columns: repeat(12, 1fr);\n  gap: var(--builder-gap, 16px);\n  padding: var(--builder-padding, 24px);\n}\n\n.grid-item[data-span=\"4\"]  { grid-column: span 4; }\n.grid-item[data-span=\"6\"]  { grid-column: span 6; }\n.grid-item[data-span=\"12\"] { grid-column: span 12; }\n\n@media (max-width: 768px) {\n  .builder-canvas-grid { grid-template-columns: repeat(4, 1fr); }\n  .grid-item { grid-column: span 4 !important; }\n}\n\n@media (max-width: 480px) {\n  .builder-canvas-grid { grid-template-columns: 1fr; }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_26_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_27_hdr_0",
-      "features.loginPageBuilder.section_27_hdr_1",
-      "features.loginPageBuilder.section_27_hdr_2",
-      "features.loginPageBuilder.section_27_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_27_cell_0_0",
-        "features.loginPageBuilder.section_27_cell_0_1",
-        "features.loginPageBuilder.section_27_cell_0_2",
-        "features.loginPageBuilder.section_27_cell_0_3"
-      ],
-      [
-        "features.loginPageBuilder.section_27_cell_1_0",
-        "features.loginPageBuilder.section_27_cell_1_1",
-        "features.loginPageBuilder.section_27_cell_1_2",
-        "features.loginPageBuilder.section_27_cell_1_3"
-      ],
-      [
-        "features.loginPageBuilder.section_27_cell_2_0",
-        "features.loginPageBuilder.section_27_cell_2_1",
-        "features.loginPageBuilder.section_27_cell_2_2",
-        "features.loginPageBuilder.section_27_cell_2_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_29_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_31_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_32_title",
-    "id": "sec_32"
-  },
-  {
-    "type": "list",
-    "variant": "ordered",
-    "items": [
-      "features.loginPageBuilder.section_33_item_0"
-    ]
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    palette2[\"Component Palette (14 types)\"]\n    drag([\"Drag Start (@dnd-kit/core)\"])\n    canvas{{\"Canvas Drop Zone (collision detection)\"}}\n    create([\"Create Component (defaults + auto-ID)\"])\n    select[\"Select Component (Properties Panel)\"]\n    palette2 --> drag\n    drag --> canvas\n    canvas --> create\n    create --> select",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_35_title",
-    "id": "sec_35"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_36_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_37_title",
-    "id": "sec_37"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_38_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_39_title",
-    "id": "sec_39"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_40_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_41_title",
-    "id": "sec_41"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_42_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_43_title",
-    "id": "sec_43"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_44_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_45_title",
-    "id": "sec_45"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_46_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_47_hdr_0",
-      "features.loginPageBuilder.section_47_hdr_1",
-      "features.loginPageBuilder.section_47_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_47_cell_0_0",
-        "features.loginPageBuilder.section_47_cell_0_1",
-        "features.loginPageBuilder.section_47_cell_0_2"
-      ],
-      [
-        "features.loginPageBuilder.section_47_cell_1_0",
-        "features.loginPageBuilder.section_47_cell_1_1",
-        "features.loginPageBuilder.section_47_cell_1_2"
-      ],
-      [
-        "features.loginPageBuilder.section_47_cell_2_0",
-        "features.loginPageBuilder.section_47_cell_2_1",
-        "features.loginPageBuilder.section_47_cell_2_2"
-      ],
-      [
-        "features.loginPageBuilder.section_47_cell_3_0",
-        "features.loginPageBuilder.section_47_cell_3_1",
-        "features.loginPageBuilder.section_47_cell_3_2"
-      ],
-      [
-        "features.loginPageBuilder.section_47_cell_4_0",
-        "features.loginPageBuilder.section_47_cell_4_1",
-        "features.loginPageBuilder.section_47_cell_4_2"
-      ],
-      [
-        "features.loginPageBuilder.section_47_cell_5_0",
-        "features.loginPageBuilder.section_47_cell_5_1",
-        "features.loginPageBuilder.section_47_cell_5_2"
-      ],
-      [
-        "features.loginPageBuilder.section_47_cell_6_0",
-        "features.loginPageBuilder.section_47_cell_6_1",
-        "features.loginPageBuilder.section_47_cell_6_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_48_title",
-    "id": "sec_48"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_49_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_50_title",
-    "id": "sec_50"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_51_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_52_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "interface BuilderComponent {\n  id: string;          // UUID v4\n  type: ComponentType; // 'logo' | 'heading' | 'form' | ...\n  props: Record<string, unknown>;\n  position: { x: number; y: number };\n  gridPosition: { colSpan: number; rowSpan: number; colStart: number; rowStart: number };\n  section: 'header' | 'body' | 'footer';\n  order: number;\n  responsive: { sm: GridOverride; md: GridOverride };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_54_title",
-    "id": "sec_54"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_55_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_56_title",
-    "id": "sec_56"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_57_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_58_title",
-    "id": "sec_58"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_59_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_60_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"canvasMode\": \"grid\",\n  \"gridConfig\": { \"columns\": 12, \"columnGap\": 16, \"rowGap\": 16 },\n  \"components\": [\n    {\n      \"id\": \"comp-1\",\n      \"type\": \"logo\",\n      \"props\": { \"width\": 120, \"alignment\": \"center\" },\n      \"gridPosition\": { \"colSpan\": 4, \"colStart\": 4, \"rowStart\": 0 }\n    },\n    {\n      \"id\": \"comp-2\",\n      \"type\": \"heading\",\n      \"props\": { \"text\": \"Welcome\", \"level\": \"h1\" },\n      \"gridPosition\": { \"colSpan\": 8, \"colStart\": 2, \"rowStart\": 1 }\n    }\n  ]\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_62_title",
-    "id": "sec_62"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_63_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_64_title",
-    "id": "sec_64"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_65_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_66_title",
-    "id": "sec_66"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_67_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_68_title",
-    "id": "sec_68"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_69_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_70_title",
-    "id": "sec_70"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_71_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_72_title",
-    "id": "sec_72"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_73_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_74_hdr_0",
-      "features.loginPageBuilder.section_74_hdr_1"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_74_cell_0_0",
-        "features.loginPageBuilder.section_74_cell_0_1"
-      ],
-      [
-        "features.loginPageBuilder.section_74_cell_1_0",
-        "features.loginPageBuilder.section_74_cell_1_1"
-      ],
-      [
-        "features.loginPageBuilder.section_74_cell_2_0",
-        "features.loginPageBuilder.section_74_cell_2_1"
-      ],
-      [
-        "features.loginPageBuilder.section_74_cell_3_0",
-        "features.loginPageBuilder.section_74_cell_3_1"
-      ],
-      [
-        "features.loginPageBuilder.section_74_cell_4_0",
-        "features.loginPageBuilder.section_74_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_75_title",
-    "id": "sec_75"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_76_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_77_title",
-    "id": "sec_77"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_78_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_79_title",
-    "id": "sec_79"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_80_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_81_title",
-    "id": "sec_81"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_82_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_83_hdr_0",
-      "features.loginPageBuilder.section_83_hdr_1",
-      "features.loginPageBuilder.section_83_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_83_cell_0_0",
-        "features.loginPageBuilder.section_83_cell_0_1",
-        "features.loginPageBuilder.section_83_cell_0_2"
-      ],
-      [
-        "features.loginPageBuilder.section_83_cell_1_0",
-        "features.loginPageBuilder.section_83_cell_1_1",
-        "features.loginPageBuilder.section_83_cell_1_2"
-      ],
-      [
-        "features.loginPageBuilder.section_83_cell_2_0",
-        "features.loginPageBuilder.section_83_cell_2_1",
-        "features.loginPageBuilder.section_83_cell_2_2"
-      ],
-      [
-        "features.loginPageBuilder.section_83_cell_3_0",
-        "features.loginPageBuilder.section_83_cell_3_1",
-        "features.loginPageBuilder.section_83_cell_3_2"
-      ],
-      [
-        "features.loginPageBuilder.section_83_cell_4_0",
-        "features.loginPageBuilder.section_83_cell_4_1",
-        "features.loginPageBuilder.section_83_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_84_title",
-    "id": "sec_84"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_85_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_86_title",
-    "id": "sec_86"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_87_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "features.loginPageBuilder.section_88_title",
-    "id": "sec_88"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_89_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.loginPageBuilder.section_90_hdr_0",
-      "features.loginPageBuilder.section_90_hdr_1",
-      "features.loginPageBuilder.section_90_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.loginPageBuilder.section_90_cell_0_0",
-        "features.loginPageBuilder.section_90_cell_0_1",
-        "features.loginPageBuilder.section_90_cell_0_2"
-      ],
-      [
-        "features.loginPageBuilder.section_90_cell_1_0",
-        "features.loginPageBuilder.section_90_cell_1_1",
-        "features.loginPageBuilder.section_90_cell_1_2"
-      ],
-      [
-        "features.loginPageBuilder.section_90_cell_2_0",
-        "features.loginPageBuilder.section_90_cell_2_1",
-        "features.loginPageBuilder.section_90_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_91_title",
-    "id": "sec_91"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_92_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.loginPageBuilder.section_93_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "src/modules/system/customization/src/presentation/\n├── components/\n│   ├── Builder/\n│   │   ├── BuilderCanvas.tsx          # Main canvas — mode switching\n│   │   ├── ComponentPalette.tsx        # 14-type palette strip\n│   │   ├── PropertiesPanel.tsx         # Selected component config\n│   │   ├── GridCanvas.tsx             # 12-column grid renderer\n│   │   ├── FreeformCanvas.tsx         # Absolute-position renderer\n│   │   ├── BuilderModeCanvas.tsx      # Section-based renderer\n│   │   ├── GridOverlay.tsx            # Grid visualization\n│   │   └── BuilderToolbar.tsx         # Mode switcher, undo/redo, zoom\n│   ├── DashboardBuilderTab.tsx         # Dashboard theming controls (61 settings)\n│   ├── BundleGalleryTab.tsx           # Bundle marketplace\n│   └── ThemeMarketplacePanel.tsx      # Theme quick-apply\n├── hooks/\n│   └── useBuilderState.ts             # Builder state management\n└── viewmodels/\n    └── useStudioViewModel.ts          # Master studio state",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.loginPageBuilder.section_95_title",
-    "contentKey": "features.loginPageBuilder.section_95_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.loginPageBuilder.section_96_title",
-    "id": "sec_96"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.loginPageBuilder.section_97_item_0",
-      "features.loginPageBuilder.section_97_item_1",
-      "features.loginPageBuilder.section_97_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "features/login-customizer",
-  "features/theme-marketplace",
-  "features/multi-page-branding"
-],
-  lastUpdated: "2026-06-09",
+    "features/login-customizer",
+    "features/theme-marketplace",
+    "features/multi-page-branding",
+  ],
+  lastUpdated: "2026-04-02",
 });

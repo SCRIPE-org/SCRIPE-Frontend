@@ -1,191 +1,244 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.intro" },
+
+  // ─── YARP Gateway ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.yarpTitle",
+    id: "yarp-gateway",
+  },
+  { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.yarpIntro" },
+  {
+    type: "flowchart",
+    title: "Gateway Architecture",
+    direction: "horizontal",
+    nodes: [
+      { id: "client", label: "Frontend / Mobile", type: "primary" },
+      {
+        id: "gateway",
+        label: "YARP Gateway",
+        type: "info",
+        description: "Reverse proxy + load balancing",
+      },
+      {
+        id: "identity",
+        label: "Identity Module",
+        type: "success",
+        description: "Auth, Users, Roles",
+      },
+      { id: "inventory", label: "Inventory Module", type: "warning", description: "(Future)" },
+      { id: "hr", label: "HR Module", type: "danger", description: "(Future)" },
+    ],
+    connections: [
+      { from: "client", to: "gateway" },
+      { from: "gateway", to: "identity", label: "/api/v1/auth/*" },
+      { from: "gateway", to: "inventory", label: "/api/v1/inventory/*" },
+      { from: "gateway", to: "hr", label: "/api/v1/hr/*" },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json — YARP Route Configuration",
+    code: `{
+  "ReverseProxy": {
+    "Routes": {
+      "identity-route": {
+        "ClusterId": "identity",
+        "Match": { "Path": "/api/v1/{**catch-all}" },
+        "Transforms": [
+          { "PathPattern": "/api/v1/{**catch-all}" }
+        ]
+      },
+      "hangfire-route": {
+        "ClusterId": "identity",
+        "Match": { "Path": "/hangfire/{**catch-all}" }
+      },
+      "hubs-route": {
+        "ClusterId": "identity",
+        "Match": { "Path": "/hubs/{**catch-all}" }
+      }
+    },
+    "Clusters": {
+      "identity": {
+        "Destinations": {
+          "primary": { "Address": "https://localhost:7001" },
+          "secondary": { "Address": "https://localhost:7002" }
+        },
+        "LoadBalancingPolicy": "RoundRobin",
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:30",
+            "Timeout": "00:00:10",
+            "Path": "/health"
+          }
+        }
+      }
+    }
+  }
+}`,
+  },
+
+  // ─── Module System ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.moduleTitle",
+    id: "module-system",
+  },
+  { type: "paragraph", contentKey: "infrastructure.gatewayDeployment.moduleIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Conditional Module Loading via Environment Variable",
+    code: `// Program.cs — Module registration
+var moduleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "all";
+
+switch (moduleName.ToLower())
+{
+    case "identity":
+        builder.Services.AddIdentityModule(configuration);
+        break;
+    case "inventory":
+        builder.Services.AddInventoryModule(configuration);
+        break;
+    case "all":
+    default:
+        builder.Services.AddIdentityModule(configuration);
+        builder.Services.AddInventoryModule(configuration);
+        break;
+}
+
+// ModuleControllerFeatureProvider filters controllers per module
+builder.Services.AddControllers()
+    .ConfigureApplicationPartManager(manager =>
+        manager.FeatureProviders.Add(
+            new ModuleControllerFeatureProvider(moduleName)));`,
+    highlightLines: [2, 4, 21, 22, 23, 24],
+  },
+
+  // ─── Deployment Modes ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.modesTitle",
+    id: "deployment-modes",
+  },
+  {
+    type: "comparison",
+    columns: [
+      {
+        titleKey: "infrastructure.gatewayDeployment.monolithTitle",
+        variant: "positive",
+        items: [
+          "MODULE_NAME=all (all modules in one process)",
+          "Single database connection string",
+          "No YARP gateway needed",
+          "Simpler deployment (1 process)",
+          "Shared appsettings.json",
+          "Direct method calls between modules",
+        ],
+      },
+      {
+        titleKey: "infrastructure.gatewayDeployment.microserviceTitle",
+        variant: "neutral",
+        items: [
+          "MODULE_NAME=identity (one module per process)",
+          "Per-module database",
+          "YARP gateway routes to each service",
+          "Independent scaling per module",
+          "Per-service configuration",
+          "HTTP/gRPC between services",
+        ],
+      },
+    ],
+  },
+
+  // ─── IIS Deployment ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.iisTitle",
+    id: "iis-deployment",
+  },
+  {
+    type: "step-guide",
+    steps: [
+      {
+        titleKey: "infrastructure.gatewayDeployment.iisStep1",
+        contentKey: "infrastructure.gatewayDeployment.iisStep1Desc",
+      },
+      {
+        titleKey: "infrastructure.gatewayDeployment.iisStep2",
+        contentKey: "infrastructure.gatewayDeployment.iisStep2Desc",
+      },
+      {
+        titleKey: "infrastructure.gatewayDeployment.iisStep3",
+        contentKey: "infrastructure.gatewayDeployment.iisStep3Desc",
+      },
+      {
+        titleKey: "infrastructure.gatewayDeployment.iisStep4",
+        contentKey: "infrastructure.gatewayDeployment.iisStep4Desc",
+      },
+    ],
+  },
+
+  // ─── Kestrel ──────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.gatewayDeployment.kestrelTitle",
+    id: "kestrel",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "Kestrel Production Configuration",
+    code: `{
+  "Kestrel": {
+    "Endpoints": {
+      "Https": {
+        "Url": "https://0.0.0.0:7001",
+        "Certificate": {
+          "Path": "/certs/scripe.pfx",
+          "Password": "cert-password"
+        }
+      },
+      "Http": {
+        "Url": "http://0.0.0.0:5001"
+      }
+    },
+    "Limits": {
+      "MaxConcurrentConnections": 100,
+      "MaxRequestBodySize": 10485760,
+      "RequestHeadersTimeout": "00:00:30"
+    }
+  }
+}`,
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "infrastructure.gatewayDeployment.portNote",
+  },
+];
 
 registerPage({
   slug: "infrastructure/gateway-deployment",
   titleKey: "infrastructure.gatewayDeployment.title",
+  descriptionKey: "infrastructure.gatewayDeployment.description",
   category: "infrastructure",
   order: 5,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.gatewayDeployment.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    client([\"Frontend / Mobile\"])\n    gateway([\"YARP Gateway\"])\n    %% gateway: Reverse proxy + load balancing\n    identity([\"Identity Module\"])\n    %% identity: Auth, Users, Roles\n    inventory{{\"Inventory Module\"}}\n    %% inventory: (Future)\n    hr[\"HR Module\"]\n    %% hr: (Future)\n    client --> gateway\n    gateway -->|\"/api/v1/auth/*\"| identity\n    gateway -->|\"/api/v1/inventory/*\"| inventory\n    gateway -->|\"/api/v1/hr/*\"| hr",
-    "filename": ""
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"ReverseProxy\": {\n    \"Routes\": {\n      \"identity-route\": {\n        \"ClusterId\": \"identity\",\n        \"Match\": { \"Path\": \"/api/v1/{**catch-all}\" },\n        \"Transforms\": [\n          { \"PathPattern\": \"/api/v1/{**catch-all}\" }\n        ]\n      },\n      \"hangfire-route\": {\n        \"ClusterId\": \"identity\",\n        \"Match\": { \"Path\": \"/hangfire/{**catch-all}\" }\n      },\n      \"hubs-route\": {\n        \"ClusterId\": \"identity\",\n        \"Match\": { \"Path\": \"/hubs/{**catch-all}\" }\n      }\n    },\n    \"Clusters\": {\n      \"identity\": {\n        \"Destinations\": {\n          \"primary\": { \"Address\": \"https://localhost:7001\" },\n          \"secondary\": { \"Address\": \"https://localhost:7002\" }\n        },\n        \"LoadBalancingPolicy\": \"RoundRobin\",\n        \"HealthCheck\": {\n          \"Active\": {\n            \"Enabled\": true,\n            \"Interval\": \"00:00:30\",\n            \"Timeout\": \"00:00:10\",\n            \"Path\": \"/health\"\n          }\n        }\n      }\n    }\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.gatewayDeployment.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_8_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Program.cs — Module registration\nvar moduleName = Environment.GetEnvironmentVariable(\"MODULE_NAME\") ?? \"all\";\n\nswitch (moduleName.ToLower())\n{\n    case \"identity\":\n        builder.Services.AddIdentityModule(configuration);\n        break;\n    case \"inventory\":\n        builder.Services.AddInventoryModule(configuration);\n        break;\n    case \"all\":\n    default:\n        builder.Services.AddIdentityModule(configuration);\n        builder.Services.AddInventoryModule(configuration);\n        break;\n}\n\n// ModuleControllerFeatureProvider filters controllers per module\nbuilder.Services.AddControllers()\n    .ConfigureApplicationPartManager(manager =>\n        manager.FeatureProviders.Add(\n            new ModuleControllerFeatureProvider(moduleName)));",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.gatewayDeployment.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.gatewayDeployment.section_12_hdr_0"
-    ],
-    "rows": [
-      [
-        "infrastructure.gatewayDeployment.section_12_cell_0_0",
-        "infrastructure.gatewayDeployment.section_12_cell_0_1"
-      ],
-      [
-        "infrastructure.gatewayDeployment.section_12_cell_1_0",
-        "infrastructure.gatewayDeployment.section_12_cell_1_1"
-      ],
-      [
-        "infrastructure.gatewayDeployment.section_12_cell_2_0",
-        "infrastructure.gatewayDeployment.section_12_cell_2_1"
-      ],
-      [
-        "infrastructure.gatewayDeployment.section_12_cell_3_0",
-        "infrastructure.gatewayDeployment.section_12_cell_3_1"
-      ],
-      [
-        "infrastructure.gatewayDeployment.section_12_cell_4_0",
-        "infrastructure.gatewayDeployment.section_12_cell_4_1"
-      ],
-      [
-        "infrastructure.gatewayDeployment.section_12_cell_5_0",
-        "infrastructure.gatewayDeployment.section_12_cell_5_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.gatewayDeployment.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "infrastructure.gatewayDeployment.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "infrastructure.gatewayDeployment.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_17_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "infrastructure.gatewayDeployment.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "infrastructure.gatewayDeployment.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_21_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.gatewayDeployment.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.gatewayDeployment.section_23_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"Kestrel\": {\n    \"Endpoints\": {\n      \"Https\": {\n        \"Url\": \"https://0.0.0.0:7001\",\n        \"Certificate\": {\n          \"Path\": \"/certs/scripe.pfx\",\n          \"Password\": \"cert-password\"\n        }\n      },\n      \"Http\": {\n        \"Url\": \"http://0.0.0.0:5001\"\n      }\n    },\n    \"Limits\": {\n      \"MaxConcurrentConnections\": 100,\n      \"MaxRequestBodySize\": 10485760,\n      \"RequestHeadersTimeout\": \"00:00:30\"\n    }\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "infrastructure.gatewayDeployment.section_25_title",
-    "contentKey": "infrastructure.gatewayDeployment.section_25_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.gatewayDeployment.section_26_title",
-    "id": "sec_26"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "infrastructure.gatewayDeployment.section_27_item_0",
-      "infrastructure.gatewayDeployment.section_27_item_1",
-      "infrastructure.gatewayDeployment.section_27_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "architecture/dependency-injection",
-  "architecture/backend",
-  "infrastructure/resilience"
-],
-  lastUpdated: "2026-06-09",
+    "architecture/dependency-injection",
+    "architecture/backend",
+    "infrastructure/resilience",
+  ],
+  lastUpdated: "2026-02-20",
 });

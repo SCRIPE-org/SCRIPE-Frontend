@@ -1,257 +1,182 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "modules.tenantPlans.intro" },
+
+  // ─── B2B2C Concept ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.conceptTitle",
+    id: "b2b2c-model",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.conceptIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "A", label: "SCRIPE Platform (Operator)", type: "primary" },
+      { id: "B", label: "Tier 1: Editions → Tenants", type: "info" },
+      { id: "C", label: "Tenant Admin", type: "default" },
+      { id: "D", label: "Tier 2: TenantPlans → Users", type: "info" },
+      { id: "E", label: "End Users (UserSubscription)", type: "success" },
+    ],
+    connections: [
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+    ],
+  },
+
+  // ─── TenantPlan Entity ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.entityTitle",
+    id: "tenantplan-entity",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.entityIntro" },
+  {
+    type: "table",
+    headers: ["Field", "Type", "Description"],
+    rows: [
+      ["Name", "string(200)", "Plan display name (e.g. 'Basic', 'Pro', 'Enterprise')"],
+      ["Description", "string?", "Human-readable plan description"],
+      ["Price", "decimal(18,2)", "Monthly or annual price"],
+      ["Currency", "Currency", "ISO currency code"],
+      ["BillingCycle", "BillingCycle", "Monthly | Yearly | Lifetime | Free"],
+      ["MaxUsers", "int?", "Max subscribers (-1 = unlimited)"],
+      ["TrialDays", "int", "Trial period length in days (0 = no trial)"],
+      ["IsActive", "bool", "Whether new subscribers can join this plan"],
+      ["TenantId", "Guid", "Owning tenant — rows are isolated per tenant"],
+    ],
+  },
+
+  // ─── TenantPlanFeature ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.featureEntityTitle",
+    id: "plan-features",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.featureEntityIntro" },
+  {
+    type: "code",
+    language: "json",
+    code: `// Example TenantPlanFeature records for a "Pro" plan
+[
+  { "Key": "maxProjects", "Value": "50" },
+  { "Key": "apiAccess", "Value": "true" },
+  { "Key": "supportLevel", "Value": "priority" },
+  { "Key": "storageGb", "Value": "100" }
+]`,
+  },
+
+  // ─── Plan Lifecycle ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.lifecycleTitle",
+    id: "plan-lifecycle",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.lifecycleIntro" },
+
+  // ─── Tenant Context Required ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.contextTitle",
+    id: "tenant-context",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.contextIntro" },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "modules.tenantPlans.contextIntro",
+  },
+
+  // ─── API Endpoints ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.endpointsTitle",
+    id: "api-endpoints",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.endpointsIntro" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/tenant-plans",
+        descriptionKey: "modules.tenantPlans.ep.list",
+        auth: "JWT",
+        permission: "tenant_plans.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/tenant-plans/{id}",
+        descriptionKey: "modules.tenantPlans.ep.get",
+        auth: "JWT",
+        permission: "tenant_plans.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/tenant-plans",
+        descriptionKey: "modules.tenantPlans.ep.create",
+        auth: "JWT",
+        permission: "tenant_plans.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/tenant-plans/{id}",
+        descriptionKey: "modules.tenantPlans.ep.update",
+        auth: "JWT",
+        permission: "tenant_plans.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/tenant-plans/{id}",
+        descriptionKey: "modules.tenantPlans.ep.delete",
+        auth: "JWT",
+        permission: "tenant_plans.delete",
+      },
+    ],
+  },
+
+  // ─── Permissions ──────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.tenantPlans.permissionsTitle",
+    id: "permissions",
+  },
+  { type: "paragraph", contentKey: "modules.tenantPlans.permissionsIntro" },
+  {
+    type: "table",
+    headers: ["Permission", "Action"],
+    rows: [
+      ["tenant_plans.view", "View plan list and details"],
+      ["tenant_plans.create", "Create new plans"],
+      ["tenant_plans.update", "Edit plan name, price, features"],
+      ["tenant_plans.delete", "Soft-delete a plan"],
+    ],
+  },
+];
 
 registerPage({
   slug: "modules/tenant-plans",
   titleKey: "modules.tenantPlans.title",
+  descriptionKey: "modules.tenantPlans.description",
   category: "modules",
   order: 9,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    A([\"SCRIPE Platform (Operator)\"])\n    B([\"Tier 1: Editions → Tenants\"])\n    C[\"Tenant Admin\"]\n    D([\"Tier 2: TenantPlans → Users\"])\n    E([\"End Users (UserSubscription)\"])\n    A --> B\n    B --> C\n    C --> D\n    D --> E",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_6_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.tenantPlans.section_7_hdr_0",
-      "modules.tenantPlans.section_7_hdr_1",
-      "modules.tenantPlans.section_7_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.tenantPlans.section_7_cell_0_0",
-        "modules.tenantPlans.section_7_cell_0_1",
-        "modules.tenantPlans.section_7_cell_0_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_1_0",
-        "modules.tenantPlans.section_7_cell_1_1",
-        "modules.tenantPlans.section_7_cell_1_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_2_0",
-        "modules.tenantPlans.section_7_cell_2_1",
-        "modules.tenantPlans.section_7_cell_2_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_3_0",
-        "modules.tenantPlans.section_7_cell_3_1",
-        "modules.tenantPlans.section_7_cell_3_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_4_0",
-        "modules.tenantPlans.section_7_cell_4_1",
-        "modules.tenantPlans.section_7_cell_4_2",
-        "modules.tenantPlans.section_7_cell_4_3",
-        "modules.tenantPlans.section_7_cell_4_4",
-        "modules.tenantPlans.section_7_cell_4_5"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_5_0",
-        "modules.tenantPlans.section_7_cell_5_1",
-        "modules.tenantPlans.section_7_cell_5_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_6_0",
-        "modules.tenantPlans.section_7_cell_6_1",
-        "modules.tenantPlans.section_7_cell_6_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_7_0",
-        "modules.tenantPlans.section_7_cell_7_1",
-        "modules.tenantPlans.section_7_cell_7_2"
-      ],
-      [
-        "modules.tenantPlans.section_7_cell_8_0",
-        "modules.tenantPlans.section_7_cell_8_1",
-        "modules.tenantPlans.section_7_cell_8_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "// Example TenantPlanFeature records for a \"Pro\" plan\n[\n  { \"Key\": \"maxProjects\", \"Value\": \"50\" },\n  { \"Key\": \"apiAccess\", \"Value\": \"true\" },\n  { \"Key\": \"supportLevel\", \"Value\": \"priority\" },\n  { \"Key\": \"storageGb\", \"Value\": \"100\" }\n]",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_14_content"
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "modules.tenantPlans.section_15_title",
-    "contentKey": "modules.tenantPlans.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_17_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.tenantPlans.section_18_hdr_0",
-      "modules.tenantPlans.section_18_hdr_1",
-      "modules.tenantPlans.section_18_hdr_2",
-      "modules.tenantPlans.section_18_hdr_3",
-      "modules.tenantPlans.section_18_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.tenantPlans.section_18_cell_0_0",
-        "modules.tenantPlans.section_18_cell_0_1",
-        "modules.tenantPlans.section_18_cell_0_2",
-        "modules.tenantPlans.section_18_cell_0_3",
-        "modules.tenantPlans.section_18_cell_0_4"
-      ],
-      [
-        "modules.tenantPlans.section_18_cell_1_0",
-        "modules.tenantPlans.section_18_cell_1_1",
-        "modules.tenantPlans.section_18_cell_1_2",
-        "modules.tenantPlans.section_18_cell_1_3",
-        "modules.tenantPlans.section_18_cell_1_4"
-      ],
-      [
-        "modules.tenantPlans.section_18_cell_2_0",
-        "modules.tenantPlans.section_18_cell_2_1",
-        "modules.tenantPlans.section_18_cell_2_2",
-        "modules.tenantPlans.section_18_cell_2_3",
-        "modules.tenantPlans.section_18_cell_2_4"
-      ],
-      [
-        "modules.tenantPlans.section_18_cell_3_0",
-        "modules.tenantPlans.section_18_cell_3_1",
-        "modules.tenantPlans.section_18_cell_3_2",
-        "modules.tenantPlans.section_18_cell_3_3",
-        "modules.tenantPlans.section_18_cell_3_4"
-      ],
-      [
-        "modules.tenantPlans.section_18_cell_4_0",
-        "modules.tenantPlans.section_18_cell_4_1",
-        "modules.tenantPlans.section_18_cell_4_2",
-        "modules.tenantPlans.section_18_cell_4_3",
-        "modules.tenantPlans.section_18_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.tenantPlans.section_20_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.tenantPlans.section_21_hdr_0",
-      "modules.tenantPlans.section_21_hdr_1"
-    ],
-    "rows": [
-      [
-        "modules.tenantPlans.section_21_cell_0_0",
-        "modules.tenantPlans.section_21_cell_0_1"
-      ],
-      [
-        "modules.tenantPlans.section_21_cell_1_0",
-        "modules.tenantPlans.section_21_cell_1_1"
-      ],
-      [
-        "modules.tenantPlans.section_21_cell_2_0",
-        "modules.tenantPlans.section_21_cell_2_1"
-      ],
-      [
-        "modules.tenantPlans.section_21_cell_3_0",
-        "modules.tenantPlans.section_21_cell_3_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.tenantPlans.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.tenantPlans.section_23_item_0",
-      "modules.tenantPlans.section_23_item_1",
-      "modules.tenantPlans.section_23_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "modules/user-subscriptions",
-  "modules/entitlements-overview",
-  "features/tenant-context-gate"
-],
-  lastUpdated: "2026-06-09",
+    "modules/user-subscriptions",
+    "modules/entitlements-overview",
+    "features/tenant-context-gate",
+  ],
+  lastUpdated: "2026-04-18",
 });

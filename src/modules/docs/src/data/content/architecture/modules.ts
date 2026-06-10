@@ -1,252 +1,190 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.modules.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.modules.isolationRulesTitle",
+    id: "isolation-rules",
+  },
+  {
+    type: "comparison",
+    columns: [
+      {
+        titleKey: "architecture.modules.allowedImportsTitle",
+        variant: "positive",
+        items: [
+          "@core/* — Shared infrastructure (Result, API client, UI)",
+          "@modules/{self}/* — Own module files only",
+          "External npm packages (React, TanStack Query, etc.)",
+        ],
+      },
+      {
+        titleKey: "architecture.modules.forbiddenImportsTitle",
+        variant: "negative",
+        items: [
+          "@modules/{other}/* — NEVER import from other modules",
+          "../../../modules/{other}/ — Relative paths to other modules",
+          "Embedding another module's entity or component",
+        ],
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.modules.backendModuleTitle",
+    id: "backend-module",
+  },
+  { type: "paragraph", contentKey: "architecture.modules.backendModuleIntro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Backend Module Template",
+    code: `src/Modules/{ModuleName}/
+├── {Module}.Domain/
+│   ├── Entities/              # Domain entities (DDD)
+│   ├── Interfaces/            # Repository contracts
+│   ├── Specifications/        # Query specifications
+│   ├── Events/                # Domain events
+│   └── Enums/                 # Module-specific enums
+│
+├── {Module}.Application/
+│   ├── Commands/              # CQRS write operations
+│   │   ├── Create{Entity}/
+│   │   │   ├── Create{Entity}Command.cs
+│   │   │   ├── Create{Entity}CommandValidator.cs
+│   │   │   └── Create{Entity}CommandHandler.cs
+│   │   └── Update{Entity}/
+│   ├── Queries/               # CQRS read operations
+│   │   ├── Get{Entity}ById/
+│   │   └── List{Entities}/
+│   ├── DTOs/                  # Data transfer objects
+│   ├── Mappings/              # Explicit DTO mapping rules
+│   └── DependencyInjection.cs # Assembly marker
+│
+└── {Module}.Infrastructure/
+    ├── Persistence/
+    │   ├── {Module}DbContext.cs
+    │   ├── Configurations/     # EF entity configs
+    │   ├── Repositories/       # Interface implementations
+    │   └── Migrations/         # EF migrations
+    ├── Services/               # External service adapters
+    └── DependencyInjection.cs  # Service registration`,
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.modules.frontendModuleTitle",
+    id: "frontend-module",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Frontend Module Template",
+    code: `src/modules/{module-name}/
+├── di.ts                     # Module DI Container
+├── index.ts                  # Public API (Views, entities)
+└── src/
+    ├── domain/
+    │   ├── entities/         # Zod schemas + domain logic
+    │   └── interfaces/       # Repository contracts
+    ├── data/
+    │   ├── models/           # API DTOs (raw shapes)
+    │   ├── mappers/          # DTO ↔ Entity transforms
+    │   └── repositories/     # API implementations
+    └── presentation/
+        ├── viewmodels/       # React hooks (all logic)
+        ├── views/            # Pure UI (<60 lines)
+        └── components/       # Section UI components`,
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.modules.registryTitle",
+    id: "module-registry",
+  },
+  { type: "paragraph", contentKey: "architecture.modules.registryIntro" },
+  {
+    type: "table",
+    headers: ["Module", "Type", "Backend", "Frontend", "Description"],
+    rows: [
+      ["Identity", "Core", "✅", "✅", "Authentication, users, roles, tenants"],
+      ["Admin", "Feature", "—", "✅", "Admin panel with dashboard"],
+      ["Dashboard", "Sub-module", "✅ (via Identity)", "✅", "KPIs, charts, activity feed"],
+      ["User Management", "Sub-module", "✅ (via Identity)", "✅", "User CRUD operations"],
+      ["Role Management", "Sub-module", "✅ (via Identity)", "✅", "Role + permission assignment"],
+      ["Tenant Management", "Sub-module", "✅ (via Identity)", "✅", "Multi-tenant administration"],
+      ["Docs", "Feature", "—", "✅", "Documentation portal"],
+      ["Home", "Feature", "—", "✅", "Landing page"],
+      ["Inventory (Planned)", "Core", "✅", "✅", "Product and stock management"],
+      ["Orders (Planned)", "Core", "✅", "✅", "Order processing pipeline"],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.modules.communicationTitle",
+    id: "cross-module-communication",
+  },
+  {
+    type: "step-guide",
+    steps: [
+      {
+        titleKey: "architecture.modules.pattern1Title",
+        contentKey: "architecture.modules.pattern1Content",
+        code: `// In HR module — link to Vendor details via URL
+import Link from 'next/link';
+
+<Link href={\`/vendor/\${employee.assignedVendorId}\`}>
+  View Assigned Vendor
+</Link>`,
+        codeLanguage: "typescript",
+      },
+      {
+        titleKey: "architecture.modules.pattern2Title",
+        contentKey: "architecture.modules.pattern2Content",
+        code: `// ✅ Store ONLY the vendor ID, not the whole entity
+const EmployeeSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  assignedVendorId: z.string().uuid().optional(), // Just the ID
+});
+
+// ❌ DON'T embed the entire Vendor entity
+// vendor: VendorSchema  ← This creates coupling!`,
+        codeLanguage: "typescript",
+      },
+      {
+        titleKey: "architecture.modules.pattern3Title",
+        contentKey: "architecture.modules.pattern3Content",
+        code: `// Core Event Bus (future pattern)
+eventBus.emit("employee:created", { id: "123", name: "John" });
+
+// Subscribing in another module
+eventBus.on("employee:created", (data) => {
+  // React to employee creation without importing HR module
+});`,
+        codeLanguage: "typescript",
+      },
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "architecture.modules.boundaryWarning",
+  },
+];
 
 registerPage({
   slug: "architecture/modules",
   titleKey: "architecture.modules.title",
+  descriptionKey: "architecture.modules.description",
   category: "architecture",
   order: 5,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.modules.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.modules.section_3_hdr_0",
-      "architecture.modules.section_3_hdr_1"
-    ],
-    "rows": [
-      [
-        "architecture.modules.section_3_cell_0_0",
-        "architecture.modules.section_3_cell_0_1"
-      ],
-      [
-        "architecture.modules.section_3_cell_1_0",
-        "architecture.modules.section_3_cell_1_1"
-      ],
-      [
-        "architecture.modules.section_3_cell_2_0",
-        "architecture.modules.section_3_cell_2_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.modules.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_5_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "src/Modules/{ModuleName}/\n├── {Module}.Domain/\n│   ├── Entities/              # Domain entities (DDD)\n│   ├── Interfaces/            # Repository contracts\n│   ├── Specifications/        # Query specifications\n│   ├── Events/                # Domain events\n│   └── Enums/                 # Module-specific enums\n│\n├── {Module}.Application/\n│   ├── Commands/              # CQRS write operations\n│   │   ├── Create{Entity}/\n│   │   │   ├── Create{Entity}Command.cs\n│   │   │   ├── Create{Entity}CommandValidator.cs\n│   │   │   └── Create{Entity}CommandHandler.cs\n│   │   └── Update{Entity}/\n│   ├── Queries/               # CQRS read operations\n│   │   ├── Get{Entity}ById/\n│   │   └── List{Entities}/\n│   ├── DTOs/                  # Data transfer objects\n│   ├── Mappings/              # Explicit DTO mapping rules\n│   └── DependencyInjection.cs # Assembly marker\n│\n└── {Module}.Infrastructure/\n    ├── Persistence/\n    │   ├── {Module}DbContext.cs\n    │   ├── Configurations/     # EF entity configs\n    │   ├── Repositories/       # Interface implementations\n    │   └── Migrations/         # EF migrations\n    ├── Services/               # External service adapters\n    └── DependencyInjection.cs  # Service registration",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.modules.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "src/modules/{module-name}/\n├── di.ts                     # Module DI Container\n├── index.ts                  # Public API (Views, entities)\n└── src/\n    ├── domain/\n    │   ├── entities/         # Zod schemas + domain logic\n    │   └── interfaces/       # Repository contracts\n    ├── data/\n    │   ├── models/           # API DTOs (raw shapes)\n    │   ├── mappers/          # DTO ↔ Entity transforms\n    │   └── repositories/     # API implementations\n    └── presentation/\n        ├── viewmodels/       # React hooks (all logic)\n        ├── views/            # Pure UI (<60 lines)\n        └── components/       # Section UI components",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.modules.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_12_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.modules.section_13_hdr_0",
-      "architecture.modules.section_13_hdr_1",
-      "architecture.modules.section_13_hdr_2",
-      "architecture.modules.section_13_hdr_3",
-      "architecture.modules.section_13_hdr_4"
-    ],
-    "rows": [
-      [
-        "architecture.modules.section_13_cell_0_0",
-        "architecture.modules.section_13_cell_0_1",
-        "architecture.modules.section_13_cell_0_2",
-        "architecture.modules.section_13_cell_0_3",
-        "architecture.modules.section_13_cell_0_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_1_0",
-        "architecture.modules.section_13_cell_1_1",
-        "architecture.modules.section_13_cell_1_2",
-        "architecture.modules.section_13_cell_1_3",
-        "architecture.modules.section_13_cell_1_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_2_0",
-        "architecture.modules.section_13_cell_2_1",
-        "architecture.modules.section_13_cell_2_2",
-        "architecture.modules.section_13_cell_2_3",
-        "architecture.modules.section_13_cell_2_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_3_0",
-        "architecture.modules.section_13_cell_3_1",
-        "architecture.modules.section_13_cell_3_2",
-        "architecture.modules.section_13_cell_3_3",
-        "architecture.modules.section_13_cell_3_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_4_0",
-        "architecture.modules.section_13_cell_4_1",
-        "architecture.modules.section_13_cell_4_2",
-        "architecture.modules.section_13_cell_4_3",
-        "architecture.modules.section_13_cell_4_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_5_0",
-        "architecture.modules.section_13_cell_5_1",
-        "architecture.modules.section_13_cell_5_2",
-        "architecture.modules.section_13_cell_5_3",
-        "architecture.modules.section_13_cell_5_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_6_0",
-        "architecture.modules.section_13_cell_6_1",
-        "architecture.modules.section_13_cell_6_2",
-        "architecture.modules.section_13_cell_6_3",
-        "architecture.modules.section_13_cell_6_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_7_0",
-        "architecture.modules.section_13_cell_7_1",
-        "architecture.modules.section_13_cell_7_2",
-        "architecture.modules.section_13_cell_7_3",
-        "architecture.modules.section_13_cell_7_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_8_0",
-        "architecture.modules.section_13_cell_8_1",
-        "architecture.modules.section_13_cell_8_2",
-        "architecture.modules.section_13_cell_8_3",
-        "architecture.modules.section_13_cell_8_4"
-      ],
-      [
-        "architecture.modules.section_13_cell_9_0",
-        "architecture.modules.section_13_cell_9_1",
-        "architecture.modules.section_13_cell_9_2",
-        "architecture.modules.section_13_cell_9_3",
-        "architecture.modules.section_13_cell_9_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.modules.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.modules.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// In HR module — link to Vendor details via URL\nimport Link from 'next/link';\n\n<Link href={`/vendor/${employee.assignedVendorId}`}>\n  View Assigned Vendor\n</Link>",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.modules.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_19_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// ✅ Store ONLY the vendor ID, not the whole entity\nconst EmployeeSchema = z.object({\n  id: z.string().uuid(),\n  name: z.string(),\n  assignedVendorId: z.string().uuid().optional(), // Just the ID\n});\n\n// ❌ DON'T embed the entire Vendor entity\n// vendor: VendorSchema  ← This creates coupling!",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.modules.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.modules.section_22_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// Core Event Bus (future pattern)\neventBus.emit(\"employee:created\", { id: \"123\", name: \"John\" });\n\n// Subscribing in another module\neventBus.on(\"employee:created\", (data) => {\n  // React to employee creation without importing HR module\n});",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "architecture.modules.section_24_title",
-    "contentKey": "architecture.modules.section_24_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.modules.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.modules.section_26_item_0",
-      "architecture.modules.section_26_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/overview",
-  "get-started/project-structure"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/overview", "get-started/project-structure"],
+  lastUpdated: "2026-02-19",
 });

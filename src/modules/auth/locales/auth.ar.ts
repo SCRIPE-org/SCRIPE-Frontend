@@ -133,6 +133,7 @@ export const ar = {
     back: "رجوع",
     resendCode: "إعادة إرسال الرمز",
     resendCooldown: "إعادة الإرسال خلال {{seconds}}ث",
+    verifyingLink: "جارٍ التحقق من رابط الاستعادة…",
     forgotPickWorkspaceTitle: "أي مساحة عمل؟",
     forgotPickWorkspaceSubtitle:
       "بريدك الإلكتروني مرتبط بمساحات عمل متعددة. اختر التي تريد إعادة تعيين كلمة مرورها.",

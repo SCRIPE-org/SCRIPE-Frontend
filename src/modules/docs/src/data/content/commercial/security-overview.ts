@@ -1,166 +1,132 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.securityOverview.intro" },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.securityOverview.modelTitle",
+    id: "security-model",
+  },
+  { type: "paragraph", contentKey: "commercial.securityOverview.modelContent" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "9-Layer Security Architecture",
+    nodes: [
+      { id: "l1", label: "L1: TLS 1.3 Transport Encryption", type: "default" },
+      { id: "l2", label: "L2: Rate Limiting & IP Filtering (7-tier)", type: "info" },
+      { id: "l3", label: "L3: JWT Authentication + 2FA", type: "primary" },
+      { id: "l4", label: "L4: CSRF Token Validation (timing-safe)", type: "warning" },
+      { id: "l5", label: "L5: Input Sanitization (HTML stripping)", type: "warning" },
+      { id: "l6", label: "L6: RBAC + Field-Level Authorization", type: "primary" },
+      { id: "l7", label: "L7: Anti-Replay (Mandatory Nonce + Timestamp)", type: "warning" },
+      { id: "l8", label: "L8: Response Field Projection", type: "success" },
+      { id: "l9", label: "L9: Comprehensive Audit Trail", type: "danger" },
+    ],
+    connections: [
+      { from: "l1", to: "l2" },
+      { from: "l2", to: "l3" },
+      { from: "l3", to: "l4" },
+      { from: "l4", to: "l5" },
+      { from: "l5", to: "l6" },
+      { from: "l6", to: "l7" },
+      { from: "l7", to: "l8" },
+      { from: "l8", to: "l9" },
+    ],
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.securityOverview.summaryTitle",
+    id: "summary",
+  },
+  {
+    type: "table",
+    headers: ["Layer", "Purpose", "Technology"],
+    rows: [
+      ["Transport", "Encrypt all data in transit", "TLS 1.3, HSTS forced in production"],
+      ["Rate Limiting", "Prevent brute force & DDoS", "7-tier ASP.NET Core Rate Limiting"],
+      ["Authentication", "Verify user identity", "JWT + refresh cookies, BCrypt-12, 2FA TOTP"],
+      [
+        "CSRF Protection",
+        "Prevent cross-site request forgery",
+        "Double-submit cookie (timing-safe comparison)",
+      ],
+      [
+        "Input Sanitization",
+        "Prevent XSS at backend level",
+        "HTML tag stripping on all JSON inputs",
+      ],
+      ["Authorization", "Control resource access", "Policy-based RBAC, field projections"],
+      ["Anti-Replay", "Prevent request replay attacks", "Mandatory nonce + timestamp validation"],
+      [
+        "Field Projection",
+        "Hide sensitive fields per role",
+        "Custom middleware, per-entity config",
+      ],
+      ["Audit Trail", "Record all security events", "4-source pipeline, SignalR streaming"],
+    ],
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.securityOverview.headersTitle",
+    id: "headers",
+  },
+  {
+    type: "code",
+    language: "text",
+    filename: "Security Headers Applied to Every Response",
+    code: `X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; script-src 'self'
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Permissions-Policy: camera=(), microphone=(), geolocation=()`,
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.securityOverview.complianceTitle",
+    id: "compliance",
+  },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
+      {
+        icon: "shield",
+        titleKey: "commercial.securityOverview.sox",
+        descriptionKey: "commercial.securityOverview.soxDesc",
+      },
+      {
+        icon: "globe",
+        titleKey: "commercial.securityOverview.gdpr",
+        descriptionKey: "commercial.securityOverview.gdprDesc",
+      },
+      {
+        icon: "building",
+        titleKey: "commercial.securityOverview.soc2",
+        descriptionKey: "commercial.securityOverview.soc2Desc",
+      },
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/security-overview",
   titleKey: "commercial.securityOverview.title",
+  descriptionKey: "commercial.securityOverview.description",
   category: "commercial-security",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.securityOverview.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    l1[\"L1: TLS 1.3 Transport Encryption\"]\n    l2([\"L2: Rate Limiting & IP Filtering (7-tier)\"])\n    l3([\"L3: JWT Authentication + 2FA\"])\n    l4{{\"L4: CSRF Token Validation (timing-safe)\"}}\n    l5{{\"L5: Input Sanitization (HTML stripping)\"}}\n    l6([\"L6: RBAC + Field-Level Authorization\"])\n    l7{{\"L7: Anti-Replay (Mandatory Nonce + Timestamp)\"}}\n    l8([\"L8: Response Field Projection\"])\n    l9[\"L9: Comprehensive Audit Trail\"]\n    l1 --> l2\n    l2 --> l3\n    l3 --> l4\n    l4 --> l5\n    l5 --> l6\n    l6 --> l7\n    l7 --> l8\n    l8 --> l9",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.securityOverview.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.securityOverview.section_6_hdr_0",
-      "commercial.securityOverview.section_6_hdr_1",
-      "commercial.securityOverview.section_6_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.securityOverview.section_6_cell_0_0",
-        "commercial.securityOverview.section_6_cell_0_1",
-        "commercial.securityOverview.section_6_cell_0_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_1_0",
-        "commercial.securityOverview.section_6_cell_1_1",
-        "commercial.securityOverview.section_6_cell_1_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_2_0",
-        "commercial.securityOverview.section_6_cell_2_1",
-        "commercial.securityOverview.section_6_cell_2_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_3_0",
-        "commercial.securityOverview.section_6_cell_3_1",
-        "commercial.securityOverview.section_6_cell_3_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_4_0",
-        "commercial.securityOverview.section_6_cell_4_1",
-        "commercial.securityOverview.section_6_cell_4_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_5_0",
-        "commercial.securityOverview.section_6_cell_5_1",
-        "commercial.securityOverview.section_6_cell_5_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_6_0",
-        "commercial.securityOverview.section_6_cell_6_1",
-        "commercial.securityOverview.section_6_cell_6_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_7_0",
-        "commercial.securityOverview.section_6_cell_7_1",
-        "commercial.securityOverview.section_6_cell_7_2"
-      ],
-      [
-        "commercial.securityOverview.section_6_cell_8_0",
-        "commercial.securityOverview.section_6_cell_8_1",
-        "commercial.securityOverview.section_6_cell_8_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.securityOverview.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "X-Content-Type-Options: nosniff\nX-Frame-Options: DENY\nX-XSS-Protection: 1; mode=block\nReferrer-Policy: strict-origin-when-cross-origin\nContent-Security-Policy: default-src 'self'; script-src 'self'\nStrict-Transport-Security: max-age=31536000; includeSubDomains; preload\nPermissions-Policy: camera=(), microphone=(), geolocation=()",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.securityOverview.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.securityOverview.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.securityOverview.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_14_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.securityOverview.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.securityOverview.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.securityOverview.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.securityOverview.section_18_item_0",
-      "commercial.securityOverview.section_18_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/authentication-security",
-  "commercial/data-protection"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/authentication-security", "commercial/data-protection"],
+  lastUpdated: "2026-03-13",
 });

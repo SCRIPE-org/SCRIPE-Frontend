@@ -1,238 +1,206 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.stateManagement.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.stateManagement.decisionTitle",
+    id: "decision-matrix",
+  },
+  {
+    type: "table",
+    headers: ["Question", "Answer: YES → Use", "Example"],
+    rows: [
+      [
+        "Does it come from an API?",
+        "TanStack Query v5",
+        "Employee list, audit logs, dashboard stats",
+      ],
+      ["Does the whole app need it?", "Zustand", "Auth state, sidebar, theme, toasts"],
+      ["Is it for this component only?", "useState", "Form inputs, modal open/close, toggles"],
+      [
+        "Does it need persistence?",
+        "Zustand with persist middleware",
+        "Auth token, language preference",
+      ],
+      [
+        "Does it need caching/refetch?",
+        "TanStack Query",
+        "Any server data with stale-while-revalidate",
+      ],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.stateManagement.tanstackTitle",
+    id: "tanstack-query",
+  },
+  { type: "paragraph", contentKey: "architecture.stateManagement.tanstackIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "TanStack Query — ViewModel Pattern",
+    code: `// Key factory for consistent cache keys
+export const employeeKeys = {
+  all: ["employees"] as const,
+  list: (filters: { page: number; search: string }) =>
+    [...employeeKeys.all, "list", filters] as const,
+  detail: (id: string) =>
+    [...employeeKeys.all, "detail", id] as const,
+};
+
+// Query hook
+export function useEmployees(filters: { page: number; search: string }) {
+  const repo = container.employeeRepository;
+
+  return useQuery({
+    queryKey: employeeKeys.list(filters),
+    queryFn: async () => {
+      const result = await repo.getAll(filters);
+      if (result.isErr()) throw result.error;
+      return result.value;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+// Mutation hook (auto-invalidates cache)
+export function useCreateEmployee() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateEmployeeInput) => {
+      const result = await container.employeeRepository.create(data);
+      if (result.isErr()) throw result.error;
+      return result.value;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: employeeKeys.all });
+    },
+  });
+}`,
+    highlightLines: [2, 15, 36],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.stateManagement.zustandTitle",
+    id: "zustand",
+  },
+  { type: "paragraph", contentKey: "architecture.stateManagement.zustandIntro" },
+  {
+    type: "table",
+    headers: ["Store", "Purpose", "Persistence", "Location"],
+    rows: [
+      [
+        "useAuthStore",
+        "User session, tokens, permissions",
+        "localStorage (persist)",
+        "@core/store/useAuthStore",
+      ],
+      ["useUIStore", "Sidebar, theme, mobile menu", "None", "@core/store/useUIStore"],
+      ["useToastStore", "Toast notification queue", "None", "@core/store/useToastStore"],
+    ],
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Auth Store — Zustand with persist",
+    code: `export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+
+      login: (user, token) => set({
+        user, token, isAuthenticated: true,
+      }),
+
+      logout: () => set({
+        user: null, token: null, isAuthenticated: false,
+      }),
+    }),
+    {
+      name: "auth-storage",
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+      }),
+    }
+  )
+);`,
+    highlightLines: [2, 17, 18, 19, 20],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.stateManagement.antiPatternsTitle",
+    id: "anti-patterns",
+  },
+  {
+    type: "comparison",
+    columns: [
+      {
+        titleKey: "architecture.stateManagement.doTitle",
+        variant: "positive",
+        items: [
+          "Use TanStack Query for ALL server data",
+          "Access Zustand stores directly where needed",
+          "Use useState for component-local state",
+          "Let TanStack Query handle caching & refetching",
+          "Use key factories for consistent cache keys",
+        ],
+      },
+      {
+        titleKey: "architecture.stateManagement.dontTitle",
+        variant: "negative",
+        items: [
+          "DON'T put server data in Zustand",
+          "DON'T prop-drill global state through 5+ components",
+          "DON'T use useEffect+fetch for API calls",
+          "DON'T create manual cache invalidation",
+          "DON'T mix concerns in a single hook",
+        ],
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.stateManagement.localizationTitle",
+    id: "localization",
+  },
+  { type: "paragraph", contentKey: "architecture.stateManagement.localizationIntro" },
+  {
+    type: "table",
+    headers: ["Feature", "Implementation", "Details"],
+    rows: [
+      ["Language Switching", "LanguageProvider context", "Cookie/localStorage, NOT URL-based"],
+      ["RTL/LTR Support", "Auto-set dir + lang on <html>", "Arabic: RTL, all others: LTR"],
+      ["Font Classes", "font-arabic / font-english on <body>", "Auto-applied on switch"],
+      ["Dot-Notation Keys", "t('common.save')", "Nested dictionary access"],
+      ["Interpolation", "t('errors.minLength', { min: 5 })", "{{min}} placeholder replacement"],
+      ["SSR Fallback", "Returns key itself during SSR", "Graceful degradation"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "architecture.stateManagement.noLocaleFoldersWarning",
+  },
+];
 
 registerPage({
   slug: "architecture/state-management",
   titleKey: "architecture.stateManagement.title",
+  descriptionKey: "architecture.stateManagement.description",
   category: "architecture",
   order: 7,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.stateManagement.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.stateManagement.section_3_hdr_0",
-      "architecture.stateManagement.section_3_hdr_1",
-      "architecture.stateManagement.section_3_hdr_2"
-    ],
-    "rows": [
-      [
-        "architecture.stateManagement.section_3_cell_0_0",
-        "architecture.stateManagement.section_3_cell_0_1",
-        "architecture.stateManagement.section_3_cell_0_2"
-      ],
-      [
-        "architecture.stateManagement.section_3_cell_1_0",
-        "architecture.stateManagement.section_3_cell_1_1",
-        "architecture.stateManagement.section_3_cell_1_2"
-      ],
-      [
-        "architecture.stateManagement.section_3_cell_2_0",
-        "architecture.stateManagement.section_3_cell_2_1",
-        "architecture.stateManagement.section_3_cell_2_2"
-      ],
-      [
-        "architecture.stateManagement.section_3_cell_3_0",
-        "architecture.stateManagement.section_3_cell_3_1",
-        "architecture.stateManagement.section_3_cell_3_2"
-      ],
-      [
-        "architecture.stateManagement.section_3_cell_4_0",
-        "architecture.stateManagement.section_3_cell_4_1",
-        "architecture.stateManagement.section_3_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.stateManagement.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_5_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// Key factory for consistent cache keys\nexport const employeeKeys = {\n  all: [\"employees\"] as const,\n  list: (filters: { page: number; search: string }) =>\n    [...employeeKeys.all, \"list\", filters] as const,\n  detail: (id: string) =>\n    [...employeeKeys.all, \"detail\", id] as const,\n};\n\n// Query hook\nexport function useEmployees(filters: { page: number; search: string }) {\n  const repo = container.employeeRepository;\n\n  return useQuery({\n    queryKey: employeeKeys.list(filters),\n    queryFn: async () => {\n      const result = await repo.getAll(filters);\n      if (result.isErr()) throw result.error;\n      return result.value;\n    },\n    staleTime: 5 * 60 * 1000, // 5 minutes\n  });\n}\n\n// Mutation hook (auto-invalidates cache)\nexport function useCreateEmployee() {\n  const queryClient = useQueryClient();\n\n  return useMutation({\n    mutationFn: async (data: CreateEmployeeInput) => {\n      const result = await container.employeeRepository.create(data);\n      if (result.isErr()) throw result.error;\n      return result.value;\n    },\n    onSuccess: () => {\n      queryClient.invalidateQueries({ queryKey: employeeKeys.all });\n    },\n  });\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.stateManagement.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_9_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.stateManagement.section_10_hdr_0",
-      "architecture.stateManagement.section_10_hdr_1",
-      "architecture.stateManagement.section_10_hdr_2",
-      "architecture.stateManagement.section_10_hdr_3"
-    ],
-    "rows": [
-      [
-        "architecture.stateManagement.section_10_cell_0_0",
-        "architecture.stateManagement.section_10_cell_0_1",
-        "architecture.stateManagement.section_10_cell_0_2",
-        "architecture.stateManagement.section_10_cell_0_3"
-      ],
-      [
-        "architecture.stateManagement.section_10_cell_1_0",
-        "architecture.stateManagement.section_10_cell_1_1",
-        "architecture.stateManagement.section_10_cell_1_2",
-        "architecture.stateManagement.section_10_cell_1_3"
-      ],
-      [
-        "architecture.stateManagement.section_10_cell_2_0",
-        "architecture.stateManagement.section_10_cell_2_1",
-        "architecture.stateManagement.section_10_cell_2_2",
-        "architecture.stateManagement.section_10_cell_2_3"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_11_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "export const useAuthStore = create<AuthState>()(\n  persist(\n    (set) => ({\n      user: null,\n      token: null,\n      isAuthenticated: false,\n\n      login: (user, token) => set({\n        user, token, isAuthenticated: true,\n      }),\n\n      logout: () => set({\n        user: null, token: null, isAuthenticated: false,\n      }),\n    }),\n    {\n      name: \"auth-storage\",\n      partialize: (state) => ({\n        token: state.token,\n        user: state.user,\n      }),\n    }\n  )\n);",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.stateManagement.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.stateManagement.section_14_hdr_0",
-      "architecture.stateManagement.section_14_hdr_1"
-    ],
-    "rows": [
-      [
-        "architecture.stateManagement.section_14_cell_0_0",
-        "architecture.stateManagement.section_14_cell_0_1"
-      ],
-      [
-        "architecture.stateManagement.section_14_cell_1_0",
-        "architecture.stateManagement.section_14_cell_1_1"
-      ],
-      [
-        "architecture.stateManagement.section_14_cell_2_0",
-        "architecture.stateManagement.section_14_cell_2_1"
-      ],
-      [
-        "architecture.stateManagement.section_14_cell_3_0",
-        "architecture.stateManagement.section_14_cell_3_1"
-      ],
-      [
-        "architecture.stateManagement.section_14_cell_4_0",
-        "architecture.stateManagement.section_14_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.stateManagement.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.stateManagement.section_16_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.stateManagement.section_17_hdr_0",
-      "architecture.stateManagement.section_17_hdr_1",
-      "architecture.stateManagement.section_17_hdr_2"
-    ],
-    "rows": [
-      [
-        "architecture.stateManagement.section_17_cell_0_0",
-        "architecture.stateManagement.section_17_cell_0_1",
-        "architecture.stateManagement.section_17_cell_0_2"
-      ],
-      [
-        "architecture.stateManagement.section_17_cell_1_0",
-        "architecture.stateManagement.section_17_cell_1_1",
-        "architecture.stateManagement.section_17_cell_1_2"
-      ],
-      [
-        "architecture.stateManagement.section_17_cell_2_0",
-        "architecture.stateManagement.section_17_cell_2_1",
-        "architecture.stateManagement.section_17_cell_2_2"
-      ],
-      [
-        "architecture.stateManagement.section_17_cell_3_0",
-        "architecture.stateManagement.section_17_cell_3_1",
-        "architecture.stateManagement.section_17_cell_3_2"
-      ],
-      [
-        "architecture.stateManagement.section_17_cell_4_0",
-        "architecture.stateManagement.section_17_cell_4_1",
-        "architecture.stateManagement.section_17_cell_4_2"
-      ],
-      [
-        "architecture.stateManagement.section_17_cell_5_0",
-        "architecture.stateManagement.section_17_cell_5_1",
-        "architecture.stateManagement.section_17_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "architecture.stateManagement.section_18_title",
-    "contentKey": "architecture.stateManagement.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.stateManagement.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.stateManagement.section_20_item_0",
-      "architecture.stateManagement.section_20_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/frontend",
-  "architecture/solid-pattern"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/frontend", "architecture/solid-pattern"],
+  lastUpdated: "2026-02-19",
 });

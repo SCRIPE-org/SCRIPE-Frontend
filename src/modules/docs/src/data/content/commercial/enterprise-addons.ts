@@ -1,414 +1,299 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.enterpriseAddons.intro" },
+
+  // ─── Custom Module Development ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.enterpriseAddons.customTitle",
+    id: "custom-modules",
+  },
+  { type: "paragraph", contentKey: "commercial.enterpriseAddons.customContent" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "building",
+        titleKey: "commercial.enterpriseAddons.customDev",
+        descriptionKey: "commercial.enterpriseAddons.customDevDesc",
+      },
+      {
+        icon: "zap",
+        titleKey: "commercial.enterpriseAddons.priorityFeature",
+        descriptionKey: "commercial.enterpriseAddons.priorityFeatureDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "commercial.enterpriseAddons.training",
+        descriptionKey: "commercial.enterpriseAddons.trainingDesc",
+      },
+      {
+        icon: "shield",
+        titleKey: "commercial.enterpriseAddons.securityAudit",
+        descriptionKey: "commercial.enterpriseAddons.securityAuditDesc",
+      },
+    ],
+  },
+
+  // ─── Migration Services ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.enterpriseAddons.migrationTitle",
+    id: "migration",
+  },
+  { type: "paragraph", contentKey: "commercial.enterpriseAddons.migrationIntro" },
+  {
+    type: "table",
+    headers: [
+      "commercial.enterpriseAddons.tblMigHeader1",
+      "commercial.enterpriseAddons.tblMigHeader2",
+      "commercial.enterpriseAddons.tblMigHeader3",
+    ],
+    rows: [
+      [
+        "commercial.enterpriseAddons.tblMigR1C1",
+        "commercial.enterpriseAddons.tblMigR1C2",
+        "commercial.enterpriseAddons.tblMigR1C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblMigR2C1",
+        "commercial.enterpriseAddons.tblMigR2C2",
+        "commercial.enterpriseAddons.tblMigR2C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblMigR3C1",
+        "commercial.enterpriseAddons.tblMigR3C2",
+        "commercial.enterpriseAddons.tblMigR3C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblMigR4C1",
+        "commercial.enterpriseAddons.tblMigR4C2",
+        "commercial.enterpriseAddons.tblMigR4C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblMigR5C1",
+        "commercial.enterpriseAddons.tblMigR5C2",
+        "commercial.enterpriseAddons.tblMigR5C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblMigR6C1",
+        "commercial.enterpriseAddons.tblMigR6C2",
+        "commercial.enterpriseAddons.tblMigR6C3",
+      ],
+    ],
+  },
+
+  // ─── Advanced Integration Services ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.enterpriseAddons.integrationTitle",
+    id: "integrations",
+  },
+  { type: "paragraph", contentKey: "commercial.enterpriseAddons.integrationContent" },
+  {
+    type: "table",
+    headers: [
+      "commercial.enterpriseAddons.tblIntHeader1",
+      "commercial.enterpriseAddons.tblIntHeader2",
+      "commercial.enterpriseAddons.tblIntHeader3",
+    ],
+    rows: [
+      [
+        "commercial.enterpriseAddons.tblIntR1C1",
+        "commercial.enterpriseAddons.tblIntR1C2",
+        "commercial.enterpriseAddons.tblIntR1C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblIntR2C1",
+        "commercial.enterpriseAddons.tblIntR2C2",
+        "commercial.enterpriseAddons.tblIntR2C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblIntR3C1",
+        "commercial.enterpriseAddons.tblIntR3C2",
+        "commercial.enterpriseAddons.tblIntR3C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblIntR4C1",
+        "commercial.enterpriseAddons.tblIntR4C2",
+        "commercial.enterpriseAddons.tblIntR4C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblIntR5C1",
+        "commercial.enterpriseAddons.tblIntR5C2",
+        "commercial.enterpriseAddons.tblIntR5C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblIntR6C1",
+        "commercial.enterpriseAddons.tblIntR6C2",
+        "commercial.enterpriseAddons.tblIntR6C3",
+      ],
+    ],
+  },
+
+  // ─── Engagement Process ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.enterpriseAddons.processTitle",
+    id: "process",
+  },
+  {
+    type: "step-guide",
+    steps: [
+      {
+        titleKey: "commercial.enterpriseAddons.step1Title",
+        contentKey: "commercial.enterpriseAddons.step1Content",
+      },
+      {
+        titleKey: "commercial.enterpriseAddons.step2Title",
+        contentKey: "commercial.enterpriseAddons.step2Content",
+      },
+      {
+        titleKey: "commercial.enterpriseAddons.step3Title",
+        contentKey: "commercial.enterpriseAddons.step3Content",
+      },
+      {
+        titleKey: "commercial.enterpriseAddons.step4Title",
+        contentKey: "commercial.enterpriseAddons.step4Content",
+      },
+      {
+        titleKey: "commercial.enterpriseAddons.step5Title",
+        contentKey: "commercial.enterpriseAddons.step5Content",
+      },
+    ],
+  },
+
+  // ─── Pricing Model ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.enterpriseAddons.pricingTitle",
+    id: "pricing",
+  },
+  { type: "paragraph", contentKey: "commercial.enterpriseAddons.pricingContent" },
+  {
+    type: "table",
+    headers: [
+      "commercial.enterpriseAddons.tblPriceHeader1",
+      "commercial.enterpriseAddons.tblPriceHeader2",
+      "commercial.enterpriseAddons.tblPriceHeader3",
+    ],
+    rows: [
+      [
+        "commercial.enterpriseAddons.tblPriceR1C1",
+        "commercial.enterpriseAddons.tblPriceR1C2",
+        "commercial.enterpriseAddons.tblPriceR1C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblPriceR2C1",
+        "commercial.enterpriseAddons.tblPriceR2C2",
+        "commercial.enterpriseAddons.tblPriceR2C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblPriceR3C1",
+        "commercial.enterpriseAddons.tblPriceR3C2",
+        "commercial.enterpriseAddons.tblPriceR3C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblPriceR4C1",
+        "commercial.enterpriseAddons.tblPriceR4C2",
+        "commercial.enterpriseAddons.tblPriceR4C3",
+      ],
+      [
+        "commercial.enterpriseAddons.tblPriceR5C1",
+        "commercial.enterpriseAddons.tblPriceR5C2",
+        "commercial.enterpriseAddons.tblPriceR5C3",
+      ],
+    ],
+  },
+
+  // ─── Entitlements & Plan Management ────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.enterpriseAddons.entitlementsTitle",
+    id: "entitlements",
+  },
+  { type: "paragraph", contentKey: "commercial.enterpriseAddons.entitlementsIntro" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "layers",
+        titleKey: "commercial.enterpriseAddons.entReseller",
+        descriptionKey: "commercial.enterpriseAddons.entResellerDesc",
+      },
+      {
+        icon: "git-branch",
+        titleKey: "commercial.enterpriseAddons.entVersioning",
+        descriptionKey: "commercial.enterpriseAddons.entVersioningDesc",
+      },
+      {
+        icon: "sliders",
+        titleKey: "commercial.enterpriseAddons.entOverrides",
+        descriptionKey: "commercial.enterpriseAddons.entOverridesDesc",
+      },
+      {
+        icon: "bar-chart",
+        titleKey: "commercial.enterpriseAddons.entQuota",
+        descriptionKey: "commercial.enterpriseAddons.entQuotaDesc",
+      },
+      {
+        icon: "eye",
+        titleKey: "commercial.enterpriseAddons.entContextAware",
+        descriptionKey: "commercial.enterpriseAddons.entContextAwareDesc",
+      },
+      {
+        icon: "refresh-cw",
+        titleKey: "commercial.enterpriseAddons.entLifecycleTitle",
+        descriptionKey: "commercial.enterpriseAddons.entLifecycleContent",
+      },
+      {
+        icon: "file-text",
+        titleKey: "commercial.enterpriseAddons.entRenewalAudit",
+        descriptionKey: "commercial.enterpriseAddons.entRenewalAuditDesc",
+      },
+      {
+        icon: "clock",
+        titleKey: "commercial.enterpriseAddons.entPromoExpiry",
+        descriptionKey: "commercial.enterpriseAddons.entPromoExpiryDesc",
+      },
+      {
+        icon: "shield",
+        titleKey: "commercial.enterpriseAddons.entConcurrency",
+        descriptionKey: "commercial.enterpriseAddons.entConcurrencyDesc",
+      },
+      {
+        icon: "check-circle",
+        titleKey: "commercial.enterpriseAddons.entValidation",
+        descriptionKey: "commercial.enterpriseAddons.entValidationDesc",
+      },
+      {
+        icon: "link",
+        titleKey: "commercial.enterpriseAddons.entCrossModule",
+        descriptionKey: "commercial.enterpriseAddons.entCrossModuleDesc",
+      },
+    ],
+  },
+
+  { type: "info", variant: "tip", contentKey: "commercial.enterpriseAddons.contactNote" },
+];
 
 registerPage({
   slug: "commercial/enterprise-addons",
   titleKey: "commercial.enterpriseAddons.title",
+  descriptionKey: "commercial.enterpriseAddons.description",
   category: "commercial-pricing",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_3_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_13_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.enterpriseAddons.section_14_hdr_0",
-      "commercial.enterpriseAddons.section_14_hdr_1",
-      "commercial.enterpriseAddons.section_14_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.enterpriseAddons.section_14_cell_0_0",
-        "commercial.enterpriseAddons.section_14_cell_0_1",
-        "commercial.enterpriseAddons.section_14_cell_0_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_14_cell_1_0",
-        "commercial.enterpriseAddons.section_14_cell_1_1",
-        "commercial.enterpriseAddons.section_14_cell_1_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_14_cell_2_0",
-        "commercial.enterpriseAddons.section_14_cell_2_1",
-        "commercial.enterpriseAddons.section_14_cell_2_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_14_cell_3_0",
-        "commercial.enterpriseAddons.section_14_cell_3_1",
-        "commercial.enterpriseAddons.section_14_cell_3_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_14_cell_4_0",
-        "commercial.enterpriseAddons.section_14_cell_4_1",
-        "commercial.enterpriseAddons.section_14_cell_4_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_14_cell_5_0",
-        "commercial.enterpriseAddons.section_14_cell_5_1",
-        "commercial.enterpriseAddons.section_14_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_16_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.enterpriseAddons.section_17_hdr_0",
-      "commercial.enterpriseAddons.section_17_hdr_1",
-      "commercial.enterpriseAddons.section_17_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.enterpriseAddons.section_17_cell_0_0",
-        "commercial.enterpriseAddons.section_17_cell_0_1",
-        "commercial.enterpriseAddons.section_17_cell_0_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_17_cell_1_0",
-        "commercial.enterpriseAddons.section_17_cell_1_1",
-        "commercial.enterpriseAddons.section_17_cell_1_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_17_cell_2_0",
-        "commercial.enterpriseAddons.section_17_cell_2_1",
-        "commercial.enterpriseAddons.section_17_cell_2_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_17_cell_3_0",
-        "commercial.enterpriseAddons.section_17_cell_3_1",
-        "commercial.enterpriseAddons.section_17_cell_3_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_17_cell_4_0",
-        "commercial.enterpriseAddons.section_17_cell_4_1",
-        "commercial.enterpriseAddons.section_17_cell_4_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_17_cell_5_0",
-        "commercial.enterpriseAddons.section_17_cell_5_1",
-        "commercial.enterpriseAddons.section_17_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_20_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_24_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_26_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_28_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_30_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.enterpriseAddons.section_31_hdr_0",
-      "commercial.enterpriseAddons.section_31_hdr_1",
-      "commercial.enterpriseAddons.section_31_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.enterpriseAddons.section_31_cell_0_0",
-        "commercial.enterpriseAddons.section_31_cell_0_1",
-        "commercial.enterpriseAddons.section_31_cell_0_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_31_cell_1_0",
-        "commercial.enterpriseAddons.section_31_cell_1_1",
-        "commercial.enterpriseAddons.section_31_cell_1_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_31_cell_2_0",
-        "commercial.enterpriseAddons.section_31_cell_2_1",
-        "commercial.enterpriseAddons.section_31_cell_2_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_31_cell_3_0",
-        "commercial.enterpriseAddons.section_31_cell_3_1",
-        "commercial.enterpriseAddons.section_31_cell_3_2"
-      ],
-      [
-        "commercial.enterpriseAddons.section_31_cell_4_0",
-        "commercial.enterpriseAddons.section_31_cell_4_1",
-        "commercial.enterpriseAddons.section_31_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_32_title",
-    "id": "sec_32"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_33_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_34_title",
-    "id": "sec_34"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_35_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_36_title",
-    "id": "sec_36"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_37_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_38_title",
-    "id": "sec_38"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_39_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_40_title",
-    "id": "sec_40"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_41_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_42_title",
-    "id": "sec_42"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_43_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_44_title",
-    "id": "sec_44"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_45_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_46_title",
-    "id": "sec_46"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_47_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_48_title",
-    "id": "sec_48"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_49_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_50_title",
-    "id": "sec_50"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_51_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_52_title",
-    "id": "sec_52"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_53_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.enterpriseAddons.section_54_title",
-    "id": "sec_54"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.enterpriseAddons.section_55_content"
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.enterpriseAddons.section_56_title",
-    "contentKey": "commercial.enterpriseAddons.section_56_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.enterpriseAddons.section_57_title",
-    "id": "sec_57"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.enterpriseAddons.section_58_item_0",
-      "commercial.enterpriseAddons.section_58_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/support-plans",
-  "commercial/licensing-model"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/support-plans", "commercial/licensing-model"],
+  lastUpdated: "2026-02-20",
 });

@@ -1,176 +1,216 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "frontend.realtime.intro" },
+
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.realtime.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Real-Time Communication Architecture",
+    direction: "horizontal",
+    nodes: [
+      { id: "backend", label: "ASP.NET Core", type: "primary" },
+      { id: "signalr", label: "SignalR Hubs", type: "info", description: "WebSocket + fallback" },
+      { id: "provider", label: "SignalRProvider", type: "success", description: "React Context" },
+      { id: "hooks", label: "Custom Hooks", type: "warning" },
+      { id: "audit", label: "AuditHub", type: "info" },
+      { id: "notif", label: "NotificationHub", type: "info" },
+    ],
+    connections: [
+      { from: "backend", to: "signalr" },
+      { from: "signalr", to: "audit" },
+      { from: "signalr", to: "notif" },
+      { from: "provider", to: "signalr", label: "connects" },
+      { from: "hooks", to: "provider", label: "uses context" },
+    ],
+  },
+
+  // ─── SignalR Hubs ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.realtime.hubsTitle",
+    id: "hubs",
+  },
+  {
+    type: "table",
+    headers: ["Hub", "Path", "Purpose", "Events"],
+    rows: [
+      ["AuditHub", "/hubs/audit", "Real-time audit log streaming", "AuditLogCreated"],
+      [
+        "NotificationHub",
+        "/hubs/notification",
+        "Push notifications",
+        "NotificationReceived, UnreadCountChanged",
+      ],
+    ],
+  },
+
+  // ─── SignalRProvider ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.realtime.providerTitle",
+    id: "provider",
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "SignalRProvider — Connection Management",
+    code: `// Manages SignalR connections with automatic reconnection
+export function SignalRProvider({ children }: { children: ReactNode }) {
+  const { token } = useAuthStore();
+  const [auditConnection, setAuditConnection] = useState<HubConnection | null>(null);
+  const [notifConnection, setNotifConnection] = useState<HubConnection | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+
+    // Create connection with auto-reconnect
+    const audit = new HubConnectionBuilder()
+      .withUrl(\`\${API_URL}/hubs/audit\`, {
+        accessTokenFactory: () => token,
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+      .configureLogging(LogLevel.Warning)
+      .build();
+
+    const notif = new HubConnectionBuilder()
+      .withUrl(\`\${API_URL}/hubs/notification\`, {
+        accessTokenFactory: () => token,
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+      .build();
+
+    audit.start().catch(console.error);
+    notif.start().catch(console.error);
+
+    setAuditConnection(audit);
+    setNotifConnection(notif);
+
+    return () => {
+      audit.stop();
+      notif.stop();
+    };
+  }, [token]);
+
+  return (
+    <SignalRContext.Provider value={{ auditConnection, notifConnection }}>
+      {children}
+    </SignalRContext.Provider>
+  );
+}`,
+    highlightLines: [14, 15, 16, 26, 27],
+  },
+
+  // ─── Custom Hooks ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.realtime.hooksTitle",
+    id: "hooks",
+  },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Audit Stream",
+        language: "typescript",
+        filename: "useAuditStream.ts",
+        code: `export function useAuditStream(maxItems = 100) {
+  const [logs, setLogs] = useState<AuditLogDto[]>([]);
+  const { auditConnection } = useSignalR();
+
+  useEffect(() => {
+    if (!auditConnection) return;
+
+    const handler = (log: AuditLogDto) => {
+      setLogs(prev => [log, ...prev].slice(0, maxItems));
+    };
+
+    auditConnection.on("AuditLogCreated", handler);
+    return () => auditConnection.off("AuditLogCreated", handler);
+  }, [auditConnection, maxItems]);
+
+  return { logs, clearLogs: () => setLogs([]) };
+}`,
+      },
+      {
+        label: "Notifications",
+        language: "typescript",
+        filename: "useNotifications.ts",
+        code: `export function useNotifications() {
+  const [unreadCount, setUnreadCount] = useState(0);
+  const { notifConnection } = useSignalR();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!notifConnection) return;
+
+    notifConnection.on("NotificationReceived", (notif) => {
+      // Invalidate notifications query to show new ones
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      toast.info(notif.title);
+    });
+
+    notifConnection.on("UnreadCountChanged", (count: number) => {
+      setUnreadCount(count);
+    });
+
+    return () => {
+      notifConnection.off("NotificationReceived");
+      notifConnection.off("UnreadCountChanged");
+    };
+  }, [notifConnection, queryClient]);
+
+  return { unreadCount };
+}`,
+      },
+    ],
+  },
+
+  // ─── Connection States ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.realtime.connectionStatesTitle",
+    id: "connection-states",
+  },
+  {
+    type: "table",
+    headers: ["State", "Description", "Retry Timing"],
+    rows: [
+      ["Connected", "Active WebSocket connection", "—"],
+      ["Reconnecting", "Lost connection, attempting reconnect", "0s → 2s → 5s → 10s → 30s"],
+      ["Disconnected", "All retry attempts exhausted", "Manual reconnect required"],
+      ["Connecting", "Initial connection in progress", "—"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "frontend.realtime.tenantGroupNote",
+  },
+];
 
 registerPage({
   slug: "frontend/realtime",
   titleKey: "frontend.realtime.title",
+  descriptionKey: "frontend.realtime.description",
   category: "frontend",
   order: 7,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.realtime.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.realtime.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.realtime.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    backend([\"ASP.NET Core\"])\n    signalr([\"SignalR Hubs\"])\n    %% signalr: WebSocket + fallback\n    provider([\"SignalRProvider\"])\n    %% provider: React Context\n    hooks{{\"Custom Hooks\"}}\n    audit([\"AuditHub\"])\n    notif([\"NotificationHub\"])\n    backend --> signalr\n    signalr --> audit\n    signalr --> notif\n    provider -->|\"connects\"| signalr\n    hooks -->|\"uses context\"| provider",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.realtime.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "frontend.realtime.section_5_hdr_0",
-      "frontend.realtime.section_5_hdr_1",
-      "frontend.realtime.section_5_hdr_2",
-      "frontend.realtime.section_5_hdr_3"
-    ],
-    "rows": [
-      [
-        "frontend.realtime.section_5_cell_0_0",
-        "frontend.realtime.section_5_cell_0_1",
-        "frontend.realtime.section_5_cell_0_2",
-        "frontend.realtime.section_5_cell_0_3"
-      ],
-      [
-        "frontend.realtime.section_5_cell_1_0",
-        "frontend.realtime.section_5_cell_1_1",
-        "frontend.realtime.section_5_cell_1_2",
-        "frontend.realtime.section_5_cell_1_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.realtime.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.realtime.section_7_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// Manages SignalR connections with automatic reconnection\nexport function SignalRProvider({ children }: { children: ReactNode }) {\n  const { token } = useAuthStore();\n  const [auditConnection, setAuditConnection] = useState<HubConnection | null>(null);\n  const [notifConnection, setNotifConnection] = useState<HubConnection | null>(null);\n\n  useEffect(() => {\n    if (!token) return;\n\n    // Create connection with auto-reconnect\n    const audit = new HubConnectionBuilder()\n      .withUrl(`${API_URL}/hubs/audit`, {\n        accessTokenFactory: () => token,\n      })\n      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])\n      .configureLogging(LogLevel.Warning)\n      .build();\n\n    const notif = new HubConnectionBuilder()\n      .withUrl(`${API_URL}/hubs/notification`, {\n        accessTokenFactory: () => token,\n      })\n      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])\n      .build();\n\n    audit.start().catch(console.error);\n    notif.start().catch(console.error);\n\n    setAuditConnection(audit);\n    setNotifConnection(notif);\n\n    return () => {\n      audit.stop();\n      notif.stop();\n    };\n  }, [token]);\n\n  return (\n    <SignalRContext.Provider value={{ auditConnection, notifConnection }}>\n      {children}\n    </SignalRContext.Provider>\n  );\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.realtime.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "frontend.realtime.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.realtime.section_11_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "export function useAuditStream(maxItems = 100) {\n  const [logs, setLogs] = useState<AuditLogDto[]>([]);\n  const { auditConnection } = useSignalR();\n\n  useEffect(() => {\n    if (!auditConnection) return;\n\n    const handler = (log: AuditLogDto) => {\n      setLogs(prev => [log, ...prev].slice(0, maxItems));\n    };\n\n    auditConnection.on(\"AuditLogCreated\", handler);\n    return () => auditConnection.off(\"AuditLogCreated\", handler);\n  }, [auditConnection, maxItems]);\n\n  return { logs, clearLogs: () => setLogs([]) };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "frontend.realtime.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "frontend.realtime.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "export function useNotifications() {\n  const [unreadCount, setUnreadCount] = useState(0);\n  const { notifConnection } = useSignalR();\n  const queryClient = useQueryClient();\n\n  useEffect(() => {\n    if (!notifConnection) return;\n\n    notifConnection.on(\"NotificationReceived\", (notif) => {\n      // Invalidate notifications query to show new ones\n      queryClient.invalidateQueries({ queryKey: [\"notifications\"] });\n      toast.info(notif.title);\n    });\n\n    notifConnection.on(\"UnreadCountChanged\", (count: number) => {\n      setUnreadCount(count);\n    });\n\n    return () => {\n      notifConnection.off(\"NotificationReceived\");\n      notifConnection.off(\"UnreadCountChanged\");\n    };\n  }, [notifConnection, queryClient]);\n\n  return { unreadCount };\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.realtime.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "frontend.realtime.section_17_hdr_0",
-      "frontend.realtime.section_17_hdr_1",
-      "frontend.realtime.section_17_hdr_2"
-    ],
-    "rows": [
-      [
-        "frontend.realtime.section_17_cell_0_0",
-        "frontend.realtime.section_17_cell_0_1",
-        "frontend.realtime.section_17_cell_0_2"
-      ],
-      [
-        "frontend.realtime.section_17_cell_1_0",
-        "frontend.realtime.section_17_cell_1_1",
-        "frontend.realtime.section_17_cell_1_2"
-      ],
-      [
-        "frontend.realtime.section_17_cell_2_0",
-        "frontend.realtime.section_17_cell_2_1",
-        "frontend.realtime.section_17_cell_2_2"
-      ],
-      [
-        "frontend.realtime.section_17_cell_3_0",
-        "frontend.realtime.section_17_cell_3_1",
-        "frontend.realtime.section_17_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "frontend.realtime.section_18_title",
-    "contentKey": "frontend.realtime.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "frontend.realtime.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "frontend.realtime.section_20_item_0",
-      "frontend.realtime.section_20_item_1",
-      "frontend.realtime.section_20_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "security/audit-compliance",
-  "frontend/state-management",
-  "api-reference/webhook-email-api"
-],
-  lastUpdated: "2026-06-09",
+    "security/audit-compliance",
+    "frontend/state-management",
+    "api-reference/webhook-email-api",
+  ],
+  lastUpdated: "2026-02-20",
 });

@@ -30,7 +30,7 @@ import "./architecture/dependency-injection";
 import "./features/authentication";
 import "./features/multi-tenancy";
 import "./features/role-permissions";
-import "./features/user-groups";
+import "./features/admin-groups";
 import "./features/audit-system";
 import "./features/notification-system";
 import "./features/email-system";
@@ -53,26 +53,19 @@ import "./features/tenant-context-gate";
 // Modules (Entitlements)
 import "./modules/entitlements/entitlements-overview";
 import "./modules/entitlements/editions";
-import "./modules/entitlements/subscriptions";
+// import "./modules/entitlements/subscriptions";
 import "./modules/entitlements/features";
 import "./modules/entitlements/overrides";
 
 // Modules (Billing & Tier 2 — Phases 0–9)
-import "./modules/entitlements/billing-engine";
-import "./modules/entitlements/invoices";
-import "./modules/entitlements/dunning";
-import "./modules/entitlements/tenant-plans";
-import "./modules/entitlements/user-subscriptions";
+// import "./modules/entitlements/billing-engine";
+// import "./modules/entitlements/invoices";
+// import "./modules/entitlements/dunning";
+// import "./modules/entitlements/tenant-plans";
+// import "./modules/entitlements/user-subscriptions";
 
 // Modules (Revenue Analytics — Phase 11)
-import "./modules/entitlements/revenue-analytics";
-import "./modules/entitlements/stripe-connect";
-
-// Modules (Marketplace)
-import "./modules/marketplace/marketplace-overview";
-import "./modules/marketplace/marketplace-catalog";
-import "./modules/marketplace/marketplace-submissions";
-import "./modules/marketplace/marketplace-financials";
+// import "./modules/entitlements/revenue-analytics";
 
 // Modules (Plugins — Phase 15)
 import "./modules/plugins/plugins-overview";
@@ -102,7 +95,7 @@ import "./api-reference/user-auth-api";
 import "./api-reference/admin-api";
 import "./api-reference/tenant-api";
 import "./api-reference/role-permission-api";
-import "./api-reference/user-groups-api";
+import "./api-reference/admin-groups-api";
 import "./api-reference/webhook-email-api";
 import "./api-reference/system-api";
 
@@ -120,12 +113,11 @@ import "./infrastructure/file-storage";
 import "./infrastructure/resilience";
 import "./infrastructure/gateway-deployment";
 import "./infrastructure/database-migrations";
-import "./infrastructure/scripe-cli";
+import "./infrastructure/uis-cli";
 import "./infrastructure/health-checks";
 import "./infrastructure/observability";
 import "./infrastructure/audit-trail";
 import "./infrastructure/load-testing";
-import "./infrastructure/scripe-studio";
 
 // Tutorials
 import "./tutorials/add-module";
@@ -136,7 +128,7 @@ import "./tutorials/add-backend-module";
 // ═══════════════════════════════════════════════════════════
 
 // Why SCRIPE
-import "./commercial/why-scripe-overview";
+import "./commercial/why-uis-overview";
 import "./commercial/competitive-advantages";
 import "./commercial/target-industries";
 import "./commercial/success-metrics";
@@ -151,7 +143,7 @@ import "./commercial/system-requirements";
 // Enterprise Features
 import "./commercial/multi-tenancy";
 import "./commercial/roles-permissions";
-import "./commercial/user-groups";
+import "./commercial/admin-groups";
 import "./commercial/audit-compliance";
 import "./commercial/real-time-capabilities";
 import "./commercial/localization-i18n";
@@ -203,15 +195,14 @@ import "./commercial/roadmap";
 // Modules (Commercial Entitlements)
 import "./commercial/entitlements-overview";
 import "./commercial/entitlements-editions";
-import "./commercial/entitlements-subscriptions";
+// import "./commercial/entitlements-subscriptions";
 import "./commercial/entitlements-features";
 import "./commercial/entitlements-overrides";
 
 // Modules (Commercial Billing & Tier 2 — Phases 0–9)
-import "./commercial/billing-payments";
-import "./commercial/entitlements-tenant-plans";
-import "./commercial/entitlements-user-subscriptions";
-import "./commercial/stripe-connect";
+// import "./commercial/billing-payments";
+// import "./commercial/entitlements-tenant-plans";
+// import "./commercial/entitlements-user-subscriptions";
 
 // Modules (Commercial Plugins — Phase 15)
 import "./commercial/plugins-overview";
@@ -221,7 +212,3 @@ import "./commercial/compliance-overview";
 import "./commercial/compliance-gdpr";
 import "./commercial/compliance-dsr";
 import "./commercial/compliance-roi";
-
-// Modules (Commercial Marketplace)
-import "./commercial/marketplace-overview";
-import "./commercial/marketplace-financials";

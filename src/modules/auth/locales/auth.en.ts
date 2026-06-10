@@ -133,6 +133,7 @@ export const en = {
     back: "Back",
     resendCode: "Resend code",
     resendCooldown: "Resend in {{seconds}}s",
+    verifyingLink: "Verifying your reset link…",
     forgotPickWorkspaceTitle: "Which workspace?",
     forgotPickWorkspaceSubtitle:
       "Your email is linked to multiple workspaces. Choose which one to reset.",

@@ -1,212 +1,174 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.entOverview.intro" },
+
+  // ─── Why Entitlements Matter ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.entOverview.whyTitle",
+    id: "why-entitlements",
+  },
+  { type: "paragraph", contentKey: "commercial.entOverview.whyContent" },
+  {
+    type: "feature-grid",
+    columns: 3,
+    items: [
+      {
+        icon: "layers",
+        titleKey: "commercial.entOverview.fgEditions",
+        descriptionKey: "commercial.entOverview.fgEditionsDesc",
+      },
+      {
+        icon: "refresh-cw",
+        titleKey: "commercial.entOverview.fgSubscriptions",
+        descriptionKey: "commercial.entOverview.fgSubscriptionsDesc",
+      },
+      {
+        icon: "key",
+        titleKey: "commercial.entOverview.fgFeatures",
+        descriptionKey: "commercial.entOverview.fgFeaturesDesc",
+      },
+      {
+        icon: "sliders",
+        titleKey: "commercial.entOverview.fgOverrides",
+        descriptionKey: "commercial.entOverview.fgOverridesDesc",
+      },
+      {
+        icon: "bar-chart",
+        titleKey: "commercial.entOverview.fgQuotas",
+        descriptionKey: "commercial.entOverview.fgQuotasDesc",
+      },
+      {
+        icon: "git-branch",
+        titleKey: "commercial.entOverview.fgVersioning",
+        descriptionKey: "commercial.entOverview.fgVersioningDesc",
+      },
+    ],
+  },
+
+  // ─── How It Works ───────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.entOverview.howTitle", id: "how-it-works" },
+  { type: "paragraph", contentKey: "commercial.entOverview.howContent" },
+  {
+    type: "flowchart",
+    direction: "horizontal",
+    title: "Entitlements Resolution Flow",
+    nodes: [
+      { id: "req", label: "API Request", type: "default" },
+      { id: "pipe", label: "SCRIPE Mediator Pipeline", type: "info" },
+      { id: "check", label: "IRequireFeature Check", type: "primary" },
+      { id: "resolve", label: "Resolve Tenant Features", type: "warning" },
+      { id: "allow", label: "Execute ✓", type: "success" },
+      { id: "deny", label: "Feature Disabled ✗", type: "danger" },
+    ],
+    connections: [
+      { from: "req", to: "pipe" },
+      { from: "pipe", to: "check" },
+      { from: "check", to: "resolve" },
+      { from: "resolve", to: "allow", label: "Allowed" },
+      { from: "resolve", to: "deny", label: "Blocked" },
+    ],
+  },
+
+  // ─── Resolution Priority ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.entOverview.resolutionTitle",
+    id: "resolution-priority",
+  },
+  { type: "paragraph", contentKey: "commercial.entOverview.resolutionContent" },
+  {
+    type: "table",
+    headers: [
+      "commercial.entOverview.tblResH1",
+      "commercial.entOverview.tblResH2",
+      "commercial.entOverview.tblResH3",
+    ],
+    rows: [
+      [
+        "commercial.entOverview.tblResR1C1",
+        "commercial.entOverview.tblResR1C2",
+        "commercial.entOverview.tblResR1C3",
+      ],
+      [
+        "commercial.entOverview.tblResR2C1",
+        "commercial.entOverview.tblResR2C2",
+        "commercial.entOverview.tblResR2C3",
+      ],
+      [
+        "commercial.entOverview.tblResR3C1",
+        "commercial.entOverview.tblResR3C2",
+        "commercial.entOverview.tblResR3C3",
+      ],
+      [
+        "commercial.entOverview.tblResR4C1",
+        "commercial.entOverview.tblResR4C2",
+        "commercial.entOverview.tblResR4C3",
+      ],
+    ],
+  },
+
+  // ─── Business Value ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.entOverview.valueTitle",
+    id: "business-value",
+  },
+  {
+    type: "table",
+    headers: [
+      "commercial.entOverview.tblValH1",
+      "commercial.entOverview.tblValH2",
+      "commercial.entOverview.tblValH3",
+    ],
+    rows: [
+      [
+        "commercial.entOverview.tblValR1C1",
+        "commercial.entOverview.tblValR1C2",
+        "commercial.entOverview.tblValR1C3",
+      ],
+      [
+        "commercial.entOverview.tblValR2C1",
+        "commercial.entOverview.tblValR2C2",
+        "commercial.entOverview.tblValR2C3",
+      ],
+      [
+        "commercial.entOverview.tblValR3C1",
+        "commercial.entOverview.tblValR3C2",
+        "commercial.entOverview.tblValR3C3",
+      ],
+      [
+        "commercial.entOverview.tblValR4C1",
+        "commercial.entOverview.tblValR4C2",
+        "commercial.entOverview.tblValR4C3",
+      ],
+      [
+        "commercial.entOverview.tblValR5C1",
+        "commercial.entOverview.tblValR5C2",
+        "commercial.entOverview.tblValR5C3",
+      ],
+    ],
+  },
+
+  { type: "info", variant: "tip", contentKey: "commercial.entOverview.tip" },
+];
 
 registerPage({
   slug: "commercial/entitlements-overview",
   titleKey: "commercial.entOverview.title",
+  descriptionKey: "commercial.entOverview.description",
   category: "commercial-modules",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverview.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_3_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverview.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverview.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverview.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverview.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverview.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.entOverview.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverview.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_17_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    req[\"API Request\"]\n    pipe([\"AstraFlow Mediator Pipeline\"])\n    check([\"IRequireFeature Check\"])\n    resolve{{\"Resolve Tenant Features\"}}\n    allow([\"Execute ✓\"])\n    deny[\"Feature Disabled ✗\"]\n    req --> pipe\n    pipe --> check\n    check --> resolve\n    resolve -->|\"Allowed\"| allow\n    resolve -->|\"Blocked\"| deny",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverview.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.entOverview.section_20_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.entOverview.section_21_hdr_0",
-      "commercial.entOverview.section_21_hdr_1",
-      "commercial.entOverview.section_21_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.entOverview.section_21_cell_0_0",
-        "commercial.entOverview.section_21_cell_0_1",
-        "commercial.entOverview.section_21_cell_0_2"
-      ],
-      [
-        "commercial.entOverview.section_21_cell_1_0",
-        "commercial.entOverview.section_21_cell_1_1",
-        "commercial.entOverview.section_21_cell_1_2"
-      ],
-      [
-        "commercial.entOverview.section_21_cell_2_0",
-        "commercial.entOverview.section_21_cell_2_1",
-        "commercial.entOverview.section_21_cell_2_2"
-      ],
-      [
-        "commercial.entOverview.section_21_cell_3_0",
-        "commercial.entOverview.section_21_cell_3_1",
-        "commercial.entOverview.section_21_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverview.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.entOverview.section_23_hdr_0",
-      "commercial.entOverview.section_23_hdr_1",
-      "commercial.entOverview.section_23_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.entOverview.section_23_cell_0_0",
-        "commercial.entOverview.section_23_cell_0_1",
-        "commercial.entOverview.section_23_cell_0_2"
-      ],
-      [
-        "commercial.entOverview.section_23_cell_1_0",
-        "commercial.entOverview.section_23_cell_1_1",
-        "commercial.entOverview.section_23_cell_1_2"
-      ],
-      [
-        "commercial.entOverview.section_23_cell_2_0",
-        "commercial.entOverview.section_23_cell_2_1",
-        "commercial.entOverview.section_23_cell_2_2"
-      ],
-      [
-        "commercial.entOverview.section_23_cell_3_0",
-        "commercial.entOverview.section_23_cell_3_1",
-        "commercial.entOverview.section_23_cell_3_2"
-      ],
-      [
-        "commercial.entOverview.section_23_cell_4_0",
-        "commercial.entOverview.section_23_cell_4_1",
-        "commercial.entOverview.section_23_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.entOverview.section_24_title",
-    "contentKey": "commercial.entOverview.section_24_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.entOverview.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.entOverview.section_26_item_0",
-      "commercial.entOverview.section_26_item_1",
-      "commercial.entOverview.section_26_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "commercial/entitlements-editions",
-  "commercial/entitlements-features",
-  "commercial/licensing-model"
-],
-  lastUpdated: "2026-06-09",
+    "commercial/entitlements-editions",
+    "commercial/entitlements-features",
+    "commercial/licensing-model",
+  ],
+  lastUpdated: "2026-03-02",
 });

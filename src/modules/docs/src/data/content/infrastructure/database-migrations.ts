@@ -1,171 +1,193 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.intro" },
+
+  // ─── Multi-Database Architecture ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.databaseMigrations.architectureTitle",
+    id: "architecture",
+  },
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.architectureContent" },
+  {
+    type: "flowchart",
+    title: "Derived DbContext Architecture",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "base",
+        label: "Abstract BaseDbContext",
+        type: "primary",
+        description: "Contains DbSets & Business Logic",
+      },
+      {
+        id: "sqlserver",
+        label: "SqlServerDbContext",
+        type: "info",
+        description: "ModelSnapshot for SQL Server",
+      },
+      {
+        id: "oracle",
+        label: "OracleDbContext",
+        type: "success",
+        description: "ModelSnapshot for Oracle",
+      },
+      {
+        id: "postgres",
+        label: "PostgreSqlDbContext",
+        type: "warning",
+        description: "ModelSnapshot for PostgreSQL",
+      },
+    ],
+    connections: [
+      { from: "sqlserver", to: "base", label: "inherits" },
+      { from: "oracle", to: "base", label: "inherits" },
+      { from: "postgres", to: "base", label: "inherits" },
+    ],
+  },
+
+  // ─── Runtime Dependency Injection ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.databaseMigrations.diTitle",
+    id: "di",
+  },
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.diContent" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "DependencyInjection.cs — MultiProvider Registration",
+    code: `// The AddMultiProviderDatabase extension method handles runtime resolution 
+// based automatically on the appsettings.json "DatabaseProvider" flag.
+
+services.AddMultiProviderDatabase<
+    IdentityDbContext,                     // Base Abstract Context used by Repositories
+    SqlServerIdentityDbContext,            // SQL Server Derived Context
+    OracleIdentityDbContext,               // Oracle Derived Context
+    PostgreSqlIdentityDbContext            // PostgreSQL Derived Context
+>(configuration);`,
+  },
+
+  // ─── Generating Migrations with CLI ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.databaseMigrations.cliTitle",
+    id: "cli",
+  },
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.cliContent" },
+  {
+    type: "code",
+    language: "bash",
+    filename: "scripe db add-migration",
+    code: `# All 3 providers at once (default)
+$ scripe db add-migration Initial -m Identity
+
+# Target a specific provider with -p
+$ scripe db add-migration Initial -m Identity -p SqlServer
+
+# Behind the scenes (all providers), the CLI executes:
+# dotnet ef migrations add Initial -c SqlServerIdentityDbContext -o Migrations/SqlServer
+# dotnet ef migrations add Initial -c OracleIdentityDbContext -o Migrations/Oracle
+# dotnet ef migrations add Initial -c PostgreSqlIdentityDbContext -o Migrations/PostgreSql`,
+  },
+  { type: "info", variant: "warning", contentKey: "infrastructure.databaseMigrations.cliWarning" },
+
+  // ─── Auto-Detecting Provider Updates ───────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "infrastructure.databaseMigrations.cliUpdateTitle",
+    id: "cli-update",
+  },
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.cliUpdateContent" },
+  {
+    type: "code",
+    language: "bash",
+    filename: "scripe db update",
+    code: `# Auto-detect provider from appsettings.json
+$ scripe db update -m Identity
+
+# Override with a specific provider
+$ scripe db update -m Identity -p Oracle
+
+# Output:
+# [INFO] Auto-detected database provider: SqlServer from appsettings.json
+# [INFO] > dotnet ef database update --project "..." --context SqlServerIdentityDbContext`,
+  },
+
+  // ─── Smart Force Removal ───────────────────────────
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "infrastructure.databaseMigrations.cliRemoveTitle",
+    id: "cli-remove",
+  },
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.cliRemoveContent" },
+  {
+    type: "code",
+    language: "bash",
+    filename: "scripe db remove-migration",
+    code: `# Remove from all 3 providers (active first, then force for others)
+$ scripe db remove-migration -m Identity
+
+# Remove from a specific provider only (auto-applies --force if non-active)
+$ scripe db remove-migration -m Identity -p SqlServer
+
+# Output (all providers):
+# [INFO] Auto-detected active provider: Oracle
+# [INFO] Removing latest migration for active provider (Oracle)...
+# [INFO] Force removing latest migration for SqlServer...
+# [INFO] Force removing latest migration for PostgreSql...`,
+  },
+
+  // ─── Adding a New Provider ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.databaseMigrations.newProviderTitle",
+    id: "new-provider",
+  },
+  { type: "paragraph", contentKey: "infrastructure.databaseMigrations.newProviderContent" },
+  {
+    type: "list",
+    variant: "ordered",
+    items: [
+      "infrastructure.databaseMigrations.newProviderStep1",
+      "infrastructure.databaseMigrations.newProviderStep2",
+      "infrastructure.databaseMigrations.newProviderStep3",
+      "infrastructure.databaseMigrations.newProviderStep4",
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SqliteIdentityDbContextFactory.cs",
+    code: `public class SqliteIdentityDbContextFactory : BaseIdentityDbContextFactory<SqliteIdentityDbContext>
+{
+    protected override void ConfigureOptions(DbContextOptionsBuilder optionsBuilder, string connectionString)
+    {
+        optionsBuilder.UseSqlite(connectionString, o => o.MigrationsAssembly(typeof(SqliteIdentityDbContext).Assembly.GetName().Name));
+    }
+}`,
+  },
+];
 
 registerPage({
   slug: "infrastructure/database-migrations",
   titleKey: "infrastructure.databaseMigrations.title",
+  descriptionKey: "infrastructure.databaseMigrations.description",
   category: "infrastructure",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.databaseMigrations.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    base([\"Abstract BaseDbContext\"])\n    %% base: Contains DbSets & Business Logic\n    sqlserver([\"SqlServerDbContext\"])\n    %% sqlserver: ModelSnapshot for SQL Server\n    oracle([\"OracleDbContext\"])\n    %% oracle: ModelSnapshot for Oracle\n    postgres{{\"PostgreSqlDbContext\"}}\n    %% postgres: ModelSnapshot for PostgreSQL\n    sqlserver -->|\"inherits\"| base\n    oracle -->|\"inherits\"| base\n    postgres -->|\"inherits\"| base",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.databaseMigrations.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_6_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_7_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// The AddMultiProviderDatabase extension method handles runtime resolution \n// based automatically on the appsettings.json \"DatabaseProvider\" flag.\n\nservices.AddMultiProviderDatabase<\n    IdentityDbContext,                     // Base Abstract Context used by Repositories\n    SqlServerIdentityDbContext,            // SQL Server Derived Context\n    OracleIdentityDbContext,               // Oracle Derived Context\n    PostgreSqlIdentityDbContext            // PostgreSQL Derived Context\n>(configuration);",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.databaseMigrations.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_10_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_11_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# All 3 providers at once (default)\n$ scripe db add-migration Initial -m Identity\n\n# Target a specific provider with -p\n$ scripe db add-migration Initial -m Identity -p SqlServer\n\n# Behind the scenes (all providers), the CLI executes:\n# dotnet ef migrations add Initial -c SqlServerIdentityDbContext -o Migrations/SqlServer\n# dotnet ef migrations add Initial -c OracleIdentityDbContext -o Migrations/Oracle\n# dotnet ef migrations add Initial -c PostgreSqlIdentityDbContext -o Migrations/PostgreSql",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "infrastructure.databaseMigrations.section_13_title",
-    "contentKey": "infrastructure.databaseMigrations.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "infrastructure.databaseMigrations.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# Auto-detect provider from appsettings.json\n$ scripe db update -m Identity\n\n# Override with a specific provider\n$ scripe db update -m Identity -p Oracle\n\n# Output:\n# [INFO] Auto-detected database provider: SqlServer from appsettings.json\n# [INFO] > dotnet ef database update --project \"...\" --context SqlServerIdentityDbContext",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "infrastructure.databaseMigrations.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_19_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# Remove from all 3 providers (active first, then force for others)\n$ scripe db remove-migration -m Identity\n\n# Remove from a specific provider only (auto-applies --force if non-active)\n$ scripe db remove-migration -m Identity -p SqlServer\n\n# Output (all providers):\n# [INFO] Auto-detected active provider: Oracle\n# [INFO] Removing latest migration for active provider (Oracle)...\n# [INFO] Force removing latest migration for SqlServer...\n# [INFO] Force removing latest migration for PostgreSql...",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.databaseMigrations.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_23_content"
-  },
-  {
-    "type": "list",
-    "variant": "ordered",
-    "items": [
-      "infrastructure.databaseMigrations.section_24_item_0",
-      "infrastructure.databaseMigrations.section_24_item_1",
-      "infrastructure.databaseMigrations.section_24_item_2",
-      "infrastructure.databaseMigrations.section_24_item_3"
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.databaseMigrations.section_25_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class SqliteIdentityDbContextFactory : BaseIdentityDbContextFactory<SqliteIdentityDbContext>\n{\n    protected override void ConfigureOptions(DbContextOptionsBuilder optionsBuilder, string connectionString)\n    {\n        optionsBuilder.UseSqlite(connectionString, o => o.MigrationsAssembly(typeof(SqliteIdentityDbContext).Assembly.GetName().Name));\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.databaseMigrations.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "infrastructure.databaseMigrations.section_28_item_0",
-      "infrastructure.databaseMigrations.section_28_item_1",
-      "infrastructure.databaseMigrations.section_28_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "architecture/dependency-injection",
-  "commercial/cli-tooling",
-  "architecture/modules"
-],
-  lastUpdated: "2026-06-09",
+    "architecture/dependency-injection",
+    "commercial/cli-tooling",
+    "architecture/modules",
+  ],
+  lastUpdated: "2026-03-03",
 });

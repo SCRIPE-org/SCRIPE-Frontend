@@ -1,261 +1,367 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.intro" },
+
+  // ─── k6 Overview ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.overviewTitle",
+    id: "overview",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.overviewIntro" },
+  {
+    type: "table",
+    headers: ["Test Suite", "File", "Stages", "What It Tests"],
+    rows: [
+      [
+        "Auth Flow",
+        "tests/load/auth-flow.js",
+        "2m ramp → 50 VUs × 5m → 1m ramp-down",
+        "Login → JWT retrieval → protected endpoints → health check → concurrent sessions",
+      ],
+      [
+        "CRUD Operations",
+        "tests/load/crud-operations.js",
+        "2m ramp → 30 VUs × 5m → 1m ramp-down",
+        "Create → Read (paginated) → Update → Delete with spike scenarios",
+      ],
+    ],
+  },
+
+  // ─── SLA Thresholds ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.thresholdsTitle",
+    id: "thresholds",
+  },
+  {
+    type: "table",
+    headers: ["Metric", "Threshold", "Description", "SLA Impact"],
+    rows: [
+      [
+        "http_req_duration (P95)",
+        "< 2000ms",
+        "95% of requests must complete within 2 seconds",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "http_req_duration (P99)",
+        "< 5000ms",
+        "99% of requests must complete within 5 seconds",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "http_req_failed",
+        "< 1%",
+        "Less than 1% of requests may return errors",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "http_req_duration (avg)",
+        "< 500ms",
+        "Average response time under 500ms",
+        "Pipeline FAILS if breached",
+      ],
+      [
+        "uis_login_duration (P95)",
+        "< 3000ms",
+        "95% of login requests complete in 3 seconds",
+        "Auth-specific SLA",
+      ],
+      [
+        "uis_login_fail_rate",
+        "< 5%",
+        "Less than 5% of login attempts may fail",
+        "Auth reliability SLA",
+      ],
+    ],
+  },
+
+  // ─── Auth Flow Script ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.authFlowTitle",
+    id: "auth-flow",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.authFlowIntro" },
+  {
+    type: "code",
+    language: "javascript",
+    filename: "tests/load/auth-flow.js — Key Sections",
+    code: `import http from 'k6/http';
+import { check, sleep, group } from 'k6';
+import { Rate, Trend } from 'k6/metrics';
+
+// ── Custom Metrics (visible in k6 output + Grafana) ──
+const loginDuration = new Trend('uis_login_duration', true);
+const loginFailRate = new Rate('uis_login_fail_rate');
+const tokenRefreshDuration = new Trend('uis_token_refresh_duration', true);
+
+// ── Environment Configuration ──
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';
+const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@scripe.com';
+const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'Admin@123';
+
+export const options = {
+  stages: [
+    { duration: '2m', target: 50 },   // Ramp up to 50 concurrent users
+    { duration: '5m', target: 50 },   // Sustain load for 5 minutes
+    { duration: '1m', target: 0 },    // Ramp down gracefully
+  ],
+  thresholds: {
+    'http_req_duration': ['p(95)<2000', 'p(99)<5000'],
+    'uis_login_duration': ['p(95)<3000'],
+    'uis_login_fail_rate': ['rate<0.05'],
+    'http_req_failed': ['rate<0.01'],
+  },
+};
+
+// Test Flow: Login → Protected Endpoint → Health Check
+export default function () {
+  group('1. Login', () => { /* POST /api/auth/login */ });
+  group('2. Access Protected Endpoint', () => { /* GET /api/admins/current */ });
+  group('3. Health Check', () => { /* GET /health/ready */ });
+  sleep(Math.random() * 2 + 1); // Random 1-3s think time
+}`,
+  },
+
+  // ─── Running Tests ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.runningTitle",
+    id: "running",
+  },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Running k6 Load Tests",
+    code: `# ═══════════════════════════════════════════════════════════
+# INSTALL k6
+# ═══════════════════════════════════════════════════════════
+# Windows:  winget install k6  (or choco install k6)
+# macOS:    brew install k6
+# Linux:    sudo apt install k6
+# Docker:   docker run --rm -i grafana/k6 run - <script.js
+
+# ═══════════════════════════════════════════════════════════
+# DEVELOPMENT (local backend)
+# ═══════════════════════════════════════════════════════════
+# Start your backend first: dotnet run (or scripe dev backend)
+k6 run tests/load/auth-flow.js
+k6 run tests/load/crud-operations.js
+
+# ═══════════════════════════════════════════════════════════
+# DOCKER COMPOSE (containerized backend)
+# ═══════════════════════════════════════════════════════════
+k6 run tests/load/auth-flow.js \\
+  --env BASE_URL=http://host.docker.internal:5001
+
+# ═══════════════════════════════════════════════════════════
+# STAGING / PRODUCTION (remote server)
+# ═══════════════════════════════════════════════════════════
+k6 run tests/load/auth-flow.js \\
+  --env BASE_URL=https://api.staging.scripe.com \\
+  --env ADMIN_EMAIL=staging-admin@scripe.com \\
+  --env ADMIN_PASSWORD=StrongP@ss123
+
+# ═══════════════════════════════════════════════════════════
+# CUSTOM PARAMETERS
+# ═══════════════════════════════════════════════════════════
+# Override VUs and duration for quick smoke tests
+k6 run tests/load/auth-flow.js -u 10 --duration 30s
+
+# Heavy load test (100 concurrent users, 10 minutes)
+k6 run tests/load/auth-flow.js -u 100 --duration 10m
+
+# Output to JSON for CI/CD analysis
+k6 run tests/load/auth-flow.js --out json=results.json
+
+# Output to Prometheus for Grafana dashboards
+k6 run tests/load/auth-flow.js \\
+  --out experimental-prometheus-rw \\
+  --env K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write`,
+  },
+
+  // ─── CI/CD Integration ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.cicdTitle",
+    id: "cicd",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.cicdIntro" },
+  {
+    type: "code",
+    language: "yaml",
+    filename: "GitHub Actions — Load Test Job",
+    code: `name: Load Tests
+on:
+  schedule:
+    - cron: '0 3 * * 1'    # Every Monday at 3 AM
+  workflow_dispatch:         # Manual trigger
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    services:
+      api:
+        image: scripe-api:latest
+        ports: ['5001:5001']
+        env:
+          ASPNETCORE_ENVIRONMENT: Staging
+          Database__Provider: SqlServer
+          Database__ConnectionString: \${{ secrets.TEST_DB_CONNECTION }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for API readiness
+        run: |
+          for i in {1..30}; do
+            curl -sf http://localhost:5001/health/ready && break
+            sleep 5
+          done
+
+      - name: Run Auth Flow Test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/load/auth-flow.js
+          flags: >-
+            --env BASE_URL=http://localhost:5001
+            --env ADMIN_EMAIL=\${{ secrets.TEST_ADMIN_EMAIL }}
+            --env ADMIN_PASSWORD=\${{ secrets.TEST_ADMIN_PASSWORD }}
+            --out json=auth-results.json
+
+      - name: Run CRUD Operations Test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/load/crud-operations.js
+          flags: >-
+            --env BASE_URL=http://localhost:5001
+            --env ADMIN_EMAIL=\${{ secrets.TEST_ADMIN_EMAIL }}
+            --env ADMIN_PASSWORD=\${{ secrets.TEST_ADMIN_PASSWORD }}
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-results
+          path: auth-results.json`,
+  },
+
+  // ─── Backup & DR ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.loadTesting.backupTitle",
+    id: "backup-dr",
+  },
+  { type: "paragraph", contentKey: "infrastructure.loadTesting.backupIntro" },
+  {
+    type: "table",
+    headers: ["Component", "Strategy", "Frequency", "Retention", "Recovery Tool"],
+    rows: [
+      [
+        "SQL Server",
+        "Full + Differential + Transaction Log",
+        "Daily / Hourly / 15min",
+        "30 days",
+        "SSMS Restore or T-SQL RESTORE DATABASE",
+      ],
+      [
+        "Oracle",
+        "RMAN Full + Incremental + Archive Log",
+        "Weekly / Daily / Continuous",
+        "30 days",
+        "RMAN RECOVER + RESTORE",
+      ],
+      [
+        "PostgreSQL",
+        "pg_dump + WAL archiving",
+        "Daily + Continuous",
+        "30 days",
+        "pg_restore + Point-in-Time Recovery",
+      ],
+      [
+        "Redis",
+        "RDB snapshots + AOF persistence",
+        "Hourly + Real-time",
+        "7 days",
+        "redis-cli --rdb / AOF replay",
+      ],
+      [
+        "File Storage",
+        "Cloud provider snapshots or rsync",
+        "Daily",
+        "90 days",
+        "Cloud console restore or rsync reverse",
+      ],
+      [
+        "Audit Logs",
+        "Separate backup (compliance requirement)",
+        "Daily",
+        "1 year minimum",
+        "SQL restore to read-only replica",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Backup & Recovery Commands",
+    code: `# ═══════════════════════════════════════════════════════════
+# SQL SERVER BACKUP (Windows / Docker)
+# ═══════════════════════════════════════════════════════════
+# Full backup
+sqlcmd -S localhost -U sa -P 'YourPassword' -Q \\
+  "BACKUP DATABASE SCRIPE TO DISK='/backups/uis_full.bak'"
+
+# Point-in-time restore
+sqlcmd -S localhost -U sa -P 'YourPassword' -Q \\
+  "RESTORE DATABASE SCRIPE FROM DISK='/backups/uis_full.bak' \\
+   WITH STOPAT='2026-04-06T20:00:00'"
+
+# ═══════════════════════════════════════════════════════════
+# POSTGRESQL BACKUP (Linux / Docker)
+# ═══════════════════════════════════════════════════════════
+# Full dump
+pg_dump -h localhost -U scripe -d uis_db -F c > uis_backup.dump
+
+# Restore
+pg_restore -h localhost -U scripe -d uis_db uis_backup.dump
+
+# ═══════════════════════════════════════════════════════════
+# REDIS BACKUP
+# ═══════════════════════════════════════════════════════════
+# Trigger RDB snapshot
+redis-cli BGSAVE
+
+# Copy RDB file
+cp /var/lib/redis/dump.rdb /backups/redis_$(date +%Y%m%d).rdb`,
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "infrastructure.loadTesting.drWarning",
+  },
+];
 
 registerPage({
   slug: "infrastructure/load-testing",
   titleKey: "infrastructure.loadTesting.title",
+  descriptionKey: "infrastructure.loadTesting.description",
   category: "infrastructure",
   order: 10,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.loadTesting.section_4_hdr_0",
-      "infrastructure.loadTesting.section_4_hdr_1",
-      "infrastructure.loadTesting.section_4_hdr_2",
-      "infrastructure.loadTesting.section_4_hdr_3"
-    ],
-    "rows": [
-      [
-        "infrastructure.loadTesting.section_4_cell_0_0",
-        "infrastructure.loadTesting.section_4_cell_0_1",
-        "infrastructure.loadTesting.section_4_cell_0_2",
-        "infrastructure.loadTesting.section_4_cell_0_3"
-      ],
-      [
-        "infrastructure.loadTesting.section_4_cell_1_0",
-        "infrastructure.loadTesting.section_4_cell_1_1",
-        "infrastructure.loadTesting.section_4_cell_1_2",
-        "infrastructure.loadTesting.section_4_cell_1_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.loadTesting.section_6_hdr_0",
-      "infrastructure.loadTesting.section_6_hdr_1",
-      "infrastructure.loadTesting.section_6_hdr_2",
-      "infrastructure.loadTesting.section_6_hdr_3"
-    ],
-    "rows": [
-      [
-        "infrastructure.loadTesting.section_6_cell_0_0",
-        "infrastructure.loadTesting.section_6_cell_0_1",
-        "infrastructure.loadTesting.section_6_cell_0_2",
-        "infrastructure.loadTesting.section_6_cell_0_3"
-      ],
-      [
-        "infrastructure.loadTesting.section_6_cell_1_0",
-        "infrastructure.loadTesting.section_6_cell_1_1",
-        "infrastructure.loadTesting.section_6_cell_1_2",
-        "infrastructure.loadTesting.section_6_cell_1_3"
-      ],
-      [
-        "infrastructure.loadTesting.section_6_cell_2_0",
-        "infrastructure.loadTesting.section_6_cell_2_1",
-        "infrastructure.loadTesting.section_6_cell_2_2",
-        "infrastructure.loadTesting.section_6_cell_2_3"
-      ],
-      [
-        "infrastructure.loadTesting.section_6_cell_3_0",
-        "infrastructure.loadTesting.section_6_cell_3_1",
-        "infrastructure.loadTesting.section_6_cell_3_2",
-        "infrastructure.loadTesting.section_6_cell_3_3"
-      ],
-      [
-        "infrastructure.loadTesting.section_6_cell_4_0",
-        "infrastructure.loadTesting.section_6_cell_4_1",
-        "infrastructure.loadTesting.section_6_cell_4_2",
-        "infrastructure.loadTesting.section_6_cell_4_3"
-      ],
-      [
-        "infrastructure.loadTesting.section_6_cell_5_0",
-        "infrastructure.loadTesting.section_6_cell_5_1",
-        "infrastructure.loadTesting.section_6_cell_5_2",
-        "infrastructure.loadTesting.section_6_cell_5_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_8_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "javascript",
-    "code": "import http from 'k6/http';\nimport { check, sleep, group } from 'k6';\nimport { Rate, Trend } from 'k6/metrics';\n\n// ── Custom Metrics (visible in k6 output + Grafana) ──\nconst loginDuration = new Trend('scr_login_duration', true);\nconst loginFailRate = new Rate('scr_login_fail_rate');\nconst tokenRefreshDuration = new Trend('scr_token_refresh_duration', true);\n\n// ── Environment Configuration ──\nconst BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';\nconst ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@scripe.com';\nconst ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'P@ssw0rd';\n\nexport const options = {\n  stages: [\n    { duration: '2m', target: 50 },   // Ramp up to 50 concurrent users\n    { duration: '5m', target: 50 },   // Sustain load for 5 minutes\n    { duration: '1m', target: 0 },    // Ramp down gracefully\n  ],\n  thresholds: {\n    'http_req_duration': ['p(95)<2000', 'p(99)<5000'],\n    'scr_login_duration': ['p(95)<3000'],\n    'scr_login_fail_rate': ['rate<0.05'],\n    'http_req_failed': ['rate<0.01'],\n  },\n};\n\n// Test Flow: Login → Protected Endpoint → Health Check\nexport default function () {\n  group('1. Login', () => { /* POST /api/auth/login */ });\n  group('2. Access Protected Endpoint', () => { /* GET /api/admins/current */ });\n  group('3. Health Check', () => { /* GET /health/ready */ });\n  sleep(Math.random() * 2 + 1); // Random 1-3s think time\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# ═══════════════════════════════════════════════════════════\n# INSTALL k6\n# ═══════════════════════════════════════════════════════════\n# Windows:  winget install k6  (or choco install k6)\n# macOS:    brew install k6\n# Linux:    sudo apt install k6\n# Docker:   docker run --rm -i grafana/k6 run - <script.js\n\n# ═══════════════════════════════════════════════════════════\n# DEVELOPMENT (local backend)\n# ═══════════════════════════════════════════════════════════\n# Start your backend first: dotnet run (or scripe dev backend)\nk6 run tests/load/auth-flow.js\nk6 run tests/load/crud-operations.js\n\n# ═══════════════════════════════════════════════════════════\n# DOCKER COMPOSE (containerized backend)\n# ═══════════════════════════════════════════════════════════\nk6 run tests/load/auth-flow.js \\\n  --env BASE_URL=http://host.docker.internal:5001\n\n# ═══════════════════════════════════════════════════════════\n# STAGING / PRODUCTION (remote server)\n# ═══════════════════════════════════════════════════════════\nk6 run tests/load/auth-flow.js \\\n  --env BASE_URL=https://api.staging.scripe.com \\\n  --env ADMIN_EMAIL=staging-admin@scripe.com \\\n  --env ADMIN_PASSWORD=StrongP@ss123\n\n# ═══════════════════════════════════════════════════════════\n# CUSTOM PARAMETERS\n# ═══════════════════════════════════════════════════════════\n# Override VUs and duration for quick smoke tests\nk6 run tests/load/auth-flow.js -u 10 --duration 30s\n\n# Heavy load test (100 concurrent users, 10 minutes)\nk6 run tests/load/auth-flow.js -u 100 --duration 10m\n\n# Output to JSON for CI/CD analysis\nk6 run tests/load/auth-flow.js --out json=results.json\n\n# Output to Prometheus for Grafana dashboards\nk6 run tests/load/auth-flow.js \\\n  --out experimental-prometheus-rw \\\n  --env K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_15_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_16_content"
-  },
-  {
-    "type": "code",
-    "language": "yaml",
-    "code": "name: Load Tests\non:\n  schedule:\n    - cron: '0 3 * * 1'    # Every Monday at 3 AM\n  workflow_dispatch:         # Manual trigger\n\njobs:\n  load-test:\n    runs-on: ubuntu-latest\n    services:\n      api:\n        image: scripe-api:latest\n        ports: ['5001:5001']\n        env:\n          ASPNETCORE_ENVIRONMENT: Staging\n          Database__Provider: SqlServer\n          Database__ConnectionString: ${{ secrets.TEST_DB_CONNECTION }}\n    steps:\n      - uses: actions/checkout@v4\n\n      - name: Wait for API readiness\n        run: |\n          for i in {1..30}; do\n            curl -sf http://localhost:5001/health/ready && break\n            sleep 5\n          done\n\n      - name: Run Auth Flow Test\n        uses: grafana/k6-action@v0.3.1\n        with:\n          filename: tests/load/auth-flow.js\n          flags: >-\n            --env BASE_URL=http://localhost:5001\n            --env ADMIN_EMAIL=${{ secrets.TEST_ADMIN_EMAIL }}\n            --env ADMIN_PASSWORD=${{ secrets.TEST_ADMIN_PASSWORD }}\n            --out json=auth-results.json\n\n      - name: Run CRUD Operations Test\n        uses: grafana/k6-action@v0.3.1\n        with:\n          filename: tests/load/crud-operations.js\n          flags: >-\n            --env BASE_URL=http://localhost:5001\n            --env ADMIN_EMAIL=${{ secrets.TEST_ADMIN_EMAIL }}\n            --env ADMIN_PASSWORD=${{ secrets.TEST_ADMIN_PASSWORD }}\n\n      - name: Upload Results\n        uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: k6-results\n          path: auth-results.json",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_19_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.loadTesting.section_20_hdr_0",
-      "infrastructure.loadTesting.section_20_hdr_1",
-      "infrastructure.loadTesting.section_20_hdr_2",
-      "infrastructure.loadTesting.section_20_hdr_3",
-      "infrastructure.loadTesting.section_20_hdr_4"
-    ],
-    "rows": [
-      [
-        "infrastructure.loadTesting.section_20_cell_0_0",
-        "infrastructure.loadTesting.section_20_cell_0_1",
-        "infrastructure.loadTesting.section_20_cell_0_2",
-        "infrastructure.loadTesting.section_20_cell_0_3",
-        "infrastructure.loadTesting.section_20_cell_0_4"
-      ],
-      [
-        "infrastructure.loadTesting.section_20_cell_1_0",
-        "infrastructure.loadTesting.section_20_cell_1_1",
-        "infrastructure.loadTesting.section_20_cell_1_2",
-        "infrastructure.loadTesting.section_20_cell_1_3",
-        "infrastructure.loadTesting.section_20_cell_1_4"
-      ],
-      [
-        "infrastructure.loadTesting.section_20_cell_2_0",
-        "infrastructure.loadTesting.section_20_cell_2_1",
-        "infrastructure.loadTesting.section_20_cell_2_2",
-        "infrastructure.loadTesting.section_20_cell_2_3",
-        "infrastructure.loadTesting.section_20_cell_2_4"
-      ],
-      [
-        "infrastructure.loadTesting.section_20_cell_3_0",
-        "infrastructure.loadTesting.section_20_cell_3_1",
-        "infrastructure.loadTesting.section_20_cell_3_2",
-        "infrastructure.loadTesting.section_20_cell_3_3",
-        "infrastructure.loadTesting.section_20_cell_3_4"
-      ],
-      [
-        "infrastructure.loadTesting.section_20_cell_4_0",
-        "infrastructure.loadTesting.section_20_cell_4_1",
-        "infrastructure.loadTesting.section_20_cell_4_2",
-        "infrastructure.loadTesting.section_20_cell_4_3",
-        "infrastructure.loadTesting.section_20_cell_4_4"
-      ],
-      [
-        "infrastructure.loadTesting.section_20_cell_5_0",
-        "infrastructure.loadTesting.section_20_cell_5_1",
-        "infrastructure.loadTesting.section_20_cell_5_2",
-        "infrastructure.loadTesting.section_20_cell_5_3",
-        "infrastructure.loadTesting.section_20_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.loadTesting.section_21_content"
-  },
-  {
-    "type": "code",
-    "language": "bash",
-    "code": "# ═══════════════════════════════════════════════════════════\n# SQL SERVER BACKUP (Windows / Docker)\n# ═══════════════════════════════════════════════════════════\n# Full backup\nsqlcmd -S localhost -U sa -P 'YourPassword' -Q \\\n  \"BACKUP DATABASE Scripe TO DISK='/backups/scr_full.bak'\"\n\n# Point-in-time restore\nsqlcmd -S localhost -U sa -P 'YourPassword' -Q \\\n  \"RESTORE DATABASE Scripe FROM DISK='/backups/scr_full.bak' \\\n   WITH STOPAT='2026-04-06T20:00:00'\"\n\n# ═══════════════════════════════════════════════════════════\n# POSTGRESQL BACKUP (Linux / Docker)\n# ═══════════════════════════════════════════════════════════\n# Full dump\npg_dump -h localhost -U scripe -d scr_db -F c > scr_backup.dump\n\n# Restore\npg_restore -h localhost -U scripe -d scr_db scr_backup.dump\n\n# ═══════════════════════════════════════════════════════════\n# REDIS BACKUP\n# ═══════════════════════════════════════════════════════════\n# Trigger RDB snapshot\nredis-cli BGSAVE\n\n# Copy RDB file\ncp /var/lib/redis/dump.rdb /backups/redis_$(date +%Y%m%d).rdb",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "infrastructure.loadTesting.section_23_title",
-    "contentKey": "infrastructure.loadTesting.section_23_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.loadTesting.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "infrastructure.loadTesting.section_25_item_0",
-      "infrastructure.loadTesting.section_25_item_1",
-      "infrastructure.loadTesting.section_25_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "infrastructure/observability",
-  "infrastructure/resilience",
-  "infrastructure/health-checks"
-],
-  lastUpdated: "2026-06-09",
+    "infrastructure/observability",
+    "infrastructure/resilience",
+    "infrastructure/health-checks",
+  ],
+  lastUpdated: "2026-04-06",
 });

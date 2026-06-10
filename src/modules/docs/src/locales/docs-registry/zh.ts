@@ -3,7 +3,6 @@
  * Eagerly merges all Chinese docs translations (tech + commercial).
  */
 import { zh as common } from "../pages/common/zh";
-import { zh as generatedTitles } from "../pages/generated-titles/zh";
 import { zh as getStarted } from "../pages/get-started/zh";
 import { zh as architecture } from "../pages/architecture/zh";
 import { zh as features } from "../pages/features/zh";
@@ -14,7 +13,7 @@ import { zh as infrastructure } from "../pages/infrastructure/zh";
 import { zh as tutorials } from "../pages/tutorials/zh";
 import { zh as apiReference } from "../pages/api-reference/zh";
 
-import { zh as commWhyScripe } from "../comm-pages/why-scripe/zh";
+import { zh as commWhyUIS } from "../comm-pages/why-uis/zh";
 import { zh as commPlatform } from "../comm-pages/platform/zh";
 import { zh as commEnterprise } from "../comm-pages/enterprise/zh";
 import { zh as commSecurity } from "../comm-pages/security/zh";
@@ -33,14 +32,11 @@ import { zh as pageTenantPlans } from "../pages/tenant-plans/zh";
 import { zh as pageUserSubscriptions } from "../pages/user-subscriptions/zh";
 import { zh as pageTenantContextGate } from "../pages/tenant-context-gate/zh";
 import { zh as pageRevenueAnalytics } from "../pages/revenue-analytics/zh";
-import { zh as marketplace } from "../pages/marketplace/zh";
-import { zh as stripeConnect } from "../pages/stripe-connect/zh";
 
 import { mergeAll } from "./utils";
 
 export const allDocsZh: Record<string, any> = mergeAll(
   common,
-  generatedTitles,
   getStarted,
   architecture,
   features,
@@ -50,7 +46,7 @@ export const allDocsZh: Record<string, any> = mergeAll(
   infrastructure,
   tutorials,
   apiReference,
-  commWhyScripe,
+  commWhyUIS,
   commPlatform,
   commEnterprise,
   commSecurity,
@@ -67,9 +63,5 @@ export const allDocsZh: Record<string, any> = mergeAll(
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics,
-  { modules: { marketplace: marketplace.marketplace } },
-  { commercial: marketplace.commercial },
-  { modules: { stripeConnect: stripeConnect.stripeConnect } },
-  { commercial: stripeConnect.commercial }
+  pageRevenueAnalytics
 );

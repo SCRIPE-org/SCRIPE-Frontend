@@ -1,173 +1,118 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.dataProtection.intro" },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dataProtection.encryptionTitle",
+    id: "encryption",
+  },
+  {
+    type: "table",
+    headers: ["Layer", "Type", "Implementation"],
+    rows: [
+      ["Transport", "TLS 1.3", "All API requests encrypted in transit"],
+      ["At Rest", "AES-256", "Database TDE (transparent data encryption)"],
+      ["Field Level", "AES-256-CBC", "Sensitive fields encrypted individually"],
+      ["ID Parameters", "AES encryption", "All entity IDs encrypted in URLs"],
+      ["Tokens", "RS256", "JWT tokens with asymmetric signing"],
+      ["Passwords", "Bcrypt", "One-way hashing with configurable work factor"],
+    ],
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dataProtection.fieldProjectionTitle",
+    id: "field-projection",
+  },
+  { type: "paragraph", contentKey: "commercial.dataProtection.fieldProjectionContent" },
+  {
+    type: "code",
+    language: "json",
+    filename: "Field Projection Configuration",
+    code: `{
+  "role": "HR_Viewer",
+  "projections": {
+    "Employee": {
+      "hidden": ["salary", "ssn", "bankAccount", "medicalInfo"],
+      "masked": ["phone", "email"],
+      "readOnly": ["department", "position"]
+    }
+  }
+}
+
+// API Response for HR_Viewer role:
+{
+  "name": "John Doe",
+  "department": "Engineering",
+  "phone": "***-***-4567",     // Masked
+  "email": "j***@company.com"  // Masked
+  // salary, ssn, bankAccount, medicalInfo → not present
+}`,
+  },
+
+  { type: "heading", level: 2, titleKey: "commercial.dataProtection.csrfTitle", id: "csrf" },
+  { type: "paragraph", contentKey: "commercial.dataProtection.csrfContent" },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dataProtection.replayTitle",
+    id: "anti-replay",
+  },
+  { type: "paragraph", contentKey: "commercial.dataProtection.replayContent" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Anti-Replay Protection Flow",
+    code: `Client                         Server
+  │                               │
+  │  Generate Nonce + Timestamp   │
+  │  ──────────────────────────>  │
+  │                               │  1. Check timestamp within window
+  │                               │  2. Check nonce not seen before
+  │                               │  3. Store nonce in sliding window
+  │                               │  4. Process request
+  │  <──────────────────────────  │
+  │         Response              │
+  │                               │
+  │  Replay same request          │
+  │  ──────────────────────────>  │
+  │                               │  ✗ Nonce already used → 409 Conflict
+  │  <──────────────────────────  │
+  │     409 Conflict              │`,
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.dataProtection.idEncTitle",
+    id: "id-encryption",
+  },
+  { type: "paragraph", contentKey: "commercial.dataProtection.idEncContent" },
+  {
+    type: "table",
+    headers: ["Aspect", "Without ID Encryption", "With ID Encryption"],
+    rows: [
+      ["URL example", "/api/users/42", "/api/users/aGVsbG8gd29ybGQ="],
+      ["Parameter tampering", "Easy: change 42 to 43", "Impossible: encrypted"],
+      ["Data enumeration", "Trivial: iterate 1, 2, 3...", "Prevented: non-sequential"],
+      ["Information leakage", "Reveals total record count", "No count information"],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/data-protection",
   titleKey: "commercial.dataProtection.title",
+  descriptionKey: "commercial.dataProtection.description",
   category: "commercial-security",
   order: 3,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dataProtection.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dataProtection.section_3_hdr_0",
-      "commercial.dataProtection.section_3_hdr_1",
-      "commercial.dataProtection.section_3_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.dataProtection.section_3_cell_0_0",
-        "commercial.dataProtection.section_3_cell_0_1",
-        "commercial.dataProtection.section_3_cell_0_2"
-      ],
-      [
-        "commercial.dataProtection.section_3_cell_1_0",
-        "commercial.dataProtection.section_3_cell_1_1",
-        "commercial.dataProtection.section_3_cell_1_2"
-      ],
-      [
-        "commercial.dataProtection.section_3_cell_2_0",
-        "commercial.dataProtection.section_3_cell_2_1",
-        "commercial.dataProtection.section_3_cell_2_2"
-      ],
-      [
-        "commercial.dataProtection.section_3_cell_3_0",
-        "commercial.dataProtection.section_3_cell_3_1",
-        "commercial.dataProtection.section_3_cell_3_2"
-      ],
-      [
-        "commercial.dataProtection.section_3_cell_4_0",
-        "commercial.dataProtection.section_3_cell_4_1",
-        "commercial.dataProtection.section_3_cell_4_2"
-      ],
-      [
-        "commercial.dataProtection.section_3_cell_5_0",
-        "commercial.dataProtection.section_3_cell_5_1",
-        "commercial.dataProtection.section_3_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dataProtection.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_5_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"role\": \"HR_Viewer\",\n  \"projections\": {\n    \"Employee\": {\n      \"hidden\": [\"salary\", \"ssn\", \"bankAccount\", \"medicalInfo\"],\n      \"masked\": [\"phone\", \"email\"],\n      \"readOnly\": [\"department\", \"position\"]\n    }\n  }\n}\n\n// API Response for HR_Viewer role:\n{\n  \"name\": \"John Doe\",\n  \"department\": \"Engineering\",\n  \"phone\": \"***-***-4567\",     // Masked\n  \"email\": \"j***@company.com\"  // Masked\n  // salary, ssn, bankAccount, medicalInfo → not present\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dataProtection.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_9_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dataProtection.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_11_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "Client                         Server\n  │                               │\n  │  Generate Nonce + Timestamp   │\n  │  ──────────────────────────>  │\n  │                               │  1. Check timestamp within window\n  │                               │  2. Check nonce not seen before\n  │                               │  3. Store nonce in sliding window\n  │                               │  4. Process request\n  │  <──────────────────────────  │\n  │         Response              │\n  │                               │\n  │  Replay same request          │\n  │  ──────────────────────────>  │\n  │                               │  ✗ Nonce already used → 409 Conflict\n  │  <──────────────────────────  │\n  │     409 Conflict              │",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dataProtection.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.dataProtection.section_15_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.dataProtection.section_16_hdr_0",
-      "commercial.dataProtection.section_16_hdr_1",
-      "commercial.dataProtection.section_16_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.dataProtection.section_16_cell_0_0",
-        "commercial.dataProtection.section_16_cell_0_1",
-        "commercial.dataProtection.section_16_cell_0_2"
-      ],
-      [
-        "commercial.dataProtection.section_16_cell_1_0",
-        "commercial.dataProtection.section_16_cell_1_1",
-        "commercial.dataProtection.section_16_cell_1_2"
-      ],
-      [
-        "commercial.dataProtection.section_16_cell_2_0",
-        "commercial.dataProtection.section_16_cell_2_1",
-        "commercial.dataProtection.section_16_cell_2_2"
-      ],
-      [
-        "commercial.dataProtection.section_16_cell_3_0",
-        "commercial.dataProtection.section_16_cell_3_1",
-        "commercial.dataProtection.section_16_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.dataProtection.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.dataProtection.section_18_item_0",
-      "commercial.dataProtection.section_18_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/security-overview",
-  "commercial/infrastructure-security"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/security-overview", "commercial/infrastructure-security"],
+  lastUpdated: "2026-02-20",
 });

@@ -2,13 +2,13 @@
  * Barrel file — re-exports all page locale chunks.
  */
 
-export { en as whyScripeEn } from "./why-scripe/en";
-export { ar as whyScripeAr } from "./why-scripe/ar";
-export { fr as whyScripeFr } from "./why-scripe/fr";
-export { ru as whyScripeRu } from "./why-scripe/ru";
-export { zh as whyScripeZh } from "./why-scripe/zh";
-export { es as whyScripeEs } from "./why-scripe/es";
-export { de as whyScripeDe } from "./why-scripe/de";
+export { en as whyUISEn } from "./why-uis/en";
+export { ar as whyUISAr } from "./why-uis/ar";
+export { fr as whyUISFr } from "./why-uis/fr";
+export { ru as whyUISRu } from "./why-uis/ru";
+export { zh as whyUISZh } from "./why-uis/zh";
+export { es as whyUISEs } from "./why-uis/es";
+export { de as whyUISDe } from "./why-uis/de";
 
 export { en as platformEn } from "./platform/en";
 export { ar as platformAr } from "./platform/ar";
@@ -92,7 +92,7 @@ export { de as customizationDe } from "./customization/de";
 
 // Lazy loader map for dynamic imports
 export const pageLoaders: Record<string, () => Promise<any>> = {
-  "why-scripe": () => import("./why-scripe/en"),
+  "why-uis": () => import("./why-uis/en"),
   platform: () => import("./platform/en"),
   enterprise: () => import("./enterprise/en"),
   security: () => import("./security/en"),

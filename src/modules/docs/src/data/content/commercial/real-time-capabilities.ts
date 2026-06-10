@@ -1,197 +1,122 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.intro" },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.realTimeCapabilities.signalrTitle",
+    id: "signalr",
+  },
+  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.signalrContent" },
+  {
+    type: "code",
+    language: "text",
+    filename: "SignalR Real-Time Architecture",
+    code: `┌──────────────────────────────────────────────────────┐
+│                  SignalR Hub Layer                    │
+│                                                      │
+│  ┌────────────┐ ┌────────────┐ ┌────────────┐      │
+│  │Notification│ │   Audit    │ │  Dashboard │      │
+│  │    Hub     │ │    Hub     │ │    Hub     │      │
+│  └─────┬──────┘ └─────┬──────┘ └─────┬──────┘      │
+│        │              │              │               │
+│        └──────────────┼──────────────┘               │
+│                       │                              │
+│  ┌────────────────────▼──────────────────────┐      │
+│  │       Tenant-Scoped Group Management      │      │
+│  │  Users auto-join tenant group on connect  │      │
+│  └───────────────────────────────────────────┘      │
+└──────────────────────────────────────────────────────┘
+           │              │              │
+     ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
+     │  Browser  │ │  Mobile   │ │  Desktop  │
+     │  Client   │ │  Client   │ │  Client   │
+     └───────────┘ └───────────┘ └───────────┘`,
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.realTimeCapabilities.notificationsTitle",
+    id: "notifications",
+  },
+  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.notificationsContent" },
+  {
+    type: "table",
+    headers: ["Feature", "Description"],
+    rows: [
+      ["Push notifications", "Instant delivery via WebSocket — no polling required"],
+      ["Tenant isolation", "Users only receive notifications for their tenant"],
+      ["Mark read/unread", "Individual or bulk mark operations"],
+      ["Notification bell UI", "Real-time count badge with dropdown"],
+      ["Offline queue", "Missed notifications delivered on reconnect"],
+      ["Type-based channels", "Subscribe to specific notification categories"],
+    ],
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.realTimeCapabilities.dashboardsTitle",
+    id: "dashboards",
+  },
+  { type: "paragraph", contentKey: "commercial.realTimeCapabilities.dashboardsContent" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "bar-chart",
+        titleKey: "commercial.realTimeCapabilities.liveCharts",
+        descriptionKey: "commercial.realTimeCapabilities.liveChartsDesc",
+      },
+      {
+        icon: "zap",
+        titleKey: "commercial.realTimeCapabilities.liveAudit",
+        descriptionKey: "commercial.realTimeCapabilities.liveAuditDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "commercial.realTimeCapabilities.presenceTrack",
+        descriptionKey: "commercial.realTimeCapabilities.presenceTrackDesc",
+      },
+      {
+        icon: "shield",
+        titleKey: "commercial.realTimeCapabilities.securityAlert",
+        descriptionKey: "commercial.realTimeCapabilities.securityAlertDesc",
+      },
+    ],
+  },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.realTimeCapabilities.scaleTitle",
+    id: "scaling",
+  },
+  {
+    type: "table",
+    headers: ["Feature", "Single Server", "Redis Backplane", "Azure SignalR"],
+    rows: [
+      ["Concurrent connections", "~5,000", "~50,000+", "~100,000+"],
+      ["Multi-server support", "No", "Yes", "Yes"],
+      ["Sticky sessions needed", "No", "No", "No"],
+      ["Infrastructure cost", "Included", "Redis server", "Pay-per-unit"],
+      ["Best for", "Small teams", "Growing orgs", "Enterprise scale"],
+    ],
+  },
+];
 
 registerPage({
   slug: "commercial/real-time-capabilities",
   titleKey: "commercial.realTimeCapabilities.title",
+  descriptionKey: "commercial.realTimeCapabilities.description",
   category: "commercial-enterprise",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.realTimeCapabilities.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_3_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_4_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "┌──────────────────────────────────────────────────────┐\n│                  SignalR Hub Layer                    │\n│                                                      │\n│  ┌────────────┐ ┌────────────┐ ┌────────────┐      │\n│  │Notification│ │   Audit    │ │  Dashboard │      │\n│  │    Hub     │ │    Hub     │ │    Hub     │      │\n│  └─────┬──────┘ └─────┬──────┘ └─────┬──────┘      │\n│        │              │              │               │\n│        └──────────────┼──────────────┘               │\n│                       │                              │\n│  ┌────────────────────▼──────────────────────┐      │\n│  │       Tenant-Scoped Group Management      │      │\n│  │  Users auto-join tenant group on connect  │      │\n│  └───────────────────────────────────────────┘      │\n└──────────────────────────────────────────────────────┘\n           │              │              │\n     ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐\n     │  Browser  │ │  Mobile   │ │  Desktop  │\n     │  Client   │ │  Client   │ │  Client   │\n     └───────────┘ └───────────┘ └───────────┘",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.realTimeCapabilities.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_7_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.realTimeCapabilities.section_8_hdr_0",
-      "commercial.realTimeCapabilities.section_8_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.realTimeCapabilities.section_8_cell_0_0",
-        "commercial.realTimeCapabilities.section_8_cell_0_1"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_8_cell_1_0",
-        "commercial.realTimeCapabilities.section_8_cell_1_1"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_8_cell_2_0",
-        "commercial.realTimeCapabilities.section_8_cell_2_1"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_8_cell_3_0",
-        "commercial.realTimeCapabilities.section_8_cell_3_1"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_8_cell_4_0",
-        "commercial.realTimeCapabilities.section_8_cell_4_1"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_8_cell_5_0",
-        "commercial.realTimeCapabilities.section_8_cell_5_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.realTimeCapabilities.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_10_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.realTimeCapabilities.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_12_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.realTimeCapabilities.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_14_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.realTimeCapabilities.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.realTimeCapabilities.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.realTimeCapabilities.section_18_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.realTimeCapabilities.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.realTimeCapabilities.section_20_hdr_0",
-      "commercial.realTimeCapabilities.section_20_hdr_1",
-      "commercial.realTimeCapabilities.section_20_hdr_2",
-      "commercial.realTimeCapabilities.section_20_hdr_3"
-    ],
-    "rows": [
-      [
-        "commercial.realTimeCapabilities.section_20_cell_0_0",
-        "commercial.realTimeCapabilities.section_20_cell_0_1",
-        "commercial.realTimeCapabilities.section_20_cell_0_2",
-        "commercial.realTimeCapabilities.section_20_cell_0_3"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_20_cell_1_0",
-        "commercial.realTimeCapabilities.section_20_cell_1_1",
-        "commercial.realTimeCapabilities.section_20_cell_1_2",
-        "commercial.realTimeCapabilities.section_20_cell_1_3"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_20_cell_2_0",
-        "commercial.realTimeCapabilities.section_20_cell_2_1",
-        "commercial.realTimeCapabilities.section_20_cell_2_2",
-        "commercial.realTimeCapabilities.section_20_cell_2_3"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_20_cell_3_0",
-        "commercial.realTimeCapabilities.section_20_cell_3_1",
-        "commercial.realTimeCapabilities.section_20_cell_3_2",
-        "commercial.realTimeCapabilities.section_20_cell_3_3"
-      ],
-      [
-        "commercial.realTimeCapabilities.section_20_cell_4_0",
-        "commercial.realTimeCapabilities.section_20_cell_4_1",
-        "commercial.realTimeCapabilities.section_20_cell_4_2",
-        "commercial.realTimeCapabilities.section_20_cell_4_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.realTimeCapabilities.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.realTimeCapabilities.section_22_item_0",
-      "commercial.realTimeCapabilities.section_22_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/audit-compliance",
-  "commercial/localization-i18n"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/audit-compliance", "commercial/localization-i18n"],
+  lastUpdated: "2026-02-20",
 });

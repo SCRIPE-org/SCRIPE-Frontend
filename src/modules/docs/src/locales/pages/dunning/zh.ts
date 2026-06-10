@@ -1,54 +1,58 @@
 export const zh = {
-  "modules": {
-    "dunning": {
-      "section_0_content": "4-stage failed payment recovery pipeline: warning emails, grace periods, suspension, cancellation, and auto-fallback to free edition.",
-      "section_1_content": "The dunning system is SCRIPE's automated failed-payment recovery pipeline. When a payment fails, the system does not immediately suspend the tenant — instead, it moves through 4 graduated stages over 10-14 days, giving tenants ample opportunity to update their payment method before access is restricted. Each stage sends a targeted email and escalates the urgency.",
-      "section_2_title": "4-Stage Dunning Pipeline",
-      "section_3_content": "Dunning stages are managed by two background jobs: SubscriptionReconciliationJob (daily at 3:00 AM UTC) and DunningNotificationJob (daily at 4:00 AM UTC).",
-      "section_5_title": "Stage 1: Payment Failed (Day 0)",
-      "section_6_content": "Triggered immediately when the invoice.payment_failed webhook arrives. Stripe's Smart Retry system attempts the payment again over days 1-3. SCRIPE sends the PaymentFailed email with a link to update the payment method via the Customer Portal.",
-      "section_7_title": "Stage 2: Grace Warning (Mid-Grace)",
-      "section_8_content": "If the payment is still failing at mid-grace period, DunningNotificationJob sends the GraceWarning email. The subscription enters PastDue status. The tenant retains access but sees a colored GracePeriodBanner in the admin panel (yellow warning).",
-      "section_9_title": "Stage 3: Final Warning (≤2 Days Left)",
-      "section_10_content": "When less than 2 days remain in the grace period, DunningNotificationJob sends the GraceFinalWarning email. The banner turns orange/red. This is the last chance before suspension.",
-      "section_11_title": "Stage 4: Suspend or Cancel",
-      "section_12_content": "On grace period expiry, SubscriptionReconciliationJob suspends the subscription (Suspended status) and deactivates all tenant admins. If suspension continues past an extended grace period, the subscription is Cancelled and the tenant falls back to the FallbackEdition (typically the Free edition).",
-      "section_13_title": "Background Jobs",
-      "section_14_content": "Two jobs handle the dunning lifecycle. Both are fault-isolated — a failure for one tenant does not prevent processing of other tenants.",
-      "section_15_hdr_0": "Job",
-      "section_15_hdr_1": "Schedule",
-      "section_15_hdr_2": "Responsibility",
-      "section_15_cell_0_0": "SubscriptionReconciliationJob",
-      "section_15_cell_0_1": "Daily 3:00 AM UTC",
-      "section_15_cell_0_2": "Expiry detection, suspension, fallback edition assignment",
-      "section_15_cell_1_0": "DunningNotificationJob",
-      "section_15_cell_1_1": "Daily 4:00 AM UTC",
-      "section_15_cell_1_2": "Grace warning and final warning emails for PastDue subscriptions",
-      "section_16_content": "<!-- appsettings.json -->",
-      "section_18_title": "Email Deduplication",
-      "section_19_content": "A DunningNotification entity tracks which emails have been sent per subscription per stage. The jobs check this table before sending to prevent duplicate emails if the job runs multiple times.",
-      "section_20_title": "Cross-Module Integration",
-      "section_21_content": "When a subscription is suspended, the SubscriptionChangedEventHandler fires and deactivates all tenant admins with DeactivationReason='SubscriptionSuspended'. When the subscription is resumed (payment recovered), only admins with that specific reason are reactivated — admins manually deactivated by the tenant admin remain off.",
-      "section_22_title": "WARNING",
-      "section_22_content": "**Cross-Module Integration**\n\nWhen a subscription is suspended, the SubscriptionChangedEventHandler fires and deactivates all tenant admins with DeactivationReason='SubscriptionSuspended'. When the subscription is resumed (payment recovered), only admins with that specific reason are reactivated — admins manually deactivated by the tenant admin remain off.",
-      "section_23_title": "Auto-Fallback Edition",
-      "section_24_content": "Each Edition has an optional FallbackEditionId. When a subscription is cancelled due to non-payment, the tenant is automatically moved to the FallbackEdition (usually the Free tier). This keeps the tenant's data intact while restricting premium features.",
-      "section_25_title": "Promo Codes & Proration",
-      "section_26_content": "Promo codes are validated against the EditionPromotion entity before being passed to Stripe during checkout. Stripe handles proration automatically on upgrades/downgrades — the amount is calculated by Stripe and synchronized back via the customer.subscription.updated webhook.",
-      "section_27_title": "Promotion Expiry on Renewal",
-      "section_28_content": "When a promotion has DurationDays > 0, the system calculates a PromotionExpiresAt timestamp. On each renewal (New Row Pattern), the handler checks if the promotion has expired. Expired promotions are NOT carried forward to the new subscription row — the tenant pays full price from the next billing cycle.",
-      "section_29_title": "Dunning Email Templates",
-      "section_30_content": "SCRIPE includes 4 HTML email templates for the dunning pipeline, all with subdomain-aware CTA links and bilingual support (EN + AR).",
-      "section_31_item_0": "payment-failed — Sent immediately on invoice.payment_failed. Links to Stripe Customer Portal.",
-      "section_31_item_1": "grace-warning — Sent at mid-grace. Shows days remaining and links to update payment.",
-      "section_31_item_2": "grace-final-warning — Sent ≤2 days before suspension. Maximum urgency.",
-      "section_31_item_3": "subscription-expired — Sent after grace expires. Informs tenant of downgrade to free tier.",
-      "section_32_title": "See Also",
-      "section_33_item_0": "[Billing Engine](../../technical-docs/09-modules/entitlements)",
-      "section_33_item_1": "[Invoices & Revenue](../../technical-docs/09-modules/entitlements)",
-      "section_33_item_2": "[Subscriptions](../../technical-docs/09-modules/entitlements)",
-      "section_33_item_3": "[Notification System](../../technical-docs/03-features)",
-      "title": "Dunning System"
-    }
-  }
+  modules: {
+    dunning: {
+      title: "Dunning System",
+      description:
+        "4-stage failed payment recovery pipeline: warning emails, grace periods, suspension, cancellation, and auto-fallback to free edition.",
+      intro:
+        "The dunning system is SCRIPE's automated failed-payment recovery pipeline. When a payment fails, the system does not immediately suspend the tenant — instead, it moves through 4 graduated stages over 10-14 days, giving tenants ample opportunity to update their payment method before access is restricted. Each stage sends a targeted email and escalates the urgency.",
+      stagesTitle: "4-Stage Dunning Pipeline",
+      stagesIntro:
+        "Dunning stages are managed by two background jobs: SubscriptionReconciliationJob (daily at 3:00 AM UTC) and DunningNotificationJob (daily at 4:00 AM UTC).",
+      stage1Title: "Stage 1: Payment Failed (Day 0)",
+      stage1Intro:
+        "Triggered immediately when the invoice.payment_failed webhook arrives. Stripe's Smart Retry system attempts the payment again over days 1-3. SCRIPE sends the PaymentFailed email with a link to update the payment method via the Customer Portal.",
+      stage2Title: "Stage 2: Grace Warning (Mid-Grace)",
+      stage2Intro:
+        "If the payment is still failing at mid-grace period, DunningNotificationJob sends the GraceWarning email. The subscription enters PastDue status. The tenant retains access but sees a colored GracePeriodBanner in the admin panel (yellow warning).",
+      stage3Title: "Stage 3: Final Warning (≤2 Days Left)",
+      stage3Intro:
+        "When less than 2 days remain in the grace period, DunningNotificationJob sends the GraceFinalWarning email. The banner turns orange/red. This is the last chance before suspension.",
+      stage4Title: "Stage 4: Suspend or Cancel",
+      stage4Intro:
+        "On grace period expiry, SubscriptionReconciliationJob suspends the subscription (Suspended status) and deactivates all tenant admins. If suspension continues past an extended grace period, the subscription is Cancelled and the tenant falls back to the FallbackEdition (typically the Free edition).",
+      jobsTitle: "Background Jobs",
+      jobsIntro:
+        "Two jobs handle the dunning lifecycle. Both are fault-isolated — a failure for one tenant does not prevent processing of other tenants.",
+      reconciliationJob:
+        "SubscriptionReconciliationJob — Daily at 3:00 AM UTC. Processes subscription expiry, downgrade fallback, and grace period transitions for all active subscriptions.",
+      notificationJob:
+        "DunningNotificationJob — Daily at 4:00 AM UTC. Checks all PastDue subscriptions and sends grace warning or final warning emails based on days remaining.",
+      deduplicationTitle: "Email Deduplication",
+      deduplicationIntro:
+        "A DunningNotification entity tracks which emails have been sent per subscription per stage. The jobs check this table before sending to prevent duplicate emails if the job runs multiple times.",
+      crossModuleTitle: "Cross-Module Integration",
+      crossModuleIntro:
+        "When a subscription is suspended, the SubscriptionChangedEventHandler fires and deactivates all tenant admins with DeactivationReason='SubscriptionSuspended'. When the subscription is resumed (payment recovered), only admins with that specific reason are reactivated — admins manually deactivated by the tenant admin remain off.",
+      fallbackTitle: "Auto-Fallback Edition",
+      fallbackIntro:
+        "Each Edition has an optional FallbackEditionId. When a subscription is cancelled due to non-payment, the tenant is automatically moved to the FallbackEdition (usually the Free tier). This keeps the tenant's data intact while restricting premium features.",
+      promotionsTitle: "Promo Codes & Proration",
+      promotionsIntro:
+        "Promo codes are validated against the EditionPromotion entity before being passed to Stripe during checkout. Stripe handles proration automatically on upgrades/downgrades — the amount is calculated by Stripe and synchronized back via the customer.subscription.updated webhook.",
+      promoExpiryTitle: "Promotion Expiry on Renewal",
+      promoExpiryIntro:
+        "When a promotion has DurationDays > 0, the system calculates a PromotionExpiresAt timestamp. On each renewal (New Row Pattern), the handler checks if the promotion has expired. Expired promotions are NOT carried forward to the new subscription row — the tenant pays full price from the next billing cycle.",
+      emailsTitle: "Dunning Email Templates",
+      emailsIntro:
+        "SCRIPE includes 4 HTML email templates for the dunning pipeline, all with subdomain-aware CTA links and bilingual support (EN + AR).",
+      email1:
+        "payment-failed — Sent immediately on invoice.payment_failed. Links to Stripe Customer Portal.",
+      email2:
+        "grace-warning — Sent at mid-grace. Shows days remaining and links to update payment.",
+      email3: "grace-final-warning — Sent ≤2 days before suspension. Maximum urgency.",
+      email4:
+        "subscription-expired — Sent after grace expires. Informs tenant of downgrade to free tier.",
+    },
+  },
 };

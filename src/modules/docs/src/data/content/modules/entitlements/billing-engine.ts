@@ -1,316 +1,293 @@
 import { registerPage } from "../../../repositories/DocsRepository";
+import type { DocSection } from "../../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "modules.billingEngine.intro" },
+
+  // ─── IPaymentGateway Abstraction ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.abstractionTitle",
+    id: "payment-gateway-abstraction",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.abstractionIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Application/Abstractions/Payment/IPaymentGateway.cs",
+    code: `public interface IPaymentGateway
+{
+    Task<CreateCheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request);
+    Task<CreatePaymentLinkResult> CreatePaymentLinkAsync(CreatePaymentLinkRequest request);
+    Task<CreatePortalSessionResult> CreatePortalSessionAsync(string customerId, string returnUrl);
+    Task<CancelSubscriptionResult> CancelSubscriptionAsync(string subscriptionId, bool cancelAtPeriodEnd);
+}`,
+  },
+
+  // ─── Three Subscription Modes ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.modesTitle",
+    id: "subscription-modes",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.modesIntro" },
+
+  // Mode 1
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.billingEngine.mode1Title",
+    id: "mode-self-service",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.mode1Intro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "A", label: "Tenant selects edition + billing cycle", type: "default" },
+      { id: "B", label: "POST /billing/checkout-session", type: "primary" },
+      { id: "C", label: "Stripe Checkout Session created", type: "info" },
+      { id: "D", label: "TenantSubscription → PendingPayment", type: "warning" },
+      { id: "E", label: "Tenant redirected to Stripe Checkout", type: "default" },
+      { id: "F", label: "checkout.session.completed webhook", type: "info" },
+      { id: "G", label: "HMAC signature verified", type: "default" },
+      { id: "H", label: "TenantSubscription → Active ✅", type: "success" },
+    ],
+    connections: [
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
+      { from: "F", to: "G" },
+      { from: "G", to: "H" },
+    ],
+  },
+
+  // Mode 2
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.billingEngine.mode2Title",
+    id: "mode-contact-sales",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.mode2Intro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      { id: "A", label: "Admin negotiates deal with client", type: "default" },
+      { id: "B", label: "POST /billing/payment-link", type: "primary" },
+      { id: "C", label: "Stripe Payment Link created", type: "info" },
+      { id: "D", label: "Admin sends URL to client", type: "default" },
+      { id: "E", label: "Client pays via Stripe", type: "default" },
+      { id: "F", label: "Same webhook flow as self-service", type: "success" },
+    ],
+    connections: [
+      { from: "A", to: "B" },
+      { from: "B", to: "C" },
+      { from: "C", to: "D" },
+      { from: "D", to: "E" },
+      { from: "E", to: "F" },
+    ],
+  },
+
+  // Mode 3
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.billingEngine.mode3Title",
+    id: "mode-manual",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.mode3Intro" },
+  {
+    type: "code",
+    language: "http",
+    code: `POST /api/v1/subscriptions/assign
+Authorization: Bearer <admin-jwt>
+
+{
+  "tenantId": "encrypted-id",
+  "editionId": "encrypted-id",
+  "subscriptionType": "Monthly",
+  "currency": "USD"
+  // No Stripe interaction — instant activation
+}`,
+  },
+
+  // ─── Stripe Webhook Handler ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.webhookTitle",
+    id: "stripe-webhook-handler",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.webhookIntro" },
+  {
+    type: "table",
+    headers: ["Event Type", "Handler Action"],
+    rows: [
+      ["checkout.session.completed", "Activate subscription, create Invoice + PaymentTransaction"],
+      ["invoice.paid", "Record renewal payment, create new subscription row"],
+      ["invoice.payment_failed", "Move to PastDue, start dunning, send warning email"],
+      ["customer.subscription.updated", "Sync status (active/past_due/canceled/unpaid)"],
+      ["customer.subscription.deleted", "Cancel subscription, trigger fallback edition"],
+      ["charge.refunded", "Create refund record, void invoice"],
+      ["payment_intent.succeeded", "Record successful payment intent"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "modules.billingEngine.idempotencyIntro",
+  },
+
+  // ─── Idempotency ──────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.idempotencyTitle",
+    id: "idempotency",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.idempotencyIntro" },
+
+  // ─── Configuration ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.configTitle",
+    id: "configuration",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.configIntro" },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json",
+    code: `{
+  "Stripe": {
+    "SecretKey": "sk_test_...",
+    "PublishableKey": "pk_test_...",
+    "WebhookSecret": "whsec_...",
+    "SuccessUrl": "https://app.scripe.com/billing/success",
+    "CancelUrl": "https://app.scripe.com/billing/cancel"
+  }
+}`,
+  },
+
+  // ─── Stripe Customer Portal ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.portalTitle",
+    id: "customer-portal",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.portalIntro" },
+
+  // ─── Edition Self-Service Fields ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.selfServiceTitle",
+    id: "self-service-fields",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.selfServiceIntro" },
+  {
+    type: "table",
+    headers: ["Field", "Type", "Effect"],
+    rows: [
+      [
+        "IsSelfServiceEnabled",
+        "bool",
+        "true = tenant can self-checkout. false = must contact sales.",
+      ],
+      [
+        "IsContactSalesOnly",
+        "bool",
+        "true = checkout button triggers payment link flow, not checkout session.",
+      ],
+    ],
+  },
+
+  // ─── Zero-Decimal Currency ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.currencyTitle",
+    id: "zero-decimal-currency",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.currencyIntro" },
+
+  // ─── API Endpoints ────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.billingEngine.endpointsTitle",
+    id: "api-endpoints",
+  },
+  { type: "paragraph", contentKey: "modules.billingEngine.endpointsIntro" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/checkout-session",
+        descriptionKey: "modules.billingEngine.ep.checkout",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/payment-link",
+        descriptionKey: "modules.billingEngine.ep.paymentLink",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/portal-session",
+        descriptionKey: "modules.billingEngine.ep.portal",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/billing/tenants/{id}/cancel-stripe",
+        descriptionKey: "modules.billingEngine.ep.cancel",
+        auth: "JWT",
+        permission: "billing.manage",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/billing/dashboard",
+        descriptionKey: "modules.billingEngine.ep.dashboard",
+        auth: "JWT",
+        permission: "billing.view",
+      },
+      {
+        method: "POST",
+        path: "/api/stripe-webhooks",
+        descriptionKey: "Stripe webhook receiver — no auth, HMAC-verified",
+        auth: "HMAC",
+        permission: "",
+      },
+    ],
+  },
+];
 
 registerPage({
   slug: "modules/billing-engine",
   titleKey: "modules.billingEngine.title",
+  descriptionKey: "modules.billingEngine.description",
   category: "modules",
   order: 6,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_3_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_4_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public interface IPaymentGateway\n{\n    Task<CreateCheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request);\n    Task<CreatePaymentLinkResult> CreatePaymentLinkAsync(CreatePaymentLinkRequest request);\n    Task<CreatePortalSessionResult> CreatePortalSessionAsync(string customerId, string returnUrl);\n    Task<CancelSubscriptionResult> CancelSubscriptionAsync(string subscriptionId, bool cancelAtPeriodEnd);\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_7_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.billingEngine.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    A[\"Tenant selects edition + billing cycle\"]\n    B([\"POST /billing/checkout-session\"])\n    C([\"Stripe Checkout Session created\"])\n    D{{\"TenantSubscription → PendingPayment\"}}\n    E[\"Tenant redirected to Stripe Checkout\"]\n    F([\"checkout.session.completed webhook\"])\n    G[\"HMAC signature verified\"]\n    H([\"TenantSubscription → Active ✅\"])\n    A --> B\n    B --> C\n    C --> D\n    D --> E\n    E --> F\n    F --> G\n    G --> H",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.billingEngine.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    A[\"Admin negotiates deal with client\"]\n    B([\"POST /billing/payment-link\"])\n    C([\"Stripe Payment Link created\"])\n    D[\"Admin sends URL to client\"]\n    E[\"Client pays via Stripe\"]\n    F([\"Same webhook flow as self-service\"])\n    A --> B\n    B --> C\n    C --> D\n    D --> E\n    E --> F",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "modules.billingEngine.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_15_content"
-  },
-  {
-    "type": "code",
-    "language": "http",
-    "code": "POST /api/v1/subscriptions/assign\nAuthorization: Bearer <admin-jwt>\n\n{\n  \"tenantId\": \"encrypted-id\",\n  \"editionId\": \"encrypted-id\",\n  \"subscriptionType\": \"Monthly\",\n  \"currency\": \"USD\"\n  // No Stripe interaction — instant activation\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_18_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.billingEngine.section_19_hdr_0",
-      "modules.billingEngine.section_19_hdr_1"
-    ],
-    "rows": [
-      [
-        "modules.billingEngine.section_19_cell_0_0",
-        "modules.billingEngine.section_19_cell_0_1"
-      ],
-      [
-        "modules.billingEngine.section_19_cell_1_0",
-        "modules.billingEngine.section_19_cell_1_1"
-      ],
-      [
-        "modules.billingEngine.section_19_cell_2_0",
-        "modules.billingEngine.section_19_cell_2_1"
-      ],
-      [
-        "modules.billingEngine.section_19_cell_3_0",
-        "modules.billingEngine.section_19_cell_3_1"
-      ],
-      [
-        "modules.billingEngine.section_19_cell_4_0",
-        "modules.billingEngine.section_19_cell_4_1"
-      ],
-      [
-        "modules.billingEngine.section_19_cell_5_0",
-        "modules.billingEngine.section_19_cell_5_1"
-      ],
-      [
-        "modules.billingEngine.section_19_cell_6_0",
-        "modules.billingEngine.section_19_cell_6_1"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "modules.billingEngine.section_20_title",
-    "contentKey": "modules.billingEngine.section_20_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_22_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_24_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_25_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"Stripe\": {\n    \"SecretKey\": \"sk_test_...\",\n    \"PublishableKey\": \"pk_test_...\",\n    \"WebhookSecret\": \"whsec_...\",\n    \"SuccessUrl\": \"https://app.scripe.com/billing/success\",\n    \"CancelUrl\": \"https://app.scripe.com/billing/cancel\"\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_28_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_30_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.billingEngine.section_31_hdr_0",
-      "modules.billingEngine.section_31_hdr_1",
-      "modules.billingEngine.section_31_hdr_2"
-    ],
-    "rows": [
-      [
-        "modules.billingEngine.section_31_cell_0_0",
-        "modules.billingEngine.section_31_cell_0_1",
-        "modules.billingEngine.section_31_cell_0_2"
-      ],
-      [
-        "modules.billingEngine.section_31_cell_1_0",
-        "modules.billingEngine.section_31_cell_1_1",
-        "modules.billingEngine.section_31_cell_1_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_32_title",
-    "id": "sec_32"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_33_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_34_title",
-    "id": "sec_34"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "modules.billingEngine.section_35_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "modules.billingEngine.section_36_hdr_0",
-      "modules.billingEngine.section_36_hdr_1",
-      "modules.billingEngine.section_36_hdr_2",
-      "modules.billingEngine.section_36_hdr_3",
-      "modules.billingEngine.section_36_hdr_4"
-    ],
-    "rows": [
-      [
-        "modules.billingEngine.section_36_cell_0_0",
-        "modules.billingEngine.section_36_cell_0_1",
-        "modules.billingEngine.section_36_cell_0_2",
-        "modules.billingEngine.section_36_cell_0_3",
-        "modules.billingEngine.section_36_cell_0_4"
-      ],
-      [
-        "modules.billingEngine.section_36_cell_1_0",
-        "modules.billingEngine.section_36_cell_1_1",
-        "modules.billingEngine.section_36_cell_1_2",
-        "modules.billingEngine.section_36_cell_1_3",
-        "modules.billingEngine.section_36_cell_1_4"
-      ],
-      [
-        "modules.billingEngine.section_36_cell_2_0",
-        "modules.billingEngine.section_36_cell_2_1",
-        "modules.billingEngine.section_36_cell_2_2",
-        "modules.billingEngine.section_36_cell_2_3",
-        "modules.billingEngine.section_36_cell_2_4"
-      ],
-      [
-        "modules.billingEngine.section_36_cell_3_0",
-        "modules.billingEngine.section_36_cell_3_1",
-        "modules.billingEngine.section_36_cell_3_2",
-        "modules.billingEngine.section_36_cell_3_3",
-        "modules.billingEngine.section_36_cell_3_4"
-      ],
-      [
-        "modules.billingEngine.section_36_cell_4_0",
-        "modules.billingEngine.section_36_cell_4_1",
-        "modules.billingEngine.section_36_cell_4_2",
-        "modules.billingEngine.section_36_cell_4_3",
-        "modules.billingEngine.section_36_cell_4_4"
-      ],
-      [
-        "modules.billingEngine.section_36_cell_5_0",
-        "modules.billingEngine.section_36_cell_5_1",
-        "modules.billingEngine.section_36_cell_5_2",
-        "modules.billingEngine.section_36_cell_5_3",
-        "modules.billingEngine.section_36_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "modules.billingEngine.section_37_title",
-    "id": "sec_37"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "modules.billingEngine.section_38_item_0",
-      "modules.billingEngine.section_38_item_1",
-      "modules.billingEngine.section_38_item_2",
-      "modules.billingEngine.section_38_item_3"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "modules/invoices",
-  "modules/dunning",
-  "modules/subscriptions",
-  "features/webhook-system"
-],
-  lastUpdated: "2026-06-09",
+    "modules/invoices",
+    "modules/dunning",
+    "modules/subscriptions",
+    "features/webhook-system",
+  ],
+  lastUpdated: "2026-04-18",
 });

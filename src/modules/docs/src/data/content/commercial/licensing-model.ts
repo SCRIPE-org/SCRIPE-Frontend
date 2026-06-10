@@ -1,346 +1,291 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.licensingModel.intro" },
+
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.licensingModel.runtimeOwnershipTitle",
+    id: "runtime-ownership",
+  },
+  { type: "paragraph", contentKey: "commercial.licensingModel.runtimeOwnershipIntro" },
+  {
+    type: "table",
+    headers: [
+      "commercial.licensingModel.tblRuntimeHeader1",
+      "commercial.licensingModel.tblRuntimeHeader2",
+      "commercial.licensingModel.tblRuntimeHeader3",
+    ],
+    rows: [
+      [
+        "commercial.licensingModel.tblRuntimeR1C1",
+        "commercial.licensingModel.tblRuntimeR1C2",
+        "commercial.licensingModel.tblRuntimeR1C3",
+      ],
+      [
+        "commercial.licensingModel.tblRuntimeR2C1",
+        "commercial.licensingModel.tblRuntimeR2C2",
+        "commercial.licensingModel.tblRuntimeR2C3",
+      ],
+      [
+        "commercial.licensingModel.tblRuntimeR3C1",
+        "commercial.licensingModel.tblRuntimeR3C2",
+        "commercial.licensingModel.tblRuntimeR3C3",
+      ],
+      [
+        "commercial.licensingModel.tblRuntimeR4C1",
+        "commercial.licensingModel.tblRuntimeR4C2",
+        "commercial.licensingModel.tblRuntimeR4C3",
+      ],
+    ],
+  },
+
+  // ─── License Types ──────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.licensingModel.typesTitle",
+    id: "license-types",
+  },
+  { type: "paragraph", contentKey: "commercial.licensingModel.typesIntro" },
+  {
+    type: "table",
+    headers: [
+      "commercial.licensingModel.tblTypesHeader1",
+      "commercial.licensingModel.tblTypesHeader2",
+      "commercial.licensingModel.tblTypesHeader3",
+    ],
+    rows: [
+      [
+        "commercial.licensingModel.tblTypesR1C1",
+        "commercial.licensingModel.tblTypesR1C2",
+        "commercial.licensingModel.tblTypesR1C3",
+      ],
+      [
+        "commercial.licensingModel.tblTypesR2C1",
+        "commercial.licensingModel.tblTypesR2C2",
+        "commercial.licensingModel.tblTypesR2C3",
+      ],
+      [
+        "commercial.licensingModel.tblTypesR3C1",
+        "commercial.licensingModel.tblTypesR3C2",
+        "commercial.licensingModel.tblTypesR3C3",
+      ],
+      [
+        "commercial.licensingModel.tblTypesR4C1",
+        "commercial.licensingModel.tblTypesR4C2",
+        "commercial.licensingModel.tblTypesR4C3",
+      ],
+    ],
+  },
+
+  // ─── Feature Comparison ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.licensingModel.comparisonTitle",
+    id: "comparison",
+  },
+  {
+    type: "table",
+    headers: [
+      "commercial.licensingModel.tblCompHeader1",
+      "commercial.licensingModel.tblCompHeader2",
+      "commercial.licensingModel.tblCompHeader3",
+      "commercial.licensingModel.tblCompHeader4",
+      "commercial.licensingModel.tblCompHeader5",
+    ],
+    rows: [
+      [
+        "commercial.licensingModel.tblCompR1C1",
+        "commercial.licensingModel.tblCompR1C2",
+        "commercial.licensingModel.tblCompR1C3",
+        "commercial.licensingModel.tblCompR1C4",
+        "commercial.licensingModel.tblCompR1C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR2C1",
+        "commercial.licensingModel.tblCompR2C2",
+        "commercial.licensingModel.tblCompR2C3",
+        "commercial.licensingModel.tblCompR2C4",
+        "commercial.licensingModel.tblCompR2C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR3C1",
+        "commercial.licensingModel.tblCompR3C2",
+        "commercial.licensingModel.tblCompR3C3",
+        "commercial.licensingModel.tblCompR3C4",
+        "commercial.licensingModel.tblCompR3C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR4C1",
+        "commercial.licensingModel.tblCompR4C2",
+        "commercial.licensingModel.tblCompR4C3",
+        "commercial.licensingModel.tblCompR4C4",
+        "commercial.licensingModel.tblCompR4C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR5C1",
+        "commercial.licensingModel.tblCompR5C2",
+        "commercial.licensingModel.tblCompR5C3",
+        "commercial.licensingModel.tblCompR5C4",
+        "commercial.licensingModel.tblCompR5C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR6C1",
+        "commercial.licensingModel.tblCompR6C2",
+        "commercial.licensingModel.tblCompR6C3",
+        "commercial.licensingModel.tblCompR6C4",
+        "commercial.licensingModel.tblCompR6C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR7C1",
+        "commercial.licensingModel.tblCompR7C2",
+        "commercial.licensingModel.tblCompR7C3",
+        "commercial.licensingModel.tblCompR7C4",
+        "commercial.licensingModel.tblCompR7C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR8C1",
+        "commercial.licensingModel.tblCompR8C2",
+        "commercial.licensingModel.tblCompR8C3",
+        "commercial.licensingModel.tblCompR8C4",
+        "commercial.licensingModel.tblCompR8C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR9C1",
+        "commercial.licensingModel.tblCompR9C2",
+        "commercial.licensingModel.tblCompR9C3",
+        "commercial.licensingModel.tblCompR9C4",
+        "commercial.licensingModel.tblCompR9C5",
+      ],
+      [
+        "commercial.licensingModel.tblCompR10C1",
+        "commercial.licensingModel.tblCompR10C2",
+        "commercial.licensingModel.tblCompR10C3",
+        "commercial.licensingModel.tblCompR10C4",
+        "commercial.licensingModel.tblCompR10C5",
+      ],
+    ],
+  },
+
+  // ─── Source Code Access ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.licensingModel.sourcCodeTitle",
+    id: "source-code",
+  },
+  { type: "paragraph", contentKey: "commercial.licensingModel.sourceCodeContent" },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      "commercial.licensingModel.lstSourceI1",
+      "commercial.licensingModel.lstSourceI2",
+      "commercial.licensingModel.lstSourceI3",
+      "commercial.licensingModel.lstSourceI4",
+      "commercial.licensingModel.lstSourceI5",
+      "commercial.licensingModel.lstSourceI6",
+    ],
+  },
+
+  // ─── Renewal & Upgrades ─────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.licensingModel.renewalTitle", id: "renewal" },
+  { type: "paragraph", contentKey: "commercial.licensingModel.renewalContent" },
+  {
+    type: "table",
+    headers: [
+      "commercial.licensingModel.tblRenewHeader1",
+      "commercial.licensingModel.tblRenewHeader2",
+      "commercial.licensingModel.tblRenewHeader3",
+    ],
+    rows: [
+      [
+        "commercial.licensingModel.tblRenewR1C1",
+        "commercial.licensingModel.tblRenewR1C2",
+        "commercial.licensingModel.tblRenewR1C3",
+      ],
+      [
+        "commercial.licensingModel.tblRenewR2C1",
+        "commercial.licensingModel.tblRenewR2C2",
+        "commercial.licensingModel.tblRenewR2C3",
+      ],
+      [
+        "commercial.licensingModel.tblRenewR3C1",
+        "commercial.licensingModel.tblRenewR3C2",
+        "commercial.licensingModel.tblRenewR3C3",
+      ],
+      [
+        "commercial.licensingModel.tblRenewR4C1",
+        "commercial.licensingModel.tblRenewR4C2",
+        "commercial.licensingModel.tblRenewR4C3",
+      ],
+    ],
+  },
+
+  // ─── Commercial Terms ───────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.licensingModel.termsTitle", id: "terms" },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      "commercial.licensingModel.lstTermsI1",
+      "commercial.licensingModel.lstTermsI2",
+      "commercial.licensingModel.lstTermsI3",
+      "commercial.licensingModel.lstTermsI4",
+      "commercial.licensingModel.lstTermsI5",
+    ],
+  },
+
+  // ─── Entitlements-Powered Plan Differentiation ──────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.licensingModel.entitlementsTitle",
+    id: "entitlements-integration",
+  },
+  { type: "paragraph", contentKey: "commercial.licensingModel.entitlementsIntro" },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "layers",
+        titleKey: "commercial.licensingModel.entEditions",
+        descriptionKey: "commercial.licensingModel.entEditionsDesc",
+      },
+      {
+        icon: "refresh-cw",
+        titleKey: "commercial.licensingModel.entSubscriptions",
+        descriptionKey: "commercial.licensingModel.entSubscriptionsDesc",
+      },
+      {
+        icon: "sliders",
+        titleKey: "commercial.licensingModel.entOverrides",
+        descriptionKey: "commercial.licensingModel.entOverridesDesc",
+      },
+      {
+        icon: "git-branch",
+        titleKey: "commercial.licensingModel.entVersioning",
+        descriptionKey: "commercial.licensingModel.entVersioningDesc",
+      },
+    ],
+  },
+  { type: "info", variant: "tip", contentKey: "commercial.licensingModel.entitlementsTip" },
+
+  { type: "info", variant: "tip", contentKey: "commercial.licensingModel.trialTip" },
+];
 
 registerPage({
   slug: "commercial/licensing-model",
   titleKey: "commercial.licensingModel.title",
+  descriptionKey: "commercial.licensingModel.description",
   category: "commercial-pricing",
   order: 1,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.licensingModel.section_4_hdr_0",
-      "commercial.licensingModel.section_4_hdr_1",
-      "commercial.licensingModel.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.licensingModel.section_4_cell_0_0",
-        "commercial.licensingModel.section_4_cell_0_1",
-        "commercial.licensingModel.section_4_cell_0_2"
-      ],
-      [
-        "commercial.licensingModel.section_4_cell_1_0",
-        "commercial.licensingModel.section_4_cell_1_1",
-        "commercial.licensingModel.section_4_cell_1_2"
-      ],
-      [
-        "commercial.licensingModel.section_4_cell_2_0",
-        "commercial.licensingModel.section_4_cell_2_1",
-        "commercial.licensingModel.section_4_cell_2_2"
-      ],
-      [
-        "commercial.licensingModel.section_4_cell_3_0",
-        "commercial.licensingModel.section_4_cell_3_1",
-        "commercial.licensingModel.section_4_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_6_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.licensingModel.section_7_hdr_0",
-      "commercial.licensingModel.section_7_hdr_1",
-      "commercial.licensingModel.section_7_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.licensingModel.section_7_cell_0_0",
-        "commercial.licensingModel.section_7_cell_0_1",
-        "commercial.licensingModel.section_7_cell_0_2"
-      ],
-      [
-        "commercial.licensingModel.section_7_cell_1_0",
-        "commercial.licensingModel.section_7_cell_1_1",
-        "commercial.licensingModel.section_7_cell_1_2"
-      ],
-      [
-        "commercial.licensingModel.section_7_cell_2_0",
-        "commercial.licensingModel.section_7_cell_2_1",
-        "commercial.licensingModel.section_7_cell_2_2"
-      ],
-      [
-        "commercial.licensingModel.section_7_cell_3_0",
-        "commercial.licensingModel.section_7_cell_3_1",
-        "commercial.licensingModel.section_7_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.licensingModel.section_9_hdr_0",
-      "commercial.licensingModel.section_9_hdr_1",
-      "commercial.licensingModel.section_9_hdr_2",
-      "commercial.licensingModel.section_9_hdr_3",
-      "commercial.licensingModel.section_9_hdr_4"
-    ],
-    "rows": [
-      [
-        "commercial.licensingModel.section_9_cell_0_0",
-        "commercial.licensingModel.section_9_cell_0_1",
-        "commercial.licensingModel.section_9_cell_0_2",
-        "commercial.licensingModel.section_9_cell_0_3",
-        "commercial.licensingModel.section_9_cell_0_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_1_0",
-        "commercial.licensingModel.section_9_cell_1_1",
-        "commercial.licensingModel.section_9_cell_1_2",
-        "commercial.licensingModel.section_9_cell_1_3",
-        "commercial.licensingModel.section_9_cell_1_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_2_0",
-        "commercial.licensingModel.section_9_cell_2_1",
-        "commercial.licensingModel.section_9_cell_2_2",
-        "commercial.licensingModel.section_9_cell_2_3",
-        "commercial.licensingModel.section_9_cell_2_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_3_0",
-        "commercial.licensingModel.section_9_cell_3_1",
-        "commercial.licensingModel.section_9_cell_3_2",
-        "commercial.licensingModel.section_9_cell_3_3",
-        "commercial.licensingModel.section_9_cell_3_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_4_0",
-        "commercial.licensingModel.section_9_cell_4_1",
-        "commercial.licensingModel.section_9_cell_4_2",
-        "commercial.licensingModel.section_9_cell_4_3",
-        "commercial.licensingModel.section_9_cell_4_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_5_0",
-        "commercial.licensingModel.section_9_cell_5_1",
-        "commercial.licensingModel.section_9_cell_5_2",
-        "commercial.licensingModel.section_9_cell_5_3",
-        "commercial.licensingModel.section_9_cell_5_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_6_0",
-        "commercial.licensingModel.section_9_cell_6_1",
-        "commercial.licensingModel.section_9_cell_6_2",
-        "commercial.licensingModel.section_9_cell_6_3",
-        "commercial.licensingModel.section_9_cell_6_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_7_0",
-        "commercial.licensingModel.section_9_cell_7_1",
-        "commercial.licensingModel.section_9_cell_7_2",
-        "commercial.licensingModel.section_9_cell_7_3",
-        "commercial.licensingModel.section_9_cell_7_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_8_0",
-        "commercial.licensingModel.section_9_cell_8_1",
-        "commercial.licensingModel.section_9_cell_8_2",
-        "commercial.licensingModel.section_9_cell_8_3",
-        "commercial.licensingModel.section_9_cell_8_4"
-      ],
-      [
-        "commercial.licensingModel.section_9_cell_9_0",
-        "commercial.licensingModel.section_9_cell_9_1",
-        "commercial.licensingModel.section_9_cell_9_2",
-        "commercial.licensingModel.section_9_cell_9_3",
-        "commercial.licensingModel.section_9_cell_9_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_11_content"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.licensingModel.section_12_item_0",
-      "commercial.licensingModel.section_12_item_1",
-      "commercial.licensingModel.section_12_item_2",
-      "commercial.licensingModel.section_12_item_3",
-      "commercial.licensingModel.section_12_item_4",
-      "commercial.licensingModel.section_12_item_5"
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_14_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.licensingModel.section_15_hdr_0",
-      "commercial.licensingModel.section_15_hdr_1",
-      "commercial.licensingModel.section_15_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.licensingModel.section_15_cell_0_0",
-        "commercial.licensingModel.section_15_cell_0_1",
-        "commercial.licensingModel.section_15_cell_0_2"
-      ],
-      [
-        "commercial.licensingModel.section_15_cell_1_0",
-        "commercial.licensingModel.section_15_cell_1_1",
-        "commercial.licensingModel.section_15_cell_1_2"
-      ],
-      [
-        "commercial.licensingModel.section_15_cell_2_0",
-        "commercial.licensingModel.section_15_cell_2_1",
-        "commercial.licensingModel.section_15_cell_2_2"
-      ],
-      [
-        "commercial.licensingModel.section_15_cell_3_0",
-        "commercial.licensingModel.section_15_cell_3_1",
-        "commercial.licensingModel.section_15_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.licensingModel.section_17_item_0",
-      "commercial.licensingModel.section_17_item_1",
-      "commercial.licensingModel.section_17_item_2",
-      "commercial.licensingModel.section_17_item_3",
-      "commercial.licensingModel.section_17_item_4"
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.licensingModel.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_21_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.licensingModel.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_23_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.licensingModel.section_24_title",
-    "id": "sec_24"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_25_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.licensingModel.section_26_title",
-    "id": "sec_26"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.licensingModel.section_27_content"
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.licensingModel.section_28_title",
-    "contentKey": "commercial.licensingModel.section_28_content"
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.licensingModel.section_29_title",
-    "contentKey": "commercial.licensingModel.section_29_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.licensingModel.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.licensingModel.section_31_item_0",
-      "commercial.licensingModel.section_31_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/roi-analysis",
-  "commercial/support-plans"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/roi-analysis", "commercial/support-plans"],
+  lastUpdated: "2026-02-20",
 });

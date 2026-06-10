@@ -1,191 +1,142 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.emailIntegration.intro" },
+
+  // ─── Email Delivery Pipeline ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.emailIntegration.pipelineTitle",
+    id: "pipeline",
+  },
+  {
+    type: "flowchart",
+    direction: "horizontal",
+    title: "Email Delivery Pipeline",
+    nodes: [
+      { id: "trigger", label: "Business Event", type: "default" },
+      { id: "resolve", label: "Resolve Template", type: "info" },
+      { id: "render", label: "Scriban Render", type: "primary" },
+      { id: "queue", label: "Channel Queue", type: "warning" },
+      { id: "send", label: "SMTP / SendGrid", type: "success" },
+      { id: "retry", label: "Retry on Failure", type: "danger" },
+    ],
+    connections: [
+      { from: "trigger", to: "resolve" },
+      { from: "resolve", to: "render" },
+      { from: "render", to: "queue" },
+      { from: "queue", to: "send" },
+      { from: "send", to: "retry", label: "Failed" },
+    ],
+  },
+
+  // ─── Email Providers ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.emailIntegration.providersTitle",
+    id: "providers",
+  },
+  {
+    type: "table",
+    headers: ["Provider", "Configuration", "Use Case"],
+    rows: [
+      ["SMTP", "Host, port, credentials", "Self-hosted, on-premise"],
+      ["SendGrid", "API key", "Cloud, high-volume delivery"],
+      ["Mailgun", "API key + domain", "Developer-friendly API"],
+      ["Amazon SES", "Access key + region", "AWS infrastructure"],
+      ["Custom", "Implement IEmailSender", "Any provider via adapter"],
+    ],
+  },
+
+  // ─── Template System ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.emailIntegration.templatesTitle",
+    id: "templates",
+  },
+  { type: "paragraph", contentKey: "commercial.emailIntegration.templatesContent" },
+  {
+    type: "table",
+    headers: ["Feature", "Description"],
+    rows: [
+      ["Scriban engine", "Full Liquid-compatible templating with loops, conditions, filters"],
+      ["Bilingual", "Arabic and English templates with automatic language detection"],
+      ["Placeholder validation", "Schema-validated variables prevent runtime template errors"],
+      ["Live preview", "WYSIWYG editor with real-time rendering in the admin panel"],
+      ["Version history", "Track template changes with rollback capability"],
+    ],
+  },
+
+  // ─── Features ───────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.emailIntegration.featuresTitle",
+    id: "features",
+  },
+  {
+    type: "feature-grid",
+    columns: 2,
+    items: [
+      {
+        icon: "zap",
+        titleKey: "commercial.emailIntegration.queueBased",
+        descriptionKey: "commercial.emailIntegration.queueBasedDesc",
+      },
+      {
+        icon: "globe",
+        titleKey: "commercial.emailIntegration.bilingual",
+        descriptionKey: "commercial.emailIntegration.bilingualDesc",
+      },
+      {
+        icon: "shield",
+        titleKey: "commercial.emailIntegration.retryLogic",
+        descriptionKey: "commercial.emailIntegration.retryLogicDesc",
+      },
+      {
+        icon: "bar-chart",
+        titleKey: "commercial.emailIntegration.tracking",
+        descriptionKey: "commercial.emailIntegration.trackingDesc",
+      },
+    ],
+  },
+
+  // ─── Configuration ──────────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.emailIntegration.configTitle", id: "config" },
+  {
+    type: "code",
+    language: "json",
+    filename: "Email Configuration",
+    code: `{
+  "EmailSettings": {
+    "Provider": "smtp",
+    "FromEmail": "no-reply@scripe.com",
+    "FromName": "SCRIPE Platform",
+    "Smtp": {
+      "Host": "smtp.office365.com",
+      "Port": 587,
+      "EnableSsl": true
+    },
+    "RetryPolicy": {
+      "MaxRetries": 3,
+      "BackoffSeconds": [30, 120, 600]
+    }
+  }
+}`,
+  },
+];
 
 registerPage({
   slug: "commercial/email-integration",
   titleKey: "commercial.emailIntegration.title",
+  descriptionKey: "commercial.emailIntegration.description",
   category: "commercial-integration",
   order: 3,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.emailIntegration.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    trigger[\"Business Event\"]\n    resolve([\"Resolve Template\"])\n    render([\"Scriban Render\"])\n    queue{{\"Channel Queue\"}}\n    send([\"SMTP / SendGrid\"])\n    retry[\"Retry on Failure\"]\n    trigger --> resolve\n    resolve --> render\n    render --> queue\n    queue --> send\n    send -->|\"Failed\"| retry",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.emailIntegration.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.emailIntegration.section_5_hdr_0",
-      "commercial.emailIntegration.section_5_hdr_1",
-      "commercial.emailIntegration.section_5_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.emailIntegration.section_5_cell_0_0",
-        "commercial.emailIntegration.section_5_cell_0_1",
-        "commercial.emailIntegration.section_5_cell_0_2"
-      ],
-      [
-        "commercial.emailIntegration.section_5_cell_1_0",
-        "commercial.emailIntegration.section_5_cell_1_1",
-        "commercial.emailIntegration.section_5_cell_1_2"
-      ],
-      [
-        "commercial.emailIntegration.section_5_cell_2_0",
-        "commercial.emailIntegration.section_5_cell_2_1",
-        "commercial.emailIntegration.section_5_cell_2_2"
-      ],
-      [
-        "commercial.emailIntegration.section_5_cell_3_0",
-        "commercial.emailIntegration.section_5_cell_3_1",
-        "commercial.emailIntegration.section_5_cell_3_2"
-      ],
-      [
-        "commercial.emailIntegration.section_5_cell_4_0",
-        "commercial.emailIntegration.section_5_cell_4_1",
-        "commercial.emailIntegration.section_5_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.emailIntegration.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_7_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.emailIntegration.section_8_hdr_0",
-      "commercial.emailIntegration.section_8_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.emailIntegration.section_8_cell_0_0",
-        "commercial.emailIntegration.section_8_cell_0_1"
-      ],
-      [
-        "commercial.emailIntegration.section_8_cell_1_0",
-        "commercial.emailIntegration.section_8_cell_1_1"
-      ],
-      [
-        "commercial.emailIntegration.section_8_cell_2_0",
-        "commercial.emailIntegration.section_8_cell_2_1"
-      ],
-      [
-        "commercial.emailIntegration.section_8_cell_3_0",
-        "commercial.emailIntegration.section_8_cell_3_1"
-      ],
-      [
-        "commercial.emailIntegration.section_8_cell_4_0",
-        "commercial.emailIntegration.section_8_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.emailIntegration.section_9_title",
-    "id": "sec_9"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.emailIntegration.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.emailIntegration.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.emailIntegration.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_15_content"
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "commercial.emailIntegration.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_17_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.emailIntegration.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.emailIntegration.section_19_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"EmailSettings\": {\n    \"Provider\": \"smtp\",\n    \"FromEmail\": \"no-reply@scripe.com\",\n    \"FromName\": \"SCRIPE Platform\",\n    \"Smtp\": {\n      \"Host\": \"smtp.office365.com\",\n      \"Port\": 587,\n      \"EnableSsl\": true\n    },\n    \"RetryPolicy\": {\n      \"MaxRetries\": 3,\n      \"BackoffSeconds\": [30, 120, 600]\n    }\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.emailIntegration.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.emailIntegration.section_22_item_0",
-      "commercial.emailIntegration.section_22_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/webhook-integration",
-  "commercial/message-templates"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/webhook-integration", "commercial/message-templates"],
+  lastUpdated: "2026-02-20",
 });

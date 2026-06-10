@@ -1,398 +1,310 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  //  Admin vs User
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.userManagement.adminVsUserTitle",
+    id: "admin-vs-user",
+  },
+  { type: "paragraph", contentKey: "features.userManagement.adminVsUserIntro" },
+  {
+    type: "table",
+    headers: ["Aspect", "Admin", "User"],
+    rows: [
+      ["Entity", "Admin (extends AuditableEntity)", "User (extends AuditableEntity)"],
+      ["Auth Prefix", "/api/auth/admin/*", "/api/auth/user/*"],
+      ["Permissions", "Full RBAC, assigned roles", "Limited, self-service"],
+      ["Can Manage Others", "Yes (CRUD admins/users)", "No"],
+      ["Tenant Scoped", "Yes", "Yes"],
+      ["Has Roles", "Yes (many-to-many AdminRole)", "No"],
+      ["Protected Flag", "IsProtected on super admin", "No"],
+      ["Controller", "AdminsController (27 endpoints)", "UsersController"],
+    ],
+  },
+
+  //  AdminsController CRUD
+  { type: "heading", level: 2, titleKey: "features.userManagement.crudTitle", id: "crud" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/admins",
+        descriptionKey: "Paginated list (data-scope aware)",
+        auth: "JWT",
+        permission: "admins.view",
+      },
+      {
+        method: "GET",
+        path: "/admins/{id}",
+        descriptionKey: "Single admin detail",
+        auth: "JWT",
+        permission: "admins.view",
+      },
+      {
+        method: "GET",
+        path: "/admins/tenant/{tenantId}",
+        descriptionKey: "Admins by specific tenant",
+        auth: "JWT",
+        permission: "admins.view",
+      },
+      {
+        method: "GET",
+        path: "/admins/my-tenant",
+        descriptionKey: "Admins in caller's tenant",
+        auth: "JWT",
+        permission: "admins.view",
+      },
+      {
+        method: "POST",
+        path: "/admins",
+        descriptionKey: "Create with explicit TenantId",
+        auth: "JWT",
+        permission: "admins.create",
+      },
+      {
+        method: "POST",
+        path: "/admins/my-tenant",
+        descriptionKey: "Create for caller's tenant (from JWT)",
+        auth: "JWT",
+        permission: "admins.create",
+      },
+      {
+        method: "PUT",
+        path: "/admins/{id}",
+        descriptionKey: "Update admin",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "DELETE",
+        path: "/admins/{id}",
+        descriptionKey: "Soft delete admin",
+        auth: "JWT",
+        permission: "admins.delete",
+      },
+    ],
+  },
+
+  //  Account Operations 
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.userManagement.accountOpsTitle",
+    id: "account-ops",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "PUT",
+        path: "/admins/{id}/active",
+        descriptionKey: "Activate/deactivate",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "PUT",
+        path: "/admins/{id}/change-password",
+        descriptionKey: "Change own password",
+        auth: "JWT (Self only)",
+      },
+      {
+        method: "PUT",
+        path: "/admins/{id}/reset-password",
+        descriptionKey: "Super admin resets password",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+    ],
+  },
+
+  //  Role Management
+  { type: "heading", level: 2, titleKey: "features.userManagement.roleMgmtTitle", id: "role-mgmt" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/admins/{id}/roles",
+        descriptionKey: "Get assigned roles",
+        auth: "JWT",
+        permission: "admins.view",
+      },
+      {
+        method: "POST",
+        path: "/admins/{id}/roles/{roleId}",
+        descriptionKey: "Assign single role",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "DELETE",
+        path: "/admins/{id}/roles/{roleId}",
+        descriptionKey: "Remove single role",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "PUT",
+        path: "/admins/{id}/roles/sync",
+        descriptionKey: "Nuke & Pave  replace all roles",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+    ],
+  },
+
+  //  Bulk Operations
+  { type: "heading", level: 2, titleKey: "features.userManagement.bulkOpsTitle", id: "bulk-ops" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/admins/bulk/activate",
+        descriptionKey: "Activate selected IDs",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "POST",
+        path: "/admins/bulk/deactivate",
+        descriptionKey: "Deactivate selected IDs",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "POST",
+        path: "/admins/bulk/delete",
+        descriptionKey: "Delete selected IDs",
+        auth: "JWT",
+        permission: "admins.delete",
+      },
+      {
+        method: "POST",
+        path: "/admins/bulk/activate-all",
+        descriptionKey: "Activate ALL matching filter",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "POST",
+        path: "/admins/bulk/deactivate-all",
+        descriptionKey: "Deactivate ALL matching filter",
+        auth: "JWT",
+        permission: "admins.edit",
+      },
+      {
+        method: "POST",
+        path: "/admins/bulk/delete-all",
+        descriptionKey: "Delete ALL matching filter",
+        auth: "JWT",
+        permission: "admins.delete",
+      },
+    ],
+  },
+
+  //  Enterprise Operations
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.userManagement.enterpriseOpsTitle",
+    id: "enterprise-ops",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/admins/{id}/impersonate",
+        descriptionKey: "Impersonate another admin",
+        auth: "Super admin",
+      },
+      {
+        method: "POST",
+        path: "/admins/{id}/transfer",
+        descriptionKey: "Move admin to different tenant",
+        auth: "Super admin",
+      },
+      {
+        method: "POST",
+        path: "/admins/{id}/transfer-protection",
+        descriptionKey: "Transfer 'protected' flag",
+        auth: "Super admin",
+      },
+    ],
+  },
+
+  //  Protected Admin Rules
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.userManagement.protectedTitle",
+    id: "protected",
+  },
+  { type: "paragraph", contentKey: "features.userManagement.protectedIntro" },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      "Each tenant has exactly one protected admin (the super admin who created the tenant)",
+      "Protected flag can be transferred to another admin via TransferProtection",
+      "Protected admins cannot be deleted, deactivated, or have roles removed",
+    ],
+  },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "Protected Admin Rules",
+    nodes: [
+      { id: "pa", label: "Protected Admin", type: "primary" },
+      { id: "del", label: "Cannot be Deleted", type: "danger" },
+      { id: "deact", label: "Cannot be Deactivated", type: "danger" },
+      { id: "xfer", label: "Cannot be Transferred (unless by another protected)", type: "warning" },
+      { id: "sr", label: "Owns Protected Super Admin Role", type: "success" },
+      { id: "all", label: "Gets All Tenant Permissions", type: "success" },
+    ],
+    connections: [
+      { from: "pa", to: "del" },
+      { from: "pa", to: "deact" },
+      { from: "pa", to: "xfer" },
+      { from: "pa", to: "sr" },
+      { from: "sr", to: "all" },
+    ],
+  },
+
+  //  Nuke & Pave Pattern
+  { type: "heading", level: 2, titleKey: "features.userManagement.nukePaveTitle", id: "nuke-pave" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "AdminsController.cs",
+    code: `// PUT /admins/{id}/roles/sync
+// Replaces ALL existing roles with the provided list
+// This is safer than individual add/remove in concurrent scenarios
+
+[HttpPut("{id}/roles/sync")]
+public async Task<IActionResult> SyncRoles(string id, [FromBody] SyncRolesCommand command)
+{
+    // Deletes all AdminRole entries for this admin
+    // Re-creates entries for each role in the request
+    // Single transaction  no partial states
+}`,
+  },
+  { type: "info", variant: "tip", contentKey: "features.userManagement.nukePaveTip" },
+];
 
 registerPage({
   slug: "features/user-management",
   titleKey: "features.userManagement.title",
+  descriptionKey: "features.userManagement.description",
   category: "features",
   order: 10,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.userManagement.section_0_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_1_title",
-    "id": "sec_1"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.userManagement.section_2_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.userManagement.section_3_hdr_0",
-      "features.userManagement.section_3_hdr_1",
-      "features.userManagement.section_3_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.userManagement.section_3_cell_0_0",
-        "features.userManagement.section_3_cell_0_1",
-        "features.userManagement.section_3_cell_0_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_1_0",
-        "features.userManagement.section_3_cell_1_1",
-        "features.userManagement.section_3_cell_1_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_2_0",
-        "features.userManagement.section_3_cell_2_1",
-        "features.userManagement.section_3_cell_2_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_3_0",
-        "features.userManagement.section_3_cell_3_1",
-        "features.userManagement.section_3_cell_3_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_4_0",
-        "features.userManagement.section_3_cell_4_1",
-        "features.userManagement.section_3_cell_4_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_5_0",
-        "features.userManagement.section_3_cell_5_1",
-        "features.userManagement.section_3_cell_5_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_6_0",
-        "features.userManagement.section_3_cell_6_1",
-        "features.userManagement.section_3_cell_6_2"
-      ],
-      [
-        "features.userManagement.section_3_cell_7_0",
-        "features.userManagement.section_3_cell_7_1",
-        "features.userManagement.section_3_cell_7_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.userManagement.section_5_hdr_0",
-      "features.userManagement.section_5_hdr_1",
-      "features.userManagement.section_5_hdr_2",
-      "features.userManagement.section_5_hdr_3",
-      "features.userManagement.section_5_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.userManagement.section_5_cell_0_0",
-        "features.userManagement.section_5_cell_0_1",
-        "features.userManagement.section_5_cell_0_2",
-        "features.userManagement.section_5_cell_0_3",
-        "features.userManagement.section_5_cell_0_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_1_0",
-        "features.userManagement.section_5_cell_1_1",
-        "features.userManagement.section_5_cell_1_2",
-        "features.userManagement.section_5_cell_1_3",
-        "features.userManagement.section_5_cell_1_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_2_0",
-        "features.userManagement.section_5_cell_2_1",
-        "features.userManagement.section_5_cell_2_2",
-        "features.userManagement.section_5_cell_2_3",
-        "features.userManagement.section_5_cell_2_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_3_0",
-        "features.userManagement.section_5_cell_3_1",
-        "features.userManagement.section_5_cell_3_2",
-        "features.userManagement.section_5_cell_3_3",
-        "features.userManagement.section_5_cell_3_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_4_0",
-        "features.userManagement.section_5_cell_4_1",
-        "features.userManagement.section_5_cell_4_2",
-        "features.userManagement.section_5_cell_4_3",
-        "features.userManagement.section_5_cell_4_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_5_0",
-        "features.userManagement.section_5_cell_5_1",
-        "features.userManagement.section_5_cell_5_2",
-        "features.userManagement.section_5_cell_5_3",
-        "features.userManagement.section_5_cell_5_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_6_0",
-        "features.userManagement.section_5_cell_6_1",
-        "features.userManagement.section_5_cell_6_2",
-        "features.userManagement.section_5_cell_6_3",
-        "features.userManagement.section_5_cell_6_4"
-      ],
-      [
-        "features.userManagement.section_5_cell_7_0",
-        "features.userManagement.section_5_cell_7_1",
-        "features.userManagement.section_5_cell_7_2",
-        "features.userManagement.section_5_cell_7_3",
-        "features.userManagement.section_5_cell_7_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.userManagement.section_7_hdr_0",
-      "features.userManagement.section_7_hdr_1",
-      "features.userManagement.section_7_hdr_2",
-      "features.userManagement.section_7_hdr_3",
-      "features.userManagement.section_7_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.userManagement.section_7_cell_0_0",
-        "features.userManagement.section_7_cell_0_1",
-        "features.userManagement.section_7_cell_0_2",
-        "features.userManagement.section_7_cell_0_3",
-        "features.userManagement.section_7_cell_0_4"
-      ],
-      [
-        "features.userManagement.section_7_cell_1_0",
-        "features.userManagement.section_7_cell_1_1",
-        "features.userManagement.section_7_cell_1_2",
-        "features.userManagement.section_7_cell_1_3",
-        "features.userManagement.section_7_cell_1_4"
-      ],
-      [
-        "features.userManagement.section_7_cell_2_0",
-        "features.userManagement.section_7_cell_2_1",
-        "features.userManagement.section_7_cell_2_2",
-        "features.userManagement.section_7_cell_2_3",
-        "features.userManagement.section_7_cell_2_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.userManagement.section_9_hdr_0",
-      "features.userManagement.section_9_hdr_1",
-      "features.userManagement.section_9_hdr_2",
-      "features.userManagement.section_9_hdr_3",
-      "features.userManagement.section_9_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.userManagement.section_9_cell_0_0",
-        "features.userManagement.section_9_cell_0_1",
-        "features.userManagement.section_9_cell_0_2",
-        "features.userManagement.section_9_cell_0_3",
-        "features.userManagement.section_9_cell_0_4"
-      ],
-      [
-        "features.userManagement.section_9_cell_1_0",
-        "features.userManagement.section_9_cell_1_1",
-        "features.userManagement.section_9_cell_1_2",
-        "features.userManagement.section_9_cell_1_3",
-        "features.userManagement.section_9_cell_1_4"
-      ],
-      [
-        "features.userManagement.section_9_cell_2_0",
-        "features.userManagement.section_9_cell_2_1",
-        "features.userManagement.section_9_cell_2_2",
-        "features.userManagement.section_9_cell_2_3",
-        "features.userManagement.section_9_cell_2_4"
-      ],
-      [
-        "features.userManagement.section_9_cell_3_0",
-        "features.userManagement.section_9_cell_3_1",
-        "features.userManagement.section_9_cell_3_2",
-        "features.userManagement.section_9_cell_3_3",
-        "features.userManagement.section_9_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.userManagement.section_11_hdr_0",
-      "features.userManagement.section_11_hdr_1",
-      "features.userManagement.section_11_hdr_2",
-      "features.userManagement.section_11_hdr_3",
-      "features.userManagement.section_11_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.userManagement.section_11_cell_0_0",
-        "features.userManagement.section_11_cell_0_1",
-        "features.userManagement.section_11_cell_0_2",
-        "features.userManagement.section_11_cell_0_3",
-        "features.userManagement.section_11_cell_0_4"
-      ],
-      [
-        "features.userManagement.section_11_cell_1_0",
-        "features.userManagement.section_11_cell_1_1",
-        "features.userManagement.section_11_cell_1_2",
-        "features.userManagement.section_11_cell_1_3",
-        "features.userManagement.section_11_cell_1_4"
-      ],
-      [
-        "features.userManagement.section_11_cell_2_0",
-        "features.userManagement.section_11_cell_2_1",
-        "features.userManagement.section_11_cell_2_2",
-        "features.userManagement.section_11_cell_2_3",
-        "features.userManagement.section_11_cell_2_4"
-      ],
-      [
-        "features.userManagement.section_11_cell_3_0",
-        "features.userManagement.section_11_cell_3_1",
-        "features.userManagement.section_11_cell_3_2",
-        "features.userManagement.section_11_cell_3_3",
-        "features.userManagement.section_11_cell_3_4"
-      ],
-      [
-        "features.userManagement.section_11_cell_4_0",
-        "features.userManagement.section_11_cell_4_1",
-        "features.userManagement.section_11_cell_4_2",
-        "features.userManagement.section_11_cell_4_3",
-        "features.userManagement.section_11_cell_4_4"
-      ],
-      [
-        "features.userManagement.section_11_cell_5_0",
-        "features.userManagement.section_11_cell_5_1",
-        "features.userManagement.section_11_cell_5_2",
-        "features.userManagement.section_11_cell_5_3",
-        "features.userManagement.section_11_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.userManagement.section_13_hdr_0",
-      "features.userManagement.section_13_hdr_1",
-      "features.userManagement.section_13_hdr_2",
-      "features.userManagement.section_13_hdr_3",
-      "features.userManagement.section_13_hdr_4"
-    ],
-    "rows": [
-      [
-        "features.userManagement.section_13_cell_0_0",
-        "features.userManagement.section_13_cell_0_1",
-        "features.userManagement.section_13_cell_0_2",
-        "features.userManagement.section_13_cell_0_3",
-        "features.userManagement.section_13_cell_0_4"
-      ],
-      [
-        "features.userManagement.section_13_cell_1_0",
-        "features.userManagement.section_13_cell_1_1",
-        "features.userManagement.section_13_cell_1_2",
-        "features.userManagement.section_13_cell_1_3",
-        "features.userManagement.section_13_cell_1_4"
-      ],
-      [
-        "features.userManagement.section_13_cell_2_0",
-        "features.userManagement.section_13_cell_2_1",
-        "features.userManagement.section_13_cell_2_2",
-        "features.userManagement.section_13_cell_2_3",
-        "features.userManagement.section_13_cell_2_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.userManagement.section_15_content"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.userManagement.section_16_item_0",
-      "features.userManagement.section_16_item_1",
-      "features.userManagement.section_16_item_2"
-    ]
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    pa([\"Protected Admin\"])\n    del[\"Cannot be Deleted\"]\n    deact[\"Cannot be Deactivated\"]\n    xfer{{\"Cannot be Transferred (unless by another protected)\"}}\n    sr([\"Owns Protected Super Admin Role\"])\n    all([\"Gets All Tenant Permissions\"])\n    pa --> del\n    pa --> deact\n    pa --> xfer\n    pa --> sr\n    sr --> all",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_18_title",
-    "id": "sec_18"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.userManagement.section_19_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// PUT /admins/{id}/roles/sync\n// Replaces ALL existing roles with the provided list\n// This is safer than individual add/remove in concurrent scenarios\n\n[HttpPut(\"{id}/roles/sync\")]\npublic async Task<IActionResult> SyncRoles(string id, [FromBody] SyncRolesCommand command)\n{\n    // Deletes all AdminRole entries for this admin\n    // Re-creates entries for each role in the request\n    // Single transaction  no partial states\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.userManagement.section_21_title",
-    "contentKey": "features.userManagement.section_21_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.userManagement.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.userManagement.section_23_item_0",
-      "features.userManagement.section_23_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "features/role-permissions",
-  "features/recycle-bin"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["features/role-permissions", "features/recycle-bin"],
+  lastUpdated: "2026-02-20",
 });

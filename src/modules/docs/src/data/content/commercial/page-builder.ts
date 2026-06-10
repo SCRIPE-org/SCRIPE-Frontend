@@ -1,392 +1,256 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "commercial.pageBuilder.intro" },
+
+  // ─── Login Page Builder ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.builderValueTitle",
+    id: "page-builder",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.builderValueContent" },
+
+  // ─── 3 Design Modes ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.modesTitle",
+    id: "design-modes",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.modesContent" },
+  {
+    type: "table",
+    headers: ["Mode", "Description"],
+    rows: [
+      [
+        "Freeform",
+        "Absolute positioning with pixel-level control. Desktop publishing for login pages.",
+      ],
+      ["Grid (Recommended)", "12-column CSS grid. Responsive across desktop, tablet, and mobile."],
+      ["Builder", "Structured block-based assembly. Fastest path to polished login page."],
+    ],
+  },
+
+  // ─── 14 Components ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.componentsTitle",
+    id: "components",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.componentsContent" },
+  {
+    type: "table",
+    headers: ["Component", "Description"],
+    rows: [
+      ["Logo", "Tenant logo with sizing, alignment, and link target. Supports SVG, PNG, WebP."],
+      [
+        "Heading",
+        "Display text with configurable size, weight, color. Dynamic tenant name variables.",
+      ],
+      ["Login Form", "Email/password inputs, submit, remember-me, forgot-password link."],
+      ["Social Login", "OAuth buttons for Google, Microsoft, Apple, GitHub."],
+      ["Image", "Hero graphics, illustrations, decorative elements with sizing and crop."],
+      ["Button", "4 variants (primary, secondary, outline, ghost) with icon support."],
+      ["Card Container", "Grouped layout region with background, border, and shadow."],
+      ["Footer", "Configurable links, copyright, alignment. Pre-populated Terms/Privacy."],
+      ["+ 6 More", "Text paragraphs, dividers, spacers, badges, icons, terms links."],
+    ],
+  },
+
+  // ─── Multi-Page Branding ──────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.multiPageTitle",
+    id: "multi-page",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.multiPageContent" },
+  {
+    type: "table",
+    headers: ["Page", "Purpose", "Key Capability"],
+    rows: [
+      [
+        "Login",
+        "Primary brand statement",
+        "Full visual control — layout, colors, typography, overlay",
+      ],
+      [
+        "Forgot Password",
+        "Trust-building",
+        "Independent headline/subtitle for reassuring messaging",
+      ],
+      ["Reset Password", "Action-oriented", "Clear focused messaging with minimal distractions"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "commercial.pageBuilder.multiPageAdvantageDesc",
+  },
+
+  // ─── Dashboard Theming ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.dashboardTitle",
+    id: "dashboard-theming",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.dashboardContent" },
+  {
+    type: "table",
+    headers: ["Setting", "Options"],
+    rows: [
+      [
+        "Layout Templates",
+        "8 templates: Default, Navigation, Classic, Compact, Elegant, Floating, Modern, Minimal",
+      ],
+      [
+        "Color Themes",
+        "12 palettes: Default, Zinc, Slate, Stone, Neutral, Red, Rose, Orange, Green, Blue, Violet, Yellow",
+      ],
+      ["Theme Mode", "Light, Dark, or System (respects OS preference)"],
+      ["Sidebar", "Default state: expanded or collapsed"],
+    ],
+  },
+
+  // ─── Bundle Marketplace ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.bundleTitle",
+    id: "bundles",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.bundleContent" },
+  {
+    type: "table",
+    headers: ["Feature", "Description"],
+    rows: [
+      ["Save as Bundle", "Capture current studio state as reusable, shareable configuration"],
+      ["Browse & Apply", "Filter by type, search, paginate. One-click apply."],
+      ["Complete Bundles", "Login + builder + dashboard + accessibility in one click"],
+    ],
+  },
+
+  // ─── Enterprise Safety ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.safetyTitle",
+    id: "safety",
+  },
+  { type: "paragraph", contentKey: "commercial.pageBuilder.safetyContent" },
+  {
+    type: "table",
+    headers: ["Feature", "Description"],
+    rows: [
+      [
+        "Draft → Preview → Publish",
+        "All changes in draft until explicitly published. Preview in sandbox.",
+      ],
+      ["Optimistic Concurrency", "Concurrent edits detected and rejected (409 Conflict)."],
+      ["Emergency Safe Mode", "One-click restore to platform defaults. Guaranteed working login."],
+      ["Complete Audit Trail", "Who, what, when, before/after. SOX/HIPAA/ISO 27001 compliance."],
+    ],
+  },
+
+  // ─── ROI ──────────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.roiTitle",
+    id: "roi",
+  },
+  {
+    type: "table",
+    headers: ["Scenario", "Without SCRIPE", "With SCRIPE Page Builder"],
+    rows: [
+      [
+        "Custom login page per tenant",
+        "1-2 weeks developer time ($5K–$10K)",
+        "15 minutes — tenant admin self-service",
+      ],
+      [
+        "Multi-page auth branding",
+        "Not available (all pages identical)",
+        "Independent branding for login/forgot/reset",
+      ],
+      [
+        "Dashboard visual defaults",
+        "Config file changes (deployment required)",
+        "Visual studio with live preview",
+      ],
+      [
+        "Complete platform rebrand",
+        "4-8 weeks engineering project",
+        "1 click — apply a Complete bundle",
+      ],
+      [
+        "Responsive login layouts",
+        "Custom CSS + media queries",
+        "12-column grid with automatic breakpoints",
+      ],
+      [
+        "Brand configuration backup",
+        "Manual database exports",
+        "Save as Bundle — instant snapshot + share",
+      ],
+    ],
+  },
+
+  // ─── Competitive Analysis ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "commercial.pageBuilder.competitiveTitle",
+    id: "competitive",
+  },
+  {
+    type: "table",
+    headers: ["Feature", "Auth0", "Keycloak", "SCRIPE"],
+    rows: [
+      [
+        "Visual page builder",
+        "No (code required)",
+        "No (FreeMarker templates)",
+        "Yes (14 components, 3 modes)",
+      ],
+      ["Multi-page branding", "No", "No", "Yes (Login + Forgot + Reset)"],
+      ["Dashboard theming", "No", "Limited (theme.properties)", "Yes (8 layouts, 12 colors)"],
+      [
+        "Theme marketplace",
+        "No",
+        "Community themes (unsupported)",
+        "40 premium packages (5 tiers)",
+      ],
+      ["Configuration bundles", "No", "No", "Yes (save/share/apply bundles)"],
+      ["WCAG AA compliance", "Basic", "Manual", "32 settings, 6 profiles, auto-fix audit"],
+      ["12-column responsive grid", "No", "No", "Yes (desktop/tablet/mobile breakpoints)"],
+      [
+        "Draft/Publish safety",
+        "No (live-edit)",
+        "No (direct deploy)",
+        "Yes (concurrency + rollback + safe mode)",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "commercial.pageBuilder.tip",
+  },
+];
 
 registerPage({
   slug: "commercial/page-builder",
   titleKey: "commercial.pageBuilder.title",
+  descriptionKey: "commercial.pageBuilder.description",
   category: "commercial-enterprise",
   order: 9,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_3_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_5_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_6_hdr_0",
-      "commercial.pageBuilder.section_6_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_6_cell_0_0",
-        "commercial.pageBuilder.section_6_cell_0_1"
-      ],
-      [
-        "commercial.pageBuilder.section_6_cell_1_0",
-        "commercial.pageBuilder.section_6_cell_1_1"
-      ],
-      [
-        "commercial.pageBuilder.section_6_cell_2_0",
-        "commercial.pageBuilder.section_6_cell_2_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_8_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_9_hdr_0",
-      "commercial.pageBuilder.section_9_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_9_cell_0_0",
-        "commercial.pageBuilder.section_9_cell_0_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_1_0",
-        "commercial.pageBuilder.section_9_cell_1_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_2_0",
-        "commercial.pageBuilder.section_9_cell_2_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_3_0",
-        "commercial.pageBuilder.section_9_cell_3_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_4_0",
-        "commercial.pageBuilder.section_9_cell_4_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_5_0",
-        "commercial.pageBuilder.section_9_cell_5_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_6_0",
-        "commercial.pageBuilder.section_9_cell_6_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_7_0",
-        "commercial.pageBuilder.section_9_cell_7_1"
-      ],
-      [
-        "commercial.pageBuilder.section_9_cell_8_0",
-        "commercial.pageBuilder.section_9_cell_8_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_11_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_12_hdr_0",
-      "commercial.pageBuilder.section_12_hdr_1",
-      "commercial.pageBuilder.section_12_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_12_cell_0_0",
-        "commercial.pageBuilder.section_12_cell_0_1",
-        "commercial.pageBuilder.section_12_cell_0_2"
-      ],
-      [
-        "commercial.pageBuilder.section_12_cell_1_0",
-        "commercial.pageBuilder.section_12_cell_1_1",
-        "commercial.pageBuilder.section_12_cell_1_2"
-      ],
-      [
-        "commercial.pageBuilder.section_12_cell_2_0",
-        "commercial.pageBuilder.section_12_cell_2_1",
-        "commercial.pageBuilder.section_12_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.pageBuilder.section_13_title",
-    "contentKey": "commercial.pageBuilder.section_13_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_15_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_16_hdr_0",
-      "commercial.pageBuilder.section_16_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_16_cell_0_0",
-        "commercial.pageBuilder.section_16_cell_0_1"
-      ],
-      [
-        "commercial.pageBuilder.section_16_cell_1_0",
-        "commercial.pageBuilder.section_16_cell_1_1"
-      ],
-      [
-        "commercial.pageBuilder.section_16_cell_2_0",
-        "commercial.pageBuilder.section_16_cell_2_1"
-      ],
-      [
-        "commercial.pageBuilder.section_16_cell_3_0",
-        "commercial.pageBuilder.section_16_cell_3_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_18_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_19_hdr_0",
-      "commercial.pageBuilder.section_19_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_19_cell_0_0",
-        "commercial.pageBuilder.section_19_cell_0_1"
-      ],
-      [
-        "commercial.pageBuilder.section_19_cell_1_0",
-        "commercial.pageBuilder.section_19_cell_1_1"
-      ],
-      [
-        "commercial.pageBuilder.section_19_cell_2_0",
-        "commercial.pageBuilder.section_19_cell_2_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "commercial.pageBuilder.section_21_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_22_hdr_0",
-      "commercial.pageBuilder.section_22_hdr_1"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_22_cell_0_0",
-        "commercial.pageBuilder.section_22_cell_0_1"
-      ],
-      [
-        "commercial.pageBuilder.section_22_cell_1_0",
-        "commercial.pageBuilder.section_22_cell_1_1"
-      ],
-      [
-        "commercial.pageBuilder.section_22_cell_2_0",
-        "commercial.pageBuilder.section_22_cell_2_1"
-      ],
-      [
-        "commercial.pageBuilder.section_22_cell_3_0",
-        "commercial.pageBuilder.section_22_cell_3_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_24_hdr_0",
-      "commercial.pageBuilder.section_24_hdr_1",
-      "commercial.pageBuilder.section_24_hdr_2"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_24_cell_0_0",
-        "commercial.pageBuilder.section_24_cell_0_1",
-        "commercial.pageBuilder.section_24_cell_0_2"
-      ],
-      [
-        "commercial.pageBuilder.section_24_cell_1_0",
-        "commercial.pageBuilder.section_24_cell_1_1",
-        "commercial.pageBuilder.section_24_cell_1_2"
-      ],
-      [
-        "commercial.pageBuilder.section_24_cell_2_0",
-        "commercial.pageBuilder.section_24_cell_2_1",
-        "commercial.pageBuilder.section_24_cell_2_2"
-      ],
-      [
-        "commercial.pageBuilder.section_24_cell_3_0",
-        "commercial.pageBuilder.section_24_cell_3_1",
-        "commercial.pageBuilder.section_24_cell_3_2"
-      ],
-      [
-        "commercial.pageBuilder.section_24_cell_4_0",
-        "commercial.pageBuilder.section_24_cell_4_1",
-        "commercial.pageBuilder.section_24_cell_4_2"
-      ],
-      [
-        "commercial.pageBuilder.section_24_cell_5_0",
-        "commercial.pageBuilder.section_24_cell_5_1",
-        "commercial.pageBuilder.section_24_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "commercial.pageBuilder.section_26_hdr_0",
-      "commercial.pageBuilder.section_26_hdr_1",
-      "commercial.pageBuilder.section_26_hdr_2",
-      "commercial.pageBuilder.section_26_hdr_3"
-    ],
-    "rows": [
-      [
-        "commercial.pageBuilder.section_26_cell_0_0",
-        "commercial.pageBuilder.section_26_cell_0_1",
-        "commercial.pageBuilder.section_26_cell_0_2",
-        "commercial.pageBuilder.section_26_cell_0_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_1_0",
-        "commercial.pageBuilder.section_26_cell_1_1",
-        "commercial.pageBuilder.section_26_cell_1_2",
-        "commercial.pageBuilder.section_26_cell_1_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_2_0",
-        "commercial.pageBuilder.section_26_cell_2_1",
-        "commercial.pageBuilder.section_26_cell_2_2",
-        "commercial.pageBuilder.section_26_cell_2_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_3_0",
-        "commercial.pageBuilder.section_26_cell_3_1",
-        "commercial.pageBuilder.section_26_cell_3_2",
-        "commercial.pageBuilder.section_26_cell_3_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_4_0",
-        "commercial.pageBuilder.section_26_cell_4_1",
-        "commercial.pageBuilder.section_26_cell_4_2",
-        "commercial.pageBuilder.section_26_cell_4_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_5_0",
-        "commercial.pageBuilder.section_26_cell_5_1",
-        "commercial.pageBuilder.section_26_cell_5_2",
-        "commercial.pageBuilder.section_26_cell_5_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_6_0",
-        "commercial.pageBuilder.section_26_cell_6_1",
-        "commercial.pageBuilder.section_26_cell_6_2",
-        "commercial.pageBuilder.section_26_cell_6_3"
-      ],
-      [
-        "commercial.pageBuilder.section_26_cell_7_0",
-        "commercial.pageBuilder.section_26_cell_7_1",
-        "commercial.pageBuilder.section_26_cell_7_2",
-        "commercial.pageBuilder.section_26_cell_7_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "commercial.pageBuilder.section_27_title",
-    "contentKey": "commercial.pageBuilder.section_27_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "commercial.pageBuilder.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "commercial.pageBuilder.section_29_item_0",
-      "commercial.pageBuilder.section_29_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "commercial/login-customizer",
-  "commercial/theme-marketplace"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["commercial/login-customizer", "commercial/theme-marketplace"],
+  lastUpdated: "2026-04-02",
 });

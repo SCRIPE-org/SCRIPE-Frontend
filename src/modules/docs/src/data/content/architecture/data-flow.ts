@@ -1,166 +1,187 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.dataFlow.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.dataFlow.queryFlowTitle",
+    id: "query-flow",
+  },
+  { type: "paragraph", contentKey: "architecture.dataFlow.queryFlowIntro" },
+  {
+    type: "flowchart",
+    title: "Full Query Flow — Frontend to Database",
+    direction: "horizontal",
+    nodes: [
+      { id: "view", label: "View (UI)", type: "primary" },
+      { id: "vm", label: "ViewModel", type: "success" },
+      { id: "tq", label: "TanStack Query", type: "info" },
+      { id: "repo", label: "Repository", type: "warning" },
+      { id: "api", label: "API Service", type: "danger" },
+      { id: "backend", label: "Backend API", type: "default" },
+    ],
+    connections: [
+      { from: "view", to: "vm", label: "uses hook" },
+      { from: "vm", to: "tq", label: "useQuery" },
+      { from: "tq", to: "repo", label: "queryFn" },
+      { from: "repo", to: "api", label: "GET" },
+      { from: "api", to: "backend", label: "HTTP" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.dataFlow.mutationFlowTitle",
+    id: "mutation-flow",
+  },
+  {
+    type: "flowchart",
+    title: "Full Mutation Flow — User Action to Cache Invalidation",
+    direction: "horizontal",
+    nodes: [
+      { id: "action", label: "User Action", type: "default" },
+      { id: "vm2", label: "ViewModel", type: "success" },
+      { id: "mutation", label: "useMutation", type: "info" },
+      { id: "repo2", label: "Repository", type: "warning" },
+      { id: "api2", label: "POST/PUT/DELETE", type: "danger" },
+      { id: "invalidate", label: "Invalidate Queries", type: "primary" },
+    ],
+    connections: [
+      { from: "action", to: "vm2", label: "onClick" },
+      { from: "vm2", to: "mutation", label: "mutate()" },
+      { from: "mutation", to: "repo2", label: "mutationFn" },
+      { from: "repo2", to: "api2", label: "HTTP" },
+      { from: "api2", to: "invalidate", label: "onSuccess" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.dataFlow.backendPipelineTitle",
+    id: "backend-pipeline",
+  },
+  { type: "paragraph", contentKey: "architecture.dataFlow.backendPipelineIntro" },
+  {
+    type: "flowchart",
+    title: "Backend Request Lifecycle",
+    direction: "vertical",
+    nodes: [
+      { id: "http", label: "HTTP Request", type: "default" },
+      { id: "cors2", label: "CORS Middleware", type: "info" },
+      { id: "rate", label: "Rate Limiter", type: "warning" },
+      { id: "reqlog", label: "Request Logger", type: "info" },
+      { id: "auth2", label: "JWT Authentication", type: "primary" },
+      { id: "authz2", label: "Authorization", type: "primary" },
+      { id: "ctrl", label: "Controller → AstraFlow mediator.Send()", type: "success" },
+      { id: "val", label: "ValidationBehavior", type: "warning" },
+      { id: "audit", label: "AuditBehavior", type: "info" },
+      { id: "handler2", label: "Handler → Repository → DbContext", type: "success" },
+      { id: "resp", label: "Result<T> → JSON Response", type: "primary" },
+    ],
+    connections: [
+      { from: "http", to: "cors2" },
+      { from: "cors2", to: "rate" },
+      { from: "rate", to: "reqlog" },
+      { from: "reqlog", to: "auth2" },
+      { from: "auth2", to: "authz2" },
+      { from: "authz2", to: "ctrl" },
+      { from: "ctrl", to: "val" },
+      { from: "val", to: "audit" },
+      { from: "audit", to: "handler2" },
+      { from: "handler2", to: "resp" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.dataFlow.errorFlowTitle",
+    id: "error-flow",
+  },
+  { type: "paragraph", contentKey: "architecture.dataFlow.errorFlowIntro" },
+  {
+    type: "table",
+    headers: ["Error Source", "Handler", "Response Code", "Frontend Handling"],
+    rows: [
+      [
+        "Validation failure",
+        "ValidationBehavior throws ValidationException",
+        "400 Bad Request",
+        "Form field errors via Result.errors[]",
+      ],
+      [
+        "Auth failure (no token)",
+        "JWT Middleware rejects",
+        "401 Unauthorized",
+        "Redirect to /login",
+      ],
+      [
+        "Auth failure (forbidden)",
+        "Authorization policy rejects",
+        "403 Forbidden",
+        "Show permission error",
+      ],
+      ["Entity not found", "Handler returns Result.Failure()", "404 Not Found", "Show 404 page"],
+      [
+        "Rate limit exceeded",
+        "Rate Limiter middleware",
+        "429 Too Many Requests",
+        "Show retry message",
+      ],
+      [
+        "Unhandled exception",
+        "Global exception handler",
+        "500 Internal Server Error",
+        "Show generic error",
+      ],
+      [
+        "Concurrency conflict",
+        "EF Core throws DbUpdateConcurrencyException",
+        "409 Conflict",
+        "Retry with refresh",
+      ],
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.dataFlow.cachingFlowTitle",
+    id: "caching-flow",
+  },
+  { type: "paragraph", contentKey: "architecture.dataFlow.cachingFlowIntro" },
+  {
+    type: "flowchart",
+    title: "Two-Level Caching Strategy",
+    direction: "vertical",
+    nodes: [
+      { id: "req2", label: "Query Request", type: "default" },
+      { id: "l1", label: "L1: IMemoryCache (in-process)", type: "success" },
+      { id: "l2", label: "L2: Redis (distributed)", type: "info" },
+      { id: "db", label: "Database Query", type: "danger" },
+      { id: "store", label: "Store in L1 + L2", type: "primary" },
+    ],
+    connections: [
+      { from: "req2", to: "l1", label: "Check L1" },
+      { from: "l1", to: "l2", label: "Miss → Check L2" },
+      { from: "l2", to: "db", label: "Miss → Query DB" },
+      { from: "db", to: "store", label: "Cache result" },
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "architecture.dataFlow.cacheTip",
+  },
+];
 
 registerPage({
   slug: "architecture/data-flow",
   titleKey: "architecture.dataFlow.title",
+  descriptionKey: "architecture.dataFlow.description",
   category: "architecture",
   order: 8,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.dataFlow.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.dataFlow.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.dataFlow.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.dataFlow.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    view([\"View (UI)\"])\n    vm([\"ViewModel\"])\n    tq([\"TanStack Query\"])\n    repo{{\"Repository\"}}\n    api[\"API Service\"]\n    backend[\"Backend API\"]\n    view -->|\"uses hook\"| vm\n    vm -->|\"useQuery\"| tq\n    tq -->|\"queryFn\"| repo\n    repo -->|\"GET\"| api\n    api -->|\"HTTP\"| backend",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.dataFlow.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    action[\"User Action\"]\n    vm2([\"ViewModel\"])\n    mutation([\"useMutation\"])\n    repo2{{\"Repository\"}}\n    api2[\"POST/PUT/DELETE\"]\n    invalidate([\"Invalidate Queries\"])\n    action -->|\"onClick\"| vm2\n    vm2 -->|\"mutate()\"| mutation\n    mutation -->|\"mutationFn\"| repo2\n    repo2 -->|\"HTTP\"| api2\n    api2 -->|\"onSuccess\"| invalidate",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.dataFlow.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.dataFlow.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    http[\"HTTP Request\"]\n    cors2([\"CORS Middleware\"])\n    rate{{\"Rate Limiter\"}}\n    auth2([\"JWT Authentication\"])\n    authz2([\"Authorization\"])\n    reqlog([\"Request Logger\"])\n    ctrl([\"Controller → AstraFlow mediator.Send()\"])\n    val{{\"ValidationBehavior\"}}\n    featcheck[\"FeatureCheckBehavior\"]\n    cache([\"CachingBehavior\"])\n    handler2([\"Handler → Repository → DbContext\"])\n    resp([\"Result<T> → JSON Response\"])\n    http --> cors2\n    cors2 --> rate\n    rate --> auth2\n    auth2 --> authz2\n    authz2 --> reqlog\n    reqlog --> ctrl\n    ctrl --> val\n    val --> featcheck\n    featcheck --> cache\n    cache --> handler2\n    handler2 --> resp",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.dataFlow.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.dataFlow.section_11_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.dataFlow.section_12_hdr_0",
-      "architecture.dataFlow.section_12_hdr_1",
-      "architecture.dataFlow.section_12_hdr_2",
-      "architecture.dataFlow.section_12_hdr_3"
-    ],
-    "rows": [
-      [
-        "architecture.dataFlow.section_12_cell_0_0",
-        "architecture.dataFlow.section_12_cell_0_1",
-        "architecture.dataFlow.section_12_cell_0_2",
-        "architecture.dataFlow.section_12_cell_0_3"
-      ],
-      [
-        "architecture.dataFlow.section_12_cell_1_0",
-        "architecture.dataFlow.section_12_cell_1_1",
-        "architecture.dataFlow.section_12_cell_1_2",
-        "architecture.dataFlow.section_12_cell_1_3"
-      ],
-      [
-        "architecture.dataFlow.section_12_cell_2_0",
-        "architecture.dataFlow.section_12_cell_2_1",
-        "architecture.dataFlow.section_12_cell_2_2",
-        "architecture.dataFlow.section_12_cell_2_3"
-      ],
-      [
-        "architecture.dataFlow.section_12_cell_3_0",
-        "architecture.dataFlow.section_12_cell_3_1",
-        "architecture.dataFlow.section_12_cell_3_2",
-        "architecture.dataFlow.section_12_cell_3_3"
-      ],
-      [
-        "architecture.dataFlow.section_12_cell_4_0",
-        "architecture.dataFlow.section_12_cell_4_1",
-        "architecture.dataFlow.section_12_cell_4_2",
-        "architecture.dataFlow.section_12_cell_4_3"
-      ],
-      [
-        "architecture.dataFlow.section_12_cell_5_0",
-        "architecture.dataFlow.section_12_cell_5_1",
-        "architecture.dataFlow.section_12_cell_5_2",
-        "architecture.dataFlow.section_12_cell_5_3"
-      ],
-      [
-        "architecture.dataFlow.section_12_cell_6_0",
-        "architecture.dataFlow.section_12_cell_6_1",
-        "architecture.dataFlow.section_12_cell_6_2",
-        "architecture.dataFlow.section_12_cell_6_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.dataFlow.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.dataFlow.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    req2[\"Query Request\"]\n    l1([\"L1: IMemoryCache (in-process)\"])\n    l2([\"L2: Redis (distributed)\"])\n    db[\"Database Query\"]\n    store([\"Store in L1 + L2\"])\n    req2 -->|\"Check L1\"| l1\n    l1 -->|\"Miss → Check L2\"| l2\n    l2 -->|\"Miss → Query DB\"| db\n    db -->|\"Cache result\"| store",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "architecture.dataFlow.section_16_title",
-    "contentKey": "architecture.dataFlow.section_16_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.dataFlow.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.dataFlow.section_18_item_0",
-      "architecture.dataFlow.section_18_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/cqrs",
-  "architecture/backend"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/cqrs", "architecture/backend"],
+  lastUpdated: "2026-02-19",
 });

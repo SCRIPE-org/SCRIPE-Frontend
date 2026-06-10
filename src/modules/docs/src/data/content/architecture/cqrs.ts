@@ -1,168 +1,244 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "architecture.cqrs.intro" },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.whatIsCqrsTitle",
+    id: "what-is-cqrs",
+  },
+  { type: "paragraph", contentKey: "architecture.cqrs.whatIsCqrsIntro" },
+  {
+    type: "comparison",
+    columns: [
+      {
+        titleKey: "architecture.cqrs.commandSide",
+        variant: "neutral",
+        items: [
+          "Commands CHANGE state (Create, Update, Delete)",
+          "Always return Result<T> or Result<Unit>",
+          "Go through validation + audit behaviors",
+          "Invalidate related caches on success",
+          "Named: CreateXxxCommand, UpdateXxxCommand",
+        ],
+      },
+      {
+        titleKey: "architecture.cqrs.querySide",
+        variant: "neutral",
+        items: [
+          "Queries READ state (Get, List, Search)",
+          "Return domain entities or DTOs",
+          "Skip audit behavior (read-only)",
+          "Can leverage caching",
+          "Named: GetXxxQuery, ListXxxQuery",
+        ],
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.pipelineTitle",
+    id: "pipeline",
+  },
+  {
+    type: "flowchart",
+    title: "AstraFlow mediator Pipeline (5 Behaviors)",
+    direction: "vertical",
+    nodes: [
+      { id: "send", label: "ISender.Send(command)", type: "primary" },
+      { id: "logging", label: "1. LoggingBehavior", type: "info" },
+      { id: "validation", label: "2. ValidationBehavior", type: "warning" },
+      { id: "feature", label: "3. FeatureCheckBehavior", type: "warning" },
+      { id: "webhook", label: "4. WebhookDispatchBehavior", type: "info" },
+      { id: "cache", label: "5. CachingBehavior", type: "success" },
+      { id: "handler", label: "CommandHandler.Handle()", type: "success" },
+      { id: "result", label: "Result<T>", type: "primary" },
+    ],
+    connections: [
+      { from: "send", to: "logging" },
+      { from: "logging", to: "validation" },
+      { from: "validation", to: "feature", label: "Valid" },
+      { from: "feature", to: "webhook", label: "Allowed" },
+      { from: "webhook", to: "cache" },
+      { from: "cache", to: "handler", label: "Cache miss / mutation" },
+      { from: "handler", to: "result" },
+    ],
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "architecture.cqrs.validationBehaviorTitle",
+    id: "validation-behavior",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ValidationBehavior.cs",
+    code: `public class ValidationBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : AstraFlow.Mediator.IRequest<TResponse>
+{
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
+
+    public async Task<TResponse> Handle(TRequest request,
+        RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        if (!_validators.Any()) return await next();
+
+        var context = new ValidationContext<TRequest>(request);
+        var results = await Task.WhenAll(
+            _validators.Select(v => v.ValidateAsync(context, ct)));
+
+        var failures = results
+            .SelectMany(r => r.Errors)
+            .Where(f => f != null)
+            .ToList();
+
+        if (failures.Count != 0)
+            throw new ValidationException(failures);
+
+        return await next();
+    }
+}`,
+    highlightLines: [11, 22, 23],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.commandExampleTitle",
+    id: "command-example",
+  },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Command",
+        language: "csharp",
+        code: `public record CreateAdminCommand(
+    string Name,
+    string Email,
+    string Password,
+    Guid? TenantId
+) : ICommand<AdminResponse>;`,
+      },
+      {
+        label: "Validator",
+        language: "csharp",
+        code: `public class CreateAdminCommandValidator
+    : AbstractValidator<CreateAdminCommand>
+{
+    public CreateAdminCommandValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Name is required")
+            .MaximumLength(100);
+
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .EmailAddress()
+            .WithMessage("Valid email is required");
+
+        RuleFor(x => x.Password)
+            .MinimumLength(8)
+            .Matches("[A-Z]").WithMessage("Must contain uppercase")
+            .Matches("[0-9]").WithMessage("Must contain digit")
+            .Matches("[^a-zA-Z0-9]").WithMessage("Must contain special char");
+    }
+}`,
+      },
+      {
+        label: "Handler",
+        language: "csharp",
+        code: `public class CreateAdminCommandHandler
+    : ICommandHandler<CreateAdminCommand, AdminResponse>
+{
+    private readonly IAdminRepository _repo;
+    private readonly IPasswordHasher _hasher;
+    private readonly AstraFlow.Mapper.IMapper _mapper;
+
+    public async Task<Result<AdminResponse>> Handle(
+        CreateAdminCommand request, CancellationToken ct)
+    {
+        // 1. Check for duplicates
+        var existing = await _repo.GetByEmailAsync(request.Email);
+        if (existing != null)
+            return Result<AdminResponse>.Failure("Email already exists");
+
+        // 2. Create domain entity
+        var admin = Admin.Create(
+            request.Name,
+            request.Email,
+            _hasher.Hash(request.Password),
+            request.TenantId);
+
+        // 3. Persist
+        await _repo.AddAsync(admin, ct);
+
+        // 4. Map & return
+        return Result<AdminResponse>.Success(
+            _mapper.Map<AdminResponse>(admin));
+    }
+}`,
+      },
+    ],
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.cqrs.queryExampleTitle",
+    id: "query-example",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "GetAdminByIdQuery + Handler",
+    code: `// Query
+public record GetAdminByIdQuery(Guid Id) : IQuery<AdminDetailResponse>;
+
+// Handler
+public class GetAdminByIdQueryHandler
+    : IQueryHandler<GetAdminByIdQuery, AdminDetailResponse>
+{
+    private readonly IAdminRepository _repo;
+    private readonly AstraFlow.Mapper.IMapper _mapper;
+    private readonly ICacheService _cache;
+
+    public async Task<Result<AdminDetailResponse>> Handle(
+        GetAdminByIdQuery request, CancellationToken ct)
+    {
+        var cacheKey = $"admin:{request.Id}";
+        var cached = await _cache.GetAsync<AdminDetailResponse>(cacheKey);
+        if (cached != null) return Result.Success(cached);
+
+        var admin = await _repo.GetByIdWithDetailsAsync(request.Id, ct);
+        if (admin == null)
+            return Result<AdminDetailResponse>.Failure("Admin not found");
+
+        var response = _mapper.Map<AdminDetailResponse>(admin);
+        await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(5));
+
+        return Result<AdminDetailResponse>.Success(response);
+    }
+}`,
+    highlightLines: [15, 16, 17, 24],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "architecture.cqrs.cachingTip",
+  },
+];
 
 registerPage({
   slug: "architecture/cqrs",
   titleKey: "architecture.cqrs.title",
+  descriptionKey: "architecture.cqrs.description",
   category: "architecture",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.cqrs.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.cqrs.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.cqrs.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.cqrs.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "architecture.cqrs.section_4_hdr_0",
-      "architecture.cqrs.section_4_hdr_1"
-    ],
-    "rows": [
-      [
-        "architecture.cqrs.section_4_cell_0_0",
-        "architecture.cqrs.section_4_cell_0_1"
-      ],
-      [
-        "architecture.cqrs.section_4_cell_1_0",
-        "architecture.cqrs.section_4_cell_1_1"
-      ],
-      [
-        "architecture.cqrs.section_4_cell_2_0",
-        "architecture.cqrs.section_4_cell_2_1"
-      ],
-      [
-        "architecture.cqrs.section_4_cell_3_0",
-        "architecture.cqrs.section_4_cell_3_1"
-      ],
-      [
-        "architecture.cqrs.section_4_cell_4_0",
-        "architecture.cqrs.section_4_cell_4_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.cqrs.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    send([\"ISender.Send(command)\"])\n    logging([\"1. LoggingBehavior\"])\n    validation{{\"2. ValidationBehavior\"}}\n    feature{{\"3. FeatureCheckBehavior\"}}\n    webhook([\"4. WebhookDispatchBehavior\"])\n    cache([\"5. CachingBehavior\"])\n    handler([\"CommandHandler.Handle()\"])\n    result([\"Result<T>\"])\n    send --> logging\n    logging --> validation\n    validation -->|\"Valid\"| feature\n    feature -->|\"Allowed\"| webhook\n    webhook --> cache\n    cache -->|\"Cache miss / mutation\"| handler\n    handler --> result",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 3,
-    "titleKey": "architecture.cqrs.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.cqrs.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class ValidationBehavior<TRequest, TResponse>\n    : IPipelineBehavior<TRequest, TResponse>\n    where TRequest : AstraFlow.Mediator.IRequest<TResponse>\n{\n    private readonly IEnumerable<IValidator<TRequest>> _validators;\n\n    public async Task<TResponse> Handle(TRequest request,\n        RequestHandlerDelegate<TResponse> next, CancellationToken ct)\n    {\n        if (!_validators.Any()) return await next();\n\n        var context = new ValidationContext<TRequest>(request);\n        var results = await Task.WhenAll(\n            _validators.Select(v => v.ValidateAsync(context, ct)));\n\n        var failures = results\n            .SelectMany(r => r.Errors)\n            .Where(f => f != null)\n            .ToList();\n\n        if (failures.Count != 0)\n            throw new ValidationException(failures);\n\n        return await next();\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.cqrs.section_10_title",
-    "id": "sec_10"
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "architecture.cqrs.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public record CreateAdminCommand(\n    string Name,\n    string Email,\n    string Password,\n    Guid? TenantId\n) : ICommand<AdminResponse>;",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "architecture.cqrs.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class CreateAdminCommandValidator\n    : AbstractValidator<CreateAdminCommand>\n{\n    public CreateAdminCommandValidator()\n    {\n        RuleFor(x => x.Name)\n            .NotEmpty().WithMessage(\"Name is required\")\n            .MaximumLength(100);\n\n        RuleFor(x => x.Email)\n            .NotEmpty()\n            .EmailAddress()\n            .WithMessage(\"Valid email is required\");\n\n        RuleFor(x => x.Password)\n            .MinimumLength(8)\n            .Matches(\"[A-Z]\").WithMessage(\"Must contain uppercase\")\n            .Matches(\"[0-9]\").WithMessage(\"Must contain digit\")\n            .Matches(\"[^a-zA-Z0-9]\").WithMessage(\"Must contain special char\");\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "architecture.cqrs.section_15_title",
-    "id": "sec_15"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "public class CreateAdminCommandHandler\n    : ICommandHandler<CreateAdminCommand, AdminResponse>\n{\n    private readonly IAdminRepository _repo;\n    private readonly IPasswordHasher _hasher;\n    private readonly AstraFlow.Mapper.IMapper _mapper;\n\n    public async Task<Result<AdminResponse>> Handle(\n        CreateAdminCommand request, CancellationToken ct)\n    {\n        // 1. Check for duplicates\n        var existing = await _repo.GetByEmailAsync(request.Email);\n        if (existing != null)\n            return Result<AdminResponse>.Failure(\"Email already exists\");\n\n        // 2. Create domain entity\n        var admin = Admin.Create(\n            request.Name,\n            request.Email,\n            _hasher.Hash(request.Password),\n            request.TenantId);\n\n        // 3. Persist\n        await _repo.AddAsync(admin, ct);\n\n        // 4. Map & return\n        return Result<AdminResponse>.Success(\n            _mapper.Map<AdminResponse>(admin));\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.cqrs.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "architecture.cqrs.section_18_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "// Query\npublic record GetAdminByIdQuery(Guid Id) : IQuery<AdminDetailResponse>;\n\n// Handler\npublic class GetAdminByIdQueryHandler\n    : IQueryHandler<GetAdminByIdQuery, AdminDetailResponse>\n{\n    private readonly IAdminRepository _repo;\n    private readonly AstraFlow.Mapper.IMapper _mapper;\n    private readonly ICacheService _cache;\n\n    public async Task<Result<AdminDetailResponse>> Handle(\n        GetAdminByIdQuery request, CancellationToken ct)\n    {\n        var cacheKey = $\"admin:{request.Id}\";\n        var cached = await _cache.GetAsync<AdminDetailResponse>(cacheKey);\n        if (cached != null) return Result.Success(cached);\n\n        var admin = await _repo.GetByIdWithDetailsAsync(request.Id, ct);\n        if (admin == null)\n            return Result<AdminDetailResponse>.Failure(\"Admin not found\");\n\n        var response = _mapper.Map<AdminDetailResponse>(admin);\n        await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(5));\n\n        return Result<AdminDetailResponse>.Success(response);\n    }\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "architecture.cqrs.section_20_title",
-    "contentKey": "architecture.cqrs.section_20_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "architecture.cqrs.section_21_title",
-    "id": "sec_21"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "architecture.cqrs.section_22_item_0",
-      "architecture.cqrs.section_22_item_1"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/backend",
-  "architecture/data-flow"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/backend", "architecture/data-flow"],
+  lastUpdated: "2026-02-19",
 });

@@ -1,185 +1,199 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "infrastructure.resilience.intro" },
+
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.resilience.architectureTitle",
+    id: "architecture",
+  },
+  {
+    type: "flowchart",
+    title: "Resilience Policy Pipeline",
+    direction: "horizontal",
+    nodes: [
+      { id: "req", label: "HTTP Request", type: "primary" },
+      { id: "timeout", label: "Timeout Policy", type: "danger", description: "30s default" },
+      { id: "retry", label: "Retry Policy", type: "warning", description: "Exponential backoff" },
+      {
+        id: "circuit",
+        label: "Circuit Breaker",
+        type: "info",
+        description: "Fail-fast on degraded service",
+      },
+      { id: "service", label: "External Service", type: "success" },
+    ],
+    connections: [
+      { from: "req", to: "timeout" },
+      { from: "timeout", to: "retry" },
+      { from: "retry", to: "circuit" },
+      { from: "circuit", to: "service" },
+    ],
+  },
+
+  // ─── Retry Policy ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.resilience.retryTitle",
+    id: "retry-policy",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Retry Policy Configuration",
+    code: `/// <summary>
+/// Configures retry with exponential or linear backoff + jitter.
+/// Only retries on transient HTTP errors (5xx, 408, network errors).
+/// </summary>
+services.AddResilientHttpClient("InventoryService", configuration);
+
+// Under the hood:
+builder.AddRetry(new HttpRetryStrategyOptions
+{
+    MaxRetryAttempts = options.Retry.MaxRetryAttempts,        // Default: 3
+    BackoffType = options.Retry.BackoffType == "Exponential"
+        ? DelayBackoffType.Exponential
+        : DelayBackoffType.Linear,
+    Delay = TimeSpan.FromMilliseconds(options.Retry.BaseDelayMs), // Default: 500ms
+    MaxDelay = TimeSpan.FromMilliseconds(options.Retry.MaxDelayMs), // Default: 30s
+    UseJitter = options.Retry.UseJitter,                      // Default: true
+    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+        .HandleResult(r => (int)r.StatusCode >= 500)
+        .HandleResult(r => r.StatusCode == HttpStatusCode.RequestTimeout)
+        .Handle<HttpRequestException>(),
+});`,
+    highlightLines: [10, 11, 12, 13, 14, 15, 16, 17],
+  },
+  {
+    type: "table",
+    headers: ["Attempt", "Exponential Delay", "Linear Delay", "With Jitter"],
+    rows: [
+      ["1st retry", "500ms", "500ms", "500ms ± 250ms"],
+      ["2nd retry", "1,000ms", "1,000ms", "1,000ms ± 500ms"],
+      ["3rd retry", "2,000ms", "1,500ms", "2,000ms ± 1,000ms"],
+      ["4th retry", "4,000ms", "2,000ms", "4,000ms ± 2,000ms"],
+    ],
+  },
+
+  // ─── Circuit Breaker ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.resilience.circuitBreakerTitle",
+    id: "circuit-breaker",
+  },
+  { type: "paragraph", contentKey: "infrastructure.resilience.circuitBreakerIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Circuit Breaker Configuration",
+    code: `builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions<HttpResponseMessage>
+{
+    FailureRatio = options.CircuitBreaker.FailureRatio,      // Default: 0.5 (50%)
+    MinimumThroughput = options.CircuitBreaker.MinThroughput, // Default: 10
+    SamplingDuration = TimeSpan.FromSeconds(
+        options.CircuitBreaker.SamplingDurationSeconds),       // Default: 30s
+    BreakDuration = TimeSpan.FromSeconds(
+        options.CircuitBreaker.BreakDurationSeconds),          // Default: 30s
+    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+        .HandleResult(r => (int)r.StatusCode >= 500)
+        .Handle<HttpRequestException>(),
+});`,
+  },
+  {
+    type: "table",
+    headers: ["State", "Behavior", "Transitions To"],
+    rows: [
+      [
+        "Closed (Normal)",
+        "Requests pass through normally",
+        "Open (when failure ratio > threshold)",
+      ],
+      [
+        "Open (Tripped)",
+        "Requests fail-fast immediately (no call)",
+        "Half-Open (after break duration)",
+      ],
+      [
+        "Half-Open (Testing)",
+        "One test request allowed through",
+        "Closed (on success) / Open (on failure)",
+      ],
+    ],
+  },
+
+  // ─── Timeout ──────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.resilience.timeoutTitle",
+    id: "timeout",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Timeout Policy",
+    code: `builder.AddTimeout(TimeSpan.FromSeconds(
+    options.Timeout.TimeoutSeconds       // Default: 30
+));
+
+// When timeout triggers:
+// - CancellationToken is cancelled
+// - TimeoutRejectedException is thrown
+// - Retry policy may retry the request`,
+  },
+
+  // ─── Configuration ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "infrastructure.resilience.configTitle",
+    id: "configuration",
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "appsettings.json — Resilience Configuration",
+    code: `{
+  "Resilience": {
+    "Retry": {
+      "MaxRetryAttempts": 3,
+      "BackoffType": "Exponential",
+      "BaseDelayMs": 500,
+      "MaxDelayMs": 30000,
+      "UseJitter": true
+    },
+    "CircuitBreaker": {
+      "FailureRatio": 0.5,
+      "MinThroughput": 10,
+      "SamplingDurationSeconds": 30,
+      "BreakDurationSeconds": 30
+    },
+    "Timeout": {
+      "TimeoutSeconds": 30
+    }
+  }
+}`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "infrastructure.resilience.usageTip",
+  },
+];
 
 registerPage({
   slug: "infrastructure/resilience",
   titleKey: "infrastructure.resilience.title",
+  descriptionKey: "infrastructure.resilience.description",
   category: "infrastructure",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.resilience.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    req([\"HTTP Request\"])\n    timeout[\"Timeout Policy\"]\n    %% timeout: 30s default\n    retry{{\"Retry Policy\"}}\n    %% retry: Exponential backoff\n    circuit([\"Circuit Breaker\"])\n    %% circuit: Fail-fast on degraded service\n    service([\"External Service\"])\n    req --> timeout\n    timeout --> retry\n    retry --> circuit\n    circuit --> service",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.resilience.section_4_title",
-    "id": "sec_4"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_5_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "/// <summary>\n/// Configures retry with exponential or linear backoff + jitter.\n/// Only retries on transient HTTP errors (5xx, 408, network errors).\n/// </summary>\nservices.AddResilientHttpClient(\"InventoryService\", configuration);\n\n// Under the hood:\nbuilder.AddRetry(new HttpRetryStrategyOptions\n{\n    MaxRetryAttempts = options.Retry.MaxRetryAttempts,        // Default: 3\n    BackoffType = options.Retry.BackoffType == \"Exponential\"\n        ? DelayBackoffType.Exponential\n        : DelayBackoffType.Linear,\n    Delay = TimeSpan.FromMilliseconds(options.Retry.BaseDelayMs), // Default: 500ms\n    MaxDelay = TimeSpan.FromMilliseconds(options.Retry.MaxDelayMs), // Default: 30s\n    UseJitter = options.Retry.UseJitter,                      // Default: true\n    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()\n        .HandleResult(r => (int)r.StatusCode >= 500)\n        .HandleResult(r => r.StatusCode == HttpStatusCode.RequestTimeout)\n        .Handle<HttpRequestException>(),\n});",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.resilience.section_7_hdr_0",
-      "infrastructure.resilience.section_7_hdr_1",
-      "infrastructure.resilience.section_7_hdr_2",
-      "infrastructure.resilience.section_7_hdr_3"
-    ],
-    "rows": [
-      [
-        "infrastructure.resilience.section_7_cell_0_0",
-        "infrastructure.resilience.section_7_cell_0_1",
-        "infrastructure.resilience.section_7_cell_0_2",
-        "infrastructure.resilience.section_7_cell_0_3"
-      ],
-      [
-        "infrastructure.resilience.section_7_cell_1_0",
-        "infrastructure.resilience.section_7_cell_1_1",
-        "infrastructure.resilience.section_7_cell_1_2",
-        "infrastructure.resilience.section_7_cell_1_3"
-      ],
-      [
-        "infrastructure.resilience.section_7_cell_2_0",
-        "infrastructure.resilience.section_7_cell_2_1",
-        "infrastructure.resilience.section_7_cell_2_2",
-        "infrastructure.resilience.section_7_cell_2_3"
-      ],
-      [
-        "infrastructure.resilience.section_7_cell_3_0",
-        "infrastructure.resilience.section_7_cell_3_1",
-        "infrastructure.resilience.section_7_cell_3_2",
-        "infrastructure.resilience.section_7_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.resilience.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_9_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_10_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions<HttpResponseMessage>\n{\n    FailureRatio = options.CircuitBreaker.FailureRatio,      // Default: 0.5 (50%)\n    MinimumThroughput = options.CircuitBreaker.MinThroughput, // Default: 10\n    SamplingDuration = TimeSpan.FromSeconds(\n        options.CircuitBreaker.SamplingDurationSeconds),       // Default: 30s\n    BreakDuration = TimeSpan.FromSeconds(\n        options.CircuitBreaker.BreakDurationSeconds),          // Default: 30s\n    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()\n        .HandleResult(r => (int)r.StatusCode >= 500)\n        .Handle<HttpRequestException>(),\n});",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "infrastructure.resilience.section_12_hdr_0",
-      "infrastructure.resilience.section_12_hdr_1",
-      "infrastructure.resilience.section_12_hdr_2"
-    ],
-    "rows": [
-      [
-        "infrastructure.resilience.section_12_cell_0_0",
-        "infrastructure.resilience.section_12_cell_0_1",
-        "infrastructure.resilience.section_12_cell_0_2"
-      ],
-      [
-        "infrastructure.resilience.section_12_cell_1_0",
-        "infrastructure.resilience.section_12_cell_1_1",
-        "infrastructure.resilience.section_12_cell_1_2"
-      ],
-      [
-        "infrastructure.resilience.section_12_cell_2_0",
-        "infrastructure.resilience.section_12_cell_2_1",
-        "infrastructure.resilience.section_12_cell_2_2"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.resilience.section_13_title",
-    "id": "sec_13"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "csharp",
-    "code": "builder.AddTimeout(TimeSpan.FromSeconds(\n    options.Timeout.TimeoutSeconds       // Default: 30\n));\n\n// When timeout triggers:\n// - CancellationToken is cancelled\n// - TimeoutRejectedException is thrown\n// - Retry policy may retry the request",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.resilience.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "infrastructure.resilience.section_17_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"Resilience\": {\n    \"Retry\": {\n      \"MaxRetryAttempts\": 3,\n      \"BackoffType\": \"Exponential\",\n      \"BaseDelayMs\": 500,\n      \"MaxDelayMs\": 30000,\n      \"UseJitter\": true\n    },\n    \"CircuitBreaker\": {\n      \"FailureRatio\": 0.5,\n      \"MinThroughput\": 10,\n      \"SamplingDurationSeconds\": 30,\n      \"BreakDurationSeconds\": 30\n    },\n    \"Timeout\": {\n      \"TimeoutSeconds\": 30\n    }\n  }\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "infrastructure.resilience.section_19_title",
-    "contentKey": "infrastructure.resilience.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "infrastructure.resilience.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "infrastructure.resilience.section_21_item_0",
-      "infrastructure.resilience.section_21_item_1",
-      "infrastructure.resilience.section_21_item_2"
-    ]
-  }
-],
-  relatedSlugs: [
-  "architecture/backend",
-  "infrastructure/background-jobs",
-  "security/api-security"
-],
-  lastUpdated: "2026-06-09",
+  sections,
+  relatedSlugs: ["architecture/backend", "infrastructure/background-jobs", "security/api-security"],
+  lastUpdated: "2026-02-20",
 });

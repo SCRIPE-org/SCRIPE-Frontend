@@ -1,424 +1,319 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "apiReference.adminApi.intro" },
+
+  // ─── Base Config ──────────────────────────────────────────
+  {
+    type: "table",
+    headers: ["Setting", "Value"],
+    rows: [
+      ["Base URL", "/api/v1/admins"],
+      ["Auth Required", "Yes — Bearer Token + AdminOnly"],
+      ["Permission Prefix", "admins.*"],
+      ["Rate Limit", "global (100 req/min)"],
+    ],
+  },
+
+  // ─── CRUD Endpoints ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.adminApi.crudTitle",
+    id: "crud",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/admins",
+        descriptionKey: "apiReference.adminApi.listDesc",
+        auth: "admins.view",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/admins/{id}",
+        descriptionKey: "apiReference.adminApi.getByIdDesc",
+        auth: "admins.view",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins",
+        descriptionKey: "apiReference.adminApi.createDesc",
+        auth: "admins.create",
+      },
+      {
+        method: "PUT",
+        path: "/api/v1/admins/{id}",
+        descriptionKey: "apiReference.adminApi.updateDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/admins/{id}",
+        descriptionKey: "apiReference.adminApi.deleteDesc",
+        auth: "admins.delete",
+      },
+    ],
+  },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "List (GET)",
+        language: "json",
+        filename: "GET /admins?page=1&pageSize=10&search=john",
+        code: `{
+  "items": [
+    {
+      "id": "admin-uuid",
+      "email": "admin@acme.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": { "id": "role-uuid", "name": "SuperAdmin" },
+      "isActive": true,
+      "isBlocked": false,
+      "lastLoginAt": "2026-02-20T14:00:00Z",
+      "createdAt": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "totalCount": 42,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 5
+}`,
+      },
+      {
+        label: "Create (POST)",
+        language: "json",
+        filename: "POST /admins — Request",
+        code: `{
+  "email": "newadmin@acme.com",
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "password": "AdminP@ss123!",
+  "roleId": "role-uuid",
+  "tenantId": "tenant-uuid",
+  "phoneNumber": "+1234567890"
+}`,
+      },
+      {
+        label: "Update (PUT)",
+        language: "json",
+        filename: "PUT /admins/{id} — Request",
+        code: `{
+  "firstName": "Janet",
+  "lastName": "Smith-Jones",
+  "roleId": "new-role-uuid",
+  "phoneNumber": "+9876543210",
+  "isActive": true
+}`,
+      },
+    ],
+  },
+
+  // ─── Account Actions ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.adminApi.actionsTitle",
+    id: "actions",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/activate",
+        descriptionKey: "apiReference.adminApi.activateDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/deactivate",
+        descriptionKey: "apiReference.adminApi.deactivateDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/block",
+        descriptionKey: "apiReference.adminApi.blockDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/unblock",
+        descriptionKey: "apiReference.adminApi.unblockDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/unlock",
+        descriptionKey: "apiReference.adminApi.unlockDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/reset-password",
+        descriptionKey: "apiReference.adminApi.resetPasswordDesc",
+        auth: "admins.update",
+      },
+    ],
+  },
+
+  // ─── Bulk Operations ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.adminApi.bulkTitle",
+    id: "bulk-operations",
+  },
+  { type: "paragraph", contentKey: "apiReference.adminApi.bulkIntro" },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/admins/bulk-activate",
+        descriptionKey: "apiReference.adminApi.bulkActivateDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/bulk-deactivate",
+        descriptionKey: "apiReference.adminApi.bulkDeactivateDesc",
+        auth: "admins.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/bulk-delete",
+        descriptionKey: "apiReference.adminApi.bulkDeleteDesc",
+        auth: "admins.delete",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/bulk-delete-all",
+        descriptionKey: "apiReference.adminApi.bulkDeleteAllDesc",
+        auth: "admins.delete",
+      },
+    ],
+  },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Bulk by IDs",
+        language: "json",
+        filename: "POST /admins/bulk-delete — By ID Selection",
+        code: `{
+  "ids": [
+    "admin-uuid-1",
+    "admin-uuid-2",
+    "admin-uuid-3"
+  ]
+}
+
+// Response (200)
+{ "affected": 3, "message": "3 admins deleted" }`,
+      },
+      {
+        label: "Bulk All (Filtered)",
+        language: "json",
+        filename: "POST /admins/bulk-delete-all — Filter-Based",
+        code: `// Deletes ALL matching the current filter (scoped to tenant)
+{
+  "filter": {
+    "search": "inactive",
+    "isActive": false,
+    "roleId": "role-uuid"
+  },
+  "excludeIds": ["protected-admin-uuid"]
+}
+
+// Response (200)
+{ "affected": 47, "message": "47 admins deleted" }`,
+      },
+    ],
+  },
+
+  // ─── Impersonation ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.adminApi.impersonationTitle",
+    id: "impersonation",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/impersonate",
+        descriptionKey: "apiReference.adminApi.impersonateDesc",
+        auth: "SuperAdmin only",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/stop-impersonation",
+        descriptionKey: "apiReference.adminApi.stopImpersonateDesc",
+        auth: "Impersonating admin",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/transfer",
+        descriptionKey: "apiReference.adminApi.transferDesc",
+        auth: "SuperAdmin only",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/admins/{id}/protect",
+        descriptionKey: "apiReference.adminApi.protectDesc",
+        auth: "SuperAdmin only",
+      },
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "apiReference.adminApi.impersonationWarning",
+  },
+
+  // ─── Query Parameters ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.adminApi.queryParamsTitle",
+    id: "query-params",
+  },
+  {
+    type: "table",
+    headers: ["Parameter", "Type", "Default", "Description"],
+    rows: [
+      ["page", "int", "1", "Page number (1-based)"],
+      ["pageSize", "int", "10", "Items per page (max 100)"],
+      ["search", "string", "—", "Search in name, email"],
+      ["sortBy", "string", "createdAt", "Sort field"],
+      ["sortDirection", "string", "desc", "asc or desc"],
+      ["isActive", "bool?", "—", "Filter by active status"],
+      ["isBlocked", "bool?", "—", "Filter by block status"],
+      ["roleId", "Guid?", "—", "Filter by role"],
+    ],
+  },
+];
 
 registerPage({
   slug: "api-reference/admin-api",
   titleKey: "apiReference.adminApi.title",
+  descriptionKey: "apiReference.adminApi.description",
   category: "api-reference",
   order: 4,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_1_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.adminApi.section_2_hdr_0",
-      "apiReference.adminApi.section_2_hdr_1"
-    ],
-    "rows": [
-      [
-        "apiReference.adminApi.section_2_cell_0_0",
-        "apiReference.adminApi.section_2_cell_0_1"
-      ],
-      [
-        "apiReference.adminApi.section_2_cell_1_0",
-        "apiReference.adminApi.section_2_cell_1_1"
-      ],
-      [
-        "apiReference.adminApi.section_2_cell_2_0",
-        "apiReference.adminApi.section_2_cell_2_1"
-      ],
-      [
-        "apiReference.adminApi.section_2_cell_3_0",
-        "apiReference.adminApi.section_2_cell_3_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.adminApi.section_3_title",
-    "id": "sec_3"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.adminApi.section_4_hdr_0",
-      "apiReference.adminApi.section_4_hdr_1",
-      "apiReference.adminApi.section_4_hdr_2",
-      "apiReference.adminApi.section_4_hdr_3",
-      "apiReference.adminApi.section_4_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.adminApi.section_4_cell_0_0",
-        "apiReference.adminApi.section_4_cell_0_1",
-        "apiReference.adminApi.section_4_cell_0_2",
-        "apiReference.adminApi.section_4_cell_0_3",
-        "apiReference.adminApi.section_4_cell_0_4"
-      ],
-      [
-        "apiReference.adminApi.section_4_cell_1_0",
-        "apiReference.adminApi.section_4_cell_1_1",
-        "apiReference.adminApi.section_4_cell_1_2",
-        "apiReference.adminApi.section_4_cell_1_3",
-        "apiReference.adminApi.section_4_cell_1_4"
-      ],
-      [
-        "apiReference.adminApi.section_4_cell_2_0",
-        "apiReference.adminApi.section_4_cell_2_1",
-        "apiReference.adminApi.section_4_cell_2_2",
-        "apiReference.adminApi.section_4_cell_2_3",
-        "apiReference.adminApi.section_4_cell_2_4"
-      ],
-      [
-        "apiReference.adminApi.section_4_cell_3_0",
-        "apiReference.adminApi.section_4_cell_3_1",
-        "apiReference.adminApi.section_4_cell_3_2",
-        "apiReference.adminApi.section_4_cell_3_3",
-        "apiReference.adminApi.section_4_cell_3_4"
-      ],
-      [
-        "apiReference.adminApi.section_4_cell_4_0",
-        "apiReference.adminApi.section_4_cell_4_1",
-        "apiReference.adminApi.section_4_cell_4_2",
-        "apiReference.adminApi.section_4_cell_4_3",
-        "apiReference.adminApi.section_4_cell_4_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.adminApi.section_5_title",
-    "id": "sec_5"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_6_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"items\": [\n    {\n      \"id\": \"admin-uuid\",\n      \"email\": \"admin@acme.com\",\n      \"firstName\": \"John\",\n      \"lastName\": \"Doe\",\n      \"role\": { \"id\": \"role-uuid\", \"name\": \"SuperAdmin\" },\n      \"isActive\": true,\n      \"isBlocked\": false,\n      \"lastLoginAt\": \"2026-02-20T14:00:00Z\",\n      \"createdAt\": \"2026-01-01T00:00:00Z\"\n    }\n  ],\n  \"totalCount\": 42,\n  \"page\": 1,\n  \"pageSize\": 10,\n  \"totalPages\": 5\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.adminApi.section_8_title",
-    "id": "sec_8"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_9_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"email\": \"newadmin@acme.com\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"password\": \"AdminP@ss123!\",\n  \"roleId\": \"role-uuid\",\n  \"tenantId\": \"tenant-uuid\",\n  \"phoneNumber\": \"+1234567890\"\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.adminApi.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"firstName\": \"Janet\",\n  \"lastName\": \"Smith-Jones\",\n  \"roleId\": \"new-role-uuid\",\n  \"phoneNumber\": \"+9876543210\",\n  \"isActive\": true\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.adminApi.section_14_title",
-    "id": "sec_14"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.adminApi.section_15_hdr_0",
-      "apiReference.adminApi.section_15_hdr_1",
-      "apiReference.adminApi.section_15_hdr_2",
-      "apiReference.adminApi.section_15_hdr_3",
-      "apiReference.adminApi.section_15_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.adminApi.section_15_cell_0_0",
-        "apiReference.adminApi.section_15_cell_0_1",
-        "apiReference.adminApi.section_15_cell_0_2",
-        "apiReference.adminApi.section_15_cell_0_3",
-        "apiReference.adminApi.section_15_cell_0_4"
-      ],
-      [
-        "apiReference.adminApi.section_15_cell_1_0",
-        "apiReference.adminApi.section_15_cell_1_1",
-        "apiReference.adminApi.section_15_cell_1_2",
-        "apiReference.adminApi.section_15_cell_1_3",
-        "apiReference.adminApi.section_15_cell_1_4"
-      ],
-      [
-        "apiReference.adminApi.section_15_cell_2_0",
-        "apiReference.adminApi.section_15_cell_2_1",
-        "apiReference.adminApi.section_15_cell_2_2",
-        "apiReference.adminApi.section_15_cell_2_3",
-        "apiReference.adminApi.section_15_cell_2_4"
-      ],
-      [
-        "apiReference.adminApi.section_15_cell_3_0",
-        "apiReference.adminApi.section_15_cell_3_1",
-        "apiReference.adminApi.section_15_cell_3_2",
-        "apiReference.adminApi.section_15_cell_3_3",
-        "apiReference.adminApi.section_15_cell_3_4"
-      ],
-      [
-        "apiReference.adminApi.section_15_cell_4_0",
-        "apiReference.adminApi.section_15_cell_4_1",
-        "apiReference.adminApi.section_15_cell_4_2",
-        "apiReference.adminApi.section_15_cell_4_3",
-        "apiReference.adminApi.section_15_cell_4_4"
-      ],
-      [
-        "apiReference.adminApi.section_15_cell_5_0",
-        "apiReference.adminApi.section_15_cell_5_1",
-        "apiReference.adminApi.section_15_cell_5_2",
-        "apiReference.adminApi.section_15_cell_5_3",
-        "apiReference.adminApi.section_15_cell_5_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.adminApi.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_17_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.adminApi.section_18_hdr_0",
-      "apiReference.adminApi.section_18_hdr_1",
-      "apiReference.adminApi.section_18_hdr_2",
-      "apiReference.adminApi.section_18_hdr_3",
-      "apiReference.adminApi.section_18_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.adminApi.section_18_cell_0_0",
-        "apiReference.adminApi.section_18_cell_0_1",
-        "apiReference.adminApi.section_18_cell_0_2",
-        "apiReference.adminApi.section_18_cell_0_3",
-        "apiReference.adminApi.section_18_cell_0_4"
-      ],
-      [
-        "apiReference.adminApi.section_18_cell_1_0",
-        "apiReference.adminApi.section_18_cell_1_1",
-        "apiReference.adminApi.section_18_cell_1_2",
-        "apiReference.adminApi.section_18_cell_1_3",
-        "apiReference.adminApi.section_18_cell_1_4"
-      ],
-      [
-        "apiReference.adminApi.section_18_cell_2_0",
-        "apiReference.adminApi.section_18_cell_2_1",
-        "apiReference.adminApi.section_18_cell_2_2",
-        "apiReference.adminApi.section_18_cell_2_3",
-        "apiReference.adminApi.section_18_cell_2_4"
-      ],
-      [
-        "apiReference.adminApi.section_18_cell_3_0",
-        "apiReference.adminApi.section_18_cell_3_1",
-        "apiReference.adminApi.section_18_cell_3_2",
-        "apiReference.adminApi.section_18_cell_3_3",
-        "apiReference.adminApi.section_18_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.adminApi.section_19_title",
-    "id": "sec_19"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_20_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "{\n  \"ids\": [\n    \"admin-uuid-1\",\n    \"admin-uuid-2\",\n    \"admin-uuid-3\"\n  ]\n}\n\n// Response (200)\n{ \"affected\": 3, \"message\": \"3 admins deleted\" }",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 4,
-    "titleKey": "apiReference.adminApi.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "apiReference.adminApi.section_23_content"
-  },
-  {
-    "type": "code",
-    "language": "json",
-    "code": "// Deletes ALL matching the current filter (scoped to tenant)\n{\n  \"filter\": {\n    \"search\": \"inactive\",\n    \"isActive\": false,\n    \"roleId\": \"role-uuid\"\n  },\n  \"excludeIds\": [\"protected-admin-uuid\"]\n}\n\n// Response (200)\n{ \"affected\": 47, \"message\": \"47 admins deleted\" }",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.adminApi.section_25_title",
-    "id": "sec_25"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.adminApi.section_26_hdr_0",
-      "apiReference.adminApi.section_26_hdr_1",
-      "apiReference.adminApi.section_26_hdr_2",
-      "apiReference.adminApi.section_26_hdr_3",
-      "apiReference.adminApi.section_26_hdr_4"
-    ],
-    "rows": [
-      [
-        "apiReference.adminApi.section_26_cell_0_0",
-        "apiReference.adminApi.section_26_cell_0_1",
-        "apiReference.adminApi.section_26_cell_0_2",
-        "apiReference.adminApi.section_26_cell_0_3",
-        "apiReference.adminApi.section_26_cell_0_4"
-      ],
-      [
-        "apiReference.adminApi.section_26_cell_1_0",
-        "apiReference.adminApi.section_26_cell_1_1",
-        "apiReference.adminApi.section_26_cell_1_2",
-        "apiReference.adminApi.section_26_cell_1_3",
-        "apiReference.adminApi.section_26_cell_1_4"
-      ],
-      [
-        "apiReference.adminApi.section_26_cell_2_0",
-        "apiReference.adminApi.section_26_cell_2_1",
-        "apiReference.adminApi.section_26_cell_2_2",
-        "apiReference.adminApi.section_26_cell_2_3",
-        "apiReference.adminApi.section_26_cell_2_4"
-      ],
-      [
-        "apiReference.adminApi.section_26_cell_3_0",
-        "apiReference.adminApi.section_26_cell_3_1",
-        "apiReference.adminApi.section_26_cell_3_2",
-        "apiReference.adminApi.section_26_cell_3_3",
-        "apiReference.adminApi.section_26_cell_3_4"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "apiReference.adminApi.section_27_title",
-    "contentKey": "apiReference.adminApi.section_27_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.adminApi.section_28_title",
-    "id": "sec_28"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "apiReference.adminApi.section_29_hdr_0",
-      "apiReference.adminApi.section_29_hdr_1",
-      "apiReference.adminApi.section_29_hdr_2",
-      "apiReference.adminApi.section_29_hdr_3"
-    ],
-    "rows": [
-      [
-        "apiReference.adminApi.section_29_cell_0_0",
-        "apiReference.adminApi.section_29_cell_0_1",
-        "apiReference.adminApi.section_29_cell_0_2",
-        "apiReference.adminApi.section_29_cell_0_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_1_0",
-        "apiReference.adminApi.section_29_cell_1_1",
-        "apiReference.adminApi.section_29_cell_1_2",
-        "apiReference.adminApi.section_29_cell_1_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_2_0",
-        "apiReference.adminApi.section_29_cell_2_1",
-        "apiReference.adminApi.section_29_cell_2_2",
-        "apiReference.adminApi.section_29_cell_2_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_3_0",
-        "apiReference.adminApi.section_29_cell_3_1",
-        "apiReference.adminApi.section_29_cell_3_2",
-        "apiReference.adminApi.section_29_cell_3_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_4_0",
-        "apiReference.adminApi.section_29_cell_4_1",
-        "apiReference.adminApi.section_29_cell_4_2",
-        "apiReference.adminApi.section_29_cell_4_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_5_0",
-        "apiReference.adminApi.section_29_cell_5_1",
-        "apiReference.adminApi.section_29_cell_5_2",
-        "apiReference.adminApi.section_29_cell_5_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_6_0",
-        "apiReference.adminApi.section_29_cell_6_1",
-        "apiReference.adminApi.section_29_cell_6_2",
-        "apiReference.adminApi.section_29_cell_6_3"
-      ],
-      [
-        "apiReference.adminApi.section_29_cell_7_0",
-        "apiReference.adminApi.section_29_cell_7_1",
-        "apiReference.adminApi.section_29_cell_7_2",
-        "apiReference.adminApi.section_29_cell_7_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "apiReference.adminApi.section_30_title",
-    "id": "sec_30"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "apiReference.adminApi.section_31_item_0",
-      "apiReference.adminApi.section_31_item_1",
-      "apiReference.adminApi.section_31_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "api-reference/authentication-api",
-  "api-reference/role-permission-api",
-  "api-reference/tenant-api"
-],
-  lastUpdated: "2026-06-09",
+    "api-reference/authentication-api",
+    "api-reference/role-permission-api",
+    "api-reference/tenant-api",
+  ],
+  lastUpdated: "2026-02-20",
 });

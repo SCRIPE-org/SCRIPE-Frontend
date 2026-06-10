@@ -1,388 +1,413 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "features.dashboardHub.intro" },
+
+  // ─── Hub-and-Spoke Architecture ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.archTitle",
+    id: "architecture",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.archIntro" },
+  {
+    type: "flowchart",
+    title: "Hub-and-Spoke Dashboard Architecture",
+    direction: "horizontal",
+    nodes: [
+      { id: "hub", label: "DashboardView (Tabbed Hub)", type: "success" },
+      { id: "overview", label: "Overview Tab", type: "default" },
+      { id: "audit", label: "Audit Tab", type: "info" },
+      { id: "security", label: "Security Tab", type: "warning" },
+      { id: "analytics", label: "Analytics Tab", type: "info" },
+    ],
+    connections: [
+      { from: "hub", to: "overview", label: "Inline" },
+      { from: "hub", to: "audit", label: "Lazy-load" },
+      { from: "hub", to: "security", label: "Lazy-load" },
+      { from: "hub", to: "analytics", label: "Lazy-load" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Tab", "Module", "Load Strategy", "Permission Gate"],
+    rows: [
+      ["Overview", "dashboard", "Inline (always loaded)", "None (default tab)"],
+      ["Audit", "audit", "React.lazy + Suspense", "audit_logs.view"],
+      ["Security", "security", "React.lazy + Suspense", "security.view"],
+      ["Analytics", "analytics", "React.lazy + Suspense", "None (visible to all)"],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.dashboardHub.archTip",
+  },
+
+  // ─── Domain Segregation (ISP) ────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.domainTitle",
+    id: "domain-segregation",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.domainIntro" },
+  {
+    type: "flowchart",
+    title: "Before vs After — Interface Segregation",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "before",
+        label: "Before: DashboardRepository (God Interface — 8 methods)",
+        type: "warning",
+      },
+      {
+        id: "after_dash",
+        label: "After: DashboardRepository (4 overview methods)",
+        type: "success",
+      },
+      { id: "after_audit", label: "After: AuditRepository (5 audit methods)", type: "success" },
+      { id: "after_sec", label: "After: SecurityRepository (4 security methods)", type: "success" },
+      {
+        id: "after_analytics",
+        label: "After: AnalyticsRepository (3 analytics methods)",
+        type: "success",
+      },
+    ],
+    connections: [
+      { from: "before", to: "after_dash", label: "Slimmed" },
+      { from: "before", to: "after_audit", label: "Extracted" },
+      { from: "before", to: "after_sec", label: "Extracted" },
+      { from: "before", to: "after_analytics", label: "Extracted" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Module", "Entities", "Interface", "Repository"],
+    rows: [
+      [
+        "Audit",
+        "AuditLogEntry, AuditLogDetail, AuditLogPage, AuditFilterParams, AuditAnalyticsSummary, TopAuditUser, ComplianceReport",
+        "IAuditRepository",
+        "AuditRepository",
+      ],
+      [
+        "Security",
+        "SecurityEvent, BlockedIP, LoginActivityPoint, SecurityChange",
+        "ISecurityRepository",
+        "SecurityRepository",
+      ],
+      [
+        "Analytics",
+        "AnalyticsSummary, DistributionData, ComparisonDataPoint",
+        "IAnalyticsRepository",
+        "AnalyticsRepository",
+      ],
+      [
+        "Dashboard",
+        "DashboardSummary, DashboardKPIs (overview only)",
+        "IDashboardRepository",
+        "DashboardRepository",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.dashboardHub.domainNote",
+  },
+
+  // ─── 6-Layer Clean Architecture ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.layersTitle",
+    id: "clean-architecture",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.layersIntro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "6-Layer Module Structure (per domain)",
+    code: `modules/system/{audit|security|analytics}/
+├── src/
+│   ├── domain/
+│   │   ├── entities/     # Rich domain entity classes (getters + computed)
+│   │   └── interfaces/   # IService + IRepository contracts
+│   ├── data/
+│   │   ├── models/       # Raw DTO types (match backend responses)
+│   │   ├── mappers/      # DTO ↔ Entity static converters
+│   │   ├── services/     # HTTP API calls (via IApiService)
+│   │   └── repositories/ # Wraps service → returns domain entities
+│   └── presentation/
+│       ├── viewmodels/   # React hooks (TanStack Query + repository)
+│       ├── views/        # Full-page view components
+│       └── components/   # Reusable UI components`,
+  },
+  {
+    type: "table",
+    headers: ["Layer", "Audit Module", "Security Module", "Analytics Module"],
+    rows: [
+      ["Models", "AuditModels.ts", "SecurityModels.ts", "AnalyticsModels.ts"],
+      ["Entities", "AuditEntities.ts", "SecurityEntities.ts", "AnalyticsEntities.ts"],
+      [
+        "Interfaces",
+        "IAuditRepository.ts, IAuditService.ts",
+        "ISecurityRepository.ts, ISecurityService.ts",
+        "IAnalyticsRepository.ts, IAnalyticsService.ts",
+      ],
+      ["Mapper", "AuditMapper.ts", "SecurityMapper.ts", "AnalyticsMapper.ts"],
+      ["Service", "AuditService.ts", "SecurityService.ts", "AnalyticsService.ts"],
+      ["Repository", "AuditRepository.ts", "SecurityRepository.ts", "AnalyticsRepository.ts"],
+    ],
+  },
+
+  // ─── DI Container Wiring ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.diTitle",
+    id: "di-wiring",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.diIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "modules/system/di.ts — SystemContainer Registration",
+    code: `export interface SystemContainer {
+  // ... existing repositories ...
+  auditRepository: IAuditRepository;
+  securityRepository: ISecurityRepository;
+  analyticsRepository: IAnalyticsRepository;
+}
+
+function getSystemContainer(): SystemContainer {
+  const apiService = getModuleApiService("IDENTITY");
+  const auditService = new AuditService(apiService);
+  const securityService = new SecurityService(apiService);
+  const analyticsService = new AnalyticsService(apiService);
+
+  return {
+    auditRepository: new AuditRepository(auditService),
+    securityRepository: new SecurityRepository(securityService),
+    analyticsRepository: new AnalyticsRepository(analyticsService),
+  };
+}
+
+// Lazy getters
+export const systemContainer = {
+  get auditRepository() { return getSystemContainer().auditRepository; },
+  get securityRepository() { return getSystemContainer().securityRepository; },
+  get analyticsRepository() { return getSystemContainer().analyticsRepository; },
+};`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.dashboardHub.diTip",
+  },
+
+  // ─── ViewModel Decoupling ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.viewmodelTitle",
+    id: "viewmodel-decoupling",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.viewmodelIntro" },
+  {
+    type: "table",
+    headers: ["ViewModel", "Before (God Interface)", "After (Dedicated Repository)"],
+    rows: [
+      ["useAuditViewModel", "dashboardRepository.getAuditLogs()", "auditRepository.getLogs()"],
+      [
+        "useSecurityDashboardViewModel",
+        "dashboardRepository.getSecurityEvents()",
+        "securityRepository.getSecurityEvents()",
+      ],
+      [
+        "useTenantAnalyticsViewModel",
+        "dashboardRepository.getSummary()",
+        "analyticsRepository.getSummary()",
+      ],
+      [
+        "useDashboardViewModel",
+        "8 methods (overview + audit + security)",
+        "4 methods (overview only)",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "ViewModel Pattern — useAuditViewModel.ts",
+    code: `"use client";
+import { systemContainer } from "@modules/system/di";
+import { useQuery } from "@tanstack/react-query";
+
+export function useAuditViewModel(tenantId: string) {
+  const { auditRepository } = systemContainer;
+
+  const logsQuery = useQuery({
+    queryKey: ["audit-logs", tenantId, page, pageSize],
+    queryFn: () => auditRepository.getLogs(tenantId, params),
+  });
+
+  // ... domain-specific audit logic
+}`,
+  },
+
+  // ─── Tabbed Hub Implementation ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.hubTitle",
+    id: "tabbed-hub",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.hubIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "DashboardView.tsx — Tabbed Hub with Lazy Loading",
+    code: `const AuditView = lazy(() => import("../../audit/.../AuditView"));
+const SecurityView = lazy(() => import("../../security/.../SecurityDashboardView"));
+const AnalyticsView = lazy(() => import("../../analytics/.../TenantAnalyticsView"));
+
+function DashboardView() {
+  const [activeTab, setActiveTab] = useState("overview");
+  const canViewAudit = usePermission("audit_logs.view");
+  const canViewSecurity = usePermission("security.view");
+
+  return (
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <TabsList>
+        <TabsTrigger value="overview">{t("dashboard.tabs.overview")}</TabsTrigger>
+        {canViewAudit && <TabsTrigger value="audit">{t("dashboard.tabs.audit")}</TabsTrigger>}
+        {canViewSecurity && <TabsTrigger value="security">{t("dashboard.tabs.security")}</TabsTrigger>}
+        <TabsTrigger value="analytics">{t("dashboard.tabs.analytics")}</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="overview"><OverviewContent /></TabsContent>
+      <TabsContent value="audit"><Suspense fallback={<Skeleton />}><AuditView /></Suspense></TabsContent>
+      <TabsContent value="security"><Suspense fallback={<Skeleton />}><SecurityView /></Suspense></TabsContent>
+      <TabsContent value="analytics"><Suspense fallback={<Skeleton />}><AnalyticsView /></Suspense></TabsContent>
+    </Tabs>
+  );
+}`,
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.dashboardHub.hubNote",
+  },
+
+  // ─── Tenant-Aware Caching ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.cachingTitle",
+    id: "caching",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.cachingIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "Tenant-Partitioned Query Keys",
+    code: `// CORRECT — query keys include tenantId for cache isolation
+queryKey: ["audit-logs", tenantId, page, pageSize, filters]
+queryKey: ["security-events", tenantId, severity]
+queryKey: ["analytics-summary", tenantId, dateRange]
+
+// WRONG — missing tenantId causes cross-tenant cache pollution
+queryKey: ["audit-logs", page, pageSize]`,
+  },
+
+  // ─── Backward Compatibility ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.compatTitle",
+    id: "backward-compatibility",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.compatIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "DashboardEntities.ts — Deprecated Aliases",
+    code: `// Backward-compatible aliases for legacy components
+/** @deprecated Use AuditLogPage from audit/domain/entities */
+export type AuditLogPage = import("../../audit/...").AuditLogPage;
+
+/** @deprecated Use BlockedIP from security/domain/entities */
+export type BlockedIPSummary = import("../../security/...").BlockedIP;
+
+/** @deprecated Use ComparisonDataPoint from analytics/domain/entities */
+export type LoginActivityPoint = import("../../analytics/...").ComparisonDataPoint;`,
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.dashboardHub.compatWarning",
+  },
+
+  // ─── Source File Reference ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.sourceTitle",
+    id: "source-files",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.sourceIntro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Source File Map",
+    code: `Hub:
+  modules/system/dashboard/src/presentation/views/DashboardView.tsx
+
+Audit Module:
+  modules/system/audit/src/domain/entities/AuditEntities.ts
+  modules/system/audit/src/domain/interfaces/IAuditRepository.ts
+  modules/system/audit/src/data/services/AuditService.ts
+  modules/system/audit/src/data/repositories/AuditRepository.ts
+  modules/system/audit/src/data/mappers/AuditMapper.ts
+  modules/system/audit/src/data/models/AuditModels.ts
+
+Security Module:
+  modules/system/security/src/domain/entities/SecurityEntities.ts
+  modules/system/security/src/domain/interfaces/ISecurityRepository.ts
+  modules/system/security/src/data/services/SecurityService.ts
+  modules/system/security/src/data/repositories/SecurityRepository.ts
+
+Analytics Module:
+  modules/system/analytics/src/domain/entities/AnalyticsEntities.ts
+  modules/system/analytics/src/domain/interfaces/IAnalyticsRepository.ts
+  modules/system/analytics/src/data/services/AnalyticsService.ts
+  modules/system/analytics/src/data/repositories/AnalyticsRepository.ts
+
+DI Container:
+  modules/system/di.ts
+
+Locales:
+  modules/system/dashboard/locales/dashboard.en.ts
+  modules/system/dashboard/locales/dashboard.ar.ts`,
+  },
+];
 
 registerPage({
   slug: "features/dashboard-hub",
   titleKey: "features.dashboardHub.title",
+  descriptionKey: "features.dashboardHub.description",
   category: "features",
   order: 20,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_3_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    hub([\"DashboardView (Tabbed Hub)\"])\n    overview[\"Overview Tab\"]\n    audit([\"Audit Tab\"])\n    security{{\"Security Tab\"}}\n    analytics([\"Analytics Tab\"])\n    hub -->|\"Inline\"| overview\n    hub -->|\"Lazy-load\"| audit\n    hub -->|\"Lazy-load\"| security\n    hub -->|\"Lazy-load\"| analytics",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardHub.section_5_hdr_0",
-      "features.dashboardHub.section_5_hdr_1",
-      "features.dashboardHub.section_5_hdr_2",
-      "features.dashboardHub.section_5_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.dashboardHub.section_5_cell_0_0",
-        "features.dashboardHub.section_5_cell_0_1",
-        "features.dashboardHub.section_5_cell_0_2",
-        "features.dashboardHub.section_5_cell_0_3"
-      ],
-      [
-        "features.dashboardHub.section_5_cell_1_0",
-        "features.dashboardHub.section_5_cell_1_1",
-        "features.dashboardHub.section_5_cell_1_2",
-        "features.dashboardHub.section_5_cell_1_3"
-      ],
-      [
-        "features.dashboardHub.section_5_cell_2_0",
-        "features.dashboardHub.section_5_cell_2_1",
-        "features.dashboardHub.section_5_cell_2_2",
-        "features.dashboardHub.section_5_cell_2_3"
-      ],
-      [
-        "features.dashboardHub.section_5_cell_3_0",
-        "features.dashboardHub.section_5_cell_3_1",
-        "features.dashboardHub.section_5_cell_3_2",
-        "features.dashboardHub.section_5_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.dashboardHub.section_6_title",
-    "contentKey": "features.dashboardHub.section_6_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_7_title",
-    "id": "sec_7"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_8_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    before{{\"Before: DashboardRepository (God Interface — 8 methods)\"}}\n    after_dash([\"After: DashboardRepository (4 overview methods)\"])\n    after_audit([\"After: AuditRepository (5 audit methods)\"])\n    after_sec([\"After: SecurityRepository (4 security methods)\"])\n    after_analytics([\"After: AnalyticsRepository (3 analytics methods)\"])\n    before -->|\"Slimmed\"| after_dash\n    before -->|\"Extracted\"| after_audit\n    before -->|\"Extracted\"| after_sec\n    before -->|\"Extracted\"| after_analytics",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardHub.section_10_hdr_0",
-      "features.dashboardHub.section_10_hdr_1",
-      "features.dashboardHub.section_10_hdr_2",
-      "features.dashboardHub.section_10_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.dashboardHub.section_10_cell_0_0",
-        "features.dashboardHub.section_10_cell_0_1",
-        "features.dashboardHub.section_10_cell_0_2",
-        "features.dashboardHub.section_10_cell_0_3"
-      ],
-      [
-        "features.dashboardHub.section_10_cell_1_0",
-        "features.dashboardHub.section_10_cell_1_1",
-        "features.dashboardHub.section_10_cell_1_2",
-        "features.dashboardHub.section_10_cell_1_3"
-      ],
-      [
-        "features.dashboardHub.section_10_cell_2_0",
-        "features.dashboardHub.section_10_cell_2_1",
-        "features.dashboardHub.section_10_cell_2_2",
-        "features.dashboardHub.section_10_cell_2_3"
-      ],
-      [
-        "features.dashboardHub.section_10_cell_3_0",
-        "features.dashboardHub.section_10_cell_3_1",
-        "features.dashboardHub.section_10_cell_3_2",
-        "features.dashboardHub.section_10_cell_3_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.dashboardHub.section_11_title",
-    "contentKey": "features.dashboardHub.section_11_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_12_title",
-    "id": "sec_12"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_13_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "modules/system/{audit|security|analytics}/\n├── src/\n│   ├── domain/\n│   │   ├── entities/     # Rich domain entity classes (getters + computed)\n│   │   └── interfaces/   # IService + IRepository contracts\n│   ├── data/\n│   │   ├── models/       # Raw DTO types (match backend responses)\n│   │   ├── mappers/      # DTO ↔ Entity static converters\n│   │   ├── services/     # HTTP API calls (via IApiService)\n│   │   └── repositories/ # Wraps service → returns domain entities\n│   └── presentation/\n│       ├── viewmodels/   # React hooks (TanStack Query + repository)\n│       ├── views/        # Full-page view components\n│       └── components/   # Reusable UI components",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardHub.section_16_hdr_0",
-      "features.dashboardHub.section_16_hdr_1",
-      "features.dashboardHub.section_16_hdr_2",
-      "features.dashboardHub.section_16_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.dashboardHub.section_16_cell_0_0",
-        "features.dashboardHub.section_16_cell_0_1",
-        "features.dashboardHub.section_16_cell_0_2",
-        "features.dashboardHub.section_16_cell_0_3"
-      ],
-      [
-        "features.dashboardHub.section_16_cell_1_0",
-        "features.dashboardHub.section_16_cell_1_1",
-        "features.dashboardHub.section_16_cell_1_2",
-        "features.dashboardHub.section_16_cell_1_3"
-      ],
-      [
-        "features.dashboardHub.section_16_cell_2_0",
-        "features.dashboardHub.section_16_cell_2_1",
-        "features.dashboardHub.section_16_cell_2_2",
-        "features.dashboardHub.section_16_cell_2_3"
-      ],
-      [
-        "features.dashboardHub.section_16_cell_3_0",
-        "features.dashboardHub.section_16_cell_3_1",
-        "features.dashboardHub.section_16_cell_3_2",
-        "features.dashboardHub.section_16_cell_3_3"
-      ],
-      [
-        "features.dashboardHub.section_16_cell_4_0",
-        "features.dashboardHub.section_16_cell_4_1",
-        "features.dashboardHub.section_16_cell_4_2",
-        "features.dashboardHub.section_16_cell_4_3"
-      ],
-      [
-        "features.dashboardHub.section_16_cell_5_0",
-        "features.dashboardHub.section_16_cell_5_1",
-        "features.dashboardHub.section_16_cell_5_2",
-        "features.dashboardHub.section_16_cell_5_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_17_title",
-    "id": "sec_17"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_18_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_19_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "export interface SystemContainer {\n  // ... existing repositories ...\n  auditRepository: IAuditRepository;\n  securityRepository: ISecurityRepository;\n  analyticsRepository: IAnalyticsRepository;\n}\n\nfunction getSystemContainer(): SystemContainer {\n  const apiService = getModuleApiService(\"IDENTITY\");\n  const auditService = new AuditService(apiService);\n  const securityService = new SecurityService(apiService);\n  const analyticsService = new AnalyticsService(apiService);\n\n  return {\n    auditRepository: new AuditRepository(auditService),\n    securityRepository: new SecurityRepository(securityService),\n    analyticsRepository: new AnalyticsRepository(analyticsService),\n  };\n}\n\n// Lazy getters\nexport const systemContainer = {\n  get auditRepository() { return getSystemContainer().auditRepository; },\n  get securityRepository() { return getSystemContainer().securityRepository; },\n  get analyticsRepository() { return getSystemContainer().analyticsRepository; },\n};",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.dashboardHub.section_21_title",
-    "contentKey": "features.dashboardHub.section_21_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_22_title",
-    "id": "sec_22"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_23_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardHub.section_24_hdr_0",
-      "features.dashboardHub.section_24_hdr_1",
-      "features.dashboardHub.section_24_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.dashboardHub.section_24_cell_0_0",
-        "features.dashboardHub.section_24_cell_0_1",
-        "features.dashboardHub.section_24_cell_0_2"
-      ],
-      [
-        "features.dashboardHub.section_24_cell_1_0",
-        "features.dashboardHub.section_24_cell_1_1",
-        "features.dashboardHub.section_24_cell_1_2"
-      ],
-      [
-        "features.dashboardHub.section_24_cell_2_0",
-        "features.dashboardHub.section_24_cell_2_1",
-        "features.dashboardHub.section_24_cell_2_2"
-      ],
-      [
-        "features.dashboardHub.section_24_cell_3_0",
-        "features.dashboardHub.section_24_cell_3_1",
-        "features.dashboardHub.section_24_cell_3_2"
-      ]
-    ]
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_25_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "\"use client\";\nimport { systemContainer } from \"@modules/system/di\";\nimport { useQuery } from \"@tanstack/react-query\";\n\nexport function useAuditViewModel(tenantId: string) {\n  const { auditRepository } = systemContainer;\n\n  const logsQuery = useQuery({\n    queryKey: [\"audit-logs\", tenantId, page, pageSize],\n    queryFn: () => auditRepository.getLogs(tenantId, params),\n  });\n\n  // ... domain-specific audit logic\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_27_title",
-    "id": "sec_27"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_28_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_29_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "const AuditView = lazy(() => import(\"../../audit/.../AuditView\"));\nconst SecurityView = lazy(() => import(\"../../security/.../SecurityDashboardView\"));\nconst AnalyticsView = lazy(() => import(\"../../analytics/.../TenantAnalyticsView\"));\n\nfunction DashboardView() {\n  const [activeTab, setActiveTab] = useState(\"overview\");\n  const canViewAudit = usePermission(\"audit_logs.view\");\n  const canViewSecurity = usePermission(\"security.view\");\n\n  return (\n    <Tabs value={activeTab} onValueChange={setActiveTab}>\n      <TabsList>\n        <TabsTrigger value=\"overview\">{t(\"dashboard.tabs.overview\")}</TabsTrigger>\n        {canViewAudit && <TabsTrigger value=\"audit\">{t(\"dashboard.tabs.audit\")}</TabsTrigger>}\n        {canViewSecurity && <TabsTrigger value=\"security\">{t(\"dashboard.tabs.security\")}</TabsTrigger>}\n        <TabsTrigger value=\"analytics\">{t(\"dashboard.tabs.analytics\")}</TabsTrigger>\n      </TabsList>\n\n      <TabsContent value=\"overview\"><OverviewContent /></TabsContent>\n      <TabsContent value=\"audit\"><Suspense fallback={<Skeleton />}><AuditView /></Suspense></TabsContent>\n      <TabsContent value=\"security\"><Suspense fallback={<Skeleton />}><SecurityView /></Suspense></TabsContent>\n      <TabsContent value=\"analytics\"><Suspense fallback={<Skeleton />}><AnalyticsView /></Suspense></TabsContent>\n    </Tabs>\n  );\n}",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.dashboardHub.section_31_title",
-    "contentKey": "features.dashboardHub.section_31_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_32_title",
-    "id": "sec_32"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_33_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_34_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// CORRECT — query keys include tenantId for cache isolation\nqueryKey: [\"audit-logs\", tenantId, page, pageSize, filters]\nqueryKey: [\"security-events\", tenantId, severity]\nqueryKey: [\"analytics-summary\", tenantId, dateRange]\n\n// WRONG — missing tenantId causes cross-tenant cache pollution\nqueryKey: [\"audit-logs\", page, pageSize]",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_36_title",
-    "id": "sec_36"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_37_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_38_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// Backward-compatible aliases for legacy components\n/** @deprecated Use AuditLogPage from audit/domain/entities */\nexport type AuditLogPage = import(\"../../audit/...\").AuditLogPage;\n\n/** @deprecated Use BlockedIP from security/domain/entities */\nexport type BlockedIPSummary = import(\"../../security/...\").BlockedIP;\n\n/** @deprecated Use ComparisonDataPoint from analytics/domain/entities */\nexport type LoginActivityPoint = import(\"../../analytics/...\").ComparisonDataPoint;",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "features.dashboardHub.section_40_title",
-    "contentKey": "features.dashboardHub.section_40_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_41_title",
-    "id": "sec_41"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_42_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardHub.section_43_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "Hub:\n  modules/system/dashboard/src/presentation/views/DashboardView.tsx\n\nAudit Module:\n  modules/system/audit/src/domain/entities/AuditEntities.ts\n  modules/system/audit/src/domain/interfaces/IAuditRepository.ts\n  modules/system/audit/src/data/services/AuditService.ts\n  modules/system/audit/src/data/repositories/AuditRepository.ts\n  modules/system/audit/src/data/mappers/AuditMapper.ts\n  modules/system/audit/src/data/models/AuditModels.ts\n\nSecurity Module:\n  modules/system/security/src/domain/entities/SecurityEntities.ts\n  modules/system/security/src/domain/interfaces/ISecurityRepository.ts\n  modules/system/security/src/data/services/SecurityService.ts\n  modules/system/security/src/data/repositories/SecurityRepository.ts\n\nAnalytics Module:\n  modules/system/analytics/src/domain/entities/AnalyticsEntities.ts\n  modules/system/analytics/src/domain/interfaces/IAnalyticsRepository.ts\n  modules/system/analytics/src/data/services/AnalyticsService.ts\n  modules/system/analytics/src/data/repositories/AnalyticsRepository.ts\n\nDI Container:\n  modules/system/di.ts\n\nLocales:\n  modules/system/dashboard/locales/dashboard.en.ts\n  modules/system/dashboard/locales/dashboard.ar.ts",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardHub.section_45_title",
-    "id": "sec_45"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.dashboardHub.section_46_item_0",
-      "features.dashboardHub.section_46_item_1",
-      "features.dashboardHub.section_46_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "features/dashboard-builder",
-  "features/audit-system",
-  "infrastructure/audit-trail"
-],
-  lastUpdated: "2026-06-09",
+    "features/dashboard-builder",
+    "features/audit-system",
+    "infrastructure/audit-trail",
+  ],
+  lastUpdated: "2026-04-07",
 });

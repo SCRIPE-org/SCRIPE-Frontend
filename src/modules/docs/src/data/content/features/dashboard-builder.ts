@@ -1,396 +1,329 @@
 import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+  { type: "paragraph", contentKey: "features.dashboardBuilder.intro" },
+
+  // ─── Overview ─────────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.overviewTitle",
+    id: "overview",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.overviewIntro" },
+  {
+    type: "table",
+    headers: ["Component", "Description", "Technology"],
+    rows: [
+      [
+        "4-Layer Merge Engine",
+        "Platform → Tenant → Admin → Runtime settings resolution",
+        "React Context + localStorage",
+      ],
+      [
+        "Server Sync Hook",
+        "Bidirectional sync of admin preferences to AdminSettingsJson",
+        "Custom React Hook + REST API",
+      ],
+      [
+        "FOUC Prevention",
+        "Optimistic render from cache, silent server reconcile",
+        "localStorage + CustomEvent",
+      ],
+      [
+        "Override Control",
+        "Tenant admins control which settings admins can customize",
+        "Path-level whitelist",
+      ],
+      [
+        "Preset System",
+        "Pre-built and custom theme presets with marketplace",
+        "Database + JSON blobs",
+      ],
+      [
+        "Edition Gating",
+        "Feature visibility controlled by subscription tier",
+        "FeatureChecker pipeline",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.dashboardBuilder.overviewTip",
+  },
+
+  // ─── 4-Layer Merge Engine ─────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.mergeEngineTitle",
+    id: "merge-engine",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.mergeEngineIntro" },
+  {
+    type: "flowchart",
+    title: "Settings Merge Pipeline",
+    direction: "horizontal",
+    nodes: [
+      { id: "l1", label: "Layer 1: Platform Defaults", type: "default" },
+      { id: "l3", label: "Layer 3: Tenant Defaults", type: "info" },
+      { id: "l4", label: "Layer 4: Admin Overrides", type: "warning" },
+      { id: "final", label: "Final Applied Settings", type: "success" },
+    ],
+    connections: [
+      { from: "l1", to: "l3", label: "Spread merge" },
+      { from: "l3", to: "l4", label: "Path-filtered" },
+      { from: "l4", to: "final", label: "Applied to DOM" },
+    ],
+  },
+  {
+    type: "table",
+    headers: ["Layer", "Source", "Persistence", "Scope"],
+    rows: [
+      [
+        "1. Platform Defaults",
+        "defaultSettings in settings-provider.tsx",
+        "Hardcoded",
+        "All users",
+      ],
+      [
+        "3. Tenant Defaults",
+        "DashboardThemeJson on TenantSettings",
+        "Database (tenant)",
+        "All admins in tenant",
+      ],
+      [
+        "4. Admin Overrides",
+        "AdminSettingsJson on Admin",
+        "Database (per-admin)",
+        "Individual admin",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "features.dashboardBuilder.mergeEngineNote",
+  },
+
+  // ─── Server Sync Hook ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.syncHookTitle",
+    id: "server-sync",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.syncHookIntro" },
+  {
+    type: "flowchart",
+    title: "Admin Settings Lifecycle",
+    direction: "vertical",
+    nodes: [
+      { id: "login", label: "Admin Logs In", type: "default" },
+      { id: "cache", label: "Check localStorage Cache", type: "info" },
+      { id: "flush", label: "Check PENDING_SETTINGS_FLUSH", type: "warning" },
+      { id: "fetch", label: "GET AdminSettingsJson", type: "info" },
+      { id: "reconcile", label: "Silent Reconcile", type: "success" },
+      { id: "change", label: "User Changes Setting", type: "default" },
+      { id: "debounce", label: "2s Debounce", type: "warning" },
+      { id: "save", label: "PUT to Server", type: "success" },
+    ],
+    connections: [
+      { from: "login", to: "cache" },
+      { from: "cache", to: "flush" },
+      { from: "flush", to: "fetch" },
+      { from: "fetch", to: "reconcile" },
+      { from: "change", to: "debounce" },
+      { from: "debounce", to: "save" },
+    ],
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useAdminSettingsSync.ts — Usage",
+    code: `// In DashboardLayout (authenticated layout root):
+const { isSettingsReady } = useAdminSettingsSync();
+
+// Shimmer only on first-ever device login (no cache)
+if (!isSettingsReady) {
+  return <LoadingShimmer />;
+}`,
+  },
+
+  // ─── Edge Case Protections ────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.edgeCasesTitle",
+    id: "edge-cases",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.edgeCasesIntro" },
+  {
+    type: "table",
+    headers: ["Edge Case", "Problem", "Solution"],
+    rows: [
+      [
+        "FOUC (Flash of Unstyled Content)",
+        "Blocking render for server fetch causes visible flash",
+        "Optimistic render from localStorage cache; shimmer only on first-ever device",
+      ],
+      [
+        "Tab Close Data Loss",
+        "2s debounce means last change may be lost",
+        "fetch({ keepalive: true }) with JWT in beforeunload handler",
+      ],
+      [
+        "409 Concurrency Conflict",
+        "Two sessions editing same admin's settings",
+        "Field-level last-write-wins merge using changedFieldsSinceLastSync tracker",
+      ],
+      [
+        "Payload Size Bomb",
+        "Large base64 in logoText could overflow 10KB column",
+        "8KB client-side guard with admin-settings-size-error event",
+      ],
+      [
+        "JWT Expired at Tab Close",
+        "beforeunload fetch fails with 401",
+        "Deferred flush via PENDING_SETTINGS_FLUSH localStorage key, flushed on next login",
+      ],
+    ],
+  },
+  {
+    type: "info",
+    variant: "warning",
+    contentKey: "features.dashboardBuilder.edgeCasesWarning",
+  },
+
+  // ─── Settings Reference ───────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.settingsRefTitle",
+    id: "settings-reference",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.settingsRefIntro" },
+  {
+    type: "table",
+    headers: ["Section", "Count", "Examples", "Edition Gate"],
+    rows: [
+      ["Layout & Structure", "7", "layoutTemplate, sidebarPosition, headerStyle", "Always"],
+      [
+        "Colors & Theme",
+        "16",
+        "colorTheme, gradientDirection, customPrimaryColor",
+        "Gradients / CustomColors",
+      ],
+      ["Typography & Spacing", "5", "fontSize, borderRadius, spacingSize", "Always"],
+      ["Component Styles", "16", "buttonStyle, inputStyle, tableStyle", "ComponentStyles.Enabled"],
+      ["Logo & Branding", "5", "logoType, logoAnimation, logoSize", "LogoCustomization.Enabled"],
+      ["Navigation & UX", "9", "navigationStyle, highContrast, showDetailPanel", "Always"],
+      [
+        "Toast Configuration",
+        "3",
+        "toastStyle, showToastIcons, toastDuration",
+        "ComponentStyles.Enabled",
+      ],
+      ["Hover Effects", "2", "hoverEffectType, hoverEffectIntensity", "HoverEffects.Enabled"],
+    ],
+  },
+
+  // ─── Admin Override Control ───────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.overrideControlTitle",
+    id: "override-control",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.overrideControlIntro" },
+  {
+    type: "table",
+    headers: ["Scenario", "Settings Page Behavior"],
+    rows: [
+      ["AllowAdminThemeOverride = true, no path filter", "Full edit mode (current behavior)"],
+      [
+        "AllowAdminThemeOverride = true, with path filter",
+        "Mixed mode — editable settings show controls, locked settings show 🔒 badge",
+      ],
+      [
+        "AllowAdminThemeOverride = false",
+        "Full read-only mode — all controls disabled with banner",
+      ],
+    ],
+  },
+
+  // ─── Security Model ───────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.securityTitle",
+    id: "security",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.securityIntro" },
+  {
+    type: "table",
+    headers: ["Threat", "Mitigation"],
+    rows: [
+      ["Cross-admin settings leak", "AUTH_STORAGE_KEYS_TO_CLEAR wipes all settings on logout"],
+      [
+        "Raw theme key leak",
+        "clearAllLocalStorage() removes theme and uis_admin_prefs_version explicitly",
+      ],
+      ["Oversized payload", "8KB client guard + 10KB server column limit"],
+      ["Admin modifies locked setting", "Server validates keys against AllowedAdminSettingsJson"],
+      ["Concurrent 409 conflict", "Field-level last-write-wins merge with toast notification"],
+      ["Tab-close data loss", "fetch({ keepalive: true }) with JWT Authorization header"],
+      ["JWT expired at tab close", "Deferred flush via PENDING_SETTINGS_FLUSH (survives logout)"],
+    ],
+  },
+
+  // ─── Architecture ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.archTitle",
+    id: "architecture",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.archIntro" },
+  {
+    type: "code",
+    language: "text",
+    filename: "Key Files",
+    code: `src/core/providers/
+├── useAdminSettingsSync.ts    # Server sync hook (5 edge case protections)
+├── settings-provider.tsx      # 4-layer merge engine + field tracking
+├── tenant-branding-provider.tsx # Layer 3 sync + override metadata
+
+src/core/config/
+├── storage-keys.ts            # Centralized localStorage key definitions
+├── api-endpoints.ts           # Dashboard builder API endpoint constants
+
+src/core/ui/layout/
+├── dashboard-layout.tsx       # FOUC shimmer gate (layout entry point)
+
+src/modules/auth/core/data/
+├── repositories/AuthRepository.ts  # Logout cleanup (raw key removal)`,
+  },
+  {
+    type: "info",
+    variant: "tip",
+    contentKey: "features.dashboardBuilder.archTip",
+  },
+];
 
 registerPage({
   slug: "features/dashboard-builder",
   titleKey: "features.dashboardBuilder.title",
+  descriptionKey: "features.dashboardBuilder.description",
   category: "features",
   order: 19,
-  sections: [
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_0_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_1_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_2_title",
-    "id": "sec_2"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_3_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardBuilder.section_4_hdr_0",
-      "features.dashboardBuilder.section_4_hdr_1",
-      "features.dashboardBuilder.section_4_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.dashboardBuilder.section_4_cell_0_0",
-        "features.dashboardBuilder.section_4_cell_0_1",
-        "features.dashboardBuilder.section_4_cell_0_2"
-      ],
-      [
-        "features.dashboardBuilder.section_4_cell_1_0",
-        "features.dashboardBuilder.section_4_cell_1_1",
-        "features.dashboardBuilder.section_4_cell_1_2"
-      ],
-      [
-        "features.dashboardBuilder.section_4_cell_2_0",
-        "features.dashboardBuilder.section_4_cell_2_1",
-        "features.dashboardBuilder.section_4_cell_2_2"
-      ],
-      [
-        "features.dashboardBuilder.section_4_cell_3_0",
-        "features.dashboardBuilder.section_4_cell_3_1",
-        "features.dashboardBuilder.section_4_cell_3_2"
-      ],
-      [
-        "features.dashboardBuilder.section_4_cell_4_0",
-        "features.dashboardBuilder.section_4_cell_4_1",
-        "features.dashboardBuilder.section_4_cell_4_2"
-      ],
-      [
-        "features.dashboardBuilder.section_4_cell_5_0",
-        "features.dashboardBuilder.section_4_cell_5_1",
-        "features.dashboardBuilder.section_4_cell_5_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.dashboardBuilder.section_5_title",
-    "contentKey": "features.dashboardBuilder.section_5_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_6_title",
-    "id": "sec_6"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_7_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph LR\n    l1[\"Layer 1: Platform Defaults\"]\n    l3([\"Layer 3: Tenant Defaults\"])\n    l4{{\"Layer 4: Admin Overrides\"}}\n    final([\"Final Applied Settings\"])\n    l1 -->|\"Spread merge\"| l3\n    l3 -->|\"Path-filtered\"| l4\n    l4 -->|\"Applied to DOM\"| final",
-    "filename": ""
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardBuilder.section_9_hdr_0",
-      "features.dashboardBuilder.section_9_hdr_1",
-      "features.dashboardBuilder.section_9_hdr_2",
-      "features.dashboardBuilder.section_9_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.dashboardBuilder.section_9_cell_0_0",
-        "features.dashboardBuilder.section_9_cell_0_1",
-        "features.dashboardBuilder.section_9_cell_0_2",
-        "features.dashboardBuilder.section_9_cell_0_3"
-      ],
-      [
-        "features.dashboardBuilder.section_9_cell_1_0",
-        "features.dashboardBuilder.section_9_cell_1_1",
-        "features.dashboardBuilder.section_9_cell_1_2",
-        "features.dashboardBuilder.section_9_cell_1_3"
-      ],
-      [
-        "features.dashboardBuilder.section_9_cell_2_0",
-        "features.dashboardBuilder.section_9_cell_2_1",
-        "features.dashboardBuilder.section_9_cell_2_2",
-        "features.dashboardBuilder.section_9_cell_2_3"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "note",
-    "titleKey": "features.dashboardBuilder.section_10_title",
-    "contentKey": "features.dashboardBuilder.section_10_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_11_title",
-    "id": "sec_11"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_12_content"
-  },
-  {
-    "type": "code",
-    "language": "mermaid",
-    "code": "graph TD\n    login[\"Admin Logs In\"]\n    cache([\"Check localStorage Cache\"])\n    flush{{\"Check PENDING_SETTINGS_FLUSH\"}}\n    fetch([\"GET AdminSettingsJson\"])\n    reconcile([\"Silent Reconcile\"])\n    change[\"User Changes Setting\"]\n    debounce{{\"2s Debounce\"}}\n    save([\"PUT to Server\"])\n    login --> cache\n    cache --> flush\n    flush --> fetch\n    fetch --> reconcile\n    change --> debounce\n    debounce --> save",
-    "filename": ""
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_14_content"
-  },
-  {
-    "type": "code",
-    "language": "typescript",
-    "code": "// In DashboardLayout (authenticated layout root):\nconst { isSettingsReady } = useAdminSettingsSync();\n\n// Shimmer only on first-ever device login (no cache)\nif (!isSettingsReady) {\n  return <LoadingShimmer />;\n}",
-    "filename": ""
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_16_title",
-    "id": "sec_16"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_17_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardBuilder.section_18_hdr_0",
-      "features.dashboardBuilder.section_18_hdr_1",
-      "features.dashboardBuilder.section_18_hdr_2"
-    ],
-    "rows": [
-      [
-        "features.dashboardBuilder.section_18_cell_0_0",
-        "features.dashboardBuilder.section_18_cell_0_1",
-        "features.dashboardBuilder.section_18_cell_0_2"
-      ],
-      [
-        "features.dashboardBuilder.section_18_cell_1_0",
-        "features.dashboardBuilder.section_18_cell_1_1",
-        "features.dashboardBuilder.section_18_cell_1_2"
-      ],
-      [
-        "features.dashboardBuilder.section_18_cell_2_0",
-        "features.dashboardBuilder.section_18_cell_2_1",
-        "features.dashboardBuilder.section_18_cell_2_2"
-      ],
-      [
-        "features.dashboardBuilder.section_18_cell_3_0",
-        "features.dashboardBuilder.section_18_cell_3_1",
-        "features.dashboardBuilder.section_18_cell_3_2"
-      ],
-      [
-        "features.dashboardBuilder.section_18_cell_4_0",
-        "features.dashboardBuilder.section_18_cell_4_1",
-        "features.dashboardBuilder.section_18_cell_4_2"
-      ]
-    ]
-  },
-  {
-    "type": "info",
-    "variant": "warning",
-    "titleKey": "features.dashboardBuilder.section_19_title",
-    "contentKey": "features.dashboardBuilder.section_19_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_20_title",
-    "id": "sec_20"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_21_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardBuilder.section_22_hdr_0",
-      "features.dashboardBuilder.section_22_hdr_1",
-      "features.dashboardBuilder.section_22_hdr_2",
-      "features.dashboardBuilder.section_22_hdr_3"
-    ],
-    "rows": [
-      [
-        "features.dashboardBuilder.section_22_cell_0_0",
-        "features.dashboardBuilder.section_22_cell_0_1",
-        "features.dashboardBuilder.section_22_cell_0_2",
-        "features.dashboardBuilder.section_22_cell_0_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_1_0",
-        "features.dashboardBuilder.section_22_cell_1_1",
-        "features.dashboardBuilder.section_22_cell_1_2",
-        "features.dashboardBuilder.section_22_cell_1_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_2_0",
-        "features.dashboardBuilder.section_22_cell_2_1",
-        "features.dashboardBuilder.section_22_cell_2_2",
-        "features.dashboardBuilder.section_22_cell_2_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_3_0",
-        "features.dashboardBuilder.section_22_cell_3_1",
-        "features.dashboardBuilder.section_22_cell_3_2",
-        "features.dashboardBuilder.section_22_cell_3_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_4_0",
-        "features.dashboardBuilder.section_22_cell_4_1",
-        "features.dashboardBuilder.section_22_cell_4_2",
-        "features.dashboardBuilder.section_22_cell_4_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_5_0",
-        "features.dashboardBuilder.section_22_cell_5_1",
-        "features.dashboardBuilder.section_22_cell_5_2",
-        "features.dashboardBuilder.section_22_cell_5_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_6_0",
-        "features.dashboardBuilder.section_22_cell_6_1",
-        "features.dashboardBuilder.section_22_cell_6_2",
-        "features.dashboardBuilder.section_22_cell_6_3"
-      ],
-      [
-        "features.dashboardBuilder.section_22_cell_7_0",
-        "features.dashboardBuilder.section_22_cell_7_1",
-        "features.dashboardBuilder.section_22_cell_7_2",
-        "features.dashboardBuilder.section_22_cell_7_3"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_23_title",
-    "id": "sec_23"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_24_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardBuilder.section_25_hdr_0",
-      "features.dashboardBuilder.section_25_hdr_1"
-    ],
-    "rows": [
-      [
-        "features.dashboardBuilder.section_25_cell_0_0",
-        "features.dashboardBuilder.section_25_cell_0_1"
-      ],
-      [
-        "features.dashboardBuilder.section_25_cell_1_0",
-        "features.dashboardBuilder.section_25_cell_1_1"
-      ],
-      [
-        "features.dashboardBuilder.section_25_cell_2_0",
-        "features.dashboardBuilder.section_25_cell_2_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_26_title",
-    "id": "sec_26"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_27_content"
-  },
-  {
-    "type": "table",
-    "headers": [
-      "features.dashboardBuilder.section_28_hdr_0",
-      "features.dashboardBuilder.section_28_hdr_1"
-    ],
-    "rows": [
-      [
-        "features.dashboardBuilder.section_28_cell_0_0",
-        "features.dashboardBuilder.section_28_cell_0_1"
-      ],
-      [
-        "features.dashboardBuilder.section_28_cell_1_0",
-        "features.dashboardBuilder.section_28_cell_1_1"
-      ],
-      [
-        "features.dashboardBuilder.section_28_cell_2_0",
-        "features.dashboardBuilder.section_28_cell_2_1"
-      ],
-      [
-        "features.dashboardBuilder.section_28_cell_3_0",
-        "features.dashboardBuilder.section_28_cell_3_1"
-      ],
-      [
-        "features.dashboardBuilder.section_28_cell_4_0",
-        "features.dashboardBuilder.section_28_cell_4_1"
-      ],
-      [
-        "features.dashboardBuilder.section_28_cell_5_0",
-        "features.dashboardBuilder.section_28_cell_5_1"
-      ],
-      [
-        "features.dashboardBuilder.section_28_cell_6_0",
-        "features.dashboardBuilder.section_28_cell_6_1"
-      ]
-    ]
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_29_title",
-    "id": "sec_29"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_30_content"
-  },
-  {
-    "type": "paragraph",
-    "contentKey": "features.dashboardBuilder.section_31_content"
-  },
-  {
-    "type": "code",
-    "language": "text",
-    "code": "src/core/providers/\n├── useAdminSettingsSync.ts    # Server sync hook (5 edge case protections)\n├── settings-provider.tsx      # 4-layer merge engine + field tracking\n├── tenant-branding-provider.tsx # Layer 3 sync + override metadata\n\nsrc/core/config/\n├── storage-keys.ts            # Centralized localStorage key definitions\n├── api-endpoints.ts           # Dashboard builder API endpoint constants\n\nsrc/core/ui/layout/\n├── dashboard-layout.tsx       # FOUC shimmer gate (layout entry point)\n\nsrc/modules/auth/core/data/\n├── repositories/AuthRepository.ts  # Logout cleanup (raw key removal)",
-    "filename": ""
-  },
-  {
-    "type": "info",
-    "variant": "tip",
-    "titleKey": "features.dashboardBuilder.section_33_title",
-    "contentKey": "features.dashboardBuilder.section_33_content"
-  },
-  {
-    "type": "heading",
-    "level": 2,
-    "titleKey": "features.dashboardBuilder.section_34_title",
-    "id": "sec_34"
-  },
-  {
-    "type": "list",
-    "variant": "unordered",
-    "items": [
-      "features.dashboardBuilder.section_35_item_0",
-      "features.dashboardBuilder.section_35_item_1",
-      "features.dashboardBuilder.section_35_item_2"
-    ]
-  }
-],
+  sections,
   relatedSlugs: [
-  "features/login-customizer",
-  "features/theme-marketplace",
-  "features/login-page-builder"
-],
-  lastUpdated: "2026-06-09",
+    "features/login-customizer",
+    "features/theme-marketplace",
+    "features/login-page-builder",
+  ],
+  lastUpdated: "2026-04-05",
 });
