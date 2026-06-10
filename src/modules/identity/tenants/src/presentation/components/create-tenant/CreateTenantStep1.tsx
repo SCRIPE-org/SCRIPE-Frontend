@@ -54,13 +54,21 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             onChange={(e) => vm.updateField("name", e.target.value)}
             placeholder={t("tenant.namePlaceholder") || "e.g. Acme Corporation"}
             className={cn("h-11", nameError && "border-destructive")}
+            maxLength={100}
             autoFocus
           />
-          {nameError && (
-            <p className="text-xs text-destructive">
-              {t("validation.invalidName") || "Tenant name is required."}
-            </p>
-          )}
+          <div className="flex items-center justify-between mt-1 min-h-[20px]">
+            {nameError ? (
+              <p className="text-xs text-destructive">
+                {t("validation.invalidName") || "Tenant name is required."}
+              </p>
+            ) : (
+              <div />
+            )}
+            <span className="text-xs text-muted-foreground">
+              {vm.form.name.length}/100
+            </span>
+          </div>
         </div>
 
         <div className="space-y-2">

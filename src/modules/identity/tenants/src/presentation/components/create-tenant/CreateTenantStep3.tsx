@@ -104,8 +104,8 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         />
       </div>
 
-      {/* Subscription Type & Currency — only shown after edition is selected */}
-      {vm.form.editionId && (
+      {/* Subscription Type & Currency — only shown after edition is selected and has enabled subscription types */}
+      {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
         <div className="grid gap-5 duration-300 animate-in fade-in-0 slide-in-from-bottom-2 sm:grid-cols-2">
           {/* Subscription Type */}
           <div className="space-y-2">
@@ -143,8 +143,8 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         </div>
       )}
 
-      {/* Promo Code */}
-      {vm.form.editionId && (
+      {/* Promo Code — only shown if there are subscription types enabled */}
+      {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
         <div className="space-y-2 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
           <Label className="text-sm font-medium">{t("tenant.promoCode") || "Promo Code"}</Label>
           <Input
@@ -194,8 +194,8 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         </div>
       )}
 
-      {/* Skip Payment Toggle */}
-      {vm.form.editionId && !isFreeEdition && (
+      {/* Skip Payment Toggle — only shown for paid plans with enabled subscription types */}
+      {vm.form.editionId && !isFreeEdition && subscriptionTypeOptions.length > 0 && (
         <div className="duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
           <div className="flex items-center justify-between rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
             <div className="flex items-start gap-3">

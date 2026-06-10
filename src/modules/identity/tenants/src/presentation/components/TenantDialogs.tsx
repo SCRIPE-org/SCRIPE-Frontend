@@ -146,6 +146,7 @@ export function CreateTenantDialog({
         label: t("tenant.name"),
         type: "text",
         required: true,
+        maxLength: 100,
         placeholder: t("tenant.namePlaceholder"),
       },
       {
@@ -216,7 +217,16 @@ export function CreateTenantDialog({
         label: t("tenant.subscriptionType") || "Subscription Duration",
         type: "select",
         required: true,
-        isVisible: (formData: Record<string, any>) => !!formData.editionId,
+        isVisible: (formData: Record<string, any>) => {
+          if (!formData.editionId) return false;
+          const selectedEd = cachedEditions.find((ed) => ed.id === selectedEditionId);
+          if (!selectedEd) return true;
+          const hasLifetime = selectedEd.allowLifetime !== false;
+          const hasMonthly = selectedEd.allowMonthly !== false;
+          const hasYearly = selectedEd.allowYearly !== false;
+          const hasTrial = selectedEd.allowTrial !== false;
+          return hasLifetime || hasMonthly || hasYearly || hasTrial;
+        },
         options: (() => {
           const selectedEd = cachedEditions.find((ed) => ed.id === selectedEditionId);
           const opts: { value: string; label: string }[] = [];
@@ -411,6 +421,7 @@ export function EditTenantDialog({
         label: t("tenant.name"),
         type: "text",
         required: true,
+        maxLength: 100,
         placeholder: t("tenant.namePlaceholder"),
       },
       {
