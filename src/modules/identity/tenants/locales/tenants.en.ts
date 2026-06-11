@@ -352,6 +352,7 @@ export const en = {
       yearly: "Yearly",
       trial: "Trial",
       addon: "Add-On",
+      free: "Free",
     },
     statusLabel: {
       active: "Active",
@@ -457,7 +458,8 @@ export const en = {
     neverExpires: "Never Expires",
     passwordExpiryHelp: "Password Expiry Help",
     restrictPermissions: "Restrict Admin Permissions",
-    restrictPermissionsDesc: "Limit the permissions that administrators of this tenant can assign to roles.",
+    restrictPermissionsDesc:
+      "Limit the permissions that administrators of this tenant can assign to roles.",
     allPermissionsAllowed: "All Permissions Allowed",
   },
   validation: {

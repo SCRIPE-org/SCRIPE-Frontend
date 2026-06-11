@@ -70,7 +70,10 @@ const STATUS_CONFIG: Record<
   pastdue: { variant: "destructive", icon: AlertTriangle },
 };
 
-function getTypeLabel(type: string, t: (key: string) => string): string {
+function getTypeLabel(type: string, t: (key: string) => string, isFreePlan?: boolean): string {
+  if (isFreePlan) {
+    return t("tenant.typeLabel.free") || "Free";
+  }
   const map: Record<string, string> = {
     Lifetime: t("tenant.typeLabel.lifetime") || "Lifetime",
     Monthly: t("tenant.typeLabel.monthly") || "Monthly",
@@ -111,6 +114,9 @@ function getBillingCycleOptions(
   t: (key: string) => string,
   edition?: EditionThinModel | null
 ): GenericSelectOption[] {
+  if (edition?.isFree) {
+    return [{ value: "Lifetime", label: t("tenant.typeLabel.free") || "Free (Lifetime)" }];
+  }
   const opts: GenericSelectOption[] = [];
   if (!edition || edition.allowMonthly !== false)
     opts.push({ value: "Monthly", label: t("tenant.typeLabel.monthly") || "Monthly" });
@@ -356,7 +362,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 {t("tenant.billingCycle") || "Billing"}
               </p>
               <Badge variant="outline" className="text-xs">
-                {getTypeLabel(subscription.type, t)}
+                {getTypeLabel(subscription.type, t, subscription.totalAmount === 0)}
               </Badge>
             </div>
 
@@ -953,7 +959,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   const id = v as string;
                   setSelectedEditionId(id);
                   fetchImpact(id);
-                  fetchPrice(id, selectedType);
+                  const targetEdition = (vm.availableEditions || []).find((e) => e.id === id);
+                  const newType = targetEdition?.isFree ? "Lifetime" : selectedType;
+                  if (targetEdition?.isFree) {
+                    setSelectedType("Lifetime");
+                  }
+                  fetchPrice(id, newType);
                 }}
                 placeholder={t("tenant.selectAPlan") || "Select an edition"}
               />
@@ -1030,14 +1041,16 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     {t("common.loading") || "Loading..."}
                   </div>
                 )}
-                {!isLoadingPrice && previewAmount !== null && previewAmount > 0 && (
+                {!isLoadingPrice && previewAmount !== null && previewAmount >= 0 && (
                   <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-muted-foreground">
                         {t("tenant.totalAmount") || "Total Amount"}
                       </span>
                       <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                        {formatDisplay(previewAmount, subscription?.currency || "USD")}
+                        {previewAmount === 0
+                          ? t("tenant.typeLabel.free") || "Free"
+                          : formatDisplay(previewAmount, subscription?.currency || "USD")}
                       </span>
                     </div>
                   </div>

@@ -358,6 +358,7 @@ export const ar = {
       yearly: "سنوي",
       trial: "تجريبي",
       addon: "إضافة",
+      free: "مجاني",
     },
     statusLabel: {
       active: "نشط",

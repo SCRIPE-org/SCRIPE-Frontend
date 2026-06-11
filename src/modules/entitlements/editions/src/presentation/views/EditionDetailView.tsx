@@ -90,16 +90,20 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       label: t("entitlements.features.title") || "Features",
       icon: <Zap className="h-3.5 w-3.5" />,
     },
-    {
-      id: "pricing" as const,
-      label: t("entitlements.pricing.title") || "Pricing",
-      icon: <DollarSign className="h-3.5 w-3.5" />,
-    },
-    {
-      id: "promotions" as const,
-      label: t("entitlements.promotions.title") || "Promotions",
-      icon: <Tag className="h-3.5 w-3.5" />,
-    },
+    ...(!edition.isFree
+      ? [
+          {
+            id: "pricing" as const,
+            label: t("entitlements.pricing.title") || "Pricing",
+            icon: <DollarSign className="h-3.5 w-3.5" />,
+          },
+          {
+            id: "promotions" as const,
+            label: t("entitlements.promotions.title") || "Promotions",
+            icon: <Tag className="h-3.5 w-3.5" />,
+          },
+        ]
+      : []),
     {
       id: "versions" as const,
       label: t("entitlements.editions.versions.title") || "Versions",
