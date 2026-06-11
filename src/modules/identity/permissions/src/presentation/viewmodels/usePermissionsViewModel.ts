@@ -83,9 +83,16 @@ export function usePermissionsViewModel() {
     enabled: isSystemCatalogMode,
   });
 
+  // ── TENANT MODE GROUPED: grouped permissions for a specific tenant ──
+  const tenantGroupedQuery = useQuery({
+    queryKey: ["permissions", "tenant-grouped", effectiveTenantId, { search }],
+    queryFn: () => permissionRepository.getGroupedForTenant(effectiveTenantId!, search || undefined),
+    enabled: !isSystemCatalogMode && !!effectiveTenantId,
+  });
+
   const groupedPermissions: PermissionModuleGroup[] = isSystemCatalogMode
     ? (groupedQuery.data ?? [])
-    : []; // Tenant mode: flat list still used in the view
+    : (tenantGroupedQuery.data ?? []);
 
   // Create permission mutation
   const createMutation = useMutation({
@@ -165,7 +172,7 @@ export function usePermissionsViewModel() {
     categories: categories ?? [],
     totalCount: permissions?.length ?? 0,
     isSystemCatalogMode,
-    isGroupedLoading: isSystemCatalogMode && groupedQuery.isLoading,
+    isGroupedLoading: isSystemCatalogMode ? groupedQuery.isLoading : tenantGroupedQuery.isLoading,
 
     // Filter state (View binds to these, no useState in View)
     filter: {

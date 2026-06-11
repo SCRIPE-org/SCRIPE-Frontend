@@ -66,6 +66,11 @@ export class PermissionService implements IPermissionService {
     return this.api.get<PermissionModuleGroupJson[]>(url);
   }
 
+  async getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroupJson[]> {
+    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
+    return this.api.get<PermissionModuleGroupJson[]>(url);
+  }
+
   async create(json: CreatePermissionJson): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(API_ENDPOINTS.PERMISSIONS.CREATE, json);
   }

@@ -56,6 +56,11 @@ export class PermissionRepository implements IPermissionRepository {
     return PermissionMapper.toEntityGrouped(json);
   }
 
+  async getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroup[]> {
+    const json = await this.service.getGroupedForTenant(tenantId, search);
+    return PermissionMapper.toEntityGrouped(json);
+  }
+
   async create(request: CreatePermissionRequest): Promise<string> {
     const model = PermissionMapper.toCreateModel(request);
     const response = await this.service.create(model.toJson());

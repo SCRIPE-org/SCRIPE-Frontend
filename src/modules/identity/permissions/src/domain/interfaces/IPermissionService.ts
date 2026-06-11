@@ -19,6 +19,8 @@ export interface IPermissionService {
   getCategories(): Promise<string[]>;
   /** Get permissions grouped by Module → Category from backend */
   getGrouped(search?: string): Promise<PermissionModuleGroupJson[]>;
+  /** Get tenant's permissions grouped by Module → Category from backend */
+  getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroupJson[]>;
   create(json: CreatePermissionJson): Promise<{ id: string }>;
   update(id: string, json: UpdatePermissionJson): Promise<void>;
   delete(id: string): Promise<void>;

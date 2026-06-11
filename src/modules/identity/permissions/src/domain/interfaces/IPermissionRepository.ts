@@ -53,6 +53,12 @@ export interface IPermissionRepository {
   getGrouped(search?: string): Promise<PermissionModuleGroup[]>;
 
   /**
+   * Get permissions assigned to a specific tenant, grouped by Module → Category.
+   * Used in tenant drill-down / tenant admin mode.
+   */
+  getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroup[]>;
+
+  /**
    * Create a new permission
    */
   create(request: CreatePermissionRequest): Promise<string>;
