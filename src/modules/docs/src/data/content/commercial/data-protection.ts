@@ -50,7 +50,7 @@ const sections: DocSection[] = [
   "name": "John Doe",
   "department": "Engineering",
   "phone": "***-***-4567",     // Masked
-  "email": "j***@company.com"  // Masked
+  "email": "j***@example.com"  // Masked
   // salary, ssn, bankAccount, medicalInfo → not present
 }`,
   },

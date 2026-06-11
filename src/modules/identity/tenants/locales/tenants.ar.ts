@@ -410,7 +410,7 @@ export const ar = {
       overridesTotalCost: "القيمة الاجمالية للميزات الزائدة",
     },
     adminEmail: "بريد المسؤول الإلكتروني",
-    adminEmailPlaceholder: "admin@company.com",
+    adminEmailPlaceholder: "admin@example.com",
     adminUsername: "اسم مستخدم المسؤول",
     adminUsernamePlaceholder: "سيتم إنشاؤه تلقائياً إذا تُرك فارغاً",
     setupEmailSent: "تم إرسال بريد إعداد الحساب إلى المسؤول. سيقوم بتعيين كلمة المرور الخاصة به.",

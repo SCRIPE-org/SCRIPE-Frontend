@@ -48,7 +48,7 @@ const sections: DocSection[] = [
         language: "json",
         filename: "POST /api/v1/auth/login — Request Body",
         code: `{
-  "email": "admin@company.com",
+  "email": "admin@example.com",
   "password": "P@ssw0rd123!"
 }`,
       },
@@ -64,7 +64,7 @@ const sections: DocSection[] = [
   "requiresTwoFactor": false,
   "user": {
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "email": "admin@company.com",
+    "email": "admin@example.com",
     "firstName": "John",
     "lastName": "Doe",
     "role": "SuperAdmin",
@@ -236,7 +236,7 @@ const sections: DocSection[] = [
         filename: "POST /auth/2fa/enable — Response",
         code: `{
   "secret": "JBSWY3DPEHPK3PXP",
-  "qrCodeUri": "otpauth://totp/SCRIPE:admin@company.com?secret=JBSWY3DPEHPK3PXP&issuer=SCRIPE",
+  "qrCodeUri": "otpauth://totp/SCRIPE:admin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=SCRIPE",
   "qrCodeBase64": "data:image/png;base64,iVBOR..."
 }`,
       },
@@ -329,7 +329,7 @@ const sections: DocSection[] = [
         filename: "GET /auth/me — Response",
         code: `{
   "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "email": "admin@company.com",
+  "email": "admin@example.com",
   "firstName": "John",
   "lastName": "Doe",
   "phoneNumber": "+1234567890",

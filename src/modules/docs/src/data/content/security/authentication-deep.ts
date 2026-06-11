@@ -171,7 +171,7 @@ const sections: DocSection[] = [
     filename: "Access Token Payload (decoded)",
     code: `{
   "sub": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "email": "admin@company.com",
+  "email": "admin@example.com",
   "given_name": "John",
   "family_name": "Doe",
   "role": "SuperAdmin",

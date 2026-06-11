@@ -627,31 +627,31 @@ function MockDashboardContent() {
   ];
 
   const tableRows = [
-    { name: "John Doe", email: "john@company.com", role: "Admin", status: "Active", date: "Today" },
+    { name: "John Doe", email: "john@example.com", role: "Admin", status: "Active", date: "Today" },
     {
       name: "Sarah Miller",
-      email: "sarah@company.com",
+      email: "sarah@example.com",
       role: "Editor",
       status: "Active",
       date: "Yesterday",
     },
     {
       name: "Alex Kim",
-      email: "alex@company.com",
+      email: "alex@example.com",
       role: "Viewer",
       status: "Pending",
       date: "2 days ago",
     },
     {
       name: "Maria Garcia",
-      email: "maria@company.com",
+      email: "maria@example.com",
       role: "Admin",
       status: "Active",
       date: "3 days ago",
     },
     {
       name: "James Wilson",
-      email: "james@company.com",
+      email: "james@example.com",
       role: "Editor",
       status: "Inactive",
       date: "1 week ago",

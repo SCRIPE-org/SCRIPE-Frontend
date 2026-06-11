@@ -68,7 +68,7 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
               type="email"
               value={vm.form.adminEmail}
               onChange={(e) => vm.updateField("adminEmail", e.target.value)}
-              placeholder="admin@company.com"
+              placeholder="admin@example.com"
               className={cn("h-11 pl-10 text-left", emailError && "border-destructive")}
               dir="ltr"
               autoFocus

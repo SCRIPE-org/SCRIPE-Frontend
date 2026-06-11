@@ -172,7 +172,7 @@ export function CreateTenantDialog({
         label: t("tenant.adminEmail") || "Admin Email",
         type: "text",
         required: true,
-        placeholder: t("tenant.adminEmailPlaceholder") || "admin@company.com",
+        placeholder: t("tenant.adminEmailPlaceholder") || "admin@example.com",
       },
       {
         name: "adminUsername",

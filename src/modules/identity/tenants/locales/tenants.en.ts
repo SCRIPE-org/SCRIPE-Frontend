@@ -416,7 +416,7 @@ export const en = {
       overridesTotalCost: "Override Costs",
     },
     adminEmail: "Admin Email",
-    adminEmailPlaceholder: "admin@company.com",
+    adminEmailPlaceholder: "admin@example.com",
     adminUsername: "Admin Username",
     adminUsernamePlaceholder: "Auto-generated if empty",
     setupEmailSent:

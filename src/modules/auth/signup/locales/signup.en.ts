@@ -63,7 +63,7 @@ export const en = {
       fullName: "Full name",
       fullNamePlaceholder: "John Doe",
       workEmail: "Work email",
-      emailPlaceholder: "you@company.com",
+      emailPlaceholder: "you@example.com",
       password: "Password",
       passwordPlaceholder: "Min. 12 characters",
       acceptTerms: "I agree to the",

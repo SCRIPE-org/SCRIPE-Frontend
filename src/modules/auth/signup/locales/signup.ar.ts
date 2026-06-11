@@ -63,7 +63,7 @@ export const ar = {
       fullName: "الاسم الكامل",
       fullNamePlaceholder: "أحمد محمد",
       workEmail: "البريد الإلكتروني للعمل",
-      emailPlaceholder: "you@company.com",
+      emailPlaceholder: "you@example.com",
       password: "كلمة المرور",
       passwordPlaceholder: "12 حرفاً على الأقل",
       acceptTerms: "أوافق على",

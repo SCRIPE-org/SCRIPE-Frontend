@@ -81,7 +81,7 @@ export function WorkspacePicker({
               reset();
             }}
             onKeyDown={handleKeyDown}
-            placeholder={t("auth.workspacePicker.emailPlaceholder") || "admin@company.com"}
+            placeholder={t("auth.workspacePicker.emailPlaceholder") || "admin@example.com"}
             autoComplete="email"
             disabled={isLoading}
             className="h-9 flex-1 text-sm"

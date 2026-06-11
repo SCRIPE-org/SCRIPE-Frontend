@@ -91,7 +91,7 @@ export function AccountStep({ vm }: AccountStepProps) {
           <Input
             id="signup-email"
             type="email"
-            placeholder={t("signup.account.emailPlaceholder") || "you@company.com"}
+            placeholder={t("signup.account.emailPlaceholder") || "you@example.com"}
             value={vm.wizardData.email}
             onChange={(e) => vm.updateField("email", e.target.value)}
             autoComplete="email"
