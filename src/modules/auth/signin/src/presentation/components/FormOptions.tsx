@@ -27,7 +27,7 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
               if (!disabled) onStaySignedInChange(!staySignedIn);
             }
           }}
-          className="flex h-4 w-4 shrink-0 items-center justify-center rounded transition-all"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded transition-all"
           style={{
             background: staySignedIn
               ? "linear-gradient(135deg, #A855F7, #3B82F6)"
@@ -40,8 +40,8 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
           }}
         >
           {staySignedIn && (
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-              <path d="M2 5l2 2 4-4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+            <svg width="13" height="14" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+              <path d="M2 5l2 2 5-4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           )}
         </div>

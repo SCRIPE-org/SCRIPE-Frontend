@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
 import { Button } from "@core/ui/button";
@@ -13,6 +14,7 @@ import { PaymentStep } from "../components/PaymentStep";
 import { ProvisioningStep } from "../components/ProvisioningStep";
 import { CompleteStep } from "../components/CompleteStep";
 import { SignupStepper } from "../components/SignupStepper";
+import Image from "next/image";
 
 /**
  * SignupView — Self-Service Tenant Signup Wizard
@@ -84,7 +86,9 @@ export function SignupView() {
           }}
         >
           <div className="flex-1 flex items-center justify-start">
-            <img src="/app-logo.png" alt={BRAND.name} className="h-11 w-auto" />
+            <Link href="/login">
+              <Image src="/app-logo.png" alt={BRAND.name} className="h-11 w-auto cursor-pointer" />
+            </Link>
           </div>
           {showStepper && (
             <div className="flex items-center justify-center">
@@ -171,7 +175,9 @@ export function SignupView() {
 
       {/* Logo */}
       <div className="mb-8" style={{ animation: "sxRise 0.5s ease-out" }}>
-        <img src="/app-logo.png" alt={BRAND.name} className="h-10 w-auto" />
+        <Link href="/login">
+          <Image src="/app-logo.png" alt={BRAND.name} className="h-10 w-auto cursor-pointer" />
+        </Link>
       </div>
 
       {/* Stepper */}
