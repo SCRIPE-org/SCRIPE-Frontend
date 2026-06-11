@@ -105,7 +105,10 @@ export interface SignupVerificationResult {
 
 export interface SignupResult {
   accessToken: string;
-  refreshToken: string;
+  // Note: refreshToken is intentionally absent here.
+  // CookieAuthMiddleware intercepts the /register response and moves the
+  // refresh token to an httpOnly cookie before the client ever sees the body.
+  // Storing it client-side would be a security violation.
   expiresAt: string;
   tenantId: string;
   tenantCode: string;

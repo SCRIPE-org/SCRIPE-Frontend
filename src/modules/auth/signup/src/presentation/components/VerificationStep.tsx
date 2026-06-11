@@ -14,12 +14,19 @@ interface VerificationStepProps {
 export function VerificationStep({ vm }: VerificationStepProps) {
   const { t, direction } = useI18n();
 
-  // Auto-submit when 6 digits are entered
+  // Auto-submit when 6 digits are entered.
+  // IMPORTANT: `vm` is intentionally NOT in the dependency array — the vm object
+  // reference changes on every state update (wizardData, error, etc.), which
+  // would cause this effect to re-fire after a successful verification while
+  // otpCode is still 6 digits, triggering a second server call on an already-
+  // consumed OTP. We only depend on the primitives we actually need.
+  // A second guard lives in verifyOtp() itself (isVerifyingOtpRef).
   useEffect(() => {
-    if (vm.otpCode.length === 6) {
+    if (vm.otpCode.length === 6 && !vm.isLoading) {
       vm.verifyOtp();
     }
-  }, [vm.otpCode, vm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vm.otpCode]);
 
   const maskedEmail = vm.wizardData.email.replace(
     /^(.{2})(.*)(@.*)$/,

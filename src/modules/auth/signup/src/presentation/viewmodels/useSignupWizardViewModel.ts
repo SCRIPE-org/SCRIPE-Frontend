@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { useAppStore } from "@core/store/useAppStore";
+import { AuthMapper } from "@modules/auth/core/data/mappers/AuthMapper";
+import { User } from "@modules/auth/core/domain/entities/User";
 import { authContainer } from "@modules/auth/di";
 import type {
   SignupWizardData,
@@ -44,6 +48,13 @@ const INITIAL_WIZARD_DATA: SignupWizardData = {
 export function useSignupWizardViewModel() {
   const router = useRouter();
   const { signupRepository } = authContainer;
+  const queryClient = useQueryClient();
+
+  // ── Store actions (stable references) ──
+  const setAuth = useAppStore((s) => s.setAuth);
+  const setSubscriptionInfo = useAppStore((s) => s.setSubscriptionInfo);
+  const setDefaultRedirectPath = useAppStore((s) => s.setDefaultRedirectPath);
+  const setTenantCode = useAppStore((s) => s.setTenantCode);
 
   // ── State ──
   const [step, setStep] = useState<SignupStep>("plan");
@@ -56,6 +67,10 @@ export function useSignupWizardViewModel() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpResendCooldown, setOtpResendCooldown] = useState(0);
   const cooldownRef = useRef<ReturnType<typeof setInterval>>(null);
+
+  // ── Submission guards (prevent double-fire from React effects or UI) ──
+  const isVerifyingOtpRef = useRef(false);
+  const isProvisioningRef = useRef(false);
 
   // ── Subdomain Check ──
   const [subdomainResult, setSubdomainResult] = useState<SubdomainCheckResult | null>(null);
@@ -195,15 +210,26 @@ export function useSignupWizardViewModel() {
     }, 1000);
   }, []);
 
+  // Cleanup cooldown interval on unmount to prevent memory leak
+  useEffect(() => {
+    return () => {
+      if (cooldownRef.current) clearInterval(cooldownRef.current);
+    };
+  }, []);
+
   // ════════════════════════════════════════════════════════════════════════
   // Step 3: Verify OTP
   // ════════════════════════════════════════════════════════════════════════
   const verifyOtp = useCallback(async () => {
+    // Guard: prevent double-submission from useEffect auto-fire (OTP race condition)
+    if (isVerifyingOtpRef.current) return;
+
     if (otpCode.length !== 6) {
       setError("Please enter the 6-digit code.");
       return;
     }
 
+    isVerifyingOtpRef.current = true;
     setIsLoading(true);
     setError("");
 
@@ -215,12 +241,17 @@ export function useSignupWizardViewModel() {
 
       if (result.isValid && result.verificationToken) {
         updateField("emailVerificationToken", result.verificationToken);
+        // Clear OTP code so the auto-submit useEffect cannot re-fire after step transition
+        setOtpCode("");
         setStep("workspace");
       } else {
         setError(result.error || "Invalid or expired code. Please try again.");
+        // Release guard on failure so the user can retry
+        isVerifyingOtpRef.current = false;
       }
     } catch {
       setError("Verification failed. Please try again.");
+      isVerifyingOtpRef.current = false;
     } finally {
       setIsLoading(false);
     }
@@ -312,12 +343,16 @@ export function useSignupWizardViewModel() {
   // Step 5 → 6: Start Provisioning (called from PaymentStep)
   // ════════════════════════════════════════════════════════════════════════
   const startProvisioning = useCallback(async () => {
+    // Guard: prevent double-registration if called twice (e.g. React StrictMode)
+    if (isProvisioningRef.current) return;
+    isProvisioningRef.current = true;
+
     setStep("provisioning");
     setProvisioningStep(0);
     setError("");
 
     try {
-      // Simulate provisioning progress
+      // Simulate provisioning progress steps for a polished UX
       setProvisioningStep(1);
       await new Promise((resolve) => setTimeout(resolve, 400));
 
@@ -345,25 +380,63 @@ export function useSignupWizardViewModel() {
       setProvisioningStep(3);
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Store tokens — the dashboard init flow (/me) will populate
-      // the full user store (permissions, roles, etc.)
+      // ── 1. Store access token in memory (in-memory only, security-first) ──
       secureTokenService.setAccessToken(result.accessToken);
+      // Note: refresh token is NOT in result — it was stripped by CookieAuthMiddleware
+      // and placed in an httpOnly cookie automatically. No client-side storage needed.
+
+      // ── 2. Hydrate the auth store — exactly mirroring the login flow ────────
+      // Map the AdminResponse userProfile to a User domain entity.
+      // Fallback: if the backend returns a null profile (should never happen),
+      // construct a minimal User from the wizard data so auth state is always set.
+      const user =
+        AuthMapper.userFromUnknown(result.userProfile) ??
+        new User({
+          id: "",
+          username: wizardData.email.split("@")[0] || "user",
+          firstName: wizardData.fullName.split(" ")[0] || "",
+          lastName: wizardData.fullName.split(" ").slice(1).join(" ") || "",
+          phoneNumber: "",
+          adminTypeName: "",
+        });
+
+      // Set auth state with isFreshLogin=true so DashboardLayout shows the
+      // premium welcome loader ("Getting everything ready") after redirect
+      setAuth(user, user.permissions ?? [], [], true);
+
+      // Persist tenant code for tenant-aware logout redirect (matches login flow)
+      if (result.tenantCode) {
+        setTenantCode(result.tenantCode);
+      }
+
+      // New tenants have no subscription status yet — the edition assignment
+      // happens server-side after registration. Start clean.
+      setSubscriptionInfo(null, null, null);
+
+      // Store the backend-provided redirect path as the authoritative destination
+      setDefaultRedirectPath(result.redirectUrl || "/");
+
+      // ── 3. Invalidate all cached queries so the dashboard loads fresh data ──
+      queryClient.invalidateQueries();
 
       setProvisioningStep(4);
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setStep("complete");
 
-      // Redirect to the new workspace dashboard
+      // ── 4. Navigate to root — RouteGuard sees isAuthenticated=true and
+      // DashboardLayout shows the welcome loader until everything is ready ──
       setTimeout(() => {
-        router.replace(result.redirectUrl || "/dashboard");
+        router.replace(result.redirectUrl || "/");
       }, 1500);
     } catch (err: unknown) {
+      // Reset guard on failure so the user can retry
+      isProvisioningRef.current = false;
       setStep("workspace");
       const message = err instanceof Error ? err.message : "Signup failed. Please try again.";
       setError(message);
     }
-  }, [wizardData, signupRepository, router]);
+  }, [wizardData, signupRepository, router, setAuth, setSubscriptionInfo, setDefaultRedirectPath, setTenantCode, queryClient]);
 
   // ════════════════════════════════════════════════════════════════════════
   // Navigation
