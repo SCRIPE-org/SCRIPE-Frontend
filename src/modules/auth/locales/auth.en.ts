@@ -2,7 +2,7 @@ export const en = {
   auth: {
     login: "Login",
     orContinueWith: "or continue with",
-    username: "Username or Email",
+    username: "Username or Email Address",
     password: "Password",
     loginButton: "Sign In",
     loginError: "Invalid username or password",

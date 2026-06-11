@@ -3397,3 +3397,71 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     align-items: stretch;
   }
 }
+
+/* ==========================================================================
+   RESPONSIVE AUTH LAYOUT VARS & DISABLED BUTTON STATES
+   ========================================================================== */
+:root {
+  /* Default large desktop variables */
+  --login-card-padding: 34px;
+  --login-container-py: 48px;
+  --login-heading-margin: 24px;
+  --login-footer-margin: 22px;
+  --login-input-height: 48px;
+  --login-logo-margin: 48px;
+  --login-logo-size: 96px;
+  --login-gap: 16px;
+}
+
+/* Intermediate heights (e.g. laptops, tablets) */
+@media (max-height: 850px) {
+  :root {
+    --login-card-padding: 28px;
+    --login-container-py: 32px;
+    --login-heading-margin: 18px;
+    --login-footer-margin: 16px;
+    --login-input-height: 44px;
+    --login-logo-margin: 32px;
+    --login-logo-size: 80px;
+    --login-gap: 12px;
+  }
+}
+
+/* Mobile heights / smaller viewports */
+@media (max-height: 720px) {
+  :root {
+    --login-card-padding: 20px;
+    --login-container-py: 16px;
+    --login-heading-margin: 12px;
+    --login-footer-margin: 12px;
+    --login-input-height: 40px;
+    --login-logo-margin: 20px;
+    --login-logo-size: 64px;
+    --login-gap: 8px;
+  }
+}
+
+/* Compact landscape and very short screens */
+@media (max-height: 600px) {
+  :root {
+    --login-card-padding: 14px;
+    --login-container-py: 8px;
+    --login-heading-margin: 8px;
+    --login-footer-margin: 8px;
+    --login-input-height: 36px;
+    --login-logo-margin: 12px;
+    --login-logo-size: 48px;
+    --login-gap: 6px;
+  }
+}
+
+/* Disabled button state overrides for auth components */
+.vault-stage button:disabled,
+.login-page button:disabled {
+  background: var(--sx-divider, rgba(255, 255, 255, 0.08)) !important;
+  color: var(--sx-text-faint, rgba(255, 255, 255, 0.4)) !important;
+  box-shadow: none !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}

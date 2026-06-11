@@ -35,10 +35,17 @@ export function MobileLogo({
   companyName: string;
 }) {
   return (
-    <div className="mb-12 flex flex-col items-center gap-4 lg:hidden">
+    <div
+      className="flex flex-col items-center gap-4 lg:hidden"
+      style={{ marginBottom: "var(--login-logo-margin, 48px)" }}
+    >
       <div
-        className="flex h-24 w-24 items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
-        style={{ borderRadius: "var(--login-radius-card, 24px)" }}
+        className="flex items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+        style={{
+          borderRadius: "var(--login-radius-card, 24px)",
+          width: "var(--login-logo-size, 96px)",
+          height: "var(--login-logo-size, 96px)",
+        }}
       >
         <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
       </div>

@@ -118,7 +118,7 @@ export function VaultLayout({
 
   return (
     <div
-      className={`vault-stage relative min-h-screen w-full overflow-hidden font-sans ${BG_STYLE}`}
+      className={`vault-stage login-page relative min-h-screen w-full overflow-hidden font-sans ${BG_STYLE}`}
       dir={direction}
       style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
     >
@@ -226,12 +226,18 @@ export function VaultLayout({
         </div>
 
         {/* ── Form column ──────────────────────────────────────────── */}
-        <div className="flex items-center justify-center px-5 py-12 lg:py-14 lg:pe-10 lg:ps-0">
+        <div
+          className="flex items-center justify-center px-5 lg:py-14 lg:pe-10 lg:ps-0"
+          style={{
+            paddingTop: "var(--login-container-py, 48px)",
+            paddingBottom: "var(--login-container-py, 48px)",
+          }}
+        >
           <div
             key={loginStep}
             className="sx-screen vault-cta relative flex w-full max-w-[430px] flex-col rounded-[20px]"
             style={{
-              padding: 34,
+              padding: "var(--login-card-padding, 34px)",
               background: "var(--sx-card-bg)",
               border: "1px solid var(--sx-card-border)",
               boxShadow: "var(--sx-card-shadow)",

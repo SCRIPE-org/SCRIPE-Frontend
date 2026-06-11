@@ -31,10 +31,10 @@ export function LanguageSwitcher({ buttonClassName, contentClassName }: Language
         className={cn(contentClassName)}
       >
         <DropdownMenuItem onClick={() => setLanguage("ar")}>
-          🇸🇦 {t("language.arabic") || "العربية"}
+          {t("language.arabic") || "العربية"}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setLanguage("en")}>
-          🇺🇸 {t("language.english") || "English"}
+          {t("language.english") || "English"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
