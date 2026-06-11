@@ -10,7 +10,7 @@
 
 // ── Enums / Unions ───────────────────────────────────────
 
-export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn";
+export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn" | "Free";
 export type SubscriptionStatus =
   | "Active"
   | "Trialing"

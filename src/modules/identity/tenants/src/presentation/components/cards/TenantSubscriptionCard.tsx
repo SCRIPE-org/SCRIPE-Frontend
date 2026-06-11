@@ -24,6 +24,7 @@ import {
   DollarSign,
   Globe,
   FileDown,
+  Gift,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
 import { systemContainer } from "@modules/identity/di";
@@ -71,7 +72,7 @@ const STATUS_CONFIG: Record<
 };
 
 function getTypeLabel(type: string, t: (key: string) => string, isFreePlan?: boolean): string {
-  if (isFreePlan) {
+  if (isFreePlan || type === "Free") {
     return t("tenant.typeLabel.free") || "Free";
   }
   const map: Record<string, string> = {
@@ -80,6 +81,7 @@ function getTypeLabel(type: string, t: (key: string) => string, isFreePlan?: boo
     Yearly: t("tenant.typeLabel.yearly") || "Yearly",
     Trial: t("tenant.typeLabel.trial") || "Trial",
     AddOn: t("tenant.typeLabel.addon") || "Add-On",
+    Free: t("tenant.typeLabel.free") || "Free",
   };
   return map[type] || type;
 }
@@ -115,7 +117,7 @@ function getBillingCycleOptions(
   edition?: EditionThinModel | null
 ): GenericSelectOption[] {
   if (edition?.isFree) {
-    return [{ value: "Lifetime", label: t("tenant.typeLabel.free") || "Free (Lifetime)" }];
+    return [{ value: "Free", label: t("tenant.typeLabel.free") || "Free" }];
   }
   const opts: GenericSelectOption[] = [];
   if (!edition || edition.allowMonthly !== false)
@@ -133,6 +135,7 @@ function getRenewOptions(
   t: (key: string) => string,
   edition?: EditionThinModel | null
 ): GenericSelectOption[] {
+  if (edition?.isFree) return [];
   const opts: GenericSelectOption[] = [];
   if (!edition || edition.allowMonthly !== false)
     opts.push({ value: "Monthly", label: t("tenant.renewLabel.oneMonth") || "1 Month" });
@@ -150,6 +153,7 @@ function getConvertOptions(
   t: (key: string) => string,
   edition?: EditionThinModel | null
 ): GenericSelectOption[] {
+  if (edition?.isFree) return [];
   const opts: GenericSelectOption[] = [];
   if (!edition || edition.allowMonthly !== false)
     opts.push({ value: "Monthly", label: t("tenant.typeLabel.monthly") || "Monthly" });
@@ -414,96 +418,110 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             </div>
           </div>
 
-          {/* ── Pricing Info ── */}
-          {subscription.currency && subscription.totalAmount != null && (
-            <div className="space-y-3 rounded-lg border border-border/50 bg-muted/30 p-3">
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    {t("tenant.billingCurrency") || "Currency"}
-                  </p>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm">
-                      {SUPPORTED_CURRENCIES.find((c) => c.code === subscription.currency)?.flag ||
-                        "🌍"}
-                    </span>
-                    <span className="text-sm font-bold">{subscription.currency}</span>
+          {/* ── Pricing Info / Free Plan Banner ── */}
+          {subscription.type === "Free" || (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
+            <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4 text-emerald-800 dark:text-emerald-400">
+              <Gift className="h-5 w-5 shrink-0 text-emerald-500 animate-pulse" />
+              <div>
+                <p className="text-sm font-semibold">
+                  {t("tenant.freePlanTitle") || "Free Plan"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t("tenant.freePlanDesc") || "This tenant is on a permanently free plan. No pricing, invoicing, or billing operations are required."}
+                </p>
+              </div>
+            </div>
+          ) : (
+            subscription.currency && subscription.totalAmount != null && (
+              <div className="space-y-3 rounded-lg border border-border/50 bg-muted/30 p-3">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {t("tenant.billingCurrency") || "Currency"}
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm">
+                        {SUPPORTED_CURRENCIES.find((c) => c.code === subscription.currency)?.flag ||
+                          "🌍"}
+                      </span>
+                      <span className="text-sm font-bold">{subscription.currency}</span>
+                    </div>
                   </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {t("tenant.baseAmount") || "Plan Price"}
+                    </p>
+                    <p className="text-sm font-medium">
+                      {formatDisplay(
+                        subscription.baseAmount ?? subscription.totalAmount,
+                        subscription.currency
+                      )}
+                    </p>
+                  </div>
+                  {(subscription.adjustmentAmount ?? 0) !== 0 && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        {(subscription.adjustmentAmount ?? 0) < 0
+                          ? t("tenant.entitlementLabels.overridesDiscount") || "Override Discount"
+                          : t("tenant.entitlementLabels.overridesTotalCost") || "Override Costs"}
+                      </p>
+                      <p
+                        className={`text-sm font-bold ${
+                          (subscription.adjustmentAmount ?? 0) < 0
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-amber-600 dark:text-amber-400"
+                        }`}
+                      >
+                        {(subscription.adjustmentAmount ?? 0) > 0 ? "+" : ""}
+                        {formatDisplay(subscription.adjustmentAmount!, subscription.currency)}
+                      </p>
+                    </div>
+                  )}
+                  {subscription.currency !== "USD" && subscription.exchangeRateToUsd && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        {t("tenant.exchangeRate") || "Rate"}
+                      </p>
+                      <p className="font-mono text-xs text-muted-foreground">
+                        1 {subscription.currency} = {subscription.exchangeRateToUsd.toFixed(4)} USD
+                      </p>
+                    </div>
+                  )}
+                  {subscription.appliedPromotionName && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        {t("tenant.appliedPromotion") || "Promotion"}
+                      </p>
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                      >
+                        🏷️ {subscription.appliedPromotionName}
+                        {subscription.promotionDiscount != null &&
+                          subscription.promotionDiscount > 0 && (
+                            <span className="ml-1">
+                              (–{formatDisplay(subscription.promotionDiscount, subscription.currency)}
+                              )
+                            </span>
+                          )}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    {t("tenant.baseAmount") || "Plan Price"}
-                  </p>
-                  <p className="text-sm font-medium">
-                    {formatDisplay(
-                      subscription.baseAmount ?? subscription.totalAmount,
-                      subscription.currency
-                    )}
-                  </p>
-                </div>
+
+                {/* Grand Total Bar — only when there are adjustments */}
                 {(subscription.adjustmentAmount ?? 0) !== 0 && (
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {(subscription.adjustmentAmount ?? 0) < 0
-                        ? t("tenant.entitlementLabels.overridesDiscount") || "Override Discount"
-                        : t("tenant.entitlementLabels.overridesTotalCost") || "Override Costs"}
-                    </p>
-                    <p
-                      className={`text-sm font-bold ${
-                        (subscription.adjustmentAmount ?? 0) < 0
-                          ? "text-emerald-600 dark:text-emerald-400"
-                          : "text-amber-600 dark:text-amber-400"
-                      }`}
-                    >
-                      {(subscription.adjustmentAmount ?? 0) > 0 ? "+" : ""}
-                      {formatDisplay(subscription.adjustmentAmount!, subscription.currency)}
-                    </p>
-                  </div>
-                )}
-                {subscription.currency !== "USD" && subscription.exchangeRateToUsd && (
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {t("tenant.exchangeRate") || "Rate"}
-                    </p>
-                    <p className="font-mono text-xs text-muted-foreground">
-                      1 {subscription.currency} = {subscription.exchangeRateToUsd.toFixed(4)} USD
-                    </p>
-                  </div>
-                )}
-                {subscription.appliedPromotionName && (
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {t("tenant.appliedPromotion") || "Promotion"}
-                    </p>
-                    <Badge
-                      variant="secondary"
-                      className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-                    >
-                      🏷️ {subscription.appliedPromotionName}
-                      {subscription.promotionDiscount != null &&
-                        subscription.promotionDiscount > 0 && (
-                          <span className="ml-1">
-                            (−{formatDisplay(subscription.promotionDiscount, subscription.currency)}
-                            )
-                          </span>
-                        )}
-                    </Badge>
+                  <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {t("tenant.grandTotal") || "Grand Total"}
+                    </span>
+                    <span className="text-sm font-bold text-primary">
+                      {formatDisplay(subscription.totalAmount, subscription.currency)}
+                    </span>
                   </div>
                 )}
               </div>
-
-              {/* Grand Total Bar — only when there are adjustments */}
-              {(subscription.adjustmentAmount ?? 0) !== 0 && (
-                <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {t("tenant.grandTotal") || "Grand Total"}
-                  </span>
-                  <span className="text-sm font-bold text-primary">
-                    {formatDisplay(subscription.totalAmount, subscription.currency)}
-                  </span>
-                </div>
-              )}
-            </div>
+            )
           )}
 
           {/* ── Expiration Warning ── */}

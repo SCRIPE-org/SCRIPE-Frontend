@@ -174,6 +174,7 @@ export function useTenantSubscriptionViewModel(
     (isActive || isPastDue) &&
     !isTrialing &&
     subscription?.type !== "Lifetime" &&
+    subscription?.type !== "Free" &&
     !isDowngraded;
   const canConvertTrial = !isPendingPayment && isTrialing;
   const canSuspend = !isPendingPayment && ((isActive && !isTrialing) || isPastDue);
