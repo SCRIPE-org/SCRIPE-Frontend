@@ -39,6 +39,8 @@ export const ar = {
     limitedByParent: "محدود بواسطة المستأجر الرئيسي",
     managePermissionsFor: "إدارة الصلاحيات لـ",
     title: "المستأجرون",
+    freePlanTitle: "خطة مجانية",
+    freePlanDesc:"هذه الخطة هي الخطة المجانية",
     description: "الوصف",
     hierarchy: "هرمية المستأجرين",
     allTenants: "جميع المستأجرين",
