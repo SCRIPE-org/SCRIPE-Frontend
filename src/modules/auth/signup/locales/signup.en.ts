@@ -1,6 +1,6 @@
 export const en = {
   signup: {
-    createWorkspace: "Create your workspace",
+    createWorkspace: "Create your workspace account",
     getStarted: "Get started with Scripe in under 2 minutes",
 
     // Stepper labels

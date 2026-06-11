@@ -1,6 +1,6 @@
 export const ar = {
   signup: {
-    createWorkspace: "أنشئ مساحة عملك",
+    createWorkspace: "أنشئ حساب مؤسستك",
     getStarted: "ابدأ مع سكرايب في أقل من دقيقتين",
 
     // تسميات خطوات المعالج
