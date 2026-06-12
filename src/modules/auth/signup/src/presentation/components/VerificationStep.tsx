@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2, ShieldCheck, RotateCcw } from "lucide-react";
 import { OtpInputField } from "@core/ui/otp-input-field";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
+import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 
 interface VerificationStepProps {
   vm: ReturnType<typeof useSignupWizardViewModel>;
@@ -34,7 +35,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
   );
 
   return (
-    <div style={{ animation: "sxScreenIn 0.4s ease-out" }} dir={direction}>
+    <div dir={direction}>
       {/* Header */}
       <div className="mb-8 text-center">
         {/* Shield icon */}
@@ -53,16 +54,16 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         <h1
           className="text-xl font-bold"
           style={{
-            background: "linear-gradient(180deg, #F5F2FF 0%, #C7B8F0 100%)",
+            background: BRAND_TOKENS.gradient.heroText,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
         >
           {t("signup.verification.title") || "Verify your email"}
         </h1>
-        <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
+        <p className="mt-2 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
           {t("signup.verification.sentCode") || "We sent a 6-digit code to"}{" "}
-          <span className="font-medium" style={{ color: "#C4B5FD" }}>
+          <span className="font-medium" style={{ color: BRAND_TOKENS.text.brand }}>
             {maskedEmail}
           </span>
         </p>
@@ -99,8 +100,8 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         disabled={vm.isLoading || vm.otpCode.length < 6}
         className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
         style={{
-          background: "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
-          boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
+          background: BRAND_TOKENS.gradient.cta,
+          boxShadow: BRAND_TOKENS.shadow.cta,
         }}
       >
         {vm.isLoading ? (
@@ -117,7 +118,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           type="button"
           onClick={vm.goBack}
           className="flex items-center gap-1.5 text-xs font-medium transition-colors"
-          style={{ color: "rgba(245,242,255,0.55)" }}
+          style={{ color: BRAND_TOKENS.text.secondary }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("signup.verification.back") || "Back"}
@@ -129,7 +130,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           onClick={vm.resendOtp}
           disabled={vm.otpResendCooldown > 0 || vm.isLoading}
           className="flex items-center gap-1.5 text-xs font-medium transition-colors disabled:opacity-40"
-          style={{ color: "#C4B5FD" }}
+          style={{ color: BRAND_TOKENS.text.brand }}
         >
           <RotateCcw className="h-3 w-3" />
           {vm.otpResendCooldown > 0

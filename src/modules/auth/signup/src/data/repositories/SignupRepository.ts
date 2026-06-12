@@ -1,49 +1,108 @@
-import type { ISignupRepository } from "../../domain/interfaces/ISignupRepository";
-import type { SignupService } from "../services/SignupService";
+// ═══════════════════════════════════════════════════════════════════════════
+// SignupRepository — Domain Entity Layer
+//
+// Calls the service (DTOs) and uses SignupMapper to produce domain entities.
+// This is the only layer that the presentation (ViewModels) interacts with.
+//
+// Rule: Repositories return domain entities. Never expose DTOs upward.
+// ═══════════════════════════════════════════════════════════════════════════
+
+import type {
+  ISignupRepository,
+  RegisterPayload,
+  ContactSalesPayload,
+  ChangePlanPayload,
+} from "../../domain/interfaces/ISignupRepository";
+import type { ISignupService } from "../interfaces/ISignupService";
+import { SignupMapper } from "../mappers/SignupMapper";
 import type {
   SignupOtpResult,
   SignupVerificationResult,
   SubdomainCheckResult,
   SignupResult,
+  SignupStatusResult,
+  SignupCompleteResult,
   PublicEdition,
+  PublicCategory,
+  PricingContext,
+  ResumeSessionResult,
+  ChangePlanResult,
 } from "../../domain/entities";
 
 export class SignupRepository implements ISignupRepository {
-  constructor(private readonly service: SignupService) {}
+  constructor(private readonly service: ISignupService) {}
 
-  async getEditions(): Promise<PublicEdition[]> {
-    return this.service.getEditions();
+  async getPricingContext(): Promise<PricingContext> {
+    const dto = await this.service.getPricingContext();
+    return SignupMapper.toPricingContext(dto);
   }
+
+  async getCategories(currency: string, lang: string): Promise<PublicCategory[]> {
+    const dtos = await this.service.getCategories(currency, lang);
+    return dtos.map(SignupMapper.toCategory);
+  }
+
+  async getEditions(
+    categoryKey: string | null,
+    currency: string,
+    lang: string
+  ): Promise<PublicEdition[]> {
+    const dtos = await this.service.getEditions(categoryKey, currency, lang);
+    return dtos.map(SignupMapper.toEdition);
+  }
+
   async sendOtp(email: string): Promise<SignupOtpResult> {
-    return this.service.sendOtp(email);
+    const dto = await this.service.sendOtp(email);
+    return SignupMapper.toOtpResult(dto);
   }
 
   async verifyOtp(email: string, code: string): Promise<SignupVerificationResult> {
-    return this.service.verifyOtp(email, code);
+    const dto = await this.service.verifyOtp(email, code);
+    return SignupMapper.toVerifyOtpResult(dto);
   }
 
   async checkSubdomain(subdomain: string): Promise<SubdomainCheckResult> {
-    return this.service.checkSubdomain(subdomain);
+    const dto = await this.service.checkSubdomain(subdomain);
+    return SignupMapper.toSubdomainResult(dto);
   }
 
-  async register(data: {
-    editionId?: string | null;
-    billingCycle?: string | null;
-    currency?: string | null;
-    promoCode?: string | null;
-    fullName: string;
-    email: string;
-    password: string;
-    acceptTerms: boolean;
-    marketingOptIn: boolean;
-    emailVerificationToken: string;
-    workspaceName: string;
-    subdomain: string;
-    username?: string;
-    region?: string | null;
-    defaultLocale?: string | null;
-    timezone?: string | null;
-  }): Promise<SignupResult> {
-    return this.service.register(data);
+  async submitContactSales(data: ContactSalesPayload): Promise<void> {
+    return this.service.submitContactSales(data);
+  }
+
+  async register(data: RegisterPayload): Promise<SignupResult> {
+    const dto = await this.service.register(data);
+    return SignupMapper.toRegisterResult(dto);
+  }
+
+  async getStatus(ref: string): Promise<SignupStatusResult> {
+    const dto = await this.service.getStatus(ref);
+    return SignupMapper.toStatusResult(dto);
+  }
+
+  async completeSession(signupRef: string): Promise<SignupCompleteResult> {
+    const dto = await this.service.completeSession(signupRef);
+    return SignupMapper.toCompleteResult(dto);
+  }
+
+  async abandon(signupRef: string): Promise<void> {
+    return this.service.abandon(signupRef);
+  }
+
+  async resume(signupRef: string): Promise<ResumeSessionResult | null> {
+    const dto = await this.service.resume(signupRef);
+    if (!dto) return null;
+    return {
+      status: dto.status,
+      editionId: dto.editionId,
+      billingCycle: dto.billingCycle,
+      currency: dto.currency,
+      expiresAt: dto.expiresAt,
+    };
+  }
+
+  async changePlan(payload: ChangePlanPayload): Promise<ChangePlanResult> {
+    const dto = await this.service.changePlan(payload);
+    return { checkoutUrl: dto.checkoutUrl };
   }
 }

@@ -39,6 +39,8 @@ import { ConnectRepository } from "./stripe-connect/src/data/repositories/Connec
 import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
 import { CommissionLedgerRepository } from "./commission-ledger/src/data/repositories/CommissionLedgerRepository";
 import { EditionCategoryRepository } from "./edition-categories/src/data/repositories/EditionCategoryRepository";
+import { LeadsService } from "./leads/src/data/services/LeadsService";
+import { LeadsRepository } from "./leads/src/data/repositories/LeadsRepository";
 
 // Tenant Gateways — no separate repository import needed (already imported above)
 
@@ -56,6 +58,7 @@ import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAn
 import type { ITenantGatewayRepository } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayRepository";
 import type { ICommissionLedgerRepository } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerRepository";
 import type { IEditionCategoryRepository } from "./edition-categories/src/domain/interfaces/IEditionCategoryRepository";
+import type { ILeadsRepository } from "./leads/src/domain/interfaces/ILeadsRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -86,6 +89,7 @@ export interface EntitlementsContainer {
   tenantGatewayRepository: ITenantGatewayRepository;
   commissionLedgerRepository: ICommissionLedgerRepository;
   editionCategoryRepository: IEditionCategoryRepository;
+  leadsRepository: ILeadsRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -131,6 +135,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
       commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
       editionCategoryRepository: new EditionCategoryRepository(editionCategoryService),
+      leadsRepository: new LeadsRepository(new LeadsService(apiService)),
     };
   }
 
@@ -179,5 +184,8 @@ export const entitlementsContainer = {
   },
   get editionCategoryRepository() {
     return getEntitlementsContainer().editionCategoryRepository;
+  },
+  get leadsRepository() {
+    return getEntitlementsContainer().leadsRepository;
   },
 };

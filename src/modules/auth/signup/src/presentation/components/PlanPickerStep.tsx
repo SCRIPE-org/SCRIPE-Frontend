@@ -6,33 +6,42 @@ import { Skeleton } from "@core/ui/skeleton";
 import { ChevronDown } from "lucide-react";
 import { usePlanPickerViewModel, type PlanEdition } from "../viewmodels/usePlanPickerViewModel";
 import { PlanCard } from "./PlanCard";
-import { ComparisonTable } from "./ComparisonTable";
+import { authContainer } from "@modules/auth/di";
+
 import { Button } from "@core/ui/button";
 
+import type { PublicEdition } from "../../domain/entities";
+
+const SUPPORTED_CURRENCIES = ["USD", "EUR", "SAR"] as const;
+
 interface PlanPickerStepProps {
-  onSelectPlan: (
-    edition: { id: string; name: string; trialDays: number | null; checkoutMode: string },
-    billingCycle: "monthly" | "annual"
-  ) => void;
+  onSelectPlan: (edition: PublicEdition, billingCycle: "monthly" | "annual") => void;
+  /** Pre-selected category key from CategoryStep (null = all) */
+  initialCategory?: string | null;
+  /** Display + checkout currency — owned by the wizard (defaults SAR for Arabic; U1) */
+  currency: string;
+  onCurrencyChange: (currency: string) => void;
 }
 
 /**
  * Groups editions by their category for the "All" view.
- * Returns an ordered array of { category, editions } objects.
+ * Returns an ordered array of { category, label, editions } objects.
  */
 function groupEditionsByCategory(editions: PlanEdition[]) {
-  const CATEGORY_DISPLAY_ORDER = ["General", "ERP", "Healthcare", "Education", "Finance"];
-  const groups = new Map<string, PlanEdition[]>();
+  const CATEGORY_DISPLAY_ORDER = ["general", "erp", "healthcare", "education", "finance"];
+  const groups = new Map<string, { label: string; editions: PlanEdition[] }>();
 
   for (const ed of editions) {
-    const cat = ed.category || "General";
-    if (!groups.has(cat)) groups.set(cat, []);
-    groups.get(cat)!.push(ed);
+    const cat = ed.category || "general";
+    if (!groups.has(cat)) {
+      groups.set(cat, { label: ed.categoryDisplayName ?? cat, editions: [] });
+    }
+    groups.get(cat)!.editions.push(ed);
   }
 
   // Sort each group internally by tier level
-  for (const editions of groups.values()) {
-    editions.sort((a, b) => a.tierLevel - b.tierLevel);
+  for (const group of groups.values()) {
+    group.editions.sort((a, b) => a.tierLevel - b.tierLevel);
   }
 
   // Sort categories by display order
@@ -45,12 +54,17 @@ function groupEditionsByCategory(editions: PlanEdition[]) {
       if (bi !== -1) return 1;
       return a.localeCompare(b);
     })
-    .map(([category, editions]) => ({ category, editions }));
+    .map(([category, group]) => ({ category, label: group.label, editions: group.editions }));
 }
 
-export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
+export function PlanPickerStep({
+  onSelectPlan,
+  initialCategory,
+  currency,
+  onCurrencyChange,
+}: PlanPickerStepProps) {
   const { t } = useI18n();
-  const vm = usePlanPickerViewModel(onSelectPlan);
+  const vm = usePlanPickerViewModel(authContainer.signupRepository, onSelectPlan, initialCategory ?? null, currency);
   const [showComparison, setShowComparison] = useState(false);
 
   // Group editions by category for the "All" view
@@ -69,9 +83,9 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
           <Skeleton className="mx-auto h-10 w-64" />
           <Skeleton className="mx-auto mt-3 h-5 w-80" />
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mx-auto flex flex-wrap justify-center gap-6 max-w-7xl">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-[420px] rounded-2xl" />
+            <Skeleton key={i} className="h-[420px] rounded-2xl w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[280px]" />
           ))}
         </div>
       </div>
@@ -111,16 +125,18 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
                     : "1px solid rgba(255,255,255,0.07)",
                 }}
               >
-                {cat ?? (t("signup.plan.allCategories") || "All")}
+                {cat === null
+                  ? t("signup.plan.allCategories") || "All"
+                  : vm.categoryLabels[cat] ?? cat}
               </button>
             );
           })}
         </div>
       )}
 
-      {/* ═══ Billing toggle ═══ */}
-      {vm.filteredEditions.some((e) => e.monthlyPrice > 0) && (
-        <div className="flex items-center justify-center">
+      {/* ═══ Billing toggle + Currency picker ═══ */}
+      <div className="flex flex-col items-center justify-center gap-4">
+        {vm.filteredEditions.some((e) => e.monthlyPrice > 0) && (
           <div
             className="inline-flex items-center rounded-full p-1"
             style={{
@@ -155,8 +171,45 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
               </button>
             ))}
           </div>
+        )}
+
+        {/* Currency pills (U1) — changing refetches prices in the chosen currency */}
+        <div className="flex items-center gap-3">
+          <div
+            className="inline-flex items-center rounded-full p-1"
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}
+          >
+            {SUPPORTED_CURRENCIES.map((code) => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => onCurrencyChange(code)}
+                className="rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200"
+                style={{
+                  background:
+                    currency === code
+                      ? "linear-gradient(135deg, rgba(34,211,238,0.2), rgba(34,211,238,0.1))"
+                      : "transparent",
+                  color: currency === code ? "#22D3EE" : "rgba(245,242,255,0.4)",
+                  border:
+                    currency === code
+                      ? "1px solid rgba(34,211,238,0.35)"
+                      : "1px solid transparent",
+                }}
+                aria-pressed={currency === code}
+              >
+                {code}
+              </button>
+            ))}
+          </div>
+          <span className="text-[11px]" style={{ color: "rgba(245,242,255,0.35)" }}>
+            {t("signup.plan.currencyNote", { currency }) || `Prices shown in ${currency}`}
+          </span>
         </div>
-      )}
+      </div>
 
       {/* ═══ Error ═══ */}
       {vm.error && (
@@ -172,7 +225,7 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
       {showCategoryHeaders ? (
         // "All" view: group editions by category with beautiful section headers
         <div className="space-y-16">
-          {groupedEditions.map(({ category, editions }) => (
+          {groupedEditions.map(({ category, label, editions }) => (
             <div key={category}>
               {/* Category section header */}
               <div className="mb-8 flex items-center gap-4">
@@ -186,7 +239,7 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
                   className="shrink-0 text-sm font-bold uppercase tracking-[0.2em]"
                   style={{ color: "rgba(168,85,247,0.7)" }}
                 >
-                  {category}
+                  {label}
                 </h2>
                 <div
                   className="h-px flex-1"
@@ -197,22 +250,17 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
               </div>
 
               {/* Edition cards within category */}
-              <div
-                className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-                style={{
-                  gridTemplateColumns:
-                    editions.length <= 3 ? `repeat(${editions.length}, minmax(0, 1fr))` : undefined,
-                }}
-              >
+              <div className="mx-auto flex flex-wrap justify-center gap-5 max-w-7xl">
                 {editions.map((edition, idx) => (
-                  <PlanCard
-                    key={edition.id || idx}
-                    edition={edition}
-                    index={idx}
-                    prevEditionName={idx > 0 ? editions[idx - 1]?.name : null}
-                    billingCycle={vm.billingCycle}
-                    onSelect={vm.selectPlan}
-                  />
+                  <div key={edition.id || idx} className="w-full sm:w-[calc(50%-10px)] lg:w-[320px] flex">
+                    <PlanCard
+                      edition={edition}
+                      index={idx}
+                      prevEditionName={idx > 0 ? editions[idx - 1]?.name : null}
+                      billingCycle={vm.billingCycle}
+                      onSelect={vm.selectPlan}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
@@ -220,16 +268,17 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
         </div>
       ) : (
         // Single category or filtered view: flat grid with gap
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto flex flex-wrap justify-center gap-5 max-w-7xl">
           {vm.filteredEditions.map((edition, idx) => (
-            <PlanCard
-              key={edition.id || idx}
-              edition={edition}
-              index={idx}
-              prevEditionName={idx > 0 ? vm.filteredEditions[idx - 1]?.name : null}
-              billingCycle={vm.billingCycle}
-              onSelect={vm.selectPlan}
-            />
+            <div key={edition.id || idx} className="w-full sm:w-[calc(50%-10px)] lg:w-[320px] flex">
+              <PlanCard
+                edition={edition}
+                index={idx}
+                prevEditionName={idx > 0 ? vm.filteredEditions[idx - 1]?.name : null}
+                billingCycle={vm.billingCycle}
+                onSelect={vm.selectPlan}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -286,27 +335,13 @@ export function PlanPickerStep({ onSelectPlan }: PlanPickerStepProps) {
                         : "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
-                    {cat}
+                    {vm.categoryLabels[cat] ?? cat}
                   </button>
                 );
               })}
             </div>
           )}
 
-          <div
-            className="mx-auto max-w-[1400px] overflow-hidden rounded-2xl"
-            style={{
-              background: "rgba(8,5,22,0.5)",
-              border: "1px solid rgba(255,255,255,0.04)",
-            }}
-          >
-            <ComparisonTable
-              editions={vm.comparisonEditions}
-              categories={vm.comparisonCategories}
-              billingCycle={vm.billingCycle}
-              onSelectPlan={vm.selectPlan}
-            />
-          </div>
         </div>
       )}
     </div>

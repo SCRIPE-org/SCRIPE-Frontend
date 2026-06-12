@@ -86,4 +86,8 @@ export const ENTITLEMENTS_PERMISSIONS = {
   TENANT_PAYMENT_GATEWAYS_CONFIGURE: "tenant_payment_gateways.configure",
   TENANT_PAYMENT_GATEWAYS_VERIFY: "tenant_payment_gateways.verify",
   TENANT_PAYMENT_GATEWAYS_REMOVE: "tenant_payment_gateways.remove",
+
+  // ── Platform Leads / CRM (Phase 5) ────────────────────
+  LEADS_VIEW: "leads.view",
+  LEADS_UPDATE: "leads.update",
 } as const;

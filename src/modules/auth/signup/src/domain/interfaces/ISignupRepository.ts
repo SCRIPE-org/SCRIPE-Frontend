@@ -3,30 +3,78 @@ import type {
   SignupVerificationResult,
   SubdomainCheckResult,
   SignupResult,
+  SignupStatusResult,
+  SignupCompleteResult,
   PublicEdition,
+  PublicCategory,
+  PricingContext,
+  ResumeSessionResult,
+  ChangePlanResult,
+  ChangePlanPayload,
 } from "../entities";
 
+export type { ChangePlanPayload };
+
+/** Register payload — promo codes are entered ONLY on the Stripe page, never here. */
+export interface RegisterPayload {
+  editionId?: string | null;
+  billingCycle?: string | null;
+  currency?: string | null;
+  fullName: string;
+  email: string;
+  password: string;
+  acceptTerms: boolean;
+  marketingOptIn: boolean;
+  emailVerificationToken: string;
+  workspaceName: string;
+  subdomain: string;
+  username?: string;
+  region?: string | null;
+  defaultLocale?: string | null;
+  timezone?: string | null;
+  // Discovery Intelligence (optional — sent to CRM, never affects pricing)
+  businessType?: string | null;
+  teamSize?: string | null;
+  primaryPriority?: string | null;
+}
+
+export interface ContactSalesPayload {
+  fullName: string;
+  email: string;
+  company?: string | null;
+  companySize?: string | null;
+  editionId?: string | null;
+  note?: string | null;
+  // Discovery Intelligence (optional)
+  businessType?: string | null;
+  teamSize?: string | null;
+  primaryPriority?: string | null;
+}
+
 export interface ISignupRepository {
-  getEditions(): Promise<PublicEdition[]>;
+  /** Detect visitor country and return recommended currency + all FX rates. */
+  getPricingContext(): Promise<PricingContext>;
+  getCategories(currency: string, lang: string): Promise<PublicCategory[]>;
+  getEditions(
+    categoryKey: string | null,
+    currency: string,
+    lang: string
+  ): Promise<PublicEdition[]>;
   sendOtp(email: string): Promise<SignupOtpResult>;
   verifyOtp(email: string, code: string): Promise<SignupVerificationResult>;
   checkSubdomain(subdomain: string): Promise<SubdomainCheckResult>;
-  register(data: {
-    editionId?: string | null;
-    billingCycle?: string | null;
-    currency?: string | null;
-    promoCode?: string | null;
-    fullName: string;
-    email: string;
-    password: string;
-    acceptTerms: boolean;
-    marketingOptIn: boolean;
-    emailVerificationToken: string;
-    workspaceName: string;
-    subdomain: string;
-    username?: string;
-    region?: string | null;
-    defaultLocale?: string | null;
-    timezone?: string | null;
-  }): Promise<SignupResult>;
+  submitContactSales(data: ContactSalesPayload): Promise<void>;
+  register(data: RegisterPayload): Promise<SignupResult>;
+  /** Finalize-page polling (3s → 10s cadence). */
+  getStatus(ref: string): Promise<SignupStatusResult>;
+  /** Atomic single-use consumption — issues JWTs once the webhook activated the signup. */
+  completeSession(signupRef: string): Promise<SignupCompleteResult>;
+  /** "Start fresh" — abandons the pending signup and releases the subdomain. */
+  abandon(signupRef: string): Promise<void>;
+
+  /** Validate a signupRef and return plan snapshot for the resume modal. Null = unknown/terminal ref. */
+  resume(signupRef: string): Promise<ResumeSessionResult | null>;
+
+  /** Cancel the current checkout and create a new one with a different plan. */
+  changePlan(payload: ChangePlanPayload): Promise<ChangePlanResult>;
 }

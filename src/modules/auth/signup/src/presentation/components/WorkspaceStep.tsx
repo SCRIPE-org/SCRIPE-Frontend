@@ -7,7 +7,8 @@ import { Label } from "@core/ui/label";
 import { ArrowLeft, ArrowRight, Globe, Loader2, Check, X } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
-import { BRAND } from "@/core/config/branding";
+import { BRAND } from "@core/config/branding";
+import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 
 interface WorkspaceStepProps {
   vm: ReturnType<typeof useSignupWizardViewModel>;
@@ -54,7 +55,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
   }[subdomainStatus];
 
   return (
-    <div style={{ animation: "sxScreenIn 0.4s ease-out" }} dir={direction}>
+    <div dir={direction}>
       {/* Header */}
       <div className="mb-6 text-center">
         <div
@@ -72,14 +73,14 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
         <h1
           className="text-xl font-bold"
           style={{
-            background: "linear-gradient(180deg, #F5F2FF 0%, #C7B8F0 100%)",
+            background: BRAND_TOKENS.gradient.heroText,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
         >
           {t("signup.workspace.title") || "Set up your workspace"}
         </h1>
-        <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
+        <p className="mt-2 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
           {t("signup.workspace.subtitle") || "Your team's home on Scripe"}
         </p>
       </div>
@@ -110,8 +111,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             className="h-11"
             style={{
               background: "rgba(255,255,255,0.03)",
-              borderColor: "rgba(255,255,255,0.08)",
-              color: "#F5F2FF",
+              borderColor: BRAND_TOKENS.border.input,
+              color: BRAND_TOKENS.text.primary,
             }}
           />
         </div>
@@ -121,7 +122,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           <Label
             htmlFor="signup-subdomain"
             className="text-xs font-medium"
-            style={{ color: "rgba(245,242,255,0.62)" }}
+            style={{ color: BRAND_TOKENS.text.secondary }}
           >
             {t("signup.workspace.workspaceUrl") || "Workspace URL"}
           </Label>
@@ -141,8 +142,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
                       ? "rgba(16,185,129,0.4)"
                       : subdomainStatus === "unavailable"
                         ? "rgba(239,68,68,0.4)"
-                        : "rgba(255,255,255,0.08)",
-                  color: "#F5F2FF",
+                        : BRAND_TOKENS.border.input,
+                  color: BRAND_TOKENS.text.primary,
                   transition: "border-color 0.2s",
                 }}
               />
@@ -153,8 +154,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
               className="flex h-11 items-center rounded-r-lg border border-l-0 px-3 text-xs font-medium"
               style={{
                 background: "rgba(255,255,255,0.02)",
-                borderColor: "rgba(255,255,255,0.08)",
-                color: "rgba(245,242,255,0.4)",
+                borderColor: BRAND_TOKENS.border.input,
+                color: BRAND_TOKENS.text.tertiary,
               }}
             >
               {BRAND.domain}
@@ -165,7 +166,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           {subdomainResult && !subdomainResult.available && (
             <p
               className="text-[11px] font-medium"
-              style={{ color: "#fca5a5", animation: "sxRise 0.2s ease-out" }}
+              style={{ color: "#fca5a5" }}
             >
               {subdomainResult.reason === "taken"
                 ? t("signup.workspace.subdomainTaken") || "This subdomain is already taken."
@@ -190,7 +191,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           {subdomainStatus === "available" && vm.wizardData.subdomain && (
             <p
               className="text-[11px] font-medium"
-              style={{ color: "#10B981", animation: "sxRise 0.2s ease-out" }}
+              style={{ color: "#10B981" }}
             >
               ✓ {t("signup.workspace.subdomainAvailable", { subdomain: vm.wizardData.subdomain }) ||
                 `✓ ${vm.wizardData.subdomain}.${BRAND.domain} is available!`}
@@ -204,11 +205,11 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             <Label
               htmlFor="signup-username"
               className="text-xs font-medium"
-              style={{ color: "rgba(245,242,255,0.62)" }}
+              style={{ color: BRAND_TOKENS.text.secondary }}
             >
               {t("signup.workspace.adminUsername") || "Admin username"}
             </Label>
-            <span className="text-[10px]" style={{ color: "rgba(245,242,255,0.4)" }}>
+            <span className="text-[10px]" style={{ color: BRAND_TOKENS.text.tertiary }}>
               {t("signup.common.optional") || "Optional"}
             </span>
           </div>
@@ -224,8 +225,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             className="h-11"
             style={{
               background: "rgba(255,255,255,0.03)",
-              borderColor: "rgba(255,255,255,0.08)",
-              color: "#F5F2FF",
+              borderColor: BRAND_TOKENS.border.input,
+              color: BRAND_TOKENS.text.primary,
             }}
           />
           <p
@@ -266,9 +267,8 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           }
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
-            background:
-              "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
-            boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
+            background: BRAND_TOKENS.gradient.cta,
+            boxShadow: BRAND_TOKENS.shadow.cta,
           }}
         >
           {vm.isLoading ? (

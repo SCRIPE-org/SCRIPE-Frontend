@@ -34,13 +34,24 @@ export const AUTH_ENDPOINTS = {
     SAML: {
       LOGIN: `${V1}/auth/saml/login`,
     },
-    // ── Self-service signup ────────────────────────────────────
+    // ── Self-service signup ────────────────────────────────────────────
     SIGNUP: {
+      /** Detects visitor country → returns recommended currency + all rates (cached 24h). */
+      PRICING_CONTEXT: `${V1}/auth/signup/pricing-context`,
+      GET_CATEGORIES: `${V1}/auth/signup/categories`,
       GET_EDITIONS: `${V1}/auth/signup/editions`,
       SEND_OTP: `${V1}/auth/signup/send-otp`,
       VERIFY_OTP: `${V1}/auth/signup/verify-otp`,
       CHECK_SUBDOMAIN: `${V1}/auth/signup/check-subdomain`,
+      CONTACT_SALES: `${V1}/auth/signup/contact-sales`,
       REGISTER: `${V1}/auth/signup/register`,
+      STATUS: `${V1}/auth/signup/status`,
+      COMPLETE_SESSION: `${V1}/auth/signup/complete-session`,
+      ABANDON: `${V1}/auth/signup/abandon`,
+      /** Validate an existing signupRef and return plan snapshot for UI restore. */
+      RESUME: `${V1}/auth/signup/resume`,
+      /** Change the selected plan while still awaiting payment — returns new checkoutUrl. */
+      CHANGE_PLAN: `${V1}/auth/signup/change-plan`,
     },
     // ── Passkey / WebAuthn ────────────────────────────────────
     PASSKEY: {

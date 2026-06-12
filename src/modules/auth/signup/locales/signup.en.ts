@@ -5,16 +5,23 @@ export const en = {
 
     // Stepper labels
     steps: {
+      organization: "Organization Type",
       plan: "Plan",
       account: "Account",
       verify: "Verify",
       workspace: "Workspace",
-      payment: "Payment",
+      review: "Review",
       setup: "Setting Up",
       welcome: "Welcome",
     },
     stepper: {
       label: "Signup progress",
+    },
+
+    // Header — persistent top bar
+    header: {
+      haveAccount: "Already have an account?",
+      signIn: "Sign in",
     },
 
     // Step 1 — Plan
@@ -26,6 +33,7 @@ export const en = {
       mo: "mo",
       free: "Free",
       custom: "Custom pricing",
+      loadFailed: "Failed to load plans. Please try again.",
       startFree: "Start Free",
       choosePlan: "Choose {{plan}}",
       contactSales: "Talk to Sales",
@@ -50,6 +58,7 @@ export const en = {
       featuresCount: "{{count}} features in {{categoriesCount}} categories",
       featuresHeader: "Features",
       forever: "forever",
+      currencyNote: "Prices shown in {{currency}}",
       inheritanceText: "All {{prevEditionName}} features, plus:",
       features: {
         basic: "Basic features",
@@ -125,26 +134,6 @@ export const en = {
       back: "Back",
     },
 
-    // Step 5 — Payment
-    payment: {
-      freeTitle: "You're all set!",
-      freeSubtitle: "No payment required for the Free plan.",
-      trialTitle: "Start your {{days}}-day trial",
-      paidTitle: "Complete your purchase",
-      plan: "plan",
-      cardNotRequired: "No credit card required",
-      trialNote: "No charge today. You'll be billed after your trial ends.",
-      trialCta: "Start free trial →",
-      payCta: "Complete purchase →",
-      continueFree: "Continue →",
-      processing: "Processing…",
-      promoCode: "Promo code",
-      promoApply: "Apply",
-      promoApplied: "Promo code applied!",
-      promoInvalid: "Invalid promo code.",
-      promoExpired: "This promo code has expired.",
-    },
-
     // Step 6 — Provisioning
     provisioning: {
       creatingWorkspace: "Creating workspace",
@@ -186,5 +175,137 @@ export const en = {
 
     // Copyright
     copyright: "All rights reserved",
+
+    // Step 0 — Category ("Organization")
+    category: {
+      title: "What type of organization are you?",
+      subtitle: "We'll tailor the plans to fit.",
+      allIndustries: "All Industries",
+      continue: "Continue →",
+      fromPrice: "from {{price}}/mo",
+      freeAvailable: "Free plan available",
+      notSure: "Not sure? Start with General",
+      skipButton: "Skip — show me all plans",
+    },
+
+    // Step 0b — Discovery (conversational 3-question flow)
+    discovery: {
+      badge: "Smart Discovery · Finding your perfect plan",
+
+      // Typewriter headlines
+      q1Title: "What kind of business are you?",
+      q2Title: "How big is your team?",
+      q3Title: "What matters most to you?",
+
+      // Sub-headings
+      q1Sub: "We'll tailor your plan recommendations to your industry.",
+      q2Sub: "We'll match features and quotas to your team's scale.",
+      q3Sub: "We'll pin the feature you care about most on your recommended plan.",
+
+      // Skip actions
+      skipQ: "Skip · I'll choose later",
+      skipToPlans: "Skip · Show me the plans",
+      skipAll: "Skip all questions · Take me straight to plans",
+
+      // Q2 — Team size labels
+      teamSize: {
+        solo: "Solo",
+        soloSub: "Just me",
+        small: "Small",
+        smallSub: "2 – 10 people",
+        medium: "Medium",
+        mediumSub: "11 – 50 people",
+        growing: "Growing",
+        growingSub: "51 – 200 people",
+        enterprise: "Enterprise",
+        enterpriseSub: "200+ people",
+      },
+
+      // Q3 — Priority labels
+      priority: {
+        analytics: "Analytics & Insights",
+        automation: "Automation & Workflows",
+        security: "Security & Compliance",
+        collaboration: "Team Collaboration",
+        integrations: "Integrations & APIs",
+        support: "Customer Support",
+        speed: "Speed & Performance",
+        customization: "Customization",
+      },
+
+      // Recommendation hint (shown before Q3)
+      hint: {
+        starter: "Starter",
+        team: "Team",
+        business: "Business",
+        professional: "Professional",
+        enterprise: "Enterprise",
+        message: "Based on your profile, we'll highlight our {{plan}} plan for you.",
+      },
+    },
+
+    // Contact Sales
+    contactSales: {
+      title: "Talk to our sales team",
+      interested: "Interested in:",
+      company: "Company",
+      companyPlaceholder: "Acme Inc.",
+      companySize: "Company size",
+      noteLabel: "Anything you'd like to share?",
+      notePlaceholder: "Team size, timeline, specific requirements…",
+      cta: "Request a demo",
+      successTitle: "We'll be in touch!",
+      successSubtitle: "Thanks! We'll reply within 1 business day.",
+      fallback: "Or email us directly at {{email}}",
+      backToPlans: "← Back to plans",
+    },
+
+    // Step 5 — Review (replaces Payment)
+    review: {
+      // free branch — ZERO payment language
+      freeTitle: "You're all set!",
+      freeSubtitle: "Review your details and create your workspace.",
+      createWorkspace: "Create your workspace",
+      // trial branch — card collected on Stripe's secure page
+      trialTitle: "Start your {{days}}-day free trial",
+      trialSubtitle: "Add a card on the secure checkout page — you won't be charged during the trial.",
+      trialStarts: "{{days}}-day free trial — starts when you complete checkout",
+      thenPrice: "Then {{price}}/{{cycle}}",
+      cancelAnytime: "Cancel anytime",
+      reminder: "We'll remind you 3 days before any charge",
+      startTrialCta: "Start free trial — continue to secure checkout",
+      // checkout branch
+      checkoutTitle: "Review your plan",
+      checkoutSubtitle: "Please confirm your details before continuing to secure checkout.",
+      billedTotal: "Billed today",
+      checkoutCta: "Continue to secure checkout",
+      // shared
+      planLabel: "Plan",
+      billingLabel: "Billing",
+      workspaceLabel: "Workspace",
+      accountLabel: "Account",
+      perMonth: "month",
+      perYear: "year",
+      editPlan: "Edit plan",
+      promoHint: "Have a promo code? Apply it on the secure checkout page.",
+      paymentPageNote: "",
+      checkoutCanceled: "Checkout canceled — you can try again or change your plan.",
+    },
+
+    // Finalize page (post-Stripe polling)
+    finalize: {
+      processing: "Setting up your workspace…",
+      waiting: "Confirming your payment with our payment provider.",
+      slow: "This usually completes within 15 minutes — we'll email your access link.",
+      paymentConfirmed: "Payment confirmed!",
+      opening: "Opening your workspace…",
+      successTitle: "Your workspace is ready!",
+      redirecting: "Taking you to your dashboard…",
+      failed: "Signup didn't complete. Your card was not charged.",
+      expired: "This link has expired.",
+      startAgain: "Start a new signup — you were not charged",
+      consumedTitle: "Signup already complete",
+      consumedSubtitle: "Your workspace is ready — log in with your credentials.",
+    },
   },
 };

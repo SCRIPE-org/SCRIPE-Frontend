@@ -139,7 +139,7 @@ export function PlanCard({
 
   return (
     <div
-      className="relative flex flex-col rounded-2xl transition-all duration-300 hover:translate-y-[-2px]"
+      className="relative flex flex-col w-full rounded-2xl transition-all duration-300 hover:translate-y-[-2px]"
       style={{
         background: isHighlighted
           ? "linear-gradient(180deg, rgba(30,16,60,0.7), rgba(14,10,32,0.8))"

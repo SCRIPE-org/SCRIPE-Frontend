@@ -277,6 +277,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Tenant Payment Gateways (Self-Service)
   "/my-payment-methods": [SYSTEM_PERMISSIONS.TENANT_PAYMENT_GATEWAYS_VIEW],
 
+  // Platform Leads / CRM (Phase 5)
+  "/entitlements/leads": [SYSTEM_PERMISSIONS.LEADS_VIEW],
+
   // Compliance Module
   "/compliance": [SYSTEM_PERMISSIONS.COMPLIANCE_DASHBOARD_VIEW],
   "/compliance/regulations": [SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW],

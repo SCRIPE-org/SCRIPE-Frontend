@@ -5,16 +5,23 @@ export const ar = {
 
     // تسميات خطوات المعالج
     steps: {
+      organization: "نوع المؤسسة",
       plan: "الخطة",
       account: "الحساب",
       verify: "التحقق",
       workspace: "مساحة العمل",
-      payment: "الدفع",
+      review: "المراجعة",
       setup: "الإعداد",
       welcome: "مرحباً",
     },
     stepper: {
       label: "تقدم التسجيل",
+    },
+
+    // الشريط العلوي الثابت
+    header: {
+      haveAccount: "هل لديك حساب بالفعل؟",
+      signIn: "تسجيل الدخول",
     },
 
     // الخطوة 1 — الخطة
@@ -28,11 +35,12 @@ export const ar = {
       custom: "تسعير مخصص",
       startFree: "ابدأ مجاناً",
       choosePlan: "اختر {{plan}}",
+      loadFailed: "فشل تحميل الخطط. يرجى المحاولة مرة أخرى.",
       contactSales: "تواصل مع المبيعات",
       compareAll: "قارن جميع المزايا",
       showComparison: "قارن بين جميع الخطط والمزايا",
       hideComparison: "إخفاء المقارنة",
-      savePercent: "وفّر {{percent}}٪",
+      savePercent: "وفّر {{percent}}%",
       billedAnnually: "يُفوتر سنوياً",
       trialDays: "تجربة مجانية لمدة {{days}} يوم",
       freeTagline: "ابدأ مجاناً",
@@ -50,6 +58,7 @@ export const ar = {
       featuresCount: "{{count}} ميزات في {{categoriesCount}} فئات",
       featuresHeader: "الميزات",
       forever: "للأبد",
+      currencyNote: "الأسعار بـ {{currency}}",
       inheritanceText: "كل مميزات {{prevEditionName}}، بالإضافة إلى:",
       features: {
         basic: "المزايا الأساسية",
@@ -125,26 +134,6 @@ export const ar = {
       back: "رجوع",
     },
 
-    // الخطوة 5 — الدفع
-    payment: {
-      freeTitle: "أنت جاهز!",
-      freeSubtitle: "لا يلزم الدفع للخطة المجانية.",
-      trialTitle: "ابدأ تجربتك لمدة {{days}} يوم",
-      paidTitle: "أكمل عملية الشراء",
-      plan: "خطة",
-      cardNotRequired: "لا يلزم بطاقة ائتمان",
-      trialNote: "بدون رسوم اليوم. ستتم الفوترة بعد انتهاء فترة التجربة.",
-      trialCta: "← ابدأ التجربة المجانية",
-      payCta: "← أكمل الشراء",
-      continueFree: "← متابعة",
-      processing: "جارٍ المعالجة…",
-      promoCode: "رمز ترويجي",
-      promoApply: "تطبيق",
-      promoApplied: "تم تطبيق الرمز الترويجي!",
-      promoInvalid: "رمز ترويجي غير صالح.",
-      promoExpired: "انتهت صلاحية هذا الرمز الترويجي.",
-    },
-
     // الخطوة 6 — الإعداد
     provisioning: {
       creatingWorkspace: "إنشاء مساحة العمل",
@@ -186,5 +175,132 @@ export const ar = {
 
     // حقوق النشر
     copyright: "جميع الحقوق محفوظة",
+
+    // الخطوة 0 — الفئة
+    category: {
+      title: "ما الذي يصف مؤسستك بشكل أفضل؟",
+      subtitle: "سنعرض لك الخطط المناسبة لصناعتك.",
+      allIndustries: "جميع الصناعات",
+      continue: "متابعة →",
+      fromPrice: "من {{price}}/شهر",
+      freeAvailable: "خطة مجانية متاحة",
+      notSure: "لست متأكداً؟ ابدأ بالعامة",
+      skipButton: "تخطي - اعرض جميع الخطط",
+    },
+
+    // الخطوة 0b — الاستكشاف الذكي (3 أسئلة تحاورية)
+    discovery: {
+      badge: "اكتشاف ذكي · نجد لك الخطة المثالية",
+
+      // عناوين الأسئلة (تأثير الكتابة المتحركة)
+      q1Title: "ما طبيعة عملك؟",
+      q2Title: "كم حجم فريقك؟",
+      q3Title: "ما أهم شيء بالنسبة لك؟",
+
+      // العناوين الفرعية
+      q1Sub: "سنخصص توصيات الخطط لتناسب قطاع عملك.",
+      q2Sub: "سنطابق الميزات والحصص مع حجم فريقك.",
+      q3Sub: "سنبرز الميزة الأهم بالنسبة لك في خطتك الموصى بها.",
+
+      // إجراءات التخطي
+      skipQ: "تخطي · سأختار لاحقاً",
+      skipToPlans: "تخطي · أرني الخطط",
+      skipAll: "تخطي جميع الأسئلة · اذهب مباشرة إلى الخطط",
+
+      // س2 — تسميات حجم الفريق
+      teamSize: {
+        solo: "منفرد",
+        soloSub: "أنا وحدي",
+        small: "صغير",
+        smallSub: "٢ – ١٠ أشخاص",
+        medium: "متوسط",
+        mediumSub: "١١ – ٥٠ شخصاً",
+        growing: "نامٍ",
+        growingSub: "٥١ – ٢٠٠ شخص",
+        enterprise: "مؤسسي",
+        enterpriseSub: "٢٠٠+ شخص",
+      },
+
+      // س3 — تسميات الأولويات
+      priority: {
+        analytics: "التحليلات والرؤى",
+        automation: "الأتمتة وسير العمل",
+        security: "الأمان والامتثال",
+        collaboration: "تعاون الفريق",
+        integrations: "التكاملات وواجهات API",
+        support: "دعم العملاء",
+        speed: "السرعة والأداء",
+        customization: "التخصيص",
+      },
+
+      // تلميح التوصية (يظهر قبل السؤال الثالث)
+      hint: {
+        starter: "المبتدئ",
+        team: "الفريق",
+        business: "الأعمال",
+        professional: "الاحترافي",
+        enterprise: "المؤسسي",
+        message: "بناءً على ملفك، سنبرز خطة {{plan}} لك.",
+      },
+    },
+
+    contactSales: {
+      title: "تحدث مع فريق المبيعات",
+      interested: "مهتم بـ:",
+      company: "الشركة",
+      companyPlaceholder: "شركة أكمي",
+      companySize: "حجم الشركة",
+      noteLabel: "هل هناك ما تود مشاركته؟",
+      notePlaceholder: "حجم الفريق، الجدول الزمني، المتطلبات المحددة…",
+      cta: "طلب عرض توضيحي",
+      successTitle: "سنتواصل معك قريباً!",
+      successSubtitle: "سيتواصل معك فريق المبيعات خلال يوم عمل واحد.",
+      fallback: "أو راسلنا على {{email}}",
+      backToPlans: "← رجوع إلى الخطط",
+    },
+
+    // الخطوة 5 — المراجعة
+    review: {
+      freeTitle: "أنت جاهز!",
+      freeSubtitle: "راجع تفاصيلك وأنشئ مساحة عملك.",
+      createWorkspace: "أنشئ مساحة عملك",
+      trialTitle: "ابدأ تجربتك المجانية لمدة {{days}} يوم",
+      trialSubtitle: "أضف بطاقة في صفحة الدفع الآمنة - لن يتم خصم أي مبلغ خلال التجربة.",
+      trialStarts: "تجربة مجانية لمدة {{days}} يوم - تبدأ عند إتمام الدفع",
+      thenPrice: "ثم {{price}}/{{cycle}}",
+      cancelAnytime: "إلغاء في أي وقت",
+      reminder: "سنذكّرك قبل 3 أيام من أي رسوم",
+      startTrialCta: "ابدأ التجربة المجانية - تابع إلى الدفع الآمن",
+      checkoutTitle: "راجع خطتك",
+      checkoutSubtitle: "يرجى تأكيد تفاصيلك قبل الانتقال إلى الدفع الآمن.",
+      billedTotal: "يُفوتر اليوم",
+      checkoutCta: "تابع إلى الدفع الآمن",
+      planLabel: "الخطة",
+      billingLabel: "الفوترة",
+      workspaceLabel: "مساحة العمل",
+      accountLabel: "الحساب",
+      perMonth: "شهر",
+      perYear: "سنة",
+      editPlan: "تعديل الخطة",
+      promoHint: "هل لديك رمز ترويجي؟ طبّقه في صفحة الدفع الآمنة.",
+      paymentPageNote: "",
+      checkoutCanceled: "تم إلغاء الدفع - يمكنك المحاولة مرة أخرى أو تغيير خطتك.",
+    },
+
+    // صفحة الإنهاء (بعد Stripe)
+    finalize: {
+      processing: "جارٍ إعداد مساحة عملك…",
+      waiting: "جارٍ تأكيد الدفع مع مزود الدفع.",
+      slow: "يكتمل هذا عادةً خلال 15 دقيقة - سنرسل لك رابط الوصول بالبريد.",
+      paymentConfirmed: "تم تأكيد الدفع!",
+      opening: "جارٍ فتح مساحة عملك…",
+      successTitle: "مساحة عملك جاهزة!",
+      redirecting: "جارٍ نقلك إلى لوحة التحكم…",
+      failed: "لم يكتمل التسجيل. لم يتم خصم أي مبلغ من بطاقتك.",
+      expired: "انتهت صلاحية هذا الرابط.",
+      startAgain: "ابدأ تسجيلاً جديداً - لم يتم خصم أي مبلغ",
+      consumedTitle: "اكتمل التسجيل مسبقاً",
+      consumedSubtitle: "مساحة عملك جاهزة - سجّل الدخول باستخدام بياناتك.",
+    },
   },
 };

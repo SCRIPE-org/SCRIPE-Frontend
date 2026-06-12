@@ -4,8 +4,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
-import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Checkbox } from "@core/ui/checkbox";
+import { PasswordInput } from "@core/ui/password-input";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface AccountStepProps {
@@ -16,7 +18,6 @@ const STRENGTH_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#10b981"];
 
 export function AccountStep({ vm }: AccountStepProps) {
   const { t, direction } = useI18n();
-  const [showPassword, setShowPassword] = useState(false);
 
   const strengthLabels = [
     t("signup.account.passwordStrength.veryWeak") || "Very Weak",
@@ -27,20 +28,20 @@ export function AccountStep({ vm }: AccountStepProps) {
   ];
 
   return (
-    <div style={{ animation: "sxScreenIn 0.4s ease-out" }} dir={direction}>
+    <div dir={direction}>
       {/* Header */}
       <div className="mb-6 text-center">
         <h1
           className="text-2xl font-bold"
           style={{
-            background: "linear-gradient(180deg, #F5F2FF 0%, #C7B8F0 100%)",
+            background: BRAND_TOKENS.gradient.heroText,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
         >
           {t("signup.createWorkspace") || "Create your workspace"}
         </h1>
-        <p className="mt-2 text-sm" style={{ color: "rgba(245,242,255,0.62)" }}>
+        <p className="mt-2 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
           {t("signup.getStarted") || "Get started with Scripe in under 2 minutes"}
         </p>
       </div>
@@ -49,7 +50,7 @@ export function AccountStep({ vm }: AccountStepProps) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          vm.submitAccount();
+          vm.submitAccount(vm.wizardData.email);
         }}
         className="space-y-4"
       >
@@ -58,7 +59,7 @@ export function AccountStep({ vm }: AccountStepProps) {
           <Label
             htmlFor="signup-fullname"
             className="text-xs font-medium"
-            style={{ color: "rgba(245,242,255,0.62)" }}
+            style={{ color: BRAND_TOKENS.text.secondary }}
           >
             {t("signup.account.fullName") || "Full name"}
           </Label>
@@ -73,8 +74,8 @@ export function AccountStep({ vm }: AccountStepProps) {
             className="h-11"
             style={{
               background: "rgba(255,255,255,0.03)",
-              borderColor: "rgba(255,255,255,0.08)",
-              color: "#F5F2FF",
+              borderColor: BRAND_TOKENS.border.input,
+              color: BRAND_TOKENS.text.primary,
             }}
           />
         </div>
@@ -84,7 +85,7 @@ export function AccountStep({ vm }: AccountStepProps) {
           <Label
             htmlFor="signup-email"
             className="text-xs font-medium"
-            style={{ color: "rgba(245,242,255,0.62)" }}
+            style={{ color: BRAND_TOKENS.text.secondary }}
           >
             {t("signup.account.workEmail") || "Work email"}
           </Label>
@@ -98,46 +99,34 @@ export function AccountStep({ vm }: AccountStepProps) {
             className="h-11"
             style={{
               background: "rgba(255,255,255,0.03)",
-              borderColor: "rgba(255,255,255,0.08)",
-              color: "#F5F2FF",
+              borderColor: BRAND_TOKENS.border.input,
+              color: BRAND_TOKENS.text.primary,
             }}
           />
         </div>
 
-        {/* Password */}
+        {/* Password — using PasswordInput from @core/ui */}
         <div className="space-y-1.5">
           <Label
             htmlFor="signup-password"
             className="text-xs font-medium"
-            style={{ color: "rgba(245,242,255,0.62)" }}
+            style={{ color: BRAND_TOKENS.text.secondary }}
           >
             {t("signup.account.password") || "Password"}
           </Label>
-          <div className="relative">
-            <Input
-              id="signup-password"
-              type={showPassword ? "text" : "password"}
-              placeholder={t("signup.account.passwordPlaceholder") || "Min. 12 characters"}
-              value={vm.wizardData.password}
-              onChange={(e) => vm.updatePassword(e.target.value)}
-              autoComplete="new-password"
-              className="h-11 pr-10"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                borderColor: "rgba(255,255,255,0.08)",
-                color: "#F5F2FF",
-              }}
-            />
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-              tabIndex={-1}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </Button>
-          </div>
+          <PasswordInput
+            id="signup-password"
+            placeholder={t("signup.account.passwordPlaceholder") || "Min. 12 characters"}
+            value={vm.wizardData.password}
+            onChange={(e) => vm.updatePassword(e.target.value)}
+            autoComplete="new-password"
+            className="h-11"
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              borderColor: BRAND_TOKENS.border.input,
+              color: BRAND_TOKENS.text.primary,
+            }}
+          />
 
           {/* Password Strength Meter */}
           {vm.wizardData.password.length > 0 && (
@@ -168,47 +157,32 @@ export function AccountStep({ vm }: AccountStepProps) {
           )}
         </div>
 
-        {/* Terms */}
-        <label className="flex cursor-pointer select-none items-start gap-2 pt-1">
-          <div
-            role="checkbox"
-            aria-checked={vm.wizardData.acceptTerms}
-            tabIndex={0}
-            onClick={() =>
-              !vm.isLoading && vm.updateField("acceptTerms", !vm.wizardData.acceptTerms)
+        {/* Terms — using Checkbox from @core/ui */}
+        <div className="flex items-start gap-3 pt-1">
+          <Checkbox
+            id="signup-terms"
+            checked={vm.wizardData.acceptTerms}
+            onCheckedChange={(checked) =>
+              !vm.isLoading && vm.updateField("acceptTerms", checked === true)
             }
-            onKeyDown={(e) => {
-              if (e.key === " " || e.key === "Enter") {
-                e.preventDefault();
-                if (!vm.isLoading) vm.updateField("acceptTerms", !vm.wizardData.acceptTerms);
-              }
-            }}
-            className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded transition-all"
+            disabled={vm.isLoading}
+            className="mt-0.5"
             style={{
-              background: vm.wizardData.acceptTerms
-                ? "linear-gradient(135deg, #A855F7, #3B82F6)"
-                : "transparent",
-              border: vm.wizardData.acceptTerms
-                ? "1px solid transparent"
-                : "1px solid rgba(255, 255, 255, 0.15)",
-              cursor: vm.isLoading ? "default" : "pointer",
-              opacity: vm.isLoading ? 0.5 : 1,
+              accentColor: BRAND_TOKENS.palette.violet,
             }}
+          />
+          <label
+            htmlFor="signup-terms"
+            className="cursor-pointer select-none text-xs leading-5"
+            style={{ color: BRAND_TOKENS.text.tertiary }}
           >
-            {vm.wizardData.acceptTerms && (
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                <path d="M2 5l2 2 4-4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            )}
-          </div>
-          <span className="text-xs leading-5" style={{ color: "rgba(245,242,255,0.55)" }}>
             {t("signup.account.acceptTerms") || "I agree to the"}{" "}
             <a
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium underline transition-colors hover:no-underline"
-              style={{ color: "#C4B5FD" }}
+              style={{ color: BRAND_TOKENS.text.brand }}
               onClick={(e) => e.stopPropagation()}
             >
               {t("signup.account.termsOfService") || "Terms of Service"}
@@ -219,18 +193,19 @@ export function AccountStep({ vm }: AccountStepProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium underline transition-colors hover:no-underline"
-              style={{ color: "#C4B5FD" }}
+              style={{ color: BRAND_TOKENS.text.brand }}
               onClick={(e) => e.stopPropagation()}
             >
               {t("signup.account.privacyPolicy") || "Privacy Policy"}
             </a>
-          </span>
-        </label>
+          </label>
+        </div>
 
         {/* Error */}
         {vm.error && (
           <div
             className="rounded-lg px-3 py-2 text-xs font-medium"
+            role="alert"
             style={{
               background: "rgba(239,68,68,0.1)",
               border: "1px solid rgba(239,68,68,0.2)",
@@ -245,12 +220,11 @@ export function AccountStep({ vm }: AccountStepProps) {
         {/* Submit */}
         <Button
           type="submit"
-          disabled={vm.isLoading}
+          disabled={vm.isLoading || !vm.wizardData.acceptTerms}
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
-            background:
-              "linear-gradient(180deg, #A855F7 0%, #7C3AED 40%, #4F46E5 75%, #3B82F6 100%)",
-            boxShadow: "0 4px 15px -3px rgba(124,58,237,0.4)",
+            background: BRAND_TOKENS.gradient.cta,
+            boxShadow: BRAND_TOKENS.shadow.cta,
           }}
         >
           {vm.isLoading ? (
@@ -264,14 +238,14 @@ export function AccountStep({ vm }: AccountStepProps) {
         </Button>
 
         {/* Login link */}
-        <p className="text-center text-xs" style={{ color: "rgba(245,242,255,0.55)" }}>
+        <p className="text-center text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
           {t("signup.account.alreadyHaveAccount") || "Already have an account?"}{" "}
           <Button
             variant="link"
             type="button"
             onClick={vm.goToLogin}
             className="h-auto p-0 font-medium underline transition-colors hover:no-underline"
-            style={{ color: "#C4B5FD" }}
+            style={{ color: BRAND_TOKENS.text.brand }}
           >
             {t("signup.account.signIn") || "Sign in"}
           </Button>

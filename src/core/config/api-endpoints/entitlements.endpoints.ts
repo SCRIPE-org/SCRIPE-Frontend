@@ -236,5 +236,11 @@ export const ENTITLEMENTS_ENDPOINTS = {
       VERIFY: (gatewayType: string) => `${V1}/tenant-gateways/${gatewayType}/verify`,
       REMOVE: (gatewayType: string) => `${V1}/tenant-gateways/${gatewayType}`,
     },
+    // ===== PLATFORM LEADS (Phase 5 CRM) =====
+    LEADS: {
+      LIST: `${V1}/leads`,
+      BY_ID: (id: string) => `${V1}/leads/${id}`,
+      UPDATE_STATUS: (id: string) => `${V1}/leads/${id}/status`,
+    },
   },
 };

@@ -69,6 +69,18 @@ export const STORAGE_KEYS = {
   // ── Session-scoped flags (sessionStorage) ──────────────────────────────────
   /** Set on login, cleared after first dashboard render. Used to show welcome loader only on fresh login. */
   JUST_LOGGED_IN: "scr_just_logged_in",
+
+  // ── Signup Wizard (sessionStorage — survives the Stripe round-trip) ─────────
+  /**
+   * Full wizard state: { step, wizardData (no password), selectedPlan }.
+   * Written before redirecting to Stripe; restored on cancel_url return.
+   */
+  SIGNUP_WIZARD: "scripe_signup_wizard",
+  /**
+   * The signupRef token used by the finalize page to poll and consume the session.
+   * Written alongside the Stripe redirect. Falls back to the emailed link in private mode.
+   */
+  SIGNUP_REF: "scr_signup_ref",
 } as const;
 
 /**

@@ -2,239 +2,349 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
-import { Button } from "@core/ui/button";
+import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 import { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
+import { DiscoveryStep } from "../components/DiscoveryStep";
 import { PlanPickerStep } from "../components/PlanPickerStep";
+import { CategoryStep } from "../components/CategoryStep";
 import { AccountStep } from "../components/AccountStep";
 import { VerificationStep } from "../components/VerificationStep";
 import { WorkspaceStep } from "../components/WorkspaceStep";
-import { PaymentStep } from "../components/PaymentStep";
+import { ContactSalesStep } from "../components/ContactSalesStep";
+import { ReviewStep } from "../components/ReviewStep";
 import { ProvisioningStep } from "../components/ProvisioningStep";
 import { CompleteStep } from "../components/CompleteStep";
 import { SignupStepper } from "../components/SignupStepper";
-import Image from "next/image";
+import { ResumeSignupModal } from "../components/ResumeSignupModal";
 
 /**
- * SignupView — Self-Service Tenant Signup Wizard
+ * SignupView — Self-Service Tenant Signup Wizard (v3).
  *
- * Step 1 (Plan) renders as a FULL-PAGE pricing layout (like Google One, Vercel, Render).
- * Steps 2-7 render inside a centered card container.
+ * Step flow (server-driven):
+ *   Discovery (Q1/Q2/Q3) → [Category if 2+ cats] → Plan → Account
+ *   → Verify → Workspace → Review
+ *   contact-sales editions divert to ContactSalesStep and end there;
+ *   free editions finish in-page (Provisioning → Complete);
+ *   trial/paid editions redirect to Stripe and come back via /signup/finalize.
  */
+
+// framer-motion supports function-based initial/exit variants when custom is set.
+// We avoid the strict `Variants` typedef here because it doesn't include function overloads.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const STEP_VARIANTS: Record<string, any> = {
+  initial: (direction: number) => ({
+    opacity: 0,
+    x: direction > 0 ? 32 : -32,
+    filter: "blur(4px)",
+  }),
+  animate: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    x: direction > 0 ? -32 : 32,
+    filter: "blur(4px)",
+    transition: { duration: 0.25, ease: "easeIn" },
+  }),
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const BAND_VARIANTS: Record<string, any> = {
+  hidden: { opacity: 0, height: 0 },
+  visible: {
+    opacity: 1,
+    height: "auto",
+    transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
+  },
+};
+
 export function SignupView() {
   const vm = useSignupWizardViewModel();
   const { t, direction } = useI18n();
 
   const stepperSteps = useMemo(
     () => [
+      { key: "category", label: t("signup.steps.organization") || "Organization" },
       { key: "plan", label: t("signup.steps.plan") || "Plan" },
       { key: "account", label: t("signup.steps.account") || "Account" },
       { key: "verification", label: t("signup.steps.verify") || "Verify" },
       { key: "workspace", label: t("signup.steps.workspace") || "Workspace" },
-      { key: "payment", label: t("signup.steps.payment") || "Payment" },
+      { key: "review", label: t("signup.steps.review") || "Review" },
     ],
     [t]
   );
 
-  const isPlanStep = vm.step === "plan";
-  const showStepper = vm.step !== "provisioning" && vm.step !== "complete";
+  const isFullPage =
+    vm.step === "discovery" || vm.step === "plan" || vm.step === "category";
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  //  PLAN STEP → Full-page pricing layout (no card container)
-  // ═══════════════════════════════════════════════════════════════════════════
-  if (isPlanStep) {
-    return (
+  const showStepper =
+    vm.step !== "discovery" &&
+    vm.step !== "provisioning" &&
+    vm.step !== "complete" &&
+    vm.step !== "contact-sales";
+
+  // Direction is owned by the ViewModel — set atomically with setStep via
+  // React 18 batched updates (single render, zero ref access, zero effects).
+  const slideDirection = vm.navigationDirection;
+
+  return (
+    <div
+      className="flex min-h-screen flex-col"
+      dir={direction}
+      style={{
+        background: BRAND_TOKENS.bg.base,
+        backgroundImage: BRAND_TOKENS.gradient.page,
+      }}
+    >
+      {/* ═══ Ambient glow orbs (fixed, pointer-events: none) ═══ */}
       <div
-        className="min-h-screen"
-        dir={direction}
+        className="pointer-events-none fixed left-1/3 top-0 -translate-x-1/2"
         style={{
-          background: "var(--sx-bg, #06060E)",
-          backgroundImage:
-            "radial-gradient(140% 90% at 25% 25%, #1A1140 0%, #0A0820 40%, #06060E 80%, #04040A 100%)",
+          width: 800,
+          height: 600,
+          borderRadius: "50%",
+          background: `radial-gradient(ellipse, ${BRAND_TOKENS.palette.violet}12 0%, transparent 65%)`,
+          filter: "blur(80px)",
+        }}
+      />
+      <div
+        className="pointer-events-none fixed bottom-0 right-1/4 translate-x-1/2"
+        style={{
+          width: 600,
+          height: 500,
+          borderRadius: "50%",
+          background: `radial-gradient(ellipse, ${BRAND_TOKENS.palette.cyan}0d 0%, transparent 65%)`,
+          filter: "blur(70px)",
+        }}
+      />
+
+      {/* ════════════════════════════════════════════════════════════════════
+          HEADER — always 56px, never changes height between steps.
+          Logo + wordmark on the left.
+          "Already have an account? Sign in →" on the right (plain text, no button chrome).
+          Nothing else here. Stepper lives in its own band below.
+      ════════════════════════════════════════════════════════════════════ */}
+      <header
+        className="sticky top-0 z-40 flex h-14 items-center justify-between px-5 sm:px-8"
+        style={{
+          background: "rgba(10, 8, 22, 0.72)",
+          backdropFilter: "blur(24px) saturate(160%)",
+          WebkitBackdropFilter: "blur(24px) saturate(160%)",
+          borderBottom: "1px solid rgba(255,255,255,0.055)",
         }}
       >
-        {/* Ambient glow */}
-        <div
-          className="pointer-events-none fixed left-1/4 top-1/4 -translate-x-1/2 -translate-y-1/2"
-          style={{
-            width: 700,
-            height: 700,
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)",
-            filter: "blur(100px)",
-          }}
-        />
-        <div
-          className="pointer-events-none fixed bottom-1/3 right-1/4 translate-x-1/2"
-          style={{
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(34,211,238,0.04) 0%, transparent 70%)",
-            filter: "blur(80px)",
-          }}
-        />
-
-        {/* Top bar: Logo + Stepper */}
-        <header
-          className="sticky top-0 z-40 flex items-center justify-between gap-4 px-6 py-4"
-          style={{
-            background: "rgba(6,6,14,0.85)",
-            backdropFilter: "blur(20px)",
-            borderBottom: "1px solid rgba(255,255,255,0.04)",
-          }}
+        {/* ── Logo + wordmark ── */}
+        <Link
+          href="/"
+          aria-label={BRAND.name}
+          className="flex select-none items-center gap-2.5 transition-opacity hover:opacity-75"
         >
-          <div className="flex-1 flex items-center justify-start">
-            <Link href="/login">
-              <Image src="/app-logo.png" alt={BRAND.name} className="h-11 w-auto cursor-pointer" />
-            </Link>
-          </div>
-          {showStepper && (
-            <div className="flex items-center justify-center">
+          <Image
+            src="/app-logo.png"
+            alt={BRAND.name}
+            className="h-7 w-auto"
+            width={28}
+            height={28}
+            priority
+          />
+          <span
+            className="text-[15px] font-semibold tracking-tight"
+            style={{ color: BRAND_TOKENS.text.primary }}
+          >
+            {BRAND.name}
+          </span>
+        </Link>
+
+        {/* ── "Already have an account? Sign in →" ── */}
+        <div className="flex items-center gap-1.5 text-[13px]" style={{ color: BRAND_TOKENS.text.tertiary }}>
+          <span className="hidden sm:inline">
+            {t("signup.header.haveAccount") || "Already have an account?"}
+          </span>
+          <Link
+            href="/login"
+            className="font-semibold transition-colors hover:text-white"
+            style={{ color: BRAND_TOKENS.text.brand }}
+          >
+            {t("signup.header.signIn") || "Sign in"}{" "}
+            <span aria-hidden className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+          </Link>
+        </div>
+      </header>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          STEPPER BAND — separate from header, animated height collapse.
+          Appears below the header on ALL screen sizes (no mobile/desktop split).
+          Hidden on Discovery, Provisioning, Complete, Contact-Sales steps.
+      ════════════════════════════════════════════════════════════════════ */}
+      <AnimatePresence initial={false}>
+        {showStepper && (
+          <motion.div
+            key="stepper-band"
+            variants={BAND_VARIANTS}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="sticky top-14 z-30 overflow-hidden"
+            style={{
+              background: "rgba(10, 8, 22, 0.6)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              borderBottom: "1px solid rgba(255,255,255,0.04)",
+            }}
+          >
+            <div className="flex items-center justify-center py-2.5 px-4">
               <SignupStepper
                 currentStep={vm.step}
                 steps={stepperSteps}
                 className="flex items-center justify-center gap-1 sm:gap-2"
               />
             </div>
-          )}
-          <div className="flex-1 flex items-center justify-end">
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={vm.goToLogin}
-              className="text-xs font-medium transition-colors hover:text-white"
-              style={{ color: "rgba(245,242,255,0.6)" }}
-            >
-              {t("auth.backToLogin") || "Back to login"}
-            </Button>
-          </div>
-        </header>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Full-page plan content */}
-        <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <PlanPickerStep onSelectPlan={vm.selectPlan} />
+      {/* ═══ Stage ═══ */}
+      {isFullPage ? (
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+          <AnimatePresence mode="wait" custom={slideDirection}>
+            {vm.step === "discovery" && (
+              <motion.div
+                key="discovery"
+                custom={slideDirection}
+                variants={STEP_VARIANTS}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <DiscoveryStep
+                  categories={vm.categories}
+                  isCategoriesLoading={vm.isCategoriesLoading}
+                  onComplete={vm.setDiscovery}
+                  initialAnswers={vm.discoveryAnswers}
+                />
+              </motion.div>
+            )}
+            {vm.step === "category" && (
+              <motion.div
+                key="category"
+                custom={slideDirection}
+                variants={STEP_VARIANTS}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <CategoryStep
+                  categories={vm.categories}
+                  isLoading={vm.isCategoriesLoading}
+                  currency={vm.currency}
+                  onSelectCategory={vm.selectCategory}
+                  selectedCategory={vm.selectedCategory}
+                />
+              </motion.div>
+            )}
+            {vm.step === "plan" && (
+              <motion.div
+                key="plan"
+                custom={slideDirection}
+                variants={STEP_VARIANTS}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <PlanPickerStep
+                  onSelectPlan={vm.selectPlan}
+                  initialCategory={vm.selectedCategory}
+                  currency={vm.currency}
+                  onCurrencyChange={vm.setCurrency}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
-
-        {/* Footer */}
-        <footer className="py-8 text-center text-[11px] text-white/25">
-          © {new Date().getFullYear()} {BRAND.name} — All rights reserved
-        </footer>
-      </div>
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  //  OTHER STEPS → Centered card container
-  // ═══════════════════════════════════════════════════════════════════════════
-  return (
-    <div
-      className="flex min-h-screen flex-col items-center justify-center p-4"
-      dir={direction}
-      style={{
-        background: "var(--sx-bg, #06060E)",
-        backgroundImage:
-          "radial-gradient(140% 90% at 25% 25%, #1A1140 0%, #0A0820 40%, #06060E 80%, #04040A 100%)",
-      }}
-    >
-      {/* Ambient glow orbs */}
-      <div
-        className="pointer-events-none fixed left-1/4 top-1/4 -translate-x-1/2 -translate-y-1/2"
-        style={{
-          width: 600,
-          height: 600,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
-      <div
-        className="pointer-events-none fixed bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2"
-        style={{
-          width: 400,
-          height: 400,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%)",
-          filter: "blur(60px)",
-        }}
-      />
-
-      {/* Top action: Back to login */}
-      <div className="absolute end-4 top-4 sm:end-8 sm:top-6" style={{ animation: "sxRise 0.5s ease-out" }}>
-        <Button
-          variant="ghost"
-          type="button"
-          onClick={vm.goToLogin}
-          className="text-xs font-medium transition-colors hover:text-white"
-          style={{ color: "rgba(245,242,255,0.6)" }}
-        >
-          {t("auth.backToLogin") || "Back to login"}
-        </Button>
-      </div>
-
-      {/* Logo */}
-      <div className="mb-8" style={{ animation: "sxRise 0.5s ease-out" }}>
-        <Link href="/login">
-          <Image src="/app-logo.png" alt={BRAND.name} className="h-10 w-auto cursor-pointer" />
-        </Link>
-      </div>
-
-      {/* Stepper */}
-      {showStepper && (
-        <div style={{ animation: "sxRise 0.5s ease-out 0.1s both" }}>
-          <SignupStepper currentStep={vm.step} steps={stepperSteps} />
-        </div>
+      ) : (
+        <main className="flex flex-1 flex-col items-center justify-center p-4 py-10">
+          <div
+            className="relative w-full max-w-md overflow-hidden rounded-2xl"
+            style={{
+              background: BRAND_TOKENS.bg.card,
+              border: BRAND_TOKENS.border.card,
+              boxShadow: BRAND_TOKENS.shadow.card,
+            }}
+          >
+            <AnimatePresence mode="wait" custom={slideDirection}>
+              <motion.div
+                key={vm.step}
+                custom={slideDirection}
+                variants={STEP_VARIANTS}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="p-6 sm:p-8"
+              >
+                {vm.step === "account" && <AccountStep vm={vm} />}
+                {vm.step === "verification" && <VerificationStep vm={vm} />}
+                {vm.step === "workspace" && <WorkspaceStep vm={vm} />}
+                {vm.step === "contact-sales" && (
+                  <ContactSalesStep vm={vm} editionName={vm.selectedEditionName} />
+                )}
+                {vm.step === "review" && (
+                  <ReviewStep
+                    vm={{
+                      wizardData: {
+                        billingCycle: vm.wizardData.billingCycle,
+                        subdomain: vm.wizardData.subdomain,
+                        email: vm.wizardData.email,
+                      },
+                      isLoading: vm.isLoading,
+                      error: vm.error,
+                      checkoutCanceled: vm.checkoutCanceled,
+                      dismissCheckoutCanceled: vm.dismissCheckoutCanceled,
+                      startProvisioning: vm.startProvisioning,
+                      goBack: vm.goBack,
+                      editPlan: vm.editPlan,
+                      selectedPlan: vm.selectedPlan,
+                      selectedCheckoutMode: vm.selectedCheckoutMode,
+                    }}
+                  />
+                )}
+                {vm.step === "provisioning" && <ProvisioningStep vm={vm} />}
+                {vm.step === "complete" && <CompleteStep vm={vm} />}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </main>
       )}
 
-      {/* Card container */}
-      <div
-        className="relative w-full max-w-md overflow-hidden rounded-2xl"
-        style={{
-          background: "linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85))",
-          border: "1px solid rgba(168,85,247,.22)",
-          boxShadow: "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)",
-        }}
+      {/* ═══ Footer ═══ */}
+      <footer
+        className="py-6 text-center text-[11px]"
+        style={{ color: BRAND_TOKENS.text.ghost }}
       >
-        <div
-          key={vm.step}
-          className="sx-screen p-6 sm:p-8"
-          style={{ animation: "sxScreenIn 0.4s ease-out" }}
-        >
-          {vm.step === "account" && <AccountStep vm={vm} />}
-          {vm.step === "verification" && <VerificationStep vm={vm} />}
-          {vm.step === "workspace" && <WorkspaceStep vm={vm} />}
-          {vm.step === "payment" && (
-            <PaymentStep
-              vm={{
-                wizardData: {
-                  editionId: vm.wizardData.editionId,
-                  billingCycle: vm.wizardData.billingCycle,
-                  promoCode: vm.wizardData.promoCode,
-                },
-                isLoading: vm.isLoading,
-                error: vm.error,
-                updateField: vm.updateField as (field: string, value: unknown) => void,
-                submitWorkspace: vm.startProvisioning,
-                goBack: vm.goBack,
-              }}
-              editionName={vm.selectedEditionName}
-              trialDays={vm.selectedTrialDays}
-              isFree={vm.selectedIsFree}
-            />
-          )}
-          {vm.step === "provisioning" && <ProvisioningStep vm={vm} />}
-          {vm.step === "complete" && <CompleteStep vm={vm} />}
-        </div>
-      </div>
+        © {new Date().getFullYear()} {BRAND.name} —{" "}
+        {t("signup.copyright") || "All rights reserved"}
+      </footer>
 
-      {/* Footer */}
-      <p
-        className="mt-8 text-center text-[11px] font-medium"
-        style={{ color: "rgba(245,242,255,0.35)" }}
-      >
-        © {new Date().getFullYear()} {BRAND.name} — All rights reserved
-      </p>
+      {/* ═══ Resume modal ═══ */}
+      {vm.showResumeModal && vm.pendingResumeInfo && (
+        <ResumeSignupModal
+          info={vm.pendingResumeInfo}
+          onResume={vm.resumeSignup}
+          onChangePlan={vm.changePlanFromModal}
+          onStartFresh={vm.startFreshSignup}
+        />
+      )}
     </div>
   );
 }
