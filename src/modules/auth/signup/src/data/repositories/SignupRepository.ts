@@ -122,6 +122,7 @@ export class SignupRepository implements ISignupRepository {
       recommendedEditionName: dto.recommendedEditionName,
       score: dto.score,
       reason: dto.reason,
+      reasons: dto.reasons ?? [],
     };
   }
 }

@@ -28,6 +28,8 @@ export interface DiscoveryStepProps {
     primaryPriority: string | null;
     categoryCount: number;
     recommendedTier: RecommendedTier;
+    /** Translatable locale keys explaining the recommendation (from the backend scorer). */
+    recommendationReasons: string[];
   }) => void;
   /** Pre-populated from persisted wizard state (Stripe round-trip resume) */
   initialAnswers?: {
@@ -108,22 +110,29 @@ export function DiscoveryStep({
     };
   }, [question]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Recommendation hint (computed, not fetched) ───────────────────────────
+  // ── Recommendation hint (live local preview — mirrors the real scorer) ─────
+  // Uses the SAME pure engine the wizard falls back to (Q1 + Q2 + Q3), so the hint
+  // is honest: it names the tier the scorer currently leans toward and updates as the
+  // user answers. The final, authoritative recommendation is the backend's (see complete()).
   const recommendationHint = useCallback((): string | null => {
-    if (!businessType && !teamSize) return null;
-    const sizeLabels: Record<string, string> = {
-      solo: t("signup.discovery.hint.free") || "Free",
-      "2-10": t("signup.discovery.hint.pro") || "Pro",
-      "11-50": t("signup.discovery.hint.pro") || "Pro",
-      "51-200": t("signup.discovery.hint.ultra") || "Ultra",
-      "200+": t("signup.discovery.hint.ultra") || "Ultra",
+    if (!businessType && !teamSize && primaryPriorities.length === 0) return null;
+    const tier = computeRecommendedTier({
+      businessType,
+      teamSize,
+      primaryPriority: primaryPriorities.length > 0 ? primaryPriorities.join(",") : null,
+    });
+    const tierNames: Record<RecommendedTier, string> = {
+      free: t("signup.discovery.hint.free") || "Free",
+      pro: t("signup.discovery.hint.pro") || "Pro",
+      ultra: t("signup.discovery.hint.ultra") || "Ultra",
+      enterprise: t("signup.discovery.hint.enterprise") || "Enterprise",
     };
-    const plan = sizeLabels[teamSize ?? ""] ?? (t("signup.discovery.hint.pro") || "Pro");
+    const plan = tierNames[tier];
     return (
       t("signup.discovery.hint.message", { plan }) ||
       `Based on your profile, we'll highlight our ${plan} plan for you.`
     );
-  }, [businessType, teamSize, t]);
+  }, [businessType, teamSize, primaryPriorities, t]);
 
   // ── Navigation helpers ────────────────────────────────────────────────────
   const advance = useCallback((next: number) => {
@@ -160,6 +169,9 @@ export function DiscoveryStep({
         primaryPriority: pp,
       });
       let finalTier: RecommendedTier = localTier;
+      // Reasons come from the backend scorer (translatable locale keys). The local
+      // fallback intentionally returns none — we never fabricate a "why".
+      let reasons: string[] = [];
 
       // 2. Backend scorer — only if we have something to score
       if (bt || ts || pp) {
@@ -178,9 +190,11 @@ export function DiscoveryStep({
             ultimate: "enterprise",
           };
           finalTier = tierMap[result.recommendedTier] ?? localTier;
+          reasons = result.reasons ?? [];
         } catch {
           // Network failure / backend offline — use local tier, zero disruption
           finalTier = localTier;
+          reasons = [];
         } finally {
           setIsScorerLoading(false);
         }
@@ -192,6 +206,7 @@ export function DiscoveryStep({
         primaryPriority: pp,
         categoryCount: categories.length,
         recommendedTier: finalTier,
+        recommendationReasons: reasons,
       });
     },
     [categories.length, onComplete]

@@ -4,7 +4,7 @@ import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Shield, Users, Zap, Globe, Headphones, Package, Star } from "lucide-react";
+import { Shield, Users, Zap, Globe, Headphones, Package, Star, Check } from "lucide-react";
 import type { PublicFeature } from "../../domain/entities";
 import type { PlanEdition } from "../viewmodels/usePlanPickerViewModel";
 import { formatFeatureName } from "../viewmodels/usePlanPickerViewModel";
@@ -129,8 +129,10 @@ interface PlanCardProps {
   prevEditionName?: string | null;
   billingCycle: "monthly" | "annual";
   onSelect: (edition: PlanEdition) => void;
-  /** Recommended tier from Discovery engine (e.g. "pro", "business", "enterprise") */
+  /** Recommended tier from Discovery engine ("free" | "pro" | "ultra" | "enterprise"). */
   recommendedTier?: string | null;
+  /** Translatable reason keys (backend scorer) — rendered under the recommended badge. */
+  recommendationReasons?: string[] | null;
   /** Active currency code (e.g. "USD", "EGP", "SAR"). Drives Intl.NumberFormat. */
   currencyCode?: string;
   /** True if the price is FX-converted (not hand-set). Shows ≈ prefix. */
@@ -144,6 +146,7 @@ export function PlanCard({
   billingCycle,
   onSelect,
   recommendedTier,
+  recommendationReasons,
   currencyCode = "USD",
   isFxConverted = false,
 }: PlanCardProps) {
@@ -281,6 +284,29 @@ export function PlanCard({
             {t("signup.plan.trialDays", { days: edition.trialDays }) ||
               `${edition.trialDays}-day free trial`}
           </p>
+        )}
+
+        {/* Why we recommend this — translatable reasons from the backend scorer.
+            Unknown/untranslated keys are skipped (t() returns the key on a miss). */}
+        {isRecommended && recommendationReasons && recommendationReasons.length > 0 && (
+          <ul
+            className="mt-4 space-y-1.5"
+            aria-label={t("signup.plan.whyRecommended") || "Why we recommend this"}
+          >
+            {recommendationReasons.map((key) => {
+              const text = t(key);
+              if (!text || text === key) return null;
+              return (
+                <li
+                  key={key}
+                  className="flex items-start gap-2 text-[12px] leading-relaxed text-cyan-300/80"
+                >
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>{text}</span>
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
 

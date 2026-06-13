@@ -180,4 +180,6 @@ export interface RecommendationDto {
   score: number;
   /** "scored" | "catalog_empty" */
   reason: string;
+  /** Translatable locale keys explaining the recommendation (e.g. "recommendation.reason.team.small"). */
+  reasons: string[];
 }

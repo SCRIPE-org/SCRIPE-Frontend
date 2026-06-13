@@ -70,6 +70,8 @@ export const en = {
       features: "Features",
       forever: "forever",
       currencyNote: "Prices shown in {{currency}}",
+      currencyLockedNote: "Prices shown in {{currency}}, based on your location",
+      whyRecommended: "Why we recommend this",
       detected: "Detected",
       searchCurrency: "Search currency…",
       noCurrencyFound: "No currency found",
@@ -377,6 +379,32 @@ export const en = {
       continue: "Continue signup",
       changePlan: "Choose a different plan",
       startFresh: "Start fresh",
+    },
+  },
+
+  // ── Recommendation reasons ───────────────────────────────────────────────
+  // Top-level namespace (sibling of `signup`): the backend emits bare
+  // "recommendation.reason.*" keys from GET /auth/signup/recommendation, which
+  // the plan card renders verbatim via t(key). Keep keys in sync with
+  // GetSignupRecommendationQueryHandler.cs.
+  recommendation: {
+    reason: {
+      scored: "Matched to your profile",
+      catalog_empty: "A solid starting point — you can switch plans anytime",
+      team: {
+        solo: "Sized for a solo founder",
+        small: "Fits a small team",
+        medium: "Scales with a growing team",
+        large: "Built for a large team",
+        enterprise: "Ready for enterprise scale",
+        unknown: "Flexible for any team size",
+      },
+      priority: {
+        security: "Covers your security & compliance needs",
+        scale: "Handles your scale & API needs",
+        support: "Includes the support level you want",
+      },
+      vertical_match: "Tailored to your industry",
     },
   },
 };

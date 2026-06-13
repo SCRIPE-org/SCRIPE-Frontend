@@ -128,6 +128,12 @@ export interface SignupWizardData {
    * "free" | "pro" | "business" | "enterprise" | null (not yet computed)
    */
   recommendedTier: string | null;
+  /**
+   * Translatable locale-key reasons backing the recommendation (from the backend scorer),
+   * e.g. ["recommendation.reason.team.small", "recommendation.reason.vertical_match"].
+   * Rendered under the recommended plan card. Null until Discovery completes.
+   */
+  recommendationReasons: string[] | null;
 
   // Step 2 — Account
   fullName: string;
@@ -383,4 +389,9 @@ export interface SignupRecommendationResult {
   score: number;
   /** "scored" | "catalog_empty" */
   reason: string;
+  /**
+   * Translatable locale keys explaining WHY this tier was recommended,
+   * e.g. "recommendation.reason.team.small". Rendered under the recommended plan card.
+   */
+  reasons: string[];
 }

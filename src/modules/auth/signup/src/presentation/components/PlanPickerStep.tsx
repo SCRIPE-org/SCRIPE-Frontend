@@ -8,7 +8,7 @@ import { usePlanPickerViewModel, type PlanEdition } from "../viewmodels/usePlanP
 import { PlanCard } from "./PlanCard";
 import { FeatureComparisonTable } from "./FeatureComparisonTable";
 import { authContainer } from "@modules/auth/di";
-import { BillingCountrySelector } from "./BillingCountrySelector";
+import { BillingCurrencyBadge } from "./BillingCurrencyBadge";
 import { Button } from "@core/ui/button";
 import type { PublicEdition, SupportedCurrency } from "../../domain/entities";
 
@@ -16,17 +16,16 @@ interface PlanPickerStepProps {
   onSelectPlan: (edition: PublicEdition, billingCycle: "monthly" | "annual") => void;
   /** Vertical pre-selected in Discovery Q1 — pre-filters the plan list (null = all) */
   initialCategory?: string | null;
-  /** Display + checkout currency — owned by the wizard (defaults SAR for Arabic; U1) */
+  /** Display + checkout currency — HARD-LOCKED to the visitor's detected country (read-only). */
   currency: string;
-  onCurrencyChange: (currency: string) => void;
   /** Recommended tier from Discovery engine — shown as badge on matching plan card */
   recommendedTier?: string | null;
+  /** Translatable reason keys behind the recommendation — rendered under the recommended card. */
+  recommendationReasons?: string[] | null;
   /** All supported currencies from the pricing context API (with symbols + FX rates) */
   supportedCurrencies?: SupportedCurrency[];
   /** Geo-detected country code (ISO 3166-1 alpha-2) — null if not detected */
   detectedCountry?: string | null;
-  /** Recommended currency code from geo-detection */
-  recommendedCurrency?: string;
   /** Whether the pricing context is still loading */
   isCurrencyLoading?: boolean;
   /** Q3 selected priorities (comma-joined) — used for comparison table row highlighting */
@@ -71,11 +70,10 @@ export function PlanPickerStep({
   onSelectPlan,
   initialCategory,
   currency,
-  onCurrencyChange,
   recommendedTier,
+  recommendationReasons,
   supportedCurrencies = [],
   detectedCountry,
-  recommendedCurrency,
   isCurrencyLoading = false,
   selectedPriorities,
 }: PlanPickerStepProps) {
@@ -223,14 +221,12 @@ export function PlanPickerStep({
           </div>
         )}
 
-        {/* Currency selector — searchable popover with flag + geo-detection */}
-        <BillingCountrySelector
+        {/* Currency — HARD-LOCKED to the visitor's detected country (read-only badge). */}
+        <BillingCurrencyBadge
           currency={currency}
-          onCurrencyChange={onCurrencyChange}
           supportedCurrencies={supportedCurrencies}
           isLoading={isCurrencyLoading}
           detectedCountry={detectedCountry}
-          recommendedCurrency={recommendedCurrency}
         />
       </div>
 
@@ -286,6 +282,7 @@ export function PlanPickerStep({
                       billingCycle={vm.billingCycle}
                       onSelect={vm.selectPlan}
                       recommendedTier={recommendedTier}
+                      recommendationReasons={recommendationReasons}
                       currencyCode={currency}
                       isFxConverted={isFxConverted}
                     />
@@ -307,6 +304,7 @@ export function PlanPickerStep({
                 billingCycle={vm.billingCycle}
                 onSelect={vm.selectPlan}
                 recommendedTier={recommendedTier}
+                recommendationReasons={recommendationReasons}
                 currencyCode={currency}
                 isFxConverted={isFxConverted}
               />

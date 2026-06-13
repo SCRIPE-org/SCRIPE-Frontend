@@ -70,6 +70,8 @@ export const ar = {
       features: "الميزات",
       forever: "للأبد",
       currencyNote: "الأسعار بـ {{currency}}",
+      currencyLockedNote: "الأسعار معروضة بـ {{currency}} بناءً على موقعك",
+      whyRecommended: "لماذا نوصي بهذه الخطة",
       detected: "مُكتشَف",
       searchCurrency: "ابحث عن عملة…",
       noCurrencyFound: "لا توجد عملة",
@@ -371,6 +373,30 @@ export const ar = {
       continue: "متابعة التسجيل",
       changePlan: "اختيار خطة مختلفة",
       startFresh: "البدء من جديد",
+    },
+  },
+
+  // ── أسباب التوصية ────────────────────────────────────────────────────────
+  // مساحة أسماء علوية (شقيقة لـ signup): الخادم يرسل مفاتيح "recommendation.reason.*"
+  // المجردة من GET /auth/signup/recommendation وتُعرض كما هي على بطاقة الخطة.
+  recommendation: {
+    reason: {
+      scored: "مُختار بناءً على ملفك",
+      catalog_empty: "نقطة انطلاق ممتازة — يمكنك تغيير الخطة في أي وقت",
+      team: {
+        solo: "مناسب للمؤسس الفردي",
+        small: "يناسب فريقًا صغيرًا",
+        medium: "ينمو مع فريقك المتنامي",
+        large: "مصمم للفرق الكبيرة",
+        enterprise: "جاهز لمستوى المؤسسات",
+        unknown: "مرن لأي حجم فريق",
+      },
+      priority: {
+        security: "يلبي احتياجات الأمان والامتثال لديك",
+        scale: "يتعامل مع احتياجات التوسع وواجهات API",
+        support: "يشمل مستوى الدعم الذي تريده",
+      },
+      vertical_match: "مُصمم خصيصًا لمجال عملك",
     },
   },
 };

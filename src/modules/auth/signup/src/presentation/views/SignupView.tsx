@@ -255,12 +255,12 @@ export function SignupView() {
                   onSelectPlan={vm.selectPlan}
                   initialCategory={vm.selectedCategory}
                   currency={vm.currency}
-                  onCurrencyChange={vm.setCurrency}
                   recommendedTier={vm.wizardData.recommendedTier}
+                  recommendationReasons={vm.wizardData.recommendationReasons}
                   supportedCurrencies={vm.supportedCurrencies}
                   detectedCountry={vm.pricingContext?.detectedCountry}
-                  recommendedCurrency={vm.pricingContext?.recommendedCurrency}
                   isCurrencyLoading={vm.isCurrencyLoading}
+                  selectedPriorities={vm.wizardData.primaryPriority}
                 />
               </motion.div>
             )}

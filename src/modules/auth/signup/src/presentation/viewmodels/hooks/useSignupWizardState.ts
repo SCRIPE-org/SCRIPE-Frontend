@@ -16,6 +16,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { INITIAL_WIZARD_DATA } from "../../../domain/constants/signupConstants";
 import { readPersistedWizardState } from "../../../data/helpers/wizardStorage";
+import { CURRENCY_TO_COUNTRY } from "../../../data/helpers/currencyGeo";
 import type {
   SignupStep,
   SignupWizardData,
@@ -87,44 +88,6 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
     [error]
   );
 
-  const CURRENCY_TO_COUNTRY: Record<string, string> = {
-    USD: "US",
-    EUR: "DE",
-    GBP: "GB",
-    SAR: "SA",
-    AED: "AE",
-    EGP: "EG",
-    KWD: "KW",
-    QAR: "QA",
-    BHD: "BH",
-    OMR: "OM",
-    JOD: "JO",
-    TRY: "TR",
-    PKR: "PK",
-    INR: "IN",
-    CNY: "CN",
-    JPY: "JP",
-    KRW: "KR",
-    MYR: "MY",
-    SGD: "SG",
-    AUD: "AU",
-    CAD: "CA",
-    CHF: "CH",
-    SEK: "SE",
-    NOK: "NO",
-    DKK: "DK",
-    MAD: "MA",
-    TND: "TN",
-    DZD: "DZ",
-    NGN: "NG",
-    ZAR: "ZA",
-    BRL: "BR",
-    MXN: "MX",
-    ARS: "AR",
-    CLP: "CL",
-    COP: "CO",
-  };
-
   // ── Currency (user-overridable; prevents geo-detection re-applying) ──────
   const setCurrency = useCallback((currency: string) => {
     hasAppliedPricingContext.current = true;
@@ -152,6 +115,7 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
       primaryPriority: string | null;
       categoryCount: number;
       recommendedTier?: string | null;
+      recommendationReasons?: string[] | null;
     }) => {
       setWizardData((prev) => ({
         ...prev,
@@ -159,6 +123,7 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
         teamSize: answers.teamSize,
         primaryPriority: answers.primaryPriority,
         recommendedTier: answers.recommendedTier ?? null,
+        recommendationReasons: answers.recommendationReasons ?? null,
         categoryKey: answers.businessType,
       }));
       setNavigationDirection(1);
