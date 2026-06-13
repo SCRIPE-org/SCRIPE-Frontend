@@ -60,7 +60,7 @@ const sections: DocSection[] = [
     filename: "CRUD List Page Structure",
     code: `user-management/src/presentation/
 ├── views/
-│   └── UserManagementView.tsx      # ~60 lines, pure composition
+│   └── UserManagementView.tsx      # ~200 lines max, pure composition
 ├── viewmodels/
 │   ├── useUserManagementViewModel.ts    # Orchestrator
 │   ├── useStatisticsViewModel.ts        # Stats logic
@@ -83,7 +83,7 @@ const sections: DocSection[] = [
     filename: "Dashboard Page Structure",
     code: `dashboard/src/presentation/
 ├── views/
-│   └── DashboardView.tsx           # ~60 lines
+│   └── DashboardView.tsx           # ~200 lines max
 ├── viewmodels/
 │   ├── useDashboardViewModel.ts    # Orchestrator
 │   ├── useKPIViewModel.ts          # KPI cards
@@ -198,7 +198,7 @@ const sections: DocSection[] = [
       "One ViewModel per concern — Statistics, Filters, Table = separate hooks",
       "Orchestrator composes — Main ViewModel composes section ViewModels",
       "Columns defined in ViewModel — Not in View or Component",
-      "Max ~60 lines per View — If longer, extract section components",
+      "Max ~200 lines per View — If longer, extract section components",
       "No JSX in ViewModels — ViewModels return data, not UI",
     ],
   },

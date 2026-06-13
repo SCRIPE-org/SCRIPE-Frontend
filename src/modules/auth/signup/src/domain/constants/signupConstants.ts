@@ -65,6 +65,7 @@ export const INITIAL_WIZARD_DATA: SignupWizardData = {
   businessType: null,
   teamSize: null,
   primaryPriority: null,
+  recommendedTier: null,
   // Account
   fullName: "",
   email: "",

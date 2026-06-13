@@ -6,8 +6,16 @@ import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
-import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
-import { Loader2, ArrowRight, CheckCircle, Sparkles, Building2, Users, Target } from "lucide-react";
+import {
+  Loader2,
+  ArrowRight,
+  CheckCircle,
+  Sparkles,
+  Building2,
+  Users,
+  Target,
+  Phone,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
@@ -17,14 +25,14 @@ interface ContactSalesStepProps {
   editionName?: string;
 }
 
-const COMPANY_SIZES = ["1-10", "11-50", "51-200", "200+"] as const;
-
 export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
   const { t, direction } = useI18n();
 
   const [note, setNote] = useState("");
-  const [company, setCompany] = useState("");
-  const [companySize, setCompanySize] = useState("");
+  const [company, setCompany] = useState(vm.wizardData.workspaceName ?? "");
+  const [phone, setPhone] = useState("");
+  // security: keep in sync with backend MaxMessageLength = 2000 to prevent silent truncation
+  const NOTE_MAX_LENGTH = 2000;
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +41,9 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
       fullName: vm.wizardData.fullName,
       email: vm.wizardData.email,
       company,
-      companySize,
+      phone: phone || null,
+      // Company size comes from Discovery Q2 — no need to ask again
+      companySize: vm.wizardData.teamSize ?? null,
       note,
     });
     if (ok) setSubmitted(true);
@@ -56,7 +66,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           className="flex h-16 w-16 items-center justify-center rounded-full"
           style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.25)" }}
         >
-          <CheckCircle className="h-8 w-8" style={{ color: BRAND_TOKENS.text.success }} />
+          <CheckCircle className="h-8 w-8" aria-hidden="true" style={{ color: BRAND_TOKENS.text.success }} />
         </motion.div>
 
         <div>
@@ -65,7 +75,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           </h2>
           <p className="mt-2 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
             {t("signup.contactSales.successSubtitle") ||
-              "Our sales team will reach out within 1 business day."}
+              "Our sales team will reach out within 1–2 business days."}
           </p>
         </div>
 
@@ -78,15 +88,15 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           }}
         >
           <p className="mb-3 text-xs font-semibold" style={{ color: BRAND_TOKENS.text.brand }}>
-            What happens next
+            {t("signup.contactSales.whatsNext") || "What happens next"}
           </p>
           {[
-            "Our team reviews your requirements",
-            "You'll get a tailored demo invitation",
-            "Custom pricing for your business",
+            t("signup.contactSales.next1") || "Our team reviews your requirements",
+            t("signup.contactSales.next2") || "You'll get a tailored demo invitation",
+            t("signup.contactSales.next3") || "Custom pricing crafted for your business",
           ].map((item) => (
             <div key={item} className="flex items-center gap-2 py-1">
-              <Sparkles className="h-3 w-3 flex-shrink-0" style={{ color: "#22D3EE" }} />
+              <Sparkles className="h-3 w-3 flex-shrink-0" aria-hidden="true" style={{ color: "#22D3EE" }} />
               <span className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
                 {item}
               </span>
@@ -143,31 +153,43 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           }}
         >
           <p className="mb-3 text-xs font-semibold" style={{ color: BRAND_TOKENS.text.brand }}>
-            {t("signup.contactSales.yourAnswers") || "Your answers"}
+            {t("signup.contactSales.yourAnswers") || "Your profile"}
           </p>
           <div className="space-y-2">
             {vm.wizardData.businessType && (
               <div className="flex items-center gap-2">
-                <Building2 className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND_TOKENS.text.cyan }} />
-                <span className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
+                <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+                <span className="text-xs capitalize" style={{ color: BRAND_TOKENS.text.secondary }}>
                   {vm.wizardData.businessType}
                 </span>
               </div>
             )}
             {vm.wizardData.teamSize && (
               <div className="flex items-center gap-2">
-                <Users className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND_TOKENS.text.cyan }} />
+                <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
                 <span className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
-                  {vm.wizardData.teamSize}
+                  {vm.wizardData.teamSize} {t("signup.contactSales.people") || "people"}
                 </span>
               </div>
             )}
             {vm.wizardData.primaryPriority && (
-              <div className="flex items-center gap-2">
-                <Target className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND_TOKENS.text.cyan }} />
-                <span className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
-                  {vm.wizardData.primaryPriority}
-                </span>
+              <div className="flex items-start gap-2">
+                <Target className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+                <div className="flex flex-wrap gap-1">
+                  {vm.wizardData.primaryPriority.split(",").filter(Boolean).map((p) => (
+                    <span
+                      key={p}
+                      className="rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
+                      style={{
+                        background: "rgba(34,211,238,0.1)",
+                        border: "1px solid rgba(34,211,238,0.2)",
+                        color: BRAND_TOKENS.text.cyan,
+                      }}
+                    >
+                      {p.trim()}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -175,7 +197,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Full Name — pre-filled */}
+        {/* Full Name — pre-filled from Account step */}
         <div className="space-y-1.5">
           <Label
             htmlFor="cs-fullname"
@@ -201,7 +223,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           />
         </div>
 
-        {/* Business Email */}
+        {/* Business Email — pre-filled */}
         <div className="space-y-1.5">
           <Label
             htmlFor="cs-email"
@@ -216,7 +238,38 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             required
             value={vm.wizardData.email}
             onChange={(e) => vm.updateField("email", e.target.value)}
-            placeholder={t("signup.account.emailPlaceholder") || "you@example.com"}
+            placeholder={t("signup.account.emailPlaceholder") || "you@company.com"}
+            className="h-11"
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              borderColor: BRAND_TOKENS.border.input,
+              color: BRAND_TOKENS.text.primary,
+            }}
+          />
+        </div>
+
+        {/* Phone number — new field */}
+        <div className="space-y-1.5">
+          <Label
+            htmlFor="cs-phone"
+            className="text-xs font-medium"
+            style={{ color: BRAND_TOKENS.text.secondary }}
+          >
+            <span className="flex items-center gap-1">
+              <Phone className="h-3 w-3" aria-hidden="true" />
+              {t("signup.contactSales.phone") || "Phone number"}
+            </span>
+            {" "}
+            <span style={{ color: BRAND_TOKENS.text.ghost }}>
+              ({t("signup.common.optional") || "optional"})
+            </span>
+          </Label>
+          <Input
+            id="cs-phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder={t("signup.contactSales.phonePlaceholder") || "+1 555 000 0000"}
             className="h-11"
             style={{
               background: "rgba(255,255,255,0.03)",
@@ -233,7 +286,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             className="text-xs font-medium"
             style={{ color: BRAND_TOKENS.text.secondary }}
           >
-            {t("signup.contactSales.company") || "Company"}
+            {t("signup.contactSales.company") || "Company name"}
           </Label>
           <Input
             id="cs-company"
@@ -249,49 +302,6 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
               color: BRAND_TOKENS.text.primary,
             }}
           />
-        </div>
-
-        {/* Company size — RadioGroup from @core/ui */}
-        <div className="space-y-2">
-          <Label className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
-            {t("signup.contactSales.companySize") || "Company size"}
-          </Label>
-          <RadioGroup
-            value={companySize}
-            onValueChange={setCompanySize}
-            className="grid grid-cols-4 gap-2"
-          >
-            {COMPANY_SIZES.map((size) => (
-              <div key={size} className="relative">
-                <RadioGroupItem
-                  value={size}
-                  id={`cs-size-${size}`}
-                  className="sr-only"
-                />
-                <label
-                  htmlFor={`cs-size-${size}`}
-                  className="flex cursor-pointer items-center justify-center rounded-lg px-2 py-2.5 text-xs font-semibold transition-all duration-200"
-                  style={{
-                    background:
-                      companySize === size
-                        ? BRAND_TOKENS.gradient.planCard
-                        : "rgba(255,255,255,0.03)",
-                    border:
-                      companySize === size
-                        ? BRAND_TOKENS.border.active
-                        : BRAND_TOKENS.border.muted,
-                    color:
-                      companySize === size
-                        ? BRAND_TOKENS.text.primary
-                        : BRAND_TOKENS.text.tertiary,
-                    cursor: "pointer",
-                  }}
-                >
-                  {size}
-                </label>
-              </div>
-            ))}
-          </RadioGroup>
         </div>
 
         {/* Note (optional) */}
@@ -311,10 +321,13 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             rows={3}
             placeholder={
               t("signup.contactSales.notePlaceholder") ||
-              "Team size, timeline, specific requirements…"
+              "Timeline, specific requirements, integrations you need…"
             }
             value={note}
             onChange={(e) => setNote(e.target.value)}
+            // security: enforce same 2000-char cap as backend MaxMessageLength
+            maxLength={NOTE_MAX_LENGTH}
+            aria-describedby="cs-note-count"
             className="resize-none"
             style={{
               background: "rgba(255,255,255,0.03)",
@@ -322,6 +335,19 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
               color: BRAND_TOKENS.text.primary,
             }}
           />
+          {/* Character counter — warns before hitting the backend cap */}
+          <p
+            id="cs-note-count"
+            className="text-end text-[10px]"
+            style={{
+              color: note.length > NOTE_MAX_LENGTH * 0.9
+                ? "#fca5a5"
+                : BRAND_TOKENS.text.ghost,
+            }}
+            aria-live="polite"
+          >
+            {note.length}/{NOTE_MAX_LENGTH}
+          </p>
         </div>
 
         {/* Error */}
@@ -344,6 +370,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
         <Button
           type="submit"
           disabled={vm.isLoading}
+          aria-busy={vm.isLoading}
           className="h-12 w-full rounded-xl text-sm font-semibold text-white transition-all duration-200"
           style={{
             background: BRAND_TOKENS.gradient.cta,
@@ -351,11 +378,14 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           }}
         >
           {vm.isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              <span className="sr-only">{t("signup.common.loading") || "Loading…"}</span>
+            </>
           ) : (
             <>
               {t("signup.contactSales.cta") || "Request a demo"}
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
             </>
           )}
         </Button>
@@ -368,7 +398,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             className="text-sm font-medium underline underline-offset-2"
             style={{ color: BRAND_TOKENS.text.tertiary }}
           >
-            {t("signup.common.back") || "← Back"}
+            {t("signup.common.back") || "Back"}
           </Button>
         </div>
       </form>

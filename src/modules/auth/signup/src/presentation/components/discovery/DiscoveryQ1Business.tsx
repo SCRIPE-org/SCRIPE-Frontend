@@ -71,12 +71,13 @@ export function DiscoveryQ1Business({
       {/* Skip Q1 */}
       <div className="flex justify-center mt-6">
         <button
+          type="button"
           onClick={onSkip}
-          className="text-xs transition-colors hover:opacity-80"
+          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.discovery.skipQ") || "Skip · I'll choose later"}
-          <ChevronRight className="inline h-3 w-3 ml-0.5" />
+          <ChevronRight className="inline h-3 w-3 ml-0.5" aria-hidden="true" />
         </button>
       </div>
     </motion.div>
@@ -116,20 +117,31 @@ function CategoryCard({ category, isSelected, language, onSelect }: CategoryCard
           : BRAND_TOKENS.shadow.card,
       }}
     >
-      {/* Icon */}
-      <div
-        className="flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-110"
+      {/* Icon — per-vertical hover animation */}
+      <motion.div
+        className="flex h-12 w-12 items-center justify-center rounded-xl"
         style={{
           background: `${BRAND_TOKENS.palette.violet}15`,
           border: `1px solid ${BRAND_TOKENS.palette.violet}25`,
         }}
+        variants={{
+          rest: { rotate: 0, scale: 1 },
+          hover:
+            category.iconKey === "heart-pulse"
+              ? { scale: [1, 1.15, 0.95, 1.1, 1], transition: { duration: 0.7, times: [0, 0.3, 0.5, 0.7, 1] } }
+              : category.iconKey === "factory"
+              ? { rotate: [0, -8, 8, -4, 0], transition: { duration: 0.5 } }
+              : { scale: [1, 1.15, 1.05, 1.12, 1], transition: { duration: 0.4 } },
+        }}
+        initial="rest"
+        whileHover="hover"
       >
         <DynamicIcon
           name={category.iconKey}
           className="h-6 w-6"
           style={{ color: BRAND_TOKENS.palette.violet }}
         />
-      </div>
+      </motion.div>
 
       {/* Text */}
       <div>

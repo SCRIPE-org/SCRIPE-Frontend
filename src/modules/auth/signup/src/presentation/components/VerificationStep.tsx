@@ -48,7 +48,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
             animation: "sxPop 0.5s ease-out 0.15s both",
           }}
         >
-          <ShieldCheck className="h-6 w-6" style={{ color: "#C4B5FD" }} />
+          <ShieldCheck className="h-6 w-6" aria-hidden="true" style={{ color: "#C4B5FD" }} />
         </div>
 
         <h1
@@ -79,9 +79,10 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         />
       </div>
 
-      {/* Error */}
+      {/* Error — role=alert causes immediate announcement in screen readers */}
       {vm.error && (
         <div
+          role="alert"
           className="mb-4 rounded-lg px-3 py-2 text-center text-xs font-medium"
           style={{
             background: "rgba(239,68,68,0.1)",
@@ -96,8 +97,10 @@ export function VerificationStep({ vm }: VerificationStepProps) {
 
       {/* Verify Button */}
       <Button
+        type="button"
         onClick={vm.verifyOtp}
         disabled={vm.isLoading || vm.otpCode.length < 6}
+        aria-busy={vm.isLoading}
         className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
         style={{
           background: BRAND_TOKENS.gradient.cta,
@@ -105,7 +108,10 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         }}
       >
         {vm.isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+            <span className="sr-only">{t("signup.common.loading") || "Loading…"}</span>
+          </>
         ) : (
           t("signup.verification.verifyAndContinue") || "Verify & Continue"
         )}
@@ -120,7 +126,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           className="flex items-center gap-1.5 text-xs font-medium transition-colors"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           {t("signup.verification.back") || "Back"}
         </Button>
 
@@ -132,7 +138,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           className="flex items-center gap-1.5 text-xs font-medium transition-colors disabled:opacity-40"
           style={{ color: BRAND_TOKENS.text.brand }}
         >
-          <RotateCcw className="h-3 w-3" />
+          <RotateCcw className="h-3 w-3" aria-hidden="true" />
           {vm.otpResendCooldown > 0
             ? t("signup.verification.resendIn", { seconds: String(vm.otpResendCooldown) }) ||
               `Resend in ${vm.otpResendCooldown}s`

@@ -4,23 +4,13 @@ import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Shield, Users, BarChart3, Zap, Globe, Headphones, Settings, Package } from "lucide-react";
+import { Shield, Users, Zap, Globe, Headphones, Package, Star } from "lucide-react";
 import type { PublicFeature } from "../../domain/entities";
 import type { PlanEdition } from "../viewmodels/usePlanPickerViewModel";
 import { formatFeatureName } from "../viewmodels/usePlanPickerViewModel";
 
 // ─── Feature icon by category (like Vercel) ──────────────────────────────────
 
-const FEATURE_ICONS: Record<string, typeof Shield> = {
-  Security: Shield,
-  Users: Users,
-  Modules: Package,
-  Performance: Zap,
-  General: Globe,
-  Support: Headphones,
-  Configuration: Settings,
-  Quotas: BarChart3,
-};
 
 function getFeatureIcon(featureName: string) {
   if (featureName.startsWith("Identity.")) return Users;
@@ -108,6 +98,32 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
   );
 }
 
+// ─── Currency formatting ───────────────────────────────────────────────────────
+
+/**
+ * Formats a price using Intl.NumberFormat with the edition's real currency code.
+ * If the price is FX-converted (not a hand-set price), prepends ≈ to indicate
+ * it is approximate and will be billed in the base currency.
+ */
+function formatPrice(
+  amount: number,
+  currencyCode: string,
+  isApproximate: boolean
+): string {
+  try {
+    const formatted = new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: currencyCode || "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+    return isApproximate ? `≈\u202F${formatted}` : formatted;
+  } catch {
+    // Graceful fallback if currency code is invalid
+    return `${amount.toLocaleString()} ${currencyCode}`;
+  }
+}
+
 // ─── Plan Card (Vercel-style) ─────────────────────────────────────────────────
 
 interface PlanCardProps {
@@ -116,6 +132,12 @@ interface PlanCardProps {
   prevEditionName?: string | null;
   billingCycle: "monthly" | "annual";
   onSelect: (edition: PlanEdition) => void;
+  /** Recommended tier from Discovery engine (e.g. "pro", "business", "enterprise") */
+  recommendedTier?: string | null;
+  /** Active currency code (e.g. "USD", "EGP", "SAR"). Drives Intl.NumberFormat. */
+  currencyCode?: string;
+  /** True if the price is FX-converted (not hand-set). Shows ≈ prefix. */
+  isFxConverted?: boolean;
 }
 
 export function PlanCard({
@@ -124,13 +146,27 @@ export function PlanCard({
   prevEditionName,
   billingCycle,
   onSelect,
+  recommendedTier,
+  currencyCode = "USD",
+  isFxConverted = false,
 }: PlanCardProps) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const price = billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
   const monthlyEquiv = billingCycle === "annual" && price ? Math.round(price / 12) : price;
   const isFree = edition.monthlyPrice === 0 && edition.tierLevel === 0;
   const isContactSales = edition.checkoutMode === "contact-sales";
   const isHighlighted = !!edition.badge;
+
+  // ── Recommendation badge ──────────────────────────────────────────────────
+  // Map the Discovery engine's tier key to the edition's numeric tierLevel.
+  // Tier-level matching is deterministic and locale-safe — immune to
+  // display-name changes and the earlier substring-match operator-precedence bugs.
+  const RECOMMENDED_TIER_LEVEL: Record<string, number> = {
+    free: 0, pro: 1, ultra: 2, enterprise: 3,
+  };
+  const isRecommended =
+    !!recommendedTier &&
+    edition.tierLevel === (RECOMMENDED_TIER_LEVEL[recommendedTier.toLowerCase()] ?? -1);
 
   // Compute "Everything in X, plus:" text (Vercel pattern)
   const inheritanceText = prevEditionName
@@ -146,12 +182,36 @@ export function PlanCard({
           : "rgba(255,255,255,0.02)",
         border: isHighlighted
           ? "1.5px solid rgba(168,85,247,0.35)"
-          : "1px solid rgba(255,255,255,0.06)",
-        boxShadow: isHighlighted ? "0 0 40px rgba(168,85,247,0.08)" : "none",
+          : isRecommended
+            ? "1.5px solid rgba(34,211,238,0.35)"
+            : "1px solid rgba(255,255,255,0.06)",
+        boxShadow: isHighlighted
+          ? "0 0 40px rgba(168,85,247,0.08)"
+          : isRecommended
+            ? "0 0 32px rgba(34,211,238,0.07)"
+            : "none",
         animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 80}ms both`,
       }}
     >
-      {/* Badge */}
+      {/* Recommendation badge — shown when Discovery recommends this tier */}
+      {isRecommended && (
+        <div className="absolute -top-3.5 inset-x-0 flex justify-center z-20">
+          <span
+            className="flex items-center gap-1.5 rounded-full px-4 py-1 text-[11px] font-bold uppercase tracking-wider"
+            style={{
+              background: "linear-gradient(135deg, rgba(34,211,238,0.18), rgba(99,102,241,0.18))",
+              border: "1px solid rgba(34,211,238,0.4)",
+              color: "#22D3EE",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <Star className="h-3 w-3 fill-current" aria-hidden="true" />
+            {t("signup.plan.recommended") || "Recommended for you"}
+          </span>
+        </div>
+      )}
+
+      {/* Edition badge (admin-set, e.g. "Most Popular") */}
       {edition.badge && (
         <div className="absolute -top-3 start-5 z-10">
           <Badge
@@ -191,13 +251,23 @@ export function PlanCard({
             </span>
           ) : (
             <>
-              <span className="text-3xl font-extrabold text-white/95">${monthlyEquiv}</span>
+              <span className="text-3xl font-extrabold text-white/95">
+                {monthlyEquiv != null ? formatPrice(monthlyEquiv, currencyCode, isFxConverted) : "—"}
+              </span>
               <span className="text-sm text-white/35">/{t("signup.plan.mo") || "mo"}</span>
               {billingCycle === "annual" && price ? (
                 <span className="ms-1 text-xs text-white/25">
-                  ({t("signup.plan.billedAnnually") || `$${price}/yr`})
+                  ({formatPrice(price, currencyCode, isFxConverted)}/{t("signup.plan.yr") || "yr"})
                 </span>
               ) : null}
+              {isFxConverted && (
+                <span
+                  className="ms-2 text-[10px] text-white/30"
+                  title={t("signup.plan.fxConvertedTooltip") || "Approximate. Billed in USD at checkout."}
+                >
+                  {t("signup.plan.approximateNote") || "Approx."}
+                </span>
+              )}
             </>
           )}
         </div>

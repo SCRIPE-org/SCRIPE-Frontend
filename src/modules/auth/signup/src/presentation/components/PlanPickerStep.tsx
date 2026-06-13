@@ -6,13 +6,11 @@ import { Skeleton } from "@core/ui/skeleton";
 import { ChevronDown } from "lucide-react";
 import { usePlanPickerViewModel, type PlanEdition } from "../viewmodels/usePlanPickerViewModel";
 import { PlanCard } from "./PlanCard";
+import { FeatureComparisonTable } from "./FeatureComparisonTable";
 import { authContainer } from "@modules/auth/di";
-
+import { BillingCountrySelector } from "./BillingCountrySelector";
 import { Button } from "@core/ui/button";
-
-import type { PublicEdition } from "../../domain/entities";
-
-const SUPPORTED_CURRENCIES = ["USD", "EUR", "SAR"] as const;
+import type { PublicEdition, SupportedCurrency } from "../../domain/entities";
 
 interface PlanPickerStepProps {
   onSelectPlan: (edition: PublicEdition, billingCycle: "monthly" | "annual") => void;
@@ -21,6 +19,18 @@ interface PlanPickerStepProps {
   /** Display + checkout currency — owned by the wizard (defaults SAR for Arabic; U1) */
   currency: string;
   onCurrencyChange: (currency: string) => void;
+  /** Recommended tier from Discovery engine — shown as badge on matching plan card */
+  recommendedTier?: string | null;
+  /** All supported currencies from the pricing context API (with symbols + FX rates) */
+  supportedCurrencies?: SupportedCurrency[];
+  /** Geo-detected country code (ISO 3166-1 alpha-2) — null if not detected */
+  detectedCountry?: string | null;
+  /** Recommended currency code from geo-detection */
+  recommendedCurrency?: string;
+  /** Whether the pricing context is still loading */
+  isCurrencyLoading?: boolean;
+  /** Q3 selected priorities (comma-joined) — used for comparison table row highlighting */
+  selectedPriorities?: string | null;
 }
 
 /**
@@ -62,6 +72,12 @@ export function PlanPickerStep({
   initialCategory,
   currency,
   onCurrencyChange,
+  recommendedTier,
+  supportedCurrencies = [],
+  detectedCountry,
+  recommendedCurrency,
+  isCurrencyLoading = false,
+  selectedPriorities,
 }: PlanPickerStepProps) {
   const { t } = useI18n();
   const vm = usePlanPickerViewModel(authContainer.signupRepository, onSelectPlan, initialCategory ?? null, currency);
@@ -74,6 +90,11 @@ export function PlanPickerStep({
   );
 
   const showCategoryHeaders = !vm.activeCategory && groupedEditions.length > 1;
+
+  // ── FX detection: seeded currencies have native price rows; others are FX-converted ──
+  // USD, EUR, SAR, EGP all have hand-set prices in the seeder
+  const SEEDED_CURRENCIES = new Set(["USD", "EUR", "SAR", "EGP"]);
+  const isFxConverted = !SEEDED_CURRENCIES.has(currency.toUpperCase());
 
   // ── Loading ──
   if (vm.isLoading) {
@@ -106,15 +127,26 @@ export function PlanPickerStep({
 
       {/* ═══ Category tabs ═══ */}
       {vm.categories.length > 1 && (
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        // a11y: role=group labels these as a filter set for assistive technology
+        <div
+          role="group"
+          aria-label={t("signup.plan.categoryFilterLabel") || "Filter by industry"}
+          className="flex flex-wrap items-center justify-center gap-2"
+        >
           {[null, ...vm.categories].map((cat) => {
             const isActive = vm.activeCategory === cat;
+            const label = cat === null
+              ? t("signup.plan.allCategories") || "All"
+              : vm.categoryLabels[cat] ?? cat;
             return (
               <button
                 key={cat ?? "__all"}
                 type="button"
                 onClick={() => vm.setActiveCategory(cat)}
-                className="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
+                // a11y: aria-pressed announces the active filter to screen readers
+                aria-pressed={isActive}
+                aria-label={label}
+                className="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 style={{
                   background: isActive
                     ? "linear-gradient(135deg, rgba(168,85,247,0.25), rgba(124,58,237,0.18))"
@@ -125,9 +157,7 @@ export function PlanPickerStep({
                     : "1px solid rgba(255,255,255,0.07)",
                 }}
               >
-                {cat === null
-                  ? t("signup.plan.allCategories") || "All"
-                  : vm.categoryLabels[cat] ?? cat}
+                {label}
               </button>
             );
           })}
@@ -137,7 +167,10 @@ export function PlanPickerStep({
       {/* ═══ Billing toggle + Currency picker ═══ */}
       <div className="flex flex-col items-center justify-center gap-4">
         {vm.filteredEditions.some((e) => e.monthlyPrice > 0) && (
+          // a11y: group + label makes this a labelled toggle group for screen readers
           <div
+            role="group"
+            aria-label={t("signup.plan.billingCycleLabel") || "Billing cycle"}
             className="inline-flex items-center rounded-full p-1"
             style={{
               background: "rgba(255,255,255,0.04)",
@@ -149,7 +182,9 @@ export function PlanPickerStep({
                 key={cycle}
                 type="button"
                 onClick={() => vm.setBillingCycle(cycle)}
-                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300"
+                // a11y: aria-pressed tells screen readers which billing cycle is active
+                aria-pressed={vm.billingCycle === cycle}
+                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1"
                 style={{
                   background:
                     vm.billingCycle === cycle
@@ -163,7 +198,13 @@ export function PlanPickerStep({
                   ? t("signup.plan.monthly") || "Monthly"
                   : t("signup.plan.annual") || "Annual"}
                 {cycle === "annual" && vm.annualSavingsPercent > 0 && (
-                  <span className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-bold text-cyan-400">
+                  <span
+                    className="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-bold text-cyan-400"
+                    aria-label={
+                      t("signup.plan.savePercent", { percent: vm.annualSavingsPercent }) ||
+                      `Save ${vm.annualSavingsPercent}%`
+                    }
+                  >
                     {t("signup.plan.savePercent", { percent: vm.annualSavingsPercent }) ||
                       `Save ${vm.annualSavingsPercent}%`}
                   </span>
@@ -173,42 +214,15 @@ export function PlanPickerStep({
           </div>
         )}
 
-        {/* Currency pills (U1) — changing refetches prices in the chosen currency */}
-        <div className="flex items-center gap-3">
-          <div
-            className="inline-flex items-center rounded-full p-1"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
-            {SUPPORTED_CURRENCIES.map((code) => (
-              <button
-                key={code}
-                type="button"
-                onClick={() => onCurrencyChange(code)}
-                className="rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200"
-                style={{
-                  background:
-                    currency === code
-                      ? "linear-gradient(135deg, rgba(34,211,238,0.2), rgba(34,211,238,0.1))"
-                      : "transparent",
-                  color: currency === code ? "#22D3EE" : "rgba(245,242,255,0.4)",
-                  border:
-                    currency === code
-                      ? "1px solid rgba(34,211,238,0.35)"
-                      : "1px solid transparent",
-                }}
-                aria-pressed={currency === code}
-              >
-                {code}
-              </button>
-            ))}
-          </div>
-          <span className="text-[11px]" style={{ color: "rgba(245,242,255,0.35)" }}>
-            {t("signup.plan.currencyNote", { currency }) || `Prices shown in ${currency}`}
-          </span>
-        </div>
+        {/* Currency selector — searchable popover with flag + geo-detection */}
+        <BillingCountrySelector
+          currency={currency}
+          onCurrencyChange={onCurrencyChange}
+          supportedCurrencies={supportedCurrencies}
+          isLoading={isCurrencyLoading}
+          detectedCountry={detectedCountry}
+          recommendedCurrency={recommendedCurrency}
+        />
       </div>
 
       {/* ═══ Error ═══ */}
@@ -259,6 +273,9 @@ export function PlanPickerStep({
                       prevEditionName={idx > 0 ? editions[idx - 1]?.name : null}
                       billingCycle={vm.billingCycle}
                       onSelect={vm.selectPlan}
+                      recommendedTier={recommendedTier}
+                      currencyCode={currency}
+                      isFxConverted={isFxConverted}
                     />
                   </div>
                 ))}
@@ -277,6 +294,9 @@ export function PlanPickerStep({
                 prevEditionName={idx > 0 ? vm.filteredEditions[idx - 1]?.name : null}
                 billingCycle={vm.billingCycle}
                 onSelect={vm.selectPlan}
+                recommendedTier={recommendedTier}
+                currencyCode={currency}
+                isFxConverted={isFxConverted}
               />
             </div>
           ))}
@@ -342,6 +362,17 @@ export function PlanPickerStep({
             </div>
           )}
 
+          {/* ═══ THE ACTUAL FEATURE MATRIX ═══ */}
+          <div className="mx-auto max-w-[1400px]">
+            <FeatureComparisonTable
+              comparisonCategories={vm.comparisonCategories}
+              comparisonEditions={vm.comparisonEditions}
+              billingCycle={vm.billingCycle}
+              currencyCode={currency}
+              isFxConverted={isFxConverted}
+              selectedPriorities={selectedPriorities}
+            />
+          </div>
         </div>
       )}
     </div>

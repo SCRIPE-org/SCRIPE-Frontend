@@ -59,7 +59,8 @@ export function DiscoveryQ2Team({
                   : BRAND_TOKENS.shadow.card,
               }}
             >
-              <span className="text-3xl">{size.icon}</span>
+              {/* a11y: emoji is decorative — label comes from the text below */}
+              <span className="text-3xl" aria-hidden="true">{size.icon}</span>
               <span className="text-sm font-semibold" style={{ color: BRAND_TOKENS.text.primary }}>
                 {t(size.labelKey)}
               </span>
@@ -85,19 +86,21 @@ export function DiscoveryQ2Team({
       {/* Back + skip */}
       <div className="flex items-center justify-between mt-6">
         <button
+          type="button"
           onClick={onBack}
-          className="text-xs transition-colors hover:opacity-80"
+          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.common.back") || "← Back"}
         </button>
         <button
+          type="button"
           onClick={onSkip}
-          className="text-xs transition-colors hover:opacity-80"
+          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.discovery.skipQ") || "Skip · I'll choose later"}
-          <ChevronRight className="inline h-3 w-3 ml-0.5" />
+          <ChevronRight className="inline h-3 w-3 ml-0.5" aria-hidden="true" />
         </button>
       </div>
     </motion.div>

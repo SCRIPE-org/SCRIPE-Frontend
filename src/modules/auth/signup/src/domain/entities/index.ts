@@ -121,6 +121,12 @@ export interface SignupWizardData {
   teamSize: string | null;
   /** Primary priority from Discovery Q3: "analytics" | "automation" | "security" | ... */
   primaryPriority: string | null;
+  /**
+   * Recommended tier computed by the recommendation engine after Q3.
+   * Used by PlanCard to show the "Recommended for you" badge.
+   * "free" | "pro" | "business" | "enterprise" | null (not yet computed)
+   */
+  recommendedTier: string | null;
 
   // Step 2 — Account
   fullName: string;
@@ -352,4 +358,21 @@ export interface PricingContext {
   recommendedCurrency: string;
   /** All 15 supported currencies with symbols and live USD rates. */
   supportedCurrencies: SupportedCurrency[];
+}
+
+// ─── Recommendation result from backend scorer ───────────────────────────────
+
+/**
+ * Result of GET /api/v1/auth/signup/recommendation.
+ * Server scores the Discovery Q1/Q2/Q3 answers against the live edition catalog.
+ */
+export interface SignupRecommendationResult {
+  /** "free" | "standard" | "enterprise" | "ultimate" */
+  recommendedTier: string;
+  /** Human-readable edition name, e.g. "Pro", "Ultra" */
+  recommendedEditionName: string;
+  /** Raw score — diagnostic only, not shown in UI */
+  score: number;
+  /** "scored" | "catalog_empty" */
+  reason: string;
 }

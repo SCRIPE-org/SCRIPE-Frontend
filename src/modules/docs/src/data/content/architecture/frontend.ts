@@ -34,7 +34,7 @@ const sections: DocSection[] = [
         titleKey: "architecture.frontend.viewDo",
         variant: "positive",
         items: [
-          "Max ~60 lines of JSX",
+          "Max ~200 lines of JSX",
           "Zero useState, zero useEffect",
           "Only destructures props from ViewModel",
           "Returns JSX with component composition",
@@ -144,7 +144,7 @@ export function UserManagementView() {
     │
     └── presentation/         # UI Layer (SOLID Pattern)
         ├── viewmodels/       # Section ViewModels + Orchestrator
-        ├── views/            # Pure UI Pages (~60 lines max)
+        ├── views/            # Pure UI Pages (~200 lines max)
         └── components/       # Section Components`,
   },
   {

@@ -31,6 +31,7 @@ export const ar = {
       monthly: "شهري",
       annual: "سنوي",
       mo: "شهر",
+      yr: "سنة",
       free: "مجاني",
       custom: "تسعير مخصص",
       startFree: "ابدأ مجاناً",
@@ -45,26 +46,44 @@ export const ar = {
       trialDays: "تجربة مجانية لمدة {{days}} يوم",
       freeTagline: "ابدأ مجاناً",
       allCategories: "الكل",
+      included: "مشمول",
+      notIncluded: "غير مشمول",
+      categoryFilterLabel: "تصفية حسب القطاع",
+      billingCycleLabel: "دورة الفوترة",
       compareTitle: "قارن جميع الخطط",
       compareSubtitle: "اطلع على ما تتضمنه كل خطة بالتفصيل",
       noFeatures: "لا توجد مزايا مُعدّة بعد. أضف مزايا من لوحة الإدارة.",
-      comparePricesNote: "جميع الأسعار بالدولار الأمريكي. الاشتراك السنوي يُدفع كدفعة واحدة.",
+      noFeaturesData: "لا تتوفر بيانات مزايا لهذه الخطة بعد.",
+      scrollToCompare: "مرر للأسفل لمقارنة جميع الميزات",
+      comparePricesNote: "جميع الأسعار معروضة بالـ {{currency}}. الاشتراك السنوي يُدفع كدفعة واحدة.",
       feature: "الميزة",
       featureSingle: "ميزة",
       featurePlural: "ميزات",
       unlimited: "غير محدود",
       expandAll: "توسيع الكل",
       collapseAll: "طي الكل",
+      expandSection: "توسيع القسم",
+      collapseSection: "طي القسم",
       featuresCount: "{{count}} ميزات في {{categoriesCount}} فئات",
       featuresHeader: "الميزات",
+      features: "الميزات",
       forever: "للأبد",
       currencyNote: "الأسعار بـ {{currency}}",
+      detected: "مُكتشَف",
+      searchCurrency: "ابحث عن عملة…",
+      noCurrencyFound: "لا توجد عملة",
+      selectCurrency: "اختر العملة",
       inheritanceText: "كل مميزات {{prevEditionName}}، بالإضافة إلى:",
-      features: {
+      recommended: "موصى به لك",
+      recommendedForYou: "موصى به لك",
+      fxConvertedTooltip: "سعر تقريبي. يُحسب بالدولار الأمريكي عند الدفع.",
+      approximateNote: "تقريباً",
+      legacyFeatures: {
         basic: "المزايا الأساسية",
         singleAdmin: "مستخدم مسؤول واحد",
         communitySupport: "دعم المجتمع",
       },
+
     },
 
     // الخطوة 2 — الحساب
@@ -158,6 +177,8 @@ export const ar = {
     common: {
       back: "رجوع →",
       optional: "اختياري",
+      backLabel: "العودة إلى السؤال السابق",
+      loading: "جاري التحميل...",
     },
 
     // أخطاء
@@ -206,6 +227,14 @@ export const ar = {
       skipQ: "تخطي · سأختار لاحقاً",
       skipToPlans: "تخطي · أرني الخطط",
       skipAll: "تخطي جميع الأسئلة · اذهب مباشرة إلى الخطط",
+      q3Confirm: "تم · أظهر خطتي ←",
+      q3MaxReached: "تم تحديد ٣ من ٣ (الحد الأقصى)",
+      q3Count: "تم تحديد {{count}} من {{max}}",
+      q3GroupLabel: "اختر أهم أولوياتك (حتى ٣)",
+      selected: "محدد",
+      limitReached: "تم الوصول للحد الأقصى",
+      q3ConfirmLabel: "تأكيد الأولويات ورؤية الخطة الموصى بها",
+      skipToPlansLabel: "تخطي الأولويات والانتقال مباشرة إلى الخطط",
 
       // س2 — تسميات حجم الفريق
       teamSize: {
@@ -221,7 +250,7 @@ export const ar = {
         enterpriseSub: "٢٠٠+ شخص",
       },
 
-      // س3 — تسميات الأولويات
+      // س3 — تسميات الأولويات (عامة)
       priority: {
         analytics: "التحليلات والرؤى",
         automation: "الأتمتة وسير العمل",
@@ -231,32 +260,54 @@ export const ar = {
         support: "دعم العملاء",
         speed: "السرعة والأداء",
         customization: "التخصيص",
+        // خاص بـ ERP
+        multiTenant: "متعدد المستأجرين",
+        compliance: "الامتثال التنظيمي",
+        apiAccess: "الوصول لواجهة API",
+        whiteLabel: "العلامة البيضاء",
+        sso: "الدخول الأحادي (SSO)",
+        // خاص بالرعاية الصحية
+        hipaa: "امتثال HIPAA",
+        patientData: "أمان بيانات المرضى",
+        audit: "سجلات التدقيق",
+        dedicatedSupport: "دعم مخصص",
       },
 
       // تلميح التوصية (يظهر قبل السؤال الثالث)
       hint: {
-        starter: "المبتدئ",
-        team: "الفريق",
-        business: "الأعمال",
-        professional: "الاحترافي",
-        enterprise: "المؤسسي",
+        free: "المجانية",
+        pro: "برو",
+        ultra: "ألترا",
+        enterprise: "المؤسسية",
         message: "بناءً على ملفك، سنبرز خطة {{plan}} لك.",
       },
+
+      // مؤشر حالة التقييم الذكي
+      scoring: "نجد أفضل خطة لك…",
     },
 
+    // تواصل مع المبيعات
     contactSales: {
       title: "تحدث مع فريق المبيعات",
       interested: "مهتم بـ:",
-      company: "الشركة",
+      company: "اسم الشركة",
       companyPlaceholder: "شركة أكمي",
       companySize: "حجم الشركة",
       noteLabel: "هل هناك ما تود مشاركته؟",
-      notePlaceholder: "حجم الفريق، الجدول الزمني، المتطلبات المحددة…",
+      notePlaceholder: "الجدول الزمني، المتطلبات المحددة، التكاملات التي تحتاجها…",
       cta: "طلب عرض توضيحي",
       successTitle: "سنتواصل معك قريباً!",
-      successSubtitle: "سيتواصل معك فريق المبيعات خلال يوم عمل واحد.",
+      successSubtitle: "سيتواصل معك فريق المبيعات خلال ١–٢ أيام عمل.",
       fallback: "أو راسلنا على {{email}}",
-      backToPlans: "← رجوع إلى الخطط",
+      backToPlans: "→ رجوع إلى الخطط",
+      phone: "رقم الهاتف",
+      phonePlaceholder: "+966 55 000 0000",
+      whatsNext: "ما الذي سيحدث بعد ذلك",
+      next1: "يراجع فريقنا متطلباتك",
+      next2: "ستتلقى دعوة لعرض توضيحي مخصص",
+      next3: "تسعير مخصص يناسب عملك",
+      yourAnswers: "ملفك الشخصي",
+      people: "أشخاص",
     },
 
     // الخطوة 5 — المراجعة
@@ -283,7 +334,7 @@ export const ar = {
       perYear: "سنة",
       editPlan: "تعديل الخطة",
       promoHint: "هل لديك رمز ترويجي؟ طبّقه في صفحة الدفع الآمنة.",
-      paymentPageNote: "",
+      paymentPageNote: "ستتم إعادة توجيهك إلى صفحة دفع آمنة باللغة الإنجليزية.",
       checkoutCanceled: "تم إلغاء الدفع - يمكنك المحاولة مرة أخرى أو تغيير خطتك.",
     },
 
@@ -301,6 +352,25 @@ export const ar = {
       startAgain: "ابدأ تسجيلاً جديداً - لم يتم خصم أي مبلغ",
       consumedTitle: "اكتمل التسجيل مسبقاً",
       consumedSubtitle: "مساحة عملك جاهزة - سجّل الدخول باستخدام بياناتك.",
+      changePlan: "تغيير الخطة",
+      timeoutTitle: "يستغرق الأمر وقتاً أطول من المعتاد",
+      timeoutSubtitle: "لا يزال الإعداد جارياً. سنرسل لك رابط مساحة العمل بمجرد اكتمالها.",
+    },
+
+    // دورة الفوترة
+    billing: {
+      monthly: "شهري",
+      yearly: "سنوي",
+    },
+
+    // نافذة استئناف التسجيل
+    resume: {
+      title: "استئناف تسجيلك",
+      subtitle: "لديك جلسة تسجيل معلقة. هل تريد المتابعة؟",
+      pendingPlan: "الخطة المعلقة: {{plan}}",
+      continue: "متابعة التسجيل",
+      changePlan: "اختيار خطة مختلفة",
+      startFresh: "البدء من جديد",
     },
   },
 };

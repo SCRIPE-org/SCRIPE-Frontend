@@ -11,6 +11,7 @@ import type {
   ResumeSessionResult,
   ChangePlanResult,
   ChangePlanPayload,
+  SignupRecommendationResult,
 } from "../entities";
 
 export type { ChangePlanPayload };
@@ -43,6 +44,7 @@ export interface ContactSalesPayload {
   email: string;
   company?: string | null;
   companySize?: string | null;
+  phone?: string | null;
   editionId?: string | null;
   note?: string | null;
   // Discovery Intelligence (optional)
@@ -77,4 +79,18 @@ export interface ISignupRepository {
 
   /** Cancel the current checkout and create a new one with a different plan. */
   changePlan(payload: ChangePlanPayload): Promise<ChangePlanResult>;
+
+  /**
+   * Server-side recommendation scorer.
+   * Returns recommended tier + edition name based on Discovery Q1/Q2/Q3 answers.
+   * Throws on network failure — callers should fall back to computeRecommendedTier().
+   */
+  getRecommendation(params: {
+    vertical?: string | null;
+    teamSize?: string | null;
+    priorities?: string | null;
+    currency?: string;
+    lang?: string;
+  }): Promise<SignupRecommendationResult>;
 }
+

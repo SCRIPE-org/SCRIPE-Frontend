@@ -27,6 +27,7 @@ import type {
   PricingContext,
   ResumeSessionResult,
   ChangePlanResult,
+  SignupRecommendationResult,
 } from "../../domain/entities";
 
 export class SignupRepository implements ISignupRepository {
@@ -104,5 +105,23 @@ export class SignupRepository implements ISignupRepository {
   async changePlan(payload: ChangePlanPayload): Promise<ChangePlanResult> {
     const dto = await this.service.changePlan(payload);
     return { checkoutUrl: dto.checkoutUrl };
+  }
+
+  async getRecommendation(params: {
+    vertical?: string | null;
+    teamSize?: string | null;
+    priorities?: string | null;
+    currency?: string;
+    lang?: string;
+  }): Promise<SignupRecommendationResult> {
+    // Service call — backend scores against live edition catalog
+    const dto = await this.service.getRecommendation(params);
+    // Mapping is 1:1 — DTO and entity shapes are identical
+    return {
+      recommendedTier: dto.recommendedTier,
+      recommendedEditionName: dto.recommendedEditionName,
+      score: dto.score,
+      reason: dto.reason,
+    };
   }
 }

@@ -31,6 +31,7 @@ export const en = {
       monthly: "Monthly",
       annual: "Annual",
       mo: "mo",
+      yr: "yr",
       free: "Free",
       custom: "Custom pricing",
       loadFailed: "Failed to load plans. Please try again.",
@@ -45,26 +46,44 @@ export const en = {
       trialDays: "{{days}}-day free trial",
       freeTagline: "Get started for free",
       allCategories: "All",
+      included: "Included",
+      notIncluded: "Not included",
+      categoryFilterLabel: "Filter by industry",
+      billingCycleLabel: "Billing cycle",
       compareTitle: "Compare all plans",
       compareSubtitle: "See exactly what's included in each plan",
       noFeatures: "No features configured yet. Add features in the admin panel.",
-      comparePricesNote: "All prices shown in USD. Annual billing billed as a single payment.",
+      noFeaturesData: "No feature data available for this plan yet.",
+      scrollToCompare: "Scroll to compare all features",
+      comparePricesNote: "All prices shown in {{currency}}. Annual billing billed as a single payment.",
       feature: "Feature",
       featureSingle: "feature",
       featurePlural: "features",
       unlimited: "Unlimited",
       expandAll: "Expand all",
       collapseAll: "Collapse all",
+      expandSection: "Expand section",
+      collapseSection: "Collapse section",
       featuresCount: "{{count}} features in {{categoriesCount}} categories",
       featuresHeader: "Features",
+      features: "Features",
       forever: "forever",
       currencyNote: "Prices shown in {{currency}}",
+      detected: "Detected",
+      searchCurrency: "Search currency…",
+      noCurrencyFound: "No currency found",
+      selectCurrency: "Select currency",
       inheritanceText: "All {{prevEditionName}} features, plus:",
-      features: {
+      recommended: "Recommended for you",
+      recommendedForYou: "Recommended for you",
+      fxConvertedTooltip: "Approximate price. Billed in USD at checkout.",
+      approximateNote: "Approx.",
+      legacyFeatures: {
         basic: "Basic features",
         singleAdmin: "1 admin user",
         communitySupport: "Community support",
       },
+
     },
 
     // Step 2 — Account
@@ -158,6 +177,8 @@ export const en = {
     common: {
       back: "← Back",
       optional: "optional",
+      backLabel: "Go back to previous question",
+      loading: "Loading...",
     },
 
     // Errors
@@ -206,6 +227,14 @@ export const en = {
       skipQ: "Skip · I'll choose later",
       skipToPlans: "Skip · Show me the plans",
       skipAll: "Skip all questions · Take me straight to plans",
+      q3Confirm: "Done · Show my plan →",
+      q3MaxReached: "3 of 3 selected (maximum)",
+      q3Count: "{{count}} of {{max}} selected",
+      q3GroupLabel: "Select your top priorities (up to 3)",
+      selected: "selected",
+      limitReached: "limit reached",
+      q3ConfirmLabel: "Confirm priorities and see recommended plan",
+      skipToPlansLabel: "Skip priorities and go directly to plans",
 
       // Q2 — Team size labels
       teamSize: {
@@ -221,7 +250,7 @@ export const en = {
         enterpriseSub: "200+ people",
       },
 
-      // Q3 — Priority labels
+      // Q3 — Priority labels (general)
       priority: {
         analytics: "Analytics & Insights",
         automation: "Automation & Workflows",
@@ -231,33 +260,54 @@ export const en = {
         support: "Customer Support",
         speed: "Speed & Performance",
         customization: "Customization",
+        // ERP-specific
+        multiTenant: "Multi-Tenant",
+        compliance: "Compliance",
+        apiAccess: "API Access",
+        whiteLabel: "White-label",
+        sso: "Single Sign-On (SSO)",
+        // Healthcare-specific
+        hipaa: "HIPAA Compliance",
+        patientData: "Patient Data Security",
+        audit: "Audit Trails",
+        dedicatedSupport: "Dedicated Support",
       },
 
       // Recommendation hint (shown before Q3)
       hint: {
-        starter: "Starter",
-        team: "Team",
-        business: "Business",
-        professional: "Professional",
+        free: "Free",
+        pro: "Pro",
+        ultra: "Ultra",
         enterprise: "Enterprise",
         message: "Based on your profile, we'll highlight our {{plan}} plan for you.",
       },
+
+      // Async scorer status indicator
+      scoring: "Finding your best match\u2026",
     },
 
     // Contact Sales
     contactSales: {
       title: "Talk to our sales team",
       interested: "Interested in:",
-      company: "Company",
+      company: "Company name",
       companyPlaceholder: "Acme Inc.",
       companySize: "Company size",
       noteLabel: "Anything you'd like to share?",
-      notePlaceholder: "Team size, timeline, specific requirements…",
+      notePlaceholder: "Timeline, specific requirements, integrations you need\u2026",
       cta: "Request a demo",
       successTitle: "We'll be in touch!",
-      successSubtitle: "Thanks! We'll reply within 1 business day.",
+      successSubtitle: "Our sales team will reach out within 1\u20132 business days.",
       fallback: "Or email us directly at {{email}}",
-      backToPlans: "← Back to plans",
+      backToPlans: "\u2190 Back to plans",
+      phone: "Phone number",
+      phonePlaceholder: "+1 555 000 0000",
+      whatsNext: "What happens next",
+      next1: "Our team reviews your requirements",
+      next2: "You'll get a tailored demo invitation",
+      next3: "Custom pricing crafted for your business",
+      yourAnswers: "Your profile",
+      people: "people",
     },
 
     // Step 5 — Review (replaces Payment)
@@ -288,7 +338,7 @@ export const en = {
       perYear: "year",
       editPlan: "Edit plan",
       promoHint: "Have a promo code? Apply it on the secure checkout page.",
-      paymentPageNote: "",
+      paymentPageNote: "The payment page is in English.",
       checkoutCanceled: "Checkout canceled — you can try again or change your plan.",
     },
 
@@ -306,6 +356,25 @@ export const en = {
       startAgain: "Start a new signup — you were not charged",
       consumedTitle: "Signup already complete",
       consumedSubtitle: "Your workspace is ready — log in with your credentials.",
+      changePlan: "Change plan",
+      timeoutTitle: "Taking longer than expected",
+      timeoutSubtitle: "We're still setting things up. We'll email you when your workspace is ready.",
+    },
+
+    // Billing cycle labels (used by ResumeSignupModal)
+    billing: {
+      monthly: "Monthly",
+      yearly: "Yearly",
+    },
+
+    // Resume Modal (shown when returning to signup with a pending session)
+    resume: {
+      title: "Resume your signup",
+      subtitle: "You have a pending signup session. Would you like to continue?",
+      pendingPlan: "Pending plan: {{plan}}",
+      continue: "Continue signup",
+      changePlan: "Choose a different plan",
+      startFresh: "Start fresh",
     },
   },
 };

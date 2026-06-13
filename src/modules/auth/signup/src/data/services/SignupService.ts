@@ -21,6 +21,7 @@ import type {
   CompleteSessionDto,
   PricingContextDto,
   ContactSalesRequestDto,
+  RecommendationDto,
 } from "../models/SignupModels";
 import type {
   RegisterPayload,
@@ -55,6 +56,23 @@ export class SignupService implements ISignupService {
     if (categoryKey) params.categoryId = categoryKey;
     const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.GET_EDITIONS, params);
     return this.api.get<PublicEditionDto[]>(url);
+  }
+
+  async getRecommendation(params: {
+    vertical?: string | null;
+    teamSize?: string | null;
+    priorities?: string | null;
+    currency?: string;
+    lang?: string;
+  }): Promise<RecommendationDto> {
+    const query: Record<string, string> = {};
+    if (params.vertical)   query.vertical   = params.vertical;
+    if (params.teamSize)   query.teamSize   = params.teamSize;
+    if (params.priorities) query.priorities = params.priorities;
+    if (params.currency)   query.currency   = params.currency;
+    if (params.lang)       query.lang       = params.lang;
+    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.RECOMMENDATION, query);
+    return this.api.get<RecommendationDto>(url);
   }
 
   async sendOtp(email: string): Promise<SendOtpDto> {

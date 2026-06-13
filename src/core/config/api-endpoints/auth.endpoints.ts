@@ -52,6 +52,13 @@ export const AUTH_ENDPOINTS = {
       RESUME: `${V1}/auth/signup/resume`,
       /** Change the selected plan while still awaiting payment — returns new checkoutUrl. */
       CHANGE_PLAN: `${V1}/auth/signup/change-plan`,
+      /**
+       * Server-side recommendation engine.
+       * GET ?vertical=&teamSize=&priorities=&currency=&lang=
+       * Returns { recommendedTier, recommendedEditionName, score, reason }.
+       * Falls back to local computeRecommendedTier() if this call fails.
+       */
+      RECOMMENDATION: `${V1}/auth/signup/recommendation`,
     },
     // ── Passkey / WebAuthn ────────────────────────────────────
     PASSKEY: {

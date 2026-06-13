@@ -116,6 +116,8 @@ export function AccountStep({ vm }: AccountStepProps) {
           </Label>
           <PasswordInput
             id="signup-password"
+            // a11y: links the field to the strength indicator so screen readers read both
+            aria-describedby={vm.wizardData.password.length > 0 ? "signup-password-strength" : undefined}
             placeholder={t("signup.account.passwordPlaceholder") || "Min. 12 characters"}
             value={vm.wizardData.password}
             onChange={(e) => vm.updatePassword(e.target.value)}
@@ -130,8 +132,16 @@ export function AccountStep({ vm }: AccountStepProps) {
 
           {/* Password Strength Meter */}
           {vm.wizardData.password.length > 0 && (
-            <div className="space-y-1" style={{ animation: "sxRise 0.3s ease-out" }}>
-              <div className="flex gap-1">
+            // a11y: role=status + aria-live announces strength changes as the user types
+            <div
+              id="signup-password-strength"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              className="space-y-1"
+              style={{ animation: "sxRise 0.3s ease-out" }}
+            >
+              <div className="flex gap-1" aria-hidden="true">
                 {Array.from({ length: 5 }, (_, i) => (
                   <div
                     key={i}
@@ -221,6 +231,8 @@ export function AccountStep({ vm }: AccountStepProps) {
         <Button
           type="submit"
           disabled={vm.isLoading || !vm.wizardData.acceptTerms}
+          // a11y: aria-busy signals to screen readers that work is in progress
+          aria-busy={vm.isLoading}
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
             background: BRAND_TOKENS.gradient.cta,
@@ -228,11 +240,15 @@ export function AccountStep({ vm }: AccountStepProps) {
           }}
         >
           {vm.isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <>
+              <Loader2 className="me-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              {/* a11y: visually hidden text so screen readers announce the loading state */}
+              <span className="sr-only">{t("signup.common.loading") || "Loading…"}</span>
+            </>
           ) : (
             <>
               {t("signup.account.continue") || "Continue"}
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
             </>
           )}
         </Button>

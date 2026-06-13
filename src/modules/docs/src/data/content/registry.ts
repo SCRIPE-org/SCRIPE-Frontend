@@ -56,6 +56,7 @@ import "./modules/entitlements/editions";
 // import "./modules/entitlements/subscriptions";
 import "./modules/entitlements/features";
 import "./modules/entitlements/overrides";
+import "./modules/entitlements/crm-leads";
 
 // Modules (Billing & Tier 2 — Phases 0–9)
 // import "./modules/entitlements/billing-engine";

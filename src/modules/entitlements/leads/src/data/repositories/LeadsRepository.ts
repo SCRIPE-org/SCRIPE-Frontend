@@ -1,17 +1,22 @@
 "use client";
 
-import type { PlatformLead, PlatformLeadListItem } from "../../domain/entities/PlatformLead";
+import type { PlatformLead, PlatformLeadListItem, LeadActivity } from "../../domain/entities/PlatformLead";
 import type {
   ILeadsRepository,
+  ILeadsService,
   LeadsListParams,
   UpdateLeadStatusParams,
-} from "../../domain/interfaces/ILeadsRepository";
+  CreateLeadParams,
+  ConvertLeadParams,
+  ConvertLeadResult,
+  AssignLeadParams,
+  BulkLeadStatusResult,
+} from "../../domain/interfaces";
 import type { PagedResult } from "@modules/identity/core/domain/types";
-import { LeadsService } from "../services/LeadsService";
 import { LeadsMapper } from "../mappers/LeadsMapper";
 
 export class LeadsRepository implements ILeadsRepository {
-  constructor(private readonly service: LeadsService) {}
+  constructor(private readonly service: ILeadsService) {}
 
   async getAll(params: LeadsListParams): Promise<PagedResult<PlatformLeadListItem>> {
     const model = await this.service.getAll(params);
@@ -33,5 +38,34 @@ export class LeadsRepository implements ILeadsRepository {
 
   async updateStatus(params: UpdateLeadStatusParams): Promise<void> {
     await this.service.updateStatus(params.id, params.status, params.notes);
+  }
+
+  async createLead(params: CreateLeadParams): Promise<string> {
+    return this.service.createLead(params);
+  }
+
+  async convertToTenant(id: string, params: ConvertLeadParams): Promise<ConvertLeadResult> {
+    return this.service.convertToTenant(id, params);
+  }
+
+  async assignLead(id: string, params: AssignLeadParams): Promise<void> {
+    await this.service.assignLead(id, params);
+  }
+
+  async deleteLead(id: string): Promise<void> {
+    await this.service.deleteLead(id);
+  }
+
+  async getActivity(id: string): Promise<LeadActivity[]> {
+    const dtos = await this.service.getActivity(id);
+    return dtos.map(LeadsMapper.toActivity);
+  }
+
+  async bulkUpdateStatus(
+    leadIds: string[],
+    status: string,
+    notes?: string
+  ): Promise<BulkLeadStatusResult> {
+    return this.service.bulkUpdateStatus(leadIds, status, notes);
   }
 }

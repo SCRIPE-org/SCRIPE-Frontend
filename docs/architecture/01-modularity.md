@@ -89,7 +89,7 @@ modules/admin/
     │   └── repositories/          # API calls (AdminRepository)
     └── presentation/              # React UI (SOLID pattern)
         ├── viewmodels/            # All state & logic (useAdminViewModel)
-        ├── views/                 # Pure UI (~60 lines max, zero useState)
+        ├── views/                 # Pure UI (~200 lines max, zero useState)
         └── components/            # Section components (FiltersSection)
 ```
 
@@ -128,5 +128,5 @@ import Link from "next/link";
 1. **Always use ViewModels** — Never put `useEffect` or complex logic in a View component
 2. **Use the Barrel** — Only export needed items from `index.ts`, keep internals private
 3. **DI Container** — Always resolve dependencies in `di.ts`, never `new Service()` in components
-4. **Keep Views under 60 lines** — If it's growing, split into section components
+4. **Keep Views under 200 lines** — If it's growing, split into section components
 5. **Domain layer is pure** — No React imports, no UI dependencies, just TypeScript + Zod

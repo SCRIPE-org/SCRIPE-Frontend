@@ -25,7 +25,7 @@ export const en = {
       step5Desc:
         "Create the main ViewModel that orchestrates CRUD operations using useCrudViewModel.",
       step6Title: "6. Create View",
-      step6Desc: "Build the pure UI View component that consumes the ViewModel (max ~60 lines).",
+      step6Desc: "Build the pure UI View component that consumes the ViewModel (max ~200 lines).",
       step7Title: "7. Add Route & Navigation",
       step7Desc: "Create the Next.js page connector and add navigation entries.",
       structureTitle: "Module Structure",
@@ -36,7 +36,7 @@ export const en = {
       viewTitle: "View Component",
       routeTitle: "Route & Navigation",
       checklist:
-        "Before submitting, verify:  Module follows SOLID pattern,  View is under 60 lines,  No cross-module imports,  Translations added to dictionaries,  Navigation entry added.",
+        "Before submitting, verify:  Module follows SOLID pattern,  View is under 200 lines,  No cross-module imports,  Translations added to dictionaries,  Navigation entry added.",
     },
     addBackendModule: {
       title: "Add a Backend Module",

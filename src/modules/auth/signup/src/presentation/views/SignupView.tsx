@@ -18,7 +18,7 @@ import { ContactSalesStep } from "../components/ContactSalesStep";
 import { ReviewStep } from "../components/ReviewStep";
 import { ProvisioningStep } from "../components/ProvisioningStep";
 import { CompleteStep } from "../components/CompleteStep";
-import { SignupStepper } from "../components/SignupStepper";
+import { SignupProgressBar } from "../components/SignupProgressBar";
 import { ResumeSignupModal } from "../components/ResumeSignupModal";
 
 /**
@@ -74,14 +74,13 @@ export function SignupView() {
   const vm = useSignupWizardViewModel();
   const { t, direction } = useI18n();
 
-  const stepperSteps = useMemo(
+  const progressBarLabels = useMemo(
     () => [
-      { key: "category", label: t("signup.steps.organization") || "Organization" },
-      { key: "plan", label: t("signup.steps.plan") || "Plan" },
-      { key: "account", label: t("signup.steps.account") || "Account" },
-      { key: "verification", label: t("signup.steps.verify") || "Verify" },
-      { key: "workspace", label: t("signup.steps.workspace") || "Workspace" },
-      { key: "review", label: t("signup.steps.review") || "Review" },
+      t("signup.steps.plan") || "Plan",
+      t("signup.steps.account") || "Account",
+      t("signup.steps.verify") || "Verify",
+      t("signup.steps.workspace") || "Workspace",
+      t("signup.steps.review") || "Review",
     ],
     [t]
   );
@@ -178,7 +177,13 @@ export function SignupView() {
             style={{ color: BRAND_TOKENS.text.brand }}
           >
             {t("signup.header.signIn") || "Sign in"}{" "}
-            <span aria-hidden className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+            <span
+              aria-hidden
+              className="inline-block transition-transform"
+              style={{ transform: direction === "rtl" ? "scaleX(-1)" : "none" }}
+            >
+              →
+            </span>
           </Link>
         </div>
       </header>
@@ -204,13 +209,11 @@ export function SignupView() {
               borderBottom: "1px solid rgba(255,255,255,0.04)",
             }}
           >
-            <div className="flex items-center justify-center py-2.5 px-4">
-              <SignupStepper
-                currentStep={vm.step}
-                steps={stepperSteps}
-                className="flex items-center justify-center gap-1 sm:gap-2"
-              />
-            </div>
+            <SignupProgressBar
+              currentStep={vm.step}
+              stepLabels={progressBarLabels}
+              direction={direction}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -268,6 +271,11 @@ export function SignupView() {
                   initialCategory={vm.selectedCategory}
                   currency={vm.currency}
                   onCurrencyChange={vm.setCurrency}
+                  recommendedTier={vm.wizardData.recommendedTier}
+                  supportedCurrencies={vm.supportedCurrencies}
+                  detectedCountry={vm.pricingContext?.detectedCountry}
+                  recommendedCurrency={vm.pricingContext?.recommendedCurrency}
+                  isCurrencyLoading={vm.isCurrencyLoading}
                 />
               </motion.div>
             )}

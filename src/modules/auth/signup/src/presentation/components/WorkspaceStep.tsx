@@ -45,13 +45,14 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
     return "unavailable";
   })();
 
+  // a11y: icons are decorative here — the text messages below the input carry the meaning
   const subdomainStatusIcon = {
     idle: null,
     checking: (
-      <Loader2 className="h-4 w-4 animate-spin" style={{ color: "rgba(245,242,255,0.4)" }} />
+      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" style={{ color: "rgba(245,242,255,0.4)" }} />
     ),
-    available: <Check className="h-4 w-4" style={{ color: "#10B981" }} />,
-    unavailable: <X className="h-4 w-4" style={{ color: "#ef4444" }} />,
+    available: <Check className="h-4 w-4" aria-hidden="true" style={{ color: "#10B981" }} />,
+    unavailable: <X className="h-4 w-4" aria-hidden="true" style={{ color: "#ef4444" }} />,
   }[subdomainStatus];
 
   return (
@@ -162,9 +163,10 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             </div>
           </div>
 
-          {/* Subdomain status message */}
+          {/* Subdomain status message — role=alert so screen readers announce it immediately */}
           {subdomainResult && !subdomainResult.available && (
             <p
+              role="alert"
               className="text-[11px] font-medium"
               style={{ color: "#fca5a5" }}
             >
@@ -190,11 +192,14 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           )}
           {subdomainStatus === "available" && vm.wizardData.subdomain && (
             <p
+              aria-live="polite"
               className="text-[11px] font-medium"
               style={{ color: "#10B981" }}
             >
-              ✓ {t("signup.workspace.subdomainAvailable", { subdomain: vm.wizardData.subdomain }) ||
-                `✓ ${vm.wizardData.subdomain}.${BRAND.domain} is available!`}
+              {/* a11y: ✓ is decorative — the text already conveys availability */}
+              <span aria-hidden="true">✓ </span>
+              {t("signup.workspace.subdomainAvailable", { subdomain: vm.wizardData.subdomain }) ||
+                `${vm.wizardData.subdomain}.${BRAND.domain} is available!`}
             </p>
           )}
         </div>
@@ -265,6 +270,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             vm.wizardData.subdomain.length < 3 ||
             (subdomainResult !== null && !subdomainResult.available)
           }
+          aria-busy={vm.isLoading}
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
             background: BRAND_TOKENS.gradient.cta,
@@ -272,11 +278,14 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
           }}
         >
           {vm.isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <>
+              <Loader2 className="me-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              <span className="sr-only">{t("signup.common.loading") || "Loading…"}</span>
+            </>
           ) : (
             <>
               {t("signup.workspace.createWorkspace") || "Create workspace"}
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
             </>
           )}
         </Button>
@@ -289,7 +298,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             className="flex items-center gap-1.5 text-xs font-medium transition-colors"
             style={{ color: "rgba(245,242,255,0.55)" }}
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
+            <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
             {t("signup.workspace.back") || "Back"}
           </Button>
         </div>

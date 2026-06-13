@@ -22,7 +22,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                    VIEW (Pure UI)                               │
 ├─────────────────────────────────────────────────────────────────┤
-│  ✅ Max ~60 lines                                                │
+│  ✅ Max ~200 lines                                               │
 │  ✅ Zero useState, Zero useEffect                                │
 │  ✅ Only destructures from ViewModel                             │
 │  ✅ Returns JSX with component composition                       │
@@ -67,7 +67,7 @@
 ```
 📁 user-management/src/presentation/
 ├── views/
-│   └── UserManagementView.tsx      # ~60 lines, pure composition
+│   └── UserManagementView.tsx      # ~200 lines max, pure composition
 ├── viewmodels/
 │   ├── useUserManagementViewModel.ts    # Orchestrator
 │   ├── useStatisticsViewModel.ts        # Stats logic
@@ -106,7 +106,7 @@ export function UserManagementView() {
 ```
 📁 dashboard/src/presentation/
 ├── views/
-│   └── DashboardView.tsx           # ~60 lines
+│   └── DashboardView.tsx           # ~200 lines max
 ├── viewmodels/
 │   ├── useDashboardViewModel.ts    # Orchestrator
 │   ├── useKPIViewModel.ts          # KPI cards
@@ -162,7 +162,7 @@ export function useChartViewModel(): ChartViewModelResult {
 ```
 📁 user-profile/src/presentation/
 ├── views/
-│   └── UserProfileView.tsx         # ~60 lines
+│   └── UserProfileView.tsx         # ~200 lines max
 ├── viewmodels/
 │   ├── useUserProfileViewModel.ts  # Orchestrator (fetches user)
 │   ├── useProfileHeaderViewModel.ts
@@ -306,7 +306,7 @@ export function useGeneralSettingsViewModel(): GeneralSettingsViewModelResult {
 ```
 📁 onboarding/src/presentation/
 ├── views/
-│   └── OnboardingView.tsx          # ~60 lines
+│   └── OnboardingView.tsx          # ~200 lines max
 ├── viewmodels/
 │   ├── useOnboardingViewModel.ts   # Wizard orchestrator
 │   ├── useStep1ViewModel.ts
@@ -685,7 +685,7 @@ export function useFilterViewModel(): FilterViewModelResult {
 │   │
 │   └── presentation/
 │       ├── views/
-│       │   └── {Feature}View.tsx        # ~60 lines max
+│       │   └── {Feature}View.tsx        # ~200 lines max
 │       ├── viewmodels/
 │       │   ├── use{Feature}ViewModel.ts # Orchestrator
 │       │   └── use{Section}ViewModel.ts # Per section
@@ -715,7 +715,7 @@ export function useFilterViewModel(): FilterViewModelResult {
 
 ## Checklist Before PR
 
-- [ ] View is under 60 lines
+- [ ] View is under 200 lines
 - [ ] View has NO useState or useEffect
 - [ ] All logic is in ViewModel(s)
 - [ ] ViewModel returns typed interface

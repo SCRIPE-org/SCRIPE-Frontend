@@ -160,3 +160,17 @@ export interface ContactSalesRequestDto {
   teamSize: string | null | undefined;
   primaryPriority: string | null | undefined;
 }
+
+// ─── Recommendation DTO ───────────────────────────────────────────────────────
+
+/** Shape returned by GET /auth/signup/recommendation */
+export interface RecommendationDto {
+  /** "free" | "standard" | "enterprise" | "ultimate" */
+  recommendedTier: string;
+  /** Human-readable edition name, e.g. "Pro", "Ultra" */
+  recommendedEditionName: string;
+  /** Raw score — higher = stronger match (diagnostic only) */
+  score: number;
+  /** "scored" | "catalog_empty" */
+  reason: string;
+}

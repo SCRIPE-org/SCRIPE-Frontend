@@ -239,8 +239,15 @@ export const ENTITLEMENTS_ENDPOINTS = {
     // ===== PLATFORM LEADS (Phase 5 CRM) =====
     LEADS: {
       LIST: `${V1}/leads`,
+      CREATE: `${V1}/leads`,
       BY_ID: (id: string) => `${V1}/leads/${id}`,
       UPDATE_STATUS: (id: string) => `${V1}/leads/${id}/status`,
+      ASSIGN: (id: string) => `${V1}/leads/${id}/assign`,
+      CONVERT_TO_TENANT: (id: string) => `${V1}/leads/${id}/convert-to-tenant`,
+      ACTIVITY: (id: string) => `${V1}/leads/${id}/activity`,
+      DELETE: (id: string) => `${V1}/leads/${id}`,
+      BULK_STATUS: `${V1}/leads/bulk-status`,
     },
+
   },
 };

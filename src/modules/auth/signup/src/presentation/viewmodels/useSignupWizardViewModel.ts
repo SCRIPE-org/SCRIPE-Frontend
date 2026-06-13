@@ -68,10 +68,10 @@ export function useSignupWizardViewModel() {
   // Apply geo-detected currency once (user manual selection blocks re-apply)
   useEffect(() => {
     if (pricingContext?.recommendedCurrency) {
-      state.applyRecommendedCurrency(pricingContext.recommendedCurrency);
+      state.applyRecommendedCurrency(pricingContext.recommendedCurrency, pricingContext.detectedCountry);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pricingContext?.recommendedCurrency]);
+  }, [pricingContext?.recommendedCurrency, pricingContext?.detectedCountry]);
 
   // ── 3. Categories (currency-aware refetch) ───────────────────────────────
   const { data: categories = [] as PublicCategory[], isLoading: isCategoriesLoading } =
@@ -245,6 +245,8 @@ export function useSignupWizardViewModel() {
     supportedCurrencies,
     currentCurrencyMeta,
     isCurrencyLoading,
+    // Raw pricing context — exposed so plan picker can read detectedCountry + recommendedCurrency
+    pricingContext: pricingContext ?? null,
 
     // ── Discovery ──
     discoveryAnswers: state.discoveryAnswers,

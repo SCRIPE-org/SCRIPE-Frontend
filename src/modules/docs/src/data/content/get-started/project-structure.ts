@@ -124,7 +124,7 @@ const sections: DocSection[] = [
         "React hooks with logic",
         "Domain interfaces, TanStack Query",
       ],
-      ["presentation/views/", "Presentation", "Pure UI (<60 lines)", "ViewModels, components"],
+      ["presentation/views/", "Presentation", "Pure UI (<200 lines)", "ViewModels, components"],
       [
         "presentation/components/",
         "Presentation",

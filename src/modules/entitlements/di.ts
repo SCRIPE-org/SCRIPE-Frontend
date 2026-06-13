@@ -74,6 +74,7 @@ import type { IAnalyticsService } from "./analytics/src/domain/interfaces/IAnaly
 import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayService";
 import type { ICommissionLedgerService } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerService";
 import type { IEditionCategoryService } from "./edition-categories/src/domain/interfaces/IEditionCategoryService";
+import type { ILeadsService } from "./leads/src/domain/interfaces/ILeadsService";
 
 export interface EntitlementsContainer {
   featureRepository: IFeatureRepository;
@@ -119,6 +120,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       apiService
     );
     const editionCategoryService: IEditionCategoryService = new EditionCategoryService(apiService);
+    const leadsService: ILeadsService = new LeadsService(apiService);
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {
@@ -135,7 +137,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
       commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
       editionCategoryRepository: new EditionCategoryRepository(editionCategoryService),
-      leadsRepository: new LeadsRepository(new LeadsService(apiService)),
+      leadsRepository: new LeadsRepository(leadsService),
     };
   }
 

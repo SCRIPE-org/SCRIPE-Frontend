@@ -189,7 +189,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white"
             style={{ color: BRAND_TOKENS.text.brand }}
           >
-            <Pencil className="h-3 w-3" />
+            <Pencil className="h-3 w-3" aria-hidden="true" />
             {t("signup.review.editPlan") || "Edit plan"}
           </button>
         </div>
@@ -205,7 +205,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
           }}
         >
           <div className="flex items-start gap-3">
-            <CalendarClock className="mt-0.5 h-4 w-4 shrink-0" style={{ color: BRAND_TOKENS.text.cyan }} />
+            <CalendarClock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
             <div>
               <p className="text-sm font-semibold" style={{ color: BRAND_TOKENS.text.cyan }}>
                 {t("signup.review.trialStarts", { days: trialDays }) ||
@@ -220,13 +220,13 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-4 w-4 shrink-0" style={{ color: BRAND_TOKENS.text.success }} />
+            <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.success }} />
             <p className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
               {t("signup.review.cancelAnytime") || "Cancel anytime"}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <BellRing className="h-4 w-4 shrink-0" style={{ color: BRAND_TOKENS.text.cyan }} />
+            <BellRing className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
             <p className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
               {t("signup.review.reminder") || "We'll remind you 3 days before any charge"}
             </p>
@@ -259,7 +259,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
       {!isFree && (
         <div className="space-y-2">
           <div className="flex items-center gap-2.5">
-            <TicketPercent className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND_TOKENS.text.tertiary }} />
+            <TicketPercent className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.tertiary }} />
             <p className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
               {t("signup.review.promoHint") ||
                 "Have a promo code? Apply it on the secure checkout page."}
@@ -267,7 +267,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
           </div>
           {language === "ar" && (
             <div className="flex items-center gap-2.5">
-              <Lock className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND_TOKENS.text.tertiary }} />
+              <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.tertiary }} />
               <p className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
                 {t("signup.review.paymentPageNote") ||
                   "ستتم إعادة توجيهك إلى صفحة دفع آمنة (باللغة الإنجليزية)"}
@@ -293,6 +293,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
         type="button"
         onClick={handleProceed}
         disabled={vm.isLoading}
+        aria-busy={vm.isLoading}
         className="h-12 w-full rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60"
         style={{
           background: BRAND_TOKENS.gradient.cta,
@@ -300,10 +301,13 @@ export function ReviewStep({ vm }: ReviewStepProps) {
         }}
       >
         {vm.isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <span className="sr-only">{t("signup.common.loading") || "Loading…"}</span>
+          </>
         ) : isFree ? (
           <>
-            <CheckCircle className="me-2 h-4 w-4" />
+            <CheckCircle className="me-2 h-4 w-4" aria-hidden="true" />
             {t("signup.review.createWorkspace") || "Create your workspace"}
           </>
         ) : isTrial ? (

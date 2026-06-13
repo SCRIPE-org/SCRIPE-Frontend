@@ -930,5 +930,57 @@ export const en = {
         dataStoreWarningContent: "Data store reads and writes go through the Tier 2 gateway and count toward the 60 req/min quota per installation.",
       },
     },
+    // ── CRM Leads Module ────────────────────────────────────────
+    crmLeads: {
+      title: "CRM Leads",
+      description:
+        "Enterprise contact-sales pipeline — capture, qualify, assign, and convert prospects to tenants from the admin panel.",
+      intro:
+        "The CRM Leads module is SCRIPE's built-in sales pipeline. It captures prospects who submit the Contact Sales form during the signup wizard, enriches each lead with discovery intelligence (business type, team size, priorities, recommended tier), and provides a full admin CRM workflow: list, detail drawer, status transitions, assignment, and one-click tenant conversion.",
+      whatIsTitle: "What is the Leads CRM?",
+      whatIsIntro:
+        "A Lead represents a prospective customer who has expressed interest in the platform. Each lead carries contact info, discovery context from the signup wizard, and a lifecycle status that tracks the sales engagement from first contact to conversion. All data is soft-deleted, fully audited, and accessible only to admins with the appropriate permissions.",
+      lifecycleTitle: "Lead Lifecycle",
+      lifecycleIntro:
+        "Leads move through a defined set of statuses. Status transitions are tracked in the activity timeline so the entire team can see the history of each opportunity.",
+      discoveryTitle: "Discovery Intelligence",
+      discoveryIntro:
+        "Every lead captured via the signup wizard Contact Sales form is enriched with five discovery fields that the prospect answered during the onboarding questionnaire. These fields give the sales team instant context without requiring a follow-up call.",
+      discoveryTip:
+        "The RecommendedTier field is computed by the signup wizard's recommendation engine based on the prospect's answers. It provides a data-driven starting point for the sales conversation and pre-fills the tier selection in the Convert to Tenant dialog.",
+      backendTitle: "Backend Architecture",
+      backendIntro:
+        "The Leads feature follows the standard SCRIPE 3-project module layout. The PlatformLead entity lives in the Entitlements domain and is managed via a dedicated repository and CQRS command/query pipeline.",
+      entityTitle: "PlatformLead Entity",
+      entityIntro:
+        "PlatformLead inherits from AuditableEntity (CreatedBy, CreatedAt, UpdatedBy, UpdatedAt, IsDeleted, RowVersion). All IDs are AES-encrypted in API transit. The entity is designed to hold both CRM lifecycle data and the discovery intelligence gathered during the signup wizard questionnaire.",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "The LeadsController exposes 9 endpoints covering the full lead lifecycle. All endpoints require AdminOnly JWT authentication. The contact-sales submission endpoint is the only public route.",
+      endpointsNote:
+        "All entity IDs returned by the API are AES-encrypted via IdEncryptionHelper. The frontend should never construct or manipulate raw GUIDs — always use the encrypted strings returned from the API.",
+      convertTitle: "Convert to Tenant",
+      convertIntro:
+        "The ConvertLeadToTenant command is an atomic operation that creates a live tenant from a qualified lead. The handler orchestrates tenant provisioning, edition assignment, activity logging, and status update in a single database transaction. If any step fails, the entire operation rolls back.",
+      emailsTitle: "Email Notifications",
+      emailsIntro:
+        "When a Contact Sales form is submitted, two branded HTML emails are dispatched asynchronously (fire-and-forget via Task.Run) to avoid blocking the API response. Both templates use inline CSS for maximum email client compatibility.",
+      emailsTip:
+        "Configure Leads:SalesNotificationEmail in appsettings.json to set the inbox that receives sales alerts. The SMTP settings use the shared SmtpSettings block. Emails are dispatched fire-and-forget — a delivery failure does not fail the lead creation.",
+      frontendTitle: "Frontend Architecture",
+      frontendIntro:
+        "The frontend leads sub-module follows the strict SCRIPE sub-module pattern: domain entities, data layer (service → mapper → repository), and presentation layer (viewmodel → view → components). All HTTP calls go through IApiService via DI — never directly in hooks.",
+      frontendEntityTitle: "PlatformLead Entity (Frontend)",
+      frontendEntityIntro:
+        "The PlatformLead domain entity wraps the raw DTO data with computed getters and display logic. The relativeTime getter uses Intl.RelativeTimeFormat for locale-aware relative timestamps. The discoveryTags getter aggregates the three discovery fields into a tag array for the drawer's discovery intelligence section.",
+      permissionsTitle: "Permissions",
+      permissionsIntro:
+        "Leads are gated behind five granular permissions following the standard SCRIPE permission format (module.action). Assign the leads.convert permission only to senior sales admins — it triggers tenant provisioning which is a high-impact operation.",
+      permissionsTip:
+        "Frontend permission checks (usePermission, PermissionGate) are UX-only. The backend always enforces the permission check via the AuthorizationBehavior pipeline regardless of what the UI shows.",
+      quickStartTitle: "Quick Start",
+      quickStartIntro:
+        "The typical CRM flow from prospect submission to live tenant takes 5 steps. Conversion is the only step requiring senior admin permissions — all other transitions can be performed by any admin with leads.update.",
+    },
   },
 };

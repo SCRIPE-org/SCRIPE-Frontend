@@ -20,6 +20,7 @@ import type {
   PricingContextDto,
   ResumeSessionDto,
   ChangePlanResultDto,
+  RecommendationDto,
 } from "../models/SignupModels";
 import type {
   RegisterPayload,
@@ -37,6 +38,19 @@ export interface ISignupService {
     currency: string,
     lang: string
   ): Promise<PublicEditionDto[]>;
+
+  /**
+   * Server-side recommendation scorer.
+   * Returns recommended tier + edition name based on Discovery Q1/Q2/Q3 answers.
+   * Callers should fall back to computeRecommendedTier() if this throws.
+   */
+  getRecommendation(params: {
+    vertical?: string | null;
+    teamSize?: string | null;
+    priorities?: string | null;
+    currency?: string;
+    lang?: string;
+  }): Promise<RecommendationDto>;
 
   sendOtp(email: string): Promise<SendOtpDto>;
 
