@@ -1,6 +1,9 @@
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import type { EditionCategory } from "../entities/EditionCategory";
-import type { CreateEditionCategoryRequest, UpdateEditionCategoryRequest } from "../entities/EditionCategoryRequests";
+import type {
+  CreateEditionCategoryRequest,
+  UpdateEditionCategoryRequest,
+} from "../entities/EditionCategoryRequests";
 
 export interface IEditionCategoryRepository {
   getAll(params: PaginationParams): Promise<PagedResult<EditionCategory>>;

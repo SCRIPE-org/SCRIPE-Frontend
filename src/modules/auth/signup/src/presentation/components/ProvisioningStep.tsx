@@ -34,8 +34,14 @@ export function ProvisioningStep({ vm }: ProvisioningStepProps) {
     () => [
       { label: t("signup.provisioning.creatingWorkspace") || "Creating workspace", emoji: "🏗️" },
       { label: t("signup.provisioning.settingDefaults") || "Setting up defaults", emoji: "⚙️" },
-      { label: t("signup.provisioning.registeringAccount") || "Registering your account", emoji: "🔐" },
-      { label: t("signup.provisioning.configuringPermissions") || "Configuring permissions", emoji: "🛡️" },
+      {
+        label: t("signup.provisioning.registeringAccount") || "Registering your account",
+        emoji: "🔐",
+      },
+      {
+        label: t("signup.provisioning.configuringPermissions") || "Configuring permissions",
+        emoji: "🛡️",
+      },
       { label: t("signup.provisioning.almostReady") || "Almost ready…", emoji: "✨" },
     ],
     [t]

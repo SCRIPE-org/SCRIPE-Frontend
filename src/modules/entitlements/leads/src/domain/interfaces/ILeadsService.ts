@@ -32,5 +32,9 @@ export interface ILeadsService {
   deleteLead(id: string): Promise<void>;
   getActivity(id: string): Promise<LeadActivityResponseModel[]>;
   /** Bulk-update status on up to 100 leads in one API round-trip. */
-  bulkUpdateStatus(leadIds: string[], status: string, notes?: string): Promise<BulkLeadStatusResult>;
+  bulkUpdateStatus(
+    leadIds: string[],
+    status: string,
+    notes?: string
+  ): Promise<BulkLeadStatusResult>;
 }

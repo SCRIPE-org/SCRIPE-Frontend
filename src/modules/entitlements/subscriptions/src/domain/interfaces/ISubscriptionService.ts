@@ -78,7 +78,19 @@ export interface ISubscriptionService {
   downloadReceipt(tenantId: string): Promise<{ blob: Blob; filename: string }>;
 
   // ── Downgrade Impact ──
-  getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<{ hasOverflow: boolean; overflows: { resourceType: string; featureName: string; currentCount: number; newLimit: number; overflowCount: number }[] }>;
+  getDowngradeImpact(
+    tenantId: string,
+    targetEditionId: string
+  ): Promise<{
+    hasOverflow: boolean;
+    overflows: {
+      resourceType: string;
+      featureName: string;
+      currentCount: number;
+      newLimit: number;
+      overflowCount: number;
+    }[];
+  }>;
 
   // ── Currency ──
   changeCurrency(tenantId: string, currency: string): Promise<void>;

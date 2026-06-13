@@ -49,7 +49,11 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
   const subdomainStatusIcon = {
     idle: null,
     checking: (
-      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" style={{ color: "rgba(245,242,255,0.4)" }} />
+      <Loader2
+        className="h-4 w-4 animate-spin"
+        aria-hidden="true"
+        style={{ color: "rgba(245,242,255,0.4)" }}
+      />
     ),
     available: <Check className="h-4 w-4" aria-hidden="true" style={{ color: "#10B981" }} />,
     unavailable: <X className="h-4 w-4" aria-hidden="true" style={{ color: "#ef4444" }} />,
@@ -165,11 +169,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
 
           {/* Subdomain status message — role=alert so screen readers announce it immediately */}
           {subdomainResult && !subdomainResult.available && (
-            <p
-              role="alert"
-              className="text-[11px] font-medium"
-              style={{ color: "#fca5a5" }}
-            >
+            <p role="alert" className="text-[11px] font-medium" style={{ color: "#fca5a5" }}>
               {subdomainResult.reason === "taken"
                 ? t("signup.workspace.subdomainTaken") || "This subdomain is already taken."
                 : subdomainResult.reason === "reserved"
@@ -184,18 +184,15 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
                   className="mx-1 h-auto p-0 underline hover:no-underline"
                   style={{ color: "#C4B5FD" }}
                 >
-                  {t("signup.workspace.trySuggestion", { suggestion: subdomainResult.suggestion }) ||
-                    `Try "${subdomainResult.suggestion}"?`}
+                  {t("signup.workspace.trySuggestion", {
+                    suggestion: subdomainResult.suggestion,
+                  }) || `Try "${subdomainResult.suggestion}"?`}
                 </Button>
               )}
             </p>
           )}
           {subdomainStatus === "available" && vm.wizardData.subdomain && (
-            <p
-              aria-live="polite"
-              className="text-[11px] font-medium"
-              style={{ color: "#10B981" }}
-            >
+            <p aria-live="polite" className="text-[11px] font-medium" style={{ color: "#10B981" }}>
               {/* a11y: ✓ is decorative — the text already conveys availability */}
               <span aria-hidden="true">✓ </span>
               {t("signup.workspace.subdomainAvailable", { subdomain: vm.wizardData.subdomain }) ||

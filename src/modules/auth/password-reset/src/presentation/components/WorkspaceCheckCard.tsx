@@ -12,11 +12,7 @@ interface WorkspaceCheckCardProps {
   onToggle: (w: WorkspaceOption) => void;
 }
 
-export function WorkspaceCheckCard({
-  workspace,
-  isSelected,
-  onToggle,
-}: WorkspaceCheckCardProps) {
+export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: WorkspaceCheckCardProps) {
   const { t } = useI18n();
   return (
     <button

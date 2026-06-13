@@ -204,7 +204,8 @@ export const de = {
       ep: {
         list: "Alle Abonnements auflisten (paginiert, filterbar nach Status/Typ/Mandant)",
         get: "Abonnementdetails nach ID abrufen",
-        assign: "Ein neues Abonnement erstellen (Mandant einer Edition mit WÃ¤hrung/Promo zuweisen)",
+        assign:
+          "Ein neues Abonnement erstellen (Mandant einer Edition mit WÃ¤hrung/Promo zuweisen)",
         upgrade: "Auf eine hÃ¶here Edition hochstufen",
         downgrade: "Auf eine niedrigere Edition herabstufen (prÃ¼ft OverflowPolicy)",
         impact: "Downgrade-Auswirkungen vor der AusfÃ¼hrung in der Vorschau anzeigen",
@@ -287,7 +288,8 @@ export const de = {
         "MaÃŸgeschneiderte Enterprise-Deals â€” 'Acme Corp 500 Administratoren statt der standardmÃ¤ÃŸigen 50 geben'",
       useCase2: "Werbeangebote â€” 'Premium-Chat fÃ¼r diesen Mandanten fÃ¼r 30 Tage aktivieren'",
       useCase3: "Beta-Tests â€” 'Das neue Rechnungsmodul fÃ¼r Early Adopters aktivieren'",
-      useCase4: "VorÃ¼bergehende ErhÃ¶hung â€” 'Datei-Upload-Limit wÃ¤hrend ihrer Migration erhÃ¶hen'",
+      useCase4:
+        "VorÃ¼bergehende ErhÃ¶hung â€” 'Datei-Upload-Limit wÃ¤hrend ihrer Migration erhÃ¶hen'",
       overuseWarning:
         "Ãœberschreibungen sollten sparsam eingesetzt werden. Wenn viele Mandanten dieselbe Ãœberschreibung benÃ¶tigen, ziehen Sie in Betracht, eine neue Edition zu erstellen. ÃœbermÃ¤ÃŸige Ãœberschreibungen machen das System schwerer zu verwalten und zu prÃ¼fen.",
       resolvedTitle: "Endpunkt fÃ¼r aufgelÃ¶ste Funktionen",
@@ -388,7 +390,8 @@ export const de = {
           "Betroffenenanfragen (DSRs) sind formelle Anfragen von Einzelpersonen zur AusÃ¼bung ihrer Rechte. Das Modul bietet einen vollstÃ¤ndigen DSR-Workflow.",
         typesTitle: "Anfragetypen",
         typesIntro: "Das System unterstÃ¼tzt vier DSR-Typen gemÃ¤ÃŸ DSGVO-Artikel 17 und CCPA:",
-        type1: "Export â€” Recht auf DatenÃ¼bertragbarkeit. Die betroffene Person wÃ¼nscht eine Kopie.",
+        type1:
+          "Export â€” Recht auf DatenÃ¼bertragbarkeit. Die betroffene Person wÃ¼nscht eine Kopie.",
         type2:
           "LÃ¶schung â€” Recht auf Vergessenwerden. Alle personenbezogenen Daten mÃ¼ssen gelÃ¶scht oder anonymisiert werden.",
         type3: "Berichtigung â€” Korrekturanfrage. Ungenaue Daten mÃ¼ssen aktualisiert werden.",
@@ -560,7 +563,8 @@ export const de = {
           "DSR-AktivitÃ¤tszusammenfassung â€” Statistiken zu DSR-Volumen, Typen und SLA-Einhaltung.",
         type3: "Einwilligungs-Audit â€” VollstÃ¤ndiges Protokoll der Einwilligungen und Widerrufe.",
         type4: "Aufbewahrungsanalyse â€” Aktueller Durchsetzungsstatus aller aktiven Richtlinien.",
-        type5: "Dateninventar-Export â€” VollstÃ¤ndiger Export des Dateninventars (Artikel 30 RoPA).",
+        type5:
+          "Dateninventar-Export â€” VollstÃ¤ndiger Export des Dateninventars (Artikel 30 RoPA).",
         asyncTitle: "Asynchrone Generierung",
         asyncIntro:
           "Berichte werden asynchron erstellt, um HTTP-Anfragen nicht zu blockieren. Das System erstellt einen ComplianceReport (IsReady=false) und reiht den Job ein.",
@@ -580,4 +584,3 @@ export const de = {
     },
   },
 };
-

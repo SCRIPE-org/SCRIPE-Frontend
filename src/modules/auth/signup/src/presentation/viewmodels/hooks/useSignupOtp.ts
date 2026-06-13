@@ -21,10 +21,7 @@ interface UseSignupOtpOptions {
   setStep: (step: SignupStep) => void;
   setError: (msg: string) => void;
   setIsLoading: (v: boolean) => void;
-  updateField: <K extends "emailVerificationToken">(
-    field: K,
-    value: string | null
-  ) => void;
+  updateField: <K extends "emailVerificationToken">(field: K, value: string | null) => void;
 }
 
 export function useSignupOtp({
@@ -104,26 +101,20 @@ export function useSignupOtp({
     setError("");
 
     try {
-      const result = await repository.verifyOtp(
-        email.trim().toLowerCase(),
-        otpCode
-      );
+      const result = await repository.verifyOtp(email.trim().toLowerCase(), otpCode);
       if (result.isValid && result.verificationToken) {
         updateField("emailVerificationToken", result.verificationToken);
         setOtpCode("");
         setStep("workspace");
       } else {
         setError(
-          result.error ||
-            t("signup.verification.invalidCode") ||
-            "Invalid or expired code."
+          result.error || t("signup.verification.invalidCode") || "Invalid or expired code."
         );
         isVerifyingOtpRef.current = false;
       }
     } catch {
       setError(
-        t("signup.verification.verificationFailed") ||
-          "Verification failed. Please try again."
+        t("signup.verification.verificationFailed") || "Verification failed. Please try again."
       );
       isVerifyingOtpRef.current = false;
     } finally {

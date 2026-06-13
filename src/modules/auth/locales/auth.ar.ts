@@ -19,7 +19,7 @@ export const ar = {
     validationError: "يرجى ملء جميع الحقول المطلوبة",
     passwordsDoNotMatch: "كلمتا المرور غير متطابقتين.",
     passwordsMatch: "كلمتا المرور متطابقتان.",
-    changePassword:"تغيير كلمة المرور",
+    changePassword: "تغيير كلمة المرور",
     twoFactor: {
       title: "المصادقة الثنائية",
       enterAuthCode: "أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة",

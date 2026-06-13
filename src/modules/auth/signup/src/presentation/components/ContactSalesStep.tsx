@@ -66,7 +66,11 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           className="flex h-16 w-16 items-center justify-center rounded-full"
           style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.25)" }}
         >
-          <CheckCircle className="h-8 w-8" aria-hidden="true" style={{ color: BRAND_TOKENS.text.success }} />
+          <CheckCircle
+            className="h-8 w-8"
+            aria-hidden="true"
+            style={{ color: BRAND_TOKENS.text.success }}
+          />
         </motion.div>
 
         <div>
@@ -96,7 +100,11 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             t("signup.contactSales.next3") || "Custom pricing crafted for your business",
           ].map((item) => (
             <div key={item} className="flex items-center gap-2 py-1">
-              <Sparkles className="h-3 w-3 flex-shrink-0" aria-hidden="true" style={{ color: "#22D3EE" }} />
+              <Sparkles
+                className="h-3 w-3 flex-shrink-0"
+                aria-hidden="true"
+                style={{ color: "#22D3EE" }}
+              />
               <span className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
                 {item}
               </span>
@@ -158,7 +166,11 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
           <div className="space-y-2">
             {vm.wizardData.businessType && (
               <div className="flex items-center gap-2">
-                <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+                <Building2
+                  className="h-3.5 w-3.5 shrink-0"
+                  aria-hidden="true"
+                  style={{ color: BRAND_TOKENS.text.cyan }}
+                />
                 <span className="text-xs capitalize" style={{ color: BRAND_TOKENS.text.secondary }}>
                   {vm.wizardData.businessType}
                 </span>
@@ -166,7 +178,11 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             )}
             {vm.wizardData.teamSize && (
               <div className="flex items-center gap-2">
-                <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+                <Users
+                  className="h-3.5 w-3.5 shrink-0"
+                  aria-hidden="true"
+                  style={{ color: BRAND_TOKENS.text.cyan }}
+                />
                 <span className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
                   {vm.wizardData.teamSize} {t("signup.contactSales.people") || "people"}
                 </span>
@@ -174,21 +190,28 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             )}
             {vm.wizardData.primaryPriority && (
               <div className="flex items-start gap-2">
-                <Target className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+                <Target
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                  aria-hidden="true"
+                  style={{ color: BRAND_TOKENS.text.cyan }}
+                />
                 <div className="flex flex-wrap gap-1">
-                  {vm.wizardData.primaryPriority.split(",").filter(Boolean).map((p) => (
-                    <span
-                      key={p}
-                      className="rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
-                      style={{
-                        background: "rgba(34,211,238,0.1)",
-                        border: "1px solid rgba(34,211,238,0.2)",
-                        color: BRAND_TOKENS.text.cyan,
-                      }}
-                    >
-                      {p.trim()}
-                    </span>
-                  ))}
+                  {vm.wizardData.primaryPriority
+                    .split(",")
+                    .filter(Boolean)
+                    .map((p) => (
+                      <span
+                        key={p}
+                        className="rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
+                        style={{
+                          background: "rgba(34,211,238,0.1)",
+                          border: "1px solid rgba(34,211,238,0.2)",
+                          color: BRAND_TOKENS.text.cyan,
+                        }}
+                      >
+                        {p.trim()}
+                      </span>
+                    ))}
                 </div>
               </div>
             )}
@@ -258,8 +281,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             <span className="flex items-center gap-1">
               <Phone className="h-3 w-3" aria-hidden="true" />
               {t("signup.contactSales.phone") || "Phone number"}
-            </span>
-            {" "}
+            </span>{" "}
             <span style={{ color: BRAND_TOKENS.text.ghost }}>
               ({t("signup.common.optional") || "optional"})
             </span>
@@ -340,9 +362,7 @@ export function ContactSalesStep({ vm, editionName }: ContactSalesStepProps) {
             id="cs-note-count"
             className="text-end text-[10px]"
             style={{
-              color: note.length > NOTE_MAX_LENGTH * 0.9
-                ? "#fca5a5"
-                : BRAND_TOKENS.text.ghost,
+              color: note.length > NOTE_MAX_LENGTH * 0.9 ? "#fca5a5" : BRAND_TOKENS.text.ghost,
             }}
             aria-live="polite"
           >

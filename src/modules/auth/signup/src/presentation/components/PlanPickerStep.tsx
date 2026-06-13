@@ -14,7 +14,7 @@ import type { PublicEdition, SupportedCurrency } from "../../domain/entities";
 
 interface PlanPickerStepProps {
   onSelectPlan: (edition: PublicEdition, billingCycle: "monthly" | "annual") => void;
-  /** Pre-selected category key from CategoryStep (null = all) */
+  /** Vertical pre-selected in Discovery Q1 — pre-filters the plan list (null = all) */
   initialCategory?: string | null;
   /** Display + checkout currency — owned by the wizard (defaults SAR for Arabic; U1) */
   currency: string;
@@ -80,7 +80,12 @@ export function PlanPickerStep({
   selectedPriorities,
 }: PlanPickerStepProps) {
   const { t } = useI18n();
-  const vm = usePlanPickerViewModel(authContainer.signupRepository, onSelectPlan, initialCategory ?? null, currency);
+  const vm = usePlanPickerViewModel(
+    authContainer.signupRepository,
+    onSelectPlan,
+    initialCategory ?? null,
+    currency
+  );
   const [showComparison, setShowComparison] = useState(false);
 
   // Group editions by category for the "All" view
@@ -104,9 +109,12 @@ export function PlanPickerStep({
           <Skeleton className="mx-auto h-10 w-64" />
           <Skeleton className="mx-auto mt-3 h-5 w-80" />
         </div>
-        <div className="mx-auto flex flex-wrap justify-center gap-6 max-w-7xl">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-[420px] rounded-2xl w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[280px]" />
+            <Skeleton
+              key={i}
+              className="h-[420px] w-full rounded-2xl sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[280px]"
+            />
           ))}
         </div>
       </div>
@@ -135,9 +143,10 @@ export function PlanPickerStep({
         >
           {[null, ...vm.categories].map((cat) => {
             const isActive = vm.activeCategory === cat;
-            const label = cat === null
-              ? t("signup.plan.allCategories") || "All"
-              : vm.categoryLabels[cat] ?? cat;
+            const label =
+              cat === null
+                ? t("signup.plan.allCategories") || "All"
+                : (vm.categoryLabels[cat] ?? cat);
             return (
               <button
                 key={cat ?? "__all"}
@@ -264,9 +273,12 @@ export function PlanPickerStep({
               </div>
 
               {/* Edition cards within category */}
-              <div className="mx-auto flex flex-wrap justify-center gap-5 max-w-7xl">
+              <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-5">
                 {editions.map((edition, idx) => (
-                  <div key={edition.id || idx} className="w-full sm:w-[calc(50%-10px)] lg:w-[320px] flex">
+                  <div
+                    key={edition.id || idx}
+                    className="flex w-full sm:w-[calc(50%-10px)] lg:w-[320px]"
+                  >
                     <PlanCard
                       edition={edition}
                       index={idx}
@@ -285,9 +297,9 @@ export function PlanPickerStep({
         </div>
       ) : (
         // Single category or filtered view: flat grid with gap
-        <div className="mx-auto flex flex-wrap justify-center gap-5 max-w-7xl">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-5">
           {vm.filteredEditions.map((edition, idx) => (
-            <div key={edition.id || idx} className="w-full sm:w-[calc(50%-10px)] lg:w-[320px] flex">
+            <div key={edition.id || idx} className="flex w-full sm:w-[calc(50%-10px)] lg:w-[320px]">
               <PlanCard
                 edition={edition}
                 index={idx}

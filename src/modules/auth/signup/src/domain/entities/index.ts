@@ -9,16 +9,17 @@
  * Ordered logically; the actual transition rules live in useSignupWizardState.
  */
 export type SignupStep =
-  | "discovery"     // Step 0: Conversational discovery (Q1 business, Q2 team, Q3 priority)
-  | "category"      // Step 1: Organization type (auto-skipped when <2 categories)
-  | "plan"          // Step 2: Choose edition/plan (currency-aware)
-  | "account"       // Step 3: Name, email, password
-  | "verification"  // Step 4: Email OTP
-  | "workspace"     // Step 5: Org name, subdomain, username
+  | "discovery" // Step 0: Conversational discovery (Q1 business, Q2 team, Q3 priority)
+  // NOTE: the standalone "category" step was retired — the vertical is asked ONCE in
+  // Discovery Q1 and flows into the plan picker's initialCategory filter (no double-ask).
+  | "plan" // Step 1: Choose edition/plan (currency-aware; vertical pre-filtered from Discovery Q1)
+  | "account" // Step 3: Name, email, password
+  | "verification" // Step 4: Email OTP
+  | "workspace" // Step 5: Org name, subdomain, username
   | "contact-sales" // Step 5b: Lead form (wizard ends here for contact-sales editions)
-  | "review"        // Step 6: Review & confirm
-  | "provisioning"  // Step 7: Creating tenant (free mode only)
-  | "complete";     // Step 8: Done
+  | "review" // Step 6: Review & confirm
+  | "provisioning" // Step 7: Creating tenant (free mode only)
+  | "complete"; // Step 8: Done
 
 /** Server-authoritative checkout mode — the frontend NEVER infers this. */
 export type CheckoutMode = "free" | "trial" | "checkout" | "contact-sales";
@@ -308,7 +309,14 @@ export interface SignupCompleteResult {
 
 /** Result of POST /signup/resume — plan snapshot for the resume modal. */
 export interface ResumeSessionResult {
-  status: "pending" | "awaiting_payment" | "active" | "failed" | "consumed" | "abandoned" | "unknown";
+  status:
+    | "pending"
+    | "awaiting_payment"
+    | "active"
+    | "failed"
+    | "consumed"
+    | "abandoned"
+    | "unknown";
   editionId: string | null;
   billingCycle: "monthly" | "yearly" | null;
   currency: string | null;

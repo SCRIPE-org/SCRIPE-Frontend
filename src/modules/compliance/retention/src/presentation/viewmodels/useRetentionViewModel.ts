@@ -6,9 +6,7 @@ import { complianceContainer } from "@modules/compliance/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import type {
-  UpdateRetentionPolicyRequest,
-} from "../../domain/entities/RetentionPolicy";
+import type { UpdateRetentionPolicyRequest } from "../../domain/entities/RetentionPolicy";
 import type { CreateRetentionPolicyRequest } from "../../data/models/RetentionModels";
 
 export function useRetentionViewModel() {

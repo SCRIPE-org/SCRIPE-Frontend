@@ -46,11 +46,7 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
             border: "1px solid var(--sx-accent-soft-border)",
           }}
         >
-          <Mail
-            className="h-6 w-6"
-            style={{ color: "var(--sx-accent-text)" }}
-            aria-hidden="true"
-          />
+          <Mail className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
         </div>
         <h1
           className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
@@ -58,10 +54,7 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
         >
           {t("auth.enterOtpTitle")}
         </h1>
-        <p
-          className="mt-1.5 text-[13px] leading-relaxed"
-          style={{ color: "var(--sx-text-mute)" }}
-        >
+        <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.enterOtpSubtitle").replace("{{email}}", "")}{" "}
           <strong style={{ color: "var(--sx-text)" }}>{vm.email}</strong>
         </p>
@@ -70,12 +63,7 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
       <StepDots current={3} total={totalSteps} />
 
       <form onSubmit={vm.submitOtp} className="flex flex-col gap-5">
-        <OtpInputField
-          value={vm.otp}
-          onChange={vm.setOtp}
-          variant="vault"
-          id="reset-otp"
-        />
+        <OtpInputField value={vm.otp} onChange={vm.setOtp} variant="vault" id="reset-otp" />
 
         {vm.error && (
           <div
@@ -83,9 +71,7 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
             role="alert"
             aria-live="assertive"
           >
-            <p className="text-[13px] font-medium text-destructive">
-              {resolveError(vm.error)}
-            </p>
+            <p className="text-[13px] font-medium text-destructive">{resolveError(vm.error)}</p>
           </div>
         )}
 

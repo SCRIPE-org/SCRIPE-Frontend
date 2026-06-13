@@ -48,7 +48,7 @@ export function DiscoveryQ2Team({
               whileTap={{ scale: 0.97 }}
               onClick={() => onSelect(size.value)}
               aria-pressed={isSelected}
-              className="group relative flex flex-col items-center gap-2 rounded-2xl border p-5 text-center transition-all w-full sm:w-[180px] md:w-[190px]"
+              className="group relative flex w-full flex-col items-center gap-2 rounded-2xl border p-5 text-center transition-all sm:w-[180px] md:w-[190px]"
               style={{
                 background: isSelected ? `${BRAND_TOKENS.palette.violet}18` : BRAND_TOKENS.bg.card,
                 borderColor: isSelected
@@ -60,11 +60,16 @@ export function DiscoveryQ2Team({
               }}
             >
               {/* a11y: emoji is decorative — label comes from the text below */}
-              <span className="text-3xl" aria-hidden="true">{size.icon}</span>
+              <span className="text-3xl" aria-hidden="true">
+                {size.icon}
+              </span>
               <span className="text-sm font-semibold" style={{ color: BRAND_TOKENS.text.primary }}>
                 {t(size.labelKey)}
               </span>
-              <span className="text-xs leading-tight" style={{ color: BRAND_TOKENS.text.secondary }}>
+              <span
+                className="text-xs leading-tight"
+                style={{ color: BRAND_TOKENS.text.secondary }}
+              >
                 {t(size.sublabelKey)}
               </span>
 
@@ -84,11 +89,11 @@ export function DiscoveryQ2Team({
       </div>
 
       {/* Back + skip */}
-      <div className="flex items-center justify-between mt-6">
+      <div className="mt-6 flex items-center justify-between">
         <button
           type="button"
           onClick={onBack}
-          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
+          className="rounded text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.common.back") || "← Back"}
@@ -96,11 +101,11 @@ export function DiscoveryQ2Team({
         <button
           type="button"
           onClick={onSkip}
-          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
+          className="rounded text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.discovery.skipQ") || "Skip · I'll choose later"}
-          <ChevronRight className="inline h-3 w-3 ml-0.5" aria-hidden="true" />
+          <ChevronRight className="ml-0.5 inline h-3 w-3" aria-hidden="true" />
         </button>
       </div>
     </motion.div>

@@ -48,11 +48,7 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
             border: "1px solid var(--sx-accent-soft-border)",
           }}
         >
-          <Lock
-            className="h-6 w-6"
-            style={{ color: "var(--sx-accent-text)" }}
-            aria-hidden="true"
-          />
+          <Lock className="h-6 w-6" style={{ color: "var(--sx-accent-text)" }} aria-hidden="true" />
         </div>
         <h1
           className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
@@ -128,9 +124,7 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
                 color: vm.passwordsMatch ? "rgb(34,197,94)" : "hsl(var(--destructive))",
               }}
             >
-              {vm.passwordsMatch
-                ? t("auth.passwordsMatch")
-                : t("auth.passwordsDoNotMatch")}
+              {vm.passwordsMatch ? t("auth.passwordsMatch") : t("auth.passwordsDoNotMatch")}
             </p>
           )}
         </div>
@@ -141,9 +135,7 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
             role="alert"
             aria-live="assertive"
           >
-            <p className="text-[13px] font-medium text-destructive">
-              {resolveError(vm.error)}
-            </p>
+            <p className="text-[13px] font-medium text-destructive">{resolveError(vm.error)}</p>
           </div>
         )}
 

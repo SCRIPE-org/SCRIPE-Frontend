@@ -57,7 +57,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             maxLength={100}
             autoFocus
           />
-          <div className="flex items-center justify-between mt-1 min-h-[20px]">
+          <div className="mt-1 flex min-h-[20px] items-center justify-between">
             {nameError ? (
               <p className="text-xs text-destructive">
                 {t("validation.invalidName") || "Tenant name is required."}
@@ -65,9 +65,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             ) : (
               <div />
             )}
-            <span className="text-xs text-muted-foreground">
-              {vm.form.name.length}/100
-            </span>
+            <span className="text-xs text-muted-foreground">{vm.form.name.length}/100</span>
           </div>
         </div>
 

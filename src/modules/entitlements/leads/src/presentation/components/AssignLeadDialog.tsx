@@ -39,8 +39,8 @@ export function AssignLeadDialog({
 }: AssignLeadDialogProps) {
   const { t } = useI18n();
 
-  const [adminId, setAdminId]   = useState("");
-  const [note, setNote]         = useState("");
+  const [adminId, setAdminId] = useState("");
+  const [note, setNote] = useState("");
   const [unassign, setUnassign] = useState(false);
 
   // ── Computed ──────────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ export function AssignLeadDialog({
     e.preventDefault();
     await onAssign({
       adminId: unassign ? undefined : adminId.trim() || undefined,
-      note:    note.trim() || undefined,
+      note: note.trim() || undefined,
     });
   };
 
@@ -70,7 +70,7 @@ export function AssignLeadDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="mb-1 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
               <UserPlus className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             </div>
@@ -84,13 +84,13 @@ export function AssignLeadDialog({
 
           {/* Lead context pill */}
           {lead && (
-            <div className="rounded-lg border border-border bg-muted/50 px-4 py-3 mt-2">
+            <div className="mt-2 rounded-lg border border-border bg-muted/50 px-4 py-3">
               <p className="text-sm font-medium">{lead.companyName}</p>
               <p className="text-xs text-muted-foreground">
                 {lead.contactName} · {lead.email}
               </p>
               {isCurrentlyAssigned && (
-                <p className="text-xs text-amber-500 mt-1">
+                <p className="mt-1 text-xs text-amber-500">
                   {t("leads.assignDialog.currentlyAssigned")}
                 </p>
               )}
@@ -99,7 +99,6 @@ export function AssignLeadDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
-
           {/* Unassign toggle */}
           {isCurrentlyAssigned && (
             <div
@@ -107,24 +106,21 @@ export function AssignLeadDialog({
               tabIndex={0}
               onClick={() => setUnassign((v) => !v)}
               onKeyDown={(e) => e.key === "Enter" && setUnassign((v) => !v)}
-              className={`flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors
-                ${unassign
+              className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
+                unassign
                   ? "border-amber-500/60 bg-amber-500/10 text-amber-400"
-                  : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60"}`}
+                  : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60"
+              }`}
             >
               <UserMinus className="h-4 w-4 shrink-0" />
-              <span className="text-sm font-medium">
-                {t("leads.assignDialog.unassign")}
-              </span>
+              <span className="text-sm font-medium">{t("leads.assignDialog.unassign")}</span>
             </div>
           )}
 
           {/* Admin ID input — hidden when unassigning */}
           {!unassign && (
             <div className="space-y-1.5">
-              <Label htmlFor="assign-admin-id">
-                {t("leads.assignDialog.adminId")}
-              </Label>
+              <Label htmlFor="assign-admin-id">{t("leads.assignDialog.adminId")}</Label>
               <Input
                 id="assign-admin-id"
                 value={adminId}
@@ -135,7 +131,7 @@ export function AssignLeadDialog({
                 spellCheck={false}
               />
               <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <p>{t("leads.assignDialog.adminIdHint")}</p>
               </div>
             </div>
@@ -143,9 +139,7 @@ export function AssignLeadDialog({
 
           {/* Optional note */}
           <div className="space-y-1.5">
-            <Label htmlFor="assign-note">
-              {t("leads.assignDialog.note")}
-            </Label>
+            <Label htmlFor="assign-note">{t("leads.assignDialog.note")}</Label>
             <Textarea
               id="assign-note"
               value={note}
@@ -158,12 +152,7 @@ export function AssignLeadDialog({
           </div>
 
           <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isAssigning}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isAssigning}>
               {t("leads.assignDialog.cancel")}
             </Button>
             <Button
@@ -171,8 +160,8 @@ export function AssignLeadDialog({
               disabled={isAssigning || (!unassign && !adminId.trim())}
               className={`gap-2 ${
                 unassign
-                  ? "bg-amber-600 hover:bg-amber-700 text-white"
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                  ? "bg-amber-600 text-white hover:bg-amber-700"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
               }`}
             >
               {isAssigning ? (

@@ -86,7 +86,8 @@ export function usePermissionsViewModel() {
   // ── TENANT MODE GROUPED: grouped permissions for a specific tenant ──
   const tenantGroupedQuery = useQuery({
     queryKey: ["permissions", "tenant-grouped", effectiveTenantId, { search }],
-    queryFn: () => permissionRepository.getGroupedForTenant(effectiveTenantId!, search || undefined),
+    queryFn: () =>
+      permissionRepository.getGroupedForTenant(effectiveTenantId!, search || undefined),
     enabled: !isSystemCatalogMode && !!effectiveTenantId,
   });
 

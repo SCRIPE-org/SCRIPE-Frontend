@@ -20,21 +20,18 @@ export function EditionCategoriesView() {
         {
           key: "name",
           label: t("common.name") || "Name",
-          render: (_val: unknown, cat: EditionCategory) =>
-            cat.getDisplayName(language),
+          render: (_val: unknown, cat: EditionCategory) => cat.getDisplayName(language),
           sortable: true,
         },
         {
           key: "description",
           label: t("common.description") || "Description",
-          render: (_val: unknown, cat: EditionCategory) =>
-            cat.description || "—",
+          render: (_val: unknown, cat: EditionCategory) => cat.description || "—",
         },
         {
           key: "sortOrder",
           label: t("entitlements.editions.categories.sortOrder") || "Sort Order",
-          render: (_val: unknown, cat: EditionCategory) =>
-            String(cat.sortOrder),
+          render: (_val: unknown, cat: EditionCategory) => String(cat.sortOrder),
         },
       ],
 

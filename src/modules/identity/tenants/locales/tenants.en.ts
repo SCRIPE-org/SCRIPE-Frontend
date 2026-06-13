@@ -138,7 +138,7 @@ export const en = {
     domainsCopied: "Copied to clipboard",
     domainsLoadFailed: "Failed to load domains",
     freePlanTitle: "Free Plan",
-    freePlanDesc:"This is the free plan",  
+    freePlanDesc: "This is the free plan",
     domainsRetry: "Retry",
     domainsDnsStep1: "Step 1: Add a CNAME record to route traffic",
     domainsDnsStep2: "Step 2: Add a TXT record to verify ownership",

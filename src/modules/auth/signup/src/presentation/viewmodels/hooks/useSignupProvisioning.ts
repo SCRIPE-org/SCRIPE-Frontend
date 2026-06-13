@@ -29,12 +29,11 @@ import {
   clearPersistedWizardState,
   getPersistedSignupRef,
 } from "../../../data/helpers/wizardStorage";
-import type { ISignupRepository, ContactSalesPayload } from "../../../domain/interfaces/ISignupRepository";
 import type {
-  SignupStep,
-  SignupWizardData,
-  SelectedPlan,
-} from "../../../domain/entities";
+  ISignupRepository,
+  ContactSalesPayload,
+} from "../../../domain/interfaces/ISignupRepository";
+import type { SignupStep, SignupWizardData, SelectedPlan } from "../../../domain/entities";
 
 interface UseSignupProvisioningOptions {
   repository: ISignupRepository;
@@ -144,9 +143,7 @@ export function useSignupProvisioning({
       // ── CHECKOUT MODE: hand off to Stripe ───────────────────────────────
       if (result.mode === "checkout") {
         if (!result.checkoutUrl || !result.signupRef) {
-          throw new Error(
-            t("signup.errors.signupFailed") || "Signup failed. Please try again."
-          );
+          throw new Error(t("signup.errors.signupFailed") || "Signup failed. Please try again.");
         }
 
         // Store ref for finalize page (survives Stripe round-trip)
@@ -219,7 +216,9 @@ export function useSignupProvisioning({
 
   // ── Contact Sales ─────────────────────────────────────────────────────────
   const submitContactSales = useCallback(
-    async (form: Omit<ContactSalesPayload, "editionId" | "businessType" | "teamSize" | "primaryPriority">): Promise<boolean> => {
+    async (
+      form: Omit<ContactSalesPayload, "editionId" | "businessType" | "teamSize" | "primaryPriority">
+    ): Promise<boolean> => {
       setIsLoading(true);
       setError("");
       try {
@@ -232,9 +231,7 @@ export function useSignupProvisioning({
         });
         return true;
       } catch (err: unknown) {
-        setError(
-          err instanceof Error ? err.message : "Failed to submit. Please try again."
-        );
+        setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
         return false;
       } finally {
         setIsLoading(false);

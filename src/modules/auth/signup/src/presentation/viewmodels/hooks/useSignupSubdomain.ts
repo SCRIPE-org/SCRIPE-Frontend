@@ -73,9 +73,7 @@ export function useSignupSubdomain({
   // These checks are a safety net for async conditions (availability + token).
   const submitWorkspace = useCallback(async () => {
     if (subdomainResult && !subdomainResult.available) {
-      setError(
-        t("signup.errors.subdomainUnavailable") || "Please choose an available subdomain."
-      );
+      setError(t("signup.errors.subdomainUnavailable") || "Please choose an available subdomain.");
       return;
     }
     if (!wizardData.emailVerificationToken) {

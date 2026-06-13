@@ -20,14 +20,8 @@ import {
 // ─── Account step schema ──────────────────────────────────────────────────────
 
 export const accountSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, "signup.errors.fullNameMin")
-    .max(100, "signup.errors.fullNameMax"),
-  email: z
-    .string()
-    .email("signup.errors.emailInvalid")
-    .min(1, "signup.errors.emailRequired"),
+  fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
+  email: z.string().email("signup.errors.emailInvalid").min(1, "signup.errors.emailRequired"),
   password: z
     .string()
     .min(PASSWORD_MIN_LENGTH, "signup.errors.passwordMinLength")
@@ -54,10 +48,7 @@ export const workspaceSchema = z.object({
     .min(SUBDOMAIN_MIN_LENGTH, "signup.errors.subdomainMinLength")
     .max(63, "signup.errors.subdomainMaxLength")
     .regex(SUBDOMAIN_REGEX, "signup.errors.subdomainFormat"),
-  username: z
-    .string()
-    .max(50, "signup.errors.usernameMax")
-    .optional(),
+  username: z.string().max(50, "signup.errors.usernameMax").optional(),
   region: z.string().nullable().optional(),
   timezone: z.string().min(1, "signup.errors.timezoneRequired"),
 });
@@ -67,23 +58,11 @@ export type WorkspaceFormValues = z.infer<typeof workspaceSchema>;
 // ─── Contact Sales step schema ────────────────────────────────────────────────
 
 export const contactSalesSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, "signup.errors.fullNameMin")
-    .max(100, "signup.errors.fullNameMax"),
-  email: z
-    .string()
-    .email("signup.errors.emailInvalid")
-    .min(1, "signup.errors.emailRequired"),
-  company: z
-    .string()
-    .max(200, "signup.errors.companyMax")
-    .optional(),
+  fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
+  email: z.string().email("signup.errors.emailInvalid").min(1, "signup.errors.emailRequired"),
+  company: z.string().max(200, "signup.errors.companyMax").optional(),
   companySize: z.string().optional(),
-  note: z
-    .string()
-    .max(1000, "signup.errors.noteMax")
-    .optional(),
+  note: z.string().max(1000, "signup.errors.noteMax").optional(),
 });
 
 export type ContactSalesFormValues = z.infer<typeof contactSalesSchema>;

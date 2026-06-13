@@ -3,7 +3,10 @@ import type { IEditionCategoryService } from "../../domain/interfaces/IEditionCa
 import { EditionCategory } from "../../domain/entities/EditionCategory";
 import { EditionCategoryMapper } from "../mappers/EditionCategoryMapper";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
-import type { CreateEditionCategoryRequest, UpdateEditionCategoryRequest } from "../../domain/entities/EditionCategoryRequests";
+import type {
+  CreateEditionCategoryRequest,
+  UpdateEditionCategoryRequest,
+} from "../../domain/entities/EditionCategoryRequests";
 
 export class EditionCategoryRepository implements IEditionCategoryRepository {
   constructor(private readonly service: IEditionCategoryService) {}

@@ -82,10 +82,13 @@ export function DiscoveryQ3Priority({
           aria-live="polite"
           aria-atomic="true"
           className="mb-3 text-center text-xs"
-          style={{ color: isLimitReached ? BRAND_TOKENS.palette.violet : BRAND_TOKENS.text.secondary }}
+          style={{
+            color: isLimitReached ? BRAND_TOKENS.palette.violet : BRAND_TOKENS.text.secondary,
+          }}
         >
           {isLimitReached
-            ? t("signup.discovery.q3MaxReached") || `${MAX_SELECTIONS} of ${MAX_SELECTIONS} selected (max)`
+            ? t("signup.discovery.q3MaxReached") ||
+              `${MAX_SELECTIONS} of ${MAX_SELECTIONS} selected (max)`
             : t("signup.discovery.q3Count", { count: selectionCount, max: MAX_SELECTIONS }) ||
               `${selectionCount} of ${MAX_SELECTIONS} selected`}
         </p>
@@ -171,7 +174,9 @@ export function DiscoveryQ3Priority({
           animate={{ opacity: 1, y: 0 }}
           onClick={onConfirm}
           type="button"
-          aria-label={t("signup.discovery.q3ConfirmLabel") || "Confirm priorities and see recommended plan"}
+          aria-label={
+            t("signup.discovery.q3ConfirmLabel") || "Confirm priorities and see recommended plan"
+          }
           className="mx-auto mt-5 flex w-full max-w-xs items-center justify-center gap-2 rounded-2xl px-6 py-3 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
           style={{
             background: `linear-gradient(135deg, rgba(168,85,247,0.22), rgba(124,58,237,0.18))`,
@@ -190,7 +195,7 @@ export function DiscoveryQ3Priority({
           onClick={onBack}
           type="button"
           aria-label={t("signup.common.backLabel") || "Go back to previous question"}
-          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
+          className="rounded text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.common.back") || "← Back"}
@@ -198,7 +203,9 @@ export function DiscoveryQ3Priority({
         <button
           onClick={onSkip}
           type="button"
-          aria-label={t("signup.discovery.skipToPlansLabel") || "Skip priorities and go directly to plans"}
+          aria-label={
+            t("signup.discovery.skipToPlansLabel") || "Skip priorities and go directly to plans"
+          }
           className="flex items-center gap-1 rounded-lg px-4 py-2 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1"
           style={{
             background: `${BRAND_TOKENS.palette.violet}18`,

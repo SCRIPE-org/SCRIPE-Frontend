@@ -29,16 +29,16 @@ interface FeatureComparisonTableProps {
 // Maps Q3 priority keys to the feature category label that should be highlighted
 
 const PRIORITY_TO_CATEGORY: Record<string, string> = {
-  security:      "Security",
-  compliance:    "Security",
-  sso:           "Security",
-  analytics:     "General",
-  automation:    "Modules",
+  security: "Security",
+  compliance: "Security",
+  sso: "Security",
+  analytics: "General",
+  automation: "Modules",
   collaboration: "Users & Access",
-  scale:         "Quotas",
-  performance:   "Performance",
-  api:           "General",
-  support:       "Support",
+  scale: "Quotas",
+  performance: "Performance",
+  api: "General",
+  support: "Support",
 };
 
 // ─── Cell value renderer ──────────────────────────────────────────────────────
@@ -103,7 +103,13 @@ function CellValue({
     }
     if (value === "0") {
       // a11y: decorative dash — screen reader skips it; Boolean false already conveys meaning
-      return <Minus className="mx-auto h-3.5 w-3.5 opacity-25" aria-hidden="true" style={{ color: BRAND_TOKENS.text.ghost }} />;
+      return (
+        <Minus
+          className="mx-auto h-3.5 w-3.5 opacity-25"
+          aria-hidden="true"
+          style={{ color: BRAND_TOKENS.text.ghost }}
+        />
+      );
     }
     return (
       <span className="text-xs font-semibold" style={{ color: BRAND_TOKENS.text.primary }}>
@@ -114,7 +120,13 @@ function CellValue({
 
   // Text type
   if (!value || value === "false" || value === "none") {
-    return <Minus className="mx-auto h-3.5 w-3.5 opacity-25" aria-hidden="true" style={{ color: BRAND_TOKENS.text.ghost }} />;
+    return (
+      <Minus
+        className="mx-auto h-3.5 w-3.5 opacity-25"
+        aria-hidden="true"
+        style={{ color: BRAND_TOKENS.text.ghost }}
+      />
+    );
   }
   return (
     <span className="text-[11px] leading-tight" style={{ color: BRAND_TOKENS.text.secondary }}>
@@ -144,10 +156,12 @@ function FeatureRow({
         background: isHighlighted
           ? "rgba(168,85,247,0.06)"
           : isEven
-          ? "rgba(255,255,255,0.015)"
-          : "transparent",
+            ? "rgba(255,255,255,0.015)"
+            : "transparent",
         borderBottom: "1px solid rgba(255,255,255,0.04)",
-        ...(isHighlighted ? { outline: "1px solid rgba(168,85,247,0.15)", outlineOffset: "-1px" } : {}),
+        ...(isHighlighted
+          ? { outline: "1px solid rgba(168,85,247,0.15)", outlineOffset: "-1px" }
+          : {}),
       }}
     >
       {/* Feature name */}
@@ -158,8 +172,8 @@ function FeatureRow({
           background: isHighlighted
             ? "rgba(168,85,247,0.08)"
             : isEven
-            ? "rgba(255,255,255,0.015)"
-            : "#0D0D14",
+              ? "rgba(255,255,255,0.015)"
+              : "#0D0D14",
           minWidth: 180,
           maxWidth: 240,
           borderRight: "1px solid rgba(255,255,255,0.05)",
@@ -178,7 +192,9 @@ function FeatureRow({
       {editions.map((edition) => {
         const cell = row.values[edition.id];
         const displayLabel =
-          (language === "ar" ? cell?.displayLabelAr : cell?.displayLabelEn) ?? cell?.displayLabelEn ?? null;
+          (language === "ar" ? cell?.displayLabelAr : cell?.displayLabelEn) ??
+          cell?.displayLabelEn ??
+          null;
 
         return (
           <td
@@ -193,7 +209,10 @@ function FeatureRow({
                 displayLabel={displayLabel}
               />
             ) : (
-              <Minus className="mx-auto h-3.5 w-3.5 opacity-20" style={{ color: BRAND_TOKENS.text.ghost }} />
+              <Minus
+                className="mx-auto h-3.5 w-3.5 opacity-20"
+                style={{ color: BRAND_TOKENS.text.ghost }}
+              />
             )}
           </td>
         );
@@ -216,9 +235,7 @@ function SectionHeaderRow({
   return (
     <tr
       style={{
-        background: isHighlightedSection
-          ? "rgba(168,85,247,0.1)"
-          : "rgba(255,255,255,0.03)",
+        background: isHighlightedSection ? "rgba(168,85,247,0.1)" : "rgba(255,255,255,0.03)",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
@@ -231,7 +248,8 @@ function SectionHeaderRow({
         }}
       >
         {/* a11y: ★ glyph is decorative — screen reader should not announce it */}
-        {isHighlightedSection && <span aria-hidden="true">★ </span>}{label}
+        {isHighlightedSection && <span aria-hidden="true">★ </span>}
+        {label}
       </td>
     </tr>
   );
@@ -249,9 +267,9 @@ const TIER_ACCENT: Record<number, string> = {
 // ─── Tier label → tier level map for recommendation highlight ─────────────────
 
 const TIER_LABEL_TO_LEVEL: Record<string, number> = {
-  free:       0,
-  pro:        1,
-  ultra:      2,
+  free: 0,
+  pro: 1,
+  ultra: 2,
   enterprise: 3,
 };
 
@@ -295,7 +313,7 @@ export function FeatureComparisonTable({
     recommendedTier != null ? (TIER_LABEL_TO_LEVEL[recommendedTier.toLowerCase()] ?? -1) : -1;
 
   const formatHeaderPrice = (edition: PlanEdition): string => {
-    if (edition.priceDisplay === "free")   return t("signup.plan.free")         || "Free";
+    if (edition.priceDisplay === "free") return t("signup.plan.free") || "Free";
     if (edition.priceDisplay === "custom") return t("signup.plan.contactSales") || "Contact Sales";
     const price = billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
     if (!price) return "—";
@@ -374,12 +392,13 @@ export function FeatureComparisonTable({
               {comparisonEditions.map((edition) => {
                 const accent = TIER_ACCENT[edition.tierLevel] ?? "rgba(168,85,247,0.5)";
                 const isEnterprise = edition.priceDisplay === "custom";
-                const isRecommended = recommendedTierLevel >= 0 && edition.tierLevel === recommendedTierLevel;
+                const isRecommended =
+                  recommendedTierLevel >= 0 && edition.tierLevel === recommendedTierLevel;
 
                 return (
                   <th
                     key={edition.id}
-                    className="py-5 px-4 text-center align-bottom"
+                    className="px-4 py-5 text-center align-bottom"
                     style={{
                       minWidth: 110,
                       position: "relative",
@@ -520,7 +539,8 @@ export function FeatureComparisonTable({
         }}
       >
         {isFxConverted
-          ? t("signup.plan.fxConvertedTooltip") || "Prices are approximate. Billed in USD at checkout."
+          ? t("signup.plan.fxConvertedTooltip") ||
+            "Prices are approximate. Billed in USD at checkout."
           : t("signup.plan.comparePricesNote", { currency: currencyCode }) ||
             `All prices in ${currencyCode}. Annual billed as a single payment.`}
       </div>

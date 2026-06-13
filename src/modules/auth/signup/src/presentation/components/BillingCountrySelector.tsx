@@ -10,13 +10,41 @@ import { motion, AnimatePresence } from "framer-motion";
 // ISO 4217 currency code → ISO 3166-1 alpha-2 country code mapping
 // Used to derive flag emoji from currency code (best-effort, not exhaustive)
 const CURRENCY_TO_COUNTRY: Record<string, string> = {
-  USD: "US", EUR: "EU", GBP: "GB", SAR: "SA", AED: "AE",
-  EGP: "EG", KWD: "KW", QAR: "QA", BHD: "BH", OMR: "OM",
-  JOD: "JO", TRY: "TR", PKR: "PK", INR: "IN", CNY: "CN",
-  JPY: "JP", KRW: "KR", MYR: "MY", SGD: "SG", AUD: "AU",
-  CAD: "CA", CHF: "CH", SEK: "SE", NOK: "NO", DKK: "DK",
-  MAD: "MA", TND: "TN", DZD: "DZ", NGN: "NG", ZAR: "ZA",
-  BRL: "BR", MXN: "MX", ARS: "AR", CLP: "CL", COP: "CO",
+  USD: "US",
+  EUR: "EU",
+  GBP: "GB",
+  SAR: "SA",
+  AED: "AE",
+  EGP: "EG",
+  KWD: "KW",
+  QAR: "QA",
+  BHD: "BH",
+  OMR: "OM",
+  JOD: "JO",
+  TRY: "TR",
+  PKR: "PK",
+  INR: "IN",
+  CNY: "CN",
+  JPY: "JP",
+  KRW: "KR",
+  MYR: "MY",
+  SGD: "SG",
+  AUD: "AU",
+  CAD: "CA",
+  CHF: "CH",
+  SEK: "SE",
+  NOK: "NO",
+  DKK: "DK",
+  MAD: "MA",
+  TND: "TN",
+  DZD: "DZ",
+  NGN: "NG",
+  ZAR: "ZA",
+  BRL: "BR",
+  MXN: "MX",
+  ARS: "AR",
+  CLP: "CL",
+  COP: "CO",
 };
 
 /** Convert ISO 3166-1 alpha-2 country code to flag emoji */
@@ -160,12 +188,8 @@ export function BillingCountrySelector({
         onClick={() => setOpen((prev) => !prev)}
         className="flex items-center gap-2.5 rounded-full px-4 py-2 text-sm transition-all duration-200 hover:opacity-80"
         style={{
-          background: open
-            ? "rgba(34,211,238,0.12)"
-            : "rgba(255,255,255,0.04)",
-          border: open
-            ? "1px solid rgba(34,211,238,0.35)"
-            : "1px solid rgba(255,255,255,0.08)",
+          background: open ? "rgba(34,211,238,0.12)" : "rgba(255,255,255,0.04)",
+          border: open ? "1px solid rgba(34,211,238,0.35)" : "1px solid rgba(255,255,255,0.08)",
           color: open ? "#22D3EE" : "rgba(245,242,255,0.75)",
         }}
       >
@@ -175,9 +199,7 @@ export function BillingCountrySelector({
         </span>
 
         {/* Symbol + code */}
-        <span className="font-semibold tracking-tight">
-          {currentMeta.symbol}
-        </span>
+        <span className="font-semibold tracking-tight">{currentMeta.symbol}</span>
         <span className="font-medium">{currency}</span>
 
         {/* Geo-detected badge */}
@@ -205,8 +227,7 @@ export function BillingCountrySelector({
 
       {/* ── Currency note ── */}
       <p className="text-[11px]" style={{ color: "rgba(245,242,255,0.3)" }}>
-        {t("signup.plan.currencyNote", { currency }) ||
-          `Prices shown in ${currency}`}
+        {t("signup.plan.currencyNote", { currency }) || `Prices shown in ${currency}`}
       </p>
 
       {/* ── Dropdown popover ── */}
@@ -224,8 +245,7 @@ export function BillingCountrySelector({
             style={{
               background: "rgba(18,15,38,0.97)",
               border: "1px solid rgba(255,255,255,0.1)",
-              boxShadow:
-                "0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(168,85,247,0.1)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(168,85,247,0.1)",
               backdropFilter: "blur(24px)",
             }}
           >
@@ -277,12 +297,8 @@ export function BillingCountrySelector({
                       }}
                       className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150"
                       style={{
-                        background: isSelected
-                          ? "rgba(34,211,238,0.08)"
-                          : "transparent",
-                        color: isSelected
-                          ? "#22D3EE"
-                          : "rgba(245,242,255,0.75)",
+                        background: isSelected ? "rgba(34,211,238,0.08)" : "transparent",
+                        color: isSelected ? "#22D3EE" : "rgba(245,242,255,0.75)",
                       }}
                       onMouseEnter={(e) => {
                         if (!isSelected) {
@@ -292,8 +308,7 @@ export function BillingCountrySelector({
                       }}
                       onMouseLeave={(e) => {
                         if (!isSelected) {
-                          (e.currentTarget as HTMLElement).style.background =
-                            "transparent";
+                          (e.currentTarget as HTMLElement).style.background = "transparent";
                         }
                       }}
                     >
@@ -305,13 +320,8 @@ export function BillingCountrySelector({
                       {/* Symbol + code */}
                       <div className="flex min-w-0 flex-1 flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold">
-                            {c.code}
-                          </span>
-                          <span
-                            className="text-xs"
-                            style={{ color: "rgba(245,242,255,0.4)" }}
-                          >
+                          <span className="text-sm font-semibold">{c.code}</span>
+                          <span className="text-xs" style={{ color: "rgba(245,242,255,0.4)" }}>
                             {c.symbol}
                           </span>
                           {isRecommended && (
@@ -338,10 +348,7 @@ export function BillingCountrySelector({
 
                       {/* Checkmark */}
                       {isSelected && (
-                        <Check
-                          className="h-4 w-4 flex-shrink-0"
-                          style={{ color: "#22D3EE" }}
-                        />
+                        <Check className="h-4 w-4 flex-shrink-0" style={{ color: "#22D3EE" }} />
                       )}
                     </button>
                   );

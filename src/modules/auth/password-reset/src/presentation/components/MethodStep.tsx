@@ -36,10 +36,7 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
         >
           {t("auth.chooseMethodTitle")}
         </h1>
-        <p
-          className="mt-1.5 text-[13px] leading-relaxed"
-          style={{ color: "var(--sx-text-mute)" }}
-        >
+        <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.chooseMethodSubtitle").replace("{{email}}", "")}{" "}
           <strong style={{ color: "var(--sx-text)" }}>{vm.email}</strong>
         </p>
@@ -59,14 +56,11 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
             borderColor: "var(--sx-chip-border)",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "var(--sx-accent-text)";
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "var(--sx-accent-soft)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-accent-text)";
+            (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-accent-soft)";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "var(--sx-chip-border)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-chip-border)";
             (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-chip-bg)";
           }}
         >
@@ -104,14 +98,11 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
             borderColor: "var(--sx-chip-border)",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "var(--sx-accent-text)";
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "var(--sx-accent-soft)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-accent-text)";
+            (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-accent-soft)";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "var(--sx-chip-border)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--sx-chip-border)";
             (e.currentTarget as HTMLButtonElement).style.background = "var(--sx-chip-bg)";
           }}
         >

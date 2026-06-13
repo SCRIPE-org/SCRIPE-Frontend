@@ -186,23 +186,32 @@ export const en = {
     // ── Plugins (Phase 15) ──────────────────────────────────
     pluginsOverview: {
       title: "Plugin System",
-      description: "Enterprise-grade extensibility — install certified internal plugins or sandboxed marketplace plugins with full lifecycle management.",
-      intro: "SCRIPE's Plugin System gives your platform infinite extensibility without compromising security. Platform teams can publish certified Tier 1 plugins that run in-process with full infrastructure access. Third-party vendors can publish Tier 2 plugins that run in a secure sandbox — isolated from your core data, rate-limited, and audited.",
+      description:
+        "Enterprise-grade extensibility — install certified internal plugins or sandboxed marketplace plugins with full lifecycle management.",
+      intro:
+        "SCRIPE's Plugin System gives your platform infinite extensibility without compromising security. Platform teams can publish certified Tier 1 plugins that run in-process with full infrastructure access. Third-party vendors can publish Tier 2 plugins that run in a secure sandbox — isolated from your core data, rate-limited, and audited.",
       valueTitle: "Business Value",
       featureExtTitle: "Infinite Extensibility",
-      featureExtDesc: "Extend SCRIPE with any capability — CRM integrations, AI assistants, analytics dashboards — without forking the core codebase.",
+      featureExtDesc:
+        "Extend SCRIPE with any capability — CRM integrations, AI assistants, analytics dashboards — without forking the core codebase.",
       featureSandboxTitle: "Secure Sandbox",
-      featureSandboxDesc: "Tier 2 plugins are isolated in a REST gateway. They cannot access your database, internal services, or other tenants.",
+      featureSandboxDesc:
+        "Tier 2 plugins are isolated in a REST gateway. They cannot access your database, internal services, or other tenants.",
       featureMarketTitle: "Marketplace Ready",
-      featureMarketDesc: "Built-in plugin catalog, install/uninstall lifecycle, and consent flow ready for a commercial marketplace.",
+      featureMarketDesc:
+        "Built-in plugin catalog, install/uninstall lifecycle, and consent flow ready for a commercial marketplace.",
       featureFastTitle: "Fast Integration",
-      featureFastDesc: "Plugins can inject navigation items, settings UIs, and backend services with zero changes to the host application.",
+      featureFastDesc:
+        "Plugins can inject navigation items, settings UIs, and backend services with zero changes to the host application.",
       featureLogsTitle: "Full Auditability",
-      featureLogsDesc: "Every API call made by a Tier 2 plugin is logged with endpoint, duration, status code, and timestamp.",
+      featureLogsDesc:
+        "Every API call made by a Tier 2 plugin is logged with endpoint, duration, status code, and timestamp.",
       featureI18nTitle: "RTL & i18n Ready",
-      featureI18nDesc: "The plugin SDK automatically pushes the host's language direction (LTR/RTL) and accent color to all plugin iframes.",
+      featureI18nDesc:
+        "The plugin SDK automatically pushes the host's language direction (LTR/RTL) and accent color to all plugin iframes.",
       tiersTitle: "Tier 1 vs Tier 2",
-      tiersIntro: "Choose the right tier for each use case. Tier 1 for your own certified plugins; Tier 2 for third-party marketplace integrations.",
+      tiersIntro:
+        "Choose the right tier for each use case. Tier 1 for your own certified plugins; Tier 2 for third-party marketplace integrations.",
       tier1Title: "Tier 1 — Certified",
       tier1Point1: "In-process — zero network overhead",
       tier1Point2: "Full access to DI, database, and events",
@@ -214,21 +223,28 @@ export const en = {
       tier2Point3: "iframe frontend with postMessage SDK",
       tier2Point4: "Isolated key-value data store per installation",
       audienceTitle: "Who Benefits",
-      audienceIntro: "The Plugin System creates value for every stakeholder in the SCRIPE ecosystem.",
+      audienceIntro:
+        "The Plugin System creates value for every stakeholder in the SCRIPE ecosystem.",
       audRole: "Role",
       audBenefit: "Benefit",
       audPlatform: "Platform Operator",
-      audPlatformBenefit: "Extend the platform without modifying the core. Publish certified Tier 1 plugins for your team.",
+      audPlatformBenefit:
+        "Extend the platform without modifying the core. Publish certified Tier 1 plugins for your team.",
       audTenant: "Tenant Admin",
-      audTenantBenefit: "Install and configure marketplace plugins in minutes. Control which plugins are active for your team.",
+      audTenantBenefit:
+        "Install and configure marketplace plugins in minutes. Control which plugins are active for your team.",
       audPartner: "Third-Party Vendor",
-      audPartnerBenefit: "Publish your product as a Tier 2 plugin. Get distribution, lifecycle management, and webhook events for free.",
+      audPartnerBenefit:
+        "Publish your product as a Tier 2 plugin. Get distribution, lifecycle management, and webhook events for free.",
       audDeveloper: "Platform Developer",
-      audDeveloperBenefit: "Build plugins with clear contracts — IPluginStartup for Tier 1, postMessage SDK for Tier 2. No undocumented hooks.",
+      audDeveloperBenefit:
+        "Build plugins with clear contracts — IPluginStartup for Tier 1, postMessage SDK for Tier 2. No undocumented hooks.",
       securityTitle: "Security Architecture",
-      securityIntro: "The Plugin System enforces strict security boundaries at every layer — origin validation, API key hashing, tenant isolation, and rate limiting.",
+      securityIntro:
+        "The Plugin System enforces strict security boundaries at every layer — origin validation, API key hashing, tenant isolation, and rate limiting.",
       securityNoteTitle: "Security by default",
-      securityNoteContent: "Tier 2 plugins never touch your database. All API keys are stored as SHA-256 hashes. The iframe sandbox attribute prevents script injection. Origin validation on every postMessage prevents spoofing.",
+      securityNoteContent:
+        "Tier 2 plugins never touch your database. All API keys are stored as SHA-256 hashes. The iframe sandbox attribute prevents script injection. Origin validation on every postMessage prevents spoofing.",
     },
   },
 };

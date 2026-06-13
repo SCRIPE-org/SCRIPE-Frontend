@@ -52,7 +52,11 @@ const sections: DocSection[] = [
         "Named container for batch assignments",
         "NameEn, NameAr, Code, TenantId, IsActive, Description",
       ],
-      ["AdminGroupMember", "Many-to-many junction (Admin ↔ Group)", "AdminId, AdminGroupId, JoinedAt"],
+      [
+        "AdminGroupMember",
+        "Many-to-many junction (Admin ↔ Group)",
+        "AdminId, AdminGroupId, JoinedAt",
+      ],
       ["AdminGroupRole", "Assigns a Role to a Group", "AdminGroupId, RoleId"],
       [
         "AdminGroupRestriction",

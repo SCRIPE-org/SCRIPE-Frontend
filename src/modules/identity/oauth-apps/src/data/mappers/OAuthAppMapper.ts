@@ -25,11 +25,7 @@ import {
 } from "../models/OAuthAppModel";
 import { resolveFileUrl, unresolveFileUrl } from "@core/common/utils";
 import { z } from "zod";
-import {
-  safeParseApiResponse,
-  uuidField,
-  optionalString,
-} from "@core/common/zod-utils";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

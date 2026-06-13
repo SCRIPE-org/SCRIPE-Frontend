@@ -55,7 +55,8 @@ export const en = {
       noFeatures: "No features configured yet. Add features in the admin panel.",
       noFeaturesData: "No feature data available for this plan yet.",
       scrollToCompare: "Scroll to compare all features",
-      comparePricesNote: "All prices shown in {{currency}}. Annual billing billed as a single payment.",
+      comparePricesNote:
+        "All prices shown in {{currency}}. Annual billing billed as a single payment.",
       feature: "Feature",
       featureSingle: "feature",
       featurePlural: "features",
@@ -83,7 +84,6 @@ export const en = {
         singleAdmin: "1 admin user",
         communitySupport: "Community support",
       },
-
     },
 
     // Step 2 — Account
@@ -318,7 +318,8 @@ export const en = {
       createWorkspace: "Create your workspace",
       // trial branch — card collected on Stripe's secure page
       trialTitle: "Start your {{days}}-day free trial",
-      trialSubtitle: "Add a card on the secure checkout page — you won't be charged during the trial.",
+      trialSubtitle:
+        "Add a card on the secure checkout page — you won't be charged during the trial.",
       trialStarts: "{{days}}-day free trial — starts when you complete checkout",
       thenPrice: "Then {{price}}/{{cycle}}",
       cancelAnytime: "Cancel anytime",
@@ -358,7 +359,8 @@ export const en = {
       consumedSubtitle: "Your workspace is ready — log in with your credentials.",
       changePlan: "Change plan",
       timeoutTitle: "Taking longer than expected",
-      timeoutSubtitle: "We're still setting things up. We'll email you when your workspace is ready.",
+      timeoutSubtitle:
+        "We're still setting things up. We'll email you when your workspace is ready.",
     },
 
     // Billing cycle labels (used by ResumeSignupModal)

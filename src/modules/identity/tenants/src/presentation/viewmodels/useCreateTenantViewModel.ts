@@ -138,7 +138,9 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   });
 
   // ── Creation permissions query (for availablePermissionIds picker) ──
-  const { data: creationPermissions = [], isLoading: isLoadingPermissions } = useQuery<Permission[]>({
+  const { data: creationPermissions = [], isLoading: isLoadingPermissions } = useQuery<
+    Permission[]
+  >({
     queryKey: ["tenants", "creation-permissions", form.parentId || "root"],
     queryFn: () => tenantRepository.getCreationPermissions(form.parentId || undefined),
     enabled: currentStep === 3,

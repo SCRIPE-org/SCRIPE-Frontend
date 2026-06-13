@@ -105,9 +105,7 @@ export function useResetPasswordViewModel(params: {
           // Pass selected tenantIds so the backend resets only those workspaces.
           // Empty/omitted → backend resets ALL (fallback for single-tenant accounts).
           tenantIds:
-            selectedWorkspaces.length > 0
-              ? selectedWorkspaces.map((w) => w.tenantId)
-              : undefined,
+            selectedWorkspaces.length > 0 ? selectedWorkspaces.map((w) => w.tenantId) : undefined,
         });
         setStep("success");
       } catch (err) {

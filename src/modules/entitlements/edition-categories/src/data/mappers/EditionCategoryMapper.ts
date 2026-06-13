@@ -1,6 +1,9 @@
 import { EditionCategory } from "../../domain/entities/EditionCategory";
 import type { EditionCategoryModel } from "../models/EditionCategoryModels";
-import type { CreateEditionCategoryRequest, UpdateEditionCategoryRequest } from "../../domain/entities/EditionCategoryRequests";
+import type {
+  CreateEditionCategoryRequest,
+  UpdateEditionCategoryRequest,
+} from "../../domain/entities/EditionCategoryRequests";
 
 export class EditionCategoryMapper {
   static toEntity(model: EditionCategoryModel): EditionCategory {

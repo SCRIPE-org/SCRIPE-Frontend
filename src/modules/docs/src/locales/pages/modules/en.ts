@@ -704,26 +704,37 @@ export const en = {
     plugins: {
       overview: {
         title: "Plugin System Overview",
-        description: "Two-Tier enterprise plugin platform with certified in-process plugins and sandboxed marketplace plugins.",
-        intro: "The Plugin System is SCRIPE's extensibility engine. It allows platform operators to install certified Tier 1 plugins that run in-process with full infrastructure access, and third-party Tier 2 plugins that run in a sandboxed REST gateway with an isolated key-value data store.",
+        description:
+          "Two-Tier enterprise plugin platform with certified in-process plugins and sandboxed marketplace plugins.",
+        intro:
+          "The Plugin System is SCRIPE's extensibility engine. It allows platform operators to install certified Tier 1 plugins that run in-process with full infrastructure access, and third-party Tier 2 plugins that run in a sandboxed REST gateway with an isolated key-value data store.",
         infoTitle: "Phase 15 — Enterprise Plugin Platform",
-        infoContent: "The Plugin System was introduced in Phase 15. It covers the full plugin lifecycle: definition, installation, activation, upgrade, health monitoring, execution logging, webhook subscriptions, and a complete frontend SDK for host–iframe communication.",
+        infoContent:
+          "The Plugin System was introduced in Phase 15. It covers the full plugin lifecycle: definition, installation, activation, upgrade, health monitoring, execution logging, webhook subscriptions, and a complete frontend SDK for host–iframe communication.",
         whatIsTitle: "What Is the Plugin System?",
-        whatIsIntro: "The Plugin System provides a Two-Tier architecture for extending SCRIPE with additional capabilities. Tier 1 plugins are trusted, certified modules that integrate directly into the .NET runtime via IPluginStartup. Tier 2 plugins are third-party applications that integrate via a secure REST gateway and communicate with the host using a postMessage-based SDK.",
+        whatIsIntro:
+          "The Plugin System provides a Two-Tier architecture for extending SCRIPE with additional capabilities. Tier 1 plugins are trusted, certified modules that integrate directly into the .NET runtime via IPluginStartup. Tier 2 plugins are third-party applications that integrate via a secure REST gateway and communicate with the host using a postMessage-based SDK.",
         featureTier1: "Tier 1 — Certified Plugins",
-        featureTier1Desc: "In-process plugins with full DI access, Module Federation frontend, and IPluginStartup contract.",
+        featureTier1Desc:
+          "In-process plugins with full DI access, Module Federation frontend, and IPluginStartup contract.",
         featureTier2: "Tier 2 — Sandboxed Plugins",
-        featureTier2Desc: "Third-party plugins isolated via REST gateway with rate limiting, scoped auth tokens, and an isolated key-value store.",
+        featureTier2Desc:
+          "Third-party plugins isolated via REST gateway with rate limiting, scoped auth tokens, and an isolated key-value store.",
         featureSDK: "Plugin SDK",
-        featureSDKDesc: "postMessage-based communication protocol with typed bridge classes for theme, auth, navigation, and toast.",
+        featureSDKDesc:
+          "postMessage-based communication protocol with typed bridge classes for theme, auth, navigation, and toast.",
         featureGateway: "API Gateway",
-        featureGatewayDesc: "Authenticated plugin-api gateway with per-tenant rate limiting, execution logging, and API key management.",
+        featureGatewayDesc:
+          "Authenticated plugin-api gateway with per-tenant rate limiting, execution logging, and API key management.",
         featureLogs: "Execution Logs",
-        featureLogsDesc: "Append-only execution log per installation. Records endpoint, duration, status code, and success/failure.",
+        featureLogsDesc:
+          "Append-only execution log per installation. Records endpoint, duration, status code, and success/failure.",
         featureWebhooks: "Webhook Events",
-        featureWebhooksDesc: "7 platform events (installed, uninstalled, activated, deactivated, upgraded, health failed, rate limited).",
+        featureWebhooksDesc:
+          "7 platform events (installed, uninstalled, activated, deactivated, upgraded, health failed, rate limited).",
         tiersTitle: "Two-Tier Comparison",
-        tiersIntro: "The Two-Tier model separates trusted internal plugins from third-party marketplace plugins with clear security boundaries.",
+        tiersIntro:
+          "The Two-Tier model separates trusted internal plugins from third-party marketplace plugins with clear security boundaries.",
         thAspect: "Aspect",
         thTier1: "Tier 1 (Certified)",
         thTier2: "Tier 2 (Marketplace)",
@@ -746,9 +757,11 @@ export const en = {
         rowQuotaT1: "None (trusted)",
         rowQuotaT2: "60 API calls per minute",
         architectureTitle: "System Architecture",
-        architectureIntro: "The plugin system orchestrates from catalog registration through lifecycle management, health monitoring, and execution logging.",
+        architectureIntro:
+          "The plugin system orchestrates from catalog registration through lifecycle management, health monitoring, and execution logging.",
         nodeCatalog: "Plugin Catalog",
-        nodeCatalogDesc: "Registry of all available plugin definitions with tier, status, manifest.",
+        nodeCatalogDesc:
+          "Registry of all available plugin definitions with tier, status, manifest.",
         nodeInstall: "Installation",
         nodeInstallDesc: "Tenant-scoped install record with settings JSON and health status.",
         nodeTier1Host: "Tier 1 Host",
@@ -765,9 +778,11 @@ export const en = {
         connRate: "rate check",
         connLog: "log result",
         backendTitle: "Backend Architecture",
-        backendIntro: "The backend follows SCRIPE's standard 3-project Clean Architecture module layout: Plugins.Domain → Plugins.Application → Plugins.Infrastructure.",
+        backendIntro:
+          "The backend follows SCRIPE's standard 3-project Clean Architecture module layout: Plugins.Domain → Plugins.Application → Plugins.Infrastructure.",
         cqrsTitle: "CQRS Commands & Queries",
-        cqrsIntro: "The Plugins module registers 15 request handlers via AstraFlow.Mediator. All commands have a corresponding FluentValidation validator.",
+        cqrsIntro:
+          "The Plugins module registers 15 request handlers via AstraFlow.Mediator. All commands have a corresponding FluentValidation validator.",
         cqrsType: "Type",
         cqrsName: "Handler",
         cqrsDesc: "Description",
@@ -787,7 +802,8 @@ export const en = {
         cqrsGetData: "Read data store entries for a namespace",
         cqrsLogs: "Get paginated execution logs for an installation",
         entitiesTitle: "Domain Entities",
-        entitiesIntro: "The Plugins domain defines 8 entities. PluginExecutionLog is append-only (Entity<Guid>); all others are AuditableEntity<Guid> with soft-delete support.",
+        entitiesIntro:
+          "The Plugins domain defines 8 entities. PluginExecutionLog is append-only (Entity<Guid>); all others are AuditableEntity<Guid> with soft-delete support.",
         entityName: "Entity",
         entityBase: "Base Class",
         entityPurpose: "Purpose",
@@ -800,11 +816,14 @@ export const en = {
         entityWebhookPurpose: "Webhook subscription to platform events",
         entityLogPurpose: "Append-only gateway call log (no soft-delete)",
         frontendTitle: "Frontend Architecture",
-        frontendIntro: "The frontend follows SCRIPE's MVVM pattern with strict layer separation. Views are dumb UI; ViewModels handle all state and mutations via TanStack Query.",
+        frontendIntro:
+          "The frontend follows SCRIPE's MVVM pattern with strict layer separation. Views are dumb UI; ViewModels handle all state and mutations via TanStack Query.",
         sdkTitle: "Plugin SDK",
-        sdkIntro: "The Plugin SDK lives in src/core/plugins/ and provides all infrastructure for host-plugin communication via iframe postMessage for Tier 2, and Module Federation for Tier 1.",
+        sdkIntro:
+          "The Plugin SDK lives in src/core/plugins/ and provides all infrastructure for host-plugin communication via iframe postMessage for Tier 2, and Module Federation for Tier 1.",
         endpointsTitle: "API Endpoints",
-        endpointsIntro: "All plugin endpoints are under /api/v1/plugins/ for admin operations and /api/v1/plugin-api/v1/ for the sandboxed Tier 2 gateway.",
+        endpointsIntro:
+          "All plugin endpoints are under /api/v1/plugins/ for admin operations and /api/v1/plugin-api/v1/ for the sandboxed Tier 2 gateway.",
         apiCatalog: "Browse published plugins in the catalog",
         apiCatalogId: "Get full details of a specific plugin definition",
         apiInstalled: "List all plugins installed for a tenant",
@@ -824,7 +843,8 @@ export const en = {
         apiDataSet: "Upsert a value in the data store (max 64KB)",
         apiDataDelete: "Delete a key-value entry from the data store",
         webhooksTitle: "Webhook Events",
-        webhooksIntro: "The Plugin System publishes 7 webhook events that third-party systems can subscribe to via the webhook subscription API.",
+        webhooksIntro:
+          "The Plugin System publishes 7 webhook events that third-party systems can subscribe to via the webhook subscription API.",
         webhookEvent: "Event",
         webhookTrigger: "Trigger",
         webhookDesc: "Description",
@@ -843,7 +863,8 @@ export const en = {
         whRateLimit: "PluginSandbox.IsAllowed() = false",
         whRateLimitDesc: "Fired when a Tier 2 plugin exceeds its 60 req/min quota",
         jobsTitle: "Background Jobs",
-        jobsIntro: "Three background jobs manage plugin health, data cleanup, and soft-delete purging.",
+        jobsIntro:
+          "Three background jobs manage plugin health, data cleanup, and soft-delete purging.",
         jobId: "Job ID",
         jobSchedule: "Schedule",
         jobDesc: "Description",
@@ -854,7 +875,8 @@ export const en = {
         jobSched3: "Daily at 02:00",
         jobDesc3: "Removes orphaned data store entries for uninstalled plugins",
         permissionsTitle: "Permissions Reference",
-        permissionsIntro: "All plugin endpoints are protected by permission-based authorization. Permissions are seeded at startup by PluginsPermissionProvider.",
+        permissionsIntro:
+          "All plugin endpoints are protected by permission-based authorization. Permissions are seeded at startup by PluginsPermissionProvider.",
         permKey: "Permission Key",
         permGrants: "Grants Access To",
         permCatalogView: "Browse published plugin catalog",
@@ -868,19 +890,24 @@ export const en = {
         permWebhooks: "Subscribe and unsubscribe webhook events",
         quickStartTitle: "Quick Start Guide",
         step1Title: "Run Database Migration",
-        step1Content: "Create the Plugins module database and apply migrations using the SCRIPE CLI.",
+        step1Content:
+          "Create the Plugins module database and apply migrations using the SCRIPE CLI.",
         step2Title: "Register a Plugin Definition",
-        step2Content: "Register your plugin in the catalog by calling the definitions endpoint as super admin.",
+        step2Content:
+          "Register your plugin in the catalog by calling the definitions endpoint as super admin.",
         step3Title: "Install for a Tenant",
         step3Content: "Install the plugin for a specific tenant using the install endpoint.",
         step4Title: "Activate the Installation",
         step4Content: "Activate the installation to make it available to users.",
         step5Title: "Open the Plugin UI",
-        step5Content: "Navigate to /plugins/installed in the frontend. You will see the plugin with its health badge, and can click Settings or Logs for per-installation views.",
+        step5Content:
+          "Navigate to /plugins/installed in the frontend. You will see the plugin with its health badge, and can click Settings or Logs for per-installation views.",
         securityTitle: "Security",
-        securityIntro: "The Plugin System enforces multiple security boundaries to protect tenants from malicious or buggy plugins.",
+        securityIntro:
+          "The Plugin System enforces multiple security boundaries to protect tenants from malicious or buggy plugins.",
         securityWarningTitle: "Tier 1 plugins run in-process",
-        securityWarningContent: "Tier 1 plugins have full access to SCRIPE's DI container and database. Only install certified plugins from your own team or thoroughly audited sources. The plugins_definition.create permission is restricted to super admins by default.",
+        securityWarningContent:
+          "Tier 1 plugins have full access to SCRIPE's DI container and database. Only install certified plugins from your own team or thoroughly audited sources. The plugins_definition.create permission is restricted to super admins by default.",
         secDoTitle: "Do",
         secDontTitle: "Don't",
         secDo1: "Validate event.origin in every iframe message listener",
@@ -894,18 +921,25 @@ export const en = {
       },
       sdk: {
         title: "Plugin SDK Reference",
-        description: "Complete reference for the host-plugin communication SDK — PluginBridge, message types, bridge classes, and Tier 1/2 development guides.",
-        intro: "The Plugin SDK provides all infrastructure for bidirectional communication between the SCRIPE host application and plugin frontends. Tier 2 plugins communicate via iframe postMessage; Tier 1 plugins use Module Federation with shared React.",
+        description:
+          "Complete reference for the host-plugin communication SDK — PluginBridge, message types, bridge classes, and Tier 1/2 development guides.",
+        intro:
+          "The Plugin SDK provides all infrastructure for bidirectional communication between the SCRIPE host application and plugin frontends. Tier 2 plugins communicate via iframe postMessage; Tier 1 plugins use Module Federation with shared React.",
         infoTitle: "SDK lives in src/core/plugins/",
-        infoContent: "The SDK is framework-agnostic at the message protocol level. Tier 2 plugin iframes can be built with any framework (React, Vue, Svelte, vanilla JS) as long as they implement the postMessage contract.",
+        infoContent:
+          "The SDK is framework-agnostic at the message protocol level. Tier 2 plugin iframes can be built with any framework (React, Vue, Svelte, vanilla JS) as long as they implement the postMessage contract.",
         protocolTitle: "Message Protocol",
-        protocolIntro: "All host-plugin communication uses a typed union of messages. The host sends HostToPluginMessage; the plugin sends PluginToHostMessage.",
+        protocolIntro:
+          "All host-plugin communication uses a typed union of messages. The host sends HostToPluginMessage; the plugin sends PluginToHostMessage.",
         bridgeTitle: "PluginBridge",
-        bridgeIntro: "PluginBridge is the low-level communication channel. It validates event.origin on every incoming message to prevent spoofing, and targets messages to the correct iframe window.",
+        bridgeIntro:
+          "PluginBridge is the low-level communication channel. It validates event.origin on every incoming message to prevent spoofing, and targets messages to the correct iframe window.",
         frameTitle: "PluginFrame",
-        frameIntro: "PluginFrame is the React component that renders a Tier 2 plugin in a sandboxed iframe. It automatically creates a PluginBridge, handles READY/RESIZE/NAVIGATE_REQUEST/TOAST messages, and shows a skeleton while loading.",
+        frameIntro:
+          "PluginFrame is the React component that renders a Tier 2 plugin in a sandboxed iframe. It automatically creates a PluginBridge, handles READY/RESIZE/NAVIGATE_REQUEST/TOAST messages, and shows a skeleton while loading.",
         bridgesTitle: "Bridge Classes",
-        bridgesIntro: "Each bridge class handles a specific concern. Mount them after creating a PluginBridge and unmount on cleanup.",
+        bridgesIntro:
+          "Each bridge class handles a specific concern. Mount them after creating a PluginBridge and unmount on cleanup.",
         bridgeClass: "Class",
         bridgeRole: "Responsibility",
         bridgeMsg: "Message Handled",
@@ -914,20 +948,26 @@ export const en = {
         roleNav: "Allow iframe to trigger host-side navigation",
         roleToast: "Forward iframe toast requests to host notification system",
         providerTitle: "PluginHostProvider",
-        providerIntro: "PluginHostProvider is a React context that wires all bridges and relays together. Wrap plugin pages with it to provide createBridgeFor, syncTheme, and mountRelays to child components.",
+        providerIntro:
+          "PluginHostProvider is a React context that wires all bridges and relays together. Wrap plugin pages with it to provide createBridgeFor, syncTheme, and mountRelays to child components.",
         eventBusTitle: "PluginEventBus",
-        eventBusIntro: "The in-process PluginEventBus allows any part of the host application to react to plugin lifecycle events without direct coupling. A singleton pluginEventBus is exported for convenience.",
+        eventBusIntro:
+          "The in-process PluginEventBus allows any part of the host application to react to plugin lifecycle events without direct coupling. A singleton pluginEventBus is exported for convenience.",
         tier1Title: "Tier 1 Plugin Development",
-        tier1Intro: "Tier 1 plugins integrate at the .NET level via IPluginStartup and at the frontend level via Module Federation. They share the host's React instance.",
+        tier1Intro:
+          "Tier 1 plugins integrate at the .NET level via IPluginStartup and at the frontend level via Module Federation. They share the host's React instance.",
         tab1Backend: "Backend (C#)",
         tab1Frontend: "Frontend (webpack)",
         tab1Host: "Host Usage",
         tier2Title: "Tier 2 Plugin Development",
-        tier2Intro: "Tier 2 plugins are independent web applications hosted at their own URL. The host embeds them in a sandboxed iframe. The plugin must implement the postMessage protocol.",
+        tier2Intro:
+          "Tier 2 plugins are independent web applications hosted at their own URL. The host embeds them in a sandboxed iframe. The plugin must implement the postMessage protocol.",
         dataStoreTitle: "Data Store API",
-        dataStoreIntro: "Tier 2 plugins get an isolated key-value store. All keys are scoped to the installation ID + namespace. Maximum value size is 64KB.",
+        dataStoreIntro:
+          "Tier 2 plugins get an isolated key-value store. All keys are scoped to the installation ID + namespace. Maximum value size is 64KB.",
         dataStoreWarningTitle: "Rate limiting applies to Data Store calls",
-        dataStoreWarningContent: "Data store reads and writes go through the Tier 2 gateway and count toward the 60 req/min quota per installation.",
+        dataStoreWarningContent:
+          "Data store reads and writes go through the Tier 2 gateway and count toward the 60 req/min quota per installation.",
       },
     },
     // ── CRM Leads Module ────────────────────────────────────────

@@ -66,11 +66,11 @@ export class SignupService implements ISignupService {
     lang?: string;
   }): Promise<RecommendationDto> {
     const query: Record<string, string> = {};
-    if (params.vertical)   query.vertical   = params.vertical;
-    if (params.teamSize)   query.teamSize   = params.teamSize;
+    if (params.vertical) query.vertical = params.vertical;
+    if (params.teamSize) query.teamSize = params.teamSize;
     if (params.priorities) query.priorities = params.priorities;
-    if (params.currency)   query.currency   = params.currency;
-    if (params.lang)       query.lang       = params.lang;
+    if (params.currency) query.currency = params.currency;
+    if (params.lang) query.lang = params.lang;
     const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.RECOMMENDATION, query);
     return this.api.get<RecommendationDto>(url);
   }
@@ -128,7 +128,9 @@ export class SignupService implements ISignupService {
     return this.api.post<void>(AUTH_ENDPOINTS.AUTH.SIGNUP.ABANDON, { signupRef });
   }
 
-  async resume(signupRef: string): Promise<import("../models/SignupModels").ResumeSessionDto | null> {
+  async resume(
+    signupRef: string
+  ): Promise<import("../models/SignupModels").ResumeSessionDto | null> {
     try {
       return await this.api.post<import("../models/SignupModels").ResumeSessionDto>(
         AUTH_ENDPOINTS.AUTH.SIGNUP.RESUME,

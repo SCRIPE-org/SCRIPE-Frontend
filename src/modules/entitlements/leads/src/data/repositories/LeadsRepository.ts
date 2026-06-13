@@ -1,6 +1,10 @@
 "use client";
 
-import type { PlatformLead, PlatformLeadListItem, LeadActivity } from "../../domain/entities/PlatformLead";
+import type {
+  PlatformLead,
+  PlatformLeadListItem,
+  LeadActivity,
+} from "../../domain/entities/PlatformLead";
 import type {
   ILeadsRepository,
   ILeadsService,

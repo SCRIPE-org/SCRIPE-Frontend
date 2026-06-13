@@ -210,8 +210,7 @@ export const ar = {
       secretRotationTitle: "تدوير الأسرار (فترة سماح 24 ساعة)",
       secretRotationIntro: "إنشاء سر جديد مع الإبقاء على القديم صالحاً لمدة 24 ساعة.",
       includeChildrenTitle: "اشتراكات الوحدات الفرعيين",
-      includeChildrenIntro:
-        "عند تفعيله، تتلقى خطافات الويب أحداث الوحدة والوحدات التابعين له.",
+      includeChildrenIntro: "عند تفعيله، تتلقى خطافات الويب أحداث الوحدة والوحدات التابعين له.",
       circuitBreakerTitle: "قاطع الدائرة (Circuit Breaker)",
       circuitBreakerIntro: "يتعطل الاشتراك تلقائياً بعد الفشل المتكرر.",
       retryTitle: "سياسة إعادة المحاولة",
@@ -234,8 +233,7 @@ export const ar = {
       filteringTitle: "مسار تصفية القائمة",
       filteringIntro: "عند طلب القائمة، يطبق النظام 6 فلاتر متتالية لضمان الوصول الصحيح.",
       overrideTitle: "نظام التجاوز (Override)",
-      overrideNote:
-        "عندما تتواجد تجاوزات المستخدم والوحدة معاً، تُعطى الأولوية لتجاوزات المستخدم.",
+      overrideNote: "عندما تتواجد تجاوزات المستخدم والوحدة معاً، تُعطى الأولوية لتجاوزات المستخدم.",
       reorderTitle: "إعادة الترتيب بالسحب والإفلات",
     },
     recycleBin: {

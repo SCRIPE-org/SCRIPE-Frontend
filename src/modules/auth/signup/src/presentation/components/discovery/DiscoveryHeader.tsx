@@ -7,10 +7,10 @@ import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 import { dotVariants } from "./discoveryConstants";
 
 interface DiscoveryHeaderProps {
-  question: number;        // 0 | 1 | 2
-  displayedText: string;   // typewriter output driven by parent
-  progressPct: number;     // 0–100
-  totalQuestions: number;  // normally 3
+  question: number; // 0 | 1 | 2
+  displayedText: string; // typewriter output driven by parent
+  progressPct: number; // 0–100
+  totalQuestions: number; // normally 3
 }
 
 /**
@@ -35,7 +35,8 @@ export function DiscoveryHeader({
   const subHeadlines = [
     t("signup.discovery.q1Sub") || "We'll tailor your plan recommendations to your industry.",
     t("signup.discovery.q2Sub") || "We'll match features and quotas to your team's scale.",
-    t("signup.discovery.q3Sub") || "We'll pin the feature you care about most on your recommended plan.",
+    t("signup.discovery.q3Sub") ||
+      "We'll pin the feature you care about most on your recommended plan.",
   ];
 
   return (
@@ -45,7 +46,7 @@ export function DiscoveryHeader({
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex items-center justify-center gap-2 mb-8"
+        className="mb-8 flex items-center justify-center gap-2"
       >
         <div
           className="flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold"
@@ -56,12 +57,14 @@ export function DiscoveryHeader({
           }}
         >
           <Sparkles className="h-3.5 w-3.5" />
-          <span>{t("signup.discovery.badge") || "Smart Discovery · Finding your perfect plan"}</span>
+          <span>
+            {t("signup.discovery.badge") || "Smart Discovery · Finding your perfect plan"}
+          </span>
         </div>
       </motion.div>
 
       {/* ── Typewriter headline ───────────────────────────── */}
-      <div className="text-center mb-2 min-h-[3.5rem]">
+      <div className="mb-2 min-h-[3.5rem] text-center">
         <h1
           className="text-3xl font-bold tracking-tight sm:text-4xl"
           style={{ color: BRAND_TOKENS.text.primary }}
@@ -83,14 +86,14 @@ export function DiscoveryHeader({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="text-center text-sm mb-8"
+        className="mb-8 text-center text-sm"
         style={{ color: BRAND_TOKENS.text.secondary }}
       >
         {subHeadlines[question]}
       </motion.p>
 
       {/* ── Progress dots ─────────────────────────────────── */}
-      <div className="flex items-center justify-center gap-2 mb-6">
+      <div className="mb-6 flex items-center justify-center gap-2">
         {Array.from({ length: totalQuestions }).map((_, i) => (
           <motion.div
             key={i}
@@ -109,7 +112,7 @@ export function DiscoveryHeader({
 
       {/* ── Progress bar ──────────────────────────────────── */}
       <div
-        className="h-0.5 rounded-full overflow-hidden"
+        className="h-0.5 overflow-hidden rounded-full"
         style={{ background: `${BRAND_TOKENS.text.ghost}25` }}
       >
         <motion.div

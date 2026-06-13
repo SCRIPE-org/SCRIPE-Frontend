@@ -111,10 +111,14 @@ unsub();`,
       "modules.plugins.sdk.bridgeMsg",
     ],
     rows: [
-      ["PluginThemeSync",        "modules.plugins.sdk.roleTheme",  "THEME_UPDATE"],
-      ["PluginAuthRelay",        "modules.plugins.sdk.roleAuth",   "AUTH_TOKEN_REQUEST → AUTH_TOKEN"],
-      ["PluginNavigationBridge", "modules.plugins.sdk.roleNav",    "NAVIGATE_REQUEST → NAVIGATE_CONFIRMED"],
-      ["PluginToastBridge",      "modules.plugins.sdk.roleToast",  "TOAST"],
+      ["PluginThemeSync", "modules.plugins.sdk.roleTheme", "THEME_UPDATE"],
+      ["PluginAuthRelay", "modules.plugins.sdk.roleAuth", "AUTH_TOKEN_REQUEST → AUTH_TOKEN"],
+      [
+        "PluginNavigationBridge",
+        "modules.plugins.sdk.roleNav",
+        "NAVIGATE_REQUEST → NAVIGATE_CONFIRMED",
+      ],
+      ["PluginToastBridge", "modules.plugins.sdk.roleToast", "TOAST"],
     ],
   },
   {
@@ -322,9 +326,6 @@ registerPage({
   category: "modules",
   order: 2,
   sections,
-  relatedSlugs: [
-    "modules/plugins-overview",
-    "architecture/frontend",
-  ],
+  relatedSlugs: ["modules/plugins-overview", "architecture/frontend"],
   lastUpdated: "2026-05-10",
 });

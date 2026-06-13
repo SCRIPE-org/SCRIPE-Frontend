@@ -49,7 +49,7 @@ export function DiscoveryQ1Business({
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-28 rounded-2xl animate-pulse w-[calc(50%-6px)] sm:w-[180px] md:w-[200px]"
+              className="h-28 w-[calc(50%-6px)] animate-pulse rounded-2xl sm:w-[180px] md:w-[200px]"
               style={{ background: `${BRAND_TOKENS.text.ghost}15` }}
             />
           ))}
@@ -69,15 +69,15 @@ export function DiscoveryQ1Business({
       )}
 
       {/* Skip Q1 */}
-      <div className="flex justify-center mt-6">
+      <div className="mt-6 flex justify-center">
         <button
           type="button"
           onClick={onSkip}
-          className="text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 rounded"
+          className="rounded text-xs transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1"
           style={{ color: BRAND_TOKENS.text.secondary }}
         >
           {t("signup.discovery.skipQ") || "Skip · I'll choose later"}
-          <ChevronRight className="inline h-3 w-3 ml-0.5" aria-hidden="true" />
+          <ChevronRight className="ml-0.5 inline h-3 w-3" aria-hidden="true" />
         </button>
       </div>
     </motion.div>
@@ -96,9 +96,7 @@ function CategoryCard({ category, isSelected, language, onSelect }: CategoryCard
   const { t } = useI18n();
   const displayName = category.displayName;
   const description =
-    language === "ar" && category.descriptionAr
-      ? category.descriptionAr
-      : category.description;
+    language === "ar" && category.descriptionAr ? category.descriptionAr : category.description;
 
   return (
     <motion.button
@@ -106,7 +104,7 @@ function CategoryCard({ category, isSelected, language, onSelect }: CategoryCard
       whileTap={{ scale: 0.97 }}
       onClick={() => onSelect(category.key)}
       aria-pressed={isSelected}
-      className="group relative flex flex-col items-center gap-2.5 rounded-2xl border p-5 text-center transition-all w-[calc(50%-6px)] sm:w-[180px] md:w-[200px]"
+      className="group relative flex w-[calc(50%-6px)] flex-col items-center gap-2.5 rounded-2xl border p-5 text-center transition-all sm:w-[180px] md:w-[200px]"
       style={{
         background: isSelected ? `${BRAND_TOKENS.palette.violet}18` : BRAND_TOKENS.bg.card,
         borderColor: isSelected
@@ -128,10 +126,13 @@ function CategoryCard({ category, isSelected, language, onSelect }: CategoryCard
           rest: { rotate: 0, scale: 1 },
           hover:
             category.iconKey === "heart-pulse"
-              ? { scale: [1, 1.15, 0.95, 1.1, 1], transition: { duration: 0.7, times: [0, 0.3, 0.5, 0.7, 1] } }
+              ? {
+                  scale: [1, 1.15, 0.95, 1.1, 1],
+                  transition: { duration: 0.7, times: [0, 0.3, 0.5, 0.7, 1] },
+                }
               : category.iconKey === "factory"
-              ? { rotate: [0, -8, 8, -4, 0], transition: { duration: 0.5 } }
-              : { scale: [1, 1.15, 1.05, 1.12, 1], transition: { duration: 0.4 } },
+                ? { rotate: [0, -8, 8, -4, 0], transition: { duration: 0.5 } }
+                : { scale: [1, 1.15, 1.05, 1.12, 1], transition: { duration: 0.4 } },
         }}
         initial="rest"
         whileHover="hover"
@@ -145,11 +146,17 @@ function CategoryCard({ category, isSelected, language, onSelect }: CategoryCard
 
       {/* Text */}
       <div>
-        <p className="text-sm font-semibold leading-tight" style={{ color: BRAND_TOKENS.text.primary }}>
+        <p
+          className="text-sm font-semibold leading-tight"
+          style={{ color: BRAND_TOKENS.text.primary }}
+        >
           {displayName}
         </p>
         {description && (
-          <p className="mt-1 text-[11px] leading-snug line-clamp-2" style={{ color: BRAND_TOKENS.text.secondary }}>
+          <p
+            className="mt-1 line-clamp-2 text-[11px] leading-snug"
+            style={{ color: BRAND_TOKENS.text.secondary }}
+          >
             {description}
           </p>
         )}
@@ -158,8 +165,9 @@ function CategoryCard({ category, isSelected, language, onSelect }: CategoryCard
       {/* Price hint */}
       {category.fromPriceMonthly != null && (
         <div className="text-[10px] font-medium" style={{ color: BRAND_TOKENS.palette.cyan }}>
-          {t("signup.category.fromPrice", { price: `${category.currency} ${category.fromPriceMonthly}` }) ||
-            `From ${category.currency} ${category.fromPriceMonthly}/mo`}
+          {t("signup.category.fromPrice", {
+            price: `${category.currency} ${category.fromPriceMonthly}`,
+          }) || `From ${category.currency} ${category.fromPriceMonthly}/mo`}
         </div>
       )}
 

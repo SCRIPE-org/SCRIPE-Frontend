@@ -71,7 +71,10 @@ export function computeRecommendedTier(answers: DiscoveryAnswers): RecommendedTi
 
   // ── Priority-based signal ──────────────────────────────────────────────────
   // Multi-select: score ALL selected priorities, cap at 3 to avoid inflation
-  const rawPriorities = (answers.primaryPriority ?? "").split(",").map((p) => p.trim().toLowerCase()).filter(Boolean);
+  const rawPriorities = (answers.primaryPriority ?? "")
+    .split(",")
+    .map((p) => p.trim().toLowerCase())
+    .filter(Boolean);
   let priorityScore = 0;
   for (const priority of rawPriorities) {
     if (ENTERPRISE_SIGNALS.has(priority)) priorityScore += 2;

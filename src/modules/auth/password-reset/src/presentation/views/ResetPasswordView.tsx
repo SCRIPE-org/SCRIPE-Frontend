@@ -96,7 +96,10 @@ export function ResetPasswordView() {
         <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9" style={cardStyle}>
             <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-8 w-8 animate-spin" style={{ color: "var(--sx-accent-text)" }} />
+              <Loader2
+                className="h-8 w-8 animate-spin"
+                style={{ color: "var(--sx-accent-text)" }}
+              />
               <p className="text-[14px]" style={{ color: "var(--sx-text-mute)" }}>
                 {t("auth.verifyingLink")}
               </p>

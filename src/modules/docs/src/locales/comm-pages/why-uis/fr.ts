@@ -141,8 +141,7 @@ export const fr = {
       compUISI1: "Architecture évolutive : Monolithe Modulaire → API Gateway → Microservices",
       compUISI2: "Base de code unique, trois modes de déploiement dynamiques",
       compUISI3: "Capacités des modules mathématiquement imposées à la compilation",
-      compUISI4:
-        "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
+      compUISI4: "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
       compUISI5:
         "Infrastructure de base partagée immaculée se multipliant à travers tous les modules",
       compTradI1: "Forcé de choisir entre monolithe OU microservices dès le départ",

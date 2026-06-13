@@ -22,11 +22,31 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Concept", "Role", "Example"],
     rows: [
-      ["Lead", "A prospect who submitted a Contact Sales request", "Acme Corp — Enterprise interest via signup wizard"],
-      ["Source", "How the lead entered the system", "Website form (signup wizard) or Admin-created manually"],
-      ["Status", "Current stage in the sales lifecycle", "New → Contacted → Qualified → Won / Lost / Converted"],
-      ["Assignment", "Which admin is responsible for follow-up", "sales@acme.internal assigned to jane.doe"],
-      ["Conversion", "Turning a lead into a live tenant", "One-click: creates tenant + assigns edition + sends setup email"],
+      [
+        "Lead",
+        "A prospect who submitted a Contact Sales request",
+        "Acme Corp — Enterprise interest via signup wizard",
+      ],
+      [
+        "Source",
+        "How the lead entered the system",
+        "Website form (signup wizard) or Admin-created manually",
+      ],
+      [
+        "Status",
+        "Current stage in the sales lifecycle",
+        "New → Contacted → Qualified → Won / Lost / Converted",
+      ],
+      [
+        "Assignment",
+        "Which admin is responsible for follow-up",
+        "sales@acme.internal assigned to jane.doe",
+      ],
+      [
+        "Conversion",
+        "Turning a lead into a live tenant",
+        "One-click: creates tenant + assigns edition + sends setup email",
+      ],
     ],
   },
 
@@ -46,10 +66,18 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "new", label: "New", description: "Lead created via signup wizard Contact Sales form" },
-      { id: "contacted", label: "Contacted", description: "Sales admin reached out to the prospect" },
+      {
+        id: "contacted",
+        label: "Contacted",
+        description: "Sales admin reached out to the prospect",
+      },
       { id: "qualified", label: "Qualified", description: "Lead confirmed as a real opportunity" },
       { id: "won", label: "Won", description: "Deal agreed — ready for conversion" },
-      { id: "converted", label: "Converted", description: "Tenant created, edition assigned, setup email sent" },
+      {
+        id: "converted",
+        label: "Converted",
+        description: "Tenant created, edition assigned, setup email sent",
+      },
       { id: "lost", label: "Lost", description: "Prospect did not move forward" },
     ],
     connections: [
@@ -198,14 +226,29 @@ Entitlements.Infrastructure/
     type: "table",
     headers: ["Method", "Route", "Permission", "Description"],
     rows: [
-      ["POST", "/api/v1/leads/contact-sales", "Public (no auth)", "Submit a Contact Sales request from the signup wizard"],
+      [
+        "POST",
+        "/api/v1/leads/contact-sales",
+        "Public (no auth)",
+        "Submit a Contact Sales request from the signup wizard",
+      ],
       ["POST", "/api/v1/leads", "leads.create", "Admin-created lead"],
-      ["GET", "/api/v1/leads", "leads.view", "Paginated list with filters (status, source, assigned)"],
+      [
+        "GET",
+        "/api/v1/leads",
+        "leads.view",
+        "Paginated list with filters (status, source, assigned)",
+      ],
       ["GET", "/api/v1/leads/{id}", "leads.view", "Full lead detail including Discovery data"],
       ["GET", "/api/v1/leads/{id}/activity", "leads.view", "Timeline of status changes and notes"],
       ["PUT", "/api/v1/leads/{id}/status", "leads.update", "Transition lead status"],
       ["PUT", "/api/v1/leads/{id}/assign", "leads.update", "Assign or unassign lead to admin"],
-      ["POST", "/api/v1/leads/{id}/convert-to-tenant", "leads.convert", "Atomic conversion: create tenant + assign edition + mark Converted"],
+      [
+        "POST",
+        "/api/v1/leads/{id}/convert-to-tenant",
+        "leads.convert",
+        "Atomic conversion: create tenant + assign edition + mark Converted",
+      ],
       ["DELETE", "/api/v1/leads/{id}", "leads.delete", "Soft-delete a lead"],
     ],
   },
@@ -267,8 +310,18 @@ Entitlements.Infrastructure/
     type: "table",
     headers: ["Email", "Recipient", "Trigger", "Template Style"],
     rows: [
-      ["Prospect Confirmation", "lead.Email", "Contact Sales form submitted", "Indigo branded — thanks + what happens next"],
-      ["Sales Team Alert", "Leads:SalesNotificationEmail (appsettings)", "Contact Sales form submitted", "Amber alert — company, contact, discovery data, admin link"],
+      [
+        "Prospect Confirmation",
+        "lead.Email",
+        "Contact Sales form submitted",
+        "Indigo branded — thanks + what happens next",
+      ],
+      [
+        "Sales Team Alert",
+        "Leads:SalesNotificationEmail (appsettings)",
+        "Contact Sales form submitted",
+        "Amber alert — company, contact, discovery data, admin link",
+      ],
     ],
   },
   {
@@ -415,7 +468,11 @@ Entitlements.Infrastructure/
       ["leads.view", "Read lead list and detail", "LeadsController.GetAll, GetById, GetActivity"],
       ["leads.create", "Create a new lead from admin panel", "LeadsController.Create"],
       ["leads.update", "Change status or assign lead", "LeadsController.UpdateStatus, AssignLead"],
-      ["leads.convert", "Convert lead to tenant (high-privilege)", "LeadsController.ConvertToTenant"],
+      [
+        "leads.convert",
+        "Convert lead to tenant (high-privilege)",
+        "LeadsController.ConvertToTenant",
+      ],
       ["leads.delete", "Soft-delete a lead", "LeadsController.Delete"],
     ],
   },

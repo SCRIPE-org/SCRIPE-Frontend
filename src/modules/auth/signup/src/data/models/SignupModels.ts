@@ -136,7 +136,14 @@ export interface PricingContextDto {
 // ─── Resume / Change-plan DTOs ───────────────────────────────────────────────
 
 export interface ResumeSessionDto {
-  status: "pending" | "awaiting_payment" | "active" | "failed" | "consumed" | "abandoned" | "unknown";
+  status:
+    | "pending"
+    | "awaiting_payment"
+    | "active"
+    | "failed"
+    | "consumed"
+    | "abandoned"
+    | "unknown";
   editionId: string | null;
   billingCycle: "monthly" | "yearly" | null;
   currency: string | null;

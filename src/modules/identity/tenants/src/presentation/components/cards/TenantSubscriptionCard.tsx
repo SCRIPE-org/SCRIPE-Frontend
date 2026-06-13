@@ -419,20 +419,21 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           </div>
 
           {/* ── Pricing Info / Free Plan Banner ── */}
-          {subscription.type === "Free" || (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
+          {subscription.type === "Free" ||
+          (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
             <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4 text-emerald-800 dark:text-emerald-400">
-              <Gift className="h-5 w-5 shrink-0 text-emerald-500 animate-pulse" />
+              <Gift className="h-5 w-5 shrink-0 animate-pulse text-emerald-500" />
               <div>
-                <p className="text-sm font-semibold">
-                  {t("tenant.freePlanTitle") || "Free Plan"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {t("tenant.freePlanDesc") || "This tenant is on a permanently free plan. No pricing, invoicing, or billing operations are required."}
+                <p className="text-sm font-semibold">{t("tenant.freePlanTitle") || "Free Plan"}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {t("tenant.freePlanDesc") ||
+                    "This tenant is on a permanently free plan. No pricing, invoicing, or billing operations are required."}
                 </p>
               </div>
             </div>
           ) : (
-            subscription.currency && subscription.totalAmount != null && (
+            subscription.currency &&
+            subscription.totalAmount != null && (
               <div className="space-y-3 rounded-lg border border-border/50 bg-muted/30 p-3">
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                   <div className="space-y-1">
@@ -500,7 +501,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                         {subscription.promotionDiscount != null &&
                           subscription.promotionDiscount > 0 && (
                             <span className="ml-1">
-                              (–{formatDisplay(subscription.promotionDiscount, subscription.currency)}
+                              (–
+                              {formatDisplay(subscription.promotionDiscount, subscription.currency)}
                               )
                             </span>
                           )}

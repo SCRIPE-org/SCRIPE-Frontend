@@ -22,11 +22,7 @@ import {
 } from "../../data/helpers/planHelpers";
 import { CATEGORY_ORDER } from "../../domain/constants/signupConstants";
 import type { ISignupRepository } from "../../domain/interfaces/ISignupRepository";
-import type {
-  PublicEdition,
-  PlanEdition,
-  ComparisonCategory,
-} from "../../domain/entities";
+import type { PublicEdition, PlanEdition, ComparisonCategory } from "../../domain/entities";
 
 // Re-export for backward compatibility with components that import from here
 export { formatFeatureName };
@@ -69,7 +65,9 @@ export function usePlanPickerViewModel(
         if (!cancelled) setIsLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [repository, currency, language, t]);
 
   // ── Category tabs ────────────────────────────────────────────────────────
@@ -80,9 +78,7 @@ export function usePlanPickerViewModel(
         cats.set(e.category, e.categoryDisplayName ?? e.category);
       }
     }
-    return Array.from(cats.keys()).sort((a, b) =>
-      sortByPriority(a, b, CATEGORY_ORDER)
-    );
+    return Array.from(cats.keys()).sort((a, b) => sortByPriority(a, b, CATEGORY_ORDER));
   }, [editions]);
 
   const categoryLabels = useMemo(() => {
@@ -94,9 +90,7 @@ export function usePlanPickerViewModel(
   }, [editions]);
 
   const filteredEditions = useMemo(() => {
-    const list = !activeCategory
-      ? editions
-      : editions.filter((e) => e.category === activeCategory);
+    const list = !activeCategory ? editions : editions.filter((e) => e.category === activeCategory);
     return [...list].sort((a, b) => a.tierLevel - b.tierLevel);
   }, [editions, activeCategory]);
 

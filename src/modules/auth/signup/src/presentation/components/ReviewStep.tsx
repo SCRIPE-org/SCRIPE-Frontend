@@ -205,14 +205,21 @@ export function ReviewStep({ vm }: ReviewStepProps) {
           }}
         >
           <div className="flex items-start gap-3">
-            <CalendarClock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+            <CalendarClock
+              className="mt-0.5 h-4 w-4 shrink-0"
+              aria-hidden="true"
+              style={{ color: BRAND_TOKENS.text.cyan }}
+            />
             <div>
               <p className="text-sm font-semibold" style={{ color: BRAND_TOKENS.text.cyan }}>
                 {t("signup.review.trialStarts", { days: trialDays }) ||
                   `${trialDays}-day free trial — starts when you complete checkout`}
               </p>
               {formattedPrice && (
-                <p className="mt-1 text-sm font-semibold" style={{ color: BRAND_TOKENS.text.primary }}>
+                <p
+                  className="mt-1 text-sm font-semibold"
+                  style={{ color: BRAND_TOKENS.text.primary }}
+                >
                   {t("signup.review.thenPrice", { price: formattedPrice, cycle: perCycle }) ||
                     `Then ${formattedPrice}/${perCycle}`}
                 </p>
@@ -220,13 +227,21 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.success }} />
+            <ShieldCheck
+              className="h-4 w-4 shrink-0"
+              aria-hidden="true"
+              style={{ color: BRAND_TOKENS.text.success }}
+            />
             <p className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
               {t("signup.review.cancelAnytime") || "Cancel anytime"}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <BellRing className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.cyan }} />
+            <BellRing
+              className="h-4 w-4 shrink-0"
+              aria-hidden="true"
+              style={{ color: BRAND_TOKENS.text.cyan }}
+            />
             <p className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
               {t("signup.review.reminder") || "We'll remind you 3 days before any charge"}
             </p>
@@ -249,7 +264,8 @@ export function ReviewStep({ vm }: ReviewStepProps) {
           <span className="text-base font-bold" style={{ color: BRAND_TOKENS.text.primary }}>
             {formattedPrice}
             <span className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.tertiary }}>
-              {" "}/ {perCycle}
+              {" "}
+              / {perCycle}
             </span>
           </span>
         </div>
@@ -259,7 +275,11 @@ export function ReviewStep({ vm }: ReviewStepProps) {
       {!isFree && (
         <div className="space-y-2">
           <div className="flex items-center gap-2.5">
-            <TicketPercent className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.tertiary }} />
+            <TicketPercent
+              className="h-3.5 w-3.5 shrink-0"
+              aria-hidden="true"
+              style={{ color: BRAND_TOKENS.text.tertiary }}
+            />
             <p className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
               {t("signup.review.promoHint") ||
                 "Have a promo code? Apply it on the secure checkout page."}
@@ -267,7 +287,11 @@ export function ReviewStep({ vm }: ReviewStepProps) {
           </div>
           {language === "ar" && (
             <div className="flex items-center gap-2.5">
-              <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: BRAND_TOKENS.text.tertiary }} />
+              <Lock
+                className="h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+                style={{ color: BRAND_TOKENS.text.tertiary }}
+              />
               <p className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
                 {t("signup.review.paymentPageNote") ||
                   "ستتم إعادة توجيهك إلى صفحة دفع آمنة (باللغة الإنجليزية)"}

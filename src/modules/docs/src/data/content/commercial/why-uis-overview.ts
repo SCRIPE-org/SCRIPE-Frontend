@@ -105,50 +105,17 @@ const sections: DocSection[] = [
       "commercial.whyUISOverview.tblMetricsHeader2",
     ],
     rows: [
-      [
-        "commercial.whyUISOverview.tblMetricsR1C1",
-        "commercial.whyUISOverview.tblMetricsR1C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR2C1",
-        "commercial.whyUISOverview.tblMetricsR2C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR3C1",
-        "commercial.whyUISOverview.tblMetricsR3C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR4C1",
-        "commercial.whyUISOverview.tblMetricsR4C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR5C1",
-        "commercial.whyUISOverview.tblMetricsR5C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR6C1",
-        "commercial.whyUISOverview.tblMetricsR6C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR7C1",
-        "commercial.whyUISOverview.tblMetricsR7C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR8C1",
-        "commercial.whyUISOverview.tblMetricsR8C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR9C1",
-        "commercial.whyUISOverview.tblMetricsR9C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR10C1",
-        "commercial.whyUISOverview.tblMetricsR10C2",
-      ],
-      [
-        "commercial.whyUISOverview.tblMetricsR11C1",
-        "commercial.whyUISOverview.tblMetricsR11C2",
-      ],
+      ["commercial.whyUISOverview.tblMetricsR1C1", "commercial.whyUISOverview.tblMetricsR1C2"],
+      ["commercial.whyUISOverview.tblMetricsR2C1", "commercial.whyUISOverview.tblMetricsR2C2"],
+      ["commercial.whyUISOverview.tblMetricsR3C1", "commercial.whyUISOverview.tblMetricsR3C2"],
+      ["commercial.whyUISOverview.tblMetricsR4C1", "commercial.whyUISOverview.tblMetricsR4C2"],
+      ["commercial.whyUISOverview.tblMetricsR5C1", "commercial.whyUISOverview.tblMetricsR5C2"],
+      ["commercial.whyUISOverview.tblMetricsR6C1", "commercial.whyUISOverview.tblMetricsR6C2"],
+      ["commercial.whyUISOverview.tblMetricsR7C1", "commercial.whyUISOverview.tblMetricsR7C2"],
+      ["commercial.whyUISOverview.tblMetricsR8C1", "commercial.whyUISOverview.tblMetricsR8C2"],
+      ["commercial.whyUISOverview.tblMetricsR9C1", "commercial.whyUISOverview.tblMetricsR9C2"],
+      ["commercial.whyUISOverview.tblMetricsR10C1", "commercial.whyUISOverview.tblMetricsR10C2"],
+      ["commercial.whyUISOverview.tblMetricsR11C1", "commercial.whyUISOverview.tblMetricsR11C2"],
     ],
   },
 

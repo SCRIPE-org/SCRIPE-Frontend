@@ -88,23 +88,16 @@ export function useLeadsViewModel() {
   // ── Computed stats from list data ─────────────────────────────────────────
   const allLeads = listQuery.data?.items ?? [];
   const stats = {
-    total:     listQuery.data?.totalCount ?? 0,
-    new:       allLeads.filter((l) => l.status === "New").length,
+    total: listQuery.data?.totalCount ?? 0,
+    new: allLeads.filter((l) => l.status === "New").length,
     qualified: allLeads.filter((l) => l.status === "Qualified").length,
     converted: allLeads.filter((l) => l.status === "Converted").length,
   };
 
   // ── Update Status Mutation ────────────────────────────────────────────────
   const updateStatusMutation = useMutation({
-    mutationFn: ({
-      id,
-      status,
-      notes,
-    }: {
-      id: string;
-      status: LeadStatus;
-      notes?: string;
-    }) => leadsRepository.updateStatus({ id, status, notes }),
+    mutationFn: ({ id, status, notes }: { id: string; status: LeadStatus; notes?: string }) =>
+      leadsRepository.updateStatus({ id, status, notes }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
     },
@@ -183,9 +176,12 @@ export function useLeadsViewModel() {
       setSelectedIds(new Set());
       setBulkConfirmAction(null);
       const parts: string[] = [];
-      if (result.updated > 0) parts.push(t("leads.bulk.toastUpdated", { count: String(result.updated) }));
-      if (result.skipped > 0) parts.push(t("leads.bulk.toastSkipped", { count: String(result.skipped) }));
-      if (result.notFound > 0) parts.push(t("leads.bulk.toastNotFound", { count: String(result.notFound) }));
+      if (result.updated > 0)
+        parts.push(t("leads.bulk.toastUpdated", { count: String(result.updated) }));
+      if (result.skipped > 0)
+        parts.push(t("leads.bulk.toastSkipped", { count: String(result.skipped) }));
+      if (result.notFound > 0)
+        parts.push(t("leads.bulk.toastNotFound", { count: String(result.notFound) }));
       toast({ title: t("leads.bulk.closeSuccess"), description: parts.join(" · ") });
     },
     onError: () => {
@@ -197,20 +193,17 @@ export function useLeadsViewModel() {
   // Uses Promise.allSettled so partial failures don't abort the batch.
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      const results = await Promise.allSettled(
-        ids.map((id) => leadsRepository.deleteLead(id))
-      );
-      const deleted  = results.filter((r) => r.status === "fulfilled").length;
-      const failed   = results.filter((r) => r.status === "rejected").length;
+      const results = await Promise.allSettled(ids.map((id) => leadsRepository.deleteLead(id)));
+      const deleted = results.filter((r) => r.status === "fulfilled").length;
+      const failed = results.filter((r) => r.status === "rejected").length;
       return { deleted, failed };
     },
     onSuccess: ({ deleted, failed }) => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       setSelectedIds(new Set());
       setBulkConfirmAction(null);
-      const desc = failed > 0
-        ? t("leads.bulk.toastNotFound", { count: String(failed) })
-        : undefined;
+      const desc =
+        failed > 0 ? t("leads.bulk.toastNotFound", { count: String(failed) }) : undefined;
       toast({
         title: t("leads.bulk.deleteSuccess", { count: String(deleted) }),
         description: desc,
@@ -220,7 +213,6 @@ export function useLeadsViewModel() {
       toast({ title: t("leads.bulk.deleteError"), variant: "destructive" });
     },
   });
-
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -256,7 +248,9 @@ export function useLeadsViewModel() {
   const handleOpenCreateDialog = useCallback(() => setIsCreateDialogOpen(true), []);
   const handleCloseCreateDialog = useCallback(() => setIsCreateDialogOpen(false), []);
   const handleCreateLead = useCallback(
-    async (params: CreateLeadParams) => { await createLeadMutation.mutateAsync(params); },
+    async (params: CreateLeadParams) => {
+      await createLeadMutation.mutateAsync(params);
+    },
     [createLeadMutation]
   );
 
@@ -281,7 +275,9 @@ export function useLeadsViewModel() {
   );
 
   const handleDeleteLead = useCallback(
-    async (id: string) => { await deleteLeadMutation.mutateAsync(id); },
+    async (id: string) => {
+      await deleteLeadMutation.mutateAsync(id);
+    },
     [deleteLeadMutation]
   );
 
@@ -298,9 +294,7 @@ export function useLeadsViewModel() {
 
   const handleSelectAll = useCallback((leads: { id: string }[]) => {
     setSelectedIds((prev) =>
-      prev.size === leads.length
-        ? new Set()
-        : new Set(leads.map((l) => l.id))
+      prev.size === leads.length ? new Set() : new Set(leads.map((l) => l.id))
     );
   }, []);
 
@@ -322,13 +316,13 @@ export function useLeadsViewModel() {
   // ── Exposed surface ───────────────────────────────────────────────────────
   return {
     // List
-    leads:       listQuery.data?.items ?? [],
-    totalCount:  listQuery.data?.totalCount ?? 0,
-    isLoading:   listQuery.isLoading,
-    isError:     listQuery.isError,
+    leads: listQuery.data?.items ?? [],
+    totalCount: listQuery.data?.totalCount ?? 0,
+    isLoading: listQuery.isLoading,
+    isError: listQuery.isError,
     page,
     pageSize,
-    totalPages:  Math.ceil((listQuery.data?.totalCount ?? 0) / pageSize),
+    totalPages: Math.ceil((listQuery.data?.totalCount ?? 0) / pageSize),
     stats,
 
     // Filters
@@ -338,21 +332,21 @@ export function useLeadsViewModel() {
     // Drawer
     isDrawerOpen,
     selectedLeadId,
-    selectedLead:      detailQuery.data ?? null,
-    isLoadingDetail:   detailQuery.isLoading,
+    selectedLead: detailQuery.data ?? null,
+    isLoadingDetail: detailQuery.isLoading,
 
     // Activity
-    activity:          activityQuery.data ?? [],
+    activity: activityQuery.data ?? [],
     isLoadingActivity: activityQuery.isLoading,
 
     // Mutation state
-    isUpdatingStatus:   updateStatusMutation.isPending,
-    isCreatingLead:     createLeadMutation.isPending,
-    isConvertingLead:   convertToTenantMutation.isPending,
-    isAssigningLead:    assignLeadMutation.isPending,
-    isDeletingLead:     deleteLeadMutation.isPending,
-    isBulkClosing:      bulkCloseMutation.isPending,
-    isBulkDeleting:     bulkDeleteMutation.isPending,
+    isUpdatingStatus: updateStatusMutation.isPending,
+    isCreatingLead: createLeadMutation.isPending,
+    isConvertingLead: convertToTenantMutation.isPending,
+    isAssigningLead: assignLeadMutation.isPending,
+    isDeletingLead: deleteLeadMutation.isPending,
+    isBulkClosing: bulkCloseMutation.isPending,
+    isBulkDeleting: bulkDeleteMutation.isPending,
 
     // Dialog state
     isCreateDialogOpen,
@@ -394,4 +388,3 @@ export function useLeadsViewModel() {
     handleConfirmBulkAction,
   };
 }
-

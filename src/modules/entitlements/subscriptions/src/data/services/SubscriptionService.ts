@@ -129,16 +129,24 @@ export class SubscriptionService implements ISubscriptionService {
   }
 
   async changeCurrency(tenantId: string, currency: string): Promise<void> {
-    await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId),
-      { currency }
-    );
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId), {
+      currency,
+    });
   }
 
   async getDowngradeImpact(
     tenantId: string,
     targetEditionId: string
-  ): Promise<{ hasOverflow: boolean; overflows: { resourceType: string; featureName: string; currentCount: number; newLimit: number; overflowCount: number }[] }> {
+  ): Promise<{
+    hasOverflow: boolean;
+    overflows: {
+      resourceType: string;
+      featureName: string;
+      currentCount: number;
+      newLimit: number;
+      overflowCount: number;
+    }[];
+  }> {
     return this.api.get(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
     );

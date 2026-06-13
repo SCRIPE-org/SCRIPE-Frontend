@@ -55,10 +55,7 @@ export function useSignupWizardViewModel() {
   const state = useSignupWizardState({ language });
 
   // ── 2. Pricing context (geo-detected currency + FX rates) ────────────────
-  const {
-    data: pricingContext,
-    isLoading: isCurrencyLoading,
-  } = useQuery<PricingContext>({
+  const { data: pricingContext, isLoading: isCurrencyLoading } = useQuery<PricingContext>({
     queryKey: ["signup-pricing-context"],
     queryFn: () => signupRepository.getPricingContext(),
     staleTime: 10 * 60 * 1000, // 10 min — IP doesn't change mid-session
@@ -68,19 +65,22 @@ export function useSignupWizardViewModel() {
   // Apply geo-detected currency once (user manual selection blocks re-apply)
   useEffect(() => {
     if (pricingContext?.recommendedCurrency) {
-      state.applyRecommendedCurrency(pricingContext.recommendedCurrency, pricingContext.detectedCountry);
+      state.applyRecommendedCurrency(
+        pricingContext.recommendedCurrency,
+        pricingContext.detectedCountry
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pricingContext?.recommendedCurrency, pricingContext?.detectedCountry]);
 
   // ── 3. Categories (currency-aware refetch) ───────────────────────────────
-  const { data: categories = [] as PublicCategory[], isLoading: isCategoriesLoading } =
-    useQuery<PublicCategory[]>({
-      queryKey: ["signup-categories", state.wizardData.currency, language],
-      queryFn: () =>
-        signupRepository.getCategories(state.wizardData.currency, language),
-      staleTime: 5 * 60 * 1000,
-    });
+  const { data: categories = [] as PublicCategory[], isLoading: isCategoriesLoading } = useQuery<
+    PublicCategory[]
+  >({
+    queryKey: ["signup-categories", state.wizardData.currency, language],
+    queryFn: () => signupRepository.getCategories(state.wizardData.currency, language),
+    staleTime: 5 * 60 * 1000,
+  });
 
   // ── 4. OTP sub-hook ──────────────────────────────────────────────────────
   const otp = useSignupOtp({
@@ -113,15 +113,7 @@ export function useSignupWizardViewModel() {
     setProvisioningStep: state.setProvisioningStep,
   });
 
-  // ── 7. Auto-skip category step when catalog has <2 items ────────────────
-  useEffect(() => {
-    if (state.step === "category" && !isCategoriesLoading && categories.length < 2) {
-      state.skipCategoryStep();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.step, isCategoriesLoading, categories.length]);
-
-  // ── 8. Resume detection on mount ─────────────────────────────────────────
+  // ── 7. Resume detection on mount ─────────────────────────────────────────
   // If a SIGNUP_REF is in sessionStorage and there's no ?canceled/change-plan
   // param (those are handled by useSignupWizardState), probe the server to see
   // if the session is still resumable and show the modal.
@@ -160,7 +152,11 @@ export function useSignupWizardViewModel() {
     state.setShowResumeModal(false);
     const existingRef = getPersistedSignupRef();
     if (existingRef) {
-      try { await signupRepository.abandon(existingRef); } catch { /* best-effort */ }
+      try {
+        await signupRepository.abandon(existingRef);
+      } catch {
+        /* best-effort */
+      }
     }
     clearPersistedWizardState();
     state.setStep("discovery");
@@ -190,16 +186,16 @@ export function useSignupWizardViewModel() {
   }, [router]);
 
   // ── Currency metadata ────────────────────────────────────────────────────
-  const supportedCurrencies: SupportedCurrency[] =
-    pricingContext?.supportedCurrencies ?? [];
-  const currentCurrencyMeta: SupportedCurrency =
-    supportedCurrencies.find((c) => c.code === state.wizardData.currency) ?? {
-      code: state.wizardData.currency,
-      symbol: "$",
-      nameEn: state.wizardData.currency,
-      nameAr: state.wizardData.currency,
-      rateFromUsd: 1,
-    };
+  const supportedCurrencies: SupportedCurrency[] = pricingContext?.supportedCurrencies ?? [];
+  const currentCurrencyMeta: SupportedCurrency = supportedCurrencies.find(
+    (c) => c.code === state.wizardData.currency
+  ) ?? {
+    code: state.wizardData.currency,
+    symbol: "$",
+    nameEn: state.wizardData.currency,
+    nameAr: state.wizardData.currency,
+    rateFromUsd: 1,
+  };
 
   // ─────────────────────────────────────────────────────────────────────────
   // Flat return — the complete API consumed by all signup views/components
@@ -259,8 +255,6 @@ export function useSignupWizardViewModel() {
     updateField: state.updateField,
     updatePassword,
     setDiscovery: state.setDiscovery,
-    selectCategory: state.selectCategory,
-    skipCategoryStep: state.skipCategoryStep,
     selectPlan: state.selectPlan,
     submitAccount: otp.submitAccount,
     verifyOtp: otp.verifyOtp,

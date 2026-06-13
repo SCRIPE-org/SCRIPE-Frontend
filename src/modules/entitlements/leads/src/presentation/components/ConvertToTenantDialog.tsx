@@ -13,13 +13,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ConvertLeadParams } from "../../domain/interfaces/ILeadsRepository";
@@ -48,14 +42,14 @@ export function ConvertToTenantDialog({
   const { t } = useI18n();
 
   // ── Standard fields ───────────────────────────────────────────────────────
-  const [tenantCode, setTenantCode]                 = useState("");
-  const [adminEmail, setAdminEmail]                 = useState("");
-  const [subscriptionType, setSubscriptionType]     = useState<string>("");
-  const [currency, setCurrency]                     = useState("USD");
-  const [conversionNote, setConversionNote]         = useState("");
+  const [tenantCode, setTenantCode] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [subscriptionType, setSubscriptionType] = useState<string>("");
+  const [currency, setCurrency] = useState("USD");
+  const [conversionNote, setConversionNote] = useState("");
 
   // ── Custom deal price (G7) ────────────────────────────────────────────────
-  const [useCustomPrice, setUseCustomPrice]         = useState(false);
+  const [useCustomPrice, setUseCustomPrice] = useState(false);
   const [negotiatedAmountRaw, setNegotiatedAmountRaw] = useState("");
   const [negotiatedCurrency, setNegotiatedCurrency] = useState("USD");
 
@@ -82,16 +76,14 @@ export function ConvertToTenantDialog({
     if (useCustomPrice && !validateAmount(negotiatedAmountRaw)) return;
 
     const negotiatedAmount =
-      useCustomPrice && negotiatedAmountRaw.trim()
-        ? parseFloat(negotiatedAmountRaw)
-        : undefined;
+      useCustomPrice && negotiatedAmountRaw.trim() ? parseFloat(negotiatedAmountRaw) : undefined;
 
     await onConvert({
-      tenantCode:         tenantCode.trim()     || undefined,
-      adminEmail:         adminEmail.trim()     || undefined,
-      subscriptionType:   subscriptionType      || undefined,
-      currency:           currency              || undefined,
-      conversionNote:     conversionNote.trim() || undefined,
+      tenantCode: tenantCode.trim() || undefined,
+      adminEmail: adminEmail.trim() || undefined,
+      subscriptionType: subscriptionType || undefined,
+      currency: currency || undefined,
+      conversionNote: conversionNote.trim() || undefined,
       negotiatedAmount,
       negotiatedCurrency: useCustomPrice ? negotiatedCurrency : undefined,
     });
@@ -120,7 +112,7 @@ export function ConvertToTenantDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[540px]">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="mb-1 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
@@ -132,11 +124,13 @@ export function ConvertToTenantDialog({
             </div>
           </div>
           {lead && (
-            <div className="rounded-lg border border-border bg-muted/50 px-4 py-3 mt-2">
+            <div className="mt-2 rounded-lg border border-border bg-muted/50 px-4 py-3">
               <p className="text-sm font-medium">{lead.companyName}</p>
-              <p className="text-xs text-muted-foreground">{lead.contactName} · {lead.email}</p>
+              <p className="text-xs text-muted-foreground">
+                {lead.contactName} · {lead.email}
+              </p>
               {lead.editionKey && (
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   {t("leads.drawer.editionLabel").replace("{edition}", lead.editionKey)}
                 </p>
               )}
@@ -147,9 +141,7 @@ export function ConvertToTenantDialog({
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {/* Tenant Slug */}
           <div className="space-y-1.5">
-            <Label htmlFor="convert-tenant-code">
-              {t("leads.convertDialog.tenantCode")}
-            </Label>
+            <Label htmlFor="convert-tenant-code">{t("leads.convertDialog.tenantCode")}</Label>
             <Input
               id="convert-tenant-code"
               value={tenantCode}
@@ -165,9 +157,7 @@ export function ConvertToTenantDialog({
 
           {/* Admin Email */}
           <div className="space-y-1.5">
-            <Label htmlFor="convert-admin-email">
-              {t("leads.convertDialog.adminEmail")}
-            </Label>
+            <Label htmlFor="convert-admin-email">{t("leads.convertDialog.adminEmail")}</Label>
             <Input
               id="convert-admin-email"
               type="email"
@@ -185,9 +175,7 @@ export function ConvertToTenantDialog({
           {/* Subscription Type + Currency row */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="convert-sub-type">
-                {t("leads.convertDialog.subscriptionType")}
-              </Label>
+              <Label htmlFor="convert-sub-type">{t("leads.convertDialog.subscriptionType")}</Label>
               <Select
                 value={subscriptionType}
                 onValueChange={setSubscriptionType}
@@ -211,14 +199,8 @@ export function ConvertToTenantDialog({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="convert-currency">
-                {t("leads.convertDialog.currency")}
-              </Label>
-              <Select
-                value={currency}
-                onValueChange={setCurrency}
-                disabled={isConverting}
-              >
+              <Label htmlFor="convert-currency">{t("leads.convertDialog.currency")}</Label>
+              <Select value={currency} onValueChange={setCurrency} disabled={isConverting}>
                 <SelectTrigger id="convert-currency">
                   <SelectValue />
                 </SelectTrigger>
@@ -235,16 +217,16 @@ export function ConvertToTenantDialog({
           </div>
 
           {/* ── Custom Deal Price (G7) ─────────────────────────────────── */}
-          <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 space-y-3">
+          <div className="space-y-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
             {/* Toggle row */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <BadgeDollarSign className="h-4 w-4 text-amber-500 shrink-0" />
+                <BadgeDollarSign className="h-4 w-4 shrink-0 text-amber-500" />
                 <div>
                   <p className="text-sm font-medium leading-none">
                     {t("leads.convertDialog.negotiatedPrice.toggle")}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="mt-0.5 text-xs text-muted-foreground">
                     {t("leads.convertDialog.negotiatedPrice.toggleHint")}
                   </p>
                 </div>
@@ -285,9 +267,7 @@ export function ConvertToTenantDialog({
                     autoComplete="off"
                     className={amountError ? "border-destructive" : ""}
                   />
-                  {amountError && (
-                    <p className="text-xs text-destructive">{amountError}</p>
-                  )}
+                  {amountError && <p className="text-xs text-destructive">{amountError}</p>}
                 </div>
 
                 <div className="space-y-1.5">
@@ -322,9 +302,7 @@ export function ConvertToTenantDialog({
 
           {/* Conversion Note */}
           <div className="space-y-1.5">
-            <Label htmlFor="convert-note">
-              {t("leads.convertDialog.conversionNote")}
-            </Label>
+            <Label htmlFor="convert-note">{t("leads.convertDialog.conversionNote")}</Label>
             <Textarea
               id="convert-note"
               value={conversionNote}
@@ -337,18 +315,13 @@ export function ConvertToTenantDialog({
           </div>
 
           <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isConverting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isConverting}>
               {t("leads.convertDialog.cancel")}
             </Button>
             <Button
               type="submit"
               disabled={isConverting}
-              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
             >
               {isConverting ? (
                 <>

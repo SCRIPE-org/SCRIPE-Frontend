@@ -83,7 +83,7 @@ async function loadFederatedModule(
   // Under Turbopack (Next.js --turbo), this global does not exist.
   // We use an empty shared scope as a safe fallback — the plugin's own
   // internal dependencies will still resolve via its own bundled scope.
-   
+
   const shareScope =
     typeof __webpack_share_scopes__ !== "undefined" ? __webpack_share_scopes__.default : {};
   await container.init(shareScope);

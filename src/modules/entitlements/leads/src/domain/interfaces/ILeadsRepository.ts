@@ -1,6 +1,11 @@
 "use client";
 
-import type { PlatformLead, PlatformLeadListItem, LeadStatus, LeadActivity } from "../entities/PlatformLead";
+import type {
+  PlatformLead,
+  PlatformLeadListItem,
+  LeadStatus,
+  LeadActivity,
+} from "../entities/PlatformLead";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
 export interface LeadsListParams {
@@ -52,7 +57,6 @@ export interface ConvertLeadParams {
   negotiatedCurrency?: string;
 }
 
-
 export interface ConvertLeadResult {
   tenantId: string;
   adminId: string;
@@ -86,6 +90,9 @@ export interface ILeadsRepository {
   deleteLead(id: string): Promise<void>;
   getActivity(id: string): Promise<LeadActivity[]>;
   /** Bulk-update status on multiple leads. Max 100 per call. */
-  bulkUpdateStatus(leadIds: string[], status: string, notes?: string): Promise<BulkLeadStatusResult>;
+  bulkUpdateStatus(
+    leadIds: string[],
+    status: string,
+    notes?: string
+  ): Promise<BulkLeadStatusResult>;
 }
-

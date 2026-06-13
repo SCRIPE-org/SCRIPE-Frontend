@@ -8,13 +8,7 @@ import { AssignLeadDialog } from "../components/AssignLeadDialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Checkbox } from "@core/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,28 +27,28 @@ import type { LeadStatus } from "../../domain/entities/PlatformLead";
 const ALL_STATUSES: LeadStatus[] = ["New", "Contacted", "Qualified", "Converted", "Closed"];
 
 const STATUS_STYLES: Record<LeadStatus, string> = {
-  New:       "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  New: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   Contacted: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   Qualified: "bg-violet-500/15 text-violet-300 border-violet-500/30",
   Converted: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  Closed:    "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
+  Closed: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
 };
 
 const STATUS_DOTS: Record<LeadStatus, string> = {
-  New:       "bg-blue-400",
+  New: "bg-blue-400",
   Contacted: "bg-amber-400",
   Qualified: "bg-violet-400",
   Converted: "bg-emerald-400",
-  Closed:    "bg-zinc-500",
+  Closed: "bg-zinc-500",
 };
 
 // ── Stats pill ────────────────────────────────────────────────────────────────
 
 function StatPill({ label, value, accent }: { label: string; value: number; accent: string }) {
   return (
-    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${accent} bg-current/5`}>
+    <div className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 ${accent} bg-current/5`}>
       <span className="text-lg font-bold tabular-nums">{value}</span>
-      <span className="text-xs text-zinc-400 whitespace-nowrap">{label}</span>
+      <span className="whitespace-nowrap text-xs text-zinc-400">{label}</span>
     </div>
   );
 }
@@ -77,18 +71,11 @@ function BulkActionBar({
   const { t } = useI18n();
   return (
     <div
-      className={`
-        fixed bottom-6 left-1/2 -translate-x-1/2 z-50
-        flex items-center gap-3 px-5 py-3 rounded-2xl
-        bg-zinc-900 border border-zinc-700 shadow-2xl shadow-black/60
-        backdrop-blur-sm
-        transition-all duration-300
-        ${count > 0 ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"}
-      `}
+      className={`fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-3 shadow-2xl shadow-black/60 backdrop-blur-sm transition-all duration-300 ${count > 0 ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"} `}
       aria-live="polite"
     >
       {/* Selection count */}
-      <span className="text-sm font-medium text-white tabular-nums">
+      <span className="text-sm font-medium tabular-nums text-white">
         {t("leads.bulk.selectedCount", { count: String(count) })}
       </span>
 
@@ -100,7 +87,7 @@ function BulkActionBar({
         size="sm"
         disabled={isLoading}
         onClick={onClose}
-        className="h-8 px-3 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium"
+        className="h-8 bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-500"
       >
         {isLoading
           ? t("leads.bulk.closing")
@@ -125,7 +112,7 @@ function BulkActionBar({
       <button
         id="leads-bulk-clear-btn"
         onClick={onClear}
-        className="text-xs text-zinc-400 hover:text-white transition-colors"
+        className="text-xs text-zinc-400 transition-colors hover:text-white"
         aria-label={t("leads.bulk.clearSelection")}
       >
         ✕
@@ -142,25 +129,23 @@ export function LeadsView() {
 
   const leads = vm.leads;
   const allPageSelected = leads.length > 0 && leads.every((l) => vm.selectedIds.has(l.id));
-  const someSelected     = leads.some((l) => vm.selectedIds.has(l.id));
+  const someSelected = leads.some((l) => vm.selectedIds.has(l.id));
 
   const isAnyBulkPending = vm.isBulkClosing || vm.isBulkDeleting;
 
   return (
     <div className="space-y-6">
-
       {/* ── Page Header ── */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-white">{t("leads.title")}</h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            {t("leads.subtitle")} &mdash;{" "}
-            {t("leads.totalCount", { count: String(vm.totalCount) })}
+          <p className="mt-1 text-sm text-zinc-400">
+            {t("leads.subtitle")} &mdash; {t("leads.totalCount", { count: String(vm.totalCount) })}
           </p>
         </div>
 
         {/* Stats bar + Create button */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           <StatPill
             label={t("leads.statsBar.new")}
             value={vm.stats.new}
@@ -180,7 +165,7 @@ export function LeadsView() {
             id="leads-create-btn"
             onClick={vm.handleOpenCreateDialog}
             size="sm"
-            className="ms-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs h-8 px-3"
+            className="ms-2 h-8 bg-indigo-600 px-3 text-xs text-white hover:bg-indigo-500"
           >
             {t("leads.createButton")}
           </Button>
@@ -188,13 +173,13 @@ export function LeadsView() {
       </div>
 
       {/* ── Filters ── */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex flex-wrap items-center gap-3">
         <Input
           id="leads-search"
           placeholder={t("leads.searchPlaceholder")}
           value={vm.search}
           onChange={(e) => vm.handleSearchChange(e.target.value)}
-          className="w-72 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-500"
+          className="w-72 border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-500"
         />
         <Select
           value={vm.statusFilter ?? "all"}
@@ -204,11 +189,11 @@ export function LeadsView() {
         >
           <SelectTrigger
             id="leads-status-filter"
-            className="w-44 bg-zinc-900 border-zinc-700 text-white"
+            className="w-44 border-zinc-700 bg-zinc-900 text-white"
           >
             <SelectValue placeholder={t("leads.allStatuses")} />
           </SelectTrigger>
-          <SelectContent className="bg-zinc-900 border-zinc-700">
+          <SelectContent className="border-zinc-700 bg-zinc-900">
             <SelectItem value="all">{t("leads.allStatuses")}</SelectItem>
             {ALL_STATUSES.map((s) => (
               <SelectItem key={s} value={s}>
@@ -223,34 +208,34 @@ export function LeadsView() {
       </div>
 
       {/* ── Table ── */}
-      <div className="rounded-xl border border-zinc-800 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-zinc-800">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-900 border-b border-zinc-800">
+          <thead className="border-b border-zinc-800 bg-zinc-900">
             <tr>
               {/* Select-all checkbox */}
-              <th className="px-4 py-3 w-10">
+              <th className="w-10 px-4 py-3">
                 <Checkbox
                   id="leads-select-all"
                   checked={allPageSelected}
                   data-state={someSelected && !allPageSelected ? "indeterminate" : undefined}
                   onCheckedChange={() => vm.handleSelectAll(leads)}
                   aria-label={t("leads.bulk.selectAll")}
-                  className="border-zinc-600 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                  className="border-zinc-600 data-[state=checked]:border-indigo-600 data-[state=checked]:bg-indigo-600"
                 />
               </th>
-              <th className="text-start px-4 py-3 text-zinc-400 font-medium w-[28%]">
+              <th className="w-[28%] px-4 py-3 text-start font-medium text-zinc-400">
                 {t("leads.columns.company")}
               </th>
-              <th className="text-start px-4 py-3 text-zinc-400 font-medium">
+              <th className="px-4 py-3 text-start font-medium text-zinc-400">
                 {t("leads.columns.contact")}
               </th>
-              <th className="text-start px-4 py-3 text-zinc-400 font-medium hidden lg:table-cell">
+              <th className="hidden px-4 py-3 text-start font-medium text-zinc-400 lg:table-cell">
                 {t("leads.columns.edition")}
               </th>
-              <th className="text-start px-4 py-3 text-zinc-400 font-medium">
+              <th className="px-4 py-3 text-start font-medium text-zinc-400">
                 {t("leads.columns.status")}
               </th>
-              <th className="text-start px-4 py-3 text-zinc-400 font-medium hidden md:table-cell">
+              <th className="hidden px-4 py-3 text-start font-medium text-zinc-400 md:table-cell">
                 {t("leads.columns.created")}
               </th>
             </tr>
@@ -275,39 +260,33 @@ export function LeadsView() {
                   <tr
                     key={lead.id}
                     id={`lead-row-${lead.id}`}
-                    className={`border-t border-zinc-800/50 transition-colors group
-                      ${isSelected ? "bg-indigo-950/30" : "hover:bg-zinc-800/40"}
-                    `}
+                    className={`group border-t border-zinc-800/50 transition-colors ${isSelected ? "bg-indigo-950/30" : "hover:bg-zinc-800/40"} `}
                   >
                     {/* Row checkbox — stops row click propagation */}
-                    <td
-                      className="px-4 py-3 w-10"
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                    <td className="w-10 px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         id={`lead-check-${lead.id}`}
                         checked={isSelected}
                         onCheckedChange={() => vm.handleToggleSelect(lead.id)}
                         aria-label={t("leads.bulk.selectRow", { company: lead.companyName })}
-                        className="border-zinc-600 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                        className="border-zinc-600 data-[state=checked]:border-indigo-600 data-[state=checked]:bg-indigo-600"
                       />
                     </td>
 
                     {/* Company + discovery tags — click opens drawer */}
                     <td
-                      className="px-4 py-3 cursor-pointer"
+                      className="cursor-pointer px-4 py-3"
                       onClick={() => vm.handleOpenDrawer(lead.id)}
                     >
-                      <p className="text-white font-medium group-hover:text-indigo-300 transition-colors truncate">
+                      <p className="truncate font-medium text-white transition-colors group-hover:text-indigo-300">
                         {lead.companyName}
                       </p>
                       {lead.discoveryTagKeys.length > 0 && (
-                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                        <div className="mt-1 flex flex-wrap items-center gap-1">
                           {lead.discoveryTagKeys.map(({ key, raw }) => (
                             <span
                               key={key}
-                              className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px]
-                                bg-violet-500/10 text-violet-400 border border-violet-500/20"
+                              className="inline-flex items-center rounded border border-violet-500/20 bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400"
                             >
                               {raw ? key : t(key)}
                             </span>
@@ -318,22 +297,20 @@ export function LeadsView() {
 
                     {/* Contact + email */}
                     <td
-                      className="px-4 py-3 cursor-pointer"
+                      className="cursor-pointer px-4 py-3"
                       onClick={() => vm.handleOpenDrawer(lead.id)}
                     >
-                      <p className="text-zinc-300 truncate">{lead.contactName}</p>
-                      <p className="text-zinc-500 text-xs truncate mt-0.5">{lead.email}</p>
+                      <p className="truncate text-zinc-300">{lead.contactName}</p>
+                      <p className="mt-0.5 truncate text-xs text-zinc-500">{lead.email}</p>
                     </td>
 
                     {/* Edition */}
                     <td
-                      className="px-4 py-3 hidden lg:table-cell cursor-pointer"
+                      className="hidden cursor-pointer px-4 py-3 lg:table-cell"
                       onClick={() => vm.handleOpenDrawer(lead.id)}
                     >
                       {lead.editionKey ? (
-                        <span className="text-zinc-400 text-xs font-mono">
-                          {lead.editionKey}
-                        </span>
+                        <span className="font-mono text-xs text-zinc-400">{lead.editionKey}</span>
                       ) : (
                         <span className="text-zinc-600">—</span>
                       )}
@@ -341,12 +318,11 @@ export function LeadsView() {
 
                     {/* Status badge */}
                     <td
-                      className="px-4 py-3 cursor-pointer"
+                      className="cursor-pointer px-4 py-3"
                       onClick={() => vm.handleOpenDrawer(lead.id)}
                     >
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md
-                          text-xs font-medium border ${STATUS_STYLES[lead.status]}`}
+                        className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[lead.status]}`}
                       >
                         <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOTS[lead.status]}`} />
                         {t(`leads.status.${lead.status}`)}
@@ -355,13 +331,11 @@ export function LeadsView() {
 
                     {/* Relative time + source */}
                     <td
-                      className="px-4 py-3 hidden md:table-cell cursor-pointer"
+                      className="hidden cursor-pointer px-4 py-3 md:table-cell"
                       onClick={() => vm.handleOpenDrawer(lead.id)}
                     >
-                      <p className="text-zinc-500 text-xs">{lead.relativeCreatedAt}</p>
-                      <p className="text-zinc-600 text-[10px] mt-0.5">
-                        {t(lead.sourceKey)}
-                      </p>
+                      <p className="text-xs text-zinc-500">{lead.relativeCreatedAt}</p>
+                      <p className="mt-0.5 text-[10px] text-zinc-600">{t(lead.sourceKey)}</p>
                     </td>
                   </tr>
                 );
@@ -449,8 +423,11 @@ export function LeadsView() {
       />
 
       {/* ── Bulk Confirm Dialog ── */}
-      <AlertDialog open={vm.isBulkConfirmOpen} onOpenChange={(o) => !o && vm.handleCancelBulkConfirm()}>
-        <AlertDialogContent className="bg-zinc-950 border-zinc-800">
+      <AlertDialog
+        open={vm.isBulkConfirmOpen}
+        onOpenChange={(o) => !o && vm.handleCancelBulkConfirm()}
+      >
+        <AlertDialogContent className="border-zinc-800 bg-zinc-950">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">
               {vm.bulkConfirmAction === "close"
@@ -476,15 +453,15 @@ export function LeadsView() {
               disabled={isAnyBulkPending}
               className={
                 vm.bulkConfirmAction === "delete"
-                  ? "bg-red-600 hover:bg-red-500 text-white"
-                  : "bg-amber-600 hover:bg-amber-500 text-white"
+                  ? "bg-red-600 text-white hover:bg-red-500"
+                  : "bg-amber-600 text-white hover:bg-amber-500"
               }
             >
               {isAnyBulkPending
                 ? t("leads.bulk.processing")
                 : vm.bulkConfirmAction === "close"
-                ? t("leads.bulk.confirmClose")
-                : t("leads.bulk.confirmDelete")}
+                  ? t("leads.bulk.confirmClose")
+                  : t("leads.bulk.confirmDelete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

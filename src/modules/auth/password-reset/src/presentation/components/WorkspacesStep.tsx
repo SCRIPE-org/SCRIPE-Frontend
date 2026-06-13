@@ -38,10 +38,7 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
         >
           {t("auth.forgotPickWorkspaceTitle")}
         </h1>
-        <p
-          className="mt-1.5 text-[13px] leading-relaxed"
-          style={{ color: "var(--sx-text-mute)" }}
-        >
+        <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.forgotPickWorkspaceSubtitle")}
         </p>
       </div>
@@ -51,8 +48,7 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
       {/* Select All toggle */}
       <div className="flex items-center justify-between">
         <span className="text-[12px]" style={{ color: "var(--sx-text-mute)" }}>
-          {vm.selectedWorkspaces.length} / {vm.workspaces.length}{" "}
-          {t("auth.workspacesSelected")}
+          {vm.selectedWorkspaces.length} / {vm.workspaces.length} {t("auth.workspacesSelected")}
         </span>
         <button
           type="button"

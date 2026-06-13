@@ -16,7 +16,12 @@ function relativeTime(isoDate: string): string {
   const minutes = Math.floor(diff / 60_000);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  if (days > 30) return new Date(isoDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  if (days > 30)
+    return new Date(isoDate).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   if (days >= 1) return `${days}d ago`;
   if (hours >= 1) return `${hours}h ago`;
   if (minutes >= 1) return `${minutes}m ago`;
@@ -43,28 +48,60 @@ export interface PlatformLeadListItemData {
 export class PlatformLeadListItem {
   constructor(public readonly data: PlatformLeadListItemData) {}
 
-  get id(): string { return this.data.id; }
-  get companyName(): string { return this.data.companyName; }
-  get contactName(): string { return this.data.contactName; }
-  get email(): string { return this.data.email; }
-  get phone(): string | undefined { return this.data.phone; }
-  get editionKey(): string | undefined { return this.data.editionKey; }
-  get status(): LeadStatus { return this.data.status; }
-  get source(): LeadSource { return this.data.source; }
-  get requestedAt(): string { return this.data.requestedAt; }
+  get id(): string {
+    return this.data.id;
+  }
+  get companyName(): string {
+    return this.data.companyName;
+  }
+  get contactName(): string {
+    return this.data.contactName;
+  }
+  get email(): string {
+    return this.data.email;
+  }
+  get phone(): string | undefined {
+    return this.data.phone;
+  }
+  get editionKey(): string | undefined {
+    return this.data.editionKey;
+  }
+  get status(): LeadStatus {
+    return this.data.status;
+  }
+  get source(): LeadSource {
+    return this.data.source;
+  }
+  get requestedAt(): string {
+    return this.data.requestedAt;
+  }
 
   // Discovery intelligence
-  get businessType(): string | undefined { return this.data.businessType; }
-  get teamSize(): string | undefined { return this.data.teamSize; }
-  get primaryPriority(): string | undefined { return this.data.primaryPriority; }
+  get businessType(): string | undefined {
+    return this.data.businessType;
+  }
+  get teamSize(): string | undefined {
+    return this.data.teamSize;
+  }
+  get primaryPriority(): string | undefined {
+    return this.data.primaryPriority;
+  }
 
   // Computed
-  get isNew(): boolean { return this.data.status === "New"; }
-  get isConverted(): boolean { return this.data.status === "Converted"; }
-  get relativeCreatedAt(): string { return relativeTime(this.data.requestedAt); }
+  get isNew(): boolean {
+    return this.data.status === "New";
+  }
+  get isConverted(): boolean {
+    return this.data.status === "Converted";
+  }
+  get relativeCreatedAt(): string {
+    return relativeTime(this.data.requestedAt);
+  }
 
   /** Raw i18n key for the source — view calls t(lead.sourceKey) */
-  get sourceKey(): string { return `leads.source.${this.data.source}`; }
+  get sourceKey(): string {
+    return `leads.source.${this.data.source}`;
+  }
 
   /**
    * Returns raw locale key paths for discovery fields.
@@ -76,8 +113,7 @@ export class PlatformLeadListItem {
       keys.push({ key: `leads.discovery.industryLabels.${this.data.businessType}` });
     if (this.data.teamSize)
       keys.push({ key: `leads.discovery.teamSizeLabels.${this.data.teamSize}` });
-    if (this.data.primaryPriority)
-      keys.push({ key: this.data.primaryPriority, raw: true }); // raw string
+    if (this.data.primaryPriority) keys.push({ key: this.data.primaryPriority, raw: true }); // raw string
     return keys;
   }
 
@@ -112,30 +148,74 @@ export interface PlatformLeadData {
 export class PlatformLead {
   constructor(public readonly data: PlatformLeadData) {}
 
-  get id(): string { return this.data.id; }
-  get companyName(): string { return this.data.companyName; }
-  get contactName(): string { return this.data.contactName; }
-  get email(): string { return this.data.email; }
-  get phone(): string | undefined { return this.data.phone; }
-  get editionKey(): string | undefined { return this.data.editionKey; }
-  get message(): string | undefined { return this.data.message; }
-  get status(): LeadStatus { return this.data.status; }
-  get source(): LeadSource { return this.data.source; }
-  get requestedAt(): string { return this.data.requestedAt; }
-  get updatedAt(): string { return this.data.updatedAt; }
-  get convertedAt(): string | undefined { return this.data.convertedAt; }
-  get convertedToTenantId(): string | undefined { return this.data.convertedToTenantId; }
-  get assignedToAdminId(): string | undefined { return this.data.assignedToAdminId; }
-  get notes(): string | undefined { return this.data.notes; }
-  get businessType(): string | undefined { return this.data.businessType; }
-  get teamSize(): string | undefined { return this.data.teamSize; }
-  get primaryPriority(): string | undefined { return this.data.primaryPriority; }
+  get id(): string {
+    return this.data.id;
+  }
+  get companyName(): string {
+    return this.data.companyName;
+  }
+  get contactName(): string {
+    return this.data.contactName;
+  }
+  get email(): string {
+    return this.data.email;
+  }
+  get phone(): string | undefined {
+    return this.data.phone;
+  }
+  get editionKey(): string | undefined {
+    return this.data.editionKey;
+  }
+  get message(): string | undefined {
+    return this.data.message;
+  }
+  get status(): LeadStatus {
+    return this.data.status;
+  }
+  get source(): LeadSource {
+    return this.data.source;
+  }
+  get requestedAt(): string {
+    return this.data.requestedAt;
+  }
+  get updatedAt(): string {
+    return this.data.updatedAt;
+  }
+  get convertedAt(): string | undefined {
+    return this.data.convertedAt;
+  }
+  get convertedToTenantId(): string | undefined {
+    return this.data.convertedToTenantId;
+  }
+  get assignedToAdminId(): string | undefined {
+    return this.data.assignedToAdminId;
+  }
+  get notes(): string | undefined {
+    return this.data.notes;
+  }
+  get businessType(): string | undefined {
+    return this.data.businessType;
+  }
+  get teamSize(): string | undefined {
+    return this.data.teamSize;
+  }
+  get primaryPriority(): string | undefined {
+    return this.data.primaryPriority;
+  }
 
   // Computed
-  get isNew(): boolean { return this.data.status === "New"; }
-  get isConverted(): boolean { return this.data.status === "Converted"; }
-  get isClosed(): boolean { return this.data.status === "Closed"; }
-  get relativeCreatedAt(): string { return relativeTime(this.data.requestedAt); }
+  get isNew(): boolean {
+    return this.data.status === "New";
+  }
+  get isConverted(): boolean {
+    return this.data.status === "Converted";
+  }
+  get isClosed(): boolean {
+    return this.data.status === "Closed";
+  }
+  get relativeCreatedAt(): string {
+    return relativeTime(this.data.requestedAt);
+  }
 
   /**
    * Returns raw locale key paths for each discovery field present.
@@ -144,7 +224,7 @@ export class PlatformLead {
   get discoveryTagKeys(): {
     businessTypeKey?: string;
     teamSizeKey?: string;
-    priority?: string;  // raw string — no locale key for dynamic priority values
+    priority?: string; // raw string — no locale key for dynamic priority values
   } {
     return {
       businessTypeKey: this.data.businessType
@@ -158,7 +238,9 @@ export class PlatformLead {
   }
 
   /** Raw i18n key for the source — view calls t(lead.sourceKey) */
-  get sourceKey(): string { return `leads.source.${this.data.source}`; }
+  get sourceKey(): string {
+    return `leads.source.${this.data.source}`;
+  }
 
   copyWith(updates: Partial<PlatformLeadData>): PlatformLead {
     return new PlatformLead({ ...this.data, ...updates });

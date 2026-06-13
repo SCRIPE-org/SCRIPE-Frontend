@@ -6,9 +6,8 @@
 // Owns: step, wizardData, error, isLoading, selectedPlan,
 //       checkoutCanceled, provisioningStep.
 //
-// Handles: field updates, plan selection, discovery answers, category
-//          selection, navigation (goBack/editPlan), Stripe cancel-url
-//          restoration.
+// Handles: field updates, plan selection, discovery answers,
+//          navigation (goBack/editPlan), Stripe cancel-url restoration.
 //
 // Does NOT: make API calls (that is the responsibility of the other hooks).
 // ═══════════════════════════════════════════════════════════════════════════
@@ -88,15 +87,43 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
     [error]
   );
 
-const CURRENCY_TO_COUNTRY: Record<string, string> = {
-  USD: "US", EUR: "DE", GBP: "GB", SAR: "SA", AED: "AE",
-  EGP: "EG", KWD: "KW", QAR: "QA", BHD: "BH", OMR: "OM",
-  JOD: "JO", TRY: "TR", PKR: "PK", INR: "IN", CNY: "CN",
-  JPY: "JP", KRW: "KR", MYR: "MY", SGD: "SG", AUD: "AU",
-  CAD: "CA", CHF: "CH", SEK: "SE", NOK: "NO", DKK: "DK",
-  MAD: "MA", TND: "TN", DZD: "DZ", NGN: "NG", ZAR: "ZA",
-  BRL: "BR", MXN: "MX", ARS: "AR", CLP: "CL", COP: "CO",
-};
+  const CURRENCY_TO_COUNTRY: Record<string, string> = {
+    USD: "US",
+    EUR: "DE",
+    GBP: "GB",
+    SAR: "SA",
+    AED: "AE",
+    EGP: "EG",
+    KWD: "KW",
+    QAR: "QA",
+    BHD: "BH",
+    OMR: "OM",
+    JOD: "JO",
+    TRY: "TR",
+    PKR: "PK",
+    INR: "IN",
+    CNY: "CN",
+    JPY: "JP",
+    KRW: "KR",
+    MYR: "MY",
+    SGD: "SG",
+    AUD: "AU",
+    CAD: "CA",
+    CHF: "CH",
+    SEK: "SE",
+    NOK: "NO",
+    DKK: "DK",
+    MAD: "MA",
+    TND: "TN",
+    DZD: "DZ",
+    NGN: "NG",
+    ZAR: "ZA",
+    BRL: "BR",
+    MXN: "MX",
+    ARS: "AR",
+    CLP: "CL",
+    COP: "CO",
+  };
 
   // ── Currency (user-overridable; prevents geo-detection re-applying) ──────
   const setCurrency = useCallback((currency: string) => {
@@ -106,12 +133,16 @@ const CURRENCY_TO_COUNTRY: Record<string, string> = {
   }, []);
 
   // ── Apply geo-detected currency once (from pricingContext) ───────────────
-  const applyRecommendedCurrency = useCallback((recommendedCurrency: string, detectedCountry?: string | null) => {
-    if (hasAppliedPricingContext.current) return;
-    hasAppliedPricingContext.current = true;
-    const region = detectedCountry || CURRENCY_TO_COUNTRY[recommendedCurrency.toUpperCase()] || null;
-    setWizardData((prev) => ({ ...prev, currency: recommendedCurrency, region }));
-  }, []);
+  const applyRecommendedCurrency = useCallback(
+    (recommendedCurrency: string, detectedCountry?: string | null) => {
+      if (hasAppliedPricingContext.current) return;
+      hasAppliedPricingContext.current = true;
+      const region =
+        detectedCountry || CURRENCY_TO_COUNTRY[recommendedCurrency.toUpperCase()] || null;
+      setWizardData((prev) => ({ ...prev, currency: recommendedCurrency, region }));
+    },
+    []
+  );
 
   // ── Discovery (Q1/Q2/Q3) ────────────────────────────────────────────────
   const setDiscovery = useCallback(
@@ -131,71 +162,70 @@ const CURRENCY_TO_COUNTRY: Record<string, string> = {
         categoryKey: answers.businessType,
       }));
       setNavigationDirection(1);
-      // Go directly to plans if businessType is already selected (highly optimal UI/UX)
-      const nextStep = (answers.businessType || answers.categoryCount <= 1) ? "plan" : "category";
-      setStep(nextStep);
+      // Go directly to plans step after discovery (highly optimal UI/UX)
+      setStep("plan");
     },
     []
   );
-
-  // ── Category selection ───────────────────────────────────────────────────
-  const selectCategory = useCallback((categoryKey: string | null) => {
-    setWizardData((prev) => ({ ...prev, categoryKey }));
-    setNavigationDirection(1);
-    setStep("plan");
-  }, []);
-
-  const skipCategoryStep = useCallback(() => {
-    setNavigationDirection(1);
-    setStep((current) => (current === "category" ? "plan" : current));
-  }, []);
 
   // ── Plan selection ───────────────────────────────────────────────────────
-  const selectPlan = useCallback(
-    (edition: PublicEdition, billingCycle: "monthly" | "annual") => {
-      const plan: SelectedPlan = {
-        id: edition.id,
-        name: edition.name,
-        trialDays: edition.trialDays > 0 ? edition.trialDays : null,
-        checkoutMode: edition.checkoutMode,
-        monthlyPrice: edition.monthlyPrice,
-        annualPrice: edition.annualPrice,
-        currency: edition.currency,
-        priceDisplay: edition.priceDisplay,
-      };
-      setSelectedPlan(plan);
-      setWizardData((prev) => ({
-        ...prev,
-        editionId: edition.id || null,
-        billingCycle: edition.checkoutMode !== "contact-sales"
-          ? (billingCycle === "monthly" ? "Monthly" : "Annual")
+  const selectPlan = useCallback((edition: PublicEdition, billingCycle: "monthly" | "annual") => {
+    const plan: SelectedPlan = {
+      id: edition.id,
+      name: edition.name,
+      trialDays: edition.trialDays > 0 ? edition.trialDays : null,
+      checkoutMode: edition.checkoutMode,
+      monthlyPrice: edition.monthlyPrice,
+      annualPrice: edition.annualPrice,
+      currency: edition.currency,
+      priceDisplay: edition.priceDisplay,
+    };
+    setSelectedPlan(plan);
+    setWizardData((prev) => ({
+      ...prev,
+      editionId: edition.id || null,
+      billingCycle:
+        edition.checkoutMode !== "contact-sales"
+          ? billingCycle === "monthly"
+            ? "Monthly"
+            : "Annual"
           : prev.billingCycle,
-      }));
-      setNavigationDirection(1);
-      setStep(edition.checkoutMode === "contact-sales" ? "contact-sales" : "account");
-    },
-    []
-  );
+    }));
+    setNavigationDirection(1);
+    setStep(edition.checkoutMode === "contact-sales" ? "contact-sales" : "account");
+  }, []);
 
   // ── Navigation ───────────────────────────────────────────────────────────
   const goBack = useCallback(() => {
     setError("");
-    setNavigationDirection(-1);  // ← batched with setStep in React 18 → single render
+    setNavigationDirection(-1); // ← batched with setStep in React 18 → single render
     switch (step) {
-      case "category":    setStep("discovery"); break;
-      case "plan":        setStep("category"); break;
+      // "plan" is the first interactive step after Discovery — back returns to Discovery.
+      // (The standalone "category" step was retired; the vertical is asked once in Q1.)
+      case "plan":
+        setStep("discovery");
+        break;
       case "account":
-      case "contact-sales": setStep("plan"); break;
-      case "verification": setStep("account"); break;
-      case "workspace":   setStep("verification"); break;
-      case "review":      setStep("workspace"); break;
-      default: break;
+      case "contact-sales":
+        setStep("plan");
+        break;
+      case "verification":
+        setStep("account");
+        break;
+      case "workspace":
+        setStep("verification");
+        break;
+      case "review":
+        setStep("workspace");
+        break;
+      default:
+        break;
     }
   }, [step]);
 
   const editPlan = useCallback(() => {
     setError("");
-    setNavigationDirection(-1);  // editing plan = going backward
+    setNavigationDirection(-1); // editing plan = going backward
     setStep("plan");
   }, []);
 
@@ -229,8 +259,6 @@ const CURRENCY_TO_COUNTRY: Record<string, string> = {
     setCurrency,
     applyRecommendedCurrency,
     setDiscovery,
-    selectCategory,
-    skipCategoryStep,
     selectPlan,
     goBack,
     editPlan,

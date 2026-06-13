@@ -111,13 +111,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             </ServiceProvider>
           </TooltipProvider>
         </ThemeProvider>
-      {/* React Query DevTools — only rendered in development */}
-      {process.env.NODE_ENV === "development" && ReactQueryDevtools && (
-         
-        <ReactQueryDevtools
-          {...({ initialIsOpen: false, buttonPosition: "bottom-right" } as any)}
-        />
-      )}
+        {/* React Query DevTools — only rendered in development */}
+        {process.env.NODE_ENV === "development" && ReactQueryDevtools && (
+          <ReactQueryDevtools
+            {...({ initialIsOpen: false, buttonPosition: "bottom-right" } as any)}
+          />
+        )}
       </QueryClientProvider>
     </>
   );

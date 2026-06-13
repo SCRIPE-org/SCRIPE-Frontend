@@ -10,7 +10,6 @@ import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 import { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 import { DiscoveryStep } from "../components/DiscoveryStep";
 import { PlanPickerStep } from "../components/PlanPickerStep";
-import { CategoryStep } from "../components/CategoryStep";
 import { AccountStep } from "../components/AccountStep";
 import { VerificationStep } from "../components/VerificationStep";
 import { WorkspaceStep } from "../components/WorkspaceStep";
@@ -25,8 +24,10 @@ import { ResumeSignupModal } from "../components/ResumeSignupModal";
  * SignupView — Self-Service Tenant Signup Wizard (v3).
  *
  * Step flow (server-driven):
- *   Discovery (Q1/Q2/Q3) → [Category if 2+ cats] → Plan → Account
+ *   Discovery (Q1/Q2/Q3) → Plan → Account
  *   → Verify → Workspace → Review
+ *   (The vertical is asked ONCE in Discovery Q1 and pre-filters the plan picker —
+ *    there is no separate Category step.)
  *   contact-sales editions divert to ContactSalesStep and end there;
  *   free editions finish in-page (Provisioning → Complete);
  *   trial/paid editions redirect to Stripe and come back via /signup/finalize.
@@ -85,8 +86,7 @@ export function SignupView() {
     [t]
   );
 
-  const isFullPage =
-    vm.step === "discovery" || vm.step === "plan" || vm.step === "category";
+  const isFullPage = vm.step === "discovery" || vm.step === "plan";
 
   const showStepper =
     vm.step !== "discovery" &&
@@ -167,7 +167,10 @@ export function SignupView() {
         </Link>
 
         {/* ── "Already have an account? Sign in →" ── */}
-        <div className="flex items-center gap-1.5 text-[13px]" style={{ color: BRAND_TOKENS.text.tertiary }}>
+        <div
+          className="flex items-center gap-1.5 text-[13px]"
+          style={{ color: BRAND_TOKENS.text.tertiary }}
+        >
           <span className="hidden sm:inline">
             {t("signup.header.haveAccount") || "Already have an account?"}
           </span>
@@ -236,24 +239,6 @@ export function SignupView() {
                   isCategoriesLoading={vm.isCategoriesLoading}
                   onComplete={vm.setDiscovery}
                   initialAnswers={vm.discoveryAnswers}
-                />
-              </motion.div>
-            )}
-            {vm.step === "category" && (
-              <motion.div
-                key="category"
-                custom={slideDirection}
-                variants={STEP_VARIANTS}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-              >
-                <CategoryStep
-                  categories={vm.categories}
-                  isLoading={vm.isCategoriesLoading}
-                  currency={vm.currency}
-                  onSelectCategory={vm.selectCategory}
-                  selectedCategory={vm.selectedCategory}
                 />
               </motion.div>
             )}
@@ -336,12 +321,8 @@ export function SignupView() {
       )}
 
       {/* ═══ Footer ═══ */}
-      <footer
-        className="py-6 text-center text-[11px]"
-        style={{ color: BRAND_TOKENS.text.ghost }}
-      >
-        © {new Date().getFullYear()} {BRAND.name} —{" "}
-        {t("signup.copyright") || "All rights reserved"}
+      <footer className="py-6 text-center text-[11px]" style={{ color: BRAND_TOKENS.text.ghost }}>
+        © {new Date().getFullYear()} {BRAND.name} — {t("signup.copyright") || "All rights reserved"}
       </footer>
 
       {/* ═══ Resume modal ═══ */}

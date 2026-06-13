@@ -29,9 +29,7 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
           }}
           className="flex h-5 w-5 shrink-0 items-center justify-center rounded transition-all"
           style={{
-            background: staySignedIn
-              ? "linear-gradient(135deg, #A855F7, #3B82F6)"
-              : "transparent",
+            background: staySignedIn ? "linear-gradient(135deg, #A855F7, #3B82F6)" : "transparent",
             border: staySignedIn
               ? "1px solid transparent"
               : "1px solid var(--sx-field-border, hsl(var(--border)))",

@@ -151,9 +151,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       // and must NOT be preempted by the route guard — that would cut the success
       // animation short and could race with the in-flight token exchange.
       const isStandardAuthPage =
-        pathname === "/login" ||
-        pathname === "/forgot-password" ||
-        pathname === "/reset-password";
+        pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password";
 
       if (isStandardAuthPage && hasToken && isAuthenticated) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");

@@ -890,18 +890,21 @@ export function GenericForm({
                     dir={direction}
                   />
                 )}
-                {(errors[field.name] || (field.maxLength && (!field.type || field.type === "text" || field.type === "textarea"))) && (
-                  <div className="flex items-center justify-between mt-1 min-h-[20px]">
+                {(errors[field.name] ||
+                  (field.maxLength &&
+                    (!field.type || field.type === "text" || field.type === "textarea"))) && (
+                  <div className="mt-1 flex min-h-[20px] items-center justify-between">
                     {errors[field.name] ? (
                       <p className="text-xs text-destructive">{errors[field.name]}</p>
                     ) : (
                       <div />
                     )}
-                    {field.maxLength && (!field.type || field.type === "text" || field.type === "textarea") && (
-                      <span className="text-xs text-muted-foreground">
-                        {(formData[field.name] || "").length}/{field.maxLength}
-                      </span>
-                    )}
+                    {field.maxLength &&
+                      (!field.type || field.type === "text" || field.type === "textarea") && (
+                        <span className="text-xs text-muted-foreground">
+                          {(formData[field.name] || "").length}/{field.maxLength}
+                        </span>
+                      )}
                   </div>
                 )}
               </div>

@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
-import type {
-  DocCategory,
-  DocNavItem,
-} from "../../../domain/entities/DocCategory";
+import type { DocCategory, DocNavItem } from "../../../domain/entities/DocCategory";
 import { useState, useCallback, useMemo } from "react";
 import { docsIcons } from "./DocsIcons";
 
@@ -28,10 +25,7 @@ interface CommercialSidebarProps {
   activeSlug: string;
 }
 
-export function CommercialSidebar({
-  categories,
-  activeSlug,
-}: CommercialSidebarProps) {
+export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarProps) {
   const { t } = useDocsI18n();
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
@@ -49,9 +43,7 @@ export function CommercialSidebar({
     for (const cat of categories) {
       for (const item of cat.items) {
         if (item.children) {
-          const childSlugs = item.children
-            .map((c) => c.slug)
-            .filter(Boolean);
+          const childSlugs = item.children.map((c) => c.slug).filter(Boolean);
           const hasActive = childSlugs.includes(activeSlug);
           initial[item.id] = hasActive;
         }
@@ -78,9 +70,7 @@ export function CommercialSidebar({
       for (const cat of categories) {
         for (const item of cat.items) {
           if (item.children) {
-            const childSlugs = item.children
-              .map((c) => c.slug)
-              .filter(Boolean);
+            const childSlugs = item.children.map((c) => c.slug).filter(Boolean);
             if (childSlugs.includes(activeSlug)) {
               next[item.id] = true;
             }
@@ -118,13 +108,9 @@ export function CommercialSidebar({
             style={{ "--cat-accent": color } as React.CSSProperties}
           >
             <span className="commercial-sidebar-subgroup-icon">
-              {item.icon
-                ? docsIcons[item.icon]?.({ size: 18 }) || null
-                : null}
+              {item.icon ? docsIcons[item.icon]?.({ size: 18 }) || null : null}
             </span>
-            <span className="commercial-sidebar-subgroup-title">
-              {t(item.titleKey)}
-            </span>
+            <span className="commercial-sidebar-subgroup-title">{t(item.titleKey)}</span>
             <svg
               className="commercial-sidebar-chevron"
               width="12"
@@ -149,10 +135,7 @@ export function CommercialSidebar({
                   <Link
                     key={child.id}
                     href={`/commercial/${cleanSlug}`}
-                    className={
-                      "commercial-sidebar-item " +
-                      "commercial-sidebar-item--nested"
-                    }
+                    className={"commercial-sidebar-item " + "commercial-sidebar-item--nested"}
                     data-active={isActive}
                     style={
                       isActive
@@ -163,9 +146,7 @@ export function CommercialSidebar({
                     }
                   >
                     <span className="commercial-sidebar-item-dot" />
-                    <span className="commercial-sidebar-item-text">
-                      {t(child.titleKey)}
-                    </span>
+                    <span className="commercial-sidebar-item-text">{t(child.titleKey)}</span>
                   </Link>
                 );
               })}
@@ -187,16 +168,10 @@ export function CommercialSidebar({
         href={`/commercial/${cleanSlug}`}
         className="commercial-sidebar-item"
         data-active={isActive}
-        style={
-          isActive
-            ? ({ "--item-accent": color } as React.CSSProperties)
-            : undefined
-        }
+        style={isActive ? ({ "--item-accent": color } as React.CSSProperties) : undefined}
       >
         <span className="commercial-sidebar-item-dot" />
-        <span className="commercial-sidebar-item-text">
-          {t(item.titleKey)}
-        </span>
+        <span className="commercial-sidebar-item-text">{t(item.titleKey)}</span>
       </Link>
     );
   };
@@ -205,9 +180,7 @@ export function CommercialSidebar({
     <aside className="commercial-sidebar">
       {/* Sidebar header */}
       <div className="commercial-sidebar-header">
-        <span className="commercial-sidebar-header-label">
-          {t("common.documentation")}
-        </span>
+        <span className="commercial-sidebar-header-label">{t("common.documentation")}</span>
         <span className="commercial-sidebar-header-count">
           {t("common.pagesCount", { count: totalPages })}
         </span>
@@ -216,8 +189,7 @@ export function CommercialSidebar({
       {/* Categories */}
       <nav className="commercial-sidebar-nav">
         {categories.map((cat) => {
-          const color =
-            categoryColors[cat.id] || "var(--commercial-accent-blue)";
+          const color = categoryColors[cat.id] || "var(--commercial-accent-blue)";
           const isExpanded = expanded[cat.id] ?? false;
           const hasActiveItem = cat.getAllSlugs().includes(activeSlug);
 
@@ -238,13 +210,10 @@ export function CommercialSidebar({
                     ? docsIcons[cat.icon]?.({ size: 18 }) || null
                     : docsIcons.book({ size: 18 })}
                 </span>
-                <span className="commercial-sidebar-category-title">
-                  {t(cat.titleKey)}
-                </span>
+                <span className="commercial-sidebar-category-title">{t(cat.titleKey)}</span>
                 <span className="commercial-sidebar-category-count">
                   {cat.items.reduce(
-                    (sum, item) =>
-                      sum + (item.children ? item.children.length : 1),
+                    (sum, item) => sum + (item.children ? item.children.length : 1),
                     0
                   )}
                 </span>
@@ -275,10 +244,7 @@ export function CommercialSidebar({
 
       {/* CTA */}
       <div className="commercial-sidebar-cta">
-        <a
-          href="mailto:sales@scripe.org"
-          className="commercial-sidebar-cta-btn"
-        >
+        <a href="mailto:sales@scripe.org" className="commercial-sidebar-cta-btn">
           <svg
             width="16"
             height="16"
@@ -289,12 +255,7 @@ export function CommercialSidebar({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path
-              d={
-                "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 " +
-                "1 2-2h14a2 2 0 0 1 2 2z"
-              }
-            />
+            <path d={"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 " + "1 2-2h14a2 2 0 0 1 2 2z"} />
           </svg>
           {t("common.bookDemo")}
         </a>

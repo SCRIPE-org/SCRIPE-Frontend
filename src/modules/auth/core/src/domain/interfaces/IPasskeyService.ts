@@ -1,4 +1,3 @@
-
 /**
  * IPasskeyService — HTTP service interface for passkey API calls.
  *

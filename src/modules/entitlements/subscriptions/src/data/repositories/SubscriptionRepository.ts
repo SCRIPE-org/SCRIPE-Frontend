@@ -122,7 +122,10 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     await this.service.revoke(id);
   }
 
-  async getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport> {
+  async getDowngradeImpact(
+    tenantId: string,
+    targetEditionId: string
+  ): Promise<DowngradeImpactReport> {
     return this.service.getDowngradeImpact(tenantId, targetEditionId);
   }
 

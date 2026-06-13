@@ -288,7 +288,8 @@ export const es = {
         "Ofertas promocionales â€” 'Habilitar el Chat Premium para este inquilino durante 30 dÃ­as'",
       useCase3:
         "Pruebas Beta â€” 'Habilitar el nuevo mÃ³dulo de FacturaciÃ³n para los primeros usuarios'",
-      useCase4: "Aumento temporal â€” 'Aumentar el lÃ­mite de carga de archivos durante su migraciÃ³n'",
+      useCase4:
+        "Aumento temporal â€” 'Aumentar el lÃ­mite de carga de archivos durante su migraciÃ³n'",
       overuseWarning:
         "Las sobreescrituras deben usarse con moderaciÃ³n. Si muchos inquilinos necesitan la misma sobreescritura, considere crear una nueva ediciÃ³n. El exceso de sobreescrituras hace que el sistema sea mÃ¡s difÃ­cil de gestionar y auditar.",
       resolvedTitle: "Endpoint de Funciones Resueltas",
@@ -395,7 +396,8 @@ export const es = {
           "ExportaciÃ³n â€” Solicitud de portabilidad de datos. El sujeto desea una copia de sus datos personales.",
         type2:
           "Borrado â€” Derecho al olvido. Todos los datos personales deben ser eliminados o anonimizados.",
-        type3: "Rectification â€” Solicitud de correcciÃ³n. Los datos inexactos deben actualizarse.",
+        type3:
+          "Rectification â€” Solicitud de correcciÃ³n. Los datos inexactos deben actualizarse.",
         type4:
           "RestricciÃ³n â€” RestricciÃ³n del procesamiento. Los datos pueden conservarse pero no procesarse activamente.",
         lifecycleTitle: "Ciclo de vida de la solicitud",
@@ -454,7 +456,8 @@ export const es = {
         intro:
           "La GestiÃ³n de Consentimiento registra cada vez que un usuario otorga o revoca su consentimiento. SCRIPE almacena toda la pista de auditorÃ­a.",
         purposesTitle: "PropÃ³sitos del Consentimiento",
-        purposesIntro: "Cada registro de consentimiento estÃ¡ vinculado a un propÃ³sito especÃ­fico:",
+        purposesIntro:
+          "Cada registro de consentimiento estÃ¡ vinculado a un propÃ³sito especÃ­fico:",
         purpose1: "Marketing â€” Emails de marketing y comunicaciones promocionales.",
         purpose2: "AnalÃ­tica â€” AnÃ¡lisis de uso y mejora del producto.",
         purpose3: "Terceros â€” ComparticiÃ³n de datos con servicios de terceros.",
@@ -589,4 +592,3 @@ export const es = {
     },
   },
 };
-

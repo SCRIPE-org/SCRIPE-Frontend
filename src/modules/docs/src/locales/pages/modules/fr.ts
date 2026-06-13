@@ -416,13 +416,15 @@ export const fr = {
           "Effacement â€” Droit Ã  l'oubli. Toutes les donnÃ©es doivent Ãªtre supprimÃ©es ou anonymisÃ©es.",
         type3:
           "Rectification â€” Demande de correction. Les donnÃ©es inexactes doivent Ãªtre mises Ã  jour.",
-        type4: "Restriction â€” Les donnÃ©es peuvent Ãªtre conservÃ©es mais non traitÃ©es activement.",
+        type4:
+          "Restriction â€” Les donnÃ©es peuvent Ãªtre conservÃ©es mais non traitÃ©es activement.",
         lifecycleTitle: "Cycle de vie de la demande",
         lifecycleIntro: "Les DSR passent par un ensemble dÃ©fini de statuts :",
         status1: "En attente (Pending) â€” Ã‰tat initial lors de la rÃ©ception.",
         status2: "En cours (InProgress) â€” Un responsable de conformitÃ© est assignÃ©.",
         status3: "TerminÃ© (Completed) â€” La demande a Ã©tÃ© satisfaite.",
-        status4: "RejetÃ© (Rejected) â€” La demande a Ã©tÃ© rejetÃ©e (ex: vÃ©rification insuffisante).",
+        status4:
+          "RejetÃ© (Rejected) â€” La demande a Ã©tÃ© rejetÃ©e (ex: vÃ©rification insuffisante).",
         slasTitle: "Exigences SLA du RGPD",
         slasIntro:
           "Selon l'Article 12 du RGPD, les responsables doivent rÃ©pondre aux DSR dans les 30 jours (extensible Ã  3 mois).",
@@ -602,4 +604,3 @@ export const fr = {
     },
   },
 };
-

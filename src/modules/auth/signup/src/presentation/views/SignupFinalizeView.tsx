@@ -83,7 +83,8 @@ export function SignupFinalizeView() {
                 className="h-14 w-14 animate-spin rounded-full"
                 style={{
                   background: `conic-gradient(from 0deg, transparent, ${BRAND_TOKENS.palette.violet})`,
-                  WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 0)",
+                  WebkitMask:
+                    "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 0)",
                   mask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 0)",
                 }}
                 role="status"
@@ -146,7 +147,10 @@ export function SignupFinalizeView() {
                   type="button"
                   onClick={vm.changePlan}
                   className="h-11 w-full rounded-xl text-sm font-semibold text-white"
-                  style={{ background: BRAND_TOKENS.gradient.cta, boxShadow: BRAND_TOKENS.shadow.cta }}
+                  style={{
+                    background: BRAND_TOKENS.gradient.cta,
+                    boxShadow: BRAND_TOKENS.shadow.cta,
+                  }}
                 >
                   <RefreshCw className="me-2 h-4 w-4" />
                   {t("signup.finalize.changePlan") || "Change plan"}
@@ -215,7 +219,10 @@ export function SignupFinalizeView() {
                 type="button"
                 onClick={vm.startNewSignup}
                 className="h-11 w-full rounded-xl text-sm font-semibold text-white"
-                style={{ background: BRAND_TOKENS.gradient.cta, boxShadow: BRAND_TOKENS.shadow.cta }}
+                style={{
+                  background: BRAND_TOKENS.gradient.cta,
+                  boxShadow: BRAND_TOKENS.shadow.cta,
+                }}
               >
                 <RotateCcw className="me-2 h-4 w-4" />
                 {t("signup.finalize.startAgain") || "Start a new signup — you were not charged"}
@@ -248,7 +255,10 @@ export function SignupFinalizeView() {
                 type="button"
                 onClick={vm.goToLogin}
                 className="h-11 w-full rounded-xl text-sm font-semibold text-white"
-                style={{ background: BRAND_TOKENS.gradient.cta, boxShadow: BRAND_TOKENS.shadow.cta }}
+                style={{
+                  background: BRAND_TOKENS.gradient.cta,
+                  boxShadow: BRAND_TOKENS.shadow.cta,
+                }}
               >
                 {t("auth.backToLogin") || "Log in"}
               </Button>
@@ -277,7 +287,10 @@ export function SignupFinalizeView() {
                   type="button"
                   onClick={vm.goToLogin}
                   className="h-11 w-full rounded-xl text-sm font-semibold text-white"
-                  style={{ background: BRAND_TOKENS.gradient.cta, boxShadow: BRAND_TOKENS.shadow.cta }}
+                  style={{
+                    background: BRAND_TOKENS.gradient.cta,
+                    boxShadow: BRAND_TOKENS.shadow.cta,
+                  }}
                 >
                   {t("auth.backToLogin") || "Log in"}
                 </Button>

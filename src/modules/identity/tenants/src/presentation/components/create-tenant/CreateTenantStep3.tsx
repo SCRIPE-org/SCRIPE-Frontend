@@ -398,9 +398,7 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
         value={vm.selectedEdition?.name || "-"}
       />
       <SummaryRow label={t("tenant.subscriptionType") || "Billing"} value={subscriptionLabel} />
-      {!isFree && (
-        <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />
-      )}
+      {!isFree && <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />}
       {vm.form.promotionId && (
         <SummaryRow
           label={t("tenant.promotion") || "Promotion"}

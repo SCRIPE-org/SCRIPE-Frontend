@@ -40,10 +40,7 @@ export function RequestStep({ vm, totalSteps }: RequestStepProps) {
         >
           {t("auth.forgotPasswordTitle")}
         </h1>
-        <p
-          className="mt-1.5 text-[13px] leading-relaxed"
-          style={{ color: "var(--sx-text-mute)" }}
-        >
+        <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.forgotPasswordSubtitle")}
         </p>
       </div>

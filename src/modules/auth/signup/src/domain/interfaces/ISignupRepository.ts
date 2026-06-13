@@ -57,11 +57,7 @@ export interface ISignupRepository {
   /** Detect visitor country and return recommended currency + all FX rates. */
   getPricingContext(): Promise<PricingContext>;
   getCategories(currency: string, lang: string): Promise<PublicCategory[]>;
-  getEditions(
-    categoryKey: string | null,
-    currency: string,
-    lang: string
-  ): Promise<PublicEdition[]>;
+  getEditions(categoryKey: string | null, currency: string, lang: string): Promise<PublicEdition[]>;
   sendOtp(email: string): Promise<SignupOtpResult>;
   verifyOtp(email: string, code: string): Promise<SignupVerificationResult>;
   checkSubdomain(subdomain: string): Promise<SubdomainCheckResult>;
@@ -93,4 +89,3 @@ export interface ISignupRepository {
     lang?: string;
   }): Promise<SignupRecommendationResult>;
 }
-

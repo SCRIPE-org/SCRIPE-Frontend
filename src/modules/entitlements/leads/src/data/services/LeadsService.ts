@@ -32,9 +32,7 @@ export class LeadsService implements ILeadsService {
   }
 
   async getById(id: string): Promise<PlatformLeadResponseModel> {
-    return this.api.get<PlatformLeadResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.LEADS.BY_ID(id)
-    );
+    return this.api.get<PlatformLeadResponseModel>(API_ENDPOINTS.ENTITLEMENTS.LEADS.BY_ID(id));
   }
 
   async updateStatus(id: string, status: LeadStatus, notes?: string): Promise<void> {
@@ -45,7 +43,10 @@ export class LeadsService implements ILeadsService {
   }
 
   async createLead(params: CreateLeadParams): Promise<string> {
-    const result = await this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.LEADS.CREATE, params);
+    const result = await this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.LEADS.CREATE,
+      params
+    );
     return result.id;
   }
 
@@ -53,23 +54,22 @@ export class LeadsService implements ILeadsService {
     return this.api.post<ConvertLeadResult>(
       API_ENDPOINTS.ENTITLEMENTS.LEADS.CONVERT_TO_TENANT(id),
       {
-        editionId:          params.editionId,
-        tenantCode:         params.tenantCode,
-        adminEmail:         params.adminEmail,
-        subscriptionType:   params.subscriptionType,
-        currency:           params.currency,
-        conversionNote:     params.conversionNote,
-        negotiatedAmount:   params.negotiatedAmount,
+        editionId: params.editionId,
+        tenantCode: params.tenantCode,
+        adminEmail: params.adminEmail,
+        subscriptionType: params.subscriptionType,
+        currency: params.currency,
+        conversionNote: params.conversionNote,
+        negotiatedAmount: params.negotiatedAmount,
         negotiatedCurrency: params.negotiatedCurrency,
       }
     );
   }
 
-
   async assignLead(id: string, params: AssignLeadParams): Promise<void> {
     await this.api.put(API_ENDPOINTS.ENTITLEMENTS.LEADS.ASSIGN(id), {
       adminId: params.adminId,
-      note:    params.note,
+      note: params.note,
     });
   }
 
@@ -78,9 +78,7 @@ export class LeadsService implements ILeadsService {
   }
 
   async getActivity(id: string): Promise<LeadActivityResponseModel[]> {
-    return this.api.get<LeadActivityResponseModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.LEADS.ACTIVITY(id)
-    );
+    return this.api.get<LeadActivityResponseModel[]>(API_ENDPOINTS.ENTITLEMENTS.LEADS.ACTIVITY(id));
   }
 
   async bulkUpdateStatus(
@@ -88,9 +86,10 @@ export class LeadsService implements ILeadsService {
     status: string,
     notes?: string
   ): Promise<BulkLeadStatusResult> {
-    return this.api.post<BulkLeadStatusResult>(
-      API_ENDPOINTS.ENTITLEMENTS.LEADS.BULK_STATUS,
-      { leadIds, status, notes }
-    );
+    return this.api.post<BulkLeadStatusResult>(API_ENDPOINTS.ENTITLEMENTS.LEADS.BULK_STATUS, {
+      leadIds,
+      status,
+      notes,
+    });
   }
 }

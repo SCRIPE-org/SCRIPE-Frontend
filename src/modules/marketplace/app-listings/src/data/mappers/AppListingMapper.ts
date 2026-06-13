@@ -1,11 +1,7 @@
 import { AppListing, type AppListingData } from "../../domain/entities/AppListing";
 import type { AppListingDto } from "../models/AppListingModel";
 import { z } from "zod";
-import {
-  safeParseApiResponse,
-  uuidField,
-  optionalString,
-} from "@core/common/zod-utils";
+import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 

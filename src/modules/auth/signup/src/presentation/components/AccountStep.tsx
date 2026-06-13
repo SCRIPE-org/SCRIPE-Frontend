@@ -117,7 +117,9 @@ export function AccountStep({ vm }: AccountStepProps) {
           <PasswordInput
             id="signup-password"
             // a11y: links the field to the strength indicator so screen readers read both
-            aria-describedby={vm.wizardData.password.length > 0 ? "signup-password-strength" : undefined}
+            aria-describedby={
+              vm.wizardData.password.length > 0 ? "signup-password-strength" : undefined
+            }
             placeholder={t("signup.account.passwordPlaceholder") || "Min. 12 characters"}
             value={vm.wizardData.password}
             onChange={(e) => vm.updatePassword(e.target.value)}

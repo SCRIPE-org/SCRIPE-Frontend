@@ -30,13 +30,8 @@ export function SuccessStep({ vm }: SuccessStepProps) {
         )}
       </div>
       <div className="space-y-1.5">
-        <h2
-          className="text-xl font-semibold tracking-tight"
-          style={{ color: "var(--sx-text)" }}
-        >
-          {vm.method === "magic-link"
-            ? t("auth.magicLinkSentTitle")
-            : t("auth.resetSuccessTitle")}
+        <h2 className="text-xl font-semibold tracking-tight" style={{ color: "var(--sx-text)" }}>
+          {vm.method === "magic-link" ? t("auth.magicLinkSentTitle") : t("auth.resetSuccessTitle")}
         </h2>
         <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {vm.method === "magic-link"

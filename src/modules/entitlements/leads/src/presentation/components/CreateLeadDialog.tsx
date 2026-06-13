@@ -1,24 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -55,11 +43,11 @@ export function CreateLeadDialog({
   const [form, setForm] = useState<CreateLeadFormData>({
     companyName: "",
     contactName: "",
-    email:       "",
-    phone:       "",
-    editionKey:  undefined,
-    message:     "",
-    notes:       "",
+    email: "",
+    phone: "",
+    editionKey: undefined,
+    message: "",
+    notes: "",
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof CreateLeadFormData, string>>>({});
@@ -84,32 +72,53 @@ export function CreateLeadDialog({
     await onSubmit({
       companyName: form.companyName.trim(),
       contactName: form.contactName.trim(),
-      email:       form.email.trim(),
-      phone:       form.phone?.trim() || undefined,
-      editionKey:  form.editionKey || undefined,
-      message:     form.message?.trim() || undefined,
-      notes:       form.notes?.trim() || undefined,
+      email: form.email.trim(),
+      phone: form.phone?.trim() || undefined,
+      editionKey: form.editionKey || undefined,
+      message: form.message?.trim() || undefined,
+      notes: form.notes?.trim() || undefined,
     });
     // Reset on success
-    setForm({ companyName: "", contactName: "", email: "", phone: "", editionKey: undefined, message: "", notes: "" });
+    setForm({
+      companyName: "",
+      contactName: "",
+      email: "",
+      phone: "",
+      editionKey: undefined,
+      message: "",
+      notes: "",
+    });
     setErrors({});
   };
 
   const handleClose = () => {
     if (isSubmitting) return;
-    setForm({ companyName: "", contactName: "", email: "", phone: "", editionKey: undefined, message: "", notes: "" });
+    setForm({
+      companyName: "",
+      contactName: "",
+      email: "",
+      phone: "",
+      editionKey: undefined,
+      message: "",
+      notes: "",
+    });
     setErrors({});
     onClose();
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-      <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-lg w-full max-h-[90vh] overflow-y-auto">
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) handleClose();
+      }}
+    >
+      <DialogContent className="max-h-[90vh] w-full max-w-lg overflow-y-auto border-zinc-800 bg-zinc-950 text-white">
         <DialogHeader>
-          <DialogTitle className="text-white text-lg font-semibold">
+          <DialogTitle className="text-lg font-semibold text-white">
             {t("leads.createDialog.title")}
           </DialogTitle>
-          <p className="text-sm text-zinc-400 mt-1">{t("leads.createDialog.subtitle")}</p>
+          <p className="mt-1 text-sm text-zinc-400">{t("leads.createDialog.subtitle")}</p>
         </DialogHeader>
 
         <div className="space-y-5 py-2">
@@ -124,13 +133,11 @@ export function CreateLeadDialog({
                 value={form.companyName}
                 onChange={(e) => set("companyName", e.target.value)}
                 placeholder={t("leads.createDialog.companyPlaceholder")}
-                className={`bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 ${
+                className={`border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600 ${
                   errors.companyName ? "border-red-500" : ""
                 }`}
               />
-              {errors.companyName && (
-                <p className="text-xs text-red-400">{errors.companyName}</p>
-              )}
+              {errors.companyName && <p className="text-xs text-red-400">{errors.companyName}</p>}
             </div>
 
             <div className="space-y-1.5">
@@ -142,13 +149,11 @@ export function CreateLeadDialog({
                 value={form.contactName}
                 onChange={(e) => set("contactName", e.target.value)}
                 placeholder={t("leads.createDialog.contactPlaceholder")}
-                className={`bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 ${
+                className={`border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600 ${
                   errors.contactName ? "border-red-500" : ""
                 }`}
               />
-              {errors.contactName && (
-                <p className="text-xs text-red-400">{errors.contactName}</p>
-              )}
+              {errors.contactName && <p className="text-xs text-red-400">{errors.contactName}</p>}
             </div>
           </div>
 
@@ -164,13 +169,11 @@ export function CreateLeadDialog({
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
                 placeholder="name@company.com"
-                className={`bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 ${
+                className={`border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600 ${
                   errors.email ? "border-red-500" : ""
                 }`}
               />
-              {errors.email && (
-                <p className="text-xs text-red-400">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
             </div>
 
             <div className="space-y-1.5">
@@ -183,7 +186,7 @@ export function CreateLeadDialog({
                 value={form.phone}
                 onChange={(e) => set("phone", e.target.value)}
                 placeholder="+1 555 000 0000"
-                className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600"
+                className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
               />
             </div>
           </div>
@@ -198,10 +201,10 @@ export function CreateLeadDialog({
                 value={form.editionKey ?? "none"}
                 onValueChange={(v) => set("editionKey", v === "none" ? "" : v)}
               >
-                <SelectTrigger id="cl-edition" className="bg-zinc-900 border-zinc-700 text-white">
+                <SelectTrigger id="cl-edition" className="border-zinc-700 bg-zinc-900 text-white">
                   <SelectValue placeholder={t("leads.createDialog.editionPlaceholder")} />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-900 border-zinc-700">
+                <SelectContent className="border-zinc-700 bg-zinc-900">
                   <SelectItem value="none">
                     <span className="text-zinc-500">{t("leads.createDialog.editionNone")}</span>
                   </SelectItem>
@@ -226,7 +229,7 @@ export function CreateLeadDialog({
               onChange={(e) => set("message", e.target.value)}
               placeholder={t("leads.createDialog.messagePlaceholder")}
               rows={3}
-              className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 resize-none"
+              className="resize-none border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
             />
           </div>
 
@@ -241,7 +244,7 @@ export function CreateLeadDialog({
               onChange={(e) => set("notes", e.target.value)}
               placeholder={t("leads.createDialog.notesPlaceholder")}
               rows={2}
-              className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 resize-none"
+              className="resize-none border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
             />
           </div>
         </div>
@@ -260,11 +263,9 @@ export function CreateLeadDialog({
             id="cl-submit"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40"
+            className="bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40"
           >
-            {isSubmitting
-              ? t("leads.createDialog.creating")
-              : t("leads.createDialog.create")}
+            {isSubmitting ? t("leads.createDialog.creating") : t("leads.createDialog.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

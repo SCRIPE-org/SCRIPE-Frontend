@@ -252,9 +252,8 @@ export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
           email: email.trim(),
           otp,
           newPassword,
-          tenantIds: selectedWorkspaces.length > 0
-            ? selectedWorkspaces.map((w) => w.tenantId)
-            : undefined,
+          tenantIds:
+            selectedWorkspaces.length > 0 ? selectedWorkspaces.map((w) => w.tenantId) : undefined,
         });
         setStep("success");
       } catch (err) {

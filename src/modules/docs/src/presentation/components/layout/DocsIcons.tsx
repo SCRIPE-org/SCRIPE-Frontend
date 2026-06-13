@@ -572,10 +572,7 @@ export const ChevronRightIcon = ({ size = 14, ...props }: IconProps) => (
   </svg>
 );
 
-export const docsIcons: Record<
-  string,
-  (props: IconProps) => React.ReactNode
-> = {
+export const docsIcons: Record<string, (props: IconProps) => React.ReactNode> = {
   rocket: (props) => <RocketIcon {...props} />,
   "book-open": (props) => <BookOpenIcon {...props} />,
   layout: (props) => <LayoutIcon {...props} />,

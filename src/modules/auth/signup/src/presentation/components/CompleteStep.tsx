@@ -124,8 +124,7 @@ export function CompleteStep({ vm }: CompleteStepProps) {
         <p className="mt-3 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
           {t("signup.complete.workspaceReady", {
             name: vm.wizardData.workspaceName || "your workspace",
-          }) ||
-            `Your workspace is ready. Redirecting you to your dashboard…`}
+          }) || `Your workspace is ready. Redirecting you to your dashboard…`}
         </p>
       </motion.div>
 

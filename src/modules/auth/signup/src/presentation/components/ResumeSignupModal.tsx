@@ -74,7 +74,8 @@ export function ResumeSignupModal({
           {t("signup.resume.title") || "Welcome back!"}
         </h2>
         <p className="mt-2 text-center text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
-          {t("signup.resume.subtitle") || "You have a signup in progress. What would you like to do?"}
+          {t("signup.resume.subtitle") ||
+            "You have a signup in progress. What would you like to do?"}
         </p>
 
         {/* Plan snapshot (if available) */}
@@ -89,7 +90,10 @@ export function ResumeSignupModal({
             <p className="text-xs" style={{ color: BRAND_TOKENS.text.secondary }}>
               {t("signup.resume.pendingPlan") || "Pending plan"}
             </p>
-            <p className="mt-0.5 text-sm font-semibold" style={{ color: BRAND_TOKENS.text.primary }}>
+            <p
+              className="mt-0.5 text-sm font-semibold"
+              style={{ color: BRAND_TOKENS.text.primary }}
+            >
               {[planLabel, info.currency].filter(Boolean).join(" · ")}
             </p>
           </div>

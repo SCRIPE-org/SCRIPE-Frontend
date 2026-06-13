@@ -168,19 +168,20 @@ export const en = {
       errorTitle: "Conversion Failed",
       warning: {
         title: "Edition Warning",
-        message: "Edition assignment had an issue: {error}. Tenant was created but may need manual plan setup.",
+        message:
+          "Edition assignment had an issue: {error}. Tenant was created but may need manual plan setup.",
       },
       negotiatedPrice: {
         toggle: "Custom Deal Price",
         toggleHint: "Override the standard edition price for this enterprise deal.",
         amount: "Agreed Amount",
         currency: "Deal Currency",
-        warning: "This overrides standard catalog pricing. The subscription will be marked as a custom negotiated deal.",
+        warning:
+          "This overrides standard catalog pricing. The subscription will be marked as a custom negotiated deal.",
         amountRequired: "Please enter the agreed deal amount.",
         amountInvalid: "Amount must be a positive number.",
       },
     },
-
 
     assignDialog: {
       title: "Assign Lead",
@@ -235,12 +236,14 @@ export const en = {
 
       // Confirmation dialog — Close
       confirmCloseTitle: "Close {count} leads?",
-      confirmCloseDesc: "These leads will be marked as Closed. Converted leads will be skipped automatically.",
+      confirmCloseDesc:
+        "These leads will be marked as Closed. Converted leads will be skipped automatically.",
       confirmClose: "Close leads",
 
       // Confirmation dialog — Delete
       confirmDeleteTitle: "Delete {count} leads?",
-      confirmDeleteDesc: "This will permanently soft-delete the selected leads. This action cannot be undone.",
+      confirmDeleteDesc:
+        "This will permanently soft-delete the selected leads. This action cannot be undone.",
       confirmDelete: "Delete leads",
 
       cancel: "Cancel",
@@ -260,4 +263,3 @@ export const en = {
     },
   },
 };
-

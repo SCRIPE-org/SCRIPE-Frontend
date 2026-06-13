@@ -222,9 +222,7 @@ export class SignupMapper {
     return {
       detectedCountry: dto.detectedCountry ?? null,
       recommendedCurrency: dto.recommendedCurrency ?? "USD",
-      supportedCurrencies: (dto.supportedCurrencies ?? []).map(
-        SignupMapper.toSupportedCurrency
-      ),
+      supportedCurrencies: (dto.supportedCurrencies ?? []).map(SignupMapper.toSupportedCurrency),
     };
   }
 }

@@ -55,7 +55,8 @@ export const ar = {
       noFeatures: "لا توجد مزايا مُعدّة بعد. أضف مزايا من لوحة الإدارة.",
       noFeaturesData: "لا تتوفر بيانات مزايا لهذه الخطة بعد.",
       scrollToCompare: "مرر للأسفل لمقارنة جميع الميزات",
-      comparePricesNote: "جميع الأسعار معروضة بالـ {{currency}}. الاشتراك السنوي يُدفع كدفعة واحدة.",
+      comparePricesNote:
+        "جميع الأسعار معروضة بالـ {{currency}}. الاشتراك السنوي يُدفع كدفعة واحدة.",
       feature: "الميزة",
       featureSingle: "ميزة",
       featurePlural: "ميزات",
@@ -83,7 +84,6 @@ export const ar = {
         singleAdmin: "مستخدم مسؤول واحد",
         communitySupport: "دعم المجتمع",
       },
-
     },
 
     // الخطوة 2 — الحساب

@@ -11,7 +11,6 @@ import { formatFeatureName } from "../viewmodels/usePlanPickerViewModel";
 
 // ─── Feature icon by category (like Vercel) ──────────────────────────────────
 
-
 function getFeatureIcon(featureName: string) {
   if (featureName.startsWith("Identity.")) return Users;
   if (
@@ -64,7 +63,9 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
     if (displayLabel) {
       return (
         <li className="flex items-start gap-3 py-1.5">
-          {React.createElement(iconComponent, { className: "mt-0.5 h-4 w-4 shrink-0 text-white/30" })}
+          {React.createElement(iconComponent, {
+            className: "mt-0.5 h-4 w-4 shrink-0 text-white/30",
+          })}
           <span className="text-[13px] leading-relaxed text-white/65">{displayLabel}</span>
         </li>
       );
@@ -105,11 +106,7 @@ function FeatureRow({ feature }: { feature: PublicFeature }) {
  * If the price is FX-converted (not a hand-set price), prepends ≈ to indicate
  * it is approximate and will be billed in the base currency.
  */
-function formatPrice(
-  amount: number,
-  currencyCode: string,
-  isApproximate: boolean
-): string {
+function formatPrice(amount: number, currencyCode: string, isApproximate: boolean): string {
   try {
     const formatted = new Intl.NumberFormat(undefined, {
       style: "currency",
@@ -162,7 +159,10 @@ export function PlanCard({
   // Tier-level matching is deterministic and locale-safe — immune to
   // display-name changes and the earlier substring-match operator-precedence bugs.
   const RECOMMENDED_TIER_LEVEL: Record<string, number> = {
-    free: 0, pro: 1, ultra: 2, enterprise: 3,
+    free: 0,
+    pro: 1,
+    ultra: 2,
+    enterprise: 3,
   };
   const isRecommended =
     !!recommendedTier &&
@@ -170,12 +170,13 @@ export function PlanCard({
 
   // Compute "Everything in X, plus:" text (Vercel pattern)
   const inheritanceText = prevEditionName
-    ? t("signup.plan.inheritanceText", { prevEditionName }) || `All ${prevEditionName} features, plus:`
+    ? t("signup.plan.inheritanceText", { prevEditionName }) ||
+      `All ${prevEditionName} features, plus:`
     : null;
 
   return (
     <div
-      className="relative flex flex-col w-full rounded-2xl transition-all duration-300 hover:translate-y-[-2px]"
+      className="relative flex w-full flex-col rounded-2xl transition-all duration-300 hover:translate-y-[-2px]"
       style={{
         background: isHighlighted
           ? "linear-gradient(180deg, rgba(30,16,60,0.7), rgba(14,10,32,0.8))"
@@ -195,7 +196,7 @@ export function PlanCard({
     >
       {/* Recommendation badge — shown when Discovery recommends this tier */}
       {isRecommended && (
-        <div className="absolute -top-3.5 inset-x-0 flex justify-center z-20">
+        <div className="absolute inset-x-0 -top-3.5 z-20 flex justify-center">
           <span
             className="flex items-center gap-1.5 rounded-full px-4 py-1 text-[11px] font-bold uppercase tracking-wider"
             style={{
@@ -241,9 +242,7 @@ export function PlanCard({
               <span className="text-3xl font-extrabold text-white/95">
                 {t("signup.plan.free") || "Free"}
               </span>
-              <span className="text-sm text-white/30">
-                {t("signup.plan.forever") || "forever"}
-              </span>
+              <span className="text-sm text-white/30">{t("signup.plan.forever") || "forever"}</span>
             </>
           ) : isContactSales ? (
             <span className="text-xl font-bold text-white/95">
@@ -252,7 +251,9 @@ export function PlanCard({
           ) : (
             <>
               <span className="text-3xl font-extrabold text-white/95">
-                {monthlyEquiv != null ? formatPrice(monthlyEquiv, currencyCode, isFxConverted) : "—"}
+                {monthlyEquiv != null
+                  ? formatPrice(monthlyEquiv, currencyCode, isFxConverted)
+                  : "—"}
               </span>
               <span className="text-sm text-white/35">/{t("signup.plan.mo") || "mo"}</span>
               {billingCycle === "annual" && price ? (
@@ -263,7 +264,9 @@ export function PlanCard({
               {isFxConverted && (
                 <span
                   className="ms-2 text-[10px] text-white/30"
-                  title={t("signup.plan.fxConvertedTooltip") || "Approximate. Billed in USD at checkout."}
+                  title={
+                    t("signup.plan.fxConvertedTooltip") || "Approximate. Billed in USD at checkout."
+                  }
                 >
                   {t("signup.plan.approximateNote") || "Approx."}
                 </span>

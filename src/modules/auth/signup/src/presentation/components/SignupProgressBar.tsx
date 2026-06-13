@@ -30,13 +30,7 @@ interface SignupProgressBarProps {
 }
 
 /** Steps that have a visible progress bar. Discovery is excluded (immersive). */
-const WIZARD_STEPS: SignupStep[] = [
-  "plan",
-  "account",
-  "verification",
-  "workspace",
-  "review",
-];
+const WIZARD_STEPS: SignupStep[] = ["plan", "account", "verification", "workspace", "review"];
 
 export function SignupProgressBar({ currentStep, stepLabels, direction }: SignupProgressBarProps) {
   const currentIndex = WIZARD_STEPS.indexOf(currentStep);
@@ -47,9 +41,10 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
   const totalSteps = WIZARD_STEPS.length;
   const progressPct = Math.min(((currentIndex + 1) / totalSteps) * 100, 100);
 
-  const labels = stepLabels.length >= totalSteps
-    ? stepLabels.slice(0, totalSteps)
-    : WIZARD_STEPS.map((_, i) => stepLabels[i] ?? `Step ${i + 1}`);
+  const labels =
+    stepLabels.length >= totalSteps
+      ? stepLabels.slice(0, totalSteps)
+      : WIZARD_STEPS.map((_, i) => stepLabels[i] ?? `Step ${i + 1}`);
 
   return (
     <div
@@ -89,14 +84,10 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
       {/* Step chips */}
       <div className="mt-3 flex items-center justify-between">
         {labels.map((label, i) => {
-          const done    = i < currentIndex;
-          const active  = i === currentIndex;
+          const done = i < currentIndex;
+          const active = i === currentIndex;
           return (
-            <div
-              key={i}
-              className="flex flex-col items-center gap-1"
-              style={{ flex: "1 1 0" }}
-            >
+            <div key={i} className="flex flex-col items-center gap-1" style={{ flex: "1 1 0" }}>
               {/* Dot */}
               <motion.div
                 animate={{ scale: active ? 1.3 : done ? 1 : 0.85 }}
@@ -108,9 +99,7 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
                     : done
                       ? BRAND_TOKENS.text.success
                       : "rgba(255,255,255,0.15)",
-                  boxShadow: active
-                    ? `0 0 8px ${BRAND_TOKENS.palette.violet}80`
-                    : "none",
+                  boxShadow: active ? `0 0 8px ${BRAND_TOKENS.palette.violet}80` : "none",
                 }}
               />
               {/* Label */}

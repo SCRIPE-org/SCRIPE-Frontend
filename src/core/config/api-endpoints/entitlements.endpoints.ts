@@ -248,6 +248,5 @@ export const ENTITLEMENTS_ENDPOINTS = {
       DELETE: (id: string) => `${V1}/leads/${id}`,
       BULK_STATUS: `${V1}/leads/bulk-status`,
     },
-
   },
 };

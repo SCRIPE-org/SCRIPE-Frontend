@@ -1,22 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@core/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@core/ui/sheet";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
   Building2,
   Mail,
@@ -43,11 +32,17 @@ import type { PlatformLead, LeadStatus, LeadActivity } from "../../domain/entiti
 const ALL_STATUSES: LeadStatus[] = ["New", "Contacted", "Qualified", "Converted", "Closed"];
 
 const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string }> = {
-  New:       { badge: "bg-blue-500/15 text-blue-300 border-blue-500/30",        dot: "bg-blue-400"    },
-  Contacted: { badge: "bg-amber-500/15 text-amber-300 border-amber-500/30",     dot: "bg-amber-400"   },
-  Qualified: { badge: "bg-violet-500/15 text-violet-300 border-violet-500/30",  dot: "bg-violet-400"  },
-  Converted: { badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30", dot: "bg-emerald-400" },
-  Closed:    { badge: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",        dot: "bg-zinc-500"    },
+  New: { badge: "bg-blue-500/15 text-blue-300 border-blue-500/30", dot: "bg-blue-400" },
+  Contacted: { badge: "bg-amber-500/15 text-amber-300 border-amber-500/30", dot: "bg-amber-400" },
+  Qualified: {
+    badge: "bg-violet-500/15 text-violet-300 border-violet-500/30",
+    dot: "bg-violet-400",
+  },
+  Converted: {
+    badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    dot: "bg-emerald-400",
+  },
+  Closed: { badge: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30", dot: "bg-zinc-500" },
 };
 
 // ── Copy-to-Clipboard helper ──────────────────────────────────────────────────
@@ -63,12 +58,14 @@ function CopyButton({ value }: { value: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="text-zinc-500 hover:text-zinc-300 transition-colors shrink-0"
+      className="shrink-0 text-zinc-500 transition-colors hover:text-zinc-300"
       aria-label="Copy"
     >
-      {copied
-        ? <CheckCheck className="h-3.5 w-3.5 text-emerald-400" />
-        : <Copy className="h-3.5 w-3.5" />}
+      {copied ? (
+        <CheckCheck className="h-3.5 w-3.5 text-emerald-400" />
+      ) : (
+        <Copy className="h-3.5 w-3.5" />
+      )}
     </button>
   );
 }
@@ -110,11 +107,11 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <Icon className="h-4 w-4 shrink-0 text-zinc-500 mt-0.5" />
+      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500" />
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] text-zinc-500 mb-0.5">{label}</p>
+        <p className="mb-0.5 text-[11px] text-zinc-500">{label}</p>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-zinc-200 truncate">{value}</span>
+          <span className="truncate text-sm text-zinc-200">{value}</span>
           {copyable && <CopyButton value={copyable} />}
         </div>
       </div>
@@ -182,26 +179,28 @@ export function LeadDetailDrawer({
   };
 
   return (
-    <Sheet open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+    <Sheet
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) onClose();
+      }}
+    >
       <SheetContent
         side="right"
-        className="w-full max-w-[480px] bg-zinc-950 border-s border-zinc-800 p-0 overflow-y-auto"
+        className="w-full max-w-[480px] overflow-y-auto border-s border-zinc-800 bg-zinc-950 p-0"
       >
         {/* ── Sticky header ── */}
-        <SheetHeader className="sticky top-0 z-10 bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/60 px-6 py-5">
+        <SheetHeader className="sticky top-0 z-10 border-b border-zinc-800/60 bg-zinc-950/95 px-6 py-5 backdrop-blur-sm">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <SheetTitle className="text-white text-lg font-semibold truncate">
+              <SheetTitle className="truncate text-lg font-semibold text-white">
                 {isLoading ? t("leads.drawer.loadingDetail") : (lead?.companyName ?? "")}
               </SheetTitle>
-              {lead && (
-                <p className="text-sm text-zinc-400 mt-0.5 truncate">{lead.contactName}</p>
-              )}
+              {lead && <p className="mt-0.5 truncate text-sm text-zinc-400">{lead.contactName}</p>}
             </div>
             {lead && (
               <span
-                className={`inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 rounded-full
-                  text-xs font-medium border ${STATUS_STYLES[lead.status].badge}`}
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[lead.status].badge}`}
               >
                 <span className={`h-1.5 w-1.5 rounded-full ${STATUS_STYLES[lead.status].dot}`} />
                 {t(`leads.status.${lead.status}`)}
@@ -209,9 +208,12 @@ export function LeadDetailDrawer({
             )}
           </div>
           {lead?.editionKey && (
-            <p className="text-[11px] mt-1.5 font-mono text-violet-400/80 tracking-wide">
-              🎯 {t("leads.drawer.editionLabel", {
-                edition: lead.editionKey.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+            <p className="mt-1.5 font-mono text-[11px] tracking-wide text-violet-400/80">
+              🎯{" "}
+              {t("leads.drawer.editionLabel", {
+                edition: lead.editionKey
+                  .replace(/-/g, " ")
+                  .replace(/\b\w/g, (c) => c.toUpperCase()),
               })}
             </p>
           )}
@@ -219,19 +221,18 @@ export function LeadDetailDrawer({
 
         {/* ── Body ── */}
         {isLoading ? (
-          <div className="flex items-center justify-center h-64 text-zinc-500 text-sm">
+          <div className="flex h-64 items-center justify-center text-sm text-zinc-500">
             {t("leads.drawer.loadingDetail")}
           </div>
         ) : !lead ? (
-          <div className="flex items-center justify-center h-64 text-zinc-500 text-sm">
+          <div className="flex h-64 items-center justify-center text-sm text-zinc-500">
             {t("leads.drawer.notFound")}
           </div>
         ) : (
-          <div className="px-6 py-6 space-y-7">
-
+          <div className="space-y-7 px-6 py-6">
             {/* ── Contact Info ── */}
             <Section title={t("leads.drawer.sections.contact")} icon={Mail}>
-              <div className="space-y-3 bg-zinc-900/50 rounded-xl p-4 border border-zinc-800/50">
+              <div className="space-y-3 rounded-xl border border-zinc-800/50 bg-zinc-900/50 p-4">
                 <InfoRow
                   icon={Mail}
                   label={t("leads.drawer.contact.email")}
@@ -250,7 +251,7 @@ export function LeadDetailDrawer({
                     icon={Phone}
                     label={t("leads.drawer.contact.phone")}
                     value={
-                      <span className="text-zinc-600 italic text-xs">
+                      <span className="text-xs italic text-zinc-600">
                         {t("leads.drawer.contact.phoneMissing")}
                       </span>
                     }
@@ -264,8 +265,12 @@ export function LeadDetailDrawer({
                 <InfoRow
                   icon={Clock}
                   label={t("leads.drawer.contact.submitted")}
-                  value={`${lead.relativeCreatedAt} · ${new Date(lead.requestedAt).toLocaleDateString("en-GB", {
-                    day: "2-digit", month: "short", year: "numeric",
+                  value={`${lead.relativeCreatedAt} · ${new Date(
+                    lead.requestedAt
+                  ).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
                   })}`}
                 />
               </div>
@@ -274,22 +279,24 @@ export function LeadDetailDrawer({
             {/* ── Discovery Intelligence ── */}
             {hasDiscovery && (
               <Section title={t("leads.drawer.sections.discovery")} icon={Zap}>
-                <div className="rounded-xl bg-violet-500/5 border border-violet-500/20 p-4 space-y-3">
+                <div className="space-y-3 rounded-xl border border-violet-500/20 bg-violet-500/5 p-4">
                   {di?.businessTypeKey && (
                     <div className="flex items-center gap-3">
-                      <Building2 className="h-4 w-4 text-violet-400/70 shrink-0" />
+                      <Building2 className="h-4 w-4 shrink-0 text-violet-400/70" />
                       <div>
                         <p className="text-[11px] text-zinc-500">{t("leads.discovery.industry")}</p>
-                        <p className="text-sm text-violet-200 font-medium">{t(di.businessTypeKey)}</p>
+                        <p className="text-sm font-medium text-violet-200">
+                          {t(di.businessTypeKey)}
+                        </p>
                       </div>
                     </div>
                   )}
                   {di?.teamSizeKey && (
                     <div className="flex items-center gap-3">
-                      <Users className="h-4 w-4 text-violet-400/70 shrink-0" />
+                      <Users className="h-4 w-4 shrink-0 text-violet-400/70" />
                       <div>
                         <p className="text-[11px] text-zinc-500">{t("leads.discovery.teamSize")}</p>
-                        <p className="text-sm text-violet-200 font-medium">
+                        <p className="text-sm font-medium text-violet-200">
                           {t(di.teamSizeKey)} {t("leads.discovery.teamSizeSuffix")}
                         </p>
                       </div>
@@ -297,10 +304,10 @@ export function LeadDetailDrawer({
                   )}
                   {di?.priority && (
                     <div className="flex items-center gap-3">
-                      <Tag className="h-4 w-4 text-violet-400/70 shrink-0" />
+                      <Tag className="h-4 w-4 shrink-0 text-violet-400/70" />
                       <div>
                         <p className="text-[11px] text-zinc-500">{t("leads.discovery.priority")}</p>
-                        <p className="text-sm text-violet-200 font-medium capitalize">
+                        <p className="text-sm font-medium capitalize text-violet-200">
                           {di.priority.replace(/-/g, " ")}
                         </p>
                       </div>
@@ -313,8 +320,8 @@ export function LeadDetailDrawer({
             {/* ── Message ── */}
             {lead.message && (
               <Section title={t("leads.drawer.sections.message")} icon={MessageSquare}>
-                <div className="rounded-xl bg-zinc-900/50 border border-zinc-800/50 p-4">
-                  <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/50 p-4">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">
                     {lead.message}
                   </p>
                 </div>
@@ -334,11 +341,11 @@ export function LeadDetailDrawer({
                   >
                     <SelectTrigger
                       id="drawer-status"
-                      className="bg-zinc-900 border-zinc-700 text-white h-9"
+                      className="h-9 border-zinc-700 bg-zinc-900 text-white"
                     >
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-700">
+                    <SelectContent className="border-zinc-700 bg-zinc-900">
                       {ALL_STATUSES.map((s) => (
                         <SelectItem key={s} value={s}>
                           <span className="flex items-center gap-2">
@@ -361,7 +368,7 @@ export function LeadDetailDrawer({
                     onChange={(e) => setNoteText(e.target.value)}
                     placeholder={t("leads.drawer.status.notePlaceholder")}
                     rows={3}
-                    className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 text-sm resize-none"
+                    className="resize-none border-zinc-700 bg-zinc-900 text-sm text-white placeholder:text-zinc-600"
                   />
                 </div>
 
@@ -369,15 +376,15 @@ export function LeadDetailDrawer({
                   id="drawer-save-status"
                   onClick={handleSaveStatus}
                   disabled={isUpdatingStatus || !hasChanges}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white h-9 text-sm font-medium disabled:opacity-40 transition-colors"
+                  className="h-9 w-full bg-indigo-600 text-sm font-medium text-white transition-colors hover:bg-indigo-500 disabled:opacity-40"
                 >
                   {isUpdatingStatus
                     ? t("leads.drawer.status.saving")
                     : noteSaved
-                    ? t("leads.drawer.status.saved")
-                    : hasChanges
-                    ? t("leads.drawer.status.save")
-                    : t("leads.drawer.status.noChanges")}
+                      ? t("leads.drawer.status.saved")
+                      : hasChanges
+                        ? t("leads.drawer.status.save")
+                        : t("leads.drawer.status.noChanges")}
                 </Button>
               </div>
             </Section>
@@ -385,8 +392,8 @@ export function LeadDetailDrawer({
             {/* ── Existing Sales Notes ── */}
             {lead.notes && (
               <Section title={t("leads.drawer.sections.salesNotes")} icon={StickyNote}>
-                <div className="rounded-xl bg-amber-500/5 border border-amber-500/20 p-4">
-                  <p className="text-sm text-amber-200/80 leading-relaxed whitespace-pre-wrap">
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-amber-200/80">
                     {lead.notes}
                   </p>
                 </div>
@@ -396,14 +403,17 @@ export function LeadDetailDrawer({
             {/* ── Conversion Info ── */}
             {lead.isConverted && lead.convertedAt && (
               <Section title={t("leads.drawer.sections.conversion")} icon={CheckCheck}>
-                <div className="rounded-xl bg-emerald-500/5 border border-emerald-500/20 p-4 space-y-2">
-                  <p className="text-sm text-emerald-300 font-medium">
+                <div className="space-y-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                  <p className="text-sm font-medium text-emerald-300">
                     {t("leads.drawer.conversion.converted")}
                   </p>
                   <p className="text-xs text-zinc-400">
                     {new Date(lead.convertedAt).toLocaleDateString("en-GB", {
-                      day: "2-digit", month: "long", year: "numeric",
-                      hour: "2-digit", minute: "2-digit",
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </p>
                 </div>
@@ -417,25 +427,27 @@ export function LeadDetailDrawer({
               ) : !activity || activity.length === 0 ? (
                 <p className="text-xs text-zinc-500">{t("leads.activity.empty")}</p>
               ) : (
-                <ol className="relative border-s border-zinc-800 space-y-4 ps-4">
+                <ol className="relative space-y-4 border-s border-zinc-800 ps-4">
                   {activity.map((entry) => (
                     <li key={entry.id} className="group">
                       <div className="absolute -start-1 mt-1 h-2 w-2 rounded-full bg-indigo-500 ring-2 ring-zinc-950" />
-                      <p className="text-xs text-zinc-300 font-medium">
+                      <p className="text-xs font-medium text-zinc-300">
                         {t(`leads.activity.types.${entry.type}`)}
                       </p>
                       {entry.note && (
-                        <p className="text-xs text-zinc-500 mt-0.5 italic">{entry.note}</p>
+                        <p className="mt-0.5 text-xs italic text-zinc-500">{entry.note}</p>
                       )}
-                      <p className="text-[10px] text-zinc-600 mt-0.5">
+                      <p className="mt-0.5 text-[10px] text-zinc-600">
                         {new Date(entry.occurredAt).toLocaleDateString("en-GB", {
-                          day: "2-digit", month: "short", year: "numeric",
-                          hour: "2-digit", minute: "2-digit",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
                         })}
                         {entry.actorName
                           ? ` · ${t("leads.activity.by").replace("{actor}", entry.actorName)}`
-                          : ` · ${t("leads.activity.system")}`
-                        }
+                          : ` · ${t("leads.activity.system")}`}
                       </p>
                     </li>
                   ))}
@@ -445,7 +457,7 @@ export function LeadDetailDrawer({
 
             {/* ── CRM Actions ── */}
             {!lead.isConverted && (
-              <div className="pt-2 border-t border-zinc-800 space-y-2">
+              <div className="space-y-2 border-t border-zinc-800 pt-2">
                 {onConvert && (
                   <Button
                     id="drawer-convert-btn"
@@ -485,7 +497,6 @@ export function LeadDetailDrawer({
                 )}
               </div>
             )}
-
           </div>
         )}
       </SheetContent>
