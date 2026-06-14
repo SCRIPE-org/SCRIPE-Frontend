@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none" role="img" aria-label="Caduceus Clinics">
+  <g fill="currentColor">
+    <path d="M10 6c-3 0-5.4 2.4-5.4 5.4 0 2.4 1.5 4 3.4 5.6-1.9 1.6-3.4 3.2-3.4 5.6H7.3c0-1.6 1.2-2.8 2.7-4 1.5 1.2 2.7 2.4 2.7 4h2.7c0-2.4-1.5-4-3.4-5.6 1.9-1.6 3.4-3.2 3.4-5.6C15.4 8.4 13 6 10 6Zm0 2.6c1.5 0 2.7 1.2 2.7 2.8 0 1.5-1.2 2.6-2.7 3.7-1.5-1.1-2.7-2.2-2.7-3.7 0-1.6 1.2-2.8 2.7-2.8Z"/>
+  </g>
+  <text x="20" y="21" font-family="Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600" letter-spacing="0.3" fill="currentColor">Caduceus</text>
+</svg>
