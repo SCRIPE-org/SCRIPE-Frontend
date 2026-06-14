@@ -181,7 +181,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
     key: "supportEmail",
     label: "Support Email",
     category: "system",
-    sample: "support-team@scripe.org",
+    sample: "support@scripe.org",
     fieldType: "email",
   },
   {
