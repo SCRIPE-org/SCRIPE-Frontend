@@ -34,6 +34,26 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
+// ─── DEV-MODE MISSING-KEY SURFACING ─────────────────────────
+// In development we make missing translation keys LOUD instead of
+// silently returning the bare key (which historically leaked raw keys
+// like "signup.discovery.seePlans" to the UI, and turned the common
+// `t("x") || "fallback"` pattern into dead code).
+//
+// In production we stay graceful — return the bare key, never throw —
+// so a single missing key can never blank out or crash a screen.
+const isDev = process.env.NODE_ENV !== "production";
+const warnedMissingKeys = new Set<string>();
+
+function reportMissingKey(key: string, language: Language): string {
+  if (isDev && !warnedMissingKeys.has(`${language}:${key}`)) {
+    warnedMissingKeys.add(`${language}:${key}`);
+    // eslint-disable-next-line no-console
+    console.warn(`[i18n] missing key: "${key}" (language: "${language}")`);
+  }
+  return key;
+}
+
 // ─── I18N PROVIDER (v8.0 — Zero-Flash + Deep Merge) ─────
 //
 // Architecture:
@@ -99,7 +119,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         if (value && typeof value === "object" && k in value) {
           value = value[k];
         } else {
-          return key; // Return the key if path not found
+          return reportMissingKey(key, language); // path not found
         }
       }
 
@@ -117,7 +137,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         return value;
       }
 
-      return key;
+      // Resolved to a non-string leaf (object/array) — treat as a miss.
+      return reportMissingKey(key, language);
     },
     [language]
   );
