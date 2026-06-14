@@ -34,9 +34,7 @@ export function OnboardingQuestionsCatalogView({
           key: "key",
           label: t("entitlements.onboarding.questions.key") || "Key",
           render: (value: unknown) => (
-            <span className="font-mono text-xs text-muted-foreground">
-              {String(value ?? "")}
-            </span>
+            <span className="font-mono text-xs text-muted-foreground">{String(value ?? "")}</span>
           ),
         },
         {
@@ -114,26 +112,26 @@ export function OnboardingQuestionsCatalogView({
         },
       ],
 
-      editFields: (item: OnboardingQuestion) => [
+      editFields: (item: OnboardingQuestion | null) => [
         {
           name: "labelEn",
           label: t("entitlements.onboarding.questions.labelEn") || "Label (English)",
           type: "text" as const,
           required: true,
-          defaultValue: item.labelEn,
+          defaultValue: item?.labelEn ?? "",
         },
         {
           name: "labelAr",
           label: t("entitlements.onboarding.questions.labelAr") || "Label (Arabic)",
           type: "text" as const,
           required: true,
-          defaultValue: item.labelAr,
+          defaultValue: item?.labelAr ?? "",
         },
         {
           name: "sortOrder",
           label: t("entitlements.onboarding.questions.sortOrder") || "Sort Order",
           type: "number" as const,
-          defaultValue: item.sortOrder,
+          defaultValue: item?.sortOrder ?? 10,
         },
       ],
 

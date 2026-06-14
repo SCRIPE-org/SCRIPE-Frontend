@@ -181,7 +181,10 @@ export function PlanCard({
     : null;
 
   return (
-    <div className="flex w-full flex-col" style={{ animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 80}ms both` }}>
+    <div
+      className="flex w-full flex-col"
+      style={{ animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 80}ms both` }}
+    >
       {/* Recommendation badge — rendered ABOVE card to eliminate z-index/overlap issues */}
       {isRecommended && (
         <div className="flex justify-center pb-2">
@@ -218,135 +221,141 @@ export function PlanCard({
               : "none",
         }}
       >
-      {/* Edition badge (admin-set, e.g. "Most Popular") — inside card, top-end corner */}
-      {edition.badge && (
-        <div className="absolute top-3 end-3 z-10">
-          <Badge
-            variant="default"
-            className="rounded-full border-none px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
-            style={{ background: "linear-gradient(135deg, #A855F7, #7C3AED)", color: "#fff" }}
-          >
-            {edition.badge}
-          </Badge>
-        </div>
-      )}
-
-      {/* Top section: name, tagline, price */}
-      <div className="p-6 pb-0 sm:p-7 sm:pb-0">
-        <h3 className="text-lg font-bold text-white/95 sm:text-xl">{edition.name}</h3>
-
-        {edition.tagline && (
-          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/40">
-            {edition.tagline}
-          </p>
-        )}
-
-        {/* Price */}
-        <motion.div layout className="mt-5 flex items-baseline gap-1.5">
-          {isFree ? (
-            <>
-              <span className="text-3xl font-extrabold text-white/95">
-                {t("signup.plan.free") || "Free"}
-              </span>
-              <span className="text-sm text-white/30">{t("signup.plan.forever") || "forever"}</span>
-            </>
-          ) : isContactSales ? (
-            <span className="text-xl font-bold text-white/95">
-              {t("signup.plan.custom") || "Custom pricing"}
-            </span>
-          ) : (
-            <>
-              <span className="text-3xl font-extrabold text-white/95">
-                {monthlyEquiv != null
-                  ? formatPrice(monthlyEquiv, currencyCode, isFxConverted)
-                  : "—"}
-              </span>
-              <span className="text-sm text-white/35">/{t("signup.plan.mo") || "mo"}</span>
-              {billingCycle === "annual" && price ? (
-                <span className="ms-1 text-xs text-white/25">
-                  ({formatPrice(price, currencyCode, isFxConverted)}/{t("signup.plan.yr") || "yr"})
-                </span>
-              ) : null}
-              {isFxConverted && (
-                <span
-                  className="ms-2 text-[10px] text-white/30"
-                  title={
-                    t("signup.plan.fxConvertedTooltip") || "Approximate. Billed in USD at checkout."
-                  }
-                >
-                  {t("signup.plan.approximateNote") || "Approx."}
-                </span>
-              )}
-            </>
-          )}
-        </motion.div>
-
-        {/* Trial */}
-        {edition.trialDays && !isFree && !isContactSales && (
-          <p className="mt-1.5 text-xs font-semibold text-cyan-400">
-            {t("signup.plan.trialDays", { days: edition.trialDays }) ||
-              `${edition.trialDays}-day free trial`}
-          </p>
-        )}
-
-        {/* Why we recommend this — plain reason strings from the Discovery engine scorer. */}
-        {isRecommended && recommendationReasons && recommendationReasons.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {recommendationReasons.map((reason, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
-                style={{
-                  background: "rgba(34,211,238,0.08)",
-                  border: "1px solid rgba(34,211,238,0.2)",
-                  color: "#22D3EE",
-                }}
-              >
-                <Check className="h-2.5 w-2.5" aria-hidden="true" />
-                {reason}
-              </span>
-            ))}
+        {/* Edition badge (admin-set, e.g. "Most Popular") — inside card, top-end corner */}
+        {edition.badge && (
+          <div className="absolute end-3 top-3 z-10">
+            <Badge
+              variant="default"
+              className="rounded-full border-none px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+              style={{ background: "linear-gradient(135deg, #A855F7, #7C3AED)", color: "#fff" }}
+            >
+              {edition.badge}
+            </Badge>
           </div>
         )}
-      </div>
 
-      {/* Divider */}
-      <div className="mx-6 my-5 border-t border-white/[0.06] sm:mx-7" />
+        {/* Top section: name, tagline, price */}
+        <div className="p-6 pb-0 sm:p-7 sm:pb-0">
+          <h3 className="text-lg font-bold text-white/95 sm:text-xl">{edition.name}</h3>
 
-      {/* "Everything in X, plus:" — Vercel inheritance pattern */}
-      {inheritanceText && (
-        <p className="px-6 pb-3 text-[13px] font-medium text-white/45 sm:px-7">{inheritanceText}</p>
-      )}
+          {edition.tagline && (
+            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/40">
+              {edition.tagline}
+            </p>
+          )}
 
-      {/* Features — scrolls naturally with the page */}
-      <ul className="flex-1 space-y-0.5 px-6 pb-6 sm:px-7 sm:pb-7">
-        {edition.topFeatures.map((feat, i) => (
-          <FeatureRow key={`${edition.id}-f-${i}`} feature={feat} />
-        ))}
-      </ul>
+          {/* Price */}
+          <motion.div layout className="mt-5 flex items-baseline gap-1.5">
+            {isFree ? (
+              <>
+                <span className="text-3xl font-extrabold text-white/95">
+                  {t("signup.plan.free") || "Free"}
+                </span>
+                <span className="text-sm text-white/30">
+                  {t("signup.plan.forever") || "forever"}
+                </span>
+              </>
+            ) : isContactSales ? (
+              <span className="text-xl font-bold text-white/95">
+                {t("signup.plan.custom") || "Custom pricing"}
+              </span>
+            ) : (
+              <>
+                <span className="text-3xl font-extrabold text-white/95">
+                  {monthlyEquiv != null
+                    ? formatPrice(monthlyEquiv, currencyCode, isFxConverted)
+                    : "—"}
+                </span>
+                <span className="text-sm text-white/35">/{t("signup.plan.mo") || "mo"}</span>
+                {billingCycle === "annual" && price ? (
+                  <span className="ms-1 text-xs text-white/25">
+                    ({formatPrice(price, currencyCode, isFxConverted)}/{t("signup.plan.yr") || "yr"}
+                    )
+                  </span>
+                ) : null}
+                {isFxConverted && (
+                  <span
+                    className="ms-2 text-[10px] text-white/30"
+                    title={
+                      t("signup.plan.fxConvertedTooltip") ||
+                      "Approximate. Billed in USD at checkout."
+                    }
+                  >
+                    {t("signup.plan.approximateNote") || "Approx."}
+                  </span>
+                )}
+              </>
+            )}
+          </motion.div>
 
-      {/* CTA — at the BOTTOM like Vercel */}
-      <div className="p-6 pt-0 sm:p-7 sm:pt-0">
-        <Button
-          type="button"
-          className="w-full rounded-lg py-3 text-sm font-semibold transition-all duration-200"
-          onClick={() => onSelect(edition)}
-          style={{
-            background: isHighlighted
-              ? "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)"
-              : tokens.surfaceRaised,
-            color: isHighlighted ? "#fff" : "rgba(245,242,255,0.8)",
-            border: isHighlighted ? "none" : "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          {isContactSales
-            ? t("signup.plan.contactSales") || "Get a demo"
-            : isFree
-              ? t("signup.plan.startFree") || "Start Deploying"
-              : t("signup.plan.choosePlan", { plan: edition.name }) || `Start a free trial`}
-          <span className="ms-1.5">→</span>
-        </Button>
-      </div>
+          {/* Trial */}
+          {edition.trialDays && !isFree && !isContactSales && (
+            <p className="mt-1.5 text-xs font-semibold text-cyan-400">
+              {t("signup.plan.trialDays", { days: edition.trialDays }) ||
+                `${edition.trialDays}-day free trial`}
+            </p>
+          )}
+
+          {/* Why we recommend this — plain reason strings from the Discovery engine scorer. */}
+          {isRecommended && recommendationReasons && recommendationReasons.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {recommendationReasons.map((reason, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
+                  style={{
+                    background: "rgba(34,211,238,0.08)",
+                    border: "1px solid rgba(34,211,238,0.2)",
+                    color: "#22D3EE",
+                  }}
+                >
+                  <Check className="h-2.5 w-2.5" aria-hidden="true" />
+                  {reason}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="mx-6 my-5 border-t border-white/[0.06] sm:mx-7" />
+
+        {/* "Everything in X, plus:" — Vercel inheritance pattern */}
+        {inheritanceText && (
+          <p className="px-6 pb-3 text-[13px] font-medium text-white/45 sm:px-7">
+            {inheritanceText}
+          </p>
+        )}
+
+        {/* Features — scrolls naturally with the page */}
+        <ul className="flex-1 space-y-0.5 px-6 pb-6 sm:px-7 sm:pb-7">
+          {edition.topFeatures.map((feat, i) => (
+            <FeatureRow key={`${edition.id}-f-${i}`} feature={feat} />
+          ))}
+        </ul>
+
+        {/* CTA — at the BOTTOM like Vercel */}
+        <div className="p-6 pt-0 sm:p-7 sm:pt-0">
+          <Button
+            type="button"
+            className="w-full rounded-lg py-3 text-sm font-semibold transition-all duration-200"
+            onClick={() => onSelect(edition)}
+            style={{
+              background: isHighlighted
+                ? "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)"
+                : tokens.surfaceRaised,
+              color: isHighlighted ? "#fff" : "rgba(245,242,255,0.8)",
+              border: isHighlighted ? "none" : "1px solid rgba(255,255,255,0.1)",
+            }}
+          >
+            {isContactSales
+              ? t("signup.plan.contactSales") || "Get a demo"
+              : isFree
+                ? t("signup.plan.startFree") || "Start Deploying"
+                : t("signup.plan.choosePlan", { plan: edition.name }) || `Start a free trial`}
+            <span className="ms-1.5">→</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

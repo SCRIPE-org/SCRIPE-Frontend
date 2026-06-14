@@ -178,10 +178,7 @@ function SignupViewContent() {
       <header
         className="sticky top-0 z-40 flex h-14 items-center justify-between px-5 sm:px-8"
         style={{
-          background:
-            theme === "dark"
-              ? "rgba(10, 8, 22, 0.72)"
-              : "rgba(248, 247, 255, 0.82)",
+          background: theme === "dark" ? "rgba(10, 8, 22, 0.72)" : "rgba(248, 247, 255, 0.82)",
           backdropFilter: "blur(24px) saturate(160%)",
           WebkitBackdropFilter: "blur(24px) saturate(160%)",
           borderBottom: `1px solid ${tokens.border}`,
@@ -201,19 +198,13 @@ function SignupViewContent() {
             height={28}
             priority
           />
-          <span
-            className="text-[15px] font-semibold tracking-tight"
-            style={{ color: tokens.ink }}
-          >
+          <span className="text-[15px] font-semibold tracking-tight" style={{ color: tokens.ink }}>
             {BRAND.name}
           </span>
         </Link>
 
         {/* ── "Already have an account? Sign in →" ── */}
-        <div
-          className="flex items-center gap-1.5 text-[13px]"
-          style={{ color: tokens.inkFaint }}
-        >
+        <div className="flex items-center gap-1.5 text-[13px]" style={{ color: tokens.inkFaint }}>
           <span className="hidden sm:inline">
             {t("signup.header.haveAccount") || "Already have an account?"}
           </span>
@@ -250,10 +241,7 @@ function SignupViewContent() {
             aria-label={t("signup.stepper.label") || "Signup progress"}
             className="sticky top-14 z-30 overflow-hidden"
             style={{
-              background:
-                theme === "dark"
-                  ? "rgba(10, 8, 22, 0.6)"
-                  : "rgba(248, 247, 255, 0.75)",
+              background: theme === "dark" ? "rgba(10, 8, 22, 0.6)" : "rgba(248, 247, 255, 0.75)",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
               borderBottom: `1px solid ${tokens.border}`,

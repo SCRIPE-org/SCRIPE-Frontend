@@ -259,7 +259,11 @@ export function AccountStep({ vm }: AccountStepProps) {
 
         {/* Trust cue */}
         <div className="flex items-center justify-center gap-1.5">
-          <Lock className="h-3 w-3 shrink-0" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+          <Lock
+            className="h-3 w-3 shrink-0"
+            aria-hidden="true"
+            style={{ color: tokens.inkFaint }}
+          />
           <p className="text-[10px]" style={{ color: tokens.inkFaint }}>
             {t("signup.account.trustCue") || "256-bit encrypted · No credit card required"}
           </p>

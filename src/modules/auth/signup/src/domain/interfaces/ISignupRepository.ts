@@ -101,9 +101,5 @@ export interface ISignupRepository {
   ): Promise<OnboardingRecommendation>;
 
   /** Onboarding Intelligence Engine — records a single answer against the session. */
-  submitOnboardingAnswer(
-    sessionRef: string,
-    questionKey: string,
-    values: string[]
-  ): Promise<void>;
+  submitOnboardingAnswer(sessionRef: string, questionKey: string, values: string[]): Promise<void>;
 }

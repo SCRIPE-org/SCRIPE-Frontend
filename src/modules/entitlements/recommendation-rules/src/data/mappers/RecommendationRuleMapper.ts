@@ -5,11 +5,7 @@
  * Repositories MUST use mapper methods — never construct entities directly.
  */
 import { z } from "zod";
-import {
-  safeParseApiResponse,
-  uuidField,
-  optionalIsoDate,
-} from "@core/common/zod-utils";
+import { safeParseApiResponse, uuidField, optionalIsoDate } from "@core/common/zod-utils";
 import { RecommendationRule } from "../../domain/entities/RecommendationRule";
 import type { RecommendationRuleData } from "../../domain/entities/RecommendationRule";
 import type {
@@ -64,9 +60,7 @@ export class RecommendationRuleMapper {
     return new RecommendationRule(data);
   }
 
-  static toCreateJson(
-    request: CreateRecommendationRuleRequest
-  ): CreateRecommendationRuleRequest {
+  static toCreateJson(request: CreateRecommendationRuleRequest): CreateRecommendationRuleRequest {
     return {
       name: request.name,
       editionCategoryId: request.editionCategoryId,
@@ -79,9 +73,7 @@ export class RecommendationRuleMapper {
     };
   }
 
-  static toUpdateJson(
-    request: UpdateRecommendationRuleRequest
-  ): UpdateRecommendationRuleRequest {
+  static toUpdateJson(request: UpdateRecommendationRuleRequest): UpdateRecommendationRuleRequest {
     return RecommendationRuleMapper.toCreateJson(request);
   }
 }

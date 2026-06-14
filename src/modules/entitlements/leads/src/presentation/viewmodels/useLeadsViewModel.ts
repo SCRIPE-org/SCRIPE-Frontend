@@ -300,6 +300,10 @@ export function useLeadsViewModel() {
 
   const handleClearSelection = useCallback(() => setSelectedIds(new Set()), []);
 
+  const handleSelectionChange = useCallback((ids: string[]) => {
+    setSelectedIds(new Set(ids));
+  }, []);
+
   const handleOpenBulkClose = useCallback(() => setBulkConfirmAction("close"), []);
   const handleOpenBulkDelete = useCallback(() => setBulkConfirmAction("delete"), []);
   const handleCancelBulkConfirm = useCallback(() => setBulkConfirmAction(null), []);
@@ -382,6 +386,7 @@ export function useLeadsViewModel() {
     handleToggleSelect,
     handleSelectAll,
     handleClearSelection,
+    handleSelectionChange,
     handleOpenBulkClose,
     handleOpenBulkDelete,
     handleCancelBulkConfirm,

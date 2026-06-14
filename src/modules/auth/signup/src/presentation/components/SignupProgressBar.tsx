@@ -95,11 +95,7 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
                 transition={{ type: "spring", stiffness: 400, damping: 24 }}
                 className="h-2 w-2 rounded-full"
                 style={{
-                  background: active
-                    ? tokens.accent
-                    : done
-                      ? tokens.success
-                      : tokens.border,
+                  background: active ? tokens.accent : done ? tokens.success : tokens.border,
                   boxShadow: active ? `0 0 8px ${tokens.accent}80` : "none",
                 }}
               />
@@ -107,11 +103,7 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
               <span
                 className="hidden text-[9px] font-medium leading-none md:block"
                 style={{
-                  color: active
-                    ? tokens.accent
-                    : done
-                      ? tokens.inkMuted
-                      : tokens.inkGhost,
+                  color: active ? tokens.accent : done ? tokens.inkMuted : tokens.inkGhost,
                 }}
               >
                 {label}

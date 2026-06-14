@@ -29,7 +29,12 @@ const gridVariants = {
 
 const optionVariants = {
   hidden: { opacity: 0, y: 10, scale: 0.97 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring" as const, stiffness: 340, damping: 26 } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: "spring" as const, stiffness: 340, damping: 26 },
+  },
 };
 
 // ─── DiscoveryQuestion ────────────────────────────────────────────────────────
@@ -103,9 +108,7 @@ export function DiscoveryQuestion({
                   whileTap={isDisabled ? {} : { scale: 0.96 }}
                   className="w-full rounded-xl p-3 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 disabled:cursor-not-allowed disabled:opacity-40"
                   style={{
-                    background: isSelected
-                      ? "rgba(168,85,247,0.15)"
-                      : tokens.surfaceRaised,
+                    background: isSelected ? "rgba(168,85,247,0.15)" : tokens.surfaceRaised,
                     border: isSelected ? tokens.borderActive : tokens.borderCard,
                   }}
                 >
@@ -117,18 +120,12 @@ export function DiscoveryQuestion({
                     style={{ color: isSelected ? tokens.accent : tokens.inkMuted }}
                   />
                   {/* Label */}
-                  <p
-                    className="text-sm font-semibold leading-tight"
-                    style={{ color: tokens.ink }}
-                  >
+                  <p className="text-sm font-semibold leading-tight" style={{ color: tokens.ink }}>
                     {option.label}
                   </p>
                   {/* Sublabel */}
                   {option.sublabel && (
-                    <p
-                      className="mt-0.5 text-xs leading-snug"
-                      style={{ color: tokens.inkFaint }}
-                    >
+                    <p className="mt-0.5 text-xs leading-snug" style={{ color: tokens.inkFaint }}>
                       {option.sublabel}
                     </p>
                   )}

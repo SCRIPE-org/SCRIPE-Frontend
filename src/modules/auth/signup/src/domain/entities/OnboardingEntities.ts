@@ -13,12 +13,16 @@ export const OnboardingAnswerOptionSchema = z.object({
   sublabel: z.string().nullable(),
   iconKey: z.string().nullable(),
   sortOrder: z.number(),
-  signalWeight: z.number(),
+  signalWeight: z.number().optional().default(0),
 });
 
 export const OnboardingQuestionSchema = z.object({
   key: z.string(),
-  questionType: z.enum(["single_select", "multi_select"]),
+  questionType: z.enum(["single", "multi", "single_select", "multi_select"]).transform((val) => {
+    if (val === "single") return "single_select";
+    if (val === "multi") return "multi_select";
+    return val;
+  }),
   minSelections: z.number(),
   maxSelections: z.number(),
   isRequired: z.boolean(),

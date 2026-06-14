@@ -60,16 +60,16 @@ export const AUTH_ENDPOINTS = {
        */
       RECOMMENDATION: `${V1}/auth/signup/recommendation`,
       /** Onboarding Intelligence Engine — returns dynamic Q&A flow for a category. */
-      ONBOARDING_FLOW: `${V1}/auth/signup/onboarding/flow`,
+      ONBOARDING_FLOW: `${V1}/onboarding/flow`,
       /** Onboarding Intelligence Engine — scores answers and returns recommended edition. */
-      ONBOARDING_RECOMMENDATION: `${V1}/auth/signup/onboarding/recommendation`,
+      ONBOARDING_RECOMMENDATION: `${V1}/onboarding/recommendation`,
       /** Onboarding Intelligence Engine — records a single answer against the session. */
-      ONBOARDING_ANSWER: `${V1}/auth/signup/onboarding/answer`,
+      ONBOARDING_ANSWER: `${V1}/onboarding/answer`,
     },
     // ── Passkey / WebAuthn ────────────────────────────────────
     PASSKEY: {
       REGISTER_BEGIN: `${V1}/auth/passkeys/registration/begin`,
-      REGISTER_VERIFY: `${V1}/auth/passkeys/registration/verify`,
+      REGISTER_VERIFY: `${V1}/auth/passkeys/registration/complete`,
       AUTH_BEGIN: `${V1}/auth/passkeys/authentication/begin`,
       AUTH_VERIFY: `${V1}/auth/passkeys/authentication/verify`,
       LIST: `${V1}/auth/passkeys`,

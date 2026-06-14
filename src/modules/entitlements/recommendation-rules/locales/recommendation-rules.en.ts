@@ -3,8 +3,7 @@ export const en = {
     onboarding: {
       rules: {
         title: "Recommendation Rules",
-        description:
-          "Configure the scoring rules that drive plan recommendations during signup.",
+        description: "Configure the scoring rules that drive plan recommendations during signup.",
         name: "Rule Name",
         condition: "Condition",
         tier: "Recommended Tier",

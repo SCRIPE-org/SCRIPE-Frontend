@@ -131,8 +131,12 @@ export function getEntitlementsContainer(): EntitlementsContainer {
     );
     const editionCategoryService: IEditionCategoryService = new EditionCategoryService(apiService);
     const leadsService: ILeadsService = new LeadsService(apiService);
-    const onboardingQuestionService: IOnboardingQuestionService = new OnboardingQuestionService(apiService);
-    const recommendationRuleService: IRecommendationRuleService = new RecommendationRuleService(apiService);
+    const onboardingQuestionService: IOnboardingQuestionService = new OnboardingQuestionService(
+      apiService
+    );
+    const recommendationRuleService: IRecommendationRuleService = new RecommendationRuleService(
+      apiService
+    );
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {

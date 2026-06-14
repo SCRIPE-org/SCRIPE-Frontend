@@ -194,7 +194,11 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             </p>
           )}
           {subdomainStatus === "available" && vm.wizardData.subdomain && (
-            <p aria-live="polite" className="text-[11px] font-medium" style={{ color: tokens.success }}>
+            <p
+              aria-live="polite"
+              className="text-[11px] font-medium"
+              style={{ color: tokens.success }}
+            >
               {/* a11y: ✓ is decorative — the text already conveys availability */}
               <span aria-hidden="true">✓ </span>
               {t("signup.workspace.subdomainAvailable", { subdomain: vm.wizardData.subdomain }) ||
@@ -296,7 +300,7 @@ export function WorkspaceStep({ vm }: WorkspaceStepProps) {
             (subdomainResult !== null && !subdomainResult.available)
           }
           aria-busy={vm.isLoading}
-          className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] hover:shadow-lg disabled:opacity-60"
+          className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:shadow-lg active:scale-[0.98] disabled:opacity-60"
           style={{
             background: tokens.gradientCta,
           }}

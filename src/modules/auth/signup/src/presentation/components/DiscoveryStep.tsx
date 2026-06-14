@@ -50,7 +50,9 @@ function getVisibleQuestions(
  * teamSize / primaryPriority) so users resuming from Stripe get pre-filled
  * answers on the first two canonical questions.
  */
-function seedInitialAnswers(initialAnswers?: DiscoveryStepProps["initialAnswers"]): Record<string, string[]> {
+function seedInitialAnswers(
+  initialAnswers?: DiscoveryStepProps["initialAnswers"]
+): Record<string, string[]> {
   const seed: Record<string, string[]> = {};
   if (!initialAnswers) return seed;
   if (initialAnswers.businessType) seed["business_type"] = [initialAnswers.businessType];
@@ -131,8 +133,8 @@ export function DiscoveryStep({ onComplete, initialAnswers }: DiscoveryStepProps
   });
 
   // ── Local state ─────────────────────────────────────────────────────────
-  const [answers, setAnswers] = useState<Record<string, string[]>>(
-    () => seedInitialAnswers(initialAnswers)
+  const [answers, setAnswers] = useState<Record<string, string[]>>(() =>
+    seedInitialAnswers(initialAnswers)
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -218,7 +220,8 @@ export function DiscoveryStep({ onComplete, initialAnswers }: DiscoveryStepProps
       <div className="relative mx-auto w-full max-w-4xl px-4 py-8 md:py-16">
         <div className="flex flex-col items-center gap-4 py-12 text-center">
           <p className="text-sm" style={{ color: tokens.inkMuted }}>
-            {t("signup.discovery.loadError") || "Couldn't load questions. You can skip and go straight to plans."}
+            {t("signup.discovery.loadError") ||
+              "Couldn't load questions. You can skip and go straight to plans."}
           </p>
           <div className="flex gap-3">
             <button

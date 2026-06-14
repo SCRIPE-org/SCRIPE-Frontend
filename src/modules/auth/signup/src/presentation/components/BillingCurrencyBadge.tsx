@@ -71,7 +71,9 @@ export function BillingCurrencyBadge({
           {currencyFlag(currency)}
         </span>
         <span className="font-semibold tracking-tight">{meta.symbol}</span>
-        <span className="opacity-30 text-xs leading-none select-none" aria-hidden="true">·</span>
+        <span className="select-none text-xs leading-none opacity-30" aria-hidden="true">
+          ·
+        </span>
         <span className="font-semibold tracking-wide">{currency}</span>
 
         {detectedCountry && (

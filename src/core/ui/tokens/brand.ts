@@ -121,8 +121,7 @@ export const DARK_THEME = {
   gradientPage:
     "radial-gradient(140% 90% at 25% 25%, #1A1140 0%, #0A0820 40%, #06060E 80%, #04040A 100%)",
   gradientCta: "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
-  shadowCard:
-    "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)",
+  shadowCard: "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)",
 } as const;
 
 export const LIGHT_THEME = {
@@ -145,8 +144,7 @@ export const LIGHT_THEME = {
   gradientPage:
     "radial-gradient(140% 90% at 25% 25%, #EDE9FE 0%, #F5F3FF 40%, #F8F7FF 80%, #FAFAFE 100%)",
   gradientCta: "linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #4F46E5 100%)",
-  shadowCard:
-    "0 4px 24px -4px rgba(124,58,237,0.12), 0 1px 3px rgba(0,0,0,0.06)",
+  shadowCard: "0 4px 24px -4px rgba(124,58,237,0.12), 0 1px 3px rgba(0,0,0,0.06)",
 } as const;
 
 export type ThemeTokens = { readonly [K in keyof typeof DARK_THEME]: string };

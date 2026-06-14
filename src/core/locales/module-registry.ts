@@ -47,6 +47,14 @@ import {
 
 // ─── Entitlements ──────────────────────────────────────
 import { en as entitlementsEn, ar as entitlementsAr } from "@modules/entitlements/locales";
+import {
+  en as onboardingQuestionsEn,
+  ar as onboardingQuestionsAr,
+} from "@modules/entitlements/onboarding-questions/locales";
+import {
+  en as recommendationRulesEn,
+  ar as recommendationRulesAr,
+} from "@modules/entitlements/recommendation-rules/locales";
 import { en as editionsEn, ar as editionsAr } from "@modules/entitlements/editions/locales";
 import { en as featuresEn, ar as featuresAr } from "@modules/entitlements/features/locales";
 import { en as overridesEn, ar as overridesAr } from "@modules/entitlements/overrides/locales";
@@ -180,6 +188,8 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   tenantSettingsEn,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsEn,
+  onboardingQuestionsEn,
+  recommendationRulesEn,
   editionsEn,
   featuresEn,
   overridesEn,
@@ -249,6 +259,8 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   tenantSettingsAr,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsAr,
+  onboardingQuestionsAr,
+  recommendationRulesAr,
   editionsAr,
   featuresAr,
   overridesAr,

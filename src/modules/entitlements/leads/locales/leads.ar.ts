@@ -4,7 +4,7 @@ export const ar = {
     subtitle: "طلبات التواصل مع فريق المبيعات",
     searchPlaceholder: "بحث بالشركة أو البريد الإلكتروني أو الاسم…",
     allStatuses: "جميع الحالات",
-    totalCount: "{count} إجمالي",
+    totalCount: "{{count}} إجمالي",
     createButton: "+ إنشاء عميل محتمل",
 
     columns: {
@@ -64,7 +64,7 @@ export const ar = {
     },
 
     pagination: {
-      page: "صفحة {page} من {total}",
+      page: "صفحة {{page}} من {{total}}",
       previous: "السابق",
       next: "التالي",
     },
@@ -75,7 +75,7 @@ export const ar = {
     drawer: {
       loadingDetail: "جارٍ تحميل تفاصيل العميل…",
       notFound: "العميل المحتمل غير موجود.",
-      editionLabel: "إصدار {edition}",
+      editionLabel: "إصدار {{edition}}",
 
       sections: {
         contact: "بيانات التواصل",
@@ -164,12 +164,12 @@ export const ar = {
       convert: "تحويل إلى مستأجر",
       converting: "جارٍ التحويل…",
       successTitle: "تم التحويل!",
-      successMessage: "تم إنشاء المستأجر. تم إرسال بريد الإعداد إلى {email}.",
+      successMessage: "تم إنشاء المستأجر. تم إرسال بريد الإعداد إلى {{email}}.",
       errorTitle: "فشل التحويل",
       warning: {
         title: "تحذير الإصدار",
         message:
-          "حدثت مشكلة في تعيين الإصدار: {error}. تم إنشاء المستأجر لكن قد يحتاج إلى إعداد الخطة يدوياً.",
+          "حدثت مشكلة في تعيين الإصدار: {{error}}. تم إنشاء المستأجر لكن قد يحتاج إلى إعداد الخطة يدوياً.",
       },
       negotiatedPrice: {
         toggle: "سعر الصفقة المخصص",
@@ -209,7 +209,7 @@ export const ar = {
         Converted: "تم التحويل",
         Closed: "تم الإغلاق",
       },
-      by: "بواسطة {actor}",
+      by: "بواسطة {{actor}}",
       system: "النظام",
     },
 
@@ -224,23 +224,23 @@ export const ar = {
 
     bulk: {
       // شريط الإجراءات العائم
-      selectedCount: "{count} محدد",
-      closeSelected: "إغلاق {count}",
-      deleteSelected: "حذف {count}",
+      selectedCount: "{{count}} محدد",
+      closeSelected: "إغلاق {{count}}",
+      deleteSelected: "حذف {{count}}",
       clearSelection: "إلغاء التحديد",
       selectAll: "تحديد جميع العملاء في هذه الصفحة",
-      selectRow: "تحديد {company}",
+      selectRow: "تحديد {{company}}",
       closing: "جارٍ الإغلاق…",
       processing: "جارٍ المعالجة…",
 
       // مربع تأكيد — الإغلاق
-      confirmCloseTitle: "إغلاق {count} عميل محتمل؟",
+      confirmCloseTitle: "إغلاق {{count}} عميل محتمل؟",
       confirmCloseDesc:
         "سيتم وضع علامة على هؤلاء العملاء بأنهم مغلقون. سيتم تخطي العملاء المحوَّلين تلقائيًا.",
       confirmClose: "إغلاق العملاء",
 
       // مربع تأكيد — الحذف
-      confirmDeleteTitle: "حذف {count} عميل محتمل؟",
+      confirmDeleteTitle: "حذف {{count}} عميل محتمل؟",
       confirmDeleteDesc:
         "سيتم حذف العملاء المحتملين المحددين بشكل مبدئي. لا يمكن التراجع عن هذا الإجراء.",
       confirmDelete: "حذف العملاء",
@@ -250,11 +250,11 @@ export const ar = {
       // رسائل التنبيه
       closeSuccess: "اكتمل الإغلاق الجماعي",
       closeError: "فشل إغلاق العملاء. يرجى المحاولة مرة أخرى.",
-      deleteSuccess: "تم حذف {count} عميل محتمل.",
+      deleteSuccess: "تم حذف {{count}} عميل محتمل.",
       deleteError: "فشل حذف بعض العملاء. يرجى المحاولة مرة أخرى.",
-      toastUpdated: "تم تحديث {count}",
-      toastSkipped: "تم تخطي {count}",
-      toastNotFound: "{count} غير موجود",
+      toastUpdated: "تم تحديث {{count}}",
+      toastSkipped: "تم تخطي {{count}}",
+      toastNotFound: "{{count}} غير موجود",
 
       // ملاحظات داخلية في سجل النشاط
       closedNote: "إغلاق جماعي من قِبل المشرف",

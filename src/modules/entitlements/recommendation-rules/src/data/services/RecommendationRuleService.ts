@@ -38,10 +38,7 @@ export class RecommendationRuleService implements IRecommendationRuleService {
   }
 
   async create(data: CreateRecommendationRuleRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.CREATE,
-      data
-    );
+    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.CREATE, data);
   }
 
   async update(id: string, data: UpdateRecommendationRuleRequest): Promise<void> {

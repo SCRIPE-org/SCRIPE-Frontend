@@ -104,6 +104,7 @@ export const en = {
       continue: "Continue",
       alreadyHaveAccount: "Already have an account?",
       signIn: "Sign in",
+      trustCue: "256-bit encrypted · No credit card required",
       passwordStrength: {
         veryWeak: "Very Weak",
         weak: "Weak",
@@ -215,8 +216,9 @@ export const en = {
     // Step 0b — Discovery (conversational 3-question flow)
     discovery: {
       badge: "Smart Discovery · Finding your perfect plan",
-
+      loadError: "Couldn't load questions. You can skip and go straight to plans.",
       // Typewriter headlines
+      seePlans: "See your personalized plans",
       q1Title: "What kind of business are you?",
       q2Title: "How big is your team?",
       q3Title: "What matters most to you?",

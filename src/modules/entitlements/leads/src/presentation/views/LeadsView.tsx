@@ -5,10 +5,12 @@ import { LeadDetailDrawer } from "../components/LeadDetailDrawer";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
 import { ConvertToTenantDialog } from "../components/ConvertToTenantDialog";
 import { AssignLeadDialog } from "../components/AssignLeadDialog";
+import { StatPill } from "../components/StatPill";
+import { BulkActionBar } from "../components/BulkActionBar";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { Checkbox } from "@core/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { GenericTable, type Column } from "@core/crud/components/generic-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +22,7 @@ import {
   AlertDialogTitle,
 } from "@core/ui/alert-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { LeadStatus } from "../../domain/entities/PlatformLead";
+import { type PlatformLeadListItem, type LeadStatus } from "../../domain/entities/PlatformLead";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -42,85 +44,6 @@ const STATUS_DOTS: Record<LeadStatus, string> = {
   Closed: "bg-zinc-500",
 };
 
-// ── Stats pill ────────────────────────────────────────────────────────────────
-
-function StatPill({ label, value, accent }: { label: string; value: number; accent: string }) {
-  return (
-    <div className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 ${accent} bg-current/5`}>
-      <span className="text-lg font-bold tabular-nums">{value}</span>
-      <span className="whitespace-nowrap text-xs text-zinc-400">{label}</span>
-    </div>
-  );
-}
-
-// ── Floating Bulk Action Bar ──────────────────────────────────────────────────
-
-function BulkActionBar({
-  count,
-  onClose,
-  onDelete,
-  onClear,
-  isLoading,
-}: {
-  count: number;
-  onClose: () => void;
-  onDelete: () => void;
-  onClear: () => void;
-  isLoading: boolean;
-}) {
-  const { t } = useI18n();
-  return (
-    <div
-      className={`fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-3 shadow-2xl shadow-black/60 backdrop-blur-sm transition-all duration-300 ${count > 0 ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"} `}
-      aria-live="polite"
-    >
-      {/* Selection count */}
-      <span className="text-sm font-medium tabular-nums text-white">
-        {t("leads.bulk.selectedCount", { count: String(count) })}
-      </span>
-
-      <div className="h-4 w-px bg-zinc-700" />
-
-      {/* Close selected */}
-      <Button
-        id="leads-bulk-close-btn"
-        size="sm"
-        disabled={isLoading}
-        onClick={onClose}
-        className="h-8 bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-500"
-      >
-        {isLoading
-          ? t("leads.bulk.closing")
-          : t("leads.bulk.closeSelected", { count: String(count) })}
-      </Button>
-
-      {/* Delete selected */}
-      <Button
-        id="leads-bulk-delete-btn"
-        size="sm"
-        variant="destructive"
-        disabled={isLoading}
-        onClick={onDelete}
-        className="h-8 px-3 text-xs font-medium"
-      >
-        {t("leads.bulk.deleteSelected", { count: String(count) })}
-      </Button>
-
-      <div className="h-4 w-px bg-zinc-700" />
-
-      {/* Clear */}
-      <button
-        id="leads-bulk-clear-btn"
-        onClick={onClear}
-        className="text-xs text-zinc-400 transition-colors hover:text-white"
-        aria-label={t("leads.bulk.clearSelection")}
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
-
 // ── Main view ─────────────────────────────────────────────────────────────────
 
 export function LeadsView() {
@@ -128,10 +51,98 @@ export function LeadsView() {
   const { t } = useI18n();
 
   const leads = vm.leads;
-  const allPageSelected = leads.length > 0 && leads.every((l) => vm.selectedIds.has(l.id));
-  const someSelected = leads.some((l) => vm.selectedIds.has(l.id));
-
   const isAnyBulkPending = vm.isBulkClosing || vm.isBulkDeleting;
+
+  const columns: Column<PlatformLeadListItem>[] = [
+    {
+      key: "companyName",
+      label: t("leads.columns.company"),
+      render: (_, lead) => (
+        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+          <p className="truncate font-medium text-white transition-colors group-hover:text-indigo-300">
+            {lead.companyName}
+          </p>
+          {lead.discoveryTagKeys.length > 0 && (
+            <div className="mt-1 flex flex-wrap items-center gap-1">
+              {lead.discoveryTagKeys.map(({ key, raw }) => (
+                <span
+                  key={key}
+                  className="inline-flex items-center rounded border border-violet-500/20 bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400"
+                >
+                  {raw ? key : t(key)}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "contactName",
+      label: t("leads.columns.contact"),
+      render: (_, lead) => (
+        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+          <p className="truncate text-zinc-300">{lead.contactName}</p>
+          <p className="mt-0.5 truncate text-xs text-zinc-500">{lead.email}</p>
+        </div>
+      ),
+    },
+    {
+      key: "editionKey",
+      label: t("leads.columns.edition"),
+      render: (_, lead) => (
+        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+          {lead.editionKey ? (
+            <span className="font-mono text-xs text-zinc-400">{lead.editionKey}</span>
+          ) : (
+            <span className="text-zinc-600">—</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      label: t("leads.columns.status"),
+      render: (_, lead) => (
+        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[lead.status]}`}
+          >
+            <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOTS[lead.status]}`} />
+            {t(`leads.status.${lead.status}`)}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: "requestedAt",
+      label: t("leads.columns.created"),
+      render: (_, lead) => (
+        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+          <p className="text-xs text-zinc-500">{lead.relativeCreatedAt}</p>
+          <p className="mt-0.5 text-[10px] text-zinc-600">{t(lead.sourceKey)}</p>
+        </div>
+      ),
+    },
+  ];
+
+  const actions = [
+    {
+      label: t("leads.actions.assign"),
+      onClick: (lead: PlatformLeadListItem) => vm.handleOpenAssignDialog(lead.id),
+      show: (lead: PlatformLeadListItem) => lead.status !== "Converted" && lead.status !== "Closed",
+    },
+    {
+      label: t("leads.actions.convert"),
+      onClick: (lead: PlatformLeadListItem) => vm.handleOpenConvertDialog(lead.id),
+      show: (lead: PlatformLeadListItem) => lead.status !== "Converted" && lead.status !== "Closed",
+    },
+    {
+      label: t("leads.actions.delete"),
+      onClick: (lead: PlatformLeadListItem) => vm.handleDeleteLead(lead.id),
+      variant: "destructive" as const,
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -207,177 +218,24 @@ export function LeadsView() {
         </Select>
       </div>
 
-      {/* ── Table ── */}
-      <div className="overflow-hidden rounded-xl border border-zinc-800">
-        <table className="w-full text-sm">
-          <thead className="border-b border-zinc-800 bg-zinc-900">
-            <tr>
-              {/* Select-all checkbox */}
-              <th className="w-10 px-4 py-3">
-                <Checkbox
-                  id="leads-select-all"
-                  checked={allPageSelected}
-                  data-state={someSelected && !allPageSelected ? "indeterminate" : undefined}
-                  onCheckedChange={() => vm.handleSelectAll(leads)}
-                  aria-label={t("leads.bulk.selectAll")}
-                  className="border-zinc-600 data-[state=checked]:border-indigo-600 data-[state=checked]:bg-indigo-600"
-                />
-              </th>
-              <th className="w-[28%] px-4 py-3 text-start font-medium text-zinc-400">
-                {t("leads.columns.company")}
-              </th>
-              <th className="px-4 py-3 text-start font-medium text-zinc-400">
-                {t("leads.columns.contact")}
-              </th>
-              <th className="hidden px-4 py-3 text-start font-medium text-zinc-400 lg:table-cell">
-                {t("leads.columns.edition")}
-              </th>
-              <th className="px-4 py-3 text-start font-medium text-zinc-400">
-                {t("leads.columns.status")}
-              </th>
-              <th className="hidden px-4 py-3 text-start font-medium text-zinc-400 md:table-cell">
-                {t("leads.columns.created")}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {vm.isLoading ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-zinc-500">
-                  {t("leads.loading")}
-                </td>
-              </tr>
-            ) : leads.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-zinc-500">
-                  {t("leads.empty")}
-                </td>
-              </tr>
-            ) : (
-              leads.map((lead) => {
-                const isSelected = vm.selectedIds.has(lead.id);
-                return (
-                  <tr
-                    key={lead.id}
-                    id={`lead-row-${lead.id}`}
-                    className={`group border-t border-zinc-800/50 transition-colors ${isSelected ? "bg-indigo-950/30" : "hover:bg-zinc-800/40"} `}
-                  >
-                    {/* Row checkbox — stops row click propagation */}
-                    <td className="w-10 px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        id={`lead-check-${lead.id}`}
-                        checked={isSelected}
-                        onCheckedChange={() => vm.handleToggleSelect(lead.id)}
-                        aria-label={t("leads.bulk.selectRow", { company: lead.companyName })}
-                        className="border-zinc-600 data-[state=checked]:border-indigo-600 data-[state=checked]:bg-indigo-600"
-                      />
-                    </td>
-
-                    {/* Company + discovery tags — click opens drawer */}
-                    <td
-                      className="cursor-pointer px-4 py-3"
-                      onClick={() => vm.handleOpenDrawer(lead.id)}
-                    >
-                      <p className="truncate font-medium text-white transition-colors group-hover:text-indigo-300">
-                        {lead.companyName}
-                      </p>
-                      {lead.discoveryTagKeys.length > 0 && (
-                        <div className="mt-1 flex flex-wrap items-center gap-1">
-                          {lead.discoveryTagKeys.map(({ key, raw }) => (
-                            <span
-                              key={key}
-                              className="inline-flex items-center rounded border border-violet-500/20 bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400"
-                            >
-                              {raw ? key : t(key)}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Contact + email */}
-                    <td
-                      className="cursor-pointer px-4 py-3"
-                      onClick={() => vm.handleOpenDrawer(lead.id)}
-                    >
-                      <p className="truncate text-zinc-300">{lead.contactName}</p>
-                      <p className="mt-0.5 truncate text-xs text-zinc-500">{lead.email}</p>
-                    </td>
-
-                    {/* Edition */}
-                    <td
-                      className="hidden cursor-pointer px-4 py-3 lg:table-cell"
-                      onClick={() => vm.handleOpenDrawer(lead.id)}
-                    >
-                      {lead.editionKey ? (
-                        <span className="font-mono text-xs text-zinc-400">{lead.editionKey}</span>
-                      ) : (
-                        <span className="text-zinc-600">—</span>
-                      )}
-                    </td>
-
-                    {/* Status badge */}
-                    <td
-                      className="cursor-pointer px-4 py-3"
-                      onClick={() => vm.handleOpenDrawer(lead.id)}
-                    >
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[lead.status]}`}
-                      >
-                        <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOTS[lead.status]}`} />
-                        {t(`leads.status.${lead.status}`)}
-                      </span>
-                    </td>
-
-                    {/* Relative time + source */}
-                    <td
-                      className="hidden cursor-pointer px-4 py-3 md:table-cell"
-                      onClick={() => vm.handleOpenDrawer(lead.id)}
-                    >
-                      <p className="text-xs text-zinc-500">{lead.relativeCreatedAt}</p>
-                      <p className="mt-0.5 text-[10px] text-zinc-600">{t(lead.sourceKey)}</p>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* ── Pagination ── */}
-      {vm.totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-zinc-400">
-          <span>
-            {t("leads.pagination.page", {
-              page: String(vm.page),
-              total: String(vm.totalPages),
-            })}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              id="leads-prev-page"
-              variant="outline"
-              size="sm"
-              disabled={vm.page <= 1}
-              onClick={() => vm.handlePageChange(vm.page - 1)}
-              className="border-zinc-700 text-zinc-400 hover:text-white"
-            >
-              {t("leads.pagination.previous")}
-            </Button>
-            <Button
-              id="leads-next-page"
-              variant="outline"
-              size="sm"
-              disabled={vm.page >= vm.totalPages}
-              onClick={() => vm.handlePageChange(vm.page + 1)}
-              className="border-zinc-700 text-zinc-400 hover:text-white"
-            >
-              {t("leads.pagination.next")}
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* ── Generic Table ── */}
+      <GenericTable
+        data={leads}
+        columns={columns}
+        actions={actions}
+        loading={vm.isLoading}
+        selectable={true}
+        selectedItems={Array.from(vm.selectedIds)}
+        onSelectionChange={vm.handleSelectionChange}
+        pagination={{
+          itemsCount: vm.totalCount,
+          pageSize: vm.pageSize,
+          currentPage: vm.page,
+          pagesCount: vm.totalPages,
+          onPageChange: vm.handlePageChange,
+        }}
+        emptyMessage={t("leads.empty")}
+      />
 
       {/* ── Lead Detail Drawer ── */}
       <LeadDetailDrawer

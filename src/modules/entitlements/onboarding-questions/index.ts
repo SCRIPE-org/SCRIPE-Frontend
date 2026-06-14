@@ -1,5 +1,8 @@
 export { OnboardingQuestionsView } from "./src/presentation/views/OnboardingQuestionsView";
-export type { OnboardingQuestionData, AnswerOptionData } from "./src/domain/entities/OnboardingQuestion";
+export type {
+  OnboardingQuestionData,
+  AnswerOptionData,
+} from "./src/domain/entities/OnboardingQuestion";
 export { OnboardingQuestion } from "./src/domain/entities/OnboardingQuestion";
 export type {
   CreateOnboardingQuestionRequest,

@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { safeParseApiResponse } from "@core/common/zod-utils";
 import { OnboardingQuestion } from "../../domain/entities/OnboardingQuestion";
-import type { OnboardingQuestionData, AnswerOptionData } from "../../domain/entities/OnboardingQuestion";
+import type {
+  OnboardingQuestionData,
+  AnswerOptionData,
+} from "../../domain/entities/OnboardingQuestion";
 import type {
   OnboardingQuestionDetailModel,
   OnboardingQuestionListModel,

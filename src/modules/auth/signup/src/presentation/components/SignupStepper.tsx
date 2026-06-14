@@ -41,12 +41,8 @@ export function SignupStepper({ currentStep, steps, className }: SignupStepperPr
               <div
                 className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300"
                 style={{
-                  background:
-                    isCompleted || isActive
-                      ? tokens.gradientCta
-                      : tokens.border,
-                  color:
-                    isCompleted || isActive ? tokens.accentContrast : tokens.inkFaint,
+                  background: isCompleted || isActive ? tokens.gradientCta : tokens.border,
+                  color: isCompleted || isActive ? tokens.accentContrast : tokens.inkFaint,
                   boxShadow: isActive ? `0 0 12px ${tokens.accent}66` : "none",
                   border: isActive ? tokens.borderActive : "none",
                 }}
@@ -70,11 +66,7 @@ export function SignupStepper({ currentStep, steps, className }: SignupStepperPr
               <span
                 className="hidden text-[10px] font-medium sm:block"
                 style={{
-                  color: isActive
-                    ? tokens.ink
-                    : isFuture
-                      ? tokens.inkGhost
-                      : tokens.inkMuted,
+                  color: isActive ? tokens.ink : isFuture ? tokens.inkGhost : tokens.inkMuted,
                 }}
               >
                 {step.label}

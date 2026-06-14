@@ -104,11 +104,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (typeof value === "string") {
-        // Simple interpolation: replace {{param}} with actual values
+        // Simple interpolation: replace {{param}} and {param} with actual values
         if (params) {
-          return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+          let interpolated = value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
             return params[paramKey] !== undefined ? String(params[paramKey]) : match;
           });
+          interpolated = interpolated.replace(/\{(\w+)\}/g, (match, paramKey) => {
+            return params[paramKey] !== undefined ? String(params[paramKey]) : match;
+          });
+          return interpolated;
         }
         return value;
       }

@@ -4,7 +4,7 @@ export const en = {
     subtitle: "Platform contact-sales inquiries",
     searchPlaceholder: "Search by company, email, or contact\u2026",
     allStatuses: "All Statuses",
-    totalCount: "{count} total",
+    totalCount: "{{count}} total",
     createButton: "+ Create Lead",
 
     columns: {
@@ -64,7 +64,7 @@ export const en = {
     },
 
     pagination: {
-      page: "Page {page} of {total}",
+      page: "Page {{page}} of {{total}}",
       previous: "Previous",
       next: "Next",
     },
@@ -75,7 +75,7 @@ export const en = {
     drawer: {
       loadingDetail: "Loading lead details\u2026",
       notFound: "Lead not found.",
-      editionLabel: "{edition} Edition",
+      editionLabel: "{{edition}} Edition",
 
       sections: {
         contact: "Contact",
@@ -164,12 +164,12 @@ export const en = {
       convert: "Convert to Tenant",
       converting: "Converting\u2026",
       successTitle: "Lead Converted!",
-      successMessage: "Tenant provisioned. Setup email sent to {email}.",
+      successMessage: "Tenant provisioned. Setup email sent to {{email}}.",
       errorTitle: "Conversion Failed",
       warning: {
         title: "Edition Warning",
         message:
-          "Edition assignment had an issue: {error}. Tenant was created but may need manual plan setup.",
+          "Edition assignment had an issue: {{error}}. Tenant was created but may need manual plan setup.",
       },
       negotiatedPrice: {
         toggle: "Custom Deal Price",
@@ -210,7 +210,7 @@ export const en = {
         Converted: "Converted",
         Closed: "Closed",
       },
-      by: "by {actor}",
+      by: "by {{actor}}",
       system: "System",
     },
 
@@ -225,23 +225,23 @@ export const en = {
 
     bulk: {
       // Floating bar
-      selectedCount: "{count} selected",
-      closeSelected: "Close {count}",
-      deleteSelected: "Delete {count}",
+      selectedCount: "{{count}} selected",
+      closeSelected: "Close {{count}}",
+      deleteSelected: "Delete {{count}}",
       clearSelection: "Clear selection",
       selectAll: "Select all leads on this page",
-      selectRow: "Select {company}",
+      selectRow: "Select {{company}}",
       closing: "Closing…",
       processing: "Processing…",
 
       // Confirmation dialog — Close
-      confirmCloseTitle: "Close {count} leads?",
+      confirmCloseTitle: "Close {{count}} leads?",
       confirmCloseDesc:
         "These leads will be marked as Closed. Converted leads will be skipped automatically.",
       confirmClose: "Close leads",
 
       // Confirmation dialog — Delete
-      confirmDeleteTitle: "Delete {count} leads?",
+      confirmDeleteTitle: "Delete {{count}} leads?",
       confirmDeleteDesc:
         "This will permanently soft-delete the selected leads. This action cannot be undone.",
       confirmDelete: "Delete leads",
@@ -251,11 +251,11 @@ export const en = {
       // Toast messages
       closeSuccess: "Bulk close complete",
       closeError: "Failed to close leads. Please try again.",
-      deleteSuccess: "{count} leads deleted.",
+      deleteSuccess: "{{count}} leads deleted.",
       deleteError: "Failed to delete some leads. Please try again.",
-      toastUpdated: "{count} updated",
-      toastSkipped: "{count} skipped",
-      toastNotFound: "{count} not found",
+      toastUpdated: "{{count}} updated",
+      toastSkipped: "{{count}} skipped",
+      toastNotFound: "{{count}} not found",
 
       // Internal notes appended to activity log
       closedNote: "Bulk closed by admin",

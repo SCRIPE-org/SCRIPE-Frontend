@@ -561,15 +561,23 @@ function WorkspaceCard({
   const isDisabled = isLocked || isComingSoon;
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={isDisabled ? -1 : 0}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (isDisabled) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-pressed={isActive}
       aria-disabled={isDisabled}
       className={cn(
-        "group relative flex flex-col items-center gap-2 rounded-[14px] transition-all duration-200",
+        "group relative flex flex-col items-center gap-2 rounded-[14px] outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isComingSoon ? "cursor-default" : "cursor-pointer"
       )}
       style={{
@@ -593,6 +601,7 @@ function WorkspaceCard({
         <button
           type="button"
           onClick={onTogglePin}
+          onKeyDown={(e) => e.stopPropagation()}
           disabled={isPinLoading}
           aria-label={isPinned ? "Unpin workspace" : "Pin workspace"}
           className={cn(
@@ -672,7 +681,7 @@ function WorkspaceCard({
       >
         {name}
       </span>
-    </button>
+    </div>
   );
 }
 

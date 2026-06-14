@@ -147,27 +147,22 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
    */
   const [discoveryAnswersRaw, setDiscoveryAnswersRaw] = useState<Record<string, string[]>>({});
 
-  const completeDiscovery = useCallback(
-    (answers: Record<string, string[]>) => {
-      setDiscoveryAnswersRaw(answers);
-      const businessType = answers["business_type"]?.[0] ?? null;
-      const teamSize = answers["team_size"]?.[0] ?? null;
-      const primaryPriority =
-        (answers["primary_priority"] ?? []).length > 0
-          ? answers["primary_priority"].join(",")
-          : null;
-      setWizardData((prev) => ({
-        ...prev,
-        businessType,
-        teamSize,
-        primaryPriority,
-        categoryKey: businessType,
-      }));
-      setNavigationDirection(1);
-      setStep("plan");
-    },
-    []
-  );
+  const completeDiscovery = useCallback((answers: Record<string, string[]>) => {
+    setDiscoveryAnswersRaw(answers);
+    const businessType = answers["business_type"]?.[0] ?? null;
+    const teamSize = answers["team_size"]?.[0] ?? null;
+    const primaryPriority =
+      (answers["primary_priority"] ?? []).length > 0 ? answers["primary_priority"].join(",") : null;
+    setWizardData((prev) => ({
+      ...prev,
+      businessType,
+      teamSize,
+      primaryPriority,
+      categoryKey: businessType,
+    }));
+    setNavigationDirection(1);
+    setStep("plan");
+  }, []);
 
   // ── Plan selection ───────────────────────────────────────────────────────
   const selectPlan = useCallback((edition: PublicEdition, billingCycle: "monthly" | "annual") => {

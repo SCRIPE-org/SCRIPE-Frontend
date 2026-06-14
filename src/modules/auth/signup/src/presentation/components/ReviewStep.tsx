@@ -216,10 +216,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
                   `${trialDays}-day free trial — starts when you complete checkout`}
               </p>
               {formattedPrice && (
-                <p
-                  className="mt-1 text-sm font-semibold"
-                  style={{ color: tokens.ink }}
-                >
+                <p className="mt-1 text-sm font-semibold" style={{ color: tokens.ink }}>
                   {t("signup.review.thenPrice", { price: formattedPrice, cycle: perCycle }) ||
                     `Then ${formattedPrice}/${perCycle}`}
                 </p>

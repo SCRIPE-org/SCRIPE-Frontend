@@ -3,8 +3,7 @@ export const en = {
     onboarding: {
       questions: {
         title: "Onboarding Questions",
-        description:
-          "Manage the signup intelligence engine questions and answer options.",
+        description: "Manage the signup intelligence engine questions and answer options.",
         key: "Question Key",
         label: "Label",
         labelEn: "Label (English)",

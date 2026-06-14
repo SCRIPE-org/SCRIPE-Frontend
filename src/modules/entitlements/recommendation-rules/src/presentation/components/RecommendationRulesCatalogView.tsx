@@ -25,10 +25,7 @@ interface RecommendationRulesCatalogViewProps {
   language: string;
 }
 
-export function RecommendationRulesCatalogView({
-  vm,
-  t,
-}: RecommendationRulesCatalogViewProps) {
+export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCatalogViewProps) {
   const config: CrudConfig<RecommendationRule> = useMemo(
     () => ({
       titleKey: "entitlements.onboarding.rules.title",
@@ -40,9 +37,7 @@ export function RecommendationRulesCatalogView({
           key: "name",
           label: t("entitlements.onboarding.rules.name") || "Rule Name",
           render: (value: unknown) => (
-            <span className="font-mono text-xs text-muted-foreground">
-              {String(value ?? "")}
-            </span>
+            <span className="font-mono text-xs text-muted-foreground">{String(value ?? "")}</span>
           ),
         },
         {
@@ -61,21 +56,29 @@ export function RecommendationRulesCatalogView({
           label: t("entitlements.onboarding.rules.tier") || "Tier",
           render: (value: unknown) => {
             const level = value as number | undefined;
-            if (level === undefined || level === null) return <span className="text-muted-foreground">—</span>;
+            if (level === undefined || level === null)
+              return <span className="text-muted-foreground">—</span>;
             const colorClass = TIER_BADGE_COLORS[level] ?? "bg-gray-100 text-gray-700";
             const tempRule = new (class {
               getTierLabel() {
                 switch (level) {
-                  case 0: return t("entitlements.onboarding.rules.tierFree") || "Free";
-                  case 1: return t("entitlements.onboarding.rules.tierPro") || "Pro";
-                  case 2: return t("entitlements.onboarding.rules.tierUltra") || "Ultra";
-                  case 3: return t("entitlements.onboarding.rules.tierEnterprise") || "Enterprise";
-                  default: return "—";
+                  case 0:
+                    return t("entitlements.onboarding.rules.tierFree") || "Free";
+                  case 1:
+                    return t("entitlements.onboarding.rules.tierPro") || "Pro";
+                  case 2:
+                    return t("entitlements.onboarding.rules.tierUltra") || "Ultra";
+                  case 3:
+                    return t("entitlements.onboarding.rules.tierEnterprise") || "Enterprise";
+                  default:
+                    return "—";
                 }
               }
             })();
             return (
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colorClass}`}>
+              <span
+                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colorClass}`}
+              >
                 {tempRule.getTierLabel()}
               </span>
             );
@@ -119,8 +122,7 @@ export function RecommendationRulesCatalogView({
           type: "textarea" as const,
           required: true,
           placeholder: '{"team_size":"solo"}',
-          description:
-            'Single value: {"key":"value"}  |  Multi-value match: {"key":["v1","v2"]}',
+          description: 'Single value: {"key":"value"}  |  Multi-value match: {"key":["v1","v2"]}',
         },
         {
           name: "recommendedTierLevel",
@@ -167,20 +169,20 @@ export function RecommendationRulesCatalogView({
         },
       ],
 
-      editFields: (item: RecommendationRule) => [
+      editFields: (item: RecommendationRule | null) => [
         {
           name: "conditionJson",
           label: t("entitlements.onboarding.rules.condition") || "Condition (JSON)",
           type: "textarea" as const,
           required: true,
-          defaultValue: item.conditionJson,
+          defaultValue: item?.conditionJson ?? "",
         },
         {
           name: "recommendedTierLevel",
           label: t("entitlements.onboarding.rules.tier") || "Recommended Tier",
           type: "select" as const,
           defaultValue:
-            item.recommendedTierLevel !== undefined
+            item?.recommendedTierLevel !== undefined && item?.recommendedTierLevel !== null
               ? String(item.recommendedTierLevel)
               : undefined,
           options: [
@@ -198,27 +200,27 @@ export function RecommendationRulesCatalogView({
           label: t("entitlements.onboarding.rules.scoreBonus") || "Score Bonus",
           type: "number" as const,
           required: true,
-          defaultValue: item.scoreBonus,
+          defaultValue: item?.scoreBonus ?? 0,
         },
         {
           name: "reasonEn",
           label: t("entitlements.onboarding.rules.reasonEn") || "Reason (English)",
           type: "textarea" as const,
           required: true,
-          defaultValue: item.reasonEn,
+          defaultValue: item?.reasonEn ?? "",
         },
         {
           name: "reasonAr",
           label: t("entitlements.onboarding.rules.reasonAr") || "Reason (Arabic)",
           type: "textarea" as const,
           required: true,
-          defaultValue: item.reasonAr,
+          defaultValue: item?.reasonAr ?? "",
         },
         {
           name: "priority",
           label: t("entitlements.onboarding.rules.priority") || "Priority",
           type: "number" as const,
-          defaultValue: item.priority,
+          defaultValue: item?.priority ?? 5,
         },
       ],
 
