@@ -1,0 +1,32 @@
+export const ar = {
+  entitlements: {
+    onboarding: {
+      rules: {
+        title: "قواعد التوصية",
+        description: "تكوين قواعد التسجيل التي تحرك توصيات الخطة أثناء التسجيل.",
+        name: "اسم القاعدة",
+        condition: "الشرط",
+        tier: "المستوى الموصى به",
+        scoreBonus: "مكافأة الدرجات",
+        priority: "الأولوية",
+        reason: "السبب",
+        reasonEn: "السبب (إنجليزي)",
+        reasonAr: "السبب (عربي)",
+        isSystem: "نظامي",
+        create: "إنشاء قاعدة",
+        edit: "تعديل القاعدة",
+        deleteConfirmTitle: "حذف القاعدة",
+        deleteConfirmDesc:
+          "سيؤدي هذا إلى إزالة قاعدة التوصية. لا يمكن حذف القواعد النظامية.",
+        created: "تم إنشاء القاعدة",
+        updated: "تم تحديث القاعدة",
+        deleted: "تم حذف القاعدة",
+        noItems: "لا توجد قواعد توصية",
+        tierFree: "مجاني",
+        tierPro: "برو",
+        tierUltra: "الترا",
+        tierEnterprise: "المؤسسات",
+      },
+    },
+  },
+};

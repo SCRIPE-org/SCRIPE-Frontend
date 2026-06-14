@@ -41,6 +41,10 @@ import { CommissionLedgerRepository } from "./commission-ledger/src/data/reposit
 import { EditionCategoryRepository } from "./edition-categories/src/data/repositories/EditionCategoryRepository";
 import { LeadsService } from "./leads/src/data/services/LeadsService";
 import { LeadsRepository } from "./leads/src/data/repositories/LeadsRepository";
+import { OnboardingQuestionService } from "./onboarding-questions/src/data/services/OnboardingQuestionService";
+import { OnboardingQuestionRepository } from "./onboarding-questions/src/data/repositories/OnboardingQuestionRepository";
+import { RecommendationRuleService } from "./recommendation-rules/src/data/services/RecommendationRuleService";
+import { RecommendationRuleRepository } from "./recommendation-rules/src/data/repositories/RecommendationRuleRepository";
 
 // Tenant Gateways — no separate repository import needed (already imported above)
 
@@ -59,6 +63,8 @@ import type { ITenantGatewayRepository } from "./tenant-gateways/src/domain/inte
 import type { ICommissionLedgerRepository } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerRepository";
 import type { IEditionCategoryRepository } from "./edition-categories/src/domain/interfaces/IEditionCategoryRepository";
 import type { ILeadsRepository } from "./leads/src/domain/interfaces/ILeadsRepository";
+import type { IOnboardingQuestionRepository } from "./onboarding-questions/src/domain/interfaces/IOnboardingQuestionRepository";
+import type { IRecommendationRuleRepository } from "./recommendation-rules/src/domain/interfaces/IRecommendationRuleRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -75,6 +81,8 @@ import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfa
 import type { ICommissionLedgerService } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerService";
 import type { IEditionCategoryService } from "./edition-categories/src/domain/interfaces/IEditionCategoryService";
 import type { ILeadsService } from "./leads/src/domain/interfaces/ILeadsService";
+import type { IOnboardingQuestionService } from "./onboarding-questions/src/domain/interfaces/IOnboardingQuestionService";
+import type { IRecommendationRuleService } from "./recommendation-rules/src/domain/interfaces/IRecommendationRuleService";
 
 export interface EntitlementsContainer {
   featureRepository: IFeatureRepository;
@@ -91,6 +99,8 @@ export interface EntitlementsContainer {
   commissionLedgerRepository: ICommissionLedgerRepository;
   editionCategoryRepository: IEditionCategoryRepository;
   leadsRepository: ILeadsRepository;
+  onboardingQuestionRepository: IOnboardingQuestionRepository;
+  recommendationRuleRepository: IRecommendationRuleRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -121,6 +131,8 @@ export function getEntitlementsContainer(): EntitlementsContainer {
     );
     const editionCategoryService: IEditionCategoryService = new EditionCategoryService(apiService);
     const leadsService: ILeadsService = new LeadsService(apiService);
+    const onboardingQuestionService: IOnboardingQuestionService = new OnboardingQuestionService(apiService);
+    const recommendationRuleService: IRecommendationRuleService = new RecommendationRuleService(apiService);
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {
@@ -138,6 +150,8 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
       editionCategoryRepository: new EditionCategoryRepository(editionCategoryService),
       leadsRepository: new LeadsRepository(leadsService),
+      onboardingQuestionRepository: new OnboardingQuestionRepository(onboardingQuestionService),
+      recommendationRuleRepository: new RecommendationRuleRepository(recommendationRuleService),
     };
   }
 
@@ -189,5 +203,11 @@ export const entitlementsContainer = {
   },
   get leadsRepository() {
     return getEntitlementsContainer().leadsRepository;
+  },
+  get onboardingQuestionRepository() {
+    return getEntitlementsContainer().onboardingQuestionRepository;
+  },
+  get recommendationRuleRepository() {
+    return getEntitlementsContainer().recommendationRuleRepository;
   },
 };

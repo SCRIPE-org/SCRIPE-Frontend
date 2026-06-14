@@ -1,0 +1,20 @@
+/**
+ * RecommendationRule Repository Interface
+ *
+ * Returns domain entities — never raw DTOs.
+ * Implemented by RecommendationRuleRepository in the data layer.
+ */
+import type { RecommendationRule } from "../entities/RecommendationRule";
+import type {
+  CreateRecommendationRuleRequest,
+  UpdateRecommendationRuleRequest,
+} from "../entities/RecommendationRuleRequests";
+import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+
+export interface IRecommendationRuleRepository {
+  getAll(params: PaginationParams): Promise<PagedResult<RecommendationRule>>;
+  getById(id: string): Promise<RecommendationRule>;
+  create(request: CreateRecommendationRuleRequest): Promise<string>;
+  update(id: string, request: UpdateRecommendationRuleRequest): Promise<void>;
+  delete(id: string): Promise<void>;
+}

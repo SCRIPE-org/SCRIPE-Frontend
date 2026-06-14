@@ -248,5 +248,20 @@ export const ENTITLEMENTS_ENDPOINTS = {
       DELETE: (id: string) => `${V1}/leads/${id}`,
       BULK_STATUS: `${V1}/leads/bulk-status`,
     },
+    // ===== ADMIN ONBOARDING ENGINE =====
+    ONBOARDING_QUESTIONS: {
+      LIST: `${V1}/onboarding/questions`,
+      BY_ID: (id: string) => `${V1}/onboarding/questions/${id}`,
+      CREATE: `${V1}/onboarding/questions`,
+      UPDATE: (id: string) => `${V1}/onboarding/questions/${id}`,
+      DELETE: (id: string) => `${V1}/onboarding/questions/${id}`,
+    },
+    ONBOARDING_RULES: {
+      LIST: `${V1}/onboarding/rules`,
+      BY_ID: (id: string) => `${V1}/onboarding/rules/${id}`,
+      CREATE: `${V1}/onboarding/rules`,
+      UPDATE: (id: string) => `${V1}/onboarding/rules/${id}`,
+      DELETE: (id: string) => `${V1}/onboarding/rules/${id}`,
+    },
   },
 };

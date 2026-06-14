@@ -94,4 +94,14 @@ export const ENTITLEMENTS_PERMISSIONS = {
   LEADS_DELETE: "leads.delete",
   LEADS_ASSIGN: "leads.assign",
   LEADS_CONVERT: "leads.convert",
+
+  // ── Onboarding Engine ──────────────────────────────────
+  ONBOARDING_QUESTIONS_VIEW: "onboarding_questions.view",
+  ONBOARDING_QUESTIONS_CREATE: "onboarding_questions.create",
+  ONBOARDING_QUESTIONS_UPDATE: "onboarding_questions.update",
+  ONBOARDING_QUESTIONS_DELETE: "onboarding_questions.delete",
+  ONBOARDING_RULES_VIEW: "onboarding_rules.view",
+  ONBOARDING_RULES_CREATE: "onboarding_rules.create",
+  ONBOARDING_RULES_UPDATE: "onboarding_rules.update",
+  ONBOARDING_RULES_DELETE: "onboarding_rules.delete",
 } as const;
