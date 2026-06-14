@@ -22,6 +22,8 @@ import type {
   PricingContextDto,
   ContactSalesRequestDto,
   RecommendationDto,
+  OnboardingFlowDto,
+  OnboardingRecommendationDto,
 } from "../models/SignupModels";
 import type {
   RegisterPayload,
@@ -156,5 +158,36 @@ export class SignupService implements ISignupService {
         currency: payload.currency,
       }
     );
+  }
+
+  async getOnboardingFlow(params: {
+    category?: string;
+    lang?: string;
+  }): Promise<OnboardingFlowDto> {
+    const query: Record<string, string> = { lang: params.lang ?? "en" };
+    if (params.category) query.category = params.category;
+    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_FLOW, query);
+    return this.api.get<OnboardingFlowDto>(url);
+  }
+
+  async getOnboardingRecommendation(params: {
+    category: string;
+    answers: string;
+    lang: string;
+  }): Promise<OnboardingRecommendationDto> {
+    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_RECOMMENDATION, {
+      category: params.category,
+      answers: params.answers,
+      lang: params.lang,
+    });
+    return this.api.get<OnboardingRecommendationDto>(url);
+  }
+
+  async submitOnboardingAnswer(params: {
+    sessionRef: string;
+    questionKey: string;
+    values: string[];
+  }): Promise<void> {
+    await this.api.post<void>(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_ANSWER, params);
   }
 }

@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSignupTheme } from "@core/providers/signup-theme";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Shield, Users, Zap, Globe, Headphones, Package, Star, Check } from "lucide-react";
@@ -151,6 +153,7 @@ export function PlanCard({
   isFxConverted = false,
 }: PlanCardProps) {
   const { t } = useI18n();
+  const { tokens } = useSignupTheme();
   const price = billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
   const monthlyEquiv = billingCycle === "annual" && price ? Math.round(price / 12) : price;
   const isFree = edition.monthlyPrice === 0 && edition.tierLevel === 0;
@@ -178,28 +181,10 @@ export function PlanCard({
     : null;
 
   return (
-    <div
-      className="relative flex w-full flex-col rounded-2xl transition-all duration-300 hover:translate-y-[-2px]"
-      style={{
-        background: isHighlighted
-          ? "linear-gradient(180deg, rgba(30,16,60,0.7), rgba(14,10,32,0.8))"
-          : "rgba(255,255,255,0.02)",
-        border: isHighlighted
-          ? "1.5px solid rgba(168,85,247,0.35)"
-          : isRecommended
-            ? "1.5px solid rgba(34,211,238,0.35)"
-            : "1px solid rgba(255,255,255,0.06)",
-        boxShadow: isHighlighted
-          ? "0 0 40px rgba(168,85,247,0.08)"
-          : isRecommended
-            ? "0 0 32px rgba(34,211,238,0.07)"
-            : "none",
-        animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 80}ms both`,
-      }}
-    >
-      {/* Recommendation badge — shown when Discovery recommends this tier */}
+    <div className="flex w-full flex-col" style={{ animation: `sxRise 500ms cubic-bezier(.22,.61,.36,1) ${index * 80}ms both` }}>
+      {/* Recommendation badge — rendered ABOVE card to eliminate z-index/overlap issues */}
       {isRecommended && (
-        <div className="absolute inset-x-0 -top-3.5 z-20 flex justify-center">
+        <div className="flex justify-center pb-2">
           <span
             className="flex items-center gap-1.5 rounded-full px-4 py-1 text-[11px] font-bold uppercase tracking-wider"
             style={{
@@ -215,9 +200,27 @@ export function PlanCard({
         </div>
       )}
 
-      {/* Edition badge (admin-set, e.g. "Most Popular") */}
+      <div
+        className="relative flex w-full flex-col rounded-2xl transition-all duration-300 hover:translate-y-[-2px]"
+        style={{
+          background: isHighlighted
+            ? "linear-gradient(180deg, rgba(30,16,60,0.7), rgba(14,10,32,0.8))"
+            : "rgba(255,255,255,0.02)",
+          border: isHighlighted
+            ? "1.5px solid rgba(168,85,247,0.35)"
+            : isRecommended
+              ? "1.5px solid rgba(34,211,238,0.35)"
+              : "1px solid rgba(255,255,255,0.06)",
+          boxShadow: isHighlighted
+            ? tokens.shadowCard
+            : isRecommended
+              ? "0 0 32px rgba(34,211,238,0.07)"
+              : "none",
+        }}
+      >
+      {/* Edition badge (admin-set, e.g. "Most Popular") — inside card, top-end corner */}
       {edition.badge && (
-        <div className="absolute -top-3 start-5 z-10">
+        <div className="absolute top-3 end-3 z-10">
           <Badge
             variant="default"
             className="rounded-full border-none px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
@@ -239,7 +242,7 @@ export function PlanCard({
         )}
 
         {/* Price */}
-        <div className="mt-5 flex items-baseline gap-1.5">
+        <motion.div layout className="mt-5 flex items-baseline gap-1.5">
           {isFree ? (
             <>
               <span className="text-3xl font-extrabold text-white/95">
@@ -276,7 +279,7 @@ export function PlanCard({
               )}
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Trial */}
         {edition.trialDays && !isFree && !isContactSales && (
@@ -286,27 +289,24 @@ export function PlanCard({
           </p>
         )}
 
-        {/* Why we recommend this — translatable reasons from the backend scorer.
-            Unknown/untranslated keys are skipped (t() returns the key on a miss). */}
+        {/* Why we recommend this — plain reason strings from the Discovery engine scorer. */}
         {isRecommended && recommendationReasons && recommendationReasons.length > 0 && (
-          <ul
-            className="mt-4 space-y-1.5"
-            aria-label={t("signup.plan.whyRecommended") || "Why we recommend this"}
-          >
-            {recommendationReasons.map((key) => {
-              const text = t(key);
-              if (!text || text === key) return null;
-              return (
-                <li
-                  key={key}
-                  className="flex items-start gap-2 text-[12px] leading-relaxed text-cyan-300/80"
-                >
-                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>{text}</span>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {recommendationReasons.map((reason, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
+                style={{
+                  background: "rgba(34,211,238,0.08)",
+                  border: "1px solid rgba(34,211,238,0.2)",
+                  color: "#22D3EE",
+                }}
+              >
+                <Check className="h-2.5 w-2.5" aria-hidden="true" />
+                {reason}
+              </span>
+            ))}
+          </div>
         )}
       </div>
 
@@ -334,7 +334,7 @@ export function PlanCard({
           style={{
             background: isHighlighted
               ? "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)"
-              : "rgba(255,255,255,0.06)",
+              : tokens.surfaceRaised,
             color: isHighlighted ? "#fff" : "rgba(245,242,255,0.8)",
             border: isHighlighted ? "none" : "1px solid rgba(255,255,255,0.1)",
           }}
@@ -346,6 +346,7 @@ export function PlanCard({
               : t("signup.plan.choosePlan", { plan: edition.name }) || `Start a free trial`}
           <span className="ms-1.5">→</span>
         </Button>
+      </div>
       </div>
     </div>
   );

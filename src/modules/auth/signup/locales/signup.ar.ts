@@ -71,6 +71,7 @@ export const ar = {
       forever: "للأبد",
       currencyNote: "الأسعار بـ {{currency}}",
       currencyLockedNote: "الأسعار معروضة بـ {{currency}} بناءً على موقعك",
+      currencyDetected: "تم اكتشاف العملة من موقعك",
       whyRecommended: "لماذا نوصي بهذه الخطة",
       detected: "مُكتشَف",
       searchCurrency: "ابحث عن عملة…",
@@ -286,6 +287,15 @@ export const ar = {
 
       // مؤشر حالة التقييم الذكي
       scoring: "نجد أفضل خطة لك…",
+
+      // تسميات التنقل / الحالة (Task 32)
+      skip: "تخطي",
+      pickUpTo: "اختر حتى {{max}}",
+      next: "التالي",
+      back: "رجوع",
+      loading: "جارٍ تحميل الأسئلة...",
+      error: "تعذّر تحميل الأسئلة",
+      retry: "حاول مرة أخرى",
     },
 
     // تواصل مع المبيعات
@@ -335,6 +345,9 @@ export const ar = {
       perMonth: "شهر",
       perYear: "سنة",
       editPlan: "تعديل الخطة",
+      launchWorkspace: "أطلق مساحة عملك",
+      goToCheckout: "الانتقال إلى الدفع",
+      changePlan: "تغيير الخطة",
       promoHint: "هل لديك رمز ترويجي؟ طبّقه في صفحة الدفع الآمنة.",
       paymentPageNote: "ستتم إعادة توجيهك إلى صفحة دفع آمنة باللغة الإنجليزية.",
       checkoutCanceled: "تم إلغاء الدفع - يمكنك المحاولة مرة أخرى أو تغيير خطتك.",

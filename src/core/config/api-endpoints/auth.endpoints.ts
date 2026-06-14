@@ -59,6 +59,12 @@ export const AUTH_ENDPOINTS = {
        * Falls back to local computeRecommendedTier() if this call fails.
        */
       RECOMMENDATION: `${V1}/auth/signup/recommendation`,
+      /** Onboarding Intelligence Engine — returns dynamic Q&A flow for a category. */
+      ONBOARDING_FLOW: `${V1}/auth/signup/onboarding/flow`,
+      /** Onboarding Intelligence Engine — scores answers and returns recommended edition. */
+      ONBOARDING_RECOMMENDATION: `${V1}/auth/signup/onboarding/recommendation`,
+      /** Onboarding Intelligence Engine — records a single answer against the session. */
+      ONBOARDING_ANSWER: `${V1}/auth/signup/onboarding/answer`,
     },
     // ── Passkey / WebAuthn ────────────────────────────────────
     PASSKEY: {

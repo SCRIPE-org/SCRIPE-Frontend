@@ -71,6 +71,7 @@ export const en = {
       forever: "forever",
       currencyNote: "Prices shown in {{currency}}",
       currencyLockedNote: "Prices shown in {{currency}}, based on your location",
+      currencyDetected: "Currency detected from your location",
       whyRecommended: "Why we recommend this",
       detected: "Detected",
       searchCurrency: "Search currency…",
@@ -286,6 +287,15 @@ export const en = {
 
       // Async scorer status indicator
       scoring: "Finding your best match\u2026",
+
+      // Navigation / state labels (Task 32)
+      skip: "Skip",
+      pickUpTo: "Pick up to {{max}}",
+      next: "Next",
+      back: "Back",
+      loading: "Loading questions...",
+      error: "Couldn't load questions",
+      retry: "Try again",
     },
 
     // Contact Sales
@@ -340,6 +350,9 @@ export const en = {
       perMonth: "month",
       perYear: "year",
       editPlan: "Edit plan",
+      launchWorkspace: "Launch my workspace",
+      goToCheckout: "Go to checkout",
+      changePlan: "Change plan",
       promoHint: "Have a promo code? Apply it on the secure checkout page.",
       paymentPageNote: "The payment page is in English.",
       checkoutCanceled: "Checkout canceled — you can try again or change your plan.",

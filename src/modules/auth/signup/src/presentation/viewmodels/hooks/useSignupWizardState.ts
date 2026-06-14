@@ -133,6 +133,42 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
     []
   );
 
+  /**
+   * Engine-driven discovery completion — accepts the raw answers map from the
+   * Onboarding Intelligence Engine (question key → selected values[]).
+   *
+   * Convention: the engine question keys map to wizard fields as follows:
+   *   "business_type"    → businessType (first selected value)
+   *   "team_size"        → teamSize (first selected value)
+   *   "primary_priority" → primaryPriority (all values joined with ",")
+   *
+   * Any extra question keys are ignored for backward compat with wizard state
+   * but are available via discoveryAnswersRaw for future scoring enhancements.
+   */
+  const [discoveryAnswersRaw, setDiscoveryAnswersRaw] = useState<Record<string, string[]>>({});
+
+  const completeDiscovery = useCallback(
+    (answers: Record<string, string[]>) => {
+      setDiscoveryAnswersRaw(answers);
+      const businessType = answers["business_type"]?.[0] ?? null;
+      const teamSize = answers["team_size"]?.[0] ?? null;
+      const primaryPriority =
+        (answers["primary_priority"] ?? []).length > 0
+          ? answers["primary_priority"].join(",")
+          : null;
+      setWizardData((prev) => ({
+        ...prev,
+        businessType,
+        teamSize,
+        primaryPriority,
+        categoryKey: businessType,
+      }));
+      setNavigationDirection(1);
+      setStep("plan");
+    },
+    []
+  );
+
   // ── Plan selection ───────────────────────────────────────────────────────
   const selectPlan = useCallback((edition: PublicEdition, billingCycle: "monthly" | "annual") => {
     const plan: SelectedPlan = {
@@ -224,14 +260,18 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
     setCurrency,
     applyRecommendedCurrency,
     setDiscovery,
+    completeDiscovery,
     selectPlan,
     goBack,
     editPlan,
     dismissCheckoutCanceled,
+    // Legacy shape (backward compat with resume / persisted state)
     discoveryAnswers: {
       businessType: wizardData.businessType,
       teamSize: wizardData.teamSize,
       primaryPriority: wizardData.primaryPriority,
     },
+    // Raw engine answers (question key → values[])
+    discoveryAnswersRaw,
   };
 }

@@ -183,3 +183,40 @@ export interface RecommendationDto {
   /** Translatable locale keys explaining the recommendation (e.g. "recommendation.reason.team.small"). */
   reasons: string[];
 }
+
+// ─── Onboarding Intelligence Engine DTOs ─────────────────────────────────────
+
+export interface OnboardingAnswerOptionDto {
+  value: string;
+  label: string;
+  sublabel: string | null;
+  iconKey: string | null;
+  sortOrder: number;
+  signalWeight: number;
+}
+
+export interface OnboardingQuestionDto {
+  key: string;
+  questionType: "single_select" | "multi_select";
+  minSelections: number;
+  maxSelections: number;
+  isRequired: boolean;
+  sortOrder: number;
+  dependsOnQuestionKey: string | null;
+  dependsOnAnswerValue: string | null;
+  label: string;
+  hint: string | null;
+  iconKey: string | null;
+  options: OnboardingAnswerOptionDto[];
+}
+
+export interface OnboardingFlowDto {
+  questions: OnboardingQuestionDto[];
+}
+
+export interface OnboardingRecommendationDto {
+  recommendedEditionId: string;
+  recommendedEditionName: string;
+  score: number;
+  reasons: string[];
+}

@@ -5,8 +5,9 @@ import { Button } from "@core/ui/button";
 import { ArrowLeft, Loader2, ShieldCheck, RotateCcw } from "lucide-react";
 import { OtpInputField } from "@core/ui/otp-input-field";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
+import { useSignupTheme } from "@core/providers/signup-theme";
 import { BRAND_TOKENS } from "@core/ui/tokens/brand";
+import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface VerificationStepProps {
   vm: ReturnType<typeof useSignupWizardViewModel>;
@@ -14,6 +15,7 @@ interface VerificationStepProps {
 
 export function VerificationStep({ vm }: VerificationStepProps) {
   const { t, direction } = useI18n();
+  const { tokens } = useSignupTheme();
 
   // Auto-submit when 6 digits are entered.
   // IMPORTANT: `vm` is intentionally NOT in the dependency array — the vm object
@@ -54,23 +56,28 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         <h1
           className="text-xl font-bold"
           style={{
-            background: BRAND_TOKENS.gradient.heroText,
+            background: tokens.gradientCta,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
         >
           {t("signup.verification.title") || "Verify your email"}
         </h1>
-        <p className="mt-2 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
+        <p className="mt-2 text-sm" style={{ color: tokens.inkMuted }}>
           {t("signup.verification.sentCode") || "We sent a 6-digit code to"}{" "}
-          <span className="font-medium" style={{ color: BRAND_TOKENS.text.brand }}>
+          <span className="font-medium" style={{ color: tokens.accent }}>
             {maskedEmail}
           </span>
         </p>
       </div>
 
       {/* Unified OTP Input Component */}
-      <div className="mb-6" dir="ltr">
+      <div
+        className="mb-6"
+        dir="ltr"
+        role="group"
+        aria-label={t("signup.verification.enterCode") || "Enter verification code"}
+      >
         <OtpInputField
           value={vm.otpCode}
           onChange={vm.setOtpCode}
@@ -103,13 +110,13 @@ export function VerificationStep({ vm }: VerificationStepProps) {
         aria-busy={vm.isLoading}
         className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
         style={{
-          background: BRAND_TOKENS.gradient.cta,
+          background: tokens.gradientCta,
           boxShadow: BRAND_TOKENS.shadow.cta,
         }}
       >
         {vm.isLoading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+            <Loader2 className="me-2 h-4 w-4 animate-spin" aria-hidden="true" />
             <span className="sr-only">{t("signup.common.loading") || "Loading…"}</span>
           </>
         ) : (
@@ -124,7 +131,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           type="button"
           onClick={vm.goBack}
           className="flex items-center gap-1.5 text-xs font-medium transition-colors"
-          style={{ color: BRAND_TOKENS.text.secondary }}
+          style={{ color: tokens.inkMuted }}
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           {t("signup.verification.back") || "Back"}
@@ -136,7 +143,7 @@ export function VerificationStep({ vm }: VerificationStepProps) {
           onClick={vm.resendOtp}
           disabled={vm.otpResendCooldown > 0 || vm.isLoading}
           className="flex items-center gap-1.5 text-xs font-medium transition-colors disabled:opacity-40"
-          style={{ color: BRAND_TOKENS.text.brand }}
+          style={{ color: tokens.accent }}
         >
           <RotateCcw className="h-3 w-3" aria-hidden="true" />
           {vm.otpResendCooldown > 0

@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSignupTheme } from "@core/providers/signup-theme";
 import { Button } from "@core/ui/button";
 import {
   Loader2,
@@ -13,7 +14,6 @@ import {
   Lock,
   Pencil,
 } from "lucide-react";
-import { BRAND_TOKENS } from "@core/ui/tokens/brand";
 import type { CheckoutMode, SelectedPlan } from "../../domain/entities";
 
 interface ReviewStepProps {
@@ -50,6 +50,7 @@ interface ReviewStepProps {
  */
 export function ReviewStep({ vm }: ReviewStepProps) {
   const { t, language, direction } = useI18n();
+  const { tokens } = useSignupTheme();
   const mode = vm.selectedCheckoutMode;
   const plan = vm.selectedPlan;
 
@@ -121,7 +122,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             type="button"
             onClick={vm.dismissCheckoutCanceled}
             className="shrink-0 text-xs font-semibold"
-            style={{ color: BRAND_TOKENS.text.tertiary }}
+            style={{ color: tokens.inkFaint }}
             aria-label={t("common.dismiss") || "Dismiss"}
           >
             ✕
@@ -131,7 +132,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
 
       {/* ═══ Header ═══ */}
       <div className="text-center">
-        <h2 className="text-xl font-bold" style={{ color: BRAND_TOKENS.text.primary }}>
+        <h2 className="text-xl font-bold" style={{ color: tokens.ink }}>
           {isFree
             ? t("signup.review.freeTitle") || "You're all set!"
             : isTrial
@@ -139,7 +140,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
                 `Start your ${trialDays}-day free trial`
               : t("signup.review.checkoutTitle") || "Review your plan"}
         </h2>
-        <p className="mt-1 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
+        <p className="mt-1 text-sm" style={{ color: tokens.inkMuted }}>
           {isFree
             ? t("signup.review.freeSubtitle") || "Review your details and create your workspace."
             : isTrial
@@ -154,40 +155,39 @@ export function ReviewStep({ vm }: ReviewStepProps) {
       <div
         className="overflow-hidden rounded-xl"
         style={{
-          background: "rgba(255,255,255,0.02)",
-          border: "1px solid rgba(255,255,255,0.06)",
+          background: tokens.surfaceRaised,
+          border: tokens.borderCard,
         }}
       >
-        {summaryRows.map(({ label, value }, i) => (
-          <div
-            key={label}
-            className="flex items-center justify-between px-4 py-3"
-            style={{
-              borderBottom:
-                i < summaryRows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-            }}
-          >
-            <span className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
-              {label}
-            </span>
-            <span
-              className="max-w-[55%] truncate text-end text-xs font-medium"
-              style={{ color: BRAND_TOKENS.text.primary }}
+        <dl className="divide-y" style={{ borderColor: `1px solid ${tokens.border}` }}>
+          {summaryRows.map(({ label, value }) => (
+            <div
+              key={label}
+              className="flex items-center justify-between px-4 py-3"
+              style={{ borderBottom: `1px solid ${tokens.border}` }}
             >
-              {value}
-            </span>
-          </div>
-        ))}
+              <dt className="text-xs" style={{ color: tokens.inkFaint }}>
+                {label}
+              </dt>
+              <dd
+                className="max-w-[55%] truncate text-end text-xs font-semibold"
+                style={{ color: tokens.ink }}
+              >
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
         {/* Edit plan (U5) */}
         <div
           className="flex justify-end px-4 py-2.5"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
+          style={{ borderTop: `1px solid ${tokens.border}` }}
         >
           <button
             type="button"
             onClick={vm.editPlan}
-            className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-white"
-            style={{ color: BRAND_TOKENS.text.brand }}
+            className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:opacity-80"
+            style={{ color: tokens.accentDark }}
           >
             <Pencil className="h-3 w-3" aria-hidden="true" />
             {t("signup.review.editPlan") || "Edit plan"}
@@ -208,17 +208,17 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             <CalendarClock
               className="mt-0.5 h-4 w-4 shrink-0"
               aria-hidden="true"
-              style={{ color: BRAND_TOKENS.text.cyan }}
+              style={{ color: tokens.cyan }}
             />
             <div>
-              <p className="text-sm font-semibold" style={{ color: BRAND_TOKENS.text.cyan }}>
+              <p className="text-sm font-semibold" style={{ color: tokens.cyan }}>
                 {t("signup.review.trialStarts", { days: trialDays }) ||
                   `${trialDays}-day free trial — starts when you complete checkout`}
               </p>
               {formattedPrice && (
                 <p
                   className="mt-1 text-sm font-semibold"
-                  style={{ color: BRAND_TOKENS.text.primary }}
+                  style={{ color: tokens.ink }}
                 >
                   {t("signup.review.thenPrice", { price: formattedPrice, cycle: perCycle }) ||
                     `Then ${formattedPrice}/${perCycle}`}
@@ -230,9 +230,9 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             <ShieldCheck
               className="h-4 w-4 shrink-0"
               aria-hidden="true"
-              style={{ color: BRAND_TOKENS.text.success }}
+              style={{ color: tokens.success }}
             />
-            <p className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
+            <p className="text-xs font-medium" style={{ color: tokens.inkMuted }}>
               {t("signup.review.cancelAnytime") || "Cancel anytime"}
             </p>
           </div>
@@ -240,9 +240,9 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             <BellRing
               className="h-4 w-4 shrink-0"
               aria-hidden="true"
-              style={{ color: BRAND_TOKENS.text.cyan }}
+              style={{ color: tokens.cyan }}
             />
-            <p className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
+            <p className="text-xs font-medium" style={{ color: tokens.inkMuted }}>
               {t("signup.review.reminder") || "We'll remind you 3 days before any charge"}
             </p>
           </div>
@@ -258,12 +258,12 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             border: "1px solid rgba(168,85,247,0.18)",
           }}
         >
-          <span className="text-sm font-medium" style={{ color: BRAND_TOKENS.text.secondary }}>
+          <span className="text-sm font-medium" style={{ color: tokens.inkMuted }}>
             {t("signup.review.billedTotal") || "Billed today"}
           </span>
-          <span className="text-base font-bold" style={{ color: BRAND_TOKENS.text.primary }}>
+          <span className="text-base font-bold" style={{ color: tokens.ink }}>
             {formattedPrice}
-            <span className="text-xs font-medium" style={{ color: BRAND_TOKENS.text.tertiary }}>
+            <span className="text-xs font-medium" style={{ color: tokens.inkFaint }}>
               {" "}
               / {perCycle}
             </span>
@@ -278,9 +278,9 @@ export function ReviewStep({ vm }: ReviewStepProps) {
             <TicketPercent
               className="h-3.5 w-3.5 shrink-0"
               aria-hidden="true"
-              style={{ color: BRAND_TOKENS.text.tertiary }}
+              style={{ color: tokens.inkFaint }}
             />
-            <p className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
+            <p className="text-xs" style={{ color: tokens.inkFaint }}>
               {t("signup.review.promoHint") ||
                 "Have a promo code? Apply it on the secure checkout page."}
             </p>
@@ -290,9 +290,9 @@ export function ReviewStep({ vm }: ReviewStepProps) {
               <Lock
                 className="h-3.5 w-3.5 shrink-0"
                 aria-hidden="true"
-                style={{ color: BRAND_TOKENS.text.tertiary }}
+                style={{ color: tokens.inkFaint }}
               />
-              <p className="text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
+              <p className="text-xs" style={{ color: tokens.inkFaint }}>
                 {t("signup.review.paymentPageNote") ||
                   "ستتم إعادة توجيهك إلى صفحة دفع آمنة (باللغة الإنجليزية)"}
               </p>
@@ -318,10 +318,9 @@ export function ReviewStep({ vm }: ReviewStepProps) {
         onClick={handleProceed}
         disabled={vm.isLoading}
         aria-busy={vm.isLoading}
-        className="h-12 w-full rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60"
+        className="h-12 w-full rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
         style={{
-          background: BRAND_TOKENS.gradient.cta,
-          boxShadow: BRAND_TOKENS.shadow.cta,
+          background: tokens.gradientCta,
         }}
       >
         {vm.isLoading ? (
@@ -332,12 +331,12 @@ export function ReviewStep({ vm }: ReviewStepProps) {
         ) : isFree ? (
           <>
             <CheckCircle className="me-2 h-4 w-4" aria-hidden="true" />
-            {t("signup.review.createWorkspace") || "Create your workspace"}
+            {t("signup.review.launchWorkspace") || "Launch my workspace"}
           </>
         ) : isTrial ? (
           t("signup.review.startTrialCta") || "Start free trial — continue to secure checkout"
         ) : (
-          t("signup.review.checkoutCta") || "Continue to secure checkout"
+          t("signup.review.checkoutCta") || "Go to checkout"
         )}
       </Button>
 
@@ -348,7 +347,7 @@ export function ReviewStep({ vm }: ReviewStepProps) {
           type="button"
           onClick={vm.goBack}
           className="text-sm font-medium underline underline-offset-2"
-          style={{ color: BRAND_TOKENS.text.tertiary }}
+          style={{ color: tokens.inkFaint }}
         >
           {t("signup.common.back") || "← Back"}
         </Button>

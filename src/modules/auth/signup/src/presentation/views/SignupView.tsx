@@ -3,10 +3,11 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Sun, Moon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
-import { BRAND_TOKENS } from "@core/ui/tokens/brand";
+import { SignupThemeProvider, useSignupTheme } from "@core/providers/signup-theme";
 import { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 import { DiscoveryStep } from "../components/DiscoveryStep";
 import { PlanPickerStep } from "../components/PlanPickerStep";
@@ -33,26 +34,33 @@ import { ResumeSignupModal } from "../components/ResumeSignupModal";
  *   trial/paid editions redirect to Stripe and come back via /signup/finalize.
  */
 
+const prefersReducedMotion =
+  typeof window !== "undefined"
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+
 // framer-motion supports function-based initial/exit variants when custom is set.
 // We avoid the strict `Variants` typedef here because it doesn't include function overloads.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const STEP_VARIANTS: Record<string, any> = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 32 : -32,
-    filter: "blur(4px)",
+    x: prefersReducedMotion ? 0 : direction > 0 ? 32 : -32,
+    filter: prefersReducedMotion ? "blur(0px)" : "blur(4px)",
   }),
   animate: {
     opacity: 1,
     x: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: prefersReducedMotion
+      ? { duration: 0 }
+      : { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
   },
   exit: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -32 : 32,
-    filter: "blur(4px)",
-    transition: { duration: 0.25, ease: "easeIn" },
+    x: prefersReducedMotion ? 0 : direction > 0 ? -32 : 32,
+    filter: prefersReducedMotion ? "blur(0px)" : "blur(4px)",
+    transition: prefersReducedMotion ? { duration: 0 } : { duration: 0.25, ease: "easeIn" },
   }),
 };
 
@@ -62,16 +70,33 @@ const BAND_VARIANTS: Record<string, any> = {
   visible: {
     opacity: 1,
     height: "auto",
-    transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
+    transition: prefersReducedMotion ? { duration: 0 } : { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
   },
   exit: {
     opacity: 0,
     height: 0,
-    transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
+    transition: prefersReducedMotion ? { duration: 0 } : { duration: 0.18, ease: [0.4, 0, 1, 1] },
   },
 };
 
+/**
+ * Public export — wraps the inner content with the theme provider so that
+ * useSignupTheme() is available to all child components.
+ */
 export function SignupView() {
+  return (
+    <SignupThemeProvider>
+      <SignupViewContent />
+    </SignupThemeProvider>
+  );
+}
+
+/**
+ * Inner content — lives inside SignupThemeProvider so it can safely call
+ * useSignupTheme() and pass tokens down to sub-components.
+ */
+function SignupViewContent() {
+  const { tokens, theme, toggleTheme } = useSignupTheme();
   const vm = useSignupWizardViewModel();
   const { t, direction } = useI18n();
 
@@ -100,13 +125,28 @@ export function SignupView() {
 
   return (
     <div
-      className="flex min-h-screen flex-col"
+      className="relative flex min-h-[100dvh] flex-col"
       dir={direction}
-      style={{
-        background: BRAND_TOKENS.bg.base,
-        backgroundImage: BRAND_TOKENS.gradient.page,
-      }}
+      style={{ background: tokens.gradientPage }}
     >
+      {/* ═══ Dark/light theme toggle (top-right corner) ═══ */}
+      <button
+        onClick={toggleTheme}
+        aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+        className="absolute end-4 top-4 z-20 rounded-full p-2 transition-all duration-200 hover:scale-110 active:scale-95"
+        style={{
+          background: tokens.surfaceRaised,
+          border: tokens.borderCard,
+          color: tokens.inkMuted,
+        }}
+      >
+        {theme === "dark" ? (
+          <Sun size={16} aria-hidden="true" />
+        ) : (
+          <Moon size={16} aria-hidden="true" />
+        )}
+      </button>
+
       {/* ═══ Ambient glow orbs (fixed, pointer-events: none) ═══ */}
       <div
         className="pointer-events-none fixed left-1/3 top-0 -translate-x-1/2"
@@ -114,7 +154,7 @@ export function SignupView() {
           width: 800,
           height: 600,
           borderRadius: "50%",
-          background: `radial-gradient(ellipse, ${BRAND_TOKENS.palette.violet}12 0%, transparent 65%)`,
+          background: `radial-gradient(ellipse, ${tokens.accent}12 0%, transparent 65%)`,
           filter: "blur(80px)",
         }}
       />
@@ -124,7 +164,7 @@ export function SignupView() {
           width: 600,
           height: 500,
           borderRadius: "50%",
-          background: `radial-gradient(ellipse, ${BRAND_TOKENS.palette.cyan}0d 0%, transparent 65%)`,
+          background: `radial-gradient(ellipse, ${tokens.cyan}0d 0%, transparent 65%)`,
           filter: "blur(70px)",
         }}
       />
@@ -138,10 +178,13 @@ export function SignupView() {
       <header
         className="sticky top-0 z-40 flex h-14 items-center justify-between px-5 sm:px-8"
         style={{
-          background: "rgba(10, 8, 22, 0.72)",
+          background:
+            theme === "dark"
+              ? "rgba(10, 8, 22, 0.72)"
+              : "rgba(248, 247, 255, 0.82)",
           backdropFilter: "blur(24px) saturate(160%)",
           WebkitBackdropFilter: "blur(24px) saturate(160%)",
-          borderBottom: "1px solid rgba(255,255,255,0.055)",
+          borderBottom: `1px solid ${tokens.border}`,
         }}
       >
         {/* ── Logo + wordmark ── */}
@@ -160,7 +203,7 @@ export function SignupView() {
           />
           <span
             className="text-[15px] font-semibold tracking-tight"
-            style={{ color: BRAND_TOKENS.text.primary }}
+            style={{ color: tokens.ink }}
           >
             {BRAND.name}
           </span>
@@ -169,15 +212,15 @@ export function SignupView() {
         {/* ── "Already have an account? Sign in →" ── */}
         <div
           className="flex items-center gap-1.5 text-[13px]"
-          style={{ color: BRAND_TOKENS.text.tertiary }}
+          style={{ color: tokens.inkFaint }}
         >
           <span className="hidden sm:inline">
             {t("signup.header.haveAccount") || "Already have an account?"}
           </span>
           <Link
             href="/login"
-            className="font-semibold transition-colors hover:text-white"
-            style={{ color: BRAND_TOKENS.text.brand }}
+            className="font-semibold transition-colors"
+            style={{ color: tokens.accent }}
           >
             {t("signup.header.signIn") || "Sign in"}{" "}
             <span
@@ -204,12 +247,16 @@ export function SignupView() {
             initial="hidden"
             animate="visible"
             exit="exit"
+            aria-label={t("signup.stepper.label") || "Signup progress"}
             className="sticky top-14 z-30 overflow-hidden"
             style={{
-              background: "rgba(10, 8, 22, 0.6)",
+              background:
+                theme === "dark"
+                  ? "rgba(10, 8, 22, 0.6)"
+                  : "rgba(248, 247, 255, 0.75)",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
-              borderBottom: "1px solid rgba(255,255,255,0.04)",
+              borderBottom: `1px solid ${tokens.border}`,
             }}
           >
             <SignupProgressBar
@@ -235,9 +282,7 @@ export function SignupView() {
                 exit="exit"
               >
                 <DiscoveryStep
-                  categories={vm.categories}
-                  isCategoriesLoading={vm.isCategoriesLoading}
-                  onComplete={vm.setDiscovery}
+                  onComplete={vm.completeDiscovery}
                   initialAnswers={vm.discoveryAnswers}
                 />
               </motion.div>
@@ -271,9 +316,9 @@ export function SignupView() {
           <div
             className="relative w-full max-w-md overflow-hidden rounded-2xl"
             style={{
-              background: BRAND_TOKENS.bg.card,
-              border: BRAND_TOKENS.border.card,
-              boxShadow: BRAND_TOKENS.shadow.card,
+              background: tokens.surfaceCard,
+              border: tokens.borderCard,
+              boxShadow: tokens.shadowCard,
             }}
           >
             <AnimatePresence mode="wait" custom={slideDirection}>
@@ -321,7 +366,7 @@ export function SignupView() {
       )}
 
       {/* ═══ Footer ═══ */}
-      <footer className="py-6 text-center text-[11px]" style={{ color: BRAND_TOKENS.text.ghost }}>
+      <footer className="py-6 text-center text-[11px]" style={{ color: tokens.inkGhost }}>
         © {new Date().getFullYear()} {BRAND.name} — {t("signup.copyright") || "All rights reserved"}
       </footer>
 

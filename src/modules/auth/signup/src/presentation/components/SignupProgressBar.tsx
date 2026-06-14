@@ -12,11 +12,11 @@
  *  - Step label chips below (active highlights in brand violet)
  *  - Hidden during discovery (immersive full-screen Q&A)
  *  - Fully RTL-aware (direction from useI18n)
- *  - Uses BRAND_TOKENS — zero hardcoded colors
+ *  - Theme-aware via useSignupTheme — zero hardcoded colors
  */
 
 import { motion } from "framer-motion";
-import { BRAND_TOKENS } from "@core/ui/tokens/brand";
+import { useSignupTheme } from "@core/providers/signup-theme";
 import type { SignupStep } from "../../domain/entities";
 
 // ─── Step metadata ─────────────────────────────────────────────────────────────
@@ -33,6 +33,7 @@ interface SignupProgressBarProps {
 const WIZARD_STEPS: SignupStep[] = ["plan", "account", "verification", "workspace", "review"];
 
 export function SignupProgressBar({ currentStep, stepLabels, direction }: SignupProgressBarProps) {
+  const { tokens } = useSignupTheme();
   const currentIndex = WIZARD_STEPS.indexOf(currentStep);
 
   // Don't render for discovery, category, contact-sales, provisioning, complete
@@ -59,7 +60,7 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
       {/* Track */}
       <div
         className="relative h-1.5 w-full overflow-hidden rounded-full"
-        style={{ background: "rgba(255,255,255,0.06)" }}
+        style={{ background: tokens.border }}
       >
         {/* Fill */}
         <motion.div
@@ -67,7 +68,7 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
           animate={{ width: `${progressPct}%` }}
           transition={{ duration: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
           style={{
-            background: BRAND_TOKENS.gradient.cta,
+            background: tokens.gradientCta,
           }}
         />
         {/* Shimmer overlay */}
@@ -95,11 +96,11 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
                 className="h-2 w-2 rounded-full"
                 style={{
                   background: active
-                    ? BRAND_TOKENS.palette.violet
+                    ? tokens.accent
                     : done
-                      ? BRAND_TOKENS.text.success
-                      : "rgba(255,255,255,0.15)",
-                  boxShadow: active ? `0 0 8px ${BRAND_TOKENS.palette.violet}80` : "none",
+                      ? tokens.success
+                      : tokens.border,
+                  boxShadow: active ? `0 0 8px ${tokens.accent}80` : "none",
                 }}
               />
               {/* Label */}
@@ -107,10 +108,10 @@ export function SignupProgressBar({ currentStep, stepLabels, direction }: Signup
                 className="hidden text-[9px] font-medium leading-none md:block"
                 style={{
                   color: active
-                    ? BRAND_TOKENS.text.brand
+                    ? tokens.accent
                     : done
-                      ? BRAND_TOKENS.text.secondary
-                      : BRAND_TOKENS.text.ghost,
+                      ? tokens.inkMuted
+                      : tokens.inkGhost,
                 }}
               >
                 {label}

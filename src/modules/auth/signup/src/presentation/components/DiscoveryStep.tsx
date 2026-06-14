@@ -1,37 +1,21 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
-import { BRAND_TOKENS } from "@core/ui/tokens/brand";
-import type { PublicCategory } from "../../domain/entities";
-import { DiscoveryHeader } from "./discovery/DiscoveryHeader";
-import { DiscoveryQ1Business } from "./discovery/DiscoveryQ1Business";
-import { DiscoveryQ2Team } from "./discovery/DiscoveryQ2Team";
-import { DiscoveryQ3Priority } from "./discovery/DiscoveryQ3Priority";
-import { getPrioritiesForBusinessType } from "./discovery/discoveryConstants";
-import {
-  computeRecommendedTier,
-  type RecommendedTier,
-} from "../../data/helpers/recommendationEngine";
+import { useSignupTheme } from "@core/providers/signup-theme";
 import { authContainer } from "@modules/auth/di";
+import type { OnboardingQuestion } from "../../domain/entities/OnboardingEntities";
+import { DiscoveryQuestion } from "./discovery/DiscoveryQuestion";
+import { slideVariants, dotVariants } from "./discovery/discoveryConstants";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
+
 export interface DiscoveryStepProps {
-  /** Categories loaded by the ViewModel — never fetched here */
-  categories: PublicCategory[];
-  isCategoriesLoading: boolean;
-  /** Called when the user finishes all 3 questions (or skips) */
-  onComplete: (answers: {
-    businessType: string | null;
-    teamSize: string | null;
-    primaryPriority: string | null;
-    categoryCount: number;
-    recommendedTier: RecommendedTier;
-    /** Translatable locale keys explaining the recommendation (from the backend scorer). */
-    recommendationReasons: string[];
-  }) => void;
-  /** Pre-populated from persisted wizard state (Stripe round-trip resume) */
+  /** Called when the user finishes all visible questions (or skips all). */
+  onComplete: (answers: Record<string, string[]>) => void;
+  /** Initial answers from persisted wizard state (Stripe round-trip resume). */
   initialAnswers?: {
     businessType: string | null;
     teamSize: string | null;
@@ -39,287 +23,343 @@ export interface DiscoveryStepProps {
   };
 }
 
-const TOTAL_QUESTIONS = 3;
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-// ─── Orchestrator ─────────────────────────────────────────────────────────────
 /**
- * DiscoveryStep — ORCHESTRATOR ONLY (~100 lines)
+ * Determine which questions are visible given the current answers.
+ * A question is visible if it has no dependency, or if the answer to its
+ * dependency question contains the required value.
+ */
+function getVisibleQuestions(
+  allQuestions: OnboardingQuestion[],
+  answers: Record<string, string[]>
+): OnboardingQuestion[] {
+  return allQuestions
+    .filter((q) => {
+      if (!q.dependsOnQuestionKey) return true;
+      const depAnswer = answers[q.dependsOnQuestionKey] ?? [];
+      return q.dependsOnAnswerValue
+        ? depAnswer.includes(q.dependsOnAnswerValue)
+        : depAnswer.length > 0;
+    })
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+/**
+ * Seed initial answers from the legacy wizard state shape (businessType /
+ * teamSize / primaryPriority) so users resuming from Stripe get pre-filled
+ * answers on the first two canonical questions.
+ */
+function seedInitialAnswers(initialAnswers?: DiscoveryStepProps["initialAnswers"]): Record<string, string[]> {
+  const seed: Record<string, string[]> = {};
+  if (!initialAnswers) return seed;
+  if (initialAnswers.businessType) seed["business_type"] = [initialAnswers.businessType];
+  if (initialAnswers.teamSize) seed["team_size"] = [initialAnswers.teamSize];
+  if (initialAnswers.primaryPriority) {
+    seed["primary_priority"] = initialAnswers.primaryPriority.split(",").filter(Boolean);
+  }
+  return seed;
+}
+
+// ─── Skeleton (while flow is loading) ────────────────────────────────────────
+
+function DiscoverySkeleton({ tokens }: { tokens: ReturnType<typeof useSignupTheme>["tokens"] }) {
+  return (
+    <div className="space-y-6">
+      {/* Headline skeleton */}
+      <div className="space-y-2">
+        <div
+          className="h-7 w-2/3 animate-pulse rounded-lg"
+          style={{ background: tokens.surfaceRaised }}
+        />
+        <div
+          className="h-4 w-1/2 animate-pulse rounded-md"
+          style={{ background: tokens.surfaceRaised, opacity: 0.6 }}
+        />
+      </div>
+      {/* Options grid skeleton */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-24 animate-pulse rounded-xl"
+            style={{ background: tokens.surfaceRaised, opacity: 0.5 }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Reduced-motion guard ─────────────────────────────────────────────────────
+
+const prefersReducedMotion =
+  typeof window !== "undefined"
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+
+// ─── DiscoveryStep ────────────────────────────────────────────────────────────
+
+/**
+ * DiscoveryStep — engine-driven adaptive question renderer.
  *
  * Responsibilities:
- *   • Manages local question index (0 / 1 / 2) + slide direction
- *   • Drives the typewriter headline animation
- *   • Computes the recommendation hint string
- *   • Computes recommendedTier via the recommendation engine after Q3
- *   • Delegates all rendering to focused sub-components under discovery/
- *   • Q3 priorities are dynamic — computed from Q1 business type
+ *   • Fetches the onboarding flow from the Onboarding Intelligence Engine API
+ *   • Derives visible questions from the current answers (adaptive logic)
+ *   • Shows one question at a time with slide transitions
+ *   • Navigates forward / backward through visible questions only
+ *   • Calls onComplete(answers) when the user finishes or skips all questions
  *
- * Data contract:
- *   • Receives `categories` + `isCategoriesLoading` from the ViewModel (never from DI)
- *   • All i18n text via t() — zero hardcoded English
+ * All question data (labels, hints, options, icons) comes from the backend.
+ * No hardcoded question content — zero translations here.
  */
-export function DiscoveryStep({
-  categories,
-  isCategoriesLoading,
-  onComplete,
-  initialAnswers,
-}: DiscoveryStepProps) {
-  const { t } = useI18n();
+export function DiscoveryStep({ onComplete, initialAnswers }: DiscoveryStepProps) {
+  const { t, language } = useI18n();
+  const { tokens } = useSignupTheme();
 
-  const [question, setQuestion] = useState(0);
+  // ── Fetch flow from the engine ───────────────────────────────────────────
+  const {
+    data: flow,
+    isLoading: isFlowLoading,
+    isError: isFlowError,
+    refetch,
+  } = useQuery({
+    queryKey: ["signup-onboarding-flow", language],
+    queryFn: () => authContainer.signupRepository.getOnboardingFlow(undefined, language),
+    staleTime: 10 * 60 * 1000, // 10 min — flow is stable per session
+    retry: 1,
+  });
+
+  // ── Local state ─────────────────────────────────────────────────────────
+  const [answers, setAnswers] = useState<Record<string, string[]>>(
+    () => seedInitialAnswers(initialAnswers)
+  );
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [businessType, setBusinessType] = useState<string | null>(
-    initialAnswers?.businessType ?? null
-  );
-  const [teamSize, setTeamSize] = useState<string | null>(initialAnswers?.teamSize ?? null);
-  // Q3: stored as string[] internally; joined to comma-string at complete() for wizard-state compat
-  const [primaryPriorities, setPrimaryPriorities] = useState<string[]>(
-    initialAnswers?.primaryPriority ? initialAnswers.primaryPriority.split(",").filter(Boolean) : []
-  );
-  // Brief loading state while waiting for backend scorer (200–400 ms typically)
-  const [isScorerLoading, setIsScorerLoading] = useState(false);
 
-  // ── Dynamic Q3 priorities — changes with Q1 answer ──────────────────────
-  const dynamicPriorities = useMemo(
-    () => getPrioritiesForBusinessType(businessType),
-    [businessType]
-  );
+  // ── Derive visible questions ─────────────────────────────────────────────
+  const allQuestions = flow?.questions ?? [];
+  const visibleQuestions = getVisibleQuestions(allQuestions, answers);
+  const currentQuestion: OnboardingQuestion | undefined = visibleQuestions[currentIndex];
+  const isLastQuestion = currentIndex === visibleQuestions.length - 1;
+  const totalVisible = visibleQuestions.length;
 
-  // ── Typewriter animation ──────────────────────────────────────────────────
-  const headlines = [
-    t("signup.discovery.q1Title") || "What kind of business are you?",
-    t("signup.discovery.q2Title") || "How big is your team?",
-    t("signup.discovery.q3Title") || "What matters most to you?",
-  ];
-  const [displayedText, setDisplayedText] = useState("");
-  const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const target = headlines[question] ?? "";
-    setDisplayedText("");
-    let i = 0;
-    const tick = () => {
-      if (i <= target.length) {
-        setDisplayedText(target.slice(0, i));
-        i++;
-        typingRef.current = setTimeout(tick, 28);
-      }
-    };
-    tick();
-    return () => {
-      if (typingRef.current) clearTimeout(typingRef.current);
-    };
-  }, [question]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── Recommendation hint (live local preview — mirrors the real scorer) ─────
-  // Uses the SAME pure engine the wizard falls back to (Q1 + Q2 + Q3), so the hint
-  // is honest: it names the tier the scorer currently leans toward and updates as the
-  // user answers. The final, authoritative recommendation is the backend's (see complete()).
-  const recommendationHint = useCallback((): string | null => {
-    if (!businessType && !teamSize && primaryPriorities.length === 0) return null;
-    const tier = computeRecommendedTier({
-      businessType,
-      teamSize,
-      primaryPriority: primaryPriorities.length > 0 ? primaryPriorities.join(",") : null,
-    });
-    const tierNames: Record<RecommendedTier, string> = {
-      free: t("signup.discovery.hint.free") || "Free",
-      pro: t("signup.discovery.hint.pro") || "Pro",
-      ultra: t("signup.discovery.hint.ultra") || "Ultra",
-      enterprise: t("signup.discovery.hint.enterprise") || "Enterprise",
-    };
-    const plan = tierNames[tier];
-    return (
-      t("signup.discovery.hint.message", { plan }) ||
-      `Based on your profile, we'll highlight our ${plan} plan for you.`
-    );
-  }, [businessType, teamSize, primaryPriorities, t]);
-
-  // ── Navigation helpers ────────────────────────────────────────────────────
-  const advance = useCallback((next: number) => {
-    setDirection(1);
-    setQuestion(next);
-  }, []);
-  const goBack = useCallback((prev: number) => {
-    setDirection(-1);
-    setQuestion(prev);
-  }, []);
-
-  /**
-   * complete() — async so we can call the backend scorer.
-   *
-   * Flow:
-   *   1. Pre-compute local tier (instant, zero network) as fallback
-   *   2. If any answer exists, call backend scorer (GET /auth/signup/recommendation)
-   *   3. Map backend tier label → local RecommendedTier type
-   *   4. On ANY error (network, 5xx, timeout) → silently use local tier
-   *   5. Fire onComplete with the best available tier
-   *
-   * Backend tier map:
-   *   "free"       → "free"
-   *   "standard"   → "pro"
-   *   "enterprise" → "ultra"
-   *   "ultimate"   → "enterprise"
-   */
-  const complete = useCallback(
-    async (bt: string | null, ts: string | null, pp: string | null) => {
-      // 1. Local fallback — always ready, no network required
-      const localTier = computeRecommendedTier({
-        businessType: bt,
-        teamSize: ts,
-        primaryPriority: pp,
-      });
-      let finalTier: RecommendedTier = localTier;
-      // Reasons come from the backend scorer (translatable locale keys). The local
-      // fallback intentionally returns none — we never fabricate a "why".
-      let reasons: string[] = [];
-
-      // 2. Backend scorer — only if we have something to score
-      if (bt || ts || pp) {
-        setIsScorerLoading(true);
-        try {
-          const result = await authContainer.signupRepository.getRecommendation({
-            vertical: bt ?? undefined,
-            teamSize: ts ?? undefined,
-            priorities: pp ?? undefined,
-            lang: "en",
-          });
-          const tierMap: Record<string, RecommendedTier> = {
-            free: "free",
-            standard: "pro",
-            enterprise: "ultra",
-            ultimate: "enterprise",
-          };
-          finalTier = tierMap[result.recommendedTier] ?? localTier;
-          reasons = result.reasons ?? [];
-        } catch {
-          // Network failure / backend offline — use local tier, zero disruption
-          finalTier = localTier;
-          reasons = [];
-        } finally {
-          setIsScorerLoading(false);
+  // ── Toggle an answer value ───────────────────────────────────────────────
+  const handleToggle = useCallback(
+    (questionKey: string, value: string, questionType: string, maxSelections: number) => {
+      setAnswers((prev) => {
+        const current = prev[questionKey] ?? [];
+        if (questionType === "single_select") {
+          // Deselect if already selected, otherwise replace
+          return { ...prev, [questionKey]: current.includes(value) ? [] : [value] };
         }
-      }
-
-      onComplete({
-        businessType: bt,
-        teamSize: ts,
-        primaryPriority: pp,
-        categoryCount: categories.length,
-        recommendedTier: finalTier,
-        recommendationReasons: reasons,
+        // Multi-select
+        if (current.includes(value)) {
+          return { ...prev, [questionKey]: current.filter((v) => v !== value) };
+        }
+        if (maxSelections > 0 && current.length >= maxSelections) {
+          // Sliding queue: drop oldest, add newest
+          return { ...prev, [questionKey]: [...current.slice(1), value] };
+        }
+        return { ...prev, [questionKey]: [...current, value] };
       });
     },
-    [categories.length, onComplete]
+    []
   );
 
-  const handleQ1 = useCallback(
-    (key: string) => {
-      setBusinessType(key);
-      setTimeout(() => advance(1), 220);
-    },
-    [advance]
-  );
-  const handleQ2 = useCallback(
-    (size: string) => {
-      setTeamSize(size);
-      setTimeout(() => advance(2), 220);
-    },
-    [advance]
-  );
+  // ── Navigation ───────────────────────────────────────────────────────────
+  const goNext = useCallback(() => {
+    if (isLastQuestion) {
+      onComplete(answers);
+      return;
+    }
+    setDirection(1);
+    setCurrentIndex((i) => i + 1);
+  }, [isLastQuestion, answers, onComplete]);
 
-  // Toggle a priority in/out of the multi-select array (max 3, sliding queue)
-  const handleQ3Toggle = useCallback((p: string) => {
-    setPrimaryPriorities((prev) => {
-      if (prev.includes(p)) {
-        return prev.filter((x) => x !== p);
-      }
-      if (prev.length >= 3) {
-        return [...prev.slice(1), p]; // Slide: drop oldest, add new
-      }
-      return [...prev, p];
-    });
-  }, []);
+  const goBack = useCallback(() => {
+    if (currentIndex === 0) return;
+    setDirection(-1);
+    setCurrentIndex((i) => i - 1);
+  }, [currentIndex]);
 
-  // Confirm multi-select and advance (void-wrapped because complete is async)
-  const handleQ3Confirm = useCallback(() => {
-    const ppString = primaryPriorities.length > 0 ? primaryPriorities.join(",") : null;
-    void complete(businessType, teamSize, ppString);
-  }, [businessType, teamSize, primaryPriorities, complete]);
+  const skipCurrent = useCallback(() => {
+    if (isLastQuestion) {
+      onComplete(answers);
+      return;
+    }
+    setDirection(1);
+    setCurrentIndex((i) => i + 1);
+  }, [isLastQuestion, answers, onComplete]);
 
-  const progressPct = ((question + 1) / TOTAL_QUESTIONS) * 100;
+  const skipAll = useCallback(() => {
+    onComplete({});
+  }, [onComplete]);
+
+  // ── Can advance? ─────────────────────────────────────────────────────────
+  const currentAnswers = currentQuestion ? (answers[currentQuestion.key] ?? []) : [];
+  const canAdvance =
+    !currentQuestion ||
+    !currentQuestion.isRequired ||
+    (currentQuestion.isRequired && currentAnswers.length >= currentQuestion.minSelections);
+
+  // ── Loading state ────────────────────────────────────────────────────────
+  if (isFlowLoading) {
+    return (
+      <div className="relative mx-auto w-full max-w-4xl px-4 py-8 md:py-16">
+        <DiscoverySkeleton tokens={tokens} />
+      </div>
+    );
+  }
+
+  // ── Error state ──────────────────────────────────────────────────────────
+  if (isFlowError || allQuestions.length === 0) {
+    return (
+      <div className="relative mx-auto w-full max-w-4xl px-4 py-8 md:py-16">
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
+          <p className="text-sm" style={{ color: tokens.inkMuted }}>
+            {t("signup.discovery.loadError") || "Couldn't load questions. You can skip and go straight to plans."}
+          </p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              className="rounded-lg px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
+              style={{
+                background: tokens.surfaceRaised,
+                border: tokens.borderCard,
+                color: tokens.ink,
+              }}
+            >
+              {t("signup.discovery.retry") || "Retry"}
+            </button>
+            <button
+              type="button"
+              onClick={skipAll}
+              className="rounded-lg px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
+              style={{
+                background: tokens.gradientCta,
+                color: "#fff",
+              }}
+            >
+              {t("signup.discovery.skipAll") || "Skip to plans"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative mx-auto w-full max-w-4xl px-4 py-8 md:py-16">
-      <DiscoveryHeader
-        question={question}
-        displayedText={displayedText}
-        progressPct={progressPct}
-        totalQuestions={TOTAL_QUESTIONS}
-      />
+      {/* ── Progress dots ── */}
+      {totalVisible > 1 && (
+        <div className="mb-8 flex items-center justify-center gap-2">
+          {visibleQuestions.map((_, i) => (
+            <motion.div
+              key={i}
+              variants={dotVariants}
+              animate={i === currentIndex ? "active" : "inactive"}
+              className="rounded-full"
+              style={{
+                width: i === currentIndex ? 20 : 8,
+                height: 8,
+                background: i === currentIndex ? tokens.accent : tokens.inkGhost,
+                transition: "width 0.25s ease",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
+      {/* ── Question ── */}
       <AnimatePresence custom={direction} mode="wait">
-        {question === 0 && (
-          <DiscoveryQ1Business
-            key="q1"
-            categories={categories}
-            isCategoriesLoading={isCategoriesLoading}
-            selected={businessType}
-            direction={direction}
-            onSelect={handleQ1}
-            onSkip={() => {
-              setBusinessType(null);
-              advance(1);
-            }}
-          />
-        )}
-        {question === 1 && (
-          <DiscoveryQ2Team
-            key="q2"
-            selected={teamSize}
-            direction={direction}
-            onSelect={handleQ2}
-            onBack={() => goBack(0)}
-            onSkip={() => {
-              setTeamSize(null);
-              advance(2);
-            }}
-          />
-        )}
-        {question === 2 && (
-          <DiscoveryQ3Priority
-            key="q3"
-            selected={primaryPriorities}
-            direction={direction}
-            recommendationHint={recommendationHint()}
-            priorities={dynamicPriorities}
-            onToggle={handleQ3Toggle}
-            onConfirm={handleQ3Confirm}
-            onBack={() => goBack(1)}
-            onSkip={() => void complete(businessType, teamSize, null)}
-          />
+        {currentQuestion && (
+          <motion.div
+            key={currentQuestion.key}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+          >
+            <DiscoveryQuestion
+              question={currentQuestion}
+              selectedValues={currentAnswers}
+              onToggle={(value) =>
+                handleToggle(
+                  currentQuestion.key,
+                  value,
+                  currentQuestion.questionType,
+                  currentQuestion.maxSelections
+                )
+              }
+            />
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Global skip — always visible */}
+      {/* ── Navigation buttons ── */}
+      <div className="mt-8 flex items-center justify-between gap-3">
+        {/* Back */}
+        <div className="flex-1">
+          {currentIndex > 0 && (
+            <button
+              type="button"
+              onClick={goBack}
+              className="rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-80"
+              style={{
+                background: tokens.surfaceRaised,
+                border: tokens.borderCard,
+                color: tokens.inkMuted,
+              }}
+            >
+              {t("signup.discovery.back") || "← Back"}
+            </button>
+          )}
+        </div>
+
+        {/* Skip (only if not required) + Next */}
+        <div className="flex items-center gap-2">
+          {currentQuestion && !currentQuestion.isRequired && (
+            <button
+              type="button"
+              onClick={skipCurrent}
+              className="rounded-lg px-4 py-2 text-sm transition-opacity hover:opacity-80"
+              style={{ color: tokens.inkFaint }}
+            >
+              {t("signup.discovery.skip") || "Skip"}
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={goNext}
+            disabled={!canAdvance}
+            className="rounded-lg px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ background: tokens.gradientCta }}
+          >
+            {isLastQuestion
+              ? t("signup.discovery.seePlans") || "See plans →"
+              : t("signup.discovery.next") || "Next →"}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Global skip-all ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.8 }}
         className="mt-10 flex justify-center"
       >
         <button
           type="button"
-          onClick={() => {
-            setPrimaryPriorities([]);
-            void complete(null, null, null);
-          }}
-          disabled={isScorerLoading}
-          className="text-[11px] underline-offset-2 hover:underline disabled:cursor-wait disabled:opacity-40"
-          style={{ color: BRAND_TOKENS.text.ghost }}
+          onClick={skipAll}
+          className="text-[11px] underline-offset-2 hover:underline"
+          style={{ color: tokens.inkGhost }}
         >
-          {isScorerLoading
-            ? t("signup.discovery.scoring") || "Finding your best plan…"
-            : t("signup.discovery.skipAll") || "Skip all questions · Take me straight to plans"}
+          {t("signup.discovery.skipAll") || "Skip all questions · Take me straight to plans"}
         </button>
       </motion.div>
     </div>

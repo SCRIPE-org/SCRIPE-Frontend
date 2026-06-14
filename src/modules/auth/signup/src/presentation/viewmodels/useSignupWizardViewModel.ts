@@ -246,6 +246,7 @@ export function useSignupWizardViewModel() {
 
     // ── Discovery ──
     discoveryAnswers: state.discoveryAnswers,
+    discoveryAnswersRaw: state.discoveryAnswersRaw,
 
     // ── Categories ──
     categories,
@@ -255,6 +256,7 @@ export function useSignupWizardViewModel() {
     updateField: state.updateField,
     updatePassword,
     setDiscovery: state.setDiscovery,
+    completeDiscovery: state.completeDiscovery,
     selectPlan: state.selectPlan,
     submitAccount: otp.submitAccount,
     verifyOtp: otp.verifyOtp,

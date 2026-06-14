@@ -21,6 +21,8 @@ import type {
   ResumeSessionDto,
   ChangePlanResultDto,
   RecommendationDto,
+  OnboardingFlowDto,
+  OnboardingRecommendationDto,
 } from "../models/SignupModels";
 import type {
   RegisterPayload,
@@ -81,4 +83,21 @@ export interface ISignupService {
     billingCycle: string;
     currency: string;
   }): Promise<ChangePlanResultDto>;
+
+  /** Onboarding Intelligence Engine — returns the dynamic Q&A flow for a category. */
+  getOnboardingFlow(params: { category?: string; lang?: string }): Promise<OnboardingFlowDto>;
+
+  /** Onboarding Intelligence Engine — scores collected answers and returns recommended edition. */
+  getOnboardingRecommendation(params: {
+    category: string;
+    answers: string;
+    lang: string;
+  }): Promise<OnboardingRecommendationDto>;
+
+  /** Onboarding Intelligence Engine — records a single answer against the session. */
+  submitOnboardingAnswer(params: {
+    sessionRef: string;
+    questionKey: string;
+    values: string[];
+  }): Promise<void>;
 }

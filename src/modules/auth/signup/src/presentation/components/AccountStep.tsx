@@ -6,8 +6,9 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
 import { PasswordInput } from "@core/ui/password-input";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Lock, Loader2 } from "lucide-react";
 import { BRAND_TOKENS } from "@core/ui/tokens/brand";
+import { useSignupTheme } from "@core/providers/signup-theme";
 import type { useSignupWizardViewModel } from "../viewmodels/useSignupWizardViewModel";
 
 interface AccountStepProps {
@@ -18,6 +19,7 @@ const STRENGTH_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#10b981"];
 
 export function AccountStep({ vm }: AccountStepProps) {
   const { t, direction } = useI18n();
+  const { tokens } = useSignupTheme();
 
   const strengthLabels = [
     t("signup.account.passwordStrength.veryWeak") || "Very Weak",
@@ -34,14 +36,14 @@ export function AccountStep({ vm }: AccountStepProps) {
         <h1
           className="text-2xl font-bold"
           style={{
-            background: BRAND_TOKENS.gradient.heroText,
+            background: tokens.gradientCta,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
         >
           {t("signup.createWorkspace") || "Create your workspace"}
         </h1>
-        <p className="mt-2 text-sm" style={{ color: BRAND_TOKENS.text.secondary }}>
+        <p className="mt-2 text-sm" style={{ color: tokens.inkMuted }}>
           {t("signup.getStarted") || "Get started with Scripe in under 2 minutes"}
         </p>
       </div>
@@ -55,11 +57,11 @@ export function AccountStep({ vm }: AccountStepProps) {
         className="space-y-4"
       >
         {/* Full Name */}
-        <div className="space-y-1.5">
+        <div className="flex flex-col gap-1.5">
           <Label
             htmlFor="signup-fullname"
             className="text-xs font-medium"
-            style={{ color: BRAND_TOKENS.text.secondary }}
+            style={{ color: tokens.inkMuted }}
           >
             {t("signup.account.fullName") || "Full name"}
           </Label>
@@ -75,17 +77,17 @@ export function AccountStep({ vm }: AccountStepProps) {
             style={{
               background: "rgba(255,255,255,0.03)",
               borderColor: BRAND_TOKENS.border.input,
-              color: BRAND_TOKENS.text.primary,
+              color: tokens.ink,
             }}
           />
         </div>
 
         {/* Email */}
-        <div className="space-y-1.5">
+        <div className="flex flex-col gap-1.5">
           <Label
             htmlFor="signup-email"
             className="text-xs font-medium"
-            style={{ color: BRAND_TOKENS.text.secondary }}
+            style={{ color: tokens.inkMuted }}
           >
             {t("signup.account.workEmail") || "Work email"}
           </Label>
@@ -100,17 +102,17 @@ export function AccountStep({ vm }: AccountStepProps) {
             style={{
               background: "rgba(255,255,255,0.03)",
               borderColor: BRAND_TOKENS.border.input,
-              color: BRAND_TOKENS.text.primary,
+              color: tokens.ink,
             }}
           />
         </div>
 
         {/* Password — using PasswordInput from @core/ui */}
-        <div className="space-y-1.5">
+        <div className="flex flex-col gap-1.5">
           <Label
             htmlFor="signup-password"
             className="text-xs font-medium"
-            style={{ color: BRAND_TOKENS.text.secondary }}
+            style={{ color: tokens.inkMuted }}
           >
             {t("signup.account.password") || "Password"}
           </Label>
@@ -128,7 +130,7 @@ export function AccountStep({ vm }: AccountStepProps) {
             style={{
               background: "rgba(255,255,255,0.03)",
               borderColor: BRAND_TOKENS.border.input,
-              color: BRAND_TOKENS.text.primary,
+              color: tokens.ink,
             }}
           />
 
@@ -186,7 +188,7 @@ export function AccountStep({ vm }: AccountStepProps) {
           <label
             htmlFor="signup-terms"
             className="cursor-pointer select-none text-xs leading-5"
-            style={{ color: BRAND_TOKENS.text.tertiary }}
+            style={{ color: tokens.inkFaint }}
           >
             {t("signup.account.acceptTerms") || "I agree to the"}{" "}
             <a
@@ -194,7 +196,7 @@ export function AccountStep({ vm }: AccountStepProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium underline transition-colors hover:no-underline"
-              style={{ color: BRAND_TOKENS.text.brand }}
+              style={{ color: tokens.accent }}
               onClick={(e) => e.stopPropagation()}
             >
               {t("signup.account.termsOfService") || "Terms of Service"}
@@ -205,7 +207,7 @@ export function AccountStep({ vm }: AccountStepProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium underline transition-colors hover:no-underline"
-              style={{ color: BRAND_TOKENS.text.brand }}
+              style={{ color: tokens.accent }}
               onClick={(e) => e.stopPropagation()}
             >
               {t("signup.account.privacyPolicy") || "Privacy Policy"}
@@ -237,7 +239,7 @@ export function AccountStep({ vm }: AccountStepProps) {
           aria-busy={vm.isLoading}
           className="relative h-12 w-full overflow-hidden rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg disabled:opacity-60"
           style={{
-            background: BRAND_TOKENS.gradient.cta,
+            background: tokens.gradientCta,
             boxShadow: BRAND_TOKENS.shadow.cta,
           }}
         >
@@ -255,15 +257,23 @@ export function AccountStep({ vm }: AccountStepProps) {
           )}
         </Button>
 
+        {/* Trust cue */}
+        <div className="flex items-center justify-center gap-1.5">
+          <Lock className="h-3 w-3 shrink-0" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+          <p className="text-[10px]" style={{ color: tokens.inkFaint }}>
+            {t("signup.account.trustCue") || "256-bit encrypted · No credit card required"}
+          </p>
+        </div>
+
         {/* Login link */}
-        <p className="text-center text-xs" style={{ color: BRAND_TOKENS.text.tertiary }}>
+        <p className="text-center text-xs" style={{ color: tokens.inkFaint }}>
           {t("signup.account.alreadyHaveAccount") || "Already have an account?"}{" "}
           <Button
             variant="link"
             type="button"
             onClick={vm.goToLogin}
             className="h-auto p-0 font-medium underline transition-colors hover:no-underline"
-            style={{ color: BRAND_TOKENS.text.brand }}
+            style={{ color: tokens.accent }}
           >
             {t("signup.account.signIn") || "Sign in"}
           </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSignupTheme } from "@core/providers/signup-theme";
 
 interface SignupStepperProps {
   currentStep: string;
@@ -14,9 +15,11 @@ interface SignupStepperProps {
  * Per motion.md: active step fills with brand gradient.
  * Per responsive.md: labels collapse to numbers on xs.
  * Per design.md: brand violet gradient, token colors only.
+ * Theme-aware via useSignupTheme — zero hardcoded dark rgba/hex values.
  */
 export function SignupStepper({ currentStep, steps, className }: SignupStepperProps) {
   const { t, direction } = useI18n();
+  const { tokens } = useSignupTheme();
   const currentIndex = steps.findIndex((s) => s.key === currentStep);
 
   return (
@@ -40,10 +43,12 @@ export function SignupStepper({ currentStep, steps, className }: SignupStepperPr
                 style={{
                   background:
                     isCompleted || isActive
-                      ? "linear-gradient(180deg, #A855F7 0%, #7C3AED 100%)"
-                      : "rgba(255,255,255,0.06)",
-                  color: isCompleted || isActive ? "#fff" : "rgba(245,242,255,0.4)",
-                  boxShadow: isActive ? "0 0 12px rgba(168,85,247,0.4)" : "none",
+                      ? tokens.gradientCta
+                      : tokens.border,
+                  color:
+                    isCompleted || isActive ? tokens.accentContrast : tokens.inkFaint,
+                  boxShadow: isActive ? `0 0 12px ${tokens.accent}66` : "none",
+                  border: isActive ? tokens.borderActive : "none",
                 }}
                 aria-current={isActive ? "step" : undefined}
               >
@@ -66,10 +71,10 @@ export function SignupStepper({ currentStep, steps, className }: SignupStepperPr
                 className="hidden text-[10px] font-medium sm:block"
                 style={{
                   color: isActive
-                    ? "rgba(245,242,255,0.9)"
+                    ? tokens.ink
                     : isFuture
-                      ? "rgba(245,242,255,0.3)"
-                      : "rgba(245,242,255,0.6)",
+                      ? tokens.inkGhost
+                      : tokens.inkMuted,
                 }}
               >
                 {step.label}
@@ -81,7 +86,7 @@ export function SignupStepper({ currentStep, steps, className }: SignupStepperPr
               <div
                 className="h-px w-5 transition-all duration-300 sm:w-8"
                 style={{
-                  background: isCompleted ? "rgba(168,85,247,0.5)" : "rgba(255,255,255,0.08)",
+                  background: isCompleted ? `${tokens.accent}80` : tokens.border,
                 }}
               />
             )}

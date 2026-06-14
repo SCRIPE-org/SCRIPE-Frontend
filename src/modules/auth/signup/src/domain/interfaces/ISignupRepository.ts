@@ -13,6 +13,7 @@ import type {
   ChangePlanPayload,
   SignupRecommendationResult,
 } from "../entities";
+import type { OnboardingFlow, OnboardingRecommendation } from "../entities/OnboardingEntities";
 
 export type { ChangePlanPayload };
 
@@ -88,4 +89,21 @@ export interface ISignupRepository {
     currency?: string;
     lang?: string;
   }): Promise<SignupRecommendationResult>;
+
+  /** Onboarding Intelligence Engine — returns the dynamic Q&A flow for a category. */
+  getOnboardingFlow(categoryKey?: string, lang?: string): Promise<OnboardingFlow>;
+
+  /** Onboarding Intelligence Engine — scores collected answers and returns recommended edition. */
+  getOnboardingRecommendation(
+    categoryKey: string,
+    answersJson: string,
+    lang: string
+  ): Promise<OnboardingRecommendation>;
+
+  /** Onboarding Intelligence Engine — records a single answer against the session. */
+  submitOnboardingAnswer(
+    sessionRef: string,
+    questionKey: string,
+    values: string[]
+  ): Promise<void>;
 }

@@ -29,6 +29,14 @@ import type {
   ChangePlanResult,
   SignupRecommendationResult,
 } from "../../domain/entities";
+import {
+  OnboardingFlowSchema,
+  OnboardingRecommendationSchema,
+} from "../../domain/entities/OnboardingEntities";
+import type {
+  OnboardingFlow,
+  OnboardingRecommendation,
+} from "../../domain/entities/OnboardingEntities";
 
 export class SignupRepository implements ISignupRepository {
   constructor(private readonly service: ISignupService) {}
@@ -124,5 +132,31 @@ export class SignupRepository implements ISignupRepository {
       reason: dto.reason,
       reasons: dto.reasons ?? [],
     };
+  }
+
+  async getOnboardingFlow(categoryKey?: string, lang = "en"): Promise<OnboardingFlow> {
+    const dto = await this.service.getOnboardingFlow({ category: categoryKey, lang });
+    return OnboardingFlowSchema.parse(dto);
+  }
+
+  async getOnboardingRecommendation(
+    categoryKey: string,
+    answersJson: string,
+    lang: string
+  ): Promise<OnboardingRecommendation> {
+    const dto = await this.service.getOnboardingRecommendation({
+      category: categoryKey,
+      answers: answersJson,
+      lang,
+    });
+    return OnboardingRecommendationSchema.parse(dto);
+  }
+
+  async submitOnboardingAnswer(
+    sessionRef: string,
+    questionKey: string,
+    values: string[]
+  ): Promise<void> {
+    await this.service.submitOnboardingAnswer({ sessionRef, questionKey, values });
   }
 }
