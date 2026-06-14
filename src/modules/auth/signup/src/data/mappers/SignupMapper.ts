@@ -19,6 +19,8 @@ import type {
   CompleteSessionDto,
   PricingContextDto,
   SupportedCurrencyDto,
+  SignupWelcomeContentDto,
+  OnboardingRecommendationDto,
 } from "../models/SignupModels";
 import type {
   PublicEdition,
@@ -34,6 +36,14 @@ import type {
   SupportedCurrency,
   PlanEdition,
 } from "../../domain/entities";
+import {
+  WelcomeContentSchema,
+  OnboardingRecommendationSchema,
+} from "../../domain/entities/OnboardingEntities";
+import type {
+  WelcomeContent,
+  OnboardingRecommendation,
+} from "../../domain/entities/OnboardingEntities";
 
 export class SignupMapper {
   // ─── Feature ────────────────────────────────────────────────────────────
@@ -224,5 +234,20 @@ export class SignupMapper {
       recommendedCurrency: dto.recommendedCurrency ?? "USD",
       supportedCurrencies: (dto.supportedCurrencies ?? []).map(SignupMapper.toSupportedCurrency),
     };
+  }
+
+  // ─── Welcome + trust content ─────────────────────────────────────────────
+  // Parse via the Zod schema (single source of truth for the wire shape).
+  // Schema-parse strips unknown keys and applies the documented defaults.
+
+  static toWelcomeContent(dto: SignupWelcomeContentDto): WelcomeContent {
+    return WelcomeContentSchema.parse(dto);
+  }
+
+  // ─── Adaptive recommendation ─────────────────────────────────────────────
+  // tierKey/isSelfService are additive/optional and flow through the schema.
+
+  static toOnboardingRecommendation(dto: OnboardingRecommendationDto): OnboardingRecommendation {
+    return OnboardingRecommendationSchema.parse(dto);
   }
 }

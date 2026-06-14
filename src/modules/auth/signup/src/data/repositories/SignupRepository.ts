@@ -36,6 +36,8 @@ import {
 import type {
   OnboardingFlow,
   OnboardingRecommendation,
+  SignupRecommendationRequest,
+  WelcomeContent,
 } from "../../domain/entities/OnboardingEntities";
 
 export class SignupRepository implements ISignupRepository {
@@ -135,8 +137,22 @@ export class SignupRepository implements ISignupRepository {
   }
 
   async getOnboardingFlow(categoryKey?: string, lang = "en"): Promise<OnboardingFlow> {
+    // No categoryKey ⇒ service requests full=true (complete active graph). The
+    // schema parse carries the extended fields (conditions, relevanceBoost) through.
     const dto = await this.service.getOnboardingFlow({ category: categoryKey, lang });
     return OnboardingFlowSchema.parse(dto);
+  }
+
+  async getWelcomeContent(lang: string): Promise<WelcomeContent> {
+    const dto = await this.service.getWelcomeContent(lang);
+    return SignupMapper.toWelcomeContent(dto);
+  }
+
+  async getAdaptiveRecommendation(
+    request: SignupRecommendationRequest
+  ): Promise<OnboardingRecommendation> {
+    const dto = await this.service.getAdaptiveRecommendation(request);
+    return SignupMapper.toOnboardingRecommendation(dto);
   }
 
   async getOnboardingRecommendation(

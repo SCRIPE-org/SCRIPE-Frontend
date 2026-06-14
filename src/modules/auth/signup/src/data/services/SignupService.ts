@@ -24,11 +24,13 @@ import type {
   RecommendationDto,
   OnboardingFlowDto,
   OnboardingRecommendationDto,
+  SignupWelcomeContentDto,
 } from "../models/SignupModels";
 import type {
   RegisterPayload,
   ContactSalesPayload,
 } from "../../domain/interfaces/ISignupRepository";
+import type { SignupRecommendationRequest } from "../../domain/entities/OnboardingEntities";
 
 export class SignupService implements ISignupService {
   constructor(private readonly api: IPublicApiService) {}
@@ -164,10 +166,55 @@ export class SignupService implements ISignupService {
     category?: string;
     lang?: string;
   }): Promise<OnboardingFlowDto> {
-    const query: Record<string, string> = { lang: params.lang ?? "en" };
+    // Signup wizard mode: with no category, request the COMPLETE active graph
+    // (every vertical's questions + options + conditions) in ONE payload so the
+    // wizard evaluates all branching client-side with zero refetch.
+    // A specific category overrides full-graph (admin/preview scoping).
+    const query: Record<string, string | boolean> = {
+      lang: params.lang ?? "en",
+      full: true,
+    };
     if (params.category) query.category = params.category;
     const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_FLOW, query);
     return this.api.get<OnboardingFlowDto>(url);
+  }
+
+  /**
+   * Onboarding Intelligence Engine — localized welcome + trust content.
+   * Language is also sent via the Accept-Language header by the public API
+   * interceptor; the explicit ?lang= wins server-side when supplied.
+   */
+  async getWelcomeContent(lang: string): Promise<SignupWelcomeContentDto> {
+    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_WELCOME_CONTENT, { lang });
+    return this.api.get<SignupWelcomeContentDto>(url);
+  }
+
+  /**
+   * Adaptive recommendation — scores the collected answer map against the live
+   * edition catalog. The chosen vertical is derived server-side from the
+   * `business_type` answer; `categoryId` is optional (the scorer ignores it and
+   * scopes editions by the business_type slug). Language travels via the
+   * Accept-Language header set by the public API interceptor.
+   *
+   * Serialization: the answer map is flattened into repeated
+   * `answers=questionKey:value1,value2` query params (one per question), which
+   * `buildUrl` cannot express, so the query string is assembled here directly.
+   */
+  async getAdaptiveRecommendation(
+    request: SignupRecommendationRequest
+  ): Promise<OnboardingRecommendationDto> {
+    const search = new URLSearchParams();
+    if (request.categoryId) search.append("categoryId", request.categoryId);
+    for (const answer of request.answers) {
+      // Skip empty selections — an empty value list carries no signal.
+      if (answer.selectedValues.length === 0) continue;
+      search.append("answers", `${answer.questionKey}:${answer.selectedValues.join(",")}`);
+    }
+    const query = search.toString();
+    const url = query
+      ? `${AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_RECOMMENDATION}?${query}`
+      : AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_RECOMMENDATION;
+    return this.api.get<OnboardingRecommendationDto>(url);
   }
 
   async getOnboardingRecommendation(params: {

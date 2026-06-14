@@ -13,7 +13,12 @@ import type {
   ChangePlanPayload,
   SignupRecommendationResult,
 } from "../entities";
-import type { OnboardingFlow, OnboardingRecommendation } from "../entities/OnboardingEntities";
+import type {
+  OnboardingFlow,
+  OnboardingRecommendation,
+  SignupRecommendationRequest,
+  WelcomeContent,
+} from "../entities/OnboardingEntities";
 
 export type { ChangePlanPayload };
 
@@ -90,8 +95,25 @@ export interface ISignupRepository {
     lang?: string;
   }): Promise<SignupRecommendationResult>;
 
-  /** Onboarding Intelligence Engine — returns the dynamic Q&A flow for a category. */
+  /**
+   * Onboarding Intelligence Engine — returns the dynamic Q&A flow.
+   * With no categoryKey the backend returns the COMPLETE active graph (full=true):
+   * every vertical's questions + options + conditions in a single payload.
+   */
   getOnboardingFlow(categoryKey?: string, lang?: string): Promise<OnboardingFlow>;
+
+  /** Onboarding Intelligence Engine — localized welcome + trust content for the welcome screen. */
+  getWelcomeContent(lang: string): Promise<WelcomeContent>;
+
+  /**
+   * Adaptive recommendation — scores the collected answer map (E1 request form)
+   * against the live edition catalog and returns the recommended edition.
+   * The vertical is derived server-side from the `business_type` answer; the
+   * optional categoryId is passed through but ignored by the scorer.
+   */
+  getAdaptiveRecommendation(
+    request: SignupRecommendationRequest
+  ): Promise<OnboardingRecommendation>;
 
   /** Onboarding Intelligence Engine — scores collected answers and returns recommended edition. */
   getOnboardingRecommendation(

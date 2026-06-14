@@ -219,4 +219,39 @@ export interface OnboardingRecommendationDto {
   recommendedEditionName: string;
   score: number;
   reasons: string[];
+  /** Tier label of the recommended edition: "free" | "pro" | "ultra" | "enterprise". Additive/optional. */
+  tierKey?: string;
+  /** False when the best-fit edition is contact-sales / Enterprise. Additive/optional. */
+  isSelfService?: boolean;
+}
+
+// ─── Welcome + Trust Content DTOs ────────────────────────────────────────────
+// Mirror SignupWelcomeContentDto + SignupTrustMarkDto + SignupCustomerLogoDto.
+// Wire shape from GET /onboarding/welcome-content?lang=
+
+/** A single localized compliance/trust badge. */
+export interface SignupTrustMarkDto {
+  key: string;
+  kind: string;
+  label: string;
+  iconKey: string | null;
+  assetUrl: string | null;
+}
+
+/** A single customer logo entry. */
+export interface SignupCustomerLogoDto {
+  key: string;
+  name: string;
+  assetUrl: string;
+}
+
+/** Shape returned by GET /onboarding/welcome-content. */
+export interface SignupWelcomeContentDto {
+  headline: string;
+  subcopy: string;
+  ctaLabel: string;
+  trustedByCount: number;
+  trustedByLabel: string;
+  trustMarks: SignupTrustMarkDto[];
+  customerLogos: SignupCustomerLogoDto[];
 }

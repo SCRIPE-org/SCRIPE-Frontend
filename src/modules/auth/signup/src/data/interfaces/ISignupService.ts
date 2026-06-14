@@ -23,11 +23,13 @@ import type {
   RecommendationDto,
   OnboardingFlowDto,
   OnboardingRecommendationDto,
+  SignupWelcomeContentDto,
 } from "../models/SignupModels";
 import type {
   RegisterPayload,
   ContactSalesPayload,
 } from "../../domain/interfaces/ISignupRepository";
+import type { SignupRecommendationRequest } from "../../domain/entities/OnboardingEntities";
 
 export interface ISignupService {
   /** Detect visitor country → recommended currency + live FX rates. */
@@ -84,8 +86,25 @@ export interface ISignupService {
     currency: string;
   }): Promise<ChangePlanResultDto>;
 
-  /** Onboarding Intelligence Engine — returns the dynamic Q&A flow for a category. */
+  /**
+   * Onboarding Intelligence Engine — returns the dynamic Q&A flow.
+   * With no `category`, requests the COMPLETE active graph (full=true) so the
+   * wizard gets every vertical's questions + options + conditions in one call.
+   */
   getOnboardingFlow(params: { category?: string; lang?: string }): Promise<OnboardingFlowDto>;
+
+  /** Onboarding Intelligence Engine — localized welcome + trust content for the welcome screen. */
+  getWelcomeContent(lang: string): Promise<SignupWelcomeContentDto>;
+
+  /**
+   * Adaptive recommendation — scores the collected answer map (E1 request form)
+   * against the live edition catalog. Answers are serialized as repeated
+   * `answers=key:v1,v2` query params; the vertical is derived server-side from
+   * the `business_type` answer (categoryId is optional and ignored by the scorer).
+   */
+  getAdaptiveRecommendation(
+    request: SignupRecommendationRequest
+  ): Promise<OnboardingRecommendationDto>;
 
   /** Onboarding Intelligence Engine — scores collected answers and returns recommended edition. */
   getOnboardingRecommendation(params: {

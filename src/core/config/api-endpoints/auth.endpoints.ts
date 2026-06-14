@@ -59,10 +59,12 @@ export const AUTH_ENDPOINTS = {
        * Falls back to local computeRecommendedTier() if this call fails.
        */
       RECOMMENDATION: `${V1}/auth/signup/recommendation`,
-      /** Onboarding Intelligence Engine — returns dynamic Q&A flow for a category. */
+      /** Onboarding Intelligence Engine — returns dynamic Q&A flow for a category (full graph by default). */
       ONBOARDING_FLOW: `${V1}/onboarding/flow`,
       /** Onboarding Intelligence Engine — scores answers and returns recommended edition. */
       ONBOARDING_RECOMMENDATION: `${V1}/onboarding/recommendation`,
+      /** Onboarding Intelligence Engine — localized welcome + trust content for the welcome screen. */
+      ONBOARDING_WELCOME_CONTENT: `${V1}/onboarding/welcome-content`,
       /** Onboarding Intelligence Engine — records a single answer against the session. */
       ONBOARDING_ANSWER: `${V1}/onboarding/answer`,
     },
