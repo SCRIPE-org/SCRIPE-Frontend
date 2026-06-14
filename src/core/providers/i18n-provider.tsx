@@ -38,7 +38,7 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 // In development we make missing translation keys LOUD instead of
 // silently returning the bare key (which historically leaked raw keys
 // like "signup.discovery.seePlans" to the UI, and turned the common
-// `t("x") || "fallback"` pattern into dead code).
+// `t(key) || "fallback"` pattern into dead code).
 //
 // In production we stay graceful — return the bare key, never throw —
 // so a single missing key can never blank out or crash a screen.

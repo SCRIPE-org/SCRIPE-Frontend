@@ -26,4 +26,4 @@ export interface CreateDataInventoryRequest {
   legalBasis: string;
 }
 
-export interface UpdateDataInventoryRequest extends CreateDataInventoryRequest {}
+export type UpdateDataInventoryRequest = CreateDataInventoryRequest;

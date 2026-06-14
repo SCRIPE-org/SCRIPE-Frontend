@@ -17,8 +17,8 @@ This file scopes the **self-service signup/onboarding flow** redesign.
 
 `product` — this is app UI / onboarding hybrid, not a marketing site.
 
-- **Conversion surfaces** (onboarding, discovery, plans/pricing): may earn *Committed* color and confident editorial treatment because they carry the trust-and-adopt decision.
-- **Product task surfaces** (account, email verify, workspace setup): *Restrained* product UI — get the user through the task with clarity and zero friction, no persuasion theater.
+- **Conversion surfaces** (onboarding, discovery, plans/pricing): may earn _Committed_ color and confident editorial treatment because they carry the trust-and-adopt decision.
+- **Product task surfaces** (account, email verify, workspace setup): _Restrained_ product UI — get the user through the task with clarity and zero friction, no persuasion theater.
 
 ## Who / Where / Why
 

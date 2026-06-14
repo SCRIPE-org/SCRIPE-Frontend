@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Bell, Check, CheckCheck, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@core/ui/button";

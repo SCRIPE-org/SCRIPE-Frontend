@@ -30,7 +30,7 @@ export interface CreateRegulationRequest {
   isActive: boolean;
 }
 
-export interface UpdateRegulationRequest extends CreateRegulationRequest {}
+export type UpdateRegulationRequest = CreateRegulationRequest;
 
 export interface AddConsentPurposeRequest {
   key: string;
@@ -41,4 +41,4 @@ export interface AddConsentPurposeRequest {
   sortOrder: number;
 }
 
-export interface UpdateConsentPurposeRequest extends AddConsentPurposeRequest {}
+export type UpdateConsentPurposeRequest = AddConsentPurposeRequest;

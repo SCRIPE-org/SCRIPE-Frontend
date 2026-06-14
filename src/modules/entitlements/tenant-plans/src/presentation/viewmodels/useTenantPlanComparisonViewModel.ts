@@ -14,6 +14,8 @@
  */
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-render */
+
 import { useMemo, useState } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";

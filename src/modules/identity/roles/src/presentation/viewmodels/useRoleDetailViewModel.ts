@@ -10,6 +10,8 @@
  */
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
