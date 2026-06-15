@@ -87,20 +87,21 @@ const PHASE_VARIANTS: Record<string, any> = {
         },
 };
 
-/**
- * Public export — wraps the inner content in the signup theme provider so every
- * descendant can call useSignupTheme() (mirrors the legacy SignupView).
- */
-export function SignupWizard() {
+export interface SignupWizardProps {
+  initialCountry?: string | null;
+  initialCurrency?: string;
+}
+
+export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardProps) {
   return (
     <SignupThemeProvider>
-      <SignupWizardContent />
+      <SignupWizardContent initialCountry={initialCountry} initialCurrency={initialCurrency} />
     </SignupThemeProvider>
   );
 }
 
-function SignupWizardContent() {
-  const wizard = useSignupWizard();
+function SignupWizardContent({ initialCountry, initialCurrency }: SignupWizardProps) {
+  const wizard = useSignupWizard({ initialCountry, initialCurrency });
   const { t, direction } = useI18n();
 
   const isStepperPhase = STEPPER_PHASES.has(wizard.phase);

@@ -102,12 +102,16 @@ export interface UsePlanPickerArgs {
   discoveryAnswers: Record<string, string[]>;
   /** The server recommendation (lands asynchronously; undefined while loading/absent). */
   recommendation: OnboardingRecommendation | undefined;
+  initialCurrency?: string;
+  initialCountry?: string | null;
 }
 
 export function usePlanPicker({
   businessType,
   discoveryAnswers,
   recommendation,
+  initialCurrency,
+  initialCountry,
 }: UsePlanPickerArgs): PlanPickerViewModel {
   const { language } = useI18n();
 
@@ -136,8 +140,8 @@ export function usePlanPicker({
       ? (new URLSearchParams(window.location.search).get("__currency")?.toUpperCase() ?? null)
       : null;
 
-  const currency = devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? "USD";
-  const detectedCountry = pricingContext?.detectedCountry ?? null;
+  const currency = devCurrencyOverride ?? initialCurrency ?? pricingContext?.recommendedCurrency ?? "USD";
+  const detectedCountry = initialCountry ?? pricingContext?.detectedCountry ?? null;
   const isFxConverted = !SEEDED_CURRENCIES.has(currency.toUpperCase());
   const locale = useMemo(() => resolveLocale(language, currency), [language, currency]);
 
@@ -147,7 +151,7 @@ export function usePlanPicker({
     queryFn: () => authContainer.signupRepository.getCategories(currency, language),
     staleTime: 10 * 60 * 1000,
     retry: 1,
-    enabled: isPricingContextFetched,
+    enabled: !!initialCurrency || isPricingContextFetched,
   });
 
   const industries = useMemo(
@@ -170,7 +174,7 @@ export function usePlanPicker({
     queryFn: () => authContainer.signupRepository.getEditions(activeIndustry, currency, language),
     staleTime: 5 * 60 * 1000,
     retry: 1,
-    enabled: isPricingContextFetched,
+    enabled: !!initialCurrency || isPricingContextFetched,
   });
 
   // ── Map → tier-sorted PlanEditions, flag the recommended one. ────────────────
@@ -211,7 +215,7 @@ export function usePlanPicker({
 
   return useMemo(
     () => ({
-      isLoading: !isPricingContextFetched || isEditionsLoading,
+      isLoading: (!initialCurrency && !isPricingContextFetched) || isEditionsLoading,
       isError,
       retry,
       activeIndustry,
@@ -230,6 +234,7 @@ export function usePlanPicker({
       priorityKeys,
     }),
     [
+      initialCurrency,
       isPricingContextFetched,
       isEditionsLoading,
       isError,

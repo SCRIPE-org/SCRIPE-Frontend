@@ -37,6 +37,8 @@ export function PlansStage({ wizard }: PlansStageProps) {
     businessType: wizard.businessType,
     discoveryAnswers: wizard.discoveryAnswers,
     recommendation: wizard.recommendation,
+    initialCurrency: wizard.initialCurrency,
+    initialCountry: wizard.initialCountry,
   });
 
   // Reasons line shown on the recommended card — empty while the rec is in flight.

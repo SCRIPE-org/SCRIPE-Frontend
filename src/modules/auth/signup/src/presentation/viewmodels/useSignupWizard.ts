@@ -107,6 +107,8 @@ export interface SignupWizardViewModel {
   phase: SignupPhase;
   /** Direction of the last navigation — drives slide animations. */
   navigationDirection: NavigationDirection;
+  initialCountry?: string | null;
+  initialCurrency?: string;
 
   // ── Welcome screen data ──────────────────────────────────────────────────
   welcomeContent: WelcomeContent | undefined;
@@ -269,7 +271,13 @@ export interface SignupWizardViewModel {
   goToPhase: (phase: SignupPhase) => void;
 }
 
-export function useSignupWizard(): SignupWizardViewModel {
+export interface UseSignupWizardArgs {
+  initialCountry?: string | null;
+  initialCurrency?: string;
+}
+
+export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewModel {
+  const { initialCountry, initialCurrency } = args || {};
   const { language } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -656,6 +664,8 @@ export function useSignupWizard(): SignupWizardViewModel {
     () => ({
       phase,
       navigationDirection,
+      initialCountry,
+      initialCurrency,
       welcomeContent,
       isWelcomeLoading,
       isWelcomeError,
@@ -710,6 +720,8 @@ export function useSignupWizard(): SignupWizardViewModel {
     [
       phase,
       navigationDirection,
+      initialCountry,
+      initialCurrency,
       welcomeContent,
       isWelcomeLoading,
       isWelcomeError,
