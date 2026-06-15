@@ -84,6 +84,10 @@ import {
   ar as revenueAnalyticsAr,
 } from "@modules/entitlements/analytics/locales";
 import { en as leadsEn, ar as leadsAr } from "@modules/entitlements/leads/locales";
+import {
+  en as signupContentEn,
+  ar as signupContentAr,
+} from "@modules/entitlements/signup-content/locales";
 
 // ─── Messaging ─────────────────────────────────────────
 import { en as messagingEn, ar as messagingAr } from "@modules/messaging/locales";
@@ -201,6 +205,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   platformStripeEn,
   revenueAnalyticsEn,
   leadsEn,
+  signupContentEn,
   // Messaging
   messagingEn,
   webhooksEn,
@@ -272,6 +277,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   platformStripeAr,
   revenueAnalyticsAr,
   leadsAr,
+  signupContentAr,
   // Messaging
   messagingAr,
   webhooksAr,
