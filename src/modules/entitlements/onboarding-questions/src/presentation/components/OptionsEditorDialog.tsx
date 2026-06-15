@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { useOptionsEditorViewModel } from "../viewmodels/useOptionsEditorViewModel";
 import {
   Dialog,
