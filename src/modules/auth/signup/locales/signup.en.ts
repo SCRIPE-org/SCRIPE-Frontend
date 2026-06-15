@@ -457,7 +457,7 @@ export const en = {
       successTitle: "We'll be in touch!",
       successSubtitle: "Our sales team will reach out within 1\u20132 business days.",
       fallback: "Or email us directly at {{email}}",
-      backToPlans: "\u2190 Back to plans",
+      backToPlans: "Back to plans",
       phone: "Phone number",
       phonePlaceholder: "+1 555 000 0000",
       whatsNext: "What happens next",
