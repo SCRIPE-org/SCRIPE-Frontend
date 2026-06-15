@@ -104,4 +104,8 @@ export const ENTITLEMENTS_PERMISSIONS = {
   ONBOARDING_RULES_CREATE: "onboarding_rules.create",
   ONBOARDING_RULES_UPDATE: "onboarding_rules.update",
   ONBOARDING_RULES_DELETE: "onboarding_rules.delete",
+
+  // ── Signup Content (Welcome Screen CMS) ───────────────────────────────
+  SIGNUP_CONTENT_VIEW: "signup_content.view",
+  SIGNUP_CONTENT_MANAGE: "signup_content.manage",
 } as const;

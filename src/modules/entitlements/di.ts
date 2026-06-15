@@ -45,6 +45,8 @@ import { OnboardingQuestionService } from "./onboarding-questions/src/data/servi
 import { OnboardingQuestionRepository } from "./onboarding-questions/src/data/repositories/OnboardingQuestionRepository";
 import { RecommendationRuleService } from "./recommendation-rules/src/data/services/RecommendationRuleService";
 import { RecommendationRuleRepository } from "./recommendation-rules/src/data/repositories/RecommendationRuleRepository";
+import { SignupContentService } from "./signup-content/src/data/services/SignupContentService";
+import { SignupContentRepository } from "./signup-content/src/data/repositories/SignupContentRepository";
 
 // Tenant Gateways — no separate repository import needed (already imported above)
 
@@ -65,6 +67,7 @@ import type { IEditionCategoryRepository } from "./edition-categories/src/domain
 import type { ILeadsRepository } from "./leads/src/domain/interfaces/ILeadsRepository";
 import type { IOnboardingQuestionRepository } from "./onboarding-questions/src/domain/interfaces/IOnboardingQuestionRepository";
 import type { IRecommendationRuleRepository } from "./recommendation-rules/src/domain/interfaces/IRecommendationRuleRepository";
+import type { ISignupContentRepository } from "./signup-content/src/domain/interfaces/ISignupContentRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -83,6 +86,7 @@ import type { IEditionCategoryService } from "./edition-categories/src/domain/in
 import type { ILeadsService } from "./leads/src/domain/interfaces/ILeadsService";
 import type { IOnboardingQuestionService } from "./onboarding-questions/src/domain/interfaces/IOnboardingQuestionService";
 import type { IRecommendationRuleService } from "./recommendation-rules/src/domain/interfaces/IRecommendationRuleService";
+// SignupContent has no separate IService interface (service is used directly by repository)
 
 export interface EntitlementsContainer {
   featureRepository: IFeatureRepository;
@@ -101,6 +105,7 @@ export interface EntitlementsContainer {
   leadsRepository: ILeadsRepository;
   onboardingQuestionRepository: IOnboardingQuestionRepository;
   recommendationRuleRepository: IRecommendationRuleRepository;
+  signupContentRepository: ISignupContentRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -140,6 +145,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
 
     // ── Create Repositories (IService → IRepository mapping) ──
     _container = {
+      signupContentRepository: new SignupContentRepository(new SignupContentService(apiService)),
       featureRepository: new FeatureRepository(featureService),
       editionRepository: new EditionRepository(editionService),
       overrideRepository: new OverrideRepository(overrideService),
@@ -213,5 +219,8 @@ export const entitlementsContainer = {
   },
   get recommendationRuleRepository() {
     return getEntitlementsContainer().recommendationRuleRepository;
+  },
+  get signupContentRepository() {
+    return getEntitlementsContainer().signupContentRepository;
   },
 };
