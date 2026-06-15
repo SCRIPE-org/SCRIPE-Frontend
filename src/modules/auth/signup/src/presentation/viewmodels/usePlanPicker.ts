@@ -129,7 +129,14 @@ export function usePlanPicker({
     retry: 1,
   });
 
-  const currency = pricingContext?.recommendedCurrency ?? "USD";
+  // Dev-only: append ?__currency=EGP (or SAR, EUR, USD) to override geo-detected currency.
+  // This is stripped by the NODE_ENV guard and has zero production impact.
+  const devCurrencyOverride =
+    process.env.NODE_ENV === "development" && typeof window !== "undefined"
+      ? (new URLSearchParams(window.location.search).get("__currency")?.toUpperCase() ?? null)
+      : null;
+
+  const currency = devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? "USD";
   const detectedCountry = pricingContext?.detectedCountry ?? null;
   const isFxConverted = !SEEDED_CURRENCIES.has(currency.toUpperCase());
   const locale = useMemo(() => resolveLocale(language, currency), [language, currency]);

@@ -128,14 +128,16 @@ export function PlanCard({
       <div className="flex min-h-[1.75rem] items-start">
         {badgeLabel && (
           <span
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.6875rem] font-semibold"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.6875rem] font-semibold tracking-wide"
             style={
-              isAccent
-                ? { background: `${tokens.accent}1f`, color: tokens.accent, border: tokens.borderActive }
-                : { background: tokens.surfaceRaised, color: tokens.inkMuted, border: tokens.borderCard }
+              badge === RECOMMENDED_BADGE
+                ? { background: `${tokens.accent}1f`, color: tokens.accent, border: `1px solid ${tokens.accent}40` }
+                : badge === MOST_POPULAR_BADGE
+                  ? { background: `${tokens.accent}12`, color: tokens.accent, border: `1px solid ${tokens.accent}28` }
+                  : /* bestValue */ { background: `${tokens.cyan}18`, color: tokens.cyan, border: `1px solid ${tokens.cyan}35` }
             }
           >
-            {isAccent && <Sparkles size={12} aria-hidden />}
+            {badge === RECOMMENDED_BADGE && <Sparkles size={11} aria-hidden />}
             {badgeLabel}
           </span>
         )}
