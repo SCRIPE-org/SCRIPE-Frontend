@@ -68,3 +68,23 @@ export function currencyFlag(currencyCode: string): string {
   const country = CURRENCY_TO_COUNTRY[code];
   return country ? countryToFlag(country) : "🌐";
 }
+
+/** ISO 3166-1 alpha-2 country code → default ISO 4217 billing currency code. */
+export const COUNTRY_TO_CURRENCY: Record<string, string> = {
+  EG: "EGP",
+  SA: "SAR",
+  AE: "AED",
+  GB: "GBP",
+  DE: "EUR",
+  FR: "EUR",
+  IT: "EUR",
+  ES: "EUR",
+  NL: "EUR",
+  US: "USD",
+};
+
+/** Resolves a country code to its default billing currency, defaulting to USD. */
+export function resolveCurrencyFromCountry(countryCode: string | null | undefined): string {
+  if (!countryCode) return "USD";
+  return COUNTRY_TO_CURRENCY[countryCode.toUpperCase()] || "USD";
+}
