@@ -112,13 +112,14 @@ export function OptionGrid({
             disabled={isDisabled}
             onClick={() => onToggle(option.value)}
             whileTap={isDisabled || prefersReducedMotion ? undefined : { scale: 0.97 }}
-            className="relative flex h-full flex-col items-start gap-2 rounded-xl p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-40"
+            className="relative flex h-full flex-col items-start gap-2 rounded-xl p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:cursor-not-allowed"
             style={{
               background: isSelected ? `${tokens.accent}1f` : tokens.surfaceRaised,
               // Accent ring on select — a real border, never a side-stripe, never a glow.
               border: isSelected ? tokens.borderActive : tokens.borderCard,
               // @ts-expect-error — CSS custom prop for Tailwind ring color.
               "--tw-ring-color": tokens.accent,
+              opacity: isDisabled ? 0.35 : 1,
             }}
           >
             {/* Selected affordance — top-trailing corner. Check for multi, dot for single. */}

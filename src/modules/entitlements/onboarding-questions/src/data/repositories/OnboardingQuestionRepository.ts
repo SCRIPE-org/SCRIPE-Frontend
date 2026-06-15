@@ -50,19 +50,25 @@ export class OnboardingQuestionRepository implements IOnboardingQuestionReposito
   }
 
   async listOptions(questionId: string): Promise<AnswerOptionData[]> {
-    const models = await this.service.listOptions(questionId);
-    return models.map((m) => ({
-      id: m.id,
-      value: m.value,
-      labelEn: m.labelEn,
-      labelAr: m.labelAr,
-      sublabelEn: m.sublabelEn,
-      sublabelAr: m.sublabelAr,
-      iconKey: m.iconKey,
-      sortOrder: m.sortOrder,
-      signalWeight: m.signalWeight,
-      isActive: m.isActive,
-    }));
+    try {
+      const models = await this.service.listOptions(questionId);
+      return models.map((m) => ({
+        id: m.id,
+        value: m.value,
+        labelEn: m.labelEn,
+        labelAr: m.labelAr,
+        sublabelEn: m.sublabelEn,
+        sublabelAr: m.sublabelAr,
+        iconKey: m.iconKey,
+        sortOrder: m.sortOrder,
+        signalWeight: m.signalWeight,
+        isActive: m.isActive,
+      }));
+    } catch (error) {
+      // Fallback to fetching the entire question if the options sub-resource endpoint is not yet active/recompiled
+      const question = await this.getById(questionId);
+      return question.options;
+    }
   }
 
   async createOption(questionId: string, request: AnswerOptionRequest): Promise<string> {
