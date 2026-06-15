@@ -281,7 +281,7 @@ export const en = {
 
     // Common
     common: {
-      back: "← Back",
+      back: "Back",
       optional: "optional",
       backLabel: "Go back to previous question",
       loading: "Loading...",

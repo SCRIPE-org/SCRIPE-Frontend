@@ -8,6 +8,7 @@ import type {
   CreateLeadParams,
   ConvertLeadParams,
   AssignLeadParams,
+  AssignableAdmin,
 } from "../../domain/interfaces/ILeadsRepository";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useToast } from "@core/ui/use-toast";
@@ -74,6 +75,20 @@ export function useLeadsViewModel() {
     queryKey: QUERY_KEYS.detail(selectedLeadId ?? ""),
     queryFn: () => leadsRepository.getById(selectedLeadId!),
     enabled: !!selectedLeadId,
+    staleTime: 60 * 1000,
+  });
+
+  const convertLeadQuery = useQuery({
+    queryKey: QUERY_KEYS.detail(convertLeadId ?? ""),
+    queryFn: () => leadsRepository.getById(convertLeadId!),
+    enabled: !!convertLeadId,
+    staleTime: 60 * 1000,
+  });
+
+  const assignLeadQuery = useQuery({
+    queryKey: QUERY_KEYS.detail(assignLeadId ?? ""),
+    queryFn: () => leadsRepository.getById(assignLeadId!),
+    enabled: !!assignLeadId,
     staleTime: 60 * 1000,
   });
 
@@ -274,6 +289,13 @@ export function useLeadsViewModel() {
     [assignLeadId, assignLeadMutation]
   );
 
+  const searchAssignableAdmins = useCallback(
+    async (query: string): Promise<AssignableAdmin[]> => {
+      return leadsRepository.searchAssignableAdmins(query);
+    },
+    [leadsRepository]
+  );
+
   const handleDeleteLead = useCallback(
     async (id: string) => {
       await deleteLeadMutation.mutateAsync(id);
@@ -338,6 +360,10 @@ export function useLeadsViewModel() {
     selectedLeadId,
     selectedLead: detailQuery.data ?? null,
     isLoadingDetail: detailQuery.isLoading,
+    convertLead: convertLeadQuery.data ?? null,
+    assignLead: assignLeadQuery.data ?? null,
+    isLoadingConvertLead: convertLeadQuery.isLoading,
+    isLoadingAssignLead: assignLeadQuery.isLoading,
 
     // Activity
     activity: activityQuery.data ?? [],
@@ -381,6 +407,7 @@ export function useLeadsViewModel() {
     handleOpenAssignDialog,
     handleCloseAssignDialog,
     handleAssignLead,
+    searchAssignableAdmins,
     handleDeleteLead,
     // Bulk
     handleToggleSelect,

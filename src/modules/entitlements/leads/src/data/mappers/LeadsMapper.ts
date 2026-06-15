@@ -14,7 +14,9 @@ import type {
   PlatformLeadResponseModel,
   PlatformLeadListResponseModel,
   LeadActivityResponseModel,
+  AssignableAdminResponseModel,
 } from "../models/leads.models";
+import type { AssignableAdmin } from "../../domain/interfaces/ILeadsRepository";
 
 export class LeadsMapper {
   static toEntity(dto: PlatformLeadResponseModel): PlatformLead {
@@ -69,6 +71,19 @@ export class LeadsMapper {
       actorAdminId: dto.actorAdminId,
       actorName: dto.actorName,
       occurredAt: dto.occurredAt ?? new Date().toISOString(),
+    };
+  }
+
+  static toAssignableAdmin(dto: AssignableAdminResponseModel): AssignableAdmin {
+    const displayName = `${dto.firstName ?? ""} ${dto.lastName ?? ""}`.trim() || dto.username;
+
+    return {
+      id: dto.id,
+      username: dto.username ?? "",
+      displayName,
+      email: dto.email,
+      tenantName: dto.tenantName,
+      isPlatformAdmin: Boolean(dto.isSuperAdmin || !dto.tenantId),
     };
   }
 }

@@ -1,15 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
+import { useState, type FormEvent } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
+import { Loader2, PlusCircle } from "lucide-react";
 
 export interface CreateLeadFormData {
   companyName: string;
@@ -29,7 +35,15 @@ interface CreateLeadDialogProps {
   availableEditions: Array<{ key: string; displayName: string }>;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+const emptyForm: CreateLeadFormData = {
+  companyName: "",
+  contactName: "",
+  email: "",
+  phone: "",
+  editionKey: undefined,
+  message: "",
+  notes: "",
+};
 
 export function CreateLeadDialog({
   open,
@@ -40,16 +54,7 @@ export function CreateLeadDialog({
 }: CreateLeadDialogProps) {
   const { t } = useI18n();
 
-  const [form, setForm] = useState<CreateLeadFormData>({
-    companyName: "",
-    contactName: "",
-    email: "",
-    phone: "",
-    editionKey: undefined,
-    message: "",
-    notes: "",
-  });
-
+  const [form, setForm] = useState<CreateLeadFormData>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof CreateLeadFormData, string>>>({});
 
   const set = (field: keyof CreateLeadFormData, value: string) => {
@@ -57,18 +62,27 @@ export function CreateLeadDialog({
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
+  const reset = () => {
+    setForm(emptyForm);
+    setErrors({});
+  };
+
   const validate = (): boolean => {
     const next: typeof errors = {};
     if (!form.companyName.trim()) next.companyName = t("leads.createDialog.errors.companyRequired");
     if (!form.contactName.trim()) next.contactName = t("leads.createDialog.errors.contactRequired");
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       next.email = t("leads.createDialog.errors.emailInvalid");
+    }
+
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     if (!validate()) return;
+
     await onSubmit({
       companyName: form.companyName.trim(),
       contactName: form.contactName.trim(),
@@ -78,90 +92,78 @@ export function CreateLeadDialog({
       message: form.message?.trim() || undefined,
       notes: form.notes?.trim() || undefined,
     });
-    // Reset on success
-    setForm({
-      companyName: "",
-      contactName: "",
-      email: "",
-      phone: "",
-      editionKey: undefined,
-      message: "",
-      notes: "",
-    });
-    setErrors({});
+    reset();
   };
 
   const handleClose = () => {
     if (isSubmitting) return;
-    setForm({
-      companyName: "",
-      contactName: "",
-      email: "",
-      phone: "",
-      editionKey: undefined,
-      message: "",
-      notes: "",
-    });
-    setErrors({});
+    reset();
     onClose();
   };
 
   return (
     <Dialog
       open={open}
-      onOpenChange={(v) => {
-        if (!v) handleClose();
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) handleClose();
       }}
     >
-      <DialogContent className="max-h-[90vh] w-full max-w-lg overflow-y-auto border-zinc-800 bg-zinc-950 text-white">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-white">
-            {t("leads.createDialog.title")}
-          </DialogTitle>
-          <p className="mt-1 text-sm text-zinc-400">{t("leads.createDialog.subtitle")}</p>
+          <div className="mb-1 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
+              <PlusCircle className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <div>
+              <DialogTitle>{t("leads.createDialog.title")}</DialogTitle>
+              <DialogDescription className="mt-0.5">
+                {t("leads.createDialog.subtitle")}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="space-y-5 py-2">
-          {/* Company + Contact (2-col) */}
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-5 py-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="cl-company" className="text-xs text-zinc-400">
-                {t("leads.createDialog.company")} <span className="text-red-400">*</span>
+              <Label htmlFor="cl-company">
+                {t("leads.createDialog.company")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="cl-company"
                 value={form.companyName}
                 onChange={(e) => set("companyName", e.target.value)}
                 placeholder={t("leads.createDialog.companyPlaceholder")}
-                className={`border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600 ${
-                  errors.companyName ? "border-red-500" : ""
-                }`}
+                className={errors.companyName ? "border-destructive" : undefined}
+                disabled={isSubmitting}
               />
-              {errors.companyName && <p className="text-xs text-red-400">{errors.companyName}</p>}
+              {errors.companyName && (
+                <p className="text-xs text-destructive">{errors.companyName}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="cl-contact" className="text-xs text-zinc-400">
-                {t("leads.createDialog.contact")} <span className="text-red-400">*</span>
+              <Label htmlFor="cl-contact">
+                {t("leads.createDialog.contact")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="cl-contact"
                 value={form.contactName}
                 onChange={(e) => set("contactName", e.target.value)}
                 placeholder={t("leads.createDialog.contactPlaceholder")}
-                className={`border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600 ${
-                  errors.contactName ? "border-red-500" : ""
-                }`}
+                className={errors.contactName ? "border-destructive" : undefined}
+                disabled={isSubmitting}
               />
-              {errors.contactName && <p className="text-xs text-red-400">{errors.contactName}</p>}
+              {errors.contactName && (
+                <p className="text-xs text-destructive">{errors.contactName}</p>
+              )}
             </div>
           </div>
 
-          {/* Email + Phone (2-col) */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="cl-email" className="text-xs text-zinc-400">
-                {t("leads.createDialog.email")} <span className="text-red-400">*</span>
+              <Label htmlFor="cl-email">
+                {t("leads.createDialog.email")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="cl-email"
@@ -169,48 +171,41 @@ export function CreateLeadDialog({
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
                 placeholder="name@company.com"
-                className={`border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600 ${
-                  errors.email ? "border-red-500" : ""
-                }`}
+                className={errors.email ? "border-destructive" : undefined}
+                disabled={isSubmitting}
               />
-              {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
+              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="cl-phone" className="text-xs text-zinc-400">
-                {t("leads.createDialog.phone")}
-              </Label>
+              <Label htmlFor="cl-phone">{t("leads.createDialog.phone")}</Label>
               <Input
                 id="cl-phone"
                 type="tel"
                 value={form.phone}
                 onChange={(e) => set("phone", e.target.value)}
                 placeholder="+1 555 000 0000"
-                className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+                disabled={isSubmitting}
               />
             </div>
           </div>
 
-          {/* Edition Interest */}
           {availableEditions.length > 0 && (
             <div className="space-y-1.5">
-              <Label htmlFor="cl-edition" className="text-xs text-zinc-400">
-                {t("leads.createDialog.editionInterest")}
-              </Label>
+              <Label htmlFor="cl-edition">{t("leads.createDialog.editionInterest")}</Label>
               <Select
                 value={form.editionKey ?? "none"}
-                onValueChange={(v) => set("editionKey", v === "none" ? "" : v)}
+                onValueChange={(value) => set("editionKey", value === "none" ? "" : value)}
+                disabled={isSubmitting}
               >
-                <SelectTrigger id="cl-edition" className="border-zinc-700 bg-zinc-900 text-white">
+                <SelectTrigger id="cl-edition">
                   <SelectValue placeholder={t("leads.createDialog.editionPlaceholder")} />
                 </SelectTrigger>
-                <SelectContent className="border-zinc-700 bg-zinc-900">
-                  <SelectItem value="none">
-                    <span className="text-zinc-500">{t("leads.createDialog.editionNone")}</span>
-                  </SelectItem>
-                  {availableEditions.map((e) => (
-                    <SelectItem key={e.key} value={e.key}>
-                      {e.displayName}
+                <SelectContent>
+                  <SelectItem value="none">{t("leads.createDialog.editionNone")}</SelectItem>
+                  {availableEditions.map((edition) => (
+                    <SelectItem key={edition.key} value={edition.key}>
+                      {edition.displayName}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -218,56 +213,48 @@ export function CreateLeadDialog({
             </div>
           )}
 
-          {/* Message */}
           <div className="space-y-1.5">
-            <Label htmlFor="cl-message" className="text-xs text-zinc-400">
-              {t("leads.createDialog.message")}
-            </Label>
+            <Label htmlFor="cl-message">{t("leads.createDialog.message")}</Label>
             <Textarea
               id="cl-message"
               value={form.message}
               onChange={(e) => set("message", e.target.value)}
               placeholder={t("leads.createDialog.messagePlaceholder")}
               rows={3}
-              className="resize-none border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="resize-none"
+              disabled={isSubmitting}
             />
           </div>
 
-          {/* Internal Notes */}
           <div className="space-y-1.5">
-            <Label htmlFor="cl-notes" className="text-xs text-zinc-400">
-              {t("leads.createDialog.notes")}
-            </Label>
+            <Label htmlFor="cl-notes">{t("leads.createDialog.notes")}</Label>
             <Textarea
               id="cl-notes"
               value={form.notes}
               onChange={(e) => set("notes", e.target.value)}
               placeholder={t("leads.createDialog.notesPlaceholder")}
               rows={2}
-              className="resize-none border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="resize-none"
+              disabled={isSubmitting}
             />
           </div>
-        </div>
 
-        <DialogFooter className="gap-2 pt-2">
-          <Button
-            id="cl-cancel"
-            variant="outline"
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="border-zinc-700 text-zinc-400 hover:text-white"
-          >
-            {t("leads.createDialog.cancel")}
-          </Button>
-          <Button
-            id="cl-submit"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40"
-          >
-            {isSubmitting ? t("leads.createDialog.creating") : t("leads.createDialog.create")}
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
+              {t("leads.createDialog.cancel")}
+            </Button>
+            <Button type="submit" disabled={isSubmitting} className="gap-2">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t("leads.createDialog.creating")}
+                </>
+              ) : (
+                t("leads.createDialog.create")
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

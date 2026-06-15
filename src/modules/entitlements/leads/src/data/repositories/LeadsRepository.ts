@@ -14,6 +14,7 @@ import type {
   ConvertLeadParams,
   ConvertLeadResult,
   AssignLeadParams,
+  AssignableAdmin,
   BulkLeadStatusResult,
 } from "../../domain/interfaces";
 import type { PagedResult } from "@modules/identity/core/domain/types";
@@ -54,6 +55,11 @@ export class LeadsRepository implements ILeadsRepository {
 
   async assignLead(id: string, params: AssignLeadParams): Promise<void> {
     await this.service.assignLead(id, params);
+  }
+
+  async searchAssignableAdmins(search: string): Promise<AssignableAdmin[]> {
+    const model = await this.service.searchAssignableAdmins(search);
+    return model.items.map(LeadsMapper.toAssignableAdmin);
   }
 
   async deleteLead(id: string): Promise<void> {

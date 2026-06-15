@@ -281,7 +281,7 @@ export const ar = {
 
     // عام
     common: {
-      back: "رجوع →",
+      back: "رجوع",
       optional: "اختياري",
       backLabel: "العودة إلى السؤال السابق",
       loading: "جاري التحميل...",
@@ -322,7 +322,7 @@ export const ar = {
       title: "ما الذي يصف مؤسستك بشكل أفضل؟",
       subtitle: "سنعرض لك الخطط المناسبة لصناعتك.",
       allIndustries: "جميع الصناعات",
-      continue: "متابعة →",
+      continue: "متابعة",
       fromPrice: "من {{price}}/شهر",
       freeAvailable: "خطة مجانية متاحة",
       notSure: "لست متأكداً؟ ابدأ بالعامة",
@@ -348,7 +348,7 @@ export const ar = {
       skipQ: "تخطي · سأختار لاحقاً",
       skipToPlans: "تخطي · أرني الخطط",
       skipAll: "تخطي جميع الأسئلة · اذهب مباشرة إلى الخطط",
-      q3Confirm: "تم · أظهر خطتي ←",
+      q3Confirm: "تم · أظهر خطتي",
       q3MaxReached: "تم تحديد ٣ من ٣ (الحد الأقصى)",
       q3Count: "تم تحديد {{count}} من {{max}}",
       q3GroupLabel: "اختر أهم أولوياتك (حتى ٣)",
@@ -455,7 +455,7 @@ export const ar = {
       successTitle: "سنتواصل معك قريباً!",
       successSubtitle: "سيتواصل معك فريق المبيعات خلال ١–٢ أيام عمل.",
       fallback: "أو راسلنا على {{email}}",
-      backToPlans: "→ رجوع إلى الخطط",
+      backToPlans: "رجوع إلى الخطط",
       phone: "رقم الهاتف",
       phonePlaceholder: "+966 55 000 0000",
       whatsNext: "ما الذي سيحدث بعد ذلك",

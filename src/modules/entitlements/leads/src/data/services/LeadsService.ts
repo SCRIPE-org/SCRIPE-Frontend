@@ -6,6 +6,7 @@ import type {
   PagedLeadsModel,
   PlatformLeadResponseModel,
   LeadActivityResponseModel,
+  PagedAssignableAdminsModel,
 } from "../models/leads.models";
 import type {
   LeadsListParams,
@@ -71,6 +72,17 @@ export class LeadsService implements ILeadsService {
       adminId: params.adminId,
       note: params.note,
     });
+  }
+
+  async searchAssignableAdmins(search: string): Promise<PagedAssignableAdminsModel> {
+    const url = buildUrl(API_ENDPOINTS.ADMINS.LIST, {
+      page: 1,
+      pageSize: 10,
+      search: search.trim() || undefined,
+      isActive: true,
+    });
+
+    return this.api.get<PagedAssignableAdminsModel>(url);
   }
 
   async deleteLead(id: string): Promise<void> {

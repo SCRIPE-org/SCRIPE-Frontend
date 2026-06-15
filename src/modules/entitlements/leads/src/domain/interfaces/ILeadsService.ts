@@ -4,6 +4,7 @@ import type {
   PagedLeadsModel,
   PlatformLeadResponseModel,
   LeadActivityResponseModel,
+  PagedAssignableAdminsModel,
 } from "../../data/models/leads.models";
 import type {
   LeadsListParams,
@@ -29,6 +30,7 @@ export interface ILeadsService {
   createLead(params: CreateLeadParams): Promise<string>;
   convertToTenant(id: string, params: ConvertLeadParams): Promise<ConvertLeadResult>;
   assignLead(id: string, params: AssignLeadParams): Promise<void>;
+  searchAssignableAdmins(search: string): Promise<PagedAssignableAdminsModel>;
   deleteLead(id: string): Promise<void>;
   getActivity(id: string): Promise<LeadActivityResponseModel[]>;
   /** Bulk-update status on up to 100 leads in one API round-trip. */

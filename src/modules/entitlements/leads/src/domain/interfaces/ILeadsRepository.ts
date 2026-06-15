@@ -73,6 +73,15 @@ export interface AssignLeadParams {
   note?: string;
 }
 
+export interface AssignableAdmin {
+  id: string;
+  username: string;
+  displayName: string;
+  email?: string;
+  tenantName?: string;
+  isPlatformAdmin: boolean;
+}
+
 export interface BulkLeadStatusResult {
   updated: number;
   notFound: number;
@@ -87,6 +96,7 @@ export interface ILeadsRepository {
   createLead(params: CreateLeadParams): Promise<string>; // returns new lead id
   convertToTenant(id: string, params: ConvertLeadParams): Promise<ConvertLeadResult>;
   assignLead(id: string, params: AssignLeadParams): Promise<void>;
+  searchAssignableAdmins(search: string): Promise<AssignableAdmin[]>;
   deleteLead(id: string): Promise<void>;
   getActivity(id: string): Promise<LeadActivity[]>;
   /** Bulk-update status on multiple leads. Max 100 per call. */

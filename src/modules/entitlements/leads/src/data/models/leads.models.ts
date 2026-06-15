@@ -51,6 +51,28 @@ export interface PagedLeadsModel {
   hasPreviousPage: boolean;
 }
 
+export interface AssignableAdminResponseModel {
+  id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  isActive: boolean;
+  tenantId?: string;
+  tenantName?: string;
+  isSuperAdmin?: boolean;
+}
+
+export interface PagedAssignableAdminsModel {
+  items: AssignableAdminResponseModel[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export interface LeadActivityResponseModel {
   id: string;
   leadId: string;

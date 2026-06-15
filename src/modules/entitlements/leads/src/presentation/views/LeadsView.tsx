@@ -265,7 +265,7 @@ export function LeadsView() {
       {/* ── Convert to Tenant Dialog ── */}
       <ConvertToTenantDialog
         open={vm.isConvertDialogOpen}
-        lead={vm.selectedLead}
+        lead={vm.convertLead}
         isConverting={vm.isConvertingLead}
         onClose={vm.handleCloseConvertDialog}
         onConvert={vm.handleConvertToTenant}
@@ -274,10 +274,11 @@ export function LeadsView() {
       {/* ── Assign Lead Dialog ── */}
       <AssignLeadDialog
         open={vm.isAssignDialogOpen}
-        lead={vm.selectedLead}
+        lead={vm.assignLead}
         isAssigning={vm.isAssigningLead}
         onClose={vm.handleCloseAssignDialog}
         onAssign={vm.handleAssignLead}
+        onSearchAdmins={vm.searchAssignableAdmins}
       />
 
       {/* ── Bulk Confirm Dialog ── */}

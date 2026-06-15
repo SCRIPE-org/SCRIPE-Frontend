@@ -7,5 +7,6 @@ export type {
   ConvertLeadParams,
   ConvertLeadResult,
   AssignLeadParams,
+  AssignableAdmin,
   BulkLeadStatusResult,
 } from "./ILeadsRepository";
