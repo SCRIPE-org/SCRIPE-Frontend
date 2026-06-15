@@ -78,4 +78,8 @@ export class LeadsRepository implements ILeadsRepository {
   ): Promise<BulkLeadStatusResult> {
     return this.service.bulkUpdateStatus(leadIds, status, notes);
   }
+
+  async addNote(id: string, note: string): Promise<void> {
+    await this.service.addNote(id, note);
+  }
 }

@@ -39,4 +39,6 @@ export interface ILeadsService {
     status: string,
     notes?: string
   ): Promise<BulkLeadStatusResult>;
+  /** Append a standalone CRM note to the lead's activity timeline. */
+  addNote(id: string, note: string): Promise<void>;
 }

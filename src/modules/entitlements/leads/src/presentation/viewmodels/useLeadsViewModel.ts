@@ -172,6 +172,22 @@ export function useLeadsViewModel() {
     },
   });
 
+  // ── Add Note Mutation ─────────────────────────────────────────────────────
+  const addNoteMutation = useMutation({
+    mutationFn: ({ id, note }: { id: string; note: string }) =>
+      leadsRepository.addNote(id, note),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads", "activity"] });
+      if (selectedLeadId) {
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.activity(selectedLeadId) });
+      }
+      toast({ title: t("leads.note.added") });
+    },
+    onError: () => {
+      toast({ title: t("leads.note.error"), variant: "destructive" });
+    },
+  });
+
   // ── Delete Lead Mutation ──────────────────────────────────────────────────
   const deleteLeadMutation = useMutation({
     mutationFn: (id: string) => leadsRepository.deleteLead(id),
@@ -296,6 +312,13 @@ export function useLeadsViewModel() {
     [leadsRepository]
   );
 
+  const handleAddNote = useCallback(
+    async (id: string, note: string) => {
+      await addNoteMutation.mutateAsync({ id, note });
+    },
+    [addNoteMutation]
+  );
+
   const handleDeleteLead = useCallback(
     async (id: string) => {
       await deleteLeadMutation.mutateAsync(id);
@@ -374,6 +397,7 @@ export function useLeadsViewModel() {
     isCreatingLead: createLeadMutation.isPending,
     isConvertingLead: convertToTenantMutation.isPending,
     isAssigningLead: assignLeadMutation.isPending,
+    isAddingNote: addNoteMutation.isPending,
     isDeletingLead: deleteLeadMutation.isPending,
     isBulkClosing: bulkCloseMutation.isPending,
     isBulkDeleting: bulkDeleteMutation.isPending,
@@ -408,6 +432,7 @@ export function useLeadsViewModel() {
     handleCloseAssignDialog,
     handleAssignLead,
     searchAssignableAdmins,
+    handleAddNote,
     handleDeleteLead,
     // Bulk
     handleToggleSelect,

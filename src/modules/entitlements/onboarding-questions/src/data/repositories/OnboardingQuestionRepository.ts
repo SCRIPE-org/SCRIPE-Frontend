@@ -6,9 +6,10 @@ import type { IOnboardingQuestionService } from "../../domain/interfaces/IOnboar
 import type {
   CreateOnboardingQuestionRequest,
   UpdateOnboardingQuestionRequest,
+  AnswerOptionRequest,
 } from "../../domain/entities/OnboardingQuestionRequests";
 import { OnboardingQuestionMapper } from "../mappers/OnboardingQuestionMapper";
-import type { OnboardingQuestion } from "../../domain/entities/OnboardingQuestion";
+import type { OnboardingQuestion, AnswerOptionData } from "../../domain/entities/OnboardingQuestion";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
 export class OnboardingQuestionRepository implements IOnboardingQuestionRepository {
@@ -43,5 +44,42 @@ export class OnboardingQuestionRepository implements IOnboardingQuestionReposito
 
   async delete(id: string): Promise<void> {
     await this.service.delete(id);
+  }
+
+  async listOptions(questionId: string): Promise<AnswerOptionData[]> {
+    const models = await this.service.listOptions(questionId);
+    return models.map((m) => ({
+      id: m.id,
+      value: m.value,
+      labelEn: m.labelEn,
+      labelAr: m.labelAr,
+      sublabelEn: m.sublabelEn,
+      sublabelAr: m.sublabelAr,
+      iconKey: m.iconKey,
+      sortOrder: m.sortOrder,
+      signalWeight: m.signalWeight,
+      isActive: m.isActive,
+    }));
+  }
+
+  async createOption(questionId: string, request: AnswerOptionRequest): Promise<string> {
+    const result = await this.service.createOption(questionId, request);
+    return result.id;
+  }
+
+  async updateOption(
+    questionId: string,
+    optionId: string,
+    request: AnswerOptionRequest
+  ): Promise<void> {
+    await this.service.updateOption(questionId, optionId, request);
+  }
+
+  async deleteOption(questionId: string, optionId: string): Promise<void> {
+    await this.service.deleteOption(questionId, optionId);
+  }
+
+  async reorderOptions(questionId: string, orderedIds: string[]): Promise<void> {
+    await this.service.reorderOptions(questionId, orderedIds);
   }
 }

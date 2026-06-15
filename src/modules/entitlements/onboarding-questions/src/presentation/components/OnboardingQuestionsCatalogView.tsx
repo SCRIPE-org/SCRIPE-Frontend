@@ -6,10 +6,12 @@
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
+import { SlidersHorizontal } from "lucide-react";
+import { OptionsEditorDialog } from "./OptionsEditorDialog";
 import type { OnboardingQuestion } from "../../domain/entities/OnboardingQuestion";
 
 interface OnboardingQuestionsCatalogViewProps {
@@ -23,6 +25,8 @@ export function OnboardingQuestionsCatalogView({
   t,
   language,
 }: OnboardingQuestionsCatalogViewProps) {
+  const [optionsTarget, setOptionsTarget] = useState<{ id: string; label: string } | null>(null);
+
   const config: CrudConfig<OnboardingQuestion> = useMemo(
     () => ({
       titleKey: "entitlements.onboarding.questions.title",
@@ -136,9 +140,31 @@ export function OnboardingQuestionsCatalogView({
       ],
 
       getItemDisplayName: (item: OnboardingQuestion) => item.getLabel(language),
+
+      renderActions: (item: OnboardingQuestion) => (
+        <button
+          onClick={() => setOptionsTarget({ id: item.id, label: item.getLabel(language) })}
+          title="Edit answer options"
+          className="rounded p-1.5 text-violet-400/70 transition-colors hover:bg-violet-500/10 hover:text-violet-300"
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+        </button>
+      ),
     }),
+    // setOptionsTarget is stable — intentionally omitted from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, language]
   );
 
-  return <GenericCrudView viewModel={vm} config={config} />;
+  return (
+    <>
+      <GenericCrudView viewModel={vm} config={config} />
+      <OptionsEditorDialog
+        open={!!optionsTarget}
+        onClose={() => setOptionsTarget(null)}
+        questionId={optionsTarget?.id ?? null}
+        questionLabel={optionsTarget?.label ?? ""}
+      />
+    </>
+  );
 }

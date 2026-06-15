@@ -104,4 +104,8 @@ export class LeadsService implements ILeadsService {
       notes,
     });
   }
+
+  async addNote(id: string, note: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.LEADS.ADD_NOTE(id), { note });
+  }
 }

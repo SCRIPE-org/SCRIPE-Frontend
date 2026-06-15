@@ -247,6 +247,7 @@ export const ENTITLEMENTS_ENDPOINTS = {
       ACTIVITY: (id: string) => `${V1}/leads/${id}/activity`,
       DELETE: (id: string) => `${V1}/leads/${id}`,
       BULK_STATUS: `${V1}/leads/bulk-status`,
+      ADD_NOTE: (id: string) => `${V1}/leads/${id}/notes`,
     },
     // ===== ADMIN ONBOARDING ENGINE =====
     ONBOARDING_QUESTIONS: {
@@ -262,6 +263,33 @@ export const ENTITLEMENTS_ENDPOINTS = {
       CREATE: `${V1}/onboarding/rules`,
       UPDATE: (id: string) => `${V1}/onboarding/rules/${id}`,
       DELETE: (id: string) => `${V1}/onboarding/rules/${id}`,
+    },
+    ONBOARDING_ANSWER_OPTIONS: {
+      LIST: (questionId: string) => `${V1}/onboarding/questions/${questionId}/options`,
+      CREATE: (questionId: string) => `${V1}/onboarding/questions/${questionId}/options`,
+      UPDATE: (questionId: string, optionId: string) =>
+        `${V1}/onboarding/questions/${questionId}/options/${optionId}`,
+      DELETE: (questionId: string, optionId: string) =>
+        `${V1}/onboarding/questions/${questionId}/options/${optionId}`,
+      REORDER: (questionId: string) =>
+        `${V1}/onboarding/questions/${questionId}/options/reorder`,
+      UPDATE_CONDITIONS: (questionId: string, optionId: string) =>
+        `${V1}/onboarding/questions/${questionId}/options/${optionId}/conditions`,
+    },
+    SIGNUP_CONTENT: {
+      GET: `${V1}/signup/content`,
+      SET_MODE: `${V1}/signup/content/mode`,
+      UPDATE_WELCOME: `${V1}/signup/content/welcome`,
+      TRUST_MARKS: `${V1}/signup/content/trust-marks`,
+      CREATE_TRUST_MARK: `${V1}/signup/content/trust-marks`,
+      UPDATE_TRUST_MARK: (id: string) => `${V1}/signup/content/trust-marks/${id}`,
+      DELETE_TRUST_MARK: (id: string) => `${V1}/signup/content/trust-marks/${id}`,
+      REORDER_TRUST_MARKS: `${V1}/signup/content/trust-marks/reorder`,
+      CUSTOMER_LOGOS: `${V1}/signup/content/customer-logos`,
+      CREATE_CUSTOMER_LOGO: `${V1}/signup/content/customer-logos`,
+      UPDATE_CUSTOMER_LOGO: (id: string) => `${V1}/signup/content/customer-logos/${id}`,
+      DELETE_CUSTOMER_LOGO: (id: string) => `${V1}/signup/content/customer-logos/${id}`,
+      REORDER_CUSTOMER_LOGOS: `${V1}/signup/content/customer-logos/reorder`,
     },
   },
 };

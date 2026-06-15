@@ -203,6 +203,16 @@ export const en = {
       success: "Lead assigned successfully.",
     },
 
+    note: {
+      sectionTitle: "Add Note",
+      placeholder: "Write a CRM note…",
+      save: "Add Note",
+      saving: "Saving…",
+      saved: "✓ Note added",
+      added: "Note added to timeline.",
+      error: "Failed to add note. Please try again.",
+    },
+
     activity: {
       title: "Activity Timeline",
       empty: "No activity recorded yet.",

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import { LeadDetailDrawer } from "../components/LeadDetailDrawer";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
@@ -7,10 +8,12 @@ import { ConvertToTenantDialog } from "../components/ConvertToTenantDialog";
 import { AssignLeadDialog } from "../components/AssignLeadDialog";
 import { StatPill } from "../components/StatPill";
 import { BulkActionBar } from "../components/BulkActionBar";
+import { LeadsKanbanView } from "../components/LeadsKanbanView";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { GenericTable, type Column } from "@core/crud/components/generic-table";
+import { LayoutGrid, Table2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,9 +49,12 @@ const STATUS_DOTS: Record<LeadStatus, string> = {
 
 // ── Main view ─────────────────────────────────────────────────────────────────
 
+type ViewMode = "table" | "kanban";
+
 export function LeadsView() {
   const vm = useLeadsViewModel();
   const { t } = useI18n();
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const leads = vm.leads;
   const isAnyBulkPending = vm.isBulkClosing || vm.isBulkDeleting;
@@ -172,6 +178,24 @@ export function LeadsView() {
             value={vm.stats.converted}
             accent="border-emerald-500/30 text-emerald-400"
           />
+          {/* View toggle */}
+          <div className="flex items-center rounded-md border border-zinc-700 bg-zinc-900 p-0.5">
+            <button
+              onClick={() => setViewMode("table")}
+              className={`rounded px-2 py-1 transition-colors ${viewMode === "table" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+              aria-label="Table view"
+            >
+              <Table2 className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode("kanban")}
+              className={`rounded px-2 py-1 transition-colors ${viewMode === "kanban" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+              aria-label="Kanban view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
           <Button
             id="leads-create-btn"
             onClick={vm.handleOpenCreateDialog}
@@ -218,24 +242,32 @@ export function LeadsView() {
         </Select>
       </div>
 
-      {/* ── Generic Table ── */}
-      <GenericTable
-        data={leads}
-        columns={columns}
-        actions={actions}
-        loading={vm.isLoading}
-        selectable={true}
-        selectedItems={Array.from(vm.selectedIds)}
-        onSelectionChange={vm.handleSelectionChange}
-        pagination={{
-          itemsCount: vm.totalCount,
-          pageSize: vm.pageSize,
-          currentPage: vm.page,
-          pagesCount: vm.totalPages,
-          onPageChange: vm.handlePageChange,
-        }}
-        emptyMessage={t("leads.empty")}
-      />
+      {/* ── Table / Kanban ── */}
+      {viewMode === "kanban" ? (
+        <LeadsKanbanView
+          leads={leads}
+          isLoading={vm.isLoading}
+          onOpenDrawer={vm.handleOpenDrawer}
+        />
+      ) : (
+        <GenericTable
+          data={leads}
+          columns={columns}
+          actions={actions}
+          loading={vm.isLoading}
+          selectable={true}
+          selectedItems={Array.from(vm.selectedIds)}
+          onSelectionChange={vm.handleSelectionChange}
+          pagination={{
+            itemsCount: vm.totalCount,
+            pageSize: vm.pageSize,
+            currentPage: vm.page,
+            pagesCount: vm.totalPages,
+            onPageChange: vm.handlePageChange,
+          }}
+          emptyMessage={t("leads.empty")}
+        />
+      )}
 
       {/* ── Lead Detail Drawer ── */}
       <LeadDetailDrawer
@@ -251,6 +283,8 @@ export function LeadsView() {
         isDeletingLead={vm.isDeletingLead}
         activity={vm.activity}
         isLoadingActivity={vm.isLoadingActivity}
+        onAddNote={vm.handleAddNote}
+        isAddingNote={vm.isAddingNote}
       />
 
       {/* ── Create Lead Dialog ── */}

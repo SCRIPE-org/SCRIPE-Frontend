@@ -138,6 +138,9 @@ interface LeadDetailDrawerProps {
   /** Activity timeline entries */
   activity?: LeadActivity[];
   isLoadingActivity?: boolean;
+  /** Standalone note — appended to activity timeline without a status change */
+  onAddNote?: (id: string, note: string) => Promise<void>;
+  isAddingNote?: boolean;
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -155,12 +158,16 @@ export function LeadDetailDrawer({
   isDeletingLead,
   activity,
   isLoadingActivity,
+  onAddNote,
+  isAddingNote,
 }: LeadDetailDrawerProps) {
   const { t } = useI18n();
 
   const [pendingStatus, setPendingStatus] = useState<LeadStatus | null>(null);
   const [noteText, setNoteText] = useState("");
   const [noteSaved, setNoteSaved] = useState(false);
+  const [quickNote, setQuickNote] = useState("");
+  const [quickNoteSaved, setQuickNoteSaved] = useState(false);
 
   const pendingOrCurrent = pendingStatus ?? lead?.status ?? "New";
   const currentStatus = pendingOrCurrent;
@@ -176,6 +183,14 @@ export function LeadDetailDrawer({
     setNoteSaved(true);
     setPendingStatus(null);
     setTimeout(() => setNoteSaved(false), 2000);
+  };
+
+  const handleQuickNote = async () => {
+    if (!lead || !quickNote.trim() || !onAddNote) return;
+    await onAddNote(lead.id, quickNote.trim());
+    setQuickNote("");
+    setQuickNoteSaved(true);
+    setTimeout(() => setQuickNoteSaved(false), 2000);
   };
 
   return (
@@ -416,6 +431,34 @@ export function LeadDetailDrawer({
                       minute: "2-digit",
                     })}
                   </p>
+                </div>
+              </Section>
+            )}
+
+            {/* ── Quick Add Note ── */}
+            {onAddNote && (
+              <Section title={t("leads.note.sectionTitle")} icon={StickyNote}>
+                <div className="space-y-2">
+                  <Textarea
+                    value={quickNote}
+                    onChange={(e) => setQuickNote(e.target.value)}
+                    placeholder={t("leads.note.placeholder")}
+                    rows={3}
+                    className="resize-none border-zinc-700 bg-zinc-900 text-sm text-white placeholder:text-zinc-600"
+                    disabled={isAddingNote}
+                  />
+                  <Button
+                    onClick={handleQuickNote}
+                    disabled={!quickNote.trim() || isAddingNote}
+                    size="sm"
+                    className="h-8 w-full bg-amber-600/90 text-xs font-medium text-white hover:bg-amber-500 disabled:opacity-40"
+                  >
+                    {isAddingNote
+                      ? t("leads.note.saving")
+                      : quickNoteSaved
+                        ? t("leads.note.saved")
+                        : t("leads.note.save")}
+                  </Button>
                 </div>
               </Section>
             )}

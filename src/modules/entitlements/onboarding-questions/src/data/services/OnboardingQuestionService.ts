@@ -4,11 +4,13 @@ import type { IOnboardingQuestionService } from "../../domain/interfaces/IOnboar
 import type {
   PagedOnboardingQuestionsModel,
   OnboardingQuestionDetailModel,
+  AnswerOptionModel,
 } from "../models/OnboardingQuestionModels";
 import type { OnboardingQuestionsListParams } from "../../domain/interfaces/IOnboardingQuestionRepository";
 import type {
   CreateOnboardingQuestionRequest,
   UpdateOnboardingQuestionRequest,
+  AnswerOptionRequest,
 } from "../../domain/entities/OnboardingQuestionRequests";
 
 export class OnboardingQuestionService implements IOnboardingQuestionService {
@@ -45,5 +47,42 @@ export class OnboardingQuestionService implements IOnboardingQuestionService {
 
   async delete(id: string): Promise<void> {
     await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_QUESTIONS.DELETE(id));
+  }
+
+  async listOptions(questionId: string): Promise<AnswerOptionModel[]> {
+    return this.api.get<AnswerOptionModel[]>(
+      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.LIST(questionId)
+    );
+  }
+
+  async createOption(questionId: string, request: AnswerOptionRequest): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.CREATE(questionId),
+      request
+    );
+  }
+
+  async updateOption(
+    questionId: string,
+    optionId: string,
+    request: AnswerOptionRequest
+  ): Promise<void> {
+    await this.api.put(
+      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.UPDATE(questionId, optionId),
+      request
+    );
+  }
+
+  async deleteOption(questionId: string, optionId: string): Promise<void> {
+    await this.api.delete(
+      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.DELETE(questionId, optionId)
+    );
+  }
+
+  async reorderOptions(questionId: string, orderedIds: string[]): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.REORDER(questionId),
+      { orderedIds }
+    );
   }
 }
