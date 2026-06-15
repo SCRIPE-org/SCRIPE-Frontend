@@ -332,6 +332,31 @@ export const en = {
       loading: "Loading questions...",
       error: "Couldn't load questions",
       retry: "Try again",
+
+      // ── Adaptive Discovery stage (Elevate redesign — F3) ──────────────────
+      // Chrome copy only; question + option text arrives localized from the API.
+      stage: {
+        progressLabel: "Discovery progress",
+        next: "Next",
+        back: "Back",
+        skipStep: "Skip this",
+        skipAll: "Skip — show me the plans",
+        skipToPlans: "Skip to plans",
+        seePlans: "See my plan",
+        topPriority: "Top",
+
+        // Live profile preview (trailing column / inline on mobile)
+        profileTitle: "Your profile",
+        profileEmpty: "Answer a few questions and we'll shape a plan around how you work.",
+        profileBuilding: "Here's what we have so far.",
+        profileTease: "We'll use this to recommend the plan that fits you best.",
+
+        // Error / empty recovery
+        errorTitle: "We couldn't load the questions",
+        errorBody:
+          "Something interrupted the connection. Try again, or skip straight to the plans.",
+        retry: "Try again",
+      },
     },
 
     // Contact Sales

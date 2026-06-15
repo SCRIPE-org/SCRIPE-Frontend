@@ -4,7 +4,14 @@ import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
-import type { WelcomeContent } from "../../domain/entities/OnboardingEntities";
+import type {
+  OnboardingRecommendation,
+  SignupRecommendationRequest,
+  WelcomeContent,
+} from "../../domain/entities/OnboardingEntities";
+
+/** Industry/vertical answer key (Q1) — mirrors useDiscovery.BUSINESS_TYPE_KEY. */
+const BUSINESS_TYPE_KEY = "business_type";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // useSignupWizard — NEW orchestrator viewmodel for the Elevate redesign.
@@ -68,9 +75,33 @@ export interface SignupWizardViewModel {
   /** Re-fetch welcome content after a transient failure. */
   retryWelcome: () => void;
 
+  // ── Discovery result (consumed by the plan phase, F4) ─────────────────────
+  /** Collected discovery answers (questionKey → selected values). */
+  discoveryAnswers: Record<string, string[]>;
+  /** Derived industry/vertical (Q1) — null when discovery was skipped. */
+  businessType: string | null;
+  /** The server recommendation, or undefined when not (yet) available. */
+  recommendation: OnboardingRecommendation | undefined;
+  /** True while the recommendation request is in flight. */
+  isRecommendationLoading: boolean;
+  /**
+   * True when the recommendation call failed. The plan phase degrades
+   * gracefully (shows all tiers, no recommended badge) — never blocks.
+   */
+  isRecommendationError: boolean;
+
   // ── Navigation ───────────────────────────────────────────────────────────
   /** Primary CTA on the Welcome screen → enter the flow. */
   goToDiscovery: () => void;
+  /**
+   * Finish discovery: persists the answers + derived vertical, fires the
+   * adaptive recommendation request, and advances to the `plan` phase
+   * immediately (the rec resolves in the background; failure never blocks).
+   */
+  completeDiscovery: (result: {
+    answers: Record<string, string[]>;
+    businessType: string | null;
+  }) => void;
   /** Advance to the next phase in the linear order. */
   next: () => void;
   /** Return to the previous phase in the linear order. */
@@ -84,6 +115,15 @@ export function useSignupWizard(): SignupWizardViewModel {
 
   const [phase, setPhase] = useState<SignupPhase>("welcome");
   const [navigationDirection, setNavigationDirection] = useState<NavigationDirection>(1);
+
+  // ── Discovery result state ──────────────────────────────────────────────────
+  const [discoveryAnswers, setDiscoveryAnswers] = useState<Record<string, string[]>>({});
+  const [businessType, setBusinessType] = useState<string | null>(null);
+  const [recommendation, setRecommendation] = useState<OnboardingRecommendation | undefined>(
+    undefined,
+  );
+  const [isRecommendationLoading, setIsRecommendationLoading] = useState(false);
+  const [isRecommendationError, setIsRecommendationError] = useState(false);
 
   // ── Welcome + trust content ───────────────────────────────────────────────
   // Data-access pattern mirrors the legacy DiscoveryStep useQuery usage. This is
@@ -138,6 +178,59 @@ export function useSignupWizard(): SignupWizardViewModel {
     setPhase("discovery");
   }, []);
 
+  // ── Complete discovery → request recommendation, advance to plan ─────────────
+  // The vertical is derived server-side from the `business_type` answer; we pass
+  // the full answer map (mapped to the E1 request form) plus the lang. We advance
+  // to `plan` IMMEDIATELY so a slow/failed scorer never blocks the user — the
+  // plan phase reads `recommendation` when it lands and shows all tiers meanwhile.
+  const completeDiscovery = useCallback(
+    (result: { answers: Record<string, string[]>; businessType: string | null }) => {
+      const { answers, businessType: vertical } = result;
+
+      // Persist the collected discovery state for the plan phase (F4).
+      setDiscoveryAnswers(answers);
+      setBusinessType(vertical ?? answers[BUSINESS_TYPE_KEY]?.[0] ?? null);
+
+      // Map answers → the request's AnswerInput[] form, dropping empty selections.
+      const mappedAnswers = Object.entries(answers)
+        .filter(([, values]) => values.length > 0)
+        .map(([questionKey, selectedValues]) => ({ questionKey, selectedValues }));
+
+      const request: SignupRecommendationRequest = {
+        answers: mappedAnswers,
+        lang: language,
+      };
+
+      // Reset prior result, advance now, resolve in the background.
+      setRecommendation(undefined);
+      setIsRecommendationError(false);
+      setNavigationDirection(1);
+      setPhase("plan");
+
+      // Skip the call entirely when there's nothing to score (full skip).
+      if (mappedAnswers.length === 0) {
+        return;
+      }
+
+      setIsRecommendationLoading(true);
+      authContainer.signupRepository
+        .getAdaptiveRecommendation(request)
+        .then((rec) => {
+          setRecommendation(rec);
+          setIsRecommendationError(false);
+        })
+        .catch(() => {
+          // Graceful: plan phase shows all tiers without a recommended badge.
+          setRecommendation(undefined);
+          setIsRecommendationError(true);
+        })
+        .finally(() => {
+          setIsRecommendationLoading(false);
+        });
+    },
+    [language],
+  );
+
   return useMemo(
     () => ({
       phase,
@@ -146,7 +239,13 @@ export function useSignupWizard(): SignupWizardViewModel {
       isWelcomeLoading,
       isWelcomeError,
       retryWelcome,
+      discoveryAnswers,
+      businessType,
+      recommendation,
+      isRecommendationLoading,
+      isRecommendationError,
       goToDiscovery,
+      completeDiscovery,
       next,
       back,
       goToPhase,
@@ -158,7 +257,13 @@ export function useSignupWizard(): SignupWizardViewModel {
       isWelcomeLoading,
       isWelcomeError,
       retryWelcome,
+      discoveryAnswers,
+      businessType,
+      recommendation,
+      isRecommendationLoading,
+      isRecommendationError,
       goToDiscovery,
+      completeDiscovery,
       next,
       back,
       goToPhase,
