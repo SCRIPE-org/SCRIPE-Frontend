@@ -27,7 +27,7 @@ export function useSignupTheme() {
 }
 
 /**
- * No-op wrapper — exists so SignupView can use the provider-boundary pattern
+ * No-op wrapper — exists so SignupWizard can use the provider-boundary pattern
  * without an extra React context. The real theme is provided by AppProvider.
  */
 export function SignupThemeProvider({ children }: { children: React.ReactNode }) {

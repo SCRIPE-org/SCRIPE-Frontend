@@ -15,5 +15,5 @@ export { authContainer, getAuthContainer } from "./di";
 export { LoginView } from "./signin";
 export { ForgotPasswordView, ResetPasswordView } from "./password-reset";
 export { SetupAccountView } from "./account-setup";
-export { SignupView } from "./signup/src/presentation/views/SignupView";
+export { SignupWizard } from "./signup/src/presentation/views/SignupWizard";
 export { PasskeyManagementView } from "./core/src/presentation/views/PasskeyManagementView";
