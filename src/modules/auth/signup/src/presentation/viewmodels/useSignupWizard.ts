@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
+import type { PublicEdition, SelectedPlan } from "../../domain/entities";
 import type {
   OnboardingRecommendation,
   SignupRecommendationRequest,
@@ -90,9 +91,26 @@ export interface SignupWizardViewModel {
    */
   isRecommendationError: boolean;
 
+  // ── Plan selection (produced by the plan phase, F4 → consumed by F5) ───────
+  /**
+   * Snapshot of the chosen plan, captured verbatim from the server edition at
+   * selectPlan() time. Drives the account/review copy and provisioning branch.
+   * Null until the user picks a self-service plan.
+   */
+  selectedPlan: SelectedPlan | null;
+  /** Billing cycle chosen on the plan phase. Persisted alongside selectedPlan. */
+  selectedBillingCycle: "monthly" | "annual";
+
   // ── Navigation ───────────────────────────────────────────────────────────
   /** Primary CTA on the Welcome screen → enter the flow. */
   goToDiscovery: () => void;
+  /**
+   * Commit a chosen edition + billing cycle and advance. Self-service plans
+   * (free | trial | checkout) go to `account`; contact-sales editions divert
+   * to the `contact-sales` branch. The snapshot is captured verbatim from the
+   * server edition — the frontend never infers free/custom/price.
+   */
+  selectPlan: (edition: PublicEdition, billingCycle: "monthly" | "annual") => void;
   /**
    * Finish discovery: persists the answers + derived vertical, fires the
    * adaptive recommendation request, and advances to the `plan` phase
@@ -124,6 +142,10 @@ export function useSignupWizard(): SignupWizardViewModel {
   );
   const [isRecommendationLoading, setIsRecommendationLoading] = useState(false);
   const [isRecommendationError, setIsRecommendationError] = useState(false);
+
+  // ── Plan selection state ──────────────────────────────────────────────────
+  const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<"monthly" | "annual">("annual");
 
   // ── Welcome + trust content ───────────────────────────────────────────────
   // Data-access pattern mirrors the legacy DiscoveryStep useQuery usage. This is
@@ -177,6 +199,30 @@ export function useSignupWizard(): SignupWizardViewModel {
     setNavigationDirection(1);
     setPhase("discovery");
   }, []);
+
+  // ── Select plan → snapshot + advance (self-service vs contact-sales) ─────────
+  // The snapshot is captured verbatim from the server edition; the frontend
+  // NEVER infers free/custom/price. Contact-sales editions divert to the lead
+  // form branch; every other mode advances to the account phase.
+  const selectPlan = useCallback(
+    (edition: PublicEdition, billingCycle: "monthly" | "annual") => {
+      const plan: SelectedPlan = {
+        id: edition.id,
+        name: edition.name,
+        trialDays: edition.trialDays > 0 ? edition.trialDays : null,
+        checkoutMode: edition.checkoutMode,
+        monthlyPrice: edition.monthlyPrice,
+        annualPrice: edition.annualPrice,
+        currency: edition.currency,
+        priceDisplay: edition.priceDisplay,
+      };
+      setSelectedPlan(plan);
+      setSelectedBillingCycle(billingCycle);
+      setNavigationDirection(1);
+      setPhase(edition.checkoutMode === "contact-sales" ? "contact-sales" : "account");
+    },
+    [],
+  );
 
   // ── Complete discovery → request recommendation, advance to plan ─────────────
   // The vertical is derived server-side from the `business_type` answer; we pass
@@ -244,7 +290,10 @@ export function useSignupWizard(): SignupWizardViewModel {
       recommendation,
       isRecommendationLoading,
       isRecommendationError,
+      selectedPlan,
+      selectedBillingCycle,
       goToDiscovery,
+      selectPlan,
       completeDiscovery,
       next,
       back,
@@ -262,7 +311,10 @@ export function useSignupWizard(): SignupWizardViewModel {
       recommendation,
       isRecommendationLoading,
       isRecommendationError,
+      selectedPlan,
+      selectedBillingCycle,
       goToDiscovery,
+      selectPlan,
       completeDiscovery,
       next,
       back,

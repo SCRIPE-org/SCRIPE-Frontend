@@ -123,6 +123,61 @@ export const ar = {
       },
     },
 
+    // مرحلة الخطط (إعادة تصميم Elevate — F4). مساحة منفصلة عن `plan` القديمة؛
+    // نصوص الواجهة فقط — أسماء الإصدارات وتسميات المزايا تأتي من الـ API.
+    plans: {
+      title: "اختر الخطة التي تناسبك",
+      subtitle: "الأسعار محددة حسب منطقتك وتُفوتر بعملتك المحلية. يمكنك تبديل القطاع أو دورة الفوترة في أي وقت.",
+      industry: {
+        prefix: "خطط لقطاع",
+        ariaLabel: "اختر القطاع",
+      },
+      billing: {
+        label: "دورة الفوترة",
+        monthly: "شهري",
+        annual: "سنوي",
+        save: "وفّر {{percent}}%",
+      },
+      region: {
+        line: "الأسعار بـ {{currency}} · {{country}}",
+        lineNoCountry: "الأسعار بـ {{currency}}",
+      },
+      badge: {
+        recommended: "موصى به لك",
+        mostPopular: "الأكثر شيوعاً",
+        bestValue: "أفضل قيمة",
+      },
+      price: {
+        free: "مجاني",
+        forever: "للأبد",
+        custom: "مخصص",
+        perMonth: "شهر",
+        perYear: "{{price}} / سنة",
+        approx: "تقريباً",
+        approxTooltip: "سعر تقريبي. يُحسب بالدولار الأمريكي عند الدفع.",
+      },
+      cta: {
+        free: "ابدأ مجاناً",
+        trial: "ابدأ تجربة {{days}} يوم",
+        subscribe: "اشترك — {{price}}/شهر",
+        contactSales: "تواصل مع المبيعات",
+      },
+      feature: {
+        unlimited: "غير محدود",
+      },
+      compare: {
+        show: "قارن جميع المزايا",
+        hide: "إخفاء المقارنة",
+        featuresColumn: "المزايا",
+      },
+      error: {
+        title: "تعذّر تحميل الخطط",
+        body: "حدث ما قطع الاتصال. يرجى المحاولة مرة أخرى.",
+        retry: "إعادة المحاولة",
+      },
+      empty: "لا توجد خطط متاحة لهذا القطاع بعد.",
+    },
+
     // الخطوة 2 — الحساب
     account: {
       fullName: "الاسم الكامل",

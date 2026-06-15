@@ -123,6 +123,61 @@ export const en = {
       },
     },
 
+    // Plans phase (Elevate redesign — F4). Distinct from the legacy `plan`
+    // namespace; chrome only — edition names/feature labels come from the API.
+    plans: {
+      title: "Choose the plan that fits",
+      subtitle: "Pricing is set for your region and billed in your local currency. Switch industries or billing any time.",
+      industry: {
+        prefix: "Plans for",
+        ariaLabel: "Choose an industry",
+      },
+      billing: {
+        label: "Billing cycle",
+        monthly: "Monthly",
+        annual: "Annual",
+        save: "Save {{percent}}%",
+      },
+      region: {
+        line: "Prices in {{currency}} · {{country}}",
+        lineNoCountry: "Prices in {{currency}}",
+      },
+      badge: {
+        recommended: "Recommended for you",
+        mostPopular: "Most popular",
+        bestValue: "Best value",
+      },
+      price: {
+        free: "Free",
+        forever: "forever",
+        custom: "Custom",
+        perMonth: "mo",
+        perYear: "{{price}} / yr",
+        approx: "Approx.",
+        approxTooltip: "Approximate. Billed in USD at checkout.",
+      },
+      cta: {
+        free: "Get started free",
+        trial: "Start {{days}}-day trial",
+        subscribe: "Subscribe — {{price}}/mo",
+        contactSales: "Contact sales",
+      },
+      feature: {
+        unlimited: "Unlimited",
+      },
+      compare: {
+        show: "Compare all features",
+        hide: "Hide comparison",
+        featuresColumn: "Features",
+      },
+      error: {
+        title: "We couldn't load the plans",
+        body: "Something interrupted the connection. Please try again.",
+        retry: "Try again",
+      },
+      empty: "No plans are available for this industry yet.",
+    },
+
     // Step 2 — Account
     account: {
       fullName: "Full name",
