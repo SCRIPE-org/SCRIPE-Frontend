@@ -276,6 +276,7 @@ export const en = {
       customizeBranding: "Customize your branding",
       exploreModules: "Explore modules & features",
       redirecting: "Redirecting…",
+      goToWorkspace: "Go to my workspace",
     },
 
     // Common
@@ -443,9 +444,11 @@ export const en = {
     // Contact Sales
     contactSales: {
       title: "Talk to our sales team",
+      subtitle: "Tell us about your team and we'll tailor a plan to fit.",
       interested: "Interested in:",
       company: "Company name",
       companyPlaceholder: "Acme Inc.",
+      companyRequired: "Please enter your company name.",
       companySize: "Company size",
       noteLabel: "Anything you'd like to share?",
       notePlaceholder: "Timeline, specific requirements, integrations you need\u2026",
@@ -498,6 +501,11 @@ export const en = {
       promoHint: "Have a promo code? Apply it on the secure checkout page.",
       paymentPageNote: "The payment page is in English.",
       checkoutCanceled: "Checkout canceled — you can try again or change your plan.",
+      dismiss: "Dismiss",
+      // Elevate redesign (F8) — CTA copy per checkoutMode
+      createWorkspaceCta: "Create workspace",
+      startTrialShortCta: "Start trial",
+      subscribeCta: "Subscribe — {{price}}",
     },
 
     // Finalize page (post-Stripe polling)
@@ -531,6 +539,7 @@ export const en = {
       title: "Resume your signup",
       subtitle: "You have a pending signup session. Would you like to continue?",
       pendingPlan: "Pending plan: {{plan}}",
+      pendingPlanLabel: "Pending plan",
       continue: "Continue signup",
       changePlan: "Choose a different plan",
       startFresh: "Start fresh",

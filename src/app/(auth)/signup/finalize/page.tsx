@@ -1,6 +1,9 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { SignupFinalizeView } from "@modules/auth/signup/src/presentation/views/SignupFinalizeView";
+// F8–F10: the route now renders the NEW Elevate finalize screen (reuses
+// useFinalizeViewModel verbatim). The legacy SignupFinalizeView is kept in the
+// tree until the F11 cleanup pass.
+import { SignupFinalizeScreen } from "@modules/auth/signup/src/presentation/views/SignupFinalizeScreen";
 
 export const metadata: Metadata = {
   title: "Finishing your signup — Scripe",
@@ -12,7 +15,7 @@ export default function SignupFinalizePage() {
   // useSearchParams in the view requires a Suspense boundary at the route level
   return (
     <Suspense>
-      <SignupFinalizeView />
+      <SignupFinalizeScreen />
     </Suspense>
   );
 }

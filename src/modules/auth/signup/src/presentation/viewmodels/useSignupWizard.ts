@@ -1,11 +1,16 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
 import type {
+  ContactSalesPayload,
+} from "../../domain/interfaces/ISignupRepository";
+import type {
   PublicEdition,
+  ResumeSessionResult,
   SelectedPlan,
   SignupStep,
   SignupWizardData,
@@ -18,8 +23,15 @@ import type {
 } from "../../domain/entities/OnboardingEntities";
 import { INITIAL_WIZARD_DATA } from "../../domain/constants/signupConstants";
 import { calcPasswordStrengthScore } from "../../data/helpers/accountLogic";
+import {
+  getPersistedSignupRef,
+  clearPersistedWizardState,
+  readPersistedWizardState,
+} from "../../data/helpers/wizardStorage";
 import { useSignupOtp } from "./hooks/useSignupOtp";
 import { useSignupSubdomain } from "./hooks/useSignupSubdomain";
+import { useSignupProvisioning } from "./hooks/useSignupProvisioning";
+import { shouldShowResumeModal } from "./helpers/reviewLogic";
 
 /** Industry/vertical answer key (Q1) — mirrors useDiscovery.BUSINESS_TYPE_KEY. */
 const BUSINESS_TYPE_KEY = "business_type";
@@ -35,6 +47,12 @@ const LEGACY_STEP_TO_PHASE: Partial<Record<SignupStep, SignupPhase>> = {
   verification: "verification",
   workspace: "workspace",
   review: "review",
+  // F8–F10: the reused provisioning hook drives the free-flow tail by calling
+  // setStep("provisioning"/"complete") and rolls back to "review"/"workspace" on
+  // error — all of which must map onto the new phase machine.
+  "contact-sales": "contact-sales",
+  provisioning: "provisioning",
+  complete: "complete",
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -176,6 +194,59 @@ export interface SignupWizardViewModel {
   /** Confirm the workspace; on a valid subdomain + token advances to `review`. */
   submitWorkspace: () => void;
 
+  // ── Review phase (F8) ──────────────────────────────────────────────────────
+  /**
+   * Server-decided checkout mode for the selected plan ("free" | "trial" |
+   * "checkout" | "contact-sales"), defaulting to "free" until a plan is picked.
+   * Drives the Review CTA + copy contract and the provisioning branch.
+   */
+  checkoutMode: SelectedPlan["checkoutMode"];
+  /**
+   * Confirm the review: registers the tenant/session (reused provisioning hook),
+   * then branches — free runs in-page provisioning → complete; trial/checkout
+   * redirects to Stripe (the finalize route handles the return).
+   */
+  submitRegister: () => void;
+  /** Jump back to the plan phase to change the chosen plan (review/sales edit). */
+  editPlan: () => void;
+  /** True when the user returned from a canceled Stripe checkout (?canceled=1). */
+  checkoutCanceled: boolean;
+  /** Dismiss the checkout-canceled banner. */
+  dismissCheckoutCanceled: () => void;
+
+  // ── Provisioning phase (F9) ────────────────────────────────────────────────
+  /** Current in-page provisioning step index (free flow), driven by the hook. */
+  provisioningStep: number;
+
+  // ── Contact-sales branch (F8) ──────────────────────────────────────────────
+  /**
+   * Submit the Enterprise lead. Pre-filled from discovery + account; the caller
+   * supplies the collected form fields (company / phone / note). Resolves true
+   * on success so the form can show its success panel. Backend sanitizes.
+   */
+  submitContactSalesLead: (
+    form: Omit<
+      ContactSalesPayload,
+      "editionId" | "businessType" | "teamSize" | "primaryPriority"
+    >,
+  ) => Promise<boolean>;
+
+  // ── Resume / abandon (F8) ──────────────────────────────────────────────────
+  /** True when a resumable in-progress signup was detected on mount. */
+  showResumeModal: boolean;
+  /** Plan snapshot for the resume modal (null until resolved). */
+  pendingResumeInfo: ResumeSessionResult | null;
+  /** Restore the persisted wizard state and jump to `review`. */
+  resume: () => void;
+  /** Restore wizard data and jump to `plan` to pick a different plan. */
+  changePlan: () => void;
+  /** Abandon the pending session (release the subdomain) and start over. */
+  startFresh: () => Promise<void>;
+
+  // ── Complete phase (F9) ────────────────────────────────────────────────────
+  /** Navigate to the workspace/login (primary CTA on the Complete screen). */
+  goToLogin: () => void;
+
   // ── Navigation ───────────────────────────────────────────────────────────
   /** Primary CTA on the Welcome screen → enter the flow. */
   goToDiscovery: () => void;
@@ -205,6 +276,8 @@ export interface SignupWizardViewModel {
 
 export function useSignupWizard(): SignupWizardViewModel {
   const { language } = useI18n();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [phase, setPhase] = useState<SignupPhase>("welcome");
   const [navigationDirection, setNavigationDirection] = useState<NavigationDirection>(1);
@@ -221,6 +294,12 @@ export function useSignupWizard(): SignupWizardViewModel {
   // ── Plan selection state ──────────────────────────────────────────────────
   const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
   const [selectedBillingCycle, setSelectedBillingCycle] = useState<"monthly" | "annual">("annual");
+
+  // ── Review / provisioning / resume state (F8–F10) ──────────────────────────
+  const [provisioningStep, setProvisioningStep] = useState(0);
+  const [checkoutCanceled, setCheckoutCanceled] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+  const [pendingResumeInfo, setPendingResumeInfo] = useState<ResumeSessionResult | null>(null);
 
   // ── Account / Verify / Workspace state (F5–F7) ──────────────────────────────
   // The wizardData model + error/isSubmitting flags are kept here so the reused
@@ -304,6 +383,42 @@ export function useSignupWizard(): SignupWizardViewModel {
     setError,
   });
 
+  // ── Provisioning / register / contact-sales (F8–F10) ────────────────────────
+  // The SAME proven hook the legacy wizard composes. It owns: the free vs
+  // trial/checkout register branch, the Stripe redirect (persisting signupRef +
+  // wizard state via STORAGE_KEYS), the in-page free provisioning staging, auth
+  // hydration on the free path, and the contact-sales lead submit. We feed it the
+  // new wizard's state + the setStep adapter so the tail behaves identically.
+  const provisioning = useSignupProvisioning({
+    repository: signupRepository,
+    wizardData,
+    selectedPlan,
+    language,
+    setStep: setStepAdapter,
+    setError,
+    setIsLoading: setIsSubmitting,
+    setProvisioningStep,
+  });
+
+  // Review CTA → register + branch (free → provisioning→complete; else → Stripe).
+  const submitRegister = useCallback(() => {
+    void provisioning.startProvisioning();
+  }, [provisioning]);
+
+  // Edit-plan affordance (review + contact-sales): step back to the plan phase.
+  const editPlan = useCallback(() => {
+    setError("");
+    setNavigationDirection(-1);
+    setPhase("plan");
+  }, []);
+
+  const dismissCheckoutCanceled = useCallback(() => setCheckoutCanceled(false), []);
+
+  // Primary CTA on the Complete screen — go to the workspace/login.
+  const goToLogin = useCallback(() => {
+    router.push("/login");
+  }, [router]);
+
   // Change-email affordance on the verification phase: clear the code + token and
   // step back to the account phase (the one backward move in this sub-flow).
   const changeEmail = useCallback(() => {
@@ -313,6 +428,88 @@ export function useSignupWizard(): SignupWizardViewModel {
     setNavigationDirection(-1);
     setPhase("account");
   }, [otp, updateField]);
+
+  // ── Resume / abandon (F8) ───────────────────────────────────────────────────
+  // Mirrors the legacy orchestrator: on mount, if a SIGNUP_REF is persisted and
+  // there's no ?canceled / ?change-plan param (handled below), probe the server
+  // and surface the resume modal when the session is still resumable. All
+  // repository access stays in this hook.
+  useEffect(() => {
+    const isCanceled = searchParams?.get("canceled") === "1";
+    const isChangePlan = searchParams?.get("change-plan") === "1";
+
+    // Stripe cancel-url round-trip: restore the persisted (password-free) state
+    // and drop the user back on Review with a dismissible "canceled" banner.
+    if (isCanceled) {
+      const persisted = readPersistedWizardState();
+      if (persisted?.wizardData?.emailVerificationToken) {
+        setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+        if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
+        setPhase("review");
+      }
+      setCheckoutCanceled(true);
+      return;
+    }
+
+    // Change-plan round-trip from the finalize page: restore + jump to plan.
+    if (isChangePlan) {
+      const persisted = readPersistedWizardState();
+      if (persisted?.wizardData) {
+        setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+        if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
+      }
+      setPhase("plan");
+      return;
+    }
+
+    const existingRef = getPersistedSignupRef();
+    if (!existingRef) return;
+
+    void signupRepository.resume(existingRef).then((info) => {
+      if (shouldShowResumeModal(existingRef, info)) {
+        setPendingResumeInfo(info);
+        setShowResumeModal(true);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const resume = useCallback(() => {
+    setShowResumeModal(false);
+    const persisted = readPersistedWizardState();
+    if (persisted?.wizardData) {
+      setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+      if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
+      setNavigationDirection(1);
+      setPhase("review");
+    }
+  }, []);
+
+  const changePlan = useCallback(() => {
+    setShowResumeModal(false);
+    const persisted = readPersistedWizardState();
+    if (persisted?.wizardData) {
+      setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+      if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
+    }
+    setNavigationDirection(-1);
+    setPhase("plan");
+  }, []);
+
+  const startFresh = useCallback(async () => {
+    setShowResumeModal(false);
+    const existingRef = getPersistedSignupRef();
+    if (existingRef) {
+      try {
+        await signupRepository.abandon(existingRef);
+      } catch {
+        // best-effort — releasing the subdomain is not blocking
+      }
+    }
+    clearPersistedWizardState();
+    setNavigationDirection(1);
+    setPhase("discovery");
+  }, [signupRepository]);
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
   const goToPhase = useCallback((target: SignupPhase) => {
@@ -366,6 +563,19 @@ export function useSignupWizard(): SignupWizardViewModel {
       };
       setSelectedPlan(plan);
       setSelectedBillingCycle(billingCycle);
+      // Mirror the chosen edition + cycle into the registration model so the
+      // reused provisioning hook (which reads wizardData.editionId/billingCycle)
+      // registers the correct plan. Same mapping the legacy state hook applied.
+      setWizardData((prev) => ({
+        ...prev,
+        editionId: edition.id || null,
+        billingCycle:
+          edition.checkoutMode === "contact-sales"
+            ? prev.billingCycle
+            : billingCycle === "monthly"
+              ? "Monthly"
+              : "Annual",
+      }));
       setNavigationDirection(1);
       setPhase(edition.checkoutMode === "contact-sales" ? "contact-sales" : "account");
     },
@@ -383,7 +593,24 @@ export function useSignupWizard(): SignupWizardViewModel {
 
       // Persist the collected discovery state for the plan phase (F4).
       setDiscoveryAnswers(answers);
-      setBusinessType(vertical ?? answers[BUSINESS_TYPE_KEY]?.[0] ?? null);
+      const resolvedVertical = vertical ?? answers[BUSINESS_TYPE_KEY]?.[0] ?? null;
+      setBusinessType(resolvedVertical);
+
+      // Mirror the discovery CRM fields into the registration model so the reused
+      // provisioning hook carries them on register + contact-sales (CRM only —
+      // they never affect pricing). Mapping matches the legacy state hook.
+      const teamSize = answers["team_size"]?.[0] ?? null;
+      const primaryPriority =
+        (answers["primary_priority"] ?? []).length > 0
+          ? answers["primary_priority"].join(",")
+          : null;
+      setWizardData((prev) => ({
+        ...prev,
+        businessType: resolvedVertical,
+        teamSize,
+        primaryPriority,
+        categoryKey: resolvedVertical,
+      }));
 
       // Map answers → the request's AnswerInput[] form, dropping empty selections.
       const mappedAnswers = Object.entries(answers)
@@ -459,6 +686,20 @@ export function useSignupWizard(): SignupWizardViewModel {
       subdomainResult: subdomain.subdomainResult,
       isCheckingSubdomain: subdomain.isCheckingSubdomain,
       submitWorkspace: subdomain.submitWorkspace,
+      // Review / provisioning / contact-sales / resume (F8–F10)
+      checkoutMode: selectedPlan?.checkoutMode ?? "free",
+      submitRegister,
+      editPlan,
+      checkoutCanceled,
+      dismissCheckoutCanceled,
+      provisioningStep,
+      submitContactSalesLead: provisioning.submitContactSales,
+      showResumeModal,
+      pendingResumeInfo,
+      resume,
+      changePlan,
+      startFresh,
+      goToLogin,
       goToDiscovery,
       selectPlan,
       completeDiscovery,
@@ -489,6 +730,18 @@ export function useSignupWizard(): SignupWizardViewModel {
       otp,
       changeEmail,
       subdomain,
+      submitRegister,
+      editPlan,
+      checkoutCanceled,
+      dismissCheckoutCanceled,
+      provisioningStep,
+      provisioning,
+      showResumeModal,
+      pendingResumeInfo,
+      resume,
+      changePlan,
+      startFresh,
+      goToLogin,
       goToDiscovery,
       selectPlan,
       completeDiscovery,

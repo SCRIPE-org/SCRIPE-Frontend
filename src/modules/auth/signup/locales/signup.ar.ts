@@ -276,6 +276,7 @@ export const ar = {
       customizeBranding: "خصّص هوية العلامة التجارية",
       exploreModules: "استكشف الوحدات والمزايا",
       redirecting: "جارٍ التحويل…",
+      goToWorkspace: "اذهب إلى مساحة عملي",
     },
 
     // عام
@@ -442,9 +443,11 @@ export const ar = {
     // تواصل مع المبيعات
     contactSales: {
       title: "تحدث مع فريق المبيعات",
+      subtitle: "أخبرنا عن فريقك وسنصمم خطة تناسبك.",
       interested: "مهتم بـ:",
       company: "اسم الشركة",
       companyPlaceholder: "شركة أكمي",
+      companyRequired: "يرجى إدخال اسم شركتك.",
       companySize: "حجم الشركة",
       noteLabel: "هل هناك ما تود مشاركته؟",
       notePlaceholder: "الجدول الزمني، المتطلبات المحددة، التكاملات التي تحتاجها…",
@@ -492,6 +495,11 @@ export const ar = {
       promoHint: "هل لديك رمز ترويجي؟ طبّقه في صفحة الدفع الآمنة.",
       paymentPageNote: "ستتم إعادة توجيهك إلى صفحة دفع آمنة باللغة الإنجليزية.",
       checkoutCanceled: "تم إلغاء الدفع - يمكنك المحاولة مرة أخرى أو تغيير خطتك.",
+      dismiss: "إغلاق",
+      // إعادة التصميم (F8) — نص زر الإجراء حسب وضع الدفع
+      createWorkspaceCta: "إنشاء مساحة العمل",
+      startTrialShortCta: "ابدأ التجربة",
+      subscribeCta: "اشترك — {{price}}",
     },
 
     // صفحة الإنهاء (بعد Stripe)
@@ -524,6 +532,7 @@ export const ar = {
       title: "استئناف تسجيلك",
       subtitle: "لديك جلسة تسجيل معلقة. هل تريد المتابعة؟",
       pendingPlan: "الخطة المعلقة: {{plan}}",
+      pendingPlanLabel: "الخطة المعلقة",
       continue: "متابعة التسجيل",
       changePlan: "اختيار خطة مختلفة",
       startFresh: "البدء من جديد",
