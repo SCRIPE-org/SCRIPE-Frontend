@@ -122,7 +122,7 @@ export function usePlanPicker({
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
 
   // ── Pricing context — geo-detected currency + supported list (server-locked). ──
-  const { data: pricingContext } = useQuery({
+  const { data: pricingContext, isFetched: isPricingContextFetched } = useQuery({
     queryKey: ["signup-pricing-context"],
     queryFn: () => authContainer.signupRepository.getPricingContext(),
     staleTime: 30 * 60 * 1000, // currency is country-locked per session
@@ -147,6 +147,7 @@ export function usePlanPicker({
     queryFn: () => authContainer.signupRepository.getCategories(currency, language),
     staleTime: 10 * 60 * 1000,
     retry: 1,
+    enabled: isPricingContextFetched,
   });
 
   const industries = useMemo(
@@ -161,7 +162,7 @@ export function usePlanPicker({
   // ── Catalog — fetch the ACTIVE vertical's editions (currency + lang aware). ──
   const {
     data: rawEditions,
-    isLoading,
+    isLoading: isEditionsLoading,
     isError,
     refetch,
   } = useQuery({
@@ -169,6 +170,7 @@ export function usePlanPicker({
     queryFn: () => authContainer.signupRepository.getEditions(activeIndustry, currency, language),
     staleTime: 5 * 60 * 1000,
     retry: 1,
+    enabled: isPricingContextFetched,
   });
 
   // ── Map → tier-sorted PlanEditions, flag the recommended one. ────────────────
@@ -181,9 +183,14 @@ export function usePlanPicker({
     return mapped.map((e) => ({
       // Direct compare: recommendedEditionId is the SAME encrypted id as the catalog id.
       ...e,
-      isRecommended: isRecommendedEdition(e.id, recommendedEditionId),
+      isRecommended: isRecommendedEdition(
+        e.id,
+        recommendedEditionId,
+        e.name,
+        recommendation?.recommendedEditionName
+      ),
     }));
-  }, [rawEditions, recommendedEditionId]);
+  }, [rawEditions, recommendedEditionId, recommendation]);
 
   const hasPaidEditions = useMemo(() => editions.some((e) => e.monthlyPrice > 0), [editions]);
 
@@ -204,7 +211,7 @@ export function usePlanPicker({
 
   return useMemo(
     () => ({
-      isLoading,
+      isLoading: !isPricingContextFetched || isEditionsLoading,
       isError,
       retry,
       activeIndustry,
@@ -223,7 +230,8 @@ export function usePlanPicker({
       priorityKeys,
     }),
     [
-      isLoading,
+      isPricingContextFetched,
+      isEditionsLoading,
       isError,
       retry,
       activeIndustry,

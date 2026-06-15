@@ -48,11 +48,20 @@ const gridVariants = {
 };
 
 const tileVariants = prefersReducedMotion
-  ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
+  ? {
+      hidden: { opacity: 1, y: 0 },
+      visible: { opacity: 1, y: 0 },
+      disabled: { opacity: 0.35, y: 0 },
+    }
   : {
       hidden: { opacity: 0, y: 10 },
       visible: {
         opacity: 1,
+        y: 0,
+        transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
+      },
+      disabled: {
+        opacity: 0.35,
         y: 0,
         transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
       },
@@ -108,6 +117,7 @@ export function OptionGrid({
             // animates. Reduced-motion → no layout animation at all.
             layout={prefersReducedMotion ? false : "position"}
             variants={tileVariants}
+            animate={isDisabled ? "disabled" : "visible"}
             aria-pressed={isSelected}
             disabled={isDisabled}
             onClick={() => onToggle(option.value)}
@@ -119,7 +129,6 @@ export function OptionGrid({
               border: isSelected ? tokens.borderActive : tokens.borderCard,
               // @ts-expect-error — CSS custom prop for Tailwind ring color.
               "--tw-ring-color": tokens.accent,
-              opacity: isDisabled ? 0.35 : 1,
             }}
           >
             {/* Selected affordance — top-trailing corner. Check for multi, dot for single. */}

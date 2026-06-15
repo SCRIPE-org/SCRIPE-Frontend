@@ -350,6 +350,14 @@ export function useSignupWizard(): SignupWizardViewModel {
     retry: 1,
   });
 
+  // ── Pricing context — load early to lock the currency ──────────────────────
+  useQuery({
+    queryKey: ["signup-pricing-context"],
+    queryFn: () => authContainer.signupRepository.getPricingContext(),
+    staleTime: 30 * 60 * 1000, // currency is country-locked per session
+    retry: 1,
+  });
+
   const retryWelcome = useCallback(() => {
     void refetch();
   }, [refetch]);

@@ -31,9 +31,21 @@ export function computeAnnualSavingsPercent(
  */
 export function isRecommendedEdition(
   editionId: string,
-  recommendedEditionId: string | null | undefined
+  recommendedEditionId: string | null | undefined,
+  editionName?: string,
+  recommendedEditionName?: string | null | undefined
 ): boolean {
-  return !!recommendedEditionId && editionId === recommendedEditionId;
+  if (recommendedEditionId && editionId === recommendedEditionId) {
+    return true;
+  }
+  if (
+    recommendedEditionName &&
+    editionName &&
+    editionName.toLowerCase().trim() === recommendedEditionName.toLowerCase().trim()
+  ) {
+    return true;
+  }
+  return false;
 }
 
 /** The i18n key for the per-card CTA, keyed by the server-decided checkout mode. */

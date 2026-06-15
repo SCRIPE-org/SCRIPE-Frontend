@@ -152,7 +152,7 @@ export function OnboardingQuestionsCatalogView({
       ),
     }),
     // setOptionsTarget is stable — intentionally omitted from deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     [t, language]
   );
 

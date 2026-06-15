@@ -52,6 +52,15 @@ describe("isRecommendedEdition", () => {
     expect(isRecommendedEdition("enc_abc", undefined)).toBe(false);
     expect(isRecommendedEdition("enc_abc", "")).toBe(false);
   });
+
+  it("matches when the names are identical case-insensitively", () => {
+    expect(isRecommendedEdition("enc_abc", "enc_xyz", "ERP Enterprise", "ERP Enterprise")).toBe(true);
+    expect(isRecommendedEdition("enc_abc", "enc_xyz", "erp enterprise", "ERP Enterprise")).toBe(true);
+  });
+
+  it("does not match when names differ", () => {
+    expect(isRecommendedEdition("enc_abc", "enc_xyz", "ERP Pro", "ERP Enterprise")).toBe(false);
+  });
 });
 
 describe("ctaKeyForCheckoutMode", () => {

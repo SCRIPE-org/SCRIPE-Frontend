@@ -333,7 +333,7 @@ Entitlements.Infrastructure/
     "SalesNotificationEmail": "sales@yourcompany.com"
   },
   "SmtpSettings": {
-    "Host": "smtp.gmail.com",
+    "Host": "smtp-relay.gmail.com",
     "Port": 587,
     "Username": "noreply@yourcompany.com",
     "Password": "<app-password>",
