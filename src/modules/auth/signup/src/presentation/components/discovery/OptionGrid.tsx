@@ -19,7 +19,18 @@ import { DynamicIcon } from "./DynamicIcon";
 //   • aria-pressed on every tile; full keyboard access (native <button>).
 //   • Equal-height tiles via grid auto-rows; 2 cols mobile, 3 cols desktop.
 //   • Staggered entrance; reduced-motion → instant + visible.
-//   • Layout animation re-orders tiles smoothly when ranking changes.
+//
+// ── ZERO LAYOUT-SHIFT ON SELECTION (the core fix) ───────────────────────────
+//   Selecting a tile must NOT change any tile's box size or position:
+//   • Selected vs unselected differ ONLY in color/background/border-COLOR — both
+//     `borderCard` and `borderActive` are `1px solid …` (same width), so the box
+//     model is identical in every state. The checkmark is position:absolute.
+//   • The "top priority" marker ALWAYS occupies its row (a fixed-height slot that
+//     toggles visibility), so promoting a top pick never grows the tile height.
+//   • `layout="position"` (not `layout`) animates ONLY coordinates, never size —
+//     and since selection never reflows the grid, a plain pick triggers no motion.
+//     It animates smoothly ONLY when the option order genuinely changes (Q3
+//     re-ranking when the scale shifts). Reduced-motion disables it entirely.
 //
 // Pure UI — selection state + handlers come from the viewmodel.
 // ═══════════════════════════════════════════════════════════════════════════
@@ -92,7 +103,10 @@ export function OptionGrid({
           <motion.button
             key={option.value}
             type="button"
-            layout={!prefersReducedMotion}
+            // Animate ONLY position (never size) and ONLY when the grid order
+            // genuinely changes — a plain selection never reflows, so it never
+            // animates. Reduced-motion → no layout animation at all.
+            layout={prefersReducedMotion ? false : "position"}
             variants={tileVariants}
             aria-pressed={isSelected}
             disabled={isDisabled}
@@ -141,11 +155,23 @@ export function OptionGrid({
               )}
             </span>
 
-            {/* Subtle "top priority" marker on the first multi-select pick. */}
-            {isTop && (
+            {/*
+              "Top priority" marker on the first multi-select pick. The slot is
+              ALWAYS present on multi-select tiles (reserving its vertical space)
+              and only toggles visibility — so promoting/clearing a top pick can
+              NEVER change tile height. Single-select tiles omit the slot
+              entirely (they're uniform among themselves; no marker ever shows).
+            */}
+            {!isSingleSelect && (
               <span
-                className="mt-auto inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[0.6875rem] font-semibold"
-                style={{ background: `${tokens.accent}1a`, color: tokens.accent }}
+                aria-hidden={!isTop}
+                className="mt-auto inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[0.6875rem] font-semibold transition-opacity duration-150 motion-reduce:transition-none"
+                style={{
+                  background: `${tokens.accent}1a`,
+                  color: tokens.accent,
+                  opacity: isTop ? 1 : 0,
+                  visibility: isTop ? "visible" : "hidden",
+                }}
               >
                 <Star size={10} strokeWidth={2.5} aria-hidden />
                 {topLabel}

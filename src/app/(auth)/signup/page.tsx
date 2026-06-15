@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { SignupView } from "@modules/auth/signup/src/presentation/views/SignupView";
+import { SignupWizard } from "@modules/auth/signup/src/presentation/views/SignupWizard";
 
 export const metadata: Metadata = {
   title: "Create a Workspace — Scripe",
@@ -12,7 +12,7 @@ export default function SignupPage() {
   // useSearchParams in the wizard (checkout-canceled return) requires a Suspense boundary
   return (
     <Suspense>
-      <SignupView />
+      <SignupWizard />
     </Suspense>
   );
 }

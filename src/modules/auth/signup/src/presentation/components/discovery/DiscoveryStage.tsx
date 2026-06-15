@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -156,7 +155,15 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
       <div className="grid flex-1 items-start gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-14">
         {/* ── Leading column: question interaction + nav ── */}
         <div className="flex flex-col">
-          <div className="relative">
+          {/*
+            Stable stage height: the question region reserves a min-height sized
+            for the tallest question (heading + hint + a two-row option grid), so
+            switching between questions with different option counts never
+            collapses the column or shifts the nav row below it. The absolute-
+            positioned exiting phase (AnimatePresence mode="wait") also can't
+            stretch the box. Shorter questions simply leave calm whitespace.
+          */}
+          <div className="relative min-h-[22rem] sm:min-h-[24rem]">
             <AnimatePresence mode="wait" custom={slideDir} initial={false}>
               <motion.div
                 key={question.key}
@@ -180,8 +187,10 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
             </AnimatePresence>
           </div>
 
-          {/* ── Nav: Back · (Skip if optional) · Next/See-plans ── */}
-          <div className="mt-9 flex items-center justify-between gap-4">
+          {/* ── Nav: Back · (Skip if optional) · Next/See-plans ──
+              Fixed min-height keeps the row at a STABLE vertical position across
+              every question regardless of whether the optional Skip link shows. */}
+          <div className="mt-8 flex min-h-[2.75rem] items-center justify-between gap-4">
             <button
               type="button"
               onClick={vm.goBack}
