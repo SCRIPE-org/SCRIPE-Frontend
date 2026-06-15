@@ -24,6 +24,40 @@ export const en = {
       signIn: "Sign in",
     },
 
+    // Shell — chrome shared across every phase of the new wizard
+    shell: {
+      themeToLight: "Switch to light mode",
+      themeToDark: "Switch to dark mode",
+      preview: "Preview",
+    },
+
+    // Welcome screen (new Elevate redesign — phase F2)
+    welcome: {
+      // Fallbacks only — live copy comes from getWelcomeContent(); these render
+      // if the content endpoint is unreachable so the screen never blanks out.
+      headlineFallback: "Build your workspace",
+      subcopyFallback:
+        "One platform for your whole operation — set up in minutes, scale without limits.",
+      ctaFallback: "Get started",
+      trustedByFallback: "teams run on SCRIPE",
+      // Section labels
+      proofTitle: "Trusted by teams that take operations seriously",
+      complianceTitle: "Audited and compliant",
+      logosTitle: "Powering teams across industries",
+      // States
+      loadError: "We couldn't load the latest details, but you can still continue.",
+      retry: "Try again",
+      reassurance: "No credit card required to start.",
+    },
+
+    // Temporary placeholder for phases not yet built (removed after F1–F2)
+    stub: {
+      title: "Coming together",
+      body: "This step of the new signup experience is being built.",
+      phaseLabel: "Phase: {{phase}}",
+      back: "Back",
+    },
+
     // Step 1 — Plan
     plan: {
       title: "Choose your plan",
