@@ -180,6 +180,11 @@ export const en = {
 
     // Step 2 — Account
     account: {
+      // Elevate redesign (F5) — phase heading + adaptive CTA
+      title: "Create your account",
+      subtitle: "Just a few details to get your workspace started.",
+      continueFree: "Create account",
+      back: "Back",
       fullName: "Full name",
       fullNamePlaceholder: "John Doe",
       workEmail: "Work email",
@@ -223,6 +228,9 @@ export const en = {
       back: "Back",
       invalidCode: "Invalid or expired code. Please try again.",
       verificationFailed: "Verification failed. Please try again.",
+      // Elevate redesign (F6)
+      codeInputLabel: "Enter the 6-digit verification code",
+      changeEmail: "Change email",
     },
 
     // Step 4 — Workspace
@@ -244,6 +252,10 @@ export const en = {
       adminUsernamePlaceholder: "admin",
       usernameHint: "Your final login username will be: ",
       back: "Back",
+      // Elevate redesign (F7)
+      continue: "Continue",
+      subdomainAvailableShort: "This URL is available.",
+      previewLabel: "Workspace URL preview: {{url}}",
     },
 
     // Step 6 — Provisioning
@@ -277,12 +289,26 @@ export const en = {
     // Errors
     errors: {
       fullNameRequired: "Please enter your full name.",
+      fullNameMin: "Please enter your full name.",
+      fullNameMax: "Name must be 100 characters or fewer.",
       emailRequired: "Please enter your email address.",
+      emailInvalid: "Please enter a valid email address.",
       passwordMinLength: "Password must be at least 12 characters.",
+      passwordUppercase: "Add at least one uppercase letter.",
+      passwordLowercase: "Add at least one lowercase letter.",
+      passwordNumber: "Add at least one number.",
       termsRequired: "You must accept the terms of service.",
       workspaceNameRequired: "Please enter your workspace name.",
+      workspaceNameMin: "Workspace name must be at least 2 characters.",
+      workspaceNameMax: "Workspace name must be 100 characters or fewer.",
       subdomainMinLength: "Subdomain must be at least 3 characters.",
+      subdomainMaxLength: "Subdomain must be 63 characters or fewer.",
+      subdomainFormat: "Use lowercase letters, numbers, and hyphens.",
       subdomainUnavailable: "Please choose an available subdomain.",
+      usernameMax: "Username must be 50 characters or fewer.",
+      timezoneRequired: "Please select a timezone.",
+      companyMax: "Company name must be 200 characters or fewer.",
+      noteMax: "Note must be 1000 characters or fewer.",
       emailVerificationExpired: "Email verification expired. Please go back and verify again.",
       signupFailed: "Signup failed. Please try again.",
     },

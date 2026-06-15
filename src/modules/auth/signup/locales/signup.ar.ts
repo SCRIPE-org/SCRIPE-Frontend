@@ -180,6 +180,11 @@ export const ar = {
 
     // الخطوة 2 — الحساب
     account: {
+      // إعادة تصميم Elevate (F5) — عنوان المرحلة وزر الإجراء المتكيّف
+      title: "أنشئ حسابك",
+      subtitle: "بضع تفاصيل فقط لبدء إعداد مساحة عملك.",
+      continueFree: "إنشاء الحساب",
+      back: "رجوع",
       fullName: "الاسم الكامل",
       fullNamePlaceholder: "أحمد محمد",
       workEmail: "البريد الإلكتروني للعمل",
@@ -223,6 +228,9 @@ export const ar = {
       back: "رجوع",
       invalidCode: "رمز غير صالح أو منتهي الصلاحية. يرجى المحاولة مرة أخرى.",
       verificationFailed: "فشل التحقق. يرجى المحاولة مرة أخرى.",
+      // إعادة تصميم Elevate (F6)
+      codeInputLabel: "أدخل رمز التحقق المكون من 6 أرقام",
+      changeEmail: "تغيير البريد الإلكتروني",
     },
 
     // الخطوة 4 — مساحة العمل
@@ -244,6 +252,10 @@ export const ar = {
       adminUsernamePlaceholder: "admin",
       usernameHint: "اسم مستخدم تسجيل الدخول النهائي سيكون: ",
       back: "رجوع",
+      // إعادة تصميم Elevate (F7)
+      continue: "متابعة",
+      subdomainAvailableShort: "هذا الرابط متاح.",
+      previewLabel: "معاينة رابط مساحة العمل: {{url}}",
     },
 
     // الخطوة 6 — الإعداد
@@ -277,12 +289,26 @@ export const ar = {
     // أخطاء
     errors: {
       fullNameRequired: "يرجى إدخال اسمك الكامل.",
+      fullNameMin: "يرجى إدخال اسمك الكامل.",
+      fullNameMax: "يجب ألا يتجاوز الاسم 100 حرف.",
       emailRequired: "يرجى إدخال عنوان بريدك الإلكتروني.",
+      emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح.",
       passwordMinLength: "يجب أن تكون كلمة المرور 12 حرفاً على الأقل.",
+      passwordUppercase: "أضف حرفاً كبيراً واحداً على الأقل.",
+      passwordLowercase: "أضف حرفاً صغيراً واحداً على الأقل.",
+      passwordNumber: "أضف رقماً واحداً على الأقل.",
       termsRequired: "يجب الموافقة على شروط الخدمة.",
       workspaceNameRequired: "يرجى إدخال اسم مساحة العمل.",
+      workspaceNameMin: "يجب أن يكون اسم مساحة العمل حرفين على الأقل.",
+      workspaceNameMax: "يجب ألا يتجاوز اسم مساحة العمل 100 حرف.",
       subdomainMinLength: "يجب أن يكون النطاق الفرعي 3 أحرف على الأقل.",
+      subdomainMaxLength: "يجب ألا يتجاوز النطاق الفرعي 63 حرفاً.",
+      subdomainFormat: "استخدم أحرفاً إنجليزية صغيرة وأرقاماً وشرطات.",
       subdomainUnavailable: "يرجى اختيار نطاق فرعي متاح.",
+      usernameMax: "يجب ألا يتجاوز اسم المستخدم 50 حرفاً.",
+      timezoneRequired: "يرجى اختيار المنطقة الزمنية.",
+      companyMax: "يجب ألا يتجاوز اسم الشركة 200 حرف.",
+      noteMax: "يجب ألا تتجاوز الملاحظة 1000 حرف.",
       emailVerificationExpired: "انتهت صلاحية التحقق من البريد. يرجى العودة والتحقق مرة أخرى.",
       signupFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
     },
