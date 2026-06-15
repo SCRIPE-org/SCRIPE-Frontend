@@ -54,6 +54,7 @@ const PUBLIC_PAGES = [
   "/signup",
   "/terms",
   "/privacy",
+  "/signup/complete",
   // ── Passwordless / cross-device flows — public (no auth required) ────────
   "/magic-link", // Magic link email callback — token-authenticated, no session needed
   "/qr-approve", // QR code approval page — scanned from mobile, no auth session
