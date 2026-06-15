@@ -118,8 +118,7 @@ const DialogContent = React.forwardRef<
             target.closest("[role='listbox']") ||
             target.closest("[role='option']")
           ) {
-            // Do not prevent default: we WANT focus to leave content and move to portal
-            return;
+            e.preventDefault();
           }
         }}
         {...props}
