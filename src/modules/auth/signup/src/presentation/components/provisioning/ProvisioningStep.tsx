@@ -34,7 +34,7 @@ export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
       t("signup.provisioning.configuringPermissions"),
       t("signup.provisioning.almostReady"),
     ],
-    [t],
+    [t]
   );
 
   const current = Math.min(Math.max(wizard.provisioningStep, 0), stages.length - 1);
@@ -50,7 +50,12 @@ export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
       <header className="mb-7 flex flex-col gap-2">
         <h1
           className="font-semibold"
-          style={{ color: tokens.ink, fontSize: "clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem)", lineHeight: 1.15, letterSpacing: "-0.02em" }}
+          style={{
+            color: tokens.ink,
+            fontSize: "clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem)",
+            lineHeight: 1.15,
+            letterSpacing: "-0.02em",
+          }}
         >
           {stages[current]}
         </h1>
@@ -81,7 +86,11 @@ export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
           const done = i < current;
           const active = i === current;
           return (
-            <li key={stage} className="flex items-center gap-3" style={{ opacity: i <= current ? 1 : 0.4 }}>
+            <li
+              key={stage}
+              className="flex items-center gap-3"
+              style={{ opacity: i <= current ? 1 : 0.4 }}
+            >
               <span
                 aria-hidden
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors duration-300"
@@ -91,11 +100,21 @@ export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
                 }}
               >
                 {done ? (
-                  <Check className="h-3 w-3" strokeWidth={3} style={{ color: tokens.accentContrast }} />
+                  <Check
+                    className="h-3 w-3"
+                    strokeWidth={3}
+                    style={{ color: tokens.accentContrast }}
+                  />
                 ) : active ? (
-                  <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" style={{ color: tokens.accentContrast }} />
+                  <Loader2
+                    className="h-3 w-3 animate-spin motion-reduce:animate-none"
+                    style={{ color: tokens.accentContrast }}
+                  />
                 ) : (
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: tokens.inkGhost }} />
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ background: tokens.inkGhost }}
+                  />
                 )}
               </span>
               <span

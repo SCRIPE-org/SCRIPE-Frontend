@@ -9,7 +9,10 @@ import type {
   AnswerOptionRequest,
 } from "../../domain/entities/OnboardingQuestionRequests";
 import { OnboardingQuestionMapper } from "../mappers/OnboardingQuestionMapper";
-import type { OnboardingQuestion, AnswerOptionData } from "../../domain/entities/OnboardingQuestion";
+import type {
+  OnboardingQuestion,
+  AnswerOptionData,
+} from "../../domain/entities/OnboardingQuestion";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
 export class OnboardingQuestionRepository implements IOnboardingQuestionRepository {

@@ -84,7 +84,16 @@ export function PlanCard({
     const amount = billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
     const monthly = billingCycle === "annual" && amount ? Math.round(amount / 12) : amount;
     return formatCurrency(monthly, currency, locale, isFxConverted);
-  }, [isFree, isCustom, billingCycle, edition.monthlyPrice, edition.annualPrice, currency, locale, isFxConverted]);
+  }, [
+    isFree,
+    isCustom,
+    billingCycle,
+    edition.monthlyPrice,
+    edition.annualPrice,
+    currency,
+    locale,
+    isFxConverted,
+  ]);
 
   const annualText = useMemo(() => {
     if (isFree || isCustom || billingCycle !== "annual" || !edition.annualPrice) return null;
@@ -98,11 +107,11 @@ export function PlanCard({
         days: edition.trialDays ?? 14,
         price: priceText ?? "",
       }),
-    [edition.checkoutMode, edition.trialDays, priceText, t],
+    [edition.checkoutMode, edition.trialDays, priceText, t]
   );
 
   const badgeLabel = badge ? t(`signup.plans.badge.${badge}`) : null;
-  const reason = badge === RECOMMENDED_BADGE ? reasons[0] ?? null : null;
+  const reason = badge === RECOMMENDED_BADGE ? (reasons[0] ?? null) : null;
   const isAccent = badge === RECOMMENDED_BADGE;
 
   const entrance = reduceMotion
@@ -126,27 +135,49 @@ export function PlanCard({
       className="grid grid-rows-subgrid rounded-2xl p-6 transition-all duration-300 ease-out [grid-row:span_5] sm:p-8"
       style={{
         background: isAccent
-          ? (hovered ? `${tokens.accent}14` : `${tokens.accent}0d`)
-          : (hovered ? tokens.surfaceRaised : tokens.surfaceCard),
+          ? hovered
+            ? `${tokens.accent}14`
+            : `${tokens.accent}0d`
+          : hovered
+            ? tokens.surfaceRaised
+            : tokens.surfaceCard,
         border: isAccent
-          ? (hovered ? `1px solid ${tokens.accent}` : tokens.borderActive)
-          : (hovered ? `1px solid ${tokens.accent}40` : tokens.borderCard),
+          ? hovered
+            ? `1px solid ${tokens.accent}`
+            : tokens.borderActive
+          : hovered
+            ? `1px solid ${tokens.accent}40`
+            : tokens.borderCard,
         boxShadow: hovered
           ? tokens.shadowCard
-          : (isAccent ? "0 4px 20px -2px rgba(124, 58, 237, 0.15)" : "none"),
+          : isAccent
+            ? "0 4px 20px -2px rgba(124, 58, 237, 0.15)"
+            : "none",
       }}
     >
       {/* ── Row 1: reserved badge slot (fixed line; renders ≤ 1 badge) ── */}
-      <div className="flex min-h-[1.75rem] items-start mb-2.5">
+      <div className="mb-2.5 flex min-h-[1.75rem] items-start">
         {badgeLabel && (
           <span
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.6875rem] font-semibold tracking-wide"
             style={
               badge === RECOMMENDED_BADGE
-                ? { background: `${tokens.accent}1f`, color: tokens.accent, border: `1px solid ${tokens.accent}40` }
+                ? {
+                    background: `${tokens.accent}1f`,
+                    color: tokens.accent,
+                    border: `1px solid ${tokens.accent}40`,
+                  }
                 : badge === MOST_POPULAR_BADGE
-                  ? { background: `${tokens.accent}12`, color: tokens.accent, border: `1px solid ${tokens.accent}28` }
-                  : /* bestValue */ { background: `${tokens.cyan}18`, color: tokens.cyan, border: `1px solid ${tokens.cyan}35` }
+                  ? {
+                      background: `${tokens.accent}12`,
+                      color: tokens.accent,
+                      border: `1px solid ${tokens.accent}28`,
+                    }
+                  : /* bestValue */ {
+                      background: `${tokens.cyan}18`,
+                      color: tokens.cyan,
+                      border: `1px solid ${tokens.cyan}35`,
+                    }
             }
           >
             {badge === RECOMMENDED_BADGE && <Sparkles size={11} aria-hidden />}
@@ -157,19 +188,28 @@ export function PlanCard({
 
       {/* ── Row 2: name + tagline + price ── */}
       <div className="flex flex-col gap-1">
-        <h3 className="text-[1rem] sm:text-[1.125rem] font-semibold leading-tight" style={{ color: tokens.ink }}>
+        <h3
+          className="text-[1rem] font-semibold leading-tight sm:text-[1.125rem]"
+          style={{ color: tokens.ink }}
+        >
           {edition.name}
         </h3>
         {edition.tagline && (
-          <p className="line-clamp-2 text-[0.8125rem] leading-snug" style={{ color: tokens.inkFaint }}>
+          <p
+            className="line-clamp-2 text-[0.8125rem] leading-snug"
+            style={{ color: tokens.inkFaint }}
+          >
             {edition.tagline}
           </p>
         )}
 
-        <div className="mt-4 flex items-baseline gap-1.5 flex-wrap">
+        <div className="mt-4 flex flex-wrap items-baseline gap-1.5">
           {isFree ? (
             <>
-              <span className="text-[1.625rem] xl:text-[2rem] font-bold leading-none" style={{ color: tokens.ink }}>
+              <span
+                className="text-[1.625rem] font-bold leading-none xl:text-[2rem]"
+                style={{ color: tokens.ink }}
+              >
                 {t("signup.plans.price.free")}
               </span>
               <span className="text-[0.8125rem]" style={{ color: tokens.inkFaint }}>
@@ -177,12 +217,18 @@ export function PlanCard({
               </span>
             </>
           ) : isCustom ? (
-            <span className="text-[1.375rem] xl:text-[1.5rem] font-bold leading-none" style={{ color: tokens.ink }}>
+            <span
+              className="text-[1.375rem] font-bold leading-none xl:text-[1.5rem]"
+              style={{ color: tokens.ink }}
+            >
               {t("signup.plans.price.custom")}
             </span>
           ) : (
             <>
-              <span className="text-[1.625rem] xl:text-[2rem] font-bold leading-none" style={{ color: tokens.ink }}>
+              <span
+                className="text-[1.625rem] font-bold leading-none xl:text-[2rem]"
+                style={{ color: tokens.ink }}
+              >
                 {priceText}
               </span>
               <span className="text-[0.8125rem]" style={{ color: tokens.inkFaint }}>
@@ -193,10 +239,15 @@ export function PlanCard({
         </div>
 
         {/* Annual sub-line + approximate marker — fixed presence avoids jitter */}
-        <div className="mt-1 flex min-h-[1.25rem] flex-wrap items-center gap-x-2 text-[0.75rem]" style={{ color: tokens.inkFaint }}>
+        <div
+          className="mt-1 flex min-h-[1.25rem] flex-wrap items-center gap-x-2 text-[0.75rem]"
+          style={{ color: tokens.inkFaint }}
+        >
           {annualText && <span>{t("signup.plans.price.perYear", { price: annualText })}</span>}
           {!isFree && !isCustom && isFxConverted && (
-            <span title={t("signup.plans.price.approxTooltip")}>{t("signup.plans.price.approx")}</span>
+            <span title={t("signup.plans.price.approxTooltip")}>
+              {t("signup.plans.price.approx")}
+            </span>
           )}
         </div>
 
@@ -218,7 +269,13 @@ export function PlanCard({
       {/* ── Row 4: feature list (this is the only flexible-height row) ── */}
       <ul className="space-y-2.5">
         {edition.topFeatures.map((feat, i) => (
-          <FeatureRow key={`${edition.id}-f-${i}`} feature={feat} accent={tokens.accent} ink={tokens.inkMuted} faint={tokens.inkFaint} />
+          <FeatureRow
+            key={`${edition.id}-f-${i}`}
+            feature={feat}
+            accent={tokens.accent}
+            ink={tokens.inkMuted}
+            faint={tokens.inkFaint}
+          />
         ))}
       </ul>
 
@@ -231,8 +288,16 @@ export function PlanCard({
           style={
             {
               ...(isAccent
-                ? { background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }
-                : { background: tokens.surfaceRaised, color: tokens.ink, border: tokens.borderCard }),
+                ? {
+                    background: tokens.gradientCta,
+                    color: tokens.accentContrast,
+                    boxShadow: tokens.shadowCard,
+                  }
+                : {
+                    background: tokens.surfaceRaised,
+                    color: tokens.ink,
+                    border: tokens.borderCard,
+                  }),
               // CSS custom props for the Tailwind focus ring (cast covers the index signature).
               "--tw-ring-color": tokens.accent,
               "--tw-ring-offset-color": "transparent",

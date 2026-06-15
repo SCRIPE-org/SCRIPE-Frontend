@@ -174,8 +174,7 @@ export function useLeadsViewModel() {
 
   // ── Add Note Mutation ─────────────────────────────────────────────────────
   const addNoteMutation = useMutation({
-    mutationFn: ({ id, note }: { id: string; note: string }) =>
-      leadsRepository.addNote(id, note),
+    mutationFn: ({ id, note }: { id: string; note: string }) => leadsRepository.addNote(id, note),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads", "activity"] });
       if (selectedLeadId) {

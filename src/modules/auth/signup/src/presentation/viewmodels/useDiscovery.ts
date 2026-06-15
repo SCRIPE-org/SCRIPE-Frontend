@@ -100,12 +100,12 @@ export interface DiscoveryViewModel {
 /** Pure: derive the first-pick priority from a multi-select priorities question. */
 function deriveTopPriority(
   visibleQuestions: OnboardingQuestion[],
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): string | null {
   // The priorities question is the first MULTI-select that is not Q1. Its first
   // selected value is, by construction of toggleOption, the user's top priority.
   const priorities = visibleQuestions.find(
-    (q) => q.questionType === "multi_select" && q.key !== BUSINESS_TYPE_KEY,
+    (q) => q.questionType === "multi_select" && q.key !== BUSINESS_TYPE_KEY
   );
   if (!priorities) return null;
   return answers[priorities.key]?.[0] ?? null;
@@ -115,12 +115,7 @@ export function useDiscovery(): DiscoveryViewModel {
   const { language } = useI18n();
 
   // ── Fetch the COMPLETE adaptive graph once. No categoryKey ⇒ full=true. ──────
-  const {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery<OnboardingFlow>({
+  const { data, isLoading, isError, refetch } = useQuery<OnboardingFlow>({
     queryKey: ["signup-onboarding-flow", language],
     queryFn: () => authContainer.signupRepository.getOnboardingFlow(undefined, language),
     staleTime: 10 * 60 * 1000, // graph is stable per session
@@ -135,7 +130,7 @@ export function useDiscovery(): DiscoveryViewModel {
   // ── Derived (pure helpers) ───────────────────────────────────────────────────
   const visibleQuestions = useMemo(
     () => getVisibleQuestions(questions, answers),
-    [questions, answers],
+    [questions, answers]
   );
 
   // Clamp the index against the live visible set — when the set shrinks (e.g.
@@ -145,10 +140,10 @@ export function useDiscovery(): DiscoveryViewModel {
 
   const currentVisibleOptions = useMemo(
     () => (currentQuestion ? getVisibleOptions(currentQuestion, answers) : []),
-    [currentQuestion, answers],
+    [currentQuestion, answers]
   );
 
-  const currentSelection = currentQuestion ? answers[currentQuestion.key] ?? [] : [];
+  const currentSelection = currentQuestion ? (answers[currentQuestion.key] ?? []) : [];
 
   const isSingleSelect = currentQuestion?.questionType === "single_select";
   const isMaxReached =
@@ -159,7 +154,7 @@ export function useDiscovery(): DiscoveryViewModel {
 
   const topPriorityForCurrent =
     currentQuestion && !isSingleSelect && currentQuestion.key !== BUSINESS_TYPE_KEY
-      ? currentSelection[0] ?? null
+      ? (currentSelection[0] ?? null)
       : null;
 
   const isCurrentRequired = !!currentQuestion?.isRequired;
@@ -209,7 +204,7 @@ export function useDiscovery(): DiscoveryViewModel {
         return pruneStaleAnswers(questions, draft);
       });
     },
-    [currentQuestion, questions],
+    [currentQuestion, questions]
   );
 
   const goNext = useCallback(() => {
@@ -274,6 +269,6 @@ export function useDiscovery(): DiscoveryViewModel {
       goNext,
       goBack,
       collectResult,
-    ],
+    ]
   );
 }

@@ -101,10 +101,7 @@ export function ProfilePreview({ questions, answers, variant = "sidebar" }: Prof
         </p>
       </div>
 
-      <div
-        className="mt-5 flex flex-col gap-4"
-        aria-live="polite"
-      >
+      <div className="mt-5 flex flex-col gap-4" aria-live="polite">
         <AnimatePresence initial={false}>
           {lines.map((line) => (
             <motion.div
@@ -116,10 +113,7 @@ export function ProfilePreview({ questions, answers, variant = "sidebar" }: Prof
               transition={chipTransition}
               className="flex flex-col gap-2"
             >
-              <span
-                className="text-[0.75rem] font-medium"
-                style={{ color: tokens.inkFaint }}
-              >
+              <span className="text-[0.75rem] font-medium" style={{ color: tokens.inkFaint }}>
                 {line.questionLabel}
               </span>
               <div className="flex flex-wrap gap-1.5">

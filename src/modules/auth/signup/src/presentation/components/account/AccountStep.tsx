@@ -106,7 +106,11 @@ export function AccountStep({ wizard }: AccountStepProps) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
         {/* ── Full name ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="signup-fullname" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="signup-fullname"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.account.fullName")}
           </Label>
           <Input
@@ -126,7 +130,12 @@ export function AccountStep({ wizard }: AccountStepProps) {
             style={inputStyle}
           />
           {fieldErrors.fullName && (
-            <p id="signup-fullname-error" role="alert" className="text-[0.75rem] font-medium" style={errorTextStyle}>
+            <p
+              id="signup-fullname-error"
+              role="alert"
+              className="text-[0.75rem] font-medium"
+              style={errorTextStyle}
+            >
               {t(fieldErrors.fullName)}
             </p>
           )}
@@ -134,7 +143,11 @@ export function AccountStep({ wizard }: AccountStepProps) {
 
         {/* ── Work email ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="signup-email" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="signup-email"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.account.workEmail")}
           </Label>
           <Input
@@ -153,7 +166,12 @@ export function AccountStep({ wizard }: AccountStepProps) {
             style={inputStyle}
           />
           {fieldErrors.email && (
-            <p id="signup-email-error" role="alert" className="text-[0.75rem] font-medium" style={errorTextStyle}>
+            <p
+              id="signup-email-error"
+              role="alert"
+              className="text-[0.75rem] font-medium"
+              style={errorTextStyle}
+            >
               {t(fieldErrors.email)}
             </p>
           )}
@@ -161,7 +179,11 @@ export function AccountStep({ wizard }: AccountStepProps) {
 
         {/* ── Password ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="signup-password" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="signup-password"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.account.password")}
           </Label>
           <PasswordInput
@@ -185,7 +207,12 @@ export function AccountStep({ wizard }: AccountStepProps) {
             style={inputStyle}
           />
           {fieldErrors.password ? (
-            <p id="signup-password-error" role="alert" className="text-[0.75rem] font-medium" style={errorTextStyle}>
+            <p
+              id="signup-password-error"
+              role="alert"
+              className="text-[0.75rem] font-medium"
+              style={errorTextStyle}
+            >
               {t(fieldErrors.password)}
             </p>
           ) : (
@@ -248,7 +275,11 @@ export function AccountStep({ wizard }: AccountStepProps) {
           <div
             role="alert"
             className="rounded-lg px-3 py-2.5 text-[0.8125rem] font-medium"
-            style={{ background: `${tokens.error}1a`, border: `1px solid ${tokens.error}40`, color: tokens.error }}
+            style={{
+              background: `${tokens.error}1a`,
+              border: `1px solid ${tokens.error}40`,
+              color: tokens.error,
+            }}
           >
             {wizard.error}
           </div>
@@ -260,11 +291,18 @@ export function AccountStep({ wizard }: AccountStepProps) {
           disabled={wizard.isSubmitting}
           aria-busy={wizard.isSubmitting}
           className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
-          style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+          style={{
+            background: tokens.gradientCta,
+            color: tokens.accentContrast,
+            boxShadow: tokens.shadowCard,
+          }}
         >
           {wizard.isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              <Loader2
+                className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
               <span className="sr-only">{t("signup.common.loading")}</span>
             </>
           ) : (
@@ -282,7 +320,11 @@ export function AccountStep({ wizard }: AccountStepProps) {
 
         {/* ── Trust cue + back ── */}
         <div className="flex items-center justify-center gap-1.5">
-          <Lock className="h-3 w-3 shrink-0" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+          <Lock
+            className="h-3 w-3 shrink-0"
+            aria-hidden="true"
+            style={{ color: tokens.inkFaint }}
+          />
           <p className="text-[0.6875rem]" style={{ color: tokens.inkFaint }}>
             {t("signup.account.trustCue")}
           </p>

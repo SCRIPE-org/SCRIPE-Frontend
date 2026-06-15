@@ -27,7 +27,12 @@ interface ResumeSignupModalProps {
   onStartFresh: () => void | Promise<void>;
 }
 
-export function ResumeSignupModal({ info, onResume, onChangePlan, onStartFresh }: ResumeSignupModalProps) {
+export function ResumeSignupModal({
+  info,
+  onResume,
+  onChangePlan,
+  onStartFresh,
+}: ResumeSignupModalProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -68,7 +73,11 @@ export function ResumeSignupModal({ info, onResume, onChangePlan, onStartFresh }
     >
       <div
         className="rounded-2xl p-8"
-        style={{ background: tokens.surfaceCard, border: tokens.borderCard, boxShadow: tokens.shadowCard }}
+        style={{
+          background: tokens.surfaceCard,
+          border: tokens.borderCard,
+          boxShadow: tokens.shadowCard,
+        }}
       >
         {/* Icon */}
         <div className="mb-5 flex justify-center">
@@ -76,14 +85,25 @@ export function ResumeSignupModal({ info, onResume, onChangePlan, onStartFresh }
             className="flex h-14 w-14 items-center justify-center rounded-full"
             style={{ background: `${tokens.accent}1f`, border: `1px solid ${tokens.accent}44` }}
           >
-            <Play className="h-6 w-6 rtl:scale-x-[-1]" aria-hidden="true" style={{ color: tokens.accent }} />
+            <Play
+              className="h-6 w-6 rtl:scale-x-[-1]"
+              aria-hidden="true"
+              style={{ color: tokens.accent }}
+            />
           </div>
         </div>
 
-        <h2 id="resume-modal-title" className="text-center text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+        <h2
+          id="resume-modal-title"
+          className="text-center text-[1.25rem] font-semibold"
+          style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+        >
           {t("signup.resume.title")}
         </h2>
-        <p className="mt-2 text-center text-[0.875rem] leading-relaxed" style={{ color: tokens.inkMuted }}>
+        <p
+          className="mt-2 text-center text-[0.875rem] leading-relaxed"
+          style={{ color: tokens.inkMuted }}
+        >
           {t("signup.resume.subtitle")}
         </p>
 
@@ -108,7 +128,11 @@ export function ResumeSignupModal({ info, onResume, onChangePlan, onStartFresh }
             type="button"
             onClick={onResume}
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none"
-            style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+            style={{
+              background: tokens.gradientCta,
+              color: tokens.accentContrast,
+              boxShadow: tokens.shadowCard,
+            }}
           >
             <Play className="h-4 w-4 rtl:scale-x-[-1]" aria-hidden="true" />
             {t("signup.resume.continue")}
@@ -118,7 +142,11 @@ export function ResumeSignupModal({ info, onResume, onChangePlan, onStartFresh }
             type="button"
             onClick={onChangePlan}
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl text-[0.875rem] font-semibold transition-opacity duration-200 hover:opacity-80"
-            style={{ background: tokens.surfaceRaised, border: tokens.borderCard, color: tokens.accent }}
+            style={{
+              background: tokens.surfaceRaised,
+              border: tokens.borderCard,
+              color: tokens.accent,
+            }}
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             {t("signup.resume.changePlan")}

@@ -69,7 +69,11 @@ export function PlansStage({ wizard }: PlansStageProps) {
 
       {/* ── Controls: industry switch · billing toggle · region line ── */}
       <div className="flex flex-col items-center gap-4">
-        <IndustrySwitch value={vm.activeIndustry} options={vm.industries} onChange={vm.setIndustry} />
+        <IndustrySwitch
+          value={vm.activeIndustry}
+          options={vm.industries}
+          onChange={vm.setIndustry}
+        />
         {vm.hasPaidEditions && (
           <BillingCycleToggle
             value={vm.billingCycle}

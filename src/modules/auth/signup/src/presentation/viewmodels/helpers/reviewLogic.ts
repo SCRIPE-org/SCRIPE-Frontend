@@ -74,7 +74,7 @@ export function isInPageProvisioning(mode: CheckoutMode): boolean {
  */
 export function shouldShowResumeModal(
   ref: string | null,
-  info: ResumeSessionResult | null,
+  info: ResumeSessionResult | null
 ): boolean {
   if (!ref || !info) return false;
   return info.status === "pending" || info.status === "awaiting_payment";

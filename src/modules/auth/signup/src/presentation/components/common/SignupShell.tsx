@@ -122,10 +122,7 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
             height={28}
             priority
           />
-          <span
-            className="text-[15px] font-semibold tracking-tight"
-            style={{ color: tokens.ink }}
-          >
+          <span className="text-[15px] font-semibold tracking-tight" style={{ color: tokens.ink }}>
             {BRAND.name}
           </span>
         </Link>
@@ -144,17 +141,10 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
               color: tokens.inkMuted,
             }}
           >
-            {isDark ? (
-              <Sun size={15} aria-hidden="true" />
-            ) : (
-              <Moon size={15} aria-hidden="true" />
-            )}
+            {isDark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
           </button>
 
-          <div
-            className="flex items-center gap-1.5 text-[13px]"
-            style={{ color: tokens.inkFaint }}
-          >
+          <div className="flex items-center gap-1.5 text-[13px]" style={{ color: tokens.inkFaint }}>
             <span className="hidden sm:inline">{t("signup.header.haveAccount")}</span>
             <Link
               href="/login"

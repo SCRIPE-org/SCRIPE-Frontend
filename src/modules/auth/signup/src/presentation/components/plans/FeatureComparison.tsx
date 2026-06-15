@@ -4,10 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { Check, Minus, ChevronDown } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
-import type {
-  ComparisonCategory,
-  ComparisonCellData,
-} from "../../../domain/entities";
+import type { ComparisonCategory, ComparisonCellData } from "../../../domain/entities";
 import type { PlanPickerEdition } from "../../viewmodels/usePlanPicker";
 import { formatCurrency } from "../../../data/helpers/planPickerLogic";
 
@@ -150,16 +147,20 @@ export function FeatureComparison({
 
       {open && (
         <div
-          className="mt-6 overflow-hidden lg:overflow-visible rounded-2xl"
+          className="mt-6 overflow-hidden rounded-2xl lg:overflow-visible"
           style={{ background: tokens.surfaceCard, border: tokens.borderCard }}
         >
-          <div className="overflow-x-auto lg:overflow-visible rounded-2xl lg:rounded-none">
+          <div className="overflow-x-auto rounded-2xl lg:overflow-visible lg:rounded-none">
             <table className="w-full border-collapse text-start">
               <thead className="sticky top-14 z-20">
                 <tr style={{ background: tokens.surfaceRaised }}>
                   <th
                     className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider sm:ps-6"
-                    style={{ color: tokens.inkFaint, background: tokens.surfaceRaised, minWidth: 180 }}
+                    style={{
+                      color: tokens.inkFaint,
+                      background: tokens.surfaceRaised,
+                      minWidth: 180,
+                    }}
                   >
                     {activeCategoryLabel || t("signup.plans.compare.featuresColumn")}
                   </th>
@@ -170,12 +171,17 @@ export function FeatureComparison({
                       style={{
                         minWidth: 120,
                         background: edition.isRecommended
-                          ? (theme === "dark" ? "#1a113d" : "#f3f0ff")
+                          ? theme === "dark"
+                            ? "#1a113d"
+                            : "#f3f0ff"
                           : tokens.surfaceRaised,
                       }}
                     >
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-[0.8125rem] font-semibold" style={{ color: tokens.ink }}>
+                        <span
+                          className="text-[0.8125rem] font-semibold"
+                          style={{ color: tokens.ink }}
+                        >
                           {edition.name}
                         </span>
                         {edition.isRecommended && (
@@ -186,7 +192,10 @@ export function FeatureComparison({
                             {t("signup.plans.badge.recommended")}
                           </span>
                         )}
-                        <span className="text-[0.6875rem] font-semibold" style={{ color: tokens.cyan }}>
+                        <span
+                          className="text-[0.6875rem] font-semibold"
+                          style={{ color: tokens.cyan }}
+                        >
                           {headerPrice(edition)}
                         </span>
                       </div>
@@ -236,7 +245,14 @@ function CategoryBlock({
   language: string;
   highlighted: boolean;
   theme: "light" | "dark";
-  tokens: { ink: string; inkMuted: string; inkFaint: string; accent: string; border: string; surfaceRaised: string };
+  tokens: {
+    ink: string;
+    inkMuted: string;
+    inkFaint: string;
+    accent: string;
+    border: string;
+    surfaceRaised: string;
+  };
   unlimitedLabel: string;
 }) {
   return (
@@ -261,15 +277,23 @@ function CategoryBlock({
             style={{
               color: highlighted ? tokens.ink : tokens.inkMuted,
               background: highlighted
-                ? (theme === "dark" ? "#1d0e3a" : "#f7f4ff")
-                : (theme === "dark" ? "#120a2b" : "#ffffff"),
+                ? theme === "dark"
+                  ? "#1d0e3a"
+                  : "#f7f4ff"
+                : theme === "dark"
+                  ? "#120a2b"
+                  : "#ffffff",
               minWidth: 180,
             }}
           >
             {row.label}
           </td>
           {editions.map((edition) => (
-            <td key={edition.id} className="px-4 py-3 text-center align-middle" style={{ minWidth: 120 }}>
+            <td
+              key={edition.id}
+              className="px-4 py-3 text-center align-middle"
+              style={{ minWidth: 120 }}
+            >
               <Cell
                 cell={row.values[edition.id]}
                 language={language}
@@ -297,33 +321,77 @@ function Cell({
   tokens: { ink: string; inkMuted: string; inkFaint: string; accent: string; border: string };
   unlimitedLabel: string;
 }) {
-  if (!cell) return <Minus size={14} className="mx-auto opacity-30" style={{ color: tokens.inkFaint }} aria-hidden />;
+  if (!cell)
+    return (
+      <Minus
+        size={14}
+        className="mx-auto opacity-30"
+        style={{ color: tokens.inkFaint }}
+        aria-hidden
+      />
+    );
 
-  const displayLabel = (language === "ar" ? cell.displayLabelAr : cell.displayLabelEn) ?? cell.displayLabelEn ?? null;
+  const displayLabel =
+    (language === "ar" ? cell.displayLabelAr : cell.displayLabelEn) ?? cell.displayLabelEn ?? null;
   if (displayLabel) {
-    return <span className="text-[0.75rem] font-medium" style={{ color: tokens.ink }}>{displayLabel}</span>;
+    return (
+      <span className="text-[0.75rem] font-medium" style={{ color: tokens.ink }}>
+        {displayLabel}
+      </span>
+    );
   }
 
   if (cell.valueType === "Boolean") {
     return cell.value === "true" ? (
       <Check size={15} className="mx-auto" style={{ color: tokens.accent }} aria-hidden />
     ) : (
-      <Minus size={14} className="mx-auto opacity-30" style={{ color: tokens.inkFaint }} aria-hidden />
+      <Minus
+        size={14}
+        className="mx-auto opacity-30"
+        style={{ color: tokens.inkFaint }}
+        aria-hidden
+      />
     );
   }
 
   if (cell.valueType === "Numeric") {
     if (cell.value === "-1") {
-      return <span className="text-[0.6875rem] font-semibold" style={{ color: tokens.accent }}>{unlimitedLabel}</span>;
+      return (
+        <span className="text-[0.6875rem] font-semibold" style={{ color: tokens.accent }}>
+          {unlimitedLabel}
+        </span>
+      );
     }
     if (cell.value === "0") {
-      return <Minus size={14} className="mx-auto opacity-30" style={{ color: tokens.inkFaint }} aria-hidden />;
+      return (
+        <Minus
+          size={14}
+          className="mx-auto opacity-30"
+          style={{ color: tokens.inkFaint }}
+          aria-hidden
+        />
+      );
     }
-    return <span className="text-[0.75rem] font-semibold" style={{ color: tokens.ink }}>{Number(cell.value).toLocaleString()}</span>;
+    return (
+      <span className="text-[0.75rem] font-semibold" style={{ color: tokens.ink }}>
+        {Number(cell.value).toLocaleString()}
+      </span>
+    );
   }
 
   if (!cell.value || cell.value === "false" || cell.value === "none") {
-    return <Minus size={14} className="mx-auto opacity-30" style={{ color: tokens.inkFaint }} aria-hidden />;
+    return (
+      <Minus
+        size={14}
+        className="mx-auto opacity-30"
+        style={{ color: tokens.inkFaint }}
+        aria-hidden
+      />
+    );
   }
-  return <span className="text-[0.6875rem]" style={{ color: tokens.inkMuted }}>{cell.value}</span>;
+  return (
+    <span className="text-[0.6875rem]" style={{ color: tokens.inkMuted }}>
+      {cell.value}
+    </span>
+  );
 }

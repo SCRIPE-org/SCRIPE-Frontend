@@ -52,7 +52,7 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
         .slice(0, 63);
       if (auto) wizard.checkSubdomain(auto);
     },
-    [updateField, wizard],
+    [updateField, wizard]
   );
 
   const status: SubdomainStatus = isCheckingSubdomain
@@ -112,7 +112,11 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
       >
         {/* ── Organization name ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="signup-workspace" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="signup-workspace"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.workspace.orgName")}
           </Label>
           <Input
@@ -129,7 +133,11 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
 
         {/* ── Subdomain ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="signup-subdomain" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="signup-subdomain"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.workspace.workspaceUrl")}
           </Label>
           <div className="flex items-stretch" dir="ltr">
@@ -145,19 +153,35 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
                 aria-describedby="signup-subdomain-status"
                 aria-invalid={status === "unavailable"}
                 className="h-11 rounded-r-none pr-9"
-                style={{ ...inputStyle, borderColor: statusBorder, transition: "border-color 0.15s" }}
+                style={{
+                  ...inputStyle,
+                  borderColor: statusBorder,
+                  transition: "border-color 0.15s",
+                }}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2">
                 {status === "checking" && (
-                  <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+                  <Loader2
+                    className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                    aria-hidden="true"
+                    style={{ color: tokens.inkFaint }}
+                  />
                 )}
-                {status === "available" && <Check className="h-4 w-4" aria-hidden="true" style={{ color: tokens.success }} />}
-                {status === "unavailable" && <X className="h-4 w-4" aria-hidden="true" style={{ color: tokens.error }} />}
+                {status === "available" && (
+                  <Check className="h-4 w-4" aria-hidden="true" style={{ color: tokens.success }} />
+                )}
+                {status === "unavailable" && (
+                  <X className="h-4 w-4" aria-hidden="true" style={{ color: tokens.error }} />
+                )}
               </span>
             </div>
             <span
               className="inline-flex h-11 items-center rounded-r-xl border border-l-0 px-3 text-[0.8125rem] font-medium"
-              style={{ background: tokens.surfaceRaised, borderColor: tokens.border, color: tokens.inkFaint }}
+              style={{
+                background: tokens.surfaceRaised,
+                borderColor: tokens.border,
+                color: tokens.inkFaint,
+              }}
             >
               .{BRAND.domain}
             </span>
@@ -166,7 +190,11 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
           {/* Status message — announced to assistive tech */}
           <div id="signup-subdomain-status" aria-live="polite" className="min-h-[1rem]">
             {status === "unavailable" && subdomainResult && (
-              <p role="alert" className="text-[0.75rem] font-medium" style={{ color: tokens.error }}>
+              <p
+                role="alert"
+                className="text-[0.75rem] font-medium"
+                style={{ color: tokens.error }}
+              >
                 {subdomainResult.reason === "taken"
                   ? t("signup.workspace.subdomainTaken")
                   : subdomainResult.reason === "reserved"
@@ -179,7 +207,9 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
                     className="mx-1 font-medium underline underline-offset-2 hover:no-underline"
                     style={{ color: tokens.accent }}
                   >
-                    {t("signup.workspace.trySuggestion", { suggestion: subdomainResult.suggestion })}
+                    {t("signup.workspace.trySuggestion", {
+                      suggestion: subdomainResult.suggestion,
+                    })}
                   </button>
                 )}
               </p>
@@ -201,7 +231,11 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
                 url: `${wizardData.subdomain}.${BRAND.domain}`,
               })}
             >
-              <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+              <Lock
+                className="h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+                style={{ color: tokens.inkFaint }}
+              />
               <span className="truncate text-[0.8125rem]">
                 <span className="font-semibold" style={{ color: tokens.accent }}>
                   {wizardData.subdomain}
@@ -215,7 +249,11 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
         {/* ── Admin username (optional) ── */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="signup-username" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+            <Label
+              htmlFor="signup-username"
+              className="text-[0.8125rem] font-medium"
+              style={{ color: tokens.inkMuted }}
+            >
               {t("signup.workspace.adminUsername")}
             </Label>
             <span className="text-[0.6875rem]" style={{ color: tokens.inkFaint }}>
@@ -239,7 +277,11 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
           <div
             role="alert"
             className="rounded-lg px-3 py-2.5 text-[0.8125rem] font-medium"
-            style={{ background: `${tokens.error}1a`, border: `1px solid ${tokens.error}40`, color: tokens.error }}
+            style={{
+              background: `${tokens.error}1a`,
+              border: `1px solid ${tokens.error}40`,
+              color: tokens.error,
+            }}
           >
             {wizard.error}
           </div>
@@ -251,11 +293,18 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
           disabled={!canContinue}
           aria-busy={wizard.isSubmitting}
           className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
-          style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+          style={{
+            background: tokens.gradientCta,
+            color: tokens.accentContrast,
+            boxShadow: tokens.shadowCard,
+          }}
         >
           {wizard.isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              <Loader2
+                className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
               <span className="sr-only">{t("signup.common.loading")}</span>
             </>
           ) : (
@@ -264,7 +313,7 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
               <ArrowRight
                 size={18}
                 aria-hidden="true"
-                className="transition-transform duration-200 group-hover:translate-x-0.5 rtl:scale-x-[-1] motion-reduce:transform-none"
+                className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none rtl:scale-x-[-1]"
               />
             </>
           )}

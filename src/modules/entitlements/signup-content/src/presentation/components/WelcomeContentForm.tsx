@@ -61,7 +61,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       <div>
         <div className="mb-2 flex items-center gap-1.5">
           <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">{t("signupContent.welcome.headlineEn")}</span>
+          <span className="text-xs font-medium text-zinc-400">
+            {t("signupContent.welcome.headlineEn")}
+          </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Input
@@ -84,7 +86,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       <div>
         <div className="mb-2 flex items-center gap-1.5">
           <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">{t("signupContent.welcome.subcopyEn")}</span>
+          <span className="text-xs font-medium text-zinc-400">
+            {t("signupContent.welcome.subcopyEn")}
+          </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Textarea
@@ -107,7 +111,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       <div>
         <div className="mb-2 flex items-center gap-1.5">
           <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">{t("signupContent.welcome.ctaEn")}</span>
+          <span className="text-xs font-medium text-zinc-400">
+            {t("signupContent.welcome.ctaEn")}
+          </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Input
@@ -130,7 +136,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       <div>
         <div className="mb-2 flex items-center gap-1.5">
           <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">{t("signupContent.welcome.trustedByCount")}</span>
+          <span className="text-xs font-medium text-zinc-400">
+            {t("signupContent.welcome.trustedByCount")}
+          </span>
         </div>
         <div className="grid grid-cols-3 gap-3">
           <Input

@@ -8,10 +8,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { describe, it, expect } from "vitest";
-import type {
-  OnboardingAnswerOption,
-  OnboardingQuestion,
-} from "../entities/OnboardingEntities";
+import type { OnboardingAnswerOption, OnboardingQuestion } from "../entities/OnboardingEntities";
 import {
   getVisibleQuestions,
   isOptionVisible,
@@ -23,7 +20,7 @@ import {
 // ─── Fixture builders ──────────────────────────────────────────────────────────
 
 function opt(
-  partial: Partial<OnboardingAnswerOption> & { value: string; sortOrder: number },
+  partial: Partial<OnboardingAnswerOption> & { value: string; sortOrder: number }
 ): OnboardingAnswerOption {
   return {
     label: partial.value,
@@ -41,7 +38,7 @@ function question(
     key: string;
     sortOrder: number;
     options: OnboardingAnswerOption[];
-  },
+  }
 ): OnboardingQuestion {
   return {
     questionType: "single_select",
@@ -169,8 +166,8 @@ describe("getVisibleQuestions", () => {
     ]);
     expect(
       getVisibleQuestions([businessType, dependentAny], { business_type: ["general"] }).map(
-        (q) => q.key,
-      ),
+        (q) => q.key
+      )
     ).toEqual(["business_type", "followup"]);
   });
 });
@@ -211,18 +208,21 @@ describe("isOptionVisible", () => {
       ],
     });
     expect(
-      isOptionVisible(twoConditions, { business_type: ["healthcare"], scale_healthcare: ["network"] }),
+      isOptionVisible(twoConditions, {
+        business_type: ["healthcare"],
+        scale_healthcare: ["network"],
+      })
     ).toBe(true);
     // first condition fails
     expect(
-      isOptionVisible(twoConditions, { business_type: ["general"], scale_healthcare: ["network"] }),
+      isOptionVisible(twoConditions, { business_type: ["general"], scale_healthcare: ["network"] })
     ).toBe(false);
     // second condition fails
     expect(
       isOptionVisible(twoConditions, {
         business_type: ["healthcare"],
         scale_healthcare: ["beds_lt_50"],
-      }),
+      })
     ).toBe(false);
   });
 });
@@ -274,13 +274,13 @@ describe("rankOptions", () => {
 
     // Condition NOT satisfied → boost ignored → peer (10) before boosted (50).
     const offOrder = rankOptions([boosted, peer], { scale_healthcare: ["clinic"] }).map(
-      (o) => o.value,
+      (o) => o.value
     );
     expect(offOrder).toEqual(["peer", "boosted"]);
 
     // Condition satisfied → effective key 50-100=-50 → boosted floats above peer.
     const onOrder = rankOptions([boosted, peer], { scale_healthcare: ["network"] }).map(
-      (o) => o.value,
+      (o) => o.value
     );
     expect(onOrder).toEqual(["boosted", "peer"]);
   });
@@ -344,7 +344,10 @@ describe("pruneStaleAnswers", () => {
   });
 
   it("leaves an already-clean answer map unchanged in value", () => {
-    const clean: Record<string, string[]> = { business_type: ["healthcare"], scale_healthcare: ["clinic"] };
+    const clean: Record<string, string[]> = {
+      business_type: ["healthcare"],
+      scale_healthcare: ["clinic"],
+    };
     const after = pruneStaleAnswers(flow, clean);
     expect(after).toEqual(clean);
   });

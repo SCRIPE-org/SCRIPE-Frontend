@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
@@ -35,7 +29,13 @@ const EMPTY: CreateTrustMarkParams = {
   isActive: true,
 };
 
-export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: TrustMarkDialogProps) {
+export function TrustMarkDialog({
+  open,
+  onClose,
+  onSave,
+  isSaving,
+  editing,
+}: TrustMarkDialogProps) {
   const { t } = useI18n();
   const [form, setForm] = useState<CreateTrustMarkParams>(EMPTY);
 
@@ -65,9 +65,7 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
     onSave(form);
   };
 
-  const title = editing
-    ? t("signupContent.trustMarks.edit")
-    : t("signupContent.trustMarks.add");
+  const title = editing ? t("signupContent.trustMarks.edit") : t("signupContent.trustMarks.add");
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -96,7 +94,9 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelEn")}</label>
+              <label className="text-xs text-zinc-400">
+                {t("signupContent.trustMarks.labelEn")}
+              </label>
               <Input
                 value={form.labelEn}
                 onChange={(e) => set("labelEn", e.target.value)}
@@ -105,7 +105,9 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelAr")}</label>
+              <label className="text-xs text-zinc-400">
+                {t("signupContent.trustMarks.labelAr")}
+              </label>
               <Input
                 value={form.labelAr}
                 onChange={(e) => set("labelAr", e.target.value)}
@@ -114,7 +116,9 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.iconKey")}</label>
+              <label className="text-xs text-zinc-400">
+                {t("signupContent.trustMarks.iconKey")}
+              </label>
               <Input
                 value={form.iconKey ?? ""}
                 onChange={(e) => set("iconKey", e.target.value)}
@@ -122,7 +126,9 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.assetUrl")}</label>
+              <label className="text-xs text-zinc-400">
+                {t("signupContent.trustMarks.assetUrl")}
+              </label>
               <Input
                 value={form.assetUrl ?? ""}
                 onChange={(e) => set("assetUrl", e.target.value)}
@@ -130,7 +136,9 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</label>
+              <label className="text-xs text-zinc-400">
+                {t("signupContent.trustMarks.sortOrder")}
+              </label>
               <Input
                 type="number"
                 value={form.sortOrder}
@@ -140,11 +148,10 @@ export function TrustMarkDialog({ open, onClose, onSave, isSaving, editing }: Tr
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.isRealData")}</label>
-            <Switch
-              checked={form.isRealData}
-              onCheckedChange={(v) => set("isRealData", v)}
-            />
+            <label className="text-xs text-zinc-400">
+              {t("signupContent.trustMarks.isRealData")}
+            </label>
+            <Switch checked={form.isRealData} onCheckedChange={(v) => set("isRealData", v)} />
           </div>
           <DialogFooter>
             <Button

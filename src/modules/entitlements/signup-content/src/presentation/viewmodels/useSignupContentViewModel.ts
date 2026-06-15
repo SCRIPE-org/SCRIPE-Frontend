@@ -112,7 +112,8 @@ export function useSignupContentViewModel() {
 
   // ── Customer Logos ────────────────────────────────────────────────────────────
   const createCustomerLogoMutation = useMutation({
-    mutationFn: (data: CreateCustomerLogoParams) => signupContentRepository.createCustomerLogo(data),
+    mutationFn: (data: CreateCustomerLogoParams) =>
+      signupContentRepository.createCustomerLogo(data),
     onSuccess: () => {
       invalidate();
       setLogoDialogOpen(false);

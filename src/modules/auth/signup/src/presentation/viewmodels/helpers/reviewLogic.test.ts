@@ -10,11 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { describe, it, expect } from "vitest";
-import {
-  reviewCopyKeysForMode,
-  isInPageProvisioning,
-  shouldShowResumeModal,
-} from "./reviewLogic";
+import { reviewCopyKeysForMode, isInPageProvisioning, shouldShowResumeModal } from "./reviewLogic";
 import type { CheckoutMode, ResumeSessionResult } from "../../../domain/entities";
 
 describe("reviewCopyKeysForMode", () => {

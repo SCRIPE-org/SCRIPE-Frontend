@@ -53,23 +53,37 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
   ];
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center px-5 py-14 text-center sm:px-8" dir={direction}>
+    <div
+      className="mx-auto flex w-full max-w-md flex-1 flex-col items-center px-5 py-14 text-center sm:px-8"
+      dir={direction}
+    >
       {/* ── Success mark (single celebratory pulse, reduced-motion safe) ── */}
       <div className="relative mb-6">
         <span
           aria-hidden
           className="absolute inset-0 rounded-full motion-reduce:hidden"
-          style={{ background: `radial-gradient(circle, ${tokens.success}40 0%, transparent 70%)`, animation: "sxCompletePulse 2.4s ease-in-out infinite" }}
+          style={{
+            background: `radial-gradient(circle, ${tokens.success}40 0%, transparent 70%)`,
+            animation: "sxCompletePulse 2.4s ease-in-out infinite",
+          }}
         />
         <div
           className="relative flex h-16 w-16 items-center justify-center rounded-full"
           style={{ background: `${tokens.success}1f`, border: `2px solid ${tokens.success}66` }}
         >
-          <Check className="h-8 w-8" strokeWidth={2.5} style={{ color: tokens.success }} aria-hidden="true" />
+          <Check
+            className="h-8 w-8"
+            strokeWidth={2.5}
+            style={{ color: tokens.success }}
+            aria-hidden="true"
+          />
         </div>
       </div>
 
-      <h1 className="text-[1.5rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+      <h1
+        className="text-[1.5rem] font-semibold"
+        style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+      >
         {t("signup.complete.welcomeTitle")}
       </h1>
       <p className="mt-2 text-[0.9375rem] leading-relaxed" style={{ color: tokens.inkMuted }}>
@@ -79,8 +93,16 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
       {/* ── Next steps ── */}
       <ul className="mt-6 flex w-full flex-col gap-2">
         {highlights.map((item) => (
-          <li key={item} className="flex items-center justify-center gap-2 text-[0.8125rem]" style={{ color: tokens.inkMuted }}>
-            <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: tokens.cyan }} />
+          <li
+            key={item}
+            className="flex items-center justify-center gap-2 text-[0.8125rem]"
+            style={{ color: tokens.inkMuted }}
+          >
+            <Check
+              className="h-3.5 w-3.5 shrink-0"
+              aria-hidden="true"
+              style={{ color: tokens.cyan }}
+            />
             {item}
           </li>
         ))}
@@ -91,10 +113,17 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
         type="button"
         onClick={wizard.goToLogin}
         className="group mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none"
-        style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+        style={{
+          background: tokens.gradientCta,
+          color: tokens.accentContrast,
+          boxShadow: tokens.shadowCard,
+        }}
       >
         {t("signup.complete.goToWorkspace")}
-        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 rtl:scale-x-[-1] motion-reduce:transform-none" aria-hidden="true" />
+        <ArrowRight
+          className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none rtl:scale-x-[-1]"
+          aria-hidden="true"
+        />
       </button>
 
       <p className="mt-4 text-[0.6875rem]" style={{ color: tokens.inkFaint }}>

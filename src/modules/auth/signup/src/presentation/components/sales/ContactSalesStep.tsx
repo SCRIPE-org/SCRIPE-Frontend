@@ -41,7 +41,9 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<"fullName" | "email" | "company", string>>>({});
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<"fullName" | "email" | "company", string>>
+  >({});
 
   const inputStyle = {
     background: tokens.surfaceRaised,
@@ -54,7 +56,8 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
     const next: Partial<Record<"fullName" | "email" | "company", string>> = {};
     if (!fullName.trim()) next.fullName = t("signup.errors.fullNameRequired");
     if (!email.trim()) next.email = t("signup.errors.emailRequired");
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) next.email = t("signup.errors.emailInvalid");
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      next.email = t("signup.errors.emailInvalid");
     if (!company.trim()) next.company = t("signup.contactSales.companyRequired");
     setFieldErrors(next);
     return Object.keys(next).length === 0;
@@ -78,14 +81,20 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
   // ── Success panel ──────────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center px-5 py-14 text-center sm:px-8" dir={direction}>
+      <div
+        className="mx-auto flex w-full max-w-md flex-1 flex-col items-center px-5 py-14 text-center sm:px-8"
+        dir={direction}
+      >
         <div
           className="mb-6 flex h-14 w-14 items-center justify-center rounded-full"
           style={{ background: `${tokens.success}1f`, border: `1px solid ${tokens.success}55` }}
         >
           <Check className="h-7 w-7" aria-hidden="true" style={{ color: tokens.success }} />
         </div>
-        <h1 className="text-[1.375rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+        <h1
+          className="text-[1.375rem] font-semibold"
+          style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+        >
           {t("signup.contactSales.successTitle")}
         </h1>
         <p className="mt-2 text-[0.9375rem] leading-relaxed" style={{ color: tokens.inkMuted }}>
@@ -105,7 +114,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
             t("signup.contactSales.next3"),
           ].map((item) => (
             <div key={item} className="flex items-center gap-2 py-1">
-              <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: tokens.cyan }} />
+              <Check
+                className="h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+                style={{ color: tokens.cyan }}
+              />
               <span className="text-[0.8125rem]" style={{ color: tokens.inkMuted }}>
                 {item}
               </span>
@@ -151,7 +164,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
         {/* ── Full name ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="cs-fullname" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="cs-fullname"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.account.fullName")}
           </Label>
           <Input
@@ -178,7 +195,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
 
         {/* ── Work email ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="cs-email" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="cs-email"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.account.workEmail")}
           </Label>
           <Input
@@ -204,7 +225,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
 
         {/* ── Company ── */}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="cs-company" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+          <Label
+            htmlFor="cs-company"
+            className="text-[0.8125rem] font-medium"
+            style={{ color: tokens.inkMuted }}
+          >
             {t("signup.contactSales.company")}
           </Label>
           <Input
@@ -231,7 +256,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
         {/* ── Phone (optional) ── */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="cs-phone" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+            <Label
+              htmlFor="cs-phone"
+              className="text-[0.8125rem] font-medium"
+              style={{ color: tokens.inkMuted }}
+            >
               {t("signup.contactSales.phone")}
             </Label>
             <span className="text-[0.6875rem]" style={{ color: tokens.inkFaint }}>
@@ -255,7 +284,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
         {/* ── Note (optional) ── */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="cs-note" className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
+            <Label
+              htmlFor="cs-note"
+              className="text-[0.8125rem] font-medium"
+              style={{ color: tokens.inkMuted }}
+            >
               {t("signup.contactSales.noteLabel")}
             </Label>
             <span className="text-[0.6875rem]" style={{ color: tokens.inkFaint }}>
@@ -288,7 +321,11 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
           <div
             role="alert"
             className="rounded-lg px-3 py-2.5 text-[0.8125rem] font-medium"
-            style={{ background: `${tokens.error}1a`, border: `1px solid ${tokens.error}40`, color: tokens.error }}
+            style={{
+              background: `${tokens.error}1a`,
+              border: `1px solid ${tokens.error}40`,
+              color: tokens.error,
+            }}
           >
             {wizard.error}
           </div>
@@ -300,11 +337,18 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
           disabled={wizard.isSubmitting}
           aria-busy={wizard.isSubmitting}
           className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
-          style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+          style={{
+            background: tokens.gradientCta,
+            color: tokens.accentContrast,
+            boxShadow: tokens.shadowCard,
+          }}
         >
           {wizard.isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              <Loader2
+                className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
               <span className="sr-only">{t("signup.common.loading")}</span>
             </>
           ) : (

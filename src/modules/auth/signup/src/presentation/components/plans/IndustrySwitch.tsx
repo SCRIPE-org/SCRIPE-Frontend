@@ -40,11 +40,14 @@ export function IndustrySwitch({ value, options, onChange }: IndustrySwitchProps
   }
 
   return (
-    <div className="inline-flex items-center gap-2.5 text-[0.9375rem]" style={{ color: tokens.inkMuted }}>
+    <div
+      className="inline-flex items-center gap-2.5 text-[0.9375rem]"
+      style={{ color: tokens.inkMuted }}
+    >
       <span>{t("signup.plans.industry.prefix")}</span>
       <Select value={value ?? ""} onValueChange={onChange}>
         <SelectTrigger
-          className="h-9 w-[160px] text-[0.9375rem] font-semibold border rounded-lg focus-visible:ring-2 focus-visible:ring-offset-2"
+          className="h-9 w-[160px] rounded-lg border text-[0.9375rem] font-semibold focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{
             background: tokens.surfaceRaised,
             borderColor: tokens.border,

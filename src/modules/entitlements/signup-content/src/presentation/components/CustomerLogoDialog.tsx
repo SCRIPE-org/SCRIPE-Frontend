@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
@@ -32,7 +26,13 @@ const EMPTY: CreateCustomerLogoParams = {
   isActive: true,
 };
 
-export function CustomerLogoDialog({ open, onClose, onSave, isSaving, editing }: CustomerLogoDialogProps) {
+export function CustomerLogoDialog({
+  open,
+  onClose,
+  onSave,
+  isSaving,
+  editing,
+}: CustomerLogoDialogProps) {
   const { t } = useI18n();
   const [form, setForm] = useState<CreateCustomerLogoParams>(EMPTY);
 
@@ -89,7 +89,9 @@ export function CustomerLogoDialog({ open, onClose, onSave, isSaving, editing }:
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.assetUrl")}</label>
+            <label className="text-xs text-zinc-400">
+              {t("signupContent.customerLogos.assetUrl")}
+            </label>
             <Input
               value={form.assetUrl}
               onChange={(e) => set("assetUrl", e.target.value)}
@@ -98,7 +100,9 @@ export function CustomerLogoDialog({ open, onClose, onSave, isSaving, editing }:
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</label>
+            <label className="text-xs text-zinc-400">
+              {t("signupContent.trustMarks.sortOrder")}
+            </label>
             <Input
               type="number"
               value={form.sortOrder}
@@ -107,11 +111,10 @@ export function CustomerLogoDialog({ open, onClose, onSave, isSaving, editing }:
             />
           </div>
           <div className="flex items-center justify-between">
-            <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.isRealData")}</label>
-            <Switch
-              checked={form.isRealData}
-              onCheckedChange={(v) => set("isRealData", v)}
-            />
+            <label className="text-xs text-zinc-400">
+              {t("signupContent.customerLogos.isRealData")}
+            </label>
+            <Switch checked={form.isRealData} onCheckedChange={(v) => set("isRealData", v)} />
           </div>
           <DialogFooter>
             <Button
@@ -127,7 +130,9 @@ export function CustomerLogoDialog({ open, onClose, onSave, isSaving, editing }:
               disabled={isSaving}
               className="bg-indigo-600 text-white hover:bg-indigo-500"
             >
-              {isSaving ? t("signupContent.customerLogos.saving") : t("signupContent.customerLogos.save")}
+              {isSaving
+                ? t("signupContent.customerLogos.saving")
+                : t("signupContent.customerLogos.save")}
             </Button>
           </DialogFooter>
         </form>

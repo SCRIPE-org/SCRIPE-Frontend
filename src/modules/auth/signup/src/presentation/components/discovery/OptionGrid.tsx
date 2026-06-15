@@ -146,10 +146,7 @@ export function OptionGrid({
                 {option.label}
               </span>
               {option.sublabel && (
-                <span
-                  className="text-[0.8125rem] leading-snug"
-                  style={{ color: tokens.inkFaint }}
-                >
+                <span className="text-[0.8125rem] leading-snug" style={{ color: tokens.inkFaint }}>
                   {option.sublabel}
                 </span>
               )}

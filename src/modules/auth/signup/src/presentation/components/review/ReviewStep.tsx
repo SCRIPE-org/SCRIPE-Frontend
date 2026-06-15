@@ -83,9 +83,7 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
   // params (trial days, subscribe price) are interpolated here at render time.
   const copy = reviewCopyKeysForMode(checkoutMode);
   const ctaLabel =
-    isCheckout && formattedPrice
-      ? t(copy.ctaKey, { price: formattedPrice })
-      : t(copy.ctaKey);
+    isCheckout && formattedPrice ? t(copy.ctaKey, { price: formattedPrice }) : t(copy.ctaKey);
   const title = isTrial ? t(copy.titleKey, { days: trialDays }) : t(copy.titleKey);
   const subtitle = t(copy.subtitleKey);
 
@@ -191,20 +189,31 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
                   {t("signup.review.trialStarts", { days: trialDays })}
                 </p>
                 {formattedPrice && (
-                  <p className="mt-0.5 text-[0.8125rem] font-semibold" style={{ color: tokens.ink }}>
+                  <p
+                    className="mt-0.5 text-[0.8125rem] font-semibold"
+                    style={{ color: tokens.ink }}
+                  >
                     {t("signup.review.thenPrice", { price: formattedPrice, cycle: perCycle })}
                   </p>
                 )}
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: tokens.success }} />
+              <ShieldCheck
+                className="h-4 w-4 shrink-0"
+                aria-hidden="true"
+                style={{ color: tokens.success }}
+              />
               <p className="text-[0.75rem] font-medium" style={{ color: tokens.inkMuted }}>
                 {t("signup.review.cancelAnytime")}
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <CalendarClock className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: tokens.cyan }} />
+              <CalendarClock
+                className="h-4 w-4 shrink-0"
+                aria-hidden="true"
+                style={{ color: tokens.cyan }}
+              />
               <p className="text-[0.75rem] font-medium" style={{ color: tokens.inkMuted }}>
                 {t("signup.review.reminder")}
               </p>
@@ -235,14 +244,22 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
         {!isFree && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2.5">
-              <TicketPercent className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+              <TicketPercent
+                className="h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+                style={{ color: tokens.inkFaint }}
+              />
               <p className="text-[0.75rem]" style={{ color: tokens.inkFaint }}>
                 {t("signup.review.promoHint")}
               </p>
             </div>
             {language === "ar" && (
               <div className="flex items-center gap-2.5">
-                <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: tokens.inkFaint }} />
+                <Lock
+                  className="h-3.5 w-3.5 shrink-0"
+                  aria-hidden="true"
+                  style={{ color: tokens.inkFaint }}
+                />
                 <p className="text-[0.75rem]" style={{ color: tokens.inkFaint }}>
                   {t("signup.review.paymentPageNote")}
                 </p>
@@ -257,7 +274,11 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
             role="alert"
             aria-live="assertive"
             className="rounded-lg px-3 py-2.5 text-[0.8125rem] font-medium"
-            style={{ background: `${tokens.error}1a`, border: `1px solid ${tokens.error}40`, color: tokens.error }}
+            style={{
+              background: `${tokens.error}1a`,
+              border: `1px solid ${tokens.error}40`,
+              color: tokens.error,
+            }}
           >
             {wizard.error}
           </div>
@@ -270,11 +291,18 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
           disabled={wizard.isSubmitting}
           aria-busy={wizard.isSubmitting}
           className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
-          style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+          style={{
+            background: tokens.gradientCta,
+            color: tokens.accentContrast,
+            boxShadow: tokens.shadowCard,
+          }}
         >
           {wizard.isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              <Loader2
+                className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
               <span className="sr-only">{t("signup.common.loading")}</span>
             </>
           ) : (

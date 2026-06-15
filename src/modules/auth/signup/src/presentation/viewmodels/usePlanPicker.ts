@@ -155,7 +155,7 @@ export function usePlanPicker({
         .slice()
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((c) => ({ slug: c.key, label: c.displayName })),
-    [categories],
+    [categories]
   );
 
   // ── Catalog — fetch the ACTIVE vertical's editions (currency + lang aware). ──
@@ -166,8 +166,7 @@ export function usePlanPicker({
     refetch,
   } = useQuery({
     queryKey: ["signup-editions", activeIndustry, currency, language],
-    queryFn: () =>
-      authContainer.signupRepository.getEditions(activeIndustry, currency, language),
+    queryFn: () => authContainer.signupRepository.getEditions(activeIndustry, currency, language),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
@@ -194,7 +193,7 @@ export function usePlanPicker({
   // ── Comparison matrix — built from the active vertical's editions. ───────────
   const comparisonCategories = useMemo(
     () => buildComparisonCategories(editions, language),
-    [editions, language],
+    [editions, language]
   );
 
   // ── Q3 priorities — the first multi-select answer that isn't business_type. ──
@@ -240,6 +239,6 @@ export function usePlanPicker({
       editions,
       comparisonCategories,
       priorityKeys,
-    ],
+    ]
   );
 }

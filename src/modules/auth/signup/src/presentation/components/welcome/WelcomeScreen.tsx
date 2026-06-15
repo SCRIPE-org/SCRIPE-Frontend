@@ -31,9 +31,7 @@ const prefersReducedMotion =
 const container = {
   hidden: {},
   show: {
-    transition: prefersReducedMotion
-      ? {}
-      : { staggerChildren: 0.06, delayChildren: 0.04 },
+    transition: prefersReducedMotion ? {} : { staggerChildren: 0.06, delayChildren: 0.04 },
   },
 };
 const item = prefersReducedMotion
@@ -146,9 +144,7 @@ export function WelcomeScreen({
               {/* Inline error recovery — never replaces the whole screen. */}
               {isError && (
                 <span className="inline-flex items-center gap-2 text-[13px]">
-                  <span style={{ color: tokens.inkFaint }}>
-                    {t("signup.welcome.loadError")}
-                  </span>
+                  <span style={{ color: tokens.inkFaint }}>{t("signup.welcome.loadError")}</span>
                   <button
                     type="button"
                     onClick={onRetry}
@@ -179,10 +175,7 @@ export function WelcomeScreen({
             }}
           >
             <div className="flex flex-col gap-5">
-              <h2
-                className="text-[15px] font-semibold leading-snug"
-                style={{ color: tokens.ink }}
-              >
+              <h2 className="text-[15px] font-semibold leading-snug" style={{ color: tokens.ink }}>
                 {t("signup.welcome.proofTitle")}
               </h2>
               <TrustRow
@@ -193,10 +186,7 @@ export function WelcomeScreen({
             </div>
 
             {content.customerLogos.length > 0 && (
-              <div
-                className="border-t pt-6"
-                style={{ borderColor: tokens.border }}
-              >
+              <div className="border-t pt-6" style={{ borderColor: tokens.border }}>
                 <LogoMarquee
                   logos={content.customerLogos}
                   caption={t("signup.welcome.logosTitle")}
@@ -245,7 +235,10 @@ function WelcomeSkeleton() {
             {block("h-4 w-20", 0.45)}
             {block("h-4 w-16", 0.45)}
           </div>
-          <div className="flex flex-wrap gap-6 border-t pt-6" style={{ borderColor: tokens.border }}>
+          <div
+            className="flex flex-wrap gap-6 border-t pt-6"
+            style={{ borderColor: tokens.border }}
+          >
             {block("h-5 w-20", 0.4)}
             {block("h-5 w-24", 0.4)}
             {block("h-5 w-16", 0.4)}

@@ -30,7 +30,10 @@ export function RegionLine({ currency, detectedCountry }: RegionLineProps) {
   const flag = detectedCountry ? countryToFlag(detectedCountry) : null;
 
   return (
-    <p className="inline-flex items-center gap-1.5 text-[0.75rem]" style={{ color: tokens.inkFaint }}>
+    <p
+      className="inline-flex items-center gap-1.5 text-[0.75rem]"
+      style={{ color: tokens.inkFaint }}
+    >
       <MapPin size={12} aria-hidden />
       <span>
         {detectedCountry

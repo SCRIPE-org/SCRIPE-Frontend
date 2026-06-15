@@ -5,9 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
-import type {
-  ContactSalesPayload,
-} from "../../domain/interfaces/ISignupRepository";
+import type { ContactSalesPayload } from "../../domain/interfaces/ISignupRepository";
 import type {
   PublicEdition,
   ResumeSessionResult,
@@ -225,10 +223,7 @@ export interface SignupWizardViewModel {
    * on success so the form can show its success panel. Backend sanitizes.
    */
   submitContactSalesLead: (
-    form: Omit<
-      ContactSalesPayload,
-      "editionId" | "businessType" | "teamSize" | "primaryPriority"
-    >,
+    form: Omit<ContactSalesPayload, "editionId" | "businessType" | "teamSize" | "primaryPriority">
   ) => Promise<boolean>;
 
   // ── Resume / abandon (F8) ──────────────────────────────────────────────────
@@ -286,7 +281,7 @@ export function useSignupWizard(): SignupWizardViewModel {
   const [discoveryAnswers, setDiscoveryAnswers] = useState<Record<string, string[]>>({});
   const [businessType, setBusinessType] = useState<string | null>(null);
   const [recommendation, setRecommendation] = useState<OnboardingRecommendation | undefined>(
-    undefined,
+    undefined
   );
   const [isRecommendationLoading, setIsRecommendationLoading] = useState(false);
   const [isRecommendationError, setIsRecommendationError] = useState(false);
@@ -319,12 +314,12 @@ export function useSignupWizard(): SignupWizardViewModel {
       // Clearing the error on edit mirrors the legacy wizard-state behavior.
       setError((prev) => (prev ? "" : prev));
     },
-    [],
+    []
   );
 
   const updatePassword = useCallback(
     (value: string) => updateField("password", value),
-    [updateField],
+    [updateField]
   );
 
   const passwordStrength = calcPasswordStrengthScore(wizardData.password);
@@ -549,38 +544,35 @@ export function useSignupWizard(): SignupWizardViewModel {
   // The snapshot is captured verbatim from the server edition; the frontend
   // NEVER infers free/custom/price. Contact-sales editions divert to the lead
   // form branch; every other mode advances to the account phase.
-  const selectPlan = useCallback(
-    (edition: PublicEdition, billingCycle: "monthly" | "annual") => {
-      const plan: SelectedPlan = {
-        id: edition.id,
-        name: edition.name,
-        trialDays: edition.trialDays > 0 ? edition.trialDays : null,
-        checkoutMode: edition.checkoutMode,
-        monthlyPrice: edition.monthlyPrice,
-        annualPrice: edition.annualPrice,
-        currency: edition.currency,
-        priceDisplay: edition.priceDisplay,
-      };
-      setSelectedPlan(plan);
-      setSelectedBillingCycle(billingCycle);
-      // Mirror the chosen edition + cycle into the registration model so the
-      // reused provisioning hook (which reads wizardData.editionId/billingCycle)
-      // registers the correct plan. Same mapping the legacy state hook applied.
-      setWizardData((prev) => ({
-        ...prev,
-        editionId: edition.id || null,
-        billingCycle:
-          edition.checkoutMode === "contact-sales"
-            ? prev.billingCycle
-            : billingCycle === "monthly"
-              ? "Monthly"
-              : "Annual",
-      }));
-      setNavigationDirection(1);
-      setPhase(edition.checkoutMode === "contact-sales" ? "contact-sales" : "account");
-    },
-    [],
-  );
+  const selectPlan = useCallback((edition: PublicEdition, billingCycle: "monthly" | "annual") => {
+    const plan: SelectedPlan = {
+      id: edition.id,
+      name: edition.name,
+      trialDays: edition.trialDays > 0 ? edition.trialDays : null,
+      checkoutMode: edition.checkoutMode,
+      monthlyPrice: edition.monthlyPrice,
+      annualPrice: edition.annualPrice,
+      currency: edition.currency,
+      priceDisplay: edition.priceDisplay,
+    };
+    setSelectedPlan(plan);
+    setSelectedBillingCycle(billingCycle);
+    // Mirror the chosen edition + cycle into the registration model so the
+    // reused provisioning hook (which reads wizardData.editionId/billingCycle)
+    // registers the correct plan. Same mapping the legacy state hook applied.
+    setWizardData((prev) => ({
+      ...prev,
+      editionId: edition.id || null,
+      billingCycle:
+        edition.checkoutMode === "contact-sales"
+          ? prev.billingCycle
+          : billingCycle === "monthly"
+            ? "Monthly"
+            : "Annual",
+    }));
+    setNavigationDirection(1);
+    setPhase(edition.checkoutMode === "contact-sales" ? "contact-sales" : "account");
+  }, []);
 
   // ── Complete discovery → request recommendation, advance to plan ─────────────
   // The vertical is derived server-side from the `business_type` answer; we pass
@@ -649,7 +641,7 @@ export function useSignupWizard(): SignupWizardViewModel {
           setIsRecommendationLoading(false);
         });
     },
-    [language],
+    [language]
   );
 
   return useMemo(

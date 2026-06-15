@@ -51,10 +51,7 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
 
   const currentIndex = (STEPPER_PHASES as readonly SignupPhase[]).indexOf(phase);
 
-  const labels = useMemo(
-    () => STEPPER_PHASES.map((p) => t(PHASE_LABEL_KEY[p])),
-    [t],
-  );
+  const labels = useMemo(() => STEPPER_PHASES.map((p) => t(PHASE_LABEL_KEY[p])), [t]);
 
   // Phases without a stepper node (welcome / discovery / contact-sales /
   // provisioning / complete) render nothing — the band collapses in the shell.
@@ -79,7 +76,7 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
         {/* Connector track — sits behind the nodes, centered on the node row. */}
         <div
           aria-hidden
-          className="absolute start-0 end-0 top-[0.5625rem] h-0.5 rounded-full"
+          className="absolute end-0 start-0 top-[0.5625rem] h-0.5 rounded-full"
           style={{ background: tokens.border }}
         >
           {/* Fill — grows from the leading edge; mirrored automatically by dir. */}
@@ -101,10 +98,7 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
                   className="flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full transition-transform duration-200 ease-out motion-reduce:transition-none"
                   style={{
                     background: done || active ? tokens.accent : tokens.surfaceRaised,
-                    border:
-                      done || active
-                        ? `1px solid ${tokens.accent}`
-                        : tokens.borderCard,
+                    border: done || active ? `1px solid ${tokens.accent}` : tokens.borderCard,
                     transform: active ? "scale(1.12)" : "scale(1)",
                   }}
                 >
@@ -128,11 +122,7 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
                     active ? "block" : "hidden sm:block"
                   }`}
                   style={{
-                    color: active
-                      ? tokens.accent
-                      : done
-                        ? tokens.inkMuted
-                        : tokens.inkFaint,
+                    color: active ? tokens.accent : done ? tokens.inkMuted : tokens.inkFaint,
                   }}
                 >
                   {labels[i]}

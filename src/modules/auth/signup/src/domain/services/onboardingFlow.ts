@@ -40,7 +40,7 @@ function intersects(a: readonly string[], b: readonly string[]): boolean {
  */
 function isConditionSatisfied(
   condition: OnboardingAnswerOptionCondition,
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): boolean {
   const selected = selectedFor(answers, condition.dependsOnQuestionKey);
   // matchMode is currently only "AnyOf"; treat any value defensively as AnyOf.
@@ -59,7 +59,7 @@ function isConditionSatisfied(
  */
 export function getVisibleQuestions(
   questions: OnboardingQuestion[],
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): OnboardingQuestion[] {
   return questions
     .filter((q) => {
@@ -81,7 +81,7 @@ export function getVisibleQuestions(
  */
 export function isOptionVisible(
   option: OnboardingAnswerOption,
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): boolean {
   if (option.conditions.length === 0) return true;
   return option.conditions.every((c) => isConditionSatisfied(c, answers));
@@ -98,7 +98,7 @@ export function isOptionVisible(
  */
 function effectiveRankKey(
   option: OnboardingAnswerOption,
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): number {
   const boostActive =
     option.relevanceBoost !== 0 &&
@@ -114,17 +114,15 @@ function effectiveRankKey(
  */
 export function rankOptions(
   options: OnboardingAnswerOption[],
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): OnboardingAnswerOption[] {
-  return options
-    .slice()
-    .sort((a, b) => {
-      const ka = effectiveRankKey(a, answers);
-      const kb = effectiveRankKey(b, answers);
-      if (ka !== kb) return ka - kb;
-      if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
-      return a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
-    });
+  return options.slice().sort((a, b) => {
+    const ka = effectiveRankKey(a, answers);
+    const kb = effectiveRankKey(b, answers);
+    if (ka !== kb) return ka - kb;
+    if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+    return a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
+  });
 }
 
 /**
@@ -133,7 +131,7 @@ export function rankOptions(
  */
 export function getVisibleOptions(
   question: OnboardingQuestion,
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): OnboardingAnswerOption[] {
   const visible = question.options.filter((o) => isOptionVisible(o, answers));
   return rankOptions(visible, answers);
@@ -150,7 +148,7 @@ export function getVisibleOptions(
  */
 export function pruneStaleAnswers(
   questions: OnboardingQuestion[],
-  answers: Record<string, string[]>,
+  answers: Record<string, string[]>
 ): Record<string, string[]> {
   const visibleQuestions = getVisibleQuestions(questions, answers);
   const visibleByKey = new Map(visibleQuestions.map((q) => [q.key, q]));
@@ -164,7 +162,7 @@ export function pruneStaleAnswers(
 
     // (b) Keep only values that still correspond to a currently-visible option.
     const visibleValues = new Set(
-      question.options.filter((o) => isOptionVisible(o, answers)).map((o) => o.value),
+      question.options.filter((o) => isOptionVisible(o, answers)).map((o) => o.value)
     );
     next[key] = values.filter((v) => visibleValues.has(v));
   }

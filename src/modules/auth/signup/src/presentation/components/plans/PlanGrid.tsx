@@ -38,11 +38,15 @@ export function PlanGrid({
   onSelect,
 }: PlanGridProps) {
   const desktopCols =
-    editions.length >= 4 ? "lg:grid-cols-4" : editions.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2";
+    editions.length >= 4
+      ? "lg:grid-cols-4"
+      : editions.length === 3
+        ? "lg:grid-cols-3"
+        : "lg:grid-cols-2";
 
   return (
     <div
-      className={`mx-auto grid w-full max-w-[1400px] grid-cols-1 sm:grid-cols-2 ${desktopCols} gap-6 px-4 items-stretch`}
+      className={`mx-auto grid w-full max-w-[1400px] grid-cols-1 sm:grid-cols-2 ${desktopCols} items-stretch gap-6 px-4`}
     >
       {editions.map((edition, index) => (
         <div key={edition.id} className="grid [grid-template-rows:auto_auto_auto_1fr_auto]">

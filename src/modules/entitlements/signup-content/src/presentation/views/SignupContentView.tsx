@@ -106,7 +106,9 @@ function TrustMarksSection() {
       </CardHeader>
       <CardContent>
         {marks.length === 0 ? (
-          <p className="py-4 text-center text-sm text-zinc-600">{t("signupContent.trustMarks.empty")}</p>
+          <p className="py-4 text-center text-sm text-zinc-600">
+            {t("signupContent.trustMarks.empty")}
+          </p>
         ) : (
           <div className="space-y-2">
             {marks.map((mark, idx) => (
@@ -136,14 +138,22 @@ function TrustMarksSection() {
                   <div className="flex items-center gap-2">
                     <span className="truncate font-medium text-white">{mark.labelEn}</span>
                     <span className="text-zinc-600">/</span>
-                    <span className="truncate text-zinc-400" dir="rtl">{mark.labelAr}</span>
+                    <span className="truncate text-zinc-400" dir="rtl">
+                      {mark.labelAr}
+                    </span>
                   </div>
                   <div className="mt-0.5 flex items-center gap-2">
-                    <Badge variant="outline" className="border-zinc-700 px-1.5 py-0 text-[10px] text-zinc-500">
+                    <Badge
+                      variant="outline"
+                      className="border-zinc-700 px-1.5 py-0 text-[10px] text-zinc-500"
+                    >
                       {mark.kind}
                     </Badge>
                     {mark.isRealData && (
-                      <Badge variant="outline" className="border-emerald-700/40 px-1.5 py-0 text-[10px] text-emerald-500">
+                      <Badge
+                        variant="outline"
+                        className="border-emerald-700/40 px-1.5 py-0 text-[10px] text-emerald-500"
+                      >
                         {t("signupContent.trustMarks.isRealData")}
                       </Badge>
                     )}
@@ -209,7 +219,9 @@ function CustomerLogosSection() {
       </CardHeader>
       <CardContent>
         {logos.length === 0 ? (
-          <p className="py-4 text-center text-sm text-zinc-600">{t("signupContent.customerLogos.empty")}</p>
+          <p className="py-4 text-center text-sm text-zinc-600">
+            {t("signupContent.customerLogos.empty")}
+          </p>
         ) : (
           <div className="space-y-2">
             {logos.map((logo, idx) => (
@@ -251,7 +263,10 @@ function CustomerLogosSection() {
                   <p className="truncate font-medium text-white">{logo.name}</p>
                   <p className="mt-0.5 truncate text-xs text-zinc-500">{logo.assetUrl}</p>
                   {logo.isRealData && (
-                    <Badge variant="outline" className="mt-0.5 border-emerald-700/40 px-1.5 py-0 text-[10px] text-emerald-500">
+                    <Badge
+                      variant="outline"
+                      className="mt-0.5 border-emerald-700/40 px-1.5 py-0 text-[10px] text-emerald-500"
+                    >
                       {t("signupContent.customerLogos.isRealData")}
                     </Badge>
                   )}

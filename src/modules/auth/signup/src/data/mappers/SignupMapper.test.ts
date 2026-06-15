@@ -10,10 +10,7 @@
 
 import { describe, it, expect } from "vitest";
 import { SignupMapper } from "./SignupMapper";
-import type {
-  SignupWelcomeContentDto,
-  OnboardingRecommendationDto,
-} from "../models/SignupModels";
+import type { SignupWelcomeContentDto, OnboardingRecommendationDto } from "../models/SignupModels";
 
 describe("SignupMapper.toWelcomeContent", () => {
   it("maps the full welcome-content wire shape to a domain entity", () => {
@@ -25,7 +22,13 @@ describe("SignupMapper.toWelcomeContent", () => {
       trustedByLabel: "teams trust us",
       trustMarks: [
         { key: "soc2", kind: "compliance", label: "SOC 2", iconKey: "shield", assetUrl: null },
-        { key: "gdpr", kind: "compliance", label: "GDPR", iconKey: null, assetUrl: "https://x/g.svg" },
+        {
+          key: "gdpr",
+          kind: "compliance",
+          label: "GDPR",
+          iconKey: null,
+          assetUrl: "https://x/g.svg",
+        },
       ],
       customerLogos: [{ key: "acme", name: "Acme", assetUrl: "https://x/acme.svg" }],
     };

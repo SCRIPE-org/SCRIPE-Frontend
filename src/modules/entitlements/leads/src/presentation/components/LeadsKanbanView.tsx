@@ -48,25 +48,21 @@ export function LeadsKanbanView({ leads, isLoading, onOpenDrawer }: LeadsKanbanV
 
             {/* Cards */}
             <div className="flex flex-1 flex-col gap-2">
-              {isLoading
-                ? SKELETON_HEIGHTS.map((h, i) => (
-                    <div
-                      key={i}
-                      className="animate-pulse rounded-lg border border-zinc-800 bg-zinc-900/60"
-                      style={{ height: h }}
-                    />
-                  ))
-                : col.length === 0
-                  ? (
-                    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-zinc-800 px-3 py-6">
-                      <p className="text-center text-[11px] text-zinc-600">
-                        {t("leads.empty")}
-                      </p>
-                    </div>
-                  )
-                  : col.map((lead) => (
-                    <KanbanCard key={lead.id} lead={lead} onClick={onOpenDrawer} />
-                  ))}
+              {isLoading ? (
+                SKELETON_HEIGHTS.map((h, i) => (
+                  <div
+                    key={i}
+                    className="animate-pulse rounded-lg border border-zinc-800 bg-zinc-900/60"
+                    style={{ height: h }}
+                  />
+                ))
+              ) : col.length === 0 ? (
+                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-zinc-800 px-3 py-6">
+                  <p className="text-center text-[11px] text-zinc-600">{t("leads.empty")}</p>
+                </div>
+              ) : (
+                col.map((lead) => <KanbanCard key={lead.id} lead={lead} onClick={onOpenDrawer} />)
+              )}
             </div>
           </div>
         );

@@ -29,7 +29,7 @@ import type {
 //                                    [visible iff Q1=healthcare]
 
 function opt(
-  partial: Partial<OnboardingAnswerOption> & { value: string; sortOrder: number },
+  partial: Partial<OnboardingAnswerOption> & { value: string; sortOrder: number }
 ): OnboardingAnswerOption {
   return {
     label: partial.value,
@@ -48,7 +48,7 @@ function q(
     questionType: OnboardingQuestion["questionType"];
     sortOrder: number;
     options: OnboardingAnswerOption[];
-  },
+  }
 ): OnboardingQuestion {
   return {
     minSelections: 0,
@@ -70,7 +70,10 @@ const FLOW: OnboardingFlow = {
       questionType: "single_select",
       isRequired: true,
       sortOrder: 0,
-      options: [opt({ value: "general", sortOrder: 0 }), opt({ value: "healthcare", sortOrder: 1 })],
+      options: [
+        opt({ value: "general", sortOrder: 0 }),
+        opt({ value: "healthcare", sortOrder: 1 }),
+      ],
     }),
     q({
       key: "scale_healthcare",
@@ -95,7 +98,13 @@ const FLOW: OnboardingFlow = {
         opt({
           value: "multi_site",
           sortOrder: 3,
-          conditions: [{ dependsOnQuestionKey: "scale_healthcare", matchValues: ["network"], matchMode: "AnyOf" }],
+          conditions: [
+            {
+              dependsOnQuestionKey: "scale_healthcare",
+              matchValues: ["network"],
+              matchMode: "AnyOf",
+            },
+          ],
         }),
       ],
     }),

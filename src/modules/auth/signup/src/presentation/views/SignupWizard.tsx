@@ -69,9 +69,7 @@ const CENTERED_PHASES: ReadonlySet<SignupPhase> = new Set<SignupPhase>([
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PHASE_VARIANTS: Record<string, any> = {
   enter: (dir: number) =>
-    prefersReducedMotion
-      ? { opacity: 0 }
-      : { opacity: 0, x: dir > 0 ? 28 : -28 },
+    prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: dir > 0 ? 28 : -28 },
   center: prefersReducedMotion
     ? { opacity: 1 }
     : {
@@ -114,9 +112,7 @@ function SignupWizardContent() {
 
   return (
     <SignupShell
-      progressSlot={
-        isStepperPhase ? <SignupProgressBar phase={wizard.phase} /> : undefined
-      }
+      progressSlot={isStepperPhase ? <SignupProgressBar phase={wizard.phase} /> : undefined}
       phaseLabel={t("signup.stepper.label")}
     >
       {/*
@@ -126,11 +122,7 @@ function SignupWizardContent() {
         phases (the shell's min-h-[100dvh] + flex-1 keep the footer pinned), and
         the consistent enter/exit transition prevents any inter-phase jump.
       */}
-      <div
-        className={`flex min-h-full flex-1 flex-col ${
-          isCentered ? "justify-center" : ""
-        }`}
-      >
+      <div className={`flex min-h-full flex-1 flex-col ${isCentered ? "justify-center" : ""}`}>
         <AnimatePresence mode="wait" custom={slideDir} initial={false}>
           <motion.div
             key={wizard.phase}
@@ -164,11 +156,7 @@ function SignupWizardContent() {
  * real prop signature. Extracted so the AnimatePresence child stays a thin,
  * keyed motion wrapper (its identity = the phase, never the inner content).
  */
-function PhaseContent({
-  wizard,
-}: {
-  wizard: ReturnType<typeof useSignupWizard>;
-}) {
+function PhaseContent({ wizard }: { wizard: ReturnType<typeof useSignupWizard> }) {
   switch (wizard.phase) {
     case "welcome":
       return (

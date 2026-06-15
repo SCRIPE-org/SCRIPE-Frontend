@@ -58,7 +58,11 @@ export function SignupFinalizeScreen() {
     "inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none";
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col" dir={direction} style={{ background: tokens.gradientPage }}>
+    <div
+      className="relative flex min-h-[100dvh] flex-col"
+      dir={direction}
+      style={{ background: tokens.gradientPage }}
+    >
       {/* Ambient wash — restrained, non-interactive (no glow orb). */}
       <div
         aria-hidden
@@ -79,8 +83,19 @@ export function SignupFinalizeScreen() {
           borderBottom: `1px solid ${tokens.border}`,
         }}
       >
-        <Link href="/login" aria-label={BRAND.name} className="flex select-none items-center gap-2.5">
-          <Image src="/app-logo.png" alt={BRAND.name} className="h-7 w-auto" width={28} height={28} priority />
+        <Link
+          href="/login"
+          aria-label={BRAND.name}
+          className="flex select-none items-center gap-2.5"
+        >
+          <Image
+            src="/app-logo.png"
+            alt={BRAND.name}
+            className="h-7 w-auto"
+            width={28}
+            height={28}
+            priority
+          />
           <span className="text-[15px] font-semibold tracking-tight" style={{ color: tokens.ink }}>
             {BRAND.name}
           </span>
@@ -90,7 +105,11 @@ export function SignupFinalizeScreen() {
       <main className="relative z-0 flex flex-1 items-center justify-center p-4">
         <div
           className="w-full max-w-md rounded-2xl p-8 text-center"
-          style={{ background: tokens.surfaceCard, border: tokens.borderCard, boxShadow: tokens.shadowCard }}
+          style={{
+            background: tokens.surfaceCard,
+            border: tokens.borderCard,
+            boxShadow: tokens.shadowCard,
+          }}
         >
           {/* ── Processing / Slow / Completing ── */}
           {isWorking && (
@@ -101,15 +120,24 @@ export function SignupFinalizeScreen() {
                 aria-label={t("signup.finalize.processing")}
                 style={{
                   background: `conic-gradient(from 0deg, transparent, ${tokens.accent})`,
-                  WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 0)",
+                  WebkitMask:
+                    "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 0)",
                   mask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 0)",
                 }}
               />
               <div>
-                <h1 className="text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
-                  {vm.phase === "completing" ? t("signup.finalize.paymentConfirmed") : t("signup.finalize.processing")}
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
+                  {vm.phase === "completing"
+                    ? t("signup.finalize.paymentConfirmed")
+                    : t("signup.finalize.processing")}
                 </h1>
-                <p className="mt-2 text-[0.875rem] leading-relaxed" style={{ color: tokens.inkMuted }}>
+                <p
+                  className="mt-2 text-[0.875rem] leading-relaxed"
+                  style={{ color: tokens.inkMuted }}
+                >
                   {vm.phase === "slow"
                     ? t("signup.finalize.slow")
                     : vm.phase === "completing"
@@ -118,7 +146,12 @@ export function SignupFinalizeScreen() {
                 </p>
               </div>
               {vm.phase === "slow" && (
-                <button type="button" onClick={vm.changePlan} className={ghostBtnClass} style={{ color: tokens.inkMuted }}>
+                <button
+                  type="button"
+                  onClick={vm.changePlan}
+                  className={ghostBtnClass}
+                  style={{ color: tokens.inkMuted }}
+                >
                   <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                   {t("signup.finalize.changePlan")}
                 </button>
@@ -130,10 +163,18 @@ export function SignupFinalizeScreen() {
           {vm.phase === "success" && (
             <div className="flex flex-col items-center gap-5">
               <StatusIcon tone={tokens.success}>
-                <Check className="h-8 w-8" strokeWidth={2.5} style={{ color: tokens.success }} aria-hidden="true" />
+                <Check
+                  className="h-8 w-8"
+                  strokeWidth={2.5}
+                  style={{ color: tokens.success }}
+                  aria-hidden="true"
+                />
               </StatusIcon>
               <div>
-                <h1 className="text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
                   {t("signup.finalize.successTitle")}
                 </h1>
                 <p className="mt-2 text-[0.875rem]" style={{ color: tokens.inkMuted }}>
@@ -150,7 +191,10 @@ export function SignupFinalizeScreen() {
                 <XCircle className="h-8 w-8" style={{ color: tokens.error }} aria-hidden="true" />
               </StatusIcon>
               <div>
-                <h1 className="text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
                   {t("signup.finalize.failed")}
                 </h1>
                 {vm.error && (
@@ -159,7 +203,12 @@ export function SignupFinalizeScreen() {
                   </p>
                 )}
               </div>
-              <button type="button" onClick={vm.startNewSignup} className={primaryBtnClass} style={ctaStyle}>
+              <button
+                type="button"
+                onClick={vm.startNewSignup}
+                className={primaryBtnClass}
+                style={ctaStyle}
+              >
                 <RotateCcw className="h-4 w-4" aria-hidden="true" />
                 {t("signup.finalize.startAgain")}
               </button>
@@ -173,14 +222,22 @@ export function SignupFinalizeScreen() {
                 <LogIn className="h-8 w-8" style={{ color: tokens.cyan }} aria-hidden="true" />
               </StatusIcon>
               <div>
-                <h1 className="text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
                   {t("signup.finalize.consumedTitle")}
                 </h1>
                 <p className="mt-2 text-[0.875rem]" style={{ color: tokens.inkMuted }}>
                   {t("signup.finalize.consumedSubtitle")}
                 </p>
               </div>
-              <button type="button" onClick={vm.goToLogin} className={primaryBtnClass} style={ctaStyle}>
+              <button
+                type="button"
+                onClick={vm.goToLogin}
+                className={primaryBtnClass}
+                style={ctaStyle}
+              >
                 {t("auth.backToLogin")}
               </button>
             </div>
@@ -192,14 +249,27 @@ export function SignupFinalizeScreen() {
               <StatusIcon tone={tokens.cyan}>
                 <Clock className="h-8 w-8" style={{ color: tokens.cyan }} aria-hidden="true" />
               </StatusIcon>
-              <h1 className="text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+              <h1
+                className="text-[1.25rem] font-semibold"
+                style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+              >
                 {t("signup.finalize.expired")}
               </h1>
               <div className="flex w-full flex-col gap-2">
-                <button type="button" onClick={vm.goToLogin} className={primaryBtnClass} style={ctaStyle}>
+                <button
+                  type="button"
+                  onClick={vm.goToLogin}
+                  className={primaryBtnClass}
+                  style={ctaStyle}
+                >
                   {t("auth.backToLogin")}
                 </button>
-                <button type="button" onClick={vm.startNewSignup} className={ghostBtnClass} style={{ color: tokens.inkMuted }}>
+                <button
+                  type="button"
+                  onClick={vm.startNewSignup}
+                  className={ghostBtnClass}
+                  style={{ color: tokens.inkMuted }}
+                >
                   {t("signup.finalize.startAgain")}
                 </button>
               </div>
@@ -213,19 +283,35 @@ export function SignupFinalizeScreen() {
                 <Clock className="h-8 w-8" style={{ color: tokens.cyan }} aria-hidden="true" />
               </StatusIcon>
               <div>
-                <h1 className="text-[1.25rem] font-semibold" style={{ color: tokens.ink, letterSpacing: "-0.02em" }}>
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
                   {t("signup.finalize.timeoutTitle")}
                 </h1>
-                <p className="mt-2 text-[0.875rem] leading-relaxed" style={{ color: tokens.inkMuted }}>
+                <p
+                  className="mt-2 text-[0.875rem] leading-relaxed"
+                  style={{ color: tokens.inkMuted }}
+                >
                   {t("signup.finalize.timeoutSubtitle")}
                 </p>
               </div>
               <div className="flex w-full flex-col gap-2">
-                <button type="button" onClick={vm.changePlan} className={primaryBtnClass} style={ctaStyle}>
+                <button
+                  type="button"
+                  onClick={vm.changePlan}
+                  className={primaryBtnClass}
+                  style={ctaStyle}
+                >
                   <RefreshCw className="h-4 w-4" aria-hidden="true" />
                   {t("signup.finalize.changePlan")}
                 </button>
-                <button type="button" onClick={vm.goToLogin} className={ghostBtnClass} style={{ color: tokens.inkMuted }}>
+                <button
+                  type="button"
+                  onClick={vm.goToLogin}
+                  className={ghostBtnClass}
+                  style={{ color: tokens.inkMuted }}
+                >
                   {t("auth.backToLogin")}
                 </button>
               </div>
@@ -234,7 +320,10 @@ export function SignupFinalizeScreen() {
         </div>
       </main>
 
-      <footer className="relative z-0 py-6 text-center text-[11px]" style={{ color: tokens.inkGhost }}>
+      <footer
+        className="relative z-0 py-6 text-center text-[11px]"
+        style={{ color: tokens.inkGhost }}
+      >
         © {new Date().getFullYear()} {BRAND.name} — {t("signup.copyright")}
       </footer>
     </div>

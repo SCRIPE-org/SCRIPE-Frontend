@@ -15,11 +15,13 @@ export const BUSINESS_TYPE_KEY = "business_type";
  * price. Returns 0 when there is no paid edition or no positive monthly price.
  */
 export function computeAnnualSavingsPercent(
-  editions: { monthlyPrice: number; annualPrice: number }[],
+  editions: { monthlyPrice: number; annualPrice: number }[]
 ): number {
   const first = editions.find((e) => e.monthlyPrice > 0);
   if (!first || first.monthlyPrice * 12 <= 0) return 0;
-  return Math.round(((first.monthlyPrice * 12 - first.annualPrice) / (first.monthlyPrice * 12)) * 100);
+  return Math.round(
+    ((first.monthlyPrice * 12 - first.annualPrice) / (first.monthlyPrice * 12)) * 100
+  );
 }
 
 /**
@@ -29,7 +31,7 @@ export function computeAnnualSavingsPercent(
  */
 export function isRecommendedEdition(
   editionId: string,
-  recommendedEditionId: string | null | undefined,
+  recommendedEditionId: string | null | undefined
 ): boolean {
   return !!recommendedEditionId && editionId === recommendedEditionId;
 }
@@ -77,7 +79,7 @@ export function formatCurrency(
   amount: number,
   currency: string,
   locale: string,
-  approximate = false,
+  approximate = false
 ): string {
   try {
     const formatted = new Intl.NumberFormat(locale || undefined, {

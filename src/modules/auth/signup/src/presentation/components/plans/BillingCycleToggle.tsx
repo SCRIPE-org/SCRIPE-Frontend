@@ -49,7 +49,9 @@ export function BillingCycleToggle({ value, onChange, savingsPercent }: BillingC
               "--tw-ring-color": tokens.accent,
             }}
           >
-            {cycle === "monthly" ? t("signup.plans.billing.monthly") : t("signup.plans.billing.annual")}
+            {cycle === "monthly"
+              ? t("signup.plans.billing.monthly")
+              : t("signup.plans.billing.annual")}
             {cycle === "annual" && savingsPercent > 0 && (
               <span
                 className="rounded-full px-1.5 py-0.5 text-[0.625rem] font-bold"

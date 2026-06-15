@@ -80,9 +80,8 @@ export class OnboardingQuestionService implements IOnboardingQuestionService {
   }
 
   async reorderOptions(questionId: string, orderedIds: string[]): Promise<void> {
-    await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.REORDER(questionId),
-      { orderedIds }
-    );
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.REORDER(questionId), {
+      orderedIds,
+    });
   }
 }

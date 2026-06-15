@@ -48,7 +48,7 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
   const maskedEmail = wizard.wizardData.email.replace(
     /^(.{2})(.*)(@.*)$/,
     (_, start: string, mid: string, end: string) =>
-      start + "•".repeat(Math.min(mid.length, 5)) + end,
+      start + "•".repeat(Math.min(mid.length, 5)) + end
   );
 
   const slotBase =
@@ -138,7 +138,11 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
         <div
           role="alert"
           className="mb-4 rounded-lg px-3 py-2.5 text-center text-[0.8125rem] font-medium"
-          style={{ background: `${tokens.error}1a`, border: `1px solid ${tokens.error}40`, color: tokens.error }}
+          style={{
+            background: `${tokens.error}1a`,
+            border: `1px solid ${tokens.error}40`,
+            color: tokens.error,
+          }}
         >
           {wizard.error}
         </div>
@@ -151,11 +155,18 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
         disabled={isSubmitting || otpCode.length < OTP_LENGTH}
         aria-busy={isSubmitting}
         className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
-        style={{ background: tokens.gradientCta, color: tokens.accentContrast, boxShadow: tokens.shadowCard }}
+        style={{
+          background: tokens.gradientCta,
+          color: tokens.accentContrast,
+          boxShadow: tokens.shadowCard,
+        }}
       >
         {isSubmitting ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+            <Loader2
+              className="h-4 w-4 animate-spin motion-reduce:animate-none"
+              aria-hidden="true"
+            />
             <span className="sr-only">{t("signup.common.loading")}</span>
           </>
         ) : (

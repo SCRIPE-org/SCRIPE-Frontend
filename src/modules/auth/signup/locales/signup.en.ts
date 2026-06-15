@@ -127,7 +127,8 @@ export const en = {
     // namespace; chrome only — edition names/feature labels come from the API.
     plans: {
       title: "Choose the plan that fits",
-      subtitle: "Pricing is set for your region and billed in your local currency. Switch industries or billing any time.",
+      subtitle:
+        "Pricing is set for your region and billed in your local currency. Switch industries or billing any time.",
       industry: {
         prefix: "Plans for",
         ariaLabel: "Choose an industry",

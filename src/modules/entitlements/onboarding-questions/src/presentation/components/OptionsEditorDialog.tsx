@@ -104,11 +104,7 @@ export function OptionsEditorDialog({
     await vm.reorderOptions(ids);
   };
 
-  const field = (
-    f: keyof AnswerOptionRequest,
-    label: string,
-    type: "text" | "number" = "text"
-  ) => (
+  const field = (f: keyof AnswerOptionRequest, label: string, type: "text" | "number" = "text") => (
     <div className="flex flex-col gap-1">
       <Label className="text-xs text-zinc-400">{label}</Label>
       <Input
@@ -141,7 +137,10 @@ export function OptionsEditorDialog({
         <div className="mt-2 space-y-1">
           {vm.isLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-12 animate-pulse rounded-md border border-zinc-800 bg-zinc-900/60" />
+              <div
+                key={i}
+                className="h-12 animate-pulse rounded-md border border-zinc-800 bg-zinc-900/60"
+              />
             ))
           ) : vm.options.length === 0 && mode.kind === "idle" ? (
             <p className="py-6 text-center text-sm text-zinc-600">No options yet. Add one below.</p>
@@ -228,7 +227,12 @@ export function OptionsEditorDialog({
                   {/* Inline edit form */}
                   {isEditing && (
                     <div className="mt-1 rounded-md border border-indigo-500/30 bg-zinc-900/80 p-3">
-                      <OptionForm field={field} onSave={handleSave} onCancel={cancelForm} isSaving={isSaving} />
+                      <OptionForm
+                        field={field}
+                        onSave={handleSave}
+                        onCancel={cancelForm}
+                        isSaving={isSaving}
+                      />
                     </div>
                   )}
                 </div>
@@ -241,7 +245,12 @@ export function OptionsEditorDialog({
         {mode.kind === "add" && (
           <div className="mt-2 rounded-md border border-emerald-500/30 bg-zinc-900/80 p-3">
             <p className="mb-3 text-xs font-medium text-emerald-400">New Option</p>
-            <OptionForm field={field} onSave={handleSave} onCancel={cancelForm} isSaving={isSaving} />
+            <OptionForm
+              field={field}
+              onSave={handleSave}
+              onCancel={cancelForm}
+              isSaving={isSaving}
+            />
           </div>
         )}
 

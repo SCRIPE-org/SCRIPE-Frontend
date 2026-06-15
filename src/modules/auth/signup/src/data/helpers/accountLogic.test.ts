@@ -32,7 +32,7 @@ describe("calcPasswordStrengthScore", () => {
 
   it("is monotonic-ish: a 12-char mixed password beats a short one", () => {
     expect(calcPasswordStrengthScore("Aa1!aaaaaaaa")).toBeGreaterThan(
-      calcPasswordStrengthScore("Aa1!"),
+      calcPasswordStrengthScore("Aa1!")
     );
   });
 });

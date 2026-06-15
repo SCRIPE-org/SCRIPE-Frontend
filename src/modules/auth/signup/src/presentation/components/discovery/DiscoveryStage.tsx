@@ -36,9 +36,7 @@ const prefersReducedMotion =
 // Horizontal slide between questions; `dir` is pre-mirrored for RTL by the stage.
 const slideVariants = {
   enter: (dir: number) =>
-    prefersReducedMotion
-      ? { opacity: 0 }
-      : { x: dir > 0 ? 48 : -48, opacity: 0 },
+    prefersReducedMotion ? { opacity: 0 } : { x: dir > 0 ? 48 : -48, opacity: 0 },
   center: prefersReducedMotion
     ? { opacity: 1 }
     : {
@@ -236,16 +234,12 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
 
           {/* ── Mobile: compact profile summary beneath the question ── */}
           <div className="mt-8 lg:hidden">
-            <ProfilePreview
-              questions={vm.visibleQuestions}
-              answers={vm.answers}
-              variant="inline"
-            />
+            <ProfilePreview questions={vm.visibleQuestions} answers={vm.answers} variant="inline" />
           </div>
         </div>
 
         {/* ── Trailing column: live profile preview (desktop only) ── */}
-        <div className="hidden lg:block lg:sticky lg:top-24">
+        <div className="hidden lg:sticky lg:top-24 lg:block">
           <ProfilePreview questions={vm.visibleQuestions} answers={vm.answers} />
         </div>
       </div>
