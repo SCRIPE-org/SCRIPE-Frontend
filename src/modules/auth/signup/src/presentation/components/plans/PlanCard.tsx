@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -118,14 +118,14 @@ export function PlanCard({
       {...entrance}
       // The card spans the grid's shared 5-row template (subgrid) so every
       // section aligns across cards and CTAs sit on one baseline.
-      className="grid grid-rows-subgrid rounded-2xl p-6 transition-colors duration-200 [grid-row:span_5] sm:p-7"
+      className="grid grid-rows-subgrid rounded-2xl p-6 transition-colors duration-200 [grid-row:span_5] sm:p-8"
       style={{
         background: isAccent ? `${tokens.accent}0d` : tokens.surfaceCard,
         border: isAccent ? tokens.borderActive : tokens.borderCard,
       }}
     >
       {/* ── Row 1: reserved badge slot (fixed line; renders ≤ 1 badge) ── */}
-      <div className="flex min-h-[1.75rem] items-start">
+      <div className="flex min-h-[1.75rem] items-start mb-2.5">
         {badgeLabel && (
           <span
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.6875rem] font-semibold tracking-wide"
@@ -145,7 +145,7 @@ export function PlanCard({
 
       {/* ── Row 2: name + tagline + price ── */}
       <div className="flex flex-col gap-1">
-        <h3 className="text-[1.125rem] font-semibold leading-tight" style={{ color: tokens.ink }}>
+        <h3 className="text-[1rem] sm:text-[1.125rem] font-semibold leading-tight" style={{ color: tokens.ink }}>
           {edition.name}
         </h3>
         {edition.tagline && (
@@ -154,10 +154,10 @@ export function PlanCard({
           </p>
         )}
 
-        <div className="mt-4 flex items-baseline gap-1.5">
+        <div className="mt-4 flex items-baseline gap-1.5 flex-wrap">
           {isFree ? (
             <>
-              <span className="text-[2rem] font-bold leading-none" style={{ color: tokens.ink }}>
+              <span className="text-[1.625rem] xl:text-[2rem] font-bold leading-none" style={{ color: tokens.ink }}>
                 {t("signup.plans.price.free")}
               </span>
               <span className="text-[0.8125rem]" style={{ color: tokens.inkFaint }}>
@@ -165,12 +165,12 @@ export function PlanCard({
               </span>
             </>
           ) : isCustom ? (
-            <span className="text-[1.5rem] font-bold leading-none" style={{ color: tokens.ink }}>
+            <span className="text-[1.375rem] xl:text-[1.5rem] font-bold leading-none" style={{ color: tokens.ink }}>
               {t("signup.plans.price.custom")}
             </span>
           ) : (
             <>
-              <span className="text-[2rem] font-bold leading-none" style={{ color: tokens.ink }}>
+              <span className="text-[1.625rem] xl:text-[2rem] font-bold leading-none" style={{ color: tokens.ink }}>
                 {priceText}
               </span>
               <span className="text-[0.8125rem]" style={{ color: tokens.inkFaint }}>

@@ -37,13 +37,12 @@ export function PlanGrid({
   reasons,
   onSelect,
 }: PlanGridProps) {
-  // Column count adapts to the number of editions so 1–3 plans don't stretch.
   const desktopCols =
     editions.length >= 4 ? "lg:grid-cols-4" : editions.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2";
 
   return (
     <div
-      className={`mx-auto grid w-full max-w-6xl grid-cols-1 items-stretch gap-5 sm:grid-cols-2 ${desktopCols}`}
+      className={`mx-auto grid w-full max-w-[1400px] grid-cols-1 sm:grid-cols-2 ${desktopCols} gap-6 px-4 items-stretch`}
     >
       {editions.map((edition, index) => (
         <div key={edition.id} className="grid [grid-template-rows:auto_auto_auto_1fr_auto]">

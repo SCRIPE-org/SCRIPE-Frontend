@@ -47,7 +47,7 @@ export function PlansStage({ wizard }: PlansStageProps) {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-5 py-10 sm:px-8 sm:py-14">
+    <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-10 px-5 py-10 sm:px-8 sm:py-14">
       {/* ── Heading ── */}
       <header className="flex flex-col items-center gap-3 text-center">
         <h1
@@ -117,7 +117,7 @@ export function PlansStage({ wizard }: PlansStageProps) {
 
 function SkeletonGrid({ tokens }: { tokens: { surfaceRaised: string; borderCard: string } }) {
   return (
-    <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}

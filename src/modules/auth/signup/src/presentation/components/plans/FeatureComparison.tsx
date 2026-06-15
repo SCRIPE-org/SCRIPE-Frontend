@@ -91,7 +91,7 @@ export function FeatureComparison({
   if (editions.length === 0 || categories.length === 0) return null;
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className="mx-auto w-full max-w-[1400px]">
       <div className="flex justify-center">
         <button
           type="button"
