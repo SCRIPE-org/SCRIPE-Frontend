@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, type CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -113,15 +113,27 @@ export function PlanCard({
         transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const, delay: index * 0.05 },
       };
 
+  const [hovered, setHovered] = useState(false);
+
   return (
     <motion.div
       {...entrance}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      whileHover={reduceMotion ? undefined : { y: -5, scale: 1.015 }}
       // The card spans the grid's shared 5-row template (subgrid) so every
       // section aligns across cards and CTAs sit on one baseline.
-      className="grid grid-rows-subgrid rounded-2xl p-6 transition-colors duration-200 [grid-row:span_5] sm:p-8"
+      className="grid grid-rows-subgrid rounded-2xl p-6 transition-all duration-300 ease-out [grid-row:span_5] sm:p-8"
       style={{
-        background: isAccent ? `${tokens.accent}0d` : tokens.surfaceCard,
-        border: isAccent ? tokens.borderActive : tokens.borderCard,
+        background: isAccent
+          ? (hovered ? `${tokens.accent}14` : `${tokens.accent}0d`)
+          : (hovered ? tokens.surfaceRaised : tokens.surfaceCard),
+        border: isAccent
+          ? (hovered ? `1px solid ${tokens.accent}` : tokens.borderActive)
+          : (hovered ? `1px solid ${tokens.accent}40` : tokens.borderCard),
+        boxShadow: hovered
+          ? tokens.shadowCard
+          : (isAccent ? "0 4px 20px -2px rgba(124, 58, 237, 0.15)" : "none"),
       }}
     >
       {/* ── Row 1: reserved badge slot (fixed line; renders ≤ 1 badge) ── */}
