@@ -1,13 +1,8 @@
 /**
  * TenantNodeCard Component
  *
- * Premium expandable accordion card for a single tenant node.
- * Features:
- * - Color-coded left border (green/amber/red/gray) by status
- * - Collapsed: icon, name, code, edition badge, status badge, chevron
- * - Expanded: stats row, subscription progress bar, actions, description
- * - RTL/LTR support
- * - On-demand stats fetch when expanded
+ * Refactored modular entrypoint for a single tenant node.
+ * Uses subcomponents for header, banners, statistics, progress, and actions.
  *
  * @module tenants
  */
@@ -22,35 +17,25 @@ import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
-import { Button } from "@core/ui/button";
-import { Skeleton } from "@core/ui/skeleton";
 import {
   Building2,
-  ChevronDown,
-  Eye,
-  LogIn,
-  Pencil,
-  Trash2,
   Pause,
   Ban,
   XCircle,
-  AlertTriangle,
-  Users,
-  Shield,
-  Key,
-  Clock,
-  ArrowUpCircle,
-  CreditCard,
 } from "lucide-react";
 import { systemContainer } from "@modules/identity/di";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
 
+import { TenantNodeCardHeader } from "./TenantNodeCard/TenantNodeCardHeader";
+import type { TenantStatus } from "./TenantNodeCard/TenantNodeCardHeader";
+import { TenantNodeCardBanners } from "./TenantNodeCard/TenantNodeCardBanners";
+import { TenantNodeCardStats } from "./TenantNodeCard/TenantNodeCardStats";
+import { TenantNodeCardProgress } from "./TenantNodeCard/TenantNodeCardProgress";
+import { TenantNodeCardActions } from "./TenantNodeCard/TenantNodeCardActions";
+
 // ============================================
 // Types
 // ============================================
-
-type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
 
 interface TenantNodeCardProps {
   node: TenantTreeNode;
@@ -58,7 +43,6 @@ interface TenantNodeCardProps {
   onEdit?: (node: TenantTreeNode) => void;
   onDelete?: (node: TenantTreeNode) => void;
   onCreateChild?: (parentNode: TenantTreeNode) => void;
-  /** Compact mode for sub-tenants tab (no View Details/Enter World) */
   compact?: boolean;
 }
 
@@ -85,16 +69,15 @@ function getDaysRemaining(endDate?: string): number | null {
 }
 
 function getProgressPercentage(endDate?: string): number {
-  if (!endDate) return 100; // Lifetime = full bar
+  if (!endDate) return 100;
   const days = getDaysRemaining(endDate);
   if (days === null || days <= 0) return 0;
   if (days >= 365) return 100;
-  // Assume 365-day max for visual
   return Math.min(100, Math.round((days / 365) * 100));
 }
 
 function getProgressColor(days: number | null): string {
-  if (days === null) return "bg-primary"; // Lifetime
+  if (days === null) return "bg-primary";
   if (days <= 0) return "bg-destructive";
   if (days <= 7) return "bg-red-500";
   if (days <= 30) return "bg-amber-500";
@@ -108,39 +91,39 @@ const statusConfig: Record<
     iconBg: string;
     badgeVariant: "success" | "destructive" | "outline" | "secondary";
     badgeClass: string;
-    Icon: typeof Pause;
+    Icon: React.ComponentType<any>;
   }
 > = {
   active: {
-    borderColor: "border-s-emerald-500",
+    borderColor: "border-emerald-500/30 dark:border-emerald-500/20",
     iconBg: "bg-emerald-500/10 text-emerald-500",
     badgeVariant: "success",
     badgeClass: "",
     Icon: Building2,
   },
   suspended: {
-    borderColor: "border-s-amber-500",
+    borderColor: "border-amber-500/30 dark:border-amber-500/20",
     iconBg: "bg-amber-500/10 text-amber-500",
     badgeVariant: "outline",
     badgeClass: "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400",
     Icon: Pause,
   },
   canceled: {
-    borderColor: "border-s-red-500",
+    borderColor: "border-red-500/30 dark:border-red-500/20",
     iconBg: "bg-red-500/10 text-red-500",
     badgeVariant: "destructive",
     badgeClass: "",
     Icon: Ban,
   },
   expired: {
-    borderColor: "border-s-orange-500",
+    borderColor: "border-orange-500/30 dark:border-orange-500/20",
     iconBg: "bg-orange-500/10 text-orange-500",
     badgeVariant: "destructive",
     badgeClass: "",
     Icon: XCircle,
   },
   inactive: {
-    borderColor: "border-s-muted-foreground/30",
+    borderColor: "border-border/50",
     iconBg: "bg-muted text-muted-foreground",
     badgeVariant: "secondary",
     badgeClass: "",
@@ -256,10 +239,9 @@ export function TenantNodeCard({
       {/* Main card */}
       <div
         className={cn(
-          "relative overflow-hidden rounded-xl border border-border/50",
-          "bg-card transition-all duration-300 ease-out",
-          "hover:border-border hover:shadow-lg hover:shadow-primary/5",
-          `border-s-4 ${config.borderColor}`,
+          "relative overflow-hidden rounded-xl border transition-all duration-300 ease-out",
+          "bg-card hover:border-border hover:shadow-lg hover:shadow-primary/5",
+          config.borderColor,
           isExpanded && "border-border shadow-lg shadow-primary/5",
           (status === "canceled" || status === "inactive") && "opacity-75",
           status === "suspended" && "opacity-90",
@@ -267,103 +249,17 @@ export function TenantNodeCard({
         )}
       >
         {/* Collapsed Header (always visible) */}
-        <button
-          type="button"
-          className={cn(
-            "flex w-full items-center gap-3 p-4",
-            "text-start transition-colors",
-            "hover:bg-muted/30",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          )}
-          onClick={handleToggle}
-          aria-expanded={isExpanded}
-        >
-          {/* Tenant icon */}
-          <div
-            className={cn(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-              "border border-border/50",
-              config.iconBg,
-              "transition-transform duration-300",
-              "group-hover/card:scale-105"
-            )}
-          >
-            <Building2 className="h-5 w-5" />
-          </div>
-
-          {/* Name + Code */}
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="truncate font-semibold text-foreground">{node.name}</span>
-              <span className="font-mono text-xs text-muted-foreground">({node.code})</span>
-              {hasChildren && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 text-xs">
-                  <Building2 className="h-3 w-3" />
-                  {node.children.length}
-                </Badge>
-              )}
-            </div>
-          </div>
-
-          {/* Badges row */}
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
-            {/* Edition badge */}
-            {node.editionName && (
-              <Badge variant="outline" className="text-xs">
-                {node.editionName}
-              </Badge>
-            )}
-
-            {/* Pending Payment badge */}
-            {node.subscriptionStatus === "PendingPayment" && (
-              <Badge
-                variant="outline"
-                className="gap-1 border-amber-500/50 bg-amber-500/10 text-xs text-amber-600 dark:text-amber-400"
-              >
-                <CreditCard className="h-3 w-3" />
-                {t("tenant.pendingPayment") || "Pending Payment"}
-              </Badge>
-            )}
-
-            {/* Days remaining chip */}
-            {status === "active" && daysLeft !== null && daysLeft > 0 && (
-              <Badge
-                variant="outline"
-                className={cn(
-                  "gap-1 text-xs",
-                  daysLeft <= 7
-                    ? "border-red-500/50 text-red-500"
-                    : daysLeft <= 30
-                      ? "border-amber-500/50 text-amber-500"
-                      : "border-muted-foreground/30 text-muted-foreground"
-                )}
-              >
-                <Clock className="h-3 w-3" />
-                {daysLeft} {t("tenant.daysLeft")}
-              </Badge>
-            )}
-
-            {/* Status badge with optional tooltip */}
-            {suspensionTooltip ? (
-              <Tooltip>
-                <TooltipTrigger asChild>{statusBadge}</TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">{suspensionTooltip}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              statusBadge
-            )}
-          </div>
-
-          {/* Chevron */}
-          <ChevronDown
-            className={cn(
-              "h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300",
-              isExpanded && "rotate-180"
-            )}
-          />
-        </button>
+        <TenantNodeCardHeader
+          node={node}
+          isExpanded={isExpanded}
+          status={status}
+          daysLeft={daysLeft}
+          config={config}
+          statusBadge={statusBadge}
+          suspensionTooltip={suspensionTooltip}
+          hasChildren={hasChildren}
+          onToggle={handleToggle}
+        />
 
         {/* Expanded Content */}
         {isExpanded && (
@@ -374,133 +270,20 @@ export function TenantNodeCard({
             )}
           >
             {/* Status-specific banners */}
-            {status === "suspended" && (
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                <div className="text-sm">
-                  <p className="font-medium text-amber-500">{t("tenant.suspendedBanner")}</p>
-                  {node.suspensionReason && (
-                    <p className="mt-1 text-muted-foreground">{node.suspensionReason}</p>
-                  )}
-                </div>
-              </div>
-            )}
-            {status === "canceled" && (
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/5 p-3">
-                <Ban className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
-                <div className="text-sm">
-                  <p className="font-medium text-red-500">{t("tenant.canceledBanner")}</p>
-                  {node.suspensionReason && (
-                    <p className="mt-1 text-muted-foreground">{node.suspensionReason}</p>
-                  )}
-                </div>
-              </div>
-            )}
-            {status === "expired" && (
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/5 p-3">
-                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
-                <div className="text-sm">
-                  <p className="font-medium text-red-500">{t("tenant.expiredBanner")}</p>
-                </div>
-              </div>
-            )}
-            {node.subscriptionStatus === "PendingPayment" && (
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-                <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                <div className="text-sm">
-                  <p className="font-medium text-amber-600 dark:text-amber-400">
-                    {t("tenant.pendingPaymentBanner") ||
-                      "This tenant has a pending payment. Generate a payment link from the subscriptions page."}
-                  </p>
-                </div>
-              </div>
-            )}
+            <TenantNodeCardBanners node={node} status={status} t={t} />
 
             {/* Stats row */}
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {[
-                {
-                  key: "admins",
-                  label: t("tenant.statsAdmins"),
-                  value: stats?.adminsCount,
-                  icon: Users,
-                  color: "text-blue-500",
-                },
-                {
-                  key: "roles",
-                  label: t("tenant.statsRoles"),
-                  value: stats?.rolesCount,
-                  icon: Shield,
-                  color: "text-purple-500",
-                },
-                {
-                  key: "children",
-                  label: t("tenant.statsSubTenants"),
-                  value: stats?.subTenantsCount,
-                  icon: Building2,
-                  color: "text-emerald-500",
-                },
-                {
-                  key: "permissions",
-                  label: t("tenant.statsPermissions"),
-                  value: stats?.permissionsCount,
-                  icon: Key,
-                  color: "text-amber-500",
-                },
-              ].map((stat) => (
-                <div
-                  key={stat.key}
-                  className={cn(
-                    "flex items-center gap-2 rounded-lg border border-border/50 p-2.5",
-                    "bg-muted/20"
-                  )}
-                >
-                  <stat.icon className={cn("h-4 w-4 shrink-0", stat.color)} />
-                  <div className="min-w-0">
-                    {statsLoading ? (
-                      <Skeleton className="h-5 w-8" />
-                    ) : (
-                      <p className="text-sm font-bold">{stat.value ?? 0}</p>
-                    )}
-                    <p className="truncate text-xs text-muted-foreground">{stat.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <TenantNodeCardStats stats={stats} statsLoading={statsLoading} t={t} />
 
             {/* Subscription progress bar */}
-            {status === "active" && node.editionName && (
-              <div className="mt-3">
-                <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>
-                    {node.editionName}
-                    {daysLeft !== null
-                      ? ` • ${daysLeft} ${t("tenant.daysLeft")}`
-                      : ` • ${t("tenant.lifetime") || "Lifetime"}`}
-                  </span>
-                  {node.editionEndDate && (
-                    <span>
-                      {t("tenant.endDate")}: {new Date(node.editionEndDate).toLocaleDateString()}
-                    </span>
-                  )}
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted/50">
-                  <div
-                    className={cn("h-full rounded-full transition-all duration-500", progressColor)}
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Depleted bar for expired */}
-            {status === "expired" && (
-              <div className="mt-3">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted/50">
-                  <div className="h-full w-0 rounded-full bg-destructive" />
-                </div>
-              </div>
-            )}
+            <TenantNodeCardProgress
+              node={node}
+              status={status}
+              daysLeft={daysLeft}
+              progress={progress}
+              progressColor={progressColor}
+              t={t}
+            />
 
             {/* Description */}
             {node.description && (
@@ -510,70 +293,23 @@ export function TenantNodeCard({
             )}
 
             {/* Action buttons */}
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              {/* View Details */}
-              {canViewDetails && !compact && (
-                <Button size="sm" onClick={handleViewDetails}>
-                  <Eye className="me-1.5 h-4 w-4" />
-                  {t("common.view") || "View Details"}
-                </Button>
-              )}
-
-              {/* Enter Tenant World */}
-              {canEnterTenantWorld && canDrillDown && !compact && status !== "canceled" && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleEnterWorld}
-                  disabled={status === "suspended"}
-                >
-                  <LogIn className="me-1.5 h-4 w-4" />
-                  {t("tenant.enterTenantWorld")}
-                </Button>
-              )}
-
-              {/* Edit */}
-              {canEdit_ && onEdit && (
-                <Button size="sm" variant="ghost" onClick={() => onEdit(node)}>
-                  <Pencil className="me-1.5 h-4 w-4" />
-                  {t("tenant.edit")}
-                </Button>
-              )}
-
-              {/* Add Child */}
-              {canCreate && onCreateChild && (
-                <Button size="sm" variant="ghost" onClick={() => onCreateChild(node)}>
-                  <Building2 className="me-1.5 h-4 w-4" />
-                  {t("tenant.addChild")}
-                </Button>
-              )}
-
-              {/* Reassign Plan - for canceled/expired */}
-              {(status === "canceled" || status === "expired") && canViewDetails && !compact && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-primary text-primary hover:bg-primary/10"
-                  onClick={handleViewDetails}
-                >
-                  <ArrowUpCircle className="me-1.5 h-4 w-4" />
-                  {t("tenant.reassignPlan")}
-                </Button>
-              )}
-
-              {/* Delete */}
-              {canDeleteTenant && onDelete && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="ms-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => onDelete(node)}
-                >
-                  <Trash2 className="me-1.5 h-4 w-4" />
-                  {t("common.delete") || "Delete"}
-                </Button>
-              )}
-            </div>
+            <TenantNodeCardActions
+              node={node}
+              status={status}
+              compact={compact}
+              canViewDetails={canViewDetails}
+              canEnterTenantWorld={canEnterTenantWorld}
+              canDrillDown={canDrillDown}
+              canEdit_={canEdit_}
+              canCreate={canCreate}
+              canDeleteTenant={canDeleteTenant}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onCreateChild={onCreateChild}
+              onViewDetails={handleViewDetails}
+              onEnterWorld={handleEnterWorld}
+              t={t}
+            />
           </div>
         )}
       </div>

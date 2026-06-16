@@ -16,7 +16,11 @@ export default function BillingHubPage() {
   return (
     <main>
       <ModuleErrorBoundary moduleName="Billing & Plans Hub">
-        <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading billing console...</div>}>
+        <Suspense
+          fallback={
+            <div className="p-6 text-sm text-muted-foreground">Loading billing console...</div>
+          }
+        >
           <BillingHubView />
         </Suspense>
       </ModuleErrorBoundary>
