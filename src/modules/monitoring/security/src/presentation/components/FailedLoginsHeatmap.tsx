@@ -31,6 +31,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  cardClasses?: string;
 }
 
 const chartConfig: ChartConfig = {
@@ -45,6 +46,7 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
   isLoading,
   error,
   onRetry,
+  cardClasses,
 }: Props) {
   const { t } = useI18n();
 
@@ -58,7 +60,7 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
   );
 
   return (
-    <Card>
+    <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
           <ShieldAlert className="h-4 w-4 text-red-500" aria-hidden="true" />

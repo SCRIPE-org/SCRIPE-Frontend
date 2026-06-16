@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, type DragEvent } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { KanbanCard } from "./KanbanCard";
 import type { PlatformLeadListItem, LeadStatus } from "../../domain/entities/PlatformLead";
@@ -8,6 +9,8 @@ interface LeadsKanbanViewProps {
   leads: PlatformLeadListItem[];
   isLoading: boolean;
   onOpenDrawer: (id: string) => void;
+  onMoveLead: (id: string, status: LeadStatus) => Promise<void>;
+  isMoving: boolean;
 }
 
 const COLUMNS: { status: LeadStatus; accent: string; dot: string }[] = [
@@ -20,17 +23,54 @@ const COLUMNS: { status: LeadStatus; accent: string; dot: string }[] = [
 
 const SKELETON_HEIGHTS = [72, 88, 64, 96, 80];
 
-export function LeadsKanbanView({ leads, isLoading, onOpenDrawer }: LeadsKanbanViewProps) {
+export function LeadsKanbanView({
+  leads,
+  isLoading,
+  onOpenDrawer,
+  onMoveLead,
+  isMoving,
+}: LeadsKanbanViewProps) {
   const { t } = useI18n();
+  const [draggedLeadId, setDraggedLeadId] = useState<string | null>(null);
+  const [dropStatus, setDropStatus] = useState<LeadStatus | null>(null);
 
   const byStatus = (status: LeadStatus) => leads.filter((l) => l.status === status);
+  const draggedLead = draggedLeadId ? leads.find((lead) => lead.id === draggedLeadId) : undefined;
+
+  const handleDrop = async (event: DragEvent<HTMLDivElement>, status: LeadStatus) => {
+    event.preventDefault();
+    try {
+      setDropStatus(null);
+      const leadId = draggedLeadId ?? event.dataTransfer.getData("text/plain");
+      if (!leadId) return;
+      const current = leads.find((lead) => lead.id === leadId);
+      if (!current || current.status === status) return;
+      await onMoveLead(leadId, status);
+    } catch {
+      // ViewModel handles toast + optimistic rollback.
+    } finally {
+      setDraggedLeadId(null);
+      setDropStatus(null);
+    }
+  };
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
       {COLUMNS.map(({ status, accent, dot }) => {
         const col = byStatus(status);
         return (
-          <div key={status} className="flex min-h-[400px] flex-col gap-2">
+          <div
+            key={status}
+            className={`flex min-h-[400px] flex-col gap-2 rounded-md transition-colors ${dropStatus === status ? "bg-zinc-900/50" : ""}`}
+            onDragOver={(event) => {
+              if (!draggedLead || draggedLead.status === status || isMoving) return;
+              event.preventDefault();
+              event.dataTransfer.dropEffect = "move";
+              setDropStatus(status);
+            }}
+            onDragLeave={() => setDropStatus((current) => (current === status ? null : current))}
+            onDrop={(event) => void handleDrop(event, status)}
+          >
             {/* Column header */}
             <div
               className={`flex items-center justify-between rounded-md border px-2.5 py-2 ${accent.replace("text-", "border-")} bg-zinc-900/60`}
@@ -61,7 +101,18 @@ export function LeadsKanbanView({ leads, isLoading, onOpenDrawer }: LeadsKanbanV
                   <p className="text-center text-[11px] text-zinc-600">{t("leads.empty")}</p>
                 </div>
               ) : (
-                col.map((lead) => <KanbanCard key={lead.id} lead={lead} onClick={onOpenDrawer} />)
+                col.map((lead) => (
+                  <KanbanCard
+                    key={lead.id}
+                    lead={lead}
+                    onClick={onOpenDrawer}
+                    onDragStart={isMoving ? undefined : setDraggedLeadId}
+                    onDragEnd={() => {
+                      setDraggedLeadId(null);
+                      setDropStatus(null);
+                    }}
+                  />
+                ))
               )}
             </div>
           </div>

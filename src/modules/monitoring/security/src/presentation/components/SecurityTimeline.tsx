@@ -19,6 +19,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  cardClasses?: string;
 }
 
 const EVENT_ICONS: Record<string, { icon: typeof Shield; color: string }> = {
@@ -37,11 +38,12 @@ export const SecurityTimeline = memo(function SecurityTimeline({
   isLoading,
   error,
   onRetry,
+  cardClasses,
 }: Props) {
   const { t } = useI18n();
 
   return (
-    <Card>
+    <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-blue-500" aria-hidden="true" />

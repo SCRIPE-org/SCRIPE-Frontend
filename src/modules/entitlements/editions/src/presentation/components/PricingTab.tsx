@@ -14,8 +14,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
+import { Slider } from "@core/ui/slider";
 import { Textarea } from "@core/ui/textarea";
 import {
   Dialog,
@@ -228,14 +230,13 @@ export const PricingTab = memo(function PricingTab({
                   </Badge>
                 </div>
                 <div className="flex items-center gap-3">
-                  <input
-                    type="range"
+                  <Slider
                     min={0}
                     max={50}
                     step={1}
-                    value={vm.yearlyDiscountPercent}
-                    onChange={(e) => vm.setYearlyDiscountPercent(parseInt(e.target.value))}
-                    className="h-1.5 flex-1 cursor-pointer accent-emerald-500"
+                    value={[vm.yearlyDiscountPercent]}
+                    onValueChange={([value]) => vm.setYearlyDiscountPercent(value ?? 0)}
+                    className="flex-1"
                   />
                   <div className="flex items-center gap-1.5">
                     <span className="whitespace-nowrap text-xs tabular-nums text-muted-foreground">
@@ -659,9 +660,9 @@ export const PricingTab = memo(function PricingTab({
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">
+              <Label className="text-sm font-medium">
                 {t("entitlements.editions.versionNotesLabel") || "Version Notes"}
-              </label>
+              </Label>
               <Textarea
                 placeholder={
                   t("entitlements.editions.versions.changeNotesPlaceholder") ||

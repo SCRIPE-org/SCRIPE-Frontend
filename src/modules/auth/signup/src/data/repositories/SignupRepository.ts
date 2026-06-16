@@ -13,7 +13,7 @@ import type {
   ContactSalesPayload,
   ChangePlanPayload,
 } from "../../domain/interfaces/ISignupRepository";
-import type { ISignupService } from "../interfaces/ISignupService";
+import type { ISignupService } from "../../domain/interfaces/ISignupService";
 import { SignupMapper } from "../mappers/SignupMapper";
 import type {
   SignupOtpResult,

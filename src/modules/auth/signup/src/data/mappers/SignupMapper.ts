@@ -16,6 +16,7 @@ import type {
   SubdomainCheckDto,
   RegisterDto,
   SignupStatusDto,
+  SignupCheckoutStatusDto,
   CompleteSessionDto,
   PricingContextDto,
   SupportedCurrencyDto,
@@ -31,6 +32,7 @@ import type {
   SubdomainCheckResult,
   SignupResult,
   SignupStatusResult,
+  SignupCheckoutStatusResult,
   SignupCompleteResult,
   PricingContext,
   SupportedCurrency,
@@ -199,6 +201,14 @@ export class SignupMapper {
       status: dto.status,
       statusMessage: dto.statusMessage ?? null,
       expiresAt: dto.expiresAt ?? null,
+    };
+  }
+
+  static toCheckoutStatusResult(dto: SignupCheckoutStatusDto): SignupCheckoutStatusResult {
+    return {
+      status: dto.status ?? "unknown",
+      supportReference: dto.supportReference ?? "",
+      message: dto.message ?? "",
     };
   }
 

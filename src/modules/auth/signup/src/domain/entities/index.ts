@@ -300,6 +300,12 @@ export interface SignupStatusResult {
   expiresAt: string | null;
 }
 
+export interface SignupCheckoutStatusResult {
+  status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
+  supportReference: string;
+  message: string;
+}
+
 /** POST /signup/complete-session response — same auth shape as a free register. */
 export interface SignupCompleteResult {
   accessToken: string;

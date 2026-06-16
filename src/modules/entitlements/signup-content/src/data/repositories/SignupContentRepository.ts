@@ -10,19 +10,15 @@ import type {
   UpdateCustomerLogoParams,
 } from "../../domain/interfaces/ISignupContentRepository";
 import type { ContentMode } from "../../domain/entities/SignupContent";
-import type { SignupContentService } from "../services/SignupContentService";
+import type { ISignupContentService } from "../../domain/interfaces/ISignupContentService";
+import { SignupContentMapper } from "../mappers/SignupContentMapper";
 
 export class SignupContentRepository implements ISignupContentRepository {
-  constructor(private readonly service: SignupContentService) {}
+  constructor(private readonly service: ISignupContentService) {}
 
   async getAdminContent(): Promise<AdminSignupContent> {
     const dto = await this.service.getAdminContent();
-    return {
-      contentMode: dto.contentMode,
-      welcomeContent: dto.welcomeContent ?? null,
-      trustMarks: dto.trustMarks,
-      customerLogos: dto.customerLogos,
-    };
+    return SignupContentMapper.toEntity(dto);
   }
 
   async setMode(mode: ContentMode): Promise<void> {

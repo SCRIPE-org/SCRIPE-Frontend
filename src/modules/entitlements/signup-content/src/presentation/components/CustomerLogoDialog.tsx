@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -26,30 +26,34 @@ const EMPTY: CreateCustomerLogoParams = {
   isActive: true,
 };
 
-export function CustomerLogoDialog({
-  open,
+function toCustomerLogoForm(editing: CustomerLogo | null): CreateCustomerLogoParams {
+  if (!editing) return EMPTY;
+
+  return {
+    key: editing.key,
+    name: editing.name,
+    assetUrl: editing.assetUrl,
+    isRealData: editing.isRealData,
+    sortOrder: editing.sortOrder,
+    isActive: editing.isActive,
+  };
+}
+
+interface CustomerLogoDialogFormProps {
+  onClose: () => void;
+  onSave: (data: CreateCustomerLogoParams) => void;
+  isSaving: boolean;
+  editing: CustomerLogo | null;
+}
+
+function CustomerLogoDialogForm({
   onClose,
   onSave,
   isSaving,
   editing,
-}: CustomerLogoDialogProps) {
+}: CustomerLogoDialogFormProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<CreateCustomerLogoParams>(EMPTY);
-
-  useEffect(() => {
-    if (editing) {
-      setForm({
-        key: editing.key,
-        name: editing.name,
-        assetUrl: editing.assetUrl,
-        isRealData: editing.isRealData,
-        sortOrder: editing.sortOrder,
-        isActive: editing.isActive,
-      });
-    } else {
-      setForm(EMPTY);
-    }
-  }, [editing, open]);
+  const [form, setForm] = useState<CreateCustomerLogoParams>(() => toCustomerLogoForm(editing));
 
   const set = (field: keyof CreateCustomerLogoParams, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -59,6 +63,81 @@ export function CustomerLogoDialog({
     onSave(form);
   };
 
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 py-2">
+      <div className="space-y-1">
+        <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.key")}</label>
+        <Input
+          value={form.key}
+          onChange={(e) => set("key", e.target.value)}
+          className="border-zinc-700 bg-zinc-900 text-white"
+          required
+        />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.name")}</label>
+        <Input
+          value={form.name}
+          onChange={(e) => set("name", e.target.value)}
+          className="border-zinc-700 bg-zinc-900 text-white"
+          required
+        />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.assetUrl")}</label>
+        <Input
+          value={form.assetUrl}
+          onChange={(e) => set("assetUrl", e.target.value)}
+          className="border-zinc-700 bg-zinc-900 text-white"
+          required
+        />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</label>
+        <Input
+          type="number"
+          value={form.sortOrder}
+          onChange={(e) => set("sortOrder", Number(e.target.value))}
+          className="border-zinc-700 bg-zinc-900 text-white"
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <label className="text-xs text-zinc-400">
+          {t("signupContent.customerLogos.isRealData")}
+        </label>
+        <Switch checked={form.isRealData} onCheckedChange={(v) => set("isRealData", v)} />
+      </div>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onClose}
+          className="text-zinc-400 hover:text-white"
+        >
+          {t("signupContent.customerLogos.cancel")}
+        </Button>
+        <Button
+          type="submit"
+          disabled={isSaving}
+          className="bg-indigo-600 text-white hover:bg-indigo-500"
+        >
+          {isSaving
+            ? t("signupContent.customerLogos.saving")
+            : t("signupContent.customerLogos.save")}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+export function CustomerLogoDialog({
+  open,
+  onClose,
+  onSave,
+  isSaving,
+  editing,
+}: CustomerLogoDialogProps) {
+  const { t } = useI18n();
   const title = editing
     ? t("signupContent.customerLogos.edit")
     : t("signupContent.customerLogos.add");
@@ -69,73 +148,13 @@ export function CustomerLogoDialog({
         <DialogHeader>
           <DialogTitle className="text-white">{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 py-2">
-          <div className="space-y-1">
-            <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.key")}</label>
-            <Input
-              value={form.key}
-              onChange={(e) => set("key", e.target.value)}
-              className="border-zinc-700 bg-zinc-900 text-white"
-              required
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.name")}</label>
-            <Input
-              value={form.name}
-              onChange={(e) => set("name", e.target.value)}
-              className="border-zinc-700 bg-zinc-900 text-white"
-              required
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs text-zinc-400">
-              {t("signupContent.customerLogos.assetUrl")}
-            </label>
-            <Input
-              value={form.assetUrl}
-              onChange={(e) => set("assetUrl", e.target.value)}
-              className="border-zinc-700 bg-zinc-900 text-white"
-              required
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs text-zinc-400">
-              {t("signupContent.trustMarks.sortOrder")}
-            </label>
-            <Input
-              type="number"
-              value={form.sortOrder}
-              onChange={(e) => set("sortOrder", Number(e.target.value))}
-              className="border-zinc-700 bg-zinc-900 text-white"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <label className="text-xs text-zinc-400">
-              {t("signupContent.customerLogos.isRealData")}
-            </label>
-            <Switch checked={form.isRealData} onCheckedChange={(v) => set("isRealData", v)} />
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={onClose}
-              className="text-zinc-400 hover:text-white"
-            >
-              {t("signupContent.customerLogos.cancel")}
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSaving}
-              className="bg-indigo-600 text-white hover:bg-indigo-500"
-            >
-              {isSaving
-                ? t("signupContent.customerLogos.saving")
-                : t("signupContent.customerLogos.save")}
-            </Button>
-          </DialogFooter>
-        </form>
+        <CustomerLogoDialogForm
+          key={`${editing?.id ?? "new"}:${open ? "open" : "closed"}`}
+          onClose={onClose}
+          onSave={onSave}
+          isSaving={isSaving}
+          editing={editing}
+        />
       </DialogContent>
     </Dialog>
   );

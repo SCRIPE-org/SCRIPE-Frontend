@@ -1,20 +1,31 @@
 "use client";
 
+import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLeadListItem } from "../../domain/entities/PlatformLead";
 
 interface KanbanCardProps {
   lead: PlatformLeadListItem;
   onClick: (id: string) => void;
+  onDragStart?: (id: string) => void;
+  onDragEnd?: () => void;
 }
 
-export function KanbanCard({ lead, onClick }: KanbanCardProps) {
+export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCardProps) {
   const { t } = useI18n();
 
   return (
-    <button
+    <Button
       onClick={() => onClick(lead.id)}
-      className="group w-full rounded-lg border border-zinc-800 bg-zinc-900/80 p-3 text-start transition-all duration-150 hover:border-zinc-600 hover:bg-zinc-800/80 hover:shadow-md active:scale-[0.98]"
+      draggable={!!onDragStart}
+      onDragStart={(event) => {
+        event.dataTransfer.setData("text/plain", lead.id);
+        event.dataTransfer.effectAllowed = "move";
+        onDragStart?.(lead.id);
+      }}
+      onDragEnd={onDragEnd}
+      variant="ghost"
+      className="group h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-lg border border-zinc-800 bg-zinc-900/80 p-3 text-start transition-all duration-150 hover:border-zinc-600 hover:bg-zinc-800/80 hover:shadow-md active:scale-[0.98]"
     >
       {/* Company + edition */}
       <div className="flex items-start justify-between gap-2">
@@ -51,6 +62,6 @@ export function KanbanCard({ lead, onClick }: KanbanCardProps) {
         <span className="text-[10px] text-zinc-600">{lead.relativeCreatedAt}</span>
         <span className="text-[10px] text-zinc-600">{t(lead.sourceKey)}</span>
       </div>
-    </button>
+    </Button>
   );
 }

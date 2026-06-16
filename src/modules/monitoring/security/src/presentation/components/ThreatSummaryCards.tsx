@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Button } from "@core/ui/button";
 import { ShieldAlert, Lock, Ban, KeyRound } from "lucide-react";
+import { cn } from "@core/common/utils";
 
 interface ThreatCard {
   type: string;
@@ -22,6 +23,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  cardClasses?: string;
 }
 
 const THREAT_ICONS: Record<
@@ -59,6 +61,7 @@ export const ThreatSummaryCards = memo(function ThreatSummaryCards({
   isLoading,
   error,
   onRetry,
+  cardClasses,
 }: Props) {
   const { t } = useI18n();
 
@@ -116,7 +119,10 @@ export const ThreatSummaryCards = memo(function ThreatSummaryCards({
         const Icon = config.icon;
 
         return (
-          <Card key={threat.type} className="group transition-shadow hover:shadow-md">
+          <Card
+            key={threat.type}
+            className={cn("group transition-shadow hover:shadow-md", cardClasses)}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t(config.labelKey)}

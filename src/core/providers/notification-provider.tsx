@@ -173,29 +173,40 @@ export function NotificationSignalRProvider({ children }: { children: React.Reac
     }
   }, [hubUrl]);
 
-  // ── Auto-connect on auth (mirrors SignalRProvider exactly) ──────
+  // ── Auto-connect on auth or token change (mirrors SignalRProvider exactly) ──────
 
   useEffect(() => {
     if (isDocsRoute) return;
 
-    if (isAuthenticated && secureTokenService.hasToken()) {
-      appLogger.debug("[NotifHub] isAuthenticated=true, calling connect()");
-      setTimeout(() => connect(), 0);
-    } else {
-      appLogger.debug("[NotifHub] isAuthenticated=false, tearing down");
-      connectionRef.current?.stop();
-      connectionRef.current = null;
-      setTimeout(() => {
-        setConnection(null);
-        setConnectionState("disconnected");
-      }, 0);
-    }
+    const checkAndConnect = () => {
+      if (isAuthenticated && secureTokenService.hasToken()) {
+        appLogger.debug("[NotifHub] isAuthenticated=true, calling connect()");
+        setTimeout(() => connect(), 0);
+      } else if (!isAuthenticated) {
+        appLogger.debug("[NotifHub] isAuthenticated=false, tearing down");
+        connectionRef.current?.stop();
+        connectionRef.current = null;
+        setTimeout(() => {
+          setConnection(null);
+          setConnectionState("disconnected");
+        }, 0);
+      }
+    };
+
+    // Run check initially
+    checkAndConnect();
+
+    // Subscribe to access token updates to connect immediately when token is resolved
+    const unsubscribe = secureTokenService.subscribe(() => {
+      checkAndConnect();
+    });
 
     return () => {
+      unsubscribe();
       connectionRef.current?.stop();
       connectionRef.current = null;
     };
-  }, [isAuthenticated, isDocsRoute]);
+  }, [isAuthenticated, isDocsRoute, connect]);
 
   const contextValue = useMemo(
     () => ({

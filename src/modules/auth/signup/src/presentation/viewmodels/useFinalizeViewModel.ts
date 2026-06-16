@@ -26,7 +26,9 @@ export type FinalizePhase =
   | "slow"
   | "completing"
   | "success"
+  | "direct_success"
   | "failed"
+  | "review_required"
   | "consumed"
   | "expired"
   | "timeout";
@@ -50,8 +52,10 @@ export function useFinalizeViewModel() {
 
   const [phase, setPhase] = useState<FinalizePhase>("processing");
   const [error, setError] = useState("");
+  const [supportReference, setSupportReference] = useState("");
 
   const refRef = useRef<string | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
   const startedAtRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const isCompletingRef = useRef(false);
@@ -123,36 +127,75 @@ export function useFinalizeViewModel() {
   // ── Polling loop: 3s → 10s after 60s; degrade copy after 2 min (G7/U13) ──
   const pollOnce = useCallback(async () => {
     const signupRef = refRef.current;
-    if (!signupRef || stoppedRef.current) return;
+    const sessionId = sessionIdRef.current;
+    if (stoppedRef.current) return;
 
-    try {
-      const result = await signupRepository.getStatus(signupRef);
+    if (signupRef) {
+      try {
+        const result = await signupRepository.getStatus(signupRef);
 
-      switch (result.status) {
-        case "active":
-          await completeSession(signupRef);
-          return; // terminal — no more polling
-        case "consumed":
-          setPhase("consumed");
-          return;
-        case "failed":
-        case "abandoned":
-          setPhase("failed");
-          return;
-        case "unknown":
+        switch (result.status) {
+          case "active":
+            await completeSession(signupRef);
+            return; // terminal — no more polling
+          case "consumed":
+            setPhase("consumed");
+            return;
+          case "failed":
+          case "abandoned":
+            setPhase("failed");
+            return;
+          case "unknown":
+            setPhase("expired");
+            return;
+          default:
+            // pending / awaiting_payment — keep polling
+            break;
+        }
+      } catch {
+        // Transient network error — keep polling at the current cadence
+      }
+    } else if (sessionId) {
+      try {
+        const result = await signupRepository.getCheckoutStatus(sessionId);
+        setSupportReference(result.supportReference || "");
+
+        switch (result.status) {
+          case "completed":
+            setPhase("direct_success");
+            return; // terminal
+          case "failed":
+            setPhase("review_required");
+            setError(result.message || "");
+            return; // terminal
+          case "expired":
+          case "unknown":
+            setPhase("expired");
+            return; // terminal
+          default:
+            // pending / processing — keep polling
+            break;
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "";
+        if (message.toLowerCase().includes("not found")) {
           setPhase("expired");
           return;
-        default:
-          // pending / awaiting_payment — keep polling
-          break;
+        }
       }
-    } catch {
-      // Transient network error — keep polling at the current cadence
+    } else {
+      setPhase("expired");
+      return;
     }
 
     const elapsed = Date.now() - startedAtRef.current;
 
     if (elapsed >= ABORT_AFTER_MS) {
+      if (sessionId) {
+        setSupportReference(`checkout-${sessionId.slice(-12)}`);
+        setPhase("review_required");
+        return;
+      }
       setPhase("timeout");
       return; // terminal — stop polling
     }
@@ -174,12 +217,20 @@ export function useFinalizeViewModel() {
     }
     if (!signupRef) signupRef = searchParams?.get("ref") ?? null;
 
-    if (!signupRef) {
-      setPhase("expired");
-      return;
+    if (signupRef) {
+      refRef.current = signupRef;
+      sessionIdRef.current = null;
+    } else {
+      const sessionId = searchParams?.get("session_id") ?? null;
+      if (sessionId) {
+        refRef.current = null;
+        sessionIdRef.current = sessionId;
+      } else {
+        setPhase("expired");
+        return;
+      }
     }
 
-    refRef.current = signupRef;
     startedAtRef.current = Date.now();
     stoppedRef.current = false;
     void pollOnce();
@@ -212,6 +263,7 @@ export function useFinalizeViewModel() {
   return {
     phase,
     error,
+    supportReference,
     startNewSignup,
     goToLogin,
     changePlan,

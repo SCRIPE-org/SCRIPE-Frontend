@@ -234,6 +234,9 @@ export const ar = {
       convert: "تحويل إلى مستأجر",
       assign: "تعيين",
       viewActivity: "الأنشطة",
+      statusUpdateError: "تعذر تحديث حالة العميل المحتمل. حدّث الصفحة وحاول مرة أخرى.",
+      tableView: "عرض الجدول",
+      kanbanView: "عرض كانبان",
     },
 
     bulk: {

@@ -372,7 +372,8 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
         ? (new URLSearchParams(window.location.search).get("__currency")?.toUpperCase() ?? null)
         : null;
 
-    const resolvedCurrency = devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? initialCurrency;
+    const resolvedCurrency =
+      devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? initialCurrency;
     const resolvedCountry = initialCountry ?? pricingContext?.detectedCountry;
     if (resolvedCurrency) {
       setWizardData((prev) => ({

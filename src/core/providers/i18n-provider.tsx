@@ -48,7 +48,7 @@ const warnedMissingKeys = new Set<string>();
 function reportMissingKey(key: string, language: Language): string {
   if (isDev && !warnedMissingKeys.has(`${language}:${key}`)) {
     warnedMissingKeys.add(`${language}:${key}`);
-     
+
     console.warn(`[i18n] missing key: "${key}" (language: "${language}")`);
   }
   return key;

@@ -25,6 +25,24 @@ export class SecureTokenService {
   // On page reload, they reset to null and the app must call /auth/refresh.
   private static _accessToken: string | null = null;
   private static _tokenExpiry: number | null = null;
+  private static _listeners: (() => void)[] = [];
+
+  static subscribe(listener: () => void): () => void {
+    this._listeners.push(listener);
+    return () => {
+      this._listeners = this._listeners.filter((l) => l !== listener);
+    };
+  }
+
+  private static notifyListeners(): void {
+    this._listeners.forEach((listener) => {
+      try {
+        listener();
+      } catch (error) {
+        appLogger.error("Error in token listener:", error);
+      }
+    });
+  }
 
   /**
    * Store access token in memory.
@@ -39,6 +57,7 @@ export class SecureTokenService {
 
       this._accessToken = token;
       appLogger.auth("Access token stored in memory");
+      this.notifyListeners();
       return true;
     } catch (error) {
       appLogger.error("Failed to store access token:", error);
@@ -146,6 +165,7 @@ export class SecureTokenService {
         localStorage.removeItem("refreshToken");
       }
 
+      this.notifyListeners();
       return true;
     } catch (error) {
       appLogger.error("Failed to clear tokens:", error);

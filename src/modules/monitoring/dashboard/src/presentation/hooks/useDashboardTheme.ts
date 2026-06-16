@@ -9,15 +9,14 @@
  */
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { customizationContainer } from "@modules/customization/di";
+import { useDashboardThemeStore } from "./useDashboardThemeStore";
 import {
-  parseDashboardThemeJson,
-  DEFAULT_DASHBOARD_THEME,
   type DashboardThemeConfig,
   type CardRadius,
   type ShadowLevel,
@@ -66,25 +65,23 @@ export function useDashboardTheme() {
   const queryClient = useQueryClient();
   const customizationService = customizationContainer.customizationService;
 
-  // ── Read persisted config from localStorage (synced by TenantBrandingProvider) ──
-  const persistedConfig = useMemo(() => {
-    if (typeof window === "undefined") return { ...DEFAULT_DASHBOARD_THEME };
-    const stored = localStorage.getItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS);
-    return parseDashboardThemeJson(stored);
-  }, []);
+  const {
+    isStudioOpen,
+    setIsStudioOpen,
+    draft,
+    persistedConfig,
+    setPersistedConfig,
+    initialize,
+    updateDraft,
+    updateNested,
+    discardDraft,
+    resetToDefault,
+  } = useDashboardThemeStore();
 
-  // ── Local draft state for studio panel ──
-  const [draft, setDraft] = useState<DashboardThemeConfig>(persistedConfig);
-  const [isStudioOpen, setIsStudioOpen] = useState(false);
-
-  // Re-sync when persisted changes (e.g., another admin published, render-time state-sync)
-  const [prevPersisted, setPrevPersisted] = useState(persistedConfig);
-  if (persistedConfig !== prevPersisted) {
-    setPrevPersisted(persistedConfig);
-    if (!isStudioOpen) {
-      setDraft(persistedConfig);
-    }
-  }
+  // Initialize once on mount (harmless no-op if already initialized)
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   // ── Active config: studio draft while open, else persisted ──
   const config = isStudioOpen ? draft : persistedConfig;
@@ -107,38 +104,11 @@ export function useDashboardTheme() {
     };
   }, [config.layout]);
 
-  // ── Update helpers ──
-  const updateDraft = useCallback(
-    <K extends keyof DashboardThemeConfig>(key: K, value: DashboardThemeConfig[K]) => {
-      setDraft((prev) => ({ ...prev, [key]: value }));
-    },
-    []
-  );
-
-  const updateNested = useCallback(
-    (section: keyof DashboardThemeConfig, field: string, value: unknown) => {
-      setDraft((prev) => ({
-        ...prev,
-        [section]: {
-          ...(prev[section] as object),
-          [field]: value,
-        },
-      }));
-    },
-    []
-  );
-
-  // ── Discard draft changes ──
-  const discardDraft = useCallback(() => {
-    setDraft(persistedConfig);
-    setIsStudioOpen(false);
-  }, [persistedConfig]);
-
   // ── Save mutation ──
   const saveMutation = useMutation({
-    mutationFn: async (config: DashboardThemeConfig) => {
+    mutationFn: async (configToSave: DashboardThemeConfig) => {
       // Merge with existing prefs to keep backward compat
-      const json = JSON.stringify(config);
+      const json = JSON.stringify(configToSave);
       await customizationService.saveTenantDisplayPrefs(json);
     },
     onSuccess: () => {
@@ -148,6 +118,9 @@ export function useDashboardTheme() {
 
       // Write to localStorage for immediate apply
       localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, JSON.stringify(draft));
+
+      // Update the shared Zustand store's persistedConfig so it doesn't revert
+      setPersistedConfig(draft);
 
       // Invalidate branding cache
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
@@ -166,16 +139,6 @@ export function useDashboardTheme() {
   const saveDraft = useCallback(() => {
     saveMutation.mutate(draft);
   }, [draft, saveMutation]);
-
-  // ── Reset to default ──
-  const resetToDefault = useCallback(() => {
-    setDraft({
-      ...DEFAULT_DASHBOARD_THEME,
-      theme: persistedConfig.theme,
-      sidebarCollapsed: persistedConfig.sidebarCollapsed,
-      language: persistedConfig.language,
-    });
-  }, [persistedConfig]);
 
   return {
     config,

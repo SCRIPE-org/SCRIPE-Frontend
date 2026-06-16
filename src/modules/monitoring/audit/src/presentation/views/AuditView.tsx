@@ -9,6 +9,7 @@
  */
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useAuditViewModel } from "../viewmodels/useAuditViewModel";
 import { useAuditRealtime } from "../viewmodels/useAuditRealtime";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -16,8 +17,10 @@ import { AuditFilterPanel } from "../components/AuditFilterPanel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { FileText, Radio, Download } from "lucide-react";
+import { FileText, Radio, Download, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useDashboardTheme } from "@modules/monitoring/dashboard/src/presentation/hooks/useDashboardTheme";
+import { DashboardStudioPanel } from "@modules/monitoring/dashboard/src/presentation/components/DashboardStudioPanel";
 
 // Lazy-load table and dialog components
 const AuditLogTable = dynamic(
@@ -47,6 +50,11 @@ export function AuditView() {
   const realtime = useAuditRealtime();
   const { t } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);
+  const pathname = usePathname();
+  const isStandalone = pathname === "/audit";
+
+  const theme = useDashboardTheme();
+  const { cardClasses } = theme;
 
   return (
     <div className="space-y-6">
@@ -72,6 +80,19 @@ export function AuditView() {
             {t("audit.export.button")}
           </Button>
 
+          {/* Customize Button (Standalone only) */}
+          {isStandalone && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => theme.setIsStudioOpen(true)}
+              className="gap-1.5"
+            >
+              <Settings2 className="h-4 w-4" />
+              {t("dashboard.studio.openButton") || "Customize"}
+            </Button>
+          )}
+
           {/* Real-time connection status */}
           <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
             <span
@@ -89,7 +110,7 @@ export function AuditView() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className={cardClasses}>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">{t("audit.filters.title")}</CardTitle>
           <CardDescription>{t("audit.filters.description")}</CardDescription>
@@ -105,7 +126,7 @@ export function AuditView() {
       </Card>
 
       {/* Results Table */}
-      <Card>
+      <Card className={cardClasses}>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">{t("audit.results.title")}</CardTitle>
@@ -142,6 +163,21 @@ export function AuditView() {
         onClose={() => setExportOpen(false)}
         filters={vm.filters}
       />
+
+      {/* Dashboard Studio Panel (Standalone only) */}
+      {isStandalone && (
+        <DashboardStudioPanel
+          open={theme.isStudioOpen}
+          onClose={() => theme.setIsStudioOpen(false)}
+          draft={theme.draft}
+          onUpdateNested={theme.updateNested}
+          onSave={theme.saveDraft}
+          onDiscard={theme.discardDraft}
+          onReset={theme.resetToDefault}
+          isSaving={theme.isSaving}
+          onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
+        />
+      )}
     </div>
   );
 }

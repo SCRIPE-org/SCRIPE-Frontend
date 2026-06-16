@@ -54,8 +54,12 @@ describe("isRecommendedEdition", () => {
   });
 
   it("matches when the names are identical case-insensitively", () => {
-    expect(isRecommendedEdition("enc_abc", "enc_xyz", "ERP Enterprise", "ERP Enterprise")).toBe(true);
-    expect(isRecommendedEdition("enc_abc", "enc_xyz", "erp enterprise", "ERP Enterprise")).toBe(true);
+    expect(isRecommendedEdition("enc_abc", "enc_xyz", "ERP Enterprise", "ERP Enterprise")).toBe(
+      true
+    );
+    expect(isRecommendedEdition("enc_abc", "enc_xyz", "erp enterprise", "ERP Enterprise")).toBe(
+      true
+    );
   });
 
   it("does not match when names differ", () => {

@@ -140,7 +140,8 @@ export function usePlanPicker({
       ? (new URLSearchParams(window.location.search).get("__currency")?.toUpperCase() ?? null)
       : null;
 
-  const currency = devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? initialCurrency ?? "USD";
+  const currency =
+    devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? initialCurrency ?? "USD";
   const detectedCountry = initialCountry ?? pricingContext?.detectedCountry ?? null;
   const isFxConverted = !SEEDED_CURRENCIES.has(currency.toUpperCase());
   const locale = useMemo(() => resolveLocale(language, currency), [language, currency]);
@@ -148,7 +149,11 @@ export function usePlanPicker({
   // ── Industries — for the elegant switch (slug + localized label). ────────────
   const { data: categories } = useQuery({
     queryKey: ["signup-categories", currency, language],
-    queryFn: () => authContainer.signupRepository.getCategories(devCurrencyOverride ? currency : undefined, language),
+    queryFn: () =>
+      authContainer.signupRepository.getCategories(
+        devCurrencyOverride ? currency : undefined,
+        language
+      ),
     staleTime: 10 * 60 * 1000,
     retry: 1,
     enabled: !!initialCurrency || isPricingContextFetched,
@@ -171,7 +176,12 @@ export function usePlanPicker({
     refetch,
   } = useQuery({
     queryKey: ["signup-editions", activeIndustry, currency, language],
-    queryFn: () => authContainer.signupRepository.getEditions(activeIndustry, devCurrencyOverride ? currency : undefined, language),
+    queryFn: () =>
+      authContainer.signupRepository.getEditions(
+        activeIndustry,
+        devCurrencyOverride ? currency : undefined,
+        language
+      ),
     staleTime: 5 * 60 * 1000,
     retry: 1,
     enabled: !!initialCurrency || isPricingContextFetched,

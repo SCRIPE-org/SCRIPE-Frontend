@@ -184,6 +184,92 @@ export function SignupFinalizeScreen() {
             </div>
           )}
 
+          {/* ── Direct checkout success ── */}
+          {vm.phase === "direct_success" && (
+            <div className="flex flex-col items-center gap-5">
+              <StatusIcon tone={tokens.success}>
+                <Check
+                  className="h-8 w-8"
+                  strokeWidth={2.5}
+                  style={{ color: tokens.success }}
+                  aria-hidden="true"
+                />
+              </StatusIcon>
+              <div>
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
+                  {t("signup.finalize.directSuccessTitle")}
+                </h1>
+                <p
+                  className="mt-2 text-[0.875rem] leading-relaxed"
+                  style={{ color: tokens.inkMuted }}
+                >
+                  {t("signup.finalize.directSuccessSubtitle")}
+                </p>
+                {vm.supportReference && (
+                  <p className="mt-3 text-[0.75rem]" style={{ color: tokens.inkFaint }}>
+                    {t("signup.finalize.supportReference", {
+                      reference: vm.supportReference,
+                    })}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={vm.goToLogin}
+                className={primaryBtnClass}
+                style={ctaStyle}
+              >
+                {t("auth.backToLogin")}
+              </button>
+            </div>
+          )}
+
+          {/* ── Paid checkout needs support review ── */}
+          {vm.phase === "review_required" && (
+            <div className="flex flex-col items-center gap-5">
+              <StatusIcon tone={tokens.error}>
+                <XCircle className="h-8 w-8" style={{ color: tokens.error }} aria-hidden="true" />
+              </StatusIcon>
+              <div>
+                <h1
+                  className="text-[1.25rem] font-semibold"
+                  style={{ color: tokens.ink, letterSpacing: "-0.02em" }}
+                >
+                  {t("signup.finalize.reviewRequiredTitle")}
+                </h1>
+                <p
+                  className="mt-2 text-[0.875rem] leading-relaxed"
+                  style={{ color: tokens.inkMuted }}
+                >
+                  {t("signup.finalize.reviewRequiredSubtitle")}
+                </p>
+                {vm.supportReference && (
+                  <p className="mt-3 text-[0.75rem]" style={{ color: tokens.inkFaint }}>
+                    {t("signup.finalize.supportReference", {
+                      reference: vm.supportReference,
+                    })}
+                  </p>
+                )}
+                {vm.error && (
+                  <p className="mt-2 text-[0.75rem]" style={{ color: tokens.inkFaint }}>
+                    {vm.error}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={vm.goToLogin}
+                className={primaryBtnClass}
+                style={ctaStyle}
+              >
+                {t("auth.backToLogin")}
+              </button>
+            </div>
+          )}
+
           {/* ── Failed ── */}
           {vm.phase === "failed" && (
             <div className="flex flex-col items-center gap-5">
