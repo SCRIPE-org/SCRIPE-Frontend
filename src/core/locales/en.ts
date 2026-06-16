@@ -354,6 +354,7 @@ export const en = {
     of: "of",
     items: "items",
     item: "item",
+    count: "Count",
     total: "Total",
     subtotal: "Subtotal",
     tax: "Tax",

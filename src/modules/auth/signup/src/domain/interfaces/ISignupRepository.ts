@@ -13,6 +13,7 @@ import type {
   ChangePlanResult,
   ChangePlanPayload,
   SignupRecommendationResult,
+  PersistedWizardState,
 } from "../entities";
 import type {
   OnboardingFlow,
@@ -82,6 +83,12 @@ export interface ISignupRepository {
   completeSession(signupRef: string): Promise<SignupCompleteResult>;
   /** "Start fresh" — abandons the pending signup and releases the subdomain. */
   abandon(signupRef: string): Promise<void>;
+
+  persistSignupRef(ref: string): void;
+  getPersistedSignupRef(): string | null;
+  persistWizardState(state: PersistedWizardState): void;
+  clearPersistedWizardState(): void;
+  readPersistedWizardState(): any;
 
   /** Validate a signupRef and return plan snapshot for the resume modal. Null = unknown/terminal ref. */
   resume(signupRef: string): Promise<ResumeSessionResult | null>;

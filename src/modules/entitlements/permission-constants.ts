@@ -80,6 +80,7 @@ export const ENTITLEMENTS_PERMISSIONS = {
   ANALYTICS_REVENUE_VIEW: "revenue_analytics.view",
   ANALYTICS_HEALTH_VIEW: "revenue_analytics.view_health",
   ANALYTICS_REPORTS_MANAGE: "revenue_analytics.manage_reports",
+  ANALYTICS_REVENUE_EXPORT: "revenue_analytics.export",
 
   // ── Tenant Payment Gateways (Tier 2 self-service) ─────
   TENANT_PAYMENT_GATEWAYS_VIEW: "tenant_payment_gateways.view",

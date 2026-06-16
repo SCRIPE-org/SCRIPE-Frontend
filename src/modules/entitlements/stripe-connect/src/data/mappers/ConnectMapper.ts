@@ -7,12 +7,18 @@ import {
   ConnectAccountListItem,
   Commission,
   CommissionDashboard,
+  TenantFinancialSummary,
+  TenantTransactionItem,
+  TenantTransactionsResult,
 } from "../../domain/entities/ConnectAccount";
 import type {
   ConnectAccountResponseModel,
   ConnectAccountListResponseModel,
   CommissionResponseModel,
   CommissionDashboardResponseModel,
+  TenantTransactionsResponseModel,
+  TenantFinancialSummaryModel,
+  TenantTransactionItemModel,
 } from "../models/ConnectModels";
 
 export class ConnectMapper {
@@ -85,5 +91,46 @@ export class ConnectMapper {
       globalCommissionRate: dto.globalCommissionRate ?? 0,
       recentTrends: dto.recentTrends ?? [],
     });
+  }
+
+  static toFinancialSummaryEntity(dto: TenantFinancialSummaryModel): TenantFinancialSummary {
+    return new TenantFinancialSummary({
+      totalGrossRevenue: dto.totalGrossRevenue ?? 0,
+      totalPlatformFees: dto.totalPlatformFees ?? 0,
+      totalNetRevenue: dto.totalNetRevenue ?? 0,
+      totalRefunded: dto.totalRefunded ?? 0,
+      totalTransactions: dto.totalTransactions ?? 0,
+      refundCount: dto.refundCount ?? 0,
+      currency: dto.currency ?? "usd",
+    });
+  }
+
+  static toTransactionItemEntity(dto: TenantTransactionItemModel): TenantTransactionItem {
+    return new TenantTransactionItem({
+      id: dto.id ?? "",
+      type: dto.type ?? "Payment",
+      status: dto.status ?? "Pending",
+      grossAmount: dto.grossAmount ?? 0,
+      platformFee: dto.platformFee ?? 0,
+      netAmount: dto.netAmount ?? 0,
+      currency: dto.currency ?? "usd",
+      commissionRate: dto.commissionRate ?? 0,
+      stripePaymentIntentId: dto.stripePaymentIntentId,
+      refundedAmount: dto.refundedAmount,
+      refundedAt: dto.refundedAt,
+      transactionDate: dto.transactionDate ?? "",
+    });
+  }
+
+  static toTransactionsResultEntity(
+    dto: TenantTransactionsResponseModel
+  ): TenantTransactionsResult {
+    return {
+      summary: ConnectMapper.toFinancialSummaryEntity(dto.summary),
+      transactions: {
+        items: (dto.transactions?.items || []).map(ConnectMapper.toTransactionItemEntity),
+        totalCount: dto.transactions?.totalCount ?? 0,
+      },
+    };
   }
 }

@@ -4,7 +4,7 @@ import type { InventoryParams } from "./IInventoryService";
 import type {
   CreateDataInventoryRequest,
   UpdateDataInventoryRequest,
-} from "../../data/models/InventoryModels";
+} from "../entities/InventoryItem";
 
 export interface IInventoryRepository {
   getAll(params: InventoryParams): Promise<PagedResult<InventoryItem>>;

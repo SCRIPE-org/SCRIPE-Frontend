@@ -7,6 +7,7 @@ export { TenantFeatureDefinitionsView } from "./src/presentation/views/TenantFea
 export { FeatureDefinitionFormView } from "./src/presentation/views/FeatureDefinitionFormView";
 export { TenantPlanWizardView } from "./src/presentation/views/TenantPlanWizardView";
 export { TenantPlanEditWizardView } from "./src/presentation/views/TenantPlanEditWizardView";
+export { TenantPlanComparisonView } from "./src/presentation/views/TenantPlanComparisonView";
 export {
   TenantPlan,
   TenantFeatureDefinition,

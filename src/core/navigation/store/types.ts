@@ -49,12 +49,14 @@ export interface UiSlice {
   previousWorkspaceKey: string | null;
   isInitialLoading: boolean;
   isWorkspaceSwitching: boolean;
+  transitionTargetRoute: string | null; // Track target route during JIT workspace transitions
 
   setActiveWorkspace: (key: string | null) => void;
   setActiveRootItem: (id: string | null) => void;
   setPreviousWorkspace: (key: string | null) => void;
   setIsInitialLoading: (loading: boolean) => void;
   setIsWorkspaceSwitching: (loading: boolean) => void;
+  setTransitionTargetRoute: (route: string | null) => void;
 
   getActiveRootItem: () => MenuItem | null;
 

@@ -15,7 +15,7 @@ import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthError
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
-import { clearSessionOnLoginMount } from "@modules/auth/core/data/utils/auth-storage-cleanup";
+import { getAuthContainer } from "@modules/auth/di";
 
 export interface LoginFormData {
   identifier: string;
@@ -55,7 +55,7 @@ export function useLoginViewModel() {
   // 🔒 Guard: clear stale impersonation flags on login page mount.
   // Runs once in the ViewModel (data-layer concern) — never in the View.
   useEffect(() => {
-    clearSessionOnLoginMount();
+    getAuthContainer().authRepository.clearSessionOnLoginMount();
   }, []);
 
   const loginMutation = useAuthLogin();

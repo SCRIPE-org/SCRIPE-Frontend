@@ -5,8 +5,8 @@
  * Uses NEXT_PUBLIC_IDENTITY_API_URL with fallback to NEXT_PUBLIC_API_URL.
  */
 import { getModuleApiService } from "@core/services/api-factory";
-import { ProfileRepository } from "./src/data/repositories/ProfileRepository";
-import type { IProfileRepository } from "./src/domain/interfaces/IProfileRepository";
+import { ProfileRepository } from "./core/src/data/repositories/ProfileRepository";
+import type { IProfileRepository } from "./core/src/domain/interfaces/IProfileRepository";
 
 interface ProfileContainer {
   profileRepository: IProfileRepository;

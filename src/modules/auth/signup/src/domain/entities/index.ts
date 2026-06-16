@@ -2,6 +2,8 @@
 // Signup Domain Entities
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { User } from "@modules/auth/core/domain/entities/User";
+
 // ─── Wizard navigation ───────────────────────────────────────────────────────
 
 /**
@@ -277,7 +279,7 @@ export interface SignupResult {
   tenantCode: string | null;
   tenantName: string | null;
   redirectUrl: string | null;
-  userProfile: Record<string, unknown> | null;
+  user: User | null;
 
   // ── mode === "checkout" ──
   /** Stripe-hosted checkout URL — redirect with window.location.href */
@@ -314,7 +316,7 @@ export interface SignupCompleteResult {
   tenantCode: string;
   tenantName: string;
   redirectUrl: string;
-  userProfile: Record<string, unknown> | null;
+  user: User | null;
 }
 
 // ─── Resume / Change-plan ─────────────────────────────────────────────────────

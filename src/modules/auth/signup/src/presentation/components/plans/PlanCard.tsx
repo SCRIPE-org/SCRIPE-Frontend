@@ -7,7 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import type { PublicFeature } from "../../../domain/entities";
 import type { PlanPickerEdition } from "../../viewmodels/usePlanPicker";
-import { ctaKeyForCheckoutMode, formatCurrency } from "../../../data/helpers/planPickerLogic";
+import { ctaKeyForCheckoutMode, formatCurrency } from "../../helpers/planPickerLogic";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PlanCard — one plan, Elevate-compliant. Structurally bug-proof:

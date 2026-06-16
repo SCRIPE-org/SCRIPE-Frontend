@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useAppStore } from "@core/store/useAppStore";
-import { AuthMapper } from "@modules/auth/core/data/mappers/AuthMapper";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { authContainer } from "@modules/auth/di";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -74,7 +73,7 @@ export function useFinalizeViewModel() {
         secureTokenService.setAccessToken(result.accessToken);
 
         const user =
-          AuthMapper.userFromUnknown(result.userProfile) ??
+          result.user ??
           new User({
             id: "",
             username: "user",

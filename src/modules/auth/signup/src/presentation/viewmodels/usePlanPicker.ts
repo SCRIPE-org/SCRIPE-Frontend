@@ -22,16 +22,15 @@ import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
-import { SignupMapper } from "../../data/mappers/SignupMapper";
-import { buildComparisonCategories } from "../../data/helpers/planHelpers";
-import { CURRENCY_TO_COUNTRY } from "../../data/helpers/currencyGeo";
+import { buildComparisonCategories } from "../helpers/planHelpers";
+import { CURRENCY_TO_COUNTRY } from "../helpers/currencyGeo";
 import {
   computeAnnualSavingsPercent,
   isRecommendedEdition,
   derivePriorityKeys,
   deriveBusinessType,
-} from "../../data/helpers/planPickerLogic";
-import type { PlanEdition, ComparisonCategory } from "../../domain/entities";
+} from "../helpers/planPickerLogic";
+import type { PlanEdition, ComparisonCategory, PublicEdition } from "../../domain/entities";
 import type { OnboardingRecommendation } from "../../domain/entities/OnboardingEntities";
 
 // Currencies with hand-set native prices in the seeder; everything else is
@@ -192,7 +191,26 @@ export function usePlanPicker({
 
   const editions: PlanPickerEdition[] = useMemo(() => {
     const mapped = (rawEditions ?? [])
-      .map(SignupMapper.toPlanEditionFromEntity)
+      .map(
+        (entity: PublicEdition): PlanEdition => ({
+          id: entity.id,
+          name: entity.name,
+          tagline: entity.tagline ?? "",
+          tierLevel: entity.tier,
+          category: entity.categoryKey,
+          categoryDisplayName: entity.categoryDisplayName,
+          monthlyPrice: entity.monthlyPrice ?? 0,
+          annualPrice: entity.annualPrice ?? 0,
+          currency: entity.currency,
+          priceDisplay: entity.priceDisplay,
+          trialDays: (entity.trialDays ?? 0) > 0 ? entity.trialDays : null,
+          badge: entity.badge ?? (entity.isRecommended ? "Recommended" : null),
+          topFeatures: entity.topFeatures,
+          allFeatures: entity.allFeatures,
+          checkoutMode: entity.checkoutMode,
+          raw: entity,
+        })
+      )
       .sort((a, b) => a.tierLevel - b.tierLevel);
     return mapped.map((e) => ({
       // Direct compare: recommendedEditionId is the SAME encrypted id as the catalog id.

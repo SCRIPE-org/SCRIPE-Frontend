@@ -15,6 +15,7 @@ import type {
   CommissionDashboard,
   CommissionTrendPoint,
   TopTenantData,
+  TenantTransactionsResult,
 } from "../../domain/entities/ConnectAccount";
 
 export class ConnectRepository implements IConnectRepository {
@@ -156,8 +157,9 @@ export class ConnectRepository implements IConnectRepository {
     type?: string;
     fromDate?: string;
     toDate?: string;
-  }) {
-    return this.service.getMyTransactions(params);
+  }): Promise<TenantTransactionsResult> {
+    const dto = await this.service.getMyTransactions(params);
+    return ConnectMapper.toTransactionsResultEntity(dto);
   }
 
   async syncMyAccount(): Promise<ConnectAccount> {

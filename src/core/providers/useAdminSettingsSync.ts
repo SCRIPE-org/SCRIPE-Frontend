@@ -51,6 +51,15 @@ interface AdminSettingsPayload {
 export function useAdminSettingsSync() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
+  const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
+
+  useEffect(() => {
+    const unsubscribe = secureTokenService.subscribe(() => {
+      setHasToken(secureTokenService.hasToken());
+    });
+    return unsubscribe;
+  }, []);
+
   // ── Smart initial state: CACHE-AWARE ──
   // If localStorage has cached settings from a previous session → render immediately
   // with those cached values (optimistic render, zero shimmer for returning users).
@@ -76,7 +85,7 @@ export function useAdminSettingsSync() {
 
   // ── Load admin settings from server (with deferred flush check) ──
   const loadAdminSettings = useCallback(async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !hasToken) return;
 
     // Pre-flight: if there are NO cached settings (first login or post-logout),
     // show the transition shimmer BEFORE the API call starts. This prevents the
@@ -305,12 +314,12 @@ export function useAdminSettingsSync() {
     };
   }, [isAuthenticated, saveToServer]);
 
-  // ── Initial load on authentication ──
+  // ── Initial load on authentication & token availability ──
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && hasToken) {
       loadAdminSettings();
     }
-  }, [isAuthenticated, loadAdminSettings]);
+  }, [isAuthenticated, hasToken, loadAdminSettings]);
 
   // ── Edge Case 2 & 5: beforeunload flush ──
   useEffect(() => {

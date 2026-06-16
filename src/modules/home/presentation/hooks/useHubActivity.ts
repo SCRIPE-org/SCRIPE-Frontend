@@ -12,25 +12,8 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { getModuleApiService } from "@core/services/api-factory";
-import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints/system.endpoints";
-
-// ── Response types matching backend DTOs ──────────────────────────────────────
-
-export interface HubRecentItem {
-  eventType: string;
-  entityType: string | null;
-  moduleTag: string | null;
-  username: string | null;
-  timestamp: string; // ISO 8601
-}
-
-export interface HubActivitySummary {
-  todayActionCount: number;
-  todayModuleCount: number;
-  yesterdayActionCount: number;
-  recentItems: HubRecentItem[];
-}
+import { homeContainer } from "../../di";
+import type { HubRecentItem } from "../../hub/src/domain/entities/HubActivity";
 
 // ── Derived display data ─────────────────────────────────────────────────────
 
@@ -141,12 +124,10 @@ export interface HubActivityData {
 }
 
 export function useHubActivity(): HubActivityData {
-  const { data, isLoading } = useQuery<HubActivitySummary>({
+  const { hubActivityRepository } = homeContainer;
+  const { data, isLoading } = useQuery({
     queryKey: ["hub-activity-summary"],
-    queryFn: async () => {
-      const api = getModuleApiService("IDENTITY");
-      return api.get<HubActivitySummary>(SYSTEM_ENDPOINTS.AUDIT.HUB_SUMMARY);
-    },
+    queryFn: () => hubActivityRepository.getHubSummary(),
     staleTime: 60_000, // Refresh every minute
     refetchInterval: 120_000, // Auto-refetch every 2 minutes
     retry: 1,

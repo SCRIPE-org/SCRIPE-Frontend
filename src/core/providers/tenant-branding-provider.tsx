@@ -17,6 +17,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useTheme } from "next-themes";
 import { useI18n } from "@core/providers/i18n-provider";
+import { secureTokenService } from "@core/common/secure-token-service";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -94,9 +95,20 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
   const [branding, setBranding] = useState<TenantBrandingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
+
   useEffect(() => {
-    if (!isAuthenticated || !user) {
-      setIsLoading(false);
+    const unsubscribe = secureTokenService.subscribe(() => {
+      setHasToken(secureTokenService.hasToken());
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user || !hasToken) {
+      if (!isAuthenticated || !user) {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -129,7 +141,7 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, user?.tenantId]);
+  }, [isAuthenticated, user?.tenantId, hasToken]);
 
   // Build the context value with fallbacks
   const appName = branding?.companyName ?? branding?.name ?? BRAND.name;

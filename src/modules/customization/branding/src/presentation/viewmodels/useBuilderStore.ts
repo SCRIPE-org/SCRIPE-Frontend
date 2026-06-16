@@ -17,6 +17,8 @@ import type {
   PositionMode,
   AuthPageId,
 } from "../../domain/entities/CanvasComponent";
+import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
+import { TemplateStorageService } from "../../data/services/TemplateStorageService";
 import {
   DEFAULT_CANVAS_COMPONENTS,
   DEFAULT_CANVAS_GRID_ROWS,
@@ -160,6 +162,12 @@ interface BuilderState {
     gridRows: number,
     background: CanvasBackground
   ) => void;
+
+  // Saved templates management
+  savedTemplates: SavedTemplate[];
+  loadSavedTemplates: () => void;
+  saveTemplate: (name: string) => void;
+  deleteTemplate: (id: string) => void;
 }
 
 // ── Helper: Create a snapshot of current canvas state ─────
@@ -217,6 +225,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   canRedo: false,
   _isDragging: false,
   _preInteractionSnapshot: null,
+
+  // Saved templates
+  savedTemplates: [],
 
   // ── Initialize from draft ──
   initialize: (components, gridRows, background, pageComps) => {
@@ -670,5 +681,32 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       selectedComponentId: null,
       zoom: 100,
     });
+  },
+
+  // ── Saved Templates Management ──
+  loadSavedTemplates: () => {
+    set({ savedTemplates: TemplateStorageService.load() });
+  },
+
+  saveTemplate: (name) => {
+    const state = get();
+    const newTemplate: SavedTemplate = {
+      id: `tmpl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      name: name.trim(),
+      components: state.components.map((c) => ({ ...c, props: { ...c.props } })),
+      gridRows: state.canvasGridRows,
+      background: { ...state.canvasBackground },
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...state.savedTemplates, newTemplate];
+    TemplateStorageService.save(updated);
+    set({ savedTemplates: updated });
+  },
+
+  deleteTemplate: (id) => {
+    const state = get();
+    const updated = state.savedTemplates.filter((t) => t.id !== id);
+    TemplateStorageService.save(updated);
+    set({ savedTemplates: updated });
   },
 }));

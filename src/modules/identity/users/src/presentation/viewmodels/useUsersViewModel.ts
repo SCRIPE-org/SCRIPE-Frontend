@@ -13,7 +13,7 @@ import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { UsersEntity } from "../../domain/entities/UsersEntity";
-import type { UpdateUserModel } from "../../data/models/UsersModel";
+import type { UpdateUserRequest } from "../../domain/interfaces/IUsersRepository";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -30,7 +30,7 @@ export function useUsersViewModel() {
 
   // ============ Core CRUD ViewModel ============
   // No create (users self-register). Update + Delete only.
-  const vm = useCrudViewModel<UsersEntity, never, UpdateUserModel>(queryKey, {
+  const vm = useCrudViewModel<UsersEntity, never, UpdateUserRequest>(queryKey, {
     getAll: async (params) => {
       const res = await usersRepository.getAll({
         page: params.page,

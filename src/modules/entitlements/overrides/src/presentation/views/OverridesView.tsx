@@ -53,7 +53,7 @@ interface OverridesViewProps {
 }
 
 export function OverridesView({ tenantId }: OverridesViewProps) {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t } = useI18n();
   const vm = useOverridesViewModel(tenantId);
 

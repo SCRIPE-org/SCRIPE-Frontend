@@ -322,3 +322,119 @@ export interface TopTenantData {
   totalCommission: number;
   transactionCount: number;
 }
+
+// ── Tenant Self-Service Transactions ──
+
+export interface TenantFinancialSummaryData {
+  totalGrossRevenue: number;
+  totalPlatformFees: number;
+  totalNetRevenue: number;
+  totalRefunded: number;
+  totalTransactions: number;
+  refundCount: number;
+  currency: string;
+}
+
+export class TenantFinancialSummary {
+  constructor(public readonly data: TenantFinancialSummaryData) {}
+
+  get totalGrossRevenue() {
+    return this.data.totalGrossRevenue;
+  }
+  get totalPlatformFees() {
+    return this.data.totalPlatformFees;
+  }
+  get totalNetRevenue() {
+    return this.data.totalNetRevenue;
+  }
+  get totalRefunded() {
+    return this.data.totalRefunded;
+  }
+  get totalTransactions() {
+    return this.data.totalTransactions;
+  }
+  get refundCount() {
+    return this.data.refundCount;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+}
+
+export interface TenantTransactionItemData {
+  id: string;
+  type: string;
+  status: string;
+  grossAmount: number;
+  platformFee: number;
+  netAmount: number;
+  currency: string;
+  commissionRate: number;
+  stripePaymentIntentId?: string;
+  refundedAmount?: number;
+  refundedAt?: string;
+  transactionDate: string;
+}
+
+export class TenantTransactionItem {
+  constructor(public readonly data: TenantTransactionItemData) {}
+
+  get id() {
+    return this.data.id;
+  }
+  get type() {
+    return this.data.type;
+  }
+  get status() {
+    return this.data.status;
+  }
+  get grossAmount() {
+    return this.data.grossAmount;
+  }
+  get platformFee() {
+    return this.data.platformFee;
+  }
+  get netAmount() {
+    return this.data.netAmount;
+  }
+  get currency() {
+    return this.data.currency;
+  }
+  get commissionRate() {
+    return this.data.commissionRate;
+  }
+  get stripePaymentIntentId() {
+    return this.data.stripePaymentIntentId;
+  }
+  get refundedAmount() {
+    return this.data.refundedAmount;
+  }
+  get refundedAt() {
+    return this.data.refundedAt;
+  }
+  get transactionDate() {
+    return this.data.transactionDate;
+  }
+
+  get isPayment() {
+    return this.data.type === "Payment";
+  }
+  get isRefund() {
+    return this.data.type === "Refund";
+  }
+  get isPartialRefund() {
+    return this.data.type === "PartialRefund";
+  }
+
+  get ratePercent(): string {
+    return `${(this.data.commissionRate * 100).toFixed(1)}%`;
+  }
+}
+
+export interface TenantTransactionsResult {
+  summary: TenantFinancialSummary;
+  transactions: {
+    items: TenantTransactionItem[];
+    totalCount: number;
+  };
+}

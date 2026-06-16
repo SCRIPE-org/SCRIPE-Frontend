@@ -30,7 +30,11 @@ import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type { IAuthRepository, LoginResult } from "../../domain/interfaces/IAuthRepository";
 import { WorkspaceInfo } from "../../domain/entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
-import { clearAllLocalStorage } from "../utils/auth-storage-cleanup";
+import {
+  clearAllLocalStorage,
+  clearSessionOnLoginMount,
+  clearNavigationCaches,
+} from "../utils/auth-storage-cleanup";
 import { ImpersonationRepository } from "./ImpersonationRepository";
 
 /**
@@ -414,5 +418,13 @@ export class AuthRepository implements IAuthRepository {
     }
 
     throw new Error("Magic link verification failed: no access token in response.");
+  }
+
+  clearSessionOnLoginMount(): void {
+    clearSessionOnLoginMount();
+  }
+
+  clearNavigationCaches(): void {
+    clearNavigationCaches();
   }
 }

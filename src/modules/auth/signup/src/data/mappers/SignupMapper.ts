@@ -42,6 +42,7 @@ import {
   WelcomeContentSchema,
   OnboardingRecommendationSchema,
 } from "../../domain/entities/OnboardingEntities";
+import { AuthMapper } from "@modules/auth/core/data/mappers/AuthMapper";
 import type {
   WelcomeContent,
   OnboardingRecommendation,
@@ -188,7 +189,7 @@ export class SignupMapper {
       tenantCode: dto.tenantCode ?? null,
       tenantName: dto.tenantName ?? null,
       redirectUrl: dto.redirectUrl ?? null,
-      userProfile: dto.userProfile ?? null,
+      user: AuthMapper.userFromUnknown(dto.userProfile),
       checkoutUrl: dto.checkoutUrl ?? null,
       signupRef: dto.signupRef ?? null,
     };
@@ -222,7 +223,7 @@ export class SignupMapper {
       tenantCode: dto.tenantCode,
       tenantName: dto.tenantName,
       redirectUrl: dto.redirectUrl,
-      userProfile: dto.userProfile ?? null,
+      user: AuthMapper.userFromUnknown(dto.userProfile),
     };
   }
 

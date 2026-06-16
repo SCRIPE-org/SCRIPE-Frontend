@@ -38,7 +38,7 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | 
  */
 export function InvoiceListView() {
   // Load billing-scoped locale (billing/locales/) — not the shared entitlements locale
-  useModuleLocales(() => import("../../../../locales"), "billing");
+  useModuleLocales(() => import("../../../../core/locales"), "billing");
 
   const { t } = useI18n();
   const vm = useInvoiceViewModel();

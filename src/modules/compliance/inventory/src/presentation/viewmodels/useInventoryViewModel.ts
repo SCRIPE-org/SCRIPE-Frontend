@@ -6,11 +6,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import type { InventoryItem } from "../../domain/entities/InventoryItem";
 import type {
+  InventoryItem,
   CreateDataInventoryRequest,
   UpdateDataInventoryRequest,
-} from "../../data/models/InventoryModels";
+} from "../../domain/entities/InventoryItem";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";

@@ -47,7 +47,7 @@ interface SubscriptionsViewProps {
 }
 
 export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t, direction } = useI18n();
   const router = useRouter();
   const vm = useSubscriptionsViewModel(tenantId);

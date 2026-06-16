@@ -6,7 +6,18 @@
  */
 
 import type { UsersEntity } from "../entities/UsersEntity";
-import type { UpdateUserModel } from "../../data/models/UsersModel";
+
+export interface UpdateUserRequest {
+  firstName?: string | null;
+  lastName?: string | null;
+  middleName?: string | null;
+  birthDate?: string | null;
+  gender?: number | null;
+  country?: string | null;
+  government?: string | null;
+  city?: string | null;
+  notes?: string | null;
+}
 
 export interface IUsersRepository {
   /** Get paginated list of users */
@@ -16,7 +27,7 @@ export interface IUsersRepository {
   getById(id: string): Promise<UsersEntity>;
 
   /** Update user profile */
-  update(id: string, data: UpdateUserModel): Promise<void>;
+  update(id: string, data: UpdateUserRequest): Promise<void>;
 
   /** Soft delete user */
   delete(id: string): Promise<void>;

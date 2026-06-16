@@ -8,6 +8,7 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
   previousWorkspaceKey: null,
   isInitialLoading: true,
   isWorkspaceSwitching: false,
+  transitionTargetRoute: null,
 
   setActiveWorkspace: (key) =>
     set((state) => {
@@ -26,6 +27,7 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
   setPreviousWorkspace: (key) => set({ previousWorkspaceKey: key }),
   setIsInitialLoading: (loading) => set({ isInitialLoading: loading }),
   setIsWorkspaceSwitching: (loading) => set({ isWorkspaceSwitching: loading }),
+  setTransitionTargetRoute: (route) => set({ transitionTargetRoute: route }),
 
   getActiveRootItem: () => {
     const { activeRootItemId, getActiveRootMenuItems } = get();
@@ -48,6 +50,7 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
       previousWorkspaceKey: null,
       isInitialLoading: true,
       isWorkspaceSwitching: false,
+      transitionTargetRoute: null,
       contextKey: "",
     }),
 });

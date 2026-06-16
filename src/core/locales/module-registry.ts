@@ -13,7 +13,7 @@
  */
 
 // ─── Auth ──────────────────────────────────────────────
-import { en as authEn, ar as authAr } from "@modules/auth/locales";
+import { en as authEn, ar as authAr } from "@modules/auth/core/locales";
 import { en as signinEn, ar as signinAr } from "@modules/auth/signin/locales";
 import { en as signupEn, ar as signupAr } from "@modules/auth/signup/locales";
 
@@ -46,7 +46,7 @@ import {
 } from "@modules/customization/tenant-settings/locales";
 
 // ─── Entitlements ──────────────────────────────────────
-import { en as entitlementsEn, ar as entitlementsAr } from "@modules/entitlements/locales";
+import { en as entitlementsEn, ar as entitlementsAr } from "@modules/entitlements/core/locales";
 import {
   en as onboardingQuestionsEn,
   ar as onboardingQuestionsAr,
@@ -90,17 +90,17 @@ import {
 } from "@modules/entitlements/signup-content/locales";
 
 // ─── Messaging ─────────────────────────────────────────
-import { en as messagingEn, ar as messagingAr } from "@modules/messaging/locales";
+import { en as messagingEn, ar as messagingAr } from "@modules/messaging/core/locales";
 import { en as webhooksEn, ar as webhooksAr } from "@modules/messaging/webhooks/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
 
 // ─── Profile ───────────────────────────────────────────
-import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
+import { en as profileEn, ar as profileAr } from "@modules/profile/core/locales";
 
 // ─── Home ──────────────────────────────────────────────
-import { en as homeEn, ar as homeAr } from "@modules/home/locales";
+import { en as homeEn, ar as homeAr } from "@modules/home/core/locales";
 
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";

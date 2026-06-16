@@ -1,6 +1,8 @@
 import type { RetentionPolicy } from "../entities/RetentionPolicy";
-import type { UpdateRetentionPolicyRequest } from "../entities/RetentionPolicy";
-import type { CreateRetentionPolicyRequest } from "../../data/models/RetentionModels";
+import type {
+  UpdateRetentionPolicyRequest,
+  CreateRetentionPolicyRequest,
+} from "../entities/RetentionPolicy";
 
 export interface IRetentionRepository {
   getAll(): Promise<RetentionPolicy[]>;
