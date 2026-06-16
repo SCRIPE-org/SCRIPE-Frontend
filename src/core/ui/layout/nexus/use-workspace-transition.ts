@@ -18,6 +18,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceActions } from "@core/providers/hooks/useWorkspaceActions";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { appLogger } from "@core/common/logger";
 
 /** How long to wait AFTER the JIT fetch + pathname settle before hiding the loader */
 const SETTLE_MS = 350;
@@ -60,6 +62,7 @@ export function useWorkspaceTransition() {
    * Dismiss the loader once:
    *  - The JIT fetch has finished (isWorkspaceLoading = false)
    *  - The active workspace matches our target
+   *  - The current pathname matches the target transition route
    * Triggered by any of: fetch completion, workspace-key change, or pathname
    * settling after navigation. Merged into ONE effect so there is never more
    * than one timer in flight (two separate effects could race each other).
@@ -70,6 +73,23 @@ export function useWorkspaceTransition() {
     if (isWorkspaceLoading) return;
     if (!targetKey.current) return;
     if (activeWorkspace?.workspaceKey !== targetKey.current) return;
+
+    // Gate loader dismissal on pathname match if transitionTargetRoute is tracked
+    const transitionTargetRoute = useNavigationStore.getState().transitionTargetRoute;
+    if (transitionTargetRoute) {
+      const normPathname = pathname.toLowerCase().replace(/\/+$/, "");
+      const normTarget = transitionTargetRoute.toLowerCase().replace(/\/+$/, "");
+
+      if (normPathname !== normTarget && !normPathname.startsWith(normTarget + "/")) {
+        appLogger.debug(
+          `[useWorkspaceTransition] Pathname (${normPathname}) does not match target (${normTarget}) yet. Keeping loader visible.`
+        );
+        return;
+      }
+
+      // Reached destination! Clear transitionTargetRoute.
+      useNavigationStore.getState().setTransitionTargetRoute(null);
+    }
 
     const elapsed = Date.now() - loaderStartAt.current;
     const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
@@ -83,7 +103,7 @@ export function useWorkspaceTransition() {
     return () => clearSettle();
     // pathname included so navigation completing also triggers the dismiss
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWorkspaceLoading, activeWorkspace?.workspaceKey, pathname]);
+  }, [isWorkspaceLoading, activeWorkspace?.workspaceKey, pathname, loaderState.show]);
 
   // Safety net: if the loader is still visible after 8 seconds, dismiss it.
   // This handles edge-cases where the JIT fetch resolves but the workspace key

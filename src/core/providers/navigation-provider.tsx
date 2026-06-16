@@ -26,7 +26,15 @@
  *  defaultWorkspace) use granular Zustand selectors.
  */
 
-import { createContext, useContext, useCallback, useEffect, useRef, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo,
+  useState,
+} from "react";
 import type React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -35,6 +43,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { appLogger } from "@core/common/logger";
+import { secureTokenService } from "@core/common/secure-token-service";
 
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
@@ -94,7 +103,17 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const userId = useAppStore((s) => s.user?.id ?? "");
   const contextKey = `${tenantId ?? "platform"}:${userId}`;
 
-  const isReady = hasHydrated && isAuthenticated;
+  // Track token availability to coordinate with silent refresh
+  const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
+
+  useEffect(() => {
+    const unsubscribe = secureTokenService.subscribe(() => {
+      setHasToken(secureTokenService.hasToken());
+    });
+    return unsubscribe;
+  }, []);
+
+  const isReady = hasHydrated && isAuthenticated && hasToken;
 
   // ── Cross-context cache invalidation guard ────────────────────────────────
   // If the rehydrated store was for a different user/tenant, reset it first.

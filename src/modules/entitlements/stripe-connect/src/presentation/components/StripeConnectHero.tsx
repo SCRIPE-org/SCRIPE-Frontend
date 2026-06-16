@@ -43,14 +43,14 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
               <h2 className="text-2xl font-bold tracking-tight">
                 {t("entitlements.tenantConnect.heroTitle") || "Start Receiving Payments"}
               </h2>
-              <p className="mx-auto max-w-md text-muted-foreground text-sm leading-relaxed">
+              <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
                 {t("entitlements.tenantConnect.heroDesc") ||
                   "Connect your bank account through Stripe to securely receive automated payouts from your sales. Setup takes just a few minutes."}
               </p>
             </div>
             <Button
               size="lg"
-              className="mt-2 gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:from-violet-700 hover:to-indigo-700 hover:scale-[1.02] active:scale-95"
+              className="mt-2 gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:scale-[1.02] hover:from-violet-700 hover:to-indigo-700 active:scale-95"
               onClick={onOnboard}
               disabled={isOnboarding}
             >
@@ -73,7 +73,7 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
           return (
             <Card
               key={step.key}
-              className="group relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+              className="group relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
             >
               <CardContent className="p-5">
                 <div className="flex items-start gap-3">
@@ -81,7 +81,7 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
                     <Icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       {t("common.step") || "Step"} {i + 1}
                     </p>
                     <p className="mt-1 text-sm font-bold leading-tight">
@@ -101,7 +101,7 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
       {/* Security Note */}
       <div className="flex items-start gap-3 rounded-lg border bg-muted/40 px-4 py-3.5 text-sm transition-colors hover:bg-muted/60">
         <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-violet-600 dark:text-violet-400" />
-        <p className="leading-relaxed text-muted-foreground text-xs">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           {t("entitlements.tenantConnect.securityNote") ||
             "Your information is securely processed by Stripe. SCRIPE never sees or stores your bank account details."}
         </p>

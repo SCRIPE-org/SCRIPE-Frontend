@@ -66,7 +66,7 @@ export function StripeAccountKpis({
   return (
     <div className="space-y-6">
       {/* Success Banner */}
-      <Card className="overflow-hidden ring-1 ring-emerald-500/20 shadow-sm transition-shadow hover:shadow-md">
+      <Card className="overflow-hidden shadow-sm ring-1 ring-emerald-500/20 transition-shadow hover:shadow-md">
         <div className="bg-gradient-to-r from-emerald-500/10 to-emerald-600/5 px-6 py-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -97,7 +97,7 @@ export function StripeAccountKpis({
               <Button
                 onClick={onOpenDashboard}
                 disabled={isOpeningDashboard}
-                className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/15 hover:from-violet-700 hover:to-indigo-700 hover:scale-[1.01] active:scale-95 transition-all"
+                className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/15 transition-all hover:scale-[1.01] hover:from-violet-700 hover:to-indigo-700 active:scale-95"
               >
                 {isOpeningDashboard ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
@@ -147,12 +147,12 @@ export function StripeAccountKpis({
 
       {/* Account Details */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-muted/20">
+        <CardHeader className="border-b bg-muted/20 pb-4">
           <CardTitle className="text-base font-bold tracking-tight text-foreground/95">
             {t("entitlements.tenantConnect.accountDetails") || "Account Details"}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
+        <CardContent className="space-y-6 p-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <DetailRow
               icon={<CreditCard className="h-4 w-4" />}
@@ -213,14 +213,18 @@ function KpiCard({
   sublabel?: string;
 }) {
   return (
-    <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+    <Card className="transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
       <CardContent className="p-5">
         <div className="mb-2 flex items-center gap-2 text-muted-foreground/90">
           {icon}
           <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
         </div>
-        <p className="text-2xl font-extrabold tracking-tight tabular-nums text-foreground">{value}</p>
-        {sublabel && <p className="mt-1 text-xs text-muted-foreground/80 font-medium">{sublabel}</p>}
+        <p className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
+          {value}
+        </p>
+        {sublabel && (
+          <p className="mt-1 text-xs font-medium text-muted-foreground/80">{sublabel}</p>
+        )}
       </CardContent>
     </Card>
   );
@@ -239,7 +243,9 @@ function DetailRow({
     <div className="flex items-center gap-3 rounded-lg bg-muted/40 p-3.5 transition-colors hover:bg-muted/60">
       <div className="flex-shrink-0 text-muted-foreground/80">{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-muted-foreground/90 uppercase tracking-wider">{label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/90">
+          {label}
+        </p>
         <div className="mt-1 truncate text-sm font-bold text-foreground/90">{value}</div>
       </div>
     </div>
@@ -266,7 +272,9 @@ function CapabilityBadge({
         )}
         <span
           className={`text-sm font-bold ${
-            enabled ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+            enabled
+              ? "text-emerald-600 dark:text-emerald-400"
+              : "text-amber-600 dark:text-amber-400"
           }`}
         >
           {enabled ? t("common.active") || "Active" : t("common.pending") || "Pending"}

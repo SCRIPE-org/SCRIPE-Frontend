@@ -15,6 +15,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 interface NexusWorkspaceLoaderProps {
   show: boolean;
@@ -214,21 +215,9 @@ export function NexusWorkspaceLoader({
           />
         </div>
 
-        {/* Dots */}
-        <div style={{ display: "flex", gap: 6 }}>
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: "50%",
-                background: accent,
-                opacity: 0.4,
-                animation: `nexus-loader-bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-              }}
-            />
-          ))}
+        {/* Branded loading animation */}
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size="sm" showText={false} className="min-h-0" />
         </div>
       </div>
 

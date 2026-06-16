@@ -89,7 +89,9 @@ export function StripeOnboardingStepper({
   return (
     <div className="space-y-6">
       {/* Status Header Card */}
-      <Card className={`overflow-hidden ring-1 ${config.ringClass} transition-shadow hover:shadow-sm`}>
+      <Card
+        className={`overflow-hidden ring-1 ${config.ringClass} transition-shadow hover:shadow-sm`}
+      >
         <div className={`bg-gradient-to-r ${config.bgGradient} px-6 py-5`}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -100,7 +102,7 @@ export function StripeOnboardingStepper({
                 <h2 className="text-lg font-semibold tracking-tight">
                   {t("entitlements.tenantConnect.setupInProgress") || "Account Setup In Progress"}
                 </h2>
-                <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
+                <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
                   {t("entitlements.tenantConnect.setupInProgressDesc") ||
                     "Complete the remaining steps to start accepting payments."}
                 </p>
@@ -119,7 +121,7 @@ export function StripeOnboardingStepper({
 
       {/* Stepper Progress */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-muted/20">
+        <CardHeader className="border-b bg-muted/20 pb-4">
           <CardTitle className="text-sm font-bold tracking-tight text-foreground/95">
             {t("entitlements.tenantConnect.setupProgress") || "Setup Progress"}
           </CardTitle>
@@ -130,12 +132,12 @@ export function StripeOnboardingStepper({
               const Icon = step.icon;
               const done = stepStatus[i];
               return (
-                <div key={step.key} className="flex items-center gap-4 group">
+                <div key={step.key} className="group flex items-center gap-4">
                   <div
                     className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
                       done
-                        ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800"
-                        : "bg-muted/50 border-muted-foreground/10"
+                        ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/20"
+                        : "border-muted-foreground/10 bg-muted/50"
                     }`}
                   >
                     {done ? (
@@ -191,7 +193,7 @@ export function StripeOnboardingStepper({
         <Button
           onClick={onOnboard}
           disabled={isOnboarding}
-          className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/10 hover:from-violet-700 hover:to-indigo-700 transition-all"
+          className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/10 transition-all hover:from-violet-700 hover:to-indigo-700"
         >
           {isOnboarding ? (
             <RefreshCw className="h-4 w-4 animate-spin" />

@@ -38,7 +38,7 @@ export function TenantStripeConnectView() {
   if (vm.isError) {
     return (
       <div className="mx-auto max-w-4xl p-4 sm:p-6">
-        <Card className="border-red-200 dark:border-red-800 shadow-sm">
+        <Card className="border-red-200 shadow-sm dark:border-red-800">
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-16 text-center">
             <div className="rounded-2xl bg-red-50 p-5 dark:bg-red-900/20">
               <AlertTriangle className="h-10 w-10 text-red-500" />
@@ -47,7 +47,7 @@ export function TenantStripeConnectView() {
               <h2 className="text-xl font-bold">
                 {t("entitlements.tenantConnect.errorTitle") || "Unable to Load Account"}
               </h2>
-              <p className="mx-auto max-w-md text-muted-foreground text-sm">
+              <p className="mx-auto max-w-md text-sm text-muted-foreground">
                 {t("entitlements.tenantConnect.errorDesc") ||
                   "We couldn't load your payment account information. You may not have permission to access this page, or there was a network issue."}
               </p>
@@ -85,9 +85,9 @@ export function TenantStripeConnectView() {
         {vm.account?.isComplete && (
           <Badge
             variant="outline"
-            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 px-3 py-1 text-xs font-semibold"
+            className="border-emerald-200 bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
           >
-            <CheckCircle2 className="mr-1 h-3 w-3 inline" />
+            <CheckCircle2 className="mr-1 inline h-3 w-3" />
             {t("entitlements.tenantConnect.verified") || "Verified"}
           </Badge>
         )}
@@ -95,10 +95,7 @@ export function TenantStripeConnectView() {
 
       {/* State-Based Content */}
       {!vm.account ? (
-        <StripeConnectHero 
-          onOnboard={vm.onboard} 
-          isOnboarding={vm.isOnboarding} 
-        />
+        <StripeConnectHero onOnboard={vm.onboard} isOnboarding={vm.isOnboarding} />
       ) : vm.account.isComplete ? (
         <div className="space-y-6">
           <StripeAccountKpis

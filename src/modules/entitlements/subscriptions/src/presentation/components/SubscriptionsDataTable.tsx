@@ -41,19 +41,29 @@ interface SubscriptionsDataTableProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  Active: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
-  Trialing: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 border-blue-200 dark:border-blue-800",
-  Suspended: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 border-amber-200 dark:border-amber-800",
-  Canceled: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 border-red-200 dark:border-red-800",
-  Expired: "bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-400 border-gray-200 dark:border-gray-800",
-  GracePeriod: "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+  Active:
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
+  Trialing:
+    "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  Suspended:
+    "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+  Canceled:
+    "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 border-red-200 dark:border-red-800",
+  Expired:
+    "bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-400 border-gray-200 dark:border-gray-800",
+  GracePeriod:
+    "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400 border-orange-200 dark:border-orange-800",
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  Monthly: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400 border-violet-200 dark:border-violet-800",
-  Yearly: "bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
-  Lifetime: "bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-400 border-pink-200 dark:border-pink-800",
-  Trial: "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
+  Monthly:
+    "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400 border-violet-200 dark:border-violet-800",
+  Yearly:
+    "bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
+  Lifetime:
+    "bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-400 border-pink-200 dark:border-pink-800",
+  Trial:
+    "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
 };
 
 export function SubscriptionsDataTable({
@@ -104,7 +114,9 @@ export function SubscriptionsDataTable({
                   size="sm"
                   onClick={() => setStatusFilter(status)}
                   className={`h-7 px-3 text-[11px] font-bold ${
-                    isActive ? "shadow-sm bg-background" : "text-muted-foreground hover:text-foreground"
+                    isActive
+                      ? "bg-background shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {statusLabels[status] || status}
@@ -131,7 +143,9 @@ export function SubscriptionsDataTable({
                   size="sm"
                   onClick={() => setTypeFilter(type)}
                   className={`h-7 px-3 text-[11px] font-bold ${
-                    isActive ? "shadow-sm bg-background" : "text-muted-foreground hover:text-foreground"
+                    isActive
+                      ? "bg-background shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {typeLabels[type] || type}
@@ -148,24 +162,47 @@ export function SubscriptionsDataTable({
           <div className="overflow-x-auto rounded-lg">
             <Table>
               <TableHeader className="bg-muted/10">
-                <TableRow className="hover:bg-transparent border-b">
-                  <TableHead className="w-[50px] font-bold text-xs uppercase tracking-wider text-start">#</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("common.tenant") || "Tenant"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("entSubscriptions.edition") || "Edition"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("common.status") || "Status"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("entSubscriptions.type") || "Type"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-right">{t("entSubscriptions.amount") || "Amount"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("tenant.promoCode") || "Promo"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-right">{t("entSubscriptions.mrrContribution") || "MRR (USD)"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("entSubscriptions.startDate") || "Start Date"}</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider text-start">{t("entSubscriptions.endDate") || "End Date"}</TableHead>
+                <TableRow className="border-b hover:bg-transparent">
+                  <TableHead className="w-[50px] text-start text-xs font-bold uppercase tracking-wider">
+                    #
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("common.tenant") || "Tenant"}
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("entSubscriptions.edition") || "Edition"}
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("common.status") || "Status"}
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("entSubscriptions.type") || "Type"}
+                  </TableHead>
+                  <TableHead className="text-right text-xs font-bold uppercase tracking-wider">
+                    {t("entSubscriptions.amount") || "Amount"}
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("tenant.promoCode") || "Promo"}
+                  </TableHead>
+                  <TableHead className="text-right text-xs font-bold uppercase tracking-wider">
+                    {t("entSubscriptions.mrrContribution") || "MRR (USD)"}
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("entSubscriptions.startDate") || "Start Date"}
+                  </TableHead>
+                  <TableHead className="text-start text-xs font-bold uppercase tracking-wider">
+                    {t("entSubscriptions.endDate") || "End Date"}
+                  </TableHead>
                   <TableHead className="w-[60px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y">
                 {subscriptions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="h-28 text-center text-sm font-semibold text-muted-foreground/80">
+                    <TableCell
+                      colSpan={11}
+                      className="h-28 text-center text-sm font-semibold text-muted-foreground/80"
+                    >
                       {t("common.noResults") || "No subscriptions found"}
                     </TableCell>
                   </TableRow>
@@ -186,15 +223,19 @@ export function SubscriptionsDataTable({
                         className="cursor-pointer transition-colors hover:bg-muted/30"
                         onClick={() => router.push(`/tenants/${sub.tenantId}`)}
                       >
-                        <TableCell className="tabular-nums text-xs font-semibold text-muted-foreground/80 text-start">
+                        <TableCell className="text-start text-xs font-semibold tabular-nums text-muted-foreground/80">
                           {idx + 1}
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm font-bold text-foreground/90">{sub.tenantName}</span>
+                          <span className="text-sm font-bold text-foreground/90">
+                            {sub.tenantName}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-foreground/90">{sub.editionName}</span>
+                            <span className="text-sm font-bold text-foreground/90">
+                              {sub.editionName}
+                            </span>
                             {sub.isDowngraded && (
                               <span className="text-[10px] font-bold text-amber-600">
                                 {t("tenant.downgrade") || "Downgraded"}
@@ -222,7 +263,7 @@ export function SubscriptionsDataTable({
                             {t(`tenant.typeLabel.${sub.type.toLowerCase()}`) || sub.type}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-extrabold tabular-nums text-right text-xs text-foreground/90">
+                        <TableCell className="text-right text-xs font-extrabold tabular-nums text-foreground/90">
                           {formatDisplay(sub.totalAmount, sub.currency)}
                         </TableCell>
                         <TableCell className="text-xs">
@@ -230,7 +271,7 @@ export function SubscriptionsDataTable({
                             <div className="flex flex-col gap-0.5">
                               <Badge
                                 variant="outline"
-                                className="w-fit bg-emerald-100 text-[10px] font-extrabold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900"
+                                className="w-fit border-emerald-200 bg-emerald-100 text-[10px] font-extrabold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-400"
                               >
                                 🏷️ {sub.appliedPromoCode}
                               </Badge>
@@ -244,18 +285,18 @@ export function SubscriptionsDataTable({
                             <span className="text-muted-foreground/40">—</span>
                           )}
                         </TableCell>
-                        <TableCell className="tabular-nums font-bold text-right text-xs text-foreground/80">
+                        <TableCell className="text-right text-xs font-bold tabular-nums text-foreground/80">
                           {formatDisplay(mrr, "USD")}
                           <span className="text-[10px] text-muted-foreground/70">/mo</span>
                         </TableCell>
-                        <TableCell className="text-xs font-semibold tabular-nums text-muted-foreground text-start">
+                        <TableCell className="text-start text-xs font-semibold tabular-nums text-muted-foreground">
                           {new Date(sub.startDate).toLocaleDateString(undefined, {
                             year: "numeric",
                             month: "short",
                             day: "numeric",
                           })}
                         </TableCell>
-                        <TableCell className="text-xs font-semibold tabular-nums text-muted-foreground text-start">
+                        <TableCell className="text-start text-xs font-semibold tabular-nums text-muted-foreground">
                           {sub.endDate
                             ? new Date(sub.endDate).toLocaleDateString(undefined, {
                                 year: "numeric",
@@ -291,7 +332,8 @@ export function SubscriptionsDataTable({
       {/* Footer Metrics */}
       <div className="flex items-center justify-between text-xs font-bold text-muted-foreground/95">
         <span>
-          {subscriptions.length} {t("common.of") || "of"} {totalCount} {t("common.total") || "total"}
+          {subscriptions.length} {t("common.of") || "of"} {totalCount}{" "}
+          {t("common.total") || "total"}
         </span>
         <div className="flex items-center gap-4">
           {totalPromoDiscount > 0 && (

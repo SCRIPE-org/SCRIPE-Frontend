@@ -19,14 +19,7 @@ export function useWorkspaceActions() {
     async (workspaceKey: string, navigateTo = false) => {
       appLogger.debug(`[WorkspaceActions] Switching to workspace: ${workspaceKey}`);
 
-      // Bug 1 guard: setActiveWorkspace in the store now no-ops when the key
-      // matches the current activeWorkspaceKey (prevents previousWorkspaceKey
-      // from being overwritten with itself and breaking the Back button).
-      useNavigationStore.getState().setActiveWorkspace(workspaceKey);
-      useNavigationStore.getState().setActiveRootItem(null);
-
-      // Bug 5 fix: wrap JIT fetch in try/catch so a network or server error
-      // never leaves the workspace transition loader stuck in an infinite spin.
+      // Defer store update until menu is fetched (JIT) so sidebar does not render blank/default menu.
       if (!useNavigationStore.getState().hasWorkspaceData(workspaceKey)) {
         try {
           await fetchWorkspaceMenu(workspaceKey);
@@ -36,6 +29,10 @@ export function useWorkspaceActions() {
           appLogger.error(`[WorkspaceActions] JIT fetch failed for "${workspaceKey}":`, err);
         }
       }
+
+      // Update store key after menu data is successfully loaded or failed.
+      useNavigationStore.getState().setActiveWorkspace(workspaceKey);
+      useNavigationStore.getState().setActiveRootItem(null);
 
       if (navigateTo) {
         const freshState = useNavigationStore.getState();
@@ -57,29 +54,16 @@ export function useWorkspaceActions() {
           ? (wsGroup?.platformHomeRoute ?? wsGroup?.homeRoute)
           : wsGroup?.homeRoute;
 
-        if (contextRoute) {
-          appLogger.debug(
-            `[WorkspaceActions] Navigating to ${isPlatformContext ? "platform" : "tenant"} homeRoute: ${contextRoute}`
-          );
-          router.replace(contextRoute);
-          return;
-        }
-
-        // Fallback: scan the JIT-fetched menu tree for the first real page
         const wsData = freshState.workspaces.get(workspaceKey) ?? null;
         const firstHref = wsData ? firstPageOf(wsData) : null;
-
-        if (firstHref) {
-          appLogger.debug(`[WorkspaceActions] Navigating to first menu page: ${firstHref}`);
-          router.replace(firstHref);
-          return;
-        }
-
-        // Last-resort fallback via workspace group menu items
         const groupFirstHref = wsGroup ? firstPageOf(wsGroup) : null;
-        if (groupFirstHref) {
-          appLogger.debug(`[WorkspaceActions] Navigating to group first page: ${groupFirstHref}`);
-          router.replace(groupFirstHref);
+
+        const targetRoute = contextRoute || firstHref || groupFirstHref;
+
+        if (targetRoute) {
+          appLogger.debug(`[WorkspaceActions] Navigating to targetRoute: ${targetRoute}`);
+          useNavigationStore.getState().setTransitionTargetRoute(targetRoute);
+          router.replace(targetRoute);
         }
       }
     },

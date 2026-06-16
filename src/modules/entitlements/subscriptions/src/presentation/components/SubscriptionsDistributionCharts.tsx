@@ -51,10 +51,11 @@ export function SubscriptionsDistributionCharts({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md text-popover-foreground">
+        <div className="rounded-lg border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md">
           <p className="font-bold">{data.name}</p>
-          <p className="mt-0.5 text-muted-foreground font-medium">
-            {t("common.count") || "Count"}: <span className="text-foreground font-bold">{data.value}</span> ({data.percentage}%)
+          <p className="mt-0.5 font-medium text-muted-foreground">
+            {t("common.count") || "Count"}:{" "}
+            <span className="font-bold text-foreground">{data.value}</span> ({data.percentage}%)
           </p>
         </div>
       );
@@ -67,11 +68,11 @@ export function SubscriptionsDistributionCharts({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md text-popover-foreground">
+        <div className="rounded-lg border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md">
           <p className="font-bold">{data.edition}</p>
-          <p className="mt-0.5 text-muted-foreground font-medium">
+          <p className="mt-0.5 font-medium text-muted-foreground">
             {t("entSubscriptions.amount") || "Revenue"}:{" "}
-            <span className="text-foreground font-bold">{formatDisplay(data.revenue, "USD")}</span>
+            <span className="font-bold text-foreground">{formatDisplay(data.revenue, "USD")}</span>
           </p>
         </div>
       );
@@ -97,14 +98,14 @@ export function SubscriptionsDistributionCharts({
     <div className="grid gap-4 md:grid-cols-3">
       {/* Status Distribution */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-3 border-b bg-muted/10">
+        <CardHeader className="border-b bg-muted/10 pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
             <Users className="h-4.5 w-4.5 text-muted-foreground" />
             {t("dashboard.chart.statusDist") || "Status Distribution"}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="flex flex-col items-center gap-6 sm:flex-row">
             <div className="relative h-[120px] w-[120px] shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -124,15 +125,22 @@ export function SubscriptionsDistributionCharts({
                   <Tooltip content={renderPieTooltip} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-lg font-extrabold tracking-tight text-foreground">{totalCount}</span>
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("common.total") || "Total"}</span>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-lg font-extrabold tracking-tight text-foreground">
+                  {totalCount}
+                </span>
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                  {t("common.total") || "Total"}
+                </span>
               </div>
             </div>
-            
-            <div className="flex-1 w-full space-y-2.5">
+
+            <div className="w-full flex-1 space-y-2.5">
               {statusDistribution.map((item) => (
-                <div key={item.status} className="flex items-center justify-between text-xs font-semibold">
+                <div
+                  key={item.status}
+                  className="flex items-center justify-between text-xs font-semibold"
+                >
                   <div className="flex items-center gap-2">
                     <div
                       className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -157,14 +165,14 @@ export function SubscriptionsDistributionCharts({
 
       {/* Type Distribution */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-3 border-b bg-muted/10">
+        <CardHeader className="border-b bg-muted/10 pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
             <CreditCard className="h-4.5 w-4.5 text-muted-foreground" />
             {t("dashboard.chart.typeDist") || "Type Distribution"}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="flex flex-col items-center gap-6 sm:flex-row">
             <div className="relative h-[120px] w-[120px] shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -184,15 +192,22 @@ export function SubscriptionsDistributionCharts({
                   <Tooltip content={renderPieTooltip} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-lg font-extrabold tracking-tight text-foreground">{totalCount}</span>
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">{t("common.total") || "Total"}</span>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-lg font-extrabold tracking-tight text-foreground">
+                  {totalCount}
+                </span>
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                  {t("common.total") || "Total"}
+                </span>
               </div>
             </div>
-            
-            <div className="flex-1 w-full space-y-2.5">
+
+            <div className="w-full flex-1 space-y-2.5">
               {typeDistribution.map((item) => (
-                <div key={item.type} className="flex items-center justify-between text-xs font-semibold">
+                <div
+                  key={item.type}
+                  className="flex items-center justify-between text-xs font-semibold"
+                >
                   <div className="flex items-center gap-2">
                     <div
                       className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -217,7 +232,7 @@ export function SubscriptionsDistributionCharts({
 
       {/* Revenue by Edition */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-3 border-b bg-muted/10">
+        <CardHeader className="border-b bg-muted/10 pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
             <BarChart3 className="h-4.5 w-4.5 text-muted-foreground" />
             {t("dashboard.chart.revenueByEdition") || "Revenue by Edition"}
@@ -245,7 +260,7 @@ export function SubscriptionsDistributionCharts({
                     tickLine={false}
                     axisLine={false}
                   />
-                  <Tooltip content={renderBarTooltip} cursor={{ fill: 'rgba(0, 0, 0, 0.04)' }} />
+                  <Tooltip content={renderBarTooltip} cursor={{ fill: "rgba(0, 0, 0, 0.04)" }} />
                   <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
                     {revenueByEdition.slice(0, 5).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />

@@ -17,10 +17,14 @@ interface RenewalItem {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  Monthly: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400 border-violet-200 dark:border-violet-800",
-  Yearly: "bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
-  Lifetime: "bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-400 border-pink-200 dark:border-pink-800",
-  Trial: "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
+  Monthly:
+    "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400 border-violet-200 dark:border-violet-800",
+  Yearly:
+    "bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
+  Lifetime:
+    "bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-400 border-pink-200 dark:border-pink-800",
+  Trial:
+    "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
 };
 
 interface UpcomingRenewalsTimelineProps {
@@ -39,14 +43,14 @@ export function UpcomingRenewalsTimeline({
   if (renewals.length === 0) return null;
 
   return (
-    <Card className="border-amber-200/50 dark:border-amber-800/30 shadow-sm">
-      <CardHeader className="pb-3 border-b bg-muted/10">
+    <Card className="border-amber-200/50 shadow-sm dark:border-amber-800/30">
+      <CardHeader className="border-b bg-muted/10 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
           <CalendarClock className="h-4.5 w-4.5 text-amber-500" />
           {t("entSubscriptions.upcomingRenewals") || "Upcoming Renewals"}
           <Badge
             variant="secondary"
-            className="ml-auto bg-amber-100 text-[10px] font-extrabold tracking-wide text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-900"
+            className="ml-auto border border-amber-200 bg-amber-100 text-[10px] font-extrabold tracking-wide text-amber-700 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-400"
           >
             {renewals.length}
           </Badge>
@@ -57,12 +61,12 @@ export function UpcomingRenewalsTimeline({
           {renewals.slice(0, 5).map((sub) => (
             <div
               key={sub.id}
-              className="flex cursor-pointer items-center justify-between px-6 py-4.5 transition-colors hover:bg-muted/40"
+              className="py-4.5 flex cursor-pointer items-center justify-between px-6 transition-colors hover:bg-muted/40"
               onClick={() => router.push(`/tenants/${sub.tenantId}`)}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`h-2.5 w-2.5 rounded-full shrink-0 ${
+                  className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                     sub.daysLeft <= 7
                       ? "animate-pulse bg-red-500"
                       : sub.daysLeft <= 14
@@ -73,25 +77,27 @@ export function UpcomingRenewalsTimeline({
                 <div className="min-w-0">
                   <span className="text-sm font-bold text-foreground/90">{sub.tenantName}</span>
                   <div className="mt-1 flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground font-semibold">{sub.editionName}</span>
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      {sub.editionName}
+                    </span>
                     <Badge
                       variant="secondary"
-                      className={`${TYPE_COLORS[sub.type] || ""} h-4 px-1.5 text-[9px] font-extrabold border`}
+                      className={`${TYPE_COLORS[sub.type] || ""} h-4 border px-1.5 text-[9px] font-extrabold`}
                     >
                       {t(`tenant.typeLabel.${sub.type.toLowerCase()}`) || sub.type}
                     </Badge>
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="text-sm font-extrabold tabular-nums text-foreground">
                     {formatDisplay(sub.totalAmount, sub.currency)}
                   </div>
                   <div
-                    className={`text-xs font-semibold tabular-nums mt-0.5 ${
-                      sub.daysLeft <= 7 ? "text-red-500 font-bold" : "text-muted-foreground/80"
+                    className={`mt-0.5 text-xs font-semibold tabular-nums ${
+                      sub.daysLeft <= 7 ? "font-bold text-red-500" : "text-muted-foreground/80"
                     }`}
                   >
                     {sub.daysLeft === 1

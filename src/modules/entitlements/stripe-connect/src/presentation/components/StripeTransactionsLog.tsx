@@ -33,10 +33,14 @@ const TXN_TYPE_OPTIONS = [
 ] as const;
 
 const TXN_STATUS_STYLES: Record<string, string> = {
-  Pending: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
-  Collected: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
-  Refunded: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
-  PartiallyRefunded: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+  Pending:
+    "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+  Collected:
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
+  Refunded:
+    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
+  PartiallyRefunded:
+    "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800",
 };
 
 interface StripeTransactionsLogProps {
@@ -126,7 +130,7 @@ export function StripeTransactionsLog({
 
       {/* Transactions Table */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-3 border-b bg-muted/10">
+        <CardHeader className="border-b bg-muted/10 pb-3">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <CardTitle className="text-base font-bold tracking-tight text-foreground/95">
@@ -152,7 +156,11 @@ export function StripeTransactionsLog({
                   </SelectTrigger>
                   <SelectContent>
                     {TXN_STATUS_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-xs font-semibold">
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="text-xs font-semibold"
+                      >
                         {opt.label}
                       </SelectItem>
                     ))}
@@ -174,7 +182,11 @@ export function StripeTransactionsLog({
                   </SelectTrigger>
                   <SelectContent>
                     {TXN_TYPE_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-xs font-semibold">
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="text-xs font-semibold"
+                      >
                         {opt.label}
                       </SelectItem>
                     ))}
@@ -186,7 +198,7 @@ export function StripeTransactionsLog({
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 space-y-3">
+            <div className="space-y-3 p-6">
               {[...Array(5)].map((_, i) => (
                 <Skeleton key={i} className="h-12 w-full rounded-lg" />
               ))}
@@ -201,16 +213,16 @@ export function StripeTransactionsLog({
               </p>
             </div>
           ) : (
-            <div className="p-6 pt-4 space-y-4">
+            <div className="space-y-4 p-6 pt-4">
               {/* Table */}
               <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b bg-muted/20 text-left text-xs font-semibold text-muted-foreground/90 uppercase tracking-wider">
-                      <th className="px-4 py-3 font-semibold text-start">
+                    <tr className="border-b bg-muted/20 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground/90">
+                      <th className="px-4 py-3 text-start font-semibold">
                         {t("entitlements.tenantConnect.txn.col.date") || "Date"}
                       </th>
-                      <th className="px-4 py-3 font-semibold text-start">
+                      <th className="px-4 py-3 text-start font-semibold">
                         {t("entitlements.tenantConnect.txn.col.type") || "Type"}
                       </th>
                       <th className="px-4 py-3 text-right font-semibold">
@@ -222,7 +234,7 @@ export function StripeTransactionsLog({
                       <th className="px-4 py-3 text-right font-semibold">
                         {t("entitlements.tenantConnect.txn.col.net") || "Net"}
                       </th>
-                      <th className="px-4 py-3 font-semibold text-start">
+                      <th className="px-4 py-3 text-start font-semibold">
                         {t("entitlements.tenantConnect.txn.col.status") || "Status"}
                       </th>
                       <th className="px-4 py-3 text-right font-semibold">
@@ -232,10 +244,7 @@ export function StripeTransactionsLog({
                   </thead>
                   <tbody className="divide-y divide-border">
                     {txnItems.map((txn) => (
-                      <tr
-                        key={txn.id}
-                        className="transition-colors hover:bg-muted/30"
-                      >
+                      <tr key={txn.id} className="transition-colors hover:bg-muted/30">
                         <td className="whitespace-nowrap px-4 py-3.5 text-xs font-semibold tabular-nums text-foreground/80">
                           {formatDate(txn.transactionDate)}
                         </td>
@@ -286,7 +295,7 @@ export function StripeTransactionsLog({
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-between border-t pt-4">
-                  <p className="text-xs text-muted-foreground/85 font-semibold">
+                  <p className="text-xs font-semibold text-muted-foreground/85">
                     {t("entitlements.tenantConnect.txn.showing") || "Showing"}{" "}
                     <span className="font-bold text-foreground/80">
                       {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)}
@@ -347,8 +356,12 @@ function KpiCard({
           {icon}
           <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
         </div>
-        <p className="text-lg font-extrabold tracking-tight tabular-nums text-foreground">{value}</p>
-        {sublabel && <p className="mt-0.5 text-xs font-semibold text-muted-foreground/75">{sublabel}</p>}
+        <p className="text-lg font-extrabold tabular-nums tracking-tight text-foreground">
+          {value}
+        </p>
+        {sublabel && (
+          <p className="mt-0.5 text-xs font-semibold text-muted-foreground/75">{sublabel}</p>
+        )}
       </CardContent>
     </Card>
   );
