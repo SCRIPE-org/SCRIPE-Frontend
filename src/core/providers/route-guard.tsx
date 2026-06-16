@@ -122,6 +122,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
+  const [checkTrigger, setCheckTrigger] = useState(0);
   const { t } = useI18n();
   const [isMounted] = useState(() => typeof window !== "undefined");
 
@@ -252,6 +253,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
               setAuth(user, user.permissions || [], []);
               isRefreshing.current = false;
               setIsRestoringSession(false);
+              setCheckTrigger((prev) => prev + 1);
               return;
             }
           }
@@ -323,6 +325,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     setAuth,
     setSubscriptionInfo,
     hasRouteAccess,
+    checkTrigger,
     // NOTE: mustChangePassword intentionally NOT here — read via getState()
     // NOTE: hasRouteAccess is stable (useCallback with [] deps)
   ]);
