@@ -4,6 +4,7 @@ import type {
   SubdomainCheckResult,
   SignupResult,
   SignupStatusResult,
+  SignupCheckoutStatusResult,
   SignupCompleteResult,
   PublicEdition,
   PublicCategory,
@@ -62,8 +63,8 @@ export interface ContactSalesPayload {
 export interface ISignupRepository {
   /** Detect visitor country and return recommended currency + all FX rates. */
   getPricingContext(): Promise<PricingContext>;
-  getCategories(currency: string, lang: string): Promise<PublicCategory[]>;
-  getEditions(categoryKey: string | null, currency: string, lang: string): Promise<PublicEdition[]>;
+  getCategories(currency: string | undefined, lang: string): Promise<PublicCategory[]>;
+  getEditions(categoryKey: string | null, currency: string | undefined, lang: string): Promise<PublicEdition[]>;
   sendOtp(email: string): Promise<SignupOtpResult>;
   verifyOtp(email: string, code: string): Promise<SignupVerificationResult>;
   checkSubdomain(subdomain: string): Promise<SubdomainCheckResult>;
@@ -71,6 +72,8 @@ export interface ISignupRepository {
   register(data: RegisterPayload): Promise<SignupResult>;
   /** Finalize-page polling (3s → 10s cadence). */
   getStatus(ref: string): Promise<SignupStatusResult>;
+  /** Direct checkout completion polling by Stripe Checkout session ID. */
+  getCheckoutStatus(sessionId: string): Promise<SignupCheckoutStatusResult>;
   /** Atomic single-use consumption — issues JWTs once the webhook activated the signup. */
   completeSession(signupRef: string): Promise<SignupCompleteResult>;
   /** "Start fresh" — abandons the pending signup and releases the subdomain. */

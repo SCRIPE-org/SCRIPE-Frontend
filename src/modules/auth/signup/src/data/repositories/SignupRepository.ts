@@ -21,6 +21,7 @@ import type {
   SubdomainCheckResult,
   SignupResult,
   SignupStatusResult,
+  SignupCheckoutStatusResult,
   SignupCompleteResult,
   PublicEdition,
   PublicCategory,
@@ -48,14 +49,14 @@ export class SignupRepository implements ISignupRepository {
     return SignupMapper.toPricingContext(dto);
   }
 
-  async getCategories(currency: string, lang: string): Promise<PublicCategory[]> {
+  async getCategories(currency: string | undefined, lang: string): Promise<PublicCategory[]> {
     const dtos = await this.service.getCategories(currency, lang);
     return dtos.map(SignupMapper.toCategory);
   }
 
   async getEditions(
     categoryKey: string | null,
-    currency: string,
+    currency: string | undefined,
     lang: string
   ): Promise<PublicEdition[]> {
     const dtos = await this.service.getEditions(categoryKey, currency, lang);
@@ -89,6 +90,11 @@ export class SignupRepository implements ISignupRepository {
   async getStatus(ref: string): Promise<SignupStatusResult> {
     const dto = await this.service.getStatus(ref);
     return SignupMapper.toStatusResult(dto);
+  }
+
+  async getCheckoutStatus(sessionId: string): Promise<SignupCheckoutStatusResult> {
+    const dto = await this.service.getCheckoutStatus(sessionId);
+    return SignupMapper.toCheckoutStatusResult(dto);
   }
 
   async completeSession(signupRef: string): Promise<SignupCompleteResult> {

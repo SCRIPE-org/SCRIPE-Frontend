@@ -16,6 +16,7 @@ import type {
   SubdomainCheckDto,
   RegisterDto,
   SignupStatusDto,
+  SignupCheckoutStatusDto,
   CompleteSessionDto,
   PricingContextDto,
   ResumeSessionDto,
@@ -35,11 +36,11 @@ export interface ISignupService {
   /** Detect visitor country → recommended currency + live FX rates. */
   getPricingContext(): Promise<PricingContextDto>;
 
-  getCategories(currency: string, lang: string): Promise<PublicCategoryDto[]>;
+  getCategories(currency: string | undefined, lang: string): Promise<PublicCategoryDto[]>;
 
   getEditions(
     categoryKey: string | null,
-    currency: string,
+    currency: string | undefined,
     lang: string
   ): Promise<PublicEditionDto[]>;
 
@@ -68,6 +69,8 @@ export interface ISignupService {
 
   /** Finalize-page polling. */
   getStatus(ref: string): Promise<SignupStatusDto>;
+
+  getCheckoutStatus(sessionId: string): Promise<SignupCheckoutStatusDto>;
 
   /** Atomic single-use token consumption — issues JWTs. */
   completeSession(signupRef: string): Promise<CompleteSessionDto>;
