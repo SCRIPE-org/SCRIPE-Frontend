@@ -64,7 +64,11 @@ export interface ISignupRepository {
   /** Detect visitor country and return recommended currency + all FX rates. */
   getPricingContext(): Promise<PricingContext>;
   getCategories(currency: string | undefined, lang: string): Promise<PublicCategory[]>;
-  getEditions(categoryKey: string | null, currency: string | undefined, lang: string): Promise<PublicEdition[]>;
+  getEditions(
+    categoryKey: string | null,
+    currency: string | undefined,
+    lang: string
+  ): Promise<PublicEdition[]>;
   sendOtp(email: string): Promise<SignupOtpResult>;
   verifyOtp(email: string, code: string): Promise<SignupVerificationResult>;
   checkSubdomain(subdomain: string): Promise<SubdomainCheckResult>;

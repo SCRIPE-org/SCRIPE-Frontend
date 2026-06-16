@@ -74,6 +74,7 @@ export const AUTH_ENDPOINTS = {
        * Backend: SignupCheckoutController → CreateSignupCheckoutSessionCommand
        */
       CHECKOUT: `${V1}/auth/signup/checkout`,
+      CHECKOUT_STATUS: `${V1}/auth/signup/checkout/status`,
     },
     // ── Passkey / WebAuthn ────────────────────────────────────
     PASSKEY: {

@@ -9,55 +9,19 @@ import type {
   CreateCustomerLogoParams,
   UpdateCustomerLogoParams,
 } from "../../domain/interfaces/ISignupContentRepository";
+import type { ISignupContentService } from "../../domain/interfaces/ISignupContentService";
 import type { ContentMode } from "../../domain/entities/SignupContent";
+import type { AdminSignupContentModel } from "../models/SignupContentModels";
 
-// Raw API response shape
-export interface AdminSignupContentDto {
-  contentMode: ContentMode;
-  welcomeContent: {
-    id: string;
-    headlineEn: string;
-    headlineAr: string;
-    subcopyEn: string;
-    subcopyAr: string;
-    ctaLabelEn: string;
-    ctaLabelAr: string;
-    trustedByCount: number;
-    trustedByLabelEn: string;
-    trustedByLabelAr: string;
-  } | null;
-  trustMarks: Array<{
-    id: string;
-    key: string;
-    kind: string;
-    labelEn: string;
-    labelAr: string;
-    iconKey: string | null;
-    assetUrl: string | null;
-    isRealData: boolean;
-    sortOrder: number;
-    isActive: boolean;
-  }>;
-  customerLogos: Array<{
-    id: string;
-    key: string;
-    name: string;
-    assetUrl: string;
-    isRealData: boolean;
-    sortOrder: number;
-    isActive: boolean;
-  }>;
-}
-
-export class SignupContentService {
+export class SignupContentService implements ISignupContentService {
   constructor(private readonly api: IApiService) {}
 
-  async getAdminContent(): Promise<AdminSignupContentDto> {
-    return this.api.get<AdminSignupContentDto>(API_ENDPOINTS.ENTITLEMENTS.SIGNUP_CONTENT.GET);
+  async getAdminContent(): Promise<AdminSignupContentModel> {
+    return this.api.get<AdminSignupContentModel>(API_ENDPOINTS.ENTITLEMENTS.SIGNUP_CONTENT.GET);
   }
 
   async setMode(mode: ContentMode): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.SIGNUP_CONTENT.SET_MODE, { contentMode: mode });
+    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.SIGNUP_CONTENT.SET_MODE, { mode });
   }
 
   async updateWelcome(data: UpdateWelcomeParams): Promise<void> {

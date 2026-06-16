@@ -12,6 +12,7 @@ import {
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { useI18n } from "@core/providers/i18n-provider";
 import { ChevronUp, ChevronDown, Pencil, Trash2, Plus, X, Check } from "lucide-react";
 import type { AnswerOptionData } from "../../domain/entities/OnboardingQuestion";
 import type { AnswerOptionRequest } from "../../domain/entities/OnboardingQuestionRequests";
@@ -24,6 +25,9 @@ interface OptionsEditorDialogProps {
 }
 
 type EditorMode = { kind: "idle" } | { kind: "add" } | { kind: "edit"; option: AnswerOptionData };
+
+const SIGNAL_WEIGHT_MIN = 0;
+const SIGNAL_WEIGHT_MAX = 100;
 
 const emptyForm = (): AnswerOptionRequest => ({
   value: "",
@@ -42,16 +46,20 @@ export function OptionsEditorDialog({
   questionLabel,
 }: OptionsEditorDialogProps) {
   const vm = useOptionsEditorViewModel(open ? questionId : null);
+  const { t } = useI18n();
   const [mode, setMode] = useState<EditorMode>({ kind: "idle" });
   const [form, setForm] = useState<AnswerOptionRequest>(emptyForm());
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const isBusy = vm.isLoading || vm.isMutating;
 
   const startAdd = () => {
+    if (isBusy) return;
     setForm({ ...emptyForm(), sortOrder: (vm.options.length + 1) * 10 });
     setMode({ kind: "add" });
   };
 
   const startEdit = (option: AnswerOptionData) => {
+    if (isBusy) return;
     setForm({
       value: option.value,
       labelEn: option.labelEn,
@@ -71,6 +79,7 @@ export function OptionsEditorDialog({
   };
 
   const handleSave = async () => {
+    if (isBusy) return;
     const payload: AnswerOptionRequest = {
       ...form,
       sublabelEn: form.sublabelEn || undefined,
@@ -86,19 +95,20 @@ export function OptionsEditorDialog({
   };
 
   const handleDelete = async (id: string) => {
+    if (isBusy) return;
     await vm.deleteOption(id);
     setPendingDelete(null);
   };
 
   const handleMoveUp = async (idx: number) => {
-    if (idx === 0) return;
+    if (idx === 0 || isBusy) return;
     const ids = vm.options.map((o) => o.id);
     [ids[idx - 1], ids[idx]] = [ids[idx], ids[idx - 1]];
     await vm.reorderOptions(ids);
   };
 
   const handleMoveDown = async (idx: number) => {
-    if (idx === vm.options.length - 1) return;
+    if (idx === vm.options.length - 1 || isBusy) return;
     const ids = vm.options.map((o) => o.id);
     [ids[idx], ids[idx + 1]] = [ids[idx + 1], ids[idx]];
     await vm.reorderOptions(ids);
@@ -117,6 +127,9 @@ export function OptionsEditorDialog({
           }))
         }
         className="h-8 border-zinc-700 bg-zinc-900 text-sm text-white placeholder:text-zinc-600"
+        min={f === "signalWeight" ? SIGNAL_WEIGHT_MIN : undefined}
+        max={f === "signalWeight" ? SIGNAL_WEIGHT_MAX : undefined}
+        disabled={isBusy}
       />
     </div>
   );
@@ -124,12 +137,15 @@ export function OptionsEditorDialog({
   const isSaving = vm.isCreating || vm.isUpdating;
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+    <Dialog open={open} onOpenChange={(o) => !o && !isBusy && onClose()}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-zinc-800 bg-zinc-950">
         <DialogHeader>
-          <DialogTitle className="text-white">Answer Options</DialogTitle>
+          <DialogTitle className="text-white">
+            {t("entitlements.onboarding.questions.options.title")}
+          </DialogTitle>
           <DialogDescription className="text-zinc-400">
-            Managing options for: <span className="font-medium text-zinc-200">{questionLabel}</span>
+            {t("entitlements.onboarding.questions.options.description")}{" "}
+            <span className="font-medium text-zinc-200">{questionLabel}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +159,9 @@ export function OptionsEditorDialog({
               />
             ))
           ) : vm.options.length === 0 && mode.kind === "idle" ? (
-            <p className="py-6 text-center text-sm text-zinc-600">No options yet. Add one below.</p>
+            <p className="py-6 text-center text-sm text-zinc-600">
+              {t("entitlements.onboarding.questions.options.empty")}
+            </p>
           ) : (
             vm.options.map((opt, idx) => {
               const isEditing = mode.kind === "edit" && mode.option.id === opt.id;
@@ -163,63 +181,80 @@ export function OptionsEditorDialog({
 
                     <div className="flex shrink-0 items-center gap-1">
                       {/* Reorder */}
-                      <button
+                      <Button
                         onClick={() => handleMoveUp(idx)}
-                        disabled={idx === 0 || vm.isReordering}
-                        className="rounded p-1 text-zinc-600 transition-colors hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-30"
-                        aria-label="Move up"
+                        disabled={idx === 0 || isBusy}
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-30"
+                        aria-label={t("entitlements.onboarding.questions.options.moveUp")}
                       >
                         <ChevronUp className="h-3.5 w-3.5" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleMoveDown(idx)}
-                        disabled={idx === vm.options.length - 1 || vm.isReordering}
-                        className="rounded p-1 text-zinc-600 transition-colors hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-30"
-                        aria-label="Move down"
+                        disabled={idx === vm.options.length - 1 || isBusy}
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-30"
+                        aria-label={t("entitlements.onboarding.questions.options.moveDown")}
                       >
                         <ChevronDown className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
 
                       {/* Edit */}
-                      <button
+                      <Button
                         onClick={() => (isEditing ? cancelForm() : startEdit(opt))}
-                        className="rounded p-1 text-zinc-600 transition-colors hover:bg-zinc-800 hover:text-zinc-300"
-                        aria-label="Edit option"
+                        disabled={isBusy}
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300"
+                        aria-label={t("entitlements.onboarding.questions.options.edit")}
                       >
                         {isEditing ? (
                           <X className="h-3.5 w-3.5" />
                         ) : (
                           <Pencil className="h-3.5 w-3.5" />
                         )}
-                      </button>
+                      </Button>
 
                       {/* Delete */}
                       {isConfirmDelete ? (
                         <div className="flex items-center gap-1">
-                          <button
+                          <Button
                             onClick={() => handleDelete(opt.id)}
-                            disabled={vm.isDeleting}
-                            className="rounded p-1 text-red-400 transition-colors hover:bg-red-500/10"
-                            aria-label="Confirm delete"
+                            disabled={isBusy}
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-red-400 hover:bg-red-500/10"
+                            aria-label={t(
+                              "entitlements.onboarding.questions.options.confirmDelete"
+                            )}
                           >
                             <Check className="h-3.5 w-3.5" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => setPendingDelete(null)}
-                            className="rounded p-1 text-zinc-500 transition-colors hover:bg-zinc-800"
-                            aria-label="Cancel delete"
+                            disabled={isBusy}
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-zinc-500 hover:bg-zinc-800"
+                            aria-label={t("entitlements.onboarding.questions.options.cancelDelete")}
                           >
                             <X className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </div>
                       ) : (
-                        <button
+                        <Button
                           onClick={() => setPendingDelete(opt.id)}
-                          className="rounded p-1 text-red-500/50 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                          aria-label="Delete option"
+                          disabled={isBusy}
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+                          aria-label={t("entitlements.onboarding.questions.options.delete")}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -244,7 +279,9 @@ export function OptionsEditorDialog({
         {/* Add form */}
         {mode.kind === "add" && (
           <div className="mt-2 rounded-md border border-emerald-500/30 bg-zinc-900/80 p-3">
-            <p className="mb-3 text-xs font-medium text-emerald-400">New Option</p>
+            <p className="mb-3 text-xs font-medium text-emerald-400">
+              {t("entitlements.onboarding.questions.options.new")}
+            </p>
             <OptionForm
               field={field}
               onSave={handleSave}
@@ -260,10 +297,11 @@ export function OptionsEditorDialog({
             <Button
               onClick={startAdd}
               size="sm"
+              disabled={isBusy}
               className="h-8 border border-dashed border-emerald-500/50 bg-transparent px-3 text-xs text-emerald-400 hover:border-emerald-400 hover:bg-emerald-500/10"
             >
               <Plus className="mr-1.5 h-3.5 w-3.5" />
-              Add Option
+              {t("entitlements.onboarding.questions.options.add")}
             </Button>
           ) : (
             <div />
@@ -272,9 +310,10 @@ export function OptionsEditorDialog({
             onClick={onClose}
             variant="ghost"
             size="sm"
+            disabled={isBusy}
             className="h-8 px-3 text-xs text-zinc-400 hover:text-white"
           >
-            Close
+            {t("entitlements.onboarding.questions.options.close")}
           </Button>
         </div>
       </DialogContent>
@@ -292,17 +331,23 @@ interface OptionFormProps {
 }
 
 function OptionForm({ field, onSave, onCancel, isSaving }: OptionFormProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3">
-        {field("value", "Value (unique key)")}
-        {field("labelEn", "Label (English)")}
-        {field("labelAr", "Label (Arabic)")}
-        {field("sublabelEn", "Sub-label EN (optional)")}
-        {field("sublabelAr", "Sub-label AR (optional)")}
-        {field("iconKey", "Icon key (optional)")}
-        {field("sortOrder", "Sort order", "number")}
-        {field("signalWeight", "Signal weight", "number")}
+        {field("value", t("entitlements.onboarding.questions.options.value"))}
+        {field("labelEn", t("entitlements.onboarding.questions.options.labelEn"))}
+        {field("labelAr", t("entitlements.onboarding.questions.options.labelAr"))}
+        {field("sublabelEn", t("entitlements.onboarding.questions.options.sublabelEn"))}
+        {field("sublabelAr", t("entitlements.onboarding.questions.options.sublabelAr"))}
+        {field("iconKey", t("entitlements.onboarding.questions.options.iconKey"))}
+        {field("sortOrder", t("entitlements.onboarding.questions.options.sortOrder"), "number")}
+        {field(
+          "signalWeight",
+          t("entitlements.onboarding.questions.options.signalWeight"),
+          "number"
+        )}
       </div>
       <div className="flex items-center justify-end gap-2">
         <Button
@@ -312,7 +357,7 @@ function OptionForm({ field, onSave, onCancel, isSaving }: OptionFormProps) {
           className="h-7 px-3 text-xs text-zinc-300 hover:text-white"
           disabled={isSaving}
         >
-          Cancel
+          {t("entitlements.onboarding.questions.options.cancel")}
         </Button>
         <Button
           onClick={onSave}
@@ -320,7 +365,9 @@ function OptionForm({ field, onSave, onCancel, isSaving }: OptionFormProps) {
           disabled={isSaving}
           className="h-7 bg-indigo-600 px-3 text-xs text-white hover:bg-indigo-500"
         >
-          {isSaving ? "Saving…" : "Save"}
+          {isSaving
+            ? t("entitlements.onboarding.questions.options.saving")
+            : t("entitlements.onboarding.questions.options.save")}
         </Button>
       </div>
     </div>

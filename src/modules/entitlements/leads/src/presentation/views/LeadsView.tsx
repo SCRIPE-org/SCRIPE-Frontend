@@ -50,11 +50,21 @@ const STATUS_DOTS: Record<LeadStatus, string> = {
 // ── Main view ─────────────────────────────────────────────────────────────────
 
 type ViewMode = "table" | "kanban";
+const VIEW_MODE_STORAGE_KEY = "scripe.leads.viewMode";
 
 export function LeadsView() {
   const vm = useLeadsViewModel();
   const { t } = useI18n();
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
+  const [viewMode, setViewModeState] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") return "table";
+    const stored = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    return stored === "kanban" || stored === "table" ? stored : "table";
+  });
+
+  const setViewMode = (mode: ViewMode) => {
+    setViewModeState(mode);
+    window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
+  };
 
   const leads = vm.leads;
   const isAnyBulkPending = vm.isBulkClosing || vm.isBulkDeleting;
@@ -180,20 +190,24 @@ export function LeadsView() {
           />
           {/* View toggle */}
           <div className="flex items-center rounded-md border border-zinc-700 bg-zinc-900 p-0.5">
-            <button
+            <Button
               onClick={() => setViewMode("table")}
-              className={`rounded px-2 py-1 transition-colors ${viewMode === "table" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
-              aria-label="Table view"
+              variant="ghost"
+              size="icon"
+              className={`h-7 w-8 transition-colors ${viewMode === "table" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+              aria-label={t("leads.actions.tableView")}
             >
               <Table2 className="h-3.5 w-3.5" />
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setViewMode("kanban")}
-              className={`rounded px-2 py-1 transition-colors ${viewMode === "kanban" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
-              aria-label="Kanban view"
+              variant="ghost"
+              size="icon"
+              className={`h-7 w-8 transition-colors ${viewMode === "kanban" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+              aria-label={t("leads.actions.kanbanView")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
 
           <Button
@@ -248,6 +262,8 @@ export function LeadsView() {
           leads={leads}
           isLoading={vm.isLoading}
           onOpenDrawer={vm.handleOpenDrawer}
+          onMoveLead={vm.handleUpdateStatus}
+          isMoving={vm.isUpdatingStatus}
         />
       ) : (
         <GenericTable

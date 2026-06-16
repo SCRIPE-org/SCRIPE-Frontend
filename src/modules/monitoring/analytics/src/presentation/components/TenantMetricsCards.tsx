@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Button } from "@core/ui/button";
 import { Building2, Activity, Users, BarChart3 } from "lucide-react";
+import { cn } from "@core/common/utils";
 
 interface MetricsData {
   totalTenants: number;
@@ -24,6 +25,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  cardClasses?: string;
 }
 
 const METRIC_CONFIG = [
@@ -62,6 +64,7 @@ export const TenantMetricsCards = memo(function TenantMetricsCards({
   isLoading,
   error,
   onRetry,
+  cardClasses,
 }: Props) {
   const { t } = useI18n();
 
@@ -106,7 +109,10 @@ export const TenantMetricsCards = memo(function TenantMetricsCards({
         const value = data?.[metric.key] ?? 0;
 
         return (
-          <Card key={metric.key} className="group transition-shadow hover:shadow-md">
+          <Card
+            key={metric.key}
+            className={cn("group transition-shadow hover:shadow-md", cardClasses)}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t(metric.labelKey)}

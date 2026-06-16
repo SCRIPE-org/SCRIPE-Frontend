@@ -3,7 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import type { LeadStatus } from "../../domain/entities/PlatformLead";
+import type {
+  LeadActivity,
+  LeadStatus,
+  PlatformLead,
+  PlatformLeadListItem,
+} from "../../domain/entities/PlatformLead";
 import type {
   CreateLeadParams,
   ConvertLeadParams,
@@ -113,8 +118,43 @@ export function useLeadsViewModel() {
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status, notes }: { id: string; status: LeadStatus; notes?: string }) =>
       leadsRepository.updateStatus({ id, status, notes }),
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["leads", "list"] });
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.detail(id) });
+
+      const previousLists = queryClient.getQueriesData<{ items: PlatformLeadListItem[] }>({
+        queryKey: ["leads", "list"],
+      });
+      const previousDetail = queryClient.getQueryData<PlatformLead>(QUERY_KEYS.detail(id));
+
+      queryClient.setQueriesData<{ items: PlatformLeadListItem[] }>(
+        { queryKey: ["leads", "list"] },
+        (old) =>
+          old
+            ? {
+                ...old,
+                items: old.items.map((lead) => (lead.id === id ? lead.copyWith({ status }) : lead)),
+              }
+            : old
+      );
+
+      if (previousDetail) {
+        queryClient.setQueryData(QUERY_KEYS.detail(id), previousDetail.copyWith({ status }));
+      }
+
+      return { previousLists, previousDetail, id };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+    onError: (_error, _variables, context) => {
+      context?.previousLists.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
+      if (context?.previousDetail) {
+        queryClient.setQueryData(QUERY_KEYS.detail(context.id), context.previousDetail);
+      }
+      toast({ title: t("leads.actions.statusUpdateError"), variant: "destructive" });
     },
   });
 
@@ -175,6 +215,27 @@ export function useLeadsViewModel() {
   // ── Add Note Mutation ─────────────────────────────────────────────────────
   const addNoteMutation = useMutation({
     mutationFn: ({ id, note }: { id: string; note: string }) => leadsRepository.addNote(id, note),
+    onMutate: async ({ id, note }) => {
+      const activityKey = QUERY_KEYS.activity(id);
+      await queryClient.cancelQueries({ queryKey: activityKey });
+      const previousActivity = queryClient.getQueryData<LeadActivity[]>(activityKey);
+      const optimisticActivity: LeadActivity = {
+        id: `optimistic-${Date.now()}`,
+        leadId: id,
+        type: "NoteAdded",
+        summary: "Note added",
+        note,
+        actorName: t("leads.activity.system"),
+        occurredAt: new Date().toISOString(),
+      };
+
+      queryClient.setQueryData<LeadActivity[]>(activityKey, (old = []) => [
+        optimisticActivity,
+        ...old,
+      ]);
+
+      return { previousActivity, id };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads", "activity"] });
       if (selectedLeadId) {
@@ -182,7 +243,10 @@ export function useLeadsViewModel() {
       }
       toast({ title: t("leads.note.added") });
     },
-    onError: () => {
+    onError: (_error, _variables, context) => {
+      if (context) {
+        queryClient.setQueryData(QUERY_KEYS.activity(context.id), context.previousActivity);
+      }
       toast({ title: t("leads.note.error"), variant: "destructive" });
     },
   });

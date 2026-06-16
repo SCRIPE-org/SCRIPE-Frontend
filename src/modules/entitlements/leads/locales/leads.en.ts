@@ -235,6 +235,9 @@ export const en = {
       convert: "Convert to Tenant",
       assign: "Assign",
       viewActivity: "Activity",
+      statusUpdateError: "Could not update lead status. Refresh and try again.",
+      tableView: "Table view",
+      kanbanView: "Kanban view",
     },
 
     bulk: {

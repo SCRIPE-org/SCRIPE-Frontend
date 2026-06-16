@@ -20,6 +20,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  cardClasses?: string;
 }
 
 export const BlockedIPsTable = memo(function BlockedIPsTable({
@@ -27,11 +28,12 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({
   isLoading,
   error,
   onRetry,
+  cardClasses,
 }: Props) {
   const { t } = useI18n();
 
   return (
-    <Card>
+    <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-orange-500" aria-hidden="true" />

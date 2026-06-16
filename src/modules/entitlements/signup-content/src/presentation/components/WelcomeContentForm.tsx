@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
@@ -27,25 +27,25 @@ const EMPTY: UpdateWelcomeParams = {
   trustedByLabelAr: "",
 };
 
+function toWelcomeForm(welcome: WelcomeContent | null): UpdateWelcomeParams {
+  if (!welcome) return EMPTY;
+
+  return {
+    headlineEn: welcome.headlineEn,
+    headlineAr: welcome.headlineAr,
+    subcopyEn: welcome.subcopyEn,
+    subcopyAr: welcome.subcopyAr,
+    ctaLabelEn: welcome.ctaLabelEn,
+    ctaLabelAr: welcome.ctaLabelAr,
+    trustedByCount: welcome.trustedByCount,
+    trustedByLabelEn: welcome.trustedByLabelEn,
+    trustedByLabelAr: welcome.trustedByLabelAr,
+  };
+}
+
 export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContentFormProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<UpdateWelcomeParams>(EMPTY);
-
-  useEffect(() => {
-    if (welcome) {
-      setForm({
-        headlineEn: welcome.headlineEn,
-        headlineAr: welcome.headlineAr,
-        subcopyEn: welcome.subcopyEn,
-        subcopyAr: welcome.subcopyAr,
-        ctaLabelEn: welcome.ctaLabelEn,
-        ctaLabelAr: welcome.ctaLabelAr,
-        trustedByCount: welcome.trustedByCount,
-        trustedByLabelEn: welcome.trustedByLabelEn,
-        trustedByLabelAr: welcome.trustedByLabelAr,
-      });
-    }
-  }, [welcome]);
+  const [form, setForm] = useState<UpdateWelcomeParams>(() => toWelcomeForm(welcome));
 
   const set = (field: keyof UpdateWelcomeParams, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));

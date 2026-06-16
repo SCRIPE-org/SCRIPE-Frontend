@@ -518,6 +518,13 @@ export const en = {
       opening: "Opening your workspace…",
       successTitle: "Your workspace is ready!",
       redirecting: "Taking you to your dashboard…",
+      directSuccessTitle: "Payment confirmed",
+      directSuccessSubtitle:
+        "Your workspace has been provisioned. Check your email for the secure setup link.",
+      reviewRequiredTitle: "Payment received — review needed",
+      reviewRequiredSubtitle:
+        "We captured the payment but could not finish activation automatically. Support can reconcile it using the reference below.",
+      supportReference: "Support reference: {{reference}}",
       failed: "Signup didn't complete. Your card was not charged.",
       expired: "This link has expired.",
       startAgain: "Start a new signup — you were not charged",

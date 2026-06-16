@@ -136,26 +136,38 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
     }
   }, [hubUrl]);
 
-  // Auto-connect on auth, disconnect on logout/unmount
+  // Auto-connect on auth or token change, disconnect on logout/unmount
   useEffect(() => {
     if (isDocsRoute) return; // Skip SignalR on docs routes
-    if (isAuthenticated) {
-      setTimeout(() => connect(), 0);
-    } else {
-      // User logged out — tear down connection
-      connectionRef.current?.stop();
-      connectionRef.current = null;
-      setTimeout(() => {
-        setConnection(null);
-        setConnectionState("disconnected");
-      }, 0);
-    }
+
+    const checkAndConnect = () => {
+      if (isAuthenticated && secureTokenService.hasToken()) {
+        setTimeout(() => connect(), 0);
+      } else if (!isAuthenticated) {
+        // User logged out — tear down connection
+        connectionRef.current?.stop();
+        connectionRef.current = null;
+        setTimeout(() => {
+          setConnection(null);
+          setConnectionState("disconnected");
+        }, 0);
+      }
+    };
+
+    // Run check initially
+    checkAndConnect();
+
+    // Subscribe to access token updates to connect immediately when token is resolved
+    const unsubscribe = secureTokenService.subscribe(() => {
+      checkAndConnect();
+    });
 
     return () => {
+      unsubscribe();
       connectionRef.current?.stop();
       connectionRef.current = null;
     };
-  }, [isAuthenticated, isDocsRoute]);
+  }, [isAuthenticated, isDocsRoute, connect]);
 
   // Memoize context value to prevent unnecessary child re-renders
   const contextValue = useMemo(

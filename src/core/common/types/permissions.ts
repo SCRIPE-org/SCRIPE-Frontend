@@ -279,6 +279,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Platform Leads / CRM (Phase 5)
   "/entitlements/leads": [SYSTEM_PERMISSIONS.LEADS_VIEW],
+  "/entitlements/onboarding/questions": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
+  "/entitlements/signup-content": [SYSTEM_PERMISSIONS.SIGNUP_CONTENT_VIEW],
 
   // Compliance Module
   "/compliance": [SYSTEM_PERMISSIONS.COMPLIANCE_DASHBOARD_VIEW],

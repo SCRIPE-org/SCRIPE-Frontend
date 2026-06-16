@@ -152,7 +152,7 @@ export function OnboardingQuestionsCatalogView({
       ),
     }),
     // setOptionsTarget is stable — intentionally omitted from deps
-     
+
     [t, language]
   );
 

@@ -8,13 +8,16 @@
  */
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useSecurityDashboardViewModel } from "../viewmodels/useSecurityDashboardViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
-import { Shield, FileDown } from "lucide-react";
+import { Shield, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useDashboardTheme } from "@modules/monitoring/dashboard/src/presentation/hooks/useDashboardTheme";
+import { DashboardStudioPanel } from "@modules/monitoring/dashboard/src/presentation/components/DashboardStudioPanel";
 
 // Lazy-load heavy sections (below-the-fold)
 const FailedLoginsHeatmap = dynamic(
@@ -41,6 +44,11 @@ export function SecurityDashboardView() {
   const vm = useSecurityDashboardViewModel();
   const { t } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);
+  const pathname = usePathname();
+  const isStandalone = pathname === "/security";
+
+  const theme = useDashboardTheme();
+  const { cardClasses } = theme;
 
   return (
     <div className="space-y-6">
@@ -53,10 +61,28 @@ export function SecurityDashboardView() {
           </h1>
           <p className="text-muted-foreground">{t("security.subtitle")}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setExportOpen(true)} className="gap-1.5">
-          <FileDown className="h-4 w-4" />
-          {t("export.button")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setExportOpen(true)}
+            className="gap-1.5"
+          >
+            <FileDown className="h-4 w-4" />
+            {t("export.button")}
+          </Button>
+          {isStandalone && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => theme.setIsStudioOpen(true)}
+              className="gap-1.5"
+            >
+              <Settings2 className="h-4 w-4" />
+              {t("dashboard.studio.openButton") || "Customize"}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Threat Summary Cards */}
@@ -65,6 +91,7 @@ export function SecurityDashboardView() {
         isLoading={vm.threats.isLoading}
         error={vm.threats.error}
         onRetry={() => vm.threats.refetch()}
+        cardClasses={cardClasses}
       />
 
       {/* Charts + Timeline Row */}
@@ -74,12 +101,14 @@ export function SecurityDashboardView() {
           isLoading={vm.failedLogins.isLoading}
           error={vm.failedLogins.error}
           onRetry={() => vm.failedLogins.refetch()}
+          cardClasses={cardClasses}
         />
         <SecurityTimeline
           data={vm.timeline.data ?? []}
           isLoading={vm.timeline.isLoading}
           error={vm.timeline.error}
           onRetry={() => vm.timeline.refetch()}
+          cardClasses={cardClasses}
         />
       </div>
 
@@ -89,6 +118,7 @@ export function SecurityDashboardView() {
         isLoading={vm.blockedIPs.isLoading}
         error={vm.blockedIPs.error}
         onRetry={() => vm.blockedIPs.refetch()}
+        cardClasses={cardClasses}
       />
 
       {/* Export Dialog */}
@@ -99,6 +129,21 @@ export function SecurityDashboardView() {
         titleKey="export.security.title"
         descriptionKey="export.security.description"
       />
+
+      {/* Dashboard Studio Panel (Standalone only) */}
+      {isStandalone && (
+        <DashboardStudioPanel
+          open={theme.isStudioOpen}
+          onClose={() => theme.setIsStudioOpen(false)}
+          draft={theme.draft}
+          onUpdateNested={theme.updateNested}
+          onSave={theme.saveDraft}
+          onDiscard={theme.discardDraft}
+          onReset={theme.resetToDefault}
+          isSaving={theme.isSaving}
+          onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
+        />
+      )}
     </div>
   );
 }

@@ -8,13 +8,16 @@
  */
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useTenantAnalyticsViewModel } from "../viewmodels/useTenantAnalyticsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { TenantMetricsCards } from "../components/TenantMetricsCards";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
-import { BarChart3, FileDown } from "lucide-react";
+import { BarChart3, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useDashboardTheme } from "@modules/monitoring/dashboard/src/presentation/hooks/useDashboardTheme";
+import { DashboardStudioPanel } from "@modules/monitoring/dashboard/src/presentation/components/DashboardStudioPanel";
 
 // Lazy-load chart components (below-the-fold)
 const AdminDistributionPie = dynamic(
@@ -38,6 +41,11 @@ export function TenantAnalyticsView() {
   const vm = useTenantAnalyticsViewModel();
   const { t } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);
+  const pathname = usePathname();
+  const isStandalone = pathname === "/analytics";
+
+  const theme = useDashboardTheme();
+  const { cardClasses } = theme;
 
   return (
     <div className="space-y-6">
@@ -50,10 +58,28 @@ export function TenantAnalyticsView() {
           </h1>
           <p className="text-muted-foreground">{t("tenantAnalytics.subtitle")}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setExportOpen(true)} className="gap-1.5">
-          <FileDown className="h-4 w-4" />
-          {t("export.button")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setExportOpen(true)}
+            className="gap-1.5"
+          >
+            <FileDown className="h-4 w-4" />
+            {t("export.button")}
+          </Button>
+          {isStandalone && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => theme.setIsStudioOpen(true)}
+              className="gap-1.5"
+            >
+              <Settings2 className="h-4 w-4" />
+              {t("dashboard.studio.openButton") || "Customize"}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -62,6 +88,7 @@ export function TenantAnalyticsView() {
         isLoading={vm.metrics.isLoading}
         error={vm.metrics.error}
         onRetry={() => vm.metrics.refetch()}
+        cardClasses={cardClasses}
       />
 
       {/* Charts Row */}
@@ -71,12 +98,14 @@ export function TenantAnalyticsView() {
           isLoading={vm.distribution.isLoading}
           error={vm.distribution.error}
           onRetry={() => vm.distribution.refetch()}
+          cardClasses={cardClasses}
         />
         <LoginComparisonChart
           data={vm.comparison.data ?? []}
           isLoading={vm.comparison.isLoading}
           error={vm.comparison.error}
           onRetry={() => vm.comparison.refetch()}
+          cardClasses={cardClasses}
         />
       </div>
 
@@ -88,6 +117,21 @@ export function TenantAnalyticsView() {
         titleKey="export.analytics.title"
         descriptionKey="export.analytics.description"
       />
+
+      {/* Dashboard Studio Panel (Standalone only) */}
+      {isStandalone && (
+        <DashboardStudioPanel
+          open={theme.isStudioOpen}
+          onClose={() => theme.setIsStudioOpen(false)}
+          draft={theme.draft}
+          onUpdateNested={theme.updateNested}
+          onSave={theme.saveDraft}
+          onDiscard={theme.discardDraft}
+          onReset={theme.resetToDefault}
+          isSaving={theme.isSaving}
+          onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
+        />
+      )}
     </div>
   );
 }

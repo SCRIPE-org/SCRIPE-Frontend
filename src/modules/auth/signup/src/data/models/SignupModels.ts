@@ -107,6 +107,12 @@ export interface SignupStatusDto {
   expiresAt: string | null;
 }
 
+export interface SignupCheckoutStatusDto {
+  status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
+  supportReference: string;
+  message: string;
+}
+
 export interface CompleteSessionDto {
   accessToken: string;
   expiresAt: string;

@@ -49,24 +49,27 @@ const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string }> = {
 
 function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
+  const { t } = useI18n();
   const handleCopy = () => {
     void navigator.clipboard.writeText(value);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
   return (
-    <button
+    <Button
       type="button"
       onClick={handleCopy}
-      className="shrink-0 text-zinc-500 transition-colors hover:text-zinc-300"
-      aria-label="Copy"
+      variant="ghost"
+      size="icon"
+      className="h-6 w-6 shrink-0 text-zinc-500 hover:text-zinc-300"
+      aria-label={t("common.copy")}
     >
       {copied ? (
         <CheckCheck className="h-3.5 w-3.5 text-emerald-400" />
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}
-    </button>
+    </Button>
   );
 }
 
