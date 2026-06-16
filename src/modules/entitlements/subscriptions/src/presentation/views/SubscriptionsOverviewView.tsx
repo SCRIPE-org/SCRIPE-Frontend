@@ -57,7 +57,7 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export function SubscriptionsOverviewView() {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const router = useRouter();
   const vm = useSubscriptionsOverviewViewModel();
   const [exportOpen, setExportOpen] = useState(false);

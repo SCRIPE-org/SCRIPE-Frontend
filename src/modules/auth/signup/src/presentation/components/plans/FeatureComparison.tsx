@@ -6,7 +6,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import type { ComparisonCategory, ComparisonCellData } from "../../../domain/entities";
 import type { PlanPickerEdition } from "../../viewmodels/usePlanPicker";
-import { formatCurrency } from "../../../data/helpers/planPickerLogic";
+import { formatCurrency } from "../../helpers/planPickerLogic";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FeatureComparison — a real, collapsible "Compare all features" matrix.

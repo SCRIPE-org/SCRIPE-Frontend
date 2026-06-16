@@ -4,7 +4,7 @@ import type {
   UpdateRegulationRequest,
   AddConsentPurposeRequest,
   UpdateConsentPurposeRequest,
-} from "../../data/models/RegulationModels";
+} from "../entities/Regulation";
 
 export interface IRegulationRepository {
   getAll(): Promise<Regulation[]>;

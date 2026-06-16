@@ -21,14 +21,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useAppStore } from "@core/store/useAppStore";
-import { AuthMapper } from "@modules/auth/core/data/mappers/AuthMapper";
 import { User } from "@modules/auth/core/domain/entities/User";
-import {
-  persistWizardState,
-  persistSignupRef,
-  clearPersistedWizardState,
-  getPersistedSignupRef,
-} from "../../../data/helpers/wizardStorage";
 import type {
   ISignupRepository,
   ContactSalesPayload,
@@ -94,7 +87,7 @@ export function useSignupProvisioning({
       // awaiting_payment, reuse the existing tenant by calling changePlan
       // instead of register (which would create a second tenant).
       if (!isFreeFlow && wizardData.editionId) {
-        const existingRef = getPersistedSignupRef();
+        const existingRef = repository.getPersistedSignupRef();
         if (existingRef) {
           try {
             const statusResult = await repository.getStatus(existingRef);
@@ -108,7 +101,7 @@ export function useSignupProvisioning({
               });
 
               const { password: _pw, ...safeData } = wizardData;
-              persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
+              repository.persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
 
               window.location.href = changePlanResult.checkoutUrl;
               return;
@@ -147,11 +140,11 @@ export function useSignupProvisioning({
         }
 
         // Store ref for finalize page (survives Stripe round-trip)
-        persistSignupRef(result.signupRef);
+        repository.persistSignupRef(result.signupRef);
 
         // Persist wizard state for cancel-url restoration (no password)
         const { password: _password, ...safeData } = wizardData;
-        persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
+        repository.persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
 
         window.location.href = result.checkoutUrl;
         return; // navigation in flight — do not touch state
@@ -161,7 +154,7 @@ export function useSignupProvisioning({
       secureTokenService.setAccessToken(result.accessToken ?? "");
 
       const user =
-        AuthMapper.userFromUnknown(result.userProfile) ??
+        result.user ??
         new User({
           id: "",
           username: wizardData.email.split("@")[0] || "user",
@@ -180,7 +173,7 @@ export function useSignupProvisioning({
       setProvisioningStep(4);
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      clearPersistedWizardState();
+      repository.clearPersistedWizardState();
       setStep("complete");
 
       setTimeout(() => {

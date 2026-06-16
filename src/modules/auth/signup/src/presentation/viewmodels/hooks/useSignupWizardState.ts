@@ -16,7 +16,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { INITIAL_WIZARD_DATA } from "../../../domain/constants/signupConstants";
 import { readPersistedWizardState } from "../../../data/helpers/wizardStorage";
-import { CURRENCY_TO_COUNTRY } from "../../../data/helpers/currencyGeo";
+import { CURRENCY_TO_COUNTRY } from "../../helpers/currencyGeo";
 import type {
   SignupStep,
   SignupWizardData,

@@ -8,7 +8,8 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IUsersService } from "../../domain/interfaces/IUsersService";
-import type { UsersListModel, UsersDetailModel, UpdateUserModel } from "../models/UsersModel";
+import type { UsersListModel, UsersDetailModel } from "../models/UsersModel";
+import type { UpdateUserRequest } from "../../domain/interfaces/IUsersRepository";
 
 export class UsersService implements IUsersService {
   constructor(private readonly api: IApiService) {}
@@ -24,7 +25,7 @@ export class UsersService implements IUsersService {
     return this.api.get<UsersDetailModel>(API_ENDPOINTS.USERS.BY_ID(id));
   }
 
-  async update(id: string, data: UpdateUserModel): Promise<void> {
+  async update(id: string, data: UpdateUserRequest): Promise<void> {
     await this.api.put(API_ENDPOINTS.USERS.UPDATE(id), data);
   }
 

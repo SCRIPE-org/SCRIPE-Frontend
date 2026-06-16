@@ -29,6 +29,7 @@ import type {
   ResumeSessionResult,
   ChangePlanResult,
   SignupRecommendationResult,
+  PersistedWizardState,
 } from "../../domain/entities";
 import {
   OnboardingFlowSchema,
@@ -40,6 +41,13 @@ import type {
   SignupRecommendationRequest,
   WelcomeContent,
 } from "../../domain/entities/OnboardingEntities";
+import {
+  persistWizardState,
+  persistSignupRef,
+  clearPersistedWizardState,
+  getPersistedSignupRef,
+  readPersistedWizardState,
+} from "../helpers/wizardStorage";
 
 export class SignupRepository implements ISignupRepository {
   constructor(private readonly service: ISignupService) {}
@@ -104,6 +112,26 @@ export class SignupRepository implements ISignupRepository {
 
   async abandon(signupRef: string): Promise<void> {
     return this.service.abandon(signupRef);
+  }
+
+  persistSignupRef(ref: string): void {
+    persistSignupRef(ref);
+  }
+
+  getPersistedSignupRef(): string | null {
+    return getPersistedSignupRef();
+  }
+
+  persistWizardState(state: PersistedWizardState): void {
+    persistWizardState(state);
+  }
+
+  clearPersistedWizardState(): void {
+    clearPersistedWizardState();
+  }
+
+  readPersistedWizardState(): any {
+    return readPersistedWizardState();
   }
 
   async resume(signupRef: string): Promise<ResumeSessionResult | null> {

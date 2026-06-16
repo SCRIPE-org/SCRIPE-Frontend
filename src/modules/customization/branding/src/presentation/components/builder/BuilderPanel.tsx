@@ -46,9 +46,7 @@ import type {
   CanvasComponentType,
   CanvasBackground,
 } from "../../../domain/entities/CanvasComponent";
-import type { SavedTemplate } from "../../../domain/entities/SavedTemplate";
 import { layoutToTemplate, getAllLayoutTemplates } from "../../../domain/entities/LayoutTemplates";
-import { TemplateStorageService } from "../../../data/services/TemplateStorageService";
 
 // ── Grid Overlap Detection ──────────────────────────────
 function parseGridRange(span: string): [number, number] {
@@ -99,15 +97,15 @@ export function BuilderPanel({
   const [showTemplates, setShowTemplates] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
-  const [savedTemplates, setSavedTemplates] = useState<SavedTemplate[]>([]);
+  const savedTemplates = store.savedTemplates;
   const [showSaved, setShowSaved] = useState(false);
 
   // Load saved templates on mount
   useEffect(() => {
     setTimeout(() => {
-      setSavedTemplates(TemplateStorageService.load());
+      store.loadSavedTemplates();
     }, 0);
-  }, []);
+  }, [store]);
 
   // Overlap detection
   const overlapWarnings = useMemo(() => detectOverlaps(store.components), [store.components]);
@@ -356,9 +354,7 @@ export function BuilderPanel({
               <button
                 className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
                 onClick={() => {
-                  const updated = savedTemplates.filter((t) => t.id !== tmpl.id);
-                  setSavedTemplates(updated);
-                  TemplateStorageService.save(updated);
+                  store.deleteTemplate(tmpl.id);
                 }}
                 title="Delete template"
               >
@@ -400,17 +396,7 @@ export function BuilderPanel({
               size="sm"
               disabled={!templateName.trim()}
               onClick={() => {
-                const newTemplate: SavedTemplate = {
-                  id: `tmpl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-                  name: templateName.trim(),
-                  components: structuredClone(store.components),
-                  gridRows: store.canvasGridRows,
-                  background: structuredClone(store.canvasBackground),
-                  createdAt: new Date().toISOString(),
-                };
-                const updated = [...savedTemplates, newTemplate];
-                setSavedTemplates(updated);
-                TemplateStorageService.save(updated);
+                store.saveTemplate(templateName);
                 setSaveDialogOpen(false);
               }}
             >

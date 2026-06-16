@@ -56,3 +56,15 @@ export class InventoryItem {
     return new InventoryItem({ ...this.data, ...updates });
   }
 }
+
+export interface CreateDataInventoryRequest {
+  moduleName: string;
+  entityName: string;
+  fieldName: string;
+  dataCategory: string;
+  isAnonymizedOnErasure: boolean;
+  isIncludedInExport: boolean;
+  legalBasis: string;
+}
+
+export type UpdateDataInventoryRequest = CreateDataInventoryRequest;

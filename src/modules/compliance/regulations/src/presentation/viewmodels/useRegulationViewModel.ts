@@ -11,7 +11,7 @@ import type {
   UpdateRegulationRequest,
   AddConsentPurposeRequest,
   UpdateConsentPurposeRequest,
-} from "../../data/models/RegulationModels";
+} from "../../domain/entities/Regulation";
 
 export function useRegulationViewModel() {
   const { regulationRepository } = complianceContainer;

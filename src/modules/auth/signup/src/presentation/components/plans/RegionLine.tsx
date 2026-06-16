@@ -3,7 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { MapPin } from "lucide-react";
-import { countryToFlag } from "../../../data/helpers/currencyGeo";
+import { countryToFlag } from "../../helpers/currencyGeo";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // RegionLine — a single quiet line: "Prices in {currency} · {country}".

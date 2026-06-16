@@ -20,12 +20,7 @@ import type {
   WelcomeContent,
 } from "../../domain/entities/OnboardingEntities";
 import { INITIAL_WIZARD_DATA } from "../../domain/constants/signupConstants";
-import { calcPasswordStrengthScore } from "../../data/helpers/accountLogic";
-import {
-  getPersistedSignupRef,
-  clearPersistedWizardState,
-  readPersistedWizardState,
-} from "../../data/helpers/wizardStorage";
+import { calcPasswordStrengthScore } from "../helpers/accountLogic";
 import { useSignupOtp } from "./hooks/useSignupOtp";
 import { useSignupSubdomain } from "./hooks/useSignupSubdomain";
 import { useSignupProvisioning } from "./hooks/useSignupProvisioning";
@@ -469,7 +464,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     // Stripe cancel-url round-trip: restore the persisted (password-free) state
     // and drop the user back on Review with a dismissible "canceled" banner.
     if (isCanceled) {
-      const persisted = readPersistedWizardState();
+      const persisted = signupRepository.readPersistedWizardState();
       if (persisted?.wizardData?.emailVerificationToken) {
         setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
         if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
@@ -481,7 +476,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
 
     // Change-plan round-trip from the finalize page: restore + jump to plan.
     if (isChangePlan) {
-      const persisted = readPersistedWizardState();
+      const persisted = signupRepository.readPersistedWizardState();
       if (persisted?.wizardData) {
         setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
         if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
@@ -490,7 +485,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
       return;
     }
 
-    const existingRef = getPersistedSignupRef();
+    const existingRef = signupRepository.getPersistedSignupRef();
     if (!existingRef) return;
 
     void signupRepository.resume(existingRef).then((info) => {
@@ -504,29 +499,29 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
 
   const resume = useCallback(() => {
     setShowResumeModal(false);
-    const persisted = readPersistedWizardState();
+    const persisted = signupRepository.readPersistedWizardState();
     if (persisted?.wizardData) {
       setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
       if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
       setNavigationDirection(1);
       setPhase("review");
     }
-  }, []);
+  }, [signupRepository]);
 
   const changePlan = useCallback(() => {
     setShowResumeModal(false);
-    const persisted = readPersistedWizardState();
+    const persisted = signupRepository.readPersistedWizardState();
     if (persisted?.wizardData) {
       setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
       if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
     }
     setNavigationDirection(-1);
     setPhase("plan");
-  }, []);
+  }, [signupRepository]);
 
   const startFresh = useCallback(async () => {
     setShowResumeModal(false);
-    const existingRef = getPersistedSignupRef();
+    const existingRef = signupRepository.getPersistedSignupRef();
     if (existingRef) {
       try {
         await signupRepository.abandon(existingRef);
@@ -534,7 +529,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
         // best-effort — releasing the subdomain is not blocking
       }
     }
-    clearPersistedWizardState();
+    signupRepository.clearPersistedWizardState();
     setNavigationDirection(1);
     setPhase("discovery");
   }, [signupRepository]);

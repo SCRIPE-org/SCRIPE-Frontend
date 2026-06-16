@@ -1,5 +1,11 @@
 import type { PluginCatalogItem } from "../entities/PluginCatalogItem";
-import type { InstallPluginRequest } from "../../data/models/CatalogModels";
+
+export interface InstallPluginRequest {
+  pluginDefinitionId: string;
+  tenantId: string;
+  installedByUserId: string;
+  settingsJson?: string;
+}
 
 export interface ICatalogRepository {
   getCatalog(tenantId: string): Promise<PluginCatalogItem[]>;

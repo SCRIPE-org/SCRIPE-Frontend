@@ -5,9 +5,8 @@
  * Implements all IUsersRepository methods.
  */
 
-import type { IUsersRepository } from "../../domain/interfaces/IUsersRepository";
+import type { IUsersRepository, UpdateUserRequest } from "../../domain/interfaces/IUsersRepository";
 import type { IUsersService } from "../../domain/interfaces/IUsersService";
-import type { UpdateUserModel } from "../models/UsersModel";
 import { UsersMapper } from "../mappers/UsersMapper";
 import type { UsersEntity } from "../../domain/entities/UsersEntity";
 
@@ -29,7 +28,7 @@ export class UsersRepository implements IUsersRepository {
     return UsersMapper.toDetailEntity(result);
   }
 
-  async update(id: string, data: UpdateUserModel): Promise<void> {
+  async update(id: string, data: UpdateUserRequest): Promise<void> {
     await this.service.update(id, data);
   }
 

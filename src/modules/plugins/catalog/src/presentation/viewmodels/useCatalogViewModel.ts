@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { pluginsContainer } from "@modules/plugins/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { InstallPluginRequest } from "../../data/models/CatalogModels";
+import type { InstallPluginRequest } from "../../domain/interfaces/ICatalogRepository";
 
 export function useCatalogViewModel(tenantId: string) {
   const { catalogRepository } = pluginsContainer;

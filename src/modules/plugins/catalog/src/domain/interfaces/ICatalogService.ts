@@ -1,4 +1,5 @@
-import type { PluginCatalogItemModel, InstallPluginRequest } from "../../data/models/CatalogModels";
+import type { PluginCatalogItemModel } from "../../data/models/CatalogModels";
+import type { InstallPluginRequest } from "./ICatalogRepository";
 
 export interface ICatalogService {
   getCatalog(tenantId: string): Promise<PluginCatalogItemModel[]>;

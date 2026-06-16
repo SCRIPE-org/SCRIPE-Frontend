@@ -272,7 +272,7 @@ function EditionBreakdownTable({ data, formatCurrency, labels }: EditionBreakdow
 // ─────────────────────────────────────────────────────────────
 
 export function BillingDashboardView() {
-  useModuleLocales(() => import("../../../../locales"), "billing");
+  useModuleLocales(() => import("../../../../core/locales"), "billing");
   const { t } = useI18n();
   const { dashboard, isLoading, isError, refetch } = useBillingDashboardViewModel();
 

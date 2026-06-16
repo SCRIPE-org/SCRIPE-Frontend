@@ -11,6 +11,7 @@ import type {
   CommissionDashboard,
   CommissionTrendPoint,
   TopTenantData,
+  TenantTransactionsResult,
 } from "../entities/ConnectAccount";
 
 export interface PagedResult<T> {
@@ -77,7 +78,7 @@ export interface IConnectRepository {
     type?: string;
     fromDate?: string;
     toDate?: string;
-  }): Promise<import("../../data/models/ConnectModels").TenantTransactionsResponseModel>;
+  }): Promise<TenantTransactionsResult>;
   syncMyAccount(): Promise<ConnectAccount>;
 }
 

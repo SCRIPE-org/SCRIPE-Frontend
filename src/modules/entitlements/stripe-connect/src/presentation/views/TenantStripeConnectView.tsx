@@ -42,7 +42,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import type { TenantTransactionsResponseModel } from "../../data/models/ConnectModels";
+import type { TenantTransactionsResult } from "../../domain/entities/ConnectAccount";
 
 // ── Status Configuration ─────────────────────────────────────────────────────
 
@@ -482,7 +482,7 @@ function CompletedState({
   onOpenDashboard: () => void;
   isSyncing: boolean;
   onSync: () => void;
-  transactions: TenantTransactionsResponseModel | null;
+  transactions: TenantTransactionsResult | null;
   isLoadingTransactions: boolean;
   txnPage: number;
   txnPageSize: number;
@@ -778,7 +778,7 @@ function TransactionsSection({
   t: (key: string, params?: Record<string, string | number>) => string;
   language: string;
   currency?: string;
-  transactions: TenantTransactionsResponseModel | null;
+  transactions: TenantTransactionsResult | null;
   isLoading: boolean;
   page: number;
   pageSize: number;

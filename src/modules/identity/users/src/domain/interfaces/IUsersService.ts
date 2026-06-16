@@ -5,11 +5,8 @@
  * Matches the backend UsersController endpoints 1:1.
  */
 
-import type {
-  UsersListModel,
-  UsersDetailModel,
-  UpdateUserModel,
-} from "../../data/models/UsersModel";
+import type { UsersListModel, UsersDetailModel } from "../../data/models/UsersModel";
+import type { UpdateUserRequest } from "./IUsersRepository";
 
 export interface IUsersService {
   /** GET /api/v1/Users — paginated list */
@@ -21,7 +18,7 @@ export interface IUsersService {
   getById(id: string): Promise<UsersDetailModel>;
 
   /** PUT /api/v1/Users/{id} — update profile */
-  update(id: string, data: UpdateUserModel): Promise<void>;
+  update(id: string, data: UpdateUserRequest): Promise<void>;
 
   /** DELETE /api/v1/Users/{id} — soft delete */
   delete(id: string): Promise<void>;
