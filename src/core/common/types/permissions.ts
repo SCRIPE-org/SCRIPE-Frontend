@@ -223,12 +223,13 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/editions/compare": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/editions/[id]": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
-  "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
+
   "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/overrides/[tenantId]": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
-  "/entitlements/billing-dashboard": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
+
+  "/entitlements/billing-hub": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
   "/payment-gateways": [SYSTEM_PERMISSIONS.PAYMENT_GATEWAYS_MANAGE],
   "/entitlements/payouts": [SYSTEM_PERMISSIONS.BILLING_MANAGE],
   "/entitlements/tenant-plans": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
@@ -262,11 +263,11 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
 
   // Stripe Connect
-  "/entitlements/stripe-connect": [SYSTEM_PERMISSIONS.STRIPE_CONNECT_VIEW],
+
   "/entitlements/commissions": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
   "/entitlements/commission-ledger": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
   "/entitlements/commission-invoices": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
-  "/entitlements/payment-hub": [SYSTEM_PERMISSIONS.BILLING_MANAGE],
+
 
   // Platform Stripe Dashboard
   "/entitlements/platform-stripe": [SYSTEM_PERMISSIONS.PLATFORM_STRIPE_VIEW],

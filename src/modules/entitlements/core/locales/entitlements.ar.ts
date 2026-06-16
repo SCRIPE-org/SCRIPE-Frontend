@@ -350,6 +350,17 @@ export const ar = {
       gatewaySubId: "[مفقود] Gateway Sub Id",
       gatewayCustomerId: "[مفقود] Gateway Customer Id",
     },
+    hub: {
+      title: "مركز الفوترة والخطط",
+      desc: "إدارة لوحة الإيرادات والاشتراكات وسترايب كونكت والخطط وبوابات الدفع.",
+      tabs: {
+        overview: "نظرة عامة",
+        subscriptions: "الاشتراكات",
+        stripeConnect: "سترايب كونكت",
+        plans: "الخطط",
+        gateways: "البوابات",
+      },
+    },
   },
   common: {
     failed: "[مفقود] Failed",

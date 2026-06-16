@@ -354,6 +354,17 @@ export const en = {
       gatewaySubId: "Gateway Sub Id",
       gatewayCustomerId: "Gateway Customer Id",
     },
+    hub: {
+      title: "Billing & Plans Hub",
+      desc: "Manage revenue dashboard, subscriptions, stripe connect, plans, and gateways.",
+      tabs: {
+        overview: "Overview",
+        subscriptions: "Subscriptions",
+        stripeConnect: "Stripe Connect",
+        plans: "Plans",
+        gateways: "Gateways",
+      },
+    },
   },
   common: {
     failed: "Failed",
