@@ -355,17 +355,33 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     queryKey: ["signup-welcome-content", language],
     queryFn: () => authContainer.signupRepository.getWelcomeContent(language),
     staleTime: 10 * 60 * 1000, // 10 min — welcome content is stable per session
-    retry: 1,
   });
 
   // ── Pricing context — load early to lock the currency ──────────────────────
-  useQuery({
+  const { data: pricingContext } = useQuery({
     queryKey: ["signup-pricing-context"],
     queryFn: () => authContainer.signupRepository.getPricingContext(),
     staleTime: 30 * 60 * 1000, // currency is country-locked per session
     retry: 1,
   });
 
+  useEffect(() => {
+    // Dev-only: support override
+    const devCurrencyOverride =
+      process.env.NODE_ENV === "development" && typeof window !== "undefined"
+        ? (new URLSearchParams(window.location.search).get("__currency")?.toUpperCase() ?? null)
+        : null;
+
+    const resolvedCurrency = devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? initialCurrency;
+    const resolvedCountry = initialCountry ?? pricingContext?.detectedCountry;
+    if (resolvedCurrency) {
+      setWizardData((prev) => ({
+        ...prev,
+        currency: resolvedCurrency,
+        region: resolvedCountry || prev.region,
+      }));
+    }
+  }, [initialCurrency, initialCountry, pricingContext]);
   const retryWelcome = useCallback(() => {
     void refetch();
   }, [refetch]);

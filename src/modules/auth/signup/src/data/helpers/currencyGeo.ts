@@ -83,8 +83,8 @@ export const COUNTRY_TO_CURRENCY: Record<string, string> = {
   US: "USD",
 };
 
-/** Resolves a country code to its default billing currency, defaulting to USD. */
-export function resolveCurrencyFromCountry(countryCode: string | null | undefined): string {
-  if (!countryCode) return "USD";
-  return COUNTRY_TO_CURRENCY[countryCode.toUpperCase()] || "USD";
+/** Resolves a country code to its default billing currency, returning undefined if unknown/missing. */
+export function resolveCurrencyFromCountry(countryCode: string | null | undefined): string | undefined {
+  if (!countryCode) return undefined;
+  return COUNTRY_TO_CURRENCY[countryCode.toUpperCase()];
 }

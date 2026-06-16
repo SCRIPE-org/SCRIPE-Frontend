@@ -18,6 +18,7 @@ import type {
   SubdomainCheckDto,
   RegisterDto,
   SignupStatusDto,
+  SignupCheckoutStatusDto,
   CompleteSessionDto,
   PricingContextDto,
   ContactSalesRequestDto,
@@ -46,17 +47,20 @@ export class SignupService implements ISignupService {
     return this.api.get<PricingContextDto>(AUTH_ENDPOINTS.AUTH.SIGNUP.PRICING_CONTEXT);
   }
 
-  async getCategories(currency: string, lang: string): Promise<PublicCategoryDto[]> {
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.GET_CATEGORIES, { currency, lang });
+  async getCategories(currency: string | undefined, lang: string): Promise<PublicCategoryDto[]> {
+    const params: Record<string, string> = { lang };
+    if (currency) params.currency = currency;
+    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.GET_CATEGORIES, params);
     return this.api.get<PublicCategoryDto[]>(url);
   }
 
   async getEditions(
     categoryKey: string | null,
-    currency: string,
+    currency: string | undefined,
     lang: string
   ): Promise<PublicEditionDto[]> {
-    const params: Record<string, string> = { currency, lang };
+    const params: Record<string, string> = { lang };
+    if (currency) params.currency = currency;
     if (categoryKey) params.categoryId = categoryKey;
     const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.GET_EDITIONS, params);
     return this.api.get<PublicEditionDto[]>(url);
@@ -120,6 +124,11 @@ export class SignupService implements ISignupService {
   async getStatus(ref: string): Promise<SignupStatusDto> {
     const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.STATUS, { ref });
     return this.api.get<SignupStatusDto>(url);
+  }
+
+  async getCheckoutStatus(sessionId: string): Promise<SignupCheckoutStatusDto> {
+    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.CHECKOUT_STATUS, { sessionId });
+    return this.api.get<SignupCheckoutStatusDto>(url);
   }
 
   async completeSession(signupRef: string): Promise<CompleteSessionDto> {
