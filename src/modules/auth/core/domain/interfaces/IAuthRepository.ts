@@ -95,4 +95,8 @@ export interface IAuthRepository {
     editionName: string | null;
     defaultRedirectPath: string;
   }>;
+  /** Clear Impersonation/tokens browser session flags on login page mount */
+  clearSessionOnLoginMount(): void;
+  /** Clear navigation cache and Zustand menu stores */
+  clearNavigationCaches(): void;
 }

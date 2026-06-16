@@ -8,12 +8,12 @@
  */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { container } from "../../../di";
+import { container } from "@modules/profile/di";
 import { profileKeys } from "./useProfilePageViewModel";
 import type {
   ChangePasswordRequest,
   Enable2FAResult,
-} from "../../../src/domain/interfaces/IProfileRepository";
+} from "../../domain/interfaces/IProfileRepository";
 
 export function useSecurityViewModel() {
   const repo = container.profileRepository;

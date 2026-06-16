@@ -5,9 +5,9 @@
  *
  * Uses GitHub Settings-style left sidebar with navigation.
  */
-import { useProfilePageViewModel } from "@modules/profile/src/presentation/viewmodels/useProfilePageViewModel";
-import { ProfileHeader } from "@modules/profile/src/presentation/components/ProfileHeader";
-import { ProfileNav } from "@modules/profile/src/presentation/components/ProfileNav";
+import { useProfilePageViewModel } from "@modules/profile/core/src/presentation/viewmodels/useProfilePageViewModel";
+import { ProfileHeader } from "@modules/profile/core/src/presentation/components/ProfileHeader";
+import { ProfileNav } from "@modules/profile/core/src/presentation/components/ProfileNav";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {

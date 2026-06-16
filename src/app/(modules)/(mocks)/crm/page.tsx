@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const CrmDashboardView = dynamic(() =>
-  import("@modules/mock-crm").then((m) => ({ default: m.CrmDashboardView }))
+  import("@/modules/mocks/mock-crm").then((m) => ({ default: m.CrmDashboardView }))
 );
 
 export const metadata: Metadata = {

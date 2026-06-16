@@ -7,7 +7,7 @@
  * The route guard enforces this redirect — the admin cannot access
  * any other page until they change their password.
  */
-import { ForceChangePasswordView } from "@modules/profile/src/presentation/views/ForceChangePasswordView";
+import { ForceChangePasswordView } from "@modules/profile/core/src/presentation/views/ForceChangePasswordView";
 
 export default function ChangePasswordPage() {
   return <ForceChangePasswordView />;

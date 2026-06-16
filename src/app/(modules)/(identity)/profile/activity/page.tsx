@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const ProfileActivityView = dynamic(() =>
-  import("@modules/profile/src/presentation/views/ProfileActivityView").then((m) => ({
+  import("@modules/profile/core/src/presentation/views/ProfileActivityView").then((m) => ({
     default: m.ProfileActivityView,
   }))
 );

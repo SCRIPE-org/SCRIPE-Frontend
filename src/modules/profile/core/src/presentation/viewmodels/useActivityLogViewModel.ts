@@ -7,9 +7,9 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { container } from "../../../di";
+import { container } from "@modules/profile/di";
 import { profileKeys } from "./useProfilePageViewModel";
-import type { SecurityLogEntry } from "../../../src/domain/entities/SecurityLogEntry";
+import type { SecurityLogEntry } from "../../domain/entities/SecurityLogEntry";
 
 export function useActivityLogViewModel() {
   const repo = container.profileRepository;

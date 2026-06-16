@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const PayrollDashboardView = dynamic(() =>
-  import("@modules/mock-payroll").then((m) => ({ default: m.PayrollDashboardView }))
+  import("@/modules/mocks/mock-payroll").then((m) => ({ default: m.PayrollDashboardView }))
 );
 
 export const metadata: Metadata = {

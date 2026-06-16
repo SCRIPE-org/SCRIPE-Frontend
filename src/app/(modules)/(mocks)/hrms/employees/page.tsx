@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const HrmsEmployeesView = dynamic(() =>
-  import("@modules/mock-hrms").then((m) => ({ default: m.HrmsEmployeesView }))
+  import("@/modules/mocks/mock-hrms").then((m) => ({ default: m.HrmsEmployeesView }))
 );
 
 export const metadata: Metadata = {

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const AccountingInvoicesView = dynamic(() =>
-  import("@modules/mock-accounting").then((m) => ({ default: m.AccountingInvoicesView }))
+  import("@/modules/mocks/mock-accounting").then((m) => ({ default: m.AccountingInvoicesView }))
 );
 
 export const metadata: Metadata = {

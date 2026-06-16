@@ -30,8 +30,6 @@ import { getAuthContainer } from "@modules/auth/di";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { authBroadcast } from "@core/common/broadcast-auth";
 
-import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
-
 /**
  * Check if we're currently impersonating (read from sessionStorage).
  * This survives page reloads within the same tab but not new tabs.
@@ -58,7 +56,7 @@ export function useImpersonation() {
       } else {
         setIsImpersonating(false);
         // Clear navigation cache so menu reloads with restored identity
-        clearNavigationCaches();
+        getAuthContainer().authRepository.clearNavigationCaches();
         queryClient.invalidateQueries();
       }
     });
@@ -84,7 +82,7 @@ export function useImpersonation() {
         appLogger.auth(`Impersonation started for admin: ${adminId}`);
 
         // Purge all workspace navigation caches so the new identity loads fresh data
-        clearNavigationCaches();
+        repo.clearNavigationCaches();
 
         // Navigate to home with full reload — fresh data with new identity
         window.location.href = "/";
@@ -119,7 +117,7 @@ export function useImpersonation() {
       appLogger.auth("Impersonation stopped, original admin restored");
 
       // Purge all workspace navigation caches so the original admin loads fresh data
-      clearNavigationCaches();
+      repo.clearNavigationCaches();
 
       // Navigate to home with full reload — fresh data with original identity
       window.location.href = "/";

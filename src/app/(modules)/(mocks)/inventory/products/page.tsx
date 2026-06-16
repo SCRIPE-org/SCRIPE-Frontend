@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const InventoryProductsView = dynamic(() =>
-  import("@modules/mock-inventory").then((m) => ({ default: m.InventoryProductsView }))
+  import("@/modules/mocks/mock-inventory").then((m) => ({ default: m.InventoryProductsView }))
 );
 
 export const metadata: Metadata = {

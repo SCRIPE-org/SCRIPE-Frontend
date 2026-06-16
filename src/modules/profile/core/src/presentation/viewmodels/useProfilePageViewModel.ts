@@ -8,8 +8,8 @@
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { container } from "../../../di";
-import type { UpdateProfileRequest } from "../../../src/domain/interfaces/IProfileRepository";
+import { container } from "@modules/profile/di";
+import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
 
 export const profileKeys = {
   all: ["profile"] as const,

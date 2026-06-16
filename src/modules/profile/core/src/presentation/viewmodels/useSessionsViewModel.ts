@@ -6,7 +6,7 @@
  * Handles active sessions list and revocation.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { container } from "../../../di";
+import { container } from "@modules/profile/di";
 import { profileKeys } from "./useProfilePageViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
