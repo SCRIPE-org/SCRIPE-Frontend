@@ -6,12 +6,14 @@ import { Skeleton } from "@core/ui/skeleton";
 import { cn } from "@core/common/utils";
 
 interface TenantNodeCardStatsProps {
-  stats: {
-    adminsCount?: number;
-    rolesCount?: number;
-    subTenantsCount?: number;
-    permissionsCount?: number;
-  } | undefined;
+  stats:
+    | {
+        adminsCount?: number;
+        rolesCount?: number;
+        subTenantsCount?: number;
+        permissionsCount?: number;
+      }
+    | undefined;
   statsLoading: boolean;
   t: (key: string) => string;
 }

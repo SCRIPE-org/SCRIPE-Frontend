@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomerLogo } from "../../domain/entities/SignupContent";
 import type { CreateCustomerLogoParams } from "../../domain/interfaces/ISignupContentRepository";
+import { CustomerLogoFormSchema } from "../schemas/signup-content.schema";
 
 interface CustomerLogoDialogProps {
   open: boolean;
@@ -53,59 +57,67 @@ function CustomerLogoDialogForm({
   editing,
 }: CustomerLogoDialogFormProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<CreateCustomerLogoParams>(() => toCustomerLogoForm(editing));
 
-  const set = (field: keyof CreateCustomerLogoParams, value: unknown) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<CreateCustomerLogoParams>({
+    resolver: zodResolver(CustomerLogoFormSchema),
+    defaultValues: toCustomerLogoForm(editing),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(form);
+  const isRealData = useWatch({
+    control,
+    name: "isRealData",
+    defaultValue: false,
+  });
+
+  useEffect(() => {
+    reset(toCustomerLogoForm(editing));
+  }, [editing, reset]);
+
+  const onSubmit = (data: CreateCustomerLogoParams) => {
+    onSave(data);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 py-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.key")}</label>
-        <Input
-          value={form.key}
-          onChange={(e) => set("key", e.target.value)}
-          className="border-zinc-700 bg-zinc-900 text-white"
-          required
-        />
+        <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.key")}</Label>
+        <Input {...register("key")} className="border-zinc-700 bg-zinc-900 text-white" />
+        {errors.key && <p className="text-xs text-red-400">{errors.key.message}</p>}
       </div>
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.name")}</label>
-        <Input
-          value={form.name}
-          onChange={(e) => set("name", e.target.value)}
-          className="border-zinc-700 bg-zinc-900 text-white"
-          required
-        />
+        <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.name")}</Label>
+        <Input {...register("name")} className="border-zinc-700 bg-zinc-900 text-white" />
+        {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
       </div>
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">{t("signupContent.customerLogos.assetUrl")}</label>
-        <Input
-          value={form.assetUrl}
-          onChange={(e) => set("assetUrl", e.target.value)}
-          className="border-zinc-700 bg-zinc-900 text-white"
-          required
-        />
+        <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.assetUrl")}</Label>
+        <Input {...register("assetUrl")} className="border-zinc-700 bg-zinc-900 text-white" />
+        {errors.assetUrl && <p className="text-xs text-red-400">{errors.assetUrl.message}</p>}
       </div>
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</label>
+        <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</Label>
         <Input
           type="number"
-          value={form.sortOrder}
-          onChange={(e) => set("sortOrder", Number(e.target.value))}
+          {...register("sortOrder", { valueAsNumber: true })}
           className="border-zinc-700 bg-zinc-900 text-white"
         />
+        {errors.sortOrder && <p className="text-xs text-red-400">{errors.sortOrder.message}</p>}
       </div>
       <div className="flex items-center justify-between">
-        <label className="text-xs text-zinc-400">
+        <Label className="text-xs text-zinc-400">
           {t("signupContent.customerLogos.isRealData")}
-        </label>
-        <Switch checked={form.isRealData} onCheckedChange={(v) => set("isRealData", v)} />
+        </Label>
+        <Switch
+          checked={isRealData}
+          onCheckedChange={(v) => setValue("isRealData", v, { shouldValidate: true })}
+        />
       </div>
       <DialogFooter>
         <Button

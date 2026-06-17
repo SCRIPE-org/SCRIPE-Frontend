@@ -29,6 +29,11 @@ export const ar = {
       trustedByCount: "عدد العملاء الموثوق بهم",
       trustedByLabelEn: "تسمية الثقة",
       trustedByLabelAr: "تسمية الثقة (عربي)",
+      placeholderEn: "الإنجليزية",
+      placeholderAr: "العربية",
+      countPlaceholder: "العدد",
+      trustedByLabelEnPlaceholder: "التسمية بالإنجليزية",
+      trustedByLabelArPlaceholder: "التسمية بالعربية",
     },
 
     trustMarks: {

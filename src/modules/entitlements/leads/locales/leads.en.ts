@@ -71,6 +71,7 @@ export const en = {
 
     empty: "No leads found.",
     loading: "Loading leads\u2026",
+    loadError: "Failed to load leads. Please refresh and try again.",
 
     drawer: {
       loadingDetail: "Loading lead details\u2026",

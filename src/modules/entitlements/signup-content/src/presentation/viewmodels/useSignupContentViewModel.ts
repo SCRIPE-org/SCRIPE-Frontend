@@ -108,6 +108,9 @@ export function useSignupContentViewModel() {
     onSuccess: () => {
       invalidate();
     },
+    onError: () => {
+      toast({ title: t("signupContent.error.save"), variant: "destructive" });
+    },
   });
 
   // ── Customer Logos ────────────────────────────────────────────────────────────
@@ -154,6 +157,9 @@ export function useSignupContentViewModel() {
     mutationFn: (orderedIds: string[]) => signupContentRepository.reorderCustomerLogos(orderedIds),
     onSuccess: () => {
       invalidate();
+    },
+    onError: () => {
+      toast({ title: t("signupContent.error.save"), variant: "destructive" });
     },
   });
 
@@ -277,6 +283,7 @@ export function useSignupContentViewModel() {
     editingTrustMark,
     isSavingTrustMark: createTrustMarkMutation.isPending || updateTrustMarkMutation.isPending,
     isDeletingTrustMark: deleteTrustMarkMutation.isPending,
+    isReorderingTrustMarks: reorderTrustMarksMutation.isPending,
     handleOpenAddTrustMark,
     handleOpenEditTrustMark,
     handleCloseTrustMarkDialog,
@@ -289,6 +296,7 @@ export function useSignupContentViewModel() {
     editingLogo,
     isSavingLogo: createCustomerLogoMutation.isPending || updateCustomerLogoMutation.isPending,
     isDeletingLogo: deleteCustomerLogoMutation.isPending,
+    isReorderingLogos: reorderCustomerLogosMutation.isPending,
     handleOpenAddLogo,
     handleOpenEditLogo,
     handleCloseLogoDialog,

@@ -11,13 +11,12 @@ import type {
 } from "../../domain/interfaces/ISignupContentRepository";
 import type { ISignupContentService } from "../../domain/interfaces/ISignupContentService";
 import type { ContentMode } from "../../domain/entities/SignupContent";
-import type { AdminSignupContentModel } from "../models/SignupContentModels";
 
 export class SignupContentService implements ISignupContentService {
   constructor(private readonly api: IApiService) {}
 
-  async getAdminContent(): Promise<AdminSignupContentModel> {
-    return this.api.get<AdminSignupContentModel>(API_ENDPOINTS.ENTITLEMENTS.SIGNUP_CONTENT.GET);
+  async getAdminContent(): Promise<unknown> {
+    return this.api.get<unknown>(API_ENDPOINTS.ENTITLEMENTS.SIGNUP_CONTENT.GET);
   }
 
   async setMode(mode: ContentMode): Promise<void> {
