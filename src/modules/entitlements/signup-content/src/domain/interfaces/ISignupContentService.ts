@@ -1,4 +1,3 @@
-import type { AdminSignupContentModel } from "../../data/models/SignupContentModels";
 import type { ContentMode } from "../entities/SignupContent";
 import type {
   CreateCustomerLogoParams,
@@ -9,7 +8,7 @@ import type {
 } from "./ISignupContentRepository";
 
 export interface ISignupContentService {
-  getAdminContent(): Promise<AdminSignupContentModel>;
+  getAdminContent(): Promise<unknown>;
   setMode(mode: ContentMode): Promise<void>;
   updateWelcome(data: UpdateWelcomeParams): Promise<void>;
   createTrustMark(data: CreateTrustMarkParams): Promise<string>;

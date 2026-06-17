@@ -8,7 +8,6 @@ import {
 } from "../../domain/entities/SignupContent";
 import type { ContentMode } from "../../domain/entities/SignupContent";
 import { CONTENT_MODES } from "../../domain/entities/SignupContent";
-import type { AdminSignupContentModel } from "../models/SignupContentModels";
 
 const WelcomeContentSchema = z.object({
   id: z.string(),
@@ -54,7 +53,7 @@ const AdminSignupContentSchema = z.object({
 });
 
 export class SignupContentMapper {
-  static toEntity(model: AdminSignupContentModel): AdminSignupContent {
+  static toEntity(model: unknown): AdminSignupContent {
     const parsed = safeParseApiResponse(AdminSignupContentSchema, model, "AdminSignupContent");
 
     return new AdminSignupContent({
