@@ -1,3 +1,5 @@
+"use client";
+
 import { useActivateWorkspaceViewModel } from "../viewmodels/useActivateWorkspaceViewModel";
 import { SubscriptionStatusBox } from "../components/SubscriptionStatusBox";
 import { ChangePlanDialog } from "../components/ChangePlanDialog";
